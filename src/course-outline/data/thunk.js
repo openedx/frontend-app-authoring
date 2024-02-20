@@ -28,6 +28,9 @@ import {
   setSectionOrderList,
   setVideoSharingOption,
   setCourseItemOrderList,
+  copyBlockToClipboard,
+  pasteBlock,
+  dismissNotification,
 } from './api';
 import {
   addSection,
@@ -49,6 +52,7 @@ import {
   reorderSectionList,
   reorderSubsectionList,
   reorderUnitList,
+  updateClipboardContent,
 } from './slice';
 
 export function fetchCourseOutlineIndexQuery(courseId) {
@@ -258,11 +262,19 @@ export function configureCourseSubsectionQuery(
   isVisibleToStaffOnly,
   releaseDate,
   graderType,
-  dueDateState,
-  isTimeLimitedState,
+  dueDate,
+  isTimeLimited,
+  isProctoredExam,
+  isOnboardingExam,
+  isPracticeExam,
+  examReviewRules,
   defaultTimeLimitMin,
-  hideAfterDueState,
-  showCorrectnessState,
+  hideAfterDue,
+  showCorrectness,
+  isPrereq,
+  prereqUsageKey,
+  prereqMinScore,
+  prereqMinCompletion,
 ) {
   return async (dispatch) => {
     dispatch(configureCourseItemQuery(
@@ -272,11 +284,19 @@ export function configureCourseSubsectionQuery(
         isVisibleToStaffOnly,
         releaseDate,
         graderType,
-        dueDateState,
-        isTimeLimitedState,
+        dueDate,
+        isTimeLimited,
+        isProctoredExam,
+        isOnboardingExam,
+        isPracticeExam,
+        examReviewRules,
         defaultTimeLimitMin,
-        hideAfterDueState,
-        showCorrectnessState,
+        hideAfterDue,
+        showCorrectness,
+        isPrereq,
+        prereqUsageKey,
+        prereqMinScore,
+        prereqMinCompletion,
       ),
     ));
   };
@@ -371,7 +391,7 @@ export function deleteCourseUnitQuery(unitId, subsectionId, sectionId) {
 function duplicateCourseItemQuery(itemId, parentLocator, duplicateFn) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.duplicating));
 
     try {
       await duplicateCourseItem(itemId, parentLocator).then(async (result) => {
@@ -556,6 +576,64 @@ export function setUnitOrderListQuery(sectionId, subsectionId, unitListIds, rest
     } catch (error) {
       restoreCallback();
       dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function setClipboardContent(usageKey, broadcastClipboard) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.copying));
+
+    try {
+      await copyBlockToClipboard(usageKey).then(async (result) => {
+        const status = result?.content?.status;
+        if (status === 'ready') {
+          dispatch(updateClipboardContent(result));
+          broadcastClipboard(result);
+          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+          dispatch(hideProcessingNotification());
+        } else {
+          throw new Error(`Unexpected clipboard status "${status}" in successful API response.`);
+        }
+      });
+    } catch (error) {
+      dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function pasteClipboardContent(parentLocator, sectionId) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.pasting));
+
+    try {
+      await pasteBlock(parentLocator).then(async (result) => {
+        if (result) {
+          dispatch(fetchCourseSectionQuery(sectionId, true));
+          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+          dispatch(hideProcessingNotification());
+        }
+      });
+    } catch (error) {
+      dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function dismissNotificationQuery(url) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+
+    try {
+      await dismissNotification(url).then(async () => {
+        dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+      });
+    } catch (error) {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
   };

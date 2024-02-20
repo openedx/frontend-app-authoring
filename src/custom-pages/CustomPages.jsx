@@ -16,8 +16,8 @@ import {
   Image,
   ModalDialog,
   Container,
-} from '@edx/paragon';
-import { Add, SpinnerSimple } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { Add, SpinnerSimple } from '@openedx/paragon/icons';
 import Placeholder, {
   DraggableList,
   SortableItem,

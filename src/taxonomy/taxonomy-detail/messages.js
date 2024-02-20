@@ -14,6 +14,10 @@ const messages = defineMessages({
     id: 'course-authoring.taxonomy-detail.side-card.description',
     defaultMessage: 'Description',
   },
+  taxonomyDetailsExportID: {
+    id: 'course-authoring.taxonomy-detail.side-card.exportID',
+    defaultMessage: 'Export ID',
+  },
 });
 
 export default messages;

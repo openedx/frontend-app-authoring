@@ -2,7 +2,7 @@ import {
   CheckCircle as CheckCircleIcon,
   Lock as LockIcon,
   EditOutline as EditOutlineIcon,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 
 import { ITEM_BADGE_STATUS, VIDEO_SHARING_OPTIONS } from './constants';
 import { VisibilityTypes } from '../data/constants';
@@ -21,6 +21,8 @@ const getItemStatus = ({
   switch (true) {
   case visibilityState === VisibilityTypes.STAFF_ONLY:
     return ITEM_BADGE_STATUS.staffOnly;
+  case visibilityState === VisibilityTypes.GATED:
+    return ITEM_BADGE_STATUS.gated;
   case visibilityState === VisibilityTypes.LIVE:
     return ITEM_BADGE_STATUS.live;
   case published && !hasChanges:
@@ -42,6 +44,11 @@ const getItemStatus = ({
  */
 const getItemStatusBadgeContent = (status, messages, intl) => {
   switch (status) {
+  case ITEM_BADGE_STATUS.gated:
+    return {
+      badgeTitle: intl.formatMessage(messages.statusBadgeGated),
+      badgeIcon: LockIcon,
+    };
   case ITEM_BADGE_STATUS.live:
     return {
       badgeTitle: intl.formatMessage(messages.statusBadgeLive),
@@ -91,6 +98,10 @@ const getItemStatusBorder = (status) => {
   case ITEM_BADGE_STATUS.publishedNotLive:
     return {
       borderLeft: '5px solid #0D7D4D',
+    };
+  case ITEM_BADGE_STATUS.gated:
+    return {
+      borderLeft: '5px solid #000000',
     };
   case ITEM_BADGE_STATUS.staffOnly:
     return {

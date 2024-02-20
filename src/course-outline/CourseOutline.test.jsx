@@ -1,11 +1,12 @@
 import {
-  act, render, waitFor, cleanup, fireEvent, within,
+  act, render, waitFor, fireEvent, within,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { cloneDeep } from 'lodash';
 
 import {
   getCourseBestPracticesApiUrl,
@@ -16,6 +17,7 @@ import {
   getCourseBlockApiUrl,
   getCourseItemApiUrl,
   getXBlockBaseApiUrl,
+  getClipboardUrl,
 } from './data/api';
 import { RequestStatus } from '../data/constants';
 import {
@@ -42,6 +44,9 @@ import cardHeaderMessages from './card-header/messages';
 import enableHighlightsModalMessages from './enable-highlights-modal/messages';
 import statusBarMessages from './status-bar/messages';
 import configureModalMessages from './configure-modal/messages';
+import pasteButtonMessages from './paste-button/messages';
+import subsectionMessages from './subsection-card/messages';
+import pageAlertMessages from './page-alerts/messages';
 
 let axiosMock;
 let store;
@@ -63,6 +68,13 @@ jest.mock('../help-urls/hooks', () => ({
     visibility: 'some',
     grading: 'some',
     outline: 'some',
+  }),
+}));
+
+jest.mock('@edx/frontend-platform/i18n', () => ({
+  ...jest.requireActual('@edx/frontend-platform/i18n'),
+  useIntl: () => ({
+    formatMessage: (message) => message.defaultMessage,
   }),
 }));
 
@@ -115,7 +127,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check video sharing option udpates correctly', async () => {
-    const { findByTestId } = render(<RootWrapper />);
+    const { findByLabelText } = render(<RootWrapper />);
 
     axiosMock
       .onPost(getCourseBlockApiUrl(courseId), {
@@ -124,13 +136,10 @@ describe('<CourseOutline />', () => {
         },
       })
       .reply(200);
-    const optionDropdownWrapper = await findByTestId('video-sharing-wrapper');
-    const optionDropdown = await within(optionDropdownWrapper).findByRole('button');
-    await act(async () => fireEvent.click(optionDropdown));
-    const allOffOption = await within(optionDropdownWrapper).findByText(
-      statusBarMessages.videoSharingAllOffText.defaultMessage,
+    const optionDropdown = await findByLabelText(statusBarMessages.videoSharingTitle.defaultMessage);
+    await act(
+      async () => fireEvent.change(optionDropdown, { target: { value: VIDEO_SHARING_OPTIONS.allOff } }),
     );
-    await act(async () => fireEvent.click(allOffOption));
 
     expect(axiosMock.history.post.length).toBe(1);
     expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
@@ -141,7 +150,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check video sharing option shows error on failure', async () => {
-    const { findByTestId, queryByRole } = render(<RootWrapper />);
+    const { findByLabelText, queryByRole } = render(<RootWrapper />);
 
     axiosMock
       .onPost(getCourseBlockApiUrl(courseId), {
@@ -150,13 +159,10 @@ describe('<CourseOutline />', () => {
         },
       })
       .reply(500);
-    const optionDropdownWrapper = await findByTestId('video-sharing-wrapper');
-    const optionDropdown = await within(optionDropdownWrapper).findByRole('button');
-    await act(async () => fireEvent.click(optionDropdown));
-    const allOffOption = await within(optionDropdownWrapper).findByText(
-      statusBarMessages.videoSharingAllOffText.defaultMessage,
+    const optionDropdown = await findByLabelText(statusBarMessages.videoSharingTitle.defaultMessage);
+    await act(
+      async () => fireEvent.change(optionDropdown, { target: { value: VIDEO_SHARING_OPTIONS.allOff } }),
     );
-    await act(async () => fireEvent.click(allOffOption));
 
     expect(axiosMock.history.post.length).toBe(1);
     expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
@@ -165,7 +171,10 @@ describe('<CourseOutline />', () => {
       },
     }));
 
-    expect(queryByRole('alert')).toBeInTheDocument();
+    const alertElement = queryByRole('alert');
+    expect(alertElement).toHaveTextContent(
+      pageAlertMessages.alertFailedGeneric.defaultMessage,
+    );
   });
 
   it('render error alert after failed reindex correctly', async () => {
@@ -334,7 +343,6 @@ describe('<CourseOutline />', () => {
   });
 
   it('render CourseOutline component without sections correctly', async () => {
-    cleanup();
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(200, courseOutlineIndexWithoutSections);
@@ -344,6 +352,25 @@ describe('<CourseOutline />', () => {
     await waitFor(() => {
       expect(getByTestId('empty-placeholder')).toBeInTheDocument();
     });
+  });
+
+  it('render configuration alerts and check dismiss query', async () => {
+    axiosMock
+      .onGet(getCourseOutlineIndexApiUrl(courseId))
+      .reply(200, {
+        ...courseOutlineIndexMock,
+        notificationDismissUrl: '/some/url',
+      });
+
+    const { findByRole } = render(<RootWrapper />);
+    expect(await findByRole('alert')).toBeInTheDocument();
+    const dismissBtn = await findByRole('button', { name: 'Dismiss' });
+    axiosMock
+      .onDelete('/some/url')
+      .reply(204);
+    fireEvent.click(dismissBtn);
+
+    expect(axiosMock.history.delete.length).toBe(1);
   });
 
   it('check edit title works for section, subsection and unit', async () => {
@@ -542,7 +569,7 @@ describe('<CourseOutline />', () => {
 
     const checkPublishBtn = async (item, element, elementName) => {
       expect(
-        await within(element).findByTestId(`${elementName}-card-header__badge-status`),
+        (await within(element).getAllByRole('status'))[0],
         `Failed for ${elementName}!`,
       ).toHaveTextContent(cardHeaderMessages.statusBadgeDraft.defaultMessage);
 
@@ -598,7 +625,7 @@ describe('<CourseOutline />', () => {
       await act(async () => fireEvent.click(confirmButton));
 
       expect(
-        await within(element).findByTestId(`${elementName}-card-header__badge-status`),
+        (await within(element).getAllByRole('status'))[0],
         `Failed for ${elementName}!`,
       ).toHaveTextContent(cardHeaderMessages.statusBadgePublishedNotLive.defaultMessage);
     };
@@ -669,43 +696,43 @@ describe('<CourseOutline />', () => {
       findAllByTestId,
       findByTestId,
     } = render(<RootWrapper />);
-    const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
-    const subsection = section.childInfo.children[0];
-    const newReleaseDate = '2025-08-10T05:00:00Z';
-    const newGraderType = 'Homework';
-    const newDue = '2025-09-10T00:00:00Z';
-    const isTimeLimited = true;
-    const defaultTimeLimitMinutes = 3270;
+    const section = cloneDeep(courseOutlineIndexMock.courseStructure.childInfo.children[0]);
+    const [subsection] = section.childInfo.children;
+    const expectedRequestData = {
+      publish: 'republish',
+      graderType: 'Homework',
+      isPrereq: false,
+      prereqMinScore: 100,
+      prereqMinCompletion: 100,
+      metadata: {
+        visible_to_staff_only: null,
+        due: '2025-09-10T05:00:00Z',
+        hide_after_due: true,
+        show_correctness: 'always',
+        is_practice_exam: false,
+        is_time_limited: true,
+        is_proctored_enabled: false,
+        exam_review_rules: '',
+        default_time_limit_minutes: 3270,
+        is_onboarding_exam: false,
+        start: '2025-08-10T00:00:00Z',
+      },
+    };
 
     axiosMock
-      .onPost(getCourseItemApiUrl(subsection.id), {
-        publish: 'republish',
-        graderType: newGraderType,
-        metadata: {
-          visible_to_staff_only: null,
-          due: newDue,
-          hide_after_due: false,
-          show_correctness: 'always',
-          is_practice_exam: false,
-          is_time_limited: isTimeLimited,
-          exam_review_rules: '',
-          is_proctored_enabled: false,
-          default_time_limit_minutes: defaultTimeLimitMinutes,
-          is_onboarding_exam: false,
-          start: newReleaseDate,
-        },
-      })
+      .onPost(getCourseItemApiUrl(subsection.id), expectedRequestData)
       .reply(200, { dummy: 'value' });
 
     const [currentSection] = await findAllByTestId('section-card');
     const [firstSubsection] = await within(currentSection).findAllByTestId('subsection-card');
     const subsectionDropdownButton = await within(firstSubsection).findByTestId('subsection-card-header__menu-button');
 
-    subsection.start = newReleaseDate;
-    subsection.due = newDue;
-    subsection.format = newGraderType;
-    subsection.isTimeLimited = isTimeLimited;
-    subsection.defaultTimeLimitMinutes = defaultTimeLimitMinutes;
+    subsection.start = expectedRequestData.metadata.start;
+    subsection.due = expectedRequestData.metadata.due;
+    subsection.format = expectedRequestData.graderType;
+    subsection.isTimeLimited = expectedRequestData.metadata.is_time_limited;
+    subsection.defaultTimeLimitMinutes = expectedRequestData.metadata.default_time_limit_minutes;
+    subsection.hideAfterDue = expectedRequestData.metadata.hideAfterDue;
     section.childInfo.children[0] = subsection;
     axiosMock
       .onGet(getXBlockApiUrl(section.id))
@@ -717,15 +744,25 @@ describe('<CourseOutline />', () => {
 
     // update fields
     let configureModal = await findByTestId('configure-modal');
-    expect(await within(configureModal).findByText(newGraderType)).toBeInTheDocument();
+    expect(await within(configureModal).findByText(expectedRequestData.graderType)).toBeInTheDocument();
     let releaseDateStack = await within(configureModal).findByTestId('release-date-stack');
     let releaseDatePicker = await within(releaseDateStack).findByPlaceholderText('MM/DD/YYYY');
     fireEvent.change(releaseDatePicker, { target: { value: '08/10/2025' } });
+    let releaseDateTimePicker = await within(releaseDateStack).findByPlaceholderText('HH:MM');
+    fireEvent.change(releaseDateTimePicker, { target: { value: '00:00' } });
     let dueDateStack = await within(configureModal).findByTestId('due-date-stack');
     let dueDatePicker = await within(dueDateStack).findByPlaceholderText('MM/DD/YYYY');
     fireEvent.change(dueDatePicker, { target: { value: '09/10/2025' } });
+    let dueDateTimePicker = await within(dueDateStack).findByPlaceholderText('HH:MM');
+    fireEvent.change(dueDateTimePicker, { target: { value: '05:00' } });
     let graderTypeDropdown = await within(configureModal).findByTestId('grader-type-select');
-    fireEvent.change(graderTypeDropdown, { target: { value: newGraderType } });
+    fireEvent.change(graderTypeDropdown, { target: { value: expectedRequestData.graderType } });
+
+    // visibility tab
+    const visibilityTab = await within(configureModal).findByRole('tab', { name: configureModalMessages.visibilityTabTitle.defaultMessage });
+    fireEvent.click(visibilityTab);
+    const visibilityRadioButtons = await within(configureModal).findAllByRole('radio');
+    fireEvent.click(visibilityRadioButtons[1]);
 
     let advancedTab = await within(configureModal).findByRole('tab', { name: configureModalMessages.advancedTabTitle.defaultMessage });
     fireEvent.click(advancedTab);
@@ -739,23 +776,7 @@ describe('<CourseOutline />', () => {
 
     // verify request
     expect(axiosMock.history.post.length).toBe(1);
-    expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
-      publish: 'republish',
-      graderType: newGraderType,
-      metadata: {
-        visible_to_staff_only: null,
-        due: newDue,
-        hide_after_due: false,
-        show_correctness: 'always',
-        is_practice_exam: false,
-        is_time_limited: isTimeLimited,
-        exam_review_rules: '',
-        is_proctored_enabled: false,
-        default_time_limit_minutes: defaultTimeLimitMinutes,
-        is_onboarding_exam: false,
-        start: newReleaseDate,
-      },
-    }));
+    expect(axiosMock.history.post[0].data).toBe(JSON.stringify(expectedRequestData));
 
     // reopen modal and check values
     await act(async () => fireEvent.click(subsectionDropdownButton));
@@ -765,11 +786,15 @@ describe('<CourseOutline />', () => {
     releaseDateStack = await within(configureModal).findByTestId('release-date-stack');
     releaseDatePicker = await within(releaseDateStack).findByPlaceholderText('MM/DD/YYYY');
     expect(releaseDatePicker).toHaveValue('08/10/2025');
+    releaseDateTimePicker = await within(releaseDateStack).findByPlaceholderText('HH:MM');
+    expect(releaseDateTimePicker).toHaveValue('00:00');
     dueDateStack = await await within(configureModal).findByTestId('due-date-stack');
     dueDatePicker = await within(dueDateStack).findByPlaceholderText('MM/DD/YYYY');
     expect(dueDatePicker).toHaveValue('09/10/2025');
+    dueDateTimePicker = await within(dueDateStack).findByPlaceholderText('HH:MM');
+    expect(dueDateTimePicker).toHaveValue('05:00');
     graderTypeDropdown = await within(configureModal).findByTestId('grader-type-select');
-    expect(graderTypeDropdown).toHaveValue(newGraderType);
+    expect(graderTypeDropdown).toHaveValue(expectedRequestData.graderType);
 
     advancedTab = await within(configureModal).findByRole('tab', { name: configureModalMessages.advancedTabTitle.defaultMessage });
     fireEvent.click(advancedTab);
@@ -779,6 +804,444 @@ describe('<CourseOutline />', () => {
     hoursWrapper = await within(configureModal).findByTestId('advanced-tab-hours-picker-wrapper');
     hours = await within(hoursWrapper).findByPlaceholderText('HH:MM');
     expect(hours).toHaveValue('54:30');
+  });
+
+  it('check prereq and proctoring settings in configure modal for subsection', async () => {
+    const {
+      findAllByTestId,
+      findByTestId,
+    } = render(<RootWrapper />);
+    const section = cloneDeep(courseOutlineIndexMock.courseStructure.childInfo.children[0]);
+    const [subsection, secondSubsection] = section.childInfo.children;
+    const expectedRequestData = {
+      publish: 'republish',
+      graderType: 'notgraded',
+      isPrereq: true,
+      prereqUsageKey: secondSubsection.id,
+      prereqMinScore: 80,
+      prereqMinCompletion: 90,
+      metadata: {
+        visible_to_staff_only: true,
+        due: '',
+        hide_after_due: false,
+        show_correctness: 'always',
+        is_practice_exam: false,
+        is_time_limited: true,
+        is_proctored_enabled: true,
+        exam_review_rules: 'some rules for proctored exams',
+        default_time_limit_minutes: 30,
+        is_onboarding_exam: false,
+        start: '1970-01-01T05:00:00Z',
+      },
+    };
+
+    axiosMock
+      .onPost(getCourseItemApiUrl(subsection.id), expectedRequestData)
+      .reply(200, { dummy: 'value' });
+
+    const [currentSection] = await findAllByTestId('section-card');
+    const [firstSubsection] = await within(currentSection).findAllByTestId('subsection-card');
+    const subsectionDropdownButton = await within(firstSubsection).findByTestId('subsection-card-header__menu-button');
+
+    subsection.isTimeLimited = expectedRequestData.metadata.is_time_limited;
+    subsection.defaultTimeLimitMinutes = expectedRequestData.metadata.default_time_limit_minutes;
+    subsection.isProctoredExam = expectedRequestData.metadata.is_proctored_enabled;
+    subsection.isPracticeExam = expectedRequestData.metadata.is_practice_exam;
+    subsection.isOnboardingExam = expectedRequestData.metadata.is_onboarding_exam;
+    subsection.examReviewRules = expectedRequestData.metadata.exam_review_rules;
+    subsection.isPrereq = expectedRequestData.isPrereq;
+    subsection.prereq = expectedRequestData.prereqUsageKey;
+    subsection.prereqMinScore = expectedRequestData.prereqMinScore;
+    subsection.prereqMinCompletion = expectedRequestData.prereqMinCompletion;
+    section.childInfo.children[0] = subsection;
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, section);
+
+    fireEvent.click(subsectionDropdownButton);
+    const configureBtn = await within(firstSubsection).findByTestId('subsection-card-header__menu-configure-button');
+    fireEvent.click(configureBtn);
+
+    // update fields
+    let configureModal = await findByTestId('configure-modal');
+    let advancedTab = await within(configureModal).findByRole(
+      'tab',
+      { name: configureModalMessages.advancedTabTitle.defaultMessage },
+    );
+
+    // visibility tab
+    const visibilityTab = await within(configureModal).findByRole('tab', { name: configureModalMessages.visibilityTabTitle.defaultMessage });
+    fireEvent.click(visibilityTab);
+    const visibilityRadioButtons = await within(configureModal).findAllByRole('radio');
+    fireEvent.click(visibilityRadioButtons[2]);
+
+    fireEvent.click(advancedTab);
+    let radioButtons = await within(configureModal).findAllByRole('radio');
+    fireEvent.click(radioButtons[2]);
+    let hoursWrapper = await within(configureModal).findByTestId('advanced-tab-hours-picker-wrapper');
+    let hours = await within(hoursWrapper).findByPlaceholderText('HH:MM');
+    fireEvent.change(hours, { target: { value: '00:30' } });
+    // select a prerequisite
+    const prereqSelect = await within(configureModal).findByRole('combobox');
+    fireEvent.change(prereqSelect, { target: { value: expectedRequestData.prereqUsageKey } });
+
+    // update minimum score and completion percentage
+    let prereqMinScoreInput = await within(configureModal).findByLabelText(
+      configureModalMessages.minScoreLabel.defaultMessage,
+    );
+    fireEvent.change(prereqMinScoreInput, { target: { value: expectedRequestData.prereqMinScore } });
+    let prereqMinCompletionInput = await within(configureModal).findByLabelText(
+      configureModalMessages.minCompletionLabel.defaultMessage,
+    );
+    fireEvent.change(prereqMinCompletionInput, { target: { value: expectedRequestData.prereqMinCompletion } });
+
+    // enable this subsection to be used as prerequisite by other subsections
+    let prereqCheckbox = await within(configureModal).findByLabelText(
+      configureModalMessages.prereqCheckboxLabel.defaultMessage,
+    );
+    fireEvent.click(prereqCheckbox);
+
+    // fill some rules for proctored exams
+    let examsRulesInput = await within(configureModal).findByLabelText(
+      configureModalMessages.reviewRulesLabel.defaultMessage,
+    );
+    fireEvent.change(examsRulesInput, { target: { value: expectedRequestData.metadata.exam_review_rules } });
+
+    const saveButton = await within(configureModal).findByTestId('configure-save-button');
+    await act(async () => fireEvent.click(saveButton));
+
+    // verify request
+    expect(axiosMock.history.post.length).toBe(1);
+    expect(axiosMock.history.post[0].data).toBe(JSON.stringify(expectedRequestData));
+
+    // reopen modal and check values
+    await act(async () => fireEvent.click(subsectionDropdownButton));
+    await act(async () => fireEvent.click(configureBtn));
+
+    configureModal = await findByTestId('configure-modal');
+    advancedTab = await within(configureModal).findByRole('tab', {
+      name: configureModalMessages.advancedTabTitle.defaultMessage,
+    });
+    fireEvent.click(advancedTab);
+    radioButtons = await within(configureModal).findAllByRole('radio');
+    expect(radioButtons[0]).toHaveProperty('checked', false);
+    expect(radioButtons[1]).toHaveProperty('checked', false);
+    expect(radioButtons[2]).toHaveProperty('checked', true);
+    hoursWrapper = await within(configureModal).findByTestId('advanced-tab-hours-picker-wrapper');
+    hours = await within(hoursWrapper).findByPlaceholderText('HH:MM');
+    expect(hours).toHaveValue('00:30');
+    prereqCheckbox = await within(configureModal).findByLabelText(
+      configureModalMessages.prereqCheckboxLabel.defaultMessage,
+    );
+    expect(prereqCheckbox).toBeChecked();
+    const prereqSelectOption = await within(configureModal).findByRole('option', { selected: true });
+    expect(prereqSelectOption).toHaveAttribute('value', expectedRequestData.prereqUsageKey);
+    examsRulesInput = await within(configureModal).findByLabelText(
+      configureModalMessages.reviewRulesLabel.defaultMessage,
+    );
+    expect(examsRulesInput).toHaveTextContent(expectedRequestData.metadata.exam_review_rules);
+
+    prereqMinScoreInput = await within(configureModal).findByLabelText(
+      configureModalMessages.minScoreLabel.defaultMessage,
+    );
+    expect(prereqMinScoreInput).toHaveAttribute('value', `${expectedRequestData.prereqMinScore}`);
+    prereqMinCompletionInput = await within(configureModal).findByLabelText(
+      configureModalMessages.minCompletionLabel.defaultMessage,
+    );
+    expect(prereqMinCompletionInput).toHaveAttribute('value', `${expectedRequestData.prereqMinCompletion}`);
+  });
+
+  it('check practice proctoring settings in configure modal', async () => {
+    const {
+      findAllByTestId,
+      findByTestId,
+    } = render(<RootWrapper />);
+    const section = cloneDeep(courseOutlineIndexMock.courseStructure.childInfo.children[0]);
+    const [subsection] = section.childInfo.children;
+    const expectedRequestData = {
+      publish: 'republish',
+      graderType: 'notgraded',
+      isPrereq: false,
+      prereqMinScore: 100,
+      prereqMinCompletion: 100,
+      metadata: {
+        visible_to_staff_only: null,
+        due: '',
+        hide_after_due: false,
+        show_correctness: 'never',
+        is_practice_exam: true,
+        is_time_limited: true,
+        is_proctored_enabled: true,
+        exam_review_rules: '',
+        default_time_limit_minutes: 30,
+        is_onboarding_exam: false,
+        start: '1970-01-01T05:00:00Z',
+      },
+    };
+
+    axiosMock
+      .onPost(getCourseItemApiUrl(subsection.id), expectedRequestData)
+      .reply(200, { dummy: 'value' });
+
+    const [currentSection] = await findAllByTestId('section-card');
+    const [firstSubsection] = await within(currentSection).findAllByTestId('subsection-card');
+    const subsectionDropdownButton = await within(firstSubsection).findByTestId('subsection-card-header__menu-button');
+
+    subsection.isTimeLimited = expectedRequestData.metadata.is_time_limited;
+    subsection.defaultTimeLimitMinutes = expectedRequestData.metadata.default_time_limit_minutes;
+    subsection.isProctoredExam = expectedRequestData.metadata.is_proctored_enabled;
+    subsection.isPracticeExam = expectedRequestData.metadata.is_practice_exam;
+    subsection.isOnboardingExam = expectedRequestData.metadata.is_onboarding_exam;
+    subsection.examReviewRules = expectedRequestData.metadata.exam_review_rules;
+    section.childInfo.children[0] = subsection;
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, section);
+
+    fireEvent.click(subsectionDropdownButton);
+    const configureBtn = await within(firstSubsection).findByTestId('subsection-card-header__menu-configure-button');
+    fireEvent.click(configureBtn);
+
+    // update fields
+    let configureModal = await findByTestId('configure-modal');
+    let advancedTab = await within(configureModal).findByRole(
+      'tab',
+      { name: configureModalMessages.advancedTabTitle.defaultMessage },
+    );
+    // visibility tab
+    const visibilityTab = await within(configureModal).findByRole('tab', { name: configureModalMessages.visibilityTabTitle.defaultMessage });
+    fireEvent.click(visibilityTab);
+    const visibilityRadioButtons = await within(configureModal).findAllByRole('radio');
+    fireEvent.click(visibilityRadioButtons[4]);
+
+    // advancedTab
+    fireEvent.click(advancedTab);
+    let radioButtons = await within(configureModal).findAllByRole('radio');
+    fireEvent.click(radioButtons[3]);
+    let hoursWrapper = await within(configureModal).findByTestId('advanced-tab-hours-picker-wrapper');
+    let hours = await within(hoursWrapper).findByPlaceholderText('HH:MM');
+    fireEvent.change(hours, { target: { value: '00:30' } });
+
+    // rules box should not be visible
+    expect(within(configureModal).queryByLabelText(
+      configureModalMessages.reviewRulesLabel.defaultMessage,
+    )).not.toBeInTheDocument();
+
+    const saveButton = await within(configureModal).findByTestId('configure-save-button');
+    await act(async () => fireEvent.click(saveButton));
+
+    // verify request
+    expect(axiosMock.history.post.length).toBe(1);
+    expect(axiosMock.history.post[0].data).toBe(JSON.stringify(expectedRequestData));
+
+    // reopen modal and check values
+    await act(async () => fireEvent.click(subsectionDropdownButton));
+    await act(async () => fireEvent.click(configureBtn));
+
+    configureModal = await findByTestId('configure-modal');
+    advancedTab = await within(configureModal).findByRole('tab', { name: configureModalMessages.advancedTabTitle.defaultMessage });
+    fireEvent.click(advancedTab);
+    radioButtons = await within(configureModal).findAllByRole('radio');
+    expect(radioButtons[0]).toHaveProperty('checked', false);
+    expect(radioButtons[1]).toHaveProperty('checked', false);
+    expect(radioButtons[2]).toHaveProperty('checked', false);
+    expect(radioButtons[3]).toHaveProperty('checked', true);
+    hoursWrapper = await within(configureModal).findByTestId('advanced-tab-hours-picker-wrapper');
+    hours = await within(hoursWrapper).findByPlaceholderText('HH:MM');
+    expect(hours).toHaveValue('00:30');
+  });
+
+  it('check onboarding proctoring settings in configure modal', async () => {
+    const {
+      findAllByTestId,
+      findByTestId,
+    } = render(<RootWrapper />);
+    const section = cloneDeep(courseOutlineIndexMock.courseStructure.childInfo.children[0]);
+    const [, subsection] = section.childInfo.children;
+    const expectedRequestData = {
+      publish: 'republish',
+      graderType: 'notgraded',
+      isPrereq: true,
+      prereqMinScore: 100,
+      prereqMinCompletion: 100,
+      metadata: {
+        visible_to_staff_only: null,
+        due: '',
+        hide_after_due: false,
+        show_correctness: 'past_due',
+        is_practice_exam: false,
+        is_time_limited: true,
+        is_proctored_enabled: true,
+        exam_review_rules: '',
+        default_time_limit_minutes: 30,
+        is_onboarding_exam: true,
+        start: '2013-02-05T05:00:00Z',
+      },
+    };
+
+    axiosMock
+      .onPost(getCourseItemApiUrl(subsection.id), expectedRequestData)
+      .reply(200, { dummy: 'value' });
+
+    const [currentSection] = await findAllByTestId('section-card');
+    const [, secondSubsection] = await within(currentSection).findAllByTestId('subsection-card');
+    const subsectionDropdownButton = await within(secondSubsection).findByTestId('subsection-card-header__menu-button');
+
+    subsection.isTimeLimited = expectedRequestData.metadata.is_time_limited;
+    subsection.defaultTimeLimitMinutes = expectedRequestData.metadata.default_time_limit_minutes;
+    subsection.isProctoredExam = expectedRequestData.metadata.is_proctored_enabled;
+    subsection.isPracticeExam = expectedRequestData.metadata.is_practice_exam;
+    subsection.isOnboardingExam = expectedRequestData.metadata.is_onboarding_exam;
+    subsection.examReviewRules = expectedRequestData.metadata.exam_review_rules;
+    section.childInfo.children[1] = subsection;
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, section);
+
+    fireEvent.click(subsectionDropdownButton);
+    const configureBtn = await within(secondSubsection).findByTestId('subsection-card-header__menu-configure-button');
+    fireEvent.click(configureBtn);
+
+    // update fields
+    let configureModal = await findByTestId('configure-modal');
+    // visibility tab
+    const visibilityTab = await within(configureModal).findByRole('tab', { name: configureModalMessages.visibilityTabTitle.defaultMessage });
+    fireEvent.click(visibilityTab);
+    const visibilityRadioButtons = await within(configureModal).findAllByRole('radio');
+    fireEvent.click(visibilityRadioButtons[5]);
+
+    // advancedTab
+    let advancedTab = await within(configureModal).findByRole(
+      'tab',
+      { name: configureModalMessages.advancedTabTitle.defaultMessage },
+    );
+    fireEvent.click(advancedTab);
+    let radioButtons = await within(configureModal).findAllByRole('radio');
+    fireEvent.click(radioButtons[3]);
+    let hoursWrapper = await within(configureModal).findByTestId('advanced-tab-hours-picker-wrapper');
+    let hours = await within(hoursWrapper).findByPlaceholderText('HH:MM');
+    fireEvent.change(hours, { target: { value: '00:30' } });
+
+    // rules box should not be visible
+    expect(within(configureModal).queryByLabelText(
+      configureModalMessages.reviewRulesLabel.defaultMessage,
+    )).not.toBeInTheDocument();
+
+    const saveButton = await within(configureModal).findByTestId('configure-save-button');
+    await act(async () => fireEvent.click(saveButton));
+
+    // verify request
+    expect(axiosMock.history.post.length).toBe(1);
+    expect(axiosMock.history.post[0].data).toBe(JSON.stringify(expectedRequestData));
+
+    // reopen modal and check values
+    await act(async () => fireEvent.click(subsectionDropdownButton));
+    await act(async () => fireEvent.click(configureBtn));
+
+    configureModal = await findByTestId('configure-modal');
+    advancedTab = await within(configureModal).findByRole('tab', { name: configureModalMessages.advancedTabTitle.defaultMessage });
+    fireEvent.click(advancedTab);
+    radioButtons = await within(configureModal).findAllByRole('radio');
+    expect(radioButtons[0]).toHaveProperty('checked', false);
+    expect(radioButtons[1]).toHaveProperty('checked', false);
+    expect(radioButtons[2]).toHaveProperty('checked', false);
+    expect(radioButtons[3]).toHaveProperty('checked', true);
+    hoursWrapper = await within(configureModal).findByTestId('advanced-tab-hours-picker-wrapper');
+    hours = await within(hoursWrapper).findByPlaceholderText('HH:MM');
+    expect(hours).toHaveValue('00:30');
+  });
+
+  it('check no special exam setting in configure modal', async () => {
+    const {
+      findAllByTestId,
+      findByTestId,
+    } = render(<RootWrapper />);
+    const section = cloneDeep(courseOutlineIndexMock.courseStructure.childInfo.children[1]);
+    const [subsection] = section.childInfo.children;
+    const expectedRequestData = {
+      publish: 'republish',
+      graderType: 'notgraded',
+      prereqMinScore: 100,
+      prereqMinCompletion: 100,
+      metadata: {
+        visible_to_staff_only: null,
+        due: '',
+        hide_after_due: false,
+        show_correctness: 'always',
+        is_practice_exam: false,
+        is_time_limited: false,
+        is_proctored_enabled: false,
+        exam_review_rules: '',
+        default_time_limit_minutes: 0,
+        is_onboarding_exam: false,
+        start: '1970-01-01T05:00:00Z',
+      },
+    };
+
+    axiosMock
+      .onPost(getCourseItemApiUrl(subsection.id), expectedRequestData)
+      .reply(200, { dummy: 'value' });
+
+    const [, currentSection] = await findAllByTestId('section-card');
+    const [subsectionElement] = await within(currentSection).findAllByTestId('subsection-card');
+    const subsectionDropdownButton = await within(subsectionElement).findByTestId('subsection-card-header__menu-button');
+
+    subsection.isTimeLimited = expectedRequestData.metadata.is_time_limited;
+    subsection.defaultTimeLimitMinutes = expectedRequestData.metadata.default_time_limit_minutes;
+    subsection.isProctoredExam = expectedRequestData.metadata.is_proctored_enabled;
+    subsection.isPracticeExam = expectedRequestData.metadata.is_practice_exam;
+    subsection.isOnboardingExam = expectedRequestData.metadata.is_onboarding_exam;
+    subsection.examReviewRules = expectedRequestData.metadata.exam_review_rules;
+    section.childInfo.children[0] = subsection;
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, section);
+
+    fireEvent.click(subsectionDropdownButton);
+    const configureBtn = await within(subsectionElement).findByTestId('subsection-card-header__menu-configure-button');
+    fireEvent.click(configureBtn);
+
+    // update fields
+    let configureModal = await findByTestId('configure-modal');
+
+    // advancedTab
+    let advancedTab = await within(configureModal).findByRole(
+      'tab',
+      { name: configureModalMessages.advancedTabTitle.defaultMessage },
+    );
+    fireEvent.click(advancedTab);
+    let radioButtons = await within(configureModal).findAllByRole('radio');
+    fireEvent.click(radioButtons[0]);
+
+    // time box should not be visible
+    expect(within(configureModal).queryByLabelText(
+      configureModalMessages.timeAllotted.defaultMessage,
+    )).not.toBeInTheDocument();
+
+    // rules box should not be visible
+    expect(within(configureModal).queryByLabelText(
+      configureModalMessages.reviewRulesLabel.defaultMessage,
+    )).not.toBeInTheDocument();
+
+    const saveButton = await within(configureModal).findByTestId('configure-save-button');
+    await act(async () => fireEvent.click(saveButton));
+
+    // verify request
+    expect(axiosMock.history.post.length).toBe(1);
+    expect(axiosMock.history.post[0].data).toBe(JSON.stringify(expectedRequestData));
+
+    // reopen modal and check values
+    await act(async () => fireEvent.click(subsectionDropdownButton));
+    await act(async () => fireEvent.click(configureBtn));
+
+    configureModal = await findByTestId('configure-modal');
+    advancedTab = await within(configureModal).findByRole('tab', { name: configureModalMessages.advancedTabTitle.defaultMessage });
+    fireEvent.click(advancedTab);
+    radioButtons = await within(configureModal).findAllByRole('radio');
+    expect(radioButtons[0]).toHaveProperty('checked', true);
+    expect(radioButtons[1]).toHaveProperty('checked', false);
+    expect(radioButtons[2]).toHaveProperty('checked', false);
+    expect(radioButtons[3]).toHaveProperty('checked', false);
   });
 
   it('check configure modal for unit', async () => {
@@ -836,6 +1299,7 @@ describe('<CourseOutline />', () => {
         },
       ],
       selectedPartitionIndex: 0,
+      selectedGroupsLabel: '',
     };
     subsection.childInfo.children[0] = unit;
     section.childInfo.children[0] = subsection;
@@ -1305,7 +1769,6 @@ describe('<CourseOutline />', () => {
   });
 
   it('check that drag handle is not visible for non-draggable sections', async () => {
-    cleanup();
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(200, {
@@ -1336,5 +1799,80 @@ describe('<CourseOutline />', () => {
     await waitFor(() => {
       expect(within(sectionElement).queryByText(section.displayName)).toBeInTheDocument();
     });
+  });
+
+  it('check whether unit copy & paste option works correctly', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    // get first section -> first subsection -> first unit element
+    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const [sectionElement] = await findAllByTestId('section-card');
+    const [subsection] = section.childInfo.children;
+    let [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
+    await act(async () => fireEvent.click(expandBtn));
+    const [unit] = subsection.childInfo.children;
+    const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
+
+    const expectedClipboardContent = {
+      content: {
+        blockType: 'vertical',
+        blockTypeDisplay: 'Unit',
+        created: '2024-01-29T07:58:36.844249Z',
+        displayName: unit.displayName,
+        id: 15,
+        olxUrl: 'http://localhost:18010/api/content-staging/v1/staged-content/15/olx',
+        purpose: 'clipboard',
+        status: 'ready',
+        userId: 3,
+      },
+      sourceUsageKey: unit.id,
+      sourceContexttitle: courseOutlineIndexMock.courseStructure.displayName,
+      sourceEditUrl: unit.studioUrl,
+    };
+    // mock api call
+    axiosMock
+      .onPost(getClipboardUrl(), {
+        usage_key: unit.id,
+      }).reply(200, expectedClipboardContent);
+    // check that initialUserClipboard state is empty
+    const { initialUserClipboard } = store.getState().courseOutline;
+    expect(initialUserClipboard).toBeUndefined();
+
+    // find menu button and click on it to open menu
+    const menu = await within(unitElement).findByTestId('unit-card-header__menu-button');
+    await act(async () => fireEvent.click(menu));
+
+    // move first unit back to second position to test move down option
+    const copyButton = await within(unitElement).findByText(cardHeaderMessages.menuCopy.defaultMessage);
+    await act(async () => fireEvent.click(copyButton));
+
+    // check that initialUserClipboard state is updated
+    expect(store.getState().courseOutline.initialUserClipboard).toEqual(expectedClipboardContent);
+
+    [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    // find clipboard content label
+    const clipboardLabel = await within(subsectionElement).findByText(
+      pasteButtonMessages.clipboardContentLabel.defaultMessage,
+    );
+    await act(async () => fireEvent.mouseOver(clipboardLabel));
+
+    // find clipboard content popup link
+    expect(
+      subsectionElement.querySelector('#vertical-paste-button-overlay'),
+    ).toHaveAttribute('href', unit.studioUrl);
+
+    // check paste button functionality
+    // mock api call
+    axiosMock
+      .onPost(getXBlockBaseApiUrl(), {
+        parent_locator: subsection.id,
+        staged_content: 'clipboard',
+      }).reply(200, { dummy: 'value' });
+    const pasteBtn = await within(subsectionElement).findByText(subsectionMessages.pasteButton.defaultMessage);
+    await act(async () => fireEvent.click(pasteBtn));
+
+    [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    const lastUnitElement = (await within(subsectionElement).findAllByTestId('unit-card')).slice(-1)[0];
+    expect(lastUnitElement).toHaveTextContent(unit.displayName);
   });
 });

@@ -1,23 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Stack, Form } from '@edx/paragon';
+import { Stack, Form } from '@openedx/paragon';
 import { FormattedMessage, injectIntl, useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import { DatepickerControl, DATEPICKER_TYPES } from '../../generic/datepicker-control';
 
 const BasicTab = ({
-  releaseDate,
-  setReleaseDate,
-  isSubsection,
-  graderType,
+  values,
+  setFieldValue,
   courseGraders,
-  setGraderType,
-  dueDate,
-  setDueDate,
+  isSubsection,
 }) => {
   const intl = useIntl();
 
-  const onChangeGraderType = (e) => setGraderType(e.target.value);
+  const {
+    releaseDate,
+    graderType,
+    dueDate,
+  } = values;
+
+  const onChangeGraderType = (e) => setFieldValue('graderType', e.target.value);
 
   const createOptions = () => courseGraders.map((option) => (
     <option key={option} value={option}> {option} </option>
@@ -34,14 +36,14 @@ const BasicTab = ({
             value={releaseDate}
             label={intl.formatMessage(messages.releaseDate)}
             controlName="state-date"
-            onChange={setReleaseDate}
+            onChange={(val) => setFieldValue('releaseDate', val)}
           />
           <DatepickerControl
             type={DATEPICKER_TYPES.time}
             value={releaseDate}
             label={intl.formatMessage(messages.releaseTimeUTC)}
             controlName="start-time"
-            onChange={setReleaseDate}
+            onChange={(val) => setFieldValue('releaseDate', val)}
           />
         </Stack>
       </div>
@@ -50,16 +52,20 @@ const BasicTab = ({
           <div>
             <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.grading} /></h5>
             <hr />
-            <Form.Label><FormattedMessage {...messages.gradeAs} /></Form.Label>
-            <Form.Control
-              as="select"
-              defaultValue={graderType}
-              onChange={(value) => onChangeGraderType(value)}
-              data-testid="grader-type-select"
-            >
-              <option key="notGraded" value="Not Graded"> Not Graded </option>
-              {createOptions()}
-            </Form.Control>
+            <Form.Group>
+              <Form.Label><FormattedMessage {...messages.gradeAs} /></Form.Label>
+              <Form.Control
+                as="select"
+                defaultValue={graderType}
+                onChange={onChangeGraderType}
+                data-testid="grader-type-select"
+              >
+                <option key="notgraded" value="notgraded">
+                  {intl.formatMessage(messages.notGradedTypeOption)}
+                </option>
+                {createOptions()}
+              </Form.Control>
+            </Form.Group>
             <div data-testid="due-date-stack">
               <Stack className="mt-3" direction="horizontal" gap={5}>
                 <DatepickerControl
@@ -67,7 +73,7 @@ const BasicTab = ({
                   value={dueDate}
                   label={intl.formatMessage(messages.dueDate)}
                   controlName="state-date"
-                  onChange={setDueDate}
+                  onChange={(val) => setFieldValue('dueDate', val)}
                   data-testid="due-date-picker"
                 />
                 <DatepickerControl
@@ -75,7 +81,7 @@ const BasicTab = ({
                   value={dueDate}
                   label={intl.formatMessage(messages.dueTimeUTC)}
                   controlName="start-time"
-                  onChange={setDueDate}
+                  onChange={(val) => setFieldValue('dueDate', val)}
                 />
               </Stack>
             </div>
@@ -87,18 +93,14 @@ const BasicTab = ({
 };
 
 BasicTab.propTypes = {
-  releaseDate: PropTypes.string.isRequired,
-  setReleaseDate: PropTypes.func.isRequired,
   isSubsection: PropTypes.bool.isRequired,
-  graderType: PropTypes.string.isRequired,
-  setGraderType: PropTypes.func.isRequired,
-  dueDate: PropTypes.string,
-  setDueDate: PropTypes.func.isRequired,
+  values: PropTypes.shape({
+    releaseDate: PropTypes.string.isRequired,
+    graderType: PropTypes.string.isRequired,
+    dueDate: PropTypes.string,
+  }).isRequired,
   courseGraders: PropTypes.arrayOf(PropTypes.string).isRequired,
-};
-
-BasicTab.defaultProps = {
-  dueDate: null,
+  setFieldValue: PropTypes.func.isRequired,
 };
 
 export default injectIntl(BasicTab);

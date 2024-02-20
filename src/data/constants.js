@@ -45,6 +45,7 @@ export const DivisionSchemes = /** @type {const} */ ({
 });
 
 export const VisibilityTypes = /** @type {const} */ ({
+  GATED: 'gated',
   LIVE: 'live',
   STAFF_ONLY: 'staff_only',
   HIDE_AFTER_DUE: 'hide_after_due',

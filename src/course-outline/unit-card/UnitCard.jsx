@@ -1,20 +1,22 @@
 import { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import { useToggle } from '@edx/paragon';
+import { useToggle } from '@openedx/paragon';
 
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
-import BaseTitleWithStatusBadge from '../card-header/BaseTitleWithStatusBadge';
 import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
 import TitleLink from '../card-header/TitleLink';
+import XBlockStatus from '../xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
 
 const UnitCard = ({
   unit,
   subsection,
   section,
+  isSelfPaced,
+  isCustomRelativeDatesActive,
   index,
   canMoveItem,
   onOpenPublishModal,
@@ -25,6 +27,8 @@ const UnitCard = ({
   onDuplicateSubmit,
   getTitleLink,
   onOrderChange,
+  onCopyToClipboardClick,
+  discussionsSettings,
 }) => {
   const currentRef = useRef(null);
   const dispatch = useDispatch();
@@ -39,6 +43,8 @@ const UnitCard = ({
     visibilityState,
     actions: unitActions,
     isHeaderVisible = true,
+    enableCopyPasteUnits = false,
+    discussionEnabled,
   } = unit;
 
   // re-create actions object for customizations
@@ -46,6 +52,11 @@ const UnitCard = ({
   // add actions to control display of move up & down menu buton.
   actions.allowMoveUp = canMoveItem(index, -1);
   actions.allowMoveDown = canMoveItem(index, 1);
+
+  const parentInfo = {
+    graded: subsection.graded,
+    isTimeLimited: subsection.isTimeLimited,
+  };
 
   const unitStatus = getItemStatus({
     published,
@@ -77,17 +88,16 @@ const UnitCard = ({
     onOrderChange(index, index + 1);
   };
 
+  const handleCopyClick = () => {
+    onCopyToClipboardClick(unit.id);
+  };
+
   const titleComponent = (
     <TitleLink
+      title={displayName}
       titleLink={getTitleLink(id)}
       namePrefix={namePrefix}
-    >
-      <BaseTitleWithStatusBadge
-        title={displayName}
-        status={unitStatus}
-        namePrefix={namePrefix}
-      />
-    </TitleLink>
+    />
   );
 
   useEffect(() => {
@@ -145,10 +155,27 @@ const UnitCard = ({
           titleComponent={titleComponent}
           namePrefix={namePrefix}
           actions={actions}
+          isVertical
+          enableCopyPasteUnits={enableCopyPasteUnits}
+          onClickCopy={handleCopyClick}
+          discussionEnabled={discussionEnabled}
+          discussionsSettings={discussionsSettings}
+          parentInfo={parentInfo}
         />
+        <div className="unit-card__content item-children" data-testid="unit-card__content">
+          <XBlockStatus
+            isSelfPaced={isSelfPaced}
+            isCustomRelativeDatesActive={isCustomRelativeDatesActive}
+            blockData={unit}
+          />
+        </div>
       </div>
     </ConditionalSortableElement>
   );
+};
+
+UnitCard.defaultProps = {
+  discussionsSettings: {},
 };
 
 UnitCard.propTypes = {
@@ -166,6 +193,8 @@ UnitCard.propTypes = {
       duplicable: PropTypes.bool.isRequired,
     }).isRequired,
     isHeaderVisible: PropTypes.bool,
+    enableCopyPasteUnits: PropTypes.bool,
+    discussionEnabled: PropTypes.bool,
   }).isRequired,
   subsection: PropTypes.shape({
     id: PropTypes.string.isRequired,
@@ -174,6 +203,8 @@ UnitCard.propTypes = {
     hasChanges: PropTypes.bool.isRequired,
     visibilityState: PropTypes.string.isRequired,
     shouldScroll: PropTypes.bool,
+    isTimeLimited: PropTypes.bool,
+    graded: PropTypes.bool,
   }).isRequired,
   section: PropTypes.shape({
     id: PropTypes.string.isRequired,
@@ -193,6 +224,13 @@ UnitCard.propTypes = {
   index: PropTypes.number.isRequired,
   canMoveItem: PropTypes.func.isRequired,
   onOrderChange: PropTypes.func.isRequired,
+  isSelfPaced: PropTypes.bool.isRequired,
+  isCustomRelativeDatesActive: PropTypes.bool.isRequired,
+  onCopyToClipboardClick: PropTypes.func.isRequired,
+  discussionsSettings: PropTypes.shape({
+    providerType: PropTypes.string,
+    enableGradedUnits: PropTypes.bool,
+  }),
 };
 
 export default UnitCard;

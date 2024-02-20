@@ -1,3 +1,4 @@
+import { getConfig } from '@edx/frontend-platform';
 import { getPagePath } from '../utils';
 import messages from './messages';
 
@@ -20,7 +21,7 @@ export const getContentMenuItems = ({ studioBaseUrl, courseId, intl }) => {
       title: intl.formatMessage(messages['header.links.filesAndUploads']),
     },
   ];
-  if (process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true') {
+  if (getConfig().ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true') {
     items.push({
       href: `${studioBaseUrl}/videos/${courseId}`,
       title: intl.formatMessage(messages['header.links.videoUploads']),

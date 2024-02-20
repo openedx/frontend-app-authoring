@@ -11,14 +11,14 @@ import {
   ModalDialog,
   Stack,
   Stepper,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import {
   DeleteOutline,
   Download,
   Error as ErrorIcon,
   InsertDriveFile,
   Warning,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
 
 import LoadingButton from '../../generic/loading-button';

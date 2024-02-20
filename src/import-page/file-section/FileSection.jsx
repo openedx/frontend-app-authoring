@@ -5,7 +5,7 @@ import {
 } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import { Card, Dropzone } from '@edx/paragon';
+import { Card, Dropzone } from '@openedx/paragon';
 
 import { IMPORT_STAGES } from '../data/constants';
 import {

@@ -5,17 +5,19 @@ import { useSearchParams } from 'react-router-dom';
 import {
   Dropdown,
   Form,
+  Hyperlink,
   Icon,
   IconButton,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import {
   MoreVert as MoveVertIcon,
   EditOutline as EditIcon,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 
 import { useEscapeClick } from '../../hooks';
 import { ITEM_BADGE_STATUS } from '../constants';
 import { scrollToElement } from '../utils';
+import CardStatus from './CardStatus';
 import messages from './messages';
 
 const CardHeader = ({
@@ -35,9 +37,17 @@ const CardHeader = ({
   onClickDuplicate,
   onClickMoveUp,
   onClickMoveDown,
+  onClickCopy,
   titleComponent,
   namePrefix,
   actions,
+  enableCopyPasteUnits,
+  isVertical,
+  isSequential,
+  proctoringExamConfigurationLink,
+  discussionEnabled,
+  discussionsSettings,
+  parentInfo,
 }) => {
   const intl = useIntl();
   const [searchParams] = useSearchParams();
@@ -58,6 +68,17 @@ const CardHeader = ({
     }
   }, []);
 
+  const showDiscussionsEnabledBadge = (
+    isVertical
+      && !parentInfo?.isTimeLimited
+      && discussionEnabled
+      && discussionsSettings?.providerType === 'openedx'
+      && (
+        discussionsSettings?.enableGradedUnits
+          || (!discussionsSettings?.enableGradedUnits && !parentInfo.graded)
+      )
+  );
+
   useEscapeClick({
     onEscape: () => {
       setTitleValue(title);
@@ -73,7 +94,7 @@ const CardHeader = ({
       ref={cardHeaderRef}
     >
       {isFormOpen ? (
-        <Form.Group className="m-0">
+        <Form.Group className="m-0 w-75">
           <Form.Control
             data-testid={`${namePrefix}-edit-field`}
             ref={(e) => e && e.focus()}
@@ -91,16 +112,20 @@ const CardHeader = ({
           />
         </Form.Group>
       ) : (
-        titleComponent
-      )}
-      <div className="ml-auto d-flex">
-        {!isFormOpen && (
+        <>
+          {titleComponent}
           <IconButton
+            className="item-card-edit-icon"
             data-testid={`${namePrefix}-edit-button`}
             alt={intl.formatMessage(messages.altButtonEdit)}
             iconAs={EditIcon}
             onClick={onClickEdit}
           />
+        </>
+      )}
+      <div className="ml-auto d-flex">
+        {(isVertical || isSequential) && (
+          <CardStatus status={status} showDiscussionsEnabledBadge={showDiscussionsEnabledBadge} />
         )}
         <Dropdown data-testid={`${namePrefix}-card-header__menu`} onClick={onClickMenuButton}>
           <Dropdown.Toggle
@@ -113,6 +138,17 @@ const CardHeader = ({
             iconAs={Icon}
           />
           <Dropdown.Menu>
+            {isSequential && proctoringExamConfigurationLink && (
+              <Dropdown.Item
+                as={Hyperlink}
+                target="_blank"
+                destination={proctoringExamConfigurationLink}
+                href={proctoringExamConfigurationLink}
+                externalLinkTitle={intl.formatMessage(messages.proctoringLinkTooltip)}
+              >
+                {intl.formatMessage(messages.menuProctoringLinkText)}
+              </Dropdown.Item>
+            )}
             <Dropdown.Item
               data-testid={`${namePrefix}-card-header__menu-publish-button`}
               disabled={isDisabledPublish}
@@ -126,6 +162,11 @@ const CardHeader = ({
             >
               {intl.formatMessage(messages.menuConfigure)}
             </Dropdown.Item>
+            {isVertical && enableCopyPasteUnits && (
+              <Dropdown.Item onClick={onClickCopy}>
+                {intl.formatMessage(messages.menuCopy)}
+              </Dropdown.Item>
+            )}
             {actions.duplicable && (
               <Dropdown.Item
                 data-testid={`${namePrefix}-card-header__menu-duplicate-button`}
@@ -168,6 +209,17 @@ const CardHeader = ({
   );
 };
 
+CardHeader.defaultProps = {
+  enableCopyPasteUnits: false,
+  isVertical: false,
+  isSequential: false,
+  onClickCopy: null,
+  proctoringExamConfigurationLink: null,
+  discussionEnabled: false,
+  discussionsSettings: {},
+  parentInfo: {},
+};
+
 CardHeader.propTypes = {
   title: PropTypes.string.isRequired,
   status: PropTypes.string.isRequired,
@@ -185,8 +237,10 @@ CardHeader.propTypes = {
   onClickDuplicate: PropTypes.func.isRequired,
   onClickMoveUp: PropTypes.func.isRequired,
   onClickMoveDown: PropTypes.func.isRequired,
+  onClickCopy: PropTypes.func,
   titleComponent: PropTypes.node.isRequired,
   namePrefix: PropTypes.string.isRequired,
+  proctoringExamConfigurationLink: PropTypes.string,
   actions: PropTypes.shape({
     deletable: PropTypes.bool.isRequired,
     draggable: PropTypes.bool.isRequired,
@@ -195,6 +249,18 @@ CardHeader.propTypes = {
     allowMoveUp: PropTypes.bool,
     allowMoveDown: PropTypes.bool,
   }).isRequired,
+  enableCopyPasteUnits: PropTypes.bool,
+  isVertical: PropTypes.bool,
+  isSequential: PropTypes.bool,
+  discussionEnabled: PropTypes.bool,
+  discussionsSettings: PropTypes.shape({
+    providerType: PropTypes.string,
+    enableGradedUnits: PropTypes.bool,
+  }),
+  parentInfo: PropTypes.shape({
+    isTimeLimited: PropTypes.bool,
+    graded: PropTypes.bool,
+  }),
 };
 
 export default CardHeader;

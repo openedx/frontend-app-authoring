@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import { Form, Card, Hyperlink } from '@edx/paragon';
+import { Form, Card, Hyperlink } from '@openedx/paragon';
 
 import { getPagePath } from '../../../utils';
 import GradeRequirements from '../grade-requirements';

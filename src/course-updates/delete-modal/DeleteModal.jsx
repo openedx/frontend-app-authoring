@@ -4,7 +4,7 @@ import {
   ActionRow,
   Button,
   AlertModal,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';

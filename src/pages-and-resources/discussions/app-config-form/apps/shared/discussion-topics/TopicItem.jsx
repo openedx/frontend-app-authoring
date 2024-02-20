@@ -6,7 +6,7 @@ import { useFormikContext } from 'formik';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   Button, Card, Form,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 
 import CollapsableEditor from '../../../../../../generic/CollapsableEditor';
 import messages from '../../../messages';

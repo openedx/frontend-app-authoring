@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { useEffect, useState } from 'react';
-import { useToggle } from '@edx/paragon';
+import { useToggle } from '@openedx/paragon';
 
 import { USER_ROLES } from '../constants';
 import { RequestStatus } from '../data/constants';

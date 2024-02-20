@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { Form } from '@edx/paragon';
+import { Form } from '@openedx/paragon';
 
 import { defaultAssignmentsPropTypes } from '../utils/enum';
 

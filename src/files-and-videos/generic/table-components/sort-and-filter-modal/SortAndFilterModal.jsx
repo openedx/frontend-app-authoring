@@ -9,7 +9,7 @@ import {
   ModalDialog,
   SelectableBox,
   useCheckboxSetValues,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import messages from './messages';
 import { getCheckedFilters, getFilterOptions, processFilters } from './utils';
 

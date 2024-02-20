@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Form, Dropdown } from '@edx/paragon';
+import { Form, Dropdown } from '@openedx/paragon';
 
 import { TIME_FORMAT } from '../../constants';
 import SectionSubHeader from '../../generic/section-sub-header';

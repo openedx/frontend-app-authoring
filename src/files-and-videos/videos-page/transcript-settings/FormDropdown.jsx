@@ -1,7 +1,7 @@
 import React from 'react';
-import { Dropdown, Form, Icon } from '@edx/paragon';
+import { Dropdown, Form, Icon } from '@openedx/paragon';
 import PropTypes from 'prop-types';
-import { Check } from '@edx/paragon/icons';
+import { Check } from '@openedx/paragon/icons';
 import { isArray, isEmpty } from 'lodash';
 
 const FormDropdown = ({

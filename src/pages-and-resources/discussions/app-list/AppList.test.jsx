@@ -8,7 +8,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { act } from 'react-dom/test-utils';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
-import { breakpoints } from '@edx/paragon';
+import { breakpoints } from '@openedx/paragon';
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
 import { Context as ResponsiveContext } from 'react-responsive';

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import { useParams } from 'react-router-dom';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { FileUpload as FileUploadIcon } from '@edx/paragon/icons';
+import { FileUpload as FileUploadIcon } from '@openedx/paragon/icons';
 import { getConfig } from '@edx/frontend-platform';
 import {
   Form,
@@ -13,7 +13,7 @@ import {
   Card,
   Icon,
   IconButton,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 
 import { uploadAssets } from './data/api';
 import messages from './messages';

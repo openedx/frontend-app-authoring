@@ -7,12 +7,12 @@ import {
   Hyperlink,
   Button,
   Icon,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import {
   Close as CloseIcon,
   Warning as WarningIcon,
   RotateRight as RotateRightIcon,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { handleDeleteNotificationQuery } from '../../data/thunks';

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { Container, Layout } from '@edx/paragon';
+import { Container, Layout } from '@openedx/paragon';
 import { useIntl, injectIntl } from '@edx/frontend-platform/i18n';
 import { ErrorAlert } from '@edx/frontend-lib-content-components';
 
@@ -11,19 +11,21 @@ import { RequestStatus } from '../data/constants';
 import getPageHeadTitle from '../generic/utils';
 import ProcessingNotification from '../generic/processing-notification';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
+import Loading from '../generic/Loading';
+import AddComponent from './add-component/AddComponent';
 import HeaderTitle from './header-title/HeaderTitle';
 import Breadcrumbs from './breadcrumbs/Breadcrumbs';
 import HeaderNavigations from './header-navigations/HeaderNavigations';
+import Sequence from './course-sequence';
 import { useCourseUnit } from './hooks';
 import messages from './messages';
-
-import './CourseUnit.scss';
 
 const CourseUnit = ({ courseId }) => {
   const { blockId } = useParams();
   const intl = useIntl();
   const {
     isLoading,
+    sequenceId,
     unitTitle,
     savingStatus,
     isTitleEditFormOpen,
@@ -32,6 +34,7 @@ const CourseUnit = ({ courseId }) => {
     headerNavigationsActions,
     handleTitleEdit,
     handleInternetConnectionFailed,
+    handleCreateNewCourseXblock,
   } = useCourseUnit({ courseId, blockId });
 
   document.title = getPageHeadTitle('', unitTitle);
@@ -42,7 +45,7 @@ const CourseUnit = ({ courseId }) => {
   } = useSelector(getProcessingNotification);
 
   if (isLoading) {
-    return null;
+    return <Loading />;
   }
 
   return (
@@ -63,15 +66,18 @@ const CourseUnit = ({ courseId }) => {
               />
             )}
             breadcrumbs={(
-              <Breadcrumbs
-                courseId={courseId}
-              />
+              <Breadcrumbs />
             )}
             headerActions={(
               <HeaderNavigations
                 headerNavigationsActions={headerNavigationsActions}
               />
             )}
+          />
+          <Sequence
+            courseId={courseId}
+            sequenceId={sequenceId}
+            unitId={blockId}
           />
           <Layout
             lg={[{ span: 9 }, { span: 3 }]}
@@ -80,7 +86,12 @@ const CourseUnit = ({ courseId }) => {
             xs={[{ span: 9 }, { span: 3 }]}
             xl={[{ span: 9 }, { span: 3 }]}
           >
-            <Layout.Element />
+            <Layout.Element>
+              <AddComponent
+                blockId={blockId}
+                handleCreateNewCourseXblock={handleCreateNewCourseXblock}
+              />
+            </Layout.Element>
             <Layout.Element />
           </Layout>
         </section>

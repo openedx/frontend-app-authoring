@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Button } from '@edx/paragon';
-import { Add } from '@edx/paragon/icons';
+import { Button } from '@openedx/paragon';
+import { Add } from '@openedx/paragon/icons';
 
 import { FieldArray, useFormikContext } from 'formik';
 import { v4 as uuid } from 'uuid';

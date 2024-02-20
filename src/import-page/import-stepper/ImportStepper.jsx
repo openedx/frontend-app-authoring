@@ -6,7 +6,7 @@ import {
 } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button } from '@edx/paragon';
+import { Button } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
 
 import { RequestStatus } from '../../data/constants';

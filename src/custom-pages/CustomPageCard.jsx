@@ -9,14 +9,14 @@ import {
   Button,
   StatefulButton,
   useToggle,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import {
   DeleteOutline,
   EditOutline,
   SpinnerSimple,
   Visibility,
   VisibilityOff,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 import { useNavigate } from 'react-router-dom';
 import { deleteSingleCustomPage, updateCustomPageVisibility } from './data/thunks';
 import messages from './messages';

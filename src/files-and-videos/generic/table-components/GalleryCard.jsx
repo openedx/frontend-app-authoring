@@ -6,8 +6,8 @@ import {
   Card,
   Chip,
   Truncate,
-} from '@edx/paragon';
-import { ClosedCaption } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { ClosedCaption } from '@openedx/paragon/icons';
 import FileMenu from '../FileMenu';
 import FileThumbnail from '../ThumbnailPreview';
 

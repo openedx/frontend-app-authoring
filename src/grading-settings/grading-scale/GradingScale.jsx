@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Icon, IconButtonWithTooltip } from '@edx/paragon';
-import { Add as IconAdd } from '@edx/paragon/icons';
+import { Icon, IconButtonWithTooltip } from '@openedx/paragon';
+import { Add as IconAdd } from '@openedx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import { useRanger } from './react-ranger';

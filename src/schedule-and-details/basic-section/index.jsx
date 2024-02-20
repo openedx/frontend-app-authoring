@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   PageBanner, Button, Card, MailtoLink, Hyperlink,
-} from '@edx/paragon';
-import { Email as EmailIcon } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { Email as EmailIcon } from '@openedx/paragon/icons';
 
 import SectionSubHeader from '../../generic/section-sub-header';
 import { INVITE_STUDENTS_LINK_ID } from './constants';

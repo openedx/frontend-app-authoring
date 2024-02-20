@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Alert, Icon } from '@edx/paragon';
-import { Error } from '@edx/paragon/icons';
+import { Alert, Icon } from '@openedx/paragon';
+import { Error } from '@openedx/paragon/icons';
 import { capitalize } from 'lodash';
 
 import { transformKeysToCamelCase } from '../../utils';

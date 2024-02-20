@@ -6,7 +6,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import Responsive from 'react-responsive';
 import {
   Card, CheckboxControl, breakpoints,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import messages from './messages';
 import appMessages from '../app-config-form/messages';
 import FeaturesList from './FeaturesList';
