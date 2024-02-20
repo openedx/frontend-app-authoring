@@ -12,6 +12,7 @@
 /**
  * @typedef {Object} TagData
  * @property {number} childCount
+ * @property {number} descendantCount
  * @property {number} depth
  * @property {string} externalId
  * @property {number} id
