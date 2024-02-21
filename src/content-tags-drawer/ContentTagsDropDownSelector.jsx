@@ -10,7 +10,6 @@ import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { ArrowDropDown, ArrowDropUp } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
 import messages from './messages';
-import './ContentTagsDropDownSelector.scss';
 
 import { useTaxonomyTagsData } from './data/apiHooks';
 
