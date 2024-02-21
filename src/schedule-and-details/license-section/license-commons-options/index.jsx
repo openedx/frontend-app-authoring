@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   ActionRow, Form, Stack, CheckboxControl,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 
 import { LICENSE_COMMONS_OPTIONS } from '../constants';
 import messages from './messages';

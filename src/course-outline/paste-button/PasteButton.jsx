@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import {
   Hyperlink, Icon, Button, OverlayTrigger,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   FileCopy as PasteIcon,
   Question as QuestionIcon,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 import { getInitialUserClipboard } from '../data/selectors';
 import messages from './messages';
 

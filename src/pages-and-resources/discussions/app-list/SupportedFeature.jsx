@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Check } from '@edx/paragon/icons';
+import { Check } from '@openedx/paragon/icons';
 
 const SupportedFeature = ({ name }) => (
   <>

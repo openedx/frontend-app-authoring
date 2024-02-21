@@ -12,32 +12,18 @@
     color: $black;
   }
 
-  .item-card-header__badge-status {
-    display: flex;
-    padding: 1px .5rem;
-    justify-content: center;
-    align-items: center;
-    gap: .25rem;
-    border-radius: .375rem;
-    border: 1px solid $light-300;
-    margin: 0 .75rem;
+  .item-card-edit-icon {
+    opacity: 0;
+    transition: opacity .3s linear;
 
-    & span:last-child {
-      color: $primary-700;
+    &:focus {
+      opacity: 1;
     }
   }
 
-  .pgn__form-group {
-    width: 80%;
-  }
-}
-
-.item-card-header-tooltip {
-  .tooltip-inner {
-    max-width: 18.75rem;
-  }
-
-  .arrow {
-    transform: translate(5.75rem, 0) !important;
+  &:hover {
+    .item-card-edit-icon {
+      opacity: 1;
+    }
   }
 }

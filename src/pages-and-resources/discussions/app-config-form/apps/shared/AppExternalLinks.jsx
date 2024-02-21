@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   Hyperlink, MailtoLink,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 
 import AppConfigFormDivider from './AppConfigFormDivider';
 

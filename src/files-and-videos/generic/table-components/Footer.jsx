@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { DataTableContext, Pagination, TableFooter } from '@edx/paragon';
+import { DataTableContext, Pagination, TableFooter } from '@openedx/paragon';
 
 const Footer = () => {
   const {

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
-import { Icon } from '@edx/paragon';
-import { BookOpen as BookOpenIcon } from '@edx/paragon/icons';
+import { Icon } from '@openedx/paragon';
+import { BookOpen as BookOpenIcon } from '@openedx/paragon/icons';
 
 import { TYPE_ICONS_MAP, UNIT_ICON_TYPES } from '../../constants';
 

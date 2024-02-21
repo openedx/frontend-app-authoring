@@ -2,7 +2,7 @@ import React, { useEffect, useContext } from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   Form, TransitionReplace, Hyperlink, Alert,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import { AppContext } from '@edx/frontend-platform/react';
 import { FieldArray, useFormikContext } from 'formik';
 import _ from 'lodash';

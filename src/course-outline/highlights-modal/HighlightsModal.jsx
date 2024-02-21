@@ -6,7 +6,7 @@ import {
   Button,
   ActionRow,
   Hyperlink,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import { Formik } from 'formik';
 import { useSelector } from 'react-redux';
 

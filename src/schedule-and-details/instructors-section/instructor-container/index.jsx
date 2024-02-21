@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import TextareaAutosize from 'react-textarea-autosize';
 import {
   Card, Form, Col, Button,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import CourseUploadImage from '../../../generic/course-upload-image';

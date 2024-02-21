@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
   Alert, Button, FullscreenModal, Stepper,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 
 import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
 

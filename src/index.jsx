@@ -104,7 +104,6 @@ initialize({
         SUPPORT_URL: process.env.SUPPORT_URL || null,
         SUPPORT_EMAIL: process.env.SUPPORT_EMAIL || null,
         LEARNING_BASE_URL: process.env.LEARNING_BASE_URL,
-        PREVIEW_BASE_URL: process.env.PREVIEW_BASE_URL,
         EXAMS_BASE_URL: process.env.EXAMS_BASE_URL || null,
         CALCULATOR_HELP_URL: process.env.CALCULATOR_HELP_URL || null,
         ENABLE_PROGRESS_GRAPH_SETTINGS: process.env.ENABLE_PROGRESS_GRAPH_SETTINGS || 'false',

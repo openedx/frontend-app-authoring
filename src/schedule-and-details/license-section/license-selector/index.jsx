@@ -7,7 +7,7 @@ import {
   Button,
   OverlayTrigger,
   Tooltip,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 
 import { LICENSE_TYPE } from '../constants';
 import messages from './messages';

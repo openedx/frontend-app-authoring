@@ -5,7 +5,7 @@ import {
   Badge,
   OverlayTrigger,
   Popover,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import messages from './messages';
 
 const SystemDefinedBadge = ({ taxonomyId }) => {

@@ -44,6 +44,7 @@ const slice = createSlice({
       sourceContexttitle: null,
       sourceEditUrl: null,
     },
+    enableProctoredExams: false,
   },
   reducers: {
     fetchOutlineIndexSuccess: (state, { payload }) => {
@@ -51,6 +52,7 @@ const slice = createSlice({
       state.sectionsList = payload.courseStructure?.childInfo?.children || [];
       state.isCustomRelativeDatesActive = payload.isCustomRelativeDatesActive;
       state.initialUserClipboard = payload.initialUserClipboard;
+      state.enableProctoredExams = payload.courseStructure?.enableProctoredExams;
     },
     updateOutlineIndexLoadingStatus: (state, { payload }) => {
       state.loadingStatus = {

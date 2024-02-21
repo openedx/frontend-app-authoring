@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Button } from '@edx/paragon';
+import { Button, Truncate } from '@openedx/paragon';
 
 const TitleLink = ({
+  title,
   titleLink,
   namePrefix,
-  children,
 }) => (
   <Button
     as={Link}
@@ -14,18 +14,14 @@ const TitleLink = ({
     className="item-card-header__title-btn"
     to={titleLink}
   >
-    {children}
+    <Truncate lines={1} className={`${namePrefix}-card-title mb-0`}>{title}</Truncate>
   </Button>
 );
 
-TitleLink.defaultProps = {
-  children: null,
-};
-
 TitleLink.propTypes = {
+  title: PropTypes.string.isRequired,
   titleLink: PropTypes.string.isRequired,
   namePrefix: PropTypes.string.isRequired,
-  children: PropTypes.node,
 };
 
 export default TitleLink;

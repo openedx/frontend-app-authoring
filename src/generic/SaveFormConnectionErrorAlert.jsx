@@ -1,6 +1,6 @@
 import React from 'react';
 import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/i18n';
-import { Alert } from '@edx/paragon';
+import { Alert } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
 
 import messages from '../messages';

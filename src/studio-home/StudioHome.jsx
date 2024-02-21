@@ -6,8 +6,8 @@ import {
   Layout,
   MailtoLink,
   Row,
-} from '@edx/paragon';
-import { Add as AddIcon, Error } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { Add as AddIcon, Error } from '@openedx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { getConfig } from '@edx/frontend-platform';

@@ -74,10 +74,10 @@ describe('<StatusBar />', () => {
   });
 
   it('renders StatusBar component correctly', () => {
-    const { queryByTestId, getByText } = renderComponent();
+    const { getByText } = renderComponent();
 
     expect(getByText(messages.startDateTitle.defaultMessage)).toBeInTheDocument();
-    expect(getByText(statusBarData.courseReleaseDate)).toBeInTheDocument();
+    expect(getByText('Feb 05, 2013, 5:00 AM')).toBeInTheDocument();
 
     expect(getByText(messages.pacingTypeTitle.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.pacingTypeSelfPaced.defaultMessage)).toBeInTheDocument();
@@ -88,7 +88,7 @@ describe('<StatusBar />', () => {
     expect(getByText(messages.highlightEmailsTitle.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.highlightEmailsEnabled.defaultMessage)).toBeInTheDocument();
 
-    expect(queryByTestId('video-sharing-wrapper')).toBeInTheDocument();
+    expect(getByText(messages.videoSharingTitle.defaultMessage)).toBeInTheDocument();
   });
 
   it('renders StatusBar when isSelfPaced is false', () => {

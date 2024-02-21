@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import { useLayoutEffect, useRef, useState } from 'react';
-import { useWindowSize } from '@edx/paragon';
+import { useWindowSize } from '@openedx/paragon';
 
 import { useModel } from '../../generic/model-store';
 import { RequestStatus } from '../../data/constants';

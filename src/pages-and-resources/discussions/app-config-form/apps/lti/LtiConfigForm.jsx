@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { ensureConfig } from '@edx/frontend-platform';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Card, Form, MailtoLink } from '@edx/paragon';
+import { Card, Form, MailtoLink } from '@openedx/paragon';
 
 import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';

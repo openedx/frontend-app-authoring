@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import classNames from 'classnames';
-import { breakpoints, useWindowSize } from '@edx/paragon';
+import { breakpoints, useWindowSize } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import Loading from '../../generic/Loading';

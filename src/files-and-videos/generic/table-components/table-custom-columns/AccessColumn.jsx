@@ -1,7 +1,7 @@
 import React from 'react';
 import { PropTypes } from 'prop-types';
-import { Icon, OverlayTrigger, Tooltip } from '@edx/paragon';
-import { Locked, LockOpen } from '@edx/paragon/icons';
+import { Icon, OverlayTrigger, Tooltip } from '@openedx/paragon';
+import { Locked, LockOpen } from '@openedx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import messages from '../../messages';
 

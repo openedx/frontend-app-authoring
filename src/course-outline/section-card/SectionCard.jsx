@@ -4,14 +4,13 @@ import React, {
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Badge, Button, useToggle } from '@edx/paragon';
-import { Add as IconAdd } from '@edx/paragon/icons';
+import { Bubble, Button, useToggle } from '@openedx/paragon';
+import { Add as IconAdd } from '@openedx/paragon/icons';
 import classNames from 'classnames';
 
 import { setCurrentItem, setCurrentSection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
-import BaseTitleWithStatusBadge from '../card-header/BaseTitleWithStatusBadge';
 import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
 import TitleButton from '../card-header/TitleButton';
 import XBlockStatus from '../xblock-status/XBlockStatus';
@@ -123,16 +122,11 @@ const SectionCard = ({
 
   const titleComponent = (
     <TitleButton
+      title={displayName}
       isExpanded={isExpanded}
       onTitleClick={handleExpandContent}
       namePrefix={namePrefix}
-    >
-      <BaseTitleWithStatusBadge
-        title={displayName}
-        status=""
-        namePrefix={namePrefix}
-      />
-    </TitleButton>
+    />
   );
 
   const isDraggable = actions.draggable && (actions.allowMoveUp || actions.allowMoveDown);
@@ -183,9 +177,9 @@ const SectionCard = ({
                 variant="tertiary"
                 onClick={handleOpenHighlightsModal}
               >
-                <Badge className="mr-1 d-flex justify-content-center align-items-center highlights-badge">
+                <Bubble className="mr-1">
                   {highlights.length}
-                </Badge>
+                </Bubble>
                 <p className="m-0 text-black">{messages.sectionHighlightsBadge.defaultMessage}</p>
               </Button>
             </div>

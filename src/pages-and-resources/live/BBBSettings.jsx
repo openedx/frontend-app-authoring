@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Form, Hyperlink } from '@edx/paragon';
+import { Form, Hyperlink } from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import messages from './messages';
 import { providerNames, bbbPlanTypes } from './constants';

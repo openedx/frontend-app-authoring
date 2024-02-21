@@ -7,18 +7,15 @@ import {
   Layout,
   Row,
   TransitionReplace,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import { Helmet } from 'react-helmet';
 import {
   Add as IconAdd,
   CheckCircle as CheckCircleIcon,
   Warning as WarningIcon,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
-import {
-  DraggableList,
-  ErrorAlert,
-} from '@edx/frontend-lib-content-components';
+import { DraggableList } from '@edx/frontend-lib-content-components';
 import { arrayMove } from '@dnd-kit/sortable';
 
 import { LoadingSpinner } from '../generic/Loading';
@@ -41,6 +38,7 @@ import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
 import PublishModal from './publish-modal/PublishModal';
 import ConfigureModal from './configure-modal/ConfigureModal';
 import DeleteModal from './delete-modal/DeleteModal';
+import PageAlerts from './page-alerts/PageAlerts';
 import { useCourseOutline } from './hooks';
 import messages from './messages';
 
@@ -97,6 +95,15 @@ const CourseOutline = ({ courseId }) => {
     handleUnitDragAndDrop,
     handleCopyToClipboardClick,
     handlePasteClipboardClick,
+    notificationDismissUrl,
+    discussionsSettings,
+    discussionsIncontextFeedbackUrl,
+    discussionsIncontextLearnmoreUrl,
+    deprecatedBlocksInfo,
+    proctoringErrors,
+    mfeProctoredExamSettingsUrl,
+    handleDismissNotification,
+    advanceSettingsUrl,
   } = useCourseOutline({ courseId });
 
   const [sections, setSections] = useState(sectionsList);
@@ -250,9 +257,18 @@ const CourseOutline = ({ courseId }) => {
       </Helmet>
       <Container size="xl" className="px-4">
         <section className="course-outline-container mb-4 mt-5">
-          <ErrorAlert hideHeading isError={savingStatus === RequestStatus.FAILED}>
-            {intl.formatMessage(messages.alertFailedGeneric, { actionName: 'save', type: 'changes' })}
-          </ErrorAlert>
+          <PageAlerts
+            notificationDismissUrl={notificationDismissUrl}
+            handleDismissNotification={handleDismissNotification}
+            discussionsSettings={discussionsSettings}
+            discussionsIncontextFeedbackUrl={discussionsIncontextFeedbackUrl}
+            discussionsIncontextLearnmoreUrl={discussionsIncontextLearnmoreUrl}
+            deprecatedBlocksInfo={deprecatedBlocksInfo}
+            proctoringErrors={proctoringErrors}
+            mfeProctoredExamSettingsUrl={mfeProctoredExamSettingsUrl}
+            advanceSettingsUrl={advanceSettingsUrl}
+            savingStatus={savingStatus}
+          />
           <TransitionReplace>
             {showSuccessAlert ? (
               <AlertMessage
@@ -383,6 +399,7 @@ const CourseOutline = ({ courseId }) => {
                                               subsection.childInfo.children,
                                             )}
                                             onCopyToClipboardClick={handleCopyToClipboardClick}
+                                            discussionsSettings={discussionsSettings}
                                           />
                                         ))}
                                       </DraggableList>

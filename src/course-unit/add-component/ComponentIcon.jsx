@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
-import { Icon } from '@edx/paragon';
-import { EditNote as EditNoteIcon } from '@edx/paragon/icons';
+import { Icon } from '@openedx/paragon';
+import { EditNote as EditNoteIcon } from '@openedx/paragon/icons';
 
 import { COMPONENT_TYPE_ICON_MAP, COMPONENT_ICON_TYPES } from '../constants';
 

@@ -1,25 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Alert, Form } from '@edx/paragon';
+import { Alert, Form } from '@openedx/paragon';
 import { FormattedMessage, injectIntl, useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import { COURSE_BLOCK_NAMES } from '../constants';
 
 const VisibilityTab = ({
+  values,
+  setFieldValue,
   category,
-  isVisibleToStaffOnly,
-  setIsVisibleToStaffOnly,
   showWarning,
   isSubsection,
-  hideAfterDue,
-  setHideAfterDue,
-  showCorrectness,
-  setShowCorrectness,
 }) => {
   const intl = useIntl();
   const visibilityTitle = COURSE_BLOCK_NAMES[category]?.name;
+
+  const {
+    isVisibleToStaffOnly,
+    hideAfterDue,
+    showCorrectness,
+  } = values;
+
   const handleChange = (e) => {
-    setIsVisibleToStaffOnly(e.target.checked);
+    setFieldValue('isVisibleToStaffOnly', e.target.checked);
   };
 
   const getVisibilityValue = () => {
@@ -35,19 +38,19 @@ const VisibilityTab = ({
   const visibilityChanged = (e) => {
     const selected = e.target.value;
     if (selected === 'hide') {
-      setIsVisibleToStaffOnly(true);
-      setHideAfterDue(false);
+      setFieldValue('isVisibleToStaffOnly', true);
+      setFieldValue('hideAfterDue', false);
     } else if (selected === 'hideDue') {
-      setIsVisibleToStaffOnly(false);
-      setHideAfterDue(true);
+      setFieldValue('isVisibleToStaffOnly', false);
+      setFieldValue('hideAfterDue', true);
     } else {
-      setIsVisibleToStaffOnly(false);
-      setHideAfterDue(false);
+      setFieldValue('isVisibleToStaffOnly', false);
+      setFieldValue('hideAfterDue', false);
     }
   };
 
   const correctnessChanged = (e) => {
-    setShowCorrectness(e.target.value);
+    setFieldValue('showCorrectness', e.target.value);
   };
 
   return (
@@ -77,6 +80,11 @@ const VisibilityTab = ({
               </Form.Radio>
               <Form.Text><FormattedMessage {...messages.hideEntireSubsectionDescription} /></Form.Text>
             </Form.RadioSet>
+            {showWarning && (
+              <Alert className="mt-2" variant="warning">
+                <FormattedMessage {...messages.subsectionVisibilityWarning} />
+              </Alert>
+            )}
             <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.assessmentResultsVisibility} /></h5>
             <Form.RadioSet
               name="assessmentResultsVisibility"
@@ -103,29 +111,25 @@ const VisibilityTab = ({
           </Form.Checkbox>
         )
       }
-      {showWarning && (
-        <>
-          <hr />
-          <Alert variant="warning">
-            <FormattedMessage {...messages.sectionVisibilityWarning} />
-          </Alert>
-        </>
-
+      {showWarning && !isSubsection && (
+        <Alert className="mt-2" variant="warning">
+          <FormattedMessage {...messages.sectionVisibilityWarning} />
+        </Alert>
       )}
     </>
   );
 };
 
 VisibilityTab.propTypes = {
+  values: PropTypes.shape({
+    isVisibleToStaffOnly: PropTypes.bool.isRequired,
+    hideAfterDue: PropTypes.bool.isRequired,
+    showCorrectness: PropTypes.string.isRequired,
+  }).isRequired,
+  setFieldValue: PropTypes.func.isRequired,
   category: PropTypes.string.isRequired,
-  isVisibleToStaffOnly: PropTypes.bool.isRequired,
   showWarning: PropTypes.bool.isRequired,
-  setIsVisibleToStaffOnly: PropTypes.func.isRequired,
   isSubsection: PropTypes.bool.isRequired,
-  hideAfterDue: PropTypes.bool.isRequired,
-  setHideAfterDue: PropTypes.func.isRequired,
-  showCorrectness: PropTypes.string.isRequired,
-  setShowCorrectness: PropTypes.func.isRequired,
 };
 
 export default injectIntl(VisibilityTab);

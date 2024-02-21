@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import {
   StatefulButton,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import PropTypes from 'prop-types';
 
 /**

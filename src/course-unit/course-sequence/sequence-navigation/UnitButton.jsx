@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { connect, useSelector } from 'react-redux';
-import { Button } from '@edx/paragon';
+import { Button } from '@openedx/paragon';
 import { Link } from 'react-router-dom';
 
 import UnitIcon from './UnitIcon';

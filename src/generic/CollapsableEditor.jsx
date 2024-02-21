@@ -1,5 +1,5 @@
-import { Collapsible, Icon, IconButton } from '@edx/paragon';
-import { Delete, ExpandLess, ExpandMore } from '@edx/paragon/icons';
+import { Collapsible, Icon, IconButton } from '@openedx/paragon';
+import { Delete, ExpandLess, ExpandMore } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
 import React from 'react';
 

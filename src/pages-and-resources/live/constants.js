@@ -1,6 +1,6 @@
 import {
   GoogleMeet, MicrosoftTeams, Zoom, Bbb,
-} from '@edx/paragon/icons';
+} from '@openedx/paragon/icons';
 
 export const iconsSrc = {
   googleMeet: GoogleMeet,

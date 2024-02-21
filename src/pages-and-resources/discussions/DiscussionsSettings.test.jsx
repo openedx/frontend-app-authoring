@@ -116,10 +116,10 @@ describe('DiscussionsSettings', () => {
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.getByRole('status'));
 
-      userEvent.click(queryByLabelText(container, 'Select Piazza'));
-      userEvent.click(queryByText(container, messages.nextButton.defaultMessage));
-
-      await waitForElementToBeRemoved(screen.getByRole('status'));
+      await waitFor(() => {
+        userEvent.click(queryByLabelText(container, 'Select Piazza'));
+        userEvent.click(queryByText(container, messages.nextButton.defaultMessage));
+      });
 
       expect(queryByTestId(container, 'appList')).not.toBeInTheDocument();
       expect(queryByTestId(container, 'appConfigForm')).toBeInTheDocument();
@@ -136,10 +136,10 @@ describe('DiscussionsSettings', () => {
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.getByRole('status'));
 
-      userEvent.click(queryByLabelText(container, 'Select edX'));
-      userEvent.click(queryByText(container, messages.nextButton.defaultMessage));
-
-      await waitForElementToBeRemoved(screen.getByRole('status'));
+      await waitFor(() => {
+        userEvent.click(queryByLabelText(container, 'Select edX'));
+        userEvent.click(queryByText(container, messages.nextButton.defaultMessage));
+      });
 
       expect(queryByTestId(container, 'appList')).not.toBeInTheDocument();
       expect(queryByTestId(container, 'appConfigForm')).toBeInTheDocument();

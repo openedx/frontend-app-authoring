@@ -7,8 +7,8 @@ import {
   Icon,
   IconButtonWithTooltip,
   MailtoLink,
-} from '@edx/paragon';
-import { DeleteOutline } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { DeleteOutline } from '@openedx/paragon/icons';
 
 import messages from './messages';
 import { USER_ROLES, BADGE_STATES } from '../constants';

@@ -4,7 +4,7 @@ import {
   Container,
   CloseButton,
   Spinner,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useParams } from 'react-router-dom';
 import messages from './messages';

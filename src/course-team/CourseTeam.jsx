@@ -5,8 +5,8 @@ import {
   Button,
   Container,
   Layout,
-} from '@edx/paragon';
-import { Add as IconAdd } from '@edx/paragon/icons';
+} from '@openedx/paragon';
+import { Add as IconAdd } from '@openedx/paragon/icons';
 
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import { useModel } from '../generic/model-store';

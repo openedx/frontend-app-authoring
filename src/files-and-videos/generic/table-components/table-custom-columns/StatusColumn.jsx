@@ -1,6 +1,6 @@
 import React from 'react';
 import { PropTypes } from 'prop-types';
-import { Badge } from '@edx/paragon';
+import { Badge } from '@openedx/paragon';
 
 const StatusColumn = ({ row }) => {
   const { status } = row.original;

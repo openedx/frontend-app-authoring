@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Button } from '@edx/paragon';
+import { Button } from '@openedx/paragon';
 
 import { getCourseSectionVertical } from '../data/selectors';
 import { COMPONENT_ICON_TYPES } from '../constants';

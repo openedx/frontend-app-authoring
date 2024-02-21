@@ -5,7 +5,7 @@ import {
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
-import { getConfig, initializeMockApp } from '@edx/frontend-platform';
+import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import {
@@ -28,14 +28,11 @@ import { executeThunk } from '../utils';
 import CourseUnit from './CourseUnit';
 import headerNavigationsMessages from './header-navigations/messages';
 import headerTitleMessages from './header-title/messages';
-import { getUnitPreviewPath, getUnitViewLivePath } from './utils';
 import messages from './add-component/messages';
 
 let axiosMock;
 let store;
 const courseId = '123';
-const sectionId = 'graded_interactions';
-const subsectionId = '19a30717eff543078a5d94ae9d6c18a5';
 const blockId = '567890';
 const unitDisplayName = courseUnitIndexMock.metadata.display_name;
 const mockedUsedNavigate = jest.fn();
@@ -97,20 +94,21 @@ describe('<CourseUnit />', () => {
     const { open } = window;
     window.open = jest.fn();
     const { getByRole } = render(<RootWrapper />);
+    const {
+      draft_preview_link: draftPreviewLink,
+      published_preview_link: publishedPreviewLink,
+    } = courseSectionVerticalMock;
 
     await waitFor(() => {
       const viewLiveButton = getByRole('button', { name: headerNavigationsMessages.viewLiveButton.defaultMessage });
       userEvent.click(viewLiveButton);
       expect(window.open).toHaveBeenCalled();
-      const VIEW_LIVE_LINK = getConfig().LMS_BASE_URL + getUnitViewLivePath(courseId, blockId);
-      expect(window.open).toHaveBeenCalledWith(VIEW_LIVE_LINK, '_blank');
+      expect(window.open).toHaveBeenCalledWith(publishedPreviewLink, '_blank');
 
       const previewButton = getByRole('button', { name: headerNavigationsMessages.previewButton.defaultMessage });
       userEvent.click(previewButton);
       expect(window.open).toHaveBeenCalled();
-      // eslint-disable-next-line max-len
-      const PREVIEW_LINK = getConfig().PREVIEW_BASE_URL + getUnitPreviewPath(courseId, sectionId, subsectionId, blockId);
-      expect(window.open).toHaveBeenCalledWith(PREVIEW_LINK, '_blank');
+      expect(window.open).toHaveBeenCalledWith(draftPreviewLink, '_blank');
     });
 
     window.open = open;

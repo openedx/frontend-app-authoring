@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { v4 as uuid } from 'uuid';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Button } from '@edx/paragon';
-import { Add as AddIcon } from '@edx/paragon/icons';
+import { Button } from '@openedx/paragon';
+import { Add as AddIcon } from '@openedx/paragon/icons';
 
 import InstructorContainer from './instructor-container';
 import SectionSubHeader from '../../generic/section-sub-header';
