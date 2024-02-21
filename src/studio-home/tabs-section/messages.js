@@ -35,7 +35,11 @@ const messages = defineMessages({
   },
   coursesTabCourseNotFoundAlertMessage: {
     id: 'course-authoring.studio-home.courses.tab.course.not.found.alert.message',
-    defaultMessage: 'Sorry, the course you are trying to search was not found',
+    defaultMessage: 'Sorry, the course(s) you are trying to search was not found',
+  },
+  coursesTabCourseNotFoundAlertCleanFiltersButton: {
+    id: 'course-authoring.studio-home.courses.tab.course.not.found.alert.clean.filters.button',
+    defaultMessage: 'Clean filters',
   },
 });
 

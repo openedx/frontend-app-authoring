@@ -10,21 +10,23 @@ import CoursesOrderFilterMenu from './courses-order-filter-menu';
 
 const CoursesFilters = ({ dispatch }) => {
   const {
-    currentPage,
     order,
     search,
     activeOnly,
     archivedOnly,
+    cleanFilters,
   } = useSelector(getStudioHomeCoursesParams);
   const [inputSearchValue, setInputSearchValue] = useState('');
   const searchValueDebounced = useDebounce(inputSearchValue);
 
-  const handleSearchCourses = (value) => setInputSearchValue(value);
+  const handleSearchCourses = (value) => {
+    setInputSearchValue(value);
+  };
 
   const getFilterTypeData = (baseFilters) => ({
-    archivedCourses: { ...baseFilters, archivedOnly: true },
-    activeCourses: { ...baseFilters, activeOnly: true },
-    allCourses: { ...baseFilters },
+    archivedCourses: { ...baseFilters, archivedOnly: true, activeOnly: undefined },
+    activeCourses: { ...baseFilters, activeOnly: true, archivedOnly: undefined },
+    allCourses: { ...baseFilters, archivedOnly: undefined, activeOnly: undefined },
     azCourses: { ...baseFilters, order: 'display_name' },
     zaCourses: { ...baseFilters, order: '-display_name' },
     newestCourses: { ...baseFilters, order: '-created' },
@@ -33,10 +35,13 @@ const CoursesFilters = ({ dispatch }) => {
 
   const handleMenuFilterItemSelected = (filterType) => {
     const baseFilters = {
-      page: currentPage,
+      currentPage: 1,
       search,
       order,
       isFiltered: true,
+      archivedOnly,
+      activeOnly,
+      cleanFilters: false,
     };
 
     const filterParams = getFilterTypeData(baseFilters);
@@ -47,28 +52,44 @@ const CoursesFilters = ({ dispatch }) => {
   useEffect(() => {
     const loadCoursesSearched = () => {
       const valueFormatted = searchValueDebounced.trim();
-      const isSearchEmpty = !valueFormatted.length;
-
-      const params = {
-        page: isSearchEmpty ? 1 : currentPage,
-        search: isSearchEmpty ? undefined : valueFormatted,
+      dispatch(updateStudioHomeCoursesCustomParams({
+        page: 1,
+        search: valueFormatted,
         activeOnly,
         archivedOnly,
         order,
         isFiltered: true,
-      };
-
-      dispatch(updateStudioHomeCoursesCustomParams(params));
+        cleanFilters: false,
+      }));
     };
 
-    loadCoursesSearched();
+    const hasSearchValueDebouncedValue = searchValueDebounced.trim().length;
+
+    if (hasSearchValueDebouncedValue) {
+      loadCoursesSearched();
+    }
   }, [searchValueDebounced]);
+
+  useEffect(() => {
+    const isInputSearchEmpty = inputSearchValue.trim().length;
+    if (!isInputSearchEmpty) {
+      dispatch(updateStudioHomeCoursesCustomParams({
+        page: 1,
+        activeOnly,
+        archivedOnly,
+        order,
+        isFiltered: true,
+        cleanFilters: false,
+      }));
+    }
+  }, [inputSearchValue]);
 
   return (
     <div className="d-flex">
       <SearchField
         onSubmit={() => null}
         onChange={handleSearchCourses}
+        value={cleanFilters ? '' : inputSearchValue}
         className="mr-4"
         data-testid="input-filter-courses-search"
         placeholder="Search"

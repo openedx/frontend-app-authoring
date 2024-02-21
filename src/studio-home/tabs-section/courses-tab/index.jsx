@@ -7,6 +7,7 @@ import {
   Row,
   Pagination,
   Alert,
+  Button,
 } from '@openedx/paragon';
 import { Error, WarningFilled } from '@openedx/paragon/icons';
 
@@ -43,6 +44,8 @@ const CoursesTab = ({
     search,
     order,
     isFiltered,
+    archivedOnly,
+    activeOnly,
   } = useSelector(getStudioHomeCoursesParams);
   const hasAbilityToCreateCourse = courseCreatorStatus === COURSE_CREATOR_STATES.granted;
   const showCollapsible = [
@@ -53,9 +56,25 @@ const CoursesTab = ({
 
   const handlePageSelected = (page) => {
     dispatch(updateStudioHomeCoursesCustomParams({
-      currentPage: page, search, order, isFiltered,
+      currentPage: page,
+      search,
+      order,
+      isFiltered: true,
+      archivedOnly,
+      activeOnly,
     }));
   };
+
+  const handleCleanFilters = () => {
+    dispatch(updateStudioHomeCoursesCustomParams({
+      currentPage: 1,
+      search: undefined,
+      order: 'display_name',
+      isFiltered: true,
+      cleanFilters: true,
+    }));
+  };
+
   const hasCourses = coursesDataItems?.length;
 
   const isNotFilteringCourses = !isFiltered && !isLoading;
@@ -69,7 +88,7 @@ const CoursesTab = ({
   }
 
   return (
-    isFailed ? (
+    isFailed && !isFiltered ? (
       <AlertMessage
         variant="danger"
         description={(
@@ -155,6 +174,9 @@ const CoursesTab = ({
             <p>
               {intl.formatMessage(messages.coursesTabCourseNotFoundAlertMessage)}
             </p>
+            <Button variant="primary" onClick={handleCleanFilters}>
+              {intl.formatMessage(messages.coursesTabCourseNotFoundAlertCleanFiltersButton)}
+            </Button>
           </Alert>
         )}
         {showCollapsible && (

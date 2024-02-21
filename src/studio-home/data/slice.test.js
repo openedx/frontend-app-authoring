@@ -19,9 +19,10 @@ describe('updateStudioHomeCoursesCustomParams action', () => {
       currentPage: 1,
       search: undefined,
       order: 'display_name',
-      archivedOnly: false,
-      activeOnly: false,
+      archivedOnly: undefined,
+      activeOnly: undefined,
       isFiltered: false,
+      cleanFilters: false,
     },
   };
 
@@ -40,16 +41,18 @@ describe('updateStudioHomeCoursesCustomParams action', () => {
         archivedOnly: true,
         activeOnly: true,
         isFiltered: true,
+        cleanFilters: true,
       },
     };
 
     const payload = {
       currentPage: 2,
-      isFiltered: true,
       search: 'test',
       order: 'display_name',
       archivedOnly: true,
       activeOnly: true,
+      isFiltered: true,
+      cleanFilters: true,
     };
 
     const result = reducer(initialState, updateStudioHomeCoursesCustomParams(payload));

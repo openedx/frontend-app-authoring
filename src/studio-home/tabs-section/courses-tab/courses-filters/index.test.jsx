@@ -38,6 +38,7 @@ describe('CoursesFilters', () => {
       search: '',
       activeOnly: false,
       archivedOnly: false,
+      cleanFilters: false,
     });
   });
 

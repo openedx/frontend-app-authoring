@@ -1,10 +1,15 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { screen, fireEvent, render } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import CoursesOrderFilterMenu from '.';
 import message from './messages';
 
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useSelector: jest.fn(),
+}));
 describe('CoursesTypesFilterMenu', () => {
   // eslint-disable-next-line react/prop-types
   const IntlProviderWrapper = ({ children }) => (
@@ -26,6 +31,14 @@ describe('CoursesTypesFilterMenu', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    useSelector.mockReturnValue({
+      currentPage: 1,
+      order: 'display_name',
+      search: '',
+      activeOnly: false,
+      archivedOnly: false,
+      cleanFilters: false,
+    });
   });
 
   it('snapshot', () => {

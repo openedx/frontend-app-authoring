@@ -37,11 +37,6 @@ const useStudioHome = () => {
   }, [location.search]);
 
   useEffect(() => {
-    const { currentPage, search, order } = studioHomeCoursesParams;
-    dispatch(fetchStudioHomeData(location.search ?? '', false, { page: currentPage, order, search }));
-  }, [studioHomeCoursesParams.currentPage, isFiltered]);
-
-  useEffect(() => {
     const {
       currentPage,
       search,
@@ -60,10 +55,12 @@ const useStudioHome = () => {
       }));
     }
   }, [
+    studioHomeCoursesParams.currentPage,
     studioHomeCoursesParams.search,
     studioHomeCoursesParams.order,
     studioHomeCoursesParams.archivedOnly,
     studioHomeCoursesParams.activeOnly,
+    isFiltered,
   ]);
 
   useEffect(() => {

@@ -1,7 +1,13 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { screen, fireEvent, render } from '@testing-library/react';
 
 import CoursesFilterMenu from '.';
+
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useSelector: jest.fn(),
+}));
 
 describe('CoursesFilterMenu', () => {
   const onCourseTypeSelectedMock = jest.fn();
@@ -35,6 +41,14 @@ describe('CoursesFilterMenu', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    useSelector.mockReturnValue({
+      currentPage: 1,
+      order: 'display_name',
+      search: '',
+      activeOnly: false,
+      archivedOnly: false,
+      cleanFilters: false,
+    });
   });
 
   it('snapshot', () => {
