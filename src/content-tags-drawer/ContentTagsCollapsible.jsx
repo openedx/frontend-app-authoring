@@ -33,6 +33,7 @@ const CustomMenu = (props) => {
     appliedContentTagsTree,
     stagedContentTagsTree,
     searchTerm,
+    value,
   } = props.selectProps;
   return (
     <components.Menu {...props}>
@@ -56,6 +57,23 @@ const CustomMenu = (props) => {
             searchTerm={searchTerm}
           />
         </SelectableBox.Set>
+        <div className="d-flex flex-row justify-content-end">
+          <div className="d-inline">
+            <Button
+              variant="tertiary"
+              onClick={() => { /* TODO: Implement this */ }}
+            >
+              { intl.formatMessage(messages.collapsibleCancelStagedTagsButtonText) }
+            </Button>
+            <Button
+              variant="tertiary"
+              disabled={!(value && value.length)}
+              onClick={() => { /* TODO: Implement this */ }}
+            >
+              { intl.formatMessage(messages.collapsibleAddStagedTagsButtonText) }
+            </Button>
+          </div>
+        </div>
       </div>
     </components.Menu>
   );

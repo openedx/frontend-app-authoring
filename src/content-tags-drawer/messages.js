@@ -33,6 +33,14 @@ const messages = defineMessages({
     id: 'course-authoring.content-tags-drawer.content-tags-collapsible.selectable-box.selection.aria.label',
     defaultMessage: 'taxonomy tags selection',
   },
+  collapsibleAddStagedTagsButtonText: {
+    id: 'course-authoring.content-tags-drawer.content-tags-collapsible.custom-menu.save-staged-tags',
+    defaultMessage: 'Add',
+  },
+  collapsibleCancelStagedTagsButtonText: {
+    id: 'course-authoring.content-tags-drawer.content-tags-collapsible.custom-menu.cancel-staged-tags',
+    defaultMessage: 'Cancel',
+  },
 });
 
 export default messages;
