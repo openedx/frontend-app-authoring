@@ -51,13 +51,6 @@ const useGroupConfigurations = (courseId) => {
   };
 
   useEffect(() => {
-    if (savingStatus === RequestStatus.SUCCESSFUL) {
-      dispatch(fetchGroupConfigurationsQuery(courseId));
-      dispatch(updateSavingStatuses({ status: '' }));
-    }
-  }, [savingStatus]);
-
-  useEffect(() => {
     dispatch(fetchGroupConfigurationsQuery(courseId));
   }, [courseId]);
 

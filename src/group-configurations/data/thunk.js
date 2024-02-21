@@ -14,6 +14,8 @@ import {
   fetchGroupConfigurations,
   updateLoadingStatus,
   updateSavingStatuses,
+  updateGroupConfigurationsSuccess,
+  deleteGroupConfigurationsSuccess,
 } from './slice';
 
 export function fetchGroupConfigurationsQuery(courseId) {
@@ -36,7 +38,8 @@ export function createContentGroupQuery(courseId, group) {
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
 
     try {
-      await createContentGroup(courseId, group);
+      const data = await createContentGroup(courseId, group);
+      dispatch(updateGroupConfigurationsSuccess({ data }));
       dispatch(updateSavingStatuses({ status: RequestStatus.SUCCESSFUL }));
       return true;
     } catch (error) {
@@ -54,7 +57,8 @@ export function editContentGroupQuery(courseId, group) {
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
 
     try {
-      await editContentGroup(courseId, group);
+      const data = await editContentGroup(courseId, group);
+      dispatch(updateGroupConfigurationsSuccess({ data }));
       dispatch(updateSavingStatuses({ status: RequestStatus.SUCCESSFUL }));
       return true;
     } catch (error) {
@@ -73,6 +77,7 @@ export function deleteContentGroupQuery(courseId, parentGroupId, groupId) {
 
     try {
       await deleteContentGroup(courseId, parentGroupId, groupId);
+      dispatch(deleteGroupConfigurationsSuccess({ parentGroupId, groupId }));
       dispatch(updateSavingStatuses({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       dispatch(updateSavingStatuses({ status: RequestStatus.FAILED }));
