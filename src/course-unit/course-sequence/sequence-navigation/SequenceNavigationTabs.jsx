@@ -1,9 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@openedx/paragon';
 import { Plus as PlusIcon } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { useNavigate } from 'react-router-dom';
 
 import { changeEditTitleFormOpen, updateQueryPendingStatus } from '../../data/slice';
 import { getCourseId, getSequenceId } from '../../data/selectors';

@@ -137,6 +137,14 @@ const messages = defineMessages({
     id: 'course-authoring.course-unit.modal.make-visibility.description',
     defaultMessage: 'If the unit was previously published and released to students, any changes you made to the unit when it was hidden will now be visible to students. Do you want to proceed?',
   },
+  tagsSidebarTitle: {
+    id: 'course-authoring.course-unit.sidebar.tags.title',
+    defaultMessage: 'Unit Tags',
+  },
+  tagsSidebarManageButtonLabel: {
+    id: 'course-authoring.course-unit.sidebar.tags.button.manage',
+    defaultMessage: 'Manage tags',
+  },
 });
 
 export default messages;

@@ -12,8 +12,9 @@ import { PUBLISH_TYPES } from '../constants';
 import { SidebarBody, SidebarFooter, SidebarHeader } from './components';
 import useCourseUnitData from './hooks';
 import messages from './messages';
+import TagsSidebarBody from './components/TagsSidebarBody';
 
-const Sidebar = ({ blockId, displayUnitLocation, ...props }) => {
+const Sidebar = ({ variant, blockId, ...props }) => {
   const {
     title,
     locationId,
@@ -40,6 +41,41 @@ const Sidebar = ({ blockId, displayUnitLocation, ...props }) => {
     dispatch(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic));
   };
 
+  let sidebarTitle;
+  let sidebarBody;
+  let hideFooter = false;
+  let hideIcon = false;
+  switch (variant) {
+  case 'publish':
+    sidebarTitle = title;
+    sidebarBody = (
+      <SidebarBody
+        releaseLabel={releaseLabel}
+      />
+    );
+    break;
+  case 'location':
+    sidebarTitle = intl.formatMessage(messages.sidebarHeaderUnitLocationTitle);
+    sidebarBody = (
+      <SidebarBody
+        locationId={locationId}
+        releaseLabel={releaseLabel}
+        isDisplayUnitLocation
+      />
+    );
+    break;
+  case 'tags':
+    sidebarTitle = intl.formatMessage(messages.tagsSidebarTitle);
+    sidebarBody = (
+      <TagsSidebarBody />
+    );
+    hideFooter = true;
+    hideIcon = true;
+    break;
+  default:
+    break;
+  }
+
   return (
     <Card
       className={classNames('course-unit-sidebar', {
@@ -48,23 +84,22 @@ const Sidebar = ({ blockId, displayUnitLocation, ...props }) => {
       {...props}
     >
       <SidebarHeader
-        title={title}
+        title={sidebarTitle}
         visibilityState={visibilityState}
-        displayUnitLocation={displayUnitLocation}
+        hideIcon={hideIcon}
       />
-      <SidebarBody
-        locationId={locationId}
-        releaseLabel={releaseLabel}
-        displayUnitLocation={displayUnitLocation}
-      />
-      <SidebarFooter
-        locationId={locationId}
-        openDiscardModal={openDiscardModal}
-        openVisibleModal={openVisibleModal}
-        displayUnitLocation={displayUnitLocation}
-        handlePublishing={handleCourseUnitPublish}
-        visibleToStaffOnly={visibleToStaffOnly}
-      />
+      { sidebarBody }
+      { !hideFooter
+        && (
+          <SidebarFooter
+            locationId={locationId}
+            openDiscardModal={openDiscardModal}
+            openVisibleModal={openVisibleModal}
+            isDisplayUnitLocation={variant === 'location'}
+            handlePublishing={handleCourseUnitPublish}
+            visibleToStaffOnly={visibleToStaffOnly}
+          />
+        )}
       <ModalNotification
         title={intl.formatMessage(messages.modalDiscardUnitChangesTitle)}
         isOpen={isDiscardModalOpen}
@@ -91,12 +126,11 @@ const Sidebar = ({ blockId, displayUnitLocation, ...props }) => {
 
 Sidebar.propTypes = {
   blockId: PropTypes.string,
-  displayUnitLocation: PropTypes.bool,
+  variant: PropTypes.string.isRequired,
 };
 
 Sidebar.defaultProps = {
   blockId: null,
-  displayUnitLocation: false,
 };
 
 export default Sidebar;
