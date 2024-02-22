@@ -33,6 +33,10 @@ const messages = defineMessages({
     id: 'course-authoring.content-tags-drawer.content-tags-collapsible.selectable-box.selection.aria.label',
     defaultMessage: 'taxonomy tags selection',
   },
+  manageTagsButton: {
+    id: 'course-authoring.content-tags-drawer.button.manage',
+    defaultMessage: 'Manage tags',
+  },
 });
 
 export default messages;

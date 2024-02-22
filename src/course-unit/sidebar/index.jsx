@@ -12,7 +12,7 @@ import { PUBLISH_TYPES } from '../constants';
 import { SidebarBody, SidebarFooter, SidebarHeader } from './components';
 import useCourseUnitData from './hooks';
 import messages from './messages';
-import TagsSidebarBody from './components/TagsSidebarBody';
+import { TagsSidebarBody } from '../../content-tags-drawer/tags-sidebar';
 
 const Sidebar = ({ variant, blockId, ...props }) => {
   const {
