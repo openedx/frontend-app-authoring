@@ -1,0 +1,31 @@
+.tags-sidebar {
+  .course-unit-sidebar-header {
+    padding-bottom: .25rem !important;
+  }
+
+  .tags-sidebar-body {
+    padding-left: .7rem !important;
+
+    .tags-sidebar-taxonomy {
+      border: none;
+
+      .collapsible-trigger {
+        font-weight: bold;
+        border: none;
+        justify-content: start;
+        padding-left: 0;
+        padding-bottom: 0;
+
+        .collapsible-icon {
+          order: -1;
+          margin-left: 0;
+        }
+      }
+
+      .collapsible-body {
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+    }
+  }
+}

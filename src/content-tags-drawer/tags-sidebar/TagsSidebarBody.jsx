@@ -1,14 +1,15 @@
 import { useState, useMemo } from 'react';
 import {
-  Card, Stack, Button, Sheet, Collapsible
+  Card, Stack, Button, Sheet, Collapsible, Icon,
 } from '@openedx/paragon';
+import { ArrowDropDown, ArrowDropUp } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useParams } from 'react-router-dom';
 import { ContentTagsDrawer } from '..';
 
 import messages from '../messages';
 import { useContentTaxonomyTagsData } from '../data/apiHooks';
-import Loading from '../../generic/Loading';
+import { LoadingSpinner } from '../../generic/Loading';
 import TagsTree from './TagsTree';
 
 const TagsSidebarBody = () => {
@@ -66,9 +67,11 @@ const TagsSidebarBody = () => {
                 {tree.map((taxonomy) => (
                   <div>
                     <Collapsible
-                      className='tags-sidebar-taxonomy'
-                      styling='basic'
+                      className="tags-sidebar-taxonomy"
+                      styling="card"
                       title={taxonomy.name}
+                      iconWhenClosed={<Icon src={ArrowDropDown} />}
+                      iconWhenOpen={<Icon src={ArrowDropUp} />}
                     >
                       <TagsTree tags={taxonomy.tags} />
                     </Collapsible>
@@ -76,9 +79,13 @@ const TagsSidebarBody = () => {
                 ))}
               </Stack>
             )
-            : <Loading />}
+            : (
+              <div className="d-flex justify-content-center">
+                <LoadingSpinner />
+              </div>
+            )}
 
-          <Button variant="outline-primary" onClick={() => setShowManageTags(true)}>
+          <Button className="mt-3 ml-2" variant="outline-primary" onClick={() => setShowManageTags(true)}>
             {intl.formatMessage(messages.manageTagsButton)}
           </Button>
         </Stack>
