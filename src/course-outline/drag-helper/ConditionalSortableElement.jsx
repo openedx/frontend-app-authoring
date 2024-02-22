@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Col, Row } from '@openedx/paragon';
-import { SortableItem } from '@edx/frontend-lib-content-components';
+import SortableItem from './SortableItem';
 
 const ConditionalSortableElement = ({
   id,

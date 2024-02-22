@@ -15,8 +15,11 @@ import {
   Warning as WarningIcon,
 } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
-import { DraggableList } from '@edx/frontend-lib-content-components';
-import { arrayMove } from '@dnd-kit/sortable';
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 
 import { LoadingSpinner } from '../generic/Loading';
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
@@ -41,6 +44,7 @@ import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
 import PublishModal from './publish-modal/PublishModal';
 import ConfigureModal from './configure-modal/ConfigureModal';
 import PageAlerts from './page-alerts/PageAlerts';
+import DraggableList from './drag-helper/DraggableList';
 import { useCourseOutline } from './hooks';
 import messages from './messages';
 import useUnitTagsCount from './data/apiHooks';
@@ -194,13 +198,14 @@ const CourseOutline = ({ courseId }) => {
    * @returns {(id, step) => bool}
    */
   const canMoveItem = (items) => (id, step) => {
-    const newId = id + step;
-    const indexCheck = newId >= 0 && newId < items.length;
-    if (!indexCheck) {
-      return false;
-    }
-    const newItem = items[newId];
-    return newItem.actions.draggable;
+    // const newId = id + step;
+    // const indexCheck = newId >= 0 && newId < items.length;
+    // if (!indexCheck) {
+    //   return false;
+    // }
+    // const newItem = items[newId];
+    // return newItem.actions.draggable;
+    return true;
   };
 
   /**
@@ -348,95 +353,101 @@ const CourseOutline = ({ courseId }) => {
                     <div className="pt-4">
                       {sections.length ? (
                         <>
-                          <DraggableList itemList={sections} setState={setSections} updateOrder={finalizeSectionOrder}>
-                            {sections.map((section, sectionIndex) => (
-                              <SectionCard
-                                id={section.id}
-                                key={section.id}
-                                section={section}
-                                index={sectionIndex}
-                                canMoveItem={canMoveItem(sections)}
-                                isSelfPaced={statusBarData.isSelfPaced}
-                                isCustomRelativeDatesActive={isCustomRelativeDatesActive}
-                                savingStatus={savingStatus}
-                                onOpenHighlightsModal={handleOpenHighlightsModal}
-                                onOpenPublishModal={openPublishModal}
-                                onOpenConfigureModal={openConfigureModal}
-                                onOpenDeleteModal={openDeleteModal}
-                                onEditSectionSubmit={handleEditSubmit}
-                                onDuplicateSubmit={handleDuplicateSectionSubmit}
-                                isSectionsExpanded={isSectionsExpanded}
-                                onNewSubsectionSubmit={handleNewSubsectionSubmit}
-                                onOrderChange={updateSectionOrderByIndex}
-                              >
-                                <DraggableList
-                                  itemList={section.childInfo.children}
-                                  setState={setSubsection(sectionIndex)}
-                                  updateOrder={finalizeSubsectionOrder(section)}
+                          <DraggableList items={sections} setItems={setSections} updateOrder={finalizeSectionOrder}>
+                            <SortableContext
+                              id="root"
+                              items={sections}
+                              strategy={verticalListSortingStrategy}
+                            >
+                              {sections.map((section, sectionIndex) => (
+                                <SectionCard
+                                  id={section.id}
+                                  key={section.id}
+                                  section={section}
+                                  index={sectionIndex}
+                                  canMoveItem={canMoveItem(sections)}
+                                  isSelfPaced={statusBarData.isSelfPaced}
+                                  isCustomRelativeDatesActive={isCustomRelativeDatesActive}
+                                  savingStatus={savingStatus}
+                                  onOpenHighlightsModal={handleOpenHighlightsModal}
+                                  onOpenPublishModal={openPublishModal}
+                                  onOpenConfigureModal={openConfigureModal}
+                                  onOpenDeleteModal={openDeleteModal}
+                                  onEditSectionSubmit={handleEditSubmit}
+                                  onDuplicateSubmit={handleDuplicateSectionSubmit}
+                                  isSectionsExpanded={isSectionsExpanded}
+                                  onNewSubsectionSubmit={handleNewSubsectionSubmit}
+                                  onOrderChange={updateSectionOrderByIndex}
                                 >
-                                  {section.childInfo.children.map((subsection, subsectionIndex) => (
-                                    <SubsectionCard
-                                      key={subsection.id}
-                                      section={section}
-                                      subsection={subsection}
-                                      index={subsectionIndex}
-                                      canMoveItem={canMoveItem(section.childInfo.children)}
-                                      isSelfPaced={statusBarData.isSelfPaced}
-                                      isCustomRelativeDatesActive={isCustomRelativeDatesActive}
-                                      savingStatus={savingStatus}
-                                      onOpenPublishModal={openPublishModal}
-                                      onOpenDeleteModal={openDeleteModal}
-                                      onEditSubmit={handleEditSubmit}
-                                      onDuplicateSubmit={handleDuplicateSubsectionSubmit}
-                                      onOpenConfigureModal={openConfigureModal}
-                                      onNewUnitSubmit={handleNewUnitSubmit}
-                                      onOrderChange={updateSubsectionOrderByIndex(
-                                        sectionIndex,
-                                        section,
-                                        section.childInfo.children,
-                                      )}
-                                      onPasteClick={handlePasteClipboardClick}
-                                    >
-                                      <DraggableList
-                                        itemList={subsection.childInfo.children}
-                                        setState={setUnit(sectionIndex, subsectionIndex)}
-                                        updateOrder={finalizeUnitOrder(section, subsection)}
+                                  <SortableContext
+                                    id={section.id}
+                                    items={section.childInfo.children}
+                                    strategy={verticalListSortingStrategy}
+                                  >
+                                    {section.childInfo.children.map((subsection, subsectionIndex) => (
+                                      <SubsectionCard
+                                        key={subsection.id}
+                                        section={section}
+                                        subsection={subsection}
+                                        index={subsectionIndex}
+                                        canMoveItem={canMoveItem(section.childInfo.children)}
+                                        isSelfPaced={statusBarData.isSelfPaced}
+                                        isCustomRelativeDatesActive={isCustomRelativeDatesActive}
+                                        savingStatus={savingStatus}
+                                        onOpenPublishModal={openPublishModal}
+                                        onOpenDeleteModal={openDeleteModal}
+                                        onEditSubmit={handleEditSubmit}
+                                        onDuplicateSubmit={handleDuplicateSubsectionSubmit}
+                                        onOpenConfigureModal={openConfigureModal}
+                                        onNewUnitSubmit={handleNewUnitSubmit}
+                                        onOrderChange={updateSubsectionOrderByIndex(
+                                          sectionIndex,
+                                          section,
+                                          section.childInfo.children,
+                                        )}
+                                        onPasteClick={handlePasteClipboardClick}
                                       >
-                                        {subsection.childInfo.children.map((unit, unitIndex) => (
-                                          <UnitCard
-                                            key={unit.id}
-                                            unit={unit}
-                                            subsection={subsection}
-                                            section={section}
-                                            isSelfPaced={statusBarData.isSelfPaced}
-                                            isCustomRelativeDatesActive={isCustomRelativeDatesActive}
-                                            index={unitIndex}
-                                            canMoveItem={canMoveItem(subsection.childInfo.children)}
-                                            savingStatus={savingStatus}
-                                            onOpenPublishModal={openPublishModal}
-                                            onOpenConfigureModal={openConfigureModal}
-                                            onOpenDeleteModal={openDeleteModal}
-                                            onEditSubmit={handleEditSubmit}
-                                            onDuplicateSubmit={handleDuplicateUnitSubmit}
-                                            getTitleLink={getUnitUrl}
-                                            onOrderChange={updateUnitOrderByIndex(
-                                              sectionIndex,
-                                              subsectionIndex,
-                                              section,
-                                              subsection,
-                                              subsection.childInfo.children,
-                                            )}
-                                            onCopyToClipboardClick={handleCopyToClipboardClick}
-                                            discussionsSettings={discussionsSettings}
-                                            tagsCount={isUnitsTagCountsLoaded ? unitsTagCounts[unit.id] : 0}
-                                          />
-                                        ))}
-                                      </DraggableList>
-                                    </SubsectionCard>
-                                  ))}
-                                </DraggableList>
-                              </SectionCard>
-                            ))}
+                                        <SortableContext
+                                          id={subsection.id}
+                                          items={subsection.childInfo.children}
+                                          strategy={verticalListSortingStrategy}
+                                        >
+                                          {subsection.childInfo.children.map((unit, unitIndex) => (
+                                            <UnitCard
+                                              key={unit.id}
+                                              unit={unit}
+                                              subsection={subsection}
+                                              section={section}
+                                              isSelfPaced={statusBarData.isSelfPaced}
+                                              isCustomRelativeDatesActive={isCustomRelativeDatesActive}
+                                              index={unitIndex}
+                                              canMoveItem={canMoveItem(subsection.childInfo.children)}
+                                              savingStatus={savingStatus}
+                                              onOpenPublishModal={openPublishModal}
+                                              onOpenConfigureModal={openConfigureModal}
+                                              onOpenDeleteModal={openDeleteModal}
+                                              onEditSubmit={handleEditSubmit}
+                                              onDuplicateSubmit={handleDuplicateUnitSubmit}
+                                              getTitleLink={getUnitUrl}
+                                              onOrderChange={updateUnitOrderByIndex(
+                                                sectionIndex,
+                                                subsectionIndex,
+                                                section,
+                                                subsection,
+                                                subsection.childInfo.children,
+                                              )}
+                                              onCopyToClipboardClick={handleCopyToClipboardClick}
+                                              discussionsSettings={discussionsSettings}
+                                              tagsCount={isUnitsTagCountsLoaded ? unitsTagCounts[unit.id] : 0}
+                                            />
+                                          ))}
+                                        </SortableContext>
+                                      </SubsectionCard>
+                                    ))}
+                                  </SortableContext>
+                                </SectionCard>
+                              ))}
+                            </SortableContext>
                           </DraggableList>
                           {courseActions.childAddable && (
                             <Button
