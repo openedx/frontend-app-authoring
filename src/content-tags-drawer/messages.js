@@ -37,6 +37,10 @@ const messages = defineMessages({
     id: 'course-authoring.content-tags-drawer.button.manage',
     defaultMessage: 'Manage tags',
   },
+  tagsSidebarTitle: {
+    id: 'course-authoring.course-unit.sidebar.tags.title',
+    defaultMessage: 'Unit Tags',
+  },
 });
 
 export default messages;

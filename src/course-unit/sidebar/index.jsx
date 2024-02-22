@@ -11,8 +11,9 @@ import { getCourseUnitData } from '../data/selectors';
 import { PUBLISH_TYPES } from '../constants';
 import { SidebarBody, SidebarFooter, SidebarHeader } from './components';
 import useCourseUnitData from './hooks';
-import messages from './messages';
 import { TagsSidebarBody } from '../../content-tags-drawer/tags-sidebar';
+import TagsSidebarHeader from '../../content-tags-drawer/tags-sidebar/TagsSidebarHeader';
+import messages from './messages';
 
 const Sidebar = ({ variant, blockId, ...props }) => {
   const {
@@ -41,14 +42,18 @@ const Sidebar = ({ variant, blockId, ...props }) => {
     dispatch(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic));
   };
 
-  let sidebarTitle;
+  let sidebarHeader;
   let sidebarBody;
   let hideFooter = false;
-  let hideIcon = false;
   let className = '';
   switch (variant) {
   case 'publish':
-    sidebarTitle = title;
+    sidebarHeader = (
+      <SidebarHeader
+        title={title}
+        visibilityState={visibilityState}
+      />
+    );
     sidebarBody = (
       <SidebarBody
         releaseLabel={releaseLabel}
@@ -56,22 +61,29 @@ const Sidebar = ({ variant, blockId, ...props }) => {
     );
     break;
   case 'location':
-    sidebarTitle = intl.formatMessage(messages.sidebarHeaderUnitLocationTitle);
+    sidebarHeader = (
+      <SidebarHeader
+        title={title}
+        visibilityState={visibilityState}
+        displayUnitLocation
+      />
+    );
     sidebarBody = (
       <SidebarBody
         locationId={locationId}
         releaseLabel={releaseLabel}
-        isDisplayUnitLocation
+        displayUnitLocation
       />
     );
     break;
   case 'tags':
-    sidebarTitle = intl.formatMessage(messages.tagsSidebarTitle);
+    sidebarHeader = (
+      <TagsSidebarHeader />
+    );
     sidebarBody = (
       <TagsSidebarBody />
     );
     hideFooter = true;
-    hideIcon = true;
     className = 'tags-sidebar';
     break;
   default:
@@ -85,11 +97,7 @@ const Sidebar = ({ variant, blockId, ...props }) => {
       })}
       {...props}
     >
-      <SidebarHeader
-        title={sidebarTitle}
-        visibilityState={visibilityState}
-        hideIcon={hideIcon}
-      />
+      { sidebarHeader }
       { sidebarBody }
       { !hideFooter
         && (
@@ -97,7 +105,7 @@ const Sidebar = ({ variant, blockId, ...props }) => {
             locationId={locationId}
             openDiscardModal={openDiscardModal}
             openVisibleModal={openVisibleModal}
-            isDisplayUnitLocation={variant === 'location'}
+            displayUnitLocation={variant === 'location'}
             handlePublishing={handleCourseUnitPublish}
             visibleToStaffOnly={visibleToStaffOnly}
           />

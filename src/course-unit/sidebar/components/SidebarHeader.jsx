@@ -1,9 +1,11 @@
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { Icon, Stack } from '@openedx/paragon';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { getCourseUnitData } from '../../data/selectors';
 import { getIconVariant } from '../utils';
+import messages from '../messages';
 
 const SidebarHeader = ({ title, visibilityState, displayUnitLocation }) => {
   const intl = useIntl();
