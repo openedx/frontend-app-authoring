@@ -1,11 +1,23 @@
 .course-unit {
   .course-unit__xblocks {
+    .course-unit__xblock:not(:first-child) {
+      margin-top: 1.75rem;
+    }
+
     .pgn__card-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
       border-bottom: 1px solid $light-400;
       padding-bottom: map-get($spacers, 2);
+
+      &:not(:has(.pgn__card-header-subtitle-md)) {
+        align-items: center;
+      }
+    }
+
+    .pgn__card-header-subtitle-md {
+      margin-top: 0;
+      font-size: $font-size-sm;
     }
 
     .pgn__card-header-title-md {

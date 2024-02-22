@@ -40,7 +40,7 @@ const HeaderTitle = ({
       message = intl.formatMessage(messages.commonVisibilityMessage);
     }
 
-    return message ? (<p className="small mb-0">{message}</p>) : null;
+    return message ? (<p className="header-title__visibility-message mb-0">{message}</p>) : null;
   };
 
   useEffect(() => {
