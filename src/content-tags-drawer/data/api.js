@@ -31,6 +31,7 @@ export const getTaxonomyTagsApiUrl = (taxonomyId, options = {}) => {
 export const getContentTaxonomyTagsApiUrl = (contentId) => new URL(`api/content_tagging/v1/object_tags/${contentId}/`, getApiBaseUrl()).href;
 export const getXBlockContentDataApiURL = (contentId) => new URL(`/xblock/outline/${contentId}`, getApiBaseUrl()).href;
 export const getLibraryContentDataApiUrl = (contentId) => new URL(`/api/libraries/v2/blocks/${contentId}/`, getApiBaseUrl()).href;
+export const getContentTaxonomyTagsCountApiUrl = (contentId) => new URL(`api/content_tagging/v1/object_tag_counts/${contentId}/?count_implicit`, getApiBaseUrl()).href;
 
 /**
  * Get all tags that belong to taxonomy.
@@ -51,6 +52,16 @@ export async function getTaxonomyTagsData(taxonomyId, options = {}) {
  */
 export async function getContentTaxonomyTagsData(contentId) {
   const { data } = await getAuthenticatedHttpClient().get(getContentTaxonomyTagsApiUrl(contentId));
+  return camelCaseObject(data[contentId]);
+}
+
+/**
+ * Get the count of tags that are applied to the content object
+ * @param {string} contentId The id of the content object to fetch the count of the applied tags for
+ * @returns {Promise<number>}
+ */
+export async function getContentTaxonomyTagsCount(contentId) {
+  const { data } = await getAuthenticatedHttpClient().get(getContentTaxonomyTagsCountApiUrl(contentId));
   return camelCaseObject(data[contentId]);
 }
 

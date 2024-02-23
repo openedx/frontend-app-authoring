@@ -6,6 +6,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import {
   taxonomyTagsMock,
   contentTaxonomyTagsMock,
+  contentTaxonomyTagsCountMock,
   contentDataMock,
   updateContentTaxonomyTagsMock,
 } from '../__mocks__';
@@ -19,6 +20,8 @@ import {
   getContentTaxonomyTagsData,
   getContentData,
   updateContentTaxonomyTags,
+  getContentTaxonomyTagsCountApiUrl,
+  getContentTaxonomyTagsCount,
 } from './api';
 
 let axiosMock;
@@ -86,6 +89,15 @@ describe('content tags drawer api calls', () => {
 
     expect(axiosMock.history.get[0].url).toEqual(getContentTaxonomyTagsApiUrl(contentId));
     expect(result).toEqual(contentTaxonomyTagsMock[contentId]);
+  });
+
+  it('should get content taxonomy tags count', async () => {
+    const contentId = 'block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@aaf8b8eb86b54281aeeab12499d2cb0b';
+    axiosMock.onGet(getContentTaxonomyTagsCountApiUrl(contentId)).reply(200, contentTaxonomyTagsCountMock);
+    const result = await getContentTaxonomyTagsCount(contentId);
+
+    expect(axiosMock.history.get[0].url).toEqual(getContentTaxonomyTagsCountApiUrl(contentId));
+    expect(result).toEqual(contentTaxonomyTagsCountMock[contentId]);
   });
 
   it('should get content data for course component', async () => {

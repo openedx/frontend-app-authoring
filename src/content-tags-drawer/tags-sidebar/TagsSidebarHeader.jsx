@@ -4,22 +4,32 @@ import { useParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from '../messages';
+import { useContentTaxonomyTagsCount } from '../data/apiHooks';
 
 const TagsSidebarHeader = () => {
   const intl = useIntl();
   const contentId = useParams().blockId;
-  const tagCount = 0;
+
+  const {
+    data: contentTaxonomyTagsCount,
+    isSuccess: isContentTaxonomyTagsCountLoaded,
+  } = useContentTaxonomyTagsCount(contentId);
+
   return (
     <Stack className="course-unit-sidebar-header justify-content-between" direction="horizontal">
       <h3 className="course-unit-sidebar-header-title m-0">
         {intl.formatMessage(messages.tagsSidebarTitle)}
       </h3>
-      <div className="d-flex">
-        <Icon
-          src={Tag}
-        />
-        {tagCount}
-      </div>
+      { isContentTaxonomyTagsCountLoaded
+        && (
+          <div className="d-flex">
+            <Icon
+              className="mr-1 pt-1"
+              src={Tag}
+            />
+            {contentTaxonomyTagsCount}
+          </div>
+        )}
     </Stack>
   );
 };
