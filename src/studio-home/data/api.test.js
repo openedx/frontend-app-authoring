@@ -11,6 +11,7 @@ import {
   sendRequestForCourseCreator,
   getApiBaseUrl,
   getStudioHomeCourses,
+  getStudioHomeCoursesV2,
   getStudioHomeLibraries,
 } from './api';
 import { generateGetStudioCoursesApiResponse, generateGetStudioHomeDataApiResponse, generateGetStuioHomeLibrariesApiResponse } from '../factories/mockApiResponses';
@@ -44,9 +45,19 @@ describe('studio-home api calls', () => {
   });
 
   fit('should get studio courses data', async () => {
-    const apiLink = `${getApiBaseUrl()}/api/contentstore/v2/home/courses`;
+    const apiLink = `${getApiBaseUrl()}/api/contentstore/v1/home/courses`;
     axiosMock.onGet(apiLink).reply(200, generateGetStudioCoursesApiResponse());
     const result = await getStudioHomeCourses('');
+    const expected = generateGetStudioCoursesApiResponse();
+
+    expect(axiosMock.history.get[0].url).toEqual(apiLink);
+    expect(result).toEqual(expected);
+  });
+
+  fit('should get studio courses data v2', async () => {
+    const apiLink = `${getApiBaseUrl()}/api/contentstore/v2/home/courses`;
+    axiosMock.onGet(apiLink).reply(200, generateGetStudioCoursesApiResponse());
+    const result = await getStudioHomeCoursesV2('');
     const expected = generateGetStudioCoursesApiResponse();
 
     expect(axiosMock.history.get[0].url).toEqual(apiLink);

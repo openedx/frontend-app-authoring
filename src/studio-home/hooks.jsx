@@ -37,7 +37,7 @@ const useStudioHome = () => {
 
   useEffect(() => {
     const { currentPage } = studioHomeCoursesParams;
-    dispatch(fetchStudioHomeData(location.search ?? '', false, { page: currentPage }));
+    dispatch(fetchStudioHomeData(location.search ?? '', false, { page: currentPage }, true));
   }, [studioHomeCoursesParams.currentPage]);
 
   useEffect(() => {

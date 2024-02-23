@@ -43,9 +43,21 @@ describe('<CardItem />', () => {
     const { getByText } = render(<RootWrapper {...props} />);
     expect(getByText(`${props.org} / ${props.number} / ${props.run}`)).toBeInTheDocument();
   });
+
   it('should render correct links for non-library course', () => {
     const props = studioHomeMock.archivedCourses[0];
-    const { getByText, getByTestId } = render(<RootWrapper {...props} />);
+    const { getByText } = render(<RootWrapper {...props} />);
+    const courseTitleLink = getByText(props.displayName);
+    expect(courseTitleLink).toHaveAttribute('href', `${getConfig().STUDIO_BASE_URL}${props.url}`);
+    const btnReRunCourse = getByText(messages.btnReRunText.defaultMessage);
+    expect(btnReRunCourse).toHaveAttribute('href', props.rerunLink);
+    const viewLiveLink = getByText(messages.viewLiveBtnText.defaultMessage);
+    expect(viewLiveLink).toHaveAttribute('href', props.lmsLink);
+  });
+
+  it('should render correct links for non-library course pagination', () => {
+    const props = studioHomeMock.archivedCourses[0];
+    const { getByText, getByTestId } = render(<RootWrapper {...props} isPaginationEnabled />);
     const courseTitleLink = getByText(props.displayName);
     expect(courseTitleLink).toHaveAttribute('href', `${getConfig().STUDIO_BASE_URL}${props.url}`);
     const dropDownMenu = getByTestId('toggle-dropdown');

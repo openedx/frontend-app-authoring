@@ -27,6 +27,7 @@ const CoursesTab = ({
   dispatch,
   numPages,
   coursesCount,
+  isEnabledPagination,
 }) => {
   const intl = useIntl();
   const {
@@ -66,7 +67,7 @@ const CoursesTab = ({
     ) : (
       <>
         {isShowProcessing && <ProcessingCourses />}
-        {hasCourses && (
+        {hasCourses && isEnabledPagination && (
           <div className="d-flex justify-content-end">
             <p data-testid="pagination-info">
               {intl.formatMessage(messages.coursesPaginationInfo, {
@@ -100,11 +101,12 @@ const CoursesTab = ({
                   run={run}
                   url={url}
                   cmsLink={cmsLink}
+                  isPaginated={isEnabledPagination}
                 />
               ),
             )}
 
-            {numPages > 1 && (
+            {numPages > 1 && isEnabledPagination && (
               <Pagination
                 className="d-flex justify-content-center"
                 paginationLabel="pagination navigation"
@@ -133,6 +135,12 @@ const CoursesTab = ({
   );
 };
 
+CoursesTab.defaultProps = {
+  numPages: 0,
+  coursesCount: 0,
+  isEnabledPagination: false,
+};
+
 CoursesTab.propTypes = {
   coursesDataItems: PropTypes.arrayOf(
     PropTypes.shape({
@@ -152,8 +160,9 @@ CoursesTab.propTypes = {
   isLoading: PropTypes.bool.isRequired,
   isFailed: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
-  numPages: PropTypes.number.isRequired,
-  coursesCount: PropTypes.number.isRequired,
+  numPages: PropTypes.number,
+  coursesCount: PropTypes.number,
+  isEnabledPagination: PropTypes.bool,
 };
 
 export default CoursesTab;

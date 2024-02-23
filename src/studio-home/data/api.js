@@ -16,6 +16,10 @@ export async function getStudioHomeData() {
   return camelCaseObject(data);
 }
 
+export async function getStudioHomeCourses(search) {
+  const { data } = await getAuthenticatedHttpClient().get(`${getApiBaseUrl()}/api/contentstore/v1/home/courses${search}`);
+  return camelCaseObject(data);
+}
 /**
  * Get's studio home courses.
  * @param {string} search - Query string parameters for filtering the courses.
@@ -25,7 +29,7 @@ export async function getStudioHomeData() {
  * Features such as pagination, filtering, and ordering are better handled in the new version.
  * Please refer to this PR for further details: https://github.com/openedx/edx-platform/pull/34173
  */
-export async function getStudioHomeCourses(search, customParams) {
+export async function getStudioHomeCoursesV2(search, customParams) {
   const { data } = await getAuthenticatedHttpClient().get(`${getApiBaseUrl()}/api/contentstore/v2/home/courses${search}`, { params: customParams });
   return camelCaseObject(data);
 }

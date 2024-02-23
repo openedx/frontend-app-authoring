@@ -49,6 +49,8 @@ const StudioHome = ({ intl }) => {
     redirectToLibraryAuthoringMfe,
   } = studioHomeData;
 
+  const isPaginationCoursesEnabled = getConfig().ENABLE_PAGINATION_COURSES_STUDIO_HOME === 'true';
+
   function getHeaderButtons() {
     const headerButtons = [];
 
@@ -139,6 +141,7 @@ const StudioHome = ({ intl }) => {
               onClickNewCourse={() => setShowNewCourseContainer(true)}
               isShowProcessing={isShowProcessing}
               dispatch={dispatch}
+              isPaginationCoursesEnabled={isPaginationCoursesEnabled}
             />
           </section>
         </Layout.Element>
