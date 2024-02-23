@@ -130,6 +130,7 @@ const CoursesTab = ({
               }) => (
                 <CardItem
                   key={courseKey}
+                  courseKey={courseKey}
                   displayName={displayName}
                   lmsLink={lmsLink}
                   rerunLink={rerunLink}

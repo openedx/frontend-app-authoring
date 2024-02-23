@@ -77,4 +77,20 @@ describe('<CardItem />', () => {
     expect(queryByText(messages.btnReRunText.defaultMessage)).not.toBeInTheDocument();
     expect(queryByText(messages.viewLiveBtnText.defaultMessage)).not.toBeInTheDocument();
   });
+
+  it('should render course key if displayname is empty', () => {
+    const props = studioHomeMock.courses[1];
+    const courseKeyTest = 'course-key';
+    const { getByText } = render(
+      <RootWrapper
+        {...props}
+        displayName=""
+        courseKey={courseKeyTest}
+        lmsLink="lmsLink"
+        rerunLink="returnLink"
+        url="url"
+      />,
+    );
+    expect(getByText(courseKeyTest)).toBeInTheDocument();
+  });
 });
