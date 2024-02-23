@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import {
   DndContext,
+  DragOverlay,
   closestCorners,
   KeyboardSensor,
   PointerSensor,
@@ -15,7 +16,9 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 
+import DragContextProvider from './DragContextProvider';
 import { COURSE_BLOCK_NAMES } from '../constants';
 
 const DraggableList = ({
@@ -30,6 +33,8 @@ const DraggableList = ({
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
+
+  const [activeId, setActiveId] = React.useState();
 
   const findContainer = (id, active) => {
     // if id is for a section return container as root
@@ -49,7 +54,7 @@ const DraggableList = ({
         (subsection) => subsection.childInfo.children.find((unit) => unit.id === id)
       );
       if (subsectionIndex !== -1) {
-        return [subsectionIndex, sectionp[subsectionIndex], index];
+        return [subsectionIndex, section[subsectionIndex], index];
       }
     });
     return [-1];
@@ -65,14 +70,9 @@ const DraggableList = ({
     const [overContainerIdx, overContainer, overContainerParentIdx] = findContainer(overId, false);
 
     if (
-      activeContainerIdx === -1 ||
-      overContainerIdx === -1 ||
       activeContainerIdx === "root" ||
-      activeContainer.id === overContainer.id ||
-      activeContainer.category !== overContainer.category
+      activeContainer?.id === overContainer?.id
     ) {
-      // __AUTO_GENERATED_PRINTF_START__
-      console.log("DraggableList#handleDragOver#if 1"); // __AUTO_GENERATED_PRINTF_END__
       return;
     }
 
@@ -118,22 +118,15 @@ const DraggableList = ({
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
+    if (!active || !over) {
+      return;
+    }
+    setActiveId(null);
     const { id } = active;
     const { id: overId } = over;
 
     const [activeContainerIdx, activeContainer, activeContainerParentIdx] = findContainer(id, true);
     const [overContainerIdx, overContainer, overContainerParentIdx] = findContainer(overId, false);
-
-    if (
-      activeContainerIdx === -1 ||
-      overContainerIdx === -1 ||
-      (activeContainerIdx !== 'root' &&
-          activeContainer?.id !== overContainer?.id)
-    ) {
-      // __AUTO_GENERATED_PRINTF_START__
-      console.log("DraggableList#handleDragEnd#if 1"); // __AUTO_GENERATED_PRINTF_END__
-      return;
-    }
 
     let activeItems = items;
     let overItems = items;
@@ -143,9 +136,15 @@ const DraggableList = ({
     }
     const activeIndex = activeItems.findIndex((item) => item.id === id);
     let overIndex = overItems.findIndex((item) => item.id === overId);
-    if (overIndex === -1) {
+    if (overIndex === -1 && activeContainerIdx == 'root') {
       overIndex = overContainerIdx
     }
+    if (
+      (activeContainerIdx !== 'root' && activeContainer?.id !== overContainer?.id)
+    ) {
+      return;
+    }
+
 
     if (activeIndex !== overIndex) {
       if (activeContainerIdx === 'root') {
@@ -163,14 +162,28 @@ const DraggableList = ({
     }
   }
 
+  const handleDragStart = (event) => {
+    const { active } = event;
+    const { id } = active;
+
+    setActiveId(id);
+  }
+
   return (
     <DndContext
+      modifiers={[restrictToVerticalAxis]}
       sensors={sensors}
       collisionDetection={closestCorners}
       onDragEnd={handleDragEnd}
       onDragOver={handleDragOver}
+      onDragStart={handleDragStart}
     >
-      {children}
+      <DragContextProvider activeId={activeId}>
+        {children}
+      </DragContextProvider>
+      <DragOverlay>
+        <div className="py-3 bg-gray-200" />
+      </DragOverlay>
     </DndContext>
   );
 };

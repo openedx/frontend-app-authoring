@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useState, useRef,
+  useContext, useEffect, useState, useRef,
 } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
@@ -12,6 +12,7 @@ import { setCurrentItem, setCurrentSection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
 import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
+import { DragContext } from '../drag-helper/DragContextProvider';
 import TitleButton from '../card-header/TitleButton';
 import XBlockStatus from '../xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
@@ -38,6 +39,7 @@ const SectionCard = ({
   const currentRef = useRef(null);
   const intl = useIntl();
   const dispatch = useDispatch();
+  const { activeId } = useContext(DragContext);
   const [isExpanded, setIsExpanded] = useState(isSectionsExpanded);
   const [isFormOpen, openForm, closeForm] = useToggle(false);
   const namePrefix = 'section';
@@ -45,13 +47,6 @@ const SectionCard = ({
   useEffect(() => {
     setIsExpanded(isSectionsExpanded);
   }, [isSectionsExpanded]);
-
-  useEffect(() => {
-    // if this items has been newly added, scroll to it.
-    if (currentRef.current && section.shouldScroll) {
-      scrollToElement(currentRef.current);
-    }
-  }, []);
 
   const {
     id,
@@ -63,6 +58,19 @@ const SectionCard = ({
     actions: sectionActions,
     isHeaderVisible = true,
   } = section;
+
+  useEffect(() => {
+    if (activeId === id && isExpanded) {
+      setIsExpanded(false);
+    }
+  }, [activeId]);
+
+  useEffect(() => {
+    // if this items has been newly added, scroll to it.
+    if (currentRef.current && section.shouldScroll) {
+      scrollToElement(currentRef.current);
+    }
+  }, []);
 
   // re-create actions object for customizations
   const actions = { ...sectionActions };

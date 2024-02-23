@@ -5,6 +5,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, IconButtonWithTooltip, Row } from '@openedx/paragon';
 import { DragIndicator } from '@openedx/paragon/icons';
+
 import messages from './messages';
 
 const SortableItem = ({
@@ -20,10 +21,11 @@ const SortableItem = ({
     setNodeRef,
     transform,
     transition,
+    setActivatorNodeRef,
   } = useSortable({ id });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Translate.toString(transform),
     transition,
     ...componentStyle,
   };
@@ -36,6 +38,7 @@ const SortableItem = ({
     >
       {children}
       <IconButtonWithTooltip
+        ref={setActivatorNodeRef}
         key="drag-to-reorder-icon"
         tooltipPlacement="top"
         tooltipContent={intl.formatMessage(messages.tooltipContent)}
