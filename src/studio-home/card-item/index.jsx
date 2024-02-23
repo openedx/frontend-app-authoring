@@ -26,7 +26,6 @@ const CardItem = ({
   isLibraries,
   courseKey,
   url,
-  cmsLink,
 }) => {
   const {
     allowCourseReruns,
@@ -74,9 +73,6 @@ const CardItem = ({
               <Dropdown.Item href={lmsLink}>
                 {intl.formatMessage(messages.viewLiveBtnText)}
               </Dropdown.Item>
-              <Dropdown.Item href={cmsLink}>
-                {intl.formatMessage(messages.editStudioBtnText)}
-              </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
 
@@ -92,14 +88,12 @@ CardItem.defaultProps = {
   rerunLink: '',
   lmsLink: '',
   run: '',
-  cmsLink: '',
 };
 
 CardItem.propTypes = {
   intl: intlShape.isRequired,
   displayName: PropTypes.string.isRequired,
   lmsLink: PropTypes.string,
-  cmsLink: PropTypes.string,
   rerunLink: PropTypes.string,
   org: PropTypes.string.isRequired,
   run: PropTypes.string,
