@@ -26,7 +26,7 @@ const CardItem = ({
   run,
   isLibraries,
   courseKey,
-  isPaginationEnabled,
+  isPaginated,
   url,
   cmsLink,
 }) => {
@@ -59,7 +59,7 @@ const CardItem = ({
         )}
         subtitle={subtitle}
         actions={showActions && (
-          isPaginationEnabled ? (
+          isPaginated ? (
             <Dropdown>
               <Dropdown.Toggle
                 as={IconButton}
@@ -109,7 +109,7 @@ const CardItem = ({
 
 CardItem.defaultProps = {
   isLibraries: false,
-  isPaginationEnabled: false,
+  isPaginated: false,
   courseKey: '',
   rerunLink: '',
   lmsLink: '',
@@ -129,7 +129,7 @@ CardItem.propTypes = {
   url: PropTypes.string.isRequired,
   isLibraries: PropTypes.bool,
   courseKey: PropTypes.string,
-  isPaginationEnabled: PropTypes.bool,
+  isPaginated: PropTypes.bool,
 };
 
 export default injectIntl(CardItem);

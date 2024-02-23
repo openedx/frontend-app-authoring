@@ -15,7 +15,7 @@ describe('updateStudioHomeCoursesCustomParams action', () => {
       deleteNotificationSavingStatus: '',
     },
     studioHomeData: {},
-    studioHomeCoursesCustomParams: {
+    studioHomeCoursesRequestParams: {
       currentPage: 1,
     },
   };
@@ -25,10 +25,10 @@ describe('updateStudioHomeCoursesCustomParams action', () => {
     expect(result).toEqual(initialState);
   });
 
-  it('should update the currentPage in studioHomeCoursesCustomParams', () => {
+  it('should update the currentPage in studioHomeCoursesRequestParams', () => {
     const newState = {
       ...initialState,
-      studioHomeCoursesCustomParams: {
+      studioHomeCoursesRequestParams: {
         currentPage: 2,
       },
     };

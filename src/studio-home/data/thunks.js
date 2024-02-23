@@ -16,7 +16,7 @@ import {
   fetchCourseDataSuccessV2,
 } from './slice';
 
-function fetchStudioHomeData(search, hasHomeData, customParams = {}, isPaginationEnabled = false) {
+function fetchStudioHomeData(search, hasHomeData, requestParams = {}, isPaginationEnabled = false) {
   return async (dispatch) => {
     dispatch(updateLoadingStatuses({ studioHomeLoadingStatus: RequestStatus.IN_PROGRESS }));
     dispatch(updateLoadingStatuses({ courseLoadingStatus: RequestStatus.IN_PROGRESS }));
@@ -33,7 +33,7 @@ function fetchStudioHomeData(search, hasHomeData, customParams = {}, isPaginatio
     }
     try {
       if (isPaginationEnabled) {
-        const coursesData = await getStudioHomeCoursesV2(search || '', customParams);
+        const coursesData = await getStudioHomeCoursesV2(search || '', requestParams);
         dispatch(fetchCourseDataSuccessV2(coursesData));
       } else {
         const coursesData = await getStudioHomeCourses(search || '');

@@ -17,7 +17,7 @@ const slice = createSlice({
       deleteNotificationSavingStatus: '',
     },
     studioHomeData: {},
-    studioHomeCoursesCustomParams: {
+    studioHomeCoursesRequestParams: {
       currentPage: 1,
     },
   },
@@ -52,7 +52,7 @@ const slice = createSlice({
     },
     updateStudioHomeCoursesCustomParams: (state, { payload }) => {
       const { currentPage } = payload;
-      state.studioHomeCoursesCustomParams.currentPage = currentPage;
+      state.studioHomeCoursesRequestParams.currentPage = currentPage;
     },
   },
 });

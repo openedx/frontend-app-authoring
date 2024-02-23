@@ -57,7 +57,7 @@ describe('<CardItem />', () => {
 
   it('should render correct links for non-library course pagination', () => {
     const props = studioHomeMock.archivedCourses[0];
-    const { getByText, getByTestId } = render(<RootWrapper {...props} isPaginationEnabled />);
+    const { getByText, getByTestId } = render(<RootWrapper {...props} isPaginated />);
     const courseTitleLink = getByText(props.displayName);
     expect(courseTitleLink).toHaveAttribute('href', `${getConfig().STUDIO_BASE_URL}${props.url}`);
     const dropDownMenu = getByTestId('toggle-dropdown');

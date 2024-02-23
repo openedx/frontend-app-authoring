@@ -15,7 +15,7 @@ export const initialState = {
       deleteNotificationSavingStatus: '',
     },
     studioHomeData: {},
-    studioHomeCoursesCustomParams: {
+    studioHomeCoursesRequestParams: {
       currentPage: 1,
     },
   },
