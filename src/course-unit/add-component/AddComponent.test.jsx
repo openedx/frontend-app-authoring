@@ -169,11 +169,11 @@ describe('<AddComponent />', () => {
   it('creates new "Library" xblock on click', () => {
     const { getByRole } = renderComponent();
 
-    const discussionButton = getByRole('button', {
+    const libraryButton = getByRole('button', {
       name: new RegExp(`${messages.buttonText.defaultMessage} Library Content`, 'i'),
     });
 
-    userEvent.click(discussionButton);
+    userEvent.click(libraryButton);
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalled();
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith({
       parentLocator: '123',
@@ -293,11 +293,11 @@ describe('<AddComponent />', () => {
 
   it('verifies "Text" component creation and submission in modal', () => {
     const { getByRole } = renderComponent();
-    const advancedButton = getByRole('button', {
+    const textButton = getByRole('button', {
       name: new RegExp(`${messages.buttonText.defaultMessage} Text`, 'i'),
     });
 
-    userEvent.click(advancedButton);
+    userEvent.click(textButton);
     const modalContainer = getByRole('dialog');
 
     const radioInput = within(modalContainer).getByRole('radio', { name: 'Text' });
@@ -319,11 +319,11 @@ describe('<AddComponent />', () => {
 
   it('verifies "Open Response" component creation and submission in modal', () => {
     const { getByRole } = renderComponent();
-    const advancedButton = getByRole('button', {
+    const openResponseButton = getByRole('button', {
       name: new RegExp(`${messages.buttonText.defaultMessage} Open Response`, 'i'),
     });
 
-    userEvent.click(advancedButton);
+    userEvent.click(openResponseButton);
     const modalContainer = getByRole('dialog');
 
     const radioInput = within(modalContainer).getByRole('radio', { name: 'Peer Assessment Only' });
