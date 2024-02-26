@@ -3,7 +3,7 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
-import { render, waitFor, screen } from '@testing-library/react';
+import { render, waitFor, screen, within } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MockAdapter from 'axios-mock-adapter';
 
@@ -35,22 +35,25 @@ const mockTagsResponse = {
   results: [
     {
       ...tagDefaults,
-      value: 'two level tag 1',
+      value: 'root tag 1',
       child_count: 1,
+      descendant_count: 14,
       _id: 1001,
       sub_tags_url: '/request/to/load/subtags/1',
     },
     {
       ...tagDefaults,
-      value: 'two level tag 2',
+      value: 'root tag 2',
       child_count: 1,
+      descendant_count: 10,
       _id: 1002,
       sub_tags_url: '/request/to/load/subtags/2',
     },
     {
       ...tagDefaults,
-      value: 'two level tag 3',
+      value: 'root tag 3',
       child_count: 1,
+      descendant_count: 5,
       _id: 1003,
       sub_tags_url: '/request/to/load/subtags/3',
     },
@@ -84,7 +87,7 @@ const subTagsResponse = {
     },
   ],
 };
-const subTagsUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/?full_depth_threshold=10000&parent_tag=two+level+tag+1';
+const subTagsUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/?full_depth_threshold=10000&parent_tag=root+tag+1';
 
 describe('<TagListTable />', () => {
   beforeAll(async () => {
@@ -119,11 +122,13 @@ describe('<TagListTable />', () => {
   it('should render page correctly', async () => {
     axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsResponse);
     render(<RootWrapper />);
-    const tag = await screen.findByText('two level tag 1');
+    const tag = await screen.findByText('root tag 1');
     expect(tag).toBeInTheDocument();
-
+    
     const rows = screen.getAllByRole('row');
     expect(rows.length).toBe(3 + 1); // 3 items plus header
+    expect(within(rows[0]).getAllByRole('columnheader')[0].textContent).toEqual('Tag name');
+    expect(within(rows[1]).getAllByRole('cell')[0].textContent).toEqual('root tag 1 (14)');
   });
 
   it('should render page correctly with subtags', async () => {
