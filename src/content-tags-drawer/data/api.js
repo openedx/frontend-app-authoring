@@ -62,7 +62,10 @@ export async function getContentTaxonomyTagsData(contentId) {
  */
 export async function getContentTaxonomyTagsCount(contentId) {
   const { data } = await getAuthenticatedHttpClient().get(getContentTaxonomyTagsCountApiUrl(contentId));
-  return camelCaseObject(data[contentId]);
+  if (contentId in data) {
+    return camelCaseObject(data[contentId]);
+  }
+  return 0;
 }
 
 /**

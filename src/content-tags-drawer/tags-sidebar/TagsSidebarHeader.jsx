@@ -20,7 +20,7 @@ const TagsSidebarHeader = () => {
       <h3 className="course-unit-sidebar-header-title m-0">
         {intl.formatMessage(messages.tagsSidebarTitle)}
       </h3>
-      { isContentTaxonomyTagsCountLoaded
+      { isContentTaxonomyTagsCountLoaded && contentTaxonomyTagsCount !== 0
         && (
           <div className="d-flex">
             <Icon

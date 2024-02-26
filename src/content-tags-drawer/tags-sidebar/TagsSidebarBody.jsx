@@ -46,7 +46,7 @@ const TagsSidebarBody = () => {
 
   const tree = useMemo(() => {
     const result = [];
-    if (contentTaxonomyTagsData) {
+    if (isContentTaxonomyTagsLoaded && contentTaxonomyTagsData) {
       contentTaxonomyTagsData.taxonomies.forEach((taxonomy) => {
         result.push({
           ...taxonomy,
@@ -55,7 +55,7 @@ const TagsSidebarBody = () => {
       });
     }
     return result;
-  }, [contentTaxonomyTagsData]);
+  }, [isContentTaxonomyTagsLoaded, contentTaxonomyTagsData]);
 
   return (
     <>

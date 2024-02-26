@@ -3,7 +3,7 @@ import { Icon } from '@openedx/paragon';
 import { Tag } from '@openedx/paragon/icons';
 
 const TagsTree = ({ tags, rootDepth }) => {
-  if (tags === undefined) {
+  if (Object.keys(tags).length === 0) {
     return null;
   }
 
