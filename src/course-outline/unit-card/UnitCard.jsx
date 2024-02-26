@@ -40,6 +40,7 @@ const UnitCard = ({
 
   const {
     id,
+    category,
     displayName,
     hasChanges,
     published,
@@ -128,6 +129,7 @@ const UnitCard = ({
     <>
       <ConditionalSortableElement
         id={id}
+        category={category}
         key={id}
         draggable={isDraggable}
         componentStyle={{

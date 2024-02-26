@@ -5,6 +5,7 @@ import SortableItem from './SortableItem';
 
 const ConditionalSortableElement = ({
   id,
+  category,
   draggable,
   children,
   componentStyle,
@@ -22,6 +23,7 @@ const ConditionalSortableElement = ({
     return (
       <SortableItem
         id={id}
+        category={category}
         componentStyle={style}
       >
         <Col className="extend-margin px-0">

@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 
 export const DragContext = React.createContext({});
 
-const DragContextProvider = ({ activeId, children }) => {
+const DragContextProvider = ({ activeId, overId, children }) => {
   const contextValue = React.useMemo(() => ({
-    activeId
-  }), [activeId]);
+    activeId,
+    overId,
+  }), [activeId, overId]);
   return (
     <DragContext.Provider
       value={contextValue}
@@ -18,10 +19,12 @@ const DragContextProvider = ({ activeId, children }) => {
 
 DragContextProvider.defaultProps = {
   activeId: '',
+  overId: '',
 }
 
 DragContextProvider.propTypes = {
   activeId: PropTypes.string,
+  overId: PropTypes.string,
   children: PropTypes.node.isRequired,
 };
 

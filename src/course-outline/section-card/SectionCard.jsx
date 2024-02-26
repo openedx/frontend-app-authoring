@@ -50,6 +50,7 @@ const SectionCard = ({
 
   const {
     id,
+    category,
     displayName,
     hasChanges,
     published,
@@ -142,6 +143,7 @@ const SectionCard = ({
   return (
     <ConditionalSortableElement
       id={id}
+      category={category}
       draggable={isDraggable}
       componentStyle={{
         padding: '1.75rem',

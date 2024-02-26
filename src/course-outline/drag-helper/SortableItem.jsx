@@ -10,6 +10,7 @@ import messages from './messages';
 
 const SortableItem = ({
   id,
+  category,
   componentStyle,
   children,
   // injected
@@ -22,7 +23,12 @@ const SortableItem = ({
     transform,
     transition,
     setActivatorNodeRef,
-  } = useSortable({ id });
+  } = useSortable({
+    id,
+    data: {
+      category,
+    },
+  });
 
   const style = {
     transform: CSS.Translate.toString(transform),
@@ -57,6 +63,7 @@ SortableItem.defaultProps = {
 };
 SortableItem.propTypes = {
   id: PropTypes.string.isRequired,
+  category: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
   componentStyle: PropTypes.shape({}),
   // injected

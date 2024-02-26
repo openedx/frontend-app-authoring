@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useContext, useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
@@ -12,6 +12,7 @@ import { RequestStatus } from '../../data/constants';
 import { COURSE_BLOCK_NAMES } from '../constants';
 import CardHeader from '../card-header/CardHeader';
 import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
+import { DragContext } from '../drag-helper/DragContextProvider';
 import TitleButton from '../card-header/TitleButton';
 import XBlockStatus from '../xblock-status/XBlockStatus';
 import PasteButton from '../paste-button/PasteButton';
@@ -39,6 +40,7 @@ const SubsectionCard = ({
   const currentRef = useRef(null);
   const intl = useIntl();
   const dispatch = useDispatch();
+  const { activeId } = useContext(DragContext);
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const isScrolledToElement = locatorId === subsection.id;
@@ -47,6 +49,7 @@ const SubsectionCard = ({
 
   const {
     id,
+    category,
     displayName,
     hasChanges,
     published,
@@ -111,6 +114,12 @@ const SubsectionCard = ({
   );
 
   useEffect(() => {
+    if (activeId === id && isExpanded) {
+      setIsExpanded(false);
+    }
+  }, [activeId]);
+
+  useEffect(() => {
     // if this items has been newly added, scroll to it.
     // we need to check section.shouldScroll as whole section is fetched when a
     // subsection is duplicated under it.
@@ -134,6 +143,7 @@ const SubsectionCard = ({
   return (
     <ConditionalSortableElement
       id={id}
+      category={category}
       key={id}
       draggable={isDraggable}
       componentStyle={{
