@@ -8,7 +8,7 @@ const slice = createSlice({
   initialState: {
     savingStatus: '',
     isQueryPending: false,
-    isEditTitleFormOpen: false,
+    isTitleEditFormOpen: false,
     loadingStatus: {
       fetchUnitLoadingStatus: RequestStatus.IN_PROGRESS,
       courseSectionVerticalLoadingStatus: RequestStatus.IN_PROGRESS,
@@ -30,7 +30,7 @@ const slice = createSlice({
       state.isQueryPending = payload;
     },
     changeEditTitleFormOpen: (state, { payload }) => {
-      state.isEditTitleFormOpen = payload;
+      state.isTitleEditFormOpen = payload;
     },
     updateSavingStatus: (state, { payload }) => {
       state.savingStatus = payload.status;
