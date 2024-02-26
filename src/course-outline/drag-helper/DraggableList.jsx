@@ -200,8 +200,11 @@ const DraggableList = ({
     });
   }
 
-  function handleDragOver(event) {
+  const handleDragOver = (event) => {
     const { active, over  } = event;
+    if (!active || !over) {
+      return;
+    }
     const { id } = active;
     const { id: overId } = over;
     setOverId(id);
@@ -290,7 +293,23 @@ const DraggableList = ({
 
   const customClosestCorners = ({active, droppableContainers, ...args}) => {
     droppableContainers = droppableContainers.filter(
-      (container) => container.data?.current?.category === active.data?.current?.category
+      (container) => {
+        const activeCategory = active.data?.current?.category;
+        switch (activeCategory) {
+          case COURSE_BLOCK_NAMES.chapter.id:
+            return container.data?.current?.category === activeCategory;
+            break;
+          case COURSE_BLOCK_NAMES.sequential.id:
+            return [activeCategory, COURSE_BLOCK_NAMES.chapter.id].includes(container.data?.current?.category);
+            break;
+          case COURSE_BLOCK_NAMES.vertical.id:
+            return [activeCategory, COURSE_BLOCK_NAMES.sequential.id].includes(container.data?.current?.category);
+            break;
+          default:
+            return true;
+            break;
+        }
+      }
     );
     return closestCorners({active, droppableContainers, ...args});
   }
