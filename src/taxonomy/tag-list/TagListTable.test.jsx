@@ -3,7 +3,9 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
-import { render, waitFor, screen, within } from '@testing-library/react';
+import {
+  render, waitFor, screen, within,
+} from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MockAdapter from 'axios-mock-adapter';
 
@@ -124,7 +126,7 @@ describe('<TagListTable />', () => {
     render(<RootWrapper />);
     const tag = await screen.findByText('root tag 1');
     expect(tag).toBeInTheDocument();
-    
+
     const rows = screen.getAllByRole('row');
     expect(rows.length).toBe(3 + 1); // 3 items plus header
     expect(within(rows[0]).getAllByRole('columnheader')[0].textContent).toEqual('Tag name');

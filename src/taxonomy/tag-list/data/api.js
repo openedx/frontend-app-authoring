@@ -9,10 +9,12 @@ import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
-const getTagListApiUrl = (taxonomyId, page, pageSize) => new URL(
-  `api/content_tagging/v1/taxonomies/${taxonomyId}/tags/?page=${page + 1}&page_size=${pageSize}`,
-  getApiBaseUrl(),
-).href;
+const getTagListApiUrl = (taxonomyId, page, pageSize) => {
+  const url = new URL(`api/content_tagging/v1/taxonomies/${taxonomyId}/tags/`, getApiBaseUrl());
+  url.searchParams.append('page', page + 1);
+  url.searchParams.append('page_size', pageSize);
+  return url.href;
+};
 
 /**
  * @param {number} taxonomyId

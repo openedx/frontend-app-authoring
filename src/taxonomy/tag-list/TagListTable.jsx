@@ -40,7 +40,7 @@ SubTagsExpanded.propTypes = {
  * An "Expand" toggle to show/hide subtags, but one which is hidden if the given tag row has no subtags.
  */
 const OptionalExpandLink = ({ row }) => (
-  row.original.childCount > 0 ? <div className="tag-table-expand-row"><DataTable.ExpandRow row={row} /></div> : null
+  row.original.childCount > 0 ? <div className="d-flex justify-content-end"><DataTable.ExpandRow row={row} /></div> : null
 );
 OptionalExpandLink.propTypes = DataTable.ExpandRow.propTypes;
 
