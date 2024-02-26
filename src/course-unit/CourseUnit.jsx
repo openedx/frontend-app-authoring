@@ -29,7 +29,7 @@ const CourseUnit = ({ courseId }) => {
     unitTitle,
     isQueryPending,
     savingStatus,
-    isEditTitleFormOpen,
+    isTitleEditFormOpen,
     isErrorAlert,
     isInternetConnectionAlertFailed,
     handleTitleEditSubmit,
@@ -62,7 +62,7 @@ const CourseUnit = ({ courseId }) => {
             title={(
               <HeaderTitle
                 unitTitle={unitTitle}
-                isEditTitleFormOpen={isEditTitleFormOpen}
+                isTitleEditFormOpen={isTitleEditFormOpen}
                 handleTitleEdit={handleTitleEdit}
                 handleTitleEditSubmit={handleTitleEditSubmit}
               />

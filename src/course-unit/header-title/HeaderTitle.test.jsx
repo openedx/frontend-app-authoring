@@ -9,7 +9,7 @@ import HeaderTitle from './HeaderTitle';
 import messages from './messages';
 
 const unitTitle = 'Getting Started';
-const isEditTitleFormOpen = false;
+const isTitleEditFormOpen = false;
 const handleTitleEdit = jest.fn();
 const handleTitleEditSubmit = jest.fn();
 let store;
@@ -19,7 +19,7 @@ const renderComponent = (props) => render(
     <IntlProvider locale="en">
       <HeaderTitle
         unitTitle={unitTitle}
-        isEditTitleFormOpen={isEditTitleFormOpen}
+        isTitleEditFormOpen={isTitleEditFormOpen}
         handleTitleEdit={handleTitleEdit}
         handleTitleEditSubmit={handleTitleEditSubmit}
         {...props}
@@ -52,7 +52,7 @@ describe('<HeaderTitle />', () => {
 
   it('render HeaderTitle with open edit form', () => {
     const { getByRole } = renderComponent({
-      isEditTitleFormOpen: true,
+      isTitleEditFormOpen: true,
     });
 
     expect(getByRole('textbox', { name: messages.ariaLabelButtonEdit.defaultMessage })).toBeInTheDocument();
@@ -71,7 +71,7 @@ describe('<HeaderTitle />', () => {
 
   it('calls saving title by clicking outside or press Enter key', async () => {
     const { getByRole } = renderComponent({
-      isEditTitleFormOpen: true,
+      isTitleEditFormOpen: true,
     });
 
     const titleField = getByRole('textbox', { name: messages.ariaLabelButtonEdit.defaultMessage });

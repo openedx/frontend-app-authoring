@@ -29,7 +29,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const loadingStatus = useSelector(getLoadingStatus);
   const { draftPreviewLink, publishedPreviewLink } = useSelector(getCourseSectionVertical);
   const navigate = useNavigate();
-  const isEditTitleFormOpen = useSelector(state => state.courseUnit.isEditTitleFormOpen);
+  const isTitleEditFormOpen = useSelector(state => state.courseUnit.isTitleEditFormOpen);
   const isQueryPending = useSelector(state => state.courseUnit.isQueryPending);
 
   const unitTitle = courseUnit.metadata?.displayName || '';
@@ -49,7 +49,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   };
 
   const handleTitleEdit = () => {
-    dispatch(changeEditTitleFormOpen(!isEditTitleFormOpen));
+    dispatch(changeEditTitleFormOpen(!isTitleEditFormOpen));
   };
 
   const handleTitleEditSubmit = (displayName) => {
@@ -95,7 +95,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     isErrorAlert,
     isLoading: loadingStatus.fetchUnitLoadingStatus === RequestStatus.IN_PROGRESS
       || loadingStatus.courseSectionVerticalLoadingStatus === RequestStatus.IN_PROGRESS,
-    isEditTitleFormOpen,
+    isTitleEditFormOpen,
     isInternetConnectionAlertFailed: savingStatus === RequestStatus.FAILED,
     handleInternetConnectionFailed,
     headerNavigationsActions,
