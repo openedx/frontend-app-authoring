@@ -1,6 +1,6 @@
 import { MemoryRouter } from 'react-router-dom';
 import {
-  act, render, fireEvent, waitFor,
+  act, render, fireEvent, waitFor, screen,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
@@ -18,6 +18,7 @@ const onClickDuplicateMock = jest.fn();
 const onClickConfigureMock = jest.fn();
 const onClickMoveUpMock = jest.fn();
 const onClickMoveDownMock = jest.fn();
+const onClickManageTagsMock = jest.fn();
 const closeFormMock = jest.fn();
 
 const cardHeaderProps = {
@@ -28,6 +29,7 @@ const cardHeaderProps = {
   onClickMenuButton: onClickMenuButtonMock,
   onClickPublish: onClickPublishMock,
   onClickEdit: onClickEditMock,
+  onClickManageTags: onClickManageTagsMock,
   isFormOpen: false,
   onEditSubmit: jest.fn(),
   closeForm: closeFormMock,
@@ -166,6 +168,16 @@ describe('<CardHeader />', () => {
     const publishMenuItem = await findByText(messages.menuPublish.defaultMessage);
     await act(async () => fireEvent.click(publishMenuItem));
     expect(onClickPublishMock).toHaveBeenCalled();
+  });
+
+  it('calls onClickManageTags when the menu is clicked', async () => {
+    renderComponent();
+    const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
+    fireEvent.click(menuButton);
+
+    const manageTagsMenuItem = await screen.findByText(messages.menuManageTags.defaultMessage);
+    await act(async () => fireEvent.click(manageTagsMenuItem));
+    expect(onClickManageTagsMock).toHaveBeenCalled();
   });
 
   it('calls onClickEdit when the button is clicked', async () => {

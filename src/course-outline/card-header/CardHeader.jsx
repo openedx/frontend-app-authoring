@@ -27,6 +27,7 @@ const CardHeader = ({
   hasChanges,
   onClickPublish,
   onClickConfigure,
+  onClickManageTags,
   onClickMenuButton,
   onClickEdit,
   isFormOpen,
@@ -162,6 +163,15 @@ const CardHeader = ({
             >
               {intl.formatMessage(messages.menuConfigure)}
             </Dropdown.Item>
+            {onClickManageTags && (
+              <Dropdown.Item
+                data-testid={`${namePrefix}-card-header__menu-manage-tags-button`}
+                onClick={onClickManageTags}
+              >
+                {intl.formatMessage(messages.menuManageTags)}
+              </Dropdown.Item>
+            )}
+
             {isVertical && enableCopyPasteUnits && (
               <Dropdown.Item onClick={onClickCopy}>
                 {intl.formatMessage(messages.menuCopy)}
@@ -218,6 +228,7 @@ CardHeader.defaultProps = {
   discussionEnabled: false,
   discussionsSettings: {},
   parentInfo: {},
+  onClickManageTags: null,
 };
 
 CardHeader.propTypes = {
@@ -227,6 +238,7 @@ CardHeader.propTypes = {
   hasChanges: PropTypes.bool.isRequired,
   onClickPublish: PropTypes.func.isRequired,
   onClickConfigure: PropTypes.func.isRequired,
+  onClickManageTags: PropTypes.func,
   onClickMenuButton: PropTypes.func.isRequired,
   onClickEdit: PropTypes.func.isRequired,
   isFormOpen: PropTypes.bool.isRequired,
