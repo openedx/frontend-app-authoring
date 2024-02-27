@@ -30,6 +30,8 @@ const DraggableList = ({
 }) => {
   const {
     sectionsList,
+    prevContainerInfo,
+    setPrevContainerInfo,
     handleSectionDragAndDrop,
     handleSubsectionDragAndDrop,
     handleUnitDragAndDrop,
@@ -40,39 +42,8 @@ const DraggableList = ({
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
-
   const [activeId, setActiveId] = React.useState();
   const [overId, setOverId] = React.useState();
-  const [prevContainerInfo, setPrevContainerInfo] = React.useState();
-
-  const restoreSectionList = () => {
-    setSections(() => [...sectionsList]);
-  }
-
-  const finalizeSectionOrder = (newSections) => {
-    handleSectionDragAndDrop(newSections.map(section => section.id), restoreSectionList);
-  };
-
-  const finalizeSubsectionOrder = (section) => (newSubsections) => {
-    handleSubsectionDragAndDrop(
-      section.id,
-      prevContainerInfo?.sectionId,
-      newSubsections.map(subsection => subsection.id),
-      restoreSectionList
-    );
-    setPrevContainerInfo(null);
-  };
-
-  const finalizeUnitOrder = (section, subsection) => (newUnits) => {
-    handleUnitDragAndDrop(
-      section.id,
-      subsection.id,
-      prevContainerInfo?.sectionId,
-      newUnits.map(unit => unit.id),
-      restoreSectionList
-    );
-    setPrevContainerInfo(null);
-  };
 
   const findItemInfo = (id) => {
     // search id in sections
@@ -297,7 +268,7 @@ const DraggableList = ({
         case COURSE_BLOCK_NAMES.chapter.id:
           setSections((prev) => {
             const result = arrayMove(prev, activeInfo.index, overInfo.index);
-            finalizeSectionOrder(result);
+            handleSectionDragAndDrop(result.map(section => section.id));
             return result;
           });
           break;
@@ -309,7 +280,7 @@ const DraggableList = ({
             const result = arrayMove(overSection.childInfo.children, activeInfo.index, overInfo.index);
             overSection.childInfo.children = result;
             prevCopy[activeInfo.parentIndex] = overSection;
-            finalizeSubsectionOrder(overSection)(result);
+            handleSubsectionDragAndDrop(overSection.id, result.map(section => section.id));
             return prevCopy;
           });
           break;
@@ -325,7 +296,11 @@ const DraggableList = ({
             overSection.childInfo.children = [...overSection.childInfo.children];
             overSection.childInfo.children[activeInfo.parentIndex] = overSubsection;
             prevCopy[activeInfo.grandParentIndex] = overSection;
-            finalizeUnitOrder(overSection, overSubsection)(result);
+            handleUnitDragAndDrop(
+              overSection.id,
+              overSubsection.id,
+              result.map(section => section.id)
+            );
             return prevCopy;
           });
           break;

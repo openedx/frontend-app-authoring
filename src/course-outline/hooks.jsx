@@ -323,42 +323,53 @@ const useCourseOutline = ({ courseId }) => {
 const useCourseDragHandlers = ({ courseId }) => {
   const dispatch = useDispatch();
   const sectionsList = useSelector(getSectionsList);
-  const handleSectionDragAndDrop = (sectionListIds, restoreCallback) => {
-    dispatch(setSectionOrderListQuery(courseId, sectionListIds, restoreCallback));
+
+  const [prevContainerInfo, setPrevContainerInfo] = useState();
+
+  const restoreSectionList = () => {
+    setSections(() => [...sectionsList]);
+  }
+
+  const handleSectionDragAndDrop = (sectionListIds) => {
+    dispatch(setSectionOrderListQuery(
+      courseId,
+      sectionListIds,
+      restoreSectionList
+    ));
   };
 
   const handleSubsectionDragAndDrop = (
     sectionId,
-    prevSectionId,
     subsectionListIds,
-    restoreCallback
   ) => {
     dispatch(setSubsectionOrderListQuery(
       sectionId,
-      prevSectionId,
+      prevContainerInfo?.sectionId,
       subsectionListIds,
-      restoreCallback
+      restoreSectionList
     ));
+    setPrevContainerInfo(null);
   };
 
   const handleUnitDragAndDrop = (
     sectionId,
     subsectionId,
-    prevSectionId,
     unitListIds,
-    restoreCallback
   ) => {
     dispatch(setUnitOrderListQuery(
       sectionId,
       subsectionId,
-      prevSectionId,
+      prevContainerInfo?.sectionId,
       unitListIds,
-      restoreCallback
+      restoreSectionList,
     ));
+    setPrevContainerInfo(null);
   };
 
   return {
     sectionsList,
+    prevContainerInfo,
+    setPrevContainerInfo,
     handleSectionDragAndDrop,
     handleSubsectionDragAndDrop,
     handleUnitDragAndDrop,
