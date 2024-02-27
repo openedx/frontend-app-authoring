@@ -40,7 +40,7 @@ const SubsectionCard = ({
   const currentRef = useRef(null);
   const intl = useIntl();
   const dispatch = useDispatch();
-  const { activeId } = useContext(DragContext);
+  const { activeId, overId } = useContext(DragContext);
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const isScrolledToElement = locatorId === subsection.id;
@@ -116,8 +116,10 @@ const SubsectionCard = ({
   useEffect(() => {
     if (activeId === id && isExpanded) {
       setIsExpanded(false);
+    } else if (overId === id && !isExpanded) {
+      setIsExpanded(true);
     }
-  }, [activeId]);
+  }, [activeId, overId]);
 
   useEffect(() => {
     // if this items has been newly added, scroll to it.

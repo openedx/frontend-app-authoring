@@ -85,8 +85,8 @@ const DraggableList = ({
 
   const subsectionDragOver = (active, over, activeInfo, overInfo) => {
     if (
-      activeInfo.parent.id === overInfo.parent.id ||
-      (activeInfo.category === overInfo.parent.category && activeInfo.parent.id === overInfo.grandParent.id)
+      activeInfo.parent.id === overInfo.parent.id
+      || activeInfo.parent.id === overInfo.item.id
     ) {
       return;
     }
@@ -100,6 +100,7 @@ const DraggableList = ({
         // We're at the root droppable of a container
         newIndex = overInfo.item.childInfo.children.length + 1;
         overSectionIndex = overInfo.index;
+        setOverId(overInfo.item.id);
       } else {
         const isBelowOverItem =
           over &&
@@ -108,13 +109,9 @@ const DraggableList = ({
               over.rect.top + over.rect.height;
 
         const modifier = isBelowOverItem ? 1 : 0;
-        if (overInfo.category === COURSE_BLOCK_NAMES.sequential.id) {
-          newIndex = overInfo.index >= 0 ? overInfo.index + modifier : overInfo.item.childInfo.children.length + 1;
-          overSectionIndex = overInfo.parentIndex;
-        } else {
-          newIndex = overInfo.parentIndex >= 0 ? overInfo.parentIndex + modifier : overInfo.parent.childInfo.children.length + 1;
-          overSectionIndex = overInfo.grandParentIndex;
-        }
+        newIndex = overInfo.index >= 0 ? overInfo.index + modifier : overInfo.item.childInfo.children.length + 1;
+        overSectionIndex = overInfo.parentIndex;
+        setOverId(overInfo.parent.id);
       }
       if (overSectionIndex === undefined) {
         return prev;
@@ -136,9 +133,8 @@ const DraggableList = ({
 
   const unitDragOver = (active, over, activeInfo, overInfo) => {
     if (
-      activeInfo.parent.id === overInfo.parent.id ||
-      overInfo.category === COURSE_BLOCK_NAMES.chapter.id ||
-      (overInfo.category === COURSE_BLOCK_NAMES.sequential.id && overInfo.item.childInfo.children.length > 0)
+      activeInfo.parent.id === overInfo.parent.id
+      || activeInfo.parent.id === overInfo.item.id
     ) {
       return;
     }
@@ -155,6 +151,7 @@ const DraggableList = ({
         newIndex = overInfo.item.childInfo.children.length + 1;
         overSubsectionIndex = overInfo.index;
         overSectionIndex = overInfo.parentIndex;
+        setOverId(overInfo.item.id);
       } else {
         const isBelowOverItem =
           over &&
@@ -163,11 +160,10 @@ const DraggableList = ({
               over.rect.top + over.rect.height;
 
         const modifier = isBelowOverItem ? 1 : 0;
-        if (overInfo.category === COURSE_BLOCK_NAMES.vertical.id) {
-          newIndex = overInfo.index >= 0 ? overInfo.index + modifier : overInfo.item.childInfo.children.length + 1;
-          overSubsectionIndex = overInfo.parentIndex;
-          overSectionIndex = overInfo.grandParentIndex;
-        }
+        newIndex = overInfo.index >= 0 ? overInfo.index + modifier : overInfo.item.childInfo.children.length + 1;
+        overSubsectionIndex = overInfo.parentIndex;
+        overSectionIndex = overInfo.grandParentIndex;
+        setOverId(overInfo.parent.id);
       }
       if (overSectionIndex === undefined || overSubsectionIndex === undefined) {
         return prev;
@@ -207,7 +203,6 @@ const DraggableList = ({
     }
     const { id } = active;
     const { id: overId } = over;
-    setOverId(id);
 
     // Find the containers
     const activeInfo = findItemInfo(id);
@@ -291,10 +286,10 @@ const DraggableList = ({
     setActiveId(id);
   }
 
-  const customClosestCorners = ({active, droppableContainers, ...args}) => {
+  const customClosestCorners = ({active, droppableContainers, droppableRects, ...args}) => {
+    const activeCategory = active.data?.current?.category;
     droppableContainers = droppableContainers.filter(
       (container) => {
-        const activeCategory = active.data?.current?.category;
         switch (activeCategory) {
           case COURSE_BLOCK_NAMES.chapter.id:
             return container.data?.current?.category === activeCategory;
@@ -311,7 +306,7 @@ const DraggableList = ({
         }
       }
     );
-    return closestCorners({active, droppableContainers, ...args});
+    return closestCorners({active, droppableContainers, droppableRects, ...args});
   }
 
   return (

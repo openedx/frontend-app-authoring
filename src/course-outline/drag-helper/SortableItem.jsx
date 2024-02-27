@@ -22,15 +22,20 @@ const SortableItem = ({
     setNodeRef,
     transform,
     transition,
+    isDragging,
     setActivatorNodeRef,
+    ...args
   } = useSortable({
     id,
     data: {
       category,
     },
+    animateLayoutChanges: () => false
   });
 
   const style = {
+    position: 'relative',
+    zIndex: isDragging ? 200 : undefined,
     transform: CSS.Translate.toString(transform),
     transition,
     ...componentStyle,
