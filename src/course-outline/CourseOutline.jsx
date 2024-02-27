@@ -96,10 +96,7 @@ const CourseOutline = ({ courseId }) => {
     handleNewSubsectionSubmit,
     handleNewUnitSubmit,
     getUnitUrl,
-    handleSectionDragAndDrop,
-    handleSubsectionDragAndDrop,
     handleVideoSharingOptionChange,
-    handleUnitDragAndDrop,
     handleCopyToClipboardClick,
     handlePasteClipboardClick,
     notificationDismissUrl,
@@ -124,26 +121,11 @@ const CourseOutline = ({ courseId }) => {
 
   const { category } = useSelector(getCurrentItem);
   const deleteCategory = COURSE_BLOCK_NAMES[category]?.name.toLowerCase();
-
-  const finalizeSectionOrder = () => (newSections) => {
-    initialSections = [...sectionsList];
-    handleSectionDragAndDrop(newSections.map(section => section.id), () => {
-      setSections(() => initialSections);
-    });
-  };
-
   const setSubsection = (index) => (updatedSubsection) => {
     const section = { ...sections[index] };
     section.childInfo = { ...section.childInfo };
     section.childInfo.children = updatedSubsection();
     setSections([...sections.slice(0, index), section, ...sections.slice(index + 1)]);
-  };
-
-  const finalizeSubsectionOrder = (section) => () => (newSubsections) => {
-    initialSections = [...sectionsList];
-    handleSubsectionDragAndDrop(section.id, newSubsections.map(subsection => subsection.id), () => {
-      setSections(() => initialSections);
-    });
   };
 
   const setUnit = (sectionIndex, subsectionIndex) => (updatedUnits) => {
@@ -158,13 +140,6 @@ const CourseOutline = ({ courseId }) => {
     updatedSubsections[subsectionIndex] = subsection;
     section.childInfo.children = updatedSubsections;
     setSections([...sections.slice(0, sectionIndex), section, ...sections.slice(sectionIndex + 1)]);
-  };
-
-  const finalizeUnitOrder = (section, subsection) => () => (newUnits) => {
-    initialSections = [...sectionsList];
-    handleUnitDragAndDrop(section.id, subsection.id, newUnits.map(unit => unit.id), () => {
-      setSections(() => initialSections);
-    });
   };
 
   const unitsIdPattern = useMemo(() => {
@@ -353,7 +328,7 @@ const CourseOutline = ({ courseId }) => {
                     <div className="pt-4">
                       {sections.length ? (
                         <>
-                          <DraggableList items={sections} setItems={setSections} updateOrder={finalizeSectionOrder}>
+                          <DraggableList courseId={courseId} items={sections} setSections={setSections}>
                             <SortableContext
                               id="root"
                               items={sections}

@@ -20,13 +20,20 @@ import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 
 import DragContextProvider from './DragContextProvider';
 import { COURSE_BLOCK_NAMES } from '../constants';
+import { useCourseDragHandlers } from '../hooks';
 
 const DraggableList = ({
+  courseId,
   items,
-  setItems,
-  updateOrder,
+  setSections,
   children,
 }) => {
+  const {
+    sectionsList,
+    handleSectionDragAndDrop,
+    handleSubsectionDragAndDrop,
+    handleUnitDragAndDrop,
+  } = useCourseDragHandlers({ courseId });
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -36,6 +43,36 @@ const DraggableList = ({
 
   const [activeId, setActiveId] = React.useState();
   const [overId, setOverId] = React.useState();
+  const [prevContainerInfo, setPrevContainerInfo] = React.useState();
+
+  const restoreSectionList = () => {
+    setSections(() => [...sectionsList]);
+  }
+
+  const finalizeSectionOrder = (newSections) => {
+    handleSectionDragAndDrop(newSections.map(section => section.id), restoreSectionList);
+  };
+
+  const finalizeSubsectionOrder = (section) => (newSubsections) => {
+    handleSubsectionDragAndDrop(
+      section.id,
+      prevContainerInfo?.sectionId,
+      newSubsections.map(subsection => subsection.id),
+      restoreSectionList
+    );
+    setPrevContainerInfo(null);
+  };
+
+  const finalizeUnitOrder = (section, subsection) => (newUnits) => {
+    handleUnitDragAndDrop(
+      section.id,
+      subsection.id,
+      prevContainerInfo?.sectionId,
+      newUnits.map(unit => unit.id),
+      restoreSectionList
+    );
+    setPrevContainerInfo(null);
+  };
 
   const findItemInfo = (id) => {
     // search id in sections
@@ -90,7 +127,7 @@ const DraggableList = ({
     ) {
       return;
     }
-    setItems((prev) => {
+    setSections((prev) => {
       const prevCopy = [ ...prev ];
       const activeSection = { ...prevCopy[activeInfo.parentIndex] };
       let overSectionIndex;
@@ -124,6 +161,10 @@ const DraggableList = ({
         ...overSection.childInfo.children.slice(newIndex, overSection.childInfo.children.length)
       ]
       activeSection.childInfo = { ...activeSection.childInfo };
+      setPrevContainerInfo({
+        sectionId: activeSection.id,
+        id: activeSection.id,
+      });
       activeSection.childInfo.children = activeSection.childInfo.children.filter((item) => item.id !== active.id);
       prevCopy[activeInfo.parentIndex] = activeSection;
       prevCopy[overSectionIndex] = overSection;
@@ -138,7 +179,7 @@ const DraggableList = ({
     ) {
       return;
     }
-    setItems((prev) => {
+    setSections((prev) => {
       const prevCopy = [ ...prev ];
       const activeSection = { ...prevCopy[activeInfo.grandParentIndex] };
       const activeSubsection = { ...activeSection.childInfo.children[activeInfo.parentIndex] };
@@ -189,6 +230,10 @@ const DraggableList = ({
       activeSubsection.childInfo.children = activeSubsection.childInfo.children.filter((item) => item.id !== active.id)
       activeSection.childInfo.children = [...activeSection.childInfo.children];
       activeSection.childInfo.children[activeInfo.parentIndex] = activeSubsection;
+      setPrevContainerInfo({
+        sectionId: activeSection.id,
+        id: activeSubsection.id,
+      });
 
       prevCopy[activeInfo.grandParentIndex] = activeSection;
       prevCopy[overSectionIndex] = overSection;
@@ -247,31 +292,40 @@ const DraggableList = ({
     if (activeInfo.parent !== 'root') {
       currentItems = activeInfo.parent.childInfo.children;
     }
-    if (activeInfo.index !== overInfo.index) {
+    if (activeInfo.index !== overInfo.index || prevContainerInfo?.id) {
       switch (activeInfo.category) {
         case COURSE_BLOCK_NAMES.chapter.id:
-          setItems((prev) => arrayMove(prev, activeInfo.index, overInfo.index));
+          setSections((prev) => {
+            const result = arrayMove(prev, activeInfo.index, overInfo.index);
+            finalizeSectionOrder(result);
+            return result;
+          });
           break;
         case COURSE_BLOCK_NAMES.sequential.id:
-          setItems((prev) => {
+          setSections((prev) => {
             const prevCopy = [ ...prev ];
             const overSection = { ...prev[activeInfo.parentIndex] };
             overSection.childInfo = { ...overSection.childInfo };
-            overSection.childInfo.children = arrayMove(overSection.childInfo.children, activeInfo.index, overInfo.index);
+            const result = arrayMove(overSection.childInfo.children, activeInfo.index, overInfo.index);
+            overSection.childInfo.children = result;
             prevCopy[activeInfo.parentIndex] = overSection;
+            finalizeSubsectionOrder(overSection)(result);
             return prevCopy;
           });
           break;
         case COURSE_BLOCK_NAMES.vertical.id:
-          setItems((prev) => {
+          setSections((prev) => {
             const prevCopy = [ ...prev ];
             const overSection = { ...prev[activeInfo.grandParentIndex] };
             overSection.childInfo = { ...overSection.childInfo };
             const overSubsection = { ...overSection.childInfo.children[activeInfo.parentIndex] };
             overSubsection.childInfo = { ...overSubsection.childInfo };
-            overSubsection.childInfo.children = arrayMove(overSubsection.childInfo.children, activeInfo.index, overInfo.index);
+            const result = arrayMove(overSubsection.childInfo.children, activeInfo.index, overInfo.index);
+            overSubsection.childInfo.children = result;
+            overSection.childInfo.children = [...overSection.childInfo.children];
             overSection.childInfo.children[activeInfo.parentIndex] = overSubsection;
             prevCopy[activeInfo.grandParentIndex] = overSection;
+            finalizeUnitOrder(overSection, overSubsection)(result);
             return prevCopy;
           });
           break;
@@ -329,8 +383,7 @@ DraggableList.propTypes = {
   itemList: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
   })).isRequired,
-  setItems: PropTypes.func.isRequired,
-  updateOrder: PropTypes.func.isRequired,
+  setSections: PropTypes.func.isRequired,
   children: PropTypes.node.isRequired,
 };
 

@@ -519,66 +519,87 @@ export function addNewUnitQuery(parentLocator, callback) {
   };
 }
 
+function setBlockOrderListQuery(
+  parentId,
+  blockIds,
+  apiFn,
+  restoreCallback,
+  successCallback,
+) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+
+    try {
+      await apiFn(parentId, blockIds).then(async (result) => {
+        if (result) {
+          successCallback();
+          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+          dispatch(hideProcessingNotification());
+        }
+      });
+    } catch (error) {
+      restoreCallback();
+      dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
 export function setSectionOrderListQuery(courseId, sectionListIds, restoreCallback) {
   return async (dispatch) => {
-    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
-
-    try {
-      await setSectionOrderList(courseId, sectionListIds).then(async (result) => {
-        if (result) {
-          dispatch(reorderSectionList(sectionListIds));
-          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-          dispatch(hideProcessingNotification());
-        }
-      });
-    } catch (error) {
-      restoreCallback();
-      dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-    }
+    dispatch(setBlockOrderListQuery(
+      courseId,
+      sectionListIds,
+      setSectionOrderList,
+      restoreCallback,
+      () => dispatch(reorderSectionList(sectionListIds)),
+    ));
   };
 }
 
-export function setSubsectionOrderListQuery(sectionId, subsectionListIds, restoreCallback) {
+export function setSubsectionOrderListQuery(
+  sectionId,
+  prevSectionId,
+  subsectionListIds,
+  restoreCallback
+) {
   return async (dispatch) => {
-    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
-
-    try {
-      await setCourseItemOrderList(sectionId, subsectionListIds).then(async (result) => {
-        if (result) {
-          dispatch(reorderSubsectionList({ sectionId, subsectionListIds }));
-          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-          dispatch(hideProcessingNotification());
+    dispatch(setBlockOrderListQuery(
+      sectionId,
+      subsectionListIds,
+      setCourseItemOrderList,
+      restoreCallback,
+      () => {
+        dispatch(fetchCourseSectionQuery(sectionId));
+        if (prevSectionId && prevSectionId !== sectionId) {
+          dispatch(fetchCourseSectionQuery(prevSectionId));
         }
-      });
-    } catch (error) {
-      restoreCallback();
-      dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-    }
+      },
+    ));
   };
 }
 
-export function setUnitOrderListQuery(sectionId, subsectionId, unitListIds, restoreCallback) {
+export function setUnitOrderListQuery(
+  sectionId,
+  subsectionId,
+  prevSectionId,
+  unitListIds,
+  restoreCallback
+) {
   return async (dispatch) => {
-    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
-
-    try {
-      await setCourseItemOrderList(subsectionId, unitListIds).then(async (result) => {
-        if (result) {
-          dispatch(reorderUnitList({ sectionId, subsectionId, unitListIds }));
-          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-          dispatch(hideProcessingNotification());
+    dispatch(setBlockOrderListQuery(
+      subsectionId,
+      unitListIds,
+      setCourseItemOrderList,
+      restoreCallback,
+      () => {
+        dispatch(fetchCourseSectionQuery(sectionId));
+        if (prevSectionId && prevSectionId !== sectionId) {
+          dispatch(fetchCourseSectionQuery(prevSectionId));
         }
-      });
-    } catch (error) {
-      restoreCallback();
-      dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-    }
+      },
+    ));
   };
 }
 

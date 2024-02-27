@@ -236,20 +236,8 @@ const useCourseOutline = ({ courseId }) => {
     dispatch(duplicateUnitQuery(currentItem.id, currentSubsection.id, currentSection.id));
   };
 
-  const handleSectionDragAndDrop = (sectionListIds, restoreCallback) => {
-    dispatch(setSectionOrderListQuery(courseId, sectionListIds, restoreCallback));
-  };
-
-  const handleSubsectionDragAndDrop = (sectionId, subsectionListIds, restoreCallback) => {
-    dispatch(setSubsectionOrderListQuery(sectionId, subsectionListIds, restoreCallback));
-  };
-
   const handleVideoSharingOptionChange = (value) => {
     dispatch(setVideoSharingOptionQuery(courseId, value));
-  };
-
-  const handleUnitDragAndDrop = (sectionId, subsectionId, unitListIds, restoreCallback) => {
-    dispatch(setUnitOrderListQuery(sectionId, subsectionId, unitListIds, restoreCallback));
   };
 
   const handleDismissNotification = () => {
@@ -317,10 +305,7 @@ const useCourseOutline = ({ courseId }) => {
     getUnitUrl,
     openUnitPage,
     handleNewUnitSubmit,
-    handleSectionDragAndDrop,
-    handleSubsectionDragAndDrop,
     handleVideoSharingOptionChange,
-    handleUnitDragAndDrop,
     handleCopyToClipboardClick,
     handlePasteClipboardClick,
     notificationDismissUrl,
@@ -335,5 +320,50 @@ const useCourseOutline = ({ courseId }) => {
   };
 };
 
+const useCourseDragHandlers = ({ courseId }) => {
+  const dispatch = useDispatch();
+  const sectionsList = useSelector(getSectionsList);
+  const handleSectionDragAndDrop = (sectionListIds, restoreCallback) => {
+    dispatch(setSectionOrderListQuery(courseId, sectionListIds, restoreCallback));
+  };
+
+  const handleSubsectionDragAndDrop = (
+    sectionId,
+    prevSectionId,
+    subsectionListIds,
+    restoreCallback
+  ) => {
+    dispatch(setSubsectionOrderListQuery(
+      sectionId,
+      prevSectionId,
+      subsectionListIds,
+      restoreCallback
+    ));
+  };
+
+  const handleUnitDragAndDrop = (
+    sectionId,
+    subsectionId,
+    prevSectionId,
+    unitListIds,
+    restoreCallback
+  ) => {
+    dispatch(setUnitOrderListQuery(
+      sectionId,
+      subsectionId,
+      prevSectionId,
+      unitListIds,
+      restoreCallback
+    ));
+  };
+
+  return {
+    sectionsList,
+    handleSectionDragAndDrop,
+    handleSubsectionDragAndDrop,
+    handleUnitDragAndDrop,
+  };
+};
+
 // eslint-disable-next-line import/prefer-default-export
-export { useCourseOutline };
+export { useCourseOutline, useCourseDragHandlers };
