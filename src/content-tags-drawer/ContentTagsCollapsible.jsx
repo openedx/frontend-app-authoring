@@ -1,6 +1,6 @@
 // @ts-check
 import React from 'react';
-import Select, { components, MenuProps } from 'react-select';
+import Select, { components } from 'react-select';
 import {
   Badge,
   Collapsible,
@@ -12,8 +12,7 @@ import {
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { SelectableBox } from '@edx/frontend-lib-content-components';
-import { cloneDeep } from 'lodash';
-import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
+import { useIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { debounce } from 'lodash';
 import messages from './messages';
 import './ContentTagsCollapsible.scss';
@@ -32,6 +31,8 @@ const CustomMenu = (props) => {
     taxonomyId,
     appliedContentTagsTree,
     stagedContentTagsTree,
+    handleStagedTagsMenuChange,
+    selectRef,
     searchTerm,
     value,
   } = props.selectProps;
@@ -61,7 +62,7 @@ const CustomMenu = (props) => {
           <div className="d-inline">
             <Button
               variant="tertiary"
-              onClick={() => { /* TODO: Implement this */ }}
+              onClick={() => { handleStagedTagsMenuChange([]); selectRef.current?.blur(); }}
             >
               { intl.formatMessage(messages.collapsibleCancelStagedTagsButtonText) }
             </Button>
@@ -79,7 +80,34 @@ const CustomMenu = (props) => {
   );
 };
 
-// TODO: Add props validation for CustomMenu
+CustomMenu.propTypes = {
+  selectProps: PropTypes.shape({
+    intl: intlShape.isRequired,
+    handleSelectableBoxChange: PropTypes.func.isRequired,
+    checkedTags: PropTypes.arrayOf(PropTypes.string).isRequired,
+    taxonomyId: PropTypes.number.isRequired,
+    appliedContentTagsTree: PropTypes.objectOf(
+      PropTypes.shape({
+        explicit: PropTypes.bool.isRequired,
+        children: PropTypes.shape({}).isRequired,
+      }).isRequired,
+    ).isRequired,
+    stagedContentTagsTree: PropTypes.objectOf(
+      PropTypes.shape({
+        explicit: PropTypes.bool.isRequired,
+        children: PropTypes.shape({}).isRequired,
+      }).isRequired,
+    ).isRequired,
+    handleStagedTagsMenuChange: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/forbid-prop-types
+    selectRef: PropTypes.shape({ current: PropTypes.object }),
+    searchTerm: PropTypes.string.isRequired,
+    value: PropTypes.arrayOf(PropTypes.shape({
+      value: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+    })).isRequired,
+  }).isRequired,
+};
 
 /** @typedef {import("../taxonomy/data/types.mjs").TaxonomyData} TaxonomyData */
 /** @typedef {import("./data/types.mjs").Tag} ContentTagData */
@@ -168,6 +196,7 @@ const ContentTagsCollapsible = ({
 }) => {
   const intl = useIntl();
   const { id: taxonomyId, name, canTagObject } = taxonomyAndTagsData;
+  const selectRef = React.useRef(null);
 
   const {
     tagChangeHandler, appliedContentTagsTree, stagedContentTagsTree, contentTagsCount, checkedTags,
@@ -227,6 +256,7 @@ const ContentTagsCollapsible = ({
 
           {canTagObject && (
             <Select
+              ref={selectRef}
               isMulti
               name="tags-select"
               placeholder={intl.formatMessage(messages.collapsibleAddTagsPlaceholderText)}
@@ -244,6 +274,8 @@ const ContentTagsCollapsible = ({
               taxonomyId={taxonomyId}
               appliedContentTagsTree={appliedContentTagsTree}
               stagedContentTagsTree={stagedContentTagsTree}
+              handleStagedTagsMenuChange={handleStagedTagsMenuChange}
+              selectRef={selectRef}
               searchTerm={searchTerm}
               value={stagedContentTags}
             />
