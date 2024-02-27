@@ -100,7 +100,6 @@ const DraggableList = ({
     }
     setSections((prev) => {
       const prevCopy = [ ...prev ];
-      const activeSection = { ...prevCopy[activeInfo.parentIndex] };
       let overSectionIndex;
       // Find the indexes for the items
       let newIndex;
@@ -124,19 +123,32 @@ const DraggableList = ({
       if (overSectionIndex === undefined) {
         return prev;
       }
-      const overSection = { ...prev[overSectionIndex] };
-      overSection.childInfo = { ...overSection.childInfo };
-      overSection.childInfo.children = [
-        ...overSection.childInfo.children.slice(0, newIndex),
+
+      let activeSection = helpers.copyBlockChildren({ ...prevCopy[activeInfo.parentIndex] });
+      let overSection = helpers.copyBlockChildren({ ...prev[overSectionIndex] });
+
+      overSection = helpers.insertChild(
+        overSection,
         activeSection.childInfo.children[activeInfo.index],
-        ...overSection.childInfo.children.slice(newIndex, overSection.childInfo.children.length)
-      ]
-      activeSection.childInfo = { ...activeSection.childInfo };
-      setPrevContainerInfo({
-        sectionId: activeSection.id,
-        id: activeSection.id,
+        newIndex
+      );
+
+      setPrevContainerInfo((prev) => {
+        let sectionId = activeSection.id;
+        if (prev?.sectionId && prev.sectionId !== sectionId) {
+          sectionId = prev.sectionId;
+        }
+        return {
+          sectionId: sectionId,
+          id: sectionId,
+        };
       });
-      activeSection.childInfo.children = activeSection.childInfo.children.filter((item) => item.id !== active.id);
+
+      activeSection = helpers.setBlockChildren(
+        activeSection,
+        activeSection.childInfo.children.filter((item) => item.id !== active.id)
+      )
+
       prevCopy[activeInfo.parentIndex] = activeSection;
       prevCopy[overSectionIndex] = overSection;
       return prevCopy;
@@ -152,8 +164,6 @@ const DraggableList = ({
     }
     setSections((prev) => {
       const prevCopy = [ ...prev ];
-      const activeSection = { ...prevCopy[activeInfo.grandParentIndex] };
-      const activeSubsection = { ...activeSection.childInfo.children[activeInfo.parentIndex] };
       let overSubsectionIndex;
       let overSectionIndex;
       // Find the indexes for the items
@@ -177,33 +187,40 @@ const DraggableList = ({
         overSectionIndex = overInfo.grandParentIndex;
         setOverId(overInfo.parent.id);
       }
-      if (overSectionIndex === undefined || overSubsectionIndex === undefined) {
-        return prev;
-      }
+
+      let activeSection = helpers.copyBlockChildren({ ...prevCopy[activeInfo.grandParentIndex] });
+      let activeSubsection = helpers.copyBlockChildren({ ...activeSection.childInfo.children[activeInfo.parentIndex] });
+
       let overSection = { ...prev[overSectionIndex] };
       if (overSection.id === activeSection.id) {
         overSection = activeSection;
       }
-      overSection.childInfo = { ...overSection.childInfo };
-      const overSubsection = { ...overSection.childInfo.children[overSubsectionIndex] };
 
-      overSubsection.childInfo = { ...overSubsection.childInfo };
-      overSubsection.childInfo.children = [
-        ...overSubsection.childInfo.children.slice(0, newIndex),
+      overSection = helpers.copyBlockChildren(overSection);
+      let overSubsection = helpers.copyBlockChildren({ ...overSection.childInfo.children[overSubsectionIndex] });
+
+      overSubsection = helpers.insertChild(
+        overSubsection,
         activeSubsection.childInfo.children[activeInfo.index],
-        ...overSubsection.childInfo.children.slice(newIndex, overSubsection.childInfo.children.length)
-      ]
-      overSection.childInfo.children = [...overSection.childInfo.children];
-      overSection.childInfo.children[overSubsectionIndex] = overSubsection;
+        newIndex
+      );
+      overSection = helpers.setBlockChild(overSection, overSubsection, overSubsectionIndex);
 
-      activeSection.childInfo = { ...activeSection.childInfo };
-      activeSubsection.childInfo = { ...activeSubsection.childInfo };
-      activeSubsection.childInfo.children = activeSubsection.childInfo.children.filter((item) => item.id !== active.id)
-      activeSection.childInfo.children = [...activeSection.childInfo.children];
-      activeSection.childInfo.children[activeInfo.parentIndex] = activeSubsection;
-      setPrevContainerInfo({
-        sectionId: activeSection.id,
-        id: activeSubsection.id,
+      activeSubsection = helpers.setBlockChildren(
+        activeSubsection,
+        activeSubsection.childInfo.children.filter((item) => item.id !== active.id)
+      )
+      activeSection = helpers.setBlockChild(activeSection, activeSubsection, activeInfo.parentIndex);
+
+      setPrevContainerInfo((prev) => {
+        let sectionId = activeSection.id;
+        if (prev?.sectionId && prev.sectionId !== sectionId) {
+          sectionId = prev.sectionId;
+        }
+        return {
+          sectionId: sectionId,
+          id: activeSubsection.id,
+        };
       });
 
       prevCopy[activeInfo.grandParentIndex] = activeSection;
@@ -235,6 +252,30 @@ const DraggableList = ({
         break;
     }
   }
+
+  const helpers = {
+    copyBlockChildren: (block) => {
+      block.childInfo = { ...block.childInfo };
+      block.childInfo.children = [...block.childInfo.children];
+      return block;
+    },
+    setBlockChildren: (block, children) => {
+      block.childInfo.children = children;
+      return block;
+    },
+    setBlockChild: (block, child, id) => {
+      block.childInfo.children[id] = child;
+      return block;
+    },
+    insertChild: (block, child, index) => {
+      block.childInfo.children = [
+        ...block.childInfo.children.slice(0, index),
+        child,
+        ...block.childInfo.children.slice(index, block.childInfo.children.length)
+      ]
+      return block;
+    },
+  };
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
@@ -275,31 +316,31 @@ const DraggableList = ({
         case COURSE_BLOCK_NAMES.sequential.id:
           setSections((prev) => {
             const prevCopy = [ ...prev ];
-            const overSection = { ...prev[activeInfo.parentIndex] };
-            overSection.childInfo = { ...overSection.childInfo };
-            const result = arrayMove(overSection.childInfo.children, activeInfo.index, overInfo.index);
-            overSection.childInfo.children = result;
-            prevCopy[activeInfo.parentIndex] = overSection;
-            handleSubsectionDragAndDrop(overSection.id, result.map(section => section.id));
+            let section = helpers.copyBlockChildren({ ...prev[activeInfo.parentIndex] });
+
+            const result = arrayMove(section.childInfo.children, activeInfo.index, overInfo.index);
+            section = helpers.setBlockChildren(section, result);
+
+            prevCopy[activeInfo.parentIndex] = section;
+            handleSubsectionDragAndDrop(section.id, result.map(section => section.id));
             return prevCopy;
           });
           break;
         case COURSE_BLOCK_NAMES.vertical.id:
           setSections((prev) => {
             const prevCopy = [ ...prev ];
-            const overSection = { ...prev[activeInfo.grandParentIndex] };
-            overSection.childInfo = { ...overSection.childInfo };
-            const overSubsection = { ...overSection.childInfo.children[activeInfo.parentIndex] };
-            overSubsection.childInfo = { ...overSubsection.childInfo };
-            const result = arrayMove(overSubsection.childInfo.children, activeInfo.index, overInfo.index);
-            overSubsection.childInfo.children = result;
-            overSection.childInfo.children = [...overSection.childInfo.children];
-            overSection.childInfo.children[activeInfo.parentIndex] = overSubsection;
-            prevCopy[activeInfo.grandParentIndex] = overSection;
+            let section = helpers.copyBlockChildren({ ...prev[activeInfo.grandParentIndex] });
+            let subsection = helpers.copyBlockChildren({ ...section.childInfo.children[activeInfo.parentIndex] });
+
+            const result = arrayMove(subsection.childInfo.children, activeInfo.index, overInfo.index);
+            subsection = helpers.setBlockChildren(subsection, result);
+            section = helpers.setBlockChild(section, subsection, activeInfo.parentIndex);
+
+            prevCopy[activeInfo.grandParentIndex] = section;
             handleUnitDragAndDrop(
-              overSection.id,
-              overSubsection.id,
-              result.map(section => section.id)
+              section.id,
+              subsection.id,
+              result.map(item => item.id)
             );
             return prevCopy;
           });
