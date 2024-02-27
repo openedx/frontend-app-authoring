@@ -101,7 +101,9 @@ const slice = createSlice({
       state.savingStatus = payload.status;
     },
     updateSectionList: (state, { payload }) => {
-      state.sectionsList = state.sectionsList.map((section) => (section.id === payload.id ? payload : section));
+      state.sectionsList = state.sectionsList.map((section) => {
+        return section.id in payload ? payload[section.id] : section
+      });
     },
     setCurrentItem: (state, { payload }) => {
       state.currentItem = payload;
