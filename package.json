@@ -90,7 +90,7 @@
     "@testing-library/react": "12.1.5",
     "@testing-library/react-hooks": "^8.0.1",
     "@testing-library/user-event": "^13.2.1",
-    "axios": "^0.27.2",
+    "axios": "^0.28.0",
     "axios-mock-adapter": "1.22.0",
     "glob": "7.2.3",
     "husky": "7.0.4",
