@@ -1,5 +1,6 @@
 // @ts-check
 import React, { useMemo, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import {
   Container,
   CloseButton,
@@ -20,9 +21,14 @@ import Loading from '../generic/Loading';
 /** @typedef {import("../taxonomy/data/types.mjs").TaxonomyData} TaxonomyData */
 /** @typedef {import("./data/types.mjs").Tag} ContentTagData */
 
-const ContentTagsDrawer = () => {
+const ContentTagsDrawer = ({ id, onClose }) => {
   const intl = useIntl();
-  const { contentId } = /** @type {{contentId: string}} */(useParams());
+  const params = useParams();
+  let contentId = id;
+
+  if (contentId === undefined) {
+    contentId = params.contentId;
+  }
 
   const org = extractOrgFromContentId(contentId);
 
@@ -39,17 +45,20 @@ const ContentTagsDrawer = () => {
   } = useContentTaxonomyTagsData(contentId);
   const { taxonomyListData, isTaxonomyListLoaded } = useTaxonomyListData();
 
-  const closeContentTagsDrawer = () => {
-    // "*" allows communication with any origin
-    window.parent.postMessage('closeManageTagsDrawer', '*');
-  };
+  let onCloseDrawer = onClose;
+  if (onCloseDrawer === undefined) {
+    onCloseDrawer = () => {
+      // "*" allows communication with any origin
+      window.parent.postMessage('closeManageTagsDrawer', '*');
+    };
+  }
 
   useEffect(() => {
     const handleEsc = (event) => {
       /* Close drawer when ESC-key is pressed and selectable dropdown box not open */
       const selectableBoxOpen = document.querySelector('[data-selectable-box="taxonomy-tags"]');
       if (event.key === 'Escape' && !selectableBoxOpen) {
-        closeContentTagsDrawer();
+        onCloseDrawer();
       }
     };
     document.addEventListener('keydown', handleEsc);
@@ -86,7 +95,7 @@ const ContentTagsDrawer = () => {
 
     <div className="mt-1">
       <Container size="xl">
-        <CloseButton onClick={() => closeContentTagsDrawer()} data-testid="drawer-close-button" />
+        <CloseButton onClick={() => onCloseDrawer()} data-testid="drawer-close-button" />
         <span>{intl.formatMessage(messages.headerSubtitle)}</span>
         { isContentDataLoaded
           ? <h3>{ contentData.displayName }</h3>
@@ -114,6 +123,16 @@ const ContentTagsDrawer = () => {
       </Container>
     </div>
   );
+};
+
+ContentTagsDrawer.propTypes = {
+  id: PropTypes.string,
+  onClose: PropTypes.func,
+};
+
+ContentTagsDrawer.defaultProps = {
+  id: undefined,
+  onClose: undefined,
 };
 
 export default ContentTagsDrawer;
