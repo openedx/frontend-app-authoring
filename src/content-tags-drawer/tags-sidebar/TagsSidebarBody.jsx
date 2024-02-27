@@ -65,7 +65,7 @@ const TagsSidebarBody = () => {
             ? (
               <Stack>
                 {tree.map((taxonomy) => (
-                  <div>
+                  <div key={taxonomy.name}>
                     <Collapsible
                       className="tags-sidebar-taxonomy"
                       styling="card"
@@ -73,7 +73,7 @@ const TagsSidebarBody = () => {
                       iconWhenClosed={<Icon src={ArrowDropDown} />}
                       iconWhenOpen={<Icon src={ArrowDropUp} />}
                     >
-                      <TagsTree tags={taxonomy.tags} />
+                      <TagsTree tags={taxonomy.tags} parentKey={taxonomy.name} />
                     </Collapsible>
                   </div>
                 ))}
