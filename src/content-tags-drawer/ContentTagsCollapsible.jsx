@@ -203,12 +203,9 @@ const ContentTagsCollapsible = ({
   // The remaining staged tags are passed in as the parameter, so we set the state
   // to the passed in tags
   const handleStagedTagsMenuChange = React.useCallback((stagedTags) => {
-    const prevStagedContentTags = cloneDeep(stagedContentTags);
-    setStagedTags(taxonomyId, stagedTags);
-
     // Get tags that were unstaged to remove them from checkbox selector
-    const unstagedTags = prevStagedContentTags.filter(
-      t1 => !stagedTags.some(t2 => t1.value === t2.value && t1.label === t2.label),
+    const unstagedTags = stagedContentTags.filter(
+      t1 => !stagedTags.some(t2 => t1.value === t2.value),
     );
 
     // Call the `tagChangeHandler` with the unstaged tags to unselect them from the selectbox
@@ -216,6 +213,7 @@ const ContentTagsCollapsible = ({
     // only called when a change occurs in the react-select menu component we know that tags can only be
     // removed from there, hence the tagChangeHandler is always called with `checked=false`.
     unstagedTags.forEach(unstagedTag => tagChangeHandler(unstagedTag.value, false));
+    setStagedTags(taxonomyId, stagedTags);
   }, [taxonomyId, setStagedTags, stagedContentTags, tagChangeHandler]);
 
   return (

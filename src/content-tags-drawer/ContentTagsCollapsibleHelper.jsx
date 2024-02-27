@@ -181,16 +181,18 @@ const useContentTagsCollapsibleHelper = (
         };
       } else {
         traversal[tag].explicit = isExplicit;
-        if (!isExplicit) {
-          removeStagedContentTag(id, tag);
-        }
       }
 
       // Clear out the ancestor tags leading to newly selected tag
       // as they automatically become implicit
       value.push(encodeURIComponent(tag));
-      // eslint-disable-next-line no-unused-expressions
-      isExplicit ? add(value.join(',')) : remove(value.join(','));
+
+      if (isExplicit) {
+        add(value.join(','));
+      } else {
+        removeStagedContentTag(id, value.join(','));
+        remove(value.join(','));
+      }
 
       traversal = traversal[tag].children;
     });
@@ -229,7 +231,7 @@ const useContentTagsCollapsibleHelper = (
       });
 
       // Remove content tag from taxonomy's staged tags select menu
-      removeStagedContentTag(id, selectedTag);
+      removeStagedContentTag(id, tagSelectableBoxValue);
     }
 
     // setUpdatingTags(true);

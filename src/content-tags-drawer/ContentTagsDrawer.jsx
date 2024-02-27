@@ -13,7 +13,6 @@ import {
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useParams } from 'react-router-dom';
-import { cloneDeep } from 'lodash';
 import messages from './messages';
 import ContentTagsCollapsible from './ContentTagsCollapsible';
 import { extractOrgFromContentId } from './utils';
@@ -51,35 +50,25 @@ const ContentTagsDrawer = ({ id, onClose }) => {
   // Add a content tags to the staged tags for a taxonomy
   const addStagedContentTag = useCallback((taxonomyId, addedTag) => {
     setStagedContentTags(prevStagedContentTags => {
-      const updatedStagedContentTags = cloneDeep(prevStagedContentTags);
-      if (!updatedStagedContentTags[taxonomyId]) {
-        updatedStagedContentTags[taxonomyId] = [];
-      }
-      updatedStagedContentTags[taxonomyId].push(addedTag);
+      const updatedStagedContentTags = {
+        ...prevStagedContentTags,
+        [taxonomyId]: [...(prevStagedContentTags[taxonomyId] ?? []), addedTag],
+      };
       return updatedStagedContentTags;
     });
   }, [setStagedContentTags]);
 
   // Remove a content tag from the staged tags for a taxonomy
-  const removeStagedContentTag = useCallback((taxonomyId, tagLabel) => {
-    setStagedContentTags(prevStagedContentTags => {
-      const updatedStagedContentTags = cloneDeep(prevStagedContentTags);
-      let stagedTaxonomyTags = updatedStagedContentTags[taxonomyId];
-      if (stagedTaxonomyTags && stagedTaxonomyTags.length) {
-        stagedTaxonomyTags = stagedTaxonomyTags.filter((t) => t.label !== tagLabel);
-        updatedStagedContentTags[taxonomyId] = stagedTaxonomyTags;
-      }
-      return updatedStagedContentTags;
-    });
+  const removeStagedContentTag = useCallback((taxonomyId, tagValue) => {
+    setStagedContentTags(prevStagedContentTags => ({
+      ...prevStagedContentTags,
+      [taxonomyId]: prevStagedContentTags[taxonomyId].filter((t) => t.value !== tagValue),
+    }));
   }, [setStagedContentTags]);
 
   // Sets the staged content tags for taxonomy to the provided list of tags
   const setStagedTags = useCallback((taxonomyId, tagsList) => {
-    setStagedContentTags(prevStagedContentTags => {
-      const updatedStagedContentTags = cloneDeep(prevStagedContentTags);
-      updatedStagedContentTags[taxonomyId] = tagsList;
-      return updatedStagedContentTags;
-    });
+    setStagedContentTags(prevStagedContentTags => ({ ...prevStagedContentTags, [taxonomyId]: tagsList }));
   }, [setStagedContentTags]);
 
   const useTaxonomyListData = () => {
