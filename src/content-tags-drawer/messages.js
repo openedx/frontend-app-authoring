@@ -33,9 +33,13 @@ const messages = defineMessages({
     id: 'course-authoring.content-tags-drawer.content-tags-collapsible.selectable-box.selection.aria.label',
     defaultMessage: 'taxonomy tags selection',
   },
+  collapsibleAddTagsPlaceholderText: {
+    id: 'course-authoring.content-tags-drawer.content-tags-collapsible.custom-menu.placeholder-text',
+    defaultMessage: 'Add a tag',
+  },
   collapsibleAddStagedTagsButtonText: {
     id: 'course-authoring.content-tags-drawer.content-tags-collapsible.custom-menu.save-staged-tags',
-    defaultMessage: 'Add',
+    defaultMessage: 'Add tags',
   },
   collapsibleCancelStagedTagsButtonText: {
     id: 'course-authoring.content-tags-drawer.content-tags-collapsible.custom-menu.cancel-staged-tags',

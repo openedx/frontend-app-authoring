@@ -228,7 +228,8 @@ const ContentTagsCollapsible = ({
           {canTagObject && (
             <Select
               isMulti
-              name="colors"
+              name="tags-select"
+              placeholder={intl.formatMessage(messages.collapsibleAddTagsPlaceholderText)}
               isSearchable
               className="d-flex flex-column flex-fill"
               classNamePrefix="react-select"
