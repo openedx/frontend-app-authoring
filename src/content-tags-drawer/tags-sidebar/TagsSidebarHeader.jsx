@@ -2,6 +2,7 @@ import { Icon, Stack } from '@openedx/paragon';
 import { Tag } from '@openedx/paragon/icons';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import classNames from 'classnames';
 
 import messages from '../messages';
 import { useContentTaxonomyTagsCount } from '../data/apiHooks';
@@ -20,9 +21,12 @@ const TagsSidebarHeader = () => {
       <h3 className="course-unit-sidebar-header-title m-0">
         {intl.formatMessage(messages.tagsSidebarTitle)}
       </h3>
-      { isContentTaxonomyTagsCountLoaded && contentTaxonomyTagsCount !== 0
+      { isContentTaxonomyTagsCountLoaded
         && (
-          <div className="d-flex">
+          <div className={
+            classNames('course-unit-sidebar-header-count d-flex', { 'zero-count': contentTaxonomyTagsCount === 0 })
+          }
+          >
             <Icon
               className="mr-1 pt-1"
               src={Tag}

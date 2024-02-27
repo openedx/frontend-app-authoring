@@ -33,14 +33,4 @@ describe('<TagsSidebarHeader>', () => {
     expect(screen.getByRole('heading', { name: /unit tags/i })).toBeInTheDocument();
     expect(screen.getByText('17')).toBeInTheDocument();
   });
-
-  it('should not render count if is cero', () => {
-    useContentTaxonomyTagsCount.mockReturnValue({
-      isSuccess: true,
-      data: 0,
-    });
-    render(<RootWrapper />);
-    expect(screen.getByRole('heading', { name: /unit tags/i })).toBeInTheDocument();
-    expect(screen.queryByText('0')).not.toBeInTheDocument();
-  });
 });

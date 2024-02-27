@@ -1,6 +1,10 @@
 .tags-sidebar {
   .course-unit-sidebar-header {
     padding-bottom: .25rem !important;
+
+    .course-unit-sidebar-header-count.zero-count {
+      opacity: .4;
+    }
   }
 
   .tags-sidebar-body {
