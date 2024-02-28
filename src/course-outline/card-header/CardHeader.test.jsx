@@ -263,4 +263,20 @@ describe('<CardHeader />', () => {
 
     expect(queryByText(messages.discussionEnabledBadgeText.defaultMessage)).toBeInTheDocument();
   });
+
+  it('should render tag count if is not zero', () => {
+    renderComponent({
+      ...cardHeaderProps,
+      tagsCount: 17,
+    });
+    expect(screen.getByText('17')).toBeInTheDocument();
+  });
+
+  it('should not render tag count if is zero', () => {
+    renderComponent({
+      ...cardHeaderProps,
+      tagsCount: 0,
+    });
+    expect(screen.queryByText('0')).not.toBeInTheDocument();
+  });
 });

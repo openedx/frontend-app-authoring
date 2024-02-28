@@ -30,6 +30,7 @@ const UnitCard = ({
   onOrderChange,
   onCopyToClipboardClick,
   discussionsSettings,
+  tagsCount,
 }) => {
   const currentRef = useRef(null);
   const dispatch = useDispatch();
@@ -165,6 +166,7 @@ const UnitCard = ({
             discussionEnabled={discussionEnabled}
             discussionsSettings={discussionsSettings}
             parentInfo={parentInfo}
+            tagsCount={tagsCount}
           />
           <div className="unit-card__content item-children" data-testid="unit-card__content">
             <XBlockStatus
@@ -191,6 +193,7 @@ const UnitCard = ({
 
 UnitCard.defaultProps = {
   discussionsSettings: {},
+  tagsCount: undefined,
 };
 
 UnitCard.propTypes = {
@@ -246,6 +249,7 @@ UnitCard.propTypes = {
     providerType: PropTypes.string,
     enableGradedUnits: PropTypes.bool,
   }),
+  tagsCount: PropTypes.number,
 };
 
 export default UnitCard;
