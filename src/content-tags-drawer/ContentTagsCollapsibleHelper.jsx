@@ -83,13 +83,14 @@ const useContentTagsCollapsibleHelper = (
   taxonomyAndTagsData,
   addStagedContentTag,
   removeStagedContentTag,
+  stagedContentTags,
 ) => {
   const {
     id, contentTags, canTagObject,
   } = taxonomyAndTagsData;
-  // State to determine whether the tags are being updating so we can make a call
+  // State to determine whether an applied tag was removed so we make a call
   // to the update endpoint to the reflect those changes
-  const [updatingTags, setUpdatingTags] = React.useState(false);
+  const [removingAppliedTag, setRemoveAppliedTag] = React.useState(false);
   const updateTags = useContentTaxonomyTagsUpdater(contentId, id);
 
   // Keeps track of the content objects tags count (both implicit and explicit)
@@ -100,34 +101,40 @@ const useContentTagsCollapsibleHelper = (
   const [stagedContentTagsTree, setStagedContentTagsTree] = React.useState({});
 
   // To handle checking/unchecking tags in the SelectableBox
-  const [checkedTags, { add, remove, clear }] = useCheckboxSetValues();
+  const [checkedTags, { add, remove }] = useCheckboxSetValues();
 
-  // =================================================================
+  // Handles making requests to the backend when applied tags are removed
+  React.useEffect(() => {
+    // We have this check because this hook is fired when the component first loads
+    // and reloads (on refocus). We only want to make a request to the update endpoint when
+    // the user removes an applied tag
+    if (removingAppliedTag) {
+      setRemoveAppliedTag(false);
 
-  // TODO: Properly implement this based on feature/requirements
+      // Filter out staged tags from the checktags so they do not get committed
+      const tags = checkedTags.map(t => decodeURIComponent(t.split(',').slice(-1)));
+      const staged = stagedContentTags.map(t => t.label);
+      const remainingAppliedTags = tags.filter(t => !staged.includes(t));
 
-  // // Handles making requests to the update endpoint whenever the checked tags change
-  // React.useEffect(() => {
-  //   // We have this check because this hook is fired when the component first loads
-  //   // and reloads (on refocus). We only want to make a request to the update endpoint when
-  //   // the user is updating the tags.
-  //   if (updatingTags) {
-  //     setUpdatingTags(false);
-  //     const tags = checkedTags.map(t => decodeURIComponent(t.split(',').slice(-1)));
-  //     updateTags.mutate({ tags });
-  //   }
-  // }, [contentId, id, canTagObject, checkedTags]);
+      updateTags.mutate({ tags: remainingAppliedTags });
+    }
+  }, [contentId, id, canTagObject, checkedTags, stagedContentTags]);
 
-  // ==================================================================
+  // Handles making requests to the update endpoint when the staged tags need to be committed
+  const commitStagedTags = React.useCallback(() => {
+    const staged = stagedContentTags.map(t => t.label);
+
+    const stagedLineages = stagedContentTags.map(st => decodeURIComponent(st.value).split(',').slice(0, -1)).flat();
+
+    // Filter out applied tags that should become implicit because a child tag was committed
+    const applied = contentTags.map((t) => t.value).filter(t => !stagedLineages.includes(t));
+
+    updateTags.mutate({ tags: [...applied, ...staged] });
+  }, [contentTags, stagedContentTags, updateTags]);
 
   // This converts the contentTags prop to the tree structure mentioned above
   const appliedContentTagsTree = React.useMemo(() => {
     let contentTagsCounter = 0;
-
-    // Clear all the tags that have not been commited and the checked boxes when
-    // fresh contentTags passed in so the latest state from the backend is rendered
-    setStagedContentTagsTree({});
-    clear();
 
     // When an error occurs while updating, the contentTags query is invalidated,
     // hence they will be recalculated, and the updateTags mutation should be reset.
@@ -172,6 +179,10 @@ const useContentTagsCollapsibleHelper = (
     tagLineage.forEach(tag => {
       const isExplicit = selectedTag === tag;
 
+      // Clear out the ancestor tags leading to newly selected tag
+      // as they automatically become implicit
+      value.push(encodeURIComponent(tag));
+
       if (!traversal[tag]) {
         traversal[tag] = {
           explicit: isExplicit,
@@ -181,19 +192,11 @@ const useContentTagsCollapsibleHelper = (
         };
       } else {
         traversal[tag].explicit = isExplicit;
-      }
-
-      // Clear out the ancestor tags leading to newly selected tag
-      // as they automatically become implicit
-      value.push(encodeURIComponent(tag));
-
-      if (isExplicit) {
-        add(value.join(','));
-      } else {
         removeStagedContentTag(id, value.join(','));
-        remove(value.join(','));
       }
 
+      // eslint-disable-next-line no-unused-expressions
+      isExplicit ? add(value.join(',')) : remove(value.join(','));
       traversal = traversal[tag].children;
     });
   };
@@ -222,6 +225,9 @@ const useContentTagsCollapsibleHelper = (
       // Remove tag from the SelectableBox.Set
       remove(tagSelectableBoxValue);
 
+      // Remove tags from applied tags
+      removeTags(appliedContentTagsTree, tagLineage);
+
       // Remove tag along with it's from ancestors if it's the only child tag
       // from the staged tags tree and update the staged content tags tree
       setStagedContentTagsTree(prevStagedContentTagsTree => {
@@ -233,19 +239,32 @@ const useContentTagsCollapsibleHelper = (
       // Remove content tag from taxonomy's staged tags select menu
       removeStagedContentTag(id, tagSelectableBoxValue);
     }
-
-    // setUpdatingTags(true);
   }, [
-    stagedContentTagsTree, setStagedContentTagsTree, addTags, removeTags, removeTags,
+    stagedContentTagsTree, setStagedContentTagsTree, addTags, removeTags,
     id, addStagedContentTag, removeStagedContentTag,
   ]);
 
+  const removeAppliedTagHandler = React.useCallback((tagSelectableBoxValue) => {
+    const tagLineage = tagSelectableBoxValue.split(',').map(t => decodeURIComponent(t));
+
+    // Remove tag from the SelectableBox.Set
+    remove(tagSelectableBoxValue);
+
+    // Remove tags from applied tags
+    removeTags(appliedContentTagsTree, tagLineage);
+
+    setRemoveAppliedTag(true);
+  }, [checkedTags]);
+
   return {
     tagChangeHandler,
+    removeAppliedTagHandler,
     appliedContentTagsTree: sortKeysAlphabetically(appliedContentTagsTree),
     stagedContentTagsTree: sortKeysAlphabetically(stagedContentTagsTree),
     contentTagsCount,
     checkedTags,
+    commitStagedTags,
+    updateTags,
   };
 };
 

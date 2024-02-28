@@ -5,9 +5,7 @@ import {
   Badge,
   Collapsible,
   Button,
-  ModalPopup,
-  useToggle,
-  SearchField,
+  Spinner,
 } from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -35,6 +33,7 @@ const CustomMenu = (props) => {
     selectRef,
     searchTerm,
     value,
+    commitStagedTags,
   } = props.selectProps;
   return (
     <components.Menu {...props}>
@@ -69,7 +68,7 @@ const CustomMenu = (props) => {
             <Button
               variant="tertiary"
               disabled={!(value && value.length)}
-              onClick={() => { /* TODO: Implement this */ }}
+              onClick={() => { commitStagedTags(); handleStagedTagsMenuChange([]); selectRef.current?.blur(); }}
             >
               { intl.formatMessage(messages.collapsibleAddStagedTagsButtonText) }
             </Button>
@@ -106,6 +105,24 @@ CustomMenu.propTypes = {
       value: PropTypes.string.isRequired,
       label: PropTypes.string.isRequired,
     })).isRequired,
+    commitStagedTags: PropTypes.func.isRequired,
+  }).isRequired,
+};
+
+const CustomLoadingIndicator = (props) => {
+  const { intl } = props.selectProps;
+  return (
+    <Spinner
+      animation="border"
+      size="xl"
+      screenReaderText={intl.formatMessage(messages.loadingMessage)}
+    />
+  );
+};
+
+CustomLoadingIndicator.propTypes = {
+  selectProps: PropTypes.shape({
+    intl: intlShape.isRequired,
   }).isRequired,
 };
 
@@ -199,12 +216,20 @@ const ContentTagsCollapsible = ({
   const selectRef = React.useRef(null);
 
   const {
-    tagChangeHandler, appliedContentTagsTree, stagedContentTagsTree, contentTagsCount, checkedTags,
+    tagChangeHandler,
+    removeAppliedTagHandler,
+    appliedContentTagsTree,
+    stagedContentTagsTree,
+    contentTagsCount,
+    checkedTags,
+    commitStagedTags,
+    updateTags,
   } = useContentTagsCollapsibleHelper(
     contentId,
     taxonomyAndTagsData,
     addStagedContentTag,
     removeStagedContentTag,
+    stagedContentTags,
   );
 
   const [searchTerm, setSearchTerm] = React.useState('');
@@ -238,7 +263,7 @@ const ContentTagsCollapsible = ({
     );
 
     // Call the `tagChangeHandler` with the unstaged tags to unselect them from the selectbox
-    // and update the staged content tags tree. Since the `handleStagedTagsMenuChange` function is
+    // and update the staged content tags tree. Since the `handleStagedTagsMenuChange` function is={}
     // only called when a change occurs in the react-select menu component we know that tags can only be
     // removed from there, hence the tagChangeHandler is always called with `checked=false`.
     unstagedTags.forEach(unstagedTag => tagChangeHandler(unstagedTag.value, false));
@@ -249,7 +274,7 @@ const ContentTagsCollapsible = ({
     <div className="d-flex">
       <Collapsible title={name} styling="card-lg" className="taxonomy-tags-collapsible">
         <div key={taxonomyId}>
-          <ContentTagsTree tagsTree={appliedContentTagsTree} removeTagHandler={tagChangeHandler} />
+          <ContentTagsTree tagsTree={appliedContentTagsTree} removeTagHandler={removeAppliedTagHandler} />
         </div>
 
         <div className="d-flex taxonomy-tags-selector-menu">
@@ -258,6 +283,8 @@ const ContentTagsCollapsible = ({
             <Select
               ref={selectRef}
               isMulti
+              isLoading={updateTags.isLoading}
+              isDisabled={updateTags.isLoading}
               name="tags-select"
               placeholder={intl.formatMessage(messages.collapsibleAddTagsPlaceholderText)}
               isSearchable
@@ -265,7 +292,7 @@ const ContentTagsCollapsible = ({
               classNamePrefix="react-select"
               onInputChange={handleSearchChange}
               onChange={handleStagedTagsMenuChange}
-              components={{ Menu: CustomMenu }}
+              components={{ Menu: CustomMenu, LoadingIndicator: CustomLoadingIndicator }}
               closeMenuOnSelect={false}
               blurInputOnSelect={false}
               intl={intl}
@@ -278,6 +305,7 @@ const ContentTagsCollapsible = ({
               selectRef={selectRef}
               searchTerm={searchTerm}
               value={stagedContentTags}
+              commitStagedTags={commitStagedTags}
             />
           )}
         </div>
