@@ -269,30 +269,68 @@ const CourseOutline = ({ courseId }) => {
       );
       sectionId = section.id;
       subsectionId = subsection.id;
-    } else if (step === -1 && index === 0 && subsectionIndex > 0) {
-      [sectionsCopy, newUnits] = moveUnitOver(
-        sectionsCopy,
-        sectionIndex,
-        subsectionIndex,
-        index,
-        sectionIndex,
-        subsectionIndex + step,
-        sectionsCopy[sectionIndex].childInfo.children[subsectionIndex + step].childInfo.children.length + 1,
-      );
-      sectionId = section.id;
-      subsectionId = sectionsCopy[sectionIndex].childInfo.children[subsectionIndex + step].id;
-    } else if (step === 1 && index === units.length - 1 && subsectionIndex < sectionsCopy[sectionIndex].childInfo.children.length - 1) {
-      [sectionsCopy, newUnits] = moveUnitOver(
-        sectionsCopy,
-        sectionIndex,
-        subsectionIndex,
-        index,
-        sectionIndex,
-        subsectionIndex + step,
-        0,
-      );
-      sectionId = section.id;
-      subsectionId = sectionsCopy[sectionIndex].childInfo.children[subsectionIndex + step].id;
+    } else if (step === -1 && index === 0) {
+      if (subsectionIndex > 0) {
+        [sectionsCopy, newUnits] = moveUnitOver(
+          sectionsCopy,
+          sectionIndex,
+          subsectionIndex,
+          index,
+          sectionIndex,
+          subsectionIndex + step,
+          sectionsCopy[sectionIndex].childInfo.children[subsectionIndex + step].childInfo.children.length + 1,
+        );
+        sectionId = section.id;
+        subsectionId = sectionsCopy[sectionIndex].childInfo.children[subsectionIndex + step].id;
+      } else if (sectionIndex > 0) { // check subsections inside section
+        const newSectionIndex = sectionIndex + step;
+        if (sectionsCopy[newSectionIndex].childInfo.children.length === 0) {
+          return;
+        }
+        const newSubsectionIndex = sectionsCopy[newSectionIndex].childInfo.children.length - 1;
+        [sectionsCopy, newUnits] = moveUnitOver(
+          sectionsCopy,
+          sectionIndex,
+          subsectionIndex,
+          index,
+          newSectionIndex,
+          newSubsectionIndex,
+          sectionsCopy[newSectionIndex].childInfo.children[newSubsectionIndex].childInfo.children.length + 1,
+        );
+        sectionId = sectionsCopy[newSectionIndex].id;
+        subsectionId = sectionsCopy[newSectionIndex].childInfo.children[newSubsectionIndex].id;
+      }
+    } else if (step === 1 && index === units.length - 1) {
+      if (subsectionIndex < sectionsCopy[sectionIndex].childInfo.children.length - 1) {
+        [sectionsCopy, newUnits] = moveUnitOver(
+          sectionsCopy,
+          sectionIndex,
+          subsectionIndex,
+          index,
+          sectionIndex,
+          subsectionIndex + step,
+          0,
+        );
+        sectionId = section.id;
+        subsectionId = sectionsCopy[sectionIndex].childInfo.children[subsectionIndex + step].id;
+      } else if (sectionIndex < sectionsCopy.length - 1) {
+        const newSectionIndex = sectionIndex + step;
+        if (sectionsCopy[newSectionIndex].childInfo.children.length === 0) {
+          return;
+        }
+        const newSubsectionIndex = 0;
+        [sectionsCopy, newUnits] = moveUnitOver(
+          sectionsCopy,
+          sectionIndex,
+          subsectionIndex,
+          index,
+          newSectionIndex,
+          newSubsectionIndex,
+          0,
+        );
+        sectionId = sectionsCopy[newSectionIndex].id;
+        subsectionId = sectionsCopy[newSectionIndex].childInfo.children[newSubsectionIndex].id;
+      }
     }
     if (newUnits && sectionId && subsectionId) {
       setSections(sectionsCopy);
