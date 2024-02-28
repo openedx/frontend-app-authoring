@@ -13,6 +13,10 @@ const messages = defineMessages({
     id: 'course-authoring.pages-resources.viewLive.button',
     defaultMessage: 'View live',
   },
+  errorShowingConfiguration: {
+    id: 'course-authoring.pages-resources.courseAppPlugin.errorMessage',
+    defaultMessage: 'An error occurred when loading the configuration UI for that app.',
+  },
   enabled: {
     id: 'course-authoring.badge.enabled',
     defaultMessage: 'Enabled',

@@ -1,0 +1,45 @@
+@import "~@edx/brand/paragon/variables";
+@import "~@openedx/paragon/scss/core/utilities-only";
+
+.summary-radio {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border-width: $border-width;
+  border-color: $border-color;
+  border-radius: $border-radius;
+  border-style: solid;
+
+  &:has(input:checked) {
+    border-width: 3px;
+    border-color: theme-color("primary");
+  }
+
+  > div {
+    flex: 1;
+
+    > label {
+      min-height: 80px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+  }
+}
+
+.reset-units-button {
+  color: $link-color;
+  border-width: $border-width;
+  border-color: $border-color;
+  border-radius: $border-radius;
+  border-style: solid;
+}
+
+.reset-tooltip {
+  .arrow::before {
+    border-right-color: #00262B;
+  }
+
+  .tooltip-inner {
+    background-color: #00262B;
+  }
+}

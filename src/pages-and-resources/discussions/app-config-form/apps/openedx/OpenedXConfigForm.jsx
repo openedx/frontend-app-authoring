@@ -6,8 +6,8 @@ import React, { useState } from 'react';
 
 import { useSelector } from 'react-redux';
 import * as Yup from 'yup';
-import { useModel, useModels } from '../../../../../generic/model-store';
-import { setupYupExtensions } from '../../../../../utils';
+import { useModel, useModels } from 'CourseAuthoring/generic/model-store';
+import { setupYupExtensions } from 'CourseAuthoring/utils';
 import messages from '../../messages';
 import { checkFieldErrors } from '../../utils';
 import AnonymousPostingFields from '../shared/AnonymousPostingFields';
