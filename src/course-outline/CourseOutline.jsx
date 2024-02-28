@@ -108,11 +108,22 @@ const CourseOutline = ({ courseId }) => {
     mfeProctoredExamSettingsUrl,
     handleDismissNotification,
     advanceSettingsUrl,
+    prevContainerInfo,
+    handleSectionDragAndDrop,
+    handleSubsectionDragAndDrop,
+    handleUnitDragAndDrop,
+    moveSubsectionOver,
+    moveUnitOver,
+    moveSubsection,
+    moveUnit,
+    dragHelpers,
   } = useCourseOutline({ courseId });
 
   const [sections, setSections] = useState(sectionsList);
 
-  let initialSections = [...sectionsList];
+  const restoreSectionList = () => {
+    setSections(() => [...sectionsList]);
+  }
 
   const {
     isShow: isShowProcessingNotification,
@@ -121,26 +132,6 @@ const CourseOutline = ({ courseId }) => {
 
   const { category } = useSelector(getCurrentItem);
   const deleteCategory = COURSE_BLOCK_NAMES[category]?.name.toLowerCase();
-  const setSubsection = (index) => (updatedSubsection) => {
-    const section = { ...sections[index] };
-    section.childInfo = { ...section.childInfo };
-    section.childInfo.children = updatedSubsection();
-    setSections([...sections.slice(0, index), section, ...sections.slice(index + 1)]);
-  };
-
-  const setUnit = (sectionIndex, subsectionIndex) => (updatedUnits) => {
-    const section = { ...sections[sectionIndex] };
-    section.childInfo = { ...section.childInfo };
-
-    const subsection = { ...section.childInfo.children[subsectionIndex] };
-    subsection.childInfo = { ...subsection.childInfo };
-    subsection.childInfo.children = updatedUnits();
-
-    const updatedSubsections = [...section.childInfo.children];
-    updatedSubsections[subsectionIndex] = subsection;
-    section.childInfo.children = updatedSubsections;
-    setSections([...sections.slice(0, sectionIndex), section, ...sections.slice(sectionIndex + 1)]);
-  };
 
   const unitsIdPattern = useMemo(() => {
     let pattern = '';
@@ -194,7 +185,7 @@ const CourseOutline = ({ courseId }) => {
     }
     setSections((prevSections) => {
       const newSections = arrayMove(prevSections, currentIndex, newIndex);
-      finalizeSectionOrder()(newSections);
+      handleSectionDragAndDrop(newSections.map(section => section.id));
       return newSections;
     });
   };
@@ -207,15 +198,45 @@ const CourseOutline = ({ courseId }) => {
    * @param {any} subsections
    * @returns {(currentIndex, newIndex) => void}
    */
-  const updateSubsectionOrderByIndex = (sectionIndex, section, subsections) => (currentIndex, newIndex) => {
-    if (currentIndex === newIndex) {
-      return;
+  const updateSubsectionOrderByIndex = (sectionIndex, section, subsections) => (index, step) => {
+    let newSubsections;
+    let sectionId;
+    let sectionsCopy = [...sections];
+    if ((step === -1 && index >= 1) || (step === 1 && subsections.length - index >= 2)) {
+      [sectionsCopy, newSubsections] = moveSubsection(
+        sectionsCopy,
+        sectionIndex,
+        index,
+        index+step,
+      );
+      sectionId = section.id;
+    } else if (step === -1 && index === 0 && sectionIndex > 0) {
+      [sectionsCopy, newSubsections] = moveSubsectionOver(
+        sectionsCopy,
+        sectionIndex,
+        index,
+        sectionIndex + step,
+        sectionsCopy[sectionIndex + step].childInfo.children.length + 1,
+      );
+      sectionId = sections[sectionIndex + step].id;
+    } else if (step === 1 && index === subsections.length - 1 && sectionIndex < sections.length - 1) {
+      [sectionsCopy, newSubsections] = moveSubsectionOver(
+        sectionsCopy,
+        sectionIndex,
+        index,
+        sectionIndex + step,
+        0,
+      );
+      sectionId = sections[sectionIndex + step].id;
     }
-    setSubsection(sectionIndex)(() => {
-      const newSubsections = arrayMove(subsections, currentIndex, newIndex);
-      finalizeSubsectionOrder(section)()(newSubsections);
-      return newSubsections;
-    });
+    if (newSubsections && sectionId) {
+      setSections(sectionsCopy);
+      handleSubsectionDragAndDrop(
+        sectionId,
+        newSubsections.map(subsection => subsection.id),
+        restoreSectionList,
+      );
+    }
   };
 
   /**
@@ -233,15 +254,55 @@ const CourseOutline = ({ courseId }) => {
     section,
     subsection,
     units,
-  ) => (currentIndex, newIndex) => {
-    if (currentIndex === newIndex) {
-      return;
+  ) => (index, step) => {
+    let newUnits;
+    let sectionId;
+    let subsectionId;
+    let sectionsCopy = [...sections];
+    if ((step === -1 && index >= 1) || (step === 1 && units.length - index >= 2)) {
+      [sectionsCopy, newUnits] = moveUnit(
+        sectionsCopy,
+        sectionIndex,
+        subsectionIndex,
+        index,
+        index+step,
+      );
+      sectionId = section.id;
+      subsectionId = subsection.id;
+    } else if (step === -1 && index === 0 && subsectionIndex > 0) {
+      [sectionsCopy, newUnits] = moveUnitOver(
+        sectionsCopy,
+        sectionIndex,
+        subsectionIndex,
+        index,
+        sectionIndex,
+        subsectionIndex + step,
+        sectionsCopy[sectionIndex].childInfo.children[subsectionIndex + step].childInfo.children.length + 1,
+      );
+      sectionId = section.id;
+      subsectionId = sectionsCopy[sectionIndex].childInfo.children[subsectionIndex + step].id;
+    } else if (step === 1 && index === units.length - 1 && subsectionIndex < sectionsCopy[sectionIndex].childInfo.children.length - 1) {
+      [sectionsCopy, newUnits] = moveUnitOver(
+        sectionsCopy,
+        sectionIndex,
+        subsectionIndex,
+        index,
+        sectionIndex,
+        subsectionIndex + step,
+        0,
+      );
+      sectionId = section.id;
+      subsectionId = sectionsCopy[sectionIndex].childInfo.children[subsectionIndex + step].id;
     }
-    setUnit(sectionIndex, subsectionIndex)(() => {
-      const newUnits = arrayMove(units, currentIndex, newIndex);
-      finalizeUnitOrder(section, subsection)()(newUnits);
-      return newUnits;
-    });
+    if (newUnits && sectionId && subsectionId) {
+      setSections(sectionsCopy);
+      handleUnitDragAndDrop(
+        sectionId,
+        subsectionId,
+        newUnits.map(unit => unit.id),
+        restoreSectionList,
+      );
+    }
   };
 
   useEffect(() => {
@@ -328,7 +389,21 @@ const CourseOutline = ({ courseId }) => {
                     <div className="pt-4">
                       {sections.length ? (
                         <>
-                          <DraggableList courseId={courseId} items={sections} setSections={setSections}>
+                          <DraggableList
+                            courseId={courseId}
+                            items={sections}
+                            setSections={setSections}
+                            restoreSectionList={restoreSectionList}
+                            prevContainerInfo={prevContainerInfo}
+                            handleSectionDragAndDrop={handleSectionDragAndDrop}
+                            handleSubsectionDragAndDrop={handleSubsectionDragAndDrop}
+                            handleUnitDragAndDrop={handleUnitDragAndDrop}
+                            moveSubsectionOver={moveSubsectionOver}
+                            moveUnitOver={moveUnitOver}
+                            moveSubsection={moveSubsection}
+                            moveUnit={moveUnit}
+                            helpers={dragHelpers}
+                          >
                             <SortableContext
                               id="root"
                               items={sections}

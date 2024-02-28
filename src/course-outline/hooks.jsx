@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useToggle } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
+import { arrayMove } from '@dnd-kit/sortable';
 
 import { RequestStatus } from '../data/constants';
 import { COURSE_BLOCK_NAMES } from './constants';
@@ -94,6 +95,7 @@ const useCourseOutline = ({ courseId }) => {
   const clipboardBroadcastChannel = useBroadcastChannel('studio_clipboard_channel', (message) => {
     dispatch(updateClipboardContent(message));
   });
+  const prevContainerInfo = useRef();
 
   const handleCopyToClipboardClick = (usageKey) => {
     dispatch(setClipboardContent(usageKey, clipboardBroadcastChannel.postMessage));
@@ -244,6 +246,180 @@ const useCourseOutline = ({ courseId }) => {
     dispatch(dismissNotificationQuery(notificationDismissUrl));
   };
 
+  const handleSectionDragAndDrop = (
+    sectionListIds,
+    restoreSectionList,
+  ) => {
+    dispatch(setSectionOrderListQuery(
+      courseId,
+      sectionListIds,
+      restoreSectionList
+    ));
+  };
+
+  const handleSubsectionDragAndDrop = (
+    sectionId,
+    subsectionListIds,
+    restoreSectionList,
+  ) => {
+    dispatch(setSubsectionOrderListQuery(
+      sectionId,
+      prevContainerInfo.current,
+      subsectionListIds,
+      restoreSectionList
+    ));
+    prevContainerInfo.current = null;
+  };
+
+  const handleUnitDragAndDrop = (
+    sectionId,
+    subsectionId,
+    unitListIds,
+    restoreSectionList,
+  ) => {
+    dispatch(setUnitOrderListQuery(
+      sectionId,
+      subsectionId,
+      prevContainerInfo.current,
+      unitListIds,
+      restoreSectionList,
+    ));
+    prevContainerInfo.current = null;
+  };
+
+  const dragHelpers = {
+    copyBlockChildren: (block) => {
+      block.childInfo = { ...block.childInfo };
+      block.childInfo.children = [...block.childInfo.children];
+      return block;
+    },
+    setBlockChildren: (block, children) => {
+      block.childInfo.children = children;
+      return block;
+    },
+    setBlockChild: (block, child, id) => {
+      block.childInfo.children[id] = child;
+      return block;
+    },
+    insertChild: (block, child, index) => {
+      block.childInfo.children = [
+        ...block.childInfo.children.slice(0, index),
+        child,
+        ...block.childInfo.children.slice(index, block.childInfo.children.length)
+      ]
+      return block;
+    },
+    isBelowOverItem: (active, over) => {
+      return over &&
+        active.rect.current.translated &&
+        active.rect.current.translated.top >
+          over.rect.top + over.rect.height;
+    }
+  };
+
+  const moveSubsectionOver = (
+    prevCopy,
+    activeSectionIdx,
+    activeSubsectionIdx,
+    overSectionIdx,
+    newIndex,
+  ) => {
+    let activeSection = dragHelpers.copyBlockChildren({ ...prevCopy[activeSectionIdx] });
+    let overSection = dragHelpers.copyBlockChildren({ ...prevCopy[overSectionIdx] });
+    const subsection = activeSection.childInfo.children[activeSubsectionIdx];
+
+    overSection = dragHelpers.insertChild(overSection, subsection, newIndex);
+
+    if (prevContainerInfo.current === null || prevContainerInfo.current === undefined) {
+      prevContainerInfo.current = activeSection.id;
+    }
+
+    activeSection = dragHelpers.setBlockChildren(
+      activeSection,
+      activeSection.childInfo.children.filter((item) => item.id !== subsection.id)
+    )
+
+    prevCopy[activeSectionIdx] = activeSection;
+    prevCopy[overSectionIdx] = overSection;
+    return [prevCopy, overSection.childInfo.children];
+  }
+
+  const moveUnitOver = (
+    prevCopy,
+    activeSectionIdx,
+    activeSubsectionIdx,
+    activeUnitIdx,
+    overSectionIdx,
+    overSubsectionIdx,
+    newIndex,
+  ) => {
+    let activeSection = dragHelpers.copyBlockChildren({ ...prevCopy[activeSectionIdx] });
+    let activeSubsection = dragHelpers.copyBlockChildren(
+      { ...activeSection.childInfo.children[activeSubsectionIdx] }
+    );
+
+    let overSection = { ...prevCopy[overSectionIdx] };
+    if (overSection.id === activeSection.id) {
+      overSection = activeSection;
+    }
+
+    overSection = dragHelpers.copyBlockChildren(overSection);
+    let overSubsection = dragHelpers.copyBlockChildren(
+      { ...overSection.childInfo.children[overSubsectionIdx] }
+    );
+
+    const unit = activeSubsection.childInfo.children[activeUnitIdx];
+    overSubsection = dragHelpers.insertChild( overSubsection, unit , newIndex);
+    overSection = dragHelpers.setBlockChild(overSection, overSubsection, overSubsectionIdx);
+
+    activeSubsection = dragHelpers.setBlockChildren(
+      activeSubsection,
+      activeSubsection.childInfo.children.filter((item) => item.id !== unit.id)
+    )
+    activeSection = dragHelpers.setBlockChild(activeSection, activeSubsection, activeSubsectionIdx);
+
+    if (prevContainerInfo.current === null || prevContainerInfo.current === undefined) {
+      prevContainerInfo.current = activeSection.id;
+    }
+
+    prevCopy[activeSectionIdx] = activeSection;
+    prevCopy[overSectionIdx] = overSection;
+    return [prevCopy, overSubsection.childInfo.children];
+  }
+
+  const moveSubsection = (
+    prevCopy,
+    sectionIdx,
+    currentIdx,
+    newIdx,
+  ) => {
+    let section = dragHelpers.copyBlockChildren({ ...prevCopy[sectionIdx] });
+
+    const result = arrayMove(section.childInfo.children, currentIdx, newIdx);
+    section = dragHelpers.setBlockChildren(section, result);
+
+    prevCopy[sectionIdx] = section;
+    return [prevCopy, result];
+  }
+
+  const moveUnit = (
+    prevCopy,
+    sectionIdx,
+    subsectionIdx,
+    currentIdx,
+    newIdx,
+  ) => {
+    let section = dragHelpers.copyBlockChildren({ ...prevCopy[sectionIdx] });
+    let subsection = dragHelpers.copyBlockChildren({ ...section.childInfo.children[subsectionIdx] });
+
+    const result = arrayMove(subsection.childInfo.children, currentIdx, newIdx);
+    subsection = dragHelpers.setBlockChildren(subsection, result);
+    section = dragHelpers.setBlockChild(section, subsection, subsectionIdx);
+
+    prevCopy[sectionIdx] = section;
+    return [prevCopy, result];
+  }
+
   useEffect(() => {
     dispatch(fetchCourseOutlineIndexQuery(courseId));
     dispatch(fetchCourseBestPracticesQuery({ courseId }));
@@ -317,64 +493,17 @@ const useCourseOutline = ({ courseId }) => {
     mfeProctoredExamSettingsUrl,
     handleDismissNotification,
     advanceSettingsUrl,
-  };
-};
-
-const useCourseDragHandlers = ({ courseId }) => {
-  const dispatch = useDispatch();
-  const sectionsList = useSelector(getSectionsList);
-
-  const [prevContainerInfo, setPrevContainerInfo] = useState();
-
-  const restoreSectionList = () => {
-    setSections(() => [...sectionsList]);
-  }
-
-  const handleSectionDragAndDrop = (sectionListIds) => {
-    dispatch(setSectionOrderListQuery(
-      courseId,
-      sectionListIds,
-      restoreSectionList
-    ));
-  };
-
-  const handleSubsectionDragAndDrop = (
-    sectionId,
-    subsectionListIds,
-  ) => {
-    dispatch(setSubsectionOrderListQuery(
-      sectionId,
-      prevContainerInfo?.sectionId,
-      subsectionListIds,
-      restoreSectionList
-    ));
-    setPrevContainerInfo(null);
-  };
-
-  const handleUnitDragAndDrop = (
-    sectionId,
-    subsectionId,
-    unitListIds,
-  ) => {
-    dispatch(setUnitOrderListQuery(
-      sectionId,
-      subsectionId,
-      prevContainerInfo?.sectionId,
-      unitListIds,
-      restoreSectionList,
-    ));
-    setPrevContainerInfo(null);
-  };
-
-  return {
-    sectionsList,
     prevContainerInfo,
-    setPrevContainerInfo,
     handleSectionDragAndDrop,
     handleSubsectionDragAndDrop,
     handleUnitDragAndDrop,
+    moveSubsectionOver,
+    moveUnitOver,
+    moveSubsection,
+    moveUnit,
+    dragHelpers,
   };
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export { useCourseOutline, useCourseDragHandlers };
+export { useCourseOutline };

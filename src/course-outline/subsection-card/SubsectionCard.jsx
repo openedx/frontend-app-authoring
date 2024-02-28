@@ -94,11 +94,11 @@ const SubsectionCard = ({
   };
 
   const handleSubsectionMoveUp = () => {
-    onOrderChange(index, index - 1);
+    onOrderChange(index, -1);
   };
 
   const handleSubsectionMoveDown = () => {
-    onOrderChange(index, index + 1);
+    onOrderChange(index, 1);
   };
 
   const handleNewButtonClick = () => onNewUnitSubmit(id);

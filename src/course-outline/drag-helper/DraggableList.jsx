@@ -20,22 +20,23 @@ import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 
 import DragContextProvider from './DragContextProvider';
 import { COURSE_BLOCK_NAMES } from '../constants';
-import { useCourseDragHandlers } from '../hooks';
 
 const DraggableList = ({
   courseId,
   items,
   setSections,
+  restoreSectionList,
+  prevContainerInfo,
+  handleSectionDragAndDrop,
+  handleSubsectionDragAndDrop,
+  handleUnitDragAndDrop,
+  moveSubsectionOver,
+  moveUnitOver,
+  moveSubsection,
+  moveUnit,
+  helpers,
   children,
 }) => {
-  const {
-    sectionsList,
-    prevContainerInfo,
-    setPrevContainerInfo,
-    handleSectionDragAndDrop,
-    handleSubsectionDragAndDrop,
-    handleUnitDragAndDrop,
-  } = useCourseDragHandlers({ courseId });
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -98,59 +99,29 @@ const DraggableList = ({
     ) {
       return;
     }
+    // Find the new index for the item
+    let overSectionIndex;
+    let newIndex;
+    if (overInfo.category === COURSE_BLOCK_NAMES.chapter.id) {
+      // We're at the root droppable of a container
+      newIndex = overInfo.item.childInfo.children.length + 1;
+      overSectionIndex = overInfo.index;
+      setOverId(overInfo.item.id);
+    } else {
+      const modifier = helpers.isBelowOverItem(active, over) ? 1 : 0;
+      newIndex = overInfo.index >= 0 ? overInfo.index + modifier : overInfo.item.childInfo.children.length + 1;
+      overSectionIndex = overInfo.parentIndex;
+      setOverId(overInfo.parent.id);
+    }
+
     setSections((prev) => {
-      const prevCopy = [ ...prev ];
-      let overSectionIndex;
-      // Find the indexes for the items
-      let newIndex;
-      if (overInfo.category === COURSE_BLOCK_NAMES.chapter.id) {
-        // We're at the root droppable of a container
-        newIndex = overInfo.item.childInfo.children.length + 1;
-        overSectionIndex = overInfo.index;
-        setOverId(overInfo.item.id);
-      } else {
-        const isBelowOverItem =
-          over &&
-            active.rect.current.translated &&
-            active.rect.current.translated.top >
-              over.rect.top + over.rect.height;
-
-        const modifier = isBelowOverItem ? 1 : 0;
-        newIndex = overInfo.index >= 0 ? overInfo.index + modifier : overInfo.item.childInfo.children.length + 1;
-        overSectionIndex = overInfo.parentIndex;
-        setOverId(overInfo.parent.id);
-      }
-      if (overSectionIndex === undefined) {
-        return prev;
-      }
-
-      let activeSection = helpers.copyBlockChildren({ ...prevCopy[activeInfo.parentIndex] });
-      let overSection = helpers.copyBlockChildren({ ...prev[overSectionIndex] });
-
-      overSection = helpers.insertChild(
-        overSection,
-        activeSection.childInfo.children[activeInfo.index],
-        newIndex
+      const [prevCopy] = moveSubsectionOver(
+        [...prev],
+        activeInfo.parentIndex,
+        activeInfo.index,
+        overSectionIndex,
+        newIndex,
       );
-
-      setPrevContainerInfo((prev) => {
-        let sectionId = activeSection.id;
-        if (prev?.sectionId && prev.sectionId !== sectionId) {
-          sectionId = prev.sectionId;
-        }
-        return {
-          sectionId: sectionId,
-          id: sectionId,
-        };
-      });
-
-      activeSection = helpers.setBlockChildren(
-        activeSection,
-        activeSection.childInfo.children.filter((item) => item.id !== active.id)
-      )
-
-      prevCopy[activeInfo.parentIndex] = activeSection;
-      prevCopy[overSectionIndex] = overSection;
       return prevCopy;
     });
   }
@@ -162,69 +133,34 @@ const DraggableList = ({
     ) {
       return;
     }
+    let overSubsectionIndex;
+    let overSectionIndex;
+    // Find the indexes for the items
+    let newIndex;
+    if (overInfo.category === COURSE_BLOCK_NAMES.sequential.id) {
+      // We're at the root droppable of a container
+      newIndex = overInfo.item.childInfo.children.length + 1;
+      overSubsectionIndex = overInfo.index;
+      overSectionIndex = overInfo.parentIndex;
+      setOverId(overInfo.item.id);
+    } else {
+      const modifier = helpers.isBelowOverItem(active, over) ? 1 : 0;
+      newIndex = overInfo.index >= 0 ? overInfo.index + modifier : overInfo.item.childInfo.children.length + 1;
+      overSubsectionIndex = overInfo.parentIndex;
+      overSectionIndex = overInfo.grandParentIndex;
+      setOverId(overInfo.parent.id);
+    }
+
     setSections((prev) => {
-      const prevCopy = [ ...prev ];
-      let overSubsectionIndex;
-      let overSectionIndex;
-      // Find the indexes for the items
-      let newIndex;
-      if (overInfo.category === COURSE_BLOCK_NAMES.sequential.id) {
-        // We're at the root droppable of a container
-        newIndex = overInfo.item.childInfo.children.length + 1;
-        overSubsectionIndex = overInfo.index;
-        overSectionIndex = overInfo.parentIndex;
-        setOverId(overInfo.item.id);
-      } else {
-        const isBelowOverItem =
-          over &&
-            active.rect.current.translated &&
-            active.rect.current.translated.top >
-              over.rect.top + over.rect.height;
-
-        const modifier = isBelowOverItem ? 1 : 0;
-        newIndex = overInfo.index >= 0 ? overInfo.index + modifier : overInfo.item.childInfo.children.length + 1;
-        overSubsectionIndex = overInfo.parentIndex;
-        overSectionIndex = overInfo.grandParentIndex;
-        setOverId(overInfo.parent.id);
-      }
-
-      let activeSection = helpers.copyBlockChildren({ ...prevCopy[activeInfo.grandParentIndex] });
-      let activeSubsection = helpers.copyBlockChildren({ ...activeSection.childInfo.children[activeInfo.parentIndex] });
-
-      let overSection = { ...prev[overSectionIndex] };
-      if (overSection.id === activeSection.id) {
-        overSection = activeSection;
-      }
-
-      overSection = helpers.copyBlockChildren(overSection);
-      let overSubsection = helpers.copyBlockChildren({ ...overSection.childInfo.children[overSubsectionIndex] });
-
-      overSubsection = helpers.insertChild(
-        overSubsection,
-        activeSubsection.childInfo.children[activeInfo.index],
-        newIndex
+      const [prevCopy] = moveUnitOver(
+        [...prev],
+        activeInfo.grandParentIndex,
+        activeInfo.parentIndex,
+        activeInfo.index,
+        overSectionIndex,
+        overSubsectionIndex,
+        newIndex,
       );
-      overSection = helpers.setBlockChild(overSection, overSubsection, overSubsectionIndex);
-
-      activeSubsection = helpers.setBlockChildren(
-        activeSubsection,
-        activeSubsection.childInfo.children.filter((item) => item.id !== active.id)
-      )
-      activeSection = helpers.setBlockChild(activeSection, activeSubsection, activeInfo.parentIndex);
-
-      setPrevContainerInfo((prev) => {
-        let sectionId = activeSection.id;
-        if (prev?.sectionId && prev.sectionId !== sectionId) {
-          sectionId = prev.sectionId;
-        }
-        return {
-          sectionId: sectionId,
-          id: activeSubsection.id,
-        };
-      });
-
-      prevCopy[activeInfo.grandParentIndex] = activeSection;
-      prevCopy[overSectionIndex] = overSection;
       return prevCopy;
     });
   }
@@ -253,30 +189,6 @@ const DraggableList = ({
     }
   }
 
-  const helpers = {
-    copyBlockChildren: (block) => {
-      block.childInfo = { ...block.childInfo };
-      block.childInfo.children = [...block.childInfo.children];
-      return block;
-    },
-    setBlockChildren: (block, children) => {
-      block.childInfo.children = children;
-      return block;
-    },
-    setBlockChild: (block, child, id) => {
-      block.childInfo.children[id] = child;
-      return block;
-    },
-    insertChild: (block, child, index) => {
-      block.childInfo.children = [
-        ...block.childInfo.children.slice(0, index),
-        child,
-        ...block.childInfo.children.slice(index, block.childInfo.children.length)
-      ]
-      return block;
-    },
-  };
-
   const handleDragEnd = (event) => {
     const { active, over } = event;
     if (!active || !over) {
@@ -304,43 +216,45 @@ const DraggableList = ({
     if (activeInfo.parent !== 'root') {
       currentItems = activeInfo.parent.childInfo.children;
     }
-    if (activeInfo.index !== overInfo.index || prevContainerInfo?.id) {
+    if (activeInfo.index !== overInfo.index || prevContainerInfo.current) {
       switch (activeInfo.category) {
         case COURSE_BLOCK_NAMES.chapter.id:
           setSections((prev) => {
             const result = arrayMove(prev, activeInfo.index, overInfo.index);
-            handleSectionDragAndDrop(result.map(section => section.id));
+            handleSectionDragAndDrop(result.map(section => section.id), restoreSectionList);
             return result;
           });
           break;
         case COURSE_BLOCK_NAMES.sequential.id:
           setSections((prev) => {
-            const prevCopy = [ ...prev ];
-            let section = helpers.copyBlockChildren({ ...prev[activeInfo.parentIndex] });
-
-            const result = arrayMove(section.childInfo.children, activeInfo.index, overInfo.index);
-            section = helpers.setBlockChildren(section, result);
-
-            prevCopy[activeInfo.parentIndex] = section;
-            handleSubsectionDragAndDrop(section.id, result.map(section => section.id));
+            const [prevCopy, result] = moveSubsection(
+              [...prev],
+              activeInfo.parentIndex,
+              activeInfo.index,
+              overInfo.index,
+            );
+            handleSubsectionDragAndDrop(
+              activeInfo.parent.id,
+              result.map(subsection => subsection.id),
+              restoreSectionList,
+            );
             return prevCopy;
           });
           break;
         case COURSE_BLOCK_NAMES.vertical.id:
           setSections((prev) => {
-            const prevCopy = [ ...prev ];
-            let section = helpers.copyBlockChildren({ ...prev[activeInfo.grandParentIndex] });
-            let subsection = helpers.copyBlockChildren({ ...section.childInfo.children[activeInfo.parentIndex] });
-
-            const result = arrayMove(subsection.childInfo.children, activeInfo.index, overInfo.index);
-            subsection = helpers.setBlockChildren(subsection, result);
-            section = helpers.setBlockChild(section, subsection, activeInfo.parentIndex);
-
-            prevCopy[activeInfo.grandParentIndex] = section;
+            const [prevCopy, result] = moveUnit(
+              [...prev],
+              activeInfo.grandParentIndex,
+              activeInfo.parentIndex,
+              activeInfo.index,
+              overInfo.index,
+            );
             handleUnitDragAndDrop(
-              section.id,
-              subsection.id,
-              result.map(item => item.id)
+              activeInfo.grandParent.id,
+              activeInfo.parent.id,
+              result.map(unit => unit.id),
+              restoreSectionList,
             );
             return prevCopy;
           });

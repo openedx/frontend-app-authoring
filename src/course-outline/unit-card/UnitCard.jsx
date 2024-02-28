@@ -85,11 +85,11 @@ const UnitCard = ({
   };
 
   const handleUnitMoveUp = () => {
-    onOrderChange(index, index - 1);
+    onOrderChange(index, -1);
   };
 
   const handleUnitMoveDown = () => {
-    onOrderChange(index, index + 1);
+    onOrderChange(index, 1);
   };
 
   const handleCopyClick = () => {
