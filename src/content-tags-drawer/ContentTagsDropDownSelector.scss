@@ -4,6 +4,11 @@
 
 .taxonomy-tags-load-more-button {
   flex: 1;
+
+  &:hover {
+    background-color: transparent;
+    color: $info-900 !important;
+  }
 }
 
 .pgn__selectable_box.taxonomy-tags-selectable-box {

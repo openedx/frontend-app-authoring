@@ -13,7 +13,6 @@ import { SelectableBox } from '@edx/frontend-lib-content-components';
 import { useIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { debounce } from 'lodash';
 import messages from './messages';
-import './ContentTagsCollapsible.scss';
 
 import ContentTagsDropDownSelector from './ContentTagsDropDownSelector';
 
@@ -57,16 +56,19 @@ const CustomMenu = (props) => {
             searchTerm={searchTerm}
           />
         </SelectableBox.Set>
+        <hr className="mt-0 mb-0" />
         <div className="d-flex flex-row justify-content-end">
           <div className="d-inline">
             <Button
               variant="tertiary"
+              className="cancel-add-tags-button"
               onClick={() => { handleStagedTagsMenuChange([]); selectRef.current?.blur(); }}
             >
               { intl.formatMessage(messages.collapsibleCancelStagedTagsButtonText) }
             </Button>
             <Button
               variant="tertiary"
+              className="text-info-500 add-tags-button"
               disabled={!(value && value.length)}
               onClick={() => { commitStagedTags(); handleStagedTagsMenuChange([]); selectRef.current?.blur(); }}
             >

@@ -7,7 +7,7 @@ import {
 } from '@openedx/paragon';
 import { SelectableBox } from '@edx/frontend-lib-content-components';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
-import { ArrowDropDown, ArrowDropUp } from '@openedx/paragon/icons';
+import { ArrowDropDown, ArrowDropUp, Add } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
 import messages from './messages';
 
@@ -183,11 +183,12 @@ const ContentTagsDropDownSelector = ({
 
       { hasMorePages
         ? (
-          <div className="d-flex justify-content-center align-items-center flex-row">
+          <div>
             <Button
-              variant="outline-primary"
+              variant="tertiary"
+              iconBefore={Add}
               onClick={loadMoreTags}
-              className="mb-2 taxonomy-tags-load-more-button"
+              className="mb-2 taxonomy-tags-load-more-button px-0 text-info-500"
             >
               <FormattedMessage {...messages.loadMoreTagsButtonText} />
             </Button>
