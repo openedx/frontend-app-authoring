@@ -11,7 +11,7 @@ import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data
 import { RequestStatus } from '../../data/constants';
 import { COURSE_BLOCK_NAMES } from '../constants';
 import CardHeader from '../card-header/CardHeader';
-import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
+import SortableItem from '../drag-helper/SortableItem';
 import { DragContext } from '../drag-helper/DragContextProvider';
 import TitleButton from '../card-header/TitleButton';
 import XBlockStatus from '../xblock-status/XBlockStatus';
@@ -143,11 +143,12 @@ const SubsectionCard = ({
   );
 
   return (
-    <ConditionalSortableElement
+    <SortableItem
       id={id}
       category={category}
       key={id}
-      draggable={isDraggable}
+      isDraggable={isDraggable}
+      isDroppable={actions.childAddable}
       componentStyle={{
         background: '#f8f7f6',
         ...borderStyle,
@@ -217,7 +218,7 @@ const SubsectionCard = ({
           </div>
         )}
       </div>
-    </ConditionalSortableElement>
+    </SortableItem>
   );
 };
 

@@ -183,6 +183,9 @@ const CourseOutline = ({ courseId }) => {
     if (currentIndex === newIndex) {
       return;
     }
+    if (!sections[newIndex]?.actions?.draggable) {
+      return;
+    }
     setSections((prevSections) => {
       const newSections = arrayMove(prevSections, currentIndex, newIndex);
       handleSectionDragAndDrop(newSections.map(section => section.id));
@@ -203,6 +206,7 @@ const CourseOutline = ({ courseId }) => {
     let sectionId;
     let sectionsCopy = [...sections];
     if ((step === -1 && index >= 1) || (step === 1 && subsections.length - index >= 2)) {
+      // move subsection inside its own parent section
       [sectionsCopy, newSubsections] = moveSubsection(
         sectionsCopy,
         sectionIndex,
@@ -211,6 +215,11 @@ const CourseOutline = ({ courseId }) => {
       );
       sectionId = section.id;
     } else if (step === -1 && index === 0 && sectionIndex > 0) {
+      // move subsection to last position of previous section
+      if (!sections[sectionIndex + step]?.actions?.childAddable) {
+        // return if previous section doesn't allow adding subsections
+        return;
+      }
       [sectionsCopy, newSubsections] = moveSubsectionOver(
         sectionsCopy,
         sectionIndex,
@@ -220,6 +229,11 @@ const CourseOutline = ({ courseId }) => {
       );
       sectionId = sections[sectionIndex + step].id;
     } else if (step === 1 && index === subsections.length - 1 && sectionIndex < sections.length - 1) {
+      // move subsection to first position of next section
+      if (!sections[sectionIndex + step]?.actions?.childAddable) {
+        // return if next section doesn't allow adding subsections
+        return;
+      }
       [sectionsCopy, newSubsections] = moveSubsectionOver(
         sectionsCopy,
         sectionIndex,
@@ -260,6 +274,7 @@ const CourseOutline = ({ courseId }) => {
     let subsectionId;
     let sectionsCopy = [...sections];
     if ((step === -1 && index >= 1) || (step === 1 && units.length - index >= 2)) {
+      // move unit inside its own parent subsection
       [sectionsCopy, newUnits] = moveUnit(
         sectionsCopy,
         sectionIndex,
@@ -271,6 +286,11 @@ const CourseOutline = ({ courseId }) => {
       subsectionId = subsection.id;
     } else if (step === -1 && index === 0) {
       if (subsectionIndex > 0) {
+        // move unit to last position of previous subsection inside same section.
+        if (!sectionsCopy[sectionIndex].childInfo.children[subsectionIndex + step]?.actions?.childAddable) {
+          // return if previous subsection doesn't allow adding subsections
+          return;
+        }
         [sectionsCopy, newUnits] = moveUnitOver(
           sectionsCopy,
           sectionIndex,
@@ -282,12 +302,18 @@ const CourseOutline = ({ courseId }) => {
         );
         sectionId = section.id;
         subsectionId = sectionsCopy[sectionIndex].childInfo.children[subsectionIndex + step].id;
-      } else if (sectionIndex > 0) { // check subsections inside section
+      } else if (sectionIndex > 0) {
+        // move unit to last position of previous subsection inside previous section.
         const newSectionIndex = sectionIndex + step;
         if (sectionsCopy[newSectionIndex].childInfo.children.length === 0) {
+          // return if previous section has no subsections.
           return;
         }
         const newSubsectionIndex = sectionsCopy[newSectionIndex].childInfo.children.length - 1;
+        if (!sectionsCopy[newSectionIndex].childInfo.children[newSubsectionIndex]?.actions?.childAddable) {
+          // return if previous subsection doesn't allow adding subsections
+          return;
+        }
         [sectionsCopy, newUnits] = moveUnitOver(
           sectionsCopy,
           sectionIndex,
@@ -302,6 +328,11 @@ const CourseOutline = ({ courseId }) => {
       }
     } else if (step === 1 && index === units.length - 1) {
       if (subsectionIndex < sectionsCopy[sectionIndex].childInfo.children.length - 1) {
+        // move unit to first position of next subsection inside same section.
+        if (!sectionsCopy[sectionIndex].childInfo.children[subsectionIndex + step]?.actions?.childAddable) {
+          // return if next subsection doesn't allow adding subsections
+          return;
+        }
         [sectionsCopy, newUnits] = moveUnitOver(
           sectionsCopy,
           sectionIndex,
@@ -314,11 +345,17 @@ const CourseOutline = ({ courseId }) => {
         sectionId = section.id;
         subsectionId = sectionsCopy[sectionIndex].childInfo.children[subsectionIndex + step].id;
       } else if (sectionIndex < sectionsCopy.length - 1) {
+        // move unit to first position of next subsection inside next section.
         const newSectionIndex = sectionIndex + step;
         if (sectionsCopy[newSectionIndex].childInfo.children.length === 0) {
+          // return if next section has no subsections.
           return;
         }
         const newSubsectionIndex = 0;
+        if (!sectionsCopy[newSectionIndex].childInfo.children[newSubsectionIndex]?.actions?.childAddable) {
+          // return if next subsection doesn't allow adding subsections
+          return;
+        }
         [sectionsCopy, newUnits] = moveUnitOver(
           sectionsCopy,
           sectionIndex,

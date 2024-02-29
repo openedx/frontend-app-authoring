@@ -6,7 +6,7 @@ import { useToggle, Sheet } from '@openedx/paragon';
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
-import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
+import SortableItem from '../drag-helper/SortableItem';
 import TitleLink from '../card-header/TitleLink';
 import XBlockStatus from '../xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
@@ -127,11 +127,12 @@ const UnitCard = ({
 
   return (
     <>
-      <ConditionalSortableElement
+      <SortableItem
         id={id}
         category={category}
         key={id}
-        draggable={isDraggable}
+        isDraggable={isDraggable}
+        isDroppable={actions.childAddable}
         componentStyle={{
           background: '#fdfdfd',
           ...borderStyle,
@@ -178,7 +179,7 @@ const UnitCard = ({
             />
           </div>
         </div>
-      </ConditionalSortableElement>
+      </SortableItem>
       <Sheet
         position="right"
         show={showManageTags}

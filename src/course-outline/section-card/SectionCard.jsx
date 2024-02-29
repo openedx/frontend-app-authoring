@@ -11,7 +11,7 @@ import classNames from 'classnames';
 import { setCurrentItem, setCurrentSection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
-import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
+import SortableItem from '../drag-helper/SortableItem';
 import { DragContext } from '../drag-helper/DragContextProvider';
 import TitleButton from '../card-header/TitleButton';
 import XBlockStatus from '../xblock-status/XBlockStatus';
@@ -143,10 +143,11 @@ const SectionCard = ({
   const isDraggable = actions.draggable && (actions.allowMoveUp || actions.allowMoveDown);
 
   return (
-    <ConditionalSortableElement
+    <SortableItem
       id={id}
       category={category}
-      draggable={isDraggable}
+      isDraggable={isDraggable}
+      isDroppable={actions.childAddable}
       componentStyle={{
         padding: '1.75rem',
         ...borderStyle,
@@ -223,7 +224,7 @@ const SectionCard = ({
           )}
         </div>
       </div>
-    </ConditionalSortableElement>
+    </SortableItem>
   );
 };
 

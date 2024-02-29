@@ -96,6 +96,8 @@ const DraggableList = ({
     if (
       activeInfo.parent.id === overInfo.parent.id
       || activeInfo.parent.id === overInfo.item.id
+      || (activeInfo.category === overInfo.category && !overInfo.parent.actions.childAddable)
+      || (activeInfo.parent.category === overInfo.category && !overInfo.item.actions.childAddable)
     ) {
       return;
     }
@@ -130,6 +132,8 @@ const DraggableList = ({
     if (
       activeInfo.parent.id === overInfo.parent.id
       || activeInfo.parent.id === overInfo.item.id
+      || (activeInfo.category === overInfo.category && !overInfo.parent.actions.childAddable)
+      || (activeInfo.parent.category === overInfo.category && !overInfo.item.actions.childAddable)
     ) {
       return;
     }
