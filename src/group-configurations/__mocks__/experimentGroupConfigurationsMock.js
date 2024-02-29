@@ -27,7 +27,12 @@ module.exports = [
     parameters: {},
     scheme: 'random',
     version: 3,
-    usage: [],
+    usage: [
+      {
+        label: 'Unit1name / Content Experiment',
+        url: '/container/block-v1:2u+1+1+type@split_test+block@ccfae830ec9b406c835f8ce4520ae395',
+      },
+    ],
   },
   {
     active: true,

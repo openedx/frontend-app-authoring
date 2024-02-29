@@ -8,7 +8,7 @@ import {
   ArrowRight as ArrowRightIcon,
 } from '@openedx/paragon/icons';
 
-import { getCombinedBadgeList } from './utils';
+import { getCombinedBadgeList } from '../utils';
 import messages from './messages';
 
 const TitleButton = ({
@@ -22,7 +22,7 @@ const TitleButton = ({
       iconBefore={isExpanded ? ArrowDownIcon : ArrowRightIcon}
       variant="tertiary"
       className="configuration-card-header__button"
-      data-testid="configuration-card-header__button"
+      data-testid="configuration-card-header-button"
       onClick={onTitleClick}
     >
       <div className="configuration-card-header__title">

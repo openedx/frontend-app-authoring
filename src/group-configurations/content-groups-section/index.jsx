@@ -3,16 +3,16 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, useToggle } from '@openedx/paragon';
 import { Add as AddIcon } from '@openedx/paragon/icons';
 
-import GroupConfigurationContainer from '../group-configuration-container';
 import { availableGroupPropTypes } from '../constants';
-import ContentGroupContainer from './ContentGroupContainer';
 import EmptyPlaceholder from '../empty-placeholder';
+import ContentGroupCard from './ContentGroupCard';
+import ContentGroupForm from './ContentGroupForm';
 import { initialContentGroupObject } from './utils';
 import messages from './messages';
 
 const ContentGroupsSection = ({
   availableGroup,
-  groupConfigurationsActions,
+  contentGroupActions,
 }) => {
   const { formatMessage } = useIntl();
   const [isNewGroupVisible, openNewGroup, hideNewGroup] = useToggle(false);
@@ -27,7 +27,7 @@ const ContentGroupsSection = ({
         initialContentGroupObject(values.newGroupName),
       ],
     };
-    groupConfigurationsActions.handleCreateContentGroup(updatedContentGroups, hideNewGroup);
+    contentGroupActions.handleCreate(updatedContentGroups, hideNewGroup);
   };
 
   const handleEditContentGroup = (id, { newGroupName }, callbackToClose) => {
@@ -35,7 +35,7 @@ const ContentGroupsSection = ({
       ...availableGroup,
       groups: availableGroup.groups.map((group) => (group.id === id ? { ...group, name: newGroupName } : group)),
     };
-    groupConfigurationsActions.handleEditContentGroup(updatedContentGroups, callbackToClose);
+    contentGroupActions.handleEdit(updatedContentGroups, callbackToClose);
   };
 
   return (
@@ -46,12 +46,12 @@ const ContentGroupsSection = ({
       {groups?.length ? (
         <>
           {groups.map((group) => (
-            <GroupConfigurationContainer
+            <ContentGroupCard
               group={group}
               groupNames={groupNames}
               parentGroupId={parentGroupId}
               key={group.id}
-              groupConfigurationsActions={groupConfigurationsActions}
+              contentGroupActions={contentGroupActions}
               handleEditGroup={handleEditContentGroup}
             />
           ))}
@@ -73,7 +73,7 @@ const ContentGroupsSection = ({
         )
       )}
       {isNewGroupVisible && (
-        <ContentGroupContainer
+        <ContentGroupForm
           groupNames={groupNames}
           onCreateClick={handleCreateNewGroup}
           onCancelClick={hideNewGroup}
@@ -85,10 +85,10 @@ const ContentGroupsSection = ({
 
 ContentGroupsSection.propTypes = {
   availableGroup: PropTypes.shape(availableGroupPropTypes).isRequired,
-  groupConfigurationsActions: PropTypes.shape({
-    handleCreateContentGroup: PropTypes.func,
-    handleDeleteContentGroup: PropTypes.func,
-    handleEditContentGroup: PropTypes.func,
+  contentGroupActions: PropTypes.shape({
+    handleCreate: PropTypes.func,
+    handleDelete: PropTypes.func,
+    handleEdit: PropTypes.func,
   }).isRequired,
 };
 

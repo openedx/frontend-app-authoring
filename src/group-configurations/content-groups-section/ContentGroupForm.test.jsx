@@ -4,7 +4,7 @@ import { render, waitFor } from '@testing-library/react';
 
 import { contentGroupsMock } from '../__mocks__';
 import messages from './messages';
-import ContentGroupContainer from './ContentGroupContainer';
+import ContentGroupForm from './ContentGroupForm';
 
 const onCreateClickMock = jest.fn();
 const onCancelClickMock = jest.fn();
@@ -13,7 +13,7 @@ const onEditClickMock = jest.fn();
 
 const renderComponent = (props = {}) => render(
   <IntlProvider locale="en">
-    <ContentGroupContainer
+    <ContentGroupForm
       groupNames={contentGroupsMock.groups?.map((group) => group.name)}
       onCreateClick={onCreateClickMock}
       onCancelClick={onCancelClickMock}
@@ -24,11 +24,11 @@ const renderComponent = (props = {}) => render(
   </IntlProvider>,
 );
 
-describe('<ContentGroupContainer />', () => {
+describe('<ContentGroupForm />', () => {
   it('renders component correctly', () => {
     const { getByText, getByRole, getByTestId } = renderComponent();
 
-    expect(getByTestId('content-group-new')).toBeInTheDocument();
+    expect(getByTestId('content-group-form')).toBeInTheDocument();
     expect(
       getByText(messages.newGroupHeader.defaultMessage),
     ).toBeInTheDocument();

@@ -37,6 +37,29 @@ const slice = createSlice({
     updateSavingStatuses: (state, { payload }) => {
       state.savingStatus = payload.status;
     },
+    updateExperimentConfigurationSuccess: (state, { payload }) => {
+      const { configuration } = payload;
+      const experimentConfigurationState = state.groupConfigurations.experimentGroupConfigurations;
+      const configurationIdx = experimentConfigurationState.findIndex(
+        (conf) => configuration.id === conf.id,
+      );
+
+      if (configurationIdx !== -1) {
+        experimentConfigurationState[configurationIdx] = configuration;
+      } else {
+        state.groupConfigurations.experimentGroupConfigurations = [
+          ...experimentConfigurationState,
+          configuration,
+        ];
+      }
+    },
+    deleteExperimentConfigurationSuccess: (state, { payload }) => {
+      const { configurationId } = payload;
+      const filteredGroups = state.groupConfigurations.experimentGroupConfigurations.filter(
+        (configuration) => configuration.id !== configurationId,
+      );
+      state.groupConfigurations.experimentGroupConfigurations = filteredGroups;
+    },
   },
 });
 
@@ -46,6 +69,8 @@ export const {
   updateSavingStatuses,
   updateGroupConfigurationsSuccess,
   deleteGroupConfigurationsSuccess,
+  updateExperimentConfigurationSuccess,
+  deleteExperimentConfigurationSuccess,
 } = slice.actions;
 
 export const { reducer } = slice;

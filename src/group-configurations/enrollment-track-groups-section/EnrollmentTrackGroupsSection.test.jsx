@@ -17,7 +17,7 @@ describe('<EnrollmentTrackGroupsSection />', () => {
   it('renders component correctly', () => {
     const { getByText, getAllByTestId } = renderComponent();
     expect(getByText(enrollmentTrackGroupsMock.name)).toBeInTheDocument();
-    expect(getAllByTestId('configuration-card')).toHaveLength(
+    expect(getAllByTestId('content-group-card')).toHaveLength(
       enrollmentTrackGroupsMock.groups.length,
     );
   });

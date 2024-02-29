@@ -69,3 +69,47 @@ export async function deleteContentGroup(courseId, parentGroupId, groupId) {
 
   return camelCaseObject(data);
 }
+
+/**
+ * Create a new experiment configuration for the course.
+ * @param {string} courseId
+ * @param {object} configuration
+ * @returns {Promise<Object>}
+ */
+export async function createExperimentConfiguration(courseId, configuration) {
+  const { data } = await getAuthenticatedHttpClient().post(
+    getLegacyApiUrl(courseId),
+    configuration,
+  );
+
+  return camelCaseObject(data);
+}
+
+/**
+ * Edit the experiment configuration for the course.
+ * @param {string} courseId
+ * @param {object} configuration
+ * @returns {Promise<Object>}
+ */
+export async function editExperimentConfiguration(courseId, configuration) {
+  const { data } = await getAuthenticatedHttpClient().post(
+    getLegacyApiUrl(courseId, configuration.id),
+    configuration,
+  );
+
+  return camelCaseObject(data);
+}
+
+/**
+ * Delete existing experimental configuration from the course.
+ * @param {string} courseId
+ * @param {number} configurationId
+ * @returns {Promise<Object>}
+ */
+export async function deleteExperimentConfiguration(courseId, configurationId) {
+  const { data } = await getAuthenticatedHttpClient().delete(
+    getLegacyApiUrl(courseId, configurationId),
+  );
+
+  return camelCaseObject(data);
+}

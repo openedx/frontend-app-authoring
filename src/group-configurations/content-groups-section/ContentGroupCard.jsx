@@ -16,19 +16,17 @@ import {
 } from '@openedx/paragon/icons';
 
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
-import ContentGroupContainer from '../content-groups-section/ContentGroupContainer';
-import ExperimentGroupStack from './ExperimentGroupStack';
-import TitleButton from './TitleButton';
-import UsageList from './UsageList';
+import TitleButton from '../common/TitleButton';
+import UsageList from '../common/UsageList';
+import ContentGroupForm from './ContentGroupForm';
 import messages from './messages';
 
-const GroupConfigurationContainer = ({
+const ContentGroupCard = ({
   group,
   groupNames,
   parentGroupId,
-  isExperiment,
   readOnly,
-  groupConfigurationsActions,
+  contentGroupActions,
   handleEditGroup,
 }) => {
   const { formatMessage } = useIntl();
@@ -36,7 +34,7 @@ const GroupConfigurationContainer = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditMode, switchOnEditMode, switchOffEditMode] = useToggle(false);
   const [isOpenDeleteModal, openDeleteModal, closeDeleteModal] = useToggle(false);
-  const { groups: groupsControl, description, usage } = group;
+  const { id, name, usage } = group;
   const isUsedInLocation = !!usage.length;
 
   const { href: outlineUrl } = new URL(
@@ -50,57 +48,42 @@ const GroupConfigurationContainer = ({
     </Hyperlink>
   );
 
-  const createGuide = (emptyMessage, testId) => (
-    <span className="small text-gray-700" data-testid={testId}>
-      {formatMessage(emptyMessage, { outlineComponentLink })}
+  const guideHowToAdd = (
+    <span
+      className="small text-gray-700"
+      data-testid="configuration-card-usage-empty"
+    >
+      {formatMessage(messages.emptyContentGroups, { outlineComponentLink })}
     </span>
   );
-
-  const contentGroupsGuide = createGuide(
-    messages.emptyContentGroups,
-    'configuration-card-usage-empty',
-  );
-
-  const experimentalConfigurationsGuide = createGuide(
-    messages.emptyExperimentGroup,
-    'configuration-card-usage-experiment-empty',
-  );
-
-  const displayGuide = isExperiment
-    ? experimentalConfigurationsGuide
-    : contentGroupsGuide;
 
   const handleExpandContent = () => {
     setIsExpanded((prevState) => !prevState);
   };
 
   const handleDeleteGroup = () => {
-    groupConfigurationsActions.handleDeleteContentGroup(
-      parentGroupId,
-      group.id,
-    );
+    contentGroupActions.handleDelete(parentGroupId, id);
     closeDeleteModal();
   };
 
   return (
     <>
       {isEditMode ? (
-        <ContentGroupContainer
+        <ContentGroupForm
           isEditMode={isEditMode}
           groupNames={groupNames}
           isUsedInLocation={isUsedInLocation}
-          overrideValue={group.name}
+          overrideValue={name}
           onCancelClick={switchOffEditMode}
           onDeleteClick={openDeleteModal}
-          onEditClick={(values) => handleEditGroup(group.id, values, switchOffEditMode)}
+          onEditClick={(values) => handleEditGroup(id, values, switchOffEditMode)}
         />
       ) : (
-        <div className="configuration-card" data-testid="configuration-card">
+        <div className="configuration-card" data-testid="content-group-card">
           <div className="configuration-card-header">
             <TitleButton
               group={group}
               isExpanded={isExpanded}
-              isExperiment={isExperiment}
               onTitleClick={handleExpandContent}
             />
             {!readOnly && (
@@ -111,7 +94,7 @@ const GroupConfigurationContainer = ({
                   src={EditOutlineIcon}
                   iconAs={Icon}
                   onClick={switchOnEditMode}
-                  data-testid="configuration-card-header-edit"
+                  data-testid="content-group-card-header-edit"
                 />
                 <IconButtonWithTooltip
                   className="configuration-card-header__delete-tooltip"
@@ -124,7 +107,7 @@ const GroupConfigurationContainer = ({
                   src={DeleteOutlineIcon}
                   iconAs={Icon}
                   onClick={openDeleteModal}
-                  data-testid="configuration-card-header-delete"
+                  data-testid="content-group-card-header-delete"
                   disabled={isUsedInLocation}
                 />
               </ActionRow>
@@ -133,23 +116,16 @@ const GroupConfigurationContainer = ({
           {isExpanded && (
             <div
               className="configuration-card-content"
-              data-testid="configuration-card-content"
+              data-testid="content-group-card-content"
             >
-              {isExperiment && (
-                <span className="x-small text-gray-500">{description}</span>
-              )}
-              {isExperiment && (
-                <ExperimentGroupStack itemList={groupsControl} />
-              )}
               {usage?.length ? (
                 <UsageList
                   className="mt-2.5"
                   itemList={usage}
                   key={usage.label}
-                  isExperiment={isExperiment}
                 />
               ) : (
-                displayGuide
+                guideHowToAdd
               )}
             </div>
           )}
@@ -165,22 +141,21 @@ const GroupConfigurationContainer = ({
   );
 };
 
-GroupConfigurationContainer.defaultProps = {
+ContentGroupCard.defaultProps = {
   group: {
     id: undefined,
     name: '',
     usage: [],
     version: undefined,
   },
-  isExperiment: false,
   readOnly: false,
   groupNames: [],
   parentGroupId: null,
-  handleEditGroup: () => ({}),
-  groupConfigurationsActions: {},
+  handleEditGroup: null,
+  contentGroupActions: {},
 };
 
-GroupConfigurationContainer.propTypes = {
+ContentGroupCard.propTypes = {
   group: PropTypes.shape({
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
@@ -214,14 +189,13 @@ GroupConfigurationContainer.propTypes = {
   }),
   groupNames: PropTypes.arrayOf(PropTypes.string),
   parentGroupId: PropTypes.number,
-  isExperiment: PropTypes.bool,
   readOnly: PropTypes.bool,
   handleEditGroup: PropTypes.func,
-  groupConfigurationsActions: PropTypes.shape({
-    handleCreateContentGroup: PropTypes.func,
-    handleDeleteContentGroup: PropTypes.func,
-    handleEditContentGroup: PropTypes.func,
+  contentGroupActions: PropTypes.shape({
+    handleCreate: PropTypes.func,
+    handleDelete: PropTypes.func,
+    handleEdit: PropTypes.func,
   }),
 };
 
-export default GroupConfigurationContainer;
+export default ContentGroupCard;

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Hyperlink, Stack } from '@edx/paragon';
+import { Hyperlink, Stack } from '@openedx/paragon';
 
 import { formatUrlToUnitPage } from './utils';
 import messages from './messages';

@@ -26,5 +26,9 @@ const availableGroupPropTypes = {
   version: PropTypes.number,
 };
 
-// eslint-disable-next-line import/prefer-default-export
-export { availableGroupPropTypes };
+const MESSAGE_VALIDATION_TYPES = {
+  error: 'error',
+  warning: 'warning',
+};
+
+export { MESSAGE_VALIDATION_TYPES, availableGroupPropTypes };

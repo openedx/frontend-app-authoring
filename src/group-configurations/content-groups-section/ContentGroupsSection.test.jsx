@@ -7,9 +7,22 @@ import placeholderMessages from '../empty-placeholder/messages';
 import messages from './messages';
 import ContentGroupsSection from '.';
 
+const handleCreateMock = jest.fn();
+const handleDeleteMock = jest.fn();
+const handleEditMock = jest.fn();
+const contentGroupActions = {
+  handleCreate: handleCreateMock,
+  handleDelete: handleDeleteMock,
+  handleEdit: handleEditMock,
+};
+
 const renderComponent = (props = {}) => render(
   <IntlProvider locale="en">
-    <ContentGroupsSection availableGroup={contentGroupsMock} {...props} />
+    <ContentGroupsSection
+      availableGroup={contentGroupsMock}
+      contentGroupActions={contentGroupActions}
+      {...props}
+    />
   </IntlProvider>,
 );
 
@@ -21,7 +34,7 @@ describe('<ContentGroupsSection />', () => {
       getByRole('button', { name: messages.addNewGroup.defaultMessage }),
     ).toBeInTheDocument();
 
-    expect(getAllByTestId('configuration-card')).toHaveLength(
+    expect(getAllByTestId('content-group-card')).toHaveLength(
       contentGroupsMock.groups.length,
     );
   });
@@ -38,7 +51,7 @@ describe('<ContentGroupsSection />', () => {
     userEvent.click(
       getByRole('button', { name: placeholderMessages.button.defaultMessage }),
     );
-    expect(getByTestId('content-group-new')).toBeInTheDocument();
+    expect(getByTestId('content-group-form')).toBeInTheDocument();
   });
 
   it('renders container with new group on create click if section has groups', async () => {
@@ -46,6 +59,6 @@ describe('<ContentGroupsSection />', () => {
     userEvent.click(
       getByRole('button', { name: messages.addNewGroup.defaultMessage }),
     );
-    expect(getByTestId('content-group-new')).toBeInTheDocument();
+    expect(getByTestId('content-group-form')).toBeInTheDocument();
   });
 });

@@ -15,7 +15,7 @@ const messages = defineMessages({
   },
   aboutDescription_3: {
     id: 'course-authoring.group-configurations.sidebar.about.description-3',
-    defaultMessage: 'Click {strongText} to add a new content group. To edit the name of a content group, hover over its box and click {strongText2}. You can delete a content group only if it is not in use by a unit. To delete a content group, hover over its box and click the delete icon.Drag sections, subsections, and units to new locations in the outline.',
+    defaultMessage: 'Click {strongText} to add a new content group. To edit the name of a content group, hover over its box and click {strongText2}. You can delete a content group only if it is not in use by a unit. To delete a content group, hover over its box and click the delete icon.',
   },
   aboutDescription_3_strong: {
     id: 'course-authoring.group-configurations.sidebar.about.description-3.strong',
@@ -31,7 +31,7 @@ const messages = defineMessages({
   },
   about_2_description_2: {
     id: 'course-authoring.group-configurations.sidebar.about-2.description-2',
-    defaultMessage: 'Click {strongText} to add a new configuration. To edit a configuration, hover over its box and click {strongText2}. You can delete a group configuration only if it is not in use in an experiment. To delete a configuration, hover over its box and click the delete.',
+    defaultMessage: 'Click {strongText} to add a new configuration. To edit a configuration, hover over its box and click {strongText2}. You can delete a group configuration only if it is not in use in an experiment. To delete a configuration, hover over its box and click the delete icon.',
   },
   about_2_description_2_strong: {
     id: 'course-authoring.group-configurations.sidebar.about-2.description-2.strong',

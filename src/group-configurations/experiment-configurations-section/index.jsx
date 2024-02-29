@@ -1,41 +1,69 @@
 import PropTypes from 'prop-types';
-import { Button } from '@edx/paragon';
+import { Button, useToggle } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Add as AddIcon } from '@edx/paragon/icons';
+import { Add as AddIcon } from '@openedx/paragon/icons';
 
-import GroupConfigurationContainer from '../group-configuration-container';
 import EmptyPlaceholder from '../empty-placeholder';
+import ExperimentForm from './ExperimentForm';
+import ExperimentCard from './ExperimentCard';
+import { initialExperimentConfiguration } from './constants';
 import messages from './messages';
 
-const ExperimentConfigurationsSection = ({ availableGroups }) => {
+const ExperimentConfigurationsSection = ({
+  availableGroups,
+  experimentConfigurationActions,
+}) => {
   const { formatMessage } = useIntl();
+  const [
+    isNewConfigurationVisible,
+    openNewConfiguration,
+    hideNewConfiguration,
+  ] = useToggle(false);
+
+  const handleCreateConfiguration = (configuration) => {
+    experimentConfigurationActions.handleCreate(configuration, hideNewConfiguration);
+  };
 
   return (
     <div className="mt-2.5">
-      <p className="lead text-black mb-3 configuration-section-name">{formatMessage(messages.title)}</p>
+      <h2 className="lead text-black mb-3 configuration-section-name">
+        {formatMessage(messages.title)}
+      </h2>
       {availableGroups.length ? (
         <>
-          {availableGroups.map((group) => (
-            <GroupConfigurationContainer
-              key={group.id}
-              group={group}
-              isExperiment
+          {availableGroups.map((configuration) => (
+            <ExperimentCard
+              key={configuration.id}
+              configuration={configuration}
+              experimentConfigurationActions={experimentConfigurationActions}
+              onCreate={handleCreateConfiguration}
             />
           ))}
-          <Button
-            className="mt-4"
-            variant="outline-primary"
-            onClick={() => ({})}
-            iconBefore={AddIcon}
-            block
-          >
-            {formatMessage(messages.addNewGroup)}
-          </Button>
+          {!isNewConfigurationVisible && (
+            <Button
+              className="mt-4"
+              variant="outline-primary"
+              onClick={openNewConfiguration}
+              iconBefore={AddIcon}
+              block
+            >
+              {formatMessage(messages.addNewGroup)}
+            </Button>
+          )}
         </>
       ) : (
-        <EmptyPlaceholder
-          onCreateNewGroup={() => ({})}
-          isExperiment
+        !isNewConfigurationVisible && (
+          <EmptyPlaceholder
+            onCreateNewGroup={openNewConfiguration}
+            isExperiment
+          />
+        )
+      )}
+      {isNewConfigurationVisible && (
+        <ExperimentForm
+          initialValues={initialExperimentConfiguration}
+          onCreateClick={handleCreateConfiguration}
+          onCancelClick={hideNewConfiguration}
         />
       )}
     </div>
@@ -74,6 +102,10 @@ ExperimentConfigurationsSection.propTypes = {
       version: PropTypes.number,
     }).isRequired,
   ),
+  experimentConfigurationActions: PropTypes.shape({
+    handleCreate: PropTypes.func,
+    handleDelete: PropTypes.func,
+  }).isRequired,
 };
 
 export default ExperimentConfigurationsSection;

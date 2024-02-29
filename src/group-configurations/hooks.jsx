@@ -1,20 +1,23 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
 import { RequestStatus } from '../data/constants';
-import {
-  fetchGroupConfigurationsQuery,
-  createContentGroupQuery,
-  editContentGroupQuery,
-  deleteContentGroupQuery,
-} from './data/thunk';
-import { updateSavingStatuses } from './data/slice';
+import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
 import {
   getGroupConfigurationsData,
   getLoadingStatus,
   getSavingStatus,
 } from './data/selectors';
+import { updateSavingStatuses } from './data/slice';
+import {
+  createContentGroupQuery,
+  createExperimentConfigurationQuery,
+  deleteContentGroupQuery,
+  deleteExperimentConfigurationQuery,
+  editContentGroupQuery,
+  editExperimentConfigurationQuery,
+  fetchGroupConfigurationsQuery,
+} from './data/thunk';
 
 const useGroupConfigurations = (courseId) => {
   const dispatch = useDispatch();
@@ -30,23 +33,47 @@ const useGroupConfigurations = (courseId) => {
     dispatch(updateSavingStatuses({ status: RequestStatus.FAILED }));
   };
 
-  const groupConfigurationsActions = {
-    handleCreateContentGroup: (group, callbackToClose) => {
+  const contentGroupActions = {
+    handleCreate: (group, callbackToClose) => {
       dispatch(createContentGroupQuery(courseId, group)).then((result) => {
         if (result) {
           callbackToClose();
         }
       });
     },
-    handleEditContentGroup: (group, callbackToClose) => {
+    handleEdit: (group, callbackToClose) => {
       dispatch(editContentGroupQuery(courseId, group)).then((result) => {
         if (result) {
           callbackToClose();
         }
       });
     },
-    handleDeleteContentGroup: (parentGroupId, groupId) => {
+    handleDelete: (parentGroupId, groupId) => {
       dispatch(deleteContentGroupQuery(courseId, parentGroupId, groupId));
+    },
+  };
+
+  const experimentConfigurationActions = {
+    handleCreate: (configuration, callbackToClose) => {
+      dispatch(
+        createExperimentConfigurationQuery(courseId, configuration),
+      ).then((result) => {
+        if (result) {
+          callbackToClose();
+        }
+      });
+    },
+    handleEdit: (configuration, callbackToClose) => {
+      dispatch(editExperimentConfigurationQuery(courseId, configuration)).then(
+        (result) => {
+          if (result) {
+            callbackToClose();
+          }
+        },
+      );
+    },
+    handleDelete: (configurationId) => {
+      dispatch(deleteExperimentConfigurationQuery(courseId, configurationId));
     },
   };
 
@@ -57,7 +84,8 @@ const useGroupConfigurations = (courseId) => {
   return {
     isLoading: loadingStatus === RequestStatus.IN_PROGRESS,
     savingStatus,
-    groupConfigurationsActions,
+    contentGroupActions,
+    experimentConfigurationActions,
     groupConfigurations,
     isShowProcessingNotification,
     processingNotificationTitle,

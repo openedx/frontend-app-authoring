@@ -5,10 +5,20 @@ import { experimentGroupConfigurationsMock } from '../__mocks__';
 import messages from './messages';
 import ExperimentConfigurationsSection from '.';
 
+const handleCreateMock = jest.fn();
+const handleDeleteMock = jest.fn();
+const handleEditMock = jest.fn();
+const experimentConfigurationActions = {
+  handleCreate: handleCreateMock,
+  handleDelete: handleDeleteMock,
+  handleEdit: handleEditMock,
+};
+
 const renderComponent = (props) => render(
   <IntlProvider locale="en">
     <ExperimentConfigurationsSection
       availableGroups={experimentGroupConfigurationsMock}
+      experimentConfigurationActions={experimentConfigurationActions}
       {...props}
     />
   </IntlProvider>,

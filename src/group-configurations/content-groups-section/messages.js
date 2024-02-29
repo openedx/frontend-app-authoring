@@ -45,6 +45,27 @@ const messages = defineMessages({
     id: 'course-authoring.group-configurations.content-groups.delete-restriction',
     defaultMessage: 'Cannot delete when in use by a unit',
   },
+  emptyContentGroups: {
+    id: 'course-authoring.group-configurations.container.empty-content-groups',
+    defaultMessage:
+      'In the {outlineComponentLink}, use this group to control access to a component.',
+  },
+  courseOutline: {
+    id: 'course-authoring.group-configurations.container.course-outline',
+    defaultMessage: 'Course outline',
+  },
+  actionEdit: {
+    id: 'course-authoring.group-configurations.container.action.edit',
+    defaultMessage: 'Edit',
+  },
+  actionDelete: {
+    id: 'course-authoring.group-configurations.container.action.delete',
+    defaultMessage: 'Delete',
+  },
+  subtitleModalDelete: {
+    id: 'course-authoring.group-configurations.container.delete-modal.subtitle',
+    defaultMessage: 'content group',
+  },
 });
 
 export default messages;
