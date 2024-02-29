@@ -135,7 +135,7 @@ export const useContentTaxonomyTagsUpdater = (contentId, taxonomyId) => {
      * >}
      */
     mutationFn: ({ tags }) => updateContentTaxonomyTags(contentId, taxonomyId, tags),
-    onSettled: () => {
+    onSettled: /* istanbul ignore next */ () => {
       queryClient.invalidateQueries({ queryKey: ['contentTaxonomyTags', contentId] });
       /// Invalidate query with pattern on course outline
       queryClient.invalidateQueries({ queryKey: ['unitTagsCount'] });

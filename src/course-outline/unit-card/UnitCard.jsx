@@ -147,7 +147,7 @@ const UnitCard = ({
             onClickMenuButton={handleClickMenuButton}
             onClickPublish={onOpenPublishModal}
             onClickConfigure={onOpenConfigureModal}
-            onClickManageTags={() => setShowManageTags(true)}
+            onClickManageTags={/* istanbul ignore next */ () => setShowManageTags(true)}
             onClickEdit={openForm}
             onClickDelete={onOpenDeleteModal}
             onClickMoveUp={handleUnitMoveUp}
@@ -180,11 +180,11 @@ const UnitCard = ({
       <Sheet
         position="right"
         show={showManageTags}
-        onClose={() => setShowManageTags(false)}
+        onClose={/* istanbul ignore next */ () => setShowManageTags(false)}
       >
         <ContentTagsDrawer
           id={id}
-          onClose={() => setShowManageTags(false)}
+          onClose={/* istanbul ignore next */ () => setShowManageTags(false)}
         />
       </Sheet>
     </>

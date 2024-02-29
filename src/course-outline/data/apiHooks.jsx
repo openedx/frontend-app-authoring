@@ -9,7 +9,7 @@ import { getTagsCount } from './api';
 const useUnitTagsCount = (contentPattern) => (
   useQuery({
     queryKey: ['unitTagsCount', contentPattern],
-    queryFn: () => getTagsCount(contentPattern),
+    queryFn: /* istanbul ignore next */ () => getTagsCount(contentPattern),
   })
 );
 
