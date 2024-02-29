@@ -1,5 +1,5 @@
 import {
-  act, render, waitFor, fireEvent, within,
+  act, render, renderHook, waitFor, fireEvent, within,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -8,6 +8,8 @@ import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { cloneDeep } from 'lodash';
 
+  // __AUTO_GENERATED_PRINT_VAR_START__
+  console.log(" renderHook: ", renderHook); // __AUTO_GENERATED_PRINT_VAR_END__
 import {
   getCourseBestPracticesApiUrl,
   getCourseLaunchApiUrl,
@@ -36,6 +38,7 @@ import {
   courseSubsectionMock,
 } from './__mocks__';
 import { executeThunk } from '../utils';
+import { useCourseOutline } from './hooks';
 import { COURSE_BLOCK_NAMES, VIDEO_SHARING_OPTIONS } from './constants';
 import CourseOutline from './CourseOutline';
 import messages from './messages';
@@ -1547,11 +1550,15 @@ describe('<CourseOutline />', () => {
     await act(async () => fireEvent.click(expandBtn));
     const [, secondUnit] = subsection.childInfo.children;
     const [, unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
+    const { result: hookResult } = renderHook(() => useCourseOutline({courseId}));
 
     // mock api call
     axiosMock
       .onPut(getCourseItemApiUrl(store.getState().courseOutline.sectionsList[1].childInfo.children[1].id))
       .reply(200, { dummy: 'value' });
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, hookResult.moveUnit(courseOutlineIndexMock.courseStructure.childInfo.children, 1, 1, 0, 1)[0]);
 
     // find menu button and click on it to open menu
     const menu = await within(unitElement).findByTestId('unit-card-header__menu-button');

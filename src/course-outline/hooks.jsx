@@ -95,7 +95,6 @@ const useCourseOutline = ({ courseId }) => {
   const clipboardBroadcastChannel = useBroadcastChannel('studio_clipboard_channel', (message) => {
     dispatch(updateClipboardContent(message));
   });
-  const prevContainerInfo = useRef();
 
   const handleCopyToClipboardClick = (usageKey) => {
     dispatch(setClipboardContent(usageKey, clipboardBroadcastChannel.postMessage));
@@ -259,20 +258,21 @@ const useCourseOutline = ({ courseId }) => {
 
   const handleSubsectionDragAndDrop = (
     sectionId,
+    prevSectionId,
     subsectionListIds,
     restoreSectionList,
   ) => {
     dispatch(setSubsectionOrderListQuery(
       sectionId,
-      prevContainerInfo.current,
+      prevSectionId,
       subsectionListIds,
       restoreSectionList
     ));
-    prevContainerInfo.current = null;
   };
 
   const handleUnitDragAndDrop = (
     sectionId,
+    prevSectionId,
     subsectionId,
     unitListIds,
     restoreSectionList,
@@ -280,145 +280,11 @@ const useCourseOutline = ({ courseId }) => {
     dispatch(setUnitOrderListQuery(
       sectionId,
       subsectionId,
-      prevContainerInfo.current,
+      prevSectionId,
       unitListIds,
       restoreSectionList,
     ));
-    prevContainerInfo.current = null;
   };
-
-  const dragHelpers = {
-    copyBlockChildren: (block) => {
-      block.childInfo = { ...block.childInfo };
-      block.childInfo.children = [...block.childInfo.children];
-      return block;
-    },
-    setBlockChildren: (block, children) => {
-      block.childInfo.children = children;
-      return block;
-    },
-    setBlockChild: (block, child, id) => {
-      block.childInfo.children[id] = child;
-      return block;
-    },
-    insertChild: (block, child, index) => {
-      block.childInfo.children = [
-        ...block.childInfo.children.slice(0, index),
-        child,
-        ...block.childInfo.children.slice(index, block.childInfo.children.length)
-      ]
-      return block;
-    },
-    isBelowOverItem: (active, over) => {
-      return over &&
-        active.rect.current.translated &&
-        active.rect.current.translated.top >
-          over.rect.top + over.rect.height;
-    }
-  };
-
-  const moveSubsectionOver = (
-    prevCopy,
-    activeSectionIdx,
-    activeSubsectionIdx,
-    overSectionIdx,
-    newIndex,
-  ) => {
-    let activeSection = dragHelpers.copyBlockChildren({ ...prevCopy[activeSectionIdx] });
-    let overSection = dragHelpers.copyBlockChildren({ ...prevCopy[overSectionIdx] });
-    const subsection = activeSection.childInfo.children[activeSubsectionIdx];
-
-    overSection = dragHelpers.insertChild(overSection, subsection, newIndex);
-
-    if (prevContainerInfo.current === null || prevContainerInfo.current === undefined) {
-      prevContainerInfo.current = activeSection.id;
-    }
-
-    activeSection = dragHelpers.setBlockChildren(
-      activeSection,
-      activeSection.childInfo.children.filter((item) => item.id !== subsection.id)
-    )
-
-    prevCopy[activeSectionIdx] = activeSection;
-    prevCopy[overSectionIdx] = overSection;
-    return [prevCopy, overSection.childInfo.children];
-  }
-
-  const moveUnitOver = (
-    prevCopy,
-    activeSectionIdx,
-    activeSubsectionIdx,
-    activeUnitIdx,
-    overSectionIdx,
-    overSubsectionIdx,
-    newIndex,
-  ) => {
-    let activeSection = dragHelpers.copyBlockChildren({ ...prevCopy[activeSectionIdx] });
-    let activeSubsection = dragHelpers.copyBlockChildren(
-      { ...activeSection.childInfo.children[activeSubsectionIdx] }
-    );
-
-    let overSection = { ...prevCopy[overSectionIdx] };
-    if (overSection.id === activeSection.id) {
-      overSection = activeSection;
-    }
-
-    overSection = dragHelpers.copyBlockChildren(overSection);
-    let overSubsection = dragHelpers.copyBlockChildren(
-      { ...overSection.childInfo.children[overSubsectionIdx] }
-    );
-
-    const unit = activeSubsection.childInfo.children[activeUnitIdx];
-    overSubsection = dragHelpers.insertChild( overSubsection, unit , newIndex);
-    overSection = dragHelpers.setBlockChild(overSection, overSubsection, overSubsectionIdx);
-
-    activeSubsection = dragHelpers.setBlockChildren(
-      activeSubsection,
-      activeSubsection.childInfo.children.filter((item) => item.id !== unit.id)
-    )
-    activeSection = dragHelpers.setBlockChild(activeSection, activeSubsection, activeSubsectionIdx);
-
-    if (prevContainerInfo.current === null || prevContainerInfo.current === undefined) {
-      prevContainerInfo.current = activeSection.id;
-    }
-
-    prevCopy[activeSectionIdx] = activeSection;
-    prevCopy[overSectionIdx] = overSection;
-    return [prevCopy, overSubsection.childInfo.children];
-  }
-
-  const moveSubsection = (
-    prevCopy,
-    sectionIdx,
-    currentIdx,
-    newIdx,
-  ) => {
-    let section = dragHelpers.copyBlockChildren({ ...prevCopy[sectionIdx] });
-
-    const result = arrayMove(section.childInfo.children, currentIdx, newIdx);
-    section = dragHelpers.setBlockChildren(section, result);
-
-    prevCopy[sectionIdx] = section;
-    return [prevCopy, result];
-  }
-
-  const moveUnit = (
-    prevCopy,
-    sectionIdx,
-    subsectionIdx,
-    currentIdx,
-    newIdx,
-  ) => {
-    let section = dragHelpers.copyBlockChildren({ ...prevCopy[sectionIdx] });
-    let subsection = dragHelpers.copyBlockChildren({ ...section.childInfo.children[subsectionIdx] });
-
-    const result = arrayMove(subsection.childInfo.children, currentIdx, newIdx);
-    subsection = dragHelpers.setBlockChildren(subsection, result);
-    section = dragHelpers.setBlockChild(section, subsection, subsectionIdx);
-
-    prevCopy[sectionIdx] = section;
-    return [prevCopy, result];
-  }
 
   useEffect(() => {
     dispatch(fetchCourseOutlineIndexQuery(courseId));
@@ -493,15 +359,9 @@ const useCourseOutline = ({ courseId }) => {
     mfeProctoredExamSettingsUrl,
     handleDismissNotification,
     advanceSettingsUrl,
-    prevContainerInfo,
     handleSectionDragAndDrop,
     handleSubsectionDragAndDrop,
     handleUnitDragAndDrop,
-    moveSubsectionOver,
-    moveUnitOver,
-    moveSubsection,
-    moveUnit,
-    dragHelpers,
   };
 };
 

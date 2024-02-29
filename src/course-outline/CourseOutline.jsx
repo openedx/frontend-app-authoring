@@ -45,6 +45,12 @@ import PublishModal from './publish-modal/PublishModal';
 import ConfigureModal from './configure-modal/ConfigureModal';
 import PageAlerts from './page-alerts/PageAlerts';
 import DraggableList from './drag-helper/DraggableList';
+import {
+  moveSubsectionOver,
+  moveUnitOver,
+  moveSubsection,
+  moveUnit,
+} from './drag-helper/utils';
 import { useCourseOutline } from './hooks';
 import messages from './messages';
 import useUnitTagsCount from './data/apiHooks';
@@ -112,11 +118,6 @@ const CourseOutline = ({ courseId }) => {
     handleSectionDragAndDrop,
     handleSubsectionDragAndDrop,
     handleUnitDragAndDrop,
-    moveSubsectionOver,
-    moveUnitOver,
-    moveSubsection,
-    moveUnit,
-    dragHelpers,
   } = useCourseOutline({ courseId });
 
   const [sections, setSections] = useState(sectionsList);
@@ -247,6 +248,7 @@ const CourseOutline = ({ courseId }) => {
       setSections(sectionsCopy);
       handleSubsectionDragAndDrop(
         sectionId,
+        section.id,
         newSubsections.map(subsection => subsection.id),
         restoreSectionList,
       );
@@ -373,6 +375,7 @@ const CourseOutline = ({ courseId }) => {
       setSections(sectionsCopy);
       handleUnitDragAndDrop(
         sectionId,
+        section.id,
         subsectionId,
         newUnits.map(unit => unit.id),
         restoreSectionList,
@@ -465,7 +468,6 @@ const CourseOutline = ({ courseId }) => {
                       {sections.length ? (
                         <>
                           <DraggableList
-                            courseId={courseId}
                             items={sections}
                             setSections={setSections}
                             restoreSectionList={restoreSectionList}
@@ -473,11 +475,6 @@ const CourseOutline = ({ courseId }) => {
                             handleSectionDragAndDrop={handleSectionDragAndDrop}
                             handleSubsectionDragAndDrop={handleSubsectionDragAndDrop}
                             handleUnitDragAndDrop={handleUnitDragAndDrop}
-                            moveSubsectionOver={moveSubsectionOver}
-                            moveUnitOver={moveUnitOver}
-                            moveSubsection={moveSubsection}
-                            moveUnit={moveUnit}
-                            helpers={dragHelpers}
                           >
                             <SortableContext
                               id="root"

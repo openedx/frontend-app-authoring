@@ -20,23 +20,24 @@ import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 
 import DragContextProvider from './DragContextProvider';
 import { COURSE_BLOCK_NAMES } from '../constants';
-
-const DraggableList = ({
-  courseId,
-  items,
-  setSections,
-  restoreSectionList,
-  prevContainerInfo,
-  handleSectionDragAndDrop,
-  handleSubsectionDragAndDrop,
-  handleUnitDragAndDrop,
+import {
   moveSubsectionOver,
   moveUnitOver,
   moveSubsection,
   moveUnit,
-  helpers,
+  dragHelpers,
+} from './utils';
+
+const DraggableList = ({
+  items,
+  setSections,
+  restoreSectionList,
+  handleSectionDragAndDrop,
+  handleSubsectionDragAndDrop,
+  handleUnitDragAndDrop,
   children,
 }) => {
+  const prevContainerInfo = React.useRef();
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -110,7 +111,7 @@ const DraggableList = ({
       overSectionIndex = overInfo.index;
       setOverId(overInfo.item.id);
     } else {
-      const modifier = helpers.isBelowOverItem(active, over) ? 1 : 0;
+      const modifier = dragHelpers.isBelowOverItem(active, over) ? 1 : 0;
       newIndex = overInfo.index >= 0 ? overInfo.index + modifier : overInfo.item.childInfo.children.length + 1;
       overSectionIndex = overInfo.parentIndex;
       setOverId(overInfo.parent.id);
@@ -126,6 +127,9 @@ const DraggableList = ({
       );
       return prevCopy;
     });
+    if (prevContainerInfo.current === null || prevContainerInfo.current === undefined) {
+      prevContainerInfo.current = activeInfo.parent.id;
+    }
   }
 
   const unitDragOver = (active, over, activeInfo, overInfo) => {
@@ -148,7 +152,7 @@ const DraggableList = ({
       overSectionIndex = overInfo.parentIndex;
       setOverId(overInfo.item.id);
     } else {
-      const modifier = helpers.isBelowOverItem(active, over) ? 1 : 0;
+      const modifier = dragHelpers.isBelowOverItem(active, over) ? 1 : 0;
       newIndex = overInfo.index >= 0 ? overInfo.index + modifier : overInfo.item.childInfo.children.length + 1;
       overSubsectionIndex = overInfo.parentIndex;
       overSectionIndex = overInfo.grandParentIndex;
@@ -167,6 +171,9 @@ const DraggableList = ({
       );
       return prevCopy;
     });
+    if (prevContainerInfo.current === null || prevContainerInfo.current === undefined) {
+      prevContainerInfo.current = activeInfo.grandParent.id;
+    }
   }
 
   const handleDragOver = (event) => {
@@ -239,6 +246,7 @@ const DraggableList = ({
             );
             handleSubsectionDragAndDrop(
               activeInfo.parent.id,
+              prevContainerInfo.current,
               result.map(subsection => subsection.id),
               restoreSectionList,
             );
@@ -256,6 +264,7 @@ const DraggableList = ({
             );
             handleUnitDragAndDrop(
               activeInfo.grandParent.id,
+              prevContainerInfo.current,
               activeInfo.parent.id,
               result.map(unit => unit.id),
               restoreSectionList,
@@ -264,6 +273,7 @@ const DraggableList = ({
           });
           break;
       }
+      prevContainerInfo.current = null;
     }
   }
 
@@ -314,10 +324,14 @@ const DraggableList = ({
 };
 
 DraggableList.propTypes = {
-  itemList: PropTypes.arrayOf(PropTypes.shape({
+  items: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
   })).isRequired,
   setSections: PropTypes.func.isRequired,
+  restoreSectionList: PropTypes.func.isRequired,
+  handleSectionDragAndDrop: PropTypes.func.isRequired,
+  handleSubsectionDragAndDrop: PropTypes.func.isRequired,
+  handleUnitDragAndDrop: PropTypes.func.isRequired,
   children: PropTypes.node.isRequired,
 };
 
