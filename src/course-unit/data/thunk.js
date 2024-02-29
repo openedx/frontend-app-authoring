@@ -1,4 +1,5 @@
 import { logError, logInfo } from '@edx/frontend-platform/logging';
+import { camelCaseObject } from '@edx/frontend-platform';
 
 import {
   hideProcessingNotification,
@@ -236,8 +237,9 @@ export function createNewCourseXBlock(body, callback, blockId) {
     try {
       await createCourseXblock(body).then(async (result) => {
         if (result) {
+          const formattedResult = camelCaseObject(result);
           if (body.category === 'vertical') {
-            const courseSectionVerticalData = await getCourseSectionVerticalData(result.locator);
+            const courseSectionVerticalData = await getCourseSectionVerticalData(formattedResult.locator);
             dispatch(fetchCourseSectionVerticalDataSuccess(courseSectionVerticalData));
           }
           const courseVerticalChildrenData = await getCourseVerticalChildren(blockId);
