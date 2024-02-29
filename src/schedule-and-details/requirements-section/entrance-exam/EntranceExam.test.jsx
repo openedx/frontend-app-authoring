@@ -4,7 +4,7 @@ import {
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
-import { courseDetailsMock } from '../../__mocks__';
+import { courseDetailsMock, courseSettingsMock } from '../../__mocks__';
 import gradeRequirementsMessages from '../grade-requirements/messages';
 import messages from './messages';
 import EntranceExam from '.';
@@ -30,6 +30,7 @@ const props = {
   isCheckedString: courseDetailsMock.entranceExamEnabled,
   entranceExamMinimumScorePct: courseDetailsMock.entranceExamMinimumScorePct,
   onChange: onChangeMock,
+  isEditable: courseSettingsMock.isEditable,
 };
 
 describe('<EntranceExam />', () => {
@@ -57,5 +58,12 @@ describe('<EntranceExam />', () => {
         queryAllByText(gradeRequirementsMessages.requirementsEntranceCollapseLabel.defaultMessage).length,
       ).toBe(0);
     });
+  });
+
+  it('should disable the checkbox if isEditable is false', () => {
+    const initialProps = { ...props, isEditable: false };
+    const { getAllByRole } = render(<RootWrapper {...initialProps} />);
+    const checkbox = getAllByRole('checkbox')[0];
+    expect(checkbox.disabled).toEqual(true);
   });
 });

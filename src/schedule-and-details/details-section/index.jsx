@@ -23,11 +23,11 @@ const DetailsSection = ({
       />
       <Form.Group className="form-group-custom dropdown-language">
         <Form.Label>{intl.formatMessage(messages.dropdownLabel)}</Form.Label>
-        <Dropdown className="bg-white" disabled>
+        <Dropdown className="bg-white">
           <Dropdown.Toggle variant="outline-primary" id="languageDropdown" disabled={!isEditable}>
             {formattedLanguage()}
           </Dropdown.Toggle>
-          <Dropdown.Menu disabled>
+          <Dropdown.Menu>
             {languageOptions.map((option) => (
               <Dropdown.Item
                 key={option[0]}

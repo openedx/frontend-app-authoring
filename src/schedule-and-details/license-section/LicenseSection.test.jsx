@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
-import { courseDetailsMock } from '../__mocks__';
+import { courseDetailsMock, courseSettingsMock } from '../__mocks__';
 import messages from './messages';
 import LicenseSection from '.';
 
@@ -17,6 +17,7 @@ const RootWrapper = (props) => (
 const props = {
   license: courseDetailsMock.license,
   onChange: onChangeMock,
+  isEditable: courseSettingsMock.isEditable,
 };
 
 describe('<LicenseSection />', () => {

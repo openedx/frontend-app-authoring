@@ -34,7 +34,7 @@ const RequirementsSection = ({
     >
       <Form.Label>{intl.formatMessage(messages.dropdownLabel)}</Form.Label>
       <Dropdown className="bg-white">
-        <Dropdown.Toggle id="prerequisiteDropdown" variant="outline-primary" disabled={!isEditable}>
+        <Dropdown.Toggle id="prerequisiteDropdown" variant="outline-primary" disabled={!isEditable} data-testid="prerequisite_dropdown">
           {formattedSelectedItem}
         </Dropdown.Toggle>
         <Dropdown.Menu>

@@ -4,7 +4,7 @@ import {
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
-import { courseDetailsMock } from '../../__mocks__';
+import { courseDetailsMock, courseSettingsMock } from '../../__mocks__';
 import scheduleMessage from '../../messages';
 import messages from './messages';
 import GradeRequirements from '.';
@@ -21,6 +21,7 @@ const props = {
   errorEffort: '',
   entranceExamMinimumScorePct: courseDetailsMock.entranceExamMinimumScorePct,
   onChange: onChangeMock,
+  isEditable: courseSettingsMock.isEditable,
 };
 
 describe('<GradeRequirements />', () => {
@@ -29,6 +30,13 @@ describe('<GradeRequirements />', () => {
     expect(getByText(messages.requirementsEntranceCollapseLabel.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.requirementsEntranceCollapseHelpText.defaultMessage)).toBeInTheDocument();
     expect(getByDisplayValue(props.entranceExamMinimumScorePct)).toBeInTheDocument();
+  });
+
+  it('disable the input if isEditable is false', () => {
+    const initialProps = { ...props, isEditable: false };
+    const { getByDisplayValue } = render(<RootWrapper {...initialProps} />);
+    const input = getByDisplayValue(props.entranceExamMinimumScorePct);
+    expect(input.disabled).toEqual(true);
   });
 
   it('should call onChange on input change', () => {
