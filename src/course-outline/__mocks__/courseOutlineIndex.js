@@ -392,7 +392,7 @@ module.exports = {
                 proctoring_exam_configuration_link: null,
                 supports_onboarding: true,
                 show_review_rules: true,
-                child_info: {
+                childInfo: {
                   category: 'vertical',
                   display_name: 'Unit',
                   children: [],

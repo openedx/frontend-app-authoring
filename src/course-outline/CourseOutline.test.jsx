@@ -1,15 +1,15 @@
 import {
-  act, render, renderHook, waitFor, fireEvent, within,
+  act, render, waitFor, fireEvent, within,
 } from '@testing-library/react';
+import userEvent from '@testing-library/user-event'
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { cloneDeep } from 'lodash';
+import { closestCorners } from '@dnd-kit/core';
 
-  // __AUTO_GENERATED_PRINT_VAR_START__
-  console.log(" renderHook: ", renderHook); // __AUTO_GENERATED_PRINT_VAR_END__
 import {
   getCourseBestPracticesApiUrl,
   getCourseLaunchApiUrl,
@@ -38,7 +38,6 @@ import {
   courseSubsectionMock,
 } from './__mocks__';
 import { executeThunk } from '../utils';
-import { useCourseOutline } from './hooks';
 import { COURSE_BLOCK_NAMES, VIDEO_SHARING_OPTIONS } from './constants';
 import CourseOutline from './CourseOutline';
 import messages from './messages';
@@ -50,6 +49,12 @@ import configureModalMessages from './configure-modal/messages';
 import pasteButtonMessages from './paste-button/messages';
 import subsectionMessages from './subsection-card/messages';
 import pageAlertMessages from './page-alerts/messages';
+import {
+  moveSubsectionOver,
+  moveUnitOver,
+  moveSubsection,
+  moveUnit,
+} from './drag-helper/utils';
 
 let axiosMock;
 let store;
@@ -85,6 +90,19 @@ jest.mock('./data/apiHooks', () => () => ({
   data: {},
   isSuccess: true,
 }));
+
+jest.mock('@dnd-kit/core', () => ({
+  ...jest.requireActual('@dnd-kit/core'),
+  // Since jsdom (used by jest) does not support getBoundingClientRect function
+  // which is required for drag-n-drop calculations, we mock closestCorners fn
+  // from dnd-kit to return collided elements as per the test. This allows us to
+  // test all drag-n-drop handlers.
+  closestCorners: jest.fn(),
+}));
+
+const sleep = (ms) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 const RootWrapper = () => (
   <AppProvider store={store}>
@@ -195,6 +213,56 @@ describe('<CourseOutline />', () => {
     await act(async () => fireEvent.click(reindexButton));
 
     expect(await findByText(messages.alertErrorTitle.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('check that new section list is saved when dragged', async () => {
+    const { findAllByRole } = render(<RootWrapper />);
+    const courseBlockId = courseOutlineIndexMock.courseStructure.id;
+    const sectionsDraggers = await findAllByRole('button', { name: 'Drag to reorder' });
+    const draggableButton = sectionsDraggers[6];
+
+    axiosMock
+      .onPut(getCourseBlockApiUrl(courseBlockId))
+      .reply(200, { dummy: 'value' });
+
+    const section1 = store.getState().courseOutline.sectionsList[0].id;
+    closestCorners.mockReturnValue([{ id: section1 }]);
+
+    fireEvent.keyDown(draggableButton, { code: 'Space' });
+    await sleep(1);
+    fireEvent.keyDown(draggableButton, { code: 'Space' });
+    await waitFor(async () => {
+      const saveStatus = store.getState().courseOutline.savingStatus;
+      expect(saveStatus).toEqual(RequestStatus.SUCCESSFUL);
+    });
+
+    const section2 = store.getState().courseOutline.sectionsList[1].id;
+    expect(section1).toBe(section2);
+  });
+
+  it('check section list is restored to original order when API call fails', async () => {
+    const { findAllByRole } = render(<RootWrapper />);
+    const courseBlockId = courseOutlineIndexMock.courseStructure.id;
+    const sectionsDraggers = await findAllByRole('button', { name: 'Drag to reorder' });
+    const draggableButton = sectionsDraggers[6];
+
+    axiosMock
+      .onPut(getCourseBlockApiUrl(courseBlockId))
+      .reply(500);
+
+    const section1 = store.getState().courseOutline.sectionsList[0].id;
+    closestCorners.mockReturnValue([{ id: section1 }]);
+
+    fireEvent.keyDown(draggableButton, { code: 'Space' });
+    await sleep(1);
+    fireEvent.keyDown(draggableButton, { code: 'Space' });
+    await waitFor(async () => {
+      const saveStatus = store.getState().courseOutline.savingStatus;
+      expect(saveStatus).toEqual(RequestStatus.FAILED);
+    });
+
+    const section1New = store.getState().courseOutline.sectionsList[0].id;
+    expect(section1).toBe(section1New);
   });
 
   it('adds new section correctly', async () => {
@@ -1473,6 +1541,10 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onPut(getCourseItemApiUrl(store.getState().courseOutline.sectionsList[0].id))
       .reply(200, { dummy: 'value' });
+    const expectedSection = moveSubsection([...courseOutlineIndexMock.courseStructure.childInfo.children], 0, 0, 1)[0][0];
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, expectedSection);
 
     // find menu button and click on it to open menu
     const menu = await within(subsectionElement).findByTestId('subsection-card-header__menu-button');
@@ -1485,10 +1557,86 @@ describe('<CourseOutline />', () => {
     expect(secondSubsection.id).toBe(firstSubsectionId);
 
     // move first section back to second position to test move down option
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, section);
     const moveDownButton = await within(subsectionElement).findByTestId('subsection-card-header__menu-move-down-button');
     await act(async () => fireEvent.click(moveDownButton));
     const secondSubsectionId = store.getState().courseOutline.sectionsList[0].childInfo.children[1].id;
     expect(secondSubsection.id).toBe(secondSubsectionId);
+  });
+
+  it('check whether subsection move up to prev section if it is on top of its parent section', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    const [firstSection, section] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const [, sectionElement] = await findAllByTestId('section-card');
+    const [subsection] = section.childInfo.children;
+    const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+
+    // mock api call
+    axiosMock
+      .onPut(getCourseItemApiUrl(firstSection.id))
+      .reply(200, { dummy: 'value' });
+    const expectedSections = moveSubsectionOver([
+      ...courseOutlineIndexMock.courseStructure.childInfo.children
+    ], 1, 0, 0, firstSection.childInfo.children.length + 1)[0];
+    axiosMock
+      .onGet(getXBlockApiUrl(firstSection.id))
+      .reply(200, expectedSections[0]);
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, expectedSections[1]);
+
+    // find menu button and click on it to open menu
+    const menu = await within(subsectionElement).findByTestId('subsection-card-header__menu-button');
+    await act(async () => fireEvent.click(menu));
+
+    // move first subsection in second section to last position of prev section
+    const moveUpButton = await within(subsectionElement).findByTestId('subsection-card-header__menu-move-up-button');
+    await act(async () => fireEvent.click(moveUpButton));
+    const firstSectionSubsections = store.getState().courseOutline.sectionsList[0].childInfo.children;
+    expect(firstSectionSubsections.length).toBe(firstSection.childInfo.children.length + 1);
+    const lastSubsectionFirstSection = firstSectionSubsections[firstSectionSubsections.length - 1].id;
+    expect(subsection.id).toBe(lastSubsectionFirstSection);
+    const subsectionsSecondSection = store.getState().courseOutline.sectionsList[1].childInfo.children;
+    expect(subsectionsSecondSection.length).toBe(section.childInfo.children.length - 1);
+  });
+
+  it('check whether subsection move down to next section if it is in bottom position of its parent section', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    const [section, secondSection] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const [sectionElement] = await findAllByTestId('section-card');
+    const lastSubsectionIdx = section.childInfo.children.length - 1;
+    const subsection = section.childInfo.children[lastSubsectionIdx];
+    const subsectionElement = (await within(sectionElement).findAllByTestId('subsection-card'))[lastSubsectionIdx];
+
+    // mock api call
+    axiosMock
+      .onPut(getCourseItemApiUrl(secondSection.id))
+      .reply(200, { dummy: 'value' });
+    const expectedSections = moveSubsectionOver([
+      ...courseOutlineIndexMock.courseStructure.childInfo.children
+    ], 0, lastSubsectionIdx, 1, 0)[0];
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, expectedSections[0]);
+    axiosMock
+      .onGet(getXBlockApiUrl(secondSection.id))
+      .reply(200, expectedSections[1]);
+
+    // find menu button and click on it to open menu
+    const menu = await within(subsectionElement).findByTestId('subsection-card-header__menu-button');
+    await act(async () => fireEvent.click(menu));
+
+    // move first subsection in second section to last position of prev section
+    const moveDownBtn = await within(subsectionElement).findByTestId('subsection-card-header__menu-move-down-button');
+    await act(async () => fireEvent.click(moveDownBtn));
+    const firstSectionSubsections = store.getState().courseOutline.sectionsList[0].childInfo.children;
+    expect(firstSectionSubsections.length).toBe(section.childInfo.children.length - 1);
+    const subsectionsSecondSection = store.getState().courseOutline.sectionsList[1].childInfo.children;
+    expect(subsectionsSecondSection.length).toBe(secondSection.childInfo.children.length + 1);
+    const firstSubSecondSection = subsectionsSecondSection[0].id;
+    expect(subsection.id).toBe(firstSubSecondSection);
   });
 
   it('check whether subsection move up & down option is rendered correctly based on index', async () => {
@@ -1550,15 +1698,15 @@ describe('<CourseOutline />', () => {
     await act(async () => fireEvent.click(expandBtn));
     const [, secondUnit] = subsection.childInfo.children;
     const [, unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
-    const { result: hookResult } = renderHook(() => useCourseOutline({courseId}));
 
     // mock api call
     axiosMock
       .onPut(getCourseItemApiUrl(store.getState().courseOutline.sectionsList[1].childInfo.children[1].id))
       .reply(200, { dummy: 'value' });
+    const expectedSection = moveUnit([...courseOutlineIndexMock.courseStructure.childInfo.children], 1, 1, 0, 1)[0][1];
     axiosMock
       .onGet(getXBlockApiUrl(section.id))
-      .reply(200, hookResult.moveUnit(courseOutlineIndexMock.courseStructure.childInfo.children, 1, 1, 0, 1)[0]);
+      .reply(200, expectedSection);
 
     // find menu button and click on it to open menu
     const menu = await within(unitElement).findByTestId('unit-card-header__menu-button');
@@ -1571,10 +1719,182 @@ describe('<CourseOutline />', () => {
     expect(secondUnit.id).toBe(firstUnitId);
 
     // move first unit back to second position to test move down option
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, section);
     const moveDownButton = await within(subsectionElement).findByTestId('unit-card-header__menu-move-down-button');
     await act(async () => fireEvent.click(moveDownButton));
     const secondUnitId = store.getState().courseOutline.sectionsList[1].childInfo.children[1].childInfo.children[1].id;
     expect(secondUnit.id).toBe(secondUnitId);
+  });
+
+  it('check whether unit moves up to previous subsection if it is in top position in parent subsection', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    // get second section -> second subsection -> first unit element
+    const [, section] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const [, sectionElement] = await findAllByTestId('section-card');
+    const [firstSubsection, subsection] = section.childInfo.children;
+    const [, subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
+    await act(async () => fireEvent.click(expandBtn));
+    const [unit] = subsection.childInfo.children;
+    const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
+
+    // mock api call
+    axiosMock
+      .onPut(getCourseItemApiUrl(firstSubsection.id))
+      .reply(200, { dummy: 'value' });
+    const expectedSections = moveUnitOver([
+      ...courseOutlineIndexMock.courseStructure.childInfo.children
+    ], 1, 1, 0, 1, 0, firstSubsection.childInfo.children.length)[0];
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, expectedSections[1]);
+
+    // find menu button and click on it to open menu
+    const menu = await within(unitElement).findByTestId('unit-card-header__menu-button');
+    await act(async () => fireEvent.click(menu));
+
+    // move first unit to last position of prev subsection
+    const moveUpButton = await within(unitElement).findByTestId('unit-card-header__menu-move-up-button');
+    await act(async () => fireEvent.click(moveUpButton));
+    const firstSubUnits = store.getState().courseOutline.sectionsList[1].childInfo.children[0].childInfo.children;
+    expect(firstSubUnits[firstSubUnits.length - 1].id).toBe(unit.id);
+    const secondSubUnits = store.getState().courseOutline.sectionsList[1].childInfo.children[1].childInfo.children;
+    expect(secondSubUnits.length).toBe(subsection.childInfo.children.length - 1);
+  });
+
+  it('check whether unit moves up to previous subsection of prev section if it is in top position in parent subsection & section', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    // get second section -> second subsection -> first unit element
+    const [firstSection, secondSection] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const [, sectionElement] = await findAllByTestId('section-card');
+    const [subsection] = secondSection.childInfo.children;
+    const firstSectionLastSubsection = firstSection.childInfo.children[firstSection.childInfo.children.length - 1];
+    const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
+    await act(async () => fireEvent.click(expandBtn));
+    const [unit] = subsection.childInfo.children;
+    const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
+
+    // mock api call
+    axiosMock
+      .onPut(getCourseItemApiUrl(firstSectionLastSubsection.id))
+      .reply(200, { dummy: 'value' });
+    const expectedSections = moveUnitOver(
+      [...courseOutlineIndexMock.courseStructure.childInfo.children],
+      1,
+      0,
+      0,
+      0,
+      firstSection.childInfo.children.length - 1,
+      firstSectionLastSubsection.childInfo.children.length
+    )[0];
+    axiosMock
+      .onGet(getXBlockApiUrl(firstSection.id))
+      .reply(200, expectedSections[0]);
+    axiosMock
+      .onGet(getXBlockApiUrl(secondSection.id))
+      .reply(200, expectedSections[1]);
+
+    // find menu button and click on it to open menu
+    const menu = await within(unitElement).findByTestId('unit-card-header__menu-button');
+    await act(async () => fireEvent.click(menu));
+
+    // move first unit to last position of prev subsection
+    const moveUpButton = await within(unitElement).findByTestId('unit-card-header__menu-move-up-button');
+    await act(async () => fireEvent.click(moveUpButton));
+    const firstSectionSubsectionsStore = store.getState().courseOutline.sectionsList[0].childInfo.children;
+    const firstSectionLastSubsectionUnits = firstSectionSubsectionsStore[firstSectionSubsectionsStore.length - 1].childInfo.children;
+    expect(firstSectionLastSubsectionUnits[firstSectionLastSubsectionUnits.length - 1].id).toBe(unit.id);
+    const secondSubUnits = store.getState().courseOutline.sectionsList[1].childInfo.children[0].childInfo.children;
+    expect(secondSubUnits.length).toBe(subsection.childInfo.children.length - 1);
+  });
+
+  it('check whether unit moves down to next subsection if it is in last position in parent subsection', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    // get second section -> second subsection -> first unit element
+    const [, section] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const [, sectionElement] = await findAllByTestId('section-card');
+    const [firstSubsection, subsection] = section.childInfo.children;
+    const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
+    await act(async () => fireEvent.click(expandBtn));
+    const lastUnitIdx = firstSubsection.childInfo.children.length - 1;
+    const unit = firstSubsection.childInfo.children[lastUnitIdx];
+    const unitElement = (await within(subsectionElement).findAllByTestId('unit-card'))[lastUnitIdx];
+
+    // mock api call
+    axiosMock
+      .onPut(getCourseItemApiUrl(subsection.id))
+      .reply(200, { dummy: 'value' });
+    const expectedSections = moveUnitOver([
+      ...courseOutlineIndexMock.courseStructure.childInfo.children
+    ], 1, 0, lastUnitIdx, 1, 1, 0)[0];
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, expectedSections[1]);
+
+    // find menu button and click on it to open menu
+    const menu = await within(unitElement).findByTestId('unit-card-header__menu-button');
+    await act(async () => fireEvent.click(menu));
+
+    // move first unit to last position of prev subsection
+    const moveDownButton = await within(unitElement).findByTestId('unit-card-header__menu-move-down-button');
+    await act(async () => fireEvent.click(moveDownButton));
+    const firstSubUnits = store.getState().courseOutline.sectionsList[1].childInfo.children[0].childInfo.children;
+    expect(firstSubUnits.length).toBe(firstSubsection.childInfo.children.length - 1);
+    const secondSubUnits = store.getState().courseOutline.sectionsList[1].childInfo.children[1].childInfo.children;
+    expect(secondSubUnits[0].id).toBe(unit.id);
+  });
+
+  it('check whether unit moves down to next subsection of next section if it is in last position in parent subsection & section', async () => {
+    const { findAllByTestId } = render(<RootWrapper />);
+    // get second section -> second subsection -> first unit element
+    const [, secondSection, thirdSection] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const [, sectionElement] = await findAllByTestId('section-card');
+    const lastSubIndex = secondSection.childInfo.children.length - 1;
+    const secondSectionLastSubsection = secondSection.childInfo.children[lastSubIndex];
+    const thirdSectionFirstSubsection = thirdSection.childInfo.children[0];
+    const subsectionElement = (await within(sectionElement).findAllByTestId('subsection-card'))[lastSubIndex];
+    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
+    await act(async () => fireEvent.click(expandBtn));
+    const lastUnitIdx = secondSectionLastSubsection.childInfo.children.length - 1;
+    const unit = secondSectionLastSubsection.childInfo.children[lastUnitIdx];
+    const unitElement = (await within(subsectionElement).findAllByTestId('unit-card'))[lastUnitIdx];
+
+    // mock api call
+    axiosMock
+      .onPut(getCourseItemApiUrl(thirdSectionFirstSubsection.id))
+      .reply(200, { dummy: 'value' });
+    const expectedSections = moveUnitOver(
+      [...courseOutlineIndexMock.courseStructure.childInfo.children],
+      1,
+      lastSubIndex,
+      lastUnitIdx,
+      2,
+      0,
+      0
+    )[0];
+    axiosMock
+      .onGet(getXBlockApiUrl(secondSection.id))
+      .reply(200, expectedSections[1]);
+    axiosMock
+      .onGet(getXBlockApiUrl(thirdSection.id))
+      .reply(200, expectedSections[2]);
+
+    // find menu button and click on it to open menu
+    const menu = await within(unitElement).findByTestId('unit-card-header__menu-button');
+    await act(async () => fireEvent.click(menu));
+
+    // move first unit to last position of prev subsection
+    const moveDownButton = await within(unitElement).findByTestId('unit-card-header__menu-move-down-button');
+    await act(async () => fireEvent.click(moveDownButton));
+    const secondSectionSubsectionsStore = store.getState().courseOutline.sectionsList[1].childInfo.children;
+    const secondSectionLastSubsectionUnits = secondSectionSubsectionsStore[secondSectionSubsectionsStore.length - 1].childInfo.children;
+    expect(secondSectionLastSubsectionUnits.length).toBe(secondSectionLastSubsection.childInfo.children.length - 1);
+    const thirdSubUnits = store.getState().courseOutline.sectionsList[2].childInfo.children[0].childInfo.children;
+    expect(thirdSubUnits[0].id).toBe(unit.id);
   });
 
   it('check whether unit move up & down option is rendered correctly based on index', async () => {
@@ -1628,54 +1948,6 @@ describe('<CourseOutline />', () => {
     ).not.toHaveAttribute('aria-disabled');
   });
 
-  it('check that new section list is saved when dragged', async () => {
-    const { findAllByRole } = render(<RootWrapper />);
-    const courseBlockId = courseOutlineIndexMock.courseStructure.id;
-    const sectionsDraggers = await findAllByRole('button', { name: 'Drag to reorder' });
-    const draggableButton = sectionsDraggers[7];
-
-    axiosMock
-      .onPut(getCourseBlockApiUrl(courseBlockId))
-      .reply(200, { dummy: 'value' });
-
-    const section1 = store.getState().courseOutline.sectionsList[0].id;
-
-    fireEvent.keyDown(draggableButton, { key: 'ArrowUp' });
-    await waitFor(async () => {
-      fireEvent.keyDown(draggableButton, { code: 'Space' });
-
-      const saveStatus = store.getState().courseOutline.savingStatus;
-      expect(saveStatus).toEqual(RequestStatus.SUCCESSFUL);
-    });
-
-    const section2 = store.getState().courseOutline.sectionsList[1].id;
-    expect(section1).toBe(section2);
-  });
-
-  it('check section list is restored to original order when API call fails', async () => {
-    const { findAllByRole } = render(<RootWrapper />);
-    const courseBlockId = courseOutlineIndexMock.courseStructure.id;
-    const sectionsDraggers = await findAllByRole('button', { name: 'Drag to reorder' });
-    const draggableButton = sectionsDraggers[6];
-
-    axiosMock
-      .onPut(getCourseBlockApiUrl(courseBlockId))
-      .reply(500);
-
-    const section1 = store.getState().courseOutline.sectionsList[0].id;
-
-    fireEvent.keyDown(draggableButton, { key: 'ArrowUp' });
-    await waitFor(async () => {
-      fireEvent.keyDown(draggableButton, { code: 'Space' });
-
-      const saveStatus = store.getState().courseOutline.savingStatus;
-      expect(saveStatus).toEqual(RequestStatus.FAILED);
-    });
-
-    const section1New = store.getState().courseOutline.sectionsList[0].id;
-    expect(section1).toBe(section1New);
-  });
-
   it('check that new subsection list is saved when dragged', async () => {
     const { findAllByTestId } = render(<RootWrapper />);
 
@@ -1683,17 +1955,20 @@ describe('<CourseOutline />', () => {
     const [section] = store.getState().courseOutline.sectionsList;
     const subsectionsDraggers = within(sectionElement).getAllByRole('button', { name: 'Drag to reorder' });
     const draggableButton = subsectionsDraggers[1];
-
+    const subsection1 = section.childInfo.children[0].id;
+    closestCorners.mockReturnValue([{ id: subsection1 }]);
     axiosMock
       .onPut(getCourseItemApiUrl(section.id))
       .reply(200, { dummy: 'value' });
+    const expectedSection = moveSubsection([...courseOutlineIndexMock.courseStructure.childInfo.children], 0, 1, 0)[0][0];
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, expectedSection);
 
-    const subsection1 = section.childInfo.children[0].id;
-
-    fireEvent.keyDown(draggableButton, { key: 'ArrowUp' });
+    fireEvent.keyDown(draggableButton, { code: 'Space' });
+    await sleep(1);
+    fireEvent.keyDown(draggableButton, { code: 'Space' });
     await waitFor(async () => {
-      fireEvent.keyDown(draggableButton, { code: 'Space' });
-
       const saveStatus = store.getState().courseOutline.savingStatus;
       expect(saveStatus).toEqual(RequestStatus.SUCCESSFUL);
     });
@@ -1709,17 +1984,17 @@ describe('<CourseOutline />', () => {
     const [section] = store.getState().courseOutline.sectionsList;
     const subsectionsDraggers = within(sectionElement).getAllByRole('button', { name: 'Drag to reorder' });
     const draggableButton = subsectionsDraggers[1];
+    const subsection1 = section.childInfo.children[0].id;
+    closestCorners.mockReturnValue([{ id: subsection1 }]);
 
     axiosMock
       .onPut(getCourseItemApiUrl(section.id))
       .reply(500);
 
-    const subsection1 = section.childInfo.children[0].id;
-
-    fireEvent.keyDown(draggableButton, { key: 'ArrowUp' });
+    fireEvent.keyDown(draggableButton, { code: 'Space' });
+    await sleep(1);
+    fireEvent.keyDown(draggableButton, { code: 'Space' });
     await waitFor(async () => {
-      fireEvent.keyDown(draggableButton, { code: 'Space' });
-
       const saveStatus = store.getState().courseOutline.savingStatus;
       expect(saveStatus).toEqual(RequestStatus.FAILED);
     });
@@ -1730,89 +2005,74 @@ describe('<CourseOutline />', () => {
 
   it('check that new unit list is saved when dragged', async () => {
     const { findAllByTestId } = render(<RootWrapper />);
-    const subsectionElement = (await findAllByTestId('subsection-card'))[3];
-    const [subsection] = store.getState().courseOutline.sectionsList[1].childInfo.children;
+    // get third section
+    const [, , sectionElement] = await findAllByTestId('section-card');
+    const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    const section = store.getState().courseOutline.sectionsList[2];
+    const [subsection] = section.childInfo.children;
     const expandBtn = within(subsectionElement).getByTestId('subsection-card-header__expanded-btn');
     fireEvent.click(expandBtn);
     const unitDraggers = await within(subsectionElement).findAllByRole('button', { name: 'Drag to reorder' });
     const draggableButton = unitDraggers[1];
+    const sections = courseOutlineIndexMock.courseStructure.childInfo.children;
+
+    const unit1 = subsection.childInfo.children[0].id;
+    closestCorners.mockReturnValue([{ id: unit1 }]);
 
     axiosMock
       .onPut(getCourseItemApiUrl(subsection.id))
       .reply(200, { dummy: 'value' });
+    const expectedSection = moveUnit([...sections], 2, 0, 1, 0)[0][2];
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, expectedSection);
 
-    const unit1 = subsection.childInfo.children[0].id;
-
-    fireEvent.keyDown(draggableButton, { key: 'ArrowUp' });
+    fireEvent.keyDown(draggableButton, { code: 'Space' });
+    await sleep(1);
+    fireEvent.keyDown(draggableButton, { code: 'Space' });
     await waitFor(async () => {
-      fireEvent.keyDown(draggableButton, { code: 'Space' });
-
       const saveStatus = store.getState().courseOutline.savingStatus;
       expect(saveStatus).toEqual(RequestStatus.SUCCESSFUL);
     });
 
-    const unit2 = store.getState().courseOutline.sectionsList[1].childInfo.children[0].childInfo.children[1].id;
+    const unit2 = store.getState().courseOutline.sectionsList[2].childInfo.children[0].childInfo.children[1].id;
     expect(unit1).toBe(unit2);
   });
 
   it('check that new unit list is restored to original order when API call fails', async () => {
     const { findAllByTestId } = render(<RootWrapper />);
-    const subsectionElement = (await findAllByTestId('subsection-card'))[3];
-    const [subsection] = store.getState().courseOutline.sectionsList[1].childInfo.children;
+    // get third section
+    const [, , sectionElement] = await findAllByTestId('section-card');
+    const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    const section = store.getState().courseOutline.sectionsList[2];
+    const [subsection] = section.childInfo.children;
     const expandBtn = within(subsectionElement).getByTestId('subsection-card-header__expanded-btn');
     fireEvent.click(expandBtn);
     const unitDraggers = await within(subsectionElement).findAllByRole('button', { name: 'Drag to reorder' });
     const draggableButton = unitDraggers[1];
+    const sections = courseOutlineIndexMock.courseStructure.childInfo.children;
+
+    const unit1 = subsection.childInfo.children[0].id;
+    closestCorners.mockReturnValue([{ id: unit1 }]);
 
     axiosMock
       .onPut(getCourseItemApiUrl(subsection.id))
       .reply(500);
+    const expectedSection = moveUnit([...sections], 2, 0, 1, 0)[0][2];
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, expectedSection);
 
-    const unit1 = subsection.childInfo.children[0].id;
-
-    fireEvent.keyDown(draggableButton, { key: 'ArrowUp' });
+    fireEvent.keyDown(draggableButton, { code: 'Space' });
+    await sleep(1);
+    fireEvent.keyDown(draggableButton, { code: 'Space' });
     await waitFor(async () => {
-      fireEvent.keyDown(draggableButton, { code: 'Space' });
-
       const saveStatus = store.getState().courseOutline.savingStatus;
       expect(saveStatus).toEqual(RequestStatus.FAILED);
     });
 
-    const unit1New = store.getState().courseOutline.sectionsList[1].childInfo.children[0].childInfo.children[0].id;
+    const unit1New = store.getState().courseOutline.sectionsList[2].childInfo.children[0].childInfo.children[0].id;
     expect(unit1).toBe(unit1New);
-  });
-
-  it('check that drag handle is not visible for non-draggable sections', async () => {
-    axiosMock
-      .onGet(getCourseOutlineIndexApiUrl(courseId))
-      .reply(200, {
-        ...courseOutlineIndexMock,
-        courseStructure: {
-          ...courseOutlineIndexMock.courseStructure,
-          childInfo: {
-            ...courseOutlineIndexMock.courseStructure.childInfo,
-            children: [
-              {
-                ...courseOutlineIndexMock.courseStructure.childInfo.children[0],
-                actions: {
-                  draggable: false,
-                  childAddable: true,
-                  deletable: true,
-                  duplicable: true,
-                },
-              },
-              ...courseOutlineIndexMock.courseStructure.childInfo.children.slice(1),
-            ],
-          },
-        },
-      });
-    const { findAllByTestId } = render(<RootWrapper />);
-    const section = courseOutlineIndexMock.courseStructure.childInfo.children[0];
-    const [sectionElement] = await findAllByTestId('conditional-sortable-element--no-drag-handle');
-
-    await waitFor(() => {
-      expect(within(sectionElement).queryByText(section.displayName)).toBeInTheDocument();
-    });
   });
 
   it('check whether unit copy & paste option works correctly', async () => {

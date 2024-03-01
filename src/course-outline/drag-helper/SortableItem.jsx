@@ -61,18 +61,22 @@ const SortableItem = ({
       <Col className="extend-margin px-0">
         {children}
       </Col>
-      {isDraggable && <IconButtonWithTooltip
-        ref={setActivatorNodeRef}
-        key="drag-to-reorder-icon"
-        tooltipPlacement="top"
-        tooltipContent={intl.formatMessage(messages.tooltipContent)}
-        src={DragIndicator}
-        iconAs={Icon}
-        variant="secondary"
-        alt={intl.formatMessage(messages.tooltipContent)}
-        {...attributes}
-        {...listeners}
-      />}
+      {isDraggable && (
+        <button
+          ref={setActivatorNodeRef}
+          key="drag-to-reorder-icon"
+          aria-label={intl.formatMessage(messages.tooltipContent)}
+          className="btn-icon btn-icon-secondary btn-icon-md"
+          type="button"
+          role="button"
+          {...attributes}
+          {...listeners}
+        >
+          <span className="btn-icon__icon-container">
+            <Icon src={DragIndicator} />
+          </span>
+        </button>
+      )}
     </Row>
   );
 };
