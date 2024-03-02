@@ -28,11 +28,10 @@ const CustomMenu = (props) => {
     taxonomyId,
     appliedContentTagsTree,
     stagedContentTagsTree,
-    handleStagedTagsMenuChange,
-    selectRef,
+    handleCommitStagedTags,
+    handleCancelStagedTags,
     searchTerm,
     value,
-    commitStagedTags,
   } = props.selectProps;
   return (
     <components.Menu {...props}>
@@ -62,7 +61,7 @@ const CustomMenu = (props) => {
             <Button
               variant="tertiary"
               className="cancel-add-tags-button"
-              onClick={() => { handleStagedTagsMenuChange([]); selectRef.current?.blur(); }}
+              onClick={handleCancelStagedTags}
             >
               { intl.formatMessage(messages.collapsibleCancelStagedTagsButtonText) }
             </Button>
@@ -70,7 +69,7 @@ const CustomMenu = (props) => {
               variant="tertiary"
               className="text-info-500 add-tags-button"
               disabled={!(value && value.length)}
-              onClick={() => { commitStagedTags(); handleStagedTagsMenuChange([]); selectRef.current?.blur(); }}
+              onClick={handleCommitStagedTags}
             >
               { intl.formatMessage(messages.collapsibleAddStagedTagsButtonText) }
             </Button>
@@ -99,15 +98,13 @@ CustomMenu.propTypes = {
         children: PropTypes.shape({}).isRequired,
       }).isRequired,
     ).isRequired,
-    handleStagedTagsMenuChange: PropTypes.func.isRequired,
-    // eslint-disable-next-line react/forbid-prop-types
-    selectRef: PropTypes.shape({ current: PropTypes.object }),
+    handleCommitStagedTags: PropTypes.func.isRequired,
+    handleCancelStagedTags: PropTypes.func.isRequired,
     searchTerm: PropTypes.string.isRequired,
     value: PropTypes.arrayOf(PropTypes.shape({
       value: PropTypes.string.isRequired,
       label: PropTypes.string.isRequired,
     })).isRequired,
-    commitStagedTags: PropTypes.func.isRequired,
   }).isRequired,
 };
 
@@ -126,6 +123,42 @@ CustomLoadingIndicator.propTypes = {
   selectProps: PropTypes.shape({
     intl: intlShape.isRequired,
   }).isRequired,
+};
+
+const CustomIndicatorsContainer = (props) => {
+  const {
+    value,
+    handleCommitStagedTags,
+  } = props.selectProps;
+  return (
+    <components.IndicatorsContainer {...props}>
+      {
+        (value && value.length && (
+          <Button
+            variant="dark"
+            size="sm"
+            className="mt-2 mb-2 rounded-0"
+            onClick={handleCommitStagedTags}
+            onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); }}
+          >
+            Add
+          </Button>
+        )) || null
+      }
+      {props.children}
+    </components.IndicatorsContainer>
+  );
+};
+
+CustomIndicatorsContainer.propTypes = {
+  selectProps: PropTypes.shape({
+    value: PropTypes.arrayOf(PropTypes.shape({
+      value: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired,
+    })).isRequired,
+    handleCommitStagedTags: PropTypes.func.isRequired,
+  }).isRequired,
+  children: PropTypes.node.isRequired,
 };
 
 /** @typedef {import("../taxonomy/data/types.mjs").TaxonomyData} TaxonomyData */
@@ -244,13 +277,15 @@ const ContentTagsCollapsible = ({
     setSearchTerm(term.trim());
   }, 500); // Perform search after 500ms
 
-  const handleSearchChange = React.useCallback((value, { action, prevInputValue }) => {
-    if (value === '') {
-      // No need to debounce when search term cleared. Clear debounce function
-      handleSearch.cancel();
-      setSearchTerm('');
-    } else {
-      handleSearch(value);
+  const handleSearchChange = React.useCallback((value, { action }) => {
+    if (action === 'input-change') {
+      if (value === '') {
+        // No need to debounce when search term cleared. Clear debounce function
+        handleSearch.cancel();
+        setSearchTerm('');
+      } else {
+        handleSearch(value);
+      }
     }
   }, []);
 
@@ -271,6 +306,17 @@ const ContentTagsCollapsible = ({
     unstagedTags.forEach(unstagedTag => tagChangeHandler(unstagedTag.value, false));
     setStagedTags(taxonomyId, stagedTags);
   }, [taxonomyId, setStagedTags, stagedContentTags, tagChangeHandler]);
+
+  const handleCommitStagedTags = React.useCallback(() => {
+    commitStagedTags();
+    handleStagedTagsMenuChange([]);
+    selectRef.current?.blur();
+  }, [commitStagedTags, handleStagedTagsMenuChange, selectRef]);
+
+  const handleCancelStagedTags = React.useCallback(() => {
+    handleStagedTagsMenuChange([]);
+    selectRef.current?.blur();
+  }, [handleStagedTagsMenuChange, selectRef]);
 
   return (
     <div className="d-flex">
@@ -294,7 +340,14 @@ const ContentTagsCollapsible = ({
               classNamePrefix="react-select"
               onInputChange={handleSearchChange}
               onChange={handleStagedTagsMenuChange}
-              components={{ Menu: CustomMenu, LoadingIndicator: CustomLoadingIndicator }}
+              components={{
+                // @ts-ignore TODO: Properly fix this
+                Menu: CustomMenu,
+                // @ts-ignore TODO: Properly fix this
+                LoadingIndicator: CustomLoadingIndicator,
+                // @ts-ignore TODO: Properly fix this
+                IndicatorsContainer: CustomIndicatorsContainer,
+              }}
               closeMenuOnSelect={false}
               blurInputOnSelect={false}
               intl={intl}
@@ -303,11 +356,10 @@ const ContentTagsCollapsible = ({
               taxonomyId={taxonomyId}
               appliedContentTagsTree={appliedContentTagsTree}
               stagedContentTagsTree={stagedContentTagsTree}
-              handleStagedTagsMenuChange={handleStagedTagsMenuChange}
-              selectRef={selectRef}
+              handleCommitStagedTags={handleCommitStagedTags}
+              handleCancelStagedTags={handleCancelStagedTags}
               searchTerm={searchTerm}
               value={stagedContentTags}
-              commitStagedTags={commitStagedTags}
             />
           )}
         </div>
