@@ -37,12 +37,13 @@ const GradingPolicyAlert = ({
 GradingPolicyAlert.defaultProps = {
   graded: false,
   gradingType: '',
+  courseGraders: [],
 };
 
 GradingPolicyAlert.propTypes = {
   graded: PropTypes.bool,
   gradingType: PropTypes.string,
-  courseGraders: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+  courseGraders: PropTypes.arrayOf(PropTypes.string.isRequired),
 };
 
 export default GradingPolicyAlert;

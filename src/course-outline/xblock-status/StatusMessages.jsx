@@ -68,6 +68,7 @@ StatusMessages.defaultProps = {
   prereq: '',
   prereqs: [],
   userPartitionInfo: {},
+  hasPartitionGroupComponents: false,
 };
 
 StatusMessages.propTypes = {
@@ -79,10 +80,10 @@ StatusMessages.propTypes = {
     blockDisplayName: PropTypes.string.isRequired,
   })),
   userPartitionInfo: PropTypes.shape({
-    selectedPartitionIndex: PropTypes.number.isRequired,
-    selectedGroupsLabel: PropTypes.string.isRequired,
+    selectedPartitionIndex: PropTypes.number,
+    selectedGroupsLabel: PropTypes.string,
   }),
-  hasPartitionGroupComponents: PropTypes.bool.isRequired,
+  hasPartitionGroupComponents: PropTypes.bool,
 };
 
 export default StatusMessages;

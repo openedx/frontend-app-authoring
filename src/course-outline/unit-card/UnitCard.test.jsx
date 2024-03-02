@@ -36,6 +36,7 @@ const subsection = {
 const unit = {
   id: '123',
   displayName: 'unit Name',
+  category: 'vertical',
   published: true,
   visibilityState: 'live',
   hasChanges: false,
@@ -55,15 +56,19 @@ const renderComponent = (props) => render(
         section={section}
         subsection={subsection}
         unit={unit}
-        index="1"
-        canMoveItem={jest.fn()}
+        index={1}
+        getPossibleMoves={jest.fn()}
         onOrderChange={jest.fn()}
         onOpenPublishModal={jest.fn()}
         onOpenDeleteModal={jest.fn()}
+        onOpenConfigureModal={jest.fn()}
+        onCopyToClipboardClick={jest.fn()}
         savingStatus=""
         onEditSubmit={jest.fn()}
         onDuplicateSubmit={jest.fn()}
         getTitleLink={(id) => `/some/${id}`}
+        isSelfPaced={false}
+        isCustomRelativeDatesActive={false}
         {...props}
       />
     </IntlProvider>,

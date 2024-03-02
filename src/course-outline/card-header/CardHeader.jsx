@@ -233,12 +233,13 @@ CardHeader.defaultProps = {
   parentInfo: {},
   onClickManageTags: null,
   tagsCount: undefined,
+  cardId: '',
 };
 
 CardHeader.propTypes = {
   title: PropTypes.string.isRequired,
   status: PropTypes.string.isRequired,
-  cardId: PropTypes.string.isRequired,
+  cardId: PropTypes.string,
   hasChanges: PropTypes.bool.isRequired,
   onClickPublish: PropTypes.func.isRequired,
   onClickConfigure: PropTypes.func.isRequired,

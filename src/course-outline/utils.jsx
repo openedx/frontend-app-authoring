@@ -59,7 +59,7 @@ const getItemStatusBadgeContent = (status, messages, intl) => {
   case ITEM_BADGE_STATUS.publishedNotLive:
     return {
       badgeTitle: intl.formatMessage(messages.statusBadgePublishedNotLive),
-      badgeIcon: '',
+      badgeIcon: null,
     };
   case ITEM_BADGE_STATUS.staffOnly:
     return {
@@ -79,7 +79,7 @@ const getItemStatusBadgeContent = (status, messages, intl) => {
   default:
     return {
       badgeTitle: '',
-      badgeIcon: '',
+      badgeIcon: null,
     };
   }
 };

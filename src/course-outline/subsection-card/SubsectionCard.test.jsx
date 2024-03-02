@@ -37,6 +37,7 @@ const section = {
 const subsection = {
   id: '123',
   displayName: 'Subsection Name',
+  category: 'sequential',
   published: true,
   visibilityState: 'live',
   hasChanges: false,
@@ -47,6 +48,7 @@ const subsection = {
     duplicable: true,
   },
   isHeaderVisible: true,
+  releasedToStudents: true,
 };
 
 const onEditSubectionSubmit = jest.fn();
@@ -58,17 +60,22 @@ const renderComponent = (props, entry = '/') => render(
         <SubsectionCard
           section={section}
           subsection={subsection}
-          index="1"
-          canMoveItem={jest.fn()}
+          index={1}
+          isSelfPaced={false}
+          getPossibleMoves={jest.fn()}
           onOrderChange={jest.fn()}
           onOpenPublishModal={jest.fn()}
           onOpenHighlightsModal={jest.fn()}
           onOpenDeleteModal={jest.fn()}
+          onNewUnitSubmit={jest.fn()}
+          isCustomRelativeDatesActive={false}
           onEditClick={jest.fn()}
           savingStatus=""
           onEditSubmit={onEditSubectionSubmit}
           onDuplicateSubmit={jest.fn()}
           namePrefix="subsection"
+          onOpenConfigureModal={jest.fn()}
+          onPasteClick={jest.fn()}
           {...props}
         >
           <span>children</span>
