@@ -1,7 +1,6 @@
 import {
   act, render, waitFor, fireEvent, within,
 } from '@testing-library/react';
-import userEvent from '@testing-library/user-event'
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -100,9 +99,8 @@ jest.mock('@dnd-kit/core', () => ({
   closestCorners: jest.fn(),
 }));
 
-const sleep = (ms) => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+// eslint-disable-next-line no-promise-executor-return
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const RootWrapper = () => (
   <AppProvider store={store}>
@@ -1541,7 +1539,9 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onPut(getCourseItemApiUrl(store.getState().courseOutline.sectionsList[0].id))
       .reply(200, { dummy: 'value' });
-    const expectedSection = moveSubsection([...courseOutlineIndexMock.courseStructure.childInfo.children], 0, 0, 1)[0][0];
+    const expectedSection = moveSubsection([
+      ...courseOutlineIndexMock.courseStructure.childInfo.children,
+    ], 0, 0, 1)[0][0];
     axiosMock
       .onGet(getXBlockApiUrl(section.id))
       .reply(200, expectedSection);
@@ -1578,7 +1578,7 @@ describe('<CourseOutline />', () => {
       .onPut(getCourseItemApiUrl(firstSection.id))
       .reply(200, { dummy: 'value' });
     const expectedSections = moveSubsectionOver([
-      ...courseOutlineIndexMock.courseStructure.childInfo.children
+      ...courseOutlineIndexMock.courseStructure.childInfo.children,
     ], 1, 0, 0, firstSection.childInfo.children.length + 1)[0];
     axiosMock
       .onGet(getXBlockApiUrl(firstSection.id))
@@ -1615,7 +1615,7 @@ describe('<CourseOutline />', () => {
       .onPut(getCourseItemApiUrl(secondSection.id))
       .reply(200, { dummy: 'value' });
     const expectedSections = moveSubsectionOver([
-      ...courseOutlineIndexMock.courseStructure.childInfo.children
+      ...courseOutlineIndexMock.courseStructure.childInfo.children,
     ], 0, lastSubsectionIdx, 1, 0)[0];
     axiosMock
       .onGet(getXBlockApiUrl(section.id))
@@ -1747,7 +1747,7 @@ describe('<CourseOutline />', () => {
       .onPut(getCourseItemApiUrl(firstSubsection.id))
       .reply(200, { dummy: 'value' });
     const expectedSections = moveUnitOver([
-      ...courseOutlineIndexMock.courseStructure.childInfo.children
+      ...courseOutlineIndexMock.courseStructure.childInfo.children,
     ], 1, 1, 0, 1, 0, firstSubsection.childInfo.children.length)[0];
     axiosMock
       .onGet(getXBlockApiUrl(section.id))
@@ -1790,7 +1790,7 @@ describe('<CourseOutline />', () => {
       0,
       0,
       firstSection.childInfo.children.length - 1,
-      firstSectionLastSubsection.childInfo.children.length
+      firstSectionLastSubsection.childInfo.children.length,
     )[0];
     axiosMock
       .onGet(getXBlockApiUrl(firstSection.id))
@@ -1806,9 +1806,9 @@ describe('<CourseOutline />', () => {
     // move first unit to last position of prev subsection
     const moveUpButton = await within(unitElement).findByTestId('unit-card-header__menu-move-up-button');
     await act(async () => fireEvent.click(moveUpButton));
-    const firstSectionSubsectionsStore = store.getState().courseOutline.sectionsList[0].childInfo.children;
-    const firstSectionLastSubsectionUnits = firstSectionSubsectionsStore[firstSectionSubsectionsStore.length - 1].childInfo.children;
-    expect(firstSectionLastSubsectionUnits[firstSectionLastSubsectionUnits.length - 1].id).toBe(unit.id);
+    const firstSectionSubStore = store.getState().courseOutline.sectionsList[0].childInfo.children;
+    const firstSectionLastSubUnits = firstSectionSubStore[firstSectionSubStore.length - 1].childInfo.children;
+    expect(firstSectionLastSubUnits[firstSectionLastSubUnits.length - 1].id).toBe(unit.id);
     const secondSubUnits = store.getState().courseOutline.sectionsList[1].childInfo.children[0].childInfo.children;
     expect(secondSubUnits.length).toBe(subsection.childInfo.children.length - 1);
   });
@@ -1831,7 +1831,7 @@ describe('<CourseOutline />', () => {
       .onPut(getCourseItemApiUrl(subsection.id))
       .reply(200, { dummy: 'value' });
     const expectedSections = moveUnitOver([
-      ...courseOutlineIndexMock.courseStructure.childInfo.children
+      ...courseOutlineIndexMock.courseStructure.childInfo.children,
     ], 1, 0, lastUnitIdx, 1, 1, 0)[0];
     axiosMock
       .onGet(getXBlockApiUrl(section.id))
@@ -1876,7 +1876,7 @@ describe('<CourseOutline />', () => {
       lastUnitIdx,
       2,
       0,
-      0
+      0,
     )[0];
     axiosMock
       .onGet(getXBlockApiUrl(secondSection.id))
@@ -1892,9 +1892,9 @@ describe('<CourseOutline />', () => {
     // move first unit to last position of prev subsection
     const moveDownButton = await within(unitElement).findByTestId('unit-card-header__menu-move-down-button');
     await act(async () => fireEvent.click(moveDownButton));
-    const secondSectionSubsectionsStore = store.getState().courseOutline.sectionsList[1].childInfo.children;
-    const secondSectionLastSubsectionUnits = secondSectionSubsectionsStore[secondSectionSubsectionsStore.length - 1].childInfo.children;
-    expect(secondSectionLastSubsectionUnits.length).toBe(secondSectionLastSubsection.childInfo.children.length - 1);
+    const secondSectionSubStore = store.getState().courseOutline.sectionsList[1].childInfo.children;
+    const secondSectionLastSubUnits = secondSectionSubStore[secondSectionSubStore.length - 1].childInfo.children;
+    expect(secondSectionLastSubUnits.length).toBe(secondSectionLastSubsection.childInfo.children.length - 1);
     const thirdSubUnits = store.getState().courseOutline.sectionsList[2].childInfo.children[0].childInfo.children;
     expect(thirdSubUnits[0].id).toBe(unit.id);
   });
@@ -1956,7 +1956,9 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onPut(getCourseItemApiUrl(section.id))
       .reply(200, { dummy: 'value' });
-    const expectedSection = moveSubsection([...courseOutlineIndexMock.courseStructure.childInfo.children], 0, 1, 0)[0][0];
+    const expectedSection = moveSubsection([
+      ...courseOutlineIndexMock.courseStructure.childInfo.children,
+    ], 0, 1, 0)[0][0];
     axiosMock
       .onGet(getXBlockApiUrl(section.id))
       .reply(200, expectedSection);

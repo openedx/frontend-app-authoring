@@ -123,7 +123,7 @@ const CourseOutline = ({ courseId }) => {
 
   const restoreSectionList = () => {
     setSections(() => [...sectionsList]);
-  }
+  };
 
   const {
     isShow: isShowProcessingNotification,
@@ -177,13 +177,11 @@ const CourseOutline = ({ courseId }) => {
    * @returns {void}
    */
   const updateSubsectionOrderByIndex = (section, moveDetails) => {
-    let newSubsections;
-    let sectionsCopy;
     const { fn, args, sectionId } = moveDetails;
     if (!args) {
       return;
     }
-    [sectionsCopy, newSubsections] = fn(...args);
+    const [sectionsCopy, newSubsections] = fn(...args);
     if (newSubsections && sectionId) {
       setSections(sectionsCopy);
       handleSubsectionDragAndDrop(
@@ -202,13 +200,13 @@ const CourseOutline = ({ courseId }) => {
    * @returns {void}
    */
   const updateUnitOrderByIndex = (section, moveDetails) => {
-    let newUnits;
-    let sectionsCopy;
-    const { fn, args, sectionId, subsectionId } = moveDetails;
+    const {
+      fn, args, sectionId, subsectionId,
+    } = moveDetails;
     if (!args) {
       return;
     }
-    [sectionsCopy, newUnits] = fn(...args);
+    const [sectionsCopy, newUnits] = fn(...args);
     if (newUnits && sectionId && subsectionId) {
       setSections(sectionsCopy);
       handleUnitDragAndDrop(
@@ -354,7 +352,7 @@ const CourseOutline = ({ courseId }) => {
                                           [...sections],
                                           sectionIndex,
                                           section,
-                                          section.childInfo.children
+                                          section.childInfo.children,
                                         )}
                                         isSelfPaced={statusBarData.isSelfPaced}
                                         isCustomRelativeDatesActive={isCustomRelativeDatesActive}

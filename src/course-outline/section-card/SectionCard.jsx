@@ -236,6 +236,7 @@ SectionCard.propTypes = {
   section: PropTypes.shape({
     id: PropTypes.string.isRequired,
     displayName: PropTypes.string.isRequired,
+    category: PropTypes.string.isRequired,
     published: PropTypes.bool.isRequired,
     hasChanges: PropTypes.bool.isRequired,
     visibilityState: PropTypes.string.isRequired,

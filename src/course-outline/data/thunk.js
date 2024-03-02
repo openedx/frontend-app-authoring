@@ -50,8 +50,6 @@ import {
   deleteUnit,
   duplicateSection,
   reorderSectionList,
-  reorderSubsectionList,
-  reorderUnitList,
   updateClipboardContent,
   setPasteFileNotices,
 } from './slice';
@@ -178,11 +176,12 @@ export function fetchCourseSectionQuery(sectionIds, shouldScroll = false) {
     dispatch(updateFetchSectionLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
     try {
       const sections = {};
-      for (let sectionId of sectionIds) {
-        const data = await getCourseItem(sectionId);
+      const results = await Promise.all(sectionIds.map((sectionId) => getCourseItem(sectionId)));
+      results.forEach((data) => {
+        // eslint-disable-next-line no-param-reassign
         data.shouldScroll = shouldScroll;
         sections[data.id] = data;
-      }
+      });
       dispatch(updateSectionList(sections));
       dispatch(updateFetchSectionLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
@@ -565,7 +564,7 @@ export function setSubsectionOrderListQuery(
   sectionId,
   prevSectionId,
   subsectionListIds,
-  restoreCallback
+  restoreCallback,
 ) {
   return async (dispatch) => {
     dispatch(setBlockOrderListQuery(
@@ -589,7 +588,7 @@ export function setUnitOrderListQuery(
   subsectionId,
   prevSectionId,
   unitListIds,
-  restoreCallback
+  restoreCallback,
 ) {
   return async (dispatch) => {
     dispatch(setBlockOrderListQuery(

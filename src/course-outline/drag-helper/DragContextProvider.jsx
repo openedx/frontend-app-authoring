@@ -20,7 +20,7 @@ const DragContextProvider = ({ activeId, overId, children }) => {
 DragContextProvider.defaultProps = {
   activeId: '',
   overId: '',
-}
+};
 
 DragContextProvider.propTypes = {
   activeId: PropTypes.string,

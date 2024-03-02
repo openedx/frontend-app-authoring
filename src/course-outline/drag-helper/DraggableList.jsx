@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 import {
   DndContext,
-  DragOverlay,
   closestCorners,
   KeyboardSensor,
   PointerSensor,
@@ -12,11 +11,9 @@ import {
 } from '@dnd-kit/core';
 import {
   arrayMove,
-  SortableContext,
   sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
 import DragContextProvider from './DragContextProvider';
 import { COURSE_BLOCK_NAMES } from '../constants';
@@ -45,7 +42,7 @@ const DraggableList = ({
     }),
   );
   const [activeId, setActiveId] = React.useState();
-  const [overId, setOverId] = React.useState();
+  const [currentOverId, setCurrentOverId] = React.useState();
 
   const findItemInfo = (id) => {
     // search id in sections
@@ -55,12 +52,13 @@ const DraggableList = ({
         index: sectionIndex,
         item: items[sectionIndex],
         category: COURSE_BLOCK_NAMES.chapter.id,
-        parent: "root"
+        parent: 'root',
       };
     }
 
     // search id in subsections
-    for (let [index, section] of items.entries()) {
+    for (let index = 0; index < items.length; index++) {
+      const section = items[index];
       const subsectionIndex = section.childInfo.children.findIndex((subsection) => subsection.id === id);
       if (subsectionIndex !== -1) {
         return {
@@ -68,14 +66,16 @@ const DraggableList = ({
           item: section.childInfo.children[subsectionIndex],
           category: COURSE_BLOCK_NAMES.sequential.id,
           parentIndex: index,
-          parent: section
+          parent: section,
         };
       }
-    };
+    }
 
     // search id in units
-    for (let [index, section] of items.entries()) {
-      for (let [subIndex, subsection] of section.childInfo.children.entries()) {
+    for (let index = 0; index < items.length; index++) {
+      const section = items[index];
+      for (let subIndex = 0; subIndex < section.childInfo.children.length; subIndex++) {
+        const subsection = section.childInfo.children[subIndex];
         const unitIndex = subsection.childInfo.children.findIndex((unit) => unit.id === id);
         if (unitIndex !== -1) {
           return {
@@ -86,12 +86,12 @@ const DraggableList = ({
             parent: subsection,
             grandParentIndex: index,
             grandParent: section,
-          }
+          };
         }
-      };
-    };
+      }
+    }
     return null;
-  }
+  };
 
   const subsectionDragOver = (active, over, activeInfo, overInfo) => {
     if (
@@ -109,12 +109,12 @@ const DraggableList = ({
       // We're at the root droppable of a container
       newIndex = overInfo.item.childInfo.children.length + 1;
       overSectionIndex = overInfo.index;
-      setOverId(overInfo.item.id);
+      setCurrentOverId(overInfo.item.id);
     } else {
       const modifier = dragHelpers.isBelowOverItem(active, over) ? 1 : 0;
       newIndex = overInfo.index >= 0 ? overInfo.index + modifier : overInfo.item.childInfo.children.length + 1;
       overSectionIndex = overInfo.parentIndex;
-      setOverId(overInfo.parent.id);
+      setCurrentOverId(overInfo.parent.id);
     }
 
     setSections((prev) => {
@@ -130,7 +130,7 @@ const DraggableList = ({
     if (prevContainerInfo.current === null || prevContainerInfo.current === undefined) {
       prevContainerInfo.current = activeInfo.parent.id;
     }
-  }
+  };
 
   const unitDragOver = (active, over, activeInfo, overInfo) => {
     if (
@@ -150,13 +150,13 @@ const DraggableList = ({
       newIndex = overInfo.item.childInfo.children.length + 1;
       overSubsectionIndex = overInfo.index;
       overSectionIndex = overInfo.parentIndex;
-      setOverId(overInfo.item.id);
+      setCurrentOverId(overInfo.item.id);
     } else {
       const modifier = dragHelpers.isBelowOverItem(active, over) ? 1 : 0;
       newIndex = overInfo.index >= 0 ? overInfo.index + modifier : overInfo.item.childInfo.children.length + 1;
       overSubsectionIndex = overInfo.parentIndex;
       overSectionIndex = overInfo.grandParentIndex;
-      setOverId(overInfo.parent.id);
+      setCurrentOverId(overInfo.parent.id);
     }
 
     setSections((prev) => {
@@ -174,10 +174,10 @@ const DraggableList = ({
     if (prevContainerInfo.current === null || prevContainerInfo.current === undefined) {
       prevContainerInfo.current = activeInfo.grandParent.id;
     }
-  }
+  };
 
   const handleDragOver = (event) => {
-    const { active, over  } = event;
+    const { active, over } = event;
     if (!active || !over) {
       return;
     }
@@ -191,14 +191,16 @@ const DraggableList = ({
       return;
     }
     switch (activeInfo.category) {
-      case COURSE_BLOCK_NAMES.sequential.id:
-        return subsectionDragOver(active, over, activeInfo, overInfo);
-      case COURSE_BLOCK_NAMES.vertical.id:
-        return unitDragOver(active, over, activeInfo, overInfo);
-      default:
-        break;
+    case COURSE_BLOCK_NAMES.sequential.id:
+      subsectionDragOver(active, over, activeInfo, overInfo);
+      break;
+    case COURSE_BLOCK_NAMES.vertical.id:
+      unitDragOver(active, over, activeInfo, overInfo);
+      break;
+    default:
+      break;
     }
-  }
+  };
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
@@ -206,7 +208,7 @@ const DraggableList = ({
       return;
     }
     setActiveId(null);
-    setOverId(null);
+    setCurrentOverId(null);
     const { id } = active;
     const { id: overId } = over;
 
@@ -218,94 +220,92 @@ const DraggableList = ({
 
     if (
       activeInfo.category !== overInfo.category
-      || (activeInfo.parent !== "root" && activeInfo.parentIndex !== overInfo.parentIndex)
+      || (activeInfo.parent !== 'root' && activeInfo.parentIndex !== overInfo.parentIndex)
     ) {
       return;
     }
 
-    let currentItems = items;
-    if (activeInfo.parent !== 'root') {
-      currentItems = activeInfo.parent.childInfo.children;
-    }
     if (activeInfo.index !== overInfo.index || prevContainerInfo.current) {
       switch (activeInfo.category) {
-        case COURSE_BLOCK_NAMES.chapter.id:
-          setSections((prev) => {
-            const result = arrayMove(prev, activeInfo.index, overInfo.index);
-            handleSectionDragAndDrop(result.map(section => section.id), restoreSectionList);
-            return result;
-          });
-          break;
-        case COURSE_BLOCK_NAMES.sequential.id:
-          setSections((prev) => {
-            const [prevCopy, result] = moveSubsection(
-              [...prev],
-              activeInfo.parentIndex,
-              activeInfo.index,
-              overInfo.index,
-            );
-            handleSubsectionDragAndDrop(
-              activeInfo.parent.id,
-              prevContainerInfo.current,
-              result.map(subsection => subsection.id),
-              restoreSectionList,
-            );
-            return prevCopy;
-          });
-          break;
-        case COURSE_BLOCK_NAMES.vertical.id:
-          setSections((prev) => {
-            const [prevCopy, result] = moveUnit(
-              [...prev],
-              activeInfo.grandParentIndex,
-              activeInfo.parentIndex,
-              activeInfo.index,
-              overInfo.index,
-            );
-            handleUnitDragAndDrop(
-              activeInfo.grandParent.id,
-              prevContainerInfo.current,
-              activeInfo.parent.id,
-              result.map(unit => unit.id),
-              restoreSectionList,
-            );
-            return prevCopy;
-          });
-          break;
+      case COURSE_BLOCK_NAMES.chapter.id:
+        setSections((prev) => {
+          const result = arrayMove(prev, activeInfo.index, overInfo.index);
+          handleSectionDragAndDrop(result.map(section => section.id), restoreSectionList);
+          return result;
+        });
+        break;
+      case COURSE_BLOCK_NAMES.sequential.id:
+        setSections((prev) => {
+          const [prevCopy, result] = moveSubsection(
+            [...prev],
+            activeInfo.parentIndex,
+            activeInfo.index,
+            overInfo.index,
+          );
+          handleSubsectionDragAndDrop(
+            activeInfo.parent.id,
+            prevContainerInfo.current,
+            result.map(subsection => subsection.id),
+            restoreSectionList,
+          );
+          return prevCopy;
+        });
+        break;
+      case COURSE_BLOCK_NAMES.vertical.id:
+        setSections((prev) => {
+          const [prevCopy, result] = moveUnit(
+            [...prev],
+            activeInfo.grandParentIndex,
+            activeInfo.parentIndex,
+            activeInfo.index,
+            overInfo.index,
+          );
+          handleUnitDragAndDrop(
+            activeInfo.grandParent.id,
+            prevContainerInfo.current,
+            activeInfo.parent.id,
+            result.map(unit => unit.id),
+            restoreSectionList,
+          );
+          return prevCopy;
+        });
+        break;
+      default:
+        break;
       }
       prevContainerInfo.current = null;
     }
-  }
+  };
 
   const handleDragStart = (event) => {
     const { active } = event;
     const { id } = active;
 
     setActiveId(id);
-  }
+  };
 
-  const customClosestCorners = ({active, droppableContainers, droppableRects, ...args}) => {
+  const customClosestCorners = ({
+    active, droppableContainers, droppableRects, ...args
+  }) => {
     const activeCategory = active.data?.current?.category;
-    droppableContainers = droppableContainers.filter(
+    const filteredContainers = droppableContainers.filter(
       (container) => {
         switch (activeCategory) {
-          case COURSE_BLOCK_NAMES.chapter.id:
-            return container.data?.current?.category === activeCategory;
-            break;
-          case COURSE_BLOCK_NAMES.sequential.id:
-            return [activeCategory, COURSE_BLOCK_NAMES.chapter.id].includes(container.data?.current?.category);
-            break;
-          case COURSE_BLOCK_NAMES.vertical.id:
-            return [activeCategory, COURSE_BLOCK_NAMES.sequential.id].includes(container.data?.current?.category);
-            break;
-          default:
-            return true;
-            break;
+        case COURSE_BLOCK_NAMES.chapter.id:
+          return container.data?.current?.category === activeCategory;
+        case COURSE_BLOCK_NAMES.sequential.id:
+          return [activeCategory, COURSE_BLOCK_NAMES.chapter.id].includes(container.data?.current?.category);
+        case COURSE_BLOCK_NAMES.vertical.id:
+          return [activeCategory, COURSE_BLOCK_NAMES.sequential.id].includes(container.data?.current?.category);
+        default:
+          return true;
         }
-      }
+      },
     );
-    return closestCorners({active, droppableContainers, droppableRects, ...args});
-  }
+    return closestCorners({
+      active, droppableContainers: filteredContainers, droppableRects, ...args,
+    });
+  };
 
   return (
     <DndContext
@@ -316,7 +316,7 @@ const DraggableList = ({
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <DragContextProvider activeId={activeId} overId={overId}>
+      <DragContextProvider activeId={activeId} overId={currentOverId}>
         {children}
       </DragContextProvider>
     </DndContext>
@@ -326,6 +326,10 @@ const DraggableList = ({
 DraggableList.propTypes = {
   items: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
+    childInfo: PropTypes.shape({
+      // eslint-disable-next-line react/forbid-prop-types
+      children: PropTypes.arrayOf(PropTypes.object).isRequired,
+    }).isRequired,
   })).isRequired,
   setSections: PropTypes.func.isRequired,
   restoreSectionList: PropTypes.func.isRequired,

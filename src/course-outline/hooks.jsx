@@ -1,9 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useToggle } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
-import { arrayMove } from '@dnd-kit/sortable';
 
 import { RequestStatus } from '../data/constants';
 import { COURSE_BLOCK_NAMES } from './constants';
@@ -252,7 +251,7 @@ const useCourseOutline = ({ courseId }) => {
     dispatch(setSectionOrderListQuery(
       courseId,
       sectionListIds,
-      restoreSectionList
+      restoreSectionList,
     ));
   };
 
@@ -266,7 +265,7 @@ const useCourseOutline = ({ courseId }) => {
       sectionId,
       prevSectionId,
       subsectionListIds,
-      restoreSectionList
+      restoreSectionList,
     ));
   };
 

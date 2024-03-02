@@ -1,4 +1,6 @@
-import { useContext, useEffect, useState, useRef } from 'react';
+import {
+  useContext, useEffect, useState, useRef,
+} from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
@@ -241,6 +243,7 @@ SubsectionCard.propTypes = {
   subsection: PropTypes.shape({
     id: PropTypes.string.isRequired,
     displayName: PropTypes.string.isRequired,
+    category: PropTypes.string.isRequired,
     published: PropTypes.bool.isRequired,
     hasChanges: PropTypes.bool.isRequired,
     visibilityState: PropTypes.string.isRequired,

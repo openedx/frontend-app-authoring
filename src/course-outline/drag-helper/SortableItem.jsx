@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import { intlShape, injectIntl } from '@edx/frontend-platform/i18n';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Col, Icon, IconButtonWithTooltip, Row } from '@openedx/paragon';
+import {
+  Col, Icon, Row,
+} from '@openedx/paragon';
 import { DragIndicator } from '@openedx/paragon/icons';
 
 import messages from './messages';
@@ -26,7 +28,6 @@ const SortableItem = ({
     transition,
     isDragging,
     setActivatorNodeRef,
-    ...args
   } = useSortable({
     id,
     data: {
@@ -36,7 +37,7 @@ const SortableItem = ({
       draggable: !isDraggable,
       droppable: !isDroppable,
     },
-    animateLayoutChanges: () => false
+    animateLayoutChanges: () => false,
   });
 
   const style = {
@@ -68,7 +69,6 @@ const SortableItem = ({
           aria-label={intl.formatMessage(messages.tooltipContent)}
           className="btn-icon btn-icon-secondary btn-icon-md"
           type="button"
-          role="button"
           {...attributes}
           {...listeners}
         >

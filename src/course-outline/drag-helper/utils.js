@@ -2,32 +2,35 @@ import { arrayMove } from '@dnd-kit/sortable';
 
 export const dragHelpers = {
   copyBlockChildren: (block) => {
+    // eslint-disable-next-line no-param-reassign
     block.childInfo = { ...block.childInfo };
+    // eslint-disable-next-line no-param-reassign
     block.childInfo.children = [...block.childInfo.children];
     return block;
   },
   setBlockChildren: (block, children) => {
+    // eslint-disable-next-line no-param-reassign
     block.childInfo.children = children;
     return block;
   },
   setBlockChild: (block, child, id) => {
+    // eslint-disable-next-line no-param-reassign
     block.childInfo.children[id] = child;
     return block;
   },
   insertChild: (block, child, index) => {
+    // eslint-disable-next-line no-param-reassign
     block.childInfo.children = [
       ...block.childInfo.children.slice(0, index),
       child,
-      ...block.childInfo.children.slice(index, block.childInfo.children.length)
-    ]
+      ...block.childInfo.children.slice(index, block.childInfo.children.length),
+    ];
     return block;
   },
-  isBelowOverItem: (active, over) => {
-    return over &&
-      active.rect.current.translated &&
-      active.rect.current.translated.top >
-        over.rect.top + over.rect.height;
-  }
+  isBelowOverItem: (active, over) => over
+      && active.rect.current.translated
+      && active.rect.current.translated.top
+        > over.rect.top + over.rect.height,
 };
 
 export const moveSubsectionOver = (
@@ -45,13 +48,15 @@ export const moveSubsectionOver = (
 
   activeSection = dragHelpers.setBlockChildren(
     activeSection,
-    activeSection.childInfo.children.filter((item) => item.id !== subsection.id)
-  )
+    activeSection.childInfo.children.filter((item) => item.id !== subsection.id),
+  );
 
+  // eslint-disable-next-line no-param-reassign
   prevCopy[activeSectionIdx] = activeSection;
+  // eslint-disable-next-line no-param-reassign
   prevCopy[overSectionIdx] = overSection;
   return [prevCopy, overSection.childInfo.children];
-}
+};
 
 export const moveUnitOver = (
   prevCopy,
@@ -62,9 +67,9 @@ export const moveUnitOver = (
   overSubsectionIdx,
   newIndex,
 ) => {
-  let activeSection = dragHelpers.copyBlockChildren({ ...prevCopy[activeSectionIdx] });
+  const activeSection = dragHelpers.copyBlockChildren({ ...prevCopy[activeSectionIdx] });
   let activeSubsection = dragHelpers.copyBlockChildren(
-    { ...activeSection.childInfo.children[activeSubsectionIdx] }
+    { ...activeSection.childInfo.children[activeSubsectionIdx] },
   );
 
   let overSection = { ...prevCopy[overSectionIdx] };
@@ -74,22 +79,24 @@ export const moveUnitOver = (
 
   overSection = dragHelpers.copyBlockChildren(overSection);
   let overSubsection = dragHelpers.copyBlockChildren(
-    { ...overSection.childInfo.children[overSubsectionIdx] }
+    { ...overSection.childInfo.children[overSubsectionIdx] },
   );
 
   const unit = activeSubsection.childInfo.children[activeUnitIdx];
-  overSubsection = dragHelpers.insertChild( overSubsection, unit , newIndex);
+  overSubsection = dragHelpers.insertChild(overSubsection, unit, newIndex);
   overSection = dragHelpers.setBlockChild(overSection, overSubsection, overSubsectionIdx);
 
   activeSubsection = dragHelpers.setBlockChildren(
     activeSubsection,
-    activeSubsection.childInfo.children.filter((item) => item.id !== unit.id)
-  )
+    activeSubsection.childInfo.children.filter((item) => item.id !== unit.id),
+  );
 
-  prevCopy[activeSectionIdx] = dragHelpers.setBlockChild(activeSection, activeSubsection, activeSubsectionIdx);;
+  // eslint-disable-next-line no-param-reassign
+  prevCopy[activeSectionIdx] = dragHelpers.setBlockChild(activeSection, activeSubsection, activeSubsectionIdx);
+  // eslint-disable-next-line no-param-reassign
   prevCopy[overSectionIdx] = overSection;
   return [prevCopy, overSubsection.childInfo.children];
-}
+};
 
 export const moveSubsection = (
   prevCopy,
@@ -102,9 +109,10 @@ export const moveSubsection = (
   const result = arrayMove(section.childInfo.children, currentIdx, newIdx);
   section = dragHelpers.setBlockChildren(section, result);
 
+  // eslint-disable-next-line no-param-reassign
   prevCopy[sectionIdx] = section;
   return [prevCopy, result];
-}
+};
 
 export const moveUnit = (
   prevCopy,
@@ -120,9 +128,10 @@ export const moveUnit = (
   subsection = dragHelpers.setBlockChildren(subsection, result);
   section = dragHelpers.setBlockChild(section, subsection, subsectionIdx);
 
+  // eslint-disable-next-line no-param-reassign
   prevCopy[sectionIdx] = section;
   return [prevCopy, result];
-}
+};
 
 /**
  * Check if section can be moved by given step.
@@ -155,11 +164,11 @@ export const possibleSubsectionMoves = (sections, sectionIndex, section, subsect
         sections,
         sectionIndex,
         index,
-        index+step,
+        index + step,
       ],
-      sectionId: section.id
-    }
-  } else if (step === -1 && index === 0 && sectionIndex > 0) {
+      sectionId: section.id,
+    };
+  } if (step === -1 && index === 0 && sectionIndex > 0) {
     // move subsection to last position of previous section
     if (!sections[sectionIndex + step]?.actions?.childAddable) {
       // return if previous section doesn't allow adding subsections
@@ -175,8 +184,8 @@ export const possibleSubsectionMoves = (sections, sectionIndex, section, subsect
         sections[sectionIndex + step].childInfo.children.length + 1,
       ],
       sectionId: sections[sectionIndex + step].id,
-    }
-  } else if (step === 1 && index === subsections.length - 1 && sectionIndex < sections.length - 1) {
+    };
+  } if (step === 1 && index === subsections.length - 1 && sectionIndex < sections.length - 1) {
     // move subsection to first position of next section
     if (!sections[sectionIndex + step]?.actions?.childAddable) {
       // return if next section doesn't allow adding subsections
@@ -192,8 +201,9 @@ export const possibleSubsectionMoves = (sections, sectionIndex, section, subsect
         0,
       ],
       sectionId: sections[sectionIndex + step].id,
-    }
+    };
   }
+  return {};
 };
 
 export const possibleUnitMoves = (
@@ -202,7 +212,7 @@ export const possibleUnitMoves = (
   subsectionIndex,
   section,
   subsection,
-  units
+  units,
 ) => (index, step) => {
   if (!units[index].actions.draggable) {
     return {};
@@ -215,12 +225,12 @@ export const possibleUnitMoves = (
         sectionIndex,
         subsectionIndex,
         index,
-        index+step,
+        index + step,
       ],
       sectionId: section.id,
       subsectionId: subsection.id,
-    }
-  } else if (step === -1 && index === 0) {
+    };
+  } if (step === -1 && index === 0) {
     if (subsectionIndex > 0) {
       // move unit to last position of previous subsection inside same section.
       if (!sections[sectionIndex].childInfo.children[subsectionIndex + step]?.actions?.childAddable) {
@@ -240,8 +250,8 @@ export const possibleUnitMoves = (
         ],
         sectionId: section.id,
         subsectionId: sections[sectionIndex].childInfo.children[subsectionIndex + step].id,
-      }
-    } else if (sectionIndex > 0) {
+      };
+    } if (sectionIndex > 0) {
       // move unit to last position of previous subsection inside previous section.
       const newSectionIndex = sectionIndex + step;
       if (sections[newSectionIndex].childInfo.children.length === 0) {
@@ -266,7 +276,7 @@ export const possibleUnitMoves = (
         ],
         sectionId: sections[newSectionIndex].id,
         subsectionId: sections[newSectionIndex].childInfo.children[newSubsectionIndex].id,
-      }
+      };
     }
   } else if (step === 1 && index === units.length - 1) {
     if (subsectionIndex < sections[sectionIndex].childInfo.children.length - 1) {
@@ -288,8 +298,8 @@ export const possibleUnitMoves = (
         ],
         sectionId: section.id,
         subsectionId: sections[sectionIndex].childInfo.children[subsectionIndex + step].id,
-      }
-    } else if (sectionIndex < sections.length - 1) {
+      };
+    } if (sectionIndex < sections.length - 1) {
       // move unit to first position of next subsection inside next section.
       const newSectionIndex = sectionIndex + step;
       if (sections[newSectionIndex].childInfo.children.length === 0) {
@@ -314,9 +324,8 @@ export const possibleUnitMoves = (
         ],
         sectionId: sections[newSectionIndex].id,
         subsectionId: sections[newSectionIndex].childInfo.children[newSubsectionIndex].id,
-      }
+      };
     }
   }
   return {};
 };
-
