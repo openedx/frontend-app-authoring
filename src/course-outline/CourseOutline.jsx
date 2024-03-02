@@ -46,10 +46,9 @@ import ConfigureModal from './configure-modal/ConfigureModal';
 import PageAlerts from './page-alerts/PageAlerts';
 import DraggableList from './drag-helper/DraggableList';
 import {
-  moveSubsectionOver,
-  moveUnitOver,
-  moveSubsection,
-  moveUnit,
+  canMoveSection,
+  possibleUnitMoves,
+  possibleSubsectionMoves,
 } from './drag-helper/utils';
 import { useCourseOutline } from './hooks';
 import messages from './messages';
@@ -156,35 +155,12 @@ const CourseOutline = ({ courseId }) => {
   } = useUnitTagsCount(unitsIdPattern);
 
   /**
-   * Check if item can be moved by given step.
-   * Inner function returns false if the new index after moving by given step
-   * is out of bounds of item length.
-   * If it is within bounds, returns draggable flag of the item in the new index.
-   * This helps us avoid moving the item to a position of unmovable item.
-   * @param {Array} items
-   * @returns {(id, step) => bool}
-   */
-  const canMoveItem = (items) => (id, step) => {
-    // const newId = id + step;
-    // const indexCheck = newId >= 0 && newId < items.length;
-    // if (!indexCheck) {
-    //   return false;
-    // }
-    // const newItem = items[newId];
-    // return newItem.actions.draggable;
-    return true;
-  };
-
-  /**
    * Move section to new index
    * @param {any} currentIndex
    * @param {any} newIndex
    */
   const updateSectionOrderByIndex = (currentIndex, newIndex) => {
     if (currentIndex === newIndex) {
-      return;
-    }
-    if (!sections[newIndex]?.actions?.draggable) {
       return;
     }
     setSections((prevSections) => {
@@ -195,55 +171,19 @@ const CourseOutline = ({ courseId }) => {
   };
 
   /**
-   * Returns a function for given section which can move a subsection inside it
-   * to a new position
-   * @param {any} sectionIndex
+   * Uses details from move information and moves subsection
    * @param {any} section
-   * @param {any} subsections
-   * @returns {(currentIndex, newIndex) => void}
+   * @param {any} moveDetails
+   * @returns {void}
    */
-  const updateSubsectionOrderByIndex = (sectionIndex, section, subsections) => (index, step) => {
+  const updateSubsectionOrderByIndex = (section, moveDetails) => {
     let newSubsections;
-    let sectionId;
-    let sectionsCopy = [...sections];
-    if ((step === -1 && index >= 1) || (step === 1 && subsections.length - index >= 2)) {
-      // move subsection inside its own parent section
-      [sectionsCopy, newSubsections] = moveSubsection(
-        sectionsCopy,
-        sectionIndex,
-        index,
-        index+step,
-      );
-      sectionId = section.id;
-    } else if (step === -1 && index === 0 && sectionIndex > 0) {
-      // move subsection to last position of previous section
-      if (!sections[sectionIndex + step]?.actions?.childAddable) {
-        // return if previous section doesn't allow adding subsections
-        return;
-      }
-      [sectionsCopy, newSubsections] = moveSubsectionOver(
-        sectionsCopy,
-        sectionIndex,
-        index,
-        sectionIndex + step,
-        sectionsCopy[sectionIndex + step].childInfo.children.length + 1,
-      );
-      sectionId = sections[sectionIndex + step].id;
-    } else if (step === 1 && index === subsections.length - 1 && sectionIndex < sections.length - 1) {
-      // move subsection to first position of next section
-      if (!sections[sectionIndex + step]?.actions?.childAddable) {
-        // return if next section doesn't allow adding subsections
-        return;
-      }
-      [sectionsCopy, newSubsections] = moveSubsectionOver(
-        sectionsCopy,
-        sectionIndex,
-        index,
-        sectionIndex + step,
-        0,
-      );
-      sectionId = sections[sectionIndex + step].id;
+    let sectionsCopy;
+    const { fn, args, sectionId } = moveDetails;
+    if (!args) {
+      return;
     }
+    [sectionsCopy, newSubsections] = fn(...args);
     if (newSubsections && sectionId) {
       setSections(sectionsCopy);
       handleSubsectionDragAndDrop(
@@ -256,121 +196,19 @@ const CourseOutline = ({ courseId }) => {
   };
 
   /**
-   * Returns a function for given section & subsection which can move a unit
-   * inside it to a new position
-   * @param {any} sectionIndex
+   * Uses details from move information and moves unit
    * @param {any} section
-   * @param {any} subsection
-   * @param {any} units
-   * @returns {(currentIndex, newIndex) => void}
+   * @param {any} moveDetails
+   * @returns {void}
    */
-  const updateUnitOrderByIndex = (
-    sectionIndex,
-    subsectionIndex,
-    section,
-    subsection,
-    units,
-  ) => (index, step) => {
+  const updateUnitOrderByIndex = (section, moveDetails) => {
     let newUnits;
-    let sectionId;
-    let subsectionId;
-    let sectionsCopy = [...sections];
-    if ((step === -1 && index >= 1) || (step === 1 && units.length - index >= 2)) {
-      // move unit inside its own parent subsection
-      [sectionsCopy, newUnits] = moveUnit(
-        sectionsCopy,
-        sectionIndex,
-        subsectionIndex,
-        index,
-        index+step,
-      );
-      sectionId = section.id;
-      subsectionId = subsection.id;
-    } else if (step === -1 && index === 0) {
-      if (subsectionIndex > 0) {
-        // move unit to last position of previous subsection inside same section.
-        if (!sectionsCopy[sectionIndex].childInfo.children[subsectionIndex + step]?.actions?.childAddable) {
-          // return if previous subsection doesn't allow adding subsections
-          return;
-        }
-        [sectionsCopy, newUnits] = moveUnitOver(
-          sectionsCopy,
-          sectionIndex,
-          subsectionIndex,
-          index,
-          sectionIndex,
-          subsectionIndex + step,
-          sectionsCopy[sectionIndex].childInfo.children[subsectionIndex + step].childInfo.children.length + 1,
-        );
-        sectionId = section.id;
-        subsectionId = sectionsCopy[sectionIndex].childInfo.children[subsectionIndex + step].id;
-      } else if (sectionIndex > 0) {
-        // move unit to last position of previous subsection inside previous section.
-        const newSectionIndex = sectionIndex + step;
-        if (sectionsCopy[newSectionIndex].childInfo.children.length === 0) {
-          // return if previous section has no subsections.
-          return;
-        }
-        const newSubsectionIndex = sectionsCopy[newSectionIndex].childInfo.children.length - 1;
-        if (!sectionsCopy[newSectionIndex].childInfo.children[newSubsectionIndex]?.actions?.childAddable) {
-          // return if previous subsection doesn't allow adding subsections
-          return;
-        }
-        [sectionsCopy, newUnits] = moveUnitOver(
-          sectionsCopy,
-          sectionIndex,
-          subsectionIndex,
-          index,
-          newSectionIndex,
-          newSubsectionIndex,
-          sectionsCopy[newSectionIndex].childInfo.children[newSubsectionIndex].childInfo.children.length + 1,
-        );
-        sectionId = sectionsCopy[newSectionIndex].id;
-        subsectionId = sectionsCopy[newSectionIndex].childInfo.children[newSubsectionIndex].id;
-      }
-    } else if (step === 1 && index === units.length - 1) {
-      if (subsectionIndex < sectionsCopy[sectionIndex].childInfo.children.length - 1) {
-        // move unit to first position of next subsection inside same section.
-        if (!sectionsCopy[sectionIndex].childInfo.children[subsectionIndex + step]?.actions?.childAddable) {
-          // return if next subsection doesn't allow adding subsections
-          return;
-        }
-        [sectionsCopy, newUnits] = moveUnitOver(
-          sectionsCopy,
-          sectionIndex,
-          subsectionIndex,
-          index,
-          sectionIndex,
-          subsectionIndex + step,
-          0,
-        );
-        sectionId = section.id;
-        subsectionId = sectionsCopy[sectionIndex].childInfo.children[subsectionIndex + step].id;
-      } else if (sectionIndex < sectionsCopy.length - 1) {
-        // move unit to first position of next subsection inside next section.
-        const newSectionIndex = sectionIndex + step;
-        if (sectionsCopy[newSectionIndex].childInfo.children.length === 0) {
-          // return if next section has no subsections.
-          return;
-        }
-        const newSubsectionIndex = 0;
-        if (!sectionsCopy[newSectionIndex].childInfo.children[newSubsectionIndex]?.actions?.childAddable) {
-          // return if next subsection doesn't allow adding subsections
-          return;
-        }
-        [sectionsCopy, newUnits] = moveUnitOver(
-          sectionsCopy,
-          sectionIndex,
-          subsectionIndex,
-          index,
-          newSectionIndex,
-          newSubsectionIndex,
-          0,
-        );
-        sectionId = sectionsCopy[newSectionIndex].id;
-        subsectionId = sectionsCopy[newSectionIndex].childInfo.children[newSubsectionIndex].id;
-      }
+    let sectionsCopy;
+    const { fn, args, sectionId, subsectionId } = moveDetails;
+    if (!args) {
+      return;
     }
+    [sectionsCopy, newUnits] = fn(...args);
     if (newUnits && sectionId && subsectionId) {
       setSections(sectionsCopy);
       handleUnitDragAndDrop(
@@ -487,7 +325,7 @@ const CourseOutline = ({ courseId }) => {
                                   key={section.id}
                                   section={section}
                                   index={sectionIndex}
-                                  canMoveItem={canMoveItem(sections)}
+                                  canMoveItem={canMoveSection(sections)}
                                   isSelfPaced={statusBarData.isSelfPaced}
                                   isCustomRelativeDatesActive={isCustomRelativeDatesActive}
                                   savingStatus={savingStatus}
@@ -512,7 +350,12 @@ const CourseOutline = ({ courseId }) => {
                                         section={section}
                                         subsection={subsection}
                                         index={subsectionIndex}
-                                        canMoveItem={canMoveItem(section.childInfo.children)}
+                                        getPossibleMoves={possibleSubsectionMoves(
+                                          [...sections],
+                                          sectionIndex,
+                                          section,
+                                          section.childInfo.children
+                                        )}
                                         isSelfPaced={statusBarData.isSelfPaced}
                                         isCustomRelativeDatesActive={isCustomRelativeDatesActive}
                                         savingStatus={savingStatus}
@@ -522,11 +365,7 @@ const CourseOutline = ({ courseId }) => {
                                         onDuplicateSubmit={handleDuplicateSubsectionSubmit}
                                         onOpenConfigureModal={openConfigureModal}
                                         onNewUnitSubmit={handleNewUnitSubmit}
-                                        onOrderChange={updateSubsectionOrderByIndex(
-                                          sectionIndex,
-                                          section,
-                                          section.childInfo.children,
-                                        )}
+                                        onOrderChange={updateSubsectionOrderByIndex}
                                         onPasteClick={handlePasteClipboardClick}
                                       >
                                         <SortableContext
@@ -543,7 +382,14 @@ const CourseOutline = ({ courseId }) => {
                                               isSelfPaced={statusBarData.isSelfPaced}
                                               isCustomRelativeDatesActive={isCustomRelativeDatesActive}
                                               index={unitIndex}
-                                              canMoveItem={canMoveItem(subsection.childInfo.children)}
+                                              getPossibleMoves={possibleUnitMoves(
+                                                [...sections],
+                                                sectionIndex,
+                                                subsectionIndex,
+                                                section,
+                                                subsection,
+                                                subsection.childInfo.children,
+                                              )}
                                               savingStatus={savingStatus}
                                               onOpenPublishModal={openPublishModal}
                                               onOpenConfigureModal={openConfigureModal}
@@ -551,13 +397,7 @@ const CourseOutline = ({ courseId }) => {
                                               onEditSubmit={handleEditSubmit}
                                               onDuplicateSubmit={handleDuplicateUnitSubmit}
                                               getTitleLink={getUnitUrl}
-                                              onOrderChange={updateUnitOrderByIndex(
-                                                sectionIndex,
-                                                subsectionIndex,
-                                                section,
-                                                subsection,
-                                                subsection.childInfo.children,
-                                              )}
+                                              onOrderChange={updateUnitOrderByIndex}
                                               onCopyToClipboardClick={handleCopyToClipboardClick}
                                               discussionsSettings={discussionsSettings}
                                               tagsCount={isUnitsTagCountsLoaded ? unitsTagCounts[unit.id] : 0}

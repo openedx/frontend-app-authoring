@@ -1641,15 +1641,14 @@ describe('<CourseOutline />', () => {
 
   it('check whether subsection move up & down option is rendered correctly based on index', async () => {
     const { findAllByTestId } = render(<RootWrapper />);
-    // using second section as second section in mock has 3 subsections
-    const [, sectionElement] = await findAllByTestId('section-card');
+    // using first section
+    const sectionElements = await findAllByTestId('section-card');
+    const firstSectionElement = sectionElements[0];
     // get first, second and last subsection element
-    const {
-      0: firstSubsection,
-      1: secondSubsection,
-      length,
-      [length - 1]: lastSubsection,
-    } = await within(sectionElement).findAllByTestId('subsection-card');
+    const [
+      firstSubsection,
+      secondSubsection,
+    ] = await within(firstSectionElement).findAllByTestId('subsection-card');
 
     // find menu button and click on it to open menu in first section
     const firstMenu = await within(firstSubsection).findByTestId('subsection-card-header__menu-button');
@@ -1674,10 +1673,13 @@ describe('<CourseOutline />', () => {
       await within(secondSubsection).findByTestId('subsection-card-header__menu-move-up-button'),
     ).not.toHaveAttribute('aria-disabled');
 
+    const lastSectionElement = sectionElements[sectionElements.length - 1];
+    // get first, second and last subsection element
+    const [lastSubsection] = await within(lastSectionElement).findAllByTestId('subsection-card');
     // find menu button and click on it to open menu in last section
     const lastMenu = await within(lastSubsection).findByTestId('subsection-card-header__menu-button');
     await act(async () => fireEvent.click(lastMenu));
-    // move down option should not be enabled in last element
+    // move down option should not be enabled in last subsection of last section element
     expect(
       await within(lastSubsection).findByTestId('subsection-card-header__menu-move-down-button'),
     ).toHaveAttribute('aria-disabled', 'true');
@@ -1899,50 +1901,44 @@ describe('<CourseOutline />', () => {
 
   it('check whether unit move up & down option is rendered correctly based on index', async () => {
     const { findAllByTestId } = render(<RootWrapper />);
-    // using second section -> second subsection as it has 5 units in mock.
-    const [, sectionElement] = await findAllByTestId('section-card');
-    const [, subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    // using first section -> first subsection -> first unit
+    const sections = await findAllByTestId('section-card');
+    const [sectionElement] = sections;
+    const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
     const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
     await act(async () => fireEvent.click(expandBtn));
-    // get first, second and last unit element
-    const {
-      0: firstUnit,
-      1: secondUnit,
-      length,
-      [length - 1]: lastUnit,
-    } = await within(subsectionElement).findAllByTestId('unit-card');
+    // get first and only unit in the subsection
+    const [firstUnit] = await within(subsectionElement).findAllByTestId('unit-card');
 
     // find menu button and click on it to open menu in first section
     const firstMenu = await within(firstUnit).findByTestId('unit-card-header__menu-button');
     await act(async () => fireEvent.click(firstMenu));
-    // move down option should be enabled in first element
+    // move down option should be enabled in first element as it can move down to next subsection
     expect(
       await within(firstUnit).findByTestId('unit-card-header__menu-move-down-button'),
     ).not.toHaveAttribute('aria-disabled');
-    // move up option should not be enabled in first element
+    // move up option should not be enabled in first element as we have no subsections or sections above
     expect(
       await within(firstUnit).findByTestId('unit-card-header__menu-move-up-button'),
     ).toHaveAttribute('aria-disabled', 'true');
 
-    // find menu button and click on it to open menu in second section
-    const secondMenu = await within(secondUnit).findByTestId('unit-card-header__menu-button');
-    await act(async () => fireEvent.click(secondMenu));
-    // both move down & up option should be enabled in second element
-    expect(
-      await within(secondUnit).findByTestId('unit-card-header__menu-move-down-button'),
-    ).not.toHaveAttribute('aria-disabled');
-    expect(
-      await within(secondUnit).findByTestId('unit-card-header__menu-move-up-button'),
-    ).not.toHaveAttribute('aria-disabled');
+    // using last section -> last subsection -> last unit
+    const lastSection = sections[sections.length - 1];
+    // it has only one subsection
+    const [lastSubsectionElement] = await within(lastSection).findAllByTestId('subsection-card');
+    const lastExpandBtn = await within(lastSubsectionElement).findByTestId('subsection-card-header__expanded-btn');
+    await act(async () => fireEvent.click(lastExpandBtn));
+    // get last and the only unit in the subsection
+    const [lastUnit] = await within(lastSubsectionElement).findAllByTestId('unit-card');
 
-    // find menu button and click on it to open menu in last section
+    // find menu button and click on it to open menu in first section
     const lastMenu = await within(lastUnit).findByTestId('unit-card-header__menu-button');
     await act(async () => fireEvent.click(lastMenu));
-    // move down option should not be enabled in last element
+    // move down option should not be enabled in last element as we have no subsections or sections below
     expect(
       await within(lastUnit).findByTestId('unit-card-header__menu-move-down-button'),
     ).toHaveAttribute('aria-disabled', 'true');
-    // move up option should be enabled in last element
+    // move down option should be enabled in last element as it can move up to prev section's last subsection
     expect(
       await within(lastUnit).findByTestId('unit-card-header__menu-move-up-button'),
     ).not.toHaveAttribute('aria-disabled');

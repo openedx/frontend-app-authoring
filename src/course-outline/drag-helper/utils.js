@@ -123,3 +123,200 @@ export const moveUnit = (
   prevCopy[sectionIdx] = section;
   return [prevCopy, result];
 }
+
+/**
+ * Check if section can be moved by given step.
+ * Inner function returns false if the new index after moving by given step
+ * is out of bounds of item length.
+ * If it is within bounds, returns draggable flag of the item in the new index.
+ * This helps us avoid moving the item to a position of unmovable item.
+ * @param {Array} items
+ * @returns {(id, step) => bool}
+ */
+export const canMoveSection = (sections) => (id, step) => {
+  const newId = id + step;
+  const indexCheck = newId >= 0 && newId < sections.length;
+  if (!indexCheck) {
+    return false;
+  }
+  const newItem = sections[newId];
+  return newItem.actions.draggable;
+};
+
+export const possibleSubsectionMoves = (sections, sectionIndex, section, subsections) => (index, step) => {
+  if (!subsections[index]?.actions?.draggable) {
+    return {};
+  }
+  if ((step === -1 && index >= 1) || (step === 1 && subsections.length - index >= 2)) {
+    // move subsection inside its own parent section
+    return {
+      fn: moveSubsection,
+      args: [
+        sections,
+        sectionIndex,
+        index,
+        index+step,
+      ],
+      sectionId: section.id
+    }
+  } else if (step === -1 && index === 0 && sectionIndex > 0) {
+    // move subsection to last position of previous section
+    if (!sections[sectionIndex + step]?.actions?.childAddable) {
+      // return if previous section doesn't allow adding subsections
+      return {};
+    }
+    return {
+      fn: moveSubsectionOver,
+      args: [
+        sections,
+        sectionIndex,
+        index,
+        sectionIndex + step,
+        sections[sectionIndex + step].childInfo.children.length + 1,
+      ],
+      sectionId: sections[sectionIndex + step].id,
+    }
+  } else if (step === 1 && index === subsections.length - 1 && sectionIndex < sections.length - 1) {
+    // move subsection to first position of next section
+    if (!sections[sectionIndex + step]?.actions?.childAddable) {
+      // return if next section doesn't allow adding subsections
+      return {};
+    }
+    return {
+      fn: moveSubsectionOver,
+      args: [
+        sections,
+        sectionIndex,
+        index,
+        sectionIndex + step,
+        0,
+      ],
+      sectionId: sections[sectionIndex + step].id,
+    }
+  }
+};
+
+export const possibleUnitMoves = (
+  sections,
+  sectionIndex,
+  subsectionIndex,
+  section,
+  subsection,
+  units
+) => (index, step) => {
+  if (!units[index].actions.draggable) {
+    return {};
+  }
+  if ((step === -1 && index >= 1) || (step === 1 && units.length - index >= 2)) {
+    return {
+      fn: moveUnit,
+      args: [
+        sections,
+        sectionIndex,
+        subsectionIndex,
+        index,
+        index+step,
+      ],
+      sectionId: section.id,
+      subsectionId: subsection.id,
+    }
+  } else if (step === -1 && index === 0) {
+    if (subsectionIndex > 0) {
+      // move unit to last position of previous subsection inside same section.
+      if (!sections[sectionIndex].childInfo.children[subsectionIndex + step]?.actions?.childAddable) {
+        // return if previous subsection doesn't allow adding subsections
+        return {};
+      }
+      return {
+        fn: moveUnitOver,
+        args: [
+          sections,
+          sectionIndex,
+          subsectionIndex,
+          index,
+          sectionIndex,
+          subsectionIndex + step,
+          sections[sectionIndex].childInfo.children[subsectionIndex + step].childInfo.children.length + 1,
+        ],
+        sectionId: section.id,
+        subsectionId: sections[sectionIndex].childInfo.children[subsectionIndex + step].id,
+      }
+    } else if (sectionIndex > 0) {
+      // move unit to last position of previous subsection inside previous section.
+      const newSectionIndex = sectionIndex + step;
+      if (sections[newSectionIndex].childInfo.children.length === 0) {
+        // return if previous section has no subsections.
+        return {};
+      }
+      const newSubsectionIndex = sections[newSectionIndex].childInfo.children.length - 1;
+      if (!sections[newSectionIndex].childInfo.children[newSubsectionIndex]?.actions?.childAddable) {
+        // return if previous subsection doesn't allow adding subsections
+        return {};
+      }
+      return {
+        fn: moveUnitOver,
+        args: [
+          sections,
+          sectionIndex,
+          subsectionIndex,
+          index,
+          newSectionIndex,
+          newSubsectionIndex,
+          sections[newSectionIndex].childInfo.children[newSubsectionIndex].childInfo.children.length + 1,
+        ],
+        sectionId: sections[newSectionIndex].id,
+        subsectionId: sections[newSectionIndex].childInfo.children[newSubsectionIndex].id,
+      }
+    }
+  } else if (step === 1 && index === units.length - 1) {
+    if (subsectionIndex < sections[sectionIndex].childInfo.children.length - 1) {
+      // move unit to first position of next subsection inside same section.
+      if (!sections[sectionIndex].childInfo.children[subsectionIndex + step]?.actions?.childAddable) {
+        // return if next subsection doesn't allow adding subsections
+        return {};
+      }
+      return {
+        fn: moveUnitOver,
+        args: [
+          sections,
+          sectionIndex,
+          subsectionIndex,
+          index,
+          sectionIndex,
+          subsectionIndex + step,
+          0,
+        ],
+        sectionId: section.id,
+        subsectionId: sections[sectionIndex].childInfo.children[subsectionIndex + step].id,
+      }
+    } else if (sectionIndex < sections.length - 1) {
+      // move unit to first position of next subsection inside next section.
+      const newSectionIndex = sectionIndex + step;
+      if (sections[newSectionIndex].childInfo.children.length === 0) {
+        // return if next section has no subsections.
+        return {};
+      }
+      const newSubsectionIndex = 0;
+      if (!sections[newSectionIndex].childInfo.children[newSubsectionIndex]?.actions?.childAddable) {
+        // return if next subsection doesn't allow adding subsections
+        return {};
+      }
+      return {
+        fn: moveUnitOver,
+        args: [
+          sections,
+          sectionIndex,
+          subsectionIndex,
+          index,
+          newSectionIndex,
+          newSubsectionIndex,
+          0,
+        ],
+        sectionId: sections[newSectionIndex].id,
+        subsectionId: sections[newSectionIndex].childInfo.children[newSubsectionIndex].id,
+      }
+    }
+  }
+  return {};
+};
+

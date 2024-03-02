@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useToggle, Sheet } from '@openedx/paragon';
+import { isEmpty } from 'lodash';
 
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
@@ -19,7 +20,7 @@ const UnitCard = ({
   isSelfPaced,
   isCustomRelativeDatesActive,
   index,
-  canMoveItem,
+  getPossibleMoves,
   onOpenPublishModal,
   onOpenConfigureModal,
   onEditSubmit,
@@ -54,8 +55,10 @@ const UnitCard = ({
   // re-create actions object for customizations
   const actions = { ...unitActions };
   // add actions to control display of move up & down menu buton.
-  actions.allowMoveUp = canMoveItem(index, -1);
-  actions.allowMoveDown = canMoveItem(index, 1);
+  const moveUpDetails = getPossibleMoves(index, -1);
+  const moveDownDetails = getPossibleMoves(index, 1);
+  actions.allowMoveUp = !isEmpty(moveUpDetails);
+  actions.allowMoveDown = !isEmpty(moveDownDetails);
 
   const parentInfo = {
     graded: subsection.graded,
@@ -85,11 +88,11 @@ const UnitCard = ({
   };
 
   const handleUnitMoveUp = () => {
-    onOrderChange(index, -1);
+    onOrderChange(section, moveUpDetails);
   };
 
   const handleUnitMoveDown = () => {
-    onOrderChange(index, 1);
+    onOrderChange(section, moveDownDetails);
   };
 
   const handleCopyClick = () => {
@@ -243,7 +246,7 @@ UnitCard.propTypes = {
   onDuplicateSubmit: PropTypes.func.isRequired,
   getTitleLink: PropTypes.func.isRequired,
   index: PropTypes.number.isRequired,
-  canMoveItem: PropTypes.func.isRequired,
+  getPossibleMoves: PropTypes.func.isRequired,
   onOrderChange: PropTypes.func.isRequired,
   isSelfPaced: PropTypes.bool.isRequired,
   isCustomRelativeDatesActive: PropTypes.bool.isRequired,

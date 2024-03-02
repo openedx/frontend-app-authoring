@@ -6,6 +6,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, useToggle } from '@openedx/paragon';
 import { Add as IconAdd } from '@openedx/paragon/icons';
 import classNames from 'classnames';
+import { isEmpty } from 'lodash';
 
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
@@ -26,7 +27,7 @@ const SubsectionCard = ({
   isCustomRelativeDatesActive,
   children,
   index,
-  canMoveItem,
+  getPossibleMoves,
   onOpenPublishModal,
   onEditSubmit,
   savingStatus,
@@ -63,8 +64,10 @@ const SubsectionCard = ({
   // re-create actions object for customizations
   const actions = { ...subsectionActions };
   // add actions to control display of move up & down menu buton.
-  actions.allowMoveUp = canMoveItem(index, -1);
-  actions.allowMoveDown = canMoveItem(index, 1);
+  const moveUpDetails = getPossibleMoves(index, -1);
+  const moveDownDetails = getPossibleMoves(index, 1);
+  actions.allowMoveUp = !isEmpty(moveUpDetails);
+  actions.allowMoveDown = !isEmpty(moveDownDetails);
 
   const [isExpanded, setIsExpanded] = useState(locatorId ? isScrolledToElement : !isHeaderVisible);
   const subsectionStatus = getItemStatus({
@@ -94,11 +97,11 @@ const SubsectionCard = ({
   };
 
   const handleSubsectionMoveUp = () => {
-    onOrderChange(index, -1);
+    onOrderChange(section, moveUpDetails);
   };
 
   const handleSubsectionMoveDown = () => {
-    onOrderChange(index, 1);
+    onOrderChange(section, moveDownDetails);
   };
 
   const handleNewButtonClick = () => onNewUnitSubmit(id);
@@ -262,7 +265,7 @@ SubsectionCard.propTypes = {
   onDuplicateSubmit: PropTypes.func.isRequired,
   onNewUnitSubmit: PropTypes.func.isRequired,
   index: PropTypes.number.isRequired,
-  canMoveItem: PropTypes.func.isRequired,
+  getPossibleMoves: PropTypes.func.isRequired,
   onOrderChange: PropTypes.func.isRequired,
   onOpenConfigureModal: PropTypes.func.isRequired,
   onPasteClick: PropTypes.func.isRequired,
