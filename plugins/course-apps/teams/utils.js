@@ -1,7 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import { getConfig } from '@edx/frontend-platform';
 
-import { GroupTypes } from './constants';
+import { GroupTypes } from 'CourseAuthoring/data/constants';
 
 /**
  * Check if a group type is enabled by the current configuration.
