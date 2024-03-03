@@ -278,7 +278,11 @@ const ContentTagsCollapsible = ({
   }, 500); // Perform search after 500ms
 
   const handleSearchChange = React.useCallback((value, { action }) => {
-    if (action === 'input-change') {
+    if (action === 'input-blur') {
+      // Cancel/clear search if focused away from select input
+      handleSearch.cancel();
+      setSearchTerm('');
+    } else if (action === 'input-change') {
       if (value === '') {
         // No need to debounce when search term cleared. Clear debounce function
         handleSearch.cancel();
@@ -311,12 +315,14 @@ const ContentTagsCollapsible = ({
     commitStagedTags();
     handleStagedTagsMenuChange([]);
     selectRef.current?.blur();
-  }, [commitStagedTags, handleStagedTagsMenuChange, selectRef]);
+    setSearchTerm('');
+  }, [commitStagedTags, handleStagedTagsMenuChange, selectRef, setSearchTerm]);
 
   const handleCancelStagedTags = React.useCallback(() => {
     handleStagedTagsMenuChange([]);
     selectRef.current?.blur();
-  }, [handleStagedTagsMenuChange, selectRef]);
+    setSearchTerm('');
+  }, [handleStagedTagsMenuChange, selectRef, setSearchTerm]);
 
   return (
     <div className="d-flex">
@@ -337,7 +343,7 @@ const ContentTagsCollapsible = ({
               placeholder={intl.formatMessage(messages.collapsibleAddTagsPlaceholderText)}
               isSearchable
               className="d-flex flex-column flex-fill"
-              classNamePrefix="react-select"
+              classNamePrefix="react-select-add-tags"
               onInputChange={handleSearchChange}
               onChange={handleStagedTagsMenuChange}
               components={{
