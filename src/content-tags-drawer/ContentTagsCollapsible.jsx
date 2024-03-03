@@ -248,7 +248,7 @@ const ContentTagsCollapsible = ({
 }) => {
   const intl = useIntl();
   const { id: taxonomyId, name, canTagObject } = taxonomyAndTagsData;
-  const selectRef = React.useRef(null);
+  const selectRef = React.useRef(/** @type {HTMLSelectElement | null} */(null));
 
   const {
     tagChangeHandler,
@@ -335,7 +335,7 @@ const ContentTagsCollapsible = ({
 
           {canTagObject && (
             <Select
-              ref={selectRef}
+              ref={/** @type {React.RefObject} */(selectRef)}
               isMulti
               isLoading={updateTags.isLoading}
               isDisabled={updateTags.isLoading}
