@@ -1,5 +1,5 @@
 import { getConfig } from '@edx/frontend-platform';
-import { GroupTypes } from './constants';
+import { GroupTypes } from 'CourseAuthoring/data/constants';
 import { isGroupTypeEnabled } from './utils';
 
 jest.mock('@edx/frontend-platform', () => ({ getConfig: jest.fn() }));
