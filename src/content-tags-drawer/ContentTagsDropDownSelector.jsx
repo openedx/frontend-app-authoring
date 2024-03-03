@@ -147,7 +147,7 @@ const ContentTagsDropDownSelector = ({
                 aria-label={intl.formatMessage(messages.taxonomyTagsCheckboxAriaLabel, { tag: tagData.value })}
                 data-selectable-box="taxonomy-tags"
                 value={[...lineage, tagData.value].map(t => encodeURIComponent(t)).join(',')}
-                isIndeterminate={isImplicit(tagData)}
+                isIndeterminate={isApplied(tagData) || isImplicit(tagData)}
                 disabled={isApplied(tagData) || isImplicit(tagData)}
               >
                 <HighlightedText text={tagData.value} highlight={searchTerm} />
