@@ -27,8 +27,6 @@ const getItemStatus = ({
     return ITEM_BADGE_STATUS.live;
   case visibilityState === VisibilityTypes.UNSCHEDULED:
     return ITEM_BADGE_STATUS.unscheduled;
-  case visibilityState === VisibilityTypes.NEEDS_ATTENTION && !hasChanges:
-    return ITEM_BADGE_STATUS.needs_attention;
   case published && !hasChanges:
     return ITEM_BADGE_STATUS.publishedNotLive;
   case published && hasChanges:
@@ -122,10 +120,6 @@ const getItemStatusBorder = (status) => {
   case ITEM_BADGE_STATUS.unscheduled:
     return {
       borderLeft: '5px solid #ccc',
-    };
-  case ITEM_BADGE_STATUS.needs_attention:
-    return {
-      borderLeft: '5px solid #F0CC00',
     };
   default:
     return {};
