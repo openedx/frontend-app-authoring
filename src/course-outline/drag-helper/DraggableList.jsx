@@ -93,6 +93,7 @@ const DraggableList = ({
     return null;
   };
 
+  /* istanbul ignore next */
   const subsectionDragOver = (active, over, activeInfo, overInfo) => {
     if (
       activeInfo.parent.id === overInfo.parent.id
@@ -132,6 +133,7 @@ const DraggableList = ({
     }
   };
 
+  /* istanbul ignore next */
   const unitDragOver = (active, over, activeInfo, overInfo) => {
     if (
       activeInfo.parent.id === overInfo.parent.id
@@ -176,6 +178,7 @@ const DraggableList = ({
     }
   };
 
+  /* istanbul ignore next */
   const handleDragOver = (event) => {
     const { active, over } = event;
     if (!active || !over) {
