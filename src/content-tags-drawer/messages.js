@@ -45,6 +45,10 @@ const messages = defineMessages({
     id: 'course-authoring.content-tags-drawer.content-tags-collapsible.custom-menu.cancel-staged-tags',
     defaultMessage: 'Cancel',
   },
+  collapsibleInlineAddStagedTagsButtonText: {
+    id: 'course-authoring.content-tags-drawer.content-tags-collapsible.custom-menu.inline-save-staged-tags',
+    defaultMessage: 'Add',
+  },
 });
 
 export default messages;

@@ -127,6 +127,7 @@ CustomLoadingIndicator.propTypes = {
 
 const CustomIndicatorsContainer = (props) => {
   const {
+    intl,
     value,
     handleCommitStagedTags,
   } = props.selectProps;
@@ -141,7 +142,7 @@ const CustomIndicatorsContainer = (props) => {
             onClick={handleCommitStagedTags}
             onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); }}
           >
-            Add
+            { intl.formatMessage(messages.collapsibleInlineAddStagedTagsButtonText) }
           </Button>
         )) || null
       }
@@ -152,6 +153,7 @@ const CustomIndicatorsContainer = (props) => {
 
 CustomIndicatorsContainer.propTypes = {
   selectProps: PropTypes.shape({
+    intl: intlShape.isRequired,
     value: PropTypes.arrayOf(PropTypes.shape({
       value: PropTypes.string.isRequired,
       label: PropTypes.string.isRequired,

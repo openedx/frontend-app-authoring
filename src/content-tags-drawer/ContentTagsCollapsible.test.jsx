@@ -51,11 +51,29 @@ const data = {
       },
     ],
   },
+  stagedContentTags: [],
+  addStagedContentTag: jest.fn(),
+  removeStagedContentTag: jest.fn(),
+  setStagedTags: jest.fn(),
 };
 
-const ContentTagsCollapsibleComponent = ({ contentId, taxonomyAndTagsData }) => (
+const ContentTagsCollapsibleComponent = ({
+  contentId,
+  taxonomyAndTagsData,
+  stagedContentTags,
+  addStagedContentTag,
+  removeStagedContentTag,
+  setStagedTags,
+}) => (
   <IntlProvider locale="en" messages={{}}>
-    <ContentTagsCollapsible contentId={contentId} taxonomyAndTagsData={taxonomyAndTagsData} />
+    <ContentTagsCollapsible
+      contentId={contentId}
+      taxonomyAndTagsData={taxonomyAndTagsData}
+      stagedContentTags={stagedContentTags}
+      addStagedContentTag={addStagedContentTag}
+      removeStagedContentTag={removeStagedContentTag}
+      setStagedTags={setStagedTags}
+    />
   </IntlProvider>
 );
 
@@ -70,6 +88,10 @@ describe('<ContentTagsCollapsible />', () => {
     jest.useRealTimers(); // Restore real timers after the tests
   });
 
+  afterEach(() => {
+    jest.clearAllMocks(); // Reset all mock function call counts after each test case
+  });
+
   async function getComponent(updatedData) {
     const componentData = (!updatedData ? data : updatedData);
 
@@ -77,6 +99,10 @@ describe('<ContentTagsCollapsible />', () => {
       <ContentTagsCollapsibleComponent
         contentId={componentData.contentId}
         taxonomyAndTagsData={componentData.taxonomyAndTagsData}
+        stagedContentTags={componentData.stagedContentTags}
+        addStagedContentTag={componentData.addStagedContentTag}
+        removeStagedContentTag={componentData.removeStagedContentTag}
+        setStagedTags={componentData.setStagedTags}
       />,
     );
   }
@@ -130,59 +156,157 @@ describe('<ContentTagsCollapsible />', () => {
     expect(getByText('3')).toBeInTheDocument();
   });
 
-  it('should render new tags as they are checked in the dropdown', async () => {
+  it('should call `addStagedContentTag` when tag checked in the dropdown', async () => {
     setupTaxonomyMock();
     const { container, getByText, getAllByText } = await getComponent();
 
-    // Expand the Taxonomy to view applied tags and "Add tags" button
-    const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
-    fireEvent.click(expandToggle);
-
-    // Click on "Add tags" button to open dropdown to select new tags
-    const addTagsButton = getByText(messages.addTagsButtonText.defaultMessage);
-    fireEvent.click(addTagsButton);
-
-    // Wait for the dropdown selector for tags to open,
-    // Tag 3 should only appear there
-    expect(getByText('Tag 3')).toBeInTheDocument();
-    expect(getAllByText('Tag 3').length === 1);
-
-    const tag3 = getByText('Tag 3');
-
-    fireEvent.click(tag3);
-
-    // After clicking on Tag 3, it should also appear in amongst
-    // the tag bubbles in the tree
-    expect(getAllByText('Tag 3').length === 2);
-  });
-
-  it('should remove tag when they are unchecked in the dropdown', async () => {
-    setupTaxonomyMock();
-    const { container, getByText, getAllByText } = await getComponent();
-
-    // Expand the Taxonomy to view applied tags and "Add tags" button
+    // Expand the Taxonomy to view applied tags and "Add a tag" button
     const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
 
     fireEvent.click(expandToggle);
 
-    // Check that Tag 2 appears in tag bubbles
-    expect(getByText('Tag 2')).toBeInTheDocument();
-
-    // Click on "Add tags" button to open dropdown to select new tags
-    const addTagsButton = getByText(messages.addTagsButtonText.defaultMessage);
-    fireEvent.click(addTagsButton);
+    // Click on "Add a tag" button to open dropdown to select new tags
+    const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
+    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
+    fireEvent.mouseDown(addTagsButton);
 
     // Wait for the dropdown selector for tags to open,
     // Tag 3 should only appear there, (i.e. the dropdown is open, since Tag 3 is not applied)
-    expect(getByText('Tag 3')).toBeInTheDocument();
+    expect(getAllByText('Tag 3').length).toBe(1);
 
-    // Get the Tag 2 checkbox and click on it
-    const tag2 = getAllByText('Tag 2')[1];
-    fireEvent.click(tag2);
+    // Click to check Tag 3 and check the `addStagedContentTag` was called with the correct params
+    const tag3 = getByText('Tag 3');
+    fireEvent.click(tag3); // Need to call click first time to get focus in tests
+    fireEvent.click(tag3);
 
-    // After clicking on Tag 2, it should be removed from
-    // the tag bubbles in so only the one in the dropdown appears
-    expect(getAllByText('Tag 2').length === 1);
+    const taxonomyId = 123;
+    const addedStagedTag = {
+      value: 'Tag%203',
+      label: 'Tag 3',
+    };
+    expect(data.addStagedContentTag).toHaveBeenCalledTimes(1);
+    expect(data.addStagedContentTag).toHaveBeenCalledWith(taxonomyId, addedStagedTag);
+  });
+
+  it('should call `removeStagedContentTag` when tag staged tag unchecked in the dropdown', async () => {
+    setupTaxonomyMock();
+    const { container, getByText, getAllByText } = await getComponent();
+
+    // Expand the Taxonomy to view applied tags and "Add a tag" button
+    const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
+
+    fireEvent.click(expandToggle);
+
+    // Click on "Add a tag" button to open dropdown to select new tags
+    const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
+    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
+    fireEvent.mouseDown(addTagsButton);
+
+    // Wait for the dropdown selector for tags to open,
+    // Tag 3 should only appear there, (i.e. the dropdown is open, since Tag 3 is not applied)
+    expect(getAllByText('Tag 3').length).toBe(1);
+
+    // Click to check Tag 3
+    const tag3 = getByText('Tag 3');
+    fireEvent.click(tag3); // Need to call click first time to get focus in tests
+    fireEvent.click(tag3);
+
+    // Click to uncheck Tag 3 and check the `removeStagedContentTag` was called with the correct params
+    fireEvent.click(tag3);
+    const taxonomyId = 123;
+    const tagValue = 'Tag%203';
+    expect(data.removeStagedContentTag).toHaveBeenCalledTimes(1);
+    expect(data.removeStagedContentTag).toHaveBeenCalledWith(taxonomyId, tagValue);
+  });
+
+  it('should call `setStagedTags` to clear staged tags when clicking inline "Add" button', async () => {
+    setupTaxonomyMock();
+    // Setup component to have staged tags
+    const { container, getByText } = await getComponent({
+      ...data,
+      stagedContentTags: [{
+        value: 'Tag%203',
+        label: 'Tag 3',
+      }],
+    });
+
+    // Expand the Taxonomy to view applied tags and staged tags
+    const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
+
+    fireEvent.click(expandToggle);
+
+    // Click on inline "Add" button and check that the appropriate methods are called
+    const inlineAdd = getByText(messages.collapsibleInlineAddStagedTagsButtonText.defaultMessage);
+    fireEvent.click(inlineAdd);
+
+    // Check that `setStagedTags` called with empty tags list to clear staged tags
+    const taxonomyId = 123;
+    expect(data.setStagedTags).toHaveBeenCalledTimes(1);
+    expect(data.setStagedTags).toHaveBeenCalledWith(taxonomyId, []);
+  });
+
+  it('should call `setStagedTags` to clear staged tags when clicking "Add tags" button in dropdown', async () => {
+    setupTaxonomyMock();
+    // Setup component to have staged tags
+    const { container, getByText } = await getComponent({
+      ...data,
+      stagedContentTags: [{
+        value: 'Tag%203',
+        label: 'Tag 3',
+      }],
+    });
+
+    // Expand the Taxonomy to view applied tags and staged tags
+    const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
+
+    fireEvent.click(expandToggle);
+
+    // Click on dropdown with staged tags to expand it
+    const selectTagsDropdown = container.getElementsByClassName('react-select-add-tags__control')[0];
+    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
+    fireEvent.mouseDown(selectTagsDropdown);
+
+    // Click on "Add tags" button and check that the appropriate methods are called
+    const dropdownAdd = getByText(messages.collapsibleAddStagedTagsButtonText.defaultMessage);
+    fireEvent.click(dropdownAdd);
+
+    // Check that `setStagedTags` called with empty tags list to clear staged tags
+    const taxonomyId = 123;
+    expect(data.setStagedTags).toHaveBeenCalledTimes(1);
+    expect(data.setStagedTags).toHaveBeenCalledWith(taxonomyId, []);
+  });
+
+  it('should close dropdown and clear staged tags when clicking "Cancel" inside dropdown', async () => {
+    // Setup component to have staged tags
+    const { container, getByText } = await getComponent({
+      ...data,
+      stagedContentTags: [{
+        value: 'Tag%203',
+        label: 'Tag 3',
+      }],
+    });
+
+    // Expand the Taxonomy to view applied tags and staged tags
+    const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
+
+    fireEvent.click(expandToggle);
+
+    // Click on dropdown with staged tags to expand it
+    const selectTagsDropdown = container.getElementsByClassName('react-select-add-tags__control')[0];
+    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
+    fireEvent.mouseDown(selectTagsDropdown);
+
+    // Click on inline "Add" button and check that the appropriate methods are called
+    const dropdownCancel = getByText(messages.collapsibleCancelStagedTagsButtonText.defaultMessage);
+    fireEvent.click(dropdownCancel);
+
+    // Check that `setStagedTags` called with empty tags list to clear staged tags
+    const taxonomyId = 123;
+    expect(data.setStagedTags).toHaveBeenCalledTimes(1);
+    expect(data.setStagedTags).toHaveBeenCalledWith(taxonomyId, []);
+
+    // Check that the dropdown is closed
+    expect(dropdownCancel).not.toBeInTheDocument();
   });
 
   it('should handle search term change', async () => {
@@ -190,16 +314,17 @@ describe('<ContentTagsCollapsible />', () => {
       container, getByText, getByRole, getByDisplayValue,
     } = await getComponent();
 
-    // Expand the Taxonomy to view applied tags and "Add tags" button
+    // Expand the Taxonomy to view applied tags and "Add a tag" button
     const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
     fireEvent.click(expandToggle);
 
-    // Click on "Add tags" button to open dropdown
-    const addTagsButton = getByText(messages.addTagsButtonText.defaultMessage);
-    fireEvent.click(addTagsButton);
+    // Click on "Add a tag" button to open dropdown
+    const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
+    // Use `mouseDown` instead of `click` since the react-select didn't respond to click
+    fireEvent.mouseDown(addTagsButton);
 
     // Get the search field
-    const searchField = getByRole('searchbox');
+    const searchField = getByRole('combobox');
 
     const searchTerm = 'memo';
 
@@ -226,14 +351,15 @@ describe('<ContentTagsCollapsible />', () => {
     setupTaxonomyMock();
     const { container, getByText, queryByText } = await getComponent();
 
-    // Expand the Taxonomy to view applied tags and "Add tags" button
+    // Expand the Taxonomy to view applied tags and "Add a tag" button
     const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
 
     fireEvent.click(expandToggle);
 
-    // Click on "Add tags" button to open dropdown
-    const addTagsButton = getByText(messages.addTagsButtonText.defaultMessage);
-    fireEvent.click(addTagsButton);
+    // Click on "Add a tag" button to open dropdown
+    const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
+    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
+    fireEvent.mouseDown(addTagsButton);
 
     // Wait for the dropdown selector for tags to open, Tag 3 should appear
     // since it is not applied
@@ -248,6 +374,24 @@ describe('<ContentTagsCollapsible />', () => {
     // Wait for the dropdown selector for tags to close, Tag 3 is no longer on
     // the page
     expect(queryByText('Tag 3')).not.toBeInTheDocument();
+  });
+
+  it('should remove applied tags when clicking on `x` of tag bubble', async () => {
+    setupTaxonomyMock();
+    const { container, getByText } = await getComponent();
+
+    // Expand the Taxonomy to view applied tags
+    const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
+
+    fireEvent.click(expandToggle);
+
+    // Click on 'x' of applied tag to remove it
+    const appliedTag = getByText('Tag 2');
+    const xButtonAppliedTag = appliedTag.nextSibling;
+    xButtonAppliedTag.click();
+
+    // Check that the applied tag has been removed
+    expect(appliedTag).not.toBeInTheDocument();
   });
 
   it('should render taxonomy tags data without tags number badge', async () => {
