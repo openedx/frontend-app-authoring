@@ -21,6 +21,14 @@ import Loading from '../generic/Loading';
 /** @typedef {import("../taxonomy/data/types.mjs").TaxonomyData} TaxonomyData */
 /** @typedef {import("./data/types.mjs").Tag} ContentTagData */
 
+/**
+ * Drawer with the functionality to show and manage tags in a certain content.
+ * It is used both in interfaces of this MFE and in edx-platform interfaces such as iframe.
+ * - If you want to use it as an iframe, the component obtains the `contentId` from the url parameters.
+ *   Functions to close the drawer are handled internally.
+ * - If you want to use it as react component, you need to pass the content id and the close functions
+ *   through the component parameters.
+ */
 const ContentTagsDrawer = ({ id, onClose }) => {
   const intl = useIntl();
   const params = useParams();
