@@ -13,11 +13,11 @@ const AccessibilityPage = ({
   // injected
   intl,
 }) => {
-  const communityAccessibilityLink="https://www.edx.org/accessibility"
-  const email="accessibility@edx.org"
+  const communityAccessibilityLink = 'https://www.edx.org/accessibility';
+  const email = 'accessibility@edx.org';
   return (
     <>
-    <Helmet>
+      <Helmet>
         <title>
           {intl.formatMessage(messages.pageTitle, {
             siteName: process.env.SITE_NAME,
@@ -36,7 +36,7 @@ const AccessibilityPage = ({
 
 AccessibilityPage.propTypes = {
   // injected
-  intl: intlShape.isRequired
-}
+  intl: intlShape.isRequired,
+};
 
 export default injectIntl(AccessibilityPage);

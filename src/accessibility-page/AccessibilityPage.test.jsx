@@ -19,7 +19,7 @@ const renderComponent = () => {
   render(
     <IntlProvider locale="en">
       <AppProvider store={store}>
-        <AccessibilityPage/>
+        <AccessibilityPage />
       </AppProvider>
     </IntlProvider>,
   );
