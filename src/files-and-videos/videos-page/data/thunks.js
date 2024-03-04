@@ -87,7 +87,6 @@ export function updateVideoOrder(courseId, videoIds) {
 export function deleteVideoFile(courseId, id) {
   return async (dispatch) => {
     dispatch(updateEditStatus({ editType: 'delete', status: RequestStatus.IN_PROGRESS }));
-
     try {
       await deleteVideo(courseId, id);
       dispatch(deleteVideoSuccess({ videoId: id }));
@@ -105,15 +104,15 @@ export function addVideoFile(courseId, file, videoIds) {
     dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.IN_PROGRESS }));
     try {
       const createUrlResponse = await addVideo(courseId, file);
-      if (!createUrlResponse.ok) {
+      if (createUrlResponse.status < 200 && createUrlResponse.status >= 300) {
         console.error(`Failed to get upload URL (${createUrlResponse.status} ${createUrlResponse.statusText})`);
         dispatch(updateErrors({ error: 'add', message: `Failed to add ${file.name}.` }));
         dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
         return;
       }
-      const { edxVideoId, uploadUrl } = createUrlResponse.files[0];
-      const putToServerResponse = await uploadVideo(courseId, uploadUrl, file, edxVideoId);
-      if (!putToServerResponse.ok) {
+      const { edxVideoId, uploadUrl } = createUrlResponse.data.files[0];
+      const putToServerResponse = await uploadVideo(uploadUrl, file);
+      if (putToServerResponse.status < 200 && putToServerResponse.status >= 300) {
         dispatch(updateErrors({ error: 'add', message: `Failed to upload ${file.name}.` }));
         sendVideoUploadStatus(courseId, edxVideoId, 'Upload failed', 'upload_failed');
         dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
@@ -148,14 +147,21 @@ export function addVideoFile(courseId, file, videoIds) {
       }
       dispatch(updateVideoUploadProgress({ uploadNewVideoProgress: 0 }));
       dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
+      return;
     }
-    const { videos } = await fetchVideoList(courseId);
-    const newVideos = videos.filter(video => !videoIds.includes(video.edxVideoId));
-    const parsedVideos = updateFileValues(newVideos, true);
-    dispatch(addModels({
-      modelType: 'videos',
-      models: parsedVideos,
-    }));
+    try {
+      const { videos } = await fetchVideoList(courseId);
+      const newVideos = videos.filter(video => !videoIds.includes(video.edxVideoId));
+      const newVideoIds = newVideos.map(video => video.edxVideoId);
+      const parsedVideos = updateFileValues(newVideos, true);
+      dispatch(addModels({ modelType: 'videos', models: parsedVideos }));
+      dispatch(setVideoIds({ videoIds: videoIds.concat(newVideoIds) }));
+    } catch (error) {
+      dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
+      dispatch(updateErrors({ error: 'add', message: error.message }));
+      return;
+    }
+    dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.SUCCESSFUL }));
   };
 }
 
