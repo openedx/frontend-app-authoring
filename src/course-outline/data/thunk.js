@@ -53,7 +53,7 @@ import {
   reorderSubsectionList,
   reorderUnitList,
   updateClipboardContent,
-  setPasteFiles,
+  setPasteFileNotices,
 } from './slice';
 
 export function fetchCourseOutlineIndexQuery(courseId) {
@@ -617,7 +617,7 @@ export function pasteClipboardContent(parentLocator, sectionId) {
           dispatch(fetchCourseSectionQuery(sectionId, true));
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
           dispatch(hideProcessingNotification());
-          dispatch(setPasteFiles(result?.staticFileNotices));
+          dispatch(setPasteFileNotices(result?.staticFileNotices));
         }
       });
     } catch (error) {

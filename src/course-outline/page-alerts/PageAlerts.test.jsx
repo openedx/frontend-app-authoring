@@ -161,16 +161,29 @@ describe('<PageAlerts />', () => {
     );
   });
 
-  it('renders new, conflicting & error files alert', async () => {
+  it('renders new & error files alert', async () => {
     useSelector.mockReturnValue({
       newFiles: ['periodic-table.css'],
-      conflictingFiles: ['some.css', 'some.js'],
+      conflictingFiles: [],
       errorFiles: ['error.css'],
     });
     const { queryByText } = renderComponent();
     expect(queryByText(messages.newFileAlertTitle.defaultMessage)).toBeInTheDocument();
-    expect(queryByText(messages.conflictingFileAlertTitle.defaultMessage)).toBeInTheDocument();
     expect(queryByText(messages.errorFileAlertTitle.defaultMessage)).toBeInTheDocument();
+    expect(queryByText(messages.newFileAlertAction.defaultMessage)).toHaveAttribute(
+      'href',
+      `${getConfig().STUDIO_BASE_URL}/assets/course-id`,
+    );
+  });
+
+  it('renders conflicting files alert', async () => {
+    useSelector.mockReturnValue({
+      newFiles: [],
+      conflictingFiles: ['some.css', 'some.js'],
+      errorFiles: [],
+    });
+    const { queryByText } = renderComponent();
+    expect(queryByText(messages.conflictingFileAlertTitle.defaultMessage)).toBeInTheDocument();
     expect(queryByText(messages.newFileAlertAction.defaultMessage)).toHaveAttribute(
       'href',
       `${getConfig().STUDIO_BASE_URL}/assets/course-id`,
