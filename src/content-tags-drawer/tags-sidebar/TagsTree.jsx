@@ -1,3 +1,5 @@
+// @ts-check
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Icon } from '@openedx/paragon';
 import { Tag } from '@openedx/paragon/icons';

@@ -1,3 +1,5 @@
+// @ts-check
+import React from 'react';
 import { Stack } from '@openedx/paragon';
 import { useParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -13,7 +15,7 @@ const TagsSidebarHeader = () => {
   const {
     data: contentTaxonomyTagsCount,
     isSuccess: isContentTaxonomyTagsCountLoaded,
-  } = useContentTaxonomyTagsCount(contentId);
+  } = useContentTaxonomyTagsCount(contentId || '');
 
   return (
     <Stack className="course-unit-sidebar-header justify-content-between" direction="horizontal">

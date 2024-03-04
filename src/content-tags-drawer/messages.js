@@ -35,7 +35,7 @@ const messages = defineMessages({
   },
   manageTagsButton: {
     id: 'course-authoring.content-tags-drawer.button.manage',
-    defaultMessage: 'Manage tags',
+    defaultMessage: 'Manage Tags',
   },
   tagsSidebarTitle: {
     id: 'course-authoring.course-unit.sidebar.tags.title',

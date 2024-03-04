@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+// @ts-check
+import React, { useState, useMemo } from 'react';
 import {
   Card, Stack, Button, Sheet, Collapsible, Icon,
 } from '@openedx/paragon';
@@ -21,7 +22,7 @@ const TagsSidebarBody = () => {
   const {
     data: contentTaxonomyTagsData,
     isSuccess: isContentTaxonomyTagsLoaded,
-  } = useContentTaxonomyTagsData(contentId);
+  } = useContentTaxonomyTagsData(contentId || '');
 
   const buildTagsTree = (contentTags) => {
     const resultTree = {};
@@ -85,7 +86,7 @@ const TagsSidebarBody = () => {
               </div>
             )}
 
-          <Button className="mt-3 ml-2" variant="outline-primary" onClick={() => setShowManageTags(true)}>
+          <Button className="mt-3 ml-2" variant="outline-primary" size="sm" onClick={() => setShowManageTags(true)}>
             {intl.formatMessage(messages.manageTagsButton)}
           </Button>
         </Stack>
