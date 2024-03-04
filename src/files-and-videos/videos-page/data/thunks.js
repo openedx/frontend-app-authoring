@@ -35,6 +35,7 @@ import {
   updateEditStatus,
   updateTranscriptCredentialsSuccess,
   updateTranscriptPreferenceSuccess,
+  updateVideoUploadProgress,
 } from './slice';
 
 import { updateFileValues } from './utils';
@@ -105,16 +106,16 @@ export function addVideoFile(courseId, file, videoIds) {
     try {
       const createUrlResponse = await addVideo(courseId, file);
       if (!createUrlResponse.ok) {
-        console.error(`Failed to get upload URL (${createUrlResponse.status} ${createUrlResponse.statusText})`)
-        dispatch(updateErrors({ error: 'add', message: `Failed to add ${file.name}.`}));
+        console.error(`Failed to get upload URL (${createUrlResponse.status} ${createUrlResponse.statusText})`);
+        dispatch(updateErrors({ error: 'add', message: `Failed to add ${file.name}.` }));
         dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
         return;
       }
-      const { edxVideoId, uploadUrl } = response.files[0];
-      const putToServerResponse = await uploadVideo(courseId, uploadUrl=url, file, edxVideoId=videoId);
+      const { edxVideoId, uploadUrl } = createUrlResponse.files[0];
+      const putToServerResponse = await uploadVideo(courseId, uploadUrl, file, edxVideoId);
       if (!putToServerResponse.ok) {
-        dispatch(updateErrors({ error: 'add', message: `Failed to upload ${file.name}.`}));
-        sendVideoUploadStatus( courseId, edxVideoId, message='Upload failed', status='upload_failed',)
+        dispatch(updateErrors({ error: 'add', message: `Failed to upload ${file.name}.` }));
+        sendVideoUploadStatus(courseId, edxVideoId, 'Upload failed', 'upload_failed');
         dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
         return;
       }
@@ -124,27 +125,28 @@ export function addVideoFile(courseId, file, videoIds) {
         let loaded = 0;
 
         while (true) {
+          // eslint-disable-next-line no-await-in-loop
           const { done, value } = await reader.read();
           if (done) {
             break;
           }
           loaded += value.byteLength;
           const progress = Math.round((loaded / contentLength) * 100);
-          //Leaving this in to make browser debug easier on stage. TODO: remove this code.
+          // Leaving this in to make browser debug easier on stage. TODO: remove this code.
           console.log(`Upload progress: ${progress}%`);
-          dispatch(updateVideoUploadProgress({uploadNewVideoProgress: progress}));
+          dispatch(updateVideoUploadProgress({ uploadNewVideoProgress: progress }));
         }
-        dispatch(updateVideoUploadProgress({uploadNewVideoProgress: 0}));
-        sendVideoUploadStatus( courseId, edxVideoId, message='Upload completed', status='upload_completed')
+        dispatch(updateVideoUploadProgress({ uploadNewVideoProgress: 0 }));
+        sendVideoUploadStatus(courseId, edxVideoId, 'Upload completed', 'upload_completed');
       }
     } catch (error) {
       if (error.response && error.response.status === 413) {
         const message = error.response.data.error;
         dispatch(updateErrors({ error: 'add', message }));
-      } else{
+      } else {
         dispatch(updateErrors({ error: 'add', message: `Failed to upload ${file.name}.` }));
       }
-      dispatch(updateVideoUploadProgress({uploadNewVideoProgress: 0}));
+      dispatch(updateVideoUploadProgress({ uploadNewVideoProgress: 0 }));
       dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
     }
     const { videos } = await fetchVideoList(courseId);
@@ -154,8 +156,8 @@ export function addVideoFile(courseId, file, videoIds) {
       modelType: 'videos',
       models: parsedVideos,
     }));
-  }
-};
+  };
+}
 
 export function addVideoThumbnail({ file, videoId, courseId }) {
   return async (dispatch) => {

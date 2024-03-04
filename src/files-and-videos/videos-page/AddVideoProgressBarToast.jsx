@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Toast, ProgressBar } from '@openedx/paragon';
@@ -17,14 +17,14 @@ const AddVideoProgressBarToast = ({
     <Toast
       show={isOpen}
     >
-        {intl.formatMessage(messages.videoUploadProgressBarLabel)}
-        <ProgressBar now={uploadVideoProgress} label="60%" variant="primary"/>
+      {intl.formatMessage(messages.videoUploadProgressBarLabel)}
+      <ProgressBar now={uploadVideoProgress} label="60%" variant="primary" />
     </Toast>
   );
 };
 
 AddVideoProgressBarToast.propTypes = {
-  uploadVideoProgress: PropTypes.number,
+  uploadVideoProgress: PropTypes.number.isRequired,
   // injected
   intl: intlShape.isRequired,
 };

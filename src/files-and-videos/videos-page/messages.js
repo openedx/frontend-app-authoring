@@ -37,10 +37,10 @@ const messages = defineMessages({
     id: 'course-authoring.files-and-videos.sort-and-filter.modal.filter.failedCheckbox.label',
     defaultMessage: 'Failed',
   },
-  videoUploadProgressBarLabel:{
+  videoUploadProgressBarLabel: {
     id: 'course-authoring.files-and-videos.add-video-progress-bar.progress-bar.label',
     defaultMessage: 'Video Upload Progress:',
-  }
+  },
 });
 
 export default messages;

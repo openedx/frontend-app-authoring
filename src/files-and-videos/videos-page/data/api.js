@@ -182,7 +182,7 @@ export async function addVideo(courseId, file) {
   };
   const response = await getAuthenticatedHttpClient()
     .post(getCourseVideosApiUrl(courseId), postJson);
-  return {data: camelCaseObject(response.data), ...response};
+  return { data: camelCaseObject(response.data), ...response };
 }
 
 export async function sendVideoUploadStatus(
@@ -192,11 +192,11 @@ export async function sendVideoUploadStatus(
   status,
 ) {
   return getAuthenticatedHttpClient()
-  .post(getCourseVideosApiUrl(courseId), [{
-    edxVideoId,
-    message,
-    status,
-  }]);
+    .post(getCourseVideosApiUrl(courseId), [{
+      edxVideoId,
+      message,
+      status,
+    }]);
 }
 
 export async function uploadVideo(

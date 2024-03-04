@@ -193,7 +193,7 @@ const VideosPage = ({
     <VideosPageProvider courseId={courseId}>
       <Container size="xl" className="p-4 pt-4.5">
         <AddVideoProgressBarToast
-          uploadNewVideoProgress
+          uploadNewVideoProgress={uploadNewVideoProgress}
         />
         <EditFileErrors
           resetErrors={handleErrorReset}
