@@ -17,8 +17,8 @@ import AlertMessage from '../../generic/alert-message';
 import AlertProctoringError from '../../generic/AlertProctoringError';
 import messages from './messages';
 import advancedSettingsMessages from '../../advanced-settings/messages';
-import { getPasteFiles } from '../data/selectors';
-import { removePasteFiles } from '../data/slice';
+import { getPasteFileNotices } from '../data/selectors';
+import { removePasteFileNotices } from '../data/slice';
 
 const PageAlerts = ({
   courseId,
@@ -38,7 +38,14 @@ const PageAlerts = ({
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
   const [showConfigAlert, setShowConfigAlert] = useState(true);
   const [showDiscussionAlert, setShowDiscussionAlert] = useState(true);
-  const { newFiles, conflictingFiles, errorFiles } = useSelector(getPasteFiles);
+  const { newFiles, conflictingFiles, errorFiles } = useSelector(getPasteFileNotices);
+
+  const getAssetsUrl = () => {
+    if (getConfig().ENABLE_ASSETS_PAGE === 'true') {
+      return `/course/${courseId}/assets/`;
+    }
+    return `${getConfig().STUDIO_BASE_URL}/assets/${courseId}`;
+  };
 
   const configurationErrors = () => {
     if (!notificationDismissUrl) {
@@ -234,14 +241,7 @@ const PageAlerts = ({
 
   const newFilesPasteAlert = () => {
     const onDismiss = () => {
-      dispatch(removePasteFiles(['newFiles']));
-    };
-
-    const getAssetsUrl = () => {
-      if (getConfig().ENABLE_ASSETS_PAGE === 'true') {
-        return `/course/${courseId}/assets/`;
-      }
-      return `${getConfig().STUDIO_BASE_URL}/assets/${courseId}`;
+      dispatch(removePasteFileNotices(['newFiles']));
     };
 
     if (newFiles?.length) {
@@ -273,7 +273,7 @@ const PageAlerts = ({
 
   const errorFilesPasteAlert = () => {
     const onDismiss = () => {
-      dispatch(removePasteFiles(['errorFiles']));
+      dispatch(removePasteFileNotices(['errorFiles']));
     };
 
     if (errorFiles?.length) {
@@ -297,7 +297,7 @@ const PageAlerts = ({
 
   const conflictingFilesPasteAlert = () => {
     const onDismiss = () => {
-      dispatch(removePasteFiles(['conflictingFiles']));
+      dispatch(removePasteFileNotices(['conflictingFiles']));
     };
 
     if (conflictingFiles?.length) {
@@ -316,6 +316,14 @@ const PageAlerts = ({
           icon={WarningIcon}
           variant="warning"
           onClose={onDismiss}
+          actions={[
+            <Button
+              as={Link}
+              to={getAssetsUrl()}
+            >
+              {intl.formatMessage(messages.newFileAlertAction)}
+            </Button>,
+          ]}
         />
       );
     }

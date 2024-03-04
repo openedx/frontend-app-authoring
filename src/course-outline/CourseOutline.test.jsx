@@ -1888,8 +1888,8 @@ describe('<CourseOutline />', () => {
     const lastUnitElement = (await within(subsectionElement).findAllByTestId('unit-card')).slice(-1)[0];
     expect(lastUnitElement).toHaveTextContent(unit.displayName);
 
-    // check pasteFiles in store
-    expect(store.getState().courseOutline.pasteFiles).toEqual({
+    // check pasteFileNotices in store
+    expect(store.getState().courseOutline.pasteFileNotices).toEqual({
       newFiles: ['some.css'],
       conflictingFiles: ['con.css'],
       errorFiles: ['error.css'],
@@ -1911,7 +1911,7 @@ describe('<CourseOutline />', () => {
     dismissBtn = await within(alerts[2]).findByText('Dismiss');
     fireEvent.click(dismissBtn);
 
-    // check pasteFiles in store
-    expect(store.getState().courseOutline.pasteFiles).toEqual({});
+    // check pasteFileNotices in store
+    expect(store.getState().courseOutline.pasteFileNotices).toEqual({});
   });
 });
