@@ -8,7 +8,7 @@ import { getPublishInfo } from '../utils';
 import messages from '../messages';
 import ReleaseInfoComponent from './ReleaseInfoComponent';
 
-const SidebarBody = ({ releaseLabel, isDisplayUnitLocation, locationId }) => {
+const SidebarBody = ({ releaseLabel, displayUnitLocation, locationId }) => {
   const intl = useIntl();
   const {
     editedOn,
@@ -21,7 +21,7 @@ const SidebarBody = ({ releaseLabel, isDisplayUnitLocation, locationId }) => {
   return (
     <Card.Body className="course-unit-sidebar-date">
       <Stack>
-        {isDisplayUnitLocation ? (
+        {displayUnitLocation ? (
           <span>
             <h5 className="course-unit-sidebar-date-stage m-0">
               {intl.formatMessage(messages.unitLocationTitle)}
@@ -53,12 +53,12 @@ const SidebarBody = ({ releaseLabel, isDisplayUnitLocation, locationId }) => {
 
 SidebarBody.propTypes = {
   releaseLabel: PropTypes.string.isRequired,
-  isDisplayUnitLocation: PropTypes.bool,
+  displayUnitLocation: PropTypes.bool,
   locationId: PropTypes.string,
 };
 
 SidebarBody.defaultProps = {
-  isDisplayUnitLocation: false,
+  displayUnitLocation: false,
   locationId: null,
 };
 

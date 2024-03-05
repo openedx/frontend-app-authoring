@@ -51,7 +51,7 @@ const courseId = '123';
 const blockId = '567890';
 const unitDisplayName = courseUnitIndexMock.metadata.display_name;
 const mockedUsedNavigate = jest.fn();
-const userName = 'edx';
+const userName = 'openedx';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -719,7 +719,7 @@ describe('<CourseUnit />', () => {
     expect(discardChangesBtn).not.toBeInTheDocument();
   });
 
-  it('checks whether xblock is removed when the corresponding delete button is clicked and sidebar is the updated', async () => {
+  it('checks whether xblock is removed when the corresponding delete button is clicked and the sidebar is the updated', async () => {
     const {
       getByText,
       getAllByLabelText,

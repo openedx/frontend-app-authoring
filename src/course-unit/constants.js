@@ -58,7 +58,7 @@ export const UNIT_VISIBILITY_STATES = {
   ready: 'ready',
 };
 
-export const COLORS = {
+export const ICON_COLOR_VARIANTS = {
   BLACK: '#000',
   GREEN: '#0D7D4D',
 };
