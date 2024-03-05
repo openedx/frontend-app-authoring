@@ -121,18 +121,19 @@ export function addVideoFile(courseId, file, videoIds) {
         const reader = putToServerResponse.body.getReader();
         const contentLength = +putToServerResponse.headers.get('Content-Length');
         let loaded = 0;
-
         // eslint-disable-next-line no-constant-condition
         while (true) {
           // eslint-disable-next-line no-await-in-loop
           const { done, value } = await reader.read();
           if (done) {
+            dispatch(updateVideoUploadProgress({ uploadNewVideoProgress: 100 }));
             break;
           }
           loaded += value.byteLength;
           const progress = Math.round((loaded / contentLength) * 100);
           dispatch(updateVideoUploadProgress({ uploadNewVideoProgress: progress }));
         }
+
         dispatch(updateVideoUploadProgress({ uploadNewVideoProgress: 0 }));
         sendVideoUploadStatus(courseId, edxVideoId, 'Upload completed', 'upload_completed');
       }
