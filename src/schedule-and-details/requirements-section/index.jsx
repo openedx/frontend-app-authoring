@@ -129,7 +129,7 @@ RequirementsSection.propTypes = {
   entranceExamMinimumScorePct: PropTypes.string,
   isPrerequisiteCoursesEnabled: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired,
-  isEditable: PropTypes.bool,
+  isEditable: PropTypes.bool.isRequired,
 };
 
 export default RequirementsSection;

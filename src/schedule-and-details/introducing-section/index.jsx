@@ -202,7 +202,7 @@ IntroducingSection.propTypes = {
   enableExtendedCourseDetails: PropTypes.bool.isRequired,
   videoThumbnailImageAssetPath: PropTypes.string,
   onChange: PropTypes.func.isRequired,
-  isEditable: PropTypes.bool,
+  isEditable: PropTypes.bool.isRequired,
 };
 
 export default injectIntl(IntroducingSection);

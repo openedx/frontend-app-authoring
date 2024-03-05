@@ -54,7 +54,7 @@ LicenseSection.defaultProps = {
 LicenseSection.propTypes = {
   license: PropTypes.string,
   onChange: PropTypes.func.isRequired,
-  isEditable: PropTypes.bool,
+  isEditable: PropTypes.bool.isRequired,
 };
 
 export default LicenseSection;

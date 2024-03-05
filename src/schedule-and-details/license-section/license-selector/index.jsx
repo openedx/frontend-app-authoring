@@ -66,7 +66,7 @@ LicenseSelector.defaultProps = {
 LicenseSelector.propTypes = {
   licenseType: PropTypes.oneOf(Object.values(LICENSE_TYPE)),
   onChangeLicenseType: PropTypes.func.isRequired,
-  isEditable: PropTypes.bool,
+  isEditable: PropTypes.bool.isRequired,
 };
 
 export default LicenseSelector;

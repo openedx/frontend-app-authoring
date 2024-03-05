@@ -57,7 +57,7 @@ DetailsSection.propTypes = {
     PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
   ).isRequired,
   onChange: PropTypes.func.isRequired,
-  isEditable: PropTypes.bool,
+  isEditable: PropTypes.bool.isRequired,
 };
 
 export default DetailsSection;

@@ -170,7 +170,7 @@ ScheduleSection.propTypes = {
   certificatesDisplayBehavior: PropTypes.string.isRequired,
   canShowCertificateAvailableDateField: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired,
-  isEditable: PropTypes.bool,
+  isEditable: PropTypes.bool.isRequired,
 };
 
 export default ScheduleSection;

@@ -52,7 +52,7 @@ GradeRequirements.propTypes = {
   errorEffort: PropTypes.string,
   entranceExamMinimumScorePct: PropTypes.string,
   onChange: PropTypes.func.isRequired,
-  isEditable: PropTypes.bool,
+  isEditable: PropTypes.bool.isRequired,
 };
 
 export default GradeRequirements;
