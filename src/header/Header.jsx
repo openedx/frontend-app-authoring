@@ -1,11 +1,14 @@
+// @ts-check
 import React from 'react';
 import PropTypes from 'prop-types';
 import { getConfig } from '@edx/frontend-platform';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { StudioHeader } from '@edx/frontend-component-header';
 import { getContentMenuItems, getSettingMenuItems, getToolsMenuItems } from './utils';
 import messages from './messages';
+import SearchModal from './SearchModal';
+import { useKeyHandler } from '../hooks';
 
 const Header = ({
   courseId,
@@ -13,9 +16,12 @@ const Header = ({
   courseNumber,
   courseTitle,
   isHiddenMainMenu,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
+  const [showSearchModal, setShowSearchModal] = React.useState(false);
+  const toggleModal = React.useCallback(() => setShowSearchModal(x => !x), []);
+  useKeyHandler({ handler: toggleModal, keyName: '/' });
+
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
   const mainMenuDropdowns = [
     {
@@ -36,16 +42,23 @@ const Header = ({
   ];
   const outlineLink = `${studioBaseUrl}/course/${courseId}`;
   return (
-    <StudioHeader
-      {...{
-        org: courseOrg,
-        number: courseNumber,
-        title: courseTitle,
-        isHiddenMainMenu,
-        mainMenuDropdowns,
-        outlineLink,
-      }}
-    />
+    <>
+      <StudioHeader
+        {...{
+          org: courseOrg,
+          number: courseNumber,
+          title: courseTitle,
+          isHiddenMainMenu,
+          mainMenuDropdowns,
+          outlineLink,
+        }}
+      />
+      <SearchModal
+        isOpen={showSearchModal}
+        courseId={courseId}
+        onClose={toggleModal}
+      />
+    </>
   );
 };
 
@@ -55,8 +68,6 @@ Header.propTypes = {
   courseOrg: PropTypes.string,
   courseTitle: PropTypes.string,
   isHiddenMainMenu: PropTypes.bool,
-  // injected
-  intl: intlShape.isRequired,
 };
 
 Header.defaultProps = {
@@ -67,4 +78,4 @@ Header.defaultProps = {
   isHiddenMainMenu: false,
 };
 
-export default injectIntl(Header);
+export default Header;
