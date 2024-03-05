@@ -23,8 +23,11 @@ const AddVideoProgressBarToast = ({
   );
 };
 
+AddVideoProgressBarToast.defaultProps = {
+  uploadVideoProgress: 0,
+};
 AddVideoProgressBarToast.propTypes = {
-  uploadVideoProgress: PropTypes.number.isRequired,
+  uploadVideoProgress: PropTypes.number,
   // injected
   intl: intlShape.isRequired,
 };
