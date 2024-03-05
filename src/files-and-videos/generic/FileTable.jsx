@@ -245,7 +245,7 @@ const FileTable = ({
           fileType={fileType}
         />
         {
-          fileType === 'video' && (
+          fileType !== 'video' && (
             <ApiStatusToast
               actionType={intl.formatMessage(messages.apiStatusAddingAction)}
               selectedRowCount={selectedRows.length}
