@@ -167,8 +167,9 @@ describe('<ContentTagsCollapsible />', () => {
 
     // Click on "Add a tag" button to open dropdown to select new tags
     const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
-    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
+    // Use `mouseDown/mouseUp` instead of `click` since the react-select didn't respond to `click`
     fireEvent.mouseDown(addTagsButton);
+    fireEvent.mouseUp(addTagsButton);
 
     // Wait for the dropdown selector for tags to open,
     // Tag 3 should only appear there, (i.e. the dropdown is open, since Tag 3 is not applied)
@@ -176,7 +177,6 @@ describe('<ContentTagsCollapsible />', () => {
 
     // Click to check Tag 3 and check the `addStagedContentTag` was called with the correct params
     const tag3 = getByText('Tag 3');
-    fireEvent.click(tag3); // Need to call click first time to get focus in tests
     fireEvent.click(tag3);
 
     const taxonomyId = 123;
@@ -199,8 +199,9 @@ describe('<ContentTagsCollapsible />', () => {
 
     // Click on "Add a tag" button to open dropdown to select new tags
     const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
-    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
+    // Use `mouseDown/mouseup` instead of `click` since the react-select didn't respond to `click`
     fireEvent.mouseDown(addTagsButton);
+    fireEvent.mouseUp(addTagsButton);
 
     // Wait for the dropdown selector for tags to open,
     // Tag 3 should only appear there, (i.e. the dropdown is open, since Tag 3 is not applied)
@@ -208,7 +209,6 @@ describe('<ContentTagsCollapsible />', () => {
 
     // Click to check Tag 3
     const tag3 = getByText('Tag 3');
-    fireEvent.click(tag3); // Need to call click first time to get focus in tests
     fireEvent.click(tag3);
 
     // Click to uncheck Tag 3 and check the `removeStagedContentTag` was called with the correct params
