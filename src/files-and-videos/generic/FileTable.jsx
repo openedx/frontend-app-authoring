@@ -244,14 +244,18 @@ const FileTable = ({
           setSelectedRows={setSelectedRows}
           fileType={fileType}
         />
-        <ApiStatusToast
-          actionType={intl.formatMessage(messages.apiStatusAddingAction)}
-          selectedRowCount={selectedRows.length}
-          isOpen={isAddOpen}
-          setClose={setAddClose}
-          setSelectedRows={setSelectedRows}
-          fileType={fileType}
-        />
+        {
+          fileType === 'video' && (
+            <ApiStatusToast
+              actionType={intl.formatMessage(messages.apiStatusAddingAction)}
+              selectedRowCount={selectedRows.length}
+              isOpen={isAddOpen}
+              setClose={setAddClose}
+              setSelectedRows={setSelectedRows}
+              fileType={fileType}
+            />
+          )
+        }
         <ApiStatusToast
           actionType={intl.formatMessage(messages.apiStatusDownloadingAction)}
           selectedRowCount={selectedRows.length}

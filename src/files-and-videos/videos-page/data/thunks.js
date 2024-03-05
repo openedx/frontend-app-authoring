@@ -132,9 +132,6 @@ export function addVideoFile(courseId, file, videoIds) {
           }
           loaded += value.byteLength;
           const progress = Math.round((loaded / contentLength) * 100);
-          // Leaving this in to make browser debug easier on stage. TODO: remove this code.
-          // eslint-disable-next-line no-console
-          console.log(`Upload progress: ${progress}%`);
           dispatch(updateVideoUploadProgress({ uploadNewVideoProgress: progress }));
         }
         dispatch(updateVideoUploadProgress({ uploadNewVideoProgress: 0 }));
