@@ -13,7 +13,7 @@ import { SidebarBody, SidebarFooter, SidebarHeader } from './components';
 import useCourseUnitData from './hooks';
 import messages from './messages';
 
-const Sidebar = ({ blockId, isDisplayUnitLocation, ...props }) => {
+const Sidebar = ({ blockId, displayUnitLocation, ...props }) => {
   const {
     title,
     locationId,
@@ -23,8 +23,8 @@ const Sidebar = ({ blockId, isDisplayUnitLocation, ...props }) => {
   } = useCourseUnitData(useSelector(getCourseUnitData));
   const intl = useIntl();
   const dispatch = useDispatch();
-  const [isOpenDiscardModal, openDiscardModal, closeDiscardModal] = useToggle(false);
-  const [isOpenVisibleModal, openVisibleModal, closeVisibleModal] = useToggle(false);
+  const [isDiscardModalOpen, openDiscardModal, closeDiscardModal] = useToggle(false);
+  const [isVisibleModalOpen, openVisibleModal, closeVisibleModal] = useToggle(false);
 
   const handleCourseUnitVisibility = () => {
     closeVisibleModal();
@@ -50,24 +50,24 @@ const Sidebar = ({ blockId, isDisplayUnitLocation, ...props }) => {
       <SidebarHeader
         title={title}
         visibilityState={visibilityState}
-        isDisplayUnitLocation={isDisplayUnitLocation}
+        displayUnitLocation={displayUnitLocation}
       />
       <SidebarBody
         locationId={locationId}
         releaseLabel={releaseLabel}
-        isDisplayUnitLocation={isDisplayUnitLocation}
+        displayUnitLocation={displayUnitLocation}
       />
       <SidebarFooter
         locationId={locationId}
         openDiscardModal={openDiscardModal}
         openVisibleModal={openVisibleModal}
-        isDisplayUnitLocation={isDisplayUnitLocation}
+        displayUnitLocation={displayUnitLocation}
         handlePublishing={handleCourseUnitPublish}
         visibleToStaffOnly={visibleToStaffOnly}
       />
       <ModalNotification
         title={intl.formatMessage(messages.modalDiscardUnitChangesTitle)}
-        isOpen={isOpenDiscardModal}
+        isOpen={isDiscardModalOpen}
         actionButtonText={intl.formatMessage(messages.modalDiscardUnitChangesActionButtonText)}
         cancelButtonText={intl.formatMessage(messages.modalDiscardUnitChangesCancelButtonText)}
         handleAction={handleCourseUnitDiscardChanges}
@@ -77,7 +77,7 @@ const Sidebar = ({ blockId, isDisplayUnitLocation, ...props }) => {
       />
       <ModalNotification
         title={intl.formatMessage(messages.modalMakeVisibilityTitle)}
-        isOpen={isOpenVisibleModal}
+        isOpen={isVisibleModalOpen}
         actionButtonText={intl.formatMessage(messages.modalMakeVisibilityActionButtonText)}
         cancelButtonText={intl.formatMessage(messages.modalMakeVisibilityCancelButtonText)}
         handleAction={handleCourseUnitVisibility}
@@ -91,12 +91,12 @@ const Sidebar = ({ blockId, isDisplayUnitLocation, ...props }) => {
 
 Sidebar.propTypes = {
   blockId: PropTypes.string,
-  isDisplayUnitLocation: PropTypes.bool,
+  displayUnitLocation: PropTypes.bool,
 };
 
 Sidebar.defaultProps = {
   blockId: null,
-  isDisplayUnitLocation: false,
+  displayUnitLocation: false,
 };
 
 export default Sidebar;

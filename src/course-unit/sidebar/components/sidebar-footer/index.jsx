@@ -12,14 +12,14 @@ const SidebarFooter = ({
   handlePublishing,
   openDiscardModal,
   visibleToStaffOnly,
-  isDisplayUnitLocation,
+  displayUnitLocation,
 }) => {
   const intl = useIntl();
 
   return (
     <Card.Footer className="course-unit-sidebar-footer" orientation="horizontal">
       <Stack className="course-unit-sidebar-visibility">
-        {isDisplayUnitLocation ? (
+        {displayUnitLocation ? (
           <small className="course-unit-sidebar-location-description">
             {intl.formatMessage(messages.unitLocationDescription, { id: locationId })}
           </small>
@@ -42,7 +42,7 @@ const SidebarFooter = ({
 
 SidebarFooter.propTypes = {
   locationId: PropTypes.string,
-  isDisplayUnitLocation: PropTypes.bool,
+  displayUnitLocation: PropTypes.bool,
   openDiscardModal: PropTypes.func.isRequired,
   openVisibleModal: PropTypes.func.isRequired,
   handlePublishing: PropTypes.func.isRequired,
@@ -50,7 +50,7 @@ SidebarFooter.propTypes = {
 };
 
 SidebarFooter.defaultProps = {
-  isDisplayUnitLocation: false,
+  displayUnitLocation: false,
   locationId: null,
 };
 

@@ -7,14 +7,14 @@ import { getCourseUnitData } from '../../data/selectors';
 import { getIconVariant } from '../utils';
 import messages from '../messages';
 
-const SidebarHeader = ({ title, visibilityState, isDisplayUnitLocation }) => {
+const SidebarHeader = ({ title, visibilityState, displayUnitLocation }) => {
   const intl = useIntl();
   const { hasChanges, published } = useSelector(getCourseUnitData);
   const { iconSrc, colorVariant } = getIconVariant(visibilityState, published, hasChanges);
 
   return (
     <Stack className="course-unit-sidebar-header" direction="horizontal">
-      {!isDisplayUnitLocation && (
+      {!displayUnitLocation && (
         <Icon
           className="course-unit-sidebar-header-icon"
           svgAttrs={{ color: colorVariant }}
@@ -22,7 +22,7 @@ const SidebarHeader = ({ title, visibilityState, isDisplayUnitLocation }) => {
         />
       )}
       <h3 className="course-unit-sidebar-header-title m-0">
-        {isDisplayUnitLocation ? intl.formatMessage(messages.sidebarHeaderUnitLocationTitle) : title}
+        {displayUnitLocation ? intl.formatMessage(messages.sidebarHeaderUnitLocationTitle) : title}
       </h3>
     </Stack>
   );
@@ -31,11 +31,11 @@ const SidebarHeader = ({ title, visibilityState, isDisplayUnitLocation }) => {
 SidebarHeader.propTypes = {
   title: PropTypes.string.isRequired,
   visibilityState: PropTypes.string.isRequired,
-  isDisplayUnitLocation: PropTypes.bool,
+  displayUnitLocation: PropTypes.bool,
 };
 
 SidebarHeader.defaultProps = {
-  isDisplayUnitLocation: false,
+  displayUnitLocation: false,
 };
 
 export default SidebarHeader;

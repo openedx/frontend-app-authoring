@@ -4,7 +4,7 @@ import {
   InfoOutline as InfoOutlineIcon,
 } from '@openedx/paragon/icons';
 
-import { COLORS, UNIT_VISIBILITY_STATES } from '../constants';
+import { ICON_COLOR_VARIANTS, UNIT_VISIBILITY_STATES } from '../constants';
 import messages from './messages';
 
 /**
@@ -79,11 +79,11 @@ export const getVisibilityTitle = (intl, releasedToStudents, published, hasChang
  */
 export const getIconVariant = (visibilityState, published, hasChanges) => {
   const iconVariants = {
-    [UNIT_VISIBILITY_STATES.staffOnly]: { iconSrc: InfoOutlineIcon, colorVariant: COLORS.BLACK },
-    [UNIT_VISIBILITY_STATES.live]: { iconSrc: CheckCircleIcon, colorVariant: COLORS.GREEN },
-    publishedNoChanges: { iconSrc: CheckCircleOutlineIcon, colorVariant: COLORS.BLACK },
-    publishedWithChanges: { iconSrc: InfoOutlineIcon, colorVariant: COLORS.BLACK },
-    default: { iconSrc: InfoOutlineIcon, colorVariant: COLORS.BLACK },
+    [UNIT_VISIBILITY_STATES.staffOnly]: { iconSrc: InfoOutlineIcon, colorVariant: ICON_COLOR_VARIANTS.BLACK },
+    [UNIT_VISIBILITY_STATES.live]: { iconSrc: CheckCircleIcon, colorVariant: ICON_COLOR_VARIANTS.GREEN },
+    publishedNoChanges: { iconSrc: CheckCircleOutlineIcon, colorVariant: ICON_COLOR_VARIANTS.BLACK },
+    publishedWithChanges: { iconSrc: InfoOutlineIcon, colorVariant: ICON_COLOR_VARIANTS.BLACK },
+    default: { iconSrc: InfoOutlineIcon, colorVariant: ICON_COLOR_VARIANTS.BLACK },
   };
   if (visibilityState in iconVariants) {
     return iconVariants[visibilityState];
