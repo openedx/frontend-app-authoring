@@ -105,7 +105,6 @@ export function addVideoFile(courseId, file, videoIds) {
     try {
       const createUrlResponse = await addVideo(courseId, file);
       if (createUrlResponse.status < 200 && createUrlResponse.status >= 300) {
-        console.error(`Failed to get upload URL (${createUrlResponse.status} ${createUrlResponse.statusText})`);
         dispatch(updateErrors({ error: 'add', message: `Failed to add ${file.name}.` }));
         dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
         return;
