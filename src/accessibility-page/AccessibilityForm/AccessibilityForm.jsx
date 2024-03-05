@@ -113,7 +113,7 @@ const AccessibilityForm = ({
               floatingLabel={field.label}
             />
             {hasErrorField(field.name) && (
-              <Form.Control.Feedback type="invalid">
+              <Form.Control.Feedback type="invalid" data-testid={`error-feedback-${field.name}`}>
                 {errors[field.name]}
               </Form.Control.Feedback>
             )}

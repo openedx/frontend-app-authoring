@@ -9,7 +9,7 @@ import initializeStore from '../store';
 import AccessibilityPage from './index';
 
 const initialState = {
-  accessibility: {
+  accessibilityPage: {
     status: {},
   },
 };
