@@ -24,6 +24,7 @@ import { reducer as courseImportReducer } from './import-page/data/slice';
 import { reducer as videosReducer } from './files-and-videos/videos-page/data/slice';
 import { reducer as courseOutlineReducer } from './course-outline/data/slice';
 import { reducer as courseUnitReducer } from './course-unit/data/slice';
+import { reducer as accessibilityPageReducer } from './accessibility-page/data/slice';
 
 export default function initializeStore(preloadedState = undefined) {
   return configureStore({
@@ -49,6 +50,7 @@ export default function initializeStore(preloadedState = undefined) {
       videos: videosReducer,
       courseOutline: courseOutlineReducer,
       courseUnit: courseUnitReducer,
+      accessibilityPage: accessibilityPageReducer,
     },
     preloadedState,
   });
