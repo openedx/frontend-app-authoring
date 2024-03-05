@@ -77,4 +77,34 @@ describe('addVideoFile', () => {
       type: 'videos/updateVideoUploadProgress',
     });
   });
+  it('should handle successful upload with progress bar', async () => {
+    const mockPutToServerResponse = {
+      body: {
+        getReader: jest.fn(() => ({
+          read: jest.fn().mockResolvedValueOnce({ value: {
+            byteLength: 50
+
+          } }),
+        })),
+      },
+      headers: new Map([['Content-Length', '100']]),
+    };
+    jest.spyOn(api, 'addVideo').mockResolvedValue({
+      status: 200,
+      data: {
+        files: [
+          { edxVideoId: 'iD', uploadUrl: 'a Url' },
+        ],
+      },
+    });
+    jest.spyOn(api, 'sendVideoUploadStatus').mockResolvedValue({ status: 200 });
+    jest.spyOn(api, 'uploadVideo').mockResolvedValue(mockPutToServerResponse);
+
+    await addVideoFile(courseId, mockFile)(dispatch, getState);
+
+    expect(dispatch).toHaveBeenCalledWith({
+      payload: { uploadNewVideoProgress: 50 },
+      type: 'videos/updateVideoUploadProgress',
+    });
+  });
 });
