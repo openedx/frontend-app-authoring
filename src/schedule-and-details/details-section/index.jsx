@@ -48,7 +48,6 @@ const DetailsSection = ({
 
 DetailsSection.defaultProps = {
   language: '',
-  isEditable: true,
 };
 
 DetailsSection.propTypes = {

@@ -113,7 +113,6 @@ RequirementsSection.defaultProps = {
   entranceExamEnabled: '',
   preRequisiteCourses: [],
   entranceExamMinimumScorePct: '',
-  isEditable: true,
 };
 
 RequirementsSection.propTypes = {

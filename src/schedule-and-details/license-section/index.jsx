@@ -48,7 +48,6 @@ const LicenseSection = ({ license, onChange, isEditable }) => {
 
 LicenseSection.defaultProps = {
   license: null,
-  isEditable: true,
 };
 
 LicenseSection.propTypes = {

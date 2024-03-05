@@ -180,7 +180,6 @@ IntroducingSection.defaultProps = {
   bannerImageAssetPath: '',
   videoThumbnailImageAssetPath: '',
   overview: '',
-  isEditable: true,
 };
 
 IntroducingSection.propTypes = {

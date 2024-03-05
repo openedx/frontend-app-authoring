@@ -140,9 +140,14 @@ describe('<ScheduleAndDetails />', () => {
   it('should not show the PermissionDeniedAlert when the User Permissions Flag is not enabled', async () => {
     await permissionDisabledMockStore();
 
-    const { queryByText } = render(<RootWrapper />);
-    const permissionDeniedAlert = queryByText('You are not authorized to view this page. If you feel you should have access, please reach out to your course team admin to be given access.');
-    expect(permissionDeniedAlert).not.toBeInTheDocument();
+    const { queryByText, getAllByText } = render(<RootWrapper />);
+    await waitFor(() => {
+      const permissionDeniedAlert = queryByText('You are not authorized to view this page. If you feel you should have access, please reach out to your course team admin to be given access.');
+      const scheduleAndDetailElements = getAllByText(messages.headingTitle.defaultMessage);
+      const scheduleAndDetailTitle = scheduleAndDetailElements[0];
+      expect(permissionDeniedAlert).not.toBeInTheDocument();
+      expect(scheduleAndDetailTitle).toBeInTheDocument();
+    });
   });
 
   it('should hide credit section with condition', async () => {

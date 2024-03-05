@@ -60,7 +60,6 @@ const LicenseSelector = ({ licenseType, onChangeLicenseType, isEditable }) => {
 
 LicenseSelector.defaultProps = {
   licenseType: null,
-  isEditable: true,
 };
 
 LicenseSelector.propTypes = {

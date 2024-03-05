@@ -154,7 +154,6 @@ ScheduleSection.defaultProps = {
   enrollmentStart: '',
   upgradeDeadline: '',
   certificateAvailableDate: '',
-  isEditable: true,
 };
 
 ScheduleSection.propTypes = {

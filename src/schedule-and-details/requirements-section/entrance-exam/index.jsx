@@ -79,7 +79,6 @@ EntranceExam.defaultProps = {
   errorEffort: '',
   isCheckedString: '',
   entranceExamMinimumScorePct: '',
-  isEditable: true,
 };
 
 EntranceExam.propTypes = {

@@ -45,7 +45,6 @@ const GradeRequirements = ({
 GradeRequirements.defaultProps = {
   errorEffort: '',
   entranceExamMinimumScorePct: '',
-  isEditable: true,
 };
 
 GradeRequirements.propTypes = {
