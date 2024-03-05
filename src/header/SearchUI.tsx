@@ -1,11 +1,12 @@
 import React from 'react';
 import {
-  InstantSearch,
-  InfiniteHits,
   HierarchicalMenu,
+  Highlight,
+  InfiniteHits,
+  InstantSearch,
+  RefinementList,
   SearchBox,
   Stats,
-  Highlight
 } from "react-instantsearch-dom";
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { instantMeiliSearch } from "@meilisearch/instant-meilisearch";
@@ -28,6 +29,9 @@ const SearchUI: React.FC<Props> = (props) => {
       <InstantSearch indexName={props.indexName} searchClient={searchClient}>
         <Stats />
         <SearchBox />
+        <strong>Refine by component type:</strong>
+        <RefinementList attribute="block_type" />
+        <strong>Refine by tag:</strong>
         <HierarchicalMenu
             attributes={[
                 "tags.taxonomy",

@@ -21,6 +21,8 @@ interface Props {
 const SearchModal: React.FC<Props> = ({courseId, ...props}) => {
   const intl = useIntl();
 
+  // Load the Meilisearch connection details from the LMS: the URL to use, the index name, and an API key specific
+  // to us (to the current user) that allows us to search all content we have permission to view.
   const {
     data: searchEndpointData,
     isLoading
