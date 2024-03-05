@@ -81,10 +81,12 @@ describe('addVideoFile', () => {
     const mockPutToServerResponse = {
       body: {
         getReader: jest.fn(() => ({
-          read: jest.fn().mockResolvedValueOnce({ value: {
-            byteLength: 50
+          read: jest.fn().mockResolvedValueOnce({
+            value: {
+              byteLength: 50,
 
-          } }),
+            },
+          }),
         })),
       },
       headers: new Map([['Content-Length', '100']]),
