@@ -93,16 +93,16 @@ describe('<AccessibilityPolicyForm />', () => {
       const { savingStatus } = store.getState().accessibilityPage;
       expect(savingStatus).toEqual(RequestStatus.SUCCESSFUL);
 
-      expect(screen.getAllByRole('alert')).toHaveLength(1)
+      expect(screen.getAllByRole('alert')).toHaveLength(1);
 
       expect(screen.getByText(messages.accessibilityPolicyFormSuccess.defaultMessage)).toBeVisible();
 
       formSections.forEach(input => {
-        expect(input.value).toBe('')
-      })
+        expect(input.value).toBe('');
+      });
     });
 
-    it('shows correct rate limiting message', async() => {
+    it('shows correct rate limiting message', async () => {
       axiosMock.onPost(getZendeskrUrl()).reply(429);
       await act(async () => {
         userEvent.click(submitButton);
@@ -110,13 +110,13 @@ describe('<AccessibilityPolicyForm />', () => {
       const { savingStatus } = store.getState().accessibilityPage;
       expect(savingStatus).toEqual(RequestStatus.FAILED);
 
-      expect(screen.getAllByRole('alert')).toHaveLength(1)
+      expect(screen.getAllByRole('alert')).toHaveLength(1);
 
       expect(screen.getByTestId('rate-limit-alert')).toBeVisible();
 
       formSections.forEach(input => {
-        expect(input.value).not.toBe('')
-      })
+        expect(input.value).not.toBe('');
+      });
     });
   });
 
@@ -139,7 +139,6 @@ describe('<AccessibilityPolicyForm />', () => {
         userEvent.clear(formSections[0]);
         userEvent.clear(formSections[1]);
         userEvent.clear(formSections[2]);
-        // userEvent.click(submitButton);
       });
       const emailError = screen.getByTestId('error-feedback-email');
       expect(emailError).toBeVisible();
