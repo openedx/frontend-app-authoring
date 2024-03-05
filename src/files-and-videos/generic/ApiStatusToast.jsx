@@ -21,7 +21,7 @@ const ApiStatusToast = ({
 
   return (
     <Toast
-      show={isOpen}
+      show={(actionType === 'add' && fileType === 'video') ? false : isOpen}
       onClose={handleClose}
     >
       {intl.formatMessage(messages.apiStatusToastMessage, { actionType, selectedRowCount, fileType })}

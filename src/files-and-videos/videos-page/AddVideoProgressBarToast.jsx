@@ -18,7 +18,7 @@ const AddVideoProgressBarToast = ({
       show={isOpen}
     >
       {intl.formatMessage(messages.videoUploadProgressBarLabel)}
-      <ProgressBar now={uploadVideoProgress} label="60%" variant="primary" />
+      <ProgressBar now={uploadVideoProgress} label={uploadVideoProgress.toString()} variant="primary" />
     </Toast>
   );
 };

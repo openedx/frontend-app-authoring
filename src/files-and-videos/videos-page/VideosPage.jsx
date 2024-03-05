@@ -99,7 +99,6 @@ const VideosPage = ({
   });
 
   const videos = useModels('videos', videoIds);
-  console.log(videos);
 
   const data = {
     supportedFileFormats,

@@ -123,6 +123,7 @@ export function addVideoFile(courseId, file, videoIds) {
         const contentLength = +putToServerResponse.headers.get('Content-Length');
         let loaded = 0;
 
+        // eslint-disable-next-line no-constant-condition
         while (true) {
           // eslint-disable-next-line no-await-in-loop
           const { done, value } = await reader.read();
@@ -132,6 +133,7 @@ export function addVideoFile(courseId, file, videoIds) {
           loaded += value.byteLength;
           const progress = Math.round((loaded / contentLength) * 100);
           // Leaving this in to make browser debug easier on stage. TODO: remove this code.
+          // eslint-disable-next-line no-console
           console.log(`Upload progress: ${progress}%`);
           dispatch(updateVideoUploadProgress({ uploadNewVideoProgress: progress }));
         }

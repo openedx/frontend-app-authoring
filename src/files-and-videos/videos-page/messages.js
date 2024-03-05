@@ -39,7 +39,7 @@ const messages = defineMessages({
   },
   videoUploadProgressBarLabel: {
     id: 'course-authoring.files-and-videos.add-video-progress-bar.progress-bar.label',
-    defaultMessage: 'Video Upload Progress:',
+    defaultMessage: 'Video upload progress:',
   },
 });
 
