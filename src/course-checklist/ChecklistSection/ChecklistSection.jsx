@@ -40,8 +40,7 @@ const ChecklistSection = ({
               const outlineUrl = updateLinks.outline;
               return (
                 <div
-                  className="bg-white border py-3 px-4"
-                  style={isCompleted ? { 'box-shadow': '-5px 0 0 0 green' } : null}
+                  className={`bg-white border py-3 px-4 ${isCompleted && 'checklist-item-complete'}`}
                   id={`checklist-item-${checkId}`}
                   key={checkId}
                 >

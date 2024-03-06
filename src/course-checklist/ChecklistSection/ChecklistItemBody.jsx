@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/i18n';
-import { Button, Hyperlink, Icon } from '@openedx/paragon';
+import { ActionRow, Button, Hyperlink, Icon } from '@openedx/paragon';
 import { CheckCircle, RadioButtonUnchecked } from '@openedx/paragon/icons';
 import messages from './messages';
 
@@ -12,8 +12,8 @@ const ChecklistItemBody = ({
   // injected
   intl,
 }) => (
-  <div className="align-items-center no-gutters row">
-    <div className="col-1 text-center" id={`icon=${checkId}`}>
+  <ActionRow>
+    <div className="mr-3" id={`icon=${checkId}`}>
       {isCompleted ? (
         <Icon
           src={CheckCircle}
@@ -29,7 +29,7 @@ const ChecklistItemBody = ({
         />
       )}
     </div>
-    <div className="col">
+    <div>
       <div>
         <FormattedMessage {...messages[`${checkId}ShortDescription`]} />
       </div>
@@ -37,14 +37,17 @@ const ChecklistItemBody = ({
         <FormattedMessage {...messages[`${checkId}LongDescription`]} />
       </div>
     </div>
+    <ActionRow.Spacer />
     {updateLink && (
-      <Hyperlink destination={updateLink}>
-        <Button size="sm">
-          <FormattedMessage {...messages.updateLinkLabel} />
-        </Button>
-      </Hyperlink>
+      <>
+        <Hyperlink destination={updateLink}>
+          <Button size="sm">
+            <FormattedMessage {...messages.updateLinkLabel} />
+          </Button>
+        </Hyperlink>
+      </>
     )}
-  </div>
+  </ActionRow>
 );
 
 ChecklistItemBody.defaultProps = {

@@ -11,11 +11,11 @@ const ChecklistItemComment = ({
   data,
 }) => {
   const commentWrapper = (comment) => (
-    <div className="row m-0 mt-4 border-top no-gutters align-items-center" data-identifier="comment">
-      <div className="col-1">
+    <div className="row m-0 mt-3 pt-3 border-top align-items-center" data-identifier="comment">
+      <div className="mr-3">
         <Icon src={ModeComment} size="lg" />
       </div>
-      <div className="col my-4 small">
+      <div className="small">
         {comment}
       </div>
     </div>
@@ -45,7 +45,7 @@ const ChecklistItemComment = ({
     ) : null);
   }
 
-  if (checkId === 'assignmentDeadline') {
+  if (checkId === 'assignmentDeadlines') {
     const showDeadlinesCommentSection = Object.keys(data).length > 0
     && (
       data.assignments.assignmentsWithDatesBeforeStart.length > 0
@@ -76,9 +76,9 @@ const ChecklistItemComment = ({
     const comment = (
       <>
         <FormattedMessage {...messages.assignmentDeadlinesComment} />
-        <ul>
+        <ul className="assignment-list">
           {gradedAssignmentsOutsideDateRange.map(assignment => (
-            <li className="pr-2" key={assignment.id}>
+            <li className="assignment-list-item" key={assignment.id}>
               <Hyperlink
                 content={assignment.displayName}
                 destination={outlineUrl}
