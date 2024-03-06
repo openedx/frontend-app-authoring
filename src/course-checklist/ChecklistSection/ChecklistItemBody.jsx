@@ -1,7 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/i18n';
-import { ActionRow, Button, Hyperlink, Icon } from '@openedx/paragon';
+import {
+  ActionRow,
+  Button,
+  Hyperlink,
+  Icon,
+} from '@openedx/paragon';
 import { CheckCircle, RadioButtonUnchecked } from '@openedx/paragon/icons';
 import messages from './messages';
 
@@ -39,13 +44,11 @@ const ChecklistItemBody = ({
     </div>
     <ActionRow.Spacer />
     {updateLink && (
-      <>
-        <Hyperlink destination={updateLink}>
-          <Button size="sm">
-            <FormattedMessage {...messages.updateLinkLabel} />
-          </Button>
-        </Hyperlink>
-      </>
+      <Hyperlink destination={updateLink}>
+        <Button size="sm">
+          <FormattedMessage {...messages.updateLinkLabel} />
+        </Button>
+      </Hyperlink>
     )}
   </ActionRow>
 );

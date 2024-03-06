@@ -2,14 +2,12 @@
   list-style: none;
   display: inline-block;
 
-  &:after { 
-    content: ","; 
+  &::after {
+    content: ",";
   }
 
   &:last-child {
-    &:after {
-       content: ""; 
-    }
+    &::after { content: ""; }
   }
 }
 
@@ -21,5 +19,4 @@
 //complete checklist item style
 .checklist-item-complete {
   box-shadow: -5px 0 0 0 $success-500;
-
 }
