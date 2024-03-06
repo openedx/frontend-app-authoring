@@ -41,7 +41,27 @@ const SelectableBoxSet = React.forwardRef(({
     ...props,
   });
 
-  return (
+  const selectableBoxElement = React.createElement(
+    inputType,
+    {
+      name,
+      value,
+      defaultValue,
+      onChange,
+      ref,
+      className: classNames(
+        'pgn__selectable_box-set',
+        `pgn__selectable_box-set--${columns || DEFAULT_COLUMNS_NUMBER}`,
+        className,
+      ),
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledby,
+      ...props,
+    },
+    children,
+  );
+
+  return type === 'radio' ? (
     <FormRadioSetContextProvider
       {...{
         children,
@@ -52,28 +72,10 @@ const SelectableBoxSet = React.forwardRef(({
       }}
     >
       {
-        React.createElement(
-          inputType,
-          {
-            name,
-            value,
-            defaultValue,
-            onChange,
-            ref,
-            className: classNames(
-              'pgn__selectable_box-set',
-              `pgn__selectable_box-set--${columns || DEFAULT_COLUMNS_NUMBER}`,
-              className,
-            ),
-            'aria-label': ariaLabel,
-            'aria-labelledby': ariaLabelledby,
-            ...props,
-          },
-          children,
-        )
+        selectableBoxElement
       }
     </FormRadioSetContextProvider>
-  );
+  ) : selectableBoxElement;
 });
 
 SelectableBoxSet.propTypes = {
