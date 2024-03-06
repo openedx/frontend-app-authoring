@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
@@ -20,6 +20,7 @@ import {
   getCourseUnitData,
   getIsLoading,
   getSavingStatus,
+  getErrorMessage,
   getSequenceStatus,
   getStaticFileNotices,
   getCanEdit,
@@ -34,18 +35,16 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
 
-  const [isErrorAlert, toggleErrorAlert] = useState(false);
-  const [hasInternetConnectionError, setInternetConnectionError] = useState(false);
   const courseUnit = useSelector(getCourseUnitData);
   const savingStatus = useSelector(getSavingStatus);
   const isLoading = useSelector(getIsLoading);
+  const errorMessage = useSelector(getErrorMessage);
   const sequenceStatus = useSelector(getSequenceStatus);
   const { draftPreviewLink, publishedPreviewLink } = useSelector(getCourseSectionVertical);
   const courseVerticalChildren = useSelector(getCourseVerticalChildren);
   const staticFileNotices = useSelector(getStaticFileNotices);
   const navigate = useNavigate();
   const isTitleEditFormOpen = useSelector(state => state.courseUnit.isTitleEditFormOpen);
-  const isQueryPending = useSelector(state => state.courseUnit.isQueryPending);
   const canEdit = useSelector(getCanEdit);
   const { currentlyVisibleToStudents } = courseUnit;
   const { sharedClipboardData, showPasteXBlock, showPasteUnit } = useCopyToClipboard(canEdit);
@@ -61,10 +60,6 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     handlePreview: () => {
       window.open(draftPreviewLink, '_blank');
     },
-  };
-
-  const handleInternetConnectionFailed = () => {
-    setInternetConnectionError(true);
   };
 
   const handleTitleEdit = () => {
@@ -119,8 +114,6 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
       dispatch(updateQueryPendingStatus(true));
-    } else if (savingStatus === RequestStatus.FAILED && !hasInternetConnectionError) {
-      toggleErrorAlert(true);
     }
   }, [savingStatus]);
 
@@ -136,19 +129,16 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     sequenceId,
     courseUnit,
     unitTitle,
+    errorMessage,
     sequenceStatus,
     savingStatus,
-    isQueryPending,
-    isErrorAlert,
     staticFileNotices,
     currentlyVisibleToStudents,
     isLoading,
     isTitleEditFormOpen,
-    isInternetConnectionAlertFailed: savingStatus === RequestStatus.FAILED,
     sharedClipboardData,
     showPasteXBlock,
     showPasteUnit,
-    handleInternetConnectionFailed,
     unitXBlockActions,
     headerNavigationsActions,
     handleTitleEdit,

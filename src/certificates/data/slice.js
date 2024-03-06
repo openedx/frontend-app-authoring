@@ -12,10 +12,13 @@ const slice = createSlice({
     loadingStatus: RequestStatus.PENDING,
     savingStatus: '',
     savingImageStatus: '',
+    errorMessage: '',
   },
   reducers: {
     updateSavingStatus: (state, { payload }) => {
-      state.savingStatus = payload.status;
+      const { status, errorMessage } = payload;
+      state.savingStatus = status;
+      state.errorMessage = errorMessage;
     },
     updateSavingImageStatus: (state, { payload }) => {
       state.savingImageStatus = payload.status;

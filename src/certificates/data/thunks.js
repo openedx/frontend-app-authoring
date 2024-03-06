@@ -3,6 +3,7 @@ import {
   hideProcessingNotification,
   showProcessingNotification,
 } from '../../generic/processing-notification/data/slice';
+import { handleResponseErrors } from '../../generic/saving-error-alert';
 import { NOTIFICATION_MESSAGES } from '../../constants';
 import {
   getCertificates,
@@ -51,8 +52,7 @@ export function createCourseCertificate(courseId, certificate) {
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
     } catch (error) {
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-      return false;
+      return handleResponseErrors(error, dispatch, updateSavingStatus);
     } finally {
       dispatch(hideProcessingNotification());
     }
@@ -70,8 +70,7 @@ export function updateCourseCertificate(courseId, certificate) {
       dispatch(updateCertificateSuccess(certificatesValues));
       return true;
     } catch (error) {
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-      return false;
+      return handleResponseErrors(error, dispatch, updateSavingStatus);
     } finally {
       dispatch(hideProcessingNotification());
     }
@@ -89,8 +88,7 @@ export function deleteCourseCertificate(courseId, certificateId) {
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
     } catch (error) {
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-      return false;
+      return handleResponseErrors(error, dispatch, updateSavingStatus);
     } finally {
       dispatch(hideProcessingNotification());
     }
@@ -111,8 +109,7 @@ export function updateCertificateActiveStatus(courseId, path, activationStatus) 
       dispatch(fetchCertificates(courseId));
       return true;
     } catch (error) {
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-      return false;
+      return handleResponseErrors(error, dispatch, updateSavingStatus);
     } finally {
       dispatch(hideProcessingNotification());
     }

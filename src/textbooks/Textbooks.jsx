@@ -9,14 +9,13 @@ import {
 } from '@openedx/paragon';
 import { Add as AddIcon } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
-
 import { Helmet } from 'react-helmet';
-import React from 'react';
+
+import { SavingErrorAlert } from '../generic/saving-error-alert';
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
 import { useModel } from '../generic/model-store';
 import { LoadingSpinner } from '../generic/Loading';
 import SubHeader from '../generic/sub-header/SubHeader';
-import InternetConnectionAlert from '../generic/internet-connection-alert';
 import ProcessingNotification from '../generic/processing-notification';
 import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
 import TextbookCard from './textbook-card/TextbooksCard';
@@ -35,11 +34,11 @@ const Textbooks = ({ courseId }) => {
     textbooks,
     isLoading,
     breadcrumbs,
+    errorMessage,
+    savingStatus,
     isTextbookFormOpen,
     openTextbookForm,
     closeTextbookForm,
-    isInternetConnectionAlertFailed,
-    isQueryPending,
     handleTextbookFormSubmit,
     handleSavingStatusDispatch,
     handleTextbookEditFormSubmit,
@@ -131,9 +130,9 @@ const Textbooks = ({ courseId }) => {
         title={processingNotificationTitle}
       />
       <div className="alert-toast">
-        <InternetConnectionAlert
-          isFailed={isInternetConnectionAlertFailed}
-          isQueryPending={isQueryPending}
+        <SavingErrorAlert
+          savingStatus={savingStatus}
+          errorMessage={errorMessage}
         />
       </div>
     </>

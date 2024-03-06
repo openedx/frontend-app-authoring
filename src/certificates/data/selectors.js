@@ -3,6 +3,7 @@ import { createSelector } from '@reduxjs/toolkit';
 export const getLoadingStatus = (state) => state.certificates.loadingStatus;
 export const getSavingStatus = (state) => state.certificates.savingStatus;
 export const getSavingImageStatus = (state) => state.certificates.savingImageStatus;
+export const getErrorMessage = (state) => state.certificates.errorMessage;
 export const getSendRequestErrors = (state) => state.certificates.sendRequestErrors.developer_message;
 export const getCertificates = state => state.certificates.certificatesData.certificates;
 export const getHasCertificateModes = state => state.certificates.certificatesData.hasCertificateModes;
