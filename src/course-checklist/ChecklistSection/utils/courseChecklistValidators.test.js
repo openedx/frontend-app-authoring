@@ -30,13 +30,13 @@ describe('courseCheckValidators utility functions', () => {
       )).toEqual(false);
     });
 
-    it('returns true when has_grading_policy is true', () => {
+    it('returns true when hasGradingPolicy is true', () => {
       expect(validators.hasGradingPolicy(
         { hasGradingPolicy: true, sumOfWeights: 1 },
       )).toEqual(true);
     });
 
-    it('returns false when has_grading_policy is false', () => {
+    it('returns false when hasGradingPolicy is false', () => {
       expect(validators.hasGradingPolicy(
         { hasGradingPolicy: false, sumOfWeights: 1 },
       )).toEqual(false);
@@ -124,10 +124,10 @@ describe('courseCheckValidators utility functions', () => {
     it('returns false when a course run has start and end date and assignments before start', () => {
       expect(validators.hasAssignmentDeadlines(
         {
-          assignments_with_dates_before_start: ['test'],
-          assignments_with_dates_after_end: 0,
-          assignments_with_ora_dates_after_end: 0,
-          assignments_with_ora_dates_before_start: 0,
+          assignmentsWithDatesBeforeStart: ['test'],
+          assignmentsWithDatesAfterEnd: 0,
+          assignmentsWithOraDatesAfterEnd: 0,
+          assignmentsWithOraDatesBeforeStart: 0,
         },
         {
           hasStartDate: true,
@@ -139,10 +139,10 @@ describe('courseCheckValidators utility functions', () => {
     it('returns false when a course run has start and end date and assignments after end', () => {
       expect(validators.hasAssignmentDeadlines(
         {
-          assignments_with_dates_before_start: 0,
-          assignments_with_dates_after_end: ['test'],
-          assignments_with_ora_dates_after_end: 0,
-          assignments_with_ora_dates_before_start: 0,
+          assignmentsWithDatesBeforeStart: 0,
+          assignmentsWithDatesAfterEnd: ['test'],
+          assignmentsWithOraDatesAfterEnd: 0,
+          assignmentsWithOraDatesBeforeStart: 0,
         },
         {
           hasStartDate: true,
@@ -157,10 +157,10 @@ describe('courseCheckValidators utility functions', () => {
     () => {
       expect(validators.hasAssignmentDeadlines(
         {
-          assignments_with_dates_before_start: 0,
-          assignments_with_dates_after_end: 0,
-          assignments_with_ora_dates_after_end: 0,
-          assignments_with_ora_dates_before_start: ['test'],
+          assignmentsWithDatesBeforeStart: 0,
+          assignmentsWithDatesAfterEnd: 0,
+          assignmentsWithOraDatesAfterEnd: 0,
+          assignmentsWithOraDatesBeforeStart: ['test'],
         },
         {
           hasStartDate: true,
@@ -175,10 +175,10 @@ describe('courseCheckValidators utility functions', () => {
     () => {
       expect(validators.hasAssignmentDeadlines(
         {
-          assignments_with_dates_before_start: 0,
-          assignments_with_dates_after_end: 0,
-          assignments_with_ora_dates_after_end: ['test'],
-          assignments_with_ora_dates_before_start: 0,
+          assignmentsWithDatesBeforeStart: 0,
+          assignmentsWithDatesAfterEnd: 0,
+          assignmentsWithOraDatesAfterEnd: ['test'],
+          assignmentsWithOraDatesBeforeStart: 0,
         },
         {
           hasStartDate: true,
@@ -222,7 +222,7 @@ describe('courseCheckValidators utility functions', () => {
 
   describe('hasDiverseSequences', () => {
     it('returns true if < 20% of visible subsections have more than one block type', () => {
-      expect(validators.hasDiverseSequences({ totalVisible: 10, numMobileEncoded: 1 }))
+      expect(validators.hasDiverseSequences({ totalVisible: 10, numWithOneBlockType: 1 }))
         .toEqual(true);
     });
 
@@ -243,20 +243,20 @@ describe('courseCheckValidators utility functions', () => {
 
   describe('hasWeeklyHighlights', () => {
     it('returns true when course run has highlights enabled', () => {
-      const data = { highlights_active_for_course: true, highlights_enabled: true };
+      const data = { highlightsActiveForCourse: true, highlightsEnabled: true };
       expect(validators.hasWeeklyHighlights(data)).toEqual(true);
     });
 
     it('returns false when course run has highlights enabled', () => {
-      const data = { highlights_active_for_course: false, highlights_enabled: false };
+      const data = { highlightsActiveForCourse: false, highlightsEnabled: false };
       expect(validators.hasWeeklyHighlights(data)).toEqual(false);
 
-      data.highlights_enabled = true;
-      data.highlights_active_for_course = false;
+      data.highlightsEnabled = true;
+      data.highlightsActiveForCourse = false;
       expect(validators.hasWeeklyHighlights(data)).toEqual(false);
 
-      data.highlights_enabled = false;
-      data.highlights_active_for_course = true;
+      data.highlightsEnabled = false;
+      data.highlightsActiveForCourse = true;
       expect(validators.hasWeeklyHighlights(data)).toEqual(false);
     });
   });
@@ -264,7 +264,7 @@ describe('courseCheckValidators utility functions', () => {
   describe('hasShortUnitDepth', () => {
     it('returns true when course run has median number of blocks <= 3', () => {
       const units = {
-        num_blocks: {
+        numBlocks: {
           median: 3,
         },
       };
@@ -274,7 +274,7 @@ describe('courseCheckValidators utility functions', () => {
 
     it('returns false when course run has median number of blocks > 3', () => {
       const units = {
-        num_blocks: {
+        numBlocks: {
           median: 4,
         },
       };
@@ -285,12 +285,12 @@ describe('courseCheckValidators utility functions', () => {
 
   describe('hasProctoringEscalationEmail', () => {
     it('returns true when the course has a proctoring escalation email', () => {
-      const proctoring = { has_proctoring_escalation_email: true };
+      const proctoring = { hasProctoringEscalationEmail: true };
       expect(validators.hasProctoringEscalationEmail(proctoring)).toEqual(true);
     });
 
     it('returns false when the course does not have a proctoring escalation email', () => {
-      const proctoring = { has_proctoring_escalation_email: false };
+      const proctoring = { hasProctoringEscalationEmail: false };
       expect(validators.hasProctoringEscalationEmail(proctoring)).toEqual(false);
     });
   });
