@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { getInputType } from './getInputType';
+import { FormRadioSetContextProvider } from './FormRadioSetContext';
 
 const INPUT_TYPES = [
   'radio',
@@ -40,24 +41,38 @@ const SelectableBoxSet = React.forwardRef(({
     ...props,
   });
 
-  return React.createElement(
-    inputType,
-    {
-      name,
-      value,
-      defaultValue,
-      onChange,
-      ref,
-      className: classNames(
-        'pgn__selectable_box-set',
-        `pgn__selectable_box-set--${columns || DEFAULT_COLUMNS_NUMBER}`,
-        className,
-      ),
-      'aria-label': ariaLabel,
-      'aria-labelledby': ariaLabelledby,
-      ...props,
-    },
-    children,
+  return (
+    <FormRadioSetContextProvider
+      {...{
+        children,
+        name,
+        onChange,
+        value,
+        defaultValue,
+      }}
+    >
+      {
+        React.createElement(
+          inputType,
+          {
+            name,
+            value,
+            defaultValue,
+            onChange,
+            ref,
+            className: classNames(
+              'pgn__selectable_box-set',
+              `pgn__selectable_box-set--${columns || DEFAULT_COLUMNS_NUMBER}`,
+              className,
+            ),
+            'aria-label': ariaLabel,
+            'aria-labelledby': ariaLabelledby,
+            ...props,
+          },
+          children,
+        )
+      }
+    </FormRadioSetContextProvider>
   );
 });
 
