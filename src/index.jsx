@@ -7,6 +7,7 @@ import ErrorAlert from './editors/sharedComponents/ErrorAlerts/ErrorAlert';
 import { TinyMceWidget } from './editors/sharedComponents/TinyMceWidget';
 import { prepareEditorRef } from './editors/sharedComponents/TinyMceWidget/hooks';
 import TypeaheadDropdown from './editors/sharedComponents/TypeaheadDropdown';
+import SelectableBox from './editors/sharedComponents/SelectableBox';
 
 export {
   messages,
@@ -18,5 +19,6 @@ export {
   TinyMceWidget,
   prepareEditorRef,
   TypeaheadDropdown,
+  SelectableBox,
 };
 export default Placeholder;

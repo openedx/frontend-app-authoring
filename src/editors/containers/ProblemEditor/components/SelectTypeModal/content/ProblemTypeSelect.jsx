@@ -1,7 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Container, SelectableBox } from '@openedx/paragon';
+import { Button, Container } from '@openedx/paragon';
 import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
+
+/* SelectableBox from Paragon currently has a bug as it misses a ContextProvider.
+This is a temporary fix by overriding it with our own copy that includes the ContextProvider. */
+// TODO: Replace this import with a paragon import once the bug is fixed and delete our copy of SelectableBox.
+import SelectableBox from '../../../../../sharedComponents/SelectableBox';
 import { ProblemTypes, ProblemTypeKeys, AdvanceProblemKeys } from '../../../../../data/constants/problem';
 import messages from './messages';
 

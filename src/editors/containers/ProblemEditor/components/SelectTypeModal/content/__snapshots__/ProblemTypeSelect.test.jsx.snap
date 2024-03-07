@@ -9,58 +9,93 @@ exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
     }
   }
 >
-  <SelectableBox.Set
+  <ForwardRef
     columns={1}
     onChange={[Function]}
     type="radio"
     value="optionresponse"
   >
-    <SelectableBox
+    <ForwardRef
       aria-label="checkbox"
+      checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="multiplechoiceresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      onClick={[Function]}
+      onFocus={[Function]}
+      showActiveBoxState={true}
       type="radio"
       value="multiplechoiceresponse"
     >
       Single select
-    </SelectableBox>
-    <SelectableBox
+    </ForwardRef>
+    <ForwardRef
       aria-label="checkbox"
+      checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="choiceresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      onClick={[Function]}
+      onFocus={[Function]}
+      showActiveBoxState={true}
       type="radio"
       value="choiceresponse"
     >
       Multi-select
-    </SelectableBox>
-    <SelectableBox
+    </ForwardRef>
+    <ForwardRef
       aria-label="checkbox"
+      checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="optionresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      onClick={[Function]}
+      onFocus={[Function]}
+      showActiveBoxState={true}
       type="radio"
       value="optionresponse"
     >
       Dropdown
-    </SelectableBox>
-    <SelectableBox
+    </ForwardRef>
+    <ForwardRef
       aria-label="checkbox"
+      checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="numericalresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      onClick={[Function]}
+      onFocus={[Function]}
+      showActiveBoxState={true}
       type="radio"
       value="numericalresponse"
     >
       Numerical input
-    </SelectableBox>
-    <SelectableBox
+    </ForwardRef>
+    <ForwardRef
       aria-label="checkbox"
+      checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="stringresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      onClick={[Function]}
+      onFocus={[Function]}
+      showActiveBoxState={true}
       type="radio"
       value="stringresponse"
     >
       Text input
-    </SelectableBox>
-  </SelectableBox.Set>
+    </ForwardRef>
+  </ForwardRef>
   <Button
     className="pl-0 mt-2"
     onClick={[Function]}
@@ -84,58 +119,93 @@ exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
     }
   }
 >
-  <SelectableBox.Set
+  <ForwardRef
     columns={1}
     onChange={[Function]}
     type="radio"
     value="choiceresponse"
   >
-    <SelectableBox
+    <ForwardRef
       aria-label="checkbox"
+      checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="multiplechoiceresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      onClick={[Function]}
+      onFocus={[Function]}
+      showActiveBoxState={true}
       type="radio"
       value="multiplechoiceresponse"
     >
       Single select
-    </SelectableBox>
-    <SelectableBox
+    </ForwardRef>
+    <ForwardRef
       aria-label="checkbox"
+      checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="choiceresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      onClick={[Function]}
+      onFocus={[Function]}
+      showActiveBoxState={true}
       type="radio"
       value="choiceresponse"
     >
       Multi-select
-    </SelectableBox>
-    <SelectableBox
+    </ForwardRef>
+    <ForwardRef
       aria-label="checkbox"
+      checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="optionresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      onClick={[Function]}
+      onFocus={[Function]}
+      showActiveBoxState={true}
       type="radio"
       value="optionresponse"
     >
       Dropdown
-    </SelectableBox>
-    <SelectableBox
+    </ForwardRef>
+    <ForwardRef
       aria-label="checkbox"
+      checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="numericalresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      onClick={[Function]}
+      onFocus={[Function]}
+      showActiveBoxState={true}
       type="radio"
       value="numericalresponse"
     >
       Numerical input
-    </SelectableBox>
-    <SelectableBox
+    </ForwardRef>
+    <ForwardRef
       aria-label="checkbox"
+      checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="stringresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      onClick={[Function]}
+      onFocus={[Function]}
+      showActiveBoxState={true}
       type="radio"
       value="stringresponse"
     >
       Text input
-    </SelectableBox>
-  </SelectableBox.Set>
+    </ForwardRef>
+  </ForwardRef>
   <Button
     className="pl-0 mt-2"
     onClick={[Function]}
@@ -159,58 +229,93 @@ exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
     }
   }
 >
-  <SelectableBox.Set
+  <ForwardRef
     columns={1}
     onChange={[Function]}
     type="radio"
     value="numericalresponse"
   >
-    <SelectableBox
+    <ForwardRef
       aria-label="checkbox"
+      checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="multiplechoiceresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      onClick={[Function]}
+      onFocus={[Function]}
+      showActiveBoxState={true}
       type="radio"
       value="multiplechoiceresponse"
     >
       Single select
-    </SelectableBox>
-    <SelectableBox
+    </ForwardRef>
+    <ForwardRef
       aria-label="checkbox"
+      checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="choiceresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      onClick={[Function]}
+      onFocus={[Function]}
+      showActiveBoxState={true}
       type="radio"
       value="choiceresponse"
     >
       Multi-select
-    </SelectableBox>
-    <SelectableBox
+    </ForwardRef>
+    <ForwardRef
       aria-label="checkbox"
+      checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="optionresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      onClick={[Function]}
+      onFocus={[Function]}
+      showActiveBoxState={true}
       type="radio"
       value="optionresponse"
     >
       Dropdown
-    </SelectableBox>
-    <SelectableBox
+    </ForwardRef>
+    <ForwardRef
       aria-label="checkbox"
+      checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="numericalresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      onClick={[Function]}
+      onFocus={[Function]}
+      showActiveBoxState={true}
       type="radio"
       value="numericalresponse"
     >
       Numerical input
-    </SelectableBox>
-    <SelectableBox
+    </ForwardRef>
+    <ForwardRef
       aria-label="checkbox"
+      checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="stringresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      onClick={[Function]}
+      onFocus={[Function]}
+      showActiveBoxState={true}
       type="radio"
       value="stringresponse"
     >
       Text input
-    </SelectableBox>
-  </SelectableBox.Set>
+    </ForwardRef>
+  </ForwardRef>
   <Button
     className="pl-0 mt-2"
     onClick={[Function]}
@@ -234,58 +339,93 @@ exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
     }
   }
 >
-  <SelectableBox.Set
+  <ForwardRef
     columns={1}
     onChange={[Function]}
     type="radio"
     value="multiplechoiceresponse"
   >
-    <SelectableBox
+    <ForwardRef
       aria-label="checkbox"
+      checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="multiplechoiceresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      onClick={[Function]}
+      onFocus={[Function]}
+      showActiveBoxState={true}
       type="radio"
       value="multiplechoiceresponse"
     >
       Single select
-    </SelectableBox>
-    <SelectableBox
+    </ForwardRef>
+    <ForwardRef
       aria-label="checkbox"
+      checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="choiceresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      onClick={[Function]}
+      onFocus={[Function]}
+      showActiveBoxState={true}
       type="radio"
       value="choiceresponse"
     >
       Multi-select
-    </SelectableBox>
-    <SelectableBox
+    </ForwardRef>
+    <ForwardRef
       aria-label="checkbox"
+      checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="optionresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      onClick={[Function]}
+      onFocus={[Function]}
+      showActiveBoxState={true}
       type="radio"
       value="optionresponse"
     >
       Dropdown
-    </SelectableBox>
-    <SelectableBox
+    </ForwardRef>
+    <ForwardRef
       aria-label="checkbox"
+      checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="numericalresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      onClick={[Function]}
+      onFocus={[Function]}
+      showActiveBoxState={true}
       type="radio"
       value="numericalresponse"
     >
       Numerical input
-    </SelectableBox>
-    <SelectableBox
+    </ForwardRef>
+    <ForwardRef
       aria-label="checkbox"
+      checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="stringresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      onClick={[Function]}
+      onFocus={[Function]}
+      showActiveBoxState={true}
       type="radio"
       value="stringresponse"
     >
       Text input
-    </SelectableBox>
-  </SelectableBox.Set>
+    </ForwardRef>
+  </ForwardRef>
   <Button
     className="pl-0 mt-2"
     onClick={[Function]}
@@ -309,58 +449,93 @@ exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
     }
   }
 >
-  <SelectableBox.Set
+  <ForwardRef
     columns={1}
     onChange={[Function]}
     type="radio"
     value="stringresponse"
   >
-    <SelectableBox
+    <ForwardRef
       aria-label="checkbox"
+      checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="multiplechoiceresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      onClick={[Function]}
+      onFocus={[Function]}
+      showActiveBoxState={true}
       type="radio"
       value="multiplechoiceresponse"
     >
       Single select
-    </SelectableBox>
-    <SelectableBox
+    </ForwardRef>
+    <ForwardRef
       aria-label="checkbox"
+      checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="choiceresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      onClick={[Function]}
+      onFocus={[Function]}
+      showActiveBoxState={true}
       type="radio"
       value="choiceresponse"
     >
       Multi-select
-    </SelectableBox>
-    <SelectableBox
+    </ForwardRef>
+    <ForwardRef
       aria-label="checkbox"
+      checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="optionresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      onClick={[Function]}
+      onFocus={[Function]}
+      showActiveBoxState={true}
       type="radio"
       value="optionresponse"
     >
       Dropdown
-    </SelectableBox>
-    <SelectableBox
+    </ForwardRef>
+    <ForwardRef
       aria-label="checkbox"
+      checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="numericalresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      onClick={[Function]}
+      onFocus={[Function]}
+      showActiveBoxState={true}
       type="radio"
       value="numericalresponse"
     >
       Numerical input
-    </SelectableBox>
-    <SelectableBox
+    </ForwardRef>
+    <ForwardRef
       aria-label="checkbox"
+      checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="stringresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      onClick={[Function]}
+      onFocus={[Function]}
+      showActiveBoxState={true}
       type="radio"
       value="stringresponse"
     >
       Text input
-    </SelectableBox>
-  </SelectableBox.Set>
+    </ForwardRef>
+  </ForwardRef>
   <Button
     className="pl-0 mt-2"
     onClick={[Function]}

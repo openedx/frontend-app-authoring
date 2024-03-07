@@ -73,6 +73,7 @@
     "@reduxjs/toolkit": "^1.8.1",
     "@tinymce/tinymce-react": "^3.14.0",
     "babel-polyfill": "6.26.0",
+    "classnames": "^2.5.1",
     "codemirror": "^6.0.0",
     "fast-xml-parser": "^4.0.10",
     "frontend-components-tinymce-advanced-plugins": "^1.0.3",
