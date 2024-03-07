@@ -130,7 +130,7 @@ const CardHeader = ({
         {(isVertical || isSequential) && (
           <CardStatus status={status} showDiscussionsEnabledBadge={showDiscussionsEnabledBadge} />
         )}
-        { tagsCount !== undefined && tagsCount !== 0 && <TagCount count={tagsCount} onClick={onClickManageTags} /> }
+        { tagsCount > 0 && <TagCount count={tagsCount} onClick={onClickManageTags} /> }
         <Dropdown data-testid={`${namePrefix}-card-header__menu`} onClick={onClickMenuButton}>
           <Dropdown.Toggle
             className="item-card-header__menu"
