@@ -29,16 +29,14 @@ const SelectableBox = React.forwardRef(({
   const { value: radioValue } = useContext(FormRadioSetContext);
   const { value: checkboxValues = [] } = useContext(FormCheckboxSetContext);
 
-  console.log('radioValue: ', radioValue);
-
   const isChecked = () => {
     switch (type) {
-      case 'radio':
-        return radioValue === value;
-      case 'checkbox':
-        return checkboxValues.includes(value);
-      default:
-        return radioValue === value;
+    case 'radio':
+      return radioValue === value;
+    case 'checkbox':
+      return checkboxValues.includes(value);
+    default:
+      return radioValue === value;
     }
   };
 

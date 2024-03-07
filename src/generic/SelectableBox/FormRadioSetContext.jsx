@@ -41,6 +41,7 @@ const FormRadioSetContextProvider = ({
     checked: isControlled ? value === radioProps.value : undefined,
     defaultChecked: isControlled ? undefined : defaultValue === radioProps.value,
   });
+  // eslint-disable-next-line react/jsx-no-constructed-context-values
   const contextValue = {
     name,
     value,

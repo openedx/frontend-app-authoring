@@ -26,21 +26,6 @@ const SelectableBoxSet = React.forwardRef(({
 }, ref) => {
   const inputType = getInputType('SelectableBoxSet', type);
 
-  // eslint-disable-next-line no-console
-  console.debug('SelectableBoxSet Props: ', {
-    children,
-    name,
-    value,
-    defaultValue,
-    onChange,
-    type,
-    columns,
-    className,
-    ariaLabel,
-    ariaLabelledby,
-    ...props,
-  });
-
   const selectableBoxElement = React.createElement(
     inputType,
     {
