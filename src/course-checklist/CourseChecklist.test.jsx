@@ -62,7 +62,7 @@ describe('CourseChecklistPage', () => {
     describe('if enable_quality prop is true', () => {
       it('two checklist components ', () => {
         renderComponent();
-        mockStore();
+        mockStore(200);
 
         expect(screen.getByText(messages.launchChecklistLabel.defaultMessage)).toBeVisible();
 
