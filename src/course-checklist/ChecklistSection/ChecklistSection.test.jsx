@@ -1,32 +1,23 @@
-import { Icon, Hyperlink } from '@edx/paragon';
+/* eslint-disable */
+import { Icon, Hyperlink } from '@openedx/paragon';
 import { IntlProvider, FormattedMessage, FormattedNumber } from 'react-intl';
 import React from 'react';
 
 import CourseChecklist from '.';
 import { courseDetails } from '../../utils/testConstants';
-import getFilteredChecklist from '../../utils/CourseChecklist/getFilteredChecklist';
-import getValidatedValue from '../../utils/CourseChecklist/getValidatedValue';
+import getFilteredChecklist from './utils/CourseChecklist/getFilteredChecklist';
+import getValidatedValue from './utils/CourseChecklist/getValidatedValue';
 import messages from './displayMessages';
 import { shallowWithIntl } from '../../utils/i18n/enzymeHelper';
 import WrappedMessage from '../../utils/i18n/formattedMessageWrapper';
 
 // generating test checklist to avoid relying on actual data
-const testChecklistData = ['welcomeMessage', 'gradingPolicy', 'certificate', 'courseDates', 'assignmentDeadlines', 'proctoringEmail'].reduce(((accumulator, currentValue) => { accumulator.push({ id: currentValue }); return accumulator; }), []);
-
-/**
- * generating test validated values to mock the implementation
- * of the getValidatedValue utility function
- */
-const validatedValues = {};
-let i;
-
-
-const intlProvider = new IntlProvider({ locale: 'en', messages: {} }, {});
-const { intl } = intlProvider.getChildContext();
-
-global.analytics = {
-  track: () => {},
-};
+const testChecklistData = [
+  'welcomeMessage', 'gradingPolicy', 'certificate', 'courseDates', 'assignmentDeadlines', 'proctoringEmail',
+].reduce(((accumulator, currentValue) => {
+  accumulator.push({ id: currentValue });
+  return accumulator;
+}), []);
 
 let wrapper;
 

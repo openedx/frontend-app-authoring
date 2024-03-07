@@ -3,9 +3,8 @@ import {
   waitFor,
   screen,
 } from '@testing-library/react';
-import '@testing-library/jest-dom'
-import { getConfig, setConfig } from '@edx/frontend-platform';
-import { initializeMockApp } from '@edx/frontend-platform';
+import '@testing-library/jest-dom';
+import { getConfig, setConfig, initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -89,7 +88,7 @@ describe('CourseChecklistPage', () => {
             expect(launchChecklistStatus).not.toEqual(RequestStatus.SUCCESSFUL);
 
             expect(screen.getByText(messages.launchChecklistDoneLoadingLabel.defaultMessage)).toBeInTheDocument();
-          })
+          });
         });
 
         it('correct content when the best practices checklist is loading', async () => {
@@ -100,8 +99,10 @@ describe('CourseChecklistPage', () => {
 
             expect(bestPracticeChecklistStatus).not.toEqual(RequestStatus.IN_PROGRESS);
 
-            expect(screen.getByText(messages.bestPracticesChecklistDoneLoadingLabel.defaultMessage)).toBeInTheDocument();
-          })
+            expect(
+              screen.getByText(messages.bestPracticesChecklistDoneLoadingLabel.defaultMessage),
+            ).toBeInTheDocument();
+          });
         });
       });
     });
@@ -132,7 +133,7 @@ describe('CourseChecklistPage', () => {
             expect(launchChecklistStatus).not.toEqual(RequestStatus.SUCCESSFUL);
 
             expect(screen.getByText(messages.launchChecklistDoneLoadingLabel.defaultMessage)).toBeInTheDocument();
-          })
+          });
         });
 
         it('correct content when the best practices checklist is loading', async () => {
@@ -144,7 +145,7 @@ describe('CourseChecklistPage', () => {
             expect(bestPracticeChecklistStatus).not.toEqual(RequestStatus.IN_PROGRESS);
 
             expect(screen.queryByText(messages.bestPracticesChecklistDoneLoadingLabel.defaultMessage)).toBeNull();
-          })
+          });
         });
       });
     });
