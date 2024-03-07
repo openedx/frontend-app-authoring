@@ -19,8 +19,10 @@ const AriaLiveRegion = ({
 
   return (
     <div className="sr-only" aria-live="polite" role="status">
-      {courseLaunchLoadingMessage}
-      {enableQuality ? courseBestPracticesLoadingMessage : null}
+      <div>
+        {courseLaunchLoadingMessage}
+      </div>
+      {enableQuality ? <div>{courseBestPracticesLoadingMessage}</div> : null}
     </div>
   );
 };

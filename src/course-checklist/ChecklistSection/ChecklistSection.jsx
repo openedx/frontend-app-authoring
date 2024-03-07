@@ -58,6 +58,7 @@ const ChecklistSection = ({
 
 ChecklistSection.defaultProps = {
   updateLinks: {},
+  data: {},
 };
 
 ChecklistSection.propTypes = {
@@ -121,7 +122,7 @@ ChecklistSection.propTypes = {
       }),
       isSelfPaced: PropTypes.bool,
     }).isRequired,
-  ]).isRequired,
+  ]),
   idPrefix: PropTypes.string.isRequired,
   isLoading: PropTypes.bool.isRequired,
   updateLinks: PropTypes.shape({

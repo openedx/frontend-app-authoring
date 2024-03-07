@@ -17,17 +17,6 @@ export const getCourseLaunchApiUrl = ({
   all,
 }) => `${getApiBaseUrl()}/api/courses/v1/validation/${courseId}/?graded_only=${gradedOnly}&validate_oras=${validateOras}&all=${all}`;
 
-export const getCourseBlockApiUrl = (courseId) => {
-  const formattedCourseId = courseId.split('course-v1:')[1];
-  return `${getApiBaseUrl()}/xblock/block-v1:${formattedCourseId}+type@course+block@course`;
-};
-
-export const getCourseReindexApiUrl = (reindexLink) => `${getApiBaseUrl()}${reindexLink}`;
-export const getXBlockBaseApiUrl = () => `${getApiBaseUrl()}/xblock/`;
-export const getCourseItemApiUrl = (itemId) => `${getXBlockBaseApiUrl()}${itemId}`;
-export const getXBlockApiUrl = (blockId) => `${getXBlockBaseApiUrl()}outline/${blockId}`;
-export const getClipboardUrl = () => `${getApiBaseUrl()}/api/content-staging/v1/clipboard/`;
-
 /**
  * Get course best practices.
  * @param {{courseId: string, excludeGraded: boolean, all: boolean}} options
