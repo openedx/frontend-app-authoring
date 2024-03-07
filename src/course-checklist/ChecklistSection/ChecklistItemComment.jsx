@@ -12,8 +12,8 @@ const ChecklistItemComment = ({
 }) => {
   const commentWrapper = (comment) => (
     <div className="row m-0 mt-3 pt-3 border-top align-items-center" data-identifier="comment">
-      <div className="mr-3">
-        <Icon src={ModeComment} size="lg" />
+      <div className="mr-4">
+        <Icon src={ModeComment} size="lg" style={{ height: '32px', width: '32px' }}/>
       </div>
       <div className="small">
         {comment}
@@ -81,7 +81,7 @@ const ChecklistItemComment = ({
             <li className="assignment-list-item" key={assignment.id}>
               <Hyperlink
                 content={assignment.displayName}
-                destination={outlineUrl}
+                destination={`${outlineUrl}#${assignment.id}`}
               />
             </li>
           ))}

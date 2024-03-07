@@ -16,12 +16,12 @@ const messages = defineMessages({
   },
   launchChecklistLabel: {
     id: 'launchChecklistLabel',
-    defaultMessage: 'Launch Checklist',
+    defaultMessage: 'Launch checklist',
     description: 'Header text for a checklist that describes actions to have completed before a course should launch',
   },
   bestPracticesChecklistLabel: {
     id: 'bestPracticesChecklistLabel',
-    defaultMessage: 'Best Practices Checklist',
+    defaultMessage: 'Best practices checklist',
     description: 'Header text for a checklist that describes best practices for a course',
   },
   launchChecklistLoadingLabel: {

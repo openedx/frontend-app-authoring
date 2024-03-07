@@ -77,7 +77,12 @@ export const generateCourseLaunchData = () => ({
         display_name: 'Subsection',
       },
     ],
-    assignments_with_ora_dates_before_start: [],
+    assignments_with_ora_dates_before_start: [
+      {
+        id: 'block-v2',
+        display_name: 'ORA subsection',
+      },
+    ],
     assignments_with_ora_dates_after_end: [],
   },
   grades: {
@@ -93,7 +98,7 @@ export const generateCourseLaunchData = () => ({
     has_update: true,
   },
   proctoring: {
-    needs_proctoring_escalation_email: false,
+    needs_proctoring_escalation_email: true,
     has_proctoring_escalation_email: false,
   },
 });

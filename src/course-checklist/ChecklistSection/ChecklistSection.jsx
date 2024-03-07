@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { injectIntl } from '@edx/frontend-platform/i18n';
 import { Container, Stack } from '@openedx/paragon';
 
 import { LoadingSpinner } from '../../generic/Loading';
@@ -24,12 +25,12 @@ const ChecklistSection = ({
     <Container>
       <h3 aria-describedby={getCompletionCountID()} className="lead">{dataHeading}</h3>
       {isLoading ? (
-        <div className="row justify-content-center">
+        <div className="row justify-content-center" data-testid="loading-spinner">
           <LoadingSpinner />
         </div>
       ) : (
         <>
-          <div>
+          <div data-testid="completion-subheader">
             {getCompletionCount(checks, totalCompletedChecks)}
           </div>
           <Stack gap={3} className="mt-3">
@@ -42,10 +43,13 @@ const ChecklistSection = ({
                 <div
                   className={`bg-white border py-3 px-4 ${isCompleted && 'checklist-item-complete'}`}
                   id={`checklist-item-${checkId}`}
+                  data-testid={`checklist-item-${checkId}`}
                   key={checkId}
                 >
                   <ChecklistItemBody {...{ checkId, isCompleted, updateLink }} />
-                  <ChecklistItemComment {...{ checkId, outlineUrl, data }} />
+                  <div data-testid={`comment-section-${checkId}`}>
+                    <ChecklistItemComment {...{ checkId, outlineUrl, data }} />
+                  </div>
                 </div>
               );
             })}
@@ -135,4 +139,4 @@ ChecklistSection.propTypes = {
   }),
 };
 
-export default ChecklistSection;
+export default injectIntl(ChecklistSection);

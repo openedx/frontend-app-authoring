@@ -18,9 +18,10 @@ const ChecklistItemBody = ({
   intl,
 }) => (
   <ActionRow>
-    <div className="mr-3" id={`icon=${checkId}`}>
+    <div className="mr-3" id={`icon-${checkId}`} data-testid={`icon-${checkId}`}>
       {isCompleted ? (
         <Icon
+          data-testid="completed-icon"
           src={CheckCircle}
           className="text-success"
           style={{ height: '32px', width: '32px' }}
@@ -28,6 +29,7 @@ const ChecklistItemBody = ({
         />
       ) : (
         <Icon
+          data-testid="uncompleted-icon"
           src={RadioButtonUnchecked}
           style={{ height: '32px', width: '32px' }}
           screenReaderText={intl.formatMessage(messages.uncompletedItemLabel)}
@@ -44,7 +46,7 @@ const ChecklistItemBody = ({
     </div>
     <ActionRow.Spacer />
     {updateLink && (
-      <Hyperlink destination={updateLink}>
+      <Hyperlink destination={updateLink} data-testid="update-hyperlink">
         <Button size="sm">
           <FormattedMessage {...messages.updateLinkLabel} />
         </Button>
