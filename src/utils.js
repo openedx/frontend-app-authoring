@@ -95,12 +95,31 @@ export function parseArrayOrObjectValues(obj) {
   return result;
 }
 
+/**
+ * Create a correct inner path depend on config PUBLIC_PATH.
+ * @param {string} checkPath - the internal route path that is validated
+ * @returns {string} - the correct internal route path
+ */
+export const createCorrectInternalRoute = (checkPath) => {
+  let basePath = getPath(getConfig().PUBLIC_PATH);
+
+  if (basePath.endsWith('/')) {
+    basePath = basePath.slice(0, -1);
+  }
+
+  if (!checkPath.startsWith(basePath)) {
+    return `${basePath}${checkPath}`;
+  }
+
+  return checkPath;
+};
+
 export function getPagePath(courseId, isMfePageEnabled, urlParameter) {
   if (isMfePageEnabled === 'true') {
     if (urlParameter === 'tabs') {
-      return `${getConfig().BASE_URL}/course/${courseId}/pages-and-resources`;
+      return createCorrectInternalRoute(`/course/${courseId}/pages-and-resources`);
     }
-    return `${getConfig().BASE_URL}/course/${courseId}/${urlParameter}`;
+    return createCorrectInternalRoute(`/course/${courseId}/${urlParameter}`);
   }
   return `${getConfig().STUDIO_BASE_URL}/${urlParameter}/${courseId}`;
 }
@@ -267,23 +286,4 @@ export const getFileSizeToClosestByte = (fileSize) => {
   const units = ['B', 'KB', 'MB', 'GB', 'TB'];
   const fileSizeFixedDecimal = Number.parseFloat(size).toFixed(2);
   return `${fileSizeFixedDecimal} ${units[divides]}`;
-};
-
-/**
- * Create a correct inner path depend on config PUBLIC_PATH.
- * @param {string} checkPath - the internal route path that is validated
- * @returns {string} - the correct internal route path
- */
-export const createCorrectInternalRoute = (checkPath) => {
-  let basePath = getPath(getConfig().PUBLIC_PATH);
-
-  if (basePath.endsWith('/')) {
-    basePath = basePath.slice(0, -1);
-  }
-
-  if (!checkPath.startsWith(basePath)) {
-    return `${basePath}${checkPath}`;
-  }
-
-  return checkPath;
 };

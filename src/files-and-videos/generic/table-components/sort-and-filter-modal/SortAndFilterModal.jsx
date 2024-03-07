@@ -7,9 +7,9 @@ import {
   DataTableContext,
   Form,
   ModalDialog,
-  SelectableBox,
   useCheckboxSetValues,
 } from '@openedx/paragon';
+import SelectableBox from '../../../../generic/SelectableBox';
 import messages from './messages';
 import { getCheckedFilters, getFilterOptions, processFilters } from './utils';
 
