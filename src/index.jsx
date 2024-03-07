@@ -54,7 +54,7 @@ const App = () => {
         <Route path="/home" element={<StudioHome />} />
         <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
         <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
-        {getConfig().SHOW_ACCESSIBILITY_PAGE === 'true' && (
+        {getConfig().ENABLE_ACCESSIBILITY_PAGE === 'true' && (
           <Route path="/accessibility" element={<AccessibilityPage />} />
         )}
         {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
@@ -117,7 +117,7 @@ initialize({
         STUDIO_SHORT_NAME: process.env.STUDIO_SHORT_NAME || null,
         TERMS_OF_SERVICE_URL: process.env.TERMS_OF_SERVICE_URL || null,
         PRIVACY_POLICY_URL: process.env.PRIVACY_POLICY_URL || null,
-        SHOW_ACCESSIBILITY_PAGE: process.env.SHOW_ACCESSIBILITY_PAGE || 'false',
+        ENABLE_ACCESSIBILITY_PAGE: process.env.ENABLE_ACCESSIBILITY_PAGE || 'false',
         NOTIFICATION_FEEDBACK_URL: process.env.NOTIFICATION_FEEDBACK_URL || null,
         ENABLE_NEW_EDITOR_PAGES: process.env.ENABLE_NEW_EDITOR_PAGES || 'false',
         ENABLE_UNIT_PAGE: process.env.ENABLE_UNIT_PAGE || 'false',
