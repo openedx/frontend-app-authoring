@@ -123,7 +123,6 @@ initialize({
         ENABLE_UNIT_PAGE: process.env.ENABLE_UNIT_PAGE || 'false',
         ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN: process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN || 'false',
         ENABLE_TAGGING_TAXONOMY_PAGES: process.env.ENABLE_TAGGING_TAXONOMY_PAGES || 'false',
-        ENABLE_CHECKLIST_QUALITY: process.env.ENABLE_CHECKLIST_QUALITY || 'true',
       }, 'CourseAuthoringConfig');
     },
   },

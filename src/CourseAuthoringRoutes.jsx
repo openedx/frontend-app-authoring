@@ -20,7 +20,6 @@ import { CourseUnit } from './course-unit';
 import CourseExportPage from './export-page/CourseExportPage';
 import CourseImportPage from './import-page/CourseImportPage';
 import { DECODED_ROUTES } from './constants';
-import CourseChecklist from './course-checklist';
 
 /**
  * As of this writing, these routes are mounted at a path prefixed with the following:
@@ -110,10 +109,6 @@ const CourseAuthoringRoutes = () => {
         <Route
           path="export"
           element={<PageWrap><CourseExportPage courseId={courseId} /></PageWrap>}
-        />
-        <Route
-          path="checklists"
-          element={<PageWrap><CourseChecklist courseId={courseId} /></PageWrap>}
         />
       </Routes>
     </CourseAuthoringPage>
