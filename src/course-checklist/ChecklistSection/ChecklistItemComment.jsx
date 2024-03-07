@@ -13,7 +13,7 @@ const ChecklistItemComment = ({
   const commentWrapper = (comment) => (
     <div className="row m-0 mt-3 pt-3 border-top align-items-center" data-identifier="comment">
       <div className="mr-4">
-        <Icon src={ModeComment} size="lg" style={{ height: '32px', width: '32px' }}/>
+        <Icon src={ModeComment} size="lg" style={{ height: '32px', width: '32px' }} />
       </div>
       <div className="small">
         {comment}
