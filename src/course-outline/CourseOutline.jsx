@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -43,6 +43,7 @@ import ConfigureModal from './configure-modal/ConfigureModal';
 import PageAlerts from './page-alerts/PageAlerts';
 import { useCourseOutline } from './hooks';
 import messages from './messages';
+import useUnitTagsCount from './data/apiHooks';
 
 const CourseOutline = ({ courseId }) => {
   const intl = useIntl();
@@ -161,6 +162,27 @@ const CourseOutline = ({ courseId }) => {
       setSections(() => initialSections);
     });
   };
+
+  const unitsIdPattern = useMemo(() => {
+    let pattern = '';
+    sections.forEach((section) => {
+      section.childInfo.children.forEach((subsection) => {
+        subsection.childInfo.children.forEach((unit) => {
+          if (pattern !== '') {
+            pattern += `,${unit.id}`;
+          } else {
+            pattern += unit.id;
+          }
+        });
+      });
+    });
+    return pattern;
+  }, [sections]);
+
+  const {
+    data: unitsTagCounts,
+    isSuccess: isUnitsTagCountsLoaded,
+  } = useUnitTagsCount(unitsIdPattern);
 
   /**
    * Check if item can be moved by given step.
@@ -405,6 +427,7 @@ const CourseOutline = ({ courseId }) => {
                                             )}
                                             onCopyToClipboardClick={handleCopyToClipboardClick}
                                             discussionsSettings={discussionsSettings}
+                                            tagsCount={isUnitsTagCountsLoaded ? unitsTagCounts[unit.id] : 0}
                                           />
                                         ))}
                                       </DraggableList>

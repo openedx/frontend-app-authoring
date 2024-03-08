@@ -1,6 +1,8 @@
 import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { act, render, fireEvent } from '@testing-library/react';
+import {
+  act, render, fireEvent, screen,
+} from '@testing-library/react';
 
 import ContentTagsDrawer from './ContentTagsDrawer';
 import {
@@ -9,10 +11,13 @@ import {
 } from './data/apiHooks';
 import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from '../taxonomy/data/apiHooks';
 
+const contentId = 'block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@7f47fe2dbcaf47c5a071671c741fe1ab';
+const mockOnClose = jest.fn();
+
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: () => ({
-    contentId: 'block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@7f47fe2dbcaf47c5a071671c741fe1ab',
+    contentId,
   }),
 }));
 
@@ -35,9 +40,9 @@ jest.mock('../taxonomy/data/apiHooks', () => ({
   useIsTaxonomyListDataLoaded: jest.fn(),
 }));
 
-const RootWrapper = () => (
+const RootWrapper = (params) => (
   <IntlProvider locale="en" messages={{}}>
-    <ContentTagsDrawer />
+    <ContentTagsDrawer {...params} />
   </IntlProvider>
 );
 
@@ -75,6 +80,17 @@ describe('<ContentTagsDrawer />', () => {
       const { getByText } = render(<RootWrapper />);
       expect(getByText('Unit 1')).toBeInTheDocument();
     });
+  });
+
+  it('shows content using params', async () => {
+    useContentData.mockReturnValue({
+      isSuccess: true,
+      data: {
+        displayName: 'Unit 1',
+      },
+    });
+    render(<RootWrapper id={contentId} />);
+    expect(screen.getByText('Unit 1')).toBeInTheDocument();
   });
 
   it('shows the taxonomies data including tag numbers after the query is complete', async () => {
@@ -138,7 +154,7 @@ describe('<ContentTagsDrawer />', () => {
     });
   });
 
-  it('should call closeContentTagsDrawer when CloseButton is clicked', async () => {
+  it('should call closeManageTagsDrawer when CloseButton is clicked', async () => {
     const postMessageSpy = jest.spyOn(window.parent, 'postMessage');
 
     const { getByTestId } = render(<RootWrapper />);
@@ -152,7 +168,17 @@ describe('<ContentTagsDrawer />', () => {
     postMessageSpy.mockRestore();
   });
 
-  it('should call closeContentTagsDrawer when Escape key is pressed and no selectable box is active', () => {
+  it('should call onClose param when CloseButton is clicked', async () => {
+    render(<RootWrapper onClose={mockOnClose} />);
+
+    // Find the CloseButton element by its test ID and trigger a click event
+    const closeButton = screen.getByTestId('drawer-close-button');
+    fireEvent.click(closeButton);
+
+    expect(mockOnClose).toHaveBeenCalled();
+  });
+
+  it('should call closeManageTagsDrawer when Escape key is pressed and no selectable box is active', () => {
     const postMessageSpy = jest.spyOn(window.parent, 'postMessage');
 
     const { container } = render(<RootWrapper />);
@@ -166,7 +192,7 @@ describe('<ContentTagsDrawer />', () => {
     postMessageSpy.mockRestore();
   });
 
-  it('should not call closeContentTagsDrawer when Escape key is pressed and a selectable box is active', () => {
+  it('should not call closeManageTagsDrawer when Escape key is pressed and a selectable box is active', () => {
     const postMessageSpy = jest.spyOn(window.parent, 'postMessage');
 
     const { container } = render(<RootWrapper />);

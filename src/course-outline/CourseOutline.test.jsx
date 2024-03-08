@@ -78,6 +78,11 @@ jest.mock('@edx/frontend-platform/i18n', () => ({
   }),
 }));
 
+jest.mock('./data/apiHooks', () => () => ({
+  data: {},
+  isSuccess: true,
+}));
+
 const RootWrapper = () => (
   <AppProvider store={store}>
     <IntlProvider locale="en">

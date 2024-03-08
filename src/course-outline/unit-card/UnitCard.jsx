@@ -1,7 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
-import { useToggle } from '@openedx/paragon';
+import { useToggle, Sheet } from '@openedx/paragon';
 
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
@@ -10,6 +10,7 @@ import ConditionalSortableElement from '../drag-helper/ConditionalSortableElemen
 import TitleLink from '../card-header/TitleLink';
 import XBlockStatus from '../xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
+import { ContentTagsDrawer } from '../../content-tags-drawer';
 
 const UnitCard = ({
   unit,
@@ -29,11 +30,13 @@ const UnitCard = ({
   onOrderChange,
   onCopyToClipboardClick,
   discussionsSettings,
+  tagsCount,
 }) => {
   const currentRef = useRef(null);
   const dispatch = useDispatch();
   const [isFormOpen, openForm, closeForm] = useToggle(false);
   const namePrefix = 'unit';
+  const [showManageTags, setShowManageTags] = useState(false);
 
   const {
     id,
@@ -122,60 +125,75 @@ const UnitCard = ({
   const isDraggable = actions.draggable && (actions.allowMoveUp || actions.allowMoveDown);
 
   return (
-    <ConditionalSortableElement
-      id={id}
-      key={id}
-      draggable={isDraggable}
-      componentStyle={{
-        background: '#fdfdfd',
-        ...borderStyle,
-      }}
-    >
-      <div
-        className="unit-card"
-        data-testid="unit-card"
-        ref={currentRef}
+    <>
+      <ConditionalSortableElement
+        id={id}
+        key={id}
+        draggable={isDraggable}
+        componentStyle={{
+          background: '#fdfdfd',
+          ...borderStyle,
+        }}
       >
-        <CardHeader
-          title={displayName}
-          status={unitStatus}
-          hasChanges={hasChanges}
-          onClickMenuButton={handleClickMenuButton}
-          onClickPublish={onOpenPublishModal}
-          onClickConfigure={onOpenConfigureModal}
-          onClickEdit={openForm}
-          onClickDelete={onOpenDeleteModal}
-          onClickMoveUp={handleUnitMoveUp}
-          onClickMoveDown={handleUnitMoveDown}
-          isFormOpen={isFormOpen}
-          closeForm={closeForm}
-          onEditSubmit={handleEditSubmit}
-          isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
-          onClickDuplicate={onDuplicateSubmit}
-          titleComponent={titleComponent}
-          namePrefix={namePrefix}
-          actions={actions}
-          isVertical
-          enableCopyPasteUnits={enableCopyPasteUnits}
-          onClickCopy={handleCopyClick}
-          discussionEnabled={discussionEnabled}
-          discussionsSettings={discussionsSettings}
-          parentInfo={parentInfo}
-        />
-        <div className="unit-card__content item-children" data-testid="unit-card__content">
-          <XBlockStatus
-            isSelfPaced={isSelfPaced}
-            isCustomRelativeDatesActive={isCustomRelativeDatesActive}
-            blockData={unit}
+        <div
+          className="unit-card"
+          data-testid="unit-card"
+          ref={currentRef}
+        >
+          <CardHeader
+            title={displayName}
+            status={unitStatus}
+            hasChanges={hasChanges}
+            onClickMenuButton={handleClickMenuButton}
+            onClickPublish={onOpenPublishModal}
+            onClickConfigure={onOpenConfigureModal}
+            onClickManageTags={/* istanbul ignore next */ () => setShowManageTags(true)}
+            onClickEdit={openForm}
+            onClickDelete={onOpenDeleteModal}
+            onClickMoveUp={handleUnitMoveUp}
+            onClickMoveDown={handleUnitMoveDown}
+            isFormOpen={isFormOpen}
+            closeForm={closeForm}
+            onEditSubmit={handleEditSubmit}
+            isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
+            onClickDuplicate={onDuplicateSubmit}
+            titleComponent={titleComponent}
+            namePrefix={namePrefix}
+            actions={actions}
+            isVertical
+            enableCopyPasteUnits={enableCopyPasteUnits}
+            onClickCopy={handleCopyClick}
+            discussionEnabled={discussionEnabled}
+            discussionsSettings={discussionsSettings}
+            parentInfo={parentInfo}
+            tagsCount={tagsCount}
           />
+          <div className="unit-card__content item-children" data-testid="unit-card__content">
+            <XBlockStatus
+              isSelfPaced={isSelfPaced}
+              isCustomRelativeDatesActive={isCustomRelativeDatesActive}
+              blockData={unit}
+            />
+          </div>
         </div>
-      </div>
-    </ConditionalSortableElement>
+      </ConditionalSortableElement>
+      <Sheet
+        position="right"
+        show={showManageTags}
+        onClose={/* istanbul ignore next */ () => setShowManageTags(false)}
+      >
+        <ContentTagsDrawer
+          id={id}
+          onClose={/* istanbul ignore next */ () => setShowManageTags(false)}
+        />
+      </Sheet>
+    </>
   );
 };
 
 UnitCard.defaultProps = {
   discussionsSettings: {},
+  tagsCount: undefined,
 };
 
 UnitCard.propTypes = {
@@ -231,6 +249,7 @@ UnitCard.propTypes = {
     providerType: PropTypes.string,
     enableGradedUnits: PropTypes.bool,
   }),
+  tagsCount: PropTypes.number,
 };
 
 export default UnitCard;
