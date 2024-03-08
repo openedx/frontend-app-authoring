@@ -11,13 +11,9 @@ const checkboxText = 'SelectableCheckbox';
 const radioType = 'radio';
 const radioText = 'SelectableRadio';
 
-function SelectableCheckbox(props) {
-  return <SelectableBox type={checkboxType} {...props}>{checkboxText}</SelectableBox>;
-}
+const SelectableCheckbox = (props) => <SelectableBox type={checkboxType} {...props}>{checkboxText}</SelectableBox>;
 
-function SelectableRadio(props) {
-  return <SelectableBox type={radioType} {...props}>{radioText}</SelectableBox>;
-}
+const SelectableRadio = (props) => <SelectableBox type={radioType} {...props}>{radioText}</SelectableBox>;
 
 describe('<SelectableBox />', () => {
   describe('correct rendering', () => {

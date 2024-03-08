@@ -75,6 +75,7 @@ const FormGroupContextProvider = ({
     return { ...descriptorProps, id };
   };
 
+  // eslint-disable-next-line react/jsx-no-constructed-context-values
   const contextValue = {
     getControlProps,
     getLabelProps,
