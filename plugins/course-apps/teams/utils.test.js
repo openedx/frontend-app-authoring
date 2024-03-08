@@ -28,7 +28,7 @@ describe('teams utils', () => {
 
     test('returns false if the group is invalid', () => {
       getConfig.mockReturnValue({ ENABLE_OPEN_MANAGED_TEAM_TYPE: true });
-      expect(isGroupTypeEnabled('')).toBe(false);
+      expect(isGroupTypeEnabled('FOO')).toBe(false);
     });
 
     test('returns false if the group is null', () => {
