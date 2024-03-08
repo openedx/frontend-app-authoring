@@ -36,6 +36,8 @@ const SortAndFilterModal = ({
   }, [state]);
 
   const handleChange = (e) => {
+    // eslint-disable-next-line no-console
+    console.log('SortAndFilterModal | handleChange called | e: ', e);
     setSortBy(e.target.value);
   };
 

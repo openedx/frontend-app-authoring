@@ -33,6 +33,7 @@ const FormCheckboxSetContextProvider = ({
     checked: isControlled ? value.includes(checkboxProps.value) : undefined,
     defaultChecked: isControlled ? undefined : (defaultValue && defaultValue.includes(checkboxProps.value)),
   });
+  // eslint-disable-next-line react/jsx-no-constructed-context-values
   const contextValue = {
     name,
     value,

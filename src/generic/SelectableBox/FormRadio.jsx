@@ -18,8 +18,16 @@ const RadioControl = React.forwardRef((props, ref) => {
     radioProps = getRadioControlProps(radioProps);
   }
 
+  const onChange = (...args) => {
+    // eslint-disable-next-line no-console
+    console.log('RadioControl.onChange called with args: ', args);
+    if (radioProps.onChange) {
+      radioProps.onChange(...args);
+    }
+  };
+
   return (
-    <input {...radioProps} type="radio" ref={ref} />
+    <input {...{ ...radioProps, onChange }} type="radio" ref={ref} />
   );
 });
 
@@ -59,9 +67,9 @@ const FormRadio = React.forwardRef(({
           {children}
         </FormLabel>
         {description && (
-        <FormControlFeedback hasIcon={false}>
-          {description}
-        </FormControlFeedback>
+          <FormControlFeedback hasIcon={false}>
+            {description}
+          </FormControlFeedback>
         )}
       </div>
     </div>

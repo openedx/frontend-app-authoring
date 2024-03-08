@@ -20,7 +20,14 @@ const FormRadioSetContextProvider = ({
   value,
   defaultValue,
 }) => {
+  const handleChange = (...args) => {
+    // eslint-disable-next-line no-console
+    console.log('FormRadioSetContextProvider.handleChange called with args: ', args);
+    onChange(...args);
+  };
   const isControlled = !defaultValue && value !== undefined;
+  // eslint-disable-next-line no-console
+  console.log('FormRadioSetContextProvider | isControlled: ', isControlled);
   const getRadioControlProps = (radioProps) => ({
     ...radioProps,
     name,
@@ -29,10 +36,11 @@ const FormRadioSetContextProvider = ({
     /* istanbul ignore next */
     onFocus: radioProps.onFocus ? callAllHandlers(onFocus, radioProps.onFocus) : onFocus,
     /* istanbul ignore next */
-    onChange: radioProps.onChange ? callAllHandlers(onChange, radioProps.onChange) : onChange,
+    onChange: radioProps.onChange ? callAllHandlers(handleChange, radioProps.onChange) : onChange,
     checked: isControlled ? value === radioProps.value : undefined,
     defaultChecked: isControlled ? undefined : defaultValue === radioProps.value,
   });
+  // eslint-disable-next-line react/jsx-no-constructed-context-values
   const contextValue = {
     name,
     value,
