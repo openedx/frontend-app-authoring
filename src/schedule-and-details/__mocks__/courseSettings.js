@@ -19,6 +19,7 @@ module.exports = {
   enrollmentEndEditable: true,
   isCreditCourse: true,
   isEntranceExamsEnabled: true,
+  isEditable: true,
   isPrerequisiteCoursesEnabled: true,
   languageOptions: [
     ['en', 'English'],

@@ -20,6 +20,7 @@ const ScheduleSection = ({
   certificatesDisplayBehavior,
   canShowCertificateAvailableDateField,
   onChange,
+  isEditable,
 }) => {
   const intl = useIntl();
   const enrollmentEndHelpText = intl.formatMessage(
@@ -42,6 +43,7 @@ const ScheduleSection = ({
       ],
       rowType: SCHEDULE_ROW_TYPES.datetime,
       helpText: intl.formatMessage(messages.scheduleCourseStartDateHelpText),
+      readonly: !isEditable,
       controlName: 'startDate',
       errorFeedback: errorFields?.startDate,
     },
@@ -53,6 +55,7 @@ const ScheduleSection = ({
       value: endDate,
       rowType: SCHEDULE_ROW_TYPES.datetime,
       helpText: intl.formatMessage(messages.scheduleCourseEndDateHelpText),
+      readonly: !isEditable,
       controlName: 'endDate',
       errorFeedback: errorFields?.endDate,
     },
@@ -73,6 +76,7 @@ const ScheduleSection = ({
       value: enrollmentStart,
       rowType: SCHEDULE_ROW_TYPES.datetime,
       helpText: intl.formatMessage(messages.scheduleEnrollmentStartDateHelpText),
+      readonly: !isEditable,
       controlName: 'enrollmentStart',
       errorFeedback: errorFields?.enrollmentStart,
     },
@@ -84,7 +88,7 @@ const ScheduleSection = ({
       value: enrollmentEnd,
       rowType: SCHEDULE_ROW_TYPES.datetime,
       helpText: computedEnrollmentEndHelpText,
-      readonly: !enrollmentEndEditable,
+      readonly: !enrollmentEndEditable || !isEditable,
       controlName: 'enrollmentEnd',
       errorFeedback: errorFields?.enrollmentEnd,
     },
@@ -165,6 +169,7 @@ ScheduleSection.propTypes = {
   certificatesDisplayBehavior: PropTypes.string.isRequired,
   canShowCertificateAvailableDateField: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired,
+  isEditable: PropTypes.bool.isRequired,
 };
 
 export default ScheduleSection;

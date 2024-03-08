@@ -18,6 +18,7 @@ describe('<DetailsSection />', () => {
     language: courseSettingsMock.languageOptions[1][0],
     languageOptions: courseSettingsMock.languageOptions,
     onChange: onChangeMock,
+    isEditable: courseSettingsMock.isEditable,
   };
 
   it('renders details section successfully', () => {
@@ -56,5 +57,11 @@ describe('<DetailsSection />', () => {
     expect(
       getByRole('button', { name: messages.dropdownEmpty.defaultMessage }),
     ).toBeInTheDocument();
+  });
+
+  it('should disable the dropdown if isEditable is false', () => {
+    const initialProps = { ...props, isEditable: false };
+    const { getByRole } = render(<RootWrapper {...initialProps} />);
+    expect(getByRole('button').disabled).toEqual(true);
   });
 });

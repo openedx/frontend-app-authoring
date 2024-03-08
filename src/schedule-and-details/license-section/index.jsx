@@ -10,7 +10,7 @@ import { LICENSE_TYPE } from './constants';
 import messages from './messages';
 import { useLicenseDetails } from './hooks';
 
-const LicenseSection = ({ license, onChange }) => {
+const LicenseSection = ({ license, onChange, isEditable }) => {
   const intl = useIntl();
   const {
     licenseURL,
@@ -29,6 +29,7 @@ const LicenseSection = ({ license, onChange }) => {
       <LicenseSelector
         licenseType={licenseType}
         onChangeLicenseType={handleChangeLicenseType}
+        isEditable={isEditable}
       />
       {licenseType === LICENSE_TYPE.creativeCommons && (
         <LicenseCommonsOptions
@@ -52,6 +53,7 @@ LicenseSection.defaultProps = {
 LicenseSection.propTypes = {
   license: PropTypes.string,
   onChange: PropTypes.func.isRequired,
+  isEditable: PropTypes.bool.isRequired,
 };
 
 export default LicenseSection;

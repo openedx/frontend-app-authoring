@@ -47,7 +47,7 @@ const {
 } = courseDetailsMock;
 
 const {
-  aboutPageEditable, sidebarHtmlEnabled, shortDescriptionEditable, lmsLinkForAboutPage,
+  aboutPageEditable, sidebarHtmlEnabled, shortDescriptionEditable, lmsLinkForAboutPage, isEditable,
 } = courseSettingsMock;
 
 const props = {
@@ -63,6 +63,7 @@ const props = {
   courseImageAssetPath,
   shortDescriptionEditable,
   onChange: onChangeMock,
+  isEditable,
 };
 
 describe('<IntroducingSection />', () => {
@@ -92,6 +93,15 @@ describe('<IntroducingSection />', () => {
 
   it('should hide components if aboutPageEditable is false', () => {
     const initialProps = { ...props, aboutPageEditable: false };
+    const { queryAllByText } = render(<RootWrapper {...initialProps} />);
+    expect(queryAllByText(messages.introducingTitle.defaultMessage).length).toBe(0);
+    expect(queryAllByText(messages.introducingDescription.defaultMessage).length).toBe(0);
+    expect(queryAllByText(messages.courseOverviewLabel.defaultMessage).length).toBe(0);
+    expect(queryAllByText(messages.courseAboutSidebarLabel.defaultMessage).length).toBe(0);
+  });
+
+  it('should hide components if isEditable is false', () => {
+    const initialProps = { ...props, isEditable: false };
     const { queryAllByText } = render(<RootWrapper {...initialProps} />);
     expect(queryAllByText(messages.introducingTitle.defaultMessage).length).toBe(0);
     expect(queryAllByText(messages.introducingDescription.defaultMessage).length).toBe(0);

@@ -21,10 +21,13 @@ import scheduleMessages from './schedule-section/messages';
 import genericMessages from '../generic/help-sidebar/messages';
 import messages from './messages';
 import ScheduleAndDetails from '.';
+import { getUserPermissionsUrl, getUserPermissionsEnabledFlagUrl } from '../generic/data/api';
+import { fetchUserPermissionsQuery, fetchUserPermissionsEnabledFlag } from '../generic/data/thunks';
 
 let axiosMock;
 let store;
 const courseId = '123';
+const userId = 3;
 
 // Mock the tinymce lib
 jest.mock('@tinymce/tinymce-react', () => {
@@ -50,6 +53,18 @@ jest.mock('react-textarea-autosize', () => jest.fn((props) => (
   <textarea {...props} onFocus={() => {}} onBlur={() => {}} />
 )));
 
+const permissionsMockStore = async (permissions) => {
+  axiosMock.onGet(getUserPermissionsUrl(courseId, userId)).reply(200, permissions);
+  axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: true });
+  await executeThunk(fetchUserPermissionsQuery(courseId), store.dispatch);
+  await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
+};
+
+const permissionDisabledMockStore = async () => {
+  axiosMock.onGet(getUserPermissionsEnabledFlagUrl).reply(200, { enabled: false });
+  await executeThunk(fetchUserPermissionsEnabledFlag(), store.dispatch);
+};
+
 const RootWrapper = () => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
@@ -62,7 +77,7 @@ describe('<ScheduleAndDetails />', () => {
   beforeEach(() => {
     initializeMockApp({
       authenticatedUser: {
-        userId: 3,
+        userId,
         username: 'abc123',
         administrator: true,
         roles: [],
@@ -108,6 +123,30 @@ describe('<ScheduleAndDetails />', () => {
           name: genericMessages.sidebarTitleOther.defaultMessage,
         }),
       ).toBeInTheDocument();
+    });
+  });
+
+  it('should shows the PermissionDeniedAlert when there are not the right user permissions', async () => {
+    const permissionsData = { permissions: ['wrong_permission'] };
+    await permissionsMockStore(permissionsData);
+
+    const { queryByText } = render(<RootWrapper />);
+    await waitFor(() => {
+      const permissionDeniedAlert = queryByText('You are not authorized to view this page. If you feel you should have access, please reach out to your course team admin to be given access.');
+      expect(permissionDeniedAlert).toBeInTheDocument();
+    });
+  });
+
+  it('should not show the PermissionDeniedAlert when the User Permissions Flag is not enabled', async () => {
+    await permissionDisabledMockStore();
+
+    const { queryByText, getAllByText } = render(<RootWrapper />);
+    await waitFor(() => {
+      const permissionDeniedAlert = queryByText('You are not authorized to view this page. If you feel you should have access, please reach out to your course team admin to be given access.');
+      const scheduleAndDetailElements = getAllByText(messages.headingTitle.defaultMessage);
+      const scheduleAndDetailTitle = scheduleAndDetailElements[0];
+      expect(permissionDeniedAlert).not.toBeInTheDocument();
+      expect(scheduleAndDetailTitle).toBeInTheDocument();
     });
   });
 

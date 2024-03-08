@@ -7,7 +7,7 @@ import SectionSubHeader from '../../generic/section-sub-header';
 import messages from './messages';
 
 const DetailsSection = ({
-  language, languageOptions, onChange,
+  language, languageOptions, onChange, isEditable,
 }) => {
   const intl = useIntl();
   const formattedLanguage = () => {
@@ -24,7 +24,7 @@ const DetailsSection = ({
       <Form.Group className="form-group-custom dropdown-language">
         <Form.Label>{intl.formatMessage(messages.dropdownLabel)}</Form.Label>
         <Dropdown className="bg-white">
-          <Dropdown.Toggle variant="outline-primary" id="languageDropdown">
+          <Dropdown.Toggle variant="outline-primary" id="languageDropdown" disabled={!isEditable}>
             {formattedLanguage()}
           </Dropdown.Toggle>
           <Dropdown.Menu>
@@ -56,6 +56,7 @@ DetailsSection.propTypes = {
     PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
   ).isRequired,
   onChange: PropTypes.func.isRequired,
+  isEditable: PropTypes.bool.isRequired,
 };
 
 export default DetailsSection;

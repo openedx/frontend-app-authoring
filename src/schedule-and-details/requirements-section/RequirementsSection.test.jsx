@@ -36,6 +36,7 @@ const {
   isEntranceExamsEnabled,
   possiblePreRequisiteCourses,
   isPrerequisiteCoursesEnabled,
+  isEditable,
 } = courseSettingsMock;
 
 const props = {
@@ -49,6 +50,7 @@ const props = {
   entranceExamMinimumScorePct,
   isPrerequisiteCoursesEnabled,
   onChange: onChangeMock,
+  isEditable,
 };
 
 describe('<RequirementsSection />', () => {
@@ -89,5 +91,11 @@ describe('<RequirementsSection />', () => {
     expect(queryAllByLabelText(messages.timepickerLabel.defaultMessage).length).toBe(0);
     expect(queryAllByLabelText(messages.dropdownLabel.defaultMessage).length).toBe(0);
     expect(queryAllByLabelText(entranceExamMessages.requirementsEntrance.defaultMessage).length).toBe(0);
+  });
+
+  it('should disable the dropdown if isEditable is false', () => {
+    const initialProps = { ...props, isEditable: false };
+    const { queryByTestId } = render(<RootWrapper {...initialProps} />);
+    expect(queryByTestId('prerequisite_dropdown').disabled).toEqual(true);
   });
 });

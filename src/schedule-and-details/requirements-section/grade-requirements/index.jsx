@@ -10,6 +10,7 @@ const GradeRequirements = ({
   errorEffort,
   entranceExamMinimumScorePct,
   onChange,
+  isEditable,
 }) => (
   <Form.Group
     className={classNames('form-group-custom', {
@@ -27,6 +28,7 @@ const GradeRequirements = ({
         value={entranceExamMinimumScorePct}
         onChange={(e) => onChange(e.target.value, 'entranceExamMinimumScorePct')}
         trailingElement="%"
+        disabled={!isEditable}
       />
     </Stack>
     {errorEffort && (
@@ -49,6 +51,7 @@ GradeRequirements.propTypes = {
   errorEffort: PropTypes.string,
   entranceExamMinimumScorePct: PropTypes.string,
   onChange: PropTypes.func.isRequired,
+  isEditable: PropTypes.bool.isRequired,
 };
 
 export default GradeRequirements;

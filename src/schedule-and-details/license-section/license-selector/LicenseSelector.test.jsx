@@ -18,6 +18,7 @@ const RootWrapper = (props) => (
 const props = {
   licenseType: LICENSE_TYPE.allRightsReserved,
   onChangeLicenseType: onChangeLicenseTypeMock,
+  isEditable: true,
 };
 
 describe('<LicenseSelector />', () => {
@@ -59,5 +60,14 @@ describe('<LicenseSelector />', () => {
     const buttonSecond = getByRole('button', { name: messages.licenseChoice2.defaultMessage });
     expect(buttonFirst).toHaveClass('btn btn-outline-primary');
     expect(buttonSecond).toHaveClass('btn btn-outline-primary');
+  });
+
+  it('should show disabled buttons if isEditable is false', () => {
+    const initialProps = { ...props, isEditable: false };
+    const { getByRole } = render(<RootWrapper {...initialProps} />);
+    const buttonFirst = getByRole('button', { name: messages.licenseChoice1.defaultMessage });
+    const buttonSecond = getByRole('button', { name: messages.licenseChoice2.defaultMessage });
+    expect(buttonFirst.disabled).toEqual(true);
+    expect(buttonSecond.disabled).toEqual(true);
   });
 });
