@@ -5,6 +5,10 @@ import { cloneDeep } from 'lodash';
 
 import { useContentTaxonomyTagsUpdater } from './data/apiHooks';
 
+/** @typedef {import("../taxonomy/data/types.mjs").TaxonomyData} TaxonomyData */
+/** @typedef {import("./data/types.mjs").Tag} ContentTagData */
+/** @typedef {import("./ContentTagsCollapsible.d.ts").TagTreeEntry} TagTreeEntry */
+
 /**
  * Util function that sorts the keys of a tree in alphabetical order.
  *
@@ -49,8 +53,23 @@ const getLeafTags = (tree) => {
   return leafKeys;
 };
 
-/*
+/**
  * Handles all the underlying logic for the ContentTagsCollapsible component
+ * @param {string} contentId The ID of the content we're tagging (e.g. usage key)
+ * @param {TaxonomyData & {contentTags: ContentTagData[]}} taxonomyAndTagsData
+ * @param {(taxonomyId: number, tag: {value: string, label: string}) => void} addStagedContentTag
+ * @param {(taxonomyId: number, tagValue: string) => void} removeStagedContentTag
+ * @param {{value: string, label: string}[]} stagedContentTags
+ * @returns {{
+ *      tagChangeHandler: (tagSelectableBoxValue: string, checked: boolean) => void,
+ *      removeAppliedTagHandler: (tagSelectableBoxValue: string) => void,
+ *      appliedContentTagsTree: Record<string, TagTreeEntry>,
+ *      stagedContentTagsTree: Record<string, TagTreeEntry>,
+ *      contentTagsCount: number,
+ *      checkedTags: any,
+ *      commitStagedTags: () => void,
+ *      updateTags: import('@tanstack/react-query').UseMutationResult<any, unknown, { tags: string[]; }, unknown>
+ * }}
  */
 const useContentTagsCollapsibleHelper = (
   contentId,

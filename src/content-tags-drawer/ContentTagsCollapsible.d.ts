@@ -6,6 +6,8 @@ import type {} from 'react-select/base';
 export interface TagTreeEntry {
     explicit: boolean;
     children: Record<string, TagTreeEntry>;
+    canChangeObjecttag: boolean;
+    canDeleteObjecttag: boolean;
 }
 
 export interface TaxonomySelectProps {
