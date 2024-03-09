@@ -1,4 +1,7 @@
 // @ts-check
+// disable prop-types since we're using TypeScript to define the prop types,
+// but the linter can't detect that in a .jsx file.
+/* eslint-disable react/prop-types */
 import React from 'react';
 import Select, { components } from 'react-select';
 import {
@@ -7,10 +10,9 @@ import {
   Button,
   Spinner,
 } from '@openedx/paragon';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { SelectableBox } from '@edx/frontend-lib-content-components';
-import { useIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { debounce } from 'lodash';
 import messages from './messages';
 
@@ -20,9 +22,17 @@ import ContentTagsTree from './ContentTagsTree';
 
 import useContentTagsCollapsibleHelper from './ContentTagsCollapsibleHelper';
 
+/** @typedef {import("./ContentTagsCollapsible.d.ts").TagTreeEntry} TagTreeEntry */
+/** @typedef {import("./ContentTagsCollapsible.d.ts").TaxonomySelectProps} TaxonomySelectProps */
+/** @typedef {import("../taxonomy/data/types.mjs").TaxonomyData} TaxonomyData */
+/** @typedef {import("./data/types.mjs").Tag} ContentTagData */
+
+/**
+ * Custom Menu component for our Select box
+ * @param {import("react-select").MenuProps&{selectProps: TaxonomySelectProps}} props
+ */
 const CustomMenu = (props) => {
   const {
-    intl,
     handleSelectableBoxChange,
     checkedTags,
     taxonomyId,
@@ -33,6 +43,7 @@ const CustomMenu = (props) => {
     searchTerm,
     value,
   } = props.selectProps;
+  const intl = useIntl();
   return (
     <components.Menu {...props}>
       <div className="bg-white p-3 shadow">
@@ -80,36 +91,8 @@ const CustomMenu = (props) => {
   );
 };
 
-CustomMenu.propTypes = {
-  selectProps: PropTypes.shape({
-    intl: intlShape.isRequired,
-    handleSelectableBoxChange: PropTypes.func.isRequired,
-    checkedTags: PropTypes.arrayOf(PropTypes.string).isRequired,
-    taxonomyId: PropTypes.number.isRequired,
-    appliedContentTagsTree: PropTypes.objectOf(
-      PropTypes.shape({
-        explicit: PropTypes.bool.isRequired,
-        children: PropTypes.shape({}).isRequired,
-      }).isRequired,
-    ).isRequired,
-    stagedContentTagsTree: PropTypes.objectOf(
-      PropTypes.shape({
-        explicit: PropTypes.bool.isRequired,
-        children: PropTypes.shape({}).isRequired,
-      }).isRequired,
-    ).isRequired,
-    handleCommitStagedTags: PropTypes.func.isRequired,
-    handleCancelStagedTags: PropTypes.func.isRequired,
-    searchTerm: PropTypes.string.isRequired,
-    value: PropTypes.arrayOf(PropTypes.shape({
-      value: PropTypes.string.isRequired,
-      label: PropTypes.string.isRequired,
-    })).isRequired,
-  }).isRequired,
-};
-
-const CustomLoadingIndicator = (props) => {
-  const { intl } = props.selectProps;
+const CustomLoadingIndicator = () => {
+  const { intl } = useIntl();
   return (
     <Spinner
       animation="border"
@@ -119,18 +102,16 @@ const CustomLoadingIndicator = (props) => {
   );
 };
 
-CustomLoadingIndicator.propTypes = {
-  selectProps: PropTypes.shape({
-    intl: intlShape.isRequired,
-  }).isRequired,
-};
-
+/**
+ * Custom IndicatorsContainer component for our Select box
+ * @param {import("react-select").IndicatorsContainerProps&{selectProps: TaxonomySelectProps}} props
+ */
 const CustomIndicatorsContainer = (props) => {
   const {
-    intl,
     value,
     handleCommitStagedTags,
   } = props.selectProps;
+  const intl = useIntl();
   return (
     <components.IndicatorsContainer {...props}>
       {
@@ -150,21 +131,6 @@ const CustomIndicatorsContainer = (props) => {
     </components.IndicatorsContainer>
   );
 };
-
-CustomIndicatorsContainer.propTypes = {
-  selectProps: PropTypes.shape({
-    intl: intlShape.isRequired,
-    value: PropTypes.arrayOf(PropTypes.shape({
-      value: PropTypes.string.isRequired,
-      label: PropTypes.string.isRequired,
-    })).isRequired,
-    handleCommitStagedTags: PropTypes.func.isRequired,
-  }).isRequired,
-  children: PropTypes.node.isRequired,
-};
-
-/** @typedef {import("../taxonomy/data/types.mjs").TaxonomyData} TaxonomyData */
-/** @typedef {import("./data/types.mjs").Tag} ContentTagData */
 
 /**
  * Collapsible component that holds a Taxonomy along with Tags that belong to it.
@@ -239,9 +205,12 @@ CustomIndicatorsContainer.propTypes = {
  *
  * @param {Object} props - The component props.
  * @param {string} props.contentId - Id of the content object
- * @param {Array<Object>} props.stagedContentTags - Array of staged tags represented objects with value/label
- * @param {Function} props.addStagedContentTag - Callback function to add a staged tag for a taxonomy
- * @param {Function} props.removeStagedContentTag - Callback function to remove a staged tag from a taxonomy
+ * @param {{value: string, label: string}[]} props.stagedContentTags
+ *        - Array of staged tags represented as objects with value/label
+ * @param {(taxonomyId: number, tag: {value: string, label: string}) => void} props.addStagedContentTag
+ *        - Callback function to add a staged tag for a taxonomy
+ * @param {(taxonomyId: number, tagValue: string) => void} props.removeStagedContentTag
+ *        - Callback function to remove a staged tag from a taxonomy
  * @param {Function} props.setStagedTags - Callback function to set staged tags for a taxonomy to provided tags list
  * @param {TaxonomyData & {contentTags: ContentTagData[]}} props.taxonomyAndTagsData - Taxonomy metadata & applied tags
  */
@@ -349,16 +318,12 @@ const ContentTagsCollapsible = ({
               onInputChange={handleSearchChange}
               onChange={handleStagedTagsMenuChange}
               components={{
-                // @ts-ignore TODO: Properly fix this
                 Menu: CustomMenu,
-                // @ts-ignore TODO: Properly fix this
                 LoadingIndicator: CustomLoadingIndicator,
-                // @ts-ignore TODO: Properly fix this
                 IndicatorsContainer: CustomIndicatorsContainer,
               }}
               closeMenuOnSelect={false}
               blurInputOnSelect={false}
-              intl={intl}
               handleSelectableBoxChange={handleSelectableBoxChange}
               checkedTags={checkedTags}
               taxonomyId={taxonomyId}
@@ -385,26 +350,6 @@ const ContentTagsCollapsible = ({
       </div>
     </div>
   );
-};
-
-ContentTagsCollapsible.propTypes = {
-  contentId: PropTypes.string.isRequired,
-  taxonomyAndTagsData: PropTypes.shape({
-    id: PropTypes.number,
-    name: PropTypes.string,
-    contentTags: PropTypes.arrayOf(PropTypes.shape({
-      value: PropTypes.string,
-      lineage: PropTypes.arrayOf(PropTypes.string),
-    })),
-    canTagObject: PropTypes.bool.isRequired,
-  }).isRequired,
-  stagedContentTags: PropTypes.arrayOf(PropTypes.shape({
-    value: PropTypes.string,
-    label: PropTypes.string,
-  })).isRequired,
-  addStagedContentTag: PropTypes.func.isRequired,
-  removeStagedContentTag: PropTypes.func.isRequired,
-  setStagedTags: PropTypes.func.isRequired,
 };
 
 export default ContentTagsCollapsible;
