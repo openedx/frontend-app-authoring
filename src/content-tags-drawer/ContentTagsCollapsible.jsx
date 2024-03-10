@@ -92,7 +92,7 @@ const CustomMenu = (props) => {
 };
 
 const CustomLoadingIndicator = () => {
-  const { intl } = useIntl();
+  const intl = useIntl();
   return (
     <Spinner
       animation="border"
