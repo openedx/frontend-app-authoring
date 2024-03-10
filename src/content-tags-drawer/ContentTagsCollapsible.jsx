@@ -22,8 +22,8 @@ import ContentTagsTree from './ContentTagsTree';
 
 import useContentTagsCollapsibleHelper from './ContentTagsCollapsibleHelper';
 
-/** @typedef {import("./ContentTagsCollapsible.d.ts").TagTreeEntry} TagTreeEntry */
-/** @typedef {import("./ContentTagsCollapsible.d.ts").TaxonomySelectProps} TaxonomySelectProps */
+/** @typedef {import("./ContentTagsCollapsible").TagTreeEntry} TagTreeEntry */
+/** @typedef {import("./ContentTagsCollapsible").TaxonomySelectProps} TaxonomySelectProps */
 /** @typedef {import("../taxonomy/data/types.mjs").TaxonomyData} TaxonomyData */
 /** @typedef {import("./data/types.mjs").Tag} ContentTagData */
 

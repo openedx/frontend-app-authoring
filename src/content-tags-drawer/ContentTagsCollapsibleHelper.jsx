@@ -7,7 +7,7 @@ import { useContentTaxonomyTagsUpdater } from './data/apiHooks';
 
 /** @typedef {import("../taxonomy/data/types.mjs").TaxonomyData} TaxonomyData */
 /** @typedef {import("./data/types.mjs").Tag} ContentTagData */
-/** @typedef {import("./ContentTagsCollapsible.d.ts").TagTreeEntry} TagTreeEntry */
+/** @typedef {import("./ContentTagsCollapsible").TagTreeEntry} TagTreeEntry */
 
 /**
  * Util function that sorts the keys of a tree in alphabetical order.

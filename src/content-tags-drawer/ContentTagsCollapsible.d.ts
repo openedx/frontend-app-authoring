@@ -35,3 +35,5 @@ declare module 'react-select/base' {
   > extends TaxonomySelectProps {
   }
 }
+
+export default ContentTagsCollapsible;
