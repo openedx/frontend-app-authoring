@@ -96,6 +96,9 @@ const useContentTagsCollapsibleHelper = (
   // To handle checking/unchecking tags in the SelectableBox
   const [checkedTags, { add, remove }] = useCheckboxSetValues();
 
+  // State to keep track of the staged tags (and along with ancestors) that should be removed
+  const [stagedTagsToRemove, setStagedTagsToRemove] = React.useState(/** @type string[] */([]));
+
   // Handles making requests to the backend when applied tags are removed
   React.useEffect(() => {
     // We have this check because this hook is fired when the component first loads
@@ -112,6 +115,14 @@ const useContentTagsCollapsibleHelper = (
       updateTags.mutate({ tags: remainingAppliedTags });
     }
   }, [contentId, id, canTagObject, checkedTags, stagedContentTags]);
+
+  // Handles the removal of staged content tags based on what was removed
+  // from the staged tags tree. We are doing it in a useEffect since the removeTag
+  // method is being called inside a setState of the parent component, which
+  // was causing warnings
+  React.useEffect(() => {
+    stagedTagsToRemove.forEach(tag => removeStagedContentTag(id, tag));
+  }, [stagedTagsToRemove, removeStagedContentTag, id]);
 
   // Handles making requests to the update endpoint when the staged tags need to be committed
   const commitStagedTags = React.useCallback(() => {
@@ -166,38 +177,51 @@ const useContentTagsCollapsibleHelper = (
 
   /**
    * Util function that removes the tag along with its ancestors if it was
-   * the only explicit child tag. It also unstages tags (and ancestors) as they are removed
+   * the only explicit child tag. It returns a list of staged tags (and ancestors) that
+   * were unstaged and should be removed
    *
    * @param {object} tree - tag tree to remove the tag from
    * @param {string[]} tagsToRemove - remaining lineage of tag to remove at each recursive level.
    *                                  eg: ['grand parent', 'parent', 'tag']
    * @param {boolean} staged - whether we are removing staged tags or not
    * @param {string[]} fullLineage - Full lineage of tag being removed
+   * @returns {string[]} array of staged tag values (with ancestors) that should be removed from staged tree
    *
    */
   const removeTags = React.useCallback((tree, tagsToRemove, staged, fullLineage) => {
-    if (!tree || !tagsToRemove.length) {
-      return;
-    }
-    const key = tagsToRemove[0];
-    if (tree[key]) {
-      removeTags(tree[key].children, tagsToRemove.slice(1), staged, fullLineage);
+    const removedTags = [];
 
-      if (Object.keys(tree[key].children).length === 0 && (tree[key].explicit === false || tagsToRemove.length === 1)) {
-        // eslint-disable-next-line no-param-reassign
-        delete tree[key];
+    const traverseAndRemoveTags = (subTree, innerTagsToRemove) => {
+      if (!subTree || !innerTagsToRemove.length) {
+        return;
+      }
+      const key = innerTagsToRemove[0];
+      if (subTree[key]) {
+        traverseAndRemoveTags(subTree[key].children, innerTagsToRemove.slice(1));
 
-        // Remove tags (including ancestors) from staged tags select menu
-        if (staged) {
-          // Build value from lineage by traversing beginning till key, then encoding them
-          const toRemove = fullLineage.slice(0, fullLineage.indexOf(key) + 1).map(item => encodeURIComponent(item));
-          if (toRemove.length > 0) {
-            removeStagedContentTag(id, toRemove.join(','));
+        if (
+          Object.keys(subTree[key].children).length === 0
+          && (subTree[key].explicit === false || innerTagsToRemove.length === 1)
+        ) {
+          // eslint-disable-next-line no-param-reassign
+          delete subTree[key];
+
+          // Remove tags (including ancestors) from staged tags select menu
+          if (staged) {
+            // Build value from lineage by traversing beginning till key, then encoding them
+            const toRemove = fullLineage.slice(0, fullLineage.indexOf(key) + 1).map(item => encodeURIComponent(item));
+            if (toRemove.length > 0) {
+              removedTags.push(toRemove.join(','));
+            }
           }
         }
       }
-    }
-  }, [id, removeStagedContentTag]);
+    };
+
+    traverseAndRemoveTags(tree, tagsToRemove);
+
+    return removedTags;
+  }, []);
 
   // Add tag to the tree, and while traversing remove any selected ancestor tags
   // as they should become implicit
@@ -256,7 +280,8 @@ const useContentTagsCollapsibleHelper = (
       // from the staged tags tree and update the staged content tags tree
       setStagedContentTagsTree(prevStagedContentTagsTree => {
         const updatedStagedContentTagsTree = cloneDeep(prevStagedContentTagsTree);
-        removeTags(updatedStagedContentTagsTree, tagLineage, true, tagLineage);
+        const tagsToRemove = removeTags(updatedStagedContentTagsTree, tagLineage, true, tagLineage);
+        setStagedTagsToRemove(tagsToRemove);
         return updatedStagedContentTagsTree;
       });
     }
@@ -272,7 +297,8 @@ const useContentTagsCollapsibleHelper = (
     remove(tagSelectableBoxValue);
 
     // Remove tags from applied tags
-    removeTags(appliedContentTagsTree, tagLineage, false, tagLineage);
+    const tagsToRemove = removeTags(appliedContentTagsTree, tagLineage, false, tagLineage);
+    setStagedTagsToRemove(tagsToRemove);
 
     setRemoveAppliedTag(true);
   }, [appliedContentTagsTree, id, removeStagedContentTag]);
