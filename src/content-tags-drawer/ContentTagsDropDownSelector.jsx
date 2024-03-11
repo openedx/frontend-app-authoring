@@ -118,6 +118,38 @@ const ContentTagsDropDownSelector = ({
     setNumPages((x) => x + 1);
   }, []);
 
+  const handleKeyBoardNav = (e) => {
+    const keyPressed = e.key;
+    const currentElement = e.target;
+    const encapsulator = currentElement.closest('.dropdown-selector-tag-encapsulator');
+
+    let tagValue = currentElement.querySelector('.pgn__form-checkbox-input')?.value;
+    tagValue = tagValue ? decodeURIComponent(tagValue) : tagValue;
+
+    if (keyPressed === 'ArrowRight') {
+      if (tagValue && !isOpen(tagValue)) {
+        clickAndEnterHandler(tagValue);
+      }
+    } else if (keyPressed === 'ArrowLeft') {
+      if (tagValue && isOpen(tagValue)) {
+        clickAndEnterHandler(tagValue);
+      }
+      // TODO: Implement remaining cases when left key pressed
+    } else if (keyPressed === 'ArrowUp') {
+      const prevTag = encapsulator?.previousElementSibling?.querySelector('.dropdown-selector-tag-actions');
+      prevTag?.focus();
+      // TODO: Implement navigating inside sub tags
+    } else if (keyPressed === 'ArrowDown') {
+      const nextTag = encapsulator?.nextElementSibling?.querySelector('.dropdown-selector-tag-actions');
+      nextTag?.focus();
+      // TODO: Implement navigating inside sub tags
+    } else if (keyPressed === 'Enter') {
+      // TODO: Implement
+    } else if (keyPressed === 'Space') {
+      // TODO: Implmenet
+    }
+  };
+
   return (
     <div style={{ marginLeft: `${level * 1 }rem` }}>
       {tagPages.isLoading ? (
@@ -131,15 +163,20 @@ const ContentTagsDropDownSelector = ({
       ) : null }
       {tagPages.isError ? 'Error...' : null /* TODO: show a proper error message */}
 
-      {tagPages.data?.map((tagData) => (
-        <React.Fragment key={tagData.value}>
+      {tagPages.data?.map((tagData, i) => (
+        <div key={tagData.value} className="dropdown-selector-tag-encapsulator">
           <div
             className="d-flex flex-row"
             style={{
               minHeight: '44px',
             }}
           >
-            <div className="d-flex">
+            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+            <div
+              className="d-flex dropdown-selector-tag-actions"
+              tabIndex={i === 0 && level === 0 ? 0 : -1} // Only enable tab into top of dropdown to set focus
+              onKeyDown={handleKeyBoardNav}
+            >
               <SelectableBox
                 inputHidden={false}
                 type="checkbox"
@@ -149,6 +186,7 @@ const ContentTagsDropDownSelector = ({
                 value={[...lineage, tagData.value].map(t => encodeURIComponent(t)).join(',')}
                 isIndeterminate={isApplied(tagData) || isImplicit(tagData)}
                 disabled={isApplied(tagData) || isImplicit(tagData)}
+                tabIndex="-1"
               >
                 <HighlightedText text={tagData.value} highlight={searchTerm} />
               </SelectableBox>
@@ -158,7 +196,7 @@ const ContentTagsDropDownSelector = ({
                     <Icon
                       src={isOpen(tagData.value) ? ArrowDropUp : ArrowDropDown}
                       onClick={() => clickAndEnterHandler(tagData.value)}
-                      tabIndex="0"
+                      tabIndex="-1"
                       onKeyPress={(event) => (event.key === 'Enter' ? clickAndEnterHandler(tagData.value) : null)}
                     />
                   </div>
@@ -178,13 +216,14 @@ const ContentTagsDropDownSelector = ({
             />
           )}
 
-        </React.Fragment>
+        </div>
       ))}
 
       { hasMorePages
         ? (
           <div>
             <Button
+              tabIndex="0"
               variant="tertiary"
               iconBefore={Add}
               onClick={loadMoreTags}
