@@ -1,14 +1,6 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-
-const callAllHandlers = (...handlers) => {
-  const unifiedEventHandler = (event) => {
-    handlers
-      .filter(handler => typeof handler === 'function')
-      .forEach(handler => handler(event));
-  };
-  return unifiedEventHandler;
-};
+import { callAllHandlers } from './fieldUtils';
 
 const identityFn = props => props;
 

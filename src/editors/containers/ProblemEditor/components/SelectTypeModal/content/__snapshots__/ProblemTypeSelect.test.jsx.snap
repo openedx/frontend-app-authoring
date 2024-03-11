@@ -25,7 +25,6 @@ exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
       isInvalid={false}
       onClick={[Function]}
       onFocus={[Function]}
-      showActiveBoxState={true}
       type="radio"
       value="multiplechoiceresponse"
     >
@@ -41,7 +40,6 @@ exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
       isInvalid={false}
       onClick={[Function]}
       onFocus={[Function]}
-      showActiveBoxState={true}
       type="radio"
       value="choiceresponse"
     >
@@ -57,7 +55,6 @@ exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
       isInvalid={false}
       onClick={[Function]}
       onFocus={[Function]}
-      showActiveBoxState={true}
       type="radio"
       value="optionresponse"
     >
@@ -73,7 +70,6 @@ exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
       isInvalid={false}
       onClick={[Function]}
       onFocus={[Function]}
-      showActiveBoxState={true}
       type="radio"
       value="numericalresponse"
     >
@@ -89,7 +85,6 @@ exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
       isInvalid={false}
       onClick={[Function]}
       onFocus={[Function]}
-      showActiveBoxState={true}
       type="radio"
       value="stringresponse"
     >
@@ -135,7 +130,6 @@ exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
       isInvalid={false}
       onClick={[Function]}
       onFocus={[Function]}
-      showActiveBoxState={true}
       type="radio"
       value="multiplechoiceresponse"
     >
@@ -151,7 +145,6 @@ exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
       isInvalid={false}
       onClick={[Function]}
       onFocus={[Function]}
-      showActiveBoxState={true}
       type="radio"
       value="choiceresponse"
     >
@@ -167,7 +160,6 @@ exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
       isInvalid={false}
       onClick={[Function]}
       onFocus={[Function]}
-      showActiveBoxState={true}
       type="radio"
       value="optionresponse"
     >
@@ -183,7 +175,6 @@ exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
       isInvalid={false}
       onClick={[Function]}
       onFocus={[Function]}
-      showActiveBoxState={true}
       type="radio"
       value="numericalresponse"
     >
@@ -199,7 +190,6 @@ exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
       isInvalid={false}
       onClick={[Function]}
       onFocus={[Function]}
-      showActiveBoxState={true}
       type="radio"
       value="stringresponse"
     >
@@ -245,7 +235,6 @@ exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
       isInvalid={false}
       onClick={[Function]}
       onFocus={[Function]}
-      showActiveBoxState={true}
       type="radio"
       value="multiplechoiceresponse"
     >
@@ -261,7 +250,6 @@ exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
       isInvalid={false}
       onClick={[Function]}
       onFocus={[Function]}
-      showActiveBoxState={true}
       type="radio"
       value="choiceresponse"
     >
@@ -277,7 +265,6 @@ exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
       isInvalid={false}
       onClick={[Function]}
       onFocus={[Function]}
-      showActiveBoxState={true}
       type="radio"
       value="optionresponse"
     >
@@ -293,7 +280,6 @@ exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
       isInvalid={false}
       onClick={[Function]}
       onFocus={[Function]}
-      showActiveBoxState={true}
       type="radio"
       value="numericalresponse"
     >
@@ -309,7 +295,6 @@ exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
       isInvalid={false}
       onClick={[Function]}
       onFocus={[Function]}
-      showActiveBoxState={true}
       type="radio"
       value="stringresponse"
     >
@@ -355,7 +340,6 @@ exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
       isInvalid={false}
       onClick={[Function]}
       onFocus={[Function]}
-      showActiveBoxState={true}
       type="radio"
       value="multiplechoiceresponse"
     >
@@ -371,7 +355,6 @@ exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
       isInvalid={false}
       onClick={[Function]}
       onFocus={[Function]}
-      showActiveBoxState={true}
       type="radio"
       value="choiceresponse"
     >
@@ -387,7 +370,6 @@ exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
       isInvalid={false}
       onClick={[Function]}
       onFocus={[Function]}
-      showActiveBoxState={true}
       type="radio"
       value="optionresponse"
     >
@@ -403,7 +385,6 @@ exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
       isInvalid={false}
       onClick={[Function]}
       onFocus={[Function]}
-      showActiveBoxState={true}
       type="radio"
       value="numericalresponse"
     >
@@ -419,7 +400,6 @@ exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
       isInvalid={false}
       onClick={[Function]}
       onFocus={[Function]}
-      showActiveBoxState={true}
       type="radio"
       value="stringresponse"
     >
@@ -465,7 +445,6 @@ exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
       isInvalid={false}
       onClick={[Function]}
       onFocus={[Function]}
-      showActiveBoxState={true}
       type="radio"
       value="multiplechoiceresponse"
     >
@@ -481,7 +460,6 @@ exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
       isInvalid={false}
       onClick={[Function]}
       onFocus={[Function]}
-      showActiveBoxState={true}
       type="radio"
       value="choiceresponse"
     >
@@ -497,7 +475,6 @@ exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
       isInvalid={false}
       onClick={[Function]}
       onFocus={[Function]}
-      showActiveBoxState={true}
       type="radio"
       value="optionresponse"
     >
@@ -513,7 +490,6 @@ exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
       isInvalid={false}
       onClick={[Function]}
       onFocus={[Function]}
-      showActiveBoxState={true}
       type="radio"
       value="numericalresponse"
     >
@@ -529,7 +505,6 @@ exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
       isInvalid={false}
       onClick={[Function]}
       onFocus={[Function]}
-      showActiveBoxState={true}
       type="radio"
       value="stringresponse"
     >

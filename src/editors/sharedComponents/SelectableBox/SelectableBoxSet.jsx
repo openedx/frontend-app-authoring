@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { getInputType } from './getInputType';
-import { FormRadioSetContextProvider } from './FormRadioSetContext';
+import { getInputType } from './utils';
+// import { requiredWhenNot } from '../utils/propTypes';
 
 const INPUT_TYPES = [
   'radio',
@@ -26,7 +26,7 @@ const SelectableBoxSet = React.forwardRef(({
 }, ref) => {
   const inputType = getInputType('SelectableBoxSet', type);
 
-  const selectableBoxElement = React.createElement(
+  return React.createElement(
     inputType,
     {
       name,
@@ -45,22 +45,6 @@ const SelectableBoxSet = React.forwardRef(({
     },
     children,
   );
-
-  return type === 'radio' ? (
-    <FormRadioSetContextProvider
-      {...{
-        children,
-        name,
-        onChange,
-        value,
-        defaultValue,
-      }}
-    >
-      {
-        selectableBoxElement
-      }
-    </FormRadioSetContextProvider>
-  ) : selectableBoxElement;
 });
 
 SelectableBoxSet.propTypes = {

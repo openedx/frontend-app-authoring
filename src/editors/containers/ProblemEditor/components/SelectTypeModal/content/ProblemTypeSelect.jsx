@@ -3,9 +3,7 @@ import PropTypes from 'prop-types';
 import { Button, Container } from '@openedx/paragon';
 import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
 
-/* SelectableBox from Paragon currently has a bug as it misses a ContextProvider.
-This is a temporary fix by overriding it with our own copy that includes the ContextProvider. */
-// TODO: Replace this import with a paragon import once the bug is fixed and delete our copy of SelectableBox.
+// SelectableBox in paragon has a bug only visible on stage where you can't change selection. So we override it
 import SelectableBox from '../../../../../sharedComponents/SelectableBox';
 import { ProblemTypes, ProblemTypeKeys, AdvanceProblemKeys } from '../../../../../data/constants/problem';
 import messages from './messages';

@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<SelectableBox.Set /> correct rendering renders without props 1`] = `
+<div>
+  <div
+    aria-label="test-default-label"
+    class="pgn__selectable_box-set pgn__selectable_box-set--2 pgn__form-control-set"
+    role="radiogroup"
+  >
+    <div
+      class="pgn__selectable_box"
+      role="button"
+      tabindex="0"
+    >
+      <input
+        class="pgn__form-radio-input"
+        hidden=""
+        name="testName"
+        tabindex="-1"
+        type="radio"
+        value="1"
+      />
+      SelectableRadio1
+    </div>
+    <div
+      class="pgn__selectable_box"
+      role="button"
+      tabindex="0"
+    >
+      <input
+        class="pgn__form-radio-input"
+        hidden=""
+        name="testName"
+        tabindex="-1"
+        type="radio"
+        value="2"
+      />
+      SelectableRadio2
+    </div>
+    <div
+      class="pgn__selectable_box"
+      role="button"
+      tabindex="0"
+    >
+      <input
+        class="pgn__form-radio-input"
+        hidden=""
+        name="testName"
+        tabindex="-1"
+        type="radio"
+        value="3"
+      />
+      SelectableRadio3
+    </div>
+  </div>
+</div>
+`;

@@ -1,14 +1,6 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-
-const callAllHandlers = (...handlers) => {
-  const unifiedEventHandler = (event) => {
-    handlers
-      .filter(handler => typeof handler === 'function')
-      .forEach(handler => handler(event));
-  };
-  return unifiedEventHandler;
-};
+import { callAllHandlers } from './fieldUtils';
 
 const identityFn = props => props;
 
@@ -28,6 +20,9 @@ const FormRadioSetContextProvider = ({
   value,
   defaultValue,
 }) => {
+  const handleChange = (...args) => {
+    onChange(...args);
+  };
   const isControlled = !defaultValue && value !== undefined;
   const getRadioControlProps = (radioProps) => ({
     ...radioProps,
@@ -37,7 +32,7 @@ const FormRadioSetContextProvider = ({
     /* istanbul ignore next */
     onFocus: radioProps.onFocus ? callAllHandlers(onFocus, radioProps.onFocus) : onFocus,
     /* istanbul ignore next */
-    onChange: radioProps.onChange ? callAllHandlers(onChange, radioProps.onChange) : onChange,
+    onChange: radioProps.onChange ? callAllHandlers(handleChange, radioProps.onChange) : onChange,
     checked: isControlled ? value === radioProps.value : undefined,
     defaultChecked: isControlled ? undefined : defaultValue === radioProps.value,
   });

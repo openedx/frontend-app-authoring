@@ -1,6 +1,7 @@
-import {
-  Form, CheckboxControl, RadioControl,
-} from '@openedx/paragon';
+import { CheckboxControl } from './FormCheckbox';
+import { RadioControl } from './FormRadio';
+import FormRadioSet from './FormRadioSet';
+import FormCheckboxSet from './FormCheckboxSet';
 
 // eslint-disable-next-line import/prefer-default-export,consistent-return
 export const getInputType = (component, type) => {
@@ -16,11 +17,11 @@ export const getInputType = (component, type) => {
   } else if (component === 'SelectableBoxSet') {
     switch (type) {
       case 'radio':
-        return Form.RadioSet;
+        return FormRadioSet;
       case 'checkbox':
-        return Form.CheckboxSet;
+        return FormCheckboxSet;
       default:
-        return Form.RadioSet;
+        return FormRadioSet;
     }
   }
 };
