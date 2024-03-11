@@ -23,6 +23,9 @@ import Sequence from './course-sequence';
 import Sidebar from './sidebar';
 import { useCourseUnit } from './hooks';
 import messages from './messages';
+import PublishControls from './sidebar/PublishControls';
+import LocationInfo from './sidebar/LocationInfo';
+import TagsSidebarControls from '../content-tags-drawer/tags-sidebar-controls';
 
 const CourseUnit = ({ courseId }) => {
   const { blockId } = useParams();
@@ -123,9 +126,15 @@ const CourseUnit = ({ courseId }) => {
             </Layout.Element>
             <Layout.Element>
               <Stack gap={3}>
-                <Sidebar blockId={blockId} variant="publish" data-testid="course-unit-sidebar" />
-                <Sidebar variant="tags" />
-                <Sidebar variant="location" data-testid="course-unit-location-sidebar" />
+                <Sidebar data-testid="course-unit-sidebar">
+                  <PublishControls blockId={blockId} />
+                </Sidebar>
+                <Sidebar className="tags-sidebar">
+                  <TagsSidebarControls />
+                </Sidebar>
+                <Sidebar data-testid="course-unit-location-sidebar">
+                  <LocationInfo />
+                </Sidebar>
               </Stack>
             </Layout.Element>
           </Layout>
