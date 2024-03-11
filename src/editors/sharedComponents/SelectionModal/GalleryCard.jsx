@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 import {
   Badge,
   Image,
+  SelectableBox,
 } from '@openedx/paragon';
 import { FormattedMessage, FormattedDate, FormattedTime } from '@edx/frontend-platform/i18n';
 
-import SelectableBox from '../SelectableBox';
 import messages from './messages';
 import { formatDuration } from '../../utils';
 import LanguageNamesWidget from '../../containers/VideoEditor/components/VideoSettingsModal/components/VideoPreviewWidget/LanguageNamesWidget';
