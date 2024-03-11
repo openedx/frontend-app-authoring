@@ -3,7 +3,6 @@ import React from 'react';
 import {
   Badge,
   Collapsible,
-  SelectableBox,
   Button,
   ModalPopup,
   useToggle,
@@ -11,6 +10,7 @@ import {
 } from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { SelectableBox } from '@edx/frontend-lib-content-components';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { debounce } from 'lodash';
 import messages from './messages';

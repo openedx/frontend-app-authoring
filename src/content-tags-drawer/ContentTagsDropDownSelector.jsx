@@ -1,11 +1,11 @@
 // @ts-check
 import React, { useEffect, useState, useCallback } from 'react';
 import {
-  SelectableBox,
   Icon,
   Spinner,
   Button,
 } from '@openedx/paragon';
+import { SelectableBox } from '@edx/frontend-lib-content-components';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { ArrowDropDown, ArrowDropUp } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
