@@ -2,14 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import {
-  Scrollable, SelectableBox, Spinner,
+  Scrollable, Spinner,
 } from '@openedx/paragon';
-
 import {
   FormattedMessage,
   useIntl,
 } from '@edx/frontend-platform/i18n';
 
+import SelectableBox from '../SelectableBox';
 import messages from './messages';
 import GalleryCard from './GalleryCard';
 

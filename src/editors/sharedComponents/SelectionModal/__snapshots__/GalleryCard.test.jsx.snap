@@ -1,9 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`GalleryCard component snapshot with duration badge 1`] = `
-<SelectableBox
+<ForwardRef
+  checked={false}
   className="card bg-white shadow-none border-0 py-0"
+  inputHidden={true}
+  isIndeterminate={false}
+  isInvalid={false}
   key="props.img.externalUrl"
+  onClick={[Function]}
+  onFocus={[Function]}
   type="radio"
 >
   <div
@@ -81,13 +87,19 @@ exports[`GalleryCard component snapshot with duration badge 1`] = `
       </p>
     </div>
   </div>
-</SelectableBox>
+</ForwardRef>
 `;
 
 exports[`GalleryCard component snapshot with duration transcripts 1`] = `
-<SelectableBox
+<ForwardRef
+  checked={false}
   className="card bg-white shadow-none border-0 py-0"
+  inputHidden={true}
+  isIndeterminate={false}
+  isInvalid={false}
   key="props.img.externalUrl"
+  onClick={[Function]}
+  onFocus={[Function]}
   type="radio"
 >
   <div
@@ -167,13 +179,19 @@ exports[`GalleryCard component snapshot with duration transcripts 1`] = `
       </p>
     </div>
   </div>
-</SelectableBox>
+</ForwardRef>
 `;
 
 exports[`GalleryCard component snapshot with status badge 1`] = `
-<SelectableBox
+<ForwardRef
+  checked={false}
   className="card bg-white shadow-none border-0 py-0"
+  inputHidden={true}
+  isIndeterminate={false}
+  isInvalid={false}
   key="props.img.externalUrl"
+  onClick={[Function]}
+  onFocus={[Function]}
   type="radio"
 >
   <div
@@ -250,13 +268,19 @@ exports[`GalleryCard component snapshot with status badge 1`] = `
       </p>
     </div>
   </div>
-</SelectableBox>
+</ForwardRef>
 `;
 
 exports[`GalleryCard component snapshot with thumbnail fallback and load error 1`] = `
-<SelectableBox
+<ForwardRef
+  checked={false}
   className="card bg-white shadow-none border-0 py-0"
+  inputHidden={true}
+  isIndeterminate={false}
+  isInvalid={false}
   key="props.img.externalUrl"
+  onClick={[Function]}
+  onFocus={[Function]}
   type="radio"
 >
   <div
@@ -322,13 +346,19 @@ exports[`GalleryCard component snapshot with thumbnail fallback and load error 1
       </p>
     </div>
   </div>
-</SelectableBox>
+</ForwardRef>
 `;
 
 exports[`GalleryCard component snapshot with thumbnail fallback and no error 1`] = `
-<SelectableBox
+<ForwardRef
+  checked={false}
   className="card bg-white shadow-none border-0 py-0"
+  inputHidden={true}
+  isIndeterminate={false}
+  isInvalid={false}
   key="props.img.externalUrl"
+  onClick={[Function]}
+  onFocus={[Function]}
   type="radio"
 >
   <div
@@ -394,13 +424,19 @@ exports[`GalleryCard component snapshot with thumbnail fallback and no error 1`]
       </p>
     </div>
   </div>
-</SelectableBox>
+</ForwardRef>
 `;
 
 exports[`GalleryCard component snapshot: dateAdded=12345 1`] = `
-<SelectableBox
+<ForwardRef
+  checked={false}
   className="card bg-white shadow-none border-0 py-0"
+  inputHidden={true}
+  isIndeterminate={false}
+  isInvalid={false}
   key="props.img.externalUrl"
+  onClick={[Function]}
+  onFocus={[Function]}
   type="radio"
 >
   <div
@@ -465,5 +501,5 @@ exports[`GalleryCard component snapshot: dateAdded=12345 1`] = `
       </p>
     </div>
   </div>
-</SelectableBox>
+</ForwardRef>
 `;
