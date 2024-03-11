@@ -80,11 +80,14 @@ const VideosPage = ({
 
   const supportedFileFormats = { 'video/*': videoSupportedFileFormats || FILES_AND_UPLOAD_TYPE_FILTERS.video };
 
-  const handleAddFile = (file) => dispatch(addVideoFile(courseId, file, videoIds));
+  const handleErrorReset = (error) => dispatch(resetErrors(error));
+  const handleAddFile = (files) => {
+    handleErrorReset({ errorType: 'add' });
+    files.forEach(file => dispatch(addVideoFile(courseId, file, videoIds)));
+  };
   const handleDeleteFile = (id) => dispatch(deleteVideoFile(courseId, id));
   const handleDownloadFile = (selectedRows) => dispatch(fetchVideoDownload({ selectedRows, courseId }));
   const handleUsagePaths = (video) => dispatch(getUsagePaths({ video, courseId }));
-  const handleErrorReset = (error) => dispatch(resetErrors(error));
   const handleFileOrder = ({ newFileIdOrder, sortType }) => {
     dispatch(updateVideoOrder(courseId, newFileIdOrder, sortType));
   };

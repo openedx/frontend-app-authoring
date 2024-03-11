@@ -9,6 +9,7 @@ const slice = createSlice({
   initialState: {
     assetIds: [],
     loadingStatus: RequestStatus.IN_PROGRESS,
+    duplicateFiles: [],
     updatingStatus: '',
     addingStatus: '',
     deletingStatus: '',
@@ -64,6 +65,9 @@ const slice = createSlice({
     addAssetSuccess: (state, { payload }) => {
       state.assetIds = [payload.assetId, ...state.assetIds];
     },
+    updateDuplicateFiles: (state, { payload }) => {
+      state.duplicateFiles = payload.files;
+    },
     updateErrors: (state, { payload }) => {
       const { error, message } = payload;
       if (error === 'loading') {
@@ -89,6 +93,7 @@ export const {
   updateErrors,
   clearErrors,
   updateEditStatus,
+  updateDuplicateFiles,
 } = slice.actions;
 
 export const {

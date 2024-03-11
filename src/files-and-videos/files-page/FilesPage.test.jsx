@@ -36,6 +36,7 @@ import {
   deleteAssetFile,
   updateAssetLock,
   getUsagePaths,
+  validateAssetFiles,
 } from './data/thunks';
 import { getAssetsUrl } from './data/api';
 import messages from '../generic/messages';
@@ -124,12 +125,13 @@ describe('FilesAndUploads', () => {
       await emptyMockStore(RequestStatus.SUCCESSFUL);
       const dropzone = screen.getByTestId('files-dropzone');
       await act(async () => {
+        axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=100`).reply(200, { assets: [] });
         axiosMock.onPost(getAssetsUrl(courseId)).reply(204, generateNewAssetApiResponse());
         Object.defineProperty(dropzone, 'files', {
           value: [file],
         });
         fireEvent.drop(dropzone);
-        await executeThunk(addAssetFile(courseId, file, 0), store.dispatch);
+        await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
       });
       const addStatus = store.getState().assets.addingStatus;
       expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
@@ -193,6 +195,7 @@ describe('FilesAndUploads', () => {
     describe('table actions', () => {
       it('should upload a single file', async () => {
         await mockStore(RequestStatus.SUCCESSFUL);
+        axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=100`).reply(200, { assets: [] });
         axiosMock.onPost(getAssetsUrl(courseId)).reply(200, generateNewAssetApiResponse());
         let addFilesButton;
         await waitFor(() => {
@@ -200,7 +203,7 @@ describe('FilesAndUploads', () => {
         });
         await act(async () => {
           userEvent.upload(addFilesButton, file);
-          await executeThunk(addAssetFile(courseId, file, 1), store.dispatch);
+          await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
         });
         const addStatus = store.getState().assets.addingStatus;
         expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
@@ -503,7 +506,7 @@ describe('FilesAndUploads', () => {
       it('invalid file size should show error', async () => {
         const errorMessage = 'File download.png exceeds maximum size of 20 MB.';
         await mockStore(RequestStatus.SUCCESSFUL);
-
+        axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=100`).reply(200, { assets: [] });
         axiosMock.onPost(getAssetsUrl(courseId)).reply(413, { error: errorMessage });
         const addFilesButton = screen.getByLabelText('file-input');
         await act(async () => {
@@ -517,6 +520,7 @@ describe('FilesAndUploads', () => {
 
       it('404 upload should show error', async () => {
         await mockStore(RequestStatus.SUCCESSFUL);
+        axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=100`).reply(200, { assets: [] });
         axiosMock.onPost(getAssetsUrl(courseId)).reply(404);
         const addFilesButton = screen.getByLabelText('file-input');
         await act(async () => {

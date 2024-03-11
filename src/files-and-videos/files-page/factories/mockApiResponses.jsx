@@ -22,6 +22,7 @@ export const initialState = {
       usageMetrics: [],
       loading: '',
     },
+    duplicateFiles: {},
   },
   models: {
     assets: {
