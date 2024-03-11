@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Button, Container } from '@openedx/paragon';
 import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
 
-// SelectableBox in paragon has a bug only visible on stage where you can't change selection. So we override it
+// SelectableBox in paragon has a bug where you can't change selection. So we override it
 import SelectableBox from '../../../../../sharedComponents/SelectableBox';
 import { ProblemTypes, ProblemTypeKeys, AdvanceProblemKeys } from '../../../../../data/constants/problem';
 import messages from './messages';

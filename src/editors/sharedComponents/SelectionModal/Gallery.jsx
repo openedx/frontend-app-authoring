@@ -9,7 +9,7 @@ import {
   useIntl,
 } from '@edx/frontend-platform/i18n';
 
-// SelectableBox in paragon has a bug only visible on stage where you can't change selection. So we override it
+// SelectableBox in paragon has a bug where you can't change selection. So we override it
 import SelectableBox from '../SelectableBox';
 import messages from './messages';
 import GalleryCard from './GalleryCard';
