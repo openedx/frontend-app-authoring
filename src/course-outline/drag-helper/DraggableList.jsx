@@ -330,8 +330,18 @@ DraggableList.propTypes = {
   items: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     childInfo: PropTypes.shape({
-      // eslint-disable-next-line react/forbid-prop-types
-      children: PropTypes.arrayOf(PropTypes.object).isRequired,
+      children: PropTypes.arrayOf(
+        PropTypes.shape({
+          id: PropTypes.string.isRequired,
+          childInfo: PropTypes.shape({
+            children: PropTypes.arrayOf(
+              PropTypes.shape({
+                id: PropTypes.string.isRequired,
+              }),
+            ).isRequired,
+          }).isRequired,
+        }),
+      ).isRequired,
     }).isRequired,
   })).isRequired,
   setSections: PropTypes.func.isRequired,
