@@ -48,6 +48,7 @@ const PublishControls = ({ blockId }) => {
       />
       <SidebarBody
         releaseLabel={releaseLabel}
+        visibleToStaffOnly={visibleToStaffOnly}
       />
       <SidebarFooter
         locationId={locationId}

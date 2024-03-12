@@ -4,9 +4,7 @@ import { Card } from '@openedx/paragon';
 
 const Sidebar = ({ className, children, ...props }) => (
   <Card
-    className={classNames('course-unit-sidebar', className, {
-      // 'is-stuff-only': visibleToStaffOnly,
-    })}
+    className={classNames('course-unit-sidebar', className)}
     {...props}
   >
     {children}
