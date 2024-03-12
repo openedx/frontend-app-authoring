@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo } from 'react';
+// @ts-check
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -43,7 +44,6 @@ import ConfigureModal from './configure-modal/ConfigureModal';
 import PageAlerts from './page-alerts/PageAlerts';
 import { useCourseOutline } from './hooks';
 import messages from './messages';
-import useUnitTagsCount from './data/apiHooks';
 
 const CourseOutline = ({ courseId }) => {
   const intl = useIntl();
@@ -163,27 +163,6 @@ const CourseOutline = ({ courseId }) => {
     });
   };
 
-  const unitsIdPattern = useMemo(() => {
-    let pattern = '';
-    sections.forEach((section) => {
-      section.childInfo.children.forEach((subsection) => {
-        subsection.childInfo.children.forEach((unit) => {
-          if (pattern !== '') {
-            pattern += `,${unit.id}`;
-          } else {
-            pattern += unit.id;
-          }
-        });
-      });
-    });
-    return pattern;
-  }, [sections]);
-
-  const {
-    data: unitsTagCounts,
-    isSuccess: isUnitsTagCountsLoaded,
-  } = useUnitTagsCount(unitsIdPattern);
-
   /**
    * Check if item can be moved by given step.
    * Inner function returns false if the new index after moving by given step
@@ -191,7 +170,7 @@ const CourseOutline = ({ courseId }) => {
    * If it is within bounds, returns draggable flag of the item in the new index.
    * This helps us avoid moving the item to a position of unmovable item.
    * @param {Array} items
-   * @returns {(id, step) => bool}
+   * @returns {(id, step) => boolean}
    */
   const canMoveItem = (items) => (id, step) => {
     const newId = id + step;
@@ -312,7 +291,6 @@ const CourseOutline = ({ courseId }) => {
             ) : null}
           </TransitionReplace>
           <SubHeader
-            className="mt-5"
             title={intl.formatMessage(messages.headingTitle)}
             subtitle={intl.formatMessage(messages.headingSubtitle)}
             headerActions={(
@@ -350,7 +328,6 @@ const CourseOutline = ({ courseId }) => {
                           <DraggableList itemList={sections} setState={setSections} updateOrder={finalizeSectionOrder}>
                             {sections.map((section, sectionIndex) => (
                               <SectionCard
-                                id={section.id}
                                 key={section.id}
                                 section={section}
                                 index={sectionIndex}
@@ -427,7 +404,6 @@ const CourseOutline = ({ courseId }) => {
                                             )}
                                             onCopyToClipboardClick={handleCopyToClipboardClick}
                                             discussionsSettings={discussionsSettings}
-                                            tagsCount={isUnitsTagCountsLoaded ? unitsTagCounts[unit.id] : 0}
                                           />
                                         ))}
                                       </DraggableList>
@@ -510,6 +486,7 @@ const CourseOutline = ({ courseId }) => {
             variant="danger"
             icon={WarningIcon}
             title={intl.formatMessage(messages.alertErrorTitle)}
+            description=""
             aria-hidden="true"
           />
         )}

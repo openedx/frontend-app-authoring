@@ -8,6 +8,7 @@ import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import initializeStore from '../../store';
 import SubsectionCard from './SubsectionCard';
@@ -50,31 +51,34 @@ const subsection = {
 };
 
 const onEditSubectionSubmit = jest.fn();
+const queryClient = new QueryClient();
 
 const renderComponent = (props, entry = '/') => render(
   <AppProvider store={store} wrapWithRouter={false}>
-    <MemoryRouter initialEntries={[entry]}>
-      <IntlProvider locale="en">
-        <SubsectionCard
-          section={section}
-          subsection={subsection}
-          index="1"
-          canMoveItem={jest.fn()}
-          onOrderChange={jest.fn()}
-          onOpenPublishModal={jest.fn()}
-          onOpenHighlightsModal={jest.fn()}
-          onOpenDeleteModal={jest.fn()}
-          onEditClick={jest.fn()}
-          savingStatus=""
-          onEditSubmit={onEditSubectionSubmit}
-          onDuplicateSubmit={jest.fn()}
-          namePrefix="subsection"
-          {...props}
-        >
-          <span>children</span>
-        </SubsectionCard>
-      </IntlProvider>,
-    </MemoryRouter>,
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter initialEntries={[entry]}>
+        <IntlProvider locale="en">
+          <SubsectionCard
+            section={section}
+            subsection={subsection}
+            index="1"
+            canMoveItem={jest.fn()}
+            onOrderChange={jest.fn()}
+            onOpenPublishModal={jest.fn()}
+            onOpenHighlightsModal={jest.fn()}
+            onOpenDeleteModal={jest.fn()}
+            onEditClick={jest.fn()}
+            savingStatus=""
+            onEditSubmit={onEditSubectionSubmit}
+            onDuplicateSubmit={jest.fn()}
+            namePrefix="subsection"
+            {...props}
+          >
+            <span>children</span>
+          </SubsectionCard>
+        </IntlProvider>
+      </MemoryRouter>
+    </QueryClientProvider>
   </AppProvider>,
 );
 

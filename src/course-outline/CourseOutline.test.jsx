@@ -6,6 +6,7 @@ import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cloneDeep } from 'lodash';
 
 import {
@@ -78,16 +79,20 @@ jest.mock('@edx/frontend-platform/i18n', () => ({
   }),
 }));
 
-jest.mock('./data/apiHooks', () => () => ({
-  data: {},
-  isSuccess: true,
+jest.mock('./data/api', () => ({
+  ...jest.requireActual('./data/api'),
+  getTagsCount: () => jest.fn().mockResolvedValue({}),
 }));
+
+const queryClient = new QueryClient();
 
 const RootWrapper = () => (
   <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <CourseOutline courseId={courseId} />
-    </IntlProvider>
+    <QueryClientProvider client={queryClient}>
+      <IntlProvider locale="en">
+        <CourseOutline courseId={courseId} />
+      </IntlProvider>
+    </QueryClientProvider>
   </AppProvider>
 );
 

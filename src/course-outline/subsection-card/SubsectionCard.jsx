@@ -1,4 +1,5 @@
-import { useEffect, useState, useRef } from 'react';
+// @ts-check
+import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
@@ -147,6 +148,7 @@ const SubsectionCard = ({
             <CardHeader
               title={displayName}
               status={subsectionStatus}
+              cardId={id}
               hasChanges={hasChanges}
               onClickMenuButton={handleClickMenuButton}
               onClickPublish={onOpenPublishModal}

@@ -7,6 +7,7 @@ import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import initializeStore from '../../store';
 import SectionCard from './SectionCard';
@@ -33,27 +34,31 @@ const section = {
 
 const onEditSectionSubmit = jest.fn();
 
+const queryClient = new QueryClient();
+
 const renderComponent = (props) => render(
   <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <SectionCard
-        section={section}
-        index="1"
-        canMoveItem={jest.fn()}
-        onOrderChange={jest.fn()}
-        onOpenPublishModal={jest.fn()}
-        onOpenHighlightsModal={jest.fn()}
-        onOpenDeleteModal={jest.fn()}
-        savingStatus=""
-        onEditSectionSubmit={onEditSectionSubmit}
-        onDuplicateSubmit={jest.fn()}
-        isSectionsExpanded
-        onNewSubsectionSubmit={jest.fn()}
-        {...props}
-      >
-        <span>children</span>
-      </SectionCard>
-    </IntlProvider>,
+    <QueryClientProvider client={queryClient}>
+      <IntlProvider locale="en">
+        <SectionCard
+          section={section}
+          index="1"
+          canMoveItem={jest.fn()}
+          onOrderChange={jest.fn()}
+          onOpenPublishModal={jest.fn()}
+          onOpenHighlightsModal={jest.fn()}
+          onOpenDeleteModal={jest.fn()}
+          savingStatus=""
+          onEditSectionSubmit={onEditSectionSubmit}
+          onDuplicateSubmit={jest.fn()}
+          isSectionsExpanded
+          onNewSubsectionSubmit={jest.fn()}
+          {...props}
+        >
+          <span>children</span>
+        </SectionCard>
+      </IntlProvider>
+    </QueryClientProvider>
   </AppProvider>,
 );
 
