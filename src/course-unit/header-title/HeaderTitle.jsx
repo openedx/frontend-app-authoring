@@ -27,7 +27,7 @@ const HeaderTitle = ({
   }, [unitTitle]);
 
   return (
-    <div className="d-flex align-items-center lead">
+    <div className="d-flex align-items-center lead" data-testid="unit-header-title">
       {isTitleEditFormOpen ? (
         <Form.Group className="m-0">
           <Form.Control
@@ -55,7 +55,8 @@ const HeaderTitle = ({
         alt={intl.formatMessage(messages.altButtonSettings)}
         className="flex-shrink-0"
         iconAs={SettingsIcon}
-        onClick={() => {}}
+        onClick={() => {
+        }}
       />
     </div>
   );
