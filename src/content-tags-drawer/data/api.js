@@ -3,6 +3,7 @@ import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
+const getLmsApiBaseUrl = () => getConfig().LMS_BASE_URL;
 
 /**
  * Get the URL used to fetch tags data from the "taxonomy tags" REST API
@@ -30,6 +31,7 @@ export const getTaxonomyTagsApiUrl = (taxonomyId, options = {}) => {
 };
 export const getContentTaxonomyTagsApiUrl = (contentId) => new URL(`api/content_tagging/v1/object_tags/${contentId}/`, getApiBaseUrl()).href;
 export const getXBlockContentDataApiURL = (contentId) => new URL(`/xblock/outline/${contentId}`, getApiBaseUrl()).href;
+export const getCourseContentDataApiURL = (contentId) => new URL(`/api/courses/v1/courses/${contentId}/`, getLmsApiBaseUrl()).href;
 export const getLibraryContentDataApiUrl = (contentId) => new URL(`/api/libraries/v2/blocks/${contentId}/`, getApiBaseUrl()).href;
 
 /**
@@ -60,9 +62,14 @@ export async function getContentTaxonomyTagsData(contentId) {
  * @returns {Promise<import("./types.mjs").ContentData>}
  */
 export async function getContentData(contentId) {
-  const url = contentId.startsWith('lb:')
-    ? getLibraryContentDataApiUrl(contentId)
-    : getXBlockContentDataApiURL(contentId);
+  let url;
+  if (contentId.startsWith('lb:')) {
+    url = getLibraryContentDataApiUrl(contentId);
+  } else if (contentId.startsWith('course-v1:')) {
+    url = getCourseContentDataApiURL(contentId);
+  } else {
+    url = getXBlockContentDataApiURL(contentId);
+  }
   const { data } = await getAuthenticatedHttpClient().get(url);
   return camelCaseObject(data);
 }

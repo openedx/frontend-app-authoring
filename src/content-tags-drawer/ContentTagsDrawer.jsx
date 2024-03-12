@@ -53,6 +53,15 @@ const ContentTagsDrawer = ({ id, onClose }) => {
   } = useContentTaxonomyTagsData(contentId);
   const { taxonomyListData, isTaxonomyListLoaded } = useTaxonomyListData();
 
+  let contentName = '';
+  if (isContentDataLoaded) {
+    if ('displayName' in contentData) {
+      contentName = contentData.displayName;
+    } else {
+      contentName = contentData.name;
+    }
+  }
+
   let onCloseDrawer = onClose;
   if (onCloseDrawer === undefined) {
     onCloseDrawer = () => {
@@ -106,7 +115,7 @@ const ContentTagsDrawer = ({ id, onClose }) => {
         <CloseButton onClick={() => onCloseDrawer()} data-testid="drawer-close-button" />
         <span>{intl.formatMessage(messages.headerSubtitle)}</span>
         { isContentDataLoaded
-          ? <h3>{ contentData.displayName }</h3>
+          ? <h3>{ contentName }</h3>
           : (
             <div className="d-flex justify-content-center align-items-center flex-column">
               <Spinner
