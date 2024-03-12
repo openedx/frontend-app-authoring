@@ -123,7 +123,10 @@ const ContentTagsDropDownSelector = ({
     const currentElement = e.target;
     const encapsulator = currentElement.closest('.dropdown-selector-tag-encapsulator');
 
-    let tagValue = currentElement.querySelector('.pgn__form-checkbox-input')?.value;
+    // Get tag value with full lineage, this is URI encoded
+    const tagValueWithLineage = currentElement.querySelector('.pgn__form-checkbox-input')?.value;
+    // Extract and decode the actual tag value
+    let tagValue = tagValueWithLineage.split(',').slice(-1)[0];
     tagValue = tagValue ? decodeURIComponent(tagValue) : tagValue;
 
     if (keyPressed === 'ArrowRight') {
@@ -136,13 +139,51 @@ const ContentTagsDropDownSelector = ({
       }
       // TODO: Implement remaining cases when left key pressed
     } else if (keyPressed === 'ArrowUp') {
+      const prevSubTags = encapsulator?.previousElementSibling?.querySelectorAll('.dropdown-selector-tag-actions');
+      const prevSubTag = prevSubTags && prevSubTags[prevSubTags.length - 1];
       const prevTag = encapsulator?.previousElementSibling?.querySelector('.dropdown-selector-tag-actions');
-      prevTag?.focus();
-      // TODO: Implement navigating inside sub tags
+
+      if (prevSubTag) {
+        // Handles case of jumping in to subtags
+        prevSubTag.focus();
+      } else if (prevTag) {
+        // Handles case of navigating to previous tag on same level
+        prevTag.focus();
+      } else {
+        // Handles case of jumping out of subtags to previous parent tag
+        const prevParentTagEncapsulator = encapsulator?.parentNode.closest('.dropdown-selector-tag-encapsulator');
+        const prevParentTag = prevParentTagEncapsulator?.querySelector('.dropdown-selector-tag-actions');
+
+        prevParentTag?.focus();
+      }
     } else if (keyPressed === 'ArrowDown') {
+      const subTagEncapsulator = encapsulator?.querySelector('.dropdown-selector-tag-encapsulator');
+      const nextSubTag = subTagEncapsulator?.querySelector('.dropdown-selector-tag-actions');
       const nextTag = encapsulator?.nextElementSibling?.querySelector('.dropdown-selector-tag-actions');
-      nextTag?.focus();
-      // TODO: Implement navigating inside sub tags
+
+      if (nextSubTag) {
+        // Handles case of jumping into subtags
+        nextSubTag.focus();
+      } else if (nextTag) {
+        // Handles case of navigating to next tag on same level
+        nextTag?.focus();
+      } else {
+        // Handles case of jumping out of subtags to next focusable parent tag
+        let nextParentTagEncapsulator = encapsulator?.parentNode?.closest('.dropdown-selector-tag-encapsulator');
+
+        while (nextParentTagEncapsulator) {
+          const nextParentTag = nextParentTagEncapsulator.nextElementSibling?.querySelector(
+            '.dropdown-selector-tag-actions',
+          );
+          if (nextParentTag) {
+            nextParentTag.focus();
+            break;
+          }
+          nextParentTagEncapsulator = nextParentTagEncapsulator.parentNode.closest(
+            '.dropdown-selector-tag-encapsulator',
+          );
+        }
+      }
     } else if (keyPressed === 'Enter') {
       // TODO: Implement
     } else if (keyPressed === 'Space') {
