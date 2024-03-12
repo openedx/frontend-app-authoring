@@ -1,7 +1,7 @@
 # openedx.yaml
 
 ---
-owner: edx/teaching-and-learning
+owner: openedx/2u-tnl
 tags:
   - library
   - component
