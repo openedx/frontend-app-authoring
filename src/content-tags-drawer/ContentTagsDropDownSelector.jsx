@@ -118,8 +118,8 @@ const ContentTagsDropDownSelector = ({
     setNumPages((x) => x + 1);
   }, []);
 
-  const handleKeyBoardNav = (e) => {
-    const keyPressed = e.key;
+  const handleKeyBoardNav = (e, hasChildren) => {
+    const keyPressed = e.code;
     const currentElement = e.target;
     const encapsulator = currentElement.closest('.dropdown-selector-tag-encapsulator');
 
@@ -130,14 +130,15 @@ const ContentTagsDropDownSelector = ({
     tagValue = tagValue ? decodeURIComponent(tagValue) : tagValue;
 
     if (keyPressed === 'ArrowRight') {
+      e.preventDefault();
       if (tagValue && !isOpen(tagValue)) {
         clickAndEnterHandler(tagValue);
       }
     } else if (keyPressed === 'ArrowLeft') {
+      e.preventDefault();
       if (tagValue && isOpen(tagValue)) {
         clickAndEnterHandler(tagValue);
       }
-      // TODO: Implement remaining cases when left key pressed
     } else if (keyPressed === 'ArrowUp') {
       const prevSubTags = encapsulator?.previousElementSibling?.querySelectorAll('.dropdown-selector-tag-actions');
       const prevSubTag = prevSubTags && prevSubTags[prevSubTags.length - 1];
@@ -153,7 +154,6 @@ const ContentTagsDropDownSelector = ({
         // Handles case of jumping out of subtags to previous parent tag
         const prevParentTagEncapsulator = encapsulator?.parentNode.closest('.dropdown-selector-tag-encapsulator');
         const prevParentTag = prevParentTagEncapsulator?.querySelector('.dropdown-selector-tag-actions');
-
         prevParentTag?.focus();
       }
     } else if (keyPressed === 'ArrowDown') {
@@ -185,9 +185,17 @@ const ContentTagsDropDownSelector = ({
         }
       }
     } else if (keyPressed === 'Enter') {
-      // TODO: Implement
+      e.preventDefault();
+      if (hasChildren && tagValue) {
+        clickAndEnterHandler(tagValue);
+      } else {
+        const checkbox = currentElement.querySelector('.taxonomy-tags-selectable-box');
+        checkbox.click();
+      }
     } else if (keyPressed === 'Space') {
-      // TODO: Implmenet
+      e.preventDefault();
+      const checkbox = currentElement.querySelector('.taxonomy-tags-selectable-box');
+      checkbox.click();
     }
   };
 
@@ -216,7 +224,7 @@ const ContentTagsDropDownSelector = ({
             <div
               className="d-flex dropdown-selector-tag-actions"
               tabIndex={i === 0 && level === 0 ? 0 : -1} // Only enable tab into top of dropdown to set focus
-              onKeyDown={handleKeyBoardNav}
+              onKeyDown={(e) => handleKeyBoardNav(e, tagData.childCount > 0)}
             >
               <SelectableBox
                 inputHidden={false}
