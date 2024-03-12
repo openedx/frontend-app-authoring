@@ -10,7 +10,7 @@ import userEvent from '@testing-library/user-event';
 import ReactDOM from 'react-dom';
 import { saveAs } from 'file-saver';
 
-import { initializeMockApp } from '@edx/frontend-platform';
+import { camelCaseObject, initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -40,6 +40,8 @@ import {
 } from './data/thunks';
 import { getAssetsUrl } from './data/api';
 import messages from '../generic/messages';
+import filesPageMessages from './messages';
+import { updateFileValues } from './data/utils';
 
 let axiosMock;
 let store;
@@ -193,20 +195,106 @@ describe('FilesAndUploads', () => {
     });
 
     describe('table actions', () => {
-      it('should upload a single file', async () => {
-        await mockStore(RequestStatus.SUCCESSFUL);
-        axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=100`).reply(200, { assets: [] });
-        axiosMock.onPost(getAssetsUrl(courseId)).reply(200, generateNewAssetApiResponse());
-        let addFilesButton;
-        await waitFor(() => {
-          addFilesButton = screen.getByLabelText('file-input');
+      describe('upload a single file', () => {
+        it('should upload without duplication modal', async () => {
+          await mockStore(RequestStatus.SUCCESSFUL);
+          axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=100`).reply(200, { assets: [] });
+          axiosMock.onPost(getAssetsUrl(courseId)).reply(200, generateNewAssetApiResponse());
+          let addFilesButton;
+          await waitFor(() => {
+            addFilesButton = screen.getByLabelText('file-input');
+          });
+          await act(async () => {
+            userEvent.upload(addFilesButton, file);
+            await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
+          });
+          const addStatus = store.getState().assets.addingStatus;
+          expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
         });
-        await act(async () => {
-          userEvent.upload(addFilesButton, file);
-          await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
+
+        it('should show duplicate file modal', async () => {
+          file = new File(['(⌐□_□)'], 'mOckID6', { type: 'image/png' });
+
+          await mockStore(RequestStatus.SUCCESSFUL);
+          axiosMock.onGet(
+            `${getAssetsUrl(courseId)}?display_name=mOckID6&page_size=100`,
+          ).reply(200, { assets: [{ display_name: 'mOckID6' }] });
+          let addFilesButton;
+          await waitFor(() => {
+            addFilesButton = screen.getByLabelText('file-input');
+          });
+          await act(async () => {
+            userEvent.upload(addFilesButton, file);
+            await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
+          });
+          expect(screen.getByText(filesPageMessages.overwriteConfirmMessage.defaultMessage)).toBeVisible();
         });
-        const addStatus = store.getState().assets.addingStatus;
-        expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
+
+        it('should overwrite duplicate file', async () => {
+          file = new File(['(⌐□_□)'], 'mOckID6', { type: 'image/png' });
+
+          await mockStore(RequestStatus.SUCCESSFUL);
+          axiosMock.onGet(
+            `${getAssetsUrl(courseId)}?display_name=mOckID6&page_size=100`,
+          ).reply(200, { assets: [{ display_name: 'mOckID6' }] });
+          const { asset: newDefaultAssetResponse } = generateNewAssetApiResponse();
+          const responseData = {
+            asset: {
+              ...newDefaultAssetResponse, id: 'mOckID6',
+            },
+          };
+
+          axiosMock.onPost(getAssetsUrl(courseId)).reply(200, responseData);
+          let addFilesButton;
+          await waitFor(() => {
+            addFilesButton = screen.getByLabelText('file-input');
+          });
+          await act(async () => {
+            userEvent.upload(addFilesButton, file);
+            await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
+          });
+
+          const overwriteButton = screen.getByText(filesPageMessages.confirmOverwriteButtonLabel.defaultMessage);
+          await act(async () => {
+            fireEvent.click(overwriteButton);
+          });
+
+          const assetData = store.getState().models.assets.mOckID6;
+          const { asset: responseAssetData } = responseData;
+          const [defaultData] = updateFileValues([camelCaseObject(responseAssetData)]);
+
+          expect(screen.queryByText(filesPageMessages.overwriteConfirmMessage.defaultMessage)).toBeNull();
+          expect(assetData).toEqual(defaultData);
+        });
+
+        it('should keep original file', async () => {
+          file = new File(['(⌐□_□)'], 'mOckID6', { type: 'image/png' });
+
+          await mockStore(RequestStatus.SUCCESSFUL);
+          axiosMock.onGet(
+            `${getAssetsUrl(courseId)}?display_name=mOckID6&page_size=100`,
+          ).reply(200, { assets: [{ display_name: 'mOckID6' }] });
+          let addFilesButton;
+          await waitFor(() => {
+            addFilesButton = screen.getByLabelText('file-input');
+          });
+          await act(async () => {
+            userEvent.upload(addFilesButton, file);
+            await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
+          });
+
+          const cancelButton = screen.getByText(filesPageMessages.cancelOverwriteButtonLabel.defaultMessage);
+          await act(async () => {
+            fireEvent.click(cancelButton);
+          });
+
+          const assetData = store.getState().models.assets.mOckID6;
+          const defaultAssets = generateFetchAssetApiResponse().assets;
+          const [defaultData] = updateFileValues([defaultAssets[4]]);
+
+          expect(screen.queryByText(filesPageMessages.overwriteConfirmMessage.defaultMessage)).toBeNull();
+          expect(assetData).toEqual(defaultData);
+        });
       });
 
       it('should have disabled action buttons', async () => {
@@ -511,6 +599,20 @@ describe('FilesAndUploads', () => {
         const addFilesButton = screen.getByLabelText('file-input');
         await act(async () => {
           userEvent.upload(addFilesButton, file);
+        });
+        const addStatus = store.getState().assets.addingStatus;
+        expect(addStatus).toEqual(RequestStatus.FAILED);
+
+        expect(screen.getByText('Error')).toBeVisible();
+      });
+
+      it('404 validation should show error', async () => {
+        await mockStore(RequestStatus.SUCCESSFUL);
+        axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=100`).reply(404);
+        const addFilesButton = screen.getByLabelText('file-input');
+        await act(async () => {
+          userEvent.upload(addFilesButton, file);
+          await executeThunk(addAssetFile(courseId, file, 1), store.dispatch);
         });
         const addStatus = store.getState().assets.addingStatus;
         expect(addStatus).toEqual(RequestStatus.FAILED);
