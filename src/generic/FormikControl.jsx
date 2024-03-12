@@ -30,7 +30,7 @@ const FormikControl = ({
         onChange={handleChange}
         onBlur={handleBlur}
         onFocus={handleFocus}
-        isInvalid={fieldTouched && fieldError}
+        isInvalid={!!fieldTouched && !!fieldError}
       />
       <FormikErrorFeedback name={name}>
         <Form.Text>{help}</Form.Text>

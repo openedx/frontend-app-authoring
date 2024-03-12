@@ -1,0 +1,42 @@
+.textbook-card {
+  padding: $spacer $spacer $spacer map-get($spacers, 4);
+
+  & .pgn__card-header {
+    padding: 0;
+    margin-bottom: $spacer;
+  }
+
+  & .pgn__card-header-content {
+    margin-top: 0 !important;
+  }
+
+  & .pgn__card-header-actions {
+    margin: 0 !important;
+  }
+
+  &:not(:last-of-type) {
+    margin-bottom: map-get($spacers, 4);
+  }
+}
+
+.textbook-card__chapters {
+  margin-left: -(map-get($spacers, 2));
+}
+
+.textbook-card__chapter-item {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacer;
+
+  & span:first-of-type {
+    word-break: break-word;
+  }
+
+  & span:last-of-type {
+    word-break: break-all;
+  }
+
+  &:not(:last-of-type) {
+    margin-bottom: map-get($spacers, 2);
+  }
+}

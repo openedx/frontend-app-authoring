@@ -20,6 +20,7 @@ import { CourseUnit } from './course-unit';
 import CourseExportPage from './export-page/CourseExportPage';
 import CourseImportPage from './import-page/CourseImportPage';
 import { DECODED_ROUTES } from './constants';
+import { Textbooks } from './textbooks';
 
 /**
  * As of this writing, these routes are mounted at a path prefixed with the following:
@@ -57,7 +58,7 @@ const CourseAuthoringRoutes = () => {
         />
         <Route
           path="videos"
-          element={getConfig().ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true' ? <PageWrap><VideosPage courseId={courseId} /></PageWrap> : null}
+          element={process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true' ? <PageWrap><VideosPage courseId={courseId} /></PageWrap> : null}
         />
         <Route
           path="pages-and-resources/*"
@@ -109,6 +110,10 @@ const CourseAuthoringRoutes = () => {
         <Route
           path="export"
           element={<PageWrap><CourseExportPage courseId={courseId} /></PageWrap>}
+        />
+        <Route
+          path="/pages-and-resources/textbooks"
+          element={<PageWrap><Textbooks courseId={courseId} /></PageWrap>}
         />
       </Routes>
     </CourseAuthoringPage>
