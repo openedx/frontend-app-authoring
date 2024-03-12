@@ -97,6 +97,13 @@ const CustomMenu = (props) => {
   );
 };
 
+const disableActionKeys = (e) => {
+  const arrowKeys = ['ArrowUp', 'ArrowDown', 'ArrowRight', 'ArrowLeft', 'Backspace'];
+  if (arrowKeys.includes(e.code)) {
+    e.preventDefault();
+  }
+};
+
 const CustomLoadingIndicator = () => {
   const intl = useIntl();
   return (
@@ -131,6 +138,7 @@ const CustomIndicatorsContainer = (props) => {
             onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); }}
             ref={selectInlineAddRef}
             tabIndex="0"
+            onKeyDown={disableActionKeys} // To prevent navigating staged tags when button focused
           >
             { intl.formatMessage(messages.collapsibleInlineAddStagedTagsButtonText) }
           </Button>
