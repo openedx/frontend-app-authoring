@@ -138,6 +138,7 @@ export function addAssetFile(courseId, file, isOverwrite) {
 export function validateAssetFiles(courseId, files) {
   return async (dispatch) => {
     dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.IN_PROGRESS }));
+    dispatch(updateDuplicateFiles({ files: [] }));
 
     try {
       const filenames = [];
@@ -152,12 +153,7 @@ export function validateAssetFiles(courseId, files) {
         }
       });
     } catch (error) {
-      if (error.response && error.response.status === 413) {
-        const message = error.response.data.error;
-        dispatch(updateErrors({ error: 'add', message }));
-      } else {
-        files.forEach(file => dispatch(updateErrors({ error: 'add', message: `Failed to validate ${file.name}.` })));
-      }
+      files.forEach(file => dispatch(updateErrors({ error: 'add', message: `Failed to validate ${file.name}.` })));
       dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
     }
   };
