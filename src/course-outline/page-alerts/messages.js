@@ -59,7 +59,7 @@ const messages = defineMessages({
   },
   newFileAlertTitle: {
     id: 'course-authoring.course-outline.page-alert.paste-alert.new-files.title',
-    defaultMessage: 'New {newFilesLen, plural, one {file} other {files}} added to Files & Uploads.',
+    defaultMessage: 'New {newFilesLen, plural, one {file} other {files}} added to Files.',
   },
   newFileAlertDesc: {
     id: 'course-authoring.course-outline.page-alert.paste-alert.new-files.description',
