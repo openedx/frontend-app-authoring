@@ -38,7 +38,6 @@ import {
   ThumbnailColumn,
   TranscriptColumn,
 } from '../generic';
-import AddVideoProgressBarToast from './AddVideoProgressBarToast';
 import TranscriptSettings from './transcript-settings';
 import VideoThumbnail from './VideoThumbnail';
 import { getFormattedDuration, resampleFile } from './data/utils';
@@ -63,7 +62,6 @@ const VideosPage = ({
     videoIds,
     loadingStatus,
     transcriptStatus,
-    uploadNewVideoProgress,
     addingStatus: addVideoStatus,
     deletingStatus: deleteVideoStatus,
     updatingStatus: updateVideoStatus,
@@ -192,9 +190,6 @@ const VideosPage = ({
   return (
     <VideosPageProvider courseId={courseId}>
       <Container size="xl" className="p-4 pt-4.5">
-        <AddVideoProgressBarToast
-          uploadNewVideoProgress={uploadNewVideoProgress}
-        />
         <EditFileErrors
           resetErrors={handleErrorReset}
           errorMessages={errorMessages}

@@ -132,11 +132,12 @@ describe('Videos page', () => {
 
         axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
         axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
+
         Object.defineProperty(dropzone, 'files', {
           value: [file],
         });
         fireEvent.drop(dropzone);
-        await executeThunk(addVideoFile(courseId, file, []), store.dispatch);
+        await executeThunk(addVideoFile(courseId, file), store.dispatch);
       });
       const addStatus = store.getState().videos.addingStatus;
       expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
