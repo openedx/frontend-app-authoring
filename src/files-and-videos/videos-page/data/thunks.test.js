@@ -13,13 +13,21 @@ describe('addVideoFile', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
-  it('Should dispatch failed status if  url cannot be created.', async () => {
+  it('Should dispatch failed status and set error if url cannot be created.', async () => {
     jest.spyOn(api, 'addVideo').mockResolvedValue({
       status: 404,
     });
 
     await addVideoFile(courseId, mockFile)(dispatch, getState);
 
+    expect(dispatch).toHaveBeenCalledWith({
+      payload: {
+        error: 'add',
+        message: `Failed to upload ${mockFile.name}.`,
+      },
+
+      type: 'videos/updateErrors',
+    });
     expect(dispatch).toHaveBeenCalledWith({
       payload: {
         editType: 'add',
