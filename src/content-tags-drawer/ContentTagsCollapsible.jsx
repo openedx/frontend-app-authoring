@@ -337,8 +337,9 @@ const ContentTagsCollapsible = ({
         } else if (focusedElement === selectCancelRef.current && selectAddRef.current?.disabled) {
           setSelectMenuIsOpen(false);
         }
-        // Navigating backwards
-      } else if (event.shiftKey && focusedElement.classList.contains('react-select-add-tags__input')) {
+      // Navigating backwards
+      // @ts-ignore inputRef actually exists under the current selectRef
+      } else if (event.shiftKey && focusedElement === selectRef.current?.inputRef) {
         setSelectMenuIsOpen(false);
       }
     }
