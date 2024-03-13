@@ -14,6 +14,7 @@ export const useFileInput = ({
     setSelectedRows(files);
     onAddFile(Object.values(files));
     setAddOpen();
+    e.target.value = '';
   };
   return {
     click,

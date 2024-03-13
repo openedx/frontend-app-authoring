@@ -138,7 +138,7 @@ export function addAssetFile(courseId, file, isOverwrite) {
 export function validateAssetFiles(courseId, files) {
   return async (dispatch) => {
     dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.IN_PROGRESS }));
-    dispatch(updateDuplicateFiles({ files: [] }));
+    dispatch(updateDuplicateFiles({ files: {} }));
 
     try {
       const filenames = [];
