@@ -218,7 +218,7 @@ const ContentTagsDropDownSelector = ({
       {tagPages.isError ? 'Error...' : null /* TODO: show a proper error message */}
 
       {tagPages.data?.map((tagData, i) => (
-        <div key={tagData.value} className="dropdown-selector-tag-encapsulator">
+        <div key={tagData.value} className="mt-1 ml-1 dropdown-selector-tag-encapsulator">
           <div
             className="d-flex flex-row"
             style={{
@@ -281,7 +281,7 @@ const ContentTagsDropDownSelector = ({
               variant="tertiary"
               iconBefore={Add}
               onClick={loadMoreTags}
-              className="mb-2 taxonomy-tags-load-more-button px-0 text-info-500"
+              className="mb-2 ml-1 taxonomy-tags-load-more-button px-0 text-info-500"
             >
               <FormattedMessage {...messages.loadMoreTagsButtonText} />
             </Button>
