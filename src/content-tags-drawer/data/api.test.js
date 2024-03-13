@@ -100,7 +100,7 @@ describe('content tags drawer api calls', () => {
     expect(result).toEqual(contentTaxonomyTagsCountMock[contentId]);
   });
 
-  it('should get content taxonomy tags count as cero', async () => {
+  it('should get content taxonomy tags count as zero', async () => {
     const contentId = 'block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@aaf8b8eb86b54281aeeab12499d2cb0b';
     axiosMock.onGet(getContentTaxonomyTagsCountApiUrl(contentId)).reply(200, {});
     const result = await getContentTaxonomyTagsCount(contentId);
