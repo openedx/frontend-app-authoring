@@ -28,12 +28,16 @@ describe('addVideoFile', () => {
       type: 'videos/updateEditStatus',
     });
   });
-  it('Failed video upload dispatches updateEditStatus with failed', async () => {
+  it('Failed video upload dispatches updateEditStatus with failed, and sends the failure to the api', async () => {
+    const videoStatusMock = jest.spyOn(api, 'sendVideoUploadStatus').mockResolvedValue({
+      status: 200,
+    });
+    const mockEdxVideoId = 'iD';
     jest.spyOn(api, 'addVideo').mockResolvedValue({
       status: 200,
       data: {
         files: [
-          { edxVideoId: 'iD', uploadUrl: 'a Url' },
+          { edxVideoId: mockEdxVideoId, uploadUrl: 'a Url' },
         ],
       },
     });
@@ -41,7 +45,7 @@ describe('addVideoFile', () => {
       status: 404,
     });
     await addVideoFile(courseId, mockFile)(dispatch, getState);
-
+    expect(videoStatusMock).toHaveBeenCalledWith(courseId, mockEdxVideoId, 'Upload failed', 'upload_failed');
     expect(dispatch).toHaveBeenCalledWith({
       payload: {
         editType: 'add',
@@ -50,63 +54,23 @@ describe('addVideoFile', () => {
       type: 'videos/updateEditStatus',
     });
   });
-  it('should handle successful upload with progress bar', async () => {
-    const mockPutToServerResponse = {
-      body: {
-        getReader: jest.fn(() => ({
-          read: jest.fn().mockResolvedValueOnce({ done: true }),
-        })),
-      },
-      headers: new Map([['Content-Length', '100']]),
-    };
+  it('Successful video upload sends the success to the api', async () => {
+    const videoStatusMock = jest.spyOn(api, 'sendVideoUploadStatus').mockResolvedValue({
+      status: 200,
+    });
+    const mockEdxVideoId = 'iD';
     jest.spyOn(api, 'addVideo').mockResolvedValue({
       status: 200,
       data: {
         files: [
-          { edxVideoId: 'iD', uploadUrl: 'a Url' },
+          { edxVideoId: mockEdxVideoId, uploadUrl: 'a Url' },
         ],
       },
     });
-    jest.spyOn(api, 'sendVideoUploadStatus').mockResolvedValue({ status: 200 });
-    jest.spyOn(api, 'uploadVideo').mockResolvedValue(mockPutToServerResponse);
-
-    await addVideoFile(courseId, mockFile)(dispatch, getState);
-
-    expect(dispatch).toHaveBeenCalledWith({
-      payload: { uploadNewVideoProgress: 100 },
-      type: 'videos/updateVideoUploadProgress',
-    });
-  });
-  it('should handle successful upload with progress bar', async () => {
-    const mockPutToServerResponse = {
-      body: {
-        getReader: jest.fn(() => ({
-          read: jest.fn().mockResolvedValueOnce({
-            value: {
-              byteLength: 50,
-
-            },
-          }),
-        })),
-      },
-      headers: new Map([['Content-Length', '100']]),
-    };
-    jest.spyOn(api, 'addVideo').mockResolvedValue({
+    jest.spyOn(api, 'uploadVideo').mockResolvedValue({
       status: 200,
-      data: {
-        files: [
-          { edxVideoId: 'iD', uploadUrl: 'a Url' },
-        ],
-      },
     });
-    jest.spyOn(api, 'sendVideoUploadStatus').mockResolvedValue({ status: 200 });
-    jest.spyOn(api, 'uploadVideo').mockResolvedValue(mockPutToServerResponse);
-
     await addVideoFile(courseId, mockFile)(dispatch, getState);
-
-    expect(dispatch).toHaveBeenCalledWith({
-      payload: { uploadNewVideoProgress: 50 },
-      type: 'videos/updateVideoUploadProgress',
-    });
+    expect(videoStatusMock).toHaveBeenCalledWith(courseId, mockEdxVideoId, 'Upload completed', 'upload_completed');
   });
 });

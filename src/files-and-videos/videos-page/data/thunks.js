@@ -35,7 +35,6 @@ import {
   updateEditStatus,
   updateTranscriptCredentialsSuccess,
   updateTranscriptPreferenceSuccess,
-  updateVideoUploadProgress,
 } from './slice';
 
 import { updateFileValues } from './utils';
@@ -111,32 +110,13 @@ export function addVideoFile(courseId, file, videoIds) {
       }
       const { edxVideoId, uploadUrl } = createUrlResponse.data.files[0];
       const putToServerResponse = await uploadVideo(uploadUrl, file);
-      if (putToServerResponse.status < 200 && putToServerResponse.status >= 300) {
+      if (putToServerResponse.status < 200 || putToServerResponse.status >= 300) {
         dispatch(updateErrors({ error: 'add', message: `Failed to upload ${file.name}.` }));
         sendVideoUploadStatus(courseId, edxVideoId, 'Upload failed', 'upload_failed');
         dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
         return;
       }
-      if (putToServerResponse.body) {
-        const reader = putToServerResponse.body.getReader();
-        const contentLength = +putToServerResponse.headers.get('Content-Length');
-        let loaded = 0;
-        // eslint-disable-next-line no-constant-condition
-        while (true) {
-          // eslint-disable-next-line no-await-in-loop
-          const { done, value } = await reader.read();
-          if (done) {
-            dispatch(updateVideoUploadProgress({ uploadNewVideoProgress: 100 }));
-            break;
-          }
-          loaded += value.byteLength;
-          const progress = Math.round((loaded / contentLength) * 100);
-          dispatch(updateVideoUploadProgress({ uploadNewVideoProgress: progress }));
-        }
-
-        dispatch(updateVideoUploadProgress({ uploadNewVideoProgress: 0 }));
-        sendVideoUploadStatus(courseId, edxVideoId, 'Upload completed', 'upload_completed');
-      }
+      sendVideoUploadStatus(courseId, edxVideoId, 'Upload completed', 'upload_completed');
     } catch (error) {
       if (error.response && error.response.status === 413) {
         const message = error.response.data.error;
@@ -144,7 +124,6 @@ export function addVideoFile(courseId, file, videoIds) {
       } else {
         dispatch(updateErrors({ error: 'add', message: `Failed to upload ${file.name}.` }));
       }
-      dispatch(updateVideoUploadProgress({ uploadNewVideoProgress: 0 }));
       dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
       return;
     }

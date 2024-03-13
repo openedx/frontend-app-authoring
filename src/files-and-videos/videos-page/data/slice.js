@@ -11,7 +11,6 @@ const slice = createSlice({
     loadingStatus: RequestStatus.IN_PROGRESS,
     updatingStatus: '',
     addingStatus: '',
-    uploadNewVideoProgress: 0,
     deletingStatus: '',
     usageStatus: '',
     transcriptStatus: '',
@@ -65,9 +64,6 @@ const slice = createSlice({
     },
     addVideoById: (state, { payload }) => {
       state.videoIds = [payload.videoId, ...state.videoIds];
-    },
-    updateVideoUploadProgress: (state, { payload }) => {
-      state.uploadNewVideoProgress = payload.uploadNewVideoProgress;
     },
     updateTranscriptCredentialsSuccess: (state, { payload }) => {
       const { provider } = payload;
