@@ -362,6 +362,14 @@ const ContentTagsCollapsible = ({
 
           {canTagObject && (
             <Select
+              styles={{
+                // Overriding 'x' button styles for staged tags when navigating by keyboard
+                multiValueRemove: (base, state) => ({
+                  ...base,
+                  background: state.isFocused ? 'black' : base.background,
+                  color: state.isFocused ? 'white' : base.color,
+                }),
+              }}
               menuIsOpen={selectMenuIsOpen} // FIX: The menu currently does not close when clicking outside
               onFocus={onSelectMenuFocus}
               onKeyDown={handleSelectOnKeyDown}
