@@ -18,7 +18,10 @@ const TagsSidebarHeader = () => {
   } = useContentTaxonomyTagsCount(contentId || '');
 
   return (
-    <Stack className="course-unit-sidebar-header justify-content-between" direction="horizontal">
+    <Stack
+      className="course-unit-sidebar-header justify-content-between pb-1"
+      direction="horizontal"
+    >
       <h3 className="course-unit-sidebar-header-title m-0">
         {intl.formatMessage(messages.tagsSidebarTitle)}
       </h3>

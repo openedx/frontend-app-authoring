@@ -60,7 +60,9 @@ const TagsSidebarBody = () => {
 
   return (
     <>
-      <Card.Body className="course-unit-sidebar-date tags-sidebar-body">
+      <Card.Body
+        className="course-unit-sidebar-date tags-sidebar-body pl-2.5"
+      >
         <Stack>
           { isContentTaxonomyTagsLoaded
             ? (
@@ -68,7 +70,7 @@ const TagsSidebarBody = () => {
                 {tree.map((taxonomy) => (
                   <div key={taxonomy.name}>
                     <Collapsible
-                      className="tags-sidebar-taxonomy"
+                      className="tags-sidebar-taxonomy border-0 .font-weight-bold"
                       styling="card"
                       title={taxonomy.name}
                       iconWhenClosed={<Icon src={ArrowDropDown} />}
