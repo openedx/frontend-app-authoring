@@ -138,6 +138,11 @@ const ContentTagsDropDownSelector = ({
       e.preventDefault();
       if (tagValue && isOpen(tagValue)) {
         clickAndEnterHandler(tagValue);
+      } else {
+        // Handles case of jumping out of subtags to previous parent tag
+        const prevParentTagEncapsulator = encapsulator?.parentNode.closest('.dropdown-selector-tag-encapsulator');
+        const prevParentTag = prevParentTagEncapsulator?.querySelector('.dropdown-selector-tag-actions');
+        prevParentTag?.focus();
       }
     } else if (keyPressed === 'ArrowUp') {
       const prevSubTags = encapsulator?.previousElementSibling?.querySelectorAll('.dropdown-selector-tag-actions');
