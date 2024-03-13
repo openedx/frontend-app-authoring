@@ -1,5 +1,10 @@
 // @ts-check
-import React, { useMemo, useEffect } from 'react';
+import React, {
+  useMemo,
+  useEffect,
+  useState,
+  useCallback,
+} from 'react';
 import PropTypes from 'prop-types';
 import {
   Container,
@@ -39,6 +44,32 @@ const ContentTagsDrawer = ({ id, onClose }) => {
   }
 
   const org = extractOrgFromContentId(contentId);
+
+  const [stagedContentTags, setStagedContentTags] = useState({});
+
+  // Add a content tags to the staged tags for a taxonomy
+  const addStagedContentTag = useCallback((taxonomyId, addedTag) => {
+    setStagedContentTags(prevStagedContentTags => {
+      const updatedStagedContentTags = {
+        ...prevStagedContentTags,
+        [taxonomyId]: [...(prevStagedContentTags[taxonomyId] ?? []), addedTag],
+      };
+      return updatedStagedContentTags;
+    });
+  }, [setStagedContentTags]);
+
+  // Remove a content tag from the staged tags for a taxonomy
+  const removeStagedContentTag = useCallback((taxonomyId, tagValue) => {
+    setStagedContentTags(prevStagedContentTags => ({
+      ...prevStagedContentTags,
+      [taxonomyId]: prevStagedContentTags[taxonomyId].filter((t) => t.value !== tagValue),
+    }));
+  }, [setStagedContentTags]);
+
+  // Sets the staged content tags for taxonomy to the provided list of tags
+  const setStagedTags = useCallback((taxonomyId, tagsList) => {
+    setStagedContentTags(prevStagedContentTags => ({ ...prevStagedContentTags, [taxonomyId]: tagsList }));
+  }, [setStagedContentTags]);
 
   const useTaxonomyListData = () => {
     const taxonomyListData = useTaxonomyListDataResponse(org);
@@ -122,7 +153,14 @@ const ContentTagsDrawer = ({ id, onClose }) => {
         { isTaxonomyListLoaded && isContentTaxonomyTagsLoaded
           ? taxonomies.map((data) => (
             <div key={`taxonomy-tags-collapsible-${data.id}`}>
-              <ContentTagsCollapsible contentId={contentId} taxonomyAndTagsData={data} />
+              <ContentTagsCollapsible
+                contentId={contentId}
+                taxonomyAndTagsData={data}
+                stagedContentTags={stagedContentTags[data.id] || []}
+                addStagedContentTag={addStagedContentTag}
+                removeStagedContentTag={removeStagedContentTag}
+                setStagedTags={setStagedTags}
+              />
               <hr />
             </div>
           ))
