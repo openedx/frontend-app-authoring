@@ -41,6 +41,22 @@ const messages = defineMessages({
     id: 'course-authoring.course-unit.sidebar.tags.title',
     defaultMessage: 'Unit Tags',
   },
+  collapsibleAddTagsPlaceholderText: {
+    id: 'course-authoring.content-tags-drawer.content-tags-collapsible.custom-menu.placeholder-text',
+    defaultMessage: 'Add a tag',
+  },
+  collapsibleAddStagedTagsButtonText: {
+    id: 'course-authoring.content-tags-drawer.content-tags-collapsible.custom-menu.save-staged-tags',
+    defaultMessage: 'Add tags',
+  },
+  collapsibleCancelStagedTagsButtonText: {
+    id: 'course-authoring.content-tags-drawer.content-tags-collapsible.custom-menu.cancel-staged-tags',
+    defaultMessage: 'Cancel',
+  },
+  collapsibleInlineAddStagedTagsButtonText: {
+    id: 'course-authoring.content-tags-drawer.content-tags-collapsible.custom-menu.inline-save-staged-tags',
+    defaultMessage: 'Add',
+  },
 });
 
 export default messages;

@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/i18n';
+// SelectableBox in paragon has a bug only visible on stage where you can't change selection. So we override it
+import { SelectableBox } from '@edx/frontend-lib-content-components';
 import {
   ActionRow,
   Button,
@@ -9,7 +11,6 @@ import {
   ModalDialog,
   useCheckboxSetValues,
 } from '@openedx/paragon';
-import SelectableBox from '../../../../generic/SelectableBox';
 import messages from './messages';
 import { getCheckedFilters, getFilterOptions, processFilters } from './utils';
 

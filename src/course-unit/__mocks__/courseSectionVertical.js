@@ -289,6 +289,10 @@ module.exports = {
       },
     },
   ],
+  course_sequence_ids: [
+    'block-v1:edx+876+2030+type@sequential+block@297321078a0f4c26a50d671ed87642a6',
+    'block-v1:edx+876+2030+type@sequential+block@4e91bdfefd8e4173a03d19c4d91e1936',
+  ],
   xblock_info: {
     id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@867dddb6f55d410caaa9c1eb9c6743ec',
     display_name: 'Getting Started',

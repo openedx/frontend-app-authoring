@@ -52,22 +52,6 @@ const slice = createSlice({
       state.sequenceStatus = RequestStatus.FAILED;
       state.sequenceMightBeUnit = payload.sequenceMightBeUnit || false;
     },
-    fetchCourseRequest: (state, { payload }) => {
-      state.courseId = payload.courseId;
-      state.courseStatus = RequestStatus.IN_PROGRESS;
-    },
-    fetchCourseSuccess: (state, { payload }) => {
-      state.courseId = payload.courseId;
-      state.courseStatus = RequestStatus.SUCCESSFUL;
-    },
-    fetchCourseFailure: (state, { payload }) => {
-      state.courseId = payload.courseId;
-      state.courseStatus = RequestStatus.FAILED;
-    },
-    fetchCourseDenied: (state, { payload }) => {
-      state.courseId = payload.courseId;
-      state.courseStatus = RequestStatus.DENIED;
-    },
     fetchCourseSectionVerticalDataSuccess: (state, { payload }) => {
       state.courseSectionVertical = payload;
     },
@@ -122,10 +106,6 @@ export const {
   fetchSequenceRequest,
   fetchSequenceSuccess,
   fetchSequenceFailure,
-  fetchCourseRequest,
-  fetchCourseSuccess,
-  fetchCourseFailure,
-  fetchCourseDenied,
   fetchCourseSectionVerticalDataSuccess,
   updateLoadingCourseSectionVerticalDataStatus,
   changeEditTitleFormOpen,

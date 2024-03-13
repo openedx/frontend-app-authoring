@@ -93,6 +93,14 @@ const messages = defineMessages({
     id: 'authoring.pagesAndResources.teams.group.types.open',
     defaultMessage: 'Open',
   },
+  groupTypeOpenManaged: {
+    id: 'authoring.pagesAndResources.teams.group.types.open_managed',
+    defaultMessage: 'Open managed',
+  },
+  groupTypeOpenManagedDescription: {
+    id: 'authoring.pagesAndResources.teams.group.types.open_managed.description',
+    defaultMessage: 'Only course staff can create teams. Learners can see, join and leave teams.',
+  },
   groupTypeOpenDescription: {
     id: 'authoring.pagesAndResources.teams.group.types.open.description',
     defaultMessage: 'Learners can create, join, leave, and see other teams',

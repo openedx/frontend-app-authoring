@@ -7,12 +7,17 @@ import { GroupTypes, TeamSizes } from 'CourseAuthoring/data/constants';
 import CollapsableEditor from 'CourseAuthoring/generic/CollapsableEditor';
 import FormikControl from 'CourseAuthoring/generic/FormikControl';
 import messages from './messages';
+import { isGroupTypeEnabled } from './utils';
 
 // Maps a team type to its corresponding intl message
 const TeamTypeNameMessage = {
   [GroupTypes.OPEN]: {
     label: messages.groupTypeOpen,
     description: messages.groupTypeOpenDescription,
+  },
+  [GroupTypes.OPEN_MANAGED]: {
+    label: messages.groupTypeOpenManaged,
+    description: messages.groupTypeOpenManagedDescription,
   },
   [GroupTypes.PUBLIC_MANAGED]: {
     label: messages.groupTypePublicManaged,
@@ -105,7 +110,7 @@ const GroupEditor = ({
                 onChange={onChange}
                 onBlur={onBlur}
               >
-                {Object.values(GroupTypes).map(groupType => (
+                {Object.values(GroupTypes).map(groupType => isGroupTypeEnabled(groupType) && (
                   <Form.Radio
                     key={groupType}
                     value={groupType}
