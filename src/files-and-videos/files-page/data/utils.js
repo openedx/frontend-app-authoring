@@ -57,3 +57,17 @@ export const getSrc = ({ thumbnail, wrapperType, externalUrl }) => {
     return InsertDriveFile;
   }
 };
+
+export const getUploadConflicts = (filesToUpload, assets) => {
+  const filesFound = assets.map(item => item.displayName);
+  const conflicts = {};
+  const newFiles = [];
+  filesToUpload.forEach(file => {
+    if (filesFound.includes(file.name)) {
+      conflicts[file.name] = file;
+    } else {
+      newFiles.push(file);
+    }
+  });
+  return [conflicts, newFiles];
+};

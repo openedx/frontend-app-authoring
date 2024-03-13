@@ -13,7 +13,6 @@
 @import "studio-home/scss/StudioHome";
 @import "generic/styles";
 @import "schedule-and-details/ScheduleAndDetails";
-@import "pages-and-resources/PagesAndResources";
 @import "course-team/CourseTeam";
 @import "course-updates/CourseUpdates";
 @import "export-page/CourseExportPage";
@@ -23,3 +22,6 @@
 @import "content-tags-drawer/TagBubble";
 @import "course-outline/CourseOutline";
 @import "course-unit/CourseUnit";
+@import "course-checklist/CourseChecklist";
+@import "content-tags-drawer/ContentTagsDropDownSelector";
+@import "content-tags-drawer/ContentTagsCollapsible";

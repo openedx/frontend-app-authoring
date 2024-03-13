@@ -7,12 +7,16 @@ const slice = createSlice({
   name: 'courseUnit',
   initialState: {
     savingStatus: '',
+    isQueryPending: false,
+    isTitleEditFormOpen: false,
     loadingStatus: {
       fetchUnitLoadingStatus: RequestStatus.IN_PROGRESS,
       courseSectionVerticalLoadingStatus: RequestStatus.IN_PROGRESS,
+      courseVerticalChildrenLoadingStatus: RequestStatus.IN_PROGRESS,
     },
     unit: {},
     courseSectionVertical: {},
+    courseVerticalChildren: [],
   },
   reducers: {
     fetchCourseItemSuccess: (state, { payload }) => {
@@ -23,6 +27,12 @@ const slice = createSlice({
         ...state.loadingStatus,
         fetchUnitLoadingStatus: payload.status,
       };
+    },
+    updateQueryPendingStatus: (state, { payload }) => {
+      state.isQueryPending = payload;
+    },
+    changeEditTitleFormOpen: (state, { payload }) => {
+      state.isTitleEditFormOpen = payload;
     },
     updateSavingStatus: (state, { payload }) => {
       state.savingStatus = payload.status;
@@ -42,22 +52,6 @@ const slice = createSlice({
       state.sequenceStatus = RequestStatus.FAILED;
       state.sequenceMightBeUnit = payload.sequenceMightBeUnit || false;
     },
-    fetchCourseRequest: (state, { payload }) => {
-      state.courseId = payload.courseId;
-      state.courseStatus = RequestStatus.IN_PROGRESS;
-    },
-    fetchCourseSuccess: (state, { payload }) => {
-      state.courseId = payload.courseId;
-      state.courseStatus = RequestStatus.SUCCESSFUL;
-    },
-    fetchCourseFailure: (state, { payload }) => {
-      state.courseId = payload.courseId;
-      state.courseStatus = RequestStatus.FAILED;
-    },
-    fetchCourseDenied: (state, { payload }) => {
-      state.courseId = payload.courseId;
-      state.courseStatus = RequestStatus.DENIED;
-    },
     fetchCourseSectionVerticalDataSuccess: (state, { payload }) => {
       state.courseSectionVertical = payload;
     },
@@ -73,6 +67,34 @@ const slice = createSlice({
         createUnitXblockLoadingStatus: payload.status,
       };
     },
+    addNewUnitStatus: (state, { payload }) => {
+      state.loadingStatus = {
+        ...state.loadingStatus,
+        fetchUnitLoadingStatus: payload.status,
+      };
+    },
+    updateCourseVerticalChildren: (state, { payload }) => {
+      state.courseVerticalChildren = payload;
+    },
+    updateCourseVerticalChildrenLoadingStatus: (state, { payload }) => {
+      state.loadingStatus.courseVerticalChildrenLoadingStatus = payload.status;
+    },
+    deleteXBlock: (state, { payload }) => {
+      state.courseVerticalChildren.children = state.courseVerticalChildren.children.filter(
+        (component) => component.blockId !== payload,
+      );
+    },
+    duplicateXBlock: (state, { payload }) => {
+      state.courseVerticalChildren = {
+        ...payload.newCourseVerticalChildren,
+        children: payload.newCourseVerticalChildren.children.map((component) => {
+          if (component.blockId === payload.newId) {
+            component.shouldScroll = true;
+          }
+          return component;
+        }),
+      };
+    },
   },
 });
 
@@ -84,13 +106,15 @@ export const {
   fetchSequenceRequest,
   fetchSequenceSuccess,
   fetchSequenceFailure,
-  fetchCourseRequest,
-  fetchCourseSuccess,
-  fetchCourseFailure,
-  fetchCourseDenied,
   fetchCourseSectionVerticalDataSuccess,
   updateLoadingCourseSectionVerticalDataStatus,
+  changeEditTitleFormOpen,
+  updateQueryPendingStatus,
   updateLoadingCourseXblockStatus,
+  updateCourseVerticalChildren,
+  updateCourseVerticalChildrenLoadingStatus,
+  deleteXBlock,
+  duplicateXBlock,
 } = slice.actions;
 
 export const {

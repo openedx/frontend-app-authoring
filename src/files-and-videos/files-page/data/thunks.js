@@ -15,6 +15,7 @@ import {
   deleteAsset,
   updateLockStatus,
   getDownload,
+  getAssetDetails,
 } from './api';
 import {
   setAssetIds,
@@ -25,11 +26,12 @@ import {
   updateErrors,
   clearErrors,
   updateEditStatus,
+  updateDuplicateFiles,
 } from './slice';
 
-import { updateFileValues } from './utils';
+import { getUploadConflicts, updateFileValues } from './utils';
 
-export function fetchAddtionalAsstets(courseId, totalCount) {
+export function fetchAdditionalAssets(courseId, totalCount) {
   return async (dispatch) => {
     let remainingAssetCount = totalCount;
     let page = 1;
@@ -66,7 +68,7 @@ export function fetchAssets(courseId) {
         assetIds: assets.map(asset => asset.id),
       }));
       if (totalCount > 50) {
-        dispatch(fetchAddtionalAsstets(courseId, totalCount - 50));
+        dispatch(fetchAdditionalAssets(courseId, totalCount - 50));
       }
       dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
@@ -104,7 +106,7 @@ export function deleteAssetFile(courseId, id) {
   };
 }
 
-export function addAssetFile(courseId, file) {
+export function addAssetFile(courseId, file, isOverwrite) {
   return async (dispatch) => {
     dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.IN_PROGRESS }));
 
@@ -115,9 +117,11 @@ export function addAssetFile(courseId, file) {
         modelType: 'assets',
         model: { ...parsedAssets },
       }));
-      dispatch(addAssetSuccess({
-        assetId: asset.id,
-      }));
+      if (!isOverwrite) {
+        dispatch(addAssetSuccess({
+          assetId: asset.id,
+        }));
+      }
       dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
       if (error.response && error.response.status === 413) {
@@ -126,6 +130,30 @@ export function addAssetFile(courseId, file) {
       } else {
         dispatch(updateErrors({ error: 'add', message: `Failed to add ${file.name}.` }));
       }
+      dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function validateAssetFiles(courseId, files) {
+  return async (dispatch) => {
+    dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.IN_PROGRESS }));
+    dispatch(updateDuplicateFiles({ files: {} }));
+
+    try {
+      const filenames = [];
+      files.forEach(file => filenames.push(file.name));
+      await getAssetDetails({ courseId, filenames, fileCount: filenames.length }).then(({ assets }) => {
+        const [conflicts, newFiles] = getUploadConflicts(files, assets);
+        if (!isEmpty(newFiles)) {
+          newFiles.forEach(file => dispatch(addAssetFile(courseId, file)));
+        }
+        if (!isEmpty(conflicts)) {
+          dispatch(updateDuplicateFiles({ files: conflicts }));
+        }
+      });
+    } catch (error) {
+      files.forEach(file => dispatch(updateErrors({ error: 'add', message: `Failed to validate ${file.name}.` })));
       dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
     }
   };
@@ -161,7 +189,6 @@ export function resetErrors({ errorType }) {
 export function getUsagePaths({ asset, courseId }) {
   return async (dispatch) => {
     dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.IN_PROGRESS }));
-
     try {
       const { usageLocations } = await getAssetUsagePaths({ assetId: asset.id, courseId });
       const assetLocations = usageLocations[asset.id];

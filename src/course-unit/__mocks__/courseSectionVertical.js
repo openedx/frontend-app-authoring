@@ -289,6 +289,10 @@ module.exports = {
       },
     },
   ],
+  course_sequence_ids: [
+    'block-v1:edx+876+2030+type@sequential+block@297321078a0f4c26a50d671ed87642a6',
+    'block-v1:edx+876+2030+type@sequential+block@4e91bdfefd8e4173a03d19c4d91e1936',
+  ],
   xblock_info: {
     id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@867dddb6f55d410caaa9c1eb9c6743ec',
     display_name: 'Getting Started',
@@ -498,6 +502,7 @@ module.exports = {
                   selected_groups_label: '',
                 },
                 enable_copy_paste_units: false,
+                xblock_type: 'other',
               },
               {
                 id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@4f6c1b4e316a419ab5b6bf30e6c708e9',
@@ -581,6 +586,7 @@ module.exports = {
                   selected_groups_label: '',
                 },
                 enable_copy_paste_units: false,
+                xblock_type: 'video',
               },
               {
                 id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@3dc16db8d14842e38324e95d4030b8a0',
@@ -664,6 +670,7 @@ module.exports = {
                   selected_groups_label: '',
                 },
                 enable_copy_paste_units: false,
+                xblock_type: 'other',
               },
               {
                 id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@4a1bba2a403f40bca5ec245e945b0d76',
@@ -747,6 +754,7 @@ module.exports = {
                   selected_groups_label: '',
                 },
                 enable_copy_paste_units: false,
+                xblock_type: 'video',
               },
               {
                 id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@256f17a44983429fb1a60802203ee4e0',
@@ -830,6 +838,7 @@ module.exports = {
                   selected_groups_label: '',
                 },
                 enable_copy_paste_units: false,
+                xblock_type: 'other',
               },
               {
                 id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@e3601c0abee6427d8c17e6d6f8fdddd1',
@@ -913,6 +922,7 @@ module.exports = {
                   selected_groups_label: '',
                 },
                 enable_copy_paste_units: false,
+                xblock_type: 'video',
               },
               {
                 id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@a79d59cd72034188a71d388f4954a606',
@@ -996,6 +1006,7 @@ module.exports = {
                   selected_groups_label: '',
                 },
                 enable_copy_paste_units: false,
+                xblock_type: 'other',
               },
               {
                 id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@134df56c516a4a0dbb24dd5facef746e',
@@ -1079,6 +1090,7 @@ module.exports = {
                   selected_groups_label: '',
                 },
                 enable_copy_paste_units: false,
+                xblock_type: 'other',
               },
               {
                 id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@d91b9e5d8bc64d57a1332d06bf2f2193',
@@ -1162,6 +1174,7 @@ module.exports = {
                   selected_groups_label: '',
                 },
                 enable_copy_paste_units: false,
+                xblock_type: 'video',
               },
             ],
           },

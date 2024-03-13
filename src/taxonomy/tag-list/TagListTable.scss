@@ -1,0 +1,12 @@
+.tag-list-table {
+  table tr:first-child > th:nth-child(2) > span {
+    // Used to move "Expand all" button to the right.
+    // Find the first <span> of the second <th> of the first <tr> of the <table>.
+    //
+    // The approach of the expand buttons cannot be applied here since the
+    // table headers are rendered differently and at the component level
+    // there is no control of this style.
+    display: flex;
+    justify-content: flex-end;
+  }
+}

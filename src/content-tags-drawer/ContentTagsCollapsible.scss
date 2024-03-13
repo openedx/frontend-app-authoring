@@ -27,3 +27,33 @@
 .pgn__modal-popup__arrow {
   visibility: hidden;
 }
+
+.add-tags-button:not([disabled]):hover {
+  background-color: transparent;
+  color: $info-900 !important;
+}
+
+.cancel-add-tags-button:hover {
+  background-color: transparent;
+  color: $gray-300 !important;
+}
+
+.react-select-add-tags__control {
+  border-radius: 0 !important;
+}
+
+.react-select-add-tags__control--is-focused {
+  border-color: black !important;
+  box-shadow: 0 0 0 1px black !important;
+}
+
+.react-select-add-tags__multi-value__remove {
+  padding-right: 7px !important;
+  padding-left: 7px !important;
+  border-radius: 0 3px 3px 0;
+
+  &:hover {
+    background-color: black !important;
+    color: white !important;
+  }
+}

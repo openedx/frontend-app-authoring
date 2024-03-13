@@ -9,10 +9,12 @@ import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
-const getTagListApiUrl = (taxonomyId, page) => new URL(
-  `api/content_tagging/v1/taxonomies/${taxonomyId}/tags/?page=${page + 1}`,
-  getApiBaseUrl(),
-).href;
+const getTagListApiUrl = (taxonomyId, page, pageSize) => {
+  const url = new URL(`api/content_tagging/v1/taxonomies/${taxonomyId}/tags/`, getApiBaseUrl());
+  url.searchParams.append('page', page + 1);
+  url.searchParams.append('page_size', pageSize);
+  return url.href;
+};
 
 /**
  * @param {number} taxonomyId
@@ -20,11 +22,11 @@ const getTagListApiUrl = (taxonomyId, page) => new URL(
  * @returns {import('@tanstack/react-query').UseQueryResult<import('./types.mjs').TagListData>}
  */
 export const useTagListData = (taxonomyId, options) => {
-  const { pageIndex } = options;
+  const { pageIndex, pageSize } = options;
   return useQuery({
     queryKey: ['tagList', taxonomyId, pageIndex],
     queryFn: async () => {
-      const { data } = await getAuthenticatedHttpClient().get(getTagListApiUrl(taxonomyId, pageIndex));
+      const { data } = await getAuthenticatedHttpClient().get(getTagListApiUrl(taxonomyId, pageIndex, pageSize));
       return camelCaseObject(data);
     },
   });

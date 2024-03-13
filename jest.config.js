@@ -11,6 +11,7 @@ module.exports = createConfig('jest', {
   ],
   moduleNameMapper: {
     '^lodash-es$': 'lodash',
+    '^CourseAuthoring/(.*)$': '<rootDir>/src/$1',
   },
   modulePathIgnorePatterns: [
     '/src/pages-and-resources/utils.test.jsx',

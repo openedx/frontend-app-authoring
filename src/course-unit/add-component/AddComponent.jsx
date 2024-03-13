@@ -2,28 +2,56 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Button } from '@openedx/paragon';
+import { useToggle } from '@openedx/paragon';
 
 import { getCourseSectionVertical } from '../data/selectors';
 import { COMPONENT_ICON_TYPES } from '../constants';
-import ComponentIcon from './ComponentIcon';
+import ComponentModalView from './add-component-modals/ComponentModalView';
+import AddComponentButton from './add-component-btn';
 import messages from './messages';
 
-const AddComponent = ({ blockId, handleCreateNewCourseXblock }) => {
+const AddComponent = ({ blockId, handleCreateNewCourseXBlock }) => {
   const navigate = useNavigate();
   const intl = useIntl();
+  const [isOpenAdvanced, openAdvanced, closeAdvanced] = useToggle(false);
+  const [isOpenHtml, openHtml, closeHtml] = useToggle(false);
+  const [isOpenOpenAssessment, openOpenAssessment, closeOpenAssessment] = useToggle(false);
   const { componentTemplates } = useSelector(getCourseSectionVertical);
 
-  const handleCreateNewXblock = (type) => () => {
+  const handleCreateNewXBlock = (type, moduleName) => {
     switch (type) {
     case COMPONENT_ICON_TYPES.discussion:
     case COMPONENT_ICON_TYPES.dragAndDrop:
-      handleCreateNewCourseXblock({ type, parentLocator: blockId });
+      handleCreateNewCourseXBlock({ type, parentLocator: blockId });
       break;
     case COMPONENT_ICON_TYPES.problem:
     case COMPONENT_ICON_TYPES.video:
-      handleCreateNewCourseXblock({ type, parentLocator: blockId }, ({ courseKey, locator }) => {
+      handleCreateNewCourseXBlock({ type, parentLocator: blockId }, ({ courseKey, locator }) => {
         navigate(`/course/${courseKey}/editor/${type}/${locator}`);
+      });
+      break;
+    // TODO: The library functional will be a bit different of current legacy (CMS)
+    //  behaviour and this ticket is on hold (blocked by other development team).
+    case COMPONENT_ICON_TYPES.library:
+      handleCreateNewCourseXBlock({ type, category: 'library_content', parentLocator: blockId });
+      break;
+    case COMPONENT_ICON_TYPES.advanced:
+      handleCreateNewCourseXBlock({
+        type: moduleName, category: moduleName, parentLocator: blockId,
+      });
+      break;
+    case COMPONENT_ICON_TYPES.openassessment:
+      handleCreateNewCourseXBlock({
+        boilerplate: moduleName, category: type, parentLocator: blockId,
+      });
+      break;
+    case COMPONENT_ICON_TYPES.html:
+      handleCreateNewCourseXBlock({
+        type,
+        boilerplate: moduleName,
+        parentLocator: blockId,
+      }, ({ courseKey, locator }) => {
+        navigate(`/course/${courseKey}/editor/html/${locator}`);
       });
       break;
     default:
@@ -38,19 +66,53 @@ const AddComponent = ({ blockId, handleCreateNewCourseXblock }) => {
     <div className="py-4">
       <h5 className="h3 mb-4 text-center">{intl.formatMessage(messages.title)}</h5>
       <ul className="new-component-type list-unstyled m-0 d-flex flex-wrap justify-content-center">
-        {Object.keys(componentTemplates).map((component) => (
-          <li key={componentTemplates[component].type}>
-            <Button
-              variant="outline-primary"
-              className="add-component-button flex-column rounded-sm"
-              onClick={handleCreateNewXblock(componentTemplates[component].type)}
-            >
-              <ComponentIcon type={componentTemplates[component].type} />
-              <span className="sr-only">{intl.formatMessage(messages.buttonText)}</span>
-              <span className="small mt-2">{componentTemplates[component].displayName}</span>
-            </Button>
-          </li>
-        ))}
+        {componentTemplates.map((component) => {
+          const { type, displayName } = component;
+          let modalParams;
+
+          switch (type) {
+          case COMPONENT_ICON_TYPES.advanced:
+            modalParams = {
+              open: openAdvanced,
+              close: closeAdvanced,
+              isOpen: isOpenAdvanced,
+            };
+            break;
+          case COMPONENT_ICON_TYPES.html:
+            modalParams = {
+              open: openHtml,
+              close: closeHtml,
+              isOpen: isOpenHtml,
+            };
+            break;
+          case COMPONENT_ICON_TYPES.openassessment:
+            modalParams = {
+              open: openOpenAssessment,
+              close: closeOpenAssessment,
+              isOpen: isOpenOpenAssessment,
+            };
+            break;
+          default:
+            return (
+              <li key={type}>
+                <AddComponentButton
+                  onClick={() => handleCreateNewXBlock(type)}
+                  displayName={displayName}
+                  type={type}
+                />
+              </li>
+            );
+          }
+
+          return (
+            <ComponentModalView
+              key={type}
+              component={component}
+              handleCreateNewXBlock={handleCreateNewXBlock}
+              modalParams={modalParams}
+            />
+          );
+        })}
       </ul>
     </div>
   );
@@ -58,7 +120,7 @@ const AddComponent = ({ blockId, handleCreateNewCourseXblock }) => {
 
 AddComponent.propTypes = {
   blockId: PropTypes.string.isRequired,
-  handleCreateNewCourseXblock: PropTypes.func.isRequired,
+  handleCreateNewCourseXBlock: PropTypes.func.isRequired,
 };
 
 export default AddComponent;

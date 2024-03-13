@@ -12,10 +12,9 @@ export const useFileInput = ({
   const addFile = (e) => {
     const { files } = e.target;
     setSelectedRows(files);
-    Object.values(files).forEach(file => {
-      onAddFile(file);
-      setAddOpen();
-    });
+    onAddFile(Object.values(files));
+    setAddOpen();
+    e.target.value = '';
   };
   return {
     click,

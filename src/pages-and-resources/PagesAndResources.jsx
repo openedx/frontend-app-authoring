@@ -5,17 +5,10 @@ import { PageWrap, AppContext } from '@edx/frontend-platform/react';
 
 import { Routes, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import _ from 'lodash';
 
 import { Button, Hyperlink } from '@openedx/paragon';
 import messages from './messages';
 import DiscussionsSettings from './discussions';
-import {
-  XpertUnitSummarySettings,
-  fetchXpertPluginConfigurable,
-  fetchXpertSettings,
-  appInfo as XpertAppInfo,
-} from './xpert-unit-summary';
 
 import PageGrid from './pages/PageGrid';
 import { fetchCourseApps } from './data/thunks';
@@ -34,8 +27,6 @@ const PagesAndResources = ({ courseId, intl }) => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchCourseApps(courseId));
-    dispatch(fetchXpertPluginConfigurable(courseId));
-    dispatch(fetchXpertSettings(courseId));
   }, [courseId]);
 
   const courseAppIds = useSelector(state => state.pagesAndResources.courseAppIds);
@@ -46,32 +37,21 @@ const PagesAndResources = ({ courseId, intl }) => {
   const learningCourseURL = `${config.LEARNING_BASE_URL}/course/${courseId}`;
   const redirectUrl = `/course/${courseId}/pages-and-resources`;
 
-  // Most pages here are driven by a course app. The one exception is the Xpert unit summaries page.
+  // The pages here are driven by course apps. The list of course app IDs comes from the LMS API.
+  // We display all enabled course apps regardless of whether or not the corresponding frontend plugin is available.
   const pages = useModels('courseApps', courseAppIds);
-  const xpertPluginConfigurable = useModel('XpertSettings.enabled', 'xpert-unit-summary');
-  const xpertSettings = useModel('XpertSettings', 'xpert-unit-summary');
 
-  // These pages appear in a separate "Content Permissions" section at the bottom of the page.
-  // If there are no content permission pages, this section will not appear.
+  // We want the Xpert learning assistant and unit summaries to appear in the "Content Permissions" section instead,
+  // so we remove them from pages and add them to contentPermissionsPages.
   const contentPermissionsPages = [];
 
-  // Xpert unit summaries
-  if (xpertPluginConfigurable?.enabled) {
-    contentPermissionsPages.push({
-      ...XpertAppInfo,
-      enabled: xpertSettings?.enabled !== undefined,
-    });
-  }
-
-  // Xpert learning assistant
-  if (_.some(pages, (page) => page.id === 'learning_assistant')) {
-    const index = pages.findIndex(app => app.id === 'learning_assistant');
-
-    // We want the Xpert learning assistant page to appear in the "Content Permissions" section instead,
-    // so we remove it from pages and add it to contentPermissionsPages.
-    const [page] = pages.splice(index, 1);
-    contentPermissionsPages.push(page);
-  }
+  ['xpert_unit_summary', 'learning_assistant'].forEach(separateAppId => {
+    const index = pages.findIndex(app => app.id === separateAppId);
+    if (index !== -1) {
+      const [page] = pages.splice(index, 1);
+      contentPermissionsPages.push(page);
+    }
+  });
 
   if (loadingStatus === RequestStatus.IN_PROGRESS) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
@@ -99,10 +79,16 @@ const PagesAndResources = ({ courseId, intl }) => {
           </Hyperlink>
         </div>
 
-        <PageGrid pages={pages} />
+        <Routes>
+          <Route path="discussion/configure/:appId" element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>} />
+          <Route path="discussion" element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>} />
+          <Route path="discussion/settings" element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>} />
+          <Route path=":appId/settings" element={<PageWrap><Suspense fallback="..."><SettingsComponent url={redirectUrl} /></Suspense></PageWrap>} />
+        </Routes>
 
+        <PageGrid pages={pages} />
         {
-          !_.isEmpty(contentPermissionsPages) && (
+          (contentPermissionsPages.length > 0) && (
             <>
               <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
                 <h3 className="m-0">{intl.formatMessage(messages.contentPermissions)}</h3>
@@ -111,14 +97,6 @@ const PagesAndResources = ({ courseId, intl }) => {
             </>
           )
         }
-
-        <Routes>
-          <Route path="discussion/configure/:appId" element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>} />
-          <Route path="discussion" element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>} />
-          <Route path="discussion/settings" element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>} />
-          <Route path="xpert-unit-summary/settings" element={<PageWrap><XpertUnitSummarySettings courseId={courseId} /></PageWrap>} />
-          <Route path=":appId/settings" element={<PageWrap><Suspense fallback="..."><SettingsComponent url={redirectUrl} /></Suspense></PageWrap>} />
-        </Routes>
       </main>
     </PagesAndResourcesProvider>
   );

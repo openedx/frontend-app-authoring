@@ -19,6 +19,7 @@ import { ITEM_BADGE_STATUS } from '../constants';
 import { scrollToElement } from '../utils';
 import CardStatus from './CardStatus';
 import messages from './messages';
+import TagCount from '../../generic/tag-count';
 
 const CardHeader = ({
   title,
@@ -27,6 +28,7 @@ const CardHeader = ({
   hasChanges,
   onClickPublish,
   onClickConfigure,
+  onClickManageTags,
   onClickMenuButton,
   onClickEdit,
   isFormOpen,
@@ -48,6 +50,7 @@ const CardHeader = ({
   discussionEnabled,
   discussionsSettings,
   parentInfo,
+  tagsCount,
 }) => {
   const intl = useIntl();
   const [searchParams] = useSearchParams();
@@ -127,6 +130,7 @@ const CardHeader = ({
         {(isVertical || isSequential) && (
           <CardStatus status={status} showDiscussionsEnabledBadge={showDiscussionsEnabledBadge} />
         )}
+        { tagsCount > 0 && <TagCount count={tagsCount} onClick={onClickManageTags} /> }
         <Dropdown data-testid={`${namePrefix}-card-header__menu`} onClick={onClickMenuButton}>
           <Dropdown.Toggle
             className="item-card-header__menu"
@@ -162,6 +166,15 @@ const CardHeader = ({
             >
               {intl.formatMessage(messages.menuConfigure)}
             </Dropdown.Item>
+            {onClickManageTags && (
+              <Dropdown.Item
+                data-testid={`${namePrefix}-card-header__menu-manage-tags-button`}
+                onClick={onClickManageTags}
+              >
+                {intl.formatMessage(messages.menuManageTags)}
+              </Dropdown.Item>
+            )}
+
             {isVertical && enableCopyPasteUnits && (
               <Dropdown.Item onClick={onClickCopy}>
                 {intl.formatMessage(messages.menuCopy)}
@@ -218,6 +231,8 @@ CardHeader.defaultProps = {
   discussionEnabled: false,
   discussionsSettings: {},
   parentInfo: {},
+  onClickManageTags: null,
+  tagsCount: undefined,
 };
 
 CardHeader.propTypes = {
@@ -227,6 +242,7 @@ CardHeader.propTypes = {
   hasChanges: PropTypes.bool.isRequired,
   onClickPublish: PropTypes.func.isRequired,
   onClickConfigure: PropTypes.func.isRequired,
+  onClickManageTags: PropTypes.func,
   onClickMenuButton: PropTypes.func.isRequired,
   onClickEdit: PropTypes.func.isRequired,
   isFormOpen: PropTypes.bool.isRequired,
@@ -261,6 +277,7 @@ CardHeader.propTypes = {
     isTimeLimited: PropTypes.bool,
     graded: PropTypes.bool,
   }),
+  tagsCount: PropTypes.number,
 };
 
 export default CardHeader;

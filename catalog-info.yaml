@@ -1,0 +1,18 @@
+# This file records information about this repo. Its use is described in OEP-55:
+# https://open-edx-proposals.readthedocs.io/en/latest/processes/oep-0055-proc-project-maintainers.html
+
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: 'frontend-app-course-authoring'
+  description: "The frontend (MFE) for Open edX Course Authoring (aka Studio)"
+  links:
+    - url: "https://github.com/openedx/frontend-app-course-authoring"
+      title: "Frontend app course authoring"
+      icon: "Web"
+  annotations:
+    openedx.org/arch-interest-groups: ""
+spec:
+  owner: group:2u-tnl
+  type: 'website'
+  lifecycle: 'production'

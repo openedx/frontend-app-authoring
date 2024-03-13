@@ -62,7 +62,7 @@ const slice = createSlice({
     deleteVideoSuccess: (state, { payload }) => {
       state.videoIds = state.videoIds.filter(id => id !== payload.videoId);
     },
-    addVideoSuccess: (state, { payload }) => {
+    addVideoById: (state, { payload }) => {
       state.videoIds = [payload.videoId, ...state.videoIds];
     },
     updateTranscriptCredentialsSuccess: (state, { payload }) => {
@@ -102,6 +102,7 @@ export const {
   updateEditStatus,
   updateTranscriptCredentialsSuccess,
   updateTranscriptPreferenceSuccess,
+  updateVideoUploadProgress,
 } = slice.actions;
 
 export const {

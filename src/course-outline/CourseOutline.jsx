@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -24,8 +24,11 @@ import { RequestStatus } from '../data/constants';
 import SubHeader from '../generic/sub-header/SubHeader';
 import ProcessingNotification from '../generic/processing-notification';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
+import DeleteModal from '../generic/delete-modal/DeleteModal';
 import AlertMessage from '../generic/alert-message';
 import getPageHeadTitle from '../generic/utils';
+import { getCurrentItem } from './data/selectors';
+import { COURSE_BLOCK_NAMES } from './constants';
 import HeaderNavigations from './header-navigations/HeaderNavigations';
 import OutlineSideBar from './outline-sidebar/OutlineSidebar';
 import StatusBar from './status-bar/StatusBar';
@@ -37,10 +40,10 @@ import HighlightsModal from './highlights-modal/HighlightsModal';
 import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
 import PublishModal from './publish-modal/PublishModal';
 import ConfigureModal from './configure-modal/ConfigureModal';
-import DeleteModal from './delete-modal/DeleteModal';
 import PageAlerts from './page-alerts/PageAlerts';
 import { useCourseOutline } from './hooks';
 import messages from './messages';
+import useUnitTagsCount from './data/apiHooks';
 
 const CourseOutline = ({ courseId }) => {
   const intl = useIntl();
@@ -115,6 +118,9 @@ const CourseOutline = ({ courseId }) => {
     title: processingNotificationTitle,
   } = useSelector(getProcessingNotification);
 
+  const { category } = useSelector(getCurrentItem);
+  const deleteCategory = COURSE_BLOCK_NAMES[category]?.name.toLowerCase();
+
   const finalizeSectionOrder = () => (newSections) => {
     initialSections = [...sectionsList];
     handleSectionDragAndDrop(newSections.map(section => section.id), () => {
@@ -156,6 +162,27 @@ const CourseOutline = ({ courseId }) => {
       setSections(() => initialSections);
     });
   };
+
+  const unitsIdPattern = useMemo(() => {
+    let pattern = '';
+    sections.forEach((section) => {
+      section.childInfo.children.forEach((subsection) => {
+        subsection.childInfo.children.forEach((unit) => {
+          if (pattern !== '') {
+            pattern += `,${unit.id}`;
+          } else {
+            pattern += unit.id;
+          }
+        });
+      });
+    });
+    return pattern;
+  }, [sections]);
+
+  const {
+    data: unitsTagCounts,
+    isSuccess: isUnitsTagCountsLoaded,
+  } = useUnitTagsCount(unitsIdPattern);
 
   /**
    * Check if item can be moved by given step.
@@ -400,6 +427,7 @@ const CourseOutline = ({ courseId }) => {
                                             )}
                                             onCopyToClipboardClick={handleCopyToClipboardClick}
                                             discussionsSettings={discussionsSettings}
+                                            tagsCount={isUnitsTagCountsLoaded ? unitsTagCounts[unit.id] : 0}
                                           />
                                         ))}
                                       </DraggableList>
@@ -459,6 +487,7 @@ const CourseOutline = ({ courseId }) => {
           onConfigureSubmit={handleConfigureItemSubmit}
         />
         <DeleteModal
+          category={deleteCategory}
           isOpen={isDeleteModalOpen}
           close={closeDeleteModal}
           onDeleteSubmit={handleDeleteItemSubmit}
