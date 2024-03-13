@@ -11,7 +11,6 @@ const slice = createSlice({
     loadingStatus: RequestStatus.IN_PROGRESS,
     updatingStatus: '',
     addingStatus: '',
-    uploadNewVideoProgress: 0,
     deletingStatus: '',
     usageStatus: '',
     transcriptStatus: '',
@@ -63,11 +62,8 @@ const slice = createSlice({
     deleteVideoSuccess: (state, { payload }) => {
       state.videoIds = state.videoIds.filter(id => id !== payload.videoId);
     },
-    addVideoById: (state, { payload }) => {
+    addVideoSuccess: (state, { payload }) => {
       state.videoIds = [payload.videoId, ...state.videoIds];
-    },
-    updateVideoUploadProgress: (state, { payload }) => {
-      state.uploadNewVideoProgress = payload.uploadNewVideoProgress;
     },
     updateTranscriptCredentialsSuccess: (state, { payload }) => {
       const { provider } = payload;
@@ -106,7 +102,6 @@ export const {
   updateEditStatus,
   updateTranscriptCredentialsSuccess,
   updateTranscriptPreferenceSuccess,
-  updateVideoUploadProgress,
 } = slice.actions;
 
 export const {
