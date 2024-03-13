@@ -213,7 +213,6 @@ export const generateFetchVideosApiResponse = () => ({
 });
 
 export const generateAddVideoApiResponse = () => ({
-  ok: true,
   videos: [
     {
       edx_video_id: 'mOckID4',

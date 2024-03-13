@@ -180,30 +180,21 @@ export async function addVideo(courseId, file) {
   const postJson = {
     files: [{ file_name: file.name, content_type: file.type }],
   };
-  const response = await getAuthenticatedHttpClient()
-    .post(getCourseVideosApiUrl(courseId), postJson);
-  return { data: camelCaseObject(response.data), ...response };
-}
 
-export async function sendVideoUploadStatus(
-  courseId,
-  edxVideoId,
-  message,
-  status,
-) {
-  return getAuthenticatedHttpClient()
-    .post(getCourseVideosApiUrl(courseId), [{
-      edxVideoId,
-      message,
-      status,
-    }]);
+  const { data } = await getAuthenticatedHttpClient()
+    .post(getCourseVideosApiUrl(courseId), postJson);
+  return camelCaseObject(data);
 }
 
 export async function uploadVideo(
+  courseId,
   uploadUrl,
   uploadFile,
+  edxVideoId,
 ) {
-  return fetch(uploadUrl, {
+  const uploadErrors = [];
+
+  await fetch(uploadUrl, {
     method: 'PUT',
     headers: {
       'Content-Disposition': `attachment; filename="${uploadFile.name}"`,
@@ -211,7 +202,28 @@ export async function uploadVideo(
     },
     multipart: false,
     body: uploadFile,
-  });
+  })
+    .then(async (response) => {
+      if (!response.ok) {
+        throw new Error();
+      }
+      await getAuthenticatedHttpClient()
+        .post(getCourseVideosApiUrl(courseId), [{
+          edxVideoId,
+          message: 'Upload completed',
+          status: 'upload_completed',
+        }]);
+    })
+    .catch(async () => {
+      uploadErrors.push(`Failed to upload ${uploadFile.name} to server.`);
+      await getAuthenticatedHttpClient()
+        .post(getCourseVideosApiUrl(courseId), [{
+          edxVideoId,
+          message: 'Upload failed',
+          status: 'upload_failed',
+        }]);
+    });
+  return uploadErrors;
 }
 
 export async function deleteTranscriptPreferences(courseId) {
