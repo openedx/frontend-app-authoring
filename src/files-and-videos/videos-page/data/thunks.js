@@ -1,5 +1,5 @@
 import { camelCase, isEmpty } from 'lodash';
-import { getConfig } from '@edx/frontend-platform';
+import { getConfig, camelCaseObject } from '@edx/frontend-platform';
 import { RequestStatus } from '../../../data/constants';
 import {
   addModels,
@@ -103,12 +103,14 @@ export function addVideoFile(courseId, file, videoIds) {
     dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.IN_PROGRESS }));
     try {
       const createUrlResponse = await addVideo(courseId, file);
+      // eslint-disable-next-line
+      console.log(`Post Response: ${createUrlResponse}`);
       if (createUrlResponse.status < 200 && createUrlResponse.status >= 300) {
         dispatch(updateErrors({ error: 'add', message: `Failed to add ${file.name}.` }));
         dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
         return;
       }
-      const { edxVideoId, uploadUrl } = createUrlResponse.data.files[0];
+      const { edxVideoId, uploadUrl } = camelCaseObject(createUrlResponse.data).files[0];
       const putToServerResponse = await uploadVideo(uploadUrl, file);
       if (putToServerResponse.status < 200 || putToServerResponse.status >= 300) {
         dispatch(updateErrors({ error: 'add', message: `Failed to upload ${file.name}.` }));
