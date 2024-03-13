@@ -62,7 +62,6 @@ const VideosPage = ({
     videoIds,
     loadingStatus,
     transcriptStatus,
-    uploadNewVideoProgress,
     addingStatus: addVideoStatus,
     deletingStatus: deleteVideoStatus,
     updatingStatus: updateVideoStatus,
