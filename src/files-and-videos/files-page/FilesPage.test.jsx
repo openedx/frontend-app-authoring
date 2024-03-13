@@ -127,7 +127,7 @@ describe('FilesAndUploads', () => {
       await emptyMockStore(RequestStatus.SUCCESSFUL);
       const dropzone = screen.getByTestId('files-dropzone');
       await act(async () => {
-        axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=100`).reply(200, { assets: [] });
+        axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=1`).reply(200, { assets: [] });
         axiosMock.onPost(getAssetsUrl(courseId)).reply(204, generateNewAssetApiResponse());
         Object.defineProperty(dropzone, 'files', {
           value: [file],
@@ -198,7 +198,7 @@ describe('FilesAndUploads', () => {
       describe('upload a single file', () => {
         it('should upload without duplication modal', async () => {
           await mockStore(RequestStatus.SUCCESSFUL);
-          axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=100`).reply(200, { assets: [] });
+          axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=1`).reply(200, { assets: [] });
           axiosMock.onPost(getAssetsUrl(courseId)).reply(200, generateNewAssetApiResponse());
           let addFilesButton;
           await waitFor(() => {
@@ -217,7 +217,7 @@ describe('FilesAndUploads', () => {
 
           await mockStore(RequestStatus.SUCCESSFUL);
           axiosMock.onGet(
-            `${getAssetsUrl(courseId)}?display_name=mOckID6&page_size=100`,
+            `${getAssetsUrl(courseId)}?display_name=mOckID6&page_size=1`,
           ).reply(200, { assets: [{ display_name: 'mOckID6' }] });
           let addFilesButton;
           await waitFor(() => {
@@ -235,7 +235,7 @@ describe('FilesAndUploads', () => {
 
           await mockStore(RequestStatus.SUCCESSFUL);
           axiosMock.onGet(
-            `${getAssetsUrl(courseId)}?display_name=mOckID6&page_size=100`,
+            `${getAssetsUrl(courseId)}?display_name=mOckID6&page_size=1`,
           ).reply(200, { assets: [{ display_name: 'mOckID6' }] });
           const { asset: newDefaultAssetResponse } = generateNewAssetApiResponse();
           const responseData = {
@@ -272,7 +272,7 @@ describe('FilesAndUploads', () => {
 
           await mockStore(RequestStatus.SUCCESSFUL);
           axiosMock.onGet(
-            `${getAssetsUrl(courseId)}?display_name=mOckID6&page_size=100`,
+            `${getAssetsUrl(courseId)}?display_name=mOckID6&page_size=1`,
           ).reply(200, { assets: [{ display_name: 'mOckID6' }] });
           let addFilesButton;
           await waitFor(() => {
@@ -594,7 +594,7 @@ describe('FilesAndUploads', () => {
       it('invalid file size should show error', async () => {
         const errorMessage = 'File download.png exceeds maximum size of 20 MB.';
         await mockStore(RequestStatus.SUCCESSFUL);
-        axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=100`).reply(200, { assets: [] });
+        axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=1`).reply(200, { assets: [] });
         axiosMock.onPost(getAssetsUrl(courseId)).reply(413, { error: errorMessage });
         const addFilesButton = screen.getByLabelText('file-input');
         await act(async () => {
@@ -608,7 +608,7 @@ describe('FilesAndUploads', () => {
 
       it('404 validation should show error', async () => {
         await mockStore(RequestStatus.SUCCESSFUL);
-        axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=100`).reply(404);
+        axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=1`).reply(404);
         const addFilesButton = screen.getByLabelText('file-input');
         await act(async () => {
           userEvent.upload(addFilesButton, file);
@@ -622,7 +622,7 @@ describe('FilesAndUploads', () => {
 
       it('404 upload should show error', async () => {
         await mockStore(RequestStatus.SUCCESSFUL);
-        axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=100`).reply(200, { assets: [] });
+        axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=1`).reply(200, { assets: [] });
         axiosMock.onPost(getAssetsUrl(courseId)).reply(404);
         const addFilesButton = screen.getByLabelText('file-input');
         await act(async () => {

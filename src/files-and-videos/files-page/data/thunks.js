@@ -143,7 +143,7 @@ export function validateAssetFiles(courseId, files) {
     try {
       const filenames = [];
       files.forEach(file => filenames.push(file.name));
-      await getAssetDetails(courseId, filenames).then(({ assets }) => {
+      await getAssetDetails({ courseId, filenames, fileCount: filenames.length }).then(({ assets }) => {
         const [conflicts, newFiles] = getUploadConflicts(files, assets);
         if (!isEmpty(newFiles)) {
           newFiles.forEach(file => dispatch(addAssetFile(courseId, file)));

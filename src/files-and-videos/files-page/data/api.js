@@ -29,9 +29,9 @@ export async function getAssets(courseId, page) {
  * @param {string} courseId
  * @returns {Promise<[{}]>}
  */
-export async function getAssetDetails(courseId, filenames) {
+export async function getAssetDetails({ courseId, filenames, fileCount }) {
   const params = new URLSearchParams(filenames.map(filename => ['display_name', filename]));
-  params.append('page_size', 100);
+  params.append('page_size', fileCount);
   const { data } = await getAuthenticatedHttpClient()
     .get(`${getAssetsUrl(courseId)}?${params}`);
   return camelCaseObject(data);
