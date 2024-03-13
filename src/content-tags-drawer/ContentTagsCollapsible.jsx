@@ -286,7 +286,7 @@ const ContentTagsCollapsible = ({
         handleSearch(value);
       }
     }
-  }, []);
+  }, [selectMenuIsOpen, setSearchTerm, handleSearch]);
 
   // onChange handler for react-select component, currently only called when
   // staged tags in the react-select input are removed or fully cleared.
@@ -344,6 +344,12 @@ const ContentTagsCollapsible = ({
     }
   };
 
+  // Open the select menu and make sure the search term is cleared when focused
+  const onSelectMenuFocus = React.useCallback(() => {
+    setSelectMenuIsOpen(true);
+    setSearchTerm('');
+  }, [setSelectMenuIsOpen, setSearchTerm]);
+
   return (
     <div className="d-flex">
       <Collapsible title={name} styling="card-lg" className="taxonomy-tags-collapsible">
@@ -356,7 +362,7 @@ const ContentTagsCollapsible = ({
           {canTagObject && (
             <Select
               menuIsOpen={selectMenuIsOpen} // FIX: The menu currently does not close when clicking outside
-              onFocus={() => setSelectMenuIsOpen(true)}
+              onFocus={onSelectMenuFocus}
               onKeyDown={handleSelectOnKeyDown}
               ref={/** @type {React.RefObject} */(selectRef)}
               isMulti
