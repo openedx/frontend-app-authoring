@@ -162,8 +162,12 @@ const useContentTagsCollapsibleHelper = (
 
           // Populating the SelectableBox with "selected" (explicit) tags
           const value = item.lineage.map(l => encodeURIComponent(l)).join(',');
-          // eslint-disable-next-line no-unused-expressions
-          isExplicit ? add(value) : remove(value);
+          // Clear all the existing applied tags
+          remove(value);
+          // Add only the explicitly applied tags
+          if (isExplicit) {
+            add(value);
+          }
           contentTagsCounter += 1;
         }
 
