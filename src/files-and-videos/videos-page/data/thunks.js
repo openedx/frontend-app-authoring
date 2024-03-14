@@ -107,7 +107,6 @@ export function addVideoFile(courseId, file, videoIds) {
       // eslint-disable-next-line
       console.log(`Post Response: ${createUrlResponse}`);
       if (createUrlResponse.status < 200 || createUrlResponse.status >= 300) {
-        console.log('HEHEHEHEHEH');
         dispatch(failAddVideo({ fileName: file.name }));
       }
       const { edxVideoId, uploadUrl } = camelCaseObject(createUrlResponse.data).files[0];
@@ -137,6 +136,7 @@ export function addVideoFile(courseId, file, videoIds) {
       dispatch(setVideoIds({ videoIds: videoIds.concat(newVideoIds) }));
     } catch (error) {
       dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
+      // eslint-disable-next-line
       console.error(`fetchVideoList failed with message: ${error.message}`);
       dispatch(updateErrors({ error: 'add', message: 'Failed to load videos' }));
       return;
