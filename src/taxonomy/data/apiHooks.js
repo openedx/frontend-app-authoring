@@ -59,9 +59,10 @@ export const taxonomyQueryKeys = {
     ...taxonomyQueryKeys.taxonomyTagList(taxonomyId), 'subtags', parentTagValue,
   ],
   /**
+   * @param {number} taxonomyId ID of the taxonomy
    * @param {string} fileId Some string to uniquely identify the file we want to upload
    */
-  importPlan: (fileId) => [...taxonomyQueryKeys.all, 'importPlan', fileId],
+  importPlan: (taxonomyId, fileId) => [...taxonomyQueryKeys.all, 'importPlan', taxonomyId, fileId],
 };
 
 /**
@@ -183,7 +184,7 @@ export const useImportTags = () => {
  * @param {File|null} file The file that we want to import
  */
 export const useImportPlan = (taxonomyId, file) => useQuery({
-  queryKey: taxonomyQueryKeys.importPlan(file ? `${file.name}${file.lastModified}${file.size}` : ''),
+  queryKey: taxonomyQueryKeys.importPlan(taxonomyId, file ? `${file.name}${file.lastModified}${file.size}` : ''),
   /**
   * @type {import("@tanstack/react-query").QueryFunction<string|null>}
   */

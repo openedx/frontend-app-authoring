@@ -22,6 +22,7 @@ import {
 import PropTypes from 'prop-types';
 
 import LoadingButton from '../../generic/loading-button';
+import { LoadingSpinner } from '../../generic/Loading';
 import { getFileSizeToClosestByte } from '../../utils';
 import { TaxonomyContext } from '../common/context';
 import { getTaxonomyExportFile } from '../data/api';
@@ -315,8 +316,8 @@ const ImportTagsWizard = ({
         onClose={onClose}
         size="lg"
       >
-        {(isDialogDisabled || importPlanResult.isLoading) && (
-          // This div is used to prevent the user from interacting with the dialog while it is disabled
+        {(isDialogDisabled) && (
+          // This div is used to prevent the user from interacting with the dialog while the import is happening
           <div className="position-absolute w-100 h-100 d-block zindex-9" />
         )}
 
@@ -357,11 +358,16 @@ const ImportTagsWizard = ({
               <Button variant="tertiary" onClick={onClose}>
                 {intl.formatMessage(messages.importWizardButtonCancel)}
               </Button>
-              <LoadingButton
-                label={intl.formatMessage(messages.importWizardButtonImport)}
-                disabled={!file || !!importPlanResult.error}
-                onClick={generatePlan}
-              />
+              {
+                importPlanResult.isLoading ? <LoadingSpinner />
+                  : (
+                    <LoadingButton
+                      label={intl.formatMessage(messages.importWizardButtonImport)}
+                      disabled={!file || importPlanResult.isLoading || !!importPlanResult.error}
+                      onClick={generatePlan}
+                    />
+                  )
+              }
             </Stepper.ActionRow>
 
             <Stepper.ActionRow eventKey="plan">
