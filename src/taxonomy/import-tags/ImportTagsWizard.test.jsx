@@ -125,7 +125,7 @@ describe('<ImportTagsWizard />', () => {
     expect(getByTestId('upload-step')).toBeInTheDocument();
 
     // Continue flow
-    const importButton = getByRole('button', { name: 'Import' });
+    let importButton = getByRole('button', { name: 'Import' });
     expect(importButton).toHaveAttribute('aria-disabled', 'true');
 
     // Invalid file type
@@ -154,6 +154,8 @@ describe('<ImportTagsWizard />', () => {
 
     // Check error message
     await waitFor(async () => {
+      // Note: import button gets re-created after showing a spinner while the import plan is loaded.
+      importButton = getByRole('button', { name: 'Import' });
       expect(await findByText('Test error - details here')).toBeInTheDocument();
       // Because of the import error, we cannot proceed to the next step
       expect(importButton).toHaveAttribute('aria-disabled', 'true');
@@ -178,6 +180,8 @@ describe('<ImportTagsWizard />', () => {
 
     expect(await findByTestId('file-info')).toBeInTheDocument();
     await waitFor(() => {
+      // Note: import button gets re-created after showing a spinner while the import plan is loaded.
+      importButton = getByRole('button', { name: 'Import' });
       expect(importButton).not.toHaveAttribute('aria-disabled', 'true');
     });
 
