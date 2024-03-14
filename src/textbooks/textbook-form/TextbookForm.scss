@@ -1,0 +1,67 @@
+.textbook-form {
+  @include pgn-box-shadow(1, "centered");
+
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background-color: $white;
+  padding: map-get($spacers, 4);
+  margin-bottom: map-get($spacers, 4);
+  border-radius: .5rem;
+
+  .form-field {
+    margin-bottom: 0;
+
+    .pgn__form-group {
+      margin-bottom: 0;
+    }
+  }
+
+  .form-title {
+    font-size: 1.5rem;
+    margin-bottom: map-get($spacers, 4);
+  }
+
+  .form-main-label {
+    font-size: 1.375rem;
+    line-height: 1.75rem;
+    margin-bottom: map-get($spacers, 4);
+  }
+
+  .form-label {
+    margin-bottom: map-get($spacers, 2\.5);
+  }
+
+  .form-helper-text {
+    font-size: $font-size-xs;
+  }
+
+  .form-chapters-fields {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+
+  .field-icon-button:hover {
+    background-color: transparent !important;
+    color: $primary;
+  }
+}
+
+.modal-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $spacer;
+
+  .modal-preview-icon {
+    height: 6.25rem;
+    width: 6.25rem;
+  }
+
+  .modal-preview-text {
+    font-size: .875rem;
+  }
+}
+

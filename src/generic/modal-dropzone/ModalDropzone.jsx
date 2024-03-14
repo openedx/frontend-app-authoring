@@ -15,6 +15,7 @@ import { FileUpload as FileUploadIcon } from '@openedx/paragon/icons';
 
 import useModalDropzone from './useModalDropzone';
 import messages from './messages';
+import { UPLOAD_FILE_MAX_SIZE } from '../../constants';
 
 const ModalDropzone = ({
   fileTypes,
@@ -22,11 +23,14 @@ const ModalDropzone = ({
   imageHelpText,
   previewComponent,
   imageDropzoneText,
+  invalidFileSizeMore,
   isOpen,
   onClose,
   onCancel,
   onChange,
   onSavingStatus,
+  onSelectFile,
+  maxSize = UPLOAD_FILE_MAX_SIZE,
 }) => {
   const {
     intl,
@@ -39,8 +43,13 @@ const ModalDropzone = ({
     handleCancel,
     handleSelectFile,
   } = useModalDropzone({
-    onChange, onCancel, onClose, fileTypes, onSavingStatus,
+    onChange, onCancel, onClose, fileTypes, onSavingStatus, onSelectFile,
   });
+
+  const invalidSizeMore = invalidFileSizeMore || intl.formatMessage(
+    messages.uploadImageDropzoneInvalidSizeMore,
+    { maxSize: maxSize / (1000 * 1000) },
+  );
 
   const inputComponent = previewUrl ? (
     <div>
@@ -93,7 +102,9 @@ const ModalDropzone = ({
                   onProcessUpload={handleSelectFile}
                   inputComponent={inputComponent}
                   accept={accept}
+                  errorMessages={{ invalidSizeMore }}
                   validator={imageValidator}
+                  maxSize={maxSize}
                 />
               )}
             </Card.Body>
@@ -118,6 +129,9 @@ ModalDropzone.defaultProps = {
   imageHelpText: '',
   previewComponent: null,
   imageDropzoneText: '',
+  maxSize: UPLOAD_FILE_MAX_SIZE,
+  invalidFileSizeMore: '',
+  onSelectFile: null,
 };
 
 ModalDropzone.propTypes = {
@@ -131,6 +145,9 @@ ModalDropzone.propTypes = {
   onCancel: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
   onSavingStatus: PropTypes.func.isRequired,
+  maxSize: PropTypes.number,
+  invalidFileSizeMore: PropTypes.string,
+  onSelectFile: PropTypes.func,
 };
 
 export default ModalDropzone;

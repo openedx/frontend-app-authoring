@@ -21,6 +21,10 @@ const messages = defineMessages({
     id: 'course-authoring.certificates.modal-dropzone.upload.modal',
     defaultMessage: 'Upload',
   },
+  uploadImageDropzoneInvalidSizeMore: {
+    id: 'course-authoring.certificates.modal-dropzone.validation.invalid-size-more',
+    defaultMessage: 'Image size must be less than {maxSize}MB.',
+  },
 });
 
 export default messages;

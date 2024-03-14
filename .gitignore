@@ -20,6 +20,7 @@ temp/babel-plugin-react-intl
 /temp
 /.vscode
 /module.config.js
+/module.dev-tutor.config.js
 
 # Local environment overrides
 .env.private
