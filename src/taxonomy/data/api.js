@@ -52,6 +52,29 @@ export const apiUrls = {
    * @param {number} taxonomyId The ID of the taxonomy
    */
   taxonomy: (taxonomyId) => makeUrl(`${taxonomyId}/`).href,
+  /**
+   * Get the URL for listing the tags of a taxonomy
+   * @param {number} taxonomyId
+   * @param {number} pageIndex Zero-indexed page number
+   * @param {*} pageSize How many tags per page to load
+   */
+  tagList: (taxonomyId, pageIndex, pageSize) => {
+    const url = makeUrl(`${taxonomyId}/tags/`);
+    url.searchParams.append('page', String(pageIndex + 1));
+    url.searchParams.append('page_size', pageSize);
+    return url.href;
+  },
+  /**
+   * Get _all_ tags below a given parent tag. THis may be replaced with something more scalable in the future.
+   * @param {number} taxonomyId
+   * @param {string} parentTagValue
+   */
+  allSubtagsOf: (taxonomyId, parentTagValue) => {
+    const url = makeUrl(`${taxonomyId}/tags/`);
+    url.searchParams.set('full_depth_threshold', '10000'); // Load as deeply as we can
+    url.searchParams.set('parent_tag', parentTagValue);
+    return url.href;
+  },
   /** URL to create a new taxonomy from an import file. */
   createTaxonomyFromImport: () => makeUrl('import/').href,
   /**

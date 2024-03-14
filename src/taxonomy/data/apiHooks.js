@@ -43,6 +43,22 @@ export const taxonomyQueryKeys = {
    */
   taxonomyTagList: (taxonomyId) => [...taxonomyQueryKeys.taxonomy(taxonomyId), 'tags'],
   /**
+   * @param {number} taxonomyId ID of the taxonomy
+   * @param {number} pageIndex Which page of tags to load (zero-based)
+   * @param {number} pageSize
+   */
+  taxonomyTagListPage: (taxonomyId, pageIndex, pageSize) => [
+    ...taxonomyQueryKeys.taxonomyTagList(taxonomyId), 'page', pageIndex, pageSize,
+  ],
+  /**
+   * Query for loading _all_ the subtags of a particular parent tag
+   * @param {number} taxonomyId ID of the taxonomy
+   * @param {string} parentTagValue
+   */
+  taxonomyTagSubtagsList: (taxonomyId, parentTagValue) => [
+    ...taxonomyQueryKeys.taxonomyTagList(taxonomyId), 'subtags', parentTagValue,
+  ],
+  /**
    * @param {string} fileId Some string to uniquely identify the file we want to upload
    */
   importPlan: (fileId) => [...taxonomyQueryKeys.all, 'importPlan', fileId],
@@ -148,7 +164,7 @@ export const useImportTags = () => {
         const { data } = await getAuthenticatedHttpClient().put(apiUrls.tagsImport(taxonomyId), formData);
         return camelCaseObject(data);
       } catch (/** @type {any} */ err) {
-        throw new Error(err.response?.data.error || err.message);
+        throw new Error(err.response?.data?.error || err.message);
       }
     },
     onSuccess: (data) => {
