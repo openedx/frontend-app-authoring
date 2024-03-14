@@ -107,16 +107,14 @@ export function addVideoFile(courseId, file, videoIds) {
       // eslint-disable-next-line
       console.log(`Post Response: ${createUrlResponse}`);
       if (createUrlResponse.status < 200 || createUrlResponse.status >= 300) {
-        console.log('HEHEHEHEHEH');
-        dispatch(failAddVideo({fileName: file.name}));
+        dispatch(failAddVideo({ fileName: file.name }));
       }
       const { edxVideoId, uploadUrl } = camelCaseObject(createUrlResponse.data).files[0];
       const putToServerResponse = await uploadVideo(uploadUrl, file);
       if (putToServerResponse.status < 200 || putToServerResponse.status >= 300) {
-        dispatch(failAddVideo({fileName: file.name}));
+        dispatch(failAddVideo({ fileName: file.name }));
         sendVideoUploadStatus(courseId, edxVideoId, 'Upload failed', 'upload_failed');
-      }
-      else {
+      } else {
         sendVideoUploadStatus(courseId, edxVideoId, 'Upload completed', 'upload_completed');
       }
     } catch (error) {
@@ -137,7 +135,8 @@ export function addVideoFile(courseId, file, videoIds) {
       dispatch(setVideoIds({ videoIds: videoIds.concat(newVideoIds) }));
     } catch (error) {
       dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
-      console.error(`fetchVideoList failed with message: ${error.message}`)
+      // eslint-disable-next-line
+      console.error(`fetchVideoList failed with message: ${error.message}`);
       dispatch(updateErrors({ error: 'add', message: 'Failed to load videos' }));
       return;
     }
