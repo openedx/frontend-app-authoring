@@ -35,6 +35,7 @@ import {
   updateEditStatus,
   updateTranscriptCredentialsSuccess,
   updateTranscriptPreferenceSuccess,
+  failAddVideo,
 } from './slice';
 
 import { updateFileValues } from './utils';
@@ -105,20 +106,19 @@ export function addVideoFile(courseId, file, videoIds) {
       const createUrlResponse = await addVideo(courseId, file);
       // eslint-disable-next-line
       console.log(`Post Response: ${createUrlResponse}`);
-      if (createUrlResponse.status < 200 && createUrlResponse.status >= 300) {
-        dispatch(updateErrors({ error: 'add', message: `Failed to add ${file.name}.` }));
-        dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
-        return;
+      if (createUrlResponse.status < 200 || createUrlResponse.status >= 300) {
+        console.log('HEHEHEHEHEH');
+        dispatch(failAddVideo({fileName: file.name}));
       }
       const { edxVideoId, uploadUrl } = camelCaseObject(createUrlResponse.data).files[0];
       const putToServerResponse = await uploadVideo(uploadUrl, file);
       if (putToServerResponse.status < 200 || putToServerResponse.status >= 300) {
-        dispatch(updateErrors({ error: 'add', message: `Failed to upload ${file.name}.` }));
+        dispatch(failAddVideo({fileName: file.name}));
         sendVideoUploadStatus(courseId, edxVideoId, 'Upload failed', 'upload_failed');
-        dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
-        return;
       }
-      sendVideoUploadStatus(courseId, edxVideoId, 'Upload completed', 'upload_completed');
+      else {
+        sendVideoUploadStatus(courseId, edxVideoId, 'Upload completed', 'upload_completed');
+      }
     } catch (error) {
       if (error.response && error.response.status === 413) {
         const message = error.response.data.error;
@@ -138,7 +138,8 @@ export function addVideoFile(courseId, file, videoIds) {
       dispatch(setVideoIds({ videoIds: videoIds.concat(newVideoIds) }));
     } catch (error) {
       dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
-      dispatch(updateErrors({ error: 'add', message: error.message }));
+      console.error(`fetchVideoList failed with message: ${error.message}`)
+      dispatch(updateErrors({ error: 'add', message: 'Failed to load videos' }));
       return;
     }
     dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.SUCCESSFUL }));
