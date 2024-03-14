@@ -351,6 +351,13 @@ const ContentTagsCollapsible = ({
     setSearchTerm('');
   }, [setSelectMenuIsOpen, setSearchTerm]);
 
+  // Handles logic to close the select menu when clicking outside
+  const handleOnBlur = React.useCallback((event) => {
+    if (!event.relatedTarget || !event.relatedTarget.className?.includes('dropdown-selector')) {
+      setSelectMenuIsOpen(false);
+    }
+  }, [setSelectMenuIsOpen]);
+
   return (
     <div className="d-flex">
       <Collapsible title={name} styling="card-lg" className="taxonomy-tags-collapsible">
@@ -362,6 +369,7 @@ const ContentTagsCollapsible = ({
 
           {canTagObject && (
             <Select
+              onBlur={handleOnBlur}
               styles={{
                 // Overriding 'x' button styles for staged tags when navigating by keyboard
                 multiValueRemove: (base, state) => ({
