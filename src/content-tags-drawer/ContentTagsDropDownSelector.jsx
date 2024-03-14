@@ -114,6 +114,30 @@ const ContentTagsDropDownSelector = ({
     return !!appliedTraversal[tag.value];
   };
 
+  const isStagedExplicit = (tag) => {
+    // Traverse the staged tags tree using the lineage
+    let stagedTraversal = stagedContentTagsTree;
+    lineage.forEach(t => {
+      stagedTraversal = stagedTraversal[t]?.children || {};
+    });
+    return stagedTraversal[tag.value] && stagedTraversal[tag.value].explicit;
+  };
+
+  // Returns the state of the tag as a string: [Unchecked/Implicit/Checked]
+  const getTagState = (tag) => {
+    if (isApplied(tag) || isStagedExplicit(tag)) {
+      return intl.formatMessage(messages.taxonomyTagChecked);
+    }
+
+    if (isImplicit(tag)) {
+      return intl.formatMessage(messages.taxonomyTagImplicit);
+    }
+
+    return intl.formatMessage(messages.taxonomyTagUnchecked);
+  };
+
+  const isTopOfTagTreeDropdown = (index) => index === 0 && level === 0;
+
   const loadMoreTags = useCallback(() => {
     setNumPages((x) => x + 1);
   }, []);
@@ -225,17 +249,26 @@ const ContentTagsDropDownSelector = ({
               minHeight: '44px',
             }}
           >
+            {/* The tabIndex and onKeyDown are needed to implement custom keyboard navigation */}
             {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
             <div
               className="d-flex dropdown-selector-tag-actions"
-              tabIndex={i === 0 && level === 0 ? 0 : -1} // Only enable tab into top of dropdown to set focus
+              // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+              tabIndex={isTopOfTagTreeDropdown(i) ? 0 : -1} // Only enable tab into top of dropdown tree to set focus
               onKeyDown={(e) => handleKeyBoardNav(e, tagData.childCount > 0)}
+              aria-label={
+                intl.formatMessage(
+                  (isTopOfTagTreeDropdown(i)
+                    ? messages.taxonomyTagActionInstructionsAriaLabel
+                    : messages.taxonomyTagActionsAriaLabel),
+                  { tag: tagData.value, tagState: getTagState(tagData) },
+                )
+              }
             >
               <SelectableBox
                 inputHidden={false}
                 type="checkbox"
                 className="d-flex align-items-center taxonomy-tags-selectable-box"
-                aria-label={intl.formatMessage(messages.taxonomyTagsCheckboxAriaLabel, { tag: tagData.value })}
                 data-selectable-box="taxonomy-tags"
                 value={[...lineage, tagData.value].map(t => encodeURIComponent(t)).join(',')}
                 isIndeterminate={isApplied(tagData) || isImplicit(tagData)}
