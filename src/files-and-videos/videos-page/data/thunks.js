@@ -127,7 +127,6 @@ export function addVideoFile(courseId, file, videoIds) {
         dispatch(updateErrors({ error: 'add', message: `Failed to upload ${file.name}.` }));
       }
       dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
-      return;
     }
     try {
       const { videos } = await fetchVideoList(courseId);
