@@ -93,6 +93,13 @@ const DraggableList = ({
     return null;
   };
 
+  // For reasons unknown, onDragEnd is not being triggered by dnd-kit while
+  // testing drag over functions. The main functions responsible to move units
+  // & subsections across parents are already tested as part of move blocks by
+  // index in CourseOutline.test.jsx, just these functions which determine the
+  // new index and parent are ignored.
+  // See https://github.com/openedx/frontend-app-course-authoring/pull/859#discussion_r1519199622
+  // for more details.
   /* istanbul ignore next */
   const subsectionDragOver = (active, over, activeInfo, overInfo) => {
     if (
