@@ -22,7 +22,7 @@ describe('addVideoFile', () => {
 
     expect(dispatch).toHaveBeenCalledWith({
       payload: {
-        fileName: mockFile.name
+        fileName: mockFile.name,
       },
       type: 'videos/failAddVideo',
     });
@@ -47,7 +47,7 @@ describe('addVideoFile', () => {
     expect(videoStatusMock).toHaveBeenCalledWith(courseId, mockEdxVideoId, 'Upload failed', 'upload_failed');
     expect(dispatch).toHaveBeenCalledWith({
       payload: {
-        fileName: mockFile.name
+        fileName: mockFile.name,
       },
       type: 'videos/failAddVideo',
     });
