@@ -57,6 +57,7 @@ const Hit = ({ hit }) => (
       <Highlight attribute="content.html_content" hit={hit} />
       <Highlight attribute="content.capa_content" hit={hit} />
     </div>
+    <div style={{fontSize: "8px"}}>{hit.breadcrumbs.map((bc, i) => <span key={i}>{bc.display_name} {i !== hit.breadcrumbs.length - 1 ? '>' : ''} </span>)}</div>
   </div>
 );
 
