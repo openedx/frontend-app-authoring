@@ -1,3 +1,4 @@
+// @ts-check
 import MockAdapter from 'axios-mock-adapter';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
@@ -15,7 +16,6 @@ import {
 let axiosMock;
 
 describe('taxonomy api calls', () => {
-  const { location } = window;
   beforeEach(() => {
     initializeMockApp({
       authenticatedUser: {
@@ -33,17 +33,6 @@ describe('taxonomy api calls', () => {
     jest.clearAllMocks();
   });
 
-  beforeAll(() => {
-    delete window.location;
-    window.location = {
-      href: '',
-    };
-  });
-
-  afterAll(() => {
-    window.location = location;
-  });
-
   it.each([
     undefined,
     'All taxonomies',
@@ -58,10 +47,11 @@ describe('taxonomy api calls', () => {
   });
 
   it('should delete a taxonomy', async () => {
-    axiosMock.onDelete(apiUrls.taxonomy()).reply(200);
-    await deleteTaxonomy();
+    const taxonomyId = 123;
+    axiosMock.onDelete(apiUrls.taxonomy(taxonomyId)).reply(200);
+    await deleteTaxonomy(taxonomyId);
 
-    expect(axiosMock.history.delete[0].url).toEqual(apiUrls.taxonomy());
+    expect(axiosMock.history.delete[0].url).toEqual(apiUrls.taxonomy(taxonomyId));
   });
 
   it('should call get taxonomy', async () => {
@@ -72,11 +62,18 @@ describe('taxonomy api calls', () => {
   });
 
   it('Export should set window.location.href correctly', () => {
+    const origLocation = window.location;
+    // @ts-ignore
+    delete window.location;
+    // @ts-ignore
+    window.location = { href: '' };
+
     const pk = 1;
     const format = 'json';
-
     getTaxonomyExportFile(pk, format);
-
     expect(window.location.href).toEqual(apiUrls.exportTaxonomy(pk, format));
+
+    // Restore the location object of window:
+    window.location = origLocation;
   });
 });

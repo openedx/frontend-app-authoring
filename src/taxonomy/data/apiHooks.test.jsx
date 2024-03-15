@@ -1,3 +1,6 @@
+// @ts-check
+import React from 'react'; // Required to use JSX syntax without type errors
+
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { waitFor } from '@testing-library/react';
@@ -30,6 +33,8 @@ const wrapper = ({ children }) => (
   </QueryClientProvider>
 );
 
+const emptyFile = new File([], 'empty.csv');
+
 describe('import taxonomy api calls', () => {
   beforeEach(() => {
     initializeMockApp({
@@ -60,7 +65,7 @@ describe('import taxonomy api calls', () => {
       name: 'Taxonomy name',
       description: 'Taxonomy description',
       exportId: 'taxonomy_export_id',
-      file: new File([], 'empty.csv'),
+      file: emptyFile,
     });
 
     expect(axiosMock.history.post[0].url).toEqual(apiUrls.createTaxonomyFromImport());
@@ -75,7 +80,7 @@ describe('import taxonomy api calls', () => {
 
     const { result } = renderHook(() => useImportTags(), { wrapper });
 
-    await result.current.mutateAsync({ taxonomyId: 1 });
+    await result.current.mutateAsync({ taxonomyId: 1, file: emptyFile });
     expect(axiosMock.history.put[0].url).toEqual(apiUrls.tagsImport(1));
     expect(mockInvalidateQueries).toHaveBeenCalledWith({ queryKey: ['taxonomies', 'taxonomy', 1, 'tags'] });
     expect(mockSetQueryData).toHaveBeenCalledWith(['taxonomies', 'taxonomy', 1, 'metadata'], taxonomy);
@@ -83,7 +88,7 @@ describe('import taxonomy api calls', () => {
 
   it('should call plan import tags', async () => {
     axiosMock.onPut(apiUrls.tagsPlanImport(1)).reply(200, { plan: 'some plan' });
-    const { result } = renderHook(() => useImportPlan(1), { wrapper });
+    const { result } = renderHook(() => useImportPlan(1, emptyFile), { wrapper });
 
     await waitFor(() => {
       expect(result.current.isLoading).toBeFalsy();
@@ -94,7 +99,7 @@ describe('import taxonomy api calls', () => {
 
   it('should handle errors in plan import tags', async () => {
     axiosMock.onPut(apiUrls.tagsPlanImport(1)).reply(400, { error: 'test error' });
-    const { result } = renderHook(() => useImportPlan(1), { wrapper });
+    const { result } = renderHook(() => useImportPlan(1, emptyFile), { wrapper });
 
     await waitFor(() => {
       expect(result.current.isError).toBeTruthy();
