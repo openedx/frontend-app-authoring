@@ -18,7 +18,7 @@ import {
   EditOutline as EditIcon,
 } from '@openedx/paragon/icons';
 
-import { useContentTagsCount } from '../data/apiHooks';
+import { useContentTagsCount } from '../../generic/data/apiHooks';
 import { ContentTagsDrawer } from '../../content-tags-drawer';
 import TagCount from '../../generic/tag-count';
 import { useEscapeClick } from '../../hooks';

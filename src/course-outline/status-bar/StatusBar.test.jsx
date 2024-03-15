@@ -25,8 +25,8 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-jest.mock('../data/api', () => ({
-  ...jest.requireActual('../data/api'),
+jest.mock('../../generic/data/api', () => ({
+  ...jest.requireActual('../../generic/data/api'),
   getTagsCount: jest.fn().mockResolvedValue({ 'course-v1:123': 17 }),
 }));
 

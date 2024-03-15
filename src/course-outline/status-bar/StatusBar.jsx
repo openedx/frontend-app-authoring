@@ -12,7 +12,7 @@ import { ContentTagsDrawer } from '../../content-tags-drawer';
 import TagCount from '../../generic/tag-count';
 import { useHelpUrls } from '../../help-urls/hooks';
 import { VIDEO_SHARING_OPTIONS } from '../constants';
-import { useContentTagsCount } from '../data/apiHooks';
+import { useContentTagsCount } from '../../generic/data/apiHooks';
 import messages from './messages';
 import { getVideoSharingOptionText } from '../utils';
 

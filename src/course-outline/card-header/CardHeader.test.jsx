@@ -24,8 +24,8 @@ const closeFormMock = jest.fn();
 
 const mockGetTagsCount = jest.fn();
 
-jest.mock('../data/api', () => ({
-  ...jest.requireActual('../data/api'),
+jest.mock('../../generic/data/api', () => ({
+  ...jest.requireActual('../../generic/data/api'),
   getTagsCount: () => mockGetTagsCount(),
 }));
 
