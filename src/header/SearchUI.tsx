@@ -54,8 +54,8 @@ const Hit = ({ hit }) => (
     </div>
     <p className="hit-block_type"><em><Highlight attribute="block_type" hit={hit} /></em></p>
     <div className="hit-description">
-      <Highlight attribute="html_content" hit={hit} />
-      <Highlight attribute="capa_content" hit={hit} />
+      <Highlight attribute="content.html_content" hit={hit} />
+      <Highlight attribute="content.capa_content" hit={hit} />
     </div>
   </div>
 );
