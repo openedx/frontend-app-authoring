@@ -44,6 +44,7 @@ import deleteModalMessages from '../generic/delete-modal/messages';
 import courseXBlockMessages from './course-xblock/messages';
 import addComponentMessages from './add-component/messages';
 import { PUBLISH_TYPES, UNIT_VISIBILITY_STATES } from './constants';
+import { getContentTaxonomyTagsApiUrl, getContentTaxonomyTagsCountApiUrl } from '../content-tags-drawer/data/api';
 
 let axiosMock;
 let store;
@@ -57,6 +58,31 @@ jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: () => ({ blockId }),
   useNavigate: () => mockedUsedNavigate,
+}));
+
+jest.mock('@tanstack/react-query', () => ({
+  useQuery: jest.fn(({ queryKey }) => {
+    if (queryKey[0] === 'contentTaxonomyTags') {
+      return {
+        data: {
+          taxonomies: [],
+        },
+        isSuccess: true,
+      };
+    } if (queryKey[0] === 'contentTaxonomyTagsCount') {
+      return {
+        data: 17,
+        isSuccess: true,
+      };
+    }
+    return {
+      data: {},
+      isSuccess: true,
+    };
+  }),
+  useQueryClient: jest.fn(() => ({
+    setQueryData: jest.fn(),
+  })),
 }));
 
 const RootWrapper = () => (
@@ -92,17 +118,24 @@ describe('<CourseUnit />', () => {
       .onGet(getCourseVerticalChildrenApiUrl(blockId))
       .reply(200, courseVerticalChildrenMock);
     await executeThunk(fetchCourseVerticalChildrenData(blockId), store.dispatch);
+    axiosMock
+      .onGet(getContentTaxonomyTagsApiUrl(blockId))
+      .reply(200, {});
+    axiosMock
+      .onGet(getContentTaxonomyTagsCountApiUrl(blockId))
+      .reply(200, 17);
   });
 
   it('render CourseUnit component correctly', async () => {
-    const { getByText, getByRole } = render(<RootWrapper />);
+    const { getByText, getByRole, getByTestId } = render(<RootWrapper />);
     const currentSectionName = courseUnitIndexMock.ancestor_info.ancestors[1].display_name;
     const currentSubSectionName = courseUnitIndexMock.ancestor_info.ancestors[1].display_name;
 
     await waitFor(() => {
+      const unitHeaderTitle = getByTestId('unit-header-title');
       expect(getByText(unitDisplayName)).toBeInTheDocument();
-      expect(getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage })).toBeInTheDocument();
-      expect(getByRole('button', { name: headerTitleMessages.altButtonSettings.defaultMessage })).toBeInTheDocument();
+      expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage })).toBeInTheDocument();
+      expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonSettings.defaultMessage })).toBeInTheDocument();
       expect(getByRole('button', { name: headerNavigationsMessages.viewLiveButton.defaultMessage })).toBeInTheDocument();
       expect(getByRole('button', { name: headerNavigationsMessages.previewButton.defaultMessage })).toBeInTheDocument();
       expect(getByRole('button', { name: currentSectionName })).toBeInTheDocument();
@@ -136,7 +169,10 @@ describe('<CourseUnit />', () => {
 
   it('checks courseUnit title changing when edit query is successfully', async () => {
     const {
-      findByText, queryByRole, getByRole,
+      findByText,
+      queryByRole,
+      getByRole,
+      getByTestId,
     } = render(<RootWrapper />);
     let editTitleButton = null;
     let titleEditField = null;
@@ -160,8 +196,11 @@ describe('<CourseUnit />', () => {
       });
 
     await waitFor(() => {
-      editTitleButton = getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage });
-      titleEditField = queryByRole('textbox', { name: headerTitleMessages.ariaLabelButtonEdit.defaultMessage });
+      const unitHeaderTitle = getByTestId('unit-header-title');
+      editTitleButton = within(unitHeaderTitle)
+        .getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage });
+      titleEditField = within(unitHeaderTitle)
+        .queryByRole('textbox', { name: headerTitleMessages.ariaLabelButtonEdit.defaultMessage });
     });
     expect(titleEditField).not.toBeInTheDocument();
     fireEvent.click(editTitleButton);
@@ -299,7 +338,7 @@ describe('<CourseUnit />', () => {
   });
 
   it('the sequence unit is updated after changing the unit header', async () => {
-    const { getAllByTestId, getByRole } = render(<RootWrapper />);
+    const { getAllByTestId, getByTestId } = render(<RootWrapper />);
     const updatedCourseSectionVerticalData = cloneDeep(courseSectionVerticalMock);
     const updatedAncestorsChild = updatedCourseSectionVerticalData.xblock_info.ancestor_info.ancestors[0];
     set(updatedCourseSectionVerticalData, 'xblock_info.ancestor_info.ancestors[0].child_info.children', [
@@ -331,10 +370,12 @@ describe('<CourseUnit />', () => {
 
     await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
 
-    const editTitleButton = getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage });
+    const unitHeaderTitle = getByTestId('unit-header-title');
+
+    const editTitleButton = within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage });
     fireEvent.click(editTitleButton);
 
-    const titleEditField = getByRole('textbox', { name: headerTitleMessages.ariaLabelButtonEdit.defaultMessage });
+    const titleEditField = within(unitHeaderTitle).getByRole('textbox', { name: headerTitleMessages.ariaLabelButtonEdit.defaultMessage });
     fireEvent.change(titleEditField, { target: { value: newDisplayName } });
 
     await act(async () => fireEvent.blur(titleEditField));

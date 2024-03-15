@@ -25,10 +25,12 @@ const data = {
   taxonomyId: 123,
   level: 0,
   tagsTree: {},
+  appliedContentTagsTree: {},
+  stagedContentTagsTree: {},
 };
 
 const ContentTagsDropDownSelectorComponent = ({
-  taxonomyId, level, lineage, tagsTree, searchTerm,
+  taxonomyId, level, lineage, tagsTree, searchTerm, appliedContentTagsTree, stagedContentTagsTree,
 }) => (
   <IntlProvider locale="en" messages={{}}>
     <ContentTagsDropDownSelector
@@ -37,6 +39,8 @@ const ContentTagsDropDownSelectorComponent = ({
       lineage={lineage}
       tagsTree={tagsTree}
       searchTerm={searchTerm}
+      appliedContentTagsTree={appliedContentTagsTree}
+      stagedContentTagsTree={stagedContentTagsTree}
     />
   </IntlProvider>
 );
@@ -53,15 +57,25 @@ describe('<ContentTagsDropDownSelector />', () => {
     jest.clearAllMocks();
   });
 
+  async function getComponent(updatedData) {
+    const componentData = (!updatedData ? data : updatedData);
+
+    return render(
+      <ContentTagsDropDownSelectorComponent
+        taxonomyId={componentData.taxonomyId}
+        level={componentData.level}
+        lineage={componentData.lineage}
+        tagsTree={componentData.tagsTree}
+        searchTerm={componentData.searchTerm}
+        appliedContentTagsTree={componentData.appliedContentTagsTree}
+        stagedContentTagsTree={componentData.stagedContentTagsTree}
+      />,
+    );
+  }
+
   it('should render taxonomy tags drop down selector loading with spinner', async () => {
     await act(async () => {
-      const { getByRole } = render(
-        <ContentTagsDropDownSelectorComponent
-          taxonomyId={data.taxonomyId}
-          level={data.level}
-          tagsTree={data.tagsTree}
-        />,
-      );
+      const { getByRole } = await getComponent();
       const spinner = getByRole('status');
       expect(spinner.textContent).toEqual('Loading tags'); // Uses <Spinner />
     });
@@ -86,14 +100,8 @@ describe('<ContentTagsDropDownSelector />', () => {
     });
 
     await act(async () => {
-      const { container, getByText } = render(
-        <ContentTagsDropDownSelectorComponent
-          key={`selector-${data.taxonomyId}`}
-          taxonomyId={data.taxonomyId}
-          level={data.level}
-          tagsTree={data.tagsTree}
-        />,
-      );
+      const { container, getByText } = await getComponent();
+
       await waitFor(() => {
         expect(getByText('Tag 1')).toBeInTheDocument();
         expect(container.getElementsByClassName('taxonomy-tags-arrow-drop-down').length).toBe(0);
@@ -120,13 +128,8 @@ describe('<ContentTagsDropDownSelector />', () => {
     });
 
     await act(async () => {
-      const { container, getByText } = render(
-        <ContentTagsDropDownSelectorComponent
-          taxonomyId={data.taxonomyId}
-          level={data.level}
-          tagsTree={data.tagsTree}
-        />,
-      );
+      const { container, getByText } = await getComponent();
+
       await waitFor(() => {
         expect(getByText('Tag 2')).toBeInTheDocument();
         expect(container.getElementsByClassName('taxonomy-tags-arrow-drop-down').length).toBe(1);
@@ -162,13 +165,7 @@ describe('<ContentTagsDropDownSelector />', () => {
           },
         },
       };
-      const { container, getByText } = render(
-        <ContentTagsDropDownSelectorComponent
-          taxonomyId={dataWithTagsTree.taxonomyId}
-          level={dataWithTagsTree.level}
-          tagsTree={dataWithTagsTree.tagsTree}
-        />,
-      );
+      const { container, getByText } = await getComponent(dataWithTagsTree);
       await waitFor(() => {
         expect(getByText('Tag 2')).toBeInTheDocument();
         expect(container.getElementsByClassName('taxonomy-tags-arrow-drop-down').length).toBe(1);
@@ -230,13 +227,7 @@ describe('<ContentTagsDropDownSelector />', () => {
           },
         },
       };
-      const { container, getByText } = render(
-        <ContentTagsDropDownSelectorComponent
-          taxonomyId={dataWithTagsTree.taxonomyId}
-          level={dataWithTagsTree.level}
-          tagsTree={dataWithTagsTree.tagsTree}
-        />,
-      );
+      const { container, getByText } = await getComponent(dataWithTagsTree);
       await waitFor(() => {
         expect(getByText('Tag 2')).toBeInTheDocument();
         expect(container.getElementsByClassName('taxonomy-tags-arrow-drop-down').length).toBe(1);
@@ -291,15 +282,7 @@ describe('<ContentTagsDropDownSelector />', () => {
 
     const initalSearchTerm = 'test 1';
     await act(async () => {
-      const { rerender } = render(
-        <ContentTagsDropDownSelectorComponent
-          key={`selector-${data.taxonomyId}`}
-          taxonomyId={data.taxonomyId}
-          level={data.level}
-          tagsTree={data.tagsTree}
-          searchTerm={initalSearchTerm}
-        />,
-      );
+      const { rerender } = await getComponent({ ...data, searchTerm: initalSearchTerm });
 
       await waitFor(() => {
         expect(useTaxonomyTagsData).toBeCalledWith(data.taxonomyId, null, 1, initalSearchTerm);
@@ -312,6 +295,8 @@ describe('<ContentTagsDropDownSelector />', () => {
         level={data.level}
         tagsTree={data.tagsTree}
         searchTerm={updatedSearchTerm}
+        appliedContentTagsTree={{}}
+        stagedContentTagsTree={{}}
       />);
 
       await waitFor(() => {
@@ -326,6 +311,8 @@ describe('<ContentTagsDropDownSelector />', () => {
         level={data.level}
         tagsTree={data.tagsTree}
         searchTerm={cleanSearchTerm}
+        appliedContentTagsTree={{}}
+        stagedContentTagsTree={{}}
       />);
 
       await waitFor(() => {
@@ -347,15 +334,7 @@ describe('<ContentTagsDropDownSelector />', () => {
 
     const searchTerm = 'uncommon search term';
     await act(async () => {
-      const { getByText } = render(
-        <ContentTagsDropDownSelectorComponent
-          key={`selector-${data.taxonomyId}`}
-          taxonomyId={data.taxonomyId}
-          level={data.level}
-          tagsTree={data.tagsTree}
-          searchTerm={searchTerm}
-        />,
-      );
+      const { getByText } = await getComponent({ ...data, searchTerm });
 
       await waitFor(() => {
         expect(useTaxonomyTagsData).toBeCalledWith(data.taxonomyId, null, 1, searchTerm);

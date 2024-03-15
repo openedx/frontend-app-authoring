@@ -19,7 +19,9 @@
 @import "import-page/CourseImportPage";
 @import "taxonomy";
 @import "files-and-videos";
-@import "content-tags-drawer/TagBubble";
+@import "content-tags-drawer";
 @import "course-outline/CourseOutline";
 @import "course-unit/CourseUnit";
 @import "course-checklist/CourseChecklist";
+@import "content-tags-drawer/ContentTagsDropDownSelector";
+@import "content-tags-drawer/ContentTagsCollapsible";

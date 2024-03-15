@@ -3,12 +3,18 @@ import { useSelector } from 'react-redux';
 import { Card, Stack } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
+import classNames from 'classnames';
 import { getCourseUnitData } from '../../data/selectors';
 import { getPublishInfo } from '../utils';
 import messages from '../messages';
 import ReleaseInfoComponent from './ReleaseInfoComponent';
 
-const SidebarBody = ({ releaseLabel, displayUnitLocation, locationId }) => {
+const SidebarBody = ({
+  releaseLabel,
+  displayUnitLocation,
+  locationId,
+  visibleToStaffOnly,
+}) => {
   const intl = useIntl();
   const {
     editedOn,
@@ -19,7 +25,10 @@ const SidebarBody = ({ releaseLabel, displayUnitLocation, locationId }) => {
   } = useSelector(getCourseUnitData);
 
   return (
-    <Card.Body className="course-unit-sidebar-date">
+    <Card.Body className={classNames('course-unit-sidebar-date', {
+      'is-stuff-only': visibleToStaffOnly,
+    })}
+    >
       <Stack>
         {displayUnitLocation ? (
           <span>
@@ -55,11 +64,13 @@ SidebarBody.propTypes = {
   releaseLabel: PropTypes.string.isRequired,
   displayUnitLocation: PropTypes.bool,
   locationId: PropTypes.string,
+  visibleToStaffOnly: PropTypes.bool,
 };
 
 SidebarBody.defaultProps = {
   displayUnitLocation: false,
   locationId: null,
+  visibleToStaffOnly: false,
 };
 
 export default SidebarBody;

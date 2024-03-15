@@ -1,5 +1,10 @@
 // @ts-check
-import React, { useMemo, useEffect } from 'react';
+import React, {
+  useMemo,
+  useEffect,
+  useState,
+  useCallback,
+} from 'react';
 import PropTypes from 'prop-types';
 import {
   Container,
@@ -26,19 +31,48 @@ import Loading from '../generic/Loading';
  * It is used both in interfaces of this MFE and in edx-platform interfaces such as iframe.
  * - If you want to use it as an iframe, the component obtains the `contentId` from the url parameters.
  *   Functions to close the drawer are handled internally.
+ *   TODO: We can delete this method when is no longer used on edx-platform.
  * - If you want to use it as react component, you need to pass the content id and the close functions
  *   through the component parameters.
  */
 const ContentTagsDrawer = ({ id, onClose }) => {
   const intl = useIntl();
+  // TODO: We can delete this when the iframe is no longer used on edx-platform
   const params = useParams();
   let contentId = id;
 
   if (contentId === undefined) {
+    // TODO: We can delete this when the iframe is no longer used on edx-platform
     contentId = params.contentId;
   }
 
   const org = extractOrgFromContentId(contentId);
+
+  const [stagedContentTags, setStagedContentTags] = useState({});
+
+  // Add a content tags to the staged tags for a taxonomy
+  const addStagedContentTag = useCallback((taxonomyId, addedTag) => {
+    setStagedContentTags(prevStagedContentTags => {
+      const updatedStagedContentTags = {
+        ...prevStagedContentTags,
+        [taxonomyId]: [...(prevStagedContentTags[taxonomyId] ?? []), addedTag],
+      };
+      return updatedStagedContentTags;
+    });
+  }, [setStagedContentTags]);
+
+  // Remove a content tag from the staged tags for a taxonomy
+  const removeStagedContentTag = useCallback((taxonomyId, tagValue) => {
+    setStagedContentTags(prevStagedContentTags => ({
+      ...prevStagedContentTags,
+      [taxonomyId]: prevStagedContentTags[taxonomyId].filter((t) => t.value !== tagValue),
+    }));
+  }, [setStagedContentTags]);
+
+  // Sets the staged content tags for taxonomy to the provided list of tags
+  const setStagedTags = useCallback((taxonomyId, tagsList) => {
+    setStagedContentTags(prevStagedContentTags => ({ ...prevStagedContentTags, [taxonomyId]: tagsList }));
+  }, [setStagedContentTags]);
 
   const useTaxonomyListData = () => {
     const taxonomyListData = useTaxonomyListDataResponse(org);
@@ -131,7 +165,14 @@ const ContentTagsDrawer = ({ id, onClose }) => {
         { isTaxonomyListLoaded && isContentTaxonomyTagsLoaded
           ? taxonomies.map((data) => (
             <div key={`taxonomy-tags-collapsible-${data.id}`}>
-              <ContentTagsCollapsible contentId={contentId} taxonomyAndTagsData={data} />
+              <ContentTagsCollapsible
+                contentId={contentId}
+                taxonomyAndTagsData={data}
+                stagedContentTags={stagedContentTags[data.id] || []}
+                addStagedContentTag={addStagedContentTag}
+                removeStagedContentTag={removeStagedContentTag}
+                setStagedTags={setStagedTags}
+              />
               <hr />
             </div>
           ))

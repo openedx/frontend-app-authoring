@@ -13,6 +13,7 @@ import getPageHeadTitle from '../generic/utils';
 import AlertMessage from '../generic/alert-message';
 import ProcessingNotification from '../generic/processing-notification';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
+import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 import Loading from '../generic/Loading';
 import AddComponent from './add-component/AddComponent';
 import CourseXBlock from './course-xblock/CourseXBlock';
@@ -23,6 +24,9 @@ import Sequence from './course-sequence';
 import Sidebar from './sidebar';
 import { useCourseUnit } from './hooks';
 import messages from './messages';
+import PublishControls from './sidebar/PublishControls';
+import LocationInfo from './sidebar/LocationInfo';
+import TagsSidebarControls from '../content-tags-drawer/tags-sidebar-controls';
 
 const CourseUnit = ({ courseId }) => {
   const { blockId } = useParams();
@@ -32,6 +36,7 @@ const CourseUnit = ({ courseId }) => {
     sequenceId,
     unitTitle,
     isQueryPending,
+    sequenceStatus,
     savingStatus,
     isTitleEditFormOpen,
     isErrorAlert,
@@ -55,6 +60,14 @@ const CourseUnit = ({ courseId }) => {
 
   if (isLoading) {
     return <Loading />;
+  }
+
+  if (sequenceStatus === RequestStatus.FAILED) {
+    return (
+      <Container size="xl" className="course-unit px-4 mt-4">
+        <ConnectionErrorAlert />
+      </Container>
+    );
   }
 
   return (
@@ -123,8 +136,15 @@ const CourseUnit = ({ courseId }) => {
             </Layout.Element>
             <Layout.Element>
               <Stack gap={3}>
-                <Sidebar blockId={blockId} data-testid="course-unit-sidebar" />
-                <Sidebar displayUnitLocation data-testid="course-unit-location-sidebar" />
+                <Sidebar data-testid="course-unit-sidebar">
+                  <PublishControls blockId={blockId} />
+                </Sidebar>
+                <Sidebar className="tags-sidebar">
+                  <TagsSidebarControls />
+                </Sidebar>
+                <Sidebar data-testid="course-unit-location-sidebar">
+                  <LocationInfo />
+                </Sidebar>
               </Stack>
             </Layout.Element>
           </Layout>

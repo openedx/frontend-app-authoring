@@ -5,80 +5,85 @@ import { cloneDeep } from 'lodash';
 
 import { useContentTaxonomyTagsUpdater } from './data/apiHooks';
 
+/** @typedef {import("../taxonomy/data/types.mjs").TaxonomyData} TaxonomyData */
+/** @typedef {import("./data/types.mjs").Tag} ContentTagData */
+/** @typedef {import("./ContentTagsCollapsible").TagTreeEntry} TagTreeEntry */
+
 /**
- * Util function that consolidates two tag trees into one, sorting the keys in
- * alphabetical order.
+ * Util function that sorts the keys of a tree in alphabetical order.
  *
- * @param {object} tree1 - first tag tree
- * @param {object} tree2 - second tag tree
- * @returns {object} merged tree containing both tree1 and tree2
+ * @param {object} tree - tree that needs it's keys sorted
+ * @returns {object} sorted tree
  */
-const mergeTrees = (tree1, tree2) => {
-  const mergedTree = cloneDeep(tree1);
-
-  const sortKeysAlphabetically = (obj) => {
-    const sortedObj = {};
-    Object.keys(obj)
-      .sort()
-      .forEach((key) => {
-        sortedObj[key] = obj[key];
-        if (obj[key] && typeof obj[key] === 'object') {
-          sortedObj[key].children = sortKeysAlphabetically(obj[key].children);
-        }
-      });
-    return sortedObj;
-  };
-
-  const mergeRecursively = (destination, source) => {
-    Object.entries(source).forEach(([key, sourceValue]) => {
-      const destinationValue = destination[key];
-
-      if (destinationValue && sourceValue && typeof destinationValue === 'object' && typeof sourceValue === 'object') {
-        mergeRecursively(destinationValue, sourceValue);
-      } else {
-        // eslint-disable-next-line no-param-reassign
-        destination[key] = cloneDeep(sourceValue);
+const sortKeysAlphabetically = (tree) => {
+  const sortedObj = {};
+  Object.keys(tree)
+    .sort()
+    .forEach((key) => {
+      sortedObj[key] = tree[key];
+      if (tree[key] && typeof tree[key] === 'object') {
+        sortedObj[key].children = sortKeysAlphabetically(tree[key].children);
       }
     });
-  };
-
-  mergeRecursively(mergedTree, tree2);
-  return sortKeysAlphabetically(mergedTree);
+  return sortedObj;
 };
 
 /**
- * Util function that removes the tag along with its ancestors if it was
- * the only explicit child tag.
+ * Util function that returns the leafs of a tree. Mainly used to extract the explicit
+ * tags selected in the staged tags tree
  *
- * @param {object} tree - tag tree to remove the tag from
- * @param {string[]} tagsToRemove - full lineage of tag to remove.
- *                                  eg: ['grand parent', 'parent', 'tag']
+ * @param {object} tree - tree to extract the leaf tags from
+ * @returns {Array<string>} array of leaf (explicit) tags of provided tree
  */
-const removeTags = (tree, tagsToRemove) => {
-  if (!tree || !tagsToRemove.length) {
-    return;
-  }
-  const key = tagsToRemove[0];
-  if (tree[key]) {
-    removeTags(tree[key].children, tagsToRemove.slice(1));
+const getLeafTags = (tree) => {
+  const leafKeys = [];
 
-    if (Object.keys(tree[key].children).length === 0 && (tree[key].explicit === false || tagsToRemove.length === 1)) {
-      // eslint-disable-next-line no-param-reassign
-      delete tree[key];
-    }
+  function traverse(node) {
+    Object.keys(node).forEach(key => {
+      const child = node[key];
+      if (Object.keys(child.children).length === 0) {
+        leafKeys.push(key);
+      } else {
+        traverse(child.children);
+      }
+    });
   }
+
+  traverse(tree);
+  return leafKeys;
 };
 
-/*
+/**
  * Handles all the underlying logic for the ContentTagsCollapsible component
+ * @param {string} contentId The ID of the content we're tagging (e.g. usage key)
+ * @param {TaxonomyData & {contentTags: ContentTagData[]}} taxonomyAndTagsData
+ * @param {(taxonomyId: number, tag: {value: string, label: string}) => void} addStagedContentTag
+ * @param {(taxonomyId: number, tagValue: string) => void} removeStagedContentTag
+ * @param {{value: string, label: string}[]} stagedContentTags
+ * @returns {{
+ *      tagChangeHandler: (tagSelectableBoxValue: string, checked: boolean) => void,
+ *      removeAppliedTagHandler: (tagSelectableBoxValue: string) => void,
+ *      appliedContentTagsTree: Record<string, TagTreeEntry>,
+ *      stagedContentTagsTree: Record<string, TagTreeEntry>,
+ *      contentTagsCount: number,
+ *      checkedTags: any,
+ *      commitStagedTags: () => void,
+ *      updateTags: import('@tanstack/react-query').UseMutationResult<any, unknown, { tags: string[]; }, unknown>
+ * }}
  */
-const useContentTagsCollapsibleHelper = (contentId, taxonomyAndTagsData) => {
+const useContentTagsCollapsibleHelper = (
+  contentId,
+  taxonomyAndTagsData,
+  addStagedContentTag,
+  removeStagedContentTag,
+  stagedContentTags,
+) => {
   const {
     id, contentTags, canTagObject,
   } = taxonomyAndTagsData;
-  // State to determine whether the tags are being updating so we can make a call
+  // State to determine whether an applied tag was removed so we make a call
   // to the update endpoint to the reflect those changes
-  const [updatingTags, setUpdatingTags] = React.useState(false);
+  const [removingAppliedTag, setRemoveAppliedTag] = React.useState(false);
   const updateTags = useContentTaxonomyTagsUpdater(contentId, id);
 
   // Keeps track of the content objects tags count (both implicit and explicit)
@@ -86,31 +91,54 @@ const useContentTagsCollapsibleHelper = (contentId, taxonomyAndTagsData) => {
 
   // Keeps track of the tree structure for tags that are add by selecting/unselecting
   // tags in the dropdowns.
-  const [addedContentTags, setAddedContentTags] = React.useState({});
+  const [stagedContentTagsTree, setStagedContentTagsTree] = React.useState({});
 
   // To handle checking/unchecking tags in the SelectableBox
-  const [checkedTags, { add, remove, clear }] = useCheckboxSetValues();
+  const [checkedTags, { add, remove }] = useCheckboxSetValues();
 
-  // Handles making requests to the update endpoint whenever the checked tags change
+  // State to keep track of the staged tags (and along with ancestors) that should be removed
+  const [stagedTagsToRemove, setStagedTagsToRemove] = React.useState(/** @type string[] */([]));
+
+  // Handles making requests to the backend when applied tags are removed
   React.useEffect(() => {
     // We have this check because this hook is fired when the component first loads
     // and reloads (on refocus). We only want to make a request to the update endpoint when
-    // the user is updating the tags.
-    if (updatingTags) {
-      setUpdatingTags(false);
+    // the user removes an applied tag
+    if (removingAppliedTag) {
+      setRemoveAppliedTag(false);
+
+      // Filter out staged tags from the checktags so they do not get committed
       const tags = checkedTags.map(t => decodeURIComponent(t.split(',').slice(-1)));
-      updateTags.mutate({ tags });
+      const staged = stagedContentTags.map(t => t.label);
+      const remainingAppliedTags = tags.filter(t => !staged.includes(t));
+
+      updateTags.mutate({ tags: remainingAppliedTags });
     }
-  }, [contentId, id, canTagObject, checkedTags]);
+  }, [contentId, id, canTagObject, checkedTags, stagedContentTags]);
+
+  // Handles the removal of staged content tags based on what was removed
+  // from the staged tags tree. We are doing it in a useEffect since the removeTag
+  // method is being called inside a setState of the parent component, which
+  // was causing warnings
+  React.useEffect(() => {
+    stagedTagsToRemove.forEach(tag => removeStagedContentTag(id, tag));
+  }, [stagedTagsToRemove, removeStagedContentTag, id]);
+
+  // Handles making requests to the update endpoint when the staged tags need to be committed
+  const commitStagedTags = React.useCallback(() => {
+    // Filter out only leaf nodes of staging tree to commit
+    const explicitStaged = getLeafTags(stagedContentTagsTree);
+
+    // Filter out applied tags that should become implicit because a child tag was committed
+    const stagedLineages = stagedContentTags.map(st => decodeURIComponent(st.value).split(',').slice(0, -1)).flat();
+    const applied = contentTags.map((t) => t.value).filter(t => !stagedLineages.includes(t));
+
+    updateTags.mutate({ tags: [...applied, ...explicitStaged] });
+  }, [contentTags, stagedContentTags, stagedContentTagsTree, updateTags]);
 
   // This converts the contentTags prop to the tree structure mentioned above
-  const appliedContentTags = React.useMemo(() => {
+  const appliedContentTagsTree = React.useMemo(() => {
     let contentTagsCounter = 0;
-
-    // Clear all the tags that have not been commited and the checked boxes when
-    // fresh contentTags passed in so the latest state from the backend is rendered
-    setAddedContentTags({});
-    clear();
 
     // When an error occurs while updating, the contentTags query is invalidated,
     // hence they will be recalculated, and the updateTags mutation should be reset.
@@ -134,8 +162,12 @@ const useContentTagsCollapsibleHelper = (contentId, taxonomyAndTagsData) => {
 
           // Populating the SelectableBox with "selected" (explicit) tags
           const value = item.lineage.map(l => encodeURIComponent(l)).join(',');
-          // eslint-disable-next-line no-unused-expressions
-          isExplicit ? add(value) : remove(value);
+          // Clear all the existing applied tags
+          remove(value);
+          // Add only the explicitly applied tags
+          if (isExplicit) {
+            add(value);
+          }
           contentTagsCounter += 1;
         }
 
@@ -147,13 +179,53 @@ const useContentTagsCollapsibleHelper = (contentId, taxonomyAndTagsData) => {
     return resultTree;
   }, [contentTags, updateTags.isError]);
 
-  // This is the source of truth that represents the current state of tags in
-  // this Taxonomy as a tree. Whenever either the `appliedContentTags` (i.e. tags passed in
-  // the prop from the backed) change, or when the `addedContentTags` (i.e. tags added by
-  // selecting/unselecting them in the dropdown) change, the tree is recomputed.
-  const tagsTree = React.useMemo(() => (
-    mergeTrees(appliedContentTags, addedContentTags)
-  ), [appliedContentTags, addedContentTags]);
+  /**
+   * Util function that removes the tag along with its ancestors if it was
+   * the only explicit child tag. It returns a list of staged tags (and ancestors) that
+   * were unstaged and should be removed
+   *
+   * @param {object} tree - tag tree to remove the tag from
+   * @param {string[]} tagsToRemove - remaining lineage of tag to remove at each recursive level.
+   *                                  eg: ['grand parent', 'parent', 'tag']
+   * @param {boolean} staged - whether we are removing staged tags or not
+   * @param {string[]} fullLineage - Full lineage of tag being removed
+   * @returns {string[]} array of staged tag values (with ancestors) that should be removed from staged tree
+   *
+   */
+  const removeTags = React.useCallback((tree, tagsToRemove, staged, fullLineage) => {
+    const removedTags = [];
+
+    const traverseAndRemoveTags = (subTree, innerTagsToRemove) => {
+      if (!subTree || !innerTagsToRemove.length) {
+        return;
+      }
+      const key = innerTagsToRemove[0];
+      if (subTree[key]) {
+        traverseAndRemoveTags(subTree[key].children, innerTagsToRemove.slice(1));
+
+        if (
+          Object.keys(subTree[key].children).length === 0
+          && (subTree[key].explicit === false || innerTagsToRemove.length === 1)
+        ) {
+          // eslint-disable-next-line no-param-reassign
+          delete subTree[key];
+
+          // Remove tags (including ancestors) from staged tags select menu
+          if (staged) {
+            // Build value from lineage by traversing beginning till key, then encoding them
+            const toRemove = fullLineage.slice(0, fullLineage.indexOf(key) + 1).map(item => encodeURIComponent(item));
+            if (toRemove.length > 0) {
+              removedTags.push(toRemove.join(','));
+            }
+          }
+        }
+      }
+    };
+
+    traverseAndRemoveTags(tree, tagsToRemove);
+
+    return removedTags;
+  }, []);
 
   // Add tag to the tree, and while traversing remove any selected ancestor tags
   // as they should become implicit
@@ -162,6 +234,10 @@ const useContentTagsCollapsibleHelper = (contentId, taxonomyAndTagsData) => {
     let traversal = tree;
     tagLineage.forEach(tag => {
       const isExplicit = selectedTag === tag;
+
+      // Clear out the ancestor tags leading to newly selected tag
+      // as they automatically become implicit
+      value.push(encodeURIComponent(tag));
 
       if (!traversal[tag]) {
         traversal[tag] = {
@@ -174,12 +250,8 @@ const useContentTagsCollapsibleHelper = (contentId, taxonomyAndTagsData) => {
         traversal[tag].explicit = isExplicit;
       }
 
-      // Clear out the ancestor tags leading to newly selected tag
-      // as they automatically become implicit
-      value.push(encodeURIComponent(tag));
       // eslint-disable-next-line no-unused-expressions
       isExplicit ? add(value.join(',')) : remove(value.join(','));
-
       traversal = traversal[tag].children;
     });
   };
@@ -188,26 +260,62 @@ const useContentTagsCollapsibleHelper = (contentId, taxonomyAndTagsData) => {
     const tagLineage = tagSelectableBoxValue.split(',').map(t => decodeURIComponent(t));
     const selectedTag = tagLineage.slice(-1)[0];
 
-    const addedTree = { ...addedContentTags };
     if (checked) {
+      const stagedTree = cloneDeep(stagedContentTagsTree);
       // We "add" the tag to the SelectableBox.Set inside the addTags method
-      addTags(addedTree, tagLineage, selectedTag);
+      addTags(stagedTree, tagLineage, selectedTag);
+
+      // Update the staged content tags tree
+      setStagedContentTagsTree(stagedTree);
+
+      // Add content tag to taxonomy's staged tags select menu
+      addStagedContentTag(
+        id,
+        {
+          value: tagSelectableBoxValue,
+          label: selectedTag,
+        },
+      );
     } else {
       // Remove tag from the SelectableBox.Set
       remove(tagSelectableBoxValue);
 
-      // We remove them from both incase we are unselecting from an
-      // existing applied Tag or a newly added one
-      removeTags(addedTree, tagLineage);
-      removeTags(appliedContentTags, tagLineage);
+      // Remove tag along with it's from ancestors if it's the only child tag
+      // from the staged tags tree and update the staged content tags tree
+      setStagedContentTagsTree(prevStagedContentTagsTree => {
+        const updatedStagedContentTagsTree = cloneDeep(prevStagedContentTagsTree);
+        const tagsToRemove = removeTags(updatedStagedContentTagsTree, tagLineage, true, tagLineage);
+        setStagedTagsToRemove(tagsToRemove);
+        return updatedStagedContentTagsTree;
+      });
     }
+  }, [
+    stagedContentTagsTree, setStagedContentTagsTree, addTags, removeTags,
+    id, addStagedContentTag, removeStagedContentTag,
+  ]);
 
-    setAddedContentTags(addedTree);
-    setUpdatingTags(true);
-  }, []);
+  const removeAppliedTagHandler = React.useCallback((tagSelectableBoxValue) => {
+    const tagLineage = tagSelectableBoxValue.split(',').map(t => decodeURIComponent(t));
+
+    // Remove tag from the SelectableBox.Set
+    remove(tagSelectableBoxValue);
+
+    // Remove tags from applied tags
+    const tagsToRemove = removeTags(appliedContentTagsTree, tagLineage, false, tagLineage);
+    setStagedTagsToRemove(tagsToRemove);
+
+    setRemoveAppliedTag(true);
+  }, [appliedContentTagsTree, id, removeStagedContentTag]);
 
   return {
-    tagChangeHandler, tagsTree, contentTagsCount, checkedTags,
+    tagChangeHandler,
+    removeAppliedTagHandler,
+    appliedContentTagsTree: sortKeysAlphabetically(appliedContentTagsTree),
+    stagedContentTagsTree: sortKeysAlphabetically(stagedContentTagsTree),
+    contentTagsCount,
+    checkedTags,
+    commitStagedTags,
+    updateTags,
   };
 };
 

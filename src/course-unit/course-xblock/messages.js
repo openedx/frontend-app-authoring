@@ -3,7 +3,7 @@ import { defineMessages } from '@edx/frontend-platform/i18n';
 const messages = defineMessages({
   blockAltButtonEdit: {
     id: 'course-authoring.course-unit.xblock.button.edit.alt',
-    defaultMessage: 'Edit Item',
+    defaultMessage: 'Edit',
   },
   blockActionsDropdownAlt: {
     id: 'course-authoring.course-unit.xblock.button.actions.alt',

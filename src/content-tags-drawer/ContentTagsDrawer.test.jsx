@@ -8,8 +8,10 @@ import ContentTagsDrawer from './ContentTagsDrawer';
 import {
   useContentTaxonomyTagsData,
   useContentData,
+  useTaxonomyTagsData,
 } from './data/apiHooks';
 import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from '../taxonomy/data/apiHooks';
+import messages from './messages';
 
 const contentId = 'block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@7f47fe2dbcaf47c5a071671c741fe1ab';
 const mockOnClose = jest.fn();
@@ -33,6 +35,15 @@ jest.mock('./data/apiHooks', () => ({
   useContentTaxonomyTagsUpdater: jest.fn(() => ({
     isError: false,
   })),
+  useTaxonomyTagsData: jest.fn(() => ({
+    hasMorePages: false,
+    tagPages: {
+      isLoading: true,
+      isError: false,
+      canAddTag: false,
+      data: [],
+    },
+  })),
 }));
 
 jest.mock('../taxonomy/data/apiHooks', () => ({
@@ -47,6 +58,82 @@ const RootWrapper = (params) => (
 );
 
 describe('<ContentTagsDrawer />', () => {
+  const setupMockDataForStagedTagsTesting = () => {
+    useIsTaxonomyListDataLoaded.mockReturnValue(true);
+    useContentTaxonomyTagsData.mockReturnValue({
+      isSuccess: true,
+      data: {
+        taxonomies: [
+          {
+            name: 'Taxonomy 1',
+            taxonomyId: 123,
+            canTagObject: true,
+            tags: [
+              {
+                value: 'Tag 1',
+                lineage: ['Tag 1'],
+                canDeleteObjecttag: true,
+              },
+              {
+                value: 'Tag 2',
+                lineage: ['Tag 2'],
+                canDeleteObjecttag: true,
+              },
+            ],
+          },
+        ],
+      },
+    });
+    useTaxonomyListDataResponse.mockReturnValue({
+      results: [{
+        id: 123,
+        name: 'Taxonomy 1',
+        description: 'This is a description 1',
+        canTagObject: true,
+      }],
+    });
+
+    useTaxonomyTagsData.mockReturnValue({
+      hasMorePages: false,
+      canAddTag: false,
+      tagPages: {
+        isLoading: false,
+        isError: false,
+        data: [{
+          value: 'Tag 1',
+          externalId: null,
+          childCount: 0,
+          depth: 0,
+          parentValue: null,
+          id: 12345,
+          subTagsUrl: null,
+          canChangeTag: false,
+          canDeleteTag: false,
+        }, {
+          value: 'Tag 2',
+          externalId: null,
+          childCount: 0,
+          depth: 0,
+          parentValue: null,
+          id: 12346,
+          subTagsUrl: null,
+          canChangeTag: false,
+          canDeleteTag: false,
+        }, {
+          value: 'Tag 3',
+          externalId: null,
+          childCount: 0,
+          depth: 0,
+          parentValue: null,
+          id: 12347,
+          subTagsUrl: null,
+          canChangeTag: false,
+          canDeleteTag: false,
+        }],
+      },
+    });
+  };
+
   it('should render page and page title correctly', () => {
     const { getByText } = render(<RootWrapper />);
     expect(getByText('Manage tags')).toBeInTheDocument();
@@ -152,6 +239,101 @@ describe('<ContentTagsDrawer />', () => {
       expect(tagCountBadges[0].textContent).toBe('2');
       expect(tagCountBadges[1].textContent).toBe('1');
     });
+  });
+
+  it('should test adding a content tag to the staged tags for a taxonomy', () => {
+    setupMockDataForStagedTagsTesting();
+
+    const { container, getByText, getAllByText } = render(<RootWrapper />);
+
+    // Expand the Taxonomy to view applied tags and "Add a tag" button
+    const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
+
+    fireEvent.click(expandToggle);
+
+    // Click on "Add a tag" button to open dropdown
+    const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
+    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
+    fireEvent.mouseDown(addTagsButton);
+
+    // Tag 3 should only appear in dropdown selector, (i.e. the dropdown is open, since Tag 3 is not applied)
+    expect(getAllByText('Tag 3').length).toBe(1);
+
+    // Click to check Tag 3
+    const tag3 = getByText('Tag 3');
+    fireEvent.click(tag3);
+
+    // Check that Tag 3 has been staged, i.e. there should be 2 of them on the page
+    expect(getAllByText('Tag 3').length).toBe(2);
+  });
+
+  it('should test removing a staged content from a taxonomy', () => {
+    setupMockDataForStagedTagsTesting();
+
+    const { container, getByText, getAllByText } = render(<RootWrapper />);
+
+    // Expand the Taxonomy to view applied tags and "Add a tag" button
+    const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
+
+    fireEvent.click(expandToggle);
+
+    // Click on "Add a tag" button to open dropdown
+    const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
+    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
+    fireEvent.mouseDown(addTagsButton);
+
+    // Tag 3 should only appear in dropdown selector, (i.e. the dropdown is open, since Tag 3 is not applied)
+    expect(getAllByText('Tag 3').length).toBe(1);
+
+    // Click to check Tag 3
+    const tag3 = getByText('Tag 3');
+    fireEvent.click(tag3);
+
+    // Check that Tag 3 has been staged, i.e. there should be 2 of them on the page
+    expect(getAllByText('Tag 3').length).toBe(2);
+
+    // Click it again to unstage it and confirm that there is only one on the page
+    fireEvent.click(tag3);
+    expect(getAllByText('Tag 3').length).toBe(1);
+  });
+
+  it('should test clearing staged tags for a taxonomy', () => {
+    setupMockDataForStagedTagsTesting();
+
+    const {
+      container,
+      getByText,
+      getAllByText,
+      queryByText,
+    } = render(<RootWrapper />);
+
+    // Expand the Taxonomy to view applied tags and "Add a tag" button
+    const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
+
+    fireEvent.click(expandToggle);
+
+    // Click on "Add a tag" button to open dropdown
+    const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
+    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
+    fireEvent.mouseDown(addTagsButton);
+
+    // Tag 3 should only appear in dropdown selector, (i.e. the dropdown is open, since Tag 3 is not applied)
+    expect(getAllByText('Tag 3').length).toBe(1);
+
+    // Click to check Tag 3
+    const tag3 = getByText('Tag 3');
+    fireEvent.click(tag3);
+
+    // Check that Tag 3 has been staged, i.e. there should be 2 of them on the page
+    expect(getAllByText('Tag 3').length).toBe(2);
+
+    // Click on the Cancel button in the dropdown to clear the staged tags
+    const dropdownCancel = getByText(messages.collapsibleCancelStagedTagsButtonText.defaultMessage);
+    fireEvent.click(dropdownCancel);
+
+    // Check that there are no more Tag 3 on the page, since the staged one is cleared
+    // and the dropdown has been closed
+    expect(queryByText('Tag 3')).not.toBeInTheDocument();
   });
 
   it('should call closeManageTagsDrawer when CloseButton is clicked', async () => {

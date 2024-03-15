@@ -14,7 +14,7 @@ const TagBubble = ({
 
   const handleClick = React.useCallback(() => {
     if (!implicit && canRemove) {
-      removeTagHandler(lineage.join(','), false);
+      removeTagHandler(lineage.join(','));
     }
   }, [implicit, lineage, canRemove, removeTagHandler]);
 
