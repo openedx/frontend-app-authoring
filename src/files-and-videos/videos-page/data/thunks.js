@@ -122,7 +122,7 @@ export function addVideoFile(courseId, file, videoIds) {
       if (putToServerResponse.status < 200 || putToServerResponse.status >= 300) {
         throw new ServerError('Server responded with an error status', putToServerResponse.status);
       } else {
-        sendVideoUploadStatus(courseId, edxVideoId, 'Upload completed', 'upload_completed');
+        await sendVideoUploadStatus(courseId, edxVideoId, 'Upload completed', 'upload_completed');
       }
     } catch (error) {
       if (error.response && error.response.status === 413) {
