@@ -47,9 +47,11 @@ describe('addVideoFile', () => {
     expect(videoStatusMock).toHaveBeenCalledWith(courseId, mockEdxVideoId, 'Upload failed', 'upload_failed');
     expect(dispatch).toHaveBeenCalledWith({
       payload: {
-        fileName: mockFile.name,
+        error: 'add',
+        message: `Failed to upload ${mockFile.name}.`,
       },
-      type: 'videos/failAddVideo',
+
+      type: 'videos/updateErrors',
     });
   });
   it('Successful video upload sends the success to the api', async () => {
