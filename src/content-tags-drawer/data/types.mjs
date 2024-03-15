@@ -61,7 +61,7 @@
 
 /**
   * @typedef {Object} CourseData
-  * @property {string} name
+  * @property {string} courseDisplayNameWithDefault
   */
 
 /**

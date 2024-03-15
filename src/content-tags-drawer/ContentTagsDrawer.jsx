@@ -58,7 +58,7 @@ const ContentTagsDrawer = ({ id, onClose }) => {
     if ('displayName' in contentData) {
       contentName = contentData.displayName;
     } else {
-      contentName = contentData.name;
+      contentName = contentData.courseDisplayNameWithDefault;
     }
   }
 
