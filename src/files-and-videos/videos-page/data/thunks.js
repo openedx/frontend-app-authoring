@@ -103,8 +103,7 @@ export function deleteVideoFile(courseId, id) {
 export function addVideoFile(courseId, file, videoIds) {
   return async (dispatch) => {
     dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.IN_PROGRESS }));
-    let edxVideoId; let
-      uploadUrl;
+    let edxVideoId; let uploadUrl;
     try {
       const createUrlResponse = await addVideo(courseId, file);
       // eslint-disable-next-line
@@ -113,10 +112,8 @@ export function addVideoFile(courseId, file, videoIds) {
         dispatch(failAddVideo({ fileName: file.name }));
       }
       // eslint-disable-next-line prefer-destructuring
-      [{ edxVideoId, uploadUrl }] = camelCaseObject(createUrlResponse.data).files[0];
+      ({ edxVideoId, uploadUrl } = camelCaseObject(createUrlResponse.data).files[0]);
     } catch (error) {
-      // eslint-disable-next-line
-      console.error(`addVideo failed with message: ${error.message}`)
       dispatch(failAddVideo({ fileName: file.name }));
       return;
     }
