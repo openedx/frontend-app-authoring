@@ -37,7 +37,7 @@ import {
   updateTranscriptPreferenceSuccess,
   failAddVideo,
 } from './slice';
-import {ServerError} from './errors';
+import { ServerError } from './errors';
 
 import { updateFileValues } from './utils';
 
@@ -103,7 +103,8 @@ export function deleteVideoFile(courseId, id) {
 export function addVideoFile(courseId, file, videoIds) {
   return async (dispatch) => {
     dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.IN_PROGRESS }));
-    let edxVideoId, uploadUrl;
+    let edxVideoId; let
+      uploadUrl;
     try {
       const createUrlResponse = await addVideo(courseId, file);
       // eslint-disable-next-line
@@ -111,18 +112,18 @@ export function addVideoFile(courseId, file, videoIds) {
       if (createUrlResponse.status < 200 || createUrlResponse.status >= 300) {
         dispatch(failAddVideo({ fileName: file.name }));
       }
+      // eslint-disable-next-line prefer-destructuring
       [{ edxVideoId, uploadUrl }] = camelCaseObject(createUrlResponse.data).files[0];
-    }
-    catch (error) {
+    } catch (error) {
       // eslint-disable-next-line
       console.error(`addVideo failed with message: ${error.message}`)
       dispatch(failAddVideo({ fileName: file.name }));
       return;
     }
-    try{
+    try {
       const putToServerResponse = await uploadVideo(uploadUrl, file);
       if (putToServerResponse.status < 200 || putToServerResponse.status >= 300) {
-        throw new ServerError('Server responded with an error status', putToServerResponse.status)
+        throw new ServerError('Server responded with an error status', putToServerResponse.status);
       } else {
         sendVideoUploadStatus(courseId, edxVideoId, 'Upload completed', 'upload_completed');
       }
