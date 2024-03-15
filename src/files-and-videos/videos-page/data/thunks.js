@@ -112,7 +112,7 @@ export function addVideoFile(courseId, file, videoIds) {
         dispatch(failAddVideo({ fileName: file.name }));
       }
       // eslint-disable-next-line prefer-destructuring
-      ({ edxVideoId, uploadUrl } = camelCaseObject(createUrlResponse.data).files[0]);
+      [{ edxVideoId, uploadUrl }] = camelCaseObject(createUrlResponse.data).files;
     } catch (error) {
       dispatch(failAddVideo({ fileName: file.name }));
       return;
