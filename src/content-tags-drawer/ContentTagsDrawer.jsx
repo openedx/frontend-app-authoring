@@ -31,15 +31,18 @@ import Loading from '../generic/Loading';
  * It is used both in interfaces of this MFE and in edx-platform interfaces such as iframe.
  * - If you want to use it as an iframe, the component obtains the `contentId` from the url parameters.
  *   Functions to close the drawer are handled internally.
+ *   TODO: We can delete this method when is no longer used on edx-platform.
  * - If you want to use it as react component, you need to pass the content id and the close functions
  *   through the component parameters.
  */
 const ContentTagsDrawer = ({ id, onClose }) => {
   const intl = useIntl();
+  // TODO: We can delete this when the iframe is no longer used on edx-platform
   const params = useParams();
   let contentId = id;
 
   if (contentId === undefined) {
+    // TODO: We can delete this when the iframe is no longer used on edx-platform
     contentId = params.contentId;
   }
 
