@@ -111,7 +111,7 @@ export function addVideoFile(courseId, file, videoIds) {
       if (createUrlResponse.status < 200 || createUrlResponse.status >= 300) {
         dispatch(failAddVideo({ fileName: file.name }));
       }
-      ({ edxVideoId, uploadUrl } = camelCaseObject(createUrlResponse.data).files[0]);
+      [{ edxVideoId, uploadUrl }] = camelCaseObject(createUrlResponse.data).files[0];
     }
     catch (error) {
       // eslint-disable-next-line
