@@ -199,68 +199,6 @@ describe('<ContentTagsDropDownSelector />', () => {
     });
   });
 
-  it('should expand on enter key taxonomy tags drop down selector with sub tags', async () => {
-    useTaxonomyTagsData.mockReturnValueOnce({
-      hasMorePages: false,
-      tagPages: {
-        isLoading: false,
-        isError: false,
-        data: [{
-          value: 'Tag 2',
-          externalId: null,
-          childCount: 1,
-          depth: 0,
-          parentValue: null,
-          id: 12345,
-          subTagsUrl: 'http://localhost:18010/api/content_tagging/v1/taxonomies/4/tags/?parent_tag=Tag%202',
-        }],
-      },
-    });
-
-    await act(async () => {
-      const dataWithTagsTree = {
-        ...data,
-        tagsTree: {
-          'Tag 3': {
-            explicit: false,
-            children: {},
-          },
-        },
-      };
-      const { container, getByText } = await getComponent(dataWithTagsTree);
-      await waitFor(() => {
-        expect(getByText('Tag 2')).toBeInTheDocument();
-        expect(container.getElementsByClassName('taxonomy-tags-arrow-drop-down').length).toBe(1);
-      });
-
-      // Mock useTaxonomyTagsData again since it gets called in the recursive call
-      useTaxonomyTagsData.mockReturnValueOnce({
-        hasMorePages: false,
-        tagPages: {
-          isLoading: false,
-          isError: false,
-          data: [{
-            value: 'Tag 3',
-            externalId: null,
-            childCount: 0,
-            depth: 1,
-            parentValue: 'Tag 2',
-            id: 12346,
-            subTagsUrl: null,
-          }],
-        },
-      });
-
-      // Expand the dropdown to see the subtags selectors
-      const expandToggle = container.querySelector('.taxonomy-tags-arrow-drop-down span');
-      fireEvent.keyPress(expandToggle, { key: 'Enter', charCode: 13 });
-
-      await waitFor(() => {
-        expect(getByText('Tag 3')).toBeInTheDocument();
-      });
-    });
-  });
-
   it('should render taxonomy tags drop down selector and change search term', async () => {
     useTaxonomyTagsData.mockReturnValueOnce({
       hasMorePages: false,

@@ -284,7 +284,6 @@ const ContentTagsDropDownSelector = ({
                       src={isOpen(tagData.value) ? ArrowDropUp : ArrowDropDown}
                       onClick={() => clickAndEnterHandler(tagData.value)}
                       tabIndex="-1"
-                      onKeyPress={(event) => (event.key === 'Enter' ? clickAndEnterHandler(tagData.value) : null)}
                     />
                   </div>
                 )}
