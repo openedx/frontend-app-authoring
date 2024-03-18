@@ -5,7 +5,6 @@ import * as appHooks from '../../../hooks';
 import { thunkActions, selectors } from '../../../data/redux';
 import VideoSettingsModal from './VideoSettingsModal';
 // import SelectVideoModal from './SelectVideoModal';
-import * as module from './VideoEditorModal';
 
 export const {
   navigateTo,
@@ -13,15 +12,10 @@ export const {
 
 export const hooks = {
   initialize: (dispatch, selectedVideoId, selectedVideoUrl) => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    React.useEffect(() => {
-      dispatch(thunkActions.video.loadVideoData(selectedVideoId, selectedVideoUrl));
-    }, []);
+    dispatch(thunkActions.video.loadVideoData(selectedVideoId, selectedVideoUrl));
   },
-  returnToGallery: () => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
+  useReturnToGallery: () => {
     const learningContextId = useSelector(selectors.app.learningContextId);
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     const blockId = useSelector(selectors.app.blockId);
     return () => (navigateTo(`/course/${learningContextId}/editor/course-videos/${blockId}`));
   },
@@ -36,8 +30,8 @@ const VideoEditorModal = ({
   const searchParams = new URLSearchParams(document.location.search);
   const selectedVideoId = searchParams.get('selectedVideoId');
   const selectedVideoUrl = searchParams.get('selectedVideoUrl');
-  const onReturn = module.hooks.returnToGallery();
-  module.hooks.initialize(dispatch, selectedVideoId, selectedVideoUrl);
+  const onReturn = hooks.useReturnToGallery();
+  hooks.initialize(dispatch, selectedVideoId, selectedVideoUrl);
   return (
     <VideoSettingsModal {...{
       close,
