@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Add as IconAdd } from '@edx/paragon/icons';
-import { Button } from '@edx/paragon';
+import { Add as IconAdd } from '@openedx/paragon/icons';
+import { Button } from '@openedx/paragon';
 
 import messages from './messages';
 

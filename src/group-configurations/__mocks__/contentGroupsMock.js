@@ -13,7 +13,7 @@ module.exports = {
       name: 'My Content Group 2',
       usage: [
         {
-          label: 'Unit / Drag and Drop',
+          label: 'Unit / Blank Problem',
           url: '/container/block-v1:org+101+101+type@vertical+block@3d6d82348e2743b6ac36ac4af354de0e',
         },
         {

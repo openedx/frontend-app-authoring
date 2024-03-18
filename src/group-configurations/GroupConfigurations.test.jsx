@@ -5,6 +5,7 @@ import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
+import { RequestStatus } from '../data/constants';
 import initializeStore from '../store';
 import { executeThunk } from '../utils';
 import { getContentStoreApiUrl } from './data/api';
@@ -87,5 +88,19 @@ describe('<GroupConfigurations />', () => {
     expect(
       queryByTestId('group-configurations-empty-placeholder'),
     ).not.toBeInTheDocument();
+  });
+
+  it('updates loading status if request fails', async () => {
+    axiosMock
+      .onGet(getContentStoreApiUrl(courseId))
+      .reply(404, groupConfigurationResponseMock);
+
+    renderComponent();
+
+    await executeThunk(fetchGroupConfigurationsQuery(courseId), store.dispatch);
+
+    expect(store.getState().groupConfigurations.loadingStatus).toBe(
+      RequestStatus.FAILED,
+    );
   });
 });

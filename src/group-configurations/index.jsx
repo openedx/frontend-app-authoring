@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Container, Layout, Stack, Row,
-} from '@edx/paragon';
+} from '@openedx/paragon';
 
 import { RequestStatus } from '../data/constants';
 import { LoadingSpinner } from '../generic/Loading';

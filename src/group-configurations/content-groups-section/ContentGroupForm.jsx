@@ -13,7 +13,7 @@ import {
 
 import { WarningFilled as WarningFilledIcon } from '@openedx/paragon/icons';
 
-import PromptIfDirty from '../../generic/PromptIfDirty';
+import PromptIfDirty from '../../generic/prompt-if-dirty/PromptIfDirty';
 import { isAlreadyExistsGroup } from './utils';
 import messages from './messages';
 

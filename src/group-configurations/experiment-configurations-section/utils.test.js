@@ -9,110 +9,141 @@ describe('utils module', () => {
     it('return correct next group name test-case-1', () => {
       const groups = [
         {
-          name: 'Group A',
+          name: 'Group A', idx: 0,
         },
         {
-          name: 'Group B',
+          name: 'Group B', idx: 1,
         },
       ];
       const nextGroup = getNextGroupName(groups);
       expect(nextGroup.name).toBe('Group C');
+      expect(nextGroup.idx).toBe(2);
     });
 
     it('return correct next group name test-case-2', () => {
       const groups = [];
       const nextGroup = getNextGroupName(groups);
       expect(nextGroup.name).toBe('Group A');
+      expect(nextGroup.idx).toBe(0);
     });
 
     it('return correct next group name test-case-3', () => {
       const groups = [
         {
-          name: 'Some group',
+          name: 'Some group', idx: 0,
+        },
+        {
+          name: 'Group B', idx: 1,
         },
       ];
       const nextGroup = getNextGroupName(groups);
-      expect(nextGroup.name).toBe('Group B');
+      expect(nextGroup.name).toBe('Group C');
+      expect(nextGroup.idx).toBe(2);
     });
 
     it('return correct next group name test-case-4', () => {
       const groups = [
         {
-          name: 'Group A',
+          name: 'Group A', idx: 0,
         },
         {
-          name: 'Group A',
+          name: 'Group A', idx: 1,
         },
       ];
       const nextGroup = getNextGroupName(groups);
       expect(nextGroup.name).toBe('Group C');
+      expect(nextGroup.idx).toBe(2);
     });
 
     it('return correct next group name test-case-5', () => {
       const groups = [
         {
-          name: 'Group A',
+          name: 'Group A', idx: 0,
         },
         {
-          name: 'Group C',
+          name: 'Group C', idx: 1,
         },
         {
-          name: 'Group B',
+          name: 'Group B', idx: 2,
         },
       ];
       const nextGroup = getNextGroupName(groups);
       expect(nextGroup.name).toBe('Group D');
+      expect(nextGroup.idx).toBe(3);
     });
 
     it('return correct next group name test-case-6', () => {
       const groups = [
         {
-          name: '',
+          name: '', idx: 0,
         },
         {
-          name: '',
+          name: '', idx: 1,
         },
       ];
       const nextGroup = getNextGroupName(groups);
       expect(nextGroup.name).toBe('Group C');
+      expect(nextGroup.idx).toBe(2);
     });
 
     it('return correct next group name test-case-7', () => {
       const groups = [
         {
-          name: 'Group A',
+          name: 'Group A', idx: 0,
         },
         {
-          name: 'Group C',
+          name: 'Group C', idx: 1,
         },
       ];
       const nextGroup = getNextGroupName(groups);
       expect(nextGroup.name).toBe('Group D');
+      expect(nextGroup.idx).toBe(2);
     });
 
     it('return correct next group name test-case-8', () => {
       const groups = [
         {
-          name: 'Group D',
+          name: 'Group D', idx: 0,
+        },
+      ];
+      const nextGroup = getNextGroupName(groups);
+      expect(nextGroup.name).toBe('Group B');
+      expect(nextGroup.idx).toBe(1);
+    });
+
+    it('return correct next group name test-case-9', () => {
+      const groups = [
+        {
+          name: 'Group E', idx: 4,
+        },
+      ];
+      const nextGroup = getNextGroupName(groups);
+      expect(nextGroup.name).toBe('Group F');
+    });
+
+    it('return correct next group name test-case-10', () => {
+      const groups = [
+        {
+          name: 'Group E', idx: 0,
         },
       ];
       const nextGroup = getNextGroupName(groups);
       expect(nextGroup.name).toBe('Group B');
     });
 
-    it('return correct next group name test-case-9', () => {
+    it('return correct next group name test-case-11', () => {
       const simulatedGroupWithAlphabetLength = Array.from(
         { length: 26 },
-        () => ({ name: 'Test name' }),
+        (_, idx) => ({ name: 'Test name', idx }),
       );
       const nextGroup = getNextGroupName(simulatedGroupWithAlphabetLength);
       expect(nextGroup.name).toBe('Group AA');
     });
 
-    it('return correct next group name test-case-10', () => {
+    it('return correct next group name test-case-12', () => {
       const simulatedGroupWithAlphabetLength = Array.from(
         { length: 702 },
-        () => ({ name: 'Test name' }),
+        (_, idx) => ({ name: 'Test name', idx }),
       );
       const nextGroup = getNextGroupName(simulatedGroupWithAlphabetLength);
       expect(nextGroup.name).toBe('Group AAA');

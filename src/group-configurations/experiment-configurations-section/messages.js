@@ -108,7 +108,7 @@ const messages = defineMessages({
   },
   subtitleModalDelete: {
     id: 'course-authoring.group-configurations.experiment-card.delete-modal.subtitle',
-    defaultMessage: 'content group',
+    defaultMessage: 'group configurations',
   },
   deleteRestriction: {
     id: 'course-authoring.group-configurations.experiment-card.delete-restriction',

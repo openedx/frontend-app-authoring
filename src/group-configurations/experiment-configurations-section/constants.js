@@ -3,8 +3,12 @@ export const initialExperimentConfiguration = {
   name: '',
   description: '',
   groups: [
-    { name: 'Group A', version: 1, usage: [] },
-    { name: 'Group B', version: 1, usage: [] },
+    {
+      name: 'Group A', version: 1, usage: [], idx: 0,
+    },
+    {
+      name: 'Group B', version: 1, usage: [], idx: 1,
+    },
   ],
   scheme: 'random',
   parameters: {},

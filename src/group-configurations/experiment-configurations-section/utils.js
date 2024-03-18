@@ -12,27 +12,28 @@ const getNextGroupName = (groups, groupFieldName = 'name') => {
   const existingGroupNames = groups.map((group) => group.name);
   const lettersCount = ALPHABET_LETTERS.length;
 
-  let nextIndex = existingGroupNames.length + 1;
+  // Calculate the maximum index of existing groups
+  const maxIdx = groups.reduce((max, group) => Math.max(max, group.idx), -1);
+
+  // Calculate the next index for the new group
+  const nextIndex = maxIdx + 1;
 
   let groupName = '';
-  while (nextIndex > 0) {
-    groupName = ALPHABET_LETTERS[(nextIndex - 1) % lettersCount] + groupName;
-    nextIndex = Math.floor((nextIndex - 1) / lettersCount);
-  }
-
   let counter = 0;
-  let newName = groupName;
-  while (existingGroupNames.includes(`Group ${newName}`)) {
-    counter++;
-    let newIndex = existingGroupNames.length + 1 + counter;
+
+  do {
+    let tempIndex = nextIndex + counter;
     groupName = '';
-    while (newIndex > 0) {
-      groupName = ALPHABET_LETTERS[(newIndex - 1) % lettersCount] + groupName;
-      newIndex = Math.floor((newIndex - 1) / lettersCount);
+    while (tempIndex >= 0) {
+      groupName = ALPHABET_LETTERS[tempIndex % lettersCount] + groupName;
+      tempIndex = Math.floor(tempIndex / lettersCount) - 1;
     }
-    newName = groupName;
-  }
-  return { [groupFieldName]: `Group ${newName}`, version: 1, usage: [] };
+    counter++;
+  } while (existingGroupNames.includes(`Group ${groupName}`));
+
+  return {
+    [groupFieldName]: `Group ${groupName}`, version: 1, usage: [], idx: nextIndex,
+  };
 };
 
 /**

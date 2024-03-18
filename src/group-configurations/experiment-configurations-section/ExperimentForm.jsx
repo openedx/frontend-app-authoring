@@ -11,7 +11,7 @@ import {
 } from '@openedx/paragon';
 import { WarningFilled as WarningFilledIcon } from '@openedx/paragon/icons';
 
-import PromptIfDirty from '../../generic/PromptIfDirty';
+import PromptIfDirty from '../../generic/prompt-if-dirty/PromptIfDirty';
 import ExperimentFormGroups from './ExperimentFormGroups';
 import messages from './messages';
 import { experimentFormValidationSchema } from './validation';
@@ -87,6 +87,7 @@ const ExperimentForm = ({
                 placeholder={formatMessage(
                   messages.experimentConfigurationDescriptionPlaceholder,
                 )}
+                as="textarea"
               />
               <Form.Control.Feedback hasIcon={false} type="default">
                 {formatMessage(

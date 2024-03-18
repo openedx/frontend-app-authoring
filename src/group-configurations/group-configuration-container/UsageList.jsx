@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Hyperlink, Stack } from '@openedx/paragon';
 
-import { formatUrlToUnitPage } from './utils';
-import messages from './messages';
+import { formatUrlToUnitPage } from '../utils';
+import messages from '../messages';
 
 const UsageList = ({ className, itemList, isExperiment }) => {
   const { formatMessage } = useIntl();

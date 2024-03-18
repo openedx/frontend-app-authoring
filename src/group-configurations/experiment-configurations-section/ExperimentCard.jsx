@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
 import { getConfig } from '@edx/frontend-platform';
@@ -26,6 +26,7 @@ import { initialExperimentConfiguration } from './constants';
 const ExperimentCard = ({
   configuration,
   experimentConfigurationActions,
+  isExpandedByDefault,
   onCreate,
 }) => {
   const { formatMessage } = useIntl();
@@ -33,6 +34,10 @@ const ExperimentCard = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditMode, switchOnEditMode, switchOffEditMode] = useToggle(false);
   const [isOpenDeleteModal, openDeleteModal, closeDeleteModal] = useToggle(false);
+
+  useEffect(() => {
+    setIsExpanded(isExpandedByDefault);
+  }, [isExpandedByDefault]);
 
   const {
     id, groups: groupsControl, description, usage,
@@ -59,8 +64,14 @@ const ExperimentCard = ({
     </span>
   );
 
+  // We need to store actual idx as an additional field for getNextGroupName utility.
+  const configurationGroupsWithIndexField = {
+    ...configuration,
+    groups: configuration.groups.map((group, idx) => ({ ...group, idx })),
+  };
+
   const formValues = isEditMode
-    ? configuration
+    ? configurationGroupsWithIndexField
     : initialExperimentConfiguration;
 
   const handleDeleteConfiguration = () => {
@@ -85,7 +96,11 @@ const ExperimentCard = ({
           onEditClick={handleEditConfiguration}
         />
       ) : (
-        <div className="configuration-card" data-testid="configuration-card">
+        <div
+          className="configuration-card"
+          data-testid="configuration-card"
+          id={id}
+        >
           <div className="configuration-card-header">
             <TitleButton
               group={configuration}
@@ -106,7 +121,7 @@ const ExperimentCard = ({
                 className="configuration-card-header__delete-tooltip"
                 tooltipContent={formatMessage(
                   isUsedInLocation
-                    ? messages.deleteRestriction
+                    ? messages.experimentConfigurationDeleteRestriction
                     : messages.actionDelete,
                 )}
                 alt={formatMessage(messages.actionDelete)}
@@ -155,6 +170,7 @@ ExperimentCard.defaultProps = {
     usage: [],
     version: undefined,
   },
+  isExpandedByDefault: false,
   onCreate: null,
   experimentConfigurationActions: {},
 };
@@ -194,6 +210,7 @@ ExperimentCard.propTypes = {
     }),
     scheme: PropTypes.string,
   }),
+  isExpandedByDefault: PropTypes.bool,
   onCreate: PropTypes.func,
   experimentConfigurationActions: PropTypes.shape({
     handleCreate: PropTypes.func,

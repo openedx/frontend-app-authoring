@@ -3,6 +3,7 @@ import { Button, useToggle } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Add as AddIcon } from '@openedx/paragon/icons';
 
+import { useScrollToHashElement } from '../../hooks';
 import EmptyPlaceholder from '../empty-placeholder';
 import ExperimentForm from './ExperimentForm';
 import ExperimentCard from './ExperimentCard';
@@ -24,6 +25,8 @@ const ExperimentConfigurationsSection = ({
     experimentConfigurationActions.handleCreate(configuration, hideNewConfiguration);
   };
 
+  const { elementWithHash } = useScrollToHashElement({ isLoading: true });
+
   return (
     <div className="mt-2.5">
       <h2 className="lead text-black mb-3 configuration-section-name">
@@ -36,6 +39,7 @@ const ExperimentConfigurationsSection = ({
               key={configuration.id}
               configuration={configuration}
               experimentConfigurationActions={experimentConfigurationActions}
+              isExpandedByDefault={configuration.id === +elementWithHash}
               onCreate={handleCreateConfiguration}
             />
           ))}
