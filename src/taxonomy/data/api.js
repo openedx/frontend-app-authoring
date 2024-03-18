@@ -65,7 +65,7 @@ export const apiUrls = {
     return url.href;
   },
   /**
-   * Get _all_ tags below a given parent tag. THis may be replaced with something more scalable in the future.
+   * Get _all_ tags below a given parent tag. This may be replaced with something more scalable in the future.
    * @param {number} taxonomyId
    * @param {string} parentTagValue
    */
