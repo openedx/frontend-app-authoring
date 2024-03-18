@@ -189,7 +189,6 @@ export function resetErrors({ errorType }) {
 export function getUsagePaths({ asset, courseId }) {
   return async (dispatch) => {
     dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.IN_PROGRESS }));
-
     try {
       const { usageLocations } = await getAssetUsagePaths({ assetId: asset.id, courseId });
       const assetLocations = usageLocations[asset.id];

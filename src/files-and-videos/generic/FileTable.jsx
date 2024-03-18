@@ -244,6 +244,7 @@ const FileTable = ({
           setSelectedRows={setSelectedRows}
           fileType={fileType}
         />
+
         <ApiStatusToast
           actionType={intl.formatMessage(messages.apiStatusAddingAction)}
           selectedRowCount={selectedRows.length}
@@ -252,6 +253,7 @@ const FileTable = ({
           setSelectedRows={setSelectedRows}
           fileType={fileType}
         />
+
         <ApiStatusToast
           actionType={intl.formatMessage(messages.apiStatusDownloadingAction)}
           selectedRowCount={selectedRows.length}

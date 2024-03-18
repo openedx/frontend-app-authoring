@@ -1,5 +1,5 @@
 import { camelCase, isEmpty } from 'lodash';
-import { getConfig } from '@edx/frontend-platform';
+import { getConfig, camelCaseObject } from '@edx/frontend-platform';
 import { RequestStatus } from '../../../data/constants';
 import {
   addModels,
@@ -20,6 +20,7 @@ import {
   uploadTranscript,
   getVideoUsagePaths,
   deleteTranscriptPreferences,
+  sendVideoUploadStatus,
   setTranscriptCredentials,
   setTranscriptPreferences,
   getAllUsagePaths,
@@ -29,20 +30,20 @@ import {
   setPageSettings,
   updateLoadingStatus,
   deleteVideoSuccess,
-  addVideoSuccess,
   updateErrors,
   clearErrors,
   updateEditStatus,
   updateTranscriptCredentialsSuccess,
   updateTranscriptPreferenceSuccess,
+  failAddVideo,
 } from './slice';
+import { ServerError } from './errors';
 
 import { updateFileValues } from './utils';
 
 export function fetchVideos(courseId) {
   return async (dispatch) => {
     dispatch(updateLoadingStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
-
     try {
       const { previousUploads, ...data } = await getVideos(courseId);
       dispatch(setPageSettings({ ...data }));
@@ -87,7 +88,6 @@ export function updateVideoOrder(courseId, videoIds) {
 export function deleteVideoFile(courseId, id) {
   return async (dispatch) => {
     dispatch(updateEditStatus({ editType: 'delete', status: RequestStatus.IN_PROGRESS }));
-
     try {
       await deleteVideo(courseId, id);
       dispatch(deleteVideoSuccess({ videoId: id }));
@@ -103,42 +103,52 @@ export function deleteVideoFile(courseId, id) {
 export function addVideoFile(courseId, file, videoIds) {
   return async (dispatch) => {
     dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.IN_PROGRESS }));
-
+    let edxVideoId; let uploadUrl;
     try {
-      const { files } = await addVideo(courseId, file);
-      const { edxVideoId, uploadUrl } = files[0];
-      const errors = await uploadVideo(
-        courseId,
-        uploadUrl,
-        file,
-        edxVideoId,
-      );
-      const { videos } = await fetchVideoList(courseId);
-      const newVideos = videos.filter(video => !videoIds.includes(video.edxVideoId));
-      const parsedVideos = updateFileValues(newVideos, true);
-      dispatch(addModels({
-        modelType: 'videos',
-        models: parsedVideos,
-      }));
-      dispatch(addVideoSuccess({
-        videoId: edxVideoId,
-      }));
-      dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.SUCCESSFUL }));
-      if (!isEmpty(errors)) {
-        errors.forEach(error => {
-          dispatch(updateErrors({ error: 'add', message: error }));
-        });
-        dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
+      const createUrlResponse = await addVideo(courseId, file);
+      // eslint-disable-next-line
+      console.log(`Post Response: ${createUrlResponse}`);
+      if (createUrlResponse.status < 200 || createUrlResponse.status >= 300) {
+        dispatch(failAddVideo({ fileName: file.name }));
+      }
+      // eslint-disable-next-line prefer-destructuring
+      [{ edxVideoId, uploadUrl }] = camelCaseObject(createUrlResponse.data).files;
+    } catch (error) {
+      dispatch(failAddVideo({ fileName: file.name }));
+      return;
+    }
+    try {
+      const putToServerResponse = await uploadVideo(uploadUrl, file);
+      if (putToServerResponse.status < 200 || putToServerResponse.status >= 300) {
+        throw new ServerError('Server responded with an error status', putToServerResponse.status);
+      } else {
+        await sendVideoUploadStatus(courseId, edxVideoId, 'Upload completed', 'upload_completed');
       }
     } catch (error) {
       if (error.response && error.response.status === 413) {
         const message = error.response.data.error;
         dispatch(updateErrors({ error: 'add', message }));
       } else {
-        dispatch(updateErrors({ error: 'add', message: `Failed to add ${file.name}.` }));
+        dispatch(updateErrors({ error: 'add', message: `Failed to upload ${file.name}.` }));
       }
+      await sendVideoUploadStatus(courseId, edxVideoId || '', 'Upload failed', 'upload_failed');
       dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
     }
+    try {
+      const { videos } = await fetchVideoList(courseId);
+      const newVideos = videos.filter(video => !videoIds.includes(video.edxVideoId));
+      const newVideoIds = newVideos.map(video => video.edxVideoId);
+      const parsedVideos = updateFileValues(newVideos, true);
+      dispatch(addModels({ modelType: 'videos', models: parsedVideos }));
+      dispatch(setVideoIds({ videoIds: videoIds.concat(newVideoIds) }));
+    } catch (error) {
+      dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
+      // eslint-disable-next-line
+      console.error(`fetchVideoList failed with message: ${error.message}`);
+      dispatch(updateErrors({ error: 'add', message: 'Failed to load videos' }));
+      return;
+    }
+    dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.SUCCESSFUL }));
   };
 }
 

@@ -3,7 +3,9 @@ import MockAdapter from 'axios-mock-adapter';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
-import { getDownload, getVideosUrl, getAllUsagePaths } from './api';
+import {
+  getDownload, getVideosUrl, getAllUsagePaths, getCourseVideosApiUrl, uploadVideo, sendVideoUploadStatus,
+} from './api';
 
 jest.mock('file-saver');
 
@@ -101,6 +103,36 @@ describe('api.js', () => {
       const expected = [{ id: videoIds[0], usageLocations, activeStatus: 'inactive' }];
       const actual = await getAllUsagePaths({ courseId, videoIds });
       expect(actual).toEqual(expected);
+    });
+  });
+
+  describe('uploadVideo', () => {
+    it('PUTs to the provided URL', async () => {
+      const mockUrl = 'mock.com';
+      const mockFile = { mock: 'file' };
+      const expectedResult = 'Something';
+      global.fetch = jest.fn().mockResolvedValue(expectedResult);
+      const actual = await uploadVideo(mockUrl, mockFile);
+      expect(actual).toEqual(expectedResult);
+    });
+  });
+  describe('sendVideoUploadStatus', () => {
+    it('Posts to the correct url', async () => {
+      const mockCourseId = 'wiZard101';
+      const mockEdxVideoId = 'wIzOz.mp3';
+      const mockStatus = 'Im mElTinG';
+      const mockMessage = 'DinG DOng The WiCked WiTCH isDead';
+      const expectedResult = 'Something';
+      axiosMock.onPost(`${getCourseVideosApiUrl(mockCourseId)}`)
+        .reply(200, expectedResult);
+      const actual = await sendVideoUploadStatus(
+        mockCourseId,
+        mockEdxVideoId,
+        mockMessage,
+        mockStatus,
+      );
+      expect(actual.data).toEqual(expectedResult);
+      jest.clearAllMocks();
     });
   });
 });
