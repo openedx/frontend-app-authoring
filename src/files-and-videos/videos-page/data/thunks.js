@@ -140,7 +140,7 @@ export function addVideoFile(courseId, file, videoIds) {
       const newVideoIds = newVideos.map(video => video.edxVideoId);
       const parsedVideos = updateFileValues(newVideos, true);
       dispatch(addModels({ modelType: 'videos', models: parsedVideos }));
-      dispatch(setVideoIds({ videoIds: videoIds.concat(newVideoIds) }));
+      dispatch(setVideoIds({ videoIds: newVideoIds.concat(videoIds) }));
     } catch (error) {
       dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
       // eslint-disable-next-line
