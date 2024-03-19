@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { getConfig } from '@edx/frontend-platform';
+import { useDispatch, useSelector } from 'react-redux';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { ErrorAlert } from '@edx/frontend-lib-content-components';
 import {
@@ -9,14 +10,18 @@ import {
   Warning as WarningIcon,
 } from '@openedx/paragon/icons';
 import { Alert, Button, Hyperlink } from '@openedx/paragon';
+import { Link } from 'react-router-dom';
 
 import { RequestStatus } from '../../data/constants';
 import AlertMessage from '../../generic/alert-message';
 import AlertProctoringError from '../../generic/AlertProctoringError';
 import messages from './messages';
 import advancedSettingsMessages from '../../advanced-settings/messages';
+import { getPasteFileNotices } from '../data/selectors';
+import { removePasteFileNotices } from '../data/slice';
 
 const PageAlerts = ({
+  courseId,
   notificationDismissUrl,
   handleDismissNotification,
   discussionsSettings,
@@ -29,9 +34,18 @@ const PageAlerts = ({
   savingStatus,
 }) => {
   const intl = useIntl();
+  const dispatch = useDispatch();
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
   const [showConfigAlert, setShowConfigAlert] = useState(true);
   const [showDiscussionAlert, setShowDiscussionAlert] = useState(true);
+  const { newFiles, conflictingFiles, errorFiles } = useSelector(getPasteFileNotices);
+
+  const getAssetsUrl = () => {
+    if (getConfig().ENABLE_ASSETS_PAGE === 'true') {
+      return `/course/${courseId}/assets/`;
+    }
+    return `${getConfig().STUDIO_BASE_URL}/assets/${courseId}`;
+  };
 
   const configurationErrors = () => {
     if (!notificationDismissUrl) {
@@ -225,6 +239,97 @@ const PageAlerts = ({
     return null;
   };
 
+  const newFilesPasteAlert = () => {
+    const onDismiss = () => {
+      dispatch(removePasteFileNotices(['newFiles']));
+    };
+
+    if (newFiles?.length) {
+      return (
+        <AlertMessage
+          title={intl.formatMessage(messages.newFileAlertTitle, { newFilesLen: newFiles.length })}
+          description={intl.formatMessage(
+            messages.newFileAlertDesc,
+            { newFilesLen: newFiles.length, newFilesStr: newFiles.join(', ') },
+          )}
+          dismissible
+          show
+          icon={CampaignIcon}
+          variant="info"
+          onClose={onDismiss}
+          actions={[
+            <Button
+              as={Link}
+              to={getAssetsUrl()}
+            >
+              {intl.formatMessage(messages.newFileAlertAction)}
+            </Button>,
+          ]}
+        />
+      );
+    }
+    return null;
+  };
+
+  const errorFilesPasteAlert = () => {
+    const onDismiss = () => {
+      dispatch(removePasteFileNotices(['errorFiles']));
+    };
+
+    if (errorFiles?.length) {
+      return (
+        <AlertMessage
+          title={intl.formatMessage(messages.errorFileAlertTitle)}
+          description={intl.formatMessage(
+            messages.errorFileAlertDesc,
+            { errorFilesLen: errorFiles.length, errorFilesStr: errorFiles.join(', ') },
+          )}
+          dismissible
+          show
+          icon={WarningIcon}
+          variant="danger"
+          onClose={onDismiss}
+        />
+      );
+    }
+    return null;
+  };
+
+  const conflictingFilesPasteAlert = () => {
+    const onDismiss = () => {
+      dispatch(removePasteFileNotices(['conflictingFiles']));
+    };
+
+    if (conflictingFiles?.length) {
+      return (
+        <AlertMessage
+          title={intl.formatMessage(
+            messages.conflictingFileAlertTitle,
+            { conflictingFilesLen: conflictingFiles.length },
+          )}
+          description={intl.formatMessage(
+            messages.conflictingFileAlertDesc,
+            { conflictingFilesLen: conflictingFiles.length, conflictingFilesStr: conflictingFiles.join(', ') },
+          )}
+          dismissible
+          show
+          icon={WarningIcon}
+          variant="warning"
+          onClose={onDismiss}
+          actions={[
+            <Button
+              as={Link}
+              to={getAssetsUrl()}
+            >
+              {intl.formatMessage(messages.newFileAlertAction)}
+            </Button>,
+          ]}
+        />
+      );
+    }
+    return null;
+  };
+
   return (
     <>
       {configurationErrors()}
@@ -234,6 +339,9 @@ const PageAlerts = ({
       <ErrorAlert hideHeading isError={savingStatus === RequestStatus.FAILED}>
         {intl.formatMessage(messages.alertFailedGeneric, { actionName: 'save', type: 'changes' })}
       </ErrorAlert>
+      {errorFilesPasteAlert()}
+      {conflictingFilesPasteAlert()}
+      {newFilesPasteAlert()}
     </>
   );
 };
@@ -252,6 +360,7 @@ PageAlerts.defaultProps = {
 };
 
 PageAlerts.propTypes = {
+  courseId: PropTypes.string.isRequired,
   notificationDismissUrl: PropTypes.string,
   handleDismissNotification: PropTypes.func,
   discussionsSettings: PropTypes.shape({

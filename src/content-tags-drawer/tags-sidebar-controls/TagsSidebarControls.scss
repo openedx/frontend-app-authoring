@@ -1,0 +1,23 @@
+.tags-sidebar {
+  .tags-sidebar-body {
+    .tags-sidebar-taxonomy {
+      .collapsible-trigger {
+        font-weight: bold;
+        border: none;
+        justify-content: start;
+        padding-left: 0;
+        padding-bottom: 0;
+
+        .collapsible-icon {
+          order: -1;
+          margin-left: 0;
+        }
+      }
+
+      .collapsible-body {
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+    }
+  }
+}

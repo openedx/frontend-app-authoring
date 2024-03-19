@@ -6,6 +6,7 @@ import {
   useContentTaxonomyTagsData,
   useContentData,
   useContentTaxonomyTagsUpdater,
+  useContentTaxonomyTagsCount,
 } from './apiHooks';
 
 import { updateContentTaxonomyTags } from './api';
@@ -129,6 +130,24 @@ describe('useContentTaxonomyTagsData', () => {
     useQuery.mockReturnValueOnce({ isSuccess: false });
     const contentId = '123';
     const result = useContentTaxonomyTagsData(contentId);
+
+    expect(result).toEqual({ isSuccess: false });
+  });
+});
+
+describe('useContentTaxonomyTagsCount', () => {
+  it('should return success response', () => {
+    useQuery.mockReturnValueOnce({ isSuccess: true, data: 'data' });
+    const contentId = '123';
+    const result = useContentTaxonomyTagsCount(contentId);
+
+    expect(result).toEqual({ isSuccess: true, data: 'data' });
+  });
+
+  it('should return failure response', () => {
+    useQuery.mockReturnValueOnce({ isSuccess: false });
+    const contentId = '123';
+    const result = useContentTaxonomyTagsCount(contentId);
 
     expect(result).toEqual({ isSuccess: false });
   });

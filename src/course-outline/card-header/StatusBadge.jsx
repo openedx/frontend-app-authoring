@@ -35,7 +35,7 @@ StatusBadge.defaultProps = {
 
 StatusBadge.propTypes = {
   text: PropTypes.string,
-  icon: PropTypes.string,
+  icon: PropTypes.func,
   iconClassName: PropTypes.string,
 };
 

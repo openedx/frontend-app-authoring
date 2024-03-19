@@ -68,9 +68,9 @@
 
       @extend %base-font-params;
     }
-  }
 
-  &.is-stuff-only .course-unit-sidebar-date-and-with {
-    text-decoration: line-through;
+    &.is-stuff-only .course-unit-sidebar-date-and-with {
+      text-decoration: line-through;
+    }
   }
 }

@@ -53,13 +53,15 @@ const ReleaseStatus = ({
 
 ReleaseStatus.defaultProps = {
   explanatoryMessage: '',
+  releaseDate: '',
+  releasedToStudents: false,
 };
 
 ReleaseStatus.propTypes = {
   isInstructorPaced: PropTypes.bool.isRequired,
   explanatoryMessage: PropTypes.string,
-  releaseDate: PropTypes.string.isRequired,
-  releasedToStudents: PropTypes.bool.isRequired,
+  releaseDate: PropTypes.string,
+  releasedToStudents: PropTypes.bool,
 };
 
 export default ReleaseStatus;

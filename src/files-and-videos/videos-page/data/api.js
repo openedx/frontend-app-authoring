@@ -180,9 +180,7 @@ export async function addVideo(courseId, file) {
   const postJson = {
     files: [{ file_name: file.name, content_type: file.type }],
   };
-  const response = await getAuthenticatedHttpClient()
-    .post(getCourseVideosApiUrl(courseId), postJson);
-  return { data: camelCaseObject(response.data), ...response };
+  return getAuthenticatedHttpClient().post(getCourseVideosApiUrl(courseId), postJson);
 }
 
 export async function sendVideoUploadStatus(

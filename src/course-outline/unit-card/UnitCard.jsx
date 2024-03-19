@@ -2,11 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useToggle, Sheet } from '@openedx/paragon';
+import { isEmpty } from 'lodash';
 
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
-import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
+import SortableItem from '../drag-helper/SortableItem';
 import TitleLink from '../card-header/TitleLink';
 import XBlockStatus from '../xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
@@ -19,7 +20,7 @@ const UnitCard = ({
   isSelfPaced,
   isCustomRelativeDatesActive,
   index,
-  canMoveItem,
+  getPossibleMoves,
   onOpenPublishModal,
   onOpenConfigureModal,
   onEditSubmit,
@@ -40,6 +41,7 @@ const UnitCard = ({
 
   const {
     id,
+    category,
     displayName,
     hasChanges,
     published,
@@ -53,8 +55,10 @@ const UnitCard = ({
   // re-create actions object for customizations
   const actions = { ...unitActions };
   // add actions to control display of move up & down menu buton.
-  actions.allowMoveUp = canMoveItem(index, -1);
-  actions.allowMoveDown = canMoveItem(index, 1);
+  const moveUpDetails = getPossibleMoves(index, -1);
+  const moveDownDetails = getPossibleMoves(index, 1);
+  actions.allowMoveUp = !isEmpty(moveUpDetails);
+  actions.allowMoveDown = !isEmpty(moveDownDetails);
 
   const parentInfo = {
     graded: subsection.graded,
@@ -84,11 +88,11 @@ const UnitCard = ({
   };
 
   const handleUnitMoveUp = () => {
-    onOrderChange(index, index - 1);
+    onOrderChange(section, moveUpDetails);
   };
 
   const handleUnitMoveDown = () => {
-    onOrderChange(index, index + 1);
+    onOrderChange(section, moveDownDetails);
   };
 
   const handleCopyClick = () => {
@@ -126,10 +130,12 @@ const UnitCard = ({
 
   return (
     <>
-      <ConditionalSortableElement
+      <SortableItem
         id={id}
+        category={category}
         key={id}
-        draggable={isDraggable}
+        isDraggable={isDraggable}
+        isDroppable={actions.childAddable}
         componentStyle={{
           background: '#fdfdfd',
           ...borderStyle,
@@ -176,7 +182,7 @@ const UnitCard = ({
             />
           </div>
         </div>
-      </ConditionalSortableElement>
+      </SortableItem>
       <Sheet
         position="right"
         show={showManageTags}
@@ -200,6 +206,7 @@ UnitCard.propTypes = {
   unit: PropTypes.shape({
     id: PropTypes.string.isRequired,
     displayName: PropTypes.string.isRequired,
+    category: PropTypes.string.isRequired,
     published: PropTypes.bool.isRequired,
     hasChanges: PropTypes.bool.isRequired,
     visibilityState: PropTypes.string.isRequired,
@@ -240,7 +247,7 @@ UnitCard.propTypes = {
   onDuplicateSubmit: PropTypes.func.isRequired,
   getTitleLink: PropTypes.func.isRequired,
   index: PropTypes.number.isRequired,
-  canMoveItem: PropTypes.func.isRequired,
+  getPossibleMoves: PropTypes.func.isRequired,
   onOrderChange: PropTypes.func.isRequired,
   isSelfPaced: PropTypes.bool.isRequired,
   isCustomRelativeDatesActive: PropTypes.bool.isRequired,

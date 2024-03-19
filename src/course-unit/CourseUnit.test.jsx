@@ -44,6 +44,7 @@ import deleteModalMessages from '../generic/delete-modal/messages';
 import courseXBlockMessages from './course-xblock/messages';
 import addComponentMessages from './add-component/messages';
 import { PUBLISH_TYPES, UNIT_VISIBILITY_STATES } from './constants';
+import { getContentTaxonomyTagsApiUrl, getContentTaxonomyTagsCountApiUrl } from '../content-tags-drawer/data/api';
 
 let axiosMock;
 let store;
@@ -57,6 +58,31 @@ jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: () => ({ blockId }),
   useNavigate: () => mockedUsedNavigate,
+}));
+
+jest.mock('@tanstack/react-query', () => ({
+  useQuery: jest.fn(({ queryKey }) => {
+    if (queryKey[0] === 'contentTaxonomyTags') {
+      return {
+        data: {
+          taxonomies: [],
+        },
+        isSuccess: true,
+      };
+    } if (queryKey[0] === 'contentTaxonomyTagsCount') {
+      return {
+        data: 17,
+        isSuccess: true,
+      };
+    }
+    return {
+      data: {},
+      isSuccess: true,
+    };
+  }),
+  useQueryClient: jest.fn(() => ({
+    setQueryData: jest.fn(),
+  })),
 }));
 
 const RootWrapper = () => (
@@ -92,6 +118,12 @@ describe('<CourseUnit />', () => {
       .onGet(getCourseVerticalChildrenApiUrl(blockId))
       .reply(200, courseVerticalChildrenMock);
     await executeThunk(fetchCourseVerticalChildrenData(blockId), store.dispatch);
+    axiosMock
+      .onGet(getContentTaxonomyTagsApiUrl(blockId))
+      .reply(200, {});
+    axiosMock
+      .onGet(getContentTaxonomyTagsCountApiUrl(blockId))
+      .reply(200, 17);
   });
 
   it('render CourseUnit component correctly', async () => {
