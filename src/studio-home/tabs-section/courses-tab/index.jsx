@@ -43,7 +43,7 @@ const CoursesTab = ({
   ].includes(courseCreatorStatus);
 
   const handlePageSelected = (page) => dispatch(updateStudioHomeCoursesCustomParams({ currentPage: page }));
-  const hasCourses = coursesDataItems?.length;
+  const hasCourses = coursesDataItems?.length > 0;
 
   if (isLoading) {
     return (
