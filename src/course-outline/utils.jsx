@@ -1,9 +1,9 @@
 import {
   CheckCircle as CheckCircleIcon,
   Lock as LockIcon,
-  EditOutline as EditOutlineIcon,
 } from '@openedx/paragon/icons';
 
+import DraftIcon from '../generic/DraftIcon';
 import { ITEM_BADGE_STATUS, VIDEO_SHARING_OPTIONS } from './constants';
 import { VisibilityTypes } from '../data/constants';
 
@@ -69,12 +69,12 @@ const getItemStatusBadgeContent = (status, messages, intl) => {
   case ITEM_BADGE_STATUS.unpublishedChanges:
     return {
       badgeTitle: intl.formatMessage(messages.statusBadgeUnpublishedChanges),
-      badgeIcon: EditOutlineIcon,
+      badgeIcon: DraftIcon,
     };
   case ITEM_BADGE_STATUS.draft:
     return {
       badgeTitle: intl.formatMessage(messages.statusBadgeDraft),
-      badgeIcon: EditOutlineIcon,
+      badgeIcon: DraftIcon,
     };
   default:
     return {
