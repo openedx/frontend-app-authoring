@@ -86,22 +86,25 @@ const messages = defineMessages({
     defaultMessage: 'View files',
     description: 'This label is used as the text for a button that allows the user to view the imported files.',
   },
-  conflictingFileAlertDesc: {
-    id: 'course-authoring.course-outline.page-alert.paste-alert.new-conflicting.description',
-    defaultMessage: 'The following {conflictingFilesLen, plural, one {file} other {files}} already exist in this course but don\'t match the version used by the component you pasted:  {conflictingFilesStr}',
-    description: 'This alert description is displayed when files being imported conflict with existing files in the course and advises the user to update the conflicting files manually.',
-  },
   errorFileAlertTitle: {
     id: 'course-authoring.course-outline.page-alert.paste-alert.error-files.title',
     defaultMessage: 'Some errors occurred',
+    description: 'This title is displayed when there are errors during the import of files while pasting an unit.',
   },
   errorFileAlertDesc: {
     id: 'course-authoring.course-outline.page-alert.paste-alert.error-files.description',
     defaultMessage: 'The following required {errorFilesLen, plural, one {file} other {files}} could not be added to the course: {errorFilesStr}',
+    description: 'This description is displayed when there are errors during the import of files and lists the files that could not be imported.',
   },
   conflictingFileAlertTitle: {
     id: 'course-authoring.course-outline.page-alert.paste-alert.conflicting-files.title',
     defaultMessage: 'You may need to update {conflictingFilesLen, plural, one {a file} other {files}} manually',
+    description: 'This alert title is displayed when files being imported conflict with existing files in the course.',
+  },
+  conflictingFileAlertDesc: {
+    id: 'course-authoring.course-outline.page-alert.paste-alert.new-conflicting.description',
+    defaultMessage: 'The following {conflictingFilesLen, plural, one {file} other {files}} already exist in this course but don\'t match the version used by the component you pasted:  {conflictingFilesStr}',
+    description: 'This alert description is displayed when files being imported conflict with existing files in the course and advises the user to update the conflicting files manually.',
   },
 });
 
