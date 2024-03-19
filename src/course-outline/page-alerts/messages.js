@@ -106,6 +106,34 @@ const messages = defineMessages({
     defaultMessage: 'The following {conflictingFilesLen, plural, one {file} other {files}} already exist in this course but don\'t match the version used by the component you pasted:  {conflictingFilesStr}',
     description: 'This alert description is displayed when files being imported conflict with existing files in the course and advises the user to update the conflicting files manually.',
   },
+  newFileAlertTitle: {
+    id: 'course-authoring.course-outline.page-alert.paste-alert.new-files.title',
+    defaultMessage: 'New {newFilesLen, plural, one {file} other {files}} added to Files.',
+  },
+  newFileAlertDesc: {
+    id: 'course-authoring.course-outline.page-alert.paste-alert.new-files.description',
+    defaultMessage: 'The following required {newFilesLen, plural, one {file was} other {files were}} imported to this course: {newFilesStr}',
+  },
+  newFileAlertAction: {
+    id: 'course-authoring.course-outline.page-alert.paste-alert.new-files.action',
+    defaultMessage: 'View files',
+  },
+  errorFileAlertTitle: {
+    id: 'course-authoring.course-outline.page-alert.paste-alert.error-files.title',
+    defaultMessage: 'Some errors occurred',
+  },
+  errorFileAlertDesc: {
+    id: 'course-authoring.course-outline.page-alert.paste-alert.error-files.description',
+    defaultMessage: 'The following required {errorFilesLen, plural, one {file} other {files}} could not be added to the course: {errorFilesStr}',
+  },
+  conflictingFileAlertTitle: {
+    id: 'course-authoring.course-outline.page-alert.paste-alert.conflicting-files.title',
+    defaultMessage: 'You may need to update {conflictingFilesLen, plural, one {a file} other {files}} manually',
+  },
+  conflictingFileAlertDesc: {
+    id: 'course-authoring.course-outline.page-alert.paste-alert.new-conflicting.description',
+    defaultMessage: 'The following {conflictingFilesLen, plural, one {file} other {files}} already exist in this course but don\'t match the version used by the component you pasted:  {conflictingFilesStr}',
+  },
 });
 
 export default messages;
