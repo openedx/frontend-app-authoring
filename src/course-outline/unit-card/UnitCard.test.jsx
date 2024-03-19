@@ -36,6 +36,7 @@ const subsection = {
 const unit = {
   id: '123',
   displayName: 'unit Name',
+  category: 'vertical',
   published: true,
   visibilityState: 'live',
   hasChanges: false,
@@ -55,15 +56,19 @@ const renderComponent = (props) => render(
         section={section}
         subsection={subsection}
         unit={unit}
-        index="1"
-        canMoveItem={jest.fn()}
+        index={1}
+        getPossibleMoves={jest.fn()}
         onOrderChange={jest.fn()}
         onOpenPublishModal={jest.fn()}
         onOpenDeleteModal={jest.fn()}
+        onOpenConfigureModal={jest.fn()}
+        onCopyToClipboardClick={jest.fn()}
         savingStatus=""
         onEditSubmit={jest.fn()}
         onDuplicateSubmit={jest.fn()}
         getTitleLink={(id) => `/some/${id}`}
+        isSelfPaced={false}
+        isCustomRelativeDatesActive={false}
         {...props}
       />
     </IntlProvider>,
@@ -132,5 +137,16 @@ describe('<UnitCard />', () => {
     const menu = await within(element).findByTestId('unit-card-header__menu-button');
     await act(async () => fireEvent.click(menu));
     expect(within(element).queryByText(cardMessages.menuCopy.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('hides status badge for unscheduled units', async () => {
+    const { queryByRole } = renderComponent({
+      unit: {
+        ...unit,
+        visibilityState: 'unscheduled',
+        hasChanges: false,
+      },
+    });
+    expect(queryByRole('status')).not.toBeInTheDocument();
   });
 });
