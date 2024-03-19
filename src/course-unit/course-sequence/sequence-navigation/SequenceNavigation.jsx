@@ -20,14 +20,16 @@ import SequenceNavigationTabs from './SequenceNavigationTabs';
 
 const SequenceNavigation = ({
   intl,
+  courseId,
   unitId,
   sequenceId,
   className,
+  handleCreateNewCourseXBlock,
 }) => {
   const sequenceStatus = useSelector(getSequenceStatus);
   const {
     isFirstUnit, isLastUnit, nextLink, previousLink,
-  } = useSequenceNavigationMetadata(sequenceId, unitId);
+  } = useSequenceNavigationMetadata(courseId, sequenceId, unitId);
   const sequence = useModel('sequences', sequenceId);
 
   const shouldDisplayNotificationTriggerInSequence = useWindowSize().width < breakpoints.small.minWidth;
@@ -42,6 +44,7 @@ const SequenceNavigation = ({
       <SequenceNavigationTabs
         unitIds={sequence.unitIds || []}
         unitId={unitId}
+        handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
       />
     );
   };
@@ -102,9 +105,11 @@ const SequenceNavigation = ({
 
 SequenceNavigation.propTypes = {
   intl: intlShape.isRequired,
+  courseId: PropTypes.string.isRequired,
   unitId: PropTypes.string,
   className: PropTypes.string,
   sequenceId: PropTypes.string,
+  handleCreateNewCourseXBlock: PropTypes.func.isRequired,
 };
 
 SequenceNavigation.defaultProps = {

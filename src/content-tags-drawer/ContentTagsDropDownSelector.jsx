@@ -1,16 +1,15 @@
 // @ts-check
 import React, { useEffect, useState, useCallback } from 'react';
 import {
-  SelectableBox,
   Icon,
   Spinner,
   Button,
 } from '@openedx/paragon';
+import { SelectableBox } from '@edx/frontend-lib-content-components';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
-import { ArrowDropDown, ArrowDropUp } from '@openedx/paragon/icons';
+import { ArrowDropDown, ArrowDropUp, Add } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
 import messages from './messages';
-import './ContentTagsDropDownSelector.scss';
 
 import { useTaxonomyTagsData } from './data/apiHooks';
 
@@ -42,7 +41,7 @@ HighlightedText.defaultProps = {
 };
 
 const ContentTagsDropDownSelector = ({
-  taxonomyId, level, lineage, tagsTree, searchTerm,
+  taxonomyId, level, lineage, appliedContentTagsTree, stagedContentTagsTree, searchTerm,
 }) => {
   const intl = useIntl();
 
@@ -89,13 +88,30 @@ const ContentTagsDropDownSelector = ({
   };
 
   const isImplicit = (tag) => {
-    // Traverse the tags tree using the lineage
-    let traversal = tagsTree;
+    // Traverse the applied tags tree using the lineage
+    let appliedTraversal = appliedContentTagsTree;
     lineage.forEach(t => {
-      traversal = traversal[t]?.children || {};
+      appliedTraversal = appliedTraversal[t]?.children || {};
     });
+    const isAppliedImplicit = (appliedTraversal[tag.value] && !appliedTraversal[tag.value].explicit);
 
-    return (traversal[tag.value] && !traversal[tag.value].explicit) || false;
+    // Traverse the staged tags tree using the lineage
+    let stagedTraversal = stagedContentTagsTree;
+    lineage.forEach(t => {
+      stagedTraversal = stagedTraversal[t]?.children || {};
+    });
+    const isStagedImplicit = (stagedTraversal[tag.value] && !stagedTraversal[tag.value].explicit);
+
+    return isAppliedImplicit || isStagedImplicit || false;
+  };
+
+  const isApplied = (tag) => {
+    // Traverse the applied tags tree using the lineage
+    let appliedTraversal = appliedContentTagsTree;
+    lineage.forEach(t => {
+      appliedTraversal = appliedTraversal[t]?.children || {};
+    });
+    return !!appliedTraversal[tag.value];
   };
 
   const loadMoreTags = useCallback(() => {
@@ -131,8 +147,8 @@ const ContentTagsDropDownSelector = ({
                 aria-label={intl.formatMessage(messages.taxonomyTagsCheckboxAriaLabel, { tag: tagData.value })}
                 data-selectable-box="taxonomy-tags"
                 value={[...lineage, tagData.value].map(t => encodeURIComponent(t)).join(',')}
-                isIndeterminate={isImplicit(tagData)}
-                disabled={isImplicit(tagData)}
+                isIndeterminate={isApplied(tagData) || isImplicit(tagData)}
+                disabled={isApplied(tagData) || isImplicit(tagData)}
               >
                 <HighlightedText text={tagData.value} highlight={searchTerm} />
               </SelectableBox>
@@ -156,7 +172,8 @@ const ContentTagsDropDownSelector = ({
               taxonomyId={taxonomyId}
               level={level + 1}
               lineage={[...lineage, tagData.value]}
-              tagsTree={tagsTree}
+              appliedContentTagsTree={appliedContentTagsTree}
+              stagedContentTagsTree={stagedContentTagsTree}
               searchTerm={searchTerm}
             />
           )}
@@ -166,11 +183,12 @@ const ContentTagsDropDownSelector = ({
 
       { hasMorePages
         ? (
-          <div className="d-flex justify-content-center align-items-center flex-row">
+          <div>
             <Button
-              variant="outline-primary"
+              variant="tertiary"
+              iconBefore={Add}
               onClick={loadMoreTags}
-              className="mb-2 taxonomy-tags-load-more-button"
+              className="mb-2 taxonomy-tags-load-more-button px-0 text-info-500"
             >
               <FormattedMessage {...messages.loadMoreTagsButtonText} />
             </Button>
@@ -197,7 +215,13 @@ ContentTagsDropDownSelector.propTypes = {
   taxonomyId: PropTypes.number.isRequired,
   level: PropTypes.number.isRequired,
   lineage: PropTypes.arrayOf(PropTypes.string),
-  tagsTree: PropTypes.objectOf(
+  appliedContentTagsTree: PropTypes.objectOf(
+    PropTypes.shape({
+      explicit: PropTypes.bool.isRequired,
+      children: PropTypes.shape({}).isRequired,
+    }).isRequired,
+  ).isRequired,
+  stagedContentTagsTree: PropTypes.objectOf(
     PropTypes.shape({
       explicit: PropTypes.bool.isRequired,
       children: PropTypes.shape({}).isRequired,

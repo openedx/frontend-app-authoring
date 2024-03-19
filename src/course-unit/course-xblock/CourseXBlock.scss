@@ -1,0 +1,15 @@
+.course-unit {
+  .pgn__card .pgn__card-header {
+    border-bottom: 1px solid $light-400;
+    padding-bottom: map-get($spacers, 2);
+
+    .pgn__card-header-content {
+      margin-top: map-get($spacers, 3\.5);
+    }
+
+    .btn-icon .btn-icon__icon {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+}

@@ -46,6 +46,8 @@ mergeConfig({
   CALCULATOR_HELP_URL: process.env.CALCULATOR_HELP_URL || null,
   ENABLE_PROGRESS_GRAPH_SETTINGS: process.env.ENABLE_PROGRESS_GRAPH_SETTINGS || 'false',
   ENABLE_TEAM_TYPE_SETTING: process.env.ENABLE_TEAM_TYPE_SETTING === 'true',
+  ENABLE_CHECKLIST_QUALITY: process.env.ENABLE_CHECKLIST_QUALITY || 'true',
+  STUDIO_BASE_URL: process.env.STUDIO_BASE_URL || null,
 }, 'CourseAuthoringConfig');
 
 class ResizeObserver {

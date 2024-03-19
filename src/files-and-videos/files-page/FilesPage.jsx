@@ -16,6 +16,7 @@ import {
   getUsagePaths,
   resetErrors,
   updateAssetOrder,
+  validateAssetFiles,
 } from './data/thunks';
 import messages from './messages';
 import FilesPageProvider from './FilesPageProvider';
@@ -30,6 +31,7 @@ import {
 import { getFileSizeToClosestByte } from '../../utils';
 import FileThumbnail from './FileThumbnail';
 import FileInfoModalSidebar from './FileInfoModalSidebar';
+import FileValidationModal from './FileValidationModal';
 
 const FilesPage = ({
   courseId,
@@ -55,9 +57,16 @@ const FilesPage = ({
   } = useSelector(state => state.assets);
 
   const handleErrorReset = (error) => dispatch(resetErrors(error));
-  const handleAddFile = (file) => dispatch(addAssetFile(courseId, file));
   const handleDeleteFile = (id) => dispatch(deleteAssetFile(courseId, id));
   const handleDownloadFile = (selectedRows) => dispatch(fetchAssetDownload({ selectedRows, courseId }));
+  const handleAddFile = (files) => {
+    handleErrorReset({ errorType: 'add' });
+    dispatch(validateAssetFiles(courseId, files));
+  };
+  const handleFileOverwrite = (close, files) => {
+    Object.values(files).forEach(file => dispatch(addAssetFile(courseId, file, true)));
+    close();
+  };
   const handleLockFile = (fileId, locked) => {
     handleErrorReset({ errorType: 'lock' });
     dispatch(updateAssetLock({ courseId, assetId: fileId, locked }));
@@ -183,24 +192,27 @@ const FilesPage = ({
           <FormattedMessage {...messages.heading} />
         </div>
         {loadingStatus !== RequestStatus.FAILED && (
-          <FileTable
-            {...{
-              courseId,
-              data,
-              handleAddFile,
-              handleDeleteFile,
-              handleDownloadFile,
-              handleLockFile,
-              handleUsagePaths,
-              handleErrorReset,
-              handleFileOrder,
-              tableColumns,
-              maxFileSize,
-              thumbnailPreview,
-              infoModalSidebar,
-              files: assets,
-            }}
-          />
+          <>
+            <FileTable
+              {...{
+                courseId,
+                data,
+                handleAddFile,
+                handleDeleteFile,
+                handleDownloadFile,
+                handleLockFile,
+                handleUsagePaths,
+                handleErrorReset,
+                handleFileOrder,
+                tableColumns,
+                maxFileSize,
+                thumbnailPreview,
+                infoModalSidebar,
+                files: assets,
+              }}
+            />
+            <FileValidationModal {...{ handleFileOverwrite }} />
+          </>
         )}
       </Container>
     </FilesPageProvider>

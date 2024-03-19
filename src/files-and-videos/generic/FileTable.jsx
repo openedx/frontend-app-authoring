@@ -95,14 +95,14 @@ const FileTable = ({
   }, [files]);
 
   const fileInputControl = useFileInput({
-    onAddFile: (file) => handleAddFile(file),
+    onAddFile: (uploads) => handleAddFile(uploads),
     setSelectedRows,
     setAddOpen,
   });
   const handleDropzoneAsset = ({ fileData, handleError }) => {
     try {
       const file = fileData.get('file');
-      handleAddFile(file);
+      handleAddFile([file]);
     } catch (error) {
       handleError(error);
     }
@@ -244,6 +244,7 @@ const FileTable = ({
           setSelectedRows={setSelectedRows}
           fileType={fileType}
         />
+
         <ApiStatusToast
           actionType={intl.formatMessage(messages.apiStatusAddingAction)}
           selectedRowCount={selectedRows.length}
@@ -252,6 +253,7 @@ const FileTable = ({
           setSelectedRows={setSelectedRows}
           fileType={fileType}
         />
+
         <ApiStatusToast
           actionType={intl.formatMessage(messages.apiStatusDownloadingAction)}
           selectedRowCount={selectedRows.length}

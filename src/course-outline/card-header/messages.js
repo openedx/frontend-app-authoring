@@ -73,6 +73,10 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.card.badge.discussionEnabled',
     defaultMessage: 'Discussions enabled',
   },
+  menuManageTags: {
+    id: 'course-authoring.course-outline.card.menu.manageTags',
+    defaultMessage: 'Manage tags',
+  },
 });
 
 export default messages;

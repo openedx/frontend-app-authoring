@@ -4,3 +4,4 @@ export { default as courseBestPracticesMock } from './courseBestPractices';
 export { default as courseLaunchMock } from './courseLaunch';
 export { default as courseSectionMock } from './courseSection';
 export { default as courseSubsectionMock } from './courseSubsection';
+export { default as contentTagsCountMock } from './contentTagsCount';

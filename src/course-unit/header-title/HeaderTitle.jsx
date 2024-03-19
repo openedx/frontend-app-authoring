@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Form, IconButton } from '@openedx/paragon';
@@ -7,6 +8,7 @@ import {
   Settings as SettingsIcon,
 } from '@openedx/paragon/icons';
 
+import { updateQueryPendingStatus } from '../data/slice';
 import messages from './messages';
 
 const HeaderTitle = ({
@@ -16,14 +18,16 @@ const HeaderTitle = ({
   handleTitleEditSubmit,
 }) => {
   const intl = useIntl();
+  const dispatch = useDispatch();
   const [titleValue, setTitleValue] = useState(unitTitle);
 
   useEffect(() => {
     setTitleValue(unitTitle);
+    dispatch(updateQueryPendingStatus(true));
   }, [unitTitle]);
 
   return (
-    <div className="d-flex align-items-center lead">
+    <div className="d-flex align-items-center lead" data-testid="unit-header-title">
       {isTitleEditFormOpen ? (
         <Form.Group className="m-0">
           <Form.Control
@@ -51,7 +55,8 @@ const HeaderTitle = ({
         alt={intl.formatMessage(messages.altButtonSettings)}
         className="flex-shrink-0"
         iconAs={SettingsIcon}
-        onClick={() => {}}
+        onClick={() => {
+        }}
       />
     </div>
   );

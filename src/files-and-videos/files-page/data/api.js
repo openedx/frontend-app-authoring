@@ -25,6 +25,19 @@ export async function getAssets(courseId, page) {
 }
 
 /**
+ * Fetches the course custom pages for provided course
+ * @param {string} courseId
+ * @returns {Promise<[{}]>}
+ */
+export async function getAssetDetails({ courseId, filenames, fileCount }) {
+  const params = new URLSearchParams(filenames.map(filename => ['display_name', filename]));
+  params.append('page_size', fileCount);
+  const { data } = await getAuthenticatedHttpClient()
+    .get(`${getAssetsUrl(courseId)}?${params}`);
+  return camelCaseObject(data);
+}
+
+/**
  * Fetch asset file.
  * @param {blockId} courseId Course ID for the course to operate on
 

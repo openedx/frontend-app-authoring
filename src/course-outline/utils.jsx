@@ -1,9 +1,9 @@
 import {
   CheckCircle as CheckCircleIcon,
   Lock as LockIcon,
-  EditOutline as EditOutlineIcon,
 } from '@openedx/paragon/icons';
 
+import DraftIcon from '../generic/DraftIcon';
 import { ITEM_BADGE_STATUS, VIDEO_SHARING_OPTIONS } from './constants';
 import { VisibilityTypes } from '../data/constants';
 
@@ -25,6 +25,8 @@ const getItemStatus = ({
     return ITEM_BADGE_STATUS.gated;
   case visibilityState === VisibilityTypes.LIVE:
     return ITEM_BADGE_STATUS.live;
+  case visibilityState === VisibilityTypes.UNSCHEDULED:
+    return ITEM_BADGE_STATUS.unscheduled;
   case published && !hasChanges:
     return ITEM_BADGE_STATUS.publishedNotLive;
   case published && hasChanges:
@@ -57,7 +59,7 @@ const getItemStatusBadgeContent = (status, messages, intl) => {
   case ITEM_BADGE_STATUS.publishedNotLive:
     return {
       badgeTitle: intl.formatMessage(messages.statusBadgePublishedNotLive),
-      badgeIcon: '',
+      badgeIcon: null,
     };
   case ITEM_BADGE_STATUS.staffOnly:
     return {
@@ -67,17 +69,17 @@ const getItemStatusBadgeContent = (status, messages, intl) => {
   case ITEM_BADGE_STATUS.unpublishedChanges:
     return {
       badgeTitle: intl.formatMessage(messages.statusBadgeUnpublishedChanges),
-      badgeIcon: EditOutlineIcon,
+      badgeIcon: DraftIcon,
     };
   case ITEM_BADGE_STATUS.draft:
     return {
       badgeTitle: intl.formatMessage(messages.statusBadgeDraft),
-      badgeIcon: EditOutlineIcon,
+      badgeIcon: DraftIcon,
     };
   default:
     return {
       badgeTitle: '',
-      badgeIcon: '',
+      badgeIcon: null,
     };
   }
 };
@@ -114,6 +116,10 @@ const getItemStatusBorder = (status) => {
   case ITEM_BADGE_STATUS.draft:
     return {
       borderLeft: '5px solid #F0CC00',
+    };
+  case ITEM_BADGE_STATUS.unscheduled:
+    return {
+      borderLeft: '5px solid #ccc',
     };
   default:
     return {};

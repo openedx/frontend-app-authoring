@@ -5,6 +5,10 @@ const messages = defineMessages({
     id: 'course-authoring.course-unit.general.alert.error.description',
     defaultMessage: 'Unable to {actionName} {type}. Please try again.',
   },
+  alertUnpublishedVersion: {
+    id: 'course-authoring.course-unit.general.alert.unpublished-version.description',
+    defaultMessage: 'Note: The last published version of this unit is live. By publishing changes you will change the student experience.',
+  },
 });
 
 export default messages;

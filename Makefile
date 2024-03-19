@@ -1,7 +1,3 @@
-transifex_resource = frontend-app-course-authoring
-export TRANSIFEX_RESOURCE = ${transifex_resource}
-transifex_langs = "ar,de,de_DE,es_419,fa_IR,fr,fr_CA,hi,it,it_IT,pt,pt_PT,ru,uk,zh_CN"
-
 intl_imports = ./node_modules/.bin/intl-imports.js
 transifex_utils = ./node_modules/.bin/transifex-utils.js
 i18n = ./src/i18n
@@ -33,23 +29,6 @@ detect_changed_source_translations:
 	# Checking for changed translations...
 	git diff --exit-code $(i18n)
 
-# Pushes translations to Transifex.  You must run make extract_translations first.
-push_translations:
-	# Pushing strings to Transifex...
-	tx push -s
-	# Fetching hashes from Transifex...
-	./node_modules/@edx/reactifex/bash_scripts/get_hashed_strings_v3.sh
-	# Writing out comments to file...
-	$(transifex_utils) $(transifex_temp) --comments --v3-scripts-path
-	# Pushing comments to Transifex...
-	./node_modules/@edx/reactifex/bash_scripts/put_comments_v3.sh
-
-ifeq ($(OPENEDX_ATLAS_PULL),)
-# Pulls translations from Transifex.
-pull_translations:
-	tx pull -t -f --mode reviewed --languages=$(transifex_langs)
-else
-# Pulls translations using atlas.
 pull_translations:
 	rm -rf src/i18n/messages
 	mkdir src/i18n/messages
@@ -63,7 +42,6 @@ pull_translations:
 	            translations/frontend-app-course-authoring/src/i18n/messages:frontend-app-course-authoring
 
 	$(intl_imports) frontend-component-ai-translations frontend-lib-content-components frontend-platform paragon frontend-component-footer frontend-app-course-authoring
-endif
 
 # This target is used by Travis.
 validate-no-uncommitted-package-lock-changes:

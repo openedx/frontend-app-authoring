@@ -29,6 +29,7 @@ export const getXBlockBaseApiUrl = () => `${getApiBaseUrl()}/xblock/`;
 export const getCourseItemApiUrl = (itemId) => `${getXBlockBaseApiUrl()}${itemId}`;
 export const getXBlockApiUrl = (blockId) => `${getXBlockBaseApiUrl()}outline/${blockId}`;
 export const getClipboardUrl = () => `${getApiBaseUrl()}/api/content-staging/v1/clipboard/`;
+export const getTagsCountApiUrl = (contentPattern) => new URL(`api/content_tagging/v1/object_tag_counts/${contentPattern}/?count_implicit`, getApiBaseUrl()).href;
 
 /**
  * @typedef {Object} courseOutline
@@ -460,7 +461,7 @@ export async function pasteBlock(parentLocator) {
       staged_content: 'clipboard',
     });
 
-  return data;
+  return camelCaseObject(data);
 }
 
 /**
@@ -471,4 +472,19 @@ export async function pasteBlock(parentLocator) {
 export async function dismissNotification(url) {
   await getAuthenticatedHttpClient()
     .delete(url);
+}
+
+/**
+ * Gets the tags count of multiple content by id separated by commas.
+ * @param {string} contentPattern
+ * @returns {Promise<Object>}
+*/
+export async function getTagsCount(contentPattern) {
+  if (contentPattern) {
+    const { data } = await getAuthenticatedHttpClient()
+      .get(getTagsCountApiUrl(contentPattern));
+
+    return data;
+  }
+  return null;
 }

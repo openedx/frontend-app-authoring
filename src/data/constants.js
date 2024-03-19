@@ -37,6 +37,7 @@ export const GroupTypes = /** @type {const} */ ({
   OPEN: 'open',
   PUBLIC_MANAGED: 'public_managed',
   PRIVATE_MANAGED: 'private_managed',
+  OPEN_MANAGED: 'open_managed',
 });
 
 export const DivisionSchemes = /** @type {const} */ ({
@@ -49,4 +50,6 @@ export const VisibilityTypes = /** @type {const} */ ({
   LIVE: 'live',
   STAFF_ONLY: 'staff_only',
   HIDE_AFTER_DUE: 'hide_after_due',
+  UNSCHEDULED: 'unscheduled',
+  NEEDS_ATTENTION: 'needs_attention',
 });
