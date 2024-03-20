@@ -1,3 +1,2 @@
-export { default as PasteComponent } from './paste-component';
+// eslint-disable-next-line import/prefer-default-export
 export { default as PasteNotificationAlert } from './paste-notification';
-export { default as useCopyToClipboard } from './hooks/useClipboard';

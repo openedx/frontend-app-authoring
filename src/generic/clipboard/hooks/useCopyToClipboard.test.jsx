@@ -7,10 +7,10 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import initializeStore from '../../../store';
 import { executeThunk } from '../../../utils';
-import { copyToClipboard } from '../../data/thunk';
+import { clipboardUnit, clipboardXBlock } from '../../../__mocks__';
+import { copyToClipboard } from '../../data/thunks';
 import { getClipboardUrl } from '../../data/api';
-import { clipboardUnit, clipboardXBlock } from '../../__mocks__';
-import useClipboard from './useClipboard';
+import useCopyToClipboard from './useCopyToClipboard';
 
 let axiosMock;
 let store;
@@ -20,6 +20,7 @@ const clipboardBroadcastChannelMock = {
   postMessage: jest.fn(),
   close: jest.fn(),
 };
+
 global.BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
 
 const wrapper = ({ children }) => (
@@ -46,7 +47,7 @@ describe('useCopyToClipboard', () => {
   });
 
   it('initializes correctly', () => {
-    const { result } = renderHook(() => useClipboard(true), { wrapper });
+    const { result } = renderHook(() => useCopyToClipboard(true), { wrapper });
 
     expect(result.current.showPasteUnit).toBe(false);
     expect(result.current.showPasteXBlock).toBe(false);
@@ -54,7 +55,7 @@ describe('useCopyToClipboard', () => {
 
   describe('clipboard data update effect', () => {
     it('returns falsy flags if canEdit = false', async () => {
-      const { result } = renderHook(() => useClipboard(false), { wrapper });
+      const { result } = renderHook(() => useCopyToClipboard(false), { wrapper });
 
       axiosMock
         .onPost(getClipboardUrl())
@@ -71,7 +72,7 @@ describe('useCopyToClipboard', () => {
     });
 
     it('returns flag to display the Paste Unit button', async () => {
-      const { result } = renderHook(() => useClipboard(true), { wrapper });
+      const { result } = renderHook(() => useCopyToClipboard(true), { wrapper });
 
       axiosMock
         .onPost(getClipboardUrl())
@@ -88,7 +89,7 @@ describe('useCopyToClipboard', () => {
     });
 
     it('returns flag to display the Paste XBlock button', async () => {
-      const { result } = renderHook(() => useClipboard(true), { wrapper });
+      const { result } = renderHook(() => useCopyToClipboard(true), { wrapper });
 
       axiosMock
         .onPost(getClipboardUrl())
@@ -107,7 +108,7 @@ describe('useCopyToClipboard', () => {
 
   describe('broadcast channel message handling', () => {
     it('updates states correctly on receiving a broadcast message', async () => {
-      const { result } = renderHook(() => useClipboard(true), { wrapper });
+      const { result } = renderHook(() => useCopyToClipboard(true), { wrapper });
       clipboardBroadcastChannelMock.onmessage({ data: clipboardUnit });
 
       expect(result.current.showPasteUnit).toBe(true);

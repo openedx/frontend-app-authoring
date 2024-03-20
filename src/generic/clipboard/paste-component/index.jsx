@@ -2,10 +2,12 @@ import { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { OverlayTrigger, Popover } from '@openedx/paragon';
 
-import { PopoverContent, PasteComponentButton, WhatsInClipboard } from './components';
+import { PopoverContent, PasteButton, WhatsInClipboard } from './components';
 import { clipboardPropsTypes, OVERLAY_TRIGGERS } from './constants';
 
-const PasteComponent = ({ handleCreateNewCourseXBlock, clipboardData }) => {
+const PasteComponent = ({
+  onClick, clipboardData, text, className,
+}) => {
   const [showPopover, togglePopover] = useState(false);
   const popoverElementRef = useRef(null);
 
@@ -31,9 +33,7 @@ const PasteComponent = ({ handleCreateNewCourseXBlock, clipboardData }) => {
 
   return (
     <>
-      <PasteComponentButton
-        handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
-      />
+      <PasteButton className={className} onClick={onClick} text={text} />
       <OverlayTrigger
         show={showPopover}
         trigger={OVERLAY_TRIGGERS}
@@ -50,12 +50,17 @@ const PasteComponent = ({ handleCreateNewCourseXBlock, clipboardData }) => {
 };
 
 PasteComponent.propTypes = {
-  handleCreateNewCourseXBlock: PropTypes.func.isRequired,
+  onClick: PropTypes.func.isRequired,
+  text: PropTypes.string.isRequired,
   clipboardData: PropTypes.shape(clipboardPropsTypes),
+  blockType: PropTypes.string,
+  className: PropTypes.string,
 };
 
 PasteComponent.defaultProps = {
   clipboardData: null,
+  blockType: null,
+  className: undefined,
 };
 
 export default PasteComponent;

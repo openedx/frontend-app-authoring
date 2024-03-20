@@ -1,4 +1,5 @@
 import { RequestStatus } from '../../data/constants';
+import { updateClipboardData } from '../../generic/data/slice';
 import { NOTIFICATION_MESSAGES } from '../../constants';
 import { COURSE_BLOCK_NAMES } from '../constants';
 import {
@@ -28,7 +29,6 @@ import {
   setSectionOrderList,
   setVideoSharingOption,
   setCourseItemOrderList,
-  copyBlockToClipboard,
   pasteBlock,
   dismissNotification,
 } from './api';
@@ -50,7 +50,6 @@ import {
   deleteUnit,
   duplicateSection,
   reorderSectionList,
-  updateClipboardContent,
   setPasteFileNotices,
 } from './slice';
 
@@ -70,6 +69,7 @@ export function fetchCourseOutlineIndexQuery(courseId) {
         },
       } = outlineIndex;
       dispatch(fetchOutlineIndexSuccess(outlineIndex));
+      dispatch(updateClipboardData(outlineIndex.initialUserClipboard));
       dispatch(updateStatusBar({
         courseReleaseDate,
         highlightsEnabledForMessaging,
@@ -604,30 +604,6 @@ export function setUnitOrderListQuery(
         dispatch(fetchCourseSectionQuery(sectionIds));
       },
     ));
-  };
-}
-
-export function setClipboardContent(usageKey, broadcastClipboard) {
-  return async (dispatch) => {
-    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.copying));
-
-    try {
-      await copyBlockToClipboard(usageKey).then(async (result) => {
-        const status = result?.content?.status;
-        if (status === 'ready') {
-          dispatch(updateClipboardContent(result));
-          broadcastClipboard(result);
-          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-          dispatch(hideProcessingNotification());
-        } else {
-          throw new Error(`Unexpected clipboard status "${status}" in successful API response.`);
-        }
-      });
-    } catch (error) {
-      dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-    }
   };
 }
 

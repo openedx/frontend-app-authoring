@@ -11,8 +11,6 @@ export const getCourseUnitApiUrl = (itemId) => `${getStudioBaseUrl()}/xblock/con
 export const getXBlockBaseApiUrl = (itemId) => `${getStudioBaseUrl()}/xblock/${itemId}`;
 export const getCourseSectionVerticalApiUrl = (itemId) => `${getStudioBaseUrl()}/api/contentstore/v1/container_handler/${itemId}`;
 export const getCourseVerticalChildrenApiUrl = (itemId) => `${getStudioBaseUrl()}/api/contentstore/v1/container/vertical/${itemId}/children`;
-export const getClipboardUrl = () => `${getStudioBaseUrl()}/api/content-staging/v1/clipboard/`;
-
 export const postXBlockBaseApiUrl = () => `${getStudioBaseUrl()}/xblock/`;
 
 /**
@@ -82,29 +80,6 @@ export async function createCourseXblock({
     .post(postXBlockBaseApiUrl(), body);
 
   return data;
-}
-
-/**
- * Retrieves user's clipboard.
- * @returns {Promise<Object>} - A Promise that resolves clipboard data.
- */
-export async function getClipboard() {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(getClipboardUrl());
-
-  return camelCaseObject(data);
-}
-
-/**
- * Updates user's clipboard.
- * @param {string} usageKey - The ID of the block.
- * @returns {Promise<Object>} - A Promise that resolves clipboard data.
- */
-export async function updateClipboard(usageKey) {
-  const { data } = await getAuthenticatedHttpClient()
-    .post(getClipboardUrl(), { usage_key: usageKey });
-
-  return camelCaseObject(data);
 }
 
 /**

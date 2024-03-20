@@ -40,7 +40,7 @@ const WhatsInClipboard = ({
         className="whats-in-clipboard-text m-0"
         onKeyDown={handleKeyDown}
       >
-        {intl.formatMessage(messages.pasteComponentWhatsInClipboardText)}
+        {intl.formatMessage(messages.pasteButtonWhatsInClipboardText)}
       </p>
     </div>
   );

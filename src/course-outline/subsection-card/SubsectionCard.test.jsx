@@ -1,4 +1,3 @@
-import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import {
   act, render, fireEvent, within,
@@ -25,6 +24,13 @@ jest.mock('react-router-dom', () => ({
     pathname: mockPathname,
   }),
 }));
+
+const clipboardBroadcastChannelMock = {
+  postMessage: jest.fn(),
+  close: jest.fn(),
+};
+
+global.BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
 
 const section = {
   id: '123',

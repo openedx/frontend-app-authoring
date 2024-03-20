@@ -5,7 +5,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { Divider } from '../../../../generic/divider';
 import { getCanEdit, getCourseUnitData } from '../../../data/selectors';
-import { copyToClipboard } from '../../../data/thunk';
+import { copyToClipboard } from '../../../../generic/data/thunks';
 import messages from '../../messages';
 
 const ActionButtons = ({ openDiscardModal, handlePublishing }) => {

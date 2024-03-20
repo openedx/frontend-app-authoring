@@ -26,7 +26,7 @@ import {
 import { changeEditTitleFormOpen, updateQueryPendingStatus } from './data/slice';
 import { PUBLISH_TYPES } from './constants';
 
-import { useCopyToClipboard } from './clipboard';
+import { useCopyToClipboard } from '../generic/clipboard';
 
 // eslint-disable-next-line import/prefer-default-export
 export const useCourseUnit = ({ courseId, blockId }) => {

@@ -1,5 +1,4 @@
 import { camelCaseObject } from '@edx/frontend-platform';
-import { logError } from '@edx/frontend-platform/logging';
 
 import {
   hideProcessingNotification,
@@ -8,15 +7,13 @@ import {
 import { RequestStatus } from '../../data/constants';
 import { NOTIFICATION_MESSAGES } from '../../constants';
 import { updateModel, updateModels } from '../../generic/model-store';
-import { CLIPBOARD_STATUS } from '../constants';
+import { updateClipboardData } from '../../generic/data/slice';
 import {
   getCourseUnitData,
   editUnitDisplayName,
   getCourseSectionVerticalData,
   createCourseXblock,
   getCourseVerticalChildren,
-  updateClipboard,
-  getClipboard,
   handleCourseUnitVisibilityAndData,
   deleteUnitItem,
   duplicateUnitItem,
@@ -33,7 +30,6 @@ import {
   updateLoadingCourseXblockStatus,
   updateCourseVerticalChildren,
   updateCourseVerticalChildrenLoadingStatus,
-  updateClipboardData,
   updateQueryPendingStatus,
   deleteXBlock,
   duplicateXBlock,
@@ -242,38 +238,6 @@ export function duplicateUnitItemQuery(itemId, xblockId) {
     } catch (error) {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-    }
-  };
-}
-
-export function copyToClipboard(usageKey) {
-  const POLL_INTERVAL_MS = 1000; // Timeout duration for polling in milliseconds
-
-  return async (dispatch) => {
-    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.copying));
-    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-    dispatch(updateQueryPendingStatus(true));
-
-    try {
-      let clipboardData = await updateClipboard(usageKey);
-
-      while (clipboardData.content?.status === CLIPBOARD_STATUS.loading) {
-        // eslint-disable-next-line no-await-in-loop,no-promise-executor-return
-        await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
-        clipboardData = await getClipboard(); // eslint-disable-line no-await-in-loop
-      }
-
-      if (clipboardData.content?.status === CLIPBOARD_STATUS.ready) {
-        dispatch(updateClipboardData(clipboardData));
-        dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-      } else {
-        throw new Error(`Unexpected clipboard status "${clipboardData.content?.status}" in successful API response.`);
-      }
-    } catch (error) {
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
-      logError('Error copying to clipboard:', error);
-    } finally {
-      dispatch(hideProcessingNotification());
     }
   };
 }

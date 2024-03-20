@@ -4,14 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { useToggle } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
 
+import { copyToClipboard } from '../generic/data/thunks';
+import { getSavingStatus as getGenericSavingStatus } from '../generic/data/selectors';
 import { RequestStatus } from '../data/constants';
 import { COURSE_BLOCK_NAMES } from './constants';
-import { useBroadcastChannel } from '../generic/broadcast-channel/hooks';
 import {
   setCurrentItem,
   setCurrentSection,
   updateSavingStatus,
-  updateClipboardContent,
 } from './data/slice';
 import {
   getLoadingStatus,
@@ -50,7 +50,6 @@ import {
   setVideoSharingOptionQuery,
   setSubsectionOrderListQuery,
   setUnitOrderListQuery,
-  setClipboardContent,
   pasteClipboardContent,
   dismissNotificationQuery,
 } from './data/thunk';
@@ -81,6 +80,7 @@ const useCourseOutline = ({ courseId }) => {
   const currentSection = useSelector(getCurrentSection);
   const currentSubsection = useSelector(getCurrentSubsection);
   const isCustomRelativeDatesActive = useSelector(getCustomRelativeDatesActiveFlag);
+  const genericSavingStatus = useSelector(getGenericSavingStatus);
 
   const [isEnableHighlightsModalOpen, openEnableHighlightsModal, closeEnableHighlightsModal] = useToggle(false);
   const [isSectionsExpanded, setSectionsExpanded] = useState(true);
@@ -91,12 +91,11 @@ const useCourseOutline = ({ courseId }) => {
   const [isPublishModalOpen, openPublishModal, closePublishModal] = useToggle(false);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
-  const clipboardBroadcastChannel = useBroadcastChannel('studio_clipboard_channel', (message) => {
-    dispatch(updateClipboardContent(message));
-  });
+
+  const isSavingStatusFailed = savingStatus === RequestStatus.FAILED || genericSavingStatus === RequestStatus.FAILED;
 
   const handleCopyToClipboardClick = (usageKey) => {
-    dispatch(setClipboardContent(usageKey, clipboardBroadcastChannel.postMessage));
+    dispatch(copyToClipboard(usageKey));
   };
 
   const handlePasteClipboardClick = (parentLocator, sectionId) => {
@@ -328,7 +327,7 @@ const useCourseOutline = ({ courseId }) => {
     isEnableHighlightsModalOpen,
     openEnableHighlightsModal,
     closeEnableHighlightsModal,
-    isInternetConnectionAlertFailed: savingStatus === RequestStatus.FAILED,
+    isInternetConnectionAlertFailed: isSavingStatusFailed,
     handleInternetConnectionFailed,
     handleOpenHighlightsModal,
     isHighlightsModalOpen,
@@ -358,6 +357,7 @@ const useCourseOutline = ({ courseId }) => {
     mfeProctoredExamSettingsUrl,
     handleDismissNotification,
     advanceSettingsUrl,
+    genericSavingStatus,
     handleSectionDragAndDrop,
     handleSubsectionDragAndDrop,
     handleUnitDragAndDrop,

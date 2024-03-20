@@ -13,7 +13,7 @@ import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import ConfigureModal from '../../generic/configure-modal/ConfigureModal';
 import { scrollToElement } from '../../course-outline/utils';
 import { COURSE_BLOCK_NAMES } from '../../constants';
-import { copyToClipboard } from '../data/thunk';
+import { copyToClipboard } from '../../generic/data/thunks';
 import { COMPONENT_TYPES } from '../constants';
 import XBlockMessages from './xblock-messages/XBlockMessages';
 import messages from './messages';

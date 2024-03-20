@@ -3,7 +3,7 @@ import {
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
-import { initializeMockApp } from '@edx/frontend-platform';
+import { getConfig, initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -19,7 +19,6 @@ import {
   getCourseBlockApiUrl,
   getCourseItemApiUrl,
   getXBlockBaseApiUrl,
-  getClipboardUrl,
 } from './data/api';
 import { RequestStatus } from '../data/constants';
 import {
@@ -37,16 +36,19 @@ import {
   courseSectionMock,
   courseSubsectionMock,
 } from './__mocks__';
+import { clipboardUnit } from '../__mocks__';
 import { executeThunk } from '../utils';
 import { COURSE_BLOCK_NAMES, VIDEO_SHARING_OPTIONS } from './constants';
 import CourseOutline from './CourseOutline';
 
 import configureModalMessages from '../generic/configure-modal/messages';
+import pasteButtonMessages from '../generic/clipboard/paste-component/messages';
+import messages from './messages';
+import { getClipboardUrl } from '../generic/data/api';
 import headerMessages from './header-navigations/messages';
 import cardHeaderMessages from './card-header/messages';
 import enableHighlightsModalMessages from './enable-highlights-modal/messages';
 import statusBarMessages from './status-bar/messages';
-import pasteButtonMessages from './paste-button/messages';
 import subsectionMessages from './subsection-card/messages';
 import pageAlertMessages from './page-alerts/messages';
 import {
@@ -55,7 +57,6 @@ import {
   moveSubsection,
   moveUnit,
 } from './drag-helper/utils';
-import messages from './messages';
 
 let axiosMock;
 let store;
@@ -63,6 +64,13 @@ const mockPathname = '/foo-bar';
 const courseId = '123';
 
 window.HTMLElement.prototype.scrollIntoView = jest.fn();
+
+const clipboardBroadcastChannelMock = {
+  postMessage: jest.fn(),
+  close: jest.fn(),
+};
+
+global.BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -2080,7 +2088,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether unit copy & paste option works correctly', async () => {
-    const { findAllByTestId, findAllByRole } = render(<RootWrapper />);
+    const { findAllByTestId, queryByTestId, findAllByRole } = render(<RootWrapper />);
     // get first section -> first subsection -> first unit element
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [sectionElement] = await findAllByTestId('section-card');
@@ -2091,27 +2099,11 @@ describe('<CourseOutline />', () => {
     const [unit] = subsection.childInfo.children;
     const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
 
-    const expectedClipboardContent = {
-      content: {
-        blockType: 'vertical',
-        blockTypeDisplay: 'Unit',
-        created: '2024-01-29T07:58:36.844249Z',
-        displayName: unit.displayName,
-        id: 15,
-        olxUrl: 'http://localhost:18010/api/content-staging/v1/staged-content/15/olx',
-        purpose: 'clipboard',
-        status: 'ready',
-        userId: 3,
-      },
-      sourceUsageKey: unit.id,
-      sourceContexttitle: courseOutlineIndexMock.courseStructure.displayName,
-      sourceEditUrl: unit.studioUrl,
-    };
     // mock api call
     axiosMock
       .onPost(getClipboardUrl(), {
         usage_key: unit.id,
-      }).reply(200, expectedClipboardContent);
+      }).reply(200, clipboardUnit);
     // check that initialUserClipboard state is empty
     const { initialUserClipboard } = store.getState().courseOutline;
     expect(initialUserClipboard).toBeUndefined();
@@ -2125,19 +2117,19 @@ describe('<CourseOutline />', () => {
     await act(async () => fireEvent.click(copyButton));
 
     // check that initialUserClipboard state is updated
-    expect(store.getState().courseOutline.initialUserClipboard).toEqual(expectedClipboardContent);
+    expect(store.getState().generic.clipboardData).toEqual(clipboardUnit);
 
     [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
     // find clipboard content label
     const clipboardLabel = await within(subsectionElement).findByText(
-      pasteButtonMessages.clipboardContentLabel.defaultMessage,
+      pasteButtonMessages.pasteButtonWhatsInClipboardText.defaultMessage,
     );
     await act(async () => fireEvent.mouseOver(clipboardLabel));
 
-    // find clipboard content popup link
-    expect(
-      subsectionElement.querySelector('#vertical-paste-button-overlay'),
-    ).toHaveAttribute('href', unit.studioUrl);
+    // find clipboard content popover link
+    const popoverContent = queryByTestId('popover-content');
+    expect(popoverContent.tagName).toBe('A');
+    expect(popoverContent).toHaveAttribute('href', `${getConfig().STUDIO_BASE_URL}${unit.studioUrl}`);
 
     // check paste button functionality
     // mock api call

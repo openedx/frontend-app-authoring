@@ -56,3 +56,14 @@ export const COURSE_BLOCK_NAMES = ({
   vertical: { id: 'vertical', name: 'Unit' },
   component: { id: 'component', name: 'Component' },
 });
+
+export const STUDIO_CLIPBOARD_CHANNEL = 'studio_clipboard_channel';
+
+export const CLIPBOARD_STATUS = {
+  loading: 'loading',
+  ready: 'ready',
+  expired: 'expired',
+  error: 'error',
+};
+
+export const NOT_XBLOCK_TYPES = ['vertical', 'sequential', 'chapter', 'course'];
