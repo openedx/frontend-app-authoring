@@ -113,7 +113,6 @@ const CourseOutline = ({ courseId }) => {
     mfeProctoredExamSettingsUrl,
     handleDismissNotification,
     advanceSettingsUrl,
-    prevContainerInfo,
     handleSectionDragAndDrop,
     handleSubsectionDragAndDrop,
     handleUnitDragAndDrop,
@@ -285,7 +284,6 @@ const CourseOutline = ({ courseId }) => {
                             items={sections}
                             setSections={setSections}
                             restoreSectionList={restoreSectionList}
-                            prevContainerInfo={prevContainerInfo}
                             handleSectionDragAndDrop={handleSectionDragAndDrop}
                             handleSubsectionDragAndDrop={handleSubsectionDragAndDrop}
                             handleUnitDragAndDrop={handleUnitDragAndDrop}
