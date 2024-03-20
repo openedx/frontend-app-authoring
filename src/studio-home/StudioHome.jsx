@@ -49,7 +49,7 @@ const StudioHome = ({ intl }) => {
     redirectToLibraryAuthoringMfe,
   } = studioHomeData;
 
-  const isPaginationCoursesEnabled = getConfig().ENABLE_PAGINATION_COURSES_STUDIO_HOME === 'true';
+  const isPaginationCoursesEnabled = getConfig().ENABLE_HOME_PAGE_COURSE_API_V2 === 'true';
 
   function getHeaderButtons() {
     const headerButtons = [];
