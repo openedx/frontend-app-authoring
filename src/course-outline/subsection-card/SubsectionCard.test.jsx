@@ -85,7 +85,7 @@ const renderComponent = (props, entry = '/') => render(
           </SubsectionCard>
         </IntlProvider>
       </MemoryRouter>
-  </QueryClientProvider>
+    </QueryClientProvider>
   </AppProvider>,
 );
 

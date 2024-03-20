@@ -1,5 +1,7 @@
 // @ts-check
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import React, {
+  useContext, useEffect, useState, useRef,
+} from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
