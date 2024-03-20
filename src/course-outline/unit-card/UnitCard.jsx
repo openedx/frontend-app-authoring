@@ -138,39 +138,45 @@ const UnitCard = ({
         ...borderStyle,
       }}
     >
-      <CardHeader
-        title={displayName}
-        status={unitStatus}
-        hasChanges={hasChanges}
-        cardId={id}
-        onClickMenuButton={handleClickMenuButton}
-        onClickPublish={onOpenPublishModal}
-        onClickConfigure={onOpenConfigureModal}
-        onClickEdit={openForm}
-        onClickDelete={onOpenDeleteModal}
-        onClickMoveUp={handleUnitMoveUp}
-        onClickMoveDown={handleUnitMoveDown}
-        isFormOpen={isFormOpen}
-        closeForm={closeForm}
-        onEditSubmit={handleEditSubmit}
-        isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
-        onClickDuplicate={onDuplicateSubmit}
-        titleComponent={titleComponent}
-        namePrefix={namePrefix}
-        actions={actions}
-        isVertical
-        enableCopyPasteUnits={enableCopyPasteUnits}
-        onClickCopy={handleCopyClick}
-        discussionEnabled={discussionEnabled}
-        discussionsSettings={discussionsSettings}
-        parentInfo={parentInfo}
-      />
-      <div className="unit-card__content item-children" data-testid="unit-card__content">
-        <XBlockStatus
-          isSelfPaced={isSelfPaced}
-          isCustomRelativeDatesActive={isCustomRelativeDatesActive}
-          blockData={unit}
+      <div
+        className="unit-card"
+        data-testid="unit-card"
+        ref={currentRef}
+      >
+        <CardHeader
+          title={displayName}
+          status={unitStatus}
+          hasChanges={hasChanges}
+          cardId={id}
+          onClickMenuButton={handleClickMenuButton}
+          onClickPublish={onOpenPublishModal}
+          onClickConfigure={onOpenConfigureModal}
+          onClickEdit={openForm}
+          onClickDelete={onOpenDeleteModal}
+          onClickMoveUp={handleUnitMoveUp}
+          onClickMoveDown={handleUnitMoveDown}
+          isFormOpen={isFormOpen}
+          closeForm={closeForm}
+          onEditSubmit={handleEditSubmit}
+          isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
+          onClickDuplicate={onDuplicateSubmit}
+          titleComponent={titleComponent}
+          namePrefix={namePrefix}
+          actions={actions}
+          isVertical
+          enableCopyPasteUnits={enableCopyPasteUnits}
+          onClickCopy={handleCopyClick}
+          discussionEnabled={discussionEnabled}
+          discussionsSettings={discussionsSettings}
+          parentInfo={parentInfo}
         />
+        <div className="unit-card__content item-children" data-testid="unit-card__content">
+          <XBlockStatus
+            isSelfPaced={isSelfPaced}
+            isCustomRelativeDatesActive={isCustomRelativeDatesActive}
+            blockData={unit}
+          />
+        </div>
       </div>
     </SortableItem>
   );
