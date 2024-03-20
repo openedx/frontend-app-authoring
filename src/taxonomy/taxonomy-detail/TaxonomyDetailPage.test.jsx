@@ -6,7 +6,7 @@ import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render } from '@testing-library/react';
 
-import { getTaxonomyApiUrl } from '../data/api';
+import { apiUrls } from '../data/api';
 import initializeStore from '../../store';
 import TaxonomyDetailPage from './TaxonomyDetailPage';
 
@@ -64,7 +64,7 @@ describe('<TaxonomyDetailPage />', () => {
 
   it('shows the spinner before the query is complete', () => {
     // Use unresolved promise to keep the Loading visible
-    axiosMock.onGet(getTaxonomyApiUrl(1)).reply(() => new Promise());
+    axiosMock.onGet(apiUrls.taxonomy(1)).reply(() => new Promise());
     const { getByRole } = render(<RootWrapper />);
     const spinner = getByRole('status');
     expect(spinner.textContent).toEqual('Loading...');
@@ -73,7 +73,7 @@ describe('<TaxonomyDetailPage />', () => {
   it('shows the connector error component if not taxonomy returned', async () => {
     // Use empty response to trigger the error. Returning an error do not
     // work because the query will retry.
-    axiosMock.onGet(getTaxonomyApiUrl(1)).reply(200);
+    axiosMock.onGet(apiUrls.taxonomy(1)).reply(200);
 
     const { findByTestId } = render(<RootWrapper />);
 
@@ -81,7 +81,7 @@ describe('<TaxonomyDetailPage />', () => {
   });
 
   it('should render page and page title correctly', async () => {
-    await axiosMock.onGet(getTaxonomyApiUrl(1)).replyOnce(200, {
+    await axiosMock.onGet(apiUrls.taxonomy(1)).replyOnce(200, {
       id: 1,
       name: 'Test taxonomy',
       description: 'This is a description',
@@ -109,7 +109,7 @@ describe('<TaxonomyDetailPage />', () => {
   });
 
   it('should show system defined badge', async () => {
-    axiosMock.onGet(getTaxonomyApiUrl(1)).replyOnce(200, {
+    axiosMock.onGet(apiUrls.taxonomy(1)).replyOnce(200, {
       id: 1,
       name: 'Test taxonomy',
       description: 'This is a description',
@@ -125,7 +125,7 @@ describe('<TaxonomyDetailPage />', () => {
   });
 
   it('should not show system defined badge', async () => {
-    axiosMock.onGet(getTaxonomyApiUrl(1)).replyOnce(200, {
+    axiosMock.onGet(apiUrls.taxonomy(1)).replyOnce(200, {
       id: 1,
       name: 'Test taxonomy',
       description: 'This is a description',

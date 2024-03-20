@@ -7,8 +7,7 @@ import Proptypes from 'prop-types';
 
 import { LoadingSpinner } from '../../generic/Loading';
 import messages from './messages';
-import { useTagListDataResponse, useTagListDataStatus } from './data/apiHooks';
-import { useSubTags } from './data/api';
+import { useTagListData, useSubTags } from './data/apiHooks';
 
 const SubTagsExpanded = ({ taxonomyId, parentTagValue }) => {
   const subTagsData = useSubTags(taxonomyId, parentTagValue);
@@ -69,8 +68,7 @@ const TagListTable = ({ taxonomyId }) => {
     pageIndex: 0,
     pageSize: 100,
   });
-  const { isLoading } = useTagListDataStatus(taxonomyId, options);
-  const tagList = useTagListDataResponse(taxonomyId, options);
+  const { isLoading, data: tagList } = useTagListData(taxonomyId, options);
 
   const fetchData = (args) => {
     if (!isEqual(args, options)) {

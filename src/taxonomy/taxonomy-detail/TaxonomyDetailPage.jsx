@@ -17,7 +17,7 @@ import taxonomyMessages from '../messages';
 import { TagListTable } from '../tag-list';
 import { TaxonomyMenu } from '../taxonomy-menu';
 import TaxonomyDetailSideCard from './TaxonomyDetailSideCard';
-import { useTaxonomyDetailDataResponse, useTaxonomyDetailDataStatus } from '../data/apiHooks';
+import { useTaxonomyDetails } from '../data/apiHooks';
 import SystemDefinedBadge from '../system-defined-badge';
 
 const TaxonomyDetailPage = () => {
@@ -25,8 +25,11 @@ const TaxonomyDetailPage = () => {
   const { taxonomyId: taxonomyIdString } = useParams();
   const taxonomyId = Number(taxonomyIdString);
 
-  const taxonomy = useTaxonomyDetailDataResponse(taxonomyId);
-  const { isError, isFetched } = useTaxonomyDetailDataStatus(taxonomyId);
+  const {
+    data: taxonomy,
+    isError,
+    isFetched,
+  } = useTaxonomyDetails(taxonomyId);
 
   if (!isFetched) {
     return (

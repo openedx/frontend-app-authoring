@@ -1,7 +1,12 @@
 import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
-  act, render, fireEvent, screen,
+  act,
+  fireEvent,
+  render,
+  waitFor,
+  screen,
 } from '@testing-library/react';
 
 import ContentTagsDrawer from './ContentTagsDrawer';
@@ -10,7 +15,7 @@ import {
   useContentData,
   useTaxonomyTagsData,
 } from './data/apiHooks';
-import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from '../taxonomy/data/apiHooks';
+import { getTaxonomyListData } from '../taxonomy/data/api';
 import messages from './messages';
 
 const contentId = 'block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@7f47fe2dbcaf47c5a071671c741fe1ab';
@@ -23,6 +28,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
+// FIXME: replace these mocks with API mocks
 jest.mock('./data/apiHooks', () => ({
   useContentTaxonomyTagsData: jest.fn(() => ({
     isSuccess: false,
@@ -46,20 +52,30 @@ jest.mock('./data/apiHooks', () => ({
   })),
 }));
 
-jest.mock('../taxonomy/data/apiHooks', () => ({
-  useTaxonomyListDataResponse: jest.fn(),
-  useIsTaxonomyListDataLoaded: jest.fn(),
+jest.mock('../taxonomy/data/api', () => ({
+  // By default, the mock taxonomy list will never load (promise never resolves):
+  getTaxonomyListData: jest.fn(),
 }));
+
+const queryClient = new QueryClient();
 
 const RootWrapper = (params) => (
   <IntlProvider locale="en" messages={{}}>
-    <ContentTagsDrawer {...params} />
+    <QueryClientProvider client={queryClient}>
+      <ContentTagsDrawer {...params} />
+    </QueryClientProvider>
   </IntlProvider>
 );
 
 describe('<ContentTagsDrawer />', () => {
+  beforeEach(async () => {
+    await queryClient.resetQueries();
+    // By default, we mock the API call with a promise that never resolves.
+    // You can override this in specific test.
+    getTaxonomyListData.mockReturnValue(new Promise(() => {}));
+  });
+
   const setupMockDataForStagedTagsTesting = () => {
-    useIsTaxonomyListDataLoaded.mockReturnValue(true);
     useContentTaxonomyTagsData.mockReturnValue({
       isSuccess: true,
       data: {
@@ -84,7 +100,7 @@ describe('<ContentTagsDrawer />', () => {
         ],
       },
     });
-    useTaxonomyListDataResponse.mockReturnValue({
+    getTaxonomyListData.mockResolvedValue({
       results: [{
         id: 123,
         name: 'Taxonomy 1',
@@ -148,7 +164,6 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('shows spinner before the taxonomy tags query is complete', async () => {
-    useIsTaxonomyListDataLoaded.mockReturnValue(false);
     await act(async () => {
       const { getAllByRole } = render(<RootWrapper />);
       const spinner = getAllByRole('status')[1];
@@ -181,7 +196,6 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('shows the taxonomies data including tag numbers after the query is complete', async () => {
-    useIsTaxonomyListDataLoaded.mockReturnValue(true);
     useContentTaxonomyTagsData.mockReturnValue({
       isSuccess: true,
       data: {
@@ -218,7 +232,7 @@ describe('<ContentTagsDrawer />', () => {
         ],
       },
     });
-    useTaxonomyListDataResponse.mockReturnValue({
+    getTaxonomyListData.mockResolvedValue({
       results: [{
         id: 123,
         name: 'Taxonomy 1',
@@ -233,6 +247,7 @@ describe('<ContentTagsDrawer />', () => {
     });
     await act(async () => {
       const { container, getByText } = render(<RootWrapper />);
+      await waitFor(() => { expect(getByText('Taxonomy 1')).toBeInTheDocument(); });
       expect(getByText('Taxonomy 1')).toBeInTheDocument();
       expect(getByText('Taxonomy 2')).toBeInTheDocument();
       const tagCountBadges = container.getElementsByClassName('badge');
@@ -241,10 +256,11 @@ describe('<ContentTagsDrawer />', () => {
     });
   });
 
-  it('should test adding a content tag to the staged tags for a taxonomy', () => {
+  it('should test adding a content tag to the staged tags for a taxonomy', async () => {
     setupMockDataForStagedTagsTesting();
 
     const { container, getByText, getAllByText } = render(<RootWrapper />);
+    await waitFor(() => { expect(getByText('Taxonomy 1')).toBeInTheDocument(); });
 
     // Expand the Taxonomy to view applied tags and "Add a tag" button
     const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
@@ -267,10 +283,11 @@ describe('<ContentTagsDrawer />', () => {
     expect(getAllByText('Tag 3').length).toBe(2);
   });
 
-  it('should test removing a staged content from a taxonomy', () => {
+  it('should test removing a staged content from a taxonomy', async () => {
     setupMockDataForStagedTagsTesting();
 
     const { container, getByText, getAllByText } = render(<RootWrapper />);
+    await waitFor(() => { expect(getByText('Taxonomy 1')).toBeInTheDocument(); });
 
     // Expand the Taxonomy to view applied tags and "Add a tag" button
     const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
@@ -297,7 +314,7 @@ describe('<ContentTagsDrawer />', () => {
     expect(getAllByText('Tag 3').length).toBe(1);
   });
 
-  it('should test clearing staged tags for a taxonomy', () => {
+  it('should test clearing staged tags for a taxonomy', async () => {
     setupMockDataForStagedTagsTesting();
 
     const {
@@ -306,6 +323,7 @@ describe('<ContentTagsDrawer />', () => {
       getAllByText,
       queryByText,
     } = render(<RootWrapper />);
+    await waitFor(() => { expect(getByText('Taxonomy 1')).toBeInTheDocument(); });
 
     // Expand the Taxonomy to view applied tags and "Add a tag" button
     const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
