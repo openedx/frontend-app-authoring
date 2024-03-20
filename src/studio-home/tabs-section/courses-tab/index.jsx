@@ -9,7 +9,7 @@ import {
   Alert,
   Button,
 } from '@openedx/paragon';
-import { Error, WarningFilled } from '@openedx/paragon/icons';
+import { Error } from '@openedx/paragon/icons';
 
 import { COURSE_CREATOR_STATES } from '../../../constants';
 import { getStudioHomeData, getStudioHomeCoursesParams } from '../../data/selectors';
@@ -168,7 +168,7 @@ const CoursesTab = ({
           </Row>
         )}
         {isFiltered && !hasCourses && !isLoading && (
-          <Alert variant="warning" icon={WarningFilled} className="mt-4">
+          <Alert className="mt-4">
             <Alert.Heading>
               {intl.formatMessage(messages.coursesTabCourseNotFoundAlertTitle)}
             </Alert.Heading>

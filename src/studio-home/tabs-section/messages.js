@@ -31,15 +31,15 @@ const messages = defineMessages({
   },
   coursesTabCourseNotFoundAlertTitle: {
     id: 'course-authoring.studio-home.courses.tab.course.not.found.alert.title',
-    defaultMessage: 'Something went wrong',
+    defaultMessage: 'We could not find any result',
   },
   coursesTabCourseNotFoundAlertMessage: {
     id: 'course-authoring.studio-home.courses.tab.course.not.found.alert.message',
-    defaultMessage: 'Sorry, the course(s) you are trying to search was not found',
+    defaultMessage: 'There are no courses with the current filters.',
   },
   coursesTabCourseNotFoundAlertCleanFiltersButton: {
     id: 'course-authoring.studio-home.courses.tab.course.not.found.alert.clean.filters.button',
-    defaultMessage: 'Clean filters',
+    defaultMessage: 'Clear filters',
   },
 });
 
