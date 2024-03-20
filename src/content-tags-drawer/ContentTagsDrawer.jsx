@@ -20,7 +20,7 @@ import {
   useContentTaxonomyTagsData,
   useContentData,
 } from './data/apiHooks';
-import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from '../taxonomy/data/apiHooks';
+import { useTaxonomyList } from '../taxonomy/data/apiHooks';
 import Loading from '../generic/Loading';
 
 /** @typedef {import("../taxonomy/data/types.mjs").TaxonomyData} TaxonomyData */
@@ -37,14 +37,9 @@ import Loading from '../generic/Loading';
  */
 const ContentTagsDrawer = ({ id, onClose }) => {
   const intl = useIntl();
-  // TODO: We can delete this when the iframe is no longer used on edx-platform
+  // TODO: We can delete 'params' when the iframe is no longer used on edx-platform
   const params = useParams();
-  let contentId = id;
-
-  if (contentId === undefined) {
-    // TODO: We can delete this when the iframe is no longer used on edx-platform
-    contentId = params.contentId;
-  }
+  const contentId = id ?? params.contentId;
 
   const org = extractOrgFromContentId(contentId);
 
@@ -74,18 +69,12 @@ const ContentTagsDrawer = ({ id, onClose }) => {
     setStagedContentTags(prevStagedContentTags => ({ ...prevStagedContentTags, [taxonomyId]: tagsList }));
   }, [setStagedContentTags]);
 
-  const useTaxonomyListData = () => {
-    const taxonomyListData = useTaxonomyListDataResponse(org);
-    const isTaxonomyListLoaded = useIsTaxonomyListDataLoaded(org);
-    return { taxonomyListData, isTaxonomyListLoaded };
-  };
-
   const { data: contentData, isSuccess: isContentDataLoaded } = useContentData(contentId);
   const {
     data: contentTaxonomyTagsData,
     isSuccess: isContentTaxonomyTagsLoaded,
   } = useContentTaxonomyTagsData(contentId);
-  const { taxonomyListData, isTaxonomyListLoaded } = useTaxonomyListData();
+  const { data: taxonomyListData, isSuccess: isTaxonomyListLoaded } = useTaxonomyList(org);
 
   let contentName = '';
   if (isContentDataLoaded) {

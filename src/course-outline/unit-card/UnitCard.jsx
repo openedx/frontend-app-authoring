@@ -3,11 +3,13 @@ import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useToggle } from '@openedx/paragon';
+import { isEmpty } from 'lodash';
+
 
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
-import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
+import SortableItem from '../drag-helper/SortableItem';
 import TitleLink from '../card-header/TitleLink';
 import XBlockStatus from '../xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
@@ -19,7 +21,7 @@ const UnitCard = ({
   isSelfPaced,
   isCustomRelativeDatesActive,
   index,
-  canMoveItem,
+  getPossibleMoves,
   onOpenPublishModal,
   onOpenConfigureModal,
   onEditSubmit,
@@ -38,6 +40,7 @@ const UnitCard = ({
 
   const {
     id,
+    category,
     displayName,
     hasChanges,
     published,
@@ -51,8 +54,10 @@ const UnitCard = ({
   // re-create actions object for customizations
   const actions = { ...unitActions };
   // add actions to control display of move up & down menu buton.
-  actions.allowMoveUp = canMoveItem(index, -1);
-  actions.allowMoveDown = canMoveItem(index, 1);
+  const moveUpDetails = getPossibleMoves(index, -1);
+  const moveDownDetails = getPossibleMoves(index, 1);
+  actions.allowMoveUp = !isEmpty(moveUpDetails);
+  actions.allowMoveDown = !isEmpty(moveDownDetails);
 
   const parentInfo = {
     graded: subsection.graded,
@@ -82,11 +87,11 @@ const UnitCard = ({
   };
 
   const handleUnitMoveUp = () => {
-    onOrderChange(index, index - 1);
+    onOrderChange(section, moveUpDetails);
   };
 
   const handleUnitMoveDown = () => {
-    onOrderChange(index, index + 1);
+    onOrderChange(section, moveDownDetails);
   };
 
   const handleCopyClick = () => {
@@ -123,56 +128,52 @@ const UnitCard = ({
   const isDraggable = actions.draggable && (actions.allowMoveUp || actions.allowMoveDown);
 
   return (
-    <ConditionalSortableElement
+    <SortableItem
       id={id}
+      category={category}
       key={id}
-      draggable={isDraggable}
+      isDraggable={isDraggable}
+      isDroppable={actions.childAddable}
       componentStyle={{
         background: '#fdfdfd',
         ...borderStyle,
       }}
     >
-      <div
-        className="unit-card"
-        data-testid="unit-card"
-        ref={currentRef}
-      >
-        <CardHeader
-          title={displayName}
-          status={unitStatus}
-          hasChanges={hasChanges}
-          cardId={id}
-          onClickMenuButton={handleClickMenuButton}
-          onClickPublish={onOpenPublishModal}
-          onClickConfigure={onOpenConfigureModal}
-          onClickEdit={openForm}
-          onClickDelete={onOpenDeleteModal}
-          onClickMoveUp={handleUnitMoveUp}
-          onClickMoveDown={handleUnitMoveDown}
-          isFormOpen={isFormOpen}
-          closeForm={closeForm}
-          onEditSubmit={handleEditSubmit}
-          isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
-          onClickDuplicate={onDuplicateSubmit}
-          titleComponent={titleComponent}
-          namePrefix={namePrefix}
-          actions={actions}
-          isVertical
-          enableCopyPasteUnits={enableCopyPasteUnits}
-          onClickCopy={handleCopyClick}
-          discussionEnabled={discussionEnabled}
-          discussionsSettings={discussionsSettings}
-          parentInfo={parentInfo}
+      <CardHeader
+        title={displayName}
+        status={unitStatus}
+        hasChanges={hasChanges}
+        cardId={id}
+        onClickMenuButton={handleClickMenuButton}
+        onClickPublish={onOpenPublishModal}
+        onClickConfigure={onOpenConfigureModal}
+        onClickEdit={openForm}
+        onClickDelete={onOpenDeleteModal}
+        onClickMoveUp={handleUnitMoveUp}
+        onClickMoveDown={handleUnitMoveDown}
+        isFormOpen={isFormOpen}
+        closeForm={closeForm}
+        onEditSubmit={handleEditSubmit}
+        isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
+        onClickDuplicate={onDuplicateSubmit}
+        titleComponent={titleComponent}
+        namePrefix={namePrefix}
+        actions={actions}
+        isVertical
+        enableCopyPasteUnits={enableCopyPasteUnits}
+        onClickCopy={handleCopyClick}
+        discussionEnabled={discussionEnabled}
+        discussionsSettings={discussionsSettings}
+        parentInfo={parentInfo}
+      />
+      <div className="unit-card__content item-children" data-testid="unit-card__content">
+        <XBlockStatus
+          isSelfPaced={isSelfPaced}
+          isCustomRelativeDatesActive={isCustomRelativeDatesActive}
+          blockData={unit}
         />
-        <div className="unit-card__content item-children" data-testid="unit-card__content">
-          <XBlockStatus
-            isSelfPaced={isSelfPaced}
-            isCustomRelativeDatesActive={isCustomRelativeDatesActive}
-            blockData={unit}
-          />
-        </div>
       </div>
-    </ConditionalSortableElement>
+    </SortableItem>
   );
 };
 
@@ -184,6 +185,7 @@ UnitCard.propTypes = {
   unit: PropTypes.shape({
     id: PropTypes.string.isRequired,
     displayName: PropTypes.string.isRequired,
+    category: PropTypes.string.isRequired,
     published: PropTypes.bool.isRequired,
     hasChanges: PropTypes.bool.isRequired,
     visibilityState: PropTypes.string.isRequired,
@@ -224,7 +226,7 @@ UnitCard.propTypes = {
   onDuplicateSubmit: PropTypes.func.isRequired,
   getTitleLink: PropTypes.func.isRequired,
   index: PropTypes.number.isRequired,
-  canMoveItem: PropTypes.func.isRequired,
+  getPossibleMoves: PropTypes.func.isRequired,
   onOrderChange: PropTypes.func.isRequired,
   isSelfPaced: PropTypes.bool.isRequired,
   isCustomRelativeDatesActive: PropTypes.bool.isRequired,

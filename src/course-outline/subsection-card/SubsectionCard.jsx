@@ -1,5 +1,5 @@
 // @ts-check
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
@@ -7,12 +7,14 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, useToggle } from '@openedx/paragon';
 import { Add as IconAdd } from '@openedx/paragon/icons';
 import classNames from 'classnames';
+import { isEmpty } from 'lodash';
 
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
 import { COURSE_BLOCK_NAMES } from '../constants';
 import CardHeader from '../card-header/CardHeader';
-import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
+import SortableItem from '../drag-helper/SortableItem';
+import { DragContext } from '../drag-helper/DragContextProvider';
 import TitleButton from '../card-header/TitleButton';
 import XBlockStatus from '../xblock-status/XBlockStatus';
 import PasteButton from '../paste-button/PasteButton';
@@ -26,7 +28,7 @@ const SubsectionCard = ({
   isCustomRelativeDatesActive,
   children,
   index,
-  canMoveItem,
+  getPossibleMoves,
   onOpenPublishModal,
   onEditSubmit,
   savingStatus,
@@ -40,6 +42,7 @@ const SubsectionCard = ({
   const currentRef = useRef(null);
   const intl = useIntl();
   const dispatch = useDispatch();
+  const { activeId, overId } = useContext(DragContext);
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const isScrolledToElement = locatorId === subsection.id;
@@ -48,6 +51,7 @@ const SubsectionCard = ({
 
   const {
     id,
+    category,
     displayName,
     hasChanges,
     published,
@@ -61,8 +65,10 @@ const SubsectionCard = ({
   // re-create actions object for customizations
   const actions = { ...subsectionActions };
   // add actions to control display of move up & down menu buton.
-  actions.allowMoveUp = canMoveItem(index, -1);
-  actions.allowMoveDown = canMoveItem(index, 1);
+  const moveUpDetails = getPossibleMoves(index, -1);
+  const moveDownDetails = getPossibleMoves(index, 1);
+  actions.allowMoveUp = !isEmpty(moveUpDetails);
+  actions.allowMoveDown = !isEmpty(moveDownDetails);
 
   const [isExpanded, setIsExpanded] = useState(locatorId ? isScrolledToElement : !isHeaderVisible);
   const subsectionStatus = getItemStatus({
@@ -92,11 +98,11 @@ const SubsectionCard = ({
   };
 
   const handleSubsectionMoveUp = () => {
-    onOrderChange(index, index - 1);
+    onOrderChange(section, moveUpDetails);
   };
 
   const handleSubsectionMoveDown = () => {
-    onOrderChange(index, index + 1);
+    onOrderChange(section, moveDownDetails);
   };
 
   const handleNewButtonClick = () => onNewUnitSubmit(id);
@@ -110,6 +116,14 @@ const SubsectionCard = ({
       namePrefix={namePrefix}
     />
   );
+
+  useEffect(() => {
+    if (activeId === id && isExpanded) {
+      setIsExpanded(false);
+    } else if (overId === id && !isExpanded) {
+      setIsExpanded(true);
+    }
+  }, [activeId, overId]);
 
   useEffect(() => {
     // if this items has been newly added, scroll to it.
@@ -133,10 +147,12 @@ const SubsectionCard = ({
   );
 
   return (
-    <ConditionalSortableElement
+    <SortableItem
       id={id}
+      category={category}
       key={id}
-      draggable={isDraggable}
+      isDraggable={isDraggable}
+      isDroppable={actions.childAddable}
       componentStyle={{
         background: '#f8f7f6',
         ...borderStyle,
@@ -207,7 +223,7 @@ const SubsectionCard = ({
           </div>
         )}
       </div>
-    </ConditionalSortableElement>
+    </SortableItem>
   );
 };
 
@@ -227,6 +243,7 @@ SubsectionCard.propTypes = {
   subsection: PropTypes.shape({
     id: PropTypes.string.isRequired,
     displayName: PropTypes.string.isRequired,
+    category: PropTypes.string.isRequired,
     published: PropTypes.bool.isRequired,
     hasChanges: PropTypes.bool.isRequired,
     visibilityState: PropTypes.string.isRequired,
@@ -251,7 +268,7 @@ SubsectionCard.propTypes = {
   onDuplicateSubmit: PropTypes.func.isRequired,
   onNewUnitSubmit: PropTypes.func.isRequired,
   index: PropTypes.number.isRequired,
-  canMoveItem: PropTypes.func.isRequired,
+  getPossibleMoves: PropTypes.func.isRequired,
   onOrderChange: PropTypes.func.isRequired,
   onOpenConfigureModal: PropTypes.func.isRequired,
   onPasteClick: PropTypes.func.isRequired,

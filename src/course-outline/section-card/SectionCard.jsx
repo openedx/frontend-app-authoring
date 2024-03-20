@@ -1,6 +1,6 @@
 // @ts-check
 import React, {
-  useEffect, useState, useRef,
+  useContext, useEffect, useState, useRef,
 } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
@@ -12,7 +12,8 @@ import classNames from 'classnames';
 import { setCurrentItem, setCurrentSection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
-import ConditionalSortableElement from '../drag-helper/ConditionalSortableElement';
+import SortableItem from '../drag-helper/SortableItem';
+import { DragContext } from '../drag-helper/DragContextProvider';
 import TitleButton from '../card-header/TitleButton';
 import XBlockStatus from '../xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
@@ -39,6 +40,7 @@ const SectionCard = ({
   const currentRef = useRef(null);
   const intl = useIntl();
   const dispatch = useDispatch();
+  const { activeId, overId } = useContext(DragContext);
   const [isExpanded, setIsExpanded] = useState(isSectionsExpanded);
   const [isFormOpen, openForm, closeForm] = useToggle(false);
   const namePrefix = 'section';
@@ -47,15 +49,9 @@ const SectionCard = ({
     setIsExpanded(isSectionsExpanded);
   }, [isSectionsExpanded]);
 
-  useEffect(() => {
-    // if this items has been newly added, scroll to it.
-    if (currentRef.current && section.shouldScroll) {
-      scrollToElement(currentRef.current);
-    }
-  }, []);
-
   const {
     id,
+    category,
     displayName,
     hasChanges,
     published,
@@ -64,6 +60,21 @@ const SectionCard = ({
     actions: sectionActions,
     isHeaderVisible = true,
   } = section;
+
+  useEffect(() => {
+    if (activeId === id && isExpanded) {
+      setIsExpanded(false);
+    } else if (overId === id && !isExpanded) {
+      setIsExpanded(true);
+    }
+  }, [activeId, overId]);
+
+  useEffect(() => {
+    // if this items has been newly added, scroll to it.
+    if (currentRef.current && section.shouldScroll) {
+      scrollToElement(currentRef.current);
+    }
+  }, []);
 
   // re-create actions object for customizations
   const actions = { ...sectionActions };
@@ -133,9 +144,11 @@ const SectionCard = ({
   const isDraggable = actions.draggable && (actions.allowMoveUp || actions.allowMoveDown);
 
   return (
-    <ConditionalSortableElement
+    <SortableItem
       id={id}
-      draggable={isDraggable}
+      category={category}
+      isDraggable={isDraggable}
+      isDroppable={actions.childAddable}
       componentStyle={{
         padding: '1.75rem',
         ...borderStyle,
@@ -212,7 +225,7 @@ const SectionCard = ({
           )}
         </div>
       </div>
-    </ConditionalSortableElement>
+    </SortableItem>
   );
 };
 
@@ -224,6 +237,7 @@ SectionCard.propTypes = {
   section: PropTypes.shape({
     id: PropTypes.string.isRequired,
     displayName: PropTypes.string.isRequired,
+    category: PropTypes.string.isRequired,
     published: PropTypes.bool.isRequired,
     hasChanges: PropTypes.bool.isRequired,
     visibilityState: PropTypes.string.isRequired,

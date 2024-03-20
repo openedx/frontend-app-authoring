@@ -1,5 +1,5 @@
 // @ts-check
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useMemo } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   useToggle,
@@ -22,10 +22,11 @@ import {
 import PropTypes from 'prop-types';
 
 import LoadingButton from '../../generic/loading-button';
+import { LoadingSpinner } from '../../generic/Loading';
 import { getFileSizeToClosestByte } from '../../utils';
 import { TaxonomyContext } from '../common/context';
 import { getTaxonomyExportFile } from '../data/api';
-import { planImportTags, useImportTags } from './data/api';
+import { useImportTags, useImportPlan } from '../data/apiHooks';
 import messages from './messages';
 
 const linebreak = <> <br /> <br /> </>;
@@ -73,20 +74,17 @@ const UploadStep = ({
   file,
   setFile,
   importPlanError,
-  setImportPlanError,
 }) => {
   const intl = useIntl();
 
   /** @type {(args: {fileData: FormData}) => void} */
   const handleFileLoad = ({ fileData }) => {
     setFile(fileData.get('file'));
-    setImportPlanError(null);
   };
 
   const clearFile = (e) => {
     e.stopPropagation();
     setFile(null);
-    setImportPlanError(null);
   };
 
   return (
@@ -147,7 +145,6 @@ UploadStep.propTypes = {
   }),
   setFile: PropTypes.func.isRequired,
   importPlanError: PropTypes.string,
-  setImportPlanError: PropTypes.func.isRequired,
 };
 
 UploadStep.defaultProps = {
@@ -228,35 +225,28 @@ const ImportTagsWizard = ({
 
   const [file, setFile] = useState(/** @type {null|File} */ (null));
 
-  const [importPlan, setImportPlan] = useState(/** @type {null|string[]} */ (null));
-  const [importPlanError, setImportPlanError] = useState(null);
-
   const [isDialogDisabled, disableDialog, enableDialog] = useToggle(false);
+
+  const importPlanResult = useImportPlan(taxonomy.id, file);
+
+  const importPlan = useMemo(() => {
+    if (!importPlanResult.data) {
+      return null;
+    }
+    let planArrayTemp = importPlanResult.data.split('\n');
+    planArrayTemp = planArrayTemp.slice(2); // Removes the first two lines
+    planArrayTemp = planArrayTemp.slice(0, -1); // Removes the last line
+    const planArray = planArrayTemp
+      .filter((line) => !(line.includes('No changes'))) // Removes the "No changes" lines
+      .map((line) => line.split(':')[1].trim()); // Get only the action message
+    return /** @type {string[]} */(planArray);
+  }, [importPlanResult.data]);
 
   const importTagsMutation = useImportTags();
 
-  const generatePlan = async () => {
-    disableDialog();
-    try {
-      if (file) {
-        const plan = await planImportTags(taxonomy.id, file);
-        let planArrayTemp = plan.split('\n');
-        planArrayTemp = planArrayTemp.slice(2); // Removes the first two lines
-        planArrayTemp = planArrayTemp.slice(0, -1); // Removes the last line
-        const planArray = planArrayTemp
-          .filter((line) => !(line.includes('No changes'))) // Removes the "No changes" lines
-          .map((line) => line.split(':')[1].trim()); // Get only the action message
-        setImportPlan(planArray);
-        setImportPlanError(null);
-        setCurrentStep('plan');
-      }
-    } catch (/** @type {any} */ error) {
-      setImportPlan(null);
-      setImportPlanError(error.message);
-    } finally {
-      enableDialog();
-    }
-  };
+  const generatePlan = React.useCallback(() => {
+    setCurrentStep('plan');
+  }, []);
 
   const confirmImportTags = async () => {
     disableDialog();
@@ -326,8 +316,8 @@ const ImportTagsWizard = ({
         onClose={onClose}
         size="lg"
       >
-        {isDialogDisabled && (
-          // This div is used to prevent the user from interacting with the dialog while it is disabled
+        {(isDialogDisabled) && (
+          // This div is used to prevent the user from interacting with the dialog while the import is happening
           <div className="position-absolute w-100 h-100 d-block zindex-9" />
         )}
 
@@ -341,8 +331,7 @@ const ImportTagsWizard = ({
             <UploadStep
               file={file}
               setFile={setFile}
-              importPlanError={importPlanError}
-              setImportPlanError={setImportPlanError}
+              importPlanError={/** @type {Error|undefined} */(importPlanResult.error)?.message}
             />
             <PlanStep importPlan={importPlan} />
             <ConfirmStep importPlan={importPlan} />
@@ -369,11 +358,16 @@ const ImportTagsWizard = ({
               <Button variant="tertiary" onClick={onClose}>
                 {intl.formatMessage(messages.importWizardButtonCancel)}
               </Button>
-              <LoadingButton
-                label={intl.formatMessage(messages.importWizardButtonImport)}
-                disabled={!file || !!importPlanError}
-                onClick={generatePlan}
-              />
+              {
+                importPlanResult.isLoading ? <LoadingSpinner />
+                  : (
+                    <LoadingButton
+                      label={intl.formatMessage(messages.importWizardButtonImport)}
+                      disabled={!file || importPlanResult.isLoading || !!importPlanResult.error}
+                      onClick={generatePlan}
+                    />
+                  )
+              }
             </Stepper.ActionRow>
 
             <Stepper.ActionRow eventKey="plan">

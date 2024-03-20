@@ -23,3 +23,6 @@ temp/babel-plugin-react-intl
 
 # Local environment overrides
 .env.private
+
+# Messages .json files fetched by atlas
+src/i18n/messages/

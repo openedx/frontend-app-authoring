@@ -19,6 +19,7 @@ let store;
 const section = {
   id: '123',
   displayName: 'Section Name',
+  category: 'chapter',
   published: true,
   visibilityState: 'live',
   hasChanges: false,
@@ -42,17 +43,20 @@ const renderComponent = (props) => render(
       <IntlProvider locale="en">
         <SectionCard
           section={section}
-          index="1"
+          index={1}
           canMoveItem={jest.fn()}
           onOrderChange={jest.fn()}
           onOpenPublishModal={jest.fn()}
           onOpenHighlightsModal={jest.fn()}
           onOpenDeleteModal={jest.fn()}
+          onOpenConfigureModal={jest.fn()}
           savingStatus=""
           onEditSectionSubmit={onEditSectionSubmit}
           onDuplicateSubmit={jest.fn()}
           isSectionsExpanded
           onNewSubsectionSubmit={jest.fn()}
+          isSelfPaced={false}
+          isCustomRelativeDatesActive={false}
           {...props}
         >
           <span>children</span>
