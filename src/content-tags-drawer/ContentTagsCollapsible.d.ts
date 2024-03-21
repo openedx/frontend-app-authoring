@@ -1,3 +1,4 @@
+import { Ref } from 'react';
 import type {} from 'react-select/base';
 // This import is necessary for module augmentation.
 // It allows us to extend the 'Props' interface in the 'react-select/base' module
@@ -16,6 +17,9 @@ export interface TaxonomySelectProps {
     appliedContentTagsTree: Record<string, TagTreeEntry>;
     stagedContentTagsTree: Record<string, TagTreeEntry>;
     checkedTags: string[];
+    selectCancelRef: Ref,
+    selectAddRef: Ref,
+    selectInlineAddRef: Ref,
     handleCommitStagedTags: () => void;
     handleCancelStagedTags: () => void;
     handleSelectableBoxChange: React.ChangeEventHandler;

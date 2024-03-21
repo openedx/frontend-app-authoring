@@ -41,6 +41,8 @@ const CustomMenu = (props) => {
     handleCommitStagedTags,
     handleCancelStagedTags,
     searchTerm,
+    selectCancelRef,
+    selectAddRef,
     value,
   } = props.selectProps;
   const intl = useIntl();
@@ -56,6 +58,7 @@ const CustomMenu = (props) => {
           className="taxonomy-tags-selectable-box-set"
           onChange={handleSelectableBoxChange}
           value={checkedTags}
+          tabIndex="-1"
         >
           <ContentTagsDropDownSelector
             key={`selector-${taxonomyId}`}
@@ -70,6 +73,8 @@ const CustomMenu = (props) => {
         <div className="d-flex flex-row justify-content-end">
           <div className="d-inline">
             <Button
+              tabIndex="0"
+              ref={selectCancelRef}
               variant="tertiary"
               className="cancel-add-tags-button"
               onClick={handleCancelStagedTags}
@@ -77,6 +82,8 @@ const CustomMenu = (props) => {
               { intl.formatMessage(messages.collapsibleCancelStagedTagsButtonText) }
             </Button>
             <Button
+              tabIndex="0"
+              ref={selectAddRef}
               variant="tertiary"
               className="text-info-500 add-tags-button"
               disabled={!(value && value.length)}
@@ -89,6 +96,13 @@ const CustomMenu = (props) => {
       </div>
     </components.Menu>
   );
+};
+
+const disableActionKeys = (e) => {
+  const arrowKeys = ['ArrowUp', 'ArrowDown', 'ArrowRight', 'ArrowLeft', 'Backspace'];
+  if (arrowKeys.includes(e.code)) {
+    e.preventDefault();
+  }
 };
 
 const CustomLoadingIndicator = () => {
@@ -110,6 +124,7 @@ const CustomIndicatorsContainer = (props) => {
   const {
     value,
     handleCommitStagedTags,
+    selectInlineAddRef,
   } = props.selectProps;
   const intl = useIntl();
   return (
@@ -119,9 +134,12 @@ const CustomIndicatorsContainer = (props) => {
           <Button
             variant="dark"
             size="sm"
-            className="mt-2 mb-2 rounded-0"
+            className="mt-2 mb-2 rounded-0 inline-add-button"
             onClick={handleCommitStagedTags}
             onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); }}
+            ref={selectInlineAddRef}
+            tabIndex="0"
+            onKeyDown={disableActionKeys} // To prevent navigating staged tags when button focused
           >
             { intl.formatMessage(messages.collapsibleInlineAddStagedTagsButtonText) }
           </Button>
@@ -219,7 +237,12 @@ const ContentTagsCollapsible = ({
 }) => {
   const intl = useIntl();
   const { id: taxonomyId, name, canTagObject } = taxonomyAndTagsData;
+  const selectCancelRef = React.useRef(/** @type {HTMLSelectElement | null} */(null));
+  const selectAddRef = React.useRef(/** @type {HTMLSelectElement | null} */(null));
+  const selectInlineAddRef = React.useRef(/** @type {HTMLSelectElement | null} */(null));
   const selectRef = React.useRef(/** @type {HTMLSelectElement | null} */(null));
+
+  const [selectMenuIsOpen, setSelectMenuIsOpen] = React.useState(false);
 
   const {
     tagChangeHandler,
@@ -250,9 +273,11 @@ const ContentTagsCollapsible = ({
 
   const handleSearchChange = React.useCallback((value, { action }) => {
     if (action === 'input-blur') {
-      // Cancel/clear search if focused away from select input
-      handleSearch.cancel();
-      setSearchTerm('');
+      if (!selectMenuIsOpen) {
+        // Cancel/clear search if focused away from select input and menu closed
+        handleSearch.cancel();
+        setSearchTerm('');
+      }
     } else if (action === 'input-change') {
       if (value === '') {
         // No need to debounce when search term cleared. Clear debounce function
@@ -262,7 +287,7 @@ const ContentTagsCollapsible = ({
         handleSearch(value);
       }
     }
-  }, []);
+  }, [selectMenuIsOpen, setSearchTerm, handleSearch]);
 
   // onChange handler for react-select component, currently only called when
   // staged tags in the react-select input are removed or fully cleared.
@@ -287,13 +312,54 @@ const ContentTagsCollapsible = ({
     handleStagedTagsMenuChange([]);
     selectRef.current?.blur();
     setSearchTerm('');
+    setSelectMenuIsOpen(false);
   }, [commitStagedTags, handleStagedTagsMenuChange, selectRef, setSearchTerm]);
 
   const handleCancelStagedTags = React.useCallback(() => {
     handleStagedTagsMenuChange([]);
     selectRef.current?.blur();
     setSearchTerm('');
+    setSelectMenuIsOpen(false);
   }, [handleStagedTagsMenuChange, selectRef, setSearchTerm]);
+
+  const handleSelectOnKeyDown = (event) => {
+    const focusedElement = event.target;
+
+    if (event.key === 'Escape') {
+      setSelectMenuIsOpen(false);
+    } else if (event.key === 'Tab') {
+      // Keep the menu open when navigating inside the select menu
+      setSelectMenuIsOpen(true);
+
+      // Determine when to close the menu when navigating with keyboard
+      if (!event.shiftKey) { // Navigating forwards
+        if (focusedElement === selectAddRef.current) {
+          setSelectMenuIsOpen(false);
+        } else if (focusedElement === selectCancelRef.current && selectAddRef.current?.disabled) {
+          setSelectMenuIsOpen(false);
+        }
+      // Navigating backwards
+      // @ts-ignore inputRef actually exists under the current selectRef
+      } else if (event.shiftKey && focusedElement === selectRef.current?.inputRef) {
+        setSelectMenuIsOpen(false);
+      }
+    }
+  };
+
+  // Open the select menu and make sure the search term is cleared when focused
+  const onSelectMenuFocus = React.useCallback(() => {
+    setSelectMenuIsOpen(true);
+    setSearchTerm('');
+  }, [setSelectMenuIsOpen, setSearchTerm]);
+
+  // Handles logic to close the select menu when clicking outside
+  const handleOnBlur = React.useCallback((event) => {
+    // Check if a target we are focusing to is an element in our select menu, if not close it
+    const menuClasses = ['dropdown-selector', 'inline-add-button', 'cancel-add-tags-button'];
+    if (!event.relatedTarget || !menuClasses.some(cls => event.relatedTarget.className?.includes(cls))) {
+      setSelectMenuIsOpen(false);
+    }
+  }, [setSelectMenuIsOpen]);
 
   return (
     <div className="d-flex">
@@ -306,6 +372,18 @@ const ContentTagsCollapsible = ({
 
           {canTagObject && (
             <Select
+              onBlur={handleOnBlur}
+              styles={{
+                // Overriding 'x' button styles for staged tags when navigating by keyboard
+                multiValueRemove: (base, state) => ({
+                  ...base,
+                  background: state.isFocused ? 'black' : base.background,
+                  color: state.isFocused ? 'white' : base.color,
+                }),
+              }}
+              menuIsOpen={selectMenuIsOpen}
+              onFocus={onSelectMenuFocus}
+              onKeyDown={handleSelectOnKeyDown}
               ref={/** @type {React.RefObject} */(selectRef)}
               isMulti
               isLoading={updateTags.isLoading}
@@ -332,6 +410,9 @@ const ContentTagsCollapsible = ({
               handleCommitStagedTags={handleCommitStagedTags}
               handleCancelStagedTags={handleCancelStagedTags}
               searchTerm={searchTerm}
+              selectCancelRef={selectCancelRef}
+              selectAddRef={selectAddRef}
+              selectInlineAddRef={selectInlineAddRef}
               value={stagedContentTags}
             />
           )}

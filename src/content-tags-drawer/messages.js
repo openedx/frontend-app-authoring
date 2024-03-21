@@ -25,9 +25,25 @@ const messages = defineMessages({
     id: 'course-authoring.content-tags-drawer.tags-dropdown-selector.no-tags-found',
     defaultMessage: 'No tags found with the search term "{searchTerm}"',
   },
-  taxonomyTagsCheckboxAriaLabel: {
-    id: 'course-authoring.content-tags-drawer.tags-dropdown-selector.selectable-box.aria.label',
-    defaultMessage: '{tag} checkbox',
+  taxonomyTagChecked: {
+    id: 'course-authoring.content-tags-drawer.tags-dropdown-selector.tag-checked',
+    defaultMessage: 'Checked',
+  },
+  taxonomyTagUnchecked: {
+    id: 'course-authoring.content-tags-drawer.tags-dropdown-selector.tag-unchecked',
+    defaultMessage: 'Unchecked',
+  },
+  taxonomyTagImplicit: {
+    id: 'course-authoring.content-tags-drawer.tags-dropdown-selector.tag-implicit',
+    defaultMessage: 'Implicit',
+  },
+  taxonomyTagActionInstructionsAriaLabel: {
+    id: 'course-authoring.content-tags-drawer.tags-dropdown-selector.tag-action-instructions.aria.label',
+    defaultMessage: '{tagState} Tag: {tag}. Use the arrow keys to move among the tags in this taxonomy. Press space to select a tag.',
+  },
+  taxonomyTagActionsAriaLabel: {
+    id: 'course-authoring.content-tags-drawer.tags-dropdown-selector.tag-actions.aria.label',
+    defaultMessage: '{tagState} Tag: {tag}',
   },
   taxonomyTagsAriaLabel: {
     id: 'course-authoring.content-tags-drawer.content-tags-collapsible.selectable-box.selection.aria.label',

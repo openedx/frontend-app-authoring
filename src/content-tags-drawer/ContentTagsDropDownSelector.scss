@@ -32,3 +32,8 @@
 .pgn__selectable_box-active.taxonomy-tags-selectable-box {
   outline: none !important;
 }
+
+.dropdown-selector-tag-actions:focus-visible {
+  outline: solid 2px $info-900;
+  border-radius: 4px;
+}
