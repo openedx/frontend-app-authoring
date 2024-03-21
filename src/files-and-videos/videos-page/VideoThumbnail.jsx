@@ -49,7 +49,7 @@ const VideoThumbnail = ({
   const showThumbnail = allowThumbnailUpload && thumbnail && isUploaded;
 
   return (
-    <div data-testid={`video-thumbnail-${id}`} className="video-thumbnail row justify-content-center align-itmes-center">
+    <div className="video-thumbnail row justify-content-center align-itmes-center">
       {allowThumbnailUpload && showThumbnail && <div className="thumbnail-overlay" />}
       {showThumbnail && !thumbnailError && pageLoadStatus === RequestStatus.SUCCESSFUL ? (
         <>
@@ -62,7 +62,7 @@ const VideoThumbnail = ({
               onError={() => setThumbnailError(true)}
             />
           </div>
-          <div className="add-thumbnail">
+          <div className="add-thumbnail" data-testid={`video-thumbnail-${id}`}>
             <Button
               variant="primary"
               size="sm"
