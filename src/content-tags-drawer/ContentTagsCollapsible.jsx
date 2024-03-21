@@ -58,6 +58,7 @@ const CustomMenu = (props) => {
           className="taxonomy-tags-selectable-box-set"
           onChange={handleSelectableBoxChange}
           value={checkedTags}
+          tabIndex="-1"
         >
           <ContentTagsDropDownSelector
             key={`selector-${taxonomyId}`}
@@ -133,7 +134,7 @@ const CustomIndicatorsContainer = (props) => {
           <Button
             variant="dark"
             size="sm"
-            className="mt-2 mb-2 rounded-0"
+            className="mt-2 mb-2 rounded-0 inline-add-button"
             onClick={handleCommitStagedTags}
             onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); }}
             ref={selectInlineAddRef}
@@ -353,7 +354,9 @@ const ContentTagsCollapsible = ({
 
   // Handles logic to close the select menu when clicking outside
   const handleOnBlur = React.useCallback((event) => {
-    if (!event.relatedTarget || !event.relatedTarget.className?.includes('dropdown-selector')) {
+    // Check if a target we are focusing to is an element in our select menu, if not close it
+    const menuClasses = ['dropdown-selector', 'inline-add-button', 'cancel-add-tags-button'];
+    if (!event.relatedTarget || !menuClasses.some(cls => event.relatedTarget.className?.includes(cls))) {
       setSelectMenuIsOpen(false);
     }
   }, [setSelectMenuIsOpen]);
@@ -378,7 +381,7 @@ const ContentTagsCollapsible = ({
                   color: state.isFocused ? 'white' : base.color,
                 }),
               }}
-              menuIsOpen={selectMenuIsOpen} // FIX: The menu currently does not close when clicking outside
+              menuIsOpen={selectMenuIsOpen}
               onFocus={onSelectMenuFocus}
               onKeyDown={handleSelectOnKeyDown}
               ref={/** @type {React.RefObject} */(selectRef)}
