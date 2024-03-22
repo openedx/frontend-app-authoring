@@ -7,7 +7,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { StudioHeader } from '@edx/frontend-component-header';
 import { getContentMenuItems, getSettingMenuItems, getToolsMenuItems } from './utils';
 import messages from './messages';
-import SearchModal from './SearchModal';
+import SearchModal from '../search-modal/SearchModal';
 import { useKeyHandler } from '../hooks';
 
 const Header = ({
