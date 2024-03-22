@@ -41,6 +41,7 @@ import messages from './messages';
 import CustomPagesProvider from './CustomPagesProvider';
 import EditModal from './EditModal';
 import getPageHeadTitle from '../generic/utils';
+import { getPagePath } from '../utils';
 
 const CustomPages = ({
   courseId,
@@ -121,7 +122,7 @@ const CustomPages = ({
             ariaLabel="Custom Page breadcrumbs"
             links={[
               { label: 'Content', href: `${config.STUDIO_BASE_URL}/course/${courseId}` },
-              { label: 'Pages and Resources', href: `/course/${courseId}/pages-and-resources` },
+              { label: 'Pages and Resources', href: getPagePath(courseId, 'true', 'tabs') },
             ]}
           />
         </div>
