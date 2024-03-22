@@ -26,6 +26,7 @@ import { useStudioHome } from './hooks';
 import AlertMessage from '../generic/alert-message';
 
 const StudioHome = ({ intl }) => {
+  const isPaginationCoursesEnabled = getConfig().ENABLE_HOME_PAGE_COURSE_API_V2 === 'true';
   const {
     isLoadingPage,
     isFailedLoadingPage,
@@ -39,7 +40,7 @@ const StudioHome = ({ intl }) => {
     hasAbilityToCreateNewCourse,
     setShowNewCourseContainer,
     dispatch,
-  } = useStudioHome();
+  } = useStudioHome(isPaginationCoursesEnabled);
 
   const {
     userIsActive,
@@ -48,8 +49,6 @@ const StudioHome = ({ intl }) => {
     libraryAuthoringMfeUrl,
     redirectToLibraryAuthoringMfe,
   } = studioHomeData;
-
-  const isPaginationCoursesEnabled = getConfig().ENABLE_HOME_PAGE_COURSE_API_V2 === 'true';
 
   function getHeaderButtons() {
     const headerButtons = [];

@@ -14,7 +14,7 @@ import {
 } from './data/selectors';
 import { updateSavingStatuses } from './data/slice';
 
-const useStudioHome = () => {
+const useStudioHome = (isPaginated = false) => {
   const location = useLocation();
   const dispatch = useDispatch();
   const studioHomeData = useSelector(getStudioHomeData);
@@ -31,13 +31,17 @@ const useStudioHome = () => {
   const isFailedLoadingPage = studioHomeLoadingStatus === RequestStatus.FAILED;
 
   useEffect(() => {
-    dispatch(fetchStudioHomeData(location.search ?? ''));
-    setShowNewCourseContainer(false);
+    if (!isPaginated) {
+      dispatch(fetchStudioHomeData(location.search ?? ''));
+      setShowNewCourseContainer(false);
+    }
   }, [location.search]);
 
   useEffect(() => {
-    const { currentPage } = studioHomeCoursesParams;
-    dispatch(fetchStudioHomeData(location.search ?? '', false, { page: currentPage }, true));
+    if (isPaginated) {
+      const { currentPage } = studioHomeCoursesParams;
+      dispatch(fetchStudioHomeData(location.search ?? '', false, { page: currentPage }, true));
+    }
   }, [studioHomeCoursesParams.currentPage]);
 
   useEffect(() => {
