@@ -7,7 +7,7 @@ const defineMessages = /** @type {<T>(x: T) => x} */(_defineMessages);
 const messages = defineMessages({
   'courseSearch.title': {
     id: 'courseSearch.title',
-    defaultMessage: 'Search Course(s)',
+    defaultMessage: 'Search',
     description: 'Title for the course search dialog',
   },
 });
