@@ -2,6 +2,11 @@
 // @ts-check
 import React from 'react';
 import {
+  Dropdown,
+  ModalDialog,
+} from '@openedx/paragon';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import {
   HierarchicalMenu,
   InfiniteHits,
   InstantSearch,
@@ -10,19 +15,39 @@ import {
   Stats,
 } from 'react-instantsearch-dom';
 import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
-import 'instantsearch.css/themes/algolia-min.css';
 
 import SearchResult from './SearchResult';
+import messages from './messages';
 
-/** @type {React.FC<{url: string, apiKey: string, indexName: string}>} */
+/** @type {React.FC<{courseId: string, url: string, apiKey: string, indexName: string}>} */
 const SearchUI = (props) => {
   const { searchClient } = React.useMemo(() => instantMeiliSearch(props.url, props.apiKey), [props.url, props.apiKey]);
 
+  const [_searchThisCourseEnabled, setSearchThisCourse] = React.useState(!!props.courseId);
+  const switchToThisCourse = React.useCallback(() => setSearchThisCourse(true), []);
+  const switchToAllCourses = React.useCallback(() => setSearchThisCourse(false), []);
+  const searchThisCourse = props.courseId && _searchThisCourseEnabled;
+
   return (
-    <div className="ais-InstantSearch">
-      <InstantSearch indexName={props.indexName} searchClient={searchClient}>
+    <InstantSearch indexName={props.indexName} searchClient={searchClient}>
+      {/* We need to override z-index here or the <Dropdown.Menu> appears behind the <ModalDialog.Body> */}
+      <ModalDialog.Header style={{ zIndex: 10 }}>
+        <ModalDialog.Title><FormattedMessage {...messages['courseSearch.title']} /></ModalDialog.Title>
+        <div className="d-flex mt-3">
+          <SearchBox className="flex-grow-1" />
+          <Dropdown>
+            <Dropdown.Toggle id="search-scope-toggle">
+              {searchThisCourse ? 'This course' : 'All courses'}
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item href="#" onClick={switchToThisCourse} active={searchThisCourse} disabled={!props.courseId}>This course</Dropdown.Item>
+              <Dropdown.Item href="#" onClick={switchToAllCourses} active={!searchThisCourse}>All courses</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
+      </ModalDialog.Header>
+      <ModalDialog.Body>
         <Stats />
-        <SearchBox />
         <strong>Refine by component type:</strong>
         <RefinementList attribute="block_type" />
         <strong>Refine by tag:</strong>
@@ -36,8 +61,8 @@ const SearchUI = (props) => {
           ]}
         />
         <InfiniteHits hitComponent={SearchResult} />
-      </InstantSearch>
-    </div>
+      </ModalDialog.Body>
+    </InstantSearch>
   );
 };
 

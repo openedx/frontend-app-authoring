@@ -47,14 +47,19 @@ const SearchModal = ({ courseId, ...props }) => {
   });
 
   const title = intl.formatMessage(messages['courseSearch.title']);
-  let body;
+  let modalContents;
   if (searchEndpointData) {
-    body = <SearchUI {...searchEndpointData} />;
-  } else if (isLoading) {
-    body = <LoadingSpinner />;
+    modalContents = <SearchUI {...searchEndpointData} courseId={courseId} />;
   } else {
-    // @ts-ignore
-    body = <ErrorAlert isError>{error?.message ?? String(error)}</ErrorAlert>;
+    modalContents = (
+      <>
+        <ModalDialog.Header><ModalDialog.Title>{title}</ModalDialog.Title></ModalDialog.Header>
+        <ModalDialog.Body>
+          {/* @ts-ignore */}
+          {isLoading ? <LoadingSpinner /> : <ErrorAlert isError>{error?.message ?? String(error)}</ErrorAlert>}
+        </ModalDialog.Body>
+      </>
+    );
   }
 
   return (
@@ -66,8 +71,7 @@ const SearchModal = ({ courseId, ...props }) => {
       hasCloseButton
       isFullscreenOnMobile
     >
-      <ModalDialog.Header><ModalDialog.Title>{title}</ModalDialog.Title></ModalDialog.Header>
-      <ModalDialog.Body>{body}</ModalDialog.Body>
+      {modalContents}
     </ModalDialog>
   );
 };
