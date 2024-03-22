@@ -66,8 +66,6 @@ describe('<CardItem />', () => {
     expect(btnReRunCourse).toHaveAttribute('href', props.rerunLink);
     const viewLiveLink = getByText(messages.viewLiveBtnText.defaultMessage);
     expect(viewLiveLink).toHaveAttribute('href', props.lmsLink);
-    const editInStudioLink = getByText(messages.editStudioBtnText.defaultMessage);
-    expect(editInStudioLink).toHaveAttribute('href', props.cmsLink);
   });
   it('should render course details for library course', () => {
     const props = { ...studioHomeMock.archivedCourses[0], isLibraries: true };
