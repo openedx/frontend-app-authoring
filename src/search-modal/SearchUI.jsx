@@ -17,6 +17,7 @@ import {
 import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
 
 import SearchResult from './SearchResult';
+import SearchFilterWidget from './SearchFilterWidget';
 import messages from './messages';
 
 /** @type {React.FC<{courseId: string, url: string, apiKey: string, indexName: string}>} */
@@ -45,21 +46,28 @@ const SearchUI = (props) => {
             </Dropdown.Menu>
           </Dropdown>
         </div>
+        <div className="d-flex mt-3 align-items-center">
+          <SearchFilterWidget appliedFilters={[]} label="Type">
+            <strong>Refine by component type:</strong>
+            <RefinementList attribute="block_type" />
+          </SearchFilterWidget>
+          <SearchFilterWidget appliedFilters={[]} label="Tags">
+            <strong>Refine by tag:</strong>
+            <HierarchicalMenu
+              attributes={[
+                'tags.taxonomy',
+                'tags.level0',
+                'tags.level1',
+                'tags.level2',
+                'tags.level3',
+              ]}
+            />
+          </SearchFilterWidget>
+          <div className="flex-grow-1" />
+          <div className="text-muted x-small align-middle"><Stats /></div>
+        </div>
       </ModalDialog.Header>
       <ModalDialog.Body>
-        <Stats />
-        <strong>Refine by component type:</strong>
-        <RefinementList attribute="block_type" />
-        <strong>Refine by tag:</strong>
-        <HierarchicalMenu
-          attributes={[
-            'tags.taxonomy',
-            'tags.level0',
-            'tags.level1',
-            'tags.level2',
-            'tags.level3',
-          ]}
-        />
         <InfiniteHits hitComponent={SearchResult} />
       </ModalDialog.Body>
     </InstantSearch>

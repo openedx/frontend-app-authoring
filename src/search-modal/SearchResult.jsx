@@ -11,19 +11,19 @@ import {
  *   breadcrumbs: {display_name: string}[]}>,
  * }>} */
 const SearchResult = ({ hit }) => (
-  <div key={hit.id}>
-    <div className="hit-name">
-      <strong><Highlight attribute="display_name" hit={hit} /></strong>
+  <div key={hit.id} className="my-2 pb-2 border-bottom">
+    <div className="hit-name small">
+      <strong><Highlight attribute="display_name" hit={hit} /></strong>{' '}
+      (<Highlight attribute="block_type" hit={hit} />)
     </div>
-    <p className="hit-block_type"><em><Highlight attribute="block_type" hit={hit} /></em></p>
-    <div className="hit-description">
+    <div className="hit-description x-small text-truncate">
       <Highlight attribute="content.html_content" hit={hit} />
       <Highlight attribute="content.capa_content" hit={hit} />
     </div>
-    <div style={{ fontSize: '8px' }}>
+    <div className="text-muted x-small">
       {hit.breadcrumbs.map((bc, i) => (
         // eslint-disable-next-line react/no-array-index-key
-        <span key={i}>{bc.display_name} {i !== hit.breadcrumbs.length - 1 ? '>' : ''} </span>
+        <span key={i}>{bc.display_name} {i !== hit.breadcrumbs.length - 1 ? '/' : ''} </span>
       ))}
     </div>
   </div>
