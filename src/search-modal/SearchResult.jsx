@@ -4,10 +4,14 @@ import React from 'react';
 import {
   Highlight,
 
-} from 'react-instantsearch-dom';
+} from 'react-instantsearch';
 
-/** @type {React.FC<{hit: import('react-instantsearch-core').Hit<{
+/** @type {React.FC<{hit: import('instantsearch.js').Hit<{
  *   id: string,
+ *   display_name: string,
+ *   block_type: string,
+ *   'content.html_content'?: string,
+ *   'content.capa_content'?: string,
  *   breadcrumbs: {display_name: string}[]}>,
  * }>} */
 const SearchResult = ({ hit }) => (

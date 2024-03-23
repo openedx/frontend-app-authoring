@@ -13,7 +13,7 @@ import {
   RefinementList,
   SearchBox,
   Stats,
-} from 'react-instantsearch-dom';
+} from 'react-instantsearch';
 import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
 
 import SearchResult from './SearchResult';
