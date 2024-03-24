@@ -7,6 +7,7 @@ import {
 } from '@openedx/paragon';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
+  Configure,
   HierarchicalMenu,
   InfiniteHits,
   InstantSearch,
@@ -31,6 +32,8 @@ const SearchUI = (props) => {
 
   return (
     <InstantSearch indexName={props.indexName} searchClient={searchClient}>
+      {/* Add in a filter for the current course, if relevant */}
+      <Configure filters={searchThisCourse ? `context_key = "${props.courseId}"` : undefined} />
       {/* We need to override z-index here or the <Dropdown.Menu> appears behind the <ModalDialog.Body> */}
       <ModalDialog.Header style={{ zIndex: 10 }}>
         <ModalDialog.Title><FormattedMessage {...messages['courseSearch.title']} /></ModalDialog.Title>
