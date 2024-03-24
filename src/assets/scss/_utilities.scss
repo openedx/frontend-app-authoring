@@ -9,3 +9,8 @@
 .mw-300px {
   max-width: 300px;
 }
+
+// Simulate Tailwind-style arbitrary value classNames. We have to hard code this one though.
+.h-\[calc\(100vh-200px\)\] {
+  height: calc(100vh - 200px);
+}

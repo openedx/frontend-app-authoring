@@ -67,7 +67,7 @@ const SearchUI = (props) => {
           <div className="text-muted x-small align-middle"><Stats /></div>
         </div>
       </ModalDialog.Header>
-      <ModalDialog.Body>
+      <ModalDialog.Body className="h-[calc(100vh-200px)]">
         <InfiniteHits hitComponent={SearchResult} />
       </ModalDialog.Body>
     </InstantSearch>
