@@ -11,7 +11,6 @@ import {
   HierarchicalMenu,
   InfiniteHits,
   InstantSearch,
-  RefinementList,
   Stats,
 } from 'react-instantsearch';
 import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
@@ -20,6 +19,7 @@ import SearchResult from './SearchResult';
 import SearchFilterWidget from './SearchFilterWidget';
 import messages from './messages';
 import SearchKeywordsField from './SearchKeywordsField';
+import FilterByBlockType from './FilterByBlockType';
 
 /** @type {React.FC<{courseId: string, url: string, apiKey: string, indexName: string}>} */
 const SearchUI = (props) => {
@@ -50,10 +50,7 @@ const SearchUI = (props) => {
           </Dropdown>
         </div>
         <div className="d-flex mt-3 align-items-center">
-          <SearchFilterWidget appliedFilters={[]} label="Type">
-            <strong>Refine by component type:</strong>
-            <RefinementList attribute="block_type" />
-          </SearchFilterWidget>
+          <FilterByBlockType />
           <SearchFilterWidget appliedFilters={[]} label="Tags">
             <strong>Refine by tag:</strong>
             <HierarchicalMenu

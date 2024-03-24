@@ -1,13 +1,15 @@
 /* eslint-disable react/prop-types */
 // @ts-check
 import React from 'react';
+import { ArrowDropDown } from '@openedx/paragon/icons';
 import {
+  Badge,
   Button,
   ModalPopup,
   useToggle,
 } from '@openedx/paragon';
 
-/** @type {React.FC<{appliedFilters: string[], label: React.ReactNode, children: React.ReactNode}>} */
+/** @type {React.FC<{appliedFilters: {label: string}[], label: React.ReactNode, children: React.ReactNode}>} */
 const SearchFilterWidget = (props) => {
   const [isOpen, open, close] = useToggle(false);
   const [target, setTarget] = React.useState(null);
@@ -17,10 +19,13 @@ const SearchFilterWidget = (props) => {
       <div className="d-flex mr-3">
         <Button
           ref={setTarget}
-          variant="outline-primary"
+          variant="light"
           onClick={open}
+          iconAfter={ArrowDropDown}
         >
           {props.label}
+          {props.appliedFilters.length >= 1 ? <>: {props.appliedFilters[0].label}</> : null}
+          {props.appliedFilters.length > 1 ? <>,&nbsp;<Badge variant="info">+{props.appliedFilters.length - 1}</Badge></> : null}
         </Button>
       </div>
       <ModalPopup
@@ -29,7 +34,7 @@ const SearchFilterWidget = (props) => {
         onClose={close}
       >
         <div
-          className="bg-white p-3 rounded shadow"
+          className="bg-white rounded shadow"
           style={{ textAlign: 'start' }}
         >
           {props.children}

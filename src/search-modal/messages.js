@@ -15,6 +15,11 @@ const messages = defineMessages({
     defaultMessage: 'Search',
     description: 'Placeholder text shown in the keyword input field when the user has not yet entered a keyword',
   },
+  'courseSearch.showMore': {
+    id: 'courseSearch.showMore',
+    defaultMessage: 'Show more',
+    description: 'Show more tags / filter options',
+  },
 });
 
 export default messages;
