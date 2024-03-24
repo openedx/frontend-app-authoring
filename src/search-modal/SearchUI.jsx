@@ -11,7 +11,6 @@ import {
   InfiniteHits,
   InstantSearch,
   RefinementList,
-  SearchBox,
   Stats,
 } from 'react-instantsearch';
 import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
@@ -19,6 +18,7 @@ import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
 import SearchResult from './SearchResult';
 import SearchFilterWidget from './SearchFilterWidget';
 import messages from './messages';
+import SearchKeywordsField from './SearchKeywordsField';
 
 /** @type {React.FC<{courseId: string, url: string, apiKey: string, indexName: string}>} */
 const SearchUI = (props) => {
@@ -35,7 +35,7 @@ const SearchUI = (props) => {
       <ModalDialog.Header style={{ zIndex: 10 }}>
         <ModalDialog.Title><FormattedMessage {...messages['courseSearch.title']} /></ModalDialog.Title>
         <div className="d-flex mt-3">
-          <SearchBox className="flex-grow-1" />
+          <SearchKeywordsField className="flex-grow-1 mr-1" />
           <Dropdown>
             <Dropdown.Toggle id="search-scope-toggle">
               {searchThisCourse ? 'This course' : 'All courses'}
