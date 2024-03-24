@@ -9,7 +9,19 @@ import {
   useToggle,
 } from '@openedx/paragon';
 
-/** @type {React.FC<{appliedFilters: {label: string}[], label: React.ReactNode, children: React.ReactNode}>} */
+/**
+ * A button that represents a filter on the search.
+ * If the filter is active, the button displays the currently applied values.
+ * So when no filter is active it may look like:
+ *  [ Type ▼ ]
+ * Or when a filter is active and limited to two values, it may look like:
+ *  [ Type: HTML, +1 ▼ ]
+ *
+ * When clicked, the button will display a dropdown menu containing this
+ * element's `children`. So use this to wrap a <RefinementList> etc.
+ *
+ * @type {React.FC<{appliedFilters: {label: string}[], label: React.ReactNode, children: React.ReactNode}>}
+ */
 const SearchFilterWidget = (props) => {
   const [isOpen, open, close] = useToggle(false);
   const [target, setTarget] = React.useState(null);
