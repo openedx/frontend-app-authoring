@@ -69,6 +69,8 @@ const SearchModal = ({ courseId, ...props }) => {
       isOpen={props.isOpen}
       onClose={props.onClose}
       hasCloseButton
+      // isOverflowVisible is required or else the 'This Course' / 'All Course' toggle menu is cut off
+      isOverflowVisible
       isFullscreenOnMobile
     >
       {modalContents}

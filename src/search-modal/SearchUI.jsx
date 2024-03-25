@@ -2,9 +2,11 @@
 // @ts-check
 import React from 'react';
 import {
-  Dropdown,
+  MenuItem,
   ModalDialog,
+  SelectMenu,
 } from '@openedx/paragon';
+import { Check } from '@openedx/paragon/icons';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   Configure,
@@ -46,15 +48,24 @@ const SearchUI = (props) => {
         <ModalDialog.Title><FormattedMessage {...messages['courseSearch.title']} /></ModalDialog.Title>
         <div className="d-flex mt-3">
           <SearchKeywordsField className="flex-grow-1 mr-1" />
-          <Dropdown>
-            <Dropdown.Toggle id="search-scope-toggle">
-              {searchThisCourse ? 'This course' : 'All courses'}
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              <Dropdown.Item href="#" onClick={switchToThisCourse} active={searchThisCourse} disabled={!props.courseId}>This course</Dropdown.Item>
-              <Dropdown.Item href="#" onClick={switchToAllCourses} active={!searchThisCourse}>All courses</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
+          {/* Give this toggle button a fixed width so it doesn't change size when the selected option changes */}
+          <SelectMenu variant="primary" className="with-min-toggle-width">
+            <MenuItem
+              onClick={switchToThisCourse}
+              defaultSelected={searchThisCourse}
+              iconAfter={searchThisCourse ? Check : undefined}
+              disabled={!props.courseId}
+            >
+              This course
+            </MenuItem>
+            <MenuItem
+              onClick={switchToAllCourses}
+              defaultSelected={!searchThisCourse}
+              iconAfter={searchThisCourse ? undefined : Check}
+            >
+              All courses
+            </MenuItem>
+          </SelectMenu>
         </div>
         <div className="d-flex mt-3 align-items-center">
           <FilterByBlockType />

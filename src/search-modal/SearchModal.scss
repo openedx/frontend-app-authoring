@@ -1,0 +1,12 @@
+
+// Simulate Tailwind-style arbitrary value classNames. We have to hard code this one though.
+.h-\[calc\(100vh-200px\)\] {
+  height: calc(100vh - 200px);
+}
+
+// Helper to set a minimum width for the This Course / All Courses toggle
+.pgn__menu-select.with-min-toggle-width {
+  & > button {
+    min-width: 155px;
+  }
+}
