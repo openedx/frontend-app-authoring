@@ -32,6 +32,7 @@ const SearchFilterWidget = (props) => {
         <Button
           ref={setTarget}
           variant="light"
+          size="sm"
           onClick={open}
           iconAfter={ArrowDropDown}
         >
