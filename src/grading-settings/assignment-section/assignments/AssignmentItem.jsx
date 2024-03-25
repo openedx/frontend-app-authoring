@@ -42,14 +42,15 @@ const AssignmentItem = ({
         {descriptions}
       </Form.Control.Feedback>
       {errorEffort && (
-        <Form.Control.Feedback className="feedback-error" type="invalid">
-          {errorMsg}
-        </Form.Control.Feedback>
-      )}
-      {gradeField?.dropCount !== 0 && gradeField?.dropCount > gradeField?.minCount && (
-        <Form.Control.Feedback className="feedback-error" type="invalid">
-          {secondErrorMsg}
-        </Form.Control.Feedback>
+        gradeField?.dropCount ? (
+          <Form.Control.Feedback className="feedback-error" type="invalid">
+            {gradeField?.dropCount !== 0 && gradeField?.dropCount >= gradeField?.minCount ? secondErrorMsg : errorMsg}
+          </Form.Control.Feedback>
+        ) : (
+          <Form.Control.Feedback className="feedback-error" type="invalid">
+            {errorMsg}
+          </Form.Control.Feedback>
+        )
       )}
     </Form.Group>
   </li>
