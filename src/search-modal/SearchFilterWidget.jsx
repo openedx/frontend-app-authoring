@@ -20,7 +20,7 @@ import {
  * When clicked, the button will display a dropdown menu containing this
  * element's `children`. So use this to wrap a <RefinementList> etc.
  *
- * @type {React.FC<{appliedFilters: {label: string}[], label: React.ReactNode, children: React.ReactNode}>}
+ * @type {React.FC<{appliedFilters: {label: React.ReactNode}[], label: React.ReactNode, children: React.ReactNode}>}
  */
 const SearchFilterWidget = (props) => {
   const [isOpen, open, close] = useToggle(false);

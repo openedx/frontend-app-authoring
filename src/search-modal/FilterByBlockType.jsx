@@ -42,7 +42,7 @@ const FilterByBlockType = () => {
 
   return (
     <SearchFilterWidget
-      appliedFilters={appliedItems}
+      appliedFilters={appliedItems.map(item => ({ label: <BlockTypeLabel type={item.value} /> }))}
       label={<FormattedMessage {...messages['courseSearch.blockTypeFilter']} />}
     >
       <Form.Group>
