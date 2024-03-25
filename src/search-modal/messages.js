@@ -5,6 +5,16 @@ import { defineMessages as _defineMessages } from '@edx/frontend-platform/i18n';
 const defineMessages = /** @type {<T>(x: T) => x} */(_defineMessages);
 
 const messages = defineMessages({
+  'courseSearch.blockTypeFilter': {
+    id: 'courseSearch.blockTypeFilter',
+    defaultMessage: 'Type',
+    description: 'Label for the filter that allows limiting results to a specific component type',
+  },
+  'courseSearch.blockTagsFilter': {
+    id: 'courseSearch.blockTagsFilter',
+    defaultMessage: 'Tags',
+    description: 'Label for the filter that allows finding components with specific tags',
+  },
   'courseSearch.title': {
     id: 'courseSearch.title',
     defaultMessage: 'Search',

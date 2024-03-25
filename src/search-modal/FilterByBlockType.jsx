@@ -32,7 +32,10 @@ const FilterByBlockType = () => {
   }, [refine]);
 
   return (
-    <SearchFilterWidget appliedFilters={appliedItems} label="Type">
+    <SearchFilterWidget
+      appliedFilters={appliedItems}
+      label={<FormattedMessage {...messages['courseSearch.blockTypeFilter']} />}
+    >
       <Form.Group>
         <Form.CheckboxSet
           name="block-type-filter"
