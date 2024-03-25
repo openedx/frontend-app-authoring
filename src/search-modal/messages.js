@@ -15,6 +15,11 @@ const messages = defineMessages({
     defaultMessage: 'Tags',
     description: 'Label for the filter that allows finding components with specific tags',
   },
+  'courseSearch.clearFilters': {
+    id: 'courseSearch.clearFilters',
+    defaultMessage: 'Clear Filters',
+    description: 'Label for the button that removes all applied search filters',
+  },
   'courseSearch.title': {
     id: 'courseSearch.title',
     defaultMessage: 'Search',

@@ -15,11 +15,12 @@ import {
 } from 'react-instantsearch';
 import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
 
+import ClearFiltersButton from './ClearFiltersButton';
 import SearchResult from './SearchResult';
 import SearchFilterWidget from './SearchFilterWidget';
-import messages from './messages';
 import SearchKeywordsField from './SearchKeywordsField';
 import FilterByBlockType from './FilterByBlockType';
+import messages from './messages';
 
 /** @type {React.FC<{courseId: string, url: string, apiKey: string, indexName: string}>} */
 const SearchUI = (props) => {
@@ -31,7 +32,12 @@ const SearchUI = (props) => {
   const searchThisCourse = props.courseId && _searchThisCourseEnabled;
 
   return (
-    <InstantSearch indexName={props.indexName} searchClient={searchClient}>
+    <InstantSearch
+      indexName={props.indexName}
+      searchClient={searchClient}
+      // We enable this option as recommended by the documentation, for forwards compatibility with the next version:
+      future={{ preserveSharedStateOnUnmount: true }}
+    >
       {/* Add in a filter for the current course, if relevant */}
       <Configure filters={searchThisCourse ? `context_key = "${props.courseId}"` : undefined} />
       {/* We need to override z-index here or the <Dropdown.Menu> appears behind the <ModalDialog.Body>
@@ -66,6 +72,7 @@ const SearchUI = (props) => {
               ]}
             />
           </SearchFilterWidget>
+          <ClearFiltersButton />
           <div className="flex-grow-1" />
           <div className="text-muted x-small align-middle"><Stats /></div>
         </div>
