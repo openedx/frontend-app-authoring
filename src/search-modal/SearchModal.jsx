@@ -69,8 +69,8 @@ const SearchModal = ({ courseId, ...props }) => {
       isOpen={props.isOpen}
       onClose={props.onClose}
       hasCloseButton
-      // isOverflowVisible is required or else the 'This Course' / 'All Course' toggle menu is cut off
-      isOverflowVisible
+      // We need isOverflowVisible={false} - see the .scss file in this folder
+      isOverflowVisible={false}
       isFullscreenOnMobile
       className="courseware-search-modal"
     >

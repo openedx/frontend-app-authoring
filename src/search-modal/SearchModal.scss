@@ -12,6 +12,11 @@
 }
 
 .courseware-search-modal {
+  // Fix so the 'This course' / 'All courses' dropdown is not cut off on the right hand side,
+  // But still preserve correct scrolling behavior for the results list (vertical)
+  // (If we set 'isOverflowVisible: true', the scrolling of the results list is messed up)
+  overflow: visible;
+
   .pgn__menu-item {
     // Fix a bug in Paragon menu dropdowns: the checkbox currently shrinks if the text is too long.
     // https://github.com/openedx/paragon/pull/3019
