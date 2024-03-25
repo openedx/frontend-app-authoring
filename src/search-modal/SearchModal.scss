@@ -10,3 +10,19 @@
     min-width: 155px;
   }
 }
+
+.courseware-search-modal {
+  .pgn__menu-item {
+    // Fix a bug in Paragon menu dropdowns: the checkbox currently shrinks if the text is too long.
+    // https://github.com/openedx/paragon/pull/3019
+    input[type=checkbox] {
+      flex-grow: 0;
+      flex-shrink: 0;
+    }
+    // Fix a bug in Paragon menu dropdowns: very long text is not truncated with an ellipsis
+    // https://github.com/openedx/paragon/pull/3019
+    > div {
+      overflow: hidden;
+    }
+  }
+}

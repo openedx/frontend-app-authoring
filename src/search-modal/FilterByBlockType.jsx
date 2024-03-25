@@ -14,6 +14,7 @@ import {
 } from 'react-instantsearch';
 import SearchFilterWidget from './SearchFilterWidget';
 import messages from './messages';
+import BlockTypeLabel from './BlockTypeLabel';
 
 /** @type {React.FC} */
 const FilterByBlockType = () => {
@@ -51,7 +52,7 @@ const FilterByBlockType = () => {
                   checked={item.isRefined}
                   onChange={handleCheckboxChange}
                 >
-                  {item.label}{' '}
+                  <BlockTypeLabel type={item.value} />{' '}
                   <Badge variant="light" pill>{item.count}</Badge>
                 </MenuItem>
               ))

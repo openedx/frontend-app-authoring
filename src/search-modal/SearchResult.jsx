@@ -5,6 +5,7 @@ import {
   Highlight,
 
 } from 'react-instantsearch';
+import BlockTypeLabel from './BlockTypeLabel';
 
 /** @type {React.FC<{hit: import('instantsearch.js').Hit<{
  *   id: string,
@@ -18,7 +19,7 @@ const SearchResult = ({ hit }) => (
   <div key={hit.id} className="my-2 pb-2 border-bottom">
     <div className="hit-name small">
       <strong><Highlight attribute="display_name" hit={hit} /></strong>{' '}
-      (<Highlight attribute="block_type" hit={hit} />)
+      (<BlockTypeLabel type={hit.block_type} />)
     </div>
     <div className="hit-description x-small text-truncate">
       <Highlight attribute="content.html_content" hit={hit} />

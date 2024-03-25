@@ -72,6 +72,7 @@ const SearchModal = ({ courseId, ...props }) => {
       // isOverflowVisible is required or else the 'This Course' / 'All Course' toggle menu is cut off
       isOverflowVisible
       isFullscreenOnMobile
+      className="courseware-search-modal"
     >
       {modalContents}
     </ModalDialog>
