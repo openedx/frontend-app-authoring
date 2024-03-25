@@ -32,7 +32,8 @@ const Transcript = ({
   }, [transcript]);
 
   const input = useFileInput({
-    onAddFile: (file) => {
+    onAddFile: (files) => {
+      const [file] = files;
       handleTranscript({
         file,
         language,
