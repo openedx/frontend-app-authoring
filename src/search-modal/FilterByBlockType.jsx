@@ -16,6 +16,14 @@ import SearchFilterWidget from './SearchFilterWidget';
 import messages from './messages';
 import BlockTypeLabel from './BlockTypeLabel';
 
+/**
+ * Helper function to keep the list of component types sorted by popularity,
+ * so they don't move around the list when one or more gets selected.
+ * (the default sort puts checked items before others)
+ * @type {<T extends {count: number}>(items: T[]) => T[]}
+ */
+const transformItems = (items) => items.slice().sort((a, b) => b.count - a.count);
+
 /** @type {React.FC} */
 const FilterByBlockType = () => {
   const {
@@ -24,7 +32,7 @@ const FilterByBlockType = () => {
     canToggleShowMore,
     isShowingMore,
     toggleShowMore,
-  } = useRefinementList({ attribute: 'block_type' });
+  } = useRefinementList({ attribute: 'block_type', transformItems });
 
   const appliedItems = items.filter(item => item.isRefined);
 
