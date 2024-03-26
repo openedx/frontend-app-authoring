@@ -10,6 +10,11 @@ const messages = defineMessages({
     defaultMessage: 'Type',
     description: 'Label for the filter that allows limiting results to a specific component type',
   },
+  'courseSearch.blockTypeFilter.empty': {
+    id: 'courseSearch.blockTypeFilter.empty',
+    defaultMessage: 'No matching components',
+    description: 'Label shown when there are no options available to filter by component type',
+  },
   'courseSearch.blockTagsFilter': {
     id: 'courseSearch.blockTagsFilter',
     defaultMessage: 'Tags',

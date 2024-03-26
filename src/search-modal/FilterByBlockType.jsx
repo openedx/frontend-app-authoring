@@ -65,6 +65,12 @@ const FilterByBlockType = () => {
                 </MenuItem>
               ))
             }
+            {
+              // Show a message if there are no options at all to avoid the impression that the dropdown isn't working
+              items.length === 0 ? (
+                <MenuItem disabled><FormattedMessage {...messages['courseSearch.blockTypeFilter.empty']} /></MenuItem>
+              ) : null
+            }
           </Menu>
         </Form.CheckboxSet>
       </Form.Group>
