@@ -8,12 +8,7 @@ import {
 } from '@openedx/paragon';
 import { Check } from '@openedx/paragon/icons';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import {
-  Configure,
-  InfiniteHits,
-  InstantSearch,
-  Stats,
-} from 'react-instantsearch';
+import { Configure, InfiniteHits, InstantSearch } from 'react-instantsearch';
 import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
 
 import ClearFiltersButton from './ClearFiltersButton';
@@ -21,6 +16,7 @@ import SearchResult from './SearchResult';
 import SearchKeywordsField from './SearchKeywordsField';
 import FilterByBlockType from './FilterByBlockType';
 import FilterByTags from './FilterByTags';
+import Stats from './Stats';
 import messages from './messages';
 
 /** @type {React.FC<{courseId: string, url: string, apiKey: string, indexName: string}>} */

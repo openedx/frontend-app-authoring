@@ -85,6 +85,11 @@ const messages = defineMessages({
     defaultMessage: 'Clear Filters',
     description: 'Label for the button that removes all applied search filters',
   },
+  numResults: {
+    id: 'course-authoring.course-search.num-results',
+    defaultMessage: '{numResults, plural, one {# result} other {# results}} found',
+    description: 'This count displays how many matching results were found from the user\'s search',
+  },
   'courseSearch.title': {
     id: 'courseSearch.title',
     defaultMessage: 'Search',
