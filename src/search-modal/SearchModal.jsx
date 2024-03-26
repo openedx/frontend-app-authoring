@@ -14,13 +14,6 @@ import messages from './messages';
 import { LoadingSpinner } from '../generic/Loading';
 import SearchUI from './SearchUI';
 
-// Using TypeScript here is blocked until we have frontend-build 14:
-// interface Props {
-//   courseId: string;
-//   isOpen: boolean;
-//   onClose: () => void;
-// }
-
 /** @type {React.FC<{courseId: string, isOpen: boolean, onClose: () => void}>} */
 const SearchModal = ({ courseId, ...props }) => {
   const intl = useIntl();

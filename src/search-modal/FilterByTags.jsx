@@ -17,6 +17,9 @@ import messages from './messages';
 /** @typedef {import('instantsearch.js/es/connectors/hierarchical-menu/connectHierarchicalMenu').HierarchicalMenuItem} HierarchicalMenuItem */
 
 /**
+ * A button with a dropdown menu to allow filtering the search using tags.
+ * This version is based on Instantsearch's <HierarchichalMenu/> component, so it only allows selecting one tag at a
+ * time. We will replace it with a custom version that allows multi-select.
  * @type {React.FC<{
  *   items: HierarchicalMenuItem[],
  *   refine: (value: string) => void,

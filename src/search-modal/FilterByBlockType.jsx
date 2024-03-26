@@ -16,7 +16,12 @@ import SearchFilterWidget from './SearchFilterWidget';
 import messages from './messages';
 import BlockTypeLabel from './BlockTypeLabel';
 
-/** @type {React.FC} */
+/**
+ * A button with a dropdown that allows filtering the current search by component type (XBlock type)
+ * e.g. Limit results to "Text" (html) and "Problem" (problem) components.
+ * The button displays the first type selected, and a count of how many other types are selected, if more than one.
+ * @type {React.FC<Record<never, never>>}
+ */
 const FilterByBlockType = () => {
   const {
     items,

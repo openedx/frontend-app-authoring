@@ -6,7 +6,10 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { SearchField } from '@openedx/paragon';
 import messages from './messages';
 
-/** @type {React.FC<import('react-instantsearch').UseSearchBoxProps & {className?: string}>} */
+/**
+ * The "main" input field where users type in search keywords. The search happens as they type (no need to press enter).
+ * @type {React.FC<import('react-instantsearch').UseSearchBoxProps & {className?: string}>}
+ */
 const SearchKeywordsField = (props) => {
   const intl = useIntl();
   const { query, refine } = useSearchBox(props);

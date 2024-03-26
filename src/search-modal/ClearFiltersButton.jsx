@@ -6,7 +6,10 @@ import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Button } from '@openedx/paragon';
 import messages from './messages';
 
-/** @type {React.FC} */
+/**
+ * A button that appears when at least one filter is active, and will clear the filters when clicked.
+ * @type {React.FC<Record<never, never>>}
+ */
 const ClearFiltersButton = () => {
   const { refine, canRefine } = useClearRefinements();
   if (canRefine) {

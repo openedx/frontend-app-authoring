@@ -7,14 +7,17 @@ import {
 } from 'react-instantsearch';
 import BlockTypeLabel from './BlockTypeLabel';
 
-/** @type {React.FC<{hit: import('instantsearch.js').Hit<{
+/**
+ * A single search result (row), usually represents an XBlock/Component
+ * @type {React.FC<{hit: import('instantsearch.js').Hit<{
  *   id: string,
  *   display_name: string,
  *   block_type: string,
  *   'content.html_content'?: string,
  *   'content.capa_content'?: string,
  *   breadcrumbs: {display_name: string}[]}>,
- * }>} */
+ * }>}
+ */
 const SearchResult = ({ hit }) => (
   <div key={hit.id} className="my-2 pb-2 border-bottom">
     <div className="hit-name small">
