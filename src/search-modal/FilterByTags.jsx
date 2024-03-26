@@ -32,9 +32,8 @@ const FilterOptions = ({ items, refine, depth = 0 }) => {
     <>
       {
         items.map((item) => (
-          <>
+          <React.Fragment key={item.value}>
             <MenuItem
-              key={item.value}
               as={Form.Checkbox}
               value={item.value}
               checked={item.isRefined}
@@ -45,7 +44,7 @@ const FilterOptions = ({ items, refine, depth = 0 }) => {
               <Badge variant="light" pill>{item.count}</Badge>
             </MenuItem>
             {item.data && <FilterOptions items={item.data} refine={refine} depth={depth + 1} />}
-          </>
+          </React.Fragment>
         ))
       }
     </>
