@@ -9,7 +9,7 @@ const testObj = {};
 
 const defaultAssignments = {
   type: 'Test type',
-  minCount: 1,
+  minCount: 2,
   dropCount: 1,
   shortLabel: 'TT',
   weight: 100,
@@ -59,6 +59,20 @@ describe('<AssignmentSection />', () => {
     fireEvent.change(assignmentShortLabelInput, { target: { value: '123' } });
     expect(testObj.graders[0].shortLabel).toBe('123');
   });
+  it('checking correct assignmentTypeNameTitle value', () => {
+    const { getByTestId } = render(<RootWrapper setGradingData={setGradingData} />);
+    const assignmentShortLabelInput = getByTestId('assignment-type-name-input');
+    expect(assignmentShortLabelInput.value).toBe('Test type');
+    fireEvent.change(assignmentShortLabelInput, { target: { value: 'New Test Type' } });
+    expect(testObj.graders[0].type).toBe('New Test Type');
+  });
+  it('checking invalid assignmentTypeNameTitle value', () => {
+    const { getByText, getByTestId } = render(<RootWrapper setGradingData={setGradingData} />);
+    const assignmentShortLabelInput = getByTestId('assignment-type-name-input');
+    expect(assignmentShortLabelInput.value).toBe('Test type');
+    fireEvent.change(assignmentShortLabelInput, { target: { value: '   ' } });
+    expect(getByText(messages.assignmentTypeNameErrorMessage1.defaultMessage)).toBeInTheDocument();
+  });
   it('checking correct assignment weight of total grade value', async () => {
     const { getByTestId } = render(<RootWrapper setGradingData={setGradingData} />);
     await waitFor(() => {
@@ -72,7 +86,7 @@ describe('<AssignmentSection />', () => {
     const { getByTestId } = render(<RootWrapper setGradingData={setGradingData} />);
     await waitFor(() => {
       const assignmentTotalNumberInput = getByTestId('assignment-minCount-input');
-      expect(assignmentTotalNumberInput.value).toBe('1');
+      expect(assignmentTotalNumberInput.value).toBe('2');
       fireEvent.change(assignmentTotalNumberInput, { target: { value: '123' } });
       expect(testObj.graders[0].minCount).toBe(123);
     });
@@ -82,18 +96,18 @@ describe('<AssignmentSection />', () => {
     await waitFor(() => {
       const assignmentNumberOfDroppableInput = getByTestId('assignment-dropCount-input');
       expect(assignmentNumberOfDroppableInput.value).toBe('1');
-      fireEvent.change(assignmentNumberOfDroppableInput, { target: { value: '2' } });
-      expect(testObj.graders[0].dropCount).toBe(2);
+      fireEvent.change(assignmentNumberOfDroppableInput, { target: { value: '0' } });
+      expect(testObj.graders[0].dropCount).toBe(0);
     });
   });
-  it('checking correct error msg if dropCount have negative number or empty string', async () => {
+  it('checking correct error msg if dropCount is empty or negative integer', async () => {
     const { getByText, getByTestId } = render(<RootWrapper />);
     await waitFor(() => {
       const assignmentNumberOfDroppableInput = getByTestId('assignment-dropCount-input');
       expect(assignmentNumberOfDroppableInput.value).toBe('1');
-      fireEvent.change(assignmentNumberOfDroppableInput, { target: { value: '-2' } });
-      expect(getByText(messages.numberOfDroppableErrorMessage.defaultMessage)).toBeInTheDocument();
       fireEvent.change(assignmentNumberOfDroppableInput, { target: { value: '' } });
+      expect(getByText(messages.numberOfDroppableErrorMessage.defaultMessage)).toBeInTheDocument();
+      fireEvent.change(assignmentNumberOfDroppableInput, { target: { value: '-5' } });
       expect(getByText(messages.numberOfDroppableErrorMessage.defaultMessage)).toBeInTheDocument();
     });
   });
@@ -101,7 +115,7 @@ describe('<AssignmentSection />', () => {
     const { getByText, getByTestId } = render(<RootWrapper />);
     await waitFor(() => {
       const assignmentMinCountInput = getByTestId('assignment-minCount-input');
-      expect(assignmentMinCountInput.value).toBe('1');
+      expect(assignmentMinCountInput.value).toBe('2');
       fireEvent.change(assignmentMinCountInput, { target: { value: '-2' } });
       expect(getByText(messages.totalNumberErrorMessage.defaultMessage)).toBeInTheDocument();
       fireEvent.change(assignmentMinCountInput, { target: { value: '' } });
