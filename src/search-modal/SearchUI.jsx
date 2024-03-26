@@ -10,7 +10,6 @@ import { Check } from '@openedx/paragon/icons';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   Configure,
-  HierarchicalMenu,
   InfiniteHits,
   InstantSearch,
   Stats,
@@ -19,9 +18,9 @@ import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
 
 import ClearFiltersButton from './ClearFiltersButton';
 import SearchResult from './SearchResult';
-import SearchFilterWidget from './SearchFilterWidget';
 import SearchKeywordsField from './SearchKeywordsField';
 import FilterByBlockType from './FilterByBlockType';
+import FilterByTags from './FilterByTags';
 import messages from './messages';
 
 /** @type {React.FC<{courseId: string, url: string, apiKey: string, indexName: string}>} */
@@ -69,20 +68,7 @@ const SearchUI = (props) => {
         </div>
         <div className="d-flex mt-3 align-items-center">
           <FilterByBlockType />
-          <SearchFilterWidget
-            appliedFilters={[]}
-            label={<FormattedMessage {...messages['courseSearch.blockTagsFilter']} />}
-          >
-            <HierarchicalMenu
-              attributes={[
-                'tags.taxonomy',
-                'tags.level0',
-                'tags.level1',
-                'tags.level2',
-                'tags.level3',
-              ]}
-            />
-          </SearchFilterWidget>
+          <FilterByTags />
           <ClearFiltersButton />
           <div className="flex-grow-1" />
           <div className="text-muted x-small align-middle"><Stats /></div>

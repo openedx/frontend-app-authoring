@@ -20,6 +20,11 @@ const messages = defineMessages({
     defaultMessage: 'Tags',
     description: 'Label for the filter that allows finding components with specific tags',
   },
+  'courseSearch.blockTagsFilter.empty': {
+    id: 'courseSearch.blockTagsFilter.empty',
+    defaultMessage: 'No tags in current results',
+    description: 'Label shown when there are no options available to filter by tags',
+  },
   'courseSearch.blockType.annotatable': {
     id: 'courseSearch.blockType.annotatable',
     defaultMessage: 'Annotation',
