@@ -18,7 +18,7 @@ const SearchKeywordsField = (props) => {
       onClear={() => refine('')}
       value={query}
       className={props.className}
-      placeholder={intl.formatMessage(messages['courseSearch.inputPlaceholder'])}
+      placeholder={intl.formatMessage(messages.inputPlaceholder)}
     />
   );
 };

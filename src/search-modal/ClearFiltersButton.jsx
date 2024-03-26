@@ -12,7 +12,7 @@ const ClearFiltersButton = () => {
   if (canRefine) {
     return (
       <Button variant="link" size="sm" onClick={refine}>
-        <FormattedMessage {...messages['courseSearch.clearFilters']} />
+        <FormattedMessage {...messages.clearFilters} />
       </Button>
     );
   }

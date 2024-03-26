@@ -46,7 +46,7 @@ const SearchModal = ({ courseId, ...props }) => {
     refetchOnWindowFocus: false, // This doesn't need to be refreshed when the user switches back to this tab.
   });
 
-  const title = intl.formatMessage(messages['courseSearch.title']);
+  const title = intl.formatMessage(messages.title);
   let modalContents;
   if (searchEndpointData) {
     modalContents = <SearchUI {...searchEndpointData} courseId={courseId} />;

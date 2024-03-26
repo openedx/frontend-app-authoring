@@ -11,7 +11,7 @@ import messages from './messages';
  */
 const BlockTypeLabel = ({ type }) => {
   // TODO: Load the localized list of Component names from Studio REST API?
-  const msg = messages[`courseSearch.blockType.${type}`];
+  const msg = messages[`blockType.${type}`];
 
   if (msg) {
     return <FormattedMessage {...msg} />;

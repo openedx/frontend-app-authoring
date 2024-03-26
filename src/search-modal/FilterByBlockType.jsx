@@ -43,7 +43,7 @@ const FilterByBlockType = () => {
   return (
     <SearchFilterWidget
       appliedFilters={appliedItems.map(item => ({ label: <BlockTypeLabel type={item.value} /> }))}
-      label={<FormattedMessage {...messages['courseSearch.blockTypeFilter']} />}
+      label={<FormattedMessage {...messages.blockTypeFilter} />}
     >
       <Form.Group>
         <Form.CheckboxSet
@@ -68,7 +68,7 @@ const FilterByBlockType = () => {
             {
               // Show a message if there are no options at all to avoid the impression that the dropdown isn't working
               items.length === 0 ? (
-                <MenuItem disabled><FormattedMessage {...messages['courseSearch.blockTypeFilter.empty']} /></MenuItem>
+                <MenuItem disabled><FormattedMessage {...messages['blockTypeFilter.empty']} /></MenuItem>
               ) : null
             }
           </Menu>
@@ -76,7 +76,7 @@ const FilterByBlockType = () => {
       </Form.Group>
       {
         canToggleShowMore && !isShowingMore
-          ? <Button onClick={toggleShowMore}><FormattedMessage {...messages['courseSearch.showMore']} /></Button>
+          ? <Button onClick={toggleShowMore}><FormattedMessage {...messages.showMore} /></Button>
           : null
       }
     </SearchFilterWidget>

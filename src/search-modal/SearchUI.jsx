@@ -40,7 +40,7 @@ const SearchUI = (props) => {
       {/* We need to override z-index here or the <Dropdown.Menu> appears behind the <ModalDialog.Body>
         * But it can't be more then 9 because the close button has z-index 10. */}
       <ModalDialog.Header style={{ zIndex: 9 }} className="border-bottom">
-        <ModalDialog.Title><FormattedMessage {...messages['courseSearch.title']} /></ModalDialog.Title>
+        <ModalDialog.Title><FormattedMessage {...messages.title} /></ModalDialog.Title>
         <div className="d-flex mt-3">
           <SearchKeywordsField className="flex-grow-1 mr-1" />
           {/* Give this toggle button a fixed width so it doesn't change size when the selected option changes */}

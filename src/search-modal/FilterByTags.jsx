@@ -92,7 +92,7 @@ const FilterByTags = () => {
   return (
     <SearchFilterWidget
       appliedFilters={appliedItems}
-      label={<FormattedMessage {...messages['courseSearch.blockTagsFilter']} />}
+      label={<FormattedMessage {...messages.blockTagsFilter} />}
     >
       <Form.Group>
         <Menu style={{ boxShadow: 'none' }}>
@@ -100,14 +100,14 @@ const FilterByTags = () => {
           {
             // Show a message if there are no options at all to avoid the impression that the dropdown isn't working
             items.length === 0 ? (
-              <MenuItem disabled><FormattedMessage {...messages['courseSearch.blockTagsFilter.empty']} /></MenuItem>
+              <MenuItem disabled><FormattedMessage {...messages['blockTagsFilter.empty']} /></MenuItem>
             ) : null
           }
         </Menu>
       </Form.Group>
       {
         canToggleShowMore && !isShowingMore
-          ? <Button onClick={toggleShowMore}><FormattedMessage {...messages['courseSearch.showMore']} /></Button>
+          ? <Button onClick={toggleShowMore}><FormattedMessage {...messages.showMore} /></Button>
           : null
       }
     </SearchFilterWidget>
