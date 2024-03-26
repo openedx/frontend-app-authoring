@@ -22,7 +22,7 @@ import {
  *
  * @type {React.FC<{appliedFilters: {label: React.ReactNode}[], label: React.ReactNode, children: React.ReactNode}>}
  */
-const SearchFilterWidget = (props) => {
+const SearchFilterWidget = ({ appliedFilters, ...props }) => {
   const [isOpen, open, close] = useToggle(false);
   const [target, setTarget] = React.useState(null);
 
@@ -31,14 +31,14 @@ const SearchFilterWidget = (props) => {
       <div className="d-flex mr-3">
         <Button
           ref={setTarget}
-          variant="light"
+          variant={appliedFilters.length ? 'light' : 'outline-primary'}
           size="sm"
           onClick={open}
           iconAfter={ArrowDropDown}
         >
           {props.label}
-          {props.appliedFilters.length >= 1 ? <>: {props.appliedFilters[0].label}</> : null}
-          {props.appliedFilters.length > 1 ? <>,&nbsp;<Badge variant="info">+{props.appliedFilters.length - 1}</Badge></> : null}
+          {appliedFilters.length >= 1 ? <>: {appliedFilters[0].label}</> : null}
+          {appliedFilters.length > 1 ? <>,&nbsp;<Badge variant="secondary">+{appliedFilters.length - 1}</Badge></> : null}
         </Button>
       </div>
       <ModalPopup
