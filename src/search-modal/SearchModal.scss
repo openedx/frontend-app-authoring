@@ -34,4 +34,8 @@
       padding-left: $indent-initial + (4 * $indent-each);
     }
   }
+
+  .ais-InfiniteHits-loadPrevious, .ais-InfiniteHits-loadMore--disabled {
+    display: none; // temporary; remove this once we implement our own <Hits>/<InfiniteHits> component.
+  }
 }

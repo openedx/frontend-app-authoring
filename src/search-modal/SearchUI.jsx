@@ -12,6 +12,7 @@ import { Configure, InfiniteHits, InstantSearch } from 'react-instantsearch';
 import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
 
 import ClearFiltersButton from './ClearFiltersButton';
+import EmptyStates from './EmptyStates';
 import SearchResult from './SearchResult';
 import SearchKeywordsField from './SearchKeywordsField';
 import FilterByBlockType from './FilterByBlockType';
@@ -71,7 +72,10 @@ const SearchUI = (props) => {
         </div>
       </ModalDialog.Header>
       <ModalDialog.Body className="h-[calc(100vh-200px)]">
-        <InfiniteHits hitComponent={SearchResult} />
+        {/* If there are no results (yet), EmptyStates displays a friendly messages. Otherwise we see the results. */}
+        <EmptyStates>
+          <InfiniteHits hitComponent={SearchResult} />
+        </EmptyStates>
       </ModalDialog.Body>
     </InstantSearch>
   );
