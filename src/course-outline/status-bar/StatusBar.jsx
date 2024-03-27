@@ -144,7 +144,7 @@ const StatusBar = ({
               <a
                 className="small ml-2"
                 href="#"
-                onClick={() => openManageTagsDrawer()}
+                onClick={openManageTagsDrawer}
               >
                 {intl.formatMessage(messages.courseManageTagsLink)}
               </a>
