@@ -51,12 +51,12 @@ const messages = defineMessages({
   },
   manageTagsButton: {
     id: 'course-authoring.content-tags-drawer.button.manage',
-    defaultMessage: 'Manage Tags',
+    defaultMessage: 'Manage tags',
     description: 'Label in the button that opens the drawer to edit content tags',
   },
   tagsSidebarTitle: {
     id: 'course-authoring.course-unit.sidebar.tags.title',
-    defaultMessage: 'Unit Tags',
+    defaultMessage: 'Unit tags',
     description: 'Title of the tags sidebar',
   },
   collapsibleAddTagsPlaceholderText: {
