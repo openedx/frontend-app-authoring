@@ -145,8 +145,6 @@ export const useContentTaxonomyTagsUpdater = (contentId, taxonomyId) => {
         contentPattern = contentId.replace(/\+type@.*$/, '*');
       }
       queryClient.invalidateQueries({ queryKey: ['contentTagsCount', contentPattern] });
-      // FixMe: remove code below
-      // queryClient.invalidateQueries({ queryKey: ['contentTaxonomyTagsCount', contentId] });
     },
   });
 };
