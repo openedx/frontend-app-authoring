@@ -17,6 +17,16 @@
   // (If we set 'isOverflowVisible: true', the scrolling of the results list is messed up)
   overflow: visible;
 
+  .pgn__modal-header .pgn__menu-select {
+    // The "All courses" / "This course" toggle button
+    & > button {
+      min-width: 155px;  // Set a minumum width so it doesn't change size when you change the selection
+      // The current Open edX theme makes the search field square but the button round and it looks bad. We need this
+      // hacky override until the theme is fixed to be more consistent.
+      border-radius: 0;
+    }
+  }
+
   // Options for the "filter by tag" menu
   .pgn__menu {
     $indent-initial: 1.3rem;

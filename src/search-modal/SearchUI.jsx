@@ -45,7 +45,7 @@ const SearchUI = (props) => {
         <div className="d-flex mt-3">
           <SearchKeywordsField className="flex-grow-1 mr-1" />
           {/* Give this toggle button a fixed width so it doesn't change size when the selected option changes */}
-          <SelectMenu variant="primary" className="with-min-toggle-width">
+          <SelectMenu variant="primary">
             <MenuItem
               onClick={switchToThisCourse}
               defaultSelected={searchThisCourse}
