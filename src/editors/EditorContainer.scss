@@ -1,0 +1,29 @@
+.editor-page {
+  .pgn__modal-body {
+    @include media-breakpoint-down(xs) {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+  }
+
+  .pgn-transition-replace-group .bg-light-300 {
+    @include media-breakpoint-down(xs) {
+      padding: 5px !important;
+    }
+  }
+
+  .pgn__form-control-set .pgn__action-row {
+    @include media-breakpoint-down(xs) {
+      flex-flow: column wrap;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 8px;
+    }
+  }
+}
+
+.pgn__modal.pgn__modal-scroll-fullscreen {
+  @include media-breakpoint-down(xs) {
+    margin: 0;
+  }
+}
