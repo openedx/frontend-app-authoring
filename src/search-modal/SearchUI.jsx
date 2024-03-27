@@ -24,10 +24,11 @@ import messages from './messages';
 const SearchUI = (props) => {
   const { searchClient } = React.useMemo(() => instantMeiliSearch(props.url, props.apiKey), [props.url, props.apiKey]);
 
-  const [_searchThisCourseEnabled, setSearchThisCourse] = React.useState(!!props.courseId);
+  const hasCourseId = Boolean(props.courseId);
+  const [_searchThisCourseEnabled, setSearchThisCourse] = React.useState(hasCourseId);
   const switchToThisCourse = React.useCallback(() => setSearchThisCourse(true), []);
   const switchToAllCourses = React.useCallback(() => setSearchThisCourse(false), []);
-  const searchThisCourse = props.courseId && _searchThisCourseEnabled;
+  const searchThisCourse = hasCourseId && _searchThisCourseEnabled;
 
   return (
     <InstantSearch

@@ -109,6 +109,7 @@
     "axios": "^0.27.2",
     "axios-mock-adapter": "1.22.0",
     "eslint-import-resolver-webpack": "^0.13.8",
+    "fetch-mock-jest": "^1.5.1",
     "glob": "7.2.3",
     "husky": "7.0.4",
     "jest-canvas-mock": "^2.5.2",
