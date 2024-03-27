@@ -1,4 +1,3 @@
-
 // Simulate Tailwind-style arbitrary value classNames. We have to hard code this one though.
 .h-\[calc\(100vh-200px\)\] {
   height: calc(100vh - 200px);
@@ -31,21 +30,26 @@
   .pgn__menu {
     $indent-initial: 1.3rem;
     $indent-each: 1.6rem;
+
     .tag-option-1 {
       padding-left: $indent-initial + (1 * $indent-each);
     }
+
     .tag-option-2 {
       padding-left: $indent-initial + (2 * $indent-each);
     }
+
     .tag-option-3 {
       padding-left: $indent-initial + (3 * $indent-each);
     }
+
     .tag-option-4 {
       padding-left: $indent-initial + (4 * $indent-each);
     }
   }
 
-  .ais-InfiniteHits-loadPrevious, .ais-InfiniteHits-loadMore--disabled {
+  .ais-InfiniteHits-loadPrevious,
+  .ais-InfiniteHits-loadMore--disabled {
     display: none; // temporary; remove this once we implement our own <Hits>/<InfiniteHits> component.
   }
 }
