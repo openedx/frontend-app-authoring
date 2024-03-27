@@ -10,6 +10,7 @@ import {
   MenuItem,
 } from '@openedx/paragon';
 import {
+  useCurrentRefinements,
   useRefinementList,
 } from 'react-instantsearch';
 import SearchFilterWidget from './SearchFilterWidget';
@@ -31,7 +32,13 @@ const FilterByBlockType = () => {
     toggleShowMore,
   } = useRefinementList({ attribute: 'block_type', sortBy: ['count:desc', 'name'] });
 
-  const appliedItems = items.filter(item => item.isRefined);
+  // Get the list of applied 'items' (selected block types to filter) in the original order that the user clicked them.
+  // The first choice will be shown on the button, and we don't want it to change as the user selects more options.
+  // (But for the dropdown menu, we always want them sorted by 'count:desc' and 'name'; not in order of selection.)
+  const refinementsData = useCurrentRefinements({ includedAttributes: ['block_type'] });
+  const appliedItems = refinementsData.items[0]?.refinements ?? [];
+  // If we didn't need to preserve the order the user clicked on, the above two lines could be simplified to:
+  //   const appliedItems = items.filter(item => item.isRefined);
 
   const handleCheckboxChange = React.useCallback((e) => {
     refine(e.target.value);
@@ -39,7 +46,7 @@ const FilterByBlockType = () => {
 
   return (
     <SearchFilterWidget
-      appliedFilters={appliedItems.map(item => ({ label: <BlockTypeLabel type={item.value} /> }))}
+      appliedFilters={appliedItems.map(item => ({ label: <BlockTypeLabel type={String(item.value)} /> }))}
       label={<FormattedMessage {...messages.blockTypeFilter} />}
     >
       <Form.Group>
