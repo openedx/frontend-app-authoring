@@ -180,7 +180,7 @@ const ManageOrgsModal = ({
                     key={org}
                     iconAfter={Close}
                     onIconAfterClick={() => setSelectedOrgs(selectedOrgs.filter((o) => o !== org))}
-                    disabled={allOrgs}
+                    disabled={!!allOrgs}
                   >
                     {org}
                   </Chip>
