@@ -25,8 +25,9 @@ export const apiUrls = {
   /**
    * Get the URL of the "list all taxonomies" endpoint
    * @param {string} [org] Optionally, Filter the list to only show taxonomies assigned to this org
+   * @param {string} [contentId] Optionally, To verify the perms of each taxonomy to manage tags in a content
    */
-  taxonomyList(org) {
+  taxonomyList(org, contentId = undefined) {
     const params = {};
     if (org !== undefined) {
       if (org === UNASSIGNED) {
@@ -34,6 +35,9 @@ export const apiUrls = {
       } else if (org !== ALL_TAXONOMIES) {
         params.org = org;
       }
+    }
+    if (contentId !== undefined) {
+      params.content_id = contentId
     }
     return makeUrl('.', { enabled: 'true', ...params });
   },
@@ -88,10 +92,11 @@ export const apiUrls = {
 /**
  * Get list of taxonomies.
  * @param {string} [org] Filter the list to only show taxonomies assigned to this org
+ * @param {string} [contentId] Optionally, To verify the perms of each taxonomy to manage tags in a content
  * @returns {Promise<import("./types.mjs").TaxonomyListData>}
  */
-export async function getTaxonomyListData(org) {
-  const { data } = await getAuthenticatedHttpClient().get(apiUrls.taxonomyList(org));
+export async function getTaxonomyListData(org, contentId = undefined) {
+  const { data } = await getAuthenticatedHttpClient().get(apiUrls.taxonomyList(org, contentId));
   return camelCaseObject(data);
 }
 

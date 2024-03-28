@@ -68,11 +68,12 @@ export const taxonomyQueryKeys = {
 /**
  * Builds the query to get the taxonomy list
  * @param {string} [org] Filter the list to only show taxonomies assigned to this org
+ * @param {string} [contentId] Optionally, To verify the perms of each taxonomy to manage tags in a content
  */
-export const useTaxonomyList = (org) => (
+export const useTaxonomyList = (org, contentId = undefined) => (
   useQuery({
     queryKey: taxonomyQueryKeys.taxonomyList(org),
-    queryFn: () => api.getTaxonomyListData(org),
+    queryFn: () => api.getTaxonomyListData(org, contentId),
   })
 );
 

@@ -74,7 +74,12 @@ const ContentTagsDrawer = ({ id, onClose }) => {
     data: contentTaxonomyTagsData,
     isSuccess: isContentTaxonomyTagsLoaded,
   } = useContentTaxonomyTagsData(contentId);
-  const { data: taxonomyListData, isSuccess: isTaxonomyListLoaded } = useTaxonomyList(org);
+
+  // Taxonomies by Organization
+  const { data: taxonomyListData, isSuccess: isTaxonomyListLoaded } = useTaxonomyList(org, contentId);
+
+  // All taxonomies to verify if exists object tags in other taxonomy that does not belong to the organization.
+  const { data: allTaxonomyListData, isSuccess: isAllTaxonomyListLoaded } = useTaxonomyList(undefined, contentId);
 
   let contentName = '';
   if (isContentDataLoaded) {
@@ -109,9 +114,13 @@ const ContentTagsDrawer = ({ id, onClose }) => {
   }, []);
 
   const taxonomies = useMemo(() => {
-    if (taxonomyListData && contentTaxonomyTagsData) {
+    if (taxonomyListData && contentTaxonomyTagsData && allTaxonomyListData) {
       // Initialize list of content tags in taxonomies to populate
       const taxonomiesList = taxonomyListData.results.map((taxonomy) => ({
+        ...taxonomy,
+        contentTags: /** @type {ContentTagData[]} */([]),
+      }));
+      const allTaxonomiesList = allTaxonomyListData.results.map((taxonomy) => ({
         ...taxonomy,
         contentTags: /** @type {ContentTagData[]} */([]),
       }));
@@ -124,12 +133,25 @@ const ContentTagsDrawer = ({ id, onClose }) => {
         if (contentTaxonomy) {
           contentTaxonomy.contentTags = contentTaxonomyTags.tags;
         }
+        else {
+          // In some cases, there are object tags in taxonomies that are not part of the course organization
+          // It is necessary to show these tags, but without being able to add or delete tags (managed by permissions)
+          const contentTaxonomy = allTaxonomiesList.find((taxonomy) => taxonomy.id === contentTaxonomyTags.taxonomyId);;
+          if (contentTaxonomy) {
+            contentTaxonomy.contentTags = contentTaxonomyTags.tags;
+            taxonomiesList.push(contentTaxonomy)
+          }
+        }
       });
 
       return taxonomiesList;
     }
     return [];
-  }, [taxonomyListData, contentTaxonomyTagsData]);
+  }, [
+    taxonomyListData,
+    contentTaxonomyTagsData,
+    allTaxonomyListData,
+  ]);
 
   return (
 
@@ -151,7 +173,7 @@ const ContentTagsDrawer = ({ id, onClose }) => {
 
         <hr />
 
-        { isTaxonomyListLoaded && isContentTaxonomyTagsLoaded
+        { isTaxonomyListLoaded && isAllTaxonomyListLoaded && isContentTaxonomyTagsLoaded
           ? taxonomies.map((data) => (
             <div key={`taxonomy-tags-collapsible-${data.id}`}>
               <ContentTagsCollapsible
