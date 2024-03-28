@@ -3,12 +3,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
-
 import { StudioHeader } from '@edx/frontend-component-header';
+import { useToggle } from '@openedx/paragon';
+
+import SearchModal from '../search-modal/SearchModal';
 import { getContentMenuItems, getSettingMenuItems, getToolsMenuItems } from './utils';
 import messages from './messages';
-import SearchModal from '../search-modal/SearchModal';
-import { useKeyHandler } from '../hooks';
 
 const Header = ({
   courseId,
@@ -18,11 +18,11 @@ const Header = ({
   isHiddenMainMenu,
 }) => {
   const intl = useIntl();
-  const [showSearchModal, setShowSearchModal] = React.useState(false);
-  const toggleModal = React.useCallback(() => setShowSearchModal(x => !x), []);
-  useKeyHandler({ handler: toggleModal, keyName: '/' });
+
+  const [isShowSearchModalOpen, openSearchModal, closeSearchModal] = useToggle(false);
 
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
+  const meiliSearchEnabled = getConfig().MEILISEARCH_ENABLED === 'true' || null;
   const mainMenuDropdowns = [
     {
       id: `${intl.formatMessage(messages['header.links.content'])}-dropdown-menu`,
@@ -41,23 +41,25 @@ const Header = ({
     },
   ];
   const outlineLink = `${studioBaseUrl}/course/${courseId}`;
+
   return (
     <>
       <StudioHeader
-        {...{
-          org: courseOrg,
-          number: courseNumber,
-          title: courseTitle,
-          isHiddenMainMenu,
-          mainMenuDropdowns,
-          outlineLink,
-        }}
+        org={courseOrg}
+        number={courseNumber}
+        title={courseTitle}
+        isHiddenMainMenu={isHiddenMainMenu}
+        mainMenuDropdowns={mainMenuDropdowns}
+        outlineLink={outlineLink}
+        searchButtonAction={meiliSearchEnabled && openSearchModal}
       />
-      <SearchModal
-        isOpen={showSearchModal}
-        courseId={courseId}
-        onClose={toggleModal}
-      />
+      { meiliSearchEnabled && (
+        <SearchModal
+          isOpen={isShowSearchModalOpen}
+          courseId={courseId}
+          onClose={closeSearchModal}
+        />
+      )}
     </>
   );
 };
