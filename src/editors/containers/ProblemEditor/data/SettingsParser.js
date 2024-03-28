@@ -2,10 +2,11 @@ import _ from 'lodash-es';
 
 import { ShowAnswerTypes, RandomizationTypesKeys } from '../../../data/constants/problem';
 
-export const popuplateItem = (parentObject, itemName, statekey, metadata, allowNull = false) => {
+export const popuplateItem = (parentObject, itemName, statekey, metadata, defaultValue = null, allowNull = false) => {
   let parent = parentObject;
   const item = _.get(metadata, itemName, null);
-  if (!_.isNil(item) || allowNull) {
+  const equalsDefault = item === defaultValue;
+  if ((!_.isNil(item) || allowNull) && !equalsDefault) {
     parent = { ...parentObject, [statekey]: item };
   }
   return parent;

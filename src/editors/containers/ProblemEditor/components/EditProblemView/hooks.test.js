@@ -1,4 +1,4 @@
-import { ProblemTypeKeys } from '../../../../data/constants/problem';
+import { ProblemTypeKeys, ShowAnswerTypesKeys } from '../../../../data/constants/problem';
 import * as hooks from './hooks';
 import { MockUseState } from '../../../../../testUtils';
 
@@ -7,26 +7,27 @@ const mockBuiltOLX = 'builtOLX';
 const mockGetSettings = {
   max_attempts: 1,
   weight: 2,
-  showanswer: 'finished',
+  showanswer: ShowAnswerTypesKeys.AFTER_SOME_NUMBER_OF_ATTEMPTS,
   show_reset_button: false,
   rerandomize: 'never',
 };
 const mockParseRawOlxSettingsDiscrepancy = {
   max_attempts: 1,
   weight: 2,
-  showanswer: 'finished',
+  showanswer: ShowAnswerTypesKeys.AFTER_SOME_NUMBER_OF_ATTEMPTS,
   show_reset_button: true,
   rerandomize: 'never',
 };
 const mockParseRawOlxSettings = {
   max_attempts: 1,
   weight: 2,
-  showanswer: 'finished',
+  showanswer: ShowAnswerTypesKeys.AFTER_SOME_NUMBER_OF_ATTEMPTS,
   show_reset_button: false,
   rerandomize: 'never',
 };
 const problemState = {
   problemType: ProblemTypeKeys.ADVANCED,
+  defaultSettings: {},
   settings: {
     randomization: null,
     scoring: {
@@ -38,7 +39,7 @@ const problemState = {
     },
     timeBetween: 0,
     showAnswer: {
-      on: 'finished',
+      on: ShowAnswerTypesKeys.AFTER_SOME_NUMBER_OF_ATTEMPTS,
       afterAttempts: 0,
     },
     showResetButton: false,
@@ -281,7 +282,7 @@ describe('EditProblemView hooks parseState', () => {
     const expectedSettings = {
       max_attempts: '',
       weight: 1,
-      showanswer: 'finished',
+      showanswer: ShowAnswerTypesKeys.AFTER_SOME_NUMBER_OF_ATTEMPTS,
       show_reset_button: false,
       submission_wait_seconds: 0,
       attempts_before_showanswer_button: 0,
@@ -303,6 +304,34 @@ describe('EditProblemView hooks parseState', () => {
         settings: expectedSettings,
       });
     });
+
+    it('returned parseState content.settings should not include default values', () => {
+      const problem = {
+        ...problemState,
+        problemType: ProblemTypeKeys.NUMERIC,
+        answers: [{ id: 'A', title: 'problem', correct: true }],
+        defaultSettings: {
+          maxAttempts: '',
+          showanswer: ShowAnswerTypesKeys.AFTER_SOME_NUMBER_OF_ATTEMPTS,
+          showResetButton: false,
+          rerandomize: 'never',
+        },
+      };
+      const { settings } = hooks.getContent({
+        isAdvancedProblemType: false,
+        problemState: problem,
+        editorRef,
+        assets,
+        lmsEndpointUrl,
+        openSaveWarningModal,
+      });
+      expect(settings).toEqual({
+        attempts_before_showanswer_button: 0,
+        submission_wait_seconds: 0,
+        weight: 1,
+      });
+    });
+
     it('default advanced save and returns parseState data', () => {
       const content = hooks.getContent({
         isAdvancedProblemType: true,
