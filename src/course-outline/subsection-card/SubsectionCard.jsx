@@ -1,4 +1,5 @@
-import {
+// @ts-check
+import React, {
   useContext, useEffect, useState, useRef,
 } from 'react';
 import PropTypes from 'prop-types';
@@ -165,6 +166,7 @@ const SubsectionCard = ({
             <CardHeader
               title={displayName}
               status={subsectionStatus}
+              cardId={id}
               hasChanges={hasChanges}
               onClickMenuButton={handleClickMenuButton}
               onClickPublish={onOpenPublishModal}

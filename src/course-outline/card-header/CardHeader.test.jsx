@@ -2,7 +2,9 @@ import { MemoryRouter } from 'react-router-dom';
 import {
   act, render, fireEvent, waitFor, screen,
 } from '@testing-library/react';
+import { setConfig, getConfig } from '@edx/frontend-platform';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 import { ITEM_BADGE_STATUS } from '../constants';
 import CardHeader from './CardHeader';
@@ -18,8 +20,14 @@ const onClickDuplicateMock = jest.fn();
 const onClickConfigureMock = jest.fn();
 const onClickMoveUpMock = jest.fn();
 const onClickMoveDownMock = jest.fn();
-const onClickManageTagsMock = jest.fn();
 const closeFormMock = jest.fn();
+
+const mockGetTagsCount = jest.fn();
+
+jest.mock('../../generic/data/api', () => ({
+  ...jest.requireActual('../../generic/data/api'),
+  getTagsCount: () => mockGetTagsCount(),
+}));
 
 const cardHeaderProps = {
   title: 'Some title',
@@ -29,7 +37,6 @@ const cardHeaderProps = {
   onClickMenuButton: onClickMenuButtonMock,
   onClickPublish: onClickPublishMock,
   onClickEdit: onClickEditMock,
-  onClickManageTags: onClickManageTagsMock,
   isFormOpen: false,
   onEditSubmit: jest.fn(),
   closeForm: closeFormMock,
@@ -49,6 +56,8 @@ const cardHeaderProps = {
   },
 };
 
+const queryClient = new QueryClient();
+
 const renderComponent = (props, entry = '/') => {
   const titleComponent = (
     <TitleButton
@@ -62,13 +71,15 @@ const renderComponent = (props, entry = '/') => {
 
   return render(
     <IntlProvider locale="en">
-      <MemoryRouter initialEntries={[entry]}>
-        <CardHeader
-          {...cardHeaderProps}
-          titleComponent={titleComponent}
-          {...props}
-        />
-      </MemoryRouter>,
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={[entry]}>
+          <CardHeader
+            {...cardHeaderProps}
+            titleComponent={titleComponent}
+            {...props}
+          />
+        </MemoryRouter>
+      </QueryClientProvider>
     </IntlProvider>,
   );
 };
@@ -170,14 +181,32 @@ describe('<CardHeader />', () => {
     expect(onClickPublishMock).toHaveBeenCalled();
   });
 
-  it('calls onClickManageTags when the menu is clicked', async () => {
+  it('only shows Manage tags menu if the waffle flag is enabled', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'false',
+    });
+    renderComponent();
+    const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
+    fireEvent.click(menuButton);
+
+    expect(screen.queryByText(messages.menuManageTags.defaultMessage)).not.toBeInTheDocument();
+  });
+
+  it('shows ContentTagsDrawer when the menu is clicked', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+    });
     renderComponent();
     const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
     fireEvent.click(menuButton);
 
     const manageTagsMenuItem = await screen.findByText(messages.menuManageTags.defaultMessage);
-    await act(async () => fireEvent.click(manageTagsMenuItem));
-    expect(onClickManageTagsMock).toHaveBeenCalled();
+    fireEvent.click(manageTagsMenuItem);
+
+    // Check if the drawer is open
+    expect(screen.getByTestId('drawer-close-button')).toBeInTheDocument();
   });
 
   it('calls onClickEdit when the button is clicked', async () => {
@@ -264,19 +293,33 @@ describe('<CardHeader />', () => {
     expect(queryByText(messages.discussionEnabledBadgeText.defaultMessage)).toBeInTheDocument();
   });
 
-  it('should render tag count if is not zero', () => {
-    renderComponent({
-      ...cardHeaderProps,
-      tagsCount: 17,
+  it('should render tag count if is not zero and the waffle flag is enabled', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
     });
-    expect(screen.getByText('17')).toBeInTheDocument();
+    mockGetTagsCount.mockResolvedValue({ 12345: 17 });
+    renderComponent();
+    expect(await screen.findByText('17')).toBeInTheDocument();
+  });
+
+  it('shouldn render tag count if the waffle flag is disabled', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'false',
+    });
+    mockGetTagsCount.mockResolvedValue({ 12345: 17 });
+    renderComponent();
+    expect(screen.queryByText('17')).not.toBeInTheDocument();
   });
 
   it('should not render tag count if is zero', () => {
-    renderComponent({
-      ...cardHeaderProps,
-      tagsCount: 0,
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
     });
+    mockGetTagsCount.mockResolvedValue({ 12345: 0 });
+    renderComponent();
     expect(screen.queryByText('0')).not.toBeInTheDocument();
   });
 });

@@ -11,7 +11,6 @@ import {
   getContentTaxonomyTagsData,
   getContentData,
   updateContentTaxonomyTags,
-  getContentTaxonomyTagsCount,
 } from './api';
 
 /** @typedef {import("../../taxonomy/tag-list/data/types.mjs").TagListData} TagListData */
@@ -107,17 +106,6 @@ export const useContentTaxonomyTagsData = (contentId) => (
 );
 
 /**
- * Build the query to get the count og taxonomy tags applied to the content object
- * @param {string} contentId The ID of the content object to fetch the count of the applied tags for
- */
-export const useContentTaxonomyTagsCount = (contentId) => (
-  useQuery({
-    queryKey: ['contentTaxonomyTagsCount', contentId],
-    queryFn: () => getContentTaxonomyTagsCount(contentId),
-  })
-);
-
-/**
  * Builds the query to get meta data about the content object
  * @param {string} contentId The id of the content object (unit/component)
  */
@@ -150,8 +138,13 @@ export const useContentTaxonomyTagsUpdater = (contentId, taxonomyId) => {
     onSettled: /* istanbul ignore next */ () => {
       queryClient.invalidateQueries({ queryKey: ['contentTaxonomyTags', contentId] });
       /// Invalidate query with pattern on course outline
-      queryClient.invalidateQueries({ queryKey: ['unitTagsCount'] });
-      queryClient.invalidateQueries({ queryKey: ['contentTaxonomyTagsCount', contentId] });
+      let contentPattern;
+      if (contentId.includes('course-v1')) {
+        contentPattern = contentId;
+      } else {
+        contentPattern = contentId.replace(/\+type@.*$/, '*');
+      }
+      queryClient.invalidateQueries({ queryKey: ['contentTagsCount', contentPattern] });
     },
   });
 };

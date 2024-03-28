@@ -30,7 +30,7 @@
  */
 
 /**
- * @typedef {Object} ContentData
+ * @typedef {Object} XBlockData
  * @property {string} id
  * @property {string} displayName
  * @property {string} category
@@ -57,4 +57,13 @@
  * @property {boolean} ancestorHasStaffLock
  * @property {boolean} staffOnlyMessage
  * @property {boolean} hasPartitionGroupComponents
+ */
+
+/**
+  * @typedef {Object} CourseData
+  * @property {string} courseDisplayNameWithDefault
+  */
+
+/**
+ * @typedef {XBlockData | CourseData} ContentData
  */
