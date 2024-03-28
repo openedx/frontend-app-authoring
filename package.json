@@ -43,7 +43,7 @@
     "@edx/brand": "npm:@openedx/brand-openedx@^1.2.2",
     "@edx/frontend-component-ai-translations": "^2.0.0",
     "@edx/frontend-component-footer": "^13.0.2",
-    "@edx/frontend-component-header": "^5.0.2",
+    "@edx/frontend-component-header": "^5.1.0",
     "@edx/frontend-enterprise-hotjar": "^2.0.0",
     "@edx/frontend-lib-content-components": "^2.1.4",
     "@edx/frontend-platform": "7.0.1",
