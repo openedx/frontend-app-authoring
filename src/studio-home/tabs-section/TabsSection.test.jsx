@@ -118,6 +118,21 @@ describe('<TabsSection />', () => {
     });
   });
 
+  describe('taxonomies tab', () => {
+    it('should redirect to taxonomies page', async () => {
+      render(<RootWrapper />);
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
+      await executeThunk(fetchStudioHomeData(), store.dispatch);
+
+      const taxonomiesTab = screen.getByText(tabMessages.taxonomiesTabTitle.defaultMessage);
+      fireEvent.click(taxonomiesTab);
+
+      waitFor(() => {
+        expect(window.location.href).toContain('/taxonomies');
+      });
+    });
+  });
+
   describe('archived tab', () => {
     it('should switch to Archived tab and render specific archived course details', async () => {
       render(<RootWrapper />);
