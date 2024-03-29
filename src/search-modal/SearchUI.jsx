@@ -14,6 +14,12 @@ import 'instantsearch.css/themes/algolia-min.css';
 
 import SearchResult from './SearchResult';
 
+/* This component will be replaced by a new search UI component that will be developed in the future.
+ * See:
+ *  - https://github.com/openedx/modular-learning/issues/200
+ *  - https://github.com/openedx/modular-learning/issues/201
+ */
+/* istanbul ignore next */
 /** @type {React.FC<{url: string, apiKey: string, indexName: string}>} */
 const SearchUI = (props) => {
   const { searchClient } = React.useMemo(

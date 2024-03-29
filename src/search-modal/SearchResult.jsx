@@ -3,6 +3,12 @@
 import React from 'react';
 import { Highlight } from 'react-instantsearch-dom';
 
+/* This component will be replaced by a new search UI component that will be developed in the future.
+ * See:
+ *  - https://github.com/openedx/modular-learning/issues/200
+ *  - https://github.com/openedx/modular-learning/issues/201
+ */
+/* istanbul ignore next */
 /** @type {React.FC<{hit: import('react-instantsearch-core').Hit<{
  *   id: string,
  *   breadcrumbs: {display_name: string}[]}>,
