@@ -1,11 +1,12 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { initializeMockApp } from '@edx/frontend-platform';
+import { getConfig, initializeMockApp, setConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
-  act, fireEvent, render, waitFor,
+  act, fireEvent, render, waitFor, screen,
 } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 
@@ -41,11 +42,15 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
+const queryClient = new QueryClient();
+
 const RootWrapper = () => (
   <AppProvider store={store}>
-    <IntlProvider locale="en" messages={{}}>
-      <StudioHome intl={injectIntl} />
-    </IntlProvider>
+    <QueryClientProvider client={queryClient}>
+      <IntlProvider locale="en" messages={{}}>
+        <StudioHome intl={injectIntl} />
+      </IntlProvider>
+    </QueryClientProvider>
   </AppProvider>
 );
 
@@ -75,6 +80,11 @@ describe('<StudioHome />', async () => {
     it('should render Studio home title', () => {
       const { getByText } = render(<RootWrapper />);
       expect(getByText('Studio home')).toBeInTheDocument();
+    });
+
+    it('should render Studio home title', () => {
+      render(<RootWrapper />);
+      screen.logTestingPlaygroundURL();
     });
   });
 
@@ -248,6 +258,24 @@ describe('<StudioHome />', async () => {
       const { getByText } = render(<RootWrapper />);
       expect(getByText('Looking for help with Studio?')).toBeInTheDocument();
       expect(getByText('LMS')).toHaveAttribute('href', process.env.LMS_BASE_URL);
+    });
+
+    it('should show search button and open search modal when button clicked, if search flag enabled', async () => {
+      setConfig({
+        ...getConfig(),
+        MEILISEARCH_ENABLED: 'false',
+      });
+      const { queryByRole } = render(<RootWrapper />);
+      expect(queryByRole('button', { name: 'Search content' })).not.toBeInTheDocument();
+    });
+
+    it('should show search button if meilisearch flag disabled', async () => {
+      setConfig({
+        ...getConfig(),
+        MEILISEARCH_ENABLED: 'false',
+      });
+      const { queryByRole } = render(<RootWrapper />);
+      expect(queryByRole('button', { name: 'Search content' })).not.toBeInTheDocument();
     });
   });
 });
