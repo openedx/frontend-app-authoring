@@ -1,17 +1,14 @@
 /* eslint-disable react/prop-types */
 // @ts-check
 import React from 'react';
-import {
-  Highlight,
-
-} from 'react-instantsearch-dom';
+import { Highlight } from 'react-instantsearch-dom';
 
 /** @type {React.FC<{hit: import('react-instantsearch-core').Hit<{
  *   id: string,
  *   breadcrumbs: {display_name: string}[]}>,
  * }>} */
 const SearchResult = ({ hit }) => (
-  <div key={hit.id}>
+  <>
     <div className="hit-name">
       <strong><Highlight attribute="display_name" hit={hit} /></strong>
     </div>
@@ -26,7 +23,7 @@ const SearchResult = ({ hit }) => (
         <span key={i}>{bc.display_name} {i !== hit.breadcrumbs.length - 1 ? '>' : ''} </span>
       ))}
     </div>
-  </div>
+  </>
 );
 
 export default SearchResult;

@@ -16,7 +16,10 @@ import SearchResult from './SearchResult';
 
 /** @type {React.FC<{url: string, apiKey: string, indexName: string}>} */
 const SearchUI = (props) => {
-  const { searchClient } = React.useMemo(() => instantMeiliSearch(props.url, props.apiKey), [props.url, props.apiKey]);
+  const { searchClient } = React.useMemo(
+    () => instantMeiliSearch(props.url, props.apiKey, { primaryKey: 'id' }),
+    [props.url, props.apiKey],
+  );
 
   return (
     <div className="ais-InstantSearch">
