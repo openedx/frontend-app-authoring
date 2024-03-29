@@ -14,6 +14,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
+import { datadogRum } from '@datadog/browser-rum';
 
 import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
@@ -99,6 +100,22 @@ subscribe(APP_READY, () => {
 
 subscribe(APP_INIT_ERROR, (error) => {
   ReactDOM.render(<ErrorPage message={error.message} />, document.getElementById('root'));
+});
+
+datadogRum.init({
+  applicationId: 'a3f99dcb-4955-4baa-8341-39a88603ab08',
+  clientToken: 'pubf2e79d946cec4c4413965620ba0e0b72',
+  site: 'datadoghq.com',
+  service: 'edx-frontend-sandbox',
+  env: 'sandbox',
+  // Specify a version number to identify the deployed version of your application in Datadog
+  // version: '1.0.0',
+  sessionSampleRate: 100,
+  sessionReplaySampleRate: 20,
+  trackUserInteractions: true,
+  trackResources: true,
+  trackLongTasks: true,
+  defaultPrivacyLevel: 'mask-user-input',
 });
 
 initialize({
