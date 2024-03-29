@@ -156,11 +156,6 @@ const messages = defineMessages({
     defaultMessage: 'Back to course outline in Studio',
     description: 'The aria label for the link back to the Studio Course Outline',
   },
-  courseSearchTitle: {
-    id: 'courseSearch.title',
-    defaultMessage: 'Search Course(s)',
-    description: 'Title for the course search dialog',
-  },
 });
 
 export default messages;
