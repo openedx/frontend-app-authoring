@@ -22,7 +22,7 @@ const Header = ({
   const [isShowSearchModalOpen, openSearchModal, closeSearchModal] = useToggle(false);
 
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
-  const meiliSearchEnabled = getConfig().MEILISEARCH_ENABLED === 'true' || null;
+  const meiliSearchEnabled = getConfig().MEILISEARCH_ENABLED || null;
   const mainMenuDropdowns = [
     {
       id: `${intl.formatMessage(messages['header.links.content'])}-dropdown-menu`,
