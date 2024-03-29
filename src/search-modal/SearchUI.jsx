@@ -28,7 +28,7 @@ const SearchUI = (props) => {
   );
 
   return (
-    <div className="ais-InstantSearch">
+    <div data-testid="search-ui" className="ais-InstantSearch">
       <InstantSearch indexName={props.indexName} searchClient={searchClient}>
         <Stats />
         <SearchBox />
