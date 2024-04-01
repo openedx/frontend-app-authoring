@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+// @ts-check
+import React, { useMemo } from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -26,14 +27,20 @@ const queryClient = new QueryClient();
 const mockSetToastMessage = jest.fn();
 
 const TaxonomyMenuComponent = ({
+  // eslint-disable-next-line react/prop-types
   iconMenu,
-  systemDefined,
-  canChangeTaxonomy,
-  canDeleteTaxonomy,
+  // eslint-disable-next-line react/prop-types
+  systemDefined = false,
+  // eslint-disable-next-line react/prop-types
+  canChangeTaxonomy = true,
+  // eslint-disable-next-line react/prop-types
+  canDeleteTaxonomy = true,
 }) => {
   const context = useMemo(() => ({
     toastMessage: null,
     setToastMessage: mockSetToastMessage,
+    alertProps: null,
+    setAlertProps: null,
   }), []);
 
   return (
@@ -59,18 +66,7 @@ const TaxonomyMenuComponent = ({
   );
 };
 
-TaxonomyMenuComponent.propTypes = TaxonomyMenu.propTypes;
-
-TaxonomyMenuComponent.defaultProps = {
-  id: taxonomyId,
-  name: taxonomyName,
-  tagsCount: 0,
-  systemDefined: false,
-  canChangeTaxonomy: true,
-  canDeleteTaxonomy: true,
-};
-
-describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) => {
+describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', (iconMenu) => {
   beforeEach(async () => {
     initializeMockApp({
       authenticatedUser: {
@@ -88,29 +84,34 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
   });
 
   test('should open and close menu on button click', async () => {
-    const { findByTestId, getByTestId, queryByTestId } = render(
+    const { getByRole, getByTestId, queryByLabelText } = render(
       <TaxonomyMenuComponent iconMenu={iconMenu} />,
     );
+    const menuLabelText = 'Actions';
+    const menuAltText = `${taxonomyName} actions`;
+    const menuButtonText = iconMenu ? menuAltText : menuLabelText;
 
     // Menu closed/doesn't exist yet
-    expect(queryByTestId('taxonomy-menu')).not.toBeInTheDocument();
+    expect(queryByLabelText(menuLabelText)).not.toBeInTheDocument();
 
     // Click on the menu button to open
-    fireEvent.click(await findByTestId('taxonomy-menu-button'));
+    fireEvent.click(getByRole('button', { name: menuButtonText }));
 
     // Menu opened
     expect(getByTestId('taxonomy-menu')).toBeVisible();
 
     // Click on button again to close the menu
-    fireEvent.click(await findByTestId('taxonomy-menu-button'));
+    fireEvent.click(getByRole('button', { name: menuButtonText }));
 
     // Menu closed
     // Jest bug: toBeVisible() isn't checking opacity correctly
     // expect(getByTestId('taxonomy-menu')).not.toBeVisible();
     expect(getByTestId('taxonomy-menu').style.opacity).toEqual('0');
+    // TODO: the above should be getByLabelText(menuButtonText) but there is a conflict
+    // when iconMenu={true} because the <button> has aria-label in that case.
 
     // Menu button still visible
-    expect(getByTestId('taxonomy-menu-button')).toBeVisible();
+    expect(getByRole('button', { name: menuButtonText })).toBeVisible();
   });
 
   test('Shows menu actions that user is permitted', async () => {
@@ -155,7 +156,7 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
 
   test('Hides import/delete actions for system-defined taxonomies', async () => {
     const systemDefined = true;
-    const { queryByTestId } = render(
+    const { getByTestId, queryByTestId } = render(
       <TaxonomyMenuComponent
         iconMenu={iconMenu}
         systemDefined={systemDefined}
@@ -163,7 +164,7 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
     );
 
     // Click on the menu button to open
-    fireEvent.click(queryByTestId('taxonomy-menu-button'));
+    fireEvent.click(getByTestId('taxonomy-menu-button'));
 
     // Ensure expected menu items are found
     expect(queryByTestId('taxonomy-menu-export')).toBeInTheDocument();
@@ -265,6 +266,7 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
     fireEvent.change(input, { target: { value: 'DELETE' } });
     expect(deleteButton).toBeEnabled();
 
+    // @ts-ignore
     deleteTaxonomy.mockResolvedValueOnce({});
 
     // Click on delete button
@@ -287,6 +289,7 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', async (iconMenu) =>
     } = render(<TaxonomyMenuComponent iconMenu={iconMenu} />);
 
     // We need to provide a taxonomy or the modal will not open
+    // @ts-ignore
     getTaxonomy.mockResolvedValue({
       id: 1,
       name: 'Taxonomy 1',

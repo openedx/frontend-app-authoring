@@ -21,6 +21,16 @@ import { ImportTagsWizard } from '../import-tags';
 import { ManageOrgsModal } from '../manage-orgs';
 import messages from './messages';
 
+/** @typedef {import('../data/types.mjs').TaxonomyData} TaxonomyData */
+// Note: to make mocking easier for tests, the types below only specify the subset of TaxonomyData that we actually use.
+
+/**
+ * A menu that provides actions for editing a specific taxonomy.
+ * @type {React.FC<{
+ *   taxonomy: Pick<TaxonomyData, 'id'|'name'|'tagsCount'|'systemDefined'|'canChangeTaxonomy'|'canDeleteTaxonomy'>,
+ *   iconMenu?: boolean
+ * }>}
+ */
 const TaxonomyMenu = ({
   taxonomy, iconMenu,
 }) => {
