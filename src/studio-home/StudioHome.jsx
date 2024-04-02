@@ -26,7 +26,7 @@ import { useStudioHome } from './hooks';
 import AlertMessage from '../generic/alert-message';
 
 const StudioHome = ({ intl }) => {
-  const isPaginationCoursesEnabled = getConfig().ENABLE_HOME_PAGE_COURSE_API_V2 === 'true';
+  const isPaginationCoursesEnabled = getConfig().ENABLE_HOME_PAGE_COURSE_API_V2;
   const {
     isLoadingPage,
     isFailedLoadingPage,

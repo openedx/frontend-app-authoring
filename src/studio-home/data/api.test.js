@@ -44,7 +44,7 @@ describe('studio-home api calls', () => {
     expect(result).toEqual(expected);
   });
 
-  fit('should get studio courses data', async () => {
+  it('should get studio courses data', async () => {
     const apiLink = `${getApiBaseUrl()}/api/contentstore/v1/home/courses`;
     axiosMock.onGet(apiLink).reply(200, generateGetStudioCoursesApiResponse());
     const result = await getStudioHomeCourses('');
@@ -54,7 +54,7 @@ describe('studio-home api calls', () => {
     expect(result).toEqual(expected);
   });
 
-  fit('should get studio courses data v2', async () => {
+  it('should get studio courses data v2', async () => {
     const apiLink = `${getApiBaseUrl()}/api/contentstore/v2/home/courses`;
     axiosMock.onGet(apiLink).reply(200, generateGetStudioCoursesApiResponse());
     const result = await getStudioHomeCoursesV2('');
