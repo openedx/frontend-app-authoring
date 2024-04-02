@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -8,6 +9,7 @@ import { Error } from '@openedx/paragon/icons';
 import { COURSE_CREATOR_STATES } from '../../../constants';
 import { getStudioHomeData, getStudioHomeCoursesParams } from '../../data/selectors';
 import { updateStudioHomeCoursesCustomParams } from '../../data/slice';
+import { fetchStudioHomeData } from '../../data/thunks';
 import CardItem from '../../card-item';
 import CollapsibleStateWithAction from '../../collapsible-state-with-action';
 import { sortAlphabeticallyArray } from '../utils';
@@ -30,6 +32,7 @@ const CoursesTab = ({
   isEnabledPagination,
 }) => {
   const intl = useIntl();
+  const location = useLocation();
   const {
     courseCreatorStatus,
     optimizationEnabled,
@@ -42,7 +45,10 @@ const CoursesTab = ({
     COURSE_CREATOR_STATES.unrequested,
   ].includes(courseCreatorStatus);
 
-  const handlePageSelected = (page) => dispatch(updateStudioHomeCoursesCustomParams({ currentPage: page }));
+  const handlePageSelected = (page) => {
+    dispatch(fetchStudioHomeData(location.search ?? '', false, { page }, true));
+    dispatch(updateStudioHomeCoursesCustomParams({ currentPage: page }));
+  };
   const hasCourses = coursesDataItems?.length > 0;
 
   if (isLoading) {
