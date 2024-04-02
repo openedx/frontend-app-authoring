@@ -83,7 +83,7 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', (iconMenu) => {
     jest.clearAllMocks();
   });
 
-  test('should open and close menu on button click', async () => {
+  test('should open and close menu on button click', () => {
     const { getByRole, getByTestId, queryByLabelText } = render(
       <TaxonomyMenuComponent iconMenu={iconMenu} />,
     );
@@ -154,7 +154,7 @@ describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', (iconMenu) => {
     expect(queryByTestId('taxonomy-menu-delete')).not.toBeInTheDocument();
   });
 
-  test('Hides import/delete actions for system-defined taxonomies', async () => {
+  test('Hides import/delete actions for system-defined taxonomies', () => {
     const systemDefined = true;
     const { getByTestId, queryByTestId } = render(
       <TaxonomyMenuComponent
