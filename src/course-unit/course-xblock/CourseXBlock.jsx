@@ -5,21 +5,38 @@ import {
 } from '@openedx/paragon';
 import { EditOutline as EditIcon, MoreVert as MoveVertIcon } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import { scrollToElement } from '../../course-outline/utils';
+import { getCourseId } from '../data/selectors';
+import { COMPONENT_ICON_TYPES } from '../constants';
 import messages from './messages';
 
 const CourseXBlock = ({
-  id, title, unitXBlockActions, shouldScroll, ...props
+  id, title, type, unitXBlockActions, shouldScroll, ...props
 }) => {
   const courseXBlockElementRef = useRef(null);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
+  const navigate = useNavigate();
+  const courseId = useSelector(getCourseId);
   const intl = useIntl();
 
   const onXBlockDelete = () => {
     unitXBlockActions.handleDelete(id);
     closeDeleteModal();
+  };
+
+  const handleEdit = () => {
+    switch (type) {
+    case COMPONENT_ICON_TYPES.html:
+    case COMPONENT_ICON_TYPES.problem:
+    case COMPONENT_ICON_TYPES.video:
+      navigate(`/course/${courseId}/editor/${type}/${id}`);
+      break;
+    default:
+    }
   };
 
   useEffect(() => {
@@ -40,7 +57,7 @@ const CourseXBlock = ({
                 alt={intl.formatMessage(messages.blockAltButtonEdit)}
                 iconAs={EditIcon}
                 size="md"
-                onClick={() => {}}
+                onClick={handleEdit}
               />
               <Dropdown>
                 <Dropdown.Toggle
@@ -94,6 +111,7 @@ CourseXBlock.defaultProps = {
 CourseXBlock.propTypes = {
   id: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
   shouldScroll: PropTypes.bool,
   unitXBlockActions: PropTypes.shape({
     handleDelete: PropTypes.func,
