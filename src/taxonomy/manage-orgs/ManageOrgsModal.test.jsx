@@ -118,27 +118,36 @@ describe('<ManageOrgsModal />', () => {
       queryAllByTestId,
       getByTestId,
       getByText,
+      getByRole,
+      queryByRole,
     } = render(<RootWrapper onClose={onClose} />);
 
+    // First, org1 and org2 are already added
     await checkDialogRender(getByText);
 
     // Remove org2
-    fireEvent.click(getByText('org2').nextSibling);
+    fireEvent.click(getByRole('button', { name: 'Remove org2' }));
+
+    expect(getByRole('button', { name: 'Remove org1' })).toBeInTheDocument();
+    expect(queryByRole('button', { name: 'Remove org2' })).not.toBeInTheDocument();
 
     const input = getByTestId('autosuggest-iconbutton');
     fireEvent.click(input);
 
+    // We get the following options in the dropdown list:
     const list = queryAllByTestId('autosuggest-optionitem');
-    expect(list.length).toBe(4); // Show org3, org4, org5
-    expect(getByText('org2')).toBeInTheDocument();
-    expect(getByText('org3')).toBeInTheDocument();
-    expect(getByText('org4')).toBeInTheDocument();
-    expect(getByText('org5')).toBeInTheDocument();
+    expect(list.length).toBe(4);
+    expect(getByRole('option', { name: 'org2' })).toBeInTheDocument();
+    expect(getByRole('option', { name: 'org3' })).toBeInTheDocument();
+    expect(getByRole('option', { name: 'org4' })).toBeInTheDocument();
+    expect(getByRole('option', { name: 'org5' })).toBeInTheDocument();
 
     // Select org3
-    fireEvent.click(list[1]);
+    fireEvent.click(getByRole('option', { name: 'org3' }));
+    expect(getByRole('button', { name: 'Remove org1' })).toBeInTheDocument();
+    expect(getByRole('button', { name: 'Remove org3' })).toBeInTheDocument();
 
-    fireEvent.click(getByTestId('save-button'));
+    fireEvent.click(getByRole('button', { name: 'Save' }));
 
     await waitFor(() => {
       expect(mockUseManageOrgsMutate).toHaveBeenCalledWith({
@@ -154,14 +163,14 @@ describe('<ManageOrgsModal />', () => {
 
   it('can assign all orgs to taxonomies from the dialog', async () => {
     const onClose = jest.fn();
-    const { getByRole, getByTestId, getByText } = render(<RootWrapper onClose={onClose} />);
+    const { getByRole, getByText } = render(<RootWrapper onClose={onClose} />);
 
     await checkDialogRender(getByText);
 
     const checkbox = getByRole('checkbox', { name: 'Assign to all organizations' });
     fireEvent.click(checkbox);
 
-    fireEvent.click(getByTestId('save-button'));
+    fireEvent.click(getByRole('button', { name: 'Save' }));
 
     await waitFor(() => {
       expect(mockUseManageOrgsMutate).toHaveBeenCalledWith({
@@ -176,7 +185,7 @@ describe('<ManageOrgsModal />', () => {
 
   it('can assign no orgs to taxonomies from the dialog', async () => {
     const onClose = jest.fn();
-    const { getByRole, getByTestId, getByText } = render(<RootWrapper onClose={onClose} />);
+    const { getByRole, getByText } = render(<RootWrapper onClose={onClose} />);
 
     await checkDialogRender(getByText);
 
@@ -185,7 +194,7 @@ describe('<ManageOrgsModal />', () => {
     // Remove org2
     fireEvent.click(getByText('org2').nextSibling);
 
-    fireEvent.click(getByTestId('save-button'));
+    fireEvent.click(getByRole('button', { name: 'Save' }));
 
     await waitFor(() => {
       // Check confirm modal is open

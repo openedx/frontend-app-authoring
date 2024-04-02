@@ -60,6 +60,11 @@ const messages = defineMessages({
     id: 'course-authoring.taxonomy-manage-orgs.toast.assign-orgs-success',
     defaultMessage: 'Assigned organizations updated',
   },
+  removeOrg: {
+    id: 'course-authoring.taxonomy-manage-orgs.remove-org',
+    defaultMessage: 'Remove {org}',
+    description: 'button to remove a specific organization from a taxonomy',
+  },
 });
 
 export default messages;
