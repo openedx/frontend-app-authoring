@@ -133,7 +133,7 @@ const ContentTagsDrawer = ({ id, onClose }) => {
 
   return (
 
-    <div className="mt-1">
+    <div id="content-tags-drawer" className="mt-1">
       <Container size="xl">
         <CloseButton onClick={() => onCloseDrawer()} data-testid="drawer-close-button" />
         <span>{intl.formatMessage(messages.headerSubtitle)}</span>
