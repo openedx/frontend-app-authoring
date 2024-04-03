@@ -124,6 +124,7 @@ initialize({
         ENABLE_TAGGING_TAXONOMY_PAGES: process.env.ENABLE_TAGGING_TAXONOMY_PAGES || 'false',
         ENABLE_HOME_PAGE_COURSE_API_V2: process.env.ENABLE_HOME_PAGE_COURSE_API_V2 === 'true',
         ENABLE_CHECKLIST_QUALITY: process.env.ENABLE_CHECKLIST_QUALITY || 'true',
+        ENABLE_GRADING_METHOD_IN_PROBLEMS: process.env.ENABLE_GRADING_METHOD_IN_PROBLEMS === 'true',
       }, 'CourseAuthoringConfig');
     },
   },
