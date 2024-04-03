@@ -22,7 +22,10 @@ import messages from './messages';
 
 /** @type {React.FC<{courseId: string, url: string, apiKey: string, indexName: string}>} */
 const SearchUI = (props) => {
-  const { searchClient } = React.useMemo(() => instantMeiliSearch(props.url, props.apiKey), [props.url, props.apiKey]);
+  const { searchClient } = React.useMemo(
+    () => instantMeiliSearch(props.url, props.apiKey, { primaryKey: 'id' }),
+    [props.url, props.apiKey],
+  );
 
   const hasCourseId = Boolean(props.courseId);
   const [_searchThisCourseEnabled, setSearchThisCourse] = React.useState(hasCourseId);

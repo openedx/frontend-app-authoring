@@ -19,7 +19,7 @@ import BlockTypeLabel from './BlockTypeLabel';
  * }>}
  */
 const SearchResult = ({ hit }) => (
-  <div key={hit.id} className="my-2 pb-2 border-bottom">
+  <div className="my-2 pb-2 border-bottom">
     <div className="hit-name small">
       <strong><Highlight attribute="display_name" hit={hit} /></strong>{' '}
       (<BlockTypeLabel type={hit.block_type} />)
