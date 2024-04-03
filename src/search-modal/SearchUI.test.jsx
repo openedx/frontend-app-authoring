@@ -129,41 +129,71 @@ describe('<SearchUI />', () => {
     expect(getByText('The Little Unit That Could')).toBeInTheDocument();
   });
 
-  it('can filter results by component/XBlock type', async () => {
-    const { getByText, getByRole } = render(<Wrap><SearchUI {...defaults} /></Wrap>);
-    // Wait for the initial search request that loads all the filter options:
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
-    // Enter a keyword - search for 'giraffe':
-    fireEvent.change(getByRole('searchbox'), { target: { value: 'giraffe' } });
-    // Wait for the new search request to load all the results and refine the filter options based on the search so far:
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(3, searchEndpoint, 'post'); });
-    // And make sure the request was limited to this course:
-    expect(fetchMock).toHaveLastFetched((_url, req) => {
-      const requestData = JSON.parse(req.body?.toString() ?? '');
-      const requestedFilter = requestData?.queries[0].filter;
-      return (requestedFilter?.length === 1); // the filter is: 'context_key = "course-v1:org+test+123"'
+  describe('filters', () => {
+    /** @type {import('@testing-library/react').RenderResult} */
+    let rendered;
+    beforeEach(async () => {
+      rendered = render(<Wrap><SearchUI {...defaults} /></Wrap>);
+      const { getByRole, getByText } = rendered;
+      // Wait for the initial search request that loads all the filter options:
+      await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
+      // Enter a keyword - search for 'giraffe':
+      fireEvent.change(getByRole('searchbox'), { target: { value: 'giraffe' } });
+      // Wait for the new search request to load all the results and the filter options, based on the search so far:
+      await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(3, searchEndpoint, 'post'); });
+      // And make sure the request was limited to this course:
+      expect(fetchMock).toHaveLastFetched((_url, req) => {
+        const requestData = JSON.parse(req.body?.toString() ?? '');
+        const requestedFilter = requestData?.queries[0].filter;
+        return (requestedFilter?.length === 1); // the filter is: 'context_key = "course-v1:org+test+123"'
+      });
+      // Now we should see the results:
+      expect(getByText('1 result found')).toBeInTheDocument();
+      expect(getByText(mockResultDisplayName)).toBeInTheDocument();
     });
-    // Now we should see the results:
-    expect(getByText('1 result found')).toBeInTheDocument();
-    expect(getByText(mockResultDisplayName)).toBeInTheDocument();
-    // Now open the filters menu:
-    fireEvent.click(getByRole('button', { name: 'Type' }), {});
-    // The dropdown menu has role="group" (but in future maybe should be fixed to use role="menu" and role="menuitem"?)
-    await waitFor(() => { expect(getByRole('group')).toBeInTheDocument(); });
-    const popupMenu = getByRole('group');
-    const problemFilterCheckbox = getByLabelTextIn(popupMenu, /Problem/i);
-    fireEvent.click(problemFilterCheckbox, {});
-    // Now wait for the filter to be applied and the new results to be fetched.
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(4, searchEndpoint, 'post'); });
-    // Because we're mocking the results, there's no actual changes to the mock results,
-    // but we can verify that the filter was sent in the request
-    expect(fetchMock).toHaveLastFetched((_url, req) => {
-      const requestData = JSON.parse(req.body?.toString() ?? '');
-      const requestedFilter = requestData?.queries[0].filter;
-      return JSON.stringify(requestedFilter) === JSON.stringify([
-        'context_key = "course-v1:org+test+123"',
-        ['"block_type"="problem"'], // <-- the newly added filter, sent with the request
-      ]);
+
+    it('can filter results by component/XBlock type', async () => {
+      const { getByRole } = rendered;
+      // Now open the filters menu:
+      fireEvent.click(getByRole('button', { name: 'Type' }), {});
+      // The dropdown menu has role="group"
+      await waitFor(() => { expect(getByRole('group')).toBeInTheDocument(); });
+      const popupMenu = getByRole('group');
+      const problemFilterCheckbox = getByLabelTextIn(popupMenu, /Problem/i);
+      fireEvent.click(problemFilterCheckbox, {});
+      // Now wait for the filter to be applied and the new results to be fetched.
+      await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(4, searchEndpoint, 'post'); });
+      // Because we're mocking the results, there's no actual changes to the mock results,
+      // but we can verify that the filter was sent in the request
+      expect(fetchMock).toHaveLastFetched((_url, req) => {
+        const requestData = JSON.parse(req.body?.toString() ?? '');
+        const requestedFilter = requestData?.queries[0].filter;
+        return JSON.stringify(requestedFilter) === JSON.stringify([
+          'context_key = "course-v1:org+test+123"',
+          ['"block_type"="problem"'], // <-- the newly added filter, sent with the request
+        ]);
+      });
+    });
+
+    it('can filter results by tag', async () => {
+      const { getByRole, getByLabelText } = rendered;
+      // Now open the filters menu:
+      fireEvent.click(getByRole('button', { name: 'Tags' }), {});
+      // The dropdown menu in this case doesn't have a role; let's just assume it's displayed.
+      const competentciesCheckbox = getByLabelText(/ESDC Skills and Competencies/i);
+      fireEvent.click(competentciesCheckbox, {});
+      // Now wait for the filter to be applied and the new results to be fetched.
+      await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(4, searchEndpoint, 'post'); });
+      // Because we're mocking the results, there's no actual changes to the mock results,
+      // but we can verify that the filter was sent in the request
+      expect(fetchMock).toHaveLastFetched((_url, req) => {
+        const requestData = JSON.parse(req.body?.toString() ?? '');
+        const requestedFilter = requestData?.queries[0].filter;
+        return JSON.stringify(requestedFilter) === JSON.stringify([
+          'context_key = "course-v1:org+test+123"',
+          ['"tags.taxonomy"="ESDC Skills and Competencies"'], // <-- the newly added filter, sent with the request
+        ]);
+      });
     });
   });
 });
