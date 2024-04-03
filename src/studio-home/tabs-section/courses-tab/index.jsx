@@ -1,12 +1,15 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Icon, Row } from '@openedx/paragon';
+import { Icon, Row, Pagination } from '@openedx/paragon';
 import { Error } from '@openedx/paragon/icons';
 
 import { COURSE_CREATOR_STATES } from '../../../constants';
-import { getStudioHomeData } from '../../data/selectors';
+import { getStudioHomeData, getStudioHomeCoursesParams } from '../../data/selectors';
+import { updateStudioHomeCoursesCustomParams } from '../../data/slice';
+import { fetchStudioHomeData } from '../../data/thunks';
 import CardItem from '../../card-item';
 import CollapsibleStateWithAction from '../../collapsible-state-with-action';
 import { sortAlphabeticallyArray } from '../utils';
@@ -23,18 +26,30 @@ const CoursesTab = ({
   isShowProcessing,
   isLoading,
   isFailed,
+  dispatch,
+  numPages,
+  coursesCount,
+  isEnabledPagination,
 }) => {
   const intl = useIntl();
+  const location = useLocation();
   const {
     courseCreatorStatus,
     optimizationEnabled,
   } = useSelector(getStudioHomeData);
+  const { currentPage } = useSelector(getStudioHomeCoursesParams);
   const hasAbilityToCreateCourse = courseCreatorStatus === COURSE_CREATOR_STATES.granted;
   const showCollapsible = [
     COURSE_CREATOR_STATES.denied,
     COURSE_CREATOR_STATES.pending,
     COURSE_CREATOR_STATES.unrequested,
   ].includes(courseCreatorStatus);
+
+  const handlePageSelected = (page) => {
+    dispatch(fetchStudioHomeData(location.search ?? '', false, { page }, true));
+    dispatch(updateStudioHomeCoursesCustomParams({ currentPage: page }));
+  };
+  const hasCourses = coursesDataItems?.length > 0;
 
   if (isLoading) {
     return (
@@ -58,30 +73,55 @@ const CoursesTab = ({
     ) : (
       <>
         {isShowProcessing && <ProcessingCourses />}
-        {coursesDataItems?.length ? (
-          sortAlphabeticallyArray(coursesDataItems).map(
-            ({
-              courseKey,
-              displayName,
-              lmsLink,
-              org,
-              rerunLink,
-              number,
-              run,
-              url,
-            }) => (
-              <CardItem
-                key={courseKey}
-                displayName={displayName}
-                lmsLink={lmsLink}
-                rerunLink={rerunLink}
-                org={org}
-                number={number}
-                run={run}
-                url={url}
+        {hasCourses && isEnabledPagination && (
+          <div className="d-flex justify-content-end">
+            <p data-testid="pagination-info">
+              {intl.formatMessage(messages.coursesPaginationInfo, {
+                length: coursesDataItems.length,
+                total: coursesCount,
+              })}
+            </p>
+          </div>
+        )}
+        {hasCourses ? (
+          <>
+            {sortAlphabeticallyArray(coursesDataItems).map(
+              ({
+                courseKey,
+                displayName,
+                lmsLink,
+                org,
+                rerunLink,
+                number,
+                run,
+                url,
+                cmsLink,
+              }) => (
+                <CardItem
+                  key={courseKey}
+                  displayName={displayName}
+                  lmsLink={lmsLink}
+                  rerunLink={rerunLink}
+                  org={org}
+                  number={number}
+                  run={run}
+                  url={url}
+                  cmsLink={cmsLink}
+                  isPaginated={isEnabledPagination}
+                />
+              ),
+            )}
+
+            {numPages > 1 && isEnabledPagination && (
+              <Pagination
+                className="d-flex justify-content-center"
+                paginationLabel="pagination navigation"
+                pageCount={numPages}
+                currentPage={currentPage}
+                onPageSelect={handlePageSelected}
               />
-            ),
-          )
+            )}
+          </>
         ) : (!optimizationEnabled && (
           <ContactAdministrator
             hasAbilityToCreateCourse={hasAbilityToCreateCourse}
@@ -99,6 +139,12 @@ const CoursesTab = ({
       </>
     )
   );
+};
+
+CoursesTab.defaultProps = {
+  numPages: 0,
+  coursesCount: 0,
+  isEnabledPagination: false,
 };
 
 CoursesTab.propTypes = {
@@ -119,6 +165,10 @@ CoursesTab.propTypes = {
   isShowProcessing: PropTypes.bool.isRequired,
   isLoading: PropTypes.bool.isRequired,
   isFailed: PropTypes.bool.isRequired,
+  dispatch: PropTypes.func.isRequired,
+  numPages: PropTypes.number,
+  coursesCount: PropTypes.number,
+  isEnabledPagination: PropTypes.bool,
 };
 
 export default CoursesTab;

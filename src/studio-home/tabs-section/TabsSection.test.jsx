@@ -17,6 +17,7 @@ import {
   initialState,
   generateGetStudioHomeDataApiResponse,
   generateGetStudioCoursesApiResponse,
+  generateGetStudioCoursesApiResponseV2,
   generateGetStuioHomeLibrariesApiResponse,
 } from '../factories/mockApiResponses';
 import { getApiBaseUrl, getStudioHomeApiUrl } from '../data/api';
@@ -28,12 +29,20 @@ const { studioShortName } = studioHomeMock;
 let axiosMock;
 let store;
 const courseApiLink = `${getApiBaseUrl()}/api/contentstore/v1/home/courses`;
+const courseApiLinkV2 = `${getApiBaseUrl()}/api/contentstore/v2/home/courses`;
 const libraryApiLink = `${getApiBaseUrl()}/api/contentstore/v1/home/libraries`;
 
-const RootWrapper = () => (
+const mockDispatch = jest.fn();
+
+const RootWrapper = (overrideProps) => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
-      <TabsSection intl={{ formatMessage: jest.fn() }} dispatch={jest.fn()} />
+      <TabsSection
+        intl={{ formatMessage: jest.fn() }}
+        dispatch={mockDispatch}
+        isPaginationCoursesEnabled={false}
+        {...overrideProps}
+      />
     </IntlProvider>
   </AppProvider>
 );
@@ -115,6 +124,36 @@ describe('<TabsSection />', () => {
       await executeThunk(fetchStudioHomeData(), store.dispatch);
 
       expect(screen.getByText(tabMessages.courseTabErrorMessage.defaultMessage)).toBeVisible();
+    });
+
+    it('should render pagination when there are courses', async () => {
+      render(<RootWrapper isPaginationCoursesEnabled />);
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
+      axiosMock.onGet(courseApiLinkV2).reply(200, generateGetStudioCoursesApiResponseV2());
+      await executeThunk(fetchStudioHomeData('', true, {}, true), store.dispatch);
+      const data = generateGetStudioCoursesApiResponseV2();
+      const coursesLength = data.results.courses.length;
+      const totalItems = data.count;
+      const paginationInfoText = `Showing ${coursesLength} of ${totalItems}`;
+
+      expect(screen.getByText(studioHomeMock.courses[0].displayName)).toBeVisible();
+
+      const pagination = screen.getByRole('navigation');
+      const paginationInfo = screen.getByTestId('pagination-info');
+      expect(paginationInfo.textContent).toContain(paginationInfoText);
+      expect(pagination).toBeVisible();
+    });
+
+    it('should not render pagination when there are not courses', async () => {
+      const data = generateGetStudioCoursesApiResponseV2();
+      data.results.courses = [];
+      render(<RootWrapper />);
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
+      axiosMock.onGet(courseApiLinkV2).reply(200, data);
+      await executeThunk(fetchStudioHomeData(), store.dispatch);
+
+      const pagination = screen.queryByRole('navigation');
+      expect(pagination).not.toBeInTheDocument();
     });
   });
 
