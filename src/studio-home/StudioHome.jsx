@@ -27,6 +27,8 @@ import AlertMessage from '../generic/alert-message';
 
 const StudioHome = ({ intl }) => {
   const isPaginationCoursesEnabled = getConfig().ENABLE_HOME_PAGE_COURSE_API_V2 === 'true';
+  const isPaginationLibrariesEnabled = getConfig().ENABLE_HOME_PAGE_LIBRARY_API_V2 === 'true';
+
   const {
     isLoadingPage,
     isFailedLoadingPage,
@@ -141,6 +143,7 @@ const StudioHome = ({ intl }) => {
               isShowProcessing={isShowProcessing}
               dispatch={dispatch}
               isPaginationCoursesEnabled={isPaginationCoursesEnabled}
+              isPaginationLibrariesEnabled={isPaginationLibrariesEnabled}
             />
           </section>
         </Layout.Element>

@@ -19,6 +19,7 @@ const TabsSection = ({
   isShowProcessing,
   dispatch,
   isPaginationCoursesEnabled,
+  isPaginationLibrariesEnabled,
 }) => {
   const TABS_LIST = {
     courses: 'courses',
@@ -94,6 +95,7 @@ const TabsSection = ({
               libraries={libraries}
               isLoading={isLoadingLibraries}
               isFailed={isFailedLibrariesPage}
+              isEnabledPagination={isPaginationLibrariesEnabled}
             />
           )}
         </Tab>,
@@ -107,7 +109,7 @@ const TabsSection = ({
     if (tab === TABS_LIST.libraries && redirectToLibraryAuthoringMfe) {
       window.location.assign(libraryAuthoringMfeUrl);
     } else if (tab === TABS_LIST.libraries && !redirectToLibraryAuthoringMfe) {
-      dispatch(fetchLibraryData());
+      dispatch(fetchLibraryData(isPaginationLibrariesEnabled));
     }
     setTabKey(tab);
   };
@@ -126,6 +128,7 @@ const TabsSection = ({
 
 TabsSection.defaultProps = {
   isPaginationCoursesEnabled: false,
+  isPaginationLibrariesEnabled: false,
 };
 
 TabsSection.propTypes = {
@@ -135,6 +138,7 @@ TabsSection.propTypes = {
   isShowProcessing: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
   isPaginationCoursesEnabled: PropTypes.bool,
+  isPaginationLibrariesEnabled: PropTypes.bool,
 };
 
 export default injectIntl(TabsSection);

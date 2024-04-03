@@ -5,6 +5,7 @@ import {
   handleCourseNotification,
   getStudioHomeCourses,
   getStudioHomeLibraries,
+  getStudioHomeLibrariesV2,
   getStudioHomeCoursesV2,
 } from './api';
 import {
@@ -47,12 +48,14 @@ function fetchStudioHomeData(search, hasHomeData, requestParams = {}, isPaginati
   };
 }
 
-function fetchLibraryData() {
+function fetchLibraryData(isPaginationEnabled = false, requestParams = {}) {
   return async (dispatch) => {
     dispatch(updateLoadingStatuses({ libraryLoadingStatus: RequestStatus.IN_PROGRESS }));
 
     try {
-      const libraryData = await getStudioHomeLibraries();
+      const libraryData = isPaginationEnabled
+        ? await getStudioHomeLibrariesV2(requestParams)
+        : await getStudioHomeLibraries();
       dispatch(fetchLibraryDataSuccess(libraryData));
       dispatch(updateLoadingStatuses({ libraryLoadingStatus: RequestStatus.SUCCESSFUL }));
     } catch (error) {
