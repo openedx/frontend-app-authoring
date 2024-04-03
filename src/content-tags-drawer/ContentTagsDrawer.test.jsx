@@ -7,6 +7,7 @@ import {
   render,
   waitFor,
   screen,
+  within,
 } from '@testing-library/react';
 
 import ContentTagsDrawer from './ContentTagsDrawer';
@@ -14,11 +15,14 @@ import {
   useContentTaxonomyTagsData,
   useContentData,
   useTaxonomyTagsData,
+  useContentTaxonomyTagsUpdater,
 } from './data/apiHooks';
 import { getTaxonomyListData } from '../taxonomy/data/api';
 import messages from './messages';
 
 const contentId = 'block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@7f47fe2dbcaf47c5a071671c741fe1ab';
+const mockOnClose = jest.fn();
+const mockMutate = jest.fn();
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -29,16 +33,14 @@ jest.mock('react-router-dom', () => ({
 
 // FIXME: replace these mocks with API mocks
 jest.mock('./data/apiHooks', () => ({
-  useContentTaxonomyTagsData: jest.fn(() => ({
-    isSuccess: false,
-    data: {},
-  })),
+  useContentTaxonomyTagsData: jest.fn(() => {}),
   useContentData: jest.fn(() => ({
     isSuccess: false,
     data: {},
   })),
   useContentTaxonomyTagsUpdater: jest.fn(() => ({
     isError: false,
+    mutate: mockMutate,
   })),
   useTaxonomyTagsData: jest.fn(() => ({
     hasMorePages: false,
@@ -72,9 +74,90 @@ describe('<ContentTagsDrawer />', () => {
     // By default, we mock the API call with a promise that never resolves.
     // You can override this in specific test.
     getTaxonomyListData.mockReturnValue(new Promise(() => {}));
+    useContentTaxonomyTagsUpdater.mockReturnValue({
+      isError: false,
+      mutate: mockMutate,
+    });
   });
 
   const setupMockDataForStagedTagsTesting = () => {
+    useContentTaxonomyTagsData.mockReturnValue({
+      isSuccess: true,
+      data: {
+        taxonomies: [
+          {
+            name: 'Taxonomy 1',
+            taxonomyId: 123,
+            canTagObject: true,
+            tags: [
+              {
+                value: 'Tag 1',
+                lineage: ['Tag 1'],
+                canDeleteObjecttag: true,
+              },
+              {
+                value: 'Tag 2',
+                lineage: ['Tag 2'],
+                canDeleteObjecttag: true,
+              },
+            ],
+          },
+        ],
+      },
+    });
+    getTaxonomyListData.mockResolvedValue({
+      results: [
+        {
+          id: 123,
+          name: 'Taxonomy 1',
+          description: 'This is a description 1',
+          canTagObject: true,
+        },
+      ],
+    });
+
+    useTaxonomyTagsData.mockReturnValue({
+      hasMorePages: false,
+      canAddTag: false,
+      tagPages: {
+        isLoading: false,
+        isError: false,
+        data: [{
+          value: 'Tag 1',
+          externalId: null,
+          childCount: 0,
+          depth: 0,
+          parentValue: null,
+          id: 12345,
+          subTagsUrl: null,
+          canChangeTag: false,
+          canDeleteTag: false,
+        }, {
+          value: 'Tag 2',
+          externalId: null,
+          childCount: 0,
+          depth: 0,
+          parentValue: null,
+          id: 12346,
+          subTagsUrl: null,
+          canChangeTag: false,
+          canDeleteTag: false,
+        }, {
+          value: 'Tag 3',
+          externalId: null,
+          childCount: 0,
+          depth: 0,
+          parentValue: null,
+          id: 12347,
+          subTagsUrl: null,
+          canChangeTag: false,
+          canDeleteTag: false,
+        }],
+      },
+    });
+  };
+
+  const setupLargeMockDataForStagedTagsTesting = () => {
     useContentTaxonomyTagsData.mockReturnValue({
       isSuccess: true,
       data: {
@@ -212,6 +295,7 @@ describe('<ContentTagsDrawer />', () => {
   };
 
   it('should render page and page title correctly', () => {
+    setupMockDataForStagedTagsTesting();
     const { getByText } = render(<RootWrapper />);
     expect(getByText('Manage tags')).toBeInTheDocument();
   });
@@ -317,62 +401,143 @@ describe('<ContentTagsDrawer />', () => {
     });
   });
 
+  it('should be read only on first render', async () => {
+    setupMockDataForStagedTagsTesting();
+    render(<RootWrapper />);
+    expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
+
+    // Not show delete tag buttons
+    expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
+
+    // Not show add a tag select
+    expect(screen.queryByText(/add a tag/i)).not.toBeInTheDocument();
+
+    // Not show cancel button
+    expect(screen.queryByRole('button', { name: /cancel/i })).not.toBeInTheDocument();
+
+    // Not show save button
+    expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
+  });
+
+  it('should change to edit mode when click on `Edit tags`', async () => {
+    setupMockDataForStagedTagsTesting();
+    render(<RootWrapper />);
+    expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
+    const editTagsButton = screen.getByRole('button', {
+      name: /edit tags/i,
+    });
+    fireEvent.click(editTagsButton);
+
+    // Show delete tag buttons
+    expect(screen.getAllByRole('button', {
+      name: /delete/i,
+    }).length).toBe(2);
+
+    // Show add a tag select
+    expect(screen.getByText(/add a tag/i)).toBeInTheDocument();
+
+    // Show cancel button
+    expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
+
+    // Show save button
+    expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument();
+  });
+
+  it('should change to read mode when click on `Cancel`', async () => {
+    setupMockDataForStagedTagsTesting();
+    render(<RootWrapper />);
+    expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
+    const editTagsButton = screen.getByRole('button', {
+      name: /edit tags/i,
+    });
+    fireEvent.click(editTagsButton);
+
+    const cancelButton = screen.getByRole('button', {
+      name: /cancel/i,
+    });
+    fireEvent.click(cancelButton);
+
+    // Not show delete tag buttons
+    expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
+
+    // Not show add a tag select
+    expect(screen.queryByText(/add a tag/i)).not.toBeInTheDocument();
+
+    // Not show cancel button
+    expect(screen.queryByRole('button', { name: /cancel/i })).not.toBeInTheDocument();
+
+    // Not show save button
+    expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
+  });
+
+  it('shows spinner when loading commit tags', async () => {
+    setupMockDataForStagedTagsTesting();
+    useContentTaxonomyTagsUpdater.mockReturnValue({
+      status: 'loading',
+      isError: false,
+      mutate: mockMutate,
+    });
+    render(<RootWrapper />);
+    expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
+    expect(screen.getByRole('status')).toBeInTheDocument();
+  });
+
   it('should test adding a content tag to the staged tags for a taxonomy', async () => {
     setupMockDataForStagedTagsTesting();
+    render(<RootWrapper />);
+    expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
-    const { container, getByText, getAllByText } = render(<RootWrapper />);
-    await waitFor(() => { expect(getByText('Taxonomy 1')).toBeInTheDocument(); });
-
-    // Expand the Taxonomy to view applied tags and "Add a tag" button
-    const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
-
-    fireEvent.click(expandToggle);
+    // To edit mode
+    const editTagsButton = screen.getByRole('button', {
+      name: /edit tags/i,
+    });
+    fireEvent.click(editTagsButton);
 
     // Click on "Add a tag" button to open dropdown
-    const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
+    const addTagsButton = screen.getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
     // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
     fireEvent.mouseDown(addTagsButton);
 
     // Tag 3 should only appear in dropdown selector, (i.e. the dropdown is open, since Tag 3 is not applied)
-    expect(getAllByText('Tag 3').length).toBe(1);
+    expect(screen.getAllByText('Tag 3').length).toBe(1);
 
     // Click to check Tag 3
-    const tag3 = getByText('Tag 3');
+    const tag3 = screen.getByText('Tag 3');
     fireEvent.click(tag3);
 
     // Check that Tag 3 has been staged, i.e. there should be 2 of them on the page
-    expect(getAllByText('Tag 3').length).toBe(2);
+    expect(screen.getAllByText('Tag 3').length).toBe(2);
   });
 
   it('should test removing a staged content from a taxonomy', async () => {
     setupMockDataForStagedTagsTesting();
+    render(<RootWrapper />);
+    expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
-    const { container, getByText, getAllByText } = render(<RootWrapper />);
-    await waitFor(() => { expect(getByText('Taxonomy 1')).toBeInTheDocument(); });
-
-    // Expand the Taxonomy to view applied tags and "Add a tag" button
-    const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
-
-    fireEvent.click(expandToggle);
+    // To edit mode
+    const editTagsButton = screen.getByRole('button', {
+      name: /edit tags/i,
+    });
+    fireEvent.click(editTagsButton);
 
     // Click on "Add a tag" button to open dropdown
-    const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
+    const addTagsButton = screen.getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
     // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
     fireEvent.mouseDown(addTagsButton);
 
     // Tag 3 should only appear in dropdown selector, (i.e. the dropdown is open, since Tag 3 is not applied)
-    expect(getAllByText('Tag 3').length).toBe(1);
+    expect(screen.getAllByText('Tag 3').length).toBe(1);
 
     // Click to check Tag 3
-    const tag3 = getByText('Tag 3');
+    const tag3 = screen.getByText('Tag 3');
     fireEvent.click(tag3);
 
     // Check that Tag 3 has been staged, i.e. there should be 2 of them on the page
-    expect(getAllByText('Tag 3').length).toBe(2);
+    expect(screen.getAllByText('Tag 3').length).toBe(2);
 
     // Click it again to unstage it and confirm that there is only one on the page
     fireEvent.click(tag3);
-    expect(getAllByText('Tag 3').length).toBe(1);
+    expect(screen.getAllByText('Tag 3').length).toBe(1);
   });
 
   it('should test clearing staged tags for a taxonomy', async () => {
@@ -380,39 +545,194 @@ describe('<ContentTagsDrawer />', () => {
 
     const {
       container,
-      getByText,
-      getAllByText,
-      queryByText,
     } = render(<RootWrapper />);
-    await waitFor(() => { expect(getByText('Taxonomy 1')).toBeInTheDocument(); });
+    expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
-    // Expand the Taxonomy to view applied tags and "Add a tag" button
-    const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
-
-    fireEvent.click(expandToggle);
+    // To edit mode
+    const editTagsButton = screen.getByRole('button', {
+      name: /edit tags/i,
+    });
+    fireEvent.click(editTagsButton);
 
     // Click on "Add a tag" button to open dropdown
-    const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
+    const addTagsButton = screen.getByText(/add a tag/i);
     // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
     fireEvent.mouseDown(addTagsButton);
 
     // Tag 3 should only appear in dropdown selector, (i.e. the dropdown is open, since Tag 3 is not applied)
-    expect(getAllByText('Tag 3').length).toBe(1);
+    expect(screen.getAllByText('Tag 3').length).toBe(1);
 
     // Click to check Tag 3
-    const tag3 = getByText('Tag 3');
+    const tag3 = screen.getByText('Tag 3');
     fireEvent.click(tag3);
 
     // Check that Tag 3 has been staged, i.e. there should be 2 of them on the page
-    expect(getAllByText('Tag 3').length).toBe(2);
+    expect(screen.getAllByText('Tag 3').length).toBe(2);
 
-    // Click on the Cancel button in the dropdown to clear the staged tags
-    const dropdownCancel = getByText(messages.collapsibleCancelStagedTagsButtonText.defaultMessage);
+    const dropdown = container.querySelector('#content-tags-drawer > div:nth-child(1) > div');
+    const dropdownCancel = within(dropdown).getByRole('button', { name: /cancel/i });
     fireEvent.click(dropdownCancel);
 
     // Check that there are no more Tag 3 on the page, since the staged one is cleared
     // and the dropdown has been closed
-    expect(queryByText('Tag 3')).not.toBeInTheDocument();
+    expect(screen.queryByText('Tag 3')).not.toBeInTheDocument();
+  });
+
+  it('should test adding global staged tags and cancel', async () => {
+    setupMockDataForStagedTagsTesting();
+    render(<RootWrapper />);
+    expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
+
+    // To edit mode
+    const editTagsButton = screen.getByRole('button', {
+      name: /edit tags/i,
+    });
+    fireEvent.click(editTagsButton);
+
+    // Click on "Add a tag" button to open dropdown
+    const addTagsButton = screen.getByText(/add a tag/i);
+    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
+    fireEvent.mouseDown(addTagsButton);
+
+    // Click to check Tag 3
+    const tag3 = screen.getByText(/tag 3/i);
+    fireEvent.click(tag3);
+
+    // Click "Add tags" to save to global staged tags
+    const addTags = screen.getByRole('button', { name: /add tags/i });
+    fireEvent.click(addTags);
+
+    expect(screen.getByText(/tag 3/i)).toBeInTheDocument();
+
+    // Click "Cancel"
+    const cancelButton = screen.getByRole('button', { name: /cancel/i });
+    fireEvent.click(cancelButton);
+
+    expect(screen.queryByText(/tag 3/i)).not.toBeInTheDocument();
+  });
+
+  it('should test delete feched tags and cancel', async () => {
+    setupMockDataForStagedTagsTesting();
+    render(<RootWrapper />);
+    expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
+
+    // To edit mode
+    const editTagsButton = screen.getByRole('button', {
+      name: /edit tags/i,
+    });
+    fireEvent.click(editTagsButton);
+
+    // Delete the tag
+    const tag = screen.getByText(/tag 2/i);
+    const deleteButton = within(tag).getByRole('button', {
+      name: /delete/i,
+    });
+    fireEvent.click(deleteButton);
+
+    expect(tag).not.toBeInTheDocument();
+
+    // Click "Cancel"
+    const cancelButton = screen.getByRole('button', { name: /cancel/i });
+    fireEvent.click(cancelButton);
+
+    expect(screen.getByText(/tag 2/i)).toBeInTheDocument();
+  });
+
+  it('should test delete global staged tags and cancel', async () => {
+    setupMockDataForStagedTagsTesting();
+    render(<RootWrapper />);
+    expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
+
+    // To edit mode
+    const editTagsButton = screen.getByRole('button', {
+      name: /edit tags/i,
+    });
+    fireEvent.click(editTagsButton);
+
+    // Click on "Add a tag" button to open dropdown
+    const addTagsButton = screen.getByText(/add a tag/i);
+    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
+    fireEvent.mouseDown(addTagsButton);
+
+    // Click to check Tag 3
+    const tag3 = screen.getByText(/tag 3/i);
+    fireEvent.click(tag3);
+
+    // Click "Add tags" to save to global staged tags
+    const addTags = screen.getByRole('button', { name: /add tags/i });
+    fireEvent.click(addTags);
+
+    const tag = screen.getByText(/tag 3/i);
+    expect(screen.getByText(/tag 3/i)).toBeInTheDocument();
+
+    // Delete the tag
+    const deleteButton = within(tag).getByRole('button', {
+      name: /delete/i,
+    });
+    fireEvent.click(deleteButton);
+
+    expect(tag).not.toBeInTheDocument();
+
+    // Click "Cancel"
+    const cancelButton = screen.getByRole('button', { name: /cancel/i });
+    fireEvent.click(cancelButton);
+
+    expect(screen.queryByText(/tag 3/i)).not.toBeInTheDocument();
+  });
+
+  it('should test add removed feched tags and cancel', async () => {
+    setupMockDataForStagedTagsTesting();
+    render(<RootWrapper />);
+    expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
+
+    // To edit mode
+    const editTagsButton = screen.getByRole('button', {
+      name: /edit tags/i,
+    });
+    fireEvent.click(editTagsButton);
+
+    // Delete the tag
+    const tag = screen.getByText(/tag 2/i);
+    const deleteButton = within(tag).getByRole('button', {
+      name: /delete/i,
+    });
+    fireEvent.click(deleteButton);
+
+    expect(tag).not.toBeInTheDocument();
+
+    // Click on "Add a tag" button to open dropdown
+    const addTagsButton = screen.getByText(/add a tag/i);
+    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
+    fireEvent.mouseDown(addTagsButton);
+
+    // Click to check Tag 2
+    const tag2 = screen.getByText(/tag 2/i);
+    fireEvent.click(tag2);
+
+    // Click "Add tags" to save to global staged tags
+    const addTags = screen.getByRole('button', { name: /add tags/i });
+    fireEvent.click(addTags);
+
+    expect(screen.getByText(/tag 2/i)).toBeInTheDocument();
+
+    // Click "Cancel"
+    const cancelButton = screen.getByRole('button', { name: /cancel/i });
+    fireEvent.click(cancelButton);
+
+    expect(screen.getByText(/tag 2/i)).toBeInTheDocument();
+  });
+
+  it('should call onClose when cancel is clicked', async () => {
+    setupMockDataForStagedTagsTesting();
+    render(<RootWrapper onClose={mockOnClose} />);
+
+    const cancelButton = await screen.findByRole('button', {
+      name: /close/i,
+    });
+    expect(cancelButton).toBeInTheDocument();
+    fireEvent.click(cancelButton);
+
+    expect(mockOnClose).toHaveBeenCalled();
   });
 
   it('should call closeManageTagsDrawer when Escape key is pressed and no selectable box is active', () => {
@@ -451,8 +771,25 @@ describe('<ContentTagsDrawer />', () => {
     postMessageSpy.mockRestore();
   });
 
-  it('should taxonomies must be ordered', async () => {
+  it('should call `updateTags` mutation on save', async () => {
     setupMockDataForStagedTagsTesting();
+    render(<RootWrapper />);
+    expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
+    const editTagsButton = screen.getByRole('button', {
+      name: /edit tags/i,
+    });
+    fireEvent.click(editTagsButton);
+
+    const saveButton = screen.getByRole('button', {
+      name: /save/i,
+    });
+    fireEvent.click(saveButton);
+
+    expect(mockMutate).toHaveBeenCalled();
+  });
+
+  it('should taxonomies must be ordered', async () => {
+    setupLargeMockDataForStagedTagsTesting();
     render(<RootWrapper />);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 

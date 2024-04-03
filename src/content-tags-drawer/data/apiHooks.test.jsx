@@ -158,8 +158,12 @@ describe('useContentTaxonomyTagsUpdater', () => {
 
     const contentId = 'testerContent';
     const taxonomyId = 123;
-    const mutation = useContentTaxonomyTagsUpdater(contentId, taxonomyId);
-    mutation.mutate({ tags: ['tag1', 'tag2'] });
+    const mutation = useContentTaxonomyTagsUpdater(contentId);
+    const tagsData = [{
+      taxonomy: taxonomyId,
+      tags: ['tag1', 'tag2'],
+    }];
+    mutation.mutate({ tagsData });
 
     expect(useMutation).toBeCalled();
 
@@ -167,9 +171,8 @@ describe('useContentTaxonomyTagsUpdater', () => {
     const { mutationFn } = config;
 
     await act(async () => {
-      const tags = ['tag1', 'tag2'];
-      await mutationFn({ tags });
-      expect(updateContentTaxonomyTags).toBeCalledWith(contentId, taxonomyId, tags);
+      await mutationFn({ tagsData });
+      expect(updateContentTaxonomyTags).toBeCalledWith(contentId, tagsData);
     });
   });
 });

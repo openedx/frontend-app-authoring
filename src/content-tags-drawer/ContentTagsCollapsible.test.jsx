@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import {
   act,
   render,
   fireEvent,
+  screen,
+  within,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import ContentTagsCollapsible from './ContentTagsCollapsible';
 import messages from './messages';
+import { ContentTagsDrawerContext } from './common/context';
 
 const taxonomyMockData = {
   hasMorePages: false,
@@ -122,6 +125,16 @@ const data = {
   addStagedContentTag: jest.fn(),
   removeStagedContentTag: jest.fn(),
   setStagedTags: jest.fn(),
+  removeGlobalStagedContentTag: jest.fn(),
+  addRemovedContentTag: jest.fn(),
+  deleteRemovedContentTag: jest.fn(),
+  globalStagedContentTags: {},
+  globalStagedRemovedContentTags: {},
+  setGlobalStagedContentTags: jest.fn(),
+  isEditMode: true,
+  collapsibleState: true,
+  openCollapsible: jest.fn(),
+  closeCollapsible: jest.fn(),
 };
 
 const ContentTagsCollapsibleComponent = ({
@@ -131,18 +144,44 @@ const ContentTagsCollapsibleComponent = ({
   addStagedContentTag,
   removeStagedContentTag,
   setStagedTags,
-}) => (
-  <IntlProvider locale="en" messages={{}}>
-    <ContentTagsCollapsible
-      contentId={contentId}
-      taxonomyAndTagsData={taxonomyAndTagsData}
-      stagedContentTags={stagedContentTags}
-      addStagedContentTag={addStagedContentTag}
-      removeStagedContentTag={removeStagedContentTag}
-      setStagedTags={setStagedTags}
-    />
-  </IntlProvider>
-);
+  removeGlobalStagedContentTag,
+  addRemovedContentTag,
+  deleteRemovedContentTag,
+  globalStagedContentTags,
+  globalStagedRemovedContentTags,
+  setGlobalStagedContentTags,
+  isEditMode,
+  collapsibleState,
+  openCollapsible,
+  closeCollapsible,
+}) => {
+  const context = useMemo(() => ({
+    addStagedContentTag,
+    removeStagedContentTag,
+    setStagedTags,
+    removeGlobalStagedContentTag,
+    addRemovedContentTag,
+    deleteRemovedContentTag,
+    globalStagedContentTags,
+    globalStagedRemovedContentTags,
+    setGlobalStagedContentTags,
+    isEditMode,
+    openCollapsible,
+    closeCollapsible,
+  }), []);
+  return (
+    <ContentTagsDrawerContext.Provider value={context}>
+      <IntlProvider locale="en" messages={{}}>
+        <ContentTagsCollapsible
+          contentId={contentId}
+          taxonomyAndTagsData={taxonomyAndTagsData}
+          stagedContentTags={stagedContentTags}
+          collapsibleState={collapsibleState}
+        />
+      </IntlProvider>
+    </ContentTagsDrawerContext.Provider>
+  );
+};
 
 ContentTagsCollapsibleComponent.propTypes = ContentTagsCollapsible.propTypes;
 
@@ -170,6 +209,16 @@ describe('<ContentTagsCollapsible />', () => {
         addStagedContentTag={componentData.addStagedContentTag}
         removeStagedContentTag={componentData.removeStagedContentTag}
         setStagedTags={componentData.setStagedTags}
+        removeGlobalStagedContentTag={componentData.removeGlobalStagedContentTag}
+        addRemovedContentTag={componentData.addRemovedContentTag}
+        deleteRemovedContentTag={componentData.deleteRemovedContentTag}
+        globalStagedContentTags={componentData.globalStagedContentTags}
+        globalStagedRemovedContentTags={componentData.globalStagedRemovedContentTags}
+        setGlobalStagedContentTags={componentData.setGlobalStagedContentTags}
+        isEditMode={componentData.isEditMode}
+        collapsibleState={componentData.collapsibleState}
+        openCollapsible={componentData.openCollapsible}
+        closeCollapsible={componentData.closeCollapsible}
       />,
     );
   }
@@ -181,13 +230,58 @@ describe('<ContentTagsCollapsible />', () => {
     expect(getByText('3')).toBeInTheDocument();
   });
 
-  it('should call `addStagedContentTag` when tag checked in the dropdown', async () => {
-    const { container, getByText, getAllByText } = await getComponent();
+  it('should render read mode', async () => {
+    await getComponent({
+      ...data,
+      isEditMode: false,
+    });
 
-    // Expand the Taxonomy to view applied tags and "Add a tag" button
-    const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
+    expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
+    expect(screen.queryByText(/add a tag/i)).not.toBeInTheDocument();
+  });
 
+  it('should render edit mode', async () => {
+    await getComponent();
+
+    expect(screen.getAllByRole(
+      'button',
+      { name: /delete/i },
+    ).length).toBe(3);
+    expect(screen.getByText(/add a tag/i)).toBeInTheDocument();
+  });
+
+  it('should call `openCollapsible` when click in the collapsible', async () => {
+    await getComponent({
+      ...data,
+      collapsibleState: false,
+    });
+
+    const expandToggle = screen.getByRole('button', {
+      name: /taxonomy 1/i,
+    });
     fireEvent.click(expandToggle);
+
+    expect(data.openCollapsible).toHaveBeenCalledTimes(1);
+    expect(data.closeCollapsible).toHaveBeenCalledTimes(0);
+  });
+
+  it('should call `closeCollapsible` when click in the collapsible', async () => {
+    await getComponent({
+      ...data,
+      collapsibleState: true,
+    });
+
+    const expandToggle = screen.getByRole('button', {
+      name: /taxonomy 1/i,
+    });
+    fireEvent.click(expandToggle);
+
+    expect(data.closeCollapsible).toHaveBeenCalledTimes(1);
+    expect(data.openCollapsible).toHaveBeenCalledTimes(0);
+  });
+
+  it('should call `addStagedContentTag` when tag checked in the dropdown', async () => {
+    const { getByText, getAllByText } = await getComponent();
 
     // Click on "Add a tag" button to open dropdown to select new tags
     const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
@@ -213,12 +307,7 @@ describe('<ContentTagsCollapsible />', () => {
   });
 
   it('should call `removeStagedContentTag` when tag staged tag unchecked in the dropdown', async () => {
-    const { container, getByText, getAllByText } = await getComponent();
-
-    // Expand the Taxonomy to view applied tags and "Add a tag" button
-    const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
-
-    fireEvent.click(expandToggle);
+    const { getByText, getAllByText } = await getComponent();
 
     // Click on "Add a tag" button to open dropdown to select new tags
     const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
@@ -242,20 +331,63 @@ describe('<ContentTagsCollapsible />', () => {
     expect(data.removeStagedContentTag).toHaveBeenCalledWith(taxonomyId, tagValue);
   });
 
+  it('should call `removeGlobalStagedContentTag` when global staged tag is deleted', async () => {
+    await getComponent({
+      ...data,
+      taxonomyAndTagsData: {
+        id: 123,
+        name: 'Taxonomy 1',
+        canTagObject: true,
+        contentTags: [
+          {
+            value: 'Tag 3',
+            lineage: ['Tag 3'],
+            canDeleteObjecttag: true,
+          },
+        ],
+      },
+      globalStagedContentTags: {
+        123: [{
+          value: 'Tag 3',
+          lineage: ['Tag 3'],
+          canDeleteObjecttag: true,
+        }],
+      },
+    });
+
+    const deleteButton = screen.getByRole('button', {
+      name: /delete/i,
+    });
+    fireEvent.click(deleteButton);
+
+    const taxonomyId = 123;
+    expect(data.removeGlobalStagedContentTag).toHaveBeenCalledTimes(1);
+    expect(data.removeGlobalStagedContentTag).toHaveBeenCalledWith(taxonomyId, 'Tag 3');
+  });
+
+  it('should call `addRemovedContentTag` when a feched tag is deleted', async () => {
+    await getComponent();
+
+    const tag = screen.getByText(/tag 2/i);
+    const deleteButton = within(tag).getByRole('button', {
+      name: /delete/i,
+    });
+    fireEvent.click(deleteButton);
+
+    const taxonomyId = 123;
+    expect(data.addRemovedContentTag).toHaveBeenCalledTimes(1);
+    expect(data.addRemovedContentTag).toHaveBeenCalledWith(taxonomyId, 'Tag 2');
+  });
+
   it('should call `setStagedTags` to clear staged tags when clicking inline "Add" button', async () => {
     // Setup component to have staged tags
-    const { container, getByText } = await getComponent({
+    const { getByText } = await getComponent({
       ...data,
       stagedContentTags: [{
         value: 'Tag%203',
         label: 'Tag 3',
       }],
     });
-
-    // Expand the Taxonomy to view applied tags and staged tags
-    const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
-
-    fireEvent.click(expandToggle);
 
     // Click on inline "Add" button and check that the appropriate methods are called
     const inlineAdd = getByText(messages.collapsibleInlineAddStagedTagsButtonText.defaultMessage);
@@ -276,11 +408,6 @@ describe('<ContentTagsCollapsible />', () => {
         label: 'Tag 3',
       }],
     });
-
-    // Expand the Taxonomy to view applied tags and staged tags
-    const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
-
-    fireEvent.click(expandToggle);
 
     // Click on dropdown with staged tags to expand it
     const selectTagsDropdown = container.getElementsByClassName('react-select-add-tags__control')[0];
@@ -307,11 +434,6 @@ describe('<ContentTagsCollapsible />', () => {
       }],
     });
 
-    // Expand the Taxonomy to view applied tags and staged tags
-    const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
-
-    fireEvent.click(expandToggle);
-
     // Click on dropdown with staged tags to expand it
     const selectTagsDropdown = container.getElementsByClassName('react-select-add-tags__control')[0];
     // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
@@ -332,12 +454,8 @@ describe('<ContentTagsCollapsible />', () => {
 
   it('should handle search term change', async () => {
     const {
-      container, getByText, getByRole, getByDisplayValue,
+      getByText, getByRole, getByDisplayValue,
     } = await getComponent();
-
-    // Expand the Taxonomy to view applied tags and "Add a tag" button
-    const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
-    fireEvent.click(expandToggle);
 
     // Click on "Add a tag" button to open dropdown
     const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
@@ -369,12 +487,7 @@ describe('<ContentTagsCollapsible />', () => {
   });
 
   it('should close dropdown selector when clicking away', async () => {
-    const { container, getByText, queryByText } = await getComponent();
-
-    // Expand the Taxonomy to view applied tags and "Add a tag" button
-    const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
-
-    fireEvent.click(expandToggle);
+    const { getByText, queryByText } = await getComponent();
 
     // Click on "Add a tag" button to open dropdown
     const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
@@ -398,16 +511,10 @@ describe('<ContentTagsCollapsible />', () => {
 
   it('should test keyboard navigation of add tags widget', async () => {
     const {
-      container,
       getByText,
       queryByText,
       queryAllByText,
     } = await getComponent();
-
-    // Expand the Taxonomy to view applied tags and "Add a tag" button
-    const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
-
-    fireEvent.click(expandToggle);
 
     // Click on "Add a tag" button to open dropdown
     const addTagsButton = getByText(messages.collapsibleAddTagsPlaceholderText.defaultMessage);
@@ -530,16 +637,13 @@ describe('<ContentTagsCollapsible />', () => {
   });
 
   it('should remove applied tags when clicking on `x` of tag bubble', async () => {
-    const { container, getByText } = await getComponent();
-
-    // Expand the Taxonomy to view applied tags
-    const expandToggle = container.getElementsByClassName('collapsible-trigger')[0];
-
-    fireEvent.click(expandToggle);
+    await getComponent();
 
     // Click on 'x' of applied tag to remove it
-    const appliedTag = getByText('Tag 2');
-    const xButtonAppliedTag = appliedTag.nextSibling;
+    const appliedTag = screen.getByText(/tag 2/i);
+    const xButtonAppliedTag = within(appliedTag).getByRole('button', {
+      name: /delete/i,
+    });
     xButtonAppliedTag.click();
 
     // Check that the applied tag has been removed

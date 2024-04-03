@@ -1,29 +1,20 @@
 // @ts-check
-import React, {
-  useMemo,
-  useEffect,
-  useState,
-  useCallback,
-} from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   Container,
   Spinner,
+  Stack,
+  Button,
+  Toast,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useParams } from 'react-router-dom';
 import messages from './messages';
 import ContentTagsCollapsible from './ContentTagsCollapsible';
-import { extractOrgFromContentId } from './utils';
-import {
-  useContentTaxonomyTagsData,
-  useContentData,
-} from './data/apiHooks';
-import { useTaxonomyList } from '../taxonomy/data/apiHooks';
 import Loading from '../generic/Loading';
-
-/** @typedef {import("../taxonomy/data/types.mjs").TaxonomyData} TaxonomyData */
-/** @typedef {import("./data/types.mjs").Tag} ContentTagData */
+import useContentTagsDrawerContext from './ContentTagsDrawerHelper';
+import { ContentTagsDrawerContext } from './common/context';
 
 /**
  * Drawer with the functionality to show and manage tags in a certain content.
@@ -40,49 +31,26 @@ const ContentTagsDrawer = ({ id, onClose }) => {
   const params = useParams();
   const contentId = id ?? params.contentId;
 
-  const org = extractOrgFromContentId(contentId);
+  const context = useContentTagsDrawerContext(contentId);
 
-  const [stagedContentTags, setStagedContentTags] = useState({});
-
-  // Add a content tags to the staged tags for a taxonomy
-  const addStagedContentTag = useCallback((taxonomyId, addedTag) => {
-    setStagedContentTags(prevStagedContentTags => {
-      const updatedStagedContentTags = {
-        ...prevStagedContentTags,
-        [taxonomyId]: [...(prevStagedContentTags[taxonomyId] ?? []), addedTag],
-      };
-      return updatedStagedContentTags;
-    });
-  }, [setStagedContentTags]);
-
-  // Remove a content tag from the staged tags for a taxonomy
-  const removeStagedContentTag = useCallback((taxonomyId, tagValue) => {
-    setStagedContentTags(prevStagedContentTags => ({
-      ...prevStagedContentTags,
-      [taxonomyId]: prevStagedContentTags[taxonomyId].filter((t) => t.value !== tagValue),
-    }));
-  }, [setStagedContentTags]);
-
-  // Sets the staged content tags for taxonomy to the provided list of tags
-  const setStagedTags = useCallback((taxonomyId, tagsList) => {
-    setStagedContentTags(prevStagedContentTags => ({ ...prevStagedContentTags, [taxonomyId]: tagsList }));
-  }, [setStagedContentTags]);
-
-  const { data: contentData, isSuccess: isContentDataLoaded } = useContentData(contentId);
   const {
-    data: contentTaxonomyTagsData,
-    isSuccess: isContentTaxonomyTagsLoaded,
-  } = useContentTaxonomyTagsData(contentId);
-  const { data: taxonomyListData, isSuccess: isTaxonomyListLoaded } = useTaxonomyList(org);
-
-  let contentName = '';
-  if (isContentDataLoaded) {
-    if ('displayName' in contentData) {
-      contentName = contentData.displayName;
-    } else {
-      contentName = contentData.courseDisplayNameWithDefault;
-    }
-  }
+    showToastAfterSave,
+    toReadMode,
+    commitGlobalStagedTagsStatus,
+    isContentDataLoaded,
+    contentName,
+    isTaxonomyListLoaded,
+    isContentTaxonomyTagsLoaded,
+    tagsByTaxonomy,
+    stagedContentTags,
+    collapsibleStates,
+    isEditMode,
+    commitGlobalStagedTags,
+    toEditMode,
+    toastMessage,
+    closeToast,
+    setCollapsibleToInitalState,
+  } = context;
 
   let onCloseDrawer = onClose;
   if (onCloseDrawer === undefined) {
@@ -107,96 +75,106 @@ const ContentTagsDrawer = ({ id, onClose }) => {
     };
   }, []);
 
-  const taxonomies = useMemo(() => {
-    const sortTaxonomies = (taxonomiesList) => {
-      const taxonomiesWithData = taxonomiesList.filter(
-        (t) => t.contentTags.length !== 0,
-      );
-
-      // Count implicit tags per taxonomy.
-      // TODO This count is also calculated individually
-      // in ContentTagsCollapsible. It should only be calculated once.
-      const tagsCountBytaxonomy = {};
-      taxonomiesWithData.forEach((tax) => {
-        tagsCountBytaxonomy[tax.id] = new Set(
-          tax.contentTags.flatMap(item => item.lineage),
-        ).size;
-      });
-
-      // Sort taxonomies with data by implicit count
-      const sortedTaxonomiesWithData = taxonomiesWithData.sort(
-        (a, b) => tagsCountBytaxonomy[b.id] - tagsCountBytaxonomy[a.id],
-      );
-
-      // Empty taxonomies sorted by name.
-      // Since the query returns sorted by name,
-      // it is not necessary to do another sorting here.
-      const emptyTaxonomies = taxonomiesList.filter(
-        (t) => t.contentTags.length === 0,
-      );
-
-      return [...sortedTaxonomiesWithData, ...emptyTaxonomies];
-    };
-
-    if (taxonomyListData && contentTaxonomyTagsData) {
-      // Initialize list of content tags in taxonomies to populate
-      const taxonomiesList = taxonomyListData.results.map((taxonomy) => ({
-        ...taxonomy,
-        contentTags: /** @type {ContentTagData[]} */([]),
-      }));
-
-      const contentTaxonomies = contentTaxonomyTagsData.taxonomies;
-
-      // eslint-disable-next-line array-callback-return
-      contentTaxonomies.map((contentTaxonomyTags) => {
-        const contentTaxonomy = taxonomiesList.find((taxonomy) => taxonomy.id === contentTaxonomyTags.taxonomyId);
-        if (contentTaxonomy) {
-          contentTaxonomy.contentTags = contentTaxonomyTags.tags;
-        }
-      });
-
-      return sortTaxonomies(taxonomiesList);
+  useEffect(() => {
+    /* istanbul ignore next */
+    if (commitGlobalStagedTagsStatus === 'success') {
+      showToastAfterSave();
+      toReadMode();
     }
-    return [];
-  }, [taxonomyListData, contentTaxonomyTagsData]);
+  }, [commitGlobalStagedTagsStatus]);
+
+  // First call of the initial collapsible states
+  React.useEffect(() => {
+    setCollapsibleToInitalState();
+  }, [isTaxonomyListLoaded, isContentTaxonomyTagsLoaded]);
 
   return (
+    <ContentTagsDrawerContext.Provider value={context}>
+      <div id="content-tags-drawer" className="mt-1 tags-drawer d-flex flex-column justify-content-between min-vh-100">
+        <Container size="xl">
+          { isContentDataLoaded
+            ? <h2>{ contentName }</h2>
+            : (
+              <div className="d-flex justify-content-center align-items-center flex-column">
+                <Spinner
+                  animation="border"
+                  size="xl"
+                  screenReaderText={intl.formatMessage(messages.loadingMessage)}
+                />
+              </div>
+            )}
 
-    <div id="content-tags-drawer" className="mt-1">
-      <Container size="xl">
-        { isContentDataLoaded
-          ? <h2>{ contentName }</h2>
-          : (
-            <div className="d-flex justify-content-center align-items-center flex-column">
-              <Spinner
-                animation="border"
-                size="xl"
-                screenReaderText={intl.formatMessage(messages.loadingMessage)}
-              />
+          <hr />
+          <p className="lead text-gray-500 font-weight-bold">{intl.formatMessage(messages.headerSubtitle)}</p>
+
+          { isTaxonomyListLoaded && isContentTaxonomyTagsLoaded
+            ? tagsByTaxonomy.map((data) => (
+              <div key={`taxonomy-tags-collapsible-${data.id}`}>
+                <ContentTagsCollapsible
+                  contentId={contentId}
+                  taxonomyAndTagsData={data}
+                  stagedContentTags={stagedContentTags[data.id] || []}
+                  collapsibleState={collapsibleStates[data.id] || false}
+                />
+                <hr />
+              </div>
+            ))
+            : <Loading />}
+        </Container>
+
+        { isTaxonomyListLoaded && isContentTaxonomyTagsLoaded && (
+          <Container
+            className="bg-white position-sticky p-3.5 box-shadow-up-2 tags-drawer-footer"
+          >
+            <div className="d-flex justify-content-end">
+              { commitGlobalStagedTagsStatus !== 'loading' ? (
+                <Stack direction="horizontal" gap={2}>
+                  <Button
+                    className="font-weight-bold tags-drawer-cancel-button"
+                    variant="tertiary"
+                    onClick={isEditMode
+                      ? toReadMode
+                      : onCloseDrawer}
+                  >
+                    { intl.formatMessage(isEditMode
+                      ? messages.tagsDrawerCancelButtonText
+                      : messages.tagsDrawerCloseButtonText)}
+                  </Button>
+                  <Button
+                    variant="dark"
+                    className="rounded-0"
+                    onClick={isEditMode
+                      ? commitGlobalStagedTags
+                      : toEditMode}
+                  >
+                    { intl.formatMessage(isEditMode
+                      ? messages.tagsDrawerSaveButtonText
+                      : messages.tagsDrawerEditTagsButtonText)}
+                  </Button>
+                </Stack>
+              )
+                : (
+                  <Spinner
+                    animation="border"
+                    size="xl"
+                    screenReaderText={intl.formatMessage(messages.loadingMessage)}
+                  />
+                )}
             </div>
-          )}
-
-        <hr />
-        <p className="lead text-gray-500 font-weight-bold">{intl.formatMessage(messages.headerSubtitle)}</p>
-
-        { isTaxonomyListLoaded && isContentTaxonomyTagsLoaded
-          ? taxonomies.map((data) => (
-            <div key={`taxonomy-tags-collapsible-${data.id}`}>
-              <ContentTagsCollapsible
-                contentId={contentId}
-                taxonomyAndTagsData={data}
-                stagedContentTags={stagedContentTags[data.id] || []}
-                addStagedContentTag={addStagedContentTag}
-                removeStagedContentTag={removeStagedContentTag}
-                setStagedTags={setStagedTags}
-              />
-              <hr />
-            </div>
-          ))
-          : <Loading />}
-
-      </Container>
-    </div>
+          </Container>
+        )}
+        {/* istanbul ignore next */
+          toastMessage && (
+            <Toast
+              show
+              onClose={closeToast}
+            >
+              {toastMessage}
+            </Toast>
+          )
+        }
+      </div>
+    </ContentTagsDrawerContext.Provider>
   );
 };
 
