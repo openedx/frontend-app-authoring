@@ -2,7 +2,7 @@
 // disable prop-types since we're using TypeScript to define the prop types,
 // but the linter can't detect that in a .jsx file.
 /* eslint-disable react/prop-types */
-import React from 'react';
+import React, { useContext } from 'react';
 import Select, { components } from 'react-select';
 import {
   Collapsible,
@@ -19,14 +19,14 @@ import messages from './messages';
 
 import ContentTagsDropDownSelector from './ContentTagsDropDownSelector';
 
-import ContentTagsTree from './ContentTagsTree';
-
 import useContentTagsCollapsibleHelper from './ContentTagsCollapsibleHelper';
+import TagsTree from './TagsTree';
+import { ContentTagsDrawerContext } from './common/context';
 
-/** @typedef {import("./ContentTagsCollapsible").TagTreeEntry} TagTreeEntry */
 /** @typedef {import("./ContentTagsCollapsible").TaxonomySelectProps} TaxonomySelectProps */
 /** @typedef {import("../taxonomy/data/types.mjs").TaxonomyData} TaxonomyData */
 /** @typedef {import("./data/types.mjs").Tag} ContentTagData */
+/** @typedef {import("./data/types.mjs").StagedTagData} StagedTagData */
 
 /**
  * Custom Menu component for our Select box
@@ -77,7 +77,7 @@ const CustomMenu = (props) => {
               tabIndex="0"
               ref={selectCancelRef}
               variant="tertiary"
-              className="cancel-add-tags-button"
+              className="tags-drawer-cancel-button"
               onClick={handleCancelStagedTags}
             >
               { intl.formatMessage(messages.collapsibleCancelStagedTagsButtonText) }
@@ -224,17 +224,16 @@ const CustomIndicatorsContainer = (props) => {
  *
  * @param {Object} props - The component props.
  * @param {string} props.contentId - Id of the content object
- * @param {{value: string, label: string}[]} props.stagedContentTags
+ * @param {StagedTagData[]} props.stagedContentTags
  *        - Array of staged tags represented as objects with value/label
- * @param {(taxonomyId: number, tag: {value: string, label: string}) => void} props.addStagedContentTag
- *        - Callback function to add a staged tag for a taxonomy
- * @param {(taxonomyId: number, tagValue: string) => void} props.removeStagedContentTag
- *        - Callback function to remove a staged tag from a taxonomy
- * @param {Function} props.setStagedTags - Callback function to set staged tags for a taxonomy to provided tags list
  * @param {TaxonomyData & {contentTags: ContentTagData[]}} props.taxonomyAndTagsData - Taxonomy metadata & applied tags
+ * @param {boolean} props.collapsibleState - True if the collapsible is open
  */
 const ContentTagsCollapsible = ({
-  contentId, taxonomyAndTagsData, stagedContentTags, addStagedContentTag, removeStagedContentTag, setStagedTags,
+  contentId,
+  taxonomyAndTagsData,
+  stagedContentTags,
+  collapsibleState,
 }) => {
   const intl = useIntl();
   const { id: taxonomyId, name, canTagObject } = taxonomyAndTagsData;
@@ -246,20 +245,25 @@ const ContentTagsCollapsible = ({
   const [selectMenuIsOpen, setSelectMenuIsOpen] = React.useState(false);
 
   const {
+    isEditMode,
+    setStagedTags,
+    openCollapsible,
+    closeCollapsible,
+  } = useContext(ContentTagsDrawerContext);
+
+  const {
     tagChangeHandler,
     removeAppliedTagHandler,
     appliedContentTagsTree,
     stagedContentTagsTree,
     contentTagsCount,
     checkedTags,
-    commitStagedTags,
+    commitStagedTagsToGlobal,
     updateTags,
   } = useContentTagsCollapsibleHelper(
     contentId,
-    taxonomyAndTagsData,
-    addStagedContentTag,
-    removeStagedContentTag,
     stagedContentTags,
+    taxonomyAndTagsData,
   );
 
   const [searchTerm, setSearchTerm] = React.useState('');
@@ -309,12 +313,12 @@ const ContentTagsCollapsible = ({
   }, [taxonomyId, setStagedTags, stagedContentTags, tagChangeHandler]);
 
   const handleCommitStagedTags = React.useCallback(() => {
-    commitStagedTags();
+    commitStagedTagsToGlobal();
     handleStagedTagsMenuChange([]);
     selectRef.current?.blur();
     setSearchTerm('');
     setSelectMenuIsOpen(false);
-  }, [commitStagedTags, handleStagedTagsMenuChange, selectRef, setSearchTerm]);
+  }, [commitStagedTagsToGlobal, handleStagedTagsMenuChange, selectRef, setSearchTerm]);
 
   const handleCancelStagedTags = React.useCallback(() => {
     handleStagedTagsMenuChange([]);
@@ -366,6 +370,9 @@ const ContentTagsCollapsible = ({
     <div className="d-flex">
       <Collapsible.Advanced
         className="collapsible-card-lg taxonomy-tags-collapsible"
+        open={collapsibleState}
+        onClose={() => closeCollapsible(taxonomyId)}
+        onOpen={() => openCollapsible(taxonomyId)}
       >
         <Collapsible.Trigger className="collapsible-trigger pl-2.5">
           <Collapsible.Visible whenClosed>
@@ -379,13 +386,19 @@ const ContentTagsCollapsible = ({
         </Collapsible.Trigger>
 
         <Collapsible.Body className="collapsible-body">
-          <div key={taxonomyId}>
-            <ContentTagsTree tagsTree={appliedContentTagsTree} removeTagHandler={removeAppliedTagHandler} />
-          </div>
+          { Object.keys(appliedContentTagsTree).length !== 0
+            && (
+              <div className="mb-3" key={taxonomyId}>
+                <TagsTree
+                  tags={appliedContentTagsTree}
+                  parentKey={taxonomyId.toString()}
+                  removeTagHandler={removeAppliedTagHandler}
+                />
+              </div>
+            )}
 
           <div className="d-flex taxonomy-tags-selector-menu">
-
-            {canTagObject && (
+            {isEditMode && canTagObject && (
               <Select
                 onBlur={handleOnBlur}
                 styles={{
@@ -436,6 +449,7 @@ const ContentTagsCollapsible = ({
       </Collapsible.Advanced>
       <div className="d-flex align-items-start pt-2.5 taxonomy-tags-count-chip">
         <Chip
+          className="border-0"
           iconBefore={Tag}
           iconBeforeAlt="icon-before"
           disabled={contentTagsCount === 0}

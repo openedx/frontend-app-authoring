@@ -7,3 +7,24 @@
     min-width: 100vw;
   }
 }
+
+.tags-drawer {
+  .tags-drawer-footer {
+    right: 0;
+    bottom: 0;
+  }
+
+  .tags-drawer-cancel-button:hover {
+    background-color: transparent;
+    color: $gray-300 !important;
+  }
+}
+
+// Apply styles to sheet only if it has a child with a .tags-drawer class
+.pgn__sheet-component {
+  &:has(.tags-drawer) {
+    overflow-y: scroll;
+    padding: 0;
+    min-height: 100vh;
+  }
+}

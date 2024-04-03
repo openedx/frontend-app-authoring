@@ -119,9 +119,8 @@ export const useContentData = (contentId) => (
 /**
  * Builds the mutation to update the tags applied to the content object
  * @param {string} contentId The id of the content object to update tags for
- * @param {number} taxonomyId The id of the taxonomy the tags belong to
  */
-export const useContentTaxonomyTagsUpdater = (contentId, taxonomyId) => {
+export const useContentTaxonomyTagsUpdater = (contentId) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -130,11 +129,11 @@ export const useContentTaxonomyTagsUpdater = (contentId, taxonomyId) => {
      *   any,
      *   any,
      *   {
-     *     tags: string[]
+     *     tagsData: Promise<import("./types.mjs").UpdateTagsData[]>
      *   }
      * >}
      */
-    mutationFn: ({ tags }) => updateContentTaxonomyTags(contentId, taxonomyId, tags),
+    mutationFn: ({ tagsData }) => updateContentTaxonomyTags(contentId, tagsData),
     onSettled: /* istanbul ignore next */ () => {
       queryClient.invalidateQueries({ queryKey: ['contentTaxonomyTags', contentId] });
       /// Invalidate query with pattern on course outline

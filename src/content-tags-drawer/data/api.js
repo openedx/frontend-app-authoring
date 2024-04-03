@@ -90,13 +90,11 @@ export async function getContentData(contentId) {
 /**
  * Update content object's applied tags
  * @param {string} contentId The id of the content object (unit/component)
- * @param {number} taxonomyId The id of the taxonomy the tags belong to
- * @param {string[]} tags The list of tags (values) to set on content object
+ * @param {Promise<import("./types.mjs").UpdateTagsData[]>} tagsData The list of tags (values) to set on content object
  * @returns {Promise<import("./types.mjs").ContentTaxonomyTagsData>}
  */
-export async function updateContentTaxonomyTags(contentId, taxonomyId, tags) {
+export async function updateContentTaxonomyTags(contentId, tagsData) {
   const url = getContentTaxonomyTagsApiUrl(contentId);
-  const params = { taxonomy: taxonomyId };
-  const { data } = await getAuthenticatedHttpClient().put(url, { tags }, { params });
+  const { data } = await getAuthenticatedHttpClient().put(url, { tagsData });
   return camelCaseObject(data[contentId]);
 }

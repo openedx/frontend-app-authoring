@@ -9,6 +9,10 @@
       margin-left: -3px;
     }
   }
+
+  .tags-tree {
+    font-size: 1rem;
+  }
 }
 
 .taxonomy-tags-selector-menu {
@@ -35,11 +39,6 @@
 .add-tags-button:not([disabled]):hover {
   background-color: transparent;
   color: $info-900 !important;
-}
-
-.cancel-add-tags-button:hover {
-  background-color: transparent;
-  color: $gray-300 !important;
 }
 
 .react-select-add-tags__control {

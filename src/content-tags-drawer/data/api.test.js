@@ -132,7 +132,11 @@ describe('content tags drawer api calls', () => {
     const taxonomyId = 3;
     const tags = ['flat taxonomy tag 100', 'flat taxonomy tag 3856'];
     axiosMock.onPut(`${getContentTaxonomyTagsApiUrl(contentId)}`).reply(200, updateContentTaxonomyTagsMock);
-    const result = await updateContentTaxonomyTags(contentId, taxonomyId, tags);
+    // @ts-ignore
+    const result = await updateContentTaxonomyTags(contentId, [{
+      taxonomy: taxonomyId,
+      tags,
+    }]);
 
     expect(axiosMock.history.put[0].url).toEqual(`${getContentTaxonomyTagsApiUrl(contentId)}`);
     expect(result).toEqual(updateContentTaxonomyTagsMock[contentId]);

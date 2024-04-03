@@ -11,7 +11,7 @@ import { ContentTagsDrawer } from '..';
 import messages from '../messages';
 import { useContentTaxonomyTagsData } from '../data/apiHooks';
 import { LoadingSpinner } from '../../generic/Loading';
-import TagsTree from './TagsTree';
+import TagsTree from '../TagsTree';
 
 const TagsSidebarBody = () => {
   const intl = useIntl();

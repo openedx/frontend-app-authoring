@@ -75,6 +75,41 @@ const messages = defineMessages({
     id: 'course-authoring.content-tags-drawer.content-tags-collapsible.custom-menu.inline-save-staged-tags',
     defaultMessage: 'Add',
   },
+  tagsDrawerCancelButtonText: {
+    id: 'course-authoring.content-tags-drawer.cancel',
+    defaultMessage: 'Cancel',
+    description: 'Button to cancel edit tags.',
+  },
+  tagsDrawerSaveButtonText: {
+    id: 'course-authoring.content-tags-drawer.save',
+    defaultMessage: 'Save',
+    description: 'Button to save edited tags.',
+  },
+  tagsDrawerCloseButtonText: {
+    id: 'course-authoring.content-tags-drawer.close',
+    defaultMessage: 'Close',
+    description: 'Button to close manage tags drawer.',
+  },
+  tagsDrawerEditTagsButtonText: {
+    id: 'course-authoring.content-tags-drawer.edit-tags',
+    defaultMessage: 'Edit tags',
+    description: 'Button to edit tags in manage tags drawer.',
+  },
+  tagsSaveToastTextTypeAdded: {
+    id: 'course-authoring.content-tags-drawer.toast.added',
+    defaultMessage: '{tagsAdded} tags added.',
+    description: 'Text of toast after save when the user added tags.',
+  },
+  tagsSaveToastTextTypeRemoved: {
+    id: 'course-authoring.content-tags-drawer.toast.removed',
+    defaultMessage: '{tagsRemoved} tags removed.',
+    description: 'Text of toast after save when the user removed tags.',
+  },
+  tagsDeleteAltText: {
+    id: 'course-authoring.content-tags-drawer.tag.delete',
+    defaultMessage: 'Delete',
+    description: 'Alt label for Delete tag button.',
+  },
 });
 
 export default messages;
