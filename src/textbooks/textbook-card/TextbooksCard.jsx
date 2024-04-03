@@ -44,7 +44,7 @@ const TextbookCard = ({
   const { tabTitle, chapters, id } = textbook;
 
   const onPreviewTextbookClick = () => {
-    window.location.href = `${config.LMS_BASE_URL}/courses/${courseId}/pdfbook/${textbookIndex}/`;
+    window.open(`${config.LMS_BASE_URL}/courses/${courseId}/pdfbook/${textbookIndex}/`, '_blank');
   };
 
   const handleDeleteButtonSubmit = () => {

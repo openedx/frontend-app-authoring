@@ -127,7 +127,7 @@ const CourseAuthoringRoutes = () => {
           element={<PageWrap><Certificates courseId={courseId} /></PageWrap>}
         />
         <Route
-          path="/pages-and-resources/textbooks"
+          path="textbooks"
           element={<PageWrap><Textbooks courseId={courseId} /></PageWrap>}
         />
       </Routes>

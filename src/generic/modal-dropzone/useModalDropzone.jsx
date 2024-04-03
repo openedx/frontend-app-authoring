@@ -49,7 +49,8 @@ const useModalDropzone = ({
    */
   const constructAcceptObject = (types) => types
     .reduce((acc, type) => {
-      const mimeType = VALID_IMAGE_TYPES.includes(type) ? 'image/*' : '*/*';
+      // eslint-disable-next-line no-nested-ternary
+      const mimeType = type === 'pdf' ? 'application/pdf' : VALID_IMAGE_TYPES.includes(type) ? 'image/*' : '*/*';
       if (!acc[mimeType]) {
         acc[mimeType] = [];
       }
@@ -98,7 +99,7 @@ const useModalDropzone = ({
 
     try {
       const response = await uploadAssets(courseId, selectedFile, onUploadProgress);
-      const url = response?.asset?.url;
+      const { url } = response.asset;
 
       if (url) {
         onChange(url);
