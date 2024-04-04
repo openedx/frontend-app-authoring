@@ -152,4 +152,3 @@ All community members are expected to follow the `Open edX Code of Conduct`_.
 ## Reporting Security Issues
 
 Please do not report security issues in public. Please email security@openedx.org.
-
