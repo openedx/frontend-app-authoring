@@ -42,7 +42,7 @@
     "@edx/frontend-platform": "7.0.1",
     "@edx/react-unit-test-utils": "2.0.0",
     "@edx/reactifex": "^2.1.1",
-    "@openedx/frontend-build": "13.0.27",
+    "@openedx/frontend-build": "13.1.0",
     "@openedx/paragon": "^22.0.0",
     "@testing-library/dom": "^8.13.0",
     "@testing-library/jest-dom": "^5.16.5",
