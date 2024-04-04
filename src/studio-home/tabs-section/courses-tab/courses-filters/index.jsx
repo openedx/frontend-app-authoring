@@ -4,18 +4,20 @@ import PropTypes from 'prop-types';
 import { SearchField } from '@openedx/paragon';
 import { getStudioHomeCoursesParams } from '../../../data/selectors';
 import { updateStudioHomeCoursesCustomParams } from '../../../data/slice';
+import { fetchStudioHomeData } from '../../../data/thunks';
 import { useDebounce } from '../../../../hooks';
 import CoursesTypesFilterMenu from './courses-types-filter-menu';
 import CoursesOrderFilterMenu from './courses-order-filter-menu';
 
 const CoursesFilters = ({ dispatch }) => {
+  const studioHomeCoursesParams = useSelector(getStudioHomeCoursesParams);
   const {
     order,
     search,
     activeOnly,
     archivedOnly,
     cleanFilters,
-  } = useSelector(getStudioHomeCoursesParams);
+  } = studioHomeCoursesParams;
   const [inputSearchValue, setInputSearchValue] = useState('');
   const searchValueDebounced = useDebounce(inputSearchValue);
 
@@ -46,43 +48,67 @@ const CoursesFilters = ({ dispatch }) => {
 
     const filterParams = getFilterTypeData(baseFilters);
     const filterParamsFormat = filterParams[filterType] || baseFilters;
-    dispatch(updateStudioHomeCoursesCustomParams(filterParamsFormat));
+    const { 
+      coursesOrderLabel, 
+      coursesTypesLabel, 
+      isFiltered, 
+      orderTypeLabel, 
+      cleanFilters, 
+      currentPage, 
+      ...customParams
+    } = filterParamsFormat; 
+    dispatch(updateStudioHomeCoursesCustomParams(filterParamsFormat)); 
+    dispatch(fetchStudioHomeData(location.search ?? '', false, { page: 1, ...customParams }, true));
   };
 
+  const handleClearSearchInput = () => {
+    const filterParams = {  
+      search: undefined,
+      activeOnly,
+      archivedOnly,
+      order
+    };
+
+    dispatch(updateStudioHomeCoursesCustomParams({
+      currentPage: 1,
+      isFiltered: true,
+      cleanFilters: false,
+      inputValue: '',
+      ...filterParams
+    }));
+
+    dispatch(fetchStudioHomeData(location.search ?? '', false, { page: 1, ...filterParams }, true));
+  }
+
   useEffect(() => {
+    const debouncedCleanedSearchValue = searchValueDebounced.trim(); 
     const loadCoursesSearched = () => {
-      const valueFormatted = searchValueDebounced.trim();
-      dispatch(updateStudioHomeCoursesCustomParams({
-        page: 1,
+      const valueFormatted = debouncedCleanedSearchValue;
+      const filterParams = {  
         search: valueFormatted,
         activeOnly,
         archivedOnly,
-        order,
+        order
+      };
+      dispatch(updateStudioHomeCoursesCustomParams({
+        currentPage: 1,
         isFiltered: true,
         cleanFilters: false,
+        inputValue: searchValueDebounced,
+        ...filterParams
       }));
+
+      if (valueFormatted !== search) {
+        dispatch(fetchStudioHomeData(location.search ?? '', false, { page: 1, ...filterParams }, true));
+      }
     };
 
-    const hasSearchValueDebouncedValue = searchValueDebounced.trim().length;
+    const hasSearchValueDebouncedValue = debouncedCleanedSearchValue.length;
 
     if (hasSearchValueDebouncedValue) {
       loadCoursesSearched();
     }
-  }, [searchValueDebounced]);
-
-  useEffect(() => {
-    const isInputSearchEmpty = inputSearchValue.trim().length;
-    if (!isInputSearchEmpty) {
-      dispatch(updateStudioHomeCoursesCustomParams({
-        page: 1,
-        activeOnly,
-        archivedOnly,
-        order,
-        isFiltered: true,
-        cleanFilters: false,
-      }));
-    }
-  }, [inputSearchValue]);
+  }, [searchValueDebounced]); 
 
   return (
     <div className="d-flex">
@@ -93,6 +119,7 @@ const CoursesFilters = ({ dispatch }) => {
         className="mr-4"
         data-testid="input-filter-courses-search"
         placeholder="Search"
+        onClear={handleClearSearchInput}
       />
 
       <CoursesTypesFilterMenu

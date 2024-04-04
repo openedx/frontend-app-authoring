@@ -1,13 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/i18n';
+// SelectableBox in paragon has a bug only visible on stage where you can't change selection. So we override it
+import { SelectableBox } from '@edx/frontend-lib-content-components';
 import {
   ActionRow,
   Button,
   DataTableContext,
   Form,
   ModalDialog,
-  SelectableBox,
   useCheckboxSetValues,
 } from '@openedx/paragon';
 import messages from './messages';
@@ -36,6 +37,8 @@ const SortAndFilterModal = ({
   }, [state]);
 
   const handleChange = (e) => {
+    // eslint-disable-next-line no-console
+    console.log('SortAndFilterModal | handleChange called | e: ', e);
     setSortBy(e.target.value);
   };
 

@@ -45,6 +45,7 @@ const slice = createSlice({
       sourceEditUrl: null,
     },
     enableProctoredExams: false,
+    pasteFileNotices: {},
   },
   reducers: {
     fetchOutlineIndexSuccess: (state, { payload }) => {
@@ -100,7 +101,7 @@ const slice = createSlice({
       state.savingStatus = payload.status;
     },
     updateSectionList: (state, { payload }) => {
-      state.sectionsList = state.sectionsList.map((section) => (section.id === payload.id ? payload : section));
+      state.sectionsList = state.sectionsList.map((section) => (section.id in payload ? payload[section.id] : section));
     },
     setCurrentItem: (state, { payload }) => {
       state.currentItem = payload;
@@ -110,22 +111,6 @@ const slice = createSlice({
       sectionsList.sort((a, b) => payload.indexOf(a.id) - payload.indexOf(b.id));
 
       state.sectionsList = [...sectionsList];
-    },
-    reorderSubsectionList: (state, { payload }) => {
-      const { sectionId, subsectionListIds } = payload;
-      const sections = [...state.sectionsList];
-      const i = sections.findIndex(section => section.id === sectionId);
-      sections[i].childInfo.children.sort((a, b) => subsectionListIds.indexOf(a.id) - subsectionListIds.indexOf(b.id));
-      state.sectionsList = [...sections];
-    },
-    reorderUnitList: (state, { payload }) => {
-      const { sectionId, subsectionId, unitListIds } = payload;
-      const sections = [...state.sectionsList];
-      const i = sections.findIndex(section => section.id === sectionId);
-      const j = sections[i].childInfo.children.findIndex(subsection => subsection.id === subsectionId);
-      const subsection = sections[i].childInfo.children[j];
-      subsection.childInfo.children.sort((a, b) => unitListIds.indexOf(a.id) - unitListIds.indexOf(b.id));
-      state.sectionsList = [...sections];
     },
     setCurrentSection: (state, { payload }) => {
       state.currentSection = payload;
@@ -191,6 +176,14 @@ const slice = createSlice({
         return [...result, currentValue];
       }, []);
     },
+    setPasteFileNotices: (state, { payload }) => {
+      state.pasteFileNotices = payload;
+    },
+    removePasteFileNotices: (state, { payload }) => {
+      const pasteFileNotices = { ...state.pasteFileNotices };
+      payload.forEach((key) => delete pasteFileNotices[key]);
+      state.pasteFileNotices = pasteFileNotices;
+    },
   },
 });
 
@@ -218,6 +211,8 @@ export const {
   reorderSubsectionList,
   reorderUnitList,
   updateClipboardContent,
+  setPasteFileNotices,
+  removePasteFileNotices,
 } = slice.actions;
 
 export const {

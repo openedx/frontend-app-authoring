@@ -1,5 +1,11 @@
 // @ts-check
-import React, { useMemo, useEffect } from 'react';
+import React, {
+  useMemo,
+  useEffect,
+  useState,
+  useCallback,
+} from 'react';
+import PropTypes from 'prop-types';
 import {
   Container,
   CloseButton,
@@ -14,42 +20,85 @@ import {
   useContentTaxonomyTagsData,
   useContentData,
 } from './data/apiHooks';
-import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from '../taxonomy/data/apiHooks';
+import { useTaxonomyList } from '../taxonomy/data/apiHooks';
 import Loading from '../generic/Loading';
 
 /** @typedef {import("../taxonomy/data/types.mjs").TaxonomyData} TaxonomyData */
 /** @typedef {import("./data/types.mjs").Tag} ContentTagData */
 
-const ContentTagsDrawer = () => {
+/**
+ * Drawer with the functionality to show and manage tags in a certain content.
+ * It is used both in interfaces of this MFE and in edx-platform interfaces such as iframe.
+ * - If you want to use it as an iframe, the component obtains the `contentId` from the url parameters.
+ *   Functions to close the drawer are handled internally.
+ *   TODO: We can delete this method when is no longer used on edx-platform.
+ * - If you want to use it as react component, you need to pass the content id and the close functions
+ *   through the component parameters.
+ */
+const ContentTagsDrawer = ({ id, onClose }) => {
   const intl = useIntl();
-  const { contentId } = /** @type {{contentId: string}} */(useParams());
+  // TODO: We can delete 'params' when the iframe is no longer used on edx-platform
+  const params = useParams();
+  const contentId = id ?? params.contentId;
 
   const org = extractOrgFromContentId(contentId);
 
-  const useTaxonomyListData = () => {
-    const taxonomyListData = useTaxonomyListDataResponse(org);
-    const isTaxonomyListLoaded = useIsTaxonomyListDataLoaded(org);
-    return { taxonomyListData, isTaxonomyListLoaded };
-  };
+  const [stagedContentTags, setStagedContentTags] = useState({});
+
+  // Add a content tags to the staged tags for a taxonomy
+  const addStagedContentTag = useCallback((taxonomyId, addedTag) => {
+    setStagedContentTags(prevStagedContentTags => {
+      const updatedStagedContentTags = {
+        ...prevStagedContentTags,
+        [taxonomyId]: [...(prevStagedContentTags[taxonomyId] ?? []), addedTag],
+      };
+      return updatedStagedContentTags;
+    });
+  }, [setStagedContentTags]);
+
+  // Remove a content tag from the staged tags for a taxonomy
+  const removeStagedContentTag = useCallback((taxonomyId, tagValue) => {
+    setStagedContentTags(prevStagedContentTags => ({
+      ...prevStagedContentTags,
+      [taxonomyId]: prevStagedContentTags[taxonomyId].filter((t) => t.value !== tagValue),
+    }));
+  }, [setStagedContentTags]);
+
+  // Sets the staged content tags for taxonomy to the provided list of tags
+  const setStagedTags = useCallback((taxonomyId, tagsList) => {
+    setStagedContentTags(prevStagedContentTags => ({ ...prevStagedContentTags, [taxonomyId]: tagsList }));
+  }, [setStagedContentTags]);
 
   const { data: contentData, isSuccess: isContentDataLoaded } = useContentData(contentId);
   const {
     data: contentTaxonomyTagsData,
     isSuccess: isContentTaxonomyTagsLoaded,
   } = useContentTaxonomyTagsData(contentId);
-  const { taxonomyListData, isTaxonomyListLoaded } = useTaxonomyListData();
+  const { data: taxonomyListData, isSuccess: isTaxonomyListLoaded } = useTaxonomyList(org);
 
-  const closeContentTagsDrawer = () => {
-    // "*" allows communication with any origin
-    window.parent.postMessage('closeManageTagsDrawer', '*');
-  };
+  let contentName = '';
+  if (isContentDataLoaded) {
+    if ('displayName' in contentData) {
+      contentName = contentData.displayName;
+    } else {
+      contentName = contentData.courseDisplayNameWithDefault;
+    }
+  }
+
+  let onCloseDrawer = onClose;
+  if (onCloseDrawer === undefined) {
+    onCloseDrawer = () => {
+      // "*" allows communication with any origin
+      window.parent.postMessage('closeManageTagsDrawer', '*');
+    };
+  }
 
   useEffect(() => {
     const handleEsc = (event) => {
       /* Close drawer when ESC-key is pressed and selectable dropdown box not open */
       const selectableBoxOpen = document.querySelector('[data-selectable-box="taxonomy-tags"]');
       if (event.key === 'Escape' && !selectableBoxOpen) {
-        closeContentTagsDrawer();
+        onCloseDrawer();
       }
     };
     document.addEventListener('keydown', handleEsc);
@@ -84,12 +133,12 @@ const ContentTagsDrawer = () => {
 
   return (
 
-    <div className="mt-1">
+    <div id="content-tags-drawer" className="mt-1">
       <Container size="xl">
-        <CloseButton onClick={() => closeContentTagsDrawer()} data-testid="drawer-close-button" />
+        <CloseButton onClick={() => onCloseDrawer()} data-testid="drawer-close-button" />
         <span>{intl.formatMessage(messages.headerSubtitle)}</span>
         { isContentDataLoaded
-          ? <h3>{ contentData.displayName }</h3>
+          ? <h3>{ contentName }</h3>
           : (
             <div className="d-flex justify-content-center align-items-center flex-column">
               <Spinner
@@ -105,7 +154,14 @@ const ContentTagsDrawer = () => {
         { isTaxonomyListLoaded && isContentTaxonomyTagsLoaded
           ? taxonomies.map((data) => (
             <div key={`taxonomy-tags-collapsible-${data.id}`}>
-              <ContentTagsCollapsible contentId={contentId} taxonomyAndTagsData={data} />
+              <ContentTagsCollapsible
+                contentId={contentId}
+                taxonomyAndTagsData={data}
+                stagedContentTags={stagedContentTags[data.id] || []}
+                addStagedContentTag={addStagedContentTag}
+                removeStagedContentTag={removeStagedContentTag}
+                setStagedTags={setStagedTags}
+              />
               <hr />
             </div>
           ))
@@ -114,6 +170,16 @@ const ContentTagsDrawer = () => {
       </Container>
     </div>
   );
+};
+
+ContentTagsDrawer.propTypes = {
+  id: PropTypes.string,
+  onClose: PropTypes.func,
+};
+
+ContentTagsDrawer.defaultProps = {
+  id: undefined,
+  onClose: undefined,
 };
 
 export default ContentTagsDrawer;

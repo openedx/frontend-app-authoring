@@ -1,16 +1,15 @@
 // @ts-check
 import React, { useEffect, useState, useCallback } from 'react';
 import {
-  SelectableBox,
   Icon,
   Spinner,
   Button,
 } from '@openedx/paragon';
+import { SelectableBox } from '@edx/frontend-lib-content-components';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
-import { ArrowDropDown, ArrowDropUp } from '@openedx/paragon/icons';
+import { ArrowDropDown, ArrowDropUp, Add } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
 import messages from './messages';
-import './ContentTagsDropDownSelector.scss';
 
 import { useTaxonomyTagsData } from './data/apiHooks';
 
@@ -42,7 +41,7 @@ HighlightedText.defaultProps = {
 };
 
 const ContentTagsDropDownSelector = ({
-  taxonomyId, level, lineage, tagsTree, searchTerm,
+  taxonomyId, level, lineage, appliedContentTagsTree, stagedContentTagsTree, searchTerm,
 }) => {
   const intl = useIntl();
 
@@ -89,18 +88,145 @@ const ContentTagsDropDownSelector = ({
   };
 
   const isImplicit = (tag) => {
-    // Traverse the tags tree using the lineage
-    let traversal = tagsTree;
+    // Traverse the applied tags tree using the lineage
+    let appliedTraversal = appliedContentTagsTree;
     lineage.forEach(t => {
-      traversal = traversal[t]?.children || {};
+      appliedTraversal = appliedTraversal[t]?.children || {};
     });
+    const isAppliedImplicit = (appliedTraversal[tag.value] && !appliedTraversal[tag.value].explicit);
 
-    return (traversal[tag.value] && !traversal[tag.value].explicit) || false;
+    // Traverse the staged tags tree using the lineage
+    let stagedTraversal = stagedContentTagsTree;
+    lineage.forEach(t => {
+      stagedTraversal = stagedTraversal[t]?.children || {};
+    });
+    const isStagedImplicit = (stagedTraversal[tag.value] && !stagedTraversal[tag.value].explicit);
+
+    return isAppliedImplicit || isStagedImplicit || false;
   };
+
+  const isApplied = (tag) => {
+    // Traverse the applied tags tree using the lineage
+    let appliedTraversal = appliedContentTagsTree;
+    lineage.forEach(t => {
+      appliedTraversal = appliedTraversal[t]?.children || {};
+    });
+    return !!appliedTraversal[tag.value];
+  };
+
+  const isStagedExplicit = (tag) => {
+    // Traverse the staged tags tree using the lineage
+    let stagedTraversal = stagedContentTagsTree;
+    lineage.forEach(t => {
+      stagedTraversal = stagedTraversal[t]?.children || {};
+    });
+    return stagedTraversal[tag.value] && stagedTraversal[tag.value].explicit;
+  };
+
+  // Returns the state of the tag as a string: [Unchecked/Implicit/Checked]
+  const getTagState = (tag) => {
+    if (isApplied(tag) || isStagedExplicit(tag)) {
+      return intl.formatMessage(messages.taxonomyTagChecked);
+    }
+
+    if (isImplicit(tag)) {
+      return intl.formatMessage(messages.taxonomyTagImplicit);
+    }
+
+    return intl.formatMessage(messages.taxonomyTagUnchecked);
+  };
+
+  const isTopOfTagTreeDropdown = (index) => index === 0 && level === 0;
 
   const loadMoreTags = useCallback(() => {
     setNumPages((x) => x + 1);
   }, []);
+
+  const handleKeyBoardNav = (e, hasChildren) => {
+    const keyPressed = e.code;
+    const currentElement = e.target;
+    const encapsulator = currentElement.closest('.dropdown-selector-tag-encapsulator');
+
+    // Get tag value with full lineage, this is URI encoded
+    const tagValueWithLineage = currentElement.querySelector('.pgn__form-checkbox-input')?.value;
+    // Extract and decode the actual tag value
+    let tagValue = tagValueWithLineage.split(',').slice(-1)[0];
+    tagValue = tagValue ? decodeURIComponent(tagValue) : tagValue;
+
+    if (keyPressed === 'ArrowRight') {
+      e.preventDefault();
+      if (tagValue && !isOpen(tagValue)) {
+        clickAndEnterHandler(tagValue);
+      }
+    } else if (keyPressed === 'ArrowLeft') {
+      e.preventDefault();
+      if (tagValue && isOpen(tagValue)) {
+        clickAndEnterHandler(tagValue);
+      } else {
+        // Handles case of jumping out of subtags to previous parent tag
+        const prevParentTagEncapsulator = encapsulator?.parentNode.closest('.dropdown-selector-tag-encapsulator');
+        const prevParentTag = prevParentTagEncapsulator?.querySelector('.dropdown-selector-tag-actions');
+        prevParentTag?.focus();
+      }
+    } else if (keyPressed === 'ArrowUp') {
+      const prevSubTags = encapsulator?.previousElementSibling?.querySelectorAll('.dropdown-selector-tag-actions');
+      const prevSubTag = prevSubTags && prevSubTags[prevSubTags.length - 1];
+      const prevTag = encapsulator?.previousElementSibling?.querySelector('.dropdown-selector-tag-actions');
+
+      if (prevSubTag) {
+        // Handles case of jumping in to subtags
+        prevSubTag.focus();
+      } else if (prevTag) {
+        // Handles case of navigating to previous tag on same level
+        prevTag.focus();
+      } else {
+        // Handles case of jumping out of subtags to previous parent tag
+        const prevParentTagEncapsulator = encapsulator?.parentNode.closest('.dropdown-selector-tag-encapsulator');
+        const prevParentTag = prevParentTagEncapsulator?.querySelector('.dropdown-selector-tag-actions');
+        prevParentTag?.focus();
+      }
+    } else if (keyPressed === 'ArrowDown') {
+      const subTagEncapsulator = encapsulator?.querySelector('.dropdown-selector-tag-encapsulator');
+      const nextSubTag = subTagEncapsulator?.querySelector('.dropdown-selector-tag-actions');
+      const nextTag = encapsulator?.nextElementSibling?.querySelector('.dropdown-selector-tag-actions');
+
+      if (nextSubTag) {
+        // Handles case of jumping into subtags
+        nextSubTag.focus();
+      } else if (nextTag) {
+        // Handles case of navigating to next tag on same level
+        nextTag?.focus();
+      } else {
+        // Handles case of jumping out of subtags to next focusable parent tag
+        let nextParentTagEncapsulator = encapsulator?.parentNode?.closest('.dropdown-selector-tag-encapsulator');
+
+        while (nextParentTagEncapsulator) {
+          const nextParentTag = nextParentTagEncapsulator.nextElementSibling?.querySelector(
+            '.dropdown-selector-tag-actions',
+          );
+          if (nextParentTag) {
+            nextParentTag.focus();
+            break;
+          }
+          nextParentTagEncapsulator = nextParentTagEncapsulator.parentNode.closest(
+            '.dropdown-selector-tag-encapsulator',
+          );
+        }
+      }
+    } else if (keyPressed === 'Enter') {
+      e.preventDefault();
+      if (hasChildren && tagValue) {
+        clickAndEnterHandler(tagValue);
+      } else {
+        const checkbox = currentElement.querySelector('.taxonomy-tags-selectable-box');
+        checkbox.click();
+      }
+    } else if (keyPressed === 'Space') {
+      e.preventDefault();
+      const checkbox = currentElement.querySelector('.taxonomy-tags-selectable-box');
+      checkbox.click();
+    }
+  };
 
   return (
     <div style={{ marginLeft: `${level * 1 }rem` }}>
@@ -115,24 +241,39 @@ const ContentTagsDropDownSelector = ({
       ) : null }
       {tagPages.isError ? 'Error...' : null /* TODO: show a proper error message */}
 
-      {tagPages.data?.map((tagData) => (
-        <React.Fragment key={tagData.value}>
+      {tagPages.data?.map((tagData, i) => (
+        <div key={tagData.value} className="mt-1 ml-1 dropdown-selector-tag-encapsulator">
           <div
             className="d-flex flex-row"
             style={{
               minHeight: '44px',
             }}
           >
-            <div className="d-flex">
+            {/* The tabIndex and onKeyDown are needed to implement custom keyboard navigation */}
+            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+            <div
+              className="d-flex dropdown-selector-tag-actions"
+              // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+              tabIndex={isTopOfTagTreeDropdown(i) ? 0 : -1} // Only enable tab into top of dropdown tree to set focus
+              onKeyDown={(e) => handleKeyBoardNav(e, tagData.childCount > 0)}
+              aria-label={
+                intl.formatMessage(
+                  (isTopOfTagTreeDropdown(i)
+                    ? messages.taxonomyTagActionInstructionsAriaLabel
+                    : messages.taxonomyTagActionsAriaLabel),
+                  { tag: tagData.value, tagState: getTagState(tagData) },
+                )
+              }
+            >
               <SelectableBox
                 inputHidden={false}
                 type="checkbox"
                 className="d-flex align-items-center taxonomy-tags-selectable-box"
-                aria-label={intl.formatMessage(messages.taxonomyTagsCheckboxAriaLabel, { tag: tagData.value })}
                 data-selectable-box="taxonomy-tags"
                 value={[...lineage, tagData.value].map(t => encodeURIComponent(t)).join(',')}
-                isIndeterminate={isImplicit(tagData)}
-                disabled={isImplicit(tagData)}
+                isIndeterminate={isApplied(tagData) || isImplicit(tagData)}
+                disabled={isApplied(tagData) || isImplicit(tagData)}
+                tabIndex="-1"
               >
                 <HighlightedText text={tagData.value} highlight={searchTerm} />
               </SelectableBox>
@@ -142,8 +283,7 @@ const ContentTagsDropDownSelector = ({
                     <Icon
                       src={isOpen(tagData.value) ? ArrowDropUp : ArrowDropDown}
                       onClick={() => clickAndEnterHandler(tagData.value)}
-                      tabIndex="0"
-                      onKeyPress={(event) => (event.key === 'Enter' ? clickAndEnterHandler(tagData.value) : null)}
+                      tabIndex="-1"
                     />
                   </div>
                 )}
@@ -156,21 +296,24 @@ const ContentTagsDropDownSelector = ({
               taxonomyId={taxonomyId}
               level={level + 1}
               lineage={[...lineage, tagData.value]}
-              tagsTree={tagsTree}
+              appliedContentTagsTree={appliedContentTagsTree}
+              stagedContentTagsTree={stagedContentTagsTree}
               searchTerm={searchTerm}
             />
           )}
 
-        </React.Fragment>
+        </div>
       ))}
 
       { hasMorePages
         ? (
-          <div className="d-flex justify-content-center align-items-center flex-row">
+          <div>
             <Button
-              variant="outline-primary"
+              tabIndex="0"
+              variant="tertiary"
+              iconBefore={Add}
               onClick={loadMoreTags}
-              className="mb-2 taxonomy-tags-load-more-button"
+              className="mb-2 ml-1 taxonomy-tags-load-more-button px-0 text-info-500"
             >
               <FormattedMessage {...messages.loadMoreTagsButtonText} />
             </Button>
@@ -197,7 +340,13 @@ ContentTagsDropDownSelector.propTypes = {
   taxonomyId: PropTypes.number.isRequired,
   level: PropTypes.number.isRequired,
   lineage: PropTypes.arrayOf(PropTypes.string),
-  tagsTree: PropTypes.objectOf(
+  appliedContentTagsTree: PropTypes.objectOf(
+    PropTypes.shape({
+      explicit: PropTypes.bool.isRequired,
+      children: PropTypes.shape({}).isRequired,
+    }).isRequired,
+  ).isRequired,
+  stagedContentTagsTree: PropTypes.objectOf(
     PropTypes.shape({
       explicit: PropTypes.bool.isRequired,
       children: PropTypes.shape({}).isRequired,

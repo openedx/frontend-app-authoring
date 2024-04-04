@@ -26,6 +26,10 @@ export const NOTIFICATION_MESSAGES = {
   deleting: 'Deleting',
   copying: 'Copying',
   pasting: 'Pasting',
+  discardChanges: 'Discarding changes',
+  publishing: 'Publishing',
+  hidingFromStudents: 'Hiding from students',
+  makingVisibleToStudents: 'Making visible to students',
   empty: '',
 };
 

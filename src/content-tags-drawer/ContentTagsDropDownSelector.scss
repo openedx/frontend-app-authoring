@@ -4,11 +4,24 @@
 
 .taxonomy-tags-load-more-button {
   flex: 1;
+
+  &:hover {
+    background-color: transparent;
+    color: $info-900 !important;
+  }
 }
 
 .pgn__selectable_box.taxonomy-tags-selectable-box {
   box-shadow: none;
   padding: 0;
+
+  // Override indeterminate [-] (implicit) checkbox styles to match checked checkbox styles
+  // In the future, this customizability should be implemented in paragon instead
+  input.pgn__form-checkbox-input {
+    &:indeterminate {
+      @extend :checked; /* stylelint-disable-line scss/at-extend-no-missing-placeholder */
+    }
+  }
 }
 
 .pgn__selectable_box.taxonomy-tags-selectable-box:disabled,
@@ -18,4 +31,9 @@
 
 .pgn__selectable_box-active.taxonomy-tags-selectable-box {
   outline: none !important;
+}
+
+.dropdown-selector-tag-actions:focus-visible {
+  outline: solid 2px $info-900;
+  border-radius: 4px;
 }

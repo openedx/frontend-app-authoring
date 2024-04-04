@@ -13,7 +13,12 @@ import { RequestStatus } from '../../data/constants';
 import { fetchLibraryData } from '../data/thunks';
 
 const TabsSection = ({
-  intl, showNewCourseContainer, onClickNewCourse, isShowProcessing, dispatch,
+  intl,
+  showNewCourseContainer,
+  onClickNewCourse,
+  isShowProcessing,
+  dispatch,
+  isPaginationCoursesEnabled,
 }) => {
   const TABS_LIST = {
     courses: 'courses',
@@ -56,6 +61,7 @@ const TabsSection = ({
           dispatch={dispatch}
           numPages={numPages}
           coursesCount={coursesCount}
+          isEnabledPagination={isPaginationCoursesEnabled}
         />
       </Tab>,
     );
@@ -118,12 +124,17 @@ const TabsSection = ({
   );
 };
 
+TabsSection.defaultProps = {
+  isPaginationCoursesEnabled: false,
+};
+
 TabsSection.propTypes = {
   intl: intlShape.isRequired,
   showNewCourseContainer: PropTypes.bool.isRequired,
   onClickNewCourse: PropTypes.func.isRequired,
   isShowProcessing: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
+  isPaginationCoursesEnabled: PropTypes.bool,
 };
 
 export default injectIntl(TabsSection);

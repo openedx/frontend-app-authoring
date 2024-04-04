@@ -4,31 +4,40 @@ import { useNavigate } from 'react-router-dom';
 
 import { RequestStatus } from '../data/constants';
 import {
-  createNewCourseXblock,
+  createNewCourseXBlock,
   fetchCourseUnitQuery,
   editCourseItemQuery,
-  fetchSequence,
-  fetchCourse,
   fetchCourseSectionVerticalData,
+  fetchCourseVerticalChildrenData,
+  deleteUnitItemQuery,
+  duplicateUnitItemQuery,
 } from './data/thunk';
 import {
   getCourseSectionVertical,
+  getCourseVerticalChildren,
   getCourseUnitData,
   getLoadingStatus,
   getSavingStatus,
+  getSequenceStatus,
 } from './data/selectors';
-import { updateSavingStatus } from './data/slice';
+import { changeEditTitleFormOpen, updateQueryPendingStatus } from './data/slice';
 
 // eslint-disable-next-line import/prefer-default-export
 export const useCourseUnit = ({ courseId, blockId }) => {
   const dispatch = useDispatch();
 
+  const [isErrorAlert, toggleErrorAlert] = useState(false);
+  const [hasInternetConnectionError, setInternetConnectionError] = useState(false);
   const courseUnit = useSelector(getCourseUnitData);
   const savingStatus = useSelector(getSavingStatus);
   const loadingStatus = useSelector(getLoadingStatus);
+  const sequenceStatus = useSelector(getSequenceStatus);
   const { draftPreviewLink, publishedPreviewLink } = useSelector(getCourseSectionVertical);
+  const courseVerticalChildren = useSelector(getCourseVerticalChildren);
   const navigate = useNavigate();
-  const [isTitleEditFormOpen, toggleTitleEditForm] = useState(false);
+  const isTitleEditFormOpen = useSelector(state => state.courseUnit.isTitleEditFormOpen);
+  const isQueryPending = useSelector(state => state.courseUnit.isQueryPending);
+  const { currentlyVisibleToStudents } = courseUnit;
 
   const unitTitle = courseUnit.metadata?.displayName || '';
   const sequenceId = courseUnit.ancestorInfo?.ancestors[0].id;
@@ -43,16 +52,16 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   };
 
   const handleInternetConnectionFailed = () => {
-    dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    setInternetConnectionError(true);
   };
 
   const handleTitleEdit = () => {
-    toggleTitleEditForm(!isTitleEditFormOpen);
+    dispatch(changeEditTitleFormOpen(!isTitleEditFormOpen));
   };
 
   const handleTitleEditSubmit = (displayName) => {
     if (unitTitle !== displayName) {
-      dispatch(editCourseItemQuery(blockId, displayName));
+      dispatch(editCourseItemQuery(blockId, displayName, sequenceId));
     }
 
     handleTitleEdit();
@@ -64,15 +73,32 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     }
   };
 
-  const handleCreateNewCourseXblock = (body, callback) => (
-    dispatch(createNewCourseXblock(body, callback))
+  const handleCreateNewCourseXBlock = (body, callback) => (
+    dispatch(createNewCourseXBlock(body, callback, blockId))
   );
+
+  const unitXBlockActions = {
+    handleDelete: (XBlockId) => {
+      dispatch(deleteUnitItemQuery(blockId, XBlockId));
+    },
+    handleDuplicate: (XBlockId) => {
+      dispatch(duplicateUnitItemQuery(blockId, XBlockId));
+    },
+  };
+
+  useEffect(() => {
+    if (savingStatus === RequestStatus.SUCCESSFUL) {
+      dispatch(updateQueryPendingStatus(true));
+    } else if (savingStatus === RequestStatus.FAILED && !hasInternetConnectionError) {
+      toggleErrorAlert(true);
+    }
+  }, [savingStatus]);
 
   useEffect(() => {
     dispatch(fetchCourseUnitQuery(blockId));
-    dispatch(fetchCourseSectionVerticalData(blockId));
-    dispatch(fetchSequence(sequenceId));
-    dispatch(fetchCourse(courseId));
+    dispatch(fetchCourseSectionVerticalData(blockId, sequenceId));
+    dispatch(fetchCourseVerticalChildrenData(blockId));
+
     handleNavigate(sequenceId);
   }, [courseId, blockId, sequenceId]);
 
@@ -80,13 +106,21 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     sequenceId,
     courseUnit,
     unitTitle,
-    isLoading: loadingStatus.fetchUnitLoadingStatus === RequestStatus.IN_PROGRESS,
+    sequenceStatus,
+    savingStatus,
+    isQueryPending,
+    isErrorAlert,
+    currentlyVisibleToStudents,
+    isLoading: loadingStatus.fetchUnitLoadingStatus === RequestStatus.IN_PROGRESS
+      || loadingStatus.courseSectionVerticalLoadingStatus === RequestStatus.IN_PROGRESS,
     isTitleEditFormOpen,
     isInternetConnectionAlertFailed: savingStatus === RequestStatus.FAILED,
     handleInternetConnectionFailed,
+    unitXBlockActions,
     headerNavigationsActions,
     handleTitleEdit,
     handleTitleEditSubmit,
-    handleCreateNewCourseXblock,
+    handleCreateNewCourseXBlock,
+    courseVerticalChildren,
   };
 };

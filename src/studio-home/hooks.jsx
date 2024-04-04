@@ -14,7 +14,7 @@ import {
 } from './data/selectors';
 import { updateSavingStatuses } from './data/slice';
 
-const useStudioHome = () => {
+const useStudioHome = (isPaginated = false) => {
   const location = useLocation();
   const dispatch = useDispatch();
   const studioHomeData = useSelector(getStudioHomeData);
@@ -32,36 +32,18 @@ const useStudioHome = () => {
   const isFailedLoadingPage = studioHomeLoadingStatus === RequestStatus.FAILED;
 
   useEffect(() => {
-    dispatch(fetchStudioHomeData(location.search ?? ''));
-    setShowNewCourseContainer(false);
+    if (!isPaginated) {
+      dispatch(fetchStudioHomeData(location.search ?? ''));
+      setShowNewCourseContainer(false);
+    }
   }, [location.search]);
 
   useEffect(() => {
-    const {
-      currentPage,
-      search,
-      order,
-      archivedOnly,
-      activeOnly,
-    } = studioHomeCoursesParams;
-
-    if (isFiltered) {
-      dispatch(fetchStudioHomeData(location.search ?? '', false, {
-        page: currentPage,
-        order,
-        search,
-        archivedOnly,
-        activeOnly,
-      }));
+    if (isPaginated) {
+      const firstPage = 1;
+      dispatch(fetchStudioHomeData(location.search ?? '', false, { page: firstPage }, true));
     }
-  }, [
-    studioHomeCoursesParams.currentPage,
-    studioHomeCoursesParams.search,
-    studioHomeCoursesParams.order,
-    studioHomeCoursesParams.archivedOnly,
-    studioHomeCoursesParams.activeOnly,
-    isFiltered,
-  ]);
+  }, []);
 
   useEffect(() => {
     if (courseCreatorSavingStatus === RequestStatus.SUCCESSFUL) {

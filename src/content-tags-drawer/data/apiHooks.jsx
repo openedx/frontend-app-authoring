@@ -135,8 +135,16 @@ export const useContentTaxonomyTagsUpdater = (contentId, taxonomyId) => {
      * >}
      */
     mutationFn: ({ tags }) => updateContentTaxonomyTags(contentId, taxonomyId, tags),
-    onSettled: () => {
+    onSettled: /* istanbul ignore next */ () => {
       queryClient.invalidateQueries({ queryKey: ['contentTaxonomyTags', contentId] });
+      /// Invalidate query with pattern on course outline
+      let contentPattern;
+      if (contentId.includes('course-v1')) {
+        contentPattern = contentId;
+      } else {
+        contentPattern = contentId.replace(/\+type@.*$/, '*');
+      }
+      queryClient.invalidateQueries({ queryKey: ['contentTagsCount', contentPattern] });
     },
   });
 };

@@ -81,6 +81,26 @@ const messages = defineMessages({
     id: 'course-authoring.files-and-videos.sort-and-filter.modal.filter.otherCheckbox.label',
     defaultMessage: 'Other',
   },
+  overwriteConfirmMessage: {
+    id: 'course-authoring.files-and-videos.overwrite.modal.confirmation-message',
+    defaultMessage: 'Some of the uploaded files already exist in this course. Do you want to overwrite the following files?',
+    description: 'The message displayed in the modal shown when uploading files with pre-existing names',
+  },
+  overwriteModalTitle: {
+    id: 'course-authoring.files-and-videos.overwrite.modal.title',
+    defaultMessage: 'Overwrite files',
+    description: 'The title of the modal to confirm overwriting the files',
+  },
+  confirmOverwriteButtonLabel: {
+    id: 'course-authoring.files-and-videos.overwrite.modal.overwrite-button.label',
+    defaultMessage: 'Overwrite',
+    description: 'The message displayed in the button to confirm overwriting the files',
+  },
+  cancelOverwriteButtonLabel: {
+    id: 'course-authoring.files-and-videos.overwrite.modal.cancel-button.label',
+    defaultMessage: 'Cancel',
+    description: 'The message displayed in the button to confirm cancelling the upload',
+  },
 });
 
 export default messages;

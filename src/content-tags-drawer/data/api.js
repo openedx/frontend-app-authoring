@@ -30,7 +30,9 @@ export const getTaxonomyTagsApiUrl = (taxonomyId, options = {}) => {
 };
 export const getContentTaxonomyTagsApiUrl = (contentId) => new URL(`api/content_tagging/v1/object_tags/${contentId}/`, getApiBaseUrl()).href;
 export const getXBlockContentDataApiURL = (contentId) => new URL(`/xblock/outline/${contentId}`, getApiBaseUrl()).href;
+export const getCourseContentDataApiURL = (contentId) => new URL(`/api/contentstore/v1/course_settings/${contentId}`, getApiBaseUrl()).href;
 export const getLibraryContentDataApiUrl = (contentId) => new URL(`/api/libraries/v2/blocks/${contentId}/`, getApiBaseUrl()).href;
+export const getContentTaxonomyTagsCountApiUrl = (contentId) => new URL(`api/content_tagging/v1/object_tag_counts/${contentId}/?count_implicit`, getApiBaseUrl()).href;
 
 /**
  * Get all tags that belong to taxonomy.
@@ -55,14 +57,32 @@ export async function getContentTaxonomyTagsData(contentId) {
 }
 
 /**
+ * Get the count of tags that are applied to the content object
+ * @param {string} contentId The id of the content object to fetch the count of the applied tags for
+ * @returns {Promise<number>}
+ */
+export async function getContentTaxonomyTagsCount(contentId) {
+  const { data } = await getAuthenticatedHttpClient().get(getContentTaxonomyTagsCountApiUrl(contentId));
+  if (contentId in data) {
+    return camelCaseObject(data[contentId]);
+  }
+  return 0;
+}
+
+/**
  * Fetch meta data (eg: display_name) about the content object (unit/compoenent)
  * @param {string} contentId The id of the content object (unit/component)
  * @returns {Promise<import("./types.mjs").ContentData>}
  */
 export async function getContentData(contentId) {
-  const url = contentId.startsWith('lb:')
-    ? getLibraryContentDataApiUrl(contentId)
-    : getXBlockContentDataApiURL(contentId);
+  let url;
+  if (contentId.startsWith('lb:')) {
+    url = getLibraryContentDataApiUrl(contentId);
+  } else if (contentId.startsWith('course-v1:')) {
+    url = getCourseContentDataApiURL(contentId);
+  } else {
+    url = getXBlockContentDataApiURL(contentId);
+  }
   const { data } = await getAuthenticatedHttpClient().get(url);
   return camelCaseObject(data);
 }

@@ -26,7 +26,10 @@ const VideoThumbnail = ({
   intl,
 }) => {
   const fileInputControl = useFileInput({
-    onAddFile: (file) => handleAddThumbnail(file, id),
+    onAddFile: (files) => {
+      const [file] = files;
+      handleAddThumbnail(file, id);
+    },
     setSelectedRows: () => {},
     setAddOpen: () => false,
   });
@@ -46,18 +49,30 @@ const VideoThumbnail = ({
   const showThumbnail = allowThumbnailUpload && thumbnail && isUploaded;
 
   return (
-    <div data-testid={`video-thumbnail-${id}`} className="video-thumbnail row justify-content-center align-itmes-center">
-      {allowThumbnailUpload && <div className="thumbnail-overlay" />}
+    <div className="video-thumbnail row justify-content-center align-itmes-center">
+      {allowThumbnailUpload && showThumbnail && <div className="thumbnail-overlay" />}
       {showThumbnail && !thumbnailError && pageLoadStatus === RequestStatus.SUCCESSFUL ? (
-        <div className="border rounded">
-          <Image
-            style={imageSize}
-            className="m-1 bg-light-300"
-            src={thumbnail}
-            alt={intl.formatMessage(messages.thumbnailAltMessage, { displayName })}
-            onError={() => setThumbnailError(true)}
-          />
-        </div>
+        <>
+          <div className="border rounded">
+            <Image
+              style={imageSize}
+              className="m-1 bg-light-300"
+              src={thumbnail}
+              alt={intl.formatMessage(messages.thumbnailAltMessage, { displayName })}
+              onError={() => setThumbnailError(true)}
+            />
+          </div>
+          <div className="add-thumbnail" data-testid={`video-thumbnail-${id}`}>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={fileInputControl.click}
+              tabIndex="0"
+            >
+              {addThumbnailMessage}
+            </Button>
+          </div>
+        </>
       ) : (
         <>
           <div
@@ -76,24 +91,12 @@ const VideoThumbnail = ({
         </>
       )}
       {allowThumbnailUpload && (
-        <>
-          <div className="add-thumbnail">
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={fileInputControl.click}
-              tabIndex="0"
-            >
-              {addThumbnailMessage}
-            </Button>
-          </div>
-          <FileInput
-            key="video-thumbnail-upload"
-            fileInput={fileInputControl}
-            supportedFileFormats={supportedFiles}
-            allowMultiple={false}
-          />
-        </>
+        <FileInput
+          key="video-thumbnail-upload"
+          fileInput={fileInputControl}
+          supportedFileFormats={supportedFiles}
+          allowMultiple={false}
+        />
       )}
     </div>
   );

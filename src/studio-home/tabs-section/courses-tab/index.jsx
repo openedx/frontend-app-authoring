@@ -1,19 +1,15 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Icon,
-  Row,
-  Pagination,
-  Alert,
-  Button,
-} from '@openedx/paragon';
+import { Icon, Row, Pagination, Alert, Button } from '@openedx/paragon';
 import { Error } from '@openedx/paragon/icons';
 
 import { COURSE_CREATOR_STATES } from '../../../constants';
 import { getStudioHomeData, getStudioHomeCoursesParams } from '../../data/selectors';
 import { updateStudioHomeCoursesCustomParams } from '../../data/slice';
+import { fetchStudioHomeData } from '../../data/thunks';
 import CardItem from '../../card-item';
 import CollapsibleStateWithAction from '../../collapsible-state-with-action';
 import ContactAdministrator from './contact-administrator';
@@ -33,20 +29,16 @@ const CoursesTab = ({
   dispatch,
   numPages,
   coursesCount,
+  isEnabledPagination,
 }) => {
   const intl = useIntl();
+  const location = useLocation();
   const {
     courseCreatorStatus,
     optimizationEnabled,
   } = useSelector(getStudioHomeData);
-  const {
-    currentPage,
-    search,
-    order,
-    isFiltered,
-    archivedOnly,
-    activeOnly,
-  } = useSelector(getStudioHomeCoursesParams);
+  const studioHomeCoursesParams = useSelector(getStudioHomeCoursesParams);
+  const { currentPage, isFiltered } = studioHomeCoursesParams;
   const hasAbilityToCreateCourse = courseCreatorStatus === COURSE_CREATOR_STATES.granted;
   const showCollapsible = [
     COURSE_CREATOR_STATES.denied,
@@ -55,29 +47,38 @@ const CoursesTab = ({
   ].includes(courseCreatorStatus);
 
   const handlePageSelected = (page) => {
-    dispatch(updateStudioHomeCoursesCustomParams({
-      currentPage: page,
+    const { search, order, archivedOnly, activeOnly } = studioHomeCoursesParams;
+    const customParams = { 
       search,
       order,
-      isFiltered: true,
       archivedOnly,
       activeOnly,
-    }));
+    };
+
+    dispatch(fetchStudioHomeData(location.search ?? '', false, { page, ...customParams }, true));
+    dispatch(updateStudioHomeCoursesCustomParams({ currentPage: page, isFiltered: true })); 
+
   };
 
   const handleCleanFilters = () => {
-    dispatch(updateStudioHomeCoursesCustomParams({
+    const customParams = { 
       currentPage: 1,
       search: undefined,
       order: 'display_name',
       isFiltered: true,
       cleanFilters: true,
-    }));
+      archivedOnly: undefined,
+      activeOnly: undefined,
+      coursesTypesLabel: undefined,
+      coursesOrderLabel: undefined,
+    };
+
+    dispatch(fetchStudioHomeData(location.search ?? '', false, { page: 1, order: 'display_name' }, true));
+    dispatch(updateStudioHomeCoursesCustomParams(customParams)); 
   };
 
-  const hasCourses = coursesDataItems?.length;
-
   const isNotFilteringCourses = !isFiltered && !isLoading;
+  const hasCourses = coursesDataItems?.length > 0;
 
   if (isLoading && !isFiltered) {
     return (
@@ -101,19 +102,17 @@ const CoursesTab = ({
     ) : (
       <>
         {isShowProcessing && <ProcessingCourses />}
-        <div className="d-flex flex-row justify-content-between my-4">
-          <CoursesFilters dispatch={dispatch} />
-          {!isLoading && (
-            <div className="d-flex">
-              <p data-testid="pagination-info">
-                {intl.formatMessage(messages.coursesPaginationInfo, {
-                  length: coursesDataItems?.length ?? 0,
-                  total: coursesCount || 0,
-                })}
-              </p>
-            </div>
-          )}
-        </div>
+        {isEnabledPagination && (
+          <div className="d-flex flex-row justify-content-between my-4">
+            <CoursesFilters dispatch={dispatch} />
+            <p data-testid="pagination-info">
+              {intl.formatMessage(messages.coursesPaginationInfo, {
+                length: coursesDataItems.length,
+                total: coursesCount,
+              })}
+            </p>
+          </div>
+        )}
         {hasCourses ? (
           <>
             {coursesDataItems.map(
@@ -139,11 +138,12 @@ const CoursesTab = ({
                   run={run}
                   url={url}
                   cmsLink={cmsLink}
+                  isPaginated={isEnabledPagination}
                 />
               ),
             )}
 
-            {numPages > 1 && (
+            {numPages > 1 && isEnabledPagination && (
               <Pagination
                 className="d-flex justify-content-center"
                 paginationLabel="pagination navigation"
@@ -153,7 +153,7 @@ const CoursesTab = ({
               />
             )}
           </>
-        ) : (!optimizationEnabled && isNotFilteringCourses && (
+        ) : (!optimizationEnabled && isNotFilteringCourses &&  (
           <ContactAdministrator
             hasAbilityToCreateCourse={hasAbilityToCreateCourse}
             showNewCourseContainer={showNewCourseContainer}
@@ -193,6 +193,8 @@ const CoursesTab = ({
 
 CoursesTab.defaultProps = {
   numPages: 0,
+  coursesCount: 0,
+  isEnabledPagination: false,
 };
 
 CoursesTab.propTypes = {
@@ -215,7 +217,8 @@ CoursesTab.propTypes = {
   isFailed: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
   numPages: PropTypes.number,
-  coursesCount: PropTypes.number.isRequired,
+  coursesCount: PropTypes.number,
+  isEnabledPagination: PropTypes.bool,
 };
 
 export default CoursesTab;

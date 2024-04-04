@@ -1,9 +1,12 @@
+import MockAdapter from 'axios-mock-adapter';
 import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
+  act,
   fireEvent,
   render,
   waitFor,
@@ -13,27 +16,16 @@ import PropTypes from 'prop-types';
 import initializeStore from '../../store';
 import { getTaxonomyExportFile } from '../data/api';
 import { TaxonomyContext } from '../common/context';
-import { planImportTags } from './data/api';
 import ImportTagsWizard from './ImportTagsWizard';
 
 let store;
 
 const queryClient = new QueryClient();
+let axiosMock;
 
 jest.mock('../data/api', () => ({
   ...jest.requireActual('../data/api'),
   getTaxonomyExportFile: jest.fn(),
-}));
-
-const mockUseImportTagsMutate = jest.fn();
-
-jest.mock('./data/api', () => ({
-  ...jest.requireActual('./data/api'),
-  planImportTags: jest.fn(),
-  useImportTags: jest.fn(() => ({
-    ...jest.requireActual('./data/api').useImportTags(),
-    mutateAsync: mockUseImportTagsMutate,
-  })),
 }));
 
 const mockSetToastMessage = jest.fn();
@@ -44,6 +36,9 @@ const context = {
   alertProps: null,
   setAlertProps: mockSetAlertProps,
 };
+
+const planImportUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/import/plan/';
+const doImportUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/import/';
 
 const taxonomy = {
   id: 1,
@@ -77,6 +72,7 @@ describe('<ImportTagsWizard />', () => {
       },
     });
     store = initializeStore();
+    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
 
   afterEach(() => {
@@ -129,7 +125,7 @@ describe('<ImportTagsWizard />', () => {
     expect(getByTestId('upload-step')).toBeInTheDocument();
 
     // Continue flow
-    const importButton = getByRole('button', { name: 'Import' });
+    let importButton = getByRole('button', { name: 'Import' });
     expect(importButton).toHaveAttribute('aria-disabled', 'true');
 
     // Invalid file type
@@ -138,48 +134,56 @@ describe('<ImportTagsWizard />', () => {
     expect(getByTestId('dropzone')).toBeInTheDocument();
     expect(importButton).toHaveAttribute('aria-disabled', 'true');
 
+    const makeJson = (filename) => new File(['{}'], filename, { type: 'application/json' });
+
     // Correct file type
-    const fileJson = new File(['file contents'], 'example.json', { type: 'application/gzip' });
-    fireEvent.drop(getByTestId('dropzone'), { dataTransfer: { files: [fileJson], types: ['Files'] } });
+    axiosMock.onPut(planImportUrl).replyOnce(200, { plan: 'Import plan' });
+    fireEvent.drop(getByTestId('dropzone'), { dataTransfer: { files: [makeJson('example1.json')], types: ['Files'] } });
     expect(await findByTestId('file-info')).toBeInTheDocument();
-    expect(getByText('example.json')).toBeInTheDocument();
-    expect(importButton).not.toHaveAttribute('aria-disabled', 'true');
+    expect(getByText('example1.json')).toBeInTheDocument();
 
     // Clear file
     fireEvent.click(getByTestId('clear-file-button'));
     expect(await findByTestId('dropzone')).toBeInTheDocument();
 
     // Reselect file
-    fireEvent.drop(getByTestId('dropzone'), { dataTransfer: { files: [fileJson], types: ['Files'] } });
+    // Simulate error (note: React-Query may start to retrieve the import plan as soon as the file is selected)
+    axiosMock.onPut(planImportUrl).replyOnce(400, { error: 'Test error - details here' });
+    fireEvent.drop(getByTestId('dropzone'), { dataTransfer: { files: [makeJson('example2.json')], types: ['Files'] } });
     expect(await findByTestId('file-info')).toBeInTheDocument();
 
-    // Simulate error
-    planImportTags.mockRejectedValueOnce(new Error('Test error'));
-    expect(importButton).not.toHaveAttribute('aria-disabled', 'true');
-    fireEvent.click(importButton);
-
     // Check error message
-    expect(planImportTags).toHaveBeenCalledWith(taxonomy.id, fileJson);
-    expect(await findByText('Test error')).toBeInTheDocument();
-    const errorAlert = getByText('Test error');
+    await waitFor(async () => {
+      // Note: import button gets re-created after showing a spinner while the import plan is loaded.
+      importButton = getByRole('button', { name: 'Import' });
+      expect(await findByText('Test error - details here')).toBeInTheDocument();
+      // Because of the import error, we cannot proceed to the next step
+      expect(importButton).toHaveAttribute('aria-disabled', 'true');
+    });
+    const errorAlert = getByText('Test error - details here');
 
     // Reselect file to clear the error
     fireEvent.click(getByTestId('clear-file-button'));
     expect(errorAlert).not.toBeInTheDocument();
-    fireEvent.drop(getByTestId('dropzone'), { dataTransfer: { files: [fileJson], types: ['Files'] } });
+
+    // Now simulate uploading a correct file.
+    const expectedPlan = 'Import plan for Test import taxonomy\n'
+    + '--------------------------------\n'
+    + '#1: Create a new tag with values (external_id=tag_1, value=Tag 1, parent_id=None).\n'
+    + '#2: Create a new tag with values (external_id=tag_2, value=Tag 2, parent_id=None).\n'
+    + '#3: Create a new tag with values (external_id=tag_3, value=Tag 3, parent_id=None).\n'
+    + '#4: Create a new tag with values (external_id=tag_4, value=Tag 4, parent_id=None).\n'
+    + '#5: Delete tag (external_id=old_tag_1)\n'
+    + '#6: Delete tag (external_id=old_tag_2)\n';
+    axiosMock.onPut(planImportUrl).replyOnce(200, { plan: expectedPlan });
+    fireEvent.drop(getByTestId('dropzone'), { dataTransfer: { files: [makeJson('example3.json')], types: ['Files'] } });
 
     expect(await findByTestId('file-info')).toBeInTheDocument();
-    expect(importButton).not.toHaveAttribute('aria-disabled', 'true');
-
-    const expectedPlan = 'Import plan for Test import taxonomy\n'
-      + '--------------------------------\n'
-      + '#1: Create a new tag with values (external_id=tag_1, value=Tag 1, parent_id=None).\n'
-      + '#2: Create a new tag with values (external_id=tag_2, value=Tag 2, parent_id=None).\n'
-      + '#3: Create a new tag with values (external_id=tag_3, value=Tag 3, parent_id=None).\n'
-      + '#4: Create a new tag with values (external_id=tag_4, value=Tag 4, parent_id=None).\n'
-      + '#5: Delete tag (external_id=old_tag_1)\n'
-      + '#6: Delete tag (external_id=old_tag_2)\n';
-    planImportTags.mockResolvedValueOnce(expectedPlan);
+    await waitFor(() => {
+      // Note: import button gets re-created after showing a spinner while the import plan is loaded.
+      importButton = getByRole('button', { name: 'Import' });
+      expect(importButton).not.toHaveAttribute('aria-disabled', 'true');
+    });
 
     fireEvent.click(importButton);
 
@@ -188,7 +192,6 @@ describe('<ImportTagsWizard />', () => {
     // Test back button
     fireEvent.click(getByTestId('back-button'));
     expect(getByTestId('upload-step')).toBeInTheDocument();
-    planImportTags.mockResolvedValueOnce(expectedPlan);
     fireEvent.click(getByRole('button', { name: 'Import' }));
     expect(await findByTestId('plan-step')).toBeInTheDocument();
 
@@ -205,9 +208,9 @@ describe('<ImportTagsWizard />', () => {
     expect(getByTestId('confirm-step')).toBeInTheDocument();
 
     if (expectedResult === 'success') {
-      mockUseImportTagsMutate.mockResolvedValueOnce({});
+      axiosMock.onPut(doImportUrl).replyOnce(200, {});
     } else {
-      mockUseImportTagsMutate.mockRejectedValueOnce(new Error('Test error'));
+      axiosMock.onPut(doImportUrl).replyOnce(400, { error: 'Test error' });
     }
 
     const confirmButton = getByRole('button', { name: 'Yes, import file' });
@@ -215,24 +218,24 @@ describe('<ImportTagsWizard />', () => {
       expect(confirmButton).not.toHaveAttribute('aria-disabled', 'true');
     });
 
-    fireEvent.click(confirmButton);
-
-    await waitFor(() => {
-      expect(mockUseImportTagsMutate).toHaveBeenCalledWith({ taxonomyId: taxonomy.id, file: fileJson });
-    });
+    act(() => { fireEvent.click(confirmButton); });
 
     if (expectedResult === 'success') {
       // Toast message shown
-      expect(mockSetToastMessage).toBeCalledWith(`"${taxonomy.name}" updated`);
+      await waitFor(() => {
+        expect(mockSetToastMessage).toBeCalledWith(`"${taxonomy.name}" updated`);
+      });
     } else {
       // Alert message shown
-      expect(mockSetAlertProps).toBeCalledWith(
-        expect.objectContaining({
-          variant: 'danger',
-          title: 'Import error',
-          description: 'Test error',
-        }),
-      );
+      await waitFor(() => {
+        expect(mockSetAlertProps).toBeCalledWith(
+          expect.objectContaining({
+            variant: 'danger',
+            title: 'Import error',
+            description: 'Test error',
+          }),
+        );
+      });
     }
   });
 });

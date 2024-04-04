@@ -7,11 +7,13 @@
 /**
  * @typedef {Object} QueryOptions
  * @property {number} pageIndex
+ * @property {number} pageSize
  */
 
 /**
  * @typedef {Object} TagData
  * @property {number} childCount
+ * @property {number} descendantCount
  * @property {number} depth
  * @property {string} externalId
  * @property {number} id

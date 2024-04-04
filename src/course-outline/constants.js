@@ -5,6 +5,8 @@ export const ITEM_BADGE_STATUS = /** @type {const} */ ({
   unpublishedChanges: 'unpublished_changes',
   staffOnly: 'staff_only',
   draft: 'draft',
+  unscheduled: 'unscheduled',
+  needs_attention: 'needs_attention',
 });
 
 export const HIGHLIGHTS_FIELD_MAX_LENGTH = 250;

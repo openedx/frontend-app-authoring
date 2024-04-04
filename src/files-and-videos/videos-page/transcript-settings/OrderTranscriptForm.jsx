@@ -6,8 +6,8 @@ import {
   injectIntl,
   intlShape,
 } from '@edx/frontend-platform/i18n';
-import { Button, SelectableBox, Stack } from '@openedx/paragon';
-import { ErrorAlert } from '@edx/frontend-lib-content-components';
+import { Button, Stack } from '@openedx/paragon';
+import { ErrorAlert, SelectableBox } from '@edx/frontend-lib-content-components';
 import Cielo24Form from './Cielo24Form';
 import ThreePlayMediaForm from './ThreePlayMediaForm';
 import { RequestStatus } from '../../../data/constants';

@@ -17,6 +17,7 @@ import {
   initialState,
   generateGetStudioHomeDataApiResponse,
   generateGetStudioCoursesApiResponse,
+  generateGetStudioCoursesApiResponseV2,
   generateGetStuioHomeLibrariesApiResponse,
 } from '../factories/mockApiResponses';
 import { getApiBaseUrl, getStudioHomeApiUrl } from '../data/api';
@@ -27,15 +28,21 @@ const { studioShortName } = studioHomeMock;
 
 let axiosMock;
 let store;
-const courseApiLink = `${getApiBaseUrl()}/api/contentstore/v2/home/courses`;
+const courseApiLink = `${getApiBaseUrl()}/api/contentstore/v1/home/courses`;
+const courseApiLinkV2 = `${getApiBaseUrl()}/api/contentstore/v2/home/courses`;
 const libraryApiLink = `${getApiBaseUrl()}/api/contentstore/v1/home/libraries`;
 
 const mockDispatch = jest.fn();
 
-const RootWrapper = () => (
+const RootWrapper = (overrideProps) => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
-      <TabsSection intl={{ formatMessage: jest.fn() }} dispatch={mockDispatch} />
+      <TabsSection
+        intl={{ formatMessage: jest.fn() }}
+        dispatch={mockDispatch}
+        isPaginationCoursesEnabled={false}
+        {...overrideProps}
+      />
     </IntlProvider>
   </AppProvider>
 );
@@ -120,11 +127,11 @@ describe('<TabsSection />', () => {
     });
 
     it('should render pagination when there are courses', async () => {
-      render(<RootWrapper />);
+      render(<RootWrapper isPaginationCoursesEnabled />);
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
-      axiosMock.onGet(courseApiLink).reply(200, generateGetStudioCoursesApiResponse());
-      await executeThunk(fetchStudioHomeData(), store.dispatch);
-      const data = generateGetStudioCoursesApiResponse();
+      axiosMock.onGet(courseApiLinkV2).reply(200, generateGetStudioCoursesApiResponseV2());
+      await executeThunk(fetchStudioHomeData('', true, {}, true), store.dispatch);
+      const data = generateGetStudioCoursesApiResponseV2();
       const coursesLength = data.results.courses.length;
       const totalItems = data.count;
       const paginationInfoText = `Showing ${coursesLength} of ${totalItems}`;
@@ -138,18 +145,17 @@ describe('<TabsSection />', () => {
     });
 
     it('should not render pagination when there are not courses', async () => {
-      const data = generateGetStudioCoursesApiResponse();
+      const data = generateGetStudioCoursesApiResponseV2();
       data.results.courses = [];
       render(<RootWrapper />);
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
-      axiosMock.onGet(courseApiLink).reply(200, data);
+      axiosMock.onGet(courseApiLinkV2).reply(200, data);
       await executeThunk(fetchStudioHomeData(), store.dispatch);
 
       const pagination = screen.queryByRole('navigation');
       expect(pagination).not.toBeInTheDocument();
     });
   });
-
   describe('library tab', () => {
     it('should switch to Libraries tab and render specific library details', async () => {
       render(<RootWrapper />);

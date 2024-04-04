@@ -236,24 +236,53 @@ const useCourseOutline = ({ courseId }) => {
     dispatch(duplicateUnitQuery(currentItem.id, currentSubsection.id, currentSection.id));
   };
 
-  const handleSectionDragAndDrop = (sectionListIds, restoreCallback) => {
-    dispatch(setSectionOrderListQuery(courseId, sectionListIds, restoreCallback));
-  };
-
-  const handleSubsectionDragAndDrop = (sectionId, subsectionListIds, restoreCallback) => {
-    dispatch(setSubsectionOrderListQuery(sectionId, subsectionListIds, restoreCallback));
-  };
-
   const handleVideoSharingOptionChange = (value) => {
     dispatch(setVideoSharingOptionQuery(courseId, value));
   };
 
-  const handleUnitDragAndDrop = (sectionId, subsectionId, unitListIds, restoreCallback) => {
-    dispatch(setUnitOrderListQuery(sectionId, subsectionId, unitListIds, restoreCallback));
-  };
-
   const handleDismissNotification = () => {
     dispatch(dismissNotificationQuery(notificationDismissUrl));
+  };
+
+  const handleSectionDragAndDrop = (
+    sectionListIds,
+    restoreSectionList,
+  ) => {
+    dispatch(setSectionOrderListQuery(
+      courseId,
+      sectionListIds,
+      restoreSectionList,
+    ));
+  };
+
+  const handleSubsectionDragAndDrop = (
+    sectionId,
+    prevSectionId,
+    subsectionListIds,
+    restoreSectionList,
+  ) => {
+    dispatch(setSubsectionOrderListQuery(
+      sectionId,
+      prevSectionId,
+      subsectionListIds,
+      restoreSectionList,
+    ));
+  };
+
+  const handleUnitDragAndDrop = (
+    sectionId,
+    prevSectionId,
+    subsectionId,
+    unitListIds,
+    restoreSectionList,
+  ) => {
+    dispatch(setUnitOrderListQuery(
+      sectionId,
+      subsectionId,
+      prevSectionId,
+      unitListIds,
+      restoreSectionList,
+    ));
   };
 
   useEffect(() => {
@@ -317,10 +346,7 @@ const useCourseOutline = ({ courseId }) => {
     getUnitUrl,
     openUnitPage,
     handleNewUnitSubmit,
-    handleSectionDragAndDrop,
-    handleSubsectionDragAndDrop,
     handleVideoSharingOptionChange,
-    handleUnitDragAndDrop,
     handleCopyToClipboardClick,
     handlePasteClipboardClick,
     notificationDismissUrl,
@@ -332,6 +358,9 @@ const useCourseOutline = ({ courseId }) => {
     mfeProctoredExamSettingsUrl,
     handleDismissNotification,
     advanceSettingsUrl,
+    handleSectionDragAndDrop,
+    handleSubsectionDragAndDrop,
+    handleUnitDragAndDrop,
   };
 };
 

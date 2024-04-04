@@ -62,7 +62,7 @@ const slice = createSlice({
     deleteVideoSuccess: (state, { payload }) => {
       state.videoIds = state.videoIds.filter(id => id !== payload.videoId);
     },
-    addVideoSuccess: (state, { payload }) => {
+    addVideoById: (state, { payload }) => {
       state.videoIds = [payload.videoId, ...state.videoIds];
     },
     updateTranscriptCredentialsSuccess: (state, { payload }) => {
@@ -88,6 +88,12 @@ const slice = createSlice({
       const { error } = payload;
       state.errors[error] = [];
     },
+    failAddVideo: (state, { payload }) => {
+      const { fileName } = payload;
+      const currentErrorState = state.errors.add;
+      state.errors.add = [...currentErrorState, `Failed to add ${fileName}.`];
+      state.addingStatus = RequestStatus.FAILED;
+    },
   },
 });
 
@@ -102,6 +108,8 @@ export const {
   updateEditStatus,
   updateTranscriptCredentialsSuccess,
   updateTranscriptPreferenceSuccess,
+  updateVideoUploadProgress,
+  failAddVideo,
 } = slice.actions;
 
 export const {

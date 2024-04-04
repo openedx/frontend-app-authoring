@@ -24,17 +24,15 @@ import { Helmet } from 'react-helmet';
 import { useOrganizationListData } from '../generic/data/apiHooks';
 import SubHeader from '../generic/sub-header/SubHeader';
 import getPageHeadTitle from '../generic/utils';
-import { getTaxonomyTemplateApiUrl } from './data/api';
-import { useTaxonomyListDataResponse, useIsTaxonomyListDataLoaded } from './data/apiHooks';
+import { ALL_TAXONOMIES, apiUrls, UNASSIGNED } from './data/api';
+import { useImportNewTaxonomy, useTaxonomyList } from './data/apiHooks';
 import { importTaxonomy } from './import-tags';
 import messages from './messages';
 import TaxonomyCard from './taxonomy-card';
 
-const ALL_TAXONOMIES = 'All taxonomies';
-const UNASSIGNED = 'Unassigned';
-
 const TaxonomyListHeaderButtons = ({ canAddTaxonomy }) => {
   const intl = useIntl();
+  const importMutation = useImportNewTaxonomy();
   return (
     <>
       <OverlayTrigger
@@ -55,13 +53,13 @@ const TaxonomyListHeaderButtons = ({ canAddTaxonomy }) => {
           </Dropdown.Toggle>
           <Dropdown.Menu>
             <Dropdown.Item
-              href={getTaxonomyTemplateApiUrl('csv')}
+              href={apiUrls.taxonomyTemplate('csv')}
               data-testid="taxonomy-download-template-csv"
             >
               {intl.formatMessage(messages.downloadTemplateButtonCSVLabel)}
             </Dropdown.Item>
             <Dropdown.Item
-              href={getTaxonomyTemplateApiUrl('json')}
+              href={apiUrls.taxonomyTemplate('json')}
               data-testid="taxonomy-download-template-json"
             >
               {intl.formatMessage(messages.downloadTemplateButtonJSONLabel)}
@@ -71,7 +69,7 @@ const TaxonomyListHeaderButtons = ({ canAddTaxonomy }) => {
       </OverlayTrigger>
       <Button
         iconBefore={Add}
-        onClick={() => importTaxonomy(intl)}
+        onClick={() => importTaxonomy(intl, importMutation)}
         data-testid="taxonomy-import-button"
         disabled={!canAddTaxonomy}
       >
@@ -154,8 +152,10 @@ const TaxonomyListPage = () => {
     isSuccess: isOrganizationListLoaded,
   } = useOrganizationListData();
 
-  const taxonomyListData = useTaxonomyListDataResponse(selectedOrgFilter);
-  const isLoaded = useIsTaxonomyListDataLoaded(selectedOrgFilter);
+  const {
+    data: taxonomyListData,
+    isSuccess: isLoaded,
+  } = useTaxonomyList(selectedOrgFilter);
   const canAddTaxonomy = taxonomyListData?.canAddTaxonomy ?? false;
 
   const getOrgSelect = () => (
