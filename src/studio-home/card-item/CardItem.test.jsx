@@ -46,11 +46,9 @@ describe('<CardItem />', () => {
 
   it('should render correct links for non-library course', () => {
     const props = studioHomeMock.archivedCourses[0];
-    const { getByText, getByTestId } = render(<RootWrapper {...props} />);
+    const { getByText } = render(<RootWrapper {...props} />);
     const courseTitleLink = getByText(props.displayName);
     expect(courseTitleLink).toHaveAttribute('href', `${getConfig().STUDIO_BASE_URL}${props.url}`);
-    const dropDownMenu = getByTestId('toggle-dropdown');
-    fireEvent.click(dropDownMenu);
     const btnReRunCourse = getByText(messages.btnReRunText.defaultMessage);
     expect(btnReRunCourse).toHaveAttribute('href', props.rerunLink);
     const viewLiveLink = getByText(messages.viewLiveBtnText.defaultMessage);

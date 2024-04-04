@@ -1,6 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { screen, fireEvent, render } from '@testing-library/react';
+import {
+  screen, fireEvent, render, waitFor,
+} from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import CoursesFilters from '.';
@@ -61,11 +63,11 @@ describe('CoursesFilters', () => {
     expect(courseOrderMenuFilter).toBeInTheDocument();
   });
 
-  it('should call dispatch when the search input changes', () => {
+  it('should call dispatch when the search input changes', async () => {
     renderComponent();
     const searchInput = screen.getByRole('searchbox');
     fireEvent.change(searchInput, { target: { value: 'test' } });
-    expect(dispatchMock).toHaveBeenCalled();
+    await waitFor(() => expect(dispatchMock).toHaveBeenCalled());
   });
 
   it('should call dispatch when a menu item of course type menu is selected', () => {

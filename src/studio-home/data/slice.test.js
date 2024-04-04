@@ -15,7 +15,7 @@ describe('updateStudioHomeCoursesCustomParams action', () => {
       deleteNotificationSavingStatus: '',
     },
     studioHomeData: {},
-    studioHomeCoursesCustomParams: {
+    studioHomeCoursesRequestParams: {
       currentPage: 1,
       search: undefined,
       order: 'display_name',
@@ -31,10 +31,10 @@ describe('updateStudioHomeCoursesCustomParams action', () => {
     expect(result).toEqual(initialState);
   });
 
-  it('should update the payload passed in studioHomeCoursesCustomParams', () => {
+  it('should update the payload passed in studioHomeCoursesRequestParams', () => {
     const newState = {
       ...initialState,
-      studioHomeCoursesCustomParams: {
+      studioHomeCoursesRequestParams: {
         currentPage: 2,
         search: 'test',
         order: 'display_name',

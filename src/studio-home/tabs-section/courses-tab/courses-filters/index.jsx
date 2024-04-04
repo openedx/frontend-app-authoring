@@ -9,7 +9,7 @@ import { useDebounce } from '../../../../hooks';
 import CoursesTypesFilterMenu from './courses-types-filter-menu';
 import CoursesOrderFilterMenu from './courses-order-filter-menu';
 
-const CoursesFilters = ({ dispatch }) => {
+const CoursesFilters = ({ dispatch, locationValue }) => {
   const studioHomeCoursesParams = useSelector(getStudioHomeCoursesParams);
   const {
     order,
@@ -48,25 +48,25 @@ const CoursesFilters = ({ dispatch }) => {
 
     const filterParams = getFilterTypeData(baseFilters);
     const filterParamsFormat = filterParams[filterType] || baseFilters;
-    const { 
-      coursesOrderLabel, 
-      coursesTypesLabel, 
-      isFiltered, 
-      orderTypeLabel, 
-      cleanFilters, 
-      currentPage, 
+    const {
+      coursesOrderLabel,
+      coursesTypesLabel,
+      isFiltered,
+      orderTypeLabel,
+      cleanFilters: cleanFilterParams,
+      currentPage,
       ...customParams
-    } = filterParamsFormat; 
-    dispatch(updateStudioHomeCoursesCustomParams(filterParamsFormat)); 
-    dispatch(fetchStudioHomeData(location.search ?? '', false, { page: 1, ...customParams }, true));
+    } = filterParamsFormat;
+    dispatch(updateStudioHomeCoursesCustomParams(filterParamsFormat));
+    dispatch(fetchStudioHomeData(locationValue, false, { page: 1, ...customParams }, true));
   };
 
   const handleClearSearchInput = () => {
-    const filterParams = {  
+    const filterParams = {
       search: undefined,
       activeOnly,
       archivedOnly,
-      order
+      order,
     };
 
     dispatch(updateStudioHomeCoursesCustomParams({
@@ -74,32 +74,32 @@ const CoursesFilters = ({ dispatch }) => {
       isFiltered: true,
       cleanFilters: false,
       inputValue: '',
-      ...filterParams
+      ...filterParams,
     }));
 
-    dispatch(fetchStudioHomeData(location.search ?? '', false, { page: 1, ...filterParams }, true));
-  }
+    dispatch(fetchStudioHomeData(locationValue, false, { page: 1, ...filterParams }, true));
+  };
 
   useEffect(() => {
-    const debouncedCleanedSearchValue = searchValueDebounced.trim(); 
+    const debouncedCleanedSearchValue = searchValueDebounced.trim();
     const loadCoursesSearched = () => {
       const valueFormatted = debouncedCleanedSearchValue;
-      const filterParams = {  
+      const filterParams = {
         search: valueFormatted,
         activeOnly,
         archivedOnly,
-        order
+        order,
       };
       dispatch(updateStudioHomeCoursesCustomParams({
         currentPage: 1,
         isFiltered: true,
         cleanFilters: false,
         inputValue: searchValueDebounced,
-        ...filterParams
+        ...filterParams,
       }));
 
       if (valueFormatted !== search) {
-        dispatch(fetchStudioHomeData(location.search ?? '', false, { page: 1, ...filterParams }, true));
+        dispatch(fetchStudioHomeData(locationValue, false, { page: 1, ...filterParams }, true));
       }
     };
 
@@ -108,7 +108,7 @@ const CoursesFilters = ({ dispatch }) => {
     if (hasSearchValueDebouncedValue) {
       loadCoursesSearched();
     }
-  }, [searchValueDebounced]); 
+  }, [searchValueDebounced]);
 
   return (
     <div className="d-flex">
@@ -122,19 +122,19 @@ const CoursesFilters = ({ dispatch }) => {
         onClear={handleClearSearchInput}
       />
 
-      <CoursesTypesFilterMenu
-        onItemMenuSelected={handleMenuFilterItemSelected}
-      />
-
-      <CoursesOrderFilterMenu
-        onItemMenuSelected={handleMenuFilterItemSelected}
-      />
+      <CoursesTypesFilterMenu onItemMenuSelected={handleMenuFilterItemSelected} />
+      <CoursesOrderFilterMenu onItemMenuSelected={handleMenuFilterItemSelected} />
     </div>
   );
 };
 
+CoursesFilters.defaultProps = {
+  locationValue: '',
+};
+
 CoursesFilters.propTypes = {
   dispatch: PropTypes.func.isRequired,
+  locationValue: PropTypes.string,
 };
 
 export default CoursesFilters;

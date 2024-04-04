@@ -57,7 +57,7 @@ const slice = createSlice({
       state.studioHomeData.libraries = libraries;
     },
     updateStudioHomeCoursesCustomParams: (state, { payload }) => {
-      state.studioHomeCoursesRequestParams = { ...state.studioHomeCoursesRequestParams, ...payload };
+      Object.assign(state.studioHomeCoursesRequestParams, payload);
     },
   },
 });

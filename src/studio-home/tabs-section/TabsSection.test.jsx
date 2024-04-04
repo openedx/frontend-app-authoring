@@ -88,8 +88,9 @@ describe('<TabsSection />', () => {
   describe('course tab', () => {
     it('should render specific course details', async () => {
       render(<RootWrapper />);
+      const { results: data } = generateGetStudioCoursesApiResponse();
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
-      axiosMock.onGet(courseApiLink).reply(200, generateGetStudioCoursesApiResponse());
+      axiosMock.onGet(courseApiLink).reply(200, data);
       await executeThunk(fetchStudioHomeData(), store.dispatch);
 
       expect(screen.getByText(studioHomeMock.courses[0].displayName)).toBeVisible();
