@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Tab, Tabs } from '@openedx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useNavigate } from 'react-router-dom';
 
 import { getLoadingStatuses, getStudioHomeData } from '../data/selectors';
 import messages from './messages';
@@ -20,10 +21,12 @@ const TabsSection = ({
   dispatch,
   isPaginationCoursesEnabled,
 }) => {
+  const navigate = useNavigate();
   const TABS_LIST = {
     courses: 'courses',
     libraries: 'libraries',
     archived: 'archived',
+    taxonomies: 'taxonomies',
   };
   const [tabKey, setTabKey] = useState(TABS_LIST.courses);
   const {
@@ -100,6 +103,14 @@ const TabsSection = ({
       );
     }
 
+    tabs.push(
+      <Tab
+        key={TABS_LIST.taxonomies}
+        eventKey={TABS_LIST.taxonomies}
+        title={intl.formatMessage(messages.taxonomiesTabTitle)}
+      />,
+    );
+
     return tabs;
   }, [archivedCourses, librariesEnabled, showNewCourseContainer, isLoadingCourses, isLoadingLibraries]);
 
@@ -108,6 +119,8 @@ const TabsSection = ({
       window.location.assign(libraryAuthoringMfeUrl);
     } else if (tab === TABS_LIST.libraries && !redirectToLibraryAuthoringMfe) {
       dispatch(fetchLibraryData());
+    } else if (tab === TABS_LIST.taxonomies) {
+      navigate('/taxonomies');
     }
     setTabKey(tab);
   };

@@ -157,6 +157,58 @@ describe('<TabsSection />', () => {
       expect(pagination).not.toBeInTheDocument();
     });
   });
+
+  describe('taxonomies tab', () => {
+    it('should redirect to taxonomies page', async () => {
+      render(<RootWrapper />);
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
+      await executeThunk(fetchStudioHomeData(), store.dispatch);
+
+      const taxonomiesTab = screen.getByText(tabMessages.taxonomiesTabTitle.defaultMessage);
+      fireEvent.click(taxonomiesTab);
+
+      waitFor(() => {
+        expect(window.location.href).toContain('/taxonomies');
+      });
+    });
+  });
+
+  describe('archived tab', () => {
+    it('should switch to Archived tab and render specific archived course details', async () => {
+      render(<RootWrapper />);
+      const { results: data } = generateGetStudioCoursesApiResponse();
+      data.archivedCourses = studioHomeMock.archivedCourses;
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
+      axiosMock.onGet(courseApiLink).reply(200, data);
+      await executeThunk(fetchStudioHomeData(), store.dispatch);
+
+      const archivedTab = screen.getByText(tabMessages.archivedTabTitle.defaultMessage);
+      fireEvent.click(archivedTab);
+
+      expect(screen.getByText(studioHomeMock.archivedCourses[0].displayName)).toBeVisible();
+
+      expect(screen.getByText(
+        `${studioHomeMock.archivedCourses[0].org} / ${studioHomeMock.archivedCourses[0].number} / ${studioHomeMock.archivedCourses[0].run}`,
+      )).toBeVisible();
+    });
+
+    it('should hide Archived tab when archived courses are empty', async () => {
+      const data = generateGetStudioCoursesApiResponse();
+      data.archivedCourses = [];
+
+      render(<RootWrapper />);
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
+      axiosMock.onGet(courseApiLink).reply(200, data);
+      await executeThunk(fetchStudioHomeData(), store.dispatch);
+
+      expect(screen.getByText(tabMessages.coursesTabTitle.defaultMessage)).toBeInTheDocument();
+
+      expect(screen.getByText(tabMessages.librariesTabTitle.defaultMessage)).toBeInTheDocument();
+
+      expect(screen.queryByText(tabMessages.archivedTabTitle.defaultMessage)).toBeNull();
+    });
+  });
+
   describe('library tab', () => {
     it('should switch to Libraries tab and render specific library details', async () => {
       render(<RootWrapper />);

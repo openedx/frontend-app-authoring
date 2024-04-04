@@ -41,6 +41,11 @@ const messages = defineMessages({
     id: 'course-authoring.studio-home.courses.tab.course.not.found.alert.clean.filters.button',
     defaultMessage: 'Clear filters',
   },
+  taxonomiesTabTitle: {
+    id: 'course-authoring.studio-home.taxonomies.tab.title',
+    defaultMessage: 'Taxonomies',
+    description: 'Title of Taxonomies tab on the home page',
+  },
 });
 
 export default messages;
