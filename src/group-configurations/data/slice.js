@@ -28,8 +28,10 @@ const slice = createSlice({
       const parentGroupIndex = state.groupConfigurations.allGroupConfigurations.findIndex(
         group => parentGroupId === group.id,
       );
-      state.groupConfigurations.allGroupConfigurations[parentGroupIndex].groups = state
-        .groupConfigurations.allGroupConfigurations[parentGroupIndex].groups.filter(group => group.id !== groupId);
+      if (parentGroupIndex !== -1) {
+        state.groupConfigurations.allGroupConfigurations[parentGroupIndex].groups = state
+          .groupConfigurations.allGroupConfigurations[parentGroupIndex].groups.filter(group => group.id !== groupId);
+      }
     },
     updateLoadingStatus: (state, { payload }) => {
       state.loadingStatus = payload.status;
