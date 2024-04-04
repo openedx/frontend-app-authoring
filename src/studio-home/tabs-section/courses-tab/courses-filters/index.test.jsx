@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import {
   screen, fireEvent, render, waitFor,
 } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import CoursesFilters from '.';
@@ -127,5 +128,13 @@ describe('CoursesFilters', () => {
         cleanFilters: false,
       },
     }));
+  });
+
+  it('should handle search input submission', () => {
+    const handleSubmit = jest.fn();
+    renderComponent({ onSubmitSearchField: handleSubmit });
+    const searchInput = screen.getByRole('searchbox');
+    userEvent.type(searchInput, 'testing{enter}');
+    expect(handleSubmit).toHaveBeenCalled();
   });
 });

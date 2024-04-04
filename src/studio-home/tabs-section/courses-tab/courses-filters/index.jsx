@@ -9,7 +9,7 @@ import { useDebounce } from '../../../../hooks';
 import CoursesTypesFilterMenu from './courses-types-filter-menu';
 import CoursesOrderFilterMenu from './courses-order-filter-menu';
 
-const CoursesFilters = ({ dispatch, locationValue }) => {
+const CoursesFilters = ({ dispatch, locationValue, onSubmitSearchField }) => {
   const studioHomeCoursesParams = useSelector(getStudioHomeCoursesParams);
   const {
     order,
@@ -113,7 +113,7 @@ const CoursesFilters = ({ dispatch, locationValue }) => {
   return (
     <div className="d-flex">
       <SearchField
-        onSubmit={() => null}
+        onSubmit={onSubmitSearchField}
         onChange={handleSearchCourses}
         value={cleanFilters ? '' : inputSearchValue}
         className="mr-4"
@@ -130,11 +130,13 @@ const CoursesFilters = ({ dispatch, locationValue }) => {
 
 CoursesFilters.defaultProps = {
   locationValue: '',
+  onSubmitSearchField: () => {},
 };
 
 CoursesFilters.propTypes = {
   dispatch: PropTypes.func.isRequired,
   locationValue: PropTypes.string,
+  onSubmitSearchField: PropTypes.func,
 };
 
 export default CoursesFilters;
