@@ -8,7 +8,7 @@ import {
   RefinementList,
   SearchBox,
   Stats,
-} from 'react-instantsearch-dom';
+} from 'react-instantsearch';
 import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
 import 'instantsearch.css/themes/algolia-min.css';
 
