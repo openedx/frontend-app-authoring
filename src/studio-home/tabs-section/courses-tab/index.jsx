@@ -107,7 +107,7 @@ const CoursesTab = ({
         description={(
           <Row className="m-0 align-items-center">
             <Icon src={Error} className="text-danger-500 mr-1" />
-            <span>{intl.formatMessage(messages.courseTabErrorMessage)}</span>
+            <span data-testid="error-failed-message">{intl.formatMessage(messages.courseTabErrorMessage)}</span>
           </Row>
         )}
       />
@@ -184,7 +184,7 @@ const CoursesTab = ({
             <Alert.Heading>
               {intl.formatMessage(messages.coursesTabCourseNotFoundAlertTitle)}
             </Alert.Heading>
-            <p>
+            <p data-testid="courses-not-found-alert">
               {intl.formatMessage(messages.coursesTabCourseNotFoundAlertMessage)}
             </p>
             <Button variant="primary" onClick={handleCleanFilters}>
