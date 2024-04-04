@@ -87,4 +87,45 @@ describe('CoursesFilters', () => {
     fireEvent.click(descendantCoursesMenuItem);
     expect(dispatchMock).toHaveBeenCalled();
   });
+
+  it('should clear the search input and call dispatch when the clear button is clicked', () => {
+    renderComponent();
+    const searchInput = screen.getByRole('searchbox');
+    fireEvent.change(searchInput, { target: { value: 'test' } });
+    const searchForm = searchInput.closest('form');
+    const clearButton = searchForm.querySelector('button[type="reset"]');
+    fireEvent.click(clearButton);
+    expect(searchInput.value).toBe('');
+    expect(dispatchMock).toHaveBeenCalled();
+  });
+
+  it('should clear the search input when cleanFilters is true', () => {
+    useSelector.mockReturnValue({
+      cleanFilters: true,
+    });
+    renderComponent();
+    const searchInput = screen.getByRole('searchbox');
+    expect(searchInput.value).toBe('');
+  });
+
+  it('should call dispatch with the correct parameters when a menu item of course type menu is selected', () => {
+    renderComponent();
+    const courseTypeMenuFilter = screen.getByTestId('dropdown-toggle-course-type-menu');
+    fireEvent.click(courseTypeMenuFilter);
+    const activeCoursesMenuItem = screen.getByTestId('item-menu-active-courses');
+    fireEvent.click(activeCoursesMenuItem);
+
+    // Check that updateStudioHomeCoursesCustomParams is called with the correct payload
+    expect(dispatchMock).toHaveBeenNthCalledWith(1, expect.objectContaining({
+      payload: {
+        currentPage: 1,
+        search: '',
+        order: 'display_name',
+        isFiltered: true,
+        archivedOnly: undefined,
+        activeOnly: true,
+        cleanFilters: false,
+      },
+    }));
+  });
 });

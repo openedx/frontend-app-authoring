@@ -61,7 +61,7 @@ CoursesFilterMenu.defaultProps = {
 
 CoursesFilterMenu.propTypes = {
   onItemMenuSelected: PropTypes.func.isRequired,
-  defaultItemSelectedText: PropTypes.func,
+  defaultItemSelectedText: PropTypes.string,
   id: PropTypes.string.isRequired,
   menuItems: PropTypes.arrayOf(
     PropTypes.shape({
