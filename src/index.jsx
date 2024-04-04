@@ -38,6 +38,21 @@ const App = () => {
   useEffect(() => {
     if (process.env.HOTJAR_APP_ID) {
       try {
+        datadogRum.init({
+          applicationId: 'a3f99dcb-4955-4baa-8341-39a88603ab08',
+          clientToken: 'pubf2e79d946cec4c4413965620ba0e0b72',
+          site: 'datadoghq.com',
+          service: 'edx-frontend-sandbox',
+          env: 'staging',
+          // Specify a version number to identify the deployed version of your application in Datadog
+          version: '1.0.0',
+          sessionSampleRate: 100,
+          sessionReplaySampleRate: 20,
+          trackUserInteractions: true,
+          trackResources: true,
+          trackLongTasks: true,
+          defaultPrivacyLevel: 'mask-user-input',
+        });
         initializeHotjar({
           hotjarId: process.env.HOTJAR_APP_ID,
           hotjarVersion: process.env.HOTJAR_VERSION,
@@ -102,21 +117,7 @@ subscribe(APP_INIT_ERROR, (error) => {
   ReactDOM.render(<ErrorPage message={error.message} />, document.getElementById('root'));
 });
 
-datadogRum.init({
-  applicationId: 'a3f99dcb-4955-4baa-8341-39a88603ab08',
-  clientToken: 'pubf2e79d946cec4c4413965620ba0e0b72',
-  site: 'datadoghq.com',
-  service: 'edx-frontend-sandbox',
-  env: 'sandbox',
-  // Specify a version number to identify the deployed version of your application in Datadog
-  // version: '1.0.0',
-  sessionSampleRate: 100,
-  sessionReplaySampleRate: 20,
-  trackUserInteractions: true,
-  trackResources: true,
-  trackLongTasks: true,
-  defaultPrivacyLevel: 'mask-user-input',
-});
+
 
 initialize({
   handlers: {
