@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Form } from '@openedx/paragon';
+import { Form, OverlayTrigger, Tooltip } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { updateQueryPendingStatus } from '../../data/slice';
+import { getXBlockSupportMessages } from '../../constants';
 import AddComponentButton from '../add-component-btn';
 import messages from '../messages';
 import ModalContainer from './ModalContainer';
@@ -18,7 +19,10 @@ const ComponentModalView = ({
   const dispatch = useDispatch();
   const [moduleTitle, setModuleTitle] = useState('');
   const { open, close, isOpen } = modalParams;
-  const { type, displayName, templates } = component;
+  const {
+    type, displayName, templates, supportLegend,
+  } = component;
+  const supportLabels = getXBlockSupportMessages(intl);
 
   const handleSubmit = () => {
     handleCreateNewXBlock(type, moduleTitle);
@@ -51,15 +55,32 @@ const ComponentModalView = ({
           >
             {templates.map((componentTemplate) => {
               const value = componentTemplate.boilerplateName || componentTemplate.category;
+              const isDisplaySupportLabel = supportLegend.showLegend && supportLabels[componentTemplate.supportLevel];
 
               return (
-                <Form.Radio
-                  key={componentTemplate.displayName}
-                  className="add-component-modal-radio mb-2.5"
-                  value={value}
-                >
-                  {componentTemplate.displayName}
-                </Form.Radio>
+                <div className="d-flex justify-content-between w-100 mb-2.5 align-items-end">
+                  <Form.Radio
+                    key={componentTemplate.displayName}
+                    className="add-component-modal-radio"
+                    value={value}
+                  >
+                    {componentTemplate.displayName}
+                  </Form.Radio>
+                  {isDisplaySupportLabel && (
+                    <OverlayTrigger
+                      placement="right"
+                      overlay={(
+                        <Tooltip>
+                          {supportLabels[componentTemplate.supportLevel].tooltip}
+                        </Tooltip>
+                      )}
+                    >
+                      <span className="x-small text-gray-500 flex-shrink-0 ml-2">
+                        {supportLabels[componentTemplate.supportLevel].label}
+                      </span>
+                    </OverlayTrigger>
+                  )}
+                </div>
               );
             })}
           </Form.RadioSet>
@@ -85,8 +106,14 @@ ComponentModalView.propTypes = {
         boilerplateName: PropTypes.string,
         category: PropTypes.string,
         displayName: PropTypes.string.isRequired,
+        supportLevel: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
       }),
     ),
+    supportLegend: PropTypes.shape({
+      allowUnsupportedXblocks: PropTypes.bool,
+      documentationLabel: PropTypes.string,
+      showLegend: PropTypes.bool,
+    }),
   }).isRequired,
 };
 

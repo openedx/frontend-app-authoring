@@ -5,7 +5,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { useToggle } from '@openedx/paragon';
 
 import { getCourseSectionVertical } from '../data/selectors';
-import { COMPONENT_ICON_TYPES } from '../constants';
+import { COMPONENT_TYPES } from '../constants';
 import ComponentModalView from './add-component-modals/ComponentModalView';
 import AddComponentButton from './add-component-btn';
 import messages from './messages';
@@ -20,32 +20,32 @@ const AddComponent = ({ blockId, handleCreateNewCourseXBlock }) => {
 
   const handleCreateNewXBlock = (type, moduleName) => {
     switch (type) {
-    case COMPONENT_ICON_TYPES.discussion:
-    case COMPONENT_ICON_TYPES.dragAndDrop:
+    case COMPONENT_TYPES.discussion:
+    case COMPONENT_TYPES.dragAndDrop:
       handleCreateNewCourseXBlock({ type, parentLocator: blockId });
       break;
-    case COMPONENT_ICON_TYPES.problem:
-    case COMPONENT_ICON_TYPES.video:
+    case COMPONENT_TYPES.problem:
+    case COMPONENT_TYPES.video:
       handleCreateNewCourseXBlock({ type, parentLocator: blockId }, ({ courseKey, locator }) => {
         navigate(`/course/${courseKey}/editor/${type}/${locator}`);
       });
       break;
     // TODO: The library functional will be a bit different of current legacy (CMS)
     //  behaviour and this ticket is on hold (blocked by other development team).
-    case COMPONENT_ICON_TYPES.library:
+    case COMPONENT_TYPES.library:
       handleCreateNewCourseXBlock({ type, category: 'library_content', parentLocator: blockId });
       break;
-    case COMPONENT_ICON_TYPES.advanced:
+    case COMPONENT_TYPES.advanced:
       handleCreateNewCourseXBlock({
         type: moduleName, category: moduleName, parentLocator: blockId,
       });
       break;
-    case COMPONENT_ICON_TYPES.openassessment:
+    case COMPONENT_TYPES.openassessment:
       handleCreateNewCourseXBlock({
         boilerplate: moduleName, category: type, parentLocator: blockId,
       });
       break;
-    case COMPONENT_ICON_TYPES.html:
+    case COMPONENT_TYPES.html:
       handleCreateNewCourseXBlock({
         type,
         boilerplate: moduleName,
@@ -70,22 +70,26 @@ const AddComponent = ({ blockId, handleCreateNewCourseXBlock }) => {
           const { type, displayName } = component;
           let modalParams;
 
+          if (!component.templates.length) {
+            return null;
+          }
+
           switch (type) {
-          case COMPONENT_ICON_TYPES.advanced:
+          case COMPONENT_TYPES.advanced:
             modalParams = {
               open: openAdvanced,
               close: closeAdvanced,
               isOpen: isOpenAdvanced,
             };
             break;
-          case COMPONENT_ICON_TYPES.html:
+          case COMPONENT_TYPES.html:
             modalParams = {
               open: openHtml,
               close: closeHtml,
               isOpen: isOpenHtml,
             };
             break;
-          case COMPONENT_ICON_TYPES.openassessment:
+          case COMPONENT_TYPES.openassessment:
             modalParams = {
               open: openOpenAssessment,
               close: closeOpenAssessment,
