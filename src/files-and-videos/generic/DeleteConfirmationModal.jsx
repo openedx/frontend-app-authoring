@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
-import { isArray } from 'lodash';
 import {
   ActionRow,
   AlertModal,
@@ -24,9 +23,9 @@ const DeleteConfirmationModal = ({
   intl,
 }) => {
   const firstSelectedRow = selectedRows[0]?.original;
-  const activeContentRows = [];
-  if (isArray(selectedRows)) {
-    selectedRows.filter(row => row.original.activeStatus === 'active');
+  let activeContentRows = [];
+  if (Array.isArray(selectedRows)) {
+    activeContentRows = selectedRows.filter(row => row.original.activeStatus === 'active');
   }
   const isDeletingCourseContent = activeContentRows.length > 0;
 
