@@ -126,4 +126,43 @@ describe('CoursesFilters', () => {
     userEvent.type(searchInput, 'testing{enter}');
     expect(handleSubmit).toHaveBeenCalled();
   });
+
+  it('should call dispatch after debounce delay when the search input changes', async () => {
+    renderComponent();
+    const searchInput = screen.getByRole('searchbox');
+    fireEvent.change(searchInput, { target: { value: 'test' } });
+    await waitFor(() => expect(dispatchMock).toHaveBeenCalled(), { timeout: 500 });
+    expect(dispatchMock).toHaveBeenCalledWith(expect.anything());
+  });
+
+  it('should not call dispatch when the search input contains only spaces', async () => {
+    renderComponent();
+    const searchInput = screen.getByRole('searchbox');
+    fireEvent.change(searchInput, { target: { value: '   ' } });
+    await waitFor(() => expect(dispatchMock).not.toHaveBeenCalled(), { timeout: 500 });
+    expect(dispatchMock).not.toHaveBeenCalled();
+  });
+
+  it('should display the loading spinner when isLoading is true', () => {
+    renderComponent({ isLoading: true });
+    const spinner = screen.getByTestId('loading-search-spinner');
+    expect(spinner).toBeInTheDocument();
+  });
+
+  it('should not display the loading spinner when isLoading is false', () => {
+    renderComponent({ isLoading: false });
+    const spinner = screen.queryByTestId('loading-search-spinner');
+    expect(spinner).not.toBeInTheDocument();
+  });
+
+  it('should clear the search input and call dispatch when the reset button is clicked', async () => {
+    renderComponent();
+    const searchInput = screen.getByRole('searchbox');
+    fireEvent.change(searchInput, { target: { value: 'test' } });
+    const form = searchInput.closest('form');
+    const resetButton = form.querySelector('button[type="reset"]');
+    fireEvent.click(resetButton);
+    expect(searchInput.value).toBe('');
+    expect(dispatchMock).toHaveBeenCalled();
+  });
 });

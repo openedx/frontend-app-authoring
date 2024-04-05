@@ -131,7 +131,7 @@ const CoursesFilters = ({
           onClear={handleClearSearchInput}
         />
         {isLoading && (
-          <span className="search-field-loading">
+          <span className="search-field-loading" data-testid="loading-search-spinner">
             <LoadingSpinner size="sm" />
           </span>
         )}

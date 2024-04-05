@@ -103,7 +103,6 @@ describe('<CoursesTab />', () => {
     const props = { isFailed: true };
     const customStoreData = { studioHomeCoursesRequestParams: { currentPage: 1, isFiltered: false } };
     renderComponent(props, customStoreData);
-    screen.debug();
     const alertErrorFailed = screen.queryByTestId('error-failed-message');
     expect(alertErrorFailed).toBeInTheDocument();
   });
@@ -112,8 +111,23 @@ describe('<CoursesTab />', () => {
     const props = { isLoading: false, coursesDataItems: [] };
     const customStoreData = { studioHomeCoursesRequestParams: { currentPage: 1, isFiltered: true } };
     renderComponent(props, customStoreData);
-    screen.debug();
     const alertCoursesNotFound = screen.queryByTestId('courses-not-found-alert');
+    expect(alertCoursesNotFound).toBeInTheDocument();
+  });
+
+  it('should render processing courses component when isEnabledPagination is false and isShowProcessing is true', () => {
+    const props = { isShowProcessing: true, isEnabledPagination: false };
+    const customStoreData = {
+      studioHomeData: {
+        inProcessCourseActions: [],
+      },
+      studioHomeCoursesRequestParams: {
+        currentPage: 1,
+        isFiltered: true,
+      },
+    };
+    renderComponent(props, customStoreData);
+    const alertCoursesNotFound = screen.queryByTestId('processing-courses-title');
     expect(alertCoursesNotFound).toBeInTheDocument();
   });
 });
