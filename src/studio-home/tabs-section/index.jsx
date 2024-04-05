@@ -33,7 +33,7 @@ const TabsSection = ({
     libraryAuthoringMfeUrl,
     redirectToLibraryAuthoringMfe,
     courses, librariesEnabled, libraries, archivedCourses,
-    numPages, coursesCount,
+    numPages, coursesCount, taxonomiesEnabled,
   } = useSelector(getStudioHomeData);
   const {
     courseLoadingStatus,
@@ -103,13 +103,15 @@ const TabsSection = ({
       );
     }
 
-    tabs.push(
-      <Tab
-        key={TABS_LIST.taxonomies}
-        eventKey={TABS_LIST.taxonomies}
-        title={intl.formatMessage(messages.taxonomiesTabTitle)}
-      />,
-    );
+    if (taxonomiesEnabled) {
+      tabs.push(
+        <Tab
+          key={TABS_LIST.taxonomies}
+          eventKey={TABS_LIST.taxonomies}
+          title={intl.formatMessage(messages.taxonomiesTabTitle)}
+        />,
+      );
+    }
 
     return tabs;
   }, [archivedCourses, librariesEnabled, showNewCourseContainer, isLoadingCourses, isLoadingLibraries]);
