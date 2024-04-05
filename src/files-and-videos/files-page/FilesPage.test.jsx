@@ -331,7 +331,7 @@ describe('FilesAndUploads', () => {
         axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID1`).reply(204);
 
         fireEvent.click(deleteButton);
-        expect(screen.getByText('Delete file(s) confirmation')).toBeVisible();
+        expect(screen.getByText('Delete mOckID1')).toBeVisible();
         await act(async () => {
           userEvent.click(deleteButton);
         });
@@ -345,7 +345,7 @@ describe('FilesAndUploads', () => {
           userEvent.click(confirmDeleteButton);
         });
 
-        expect(screen.queryByText('Delete file(s) confirmation')).toBeNull();
+        expect(screen.queryByText('Delete mOckID1')).toBeNull();
 
         // Check if the asset is deleted in the store and UI
         const deleteStatus = store.getState().assets.deletingStatus;
@@ -554,10 +554,10 @@ describe('FilesAndUploads', () => {
           axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID1`).reply(204);
           fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByTestId('open-delete-confirmation-button'));
-          expect(screen.getByText('Delete file(s) confirmation')).toBeVisible();
+          expect(screen.getByText('Delete mOckID1')).toBeVisible();
 
           fireEvent.click(screen.getByText(messages.deleteFileButtonLabel.defaultMessage));
-          expect(screen.queryByText('Delete file(s) confirmation')).toBeNull();
+          expect(screen.queryByText('Delete mOckID1')).toBeNull();
 
           executeThunk(deleteAssetFile(courseId, 'mOckID1', 5), store.dispatch);
         });
@@ -644,10 +644,10 @@ describe('FilesAndUploads', () => {
           axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID3`).reply(404);
           fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByTestId('open-delete-confirmation-button'));
-          expect(screen.getByText('Delete file(s) confirmation')).toBeVisible();
+          expect(screen.getByText('Delete mOckID3')).toBeVisible();
 
           fireEvent.click(screen.getByText(messages.deleteFileButtonLabel.defaultMessage));
-          expect(screen.queryByText('Delete file(s) confirmation')).toBeNull();
+          expect(screen.queryByText('Delete mOckID3')).toBeNull();
 
           executeThunk(deleteAssetFile(courseId, 'mOckID3', 5), store.dispatch);
         });
