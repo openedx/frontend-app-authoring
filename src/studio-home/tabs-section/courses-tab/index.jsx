@@ -24,6 +24,7 @@ import ProcessingCourses from '../../processing-courses';
 import { LoadingSpinner } from '../../../generic/Loading';
 import AlertMessage from '../../../generic/alert-message';
 import messages from '../messages';
+import './index.scss';
 
 const CoursesTab = ({
   coursesDataItems,
@@ -81,8 +82,6 @@ const CoursesTab = ({
       cleanFilters: true,
       archivedOnly: undefined,
       activeOnly: undefined,
-      coursesTypesLabel: undefined,
-      coursesOrderLabel: undefined,
     };
 
     dispatch(fetchStudioHomeData(locationValue, false, { page: 1, order: 'display_name' }, true));
@@ -112,11 +111,11 @@ const CoursesTab = ({
         )}
       />
     ) : (
-      <>
-        {isShowProcessing && <ProcessingCourses />}
+      <div className="courses-tab-container">
+        {/*isShowProcessing && <ProcessingCourses />*/}
         {isEnabledPagination && (
           <div className="d-flex flex-row justify-content-between my-4">
-            <CoursesFilters dispatch={dispatch} locationValue={locationValue} />
+            <CoursesFilters dispatch={dispatch} locationValue={locationValue} isLoading={isLoading} />
             <p data-testid="pagination-info">
               {intl.formatMessage(messages.coursesPaginationInfo, {
                 length: coursesDataItems.length,
@@ -174,11 +173,6 @@ const CoursesTab = ({
         )
         )}
 
-        {isLoading && isFiltered && (
-          <Row className="m-0 mt-4 justify-content-start">
-            <LoadingSpinner />
-          </Row>
-        )}
         {isFiltered && !hasCourses && !isLoading && (
           <Alert className="mt-4">
             <Alert.Heading>
@@ -198,7 +192,7 @@ const CoursesTab = ({
             className="mt-3"
           />
         )}
-      </>
+      </div>
     )
   );
 };

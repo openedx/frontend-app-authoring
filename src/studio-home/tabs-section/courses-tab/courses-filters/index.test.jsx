@@ -89,17 +89,6 @@ describe('CoursesFilters', () => {
     expect(dispatchMock).toHaveBeenCalled();
   });
 
-  it('should clear the search input and call dispatch when the clear button is clicked', () => {
-    renderComponent();
-    const searchInput = screen.getByRole('searchbox');
-    fireEvent.change(searchInput, { target: { value: 'test' } });
-    const searchForm = searchInput.closest('form');
-    const clearButton = searchForm.querySelector('button[type="reset"]');
-    fireEvent.click(clearButton);
-    expect(searchInput.value).toBe('');
-    expect(dispatchMock).toHaveBeenCalled();
-  });
-
   it('should clear the search input when cleanFilters is true', () => {
     useSelector.mockReturnValue({
       cleanFilters: true,

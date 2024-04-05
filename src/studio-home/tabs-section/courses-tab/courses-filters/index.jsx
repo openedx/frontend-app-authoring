@@ -1,15 +1,28 @@
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { SearchField } from '@openedx/paragon';
+import debounce from 'lodash.debounce';
+
 import { getStudioHomeCoursesParams } from '../../../data/selectors';
 import { updateStudioHomeCoursesCustomParams } from '../../../data/slice';
 import { fetchStudioHomeData } from '../../../data/thunks';
-import { useDebounce } from '../../../../hooks';
+import { LoadingSpinner } from '../../../../generic/Loading';
 import CoursesTypesFilterMenu from './courses-types-filter-menu';
 import CoursesOrderFilterMenu from './courses-order-filter-menu';
+import './index.scss';
 
-const CoursesFilters = ({ dispatch, locationValue, onSubmitSearchField }) => {
+/*regex to check if a string has only whitespace
+  example "    "
+*/
+const regexOnlyWhiteSpaces = /^\s+$/;
+
+const CoursesFilters = ({ 
+  dispatch, 
+  locationValue, 
+  onSubmitSearchField,
+  isLoading 
+}) => {
   const studioHomeCoursesParams = useSelector(getStudioHomeCoursesParams);
   const {
     order,
@@ -19,11 +32,6 @@ const CoursesFilters = ({ dispatch, locationValue, onSubmitSearchField }) => {
     cleanFilters,
   } = studioHomeCoursesParams;
   const [inputSearchValue, setInputSearchValue] = useState('');
-  const searchValueDebounced = useDebounce(inputSearchValue);
-
-  const handleSearchCourses = (value) => {
-    setInputSearchValue(value);
-  };
 
   const getFilterTypeData = (baseFilters) => ({
     archivedCourses: { ...baseFilters, archivedOnly: true, activeOnly: undefined },
@@ -80,47 +88,54 @@ const CoursesFilters = ({ dispatch, locationValue, onSubmitSearchField }) => {
     dispatch(fetchStudioHomeData(locationValue, false, { page: 1, ...filterParams }, true));
   };
 
-  useEffect(() => {
-    const debouncedCleanedSearchValue = searchValueDebounced.trim();
-    const loadCoursesSearched = () => {
-      const valueFormatted = debouncedCleanedSearchValue;
+  const handleSearchCourses = (searchValueDebounced) => {
+    const valueFormatted = searchValueDebounced.trim();
+      const searchValueRequest = valueFormatted.length > 0 ? valueFormatted : undefined;
       const filterParams = {
-        search: valueFormatted,
+        search: searchValueRequest,
         activeOnly,
         archivedOnly,
         order,
       };
-      dispatch(updateStudioHomeCoursesCustomParams({
-        currentPage: 1,
-        isFiltered: true,
-        cleanFilters: false,
-        inputValue: searchValueDebounced,
-        ...filterParams,
-      }));
+      const hasOnlySpaces = regexOnlyWhiteSpaces.test(searchValueDebounced);
 
-      if (valueFormatted !== search) {
+      if (searchValueRequest && valueFormatted !== search && !hasOnlySpaces && !cleanFilters) {
+        dispatch(updateStudioHomeCoursesCustomParams({
+          currentPage: 1,
+          isFiltered: true,
+          cleanFilters: false,
+          ...filterParams,
+        }));
+  
         dispatch(fetchStudioHomeData(locationValue, false, { page: 1, ...filterParams }, true));
       }
-    };
 
-    const hasSearchValueDebouncedValue = debouncedCleanedSearchValue.length;
+      setInputSearchValue(searchValueDebounced);
+  };
 
-    if (hasSearchValueDebouncedValue) {
-      loadCoursesSearched();
-    }
-  }, [searchValueDebounced]);
+  const handleSearchCoursesDebounced = useCallback(
+    debounce((value) => handleSearchCourses(value), 400),
+    []
+  );
 
   return (
     <div className="d-flex">
-      <SearchField
-        onSubmit={onSubmitSearchField}
-        onChange={handleSearchCourses}
-        value={cleanFilters ? '' : inputSearchValue}
-        className="mr-4"
-        data-testid="input-filter-courses-search"
-        placeholder="Search"
-        onClear={handleClearSearchInput}
-      />
+      <div className="d-flex flex-row">
+          <SearchField
+            onSubmit={onSubmitSearchField}
+            onChange={handleSearchCoursesDebounced}
+            value={cleanFilters ? '' : inputSearchValue}
+            className="mr-4"
+            data-testid="input-filter-courses-search"
+            placeholder="Search"
+            onClear={handleClearSearchInput}
+          />
+          {isLoading && (
+            <span className="search-field-loading">
+              <LoadingSpinner size="sm" />
+            </span>)
+          }
+      </div>
 
       <CoursesTypesFilterMenu onItemMenuSelected={handleMenuFilterItemSelected} />
       <CoursesOrderFilterMenu onItemMenuSelected={handleMenuFilterItemSelected} />
@@ -131,12 +146,14 @@ const CoursesFilters = ({ dispatch, locationValue, onSubmitSearchField }) => {
 CoursesFilters.defaultProps = {
   locationValue: '',
   onSubmitSearchField: () => {},
+  isLoading: false,
 };
 
 CoursesFilters.propTypes = {
   dispatch: PropTypes.func.isRequired,
   locationValue: PropTypes.string,
   onSubmitSearchField: PropTypes.func,
+  isProcessing: PropTypes.bool,
 };
 
 export default CoursesFilters;
