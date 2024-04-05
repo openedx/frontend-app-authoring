@@ -112,7 +112,7 @@ const CoursesTab = ({
       />
     ) : (
       <div className="courses-tab-container">
-        {/*isShowProcessing && <ProcessingCourses />*/}
+        {isShowProcessing && !isEnabledPagination && <ProcessingCourses />}
         {isEnabledPagination && (
           <div className="d-flex flex-row justify-content-between my-4">
             <CoursesFilters dispatch={dispatch} locationValue={locationValue} isLoading={isLoading} />

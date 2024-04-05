@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { SearchField } from '@openedx/paragon';
-import debounce from 'lodash.debounce';
+import { debounce } from 'lodash';
 
 import { getStudioHomeCoursesParams } from '../../../data/selectors';
 import { updateStudioHomeCoursesCustomParams } from '../../../data/slice';
@@ -12,16 +12,16 @@ import CoursesTypesFilterMenu from './courses-types-filter-menu';
 import CoursesOrderFilterMenu from './courses-order-filter-menu';
 import './index.scss';
 
-/*regex to check if a string has only whitespace
+/* regex to check if a string has only whitespace
   example "    "
 */
 const regexOnlyWhiteSpaces = /^\s+$/;
 
-const CoursesFilters = ({ 
-  dispatch, 
-  locationValue, 
+const CoursesFilters = ({
+  dispatch,
+  locationValue,
   onSubmitSearchField,
-  isLoading 
+  isLoading,
 }) => {
   const studioHomeCoursesParams = useSelector(getStudioHomeCoursesParams);
   const {
@@ -90,51 +90,51 @@ const CoursesFilters = ({
 
   const handleSearchCourses = (searchValueDebounced) => {
     const valueFormatted = searchValueDebounced.trim();
-      const searchValueRequest = valueFormatted.length > 0 ? valueFormatted : undefined;
-      const filterParams = {
-        search: searchValueRequest,
-        activeOnly,
-        archivedOnly,
-        order,
-      };
-      const hasOnlySpaces = regexOnlyWhiteSpaces.test(searchValueDebounced);
+    const searchValueRequest = valueFormatted.length > 0 ? valueFormatted : undefined;
+    const filterParams = {
+      search: searchValueRequest,
+      activeOnly,
+      archivedOnly,
+      order,
+    };
+    const hasOnlySpaces = regexOnlyWhiteSpaces.test(searchValueDebounced);
 
-      if (searchValueRequest && valueFormatted !== search && !hasOnlySpaces && !cleanFilters) {
-        dispatch(updateStudioHomeCoursesCustomParams({
-          currentPage: 1,
-          isFiltered: true,
-          cleanFilters: false,
-          ...filterParams,
-        }));
-  
-        dispatch(fetchStudioHomeData(locationValue, false, { page: 1, ...filterParams }, true));
-      }
+    if (searchValueRequest && valueFormatted !== search && !hasOnlySpaces && !cleanFilters) {
+      dispatch(updateStudioHomeCoursesCustomParams({
+        currentPage: 1,
+        isFiltered: true,
+        cleanFilters: false,
+        ...filterParams,
+      }));
 
-      setInputSearchValue(searchValueDebounced);
+      dispatch(fetchStudioHomeData(locationValue, false, { page: 1, ...filterParams }, true));
+    }
+
+    setInputSearchValue(searchValueDebounced);
   };
 
   const handleSearchCoursesDebounced = useCallback(
     debounce((value) => handleSearchCourses(value), 400),
-    []
+    [],
   );
 
   return (
     <div className="d-flex">
       <div className="d-flex flex-row">
-          <SearchField
-            onSubmit={onSubmitSearchField}
-            onChange={handleSearchCoursesDebounced}
-            value={cleanFilters ? '' : inputSearchValue}
-            className="mr-4"
-            data-testid="input-filter-courses-search"
-            placeholder="Search"
-            onClear={handleClearSearchInput}
-          />
-          {isLoading && (
-            <span className="search-field-loading">
-              <LoadingSpinner size="sm" />
-            </span>)
-          }
+        <SearchField
+          onSubmit={onSubmitSearchField}
+          onChange={handleSearchCoursesDebounced}
+          value={cleanFilters ? '' : inputSearchValue}
+          className="mr-4"
+          data-testid="input-filter-courses-search"
+          placeholder="Search"
+          onClear={handleClearSearchInput}
+        />
+        {isLoading && (
+          <span className="search-field-loading">
+            <LoadingSpinner size="sm" />
+          </span>
+        )}
       </div>
 
       <CoursesTypesFilterMenu onItemMenuSelected={handleMenuFilterItemSelected} />
@@ -153,7 +153,7 @@ CoursesFilters.propTypes = {
   dispatch: PropTypes.func.isRequired,
   locationValue: PropTypes.string,
   onSubmitSearchField: PropTypes.func,
-  isProcessing: PropTypes.bool,
+  isLoading: PropTypes.bool,
 };
 
 export default CoursesFilters;
