@@ -1,4 +1,6 @@
 // @ts-check
+/* eslint-disable react/prop-types */
+// ^ eslint doesn't 'see' JSDoc types; remove this lint directive when converting this to .tsx
 import React, { useMemo } from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -26,14 +28,18 @@ const queryClient = new QueryClient();
 
 const mockSetToastMessage = jest.fn();
 
+/**
+ * @type {React.FC<{
+ *   iconMenu: boolean,
+ *   systemDefined?: boolean,
+ *   canChangeTaxonomy?: boolean,
+ *   canDeleteTaxonomy?: boolean,
+ * }>}
+ */
 const TaxonomyMenuComponent = ({
-  // eslint-disable-next-line react/prop-types
   iconMenu,
-  // eslint-disable-next-line react/prop-types
   systemDefined = false,
-  // eslint-disable-next-line react/prop-types
   canChangeTaxonomy = true,
-  // eslint-disable-next-line react/prop-types
   canDeleteTaxonomy = true,
 }) => {
   const context = useMemo(() => ({
