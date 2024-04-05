@@ -1,0 +1,115 @@
+@import "variables";
+
+.certificates {
+  .section-title {
+    color: $black;
+  }
+
+  .sub-header-actions {
+    margin-bottom: .5rem;
+  }
+
+  .certificate-details {
+    .certificate-details__info {
+      color: $black;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .certificate-details__info-paragraph {
+      flex: 1;
+    }
+
+    .certificate-details__info-paragraph-course-number {
+      flex: 1;
+      color: $gray-700;
+      text-align: right;
+    }
+  }
+
+  .signatory {
+    position: relative;
+    display: flex;
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      height: 2.75rem;
+    }
+
+    .signatory__header {
+      justify-content: space-between;
+      flex: 1;
+      max-width: 18.75rem;
+    }
+
+    .signatory__action-button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: .75rem;
+    }
+
+    .signatory__fields-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .signatory__text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .signatory__image-container {
+      flex: 2;
+      max-width: 18.75rem;
+      margin: auto;
+    }
+
+    .signatory__image {
+      margin: 0;
+    }
+  }
+
+  @media (max-width: map-get($grid-breakpoints, "xl")) {
+    .signatory {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .signatory__header {
+        max-width: none;
+      }
+
+      .signatory__text {
+        white-space: normal;
+      }
+
+      .signatory__image-container {
+        max-width: none;
+        margin-top: 1.25rem;
+      }
+    }
+  }
+
+  .signatory__image {
+    display: flex;
+    margin: .625rem auto;
+    max-width: 23.5rem;
+    width: 100%;
+  }
+
+  .certificates-card-form {
+    .pgn__form-control-description,
+    .pgn__form-text {
+      margin-top: .62rem;
+    }
+  }
+}
+
+.certificates.alert-toast {
+  z-index: $popover;
+}

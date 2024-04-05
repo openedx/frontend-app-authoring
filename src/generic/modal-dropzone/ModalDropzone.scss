@@ -1,0 +1,14 @@
+.modal-dropzone .image-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 300px;
+
+  .pgn__dropzone {
+    background: $white;
+    height: 100%;
+    min-height: 18.75rem;
+  }
+}

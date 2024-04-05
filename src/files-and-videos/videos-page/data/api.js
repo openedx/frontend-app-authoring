@@ -206,6 +206,7 @@ export async function uploadVideo(
     headers: {
       'Content-Disposition': `attachment; filename="${uploadFile.name}"`,
       'Content-Type': uploadFile.type,
+      'Content-Length': uploadFile.size,
     },
     multipart: false,
     body: uploadFile,

@@ -1,3 +1,4 @@
+// @ts-check
 import React, {
   useContext, useEffect, useState, useRef,
 } from 'react';

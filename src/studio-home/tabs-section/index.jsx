@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Tab, Tabs } from '@openedx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useNavigate } from 'react-router-dom';
 
 import { getLoadingStatuses, getStudioHomeData } from '../data/selectors';
 import messages from './messages';
@@ -13,18 +14,26 @@ import { RequestStatus } from '../../data/constants';
 import { fetchLibraryData } from '../data/thunks';
 
 const TabsSection = ({
-  intl, showNewCourseContainer, onClickNewCourse, isShowProcessing, dispatch,
+  intl,
+  showNewCourseContainer,
+  onClickNewCourse,
+  isShowProcessing,
+  dispatch,
+  isPaginationCoursesEnabled,
 }) => {
+  const navigate = useNavigate();
   const TABS_LIST = {
     courses: 'courses',
     libraries: 'libraries',
     archived: 'archived',
+    taxonomies: 'taxonomies',
   };
   const [tabKey, setTabKey] = useState(TABS_LIST.courses);
   const {
     libraryAuthoringMfeUrl,
     redirectToLibraryAuthoringMfe,
     courses, librariesEnabled, libraries, archivedCourses,
+    numPages, coursesCount,
   } = useSelector(getStudioHomeData);
   const {
     courseLoadingStatus,
@@ -52,6 +61,10 @@ const TabsSection = ({
           isShowProcessing={isShowProcessing}
           isLoading={isLoadingCourses}
           isFailed={isFailedCoursesPage}
+          dispatch={dispatch}
+          numPages={numPages}
+          coursesCount={coursesCount}
+          isEnabledPagination={isPaginationCoursesEnabled}
         />
       </Tab>,
     );
@@ -90,6 +103,14 @@ const TabsSection = ({
       );
     }
 
+    tabs.push(
+      <Tab
+        key={TABS_LIST.taxonomies}
+        eventKey={TABS_LIST.taxonomies}
+        title={intl.formatMessage(messages.taxonomiesTabTitle)}
+      />,
+    );
+
     return tabs;
   }, [archivedCourses, librariesEnabled, showNewCourseContainer, isLoadingCourses, isLoadingLibraries]);
 
@@ -98,6 +119,8 @@ const TabsSection = ({
       window.location.assign(libraryAuthoringMfeUrl);
     } else if (tab === TABS_LIST.libraries && !redirectToLibraryAuthoringMfe) {
       dispatch(fetchLibraryData());
+    } else if (tab === TABS_LIST.taxonomies) {
+      navigate('/taxonomies');
     }
     setTabKey(tab);
   };
@@ -114,12 +137,17 @@ const TabsSection = ({
   );
 };
 
+TabsSection.defaultProps = {
+  isPaginationCoursesEnabled: false,
+};
+
 TabsSection.propTypes = {
   intl: intlShape.isRequired,
   showNewCourseContainer: PropTypes.bool.isRequired,
   onClickNewCourse: PropTypes.func.isRequired,
   isShowProcessing: PropTypes.bool.isRequired,
   dispatch: PropTypes.func.isRequired,
+  isPaginationCoursesEnabled: PropTypes.bool,
 };
 
 export default injectIntl(TabsSection);

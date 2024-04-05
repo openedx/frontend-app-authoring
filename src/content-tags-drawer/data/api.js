@@ -30,6 +30,7 @@ export const getTaxonomyTagsApiUrl = (taxonomyId, options = {}) => {
 };
 export const getContentTaxonomyTagsApiUrl = (contentId) => new URL(`api/content_tagging/v1/object_tags/${contentId}/`, getApiBaseUrl()).href;
 export const getXBlockContentDataApiURL = (contentId) => new URL(`/xblock/outline/${contentId}`, getApiBaseUrl()).href;
+export const getCourseContentDataApiURL = (contentId) => new URL(`/api/contentstore/v1/course_settings/${contentId}`, getApiBaseUrl()).href;
 export const getLibraryContentDataApiUrl = (contentId) => new URL(`/api/libraries/v2/blocks/${contentId}/`, getApiBaseUrl()).href;
 export const getContentTaxonomyTagsCountApiUrl = (contentId) => new URL(`api/content_tagging/v1/object_tag_counts/${contentId}/?count_implicit`, getApiBaseUrl()).href;
 
@@ -74,9 +75,14 @@ export async function getContentTaxonomyTagsCount(contentId) {
  * @returns {Promise<import("./types.mjs").ContentData>}
  */
 export async function getContentData(contentId) {
-  const url = contentId.startsWith('lb:')
-    ? getLibraryContentDataApiUrl(contentId)
-    : getXBlockContentDataApiURL(contentId);
+  let url;
+  if (contentId.startsWith('lb:')) {
+    url = getLibraryContentDataApiUrl(contentId);
+  } else if (contentId.startsWith('course-v1:')) {
+    url = getCourseContentDataApiURL(contentId);
+  } else {
+    url = getXBlockContentDataApiURL(contentId);
+  }
   const { data } = await getAuthenticatedHttpClient().get(url);
   return camelCaseObject(data);
 }
