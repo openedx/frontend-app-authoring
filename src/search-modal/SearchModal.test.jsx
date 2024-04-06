@@ -33,7 +33,7 @@ const RootWrapper = () => (
   </AppProvider>
 );
 
-describe('<ManageOrgsModal />', () => {
+describe('<SearchModal />', () => {
   beforeEach(() => {
     initializeMockApp({
       authenticatedUser: {

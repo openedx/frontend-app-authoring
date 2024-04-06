@@ -67,9 +67,6 @@ describe('<SearchUI />', () => {
   });
 
   afterEach(async () => {
-    // Unfortunately it seems a slight delay is necessary to capture all the asynchronous Meilisearch calls.
-    // If we don't do this, some network requests happen while our fetchMock is inactive, resulting in a warning.
-    // await new Promise(r => { setTimeout(r, 500); });
     fetchMock.mockReset();
   });
 
