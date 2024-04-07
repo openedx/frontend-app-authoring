@@ -8,7 +8,6 @@ import React, {
 import PropTypes from 'prop-types';
 import {
   Container,
-  CloseButton,
   Spinner,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -135,7 +134,6 @@ const ContentTagsDrawer = ({ id, onClose }) => {
 
     <div id="content-tags-drawer" className="mt-1">
       <Container size="xl">
-        <CloseButton onClick={() => onCloseDrawer()} data-testid="drawer-close-button" />
         <span>{intl.formatMessage(messages.headerSubtitle)}</span>
         { isContentDataLoaded
           ? <h3>{ contentName }</h3>

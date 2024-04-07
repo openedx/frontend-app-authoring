@@ -354,30 +354,6 @@ describe('<ContentTagsDrawer />', () => {
     expect(queryByText('Tag 3')).not.toBeInTheDocument();
   });
 
-  it('should call closeManageTagsDrawer when CloseButton is clicked', async () => {
-    const postMessageSpy = jest.spyOn(window.parent, 'postMessage');
-
-    const { getByTestId } = render(<RootWrapper />);
-
-    // Find the CloseButton element by its test ID and trigger a click event
-    const closeButton = getByTestId('drawer-close-button');
-    fireEvent.click(closeButton);
-
-    expect(postMessageSpy).toHaveBeenCalledWith('closeManageTagsDrawer', '*');
-
-    postMessageSpy.mockRestore();
-  });
-
-  it('should call onClose param when CloseButton is clicked', async () => {
-    render(<RootWrapper onClose={mockOnClose} />);
-
-    // Find the CloseButton element by its test ID and trigger a click event
-    const closeButton = screen.getByTestId('drawer-close-button');
-    fireEvent.click(closeButton);
-
-    expect(mockOnClose).toHaveBeenCalled();
-  });
-
   it('should call closeManageTagsDrawer when Escape key is pressed and no selectable box is active', () => {
     const postMessageSpy = jest.spyOn(window.parent, 'postMessage');
 

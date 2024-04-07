@@ -206,7 +206,7 @@ describe('<CardHeader />', () => {
     fireEvent.click(manageTagsMenuItem);
 
     // Check if the drawer is open
-    expect(screen.getByTestId('drawer-close-button')).toBeInTheDocument();
+    expect(screen.getAllByText('Manage tags').length).toBe(2);
   });
 
   it('calls onClickEdit when the button is clicked', async () => {
