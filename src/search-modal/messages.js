@@ -90,6 +90,16 @@ const messages = defineMessages({
     defaultMessage: '{numResults, plural, one {# result} other {# results}} found',
     description: 'This count displays how many matching results were found from the user\'s search',
   },
+  searchAllCourses: {
+    id: 'course-authoring.course-search.searchAllCourses',
+    defaultMessage: 'All courses',
+    description: 'Option to get search results from all courses.',
+  },
+  searchThisCourse: {
+    id: 'course-authoring.course-search.searchThisCourse',
+    defaultMessage: 'This course',
+    description: 'Option to limit search results to the current course only.',
+  },
   title: {
     id: 'course-authoring.course-search.title',
     defaultMessage: 'Search',

@@ -48,7 +48,6 @@ const SearchUI = (props) => {
         <ModalDialog.Title><FormattedMessage {...messages.title} /></ModalDialog.Title>
         <div className="d-flex mt-3">
           <SearchKeywordsField className="flex-grow-1 mr-1" />
-          {/* Give this toggle button a fixed width so it doesn't change size when the selected option changes */}
           <SelectMenu variant="primary">
             <MenuItem
               onClick={switchToThisCourse}
@@ -56,14 +55,14 @@ const SearchUI = (props) => {
               iconAfter={searchThisCourse ? Check : undefined}
               disabled={!props.courseId}
             >
-              This course
+              <FormattedMessage {...messages.searchThisCourse} />
             </MenuItem>
             <MenuItem
               onClick={switchToAllCourses}
               defaultSelected={!searchThisCourse}
               iconAfter={searchThisCourse ? undefined : Check}
             >
-              All courses
+              <FormattedMessage {...messages.searchAllCourses} />
             </MenuItem>
           </SelectMenu>
         </div>

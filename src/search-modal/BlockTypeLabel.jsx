@@ -19,7 +19,7 @@ const BlockTypeLabel = ({ type }) => {
   // Replace underscores and hypens with spaces, then let the browser capitalize this
   // in a locale-aware way to get a reasonable display value.
   // e.g. 'drag-and-drop-v2' -> "Drag And Drop V2"
-  return <span style={{ textTransform: 'capitalize' }}>XXX {type.replace(/[_-]/g, ' ')}</span>;
+  return <span style={{ textTransform: 'capitalize' }}>{type.replace(/[_-]/g, ' ')}</span>;
 };
 
 export default BlockTypeLabel;
