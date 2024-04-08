@@ -90,16 +90,15 @@ const CoursesFilters = ({
 
   const handleSearchCourses = (searchValueDebounced) => {
     const valueFormatted = searchValueDebounced.trim();
-    const searchValueRequest = valueFormatted.length > 0 ? valueFormatted : undefined;
     const filterParams = {
-      search: searchValueRequest,
+      search: valueFormatted,
       activeOnly,
       archivedOnly,
       order,
     };
     const hasOnlySpaces = regexOnlyWhiteSpaces.test(searchValueDebounced);
 
-    if (searchValueRequest && valueFormatted !== search && !hasOnlySpaces && !cleanFilters) {
+    if (valueFormatted !== search && !hasOnlySpaces && !cleanFilters) {
       dispatch(updateStudioHomeCoursesCustomParams({
         currentPage: 1,
         isFiltered: true,
