@@ -9,7 +9,9 @@ import {
   Collapsible,
   Button,
   Spinner,
+  Chip,
 } from '@openedx/paragon';
+import { Tag } from '@openedx/paragon/icons';
 import classNames from 'classnames';
 import { SelectableBox } from '@edx/frontend-lib-content-components';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -418,16 +420,14 @@ const ContentTagsCollapsible = ({
           )}
         </div>
       </Collapsible>
-      <div className="d-flex">
-        <Badge
-          variant="light"
-          pill
-          className={classNames('align-self-start', 'mt-3', {
-            invisible: contentTagsCount === 0,
-          })}
+      <div className="d-flex align-items-start pt-2.5 taxonomy-tags-count-chip">
+        <Chip
+          iconBefore={Tag}
+          iconBeforeAlt="icon-before"
+          disabled={contentTagsCount === 0}
         >
           {contentTagsCount}
-        </Badge>
+        </Chip>
       </div>
     </div>
   );
