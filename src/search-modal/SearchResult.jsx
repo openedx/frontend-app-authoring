@@ -1,10 +1,7 @@
 /* eslint-disable react/prop-types */
 // @ts-check
 import React from 'react';
-import {
-  Highlight,
-
-} from 'react-instantsearch';
+import { Highlight } from 'react-instantsearch';
 import BlockTypeLabel from './BlockTypeLabel';
 
 /**

@@ -7,6 +7,7 @@ import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import initializeStore from '../../store';
 import UnitCard from './UnitCard';
@@ -49,29 +50,33 @@ const unit = {
   isHeaderVisible: true,
 };
 
+const queryClient = new QueryClient();
+
 const renderComponent = (props) => render(
   <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <UnitCard
-        section={section}
-        subsection={subsection}
-        unit={unit}
-        index={1}
-        getPossibleMoves={jest.fn()}
-        onOrderChange={jest.fn()}
-        onOpenPublishModal={jest.fn()}
-        onOpenDeleteModal={jest.fn()}
-        onOpenConfigureModal={jest.fn()}
-        onCopyToClipboardClick={jest.fn()}
-        savingStatus=""
-        onEditSubmit={jest.fn()}
-        onDuplicateSubmit={jest.fn()}
-        getTitleLink={(id) => `/some/${id}`}
-        isSelfPaced={false}
-        isCustomRelativeDatesActive={false}
-        {...props}
-      />
-    </IntlProvider>,
+    <QueryClientProvider client={queryClient}>
+      <IntlProvider locale="en">
+        <UnitCard
+          section={section}
+          subsection={subsection}
+          unit={unit}
+          index={1}
+          getPossibleMoves={jest.fn()}
+          onOrderChange={jest.fn()}
+          onOpenPublishModal={jest.fn()}
+          onOpenDeleteModal={jest.fn()}
+          onOpenConfigureModal={jest.fn()}
+          onCopyToClipboardClick={jest.fn()}
+          savingStatus=""
+          onEditSubmit={jest.fn()}
+          onDuplicateSubmit={jest.fn()}
+          getTitleLink={(id) => `/some/${id}`}
+          isSelfPaced={false}
+          isCustomRelativeDatesActive={false}
+          {...props}
+        />
+      </IntlProvider>
+    </QueryClientProvider>
   </AppProvider>,
 );
 

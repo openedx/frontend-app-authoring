@@ -1,7 +1,14 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import { ActionRow, Card, Hyperlink } from '@openedx/paragon';
+import {
+  Card,
+  Hyperlink,
+  Dropdown,
+  IconButton,
+  ActionRow,
+} from '@openedx/paragon';
+import { MoreHoriz } from '@openedx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 
@@ -10,7 +17,17 @@ import { getStudioHomeData } from '../data/selectors';
 import messages from '../messages';
 
 const CardItem = ({
-  intl, displayName, lmsLink, rerunLink, org, number, run, isLibraries, url,
+  intl,
+  displayName,
+  lmsLink,
+  rerunLink,
+  org,
+  number,
+  run,
+  isLibraries,
+  courseKey,
+  isPaginated,
+  url,
 }) => {
   const {
     allowCourseReruns,
@@ -41,16 +58,45 @@ const CardItem = ({
         )}
         subtitle={subtitle}
         actions={showActions && (
-          <ActionRow>
-            {isShowRerunLink && (
-              <Hyperlink className="small" destination={rerunLink}>
-                {intl.formatMessage(messages.btnReRunText)}
+          isPaginated ? (
+            <Dropdown>
+              <Dropdown.Toggle
+                as={IconButton}
+                iconAs={MoreHoriz}
+                variant="primary"
+                data-testid="toggle-dropdown"
+              />
+              <Dropdown.Menu>
+                {isShowRerunLink && (
+                  <Dropdown.Item href={rerunLink}>
+                    {messages.btnReRunText.defaultMessage}
+                  </Dropdown.Item>
+                )}
+                <Dropdown.Item href={lmsLink}>
+                  {intl.formatMessage(messages.viewLiveBtnText)}
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          ) : (
+            <ActionRow>
+              {isShowRerunLink && (
+                <Hyperlink
+                  className="small"
+                  destination={rerunLink}
+                  key={`action-row-rerunLink-${courseKey}`}
+                >
+                  {intl.formatMessage(messages.btnReRunText)}
+                </Hyperlink>
+              )}
+              <Hyperlink
+                className="small ml-3"
+                destination={lmsLink}
+                key={`action-row-lmsLink-${courseKey}`}
+              >
+                {intl.formatMessage(messages.viewLiveBtnText)}
               </Hyperlink>
-            )}
-            <Hyperlink className="small ml-3" destination={lmsLink}>
-              {intl.formatMessage(messages.viewLiveBtnText)}
-            </Hyperlink>
-          </ActionRow>
+            </ActionRow>
+          )
         )}
       />
     </Card>
@@ -59,6 +105,8 @@ const CardItem = ({
 
 CardItem.defaultProps = {
   isLibraries: false,
+  isPaginated: false,
+  courseKey: '',
   rerunLink: '',
   lmsLink: '',
   run: '',
@@ -74,6 +122,8 @@ CardItem.propTypes = {
   number: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
   isLibraries: PropTypes.bool,
+  courseKey: PropTypes.string,
+  isPaginated: PropTypes.bool,
 };
 
 export default injectIntl(CardItem);

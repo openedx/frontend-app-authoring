@@ -13,7 +13,7 @@ import {
 } from './data/selectors';
 import { updateSavingStatuses } from './data/slice';
 
-const useStudioHome = () => {
+const useStudioHome = (isPaginated = false) => {
   const location = useLocation();
   const dispatch = useDispatch();
   const studioHomeData = useSelector(getStudioHomeData);
@@ -29,9 +29,18 @@ const useStudioHome = () => {
   const isFailedLoadingPage = studioHomeLoadingStatus === RequestStatus.FAILED;
 
   useEffect(() => {
-    dispatch(fetchStudioHomeData(location.search ?? ''));
-    setShowNewCourseContainer(false);
+    if (!isPaginated) {
+      dispatch(fetchStudioHomeData(location.search ?? ''));
+      setShowNewCourseContainer(false);
+    }
   }, [location.search]);
+
+  useEffect(() => {
+    if (isPaginated) {
+      const firstPage = 1;
+      dispatch(fetchStudioHomeData(location.search ?? '', false, { page: firstPage }, true));
+    }
+  }, []);
 
   useEffect(() => {
     if (courseCreatorSavingStatus === RequestStatus.SUCCESSFUL) {

@@ -69,7 +69,7 @@ jest.mock('@tanstack/react-query', () => ({
         },
         isSuccess: true,
       };
-    } if (queryKey[0] === 'contentTaxonomyTagsCount') {
+    } if (queryKey[0] === 'contentTagsCount') {
       return {
         data: 17,
         isSuccess: true,

@@ -3,6 +3,8 @@ import { render, fireEvent } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
+import { getConfig, setConfig } from '@edx/frontend-platform/config';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import StatusBar from './StatusBar';
 import messages from './messages';
@@ -11,7 +13,7 @@ import { VIDEO_SHARING_OPTIONS } from '../constants';
 
 let store;
 const mockPathname = '/foo-bar';
-const courseId = '123';
+const courseId = 'course-v1:123';
 const isLoading = false;
 const openEnableHighlightsModalMock = jest.fn();
 const handleVideoSharingOptionChange = jest.fn();
@@ -21,6 +23,11 @@ jest.mock('react-router-dom', () => ({
   useLocation: () => ({
     pathname: mockPathname,
   }),
+}));
+
+jest.mock('../../generic/data/api', () => ({
+  ...jest.requireActual('../../generic/data/api'),
+  getTagsCount: jest.fn().mockResolvedValue({ 'course-v1:123': 17 }),
 }));
 
 jest.mock('../../help-urls/hooks', () => ({
@@ -45,18 +52,22 @@ const statusBarData = {
   videoSharingOptions: VIDEO_SHARING_OPTIONS.allOn,
 };
 
+const queryClient = new QueryClient();
+
 const renderComponent = (props) => render(
   <AppProvider store={store} messages={{}}>
-    <IntlProvider locale="en">
-      <StatusBar
-        courseId={courseId}
-        isLoading={isLoading}
-        openEnableHighlightsModal={openEnableHighlightsModalMock}
-        handleVideoSharingOptionChange={handleVideoSharingOptionChange}
-        statusBarData={statusBarData}
-        {...props}
-      />
-    </IntlProvider>
+    <QueryClientProvider client={queryClient}>
+      <IntlProvider locale="en">
+        <StatusBar
+          courseId={courseId}
+          isLoading={isLoading}
+          openEnableHighlightsModal={openEnableHighlightsModalMock}
+          handleVideoSharingOptionChange={handleVideoSharingOptionChange}
+          statusBarData={statusBarData}
+          {...props}
+        />
+      </IntlProvider>
+    </QueryClientProvider>
   </AppProvider>,
 );
 
@@ -132,5 +143,24 @@ describe('<StatusBar />', () => {
     });
 
     expect(queryByTestId('video-sharing-wrapper')).not.toBeInTheDocument();
+  });
+
+  it('renders the tag count if the waffle flag is enabled', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+    });
+    const { findByText } = renderComponent();
+
+    expect(await findByText('17')).toBeInTheDocument();
+  });
+  it('doesnt renders the tag count if the waffle flag is disabled', () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'false',
+    });
+    const { queryByText } = renderComponent();
+
+    expect(queryByText('17')).not.toBeInTheDocument();
   });
 });

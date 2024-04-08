@@ -17,6 +17,9 @@ const slice = createSlice({
       deleteNotificationSavingStatus: '',
     },
     studioHomeData: {},
+    studioHomeCoursesRequestParams: {
+      currentPage: 1,
+    },
   },
   reducers: {
     updateLoadingStatuses: (state, { payload }) => {
@@ -34,9 +37,22 @@ const slice = createSlice({
       state.studioHomeData.archivedCourses = archivedCourses;
       state.studioHomeData.inProcessCourseActions = inProcessCourseActions;
     },
+    fetchCourseDataSuccessV2: (state, { payload }) => {
+      const { courses, archivedCourses = [], inProcessCourseActions } = payload.results;
+      const { numPages, count } = payload;
+      state.studioHomeData.courses = courses;
+      state.studioHomeData.archivedCourses = archivedCourses;
+      state.studioHomeData.inProcessCourseActions = inProcessCourseActions;
+      state.studioHomeData.numPages = numPages;
+      state.studioHomeData.coursesCount = count;
+    },
     fetchLibraryDataSuccess: (state, { payload }) => {
       const { libraries } = payload;
       state.studioHomeData.libraries = libraries;
+    },
+    updateStudioHomeCoursesCustomParams: (state, { payload }) => {
+      const { currentPage } = payload;
+      state.studioHomeCoursesRequestParams.currentPage = currentPage;
     },
   },
 });
@@ -46,7 +62,9 @@ export const {
   updateLoadingStatuses,
   fetchStudioHomeDataSuccess,
   fetchCourseDataSuccess,
+  fetchCourseDataSuccessV2,
   fetchLibraryDataSuccess,
+  updateStudioHomeCoursesCustomParams,
 } = slice.actions;
 
 export const {

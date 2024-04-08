@@ -8,6 +8,7 @@ export const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 export const getCreateOrRerunCourseUrl = () => new URL('course/', getApiBaseUrl()).href;
 export const getCourseRerunUrl = (courseId) => new URL(`/api/contentstore/v1/course_rerun/${courseId}`, getApiBaseUrl()).href;
 export const getOrganizationsUrl = () => new URL('organizations', getApiBaseUrl()).href;
+export const getTagsCountApiUrl = (contentPattern) => new URL(`api/content_tagging/v1/object_tag_counts/${contentPattern}/?count_implicit`, getApiBaseUrl()).href;
 
 /**
  * Get's organizations data. Returns list of organization names.
@@ -42,4 +43,19 @@ export async function createOrRerunCourse(courseData) {
     convertObjectToSnakeCase(courseData, true),
   );
   return camelCaseObject(data);
+}
+
+/**
+ * Gets the tags count of multiple content by id separated by commas or a pattern using a '*' wildcard.
+ * @param {string} contentPattern
+ * @returns {Promise<Object>}
+*/
+export async function getTagsCount(contentPattern) {
+  if (contentPattern) {
+    const { data } = await getAuthenticatedHttpClient()
+      .get(getTagsCountApiUrl(contentPattern));
+
+    return data;
+  }
+  return null;
 }

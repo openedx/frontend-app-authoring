@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo } from 'react';
+// @ts-check
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -52,7 +53,6 @@ import {
 } from './drag-helper/utils';
 import { useCourseOutline } from './hooks';
 import messages from './messages';
-import useUnitTagsCount from './data/apiHooks';
 
 const CourseOutline = ({ courseId }) => {
   const intl = useIntl();
@@ -113,7 +113,6 @@ const CourseOutline = ({ courseId }) => {
     mfeProctoredExamSettingsUrl,
     handleDismissNotification,
     advanceSettingsUrl,
-    prevContainerInfo,
     handleSectionDragAndDrop,
     handleSubsectionDragAndDrop,
     handleUnitDragAndDrop,
@@ -132,27 +131,6 @@ const CourseOutline = ({ courseId }) => {
 
   const { category } = useSelector(getCurrentItem);
   const deleteCategory = COURSE_BLOCK_NAMES[category]?.name.toLowerCase();
-
-  const unitsIdPattern = useMemo(() => {
-    let pattern = '';
-    sections.forEach((section) => {
-      section.childInfo.children.forEach((subsection) => {
-        subsection.childInfo.children.forEach((unit) => {
-          if (pattern !== '') {
-            pattern += `,${unit.id}`;
-          } else {
-            pattern += unit.id;
-          }
-        });
-      });
-    });
-    return pattern;
-  }, [sections]);
-
-  const {
-    data: unitsTagCounts,
-    isSuccess: isUnitsTagCountsLoaded,
-  } = useUnitTagsCount(unitsIdPattern);
 
   /**
    * Move section to new index
@@ -268,7 +246,6 @@ const CourseOutline = ({ courseId }) => {
             ) : null}
           </TransitionReplace>
           <SubHeader
-            className="mt-5"
             title={intl.formatMessage(messages.headingTitle)}
             subtitle={intl.formatMessage(messages.headingSubtitle)}
             headerActions={(
@@ -307,7 +284,6 @@ const CourseOutline = ({ courseId }) => {
                             items={sections}
                             setSections={setSections}
                             restoreSectionList={restoreSectionList}
-                            prevContainerInfo={prevContainerInfo}
                             handleSectionDragAndDrop={handleSectionDragAndDrop}
                             handleSubsectionDragAndDrop={handleSubsectionDragAndDrop}
                             handleUnitDragAndDrop={handleUnitDragAndDrop}
@@ -319,7 +295,6 @@ const CourseOutline = ({ courseId }) => {
                             >
                               {sections.map((section, sectionIndex) => (
                                 <SectionCard
-                                  id={section.id}
                                   key={section.id}
                                   section={section}
                                   index={sectionIndex}
@@ -398,7 +373,6 @@ const CourseOutline = ({ courseId }) => {
                                               onOrderChange={updateUnitOrderByIndex}
                                               onCopyToClipboardClick={handleCopyToClipboardClick}
                                               discussionsSettings={discussionsSettings}
-                                              tagsCount={isUnitsTagCountsLoaded ? unitsTagCounts[unit.id] : 0}
                                             />
                                           ))}
                                         </SortableContext>
@@ -482,6 +456,7 @@ const CourseOutline = ({ courseId }) => {
             variant="danger"
             icon={WarningIcon}
             title={intl.formatMessage(messages.alertErrorTitle)}
+            description=""
             aria-hidden="true"
           />
         )}
