@@ -136,7 +136,7 @@ const ContentTagsDrawer = ({ id, onClose }) => {
       <Container size="xl">
         <span>{intl.formatMessage(messages.headerSubtitle)}</span>
         { isContentDataLoaded
-          ? <h3>{ contentName }</h3>
+          ? <h2>{ contentName }</h2>
           : (
             <div className="d-flex justify-content-center align-items-center flex-column">
               <Spinner
@@ -148,6 +148,7 @@ const ContentTagsDrawer = ({ id, onClose }) => {
           )}
 
         <hr />
+        <p className='lead text-gray-500 font-weight-bold'>{intl.formatMessage(messages.headerSubtitle)}</p>
 
         { isTaxonomyListLoaded && isContentTaxonomyTagsLoaded
           ? taxonomies.map((data) => (

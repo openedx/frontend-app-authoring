@@ -365,7 +365,7 @@ const ContentTagsCollapsible = ({
 
   return (
     <div className="d-flex">
-      <Collapsible title={name} styling="card-lg" className="taxonomy-tags-collapsible">
+      <Collapsible title={<h4>{name}</h4>} styling="card-lg" className="taxonomy-tags-collapsible">
         <div key={taxonomyId}>
           <ContentTagsTree tagsTree={appliedContentTagsTree} removeTagHandler={removeAppliedTagHandler} />
         </div>
