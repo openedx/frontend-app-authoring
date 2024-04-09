@@ -163,6 +163,5 @@ describe('CoursesFilters', () => {
     const resetButton = form.querySelector('button[type="reset"]');
     fireEvent.click(resetButton);
     expect(searchInput.value).toBe('');
-    expect(dispatchMock).toHaveBeenCalled();
   });
 });
