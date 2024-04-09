@@ -72,7 +72,7 @@ describe('DeleteConfirmationModal', () => {
     expect(within(deleteUsageList).getByTestId('collapsible-file-test')).toBeVisible();
   });
 
-  it('should not show teste file in delete confirmation usage list', () => {
+  it('should not show test file in delete confirmation usage list', () => {
     const props = {
       ...defaultProps,
       selectedRows: [
