@@ -13,6 +13,7 @@ export const getCourseId = (state) => state.courseDetail.courseId;
 export const getSequenceId = (state) => state.courseUnit.sequenceId;
 export const getCourseVerticalChildren = (state) => state.courseUnit.courseVerticalChildren;
 const getLoadingStatuses = (state) => state.courseUnit.loadingStatus;
+export const getMovedXBlockParams = (state) => state.courseUnit.movedXBlockParams;
 export const getIsLoading = createSelector(
   [getLoadingStatuses],
   loadingStatus => Object.values(loadingStatus)

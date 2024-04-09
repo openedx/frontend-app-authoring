@@ -13,6 +13,7 @@ import {
   duplicateUnitItemQuery,
   setXBlockOrderListQuery,
   editCourseUnitVisibilityAndData,
+  rollbackUnitItemQuery,
 } from './data/thunk';
 import {
   getCourseSectionVertical,
@@ -23,11 +24,17 @@ import {
   getSequenceStatus,
   getStaticFileNotices,
   getCanEdit,
+  getMovedXBlockParams,
 } from './data/selectors';
-import { changeEditTitleFormOpen, updateQueryPendingStatus } from './data/slice';
+import {
+  changeEditTitleFormOpen,
+  updateQueryPendingStatus,
+  updateMovedXBlockParams,
+} from './data/slice';
 import { PUBLISH_TYPES } from './constants';
 
 import { useCopyToClipboard } from '../generic/clipboard';
+import { createCorrectInternalRoute } from '../utils';
 
 // eslint-disable-next-line import/prefer-default-export
 export const useCourseUnit = ({ courseId, blockId }) => {
@@ -39,6 +46,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const courseUnit = useSelector(getCourseUnitData);
   const savingStatus = useSelector(getSavingStatus);
   const isLoading = useSelector(getIsLoading);
+  const movedXBlockParams = useSelector(getMovedXBlockParams);
   const sequenceStatus = useSelector(getSequenceStatus);
   const { draftPreviewLink, publishedPreviewLink } = useSelector(getCourseSectionVertical);
   const courseVerticalChildren = useSelector(getCourseVerticalChildren);
@@ -116,6 +124,19 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     dispatch(setXBlockOrderListQuery(blockId, xblockListIds, restoreCallback));
   };
 
+  const handleRollbackMovedXBlock = () => {
+    dispatch(rollbackUnitItemQuery(blockId, movedXBlockParams.sourceLocator, movedXBlockParams.title));
+  };
+
+  const handleCloseXBlockMovedAlert = () => {
+    dispatch(updateMovedXBlockParams({ isSuccess: false }));
+  };
+
+  const handleNavigateToTargetUnit = () => {
+    const correctInternalRoute = createCorrectInternalRoute(`/course/${courseId}/container/${movedXBlockParams.targetParentLocator}`);
+    navigate(correctInternalRoute);
+  };
+
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
       dispatch(updateQueryPendingStatus(true));
@@ -130,6 +151,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     dispatch(fetchCourseVerticalChildrenData(blockId));
 
     handleNavigate(sequenceId);
+    dispatch(updateMovedXBlockParams({ isSuccess: false }));
   }, [courseId, blockId, sequenceId]);
 
   return {
@@ -157,6 +179,10 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     handleConfigureSubmit,
     courseVerticalChildren,
     handleXBlockDragAndDrop,
+    handleRollbackMovedXBlock,
+    handleCloseXBlockMovedAlert,
+    movedXBlockParams,
+    handleNavigateToTargetUnit,
     canPasteComponent,
   };
 };

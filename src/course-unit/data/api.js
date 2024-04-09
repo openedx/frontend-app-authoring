@@ -150,6 +150,22 @@ export async function duplicateUnitItem(itemId, XBlockId) {
 }
 
 /**
+ * Rolls back a unit item to its previous state.
+ * @param {string} itemId - The ID of the item to be rolled back.
+ * @param {string} xblockId - The ID of the XBlock associated with the item.
+ * @returns {Promise<any>} - A promise that resolves to the response data from the server.
+ */
+export async function rollbackUnitItem(itemId, xblockId) {
+  const { data } = await getAuthenticatedHttpClient()
+    .patch(postXBlockBaseApiUrl(), {
+      parent_locator: itemId,
+      move_source_locator: xblockId,
+    });
+
+  return data;
+}
+
+/**
  * Sets the order list of XBlocks.
  * @param {string} blockId - The identifier of the course unit.
  * @param {Object[]} children - The array of child elements representing the updated order of XBlocks.

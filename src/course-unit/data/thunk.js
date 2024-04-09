@@ -18,6 +18,7 @@ import {
   deleteUnitItem,
   duplicateUnitItem,
   setXBlockOrderList,
+  rollbackUnitItem,
 } from './api';
 import {
   updateLoadingCourseUnitStatus,
@@ -36,6 +37,7 @@ import {
   duplicateXBlock,
   fetchStaticFileNoticesSuccess,
   reorderXBlockList,
+  updateMovedXBlockParams,
 } from './slice';
 import { getNotificationMessage } from './utils';
 
@@ -238,6 +240,27 @@ export function duplicateUnitItemQuery(itemId, xblockId) {
         newId: locator,
         newCourseVerticalChildren,
       }));
+      const courseUnit = await getCourseUnitData(itemId);
+      dispatch(fetchCourseItemSuccess(courseUnit));
+      dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
+      dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function rollbackUnitItemQuery(itemId, xblockId, title) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.undoMoving));
+
+    try {
+      await rollbackUnitItem(itemId, xblockId);
+      const newCourseVerticalChildren = await getCourseVerticalChildren(itemId);
+      dispatch(updateCourseVerticalChildren(newCourseVerticalChildren));
+      dispatch(updateMovedXBlockParams({ title, isSuccess: true, isUndo: true }));
       const courseUnit = await getCourseUnitData(itemId);
       dispatch(fetchCourseItemSuccess(courseUnit));
       dispatch(hideProcessingNotification());

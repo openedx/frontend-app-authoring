@@ -51,6 +51,10 @@ jest.mock('react-redux', () => ({
   useSelector: jest.fn(),
 }));
 
+jest.mock('../../generic/hooks', () => ({
+  useOverflowControl: () => jest.fn(),
+}));
+
 const renderComponent = (props) => render(
   <AppProvider store={store}>
     <IntlProvider locale="en">

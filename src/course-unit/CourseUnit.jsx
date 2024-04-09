@@ -2,11 +2,16 @@ import { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { Container, Layout, Stack } from '@openedx/paragon';
+import {
+  Container, Layout, Stack, Button, TransitionReplace,
+} from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl, injectIntl } from '@edx/frontend-platform/i18n';
 import { DraggableList, ErrorAlert } from '@edx/frontend-lib-content-components';
-import { Warning as WarningIcon } from '@openedx/paragon/icons';
+import {
+  Warning as WarningIcon,
+  CheckCircle as CheckCircleIcon,
+} from '@openedx/paragon/icons';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
@@ -61,6 +66,10 @@ const CourseUnit = ({ courseId }) => {
     courseVerticalChildren,
     handleXBlockDragAndDrop,
     canPasteComponent,
+    movedXBlockParams,
+    handleRollbackMovedXBlock,
+    handleCloseXBlockMovedAlert,
+    handleNavigateToTargetUnit,
   } = useCourseUnit({ courseId, blockId });
 
   const initialXBlocksData = useMemo(() => courseVerticalChildren.children ?? [], [courseVerticalChildren.children]);
@@ -101,6 +110,34 @@ const CourseUnit = ({ courseId }) => {
     <>
       <Container size="xl" className="course-unit px-4">
         <section className="course-unit-container mb-4 mt-5">
+          <TransitionReplace>
+            {movedXBlockParams.isSuccess ? (
+              <AlertMessage
+                key="xblock-moved-alert"
+                data-testid="xblock-moved-alert"
+                show={movedXBlockParams.isSuccess}
+                variant="success"
+                icon={CheckCircleIcon}
+                title={movedXBlockParams.isUndo
+                  ? intl.formatMessage(messages.alertMoveCancelTitle)
+                  : intl.formatMessage(messages.alertMoveSuccessTitle)}
+                description={movedXBlockParams.isUndo
+                  ? intl.formatMessage(messages.alertMoveCancelDescription, { title: movedXBlockParams.title })
+                  : intl.formatMessage(messages.alertMoveSuccessDescription, { title: movedXBlockParams.title })}
+                aria-hidden={movedXBlockParams.isSuccess}
+                dismissible
+                actions={movedXBlockParams.isUndo ? null : [
+                  <Button onClick={handleRollbackMovedXBlock}>
+                    {intl.formatMessage(messages.undoMoveButton)}
+                  </Button>,
+                  <Button onClick={handleNavigateToTargetUnit}>
+                    {intl.formatMessage(messages.newLocationButton)}
+                  </Button>,
+                ]}
+                onClose={handleCloseXBlockMovedAlert}
+              />
+            ) : null}
+          </TransitionReplace>
           <ErrorAlert hideHeading isError={savingStatus === RequestStatus.FAILED && isErrorAlert}>
             {intl.formatMessage(messages.alertFailedGeneric, { actionName: 'save', type: 'changes' })}
           </ErrorAlert>
