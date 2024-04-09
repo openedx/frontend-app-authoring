@@ -5,14 +5,13 @@
 import React from 'react';
 import Select, { components } from 'react-select';
 import {
-  Badge,
   Collapsible,
   Button,
   Spinner,
   Chip,
+  Icon,
 } from '@openedx/paragon';
-import { Tag } from '@openedx/paragon/icons';
-import classNames from 'classnames';
+import { Tag, KeyboardArrowDown, KeyboardArrowUp } from '@openedx/paragon/icons';
 import { SelectableBox } from '@edx/frontend-lib-content-components';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { debounce } from 'lodash';
@@ -365,61 +364,76 @@ const ContentTagsCollapsible = ({
 
   return (
     <div className="d-flex">
-      <Collapsible title={<h4>{name}</h4>} styling="card-lg" className="taxonomy-tags-collapsible">
-        <div key={taxonomyId}>
-          <ContentTagsTree tagsTree={appliedContentTagsTree} removeTagHandler={removeAppliedTagHandler} />
-        </div>
+      <Collapsible.Advanced
+        className="collapsible-card-lg taxonomy-tags-collapsible"
+      >
+        <Collapsible.Trigger className="collapsible-trigger pl-2.5">
+          <Collapsible.Visible whenClosed>
+            <Icon src={KeyboardArrowDown} />
+          </Collapsible.Visible>
 
-        <div className="d-flex taxonomy-tags-selector-menu">
+          <Collapsible.Visible whenOpen>
+            <Icon src={KeyboardArrowUp} />
+          </Collapsible.Visible>
+          <h4 className="flex-grow-1 pl-2">{name}</h4>
+        </Collapsible.Trigger>
 
-          {canTagObject && (
-            <Select
-              onBlur={handleOnBlur}
-              styles={{
-                // Overriding 'x' button styles for staged tags when navigating by keyboard
-                multiValueRemove: (base, state) => ({
-                  ...base,
-                  background: state.isFocused ? 'black' : base.background,
-                  color: state.isFocused ? 'white' : base.color,
-                }),
-              }}
-              menuIsOpen={selectMenuIsOpen}
-              onFocus={onSelectMenuFocus}
-              onKeyDown={handleSelectOnKeyDown}
-              ref={/** @type {React.RefObject} */(selectRef)}
-              isMulti
-              isLoading={updateTags.isLoading}
-              isDisabled={updateTags.isLoading}
-              name="tags-select"
-              placeholder={intl.formatMessage(messages.collapsibleAddTagsPlaceholderText)}
-              isSearchable
-              className="d-flex flex-column flex-fill"
-              classNamePrefix="react-select-add-tags"
-              onInputChange={handleSearchChange}
-              onChange={handleStagedTagsMenuChange}
-              components={{
-                Menu: CustomMenu,
-                LoadingIndicator: CustomLoadingIndicator,
-                IndicatorsContainer: CustomIndicatorsContainer,
-              }}
-              closeMenuOnSelect={false}
-              blurInputOnSelect={false}
-              handleSelectableBoxChange={handleSelectableBoxChange}
-              checkedTags={checkedTags}
-              taxonomyId={taxonomyId}
-              appliedContentTagsTree={appliedContentTagsTree}
-              stagedContentTagsTree={stagedContentTagsTree}
-              handleCommitStagedTags={handleCommitStagedTags}
-              handleCancelStagedTags={handleCancelStagedTags}
-              searchTerm={searchTerm}
-              selectCancelRef={selectCancelRef}
-              selectAddRef={selectAddRef}
-              selectInlineAddRef={selectInlineAddRef}
-              value={stagedContentTags}
-            />
-          )}
-        </div>
-      </Collapsible>
+        <Collapsible.Body className="collapsible-body">
+          <div key={taxonomyId}>
+            <ContentTagsTree tagsTree={appliedContentTagsTree} removeTagHandler={removeAppliedTagHandler} />
+          </div>
+
+          <div className="d-flex taxonomy-tags-selector-menu">
+
+            {canTagObject && (
+              <Select
+                onBlur={handleOnBlur}
+                styles={{
+                  // Overriding 'x' button styles for staged tags when navigating by keyboard
+                  multiValueRemove: (base, state) => ({
+                    ...base,
+                    background: state.isFocused ? 'black' : base.background,
+                    color: state.isFocused ? 'white' : base.color,
+                  }),
+                }}
+                menuIsOpen={selectMenuIsOpen}
+                onFocus={onSelectMenuFocus}
+                onKeyDown={handleSelectOnKeyDown}
+                ref={/** @type {React.RefObject} */(selectRef)}
+                isMulti
+                isLoading={updateTags.isLoading}
+                isDisabled={updateTags.isLoading}
+                name="tags-select"
+                placeholder={intl.formatMessage(messages.collapsibleAddTagsPlaceholderText)}
+                isSearchable
+                className="d-flex flex-column flex-fill"
+                classNamePrefix="react-select-add-tags"
+                onInputChange={handleSearchChange}
+                onChange={handleStagedTagsMenuChange}
+                components={{
+                  Menu: CustomMenu,
+                  LoadingIndicator: CustomLoadingIndicator,
+                  IndicatorsContainer: CustomIndicatorsContainer,
+                }}
+                closeMenuOnSelect={false}
+                blurInputOnSelect={false}
+                handleSelectableBoxChange={handleSelectableBoxChange}
+                checkedTags={checkedTags}
+                taxonomyId={taxonomyId}
+                appliedContentTagsTree={appliedContentTagsTree}
+                stagedContentTagsTree={stagedContentTagsTree}
+                handleCommitStagedTags={handleCommitStagedTags}
+                handleCancelStagedTags={handleCancelStagedTags}
+                searchTerm={searchTerm}
+                selectCancelRef={selectCancelRef}
+                selectAddRef={selectAddRef}
+                selectInlineAddRef={selectInlineAddRef}
+                value={stagedContentTags}
+              />
+            )}
+          </div>
+        </Collapsible.Body>
+      </Collapsible.Advanced>
       <div className="d-flex align-items-start pt-2.5 taxonomy-tags-count-chip">
         <Chip
           iconBefore={Tag}
