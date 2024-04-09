@@ -97,7 +97,7 @@ const FilterByTags = () => {
       label={<FormattedMessage {...messages.blockTagsFilter} />}
     >
       <Form.Group>
-        <Menu style={{ boxShadow: 'none' }}>
+        <Menu className="tags-refinement-menu" style={{ boxShadow: 'none' }}>
           <FilterOptions items={items} refine={refine} />
           {
             // Show a message if there are no options at all to avoid the impression that the dropdown isn't working
