@@ -69,29 +69,10 @@ const CoursesFilters = ({
     dispatch(fetchStudioHomeData(locationValue, false, { page: 1, ...customParams }, true));
   };
 
-  const handleClearSearchInput = () => {
-    const filterParams = {
-      search: undefined,
-      activeOnly,
-      archivedOnly,
-      order,
-    };
-
-    dispatch(updateStudioHomeCoursesCustomParams({
-      currentPage: 1,
-      isFiltered: true,
-      cleanFilters: false,
-      inputValue: '',
-      ...filterParams,
-    }));
-
-    dispatch(fetchStudioHomeData(locationValue, false, { page: 1, ...filterParams }, true));
-  };
-
   const handleSearchCourses = (searchValueDebounced) => {
     const valueFormatted = searchValueDebounced.trim();
     const filterParams = {
-      search: valueFormatted,
+      search: valueFormatted.length > 0 ? valueFormatted : undefined,
       activeOnly,
       archivedOnly,
       order,
@@ -127,7 +108,6 @@ const CoursesFilters = ({
           className="mr-4"
           data-testid="input-filter-courses-search"
           placeholder="Search"
-          onClear={handleClearSearchInput}
         />
         {isLoading && (
           <span className="search-field-loading" data-testid="loading-search-spinner">
