@@ -25,7 +25,7 @@ const DeleteConfirmationModal = ({
   const firstSelectedRow = selectedRows[0]?.original;
   let activeContentRows = [];
   if (Array.isArray(selectedRows)) {
-    activeContentRows = selectedRows.filter(row => row.original.activeStatus === 'active');
+    activeContentRows = selectedRows.filter(row => row.original?.activeStatus === 'active');
   }
   const isDeletingCourseContent = activeContentRows.length > 0;
 
