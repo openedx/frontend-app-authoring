@@ -284,7 +284,7 @@ export const convertToDateFromString = (dateStr) => {
   const sign = timeZoneOffset < 0 ? '+' : '-';
   const timeZone = `${sign}${String(timeZoneHours).padStart(2, '0')}00`;
 
-  return moment(stripTimeZone(dateStr) + timeZone).toDate();
+  return moment(stripTimeZone(String(dateStr)) + timeZone).toDate();
 };
 
 export const convertToStringFromDate = (date) => {
