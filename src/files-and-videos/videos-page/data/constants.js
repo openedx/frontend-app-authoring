@@ -7,5 +7,6 @@ export const MIN_HEIGHT = 360;
 export const ASPECT_RATIO = 16 / 9;
 export const ASPECT_RATIO_ERROR_MARGIN = 0.1;
 export const TRANSCRIPT_FAILURE_STATUSES = ['Transcript Failed', 'Partial Failure'];
-export const VIDEO_PROCESSING_STATUSES = ['Uploading', 'In Progress', 'Uploaded'];
+export const VIDEO_PROCESSING_STATUSES = ['In Progress', 'Uploaded']; // Don't add "Uploading" here. Otherwise interrupted uploads will be considered as processing.
 export const VIDEO_SUCCESS_STATUSES = ['Ready', 'Imported'];
+export const VIDEO_FAILURE_STATUSES = ['Failed', 'Partial Failure', 'Uploading']; // 'Uploading' is added here to handle interrupted uploads.

@@ -1,10 +1,12 @@
 import React from 'react';
 import { PropTypes } from 'prop-types';
 import { Badge } from '@openedx/paragon';
+import { VIDEO_FAILURE_STATUSES } from '../../../videos-page/data/constants';
 
 const StatusColumn = ({ row }) => {
   const { status } = row.original;
   const isUploaded = status === 'Success';
+  const isFailed = VIDEO_FAILURE_STATUSES.includes(status);
 
   if (isUploaded) {
     return null;
@@ -12,7 +14,7 @@ const StatusColumn = ({ row }) => {
 
   return (
     <Badge variant="light">
-      {status}
+      {isFailed ? 'Failed' : status}
     </Badge>
   );
 };

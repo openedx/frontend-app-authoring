@@ -69,3 +69,11 @@
   gap: 24px 16px;
   grid-template-columns: repeat(3, 33%);
 }
+
+.video-upload-spinner {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+.video-upload-warning-text {
+  font-size: 18px;
+}

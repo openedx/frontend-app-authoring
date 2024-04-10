@@ -141,10 +141,18 @@ export function deleteVideoFile(courseId, id) {
   };
 }
 
-export function markVideoUploadsInProgressAsFailed({ uploadsTracker }) {
-  return async (dispatch) => {
-    uploadsTracker.current.forEach((fileName) => {
-      dispatch(failAddVideo({ fileName }));
+export function markVideoUploadsInProgressAsFailed({ uploadsTracker, courseId }) {
+  return (dispatch) => {
+    uploadsTracker.current.forEach((edxVideoId) => {
+      sendVideoUploadStatus(
+        courseId,
+        edxVideoId || '',
+        'Upload failed',
+        'upload_failed',
+      );
+      dispatch(
+        updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }),
+      );
     });
     // eslint-disable-next-line no-param-reassign
     uploadsTracker.current = [];
@@ -161,7 +169,6 @@ export function addVideoFile(
     dispatch(
       updateEditStatus({ editType: 'add', status: RequestStatus.IN_PROGRESS }),
     );
-    uploadsTracker.current = [...uploadsTracker.current, file.name];
 
     let edxVideoId;
     let uploadUrl;
@@ -182,6 +189,7 @@ export function addVideoFile(
       return;
     }
     try {
+      uploadsTracker.current = [...uploadsTracker.current, edxVideoId];
       const putToServerResponse = await uploadVideo(uploadUrl, file);
       if (
         putToServerResponse.status < 200
@@ -222,7 +230,7 @@ export function addVideoFile(
       );
     } finally {
       uploadsTracker.current = uploadsTracker.current.filter(
-        (name) => name !== file.name,
+        (id) => id !== edxVideoId,
       );
       console.log('FILE UPLOAD DONE');
     }

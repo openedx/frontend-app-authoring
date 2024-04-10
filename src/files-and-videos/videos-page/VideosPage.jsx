@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -12,6 +12,8 @@ import {
   Button,
   CheckboxFilter,
   Container,
+  Alert,
+  Spinner,
 } from '@openedx/paragon';
 import Placeholder from '@edx/frontend-lib-content-components';
 
@@ -62,6 +64,7 @@ const VideosPage = ({
     courseDetails?.name,
     intl.formatMessage(messages.heading),
   );
+  const [showUploadAlert, setShowUploadAlert] = useState(false);
 
   useEffect(() => {
     dispatch(fetchVideos(courseId));
@@ -69,7 +72,7 @@ const VideosPage = ({
 
   useEffect(() => {
     window.onbeforeunload = () => {
-      dispatch(markVideoUploadsInProgressAsFailed(uploadsTracker.current));
+      dispatch(markVideoUploadsInProgressAsFailed({ uploadsTracker, courseId }));
       return undefined;
     };
   }, []);
@@ -223,6 +226,11 @@ const VideosPage = ({
           updateFileStatus={updateVideoStatus}
           loadingStatus={loadingStatus}
         />
+        <Alert variant="warning" show={showUploadAlert}>
+          <div className="video-upload-warning-text"><Spinner animation="border" variant="warning" className="video-upload-spinner mr-3" screenReaderText="loading" />
+            <p className="d-inline">Upload in progress. Please wait for the upload to complete before navigating away from this page.</p>
+          </div>
+        </Alert>
         <ActionRow>
           <div className="h2">
             <FormattedMessage {...messages.heading} />
