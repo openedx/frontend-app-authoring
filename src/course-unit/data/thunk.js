@@ -162,6 +162,11 @@ export function createNewCourseXBlock(body, callback, blockId) {
           }
           if (body.stagedContent) {
             localStorage.setItem('staticFileNotices', JSON.stringify(formattedResult.staticFileNotices));
+            dispatch(fetchStaticFileNoticesSuccess(formattedResult.staticFileNotices));
+
+            if (body.parentLocator.includes('vertical')) {
+              localStorage.removeItem('staticFileNotices');
+            }
           }
           const courseVerticalChildrenData = await getCourseVerticalChildren(blockId);
           dispatch(updateCourseVerticalChildren(courseVerticalChildrenData));
