@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -24,6 +24,7 @@ import {
   fetchVideoDownload,
   fetchVideos,
   getUsagePaths,
+  markVideoUploadsInProgressAsFailed,
   resetErrors,
   updateVideoOrder,
 } from './data/thunks';
@@ -50,13 +51,28 @@ const VideosPage = ({
   intl,
 }) => {
   const dispatch = useDispatch();
-  const [isTranscriptSettingsOpen, openTranscriptSettings, closeTranscriptSettings] = useToggle(false);
+  const [
+    isTranscriptSettingsOpen,
+    openTranscriptSettings,
+    closeTranscriptSettings,
+  ] = useToggle(false);
   const courseDetails = useModel('courseDetails', courseId);
-  document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.heading));
+  const uploadsTracker = useRef([]);
+  document.title = getPageHeadTitle(
+    courseDetails?.name,
+    intl.formatMessage(messages.heading),
+  );
 
   useEffect(() => {
     dispatch(fetchVideos(courseId));
   }, [courseId]);
+
+  useEffect(() => {
+    window.onbeforeunload = () => {
+      dispatch(markVideoUploadsInProgressAsFailed(uploadsTracker.current));
+      return undefined;
+    };
+  }, []);
 
   const {
     videoIds,
@@ -68,7 +84,7 @@ const VideosPage = ({
     usageStatus: usagePathStatus,
     errors: errorMessages,
     pageSettings,
-  } = useSelector(state => state.videos);
+  } = useSelector((state) => state.videos);
 
   const {
     isVideoTranscriptEnabled,
@@ -78,12 +94,14 @@ const VideosPage = ({
     videoImageSettings,
   } = pageSettings;
 
-  const supportedFileFormats = { 'video/*': videoSupportedFileFormats || FILES_AND_UPLOAD_TYPE_FILTERS.video };
+  const supportedFileFormats = {
+    'video/*': videoSupportedFileFormats || FILES_AND_UPLOAD_TYPE_FILTERS.video,
+  };
 
   const handleErrorReset = (error) => dispatch(resetErrors(error));
   const handleAddFile = (files) => {
     handleErrorReset({ errorType: 'add' });
-    files.forEach(file => dispatch(addVideoFile(courseId, file, videoIds)));
+    files.forEach((file) => dispatch(addVideoFile(courseId, file, videoIds, uploadsTracker)));
   };
   const handleDeleteFile = (id) => dispatch(deleteVideoFile(courseId, id));
   const handleDownloadFile = (selectedRows) => dispatch(fetchVideoDownload({ selectedRows, courseId }));
@@ -116,9 +134,7 @@ const VideosPage = ({
     handleAddThumbnail,
     videoImageSettings,
   });
-  const infoModalSidebar = (video, activeTab, setActiveTab) => (
-    VideoInfoModalSidebar({ video, activeTab, setActiveTab })
-  );
+  const infoModalSidebar = (video, activeTab, setActiveTab) => VideoInfoModalSidebar({ video, activeTab, setActiveTab });
   const maxFileSize = videoUploadMaxFileSize * 1073741824;
   const transcriptColumn = {
     id: 'transcriptStatus',
@@ -128,8 +144,14 @@ const VideosPage = ({
     Filter: CheckboxFilter,
     filter: 'exactTextCase',
     filterChoices: [
-      { name: intl.formatMessage(messages.transcribedCheckboxLabel), value: 'transcribed' },
-      { name: intl.formatMessage(messages.notTranscribedCheckboxLabel), value: 'notTranscribed' },
+      {
+        name: intl.formatMessage(messages.transcribedCheckboxLabel),
+        value: 'transcribed',
+      },
+      {
+        name: intl.formatMessage(messages.notTranscribedCheckboxLabel),
+        value: 'notTranscribed',
+      },
     ],
   };
   const activeColumn = {
