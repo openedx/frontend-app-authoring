@@ -1,9 +1,12 @@
+// @ts-check
 import React from 'react';
 import PropTypes from 'prop-types';
 import { getConfig } from '@edx/frontend-platform';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { StudioHeader } from '@edx/frontend-component-header';
+import { useToggle } from '@openedx/paragon';
+
+import SearchModal from '../search-modal/SearchModal';
 import { getContentMenuItems, getSettingMenuItems, getToolsMenuItems } from './utils';
 import messages from './messages';
 
@@ -13,10 +16,13 @@ const Header = ({
   courseNumber,
   courseTitle,
   isHiddenMainMenu,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
+
+  const [isShowSearchModalOpen, openSearchModal, closeSearchModal] = useToggle(false);
+
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
+  const meiliSearchEnabled = getConfig().MEILISEARCH_ENABLED || null;
   const mainMenuDropdowns = [
     {
       id: `${intl.formatMessage(messages['header.links.content'])}-dropdown-menu`,
@@ -35,17 +41,26 @@ const Header = ({
     },
   ];
   const outlineLink = `${studioBaseUrl}/course/${courseId}`;
+
   return (
-    <StudioHeader
-      {...{
-        org: courseOrg,
-        number: courseNumber,
-        title: courseTitle,
-        isHiddenMainMenu,
-        mainMenuDropdowns,
-        outlineLink,
-      }}
-    />
+    <>
+      <StudioHeader
+        org={courseOrg}
+        number={courseNumber}
+        title={courseTitle}
+        isHiddenMainMenu={isHiddenMainMenu}
+        mainMenuDropdowns={mainMenuDropdowns}
+        outlineLink={outlineLink}
+        searchButtonAction={meiliSearchEnabled && openSearchModal}
+      />
+      { meiliSearchEnabled && (
+        <SearchModal
+          isOpen={isShowSearchModalOpen}
+          courseId={courseId}
+          onClose={closeSearchModal}
+        />
+      )}
+    </>
   );
 };
 
@@ -55,8 +70,6 @@ Header.propTypes = {
   courseOrg: PropTypes.string,
   courseTitle: PropTypes.string,
   isHiddenMainMenu: PropTypes.bool,
-  // injected
-  intl: intlShape.isRequired,
 };
 
 Header.defaultProps = {
@@ -67,4 +80,4 @@ Header.defaultProps = {
   isHiddenMainMenu: false,
 };
 
-export default injectIntl(Header);
+export default Header;

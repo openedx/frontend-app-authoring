@@ -159,9 +159,21 @@ describe('<TabsSection />', () => {
   });
 
   describe('taxonomies tab', () => {
-    it('should redirect to taxonomies page', async () => {
+    it('should not show taxonomies tab on page if not enabled', async () => {
       render(<RootWrapper />);
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
+      await executeThunk(fetchStudioHomeData(), store.dispatch);
+
+      expect(screen.getByText(tabMessages.coursesTabTitle.defaultMessage)).toBeInTheDocument();
+      expect(screen.queryByText(tabMessages.taxonomiesTabTitle.defaultMessage)).toBeNull();
+    });
+
+    it('should redirect to taxonomies page', async () => {
+      const data = generateGetStudioHomeDataApiResponse();
+      data.taxonomiesEnabled = true;
+
+      render(<RootWrapper />);
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, data);
       await executeThunk(fetchStudioHomeData(), store.dispatch);
 
       const taxonomiesTab = screen.getByText(tabMessages.taxonomiesTabTitle.defaultMessage);

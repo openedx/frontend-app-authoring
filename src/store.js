@@ -26,6 +26,7 @@ import { reducer as courseOutlineReducer } from './course-outline/data/slice';
 import { reducer as courseUnitReducer } from './course-unit/data/slice';
 import { reducer as courseChecklistReducer } from './course-checklist/data/slice';
 import { reducer as accessibilityPageReducer } from './accessibility-page/data/slice';
+import { reducer as certificatesReducer } from './certificates/data/slice';
 
 export default function initializeStore(preloadedState = undefined) {
   return configureStore({
@@ -53,6 +54,7 @@ export default function initializeStore(preloadedState = undefined) {
       courseUnit: courseUnitReducer,
       courseChecklist: courseChecklistReducer,
       accessibilityPage: accessibilityPageReducer,
+      certificates: certificatesReducer,
     },
     preloadedState,
   });

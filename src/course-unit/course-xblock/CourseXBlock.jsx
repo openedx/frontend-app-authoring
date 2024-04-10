@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import { scrollToElement } from '../../course-outline/utils';
 import { getCourseId } from '../data/selectors';
-import { COMPONENT_ICON_TYPES } from '../constants';
+import { COMPONENT_TYPES } from '../constants';
 import messages from './messages';
 
 const CourseXBlock = ({
@@ -30,9 +30,9 @@ const CourseXBlock = ({
 
   const handleEdit = () => {
     switch (type) {
-    case COMPONENT_ICON_TYPES.html:
-    case COMPONENT_ICON_TYPES.problem:
-    case COMPONENT_ICON_TYPES.video:
+    case COMPONENT_TYPES.html:
+    case COMPONENT_TYPES.problem:
+    case COMPONENT_TYPES.video:
       navigate(`/course/${courseId}/editor/${type}/${id}`);
       break;
     default:

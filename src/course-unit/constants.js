@@ -12,11 +12,13 @@ import {
   TextFields as TextFieldsIcon,
   VideoCamera as VideoCameraIcon,
 } from '@openedx/paragon/icons';
+
 import messages from './sidebar/messages';
+import addComponentMessages from './add-component/messages';
 
 export const UNIT_ICON_TYPES = ['video', 'other', 'vertical', 'problem', 'lock'];
 
-export const COMPONENT_ICON_TYPES = {
+export const COMPONENT_TYPES = {
   advanced: 'advanced',
   discussion: 'discussion',
   library: 'library',
@@ -36,14 +38,14 @@ export const TYPE_ICONS_MAP = {
 };
 
 export const COMPONENT_TYPE_ICON_MAP = {
-  [COMPONENT_ICON_TYPES.advanced]: ScienceIcon,
-  [COMPONENT_ICON_TYPES.discussion]: QuestionAnswerOutlineIcon,
-  [COMPONENT_ICON_TYPES.library]: LibraryIcon,
-  [COMPONENT_ICON_TYPES.html]: TextFieldsIcon,
-  [COMPONENT_ICON_TYPES.openassessment]: EditNoteIcon,
-  [COMPONENT_ICON_TYPES.problem]: HelpOutlineIcon,
-  [COMPONENT_ICON_TYPES.video]: VideoCameraIcon,
-  [COMPONENT_ICON_TYPES.dragAndDrop]: BackHandIcon,
+  [COMPONENT_TYPES.advanced]: ScienceIcon,
+  [COMPONENT_TYPES.discussion]: QuestionAnswerOutlineIcon,
+  [COMPONENT_TYPES.library]: LibraryIcon,
+  [COMPONENT_TYPES.html]: TextFieldsIcon,
+  [COMPONENT_TYPES.openassessment]: EditNoteIcon,
+  [COMPONENT_TYPES.problem]: HelpOutlineIcon,
+  [COMPONENT_TYPES.video]: VideoCameraIcon,
+  [COMPONENT_TYPES.dragAndDrop]: BackHandIcon,
 };
 
 export const getUnitReleaseStatus = (intl) => ({
@@ -68,3 +70,18 @@ export const PUBLISH_TYPES = {
   discardChanges: 'discard_changes',
   makePublic: 'make_public',
 };
+
+export const getXBlockSupportMessages = (intl) => ({
+  fs: { // Fully supported
+    label: intl.formatMessage(addComponentMessages.modalComponentSupportLabelFullySupported),
+    tooltip: intl.formatMessage(addComponentMessages.modalComponentSupportTooltipFullySupported),
+  },
+  ps: { // Provisionally supported
+    label: intl.formatMessage(addComponentMessages.modalComponentSupportLabelProvisionallySupported),
+    tooltip: intl.formatMessage(addComponentMessages.modalComponentSupportTooltipProvisionallySupported),
+  },
+  us: { // Not supported
+    label: intl.formatMessage(addComponentMessages.modalComponentSupportLabelNotSupported),
+    tooltip: intl.formatMessage(addComponentMessages.modalComponentSupportTooltipNotSupported),
+  },
+});
