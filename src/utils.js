@@ -265,14 +265,15 @@ export const convertToDateFromString = (dateStr) => {
     return '';
   }
 
-  const stripTimeZone = (stringValue) => stringValue.substring(0,19);
+  const stripTimeZone = (stringValue) => stringValue.substring(0, 19);
 
   const differenceDueToDST = (date) => {
     const isNowDST = moment(new Date()).isDST();
     const isDateDST = moment(date).isDST();
     if (isNowDST && !isDateDST) {
       return 1;
-    } else if (!isNowDST && isDateDST) {
+    }
+    if (!isNowDST && isDateDST) {
       return -1;
     }
     return 0;
@@ -281,7 +282,7 @@ export const convertToDateFromString = (dateStr) => {
   const timeZoneOffset = new Date().getTimezoneOffset();
   const timeZoneHours = (Math.abs(timeZoneOffset) / 60) + differenceDueToDST(moment(dateStr));
   const sign = timeZoneOffset < 0 ? '+' : '-';
-  const timeZone = sign + String(timeZoneHours).padStart(2, '0') + '00';
+  const timeZone = `${sign}${String(timeZoneHours).padStart(2, '0')}00`;
 
   return moment(stripTimeZone(dateStr) + timeZone).toDate();
 };
