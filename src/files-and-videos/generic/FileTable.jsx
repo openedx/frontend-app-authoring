@@ -3,14 +3,11 @@ import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import {
-  DataTable,
-  TextFilter,
-  Dropzone,
   CardView,
+  DataTable,
+  Dropzone,
+  TextFilter,
   useToggle,
-  AlertModal,
-  ActionRow,
-  Button,
 } from '@openedx/paragon';
 
 import { RequestStatus } from '../../data/constants';
@@ -28,6 +25,7 @@ import {
   Footer,
 } from './table-components';
 import ApiStatusToast from './ApiStatusToast';
+import DeleteConfirmationModal from './DeleteConfirmationModal';
 
 const FileTable = ({
   files,
@@ -275,23 +273,15 @@ const FileTable = ({
           sidebar={infoModalSidebar}
         />
       )}
-      <AlertModal
-        title={intl.formatMessage(messages.deleteConfirmationTitle, { fileType })}
-        isOpen={isDeleteConfirmationOpen}
-        onClose={closeDeleteConfirmation}
-        footerNode={(
-          <ActionRow>
-            <Button variant="tertiary" onClick={closeDeleteConfirmation}>
-              {intl.formatMessage(messages.cancelButtonLabel)}
-            </Button>
-            <Button onClick={handleBulkDelete}>
-              {intl.formatMessage(messages.deleteFileButtonLabel)}
-            </Button>
-          </ActionRow>
-        )}
-      >
-        {intl.formatMessage(messages.deleteConfirmationMessage, { fileNumber: selectedRows.length, fileType })}
-      </AlertModal>
+      <DeleteConfirmationModal
+        {...{
+          isDeleteConfirmationOpen,
+          closeDeleteConfirmation,
+          handleBulkDelete,
+          selectedRows,
+          fileType,
+        }}
+      />
     </div>
   );
 };
