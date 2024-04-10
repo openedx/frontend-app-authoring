@@ -1,26 +1,24 @@
 /* eslint-disable react/prop-types */
 // @ts-check
 import React from 'react';
-import { useStats, useClearRefinements } from 'react-instantsearch';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import messages from './messages';
+import { useSearchContext } from './manager/SearchManager';
 
 /**
  * Simple component that displays the # of matching results
  * @type {React.FC<Record<never, never>>}
  */
-const Stats = (props) => {
-  const { nbHits, query } = useStats(props);
-  const { canRefine: hasFiltersApplied } = useClearRefinements();
-  const hasQuery = !!query;
+const Stats = () => {
+  const { totalHits, searchKeywords, canClearFilters } = useSearchContext();
 
-  if (!hasQuery && !hasFiltersApplied) {
+  if (!searchKeywords && !canClearFilters) {
     // We haven't started the search yet.
     return null;
   }
 
   return (
-    <FormattedMessage {...messages.numResults} values={{ numResults: nbHits }} />
+    <FormattedMessage {...messages.numResults} values={{ numResults: totalHits }} />
   );
 };
 

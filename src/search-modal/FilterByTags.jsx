@@ -1,117 +1,199 @@
 /* eslint-disable react/prop-types */
 // @ts-check
 import React from 'react';
-import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Button,
   Badge,
   Form,
+  Icon,
+  IconButton,
   Menu,
   MenuItem,
+  SearchField,
 } from '@openedx/paragon';
-import { useHierarchicalMenu } from 'react-instantsearch';
+import { ArrowDropDown, ArrowDropUp } from '@openedx/paragon/icons';
 import SearchFilterWidget from './SearchFilterWidget';
 import messages from './messages';
-
-// eslint-disable-next-line max-len
-/** @typedef {import('instantsearch.js/es/connectors/hierarchical-menu/connectHierarchicalMenu').HierarchicalMenuItem} HierarchicalMenuItem */
+import { useSearchContext } from './manager/SearchManager';
+import { useTagFilterOptions } from './data/apiHooks';
+import { LoadingSpinner } from '../generic/Loading';
+import { TAG_SEP } from './data/api';
 
 /**
- * A button with a dropdown menu to allow filtering the search using tags.
- * This version is based on Instantsearch's <HierarchichalMenu/> component, so it only allows selecting one tag at a
- * time. We will replace it with a custom version that allows multi-select.
+ * A menu item with a checkbox and an optional ▼ button (to show/hide children)
  * @type {React.FC<{
- *   items: HierarchicalMenuItem[],
- *   refine: (value: string) => void,
- *   depth?: number,
+ *   label: string;
+ *   tagPath: string;
+ *   isChecked: boolean;
+ *   onClickCheckbox: () => void;
+ *   tagCount: number;
+ *   hasChildren?: boolean;
+ *   isExpanded?: boolean;
+ *   onToggleChildren?: (tagPath: string) => void;
  * }>}
  */
-const FilterOptions = ({ items, refine, depth = 0 }) => {
-  const handleCheckboxChange = React.useCallback((e) => {
-    refine(e.target.value);
-  }, [refine]);
+const TagMenuItem = ({
+  label,
+  tagPath,
+  tagCount,
+  isChecked,
+  onClickCheckbox,
+  hasChildren,
+  isExpanded,
+  onToggleChildren,
+}) => {
+  const intl = useIntl();
+  const randomNumber = React.useMemo(() => Math.floor(Math.random() * 1000), []);
+  const checkboxId = tagPath.replace(/[\W]/g, '_') + randomNumber;
 
   return (
-    <>
+    <div className="pgn__menu-item pgn__form-checkbox tag-toggle-item" role="group">
+      <input
+        type="checkbox"
+        id={checkboxId}
+        checked={isChecked}
+        onChange={onClickCheckbox}
+        className="pgn__form-checkbox-input flex-shrink-0"
+      />
+      <label htmlFor={checkboxId} className="flex-shrink-1">
+        {label}{' '}
+        <Badge variant="light" pill>{tagCount}</Badge>
+      </label>
       {
-        items.map((item) => (
-          <React.Fragment key={item.value}>
-            <MenuItem
-              as={Form.Checkbox}
-              value={item.value}
-              checked={item.isRefined}
-              onChange={handleCheckboxChange}
-              className={`tag-option-${depth}`}
-            >
-              {item.label}{' '}
-              <Badge variant="light" pill>{item.count}</Badge>
-            </MenuItem>
-            {item.data && <FilterOptions items={item.data} refine={refine} depth={depth + 1} />}
-          </React.Fragment>
-        ))
+        hasChildren
+          ? (
+            <IconButton
+              src={isExpanded ? ArrowDropUp : ArrowDropDown}
+              iconAs={Icon}
+              alt={
+                intl.formatMessage(
+                  isExpanded ? messages.childTagsCollapse : messages.childTagsExpand,
+                  { tagName: label },
+                )
+              }
+              onClick={() => onToggleChildren?.(tagPath)}
+              variant="primary"
+              size="sm"
+            />
+          ) : null
       }
-    </>
+    </div>
+  );
+};
+
+/**
+ * A list of menu items with all of the options for tags at one level of the hierarchy.
+ * @type {React.FC<{
+ *   tagSearchKeywords: string;
+ *   parentTagPath?: string;
+ *   toggleTagChildren?: (tagPath: string) => void;
+ *   expandedTags: string[],
+ * }>}
+ */
+const TagOptions = ({
+  parentTagPath = '',
+  tagSearchKeywords,
+  expandedTags,
+  toggleTagChildren,
+}) => {
+  const searchContext = useSearchContext();
+  const { data: tagOptions, isLoading, isError } = useTagFilterOptions({
+    ...searchContext,
+    parentTagPath,
+    tagSearchKeywords,
+  });
+
+  if (isError) {
+    return <MenuItem disabled><FormattedMessage {...messages['blockTagsFilter.error']} /></MenuItem>;
+  }
+  if (isLoading || tagOptions === undefined) {
+    return <LoadingSpinner />;
+  }
+
+  // Show a message if there are no options at all to avoid the impression that the dropdown isn't working
+  if (Object.keys(tagOptions).length === 0 && !parentTagPath) {
+    return <MenuItem disabled><FormattedMessage {...messages['blockTagsFilter.empty']} /></MenuItem>;
+  }
+
+  return (
+    <div role="group">
+      {
+        tagOptions.map(({ tagName, tagPath, ...t }) => {
+          const isExpanded = expandedTags.includes(tagPath);
+          return (
+            <React.Fragment key={tagName}>
+              <TagMenuItem
+                key={tagName}
+                label={tagName}
+                tagCount={t.tagCount}
+                tagPath={tagPath}
+                isChecked={searchContext.tagsFilter.includes(tagPath)}
+                onClickCheckbox={() => {
+                  searchContext.setTagsFilter((tf) => (
+                    tf.includes(tagPath) ? tf.filter(tp => tp !== tagPath) : [...tf, tagPath]
+                  ));
+                }}
+                hasChildren={t.hasChildren}
+                isExpanded={isExpanded}
+                onToggleChildren={toggleTagChildren}
+              />
+              {isExpanded ? (
+                <div className="ml-4">
+                  <TagOptions
+                    parentTagPath={tagPath}
+                    expandedTags={expandedTags}
+                    tagSearchKeywords={tagSearchKeywords}
+                    toggleTagChildren={toggleTagChildren}
+                  />
+                </div>
+              ) : null}
+            </React.Fragment>
+          );
+        })
+      }
+    </div>
   );
 };
 
 /** @type {React.FC} */
 const FilterByTags = () => {
-  const {
-    items,
-    refine,
-    canToggleShowMore,
-    isShowingMore,
-    toggleShowMore,
-  } = useHierarchicalMenu({
-    attributes: [
-      'tags.taxonomy',
-      'tags.level0',
-      'tags.level1',
-      'tags.level2',
-      'tags.level3',
-    ],
-  });
+  const intl = useIntl();
+  const { tagsFilter } = useSearchContext();
+  const [tagSearchKeywords, setTagSearchKeywords] = React.useState('');
 
-  // Recurse over the 'items' tree and find all the selected leaf tags - (with no children that are checked/"refined")
-  const appliedItems = React.useMemo(() => {
-    /** @type {{label: string}[]} */
-    const result = [];
-    /** @type {(itemSet: HierarchicalMenuItem[]) => void} */
-    const findSelectedLeaves = (itemSet) => {
-      itemSet.forEach(item => {
-        if (item.isRefined && item.data?.find(child => child.isRefined) === undefined) {
-          result.push({ label: item.label });
-        }
-        if (item.data) {
-          findSelectedLeaves(item.data);
-        }
-      });
-    };
-    findSelectedLeaves(items);
-    return result;
-  }, [items]);
+  // e.g. {"Location", "Location > North America"} if those two paths of the tag tree are expanded
+  const [expandedTags, setExpandedTags] = React.useState(/** @type {string[]} */([]));
+  const toggleTagChildren = React.useCallback(tagWithLineage => {
+    setExpandedTags(currentList => {
+      if (currentList.includes(tagWithLineage)) {
+        return currentList.filter(x => x !== tagWithLineage);
+      }
+      return [...currentList, tagWithLineage];
+    });
+  }, [setExpandedTags]);
 
   return (
     <SearchFilterWidget
-      appliedFilters={appliedItems}
+      appliedFilters={tagsFilter.map(tf => ({ label: tf.split(TAG_SEP).pop() }))}
       label={<FormattedMessage {...messages.blockTagsFilter} />}
     >
-      <Form.Group>
+      <Form.Group className="pt-3">
+        <SearchField
+          onSubmit={setTagSearchKeywords}
+          onChange={setTagSearchKeywords}
+          onClear={() => setTagSearchKeywords('')}
+          value={tagSearchKeywords}
+          placeholder={intl.formatMessage(messages.searchTagsByKeywordPlaceholder)}
+          className="mx-3 mb-1"
+        />
         <Menu className="tags-refinement-menu" style={{ boxShadow: 'none' }}>
-          <FilterOptions items={items} refine={refine} />
-          {
-            // Show a message if there are no options at all to avoid the impression that the dropdown isn't working
-            items.length === 0 ? (
-              <MenuItem disabled><FormattedMessage {...messages['blockTagsFilter.empty']} /></MenuItem>
-            ) : null
-          }
+          <TagOptions
+            tagSearchKeywords={tagSearchKeywords}
+            toggleTagChildren={toggleTagChildren}
+            expandedTags={expandedTags}
+          />
         </Menu>
       </Form.Group>
-      {
-        canToggleShowMore && !isShowingMore
-          ? <Button onClick={toggleShowMore}><FormattedMessage {...messages.showMore} /></Button>
-          : null
-      }
     </SearchFilterWidget>
   );
 };

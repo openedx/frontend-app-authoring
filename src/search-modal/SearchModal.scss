@@ -28,28 +28,9 @@
 
   // Options for the "filter by tag" menu
   .pgn__menu.tags-refinement-menu {
-    $indent-initial: 1.3rem;
-    $indent-each: 1.6rem;
-
-    .tag-option-1 {
-      padding-left: $indent-initial + (1 * $indent-each);
-    }
-
-    .tag-option-2 {
-      padding-left: $indent-initial + (2 * $indent-each);
-    }
-
-    .tag-option-3 {
-      padding-left: $indent-initial + (3 * $indent-each);
-    }
-
-    .tag-option-4 {
-      padding-left: $indent-initial + (4 * $indent-each);
-    }
-
     .pgn__menu-item {
       // Make the "filter by tag" menu much wider than normal, because we need the space to display the tags hierarchy
-      width: 400px;
+      width: 100%;
     }
   }
 

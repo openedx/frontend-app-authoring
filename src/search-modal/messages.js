@@ -25,6 +25,11 @@ const messages = defineMessages({
     defaultMessage: 'No tags in current results',
     description: 'Label shown when there are no options available to filter by tags',
   },
+  'blockTagsFilter.error': {
+    id: 'course-authoring.course-search.blockTagsFilter.error',
+    defaultMessage: 'Error loading tags',
+    description: 'Label shown when the tags could not be loaded',
+  },
   'blockType.annotatable': {
     id: 'course-authoring.course-search.blockType.annotatable',
     defaultMessage: 'Annotation',
@@ -80,6 +85,16 @@ const messages = defineMessages({
     defaultMessage: 'Video',
     description: 'Name of the "Video" component type in Studio',
   },
+  childTagsExpand: {
+    id: 'course-authoring.course-search.child-tags-expand',
+    defaultMessage: 'Expand to show child tags of "{tagName}"',
+    description: 'This text describes the ▼ expand toggle button to non-visual users.',
+  },
+  childTagsCollapse: {
+    id: 'course-authoring.course-search.child-tags-collapse',
+    defaultMessage: 'Collapse to hige child tags of "{tagName}"',
+    description: 'This text describes the ▲ collapse toggle button to non-visual users.',
+  },
   clearFilters: {
     id: 'course-authoring.course-search.clearFilters',
     defaultMessage: 'Clear Filters',
@@ -109,6 +124,11 @@ const messages = defineMessages({
     id: 'course-authoring.course-search.inputPlaceholder',
     defaultMessage: 'Search',
     description: 'Placeholder text shown in the keyword input field when the user has not yet entered a keyword',
+  },
+  searchTagsByKeywordPlaceholder: {
+    id: 'course-authoring.course-search.searchTagsByKeywordPlaceholder',
+    defaultMessage: 'Search tags',
+    description: 'Placeholder text shown in the input field that allows searching through the available tags',
   },
   showMore: {
     id: 'course-authoring.course-search.showMore',

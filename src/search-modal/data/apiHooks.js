@@ -1,16 +1,21 @@
 // @ts-check
-
+import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 
-import { getContentSearchConfig } from './api';
+import {
+  TAG_SEP,
+  fetchAvailableTagOptions,
+  fetchSearchResults,
+  fetchTagsThatMatchKeyword,
+  getContentSearchConfig,
+} from './api';
 
 /**
-  * Load the Meilisearch connection details from the CMS: the URL to use, the index name, and an API key specific
-  * to the current user that allows it to search all content he have permission to view.
-  *
-  */
-/* eslint-disable import/prefer-default-export */
-export const useContentSearch = () => (
+ * Load the Meilisearch connection details from the CMS: the URL to use, the index name, and an API key specific
+ * to the current user that allows it to search all content he have permission to view.
+ *
+ */
+export const useContentSearchConnection = () => (
   useQuery({
     queryKey: ['content_search'],
     queryFn: getContentSearchConfig,
@@ -21,3 +26,137 @@ export const useContentSearch = () => (
     refetchOnMount: false,
   })
 );
+
+/**
+ * Get the results of a search
+ * @param {object} context
+ * @param {import('meilisearch').MeiliSearch} [context.client] The Meilisearch API client
+ * @param {string} [context.indexName] Which search index contains the content data
+ * @param {import('meilisearch').Filter} [context.extraFilter] Other filters to apply to the search, e.g. course ID
+ * @param {string} context.searchKeywords The keywords that the user is searching for, if any
+ * @param {string[]} context.blockTypesFilter Only search for these block types (e.g. ["html", "problem"])
+ * @param {string[]} context.tagsFilter Required tags (all must match), e.g. ["Difficulty > Hard", "Subject > Math"]
+ */
+export const useContentSearchResults = ({
+  client,
+  indexName,
+  extraFilter,
+  searchKeywords,
+  blockTypesFilter,
+  tagsFilter,
+}) => (
+  useQuery({
+    enabled: client !== undefined && indexName !== undefined,
+    queryKey: [
+      'content_search',
+      'results',
+      client?.config.apiKey,
+      client?.config.host,
+      indexName,
+      extraFilter,
+      searchKeywords,
+      blockTypesFilter,
+      tagsFilter,
+    ],
+    queryFn: () => {
+      if (client === undefined || indexName === undefined) {
+        throw new Error('Required data unexpectedly undefined. Check "enable" condition of useQuery.');
+      }
+      return fetchSearchResults({
+        client,
+        extraFilter,
+        indexName,
+        searchKeywords,
+        blockTypesFilter,
+        tagsFilter,
+      });
+    },
+    // Avoid flickering results when user is typing... keep old results until new is available.
+    keepPreviousData: true,
+  })
+);
+
+/**
+ * Get the available tags that can be used to refine a search, based on the search filters applied so far.
+ * Also the user can use a keyword search to find specific tags.
+ * @param {object} args
+ * @param {import('meilisearch').MeiliSearch} [args.client] The Meilisearch client instance
+ * @param {string} [args.indexName] Which index to search
+ * @param {string} args.searchKeywords Overall query string for the search; may be empty
+ * @param {string[]} [args.blockTypesFilter] Filter to only include these block types e.g. ["problem", "html"]
+ * @param {import('meilisearch').Filter} [args.extraFilter] Any other filters to apply to the overall search.
+ * @param {string} [args.tagSearchKeywords] Only show taxonomies/tags that match these keywords
+ * @param {string} [args.parentTagPath] Only fetch tags below this parent tag/taxonomy e.g. "Places > North America"
+ */
+export const useTagFilterOptions = (args) => {
+  const mainQuery = useQuery({
+    enabled: args.client !== undefined && args.indexName !== undefined,
+    queryKey: [
+      'content_search',
+      'tag_filter_options',
+      args.client?.config.apiKey,
+      args.client?.config.host,
+      args.indexName,
+      args.extraFilter,
+      args.searchKeywords,
+      args.blockTypesFilter,
+      args.parentTagPath,
+      args.tagSearchKeywords,
+    ],
+    queryFn: () => {
+      const { client, indexName } = args;
+      if (client === undefined || indexName === undefined) {
+        throw new Error('Required data unexpectedly undefined. Check "enable" condition of useQuery.');
+      }
+      return fetchAvailableTagOptions({ ...args, client, indexName });
+    },
+    // Avoid flickering results when user is typing... keep old results until new is available.
+    keepPreviousData: true,
+  });
+
+  const tagKeywordSearchData = useQuery({
+    enabled: args.client !== undefined && args.indexName !== undefined,
+    queryKey: [
+      'content_search',
+      'tags_keyword_search_dat',
+      args.client?.config.apiKey,
+      args.client?.config.host,
+      args.indexName,
+      args.extraFilter,
+      args.blockTypesFilter,
+      args.tagSearchKeywords,
+    ],
+    queryFn: () => {
+      const { client, indexName } = args;
+      if (client === undefined || indexName === undefined) {
+        throw new Error('Required data unexpectedly undefined. Check "enable" condition of useQuery.');
+      }
+      return fetchTagsThatMatchKeyword({ ...args, client, indexName });
+    },
+    // Avoid flickering results when user is typing... keep old results until new is available.
+    keepPreviousData: true,
+  });
+
+  const data = React.useMemo(() => {
+    if (!args.tagSearchKeywords || !tagKeywordSearchData.data) {
+      // If there's no keyword search being used to filter the list of available tags, just use the results of the
+      // main query.
+      return mainQuery.data;
+    }
+    if (mainQuery.data === undefined) {
+      return undefined;
+    }
+    // Combine these two queries to filter the list of tags based on the keyword search.
+    return mainQuery.data.filter(({ tagPath }) => {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const matchingTag of tagKeywordSearchData.data.matches) {
+        if (matchingTag.tagPath === tagPath || matchingTag.tagPath.startsWith(tagPath + TAG_SEP)) {
+          return true;
+        }
+      }
+      return false;
+    });
+  }, [mainQuery.data, tagKeywordSearchData.data]);
+
+  return { ...mainQuery, data };
+};

@@ -4,8 +4,8 @@ import React from 'react';
 import { ModalDialog } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-import SearchEndpointLoader from './SearchEndpointLoader';
 import messages from './messages';
+import SearchUI from './SearchUI';
 
 /** @type {React.FC<{courseId: string, isOpen: boolean, onClose: () => void}>} */
 const SearchModal = ({ courseId, ...props }) => {
@@ -24,7 +24,7 @@ const SearchModal = ({ courseId, ...props }) => {
       isFullscreenOnMobile
       className="courseware-search-modal"
     >
-      <SearchEndpointLoader courseId={courseId} />
+      <SearchUI courseId={courseId} />
     </ModalDialog>
   );
 };

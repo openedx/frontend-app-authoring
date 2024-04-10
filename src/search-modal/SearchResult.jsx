@@ -1,34 +1,27 @@
 /* eslint-disable react/prop-types */
 // @ts-check
 import React from 'react';
-import { Highlight } from 'react-instantsearch';
 import BlockTypeLabel from './BlockTypeLabel';
+import Highlight from './Highlight';
 
 /**
  * A single search result (row), usually represents an XBlock/Component
- * @type {React.FC<{hit: import('instantsearch.js').Hit<{
- *   id: string,
- *   display_name: string,
- *   block_type: string,
- *   'content.html_content'?: string,
- *   'content.capa_content'?: string,
- *   breadcrumbs: {display_name: string}[]}>,
- * }>}
+ * @type {React.FC<{hit: import('./data/api').ContentHit}>}
  */
 const SearchResult = ({ hit }) => (
   <div className="my-2 pb-2 border-bottom">
     <div className="hit-name small">
-      <strong><Highlight attribute="display_name" hit={hit} /></strong>{' '}
-      (<BlockTypeLabel type={hit.block_type} />)
+      <strong><Highlight text={hit.formatted.displayName} /></strong>{' '}
+      (<BlockTypeLabel type={hit.blockType} />)
     </div>
     <div className="hit-description x-small text-truncate">
-      <Highlight attribute="content.html_content" hit={hit} />
-      <Highlight attribute="content.capa_content" hit={hit} />
+      <Highlight text={hit.formatted.content?.htmlContent ?? ''} />
+      <Highlight text={hit.formatted.content?.capaContent ?? ''} />
     </div>
     <div className="text-muted x-small">
       {hit.breadcrumbs.map((bc, i) => (
         // eslint-disable-next-line react/no-array-index-key
-        <span key={i}>{bc.display_name} {i !== hit.breadcrumbs.length - 1 ? '/' : ''} </span>
+        <span key={i}>{bc.displayName} {i !== hit.breadcrumbs.length - 1 ? '/' : ''} </span>
       ))}
     </div>
   </div>
