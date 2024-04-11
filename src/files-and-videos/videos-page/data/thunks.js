@@ -28,9 +28,12 @@ import {
 } from './api';
 import {
   setVideoIds,
+  setUploadingIds,
   setPageSettings,
   updateLoadingStatus,
   deleteVideoSuccess,
+  addUploadingId,
+  deleteUploadingId,
   updateErrors,
   clearErrors,
   updateEditStatus,
@@ -141,9 +144,9 @@ export function deleteVideoFile(courseId, id) {
   };
 }
 
-export function markVideoUploadsInProgressAsFailed({ uploadsTracker, courseId }) {
+export function markVideoUploadsInProgressAsFailed({ uploadingIds, courseId }) {
   return (dispatch) => {
-    uploadsTracker.current.forEach((edxVideoId) => {
+    uploadingIds.forEach((edxVideoId) => {
       sendVideoUploadStatus(
         courseId,
         edxVideoId || '',
@@ -155,7 +158,7 @@ export function markVideoUploadsInProgressAsFailed({ uploadsTracker, courseId })
       );
     });
     // eslint-disable-next-line no-param-reassign
-    uploadsTracker.current = [];
+    dispatch(setUploadingIds({ uploadingIds: [] }));
   };
 }
 
@@ -163,17 +166,16 @@ export function addVideoFile(
   courseId,
   file,
   videoIds,
-  uploadsTracker,
 ) {
   return async (dispatch) => {
     dispatch(
       updateEditStatus({ editType: 'add', status: RequestStatus.IN_PROGRESS }),
     );
+    // sleep 10 seconds
 
     let edxVideoId;
     let uploadUrl;
     try {
-      console.log('FILE UPLOAD STARTED');
       const createUrlResponse = await addVideo(courseId, file);
       // eslint-disable-next-line
       console.log(`Post Response: ${createUrlResponse}`);
@@ -189,7 +191,9 @@ export function addVideoFile(
       return;
     }
     try {
-      uploadsTracker.current = [...uploadsTracker.current, edxVideoId];
+      dispatch(addUploadingId({ id: edxVideoId }));
+      await new Promise((resolve) => setTimeout(resolve, 10000));
+
       const putToServerResponse = await uploadVideo(uploadUrl, file);
       if (
         putToServerResponse.status < 200
@@ -229,10 +233,7 @@ export function addVideoFile(
         updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }),
       );
     } finally {
-      uploadsTracker.current = uploadsTracker.current.filter(
-        (id) => id !== edxVideoId,
-      );
-      console.log('FILE UPLOAD DONE');
+      dispatch(deleteUploadingId({ id: edxVideoId }));
     }
     try {
       const { videos } = await fetchVideoList(courseId);

@@ -69,15 +69,9 @@ const VideosPage = ({
     dispatch(fetchVideos(courseId));
   }, [courseId]);
 
-  useEffect(() => {
-    window.onbeforeunload = () => {
-      dispatch(markVideoUploadsInProgressAsFailed({ uploadsTracker, courseId }));
-      return undefined;
-    };
-  }, []);
-
   const {
     videoIds,
+    uploadingIds,
     loadingStatus,
     transcriptStatus,
     addingStatus: addVideoStatus,
@@ -87,6 +81,15 @@ const VideosPage = ({
     errors: errorMessages,
     pageSettings,
   } = useSelector((state) => state.videos);
+
+  useEffect(() => {
+    window.onbeforeunload = () => {
+      dispatch(markVideoUploadsInProgressAsFailed({ uploadingIds, courseId }));
+      return undefined;
+    };
+  }, []);
+
+  console.log('uploadingIds:', uploadingIds);
 
   const {
     isVideoTranscriptEnabled,
