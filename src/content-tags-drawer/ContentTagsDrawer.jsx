@@ -109,6 +109,40 @@ const ContentTagsDrawer = ({ id, onClose }) => {
   }, []);
 
   const taxonomies = useMemo(() => {
+    const sortTaxonomies = (taxonomiesList) => {
+      const taxonomiesWithData = taxonomiesList.filter(
+        (t) => t.contentTags.length !== 0,
+      );
+
+      // Count implicit tags per taxonomy
+      const tagsCountBytaxonomy = {};
+      taxonomiesWithData.forEach((tax) => {
+        const countedTags = [];
+        let tagsCounter = 0;
+        tax.contentTags.forEach((tag) => {
+          tag.lineage.forEach((value) => {
+            if (!countedTags.includes(value)) {
+              countedTags.push(value);
+              tagsCounter += 1;
+            }
+          });
+        });
+        tagsCountBytaxonomy[tax.id] = tagsCounter;
+      });
+
+      // Sort taxonomies with data by implicit count
+      const sortedTaxonomiesWithData = taxonomiesWithData.sort(
+        (a, b) => tagsCountBytaxonomy[b.id] - tagsCountBytaxonomy[a.id],
+      );
+
+      // Sort empty taxonomies by name
+      const emptyTaxonomies = taxonomiesList.filter(
+        (t) => t.contentTags.length === 0,
+      ).sort((a, b) => a.name.localeCompare(b.name));
+
+      return [...sortedTaxonomiesWithData, ...emptyTaxonomies];
+    };
+
     if (taxonomyListData && contentTaxonomyTagsData) {
       // Initialize list of content tags in taxonomies to populate
       const taxonomiesList = taxonomyListData.results.map((taxonomy) => ({
@@ -126,7 +160,7 @@ const ContentTagsDrawer = ({ id, onClose }) => {
         }
       });
 
-      return taxonomiesList;
+      return sortTaxonomies(taxonomiesList);
     }
     return [];
   }, [taxonomyListData, contentTaxonomyTagsData]);
