@@ -9,6 +9,7 @@ export const initialState = {
   },
   videos: {
     videoIds: ['mOckID0'],
+    uploadingIds: [],
     pageSettings: {
       transcriptAvailableLanguages: [
         { languageCode: 'ar', languageText: 'Arabic' },

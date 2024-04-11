@@ -93,6 +93,7 @@ describe('Videos page', () => {
         videos: {
           ...initialState.videos,
           videoIds: [],
+          uploadingIds: [],
         },
         models: {},
       });

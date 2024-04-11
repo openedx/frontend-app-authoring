@@ -89,8 +89,6 @@ const VideosPage = ({
     };
   }, []);
 
-  console.log('uploadingIds:', uploadingIds);
-
   const {
     isVideoTranscriptEnabled,
     encodingsDownloadUrl,

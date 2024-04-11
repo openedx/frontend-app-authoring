@@ -192,7 +192,6 @@ export function addVideoFile(
     }
     try {
       dispatch(addUploadingId({ id: edxVideoId }));
-      await new Promise((resolve) => setTimeout(resolve, 10000));
 
       const putToServerResponse = await uploadVideo(uploadUrl, file);
       if (
