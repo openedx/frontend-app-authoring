@@ -19,7 +19,6 @@ import { getTaxonomyListData } from '../taxonomy/data/api';
 import messages from './messages';
 
 const contentId = 'block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@7f47fe2dbcaf47c5a071671c741fe1ab';
-const mockOnClose = jest.fn();
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
