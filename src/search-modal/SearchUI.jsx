@@ -7,7 +7,7 @@ import {
   SelectMenu,
 } from '@openedx/paragon';
 import { Check } from '@openedx/paragon/icons';
-import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Configure, InfiniteHits, InstantSearch } from 'react-instantsearch';
 import { instantMeiliSearch } from '@meilisearch/instant-meilisearch';
 
@@ -26,6 +26,8 @@ const SearchUI = (props) => {
     () => instantMeiliSearch(props.url, props.apiKey, { primaryKey: 'id' }),
     [props.url, props.apiKey],
   );
+
+  const intl = useIntl();
 
   const hasCourseId = Boolean(props.courseId);
   const [_searchThisCourseEnabled, setSearchThisCourse] = React.useState(hasCourseId);
@@ -90,7 +92,13 @@ const SearchUI = (props) => {
             hitComponent={HitComponent}
             classNames={{
               list: 'list-unstyled',
+              loadMore: 'btn btn-primary',
+              disabledLoadMore: 'disabled',
             }}
+            translations={{
+              showMoreButtonText: intl.formatMessage(messages.showMoreResults),
+            }}
+            showPrevious={false}
             transformItems={(/** @type {import("./SearchResult").CustomHit[]} */ items) => items.map((item) => ({
               ...item,
               breadcrumbsNames: item.breadcrumbs.map((bc) => bc.display_name),

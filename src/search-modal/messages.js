@@ -135,6 +135,11 @@ const messages = defineMessages({
     defaultMessage: 'Please try a different search term or filter',
     description: 'Subtitle shown when the search returned no results',
   },
+  showMoreResults: {
+    id: 'course-authoring.course-search.showMoreResults',
+    defaultMessage: 'Show more results',
+    description: 'Show more results button label',
+  },
 });
 
 export default messages;

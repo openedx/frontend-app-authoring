@@ -3,6 +3,7 @@
 import React from 'react';
 import { getConfig, getPath } from '@edx/frontend-platform';
 import {
+  Button,
   Icon,
   IconButton,
   Stack,
@@ -117,30 +118,33 @@ const SearchResult = ({ hit, closeSearch }) => {
   };
 
   return (
-    <Stack
-      className="border-bottom search-result p-2"
-      role="button"
-      direction="horizontal"
-      gap={2}
+    <Button
+      variant="tertiary w-100 text-left"
       onClick={navigateToContext}
     >
-      <div className="align-top">
-        <Icon className="align-top" src={ItemIcon[hit.block_type] || Article} />
-      </div>
-      <Stack>
-        <div className="hit-name small">
-          <CustomHighlight attribute="display_name" hit={hit} />
+      <Stack
+        className="border-bottom search-result p-2 w-100"
+        direction="horizontal"
+        gap={2}
+      >
+        <div className="align-top">
+          <Icon className="align-top" src={ItemIcon[hit.block_type] || Article} />
         </div>
-        <div className="hit-description x-small text-truncate">
-          <Snippet attribute="content.html_content" hit={hit} highlightedTagName="b" />
-          <Snippet attribute="content.capa_content" hit={hit} highlightedTagName="b" />
-        </div>
-        <div className="text-muted x-small">
-          <CustomHighlight attribute="breadcrumbsNames" separator=" / " hit={hit} />
-        </div>
+        <Stack>
+          <div className="hit-name small">
+            <CustomHighlight attribute="display_name" hit={hit} />
+          </div>
+          <div className="hit-description x-small text-truncate">
+            <Snippet attribute="content.html_content" hit={hit} highlightedTagName="b" />
+            <Snippet attribute="content.capa_content" hit={hit} highlightedTagName="b" />
+          </div>
+          <div className="text-muted x-small">
+            <CustomHighlight attribute="breadcrumbsNames" separator=" / " hit={hit} />
+          </div>
+        </Stack>
+        <IconButton src={OpenInNew} iconAs={Icon} onClick={(e) => navigateToContext(e, true)} />
       </Stack>
-      <IconButton src={OpenInNew} iconAs={Icon} onClick={(e) => navigateToContext(e, true)} />
-    </Stack>
+    </Button>
   );
 };
 

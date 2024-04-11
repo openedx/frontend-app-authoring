@@ -64,17 +64,6 @@
     }
   }
 
-  .ais-InfiniteHits-loadPrevious,
-  .ais-InfiniteHits-loadMore--disabled {
-    display: none; // temporary; remove this once we implement our own <Hits>/<InfiniteHits> component.
-  }
-
-  .search-result {
-    &:hover {
-      background-color: $gray-100 !important;
-    }
-  }
-
   .fs-large {
     font-size: $font-size-base * 1.25;
   }
