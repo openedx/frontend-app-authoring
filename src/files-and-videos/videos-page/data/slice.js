@@ -7,7 +7,6 @@ const slice = createSlice({
   name: 'videos',
   initialState: {
     videoIds: [],
-    uploadingIds: [],
     pageSettings: {},
     loadingStatus: RequestStatus.IN_PROGRESS,
     updatingStatus: '',
@@ -28,9 +27,6 @@ const slice = createSlice({
   reducers: {
     setVideoIds: (state, { payload }) => {
       state.videoIds = payload.videoIds;
-    },
-    setUploadingIds: (state, { payload }) => {
-      state.uploadingIds = payload.uploadingIds;
     },
     setPageSettings: (state, { payload }) => {
       state.pageSettings = payload;
@@ -62,12 +58,6 @@ const slice = createSlice({
       default:
         break;
       }
-    },
-    addUploadingId: (state, { payload }) => {
-      state.uploadingIds = [payload.id, ...state.uploadingIds];
-    },
-    deleteUploadingId: (state, { payload }) => {
-      state.uploadingIds = state.uploadingIds.filter(id => id !== payload.id);
     },
     deleteVideoSuccess: (state, { payload }) => {
       state.videoIds = state.videoIds.filter(id => id !== payload.videoId);
@@ -109,12 +99,9 @@ const slice = createSlice({
 
 export const {
   setVideoIds,
-  setUploadingIds,
   setPageSettings,
   updateLoadingStatus,
   deleteVideoSuccess,
-  addUploadingId,
-  deleteUploadingId,
   addVideoSuccess,
   updateErrors,
   clearErrors,

@@ -28,12 +28,9 @@ import {
 } from './api';
 import {
   setVideoIds,
-  setUploadingIds,
   setPageSettings,
   updateLoadingStatus,
   deleteVideoSuccess,
-  addUploadingId,
-  deleteUploadingId,
   updateErrors,
   clearErrors,
   updateEditStatus,
@@ -144,9 +141,9 @@ export function deleteVideoFile(courseId, id) {
   };
 }
 
-export function markVideoUploadsInProgressAsFailed({ uploadingIds, courseId }) {
+export function markVideoUploadsInProgressAsFailed({ uploadingIdsRef, courseId }) {
   return (dispatch) => {
-    uploadingIds.forEach((edxVideoId) => {
+    uploadingIdsRef.current.forEach((edxVideoId) => {
       sendVideoUploadStatus(
         courseId,
         edxVideoId || '',
@@ -158,7 +155,7 @@ export function markVideoUploadsInProgressAsFailed({ uploadingIds, courseId }) {
       );
     });
     // eslint-disable-next-line no-param-reassign
-    dispatch(setUploadingIds({ uploadingIds: [] }));
+    uploadingIdsRef.current = [];
   };
 }
 
@@ -166,19 +163,20 @@ export function addVideoFile(
   courseId,
   file,
   videoIds,
+  uploadingIdsRef,
 ) {
   return async (dispatch) => {
+    console.log('addVideoFile');
     dispatch(
       updateEditStatus({ editType: 'add', status: RequestStatus.IN_PROGRESS }),
     );
-    // sleep 10 seconds
 
     let edxVideoId;
     let uploadUrl;
     try {
       const createUrlResponse = await addVideo(courseId, file);
       // eslint-disable-next-line
-      console.log(`Post Response: ${createUrlResponse}`);
+      console.log(`Post Response: ${JSON.stringify(createUrlResponse)}`);
       if (createUrlResponse.status < 200 || createUrlResponse.status >= 300) {
         dispatch(failAddVideo({ fileName: file.name }));
       }
@@ -188,10 +186,13 @@ export function addVideoFile(
       ).files;
     } catch (error) {
       dispatch(failAddVideo({ fileName: file.name }));
+      updateEditStatus({ editType: 'add', status: RequestStatus.FAILED });
       return;
     }
     try {
-      dispatch(addUploadingId({ id: edxVideoId }));
+      uploadingIdsRef.current = [...uploadingIdsRef.current, edxVideoId];
+      // sleep 10 seconds
+      // await new Promise((resolve) => setTimeout(resolve, 10000));
 
       const putToServerResponse = await uploadVideo(uploadUrl, file);
       if (
@@ -210,6 +211,9 @@ export function addVideoFile(
           'upload_completed',
         );
       }
+      uploadingIdsRef.current = uploadingIdsRef.current.filter(
+        (id) => id !== edxVideoId,
+      );
     } catch (error) {
       if (error.response && error.response.status === 413) {
         const message = error.response.data.error;
@@ -231,8 +235,10 @@ export function addVideoFile(
       dispatch(
         updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }),
       );
-    } finally {
-      dispatch(deleteUploadingId({ id: edxVideoId }));
+      uploadingIdsRef.current = uploadingIdsRef.current.filter(
+        (id) => id !== edxVideoId,
+      );
+      return;
     }
     try {
       const { videos } = await fetchVideoList(courseId);

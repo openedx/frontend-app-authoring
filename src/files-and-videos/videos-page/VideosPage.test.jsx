@@ -28,17 +28,20 @@ import {
   initialState,
 } from './factories/mockApiResponses';
 
-import {
+import * as thunks from './data/thunks';
+import * as api from './data/api';
+import videoMessages from './messages';
+import messages from '../generic/messages';
+
+const { getVideosUrl, getCourseVideosApiUrl, getApiBaseUrl } = api;
+const {
   fetchVideos,
   addVideoFile,
   deleteVideoFile,
   getUsagePaths,
   addVideoThumbnail,
   fetchVideoDownload,
-} from './data/thunks';
-import { getVideosUrl, getCourseVideosApiUrl, getApiBaseUrl } from './data/api';
-import videoMessages from './messages';
-import messages from '../generic/messages';
+} = thunks;
 
 let axiosMock;
 let store;
@@ -93,12 +96,15 @@ describe('Videos page', () => {
         videos: {
           ...initialState.videos,
           videoIds: [],
-          uploadingIds: [],
         },
         models: {},
       });
       axiosMock = new MockAdapter(getAuthenticatedHttpClient());
       file = new File(['(⌐□_□)'], 'download.mp4', { type: 'video/mp4' });
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
     });
 
     it('should return placeholder component', async () => {
@@ -137,7 +143,7 @@ describe('Videos page', () => {
           value: [file],
         });
         fireEvent.drop(dropzone);
-        await executeThunk(addVideoFile(courseId, file, []), store.dispatch);
+        await executeThunk(addVideoFile(courseId, file, [], { current: [] }), store.dispatch);
       });
       const addStatus = store.getState().videos.addingStatus;
       expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
@@ -229,7 +235,7 @@ describe('Videos page', () => {
         it('should render video with in progress status', async () => {
           await mockStore(RequestStatus.IN_PROGRESS);
           expect(screen.getByText('Failed')).toBeVisible();
-          expect(screen.queryByText('In Progress')).toBeNull();
+          expect(screen.queryByText('In Progress')).not.toBeInTheDocument();
         });
       });
     });
@@ -248,10 +254,42 @@ describe('Videos page', () => {
         const { videoIds } = store.getState().videos;
         await act(async () => {
           userEvent.upload(addFilesButton, file);
-          await executeThunk(addVideoFile(courseId, file, videoIds), store.dispatch);
+          await executeThunk(addVideoFile(courseId, file, videoIds, { current: [] }), store.dispatch);
         });
         const addStatus = store.getState().videos.addingStatus;
         expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
+      });
+
+      it('when uploads are in progress, should show alert and set them to failed on page leave', async () => {
+        await mockStore(RequestStatus.SUCCESSFUL);
+
+        const mockResponseData = { status: '200', ok: true, blob: () => 'Data' };
+        const mockFetchResponse = Promise.resolve(mockResponseData);
+        global.fetch = jest.fn().mockImplementation(() => mockFetchResponse);
+
+        axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
+        axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
+
+        const uploadSpy = jest.spyOn(api, 'uploadVideo');
+        const setFailedSpy = jest.spyOn(api, 'sendVideoUploadStatus').mockImplementation(() => {});
+        uploadSpy.mockResolvedValue(new Promise(() => {}));
+
+        const addFilesButton = screen.getAllByLabelText('file-input')[3];
+        act(async () => {
+          userEvent.upload(addFilesButton, file);
+        });
+        await waitFor(() => {
+          const addStatus = store.getState().videos.addingStatus;
+          expect(addStatus).toEqual(RequestStatus.IN_PROGRESS);
+          expect(uploadSpy).toHaveBeenCalled();
+          expect(screen.getByText(videoMessages.videoUploadAlertLabel.defaultMessage)).toBeVisible();
+        });
+        act(() => {
+          window.dispatchEvent(new Event('beforeunload'));
+        });
+        await waitFor(() => {
+          expect(setFailedSpy).toHaveBeenCalledWith(courseId, expect.any(String), expect.any(String), 'upload_failed');
+        });
       });
 
       it('should have disabled action buttons', async () => {
@@ -541,6 +579,7 @@ describe('Videos page', () => {
       });
 
       it('delete button should delete file', async () => {
+        axiosMock.onPut().reply(200);
         await mockStore(RequestStatus.SUCCESSFUL);
 
         const fileMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
@@ -622,19 +661,19 @@ describe('Videos page', () => {
 
       it('404 upload file to server should show error', async () => {
         await mockStore(RequestStatus.SUCCESSFUL);
-        const mockResponseData = { status: '404', ok: false, blob: () => 'Data' };
-        const mockFetchResponse = Promise.reject(mockResponseData);
-        global.fetch = jest.fn().mockImplementation(() => mockFetchResponse);
 
         axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
         axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
+        axiosMock.onPut().reply(404);
         const addFilesButton = screen.getAllByLabelText('file-input')[3];
         await act(async () => {
           userEvent.upload(addFilesButton, file);
-          await executeThunk(addVideoFile(courseId, file), store.dispatch);
+          await executeThunk(addVideoFile(courseId, file, [], { current: [] }), store.dispatch);
         });
-        const addStatus = store.getState().videos.addingStatus;
-        expect(addStatus).toEqual(RequestStatus.FAILED);
+        await waitFor(() => {
+          const addStatus = store.getState().videos.addingStatus;
+          expect(addStatus).toEqual(RequestStatus.FAILED);
+        });
 
         expect(screen.getByText('Error')).toBeVisible();
       });
@@ -642,25 +681,37 @@ describe('Videos page', () => {
       it('404 delete should show error', async () => {
         await mockStore(RequestStatus.SUCCESSFUL);
 
+        axiosMock.onDelete(`${getCourseVideosApiUrl(courseId)}/mOckID1`).reply(404);
+        expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
         const videoMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
+        console.log('videoMenuButton present: ', !!videoMenuButton);
+        act(() => {
+          fireEvent.click(videoMenuButton);
+        });
+        await waitFor(() => {
+          expect(screen.getByTestId('open-delete-confirmation-button')).toBeVisible();
+        });
+
+        fireEvent.click(screen.getByTestId('open-delete-confirmation-button'));
+        await waitFor(() => {
+          expect(screen.getByText('Delete video(s) confirmation')).toBeVisible();
+        });
+        fireEvent.click(screen.getByText(messages.deleteFileButtonLabel.defaultMessage));
 
         await waitFor(() => {
-          axiosMock.onDelete(`${getCourseVideosApiUrl(courseId)}/mOckID1`).reply(404);
-          fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
-          fireEvent.click(screen.getByTestId('open-delete-confirmation-button'));
-          expect(screen.getByText('Delete video(s) confirmation')).toBeVisible();
-
-          fireEvent.click(screen.getByText(messages.deleteFileButtonLabel.defaultMessage));
           expect(screen.queryByText('Delete video(s) confirmation')).toBeNull();
-
-          executeThunk(deleteVideoFile(courseId, 'mOckID1', 5), store.dispatch);
         });
-        const deleteStatus = store.getState().videos.deletingStatus;
-        expect(deleteStatus).toEqual(RequestStatus.FAILED);
 
-        expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
+        await executeThunk(deleteVideoFile(courseId, 'mOckID1', 5), store.dispatch);
 
-        expect(screen.getByText('Error')).toBeVisible();
+        await waitFor(() => {
+          const deleteStatus = store.getState().videos.deletingStatus;
+          expect(deleteStatus).toEqual(RequestStatus.FAILED);
+
+          expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
+
+          expect(screen.getByText('Error')).toBeVisible();
+        });
       });
 
       it('404 usage path fetch should show error', async () => {

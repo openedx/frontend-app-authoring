@@ -59,7 +59,6 @@ const VideosPage = ({
     closeTranscriptSettings,
   ] = useToggle(false);
   const courseDetails = useModel('courseDetails', courseId);
-  const uploadsTracker = useRef([]);
   document.title = getPageHeadTitle(
     courseDetails?.name,
     intl.formatMessage(messages.heading),
@@ -71,7 +70,6 @@ const VideosPage = ({
 
   const {
     videoIds,
-    uploadingIds,
     loadingStatus,
     transcriptStatus,
     addingStatus: addVideoStatus,
@@ -82,9 +80,11 @@ const VideosPage = ({
     pageSettings,
   } = useSelector((state) => state.videos);
 
+  const uploadingIdsRef = useRef([]);
+
   useEffect(() => {
     window.onbeforeunload = () => {
-      dispatch(markVideoUploadsInProgressAsFailed({ uploadingIds, courseId }));
+      dispatch(markVideoUploadsInProgressAsFailed({ uploadingIdsRef, courseId }));
       return undefined;
     };
   }, []);
@@ -104,7 +104,7 @@ const VideosPage = ({
   const handleErrorReset = (error) => dispatch(resetErrors(error));
   const handleAddFile = (files) => {
     handleErrorReset({ errorType: 'add' });
-    files.forEach((file) => dispatch(addVideoFile(courseId, file, videoIds, uploadsTracker)));
+    files.forEach((file) => dispatch(addVideoFile(courseId, file, videoIds, uploadingIdsRef)));
   };
   const handleDeleteFile = (id) => dispatch(deleteVideoFile(courseId, id));
   const handleDownloadFile = (selectedRows) => dispatch(fetchVideoDownload({ selectedRows, courseId }));
