@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -64,7 +64,6 @@ const VideosPage = ({
     courseDetails?.name,
     intl.formatMessage(messages.heading),
   );
-  const [showUploadAlert, setShowUploadAlert] = useState(false);
 
   useEffect(() => {
     dispatch(fetchVideos(courseId));
@@ -137,7 +136,9 @@ const VideosPage = ({
     handleAddThumbnail,
     videoImageSettings,
   });
-  const infoModalSidebar = (video, activeTab, setActiveTab) => VideoInfoModalSidebar({ video, activeTab, setActiveTab });
+  const infoModalSidebar = (video, activeTab, setActiveTab) => (
+    VideoInfoModalSidebar({ video, activeTab, setActiveTab })
+  );
   const maxFileSize = videoUploadMaxFileSize * 1073741824;
   const transcriptColumn = {
     id: 'transcriptStatus',
@@ -226,9 +227,9 @@ const VideosPage = ({
           updateFileStatus={updateVideoStatus}
           loadingStatus={loadingStatus}
         />
-        <Alert variant="warning" show={showUploadAlert}>
+        <Alert variant="warning" show={addVideoStatus === RequestStatus.IN_PROGRESS}>
           <div className="video-upload-warning-text"><Spinner animation="border" variant="warning" className="video-upload-spinner mr-3" screenReaderText="loading" />
-            <p className="d-inline">Upload in progress. Please wait for the upload to complete before navigating away from this page.</p>
+            <p className="d-inline"><FormattedMessage {...messages.videoUploadAlertLabel} /></p>
           </div>
         </Alert>
         <ActionRow>
