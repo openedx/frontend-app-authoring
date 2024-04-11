@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 // @ts-check
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   MenuItem,
   ModalDialog,
@@ -20,7 +20,7 @@ import FilterByTags from './FilterByTags';
 import Stats from './Stats';
 import messages from './messages';
 
-/** @type {React.FC<{courseId: string, url: string, apiKey: string, indexName: string}>} */
+/** @type {React.FC<{courseId: string, url: string, apiKey: string, indexName: string, closeSearch?: () => void}>} */
 const SearchUI = (props) => {
   const { searchClient } = React.useMemo(
     () => instantMeiliSearch(props.url, props.apiKey, { primaryKey: 'id' }),
@@ -33,6 +33,11 @@ const SearchUI = (props) => {
   const switchToAllCourses = React.useCallback(() => setSearchThisCourse(false), []);
   const searchThisCourse = hasCourseId && _searchThisCourseEnabled;
 
+  const HitComponent = useCallback(
+    ({ hit }) => <SearchResult hit={hit} closeSearch={props.closeSearch} />,
+    [],
+  );
+
   return (
     <InstantSearch
       indexName={props.indexName}
@@ -41,7 +46,11 @@ const SearchUI = (props) => {
       future={{ preserveSharedStateOnUnmount: true }}
     >
       {/* Add in a filter for the current course, if relevant */}
-      <Configure filters={searchThisCourse ? `context_key = "${props.courseId}"` : undefined} />
+      <Configure
+        filters={searchThisCourse ? `context_key = "${props.courseId}"` : undefined}
+        attributesToSnippet={['content.html_content:20', 'content.capa_content:20']}
+      />
+
       {/* We need to override z-index here or the <Dropdown.Menu> appears behind the <ModalDialog.Body>
         * But it can't be more then 9 because the close button has z-index 10. */}
       <ModalDialog.Header style={{ zIndex: 9 }} className="border-bottom">
@@ -77,7 +86,23 @@ const SearchUI = (props) => {
       <ModalDialog.Body className="h-[calc(100vh-200px)]">
         {/* If there are no results (yet), EmptyStates displays a friendly messages. Otherwise we see the results. */}
         <EmptyStates>
-          <InfiniteHits hitComponent={SearchResult} />
+          <InfiniteHits
+            hitComponent={HitComponent}
+            classNames={{
+              list: 'list-unstyled',
+            }}
+            transformItems={(/** @type {import("./SearchResult").CustomHit[]} */ items) => items.map((item) => ({
+              ...item,
+              breadcrumbsNames: item.breadcrumbs.map((bc) => bc.display_name),
+              _highlightResult: {
+                // eslint-disable-next-line no-underscore-dangle
+                ...item._highlightResult,
+                // @ts-ignore
+                // eslint-disable-next-line no-underscore-dangle
+                breadcrumbsNames: item._highlightResult?.breadcrumbs.map((bc) => bc.display_name),
+              },
+            }))}
+          />
         </EmptyStates>
       </ModalDialog.Body>
     </InstantSearch>

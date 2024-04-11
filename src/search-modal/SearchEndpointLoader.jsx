@@ -10,8 +10,8 @@ import { useContentSearch } from './data/apiHooks';
 import SearchUI from './SearchUI';
 import messages from './messages';
 
-/** @type {React.FC<{courseId: string}>} */
-const SearchEndpointLoader = ({ courseId }) => {
+/** @type {React.FC<{courseId: string, closeSearch?: () => void}>} */
+const SearchEndpointLoader = ({ courseId, closeSearch }) => {
   const intl = useIntl();
 
   // Load the Meilisearch connection details from the LMS: the URL to use, the index name, and an API key specific
@@ -25,7 +25,7 @@ const SearchEndpointLoader = ({ courseId }) => {
   const title = intl.formatMessage(messages.title);
 
   if (searchEndpointData) {
-    return <SearchUI {...searchEndpointData} courseId={courseId} />;
+    return <SearchUI {...searchEndpointData} courseId={courseId} closeSearch={closeSearch} />;
   }
   return (
     <>

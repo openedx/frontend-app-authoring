@@ -13,12 +13,14 @@ import {
 } from '@testing-library/react';
 import fetchMock from 'fetch-mock-jest';
 
+import initializeStore from '../store';
 // @ts-ignore
 import mockResult from './__mocks__/search-result.json';
 import SearchUI from './SearchUI';
 
 // mockResult contains only a single result - this one:
 const mockResultDisplayName = 'Test HTML Block';
+let store;
 
 const queryClient = new QueryClient();
 
@@ -33,7 +35,7 @@ const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
 
 /** @type {React.FC<{children:React.ReactNode}>} */
 const Wrap = ({ children }) => (
-  <AppProvider>
+  <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
         {children}
@@ -52,6 +54,7 @@ describe('<SearchUI />', () => {
         roles: [],
       },
     });
+    store = initializeStore();
     fetchMock.post(searchEndpoint, (_url, req) => {
       const requestData = JSON.parse(req.body?.toString() ?? '');
       const query = requestData?.queries[0]?.q ?? '';
@@ -73,11 +76,11 @@ describe('<SearchUI />', () => {
   it('should render an empty state', async () => {
     const { getByText } = render(<Wrap><SearchUI {...defaults} /></Wrap>);
     // Before the results have even loaded, we see this message:
-    expect(getByText('Enter a keyword or select a filter to begin searching.')).toBeInTheDocument();
+    expect(getByText('Start searching to find content')).toBeInTheDocument();
     // When this UI loads, Instantsearch makes two queries. I think one to load the facets and one "blank" search.
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
     // And that message is still displayed even after the initial results/filters have loaded:
-    expect(getByText('Enter a keyword or select a filter to begin searching.')).toBeInTheDocument();
+    expect(getByText('Start searching to find content')).toBeInTheDocument();
   });
 
   it('defaults to searching "All Courses" if used outside of any particular course', async () => {

@@ -115,6 +115,26 @@ const messages = defineMessages({
     defaultMessage: 'Show more',
     description: 'Show more tags / filter options',
   },
+  emptySearchTitle: {
+    id: 'course-authoring.course-search.emptySearchTitle',
+    defaultMessage: 'Start searching to find content',
+    description: 'Title shown when the user has not yet entered a keyword',
+  },
+  emptySearchSubtitle: {
+    id: 'course-authoring.course-search.emptySearchSubtitle',
+    defaultMessage: 'Find sections, subsections, units and components',
+    description: 'Subtitle shown when the user has not yet entered a keyword',
+  },
+  noResultsTitle: {
+    id: 'course-authoring.course-search.noResultsTitle',
+    defaultMessage: 'We didn\'t find anything matching your search',
+    description: 'Title shown when the search returned no results',
+  },
+  noResultsSubtitle: {
+    id: 'course-authoring.course-search.noResultsSubtitle',
+    defaultMessage: 'Please try a different search term or filter',
+    description: 'Subtitle shown when the search returned no results',
+  },
 });
 
 export default messages;
