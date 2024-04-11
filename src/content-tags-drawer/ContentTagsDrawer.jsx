@@ -134,7 +134,6 @@ const ContentTagsDrawer = ({ id, onClose }) => {
 
     <div id="content-tags-drawer" className="mt-1">
       <Container size="xl">
-        <span>{intl.formatMessage(messages.headerSubtitle)}</span>
         { isContentDataLoaded
           ? <h2>{ contentName }</h2>
           : (

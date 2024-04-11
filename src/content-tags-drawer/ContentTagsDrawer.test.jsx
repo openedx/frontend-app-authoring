@@ -249,7 +249,7 @@ describe('<ContentTagsDrawer />', () => {
       await waitFor(() => { expect(getByText('Taxonomy 1')).toBeInTheDocument(); });
       expect(getByText('Taxonomy 1')).toBeInTheDocument();
       expect(getByText('Taxonomy 2')).toBeInTheDocument();
-      const tagCountBadges = container.getElementsByClassName('badge');
+      const tagCountBadges = container.getElementsByClassName('taxonomy-tags-count-chip');
       expect(tagCountBadges[0].textContent).toBe('2');
       expect(tagCountBadges[1].textContent).toBe('1');
     });
