@@ -38,6 +38,7 @@ const StudioHome = ({ intl }) => {
     showNewCourseContainer,
     isShowOrganizationDropdown,
     hasAbilityToCreateNewCourse,
+    isFiltered,
     setShowNewCourseContainer,
     dispatch,
   } = useStudioHome(isPaginationCoursesEnabled);
@@ -99,7 +100,7 @@ const StudioHome = ({ intl }) => {
   }
 
   const headerButtons = userIsActive ? getHeaderButtons() : [];
-  if (isLoadingPage) {
+  if (isLoadingPage && !isFiltered) {
     return (<Loading />);
   }
 
@@ -138,7 +139,7 @@ const StudioHome = ({ intl }) => {
               tabsData={studioHomeData}
               showNewCourseContainer={showNewCourseContainer}
               onClickNewCourse={() => setShowNewCourseContainer(true)}
-              isShowProcessing={isShowProcessing}
+              isShowProcessing={isShowProcessing && !isFiltered}
               dispatch={dispatch}
               isPaginationCoursesEnabled={isPaginationCoursesEnabled}
             />

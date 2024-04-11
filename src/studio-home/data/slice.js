@@ -19,6 +19,12 @@ const slice = createSlice({
     studioHomeData: {},
     studioHomeCoursesRequestParams: {
       currentPage: 1,
+      search: undefined,
+      order: 'display_name',
+      archivedOnly: undefined,
+      activeOnly: undefined,
+      isFiltered: false,
+      cleanFilters: false,
     },
   },
   reducers: {
@@ -51,8 +57,7 @@ const slice = createSlice({
       state.studioHomeData.libraries = libraries;
     },
     updateStudioHomeCoursesCustomParams: (state, { payload }) => {
-      const { currentPage } = payload;
-      state.studioHomeCoursesRequestParams.currentPage = currentPage;
+      Object.assign(state.studioHomeCoursesRequestParams, payload);
     },
   },
 });
