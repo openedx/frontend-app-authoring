@@ -8,6 +8,7 @@ const messages = defineMessages({
   componentTitle: {
     id: 'course-authoring.course-outline.configure-modal.component.title',
     defaultMessage: 'Editing access for: {title}',
+    description: 'The visibility modal title for unit',
   },
   basicTabTitle: {
     id: 'course-authoring.course-outline.configure-modal.basic-tab.title',
@@ -72,6 +73,7 @@ const messages = defineMessages({
   unitSelectDeletedGroupErrorMessage: {
     id: 'course-authoring.course-outline.configure-modal.unit-tab.unit-select-group-deleted-error-message',
     defaultMessage: 'This group no longer exists. Choose another group or remove the access restriction.',
+    description: 'The alert text of no longer available group',
   },
   unitAllLearnersAndStaff: {
     id: 'course-authoring.course-outline.configure-modal.unit-tab.unit-all-learners-staff',
