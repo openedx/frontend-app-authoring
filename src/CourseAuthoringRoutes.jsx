@@ -82,11 +82,11 @@ const CourseAuthoringRoutes = () => {
         ))}
         <Route
           path="editor/course-videos/:blockId"
-          element={getConfig().ENABLE_NEW_EDITOR_PAGES === 'true' ? <PageWrap><VideoSelectorContainer courseId={courseId} /></PageWrap> : null}
+          element={getConfig().ENABLE_NEW_EDITOR_PAGES === true ? <PageWrap><VideoSelectorContainer courseId={courseId} /></PageWrap> : null}
         />
         <Route
           path="editor/:blockType/:blockId?"
-          element={getConfig().ENABLE_NEW_EDITOR_PAGES === 'true' ? <PageWrap><EditorContainer courseId={courseId} /></PageWrap> : null}
+          element={getConfig().ENABLE_NEW_EDITOR_PAGES === true ? <PageWrap><EditorContainer courseId={courseId} /></PageWrap> : null}
         />
         <Route
           path="settings/details"
