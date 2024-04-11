@@ -1,0 +1,71 @@
+// Simulate Tailwind-style arbitrary value classNames. We have to hard code this one though.
+.h-\[calc\(100vh-200px\)\] {
+  height: calc(100vh - 200px);
+}
+
+// Helper to set a minimum width for the This Course / All Courses toggle
+.pgn__menu-select.with-min-toggle-width {
+  & > button {
+    min-width: 155px;
+  }
+}
+
+.courseware-search-modal {
+  // Fix so the 'This course' / 'All courses' dropdown is not cut off on the right hand side,
+  // But still preserve correct scrolling behavior for the results list (vertical)
+  // (If we set 'isOverflowVisible: true', the scrolling of the results list is messed up)
+  overflow: visible;
+
+  .pgn__modal-header .pgn__menu-select {
+    // The "All courses" / "This course" toggle button
+    & > button {
+      min-width: 155px;  // Set a minumum width so it doesn't change size when you change the selection
+      // The current Open edX theme makes the search field square but the button round and it looks bad. We need this
+      // hacky override until the theme is fixed to be more consistent.
+      border-radius: 0;
+    }
+  }
+
+  // Options for the "filter by tag" menu
+  .pgn__menu {
+    $indent-initial: 1.3rem;
+    $indent-each: 1.6rem;
+
+    .tag-option-1 {
+      padding-left: $indent-initial + (1 * $indent-each);
+    }
+
+    .tag-option-2 {
+      padding-left: $indent-initial + (2 * $indent-each);
+    }
+
+    .tag-option-3 {
+      padding-left: $indent-initial + (3 * $indent-each);
+    }
+
+    .tag-option-4 {
+      padding-left: $indent-initial + (4 * $indent-each);
+    }
+  }
+
+  .pgn__menu-item {
+    // Fix a bug in Paragon menu dropdowns: the checkbox currently shrinks if the text is too long.
+    // https://github.com/openedx/paragon/pull/3019
+    // This can be removed once we upgrade Paragon - https://github.com/openedx/frontend-app-course-authoring/pull/933
+    input[type="checkbox"] {
+      flex-grow: 0;
+      flex-shrink: 0;
+    }
+    // Fix a bug in Paragon menu dropdowns: very long text is not truncated with an ellipsis
+    // https://github.com/openedx/paragon/pull/3019
+    // This can be removed once we upgrade Paragon - https://github.com/openedx/frontend-app-course-authoring/pull/933
+    > div {
+      overflow: hidden;
+    }
+  }
+
+  .ais-InfiniteHits-loadPrevious,
+  .ais-InfiniteHits-loadMore--disabled {
+    display: none; // temporary; remove this once we implement our own <Hits>/<InfiniteHits> component.
+  }
+}
