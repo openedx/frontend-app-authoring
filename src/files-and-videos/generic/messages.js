@@ -145,6 +145,10 @@ const messages = defineMessages({
     id: 'course-authoring.files-and-uploads.applyySortButton.label',
     defaultMessage: 'Apply',
   },
+  failedLabel: {
+    id: 'course-authoring.files-and-uploads.filter.failed.label',
+    defaultMessage: 'Failed',
+  },
 });
 
 export default messages;

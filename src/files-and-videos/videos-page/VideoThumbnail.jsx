@@ -46,6 +46,7 @@ const VideoThumbnail = ({
     ? Object.values(videoImageSettings.supportedFileFormats) : null;
   const isUploaded = VIDEO_SUCCESS_STATUSES.includes(status);
   const isFailed = VIDEO_FAILURE_STATUSES.includes(status);
+  const failedMessage = intl.formatMessage(messages.failedCheckboxLabel);
 
   const showThumbnail = allowThumbnailUpload && thumbnail && isUploaded;
 
@@ -85,7 +86,7 @@ const VideoThumbnail = ({
           <div className="status-badge">
             {!isUploaded && (
               <Badge variant="light">
-                {!isFailed ? status : 'Failed'}
+                {!isFailed ? status : failedMessage}
               </Badge>
             )}
           </div>
