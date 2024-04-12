@@ -421,7 +421,7 @@ describe('Videos page', () => {
               fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
             });
 
-            const imageFilterChip = screen.getByTestId('icon-after');
+            const imageFilterChip = screen.getByRole('button', { name: 'Remove this filter' });
             fireEvent.click(imageFilterChip);
 
             expect(screen.queryByText(videoMessages.transcribedCheckboxLabel.defaultMessage)).toBeNull();
