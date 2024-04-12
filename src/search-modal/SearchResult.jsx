@@ -76,7 +76,7 @@ const getContextUrl = (hit, newWindow, libraryAuthoringMfeUrl) => {
   const { context_key: contextKey, usage_key: usageKey } = hit;
   if (contextKey.startsWith('course-v1:')) {
     if (newWindow) {
-      return `${getPath(getConfig().PUBLIC_PATH)}/course/${contextKey}?show=${encodeURIComponent(usageKey)}`;
+      return `${getPath(getConfig().PUBLIC_PATH)}course/${contextKey}?show=${encodeURIComponent(usageKey)}`;
     }
     return `/course/${contextKey}?show=${encodeURIComponent(usageKey)}`;
   }
