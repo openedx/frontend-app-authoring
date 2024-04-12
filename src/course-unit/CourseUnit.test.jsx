@@ -149,9 +149,9 @@ describe('<CourseUnit />', () => {
     store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock
-      .onGet(getCourseUnitApiUrl(courseId))
+      .onGet(getCourseUnitApiUrl(blockId))
       .reply(200, courseUnitIndexMock);
-    await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
+    await executeThunk(fetchCourseUnitQuery(blockId), store.dispatch);
     axiosMock
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, courseSectionVerticalMock);
@@ -1036,7 +1036,7 @@ describe('<CourseUnit />', () => {
       .reply(200, { dummy: 'value' });
     axiosMock
       .onGet(getCourseUnitApiUrl(blockId))
-      .replyOnce(200, {
+      .reply(200, {
         ...courseUnitIndexMock,
         visibility_state: UNIT_VISIBILITY_STATES.staffOnly,
         has_explicit_staff_lock: true,

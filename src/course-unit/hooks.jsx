@@ -23,6 +23,7 @@ import {
   getSavingStatus,
   getSequenceStatus,
   getStaticFileNotices,
+  getIsLoadingFailed,
   getCanEdit,
   getMovedXBlockParams,
 } from './data/selectors';
@@ -46,6 +47,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const courseUnit = useSelector(getCourseUnitData);
   const savingStatus = useSelector(getSavingStatus);
   const isLoading = useSelector(getIsLoading);
+  const isLoadingFailed = useSelector(getIsLoadingFailed);
   const movedXBlockParams = useSelector(getMovedXBlockParams);
   const sequenceStatus = useSelector(getSequenceStatus);
   const { draftPreviewLink, publishedPreviewLink } = useSelector(getCourseSectionVertical);
@@ -165,6 +167,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     staticFileNotices,
     currentlyVisibleToStudents,
     isLoading,
+    isLoadingFailed,
     isTitleEditFormOpen,
     isInternetConnectionAlertFailed: savingStatus === RequestStatus.FAILED,
     sharedClipboardData,

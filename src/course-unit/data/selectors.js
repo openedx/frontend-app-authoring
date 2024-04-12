@@ -19,3 +19,8 @@ export const getIsLoading = createSelector(
   loadingStatus => Object.values(loadingStatus)
     .some((status) => status === RequestStatus.IN_PROGRESS),
 );
+export const getIsLoadingFailed = createSelector(
+  [getLoadingStatuses],
+  loadingStatus => Object.values(loadingStatus)
+    .some((status) => status === RequestStatus.FAILED),
+);

@@ -43,6 +43,7 @@ const CourseUnit = ({ courseId }) => {
   const intl = useIntl();
   const {
     isLoading,
+    isLoadingFailed,
     sequenceId,
     unitTitle,
     isQueryPending,
@@ -92,7 +93,7 @@ const CourseUnit = ({ courseId }) => {
     return <Loading />;
   }
 
-  if (sequenceStatus === RequestStatus.FAILED) {
+  if (isLoadingFailed || sequenceStatus === RequestStatus.FAILED) {
     return (
       <Container size="xl" className="course-unit px-4 mt-4">
         <ConnectionErrorAlert />
