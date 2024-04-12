@@ -166,7 +166,6 @@ export function addVideoFile(
   uploadingIdsRef,
 ) {
   return async (dispatch) => {
-    console.log('addVideoFile');
     dispatch(
       updateEditStatus({ editType: 'add', status: RequestStatus.IN_PROGRESS }),
     );

@@ -7,7 +7,6 @@ import {
   MAX_WIDTH,
   MIN_HEIGHT,
   MIN_WIDTH,
-  VIDEO_STATUS_MAPPING,
 } from './constants';
 
 ensureConfig([
