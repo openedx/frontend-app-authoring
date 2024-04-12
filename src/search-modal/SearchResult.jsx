@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 // @ts-check
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { getConfig, getPath } from '@edx/frontend-platform';
 import {
   Button,
@@ -66,55 +66,65 @@ const ItemIcon = {
 };
 
 /**
- * Returns the URL for the context of the hit
- * @param {CustomHit} hit
- * @param {boolean} newWindow
- * @param {string} libraryAuthoringMfeUrl
- * @returns {string}
- */
-const getContextUrl = (hit, newWindow, libraryAuthoringMfeUrl) => {
-  const { context_key: contextKey, usage_key: usageKey } = hit;
-  if (contextKey.startsWith('course-v1:')) {
-    const courseSufix = `course/${contextKey}?show=${encodeURIComponent(usageKey)}`;
-    if (newWindow) {
-      return `${getPath(getConfig().PUBLIC_PATH)}${courseSufix}`;
-    }
-    return `/${courseSufix}`;
-  }
-  if (usageKey.startsWith('lb:')) {
-    return `${libraryAuthoringMfeUrl}library/${contextKey}`;
-  }
-  return '#';
-};
-
-/**
  * A single search result (row), usually represents an XBlock/Component
  * @type {React.FC<{ hit: CustomHit, closeSearch?: () => void}>}
  */
 const SearchResult = ({ hit, closeSearch }) => {
   const navigate = useNavigate();
-  const { libraryAuthoringMfeUrl } = useSelector(getStudioHomeData);
+  const { libraryAuthoringMfeUrl, redirectToLibraryAuthoringMfe } = useSelector(getStudioHomeData);
+
+  /**
+   * Returns the URL for the context of the hit
+   * @param {CustomHit} hit
+   * @param {boolean?} newWindow
+   * @param {string} libraryAuthoringMfeUrl
+   * @returns {string?}
+   */
+  const getContextUrl = useCallback((newWindow) => {
+    const { context_key: contextKey, usage_key: usageKey } = hit;
+    if (contextKey.startsWith('course-v1:')) {
+      const courseSufix = `course/${contextKey}?show=${encodeURIComponent(usageKey)}`;
+      if (newWindow) {
+        return `${getPath(getConfig().PUBLIC_PATH)}${courseSufix}`;
+      }
+      return `/${courseSufix}`;
+    }
+    if (usageKey.startsWith('lb:')) {
+      if (redirectToLibraryAuthoringMfe) {
+        return `${libraryAuthoringMfeUrl}library/${contextKey}`;
+      }
+    }
+
+    // No context URL for this hit
+    return undefined;
+  }, [libraryAuthoringMfeUrl, redirectToLibraryAuthoringMfe]);
+
+  const redirectUrl = useMemo(() => getContextUrl(), [libraryAuthoringMfeUrl, redirectToLibraryAuthoringMfe]);
+  const newWindowUrl = useMemo(() => getContextUrl(true), [libraryAuthoringMfeUrl, redirectToLibraryAuthoringMfe]);
+
+  /**
+    * Opens the context of the hit in a new window
+    * @param {React.MouseEvent} e
+    * @returns {void}
+    * */
+  const openContextInNewWindow = (e) => {
+    e.stopPropagation();
+    window.open(newWindowUrl, '_blank');
+  };
 
   /**
     * Navigates to the context of the hit
     * @param {React.MouseEvent} e
-    * @param {boolean} newWindow
     * @returns {void}
     * */
-  const navigateToContext = (e, newWindow) => {
+  const navigateToContext = (e) => {
     e.stopPropagation();
-    const url = getContextUrl(hit, newWindow, libraryAuthoringMfeUrl);
-    if (newWindow) {
-      window.open(url, '_blank');
+    if (redirectUrl.startsWith('http')) {
+      window.location.href = redirectUrl;
       return;
     }
 
-    if (url.startsWith('http')) {
-      window.location.href = url;
-      return;
-    }
-
-    navigate(url);
+    navigate(redirectUrl);
     closeSearch?.();
   };
 
@@ -122,6 +132,7 @@ const SearchResult = ({ hit, closeSearch }) => {
     <Button
       variant="tertiary w-100 text-left"
       onClick={navigateToContext}
+      disabled={!redirectUrl}
     >
       <Stack
         className="border-bottom search-result p-2 w-100"
@@ -143,7 +154,12 @@ const SearchResult = ({ hit, closeSearch }) => {
             <CustomHighlight attribute="breadcrumbsNames" separator=" / " hit={hit} />
           </div>
         </Stack>
-        <IconButton src={OpenInNew} iconAs={Icon} onClick={(e) => navigateToContext(e, true)} />
+        <IconButton
+          src={OpenInNew}
+          iconAs={Icon}
+          disabled={!newWindowUrl}
+          onClick={openContextInNewWindow}
+        />
       </Stack>
     </Button>
   );
