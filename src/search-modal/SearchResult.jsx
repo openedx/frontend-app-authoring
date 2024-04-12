@@ -109,6 +109,11 @@ const SearchResult = ({ hit, closeSearch }) => {
     * */
   const openContextInNewWindow = (e) => {
     e.stopPropagation();
+
+    if (!newWindowUrl) {
+      return;
+    }
+
     window.open(newWindowUrl, '_blank');
   };
 
@@ -119,6 +124,11 @@ const SearchResult = ({ hit, closeSearch }) => {
     * */
   const navigateToContext = (e) => {
     e.stopPropagation();
+
+    if (!redirectUrl) {
+      return;
+    }
+
     if (redirectUrl.startsWith('http')) {
       window.location.href = redirectUrl;
       return;
