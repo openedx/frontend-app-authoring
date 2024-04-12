@@ -75,12 +75,13 @@ const ItemIcon = {
 const getContextUrl = (hit, newWindow, libraryAuthoringMfeUrl) => {
   const { context_key: contextKey, usage_key: usageKey } = hit;
   if (contextKey.startsWith('course-v1:')) {
+    const courseSufix = `course/${contextKey}?show=${encodeURIComponent(usageKey)}`;
     if (newWindow) {
-      return `${getPath(getConfig().PUBLIC_PATH)}course/${contextKey}?show=${encodeURIComponent(usageKey)}`;
+      return `${getPath(getConfig().PUBLIC_PATH)}${courseSufix}`;
     }
-    return `/course/${contextKey}?show=${encodeURIComponent(usageKey)}`;
+    return `/${courseSufix}`;
   }
-  if (usageKey.includes('lb:')) {
+  if (usageKey.startsWith('lb:')) {
     return `${libraryAuthoringMfeUrl}library/${contextKey}`;
   }
   return '#';
