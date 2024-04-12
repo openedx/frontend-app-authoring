@@ -273,18 +273,18 @@ describe('Videos page', () => {
         act(async () => {
           userEvent.upload(addFilesButton, file);
         });
-        // await waitFor(() => {
-        //   const addStatus = store.getState().videos.addingStatus;
-        //   expect(addStatus).toEqual(RequestStatus.IN_PROGRESS);
-        //   expect(uploadSpy).toHaveBeenCalled();
-        //   expect(screen.getByText(videoMessages.videoUploadAlertLabel.defaultMessage)).toBeVisible();
-        // });
-        // act(() => {
-        //   window.dispatchEvent(new Event('beforeunload'));
-        // });
-        // await waitFor(() => {
-        //   expect(setFailedSpy).toHaveBeenCalledWith(courseId, expect.any(String), expect.any(String), 'upload_failed');
-        // });
+        await waitFor(() => {
+          const addStatus = store.getState().videos.addingStatus;
+          expect(addStatus).toEqual(RequestStatus.IN_PROGRESS);
+          expect(uploadSpy).toHaveBeenCalled();
+          expect(screen.getByText(videoMessages.videoUploadAlertLabel.defaultMessage)).toBeVisible();
+        });
+        act(() => {
+          window.dispatchEvent(new Event('beforeunload'));
+        });
+        await waitFor(() => {
+          expect(setFailedSpy).toHaveBeenCalledWith(courseId, expect.any(String), expect.any(String), 'upload_failed');
+        });
         uploadSpy.mockRestore();
         setFailedSpy.mockRestore();
       });
