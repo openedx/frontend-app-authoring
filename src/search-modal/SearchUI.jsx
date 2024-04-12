@@ -101,13 +101,19 @@ const SearchUI = (props) => {
             showPrevious={false}
             transformItems={(/** @type {import("./SearchResult").CustomHit[]} */ items) => items.map((item) => ({
               ...item,
-              breadcrumbsNames: item.breadcrumbs.map((bc) => bc.display_name),
+              breadcrumbsNames: searchThisCourse
+                ? item.breadcrumbs.slice(1).map((bc) => bc.display_name)
+                : item.breadcrumbs.map((bc) => bc.display_name),
               _highlightResult: {
                 // eslint-disable-next-line no-underscore-dangle
                 ...item._highlightResult,
-                // @ts-ignore
-                // eslint-disable-next-line no-underscore-dangle
-                breadcrumbsNames: item._highlightResult?.breadcrumbs.map((bc) => bc.display_name),
+                breadcrumbsNames: searchThisCourse
+                  // @ts-ignore
+                  // eslint-disable-next-line no-underscore-dangle
+                  ? item._highlightResult?.breadcrumbs.slice(1).map((bc) => bc.display_name)
+                  // @ts-ignore
+                  // eslint-disable-next-line no-underscore-dangle
+                  : item._highlightResult?.breadcrumbs.map((bc) => bc.display_name),
               },
             }))}
           />
