@@ -238,7 +238,7 @@ export function addVideoFile(
       uploadingIdsRef.current = uploadingIdsRef.current.filter(
         (id) => id !== edxVideoId,
       );
-      return;
+      // return;
     }
     try {
       const { videos } = await fetchVideoList(courseId);
