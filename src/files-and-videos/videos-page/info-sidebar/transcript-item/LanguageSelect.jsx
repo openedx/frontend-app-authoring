@@ -1,7 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Dropdown, Icon } from '@openedx/paragon';
-import { Check, ExpandMore } from '@openedx/paragon/icons';
+
+import {
+  Button,
+  Icon,
+  ModalPopup,
+  Menu,
+  MenuItem,
+  useToggle,
+} from '@openedx/paragon';
+import { Check, ExpandMore, ExpandLess } from '@openedx/paragon/icons';
 import { isEmpty } from 'lodash';
 
 const LanguageSelect = ({
@@ -12,47 +20,87 @@ const LanguageSelect = ({
   placeholderText,
 }) => {
   const currentSelection = isEmpty(value) ? placeholderText : options[value];
+
+  const [isOpen, , close, toggle] = useToggle();
+  const [target, setTarget] = useState(null);
+
   return (
-    <Dropdown>
-      <Dropdown.Toggle
-        variant="tertiary"
-        size="sm"
-        className="border border-gray-700 justify-content-between"
-        style={{ minWidth: '100%' }}
-        id={`language-select-dropdown-${currentSelection}`}
-        data-testid="language-select-dropdown"
+    <>
+      <div className="col-9 p-0">
+        <Button
+          variant="tertiary"
+          size="sm"
+          className="border border-gray-700 justify-content-between"
+          style={{ minWidth: '100%' }}
+          id={`language-select-dropdown-${currentSelection}`}
+          data-testid="language-select-dropdown"
+          iconAfter={isOpen ? ExpandLess : ExpandMore}
+          onClick={toggle}
+          ref={setTarget}
+        >
+          {currentSelection}
+        </Button>
+      </div>
+      <ModalPopup
+        placement="bottom-end"
+        positionRef={target}
+        isOpen={isOpen}
+        onClose={close}
+        onEscapeKey={close}
       >
-        {currentSelection}
-      </Dropdown.Toggle>
-      <Dropdown.Menu className="m-0 position-fixed">
-        <div style={{ height: '230px', overflowY: 'scroll' }}>
-          {Object.entries(options).map(([valueKey, text]) => {
-            if (valueKey === value) {
+        <Menu
+          className="language-select"
+        >
+          <div>
+            {Object.entries(options).map(([valueKey, text]) => {
+              if (valueKey === value) {
+                return (
+                  <MenuItem
+                    as={Button}
+                    variant="tertiary"
+                    size="sm"
+                    key={`${valueKey}-item`}
+                  >
+                    <Icon size="inline" src={Check} />
+                    <span className="pl-1">{text}</span>
+                  </MenuItem>
+                );
+              }
+              if (!previousSelection.includes(valueKey)) {
+                return (
+                  <MenuItem
+                    as={Button}
+                    variant="tertiary"
+                    size="sm"
+                    onClick={() => {
+                      handleSelect(valueKey);
+                      close();
+                    }}
+                    key={`${valueKey}-item`}
+                  >
+                    <span className="pl-3">{text}</span>
+                  </MenuItem>
+                );
+              }
               return (
-                <Dropdown.Item className="small" key={`${valueKey}-item`}>
-                  <Icon size="inline" src={Check} className="m-n2" /><span className="pl-3">{text}</span>
-                </Dropdown.Item>
-              );
-            }
-            if (!previousSelection.includes(valueKey)) {
-              return (
-                <Dropdown.Item className="small" onClick={() => handleSelect(valueKey)} key={`${valueKey}-item`}>
+                <MenuItem
+                  disabled
+                  variant="tertiary"
+                  as={Button}
+                  size="sm"
+                  key={`${valueKey}-item`}
+                >
                   <span className="pl-3">{text}</span>
-                </Dropdown.Item>
+                </MenuItem>
               );
-            }
-            return (
-              <Dropdown.Item disabled className="small" key={`${valueKey}-item`}>
-                <span className="pl-3">{text}</span>
-              </Dropdown.Item>
-            );
-          })}
-        </div>
+            })}
+          </div>
+        </Menu>
         <div className="row justify-content-center">
           <Icon src={ExpandMore} size="xs" />
         </div>
-      </Dropdown.Menu>
-    </Dropdown>
+      </ModalPopup>
+    </>
   );
 };
 

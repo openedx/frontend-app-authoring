@@ -84,15 +84,13 @@ const Transcript = ({
           key={`transcript-${language}`}
           data-testid={`transcript-${language}`}
         >
-          <div className="col-9 p-0">
-            <LanguageSelect
-              options={languages}
-              value={newLanguage}
-              placeholderText={intl.formatMessage(messages.languageSelectPlaceholder)}
-              previousSelection={previousSelection}
-              handleSelect={updateLangauge}
-            />
-          </div>
+          <LanguageSelect
+            options={languages}
+            value={newLanguage}
+            placeholderText={intl.formatMessage(messages.languageSelectPlaceholder)}
+            previousSelection={previousSelection}
+            handleSelect={updateLangauge}
+          />
           { transcript === '' ? (
             <IconButton
               iconAs={Icon}
