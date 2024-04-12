@@ -144,12 +144,17 @@ export function deleteVideoFile(courseId, id) {
 export function markVideoUploadsInProgressAsFailed({ uploadingIdsRef, courseId }) {
   return (dispatch) => {
     uploadingIdsRef.current.forEach((edxVideoId) => {
-      sendVideoUploadStatus(
-        courseId,
-        edxVideoId || '',
-        'Upload failed',
-        'upload_failed',
-      );
+      try {
+        sendVideoUploadStatus(
+          courseId,
+          edxVideoId || '',
+          'Upload failed',
+          'upload_failed',
+        );
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(`Failed to send "Failed" upload status for ${edxVideoId} onbeforeunload`);
+      }
       dispatch(
         updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }),
       );
