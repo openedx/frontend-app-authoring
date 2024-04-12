@@ -135,13 +135,11 @@ const SearchResult = ({ hit, closeSearch }) => {
       disabled={!redirectUrl}
     >
       <Stack
-        className="border-bottom search-result p-2 w-100"
+        className="border-bottom search-result p-2 w-100 align-items-start"
         direction="horizontal"
-        gap={2}
+        gap={3}
       >
-        <div className="align-top">
-          <Icon className="align-top" src={ItemIcon[hit.block_type] || Article} />
-        </div>
+        <Icon className="text-muted" src={ItemIcon[hit.block_type] || Article} />
         <Stack>
           <div className="hit-name small">
             <CustomHighlight attribute="display_name" hit={hit} />
