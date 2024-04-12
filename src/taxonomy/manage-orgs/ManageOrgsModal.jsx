@@ -170,31 +170,38 @@ const ManageOrgsModal = ({
         <hr className="mx-4" />
 
         <ModalDialog.Body>
-          <Form.Label>
+          <Form.Group>
             <Stack>
               <div className="pb-5">{intl.formatMessage(messages.bodyText)}</div>
-              <div>{intl.formatMessage(messages.currentAssignments)}</div>
+              <Form.Label>
+                <div>{intl.formatMessage(messages.currentAssignments)}</div>
+              </Form.Label>
               <div className="col-9 d-inline-box overflow-auto">
                 {selectedOrgs.length ? selectedOrgs.map((org) => (
                   <Chip
                     key={org}
                     iconAfter={Close}
-                    onIconAfterClick={() => setSelectedOrgs(selectedOrgs.filter((o) => o !== org))}
-                    disabled={allOrgs}
+                    iconAfterAlt={intl.formatMessage(messages.removeOrg, { org })}
+                    onIconAfterClick={() => setSelectedOrgs(selOrgs => (selOrgs || []).filter((o) => o !== org))}
+                    disabled={!!allOrgs}
                   >
                     {org}
                   </Chip>
                 )) : <span className="text-muted">{intl.formatMessage(messages.noOrganizationAssigned)}</span> }
               </div>
             </Stack>
-          </Form.Label>
+          </Form.Group>
           <Form.Group>
             <Form.Label>
               {intl.formatMessage(messages.addOrganizations)}
             </Form.Label>
             <Form.Autosuggest
               placeholder={intl.formatMessage(messages.searchOrganizations)}
-              onSelected={(org) => setSelectedOrgs([...selectedOrgs, org])}
+              onChange={({ selectionValue }) => {
+                if (selectionValue) {
+                  setSelectedOrgs([...selectedOrgs, selectionValue]);
+                }
+              }}
               disabled={allOrgs}
             >
               {organizationListData ? organizationListData.filter(o => !selectedOrgs?.includes(o)).map((org) => (
@@ -214,7 +221,7 @@ const ManageOrgsModal = ({
             <ModalDialog.CloseButton onClick={onClose} variant="tertiary">
               {intl.formatMessage(messages.cancelButton)}
             </ModalDialog.CloseButton>
-            <Button variant="primary" onClick={confirmSave} data-testid="save-button">
+            <Button variant="primary" onClick={confirmSave}>
               {intl.formatMessage(messages.saveButton)}
             </Button>
           </ActionRow>

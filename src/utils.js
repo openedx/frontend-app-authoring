@@ -255,19 +255,50 @@ export function setupYupExtensions() {
 }
 
 export const convertToDateFromString = (dateStr) => {
+  /**
+   * Convert UTC to local time for react-datepicker
+   * Note: react-datepicker has a bug where it only interacts with local time
+   * @param {string} dateStr - YYYY-MM-DDTHH:MM:SSZ
+   * @return {Date} date in local time
+   */
   if (!dateStr) {
     return '';
   }
 
-  return moment(dateStr).utc().toDate();
+  const stripTimeZone = (stringValue) => stringValue.substring(0, 19);
+
+  const differenceDueToDST = (date) => {
+    const isNowDST = moment(new Date()).isDST();
+    const isDateDST = moment(date).isDST();
+    if (isNowDST && !isDateDST) {
+      return 1;
+    }
+    if (!isNowDST && isDateDST) {
+      return -1;
+    }
+    return 0;
+  };
+
+  const timeZoneOffset = new Date().getTimezoneOffset();
+  const timeZoneHours = (Math.abs(timeZoneOffset) / 60) + differenceDueToDST(moment(dateStr));
+  const sign = timeZoneOffset < 0 ? '+' : '-';
+  const timeZone = `${sign}${String(timeZoneHours).padStart(2, '0')}00`;
+
+  return moment(stripTimeZone(String(dateStr)) + timeZone).toDate();
 };
 
 export const convertToStringFromDate = (date) => {
+  /**
+   * Convert local time to UTC from react-datepicker
+   * Note: react-datepicker has a bug where it only interacts with local time
+   * @param {Date} date - date in local time
+   * @return {string} YYYY-MM-DDTHH:MM:SSZ
+   */
   if (!date) {
     return '';
   }
 
-  return moment(date).utc().format(DATE_TIME_FORMAT);
+  return moment(date).format(DATE_TIME_FORMAT);
 };
 
 export const isValidDate = (date) => {

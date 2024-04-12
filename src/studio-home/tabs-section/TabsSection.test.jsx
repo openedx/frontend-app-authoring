@@ -88,8 +88,9 @@ describe('<TabsSection />', () => {
   describe('course tab', () => {
     it('should render specific course details', async () => {
       render(<RootWrapper />);
+      const { results: data } = generateGetStudioCoursesApiResponse();
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
-      axiosMock.onGet(courseApiLink).reply(200, generateGetStudioCoursesApiResponse());
+      axiosMock.onGet(courseApiLink).reply(200, data);
       await executeThunk(fetchStudioHomeData(), store.dispatch);
 
       expect(screen.getByText(studioHomeMock.courses[0].displayName)).toBeVisible();
@@ -101,7 +102,7 @@ describe('<TabsSection />', () => {
 
     it('should render default sections when courses are empty', async () => {
       const data = generateGetStudioCoursesApiResponse();
-      data.courses = [];
+      data.results.courses = [];
 
       render(<RootWrapper />);
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
@@ -187,8 +188,10 @@ describe('<TabsSection />', () => {
   describe('archived tab', () => {
     it('should switch to Archived tab and render specific archived course details', async () => {
       render(<RootWrapper />);
+      const { results: data } = generateGetStudioCoursesApiResponse();
+      data.archivedCourses = studioHomeMock.archivedCourses;
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
-      axiosMock.onGet(courseApiLink).reply(200, generateGetStudioCoursesApiResponse());
+      axiosMock.onGet(courseApiLink).reply(200, data);
       await executeThunk(fetchStudioHomeData(), store.dispatch);
 
       const archivedTab = screen.getByText(tabMessages.archivedTabTitle.defaultMessage);

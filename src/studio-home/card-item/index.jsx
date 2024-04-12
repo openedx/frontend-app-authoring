@@ -41,6 +41,7 @@ const CardItem = ({
   const isShowRerunLink = allowCourseReruns
     && rerunCreatorStatus
     && courseCreatorStatus === COURSE_CREATOR_STATES.granted;
+  const hasDisplayName = displayName.trim().length ? displayName : courseKey;
 
   return (
     <Card className="card-item">
@@ -51,7 +52,7 @@ const CardItem = ({
             className="card-item-title"
             destination={courseUrl().toString()}
           >
-            {displayName}
+            {hasDisplayName}
           </Hyperlink>
         ) : (
           <span className="card-item-title">{displayName}</span>

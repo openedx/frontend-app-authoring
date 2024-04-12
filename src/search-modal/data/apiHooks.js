@@ -14,7 +14,10 @@ export const useContentSearch = () => (
   useQuery({
     queryKey: ['content_search'],
     queryFn: getContentSearchConfig,
-    staleTime: 60 * 60, // If cache is up to one hour old, no need to re-fetch
+    cacheTime: 60 * 60_000, // Even if we're not actively using the search modal, keep it in memory up to an hour
+    staleTime: 60 * 60_000, // If cache is up to one hour old, no need to re-fetch
+    refetchInterval: 60 * 60_000,
     refetchOnWindowFocus: false, // This doesn't need to be refreshed when the user switches back to this tab.
+    refetchOnMount: false,
   })
 );

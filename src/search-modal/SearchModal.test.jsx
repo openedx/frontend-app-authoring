@@ -58,8 +58,8 @@ describe('<SearchModal />', () => {
       index: 'test-index',
       apiKey: 'test-api-key',
     });
-    const { findByTestId } = render(<RootWrapper />);
-    expect(await findByTestId('search-ui')).toBeInTheDocument();
+    const { findByText } = render(<RootWrapper />);
+    expect(await findByText('Enter a keyword or select a filter to begin searching.')).toBeInTheDocument();
   });
 
   it('should render the spinner while the config is loading', () => {

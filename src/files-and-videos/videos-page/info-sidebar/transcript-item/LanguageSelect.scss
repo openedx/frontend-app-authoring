@@ -1,0 +1,24 @@
+.language-select {
+  padding: 8px 0;
+  margin: 0;
+  overflow-x: hidden;
+  max-height: 275px;
+  width: 300px;
+
+  @include pgn-box-shadow(2, "down");
+
+  .pgn__menu-item {
+    width: 100%;
+    justify-content: start;
+    font-weight: 400;
+
+    &:hover {
+      background-color: $light-300;
+    }
+
+    .pgn__menu-item-text {
+      display: flex;
+      align-items: center;
+    }
+  }
+}

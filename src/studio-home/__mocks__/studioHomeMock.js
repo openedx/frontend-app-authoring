@@ -47,7 +47,7 @@ module.exports = {
       org: 'org.0',
       rerunLink: null,
       run: 'Run_0',
-      url: null,
+      url: '',
     },
   ],
   inProcessCourseActions: [],

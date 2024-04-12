@@ -174,7 +174,7 @@ describe('TranscriptTab', () => {
           fireEvent.click(menuButton);
         });
 
-        const deleteButton = screen.getByText(transcriptRowMessages.deleteTranscript.defaultMessage).closest('a');
+        const deleteButton = screen.getByText(transcriptRowMessages.deleteTranscript.defaultMessage).closest('button');
         fireEvent.click(deleteButton);
       });
 
@@ -237,7 +237,7 @@ describe('TranscriptTab', () => {
         });
         downloadButton = screen.getByText(
           transcriptRowMessages.downloadTranscript.defaultMessage,
-        ).closest('a');
+        ).closest('button');
       });
 
       it('should download transcript', async () => {
@@ -291,7 +291,7 @@ describe('TranscriptTab', () => {
         });
         const replaceButton = screen.getByText(
           transcriptRowMessages.replaceTranscript.defaultMessage,
-        ).closest('a');
+        ).closest('button');
         fireEvent.click(replaceButton);
       });
 

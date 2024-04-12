@@ -316,7 +316,7 @@ describe('Videos page', () => {
         axiosMock.onDelete(`${getCourseVideosApiUrl(courseId)}/mOckID1`).reply(204);
 
         fireEvent.click(deleteButton);
-        expect(screen.getByText('Delete video(s) confirmation')).toBeVisible();
+        expect(screen.getByText('Delete mOckID1.mp4')).toBeVisible();
         await act(async () => {
           userEvent.click(deleteButton);
         });
@@ -330,7 +330,7 @@ describe('Videos page', () => {
           userEvent.click(confirmDeleteButton);
         });
 
-        expect(screen.queryByText('Delete video(s) confirmation')).toBeNull();
+        expect(screen.queryByText('Delete mOckID1.mp4')).toBeNull();
 
         // Check if the video is deleted in the store and UI
         const deleteStatus = store.getState().videos.deletingStatus;
@@ -464,7 +464,7 @@ describe('Videos page', () => {
               fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
             });
 
-            const imageFilterChip = screen.getByTestId('icon-after');
+            const imageFilterChip = screen.getByRole('button', { name: 'Remove this filter' });
             fireEvent.click(imageFilterChip);
 
             expect(screen.queryByText(videoMessages.transcribedCheckboxLabel.defaultMessage)).toBeNull();
@@ -584,10 +584,10 @@ describe('Videos page', () => {
           axiosMock.onDelete(`${getCourseVideosApiUrl(courseId)}/mOckID1`).reply(204);
           fireEvent.click(within(fileMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByTestId('open-delete-confirmation-button'));
-          expect(screen.getByText('Delete video(s) confirmation')).toBeVisible();
+          expect(screen.getByText('Delete mOckID1.mp4')).toBeVisible();
 
           fireEvent.click(screen.getByText(messages.deleteFileButtonLabel.defaultMessage));
-          expect(screen.queryByText('Delete video(s) confirmation')).toBeNull();
+          expect(screen.queryByText('Delete mOckID1.mp4')).toBeNull();
 
           executeThunk(deleteVideoFile(courseId, 'mOckID1', 5), store.dispatch);
         });
@@ -683,10 +683,10 @@ describe('Videos page', () => {
           axiosMock.onDelete(`${getCourseVideosApiUrl(courseId)}/mOckID1`).reply(404);
           fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByTestId('open-delete-confirmation-button'));
-          expect(screen.getByText('Delete video(s) confirmation')).toBeVisible();
+          expect(screen.getByText('Delete mOckID1.mp4')).toBeVisible();
 
           fireEvent.click(screen.getByText(messages.deleteFileButtonLabel.defaultMessage));
-          expect(screen.queryByText('Delete video(s) confirmation')).toBeNull();
+          expect(screen.queryByText('Delete mOckID1.mp4')).toBeNull();
         });
         executeThunk(deleteVideoFile(courseId, 'mOckID1', 5), store.dispatch);
         await waitFor(() => {

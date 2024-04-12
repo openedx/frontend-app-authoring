@@ -283,7 +283,7 @@ const ContentTagsDropDownSelector = ({
                     <Icon
                       src={isOpen(tagData.value) ? ArrowDropUp : ArrowDropDown}
                       onClick={() => clickAndEnterHandler(tagData.value)}
-                      tabIndex="-1"
+                      tabIndex={-1}
                     />
                   </div>
                 )}
