@@ -10,7 +10,7 @@ import {
 } from '@openedx/paragon';
 import { FileInput, useFileInput } from '../generic';
 import messages from './messages';
-import { VIDEO_SUCCESS_STATUSES } from './data/constants';
+import { VIDEO_SUCCESS_STATUSES, VIDEO_FAILURE_STATUSES } from './data/constants';
 import { RequestStatus } from '../../data/constants';
 
 const VideoThumbnail = ({
@@ -45,6 +45,8 @@ const VideoThumbnail = ({
   const supportedFiles = videoImageSettings?.supportedFileFormats
     ? Object.values(videoImageSettings.supportedFileFormats) : null;
   const isUploaded = VIDEO_SUCCESS_STATUSES.includes(status);
+  const isFailed = VIDEO_FAILURE_STATUSES.includes(status);
+  const failedMessage = intl.formatMessage(messages.failedCheckboxLabel);
 
   const showThumbnail = allowThumbnailUpload && thumbnail && isUploaded;
 
@@ -84,7 +86,7 @@ const VideoThumbnail = ({
           <div className="status-badge">
             {!isUploaded && (
               <Badge variant="light">
-                {status}
+                {!isFailed ? status : failedMessage}
               </Badge>
             )}
           </div>

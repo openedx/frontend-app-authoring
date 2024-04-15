@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -12,6 +12,8 @@ import {
   Button,
   CheckboxFilter,
   Container,
+  Alert,
+  Spinner,
 } from '@openedx/paragon';
 import Placeholder from '@edx/frontend-lib-content-components';
 
@@ -24,6 +26,7 @@ import {
   fetchVideoDownload,
   fetchVideos,
   getUsagePaths,
+  markVideoUploadsInProgressAsFailed,
   resetErrors,
   updateVideoOrder,
 } from './data/thunks';
@@ -50,9 +53,16 @@ const VideosPage = ({
   intl,
 }) => {
   const dispatch = useDispatch();
-  const [isTranscriptSettingsOpen, openTranscriptSettings, closeTranscriptSettings] = useToggle(false);
+  const [
+    isTranscriptSettingsOpen,
+    openTranscriptSettings,
+    closeTranscriptSettings,
+  ] = useToggle(false);
   const courseDetails = useModel('courseDetails', courseId);
-  document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.heading));
+  document.title = getPageHeadTitle(
+    courseDetails?.name,
+    intl.formatMessage(messages.heading),
+  );
 
   useEffect(() => {
     dispatch(fetchVideos(courseId));
@@ -68,7 +78,16 @@ const VideosPage = ({
     usageStatus: usagePathStatus,
     errors: errorMessages,
     pageSettings,
-  } = useSelector(state => state.videos);
+  } = useSelector((state) => state.videos);
+
+  const uploadingIdsRef = useRef([]);
+
+  useEffect(() => {
+    window.onbeforeunload = () => {
+      dispatch(markVideoUploadsInProgressAsFailed({ uploadingIdsRef, courseId }));
+      return undefined;
+    };
+  }, []);
 
   const {
     isVideoTranscriptEnabled,
@@ -78,12 +97,14 @@ const VideosPage = ({
     videoImageSettings,
   } = pageSettings;
 
-  const supportedFileFormats = { 'video/*': videoSupportedFileFormats || FILES_AND_UPLOAD_TYPE_FILTERS.video };
+  const supportedFileFormats = {
+    'video/*': videoSupportedFileFormats || FILES_AND_UPLOAD_TYPE_FILTERS.video,
+  };
 
   const handleErrorReset = (error) => dispatch(resetErrors(error));
   const handleAddFile = (files) => {
     handleErrorReset({ errorType: 'add' });
-    files.forEach(file => dispatch(addVideoFile(courseId, file, videoIds)));
+    files.forEach((file) => dispatch(addVideoFile(courseId, file, videoIds, uploadingIdsRef)));
   };
   const handleDeleteFile = (id) => dispatch(deleteVideoFile(courseId, id));
   const handleDownloadFile = (selectedRows) => dispatch(fetchVideoDownload({ selectedRows, courseId }));
@@ -128,8 +149,14 @@ const VideosPage = ({
     Filter: CheckboxFilter,
     filter: 'exactTextCase',
     filterChoices: [
-      { name: intl.formatMessage(messages.transcribedCheckboxLabel), value: 'transcribed' },
-      { name: intl.formatMessage(messages.notTranscribedCheckboxLabel), value: 'notTranscribed' },
+      {
+        name: intl.formatMessage(messages.transcribedCheckboxLabel),
+        value: 'transcribed',
+      },
+      {
+        name: intl.formatMessage(messages.notTranscribedCheckboxLabel),
+        value: 'notTranscribed',
+      },
     ],
   };
   const activeColumn = {
@@ -201,6 +228,11 @@ const VideosPage = ({
           updateFileStatus={updateVideoStatus}
           loadingStatus={loadingStatus}
         />
+        <Alert variant="warning" show={addVideoStatus === RequestStatus.IN_PROGRESS}>
+          <div className="video-upload-warning-text"><Spinner animation="border" variant="warning" className="video-upload-spinner mr-3" screenReaderText="loading" />
+            <p className="d-inline"><FormattedMessage {...messages.videoUploadAlertLabel} /></p>
+          </div>
+        </Alert>
         <ActionRow>
           <div className="h2">
             <FormattedMessage {...messages.heading} />

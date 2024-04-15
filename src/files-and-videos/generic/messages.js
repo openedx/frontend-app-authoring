@@ -199,6 +199,10 @@ const messages = defineMessages({
     defaultMessage: 'Apply',
     description: 'Label for apply sort button in sort and filter modal',
   },
+  failedLabel: {
+    id: 'course-authoring.files-and-uploads.filter.failed.label',
+    defaultMessage: 'Failed',
+  },
 });
 
 export default messages;

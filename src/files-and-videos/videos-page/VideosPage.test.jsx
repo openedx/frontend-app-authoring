@@ -36,9 +36,11 @@ import {
   addVideoThumbnail,
   fetchVideoDownload,
 } from './data/thunks';
-import { getVideosUrl, getCourseVideosApiUrl, getApiBaseUrl } from './data/api';
+import * as api from './data/api';
 import videoMessages from './messages';
 import messages from '../generic/messages';
+
+const { getVideosUrl, getCourseVideosApiUrl, getApiBaseUrl } = api;
 
 let axiosMock;
 let store;
@@ -136,7 +138,7 @@ describe('Videos page', () => {
           value: [file],
         });
         fireEvent.drop(dropzone);
-        await executeThunk(addVideoFile(courseId, file, []), store.dispatch);
+        await executeThunk(addVideoFile(courseId, file, [], { current: [] }), store.dispatch);
       });
       const addStatus = store.getState().videos.addingStatus;
       expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
@@ -157,7 +159,7 @@ describe('Videos page', () => {
           roles: [],
         },
       });
-      store = initializeStore(initialState);
+      store = initializeStore({ ...initialState });
       axiosMock = new MockAdapter(getAuthenticatedHttpClient());
       file = new File(['(⌐□_□)'], 'download.png', { type: 'image/png' });
     });
@@ -224,6 +226,13 @@ describe('Videos page', () => {
 
         expect(addThumbnailButton).toBeNull();
       });
+      describe('with videos with backend status in_progress', () => {
+        it('should render video with in progress status', async () => {
+          await mockStore(RequestStatus.IN_PROGRESS);
+          expect(screen.getByText('Failed')).toBeVisible();
+          expect(screen.queryByText('In Progress')).not.toBeInTheDocument();
+        });
+      });
     });
 
     describe('table actions', () => {
@@ -240,10 +249,44 @@ describe('Videos page', () => {
         const { videoIds } = store.getState().videos;
         await act(async () => {
           userEvent.upload(addFilesButton, file);
-          await executeThunk(addVideoFile(courseId, file, videoIds), store.dispatch);
+          await executeThunk(addVideoFile(courseId, file, videoIds, { current: [] }), store.dispatch);
         });
         const addStatus = store.getState().videos.addingStatus;
         expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
+      });
+
+      it('when uploads are in progress, should show alert and set them to failed on page leave', async () => {
+        await mockStore(RequestStatus.SUCCESSFUL);
+
+        const mockResponseData = { status: '200', ok: true, blob: () => 'Data' };
+        const mockFetchResponse = Promise.resolve(mockResponseData);
+        global.fetch = jest.fn().mockImplementation(() => mockFetchResponse);
+
+        axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
+        axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
+
+        const uploadSpy = jest.spyOn(api, 'uploadVideo');
+        const setFailedSpy = jest.spyOn(api, 'sendVideoUploadStatus').mockImplementation(() => {});
+        uploadSpy.mockResolvedValue(new Promise(() => {}));
+
+        const addFilesButton = screen.getAllByLabelText('file-input')[3];
+        act(async () => {
+          userEvent.upload(addFilesButton, file);
+        });
+        await waitFor(() => {
+          const addStatus = store.getState().videos.addingStatus;
+          expect(addStatus).toEqual(RequestStatus.IN_PROGRESS);
+          expect(uploadSpy).toHaveBeenCalled();
+          expect(screen.getByText(videoMessages.videoUploadAlertLabel.defaultMessage)).toBeVisible();
+        });
+        act(() => {
+          window.dispatchEvent(new Event('beforeunload'));
+        });
+        await waitFor(() => {
+          expect(setFailedSpy).toHaveBeenCalledWith(courseId, expect.any(String), expect.any(String), 'upload_failed');
+        });
+        uploadSpy.mockRestore();
+        setFailedSpy.mockRestore();
       });
 
       it('should have disabled action buttons', async () => {
@@ -573,7 +616,7 @@ describe('Videos page', () => {
         const addFilesButton = screen.getAllByLabelText('file-input')[3];
         await act(async () => {
           userEvent.upload(addFilesButton, file);
-          await executeThunk(addVideoFile(courseId, file), store.dispatch);
+          await executeThunk(addVideoFile(courseId, file, undefined, { current: [] }), store.dispatch);
         });
         const addStatus = store.getState().videos.addingStatus;
         expect(addStatus).toEqual(RequestStatus.FAILED);
@@ -588,7 +631,7 @@ describe('Videos page', () => {
         const addFilesButton = screen.getAllByLabelText('file-input')[3];
         await act(async () => {
           userEvent.upload(addFilesButton, file);
-          await executeThunk(addVideoFile(courseId, file), store.dispatch);
+          await executeThunk(addVideoFile(courseId, file, undefined, { current: [] }), store.dispatch);
         });
         const addStatus = store.getState().videos.addingStatus;
         expect(addStatus).toEqual(RequestStatus.FAILED);
@@ -623,7 +666,7 @@ describe('Videos page', () => {
         const addFilesButton = screen.getAllByLabelText('file-input')[3];
         await act(async () => {
           userEvent.upload(addFilesButton, file);
-          await executeThunk(addVideoFile(courseId, file), store.dispatch);
+          await executeThunk(addVideoFile(courseId, file, undefined, { current: [] }), store.dispatch);
         });
         const addStatus = store.getState().videos.addingStatus;
         expect(addStatus).toEqual(RequestStatus.FAILED);
@@ -636,7 +679,7 @@ describe('Videos page', () => {
 
         const videoMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
 
-        await waitFor(() => {
+        await waitFor(async () => {
           axiosMock.onDelete(`${getCourseVideosApiUrl(courseId)}/mOckID1`).reply(404);
           fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
           fireEvent.click(screen.getByTestId('open-delete-confirmation-button'));
@@ -644,11 +687,12 @@ describe('Videos page', () => {
 
           fireEvent.click(screen.getByText(messages.deleteFileButtonLabel.defaultMessage));
           expect(screen.queryByText('Delete mOckID1.mp4')).toBeNull();
-
-          executeThunk(deleteVideoFile(courseId, 'mOckID1', 5), store.dispatch);
         });
-        const deleteStatus = store.getState().videos.deletingStatus;
-        expect(deleteStatus).toEqual(RequestStatus.FAILED);
+        executeThunk(deleteVideoFile(courseId, 'mOckID1', 5), store.dispatch);
+        await waitFor(() => {
+          const deleteStatus = store.getState().videos.deletingStatus;
+          expect(deleteStatus).toEqual(RequestStatus.FAILED);
+        });
 
         expect(screen.getByTestId('grid-card-mOckID1')).toBeVisible();
 
@@ -669,8 +713,10 @@ describe('Videos page', () => {
             video: { id: 'mOckID3', displayName: 'mOckID3' },
           }), store.dispatch);
         });
-        const { usageStatus } = store.getState().videos;
-        expect(usageStatus).toEqual(RequestStatus.FAILED);
+        await waitFor(() => {
+          const { usageStatus } = store.getState().videos;
+          expect(usageStatus).toEqual(RequestStatus.FAILED);
+        });
       });
 
       it('multiple video files fetch failure should show error', async () => {
