@@ -8,7 +8,6 @@ import ContentGroupForm from './ContentGroupForm';
 
 const onCreateClickMock = jest.fn();
 const onCancelClickMock = jest.fn();
-const onDeleteClickMock = jest.fn();
 const onEditClickMock = jest.fn();
 
 const renderComponent = (props = {}) => render(
@@ -17,7 +16,6 @@ const renderComponent = (props = {}) => render(
       groupNames={contentGroupsMock.groups?.map((group) => group.name)}
       onCreateClick={onCreateClickMock}
       onCancelClick={onCancelClickMock}
-      onDeleteClick={onDeleteClickMock}
       onEditClick={onEditClickMock}
       {...props}
     />
@@ -56,9 +54,6 @@ describe('<ContentGroupForm />', () => {
       getByText(messages.newGroupHeader.defaultMessage),
     ).toBeInTheDocument();
     expect(
-      getByRole('button', { name: messages.deleteButton.defaultMessage }),
-    ).toBeInTheDocument();
-    expect(
       getByRole('button', { name: messages.saveButton.defaultMessage }),
     ).toBeInTheDocument();
     expect(
@@ -67,16 +62,14 @@ describe('<ContentGroupForm />', () => {
   });
 
   it('shows alert if group is used in location with edit mode', () => {
-    const { getByText, getByRole } = renderComponent({
+    const { getByText } = renderComponent({
       isEditMode: true,
       overrideValue: 'overrideValue',
       isUsedInLocation: true,
     });
-    const deleteButton = getByRole('button', { name: messages.deleteButton.defaultMessage });
     expect(
       getByText(messages.alertGroupInUsage.defaultMessage),
     ).toBeInTheDocument();
-    expect(deleteButton).toBeDisabled();
   });
 
   it('calls onCreate when the "Create" button is clicked with a valid form', async () => {
@@ -168,19 +161,6 @@ describe('<ContentGroupForm />', () => {
         getByText(messages.invalidMessage.defaultMessage),
       ).toBeInTheDocument();
     });
-  });
-  it('calls onDelete when the "Delete" button is clicked', async () => {
-    const { getByRole } = renderComponent({
-      isEditMode: true,
-      overrideValue: contentGroupsMock.groups[0].name,
-    });
-    const deleteButton = getByRole('button', {
-      name: messages.deleteButton.defaultMessage,
-    });
-    expect(deleteButton).toBeInTheDocument();
-    userEvent.click(deleteButton);
-
-    expect(onDeleteClickMock).toHaveBeenCalledTimes(1);
   });
 
   it('calls onCancel when the "Cancel" button is clicked', async () => {

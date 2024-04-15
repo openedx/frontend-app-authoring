@@ -6,8 +6,6 @@ import {
   ActionRow,
   Button,
   Form,
-  OverlayTrigger,
-  Tooltip,
 } from '@openedx/paragon';
 import { WarningFilled as WarningFilledIcon } from '@openedx/paragon/icons';
 
@@ -22,7 +20,6 @@ const ExperimentForm = ({
   isUsedInLocation,
   onCreateClick,
   onCancelClick,
-  onDeleteClick,
   onEditClick,
 }) => {
   const { formatMessage } = useIntl();
@@ -118,32 +115,7 @@ const ExperimentForm = ({
                 <p>{formatMessage(messages.experimentConfigurationAlert)}</p>
               </Alert>
             )}
-
             <ActionRow data-testid="experiment-configuration-actions">
-              {isEditMode && (
-                <OverlayTrigger
-                  overlay={(
-                    <Tooltip
-                      id={`delete-restriction-tooltip-${values.newGroupName}`}
-                    >
-                      {formatMessage(
-                        isUsedInLocation
-                          ? messages.experimentConfigurationDeleteRestriction
-                          : messages.actionDelete,
-                      )}
-                    </Tooltip>
-                  )}
-                >
-                  <Button
-                    disabled={isUsedInLocation}
-                    variant="outline-primary"
-                    onClick={onDeleteClick}
-                  >
-                    {formatMessage(messages.actionDelete)}
-                  </Button>
-                </OverlayTrigger>
-              )}
-              <ActionRow.Spacer />
               <Button onClick={onCancelClick} variant="tertiary">
                 {formatMessage(messages.experimentConfigurationCancel)}
               </Button>
@@ -167,7 +139,6 @@ ExperimentForm.defaultProps = {
   isEditMode: false,
   isUsedInLocation: false,
   onCreateClick: null,
-  onDeleteClick: null,
   onEditClick: null,
 };
 
@@ -187,7 +158,6 @@ ExperimentForm.propTypes = {
   isUsedInLocation: PropTypes.bool,
   onCreateClick: PropTypes.func,
   onCancelClick: PropTypes.func.isRequired,
-  onDeleteClick: PropTypes.func,
   onEditClick: PropTypes.func,
 };
 

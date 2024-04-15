@@ -75,7 +75,6 @@ const ContentGroupCard = ({
           isUsedInLocation={isUsedInLocation}
           overrideValue={name}
           onCancelClick={switchOffEditMode}
-          onDeleteClick={openDeleteModal}
           onEditClick={(values) => handleEditGroup(id, values, switchOffEditMode)}
         />
       ) : (

@@ -26,27 +26,30 @@ const TitleButton = ({
       onClick={onTitleClick}
     >
       <div className="configuration-card-header__title">
-        <h3><Truncate lines={1}>{name}</Truncate></h3>
+        <h3>
+          <Truncate lines={1}>{name}</Truncate>
+        </h3>
         <span className="x-small text-gray-500">
           {formatMessage(messages.titleId, { id })}
         </span>
       </div>
       {!isExpanded && (
-        <Stack gap={2.5} direction="horizontal">
-          {getCombinedBadgeList(
-            usage,
-            group,
-            isExperiment,
-            formatMessage,
-          ).map((badge) => (
-            <Badge
-              key={badge}
-              className="configuration-card-header__badge"
-              data-testid="configuration-card-header__badge"
-            >
-              <span className="small">{badge}</span>
-            </Badge>
-          ))}
+        <Stack
+          gap={2.5}
+          direction="horizontal"
+          data-testid="configuration-card-header-button-usage"
+        >
+          {getCombinedBadgeList(usage, group, isExperiment, formatMessage).map(
+            (badge) => (
+              <Badge
+                key={badge}
+                className="configuration-card-header__badge"
+                data-testid="configuration-card-header__badge"
+              >
+                <span className="small">{badge}</span>
+              </Badge>
+            ),
+          )}
         </Stack>
       )}
     </Button>

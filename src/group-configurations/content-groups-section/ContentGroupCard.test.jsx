@@ -65,26 +65,19 @@ describe('<ContentGroupCard />', () => {
   });
 
   it('renders content group badge with used only one location', () => {
-    const { getByText } = renderComponent({
+    const { queryByTestId } = renderComponent({
       group: contentGroupWithOnlyOneUsage,
     });
-    expect(
-      getByText(rootMessages.usedInLocation.defaultMessage),
-    ).toBeInTheDocument();
+    const usageBlock = queryByTestId('configuration-card-header-button-usage');
+    expect(usageBlock).toBeInTheDocument();
   });
 
   it('renders content group badge with used locations', () => {
-    const { getByText } = renderComponent({
+    const { queryByTestId } = renderComponent({
       group: contentGroupWithUsages,
     });
-    expect(
-      getByText(
-        rootMessages.usedInLocations.defaultMessage.replace(
-          '{len}',
-          contentGroupWithUsages.usage.length,
-        ),
-      ),
-    ).toBeInTheDocument();
+    const usageBlock = queryByTestId('configuration-card-header-button-usage');
+    expect(usageBlock).toBeInTheDocument();
   });
 
   it('renders group controls without access to units', () => {

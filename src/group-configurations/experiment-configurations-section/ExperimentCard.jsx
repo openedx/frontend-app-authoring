@@ -92,7 +92,6 @@ const ExperimentCard = ({
           isUsedInLocation={isUsedInLocation}
           onCreateClick={onCreate}
           onCancelClick={switchOffEditMode}
-          onDeleteClick={openDeleteModal}
           onEditClick={handleEditConfiguration}
         />
       ) : (

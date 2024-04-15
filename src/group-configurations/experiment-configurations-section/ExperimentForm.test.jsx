@@ -1,6 +1,6 @@
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import userEvent from '@testing-library/user-event';
-import { render, waitFor, within } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 
 import { experimentGroupConfigurationsMock } from '../__mocks__';
 import messages from './messages';
@@ -9,7 +9,6 @@ import ExperimentForm from './ExperimentForm';
 
 const onCreateClickMock = jest.fn();
 const onCancelClickMock = jest.fn();
-const onDeleteClickMock = jest.fn();
 const onEditClickMock = jest.fn();
 
 const experimentConfiguration = experimentGroupConfigurationsMock[0];
@@ -20,7 +19,6 @@ const renderComponent = (props = {}) => render(
       initialValues={initialExperimentConfiguration}
       onCreateClick={onCreateClickMock}
       onCancelClick={onCancelClickMock}
-      onDeleteClick={onDeleteClickMock}
       onEditClick={onEditClickMock}
       {...props}
     />
@@ -69,20 +67,14 @@ describe('<ExperimentForm />', () => {
   });
 
   it('shows alert if group is used in location with edit mode', () => {
-    const { getByText, getByTestId } = renderComponent({
+    const { getByText } = renderComponent({
       isEditMode: true,
       initialValues: experimentConfiguration,
       isUsedInLocation: true,
     });
-    const deleteButton = within(
-      getByTestId('experiment-configuration-actions'),
-    ).getByRole('button', {
-      name: messages.actionDelete.defaultMessage,
-    });
     expect(
       getByText(messages.experimentConfigurationAlert.defaultMessage),
     ).toBeInTheDocument();
-    expect(deleteButton).toBeDisabled();
   });
 
   it('calls onCreateClick when the "Create" button is clicked with a valid form', async () => {
@@ -229,22 +221,6 @@ describe('<ExperimentForm />', () => {
     await waitFor(() => {
       expect(onEditClickMock).toHaveBeenCalledTimes(1);
     });
-  });
-
-  it('calls onDeleteClick when the "Delete" button is clicked', async () => {
-    const { getByTestId } = renderComponent({
-      isEditMode: true,
-      initialValues: experimentConfiguration,
-    });
-    const deleteButton = within(
-      getByTestId('experiment-configuration-actions'),
-    ).getByRole('button', {
-      name: messages.actionDelete.defaultMessage,
-    });
-    expect(deleteButton).toBeInTheDocument();
-    userEvent.click(deleteButton);
-
-    expect(onDeleteClickMock).toHaveBeenCalledTimes(1);
   });
 
   it('calls onCancelClick when the "Cancel" button is clicked', async () => {

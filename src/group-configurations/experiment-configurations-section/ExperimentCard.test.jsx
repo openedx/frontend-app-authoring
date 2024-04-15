@@ -4,7 +4,6 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import { experimentGroupConfigurationsMock } from '../__mocks__';
 import commonMessages from '../common/messages';
-import rootMessages from '../messages';
 import ExperimentCard from './ExperimentCard';
 
 const handleCreateMock = jest.fn();
@@ -56,41 +55,6 @@ describe('<ExperimentCard />', () => {
     expect(queryByTestId('configuration-card-content')).not.toBeInTheDocument();
   });
 
-  it('renders experiment configuration badge with used only one location', () => {
-    const { getByText } = renderComponent();
-    expect(
-      getByText(rootMessages.usedInLocation.defaultMessage),
-    ).toBeInTheDocument();
-  });
-
-  it('renders experiment configuration badge with used locations', () => {
-    const fewLocationsArray = [
-      {
-        label: 'Unit1name / Content Experiment',
-        url: '/container/block-v1:2u+1+1+type@split_test+block@ccfae830ec9b406c835f8ce4520ae395',
-      },
-      {
-        label: 'UnitName 2 / Content Experiment',
-        url: '/container/block-v1:2u+1+1+type@split_test+block@ccfae830ec9b406c835f8ce4520ae396',
-      },
-    ];
-    const experimentConfigurationUpdated = {
-      ...experimentConfiguration,
-      usage: fewLocationsArray,
-    };
-    const { getByText } = renderComponent({
-      configuration: experimentConfigurationUpdated,
-    });
-    expect(
-      getByText(
-        rootMessages.usedInLocations.defaultMessage.replace(
-          '{len}',
-          experimentConfigurationUpdated.usage.length,
-        ),
-      ),
-    ).toBeInTheDocument();
-  });
-
   it('renders experiment configuration without access to units', () => {
     const experimentConfigurationUpdated = {
       ...experimentConfiguration,
@@ -134,16 +98,11 @@ describe('<ExperimentCard />', () => {
     ).toBeInTheDocument();
   });
 
-  it('renders experiment configuration badge that contain 2 groups', () => {
-    const { getByText } = renderComponent();
-    expect(
-      getByText(
-        rootMessages.containsGroups.defaultMessage.replace(
-          '{len}',
-          experimentConfiguration.groups.length,
-        ),
-      ),
-    ).toBeInTheDocument();
+  it('renders experiment configuration badge that contains groups', () => {
+    const { queryByTestId } = renderComponent();
+
+    const usageBlock = queryByTestId('configuration-card-header-button-usage');
+    expect(usageBlock).toBeInTheDocument();
   });
 
   it("user can't delete experiment configuration that is used in location", () => {

@@ -20,9 +20,7 @@ const getGroupsCountMessage = (items, formatMessage) => {
     return [];
   }
 
-  const messageKey = items.length === 1 ? messages.containsGroup : messages.containsGroups;
-  const message = formatMessage(messageKey, { len: items.length });
-  return [message];
+  return [formatMessage(messages.containsGroups, { len: items.length })];
 };
 
 /**
@@ -36,10 +34,7 @@ const getUsageCountMessage = (items, formatMessage) => {
     return [formatMessage(messages.notInUse)];
   }
 
-  const message = items.length === 1
-    ? formatMessage(messages.usedInLocation)
-    : formatMessage(messages.usedInLocations, { len: items.length });
-  return [message];
+  return [formatMessage(messages.usedInLocations, { len: items.length })];
 };
 
 /**

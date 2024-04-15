@@ -7,8 +7,6 @@ import {
   ActionRow,
   Button,
   Form,
-  OverlayTrigger,
-  Tooltip,
 } from '@openedx/paragon';
 
 import { WarningFilled as WarningFilledIcon } from '@openedx/paragon/icons';
@@ -24,7 +22,6 @@ const ContentGroupForm = ({
   overrideValue,
   onCreateClick,
   onCancelClick,
-  onDeleteClick,
   onEditClick,
 }) => {
   const { formatMessage } = useIntl();
@@ -86,30 +83,6 @@ const ContentGroupForm = ({
                 </Alert>
               )}
               <ActionRow>
-                {isEditMode && (
-                  <OverlayTrigger
-                    overlay={(
-                      <Tooltip
-                        id={`delete-restriction-tooltip-${values.newGroupName}`}
-                      >
-                        {formatMessage(
-                          isUsedInLocation
-                            ? messages.deleteRestriction
-                            : messages.deleteButton,
-                        )}
-                      </Tooltip>
-                    )}
-                  >
-                    <Button
-                      disabled={isUsedInLocation}
-                      variant="outline-primary"
-                      onClick={onDeleteClick}
-                    >
-                      {formatMessage(messages.deleteButton)}
-                    </Button>
-                  </OverlayTrigger>
-                )}
-                <ActionRow.Spacer />
                 <Button onClick={onCancelClick} variant="tertiary">
                   {formatMessage(messages.cancelButton)}
                 </Button>
@@ -134,7 +107,6 @@ ContentGroupForm.defaultProps = {
   isEditMode: false,
   isUsedInLocation: false,
   onCreateClick: null,
-  onDeleteClick: null,
   onEditClick: null,
 };
 
@@ -145,7 +117,6 @@ ContentGroupForm.propTypes = {
   overrideValue: PropTypes.string,
   onCreateClick: PropTypes.func,
   onCancelClick: PropTypes.func.isRequired,
-  onDeleteClick: PropTypes.func,
   onEditClick: PropTypes.func,
 };
 
