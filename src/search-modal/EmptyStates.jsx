@@ -9,19 +9,11 @@ import EmptySearchImage from './images/empty-search.svg';
 import NoResultImage from './images/no-results.svg';
 import messages from './messages';
 
-const EmptySearch = () => (
+const InfoMessage = ({ title, subtitle, image }) => (
   <Stack className="d-flex mt-6 align-items-center">
-    <p className="fs-large"> <FormattedMessage {...messages.emptySearchTitle} /> </p>
-    <p className="small text-muted"> <FormattedMessage {...messages.emptySearchSubtitle} /> </p>
-    <img src={EmptySearchImage} alt="" />
-  </Stack>
-);
-
-const NoResults = () => (
-  <Stack className="d-flex mt-6 align-items-center">
-    <p className="fs-large"> <FormattedMessage {...messages.noResultsTitle} /> </p>
-    <p className="small text-muted"> <FormattedMessage {...messages.noResultsSubtitle} /> </p>
-    <img src={NoResultImage} alt="" />
+    <p className="lead"> <FormattedMessage {...title} /> </p>
+    <p className="small text-muted"> <FormattedMessage {...subtitle} /> </p>
+    <img src={image} alt="" />
   </Stack>
 );
 
@@ -38,10 +30,22 @@ const EmptyStates = ({ children }) => {
 
   if (!hasQuery && !hasFiltersApplied) {
     // We haven't started the search yet. Display the "start your search" empty state
-    return <EmptySearch />;
+    return (
+      <InfoMessage
+        title={messages.emptySearchTitle}
+        subtitle={messages.emptySearchSubtitle}
+        image={EmptySearchImage}
+      />
+    );
   }
   if (nbHits === 0) {
-    return <NoResults />;
+    return (
+      <InfoMessage
+        title={messages.noResultsTitle}
+        subtitle={messages.noResultsSubtitle}
+        image={NoResultImage}
+      />
+    );
   }
 
   return children;
