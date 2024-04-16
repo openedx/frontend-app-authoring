@@ -135,6 +135,16 @@ const messages = defineMessages({
     defaultMessage: 'Show more',
     description: 'Show more tags / filter options',
   },
+  showMoreResults: {
+    id: 'course-authoring.course-search.showMoreResults',
+    defaultMessage: 'Show more results',
+    description: 'Show more results - a button to add to the list of results by loading more from the server',
+  },
+  loadingMoreResults: {
+    id: 'course-authoring.course-search.loadingMoreResults',
+    defaultMessage: 'Loading more results',
+    description: 'Loading more results - the button displays this message while more results are loading',
+  },
 });
 
 export default messages;

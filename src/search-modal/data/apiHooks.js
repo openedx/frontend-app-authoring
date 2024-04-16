@@ -1,6 +1,6 @@
 // @ts-check
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 import {
   TAG_SEP,
@@ -44,8 +44,8 @@ export const useContentSearchResults = ({
   searchKeywords,
   blockTypesFilter,
   tagsFilter,
-}) => (
-  useQuery({
+}) => {
+  const query = useInfiniteQuery({
     enabled: client !== undefined && indexName !== undefined,
     queryKey: [
       'content_search',
@@ -58,7 +58,7 @@ export const useContentSearchResults = ({
       blockTypesFilter,
       tagsFilter,
     ],
-    queryFn: () => {
+    queryFn: ({ pageParam = 0 }) => {
       if (client === undefined || indexName === undefined) {
         throw new Error('Required data unexpectedly undefined. Check "enable" condition of useQuery.');
       }
@@ -69,12 +69,38 @@ export const useContentSearchResults = ({
         searchKeywords,
         blockTypesFilter,
         tagsFilter,
+        // For infinite pagination of results, we can retrieve additional pages if requested.
+        // Note that if there are 20 results per page, the "second page" has offset=20, not 2.
+        offset: pageParam,
       });
     },
+    getNextPageParam: (lastPage) => lastPage.nextOffset,
     // Avoid flickering results when user is typing... keep old results until new is available.
     keepPreviousData: true,
-  })
-);
+  });
+
+  const pages = query.data?.pages;
+  const hits = React.useMemo(
+    () => pages?.reduce((alllHits, page) => [...alllHits, ...page.hits], []) ?? [],
+    [pages],
+  );
+
+  return {
+    hits,
+    // The distribution of block type filter options
+    blockTypes: pages?.[0]?.blockTypes ?? {},
+    status: query.status,
+    isFetching: query.isFetching,
+    isFetchingNextPage: query.isFetchingNextPage,
+    // Call this to load more pages. We include some "safety" features recommended by the docs: this should never be
+    // called while already fetching a page, and parameters (like 'event') should not be passed into fetchNextPage().
+    // See https://tanstack.com/query/v4/docs/framework/react/guides/infinite-queries
+    fetchNextPage: () => { if (!query.isFetching && !query.isFetchingNextPage) { query.fetchNextPage(); } },
+    hasNextPage: query.hasNextPage,
+    // The last page has the most accurate count of total hits
+    totalHits: pages?.[pages.length - 1]?.totalHits ?? 0,
+  };
+};
 
 /**
  * Get the available tags that can be used to refine a search, based on the search filters applied so far.

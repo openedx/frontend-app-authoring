@@ -27,6 +27,10 @@ import { useContentSearchConnection, useContentSearchResults } from '../data/api
  *   clearFilters: () => void,
  *   hits: import('../data/api').ContentHit[],
  *   totalHits: number,
+ *   isFetching: boolean,
+ *   hasNextPage: boolean | undefined,
+ *   isFetchingNextPage: boolean,
+ *   fetchNextPage: () => void,
  * }>}
  */
 const SearchContext = /** @type {any} */(React.createContext(undefined));
@@ -74,13 +78,9 @@ export const SearchContextProvider = ({ extraFilter, children }) => {
       tagsFilter,
       setTagsFilter,
       extraFilter,
-      // This is the list of _available_ block types to filter, e.g. {"problem": 3, "html": 2}
-      blockTypes: result.data?.blockTypes ?? {},
       canClearFilters,
       clearFilters,
-      // The results:
-      hits: result.data?.hits ?? [],
-      totalHits: result.data?.totalHits ?? 0,
+      ...result,
     },
   }, children);
 };

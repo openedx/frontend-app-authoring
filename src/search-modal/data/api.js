@@ -109,9 +109,11 @@ function formatSearchHit(hit) {
  *   blockTypesFilter?: string[],
  *   tagsFilter?: string[],
  *   extraFilter?: import('meilisearch').Filter,
+ *   offset?: number,
  * }} context
  * @returns {Promise<{
  *   hits: ContentHit[],
+ *   nextOffset: number|undefined,
  *   totalHits: number,
  *   blockTypes: Record<string, number>,
  * }>}
@@ -124,6 +126,8 @@ export async function fetchSearchResults({
   /** The full path of tags that each result MUST have, e.g. ["Difficulty > Hard", "Subject > Math"] */
   tagsFilter,
   extraFilter,
+  /** How many results to skip, e.g. if limit=20 then passing offset=20 gets the second page. */
+  offset = 0,
 }) {
   /** @type {import('meilisearch').MultiSearchQuery[]} */
   const queries = [];
@@ -134,6 +138,8 @@ export async function fetchSearchResults({
   const blockTypesFilterFormatted = blockTypesFilter?.length ? [blockTypesFilter.map(bt => `block_type = ${bt}`)] : [];
 
   const tagsFilterFormatted = formatTagsFilter(tagsFilter);
+
+  const limit = 20; // How many results to retrieve per page.
 
   // First query is always to get the hits, with all the filters applied.
   queries.push({
@@ -149,6 +155,8 @@ export async function fetchSearchResults({
     attributesToHighlight: ['display_name', 'content'],
     highlightPreTag: '<mark>',
     highlightPostTag: '</mark>',
+    offset,
+    limit,
   });
 
   // The second query is to get the possible values for the "block types" filter
@@ -169,6 +177,7 @@ export async function fetchSearchResults({
     hits: results[0].hits.map(formatSearchHit),
     totalHits: results[0].totalHits ?? results[0].estimatedTotalHits ?? results[0].hits.length,
     blockTypes: results[1].facetDistribution?.block_type ?? {},
+    nextOffset: results[0].hits.length === limit ? offset + limit : undefined,
   };
 }
 
