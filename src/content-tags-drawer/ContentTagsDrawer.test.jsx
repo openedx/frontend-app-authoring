@@ -19,6 +19,7 @@ import {
 } from './data/apiHooks';
 import { getTaxonomyListData } from '../taxonomy/data/api';
 import messages from './messages';
+import { ContentTagsDrawerSheetContext } from './common/context';
 
 const contentId = 'block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@7f47fe2dbcaf47c5a071671c741fe1ab';
 const mockOnClose = jest.fn();
@@ -61,15 +62,18 @@ jest.mock('../taxonomy/data/api', () => ({
 const queryClient = new QueryClient();
 
 const RootWrapper = (params) => (
-  <IntlProvider locale="en" messages={{}}>
-    <QueryClientProvider client={queryClient}>
-      <ContentTagsDrawer {...params} />
-    </QueryClientProvider>
-  </IntlProvider>
+  <ContentTagsDrawerSheetContext.Provider value={params}>
+    <IntlProvider locale="en" messages={{}}>
+      <QueryClientProvider client={queryClient}>
+        <ContentTagsDrawer {...params} />
+      </QueryClientProvider>
+    </IntlProvider>
+  </ContentTagsDrawerSheetContext.Provider>
 );
 
 describe('<ContentTagsDrawer />', () => {
   beforeEach(async () => {
+    jest.clearAllMocks();
     await queryClient.resetQueries();
     // By default, we mock the API call with a promise that never resolves.
     // You can override this in specific test.
@@ -749,6 +753,16 @@ describe('<ContentTagsDrawer />', () => {
     postMessageSpy.mockRestore();
   });
 
+  it('should call `onClose` when Escape key is pressed and no selectable box is active', () => {
+    const { container } = render(<RootWrapper onClose={mockOnClose} />);
+
+    fireEvent.keyDown(container, {
+      key: 'Escape',
+    });
+
+    expect(mockOnClose).toHaveBeenCalled();
+  });
+
   it('should not call closeManageTagsDrawer when Escape key is pressed and a selectable box is active', () => {
     const postMessageSpy = jest.spyOn(window.parent, 'postMessage');
 
@@ -769,6 +783,46 @@ describe('<ContentTagsDrawer />', () => {
     document.body.removeChild(selectableBox);
 
     postMessageSpy.mockRestore();
+  });
+
+  it('should not call `onClose` when Escape key is pressed and a selectable box is active', () => {
+    const { container } = render(<RootWrapper onClose={mockOnClose} />);
+
+    // Simulate that the selectable box is open by adding an element with the data attribute
+    const selectableBox = document.createElement('div');
+    selectableBox.setAttribute('data-selectable-box', 'taxonomy-tags');
+    document.body.appendChild(selectableBox);
+
+    fireEvent.keyDown(container, {
+      key: 'Escape',
+    });
+
+    expect(mockOnClose).not.toHaveBeenCalled();
+
+    // Remove the added element
+    document.body.removeChild(selectableBox);
+  });
+
+  it('should not call closeManageTagsDrawer when Escape key is pressed and container is blocked', () => {
+    const postMessageSpy = jest.spyOn(window.parent, 'postMessage');
+
+    const { container } = render(<RootWrapper blockingSheet />);
+    fireEvent.keyDown(container, {
+      key: 'Escape',
+    });
+
+    expect(postMessageSpy).not.toHaveBeenCalled();
+
+    postMessageSpy.mockRestore();
+  });
+
+  it('should not call `onClose` when Escape key is pressed and container is blocked', () => {
+    const { container } = render(<RootWrapper blockingSheet onClose={mockOnClose} />);
+    fireEvent.keyDown(container, {
+      key: 'Escape',
+    });
+
+    expect(mockOnClose).not.toHaveBeenCalled();
   });
 
   it('should call `updateTags` mutation on save', async () => {

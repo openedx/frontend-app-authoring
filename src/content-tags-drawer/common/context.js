@@ -35,3 +35,9 @@ export const ContentTagsDrawerContext = React.createContext({
   closeToast: /** @type{() => void} */ (() => {}),
   setCollapsibleToInitalState: /** @type{() => void} */ (() => {}),
 });
+
+/* istanbul ignore next */
+export const ContentTagsDrawerSheetContext = React.createContext({
+  blockingSheet: /** @type{boolean} */ (false),
+  setBlockingSheet: /** @type{Function} */ (() => {}),
+});
