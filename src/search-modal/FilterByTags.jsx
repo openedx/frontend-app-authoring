@@ -11,7 +11,7 @@ import {
   MenuItem,
   SearchField,
 } from '@openedx/paragon';
-import { ArrowDropDown, ArrowDropUp } from '@openedx/paragon/icons';
+import { ArrowDropDown, ArrowDropUp, Warning } from '@openedx/paragon/icons';
 import SearchFilterWidget from './SearchFilterWidget';
 import messages from './messages';
 import { useSearchContext } from './manager/SearchManager';
@@ -97,7 +97,7 @@ const TagOptions = ({
   toggleTagChildren,
 }) => {
   const searchContext = useSearchContext();
-  const { data: tagOptions, isLoading, isError } = useTagFilterOptions({
+  const { data, isLoading, isError } = useTagFilterOptions({
     ...searchContext,
     parentTagPath,
     tagSearchKeywords,
@@ -106,19 +106,19 @@ const TagOptions = ({
   if (isError) {
     return <MenuItem disabled><FormattedMessage {...messages['blockTagsFilter.error']} /></MenuItem>;
   }
-  if (isLoading || tagOptions === undefined) {
+  if (isLoading || data.tags === undefined) {
     return <LoadingSpinner />;
   }
 
   // Show a message if there are no options at all to avoid the impression that the dropdown isn't working
-  if (Object.keys(tagOptions).length === 0 && !parentTagPath) {
+  if (data.tags.length === 0 && !parentTagPath) {
     return <MenuItem disabled><FormattedMessage {...messages['blockTagsFilter.empty']} /></MenuItem>;
   }
 
   return (
     <div role="group">
       {
-        tagOptions.map(({ tagName, tagPath, ...t }) => {
+        data.tags.map(({ tagName, tagPath, ...t }) => {
           const isExpanded = expandedTags.includes(tagPath);
           return (
             <React.Fragment key={tagName}>
@@ -150,6 +150,15 @@ const TagOptions = ({
             </React.Fragment>
           );
         })
+      }
+      {
+        // Sometimes, due to limitations of how the search index/API works, we aren't able to retrieve all the options:
+        data.mayBeMissingResults
+          ? (
+            <MenuItem iconBefore={Warning} disabled>
+              <FormattedMessage {...messages['blockTagsFilter.incomplete']} />
+            </MenuItem>
+          ) : null
       }
     </div>
   );

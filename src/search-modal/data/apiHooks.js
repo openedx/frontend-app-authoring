@@ -167,13 +167,13 @@ export const useTagFilterOptions = (args) => {
     if (!args.tagSearchKeywords || !tagKeywordSearchData.data) {
       // If there's no keyword search being used to filter the list of available tags, just use the results of the
       // main query.
-      return mainQuery.data;
+      return { tags: mainQuery.data?.tags, mayBeMissingResults: mainQuery.data?.mayBeMissingResults ?? false };
     }
     if (mainQuery.data === undefined) {
-      return undefined;
+      return { tags: undefined, mayBeMissingResults: false };
     }
     // Combine these two queries to filter the list of tags based on the keyword search.
-    return mainQuery.data.filter(({ tagPath }) => {
+    const tags = mainQuery.data.tags.filter(({ tagPath }) => {
       // eslint-disable-next-line no-restricted-syntax
       for (const matchingTag of tagKeywordSearchData.data.matches) {
         if (matchingTag.tagPath === tagPath || matchingTag.tagPath.startsWith(tagPath + TAG_SEP)) {
@@ -182,6 +182,10 @@ export const useTagFilterOptions = (args) => {
       }
       return false;
     });
+    return {
+      tags,
+      mayBeMissingResults: mainQuery.data.mayBeMissingResults || tagKeywordSearchData.data.mayBeMissingResults,
+    };
   }, [mainQuery.data, tagKeywordSearchData.data]);
 
   return { ...mainQuery, data };

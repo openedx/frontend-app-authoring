@@ -30,6 +30,11 @@ const messages = defineMessages({
     defaultMessage: 'Error loading tags',
     description: 'Label shown when the tags could not be loaded',
   },
+  'blockTagsFilter.incomplete': {
+    id: 'course-authoring.course-search.blockTagsFilter.incomplete',
+    defaultMessage: 'Sorry, not all tags could be loaded',
+    description: 'Label shown when the system is not able to display all of the available tag options.',
+  },
   'blockType.annotatable': {
     id: 'course-authoring.course-search.blockType.annotatable',
     defaultMessage: 'Annotation',

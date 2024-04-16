@@ -192,7 +192,10 @@ export async function fetchSearchResults({
  * @param {string[]} [context.blockTypesFilter] Filter to only include these block types e.g. ["problem", "html"]
  * @param {import('meilisearch').Filter} [context.extraFilter] Any other filters to apply, e.g. course ID.
  * @param {string} [context.parentTagPath] Only fetch tags below this parent tag/taxonomy e.g. "Places > North America"
- * @returns {Promise<{tagName: string, tagPath: string, tagCount: number, hasChildren: boolean}[]>}
+ * @returns {Promise<{
+ *   tags: {tagName: string, tagPath: string, tagCount: number, hasChildren: boolean}[];
+ *   mayBeMissingResults: boolean;
+ * }>}
  */
 export async function fetchAvailableTagOptions({
   client,
@@ -203,6 +206,8 @@ export async function fetchAvailableTagOptions({
   parentTagPath,
   // Ideally this would include 'tagSearchKeywords' to filter the tag tree by keyword search but that's not possible yet
 }) {
+  const meilisearchFacetLimit = 100; // The 'maxValuesPerFacet' on the index. For Open edX we leave the default, 100.
+
   // Convert 'extraFilter' into an array
   const extraFilterFormatted = forceArray(extraFilter);
 
@@ -225,17 +230,11 @@ export async function fetchAvailableTagOptions({
     parentFilter = [`${parentFacetName} = "${parentTagPath}"`];
   }
 
-  const { facetDistribution } = await client.index(indexName).search(searchKeywords, {
-    facets: [facetName],
-    filter: [...extraFilterFormatted, ...blockTypesFilterFormatted, ...parentFilter],
-    limit: 0,
-  });
-  if (facetDistribution === undefined) {
-    throw new Error('Unexpectedly missing facetDistribution in Meilisearch result');
-  }
-
+  // Now load the facet values. Doing it with this API gives us much more flexibility in loading than if we just
+  // requested the facets by passing { facets: ["tags"] } into the main search request; that works fine for loading the
+  // root tags but can't load specific child tags like we can using this approach.
   /** @type {{tagName: string, tagPath: string, tagCount: number, hasChildren: boolean}[]} */
-  const tagData = [];
+  const tags = [];
   const { facetHits } = await client.index(indexName).searchForFacetValues({
     facetName,
     // It's not super clear in the documentation, but facetQuery is basically a "startsWith" query, which is what we
@@ -248,7 +247,7 @@ export async function fetchAvailableTagOptions({
   });
   facetHits.forEach(({ value: tagPath, count: tagCount }) => {
     if (!parentTagPath) {
-      tagData.push({
+      tags.push({
         tagName: tagPath,
         tagPath,
         tagCount,
@@ -258,7 +257,7 @@ export async function fetchAvailableTagOptions({
       const parts = tagPath.split(TAG_SEP);
       const tagName = parts[parts.length - 1];
       if (tagPath === `${parentTagPath}${TAG_SEP}${tagName}`) {
-        tagData.push({
+        tags.push({
           tagName,
           tagPath,
           tagCount,
@@ -278,14 +277,13 @@ export async function fetchAvailableTagOptions({
       q: searchKeywords,
       filter: [...extraFilterFormatted, ...blockTypesFilterFormatted, ...parentFilter],
     });
-    const meilisearchFacetLimit = 100; // The 'maxValuesPerFacet' on the index. For Open edX we leave the default, 100.
     if (childFacetHits.length >= meilisearchFacetLimit) {
       // Assume they all have child tags; we can't retrieve more than 100 facet values (per Meilisearch docs) so
       // we can't say for sure on a tag-by-tag basis, but we know that at least some of them have children, so
       // it's a safe bet that most/all of them have children. And it's not a huge problem if we say they have children
       // but they don't.
       // eslint-disable-next-line no-param-reassign
-      tagData.forEach((t) => { t.hasChildren = true; });
+      tags.forEach((t) => { t.hasChildren = true; });
     } else if (childFacetHits.length > 0) {
       // Some (or maybe all) of these tags have child tags. Let's figure out which ones exactly.
       /** @type {Set<string>} */
@@ -296,11 +294,13 @@ export async function fetchAvailableTagOptions({
         tagsWithChildren.add(tagPath);
       });
       // eslint-disable-next-line no-param-reassign
-      tagData.forEach((t) => { t.hasChildren = tagsWithChildren.has(t.tagPath); });
+      tags.forEach((t) => { t.hasChildren = tagsWithChildren.has(t.tagPath); });
     }
   }
 
-  return tagData;
+  // If we hit the limit of facetHits, there are probably even more tags, but there is no API to retrieve
+  // them (no pagination etc.), so just tell the user that not all tags could be displayed. This should be pretty rare.
+  return { tags, mayBeMissingResults: facetHits.length >= meilisearchFacetLimit };
 }
 
 /**
