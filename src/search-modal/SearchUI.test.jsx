@@ -16,6 +16,8 @@ import fetchMock from 'fetch-mock-jest';
 import initializeStore from '../store';
 // @ts-ignore
 import mockResult from './__mocks__/search-result.json';
+// @ts-ignore
+import mockEmptyResult from './__mocks__/empty-search-result.json';
 import SearchUI from './SearchUI';
 
 // mockResult contains only a single result - this one:
@@ -43,6 +45,19 @@ const Wrap = ({ children }) => (
     </IntlProvider>
   </AppProvider>
 );
+
+const returnEmptyResult = (_url, req) => {
+  const requestData = JSON.parse(req.body?.toString() ?? '');
+  const query = requestData?.queries[0]?.q ?? '';
+  // We have to replace the query (search keywords) in the mock results with the actual query,
+  // because otherwise Instantsearch will update the UI and change the query,
+  // leading to unexpected results in the test cases.
+  mockEmptyResult.results[0].query = query;
+  // And create the required '_formatted' field; not sure why it's there - seems very redundant. But it's required.
+  // eslint-disable-next-line no-underscore-dangle, no-param-reassign
+  mockEmptyResult.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
+  return mockEmptyResult;
+};
 
 describe('<SearchUI />', () => {
   beforeEach(async () => {
@@ -81,6 +96,23 @@ describe('<SearchUI />', () => {
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
     // And that message is still displayed even after the initial results/filters have loaded:
     expect(getByText('Start searching to find content')).toBeInTheDocument();
+  });
+
+  it('should render an empty state if no result found', async () => {
+    fetchMock.post(searchEndpoint, returnEmptyResult, { overwriteRoutes: true });
+    const { getByText, getByRole } = render(<Wrap><SearchUI {...defaults} /></Wrap>);
+    // Return an empty result set:
+    // Before the results have even loaded, we see this message:
+    expect(getByText('Start searching to find content')).toBeInTheDocument();
+    // When this UI loads, Instantsearch makes two queries. I think one to load the facets and one "blank" search.
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
+    // And that message is still displayed even after the initial results/filters have loaded:
+    expect(getByText('Start searching to find content')).toBeInTheDocument();
+    // Enter a keyword - search for 'noresults':
+    fireEvent.change(getByRole('searchbox'), { target: { value: 'noresults' } });
+    // Wait for the new search request to load all the results:
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(3, searchEndpoint, 'post'); });
+    expect(getByText('We didn\'t find anything matching your search')).toBeInTheDocument();
   });
 
   it('defaults to searching "All Courses" if used outside of any particular course', async () => {
