@@ -35,6 +35,13 @@ const defaults = {
 };
 const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
 
+const mockNavigate = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'), // use actual for all non-hook parts
+  useNavigate: () => mockNavigate,
+}));
+
 /** @type {React.FC<{children:React.ReactNode}>} */
 const Wrap = ({ children }) => (
   <AppProvider store={store}>
@@ -133,6 +140,20 @@ describe('<SearchUI />', () => {
     expect(getByText(mockResultDisplayName)).toBeInTheDocument();
     // Breadcrumbs showing where the result came from:
     expect(getByText('The Little Unit That Could')).toBeInTheDocument();
+
+    // Clicking the "Open in new window" button should open the result in a new window:
+    const { open } = window;
+    window.open = jest.fn();
+    fireEvent.click(getByRole('button', { name: 'Open in new window' }));
+    expect(window.open).toHaveBeenCalledWith(
+      '/course/course-v1:edx+TestCourse+24?show=block-v1%3Aedx%2BTestCourse%2B24%2Btype%40html%2Bblock%40test_html',
+      '_blank',
+    );
+    window.open = open;
+
+    // Clicking in the result should navigate to the result's URL:
+    fireEvent.click(getByRole('button', { name: /The Little Unit That Could/ }));
+    expect(mockNavigate).toHaveBeenCalledWith('/course/course-v1:edx+TestCourse+24?show=block-v1%3Aedx%2BTestCourse%2B24%2Btype%40html%2Bblock%40test_html');
   });
 
   it('defaults to searching "This Course" if used in a course', async () => {
