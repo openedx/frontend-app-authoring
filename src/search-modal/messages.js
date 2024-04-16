@@ -140,6 +140,11 @@ const messages = defineMessages({
     defaultMessage: 'Show more results',
     description: 'Show more results button label',
   },
+  openInNewWindow: {
+    id: 'course-authoring.course-search.openInNewWindow',
+    defaultMessage: 'Open in new window',
+    description: 'Alt text for the button that opens the search result in a new window',
+  },
 });
 
 export default messages;

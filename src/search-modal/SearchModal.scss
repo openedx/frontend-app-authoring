@@ -67,4 +67,16 @@
   .fs-large {
     font-size: $font-size-base * 1.25;
   }
+
+  .search-result {
+    &:hover {
+      background-color: $gray-100;
+      cursor: pointer;
+    }
+
+    &:hover.text-muted {
+      cursor: unset;
+      background-color: unset;
+    }
+  }
 }

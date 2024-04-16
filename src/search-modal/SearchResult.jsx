@@ -2,8 +2,8 @@
 // @ts-check
 import React, { useCallback, useMemo } from 'react';
 import { getConfig, getPath } from '@edx/frontend-platform';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Button,
   Icon,
   IconButton,
   Stack,
@@ -24,6 +24,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { getStudioHomeData } from '../studio-home/data/selectors';
+import messages from './messages';
 
 /**
   * @typedef {import('instantsearch.js').Hit<{
@@ -70,6 +71,7 @@ const ItemIcon = {
  * @type {React.FC<{ hit: CustomHit, closeSearch?: () => void}>}
  */
 const SearchResult = ({ hit, closeSearch }) => {
+  const intl = useIntl();
   const navigate = useNavigate();
   const { libraryAuthoringMfeUrl, redirectToLibraryAuthoringMfe } = useSelector(getStudioHomeData);
 
@@ -119,13 +121,18 @@ const SearchResult = ({ hit, closeSearch }) => {
 
   /**
     * Navigates to the context of the hit
-    * @param {React.MouseEvent} e
+    * @param {(React.MouseEvent | React.KeyboardEvent)} e
     * @returns {void}
     * */
   const navigateToContext = (e) => {
     e.stopPropagation();
 
     if (!redirectUrl) {
+      return;
+    }
+
+    // @ts-ignore Cannot use 'instanceof' with React.KeyboardEvent to narrow down the type
+    if (e.nativeEvent instanceof KeyboardEvent && e.key !== 'Enter' && e.key !== ' ') {
       return;
     }
 
@@ -139,37 +146,36 @@ const SearchResult = ({ hit, closeSearch }) => {
   };
 
   return (
-    <Button
-      variant="tertiary w-100 text-left"
+    <Stack
+      className={`border-bottom search-result p-2 align-items-start ${!redirectUrl ? 'text-muted' : ''}`}
+      direction="horizontal"
+      gap={3}
       onClick={navigateToContext}
-      disabled={!redirectUrl}
+      onKeyDown={navigateToContext}
+      tabIndex={redirectUrl ? 0 : undefined}
+      role="button"
     >
-      <Stack
-        className="border-bottom search-result p-2 w-100 align-items-start"
-        direction="horizontal"
-        gap={3}
-      >
-        <Icon className="text-muted" src={ItemIcon[hit.block_type] || Article} />
-        <Stack>
-          <div className="hit-name small">
-            <CustomHighlight attribute="display_name" hit={hit} />
-          </div>
-          <div className="hit-description x-small text-truncate">
-            <Snippet attribute="content.html_content" hit={hit} highlightedTagName="b" />
-            <Snippet attribute="content.capa_content" hit={hit} highlightedTagName="b" />
-          </div>
-          <div className="text-muted x-small">
-            <CustomHighlight attribute="breadcrumbsNames" separator=" / " hit={hit} />
-          </div>
-        </Stack>
-        <IconButton
-          src={OpenInNew}
-          iconAs={Icon}
-          disabled={!newWindowUrl}
-          onClick={openContextInNewWindow}
-        />
+      <Icon className="text-muted" src={ItemIcon[hit.block_type] || Article} />
+      <Stack>
+        <div className="hit-name small">
+          <CustomHighlight attribute="display_name" hit={hit} />
+        </div>
+        <div className="hit-description x-small text-truncate">
+          <Snippet attribute="content.html_content" hit={hit} highlightedTagName="b" />
+          <Snippet attribute="content.capa_content" hit={hit} highlightedTagName="b" />
+        </div>
+        <div className="text-muted x-small">
+          <CustomHighlight attribute="breadcrumbsNames" separator=" / " hit={hit} />
+        </div>
       </Stack>
-    </Button>
+      <IconButton
+        src={OpenInNew}
+        iconAs={Icon}
+        disabled={!newWindowUrl}
+        onClick={openContextInNewWindow}
+        alt={intl.formatMessage(messages.openInNewWindow)}
+      />
+    </Stack>
   );
 };
 
