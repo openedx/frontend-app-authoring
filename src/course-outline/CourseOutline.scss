@@ -14,14 +14,11 @@
 
 div.row:has(> div > div.highlight) {
   animation: 5s glow;
+  animation-timing-function: cubic-bezier(1, 0, .72, .04);
 }
 
 @keyframes glow {
   0% {
-    box-shadow: 0 0 5px 5px $primary-500;
-  }
-
-  90% {
     box-shadow: 0 0 5px 5px $primary-500;
   }
 
