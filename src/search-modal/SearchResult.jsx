@@ -131,8 +131,7 @@ const SearchResult = ({ hit, closeSearch }) => {
       return;
     }
 
-    // @ts-ignore Cannot use 'instanceof' with React.KeyboardEvent to narrow down the type
-    if (e.nativeEvent instanceof KeyboardEvent && e.key !== 'Enter' && e.key !== ' ') {
+    if ('key' in e && e.key !== 'Enter' && e.key !== ' ') {
       return;
     }
 
