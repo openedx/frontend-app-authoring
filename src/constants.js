@@ -66,4 +66,4 @@ export const CLIPBOARD_STATUS = {
   error: 'error',
 };
 
-export const NOT_XBLOCK_TYPES = ['vertical', 'sequential', 'chapter', 'course'];
+export const STRUCTURAL_XBLOCK_TYPES = ['vertical', 'sequential', 'chapter', 'course'];

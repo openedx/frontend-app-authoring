@@ -18,22 +18,6 @@ import addComponentMessages from './add-component/messages';
 
 export const UNIT_ICON_TYPES = ['video', 'other', 'vertical', 'problem', 'lock'];
 
-export const NOT_XBLOCK_TYPES = ['vertical', 'sequential', 'chapter', 'course'];
-
-export const STUDIO_CLIPBOARD_CHANNEL = 'studio_clipboard_channel';
-
-/**
- * Enum for clipboard status.
- * @readonly
- * @enum {string}
- */
-export const CLIPBOARD_STATUS = {
-  loading: 'loading',
-  ready: 'ready',
-  expired: 'expired',
-  error: 'error',
-};
-
 export const COMPONENT_TYPES = {
   advanced: 'advanced',
   discussion: 'discussion',

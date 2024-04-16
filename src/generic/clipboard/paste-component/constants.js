@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 
+/* eslint-disable import/prefer-default-export */
 export const clipboardPropsTypes = {
   sourceEditUrl: PropTypes.string.isRequired,
   content: PropTypes.shape({
@@ -8,5 +9,3 @@ export const clipboardPropsTypes = {
   }).isRequired,
   sourceContextTitle: PropTypes.string.isRequired,
 };
-
-export const OVERLAY_TRIGGERS = ['hover', 'focus'];

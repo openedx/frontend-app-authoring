@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   locator: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@vertical_0270f6de40fc',
   courseKey: 'course-v1:edX+L153+3T2023',
   staticFileNotices: {

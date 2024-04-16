@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { OverlayTrigger, Popover } from '@openedx/paragon';
 
 import { PopoverContent, PasteButton, WhatsInClipboard } from './components';
-import { clipboardPropsTypes, OVERLAY_TRIGGERS } from './constants';
+import { clipboardPropsTypes } from './constants';
 
 const PasteComponent = ({
   onClick, clipboardData, text, className,
@@ -36,7 +36,6 @@ const PasteComponent = ({
       <PasteButton className={className} onClick={onClick} text={text} />
       <OverlayTrigger
         show={showPopover}
-        trigger={OVERLAY_TRIGGERS}
         overlay={renderPopover}
       >
         <WhatsInClipboard

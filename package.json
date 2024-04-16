@@ -120,8 +120,5 @@
   },
   "peerDependencies": {
     "decode-uri-component": ">=0.2.2"
-  },
-  "overrides": {
-    "react-intl": "^6.4.0"
   }
 }

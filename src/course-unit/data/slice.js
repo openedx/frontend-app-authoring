@@ -17,7 +17,7 @@ const slice = createSlice({
     },
     unit: {},
     courseSectionVertical: {},
-    courseVerticalChildren: {},
+    courseVerticalChildren: { children: [], isPublished: true },
     staticFileNotices: {},
   },
   reducers: {

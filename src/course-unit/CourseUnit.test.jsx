@@ -53,7 +53,6 @@ import courseXBlockMessages from './course-xblock/messages';
 import addComponentMessages from './add-component/messages';
 import { PUBLISH_TYPES, UNIT_VISIBILITY_STATES } from './constants';
 import messages from './messages';
-import { copyToClipboard } from '../generic/data/thunks';
 import { getContentTaxonomyTagsApiUrl, getContentTaxonomyTagsCountApiUrl } from '../content-tags-drawer/data/api';
 
 let axiosMock;
@@ -1174,8 +1173,16 @@ describe('<CourseUnit />', () => {
           user_clipboard: clipboardXBlock,
         });
 
+      axiosMock
+        .onGet(getCourseUnitApiUrl(courseId))
+        .reply(200, {
+          ...courseUnitIndexMock,
+          enable_copy_paste_units: true,
+        });
+
+      await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
       await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
-      await executeThunk(copyToClipboard(blockId), store.dispatch);
+
       expect(getByRole('button', { name: messages.pasteButtonText.defaultMessage })).toBeInTheDocument();
     });
 
@@ -1191,10 +1198,6 @@ describe('<CourseUnit />', () => {
           enable_copy_paste_units: true,
         });
 
-      await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
-
-      userEvent.click(getByRole('button', { name: sidebarMessages.actionButtonCopyUnitTitle.defaultMessage }));
-
       axiosMock
         .onGet(getCourseSectionVerticalApiUrl(blockId))
         .reply(200, {
@@ -1202,9 +1205,10 @@ describe('<CourseUnit />', () => {
           user_clipboard: clipboardUnit,
         });
 
+      await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
       await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
-      await executeThunk(copyToClipboard(blockId), store.dispatch);
 
+      userEvent.click(getByRole('button', { name: sidebarMessages.actionButtonCopyUnitTitle.defaultMessage }));
       userEvent.click(getByRole('button', { name: courseSequenceMessages.pasteAsNewUnitLink.defaultMessage }));
 
       let units = null;
@@ -1252,10 +1256,6 @@ describe('<CourseUnit />', () => {
           enable_copy_paste_units: true,
         });
 
-      await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
-
-      userEvent.click(getByRole('button', { name: sidebarMessages.actionButtonCopyUnitTitle.defaultMessage }));
-
       axiosMock
         .onGet(getCourseSectionVerticalApiUrl(blockId))
         .reply(200, {
@@ -1263,9 +1263,10 @@ describe('<CourseUnit />', () => {
           user_clipboard: clipboardUnit,
         });
 
+      await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
       await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
-      await executeThunk(copyToClipboard(blockId), store.dispatch);
 
+      userEvent.click(getByRole('button', { name: sidebarMessages.actionButtonCopyUnitTitle.defaultMessage }));
       userEvent.click(getByRole('button', { name: courseSequenceMessages.pasteAsNewUnitLink.defaultMessage }));
 
       const updatedCourseSectionVerticalData = cloneDeep(courseSectionVerticalMock);
@@ -1316,10 +1317,6 @@ describe('<CourseUnit />', () => {
           enable_copy_paste_units: true,
         });
 
-      await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
-
-      userEvent.click(getByRole('button', { name: sidebarMessages.actionButtonCopyUnitTitle.defaultMessage }));
-
       axiosMock
         .onGet(getCourseSectionVerticalApiUrl(blockId))
         .reply(200, {
@@ -1327,9 +1324,10 @@ describe('<CourseUnit />', () => {
           user_clipboard: clipboardUnit,
         });
 
+      await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
       await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
-      await executeThunk(copyToClipboard(blockId), store.dispatch);
 
+      userEvent.click(getByRole('button', { name: sidebarMessages.actionButtonCopyUnitTitle.defaultMessage }));
       userEvent.click(getByRole('button', { name: courseSequenceMessages.pasteAsNewUnitLink.defaultMessage }));
 
       const updatedCourseSectionVerticalData = cloneDeep(courseSectionVerticalMock);
@@ -1380,10 +1378,6 @@ describe('<CourseUnit />', () => {
           enable_copy_paste_units: true,
         });
 
-      await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
-
-      userEvent.click(getByRole('button', { name: sidebarMessages.actionButtonCopyUnitTitle.defaultMessage }));
-
       axiosMock
         .onGet(getCourseSectionVerticalApiUrl(blockId))
         .reply(200, {
@@ -1391,9 +1385,10 @@ describe('<CourseUnit />', () => {
           user_clipboard: clipboardUnit,
         });
 
+      await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
       await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
-      await executeThunk(copyToClipboard(blockId), store.dispatch);
 
+      userEvent.click(getByRole('button', { name: sidebarMessages.actionButtonCopyUnitTitle.defaultMessage }));
       userEvent.click(getByRole('button', { name: courseSequenceMessages.pasteAsNewUnitLink.defaultMessage }));
 
       const updatedCourseSectionVerticalData = cloneDeep(courseSectionVerticalMock);

@@ -14,7 +14,7 @@ const WhatsInClipboard = ({
 
   const handleKeyDown = ({ key }) => {
     if (key === 'Tab') {
-      popoverElementRef.current.focus();
+      popoverElementRef.current?.focus();
       handlePopoverToggle(true);
     }
   };

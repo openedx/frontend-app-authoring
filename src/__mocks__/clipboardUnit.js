@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   content: {
     id: 67,
     userId: 3,
