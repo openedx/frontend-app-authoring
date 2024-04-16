@@ -50,16 +50,34 @@
               "ESDC Skills and Competencies > Work Context > Physical Work Environment > Environmental Conditions > Biological Agents"
             ]
           }
+        },
+        {
+          "display_name": "Text1",
+          "block_id": "a1fa8bdd-dc67-4976-9bf5-0ea75a9bca3d",
+          "content": {
+            "html_content": " Test "
+          },
+          "id": "lborg1libafter1htmla1fa8bdd-dc67-4976-9bf5-0ea75a9bca3d-8c5b26ce",
+          "usage_key": "lb:org1:libafter1:html:a1fa8bdd-dc67-4976-9bf5-0ea75a9bca3d",
+          "block_type": "html",
+          "context_key": "lib:org1:libafter1",
+          "org": "edx",
+          "breadcrumbs": [
+            {
+              "display_name": "libafter2"
+            }
+          ],
+          "type": "library_block"
         }
       ],
       "query": "learn",
       "processingTimeMs": 1,
       "limit": 2,
       "offset": 0,
-      "estimatedTotalHits": 1,
+      "estimatedTotalHits": 2,
       "facetDistribution": {
         "block_type": {
-          "html": 1,
+          "html": 2,
           "problem": 16,
           "vertical": 2,
           "video": 1

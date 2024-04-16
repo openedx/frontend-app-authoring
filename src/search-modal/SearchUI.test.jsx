@@ -9,6 +9,7 @@ import {
   fireEvent,
   render,
   waitFor,
+  within,
   getByLabelText as getByLabelTextIn,
 } from '@testing-library/react';
 import fetchMock from 'fetch-mock-jest';
@@ -136,15 +137,17 @@ describe('<SearchUI />', () => {
     // Now we should see the results:
     expect(queryByText('Enter a keyword')).toBeNull();
     // The result:
-    expect(getByText('1 result found')).toBeInTheDocument();
+    expect(getByText('2 results found')).toBeInTheDocument();
     expect(getByText(mockResultDisplayName)).toBeInTheDocument();
     // Breadcrumbs showing where the result came from:
     expect(getByText('The Little Unit That Could')).toBeInTheDocument();
 
+    const resultItem = getByRole('button', { name: /The Little Unit That Could/ });
+
     // Clicking the "Open in new window" button should open the result in a new window:
     const { open } = window;
     window.open = jest.fn();
-    fireEvent.click(getByRole('button', { name: 'Open in new window' }));
+    fireEvent.click(within(resultItem).getByRole('button', { name: 'Open in new window' }));
     expect(window.open).toHaveBeenCalledWith(
       '/course/course-v1:edx+TestCourse+24?show=block-v1%3Aedx%2BTestCourse%2B24%2Btype%40html%2Bblock%40test_html',
       '_blank',
@@ -152,7 +155,7 @@ describe('<SearchUI />', () => {
     window.open = open;
 
     // Clicking in the result should navigate to the result's URL:
-    fireEvent.click(getByRole('button', { name: /The Little Unit That Could/ }));
+    fireEvent.click(resultItem);
     expect(mockNavigate).toHaveBeenCalledWith('/course/course-v1:edx+TestCourse+24?show=block-v1%3Aedx%2BTestCourse%2B24%2Btype%40html%2Bblock%40test_html');
   });
 
@@ -176,7 +179,7 @@ describe('<SearchUI />', () => {
     // Now we should see the results:
     expect(queryByText('Enter a keyword')).toBeNull();
     // The result:
-    expect(getByText('1 result found')).toBeInTheDocument();
+    expect(getByText('2 results found')).toBeInTheDocument();
     expect(getByText(mockResultDisplayName)).toBeInTheDocument();
     // Breadcrumbs showing where the result came from:
     expect(getByText('The Little Unit That Could')).toBeInTheDocument();
@@ -201,7 +204,7 @@ describe('<SearchUI />', () => {
         return (requestedFilter?.length === 1); // the filter is: 'context_key = "course-v1:org+test+123"'
       });
       // Now we should see the results:
-      expect(getByText('1 result found')).toBeInTheDocument();
+      expect(getByText('2 results found')).toBeInTheDocument();
       expect(getByText(mockResultDisplayName)).toBeInTheDocument();
     });
 
