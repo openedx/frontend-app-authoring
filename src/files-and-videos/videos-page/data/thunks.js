@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { camelCase, isEmpty } from 'lodash';
 import { getConfig, camelCaseObject } from '@edx/frontend-platform';
 import { RequestStatus } from '../../../data/constants';
@@ -43,7 +44,9 @@ import { updateFileValues } from './utils';
 
 export function fetchVideos(courseId) {
   return async (dispatch) => {
-    dispatch(updateLoadingStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
+    dispatch(
+      updateLoadingStatus({ courseId, status: RequestStatus.IN_PROGRESS }),
+    );
     try {
       const { previousUploads, ...data } = await getVideos(courseId);
       dispatch(setPageSettings({ ...data }));
@@ -51,110 +54,228 @@ export function fetchVideos(courseId) {
       // If previous uploads are empty there is no need to add an empty model
       // or loop through and empty list so automatically set loading to successful
       if (isEmpty(previousUploads)) {
-        dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
+        dispatch(
+          updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }),
+        );
       } else {
         const parsedVideos = updateFileValues(previousUploads);
-        const videoIds = parsedVideos.map(video => video.id);
+        const videoIds = parsedVideos.map((video) => video.id);
         dispatch(addModels({ modelType: 'videos', models: parsedVideos }));
         dispatch(setVideoIds({ videoIds }));
-        dispatch(updateLoadingStatus({ courseId, status: RequestStatus.PARTIAL }));
-        const allUsageLocations = await getAllUsagePaths({ courseId, videoIds });
-        dispatch(updateModels({ modelType: 'videos', models: allUsageLocations }));
-        dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
+        dispatch(
+          updateLoadingStatus({ courseId, status: RequestStatus.PARTIAL }),
+        );
+        const allUsageLocations = await getAllUsagePaths({
+          courseId,
+          videoIds,
+        });
+        dispatch(
+          updateModels({ modelType: 'videos', models: allUsageLocations }),
+        );
+        dispatch(
+          updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }),
+        );
       }
     } catch (error) {
       if (error.response && error.response.status === 403) {
         dispatch(updateLoadingStatus({ status: RequestStatus.DENIED }));
       } else {
-        dispatch(updateErrors({ error: 'loading', message: 'Failed to load videos' }));
-        dispatch(updateLoadingStatus({ courseId, status: RequestStatus.FAILED }));
+        dispatch(
+          updateErrors({ error: 'loading', message: 'Failed to load videos' }),
+        );
+        dispatch(
+          updateLoadingStatus({ courseId, status: RequestStatus.FAILED }),
+        );
       }
     }
   };
 }
 
 export function resetErrors({ errorType }) {
-  return (dispatch) => { dispatch(clearErrors({ error: errorType })); };
+  return (dispatch) => {
+    dispatch(clearErrors({ error: errorType }));
+  };
 }
 
 export function updateVideoOrder(courseId, videoIds) {
   return async (dispatch) => {
-    dispatch(updateLoadingStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
+    dispatch(
+      updateLoadingStatus({ courseId, status: RequestStatus.IN_PROGRESS }),
+    );
     dispatch(setVideoIds({ videoIds }));
-    dispatch(updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
+    dispatch(
+      updateLoadingStatus({ courseId, status: RequestStatus.SUCCESSFUL }),
+    );
   };
 }
 
 export function deleteVideoFile(courseId, id) {
   return async (dispatch) => {
-    dispatch(updateEditStatus({ editType: 'delete', status: RequestStatus.IN_PROGRESS }));
+    dispatch(
+      updateEditStatus({
+        editType: 'delete',
+        status: RequestStatus.IN_PROGRESS,
+      }),
+    );
     try {
       await deleteVideo(courseId, id);
       dispatch(deleteVideoSuccess({ videoId: id }));
       dispatch(removeModel({ modelType: 'videos', id }));
-      dispatch(updateEditStatus({ editType: 'delete', status: RequestStatus.SUCCESSFUL }));
+      dispatch(
+        updateEditStatus({
+          editType: 'delete',
+          status: RequestStatus.SUCCESSFUL,
+        }),
+      );
     } catch (error) {
-      dispatch(updateErrors({ error: 'delete', message: `Failed to delete file id ${id}.` }));
-      dispatch(updateEditStatus({ editType: 'delete', status: RequestStatus.FAILED }));
+      dispatch(
+        updateErrors({
+          error: 'delete',
+          message: `Failed to delete file id ${id}.`,
+        }),
+      );
+      dispatch(
+        updateEditStatus({ editType: 'delete', status: RequestStatus.FAILED }),
+      );
     }
   };
 }
 
-export function addVideoFile(courseId, file, videoIds) {
+export function markVideoUploadsInProgressAsFailed({ uploadingIdsRef, courseId }) {
+  return (dispatch) => {
+    uploadingIdsRef.current.forEach((edxVideoId) => {
+      try {
+        sendVideoUploadStatus(
+          courseId,
+          edxVideoId || '',
+          'Upload failed',
+          'upload_failed',
+        );
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(`Failed to send "Failed" upload status for ${edxVideoId} onbeforeunload`);
+      }
+      dispatch(
+        updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }),
+      );
+    });
+    // eslint-disable-next-line no-param-reassign
+    uploadingIdsRef.current = [];
+  };
+}
+
+export function addVideoFile(
+  courseId,
+  file,
+  videoIds,
+  uploadingIdsRef,
+) {
   return async (dispatch) => {
-    dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.IN_PROGRESS }));
-    let edxVideoId; let uploadUrl;
+    dispatch(
+      updateEditStatus({ editType: 'add', status: RequestStatus.IN_PROGRESS }),
+    );
+
+    let edxVideoId;
+    let uploadUrl;
     try {
       const createUrlResponse = await addVideo(courseId, file);
       // eslint-disable-next-line
-      console.log(`Post Response: ${createUrlResponse}`);
+      console.log(`Post Response: ${JSON.stringify(createUrlResponse)}`);
       if (createUrlResponse.status < 200 || createUrlResponse.status >= 300) {
         dispatch(failAddVideo({ fileName: file.name }));
       }
       // eslint-disable-next-line prefer-destructuring
-      [{ edxVideoId, uploadUrl }] = camelCaseObject(createUrlResponse.data).files;
+      [{ edxVideoId, uploadUrl }] = camelCaseObject(
+        createUrlResponse.data,
+      ).files;
     } catch (error) {
       dispatch(failAddVideo({ fileName: file.name }));
+      updateEditStatus({ editType: 'add', status: RequestStatus.FAILED });
       return;
     }
     try {
+      uploadingIdsRef.current = [...uploadingIdsRef.current, edxVideoId];
+
       const putToServerResponse = await uploadVideo(uploadUrl, file);
-      if (putToServerResponse.status < 200 || putToServerResponse.status >= 300) {
-        throw new ServerError('Server responded with an error status', putToServerResponse.status);
+      if (
+        putToServerResponse.status < 200
+        || putToServerResponse.status >= 300
+      ) {
+        throw new ServerError(
+          'Server responded with an error status',
+          putToServerResponse.status,
+        );
       } else {
-        await sendVideoUploadStatus(courseId, edxVideoId, 'Upload completed', 'upload_completed');
+        await sendVideoUploadStatus(
+          courseId,
+          edxVideoId,
+          'Upload completed',
+          'upload_completed',
+        );
       }
+      uploadingIdsRef.current = uploadingIdsRef.current.filter(
+        (id) => id !== edxVideoId,
+      );
     } catch (error) {
       if (error.response && error.response.status === 413) {
         const message = error.response.data.error;
         dispatch(updateErrors({ error: 'add', message }));
       } else {
-        dispatch(updateErrors({ error: 'add', message: `Failed to upload ${file.name}.` }));
+        dispatch(
+          updateErrors({
+            error: 'add',
+            message: `Failed to upload ${file.name}.`,
+          }),
+        );
       }
-      await sendVideoUploadStatus(courseId, edxVideoId || '', 'Upload failed', 'upload_failed');
-      dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
+      await sendVideoUploadStatus(
+        courseId,
+        edxVideoId || '',
+        'Upload failed',
+        'upload_failed',
+      );
+      dispatch(
+        updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }),
+      );
+      uploadingIdsRef.current = uploadingIdsRef.current.filter(
+        (id) => id !== edxVideoId,
+      );
+      // return;
     }
     try {
       const { videos } = await fetchVideoList(courseId);
-      const newVideos = videos.filter(video => !videoIds.includes(video.edxVideoId));
-      const newVideoIds = newVideos.map(video => video.edxVideoId);
+      const newVideos = videos.filter(
+        (video) => !videoIds.includes(video.edxVideoId),
+      );
+      const newVideoIds = newVideos.map((video) => video.edxVideoId);
       const parsedVideos = updateFileValues(newVideos, true);
       dispatch(addModels({ modelType: 'videos', models: parsedVideos }));
       dispatch(setVideoIds({ videoIds: newVideoIds.concat(videoIds) }));
     } catch (error) {
-      dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
+      dispatch(
+        updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }),
+      );
       // eslint-disable-next-line
       console.error(`fetchVideoList failed with message: ${error.message}`);
-      dispatch(updateErrors({ error: 'add', message: 'Failed to load videos' }));
+      dispatch(
+        updateErrors({ error: 'add', message: 'Failed to load videos' }),
+      );
       return;
     }
-    dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.SUCCESSFUL }));
+    dispatch(
+      updateEditStatus({ editType: 'add', status: RequestStatus.SUCCESSFUL }),
+    );
   };
 }
 
 export function addVideoThumbnail({ file, videoId, courseId }) {
   return async (dispatch) => {
-    dispatch(updateEditStatus({ editType: 'thumbnail', status: RequestStatus.IN_PROGRESS }));
+    dispatch(
+      updateEditStatus({
+        editType: 'thumbnail',
+        status: RequestStatus.IN_PROGRESS,
+      }),
+    );
     dispatch(resetErrors({ errorType: 'thumbnail' }));
     try {
       const { imageUrl } = await addThumbnail({ courseId, videoId, file });
@@ -162,22 +283,39 @@ export function addVideoThumbnail({ file, videoId, courseId }) {
       if (thumbnail.startsWith('/')) {
         thumbnail = `${getConfig().STUDIO_BASE_URL}${imageUrl}`;
       }
-      dispatch(updateModel({
-        modelType: 'videos',
-        model: {
-          id: videoId,
-          thumbnail,
-        },
-      }));
-      dispatch(updateEditStatus({ editType: 'thumbnail', status: RequestStatus.SUCCESSFUL }));
+      dispatch(
+        updateModel({
+          modelType: 'videos',
+          model: {
+            id: videoId,
+            thumbnail,
+          },
+        }),
+      );
+      dispatch(
+        updateEditStatus({
+          editType: 'thumbnail',
+          status: RequestStatus.SUCCESSFUL,
+        }),
+      );
     } catch (error) {
       if (error.response?.data?.error) {
         const message = error.response.data.error;
         dispatch(updateErrors({ error: 'thumbnail', message }));
       } else {
-        dispatch(updateErrors({ error: 'thumbnail', message: `Failed to add thumbnail for video id ${videoId}.` }));
+        dispatch(
+          updateErrors({
+            error: 'thumbnail',
+            message: `Failed to add thumbnail for video id ${videoId}.`,
+          }),
+        );
       }
-      dispatch(updateEditStatus({ editType: 'thumbnail', status: RequestStatus.FAILED }));
+      dispatch(
+        updateEditStatus({
+          editType: 'thumbnail',
+          status: RequestStatus.FAILED,
+        }),
+      );
     }
   };
 }
@@ -189,7 +327,12 @@ export function deleteVideoTranscript({
   apiUrl,
 }) {
   return async (dispatch) => {
-    dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.IN_PROGRESS }));
+    dispatch(
+      updateEditStatus({
+        editType: 'transcript',
+        status: RequestStatus.IN_PROGRESS,
+      }),
+    );
 
     try {
       await deleteTranscript({
@@ -197,22 +340,41 @@ export function deleteVideoTranscript({
         language,
         apiUrl,
       });
-      const updatedTranscripts = transcripts.filter(transcript => transcript !== language);
+      const updatedTranscripts = transcripts.filter(
+        (transcript) => transcript !== language,
+      );
       const transcriptStatus = updatedTranscripts?.length > 0 ? 'transcribed' : 'notTranscribed';
 
-      dispatch(updateModel({
-        modelType: 'videos',
-        model: {
-          id: videoId,
-          transcripts: updatedTranscripts,
-          transcriptStatus,
-        },
-      }));
+      dispatch(
+        updateModel({
+          modelType: 'videos',
+          model: {
+            id: videoId,
+            transcripts: updatedTranscripts,
+            transcriptStatus,
+          },
+        }),
+      );
 
-      dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.SUCCESSFUL }));
+      dispatch(
+        updateEditStatus({
+          editType: 'transcript',
+          status: RequestStatus.SUCCESSFUL,
+        }),
+      );
     } catch (error) {
-      dispatch(updateErrors({ error: 'transcript', message: `Failed to delete ${language} transcript.` }));
-      dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.FAILED }));
+      dispatch(
+        updateErrors({
+          error: 'transcript',
+          message: `Failed to delete ${language} transcript.`,
+        }),
+      );
+      dispatch(
+        updateEditStatus({
+          editType: 'transcript',
+          status: RequestStatus.FAILED,
+        }),
+      );
     }
   };
 }
@@ -224,7 +386,12 @@ export function downloadVideoTranscript({
   apiUrl,
 }) {
   return async (dispatch) => {
-    dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.IN_PROGRESS }));
+    dispatch(
+      updateEditStatus({
+        editType: 'transcript',
+        status: RequestStatus.IN_PROGRESS,
+      }),
+    );
 
     try {
       await downloadTranscript({
@@ -233,10 +400,25 @@ export function downloadVideoTranscript({
         apiUrl,
         filename,
       });
-      dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.SUCCESSFUL }));
+      dispatch(
+        updateEditStatus({
+          editType: 'transcript',
+          status: RequestStatus.SUCCESSFUL,
+        }),
+      );
     } catch (error) {
-      dispatch(updateErrors({ error: 'transcript', message: `Failed to download ${filename}.` }));
-      dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.FAILED }));
+      dispatch(
+        updateErrors({
+          error: 'transcript',
+          message: `Failed to download ${filename}.`,
+        }),
+      );
+      dispatch(
+        updateEditStatus({
+          editType: 'transcript',
+          status: RequestStatus.FAILED,
+        }),
+      );
     }
   };
 }
@@ -250,7 +432,12 @@ export function uploadVideoTranscript({
   transcripts,
 }) {
   return async (dispatch) => {
-    dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.IN_PROGRESS }));
+    dispatch(
+      updateEditStatus({
+        editType: 'transcript',
+        status: RequestStatus.IN_PROGRESS,
+      }),
+    );
     const isReplacement = !isEmpty(language);
 
     try {
@@ -263,7 +450,9 @@ export function uploadVideoTranscript({
       });
       let updatedTranscripts = transcripts;
       if (isReplacement) {
-        const removeTranscript = transcripts.filter(transcript => transcript !== language);
+        const removeTranscript = transcripts.filter(
+          (transcript) => transcript !== language,
+        );
         updatedTranscripts = [...removeTranscript, newLanguage];
       } else {
         updatedTranscripts = [...transcripts, newLanguage];
@@ -271,118 +460,246 @@ export function uploadVideoTranscript({
 
       const transcriptStatus = updatedTranscripts?.length > 0 ? 'transcribed' : 'notTranscribed';
 
-      dispatch(updateModel({
-        modelType: 'videos',
-        model: {
-          id: videoId,
-          transcripts: updatedTranscripts,
-          transcriptStatus,
-        },
-      }));
+      dispatch(
+        updateModel({
+          modelType: 'videos',
+          model: {
+            id: videoId,
+            transcripts: updatedTranscripts,
+            transcriptStatus,
+          },
+        }),
+      );
 
-      dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.SUCCESSFUL }));
+      dispatch(
+        updateEditStatus({
+          editType: 'transcript',
+          status: RequestStatus.SUCCESSFUL,
+        }),
+      );
     } catch (error) {
       if (error.response?.data?.error) {
         const message = error.response.data.error;
         dispatch(updateErrors({ error: 'transcript', message }));
       } else {
-        const message = isReplacement ? `Failed to replace ${language} with ${newLanguage}.` : `Failed to add ${newLanguage}.`;
+        const message = isReplacement
+          ? `Failed to replace ${language} with ${newLanguage}.`
+          : `Failed to add ${newLanguage}.`;
         dispatch(updateErrors({ error: 'transcript', message }));
       }
-      dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.FAILED }));
+      dispatch(
+        updateEditStatus({
+          editType: 'transcript',
+          status: RequestStatus.FAILED,
+        }),
+      );
     }
   };
 }
 
 export function getUsagePaths({ video, courseId }) {
   return async (dispatch) => {
-    dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.IN_PROGRESS }));
+    dispatch(
+      updateEditStatus({
+        editType: 'usageMetrics',
+        status: RequestStatus.IN_PROGRESS,
+      }),
+    );
 
     try {
-      const { usageLocations } = await getVideoUsagePaths({ videoId: video.id, courseId });
+      const { usageLocations } = await getVideoUsagePaths({
+        videoId: video.id,
+        courseId,
+      });
       const activeStatus = usageLocations?.length > 0 ? 'active' : 'inactive';
 
-      dispatch(updateModel({
-        modelType: 'videos',
-        model: {
-          id: video.id,
-          usageLocations,
-          activeStatus,
-        },
-      }));
-      dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.SUCCESSFUL }));
+      dispatch(
+        updateModel({
+          modelType: 'videos',
+          model: {
+            id: video.id,
+            usageLocations,
+            activeStatus,
+          },
+        }),
+      );
+      dispatch(
+        updateEditStatus({
+          editType: 'usageMetrics',
+          status: RequestStatus.SUCCESSFUL,
+        }),
+      );
     } catch (error) {
-      dispatch(updateErrors({ error: 'usageMetrics', message: `Failed to get usage metrics for ${video.displayName}.` }));
-      dispatch(updateEditStatus({ editType: 'usageMetrics', status: RequestStatus.FAILED }));
+      dispatch(
+        updateErrors({
+          error: 'usageMetrics',
+          message: `Failed to get usage metrics for ${video.displayName}.`,
+        }),
+      );
+      dispatch(
+        updateEditStatus({
+          editType: 'usageMetrics',
+          status: RequestStatus.FAILED,
+        }),
+      );
     }
   };
 }
 
 export function fetchVideoDownload({ selectedRows, courseId }) {
   return async (dispatch) => {
-    dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.IN_PROGRESS }));
+    dispatch(
+      updateEditStatus({
+        editType: 'download',
+        status: RequestStatus.IN_PROGRESS,
+      }),
+    );
     try {
       const errors = await getDownload(selectedRows, courseId);
-      dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.SUCCESSFUL }));
+      dispatch(
+        updateEditStatus({
+          editType: 'download',
+          status: RequestStatus.SUCCESSFUL,
+        }),
+      );
       if (!isEmpty(errors)) {
-        errors.forEach(error => {
+        errors.forEach((error) => {
           dispatch(updateErrors({ error: 'download', message: error }));
         });
-        dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.FAILED }));
+        dispatch(
+          updateEditStatus({
+            editType: 'download',
+            status: RequestStatus.FAILED,
+          }),
+        );
       }
     } catch (error) {
-      dispatch(updateErrors({ error: 'download', message: 'Failed to download zip file of videos.' }));
-      dispatch(updateEditStatus({ editType: 'download', status: RequestStatus.FAILED }));
+      dispatch(
+        updateErrors({
+          error: 'download',
+          message: 'Failed to download zip file of videos.',
+        }),
+      );
+      dispatch(
+        updateEditStatus({
+          editType: 'download',
+          status: RequestStatus.FAILED,
+        }),
+      );
     }
   };
 }
 
 export function clearAutomatedTranscript({ courseId }) {
   return async (dispatch) => {
-    dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.IN_PROGRESS }));
+    dispatch(
+      updateEditStatus({
+        editType: 'transcript',
+        status: RequestStatus.IN_PROGRESS,
+      }),
+    );
 
     try {
       await deleteTranscriptPreferences(courseId);
       dispatch(updateTranscriptPreferenceSuccess({ modified: new Date() }));
-      dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.SUCCESSFUL }));
+      dispatch(
+        updateEditStatus({
+          editType: 'transcript',
+          status: RequestStatus.SUCCESSFUL,
+        }),
+      );
     } catch (error) {
-      dispatch(updateErrors({ error: 'transcript', message: 'Failed to update order transcripts settings.' }));
-      dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.FAILED }));
+      dispatch(
+        updateErrors({
+          error: 'transcript',
+          message: 'Failed to update order transcripts settings.',
+        }),
+      );
+      dispatch(
+        updateEditStatus({
+          editType: 'transcript',
+          status: RequestStatus.FAILED,
+        }),
+      );
     }
   };
 }
 
 export function updateTranscriptCredentials({ courseId, data }) {
   return async (dispatch) => {
-    dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.IN_PROGRESS }));
+    dispatch(
+      updateEditStatus({
+        editType: 'transcript',
+        status: RequestStatus.IN_PROGRESS,
+      }),
+    );
 
     try {
       await setTranscriptCredentials(courseId, data);
-      dispatch(updateTranscriptCredentialsSuccess({ provider: camelCase(data.provider) }));
-      dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.SUCCESSFUL }));
+      dispatch(
+        updateTranscriptCredentialsSuccess({
+          provider: camelCase(data.provider),
+        }),
+      );
+      dispatch(
+        updateEditStatus({
+          editType: 'transcript',
+          status: RequestStatus.SUCCESSFUL,
+        }),
+      );
     } catch (error) {
-      dispatch(updateErrors({ error: 'transcript', message: `Failed to update ${data.provider} credentials.` }));
-      dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.FAILED }));
+      dispatch(
+        updateErrors({
+          error: 'transcript',
+          message: `Failed to update ${data.provider} credentials.`,
+        }),
+      );
+      dispatch(
+        updateEditStatus({
+          editType: 'transcript',
+          status: RequestStatus.FAILED,
+        }),
+      );
     }
   };
 }
 
 export function updateTranscriptPreference({ courseId, data }) {
   return async (dispatch) => {
-    dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.IN_PROGRESS }));
+    dispatch(
+      updateEditStatus({
+        editType: 'transcript',
+        status: RequestStatus.IN_PROGRESS,
+      }),
+    );
 
     try {
       const preferences = await setTranscriptPreferences(courseId, data);
       dispatch(updateTranscriptPreferenceSuccess(preferences));
-      dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.SUCCESSFUL }));
+      dispatch(
+        updateEditStatus({
+          editType: 'transcript',
+          status: RequestStatus.SUCCESSFUL,
+        }),
+      );
     } catch (error) {
       if (error.response?.data?.error) {
         const message = error.response.data.error;
         dispatch(updateErrors({ error: 'transcript', message }));
       } else {
-        dispatch(updateErrors({ error: 'transcript', message: `Failed to update ${data.provider} transcripts settings.` }));
+        dispatch(
+          updateErrors({
+            error: 'transcript',
+            message: `Failed to update ${data.provider} transcripts settings.`,
+          }),
+        );
       }
-      dispatch(updateEditStatus({ editType: 'transcript', status: RequestStatus.FAILED }));
+      dispatch(
+        updateEditStatus({
+          editType: 'transcript',
+          status: RequestStatus.FAILED,
+        }),
+      );
     }
   };
 }

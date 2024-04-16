@@ -29,6 +29,18 @@ const messages = defineMessages({
     id: 'course-authoring.studio-home.archived.tab.error.message',
     defaultMessage: 'Failed to fetch archived courses. Please try again later.',
   },
+  coursesTabCourseNotFoundAlertTitle: {
+    id: 'course-authoring.studio-home.courses.tab.course.not.found.alert.title',
+    defaultMessage: 'We could not find any result',
+  },
+  coursesTabCourseNotFoundAlertMessage: {
+    id: 'course-authoring.studio-home.courses.tab.course.not.found.alert.message',
+    defaultMessage: 'There are no courses with the current filters.',
+  },
+  coursesTabCourseNotFoundAlertCleanFiltersButton: {
+    id: 'course-authoring.studio-home.courses.tab.course.not.found.alert.clean.filters.button',
+    defaultMessage: 'Clear filters',
+  },
   taxonomiesTabTitle: {
     id: 'course-authoring.studio-home.taxonomies.tab.title',
     defaultMessage: 'Taxonomies',

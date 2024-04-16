@@ -3,7 +3,13 @@ import { useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Icon, Row, Pagination } from '@openedx/paragon';
+import {
+  Icon,
+  Row,
+  Pagination,
+  Alert,
+  Button,
+} from '@openedx/paragon';
 import { Error } from '@openedx/paragon/icons';
 
 import { COURSE_CREATOR_STATES } from '../../../constants';
@@ -12,12 +18,13 @@ import { updateStudioHomeCoursesCustomParams } from '../../data/slice';
 import { fetchStudioHomeData } from '../../data/thunks';
 import CardItem from '../../card-item';
 import CollapsibleStateWithAction from '../../collapsible-state-with-action';
-import { sortAlphabeticallyArray } from '../utils';
 import ContactAdministrator from './contact-administrator';
+import CoursesFilters from './courses-filters';
 import ProcessingCourses from '../../processing-courses';
 import { LoadingSpinner } from '../../../generic/Loading';
 import AlertMessage from '../../../generic/alert-message';
 import messages from '../messages';
+import './index.scss';
 
 const CoursesTab = ({
   coursesDataItems,
@@ -37,21 +44,54 @@ const CoursesTab = ({
     courseCreatorStatus,
     optimizationEnabled,
   } = useSelector(getStudioHomeData);
-  const { currentPage } = useSelector(getStudioHomeCoursesParams);
+  const studioHomeCoursesParams = useSelector(getStudioHomeCoursesParams);
+  const { currentPage, isFiltered } = studioHomeCoursesParams;
   const hasAbilityToCreateCourse = courseCreatorStatus === COURSE_CREATOR_STATES.granted;
   const showCollapsible = [
     COURSE_CREATOR_STATES.denied,
     COURSE_CREATOR_STATES.pending,
     COURSE_CREATOR_STATES.unrequested,
   ].includes(courseCreatorStatus);
+  const locationValue = location.search ?? '';
 
   const handlePageSelected = (page) => {
-    dispatch(fetchStudioHomeData(location.search ?? '', false, { page }, true));
-    dispatch(updateStudioHomeCoursesCustomParams({ currentPage: page }));
+    const {
+      search,
+      order,
+      archivedOnly,
+      activeOnly,
+    } = studioHomeCoursesParams;
+
+    const customParams = {
+      search,
+      order,
+      archivedOnly,
+      activeOnly,
+    };
+
+    dispatch(fetchStudioHomeData(locationValue, false, { page, ...customParams }, true));
+    dispatch(updateStudioHomeCoursesCustomParams({ currentPage: page, isFiltered: true }));
   };
+
+  const handleCleanFilters = () => {
+    const customParams = {
+      currentPage: 1,
+      search: undefined,
+      order: 'display_name',
+      isFiltered: true,
+      cleanFilters: true,
+      archivedOnly: undefined,
+      activeOnly: undefined,
+    };
+
+    dispatch(fetchStudioHomeData(locationValue, false, { page: 1, order: 'display_name' }, true));
+    dispatch(updateStudioHomeCoursesCustomParams(customParams));
+  };
+
+  const isNotFilteringCourses = !isFiltered && !isLoading;
   const hasCourses = coursesDataItems?.length > 0;
 
-  if (isLoading) {
+  if (isLoading && !isFiltered) {
     return (
       <Row className="m-0 mt-4 justify-content-center">
         <LoadingSpinner />
@@ -60,21 +100,22 @@ const CoursesTab = ({
   }
 
   return (
-    isFailed ? (
+    isFailed && !isFiltered ? (
       <AlertMessage
         variant="danger"
         description={(
           <Row className="m-0 align-items-center">
             <Icon src={Error} className="text-danger-500 mr-1" />
-            <span>{intl.formatMessage(messages.courseTabErrorMessage)}</span>
+            <span data-testid="error-failed-message">{intl.formatMessage(messages.courseTabErrorMessage)}</span>
           </Row>
         )}
       />
     ) : (
-      <>
-        {isShowProcessing && <ProcessingCourses />}
-        {hasCourses && isEnabledPagination && (
-          <div className="d-flex justify-content-end">
+      <div className="courses-tab-container">
+        {isShowProcessing && !isEnabledPagination && <ProcessingCourses />}
+        {isEnabledPagination && (
+          <div className="d-flex flex-row justify-content-between my-4">
+            <CoursesFilters dispatch={dispatch} locationValue={locationValue} isLoading={isLoading} />
             <p data-testid="pagination-info">
               {intl.formatMessage(messages.coursesPaginationInfo, {
                 length: coursesDataItems.length,
@@ -85,7 +126,7 @@ const CoursesTab = ({
         )}
         {hasCourses ? (
           <>
-            {sortAlphabeticallyArray(coursesDataItems).map(
+            {coursesDataItems.map(
               ({
                 courseKey,
                 displayName,
@@ -99,6 +140,7 @@ const CoursesTab = ({
               }) => (
                 <CardItem
                   key={courseKey}
+                  courseKey={courseKey}
                   displayName={displayName}
                   lmsLink={lmsLink}
                   rerunLink={rerunLink}
@@ -122,7 +164,7 @@ const CoursesTab = ({
               />
             )}
           </>
-        ) : (!optimizationEnabled && (
+        ) : (!optimizationEnabled && isNotFilteringCourses && (
           <ContactAdministrator
             hasAbilityToCreateCourse={hasAbilityToCreateCourse}
             showNewCourseContainer={showNewCourseContainer}
@@ -130,13 +172,27 @@ const CoursesTab = ({
           />
         )
         )}
+
+        {isFiltered && !hasCourses && !isLoading && (
+          <Alert className="mt-4">
+            <Alert.Heading>
+              {intl.formatMessage(messages.coursesTabCourseNotFoundAlertTitle)}
+            </Alert.Heading>
+            <p data-testid="courses-not-found-alert">
+              {intl.formatMessage(messages.coursesTabCourseNotFoundAlertMessage)}
+            </p>
+            <Button variant="primary" onClick={handleCleanFilters}>
+              {intl.formatMessage(messages.coursesTabCourseNotFoundAlertCleanFiltersButton)}
+            </Button>
+          </Alert>
+        )}
         {showCollapsible && (
           <CollapsibleStateWithAction
             state={courseCreatorStatus}
             className="mt-3"
           />
         )}
-      </>
+      </div>
     )
   );
 };

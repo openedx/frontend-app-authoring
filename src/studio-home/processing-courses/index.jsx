@@ -13,7 +13,7 @@ const ProcessingCourses = () => {
 
   return (
     <>
-      <div className="text-gray-500 small">
+      <div className="text-gray-500 small" data-testid="processing-courses-title">
         {intl.formatMessage(messages.processingTitle)}
       </div>
       <hr />

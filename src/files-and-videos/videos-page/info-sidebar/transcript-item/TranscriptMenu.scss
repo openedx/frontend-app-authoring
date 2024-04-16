@@ -1,0 +1,17 @@
+.transcript-menu {
+  padding: 8px 0;
+  margin: 0;
+  width: 250px;
+
+  @include pgn-box-shadow(2, "down");
+
+  .pgn__menu-item {
+    width: 100%;
+    justify-content: start;
+    font-weight: 400;
+
+    &:hover {
+      background-color: $light-300;
+    }
+  }
+}

@@ -10,6 +10,7 @@ import {
   getLoadingStatuses,
   getSavingStatuses,
   getStudioHomeData,
+  getStudioHomeCoursesParams,
 } from './data/selectors';
 import { updateSavingStatuses } from './data/slice';
 
@@ -17,6 +18,8 @@ const useStudioHome = (isPaginated = false) => {
   const location = useLocation();
   const dispatch = useDispatch();
   const studioHomeData = useSelector(getStudioHomeData);
+  const studioHomeCoursesParams = useSelector(getStudioHomeCoursesParams);
+  const { isFiltered } = studioHomeCoursesParams;
   const newCourseData = useSelector(getCourseData);
   const { studioHomeLoadingStatus } = useSelector(getLoadingStatuses);
   const savingCreateRerunStatus = useSelector(getSavingStatus);
@@ -89,6 +92,7 @@ const useStudioHome = (isPaginated = false) => {
     courseCreatorSavingStatus,
     isShowOrganizationDropdown,
     hasAbilityToCreateNewCourse,
+    isFiltered,
     dispatch,
     setShowNewCourseContainer,
   };

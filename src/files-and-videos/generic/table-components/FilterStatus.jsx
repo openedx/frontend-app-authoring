@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   DataTableContext, Button, Row, Chip,
 } from '@openedx/paragon';
@@ -10,6 +10,7 @@ import { getFilters, removeFilter } from './utils';
 const FilterStatus = ({
   className, variant, size, clearFiltersText, buttonClassName,
 }) => {
+  const intl = useIntl();
   const {
     state, setAllFilters, setFilter, RowStatusComponent, columns,
   } = useContext(DataTableContext);
@@ -29,6 +30,11 @@ const FilterStatus = ({
           <Chip
             key={value}
             iconAfter={Close}
+            iconAfterAlt={intl.formatMessage({
+              id: 'pgn.DataTable.FilterStatus.removeFilter',
+              defaultMessage: 'Remove this filter',
+              description: 'Remove one of the applied filters.',
+            })}
             onIconAfterClick={() => removeFilter(value, setFilter, setAllFilters, state)}
           >
             {name}

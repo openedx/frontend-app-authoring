@@ -1,5 +1,7 @@
 @import "files-and-videos/videos-page/transcript-settings/TranscriptSettings";
 @import "files-and-videos/videos-page/VideoThumbnail";
+@import "files-and-videos/videos-page/info-sidebar/transcript-item/LanguageSelect";
+@import "files-and-videos/videos-page/info-sidebar/transcript-item/TranscriptMenu";
 @import "files-and-videos/generic/table-components/GalleryCard";
 
 .files-table {
@@ -49,10 +51,10 @@
     .pgn__menu-item {
       width: 100%;
       justify-content: start;
+      font-weight: 400;
 
-      &.focus,
-      &:focus {
-        font-weight: 500;
+      &:hover {
+        background-color: $light-300;
       }
     }
   }
@@ -68,4 +70,13 @@
   grid-auto-flow: row;
   gap: 24px 16px;
   grid-template-columns: repeat(3, 33%);
+}
+
+.video-upload-spinner {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+.video-upload-warning-text {
+  font-size: 18px;
 }
