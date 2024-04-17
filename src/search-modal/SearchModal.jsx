@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 // @ts-check
 import React from 'react';
-import { ModalDialog } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { ModalDialog } from '@openedx/paragon';
 
 import SearchEndpointLoader from './SearchEndpointLoader';
 import messages from './messages';
@@ -24,7 +24,7 @@ const SearchModal = ({ courseId, ...props }) => {
       isFullscreenOnMobile
       className="courseware-search-modal"
     >
-      <SearchEndpointLoader courseId={courseId} />
+      <SearchEndpointLoader courseId={courseId} closeSearch={props.onClose} />
     </ModalDialog>
   );
 };

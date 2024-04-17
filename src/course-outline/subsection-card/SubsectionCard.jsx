@@ -134,7 +134,7 @@ const SubsectionCard = ({
     if (currentRef.current && (section.shouldScroll || subsection.shouldScroll || isScrolledToElement)) {
       scrollToElement(currentRef.current);
     }
-  }, []);
+  }, [isScrolledToElement]);
 
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
@@ -160,7 +160,11 @@ const SubsectionCard = ({
         ...borderStyle,
       }}
     >
-      <div className="subsection-card" data-testid="subsection-card" ref={currentRef}>
+      <div
+        className={`subsection-card ${isScrolledToElement ? 'highlight' : ''}`}
+        data-testid="subsection-card"
+        ref={currentRef}
+      >
         {isHeaderVisible && (
           <>
             <CardHeader

@@ -1,7 +1,21 @@
 /* eslint-disable react/prop-types */
 // @ts-check
 import React from 'react';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import { Stack } from '@openedx/paragon';
 import { useStats, useClearRefinements } from 'react-instantsearch';
+
+import EmptySearchImage from './images/empty-search.svg';
+import NoResultImage from './images/no-results.svg';
+import messages from './messages';
+
+const InfoMessage = ({ title, subtitle, image }) => (
+  <Stack className="d-flex mt-6 align-items-center">
+    <p className="lead"> <FormattedMessage {...title} /> </p>
+    <p className="small text-muted"> <FormattedMessage {...subtitle} /> </p>
+    <img src={image} alt="" />
+  </Stack>
+);
 
 /**
  * If the user hasn't put any keywords/filters yet, display an "empty state".
@@ -16,12 +30,22 @@ const EmptyStates = ({ children }) => {
 
   if (!hasQuery && !hasFiltersApplied) {
     // We haven't started the search yet. Display the "start your search" empty state
-    // Note this isn't localized because it's going to be replaced in a fast-follow PR.
-    return <p className="text-muted text-center mt-6">Enter a keyword or select a filter to begin searching.</p>;
+    return (
+      <InfoMessage
+        title={messages.emptySearchTitle}
+        subtitle={messages.emptySearchSubtitle}
+        image={EmptySearchImage}
+      />
+    );
   }
   if (nbHits === 0) {
-    // Note this isn't localized because it's going to be replaced in a fast-follow PR.
-    return <p className="text-muted text-center mt-6">No results found. Change your search and try again.</p>;
+    return (
+      <InfoMessage
+        title={messages.noResultsTitle}
+        subtitle={messages.noResultsSubtitle}
+        image={NoResultImage}
+      />
+    );
   }
 
   return children;

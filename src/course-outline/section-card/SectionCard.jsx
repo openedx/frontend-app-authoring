@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Bubble, Button, useToggle } from '@openedx/paragon';
 import { Add as IconAdd } from '@openedx/paragon/icons';
+import { useSearchParams } from 'react-router-dom';
 import classNames from 'classnames';
 
 import { setCurrentItem, setCurrentSection } from '../data/slice';
@@ -42,6 +43,9 @@ const SectionCard = ({
   const dispatch = useDispatch();
   const { activeId, overId } = useContext(DragContext);
   const [isExpanded, setIsExpanded] = useState(isSectionsExpanded);
+  const [searchParams] = useSearchParams();
+  const locatorId = searchParams.get('show');
+  const isScrolledToElement = locatorId === section.id;
   const [isFormOpen, openForm, closeForm] = useToggle(false);
   const namePrefix = 'section';
 
@@ -70,11 +74,10 @@ const SectionCard = ({
   }, [activeId, overId]);
 
   useEffect(() => {
-    // if this items has been newly added, scroll to it.
-    if (currentRef.current && section.shouldScroll) {
+    if (currentRef.current && (section.shouldScroll || isScrolledToElement)) {
       scrollToElement(currentRef.current);
     }
-  }, []);
+  }, [isScrolledToElement]);
 
   // re-create actions object for customizations
   const actions = { ...sectionActions };
@@ -155,7 +158,7 @@ const SectionCard = ({
       }}
     >
       <div
-        className="section-card"
+        className={`section-card ${isScrolledToElement ? 'highlight' : ''}`}
         data-testid="section-card"
         ref={currentRef}
       >

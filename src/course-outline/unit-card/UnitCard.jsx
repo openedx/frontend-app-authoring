@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useToggle } from '@openedx/paragon';
 import { isEmpty } from 'lodash';
+import { useSearchParams } from 'react-router-dom';
 
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
@@ -34,6 +35,9 @@ const UnitCard = ({
 }) => {
   const currentRef = useRef(null);
   const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
+  const locatorId = searchParams.get('show');
+  const isScrolledToElement = locatorId === unit.id;
   const [isFormOpen, openForm, closeForm] = useToggle(false);
   const namePrefix = 'unit';
 
@@ -109,10 +113,10 @@ const UnitCard = ({
     // if this items has been newly added, scroll to it.
     // we need to check section.shouldScroll as whole section is fetched when a
     // unit is duplicated under it.
-    if (currentRef.current && (section.shouldScroll || unit.shouldScroll)) {
+    if (currentRef.current && (section.shouldScroll || unit.shouldScroll || isScrolledToElement)) {
       scrollToElement(currentRef.current);
     }
-  }, []);
+  }, [isScrolledToElement]);
 
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
@@ -139,7 +143,7 @@ const UnitCard = ({
       }}
     >
       <div
-        className="unit-card"
+        className={`unit-card ${isScrolledToElement ? 'highlight' : ''}`}
         data-testid="unit-card"
         ref={currentRef}
       >
