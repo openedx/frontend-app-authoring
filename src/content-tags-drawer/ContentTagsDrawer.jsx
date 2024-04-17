@@ -114,20 +114,14 @@ const ContentTagsDrawer = ({ id, onClose }) => {
         (t) => t.contentTags.length !== 0,
       );
 
-      // Count implicit tags per taxonomy
+      // Count implicit tags per taxonomy.
+      // TODO This count is also calculated individually
+      // in ContentTagsCollapsible. It should only be calculated once.
       const tagsCountBytaxonomy = {};
       taxonomiesWithData.forEach((tax) => {
-        const countedTags = [];
-        let tagsCounter = 0;
-        tax.contentTags.forEach((tag) => {
-          tag.lineage.forEach((value) => {
-            if (!countedTags.includes(value)) {
-              countedTags.push(value);
-              tagsCounter += 1;
-            }
-          });
-        });
-        tagsCountBytaxonomy[tax.id] = tagsCounter;
+        tagsCountBytaxonomy[tax.id] = new Set(
+          tax.contentTags.flatMap(item => item.lineage),
+        ).size;
       });
 
       // Sort taxonomies with data by implicit count
@@ -135,10 +129,12 @@ const ContentTagsDrawer = ({ id, onClose }) => {
         (a, b) => tagsCountBytaxonomy[b.id] - tagsCountBytaxonomy[a.id],
       );
 
-      // Sort empty taxonomies by name
+      // Empty taxonomies sorted by name.
+      // Since the query returns sorted by name,
+      // it is not necessary to do another sorting here.
       const emptyTaxonomies = taxonomiesList.filter(
         (t) => t.contentTags.length === 0,
-      ).sort((a, b) => a.name.localeCompare(b.name));
+      );
 
       return [...sortedTaxonomiesWithData, ...emptyTaxonomies];
     };

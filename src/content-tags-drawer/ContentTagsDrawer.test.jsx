@@ -157,15 +157,15 @@ describe('<ContentTagsDrawer />', () => {
           canTagObject: true,
         },
         {
-          id: 126,
-          name: '(B) Taxonomy 4',
-          description: 'This is a description 4',
-          canTagObject: true,
-        },
-        {
           id: 127,
           name: '(A) Taxonomy 5',
           description: 'This is a description 5',
+          canTagObject: true,
+        },
+        {
+          id: 126,
+          name: '(B) Taxonomy 4',
+          description: 'This is a description 4',
           canTagObject: true,
         },
       ],
