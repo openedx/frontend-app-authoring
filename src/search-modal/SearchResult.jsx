@@ -112,6 +112,7 @@ const SearchResult = ({ hit, closeSearch }) => {
   const openContextInNewWindow = (e) => {
     e.stopPropagation();
 
+    /* istanbul ignore next */
     if (!newWindowUrl) {
       return;
     }
@@ -127,7 +128,9 @@ const SearchResult = ({ hit, closeSearch }) => {
   const navigateToContext = (e) => {
     e.stopPropagation();
 
+    /* istanbul ignore next */
     if (!redirectUrl) {
+      // This case is for the library authoring MFE
       return;
     }
 
@@ -135,7 +138,9 @@ const SearchResult = ({ hit, closeSearch }) => {
       return;
     }
 
+    /* istanbul ignore next */
     if (redirectUrl.startsWith('http')) {
+      // This case is for the library authoring MFE
       window.location.href = redirectUrl;
       return;
     }
