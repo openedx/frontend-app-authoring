@@ -32,6 +32,7 @@ const SearchResults = () => {
       {hasNextPage
         ? (
           <StatefulButton
+            className="mt-2"
             variant="primary"
             state={isFetchingNextPage ? 'pending' : 'default'}
             labels={labels}

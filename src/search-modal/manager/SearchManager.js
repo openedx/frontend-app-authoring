@@ -31,12 +31,19 @@ import { useContentSearchConnection, useContentSearchResults } from '../data/api
  *   hasNextPage: boolean | undefined,
  *   isFetchingNextPage: boolean,
  *   fetchNextPage: () => void,
+ *   closeSearchModal: () => void,
  * }>}
  */
 const SearchContext = /** @type {any} */(React.createContext(undefined));
 
-/** @type {React.FC<{ extraFilter?: import('meilisearch').Filter, children: React.ReactNode }>} */
-export const SearchContextProvider = ({ extraFilter, children }) => {
+/**
+ * @type {React.FC<{
+*   extraFilter?: import('meilisearch').Filter,
+*   children: React.ReactNode,
+*   closeSearchModal?: () => void,
+* }>}
+*/
+export const SearchContextProvider = ({ extraFilter, children, closeSearchModal }) => {
   const [searchKeywords, setSearchKeywords] = React.useState('');
   const [blockTypesFilter, setBlockTypesFilter] = React.useState(/** type {string[]} */([]));
   const [tagsFilter, setTagsFilter] = React.useState(/** type {string[]} */([]));
@@ -80,6 +87,7 @@ export const SearchContextProvider = ({ extraFilter, children }) => {
       extraFilter,
       canClearFilters,
       clearFilters,
+      closeSearchModal: closeSearchModal ?? (() => {}),
       ...result,
     },
   }, children);

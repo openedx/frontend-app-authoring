@@ -150,6 +150,31 @@ const messages = defineMessages({
     defaultMessage: 'Loading more results',
     description: 'Loading more results - the button displays this message while more results are loading',
   },
+  emptySearchTitle: {
+    id: 'course-authoring.course-search.emptySearchTitle',
+    defaultMessage: 'Start searching to find content',
+    description: 'Title shown when the user has not yet entered a keyword',
+  },
+  emptySearchSubtitle: {
+    id: 'course-authoring.course-search.emptySearchSubtitle',
+    defaultMessage: 'Find sections, subsections, units and components',
+    description: 'Subtitle shown when the user has not yet entered a keyword',
+  },
+  noResultsTitle: {
+    id: 'course-authoring.course-search.noResultsTitle',
+    defaultMessage: 'We didn\'t find anything matching your search',
+    description: 'Title shown when the search returned no results',
+  },
+  noResultsSubtitle: {
+    id: 'course-authoring.course-search.noResultsSubtitle',
+    defaultMessage: 'Please try a different search term or filter',
+    description: 'Subtitle shown when the search returned no results',
+  },
+  openInNewWindow: {
+    id: 'course-authoring.course-search.openInNewWindow',
+    defaultMessage: 'Open in new window',
+    description: 'Alt text for the button that opens the search result in a new window',
+  },
 });
 
 export default messages;

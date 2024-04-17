@@ -16,6 +16,14 @@
   // (If we set 'isOverflowVisible: true', the scrolling of the results list is messed up)
   overflow: visible;
 
+  // Highlight matching terms using bold, not yellow highlighting
+  mark {
+    font-weight: bold;
+    background-color: transparent;
+    padding: 0;
+    display: inline;
+  }
+
   .pgn__modal-header .pgn__menu-select {
     // The "All courses" / "This course" toggle button
     & > button {
@@ -50,8 +58,15 @@
     }
   }
 
-  .ais-InfiniteHits-loadPrevious,
-  .ais-InfiniteHits-loadMore--disabled {
-    display: none; // temporary; remove this once we implement our own <Hits>/<InfiniteHits> component.
+  .search-result {
+    &:hover {
+      background-color: $gray-100;
+      cursor: pointer;
+    }
+
+    &:hover.text-muted {
+      cursor: unset;
+      background-color: unset;
+    }
   }
 }

@@ -18,7 +18,7 @@ describe('addVideoFile', () => {
       status: 404,
     });
 
-    await addVideoFile(courseId, mockFile)(dispatch, getState);
+    await addVideoFile(courseId, mockFile, undefined, { current: [] })(dispatch, getState);
 
     expect(dispatch).toHaveBeenCalledWith({
       payload: {
@@ -43,7 +43,7 @@ describe('addVideoFile', () => {
     jest.spyOn(api, 'uploadVideo').mockResolvedValue({
       status: 404,
     });
-    await addVideoFile(courseId, mockFile)(dispatch, getState);
+    await addVideoFile(courseId, mockFile, undefined, { current: [] })(dispatch, getState);
     expect(videoStatusMock).toHaveBeenCalledWith(courseId, mockEdxVideoId, 'Upload failed', 'upload_failed');
     expect(dispatch).toHaveBeenCalledWith({
       payload: {
@@ -70,7 +70,7 @@ describe('addVideoFile', () => {
     jest.spyOn(api, 'uploadVideo').mockResolvedValue({
       status: 200,
     });
-    await addVideoFile(courseId, mockFile)(dispatch, getState);
+    await addVideoFile(courseId, mockFile, undefined, { current: [] })(dispatch, getState);
     expect(videoStatusMock).toHaveBeenCalledWith(courseId, mockEdxVideoId, 'Upload completed', 'upload_completed');
   });
 });

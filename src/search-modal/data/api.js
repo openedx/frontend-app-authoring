@@ -155,6 +155,7 @@ export async function fetchSearchResults({
     attributesToHighlight: ['display_name', 'content'],
     highlightPreTag: '<mark>',
     highlightPostTag: '</mark>',
+    attributesToCrop: ['content'],
     offset,
     limit,
   });

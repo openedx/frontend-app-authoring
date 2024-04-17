@@ -19,7 +19,7 @@ import Stats from './Stats';
 import { SearchContextProvider } from './manager/SearchManager';
 import messages from './messages';
 
-/** @type {React.FC<{courseId: string}>} */
+/** @type {React.FC<{courseId: string, closeSearchModal?: () => void}>} */
 const SearchUI = (props) => {
   const hasCourseId = Boolean(props.courseId);
   const [_searchThisCourseEnabled, setSearchThisCourse] = React.useState(hasCourseId);
@@ -28,7 +28,10 @@ const SearchUI = (props) => {
   const searchThisCourse = hasCourseId && _searchThisCourseEnabled;
 
   return (
-    <SearchContextProvider extraFilter={searchThisCourse ? `context_key = "${props.courseId}"` : undefined}>
+    <SearchContextProvider
+      extraFilter={searchThisCourse ? `context_key = "${props.courseId}"` : undefined}
+      closeSearchModal={props.closeSearchModal}
+    >
       {/* We need to override z-index here or the <Dropdown.Menu> appears behind the <ModalDialog.Body>
         * But it can't be more then 9 because the close button has z-index 10. */}
       <ModalDialog.Header style={{ zIndex: 9 }} className="border-bottom">

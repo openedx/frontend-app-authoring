@@ -23,6 +23,11 @@ const queryClient = new QueryClient({
   },
 });
 
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useSelector: jest.fn(),
+}));
+
 const RootWrapper = () => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
@@ -59,7 +64,7 @@ describe('<SearchModal />', () => {
       apiKey: 'test-api-key',
     });
     const { findByText } = render(<RootWrapper />);
-    expect(await findByText('Enter a keyword or select a filter to begin searching.')).toBeInTheDocument();
+    expect(await findByText('Start searching to find content')).toBeInTheDocument();
   });
 
   it('should render the spinner while the config is loading', () => {

@@ -41,6 +41,10 @@ const messages = defineMessages({
     id: 'course-authoring.files-and-videos.add-video-progress-bar.progress-bar.label',
     defaultMessage: 'Video upload progress:',
   },
+  videoUploadAlertLabel: {
+    id: 'course-authoring.files-and-videos.video-upload-alert',
+    defaultMessage: 'Upload in progress. Please wait for the upload to complete before navigating away from this page.',
+  },
 });
 
 export default messages;
