@@ -12,26 +12,26 @@ import {
   Article,
   Folder,
   OpenInNew,
-  Question,
-  TextFields,
-  Videocam,
 } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+
+import { COMPONENT_TYPE_ICON_MAP, TYPE_ICONS_MAP } from '../course-unit/constants';
 import { getStudioHomeData } from '../studio-home/data/selectors';
+import { useSearchContext } from './manager/SearchManager';
+import Highlight from './Highlight';
 import messages from './messages';
 
-import Highlight from './Highlight';
-import { useSearchContext } from './manager/SearchManager';
-
-const ItemIcon = {
-  vertical: Folder,
+const STRUCTURAL_TYPE_ICONS = {
+  vertical: TYPE_ICONS_MAP.vertical,
   sequential: Folder,
   chapter: Folder,
-  problem: Question,
-  video: Videocam,
-  html: TextFields,
 };
+
+/** @param {string} blockType */
+function getItemIcon(blockType) {
+  return STRUCTURAL_TYPE_ICONS[blockType] ?? COMPONENT_TYPE_ICON_MAP[blockType] ?? Article;
+}
 
 /**
  * A single search result (row), usually represents an XBlock/Component
@@ -124,7 +124,7 @@ const SearchResult = ({ hit }) => {
       tabIndex={redirectUrl ? 0 : undefined}
       role="button"
     >
-      <Icon className="text-muted" src={ItemIcon[hit.blockType] || Article} />
+      <Icon className="text-muted" src={getItemIcon(hit.blockType)} />
       <Stack>
         <div className="hit-name small">
           <Highlight text={hit.formatted.displayName} />
