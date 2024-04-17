@@ -1,15 +1,11 @@
 import classNames from 'classnames';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import {
-  Badge, Card, Icon, IconButton, Hyperlink,
-} from '@openedx/paragon';
-import { ArrowForward, Settings } from '@openedx/paragon/icons';
+import { useIntl } from '@edx/frontend-platform/i18n';
+import { Badge, Card } from '@openedx/paragon';
 import PropTypes from 'prop-types';
-import React, { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 import messages from '../messages';
-import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
 import { useIsDesktop } from '../../utils';
+import PageSettingButton from './PageSettingButton';
 import './PageCard.scss';
 
 const CoursePageShape = PropTypes.shape({
@@ -19,45 +15,21 @@ const CoursePageShape = PropTypes.shape({
   enabled: PropTypes.bool.isRequired,
   legacyLink: PropTypes.string,
   allowedOperations: PropTypes.shape({
-    enable: PropTypes.bool.isRequired,
-    configure: PropTypes.bool.isRequired,
-  }).isRequired,
+    enable: PropTypes.bool,
+    configure: PropTypes.bool,
+  }),
 });
 
 export { CoursePageShape };
 
 const PageCard = ({
-  intl,
   page,
+  settingButton,
 }) => {
-  const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
+  const { formatMessage } = useIntl();
   const isDesktop = useIsDesktop();
-  const navigate = useNavigate();
 
-  // eslint-disable-next-line react/no-unstable-nested-components
-  const SettingsButton = () => {
-    if (page.legacyLink) {
-      return (
-        <Hyperlink destination={page.legacyLink}>
-          <IconButton
-            src={ArrowForward}
-            iconAs={Icon}
-            size="inline"
-            alt={intl.formatMessage(messages.settings)}
-          />
-        </Hyperlink>
-      );
-    }
-    return (page.allowedOperations.configure || page.allowedOperations.enable) && (
-      <IconButton
-        src={Settings}
-        iconAs={Icon}
-        size="inline"
-        alt={intl.formatMessage(messages.settings)}
-        onClick={() => navigate(`${pagesAndResourcesPath}/${page.id}/settings`)}
-      />
-    );
-  };
+  const SettingButton = settingButton || <PageSettingButton {...page} />;
 
   return (
     <Card
@@ -70,10 +42,10 @@ const PageCard = ({
         title={page.name}
         subtitle={page.enabled && (
           <Badge variant="success" className="mt-1">
-            {intl.formatMessage(messages.enabled)}
+            {formatMessage(messages.enabled)}
           </Badge>
         )}
-        actions={<div className="mt-1"><SettingsButton /></div>}
+        actions={<div className="mt-1">{SettingButton}</div>}
         size="sm"
       />
       <Card.Body>
@@ -85,9 +57,13 @@ const PageCard = ({
   );
 };
 
-PageCard.propTypes = {
-  intl: intlShape.isRequired,
-  page: CoursePageShape.isRequired,
+PageCard.defaultProps = {
+  settingButton: null,
 };
 
-export default injectIntl(PageCard);
+PageCard.propTypes = {
+  page: CoursePageShape.isRequired,
+  settingButton: PropTypes.node,
+};
+
+export default PageCard;
