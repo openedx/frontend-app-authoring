@@ -8,7 +8,6 @@ import React, {
 import PropTypes from 'prop-types';
 import {
   Container,
-  CloseButton,
   Spinner,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -135,10 +134,8 @@ const ContentTagsDrawer = ({ id, onClose }) => {
 
     <div id="content-tags-drawer" className="mt-1">
       <Container size="xl">
-        <CloseButton onClick={() => onCloseDrawer()} data-testid="drawer-close-button" />
-        <span>{intl.formatMessage(messages.headerSubtitle)}</span>
         { isContentDataLoaded
-          ? <h3>{ contentName }</h3>
+          ? <h2>{ contentName }</h2>
           : (
             <div className="d-flex justify-content-center align-items-center flex-column">
               <Spinner
@@ -150,6 +147,7 @@ const ContentTagsDrawer = ({ id, onClose }) => {
           )}
 
         <hr />
+        <p className="lead text-gray-500 font-weight-bold">{intl.formatMessage(messages.headerSubtitle)}</p>
 
         { isTaxonomyListLoaded && isContentTaxonomyTagsLoaded
           ? taxonomies.map((data) => (

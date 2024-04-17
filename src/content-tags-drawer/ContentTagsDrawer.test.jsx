@@ -19,7 +19,6 @@ import { getTaxonomyListData } from '../taxonomy/data/api';
 import messages from './messages';
 
 const contentId = 'block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@7f47fe2dbcaf47c5a071671c741fe1ab';
-const mockOnClose = jest.fn();
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -250,7 +249,7 @@ describe('<ContentTagsDrawer />', () => {
       await waitFor(() => { expect(getByText('Taxonomy 1')).toBeInTheDocument(); });
       expect(getByText('Taxonomy 1')).toBeInTheDocument();
       expect(getByText('Taxonomy 2')).toBeInTheDocument();
-      const tagCountBadges = container.getElementsByClassName('badge');
+      const tagCountBadges = container.getElementsByClassName('taxonomy-tags-count-chip');
       expect(tagCountBadges[0].textContent).toBe('2');
       expect(tagCountBadges[1].textContent).toBe('1');
     });
@@ -352,30 +351,6 @@ describe('<ContentTagsDrawer />', () => {
     // Check that there are no more Tag 3 on the page, since the staged one is cleared
     // and the dropdown has been closed
     expect(queryByText('Tag 3')).not.toBeInTheDocument();
-  });
-
-  it('should call closeManageTagsDrawer when CloseButton is clicked', async () => {
-    const postMessageSpy = jest.spyOn(window.parent, 'postMessage');
-
-    const { getByTestId } = render(<RootWrapper />);
-
-    // Find the CloseButton element by its test ID and trigger a click event
-    const closeButton = getByTestId('drawer-close-button');
-    fireEvent.click(closeButton);
-
-    expect(postMessageSpy).toHaveBeenCalledWith('closeManageTagsDrawer', '*');
-
-    postMessageSpy.mockRestore();
-  });
-
-  it('should call onClose param when CloseButton is clicked', async () => {
-    render(<RootWrapper onClose={mockOnClose} />);
-
-    // Find the CloseButton element by its test ID and trigger a click event
-    const closeButton = screen.getByTestId('drawer-close-button');
-    fireEvent.click(closeButton);
-
-    expect(mockOnClose).toHaveBeenCalled();
   });
 
   it('should call closeManageTagsDrawer when Escape key is pressed and no selectable box is active', () => {

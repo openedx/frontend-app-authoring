@@ -177,7 +177,7 @@ describe('<ContentTagsCollapsible />', () => {
   it('should render taxonomy tags data along content tags number badge', async () => {
     const { container, getByText } = await getComponent();
     expect(getByText('Taxonomy 1')).toBeInTheDocument();
-    expect(container.getElementsByClassName('badge').length).toBe(1);
+    expect(container.getElementsByClassName('taxonomy-tags-count-chip').length).toBe(1);
     expect(getByText('3')).toBeInTheDocument();
   });
 
@@ -546,13 +546,14 @@ describe('<ContentTagsCollapsible />', () => {
     expect(appliedTag).not.toBeInTheDocument();
   });
 
-  it('should render taxonomy tags data without tags number badge', async () => {
+  it('should render taxonomy tags data with tags number badge as cero', async () => {
     const updatedData = { ...data };
     updatedData.taxonomyAndTagsData = { ...updatedData.taxonomyAndTagsData };
     updatedData.taxonomyAndTagsData.contentTags = [];
     const { container, getByText } = await getComponent(updatedData);
 
     expect(getByText('Taxonomy 1')).toBeInTheDocument();
-    expect(container.getElementsByClassName('invisible').length).toBe(1);
+    expect(container.getElementsByClassName('taxonomy-tags-count-chip').length).toBe(1);
+    expect(getByText('0')).toBeInTheDocument();
   });
 });

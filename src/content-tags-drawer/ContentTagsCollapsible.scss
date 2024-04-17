@@ -4,6 +4,10 @@
 
   .collapsible-trigger {
     border: none !important;
+
+    .pgn__icon {
+      margin-left: -3px;
+    }
   }
 }
 
@@ -56,4 +60,8 @@
     background-color: black !important;
     color: white !important;
   }
+}
+
+.taxonomy-tags-count-chip > .pgn__chip {
+  background: none;
 }
