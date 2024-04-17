@@ -97,7 +97,7 @@ const messages = defineMessages({
   },
   childTagsCollapse: {
     id: 'course-authoring.course-search.child-tags-collapse',
-    defaultMessage: 'Collapse to hige child tags of "{tagName}"',
+    defaultMessage: 'Collapse to hide child tags of "{tagName}"',
     description: 'This text describes the ▲ collapse toggle button to non-visual users.',
   },
   clearFilters: {

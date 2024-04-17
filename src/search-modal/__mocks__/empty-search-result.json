@@ -2,16 +2,24 @@
   "comment": "This is a mock of the empty response from Meilisearch, based on an actual search in Studio.",
   "results": [
     {
-      "indexUid": "tutor_studio_content",
+      "indexUid": "studio",
       "hits": [],
       "query": "noresult",
       "processingTimeMs": 0,
-      "limit": 21,
+      "limit": 20,
+      "offset": 0,
+      "estimatedTotalHits": 0
+    },
+    {
+      "indexUid": "studio",
+      "hits": [],
+      "query": "noresult",
+      "processingTimeMs": 0,
+      "limit": 0,
       "offset": 0,
       "estimatedTotalHits": 0,
       "facetDistribution": {
-        "block_type": {},
-        "tags.taxonomy": {}
+          "block_type": {}
       },
       "facetStats": {}
     }
