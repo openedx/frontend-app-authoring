@@ -23,6 +23,10 @@ import mockResult from './__mocks__/search-result.json';
 import mockEmptyResult from './__mocks__/empty-search-result.json';
 // @ts-ignore
 import mockTagsFacetResult from './__mocks__/facet-search.json';
+// @ts-ignore
+import mockTagsFacetResultLevel0 from './__mocks__/facet-search-level0.json';
+// @ts-ignore
+import mockTagsFacetResultLevel1 from './__mocks__/facet-search-level1.json';
 import SearchUI from './SearchUI';
 import { getContentSearchConfigUrl } from './data/api';
 
@@ -200,7 +204,15 @@ describe('<SearchUI />', () => {
     /** @type {import('@testing-library/react').RenderResult} */
     let rendered;
     beforeEach(async () => {
-      fetchMock.post(facetSearchEndpoint, mockTagsFacetResult);
+      fetchMock.post(facetSearchEndpoint, (_path, req) => {
+        const requestData = JSON.parse(req.body?.toString() ?? '');
+        switch (requestData.facetName) {
+        case 'tags.taxonomy': return mockTagsFacetResult;
+        case 'tags.level0': return mockTagsFacetResultLevel0;
+        case 'tags.level1': return mockTagsFacetResultLevel1;
+        default: throw new Error(`Facet ${requestData.facetName} not mocked for testing`);
+        }
+      });
 
       rendered = render(<Wrap><SearchUI {...defaults} /></Wrap>);
       const { getByRole, getByText } = rendered;
@@ -266,6 +278,39 @@ describe('<SearchUI />', () => {
         return JSON.stringify(requestedFilter) === JSON.stringify([
           'context_key = "course-v1:org+test+123"',
           'tags.taxonomy = "ESDC Skills and Competencies"', // <-- the newly added filter, sent with the request
+        ]);
+      });
+    });
+
+    it('can filter results by a child tag', async () => {
+      const { getByRole, getByLabelText, queryByLabelText } = rendered;
+      // Now open the filters menu:
+      fireEvent.click(getByRole('button', { name: 'Tags' }), {});
+      // The dropdown menu in this case doesn't have a role; let's just assume it's displayed.
+      const expandButtonLabel = /Expand to show child tags of "ESDC Skills and Competencies"/i;
+      await waitFor(() => { expect(getByLabelText(expandButtonLabel)).toBeInTheDocument(); });
+
+      // First, the child tag is not shown:
+      const childTagLabel = /^Abilities/i;
+      expect(queryByLabelText(childTagLabel)).toBeNull();
+      // Click on the button to show children
+      const expandButton = getByLabelText(expandButtonLabel);
+      fireEvent.click(expandButton, {});
+      // Now the child tag is visible:
+      await waitFor(() => { expect(queryByLabelText(childTagLabel)).toBeInTheDocument(); });
+      // Click on it:
+      const abilitiesTagFilterCheckbox = getByLabelText(childTagLabel);
+      fireEvent.click(abilitiesTagFilterCheckbox);
+      // Now wait for the filter to be applied and the new results to be fetched.
+      await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(3, searchEndpoint, 'post'); });
+      // Because we're mocking the results, there's no actual changes to the mock results,
+      // but we can verify that the filter was sent in the request
+      expect(fetchMock).toBeDone((_url, req) => {
+        const requestData = JSON.parse(req.body?.toString() ?? '');
+        const requestedFilter = requestData?.queries?.[0]?.filter;
+        return JSON.stringify(requestedFilter) === JSON.stringify([
+          'context_key = "course-v1:org+test+123"',
+          'tags.level0 = "ESDC Skills and Competencies > Abilities"',
         ]);
       });
     });
