@@ -9,7 +9,11 @@ import SearchResult from './SearchResult';
 import messages from './messages';
 
 /**
- * A single search result (row), usually represents an XBlock/Component
+ * All of the single results ("hits"), based on the user's search.
+ *
+ * Uses "infinite pagination" to load more pages as needed (if users click the
+ * "Show more results" button).
+ *
  * @type {React.FC<Record<never, never>>}
  */
 const SearchResults = () => {
