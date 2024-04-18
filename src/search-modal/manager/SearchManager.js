@@ -32,6 +32,7 @@ import { useContentSearchConnection, useContentSearchResults } from '../data/api
  *   isFetchingNextPage: boolean,
  *   fetchNextPage: () => void,
  *   closeSearchModal: () => void,
+ *   hasError: boolean,
  * }>}
  */
 const SearchContext = /** @type {any} */(React.createContext(undefined));
@@ -55,7 +56,7 @@ export const SearchContextProvider = ({ extraFilter, children, closeSearchModal 
   }, []);
 
   // Initialize a connection to Meilisearch:
-  const { data: connectionDetails } = useContentSearchConnection();
+  const { data: connectionDetails, isError: hasConnectionError } = useContentSearchConnection();
   const indexName = connectionDetails?.indexName;
   const client = React.useMemo(() => {
     if (connectionDetails?.apiKey === undefined || connectionDetails?.url === undefined) {
@@ -88,6 +89,7 @@ export const SearchContextProvider = ({ extraFilter, children, closeSearchModal 
       canClearFilters,
       clearFilters,
       closeSearchModal: closeSearchModal ?? (() => {}),
+      hasError: hasConnectionError || result.isError,
       ...result,
     },
   }, children);

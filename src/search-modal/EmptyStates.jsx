@@ -2,7 +2,7 @@
 // @ts-check
 import React from 'react';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import { Stack } from '@openedx/paragon';
+import { Alert, Stack } from '@openedx/paragon';
 
 import { useSearchContext } from './manager/SearchManager';
 import EmptySearchImage from './images/empty-search.svg';
@@ -24,9 +24,21 @@ const InfoMessage = ({ title, subtitle, image }) => (
  * @type {React.FC<{children: React.ReactElement}>}
  */
 const EmptyStates = ({ children }) => {
-  const { canClearFilters: hasFiltersApplied, totalHits, searchKeywords } = useSearchContext();
+  const {
+    canClearFilters: hasFiltersApplied,
+    totalHits,
+    searchKeywords,
+    hasError,
+  } = useSearchContext();
   const hasQuery = !!searchKeywords;
 
+  if (hasError) {
+    return (
+      <Alert variant="danger">
+        <FormattedMessage {...messages.searchError} />
+      </Alert>
+    );
+  }
   if (!hasQuery && !hasFiltersApplied) {
     // We haven't started the search yet. Display the "start your search" empty state
     return (

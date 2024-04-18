@@ -175,6 +175,11 @@ const messages = defineMessages({
     defaultMessage: 'Open in new window',
     description: 'Alt text for the button that opens the search result in a new window',
   },
+  searchError: {
+    id: 'course-authoring.course-search.searchError',
+    defaultMessage: 'An error occurred. Unable to load search results.',
+    description: 'Error message shown when search is not working.',
+  },
 });
 
 export default messages;

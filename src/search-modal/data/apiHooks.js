@@ -91,6 +91,7 @@ export const useContentSearchResults = ({
     blockTypes: pages?.[0]?.blockTypes ?? {},
     status: query.status,
     isFetching: query.isFetching,
+    isError: query.isError,
     isFetchingNextPage: query.isFetchingNextPage,
     // Call this to load more pages. We include some "safety" features recommended by the docs: this should never be
     // called while already fetching a page, and parameters (like 'event') should not be passed into fetchNextPage().

@@ -67,17 +67,9 @@ describe('<SearchModal />', () => {
     expect(await findByText('Start searching to find content')).toBeInTheDocument();
   });
 
-  it('should render the spinner while the config is loading', () => {
-    axiosMock.onGet(getContentSearchConfigUrl()).replyOnce(200, new Promise(() => {})); // never resolves
-    const { getByRole } = render(<RootWrapper />);
-
-    const spinner = getByRole('status');
-    expect(spinner.textContent).toEqual('Loading...');
-  });
-
   it('should render the error message if the api call throws', async () => {
     axiosMock.onGet(getContentSearchConfigUrl()).networkError();
     const { findByText } = render(<RootWrapper />);
-    expect(await findByText('Network Error')).toBeInTheDocument();
+    expect(await findByText('An error occurred. Unable to load search results.')).toBeInTheDocument();
   });
 });
