@@ -96,16 +96,78 @@ describe('<ContentTagsDrawer />', () => {
               },
             ],
           },
+          {
+            name: 'Taxonomy 2',
+            taxonomyId: 124,
+            canTagObject: true,
+            tags: [
+              {
+                value: 'Tag 1',
+                lineage: ['Tag 1'],
+                canDeleteObjecttag: true,
+              },
+            ],
+          },
+          {
+            name: 'Taxonomy 3',
+            taxonomyId: 125,
+            canTagObject: true,
+            tags: [
+              {
+                value: 'Tag 1.1.1',
+                lineage: ['Tag 1', 'Tag 1.1', 'Tag 1.1.1'],
+                canDeleteObjecttag: true,
+              },
+            ],
+          },
+          {
+            name: '(B) Taxonomy 4',
+            taxonomyId: 126,
+            canTagObject: true,
+            tags: [],
+          },
+          {
+            name: '(A) Taxonomy 5',
+            taxonomyId: 127,
+            canTagObject: true,
+            tags: [],
+          },
         ],
       },
     });
     getTaxonomyListData.mockResolvedValue({
-      results: [{
-        id: 123,
-        name: 'Taxonomy 1',
-        description: 'This is a description 1',
-        canTagObject: true,
-      }],
+      results: [
+        {
+          id: 123,
+          name: 'Taxonomy 1',
+          description: 'This is a description 1',
+          canTagObject: true,
+        },
+        {
+          id: 124,
+          name: 'Taxonomy 2',
+          description: 'This is a description 2',
+          canTagObject: true,
+        },
+        {
+          id: 125,
+          name: 'Taxonomy 3',
+          description: 'This is a description 3',
+          canTagObject: true,
+        },
+        {
+          id: 127,
+          name: '(A) Taxonomy 5',
+          description: 'This is a description 5',
+          canTagObject: true,
+        },
+        {
+          id: 126,
+          name: '(B) Taxonomy 4',
+          description: 'This is a description 4',
+          canTagObject: true,
+        },
+      ],
     });
 
     useTaxonomyTagsData.mockReturnValue({
@@ -387,5 +449,26 @@ describe('<ContentTagsDrawer />', () => {
     document.body.removeChild(selectableBox);
 
     postMessageSpy.mockRestore();
+  });
+
+  it('should taxonomies must be ordered', async () => {
+    setupMockDataForStagedTagsTesting();
+    render(<RootWrapper />);
+    expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
+
+    // First, taxonomies with content sorted by count implicit
+    // Later, empty taxonomies sorted by name
+    const expectedOrder = [
+      'Taxonomy 3', // 3 tags
+      'Taxonomy 1', // 2 tags
+      'Taxonomy 2', // 1 tag
+      '(A) Taxonomy 5',
+      '(B) Taxonomy 4',
+    ];
+
+    const taxonomies = screen.getAllByText(/.*Taxonomy.*/);
+    for (let i = 0; i !== taxonomies.length; i++) {
+      expect(taxonomies[i].textContent).toBe(expectedOrder[i]);
+    }
   });
 });

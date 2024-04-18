@@ -108,6 +108,36 @@ const ContentTagsDrawer = ({ id, onClose }) => {
   }, []);
 
   const taxonomies = useMemo(() => {
+    const sortTaxonomies = (taxonomiesList) => {
+      const taxonomiesWithData = taxonomiesList.filter(
+        (t) => t.contentTags.length !== 0,
+      );
+
+      // Count implicit tags per taxonomy.
+      // TODO This count is also calculated individually
+      // in ContentTagsCollapsible. It should only be calculated once.
+      const tagsCountBytaxonomy = {};
+      taxonomiesWithData.forEach((tax) => {
+        tagsCountBytaxonomy[tax.id] = new Set(
+          tax.contentTags.flatMap(item => item.lineage),
+        ).size;
+      });
+
+      // Sort taxonomies with data by implicit count
+      const sortedTaxonomiesWithData = taxonomiesWithData.sort(
+        (a, b) => tagsCountBytaxonomy[b.id] - tagsCountBytaxonomy[a.id],
+      );
+
+      // Empty taxonomies sorted by name.
+      // Since the query returns sorted by name,
+      // it is not necessary to do another sorting here.
+      const emptyTaxonomies = taxonomiesList.filter(
+        (t) => t.contentTags.length === 0,
+      );
+
+      return [...sortedTaxonomiesWithData, ...emptyTaxonomies];
+    };
+
     if (taxonomyListData && contentTaxonomyTagsData) {
       // Initialize list of content tags in taxonomies to populate
       const taxonomiesList = taxonomyListData.results.map((taxonomy) => ({
@@ -125,7 +155,7 @@ const ContentTagsDrawer = ({ id, onClose }) => {
         }
       });
 
-      return taxonomiesList;
+      return sortTaxonomies(taxonomiesList);
     }
     return [];
   }, [taxonomyListData, contentTaxonomyTagsData]);
