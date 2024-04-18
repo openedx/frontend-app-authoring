@@ -34,13 +34,12 @@ export const SourceCodeModal = ({
       isOpen={isOpen}
       title={intl.formatMessage(messages.titleLabel)}
     >
-      <div style={{ padding: '10px 30px', height: '300px' }}>
+      <div style={{ padding: '10px 30px' }}>
         <CodeEditor
           innerRef={ref}
           value={value}
         />
       </div>
-
     </BaseModal>
   );
 };

@@ -34,7 +34,6 @@ exports[`SourceCodeModal renders as expected with default behavior 1`] = `
   <div
     style={
       Object {
-        "height": "300px",
         "padding": "10px 30px",
       }
     }
