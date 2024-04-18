@@ -10,6 +10,9 @@ export const getContentSearchConfigUrl = () => new URL(
 /** The separator used for hierarchical tags in the search index, e.g. tags.level1 = "Subject > Math > Calculus" */
 export const TAG_SEP = ' > ';
 
+export const highlightPreTag = '__meili-highlight__'; // Indicate the start of a highlighted (matching) term
+export const highlightPostTag = '__/meili-highlight__'; // Indicate the end of a highlighted (matching) term
+
 /**
  * Get the content search configuration from the CMS.
  *
@@ -153,8 +156,8 @@ export async function fetchSearchResults({
       ...tagsFilterFormatted,
     ],
     attributesToHighlight: ['display_name', 'content'],
-    highlightPreTag: '<mark>',
-    highlightPostTag: '</mark>',
+    highlightPreTag,
+    highlightPostTag,
     attributesToCrop: ['content'],
     cropLength: 20,
     offset,
