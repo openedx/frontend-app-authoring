@@ -75,7 +75,7 @@ function formatTagsFilter(tagsFilter) {
  * @property {string} id
  * @property {string} usageKey
  * @property {"course_block"|"library_block"} type
- * @property {string} block_id
+ * @property {string} blockId
  * @property {string} displayName
  * @property {string} blockType The block_type part of the usage key. What type of XBlock this is.
  * @property {string} contextKey The course or library ID
@@ -156,6 +156,7 @@ export async function fetchSearchResults({
     highlightPreTag: '<mark>',
     highlightPostTag: '</mark>',
     attributesToCrop: ['content'],
+    cropLength: 20,
     offset,
     limit,
   });
@@ -348,7 +349,7 @@ export async function fetchTagsThatMatchKeyword({
     attributesToRetrieve: ['tags'],
     limit,
     // We'd like to use 'showMatchesPosition: true' to know exaclty which tags match, but it doesn't provide the
-    // detail we need; it's impossible to tell whihc tag at a given level matched based on the returned _matchesPosition
+    // detail we need; it's impossible to tell which tag at a given level matched based on the returned _matchesPosition
     // data - https://github.com/orgs/meilisearch/discussions/550
   });
 

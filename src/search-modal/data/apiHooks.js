@@ -81,7 +81,7 @@ export const useContentSearchResults = ({
 
   const pages = query.data?.pages;
   const hits = React.useMemo(
-    () => pages?.reduce((alllHits, page) => [...alllHits, ...page.hits], []) ?? [],
+    () => pages?.reduce((allHits, page) => [...allHits, ...page.hits], []) ?? [],
     [pages],
   );
 
@@ -174,15 +174,11 @@ export const useTagFilterOptions = (args) => {
       return { tags: undefined, mayBeMissingResults: false };
     }
     // Combine these two queries to filter the list of tags based on the keyword search.
-    const tags = mainQuery.data.tags.filter(({ tagPath }) => {
-      // eslint-disable-next-line no-restricted-syntax
-      for (const matchingTag of tagKeywordSearchData.data.matches) {
-        if (matchingTag.tagPath === tagPath || matchingTag.tagPath.startsWith(tagPath + TAG_SEP)) {
-          return true;
-        }
-      }
-      return false;
-    });
+    const tags = mainQuery.data.tags.filter(
+      ({ tagPath }) => tagKeywordSearchData.data.matches.some(
+        (matchingTag) => matchingTag.tagPath === tagPath || matchingTag.tagPath.startsWith(tagPath + TAG_SEP),
+      ),
+    );
     return {
       tags,
       mayBeMissingResults: mainQuery.data.mayBeMissingResults || tagKeywordSearchData.data.mayBeMissingResults,

@@ -134,10 +134,7 @@ const SearchResult = ({ hit }) => {
           <Highlight text={hit.formatted.content?.capaContent ?? ''} />
         </div>
         <div className="text-muted x-small">
-          {hit.breadcrumbs.map((bc, i) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <span key={i}>{bc.displayName} {i !== hit.breadcrumbs.length - 1 ? '/' : ''} </span>
-          ))}
+          {hit.breadcrumbs.map(bc => bc.displayName).join(' / ')}
         </div>
       </Stack>
       <IconButton
