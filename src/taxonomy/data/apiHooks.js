@@ -113,18 +113,16 @@ export const useImportNewTaxonomy = () => {
     *   any,
     *   {
     *     name: string,
-    *     exportId: string,
     *     description: string,
     *     file: File,
     *   }
     * >}
     */
     mutationFn: async ({
-      name, exportId, description, file,
+      name, description, file,
     }) => {
       const formData = new FormData();
       formData.append('taxonomy_name', name);
-      formData.append('taxonomy_export_id', exportId);
       formData.append('taxonomy_description', description);
       formData.append('file', file);
 

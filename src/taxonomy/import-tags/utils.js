@@ -68,26 +68,6 @@ export const importTaxonomy = async (intl, importMutation) => { // eslint-disabl
     return taxonomyName;
   };
 
-  const getTaxonomyExportId = () => {
-    let taxonomyExportId = null;
-    const validationRegex = /^[\p{L}\w\-.]+$/u;
-    while (!taxonomyExportId) {
-      taxonomyExportId = prompt(intl.formatMessage(messages.promptTaxonomyExportId));
-
-      if (taxonomyExportId == null) {
-        break;
-      }
-
-      if (!taxonomyExportId) {
-        alert(intl.formatMessage(messages.promptTaxonomyExportIdRequired));
-      } else if (!validationRegex.test(taxonomyExportId)) {
-        alert(intl.formatMessage(messages.promptTaxonomyExportIdInvalid));
-        taxonomyExportId = null;
-      }
-    }
-    return taxonomyExportId;
-  };
-
   const getTaxonomyDescription = () => prompt(intl.formatMessage(messages.promptTaxonomyDescription));
 
   const file = await selectFile();
@@ -101,11 +81,6 @@ export const importTaxonomy = async (intl, importMutation) => { // eslint-disabl
     return;
   }
 
-  const exportId = getTaxonomyExportId();
-  if (exportId == null) {
-    return;
-  }
-
   const description = getTaxonomyDescription();
   if (description == null) {
     return;
@@ -113,7 +88,6 @@ export const importTaxonomy = async (intl, importMutation) => { // eslint-disabl
 
   importMutation.mutateAsync({
     name,
-    exportId,
     description,
     file,
   }).then(() => {

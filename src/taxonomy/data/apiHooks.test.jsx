@@ -64,7 +64,6 @@ describe('import taxonomy api calls', () => {
     const mutateResult = await result.current.mutateAsync({
       name: 'Taxonomy name',
       description: 'Taxonomy description',
-      exportId: 'taxonomy_export_id',
       file: emptyFile,
     });
 
