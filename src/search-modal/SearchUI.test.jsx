@@ -151,7 +151,7 @@ describe('<SearchUI />', () => {
     expect(getByText('2 results found')).toBeInTheDocument();
     expect(getByText(mockResultDisplayName)).toBeInTheDocument();
     // Breadcrumbs showing where the result came from:
-    expect(getByText('The Little Unit That Could')).toBeInTheDocument();
+    expect(getByText('TheCourse / Section 2 / Subsection 3 / The Little Unit That Could')).toBeInTheDocument();
 
     const resultItem = getByRole('button', { name: /The Little Unit That Could/ });
 
@@ -193,7 +193,7 @@ describe('<SearchUI />', () => {
     expect(getByText('2 results found')).toBeInTheDocument();
     expect(getByText(mockResultDisplayName)).toBeInTheDocument();
     // Breadcrumbs showing where the result came from:
-    expect(getByText('The Little Unit That Could')).toBeInTheDocument();
+    expect(getByText('TheCourse / Section 2 / Subsection 3 / The Little Unit That Could')).toBeInTheDocument();
   });
 
   describe('filters', () => {
