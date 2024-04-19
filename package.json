@@ -102,7 +102,7 @@
     "@edx/reactifex": "^1.0.3",
     "@edx/stylelint-config-edx": "2.3.0",
     "@edx/typescript-config": "^1.0.1",
-    "@openedx/frontend-build": "13.1.0",
+    "@openedx/frontend-build": "14.0.0-alpha.3",
     "@testing-library/jest-dom": "5.17.0",
     "@testing-library/react": "12.1.5",
     "@testing-library/react-hooks": "^8.0.1",
