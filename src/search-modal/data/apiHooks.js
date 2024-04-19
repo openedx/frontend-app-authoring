@@ -77,6 +77,7 @@ export const useContentSearchResults = ({
     getNextPageParam: (lastPage) => lastPage.nextOffset,
     // Avoid flickering results when user is typing... keep old results until new is available.
     keepPreviousData: true,
+    refetchOnWindowFocus: false, // This doesn't need to be refreshed when the user switches back to this tab.
   });
 
   const pages = query.data?.pages;
@@ -128,7 +129,6 @@ export const useTagFilterOptions = (args) => {
       args.searchKeywords,
       args.blockTypesFilter,
       args.parentTagPath,
-      args.tagSearchKeywords,
     ],
     queryFn: () => {
       const { client, indexName } = args;
@@ -139,13 +139,14 @@ export const useTagFilterOptions = (args) => {
     },
     // Avoid flickering results when user is typing... keep old results until new is available.
     keepPreviousData: true,
+    refetchOnWindowFocus: false, // This doesn't need to be refreshed when the user switches back to this tab.
   });
 
   const tagKeywordSearchData = useQuery({
     enabled: args.client !== undefined && args.indexName !== undefined,
     queryKey: [
       'content_search',
-      'tags_keyword_search_dat',
+      'tags_keyword_search_data',
       args.client?.config.apiKey,
       args.client?.config.host,
       args.indexName,
@@ -162,6 +163,7 @@ export const useTagFilterOptions = (args) => {
     },
     // Avoid flickering results when user is typing... keep old results until new is available.
     keepPreviousData: true,
+    refetchOnWindowFocus: false, // This doesn't need to be refreshed when the user switches back to this tab.
   });
 
   const data = React.useMemo(() => {
