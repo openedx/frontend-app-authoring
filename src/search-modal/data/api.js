@@ -235,6 +235,17 @@ export async function fetchAvailableTagOptions({
     parentFilter = [`${parentFacetName} = "${parentTagPath}"`];
   }
 
+  // As an optimization, start pre-loading the data about "has child tags", if we will need it later.
+  // Notice we don't 'await' the result of this request, so it can happen in parallel with the main request that follows
+  const maybeHasChildren = depth > 0 && depth < 4; // If depth=0, it definitely has children; we don't support depth > 4
+  const nextLevelFacet = `tags.level${depth}`; // This will give the children of the current tags.
+  const preloadChildTagsData = maybeHasChildren ? client.index(indexName).searchForFacetValues({
+    facetName: nextLevelFacet,
+    facetQuery: parentTagPath,
+    q: searchKeywords,
+    filter: [...extraFilterFormatted, ...blockTypesFilterFormatted, ...parentFilter],
+  }) : undefined;
+
   // Now load the facet values. Doing it with this API gives us much more flexibility in loading than if we just
   // requested the facets by passing { facets: ["tags"] } into the main search request; that works fine for loading the
   // root tags but can't load specific child tags like we can using this approach.
@@ -273,15 +284,10 @@ export async function fetchAvailableTagOptions({
   });
 
   // Figure out if [some of] the tags at this level have children:
-  if (depth > 0 && depth < 4) {
-    const nextLevelFacet = `tags.level${depth}`; // This will give the children of the current tags.
+  if (maybeHasChildren) {
+    if (preloadChildTagsData === undefined) { throw new Error('Child tags data unexpectedly not pre-loaded'); }
     // Retrieve the children of the current tags:
-    const { facetHits: childFacetHits } = await client.index(indexName).searchForFacetValues({
-      facetName: nextLevelFacet,
-      facetQuery: parentTagPath,
-      q: searchKeywords,
-      filter: [...extraFilterFormatted, ...blockTypesFilterFormatted, ...parentFilter],
-    });
+    const { facetHits: childFacetHits } = await preloadChildTagsData;
     if (childFacetHits.length >= meilisearchFacetLimit) {
       // Assume they all have child tags; we can't retrieve more than 100 facet values (per Meilisearch docs) so
       // we can't say for sure on a tag-by-tag basis, but we know that at least some of them have children, so
