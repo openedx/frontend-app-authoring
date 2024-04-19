@@ -135,6 +135,11 @@ const messages = defineMessages({
     defaultMessage: 'Search tags',
     description: 'Placeholder text shown in the input field that allows searching through the available tags',
   },
+  submitSearchTagsByKeyword: {
+    id: 'course-authoring.course-search.submitSearchTagsByKeyword',
+    defaultMessage: 'Submit tag keyword search',
+    description: 'Text shown to screen reader users for the search button on the tags keyword search',
+  },
   showMore: {
     id: 'course-authoring.course-search.showMore',
     defaultMessage: 'Show more',

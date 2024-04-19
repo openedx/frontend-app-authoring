@@ -192,6 +192,10 @@ const FilterByTags = () => {
           onChange={setTagSearchKeywords}
           onClear={() => setTagSearchKeywords('')}
           value={tagSearchKeywords}
+          screenReaderText={{
+            label: intl.formatMessage(messages.searchTagsByKeywordPlaceholder),
+            submitButton: intl.formatMessage(messages.submitSearchTagsByKeyword),
+          }}
           placeholder={intl.formatMessage(messages.searchTagsByKeywordPlaceholder)}
           className="mx-3 mb-1"
         />

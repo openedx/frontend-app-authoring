@@ -1,0 +1,48 @@
+{
+  "comment": "Because this document has at least one tag that matches the search 'lightcast', all of its tags get returned.",
+  "hits": [
+    {
+      "tags": {
+        "taxonomy": [
+          "ESDC Skills and Competencies",
+          "FlatTaxonomy",
+          "HierarchicalTaxonomy",
+          "Lightcast Open Skills Taxonomy"
+        ],
+        "level0": [
+          "ESDC Skills and Competencies > Interests",
+          "FlatTaxonomy > flat taxonomy tag 1420",
+          "FlatTaxonomy > flat taxonomy tag 1683",
+          "FlatTaxonomy > flat taxonomy tag 2633",
+          "HierarchicalTaxonomy > hierarchical taxonomy tag 1",
+          "HierarchicalTaxonomy > hierarchical taxonomy tag 2",
+          "HierarchicalTaxonomy > hierarchical taxonomy tag 4",
+          "Lightcast Open Skills Taxonomy > Information Technology Category"
+        ],
+        "level1": [
+          "ESDC Skills and Competencies > Interests > Holland Codes",
+          "HierarchicalTaxonomy > hierarchical taxonomy tag 1 > hierarchical taxonomy tag 1.3",
+          "HierarchicalTaxonomy > hierarchical taxonomy tag 2 > hierarchical taxonomy tag 2.16",
+          "HierarchicalTaxonomy > hierarchical taxonomy tag 4 > hierarchical taxonomy tag 4.8",
+          "Lightcast Open Skills Taxonomy > Information Technology Category > Web Content"
+        ],
+        "level2": [
+          "ESDC Skills and Competencies > Interests > Holland Codes > Interests - Holland Codes",
+          "HierarchicalTaxonomy > hierarchical taxonomy tag 1 > hierarchical taxonomy tag 1.3 > hierarchical taxonomy tag 1.3.7",
+          "HierarchicalTaxonomy > hierarchical taxonomy tag 2 > hierarchical taxonomy tag 2.16 > hierarchical taxonomy tag 2.16.31",
+          "HierarchicalTaxonomy > hierarchical taxonomy tag 4 > hierarchical taxonomy tag 4.8 > hierarchical taxonomy tag 4.8.25",
+          "Lightcast Open Skills Taxonomy > Information Technology Category > Web Content > Web Resource"
+        ],
+        "level3": [
+          "ESDC Skills and Competencies > Interests > Holland Codes > Interests - Holland Codes > Artistic",
+          "ESDC Skills and Competencies > Interests > Holland Codes > Interests - Holland Codes > Investigative"
+        ]
+      }
+    }
+  ],
+  "query": "lightcast",
+  "processingTimeMs": 3,
+  "limit": 1000,
+  "offset": 0,
+  "estimatedTotalHits": 23
+}

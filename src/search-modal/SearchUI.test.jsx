@@ -27,6 +27,8 @@ import mockTagsFacetResult from './__mocks__/facet-search.json';
 import mockTagsFacetResultLevel0 from './__mocks__/facet-search-level0.json';
 // @ts-ignore
 import mockTagsFacetResultLevel1 from './__mocks__/facet-search-level1.json';
+// @ts-ignore
+import mockTagsKeywordSearchResult from './__mocks__/tags-keyword-search.json';
 import SearchUI from './SearchUI';
 import { getContentSearchConfigUrl } from './data/api';
 
@@ -42,6 +44,7 @@ const defaults = {
 };
 const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
 const facetSearchEndpoint = 'http://mock.meilisearch.local/indexes/studio/facet-search';
+const tagsKeywordSearchEndpoint = 'http://mock.meilisearch.local/indexes/studio/search';
 
 const mockNavigate = jest.fn();
 
@@ -105,6 +108,7 @@ describe('<SearchUI />', () => {
       mockResult.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
       return mockResult;
     });
+    fetchMock.post(tagsKeywordSearchEndpoint, mockTagsKeywordSearchResult);
   });
 
   afterEach(async () => {
@@ -313,6 +317,21 @@ describe('<SearchUI />', () => {
           'tags.level0 = "ESDC Skills and Competencies > Abilities"',
         ]);
       });
+    });
+
+    it('can do a keyword search of the tag options', async () => {
+      const { getByRole, getByLabelText, queryByLabelText } = rendered;
+      // Now open the filters menu:
+      fireEvent.click(getByRole('button', { name: 'Tags' }), {});
+      // The dropdown menu in this case doesn't have a role; let's just assume it's displayed.
+      const expandButtonLabel = /Expand to show child tags of "ESDC Skills and Competencies"/i;
+      await waitFor(() => { expect(getByLabelText(expandButtonLabel)).toBeInTheDocument(); });
+
+      const input = getByLabelText('Search tags');
+      fireEvent.change(input, { target: { value: 'Lightcast' } });
+
+      await waitFor(() => { expect(queryByLabelText(/^ESDC Skills and Competencies/i)).toBeNull(); });
+      expect(queryByLabelText(/^Lightcast/i)).toBeInTheDocument();
     });
   });
 });
