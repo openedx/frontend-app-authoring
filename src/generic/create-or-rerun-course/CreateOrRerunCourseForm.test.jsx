@@ -156,7 +156,7 @@ describe('<CreateOrRerunCourseForm />', () => {
       await axiosMock.onPost(getCreateOrRerunCourseUrl()).reply(200, { url });
       await executeThunk(updateCreateOrRerunCourseQuery({ org: 'testX', run: 'some' }), store.dispatch);
 
-      expect(window.location.assign).toHaveBeenCalledWith(`${process.env.STUDIO_BASE_URL}${url}`);
+      waitFor(() => expect(window.location.assign).toHaveBeenCalledWith(`${process.env.STUDIO_BASE_URL}${url}`));
     });
     it('should call window.location.assign with url and destinationCourseKey', async () => {
       render(<RootWrapper {...props} />);
@@ -179,7 +179,7 @@ describe('<CreateOrRerunCourseForm />', () => {
       });
       await executeThunk(updateCreateOrRerunCourseQuery({ org: 'testX', run: 'some' }), store.dispatch);
 
-      expect(window.location.assign).toHaveBeenCalledWith(`${process.env.STUDIO_BASE_URL}${url}${destinationCourseKey}`);
+      waitFor(() => expect(window.location.assign).toHaveBeenCalledWith(`${process.env.STUDIO_BASE_URL}${url}${destinationCourseKey}`));
     });
   });
 

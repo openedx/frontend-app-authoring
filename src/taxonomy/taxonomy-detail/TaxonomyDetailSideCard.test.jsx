@@ -26,7 +26,7 @@ const TaxonomyCardComponent = ({ taxonomy }) => (
 
 TaxonomyCardComponent.propTypes = TaxonomyDetailSideCard.propTypes;
 
-describe('<TaxonomyDetailSideCard/>', async () => {
+describe('<TaxonomyDetailSideCard/>', () => {
   beforeEach(async () => {
     initializeMockApp({
       authenticatedUser: {
@@ -39,7 +39,7 @@ describe('<TaxonomyDetailSideCard/>', async () => {
     store = initializeStore();
   });
 
-  it('should render title and description of the card', () => {
+  it('should render title and description of the card', async () => {
     const { getByText } = render(<TaxonomyCardComponent taxonomy={data} />);
     expect(getByText(data.name)).toBeInTheDocument();
     expect(getByText(data.description)).toBeInTheDocument();

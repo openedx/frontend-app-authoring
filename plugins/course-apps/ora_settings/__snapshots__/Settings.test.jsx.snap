@@ -5,7 +5,7 @@ exports[`ORASettings should render 1`] = `
   appId="ora_settings"
   hideAppToggle={true}
   initialValues={
-    Object {
+    {
       "enableFlexiblePeerGrade": "abitrary value",
     }
   }
@@ -31,7 +31,7 @@ exports[`ORASettings should render 1`] = `
     </div>
   }
   validationSchema={
-    Object {
+    {
       "enableFlexiblePeerGrade": "Yub.boolean",
     }
   }

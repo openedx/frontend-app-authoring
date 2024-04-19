@@ -37,7 +37,7 @@ const TaxonomyCardComponent = ({ original }) => (
 
 TaxonomyCardComponent.propTypes = TaxonomyCard.propTypes;
 
-describe('<TaxonomyCard />', async () => {
+describe('<TaxonomyCard />', () => {
   beforeEach(async () => {
     initializeMockApp({
       authenticatedUser: {

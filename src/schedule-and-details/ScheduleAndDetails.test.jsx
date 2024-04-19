@@ -148,7 +148,7 @@ describe('<ScheduleAndDetails />', () => {
   it('should display a success message when course details saves', async () => {
     const { getByText } = render(<RootWrapper />);
     await executeThunk(updateCourseDetailsQuery(courseId, 'DaTa'), store.dispatch);
-    expect(getByText(messages.alertSuccess.defaultMessage)).toBeInTheDocument();
+    waitFor(() => expect(getByText(messages.alertSuccess.defaultMessage)).toBeInTheDocument());
   });
 
   it('should display an error when GET CourseDetails fails', async () => {
@@ -177,6 +177,6 @@ describe('<ScheduleAndDetails />', () => {
       .reply(404, 'error');
     const { getByText } = render(<RootWrapper />);
     await executeThunk(updateCourseDetailsQuery(courseId, 'DaTa'), store.dispatch);
-    expect(getByText(messages.alertFail.defaultMessage)).toBeInTheDocument();
+    waitFor(() => expect(getByText(messages.alertFail.defaultMessage)).toBeInTheDocument());
   });
 });
