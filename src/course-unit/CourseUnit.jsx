@@ -48,6 +48,7 @@ const CourseUnit = ({ courseId }) => {
     handleTitleEdit,
     handleInternetConnectionFailed,
     handleCreateNewCourseXBlock,
+    handleConfigureSubmit,
     courseVerticalChildren,
   } = useCourseUnit({ courseId, blockId });
 
@@ -85,6 +86,7 @@ const CourseUnit = ({ courseId }) => {
                 isTitleEditFormOpen={isTitleEditFormOpen}
                 handleTitleEdit={handleTitleEdit}
                 handleTitleEditSubmit={handleTitleEditSubmit}
+                handleConfigureSubmit={handleConfigureSubmit}
               />
             )}
             breadcrumbs={(
@@ -119,16 +121,20 @@ const CourseUnit = ({ courseId }) => {
               )}
               <Stack gap={4} className="mb-4">
                 {courseVerticalChildren.children.map(({
-                  name, blockId: id, blockType: type, shouldScroll,
+                  name, blockId: id, blockType: type, shouldScroll, userPartitionInfo, validationMessages,
                 }) => (
                   <CourseXBlock
                     id={id}
                     key={id}
                     title={name}
                     type={type}
+                    blockId={blockId}
+                    validationMessages={validationMessages}
                     shouldScroll={shouldScroll}
                     unitXBlockActions={unitXBlockActions}
+                    handleConfigureSubmit={handleConfigureSubmit}
                     data-testid="course-xblock"
+                    userPartitionInfo={userPartitionInfo}
                   />
                 ))}
               </Stack>

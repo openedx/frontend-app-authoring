@@ -9,21 +9,37 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
+import ConfigureModal from '../../generic/configure-modal/ConfigureModal';
 import { scrollToElement } from '../../course-outline/utils';
+import { COURSE_BLOCK_NAMES } from '../../constants';
 import { getCourseId } from '../data/selectors';
 import { COMPONENT_TYPES } from '../constants';
+import XBlockMessages from './xblock-messages/XBlockMessages';
 import messages from './messages';
 
 const CourseXBlock = ({
-  id, title, type, unitXBlockActions, shouldScroll, ...props
+  id, title, type, unitXBlockActions, shouldScroll, userPartitionInfo,
+  handleConfigureSubmit, validationMessages, ...props
 }) => {
   const courseXBlockElementRef = useRef(null);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
+  const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
   const navigate = useNavigate();
   const courseId = useSelector(getCourseId);
   const intl = useIntl();
 
-  const onXBlockDelete = () => {
+  const visibilityMessage = userPartitionInfo.selectedGroupsLabel
+    ? intl.formatMessage(messages.visibilityMessage, { selectedGroupsLabel: userPartitionInfo.selectedGroupsLabel })
+    : null;
+
+  const currentItemData = {
+    category: COURSE_BLOCK_NAMES.component.id,
+    displayName: title,
+    userPartitionInfo,
+    showCorrectness: 'always',
+  };
+
+  const onDeleteSubmit = () => {
     unitXBlockActions.handleDelete(id);
     closeDeleteModal();
   };
@@ -39,6 +55,10 @@ const CourseXBlock = ({
     }
   };
 
+  const onConfigureSubmit = (...arg) => {
+    handleConfigureSubmit(id, ...arg, closeConfigureModal);
+  };
+
   useEffect(() => {
     // if this item has been newly added, scroll to it.
     if (courseXBlockElementRef.current && shouldScroll) {
@@ -51,6 +71,7 @@ const CourseXBlock = ({
       <Card className="mb-1">
         <Card.Header
           title={title}
+          subtitle={visibilityMessage}
           actions={(
             <ActionRow>
               <IconButton
@@ -78,7 +99,7 @@ const CourseXBlock = ({
                   <Dropdown.Item>
                     {intl.formatMessage(messages.blockLabelButtonMove)}
                   </Dropdown.Item>
-                  <Dropdown.Item>
+                  <Dropdown.Item onClick={openConfigureModal}>
                     {intl.formatMessage(messages.blockLabelButtonManageAccess)}
                   </Dropdown.Item>
                   <Dropdown.Item onClick={openDeleteModal}>
@@ -90,13 +111,21 @@ const CourseXBlock = ({
                 category="component"
                 isOpen={isDeleteModalOpen}
                 close={closeDeleteModal}
-                onDeleteSubmit={onXBlockDelete}
+                onDeleteSubmit={onDeleteSubmit}
+              />
+              <ConfigureModal
+                isXBlockComponent
+                isOpen={isConfigureModalOpen}
+                onClose={closeConfigureModal}
+                onConfigureSubmit={onConfigureSubmit}
+                currentItemData={currentItemData}
               />
             </ActionRow>
           )}
           size="md"
         />
         <Card.Section>
+          <XBlockMessages validationMessages={validationMessages} />
           <div className="w-100 bg-gray-100" style={{ height: 200 }} data-block-id={id} />
         </Card.Section>
       </Card>
@@ -105,6 +134,7 @@ const CourseXBlock = ({
 };
 
 CourseXBlock.defaultProps = {
+  validationMessages: [],
   shouldScroll: false,
 };
 
@@ -113,10 +143,30 @@ CourseXBlock.propTypes = {
   title: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   shouldScroll: PropTypes.bool,
+  validationMessages: PropTypes.arrayOf(PropTypes.shape({
+    type: PropTypes.string,
+    text: PropTypes.string,
+  })),
   unitXBlockActions: PropTypes.shape({
     handleDelete: PropTypes.func,
     handleDuplicate: PropTypes.func,
   }).isRequired,
+  userPartitionInfo: PropTypes.shape({
+    selectablePartitions: PropTypes.arrayOf(PropTypes.shape({
+      groups: PropTypes.arrayOf(PropTypes.shape({
+        deleted: PropTypes.bool,
+        id: PropTypes.number,
+        name: PropTypes.string,
+        selected: PropTypes.bool,
+      })),
+      id: PropTypes.number,
+      name: PropTypes.string,
+      scheme: PropTypes.string,
+    })),
+    selectedPartitionIndex: PropTypes.number,
+    selectedGroupsLabel: PropTypes.string,
+  }).isRequired,
+  handleConfigureSubmit: PropTypes.func.isRequired,
 };
 
 export default CourseXBlock;

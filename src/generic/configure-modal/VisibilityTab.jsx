@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Alert, Form } from '@openedx/paragon';
 import { FormattedMessage, injectIntl, useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
-import { COURSE_BLOCK_NAMES } from '../constants';
+import { COURSE_BLOCK_NAMES } from '../../constants';
 
 const VisibilityTab = ({
   values,

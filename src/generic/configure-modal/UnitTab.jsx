@@ -5,10 +5,12 @@ import {
   FormattedMessage, injectIntl, useIntl,
 } from '@edx/frontend-platform/i18n';
 import { Field } from 'formik';
+import classNames from 'classnames';
 
 import messages from './messages';
 
 const UnitTab = ({
+  isXBlockComponent,
   values,
   setFieldValue,
   showWarning,
@@ -18,6 +20,7 @@ const UnitTab = ({
   const {
     isVisibleToStaffOnly,
     selectedPartitionIndex,
+    selectedGroups,
   } = values;
 
   const handleChange = (e) => {
@@ -26,21 +29,32 @@ const UnitTab = ({
 
   const handleSelect = (e) => {
     setFieldValue('selectedPartitionIndex', parseInt(e.target.value, 10));
+    setFieldValue('selectedGroups', []);
+  };
+
+  const checkIsDeletedGroup = (group) => {
+    const isGroupSelected = selectedGroups.includes(group.id.toString());
+
+    return group.deleted && isGroupSelected;
   };
 
   return (
     <>
-      <h3 className="mt-3"><FormattedMessage {...messages.unitVisibility} /></h3>
-      <hr />
-      <Form.Checkbox checked={isVisibleToStaffOnly} onChange={handleChange} data-testid="unit-visibility-checkbox">
-        <FormattedMessage {...messages.hideFromLearners} />
-      </Form.Checkbox>
-      {showWarning && (
-        <Alert className="mt-2" variant="warning">
-          <FormattedMessage {...messages.unitVisibilityWarning} />
-        </Alert>
+      {!isXBlockComponent && (
+        <>
+          <h3 className="mt-3"><FormattedMessage {...messages.unitVisibility} /></h3>
+          <hr />
+          <Form.Checkbox checked={isVisibleToStaffOnly} onChange={handleChange} data-testid="unit-visibility-checkbox">
+            <FormattedMessage {...messages.hideFromLearners} />
+          </Form.Checkbox>
+          {showWarning && (
+            <Alert className="mt-2" variant="warning">
+              <FormattedMessage {...messages.unitVisibilityWarning} />
+            </Alert>
+          )}
+          <hr />
+        </>
       )}
-      <hr />
       <Form.Group controlId="groupSelect">
         <Form.Label as="legend" className="font-weight-bold">
           <FormattedMessage {...messages.restrictAccessTo} />
@@ -89,9 +103,19 @@ const UnitTab = ({
                     value={`${group.id}`}
                     name="selectedGroups"
                   />
-                  <Form.Label isInline>
-                    {group.name}
-                  </Form.Label>
+                  <div>
+                    <Form.Label
+                      className={classNames({ 'text-danger': checkIsDeletedGroup(group) })}
+                      isInline
+                    >
+                      {group.name}
+                    </Form.Label>
+                    {group.deleted && (
+                      <Form.Control.Feedback type="invalid" hasIcon={false}>
+                        {intl.formatMessage(messages.unitSelectDeletedGroupErrorMessage)}
+                      </Form.Control.Feedback>
+                    )}
+                  </div>
                 </Form.Group>
               ))}
             </div>
@@ -103,13 +127,21 @@ const UnitTab = ({
   );
 };
 
+UnitTab.defaultProps = {
+  isXBlockComponent: false,
+};
+
 UnitTab.propTypes = {
+  isXBlockComponent: PropTypes.bool,
   values: PropTypes.shape({
     isVisibleToStaffOnly: PropTypes.bool.isRequired,
     selectedPartitionIndex: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.number,
     ]).isRequired,
+    selectedGroups: PropTypes.oneOfType([
+      PropTypes.string,
+    ]),
   }).isRequired,
   setFieldValue: PropTypes.func.isRequired,
   showWarning: PropTypes.bool.isRequired,

@@ -3,7 +3,12 @@ import { defineMessages } from '@edx/frontend-platform/i18n';
 const messages = defineMessages({
   title: {
     id: 'course-authoring.course-outline.configure-modal.title',
-    defaultMessage: '{title} Settings',
+    defaultMessage: '{title} settings',
+  },
+  componentTitle: {
+    id: 'course-authoring.course-outline.configure-modal.component.title',
+    defaultMessage: 'Editing access for: {title}',
+    description: 'The visibility modal title for unit',
   },
   basicTabTitle: {
     id: 'course-authoring.course-outline.configure-modal.basic-tab.title',
@@ -15,15 +20,15 @@ const messages = defineMessages({
   },
   releaseDateAndTime: {
     id: 'course-authoring.course-outline.configure-modal.basic-tab.release-date-and-time',
-    defaultMessage: 'Release Date and Time',
+    defaultMessage: 'Release date and time',
   },
   releaseDate: {
     id: 'course-authoring.course-outline.configure-modal.basic-tab.release-date',
-    defaultMessage: 'Release Date:',
+    defaultMessage: 'Release date:',
   },
   releaseTimeUTC: {
     id: 'course-authoring.course-outline.configure-modal.basic-tab.release-time-UTC',
-    defaultMessage: 'Release Time in UTC:',
+    defaultMessage: 'Release time in UTC:',
   },
   visibilityTabTitle: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.title',
@@ -31,11 +36,11 @@ const messages = defineMessages({
   },
   visibilitySectionTitle: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.section-visibility',
-    defaultMessage: '{visibilityTitle} Visibility',
+    defaultMessage: '{visibilityTitle} visibility',
   },
   unitVisibility: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.unit-visibility',
-    defaultMessage: 'Unit Visibility',
+    defaultMessage: 'Unit visibility',
   },
   hideFromLearners: {
     id: 'course-authoring.course-outline.configure-modal.visibility.hide-from-learners',
@@ -65,6 +70,11 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.configure-modal.unit-tab.unit-select-group-type',
     defaultMessage: 'Select a group type',
   },
+  unitSelectDeletedGroupErrorMessage: {
+    id: 'course-authoring.course-outline.configure-modal.unit-tab.unit-select-group-deleted-error-message',
+    defaultMessage: 'This group no longer exists. Choose another group or remove the access restriction.',
+    description: 'The alert text of no longer available group',
+  },
   unitAllLearnersAndStaff: {
     id: 'course-authoring.course-outline.configure-modal.unit-tab.unit-all-learners-staff',
     defaultMessage: 'All Learners and Staff',
@@ -87,15 +97,15 @@ const messages = defineMessages({
   },
   dueDate: {
     id: 'course-authoring.course-outline.configure-modal.basic-tab.due-date',
-    defaultMessage: 'Due Date:',
+    defaultMessage: 'Due date:',
   },
   dueTimeUTC: {
     id: 'course-authoring.course-outline.configure-modal.basic-tab.due-time-UTC',
-    defaultMessage: 'Due Time in UTC:',
+    defaultMessage: 'Due time in UTC:',
   },
   subsectionVisibility: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.subsection-visibility',
-    defaultMessage: 'Subsection Visibility',
+    defaultMessage: 'Subsection visibility',
   },
   showEntireSubsection: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.show-entire-subsection',
@@ -151,7 +161,7 @@ const messages = defineMessages({
   },
   setSpecialExam: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.set-special-exam',
-    defaultMessage: 'Set as a Special Exam',
+    defaultMessage: 'Set as a special exam',
   },
   none: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.none',
@@ -195,7 +205,7 @@ const messages = defineMessages({
   },
   timeAllotted: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.time-allotted',
-    defaultMessage: 'Time Allotted (HH:MM):',
+    defaultMessage: 'Time allotted (HH:MM):',
   },
   timeLimitDescription: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.time-limit-description',

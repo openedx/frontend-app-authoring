@@ -4,7 +4,7 @@ import { Form } from '@openedx/paragon';
 import { FormattedMessage, injectIntl, useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 
-import FormikControl from '../../generic/FormikControl';
+import FormikControl from '../FormikControl';
 
 const PrereqSettings = ({
   values,
