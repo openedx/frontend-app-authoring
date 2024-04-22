@@ -96,6 +96,7 @@ const DiscussionsSettings = ({ courseId, intl }) => {
             onClose={handleClose}
             isOpen
             beforeBodyNode={<Stepper.Header className="border-bottom border-light" />}
+            isOverflowVisible={false}
             footerNode={(
               <>
                 <Stepper.ActionRow eventKey={SELECTION_STEP}>
