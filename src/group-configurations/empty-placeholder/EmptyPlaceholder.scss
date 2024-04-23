@@ -1,0 +1,10 @@
+.group-configurations-empty-placeholder {
+  @include pgn-box-shadow(1, "down");
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  border-radius: .375rem;
+  padding: 1.5rem;
+}
