@@ -11,7 +11,7 @@ export const useFileInput = ({
   const click = () => ref.current.click();
   const addFile = (e) => {
     const { files } = e.target;
-    setSelectedRows(files);
+    setSelectedRows([...files]);
     onAddFile(Object.values(files));
     setAddOpen();
     e.target.value = '';
