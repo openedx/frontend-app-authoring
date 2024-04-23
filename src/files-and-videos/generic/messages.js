@@ -8,7 +8,7 @@ const messages = defineMessages({
   },
   apiStatusToastMessage: {
     id: 'course-authoring.files-and-upload.apiStatus.message',
-    defaultMessage: '{actionType} {selectedRowCount} {fileType}(s)',
+    defaultMessage: '{actionType} {selectedRowCount} {selectedRowCount, plural, one {{fileType}} other {{fileType}s}}',
     description: 'This message is showed in the toast when action is applied to files',
   },
   apiStatusAddingAction: {
