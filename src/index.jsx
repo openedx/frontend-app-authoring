@@ -8,7 +8,7 @@ import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import {
-  Navigate, Route, createRoutesFromElements, createBrowserRouter, RouterProvider,
+  Route, createRoutesFromElements, createBrowserRouter, RouterProvider,
 } from 'react-router-dom';
 import {
   QueryClient,
@@ -59,8 +59,6 @@ const App = () => {
         )}
         {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
           <>
-            {/* TODO: remove this redirect once Studio's link is updated */}
-            <Route path="/taxonomy-list" element={<Navigate to="/taxonomies" />} />
             <Route path="/taxonomies" element={<TaxonomyLayout />}>
               <Route index element={<TaxonomyListPage />} />
             </Route>
