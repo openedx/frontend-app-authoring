@@ -15,14 +15,21 @@ const SearchKeywordsField = (props) => {
   const { searchKeywords, setSearchKeywords } = useSearchContext();
 
   return (
-    <SearchField
+    <SearchField.Advanced
       onSubmit={setSearchKeywords}
       onChange={setSearchKeywords}
       onClear={() => setSearchKeywords('')}
       value={searchKeywords}
       className={props.className}
-      placeholder={intl.formatMessage(messages.inputPlaceholder)}
-    />
+    >
+      <SearchField.Label />
+      <SearchField.Input
+        autoFocus
+        placeholder={intl.formatMessage(messages.inputPlaceholder)}
+      />
+      <SearchField.ClearButton />
+      <SearchField.SubmitButton />
+    </SearchField.Advanced>
   );
 };
 
