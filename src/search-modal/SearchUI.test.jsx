@@ -17,6 +17,10 @@ import {
 import fetchMock from 'fetch-mock-jest';
 
 import initializeStore from '../store';
+import { executeThunk } from '../utils';
+import { getStudioHomeApiUrl } from '../studio-home/data/api';
+import { fetchStudioHomeData } from '../studio-home/data/thunks';
+import { generateGetStudioHomeDataApiResponse } from '../studio-home/factories/mockApiResponses';
 import mockResult from './__mocks__/search-result.json';
 import mockEmptyResult from './__mocks__/empty-search-result.json';
 import mockTagsFacetResult from './__mocks__/facet-search.json';
@@ -89,6 +93,7 @@ describe('<SearchUI />', () => {
       index_name: 'studio',
       api_key: 'test-key',
     });
+
     // The Meilisearch client-side API uses fetch, not Axios.
     fetchMock.post(searchEndpoint, (_url, req) => {
       const requestData = JSON.parse(req.body?.toString() ?? '');
@@ -185,7 +190,13 @@ describe('<SearchUI />', () => {
   describe('results', () => {
     /** @type {import('@testing-library/react').RenderResult} */
     let rendered;
-    beforeEach(() => {
+    beforeEach(async () => {
+      const data = generateGetStudioHomeDataApiResponse();
+      data.redirectToLibraryAuthoringMfe = true;
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, data);
+
+      await executeThunk(fetchStudioHomeData(), store.dispatch);
+
       rendered = render(<Wrap><SearchUI {...defaults} /></Wrap>);
       const { getByRole } = rendered;
       fireEvent.change(getByRole('searchbox'), { target: { value: 'giraffe' } });
@@ -283,6 +294,29 @@ describe('<SearchUI />', () => {
         '/course/course-v1:SampleTaxonomyOrg1+STC1+2023_1/container/block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@aaf8b8eb86b54281aeeab12499d2cb0b'
         + '?show=block-v1%3ASampleTaxonomyOrg1%2BSTC1%2B2023_1%2Btype%40html%2Bblock%400b2d1c0722f742489602b6d8645205f4',
       );
+    });
+
+    test('click lib component result navigates to the context', async () => {
+      const { findByRole } = rendered;
+
+      const resultItem = await findByRole('button', { name: /Library Content/ });
+
+      // Clicking the "Open in new window" button should open the result in a new window:
+      const { open, location } = window;
+      window.open = jest.fn();
+      fireEvent.click(within(resultItem).getByRole('button', { name: 'Open in new window' }));
+      expect(window.open).toHaveBeenCalledWith(
+        'http://localhost:3001/library/lib:org1:libafter1',
+        '_blank',
+      );
+      window.open = open;
+
+      // @ts-ignore
+      window.location = { href: '' };
+      // Clicking in the result should navigate to the result's URL:
+      fireEvent.click(resultItem);
+      expect(window.location.href = 'http://localhost:3001/library/lib:org1:libafter1');
+      window.location = location;
     });
   });
 
