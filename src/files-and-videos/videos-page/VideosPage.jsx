@@ -85,7 +85,7 @@ const VideosPage = ({
   useEffect(() => {
     window.onbeforeunload = () => {
       dispatch(markVideoUploadsInProgressAsFailed({ uploadingIdsRef, courseId }));
-      return undefined;
+      return "";
     };
   }, []);
 
