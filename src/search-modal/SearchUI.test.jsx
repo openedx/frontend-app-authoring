@@ -191,12 +191,6 @@ describe('<SearchUI />', () => {
     /** @type {import('@testing-library/react').RenderResult} */
     let rendered;
     beforeEach(async () => {
-      const data = generateGetStudioHomeDataApiResponse();
-      data.redirectToLibraryAuthoringMfe = true;
-      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, data);
-
-      await executeThunk(fetchStudioHomeData(), store.dispatch);
-
       rendered = render(<Wrap><SearchUI {...defaults} /></Wrap>);
       const { getByRole } = rendered;
       fireEvent.change(getByRole('searchbox'), { target: { value: 'giraffe' } });
@@ -297,6 +291,12 @@ describe('<SearchUI />', () => {
     });
 
     test('click lib component result navigates to the context', async () => {
+      const data = generateGetStudioHomeDataApiResponse();
+      data.redirectToLibraryAuthoringMfe = true;
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, data);
+
+      await executeThunk(fetchStudioHomeData(), store.dispatch);
+
       const { findByRole } = rendered;
 
       const resultItem = await findByRole('button', { name: /Library Content/ });
@@ -316,6 +316,32 @@ describe('<SearchUI />', () => {
       // Clicking in the result should navigate to the result's URL:
       fireEvent.click(resultItem);
       expect(window.location.href = 'http://localhost:3001/library/lib:org1:libafter1');
+      window.location = location;
+    });
+
+    test('click lib component result doesnt navigates to the context withou libraryAuthoringMfe', async () => {
+      const data = generateGetStudioHomeDataApiResponse();
+      data.redirectToLibraryAuthoringMfe = false;
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, data);
+
+      await executeThunk(fetchStudioHomeData(), store.dispatch);
+
+      const { findByRole } = rendered;
+
+      const resultItem = await findByRole('button', { name: /Library Content/ });
+
+      // Clicking the "Open in new window" button should open the result in a new window:
+      const { open, location } = window;
+      window.open = jest.fn();
+      fireEvent.click(within(resultItem).getByRole('button', { name: 'Open in new window' }));
+      expect(window.open).not.toHaveBeenCalled();
+      window.open = open;
+
+      // @ts-ignore
+      window.location = { href: '' };
+      // Clicking in the result should navigate to the result's URL:
+      fireEvent.click(resultItem);
+      expect(window.location.href === location.href);
       window.location = location;
     });
   });
