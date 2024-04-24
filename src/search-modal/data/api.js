@@ -83,8 +83,9 @@ function formatTagsFilter(tagsFilter) {
  * @property {string} blockType The block_type part of the usage key. What type of XBlock this is.
  * @property {string} contextKey The course or library ID
  * @property {string} org
- * @property {{displayName: string}[]} breadcrumbs First one is the name of the course/library itself.
- *       After that is the name of any parent Section/Subsection/Unit/etc.
+ * @property {[{displayName: string}, ...Array<{displayName: string, usageKey: string}>]} breadcrumbs
+ *          First one is the name of the course/library itself.
+ *          After that is the name and usage key of any parent Section/Subsection/Unit/etc.
  * @property {Record<'taxonomy'|'level0'|'level1'|'level2'|'level3', string[]>} tags
  * @property {ContentDetails} [content]
  * @property {{displayName: string, content: ContentDetails}} formatted Same fields with <mark>...</mark> highlights

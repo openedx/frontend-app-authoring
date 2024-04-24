@@ -18,9 +18,15 @@
           "org": "edx",
           "breadcrumbs": [
             { "display_name": "TheCourse" },
-            { "display_name": "Section 2" },
-            { "display_name": "Subsection 3" },
-            { "display_name": "The Little Unit That Could" }
+            { "display_name": "Section 2", "usage_key": "block-v1:edx+TestCourse+24+type@chapter+block@chapter_2" },
+            {
+              "display_name": "Subsection 3",
+              "usage_key": "block-v1:edx+TestCourse+24+type@sequential+block@sequential_3"
+            },
+            {
+              "display_name": "The Little Unit That Could",
+              "usage_key": "block-v1:edx+TestCourse+24+type@vertical+block@vertical_3_1"
+            }
           ],
           "tags": {
             "taxonomy": [

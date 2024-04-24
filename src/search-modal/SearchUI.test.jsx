@@ -17,17 +17,11 @@ import {
 import fetchMock from 'fetch-mock-jest';
 
 import initializeStore from '../store';
-// @ts-ignore
 import mockResult from './__mocks__/search-result.json';
-// @ts-ignore
 import mockEmptyResult from './__mocks__/empty-search-result.json';
-// @ts-ignore
 import mockTagsFacetResult from './__mocks__/facet-search.json';
-// @ts-ignore
 import mockTagsFacetResultLevel0 from './__mocks__/facet-search-level0.json';
-// @ts-ignore
 import mockTagsFacetResultLevel1 from './__mocks__/facet-search-level1.json';
-// @ts-ignore
 import mockTagsKeywordSearchResult from './__mocks__/tags-keyword-search.json';
 import SearchUI from './SearchUI';
 import { getContentSearchConfigUrl } from './data/api';
@@ -168,14 +162,18 @@ describe('<SearchUI />', () => {
     window.open = jest.fn();
     fireEvent.click(within(resultItem).getByRole('button', { name: 'Open in new window' }));
     expect(window.open).toHaveBeenCalledWith(
-      '/course/course-v1:edx+TestCourse+24?show=block-v1%3Aedx%2BTestCourse%2B24%2Btype%40html%2Bblock%40test_html',
+      '/course/course-v1:edx+TestCourse+24/container/block-v1:edx+TestCourse+24+type@vertical+block@vertical_3_1'
+      + '?show=block-v1%3Aedx%2BTestCourse%2B24%2Btype%40html%2Bblock%40test_html',
       '_blank',
     );
     window.open = open;
 
     // Clicking in the result should navigate to the result's URL:
     fireEvent.click(resultItem);
-    expect(mockNavigate).toHaveBeenCalledWith('/course/course-v1:edx+TestCourse+24?show=block-v1%3Aedx%2BTestCourse%2B24%2Btype%40html%2Bblock%40test_html');
+    expect(mockNavigate).toHaveBeenCalledWith(
+      '/course/course-v1:edx+TestCourse+24/container/block-v1:edx+TestCourse+24+type@vertical+block@vertical_3_1'
+      + '?show=block-v1%3Aedx%2BTestCourse%2B24%2Btype%40html%2Bblock%40test_html',
+    );
   });
 
   it('defaults to searching "This Course" if used in a course', async () => {

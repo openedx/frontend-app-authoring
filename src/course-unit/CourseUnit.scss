@@ -4,3 +4,18 @@
 @import "./course-xblock/CourseXBlock";
 @import "./sidebar/Sidebar";
 @import "./header-title/HeaderTitle";
+
+div.xblock-highlight {
+  animation: 5s glow;
+  animation-timing-function: cubic-bezier(1, 0, .72, .04);
+}
+
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 5px 5px $primary-500;
+  }
+
+  100% {
+    box-shadow: unset;
+  }
+}
