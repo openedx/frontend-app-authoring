@@ -9,6 +9,7 @@ const slice = createSlice({
     savingStatus: '',
     isQueryPending: false,
     isTitleEditFormOpen: false,
+    canEdit: true,
     loadingStatus: {
       fetchUnitLoadingStatus: RequestStatus.IN_PROGRESS,
       courseSectionVerticalLoadingStatus: RequestStatus.IN_PROGRESS,
@@ -16,7 +17,8 @@ const slice = createSlice({
     },
     unit: {},
     courseSectionVertical: {},
-    courseVerticalChildren: {},
+    courseVerticalChildren: { children: [], isPublished: true },
+    staticFileNotices: {},
   },
   reducers: {
     fetchCourseItemSuccess: (state, { payload }) => {
@@ -95,6 +97,9 @@ const slice = createSlice({
         }),
       };
     },
+    fetchStaticFileNoticesSuccess: (state, { payload }) => {
+      state.staticFileNotices = payload;
+    },
   },
 });
 
@@ -115,6 +120,7 @@ export const {
   updateCourseVerticalChildrenLoadingStatus,
   deleteXBlock,
   duplicateXBlock,
+  fetchStaticFileNoticesSuccess,
 } = slice.actions;
 
 export const {

@@ -9,7 +9,6 @@
 @import "./publish-modal/PublishModal";
 @import "./drag-helper/SortableItem";
 @import "./xblock-status/XBlockStatus";
-@import "./paste-button/PasteButton";
 
 div.row:has(> div > div.highlight) {
   animation: 5s glow;

@@ -20,9 +20,13 @@ import {
   getLoadingStatus,
   getSavingStatus,
   getSequenceStatus,
+  getStaticFileNotices,
+  getCanEdit,
 } from './data/selectors';
 import { changeEditTitleFormOpen, updateQueryPendingStatus } from './data/slice';
 import { PUBLISH_TYPES } from './constants';
+
+import { useCopyToClipboard } from '../generic/clipboard';
 
 // eslint-disable-next-line import/prefer-default-export
 export const useCourseUnit = ({ courseId, blockId }) => {
@@ -36,10 +40,14 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const sequenceStatus = useSelector(getSequenceStatus);
   const { draftPreviewLink, publishedPreviewLink } = useSelector(getCourseSectionVertical);
   const courseVerticalChildren = useSelector(getCourseVerticalChildren);
+  const staticFileNotices = useSelector(getStaticFileNotices);
   const navigate = useNavigate();
   const isTitleEditFormOpen = useSelector(state => state.courseUnit.isTitleEditFormOpen);
   const isQueryPending = useSelector(state => state.courseUnit.isQueryPending);
+  const canEdit = useSelector(getCanEdit);
   const { currentlyVisibleToStudents } = courseUnit;
+  const { sharedClipboardData, showPasteXBlock, showPasteUnit } = useCopyToClipboard(canEdit);
+  const { canPasteComponent } = courseVerticalChildren;
 
   const unitTitle = courseUnit.metadata?.displayName || '';
   const sequenceId = courseUnit.ancestorInfo?.ancestors[0].id;
@@ -117,11 +125,15 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     savingStatus,
     isQueryPending,
     isErrorAlert,
+    staticFileNotices,
     currentlyVisibleToStudents,
     isLoading: loadingStatus.fetchUnitLoadingStatus === RequestStatus.IN_PROGRESS
       || loadingStatus.courseSectionVerticalLoadingStatus === RequestStatus.IN_PROGRESS,
     isTitleEditFormOpen,
     isInternetConnectionAlertFailed: savingStatus === RequestStatus.FAILED,
+    sharedClipboardData,
+    showPasteXBlock,
+    showPasteUnit,
     handleInternetConnectionFailed,
     unitXBlockActions,
     headerNavigationsActions,
@@ -130,5 +142,6 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     handleCreateNewCourseXBlock,
     handleConfigureSubmit,
     courseVerticalChildren,
+    canPasteComponent,
   };
 };

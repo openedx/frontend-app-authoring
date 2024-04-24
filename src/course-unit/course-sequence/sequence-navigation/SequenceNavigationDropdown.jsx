@@ -1,12 +1,18 @@
 import PropTypes from 'prop-types';
 import { Button, Dropdown } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Plus as PlusIcon } from '@openedx/paragon/icons/';
+import { Plus as PlusIcon, ContentPasteGo as ContentPasteGoIcon } from '@openedx/paragon/icons/';
 
 import messages from '../messages';
 import UnitButton from './UnitButton';
 
-const SequenceNavigationDropdown = ({ unitId, unitIds, handleClick }) => {
+const SequenceNavigationDropdown = ({
+  unitId,
+  unitIds,
+  handleAddNewSequenceUnit,
+  handlePasteNewSequenceUnit,
+  showPasteUnit,
+}) => {
   const intl = useIntl();
 
   return (
@@ -32,10 +38,20 @@ const SequenceNavigationDropdown = ({ unitId, unitIds, handleClick }) => {
           as={Dropdown.Item}
           variant="outline-primary"
           iconBefore={PlusIcon}
-          onClick={handleClick}
+          onClick={handleAddNewSequenceUnit}
         >
           {intl.formatMessage(messages.newUnitBtnText)}
         </Button>
+        {showPasteUnit && (
+          <Button
+            as={Dropdown.Item}
+            variant="outline-primary"
+            iconBefore={ContentPasteGoIcon}
+            onClick={handlePasteNewSequenceUnit}
+          >
+            {intl.formatMessage(messages.pasteAsNewUnitLink)}
+          </Button>
+        )}
       </Dropdown.Menu>
     </Dropdown>
   );
@@ -44,7 +60,9 @@ const SequenceNavigationDropdown = ({ unitId, unitIds, handleClick }) => {
 SequenceNavigationDropdown.propTypes = {
   unitId: PropTypes.string.isRequired,
   unitIds: PropTypes.arrayOf(PropTypes.string).isRequired,
-  handleClick: PropTypes.func.isRequired,
+  handleAddNewSequenceUnit: PropTypes.func.isRequired,
+  handlePasteNewSequenceUnit: PropTypes.func.isRequired,
+  showPasteUnit: PropTypes.bool.isRequired,
 };
 
 export default SequenceNavigationDropdown;

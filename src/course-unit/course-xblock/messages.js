@@ -26,6 +26,10 @@ const messages = defineMessages({
     defaultMessage: 'Move',
     description: 'The xblock move button text',
   },
+  blockLabelButtonCopyToClipboard: {
+    id: 'course-authoring.course-unit.xblock.button.copyToClipboard.label',
+    defaultMessage: 'Copy to clipboard',
+  },
   blockLabelButtonManageAccess: {
     id: 'course-authoring.course-unit.xblock.button.manageAccess.label',
     defaultMessage: 'Manage access',

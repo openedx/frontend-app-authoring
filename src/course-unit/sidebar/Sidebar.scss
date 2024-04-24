@@ -50,6 +50,14 @@
         line-height: $headings-line-height;
       }
     }
+
+    .course-unit-sidebar-footer__divider {
+      margin: map-get($spacers, 3\.5) map-get($spacers, 0) map-get($spacers, 3\.5);
+    }
+
+    .course-unit-sidebar-footer__discard-changes__btn + .course-unit-sidebar-footer__divider {
+      margin: map-get($spacers, 2) map-get($spacers, 0) map-get($spacers, 3\.5);
+    }
   }
 
   .course-unit-sidebar-date {

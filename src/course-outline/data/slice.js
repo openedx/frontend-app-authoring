@@ -38,12 +38,6 @@ const slice = createSlice({
       childAddable: true,
       duplicable: true,
     },
-    initialUserClipboard: {
-      content: {},
-      sourceUsageKey: null,
-      sourceContexttitle: null,
-      sourceEditUrl: null,
-    },
     enableProctoredExams: false,
     pasteFileNotices: {},
   },
@@ -52,7 +46,6 @@ const slice = createSlice({
       state.outlineIndexData = payload;
       state.sectionsList = payload.courseStructure?.childInfo?.children || [];
       state.isCustomRelativeDatesActive = payload.isCustomRelativeDatesActive;
-      state.initialUserClipboard = payload.initialUserClipboard;
       state.enableProctoredExams = payload.courseStructure?.enableProctoredExams;
     },
     updateOutlineIndexLoadingStatus: (state, { payload }) => {
@@ -78,9 +71,6 @@ const slice = createSlice({
         ...state.statusBarData,
         ...payload,
       };
-    },
-    updateClipboardContent: (state, { payload }) => {
-      state.initialUserClipboard = payload;
     },
     updateCourseActions: (state, { payload }) => {
       state.actions = {
@@ -210,7 +200,6 @@ export const {
   reorderSectionList,
   reorderSubsectionList,
   reorderUnitList,
-  updateClipboardContent,
   setPasteFileNotices,
   removePasteFileNotices,
 } = slice.actions;
