@@ -25,6 +25,16 @@ const messages = defineMessages({
     defaultMessage: 'No tags in current results',
     description: 'Label shown when there are no options available to filter by tags',
   },
+  'blockTagsFilter.error': {
+    id: 'course-authoring.course-search.blockTagsFilter.error',
+    defaultMessage: 'Error loading tags',
+    description: 'Label shown when the tags could not be loaded',
+  },
+  'blockTagsFilter.incomplete': {
+    id: 'course-authoring.course-search.blockTagsFilter.incomplete',
+    defaultMessage: 'Sorry, not all tags could be loaded',
+    description: 'Label shown when the system is not able to display all of the available tag options.',
+  },
   'blockType.annotatable': {
     id: 'course-authoring.course-search.blockType.annotatable',
     defaultMessage: 'Annotation',
@@ -80,6 +90,16 @@ const messages = defineMessages({
     defaultMessage: 'Video',
     description: 'Name of the "Video" component type in Studio',
   },
+  childTagsExpand: {
+    id: 'course-authoring.course-search.child-tags-expand',
+    defaultMessage: 'Expand to show child tags of "{tagName}"',
+    description: 'This text describes the ▼ expand toggle button to non-visual users.',
+  },
+  childTagsCollapse: {
+    id: 'course-authoring.course-search.child-tags-collapse',
+    defaultMessage: 'Collapse to hide child tags of "{tagName}"',
+    description: 'This text describes the ▲ collapse toggle button to non-visual users.',
+  },
   clearFilters: {
     id: 'course-authoring.course-search.clearFilters',
     defaultMessage: 'Clear Filters',
@@ -110,10 +130,30 @@ const messages = defineMessages({
     defaultMessage: 'Search',
     description: 'Placeholder text shown in the keyword input field when the user has not yet entered a keyword',
   },
+  searchTagsByKeywordPlaceholder: {
+    id: 'course-authoring.course-search.searchTagsByKeywordPlaceholder',
+    defaultMessage: 'Search tags',
+    description: 'Placeholder text shown in the input field that allows searching through the available tags',
+  },
+  submitSearchTagsByKeyword: {
+    id: 'course-authoring.course-search.submitSearchTagsByKeyword',
+    defaultMessage: 'Submit tag keyword search',
+    description: 'Text shown to screen reader users for the search button on the tags keyword search',
+  },
   showMore: {
     id: 'course-authoring.course-search.showMore',
     defaultMessage: 'Show more',
     description: 'Show more tags / filter options',
+  },
+  showMoreResults: {
+    id: 'course-authoring.course-search.showMoreResults',
+    defaultMessage: 'Show more results',
+    description: 'Show more results - a button to add to the list of results by loading more from the server',
+  },
+  loadingMoreResults: {
+    id: 'course-authoring.course-search.loadingMoreResults',
+    defaultMessage: 'Loading more results',
+    description: 'Loading more results - the button displays this message while more results are loading',
   },
   emptySearchTitle: {
     id: 'course-authoring.course-search.emptySearchTitle',
@@ -135,15 +175,15 @@ const messages = defineMessages({
     defaultMessage: 'Please try a different search term or filter',
     description: 'Subtitle shown when the search returned no results',
   },
-  showMoreResults: {
-    id: 'course-authoring.course-search.showMoreResults',
-    defaultMessage: 'Show more results',
-    description: 'Show more results button label',
-  },
   openInNewWindow: {
     id: 'course-authoring.course-search.openInNewWindow',
     defaultMessage: 'Open in new window',
     description: 'Alt text for the button that opens the search result in a new window',
+  },
+  searchError: {
+    id: 'course-authoring.course-search.searchError',
+    defaultMessage: 'An error occurred. Unable to load search results.',
+    description: 'Error message shown when search is not working.',
   },
 });
 

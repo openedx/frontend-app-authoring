@@ -1,0 +1,12 @@
+{
+  "facetHits": [
+      { "value": "ESDC Skills and Competencies", "count": 7 },
+      { "value": "FlatTaxonomy", "count": 7 },
+      { "value": "HierarchicalTaxonomy", "count": 6 },
+      { "value": "Lightcast Open Skills Taxonomy", "count": 6 },
+      { "value": "MultiOrgTaxonomy", "count": 7 },
+      { "value": "TwoLevelTaxonomy", "count": 7 }
+  ],
+  "facetQuery": "",
+  "processingTimeMs": 0
+}

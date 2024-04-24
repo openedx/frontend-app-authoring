@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 // @ts-check
-import React, { useCallback, useMemo } from 'react';
+import React from 'react';
 import { getConfig, getPath } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -12,78 +12,42 @@ import {
   Article,
   Folder,
   OpenInNew,
-  Question,
-  TextFields,
-  Videocam,
 } from '@openedx/paragon/icons';
-import {
-  Highlight,
-  Snippet,
-} from 'react-instantsearch';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
+import { COMPONENT_TYPE_ICON_MAP, TYPE_ICONS_MAP } from '../course-unit/constants';
 import { getStudioHomeData } from '../studio-home/data/selectors';
+import { useSearchContext } from './manager/SearchManager';
+import Highlight from './Highlight';
 import messages from './messages';
 
-/**
-  * @typedef {import('instantsearch.js').Hit<{
-  *  id: string,
-  *  usage_key: string,
-  *  context_key: string,
-  *  display_name: string,
-  *  block_type: string,
-  *  'content.html_content'?: string,
-  *  'content.capa_content'?: string,
-  *  breadcrumbs: {display_name: string}[]
-  *  breadcrumbsNames: string[],
-  *  }>} CustomHit
-  */
-
-/**
- * Custom Highlight component that uses the <b> tag for highlighting
- * @type {React.FC<{
- *   attribute: keyof CustomHit | string[],
- *   hit: CustomHit,
- *   separator?: string,
- * }>}
- */
-const CustomHighlight = ({ attribute, hit, separator }) => (
-  <Highlight
-    attribute={attribute}
-    hit={hit}
-    separator={separator}
-    highlightedTagName="b"
-  />
-);
-
-const ItemIcon = {
-  vertical: Folder,
+const STRUCTURAL_TYPE_ICONS = {
+  vertical: TYPE_ICONS_MAP.vertical,
   sequential: Folder,
   chapter: Folder,
-  problem: Question,
-  video: Videocam,
-  html: TextFields,
 };
+
+/** @param {string} blockType */
+function getItemIcon(blockType) {
+  return STRUCTURAL_TYPE_ICONS[blockType] ?? COMPONENT_TYPE_ICON_MAP[blockType] ?? Article;
+}
 
 /**
  * A single search result (row), usually represents an XBlock/Component
- * @type {React.FC<{ hit: CustomHit, closeSearch?: () => void}>}
+ * @type {React.FC<{hit: import('./data/api').ContentHit}>}
  */
-const SearchResult = ({ hit, closeSearch }) => {
+const SearchResult = ({ hit }) => {
   const intl = useIntl();
   const navigate = useNavigate();
+  const { closeSearchModal } = useSearchContext();
   const { libraryAuthoringMfeUrl, redirectToLibraryAuthoringMfe } = useSelector(getStudioHomeData);
 
   /**
    * Returns the URL for the context of the hit
-   * @param {CustomHit} hit
-   * @param {boolean?} newWindow
-   * @param {string} libraryAuthoringMfeUrl
-   * @returns {string?}
    */
-  const getContextUrl = useCallback((newWindow) => {
-    const { context_key: contextKey, usage_key: usageKey } = hit;
+  const getContextUrl = React.useCallback((newWindow = false) => {
+    const { contextKey, usageKey } = hit;
     if (contextKey.startsWith('course-v1:')) {
       const courseSufix = `course/${contextKey}?show=${encodeURIComponent(usageKey)}`;
       if (newWindow) {
@@ -101,30 +65,31 @@ const SearchResult = ({ hit, closeSearch }) => {
     return undefined;
   }, [libraryAuthoringMfeUrl, redirectToLibraryAuthoringMfe]);
 
-  const redirectUrl = useMemo(() => getContextUrl(), [libraryAuthoringMfeUrl, redirectToLibraryAuthoringMfe]);
-  const newWindowUrl = useMemo(() => getContextUrl(true), [libraryAuthoringMfeUrl, redirectToLibraryAuthoringMfe]);
+  const redirectUrl = React.useMemo(() => getContextUrl(), [libraryAuthoringMfeUrl, redirectToLibraryAuthoringMfe]);
+  const newWindowUrl = React.useMemo(
+    () => getContextUrl(true),
+    [libraryAuthoringMfeUrl, redirectToLibraryAuthoringMfe],
+  );
 
   /**
-    * Opens the context of the hit in a new window
-    * @param {React.MouseEvent} e
-    * @returns {void}
-    * */
+   * Opens the context of the hit in a new window
+   * @param {React.MouseEvent} e
+   * @returns {void}
+   */
   const openContextInNewWindow = (e) => {
     e.stopPropagation();
-
     /* istanbul ignore next */
     if (!newWindowUrl) {
       return;
     }
-
     window.open(newWindowUrl, '_blank');
   };
 
   /**
-    * Navigates to the context of the hit
-    * @param {(React.MouseEvent | React.KeyboardEvent)} e
-    * @returns {void}
-    * */
+   * Navigates to the context of the hit
+   * @param {(React.MouseEvent | React.KeyboardEvent)} e
+   * @returns {void}
+   */
   const navigateToContext = (e) => {
     e.stopPropagation();
 
@@ -146,7 +111,7 @@ const SearchResult = ({ hit, closeSearch }) => {
     }
 
     navigate(redirectUrl);
-    closeSearch?.();
+    closeSearchModal();
   };
 
   return (
@@ -159,17 +124,17 @@ const SearchResult = ({ hit, closeSearch }) => {
       tabIndex={redirectUrl ? 0 : undefined}
       role="button"
     >
-      <Icon className="text-muted" src={ItemIcon[hit.block_type] || Article} />
+      <Icon className="text-muted" src={getItemIcon(hit.blockType)} />
       <Stack>
         <div className="hit-name small">
-          <CustomHighlight attribute="display_name" hit={hit} />
+          <Highlight text={hit.formatted.displayName} />
         </div>
         <div className="hit-description x-small text-truncate">
-          <Snippet attribute="content.html_content" hit={hit} highlightedTagName="b" />
-          <Snippet attribute="content.capa_content" hit={hit} highlightedTagName="b" />
+          <Highlight text={hit.formatted.content?.htmlContent ?? ''} />
+          <Highlight text={hit.formatted.content?.capaContent ?? ''} />
         </div>
         <div className="text-muted x-small">
-          <CustomHighlight attribute="breadcrumbsNames" separator=" / " hit={hit} />
+          {hit.breadcrumbs.map(bc => bc.displayName).join(' / ')}
         </div>
       </Stack>
       <IconButton

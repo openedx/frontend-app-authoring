@@ -1,20 +1,20 @@
 /* eslint-disable react/prop-types */
 // @ts-check
 import React from 'react';
-import { useClearRefinements } from 'react-instantsearch';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Button } from '@openedx/paragon';
 import messages from './messages';
+import { useSearchContext } from './manager/SearchManager';
 
 /**
  * A button that appears when at least one filter is active, and will clear the filters when clicked.
  * @type {React.FC<Record<never, never>>}
  */
 const ClearFiltersButton = () => {
-  const { refine, canRefine } = useClearRefinements();
-  if (canRefine) {
+  const { canClearFilters, clearFilters } = useSearchContext();
+  if (canClearFilters) {
     return (
-      <Button variant="link" size="sm" onClick={refine}>
+      <Button variant="link" size="sm" onClick={clearFilters}>
         <FormattedMessage {...messages.clearFilters} />
       </Button>
     );
