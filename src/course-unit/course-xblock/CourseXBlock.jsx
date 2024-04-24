@@ -6,7 +6,6 @@ import {
 } from '@openedx/paragon';
 import { EditOutline as EditIcon, MoreVert as MoveVertIcon } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { getCanEdit, getCourseId } from 'CourseAuthoring/course-unit/data/selectors';
