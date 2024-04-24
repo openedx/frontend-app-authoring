@@ -69,7 +69,8 @@ function getUnitComponentUrlSuffix(hit) {
     }
   }
 
-  return `course/${contextKey}/`;
+  // istanbul ignore next - This case should never be reached
+  return `course/${contextKey}`;
 }
 
 /**
@@ -142,7 +143,7 @@ const SearchResult = ({ hit }) => {
       }
     }
 
-    // No context URL for this hit
+    // No context URL for this hit (e.g. a library without library authoring mfe)
     return undefined;
   }, [libraryAuthoringMfeUrl, redirectToLibraryAuthoringMfe, hit]);
 
