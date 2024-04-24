@@ -165,12 +165,20 @@ const getHighlightsFormValues = (currentHighlights) => {
  * Method to scroll into view port, if it's outside the viewport
  *
  * @param {Object} target - DOM Element
+ * @param {boolean} alignWithTop (optional) - Whether top of the target will be aligned to
+ *                                            the top of viewpoint. (default: false)
  * @returns {undefined}
  */
-const scrollToElement = target => {
+const scrollToElement = (target, alignWithTop = false) => {
   if (target.getBoundingClientRect().bottom > window.innerHeight) {
-    //  The bottom of the target will be aligned to the bottom of the visible area of the scrollable ancestor.
-    target.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
+    // if alignWithTop is set, the top of the target will be aligned to the top of visible area
+    // of the scrollable ancestor, Otherwise, the bottom of the target will be aligned to the
+    // bottom of the visible area of the scrollable ancestor.
+    target.scrollIntoView({
+      behavior: 'smooth',
+      block: alignWithTop ? 'start' : 'end',
+      inline: 'nearest',
+    });
   }
 
   // Target is outside the view from the top

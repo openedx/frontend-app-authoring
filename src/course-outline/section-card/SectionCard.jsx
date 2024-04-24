@@ -42,10 +42,10 @@ const SectionCard = ({
   const intl = useIntl();
   const dispatch = useDispatch();
   const { activeId, overId } = useContext(DragContext);
-  const [isExpanded, setIsExpanded] = useState(isSectionsExpanded);
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const isScrolledToElement = locatorId === section.id;
+  const [isExpanded, setIsExpanded] = useState(locatorId ? !!locatorId : isSectionsExpanded);
   const [isFormOpen, openForm, closeForm] = useToggle(false);
   const namePrefix = 'section';
 
@@ -75,9 +75,17 @@ const SectionCard = ({
 
   useEffect(() => {
     if (currentRef.current && (section.shouldScroll || isScrolledToElement)) {
-      scrollToElement(currentRef.current);
+      // Align element closer to the top of the screen if scrolling for search result
+      const alignWithTop = !!isScrolledToElement;
+      scrollToElement(currentRef.current, alignWithTop);
     }
   }, [isScrolledToElement]);
+
+  useEffect(() => {
+    // If the locatorId is set/changed, we need to make sure that the section is expanded
+    // in order to scroll to search result, otherwise leave it as is.
+    setIsExpanded((prevState) => (locatorId ? !!locatorId : prevState));
+  }, [locatorId, setIsExpanded]);
 
   // re-create actions object for customizations
   const actions = { ...sectionActions };

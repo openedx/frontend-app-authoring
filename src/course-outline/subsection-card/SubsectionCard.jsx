@@ -72,7 +72,8 @@ const SubsectionCard = ({
   actions.allowMoveUp = !isEmpty(moveUpDetails);
   actions.allowMoveDown = !isEmpty(moveDownDetails);
 
-  const [isExpanded, setIsExpanded] = useState(locatorId ? isScrolledToElement : !isHeaderVisible);
+  // Expand the subsection if a search result should be shown/scrolled to
+  const [isExpanded, setIsExpanded] = useState(locatorId ? !!locatorId : !isHeaderVisible);
   const subsectionStatus = getItemStatus({
     published,
     visibilityState,
@@ -132,9 +133,17 @@ const SubsectionCard = ({
     // we need to check section.shouldScroll as whole section is fetched when a
     // subsection is duplicated under it.
     if (currentRef.current && (section.shouldScroll || subsection.shouldScroll || isScrolledToElement)) {
-      scrollToElement(currentRef.current);
+      // Align element closer to the top of the screen if scrolling for search result
+      const alignWithTop = !!isScrolledToElement;
+      scrollToElement(currentRef.current, alignWithTop);
     }
   }, [isScrolledToElement]);
+
+  useEffect(() => {
+    // If the locatorId is set/changed, we need to make sure that the subsection is expanded
+    // in order to scroll to search result
+    setIsExpanded((prevState) => (locatorId ? !!locatorId : prevState));
+  }, [locatorId, setIsExpanded]);
 
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
