@@ -150,30 +150,10 @@ describe('<SearchUI />', () => {
     // Now we should see the results:
     expect(queryByText('Enter a keyword')).toBeNull();
     // The result:
-    expect(getByText('2 results found')).toBeInTheDocument();
+    expect(getByText('6 results found')).toBeInTheDocument();
     expect(getByText(mockResultDisplayName)).toBeInTheDocument();
     // Breadcrumbs showing where the result came from:
     expect(getByText('TheCourse / Section 2 / Subsection 3 / The Little Unit That Could')).toBeInTheDocument();
-
-    const resultItem = getByRole('button', { name: /The Little Unit That Could/ });
-
-    // Clicking the "Open in new window" button should open the result in a new window:
-    const { open } = window;
-    window.open = jest.fn();
-    fireEvent.click(within(resultItem).getByRole('button', { name: 'Open in new window' }));
-    expect(window.open).toHaveBeenCalledWith(
-      '/course/course-v1:edx+TestCourse+24/container/block-v1:edx+TestCourse+24+type@vertical+block@vertical_3_1'
-      + '?show=block-v1%3Aedx%2BTestCourse%2B24%2Btype%40html%2Bblock%40test_html',
-      '_blank',
-    );
-    window.open = open;
-
-    // Clicking in the result should navigate to the result's URL:
-    fireEvent.click(resultItem);
-    expect(mockNavigate).toHaveBeenCalledWith(
-      '/course/course-v1:edx+TestCourse+24/container/block-v1:edx+TestCourse+24+type@vertical+block@vertical_3_1'
-      + '?show=block-v1%3Aedx%2BTestCourse%2B24%2Btype%40html%2Bblock%40test_html',
-    );
   });
 
   it('defaults to searching "This Course" if used in a course', async () => {
@@ -196,10 +176,114 @@ describe('<SearchUI />', () => {
     // Now we should see the results:
     expect(queryByText('Enter a keyword')).toBeNull();
     // The result:
-    expect(getByText('2 results found')).toBeInTheDocument();
+    expect(getByText('6 results found')).toBeInTheDocument();
     expect(getByText(mockResultDisplayName)).toBeInTheDocument();
     // Breadcrumbs showing where the result came from:
     expect(getByText('TheCourse / Section 2 / Subsection 3 / The Little Unit That Could')).toBeInTheDocument();
+  });
+
+  describe('results', () => {
+    /** @type {import('@testing-library/react').RenderResult} */
+    let rendered;
+    beforeEach(() => {
+      rendered = render(<Wrap><SearchUI {...defaults} /></Wrap>);
+      const { getByRole } = rendered;
+      fireEvent.change(getByRole('searchbox'), { target: { value: 'giraffe' } });
+    });
+
+    test('click section result navigates to the context', async () => {
+      const { findAllByRole } = rendered;
+
+      const [resultItem] = await findAllByRole('button', { name: /Section 1/ });
+
+      // Clicking the "Open in new window" button should open the result in a new window:
+      const { open } = window;
+      window.open = jest.fn();
+      fireEvent.click(within(resultItem).getByRole('button', { name: 'Open in new window' }));
+      expect(window.open).toHaveBeenCalledWith(
+        '/course/course-v1:SampleTaxonomyOrg1+STC1+2023_1'
+        + '?show=block-v1%3ASampleTaxonomyOrg1%2BSTC1%2B2023_1%2Btype%40chapter%2Bblock%40c7077c8cafcf420dbc0b440bf27bad04',
+        '_blank',
+      );
+      window.open = open;
+
+      // Clicking in the result should navigate to the result's URL:
+      fireEvent.click(resultItem);
+      expect(mockNavigate).toHaveBeenCalledWith(
+        '/course/course-v1:SampleTaxonomyOrg1+STC1+2023_1'
+        + '?show=block-v1%3ASampleTaxonomyOrg1%2BSTC1%2B2023_1%2Btype%40chapter%2Bblock%40c7077c8cafcf420dbc0b440bf27bad04',
+      );
+    });
+
+    test('click subsection result navigates to the context', async () => {
+      const { findAllByRole } = rendered;
+
+      const [resultItem] = await findAllByRole('button', { name: /Subsection 1.1/ });
+
+      // Clicking the "Open in new window" button should open the result in a new window:
+      const { open } = window;
+      window.open = jest.fn();
+      fireEvent.click(within(resultItem).getByRole('button', { name: 'Open in new window' }));
+      expect(window.open).toHaveBeenCalledWith(
+        '/course/course-v1:SampleTaxonomyOrg1+STC1+2023_1'
+        + '?show=block-v1%3ASampleTaxonomyOrg1%2BSTC1%2B2023_1%2Btype%40sequential%2Bblock%4092e3e9ca156c44fa8a735f0e9e7c854f',
+        '_blank',
+      );
+      window.open = open;
+
+      // Clicking in the result should navigate to the result's URL:
+      fireEvent.click(resultItem);
+      expect(mockNavigate).toHaveBeenCalledWith(
+        '/course/course-v1:SampleTaxonomyOrg1+STC1+2023_1'
+        + '?show=block-v1%3ASampleTaxonomyOrg1%2BSTC1%2B2023_1%2Btype%40sequential%2Bblock%4092e3e9ca156c44fa8a735f0e9e7c854f',
+      );
+    });
+
+    test('click unit result navigates to the context', async () => {
+      const { findAllByRole } = rendered;
+
+      const [resultItem] = await findAllByRole('button', { name: /Unit 1.1.1/ });
+
+      // Clicking the "Open in new window" button should open the result in a new window:
+      const { open } = window;
+      window.open = jest.fn();
+      fireEvent.click(within(resultItem).getByRole('button', { name: 'Open in new window' }));
+      expect(window.open).toHaveBeenCalledWith(
+        '/course/course-v1:SampleTaxonomyOrg1+STC1+2023_1/container/block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@aaf8b8eb86b54281aeeab12499d2cb0b',
+        '_blank',
+      );
+      window.open = open;
+
+      // Clicking in the result should navigate to the result's URL:
+      fireEvent.click(resultItem);
+      expect(mockNavigate).toHaveBeenCalledWith(
+        '/course/course-v1:SampleTaxonomyOrg1+STC1+2023_1/container/block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@aaf8b8eb86b54281aeeab12499d2cb0b',
+      );
+    });
+
+    test('click unit component result navigates to the context', async () => {
+      const { findAllByRole } = rendered;
+
+      const [resultItem] = await findAllByRole('button', { name: /Announcement/ });
+
+      // Clicking the "Open in new window" button should open the result in a new window:
+      const { open } = window;
+      window.open = jest.fn();
+      fireEvent.click(within(resultItem).getByRole('button', { name: 'Open in new window' }));
+      expect(window.open).toHaveBeenCalledWith(
+        '/course/course-v1:SampleTaxonomyOrg1+STC1+2023_1/container/block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@aaf8b8eb86b54281aeeab12499d2cb0b'
+        + '?show=block-v1%3ASampleTaxonomyOrg1%2BSTC1%2B2023_1%2Btype%40html%2Bblock%400b2d1c0722f742489602b6d8645205f4',
+        '_blank',
+      );
+      window.open = open;
+
+      // Clicking in the result should navigate to the result's URL:
+      fireEvent.click(resultItem);
+      expect(mockNavigate).toHaveBeenCalledWith(
+        '/course/course-v1:SampleTaxonomyOrg1+STC1+2023_1/container/block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@aaf8b8eb86b54281aeeab12499d2cb0b'
+        + '?show=block-v1%3ASampleTaxonomyOrg1%2BSTC1%2B2023_1%2Btype%40html%2Bblock%400b2d1c0722f742489602b6d8645205f4',
+      );
+    });
   });
 
   describe('filters', () => {
@@ -231,7 +315,7 @@ describe('<SearchUI />', () => {
         return (requestedFilter?.length === 1); // the filter is: 'context_key = "course-v1:org+test+123"'
       });
       // Now we should see the results:
-      expect(getByText('2 results found')).toBeInTheDocument();
+      expect(getByText('6 results found')).toBeInTheDocument();
       expect(getByText(mockResultDisplayName)).toBeInTheDocument();
     });
 
