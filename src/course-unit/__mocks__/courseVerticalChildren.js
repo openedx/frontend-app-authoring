@@ -144,4 +144,5 @@ module.exports = {
     },
   ],
   isPublished: false,
+  canPasteComponent: true,
 };

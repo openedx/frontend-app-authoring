@@ -435,20 +435,6 @@ export async function setVideoSharingOption(courseId, videoSharingOption) {
 }
 
 /**
- * Copy block to clipboard
- * @param {string} usageKey
- * @returns {Promise<Object>}
-*/
-export async function copyBlockToClipboard(usageKey) {
-  const { data } = await getAuthenticatedHttpClient()
-    .post(getClipboardUrl(), {
-      usage_key: usageKey,
-    });
-
-  return camelCaseObject(data);
-}
-
-/**
  * Paste block to clipboard
  * @param {string} parentLocator
  * @returns {Promise<Object>}

@@ -29,6 +29,10 @@ const messages = defineMessages({
     id: 'course-authoring.course-unit.sequence.navigation.menu',
     defaultMessage: '{current} of {total}',
   },
+  pasteAsNewUnitLink: {
+    id: 'course-authoring.course-unit.sequence.navigation.menu.copy-unit.past-unit-link',
+    defaultMessage: 'Paste as new unit',
+  },
 });
 
 export default messages;

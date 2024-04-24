@@ -35,7 +35,7 @@
     min-width: 0;
   }
 
-  .sequence-navigation-tabs .btn:not(.sequence-navigation-tabs-new-unit-btn) {
+  .sequence-navigation-tabs .btn:not(.sequence-navigation-tabs-action-btn) {
     flex-basis: 100%;
     min-width: 2rem;
   }
@@ -63,7 +63,7 @@
 
   .sequence-navigation-prev-btn,
   .sequence-navigation-next-btn,
-  .sequence-navigation-tabs-new-unit-btn {
+  .sequence-navigation-tabs-action-btn {
     min-width: 12.5rem;
   }
 

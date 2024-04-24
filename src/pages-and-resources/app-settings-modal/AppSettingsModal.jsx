@@ -1,11 +1,9 @@
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  ActionRow,
   Alert,
   Badge,
   Form,
   Hyperlink,
-  ModalDialog,
   StatefulButton,
   TransitionReplace,
 } from '@openedx/paragon';
@@ -31,81 +29,10 @@ import { updateSavingStatus } from '../data/slice';
 import { updateAppStatus } from '../data/thunks';
 import AppConfigFormDivider from '../discussions/app-config-form/apps/shared/AppConfigFormDivider';
 import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
+import AppSettingsModalBase from './AppSettingsModalBase';
 import messages from './messages';
 
-const AppSettingsForm = ({
-  formikProps, children, showForm,
-}) => children && (
-  <TransitionReplace>
-    {showForm ? (
-      <React.Fragment key="app-enabled">
-        {children(formikProps)}
-      </React.Fragment>
-    ) : (
-      <React.Fragment key="app-disabled" />
-    )}
-  </TransitionReplace>
-);
-
-AppSettingsForm.propTypes = {
-  // Ignore the warning here since we're just passing along the props as-is and the child component should validate
-  // eslint-disable-next-line react/forbid-prop-types
-  formikProps: PropTypes.object.isRequired,
-  showForm: PropTypes.bool.isRequired,
-  children: PropTypes.func,
-};
-
-AppSettingsForm.defaultProps = {
-  children: null,
-};
-
-const AppSettingsModalBase = ({
-  intl, title, onClose, variant, isMobile, children, footer,
-}) => (
-  <ModalDialog
-    title={title}
-    isOpen
-    onClose={onClose}
-    size="lg"
-    variant={variant}
-    hasCloseButton={isMobile}
-    isFullscreenOnMobile
-  >
-    <ModalDialog.Header>
-      <ModalDialog.Title data-testid="modal-title">
-        {title}
-      </ModalDialog.Title>
-    </ModalDialog.Header>
-    <ModalDialog.Body>
-      {children}
-    </ModalDialog.Body>
-    <ModalDialog.Footer className="p-4">
-      <ActionRow>
-        <ModalDialog.CloseButton variant="tertiary">
-          {intl.formatMessage(messages.cancel)}
-        </ModalDialog.CloseButton>
-        {footer}
-      </ActionRow>
-    </ModalDialog.Footer>
-  </ModalDialog>
-);
-
-AppSettingsModalBase.propTypes = {
-  intl: intlShape.isRequired,
-  title: PropTypes.string.isRequired,
-  onClose: PropTypes.func.isRequired,
-  variant: PropTypes.oneOf(['default', 'dark']).isRequired,
-  isMobile: PropTypes.bool.isRequired,
-  children: PropTypes.node.isRequired,
-  footer: PropTypes.node,
-};
-
-AppSettingsModalBase.defaultProps = {
-  footer: null,
-};
-
 const AppSettingsModal = ({
-  intl,
   appId,
   title,
   children,
@@ -121,6 +48,7 @@ const AppSettingsModal = ({
   enableReinitialize,
   hideAppToggle,
 }) => {
+  const { formatMessage } = useIntl();
   const { courseId } = useContext(PagesAndResourcesContext);
   const loadingStatus = useSelector(getLoadingStatus);
   const updateSettingsRequestStatus = useSelector(getSavingStatus);
@@ -199,14 +127,12 @@ const AppSettingsModal = ({
               onClose={onClose}
               variant={modalVariant}
               isMobile={isMobile}
-              isFullscreenOnMobile
-              intl={intl}
               footer={(
                 <StatefulButton
                   labels={{
-                    default: intl.formatMessage(messages.save),
-                    pending: intl.formatMessage(messages.saving),
-                    complete: intl.formatMessage(messages.saved),
+                    default: formatMessage(messages.save),
+                    pending: formatMessage(messages.saving),
+                    complete: formatMessage(messages.saved),
                   }}
                   state={submitButtonState}
                   onClick={handleFormikSubmit(formikProps)}
@@ -216,9 +142,9 @@ const AppSettingsModal = ({
               {saveError && (
                 <Alert variant="danger" icon={Info} ref={alertRef}>
                   <Alert.Heading>
-                    {formikProps.errors.enabled?.title || intl.formatMessage(messages.errorSavingTitle)}
+                    {formikProps.errors.enabled?.title || formatMessage(messages.errorSavingTitle)}
                   </Alert.Heading>
-                  {formikProps.errors.enabled?.message || intl.formatMessage(messages.errorSavingMessage)}
+                  {formikProps.errors.enabled?.message || formatMessage(messages.errorSavingMessage)}
                 </Alert>
               )}
               {!hideAppToggle && (
@@ -233,7 +159,7 @@ const AppSettingsModal = ({
                       {enableAppLabel}
                       {formikProps.values.enabled && (
                         <Badge className="ml-2" variant="success" data-testid="enable-badge">
-                          {intl.formatMessage(messages.enabled)}
+                          {formatMessage(messages.enabled)}
                         </Badge>
                       )}
                     </div>
@@ -249,9 +175,19 @@ const AppSettingsModal = ({
               {bodyChildren}
               {(formikProps.values.enabled || configureBeforeEnable) && children
                 && <AppConfigFormDivider marginAdj={{ default: 0, sm: 0 }} />}
-              <AppSettingsForm formikProps={formikProps} showForm={formikProps.values.enabled || configureBeforeEnable}>
-                {children}
-              </AppSettingsForm>
+              {
+                children && (
+                  <TransitionReplace>
+                    {formikProps.values.enabled || configureBeforeEnable ? (
+                      <React.Fragment key="app-enabled">
+                        {children(formikProps)}
+                      </React.Fragment>
+                    ) : (
+                      <React.Fragment key="app-disabled" />
+                    )}
+                  </TransitionReplace>
+                )
+              }
             </AppSettingsModalBase>
           </Form>
         )}
@@ -260,7 +196,6 @@ const AppSettingsModal = ({
   }
   return (
     <AppSettingsModalBase
-      intl={intl}
       title={title}
       isOpen
       onClose={onClose}
@@ -277,7 +212,6 @@ const AppSettingsModal = ({
 };
 
 AppSettingsModal.propTypes = {
-  intl: intlShape.isRequired,
   title: PropTypes.string.isRequired,
   appId: PropTypes.string.isRequired,
   children: PropTypes.func,
@@ -306,4 +240,4 @@ AppSettingsModal.defaultProps = {
   hideAppToggle: false,
 };
 
-export default injectIntl(AppSettingsModal);
+export default AppSettingsModal;

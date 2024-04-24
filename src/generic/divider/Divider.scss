@@ -1,0 +1,5 @@
+.divider {
+  border-top: $border-width solid $light-400;
+  height: 0;
+  margin: $spacer map-get($spacers, 0);
+}

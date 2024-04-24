@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   ActionRow, Card, Dropdown, Icon, IconButton, useToggle,
 } from '@openedx/paragon';
@@ -8,11 +9,12 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
+import { getCanEdit, getCourseId } from 'CourseAuthoring/course-unit/data/selectors';
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import ConfigureModal from '../../generic/configure-modal/ConfigureModal';
 import { scrollToElement } from '../../course-outline/utils';
 import { COURSE_BLOCK_NAMES } from '../../constants';
-import { getCourseId } from '../data/selectors';
+import { copyToClipboard } from '../../generic/data/thunks';
 import { COMPONENT_TYPES } from '../constants';
 import XBlockMessages from './xblock-messages/XBlockMessages';
 import messages from './messages';
@@ -24,7 +26,9 @@ const CourseXBlock = ({
   const courseXBlockElementRef = useRef(null);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const canEdit = useSelector(getCanEdit);
   const courseId = useSelector(getCourseId);
   const intl = useIntl();
 
@@ -98,15 +102,17 @@ const CourseXBlock = ({
                   iconAs={Icon}
                 />
                 <Dropdown.Menu>
-                  <Dropdown.Item>
-                    {intl.formatMessage(messages.blockLabelButtonCopy)}
-                  </Dropdown.Item>
                   <Dropdown.Item onClick={() => unitXBlockActions.handleDuplicate(id)}>
                     {intl.formatMessage(messages.blockLabelButtonDuplicate)}
                   </Dropdown.Item>
                   <Dropdown.Item>
                     {intl.formatMessage(messages.blockLabelButtonMove)}
                   </Dropdown.Item>
+                  {canEdit && (
+                    <Dropdown.Item onClick={() => dispatch(copyToClipboard(id))}>
+                      {intl.formatMessage(messages.blockLabelButtonCopyToClipboard)}
+                    </Dropdown.Item>
+                  )}
                   <Dropdown.Item onClick={openConfigureModal}>
                     {intl.formatMessage(messages.blockLabelButtonManageAccess)}
                   </Dropdown.Item>
