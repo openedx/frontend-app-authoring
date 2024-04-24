@@ -140,13 +140,6 @@ Requirements
   * ``new_core_editors.use_new_video_editor``: must be enabled for the new Video Xblock editor to be used in Studio
   * ``new_core_editors.use_new_problem_editor``: must be enabled for the new Problem Xblock editor to be used in Studio
 
-Configuration
--------------
-
-In additional to the standard settings, the following local configuration item is required:
-
-* ``ENABLE_NEW_EDITOR_PAGES``: must be enabled in order to actually present the new XBlock editors (on by default)
-
 Feature Description
 -------------------
 
