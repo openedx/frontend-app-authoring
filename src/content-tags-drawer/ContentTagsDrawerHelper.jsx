@@ -338,8 +338,20 @@ const useContentTagsDrawerContext = (contentId) => {
     setTagsByTaxonomy(mergedTagsArray);
 
     if (setBlockingSheet) {
-      const { tagsAdded, tagsRemoved } = countTags();
-      if (tagsAdded || tagsRemoved) {
+      const areChangesInTags = () => {
+        const tagsAddedList = Object.values(globalStagedContentTags);
+        const tagsRemovedList = Object.values(globalStagedRemovedContentTags);
+
+        if (tagsAddedList.some(tags => tags.length > 0)) {
+          return true;
+        }
+        if (tagsRemovedList.some(tags => tags.length > 0)) {
+          return true;
+        }
+        return false;
+      };
+
+      if (areChangesInTags()) {
         setBlockingSheet(true);
       } else {
         setBlockingSheet(false);

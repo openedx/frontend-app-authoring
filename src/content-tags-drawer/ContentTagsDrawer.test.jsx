@@ -24,6 +24,7 @@ import { ContentTagsDrawerSheetContext } from './common/context';
 const contentId = 'block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@7f47fe2dbcaf47c5a071671c741fe1ab';
 const mockOnClose = jest.fn();
 const mockMutate = jest.fn();
+const mockSetBlockingSheet = jest.fn();
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -823,6 +824,58 @@ describe('<ContentTagsDrawer />', () => {
     });
 
     expect(mockOnClose).not.toHaveBeenCalled();
+  });
+
+  it('should call `setBlockingSheet` on add a tag', async () => {
+    setupMockDataForStagedTagsTesting();
+    render(<RootWrapper blockingSheet setBlockingSheet={mockSetBlockingSheet} />);
+    expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
+
+    expect(mockSetBlockingSheet).toHaveBeenCalledWith(false);
+
+    // To edit mode
+    const editTagsButton = screen.getByRole('button', {
+      name: /edit tags/i,
+    });
+    fireEvent.click(editTagsButton);
+
+    // Click on "Add a tag" button to open dropdown
+    const addTagsButton = screen.getByText(/add a tag/i);
+    // Use `mouseDown` instead of `click` since the react-select didn't respond to `click`
+    fireEvent.mouseDown(addTagsButton);
+
+    // Click to check Tag 3
+    const tag3 = screen.getByText(/tag 3/i);
+    fireEvent.click(tag3);
+
+    // Click "Add tags" to save to global staged tags
+    const addTags = screen.getByRole('button', { name: /add tags/i });
+    fireEvent.click(addTags);
+
+    expect(mockSetBlockingSheet).toHaveBeenCalledWith(true);
+  });
+
+  it('should call `setBlockingSheet` on delete a tag', async () => {
+    setupMockDataForStagedTagsTesting();
+    render(<RootWrapper blockingSheet setBlockingSheet={mockSetBlockingSheet} />);
+    expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
+
+    expect(mockSetBlockingSheet).toHaveBeenCalledWith(false);
+
+    // To edit mode
+    const editTagsButton = screen.getByRole('button', {
+      name: /edit tags/i,
+    });
+    fireEvent.click(editTagsButton);
+
+    // Delete the tag
+    const tag = screen.getByText(/tag 2/i);
+    const deleteButton = within(tag).getByRole('button', {
+      name: /delete/i,
+    });
+    fireEvent.click(deleteButton);
+
+    expect(mockSetBlockingSheet).toHaveBeenCalledWith(true);
   });
 
   it('should call `updateTags` mutation on save', async () => {
