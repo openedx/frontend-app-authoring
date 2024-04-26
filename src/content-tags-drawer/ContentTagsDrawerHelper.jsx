@@ -339,6 +339,10 @@ const useContentTagsDrawerContext = (contentId) => {
 
     if (setBlockingSheet) {
       const areChangesInTags = () => {
+        // It is calculated in this way, because there are cases in which
+        // there are keys in the map, but they contain empty lists
+        // (e.g. add a tag, and remove the same tag later).
+
         const tagsAddedList = Object.values(globalStagedContentTags);
         const tagsRemovedList = Object.values(globalStagedRemovedContentTags);
 
