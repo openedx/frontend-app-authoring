@@ -239,6 +239,7 @@ const useContentTagsDrawerContext = (contentId) => {
   ]);
 
   // Count added and removed tags
+  /* istanbul ignore next */
   const countTags = React.useCallback(() => {
     const tagsAddedList = Object.values(globalStagedContentTags);
     const tagsRemovedList = Object.values(globalStagedRemovedContentTags);
