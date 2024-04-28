@@ -31,6 +31,11 @@
       // The current Open edX theme makes the search field square but the button round and it looks bad. We need this
       // hacky override until the theme is fixed to be more consistent.
       border-radius: 0;
+
+      // Needed so the the focus borders matches the button's borders
+      &:focus::before {
+        border-radius: 0;
+      }
     }
   }
 
