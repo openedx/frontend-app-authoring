@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { RequestStatus } from '../data/constants';
 import {
@@ -31,6 +31,7 @@ import { useCopyToClipboard } from '../generic/clipboard';
 // eslint-disable-next-line import/prefer-default-export
 export const useCourseUnit = ({ courseId, blockId }) => {
   const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
 
   const [isErrorAlert, toggleErrorAlert] = useState(false);
   const [hasInternetConnectionError, setInternetConnectionError] = useState(false);
@@ -84,7 +85,16 @@ export const useCourseUnit = ({ courseId, blockId }) => {
 
   const handleNavigate = (id) => {
     if (sequenceId) {
-      navigate(`/course/${courseId}/container/${blockId}/${id}`, { replace: true });
+      const path = `/course/${courseId}/container/${blockId}/${id}`;
+      const options = { replace: true };
+      if (searchParams.size) {
+        navigate({
+          pathname: path,
+          search: `?${searchParams}`,
+        }, options);
+      } else {
+        navigate(path, options);
+      }
     }
   };
 

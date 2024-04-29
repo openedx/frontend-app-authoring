@@ -34,6 +34,81 @@ function getItemIcon(blockType) {
 }
 
 /**
+ * Returns the URL Suffix for library/library component hit
+ * @param {import('./data/api').ContentHit} hit
+ * @param {string} libraryAuthoringMfeUrl
+ * @returns string
+*/
+function getLibraryHitUrl(hit, libraryAuthoringMfeUrl) {
+  const { contextKey } = hit;
+  return `${libraryAuthoringMfeUrl}/library/${contextKey}`;
+}
+
+/**
+ * Returns the URL Suffix for a unit hit
+ * @param {import('./data/api').ContentHit} hit
+ * @returns string
+*/
+function getUnitUrlSuffix(hit) {
+  const { contextKey, usageKey } = hit;
+  return `course/${contextKey}/container/${usageKey}`;
+}
+
+/**
+ * Returns the URL Suffix for a unit component hit
+ * @param {import('./data/api').ContentHit} hit
+ * @returns string
+*/
+function getUnitComponentUrlSuffix(hit) {
+  const { breadcrumbs, contextKey, usageKey } = hit;
+  if (breadcrumbs.length > 1) {
+    const parent = breadcrumbs[breadcrumbs.length - 1];
+
+    if ('usageKey' in parent) {
+      return `course/${contextKey}/container/${parent.usageKey}?show=${encodeURIComponent(usageKey)}`;
+    }
+  }
+
+  // istanbul ignore next - This case should never be reached
+  return `course/${contextKey}`;
+}
+
+/**
+ * Returns the URL Suffix for a course component hit
+ * @param {import('./data/api').ContentHit} hit
+ * @returns string
+*/
+function getCourseComponentUrlSuffix(hit) {
+  const { contextKey, usageKey } = hit;
+  return `course/${contextKey}?show=${encodeURIComponent(usageKey)}`;
+}
+
+/**
+ * Returns the URL Suffix for the search hit param
+ * @param {import('./data/api').ContentHit} hit
+ * @returns string
+*/
+function getUrlSuffix(hit) {
+  const { blockType, breadcrumbs } = hit;
+
+  // Check if is a unit
+  if (blockType === 'vertical') {
+    return getUnitUrlSuffix(hit);
+  }
+
+  // Check if the parent is a unit
+  if (breadcrumbs.length > 1) {
+    const parent = breadcrumbs[breadcrumbs.length - 1];
+
+    if ('usageKey' in parent && parent.usageKey.includes('type@vertical')) {
+      return getUnitComponentUrlSuffix(hit);
+    }
+  }
+
+  return getCourseComponentUrlSuffix(hit);
+}
+
+/**
  * A single search result (row), usually represents an XBlock/Component
  * @type {React.FC<{hit: import('./data/api').ContentHit}>}
  */
@@ -43,33 +118,34 @@ const SearchResult = ({ hit }) => {
   const { closeSearchModal } = useSearchContext();
   const { libraryAuthoringMfeUrl, redirectToLibraryAuthoringMfe } = useSelector(getStudioHomeData);
 
+  const { usageKey } = hit;
+
+  const noRedirectUrl = usageKey.startsWith('lb:') && !redirectToLibraryAuthoringMfe;
+
   /**
    * Returns the URL for the context of the hit
    */
   const getContextUrl = React.useCallback((newWindow = false) => {
-    const { contextKey, usageKey } = hit;
+    const { contextKey } = hit;
+
     if (contextKey.startsWith('course-v1:')) {
-      const courseSufix = `course/${contextKey}?show=${encodeURIComponent(usageKey)}`;
+      const urlSuffix = getUrlSuffix(hit);
+
       if (newWindow) {
-        return `${getPath(getConfig().PUBLIC_PATH)}${courseSufix}`;
+        return `${getPath(getConfig().PUBLIC_PATH)}${urlSuffix}`;
       }
-      return `/${courseSufix}`;
+      return `/${urlSuffix}`;
     }
+
     if (usageKey.startsWith('lb:')) {
       if (redirectToLibraryAuthoringMfe) {
-        return `${libraryAuthoringMfeUrl}library/${contextKey}`;
+        return getLibraryHitUrl(hit, libraryAuthoringMfeUrl);
       }
     }
 
-    // No context URL for this hit
+    // No context URL for this hit (e.g. a library without library authoring mfe)
     return undefined;
-  }, [libraryAuthoringMfeUrl, redirectToLibraryAuthoringMfe]);
-
-  const redirectUrl = React.useMemo(() => getContextUrl(), [libraryAuthoringMfeUrl, redirectToLibraryAuthoringMfe]);
-  const newWindowUrl = React.useMemo(
-    () => getContextUrl(true),
-    [libraryAuthoringMfeUrl, redirectToLibraryAuthoringMfe],
-  );
+  }, [libraryAuthoringMfeUrl, redirectToLibraryAuthoringMfe, hit]);
 
   /**
    * Opens the context of the hit in a new window
@@ -78,6 +154,7 @@ const SearchResult = ({ hit }) => {
    */
   const openContextInNewWindow = (e) => {
     e.stopPropagation();
+    const newWindowUrl = getContextUrl(true);
     /* istanbul ignore next */
     if (!newWindowUrl) {
       return;
@@ -90,8 +167,9 @@ const SearchResult = ({ hit }) => {
    * @param {(React.MouseEvent | React.KeyboardEvent)} e
    * @returns {void}
    */
-  const navigateToContext = (e) => {
+  const navigateToContext = React.useCallback((e) => {
     e.stopPropagation();
+    const redirectUrl = getContextUrl();
 
     /* istanbul ignore next */
     if (!redirectUrl) {
@@ -112,16 +190,16 @@ const SearchResult = ({ hit }) => {
 
     navigate(redirectUrl);
     closeSearchModal();
-  };
+  }, [getContextUrl]);
 
   return (
     <Stack
-      className={`border-bottom search-result p-2 align-items-start ${!redirectUrl ? 'text-muted' : ''}`}
+      className={`border-bottom search-result p-2 align-items-start ${noRedirectUrl ? 'text-muted' : ''}`}
       direction="horizontal"
       gap={3}
       onClick={navigateToContext}
       onKeyDown={navigateToContext}
-      tabIndex={redirectUrl ? 0 : undefined}
+      tabIndex={noRedirectUrl ? undefined : 0}
       role="button"
     >
       <Icon className="text-muted" src={getItemIcon(hit.blockType)} />
@@ -140,7 +218,7 @@ const SearchResult = ({ hit }) => {
       <IconButton
         src={OpenInNew}
         iconAs={Icon}
-        disabled={!newWindowUrl}
+        disabled={noRedirectUrl ? true : undefined}
         onClick={openContextInNewWindow}
         alt={intl.formatMessage(messages.openInNewWindow)}
       />

@@ -1,12 +1,12 @@
 import { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import {
   ActionRow, Card, Dropdown, Icon, IconButton, useToggle,
 } from '@openedx/paragon';
 import { EditOutline as EditIcon, MoreVert as MoveVertIcon } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { getCanEdit, getCourseId } from 'CourseAuthoring/course-unit/data/selectors';
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
@@ -30,6 +30,10 @@ const CourseXBlock = ({
   const canEdit = useSelector(getCanEdit);
   const courseId = useSelector(getCourseId);
   const intl = useIntl();
+
+  const [searchParams] = useSearchParams();
+  const locatorId = searchParams.get('show');
+  const isScrolledToElement = locatorId === id;
 
   const visibilityMessage = userPartitionInfo.selectedGroupsLabel
     ? intl.formatMessage(messages.visibilityMessage, { selectedGroupsLabel: userPartitionInfo.selectedGroupsLabel })
@@ -64,13 +68,17 @@ const CourseXBlock = ({
 
   useEffect(() => {
     // if this item has been newly added, scroll to it.
-    if (courseXBlockElementRef.current && shouldScroll) {
+    if (courseXBlockElementRef.current && (shouldScroll || isScrolledToElement)) {
       scrollToElement(courseXBlockElementRef.current);
     }
-  }, []);
+  }, [isScrolledToElement]);
 
   return (
-    <div ref={courseXBlockElementRef} {...props}>
+    <div
+      ref={courseXBlockElementRef}
+      {...props}
+      className={isScrolledToElement ? 'xblock-highlight' : undefined}
+    >
       <Card className="mb-1">
         <Card.Header
           title={title}
