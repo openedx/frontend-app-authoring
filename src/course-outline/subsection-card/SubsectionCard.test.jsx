@@ -32,13 +32,8 @@ const clipboardBroadcastChannelMock = {
 
 global.BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
 
-const section = {
-  id: '123',
-  displayName: 'Section Name',
-  published: true,
-  visibilityState: 'live',
-  hasChanges: false,
-  highlights: ['highlight 1', 'highlight 2'],
+const unit = {
+  id: 'unit-1',
 };
 
 const subsection = {
@@ -56,6 +51,25 @@ const subsection = {
   },
   isHeaderVisible: true,
   releasedToStudents: true,
+  childInfo: {
+    children: [{
+      id: unit.id,
+    }],
+  },
+};
+
+const section = {
+  id: '123',
+  displayName: 'Section Name',
+  published: true,
+  visibilityState: 'live',
+  hasChanges: false,
+  highlights: ['highlight 1', 'highlight 2'],
+  childInfo: {
+    children: [{
+      id: subsection.id,
+    }],
+  },
 };
 
 const onEditSubectionSubmit = jest.fn();
@@ -227,12 +241,22 @@ describe('<SubsectionCard />', () => {
     expect(await findByText(cardHeaderMessages.statusBadgeDraft.defaultMessage)).toBeInTheDocument();
   });
 
-  it('check extended section when URL has a "show" param', async () => {
-    const { findByTestId } = renderComponent(null, `?show=${section.id}`);
+  it('check extended subsection when URL "show" param in subsection', async () => {
+    const { findByTestId } = renderComponent(null, `?show=${unit.id}`);
 
     const cardUnits = await findByTestId('subsection-card__units');
     const newUnitButton = await findByTestId('new-unit-button');
     expect(cardUnits).toBeInTheDocument();
     expect(newUnitButton).toBeInTheDocument();
+  });
+
+  it('check not extended subsection when URL "show" param not in subsection', async () => {
+    const randomId = 'random-id';
+    const { queryByTestId } = renderComponent(null, `?show=${randomId}`);
+
+    const cardUnits = await queryByTestId('subsection-card__units');
+    const newUnitButton = await queryByTestId('new-unit-button');
+    expect(cardUnits).toBeNull();
+    expect(newUnitButton).toBeNull();
   });
 });

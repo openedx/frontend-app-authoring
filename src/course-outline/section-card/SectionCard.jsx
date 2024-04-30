@@ -45,7 +45,33 @@ const SectionCard = ({
   const [searchParams] = useSearchParams();
   const locatorId = searchParams.get('show');
   const isScrolledToElement = locatorId === section.id;
-  const [isExpanded, setIsExpanded] = useState(locatorId ? !!locatorId : isSectionsExpanded);
+
+  // Expand the section if a search result should be shown/scrolled to
+  const containsSearchResult = () => {
+    if (locatorId) {
+      const subsections = section.childInfo?.children;
+      if (subsections) {
+        for (let i = 0; i < subsections.length; i++) {
+          const subsection = subsections[i];
+
+          // Check if the search result is one of the subsections
+          const matchedSubsection = subsection.id === locatorId;
+          if (matchedSubsection) {
+            return true;
+          }
+
+          // Check if the search result is one of the units
+          const matchedUnit = !!subsection.childInfo?.children?.filter((child) => child.id === locatorId).length;
+          if (matchedUnit) {
+            return true;
+          }
+        }
+      }
+    }
+
+    return false;
+  };
+  const [isExpanded, setIsExpanded] = useState(containsSearchResult() || isSectionsExpanded);
   const [isFormOpen, openForm, closeForm] = useToggle(false);
   const namePrefix = 'section';
 
@@ -83,8 +109,8 @@ const SectionCard = ({
 
   useEffect(() => {
     // If the locatorId is set/changed, we need to make sure that the section is expanded
-    // in order to scroll to search result, otherwise leave it as is.
-    setIsExpanded((prevState) => (locatorId ? !!locatorId : prevState));
+    // if it contains the result, in order to scroll to it
+    setIsExpanded((prevState) => containsSearchResult() || prevState);
   }, [locatorId, setIsExpanded]);
 
   // re-create actions object for customizations
@@ -261,6 +287,20 @@ SectionCard.propTypes = {
       duplicable: PropTypes.bool.isRequired,
     }).isRequired,
     isHeaderVisible: PropTypes.bool,
+    childInfo: PropTypes.shape({
+      children: PropTypes.arrayOf(
+        PropTypes.shape({
+          id: PropTypes.string.isRequired,
+          childInfo: PropTypes.shape({
+            children: PropTypes.arrayOf(
+              PropTypes.shape({
+                id: PropTypes.string.isRequired,
+              }),
+            ).isRequired,
+          }).isRequired,
+        }),
+      ).isRequired,
+    }).isRequired,
   }).isRequired,
   isSelfPaced: PropTypes.bool.isRequired,
   isCustomRelativeDatesActive: PropTypes.bool.isRequired,

@@ -73,7 +73,14 @@ const SubsectionCard = ({
   actions.allowMoveDown = !isEmpty(moveDownDetails);
 
   // Expand the subsection if a search result should be shown/scrolled to
-  const [isExpanded, setIsExpanded] = useState(locatorId ? !!locatorId : !isHeaderVisible);
+  const containsSearchResult = () => {
+    if (locatorId) {
+      return !!subsection.childInfo?.children?.filter((child) => child.id === locatorId).length;
+    }
+
+    return false;
+  };
+  const [isExpanded, setIsExpanded] = useState(containsSearchResult() || !isHeaderVisible);
   const subsectionStatus = getItemStatus({
     published,
     visibilityState,
@@ -141,8 +148,8 @@ const SubsectionCard = ({
 
   useEffect(() => {
     // If the locatorId is set/changed, we need to make sure that the subsection is expanded
-    // in order to scroll to search result
-    setIsExpanded((prevState) => (locatorId ? !!locatorId : prevState));
+    // if it contains the result, in order to scroll to it
+    setIsExpanded((prevState) => (containsSearchResult() || prevState));
   }, [locatorId, setIsExpanded]);
 
   useEffect(() => {
@@ -273,6 +280,13 @@ SubsectionCard.propTypes = {
       duplicable: PropTypes.bool.isRequired,
     }).isRequired,
     isHeaderVisible: PropTypes.bool,
+    childInfo: PropTypes.shape({
+      children: PropTypes.arrayOf(
+        PropTypes.shape({
+          id: PropTypes.string.isRequired,
+        }),
+      ).isRequired,
+    }).isRequired,
   }).isRequired,
   children: PropTypes.node,
   isSelfPaced: PropTypes.bool.isRequired,
