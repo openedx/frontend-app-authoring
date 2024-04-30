@@ -47,7 +47,7 @@ const Textbooks = ({ courseId }) => {
   } = useTextbooks(courseId);
 
   const {
-    isShow: isShowProcessingNotification,
+    isShow: showProcessingNotification,
     title: processingNotificationTitle,
   } = useSelector(getProcessingNotification);
 
@@ -127,7 +127,7 @@ const Textbooks = ({ courseId }) => {
         </section>
       </Container>
       <ProcessingNotification
-        isShow={isShowProcessingNotification}
+        isShow={showProcessingNotification}
         title={processingNotificationTitle}
       />
       <div className="alert-toast">

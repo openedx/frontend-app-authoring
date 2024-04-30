@@ -41,7 +41,7 @@ const useTextbooks = (courseId) => {
     },
     {
       label: '',
-      href: `/course/${courseId}/pages-and-resources/textbooks`,
+      href: `/course/${courseId}/textbooks`,
     },
   ];
 

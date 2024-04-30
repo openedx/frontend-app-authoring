@@ -4,6 +4,7 @@ import {
 } from 'react-router-dom';
 import { getConfig } from '@edx/frontend-platform';
 import { PageWrap } from '@edx/frontend-platform/react';
+import { Textbooks } from 'CourseAuthoring/textbooks';
 import CourseAuthoringPage from './CourseAuthoringPage';
 import { PagesAndResources } from './pages-and-resources';
 import EditorContainer from './editors/EditorContainer';
@@ -23,7 +24,6 @@ import CourseImportPage from './import-page/CourseImportPage';
 import { DECODED_ROUTES } from './constants';
 import CourseChecklist from './course-checklist';
 import GroupConfigurations from './group-configurations';
-import { Textbooks } from './textbooks';
 
 /**
  * As of this writing, these routes are mounted at a path prefixed with the following:
