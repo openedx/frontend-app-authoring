@@ -57,7 +57,7 @@ const App = () => {
         {getConfig().ENABLE_ACCESSIBILITY_PAGE === 'true' && (
           <Route path="/accessibility" element={<AccessibilityPage />} />
         )}
-        {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
+        {!([true, 'true'].includes(getConfig().DISABLE_TAGGING_FEATURE)) && (
           <>
             <Route path="/taxonomies" element={<TaxonomyLayout />}>
               <Route index element={<TaxonomyListPage />} />
@@ -121,7 +121,7 @@ initialize({
         ENABLE_UNIT_PAGE: process.env.ENABLE_UNIT_PAGE || 'false',
         ENABLE_ASSETS_PAGE: process.env.ENABLE_ASSETS_PAGE || 'false',
         ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN: process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN || 'false',
-        ENABLE_TAGGING_TAXONOMY_PAGES: process.env.ENABLE_TAGGING_TAXONOMY_PAGES || 'false',
+        DISABLE_TAGGING_FEATURE: process.env.DISABLE_TAGGING_FEATURE || 'false',
         ENABLE_HOME_PAGE_COURSE_API_V2: process.env.ENABLE_HOME_PAGE_COURSE_API_V2 === 'true',
         ENABLE_CHECKLIST_QUALITY: process.env.ENABLE_CHECKLIST_QUALITY || 'true',
       }, 'CourseAuthoringConfig');

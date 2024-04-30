@@ -138,7 +138,7 @@ const CardHeader = ({
           {(isVertical || isSequential) && (
             <CardStatus status={status} showDiscussionsEnabledBadge={showDiscussionsEnabledBadge} />
           )}
-          { getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && contentTagCount > 0 && (
+          { !([true, 'true'].includes(getConfig().DISABLE_TAGGING_FEATURE)) && contentTagCount > 0 && (
             <TagCount count={contentTagCount} onClick={openManageTagsDrawer} />
           )}
           <Dropdown data-testid={`${namePrefix}-card-header__menu`} onClick={onClickMenuButton}>
@@ -176,7 +176,7 @@ const CardHeader = ({
               >
                 {intl.formatMessage(messages.menuConfigure)}
               </Dropdown.Item>
-              {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
+              {!([true, 'true'].includes(getConfig().DISABLE_TAGGING_FEATURE)) && (
                 <Dropdown.Item
                   data-testid={`${namePrefix}-card-header__menu-manage-tags-button`}
                   onClick={openManageTagsDrawer}

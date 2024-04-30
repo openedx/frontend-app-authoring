@@ -253,14 +253,14 @@ Requirements
 
 * ``edx-platform`` Waffle flags:
 
-  * ``new_studio_mfe.use_tagging_taxonomy_list_page``: this feature flag must be enabled.
+  * ``content_tagging.disable_tagging_feature``: this feature flag must NOT be checked.
 
 Configuration
 -------------
 
-In additional to the standard settings, the following local configuration items are required:
+In additional to the standard settings, the following local configuration items could be used to disable the tagging feature.
 
-* ``ENABLE_TAGGING_TAXONOMY_PAGES``: must be enabled in order to actually present the new Tagging/Taxonomy pages.
+* ``DISABLE_TAGGING_FEATURE``: can be checked in order to hide the Tagging/Taxonomy pages.
 
 
 Developing

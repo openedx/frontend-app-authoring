@@ -148,7 +148,7 @@ describe('<StatusBar />', () => {
   it('renders the tag count if the waffle flag is enabled', async () => {
     setConfig({
       ...getConfig(),
-      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+      DISABLE_TAGGING_FEATURE: 'false',
     });
     const { findByText } = renderComponent();
 
@@ -157,7 +157,7 @@ describe('<StatusBar />', () => {
   it('doesnt renders the tag count if the waffle flag is disabled', () => {
     setConfig({
       ...getConfig(),
-      ENABLE_TAGGING_TAXONOMY_PAGES: 'false',
+      DISABLE_TAGGING_FEATURE: 'true',
     });
     const { queryByText } = renderComponent();
 

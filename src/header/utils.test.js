@@ -33,7 +33,7 @@ describe('header utils', () => {
     it('should include export tags option', () => {
       setConfig({
         ...getConfig(),
-        ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+        DISABLE_TAGGING_FEATURE: 'false',
       });
       const actualItemsTitle = getToolsMenuItems(props).map((item) => item.title);
       expect(actualItemsTitle).toEqual([
@@ -46,7 +46,7 @@ describe('header utils', () => {
     it('should not include export tags option', () => {
       setConfig({
         ...getConfig(),
-        ENABLE_TAGGING_TAXONOMY_PAGES: 'false',
+        DISABLE_TAGGING_FEATURE: 'true',
       });
       const actualItemsTitle = getToolsMenuItems(props).map((item) => item.title);
       expect(actualItemsTitle).toEqual([
