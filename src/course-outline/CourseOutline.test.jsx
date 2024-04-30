@@ -56,7 +56,7 @@ import {
   moveUnitOver,
   moveSubsection,
   moveUnit,
-} from './drag-helper/utils';
+} from '../generic/drag-helper/utils';
 
 let axiosMock;
 let store;

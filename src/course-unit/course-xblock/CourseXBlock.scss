@@ -1,5 +1,9 @@
 .course-unit {
   .course-unit__xblocks {
+    .course-unit__xblock:not(:first-child) {
+      margin-top: 1.75rem;
+    }
+
     .pgn__card-header {
       display: flex;
       justify-content: space-between;
