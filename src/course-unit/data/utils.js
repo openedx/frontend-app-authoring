@@ -72,8 +72,6 @@ export const updateXBlockBlockIdToId = (data) => {
 
     if (key === 'children' || key === 'selectablePartitions' || key === 'groups') {
       updatedData[key] = updateXBlockBlockIdToId(value);
-    } else if (key === 'blockId') {
-      updatedData.id = value;
     } else {
       // Copy other properties unchanged
       updatedData[key] = value;
