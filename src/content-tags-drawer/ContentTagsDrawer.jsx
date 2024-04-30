@@ -90,10 +90,10 @@ const ContentTagsDrawer = ({ id, onClose }) => {
 
   return (
     <ContentTagsDrawerContext.Provider value={context}>
-      <div id="content-tags-drawer" className="mt-1 tags-drawer d-flex flex-column justify-content-between min-vh-100">
+      <div id="content-tags-drawer" className="mt-1 tags-drawer d-flex flex-column justify-content-between min-vh-100 pt-3">
         <Container size="xl">
           { isContentDataLoaded
-            ? <h2>{ contentName }</h2>
+            ? <h2 className="tags-drawer-heading pl-2.5">{ contentName }</h2>
             : (
               <div className="d-flex justify-content-center align-items-center flex-column">
                 <Spinner
@@ -103,23 +103,25 @@ const ContentTagsDrawer = ({ id, onClose }) => {
                 />
               </div>
             )}
-
           <hr />
-          <p className="lead text-gray-500 font-weight-bold">{intl.formatMessage(messages.headerSubtitle)}</p>
-
-          { isTaxonomyListLoaded && isContentTaxonomyTagsLoaded
-            ? tagsByTaxonomy.map((data) => (
-              <div key={`taxonomy-tags-collapsible-${data.id}`}>
-                <ContentTagsCollapsible
-                  contentId={contentId}
-                  taxonomyAndTagsData={data}
-                  stagedContentTags={stagedContentTags[data.id] || []}
-                  collapsibleState={collapsibleStates[data.id] || false}
-                />
-                <hr />
-              </div>
-            ))
-            : <Loading />}
+          <Container>
+            <p className="tags-drawer-subtitle lead text-gray-500 font-weight-bold">
+              {intl.formatMessage(messages.headerSubtitle)}
+            </p>
+            { isTaxonomyListLoaded && isContentTaxonomyTagsLoaded
+              ? tagsByTaxonomy.map((data) => (
+                <div key={`taxonomy-tags-collapsible-${data.id}`}>
+                  <ContentTagsCollapsible
+                    contentId={contentId}
+                    taxonomyAndTagsData={data}
+                    stagedContentTags={stagedContentTags[data.id] || []}
+                    collapsibleState={collapsibleStates[data.id] || false}
+                  />
+                  <hr />
+                </div>
+              ))
+              : <Loading />}
+          </Container>
         </Container>
 
         { isTaxonomyListLoaded && isContentTaxonomyTagsLoaded && (
