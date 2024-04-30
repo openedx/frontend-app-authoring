@@ -104,10 +104,13 @@ describe('<ModalDropzone />', () => {
   });
 
   it('should successfully upload an asset and return the URL', async () => {
-    const mockUrl = `${baseUrl}/assets/course-123/test.png`;
+    const mockUrl = `${baseUrl}/assets/course-123/test-file.png`;
     axiosMock.onPost(getUploadAssetsUrl(courseId).href).reply(200, {
       asset: { url: mockUrl },
     });
+    const response = await uploadAssets(courseId, fileData, () => {});
+
+    expect(response.asset.url).toBe(mockUrl);
 
     const { getByRole, getByAltText } = render(<RootWrapper {...props} />);
     const dropzoneInput = getByRole('presentation', { hidden: true }).firstChild;
@@ -130,5 +133,27 @@ describe('<ModalDropzone />', () => {
     axiosMock.onPost(getUploadAssetsUrl(courseId).href).networkError();
 
     await expect(uploadAssets(courseId, fileData, () => {})).rejects.toThrow('Network Error');
+  });
+
+  it('displays a custom error message when the file size exceeds the limit', async () => {
+    const maxSizeInBytes = 20 * 1000 * 1000;
+    const expectedErrorMessage = 'Custom error message';
+
+    const { getByText, getByRole } = render(
+      <RootWrapper {...props} maxSize={maxSizeInBytes} invalidFileSizeMore={expectedErrorMessage} />,
+    );
+    const dropzoneInput = getByRole('presentation', { hidden: true });
+
+    const fileToUpload = new File(
+      [new ArrayBuffer(maxSizeInBytes + 1)],
+      'test-file.png',
+      { type: 'image/png' },
+    );
+
+    userEvent.upload(dropzoneInput.firstChild, fileToUpload);
+
+    await waitFor(() => {
+      expect(getByText(expectedErrorMessage)).toBeInTheDocument();
+    });
   });
 });
