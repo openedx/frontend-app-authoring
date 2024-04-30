@@ -177,7 +177,6 @@ const CourseUnit = ({ courseId }) => {
                         handleConfigureSubmit={handleConfigureSubmit}
                         unitXBlockActions={unitXBlockActions}
                         data-testid="course-xblock"
-                        className="course-unit__xblock"
                         userPartitionInfo={userPartitionInfo}
                       />
                     ))}

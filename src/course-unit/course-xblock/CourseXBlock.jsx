@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   ActionRow, Card, Dropdown, Icon, IconButton, useToggle,
@@ -78,7 +79,9 @@ const CourseXBlock = ({
     <div
       ref={courseXBlockElementRef}
       {...props}
-      className={isScrolledToElement ? 'xblock-highlight' : undefined}
+      className={classNames('course-unit__xblock', {
+        'xblock-highlight': isScrolledToElement,
+      })}
     >
       <Card
         as={SortableItem}
