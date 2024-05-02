@@ -73,9 +73,11 @@ describe('Editor Pages Load no header', () => {
     const wrapper = render(
       <AppProvider store={store}>
         <IntlProvider locale="en">
-          <CourseAuthoringPage courseId={courseId}>
-            <PagesAndResources courseId={courseId} />
-          </CourseAuthoringPage>
+          <QueryClientProvider client={queryClient}>
+            <CourseAuthoringPage courseId={courseId}>
+              <PagesAndResources courseId={courseId} />
+            </CourseAuthoringPage>
+          </QueryClientProvider>
         </IntlProvider>
       </AppProvider>
       ,
@@ -108,7 +110,9 @@ describe('Course authoring page', () => {
     const wrapper = render(
       <AppProvider store={store}>
         <IntlProvider locale="en">
-          <CourseAuthoringPage courseId={courseId} />
+          <QueryClientProvider client={queryClient}>
+            <CourseAuthoringPage courseId={courseId} />
+          </QueryClientProvider>
         </IntlProvider>
       </AppProvider>
       ,
@@ -125,9 +129,11 @@ describe('Course authoring page', () => {
     const wrapper = render(
       <AppProvider store={store}>
         <IntlProvider locale="en">
-          <CourseAuthoringPage courseId={courseId}>
-            <div data-testid={contentTestId} />
-          </CourseAuthoringPage>
+          <QueryClientProvider client={queryClient}>
+            <CourseAuthoringPage courseId={courseId}>
+              <div data-testid={contentTestId} />
+            </CourseAuthoringPage>
+          </QueryClientProvider>
         </IntlProvider>
       </AppProvider>
       ,
