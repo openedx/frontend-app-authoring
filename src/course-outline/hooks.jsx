@@ -72,7 +72,7 @@ const useCourseOutline = ({ courseId }) => {
     mfeProctoredExamSettingsUrl,
     advanceSettingsUrl,
   } = useSelector(getOutlineIndexData);
-  const { outlineIndexLoadingStatus } = useSelector(getLoadingStatus);
+  const { outlineIndexLoadingStatus, reIndexLoadingStatus } = useSelector(getLoadingStatus);
   const statusBarData = useSelector(getStatusBarData);
   const savingStatus = useSelector(getSavingStatus);
   const courseActions = useSelector(getCourseActions);
@@ -289,6 +289,10 @@ const useCourseOutline = ({ courseId }) => {
     dispatch(fetchCourseBestPracticesQuery({ courseId }));
     dispatch(fetchCourseLaunchQuery({ courseId }));
   }, [courseId]);
+
+  useEffect(() => {
+    setShowSuccessAlert(reIndexLoadingStatus === RequestStatus.SUCCESSFUL);
+  }, [reIndexLoadingStatus]);
 
   return {
     courseActions,

@@ -140,6 +140,17 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(200, courseOutlineIndexMock);
+    axiosMock
+      .onGet(getCourseBestPracticesApiUrl({
+        courseId, excludeGraded: true, all: true,
+      }))
+      .reply(200, courseBestPracticesMock);
+
+    axiosMock
+      .onGet(getCourseLaunchApiUrl({
+        courseId, gradedOnly: true, validateOras: true, all: true,
+      }))
+      .reply(200, courseLaunchMock);
     await executeThunk(fetchCourseOutlineIndexQuery(courseId), store.dispatch);
   });
 
@@ -224,7 +235,7 @@ describe('<CourseOutline />', () => {
     const reindexButton = await findByTestId('course-reindex');
     await act(async () => fireEvent.click(reindexButton));
 
-    expect(await findByText(messages.alertErrorTitle.defaultMessage)).toBeInTheDocument();
+    expect(await findByText('Request failed with status code 500')).toBeInTheDocument();
   });
 
   it('check that new section list is saved when dragged', async () => {
@@ -358,18 +369,6 @@ describe('<CourseOutline />', () => {
 
   it('render checklist value correctly', async () => {
     const { getByText } = render(<RootWrapper />);
-
-    axiosMock
-      .onGet(getCourseBestPracticesApiUrl({
-        courseId, excludeGraded: true, all: true,
-      }))
-      .reply(200, courseBestPracticesMock);
-
-    axiosMock
-      .onGet(getCourseLaunchApiUrl({
-        courseId, gradedOnly: true, validateOras: true, all: true,
-      }))
-      .reply(200, courseLaunchMock);
 
     await executeThunk(fetchCourseLaunchQuery({
       courseId, gradedOnly: true, validateOras: true, all: true,
@@ -2093,6 +2092,9 @@ describe('<CourseOutline />', () => {
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [sectionElement] = await findAllByTestId('section-card');
     const [subsection] = section.childInfo.children;
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, courseSectionMock);
     let [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
     const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
     await act(async () => fireEvent.click(expandBtn));

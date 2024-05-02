@@ -195,9 +195,9 @@ describe('<PageAlerts />', () => {
     const { queryByText } = renderComponent({
       ...pageAlertsData,
       errors: {
-        outlineIndexApi: { data: 'some error', type: API_ERROR_TYPES.serverError, statusText: 'BadRequest' },
+        outlineIndexApi: { data: 'BadRequest: some error', type: API_ERROR_TYPES.serverError },
         courseLaunchApi: { type: API_ERROR_TYPES.networkError },
-        reindexApi: { type: API_ERROR_TYPES.unknown, msg: 'some unknown error' },
+        reindexApi: { type: API_ERROR_TYPES.unknown, data: 'some unknown error' },
       },
     });
     expect(queryByText(messages.networkErrorAlert.defaultMessage)).toBeInTheDocument();
