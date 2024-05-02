@@ -9,7 +9,9 @@ import {
   InfoOutline as InfoOutlineIcon,
   Warning as WarningIcon,
 } from '@openedx/paragon/icons';
-import { Alert, Button, Hyperlink } from '@openedx/paragon';
+import {
+  Alert, Button, Hyperlink, Truncate,
+} from '@openedx/paragon';
 import { Link } from 'react-router-dom';
 
 import { RequestStatus } from '../../data/constants';
@@ -18,7 +20,8 @@ import AlertProctoringError from '../../generic/AlertProctoringError';
 import messages from './messages';
 import advancedSettingsMessages from '../../advanced-settings/messages';
 import { getPasteFileNotices } from '../data/selectors';
-import { removePasteFileNotices } from '../data/slice';
+import { dismissError, removePasteFileNotices } from '../data/slice';
+import { API_ERROR_TYPES } from '../constants';
 
 const PageAlerts = ({
   courseId,
@@ -32,6 +35,7 @@ const PageAlerts = ({
   mfeProctoredExamSettingsUrl,
   advanceSettingsUrl,
   savingStatus,
+  errors,
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -330,6 +334,32 @@ const PageAlerts = ({
     return null;
   };
 
+  const renderApiErrors = () => {
+    const errorList = Object.entries(errors).map(([k, v]) => {
+      switch (v.type) {
+      case API_ERROR_TYPES.networkError:
+        return [k, intl.formatMessage(messages.networkErrorAlert)];
+      default:
+        return [k, v.data];
+      }
+    });
+    if (!errorList?.length) {
+      return null;
+    }
+    return (
+      errorList.map(([k, msg]) => (
+        <ErrorAlert
+          hideHeading
+          isError
+          key={k}
+          dismissError={() => dispatch(dismissError([k]))}
+        >
+          <Truncate lines={2}>{msg}</Truncate>
+        </ErrorAlert>
+      ))
+    );
+  };
+
   return (
     <>
       {configurationErrors()}
@@ -339,6 +369,7 @@ const PageAlerts = ({
       <ErrorAlert hideHeading isError={savingStatus === RequestStatus.FAILED}>
         {intl.formatMessage(messages.alertFailedGeneric, { actionName: 'save', type: 'changes' })}
       </ErrorAlert>
+      {renderApiErrors()}
       {errorFilesPasteAlert()}
       {conflictingFilesPasteAlert()}
       {newFilesPasteAlert()}
@@ -357,6 +388,7 @@ PageAlerts.defaultProps = {
   mfeProctoredExamSettingsUrl: '',
   advanceSettingsUrl: '',
   savingStatus: '',
+  errors: {},
 };
 
 PageAlerts.propTypes = {
@@ -387,6 +419,24 @@ PageAlerts.propTypes = {
   mfeProctoredExamSettingsUrl: PropTypes.string,
   advanceSettingsUrl: PropTypes.string,
   savingStatus: PropTypes.string,
+  errors: PropTypes.shape({
+    outlineIndexApi: PropTypes.shape({
+      data: PropTypes.string,
+      type: PropTypes.string.isRequired,
+    }),
+    reindexApi: PropTypes.shape({
+      data: PropTypes.string,
+      type: PropTypes.string.isRequired,
+    }),
+    sectionLoadingApi: PropTypes.shape({
+      data: PropTypes.string,
+      type: PropTypes.string.isRequired,
+    }),
+    courseLaunchApi: PropTypes.shape({
+      data: PropTypes.string,
+      type: PropTypes.string.isRequired,
+    }),
+  }),
 };
 
 export default PageAlerts;

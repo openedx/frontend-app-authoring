@@ -11,7 +11,9 @@ const slice = createSlice({
       outlineIndexLoadingStatus: RequestStatus.IN_PROGRESS,
       reIndexLoadingStatus: RequestStatus.IN_PROGRESS,
       fetchSectionLoadingStatus: RequestStatus.IN_PROGRESS,
+      courseLaunchQueryStatus: RequestStatus.IN_PROGRESS,
     },
+    errors: {},
     outlineIndexData: {},
     savingStatus: '',
     statusBarData: {
@@ -53,18 +55,69 @@ const slice = createSlice({
         ...state.loadingStatus,
         outlineIndexLoadingStatus: payload.status,
       };
+      if (payload.errors) {
+        state.errors = {
+          ...state.errors,
+          outlineIndexApi: payload.errors,
+        };
+      } else {
+        const errors = { ...state.errors };
+        delete errors.outlineIndexApi;
+        state.errors = errors;
+      }
     },
     updateReindexLoadingStatus: (state, { payload }) => {
       state.loadingStatus = {
         ...state.loadingStatus,
         reIndexLoadingStatus: payload.status,
       };
+      if (payload.errors) {
+        state.errors = {
+          ...state.errors,
+          reindexApi: payload.errors,
+        };
+      } else {
+        const errors = { ...state.errors };
+        delete errors.reindexApi;
+        state.errors = errors;
+      }
     },
     updateFetchSectionLoadingStatus: (state, { payload }) => {
       state.loadingStatus = {
         ...state.loadingStatus,
         fetchSectionLoadingStatus: payload.status,
       };
+      if (payload.errors) {
+        state.errors = {
+          ...state.errors,
+          sectionLoadingApi: payload.errors,
+        };
+      } else {
+        const errors = { ...state.errors };
+        delete errors.sectionLoadingApi;
+        state.errors = errors;
+      }
+    },
+    updateCourseLaunchQueryStatus: (state, { payload }) => {
+      state.loadingStatus = {
+        ...state.loadingStatus,
+        courseLaunchQueryStatus: payload.status,
+      };
+      if (payload.errors) {
+        state.errors = {
+          ...state.errors,
+          courseLaunchApi: payload.errors,
+        };
+      } else {
+        const errors = { ...state.errors };
+        delete errors.courseLaunchApi;
+        state.errors = errors;
+      }
+    },
+    dismissError: (state, { payload }) => {
+      const errors = { ...state.errors };
+      payload.forEach((key) => delete errors[key]);
+      state.errors = errors;
     },
     updateStatusBar: (state, { payload }) => {
       state.statusBarData = {
@@ -188,6 +241,7 @@ export const {
   fetchStatusBarChecklistSuccess,
   fetchStatusBarSelPacedSuccess,
   updateFetchSectionLoadingStatus,
+  updateCourseLaunchQueryStatus,
   updateSavingStatus,
   updateSectionList,
   setCurrentItem,
@@ -202,6 +256,7 @@ export const {
   reorderUnitList,
   setPasteFileNotices,
   removePasteFileNotices,
+  dismissError,
 } = slice.actions;
 
 export const {

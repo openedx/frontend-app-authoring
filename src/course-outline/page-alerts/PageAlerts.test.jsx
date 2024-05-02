@@ -8,6 +8,7 @@ import { initializeMockApp, getConfig } from '@edx/frontend-platform';
 import PageAlerts from './PageAlerts';
 import messages from './messages';
 import initializeStore from '../../store';
+import { API_ERROR_TYPES } from '../constants';
 
 jest.mock('@edx/frontend-platform/i18n', () => ({
   ...jest.requireActual('@edx/frontend-platform/i18n'),
@@ -188,5 +189,19 @@ describe('<PageAlerts />', () => {
       'href',
       `${getConfig().STUDIO_BASE_URL}/assets/course-id`,
     );
+  });
+
+  it('renders api error alerts', async () => {
+    const { queryByText } = renderComponent({
+      ...pageAlertsData,
+      errors: {
+        outlineIndexApi: { data: 'some error', type: API_ERROR_TYPES.serverError, statusText: 'BadRequest' },
+        courseLaunchApi: { type: API_ERROR_TYPES.networkError },
+        reindexApi: { type: API_ERROR_TYPES.unknown, msg: 'some unknown error' },
+      },
+    });
+    expect(queryByText(messages.networkErrorAlert.defaultMessage)).toBeInTheDocument();
+    expect(queryByText('BadRequest: some error')).toBeInTheDocument();
+    expect(queryByText('some unknown error')).toBeInTheDocument();
   });
 });
