@@ -1,6 +1,6 @@
 // @ts-check
 import { useQuery } from '@tanstack/react-query';
-import { getOrganizations, getTagsCount } from './api';
+import { getOrganizations, getStudioHomeData, getTagsCount } from './api';
 
 /**
  * Builds the query to get a list of available organizations
@@ -32,3 +32,8 @@ export const useContentTagsCount = (contentId) => {
     select: (data) => data[contentId] || 0, // Return the tags count of the specific contentId
   });
 };
+
+export const useStudioHomeData = () => useQuery({
+  queryKey: ['studioHomeData'],
+  queryFn: getStudioHomeData,
+});

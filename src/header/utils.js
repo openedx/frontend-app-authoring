@@ -58,7 +58,9 @@ export const getSettingMenuItems = ({ studioBaseUrl, courseId, intl }) => ([
   },
 ]);
 
-export const getToolsMenuItems = ({ studioBaseUrl, courseId, intl }) => ([
+export const getToolsMenuItems = ({
+  studioBaseUrl, courseId, intl, taxonomiesEnabled,
+}) => ([
   {
     href: `${studioBaseUrl}/import/${courseId}`,
     title: intl.formatMessage(messages['header.links.import']),
@@ -67,7 +69,7 @@ export const getToolsMenuItems = ({ studioBaseUrl, courseId, intl }) => ([
     href: `${studioBaseUrl}/export/${courseId}`,
     title: intl.formatMessage(messages['header.links.exportCourse']),
   },
-  ...(!([true, 'true'].includes(getConfig().DISABLE_TAGGING_FEATURE))
+  ...(taxonomiesEnabled
     ? [{
       href: `${studioBaseUrl}/api/content_tagging/v1/object_tags/${courseId}/export/`,
       title: intl.formatMessage(messages['header.links.exportTags']),

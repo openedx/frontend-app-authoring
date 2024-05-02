@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import moment from 'moment/moment';
 import PropTypes from 'prop-types';
 import { FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
-import { getConfig } from '@edx/frontend-platform/config';
 import {
   Button, Hyperlink, Form, Sheet, Stack, useToggle,
 } from '@openedx/paragon';
@@ -12,7 +11,7 @@ import { ContentTagsDrawer } from '../../content-tags-drawer';
 import TagCount from '../../generic/tag-count';
 import { useHelpUrls } from '../../help-urls/hooks';
 import { VIDEO_SHARING_OPTIONS } from '../constants';
-import { useContentTagsCount } from '../../generic/data/apiHooks';
+import { useContentTagsCount, useStudioHomeData } from '../../generic/data/apiHooks';
 import messages from './messages';
 import { getVideoSharingOptionText } from '../utils';
 
@@ -71,6 +70,8 @@ const StatusBar = ({
   } = useHelpUrls(['contentHighlights', 'socialSharing']);
 
   const { data: courseTagCount } = useContentTagsCount(courseId);
+  const { data: studioData } = useStudioHomeData();
+  const taxonomiesEnabled = studioData?.taxonomiesEnabled;
 
   const [isManageTagsDrawerOpen, openManageTagsDrawer, closeManageTagsDrawer] = useToggle(false);
 
@@ -136,7 +137,7 @@ const StatusBar = ({
             </Hyperlink>
           </div>
         </StatusBarItem>
-        {!([true, 'true'].includes(getConfig().DISABLE_TAGGING_FEATURE)) && (
+        {taxonomiesEnabled && (
           <StatusBarItem title={intl.formatMessage(messages.courseTagsTitle)}>
             <div className="d-flex align-items-center">
               <TagCount count={courseTagCount} />

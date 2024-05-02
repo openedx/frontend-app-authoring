@@ -10,6 +10,7 @@ export const getCourseRerunUrl = (courseId) => new URL(`/api/contentstore/v1/cou
 export const getOrganizationsUrl = () => new URL('organizations', getApiBaseUrl()).href;
 export const getClipboardUrl = () => `${getApiBaseUrl()}/api/content-staging/v1/clipboard/`;
 export const getTagsCountApiUrl = (contentPattern) => new URL(`api/content_tagging/v1/object_tag_counts/${contentPattern}/?count_implicit`, getApiBaseUrl()).href;
+export const getStudioHomeApiUrl = () => new URL('api/contentstore/v1/home', getApiBaseUrl()).href;
 
 /**
  * Get's organizations data. Returns list of organization names.
@@ -82,4 +83,13 @@ export async function getTagsCount(contentPattern) {
     return data;
   }
   return null;
+}
+
+/**
+ * Get's studio home data.
+ * @returns {Promise<Object>}
+ */
+export async function getStudioHomeData() {
+  const { data } = await getAuthenticatedHttpClient().get(getStudioHomeApiUrl());
+  return camelCaseObject(data);
 }

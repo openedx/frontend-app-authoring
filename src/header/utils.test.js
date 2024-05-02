@@ -31,10 +31,7 @@ describe('header utils', () => {
 
   describe('getToolsMenuItems', () => {
     it('should include export tags option', () => {
-      setConfig({
-        ...getConfig(),
-        DISABLE_TAGGING_FEATURE: 'false',
-      });
+      props.taxonomiesEnabled = true;
       const actualItemsTitle = getToolsMenuItems(props).map((item) => item.title);
       expect(actualItemsTitle).toEqual([
         'Import',
@@ -44,10 +41,7 @@ describe('header utils', () => {
       ]);
     });
     it('should not include export tags option', () => {
-      setConfig({
-        ...getConfig(),
-        DISABLE_TAGGING_FEATURE: 'true',
-      });
+      props.taxonomiesEnabled = false;
       const actualItemsTitle = getToolsMenuItems(props).map((item) => item.title);
       expect(actualItemsTitle).toEqual([
         'Import',

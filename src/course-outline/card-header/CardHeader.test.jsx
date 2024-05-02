@@ -2,7 +2,6 @@ import { MemoryRouter } from 'react-router-dom';
 import {
   act, render, fireEvent, waitFor, screen,
 } from '@testing-library/react';
-import { setConfig, getConfig } from '@edx/frontend-platform';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
@@ -23,10 +22,12 @@ const onClickMoveDownMock = jest.fn();
 const closeFormMock = jest.fn();
 
 const mockGetTagsCount = jest.fn();
+const mockStudioHomeData = jest.fn().mockReturnValue({ taxonomiesEnabled: true });
 
 jest.mock('../../generic/data/api', () => ({
   ...jest.requireActual('../../generic/data/api'),
   getTagsCount: () => mockGetTagsCount(),
+  getStudioHomeData: () => mockStudioHomeData(),
 }));
 
 const cardHeaderProps = {
@@ -85,6 +86,16 @@ const renderComponent = (props, entry = '/') => {
 };
 
 describe('<CardHeader />', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    queryClient.clear();
+  });
+
+  afterEach(() => {
+    queryClient.clear();
+    jest.clearAllMocks();
+  });
+
   it('render CardHeader component correctly', async () => {
     const { findByText, findByTestId, queryByTestId } = renderComponent();
 
@@ -182,10 +193,6 @@ describe('<CardHeader />', () => {
   });
 
   it('only shows Manage tags menu if the waffle flag is enabled', async () => {
-    setConfig({
-      ...getConfig(),
-      DISABLE_TAGGING_FEATURE: 'true',
-    });
     renderComponent();
     const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
     fireEvent.click(menuButton);
@@ -194,10 +201,6 @@ describe('<CardHeader />', () => {
   });
 
   it('shows ContentTagsDrawer when the menu is clicked', async () => {
-    setConfig({
-      ...getConfig(),
-      DISABLE_TAGGING_FEATURE: 'false',
-    });
     renderComponent();
     const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
     fireEvent.click(menuButton);
@@ -294,30 +297,19 @@ describe('<CardHeader />', () => {
   });
 
   it('should render tag count if is not zero and the waffle flag is enabled', async () => {
-    setConfig({
-      ...getConfig(),
-      DISABLE_TAGGING_FEATURE: 'false',
-    });
     mockGetTagsCount.mockResolvedValue({ 12345: 17 });
     renderComponent();
     expect(await screen.findByText('17')).toBeInTheDocument();
   });
 
   it('shouldn render tag count if the waffle flag is disabled', async () => {
-    setConfig({
-      ...getConfig(),
-      DISABLE_TAGGING_FEATURE: 'true',
-    });
+    mockStudioHomeData.mockResolvedValue({ taxonomiesEnabled: false });
     mockGetTagsCount.mockResolvedValue({ 12345: 17 });
     renderComponent();
     expect(screen.queryByText('17')).not.toBeInTheDocument();
   });
 
   it('should not render tag count if is zero', () => {
-    setConfig({
-      ...getConfig(),
-      DISABLE_TAGGING_FEATURE: 'false',
-    });
     mockGetTagsCount.mockResolvedValue({ 12345: 0 });
     renderComponent();
     expect(screen.queryByText('0')).not.toBeInTheDocument();

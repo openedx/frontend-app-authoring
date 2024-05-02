@@ -8,7 +8,6 @@ export const getCourseNotificationUrl = (url) => new URL(url, getApiBaseUrl()).h
 
 /**
  * Get's studio home data.
- * @param {string} search
  * @returns {Promise<Object>}
  */
 export async function getStudioHomeData() {

@@ -3,7 +3,6 @@ import { render, fireEvent } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
-import { getConfig, setConfig } from '@edx/frontend-platform/config';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import StatusBar from './StatusBar';
@@ -17,6 +16,7 @@ const courseId = 'course-v1:123';
 const isLoading = false;
 const openEnableHighlightsModalMock = jest.fn();
 const handleVideoSharingOptionChange = jest.fn();
+const mockStudioHomeData = jest.fn().mockResolvedValue({ taxonomiesEnabled: true });
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -28,6 +28,7 @@ jest.mock('react-router-dom', () => ({
 jest.mock('../../generic/data/api', () => ({
   ...jest.requireActual('../../generic/data/api'),
   getTagsCount: jest.fn().mockResolvedValue({ 'course-v1:123': 17 }),
+  getStudioHomeData: () => mockStudioHomeData(),
 }));
 
 jest.mock('../../help-urls/hooks', () => ({
@@ -82,6 +83,7 @@ describe('<StatusBar />', () => {
       },
     });
     store = initializeStore();
+    queryClient.clear();
   });
 
   it('renders StatusBar component correctly', () => {
@@ -146,19 +148,13 @@ describe('<StatusBar />', () => {
   });
 
   it('renders the tag count if the waffle flag is enabled', async () => {
-    setConfig({
-      ...getConfig(),
-      DISABLE_TAGGING_FEATURE: 'false',
-    });
+    mockStudioHomeData.mockResolvedValue({ taxonomiesEnabled: true });
     const { findByText } = renderComponent();
 
     expect(await findByText('17')).toBeInTheDocument();
   });
   it('doesnt renders the tag count if the waffle flag is disabled', () => {
-    setConfig({
-      ...getConfig(),
-      DISABLE_TAGGING_FEATURE: 'true',
-    });
+    mockStudioHomeData.mockResolvedValue({ taxonomiesEnabled: false });
     const { queryByText } = renderComponent();
 
     expect(queryByText('17')).not.toBeInTheDocument();

@@ -1,7 +1,6 @@
 // @ts-check
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSearchParams } from 'react-router-dom';
 import {
@@ -18,7 +17,7 @@ import {
   EditOutline as EditIcon,
 } from '@openedx/paragon/icons';
 
-import { useContentTagsCount } from '../../generic/data/apiHooks';
+import { useContentTagsCount, useStudioHomeData } from '../../generic/data/apiHooks';
 import { ContentTagsDrawer } from '../../content-tags-drawer';
 import TagCount from '../../generic/tag-count';
 import { useEscapeClick } from '../../hooks';
@@ -66,6 +65,8 @@ const CardHeader = ({
     || status === ITEM_BADGE_STATUS.publishedNotLive) && !hasChanges;
 
   const { data: contentTagCount } = useContentTagsCount(cardId);
+  const { data: studioData } = useStudioHomeData();
+  const taxonomiesEnabled = studioData?.taxonomiesEnabled;
 
   useEffect(() => {
     const locatorId = searchParams.get('show');
@@ -138,7 +139,7 @@ const CardHeader = ({
           {(isVertical || isSequential) && (
             <CardStatus status={status} showDiscussionsEnabledBadge={showDiscussionsEnabledBadge} />
           )}
-          { !([true, 'true'].includes(getConfig().DISABLE_TAGGING_FEATURE)) && contentTagCount > 0 && (
+          { taxonomiesEnabled && contentTagCount > 0 && (
             <TagCount count={contentTagCount} onClick={openManageTagsDrawer} />
           )}
           <Dropdown data-testid={`${namePrefix}-card-header__menu`} onClick={onClickMenuButton}>
@@ -176,7 +177,7 @@ const CardHeader = ({
               >
                 {intl.formatMessage(messages.menuConfigure)}
               </Dropdown.Item>
-              {!([true, 'true'].includes(getConfig().DISABLE_TAGGING_FEATURE)) && (
+              {taxonomiesEnabled && (
                 <Dropdown.Item
                   data-testid={`${namePrefix}-card-header__menu-manage-tags-button`}
                   onClick={openManageTagsDrawer}

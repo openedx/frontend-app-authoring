@@ -6,6 +6,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { StudioHeader } from '@edx/frontend-component-header';
 import { useToggle } from '@openedx/paragon';
 
+import { useStudioHomeData } from '../generic/data/apiHooks';
 import SearchModal from '../search-modal/SearchModal';
 import { getContentMenuItems, getSettingMenuItems, getToolsMenuItems } from './utils';
 import messages from './messages';
@@ -20,6 +21,8 @@ const Header = ({
   const intl = useIntl();
 
   const [isShowSearchModalOpen, openSearchModal, closeSearchModal] = useToggle(false);
+  const { data: studioData } = useStudioHomeData();
+  const taxonomiesEnabled = studioData?.taxonomiesEnabled;
 
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
   const meiliSearchEnabled = [true, 'true'].includes(getConfig().MEILISEARCH_ENABLED);
@@ -37,7 +40,9 @@ const Header = ({
     {
       id: `${intl.formatMessage(messages['header.links.tools'])}-dropdown-menu`,
       buttonTitle: intl.formatMessage(messages['header.links.tools']),
-      items: getToolsMenuItems({ studioBaseUrl, courseId, intl }),
+      items: getToolsMenuItems({
+        studioBaseUrl, courseId, intl, taxonomiesEnabled,
+      }),
     },
   ];
   const outlineLink = `${studioBaseUrl}/course/${courseId}`;
