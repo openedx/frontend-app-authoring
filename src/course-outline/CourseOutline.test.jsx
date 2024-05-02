@@ -163,6 +163,26 @@ describe('<CourseOutline />', () => {
     });
   });
 
+  it('handles course outline fetch api errors', async () => {
+    axiosMock
+      .onGet(getCourseOutlineIndexApiUrl(courseId))
+      .reply(500);
+
+    const { findByText, findByRole } = render(<RootWrapper />);
+    expect(await findByText('Request failed with status code 500')).toBeInTheDocument();
+    // check errors in store
+    expect(store.getState().courseOutline.errors).toEqual({
+      outlineIndexApi: {
+        data: 'Request failed with status code 500',
+        type: 'unknown',
+      },
+    });
+
+    const dismissBtn = await findByRole('button', { name: 'Dismiss' });
+    fireEvent.click(dismissBtn);
+    expect(store.getState().courseOutline.errors).toEqual({});
+  });
+
   it('check reindex and render success alert is correctly', async () => {
     const { findByText, findByTestId } = render(<RootWrapper />);
 
@@ -378,6 +398,32 @@ describe('<CourseOutline />', () => {
     }), store.dispatch);
 
     expect(getByText('4/9 completed')).toBeInTheDocument();
+  });
+
+  it('render alerts if checklist api fails', async () => {
+    axiosMock
+      .onGet(getCourseLaunchApiUrl({
+        courseId, gradedOnly: true, validateOras: true, all: true,
+      }))
+      .reply(500);
+    const { findByText, findByRole } = render(<RootWrapper />);
+
+    await executeThunk(fetchCourseLaunchQuery({
+      courseId, gradedOnly: true, validateOras: true, all: true,
+    }), store.dispatch);
+
+    expect(await findByText('Request failed with status code 500')).toBeInTheDocument();
+    // check errors in store
+    expect(store.getState().courseOutline.errors).toEqual({
+      courseLaunchApi: {
+        data: 'Request failed with status code 500',
+        type: 'unknown',
+      },
+    });
+
+    const dismissBtn = await findByRole('button', { name: 'Dismiss' });
+    fireEvent.click(dismissBtn);
+    expect(store.getState().courseOutline.errors).toEqual({});
   });
 
   it('check highlights are enabled after enable highlights query is successful', async () => {
