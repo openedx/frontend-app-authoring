@@ -7,6 +7,7 @@ import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import initializeStore from './store';
 import CourseAuthoringPage from './CourseAuthoringPage';
 import PagesAndResources from './pages-and-resources/PagesAndResources';
@@ -38,6 +39,8 @@ beforeEach(() => {
   axiosMock = new MockAdapter(getAuthenticatedHttpClient());
 });
 
+const queryClient = new QueryClient();
+
 describe('Editor Pages Load no header', () => {
   const mockStoreSuccess = async () => {
     const apiBaseUrl = getConfig().STUDIO_BASE_URL;
@@ -53,9 +56,11 @@ describe('Editor Pages Load no header', () => {
     const wrapper = render(
       <AppProvider store={store}>
         <IntlProvider locale="en">
-          <CourseAuthoringPage courseId={courseId}>
-            <PagesAndResources courseId={courseId} />
-          </CourseAuthoringPage>
+          <QueryClientProvider client={queryClient}>
+            <CourseAuthoringPage courseId={courseId}>
+              <PagesAndResources courseId={courseId} />
+            </CourseAuthoringPage>
+          </QueryClientProvider>
         </IntlProvider>
       </AppProvider>
       ,

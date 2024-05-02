@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { AppProvider } from '@edx/frontend-platform/react';
 import {
   act, fireEvent, render, waitFor,
@@ -41,11 +42,15 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
+const queryClient = new QueryClient();
+
 const RootWrapper = () => (
   <AppProvider store={store}>
-    <IntlProvider locale="en" messages={{}}>
-      <StudioHome intl={injectIntl} />
-    </IntlProvider>
+    <QueryClientProvider client={queryClient}>
+      <IntlProvider locale="en" messages={{}}>
+        <StudioHome intl={injectIntl} />
+      </IntlProvider>
+    </QueryClientProvider>
   </AppProvider>
 );
 

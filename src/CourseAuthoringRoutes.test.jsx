@@ -1,6 +1,7 @@
 import React from 'react';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import CourseAuthoringRoutes from './CourseAuthoringRoutes';
@@ -48,6 +49,8 @@ jest.mock('./custom-pages/CustomPages', () => (props) => {
   return customPagesMockText;
 });
 
+const queryClient = new QueryClient();
+
 describe('<CourseAuthoringRoutes>', () => {
   beforeEach(() => {
     initializeMockApp({
@@ -65,7 +68,9 @@ describe('<CourseAuthoringRoutes>', () => {
     render(
       <AppProvider store={store} wrapWithRouter={false}>
         <MemoryRouter initialEntries={['/pages-and-resources']}>
-          <CourseAuthoringRoutes />
+          <QueryClientProvider client={queryClient}>
+            <CourseAuthoringRoutes />
+          </QueryClientProvider>
         </MemoryRouter>
       </AppProvider>,
     );
@@ -82,7 +87,9 @@ describe('<CourseAuthoringRoutes>', () => {
     render(
       <AppProvider store={store} wrapWithRouter={false}>
         <MemoryRouter initialEntries={['/editor/video/block-id']}>
-          <CourseAuthoringRoutes />
+          <QueryClientProvider client={queryClient}>
+            <CourseAuthoringRoutes />
+          </QueryClientProvider>
         </MemoryRouter>
       </AppProvider>,
     );
@@ -100,7 +107,9 @@ describe('<CourseAuthoringRoutes>', () => {
     render(
       <AppProvider store={store} wrapWithRouter={false}>
         <MemoryRouter initialEntries={['/editor/course-videos/block-id']}>
-          <CourseAuthoringRoutes />
+          <QueryClientProvider client={queryClient}>
+            <CourseAuthoringRoutes />
+          </QueryClientProvider>
         </MemoryRouter>
       </AppProvider>,
     );

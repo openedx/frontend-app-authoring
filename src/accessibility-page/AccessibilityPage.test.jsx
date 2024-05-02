@@ -5,6 +5,7 @@ import {
 import { AppProvider } from '@edx/frontend-platform/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import initializeStore from '../store';
 import AccessibilityPage from './index';
 
@@ -15,11 +16,15 @@ const initialState = {
 };
 let store;
 
+const queryClient = new QueryClient();
+
 const renderComponent = () => {
   render(
     <IntlProvider locale="en">
       <AppProvider store={store}>
-        <AccessibilityPage />
+        <QueryClientProvider client={queryClient}>
+          <AccessibilityPage />
+        </QueryClientProvider>
       </AppProvider>
     </IntlProvider>,
   );
