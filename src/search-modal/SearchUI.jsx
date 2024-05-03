@@ -37,7 +37,7 @@ const SearchUI = (props) => {
       <ModalDialog.Header style={{ zIndex: 9 }} className="border-bottom">
         <ModalDialog.Title><FormattedMessage {...messages.title} /></ModalDialog.Title>
         <div className="d-flex mt-3">
-          <SearchKeywordsField className="flex-grow-1 mr-1" />
+          <SearchKeywordsField className="flex-grow-1 mr-2" />
           <SelectMenu variant="primary">
             <MenuItem
               onClick={switchToThisCourse}

@@ -72,7 +72,15 @@ const SubsectionCard = ({
   actions.allowMoveUp = !isEmpty(moveUpDetails);
   actions.allowMoveDown = !isEmpty(moveDownDetails);
 
-  const [isExpanded, setIsExpanded] = useState(locatorId ? isScrolledToElement : !isHeaderVisible);
+  // Expand the subsection if a search result should be shown/scrolled to
+  const containsSearchResult = () => {
+    if (locatorId) {
+      return !!subsection.childInfo?.children?.filter((child) => child.id === locatorId).length;
+    }
+
+    return false;
+  };
+  const [isExpanded, setIsExpanded] = useState(containsSearchResult() || !isHeaderVisible);
   const subsectionStatus = getItemStatus({
     published,
     visibilityState,
@@ -132,9 +140,17 @@ const SubsectionCard = ({
     // we need to check section.shouldScroll as whole section is fetched when a
     // subsection is duplicated under it.
     if (currentRef.current && (section.shouldScroll || subsection.shouldScroll || isScrolledToElement)) {
-      scrollToElement(currentRef.current);
+      // Align element closer to the top of the screen if scrolling for search result
+      const alignWithTop = !!isScrolledToElement;
+      scrollToElement(currentRef.current, alignWithTop);
     }
   }, [isScrolledToElement]);
+
+  useEffect(() => {
+    // If the locatorId is set/changed, we need to make sure that the subsection is expanded
+    // if it contains the result, in order to scroll to it
+    setIsExpanded((prevState) => (containsSearchResult() || prevState));
+  }, [locatorId, setIsExpanded]);
 
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
@@ -264,6 +280,13 @@ SubsectionCard.propTypes = {
       duplicable: PropTypes.bool.isRequired,
     }).isRequired,
     isHeaderVisible: PropTypes.bool,
+    childInfo: PropTypes.shape({
+      children: PropTypes.arrayOf(
+        PropTypes.shape({
+          id: PropTypes.string.isRequired,
+        }),
+      ).isRequired,
+    }).isRequired,
   }).isRequired,
   children: PropTypes.node,
   isSelfPaced: PropTypes.bool.isRequired,

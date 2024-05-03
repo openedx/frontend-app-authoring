@@ -114,7 +114,9 @@ const UnitCard = ({
     // we need to check section.shouldScroll as whole section is fetched when a
     // unit is duplicated under it.
     if (currentRef.current && (section.shouldScroll || unit.shouldScroll || isScrolledToElement)) {
-      scrollToElement(currentRef.current);
+      // Align element closer to the top of the screen if scrolling for search result
+      const alignWithTop = !!isScrolledToElement;
+      scrollToElement(currentRef.current, alignWithTop);
     }
   }, [isScrolledToElement]);
 
