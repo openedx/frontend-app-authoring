@@ -209,6 +209,7 @@ describe('<ConfigureModal /> for Unit', () => {
     expect(getByText(`${currentUnitMock.displayName} settings`)).toBeInTheDocument();
     expect(getByText(messages.unitVisibility.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.hideFromLearners.defaultMessage)).toBeInTheDocument();
+    expect(getByText(messages.discussionEnabledCheckbox.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.restrictAccessTo.defaultMessage)).toBeInTheDocument();
     expect(getByText(messages.unitSelectGroupType.defaultMessage)).toBeInTheDocument();
 

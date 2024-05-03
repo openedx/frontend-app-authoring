@@ -1405,6 +1405,7 @@ describe('<CourseOutline />', () => {
         publish: 'republish',
         metadata: {
           visible_to_staff_only: isVisibleToStaffOnly,
+          discussion_enabled: false,
           group_access: newGroupAccess,
         },
       })
@@ -1423,6 +1424,7 @@ describe('<CourseOutline />', () => {
 
     // after configuraiton response
     unit.visibilityState = 'staff_only';
+    unit.discussion_enabled = false;
     unit.userPartitionInfo = {
       selectablePartitions: [
         {
@@ -1465,6 +1467,11 @@ describe('<CourseOutline />', () => {
     )).toBeInTheDocument();
     let visibilityCheckbox = await within(configureModal).findByTestId('unit-visibility-checkbox');
     await act(async () => fireEvent.click(visibilityCheckbox));
+    let discussionCheckbox = await within(configureModal).findByLabelText(
+      configureModalMessages.discussionEnabledCheckbox.defaultMessage,
+    );
+    expect(discussionCheckbox).toBeChecked();
+    await act(async () => fireEvent.click(discussionCheckbox));
 
     let groupeType = await within(configureModal).findByTestId('group-type-select');
     fireEvent.change(groupeType, { target: { value: '0' } });
@@ -1481,6 +1488,10 @@ describe('<CourseOutline />', () => {
     configureModal = await findByTestId('configure-modal');
     visibilityCheckbox = await within(configureModal).findByTestId('unit-visibility-checkbox');
     expect(visibilityCheckbox).toBeChecked();
+    discussionCheckbox = await within(configureModal).findByLabelText(
+      configureModalMessages.discussionEnabledCheckbox.defaultMessage,
+    );
+    expect(discussionCheckbox).not.toBeChecked();
 
     groupeType = await within(configureModal).findByTestId('group-type-select');
     expect(groupeType).toHaveValue('0');

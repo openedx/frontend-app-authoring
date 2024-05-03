@@ -59,6 +59,7 @@ const ConfigureModal = ({
     supportsOnboarding,
     showReviewRules,
     onlineProctoringRules,
+    discussionEnabled,
   } = currentItemData;
 
   const getSelectedGroups = () => {
@@ -99,6 +100,7 @@ const ConfigureModal = ({
     // by default it is -1 i.e. accessible to all learners & staff
     selectedPartitionIndex: userPartitionInfo?.selectedPartitionIndex,
     selectedGroups: getSelectedGroups(),
+    discussionEnabled,
   };
 
   const validationSchema = Yup.object().shape({
@@ -128,6 +130,7 @@ const ConfigureModal = ({
     ).nullable(true),
     selectedPartitionIndex: Yup.number().integer(),
     selectedGroups: Yup.array().of(Yup.string()),
+    discussionEnabled: Yup.boolean(),
   });
 
   const isSubsection = category === COURSE_BLOCK_NAMES.sequential.id;
@@ -169,7 +172,7 @@ const ConfigureModal = ({
         const partitionId = userPartitionInfo.selectablePartitions[data.selectedPartitionIndex].id;
         groupAccess[partitionId] = data.selectedGroups.map(g => parseInt(g, 10));
       }
-      onConfigureSubmit(data.isVisibleToStaffOnly, groupAccess);
+      onConfigureSubmit(data.isVisibleToStaffOnly, groupAccess, data.discussionEnabled);
       break;
     default:
       break;
@@ -361,6 +364,7 @@ ConfigureModal.propTypes = {
     supportsOnboarding: PropTypes.bool,
     showReviewRules: PropTypes.bool,
     onlineProctoringRules: PropTypes.string,
+    discussionEnabled: PropTypes.bool.isRequired,
   }).isRequired,
   isXBlockComponent: PropTypes.bool,
   isSelfPaced: PropTypes.bool.isRequired,
