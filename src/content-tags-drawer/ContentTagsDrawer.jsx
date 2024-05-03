@@ -93,7 +93,7 @@ const ContentTagsDrawer = ({ id, onClose }) => {
       <div id="content-tags-drawer" className="mt-1 tags-drawer d-flex flex-column justify-content-between min-vh-100 pt-3">
         <Container size="xl">
           { isContentDataLoaded
-            ? <h2 className="tags-drawer-heading pl-2.5">{ contentName }</h2>
+            ? <h2 className="h3 pl-2.5">{ contentName }</h2>
             : (
               <div className="d-flex justify-content-center align-items-center flex-column">
                 <Spinner
@@ -105,7 +105,7 @@ const ContentTagsDrawer = ({ id, onClose }) => {
             )}
           <hr />
           <Container>
-            <p className="tags-drawer-subtitle lead text-gray-500 font-weight-bold">
+            <p className="h4 text-gray-500 font-weight-bold">
               {intl.formatMessage(messages.headerSubtitle)}
             </p>
             { isTaxonomyListLoaded && isContentTaxonomyTagsLoaded

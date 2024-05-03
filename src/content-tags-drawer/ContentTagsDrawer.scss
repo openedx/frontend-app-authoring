@@ -9,10 +9,6 @@
 }
 
 .tags-drawer {
-  .tags-drawer-heading {
-    font-size: 1.375rem !important;
-  }
-
   .tags-drawer-footer {
     right: 0;
     bottom: 0;
@@ -21,14 +17,6 @@
   .tags-drawer-cancel-button:hover {
     background-color: transparent;
     color: $gray-300 !important;
-  }
-
-  .tags-drawer-subtitle {
-    font-size: 1.125rem !important;
-  }
-
-  .tags-drawer-taxonomy-name {
-    font-size: .875rem !important;
   }
 }
 
