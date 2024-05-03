@@ -10,6 +10,7 @@ const BasicTab = ({
   setFieldValue,
   courseGraders,
   isSubsection,
+  isSelfPaced,
 }) => {
   const intl = useIntl();
 
@@ -27,26 +28,30 @@ const BasicTab = ({
 
   return (
     <>
-      <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.releaseDateAndTime} /></h5>
-      <hr />
-      <div data-testid="release-date-stack">
-        <Stack className="mt-3" direction="horizontal" gap={5}>
-          <DatepickerControl
-            type={DATEPICKER_TYPES.date}
-            value={releaseDate}
-            label={intl.formatMessage(messages.releaseDate)}
-            controlName="state-date"
-            onChange={(val) => setFieldValue('releaseDate', val)}
-          />
-          <DatepickerControl
-            type={DATEPICKER_TYPES.time}
-            value={releaseDate}
-            label={intl.formatMessage(messages.releaseTimeUTC)}
-            controlName="start-time"
-            onChange={(val) => setFieldValue('releaseDate', val)}
-          />
-        </Stack>
-      </div>
+      {!isSelfPaced && (
+        <>
+          <h5 className="mt-4 text-gray-700"><FormattedMessage {...messages.releaseDateAndTime} /></h5>
+          <hr />
+          <div data-testid="release-date-stack">
+            <Stack className="mt-3" direction="horizontal" gap={5}>
+              <DatepickerControl
+                type={DATEPICKER_TYPES.date}
+                value={releaseDate}
+                label={intl.formatMessage(messages.releaseDate)}
+                controlName="state-date"
+                onChange={(val) => setFieldValue('releaseDate', val)}
+              />
+              <DatepickerControl
+                type={DATEPICKER_TYPES.time}
+                value={releaseDate}
+                label={intl.formatMessage(messages.releaseTimeUTC)}
+                controlName="start-time"
+                onChange={(val) => setFieldValue('releaseDate', val)}
+              />
+            </Stack>
+          </div>
+        </>
+      )}
       {
         isSubsection && (
           <div>
@@ -66,25 +71,27 @@ const BasicTab = ({
                 {createOptions()}
               </Form.Control>
             </Form.Group>
-            <div data-testid="due-date-stack">
-              <Stack className="mt-3" direction="horizontal" gap={5}>
-                <DatepickerControl
-                  type={DATEPICKER_TYPES.date}
-                  value={dueDate}
-                  label={intl.formatMessage(messages.dueDate)}
-                  controlName="state-date"
-                  onChange={(val) => setFieldValue('dueDate', val)}
-                  data-testid="due-date-picker"
-                />
-                <DatepickerControl
-                  type={DATEPICKER_TYPES.time}
-                  value={dueDate}
-                  label={intl.formatMessage(messages.dueTimeUTC)}
-                  controlName="start-time"
-                  onChange={(val) => setFieldValue('dueDate', val)}
-                />
-              </Stack>
-            </div>
+            {!isSelfPaced && (
+              <div data-testid="due-date-stack">
+                <Stack className="mt-3" direction="horizontal" gap={5}>
+                  <DatepickerControl
+                    type={DATEPICKER_TYPES.date}
+                    value={dueDate}
+                    label={intl.formatMessage(messages.dueDate)}
+                    controlName="state-date"
+                    onChange={(val) => setFieldValue('dueDate', val)}
+                    data-testid="due-date-picker"
+                  />
+                  <DatepickerControl
+                    type={DATEPICKER_TYPES.time}
+                    value={dueDate}
+                    label={intl.formatMessage(messages.dueTimeUTC)}
+                    controlName="start-time"
+                    onChange={(val) => setFieldValue('dueDate', val)}
+                  />
+                </Stack>
+              </div>
+            )}
           </div>
         )
       }
@@ -101,6 +108,7 @@ BasicTab.propTypes = {
   }).isRequired,
   courseGraders: PropTypes.arrayOf(PropTypes.string).isRequired,
   setFieldValue: PropTypes.func.isRequired,
+  isSelfPaced: PropTypes.bool.isRequired,
 };
 
 export default injectIntl(BasicTab);

@@ -28,6 +28,7 @@ const ConfigureModal = ({
   currentItemData,
   enableProctoredExams,
   isXBlockComponent,
+  isSelfPaced,
 }) => {
   const intl = useIntl();
   const {
@@ -186,6 +187,7 @@ const ConfigureModal = ({
               setFieldValue={setFieldValue}
               isSubsection={isSubsection}
               courseGraders={courseGraders === 'undefined' ? [] : courseGraders}
+              isSelfPaced={isSelfPaced}
             />
           </Tab>
           <Tab eventKey="visibility" title={intl.formatMessage(messages.visibilityTabTitle)}>
@@ -208,6 +210,7 @@ const ConfigureModal = ({
               setFieldValue={setFieldValue}
               isSubsection={isSubsection}
               courseGraders={courseGraders === 'undefined' ? [] : courseGraders}
+              isSelfPaced={isSelfPaced}
             />
           </Tab>
           <Tab eventKey="visibility" title={intl.formatMessage(messages.visibilityTabTitle)}>
@@ -360,6 +363,7 @@ ConfigureModal.propTypes = {
     onlineProctoringRules: PropTypes.string,
   }).isRequired,
   isXBlockComponent: PropTypes.bool,
+  isSelfPaced: PropTypes.bool.isRequired,
 };
 
 export default ConfigureModal;

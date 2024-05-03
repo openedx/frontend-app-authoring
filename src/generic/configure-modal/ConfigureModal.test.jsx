@@ -44,6 +44,7 @@ const renderComponent = () => render(
         onClose={onCloseMock}
         onConfigureSubmit={onConfigureSubmitMock}
         currentItemData={currentSectionMock}
+        isSelfPaced={false}
       />
     </IntlProvider>,
   </AppProvider>,
@@ -85,7 +86,7 @@ describe('<ConfigureModal /> for Section', () => {
   });
 });
 
-const renderSubsectionComponent = () => render(
+const renderSubsectionComponent = (props) => render(
   <AppProvider store={store}>
     <IntlProvider locale="en">
       <ConfigureModal
@@ -93,6 +94,8 @@ const renderSubsectionComponent = () => render(
         onClose={onCloseMock}
         onConfigureSubmit={onConfigureSubmitMock}
         currentItemData={currentSubsectionMock}
+        isSelfPaced={false}
+        {...props}
       />
     </IntlProvider>,
   </AppProvider>,
@@ -127,6 +130,14 @@ describe('<ConfigureModal /> for Subsection', () => {
     expect(getByText(messages.dueTimeUTC.defaultMessage)).toBeInTheDocument();
     expect(getByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
     expect(getByRole('button', { name: messages.saveButton.defaultMessage })).toBeInTheDocument();
+  });
+
+  it('hides release and due dates for self paced courses', () => {
+    const { queryByText } = renderSubsectionComponent({ isSelfPaced: true });
+    expect(queryByText(messages.releaseDate.defaultMessage)).not.toBeInTheDocument();
+    expect(queryByText(messages.releaseTimeUTC.defaultMessage)).not.toBeInTheDocument();
+    expect(queryByText(messages.dueDate.defaultMessage)).not.toBeInTheDocument();
+    expect(queryByText(messages.dueTimeUTC.defaultMessage)).not.toBeInTheDocument();
   });
 
   it('switches to the subsection Visibility tab and renders correctly', () => {
