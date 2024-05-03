@@ -337,24 +337,39 @@ const PageAlerts = ({
   const renderApiErrors = () => {
     const errorList = Object.entries(errors).map(([k, v]) => {
       switch (v.type) {
+      case API_ERROR_TYPES.serverError:
+        return {
+          key: k,
+          desc: v.data,
+          title: intl.formatMessage(messages.serverErrorAlert, {
+            status: v.status,
+          }),
+        };
       case API_ERROR_TYPES.networkError:
-        return [k, intl.formatMessage(messages.networkErrorAlert)];
+        return {
+          key: k,
+          title: intl.formatMessage(messages.networkErrorAlert),
+        };
       default:
-        return [k, v.data];
+        return { key: k, desc: v.data };
       }
     });
     if (!errorList?.length) {
       return null;
     }
     return (
-      errorList.map(([k, msg]) => (
+      errorList.map((msgObj) => (
         <ErrorAlert
-          hideHeading
           isError
-          key={k}
-          dismissError={() => dispatch(dismissError([k]))}
+          hideHeading
+          key={msgObj.key}
+          dismissError={() => dispatch(dismissError([msgObj.key]))}
         >
-          <Truncate lines={2}>{msg}</Truncate>
+          {msgObj.title
+            && (
+              <Alert.Heading>{msgObj.title}</Alert.Heading>
+            )}
+          {msgObj.desc && <Truncate lines={2}>{msgObj.desc}</Truncate>}
         </ErrorAlert>
       ))
     );

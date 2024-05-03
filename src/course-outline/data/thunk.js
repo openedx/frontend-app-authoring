@@ -56,11 +56,9 @@ import {
 
 const getErrorDetails = (error) => {
   const errorInfo = {};
-  if (error.response?.data && error.response?.statusText) {
-    errorInfo.data = `${error.response.statusText}: ${JSON.stringify(error.response.data)}`;
-    errorInfo.type = API_ERROR_TYPES.serverError;
-  } else if (error.response?.statusText) {
-    errorInfo.data = error.response?.statusText;
+  if (error.response?.data) {
+    errorInfo.data = JSON.stringify(error.response.data);
+    errorInfo.status = error.response.status;
     errorInfo.type = API_ERROR_TYPES.serverError;
   } else if (error.request) {
     errorInfo.type = API_ERROR_TYPES.networkError;

@@ -195,13 +195,14 @@ describe('<PageAlerts />', () => {
     const { queryByText } = renderComponent({
       ...pageAlertsData,
       errors: {
-        outlineIndexApi: { data: 'BadRequest: some error', type: API_ERROR_TYPES.serverError },
+        outlineIndexApi: { data: 'some error', status: 400, type: API_ERROR_TYPES.serverError },
         courseLaunchApi: { type: API_ERROR_TYPES.networkError },
         reindexApi: { type: API_ERROR_TYPES.unknown, data: 'some unknown error' },
       },
     });
     expect(queryByText(messages.networkErrorAlert.defaultMessage)).toBeInTheDocument();
-    expect(queryByText('BadRequest: some error')).toBeInTheDocument();
+    expect(queryByText(messages.serverErrorAlert.defaultMessage)).toBeInTheDocument();
+    expect(queryByText('some error')).toBeInTheDocument();
     expect(queryByText('some unknown error')).toBeInTheDocument();
   });
 });

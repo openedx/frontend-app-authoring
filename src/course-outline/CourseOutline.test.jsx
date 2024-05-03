@@ -166,15 +166,16 @@ describe('<CourseOutline />', () => {
   it('handles course outline fetch api errors', async () => {
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
-      .reply(500);
+      .reply(500, 'some internal error');
 
     const { findByText, findByRole } = render(<RootWrapper />);
-    expect(await findByText('Request failed with status code 500')).toBeInTheDocument();
+    expect(await findByText('"some internal error"')).toBeInTheDocument();
     // check errors in store
     expect(store.getState().courseOutline.errors).toEqual({
       outlineIndexApi: {
-        data: 'Request failed with status code 500',
-        type: 'unknown',
+        data: '"some internal error"',
+        status: 500,
+        type: 'serverError',
       },
     });
 
