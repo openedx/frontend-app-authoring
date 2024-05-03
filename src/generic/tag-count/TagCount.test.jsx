@@ -1,20 +1,28 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
+
 import TagCount from '.';
+
+const renderComponent = (props) => render(
+  <IntlProvider locale="en">
+    <TagCount {...props} />,
+  </IntlProvider>,
+);
 
 describe('<TagCount>', () => {
   it('should render the component', () => {
-    render(<TagCount count={17} />);
+    renderComponent({ count: 17 });
     expect(screen.getByText('17')).toBeInTheDocument();
   });
 
   it('should render the component with zero', () => {
-    render(<TagCount count={0} />);
+    renderComponent({ count: 0 });
     expect(screen.getByText('0')).toBeInTheDocument();
   });
 
   it('should render a button with onClick', () => {
-    render(<TagCount count={17} onClick={() => {}} />);
+    renderComponent({ count: 17, onClick: () => {} });
     expect(screen.getByRole('button', {
       name: /17/i,
     }));

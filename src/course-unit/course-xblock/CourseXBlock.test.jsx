@@ -8,6 +8,7 @@ import { camelCaseObject, initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import configureModalMessages from '../../generic/configure-modal/messages';
 import deleteModalMessages from '../../generic/delete-modal/messages';
@@ -34,12 +35,14 @@ const {
   block_id: id,
   block_type: type,
   user_partition_info: userPartitionInfo,
+  actions,
 } = courseVerticalChildrenMock.children[0];
 const userPartitionInfoFormatted = camelCaseObject(userPartitionInfo);
 const unitXBlockActionsMock = {
   handleDelete: handleDeleteMock,
   handleDuplicate: handleDuplicateMock,
 };
+const xblockActions = camelCaseObject(actions);
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -51,21 +54,33 @@ jest.mock('react-redux', () => ({
   useSelector: jest.fn(),
 }));
 
+const mockGetTagsCount = jest.fn();
+
+jest.mock('../../generic/data/api', () => ({
+  ...jest.requireActual('../../generic/data/api'),
+  getTagsCount: () => mockGetTagsCount(),
+}));
+
+const queryClient = new QueryClient();
+
 const renderComponent = (props) => render(
   <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <CourseXBlock
-        id={id}
-        title={name}
-        type={type}
-        blockId={blockId}
-        unitXBlockActions={unitXBlockActionsMock}
-        userPartitionInfo={userPartitionInfoFormatted}
-        shouldScroll={false}
-        handleConfigureSubmit={handleConfigureSubmitMock}
-        {...props}
-      />
-    </IntlProvider>
+    <QueryClientProvider client={queryClient}>
+      <IntlProvider locale="en">
+        <CourseXBlock
+          id={id}
+          title={name}
+          type={type}
+          blockId={blockId}
+          unitXBlockActions={unitXBlockActionsMock}
+          userPartitionInfo={userPartitionInfoFormatted}
+          shouldScroll={false}
+          handleConfigureSubmit={handleConfigureSubmitMock}
+          actions={xblockActions}
+          {...props}
+        />
+      </IntlProvider>
+    </QueryClientProvider>
   </AppProvider>,
 );
 

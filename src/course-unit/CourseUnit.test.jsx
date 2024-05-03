@@ -599,6 +599,7 @@ describe('<CourseUnit />', () => {
             block_id: '1234567890',
             block_type: 'drag-and-drop-v2',
             user_partition_info: {},
+            actions: courseVerticalChildrenMock.children[0].actions,
           },
         ],
       });
@@ -971,6 +972,153 @@ describe('<CourseUnit />', () => {
     )).toBeInTheDocument();
   });
 
+  it('checks if xblock is a duplicate when the corresponding duplicate button is clicked and if the sidebar status is updated', async () => {
+    axiosMock
+      .onPost(postXBlockBaseApiUrl({
+        parent_locator: blockId,
+        duplicate_source_locator: courseVerticalChildrenMock.children[0].block_id,
+      }))
+      .replyOnce(200, { locator: '1234567890' });
+
+    axiosMock
+      .onGet(getCourseVerticalChildrenApiUrl(blockId))
+      .reply(200, {
+        ...courseVerticalChildrenMock,
+        children: [
+          ...courseVerticalChildrenMock.children,
+          {
+            ...courseVerticalChildrenMock.children[0],
+            name: 'New Cloned XBlock',
+          },
+        ],
+      });
+
+    const {
+      getByText,
+      getAllByLabelText,
+      getAllByTestId,
+      queryByRole,
+      getByRole,
+    } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      userEvent.click(getByRole('button', { name: sidebarMessages.actionButtonPublishTitle.defaultMessage }));
+    });
+
+    axiosMock
+      .onPost(getXBlockBaseApiUrl(blockId), {
+        publish: PUBLISH_TYPES.makePublic,
+      })
+      .reply(200, { dummy: 'value' });
+    axiosMock
+      .onGet(getCourseUnitApiUrl(blockId))
+      .reply(200, {
+        ...courseUnitIndexMock,
+        visibility_state: UNIT_VISIBILITY_STATES.live,
+        has_changes: false,
+        published_by: userName,
+      });
+
+    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
+
+    await waitFor(() => {
+      // check if the sidebar status is Published and Live
+      expect(getByText(sidebarMessages.sidebarTitlePublishedAndLive.defaultMessage)).toBeInTheDocument();
+      expect(getByText(
+        sidebarMessages.publishLastPublished.defaultMessage
+          .replace('{publishedOn}', courseUnitIndexMock.published_on)
+          .replace('{publishedBy}', userName),
+      )).toBeInTheDocument();
+      expect(queryByRole('button', { name: sidebarMessages.actionButtonPublishTitle.defaultMessage })).not.toBeInTheDocument();
+
+      expect(getByText(unitDisplayName)).toBeInTheDocument();
+      const [xblockActionBtn] = getAllByLabelText(courseXBlockMessages.blockActionsDropdownAlt.defaultMessage);
+      userEvent.click(xblockActionBtn);
+
+      const duplicateBtn = getByText(courseXBlockMessages.blockLabelButtonDuplicate.defaultMessage);
+      userEvent.click(duplicateBtn);
+
+      expect(getAllByTestId('course-xblock')).toHaveLength(3);
+      expect(getByText('New Cloned XBlock')).toBeInTheDocument();
+    });
+
+    axiosMock
+      .onGet(getCourseUnitApiUrl(blockId))
+      .reply(200, courseUnitIndexMock);
+
+    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
+
+    // after duplicate the xblock, the sidebar status changes to Draft (unpublished changes)
+    expect(getByText(sidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage)).toBeInTheDocument();
+    expect(getByText(sidebarMessages.visibilityStaffAndLearnersTitle.defaultMessage)).toBeInTheDocument();
+    expect(getByText(sidebarMessages.releaseStatusTitle.defaultMessage)).toBeInTheDocument();
+    expect(getByText(sidebarMessages.sidebarBodyNote.defaultMessage)).toBeInTheDocument();
+    expect(getByText(sidebarMessages.visibilityWillBeVisibleToTitle.defaultMessage)).toBeInTheDocument();
+    expect(getByText(sidebarMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();
+    expect(getByText(sidebarMessages.actionButtonPublishTitle.defaultMessage)).toBeInTheDocument();
+    expect(getByText(sidebarMessages.actionButtonDiscardChangesTitle.defaultMessage)).toBeInTheDocument();
+    expect(getByText(courseUnitIndexMock.release_date)).toBeInTheDocument();
+    expect(getByText(
+      sidebarMessages.publishInfoDraftSaved.defaultMessage
+        .replace('{editedOn}', courseUnitIndexMock.edited_on)
+        .replace('{editedBy}', courseUnitIndexMock.edited_by),
+    )).toBeInTheDocument();
+    expect(getByText(
+      sidebarMessages.releaseInfoWithSection.defaultMessage
+        .replace('{sectionName}', courseUnitIndexMock.release_date_from),
+    )).toBeInTheDocument();
+  });
+
+  it('should hide action buttons when their corresponding properties are set to false', async () => {
+    const {
+      getByText,
+      getAllByLabelText,
+      queryByRole,
+    } = render(<RootWrapper />);
+
+    const convertedXBlockActions = camelCaseObject(courseVerticalChildrenMock.children[0].actions);
+
+    const updatedXBlockActions = Object.keys(convertedXBlockActions).reduce((acc, key) => {
+      acc[key] = false;
+      return acc;
+    }, {});
+
+    axiosMock
+      .onGet(getCourseVerticalChildrenApiUrl(blockId))
+      .reply(200, {
+        children: [
+          {
+            ...courseVerticalChildrenMock.children[0],
+            actions: {
+              ...courseVerticalChildrenMock.children[0].actions,
+              updatedXBlockActions,
+            },
+          },
+        ],
+      });
+
+    await executeThunk(fetchCourseVerticalChildrenData(blockId), store.dispatch);
+
+    await waitFor(() => {
+      expect(getByText(unitDisplayName)).toBeInTheDocument();
+      const [xblockActionBtn] = getAllByLabelText(courseXBlockMessages.blockActionsDropdownAlt.defaultMessage);
+      userEvent.click(xblockActionBtn);
+      const deleteBtn = queryByRole('button', { name: courseXBlockMessages.blockLabelButtonDelete.defaultMessage });
+      const duplicateBtn = queryByRole('button', { name: courseXBlockMessages.blockLabelButtonDuplicate.defaultMessage });
+      const moveBtn = queryByRole('button', { name: courseXBlockMessages.blockLabelButtonMove.defaultMessage });
+      const copyToClipboardBtn = queryByRole('button', { name: courseXBlockMessages.blockLabelButtonCopyToClipboard.defaultMessage });
+      const manageAccessBtn = queryByRole('button', { name: courseXBlockMessages.blockLabelButtonManageAccess.defaultMessage });
+      const manageTagsBtn = queryByRole('button', { name: courseXBlockMessages.blockLabelButtonManageTags.defaultMessage });
+
+      expect(deleteBtn).not.toBeInTheDocument();
+      expect(duplicateBtn).not.toBeInTheDocument();
+      expect(moveBtn).not.toBeInTheDocument();
+      expect(copyToClipboardBtn).not.toBeInTheDocument();
+      expect(manageAccessBtn).not.toBeInTheDocument();
+      expect(manageTagsBtn).not.toBeInTheDocument();
+    });
+  });
+
   it('should toggle visibility from header configure modal and update course unit state accordingly', async () => {
     const { getByRole, getByTestId } = render(<RootWrapper />);
     let courseUnitSidebar;
@@ -1175,6 +1323,7 @@ describe('<CourseUnit />', () => {
                 selected_partition_index: -1,
                 selected_groups_label: '',
               },
+              actions: courseVerticalChildrenMock.children[0].actions,
             },
           ],
         });
