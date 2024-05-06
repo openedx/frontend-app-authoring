@@ -25,7 +25,39 @@ const FilterByBlockType = () => {
     blockTypesFilter,
     setBlockTypesFilter,
   } = useSearchContext();
-  // TODO: sort blockTypes first by count, then by name
+
+  // Sort blocktypes in order of hierarchy followed by alphabetically for components
+  const sortedBlockTypeKeys = Object.keys(blockTypes).sort((a, b) => {
+    const order = {
+      chapter: 1,
+      sequential: 2,
+      vertical: 3,
+    };
+
+    // If both blocktypes are in the order dictionary, sort them based on the order defined
+    if (order[a] && order[b]) {
+      return order[a] - order[b];
+    }
+
+    // If only blocktype 'a' is in the order dictionary, place it before 'b'
+    if (order[a]) {
+      return -1;
+    }
+
+    // If only blocktype 'b' is in the order dictionary, place it before 'a'
+    if (order[b]) {
+      return 1;
+    }
+
+    // If neither blocktype is in the order dictionary, sort alphabetically
+    return a.localeCompare(b);
+  });
+
+  // Rebuild sorted blocktypes dictionary
+  const sortedBlockTypes = {};
+  sortedBlockTypeKeys.forEach(key => {
+    sortedBlockTypes[key] = blockTypes[key];
+  });
 
   const handleCheckboxChange = React.useCallback((e) => {
     setBlockTypesFilter(currentFilters => {
@@ -48,7 +80,7 @@ const FilterByBlockType = () => {
         >
           <Menu className="block-type-refinement-menu" style={{ boxShadow: 'none' }}>
             {
-              Object.entries(blockTypes).map(([blockType, count]) => (
+              Object.entries(sortedBlockTypes).map(([blockType, count]) => (
                 <MenuItem
                   key={blockType}
                   as={Form.Checkbox}
@@ -63,7 +95,7 @@ const FilterByBlockType = () => {
             }
             {
               // Show a message if there are no options at all to avoid the impression that the dropdown isn't working
-              blockTypes.length === 0 ? (
+              sortedBlockTypes.length === 0 ? (
                 <MenuItem disabled><FormattedMessage {...messages['blockTypeFilter.empty']} /></MenuItem>
               ) : null
             }
