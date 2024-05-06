@@ -46,7 +46,7 @@ const FilterByBlockType = () => {
           name="block-type-filter"
           defaultValue={blockTypesFilter}
         >
-          <Menu style={{ boxShadow: 'none' }}>
+          <Menu className="block-type-refinement-menu" style={{ boxShadow: 'none' }}>
             {
               Object.entries(blockTypes).map(([blockType, count]) => (
                 <MenuItem
