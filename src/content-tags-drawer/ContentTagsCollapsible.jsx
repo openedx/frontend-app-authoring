@@ -382,7 +382,7 @@ const ContentTagsCollapsible = ({
           <Collapsible.Visible whenOpen>
             <Icon src={KeyboardArrowUp} />
           </Collapsible.Visible>
-          <h4 className="flex-grow-1 pl-2">{name}</h4>
+          <h3 className="h5 flex-grow-1 pl-2">{name}</h3>
         </Collapsible.Trigger>
 
         <Collapsible.Body className="collapsible-body">
