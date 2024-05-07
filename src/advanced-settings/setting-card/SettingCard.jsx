@@ -71,7 +71,7 @@ const SettingCard = ({
                   iconAs={Icon}
                   alt={intl.formatMessage(messages.helpButtonText)}
                   variant="primary"
-                  className=" ml-1 mr-2"
+                  className="flex-shrink-0 ml-1 mr-2"
                 />
                 <ModalPopup
                   hasArrow
