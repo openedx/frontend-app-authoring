@@ -255,14 +255,6 @@ Requirements
 
   * ``content_tagging.disable_tagging_feature``: this feature flag must NOT be checked.
 
-Configuration
--------------
-
-In additional to the standard settings, the following local configuration items could be used to disable the tagging feature.
-
-* ``DISABLE_TAGGING_FEATURE``: can be checked in order to hide the Tagging/Taxonomy pages.
-
-
 Developing
 **********
 

@@ -16,7 +16,7 @@ const courseId = 'course-v1:123';
 const isLoading = false;
 const openEnableHighlightsModalMock = jest.fn();
 const handleVideoSharingOptionChange = jest.fn();
-const mockStudioHomeData = jest.fn().mockResolvedValue({ taxonomiesEnabled: true });
+const mockTaggingFeaturesEnabled = jest.fn();
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -27,8 +27,12 @@ jest.mock('react-router-dom', () => ({
 
 jest.mock('../../generic/data/api', () => ({
   ...jest.requireActual('../../generic/data/api'),
-  getTagsCount: jest.fn().mockResolvedValue({ 'course-v1:123': 17 }),
-  getStudioHomeData: () => mockStudioHomeData(),
+  getTagsCount: () => ({ 'course-v1:123': 17 }),
+}));
+
+jest.mock('../../generic/data/apiHooks', () => ({
+  ...jest.requireActual('../../generic/data/apiHooks'),
+  useTaggingFeaturesEnabled: () => mockTaggingFeaturesEnabled(),
 }));
 
 jest.mock('../../help-urls/hooks', () => ({
@@ -84,6 +88,7 @@ describe('<StatusBar />', () => {
     });
     store = initializeStore();
     queryClient.clear();
+    mockTaggingFeaturesEnabled.mockReturnValue(true);
   });
 
   it('renders StatusBar component correctly', () => {
@@ -147,14 +152,14 @@ describe('<StatusBar />', () => {
     expect(queryByTestId('video-sharing-wrapper')).not.toBeInTheDocument();
   });
 
-  it('renders the tag count if the waffle flag is enabled', async () => {
-    mockStudioHomeData.mockResolvedValue({ taxonomiesEnabled: true });
+  it('renders the tag count', async () => {
     const { findByText } = renderComponent();
 
     expect(await findByText('17')).toBeInTheDocument();
   });
-  it('doesnt renders the tag count if the waffle flag is disabled', () => {
-    mockStudioHomeData.mockResolvedValue({ taxonomiesEnabled: false });
+
+  it('does not render the tag count if the waffle flag is disabled', () => {
+    mockTaggingFeaturesEnabled.mockReturnValue(false);
     const { queryByText } = renderComponent();
 
     expect(queryByText('17')).not.toBeInTheDocument();

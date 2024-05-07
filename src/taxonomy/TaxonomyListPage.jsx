@@ -18,10 +18,10 @@ import {
   Check,
 } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
-
+import { Navigate } from 'react-router';
 import { Helmet } from 'react-helmet';
 
-import { useOrganizationListData } from '../generic/data/apiHooks';
+import { useOrganizationListData, useTaggingFeaturesEnabled } from '../generic/data/apiHooks';
 import SubHeader from '../generic/sub-header/SubHeader';
 import getPageHeadTitle from '../generic/utils';
 import { ALL_TAXONOMIES, apiUrls, UNASSIGNED } from './data/api';
@@ -167,6 +167,11 @@ const TaxonomyListPage = () => {
       setSelectedOrgFilter={setSelectedOrgFilter}
     />
   );
+
+  const taxonomiesEnabled = useTaggingFeaturesEnabled();
+  if (!taxonomiesEnabled) {
+    return <Navigate to="/home" />;
+  }
 
   return (
     <>

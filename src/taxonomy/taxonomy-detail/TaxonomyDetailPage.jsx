@@ -7,12 +7,13 @@ import {
   Layout,
 } from '@openedx/paragon';
 import { Helmet } from 'react-helmet';
-import { Link, useParams } from 'react-router-dom';
+import { Link, Navigate, useParams } from 'react-router-dom';
 
 import ConnectionErrorAlert from '../../generic/ConnectionErrorAlert';
 import Loading from '../../generic/Loading';
 import getPageHeadTitle from '../../generic/utils';
 import SubHeader from '../../generic/sub-header/SubHeader';
+import { useTaggingFeaturesEnabled } from '../../generic/data/apiHooks';
 import taxonomyMessages from '../messages';
 import { TagListTable } from '../tag-list';
 import { TaxonomyMenu } from '../taxonomy-menu';
@@ -30,6 +31,11 @@ const TaxonomyDetailPage = () => {
     isError,
     isFetched,
   } = useTaxonomyDetails(taxonomyId);
+
+  const taxonomiesEnabled = useTaggingFeaturesEnabled();
+  if (!taxonomiesEnabled) {
+    return <Navigate to="/home" />;
+  }
 
   if (!isFetched) {
     return (

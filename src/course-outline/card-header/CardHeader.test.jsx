@@ -2,6 +2,7 @@ import { MemoryRouter } from 'react-router-dom';
 import {
   act, render, fireEvent, waitFor, screen,
 } from '@testing-library/react';
+import { getConfig } from '@edx/frontend-platform';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
@@ -22,12 +23,15 @@ const onClickMoveDownMock = jest.fn();
 const closeFormMock = jest.fn();
 
 const mockGetTagsCount = jest.fn();
-const mockStudioHomeData = jest.fn().mockReturnValue({ taxonomiesEnabled: true });
+const mockTaggingFeaturesEnabled = jest.fn();
 
 jest.mock('../../generic/data/api', () => ({
   ...jest.requireActual('../../generic/data/api'),
   getTagsCount: () => mockGetTagsCount(),
-  getStudioHomeData: () => mockStudioHomeData(),
+}));
+jest.mock('../../generic/data/apiHooks', () => ({
+  ...jest.requireActual('../../generic/data/apiHooks'),
+  useTaggingFeaturesEnabled: () => mockTaggingFeaturesEnabled(),
 }));
 
 const cardHeaderProps = {
@@ -89,11 +93,8 @@ describe('<CardHeader />', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     queryClient.clear();
-  });
-
-  afterEach(() => {
-    queryClient.clear();
-    jest.clearAllMocks();
+    mockGetTagsCount.mockReturnValue({});
+    mockTaggingFeaturesEnabled.mockReturnValue(true);
   });
 
   it('render CardHeader component correctly', async () => {
@@ -192,7 +193,16 @@ describe('<CardHeader />', () => {
     expect(onClickPublishMock).toHaveBeenCalled();
   });
 
-  it('only shows Manage tags menu if the waffle flag is enabled', async () => {
+  it('shows the "Manage tags" menu item by default', async () => {
+    renderComponent();
+    const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
+    fireEvent.click(menuButton);
+
+    expect(screen.queryByText(messages.menuManageTags.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('hides the "Manage tags" menu item if the tagging functionality is disabled', async () => {
+    mockTaggingFeaturesEnabled.mockReturnValue(false);
     renderComponent();
     const menuButton = await screen.findByTestId('subsection-card-header__menu-button');
     fireEvent.click(menuButton);
@@ -313,14 +323,14 @@ describe('<CardHeader />', () => {
     expect(queryByText(messages.discussionEnabledBadgeText.defaultMessage)).toBeInTheDocument();
   });
 
-  it('should render tag count if is not zero and the waffle flag is enabled', async () => {
+  it('should render tag count if is not zero', async () => {
     mockGetTagsCount.mockResolvedValue({ 12345: 17 });
     renderComponent();
     expect(await screen.findByText('17')).toBeInTheDocument();
   });
 
-  it('shouldn render tag count if the waffle flag is disabled', async () => {
-    mockStudioHomeData.mockResolvedValue({ taxonomiesEnabled: false });
+  it('should not render tag count if the waffle flag is disabled', async () => {
+    mockTaggingFeaturesEnabled.mockReturnValue(false);
     mockGetTagsCount.mockResolvedValue({ 12345: 17 });
     renderComponent();
     expect(screen.queryByText('17')).not.toBeInTheDocument();

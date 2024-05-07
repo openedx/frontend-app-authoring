@@ -6,7 +6,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { StudioHeader } from '@edx/frontend-component-header';
 import { useToggle } from '@openedx/paragon';
 
-import { useStudioHomeData } from '../generic/data/apiHooks';
+import { useTaggingFeaturesEnabled } from '../generic/data/apiHooks';
 import SearchModal from '../search-modal/SearchModal';
 import { getContentMenuItems, getSettingMenuItems, getToolsMenuItems } from './utils';
 import messages from './messages';
@@ -21,8 +21,7 @@ const Header = ({
   const intl = useIntl();
 
   const [isShowSearchModalOpen, openSearchModal, closeSearchModal] = useToggle(false);
-  const { data: studioData } = useStudioHomeData();
-  const taxonomiesEnabled = studioData?.taxonomiesEnabled;
+  const taxonomiesEnabled = useTaggingFeaturesEnabled();
 
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
   const meiliSearchEnabled = [true, 'true'].includes(getConfig().MEILISEARCH_ENABLED);

@@ -37,3 +37,15 @@ export const useStudioHomeData = () => useQuery({
   queryKey: ['studioHomeData'],
   queryFn: getStudioHomeData,
 });
+
+/**
+ * Are the tagging/taxonomy features enabled?
+ * @returns {boolean} Whether they are enabled (default true)
+ */
+export const useTaggingFeaturesEnabled = () => {
+  const { data: studioHomeData } = useStudioHomeData();
+  // Default is true unless it's explicitly disabled. This _may_ cause a "flash" of features that then disappear
+  // on some instances with tagging disabled, but we are treating "tagging disabled" as an unusual exception, and
+  // having tagging enabled as the default expected for 99% of users.
+  return studioHomeData?.taxonomiesEnabled ?? true;
+};

@@ -1,6 +1,7 @@
 // @ts-check
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
+import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSearchParams } from 'react-router-dom';
 import {
@@ -17,7 +18,7 @@ import {
   EditOutline as EditIcon,
 } from '@openedx/paragon/icons';
 
-import { useContentTagsCount, useStudioHomeData } from '../../generic/data/apiHooks';
+import { useContentTagsCount, useTaggingFeaturesEnabled } from '../../generic/data/apiHooks';
 import { ContentTagsDrawer } from '../../content-tags-drawer';
 import TagCount from '../../generic/tag-count';
 import { useEscapeClick } from '../../hooks';
@@ -70,8 +71,7 @@ const CardHeader = ({
     || status === ITEM_BADGE_STATUS.publishedNotLive) && !hasChanges;
 
   const { data: contentTagCount } = useContentTagsCount(cardId);
-  const { data: studioData } = useStudioHomeData();
-  const taxonomiesEnabled = studioData?.taxonomiesEnabled;
+  const taxonomiesEnabled = useTaggingFeaturesEnabled();
 
   useEffect(() => {
     const locatorId = searchParams.get('show');

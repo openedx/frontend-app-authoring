@@ -57,20 +57,16 @@ const App = () => {
         {getConfig().ENABLE_ACCESSIBILITY_PAGE === 'true' && (
           <Route path="/accessibility" element={<AccessibilityPage />} />
         )}
-        {!([true, 'true'].includes(getConfig().DISABLE_TAGGING_FEATURE)) && (
-          <>
-            <Route path="/taxonomies" element={<TaxonomyLayout />}>
-              <Route index element={<TaxonomyListPage />} />
-            </Route>
-            <Route path="/taxonomy" element={<TaxonomyLayout />}>
-              <Route path="/taxonomy/:taxonomyId" element={<TaxonomyDetailPage />} />
-            </Route>
-            <Route
-              path="/tagging/components/widget/:contentId"
-              element={<ContentTagsDrawer />}
-            />
-          </>
-        )}
+        <Route path="/taxonomies" element={<TaxonomyLayout />}>
+          <Route index element={<TaxonomyListPage />} />
+        </Route>
+        <Route path="/taxonomy" element={<TaxonomyLayout />}>
+          <Route path="/taxonomy/:taxonomyId" element={<TaxonomyDetailPage />} />
+        </Route>
+        <Route
+          path="/tagging/components/widget/:contentId"
+          element={<ContentTagsDrawer />}
+        />
       </Route>,
     ),
     {
@@ -121,7 +117,6 @@ initialize({
         ENABLE_UNIT_PAGE: process.env.ENABLE_UNIT_PAGE || 'false',
         ENABLE_ASSETS_PAGE: process.env.ENABLE_ASSETS_PAGE || 'false',
         ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN: process.env.ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN || 'false',
-        DISABLE_TAGGING_FEATURE: process.env.DISABLE_TAGGING_FEATURE || 'false',
         ENABLE_HOME_PAGE_COURSE_API_V2: process.env.ENABLE_HOME_PAGE_COURSE_API_V2 === 'true',
         ENABLE_CHECKLIST_QUALITY: process.env.ENABLE_CHECKLIST_QUALITY || 'true',
         ENABLE_GRADING_METHOD_IN_PROBLEMS: process.env.ENABLE_GRADING_METHOD_IN_PROBLEMS === 'true',

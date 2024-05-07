@@ -9,9 +9,9 @@ import { AppContext } from '@edx/frontend-platform/react';
 
 import { ContentTagsDrawer } from '../../content-tags-drawer';
 import TagCount from '../../generic/tag-count';
+import { useContentTagsCount, useTaggingFeaturesEnabled } from '../../generic/data/apiHooks';
 import { useHelpUrls } from '../../help-urls/hooks';
 import { VIDEO_SHARING_OPTIONS } from '../constants';
-import { useContentTagsCount, useStudioHomeData } from '../../generic/data/apiHooks';
 import messages from './messages';
 import { getVideoSharingOptionText } from '../utils';
 
@@ -70,8 +70,7 @@ const StatusBar = ({
   } = useHelpUrls(['contentHighlights', 'socialSharing']);
 
   const { data: courseTagCount } = useContentTagsCount(courseId);
-  const { data: studioData } = useStudioHomeData();
-  const taxonomiesEnabled = studioData?.taxonomiesEnabled;
+  const taxonomiesEnabled = useTaggingFeaturesEnabled();
 
   const [isManageTagsDrawerOpen, openManageTagsDrawer, closeManageTagsDrawer] = useToggle(false);
 
