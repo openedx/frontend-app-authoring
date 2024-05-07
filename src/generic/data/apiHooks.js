@@ -36,6 +36,12 @@ export const useContentTagsCount = (contentId) => {
 export const useStudioHomeData = () => useQuery({
   queryKey: ['studioHomeData'],
   queryFn: getStudioHomeData,
+  // Currently this is only used for 'useTaggingFeaturesEnabled' so we don't need to refetch it so often.
+  cacheTime: 10 * 60_000, // Even if we're not actively using this, keep it in memory up to ten minutes
+  staleTime: 10 * 60_000, // If cache is up to ten minutes old, no need to re-fetch
+  refetchInterval: 10 * 60_000,
+  refetchOnWindowFocus: false, // This doesn't need to be refreshed when the user switches back to this tab.
+  refetchOnMount: false,
 });
 
 /**
