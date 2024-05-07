@@ -53,7 +53,7 @@ module.exports = {
   taxonomyTagsWidgetUrl: 'http://localhost:2001/tagging/components/widget/',
   staffOnlyMessage: false,
   enableCopyPasteUnits: true,
-  useTaggingTaxonomyListPage: true,
+  isTaggingFeatureDisabled: false,
   hasPartitionGroupComponents: false,
   userPartitionInfo: {
     selectablePartitions: [],
