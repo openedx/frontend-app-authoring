@@ -44,7 +44,7 @@ const messages = defineMessages({
   },
   unitAccess: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.unit-access',
-    defaultMessage: 'Unit Access',
+    defaultMessage: 'Unit access',
   },
   discussionEnabledSectionTitle: {
     id: 'course-authoring.course-outline.configure-modal.discussion-enabled.section-title',
