@@ -268,14 +268,31 @@ describe('<CardHeader />', () => {
   it('check if proctoringExamConfigurationLink is visible', async () => {
     const { findByText, findByTestId } = renderComponent({
       ...cardHeaderProps,
-      proctoringExamConfigurationLink: 'https://localhost:8000/',
+      proctoringExamConfigurationLink: 'proctoringlink',
       isSequential: true,
     });
 
     const menuButton = await findByTestId('subsection-card-header__menu-button');
     await act(async () => fireEvent.click(menuButton));
 
-    expect(await findByText(messages.menuProctoringLinkText.defaultMessage)).toBeInTheDocument();
+    const element = await findByText(messages.menuProctoringLinkText.defaultMessage);
+    expect(element).toBeInTheDocument();
+    expect(element.getAttribute('href')).toBe(`${getConfig().STUDIO_BASE_URL}/proctoringlink`);
+  });
+
+  it('check if proctoringExamConfigurationLink is absolute', async () => {
+    const { findByText, findByTestId } = renderComponent({
+      ...cardHeaderProps,
+      proctoringExamConfigurationLink: 'http://localhost:9000/proctoringlink',
+      isSequential: true,
+    });
+
+    const menuButton = await findByTestId('subsection-card-header__menu-button');
+    await act(async () => fireEvent.click(menuButton));
+
+    const element = await findByText(messages.menuProctoringLinkText.defaultMessage);
+    expect(element).toBeInTheDocument();
+    expect(element.getAttribute('href')).toBe('http://localhost:9000/proctoringlink');
   });
 
   it('check if discussion enabled badge is visible', async () => {

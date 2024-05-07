@@ -8,7 +8,7 @@ import {
 } from '@openedx/paragon';
 import {
   ArrowDropDown as ArrowDownIcon,
-  ArrowDropUp as ArrowUpIcon,
+  ArrowRight as ArrowRightIcon,
 } from '@openedx/paragon/icons';
 import messages from './messages';
 
@@ -33,7 +33,7 @@ const TitleButton = ({
       )}
     >
       <Button
-        iconBefore={isExpanded ? ArrowUpIcon : ArrowDownIcon}
+        iconBefore={isExpanded ? ArrowDownIcon : ArrowRightIcon}
         variant="tertiary"
         data-testid={`${namePrefix}-card-header__expanded-btn`}
         className="item-card-header__title-btn"

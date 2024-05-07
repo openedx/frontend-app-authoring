@@ -4,6 +4,7 @@ import {
 } from 'react-router-dom';
 import { getConfig } from '@edx/frontend-platform';
 import { PageWrap } from '@edx/frontend-platform/react';
+import { Textbooks } from 'CourseAuthoring/textbooks';
 import CourseAuthoringPage from './CourseAuthoringPage';
 import { PagesAndResources } from './pages-and-resources';
 import EditorContainer from './editors/EditorContainer';
@@ -124,6 +125,10 @@ const CourseAuthoringRoutes = () => {
         <Route
           path="certificates"
           element={<PageWrap><Certificates courseId={courseId} /></PageWrap>}
+        />
+        <Route
+          path="textbooks"
+          element={<PageWrap><Textbooks courseId={courseId} /></PageWrap>}
         />
       </Routes>
     </CourseAuthoringPage>

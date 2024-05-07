@@ -1,4 +1,5 @@
 import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import {
   act, render, fireEvent, within,
 } from '@testing-library/react';
@@ -15,6 +16,40 @@ import SectionCard from './SectionCard';
 // eslint-disable-next-line no-unused-vars
 let axiosMock;
 let store;
+const mockPathname = '/foo-bar';
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useLocation: () => ({
+    pathname: mockPathname,
+  }),
+}));
+
+const unit = {
+  id: 'unit-1',
+};
+
+const subsection = {
+  id: '123',
+  displayName: 'Subsection Name',
+  category: 'sequential',
+  published: true,
+  visibilityState: 'live',
+  hasChanges: false,
+  actions: {
+    draggable: true,
+    childAddable: true,
+    deletable: true,
+    duplicable: true,
+  },
+  isHeaderVisible: true,
+  releasedToStudents: true,
+  childInfo: {
+    children: [{
+      id: unit.id,
+    }],
+  },
+};
 
 const section = {
   id: '123',
@@ -31,37 +66,49 @@ const section = {
     duplicable: true,
   },
   isHeaderVisible: true,
+  childInfo: {
+    children: [{
+      id: subsection.id,
+      childInfo: {
+        children: [{
+          id: unit.id,
+        }],
+      },
+    }],
+  },
 };
 
 const onEditSectionSubmit = jest.fn();
 
 const queryClient = new QueryClient();
 
-const renderComponent = (props) => render(
-  <AppProvider store={store}>
+const renderComponent = (props, entry = '/') => render(
+  <AppProvider store={store} wrapWithRouter={false}>
     <QueryClientProvider client={queryClient}>
-      <IntlProvider locale="en">
-        <SectionCard
-          section={section}
-          index={1}
-          canMoveItem={jest.fn()}
-          onOrderChange={jest.fn()}
-          onOpenPublishModal={jest.fn()}
-          onOpenHighlightsModal={jest.fn()}
-          onOpenDeleteModal={jest.fn()}
-          onOpenConfigureModal={jest.fn()}
-          savingStatus=""
-          onEditSectionSubmit={onEditSectionSubmit}
-          onDuplicateSubmit={jest.fn()}
-          isSectionsExpanded
-          onNewSubsectionSubmit={jest.fn()}
-          isSelfPaced={false}
-          isCustomRelativeDatesActive={false}
-          {...props}
-        >
-          <span>children</span>
-        </SectionCard>
-      </IntlProvider>
+      <MemoryRouter initialEntries={[entry]}>
+        <IntlProvider locale="en">
+          <SectionCard
+            section={section}
+            index={1}
+            canMoveItem={jest.fn()}
+            onOrderChange={jest.fn()}
+            onOpenPublishModal={jest.fn()}
+            onOpenHighlightsModal={jest.fn()}
+            onOpenDeleteModal={jest.fn()}
+            onOpenConfigureModal={jest.fn()}
+            savingStatus=""
+            onEditSectionSubmit={onEditSectionSubmit}
+            onDuplicateSubmit={jest.fn()}
+            isSectionsExpanded
+            onNewSubsectionSubmit={jest.fn()}
+            isSelfPaced={false}
+            isCustomRelativeDatesActive={false}
+            {...props}
+          >
+            <span>children</span>
+          </SectionCard>
+        </IntlProvider>
+      </MemoryRouter>
     </QueryClientProvider>
   </AppProvider>,
 );
@@ -147,5 +194,39 @@ describe('<SectionCard />', () => {
     expect(within(element).queryByTestId('section-card-header__menu-duplicate-button')).not.toBeInTheDocument();
     expect(within(element).queryByTestId('section-card-header__menu-delete-button')).not.toBeInTheDocument();
     expect(queryByTestId('new-subsection-button')).not.toBeInTheDocument();
+  });
+
+  it('check extended section when URL "show" param in subsection under section', async () => {
+    const collapsedSections = { ...section };
+    collapsedSections.isSectionsExpanded = false;
+    const { findByTestId } = renderComponent(collapsedSections, `?show=${subsection.id}`);
+
+    const cardSubsections = await findByTestId('section-card__subsections');
+    const newSubsectionButton = await findByTestId('new-subsection-button');
+    expect(cardSubsections).toBeInTheDocument();
+    expect(newSubsectionButton).toBeInTheDocument();
+  });
+
+  it('check extended section when URL "show" param in unit under section', async () => {
+    const collapsedSections = { ...section };
+    collapsedSections.isSectionsExpanded = false;
+    const { findByTestId } = renderComponent(collapsedSections, `?show=${unit.id}`);
+
+    const cardSubsections = await findByTestId('section-card__subsections');
+    const newSubsectionButton = await findByTestId('new-subsection-button');
+    expect(cardSubsections).toBeInTheDocument();
+    expect(newSubsectionButton).toBeInTheDocument();
+  });
+
+  it('check not extended section when URL "show" param not in section', async () => {
+    const randomId = 'random-id';
+    const collapsedSections = { ...section };
+    collapsedSections.isSectionsExpanded = false;
+    const { queryByTestId } = renderComponent(collapsedSections, `?show=${randomId}`);
+
+    const cardSubsections = await queryByTestId('section-card__subsections');
+    const newSubsectionButton = await queryByTestId('new-subsection-button');
+    expect(cardSubsections).toBeNull();
+    expect(newSubsectionButton).toBeNull();
   });
 });

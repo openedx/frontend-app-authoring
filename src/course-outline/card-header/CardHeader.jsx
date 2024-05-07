@@ -61,6 +61,11 @@ const CardHeader = ({
   const cardHeaderRef = useRef(null);
   const [isManageTagsDrawerOpen, openManageTagsDrawer, closeManageTagsDrawer] = useToggle(false);
 
+  // Use studio url as base if proctoringExamConfigurationLink is a relative link
+  const fullProctoringExamConfigurationLink = () => (
+    proctoringExamConfigurationLink && new URL(proctoringExamConfigurationLink, getConfig().STUDIO_BASE_URL).href
+  );
+
   const isDisabledPublish = (status === ITEM_BADGE_STATUS.live
     || status === ITEM_BADGE_STATUS.publishedNotLive) && !hasChanges;
 
@@ -157,8 +162,8 @@ const CardHeader = ({
                 <Dropdown.Item
                   as={Hyperlink}
                   target="_blank"
-                  destination={proctoringExamConfigurationLink}
-                  href={proctoringExamConfigurationLink}
+                  destination={fullProctoringExamConfigurationLink()}
+                  href={fullProctoringExamConfigurationLink()}
                   externalLinkTitle={intl.formatMessage(messages.proctoringLinkTooltip)}
                 >
                   {intl.formatMessage(messages.menuProctoringLinkText)}
