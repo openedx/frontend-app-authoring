@@ -42,6 +42,7 @@ import messages from './messages';
  *     showToastAfterSave: () => void,
  *     closeToast: () => void,
  *     setCollapsibleToInitalState: () => void,
+ *     otherTaxonomies: TagsInTaxonomy[],
  * }}
  */
 const useContentTagsDrawerContext = (contentId) => {
@@ -74,7 +75,7 @@ const useContentTagsDrawerContext = (contentId) => {
   const { data: taxonomyListData, isSuccess: isTaxonomyListLoaded } = useTaxonomyList(org);
 
   // Tags feched from database
-  const fechedTaxonomies = React.useMemo(() => {
+  const { fechedTaxonomies, otherTaxonomies } = React.useMemo(() => {
     const sortTaxonomies = (taxonomiesList) => {
       const taxonomiesWithData = taxonomiesList.filter(
         (t) => t.contentTags.length !== 0,
@@ -114,17 +115,37 @@ const useContentTagsDrawerContext = (contentId) => {
 
       const contentTaxonomies = contentTaxonomyTagsData.taxonomies;
 
+      const otherTaxonomiesList = [];
+
       // eslint-disable-next-line array-callback-return
       contentTaxonomies.map((contentTaxonomyTags) => {
         const contentTaxonomy = taxonomiesList.find((taxonomy) => taxonomy.id === contentTaxonomyTags.taxonomyId);
         if (contentTaxonomy) {
           contentTaxonomy.contentTags = contentTaxonomyTags.tags;
+        } else {
+          otherTaxonomiesList.push({
+            canChangeTaxonomy: false,
+            canDeleteTaxonomy: false,
+            canTagObject: false,
+            contentTags: contentTaxonomyTags.tags,
+            enabled: true,
+            exportId: contentTaxonomyTags.exportId,
+            id: contentTaxonomyTags.taxonomyId,
+            name: contentTaxonomyTags.name,
+            visibleToAuthors: true,
+          });
         }
       });
 
-      return sortTaxonomies(taxonomiesList);
+      return {
+        fechedTaxonomies: sortTaxonomies(taxonomiesList),
+        otherTaxonomies: otherTaxonomiesList,
+      };
     }
-    return [];
+    return {
+      fechedTaxonomies: [],
+      otherTaxonomies: [],
+    };
   }, [taxonomyListData, contentTaxonomyTagsData]);
 
   // Add a content tags to the staged tags for a taxonomy
@@ -367,6 +388,7 @@ const useContentTagsDrawerContext = (contentId) => {
     showToastAfterSave,
     closeToast,
     setCollapsibleToInitalState,
+    otherTaxonomies,
   };
 };
 

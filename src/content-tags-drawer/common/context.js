@@ -34,4 +34,5 @@ export const ContentTagsDrawerContext = React.createContext({
   showToastAfterSave: /** @type{() => void} */ (() => {}),
   closeToast: /** @type{() => void} */ (() => {}),
   setCollapsibleToInitalState: /** @type{() => void} */ (() => {}),
+  otherTaxonomies: /** @type{TagsInTaxonomy[]} */ ([]),
 });

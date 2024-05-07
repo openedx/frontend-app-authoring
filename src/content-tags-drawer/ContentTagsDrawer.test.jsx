@@ -157,6 +157,100 @@ describe('<ContentTagsDrawer />', () => {
     });
   };
 
+  const setupMockDataWithOtherTagsTestings = () => {
+    useContentTaxonomyTagsData.mockReturnValue({
+      isSuccess: true,
+      data: {
+        taxonomies: [
+          {
+            name: 'Taxonomy 1',
+            taxonomyId: 123,
+            canTagObject: true,
+            tags: [
+              {
+                value: 'Tag 1',
+                lineage: ['Tag 1'],
+                canDeleteObjecttag: true,
+              },
+              {
+                value: 'Tag 2',
+                lineage: ['Tag 2'],
+                canDeleteObjecttag: true,
+              },
+            ],
+          },
+          {
+            name: 'Taxonomy 2',
+            taxonomyId: 1234,
+            canTagObject: false,
+            tags: [
+              {
+                value: 'Tag 3',
+                lineage: ['Tag 3'],
+                canDeleteObjecttag: true,
+              },
+              {
+                value: 'Tag 4',
+                lineage: ['Tag 4'],
+                canDeleteObjecttag: true,
+              },
+            ],
+          },
+        ],
+      },
+    });
+    getTaxonomyListData.mockResolvedValue({
+      results: [
+        {
+          id: 123,
+          name: 'Taxonomy 1',
+          description: 'This is a description 1',
+          canTagObject: true,
+        },
+      ],
+    });
+
+    useTaxonomyTagsData.mockReturnValue({
+      hasMorePages: false,
+      canAddTag: false,
+      tagPages: {
+        isLoading: false,
+        isError: false,
+        data: [{
+          value: 'Tag 1',
+          externalId: null,
+          childCount: 0,
+          depth: 0,
+          parentValue: null,
+          id: 12345,
+          subTagsUrl: null,
+          canChangeTag: false,
+          canDeleteTag: false,
+        }, {
+          value: 'Tag 2',
+          externalId: null,
+          childCount: 0,
+          depth: 0,
+          parentValue: null,
+          id: 12346,
+          subTagsUrl: null,
+          canChangeTag: false,
+          canDeleteTag: false,
+        }, {
+          value: 'Tag 3',
+          externalId: null,
+          childCount: 0,
+          depth: 0,
+          parentValue: null,
+          id: 12347,
+          subTagsUrl: null,
+          canChangeTag: false,
+          canDeleteTag: false,
+        }],
+      },
+    });
+  };
+
   const setupLargeMockDataForStagedTagsTesting = () => {
     useContentTaxonomyTagsData.mockReturnValue({
       isSuccess: true,
@@ -807,5 +901,24 @@ describe('<ContentTagsDrawer />', () => {
     for (let i = 0; i !== taxonomies.length; i++) {
       expect(taxonomies[i].textContent).toBe(expectedOrder[i]);
     }
+  });
+
+  it('should not show "Other tags" section', async () => {
+    setupMockDataForStagedTagsTesting();
+
+    render(<RootWrapper />);
+    expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
+
+    expect(screen.queryByText('Other tags')).not.toBeInTheDocument();
+  });
+
+  it('should show "Other tags" section', async () => {
+    setupMockDataWithOtherTagsTestings();
+
+    render(<RootWrapper />);
+    expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
+
+    expect(screen.getByText('Other tags')).toBeInTheDocument();
+    expect(screen.getByText('Taxonomy 2')).toBeInTheDocument();
   });
 });
