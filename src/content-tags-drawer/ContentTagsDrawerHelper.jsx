@@ -59,6 +59,8 @@ const useContentTagsDrawerContext = (contentId) => {
   const [globalStagedRemovedContentTags, setGlobalStagedRemovedContentTags] = React.useState({});
   // Merges feched tags, global staged tags and global removed staged tags
   const [tagsByTaxonomy, setTagsByTaxonomy] = React.useState(/** @type TagsInTaxonomy[] */ ([]));
+  // Other taxonomies that the user doesn't have permissions
+  const [otherTaxonomies, setOtherTaxonomies] = React.useState(/** @type TagsInTaxonomy[] */ ([]));
   // This stores taxonomy collapsible states (open/close).
   const [collapsibleStates, setColapsibleStates] = React.useState({});
   // Message to show a toast in the content drawer.
@@ -75,7 +77,7 @@ const useContentTagsDrawerContext = (contentId) => {
   const { data: taxonomyListData, isSuccess: isTaxonomyListLoaded } = useTaxonomyList(org);
 
   // Tags feched from database
-  const { fechedTaxonomies, otherTaxonomies } = React.useMemo(() => {
+  const { fechedTaxonomies, fechedOtherTaxonomies } = React.useMemo(() => {
     const sortTaxonomies = (taxonomiesList) => {
       const taxonomiesWithData = taxonomiesList.filter(
         (t) => t.contentTags.length !== 0,
@@ -139,12 +141,12 @@ const useContentTagsDrawerContext = (contentId) => {
 
       return {
         fechedTaxonomies: sortTaxonomies(taxonomiesList),
-        otherTaxonomies: otherTaxonomiesList,
+        fechedOtherTaxonomies: otherTaxonomiesList,
       };
     }
     return {
       fechedTaxonomies: [],
-      otherTaxonomies: [],
+      fechedOtherTaxonomies: [],
     };
   }, [taxonomyListData, contentTaxonomyTagsData]);
 
@@ -222,6 +224,9 @@ const useContentTagsDrawerContext = (contentId) => {
     fechedTaxonomies.forEach((taxonomy) => {
       updatedState[taxonomy.id] = true;
     });
+    fechedOtherTaxonomies.forEach((taxonomy) => {
+      updatedState[taxonomy.id] = true;
+    });
     setColapsibleStates(updatedState);
   }, [fechedTaxonomies, setColapsibleStates]);
 
@@ -229,6 +234,10 @@ const useContentTagsDrawerContext = (contentId) => {
   const setCollapsibleToInitalState = React.useCallback(() => {
     const updatedState = {};
     fechedTaxonomies.forEach((taxonomy) => {
+      // Taxonomy with content tags must be open
+      updatedState[taxonomy.id] = taxonomy.contentTags.length !== 0;
+    });
+    fechedOtherTaxonomies.forEach((taxonomy) => {
       // Taxonomy with content tags must be open
       updatedState[taxonomy.id] = taxonomy.contentTags.length !== 0;
     });
@@ -315,6 +324,10 @@ const useContentTagsDrawerContext = (contentId) => {
       { ...acc, [obj.id]: obj }
     ), {});
 
+    const mergedOtherTaxonomies = cloneDeep(fechedOtherTaxonomies).reduce((acc, obj) => (
+      { ...acc, [obj.id]: obj }
+    ), {});
+
     Object.keys(globalStagedContentTags).forEach((taxonomyId) => {
       if (mergedTags[taxonomyId]) {
         // TODO test this
@@ -334,6 +347,10 @@ const useContentTagsDrawerContext = (contentId) => {
         mergedTags[taxonomyId].contentTags = mergedTags[taxonomyId].contentTags.filter(
           (t) => !globalStagedRemovedContentTags[taxonomyId].includes(t.value),
         );
+      } else if (mergedOtherTaxonomies[taxonomyId]) {
+        mergedOtherTaxonomies[taxonomyId].contentTags = mergedOtherTaxonomies[taxonomyId].contentTags.filter(
+          (t) => !globalStagedRemovedContentTags[taxonomyId].includes(t.value),
+        );
       }
     });
 
@@ -342,8 +359,10 @@ const useContentTagsDrawerContext = (contentId) => {
     const mergedTagsArray = fechedTaxonomies.map(obj => mergedTags[obj.id]);
 
     setTagsByTaxonomy(mergedTagsArray);
+    setOtherTaxonomies(Object.values(mergedOtherTaxonomies));
   }, [
     fechedTaxonomies,
+    fechedOtherTaxonomies,
     globalStagedContentTags,
     globalStagedRemovedContentTags,
   ]);
@@ -351,6 +370,12 @@ const useContentTagsDrawerContext = (contentId) => {
   const commitGlobalStagedTags = React.useCallback(() => {
     const tagsData = [];
     tagsByTaxonomy.forEach((tags) => {
+      tagsData.push({
+        taxonomy: tags.id,
+        tags: tags.contentTags.map(t => t.value),
+      });
+    });
+    otherTaxonomies.forEach((tags) => {
       tagsData.push({
         taxonomy: tags.id,
         tags: tags.contentTags.map(t => t.value),

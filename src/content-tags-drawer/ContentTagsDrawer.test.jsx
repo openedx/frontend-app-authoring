@@ -920,5 +920,34 @@ describe('<ContentTagsDrawer />', () => {
 
     expect(screen.getByText('Other tags')).toBeInTheDocument();
     expect(screen.getByText('Taxonomy 2')).toBeInTheDocument();
+    expect(screen.getByText('Tag 3')).toBeInTheDocument();
+    expect(screen.getByText('Tag 4')).toBeInTheDocument();
+  });
+
+  it('should test delete "Other tags" and cancel', async () => {
+    setupMockDataWithOtherTagsTestings();
+    render(<RootWrapper />);
+    expect(await screen.findByText('Taxonomy 2')).toBeInTheDocument();
+
+    // To edit mode
+    const editTagsButton = screen.getByRole('button', {
+      name: /edit tags/i,
+    });
+    fireEvent.click(editTagsButton);
+
+    // Delete the tag
+    const tag = screen.getByText(/tag 3/i);
+    const deleteButton = within(tag).getByRole('button', {
+      name: /delete/i,
+    });
+    fireEvent.click(deleteButton);
+
+    expect(tag).not.toBeInTheDocument();
+
+    // Click "Cancel"
+    const cancelButton = screen.getByRole('button', { name: /cancel/i });
+    fireEvent.click(cancelButton);
+
+    expect(screen.getByText(/tag 3/i)).toBeInTheDocument();
   });
 });
