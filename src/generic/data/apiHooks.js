@@ -46,6 +46,10 @@ export const useStudioHomeData = () => useQuery({
 
 /**
  * Are the tagging/taxonomy features enabled?
+ *
+ * TODO: This is temporary, for the Open edX Redwood release. Sometime post-Redwood pre-Sumac (and after being enabled
+ * for a while on edx.org), this should be removed and the tagging/taxonomy functionality always enabled.
+ *
  * @returns {boolean} Whether they are enabled (default true)
  */
 export const useTaggingFeaturesEnabled = () => {

@@ -13,6 +13,7 @@ import TaxonomyDetailPage from './TaxonomyDetailPage';
 let store;
 const mockNavigate = jest.fn();
 const mockMutate = jest.fn();
+const mockTaggingFeaturesEnabled = jest.fn();
 let axiosMock;
 
 jest.mock('react-router-dom', () => ({
@@ -21,10 +22,15 @@ jest.mock('react-router-dom', () => ({
     taxonomyId: '1',
   }),
   useNavigate: () => mockNavigate,
+  Navigate: jest.fn(({ to }) => `[Navigate: Redirected to ${to}]`),
 }));
 jest.mock('../data/apiHooks', () => ({
   ...jest.requireActual('../data/apiHooks'),
   useDeleteTaxonomy: () => mockMutate,
+}));
+jest.mock('../../generic/data/apiHooks', () => ({
+  ...jest.requireActual('../../generic/data/apiHooks'),
+  useTaggingFeaturesEnabled: () => mockTaggingFeaturesEnabled(),
 }));
 
 jest.mock('./TaxonomyDetailSideCard', () => jest.fn(() => <>Mock TaxonomyDetailSideCard</>));
@@ -54,12 +60,19 @@ describe('<TaxonomyDetailPage />', () => {
     });
     store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    mockTaggingFeaturesEnabled.mockReturnValue(true);
   });
 
   afterEach(() => {
     jest.clearAllMocks();
     axiosMock.restore();
     queryClient.clear();
+  });
+
+  it('redirects to Studio home if the tagging feature is disabled', () => {
+    mockTaggingFeaturesEnabled.mockReturnValue(false);
+    const doc = render(<RootWrapper />);
+    expect(doc.asFragment().textContent).toEqual('[Navigate: Redirected to /home]');
   });
 
   it('shows the spinner before the query is complete', () => {
