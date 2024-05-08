@@ -203,12 +203,11 @@ const CourseUnit = ({ courseId }) => {
                 <Sidebar data-testid="course-unit-sidebar">
                   <PublishControls blockId={blockId} />
                 </Sidebar>
-                {
-                  taxonomiesEnabled &&
+                {taxonomiesEnabled && (
                   <Sidebar className="tags-sidebar">
                     <TagsSidebarControls />
                   </Sidebar>
-                }
+                )}
                 <Sidebar data-testid="course-unit-location-sidebar">
                   <LocationInfo />
                 </Sidebar>
