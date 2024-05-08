@@ -168,20 +168,22 @@ describe('<CourseOutline />', () => {
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(500, 'some internal error');
 
-    const { findByText, findByRole } = render(<RootWrapper />);
+    const { findByText, queryByRole } = render(<RootWrapper />);
     expect(await findByText('"some internal error"')).toBeInTheDocument();
     // check errors in store
     expect(store.getState().courseOutline.errors).toEqual({
+      courseLaunchApi: null,
       outlineIndexApi: {
         data: '"some internal error"',
+        dismissible: false,
         status: 500,
         type: 'serverError',
       },
+      reindexApi: null,
+      sectionLoadingApi: null,
     });
 
-    const dismissBtn = await findByRole('button', { name: 'Dismiss' });
-    fireEvent.click(dismissBtn);
-    expect(store.getState().courseOutline.errors).toEqual({});
+    expect(queryByRole('button', { name: 'Dismiss' })).not.toBeInTheDocument();
   });
 
   it('check reindex and render success alert is correctly', async () => {
@@ -419,12 +421,21 @@ describe('<CourseOutline />', () => {
       courseLaunchApi: {
         data: 'Request failed with status code 500',
         type: 'unknown',
+        dismissible: true,
       },
+      outlineIndexApi: null,
+      reindexApi: null,
+      sectionLoadingApi: null,
     });
 
     const dismissBtn = await findByRole('button', { name: 'Dismiss' });
     fireEvent.click(dismissBtn);
-    expect(store.getState().courseOutline.errors).toEqual({});
+    expect(store.getState().courseOutline.errors).toEqual({
+      courseLaunchApi: null,
+      outlineIndexApi: null,
+      reindexApi: null,
+      sectionLoadingApi: null,
+    });
   });
 
   it('check highlights are enabled after enable highlights query is successful', async () => {

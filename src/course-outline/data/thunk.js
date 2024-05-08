@@ -54,8 +54,8 @@ import {
   updateCourseLaunchQueryStatus,
 } from './slice';
 
-const getErrorDetails = (error) => {
-  const errorInfo = {};
+const getErrorDetails = (error, dismissible = true) => {
+  const errorInfo = { dismissible };
   if (error.response?.data) {
     errorInfo.data = JSON.stringify(error.response.data);
     errorInfo.status = error.response.status;
@@ -98,7 +98,7 @@ export function fetchCourseOutlineIndexQuery(courseId) {
     } catch (error) {
       dispatch(updateOutlineIndexLoadingStatus({
         status: RequestStatus.FAILED,
-        errors: getErrorDetails(error),
+        errors: getErrorDetails(error, false),
       }));
     }
   };
