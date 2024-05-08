@@ -63,6 +63,10 @@ const messages = defineMessages({
     id: 'course-authoring.content-tags-drawer.content-tags-collapsible.custom-menu.placeholder-text',
     defaultMessage: 'Add a tag',
   },
+  collapsibleNoTagsAddedText: {
+    id: 'course-authoring.content-tags-drawer.content-tags-collapsible.custom-menu.placeholder-text',
+    defaultMessage: 'No tags added yet.',
+  },
   collapsibleAddStagedTagsButtonText: {
     id: 'course-authoring.content-tags-drawer.content-tags-collapsible.custom-menu.save-staged-tags',
     defaultMessage: 'Add tags',

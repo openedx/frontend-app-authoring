@@ -132,6 +132,7 @@ const data = {
   globalStagedRemovedContentTags: {},
   setGlobalStagedContentTags: jest.fn(),
   isEditMode: true,
+  toEditMode: jest.fn(),
   collapsibleState: true,
   openCollapsible: jest.fn(),
   closeCollapsible: jest.fn(),
@@ -151,6 +152,7 @@ const ContentTagsCollapsibleComponent = ({
   globalStagedRemovedContentTags,
   setGlobalStagedContentTags,
   isEditMode,
+  toEditMode,
   collapsibleState,
   openCollapsible,
   closeCollapsible,
@@ -166,6 +168,7 @@ const ContentTagsCollapsibleComponent = ({
     globalStagedRemovedContentTags,
     setGlobalStagedContentTags,
     isEditMode,
+    toEditMode,
     openCollapsible,
     closeCollapsible,
   }), []);
@@ -216,6 +219,7 @@ describe('<ContentTagsCollapsible />', () => {
         globalStagedRemovedContentTags={componentData.globalStagedRemovedContentTags}
         setGlobalStagedContentTags={componentData.setGlobalStagedContentTags}
         isEditMode={componentData.isEditMode}
+        toEditMode={componentData.toEditMode}
         collapsibleState={componentData.collapsibleState}
         openCollapsible={componentData.openCollapsible}
         closeCollapsible={componentData.closeCollapsible}
@@ -250,6 +254,32 @@ describe('<ContentTagsCollapsible />', () => {
     expect(screen.getByText(/add a tag/i)).toBeInTheDocument();
   });
 
+  it('should render "no tags added yet" when expanded in read mode', async () => {
+    await getComponent({
+      ...data,
+      isEditMode: false,
+      taxonomyAndTagsData: {
+        id: 123,
+        name: 'Taxonomy 1',
+        canTagObject: true,
+        contentTags: [],
+      },
+    });
+
+    const expandToggle = screen.getByRole('button', {
+      name: /taxonomy 1/i,
+    });
+    fireEvent.click(expandToggle);
+    expect(screen.queryByText(/no tags added yet/i)).toBeInTheDocument();
+
+    const addTags = screen.getByRole('button', {
+      name: /add tags/i,
+    });
+    expect(addTags).toBeInTheDocument();
+    fireEvent.click(addTags);
+    expect(data.toEditMode).toHaveBeenCalledTimes(1);
+  });
+
   it('should call `openCollapsible` when click in the collapsible', async () => {
     await getComponent({
       ...data,
@@ -263,6 +293,7 @@ describe('<ContentTagsCollapsible />', () => {
 
     expect(data.openCollapsible).toHaveBeenCalledTimes(1);
     expect(data.closeCollapsible).toHaveBeenCalledTimes(0);
+    expect(screen.queryByText(/no tags added yet/i)).not.toBeInTheDocument();
   });
 
   it('should call `closeCollapsible` when click in the collapsible', async () => {
