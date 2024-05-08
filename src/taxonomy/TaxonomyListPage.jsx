@@ -1,5 +1,5 @@
 // @ts-check
-import React, { useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Button,
@@ -29,10 +29,27 @@ import { useImportNewTaxonomy, useTaxonomyList } from './data/apiHooks';
 import { importTaxonomy } from './import-tags';
 import messages from './messages';
 import TaxonomyCard from './taxonomy-card';
+import { TaxonomyContext } from './common/context';
 
 const TaxonomyListHeaderButtons = ({ canAddTaxonomy }) => {
   const intl = useIntl();
   const importMutation = useImportNewTaxonomy();
+  const { setToastMessage } = useContext(TaxonomyContext);
+
+  const showImportInProgressAlert = useCallback(() => {
+    /* istanbul ignore next */
+    if (setToastMessage) {
+      setToastMessage(intl.formatMessage(messages.importInProgressAlertDescription));
+    }
+  }, [setToastMessage]);
+
+  const closeImportInProgressAlert = useCallback(() => {
+    /* istanbul ignore next */
+    if (setToastMessage) {
+      setToastMessage(null);
+    }
+  }, [setToastMessage]);
+
   return (
     <>
       <OverlayTrigger
@@ -69,7 +86,12 @@ const TaxonomyListHeaderButtons = ({ canAddTaxonomy }) => {
       </OverlayTrigger>
       <Button
         iconBefore={Add}
-        onClick={() => importTaxonomy(intl, importMutation)}
+        onClick={() => importTaxonomy(
+          intl,
+          importMutation,
+          showImportInProgressAlert,
+          closeImportInProgressAlert,
+        )}
         data-testid="taxonomy-import-button"
         disabled={!canAddTaxonomy}
       >
