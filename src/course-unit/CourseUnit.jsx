@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { Container, Layout, Stack } from '@openedx/paragon';
+import { getConfig } from '@edx/frontend-platform';
 import { useIntl, injectIntl } from '@edx/frontend-platform/i18n';
 import { DraggableList, ErrorAlert } from '@edx/frontend-lib-content-components';
 import { Warning as WarningIcon } from '@openedx/paragon/icons';
@@ -200,9 +201,12 @@ const CourseUnit = ({ courseId }) => {
                 <Sidebar data-testid="course-unit-sidebar">
                   <PublishControls blockId={blockId} />
                 </Sidebar>
-                <Sidebar className="tags-sidebar">
-                  <TagsSidebarControls />
-                </Sidebar>
+                {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true'
+                && (
+                  <Sidebar className="tags-sidebar">
+                    <TagsSidebarControls />
+                  </Sidebar>
+                )}
                 <Sidebar data-testid="course-unit-location-sidebar">
                   <LocationInfo />
                 </Sidebar>

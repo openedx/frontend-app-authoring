@@ -1,5 +1,5 @@
 import React from 'react';
-import { initializeMockApp } from '@edx/frontend-platform';
+import { getConfig, initializeMockApp, setConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import {
   waitFor, render, fireEvent, screen, act,
@@ -160,6 +160,11 @@ describe('<TabsSection />', () => {
 
   describe('taxonomies tab', () => {
     it('should not show taxonomies tab on page if not enabled', async () => {
+      setConfig({
+        ...getConfig(),
+        ENABLE_TAGGING_TAXONOMY_PAGES: 'false',
+      });
+
       render(<RootWrapper />);
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
       await executeThunk(fetchStudioHomeData(), store.dispatch);
@@ -169,11 +174,13 @@ describe('<TabsSection />', () => {
     });
 
     it('should redirect to taxonomies page', async () => {
-      const data = generateGetStudioHomeDataApiResponse();
-      data.taxonomiesEnabled = true;
+      setConfig({
+        ...getConfig(),
+        ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+      });
 
       render(<RootWrapper />);
-      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, data);
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
       await executeThunk(fetchStudioHomeData(), store.dispatch);
 
       const taxonomiesTab = screen.getByText(tabMessages.taxonomiesTabTitle.defaultMessage);
