@@ -1,12 +1,12 @@
 // @ts-check
 import React, { useState, useMemo } from 'react';
 import {
-  Card, Stack, Button, Sheet, Collapsible, Icon,
+  Card, Stack, Button, Collapsible, Icon,
 } from '@openedx/paragon';
 import { ArrowDropDown, ArrowDropUp } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useParams } from 'react-router-dom';
-import { ContentTagsDrawer } from '..';
+import { ContentTagsDrawerSheet } from '..';
 
 import messages from '../messages';
 import { useContentTaxonomyTagsData } from '../data/apiHooks';
@@ -93,16 +93,11 @@ const TagsSidebarBody = () => {
           </Button>
         </Stack>
       </Card.Body>
-      <Sheet
-        position="right"
-        show={showManageTags}
+      <ContentTagsDrawerSheet
+        id={contentId}
         onClose={onClose}
-      >
-        <ContentTagsDrawer
-          id={contentId}
-          onClose={onClose}
-        />
-      </Sheet>
+        showSheet={showManageTags}
+      />
     </>
   );
 };

@@ -10,7 +10,6 @@ import {
   Hyperlink,
   Icon,
   IconButton,
-  Sheet,
   useToggle,
 } from '@openedx/paragon';
 import {
@@ -19,7 +18,7 @@ import {
 } from '@openedx/paragon/icons';
 
 import { useContentTagsCount } from '../../generic/data/apiHooks';
-import { ContentTagsDrawer } from '../../content-tags-drawer';
+import { ContentTagsDrawerSheet } from '../../content-tags-drawer';
 import TagCount from '../../generic/tag-count';
 import { useEscapeClick } from '../../hooks';
 import { ITEM_BADGE_STATUS } from '../constants';
@@ -234,16 +233,11 @@ const CardHeader = ({
           </Dropdown>
         </div>
       </div>
-      <Sheet
-        position="right"
-        show={isManageTagsDrawerOpen}
+      <ContentTagsDrawerSheet
+        id={cardId}
         onClose={/* istanbul ignore next */ () => closeManageTagsDrawer()}
-      >
-        <ContentTagsDrawer
-          id={cardId}
-          onClose={/* istanbul ignore next */ () => closeManageTagsDrawer()}
-        />
-      </Sheet>
+        showSheet={isManageTagsDrawerOpen}
+      />
     </>
   );
 };

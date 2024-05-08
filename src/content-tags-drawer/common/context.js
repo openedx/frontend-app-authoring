@@ -35,3 +35,14 @@ export const ContentTagsDrawerContext = React.createContext({
   closeToast: /** @type{() => void} */ (() => {}),
   setCollapsibleToInitalState: /** @type{() => void} */ (() => {}),
 });
+
+// This context has not been added to ContentTagsDrawerContext because it has been
+// created one level higher to control the behavior of the Sheet that contatins the Drawer.
+// This logic is not used in legacy edx-platform screens. But it can be separated if we keep
+// the contexts separate.
+// TODO We can join both contexts when the Drawer is no longer used on edx-platform
+/* istanbul ignore next */
+export const ContentTagsDrawerSheetContext = React.createContext({
+  blockingSheet: /** @type{boolean} */ (false),
+  setBlockingSheet: /** @type{Function} */ (() => {}),
+});
