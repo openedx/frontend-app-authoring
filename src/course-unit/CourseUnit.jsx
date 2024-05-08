@@ -31,6 +31,7 @@ import PublishControls from './sidebar/PublishControls';
 import LocationInfo from './sidebar/LocationInfo';
 import TagsSidebarControls from '../content-tags-drawer/tags-sidebar-controls';
 import { PasteNotificationAlert } from './clipboard';
+import { useTaggingFeaturesEnabled } from '../generic/data/apiHooks';
 
 const CourseUnit = ({ courseId }) => {
   const { blockId } = useParams();
@@ -64,6 +65,8 @@ const CourseUnit = ({ courseId }) => {
 
   const initialXBlocksData = useMemo(() => courseVerticalChildren.children ?? [], [courseVerticalChildren.children]);
   const [unitXBlocks, setUnitXBlocks] = useState(initialXBlocksData);
+
+  const taxonomiesEnabled = useTaggingFeaturesEnabled();
 
   useEffect(() => {
     document.title = getPageHeadTitle('', unitTitle);
@@ -200,9 +203,12 @@ const CourseUnit = ({ courseId }) => {
                 <Sidebar data-testid="course-unit-sidebar">
                   <PublishControls blockId={blockId} />
                 </Sidebar>
-                <Sidebar className="tags-sidebar">
-                  <TagsSidebarControls />
-                </Sidebar>
+                {
+                  taxonomiesEnabled &&
+                  <Sidebar className="tags-sidebar">
+                    <TagsSidebarControls />
+                  </Sidebar>
+                }
                 <Sidebar data-testid="course-unit-location-sidebar">
                   <LocationInfo />
                 </Sidebar>
