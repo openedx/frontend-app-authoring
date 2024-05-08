@@ -260,7 +260,8 @@ Configuration
 
 In additional to the standard settings, the following local configuration items are required:
 
-* ``ENABLE_TAGGING_TAXONOMY_PAGES``: must be enabled in order to actually present the new Tagging/Taxonomy pages.
+* ``ENABLE_TAGGING_TAXONOMY_PAGES``: must be enabled (which it is by default) in order to actually enable/show the new 
+Tagging/Taxonomy functionality.
 
 
 Developing
