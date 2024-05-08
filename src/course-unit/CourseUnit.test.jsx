@@ -5,7 +5,12 @@ import {
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
-import { camelCaseObject, getConfig, initializeMockApp, setConfig } from '@edx/frontend-platform';
+import {
+  camelCaseObject,
+  getConfig,
+  initializeMockApp,
+  setConfig,
+} from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { cloneDeep, set } from 'lodash';
 
