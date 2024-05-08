@@ -18,6 +18,10 @@
     background-color: transparent;
     color: $gray-300 !important;
   }
+
+  .other-description {
+    font-size: .9rem;
+  }
 }
 
 // Apply styles to sheet only if it has a child with a .tags-drawer class

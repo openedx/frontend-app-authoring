@@ -127,7 +127,7 @@ const ContentTagsDrawer = ({ id, onClose }) => {
                 <p className="h4 text-gray-500 font-weight-bold">
                   {intl.formatMessage(messages.otherTagsHeader)}
                 </p>
-                <p className="h6 text-gray-500">
+                <p className="other-description text-gray-500">
                   {intl.formatMessage(messages.otherTagsDescription)}
                 </p>
                 { isTaxonomyListLoaded && isContentTaxonomyTagsLoaded && (
