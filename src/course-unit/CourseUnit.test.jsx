@@ -5,7 +5,7 @@ import {
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
-import { camelCaseObject, initializeMockApp } from '@edx/frontend-platform';
+import { camelCaseObject, getConfig, initializeMockApp, setConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { cloneDeep, set } from 'lodash';
 
@@ -1033,6 +1033,24 @@ describe('<CourseUnit />', () => {
       expect(within(courseUnitSidebar)
         .getByText(sidebarMessages.visibilityStaffOnlyTitle.defaultMessage)).toBeInTheDocument();
     });
+  });
+
+  it('shows the Tags sidebar when enabled', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+    });
+    const { getByText } = render(<RootWrapper />);
+    await waitFor(() => { expect(getByText('Unit tags')).toBeInTheDocument(); });
+  });
+
+  it('hides the Tags sidebar when not enabled', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'false',
+    });
+    const { queryByText } = render(<RootWrapper />);
+    await waitFor(() => { expect(queryByText('Unit tags')).not.toBeInTheDocument(); });
   });
 
   describe('Copy paste functionality', () => {
