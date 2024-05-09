@@ -15,6 +15,7 @@ import { getConfig } from '@edx/frontend-platform';
 import { COURSE_CREATOR_STATES } from '../../constants';
 import { getStudioHomeData } from '../data/selectors';
 import messages from '../messages';
+import { trimSlashes } from './utils';
 
 const CardItem = ({
   intl,
@@ -69,7 +70,7 @@ const CardItem = ({
               />
               <Dropdown.Menu>
                 {isShowRerunLink && (
-                  <Dropdown.Item href={rerunLink}>
+                  <Dropdown.Item href={trimSlashes(rerunLink)}>
                     {messages.btnReRunText.defaultMessage}
                   </Dropdown.Item>
                 )}
@@ -83,7 +84,7 @@ const CardItem = ({
               {isShowRerunLink && (
                 <Hyperlink
                   className="small"
-                  destination={rerunLink}
+                  destination={trimSlashes(rerunLink)}
                   key={`action-row-rerunLink-${courseKey}`}
                 >
                   {intl.formatMessage(messages.btnReRunText)}

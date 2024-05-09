@@ -8,6 +8,7 @@ import { initializeMockApp, getConfig } from '@edx/frontend-platform';
 import { studioHomeMock } from '../__mocks__';
 import messages from '../messages';
 import initializeStore from '../../store';
+import { trimSlashes } from './utils';
 import CardItem from '.';
 
 jest.mock('react-redux', () => ({
@@ -50,7 +51,7 @@ describe('<CardItem />', () => {
     const courseTitleLink = getByText(props.displayName);
     expect(courseTitleLink).toHaveAttribute('href', `${getConfig().STUDIO_BASE_URL}${props.url}`);
     const btnReRunCourse = getByText(messages.btnReRunText.defaultMessage);
-    expect(btnReRunCourse).toHaveAttribute('href', props.rerunLink);
+    expect(btnReRunCourse).toHaveAttribute('href', trimSlashes(props.rerunLink));
     const viewLiveLink = getByText(messages.viewLiveBtnText.defaultMessage);
     expect(viewLiveLink).toHaveAttribute('href', props.lmsLink);
   });
@@ -63,7 +64,7 @@ describe('<CardItem />', () => {
     const dropDownMenu = getByTestId('toggle-dropdown');
     fireEvent.click(dropDownMenu);
     const btnReRunCourse = getByText(messages.btnReRunText.defaultMessage);
-    expect(btnReRunCourse).toHaveAttribute('href', props.rerunLink);
+    expect(btnReRunCourse).toHaveAttribute('href', trimSlashes(props.rerunLink));
     const viewLiveLink = getByText(messages.viewLiveBtnText.defaultMessage);
     expect(viewLiveLink).toHaveAttribute('href', props.lmsLink);
   });
