@@ -6,6 +6,7 @@ export const getCanEdit = (state) => state.courseUnit.canEdit;
 export const getStaticFileNotices = (state) => state.courseUnit.staticFileNotices;
 export const getCourseUnit = (state) => state.courseUnit;
 export const getSavingStatus = (state) => state.courseUnit.savingStatus;
+export const getErrorMessage = (state) => state.courseUnit.errorMessage;
 export const getSequenceStatus = (state) => state.courseUnit.sequenceStatus;
 export const getSequenceIds = (state) => state.courseUnit.courseSectionVertical.courseSequenceIds;
 export const getCourseSectionVertical = (state) => state.courseUnit.courseSectionVertical;

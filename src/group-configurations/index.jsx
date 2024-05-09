@@ -4,13 +4,12 @@ import {
   Container, Layout, Stack, Row,
 } from '@openedx/paragon';
 
-import { RequestStatus } from '../data/constants';
 import { LoadingSpinner } from '../generic/Loading';
 import { useModel } from '../generic/model-store';
 import SubHeader from '../generic/sub-header/SubHeader';
 import getPageHeadTitle from '../generic/utils';
 import ProcessingNotification from '../generic/processing-notification';
-import InternetConnectionAlert from '../generic/internet-connection-alert';
+import { SavingErrorAlert } from '../generic/saving-error-alert';
 import messages from './messages';
 import ContentGroupsSection from './content-groups-section';
 import ExperimentConfigurationsSection from './experiment-configurations-section';
@@ -24,6 +23,7 @@ const GroupConfigurations = ({ courseId }) => {
   const {
     isLoading,
     savingStatus,
+    errorMessage,
     contentGroupActions,
     experimentConfigurationActions,
     processingNotificationTitle,
@@ -34,7 +34,6 @@ const GroupConfigurations = ({ courseId }) => {
       shouldShowExperimentGroups,
       experimentGroupConfigurations,
     },
-    handleInternetConnectionFailed,
   } = useGroupConfigurations(courseId);
 
   document.title = getPageHeadTitle(
@@ -71,7 +70,10 @@ const GroupConfigurations = ({ courseId }) => {
           xl={[{ span: 9 }, { span: 3 }]}
         >
           <Layout.Element>
-            <Stack gap={3} data-testid="group-configurations-main-content-wrapper">
+            <Stack
+              gap={3}
+              data-testid="group-configurations-main-content-wrapper"
+            >
               {!!enrollmentTrackGroup && (
                 <EnrollmentTrackGroupsSection
                   availableGroup={enrollmentTrackGroup}
@@ -102,10 +104,9 @@ const GroupConfigurations = ({ courseId }) => {
         </Layout>
       </Container>
       <div className="alert-toast">
-        <InternetConnectionAlert
-          isFailed={savingStatus === RequestStatus.FAILED}
-          isQueryPending={savingStatus === RequestStatus.PENDING}
-          onInternetConnectionFailed={handleInternetConnectionFailed}
+        <SavingErrorAlert
+          savingStatus={savingStatus}
+          errorMessage={errorMessage}
         />
         <ProcessingNotification
           isShow={isShowProcessingNotification}

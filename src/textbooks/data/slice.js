@@ -9,6 +9,7 @@ const slice = createSlice({
     savingStatus: '',
     loadingStatus: RequestStatus.IN_PROGRESS,
     textbooks: [],
+    errorMessage: '',
     currentTextbookId: '',
   },
   reducers: {
@@ -19,7 +20,9 @@ const slice = createSlice({
       state.loadingStatus = payload.status;
     },
     updateSavingStatus: (state, { payload }) => {
-      state.savingStatus = payload.status;
+      const { status, errorMessage } = payload;
+      state.savingStatus = status;
+      state.errorMessage = errorMessage;
     },
     createTextbookSuccess: (state, { payload }) => {
       state.textbooks = [...state.textbooks, payload];

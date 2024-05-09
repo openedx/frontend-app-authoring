@@ -7,6 +7,7 @@ const slice = createSlice({
   name: 'courseUnit',
   initialState: {
     savingStatus: '',
+    errorMessage: '',
     isQueryPending: false,
     isTitleEditFormOpen: false,
     canEdit: true,
@@ -37,7 +38,9 @@ const slice = createSlice({
       state.isTitleEditFormOpen = payload;
     },
     updateSavingStatus: (state, { payload }) => {
-      state.savingStatus = payload.status;
+      const { status, errorMessage } = payload;
+      state.savingStatus = status;
+      state.errorMessage = errorMessage;
     },
     fetchSequenceRequest: (state, { payload }) => {
       state.sequenceId = payload.sequenceId;
