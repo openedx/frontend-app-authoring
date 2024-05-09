@@ -280,6 +280,7 @@
       "estimatedTotalHits": 0,
       "facetDistribution": {
         "block_type": {
+          "chapter": 1,
           "html": 2,
           "problem": 16,
           "vertical": 2,

@@ -13,7 +13,7 @@ const messages = defineMessages({
   },
   containsGroups: {
     id: 'course-authoring.group-configurations.container.contains-groups',
-    defaultMessage: 'Contains {len, plural, one {group} other {groups}}',
+    defaultMessage: 'Contains {len, plural, one {1 group} other {{len} groups}}',
     description: 'Message indicating the number of groups contained within a container.',
   },
   notInUse: {
@@ -23,7 +23,7 @@ const messages = defineMessages({
   },
   usedInLocations: {
     id: 'course-authoring.group-configurations.container.used-in-locations',
-    defaultMessage: 'Used in {len, plural, one {location} other {locations}}',
+    defaultMessage: 'Used in {len, plural, one {1 location} other {{len} locations}}',
     description: 'Message indicating the number of locations where the group configurations are used.',
   },
 });

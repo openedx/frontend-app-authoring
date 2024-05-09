@@ -41,8 +41,15 @@ const selectFile = async () => new Promise((resolve) => {
  * @param {*} intl The react-intl object returned by the useIntl() hook
  * @param {ReturnType<typeof import('../data/apiHooks').useImportNewTaxonomy>} importMutation The import mutation
  *        returned by the useImportNewTaxonomy() hook.
+ * @param {() => void} showImportInProgressAlert Function to show `In progress` alert.
+ * @param {() => void} closeImportInProgressAlert Function to close `In progress` alert.
  */
-export const importTaxonomy = async (intl, importMutation) => { // eslint-disable-line import/prefer-default-export
+export const importTaxonomy = async ( // eslint-disable-line import/prefer-default-export
+  intl,
+  importMutation,
+  showImportInProgressAlert,
+  closeImportInProgressAlert,
+) => {
   /*
     * This function is a temporary "Barebones" implementation of the import
     * functionality with `prompt` and `alert`. It is intended to be replaced
@@ -86,13 +93,17 @@ export const importTaxonomy = async (intl, importMutation) => { // eslint-disabl
     return;
   }
 
+  showImportInProgressAlert();
+
   importMutation.mutateAsync({
     name,
     description,
     file,
   }).then(() => {
+    closeImportInProgressAlert();
     alert(intl.formatMessage(messages.importTaxonomySuccess));
   }).catch((error) => {
+    closeImportInProgressAlert();
     alert(intl.formatMessage(messages.importTaxonomyError));
     console.error(error.response);
   });

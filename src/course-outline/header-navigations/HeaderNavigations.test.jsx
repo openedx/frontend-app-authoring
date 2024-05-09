@@ -124,4 +124,13 @@ describe('<HeaderNavigations />', () => {
       expect(queryByText(messages.reindexButtonTooltip.defaultMessage)).not.toBeInTheDocument();
     });
   });
+
+  it('disables new section button if course outline fetch fails', () => {
+    const { getByRole } = renderComponent({
+      errors: { outlineIndexApi: { data: 'some error', type: 'serverError' } },
+    });
+
+    expect(getByRole('button', { name: messages.newSectionButton.defaultMessage })).toBeInTheDocument();
+    expect(getByRole('button', { name: messages.newSectionButton.defaultMessage })).toBeDisabled();
+  });
 });

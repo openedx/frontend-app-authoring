@@ -49,6 +49,11 @@ const messages = defineMessages({
     id: 'course-authoring.taxonomy-list.alert.dismiss',
     defaultMessage: 'Dismiss',
   },
+  importInProgressAlertDescription: {
+    id: 'course-authoring.import-tags.prompt.in-progress',
+    defaultMessage: 'Please keep this window open. We\'ll let you know when it\'s done.',
+    description: 'Alert message when the taxonomy import is in progress.',
+  },
 });
 
 export default messages;

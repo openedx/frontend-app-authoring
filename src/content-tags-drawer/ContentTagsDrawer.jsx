@@ -1,5 +1,5 @@
 // @ts-check
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   Container,
@@ -14,7 +14,7 @@ import messages from './messages';
 import ContentTagsCollapsible from './ContentTagsCollapsible';
 import Loading from '../generic/Loading';
 import useContentTagsDrawerContext from './ContentTagsDrawerHelper';
-import { ContentTagsDrawerContext } from './common/context';
+import { ContentTagsDrawerContext, ContentTagsDrawerSheetContext } from './common/context';
 
 /**
  * Drawer with the functionality to show and manage tags in a certain content.
@@ -32,6 +32,7 @@ const ContentTagsDrawer = ({ id, onClose }) => {
   const contentId = id ?? params.contentId;
 
   const context = useContentTagsDrawerContext(contentId);
+  const { blockingSheet } = useContext(ContentTagsDrawerSheetContext);
 
   const {
     showToastAfterSave,
@@ -65,7 +66,7 @@ const ContentTagsDrawer = ({ id, onClose }) => {
     const handleEsc = (event) => {
       /* Close drawer when ESC-key is pressed and selectable dropdown box not open */
       const selectableBoxOpen = document.querySelector('[data-selectable-box="taxonomy-tags"]');
-      if (event.key === 'Escape' && !selectableBoxOpen) {
+      if (event.key === 'Escape' && !selectableBoxOpen && !blockingSheet) {
         onCloseDrawer();
       }
     };
@@ -74,7 +75,7 @@ const ContentTagsDrawer = ({ id, onClose }) => {
     return () => {
       document.removeEventListener('keydown', handleEsc);
     };
-  }, []);
+  }, [blockingSheet]);
 
   useEffect(() => {
     /* istanbul ignore next */

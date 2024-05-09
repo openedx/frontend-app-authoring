@@ -8,8 +8,11 @@ import {
   Campaign as CampaignIcon,
   InfoOutline as InfoOutlineIcon,
   Warning as WarningIcon,
+  Error as ErrorIcon,
 } from '@openedx/paragon/icons';
-import { Alert, Button, Hyperlink } from '@openedx/paragon';
+import {
+  Alert, Button, Hyperlink, Truncate,
+} from '@openedx/paragon';
 import { Link } from 'react-router-dom';
 
 import { RequestStatus } from '../../data/constants';
@@ -18,7 +21,8 @@ import AlertProctoringError from '../../generic/AlertProctoringError';
 import messages from './messages';
 import advancedSettingsMessages from '../../advanced-settings/messages';
 import { getPasteFileNotices } from '../data/selectors';
-import { removePasteFileNotices } from '../data/slice';
+import { dismissError, removePasteFileNotices } from '../data/slice';
+import { API_ERROR_TYPES } from '../constants';
 
 const PageAlerts = ({
   courseId,
@@ -32,6 +36,7 @@ const PageAlerts = ({
   mfeProctoredExamSettingsUrl,
   advanceSettingsUrl,
   savingStatus,
+  errors,
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -330,6 +335,67 @@ const PageAlerts = ({
     return null;
   };
 
+  const renderApiErrors = () => {
+    const errorList = Object.entries(errors).filter(obj => obj[1] !== null).map(([k, v]) => {
+      switch (v.type) {
+      case API_ERROR_TYPES.serverError:
+        return {
+          key: k,
+          desc: v.data,
+          title: intl.formatMessage(messages.serverErrorAlert, {
+            status: v.status,
+          }),
+          dismissible: v.dismissible,
+        };
+      case API_ERROR_TYPES.networkError:
+        return {
+          key: k,
+          title: intl.formatMessage(messages.networkErrorAlert),
+          dismissible: v.dismissible,
+        };
+      default:
+        return {
+          key: k,
+          desc: v.data,
+          dismissible: v.dismissible,
+        };
+      }
+    });
+    if (!errorList?.length) {
+      return null;
+    }
+    return (
+      errorList.map((msgObj) => (
+        msgObj.dismissible ? (
+          <ErrorAlert
+            isError
+            hideHeading
+            key={msgObj.key}
+            dismissError={() => dispatch(dismissError(msgObj.key))}
+          >
+            {msgObj.title
+              && (
+                <Alert.Heading>{msgObj.title}</Alert.Heading>
+              )}
+            {msgObj.desc && <Truncate lines={2}>{msgObj.desc}</Truncate>}
+          </ErrorAlert>
+        ) : (
+          <Alert
+            variant="danger"
+            icon={ErrorIcon}
+            key={msgObj.key}
+          >
+            {msgObj.title
+                && (
+                  <Alert.Heading>{msgObj.title}</Alert.Heading>
+                )}
+            {msgObj.desc && <Truncate lines={2}>{msgObj.desc}</Truncate>}
+          </Alert>
+        )
+      ))
+    );
+  };
+
   return (
     <>
       {configurationErrors()}
@@ -339,6 +405,7 @@ const PageAlerts = ({
       <ErrorAlert hideHeading isError={savingStatus === RequestStatus.FAILED}>
         {intl.formatMessage(messages.alertFailedGeneric, { actionName: 'save', type: 'changes' })}
       </ErrorAlert>
+      {renderApiErrors()}
       {errorFilesPasteAlert()}
       {conflictingFilesPasteAlert()}
       {newFilesPasteAlert()}
@@ -357,6 +424,7 @@ PageAlerts.defaultProps = {
   mfeProctoredExamSettingsUrl: '',
   advanceSettingsUrl: '',
   savingStatus: '',
+  errors: {},
 };
 
 PageAlerts.propTypes = {
@@ -387,6 +455,24 @@ PageAlerts.propTypes = {
   mfeProctoredExamSettingsUrl: PropTypes.string,
   advanceSettingsUrl: PropTypes.string,
   savingStatus: PropTypes.string,
+  errors: PropTypes.shape({
+    outlineIndexApi: PropTypes.shape({
+      data: PropTypes.string,
+      type: PropTypes.string.isRequired,
+    }),
+    reindexApi: PropTypes.shape({
+      data: PropTypes.string,
+      type: PropTypes.string.isRequired,
+    }),
+    sectionLoadingApi: PropTypes.shape({
+      data: PropTypes.string,
+      type: PropTypes.string.isRequired,
+    }),
+    courseLaunchApi: PropTypes.shape({
+      data: PropTypes.string,
+      type: PropTypes.string.isRequired,
+    }),
+  }),
 };
 
 export default PageAlerts;

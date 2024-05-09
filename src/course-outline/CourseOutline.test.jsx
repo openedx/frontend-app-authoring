@@ -140,6 +140,17 @@ describe('<CourseOutline />', () => {
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(200, courseOutlineIndexMock);
+    axiosMock
+      .onGet(getCourseBestPracticesApiUrl({
+        courseId, excludeGraded: true, all: true,
+      }))
+      .reply(200, courseBestPracticesMock);
+
+    axiosMock
+      .onGet(getCourseLaunchApiUrl({
+        courseId, gradedOnly: true, validateOras: true, all: true,
+      }))
+      .reply(200, courseLaunchMock);
     await executeThunk(fetchCourseOutlineIndexQuery(courseId), store.dispatch);
   });
 
@@ -150,6 +161,29 @@ describe('<CourseOutline />', () => {
       expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
       expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
     });
+  });
+
+  it('handles course outline fetch api errors', async () => {
+    axiosMock
+      .onGet(getCourseOutlineIndexApiUrl(courseId))
+      .reply(500, 'some internal error');
+
+    const { findByText, queryByRole } = render(<RootWrapper />);
+    expect(await findByText('"some internal error"')).toBeInTheDocument();
+    // check errors in store
+    expect(store.getState().courseOutline.errors).toEqual({
+      courseLaunchApi: null,
+      outlineIndexApi: {
+        data: '"some internal error"',
+        dismissible: false,
+        status: 500,
+        type: 'serverError',
+      },
+      reindexApi: null,
+      sectionLoadingApi: null,
+    });
+
+    expect(queryByRole('button', { name: 'Dismiss' })).not.toBeInTheDocument();
   });
 
   it('check reindex and render success alert is correctly', async () => {
@@ -224,7 +258,7 @@ describe('<CourseOutline />', () => {
     const reindexButton = await findByTestId('course-reindex');
     await act(async () => fireEvent.click(reindexButton));
 
-    expect(await findByText(messages.alertErrorTitle.defaultMessage)).toBeInTheDocument();
+    expect(await findByText('Request failed with status code 500')).toBeInTheDocument();
   });
 
   it('check that new section list is saved when dragged', async () => {
@@ -359,18 +393,6 @@ describe('<CourseOutline />', () => {
   it('render checklist value correctly', async () => {
     const { getByText } = render(<RootWrapper />);
 
-    axiosMock
-      .onGet(getCourseBestPracticesApiUrl({
-        courseId, excludeGraded: true, all: true,
-      }))
-      .reply(200, courseBestPracticesMock);
-
-    axiosMock
-      .onGet(getCourseLaunchApiUrl({
-        courseId, gradedOnly: true, validateOras: true, all: true,
-      }))
-      .reply(200, courseLaunchMock);
-
     await executeThunk(fetchCourseLaunchQuery({
       courseId, gradedOnly: true, validateOras: true, all: true,
     }), store.dispatch);
@@ -379,6 +401,41 @@ describe('<CourseOutline />', () => {
     }), store.dispatch);
 
     expect(getByText('4/9 completed')).toBeInTheDocument();
+  });
+
+  it('render alerts if checklist api fails', async () => {
+    axiosMock
+      .onGet(getCourseLaunchApiUrl({
+        courseId, gradedOnly: true, validateOras: true, all: true,
+      }))
+      .reply(500);
+    const { findByText, findByRole } = render(<RootWrapper />);
+
+    await executeThunk(fetchCourseLaunchQuery({
+      courseId, gradedOnly: true, validateOras: true, all: true,
+    }), store.dispatch);
+
+    expect(await findByText('Request failed with status code 500')).toBeInTheDocument();
+    // check errors in store
+    expect(store.getState().courseOutline.errors).toEqual({
+      courseLaunchApi: {
+        data: 'Request failed with status code 500',
+        type: 'unknown',
+        dismissible: true,
+      },
+      outlineIndexApi: null,
+      reindexApi: null,
+      sectionLoadingApi: null,
+    });
+
+    const dismissBtn = await findByRole('button', { name: 'Dismiss' });
+    fireEvent.click(dismissBtn);
+    expect(store.getState().courseOutline.errors).toEqual({
+      courseLaunchApi: null,
+      outlineIndexApi: null,
+      reindexApi: null,
+      sectionLoadingApi: null,
+    });
   });
 
   it('check highlights are enabled after enable highlights query is successful', async () => {
@@ -2093,6 +2150,9 @@ describe('<CourseOutline />', () => {
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
     const [sectionElement] = await findAllByTestId('section-card');
     const [subsection] = section.childInfo.children;
+    axiosMock
+      .onGet(getXBlockApiUrl(section.id))
+      .reply(200, courseSectionMock);
     let [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
     const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
     await act(async () => fireEvent.click(expandBtn));

@@ -1,7 +1,7 @@
 import { RequestStatus } from '../../data/constants';
 import { updateClipboardData } from '../../generic/data/slice';
 import { NOTIFICATION_MESSAGES } from '../../constants';
-import { COURSE_BLOCK_NAMES } from '../constants';
+import { API_ERROR_TYPES, COURSE_BLOCK_NAMES } from '../constants';
 import {
   hideProcessingNotification,
   showProcessingNotification,
@@ -51,7 +51,23 @@ import {
   duplicateSection,
   reorderSectionList,
   setPasteFileNotices,
+  updateCourseLaunchQueryStatus,
 } from './slice';
+
+const getErrorDetails = (error, dismissible = true) => {
+  const errorInfo = { dismissible };
+  if (error.response?.data) {
+    errorInfo.data = JSON.stringify(error.response.data);
+    errorInfo.status = error.response.status;
+    errorInfo.type = API_ERROR_TYPES.serverError;
+  } else if (error.request) {
+    errorInfo.type = API_ERROR_TYPES.networkError;
+  } else {
+    errorInfo.type = API_ERROR_TYPES.unknown;
+    errorInfo.data = error.message;
+  }
+  return errorInfo;
+};
 
 export function fetchCourseOutlineIndexQuery(courseId) {
   return async (dispatch) => {
@@ -80,7 +96,10 @@ export function fetchCourseOutlineIndexQuery(courseId) {
 
       dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.FAILED }));
+      dispatch(updateOutlineIndexLoadingStatus({
+        status: RequestStatus.FAILED,
+        errors: getErrorDetails(error, false),
+      }));
     }
   };
 }
@@ -92,6 +111,7 @@ export function fetchCourseLaunchQuery({
   all = true,
 }) {
   return async (dispatch) => {
+    dispatch(updateCourseLaunchQueryStatus({ status: RequestStatus.IN_PROGRESS }));
     try {
       const data = await getCourseLaunch({
         courseId, gradedOnly, validateOras, all,
@@ -99,9 +119,12 @@ export function fetchCourseLaunchQuery({
       dispatch(fetchStatusBarSelPacedSuccess({ isSelfPaced: data.isSelfPaced }));
       dispatch(fetchStatusBarChecklistSuccess(getCourseLaunchChecklist(data)));
 
-      return true;
+      dispatch(updateCourseLaunchQueryStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      return false;
+      dispatch(updateCourseLaunchQueryStatus({
+        status: RequestStatus.FAILED,
+        errors: getErrorDetails(error),
+      }));
     }
   };
 }
@@ -166,7 +189,10 @@ export function fetchCourseReindexQuery(courseId, reindexLink) {
       await restartIndexingOnCourse(reindexLink);
       dispatch(updateReindexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      dispatch(updateReindexLoadingStatus({ status: RequestStatus.FAILED }));
+      dispatch(updateReindexLoadingStatus({
+        status: RequestStatus.FAILED,
+        errors: getErrorDetails(error),
+      }));
     }
   };
 }
@@ -185,7 +211,10 @@ export function fetchCourseSectionQuery(sectionIds, shouldScroll = false) {
       dispatch(updateSectionList(sections));
       dispatch(updateFetchSectionLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      dispatch(updateFetchSectionLoadingStatus({ status: RequestStatus.FAILED }));
+      dispatch(updateFetchSectionLoadingStatus({
+        status: RequestStatus.FAILED,
+        errors: getErrorDetails(error),
+      }));
     }
   };
 }

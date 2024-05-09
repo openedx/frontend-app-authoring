@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 import { FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform/config';
 import {
-  Button, Hyperlink, Form, Sheet, Stack, useToggle,
+  Button, Hyperlink, Form, Stack, useToggle,
 } from '@openedx/paragon';
 import { AppContext } from '@edx/frontend-platform/react';
 
-import { ContentTagsDrawer } from '../../content-tags-drawer';
+import { ContentTagsDrawerSheet } from '../../content-tags-drawer';
 import TagCount from '../../generic/tag-count';
 import { useHelpUrls } from '../../help-urls/hooks';
 import { VIDEO_SHARING_OPTIONS } from '../constants';
@@ -188,16 +188,11 @@ const StatusBar = ({
 
         )}
       </Stack>
-      <Sheet
-        position="right"
-        show={isManageTagsDrawerOpen}
+      <ContentTagsDrawerSheet
+        id={courseId}
         onClose={/* istanbul ignore next */ () => closeManageTagsDrawer()}
-      >
-        <ContentTagsDrawer
-          id={courseId}
-          onClose={/* istanbul ignore next */ () => closeManageTagsDrawer()}
-        />
-      </Sheet>
+        showSheet={isManageTagsDrawerOpen}
+      />
     </>
   );
 };

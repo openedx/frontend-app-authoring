@@ -4,6 +4,7 @@ import {
   hideProcessingNotification,
   showProcessingNotification,
 } from '../../generic/processing-notification/data/slice';
+import { handleResponseErrors } from '../../generic/saving-error-alert';
 import {
   getGroupConfigurations,
   createContentGroup,
@@ -48,8 +49,7 @@ export function createContentGroupQuery(courseId, group) {
       dispatch(updateSavingStatuses({ status: RequestStatus.SUCCESSFUL }));
       return true;
     } catch (error) {
-      dispatch(updateSavingStatuses({ status: RequestStatus.FAILED }));
-      return false;
+      return handleResponseErrors(error, dispatch, updateSavingStatuses);
     } finally {
       dispatch(hideProcessingNotification());
     }
@@ -67,8 +67,7 @@ export function editContentGroupQuery(courseId, group) {
       dispatch(updateSavingStatuses({ status: RequestStatus.SUCCESSFUL }));
       return true;
     } catch (error) {
-      dispatch(updateSavingStatuses({ status: RequestStatus.FAILED }));
-      return false;
+      return handleResponseErrors(error, dispatch, updateSavingStatuses);
     } finally {
       dispatch(hideProcessingNotification());
     }
@@ -85,7 +84,7 @@ export function deleteContentGroupQuery(courseId, parentGroupId, groupId) {
       dispatch(deleteGroupConfigurationsSuccess({ parentGroupId, groupId }));
       dispatch(updateSavingStatuses({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      dispatch(updateSavingStatuses({ status: RequestStatus.FAILED }));
+      handleResponseErrors(error, dispatch, updateSavingStatuses);
     } finally {
       dispatch(hideProcessingNotification());
     }
@@ -98,32 +97,39 @@ export function createExperimentConfigurationQuery(courseId, newConfiguration) {
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
 
     try {
-      const configuration = await createExperimentConfiguration(courseId, newConfiguration);
+      const configuration = await createExperimentConfiguration(
+        courseId,
+        newConfiguration,
+      );
       dispatch(updateExperimentConfigurationSuccess({ configuration }));
       dispatch(updateSavingStatuses({ status: RequestStatus.SUCCESSFUL }));
       return true;
     } catch (error) {
-      dispatch(updateSavingStatuses({ status: RequestStatus.FAILED }));
-      return false;
+      return handleResponseErrors(error, dispatch, updateSavingStatuses);
     } finally {
       dispatch(hideProcessingNotification());
     }
   };
 }
 
-export function editExperimentConfigurationQuery(courseId, editedConfiguration) {
+export function editExperimentConfigurationQuery(
+  courseId,
+  editedConfiguration,
+) {
   return async (dispatch) => {
     dispatch(updateSavingStatuses({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
 
     try {
-      const configuration = await editExperimentConfiguration(courseId, editedConfiguration);
+      const configuration = await editExperimentConfiguration(
+        courseId,
+        editedConfiguration,
+      );
       dispatch(updateExperimentConfigurationSuccess({ configuration }));
       dispatch(updateSavingStatuses({ status: RequestStatus.SUCCESSFUL }));
       return true;
     } catch (error) {
-      dispatch(updateSavingStatuses({ status: RequestStatus.FAILED }));
-      return false;
+      return handleResponseErrors(error, dispatch, updateSavingStatuses);
     } finally {
       dispatch(hideProcessingNotification());
     }
@@ -140,7 +146,7 @@ export function deleteExperimentConfigurationQuery(courseId, configurationId) {
       dispatch(deleteExperimentConfigurationSuccess({ configurationId }));
       dispatch(updateSavingStatuses({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      dispatch(updateSavingStatuses({ status: RequestStatus.FAILED }));
+      handleResponseErrors(error, dispatch, updateSavingStatuses);
     } finally {
       dispatch(hideProcessingNotification());
     }

@@ -10,6 +10,7 @@ import {
   getTextbooksData,
   getLoadingStatus,
   getSavingStatus,
+  getErrorMessage,
 } from './data/selectors';
 import {
   createTextbookQuery,
@@ -27,6 +28,7 @@ const useTextbooks = (courseId) => {
   const textbooks = useSelector(getTextbooksData);
   const loadingStatus = useSelector(getLoadingStatus);
   const savingStatus = useSelector(getSavingStatus);
+  const errorMessage = useSelector(getErrorMessage);
 
   const [isTextbookFormOpen, openTextbookForm, closeTextbookForm] = useToggle(false);
 
@@ -75,8 +77,8 @@ const useTextbooks = (courseId) => {
 
   return {
     isLoading: loadingStatus === RequestStatus.IN_PROGRESS,
-    isInternetConnectionAlertFailed: savingStatus === RequestStatus.FAILED,
-    isQueryPending: savingStatus === RequestStatus.PENDING,
+    savingStatus,
+    errorMessage,
     textbooks,
     breadcrumbs,
     isTextbookFormOpen,

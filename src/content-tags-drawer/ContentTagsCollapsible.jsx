@@ -240,12 +240,14 @@ const ContentTagsCollapsible = ({
   const selectCancelRef = React.useRef(/** @type {HTMLSelectElement | null} */(null));
   const selectAddRef = React.useRef(/** @type {HTMLSelectElement | null} */(null));
   const selectInlineAddRef = React.useRef(/** @type {HTMLSelectElement | null} */(null));
+  const selectInlineEditModeRef = React.useRef(/** @type {HTMLSelectElement | null} */(null));
   const selectRef = React.useRef(/** @type {HTMLSelectElement | null} */(null));
 
   const [selectMenuIsOpen, setSelectMenuIsOpen] = React.useState(false);
 
   const {
     isEditMode,
+    toEditMode,
     setStagedTags,
     openCollapsible,
     closeCollapsible,
@@ -386,6 +388,23 @@ const ContentTagsCollapsible = ({
         </Collapsible.Trigger>
 
         <Collapsible.Body className="collapsible-body">
+          { Object.keys(appliedContentTagsTree).length === 0 && !isEditMode
+            && (
+              <div className="mb-3" key={taxonomyId}>
+                <p className="text-gray-500">{intl.formatMessage(messages.collapsibleNoTagsAddedText)}
+                  <Button
+                    tabIndex="0"
+                    size="inline"
+                    ref={selectInlineEditModeRef}
+                    variant="link"
+                    className="text-info-500 add-tags-button"
+                    onClick={toEditMode}
+                  >
+                    { intl.formatMessage(messages.collapsibleAddStagedTagsButtonText) }
+                  </Button>
+                </p>
+              </div>
+            )}
           { Object.keys(appliedContentTagsTree).length !== 0
             && (
               <div className="mb-3" key={taxonomyId}>

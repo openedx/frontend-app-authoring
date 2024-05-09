@@ -78,7 +78,7 @@ describe('createTextbookQuery', () => {
     expect(dispatch).toHaveBeenCalledWith(updateSavingStatus({ status: RequestStatus.IN_PROGRESS }));
     expect(dispatch).toHaveBeenCalledWith(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
     expect(createTextbook).toHaveBeenCalledWith('courseId', {});
-    expect(dispatch).toHaveBeenCalledWith(updateSavingStatus({ status: RequestStatus.FAILED }));
+    expect(dispatch).toHaveBeenCalledWith(updateSavingStatus({ status: RequestStatus.FAILED, errorMessage: '' }));
     expect(dispatch).toHaveBeenCalledWith(hideProcessingNotification());
   });
 });
@@ -106,7 +106,7 @@ describe('editTextbookQuery', () => {
     expect(dispatch).toHaveBeenCalledWith(updateSavingStatus({ status: RequestStatus.IN_PROGRESS }));
     expect(dispatch).toHaveBeenCalledWith(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
     expect(editTextbook).toHaveBeenCalledWith('courseId', {});
-    expect(dispatch).toHaveBeenCalledWith(updateSavingStatus({ status: RequestStatus.FAILED }));
+    expect(dispatch).toHaveBeenCalledWith(updateSavingStatus({ status: RequestStatus.FAILED, errorMessage: '' }));
     expect(dispatch).toHaveBeenCalledWith(hideProcessingNotification());
   });
 });
@@ -133,7 +133,7 @@ describe('deleteTextbookQuery', () => {
     expect(dispatch).toHaveBeenCalledWith(updateSavingStatus({ status: RequestStatus.IN_PROGRESS }));
     expect(dispatch).toHaveBeenCalledWith(showProcessingNotification(NOTIFICATION_MESSAGES.deleting));
     expect(deleteTextbook).toHaveBeenCalledWith('courseId', 'textbookId');
-    expect(dispatch).toHaveBeenCalledWith(updateSavingStatus({ status: RequestStatus.FAILED }));
+    expect(dispatch).toHaveBeenCalledWith(updateSavingStatus({ status: RequestStatus.FAILED, errorMessage: '' }));
     expect(dispatch).toHaveBeenCalledWith(hideProcessingNotification());
   });
 });

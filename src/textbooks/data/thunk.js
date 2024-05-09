@@ -2,6 +2,7 @@ import {
   hideProcessingNotification,
   showProcessingNotification,
 } from '../../generic/processing-notification/data/slice';
+import { handleResponseErrors } from '../../generic/saving-error-alert';
 import { RequestStatus } from '../../data/constants';
 import { NOTIFICATION_MESSAGES } from '../../constants';
 import {
@@ -43,7 +44,7 @@ export function createTextbookQuery(courseId, textbook) {
       dispatch(createTextbookSuccess(data));
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+      handleResponseErrors(error, dispatch, updateSavingStatus);
     } finally {
       dispatch(hideProcessingNotification());
     }
@@ -60,7 +61,7 @@ export function editTextbookQuery(courseId, textbook) {
       dispatch(editTextbookSuccess(data));
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+      handleResponseErrors(error, dispatch, updateSavingStatus);
     } finally {
       dispatch(hideProcessingNotification());
     }
@@ -77,7 +78,7 @@ export function deleteTextbookQuery(courseId, textbookId) {
       dispatch(deleteTextbookSuccess(textbookId));
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+      handleResponseErrors(error, dispatch, updateSavingStatus);
     } finally {
       dispatch(hideProcessingNotification());
     }

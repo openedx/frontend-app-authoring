@@ -24,6 +24,7 @@ import {
   getCurrentSection,
   getCurrentSubsection,
   getCustomRelativeDatesActiveFlag,
+  getErrors,
 } from './data/selectors';
 import {
   addNewSectionQuery,
@@ -81,12 +82,12 @@ const useCourseOutline = ({ courseId }) => {
   const currentSubsection = useSelector(getCurrentSubsection);
   const isCustomRelativeDatesActive = useSelector(getCustomRelativeDatesActiveFlag);
   const genericSavingStatus = useSelector(getGenericSavingStatus);
+  const errors = useSelector(getErrors);
 
   const [isEnableHighlightsModalOpen, openEnableHighlightsModal, closeEnableHighlightsModal] = useToggle(false);
   const [isSectionsExpanded, setSectionsExpanded] = useState(true);
   const [isDisabledReindexButton, setDisableReindexButton] = useState(false);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
-  const [showErrorAlert, setShowErrorAlert] = useState(false);
   const [isHighlightsModalOpen, openHighlightsModal, closeHighlightsModal] = useToggle(false);
   const [isPublishModalOpen, openPublishModal, closePublishModal] = useToggle(false);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
@@ -135,7 +136,6 @@ const useCourseOutline = ({ courseId }) => {
     handleReIndex: () => {
       setDisableReindexButton(true);
       setShowSuccessAlert(false);
-      setShowErrorAlert(false);
 
       dispatch(fetchCourseReindexQuery(courseId, reindexLink)).then(() => {
         setDisableReindexButton(false);
@@ -291,13 +291,7 @@ const useCourseOutline = ({ courseId }) => {
   }, [courseId]);
 
   useEffect(() => {
-    if (reIndexLoadingStatus === RequestStatus.FAILED) {
-      setShowErrorAlert(true);
-    }
-
-    if (reIndexLoadingStatus === RequestStatus.SUCCESSFUL) {
-      setShowSuccessAlert(true);
-    }
+    setShowSuccessAlert(reIndexLoadingStatus === RequestStatus.SUCCESSFUL);
   }, [reIndexLoadingStatus]);
 
   return {
@@ -308,7 +302,6 @@ const useCourseOutline = ({ courseId }) => {
     isLoading: outlineIndexLoadingStatus === RequestStatus.IN_PROGRESS,
     isReIndexShow: Boolean(reindexLink),
     showSuccessAlert,
-    showErrorAlert,
     isDisabledReindexButton,
     isSectionsExpanded,
     isPublishModalOpen,
@@ -361,6 +354,7 @@ const useCourseOutline = ({ courseId }) => {
     handleSectionDragAndDrop,
     handleSubsectionDragAndDrop,
     handleUnitDragAndDrop,
+    errors,
   };
 };
 

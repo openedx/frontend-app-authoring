@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Tab, Tabs } from '@openedx/paragon';
+import { getConfig } from '@edx/frontend-platform';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { useNavigate } from 'react-router-dom';
 
@@ -33,7 +34,7 @@ const TabsSection = ({
     libraryAuthoringMfeUrl,
     redirectToLibraryAuthoringMfe,
     courses, librariesEnabled, libraries, archivedCourses,
-    numPages, coursesCount, taxonomiesEnabled,
+    numPages, coursesCount,
   } = useSelector(getStudioHomeData);
   const {
     courseLoadingStatus,
@@ -103,7 +104,7 @@ const TabsSection = ({
       );
     }
 
-    if (taxonomiesEnabled) {
+    if (getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true') {
       tabs.push(
         <Tab
           key={TABS_LIST.taxonomies}

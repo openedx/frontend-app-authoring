@@ -17,6 +17,7 @@ const HeaderNavigations = ({
   isDisabledReindexButton,
   hasSections,
   courseActions,
+  errors,
 }) => {
   const intl = useIntl();
   const {
@@ -37,6 +38,7 @@ const HeaderNavigations = ({
           <Button
             iconBefore={IconAdd}
             onClick={handleNewSection}
+            disabled={errors?.outlineIndexApi}
           >
             {intl.formatMessage(messages.newSectionButton)}
           </Button>
@@ -92,6 +94,10 @@ const HeaderNavigations = ({
   );
 };
 
+HeaderNavigations.defaultProps = {
+  errors: {},
+};
+
 HeaderNavigations.propTypes = {
   isReIndexShow: PropTypes.bool.isRequired,
   isSectionsExpanded: PropTypes.bool.isRequired,
@@ -109,6 +115,24 @@ HeaderNavigations.propTypes = {
     childAddable: PropTypes.bool.isRequired,
     duplicable: PropTypes.bool.isRequired,
   }).isRequired,
+  errors: PropTypes.shape({
+    outlineIndexApi: PropTypes.shape({
+      data: PropTypes.string,
+      type: PropTypes.string.isRequired,
+    }),
+    reindexApi: PropTypes.shape({
+      data: PropTypes.string,
+      type: PropTypes.string.isRequired,
+    }),
+    sectionLoadingApi: PropTypes.shape({
+      data: PropTypes.string,
+      type: PropTypes.string.isRequired,
+    }),
+    courseLaunchApi: PropTypes.shape({
+      data: PropTypes.string,
+      type: PropTypes.string.isRequired,
+    }),
+  }),
 };
 
 export default HeaderNavigations;

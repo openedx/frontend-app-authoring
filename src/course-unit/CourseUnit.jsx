@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { Container, Layout, Stack } from '@openedx/paragon';
+import { getConfig } from '@edx/frontend-platform';
 import { useIntl, injectIntl } from '@edx/frontend-platform/i18n';
-import { DraggableList, ErrorAlert } from '@edx/frontend-lib-content-components';
 import { Warning as WarningIcon } from '@openedx/paragon/icons';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { DraggableList } from '@edx/frontend-lib-content-components';
 
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
 import SubHeader from '../generic/sub-header/SubHeader';
@@ -15,7 +16,7 @@ import getPageHeadTitle from '../generic/utils';
 import AlertMessage from '../generic/alert-message';
 import { PasteComponent } from '../generic/clipboard';
 import ProcessingNotification from '../generic/processing-notification';
-import InternetConnectionAlert from '../generic/internet-connection-alert';
+import { SavingErrorAlert } from '../generic/saving-error-alert';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 import Loading from '../generic/Loading';
 import AddComponent from './add-component/AddComponent';
@@ -39,14 +40,12 @@ const CourseUnit = ({ courseId }) => {
     isLoading,
     sequenceId,
     unitTitle,
-    isQueryPending,
+    errorMessage,
     sequenceStatus,
     savingStatus,
     isTitleEditFormOpen,
-    isErrorAlert,
     staticFileNotices,
     currentlyVisibleToStudents,
-    isInternetConnectionAlertFailed,
     unitXBlockActions,
     sharedClipboardData,
     showPasteXBlock,
@@ -54,7 +53,6 @@ const CourseUnit = ({ courseId }) => {
     handleTitleEditSubmit,
     headerNavigationsActions,
     handleTitleEdit,
-    handleInternetConnectionFailed,
     handleCreateNewCourseXBlock,
     handleConfigureSubmit,
     courseVerticalChildren,
@@ -100,9 +98,6 @@ const CourseUnit = ({ courseId }) => {
     <>
       <Container size="xl" className="course-unit px-4">
         <section className="course-unit-container mb-4 mt-5">
-          <ErrorAlert hideHeading isError={savingStatus === RequestStatus.FAILED && isErrorAlert}>
-            {intl.formatMessage(messages.alertFailedGeneric, { actionName: 'save', type: 'changes' })}
-          </ErrorAlert>
           <SubHeader
             hideBorder
             title={(
@@ -200,9 +195,12 @@ const CourseUnit = ({ courseId }) => {
                 <Sidebar data-testid="course-unit-sidebar">
                   <PublishControls blockId={blockId} />
                 </Sidebar>
-                <Sidebar className="tags-sidebar">
-                  <TagsSidebarControls />
-                </Sidebar>
+                {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true'
+                && (
+                  <Sidebar className="tags-sidebar">
+                    <TagsSidebarControls />
+                  </Sidebar>
+                )}
                 <Sidebar data-testid="course-unit-location-sidebar">
                   <LocationInfo />
                 </Sidebar>
@@ -216,13 +214,10 @@ const CourseUnit = ({ courseId }) => {
           isShow={isShowProcessingNotification}
           title={processingNotificationTitle}
         />
-        {isQueryPending && (
-          <InternetConnectionAlert
-            isFailed={isInternetConnectionAlertFailed}
-            isQueryPending={savingStatus === RequestStatus.PENDING}
-            onInternetConnectionFailed={handleInternetConnectionFailed}
-          />
-        )}
+        <SavingErrorAlert
+          savingStatus={savingStatus}
+          errorMessage={errorMessage}
+        />
       </div>
     </>
   );

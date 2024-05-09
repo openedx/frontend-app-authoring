@@ -7,6 +7,7 @@ import {
   getGroupConfigurationsData,
   getLoadingStatus,
   getSavingStatus,
+  getErrorMessage,
 } from './data/selectors';
 import { updateSavingStatuses } from './data/slice';
 import {
@@ -24,6 +25,7 @@ const useGroupConfigurations = (courseId) => {
   const groupConfigurations = useSelector(getGroupConfigurationsData);
   const loadingStatus = useSelector(getLoadingStatus);
   const savingStatus = useSelector(getSavingStatus);
+  const errorMessage = useSelector(getErrorMessage);
   const {
     isShow: isShowProcessingNotification,
     title: processingNotificationTitle,
@@ -86,6 +88,7 @@ const useGroupConfigurations = (courseId) => {
     savingStatus,
     contentGroupActions,
     experimentConfigurationActions,
+    errorMessage,
     groupConfigurations,
     isShowProcessingNotification,
     processingNotificationTitle,

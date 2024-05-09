@@ -11,6 +11,13 @@ const slice = createSlice({
       outlineIndexLoadingStatus: RequestStatus.IN_PROGRESS,
       reIndexLoadingStatus: RequestStatus.IN_PROGRESS,
       fetchSectionLoadingStatus: RequestStatus.IN_PROGRESS,
+      courseLaunchQueryStatus: RequestStatus.IN_PROGRESS,
+    },
+    errors: {
+      outlineIndexApi: null,
+      reindexApi: null,
+      sectionLoadingApi: null,
+      courseLaunchApi: null,
     },
     outlineIndexData: {},
     savingStatus: '',
@@ -53,18 +60,31 @@ const slice = createSlice({
         ...state.loadingStatus,
         outlineIndexLoadingStatus: payload.status,
       };
+      state.errors.outlineIndexApi = payload.errors || null;
     },
     updateReindexLoadingStatus: (state, { payload }) => {
       state.loadingStatus = {
         ...state.loadingStatus,
         reIndexLoadingStatus: payload.status,
       };
+      state.errors.reindexApi = payload.errors || null;
     },
     updateFetchSectionLoadingStatus: (state, { payload }) => {
       state.loadingStatus = {
         ...state.loadingStatus,
         fetchSectionLoadingStatus: payload.status,
       };
+      state.errors.sectionLoadingApi = payload.errors || null;
+    },
+    updateCourseLaunchQueryStatus: (state, { payload }) => {
+      state.loadingStatus = {
+        ...state.loadingStatus,
+        courseLaunchQueryStatus: payload.status,
+      };
+      state.errors.courseLaunchApi = payload.errors || null;
+    },
+    dismissError: (state, { payload }) => {
+      state.errors[payload] = null;
     },
     updateStatusBar: (state, { payload }) => {
       state.statusBarData = {
@@ -188,6 +208,7 @@ export const {
   fetchStatusBarChecklistSuccess,
   fetchStatusBarSelPacedSuccess,
   updateFetchSectionLoadingStatus,
+  updateCourseLaunchQueryStatus,
   updateSavingStatus,
   updateSectionList,
   setCurrentItem,
@@ -202,6 +223,7 @@ export const {
   reorderUnitList,
   setPasteFileNotices,
   removePasteFileNotices,
+  dismissError,
 } = slice.actions;
 
 export const {

@@ -47,6 +47,14 @@
     }
   }
 
+  // Options for the "filter by block type" menu
+  .pgn__menu.block-type-refinement-menu {
+    .pgn__menu-item {
+      // Make the "filter by block type" menu expand to fit longer block types names
+      width: 100%;
+    }
+  }
+
   .pgn__menu-item {
     // Fix a bug in Paragon menu dropdowns: the checkbox currently shrinks if the text is too long.
     // https://github.com/openedx/paragon/pull/3019
