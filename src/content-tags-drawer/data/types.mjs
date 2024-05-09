@@ -14,6 +14,7 @@
  * @property {number} taxonomyId
  * @property {boolean} canTagObject
  * @property {Tag[]} tags
+ * @property {string} exportId
  */
 
 /**

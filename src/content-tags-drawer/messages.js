@@ -114,6 +114,16 @@ const messages = defineMessages({
     defaultMessage: 'Delete',
     description: 'Alt label for Delete tag button.',
   },
+  otherTagsHeader: {
+    id: 'course-authoring.content-tags-drawer.other-tags.header',
+    defaultMessage: 'Other tags',
+    description: 'Header of "Other tags" subsection in tags drawer',
+  },
+  otherTagsDescription: {
+    id: 'course-authoring.content-tags-drawer.other-tags.description',
+    defaultMessage: 'These tags are already applied, but you can\'t add new ones as you don\'t have access to their taxonomies.',
+    description: 'Description of "Other tags" subsection in tags drawer',
+  },
 });
 
 export default messages;

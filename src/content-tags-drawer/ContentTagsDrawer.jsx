@@ -51,6 +51,7 @@ const ContentTagsDrawer = ({ id, onClose }) => {
     toastMessage,
     closeToast,
     setCollapsibleToInitalState,
+    otherTaxonomies,
   } = context;
 
   let onCloseDrawer = onClose;
@@ -122,6 +123,29 @@ const ContentTagsDrawer = ({ id, onClose }) => {
                 </div>
               ))
               : <Loading />}
+            {otherTaxonomies.length !== 0 && (
+              <div>
+                <p className="h4 text-gray-500 font-weight-bold">
+                  {intl.formatMessage(messages.otherTagsHeader)}
+                </p>
+                <p className="other-description text-gray-500">
+                  {intl.formatMessage(messages.otherTagsDescription)}
+                </p>
+                { isTaxonomyListLoaded && isContentTaxonomyTagsLoaded && (
+                  otherTaxonomies.map((data) => (
+                    <div key={`taxonomy-tags-collapsible-${data.id}`}>
+                      <ContentTagsCollapsible
+                        contentId={contentId}
+                        taxonomyAndTagsData={data}
+                        stagedContentTags={stagedContentTags[data.id] || []}
+                        collapsibleState={collapsibleStates[data.id] || false}
+                      />
+                      <hr />
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </Container>
         </Container>
 
