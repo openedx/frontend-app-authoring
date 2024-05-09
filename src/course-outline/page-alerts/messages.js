@@ -106,6 +106,16 @@ const messages = defineMessages({
     defaultMessage: 'The following {conflictingFilesLen, plural, one {file} other {files}} already exist in this course but don\'t match the version used by the component you pasted:  {conflictingFilesStr}',
     description: 'This alert description is displayed when files being imported conflict with existing files in the course and advises the user to update the conflicting files manually.',
   },
+  serverErrorAlert: {
+    id: 'course-authoring.course-outline.page-alert.server-error.title',
+    defaultMessage: 'Request failed with status: {status}',
+    description: 'Generic server error alert title.',
+  },
+  networkErrorAlert: {
+    id: 'course-authoring.course-outline.page-alert.network-error.title',
+    defaultMessage: 'Network error',
+    description: 'Generic network error alert.',
+  },
 });
 
 export default messages;

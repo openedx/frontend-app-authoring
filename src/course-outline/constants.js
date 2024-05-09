@@ -82,3 +82,9 @@ export const VIDEO_SHARING_OPTIONS = /** @type {const} */ ({
   allOn: 'all-on',
   allOff: 'all-off',
 });
+
+export const API_ERROR_TYPES = /** @type {const} */ ({
+  networkError: 'networkError',
+  serverError: 'serverError',
+  unknown: 'unknown',
+});
