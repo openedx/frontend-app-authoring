@@ -87,16 +87,17 @@ const PagesAndResources = ({ courseId, intl }) => {
           <Route path=":appId/settings" element={<PageWrap><Suspense fallback="..."><SettingsComponent url={redirectUrl} /></Suspense></PageWrap>} />
         </Routes>
 
-        <PageGrid pages={pages} pluginSlotId='additional_course_plugin' />
+        <PageGrid pages={pages} pluginSlotId="additional_course_plugin" />
         {
-          (contentPermissionsPages.length > 0 || getConfig()?.pluginSlots?.additional_course_content_plugin != null) && (
-            <>
-              <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
-                <h3 className="m-0">{intl.formatMessage(messages.contentPermissions)}</h3>
-              </div>
-              <PageGrid pages={contentPermissionsPages} pluginSlotId='additional_course_content_plugin' />
-            </>
-          )
+          (contentPermissionsPages.length > 0 || getConfig()?.pluginSlots?.additional_course_content_plugin != null)
+            && (
+              <>
+                <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
+                  <h3 className="m-0">{intl.formatMessage(messages.contentPermissions)}</h3>
+                </div>
+                <PageGrid pages={contentPermissionsPages} pluginSlotId="additional_course_content_plugin" />
+              </>
+            )
         }
       </main>
     </PagesAndResourcesProvider>
