@@ -5,7 +5,7 @@ import { CardGrid } from '@openedx/paragon';
 import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import PageCard, { CoursePageShape } from './PageCard';
 
-const PageGrid = ({ pages }) => (
+const PageGrid = ({ pages, pluginSlotId }) => (
   <CardGrid columnSizes={{
     xs: 12,
     sm: 6,
@@ -16,12 +16,17 @@ const PageGrid = ({ pages }) => (
     {pages.map((page) => (
       <PageCard page={page} key={page.id} />
     ))}
-    <PluginSlot id="additional_course_plugin" />
+    {pluginSlotId && <PluginSlot id={pluginSlotId} />}
   </CardGrid>
 );
 
+PageGrid.defaultProps = {
+  pluginSlotId: null,
+};
+
 PageGrid.propTypes = {
   pages: PropTypes.arrayOf(CoursePageShape.isRequired).isRequired,
+  pluginSlotId: PropTypes.string,
 };
 
 export default injectIntl(PageGrid);
