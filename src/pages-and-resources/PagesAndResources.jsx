@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, Suspense } from 'react';
 import PropTypes from 'prop-types';
+import { getConfig } from '@edx/frontend-platform';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { PageWrap, AppContext } from '@edx/frontend-platform/react';
 
@@ -88,7 +89,7 @@ const PagesAndResources = ({ courseId, intl }) => {
 
         <PageGrid pages={pages} pluginSlotId='additional_course_plugin' />
         {
-          (contentPermissionsPages.length > 0) && (
+          (contentPermissionsPages.length > 0 || getConfig()?.pluginSlots?.additional_course_content_plugin != null) && (
             <>
               <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
                 <h3 className="m-0">{intl.formatMessage(messages.contentPermissions)}</h3>
