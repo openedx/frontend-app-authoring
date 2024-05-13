@@ -30,6 +30,7 @@ const PublishModal = ({
       onClose={onClose}
       hasCloseButton
       isFullscreenOnMobile
+      isOverflowVisible={false}
     >
       <ModalDialog.Header className="publish-modal__header">
         <ModalDialog.Title>

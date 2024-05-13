@@ -438,6 +438,7 @@ const CourseOutline = ({ courseId }) => {
           onConfigureSubmit={handleConfigureItemSubmit}
           currentItemData={currentItemData}
           enableProctoredExams={enableProctoredExams}
+          isSelfPaced={statusBarData.isSelfPaced}
         />
         <DeleteModal
           category={deleteCategory}

@@ -42,6 +42,22 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.unit-visibility',
     defaultMessage: 'Unit visibility',
   },
+  unitAccess: {
+    id: 'course-authoring.course-outline.configure-modal.visibility-tab.unit-access',
+    defaultMessage: 'Unit access',
+  },
+  discussionEnabledSectionTitle: {
+    id: 'course-authoring.course-outline.configure-modal.discussion-enabled.section-title',
+    defaultMessage: 'Discussion',
+  },
+  discussionEnabledCheckbox: {
+    id: 'course-authoring.course-outline.configure-modal.discussion-enabled.checkbox',
+    defaultMessage: 'Enable discussion',
+  },
+  discussionEnabledDescription: {
+    id: 'course-authoring.course-outline.configure-modal.discussion-enabled.description',
+    defaultMessage: 'Topics for unpublished units will not be created',
+  },
   hideFromLearners: {
     id: 'course-authoring.course-outline.configure-modal.visibility.hide-from-learners',
     defaultMessage: 'Hide from learners',

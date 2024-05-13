@@ -38,6 +38,7 @@ const HighlightsModal = ({
       onClose={onClose}
       hasCloseButton
       isFullscreenOnMobile
+      isOverflowVisible={false}
     >
       <ModalDialog.Header className="highlights-modal__header">
         <ModalDialog.Title>

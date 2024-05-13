@@ -310,7 +310,7 @@ export async function configureCourseSubsection(
  * @param {object} groupAccess
  * @returns {Promise<Object>}
  */
-export async function configureCourseUnit(unitId, isVisibleToStaffOnly, groupAccess) {
+export async function configureCourseUnit(unitId, isVisibleToStaffOnly, groupAccess, discussionEnabled) {
   const { data } = await getAuthenticatedHttpClient()
     .post(getCourseItemApiUrl(unitId), {
       publish: 'republish',
@@ -318,6 +318,7 @@ export async function configureCourseUnit(unitId, isVisibleToStaffOnly, groupAcc
         // The backend expects metadata.visible_to_staff_only to either true or null
         visible_to_staff_only: isVisibleToStaffOnly ? true : null,
         group_access: groupAccess,
+        discussion_enabled: discussionEnabled,
       },
     });
 
