@@ -216,18 +216,6 @@ exports[`GalleryCard component snapshot with status badge 1`] = `
           }
         }
       />
-      <Badge
-        style={
-          Object {
-            "left": "6px",
-            "position": "absolute",
-            "top": "6px",
-          }
-        }
-        variant="danger"
-      >
-        failed
-      </Badge>
     </div>
     <div
       className="card-text px-3 py-2"

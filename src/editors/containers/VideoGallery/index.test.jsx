@@ -22,6 +22,7 @@ const initialVideos = [
     course_video_image_url: 'course_video_image_url_1',
     created: '2022-09-07T04:56:58.726Z',
     status: 'Uploading',
+    status_nontranslated: 'Uploading',
     duration: 3,
     transcripts: [],
   },
@@ -31,6 +32,7 @@ const initialVideos = [
     course_video_image_url: 'course_video_image_url_2',
     created: '2022-11-07T04:56:58.726Z',
     status: 'In Progress',
+    status_nontranslated: 'In Progress',
     duration: 2,
     transcripts: [],
   }, {
@@ -39,6 +41,7 @@ const initialVideos = [
     course_video_image_url: 'course_video_image_url_3',
     created: '2022-01-07T04:56:58.726Z',
     status: 'Ready',
+    status_nontranslated: 'Ready',
     duration: 4,
     transcripts: [],
   },
@@ -146,7 +149,7 @@ describe('VideoGallery', () => {
     });
     it.each([
       ['Uploading', 1, [1]],
-      ['Processing', 1, [2]],
+      ['In Progress', 1, [2]],
       ['Ready', 1, [3]],
       ['Failed', 1, [4]],
     ])('videos can be filtered by status %s', async (filterBy, length, items) => {
@@ -158,6 +161,7 @@ describe('VideoGallery', () => {
           course_video_image_url: 'course_video_image_url_4',
           created: '2022-01-07T04:56:58.726Z',
           status: 'Failed',
+          status_nontranslated: 'Failed',
           duration: 4,
           transcripts: [],
         }],

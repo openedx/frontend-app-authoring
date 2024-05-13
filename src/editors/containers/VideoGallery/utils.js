@@ -30,11 +30,11 @@ export const filterKeys = StrictDict({
 });
 
 export const filterMessages = StrictDict({
-  anyStatus: messages[messageKeys.filterByVideoStatusAny],
-  uploading: messages[messageKeys.filterByVideoStatusUploading],
-  processing: messages[messageKeys.filterByVideoStatusProcessing],
-  ready: messages[messageKeys.filterByVideoStatusReady],
-  failed: messages[messageKeys.filterByVideoStatusFailed],
+  anyStatus: messages[messageKeys.videoStatusAny],
+  uploading: messages[messageKeys.videoStatusUploading],
+  processing: messages[messageKeys.videoStatusProcessing],
+  ready: messages[messageKeys.videoStatusReady],
+  failed: messages[messageKeys.videoStatusFailed],
 });
 
 export const sortFunctions = StrictDict({

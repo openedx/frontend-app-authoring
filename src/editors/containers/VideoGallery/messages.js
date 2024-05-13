@@ -54,31 +54,31 @@ export const messages = {
     description: 'Dropdown label for sorting by duration (longest)',
   },
 
-  // Filter Dropdown
-  filterByVideoStatusAny: {
-    id: 'authoring.selectvideomodal.filter.videostatusnone.label',
+  // Video status labels
+  videoStatusAny: {
+    id: 'authoring.selectvideomodal.videostatusnone.label',
     defaultMessage: 'Any status',
-    description: 'Dropdown label for no filter (any status)',
+    description: 'Label for video status (any status)',
   },
-  filterByVideoStatusUploading: {
-    id: 'authoring.selectvideomodal.filter.videostatusuploading.label',
+  videoStatusUploading: {
+    id: 'authoring.selectvideomodal.videostatusuploading.label',
     defaultMessage: 'Uploading',
-    description: 'Dropdown label for filter by video status (uploading)',
+    description: 'Label for video status (uploading)',
   },
-  filterByVideoStatusProcessing: {
-    id: 'authoring.selectvideomodal.filter.videostatusprocessing.label',
-    defaultMessage: 'Processing',
-    description: 'Dropdown label for filter by video status (processing)',
+  videoStatusProcessing: {
+    id: 'authoring.selectvideomodal.videostatusprocessing.label',
+    defaultMessage: 'In Progress',
+    description: 'Label for video status (processing)',
   },
-  filterByVideoStatusReady: {
-    id: 'authoring.selectvideomodal.filter.videostatusready.label',
+  videoStatusReady: {
+    id: 'authoring.selectvideomodal.videostatusready.label',
     defaultMessage: 'Ready',
-    description: 'Dropdown label for filter by video status (ready)',
+    description: 'Label for video status (ready)',
   },
-  filterByVideoStatusFailed: {
-    id: 'authoring.selectvideomodal.filter.videostatusfailed.label',
+  videoStatusFailed: {
+    id: 'authoring.selectvideomodal.videostatusfailed.label',
     defaultMessage: 'Failed',
-    description: 'Dropdown label for filter by video status (failed)',
+    description: 'Label for video status (failed)',
   },
 
   // Hide switch

@@ -52,8 +52,6 @@ export const filterListByStatus = ({ statusFilter, videoList }) => {
   if (statusFilter === filterKeys.anyStatus) {
     return videoList;
   }
-  // TODO deal with translation mismatch because the video status is
-  // already translated in the backend
   return videoList.filter(({ status }) => filterKeys[statusFilter] === status);
 };
 
@@ -166,8 +164,9 @@ export const buildVideos = ({ rawVideos }) => {
       dateAdded: new Date(video.created),
       locked: false,
       thumbnail: video.course_video_image_url,
-      status: video.status,
-      statusBadgeVariant: module.getstatusBadgeVariant({ status: video.status }),
+      status: video.status_nontranslated,
+      statusBadgeVariant: module.getstatusBadgeVariant({ status: video.status_nontranslated }),
+      statusMessage: module.getStatusMessage({ status: video.status_nontranslated }),
       duration: video.duration,
       transcripts: video.transcripts,
     }));
@@ -177,7 +176,6 @@ export const buildVideos = ({ rawVideos }) => {
 
 export const getstatusBadgeVariant = ({ status }) => {
   switch (status) {
-    // TODO deal with translation mismatch
     case filterKeys.failed:
       return 'danger';
     case filterKeys.uploading:
@@ -187,6 +185,8 @@ export const getstatusBadgeVariant = ({ status }) => {
       return null;
   }
 };
+
+export const getStatusMessage = ({ status }) => Object.values(filterMessages).find((m) => m.defaultMessage === status);
 
 export const useVideoProps = ({ videos }) => {
   const searchSortProps = useSearchAndSortProps();
