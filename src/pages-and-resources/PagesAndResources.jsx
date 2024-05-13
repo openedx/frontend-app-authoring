@@ -65,6 +65,8 @@ const PagesAndResources = ({ courseId, intl }) => {
     );
   }
 
+  const hasAdditionalCoursePlugin = getConfig()?.pluginSlots?.additional_course_plugin != null;
+
   return (
     <PagesAndResourcesProvider courseId={courseId}>
       <main className="container container-mw-md px-3">
@@ -89,7 +91,7 @@ const PagesAndResources = ({ courseId, intl }) => {
 
         <PageGrid pages={pages} pluginSlotId="additional_course_plugin" />
         {
-          (contentPermissionsPages.length > 0 || getConfig()?.pluginSlots?.additional_course_content_plugin != null)
+          (contentPermissionsPages.length > 0 || hasAdditionalCoursePlugin)
             && (
               <>
                 <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
