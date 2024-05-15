@@ -69,7 +69,7 @@ export const getToolsMenuItems = ({ studioBaseUrl, courseId, intl }) => ([
   },
   ...(getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true'
     ? [{
-      href: `${studioBaseUrl}/api/content_tagging/v1/object_tags/${courseId}/export/`,
+      href: '#export',
       title: intl.formatMessage(messages['header.links.exportTags']),
     }] : []
   ),

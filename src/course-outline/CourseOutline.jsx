@@ -8,6 +8,7 @@ import {
   Layout,
   Row,
   TransitionReplace,
+  Toast,
 } from '@openedx/paragon';
 import { Helmet } from 'react-helmet';
 import {
@@ -20,6 +21,7 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
+import { useLocation } from 'react-router-dom';
 
 import { LoadingSpinner } from '../generic/Loading';
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
@@ -52,9 +54,11 @@ import {
 } from '../generic/drag-helper/utils';
 import { useCourseOutline } from './hooks';
 import messages from './messages';
+import { getTagsExportFile } from './data/api';
 
 const CourseOutline = ({ courseId }) => {
   const intl = useIntl();
+  const location = useLocation();
 
   const {
     courseName,
@@ -116,6 +120,22 @@ const CourseOutline = ({ courseId }) => {
     handleUnitDragAndDrop,
     errors,
   } = useCourseOutline({ courseId });
+
+  // Use `setToastMessage` to show the toast.
+  const [toastMessage, setToastMessage] = useState(/** @type{null|string} */ (null));
+
+  useEffect(() => {
+    if (location.hash === '#export') {
+      setToastMessage(intl.formatMessage(messages.exportTagsToastMessage));
+      getTagsExportFile(courseId, courseName).finally(() => {
+        setToastMessage(null);
+      });
+
+      // Delete `#export` from location
+      const newUrl = window.location.href.split('#')[0];
+      window.history.replaceState({}, document.title, newUrl);
+    }
+  }, [location]);
 
   const [sections, setSections] = useState(sectionsList);
 
@@ -458,6 +478,15 @@ const CourseOutline = ({ courseId }) => {
           onInternetConnectionFailed={handleInternetConnectionFailed}
         />
       </div>
+      {toastMessage && (
+        <Toast
+          show
+          onClose={() => setToastMessage(null)}
+          data-testid="taxonomy-toast"
+        >
+          {toastMessage}
+        </Toast>
+      )}
     </>
   );
 };

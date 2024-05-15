@@ -29,6 +29,11 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.section-list.button.new-section',
     defaultMessage: 'New section',
   },
+  exportTagsToastMessage: {
+    id: 'course-authoring.course-outline.export-tags.toast.message',
+    defaultMessage: 'Please wait. Creating export file...',
+    description: 'Message in toast when exporting tags of a course',
+  },
 });
 
 export default messages;
