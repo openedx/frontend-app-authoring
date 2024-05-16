@@ -125,13 +125,13 @@ const CourseOutline = ({ courseId }) => {
   const [toastMessage, setToastMessage] = useState(/** @type{null|string} */ (null));
 
   useEffect(() => {
-    if (location.hash === '#export') {
+    if (location.hash === '#export-tags') {
       setToastMessage(intl.formatMessage(messages.exportTagsToastMessage));
       getTagsExportFile(courseId, courseName).finally(() => {
         setToastMessage(null);
       });
 
-      // Delete `#export` from location
+      // Delete `#export-tags` from location
       const newUrl = window.location.href.split('#')[0];
       window.history.replaceState({}, document.title, newUrl);
     }

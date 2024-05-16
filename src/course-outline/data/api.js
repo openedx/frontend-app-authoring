@@ -470,7 +470,7 @@ export async function getTagsExportFile(courseId, courseName) {
   // Gets exported tags and builds the blob to download CSV file.
   // This can be done with this code:
   // `window.location.href = exportTags(contentId);`
-  // but it is done in this way to known when the operation ends to close the toast.
+  // but it is done in this way so we know when the operation ends to close the toast.
   const response = await getAuthenticatedHttpClient().get(exportTags(courseId), {
     responseType: 'blob',
   });
