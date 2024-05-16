@@ -126,13 +126,15 @@ const CourseOutline = ({ courseId }) => {
 
   useEffect(() => {
     if (location.hash === '#export-tags') {
-      setToastMessage(intl.formatMessage(messages.exportTagsToastMessage));
-      getTagsExportFile(courseId, courseName).finally(() => {
-        setToastMessage(null);
+      setToastMessage(intl.formatMessage(messages.exportTagsCreatingToastMessage));
+      getTagsExportFile(courseId, courseName).then(() => {
+        setToastMessage(intl.formatMessage(messages.exportTagsSuccessToastMessage));
+      }).catch(() => {
+        setToastMessage(intl.formatMessage(messages.exportTagsErrorToastMessage));
       });
 
       // Delete `#export-tags` from location
-      window.location.href = '#'
+      window.location.href = '#';
     }
   }, [location]);
 

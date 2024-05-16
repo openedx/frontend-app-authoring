@@ -475,6 +475,10 @@ export async function getTagsExportFile(courseId, courseName) {
     responseType: 'blob',
   });
 
+  if (response.status !== 200) {
+    throw response.statusText;
+  }
+
   const blob = new Blob([response.data], { type: 'text/csv' });
   const url = window.URL.createObjectURL(blob);
 

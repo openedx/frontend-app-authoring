@@ -29,10 +29,20 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.section-list.button.new-section',
     defaultMessage: 'New section',
   },
-  exportTagsToastMessage: {
-    id: 'course-authoring.course-outline.export-tags.toast.message',
+  exportTagsCreatingToastMessage: {
+    id: 'course-authoring.course-outline.export-tags.toast.creating.message',
     defaultMessage: 'Please wait. Creating export file...',
-    description: 'Message in toast when exporting tags of a course',
+    description: 'In progress message in toast when exporting tags of a course',
+  },
+  exportTagsSuccessToastMessage: {
+    id: 'course-authoring.course-outline.export-tags.toast.success.message',
+    defaultMessage: 'File created successfully',
+    description: 'Success message in toast when exporting tags of a course',
+  },
+  exportTagsErrorToastMessage: {
+    id: 'course-authoring.course-outline.export-tags.toast.error.message',
+    defaultMessage: 'An error has occurred creating the file',
+    description: 'Error message in toast when exporting tags of a course',
   },
 });
 
