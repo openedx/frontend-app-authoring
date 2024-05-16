@@ -132,8 +132,7 @@ const CourseOutline = ({ courseId }) => {
       });
 
       // Delete `#export-tags` from location
-      const newUrl = window.location.href.split('#')[0];
-      window.history.replaceState({}, document.title, newUrl);
+      window.location.href = '#'
     }
   }, [location]);
 
