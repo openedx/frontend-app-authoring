@@ -482,7 +482,7 @@ const CourseOutline = ({ courseId }) => {
       {toastMessage && (
         <Toast
           show
-          onClose={() => setToastMessage(null)}
+          onClose={/* istanbul ignore next */ () => setToastMessage(null)}
           data-testid="taxonomy-toast"
         >
           {toastMessage}

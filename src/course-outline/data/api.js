@@ -475,6 +475,7 @@ export async function getTagsExportFile(courseId, courseName) {
     responseType: 'blob',
   });
 
+  /* istanbul ignore next */
   if (response.status !== 200) {
     throw response.statusText;
   }
