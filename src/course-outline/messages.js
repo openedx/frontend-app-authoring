@@ -31,12 +31,12 @@ const messages = defineMessages({
   },
   exportTagsCreatingToastMessage: {
     id: 'course-authoring.course-outline.export-tags.toast.creating.message',
-    defaultMessage: 'Please wait. Creating export file...',
+    defaultMessage: 'Please wait. Creating export file for course tags...',
     description: 'In progress message in toast when exporting tags of a course',
   },
   exportTagsSuccessToastMessage: {
     id: 'course-authoring.course-outline.export-tags.toast.success.message',
-    defaultMessage: 'File created successfully',
+    defaultMessage: 'Course tags exported successfully',
     description: 'Success message in toast when exporting tags of a course',
   },
   exportTagsErrorToastMessage: {

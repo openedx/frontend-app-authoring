@@ -2265,12 +2265,12 @@ describe('<CourseOutline />', () => {
     window.URL.createObjectURL = jest.fn().mockReturnValue('http://example.com/archivo');
     window.URL.revokeObjectURL = jest.fn();
     render(<RootWrapper />);
-    expect(await screen.findByText('Please wait. Creating export file...')).toBeInTheDocument();
+    expect(await screen.findByText('Please wait. Creating export file for course tags...')).toBeInTheDocument();
 
     const expectedRequest = axiosMock.history.get.filter(request => request.url === exportTags(courseId));
     expect(expectedRequest.length).toBe(1);
 
-    expect(await screen.findByText('File created successfully')).toBeInTheDocument();
+    expect(await screen.findByText('Course tags exported successfully')).toBeInTheDocument();
   });
 
   it('should show toast on export tags error', async () => {
@@ -2283,7 +2283,7 @@ describe('<CourseOutline />', () => {
     });
 
     render(<RootWrapper />);
-    expect(await screen.findByText('Please wait. Creating export file...')).toBeInTheDocument();
+    expect(await screen.findByText('Please wait. Creating export file for course tags...')).toBeInTheDocument();
     expect(await screen.findByText('An error has occurred creating the file')).toBeInTheDocument();
   });
 });
