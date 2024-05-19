@@ -50,7 +50,7 @@ const RootWrapper = ({ onClose }) => (
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
         <TaxonomyContext.Provider value={context}>
-          <ImportTagsWizard taxonomy={taxonomy} isOpen onClose={onClose} />
+          <ImportTagsWizard taxonomy={taxonomy} isOpen onClose={onClose} reimport />
         </TaxonomyContext.Provider>
       </QueryClientProvider>
     </IntlProvider>

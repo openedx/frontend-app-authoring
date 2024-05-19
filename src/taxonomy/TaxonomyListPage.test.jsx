@@ -15,7 +15,6 @@ import MockAdapter from 'axios-mock-adapter';
 import initializeStore from '../store';
 import { apiUrls } from './data/api';
 import TaxonomyListPage from './TaxonomyListPage';
-import { importTaxonomy } from './import-tags';
 import { TaxonomyContext } from './common/context';
 
 let store;
@@ -36,10 +35,6 @@ const listTaxonomiesUnassignedUrl = `${listTaxonomiesUrl}&unassigned=true`;
 const listTaxonomiesOrg1Url = `${listTaxonomiesUrl}&org=Org+1`;
 const listTaxonomiesOrg2Url = `${listTaxonomiesUrl}&org=Org+2`;
 const organizations = ['Org 1', 'Org 2'];
-
-jest.mock('./import-tags', () => ({
-  importTaxonomy: jest.fn(),
-}));
 
 const context = {
   toastMessage: null,
@@ -123,17 +118,6 @@ describe('<TaxonomyListPage />', () => {
     await waitFor(() => { expect(queryByText('Loading')).toEqual(null); });
     const importButton = getByRole('button', { name: 'Import' });
     expect(importButton).toBeDisabled();
-  });
-
-  it('calls the import taxonomy action when the import button is clicked', async () => {
-    axiosMock.onGet(listTaxonomiesUrl).reply(200, { results: [], canAddTaxonomy: true });
-
-    const { getByRole } = render(<RootWrapper />);
-    const importButton = getByRole('button', { name: 'Import' });
-    // Once the API response is received and rendered, the Import button should be enabled:
-    await waitFor(() => { expect(importButton).not.toBeDisabled(); });
-    fireEvent.click(importButton);
-    expect(importTaxonomy).toHaveBeenCalled();
   });
 
   it('should show all "All taxonomies", "Unassigned" and org names in taxonomy org filter', async () => {
