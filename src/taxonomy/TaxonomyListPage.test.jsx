@@ -120,6 +120,18 @@ describe('<TaxonomyListPage />', () => {
     expect(importButton).toBeDisabled();
   });
 
+  it('opens the import dialog modal when the import button is clicked', async () => {
+    axiosMock.onGet(listTaxonomiesUrl).reply(200, { results: [], canAddTaxonomy: true });
+
+    const { getByRole, getByText } = render(<RootWrapper />);
+    const importButton = getByRole('button', { name: 'Import' });
+    // Once the API response is received and rendered, the Import button should be enabled:
+    await waitFor(() => { expect(importButton).not.toBeDisabled(); });
+    fireEvent.click(importButton);
+
+    expect(getByText('Upload file')).toBeInTheDocument();
+  });
+
   it('should show all "All taxonomies", "Unassigned" and org names in taxonomy org filter', async () => {
     axiosMock.onGet(listTaxonomiesUrl).reply(200, {
       results: [{

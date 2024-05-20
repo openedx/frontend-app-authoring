@@ -10,6 +10,7 @@ import {
   fireEvent,
   render,
   waitFor,
+  screen,
 } from '@testing-library/react';
 import PropTypes from 'prop-types';
 
@@ -39,18 +40,19 @@ const context = {
 
 const planImportUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/import/plan/';
 const doImportUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/import/';
+const doImportNewTaxonomyUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/import/';
 
-const taxonomy = {
+const sampleTaxonomy = {
   id: 1,
   name: 'Test Taxonomy',
 };
 
-const RootWrapper = ({ onClose }) => (
+const RootWrapper = ({ onClose, reimport, taxonomy }) => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
         <TaxonomyContext.Provider value={context}>
-          <ImportTagsWizard taxonomy={taxonomy} isOpen onClose={onClose} reimport />
+          <ImportTagsWizard taxonomy={taxonomy} isOpen onClose={onClose} reimport={reimport} />
         </TaxonomyContext.Provider>
       </QueryClientProvider>
     </IntlProvider>
@@ -59,6 +61,11 @@ const RootWrapper = ({ onClose }) => (
 
 RootWrapper.propTypes = {
   onClose: PropTypes.func.isRequired,
+  reimport: PropTypes.bool.isRequired,
+  taxonomy: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 describe('<ImportTagsWizard />', () => {
@@ -80,9 +87,9 @@ describe('<ImportTagsWizard />', () => {
     queryClient.clear();
   });
 
-  it('render the dialog in the first step can close on cancel', async () => {
+  it('render the dialog in the reimport first step can close on cancel', async () => {
     const onClose = jest.fn();
-    const { findByTestId, getByTestId } = render(<RootWrapper onClose={onClose} />);
+    const { findByTestId, getByTestId } = render(<RootWrapper taxonomy={sampleTaxonomy} onClose={onClose} reimport />);
 
     expect(await findByTestId('export-step')).toBeInTheDocument();
 
@@ -91,26 +98,26 @@ describe('<ImportTagsWizard />', () => {
     expect(onClose).toHaveBeenCalled();
   });
 
-  it('can export taxonomies from the dialog', async () => {
+  it('can export taxonomies from the reimport dialog', async () => {
     const onClose = jest.fn();
-    const { findByTestId, getByTestId } = render(<RootWrapper onClose={onClose} />);
+    const { findByTestId, getByTestId } = render(<RootWrapper taxonomy={sampleTaxonomy} onClose={onClose} reimport />);
 
     expect(await findByTestId('export-step')).toBeInTheDocument();
 
     fireEvent.click(getByTestId('export-json-button'));
 
-    expect(getTaxonomyExportFile).toHaveBeenCalledWith(taxonomy.id, 'json');
+    expect(getTaxonomyExportFile).toHaveBeenCalledWith(sampleTaxonomy.id, 'json');
 
     fireEvent.click(getByTestId('export-csv-button'));
 
-    expect(getTaxonomyExportFile).toHaveBeenCalledWith(taxonomy.id, 'csv');
+    expect(getTaxonomyExportFile).toHaveBeenCalledWith(sampleTaxonomy.id, 'csv');
   });
 
-  it.each(['success', 'error'])('can upload taxonomies from the dialog (%p)', async (expectedResult) => {
+  it.each(['success', 'error'])('can upload taxonomies from the reimport dialog (%p)', async (expectedResult) => {
     const onClose = jest.fn();
     const {
       findByTestId, findByText, getByRole, getAllByTestId, getByTestId, getByText,
-    } = render(<RootWrapper onClose={onClose} />);
+    } = render(<RootWrapper taxonomy={sampleTaxonomy} onClose={onClose} reimport />);
 
     expect(await findByTestId('export-step')).toBeInTheDocument();
 
@@ -223,7 +230,7 @@ describe('<ImportTagsWizard />', () => {
     if (expectedResult === 'success') {
       // Toast message shown
       await waitFor(() => {
-        expect(mockSetToastMessage).toBeCalledWith(`"${taxonomy.name}" updated`);
+        expect(mockSetToastMessage).toBeCalledWith(`"${sampleTaxonomy.name}" updated`);
       });
     } else {
       // Alert message shown
@@ -233,6 +240,115 @@ describe('<ImportTagsWizard />', () => {
             variant: 'danger',
             title: 'Import error',
             description: 'Test error',
+          }),
+        );
+      });
+    }
+  });
+
+  it.each(['success', 'error'])('can upload new taxonomies from the dialog (%p)', async (expectedResult) => {
+    const onClose = jest.fn();
+    const {
+      findByTestId, getByRole, getByTestId, getByText, queryByTestId,
+    } = render(<RootWrapper taxonomy={null} onClose={onClose} />);
+
+    // Check that there is no export step
+    expect(await queryByTestId('export-step')).not.toBeInTheDocument();
+    // Check that there is no back button in the upload step
+    expect(await queryByTestId('back-button')).not.toBeInTheDocument();
+
+    // Check that we are on the upload step
+    expect(getByTestId('upload-step')).toBeInTheDocument();
+
+    // Continue flow
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeInTheDocument());
+    let continueButton = getByRole('button', { name: 'Continue' });
+    expect(continueButton).toHaveAttribute('aria-disabled', 'true');
+
+    // Invalid file type
+    const fileTarGz = new File(['file contents'], 'example.tar.gz', { type: 'application/gzip' });
+    fireEvent.drop(getByTestId('dropzone'), { dataTransfer: { files: [fileTarGz], types: ['Files'] } });
+    expect(getByTestId('dropzone')).toBeInTheDocument();
+    expect(continueButton).toHaveAttribute('aria-disabled', 'true');
+
+    const makeJson = (filename) => new File(['{}'], filename, { type: 'application/json' });
+
+    // Correct file type
+    fireEvent.drop(getByTestId('dropzone'), { dataTransfer: { files: [makeJson('example1.json')], types: ['Files'] } });
+    expect(await findByTestId('file-info')).toBeInTheDocument();
+    expect(getByText('example1.json')).toBeInTheDocument();
+
+    // Clear file
+    fireEvent.click(getByTestId('clear-file-button'));
+    expect(await findByTestId('dropzone')).toBeInTheDocument();
+
+    // Reselect file
+    fireEvent.drop(getByTestId('dropzone'), { dataTransfer: { files: [makeJson('example1.json')], types: ['Files'] } });
+    expect(await findByTestId('file-info')).toBeInTheDocument();
+    expect(getByText('example1.json')).toBeInTheDocument();
+
+    // Click continue once button enabled
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeInTheDocument());
+    continueButton = getByRole('button', { name: 'Continue' });
+    await waitFor(() => {
+      expect(continueButton).not.toHaveAttribute('aria-disabled', 'true');
+    });
+    fireEvent.click(continueButton);
+
+    expect(await findByTestId('populate-step')).toBeInTheDocument();
+
+    // Test back button
+    fireEvent.click(getByTestId('back-button'));
+    expect(getByTestId('upload-step')).toBeInTheDocument();
+    fireEvent.click(getByRole('button', { name: 'Continue' }));
+    expect(await findByTestId('populate-step')).toBeInTheDocument();
+
+    // Check import button is disabled when fields not populated
+    const importButton = getByRole('button', { name: 'Import' });
+    expect(importButton).toHaveAttribute('aria-disabled', 'true');
+
+    // Populate new taxonomy information
+    const newTaxonomyName = 'New Taxonomy';
+    const taxonomyNameInputEl = screen.getByLabelText('Taxonomy Name');
+    fireEvent.change(taxonomyNameInputEl, {
+      target: { value: newTaxonomyName },
+    });
+    const taxonomyDescInputEl = screen.getByLabelText('Taxonomy Description');
+    fireEvent.change(taxonomyDescInputEl, {
+      target: { value: 'New Taxonomy Description' },
+    });
+
+    // Test back button
+    fireEvent.click(getByTestId('back-button'));
+    expect(getByTestId('upload-step')).toBeInTheDocument();
+    fireEvent.click(getByRole('button', { name: 'Continue' }));
+
+    expect(getByTestId('populate-step')).toBeInTheDocument();
+
+    if (expectedResult === 'success') {
+      axiosMock.onPost(doImportNewTaxonomyUrl).replyOnce(200, {});
+    } else {
+      axiosMock.onPost(doImportNewTaxonomyUrl).replyOnce(400);
+    }
+
+    await waitFor(() => {
+      expect(getByRole('button', { name: 'Import' })).not.toHaveAttribute('aria-disabled', 'true');
+    });
+
+    act(() => { fireEvent.click(getByRole('button', { name: 'Import' })); });
+
+    if (expectedResult === 'success') {
+      // Toast message shown
+      await waitFor(() => {
+        expect(mockSetToastMessage).toBeCalledWith(`"${newTaxonomyName}" imported`);
+      });
+    } else {
+      // Alert message shown
+      await waitFor(() => {
+        expect(mockSetAlertProps).toBeCalledWith(
+          expect.objectContaining({
+            variant: 'danger',
+            title: 'Import error',
           }),
         );
       });
