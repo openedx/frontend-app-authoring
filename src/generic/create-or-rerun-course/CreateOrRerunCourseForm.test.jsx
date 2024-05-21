@@ -27,11 +27,14 @@ import messages from './messages';
 import { CreateOrRerunCourseForm } from '.';
 import { initialState } from './factories/mockApiResponses';
 
+const mockedUsedNavigate = jest.fn();
+
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: () => ({
     courseId: 'course-id-mock',
   }),
+  useNavigate: () => mockedUsedNavigate,
 }));
 
 let axiosMock;
@@ -134,8 +137,6 @@ describe('<CreateOrRerunCourseForm />', () => {
   });
 
   describe('handleOnClickCreate', () => {
-    delete window.location;
-    window.location = { assign: jest.fn() };
     it('should call window.location.assign with url', async () => {
       render(<RootWrapper {...props} />);
       await mockStore();
@@ -156,7 +157,7 @@ describe('<CreateOrRerunCourseForm />', () => {
       await axiosMock.onPost(getCreateOrRerunCourseUrl()).reply(200, { url });
       await executeThunk(updateCreateOrRerunCourseQuery({ org: 'testX', run: 'some' }), store.dispatch);
 
-      expect(window.location.assign).toHaveBeenCalledWith(`${process.env.STUDIO_BASE_URL}${url}`);
+      expect(mockedUsedNavigate).toHaveBeenCalledWith(`${url}`);
     });
     it('should call window.location.assign with url and destinationCourseKey', async () => {
       render(<RootWrapper {...props} />);
@@ -179,7 +180,7 @@ describe('<CreateOrRerunCourseForm />', () => {
       });
       await executeThunk(updateCreateOrRerunCourseQuery({ org: 'testX', run: 'some' }), store.dispatch);
 
-      expect(window.location.assign).toHaveBeenCalledWith(`${process.env.STUDIO_BASE_URL}${url}${destinationCourseKey}`);
+      expect(mockedUsedNavigate).toHaveBeenCalledWith(`${url}${destinationCourseKey}`);
     });
   });
 
