@@ -294,11 +294,7 @@ const ImportTagsWizard = ({
   const intl = useIntl();
   const { setToastMessage, setAlertProps } = useContext(TaxonomyContext);
 
-  const steps = reimport
-    ? ['export', 'upload', 'plan', 'confirm']
-    : ['upload', 'populate', 'confirm'];
-
-  const [currentStep, setCurrentStep] = useState(steps[0]);
+  const [currentStep, setCurrentStep] = useState(reimport ? 'export' : 'upload');
 
   const [file, setFile] = useState(/** @type {null|File} */ (null));
 
