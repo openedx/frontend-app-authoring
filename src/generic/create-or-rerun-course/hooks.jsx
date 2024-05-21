@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { useNavigate } from 'react-router-dom';
 
 import { RequestStatus } from '../../data/constants';
 import { getStudioHomeData } from '../../studio-home/data/selectors';
@@ -20,6 +20,7 @@ import messages from './messages';
 const useCreateOrRerunCourse = (initialValues) => {
   const intl = useIntl();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const redirectUrlObj = useSelector(getRedirectUrlObj);
   const createOrRerunCourseSavingStatus = useSelector(getSavingStatus);
   const allOrganizations = useSelector(getOrganizations);
@@ -93,9 +94,9 @@ const useCreateOrRerunCourse = (initialValues) => {
       // is in the destionationCourseKey attribute from the api.
       if (url) {
         if (destinationCourseKey) {
-          window.location.assign(`${getConfig().STUDIO_BASE_URL}${url}${destinationCourseKey}`);
+          navigate(`${url}${destinationCourseKey}`);
         } else {
-          window.location.assign(`${getConfig().STUDIO_BASE_URL}${url}`);
+          navigate(url);
         }
       }
     } else if (createOrRerunCourseSavingStatus === RequestStatus.FAILED) {
