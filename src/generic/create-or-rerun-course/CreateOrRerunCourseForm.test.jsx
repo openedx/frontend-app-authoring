@@ -157,7 +157,7 @@ describe('<CreateOrRerunCourseForm />', () => {
       await axiosMock.onPost(getCreateOrRerunCourseUrl()).reply(200, { url });
       await executeThunk(updateCreateOrRerunCourseQuery({ org: 'testX', run: 'some' }), store.dispatch);
 
-      expect(mockedUsedNavigate).toHaveBeenCalledWith(`${url}`);
+      expect(mockedUsedNavigate).toHaveBeenCalledWith(url);
     });
     it('should call window.location.assign with url and destinationCourseKey', async () => {
       render(<RootWrapper {...props} />);

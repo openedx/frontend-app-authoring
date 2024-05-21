@@ -96,7 +96,7 @@ const useCreateOrRerunCourse = (initialValues) => {
         if (destinationCourseKey) {
           navigate(`${url}${destinationCourseKey}`);
         } else {
-          navigate(`${url}`);
+          navigate(url);
         }
       }
     } else if (createOrRerunCourseSavingStatus === RequestStatus.FAILED) {
