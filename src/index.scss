@@ -51,3 +51,11 @@ div.xblock-highlight {
     box-shadow: unset;
   }
 }
+
+body {
+  background-color: $light-200;
+
+  .editor-page {
+    background-color: $light-100;
+  }
+}
