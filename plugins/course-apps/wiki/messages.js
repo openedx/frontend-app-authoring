@@ -26,7 +26,8 @@ const messages = defineMessages({
   },
   enablePublicWikiHelp: {
     id: 'course-authoring.pages-resources.wiki.enable-public-wiki.help',
-    defaultMessage: 'If enabled, any registered user can view the course wiki even if not enrolled in the course',
+    defaultMessage: `If enabled, any registered user can view the course wiki
+    even if they are not enrolled in the course`,
   },
 });
 
