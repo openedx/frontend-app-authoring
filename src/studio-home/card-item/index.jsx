@@ -43,8 +43,7 @@ const CardItem = ({
     && rerunCreatorStatus
     && courseCreatorStatus === COURSE_CREATOR_STATES.granted;
   const hasDisplayName = displayName.trim().length ? displayName : courseKey;
-  // eslint-disable-next-line no-console
-  console.log('rerunLink ===>', rerunLink);
+
   return (
     <Card className="card-item">
       <Card.Header
