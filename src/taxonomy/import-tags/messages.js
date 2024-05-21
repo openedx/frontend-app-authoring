@@ -67,6 +67,14 @@ const messages = defineMessages({
     + 'the file that you wish to import.'
     + '{br}Once the file is ready to be imported, drag and drop it into the box below, or click to upload.',
   },
+  csvTemplateTitle: {
+    id: 'course-authoring.import-tags.wizard.step-upload.csv-template',
+    defaultMessage: 'CSV template',
+  },
+  jsonTemplateTitle: {
+    id: 'course-authoring.import-tags.wizard.step-upload.json-template',
+    defaultMessage: 'JSON template',
+  },
   importWizardStepPopulateTitle: {
     id: 'course-authoring.import-tags.wizard.step-populate.title',
     defaultMessage: 'Populate Taxonomy Information',

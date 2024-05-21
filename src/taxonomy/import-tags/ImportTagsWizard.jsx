@@ -32,8 +32,19 @@ import messages from './messages';
 
 const linebreak = <> <br /> <br /> </>;
 
-const csvTemplateUrl = <a href={apiUrls.taxonomyTemplate('csv')} download>CSV template</a>;
-const jsonTemplateUrl = <a href={apiUrls.taxonomyTemplate('json')} download>JSON template</a>;
+const CsvTemplateUrl = () => {
+  const intl = useIntl();
+  return (
+    <a href={apiUrls.taxonomyTemplate('csv')} download>{intl.formatMessage(messages.csvTemplateTitle)}</a>
+  );
+};
+
+const JsonTemplateUrl = () => {
+  const intl = useIntl();
+  return (
+    <a href={apiUrls.taxonomyTemplate('json')} download>{intl.formatMessage(messages.jsonTemplateTitle)}</a>
+  );
+};
 
 const TaxonomyProp = PropTypes.shape({
   id: PropTypes.number.isRequired,
@@ -100,7 +111,7 @@ const UploadStep = ({
             ? intl.formatMessage(messages.importWizardStepReuploadBody, { br: linebreak })
             : intl.formatMessage(
               messages.importWizardStepUploadBody,
-              { csvTemplateUrl, jsonTemplateUrl, br: linebreak },
+              { csvTemplateUrl: CsvTemplateUrl(), jsonTemplateUrl: JsonTemplateUrl(), br: linebreak },
             )
         }
         </p>
