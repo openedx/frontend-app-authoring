@@ -13,6 +13,7 @@ const AppSettingsModalBase = ({
   isMobile,
   children,
   footer,
+  disclaimer,
   isOpen,
 }) => {
   const { formatMessage } = useIntl();
@@ -31,6 +32,7 @@ const AppSettingsModalBase = ({
       </ModalDialog.Header>
       <ModalDialog.Body>{children}</ModalDialog.Body>
       <ModalDialog.Footer className="p-4">
+        {disclaimer}
         <ActionRow>
           <ModalDialog.CloseButton variant="tertiary">
             {formatMessage(messages.cancel)}
@@ -53,11 +55,13 @@ AppSettingsModalBase.propTypes = {
   isMobile: PropTypes.bool.isRequired,
   children: PropTypes.node.isRequired,
   footer: PropTypes.node,
+  disclaimer: PropTypes.node,
   isOpen: PropTypes.bool,
 };
 
 AppSettingsModalBase.defaultProps = {
   footer: null,
+  disclaimer: null,
 };
 
 export default AppSettingsModalBase;
