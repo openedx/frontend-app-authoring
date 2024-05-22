@@ -22,6 +22,11 @@
   .other-description {
     font-size: .9rem;
   }
+
+  .enable-taxonomies-button:not([disabled]):hover {
+    background-color: transparent;
+    color: $info-900 !important;
+  }
 }
 
 // Apply styles to sheet only if it has a child with a .tags-drawer class

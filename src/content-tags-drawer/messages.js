@@ -25,6 +25,11 @@ const messages = defineMessages({
     id: 'course-authoring.content-tags-drawer.tags-dropdown-selector.no-tags-found',
     defaultMessage: 'No tags found with the search term "{searchTerm}"',
   },
+  noTagsInTaxonomyMessage: {
+    id: 'course-authoring.content-tags-drawer.tags-dropdown-selector.no-tags-in-taxonomy',
+    defaultMessage: 'No tags in this taxonomy yet',
+    description: 'Message when the user uses the tags dropdown selector of an empty taxonomy',
+  },
   taxonomyTagChecked: {
     id: 'course-authoring.content-tags-drawer.tags-dropdown-selector.tag-checked',
     defaultMessage: 'Checked',
@@ -123,6 +128,16 @@ const messages = defineMessages({
     id: 'course-authoring.content-tags-drawer.other-tags.description',
     defaultMessage: 'These tags are already applied, but you can\'t add new ones as you don\'t have access to their taxonomies.',
     description: 'Description of "Other tags" subsection in tags drawer',
+  },
+  emptyDrawerContent: {
+    id: 'course-authoring.content-tags-drawer.empty',
+    defaultMessage: 'To use tags, please {link} or contact your administrator.',
+    description: 'Message when there are no taxonomies.',
+  },
+  emptyDrawerContentLink: {
+    id: 'course-authoring.content-tags-drawer.empty-link',
+    defaultMessage: 'enable a taxonomy',
+    description: 'Message of the link used in empty drawer message.',
   },
 });
 
