@@ -23,12 +23,18 @@ import {
 export function fetchCourseUpdatesQuery(courseId) {
   return async (dispatch) => {
     try {
-      dispatch(updateLoadingStatuses({ fetchCourseHandoutsQuery: RequestStatus.IN_PROGRESS }));
+      dispatch(updateLoadingStatuses({ fetchCourseUpdatesQuery: RequestStatus.IN_PROGRESS }));
       const courseUpdates = await getCourseUpdates(courseId);
       dispatch(fetchCourseUpdatesSuccess(courseUpdates));
-      dispatch(updateLoadingStatuses({ fetchCourseHandoutsQuery: RequestStatus.SUCCESSFUL }));
+      dispatch(updateLoadingStatuses({
+        status: { fetchCourseUpdatesQuery: RequestStatus.SUCCESSFUL },
+        error: { loadingUpdates: false },
+      }));
     } catch (error) {
-      dispatch(updateLoadingStatuses({ fetchCourseHandoutsQuery: RequestStatus.FAILED }));
+      dispatch(updateLoadingStatuses({
+        status: { fetchCourseUpdatesQuery: RequestStatus.FAILED },
+        error: { loadingUpdates: true },
+      }));
     }
   };
 }
@@ -41,10 +47,16 @@ export function createCourseUpdateQuery(courseId, data) {
       const courseUpdate = await createUpdate(courseId, data);
       dispatch(createCourseUpdate(courseUpdate));
       dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatuses({ createCourseUpdateQuery: RequestStatus.SUCCESSFUL }));
+      dispatch(updateSavingStatuses({
+        status: { createCourseUpdateQuery: RequestStatus.SUCCESSFUL },
+        error: { creatingUpdate: false },
+      }));
     } catch (error) {
       dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatuses({ createCourseUpdateQuery: RequestStatus.FAILED }));
+      dispatch(updateSavingStatuses({
+        status: { createCourseUpdateQuery: RequestStatus.FAILED },
+        error: { creatingUpdate: true },
+      }));
     }
   };
 }
@@ -57,10 +69,16 @@ export function editCourseUpdateQuery(courseId, data) {
       const courseUpdate = await editUpdate(courseId, data);
       dispatch(editCourseUpdate(courseUpdate));
       dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatuses({ createCourseUpdateQuery: RequestStatus.SUCCESSFUL }));
+      dispatch(updateSavingStatuses({
+        status: { createCourseUpdateQuery: RequestStatus.SUCCESSFUL },
+        error: { savingUpdates: false },
+      }));
     } catch (error) {
       dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatuses({ createCourseUpdateQuery: RequestStatus.FAILED }));
+      dispatch(updateSavingStatuses({
+        status: { createCourseUpdateQuery: RequestStatus.FAILED },
+        error: { savingUpdates: true },
+      }));
     }
   };
 }
@@ -73,10 +91,16 @@ export function deleteCourseUpdateQuery(courseId, updateId) {
       const courseUpdates = await deleteUpdate(courseId, updateId);
       dispatch(deleteCourseUpdate(courseUpdates));
       dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatuses({ createCourseUpdateQuery: RequestStatus.SUCCESSFUL }));
+      dispatch(updateSavingStatuses({
+        status: { createCourseUpdateQuery: RequestStatus.SUCCESSFUL },
+        error: { deletingUpdates: false },
+      }));
     } catch (error) {
       dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatuses({ createCourseUpdateQuery: RequestStatus.FAILED }));
+      dispatch(updateSavingStatuses({
+        status: { createCourseUpdateQuery: RequestStatus.FAILED },
+        error: { deletingUpdates: true },
+      }));
     }
   };
 }
@@ -87,9 +111,15 @@ export function fetchCourseHandoutsQuery(courseId) {
       dispatch(updateLoadingStatuses({ fetchCourseHandoutsQuery: RequestStatus.IN_PROGRESS }));
       const courseHandouts = await getCourseHandouts(courseId);
       dispatch(fetchCourseHandoutsSuccess(courseHandouts));
-      dispatch(updateLoadingStatuses({ fetchCourseHandoutsQuery: RequestStatus.SUCCESSFUL }));
+      dispatch(updateLoadingStatuses({
+        status: { fetchCourseHandoutsQuery: RequestStatus.SUCCESSFUL },
+        error: { loadingHandouts: false },
+      }));
     } catch (error) {
-      dispatch(updateLoadingStatuses({ fetchCourseHandoutsQuery: RequestStatus.FAILED }));
+      dispatch(updateLoadingStatuses({
+        status: { fetchCourseHandoutsQuery: RequestStatus.FAILED },
+        error: { loadingHandouts: true },
+      }));
     }
   };
 }
@@ -102,10 +132,16 @@ export function editCourseHandoutsQuery(courseId, data) {
       const courseHandouts = await editHandouts(courseId, data);
       dispatch(editCourseHandouts(courseHandouts));
       dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatuses({ createCourseUpdateQuery: RequestStatus.SUCCESSFUL }));
+      dispatch(updateSavingStatuses({
+        status: { createCourseUpdateQuery: RequestStatus.SUCCESSFUL },
+        error: { savingHandouts: false },
+      }));
     } catch (error) {
       dispatch(hideProcessingNotification());
-      dispatch(updateSavingStatuses({ createCourseUpdateQuery: RequestStatus.FAILED }));
+      dispatch(updateSavingStatuses({
+        status: { createCourseUpdateQuery: RequestStatus.FAILED },
+        error: { savingHandouts: true },
+      }));
     }
   };
 }

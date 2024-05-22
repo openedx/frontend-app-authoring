@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Helmet } from 'react-helmet';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
+  ActionRow,
   Button,
   Container,
   Layout,
 } from '@openedx/paragon';
-import { Add as AddIcon } from '@openedx/paragon/icons';
+import { Add as AddIcon, ErrorOutline as ErrorIcon } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
 
 import { useModel } from '../generic/model-store';
@@ -22,15 +24,18 @@ import UpdateForm from './update-form/UpdateForm';
 import { REQUEST_TYPES } from './constants';
 import messages from './messages';
 import { useCourseUpdates } from './hooks';
-import { getLoadingStatuses, getSavingStatuses } from './data/selectors';
+import {
+  getErrors,
+  getLoadingStatuses,
+  getSavingStatuses,
+} from './data/selectors';
 import { matchesAnyStatus } from './utils';
 import getPageHeadTitle from '../generic/utils';
+import AlertMessage from '../generic/alert-message';
 
 const CourseUpdates = ({ courseId }) => {
   const intl = useIntl();
-
   const courseDetails = useModel('courseDetails', courseId);
-  document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.headingTitle));
 
   const {
     requestType,
@@ -56,6 +61,7 @@ const CourseUpdates = ({ courseId }) => {
 
   const loadingStatuses = useSelector(getLoadingStatuses);
   const savingStatuses = useSelector(getSavingStatuses);
+  const errors = useSelector(getErrors);
 
   const anyStatusFailed = matchesAnyStatus({ ...loadingStatuses, ...savingStatuses }, RequestStatus.FAILED);
   const anyStatusInProgress = matchesAnyStatus({ ...loadingStatuses, ...savingStatuses }, RequestStatus.IN_PROGRESS);
@@ -63,8 +69,61 @@ const CourseUpdates = ({ courseId }) => {
 
   return (
     <>
-      <Container size="xl" className="px-4">
-        <section className="setting-items mb-4 mt-5">
+      <Helmet>
+        <title>
+          {getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.headingTitle))}
+        </title>
+      </Helmet>
+      <Container size="xl" className="px-4 pt-4">
+        <section className="setting-items mb-4">
+          {errors.loadingUpdates && (
+            <AlertMessage
+              title={intl.formatMessage(messages.loadingUpdatesErrorTitle)}
+              description={intl.formatMessage(messages.loadingUpdatesErrorDescription, { courseId })}
+              variant="danger"
+              icon={ErrorIcon}
+            />
+          )}
+          {errors.loadingHandouts && (
+            <AlertMessage
+              title={intl.formatMessage(messages.loadingHandoutsErrorTitle)}
+              description={intl.formatMessage(messages.loadingHandoutsErrorDescription, { courseId })}
+              variant="danger"
+              icon={ErrorIcon}
+            />
+          )}
+          {errors.creatingUpdate && (
+            <AlertMessage
+              title={intl.formatMessage(messages.savingUpdatesErrorTitle)}
+              description={intl.formatMessage(messages.savingNewUpdateErrorAlertDescription)}
+              variant="danger"
+              icon={ErrorIcon}
+            />
+          )}
+          {errors.savingUpdates && (
+            <AlertMessage
+              title={intl.formatMessage(messages.savingUpdatesErrorTitle)}
+              description={intl.formatMessage(messages.savingUpdatesErrorDescription)}
+              variant="danger"
+              icon={ErrorIcon}
+            />
+          )}
+          {errors.deletingUpdates && (
+            <AlertMessage
+              title={intl.formatMessage(messages.deletingUpdatesErrorTitle)}
+              description={intl.formatMessage(messages.deletingUpdatesErrorDescription)}
+              variant="danger"
+              icon={ErrorIcon}
+            />
+          )}
+          {errors.savingHandouts && (
+            <AlertMessage
+              title={intl.formatMessage(messages.savingHandoutsErrorTitle)}
+              description={intl.formatMessage(messages.savingHandoutsErrorDescription)}
+              variant="danger"
+              icon={ErrorIcon}
+            />
+          )}
           <Layout
             lg={[{ span: 12 }]}
             md={[{ span: 12 }]}
@@ -72,7 +131,7 @@ const CourseUpdates = ({ courseId }) => {
             xs={[{ span: 12 }]}
             xl={[{ span: 12 }]}
           >
-            <Layout.Element>
+            <Layout.Element className="mt-3">
               <article>
                 <div>
                   <SubHeader
@@ -85,7 +144,7 @@ const CourseUpdates = ({ courseId }) => {
                         iconBefore={AddIcon}
                         size="sm"
                         onClick={() => handleOpenUpdateForm(REQUEST_TYPES.add_new_update)}
-                        disabled={isUpdateFormOpen}
+                        disabled={isUpdateFormOpen || errors.loadingUpdates}
                       >
                         {intl.formatMessage(messages.newUpdateButton)}
                       </Button>
@@ -102,33 +161,54 @@ const CourseUpdates = ({ courseId }) => {
                       />
                     )}
                     <div className="updates-container">
-                      <div className="p-4.5">
-                        {courseUpdates.length ? courseUpdates.map((courseUpdate, index) => (
-                          isInnerFormOpen(courseUpdate.id) ? (
-                            <UpdateForm
-                              isOpen={isUpdateFormOpen}
-                              close={closeUpdateForm}
-                              requestType={requestType}
-                              isInnerForm
-                              isFirstUpdate={index === 0}
-                              onSubmit={handleUpdatesSubmit}
-                              courseUpdatesInitialValues={courseUpdatesInitialValues}
-                            />
-                          ) : (
-                            <CourseUpdate
-                              dateForUpdate={courseUpdate.date}
-                              contentForUpdate={courseUpdate.content}
-                              onEdit={() => handleOpenUpdateForm(REQUEST_TYPES.edit_update, courseUpdate)}
-                              onDelete={() => handleOpenDeleteForm(courseUpdate)}
-                              isDisabledButtons={isUpdateFormOpen}
-                            />
-                          ))) : null}
-                      </div>
+                      {courseUpdates.length > 0 && (
+                        <div className="p-4.5">
+                          {courseUpdates.map((courseUpdate, index) => (
+                            isInnerFormOpen(courseUpdate.id) ? (
+                              <UpdateForm
+                                isOpen={isUpdateFormOpen}
+                                close={closeUpdateForm}
+                                requestType={requestType}
+                                isInnerForm
+                                isFirstUpdate={index === 0}
+                                onSubmit={handleUpdatesSubmit}
+                                courseUpdatesInitialValues={courseUpdatesInitialValues}
+                              />
+                            ) : (
+                              <CourseUpdate
+                                dateForUpdate={courseUpdate.date}
+                                contentForUpdate={courseUpdate.content}
+                                onEdit={() => handleOpenUpdateForm(REQUEST_TYPES.edit_update, courseUpdate)}
+                                onDelete={() => handleOpenDeleteForm(courseUpdate)}
+                                isDisabledButtons={isUpdateFormOpen}
+                              />
+                            )
+                          ))}
+                        </div>
+                      )}
+                      {!courseUpdates.length && (
+                        <ActionRow>
+                          <ActionRow.Spacer />
+                          <span className="small mr-2">
+                            {intl.formatMessage(messages.noCourseUpdates)}
+                          </span>
+                          <Button
+                            variant="primary"
+                            iconBefore={AddIcon}
+                            size="sm"
+                            onClick={() => handleOpenUpdateForm(REQUEST_TYPES.add_new_update)}
+                            disabled={isUpdateFormOpen || errors.loadingUpdates}
+                          >
+                            {intl.formatMessage(messages.firstUpdateButton)}
+                          </Button>
+                          <ActionRow.Spacer />
+                        </ActionRow>
+                      )}
                       <div className="updates-handouts-container">
                         <CourseHandouts
                           contentForHandouts={courseHandouts?.data || ''}
                           onEdit={() => handleOpenUpdateForm(REQUEST_TYPES.edit_handouts)}
-                          isDisabledButtons={isUpdateFormOpen}
+                          isDisabledButtons={isUpdateFormOpen || errors.loadingHandouts}
                         />
                       </div>
                       <DeleteModal

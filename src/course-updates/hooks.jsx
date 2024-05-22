@@ -98,7 +98,7 @@ const useCourseUpdates = ({ courseId }) => {
     courseHandouts,
     courseUpdatesInitialValues,
     isMainFormOpen: isUpdateFormOpen && requestType !== REQUEST_TYPES.edit_update,
-    isInnerFormOpen: (id) => isUpdateFormOpen && currentUpdate.id === id && requestType === REQUEST_TYPES.edit_update,
+    isInnerFormOpen: (id) => (isUpdateFormOpen && currentUpdate.id === id && requestType === REQUEST_TYPES.edit_update),
     isUpdateFormOpen,
     isDeleteModalOpen,
     closeUpdateForm,
