@@ -66,7 +66,7 @@ const messages = defineMessages({
     defaultMessage: 'Failed to save new course update. Please try again later.',
     description: 'Alert body message for saving new course update errors',
   },
-  savingHandoutErrorTitle: {
+  savingHandoutsErrorTitle: {
     id: 'course-authoring.course-updates.error.saving-handouts.title',
     defaultMessage: 'Failed to save course handouts',
     description: 'Alert title for saving handouts error alert',

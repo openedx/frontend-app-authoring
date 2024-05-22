@@ -118,7 +118,7 @@ const CourseUpdates = ({ courseId }) => {
           )}
           {errors.savingHandouts && (
             <AlertMessage
-              title={intl.formatMessage(messages.savingHandoutErrorTitle)}
+              title={intl.formatMessage(messages.savingHandoutsErrorTitle)}
               description={intl.formatMessage(messages.savingHandoutsErrorDescription)}
               variant="danger"
               icon={ErrorIcon}
