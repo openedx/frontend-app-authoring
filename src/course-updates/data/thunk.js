@@ -28,12 +28,12 @@ export function fetchCourseUpdatesQuery(courseId) {
       dispatch(fetchCourseUpdatesSuccess(courseUpdates));
       dispatch(updateLoadingStatuses({
         status: { fetchCourseUpdatesQuery: RequestStatus.SUCCESSFUL },
-        error: { loadingUpdates: '' },
+        error: { loadingUpdates: false },
       }));
     } catch (error) {
       dispatch(updateLoadingStatuses({
         status: { fetchCourseUpdatesQuery: RequestStatus.FAILED },
-        error: { loadingUpdates: `Failed to load course updates for ${courseId}.` },
+        error: { loadingUpdates: true },
       }));
     }
   };
@@ -49,13 +49,13 @@ export function createCourseUpdateQuery(courseId, data) {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatuses({
         status: { createCourseUpdateQuery: RequestStatus.SUCCESSFUL },
-        error: { savingUpdates: '' },
+        error: { creatingUpdate: false },
       }));
     } catch (error) {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatuses({
         status: { createCourseUpdateQuery: RequestStatus.FAILED },
-        error: { savingUpdates: 'Failed to save new course update.' },
+        error: { creatingUpdate: true },
       }));
     }
   };
@@ -71,13 +71,13 @@ export function editCourseUpdateQuery(courseId, data) {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatuses({
         status: { createCourseUpdateQuery: RequestStatus.SUCCESSFUL },
-        error: { savingUpdates: '' },
+        error: { savingUpdates: false },
       }));
     } catch (error) {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatuses({
         status: { createCourseUpdateQuery: RequestStatus.FAILED },
-        error: { savingUpdates: 'Failed to save recent changes to course update.' },
+        error: { savingUpdates: true },
       }));
     }
   };
@@ -93,13 +93,13 @@ export function deleteCourseUpdateQuery(courseId, updateId) {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatuses({
         status: { createCourseUpdateQuery: RequestStatus.SUCCESSFUL },
-        error: { savingUpdates: '' },
+        error: { deletingUpdates: false },
       }));
     } catch (error) {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatuses({
         status: { createCourseUpdateQuery: RequestStatus.FAILED },
-        error: { savingUpdates: 'Failed to delete selected course update.' },
+        error: { deletingUpdates: true },
       }));
     }
   };
@@ -113,12 +113,12 @@ export function fetchCourseHandoutsQuery(courseId) {
       dispatch(fetchCourseHandoutsSuccess(courseHandouts));
       dispatch(updateLoadingStatuses({
         status: { fetchCourseHandoutsQuery: RequestStatus.SUCCESSFUL },
-        error: { loadingHandouts: '' },
+        error: { loadingHandouts: false },
       }));
     } catch (error) {
       dispatch(updateLoadingStatuses({
         status: { fetchCourseHandoutsQuery: RequestStatus.FAILED },
-        error: { loadingHandouts: `Failed to load course handouts for ${courseId}.` },
+        error: { loadingHandouts: true },
       }));
     }
   };
@@ -134,13 +134,13 @@ export function editCourseHandoutsQuery(courseId, data) {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatuses({
         status: { createCourseUpdateQuery: RequestStatus.SUCCESSFUL },
-        error: { savingHandouts: '' },
+        error: { savingHandouts: false },
       }));
     } catch (error) {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatuses({
         status: { createCourseUpdateQuery: RequestStatus.FAILED },
-        error: { savingHandouts: 'Failed to save recent changes to course handouts.' },
+        error: { savingHandouts: true },
       }));
     }
   };

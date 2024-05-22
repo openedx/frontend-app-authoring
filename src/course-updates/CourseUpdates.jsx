@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
 import { Helmet } from 'react-helmet';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -77,52 +76,52 @@ const CourseUpdates = ({ courseId }) => {
       </Helmet>
       <Container size="xl" className="px-4 pt-4">
         <section className="setting-items mb-4">
-          {!isEmpty(errors.loadingUpdates) && (
+          {errors.loadingUpdates && (
             <AlertMessage
-              title={intl.formatMessage(messages.loadingErrorAlertTitle, { errorType: 'updates' })}
-              description={intl.formatMessage(
-                messages.loadingErrorAlertDescription,
-                { message: errors.loadingUpdates },
-              )}
+              title={intl.formatMessage(messages.loadingUpdatesErrorTitle)}
+              description={intl.formatMessage(messages.loadingUpdatesErrorDescription, { courseId })}
               variant="danger"
               icon={ErrorIcon}
             />
           )}
-          {!isEmpty(errors.loadingHandouts) && (
+          {errors.loadingHandouts && (
             <AlertMessage
-              title={intl.formatMessage(messages.loadingErrorAlertTitle, { errorType: 'handouts' })}
-              description={intl.formatMessage(
-                messages.loadingErrorAlertDescription,
-                { message: errors.loadingHandouts },
-              )}
+              title={intl.formatMessage(messages.loadingHandoutsErrorTitle)}
+              description={intl.formatMessage(messages.loadingHandoutsErrorDescription, { courseId })}
               variant="danger"
               icon={ErrorIcon}
             />
           )}
-          {!isEmpty(errors.savingUpdates) && (
+          {errors.creatingUpdate && (
             <AlertMessage
-              title={intl.formatMessage(
-                messages.savingErrorAlertTitle,
-                {
-                  actionType: errors.savingUpdates.includes('delete') ? 'delete' : 'save',
-                  errorType: 'update',
-                },
-              )}
-              description={intl.formatMessage(messages.savingErrorAlertDescription, { message: errors.savingUpdates })}
+              title={intl.formatMessage(messages.savingUpdatesErrorTitle)}
+              description={intl.formatMessage(messages.savingNewUpdateErrorAlertDescription)}
               variant="danger"
               icon={ErrorIcon}
-              dismissable
-              closeLabel="Dismiss"
             />
           )}
-          {!isEmpty(errors.savingHandouts) && (
+          {errors.savingUpdates && (
             <AlertMessage
-              title={intl.formatMessage(messages.savingErrorAlertTitle, { actionType: 'save', errorType: 'handouts' })}
-              description={intl.formatMessage(messages.savingErrorAlertDescription, { message: errors.savingHandouts })}
+              title={intl.formatMessage(messages.savingUpdatesErrorTitle)}
+              description={intl.formatMessage(messages.savingUpdatesErrorDescription)}
               variant="danger"
               icon={ErrorIcon}
-              dismissable
-              closeLabel="Dismiss"
+            />
+          )}
+          {errors.deletingUpdates && (
+            <AlertMessage
+              title={intl.formatMessage(messages.deletingUpdatesErrorTitle)}
+              description={intl.formatMessage(messages.deletingUpdatesErrorDescription)}
+              variant="danger"
+              icon={ErrorIcon}
+            />
+          )}
+          {errors.savingHandouts && (
+            <AlertMessage
+              title={intl.formatMessage(messages.savingHandoutErrorTitle)}
+              description={intl.formatMessage(messages.savingHandoutsErrorDescription)}
+              variant="danger"
+              icon={ErrorIcon}
             />
           )}
           <Layout
@@ -145,7 +144,7 @@ const CourseUpdates = ({ courseId }) => {
                         iconBefore={AddIcon}
                         size="sm"
                         onClick={() => handleOpenUpdateForm(REQUEST_TYPES.add_new_update)}
-                        disabled={isUpdateFormOpen || !isEmpty(errors.loadingUpdates)}
+                        disabled={isUpdateFormOpen || errors.loadingUpdates}
                       >
                         {intl.formatMessage(messages.newUpdateButton)}
                       </Button>
@@ -198,7 +197,7 @@ const CourseUpdates = ({ courseId }) => {
                             iconBefore={AddIcon}
                             size="sm"
                             onClick={() => handleOpenUpdateForm(REQUEST_TYPES.add_new_update)}
-                            disabled={isUpdateFormOpen || !isEmpty(errors.loadingUpdates)}
+                            disabled={isUpdateFormOpen || errors.loadingUpdates}
                           >
                             {intl.formatMessage(messages.firstUpdateButton)}
                           </Button>
@@ -209,7 +208,7 @@ const CourseUpdates = ({ courseId }) => {
                         <CourseHandouts
                           contentForHandouts={courseHandouts?.data || ''}
                           onEdit={() => handleOpenUpdateForm(REQUEST_TYPES.edit_handouts)}
-                          isDisabledButtons={isUpdateFormOpen || !isEmpty(errors.loadingHandouts)}
+                          isDisabledButtons={isUpdateFormOpen || errors.loadingHandouts}
                         />
                       </div>
                       <DeleteModal

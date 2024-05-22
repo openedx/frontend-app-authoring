@@ -16,10 +16,12 @@ const initialState = {
     fetchCourseHandoutsQuery: '',
   },
   errors: {
-    loadingUpdates: '',
-    loadingHandouts: '',
-    savingUpdates: '',
-    savingHandouts: '',
+    creatingUpdate: false,
+    deletingUpdates: false,
+    loadingUpdates: false,
+    loadingHandouts: false,
+    savingUpdates: false,
+    savingHandouts: false,
   },
 };
 
@@ -55,12 +57,12 @@ const slice = createSlice({
     },
     updateSavingStatuses: (state, { payload }) => {
       const { status, error } = payload;
-      state.errors = { ...state.errors, ...error };
+      state.errors = { ...initialState.errors, ...error };
       state.savingStatuses = { ...state.savingStatuses, ...status };
     },
     updateLoadingStatuses: (state, { payload }) => {
       const { status, error } = payload;
-      state.errors = { ...state.errors, ...error };
+      state.errors = { ...initialState.errors, ...error };
       state.loadingStatuses = { ...state.loadingStatuses, ...status };
     },
   },

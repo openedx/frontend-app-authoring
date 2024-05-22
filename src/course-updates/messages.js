@@ -31,25 +31,60 @@ const messages = defineMessages({
     defaultMessage: 'You have not added any updates to this course yet.',
     description: 'Message to notify user that they do not have any existing course updates',
   },
-  loadingErrorAlertTitle: {
-    id: 'course-authoring.course-updates.actions.first-update-message',
-    defaultMessage: 'Failed to load course {errorType}',
-    description: 'Alert title for loading error alert',
+  loadingUpdatesErrorTitle: {
+    id: 'course-authoring.course-updates.error.loading-updates.title',
+    defaultMessage: 'Failed to load course updates',
+    description: 'Alert title for loading updates error alert',
   },
-  loadingErrorAlertDescription: {
-    id: 'course-authoring.course-updates.loading-error',
-    defaultMessage: '{message} Please try again later.',
-    description: 'Alert body message for loading course update and handout errors',
+  loadingUpdatesErrorDescription: {
+    id: 'course-authoring.course-updates.error.loading-updates.description',
+    defaultMessage: 'Failed to load course updates for {courseId}. Please try again later.',
+    description: 'Alert body message for loading course update errors',
   },
-  savingErrorAlertTitle: {
-    id: 'course-authoring.course-updates.saving-error.title',
-    defaultMessage: 'Failed to {actionType} course {errorType}',
-    description: 'Alert title for saving error alert',
+  loadingHandoutsErrorTitle: {
+    id: 'course-authoring.course-updates.error.loading-handouts.title',
+    defaultMessage: 'Failed to load course handouts',
+    description: 'Alert title for loading handouts error alert',
   },
-  savingErrorAlertDescription: {
-    id: 'course-authoring.course-updates.saving-error.description',
-    defaultMessage: '{message} Please try again later.',
-    description: 'Alert body message for saving course update and handout errors',
+  loadingHandoutsErrorDescription: {
+    id: 'course-authoring.course-updates.error.loading-handouts.description',
+    defaultMessage: 'Failed to load course updates for {courseId}. Please try again later.',
+    description: 'Alert body message for loading course handout errors',
+  },
+  savingUpdatesErrorTitle: {
+    id: 'course-authoring.course-updates.error.saving-updates.title',
+    defaultMessage: 'Failed to save course update',
+    description: 'Alert title for saving updates error alert',
+  },
+  savingUpdatesErrorDescription: {
+    id: 'course-authoring.course-updates.error.saving-updates.description',
+    defaultMessage: 'Failed to save recent changes to course update. Please try again later.',
+    description: 'Alert body message for saving edits to course update errors',
+  },
+  savingNewUpdateErrorAlertDescription: {
+    id: 'course-authoring.course-updates.error.saving-new-updates.description',
+    defaultMessage: 'Failed to save new course update. Please try again later.',
+    description: 'Alert body message for saving new course update errors',
+  },
+  savingHandoutErrorTitle: {
+    id: 'course-authoring.course-updates.error.saving-handouts.title',
+    defaultMessage: 'Failed to save course handouts',
+    description: 'Alert title for saving handouts error alert',
+  },
+  savingHandoutsErrorDescription: {
+    id: 'course-authoring.course-updates.error.saving-handouts.description',
+    defaultMessage: 'Failed to save recent changes to course handouts. Please try again later.',
+    description: 'Alert body message for saving course handout errors',
+  },
+  deletingUpdatesErrorTitle: {
+    id: 'course-authoring.course-updates.error.deleting-updates.title',
+    defaultMessage: 'Failed to delete course update',
+    description: 'Alert title for deleting update error alert',
+  },
+  deletingUpdatesErrorDescription: {
+    id: 'course-authoring.course-updates.error.deleting-updates.description',
+    defaultMessage: 'Failed to delete selected course update. Please try again later.',
+    description: 'Alert body message for deleting course update errors',
   },
 });
 
