@@ -20,6 +20,7 @@ import {
 import { getTaxonomyListData } from '../taxonomy/data/api';
 import messages from './messages';
 import { ContentTagsDrawerSheetContext } from './common/context';
+import { languageExportId } from './utils';
 
 const contentId = 'block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@7f47fe2dbcaf47c5a071671c741fe1ab';
 const mockOnClose = jest.fn();
@@ -248,6 +249,83 @@ describe('<ContentTagsDrawer />', () => {
           depth: 0,
           parentValue: null,
           id: 12347,
+          subTagsUrl: null,
+          canChangeTag: false,
+          canDeleteTag: false,
+        }],
+      },
+    });
+  };
+
+  const setupMockDataLanguageTaxonomyTestings = (hasTags) => {
+    useContentTaxonomyTagsData.mockReturnValue({
+      isSuccess: true,
+      data: {
+        taxonomies: [
+          {
+            name: 'Languages',
+            taxonomyId: 123,
+            exportId: languageExportId,
+            canTagObject: true,
+            tags: hasTags ? [
+              {
+                value: 'Tag 1',
+                lineage: ['Tag 1'],
+                canDeleteObjecttag: true,
+              },
+            ] : [],
+          },
+          {
+            name: 'Taxonomy 1',
+            taxonomyId: 1234,
+            canTagObject: true,
+            tags: [
+              {
+                value: 'Tag 1',
+                lineage: ['Tag 1'],
+                canDeleteObjecttag: true,
+              },
+              {
+                value: 'Tag 2',
+                lineage: ['Tag 2'],
+                canDeleteObjecttag: true,
+              },
+            ],
+          },
+        ],
+      },
+    });
+    getTaxonomyListData.mockResolvedValue({
+      results: [
+        {
+          id: 123,
+          name: 'Languages',
+          description: 'This is a description 1',
+          exportId: languageExportId,
+          canTagObject: true,
+        },
+        {
+          id: 1234,
+          name: 'Taxonomy 1',
+          description: 'This is a description 2',
+          canTagObject: true,
+        },
+      ],
+    });
+
+    useTaxonomyTagsData.mockReturnValue({
+      hasMorePages: false,
+      canAddTag: false,
+      tagPages: {
+        isLoading: false,
+        isError: false,
+        data: [{
+          value: 'Tag 1',
+          externalId: null,
+          childCount: 0,
+          depth: 0,
+          parentValue: null,
+          id: 12345,
           subTagsUrl: null,
           canChangeTag: false,
           canDeleteTag: false,
@@ -1056,5 +1134,19 @@ describe('<ContentTagsDrawer />', () => {
     fireEvent.click(cancelButton);
 
     expect(screen.getByText(/tag 3/i)).toBeInTheDocument();
+  });
+
+  it('should show Language Taxonomy', async () => {
+    setupMockDataLanguageTaxonomyTestings(true);
+    render(<RootWrapper />);
+    expect(await screen.findByText('Languages')).toBeInTheDocument();
+  });
+
+  it('should hide Language Taxonomy', async () => {
+    setupMockDataLanguageTaxonomyTestings(false);
+    render(<RootWrapper />);
+    expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
+
+    expect(screen.queryByText('Languages')).not.toBeInTheDocument();
   });
 });
