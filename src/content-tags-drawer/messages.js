@@ -25,6 +25,11 @@ const messages = defineMessages({
     id: 'course-authoring.content-tags-drawer.tags-dropdown-selector.no-tags-found',
     defaultMessage: 'No tags found with the search term "{searchTerm}"',
   },
+  noTagsInTaxonomyMessage: {
+    id: 'course-authoring.content-tags-drawer.tags-dropdown-selector.no-tags-in-taxonomy',
+    defaultMessage: 'No tags in this taxonomy yet',
+    description: 'Message when the user uses the tags dropdown selector of an empty taxonomy',
+  },
   taxonomyTagChecked: {
     id: 'course-authoring.content-tags-drawer.tags-dropdown-selector.tag-checked',
     defaultMessage: 'Checked',

@@ -323,7 +323,9 @@ const ContentTagsDropDownSelector = ({
 
       { tagPages.data.length === 0 && !tagPages.isLoading && (
         <div className="d-flex justify-content-center muted-text">
-          <FormattedMessage {...messages.noTagsFoundMessage} values={{ searchTerm }} />
+          { searchTerm
+            ? <FormattedMessage {...messages.noTagsFoundMessage} values={{ searchTerm }} />
+            : <FormattedMessage {...messages.noTagsInTaxonomyMessage} />}
         </div>
       )}
 

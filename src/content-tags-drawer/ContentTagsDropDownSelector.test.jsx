@@ -282,4 +282,28 @@ describe('<ContentTagsDropDownSelector />', () => {
       expect(getByText(message)).toBeInTheDocument();
     });
   });
+
+  it('should render "noTagsInTaxonomy" message if taxonomy is empty', async () => {
+    useTaxonomyTagsData.mockReturnValueOnce({
+      hasMorePages: false,
+      tagPages: {
+        isLoading: false,
+        isError: false,
+        isSuccess: true,
+        data: [],
+      },
+    });
+
+    const searchTerm = '';
+    await act(async () => {
+      const { getByText } = await getComponent({ ...data, searchTerm });
+
+      await waitFor(() => {
+        expect(useTaxonomyTagsData).toBeCalledWith(data.taxonomyId, null, 1, searchTerm);
+      });
+
+      const message = 'No tags in this taxonomy yet';
+      expect(getByText(message)).toBeInTheDocument();
+    });
+  });
 });
