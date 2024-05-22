@@ -56,28 +56,30 @@ export const VideoGallery = () => {
   );
 
   return (
-    <SelectionModal
-      {...{
-        isOpen: true,
-        close: handleCancel,
-        size: 'fullscreen',
-        isFullscreenScroll: false,
-        galleryError,
-        inputError,
-        fileInput,
-        galleryProps: {
-          ...galleryProps,
-          thumbnailFallback,
-        },
-        searchSortProps,
-        selectBtnProps,
-        acceptedFiles: acceptedImgKeys,
-        modalMessages,
-        isLoaded,
-        isUploadError,
-        isFetchError,
-      }}
-    />
+    <div style={isLoaded ? { backgroundColor: '#E9E6E4' } : {}}>
+      <SelectionModal
+        {...{
+          isOpen: true,
+          close: handleCancel,
+          size: 'fullscreen',
+          isFullscreenScroll: false,
+          galleryError,
+          inputError,
+          fileInput,
+          galleryProps: {
+            ...galleryProps,
+            thumbnailFallback,
+          },
+          searchSortProps,
+          selectBtnProps,
+          acceptedFiles: acceptedImgKeys,
+          modalMessages,
+          isLoaded,
+          isUploadError,
+          isFetchError,
+        }}
+      />
+    </div>
   );
 };
 

@@ -2,7 +2,11 @@
 
 exports[`SourceCodeModal renders as expected with default behavior 1`] = `
 <BaseModal
-  bodyStyle={null}
+  bodyStyle={
+    Object {
+      "maxHeight": NaN,
+    }
+  }
   close={[MockFunction]}
   confirmAction={
     <Button
@@ -32,11 +36,7 @@ exports[`SourceCodeModal renders as expected with default behavior 1`] = `
   title="Edit Source Code"
 >
   <div
-    style={
-      Object {
-        "padding": "10px 30px",
-      }
-    }
+    className="px-4.5 pt-2.5"
   >
     <injectIntl(ShimmedIntlComponent)
       innerRef="moCKrEf"

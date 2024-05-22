@@ -21,7 +21,7 @@
 }
 
 /* Set top padding to 0 when there is an alert above. */
-.selection-modal .pgn__vstack > .alert + .gallery > .pgn__scrollable-body-content > .p-4 {
+.selection-modal .pgn__scrollable-body-content > .pgn__vstack > .alert + .gallery > .p-4 {
     padding-top: 0 !important;
 }
 

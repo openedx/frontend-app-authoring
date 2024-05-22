@@ -1,9 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {
-  Scrollable, Spinner,
-} from '@openedx/paragon';
+import { Spinner } from '@openedx/paragon';
 import {
   FormattedMessage,
   useIntl,
@@ -59,26 +57,24 @@ export const Gallery = ({
     );
   }
   return (
-    <Scrollable className="gallery bg-light-400" style={{ height, margin: '0 -1.5rem' }}>
-      <div className="p-4">
-        <SelectableBox.Set
-          columns={1}
-          name="images"
-          onChange={onHighlightChange}
-          type="radio"
-          value={highlighted}
-        >
-          { displayList.map(asset => (
-            <GalleryCard
-              key={asset.id}
-              asset={asset}
-              showId={showIdsOnCards}
-              thumbnailFallback={thumbnailFallback}
-            />
-          )) }
-        </SelectableBox.Set>
-      </div>
-    </Scrollable>
+    <div className="p-4 gallery bg-light-400" style={{ height, margin: '0 -1.5rem' }}>
+      <SelectableBox.Set
+        columns={1}
+        name="images"
+        onChange={onHighlightChange}
+        type="radio"
+        value={highlighted}
+      >
+        { displayList.map(asset => (
+          <GalleryCard
+            key={asset.id}
+            asset={asset}
+            showId={showIdsOnCards}
+            thumbnailFallback={thumbnailFallback}
+          />
+        )) }
+      </SelectableBox.Set>
+    </div>
   );
 };
 

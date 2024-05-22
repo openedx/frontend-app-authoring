@@ -23,11 +23,13 @@ exports[`BaseModal ImageUploadModal template component snapshot 1`] = `
       props.title node
     </ModalDialog.Title>
   </ModalDialog.Header>
-  <ModalDialog.Body
+  <Scrollable
     style={null}
   >
-    props.children node
-  </ModalDialog.Body>
+    <ModalDialog.Body>
+      props.children node
+    </ModalDialog.Body>
+  </Scrollable>
   <ModalDialog.Footer>
     <ActionRow>
       props.footerAction node

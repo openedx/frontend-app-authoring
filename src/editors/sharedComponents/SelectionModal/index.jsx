@@ -81,7 +81,7 @@ export const SelectionModal = ({
         </Button>
       )}
       title={intl.formatMessage(titleMsg)}
-      bodyStyle={{ background, padding: '3px 24px' }}
+      bodyStyle={{ background }}
       headerComponent={(
         <div style={{ margin: '18px 0' }}>
           <SearchSort {...searchSortProps} />

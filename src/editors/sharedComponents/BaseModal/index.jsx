@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import {
   ActionRow,
   ModalDialog,
+  Scrollable,
 } from '@openedx/paragon';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
@@ -39,9 +40,11 @@ export const BaseModal = ({
       </ModalDialog.Title>
       {headerComponent}
     </ModalDialog.Header>
-    <ModalDialog.Body style={bodyStyle}>
-      {children}
-    </ModalDialog.Body>
+    <Scrollable style={bodyStyle}>
+      <ModalDialog.Body>
+        {children}
+      </ModalDialog.Body>
+    </Scrollable>
     <ModalDialog.Footer>
       <ActionRow>
         {footerAction}

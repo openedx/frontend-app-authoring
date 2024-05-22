@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { Button } from '@openedx/paragon';
 
 import { thunkActions } from '../../../data/redux';
-import BaseModal from './BaseModal';
+import BaseModal from '../../../sharedComponents/BaseModal';
 import * as module from './SelectVideoModal';
 
 export const hooks = {

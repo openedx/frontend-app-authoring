@@ -1,5 +1,4 @@
 /* eslint-disable import/no-extraneous-dependencies */
-
 import 'babel-polyfill';
 import 'jest-canvas-mock';
 
@@ -125,6 +124,7 @@ jest.mock('@openedx/paragon', () => jest.requireActual('testUtils').mockNestedCo
   Stack: 'Stack',
   Toast: 'Toast',
   Truncate: 'Truncate',
+  useWindowSize: { height: '500px' },
 }));
 
 jest.mock('@openedx/paragon/icons', () => ({

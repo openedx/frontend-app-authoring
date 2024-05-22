@@ -7,7 +7,7 @@ import {
   intlShape,
 } from '@edx/frontend-platform/i18n';
 
-import { Button } from '@openedx/paragon';
+import { Button, useWindowSize } from '@openedx/paragon';
 import messages from './messages';
 import hooks from './hooks';
 import BaseModal from '../BaseModal';
@@ -22,6 +22,8 @@ export const SourceCodeModal = ({
   intl,
 }) => {
   const { saveBtnProps, value, ref } = hooks.prepareSourceCodeModal({ editorRef, close });
+  const { height } = useWindowSize();
+
   return (
     <BaseModal
       close={close}
@@ -33,8 +35,9 @@ export const SourceCodeModal = ({
             )}
       isOpen={isOpen}
       title={intl.formatMessage(messages.titleLabel)}
+      bodyStyle={{ maxHeight: (height - 180) }}
     >
-      <div style={{ padding: '10px 30px' }}>
+      <div className="px-4.5 pt-2.5">
         <CodeEditor
           innerRef={ref}
           value={value}
