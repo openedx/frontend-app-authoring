@@ -262,6 +262,76 @@
             "org": "SampleTaxonomyOrg1",
             "access_id": "6"
           }
+        },
+        {
+          "display_name": "Text block in Lib Component",
+          "block_id": "b654d61248bcc1f84c08",
+          "content": {
+            "html_content": " This is a text block lib component. "
+          },
+          "id": "block-v1sampletaxonomyorg1stc12023_1typehtmlblockb654d61248bcc1f84c08-77f1f658",
+          "type": "course_block",
+          "breadcrumbs": [
+            {
+              "display_name": "Sample Taxonomy Course"
+            },
+            {
+              "display_name": "Section 1",
+              "usage_key": "block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@chapter+block@c7077c8cafcf420dbc0b440bf27bad04"
+            },
+            {
+              "display_name": "Subsection 1.1",
+              "usage_key": "block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@sequential+block@92e3e9ca156c44fa8a735f0e9e7c854f"
+            },
+            {
+              "display_name": "Unit 1.1.1",
+              "usage_key": "block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@aaf8b8eb86b54281aeeab12499d2cb0b"
+            },
+            {
+              "display_name": "Randomized Content Block",
+              "usage_key": "block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@library_content+block@427e5cd03fbe431d9d551c67d4e280ae"
+            }
+          ],
+          "usage_key": "block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@html+block@b654d61248bcc1f84c08",
+          "block_type": "html",
+          "context_key": "course-v1:SampleTaxonomyOrg1+STC1+2023_1",
+          "org": "SampleTaxonomyOrg1",
+          "access_id": 6,
+          "_formatted": {
+            "display_name": "Text block in Lib Component",
+            "block_id": "b654d61248bcc1f84c08",
+            "content": {
+              "html_content": " This is a text block lib component. "
+            },
+            "id": "block-v1sampletaxonomyorg1stc12023_1typehtmlblockb654d61248bcc1f84c08-77f1f658",
+            "type": "course_block",
+            "breadcrumbs": [
+              {
+                "display_name": "Sample Taxonomy Course"
+              },
+              {
+                "display_name": "Section 1",
+                "usage_key": "block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@chapter+block@c7077c8cafcf420dbc0b440bf27bad04"
+              },
+              {
+                "display_name": "Subsection 1.1",
+                "usage_key": "block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@sequential+block@92e3e9ca156c44fa8a735f0e9e7c854f"
+              },
+              {
+                "display_name": "Unit 1.1.1",
+                "usage_key": "block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@aaf8b8eb86b54281aeeab12499d2cb0b"
+              },
+              {
+                "display_name": "Randomized Content Block",
+                "usage_key": "block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@library_content+block@427e5cd03fbe431d9d551c67d4e280ae"
+              }
+            ],
+            "usage_key": "block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@html+block@b654d61248bcc1f84c08",
+            "block_type": "html",
+            "context_key": "course-v1:SampleTaxonomyOrg1+STC1+2023_1",
+            "org": "SampleTaxonomyOrg1",
+            "access_id": "6"
+          }
         }
       ],
       "query": "learn",
