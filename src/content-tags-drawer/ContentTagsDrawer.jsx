@@ -8,8 +8,8 @@ import {
   Button,
   Toast,
 } from '@openedx/paragon';
-import { useIntl } from '@edx/frontend-platform/i18n';
-import { useParams } from 'react-router-dom';
+import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
+import { useParams, useNavigate } from 'react-router-dom';
 import messages from './messages';
 import ContentTagsCollapsible from './ContentTagsCollapsible';
 import Loading from '../generic/Loading';
@@ -27,6 +27,7 @@ import { ContentTagsDrawerContext, ContentTagsDrawerSheetContext } from './commo
  */
 const ContentTagsDrawer = ({ id, onClose }) => {
   const intl = useIntl();
+  const navigate = useNavigate();
   // TODO: We can delete 'params' when the iframe is no longer used on edx-platform
   const params = useParams();
   const contentId = id ?? params.contentId;
@@ -90,6 +91,46 @@ const ContentTagsDrawer = ({ id, onClose }) => {
     setCollapsibleToInitalState();
   }, [isTaxonomyListLoaded, isContentTaxonomyTagsLoaded]);
 
+  const buildTaxonomies = () => {
+    if (isTaxonomyListLoaded && isContentTaxonomyTagsLoaded) {
+      if (tagsByTaxonomy.length !== 0) {
+        return (
+          tagsByTaxonomy.map((data) => (
+            <div key={`taxonomy-tags-collapsible-${data.id}`}>
+              <ContentTagsCollapsible
+                contentId={contentId}
+                taxonomyAndTagsData={data}
+                stagedContentTags={stagedContentTags[data.id] || []}
+                collapsibleState={collapsibleStates[data.id] || false}
+              />
+              <hr />
+            </div>
+          ))
+        );
+      }
+      return (
+        <FormattedMessage
+          {...messages.emptyDrawerContent}
+          values={{
+            link: (
+              <Button
+                tabIndex="0"
+                size="inline"
+                variant="link"
+                className="text-info-500 p-0 enable-taxonomies-button"
+                onClick={() => navigate('/taxonomies')}
+              >
+                { intl.formatMessage(messages.emptyDrawerContentLink) }
+              </Button>
+            ),
+          }}
+        />
+      );
+    }
+
+    return <Loading />;
+  };
+
   return (
     <ContentTagsDrawerContext.Provider value={context}>
       <div id="content-tags-drawer" className="mt-1 tags-drawer d-flex flex-column justify-content-between min-vh-100 pt-3">
@@ -110,19 +151,7 @@ const ContentTagsDrawer = ({ id, onClose }) => {
             <p className="h4 text-gray-500 font-weight-bold">
               {intl.formatMessage(messages.headerSubtitle)}
             </p>
-            { isTaxonomyListLoaded && isContentTaxonomyTagsLoaded
-              ? tagsByTaxonomy.map((data) => (
-                <div key={`taxonomy-tags-collapsible-${data.id}`}>
-                  <ContentTagsCollapsible
-                    contentId={contentId}
-                    taxonomyAndTagsData={data}
-                    stagedContentTags={stagedContentTags[data.id] || []}
-                    collapsibleState={collapsibleStates[data.id] || false}
-                  />
-                  <hr />
-                </div>
-              ))
-              : <Loading />}
+            {buildTaxonomies()}
             {otherTaxonomies.length !== 0 && (
               <div>
                 <p className="h4 text-gray-500 font-weight-bold">

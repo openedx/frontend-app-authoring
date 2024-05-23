@@ -32,6 +32,7 @@ jest.mock('react-router-dom', () => ({
   useParams: () => ({
     contentId,
   }),
+  useNavigate: jest.fn(),
 }));
 
 // FIXME: replace these mocks with API mocks
@@ -1148,5 +1149,29 @@ describe('<ContentTagsDrawer />', () => {
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
     expect(screen.queryByText('Languages')).not.toBeInTheDocument();
+  });
+
+  it('should show empty drawer message', async () => {
+    useContentTaxonomyTagsData.mockReturnValue({
+      isSuccess: true,
+      data: {
+        taxonomies: [],
+      },
+    });
+    getTaxonomyListData.mockResolvedValue({
+      results: [],
+    });
+    useTaxonomyTagsData.mockReturnValue({
+      hasMorePages: false,
+      canAddTag: false,
+      tagPages: {
+        isLoading: false,
+        isError: false,
+        data: [],
+      },
+    });
+
+    render(<RootWrapper />);
+    expect(await screen.findByText(/to use tags, please or contact your administrator\./i)).toBeInTheDocument();
   });
 });
