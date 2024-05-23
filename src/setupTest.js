@@ -1,10 +1,5 @@
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
 import '@testing-library/jest-dom';
 import '@testing-library/jest-dom/extend-expect';
-
-/* eslint-disable import/no-extraneous-dependencies */
-import 'babel-polyfill';
 
 import { mergeConfig } from '@edx/frontend-platform';
 
