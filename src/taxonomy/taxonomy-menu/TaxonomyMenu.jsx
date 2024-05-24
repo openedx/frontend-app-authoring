@@ -117,6 +117,7 @@ const TaxonomyMenu = ({
           taxonomy={taxonomy}
           isOpen={isImportModalOpen}
           onClose={importModalClose}
+          reimport
         />
       )}
       {isManageOrgsModalOpen && (

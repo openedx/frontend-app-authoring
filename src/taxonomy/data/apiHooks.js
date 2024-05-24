@@ -187,7 +187,7 @@ export const useImportPlan = (taxonomyId, file) => useQuery({
   * @type {import("@tanstack/react-query").QueryFunction<string|null>}
   */
   queryFn: async () => {
-    if (file === null) {
+    if (!taxonomyId || file === null) {
       return null;
     }
     const formData = new FormData();

@@ -1,5 +1,5 @@
 // @ts-check
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Button,
@@ -12,6 +12,7 @@ import {
   Tooltip,
   SelectMenu,
   MenuItem,
+  useToggle,
 } from '@openedx/paragon';
 import {
   Add,
@@ -25,33 +26,24 @@ import { useOrganizationListData } from '../generic/data/apiHooks';
 import SubHeader from '../generic/sub-header/SubHeader';
 import getPageHeadTitle from '../generic/utils';
 import { ALL_TAXONOMIES, apiUrls, UNASSIGNED } from './data/api';
-import { useImportNewTaxonomy, useTaxonomyList } from './data/apiHooks';
-import { importTaxonomy } from './import-tags';
+import { useTaxonomyList } from './data/apiHooks';
+import { ImportTagsWizard } from './import-tags';
 import messages from './messages';
 import TaxonomyCard from './taxonomy-card';
-import { TaxonomyContext } from './common/context';
 
 const TaxonomyListHeaderButtons = ({ canAddTaxonomy }) => {
   const intl = useIntl();
-  const importMutation = useImportNewTaxonomy();
-  const { setToastMessage } = useContext(TaxonomyContext);
 
-  const showImportInProgressAlert = useCallback(() => {
-    /* istanbul ignore next */
-    if (setToastMessage) {
-      setToastMessage(intl.formatMessage(messages.importInProgressAlertDescription));
-    }
-  }, [setToastMessage]);
-
-  const closeImportInProgressAlert = useCallback(() => {
-    /* istanbul ignore next */
-    if (setToastMessage) {
-      setToastMessage(null);
-    }
-  }, [setToastMessage]);
+  const [isImportModalOpen, importModalOpen, importModalClose] = useToggle(false);
 
   return (
     <>
+      {isImportModalOpen && (
+        <ImportTagsWizard
+          isOpen={isImportModalOpen}
+          onClose={importModalClose}
+        />
+      )}
       <OverlayTrigger
         placement="top"
         overlay={(
@@ -86,12 +78,7 @@ const TaxonomyListHeaderButtons = ({ canAddTaxonomy }) => {
       </OverlayTrigger>
       <Button
         iconBefore={Add}
-        onClick={() => importTaxonomy(
-          intl,
-          importMutation,
-          showImportInProgressAlert,
-          closeImportInProgressAlert,
-        )}
+        onClick={importModalOpen}
         data-testid="taxonomy-import-button"
         disabled={!canAddTaxonomy}
       >

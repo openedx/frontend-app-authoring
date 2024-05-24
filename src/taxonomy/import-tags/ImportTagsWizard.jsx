@@ -11,6 +11,7 @@ import {
   ModalDialog,
   Stack,
   Stepper,
+  Form,
 } from '@openedx/paragon';
 import {
   DeleteOutline,
@@ -25,8 +26,8 @@ import LoadingButton from '../../generic/loading-button';
 import { LoadingSpinner } from '../../generic/Loading';
 import { getFileSizeToClosestByte } from '../../utils';
 import { TaxonomyContext } from '../common/context';
-import { getTaxonomyExportFile } from '../data/api';
-import { useImportTags, useImportPlan } from '../data/apiHooks';
+import { getTaxonomyExportFile, apiUrls } from '../data/api';
+import { useImportTags, useImportPlan, useImportNewTaxonomy } from '../data/apiHooks';
 import messages from './messages';
 
 const linebreak = <> <br /> <br /> </>;
@@ -74,8 +75,17 @@ const UploadStep = ({
   file,
   setFile,
   importPlanError,
+  reimport,
 }) => {
   const intl = useIntl();
+
+  const csvTemplateUrl = (
+    <a href={apiUrls.taxonomyTemplate('csv')} download>{intl.formatMessage(messages.csvTemplateTitle)}</a>
+  );
+
+  const jsonTemplateUrl = (
+    <a href={apiUrls.taxonomyTemplate('json')} download>{intl.formatMessage(messages.jsonTemplateTitle)}</a>
+  );
 
   /** @type {(args: {fileData: FormData}) => void} */
   const handleFileLoad = ({ fileData }) => {
@@ -90,7 +100,15 @@ const UploadStep = ({
   return (
     <Stepper.Step eventKey="upload" title="upload" hasError={!!importPlanError}>
       <Stack gap={3} data-testid="upload-step">
-        <p>{intl.formatMessage(messages.importWizardStepUploadBody, { br: linebreak })}</p>
+        <p>{
+          reimport
+            ? intl.formatMessage(messages.importWizardStepReuploadBody, { br: linebreak })
+            : intl.formatMessage(
+              messages.importWizardStepUploadBody,
+              { csvTemplateUrl, jsonTemplateUrl, br: linebreak },
+            )
+        }
+        </p>
         <div>
           {!file ? (
             <Dropzone
@@ -145,11 +163,60 @@ UploadStep.propTypes = {
   }),
   setFile: PropTypes.func.isRequired,
   importPlanError: PropTypes.string,
+  reimport: PropTypes.bool,
 };
 
 UploadStep.defaultProps = {
   file: null,
   importPlanError: null,
+  reimport: false,
+};
+
+const PopulateStep = ({
+  taxonomyPopulateData,
+  setTaxonomyPopulateData,
+}) => {
+  const intl = useIntl();
+
+  const handleNameChange = (e) => {
+    const updatedState = { ...taxonomyPopulateData };
+    updatedState.taxonomyName = e.target.value;
+    setTaxonomyPopulateData(updatedState);
+  };
+
+  const handleDescChange = (e) => {
+    const updatedState = { ...taxonomyPopulateData };
+    updatedState.taxonomyDesc = e.target.value;
+    setTaxonomyPopulateData(updatedState);
+  };
+
+  return (
+    <Stepper.Step eventKey="populate" title="populate">
+      <Stack gap={3} data-testid="populate-step">
+        <Form.Group>
+          <Form.Label>{ intl.formatMessage(messages.importWizardStepPopulateTaxonomyName) }</Form.Label>
+          <Form.Control value={taxonomyPopulateData.taxonomyName} onChange={handleNameChange} />
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>{ intl.formatMessage(messages.importWizardStepPopulateTaxonomyDesc) }</Form.Label>
+          <Form.Control
+            as="textarea"
+            autoResize
+            value={taxonomyPopulateData.taxonomyDesc}
+            onChange={handleDescChange}
+          />
+        </Form.Group>
+      </Stack>
+    </Stepper.Step>
+  );
+};
+
+PopulateStep.propTypes = {
+  taxonomyPopulateData: PropTypes.shape({
+    taxonomyName: PropTypes.string.isRequired,
+    taxonomyDesc: PropTypes.string.isRequired,
+  }).isRequired,
+  setTaxonomyPopulateData: PropTypes.func.isRequired,
 };
 
 const PlanStep = ({ importPlan }) => {
@@ -216,18 +283,56 @@ const ImportTagsWizard = ({
   taxonomy,
   isOpen,
   onClose,
+  reimport,
 }) => {
   const intl = useIntl();
   const { setToastMessage, setAlertProps } = useContext(TaxonomyContext);
 
-  const steps = ['export', 'upload', 'plan', 'confirm'];
-  const [currentStep, setCurrentStep] = useState(steps[0]);
+  const [currentStep, setCurrentStep] = useState(reimport ? 'export' : 'upload');
 
   const [file, setFile] = useState(/** @type {null|File} */ (null));
 
   const [isDialogDisabled, disableDialog, enableDialog] = useToggle(false);
 
-  const importPlanResult = useImportPlan(taxonomy.id, file);
+  const [taxonomyPopulateData, setTaxonomyPopulateData] = useState({
+    taxonomyName: '',
+    taxonomyDesc: '',
+  });
+
+  const importNewTaxonomyMutation = useImportNewTaxonomy();
+
+  const importNewTaxonomy = async () => {
+    disableDialog();
+    try {
+      const { taxonomyName, taxonomyDesc } = taxonomyPopulateData;
+      if (file) {
+        await importNewTaxonomyMutation.mutateAsync({
+          name: taxonomyName,
+          description: taxonomyDesc,
+          file,
+        });
+      }
+      if (setToastMessage) {
+        setToastMessage(intl.formatMessage(messages.importNewTaxonomyToast, { name: taxonomyName }));
+      }
+    } catch (/** @type {any} */ error) {
+      const alertProps = {
+        variant: 'danger',
+        icon: ErrorIcon,
+        title: intl.formatMessage(messages.importTaxonomyErrorAlert),
+        description: error.message,
+      };
+
+      if (setAlertProps) {
+        setAlertProps(alertProps);
+      }
+    } finally {
+      enableDialog();
+      onClose();
+    }
+  };
+
+  const importPlanResult = useImportPlan(taxonomy?.id, file);
 
   const importPlan = useMemo(() => {
     if (!importPlanResult.data) {
@@ -248,6 +353,10 @@ const ImportTagsWizard = ({
     setCurrentStep('plan');
   }, []);
 
+  const populateData = React.useCallback(() => {
+    setCurrentStep('populate');
+  }, []);
+
   const confirmImportTags = async () => {
     disableDialog();
     try {
@@ -258,7 +367,7 @@ const ImportTagsWizard = ({
         });
       }
       if (setToastMessage) {
-        setToastMessage(intl.formatMessage(messages.importTaxonomyToast, { name: taxonomy.name }));
+        setToastMessage(intl.formatMessage(messages.importTaxonomyToast, { name: taxonomy?.name }));
       }
     } catch (/** @type {any} */ error) {
       const alertProps = {
@@ -280,12 +389,17 @@ const ImportTagsWizard = ({
   const stepHeaders = {
     export: (
       <DefaultModalHeader>
-        {intl.formatMessage(messages.importWizardStepExportTitle, { name: taxonomy.name })}
+        {intl.formatMessage(messages.importWizardStepExportTitle, { name: taxonomy?.name })}
       </DefaultModalHeader>
     ),
     upload: (
       <DefaultModalHeader>
         {intl.formatMessage(messages.importWizardStepUploadTitle)}
+      </DefaultModalHeader>
+    ),
+    populate: (
+      <DefaultModalHeader>
+        {intl.formatMessage(messages.importWizardStepPopulateTitle)}
       </DefaultModalHeader>
     ),
     plan: (
@@ -327,11 +441,16 @@ const ImportTagsWizard = ({
 
         <Stepper activeKey={currentStep}>
           <ModalDialog.Body>
-            <ExportStep taxonomy={taxonomy} />
+            {reimport && <ExportStep taxonomy={taxonomy} />}
             <UploadStep
               file={file}
               setFile={setFile}
               importPlanError={/** @type {Error|undefined} */(importPlanResult.error)?.message}
+              reimport={reimport}
+            />
+            <PopulateStep
+              taxonomyPopulateData={taxonomyPopulateData}
+              setTaxonomyPopulateData={setTaxonomyPopulateData}
             />
             <PlanStep importPlan={importPlan} />
             <ConfirmStep importPlan={importPlan} />
@@ -351,9 +470,14 @@ const ImportTagsWizard = ({
             </Stepper.ActionRow>
 
             <Stepper.ActionRow eventKey="upload">
-              <Button variant="outline-primary" onClick={() => setCurrentStep('export')} data-testid="back-button">
-                {intl.formatMessage(messages.importWizardButtonPrevious)}
-              </Button>
+              {
+                reimport
+                && (
+                  <Button variant="outline-primary" onClick={() => setCurrentStep('export')} data-testid="back-button">
+                    {intl.formatMessage(messages.importWizardButtonPrevious)}
+                  </Button>
+                )
+              }
               <Stepper.ActionRow.Spacer />
               <Button variant="tertiary" onClick={onClose}>
                 {intl.formatMessage(messages.importWizardButtonCancel)}
@@ -362,12 +486,33 @@ const ImportTagsWizard = ({
                 importPlanResult.isLoading ? <LoadingSpinner />
                   : (
                     <LoadingButton
-                      label={intl.formatMessage(messages.importWizardButtonImport)}
+                      label={
+                        reimport
+                          ? intl.formatMessage(messages.importWizardButtonImport)
+                          : intl.formatMessage(messages.importWizardButtonContinue)
+                      }
                       disabled={!file || importPlanResult.isLoading || !!importPlanResult.error}
-                      onClick={generatePlan}
+                      onClick={reimport ? generatePlan : populateData}
                     />
                   )
               }
+            </Stepper.ActionRow>
+
+            <Stepper.ActionRow eventKey="populate">
+              <Button variant="outline-primary" onClick={() => setCurrentStep('upload')} data-testid="back-button">
+                {intl.formatMessage(messages.importWizardButtonPrevious)}
+              </Button>
+              <Stepper.ActionRow.Spacer />
+              <Button variant="tertiary" onClick={onClose}>
+                {intl.formatMessage(messages.importWizardButtonCancel)}
+              </Button>
+              <LoadingButton
+                label={intl.formatMessage(messages.importWizardButtonImport)}
+                disabled={!taxonomyPopulateData.taxonomyName || !taxonomyPopulateData.taxonomyDesc}
+                onClick={importNewTaxonomy}
+                data-testid="import-button"
+              />
+
             </Stepper.ActionRow>
 
             <Stepper.ActionRow eventKey="plan">
@@ -384,9 +529,14 @@ const ImportTagsWizard = ({
             </Stepper.ActionRow>
 
             <Stepper.ActionRow eventKey="confirm">
-              <Button variant="outline-primary" onClick={() => setCurrentStep('plan')} data-testid="back-button">
-                {intl.formatMessage(messages.importWizardButtonPrevious)}
-              </Button>
+              {
+                reimport
+                && (
+                  <Button variant="outline-primary" onClick={() => setCurrentStep('plan')} data-testid="back-button">
+                    {intl.formatMessage(messages.importWizardButtonPrevious)}
+                  </Button>
+                )
+              }
               <Stepper.ActionRow.Spacer />
               <Button variant="tertiary" onClick={onClose}>
                 {intl.formatMessage(messages.importWizardButtonCancel)}
@@ -404,10 +554,16 @@ const ImportTagsWizard = ({
   );
 };
 
+ImportTagsWizard.defaultProps = {
+  taxonomy: null,
+  reimport: false,
+};
+
 ImportTagsWizard.propTypes = {
-  taxonomy: TaxonomyProp.isRequired,
+  taxonomy: TaxonomyProp,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
+  reimport: PropTypes.bool,
 };
 
 export default ImportTagsWizard;
