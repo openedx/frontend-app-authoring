@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useToggle } from '@openedx/paragon';
 
 import { COMMA_SEPARATED_DATE_FORMAT } from '../constants';
-import { convertToDateFromString, convertToStringFromDate } from '../utils';
+import { convertToDateFromString } from '../utils';
 import { getCourseHandouts, getCourseUpdates } from './data/selectors';
 import { REQUEST_TYPES } from './constants';
 import {
