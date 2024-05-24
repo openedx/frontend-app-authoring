@@ -32,20 +32,6 @@ import messages from './messages';
 
 const linebreak = <> <br /> <br /> </>;
 
-const CsvTemplateUrl = () => {
-  const intl = useIntl();
-  return (
-    <a href={apiUrls.taxonomyTemplate('csv')} download>{intl.formatMessage(messages.csvTemplateTitle)}</a>
-  );
-};
-
-const JsonTemplateUrl = () => {
-  const intl = useIntl();
-  return (
-    <a href={apiUrls.taxonomyTemplate('json')} download>{intl.formatMessage(messages.jsonTemplateTitle)}</a>
-  );
-};
-
 const TaxonomyProp = PropTypes.shape({
   id: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
@@ -93,6 +79,14 @@ const UploadStep = ({
 }) => {
   const intl = useIntl();
 
+  const csvTemplateUrl = (
+    <a href={apiUrls.taxonomyTemplate('csv')} download>{intl.formatMessage(messages.csvTemplateTitle)}</a>
+  );
+
+  const jsonTemplateUrl = (
+    <a href={apiUrls.taxonomyTemplate('json')} download>{intl.formatMessage(messages.jsonTemplateTitle)}</a>
+  );
+
   /** @type {(args: {fileData: FormData}) => void} */
   const handleFileLoad = ({ fileData }) => {
     setFile(fileData.get('file'));
@@ -111,7 +105,7 @@ const UploadStep = ({
             ? intl.formatMessage(messages.importWizardStepReuploadBody, { br: linebreak })
             : intl.formatMessage(
               messages.importWizardStepUploadBody,
-              { csvTemplateUrl: CsvTemplateUrl(), jsonTemplateUrl: JsonTemplateUrl(), br: linebreak },
+              { csvTemplateUrl, jsonTemplateUrl, br: linebreak },
             )
         }
         </p>
