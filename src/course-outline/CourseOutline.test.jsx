@@ -1,5 +1,5 @@
 import {
-  act, render, waitFor, fireEvent, within,
+  act, render, waitFor, fireEvent, within, screen,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -10,6 +10,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cloneDeep } from 'lodash';
 import { closestCorners } from '@dnd-kit/core';
 
+import { useLocation } from 'react-router-dom';
 import {
   getCourseBestPracticesApiUrl,
   getCourseLaunchApiUrl,
@@ -19,6 +20,7 @@ import {
   getCourseBlockApiUrl,
   getCourseItemApiUrl,
   getXBlockBaseApiUrl,
+  exportTags,
 } from './data/api';
 import { RequestStatus } from '../data/constants';
 import {
@@ -74,9 +76,7 @@ global.BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
-  useLocation: () => ({
-    pathname: mockPathname,
-  }),
+  useLocation: jest.fn(),
 }));
 
 jest.mock('../help-urls/hooks', () => ({
@@ -133,6 +133,10 @@ describe('<CourseOutline />', () => {
         administrator: true,
         roles: [],
       },
+    });
+
+    useLocation.mockReturnValue({
+      pathname: mockPathname,
     });
 
     store = initializeStore();
@@ -2247,5 +2251,39 @@ describe('<CourseOutline />', () => {
 
     // check pasteFileNotices in store
     expect(store.getState().courseOutline.pasteFileNotices).toEqual({});
+  });
+
+  it('should show toats on export tags', async () => {
+    const expectedResponse = 'this is a test';
+    axiosMock
+      .onGet(exportTags(courseId))
+      .reply(200, expectedResponse);
+    useLocation.mockReturnValue({
+      pathname: '/foo-bar',
+      hash: '#export-tags',
+    });
+    window.URL.createObjectURL = jest.fn().mockReturnValue('http://example.com/archivo');
+    window.URL.revokeObjectURL = jest.fn();
+    render(<RootWrapper />);
+    expect(await screen.findByText('Please wait. Creating export file for course tags...')).toBeInTheDocument();
+
+    const expectedRequest = axiosMock.history.get.filter(request => request.url === exportTags(courseId));
+    expect(expectedRequest.length).toBe(1);
+
+    expect(await screen.findByText('Course tags exported successfully')).toBeInTheDocument();
+  });
+
+  it('should show toast on export tags error', async () => {
+    axiosMock
+      .onGet(exportTags(courseId))
+      .reply(404);
+    useLocation.mockReturnValue({
+      pathname: '/foo-bar',
+      hash: '#export-tags',
+    });
+
+    render(<RootWrapper />);
+    expect(await screen.findByText('Please wait. Creating export file for course tags...')).toBeInTheDocument();
+    expect(await screen.findByText('An error has occurred creating the file')).toBeInTheDocument();
   });
 });

@@ -29,6 +29,7 @@ export const getXBlockBaseApiUrl = () => `${getApiBaseUrl()}/xblock/`;
 export const getCourseItemApiUrl = (itemId) => `${getXBlockBaseApiUrl()}${itemId}`;
 export const getXBlockApiUrl = (blockId) => `${getXBlockBaseApiUrl()}outline/${blockId}`;
 export const getClipboardUrl = () => `${getApiBaseUrl()}/api/content-staging/v1/clipboard/`;
+export const exportTags = (courseId) => `${getApiBaseUrl()}/api/content_tagging/v1/object_tags/${courseId}/export/`;
 
 /**
  * @typedef {Object} courseOutline
@@ -458,4 +459,34 @@ export async function pasteBlock(parentLocator) {
 export async function dismissNotification(url) {
   await getAuthenticatedHttpClient()
     .delete(url);
+}
+
+/**
+ * Downloads the file of the exported tags
+ * @param {string} courseId The ID of the content
+ * @returns void
+ */
+export async function getTagsExportFile(courseId, courseName) {
+  // Gets exported tags and builds the blob to download CSV file.
+  // This can be done with this code:
+  // `window.location.href = exportTags(contentId);`
+  // but it is done in this way so we know when the operation ends to close the toast.
+  const response = await getAuthenticatedHttpClient().get(exportTags(courseId), {
+    responseType: 'blob',
+  });
+
+  /* istanbul ignore next */
+  if (response.status !== 200) {
+    throw response.statusText;
+  }
+
+  const blob = new Blob([response.data], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${courseName}.csv`;
+  a.click();
+
+  window.URL.revokeObjectURL(url);
 }
