@@ -56,9 +56,36 @@ const messages = defineMessages({
   },
   importWizardStepUploadBody: {
     id: 'course-authoring.import-tags.wizard.step-upload.body',
+    defaultMessage: 'You can upload a CSV or JSON file to create a new taxonomy. You may use any spreadsheet tool '
+    + '(for CSV files), or any text editor (for JSON files) to create the file that you wish to import. '
+    + 'For an example of the required format, download the {csvTemplateUrl} or {jsonTemplateUrl}.'
+    + '{br}Once the file is ready to be imported, drag and drop it into the box below, or click to upload.',
+  },
+  importWizardStepReuploadBody: {
+    id: 'course-authoring.import-tags.wizard.step-reupload.body',
     defaultMessage: 'You may use any spreadsheet tool (for CSV files), or any text editor (for JSON files) to create '
     + 'the file that you wish to import.'
     + '{br}Once the file is ready to be imported, drag and drop it into the box below, or click to upload.',
+  },
+  csvTemplateTitle: {
+    id: 'course-authoring.import-tags.wizard.step-upload.csv-template',
+    defaultMessage: 'CSV template',
+  },
+  jsonTemplateTitle: {
+    id: 'course-authoring.import-tags.wizard.step-upload.json-template',
+    defaultMessage: 'JSON template',
+  },
+  importWizardStepPopulateTitle: {
+    id: 'course-authoring.import-tags.wizard.step-populate.title',
+    defaultMessage: 'Populate Taxonomy Information',
+  },
+  importWizardStepPopulateTaxonomyName: {
+    id: 'course-authoring.import-tags.wizard.step-populate.name',
+    defaultMessage: 'Taxonomy Name',
+  },
+  importWizardStepPopulateTaxonomyDesc: {
+    id: 'course-authoring.import-tags.wizard.step-populate.desc',
+    defaultMessage: 'Taxonomy Description',
   },
   importWizardStepPlanTitle: {
     id: 'course-authoring.import-tags.wizard.step-plan.title',
@@ -115,6 +142,10 @@ const messages = defineMessages({
   importTaxonomyError: {
     id: 'course-authoring.import-tags.error',
     defaultMessage: 'Import failed - see details in the browser console',
+  },
+  importNewTaxonomyToast: {
+    id: 'course-authoring.import-tags.new.toast.success',
+    defaultMessage: '"{name}" imported',
   },
   importTaxonomyToast: {
     id: 'course-authoring.import-tags.toast.success',
