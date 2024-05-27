@@ -18,6 +18,7 @@ import Header from '../header';
 import SubHeader from '../generic/sub-header/SubHeader';
 import HomeSidebar from './home-sidebar';
 import TabsSection from './tabs-section';
+import { isMixedOrV2LibrariesMode } from './tabs-section/utils';
 import OrganizationSection from './organization-section';
 import VerifyEmailLayout from './verify-email-layout';
 import CreateNewCourseForm from './create-new-course-form';
@@ -43,12 +44,14 @@ const StudioHome = ({ intl }) => {
     dispatch,
   } = useStudioHome(isPaginationCoursesEnabled);
 
+  // TODO: this should be a flag in the backend
+  const LIB_MODE = 'mixed';
+
   const {
     userIsActive,
     studioShortName,
     studioRequestEmail,
     libraryAuthoringMfeUrl,
-    redirectToLibraryAuthoringMfe,
   } = studioHomeData;
 
   function getHeaderButtons() {
@@ -79,8 +82,8 @@ const StudioHome = ({ intl }) => {
     }
 
     let libraryHref = `${getConfig().STUDIO_BASE_URL}/home_library`;
-    if (redirectToLibraryAuthoringMfe) {
-      libraryHref = `${libraryAuthoringMfeUrl}/create`;
+    if (isMixedOrV2LibrariesMode(LIB_MODE)) {
+      libraryHref = `${libraryAuthoringMfeUrl}create`;
     }
 
     headerButtons.push(
