@@ -9,10 +9,12 @@ import { useNavigate } from 'react-router-dom';
 import { getLoadingStatuses, getStudioHomeData } from '../data/selectors';
 import messages from './messages';
 import LibrariesTab from './libraries-tab';
+import LibrariesV2Tab from './libraries-v2-tab/index.tsx';
 import ArchivedTab from './archived-tab';
 import CoursesTab from './courses-tab';
 import { RequestStatus } from '../../data/constants';
 import { fetchLibraryData } from '../data/thunks';
+import { isMixedOrV1LibrariesMode, isMixedOrV2LibrariesMode } from './utils';
 
 const TabsSection = ({
   intl,
@@ -23,9 +25,14 @@ const TabsSection = ({
   isPaginationCoursesEnabled,
 }) => {
   const navigate = useNavigate();
+
+  // TODO: this should be a flag in the backend
+  const LIB_MODE = 'mixed';
+
   const TABS_LIST = {
     courses: 'courses',
     libraries: 'libraries',
+    legacyLibraries: 'legacyLibraries',
     archived: 'archived',
     taxonomies: 'taxonomies',
   };
@@ -87,21 +94,37 @@ const TabsSection = ({
     }
 
     if (librariesEnabled) {
-      tabs.push(
-        <Tab
-          key={TABS_LIST.libraries}
-          eventKey={TABS_LIST.libraries}
-          title={intl.formatMessage(messages.librariesTabTitle)}
-        >
-          {!redirectToLibraryAuthoringMfe && (
+      if (isMixedOrV2LibrariesMode(LIB_MODE)) {
+        tabs.push(
+          <Tab
+            key={TABS_LIST.libraries}
+            eventKey={TABS_LIST.libraries}
+            title={intl.formatMessage(messages.librariesTabTitle)}
+          >
+            <LibrariesV2Tab />
+          </Tab>,
+        );
+      }
+
+      if (isMixedOrV1LibrariesMode(LIB_MODE)) {
+        tabs.push(
+          <Tab
+            key={TABS_LIST.legacyLibraries}
+            eventKey={TABS_LIST.legacyLibraries}
+            title={intl.formatMessage(
+              LIB_MODE === 'v1 only'
+                ? messages.librariesTabTitle
+                : messages.legacyLibrariesTabTitle,
+            )}
+          >
             <LibrariesTab
               libraries={libraries}
               isLoading={isLoadingLibraries}
               isFailed={isFailedLibrariesPage}
             />
-          )}
-        </Tab>,
-      );
+          </Tab>,
+        );
+      }
     }
 
     if (getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true') {
@@ -118,9 +141,7 @@ const TabsSection = ({
   }, [archivedCourses, librariesEnabled, showNewCourseContainer, isLoadingCourses, isLoadingLibraries]);
 
   const handleSelectTab = (tab) => {
-    if (tab === TABS_LIST.libraries && redirectToLibraryAuthoringMfe) {
-      window.location.assign(libraryAuthoringMfeUrl);
-    } else if (tab === TABS_LIST.libraries && !redirectToLibraryAuthoringMfe) {
+    if (tab === TABS_LIST.legacyLibraries) {
       dispatch(fetchLibraryData());
     } else if (tab === TABS_LIST.taxonomies) {
       navigate('/taxonomies');

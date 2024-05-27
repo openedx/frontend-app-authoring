@@ -21,6 +21,10 @@ const messages = defineMessages({
     id: 'course-authoring.studio-home.libraries.tab.title',
     defaultMessage: 'Libraries',
   },
+  legacyLibrariesTabTitle: {
+    id: 'course-authoring.studio-home.legacy.libraries.tab.title',
+    defaultMessage: 'Legacy Libraries',
+  },
   archivedTabTitle: {
     id: 'course-authoring.studio-home.archived.tab.title',
     defaultMessage: 'Archived courses',

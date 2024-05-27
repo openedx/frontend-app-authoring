@@ -40,6 +40,11 @@ export async function getStudioHomeLibraries() {
   return camelCaseObject(data);
 }
 
+export async function getStudioHomeLibrariesV2() {
+  const { data } = await getAuthenticatedHttpClient().get(`${getApiBaseUrl()}/api/libraries/v2/`);
+  return camelCaseObject(data);
+}
+
 /**
  * Handle course notification requests.
  * @param {string} url
