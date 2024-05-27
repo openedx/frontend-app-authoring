@@ -80,7 +80,7 @@ describe('<TabsSection />', () => {
 
     expect(screen.getByText(tabMessages.coursesTabTitle.defaultMessage)).toBeInTheDocument();
 
-    expect(screen.getByText(tabMessages.librariesTabTitle.defaultMessage)).toBeInTheDocument();
+    expect(screen.getByText(tabMessages.legacyLibrariesTabTitle.defaultMessage)).toBeInTheDocument();
 
     expect(screen.getByText(tabMessages.archivedTabTitle.defaultMessage)).toBeInTheDocument();
   });
@@ -222,7 +222,7 @@ describe('<TabsSection />', () => {
 
       expect(screen.getByText(tabMessages.coursesTabTitle.defaultMessage)).toBeInTheDocument();
 
-      expect(screen.getByText(tabMessages.librariesTabTitle.defaultMessage)).toBeInTheDocument();
+      expect(screen.getByText(tabMessages.legacyLibrariesTabTitle.defaultMessage)).toBeInTheDocument();
 
       expect(screen.queryByText(tabMessages.archivedTabTitle.defaultMessage)).toBeNull();
     });
@@ -236,7 +236,7 @@ describe('<TabsSection />', () => {
       await executeThunk(fetchStudioHomeData(), store.dispatch);
       await executeThunk(fetchLibraryData(), store.dispatch);
 
-      const librariesTab = screen.getByText(tabMessages.librariesTabTitle.defaultMessage);
+      const librariesTab = screen.getByText(tabMessages.legacyLibrariesTabTitle.defaultMessage);
       await act(async () => {
         fireEvent.click(librariesTab);
       });
@@ -257,7 +257,7 @@ describe('<TabsSection />', () => {
       await executeThunk(fetchStudioHomeData(), store.dispatch);
 
       expect(screen.getByText(tabMessages.coursesTabTitle.defaultMessage)).toBeInTheDocument();
-      expect(screen.queryByText(tabMessages.librariesTabTitle.defaultMessage)).toBeNull();
+      expect(screen.queryByText(tabMessages.legacyLibrariesTabTitle.defaultMessage)).toBeNull();
     });
 
     it('should redirect to library authoring mfe', async () => {
@@ -268,7 +268,7 @@ describe('<TabsSection />', () => {
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, data);
       await executeThunk(fetchStudioHomeData(), store.dispatch);
 
-      const librariesTab = screen.getByText(tabMessages.librariesTabTitle.defaultMessage);
+      const librariesTab = screen.getByText(tabMessages.legacyLibrariesTabTitle.defaultMessage);
       fireEvent.click(librariesTab);
 
       waitFor(() => {
@@ -283,7 +283,7 @@ describe('<TabsSection />', () => {
       await executeThunk(fetchStudioHomeData(), store.dispatch);
       await executeThunk(fetchLibraryData(), store.dispatch);
 
-      const librariesTab = screen.getByText(tabMessages.librariesTabTitle.defaultMessage);
+      const librariesTab = screen.getByText(tabMessages.legacyLibrariesTabTitle.defaultMessage);
       await act(async () => {
         fireEvent.click(librariesTab);
       });
