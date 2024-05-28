@@ -52,6 +52,8 @@ const App = () => {
     createRoutesFromElements(
       <Route>
         <Route path="/home" element={<StudioHome />} />
+        <Route path="/libraries" element={<StudioHome />} />
+        <Route path="/legacy-libraries" element={<StudioHome />} />
         <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
         <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
         {getConfig().ENABLE_ACCESSIBILITY_PAGE === 'true' && (
