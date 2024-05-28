@@ -165,12 +165,13 @@ export function updateAssetLock({ assetId, courseId, locked }) {
 
     try {
       await updateLockStatus({ assetId, courseId, locked });
+      const lockStatus = locked ? 'locked' : 'public';
       dispatch(updateModel({
         modelType: 'assets',
         model: {
           id: assetId,
           locked,
-          lockStatus: locked,
+          lockStatus,
         },
       }));
       dispatch(updateEditStatus({ editType: 'lock', status: RequestStatus.SUCCESSFUL }));
