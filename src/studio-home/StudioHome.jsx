@@ -44,8 +44,7 @@ const StudioHome = ({ intl }) => {
     dispatch,
   } = useStudioHome(isPaginationCoursesEnabled);
 
-  // TODO: this should be a flag in the backend
-  const LIB_MODE = 'mixed';
+  const libMode = getConfig().LIBRARY_MODE;
 
   const {
     userIsActive,
@@ -82,7 +81,7 @@ const StudioHome = ({ intl }) => {
     }
 
     let libraryHref = `${getConfig().STUDIO_BASE_URL}/home_library`;
-    if (isMixedOrV2LibrariesMode(LIB_MODE)) {
+    if (isMixedOrV2LibrariesMode(libMode)) {
       libraryHref = `${libraryAuthoringMfeUrl}create`;
     }
 
