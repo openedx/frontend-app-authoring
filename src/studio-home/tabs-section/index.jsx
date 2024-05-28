@@ -25,10 +25,7 @@ const TabsSection = ({
   isPaginationCoursesEnabled,
 }) => {
   const navigate = useNavigate();
-
-  // TODO: this should be a flag in the backend
-  const LIB_MODE = 'mixed';
-
+  const libMode = getConfig().LIBRARY_MODE;
   const TABS_LIST = {
     courses: 'courses',
     libraries: 'libraries',
@@ -94,7 +91,7 @@ const TabsSection = ({
     }
 
     if (librariesEnabled) {
-      if (isMixedOrV2LibrariesMode(LIB_MODE)) {
+      if (isMixedOrV2LibrariesMode(libMode)) {
         tabs.push(
           <Tab
             key={TABS_LIST.libraries}
@@ -106,13 +103,13 @@ const TabsSection = ({
         );
       }
 
-      if (isMixedOrV1LibrariesMode(LIB_MODE)) {
+      if (isMixedOrV1LibrariesMode(libMode)) {
         tabs.push(
           <Tab
             key={TABS_LIST.legacyLibraries}
             eventKey={TABS_LIST.legacyLibraries}
             title={intl.formatMessage(
-              LIB_MODE === 'v1 only'
+              libMode === 'v1 only'
                 ? messages.librariesTabTitle
                 : messages.legacyLibrariesTabTitle,
             )}
