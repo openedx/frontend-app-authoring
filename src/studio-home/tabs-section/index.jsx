@@ -1,10 +1,10 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Tab, Tabs } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import { getLoadingStatuses, getStudioHomeData } from '../data/selectors';
 import messages from './messages';
@@ -25,6 +25,7 @@ const TabsSection = ({
   isPaginationCoursesEnabled,
 }) => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const libMode = getConfig().LIBRARY_MODE;
   const TABS_LIST = {
     courses: 'courses',
@@ -33,7 +34,37 @@ const TabsSection = ({
     archived: 'archived',
     taxonomies: 'taxonomies',
   };
-  const [tabKey, setTabKey] = useState(TABS_LIST.courses);
+
+  const initTabKeyState = (pname) => {
+    if (pname.includes('/libraries')) {
+      return isMixedOrV2LibrariesMode(libMode)
+        ? TABS_LIST.libraries
+        : TABS_LIST.legacyLibraries;
+    }
+
+    if (pname.includes('/legacy-libraries')) {
+      return TABS_LIST.legacyLibraries;
+    }
+
+    // Default to courses tab
+    return TABS_LIST.courses;
+  };
+
+  const [tabKey, setTabKey] = useState(initTabKeyState(pathname));
+
+  // This is needed to handle navigating using the back/forward buttons in the browser
+  useEffect(() => {
+    // Handle special case when navigating directly to /legacy-libraries or /libraries in `v1 only` mode
+    // we need to call dispatch to fetch library data
+    if (
+      (isMixedOrV1LibrariesMode(libMode) && pathname.includes('/libraries'))
+      || pathname.includes('/legacy-libraries')
+    ) {
+      dispatch(fetchLibraryData());
+    }
+    setTabKey(initTabKeyState(pathname));
+  }, [pathname]);
+
   const {
     libraryAuthoringMfeUrl,
     redirectToLibraryAuthoringMfe,
@@ -138,8 +169,17 @@ const TabsSection = ({
   }, [archivedCourses, librariesEnabled, showNewCourseContainer, isLoadingCourses, isLoadingLibraries]);
 
   const handleSelectTab = (tab) => {
-    if (tab === TABS_LIST.legacyLibraries) {
+    if (tab === TABS_LIST.courses) {
+      navigate('/home');
+    } else if (tab === TABS_LIST.legacyLibraries) {
       dispatch(fetchLibraryData());
+      navigate(
+        libMode === 'v1 only'
+          ? '/libraries'
+          : '/legacy-libraries',
+      );
+    } else if (tab === TABS_LIST.libraries) {
+      navigate('/libraries');
     } else if (tab === TABS_LIST.taxonomies) {
       navigate('/taxonomies');
     }
