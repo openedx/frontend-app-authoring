@@ -16,6 +16,62 @@ import Loading from '../generic/Loading';
 import useContentTagsDrawerContext from './ContentTagsDrawerHelper';
 import { ContentTagsDrawerContext, ContentTagsDrawerSheetContext } from './common/context';
 
+const TaxonomyList = ({ contentId }) => {
+  const navigate = useNavigate();
+  const intl = useIntl();
+
+  const {
+    isTaxonomyListLoaded,
+    isContentTaxonomyTagsLoaded,
+    tagsByTaxonomy,
+    stagedContentTags,
+    collapsibleStates,
+  } = React.useContext(ContentTagsDrawerContext);
+
+  if (isTaxonomyListLoaded && isContentTaxonomyTagsLoaded) {
+    if (tagsByTaxonomy.length !== 0) {
+      return (
+        tagsByTaxonomy.map((data) => (
+          <div key={`taxonomy-tags-collapsible-${data.id}`}>
+            <ContentTagsCollapsible
+              contentId={contentId}
+              taxonomyAndTagsData={data}
+              stagedContentTags={stagedContentTags[data.id] || []}
+              collapsibleState={collapsibleStates[data.id] || false}
+            />
+            <hr />
+          </div>
+        ))
+      );
+    }
+
+    return (
+      <FormattedMessage
+        {...messages.emptyDrawerContent}
+        values={{
+          link: (
+            <Button
+              tabIndex="0"
+              size="inline"
+              variant="link"
+              className="text-info-500 p-0 enable-taxonomies-button"
+              onClick={() => navigate('/taxonomies')}
+            >
+              { intl.formatMessage(messages.emptyDrawerContentLink) }
+            </Button>
+          ),
+        }}
+      />
+    );
+  }
+
+  return <Loading />;
+};
+
+TaxonomyList.propTypes = {
+  contentId: PropTypes.string.isRequired,
+};
+
 /**
  * Drawer with the functionality to show and manage tags in a certain content.
  * It is used both in interfaces of this MFE and in edx-platform interfaces such as iframe.
@@ -27,7 +83,6 @@ import { ContentTagsDrawerContext, ContentTagsDrawerSheetContext } from './commo
  */
 const ContentTagsDrawer = ({ id, onClose }) => {
   const intl = useIntl();
-  const navigate = useNavigate();
   // TODO: We can delete 'params' when the iframe is no longer used on edx-platform
   const params = useParams();
   const contentId = id ?? params.contentId;
@@ -43,7 +98,6 @@ const ContentTagsDrawer = ({ id, onClose }) => {
     contentName,
     isTaxonomyListLoaded,
     isContentTaxonomyTagsLoaded,
-    tagsByTaxonomy,
     stagedContentTags,
     collapsibleStates,
     isEditMode,
@@ -91,46 +145,6 @@ const ContentTagsDrawer = ({ id, onClose }) => {
     setCollapsibleToInitalState();
   }, [isTaxonomyListLoaded, isContentTaxonomyTagsLoaded]);
 
-  const buildTaxonomies = () => {
-    if (isTaxonomyListLoaded && isContentTaxonomyTagsLoaded) {
-      if (tagsByTaxonomy.length !== 0) {
-        return (
-          tagsByTaxonomy.map((data) => (
-            <div key={`taxonomy-tags-collapsible-${data.id}`}>
-              <ContentTagsCollapsible
-                contentId={contentId}
-                taxonomyAndTagsData={data}
-                stagedContentTags={stagedContentTags[data.id] || []}
-                collapsibleState={collapsibleStates[data.id] || false}
-              />
-              <hr />
-            </div>
-          ))
-        );
-      }
-      return (
-        <FormattedMessage
-          {...messages.emptyDrawerContent}
-          values={{
-            link: (
-              <Button
-                tabIndex="0"
-                size="inline"
-                variant="link"
-                className="text-info-500 p-0 enable-taxonomies-button"
-                onClick={() => navigate('/taxonomies')}
-              >
-                { intl.formatMessage(messages.emptyDrawerContentLink) }
-              </Button>
-            ),
-          }}
-        />
-      );
-    }
-
-    return <Loading />;
-  };
-
   return (
     <ContentTagsDrawerContext.Provider value={context}>
       <div id="content-tags-drawer" className="mt-1 tags-drawer d-flex flex-column justify-content-between min-vh-100 pt-3">
@@ -151,7 +165,7 @@ const ContentTagsDrawer = ({ id, onClose }) => {
             <p className="h4 text-gray-500 font-weight-bold">
               {intl.formatMessage(messages.headerSubtitle)}
             </p>
-            {buildTaxonomies()}
+            <TaxonomyList contentId={contentId} />
             {otherTaxonomies.length !== 0 && (
               <div>
                 <p className="h4 text-gray-500 font-weight-bold">

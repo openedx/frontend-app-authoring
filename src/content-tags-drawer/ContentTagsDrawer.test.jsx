@@ -26,13 +26,14 @@ const contentId = 'block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@7
 const mockOnClose = jest.fn();
 const mockMutate = jest.fn();
 const mockSetBlockingSheet = jest.fn();
+const mockNavigate = jest.fn();
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: () => ({
     contentId,
   }),
-  useNavigate: jest.fn(),
+  useNavigate: () => mockNavigate,
 }));
 
 // FIXME: replace these mocks with API mocks
@@ -1173,5 +1174,10 @@ describe('<ContentTagsDrawer />', () => {
 
     render(<RootWrapper />);
     expect(await screen.findByText(/to use tags, please or contact your administrator\./i)).toBeInTheDocument();
+    const enableButton = screen.getByRole('button', {
+      name: /enable a taxonomy/i,
+    });
+    fireEvent.click(enableButton);
+    expect(mockNavigate).toHaveBeenCalledWith('/taxonomies');
   });
 });
