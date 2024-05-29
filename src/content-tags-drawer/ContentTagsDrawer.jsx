@@ -31,17 +31,19 @@ const TaxonomyList = ({ contentId }) => {
   if (isTaxonomyListLoaded && isContentTaxonomyTagsLoaded) {
     if (tagsByTaxonomy.length !== 0) {
       return (
-        tagsByTaxonomy.map((data) => (
-          <div key={`taxonomy-tags-collapsible-${data.id}`}>
-            <ContentTagsCollapsible
-              contentId={contentId}
-              taxonomyAndTagsData={data}
-              stagedContentTags={stagedContentTags[data.id] || []}
-              collapsibleState={collapsibleStates[data.id] || false}
-            />
-            <hr />
-          </div>
-        ))
+        <div>
+          { tagsByTaxonomy.map((data) => (
+            <div key={`taxonomy-tags-collapsible-${data.id}`}>
+              <ContentTagsCollapsible
+                contentId={contentId}
+                taxonomyAndTagsData={data}
+                stagedContentTags={stagedContentTags[data.id] || []}
+                collapsibleState={collapsibleStates[data.id] || false}
+              />
+              <hr />
+            </div>
+          ))}
+        </div>
       );
     }
 
