@@ -273,9 +273,9 @@ describe('ProctoredExamSettings', () => {
         await act(async () => {
           fireEvent.change(selectEscalationEmailElement, { target: { value: 'foo.bar' } });
         });
-        const selectButton = screen.getByTestId('submissionButton');
+        const proctoringForm = screen.getByTestId('proctoringForm');
         await act(async () => {
-          fireEvent.click(selectButton);
+          fireEvent.submit(proctoringForm);
         });
 
         // verify alert content and focus management

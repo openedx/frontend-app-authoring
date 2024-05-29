@@ -1,6 +1,7 @@
 import {
   render,
   act,
+  fireEvent,
   screen,
   waitFor,
   within,
@@ -70,9 +71,7 @@ describe('TranscriptSettings', () => {
     it('should change view to order form', async () => {
       renderComponent(defaultProps);
       const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);
-      await act(async () => {
-        userEvent.click(orderButton);
-      });
+      await userEvent.click(orderButton);
       const selectableButtons = screen.getAllByLabelText('none radio')[0];
 
       expect(selectableButtons).toBeVisible();
@@ -81,17 +80,14 @@ describe('TranscriptSettings', () => {
     it('should return to order transcript collapsible', async () => {
       renderComponent(defaultProps);
       const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);
-      await act(async () => {
-        userEvent.click(orderButton);
-      });
+      await userEvent.click(orderButton);
       const selectableButtons = screen.getAllByLabelText('none radio')[0];
 
       expect(selectableButtons).toBeVisible();
 
       const backButton = screen.getByLabelText('back button to main transcript settings view');
+      await userEvent.click(backButton);
       await waitFor(() => {
-        userEvent.click(backButton);
-
         expect(screen.queryByLabelText('back button to main transcript settings view')).toBeNull();
       });
     });
@@ -99,13 +95,9 @@ describe('TranscriptSettings', () => {
     it('discard changes should call closeTranscriptSettings', async () => {
       renderComponent(defaultProps);
       const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);
-      await act(async () => {
-        userEvent.click(orderButton);
-      });
+      await userEvent.click(orderButton);
       const discardButton = screen.getByText(messages.discardSettingsLabel.defaultMessage);
-      await act(async () => {
-        userEvent.click(discardButton);
-      });
+      await userEvent.click(discardButton);
 
       expect(defaultProps.closeTranscriptSettings).toHaveBeenCalled();
     });
@@ -145,9 +137,7 @@ describe('TranscriptSettings', () => {
 
     it('should load page with Cielo24 selected', async () => {
       const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);
-      await act(async () => {
-        userEvent.click(orderButton);
-      });
+      await userEvent.click(orderButton);
       const cielo24Button = screen.getByText(messages.cieloLabel.defaultMessage);
 
       expect(within(cielo24Button).getByLabelText('Cielo24 radio')).toHaveProperty('checked', true);
@@ -185,22 +175,18 @@ describe('TranscriptSettings', () => {
 
       renderComponent(defaultProps);
       const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);
-      await act(async () => {
-        userEvent.click(orderButton);
-      });
+      await userEvent.click(orderButton);
       const noneButton = screen.getAllByLabelText('none radio')[0];
 
-      await act(async () => {
-        userEvent.click(noneButton);
-      });
+      await userEvent.click(noneButton);
     });
 
     it('api should succeed', async () => {
       const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
 
       axiosMock.onDelete(`${getApiBaseUrl()}/transcript_preferences/${courseId}`).reply(204);
-      await waitFor(() => {
-        userEvent.click(updateButton);
+      await act(async () => {
+        fireEvent.click(updateButton);
       });
       const { transcriptStatus } = store.getState().videos;
 
@@ -211,8 +197,8 @@ describe('TranscriptSettings', () => {
       const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
 
       axiosMock.onDelete(`${getApiBaseUrl()}/transcript_preferences/${courseId}`).reply(404);
-      await waitFor(() => {
-        userEvent.click(updateButton);
+      await act(async () => {
+        fireEvent.click(updateButton);
       });
       const { transcriptStatus } = store.getState().videos;
 
@@ -237,24 +223,18 @@ describe('TranscriptSettings', () => {
 
       renderComponent(defaultProps);
       const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);
-      await act(async () => {
-        userEvent.click(orderButton);
-      });
+      await userEvent.click(orderButton);
     });
 
     it('should ask for Cielo24 or 3Play Media credentials', async () => {
       const cielo24Button = screen.getAllByLabelText('Cielo24 radio')[0];
-      await act(async () => {
-        userEvent.click(cielo24Button);
-      });
+      await userEvent.click(cielo24Button);
       const cieloCredentialMessage = screen.getByTestId('cieloCredentialMessage');
 
       expect(cieloCredentialMessage).toBeVisible();
 
       const threePlayMediaButton = screen.getAllByLabelText('3PlayMedia radio')[0];
-      await act(async () => {
-        userEvent.click(threePlayMediaButton);
-      });
+      await userEvent.click(threePlayMediaButton);
       const threePlayMediaCredentialMessage = screen.getByTestId('threePlayMediaCredentialMessage');
 
       expect(threePlayMediaCredentialMessage).toBeVisible();
@@ -263,9 +243,7 @@ describe('TranscriptSettings', () => {
     describe('api succeeds', () => {
       it('should update cielo24 credentials ', async () => {
         const cielo24Button = screen.getAllByLabelText('Cielo24 radio')[0];
-        await act(async () => {
-          userEvent.click(cielo24Button);
-        });
+        await userEvent.click(cielo24Button);
 
         const firstInput = screen.getByLabelText(messages.cieloApiKeyLabel.defaultMessage);
         const secondInput = screen.getByLabelText(messages.cieloUsernameLabel.defaultMessage);
@@ -279,8 +257,8 @@ describe('TranscriptSettings', () => {
         });
 
         axiosMock.onPost(`${getApiBaseUrl()}/transcript_credentials/${courseId}`).reply(200);
-        await waitFor(() => {
-          userEvent.click(updateButton);
+        await act(async () => {
+          fireEvent.click(updateButton);
         });
 
         const { transcriptStatus } = store.getState().videos;
@@ -294,9 +272,7 @@ describe('TranscriptSettings', () => {
 
       it('should update 3Play Media credentials', async () => {
         const threePlayButton = screen.getAllByLabelText('3PlayMedia radio')[0];
-        await act(async () => {
-          userEvent.click(threePlayButton);
-        });
+        await userEvent.click(threePlayButton);
 
         const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
         const firstInput = screen.getByLabelText(messages.threePlayMediaApiKeyLabel.defaultMessage);
@@ -310,9 +286,10 @@ describe('TranscriptSettings', () => {
         });
 
         axiosMock.onPost(`${getApiBaseUrl()}/transcript_credentials/${courseId}`).reply(200);
-        await waitFor(() => {
-          userEvent.click(updateButton);
+        await act(async () => {
+          fireEvent.click(updateButton);
         });
+
         const { transcriptStatus } = store.getState().videos;
 
         expect(transcriptStatus).toEqual(RequestStatus.SUCCESSFUL);
@@ -326,9 +303,7 @@ describe('TranscriptSettings', () => {
     describe('api fails', () => {
       it('should show error alert on Cielo24 credentials update', async () => {
         const cielo24Button = screen.getAllByLabelText('Cielo24 radio')[0];
-        await act(async () => {
-          userEvent.click(cielo24Button);
-        });
+        await userEvent.click(cielo24Button);
 
         const firstInput = screen.getByLabelText(messages.cieloApiKeyLabel.defaultMessage);
         const secondInput = screen.getByLabelText(messages.cieloUsernameLabel.defaultMessage);
@@ -342,9 +317,10 @@ describe('TranscriptSettings', () => {
         });
 
         axiosMock.onPost(`${getApiBaseUrl()}/transcript_preferences/${courseId}`).reply(503);
-        await waitFor(() => {
-          userEvent.click(updateButton);
+        await act(async () => {
+          fireEvent.click(updateButton);
         });
+
         const { transcriptStatus } = store.getState().videos;
 
         expect(transcriptStatus).toEqual(RequestStatus.FAILED);
@@ -354,9 +330,7 @@ describe('TranscriptSettings', () => {
 
       it('should show error alert on 3PlayMedia credentials update', async () => {
         const threePlayButton = screen.getAllByLabelText('3PlayMedia radio')[0];
-        await act(async () => {
-          userEvent.click(threePlayButton);
-        });
+        await userEvent.click(threePlayButton);
 
         const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
         const firstInput = screen.getByLabelText(messages.threePlayMediaApiKeyLabel.defaultMessage);
@@ -370,9 +344,10 @@ describe('TranscriptSettings', () => {
         });
 
         axiosMock.onPost(`${getApiBaseUrl()}/transcript_preferences/${courseId}`).reply(404);
-        await waitFor(() => {
-          userEvent.click(updateButton);
+        await act(async () => {
+          fireEvent.click(updateButton);
         });
+
         const { transcriptStatus } = store.getState().videos;
 
         expect(transcriptStatus).toEqual(RequestStatus.FAILED);
@@ -408,24 +383,18 @@ describe('TranscriptSettings', () => {
       axiosMock = new MockAdapter(getAuthenticatedHttpClient());
       renderComponent(defaultProps);
       const orderButton = screen.getByText(messages.orderTranscriptsTitle.defaultMessage);
-      await act(async () => {
-        userEvent.click(orderButton);
-      });
+      await userEvent.click(orderButton);
     });
 
     it('should not show credentials request for Cielo24 and 3Play Media', async () => {
       const cielo24Button = screen.getAllByLabelText('Cielo24 radio')[0];
-      await act(async () => {
-        userEvent.click(cielo24Button);
-      });
+      await userEvent.click(cielo24Button);
       const cieloCredentialMessage = screen.queryByTestId('cieloCredentialMessage');
 
       expect(cieloCredentialMessage).toBeNull();
 
       const threePlayMediaButton = screen.getAllByLabelText('3PlayMedia radio')[0];
-      await act(async () => {
-        userEvent.click(threePlayMediaButton);
-      });
+      await userEvent.click(threePlayMediaButton);
       const threePlayMediaCredentialMessage = screen.queryByTestId('threePlayMediaCredentialMessage');
 
       expect(threePlayMediaCredentialMessage).toBeNull();
@@ -443,9 +412,7 @@ describe('TranscriptSettings', () => {
         };
 
         const cielo24Button = screen.getAllByLabelText('Cielo24 radio')[0];
-        await act(async () => {
-          userEvent.click(cielo24Button);
-        });
+        await userEvent.click(cielo24Button);
         const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
         const turnaround = screen.getByText(messages.cieloTurnaroundPlaceholder.defaultMessage);
         const fidelity = screen.getByText(messages.cieloFidelityPlaceholder.defaultMessage);
@@ -469,9 +436,10 @@ describe('TranscriptSettings', () => {
         expect(updateButton).not.toHaveAttribute('disabled');
 
         axiosMock.onPost(`${getApiBaseUrl()}/transcript_preferences/${courseId}`).reply(200, apiResponse);
-        await waitFor(() => {
-          userEvent.click(updateButton);
+        await act(async () => {
+          fireEvent.click(updateButton);
         });
+
         const { transcriptStatus } = store.getState().videos;
 
         expect(transcriptStatus).toEqual(RequestStatus.SUCCESSFUL);
@@ -488,9 +456,7 @@ describe('TranscriptSettings', () => {
           global: false,
         };
         const threePlayButton = screen.getAllByLabelText('3PlayMedia radio')[0];
-        await act(async () => {
-          userEvent.click(threePlayButton);
-        });
+        await userEvent.click(threePlayButton);
         const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
         const turnaround = screen.getByText(messages.threePlayMediaTurnaroundPlaceholder.defaultMessage);
         const source = screen.getByText(messages.threePlayMediaSourceLanguagePlaceholder.defaultMessage);
@@ -512,8 +478,8 @@ describe('TranscriptSettings', () => {
         });
 
         axiosMock.onPost(`${getApiBaseUrl()}/transcript_preferences/${courseId}`).reply(200, apiResponse);
-        await waitFor(() => {
-          userEvent.click(updateButton);
+        await act(async () => {
+          fireEvent.click(updateButton);
         });
         const { transcriptStatus } = store.getState().videos;
 
@@ -529,9 +495,7 @@ describe('TranscriptSettings', () => {
           global: false,
         };
         const threePlayButton = screen.getAllByLabelText('3PlayMedia radio')[0];
-        await act(async () => {
-          userEvent.click(threePlayButton);
-        });
+        await userEvent.click(threePlayButton);
         const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
         const turnaround = screen.getByText(messages.threePlayMediaTurnaroundPlaceholder.defaultMessage);
         const source = screen.getByText(messages.threePlayMediaSourceLanguagePlaceholder.defaultMessage);
@@ -550,8 +514,8 @@ describe('TranscriptSettings', () => {
         expect(updateButton).not.toHaveAttribute('disabled');
 
         axiosMock.onPost(`${getApiBaseUrl()}/transcript_preferences/${courseId}`).reply(200, apiResponse);
-        await waitFor(() => {
-          userEvent.click(updateButton);
+        await act(async () => {
+          fireEvent.click(updateButton);
         });
         const { transcriptStatus } = store.getState().videos;
 
@@ -562,9 +526,7 @@ describe('TranscriptSettings', () => {
     describe('api fails', () => {
       it('should show error alert on Cielo24 preferences update', async () => {
         const cielo24Button = screen.getAllByLabelText('Cielo24 radio')[0];
-        await act(async () => {
-          userEvent.click(cielo24Button);
-        });
+        await userEvent.click(cielo24Button);
         const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
         const turnaround = screen.getByText(messages.cieloTurnaroundPlaceholder.defaultMessage);
         const fidelity = screen.getByText(messages.cieloFidelityPlaceholder.defaultMessage);
@@ -588,8 +550,8 @@ describe('TranscriptSettings', () => {
         expect(updateButton).not.toHaveAttribute('disabled');
 
         axiosMock.onPost(`${getApiBaseUrl()}/transcript_preferences/${courseId}`).reply(503);
-        await waitFor(() => {
-          userEvent.click(updateButton);
+        await act(async () => {
+          fireEvent.click(updateButton);
         });
         const { transcriptStatus } = store.getState().videos;
 
@@ -600,9 +562,7 @@ describe('TranscriptSettings', () => {
 
       it('should show error alert with default message on 3PlayMedia preferences update', async () => {
         const threePlayButton = screen.getAllByLabelText('3PlayMedia radio')[0];
-        await act(async () => {
-          userEvent.click(threePlayButton);
-        });
+        await userEvent.click(threePlayButton);
         const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
         const turnaround = screen.getByText(messages.threePlayMediaTurnaroundPlaceholder.defaultMessage);
         const source = screen.getByText(messages.threePlayMediaSourceLanguagePlaceholder.defaultMessage);
@@ -621,8 +581,8 @@ describe('TranscriptSettings', () => {
         expect(updateButton).not.toHaveAttribute('disabled');
 
         axiosMock.onPost(`${getApiBaseUrl()}/transcript_preferences/${courseId}`).reply(404);
-        await waitFor(() => {
-          userEvent.click(updateButton);
+        await act(async () => {
+          fireEvent.click(updateButton);
         });
         const { transcriptStatus } = store.getState().videos;
 
@@ -633,9 +593,7 @@ describe('TranscriptSettings', () => {
 
       it('should show error alert with default message on 3PlayMedia preferences update', async () => {
         const threePlayButton = screen.getAllByLabelText('3PlayMedia radio')[0];
-        await act(async () => {
-          userEvent.click(threePlayButton);
-        });
+        await userEvent.click(threePlayButton);
         const updateButton = screen.getByText(messages.updateSettingsLabel.defaultMessage);
         const turnaround = screen.getByText(messages.threePlayMediaTurnaroundPlaceholder.defaultMessage);
         const source = screen.getByText(messages.threePlayMediaSourceLanguagePlaceholder.defaultMessage);
@@ -654,8 +612,8 @@ describe('TranscriptSettings', () => {
         expect(updateButton).not.toHaveAttribute('disabled');
 
         axiosMock.onPost(`${getApiBaseUrl()}/transcript_preferences/${courseId}`).reply(404, { error: 'Invalid turnaround.' });
-        await waitFor(() => {
-          userEvent.click(updateButton);
+        await act(async () => {
+          fireEvent.click(updateButton);
         });
         const { transcriptStatus } = store.getState().videos;
 

@@ -332,9 +332,7 @@ describe('FilesAndUploads', () => {
 
         fireEvent.click(deleteButton);
         expect(screen.getByText('Delete mOckID1')).toBeVisible();
-        await act(async () => {
-          userEvent.click(deleteButton);
-        });
+        await userEvent.click(deleteButton);
 
         // Wait for the delete confirmation button to appear
         const confirmDeleteButton = await screen.findByRole('button', {
@@ -342,7 +340,7 @@ describe('FilesAndUploads', () => {
         });
 
         await act(async () => {
-          userEvent.click(confirmDeleteButton);
+          fireEvent.click(confirmDeleteButton);
         });
 
         expect(screen.queryByText('Delete mOckID1')).toBeNull();
