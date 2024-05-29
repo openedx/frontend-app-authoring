@@ -20,30 +20,30 @@ const getChecklistValidatedValue = (data, id) => {
   } = data;
 
   switch (id) {
-  case 'welcomeMessage':
-    return healthValidators.hasWelcomeMessage(updates);
-  case 'gradingPolicy':
-    return healthValidators.hasGradingPolicy(grades);
-  case 'certificate':
-    return healthValidators.hasCertificate(certificates);
-  case 'courseDates':
-    return healthValidators.hasDates(dates);
-  case 'assignmentDeadlines':
-    return healthValidators.hasAssignmentDeadlines(assignments, dates);
-  case 'videoDuration':
-    return healthValidators.hasShortVideoDuration(videos);
-  case 'mobileFriendlyVideo':
-    return healthValidators.hasMobileFriendlyVideos(videos);
-  case 'diverseSequences':
-    return healthValidators.hasDiverseSequences(subsections);
-  case 'weeklyHighlights':
-    return healthValidators.hasWeeklyHighlights(sections);
-  case 'unitDepth':
-    return healthValidators.hasShortUnitDepth(units);
-  case 'proctoringEmail':
-    return healthValidators.hasProctoringEscalationEmail(proctoring);
-  default:
-    throw new Error(`Unknown validator ${id}.`);
+    case 'welcomeMessage':
+      return healthValidators.hasWelcomeMessage(updates);
+    case 'gradingPolicy':
+      return healthValidators.hasGradingPolicy(grades);
+    case 'certificate':
+      return healthValidators.hasCertificate(certificates);
+    case 'courseDates':
+      return healthValidators.hasDates(dates);
+    case 'assignmentDeadlines':
+      return healthValidators.hasAssignmentDeadlines(assignments, dates);
+    case 'videoDuration':
+      return healthValidators.hasShortVideoDuration(videos);
+    case 'mobileFriendlyVideo':
+      return healthValidators.hasMobileFriendlyVideos(videos);
+    case 'diverseSequences':
+      return healthValidators.hasDiverseSequences(subsections);
+    case 'weeklyHighlights':
+      return healthValidators.hasWeeklyHighlights(sections);
+    case 'unitDepth':
+      return healthValidators.hasShortUnitDepth(units);
+    case 'proctoringEmail':
+      return healthValidators.hasProctoringEscalationEmail(proctoring);
+    default:
+      throw new Error(`Unknown validator ${id}.`);
   }
 };
 

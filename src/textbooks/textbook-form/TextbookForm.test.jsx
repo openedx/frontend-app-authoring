@@ -14,7 +14,7 @@ import { createTextbookQuery } from '../data/thunk';
 import TextbookForm from './TextbookForm';
 import messages from './messages';
 
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 let axiosMock;
 let store;
 const courseId = 'course-v1:org+101+101';

@@ -11,7 +11,7 @@ import initializeStore from '../../store';
 import PublishModal from './PublishModal';
 import messages from './messages';
 
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 let axiosMock;
 let store;
 

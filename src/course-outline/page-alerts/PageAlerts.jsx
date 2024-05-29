@@ -338,27 +338,27 @@ const PageAlerts = ({
   const renderApiErrors = () => {
     const errorList = Object.entries(errors).filter(obj => obj[1] !== null).map(([k, v]) => {
       switch (v.type) {
-      case API_ERROR_TYPES.serverError:
-        return {
-          key: k,
-          desc: v.data,
-          title: intl.formatMessage(messages.serverErrorAlert, {
-            status: v.status,
-          }),
-          dismissible: v.dismissible,
-        };
-      case API_ERROR_TYPES.networkError:
-        return {
-          key: k,
-          title: intl.formatMessage(messages.networkErrorAlert),
-          dismissible: v.dismissible,
-        };
-      default:
-        return {
-          key: k,
-          desc: v.data,
-          dismissible: v.dismissible,
-        };
+        case API_ERROR_TYPES.serverError:
+          return {
+            key: k,
+            desc: v.data,
+            title: intl.formatMessage(messages.serverErrorAlert, {
+              status: v.status,
+            }),
+            dismissible: v.dismissible,
+          };
+        case API_ERROR_TYPES.networkError:
+          return {
+            key: k,
+            title: intl.formatMessage(messages.networkErrorAlert),
+            dismissible: v.dismissible,
+          };
+        default:
+          return {
+            key: k,
+            desc: v.data,
+            dismissible: v.dismissible,
+          };
       }
     });
     if (!errorList?.length) {

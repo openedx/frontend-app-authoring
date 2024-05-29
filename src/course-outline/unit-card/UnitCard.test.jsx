@@ -13,7 +13,7 @@ import initializeStore from '../../store';
 import UnitCard from './UnitCard';
 import cardMessages from '../card-header/messages';
 
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 let axiosMock;
 let store;
 

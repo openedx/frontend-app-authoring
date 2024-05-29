@@ -2,7 +2,7 @@
   min-width: max(500px, 33vw);
 }
 
-@media only screen and (max-width: 500px) {
+@media only screen and (width <= 500px) {
   .pgn__sheet-component:has(#content-tags-drawer) {
     min-width: 100vw;
   }

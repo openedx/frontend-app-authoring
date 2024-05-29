@@ -13,7 +13,7 @@ import initializeStore from '../../store';
 import HighlightsModal from './HighlightsModal';
 import messages from './messages';
 
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 let axiosMock;
 let store;
 const mockPathname = '/foo-bar';

@@ -353,10 +353,10 @@ describe('<SearchUI />', () => {
       fetchMock.post(facetSearchEndpoint, (_path, req) => {
         const requestData = JSON.parse(req.body?.toString() ?? '');
         switch (requestData.facetName) {
-        case 'tags.taxonomy': return mockTagsFacetResult;
-        case 'tags.level0': return mockTagsFacetResultLevel0;
-        case 'tags.level1': return mockTagsFacetResultLevel1;
-        default: throw new Error(`Facet ${requestData.facetName} not mocked for testing`);
+          case 'tags.taxonomy': return mockTagsFacetResult;
+          case 'tags.level0': return mockTagsFacetResultLevel0;
+          case 'tags.level1': return mockTagsFacetResultLevel1;
+          default: throw new Error(`Facet ${requestData.facetName} not mocked for testing`);
         }
       });
 

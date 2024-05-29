@@ -36,14 +36,14 @@ const useCourseUpdates = ({ courseId }) => {
     setRequestType(type);
 
     switch (type) {
-    case REQUEST_TYPES.add_new_update:
-      setCurrentUpdate(initialUpdate);
-      break;
-    case REQUEST_TYPES.edit_update:
-      setCurrentUpdate(courseUpdate);
-      break;
-    default:
-      window.scrollTo(0, 0);
+      case REQUEST_TYPES.add_new_update:
+        setCurrentUpdate(initialUpdate);
+        break;
+      case REQUEST_TYPES.edit_update:
+        setCurrentUpdate(courseUpdate);
+        break;
+      default:
+        window.scrollTo(0, 0);
     }
 
     openUpdateForm();
@@ -70,14 +70,14 @@ const useCourseUpdates = ({ courseId }) => {
     };
 
     switch (requestType) {
-    case REQUEST_TYPES.add_new_update:
-      return handleQuerySubmit(dispatch(createCourseUpdateQuery(courseId, { date, content })));
-    case REQUEST_TYPES.edit_update:
-      return handleQuerySubmit(dispatch(editCourseUpdateQuery(courseId, { id, date, content })));
-    case REQUEST_TYPES.edit_handouts:
-      return handleQuerySubmit(dispatch(editCourseHandoutsQuery(courseId, { ...data, data: data?.data || '' })));
-    default:
-      return true;
+      case REQUEST_TYPES.add_new_update:
+        return handleQuerySubmit(dispatch(createCourseUpdateQuery(courseId, { date, content })));
+      case REQUEST_TYPES.edit_update:
+        return handleQuerySubmit(dispatch(editCourseUpdateQuery(courseId, { id, date, content })));
+      case REQUEST_TYPES.edit_handouts:
+        return handleQuerySubmit(dispatch(editCourseHandoutsQuery(courseId, { ...data, data: data?.data || '' })));
+      default:
+        return true;
     }
   };
 

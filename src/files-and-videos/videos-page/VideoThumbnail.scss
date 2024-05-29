@@ -11,10 +11,7 @@
   position: absolute;
   height: 99%;
   width: 100%;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  right: 0;
+  inset: 0;
   opacity: 0;
   -webkit-transition: all .4s ease-in-out 0s;
   -moz-transition: all .4s ease-in-out 0s;
