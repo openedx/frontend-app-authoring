@@ -22,7 +22,7 @@ const messages = defineMessages({
     description: 'Learn more link in upgraded discussion notification alert',
   },
   discussionNotificationFeedback: {
-    id: 'course-authoring.course-outline.page-alerts.discussionNotificationLearnMore',
+    id: 'course-authoring.course-outline.page-alerts.discussionNotificationFeedback',
     defaultMessage: 'Share feedback',
     description: 'Share feedback link in upgraded discussion notification alert',
   },
