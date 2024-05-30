@@ -27,6 +27,7 @@ import {
   solutionExplanationWithoutDivTest,
   tablesInRichTextTest,
   parseOutExplanationTests,
+  unexpectOlxAfterProblemTypeTags,
 } from './mockData/olxTestData';
 import { ProblemTypeKeys } from '../../../data/constants/problem';
 
@@ -87,7 +88,7 @@ describe('OLXParser', () => {
         }
       });
     });
-    describe('when multi select problem finds partial_credit attribute', () => {
+    describe('when numerical problem finds partial_credit attribute', () => {
       it('should throw error and contain message regarding opening advanced editor', () => {
         try {
           numericalProblemPartialCreditParser.getParsedOLXData();
@@ -97,13 +98,24 @@ describe('OLXParser', () => {
         }
       });
     });
-    describe('when multi select problem finds partial_credit attribute', () => {
+    describe('when single select problem finds partial_credit attribute', () => {
       it('should throw error and contain message regarding opening advanced editor', () => {
         try {
           singleSelectPartialCreditParser.getParsedOLXData();
         } catch (e) {
           expect(e).toBeInstanceOf(Error);
           expect(e.message).toBe('Partial credit not supported by GUI, reverting to Advanced Editor');
+        }
+      });
+    });
+    describe('when signle select problem has unexpected olx after multiplechoiceresponse tag', () => {
+      it('should throw error and contain message regarding opening advanced editor', () => {
+        const unexpectOlxAfterProblemTypeTagsParser = new OLXParser(unexpectOlxAfterProblemTypeTags.rawOLX);
+        try {
+          unexpectOlxAfterProblemTypeTagsParser.getParsedOLXData();
+        } catch (e) {
+          expect(e).toBeInstanceOf(Error);
+          expect(e.message).toBe('OLX found after the multiplechoiceresponse tags, opening in advanced editor');
         }
       });
     });

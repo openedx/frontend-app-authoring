@@ -491,6 +491,39 @@ export class OLXParser {
     return res;
   }
 
+  /** hasOLXAfterProblemTypeTag(problemType)
+   * checkTextAfterProblemTypeTag takes a problemType. The problem type is used to determine
+   * if there is olx after the answer choices the problem. Simple problems are not expected
+   * to have olx after the answer choices and returns false. In the event that a problem has
+   * olx after the answer choices it returns true and will raise an error.
+   * @param {string} problemType - string of the olx problem type
+   * @return {bool}
+   */
+  hasOLXAfterProblemTypeTag(problemType) {
+    let problemTagIndex = this.richTextProblem.length - 1;
+    let hasExtraOLX = false;
+    Object.entries(this.richTextProblem).forEach(([i, value]) => {
+      if (Object.keys(value).includes(problemType)) {
+        problemTagIndex = i;
+      }
+    });
+
+    if (problemTagIndex < this.richTextProblem.length - 1) {
+      const olxAfterProblemType = this.richTextProblem.slice(problemTagIndex + 1);
+      Object.values(olxAfterProblemType).forEach(value => {
+        const currentKey = Object.keys(value)[0];
+        const invalidText = currentKey === '#text' && value[currentKey] !== '\n';
+        const invalidKey = !nonQuestionKeys.includes(currentKey) && currentKey !== '#text';
+        if (invalidText) {
+          hasExtraOLX = true;
+        } else if (invalidKey) {
+          hasExtraOLX = true;
+        }
+      });
+    }
+    return hasExtraOLX;
+  }
+
   replaceOlxDescriptionTag(questionString) {
     return questionString.replace(/<description>/gm, '<em class="olx_description">').replace(/<\/description>/gm, '</em>');
   }
@@ -634,14 +667,18 @@ export class OLXParser {
       throw new Error('Misc Attributes asscoiated with problem, opening in advanced editor');
     }
 
+    const problemType = this.getProblemType();
+
+    if (this.hasOLXAfterProblemTypeTag(problemType)) {
+      throw new Error(`OLX was found after the ${problemType} tags, opening in advanced editor`);
+    }
+
     let answersObject = {};
     let additionalAttributes = {};
     let groupFeedbackList = [];
-    const problemType = this.getProblemType();
     const hints = this.getHints();
     const question = this.parseQuestions(problemType);
     const solutionExplanation = this.getSolutionExplanation(problemType);
-
     switch (problemType) {
       case ProblemTypeKeys.DROPDOWN:
         answersObject = this.parseMultipleChoiceAnswers(ProblemTypeKeys.DROPDOWN, 'optioninput', 'option');

@@ -1154,3 +1154,21 @@ export const numericalProblemPartialCredit = {
     </numericalresponse>
   </problem>`
 }
+
+export const unexpectOlxAfterProblemTypeTags = {
+  rawOLX: `<problem>
+    <multiplechoiceresponse>
+      <label>What Apple device competed with the portable CD player?</label>
+      <choicegroup type="MultipleChoice">
+        <choice correct="false">The iPad</choice>
+        <choice correct="false">Napster</choice>
+        <choice correct="true">The iPod</choice>
+      </choicegroup>
+    </multiplechoiceresponse>
+    <a href="#">Check out Apple's history for more information.</a>
+    <demandhint>
+      <hint><p>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</p></hint>
+      <hint><p>If you add more than one hint, a different hint appears each time learners select the hint button.</p></hint>
+    </demandhint>
+  </problem>`
+}
