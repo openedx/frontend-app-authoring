@@ -63,8 +63,8 @@ describe('<AssignmentSection />', () => {
     const { getByTestId } = render(<RootWrapper setGradingData={setGradingData} />);
     const assignmentShortLabelInput = getByTestId('assignment-type-name-input');
     expect(assignmentShortLabelInput.value).toBe('Test type');
-    fireEvent.change(assignmentShortLabelInput, { target: { value: 'New Test Type' } });
-    expect(testObj.graders[0].type).toBe('New Test Type');
+    fireEvent.change(assignmentShortLabelInput, { target: { value: 'New test type' } });
+    expect(testObj.graders[0].type).toBe('New test type');
   });
   it('checking invalid assignmentTypeNameTitle value', () => {
     const { getByText, getByTestId } = render(<RootWrapper setGradingData={setGradingData} />);
