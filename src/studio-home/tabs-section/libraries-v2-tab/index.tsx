@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Icon, Row } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
@@ -8,7 +9,10 @@ import AlertMessage from '../../../generic/alert-message';
 import CardItem from '../../card-item';
 import messages from '../messages';
 
-const LibrariesV2Tab = () => {
+const LibrariesV2Tab = ({
+  libraryAuthoringMfeUrl,
+  redirectToLibraryAuthoringMfe,
+}) => {
   const intl = useIntl();
   const {
     data,
@@ -24,6 +28,14 @@ const LibrariesV2Tab = () => {
     );
   }
 
+  const libURL = (id: string): string => (
+    libraryAuthoringMfeUrl && redirectToLibraryAuthoringMfe
+      ? `${libraryAuthoringMfeUrl}library/${id}`
+      // Redirection to the placeholder is done in the MFE rather than
+      // through the backend i.e. redirection from cms, because this this will probably change
+      : `${window.location.origin}/course-authoring/library/${id}`
+  );
+
   return (
     isError ? (
       <AlertMessage
@@ -38,15 +50,14 @@ const LibrariesV2Tab = () => {
       />
     ) : (
       <div className="courses-tab">
-        {data.map(({ org, slug, title }) => (
+        {data.map(({ id, org, slug, title }) => (
           <CardItem
             key={`${org}+${slug}`}
             isLibraries
             displayName={title}
             org={org}
             number={slug}
-            // TODO: Pass in the URL
-            // url={url}
+            url={libURL(id)}
           />
         ))}
       </div>
@@ -54,5 +65,9 @@ const LibrariesV2Tab = () => {
   );
 };
 
+LibrariesV2Tab.propTypes = {
+  libraryAuthoringMfeUrl: PropTypes.string.isRequired,
+  redirectToLibraryAuthoringMfe: PropTypes.bool.isRequired,
+};
 
 export default LibrariesV2Tab;
