@@ -129,7 +129,10 @@ const TabsSection = ({
             eventKey={TABS_LIST.libraries}
             title={intl.formatMessage(messages.librariesTabTitle)}
           >
-            <LibrariesV2Tab />
+            <LibrariesV2Tab
+              libraryAuthoringMfeUrl={libraryAuthoringMfeUrl}
+              redirectToLibraryAuthoringMfe={redirectToLibraryAuthoringMfe}
+            />
           </Tab>,
         );
       }
