@@ -22,7 +22,7 @@ const DeadlineSection = ({
   }, [gracePeriod]);
 
   const handleDeadlineChange = (e) => {
-    let { value } = e.target;
+    const { value } = e.target;
     const [hours, minutes] = value.split(':');
 
     setNewDeadlineValue(value);
