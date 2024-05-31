@@ -30,7 +30,7 @@ const RootWrapper = () => (
   </AppProvider>
 );
 
-describe('<OrganizationSection />', async () => {
+describe('<OrganizationSection />', () => {
   beforeEach(async () => {
     initializeMockApp({
       authenticatedUser: {
