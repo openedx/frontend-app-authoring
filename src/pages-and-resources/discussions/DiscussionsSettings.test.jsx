@@ -11,7 +11,12 @@ import {
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
 import React from 'react';
-import { Routes, Route, MemoryRouter } from 'react-router-dom';
+import {
+  Routes,
+  Route,
+  MemoryRouter,
+  useLocation,
+} from 'react-router-dom';
 import { fetchCourseDetail } from '../../data/thunks';
 import initializeStore from '../../store';
 import { executeThunk } from '../../utils';
@@ -37,6 +42,11 @@ let container;
 // Modal creates a portal. Overriding ReactDOM.createPortal allows portals to be tested in jest.
 ReactDOM.createPortal = jest.fn(node => node);
 
+const LocationDisplay = () => {
+  const location = useLocation();
+  return <div data-testid="location-display">{location.pathname}</div>;
+};
+
 function renderComponent(route) {
   const wrapper = render(
     <AppProvider store={store} wrapWithRouter={false}>
@@ -52,6 +62,7 @@ function renderComponent(route) {
               element={<PageWrap><DiscussionsSettings courseId={courseId} /></PageWrap>}
             />
           </Routes>
+          <LocationDisplay />
         </MemoryRouter>
       </PagesAndResourcesProvider>
     </AppProvider>,
@@ -201,7 +212,9 @@ describe('DiscussionsSettings', () => {
       // then it's safe to proceed with our expectations.
       await waitFor(() => expect(screen.queryByRole(container, 'button', { name: 'Close' })).toBeNull());
 
-      await waitFor(() => expect(window.location.pathname).toEqual(`/course/${courseId}/pages-and-resources`));
+      // Confirm route is correct
+      const locationDisplay = await screen.findByTestId('location-display');
+      await waitFor(() => expect(locationDisplay.textContent).toEqual(`/course/${courseId}/pages-and-resources`));
     });
 
     test('requires confirmation if changing provider', async () => {
@@ -354,8 +367,10 @@ describe('DiscussionsSettings', () => {
       expect(queryByTestId(container, 'appList')).not.toBeInTheDocument();
       expect(queryByTestId(container, 'appConfigForm')).not.toBeInTheDocument();
 
+      // Confirm route is correct
       // We don't technically leave the route in this case, though the modal is hidden.
-      expect(window.location.pathname).toEqual(`/course/${courseId}/pages-and-resources/discussion/configure/piazza`);
+      const locationDisplay = await screen.findByTestId('location-display');
+      await waitFor(() => expect(locationDisplay.textContent).toEqual(`/course/${courseId}/pages-and-resources/discussion/configure/piazza`));
 
       const alert = await findByRole(container, 'alert');
       expect(alert).toBeInTheDocument();
