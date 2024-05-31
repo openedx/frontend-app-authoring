@@ -132,7 +132,7 @@ const AppList = ({ intl }) => {
           labelClassName="line-height-24"
           onChange={handleChange}
           checked={!enabled}
-          data-testId="hide-discussion"
+          data-testid="hide-discussion"
         >
           {intl.formatMessage(messages.hideDiscussionTab)}
         </Form.Switch>
