@@ -185,7 +185,7 @@ describe('DiscussionsSettings', () => {
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.getByRole('status'));
 
-      act(async () => {
+      await act(async () => {
         userEvent.click(queryByLabelText(container, 'Select Piazza'));
 
         userEvent.click(getByRole(container, 'button', { name: 'Next' }));
@@ -210,7 +210,7 @@ describe('DiscussionsSettings', () => {
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.getByRole('status'));
 
-      act(async () => {
+      await act(async () => {
         userEvent.click(getByRole(container, 'checkbox', { name: 'Select Discourse' }));
         userEvent.click(getByRole(container, 'button', { name: 'Next' }));
 
@@ -241,7 +241,7 @@ describe('DiscussionsSettings', () => {
 
       await waitFor(() => expect(screen.queryByRole('status')).toBeNull());
 
-      act(async () => {
+      await act(async () => {
         expect(await findByRole(container, 'heading', { name: 'Discourse' })).toBeInTheDocument();
 
         userEvent.type(getByRole(container, 'textbox', { name: 'Consumer Key' }), 'a');
@@ -305,7 +305,7 @@ describe('DiscussionsSettings', () => {
       await waitForElementToBeRemoved(screen.getByRole('status'));
 
       // Apply causes an async action to take place
-      act(async () => {
+      await act(async () => {
         userEvent.click(queryByText(container, appMessages.saveButton.defaultMessage));
         await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
 
@@ -350,7 +350,7 @@ describe('DiscussionsSettings', () => {
       // content has been loaded - prior to proceeding with our expectations.
       await waitForElementToBeRemoved(screen.getByRole('status'));
 
-      act(async () => {
+      await act(async () => {
         userEvent.click(getByRole(container, 'button', { name: 'Save' }));
 
         await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
@@ -408,7 +408,7 @@ describe.each([
     // content has been loaded - prior to proceeding with our expectations.
     waitForElementToBeRemoved(screen.getByRole('status'));
 
-    act(async () => {
+    await act(async () => {
       userEvent.click(await screen.findByLabelText('Select Piazza'));
       userEvent.click(queryByText(container, messages.nextButton.defaultMessage));
       waitForElementToBeRemoved(screen.getByRole('status'));
@@ -462,7 +462,7 @@ describe.each([
     // content has been loaded - prior to proceeding with our expectations.
     waitForElementToBeRemoved(screen.getByRole('status'));
 
-    act(async () => {
+    await act(async () => {
       userEvent.click(await screen.findByLabelText('Select Piazza'));
       userEvent.click(await screen.findByText(messages.nextButton.defaultMessage));
 
