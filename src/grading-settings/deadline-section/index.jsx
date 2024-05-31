@@ -12,7 +12,7 @@ const DeadlineSection = ({
   intl, setShowSavePrompt, gracePeriod, setGradingData, setShowSuccessAlert,
 }) => {
   const timeStampValue = gracePeriod
-    ? gracePeriod.hours && `${formatTime(gracePeriod.hours)}:${formatTime(gracePeriod.minutes)}`
+    ? gracePeriod.minutes && `${formatTime(gracePeriod.hours)}:${formatTime(gracePeriod.minutes)}`
     : DEFAULT_TIME_STAMP;
   const [newDeadlineValue, setNewDeadlineValue] = useState(timeStampValue);
   const [isError, setIsError] = useState(false);
@@ -22,7 +22,7 @@ const DeadlineSection = ({
   }, [gracePeriod]);
 
   const handleDeadlineChange = (e) => {
-    const { value } = e.target;
+    let { value } = e.target;
     const [hours, minutes] = value.split(':');
 
     setNewDeadlineValue(value);
