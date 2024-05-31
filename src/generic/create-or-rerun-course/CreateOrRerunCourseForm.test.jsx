@@ -147,13 +147,13 @@ describe('<CreateOrRerunCourseForm />', () => {
       const runInput = screen.getByPlaceholderText(messages.courseRunPlaceholder.defaultMessage);
       const createBtn = screen.getByRole('button', { name: messages.createButton.defaultMessage });
 
+      await userEvent.type(displayNameInput, 'foo course name');
       await act(async () => {
-        userEvent.type(displayNameInput, 'foo course name');
         fireEvent.click(orgInput);
-        userEvent.type(numberInput, '777');
-        userEvent.type(runInput, '1');
-        userEvent.click(createBtn);
       });
+      await userEvent.type(numberInput, '777');
+      await userEvent.type(runInput, '1');
+      await userEvent.click(createBtn);
       await axiosMock.onPost(getCreateOrRerunCourseUrl()).reply(200, { url });
       await executeThunk(updateCreateOrRerunCourseQuery({ org: 'testX', run: 'some' }), store.dispatch);
 
@@ -171,13 +171,13 @@ describe('<CreateOrRerunCourseForm />', () => {
       const createBtn = screen.getByRole('button', { name: messages.createButton.defaultMessage });
       await axiosMock.onPost(getCreateOrRerunCourseUrl()).reply(200, { url, destinationCourseKey });
 
-      await act(async () => {
-        userEvent.type(displayNameInput, 'foo course name');
+      await userEvent.type(displayNameInput, 'foo course name');
+      await act(() => {
         fireEvent.click(orgInput);
-        userEvent.type(numberInput, '777');
-        userEvent.type(runInput, '1');
-        userEvent.click(createBtn);
       });
+      await userEvent.type(numberInput, '777');
+      await userEvent.type(runInput, '1');
+      await userEvent.click(createBtn);
       await executeThunk(updateCreateOrRerunCourseQuery({ org: 'testX', run: 'some' }), store.dispatch);
 
       expect(mockedUsedNavigate).toHaveBeenCalledWith(`${url}${destinationCourseKey}`);

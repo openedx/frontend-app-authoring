@@ -133,21 +133,24 @@ describe('<ScheduleAndDetails />', () => {
     const { getAllByPlaceholderText, getByText } = render(
       <RootWrapper />,
     );
+    let inputs;
     await waitFor(() => {
-      const inputs = getAllByPlaceholderText(DATE_FORMAT.toLocaleUpperCase());
-      act(() => {
-        fireEvent.change(inputs[0], { target: { value: '06/16/2023' } });
-      });
-
-      expect(
-        getByText(messages.alertWarning.defaultMessage),
-      ).toBeInTheDocument();
+      inputs = getAllByPlaceholderText(DATE_FORMAT.toLocaleUpperCase());
     });
+    await act(async () => {
+      fireEvent.change(inputs[0], { target: { value: '06/16/2023' } });
+    });
+
+    expect(
+      getByText(messages.alertWarning.defaultMessage),
+    ).toBeInTheDocument();
   });
 
   it('should display a success message when course details saves', async () => {
     const { getByText } = render(<RootWrapper />);
-    await executeThunk(updateCourseDetailsQuery(courseId, 'DaTa'), store.dispatch);
+    await waitFor(() => {
+      executeThunk(updateCourseDetailsQuery(courseId, 'DaTa'), store.dispatch);
+    });
     expect(getByText(messages.alertSuccess.defaultMessage)).toBeInTheDocument();
   });
 
@@ -176,7 +179,9 @@ describe('<ScheduleAndDetails />', () => {
       .onPut(getCourseDetailsApiUrl(courseId))
       .reply(404, 'error');
     const { getByText } = render(<RootWrapper />);
-    await executeThunk(updateCourseDetailsQuery(courseId, 'DaTa'), store.dispatch);
+    await act(async () => {
+      await executeThunk(updateCourseDetailsQuery(courseId, 'DaTa'), store.dispatch);
+    });
     expect(getByText(messages.alertFail.defaultMessage)).toBeInTheDocument();
   });
 });

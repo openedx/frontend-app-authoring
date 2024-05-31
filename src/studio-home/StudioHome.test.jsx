@@ -49,7 +49,7 @@ const RootWrapper = () => (
   </AppProvider>
 );
 
-describe('<StudioHome />', async () => {
+describe('<StudioHome />', () => {
   describe('api fetch fails', () => {
     beforeEach(async () => {
       initializeMockApp({
