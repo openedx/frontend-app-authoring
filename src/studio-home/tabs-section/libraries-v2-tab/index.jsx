@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Icon, Row, Pagination } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-import { useListStudioHomeV2Libraries } from '../../data/apiHooks';
+import useListStudioHomeV2Libraries from '../../data/apiHooks';
 import { LoadingSpinner } from '../../../generic/Loading';
 import AlertMessage from '../../../generic/alert-message';
 import CardItem from '../../card-item';
@@ -25,7 +25,7 @@ const LibrariesV2Tab = ({
     data,
     isLoading,
     isError,
-  } = useListStudioHomeV2Libraries({page: currentPage});
+  } = useListStudioHomeV2Libraries({ page: currentPage });
 
   if (isLoading) {
     return (
@@ -68,25 +68,32 @@ const LibrariesV2Tab = ({
           </p>
         </div>
 
-        {data.results.map(({ id, org, slug, title }) => (
-          <CardItem
-            key={`${org}+${slug}`}
-            isLibraries
-            displayName={title}
-            org={org}
-            number={slug}
-            url={libURL(id)}
-          />
-        ))}
+        {
+          data.results.map(({
+            id, org, slug, title,
+          }) => (
+            <CardItem
+              key={`${org}+${slug}`}
+              isLibraries
+              displayName={title}
+              org={org}
+              number={slug}
+              url={libURL(id)}
+            />
+          ))
+        }
 
-        {data.numPages > 1 &&
-          <Pagination
-            className="d-flex justify-content-center"
-            paginationLabel="pagination navigation"
-            pageCount={data.numPages}
-            currentPage={currentPage}
-            onPageSelect={handlePageSelect}
-          />
+        {
+          data.numPages > 1
+          && (
+            <Pagination
+              className="d-flex justify-content-center"
+              paginationLabel="pagination navigation"
+              pageCount={data.numPages}
+              currentPage={currentPage}
+              onPageSelect={handlePageSelect}
+            />
+          )
         }
       </div>
     )
