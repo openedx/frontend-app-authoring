@@ -12,5 +12,5 @@ const messages = defineMessages({
     description: 'Title of add content in library container.',
   },
 });
-  
+
 export default messages;

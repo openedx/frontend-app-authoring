@@ -60,7 +60,7 @@ export default function initializeStore(preloadedState = undefined) {
       certificates: certificatesReducer,
       groupConfigurations: groupConfigurationsReducer,
       textbooks: textbooksReducer,
-      libraryHome: libraryHomeReducer
+      libraryHome: libraryHomeReducer,
     },
     preloadedState,
   });

@@ -2,27 +2,27 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  showLibrarySheet: false,
-  sheetBodyComponent: null,
+  showLibrarySidebar: false,
+  sidebarBodyComponent: null,
 };
 
 const slice = createSlice({
   name: 'libraryHome',
   initialState,
   reducers: {
-    closeLibrarySheet: (state) => {
-      state.showLibrarySheet = false;
+    closeLibrarySidebar: (state) => {
+      state.showLibrarySidebar = false;
     },
-    openAddContentSheet: (state) => {
-      state.sheetBodyComponent = 'add-content';
-      state.showLibrarySheet = true;
+    openAddContentSidebar: (state) => {
+      state.sidebarBodyComponent = 'add-content';
+      state.showLibrarySidebar = true;
     },
   },
 });
 
 export const {
-  closeLibrarySheet,
-  openAddContentSheet,
+  closeLibrarySidebar,
+  openAddContentSidebar,
 } = slice.actions;
 
 export const {

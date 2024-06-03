@@ -1,2 +1,2 @@
-export const getShowLibrarySheet = (state) => state.libraryHome.showLibrarySheet;
-export const getSheetBodyComponent = (state) => state.libraryHome.sheetBodyComponent;
+export const getShowLibrarySidebar = (state) => state.libraryHome.showLibrarySidebar;
+export const getSidebarBodyComponent = (state) => state.libraryHome.sidebarBodyComponent;

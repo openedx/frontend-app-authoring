@@ -1,7 +1,6 @@
 // @ts-check
 import React from 'react';
 import {
-  Container,
   Stack,
   Button,
 } from '@openedx/paragon';
@@ -37,33 +36,29 @@ const AddContentContainer = () => {
       disabled: true,
     },
   ];
-  
+
   return (
-    <div>
-      <Container size='xs'>        
-        <Stack direction='vertical'>
-          <Button
-            variant='outline-primary'
-            disabled={true}
-            className='m-2 rounded-0'
-          >
-            {intl.formatMessage(messages.collectionButton)}
-          </Button>
-          <hr />
-          {contentTypes.map((contentType) => (
-            <Button 
-              variant='outline-primary'
-              disabled={contentType.disabled}
-              className='m-2 rounded-0'
-            >
-              {contentType.name}
-            </Button>
-          ))}
-        </Stack>
-      </Container>
-    </div>
+    <Stack direction="vertical">
+      <Button
+        variant="outline-primary"
+        disabled
+        className="m-2 rounded-0"
+      >
+        {intl.formatMessage(messages.collectionButton)}
+      </Button>
+      <hr />
+      {contentTypes.map((contentType) => (
+        <Button
+          variant="outline-primary"
+          disabled={contentType.disabled}
+          className="m-2 rounded-0"
+        >
+          {contentType.name}
+        </Button>
+      ))}
+    </Stack>
   );
-}
+};
 
 AddContentContainer.propTypes = {};
 

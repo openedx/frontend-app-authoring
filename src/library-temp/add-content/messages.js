@@ -37,5 +37,5 @@ const messages = defineMessages({
     description: 'Content of button to create a Advanced / Other component.',
   },
 });
-  
+
 export default messages;

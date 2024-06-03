@@ -1,29 +1,49 @@
 import React from 'react';
 import {
-    Button
+  Button,
+  Stack,
+  Container,
+  Row,
+  Col,
 } from '@openedx/paragon';
 import { Add } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import messages from './messages';
-import { LibrarySheet } from './library-sheet';
-import { openAddContentSheet } from './data/slice';
+import { LibrarySidebar } from './library-sidebar';
+import { openAddContentSidebar } from './data/slice';
+import { getShowLibrarySidebar } from './data/selectors';
 
 const LibraryLayout = () => {
   const intl = useIntl();
+  const showDrawer = useSelector(getShowLibrarySidebar);
   const dispatch = useDispatch();
+
   return (
-    <div>
-      <Button
-        iconBefore={Add}
-        variant='primary rounded-0'
-        onClick={() => dispatch(openAddContentSheet())}
-      >
-        {intl.formatMessage(messages.newContentButton)}
-      </Button>
-      <LibrarySheet />
-    </div>
+    <Container>
+      <Row>
+        <Col>
+          <Stack direction="horizontal" className="d-flex justify-content-between">
+            <span>
+              This is a test
+            </span>
+            <Button
+              iconBefore={Add}
+              variant="primary rounded-0"
+              onClick={() => dispatch(openAddContentSidebar())}
+            >
+              {intl.formatMessage(messages.newContentButton)}
+            </Button>
+          </Stack>
+        </Col>
+        {showDrawer && (
+          <Col xs={6} md={4} className="box-shadow-left-1">
+            <LibrarySidebar />
+          </Col>
+        )}
+      </Row>
+    </Container>
   );
-}
+};
 
 export default LibraryLayout;
