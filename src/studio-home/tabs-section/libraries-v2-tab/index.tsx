@@ -35,7 +35,7 @@ const LibrariesV2Tab = ({
     );
   }
 
-  const libURL = (id: string): string => (
+  const libURL = (id) => (
     libraryAuthoringMfeUrl && redirectToLibraryAuthoringMfe
       ? `${libraryAuthoringMfeUrl}library/${id}`
       // Redirection to the placeholder is done in the MFE rather than
