@@ -7,7 +7,6 @@ import Header from '../../header';
 import SubHeader from '../../generic/sub-header/SubHeader';
 import messages from './messages';
 
-
 const LibraryV2Placeholder = () => {
   const intl = useIntl();
 
