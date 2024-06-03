@@ -1,4 +1,6 @@
 import React from 'react';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { getConfig, initializeMockApp, setConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import {
@@ -34,15 +36,38 @@ const libraryApiLink = `${getApiBaseUrl()}/api/contentstore/v1/home/libraries`;
 
 const mockDispatch = jest.fn();
 
+const queryClient = new QueryClient();
+
+const tabSectionComponent = (overrideProps) => (
+  <TabsSection
+    intl={{ formatMessage: jest.fn() }}
+    dispatch={mockDispatch}
+    isPaginationCoursesEnabled={false}
+    {...overrideProps}
+  />
+);
+
 const RootWrapper = (overrideProps) => (
-  <AppProvider store={store}>
+  <AppProvider store={store} wrapWithRouter={false}>
     <IntlProvider locale="en" messages={{}}>
-      <TabsSection
-        intl={{ formatMessage: jest.fn() }}
-        dispatch={mockDispatch}
-        isPaginationCoursesEnabled={false}
-        {...overrideProps}
-      />
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={['/home']}>
+          <Routes>
+            <Route
+              path="/home"
+              element={tabSectionComponent(overrideProps)}
+            />
+            <Route
+              path="/libraries"
+              element={tabSectionComponent(overrideProps)}
+            />
+            <Route
+              path="/legacy-libraries"
+              element={tabSectionComponent(overrideProps)}
+            />
+          </Routes>
+        </MemoryRouter>
+      </QueryClientProvider>
     </IntlProvider>
   </AppProvider>
 );
