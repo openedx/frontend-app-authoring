@@ -290,6 +290,31 @@ describe('<SearchUI />', () => {
       );
     });
 
+    test('click lib component in unit result navigates to the context of encompassing lib component', async () => {
+      const { findAllByRole } = rendered;
+
+      const [resultItem] = await findAllByRole('button', { name: /Text block in Lib Component/ });
+
+      // Clicking the "Open in new window" button should open the result in a new window:
+      const { open } = window;
+      window.open = jest.fn();
+      fireEvent.click(within(resultItem).getByRole('button', { name: 'Open in new window' }));
+
+      expect(window.open).toHaveBeenCalledWith(
+        '/course/course-v1:SampleTaxonomyOrg1+STC1+2023_1/container/block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@aaf8b8eb86b54281aeeab12499d2cb0b'
+        + '?show=block-v1%3ASampleTaxonomyOrg1%2BSTC1%2B2023_1%2Btype%40library_content%2Bblock%40427e5cd03fbe431d9d551c67d4e280ae',
+        '_blank',
+      );
+      window.open = open;
+
+      // Clicking in the result should navigate to the result's URL:
+      fireEvent.click(resultItem);
+      expect(mockNavigate).toHaveBeenCalledWith(
+        '/course/course-v1:SampleTaxonomyOrg1+STC1+2023_1/container/block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@aaf8b8eb86b54281aeeab12499d2cb0b'
+        + '?show=block-v1%3ASampleTaxonomyOrg1%2BSTC1%2B2023_1%2Btype%40library_content%2Bblock%40427e5cd03fbe431d9d551c67d4e280ae',
+      );
+    });
+
     test('click lib component result navigates to the context', async () => {
       const data = generateGetStudioHomeDataApiResponse();
       data.redirectToLibraryAuthoringMfe = true;

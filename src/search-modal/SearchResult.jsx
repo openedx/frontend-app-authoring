@@ -41,7 +41,7 @@ function getItemIcon(blockType) {
 */
 function getLibraryHitUrl(hit, libraryAuthoringMfeUrl) {
   const { contextKey } = hit;
-  return `${libraryAuthoringMfeUrl}/library/${contextKey}`;
+  return `${libraryAuthoringMfeUrl}library/${contextKey}`;
 }
 
 /**
@@ -62,10 +62,20 @@ function getUnitUrlSuffix(hit) {
 function getUnitComponentUrlSuffix(hit) {
   const { breadcrumbs, contextKey, usageKey } = hit;
   if (breadcrumbs.length > 1) {
-    const parent = breadcrumbs[breadcrumbs.length - 1];
+    let parent = breadcrumbs[breadcrumbs.length - 1];
 
     if ('usageKey' in parent) {
-      return `course/${contextKey}/container/${parent.usageKey}?show=${encodeURIComponent(usageKey)}`;
+      // Handle case for library component in unit
+      let libComponentUsageKey;
+      if (parent.usageKey.includes('type@library_content') && breadcrumbs.length > 2) {
+        libComponentUsageKey = parent.usageKey;
+        parent = breadcrumbs[breadcrumbs.length - 2];
+      }
+
+      if ('usageKey' in parent) {
+        const encodedUsageKey = encodeURIComponent(libComponentUsageKey || usageKey);
+        return `course/${contextKey}/container/${parent.usageKey}?show=${encodedUsageKey}`;
+      }
     }
   }
 
@@ -96,11 +106,13 @@ function getUrlSuffix(hit) {
     return getUnitUrlSuffix(hit);
   }
 
-  // Check if the parent is a unit
+  // Check if the parent is a unit or a library component in a unit
   if (breadcrumbs.length > 1) {
     const parent = breadcrumbs[breadcrumbs.length - 1];
 
-    if ('usageKey' in parent && parent.usageKey.includes('type@vertical')) {
+    if ('usageKey' in parent && (
+      parent.usageKey.includes('type@vertical') || parent.usageKey.includes('type@library_content'))
+    ) {
       return getUnitComponentUrlSuffix(hit);
     }
   }
