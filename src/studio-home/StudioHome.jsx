@@ -51,6 +51,7 @@ const StudioHome = ({ intl }) => {
     studioShortName,
     studioRequestEmail,
     libraryAuthoringMfeUrl,
+    redirectToLibraryAuthoringMfe,
   } = studioHomeData;
 
   function getHeaderButtons() {
@@ -82,7 +83,9 @@ const StudioHome = ({ intl }) => {
 
     let libraryHref = `${getConfig().STUDIO_BASE_URL}/home_library`;
     if (isMixedOrV2LibrariesMode(libMode)) {
-      libraryHref = `${libraryAuthoringMfeUrl}create`;
+      libraryHref = libraryAuthoringMfeUrl && redirectToLibraryAuthoringMfe
+        ? `${libraryAuthoringMfeUrl}create`
+        : `${window.location.origin}/course-authoring/library/create`;
     }
 
     headerButtons.push(
