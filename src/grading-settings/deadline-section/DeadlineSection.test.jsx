@@ -48,6 +48,26 @@ describe('<DeadlineSection />', () => {
       expect(testObj.gracePeriod.minutes).toBe(13);
     });
   });
+  it('checking deadline input value if grace Period has no hours', async () => {
+    const { getByTestId } = render(<RootWrapper
+      gracePeriod={{ hours: 0, minutes: 13 }}
+      setGradingData={setGradingData}
+    />);
+    await waitFor(() => {
+      const inputElement = getByTestId('deadline-period-input');
+      expect(inputElement.value).toBe('00:13');
+    });
+  });
+  it('checking deadline input value if grace Period has no minutes', async () => {
+    const { getByTestId } = render(<RootWrapper
+      gracePeriod={{ hours: 13, minutes: 0 }}
+      setGradingData={setGradingData}
+    />);
+    await waitFor(() => {
+      const inputElement = getByTestId('deadline-period-input');
+      expect(inputElement.value).toBe('13:00');
+    });
+  });
   it('checking deadline input value if grace Period equal null', async () => {
     const { getByTestId } = render(<RootWrapper gracePeriod={null} setGradingData={setGradingData} />);
     await waitFor(() => {
