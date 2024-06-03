@@ -9,7 +9,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { getLoadingStatuses, getStudioHomeData } from '../data/selectors';
 import messages from './messages';
 import LibrariesTab from './libraries-tab';
-import LibrariesV2Tab from './libraries-v2-tab/index.tsx';
+import LibrariesV2Tab from './libraries-v2-tab/index';
 import ArchivedTab from './archived-tab';
 import CoursesTab from './courses-tab';
 import { RequestStatus } from '../../data/constants';
