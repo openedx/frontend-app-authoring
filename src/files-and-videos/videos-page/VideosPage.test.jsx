@@ -40,6 +40,9 @@ import * as api from './data/api';
 import videoMessages from './messages';
 import messages from '../generic/messages';
 
+// eslint-disable-next-line no-promise-executor-return
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const { getVideosUrl, getCourseVideosApiUrl, getApiBaseUrl } = api;
 
 let axiosMock;
@@ -70,6 +73,8 @@ const mockStore = async (
 
   renderComponent();
   await executeThunk(fetchVideos(courseId), store.dispatch);
+  // Wait a couple seconds to finish loading video files into the data table
+  await sleep(2);
 };
 
 const emptyMockStore = async (status) => {
@@ -247,10 +252,10 @@ describe('Videos page', () => {
 
         const addFilesButton = screen.getAllByLabelText('file-input')[3];
         const { videoIds } = store.getState().videos;
-        await act(async () => {
+        await waitFor(() => {
           userEvent.upload(addFilesButton, file);
-          await executeThunk(addVideoFile(courseId, file, videoIds, { current: [] }), store.dispatch);
         });
+        await executeThunk(addVideoFile(courseId, file, videoIds, { current: [] }), store.dispatch);
         const addStatus = store.getState().videos.addingStatus;
         expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
       });
@@ -270,7 +275,7 @@ describe('Videos page', () => {
         uploadSpy.mockResolvedValue(new Promise(() => {}));
 
         const addFilesButton = screen.getAllByLabelText('file-input')[3];
-        act(async () => {
+        await waitFor(() => {
           userEvent.upload(addFilesButton, file);
         });
         await waitFor(() => {
@@ -317,9 +322,7 @@ describe('Videos page', () => {
 
         fireEvent.click(deleteButton);
         expect(screen.getByText('Delete mOckID1.mp4')).toBeVisible();
-        await act(async () => {
-          userEvent.click(deleteButton);
-        });
+        fireEvent.click(deleteButton);
 
         // Wait for the delete confirmation button to appear
         const confirmDeleteButton = await screen.findByRole('button', {
@@ -327,7 +330,7 @@ describe('Videos page', () => {
         });
 
         await act(async () => {
-          userEvent.click(confirmDeleteButton);
+          fireEvent.click(confirmDeleteButton);
         });
 
         expect(screen.queryByText('Delete mOckID1.mp4')).toBeNull();
@@ -614,10 +617,10 @@ describe('Videos page', () => {
         axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(413, { error: errorMessage });
 
         const addFilesButton = screen.getAllByLabelText('file-input')[3];
-        await act(async () => {
+        await waitFor(() => {
           userEvent.upload(addFilesButton, file);
-          await executeThunk(addVideoFile(courseId, file, undefined, { current: [] }), store.dispatch);
         });
+        await executeThunk(addVideoFile(courseId, file, undefined, { current: [] }), store.dispatch);
         const addStatus = store.getState().videos.addingStatus;
         expect(addStatus).toEqual(RequestStatus.FAILED);
 
@@ -629,10 +632,10 @@ describe('Videos page', () => {
         axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(404);
 
         const addFilesButton = screen.getAllByLabelText('file-input')[3];
-        await act(async () => {
+        await waitFor(() => {
           userEvent.upload(addFilesButton, file);
-          await executeThunk(addVideoFile(courseId, file, undefined, { current: [] }), store.dispatch);
         });
+        await executeThunk(addVideoFile(courseId, file, undefined, { current: [] }), store.dispatch);
         const addStatus = store.getState().videos.addingStatus;
         expect(addStatus).toEqual(RequestStatus.FAILED);
 
@@ -664,10 +667,10 @@ describe('Videos page', () => {
         axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
         axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
         const addFilesButton = screen.getAllByLabelText('file-input')[3];
-        await act(async () => {
+        await waitFor(() => {
           userEvent.upload(addFilesButton, file);
-          await executeThunk(addVideoFile(courseId, file, undefined, { current: [] }), store.dispatch);
         });
+        await executeThunk(addVideoFile(courseId, file, undefined, { current: [] }), store.dispatch);
         const addStatus = store.getState().videos.addingStatus;
         expect(addStatus).toEqual(RequestStatus.FAILED);
 
