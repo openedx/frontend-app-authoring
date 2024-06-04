@@ -13,8 +13,14 @@ import {
   getStudioHomeCourses,
   getStudioHomeCoursesV2,
   getStudioHomeLibraries,
+  getStudioHomeLibrariesV2,
 } from './api';
-import { generateGetStudioCoursesApiResponse, generateGetStudioHomeDataApiResponse, generateGetStuioHomeLibrariesApiResponse } from '../factories/mockApiResponses';
+import {
+  generateGetStudioCoursesApiResponse,
+  generateGetStudioHomeDataApiResponse,
+  generateGetStudioHomeLibrariesApiResponse,
+  generateGetStudioHomeLibrariesV2ApiResponse,
+} from '../factories/mockApiResponses';
 
 let axiosMock;
 
@@ -64,11 +70,21 @@ describe('studio-home api calls', () => {
     expect(result).toEqual(expected);
   });
 
-  it('should get studio libraries data', async () => {
+  it('should get studio v1 libraries data', async () => {
     const apiLink = `${getApiBaseUrl()}/api/contentstore/v1/home/libraries`;
-    axiosMock.onGet(apiLink).reply(200, generateGetStuioHomeLibrariesApiResponse());
+    axiosMock.onGet(apiLink).reply(200, generateGetStudioHomeLibrariesApiResponse());
     const result = await getStudioHomeLibraries();
-    const expected = generateGetStuioHomeLibrariesApiResponse();
+    const expected = generateGetStudioHomeLibrariesApiResponse();
+
+    expect(axiosMock.history.get[0].url).toEqual(apiLink);
+    expect(result).toEqual(expected);
+  });
+
+  it('should get studio v2 libraries data', async () => {
+    const apiLink = `${getApiBaseUrl()}/api/libraries/v2/`;
+    axiosMock.onGet(apiLink).reply(200, generateGetStudioHomeLibrariesV2ApiResponse());
+    const result = await getStudioHomeLibrariesV2({});
+    const expected = generateGetStudioHomeLibrariesV2ApiResponse();
 
     expect(axiosMock.history.get[0].url).toEqual(apiLink);
     expect(result).toEqual(expected);
