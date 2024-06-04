@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import {
   AdvanceProblemKeys, AdvanceProblems, ProblemTypeKeys, ProblemTypes,
 } from '../../../../data/constants/problem';
-import { StrictDict } from '../../../../utils';
+import { StrictDict, snakeCaseKeys } from '../../../../utils';
 import * as module from './hooks';
 import { getDataFromOlx } from '../../../../data/redux/thunkActions/problem';
 
@@ -19,14 +19,28 @@ export const selectHooks = () => {
   };
 };
 
-export const onSelect = ({ selected, updateField, setBlockTitle }) => () => {
+export const onSelect = ({
+  selected,
+  updateField,
+  setBlockTitle,
+  defaultSettings,
+}) => () => {
   if (Object.values(AdvanceProblemKeys).includes(selected)) {
     updateField({ problemType: ProblemTypeKeys.ADVANCED, rawOLX: AdvanceProblems[selected].template });
     setBlockTitle(AdvanceProblems[selected].title);
   } else {
     const newOLX = ProblemTypes[selected].template;
-    const { settings, ...newState } = getDataFromOlx({ rawOLX: newOLX, rawSettings: {}, defaultSettings: {} });
-    updateField({ ...newState });
+    const newState = getDataFromOlx({
+      rawOLX: newOLX,
+      rawSettings: {
+        weight: 1,
+        attempts_before_showanswer_button: 0,
+        show_reset_button: null,
+        showanswer: null,
+      },
+      defaultSettings: snakeCaseKeys(defaultSettings),
+    });
+    updateField(newState);
     setBlockTitle(ProblemTypes[selected].title);
   }
 };

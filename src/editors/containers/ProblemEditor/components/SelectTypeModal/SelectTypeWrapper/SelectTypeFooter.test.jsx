@@ -16,6 +16,7 @@ describe('SelectTypeFooter', () => {
     onCancel: jest.fn().mockName('onCancel'),
     selected: null,
     // redux
+    defaultSettings: {},
     updateField: jest.fn().mockName('UpdateField'),
     // inject
     intl: { formatMessage },
@@ -45,7 +46,7 @@ describe('SelectTypeFooter', () => {
 
   describe('mapStateToProps', () => {
     test('is empty', () => {
-      expect(module.mapStateToProps()).toEqual({});
+      expect(module.mapDispatchToProps.defaultSettings).toEqual(actions.problem.defaultSettings);
     });
   });
   describe('mapDispatchToProps', () => {

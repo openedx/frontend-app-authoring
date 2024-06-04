@@ -6,7 +6,9 @@ export const popuplateItem = (parentObject, itemName, statekey, metadata, defaul
   let parent = parentObject;
   const item = _.get(metadata, itemName, null);
   const equalsDefault = item === defaultValue;
-  if ((!_.isNil(item) || allowNull) && !equalsDefault) {
+  if (allowNull) {
+    parent = { ...parentObject, [statekey]: item };
+  } else if (!_.isNil(item) && !equalsDefault) {
     parent = { ...parentObject, [statekey]: item };
   }
   return parent;

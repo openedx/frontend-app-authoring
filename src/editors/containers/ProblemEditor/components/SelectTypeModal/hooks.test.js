@@ -3,7 +3,7 @@ import React from 'react';
 import { MockUseState } from '../../../../../testUtils';
 import * as module from './hooks';
 import { AdvanceProblems, ProblemTypeKeys, ProblemTypes } from '../../../../data/constants/problem';
-import { OLXParser } from '../../data/OLXParser';
+import { getDataFromOlx } from '../../../../data/redux/thunkActions/problem';
 
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
@@ -17,6 +17,12 @@ const mockSelected = 'multiplechoiceresponse';
 const mockAdvancedSelected = 'circuitschematic';
 const mockSetSelected = jest.fn().mockName('setSelected');
 const mocksetBlockTitle = jest.fn().mockName('setBlockTitle');
+const mockDefaultSettings = {
+  max_attempts: null,
+  rerandomize: 'never',
+  showR_reset_button: false,
+  showanswer: 'always',
+};
 
 let hook;
 
@@ -58,13 +64,24 @@ describe('SelectTypeModal hooks', () => {
       expect(mocksetBlockTitle).toHaveBeenCalledWith(AdvanceProblems[mockAdvancedSelected].title);
     });
     test('updateField is called with selected on visual propblems', () => {
-      module.onSelect({ selected: mockSelected, updateField: mockUpdateField, setBlockTitle: mocksetBlockTitle })();
-      const testOlXParser = new OLXParser(ProblemTypes[mockSelected].template);
-      const { settings, ...testState } = testOlXParser.getParsedOLXData();
-      expect(mockUpdateField).toHaveBeenCalledWith({
-        ...testState,
+      module.onSelect({
+        selected: mockSelected,
+        updateField: mockUpdateField,
+        setBlockTitle: mocksetBlockTitle,
+        defaultSettings: mockDefaultSettings,
+      })();
+      // const testOlXParser = new OLXParser(ProblemTypes[mockSelected].template);
+      const testState = getDataFromOlx({
         rawOLX: ProblemTypes[mockSelected].template,
+        rawSettings: {
+          weight: 1,
+          attempts_before_showanswer_button: 0,
+          show_reset_button: null,
+          showanswer: null,
+        },
+        defaultSettings: mockDefaultSettings,
       });
+      expect(mockUpdateField).toHaveBeenCalledWith(testState);
       expect(mocksetBlockTitle).toHaveBeenCalledWith(ProblemTypes[mockSelected].title);
     });
   });

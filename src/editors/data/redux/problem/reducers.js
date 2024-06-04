@@ -21,7 +21,7 @@ const initialState = {
     scoring: {
       weight: 1,
       attempts: {
-        unlimited: false,
+        unlimited: true,
         number: null,
       },
     },

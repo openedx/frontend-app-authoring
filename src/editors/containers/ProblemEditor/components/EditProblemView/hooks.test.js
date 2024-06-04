@@ -305,7 +305,7 @@ describe('EditProblemView hooks parseState', () => {
       });
     });
 
-    it('returned parseState content.settings should not include default values', () => {
+    it('returned parseState content.settings should not include default values (not including maxAttempts)', () => {
       const problem = {
         ...problemState,
         problemType: ProblemTypeKeys.NUMERIC,
@@ -326,6 +326,7 @@ describe('EditProblemView hooks parseState', () => {
         openSaveWarningModal,
       });
       expect(settings).toEqual({
+        max_attempts: '',
         attempts_before_showanswer_button: 0,
         submission_wait_seconds: 0,
         weight: 1,

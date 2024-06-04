@@ -11,12 +11,13 @@ import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/
 import messages from './messages';
 import hooks from '../hooks';
 
-import { actions } from '../../../../../data/redux';
+import { actions, selectors } from '../../../../../data/redux';
 
 export const SelectTypeFooter = ({
   onCancel,
   selected,
   // redux
+  defaultSettings,
   updateField,
   setBlockTitle,
   // injected,
@@ -35,7 +36,12 @@ export const SelectTypeFooter = ({
         </Button>
         <Button
           aria-label={intl.formatMessage(messages.selectButtonAriaLabel)}
-          onClick={hooks.onSelect({ selected, updateField, setBlockTitle })}
+          onClick={hooks.onSelect({
+            selected,
+            updateField,
+            setBlockTitle,
+            defaultSettings,
+          })}
           disabled={!selected}
         >
           <FormattedMessage {...messages.selectButtonLabel} />
@@ -50,6 +56,12 @@ SelectTypeFooter.defaultProps = {
 };
 
 SelectTypeFooter.propTypes = {
+  defaultSettings: PropTypes.shape({
+    maxAttempts: PropTypes.number,
+    rerandomize: PropTypes.string,
+    showResetButton: PropTypes.bool,
+    showanswer: PropTypes.string,
+  }).isRequired,
   onCancel: PropTypes.func.isRequired,
   selected: PropTypes.string,
   updateField: PropTypes.func.isRequired,
@@ -58,7 +70,8 @@ SelectTypeFooter.propTypes = {
   intl: intlShape.isRequired,
 };
 
-export const mapStateToProps = () => ({
+export const mapStateToProps = (state) => ({
+  defaultSettings: selectors.problem.defaultSettings(state),
 });
 
 export const mapDispatchToProps = {
