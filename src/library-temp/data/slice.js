@@ -4,6 +4,8 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   showLibrarySidebar: false,
   sidebarBodyComponent: null,
+  showToast: false,
+  toastMessage: null,
 };
 
 const slice = createSlice({
@@ -17,12 +19,23 @@ const slice = createSlice({
       state.sidebarBodyComponent = 'add-content';
       state.showLibrarySidebar = true;
     },
+    showToast: (state, { payload }) => {
+      const { toastMessage } = payload;
+      state.showToast = true;
+      state.toastMessage = toastMessage;
+    },
+    closeToast: (state) => {
+      state.showToast = false;
+      state.toastMessage = null;
+    },
   },
 });
 
 export const {
   closeLibrarySidebar,
   openAddContentSidebar,
+  showToast,
+  closeToast,
 } = slice.actions;
 
 export const {

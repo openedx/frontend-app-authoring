@@ -36,6 +36,16 @@ const messages = defineMessages({
     defaultMessage: 'Advanced / Other',
     description: 'Content of button to create a Advanced / Other component.',
   },
+  successCreateMessage: {
+    id: 'library-home.add-content.success.text',
+    defaultMessage: 'Content created successfully.',
+    description: 'Message when creation of content in library is success',
+  },
+  errorCreateMessage: {
+    id: 'library-home.add-content.error.text',
+    defaultMessage: 'There was an error creating the content.',
+    description: 'Message when creation of content in library is on error',
+  },
 });
 
 export default messages;
