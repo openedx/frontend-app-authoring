@@ -4,7 +4,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { cloneDeep } from 'lodash';
 import { useContentData, useContentTaxonomyTagsData, useContentTaxonomyTagsUpdater } from './data/apiHooks';
 import { useTaxonomyList } from '../taxonomy/data/apiHooks';
-import { extractOrgFromContentId } from './utils';
+import { extractOrgFromContentId, languageExportId } from './utils';
 import messages from './messages';
 import { ContentTagsDrawerSheetContext } from './common/context';
 
@@ -142,8 +142,14 @@ const useContentTagsDrawerContext = (contentId) => {
         }
       });
 
+      // Delete Language taxonomy if is empty
+      const filteredTaxonomies = taxonomiesList.filter(
+        (taxonomy) => taxonomy.exportId !== languageExportId
+          || taxonomy.contentTags.length !== 0,
+      );
+
       return {
-        fechedTaxonomies: sortTaxonomies(taxonomiesList),
+        fechedTaxonomies: sortTaxonomies(filteredTaxonomies),
         fechedOtherTaxonomies: otherTaxonomiesList,
       };
     }
