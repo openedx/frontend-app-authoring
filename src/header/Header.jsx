@@ -6,16 +6,17 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { StudioHeader } from '@edx/frontend-component-header';
 import { useToggle } from '@openedx/paragon';
 
-import SearchModal from '../search-modal/SearchModal';
+import { SearchModal } from '../search-modal';
 import { getContentMenuItems, getSettingMenuItems, getToolsMenuItems } from './utils';
 import messages from './messages';
 
 const Header = ({
-  courseId,
-  courseOrg,
-  courseNumber,
-  courseTitle,
+  contentId,
+  org,
+  number,
+  title,
   isHiddenMainMenu,
+  isLibrary,
 }) => {
   const intl = useIntl();
 
@@ -23,40 +24,40 @@ const Header = ({
 
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
   const meiliSearchEnabled = [true, 'true'].includes(getConfig().MEILISEARCH_ENABLED);
-  const mainMenuDropdowns = [
+  const mainMenuDropdowns = !isLibrary ? [
     {
       id: `${intl.formatMessage(messages['header.links.content'])}-dropdown-menu`,
       buttonTitle: intl.formatMessage(messages['header.links.content']),
-      items: getContentMenuItems({ studioBaseUrl, courseId, intl }),
+      items: getContentMenuItems({ studioBaseUrl, courseId: contentId, intl }),
     },
     {
       id: `${intl.formatMessage(messages['header.links.settings'])}-dropdown-menu`,
       buttonTitle: intl.formatMessage(messages['header.links.settings']),
-      items: getSettingMenuItems({ studioBaseUrl, courseId, intl }),
+      items: getSettingMenuItems({ studioBaseUrl, courseId: contentId, intl }),
     },
     {
       id: `${intl.formatMessage(messages['header.links.tools'])}-dropdown-menu`,
       buttonTitle: intl.formatMessage(messages['header.links.tools']),
-      items: getToolsMenuItems({ studioBaseUrl, courseId, intl }),
+      items: getToolsMenuItems({ studioBaseUrl, courseId: contentId, intl }),
     },
-  ];
-  const outlineLink = `${studioBaseUrl}/course/${courseId}`;
+  ] : [];
+  const outlineLink = !isLibrary ? `${studioBaseUrl}/course/${contentId}` : `${studioBaseUrl}/library/${contentId}`;
 
   return (
     <>
       <StudioHeader
-        org={courseOrg}
-        number={courseNumber}
-        title={courseTitle}
+        org={org}
+        number={number}
+        title={title}
         isHiddenMainMenu={isHiddenMainMenu}
         mainMenuDropdowns={mainMenuDropdowns}
         outlineLink={outlineLink}
-        searchButtonAction={meiliSearchEnabled && openSearchModal}
+        searchButtonAction={meiliSearchEnabled && !isLibrary ? openSearchModal : undefined}
       />
       { meiliSearchEnabled && (
         <SearchModal
           isOpen={isShowSearchModalOpen}
-          courseId={courseId}
+          courseId={isLibrary ? undefined : contentId}
           onClose={closeSearchModal}
         />
       )}
@@ -65,19 +66,21 @@ const Header = ({
 };
 
 Header.propTypes = {
-  courseId: PropTypes.string,
-  courseNumber: PropTypes.string,
-  courseOrg: PropTypes.string,
-  courseTitle: PropTypes.string,
+  contentId: PropTypes.string,
+  number: PropTypes.string,
+  org: PropTypes.string,
+  title: PropTypes.string,
   isHiddenMainMenu: PropTypes.bool,
+  isLibrary: PropTypes.bool,
 };
 
 Header.defaultProps = {
-  courseId: '',
-  courseNumber: '',
-  courseOrg: '',
-  courseTitle: '',
+  contentId: '',
+  number: '',
+  org: '',
+  title: '',
   isHiddenMainMenu: false,
+  isLibrary: false,
 };
 
 export default Header;
