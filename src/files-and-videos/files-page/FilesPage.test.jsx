@@ -43,6 +43,9 @@ import messages from '../generic/messages';
 import filesPageMessages from './messages';
 import { updateFileValues } from './data/utils';
 
+// eslint-disable-next-line no-promise-executor-return
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 let axiosMock;
 let store;
 let file;
@@ -71,6 +74,8 @@ const mockStore = async (
   }
   renderComponent();
   await executeThunk(fetchAssets(courseId), store.dispatch);
+  // Wait a couple seconds to finish loading files into the data table
+  await sleep(2);
 };
 
 const emptyMockStore = async (status) => {
@@ -204,10 +209,10 @@ describe('FilesAndUploads', () => {
           await waitFor(() => {
             addFilesButton = screen.getByLabelText('file-input');
           });
-          await act(async () => {
+          await waitFor(() => {
             userEvent.upload(addFilesButton, file);
-            await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
           });
+          await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
           const addStatus = store.getState().assets.addingStatus;
           expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
         });
@@ -223,10 +228,10 @@ describe('FilesAndUploads', () => {
           await waitFor(() => {
             addFilesButton = screen.getByLabelText('file-input');
           });
-          await act(async () => {
+          await waitFor(() => {
             userEvent.upload(addFilesButton, file);
-            await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
           });
+          await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
           expect(screen.getByText(filesPageMessages.overwriteConfirmMessage.defaultMessage)).toBeVisible();
         });
 
@@ -249,10 +254,10 @@ describe('FilesAndUploads', () => {
           await waitFor(() => {
             addFilesButton = screen.getByLabelText('file-input');
           });
-          await act(async () => {
+          await waitFor(() => {
             userEvent.upload(addFilesButton, file);
-            await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
           });
+          await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
 
           const overwriteButton = screen.getByText(filesPageMessages.confirmOverwriteButtonLabel.defaultMessage);
           await act(async () => {
@@ -278,10 +283,10 @@ describe('FilesAndUploads', () => {
           await waitFor(() => {
             addFilesButton = screen.getByLabelText('file-input');
           });
-          await act(async () => {
+          await waitFor(() => {
             userEvent.upload(addFilesButton, file);
-            await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
           });
+          await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
 
           const cancelButton = screen.getByText(filesPageMessages.cancelOverwriteButtonLabel.defaultMessage);
           await act(async () => {
@@ -332,7 +337,7 @@ describe('FilesAndUploads', () => {
 
         fireEvent.click(deleteButton);
         expect(screen.getByText('Delete mOckID1')).toBeVisible();
-        await userEvent.click(deleteButton);
+        fireEvent.click(deleteButton);
 
         // Wait for the delete confirmation button to appear
         const confirmDeleteButton = await screen.findByRole('button', {
@@ -595,7 +600,7 @@ describe('FilesAndUploads', () => {
         axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=1`).reply(200, { assets: [] });
         axiosMock.onPost(getAssetsUrl(courseId)).reply(413, { error: errorMessage });
         const addFilesButton = screen.getByLabelText('file-input');
-        await act(async () => {
+        await waitFor(() => {
           userEvent.upload(addFilesButton, file);
         });
         const addStatus = store.getState().assets.addingStatus;
@@ -608,10 +613,10 @@ describe('FilesAndUploads', () => {
         await mockStore(RequestStatus.SUCCESSFUL);
         axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=1`).reply(404);
         const addFilesButton = screen.getByLabelText('file-input');
-        await act(async () => {
+        await waitFor(() => {
           userEvent.upload(addFilesButton, file);
-          await executeThunk(addAssetFile(courseId, file, 1), store.dispatch);
         });
+        await executeThunk(addAssetFile(courseId, file, 1), store.dispatch);
         const addStatus = store.getState().assets.addingStatus;
         expect(addStatus).toEqual(RequestStatus.FAILED);
 
@@ -623,10 +628,10 @@ describe('FilesAndUploads', () => {
         axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=1`).reply(200, { assets: [] });
         axiosMock.onPost(getAssetsUrl(courseId)).reply(404);
         const addFilesButton = screen.getByLabelText('file-input');
-        await act(async () => {
+        await waitFor(() => {
           userEvent.upload(addFilesButton, file);
-          await executeThunk(addAssetFile(courseId, file, 1), store.dispatch);
         });
+        await executeThunk(addAssetFile(courseId, file, 1), store.dispatch);
         const addStatus = store.getState().assets.addingStatus;
         expect(addStatus).toEqual(RequestStatus.FAILED);
 
