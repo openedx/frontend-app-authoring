@@ -40,9 +40,6 @@ import * as api from './data/api';
 import videoMessages from './messages';
 import messages from '../generic/messages';
 
-// eslint-disable-next-line no-promise-executor-return
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
 const { getVideosUrl, getCourseVideosApiUrl, getApiBaseUrl } = api;
 
 let axiosMock;
@@ -73,8 +70,15 @@ const mockStore = async (
 
   renderComponent();
   await executeThunk(fetchVideos(courseId), store.dispatch);
-  // Wait a couple seconds to finish loading video files into the data table
-  await sleep(2);
+
+  // Finish loading the expected files into the data table before returning,
+  // because loading new files can disrupt things like accessing file menus.
+  if (status === RequestStatus.SUCCESSFUL) {
+    const numFiles = 3;
+    await waitFor(() => {
+      expect(screen.getByText(`Showing ${numFiles} of ${numFiles}`)).toBeInTheDocument();
+    });
+  }
 };
 
 const emptyMockStore = async (status) => {
