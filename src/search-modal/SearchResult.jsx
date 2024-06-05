@@ -36,12 +36,11 @@ function getItemIcon(blockType) {
 /**
  * Returns the URL Suffix for library/library component hit
  * @param {import('./data/api').ContentHit} hit
- * @param {string} libraryAuthoringMfeUrl
  * @returns string
 */
-function getLibraryHitUrl(hit, libraryAuthoringMfeUrl) {
+function getLibraryComponentUrlSuffix(hit) {
   const { contextKey } = hit;
-  return `${libraryAuthoringMfeUrl}library/${contextKey}`;
+  return `library/${contextKey}`;
 }
 
 /**
@@ -130,10 +129,6 @@ const SearchResult = ({ hit }) => {
   const { closeSearchModal } = useSearchContext();
   const { libraryAuthoringMfeUrl, redirectToLibraryAuthoringMfe } = useSelector(getStudioHomeData);
 
-  const { usageKey } = hit;
-
-  const noRedirectUrl = usageKey.startsWith('lb:') && !redirectToLibraryAuthoringMfe;
-
   /**
    * Returns the URL for the context of the hit
    */
@@ -149,10 +144,16 @@ const SearchResult = ({ hit }) => {
       return `/${urlSuffix}`;
     }
 
-    if (usageKey.startsWith('lb:')) {
-      if (redirectToLibraryAuthoringMfe) {
-        return getLibraryHitUrl(hit, libraryAuthoringMfeUrl);
+    if (contextKey.startsWith('lib:')) {
+      const urlSuffix = getLibraryComponentUrlSuffix(hit);
+      if (libraryAuthoringMfeUrl) {
+        return `${libraryAuthoringMfeUrl}${urlSuffix}`;
       }
+
+      if (newWindow) {
+        return `${getPath(getConfig().PUBLIC_PATH)}${urlSuffix}`;
+      }
+      return `/${urlSuffix}`;
     }
 
     // No context URL for this hit (e.g. a library without library authoring mfe)
@@ -206,12 +207,12 @@ const SearchResult = ({ hit }) => {
 
   return (
     <Stack
-      className={`border-bottom search-result p-2 align-items-start ${noRedirectUrl ? 'text-muted' : ''}`}
+      className="border-bottom search-result p-2 align-items-start"
       direction="horizontal"
       gap={3}
       onClick={navigateToContext}
       onKeyDown={navigateToContext}
-      tabIndex={noRedirectUrl ? undefined : 0}
+      tabIndex={0}
       role="button"
     >
       <Icon className="text-muted" src={getItemIcon(hit.blockType)} />
@@ -230,7 +231,6 @@ const SearchResult = ({ hit }) => {
       <IconButton
         src={OpenInNew}
         iconAs={Icon}
-        disabled={noRedirectUrl ? true : undefined}
         onClick={openContextInNewWindow}
         alt={intl.formatMessage(messages.openInNewWindow)}
       />
