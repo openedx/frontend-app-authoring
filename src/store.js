@@ -29,7 +29,7 @@ import { reducer as accessibilityPageReducer } from './accessibility-page/data/s
 import { reducer as textbooksReducer } from './textbooks/data/slice';
 import { reducer as certificatesReducer } from './certificates/data/slice';
 import { reducer as groupConfigurationsReducer } from './group-configurations/data/slice';
-import { reducer as libraryHomeReducer } from './library-temp/data/slice';
+import { reducer as libraryHomeReducer } from './library-authoring/data/slice';
 
 export default function initializeStore(preloadedState = undefined) {
   return configureStore({

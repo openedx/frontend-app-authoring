@@ -1,9 +1,22 @@
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { MeiliSearch } from 'meilisearch';
 
 import { useContentSearchConnection, useContentSearchResults } from '../../search-modal';
-import { getContentLibrary } from './api';
+import { createLibraryBlock, getContentLibrary } from './api';
+
+/** @typedef {import("./types.mjs").CreateBlockData} CreateBlockData */
+
+export const libraryQueryKeys = {
+  /**
+   * Used in all query keys.
+   * You can use these key to invalidate all queries.
+   */
+  all: ['contentLibrary'],
+  contentLibrary: (libraryId) => [
+    libraryQueryKeys.all, libraryId
+  ],
+};
 
 /**
  * Hook to fetch a content library by its ID.
@@ -14,6 +27,25 @@ export const useContentLibrary = (libraryId?: string) => (
     queryFn: () => getContentLibrary(libraryId),
   })
 );
+
+/**
+ * Use this mutation to create a block in a library
+ * @param {string} libraryId
+ */
+export const useCreateLibraryBlock = (libraryId) => {
+ if (libraryId === undefined) {
+   return undefined;
+ }
+ const queryClient = useQueryClient();
+ return useMutation({
+   /** @type {import("@tanstack/react-query").MutateFunction<any, any, {data: CreateBlockData}>} */
+   mutationFn: async (data) => createLibraryBlock(data),
+   onSettled: () => {
+     queryClient.invalidateQueries({ queryKey: libraryQueryKeys.contentLibrary(libraryId) });
+     queryClient.invalidateQueries({ queryKey: ['content_search']});
+   },
+ });
+};
 
 /**
  * Hook to fetch the count of components and collections in a library.

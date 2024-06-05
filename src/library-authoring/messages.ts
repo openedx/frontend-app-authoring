@@ -90,6 +90,16 @@ const messages = defineMessages({
     defaultMessage: 'Components ({componentCount})',
     description: 'Title for the components container',
   },
+  addContentTitle: {
+    id: 'course-authoring.library-authoring.drawer.title.add-content',
+    defaultMessage: 'Add Content',
+    description: 'Title of add content in library container.',
+  },
+  newContentButton: {
+    id: 'course-authoring.library-authoring.buttons.new-content.text',
+    defaultMessage: 'New',
+    description: 'Text of button to open "Add content drawer"',
+  },
 });
 
 export default messages;

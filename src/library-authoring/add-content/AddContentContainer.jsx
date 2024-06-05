@@ -16,14 +16,15 @@ import {
 } from '@openedx/paragon/icons';
 import { v4 as uuid4 } from 'uuid';
 import { useDispatch } from 'react-redux';
-import { useCreateLibraryBlock } from '../data/apiHooks';
+import { useParams } from 'react-router-dom';
+import { useCreateLibraryBlock } from '../data/apiHook';
 import messages from './messages';
 import { showToast } from '../data/slice';
 
 const AddContentContainer = () => {
   const intl = useIntl();
-  const createBlockMutation = useCreateLibraryBlock();
-  const libraryId = 'lib:SampleTaxonomyOrg1:first2';
+  const { libraryId } = useParams();
+  const createBlockMutation = useCreateLibraryBlock(libraryId);
   const dispatch = useDispatch();
 
   const contentTypes = [
@@ -65,15 +66,17 @@ const AddContentContainer = () => {
   ];
 
   const onCreateContent = (blockType) => {
-    createBlockMutation.mutateAsync({
-      libraryId,
-      blockType,
-      definitionId: `${uuid4()}`,
-    }).then(() => {
-      dispatch(showToast({ toastMessage: intl.formatMessage(messages.successCreateMessage) }));
-    }).catch(() => {
-      dispatch(showToast({ toastMessage: intl.formatMessage(messages.errorCreateMessage) }));
-    });
+    if (createBlockMutation && libraryId) {
+      createBlockMutation.mutateAsync({
+        libraryId,
+        blockType,
+        definitionId: `${uuid4()}`,
+      }).then(() => {
+        dispatch(showToast({ toastMessage: intl.formatMessage(messages.successCreateMessage) }));
+      }).catch(() => {
+        dispatch(showToast({ toastMessage: intl.formatMessage(messages.errorCreateMessage) }));
+      });
+    }
   };
 
   return (
