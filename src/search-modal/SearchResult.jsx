@@ -42,7 +42,7 @@ function getItemIcon(blockType) {
 */
 function getLibraryHitUrl(hit, libraryAuthoringMfeUrl) {
   const { contextKey } = hit;
-  return constructLibraryAuthoringURL(libraryAuthoringMfeUrl, contextKey);
+  return constructLibraryAuthoringURL(libraryAuthoringMfeUrl, `library/${contextKey}`);
 }
 
 /**
