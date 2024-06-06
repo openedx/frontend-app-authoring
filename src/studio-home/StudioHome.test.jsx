@@ -52,7 +52,7 @@ const RootWrapper = () => (
               element={<StudioHome intl={injectIntl} />}
             />
             <Route
-              path="/legacy-libraries"
+              path="/libraries-v1"
               element={<StudioHome intl={injectIntl} />}
             />
           </Routes>

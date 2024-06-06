@@ -36,14 +36,14 @@ const TabsSection = ({
   };
 
   const initTabKeyState = (pname) => {
+    if (pname.includes('/libraries-v1')) {
+      return TABS_LIST.legacyLibraries;
+    }
+
     if (pname.includes('/libraries')) {
       return isMixedOrV2LibrariesMode(libMode)
         ? TABS_LIST.libraries
         : TABS_LIST.legacyLibraries;
-    }
-
-    if (pname.includes('/legacy-libraries')) {
-      return TABS_LIST.legacyLibraries;
     }
 
     // Default to courses tab
@@ -54,11 +54,10 @@ const TabsSection = ({
 
   // This is needed to handle navigating using the back/forward buttons in the browser
   useEffect(() => {
-    // Handle special case when navigating directly to /legacy-libraries or /libraries in `v1 only` mode
+    // Handle special case when navigating directly to /libraries-v1 or /libraries in `v1 only` mode
     // we need to call dispatch to fetch library data
-    if (
-      (isMixedOrV1LibrariesMode(libMode) && pathname.includes('/libraries'))
-      || pathname.includes('/legacy-libraries')
+    if (pathname.includes('/libraries-v1')
+      || (isMixedOrV1LibrariesMode(libMode) && pathname.includes('/libraries'))
     ) {
       dispatch(fetchLibraryData());
     }
@@ -179,7 +178,7 @@ const TabsSection = ({
       navigate(
         libMode === 'v1 only'
           ? '/libraries'
-          : '/legacy-libraries',
+          : '/libraries-v1',
       );
     } else if (tab === TABS_LIST.libraries) {
       navigate('/libraries');

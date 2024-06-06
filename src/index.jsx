@@ -54,7 +54,7 @@ const App = () => {
       <Route>
         <Route path="/home" element={<StudioHome />} />
         <Route path="/libraries" element={<StudioHome />} />
-        <Route path="/legacy-libraries" element={<StudioHome />} />
+        <Route path="/libraries-v1" element={<StudioHome />} />
         <Route path="/library/:libraryId" element={<LibraryV2Placeholder />} />
         <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
         <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
