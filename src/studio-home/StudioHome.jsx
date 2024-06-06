@@ -10,7 +10,7 @@ import {
 import { Add as AddIcon, Error } from '@openedx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { StudioFooter } from '@edx/frontend-component-footer';
-import { getConfig } from '@edx/frontend-platform';
+import { getConfig, getPath } from '@edx/frontend-platform';
 
 import Loading from '../generic/Loading';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
@@ -85,7 +85,7 @@ const StudioHome = ({ intl }) => {
     if (isMixedOrV2LibrariesMode(libMode)) {
       libraryHref = libraryAuthoringMfeUrl && redirectToLibraryAuthoringMfe
         ? `${libraryAuthoringMfeUrl}create`
-        : `${window.location.origin}/course-authoring/library/create`;
+        : `${getPath(getConfig().PUBLIC_PATH)}library/create`;
     }
 
     headerButtons.push(
