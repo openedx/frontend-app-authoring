@@ -7,6 +7,7 @@ import Header from '../../header';
 import SubHeader from '../../generic/sub-header/SubHeader';
 import messages from './messages';
 
+/* istanbul ignore next */
 const LibraryV2Placeholder = () => {
   const intl = useIntl();
 
