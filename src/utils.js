@@ -301,3 +301,27 @@ export const getFileSizeToClosestByte = (fileSize) => {
   const fileSizeFixedDecimal = Number.parseFloat(size).toFixed(2);
   return `${fileSizeFixedDecimal} ${units[divides]}`;
 };
+
+/**
+ * Constructs library authoring MFE URL with correct slashes
+ * @param {string} libraryAuthoringMfeUrl - the base library authoring MFE url
+ * @param {string} path - the library authoring MFE url path
+ * @returns {string} - the correct internal route path
+ */
+export const constructLibraryAuthoringURL = (libraryAuthoringMfeUrl, path) => {
+  // Remove '/' at the beginning of path if any
+  const trimmedPath = path.startsWith('/')
+    ? path.slice(1, path.length)
+    : path;
+
+  let constructedUrl = libraryAuthoringMfeUrl;
+  // Remove trailing `/` from base if found
+  if (libraryAuthoringMfeUrl.endsWith('/')) {
+    constructedUrl = constructedUrl.slice(0, -1);
+  }
+
+  // Add the `/` and path to url
+  constructedUrl = `${constructedUrl}/${trimmedPath}`;
+
+  return constructedUrl;
+};
