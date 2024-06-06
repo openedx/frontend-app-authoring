@@ -82,7 +82,7 @@ const RootWrapper = (overrideProps) => (
               element={tabSectionComponent(overrideProps)}
             />
             <Route
-              path="/legacy-libraries"
+              path="/libraries-v1"
               element={tabSectionComponent(overrideProps)}
             />
           </Routes>
@@ -266,7 +266,7 @@ describe('<TabsSection />', () => {
       // confirm that the url path has changed
       expect(librariesTab).toHaveClass('active');
       waitFor(() => {
-        expect(window.location.href).toContain('/legacy-libraries');
+        expect(window.location.href).toContain('/libraries-v1');
       });
 
       // switch back to courses tab
