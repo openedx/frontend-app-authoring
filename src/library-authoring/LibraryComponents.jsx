@@ -16,7 +16,7 @@ import messages from './messages';
  * }>}
  */
 const LibraryComponents = ({ libraryId, filter: { searchKeywords } }) => {
-  const { componentCount, collectionCount } = useLibraryComponentCount(libraryId, searchKeywords);
+  const { componentCount } = useLibraryComponentCount(libraryId, searchKeywords);
 
   if (componentCount === 0) {
     return searchKeywords === '' ? <NoComponents /> : <NoSearchResults />;
