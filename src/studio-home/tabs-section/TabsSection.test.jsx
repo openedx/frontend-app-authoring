@@ -149,6 +149,10 @@ describe('<TabsSection />', () => {
     await executeThunk(fetchStudioHomeData(), store.dispatch);
 
     expect(screen.getByText(tabMessages.librariesTabTitle.defaultMessage)).toBeInTheDocument();
+    const librariesTab = screen.getByRole('tab', { name: tabMessages.librariesTabTitle.defaultMessage });
+    expect(librariesTab).toBeInTheDocument();
+    // Check Tab.eventKey
+    expect(librariesTab).toHaveAttribute('data-rb-event-key', 'legacyLibraries');
 
     expect(screen.queryByText(tabMessages.legacyLibrariesTabTitle.defaultMessage)).not.toBeInTheDocument();
   });
@@ -166,6 +170,10 @@ describe('<TabsSection />', () => {
     await executeThunk(fetchStudioHomeData(), store.dispatch);
 
     expect(screen.getByText(tabMessages.librariesTabTitle.defaultMessage)).toBeInTheDocument();
+    const librariesTab = screen.getByRole('tab', { name: tabMessages.librariesTabTitle.defaultMessage });
+    expect(librariesTab).toBeInTheDocument();
+    // Check Tab.eventKey
+    expect(librariesTab).toHaveAttribute('data-rb-event-key', 'libraries');
 
     expect(screen.queryByText(tabMessages.legacyLibrariesTabTitle.defaultMessage)).not.toBeInTheDocument();
   });
