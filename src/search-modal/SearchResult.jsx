@@ -146,7 +146,7 @@ const SearchResult = ({ hit }) => {
 
     if (contextKey.startsWith('lib:')) {
       const urlSuffix = getLibraryComponentUrlSuffix(hit);
-      if (libraryAuthoringMfeUrl) {
+      if (redirectToLibraryAuthoringMfe && libraryAuthoringMfeUrl) {
         return `${libraryAuthoringMfeUrl}${urlSuffix}`;
       }
 
