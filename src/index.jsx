@@ -19,7 +19,7 @@ import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
 import messages from './i18n';
 
-import { LibraryAuthoringPage } from './library-authoring';
+import { CreateLibrary, LibraryAuthoringPage } from './library-authoring';
 import initializeStore from './store';
 import CourseAuthoringRoutes from './CourseAuthoringRoutes';
 import Head from './head/Head';
@@ -55,6 +55,7 @@ const App = () => {
         <Route path="/home" element={<StudioHome />} />
         <Route path="/libraries" element={<StudioHome />} />
         <Route path="/legacy-libraries" element={<StudioHome />} />
+        <Route path="/library/create" element={<CreateLibrary />} />
         <Route path="/library/:libraryId/*" element={<LibraryAuthoringPage />} />
         <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
         <Route path="/course_rerun/:courseId" element={<CourseRerun />} />

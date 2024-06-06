@@ -14,6 +14,7 @@ export const useContentLibrary = (libraryId?: string) => {
     return {
       data: undefined,
       error: 'No library ID provided',
+      isLoading: false,
     }
   }
 
