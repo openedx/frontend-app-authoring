@@ -156,7 +156,7 @@ const SearchResult = ({ hit }) => {
       return `/${urlSuffix}`;
     }
 
-    // No context URL for this hit (e.g. a library without library authoring mfe)
+    // istanbul ignore next - This case should never be reached
     return undefined;
   }, [libraryAuthoringMfeUrl, redirectToLibraryAuthoringMfe, hit]);
 
