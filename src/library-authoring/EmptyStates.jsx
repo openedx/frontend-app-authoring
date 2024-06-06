@@ -9,8 +9,10 @@ import messages from './messages';
 
 export const NoComponents = () => (
   <Stack direction="horizontal" gap={3} className="mt-6 justify-content-center">
-    <div>You have not added any content to this library yet.</div>
-    <Button iconBefore={Add}>Add Content</Button>
+    <FormattedMessage {...messages.noComponents} />
+    <Button iconBefore={Add}>
+      <FormattedMessage {...messages.addComponent} />
+    </Button>
   </Stack>
 );
 

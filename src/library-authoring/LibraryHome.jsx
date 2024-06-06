@@ -1,6 +1,7 @@
 // @ts-check
 /* eslint-disable react/prop-types */
 import React from 'react';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   Card, Stack,
 } from '@openedx/paragon';
@@ -9,6 +10,7 @@ import { NoComponents, NoSearchResults } from './EmptyStates';
 import LibraryCollections from './LibraryCollections';
 import LibraryComponents from './LibraryComponents';
 import { useLibraryComponentCount } from './data/apiHook';
+import messages from './messages';
 
 /**
  * @type {React.FC<{
@@ -46,7 +48,7 @@ const LibraryHome = ({ libraryId, filter }) => {
   return (
     <Stack gap={3}>
       <Section title="Recently Modified">
-        Recently modified components and collections will be displayed here.
+        <FormattedMessage {...messages.recentComponentsTempPlaceholder} />
       </Section>
       <Section title={`Collections (${collectionCount})`}>
         <LibraryCollections />
