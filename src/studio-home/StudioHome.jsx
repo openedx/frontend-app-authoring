@@ -12,6 +12,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { getConfig, getPath } from '@edx/frontend-platform';
 
+import { constructLibraryAuthoringURL } from '../utils';
 import Loading from '../generic/Loading';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import Header from '../header';
@@ -84,7 +85,7 @@ const StudioHome = ({ intl }) => {
     let libraryHref = `${getConfig().STUDIO_BASE_URL}/home_library`;
     if (isMixedOrV2LibrariesMode(libMode)) {
       libraryHref = libraryAuthoringMfeUrl && redirectToLibraryAuthoringMfe
-        ? `${libraryAuthoringMfeUrl}create`
+        ? constructLibraryAuthoringURL(libraryAuthoringMfeUrl, 'create')
         : `${getPath(getConfig().PUBLIC_PATH)}library/create`;
     }
 

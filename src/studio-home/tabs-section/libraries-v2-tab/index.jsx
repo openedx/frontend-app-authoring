@@ -4,6 +4,7 @@ import { Icon, Row, Pagination } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig, getPath } from '@edx/frontend-platform';
 
+import { constructLibraryAuthoringURL } from '../../../utils';
 import useListStudioHomeV2Libraries from '../../data/apiHooks';
 import { LoadingSpinner } from '../../../generic/Loading';
 import AlertMessage from '../../../generic/alert-message';
@@ -38,7 +39,7 @@ const LibrariesV2Tab = ({
 
   const libURL = (id) => (
     libraryAuthoringMfeUrl && redirectToLibraryAuthoringMfe
-      ? `${libraryAuthoringMfeUrl}library/${id}`
+      ? constructLibraryAuthoringURL(libraryAuthoringMfeUrl, `library/${id}`)
       : `${getPath(getConfig().PUBLIC_PATH)}library/${id}`
   );
 
