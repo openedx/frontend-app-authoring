@@ -42,7 +42,7 @@ const ComponentModalView = ({
       <ModalContainer
         isOpen={isOpen}
         close={close}
-        title={intl.formatMessage(messages.modalContainerTitle, { componentTitle: displayName.toLowerCase() })}
+        title={intl.formatMessage(messages.modalContainerTitle, { componentTitle: (displayName ?? '').toLowerCase() })}
         btnText={intl.formatMessage(messages.modalBtnText)}
         onSubmit={handleSubmit}
         resetDisabled={() => setModuleTitle('')}
