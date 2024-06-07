@@ -66,7 +66,7 @@ const AddContentContainer = () => {
   ];
 
   const onCreateContent = (blockType) => {
-    if (createBlockMutation && libraryId) {
+    if (libraryId) {
       createBlockMutation.mutateAsync({
         libraryId,
         blockType,

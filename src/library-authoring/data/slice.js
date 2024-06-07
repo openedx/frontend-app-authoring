@@ -14,6 +14,7 @@ const slice = createSlice({
   reducers: {
     closeLibrarySidebar: (state) => {
       state.showLibrarySidebar = false;
+      state.sidebarBodyComponent = null;
     },
     openAddContentSidebar: (state) => {
       state.sidebarBodyComponent = 'add-content';

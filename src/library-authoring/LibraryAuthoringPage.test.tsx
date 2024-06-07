@@ -5,7 +5,9 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, waitFor } from '@testing-library/react';
+import {
+  render, waitFor, screen, fireEvent,
+} from '@testing-library/react';
 import fetchMock from 'fetch-mock-jest';
 
 import initializeStore from '../store';
@@ -61,6 +63,7 @@ const libraryData: ContentLibrary = {
   allowPublicRead: false,
   hasUnpublishedChanges: true,
   hasUnpublishedDeletes: false,
+  canEditLibrary: true,
   license: '',
 };
 
@@ -232,5 +235,35 @@ describe('<LibraryAuthoringPage />', () => {
     // Go back to Home tab
     // This step is necessary to avoid the url change leak to other tests
     fireEvent.click(getByRole('tab', { name: 'Home' }));
+  });
+
+  it('show new content button', async () => {
+    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
+    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
+
+    render(<RootWrapper />);
+
+    expect(await screen.findByRole('heading', `Content library${libraryData.title}`)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /new/i })).toBeInTheDocument();
+  });
+
+  it('should open and close new content sidebar', async () => {
+    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
+    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
+
+    render(<RootWrapper />);
+
+    expect(await screen.findByRole('heading', `Content library${libraryData.title}`)).toBeInTheDocument();
+    expect(screen.queryByText(/add content/i)).not.toBeInTheDocument();
+
+    const newButton = screen.getByRole('button', { name: /new/i });
+    fireEvent.click(newButton);
+
+    expect(screen.getByText(/add content/i)).toBeInTheDocument();
+
+    const closeButton = screen.getByRole('button', { name: /close/i });
+    fireEvent.click(closeButton);
+
+    expect(screen.queryByText(/add content/i)).not.toBeInTheDocument();
   });
 });
