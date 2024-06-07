@@ -58,7 +58,6 @@ const LibraryAuthoringPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [tabKey, setTabKey] = React.useState(TAB_LIST.home);
   const [searchKeywords, setSearchKeywords] = React.useState('');
 
   const { libraryId } = useParams();
