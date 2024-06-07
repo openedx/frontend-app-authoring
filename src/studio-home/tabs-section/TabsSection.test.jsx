@@ -82,7 +82,7 @@ const RootWrapper = (overrideProps) => (
               element={tabSectionComponent(overrideProps)}
             />
             <Route
-              path="/legacy-libraries"
+              path="/libraries-v1"
               element={tabSectionComponent(overrideProps)}
             />
           </Routes>
@@ -149,6 +149,10 @@ describe('<TabsSection />', () => {
     await executeThunk(fetchStudioHomeData(), store.dispatch);
 
     expect(screen.getByText(tabMessages.librariesTabTitle.defaultMessage)).toBeInTheDocument();
+    const librariesTab = screen.getByRole('tab', { name: tabMessages.librariesTabTitle.defaultMessage });
+    expect(librariesTab).toBeInTheDocument();
+    // Check Tab.eventKey
+    expect(librariesTab).toHaveAttribute('data-rb-event-key', 'legacyLibraries');
 
     expect(screen.queryByText(tabMessages.legacyLibrariesTabTitle.defaultMessage)).not.toBeInTheDocument();
   });
@@ -166,6 +170,10 @@ describe('<TabsSection />', () => {
     await executeThunk(fetchStudioHomeData(), store.dispatch);
 
     expect(screen.getByText(tabMessages.librariesTabTitle.defaultMessage)).toBeInTheDocument();
+    const librariesTab = screen.getByRole('tab', { name: tabMessages.librariesTabTitle.defaultMessage });
+    expect(librariesTab).toBeInTheDocument();
+    // Check Tab.eventKey
+    expect(librariesTab).toHaveAttribute('data-rb-event-key', 'libraries');
 
     expect(screen.queryByText(tabMessages.legacyLibrariesTabTitle.defaultMessage)).not.toBeInTheDocument();
   });
@@ -266,7 +274,7 @@ describe('<TabsSection />', () => {
       // confirm that the url path has changed
       expect(librariesTab).toHaveClass('active');
       waitFor(() => {
-        expect(window.location.href).toContain('/legacy-libraries');
+        expect(window.location.href).toContain('/libraries-v1');
       });
 
       // switch back to courses tab

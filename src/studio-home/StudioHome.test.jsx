@@ -14,7 +14,7 @@ import MockAdapter from 'axios-mock-adapter';
 import initializeStore from '../store';
 import { RequestStatus } from '../data/constants';
 import { COURSE_CREATOR_STATES } from '../constants';
-import { executeThunk } from '../utils';
+import { executeThunk, constructLibraryAuthoringURL } from '../utils';
 import { studioHomeMock } from './__mocks__';
 import { getStudioHomeApiUrl } from './data/api';
 import { fetchStudioHomeData } from './data/thunks';
@@ -52,7 +52,7 @@ const RootWrapper = () => (
               element={<StudioHome intl={injectIntl} />}
             />
             <Route
-              path="/legacy-libraries"
+              path="/libraries-v1"
               element={<StudioHome intl={injectIntl} />}
             />
           </Routes>
@@ -191,7 +191,9 @@ describe('<StudioHome />', async () => {
 
         const { getByTestId } = render(<RootWrapper />);
         const createNewLibraryButton = getByTestId('new-library-button');
-        expect(createNewLibraryButton.getAttribute('href')).toBe(`${libraryAuthoringMfeUrl}/create`);
+        expect(createNewLibraryButton.getAttribute('href')).toBe(
+          `${constructLibraryAuthoringURL(libraryAuthoringMfeUrl, 'create')}`,
+        );
       });
     });
 

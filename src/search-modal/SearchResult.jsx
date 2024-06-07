@@ -16,6 +16,7 @@ import {
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
+import { constructLibraryAuthoringURL } from '../utils';
 import { COMPONENT_TYPE_ICON_MAP, TYPE_ICONS_MAP } from '../course-unit/constants';
 import { getStudioHomeData } from '../studio-home/data/selectors';
 import { useSearchContext } from './manager/SearchManager';
@@ -147,7 +148,7 @@ const SearchResult = ({ hit }) => {
     if (contextKey.startsWith('lib:')) {
       const urlSuffix = getLibraryComponentUrlSuffix(hit);
       if (redirectToLibraryAuthoringMfe && libraryAuthoringMfeUrl) {
-        return `${libraryAuthoringMfeUrl}${urlSuffix}`;
+        return constructLibraryAuthoringURL(libraryAuthoringMfeUrl, urlSuffix);
       }
 
       if (newWindow) {

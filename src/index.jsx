@@ -24,6 +24,7 @@ import initializeStore from './store';
 import CourseAuthoringRoutes from './CourseAuthoringRoutes';
 import Head from './head/Head';
 import { StudioHome } from './studio-home';
+import LibraryV2Placeholder from './studio-home/tabs-section/LibraryV2Placeholder';
 import CourseRerun from './course-rerun';
 import { TaxonomyLayout, TaxonomyDetailPage, TaxonomyListPage } from './taxonomy';
 import { ContentTagsDrawer } from './content-tags-drawer';
@@ -54,7 +55,7 @@ const App = () => {
       <Route>
         <Route path="/home" element={<StudioHome />} />
         <Route path="/libraries" element={<StudioHome />} />
-        <Route path="/legacy-libraries" element={<StudioHome />} />
+        <Route path="/libraries-v1" element={<StudioHome />} />
         <Route path="/library/create" element={<CreateLibrary />} />
         <Route path="/library/:libraryId/*" element={<LibraryAuthoringPage />} />
         <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />

@@ -10,8 +10,9 @@ import {
 import { Add as AddIcon, Error } from '@openedx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { StudioFooter } from '@edx/frontend-component-footer';
-import { getConfig } from '@edx/frontend-platform';
+import { getConfig, getPath } from '@edx/frontend-platform';
 
+import { constructLibraryAuthoringURL } from '../utils';
 import Loading from '../generic/Loading';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import Header from '../header';
@@ -84,8 +85,11 @@ const StudioHome = ({ intl }) => {
     let libraryHref = `${getConfig().STUDIO_BASE_URL}/home_library`;
     if (isMixedOrV2LibrariesMode(libMode)) {
       libraryHref = libraryAuthoringMfeUrl && redirectToLibraryAuthoringMfe
-        ? `${libraryAuthoringMfeUrl}create`
-        : `${window.location.origin}/course-authoring/library/create`;
+        ? constructLibraryAuthoringURL(libraryAuthoringMfeUrl, 'create')
+        // Redirection to the placeholder is done in the MFE rather than
+        // through the backend i.e. redirection from cms, because this this will probably change,
+        // hence why we use the MFE's origin
+        : `${window.location.origin}${getPath(getConfig().PUBLIC_PATH)}library/create`;
     }
 
     headerButtons.push(
