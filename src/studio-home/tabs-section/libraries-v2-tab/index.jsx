@@ -40,7 +40,10 @@ const LibrariesV2Tab = ({
   const libURL = (id) => (
     libraryAuthoringMfeUrl && redirectToLibraryAuthoringMfe
       ? constructLibraryAuthoringURL(libraryAuthoringMfeUrl, `library/${id}`)
-      : `${getPath(getConfig().PUBLIC_PATH)}library/${id}`
+      // Redirection to the placeholder is done in the MFE rather than
+      // through the backend i.e. redirection from cms, because this this will probably change,
+      // hence why we use the MFE's origin
+      : `${window.location.origin}${getPath(getConfig().PUBLIC_PATH)}library/${id}`
   );
 
   return (
