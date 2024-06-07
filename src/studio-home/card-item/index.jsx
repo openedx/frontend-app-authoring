@@ -10,7 +10,7 @@ import {
 } from '@openedx/paragon';
 import { MoreHoriz } from '@openedx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { getConfig, getPath } from '@edx/frontend-platform';
+import { getConfig } from '@edx/frontend-platform';
 
 import { COURSE_CREATOR_STATES } from '../../constants';
 import { getStudioHomeData } from '../data/selectors';
@@ -35,15 +35,7 @@ const CardItem = ({
     courseCreatorStatus,
     rerunCreatorStatus,
   } = useSelector(getStudioHomeData);
-  const destinationUrl = () => (
-    isLibraries && url.includes(getPath(getConfig().PUBLIC_PATH))
-      // Redirection to the placeholder is done in the MFE rather than
-      // through the backend i.e. redirection from cms, because this this will probably change,
-      // hence why we use the MFE's origin
-      ? new URL(url, window.location.origin)
-      : new URL(url, getConfig().STUDIO_BASE_URL)
-  );
-
+  const destinationUrl = () => new URL(url, getConfig().STUDIO_BASE_URL);
   const subtitle = isLibraries ? `${org} / ${number}` : `${org} / ${number} / ${run}`;
   const readOnlyItem = !(lmsLink || rerunLink || url);
   const showActions = !(readOnlyItem || isLibraries);
