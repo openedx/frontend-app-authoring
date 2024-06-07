@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect } from 'react';
 import { StudioFooter } from '@edx/frontend-component-footer';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Container, Icon, IconButton, SearchField, Tab, Tabs,
 } from '@openedx/paragon';
@@ -30,7 +30,12 @@ const TAB_LIST = {
 const SubHeaderTitle = ({ title }) => (
   <>
     {title}
-    <IconButton src={InfoOutline} iconAs={Icon} alt="Info" onClick={() => {}} className="mr-2" />
+    <IconButton
+      src={InfoOutline}
+      iconAs={Icon}
+      alt={<FormattedMessage {...messages.headingInfoAlt} />}
+      className="mr-2"
+    />
   </>
 );
 
@@ -90,7 +95,6 @@ const LibraryAuthoringPage = () => {
         <SearchField
           value={searchKeywords}
           placeholder={intl.formatMessage(messages.searchPlaceholder)}
-          onSubmit={(value) => setSearchKeywords(value)}
           onChange={(value) => setSearchKeywords(value)}
           className="w-50"
         />

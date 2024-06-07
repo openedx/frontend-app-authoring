@@ -9,9 +9,7 @@ import SubHeader from '../generic/sub-header/SubHeader';
 
 import messages from './messages';
 
-/**
- * @type {React.FC}
- */
+/* istanbul ignore next This is only a placeholder component */
 const CreateLibrary = () => (
   <>
     <Header isHiddenMainMenu />

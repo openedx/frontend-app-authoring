@@ -6,6 +6,11 @@ const messages = defineMessages({
     defaultMessage: 'Content library',
     description: 'The page heading for the library page.',
   },
+  headingInfoAlt: {
+    id: 'course-authoring.library-authoring.heading-info-alt',
+    defaultMessage: 'Info',
+    description: 'Alt text for the info icon next to the page heading.',
+  },
   searchPlaceholder: {
     id: 'course-authoring.library-authoring.search',
     defaultMessage: 'Search...',
