@@ -341,7 +341,6 @@ const PageAlerts = ({
       case API_ERROR_TYPES.serverError:
         return {
           key: k,
-          desc: v.data,
           title: intl.formatMessage(messages.serverErrorAlert, {
             status: v.status,
           }),

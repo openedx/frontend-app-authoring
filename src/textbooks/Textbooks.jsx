@@ -46,8 +46,7 @@ const Textbooks = ({ courseId }) => {
     handleTextbookEditFormSubmit,
     handleTextbookDeleteSubmit,
   } = useTextbooks(courseId);
-  const STORE = useSelector((state) => state.textbooks);
-  console.log('STORE ===>', STORE);
+
   const {
     isShow: showProcessingNotification,
     title: processingNotificationTitle,

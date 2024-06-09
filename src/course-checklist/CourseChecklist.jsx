@@ -37,11 +37,11 @@ const CourseChecklist = ({
     bestPracticeData,
   } = useSelector(state => state.courseChecklist);
 
-  const { bestPracticeChecklistLoadingStatus, launchChecklistLoadingStatus } = loadingStatus;
+  const { bestPracticeChecklistStatus, launchChecklistStatus } = loadingStatus;
 
-  const isCourseLaunchChecklistLoading = bestPracticeChecklistLoadingStatus === RequestStatus.IN_PROGRESS;
-  const isCourseBestPracticeChecklistLoading = launchChecklistLoadingStatus === RequestStatus.IN_PROGRESS;
-  const isLoadingDenied = loadingStatus === RequestStatus.DENIED;
+  const isCourseLaunchChecklistLoading = bestPracticeChecklistStatus === RequestStatus.IN_PROGRESS;
+  const isCourseBestPracticeChecklistLoading = launchChecklistStatus === RequestStatus.IN_PROGRESS;
+  const isLoadingDenied = launchChecklistStatus === RequestStatus.DENIED;
 
   if (isLoadingDenied) {
     return (

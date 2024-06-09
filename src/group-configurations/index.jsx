@@ -3,7 +3,6 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Container, Layout, Stack, Row,
 } from '@openedx/paragon';
-// import { useDispatch, useSelector } from 'react-redux';
 
 import { LoadingSpinner } from '../generic/Loading';
 import { useModel } from '../generic/model-store';

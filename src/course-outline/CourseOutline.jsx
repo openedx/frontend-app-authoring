@@ -32,7 +32,6 @@ import InternetConnectionAlert from '../generic/internet-connection-alert';
 import DeleteModal from '../generic/delete-modal/DeleteModal';
 import ConfigureModal from '../generic/configure-modal/ConfigureModal';
 import AlertMessage from '../generic/alert-message';
-import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 import getPageHeadTitle from '../generic/utils';
 import { getCurrentItem, getProctoredExamsFlag } from './data/selectors';
 import { COURSE_BLOCK_NAMES } from './constants';

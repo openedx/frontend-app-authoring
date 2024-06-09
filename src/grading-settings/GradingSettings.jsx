@@ -63,8 +63,7 @@ const GradingSettings = ({ intl, courseId }) => {
     handleAddAssignment,
     handleRemoveAssignment,
   } = useUpdateGradingData(gradingSettingsData, setOverrideInternetConnectionAlert, setShowSuccessAlert);
-  // const STORE = useSelector((state) => state.gradingSettings);
-  // console.log('STORE ===>', STORE);
+
   const {
     gradeLetters,
     gradeValues,

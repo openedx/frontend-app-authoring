@@ -21,7 +21,6 @@ import InfoModal from './info-modal/InfoModal';
 import { useCourseTeam } from './hooks';
 import getPageHeadTitle from '../generic/utils';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
-// import { useSelector } from 'react-redux';
 
 const CourseTeam = ({ courseId }) => {
   const intl = useIntl();
