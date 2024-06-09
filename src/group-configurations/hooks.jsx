@@ -85,6 +85,7 @@ const useGroupConfigurations = (courseId) => {
 
   return {
     isLoading: loadingStatus === RequestStatus.IN_PROGRESS,
+    isLoadingDenied: loadingStatus === RequestStatus.DENIED,
     savingStatus,
     contentGroupActions,
     experimentConfigurationActions,

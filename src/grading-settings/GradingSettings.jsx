@@ -16,6 +16,7 @@ import AlertMessage from '../generic/alert-message';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 
 import { useModel } from '../generic/model-store';
+import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 import SectionSubHeader from '../generic/section-sub-header';
 import SubHeader from '../generic/sub-header/SubHeader';
 import getPageHeadTitle from '../generic/utils';
@@ -47,6 +48,7 @@ const GradingSettings = ({ courseId }) => {
   const courseAssignmentLists = gradingSettings?.courseAssignmentLists;
   const courseGradingDetails = gradingSettings?.courseDetails;
 
+  const isLoadingDenied = loadingStatus === RequestStatus.DENIED;
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const isLoading = isCourseSettingsLoading || isGradingSettingsLoading;
   const [isQueryPending, setIsQueryPending] = useState(false);
@@ -85,6 +87,14 @@ const GradingSettings = ({ courseId }) => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [savePending]);
+
+  if (isLoadingDenied) {
+    return (
+      <Container size="xl" className="course-unit px-4 mt-4">
+        <ConnectionErrorAlert />
+      </Container>
+    );
+  }
 
   if (isLoading) {
     return null;
