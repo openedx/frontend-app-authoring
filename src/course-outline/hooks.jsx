@@ -300,6 +300,7 @@ const useCourseOutline = ({ courseId }) => {
     sectionsList,
     isCustomRelativeDatesActive,
     isLoading: outlineIndexLoadingStatus === RequestStatus.IN_PROGRESS,
+    isLoadingDenied: outlineIndexLoadingStatus === RequestStatus.DENIED,
     isReIndexShow: Boolean(reindexLink),
     showSuccessAlert,
     isDisabledReindexButton,

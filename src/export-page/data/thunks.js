@@ -89,7 +89,11 @@ export function fetchExportStatus(courseId) {
       dispatch(updateLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
     } catch (error) {
-      dispatch(updateLoadingStatus({ status: RequestStatus.FAILED }));
+      if (error.response && error.response.status === 403) {
+        dispatch(updateLoadingStatus({ status: RequestStatus.DENIED }));
+      } else {
+        dispatch(updateLoadingStatus({ courseId, status: RequestStatus.FAILED }));
+      }
       return false;
     }
   };

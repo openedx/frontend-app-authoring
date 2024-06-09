@@ -13,6 +13,7 @@ import AriaLiveRegion from './AriaLiveRegion';
 import { RequestStatus } from '../data/constants';
 import ChecklistSection from './ChecklistSection';
 import { fetchCourseLaunchQuery, fetchCourseBestPracticesQuery } from './data/thunks';
+import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 import getUpdateLinks from './utils';
 
 const CourseChecklist = ({
@@ -40,6 +41,15 @@ const CourseChecklist = ({
 
   const isCourseLaunchChecklistLoading = bestPracticeChecklistLoadingStatus === RequestStatus.IN_PROGRESS;
   const isCourseBestPracticeChecklistLoading = launchChecklistLoadingStatus === RequestStatus.IN_PROGRESS;
+  const isLoadingDenied = loadingStatus === RequestStatus.DENIED;
+
+  if (isLoadingDenied) {
+    return (
+      <Container size="xl" className="course-unit px-4 mt-4">
+        <ConnectionErrorAlert />
+      </Container>
+    );
+  }
 
   return (
     <>

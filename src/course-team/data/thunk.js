@@ -24,7 +24,11 @@ export function fetchCourseTeamQuery(courseId) {
       dispatch(updateLoadingCourseTeamStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
     } catch (error) {
-      dispatch(updateLoadingCourseTeamStatus({ status: RequestStatus.FAILED }));
+      if (error.response && error.response.status === 403) {
+        dispatch(updateLoadingCourseTeamStatus({ status: RequestStatus.DENIED }));
+      } else {
+        dispatch(updateLoadingCourseTeamStatus({ status: RequestStatus.FAILED }));
+      }
       return false;
     }
   };

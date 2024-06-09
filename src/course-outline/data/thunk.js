@@ -96,10 +96,17 @@ export function fetchCourseOutlineIndexQuery(courseId) {
 
       dispatch(updateOutlineIndexLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      dispatch(updateOutlineIndexLoadingStatus({
-        status: RequestStatus.FAILED,
-        errors: getErrorDetails(error, false),
-      }));
+      if (error.response && error.response.status === 403) {
+        dispatch(updateOutlineIndexLoadingStatus({
+          status: RequestStatus.DENIED,
+          errors: getErrorDetails(error, false),
+        }));
+      } else {
+        dispatch(updateOutlineIndexLoadingStatus({
+          status: RequestStatus.FAILED,
+          errors: getErrorDetails(error, false),
+        }));
+      }
     }
   };
 }

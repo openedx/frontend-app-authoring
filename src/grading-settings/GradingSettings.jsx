@@ -12,6 +12,7 @@ import AlertMessage from '../generic/alert-message';
 import { RequestStatus } from '../data/constants';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import SubHeader from '../generic/sub-header/SubHeader';
+import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 import SectionSubHeader from '../generic/section-sub-header';
 import { STATEFUL_BUTTON_STATES } from '../constants';
 import {
@@ -37,6 +38,7 @@ const GradingSettings = ({ intl, courseId }) => {
   const courseAssignmentLists = useSelector(getCourseAssignmentLists);
   const savingStatus = useSelector(getSavingStatus);
   const loadingStatus = useSelector(getLoadingStatus);
+  const isLoadingDenied = loadingStatus === RequestStatus.DENIED;
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const dispatch = useDispatch();
   const isLoading = loadingStatus === RequestStatus.IN_PROGRESS;
@@ -61,7 +63,8 @@ const GradingSettings = ({ intl, courseId }) => {
     handleAddAssignment,
     handleRemoveAssignment,
   } = useUpdateGradingData(gradingSettingsData, setOverrideInternetConnectionAlert, setShowSuccessAlert);
-
+  // const STORE = useSelector((state) => state.gradingSettings);
+  // console.log('STORE ===>', STORE);
   const {
     gradeLetters,
     gradeValues,
@@ -82,6 +85,14 @@ const GradingSettings = ({ intl, courseId }) => {
     dispatch(fetchGradingSettings(courseId));
     dispatch(fetchCourseSettingsQuery(courseId));
   }, [courseId]);
+
+  if (isLoadingDenied) {
+    return (
+      <Container size="xl" className="course-unit px-4 mt-4">
+        <ConnectionErrorAlert />
+      </Container>
+    );
+  }
 
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment

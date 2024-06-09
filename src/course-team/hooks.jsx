@@ -113,6 +113,7 @@ const useCourseTeam = ({ courseId }) => {
     courseTeamUsers,
     currentUserEmail,
     isLoading: loadingCourseTeamStatus === RequestStatus.IN_PROGRESS,
+    isLoadingDenied: loadingCourseTeamStatus === RequestStatus.DENIED,
     isSingleAdmin,
     isFormVisible,
     isAllowActions,

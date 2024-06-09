@@ -16,6 +16,7 @@ import { getProcessingNotification } from '../generic/processing-notification/da
 import { useModel } from '../generic/model-store';
 import { LoadingSpinner } from '../generic/Loading';
 import SubHeader from '../generic/sub-header/SubHeader';
+import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 import ProcessingNotification from '../generic/processing-notification';
 import EmptyPlaceholder from './empty-placeholder/EmptyPlaceholder';
 import TextbookCard from './textbook-card/TextbooksCard';
@@ -33,6 +34,7 @@ const Textbooks = ({ courseId }) => {
   const {
     textbooks,
     isLoading,
+    isLoadingFailed,
     breadcrumbs,
     errorMessage,
     savingStatus,
@@ -44,11 +46,20 @@ const Textbooks = ({ courseId }) => {
     handleTextbookEditFormSubmit,
     handleTextbookDeleteSubmit,
   } = useTextbooks(courseId);
-
+  const STORE = useSelector((state) => state.textbooks);
+  console.log('STORE ===>', STORE);
   const {
     isShow: showProcessingNotification,
     title: processingNotificationTitle,
   } = useSelector(getProcessingNotification);
+
+  if (isLoadingFailed) {
+    return (
+      <Container size="xl" className="course-unit px-4 mt-4">
+        <ConnectionErrorAlert />
+      </Container>
+    );
+  }
 
   if (isLoading) {
     return (

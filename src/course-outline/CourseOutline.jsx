@@ -32,6 +32,7 @@ import InternetConnectionAlert from '../generic/internet-connection-alert';
 import DeleteModal from '../generic/delete-modal/DeleteModal';
 import ConfigureModal from '../generic/configure-modal/ConfigureModal';
 import AlertMessage from '../generic/alert-message';
+import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 import getPageHeadTitle from '../generic/utils';
 import { getCurrentItem, getProctoredExamsFlag } from './data/selectors';
 import { COURSE_BLOCK_NAMES } from './constants';
@@ -68,6 +69,7 @@ const CourseOutline = ({ courseId }) => {
     sectionsList,
     isCustomRelativeDatesActive,
     isLoading,
+    isLoadingDenied,
     isReIndexShow,
     showSuccessAlert,
     isSectionsExpanded,
@@ -229,6 +231,27 @@ const CourseOutline = ({ courseId }) => {
       <Row className="m-0 mt-4 justify-content-center">
         <LoadingSpinner />
       </Row>
+    );
+  }
+
+  if (isLoadingDenied) {
+    return (
+      <Container size="xl" className="px-4 mt-4">
+        <PageAlerts
+          courseId={courseId}
+          notificationDismissUrl={notificationDismissUrl}
+          handleDismissNotification={handleDismissNotification}
+          discussionsSettings={discussionsSettings}
+          discussionsIncontextFeedbackUrl={discussionsIncontextFeedbackUrl}
+          discussionsIncontextLearnmoreUrl={discussionsIncontextLearnmoreUrl}
+          deprecatedBlocksInfo={deprecatedBlocksInfo}
+          proctoringErrors={proctoringErrors}
+          mfeProctoredExamSettingsUrl={mfeProctoredExamSettingsUrl}
+          advanceSettingsUrl={advanceSettingsUrl}
+          savingStatus={savingStatus}
+          errors={errors}
+        />
+      </Container>
     );
   }
 

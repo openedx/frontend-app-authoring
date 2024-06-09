@@ -3,6 +3,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Container, Layout, Stack, Row,
 } from '@openedx/paragon';
+// import { useDispatch, useSelector } from 'react-redux';
 
 import { LoadingSpinner } from '../generic/Loading';
 import { useModel } from '../generic/model-store';
@@ -16,6 +17,7 @@ import ExperimentConfigurationsSection from './experiment-configurations-section
 import EnrollmentTrackGroupsSection from './enrollment-track-groups-section';
 import GroupConfigurationSidebar from './group-configuration-sidebar';
 import { useGroupConfigurations } from './hooks';
+import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 
 const GroupConfigurations = ({ courseId }) => {
   const { formatMessage } = useIntl();
@@ -34,12 +36,21 @@ const GroupConfigurations = ({ courseId }) => {
       shouldShowExperimentGroups,
       experimentGroupConfigurations,
     },
+    isLoadingDenied,
   } = useGroupConfigurations(courseId);
 
   document.title = getPageHeadTitle(
     courseDetails?.name,
     formatMessage(messages.headingTitle),
   );
+
+  if (isLoadingDenied) {
+    return (
+      <Container size="xl" className="course-unit px-4 mt-4">
+        <ConnectionErrorAlert />
+      </Container>
+    );
+  }
 
   if (isLoading) {
     return (

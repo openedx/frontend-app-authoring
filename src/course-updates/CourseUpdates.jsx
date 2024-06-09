@@ -16,6 +16,7 @@ import { getProcessingNotification } from '../generic/processing-notification/da
 import ProcessingNotification from '../generic/processing-notification';
 import SubHeader from '../generic/sub-header/SubHeader';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
+import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 import { RequestStatus } from '../data/constants';
 import CourseHandouts from './course-handouts/CourseHandouts';
 import CourseUpdate from './course-update/CourseUpdate';
@@ -64,8 +65,17 @@ const CourseUpdates = ({ courseId }) => {
   const errors = useSelector(getErrors);
 
   const anyStatusFailed = matchesAnyStatus({ ...loadingStatuses, ...savingStatuses }, RequestStatus.FAILED);
+  const anyStatusDenied = matchesAnyStatus({ ...loadingStatuses, ...savingStatuses }, RequestStatus.DENIED);
   const anyStatusInProgress = matchesAnyStatus({ ...loadingStatuses, ...savingStatuses }, RequestStatus.IN_PROGRESS);
   const anyStatusPending = matchesAnyStatus({ ...loadingStatuses, ...savingStatuses }, RequestStatus.PENDING);
+
+  if (anyStatusDenied) {
+    return (
+      <Container size="xl" className="course-unit px-4 mt-4">
+        <ConnectionErrorAlert />
+      </Container>
+    );
+  }
 
   return (
     <>
