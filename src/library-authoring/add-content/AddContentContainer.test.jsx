@@ -1,23 +1,22 @@
 import { initializeMockApp } from '@edx/frontend-platform';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, fireEvent } from '@testing-library/react';
+import {
+  render, screen, fireEvent, waitFor,
+} from '@testing-library/react';
 import { AppProvider } from '@edx/frontend-platform/react';
+import MockAdapter from 'axios-mock-adapter';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import AddContentContainer from './AddContentContainer';
 import initializeStore from '../../store';
+import { getCreateLibraryBlockUrl } from '../data/api';
 
 const mockUseParams = jest.fn();
-const mockUseCreateLibraryBlock = jest.fn();
+let axiosMock;
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'), // use actual for all non-hook parts
   useParams: () => mockUseParams(),
-}));
-
-jest.mock('../data/apiHook', () => ({
-  useCreateLibraryBlock: () => ({
-    mutateAsync: mockUseCreateLibraryBlock,
-  }),
 }));
 
 const libraryId = '1';
@@ -52,6 +51,7 @@ describe('<AddContentContainer />', () => {
       },
     });
     store = initializeStore();
+    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     mockUseParams.mockReturnValue({ libraryId });
   });
 
@@ -71,14 +71,14 @@ describe('<AddContentContainer />', () => {
   });
 
   it('should create a content', async () => {
-    mockUseCreateLibraryBlock.mockReturnValue({
-      then: () => ({ catch: jest.fn() }),
-    });
+    const url = getCreateLibraryBlockUrl(libraryId);
+    axiosMock.onPost(url).reply(200);
+
     render(<RootWrapper />);
 
     const textButton = screen.getByRole('button', { name: /text/i });
     fireEvent.click(textButton);
 
-    expect(mockUseCreateLibraryBlock).toHaveBeenCalled();
+    await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(url));
   });
 });

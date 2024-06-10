@@ -5,8 +5,6 @@ import { MeiliSearch } from 'meilisearch';
 import { useContentSearchConnection, useContentSearchResults } from '../../search-modal';
 import { createLibraryBlock, getContentLibrary } from './api';
 
-/** @typedef {import("./types.mjs").CreateBlockData} CreateBlockData */
-
 export const libraryQueryKeys = {
   /**
    * Used in all query keys.
@@ -30,15 +28,13 @@ export const useContentLibrary = (libraryId?: string) => (
 
 /**
  * Use this mutation to create a block in a library
- * @param {string} [libraryId]
  */
-export const useCreateLibraryBlock = (libraryId) => {
+export const useCreateLibraryBlock = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    /** @type {import("@tanstack/react-query").MutateFunction<any, any, CreateBlockData>} */
-    mutationFn: async (data) => createLibraryBlock(data),
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: libraryQueryKeys.contentLibrary(libraryId) });
+    mutationFn: createLibraryBlock,
+    onSettled: (_data, _error, variables) => {
+      queryClient.invalidateQueries({ queryKey: libraryQueryKeys.contentLibrary(variables.libraryId) });
       queryClient.invalidateQueries({ queryKey: ['content_search'] });
     },
   });

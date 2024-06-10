@@ -24,7 +24,7 @@ import { showToast } from '../data/slice';
 const AddContentContainer = () => {
   const intl = useIntl();
   const { libraryId } = useParams();
-  const createBlockMutation = useCreateLibraryBlock(libraryId);
+  const createBlockMutation = useCreateLibraryBlock();
   const dispatch = useDispatch();
 
   const contentTypes = [
@@ -62,6 +62,7 @@ const AddContentContainer = () => {
       name: intl.formatMessage(messages.otherTypeButton),
       disabled: true,
       icon: AutoAwesome,
+      blockType: 'other', // This block doesn't exist yet.
     },
   ];
 
@@ -92,6 +93,7 @@ const AddContentContainer = () => {
       <hr className="w-100 bg-gray-500" />
       {contentTypes.map((contentType) => (
         <Button
+          key={`add-content-${contentType.blockType}`}
           variant="outline-primary"
           disabled={contentType.disabled}
           className="m-2 rounded-0"

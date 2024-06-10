@@ -145,19 +145,21 @@ const LibraryAuthoringPage = () => {
             </Container>
             <StudioFooter />
           </Col>
-          {showSidebar && (
+          { showSidebar && (
             <Col xs={6} md={4} className="box-shadow-left-1">
               <LibrarySidebar />
             </Col>
           )}
         </Row>
       </Container>
-      <Toast
-        show={showToast}
-        onClose={() => dispatch(closeToast())}
-      >
-        {toastMessage}
-      </Toast>
+      { toastMessage && (
+        <Toast
+          show={showToast}
+          onClose={/* istanbul ignore next */ () => dispatch(closeToast())}
+        >
+          {toastMessage}
+        </Toast>
+      )}
     </>
   );
 };

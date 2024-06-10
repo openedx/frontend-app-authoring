@@ -100,6 +100,11 @@ const messages = defineMessages({
     defaultMessage: 'New',
     description: 'Text of button to open "Add content drawer"',
   },
+  closeButtonAlt: {
+    id: 'course-authoring.library-authoring.buttons.close.alt',
+    defaultMessage: 'Close',
+    description: 'Alt text of close button',
+  },
 });
 
 export default messages;
