@@ -8,8 +8,7 @@ import messages from '../messages';
 const ConnectionErrorAlert = ({ intl }) => (
   <Alert variant="danger" data-testid="connectionErrorAlert">
     <FormattedMessage
-      id="authoring.alert.error.connection"
-      defaultMessage="We encountered a technical error when loading this page. This might be a temporary issue, so please try again in a few minutes. If the problem persists, please go to the {supportLink} for help."
+      {...messages.connectionError}
       values={{
         supportLink: (
           <Alert.Link href={getConfig().SUPPORT_URL}>

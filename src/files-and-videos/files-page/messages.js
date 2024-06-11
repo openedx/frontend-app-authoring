@@ -47,12 +47,12 @@ const messages = defineMessages({
     description: 'Label for lock file checkbox in info modal',
   },
   activeCheckboxLabel: {
-    id: 'course-authoring.files-and-videos.sort-and-filter.modal.filter.activeCheckbox.label',
+    id: 'course-authoring.files-and-videos.file-info.activeCheckbox.label',
     defaultMessage: 'Active',
     description: 'Label for active checkbox in filter section of sort and filter modal',
   },
   inactiveCheckboxLabel: {
-    id: 'course-authoring.files-and-videos.sort-and-filter.modal.filter.inactiveCheckbox.label',
+    id: 'course-authoring.files-and-videos.file-info.inactiveCheckbox.label',
     defaultMessage: 'Inactive',
     description: 'Label for inactive checkbox in filter section of sort and filter modal',
   },

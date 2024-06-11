@@ -56,7 +56,7 @@ const messages = defineMessages({
     defaultMessage: 'Video Sharing',
   },
   videoSharingLink: {
-    id: 'course-authoring.course-outline.status-bar.video-sharing.title',
+    id: 'course-authoring.course-outline.status-bar.video-sharing.link',
     defaultMessage: 'Learn more',
   },
   videoSharingPerVideoText: {

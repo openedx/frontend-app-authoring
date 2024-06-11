@@ -22,7 +22,7 @@ const messages = defineMessages({
     defaultMessage: 'Add admin access',
   },
   removeButton: {
-    id: 'course-authoring.course-team.member.button.remove',
+    id: 'course-authoring.course-team.member.button.remove-admin-access',
     defaultMessage: 'Remove admin access',
   },
   deleteUserButton: {
