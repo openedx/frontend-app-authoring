@@ -3,7 +3,7 @@
 exports[`Editor Page snapshots props besides blockType default to null 1`] = `
 <Provider
   store={
-    Object {
+    {
       "dispatch": [Function],
       "getState": [Function],
       "replaceReducer": [Function],
@@ -32,7 +32,7 @@ exports[`Editor Page snapshots props besides blockType default to null 1`] = `
 exports[`Editor Page snapshots rendering correctly with expected Input 1`] = `
 <Provider
   store={
-    Object {
+    {
       "dispatch": [Function],
       "getState": [Function],
       "replaceReducer": [Function],

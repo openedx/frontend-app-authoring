@@ -23,8 +23,8 @@ exports[`RawEditor renders as expected with default behavior 1`] = `
   </Alert>
   <injectIntl(ShimmedIntlComponent)
     innerRef={
-      Object {
-        "current": Object {
+      {
+        "current": {
           "value": "Ref Value",
         },
       }
@@ -39,8 +39,8 @@ exports[`RawEditor renders as expected with lang equal to xml 1`] = `
 <div>
   <injectIntl(ShimmedIntlComponent)
     innerRef={
-      Object {
-        "current": Object {
+      {
+        "current": {
           "value": "Ref Value",
         },
       }

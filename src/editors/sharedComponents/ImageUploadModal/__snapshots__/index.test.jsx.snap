@@ -5,9 +5,9 @@ exports[`ImageUploadModal component snapshot: no selection (Select Image Modal) 
   clearSelection={[MockFunction props.clearSelection]}
   close={[MockFunction props.close]}
   images={
-    Object {
-      "current": Array [
-        Object {
+    {
+      "current": [
+        {
           "contentType": "image/png",
           "dateAdded": 1682009100000,
           "displayName": "DALL·E 2023-03-10.png",
@@ -34,9 +34,9 @@ exports[`ImageUploadModal component snapshot: selection has no externalUrl (Sele
   clearSelection={[MockFunction props.clearSelection]}
   close={[MockFunction props.close]}
   images={
-    Object {
-      "current": Array [
-        Object {
+    {
+      "current": [
+        {
           "contentType": "image/png",
           "dateAdded": 1682009100000,
           "displayName": "DALL·E 2023-03-10.png",
@@ -61,9 +61,9 @@ exports[`ImageUploadModal component snapshot: selection has no externalUrl (Sele
 exports[`ImageUploadModal component snapshot: with selection content (ImageSettingsUpload) 1`] = `
 <ImageSettingsModal
   images={
-    Object {
-      "current": Array [
-        Object {
+    {
+      "current": [
+        {
           "contentType": "image/png",
           "dateAdded": 1682009100000,
           "displayName": "DALL·E 2023-03-10.png",
@@ -83,7 +83,7 @@ exports[`ImageUploadModal component snapshot: with selection content (ImageSetti
   isOpen={false}
   returnToSelection={[MockFunction props.clearSelection]}
   selection={
-    Object {
+    {
       "externalUrl": "sOmEuRl.cOm",
       "some": "images",
     }

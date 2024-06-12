@@ -3,7 +3,7 @@
 exports[`RandomizationCard snapshot snapshot: renders randomization setting card with default randomization 1`] = `
 <SettingsOption
   className=""
-  extraSections={Array []}
+  extraSections={[]}
   hasExpandableTextArea={false}
   none={true}
   summary="sUmmary"
@@ -55,7 +55,7 @@ exports[`RandomizationCard snapshot snapshot: renders randomization setting card
 exports[`RandomizationCard snapshot snapshot: renders randomization setting card with randomization defined 1`] = `
 <SettingsOption
   className=""
-  extraSections={Array []}
+  extraSections={[]}
   hasExpandableTextArea={false}
   none={false}
   summary="sUmmary"
@@ -107,7 +107,7 @@ exports[`RandomizationCard snapshot snapshot: renders randomization setting card
 exports[`RandomizationCard snapshot snapshot: renders randomization setting card with randomization null 1`] = `
 <SettingsOption
   className=""
-  extraSections={Array []}
+  extraSections={[]}
   hasExpandableTextArea={false}
   none={true}
   summary="sUmmary"

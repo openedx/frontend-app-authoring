@@ -3,7 +3,7 @@
 exports[`ResetCard snapshot snapshot: renders reset true setting card 1`] = `
 <SettingsOption
   className="resetCard"
-  extraSections={Array []}
+  extraSections={[]}
   hasExpandableTextArea={false}
   summary="False"
   title="Show reset option"
@@ -66,7 +66,7 @@ exports[`ResetCard snapshot snapshot: renders reset true setting card 1`] = `
 exports[`ResetCard snapshot snapshot: renders reset true setting card 2`] = `
 <SettingsOption
   className="resetCard"
-  extraSections={Array []}
+  extraSections={[]}
   hasExpandableTextArea={false}
   summary="True"
   title="Show reset option"

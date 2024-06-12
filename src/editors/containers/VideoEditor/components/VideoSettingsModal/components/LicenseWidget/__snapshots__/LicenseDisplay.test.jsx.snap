@@ -17,7 +17,7 @@ exports[`LicenseDisplay snapshots snapshots: renders as expected with default pr
     className="small border border-gray-300 rounded p-4"
   >
     <injectIntl(ShimmedIntlComponent)
-      details={Object {}}
+      details={{}}
       license="all-rights-reserved"
     />
     <div
@@ -57,7 +57,7 @@ exports[`LicenseDisplay snapshots snapshots: renders as expected with level set 
     className="small border border-gray-300 rounded p-4"
   >
     <injectIntl(ShimmedIntlComponent)
-      details={Object {}}
+      details={{}}
       license="all-rights-reserved"
     />
     <div
@@ -97,7 +97,7 @@ exports[`LicenseDisplay snapshots snapshots: renders as expected with level set 
     className="small border border-gray-300 rounded p-4"
   >
     <injectIntl(ShimmedIntlComponent)
-      details={Object {}}
+      details={{}}
       license="creative-commons"
     />
     <div
@@ -139,7 +139,7 @@ exports[`LicenseDisplay snapshots snapshots: renders as expected with level set 
     className="small border border-gray-300 rounded p-4"
   >
     <injectIntl(ShimmedIntlComponent)
-      details={Object {}}
+      details={{}}
       license="all-rights-reserved"
     />
     <div

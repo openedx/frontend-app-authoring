@@ -10,7 +10,7 @@ exports[`EditableHeader snapshot snapshot 1`] = `
     onKeyDown={[MockFunction args.handleKeyDown]}
     placeholder="Title"
     style={
-      Object {
+      {
         "paddingInlineEnd": "calc(1rem + 84px)",
       }
     }

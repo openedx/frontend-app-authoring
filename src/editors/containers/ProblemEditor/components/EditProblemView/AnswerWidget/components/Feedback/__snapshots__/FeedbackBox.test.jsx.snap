@@ -6,7 +6,7 @@ exports[`FeedbackBox component renders as expected with a multi select problem 1
 >
   <FeedbackControl
     answer={
-      Object {
+      {
         "correct": true,
         "id": "A",
         "problemType": "sOMepRObleM",
@@ -16,17 +16,17 @@ exports[`FeedbackBox component renders as expected with a multi select problem 1
       }
     }
     feedback="some feedback"
-    intl={Object {}}
+    intl={{}}
     key="selectedfeedback-A"
     labelMessage={
-      Object {
+      {
         "defaultMessage": "Show following feedback when {answerId} {boldunderline}:",
         "description": "Label text for feedback if option is selected",
         "id": "authoring.answerwidget.feedback.selected.label",
       }
     }
     labelMessageBoldUnderline={
-      Object {
+      {
         "defaultMessage": "is selected",
         "description": "Bold & underlined text for feedback if option is selected",
         "id": "authoring.answerwidget.feedback.selected.label.boldunderline",
@@ -36,7 +36,7 @@ exports[`FeedbackBox component renders as expected with a multi select problem 1
   />
   <FeedbackControl
     answer={
-      Object {
+      {
         "correct": true,
         "id": "A",
         "problemType": "sOMepRObleM",
@@ -46,17 +46,17 @@ exports[`FeedbackBox component renders as expected with a multi select problem 1
       }
     }
     feedback="unselectedFeedback"
-    intl={Object {}}
+    intl={{}}
     key="unselectedfeedback-A"
     labelMessage={
-      Object {
+      {
         "defaultMessage": "Show following feedback when {answerId} {boldunderline}:",
         "description": "Label text for feedback if option is not selected",
         "id": "authoring.answerwidget.feedback.unselected.label",
       }
     }
     labelMessageBoldUnderline={
-      Object {
+      {
         "defaultMessage": "is not selected",
         "description": "Bold & underlined text for feedback if option is not selected",
         "id": "authoring.answerwidget.feedback.unselected.label.boldunderline",
@@ -73,7 +73,7 @@ exports[`FeedbackBox component renders as expected with a numeric input problem 
 >
   <FeedbackControl
     answer={
-      Object {
+      {
         "correct": true,
         "id": "A",
         "problemType": "sOMepRObleM",
@@ -83,17 +83,17 @@ exports[`FeedbackBox component renders as expected with a numeric input problem 
       }
     }
     feedback="some feedback"
-    intl={Object {}}
+    intl={{}}
     key="selectedfeedback-A"
     labelMessage={
-      Object {
+      {
         "defaultMessage": "Show following feedback when {answerId} {boldunderline}:",
         "description": "Label text for feedback if option is selected",
         "id": "authoring.answerwidget.feedback.selected.label",
       }
     }
     labelMessageBoldUnderline={
-      Object {
+      {
         "defaultMessage": "is selected",
         "description": "Bold & underlined text for feedback if option is selected",
         "id": "authoring.answerwidget.feedback.selected.label.boldunderline",
@@ -110,7 +110,7 @@ exports[`FeedbackBox component renders as expected with default props 1`] = `
 >
   <FeedbackControl
     answer={
-      Object {
+      {
         "correct": true,
         "id": "A",
         "problemType": "sOMepRObleM",
@@ -120,17 +120,17 @@ exports[`FeedbackBox component renders as expected with default props 1`] = `
       }
     }
     feedback="some feedback"
-    intl={Object {}}
+    intl={{}}
     key="selectedfeedback-A"
     labelMessage={
-      Object {
+      {
         "defaultMessage": "Show following feedback when {answerId} {boldunderline}:",
         "description": "Label text for feedback if option is selected",
         "id": "authoring.answerwidget.feedback.selected.label",
       }
     }
     labelMessageBoldUnderline={
-      Object {
+      {
         "defaultMessage": "is selected",
         "description": "Bold & underlined text for feedback if option is selected",
         "id": "authoring.answerwidget.feedback.selected.label.boldunderline",

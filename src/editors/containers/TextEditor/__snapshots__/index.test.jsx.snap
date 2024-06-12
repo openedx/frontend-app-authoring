@@ -3,15 +3,15 @@
 exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
 <EditorContainer
   getContent={
-    Object {
-      "getContent": Object {
-        "assets": Object {
-          "sOmEaSsET": Object {
+    {
+      "getContent": {
+        "assets": {
+          "sOmEaSsET": {
             "staTICUrl": "/assets/sOmEaSsET",
           },
         },
-        "editorRef": Object {
-          "current": Object {
+        "editorRef": {
+          "current": {
             "value": "something",
           },
         },
@@ -38,8 +38,8 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
     <[object Object]
       editorContentHtml="eDiTablE Text"
       editorRef={
-        Object {
-          "current": Object {
+        {
+          "current": {
             "value": "something",
           },
         }
@@ -57,15 +57,15 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
 exports[`TextEditor snapshots loaded, raw editor 1`] = `
 <EditorContainer
   getContent={
-    Object {
-      "getContent": Object {
-        "assets": Object {
-          "sOmEaSsET": Object {
+    {
+      "getContent": {
+        "assets": {
+          "sOmEaSsET": {
             "staTICUrl": "/assets/sOmEaSsET",
           },
         },
-        "editorRef": Object {
-          "current": Object {
+        "editorRef": {
+          "current": {
             "value": "something",
           },
         },
@@ -91,15 +91,15 @@ exports[`TextEditor snapshots loaded, raw editor 1`] = `
     </Toast>
     <RawEditor
       content={
-        Object {
-          "data": Object {
+        {
+          "data": {
             "data": "eDiTablE Text",
           },
         }
       }
       editorRef={
-        Object {
-          "current": Object {
+        {
+          "current": {
             "value": "something",
           },
         }
@@ -113,15 +113,15 @@ exports[`TextEditor snapshots loaded, raw editor 1`] = `
 exports[`TextEditor snapshots not yet loaded, Spinner appears 1`] = `
 <EditorContainer
   getContent={
-    Object {
-      "getContent": Object {
-        "assets": Object {
-          "sOmEaSsET": Object {
+    {
+      "getContent": {
+        "assets": {
+          "sOmEaSsET": {
             "staTICUrl": "/assets/sOmEaSsET",
           },
         },
-        "editorRef": Object {
-          "current": Object {
+        "editorRef": {
+          "current": {
             "value": "something",
           },
         },
@@ -161,15 +161,15 @@ exports[`TextEditor snapshots not yet loaded, Spinner appears 1`] = `
 exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
 <EditorContainer
   getContent={
-    Object {
-      "getContent": Object {
-        "assets": Object {
-          "sOmEaSsET": Object {
+    {
+      "getContent": {
+        "assets": {
+          "sOmEaSsET": {
             "staTICUrl": "/assets/sOmEaSsET",
           },
         },
-        "editorRef": Object {
-          "current": Object {
+        "editorRef": {
+          "current": {
             "value": "something",
           },
         },
@@ -196,8 +196,8 @@ exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
     <[object Object]
       editorContentHtml="eDiTablE Text"
       editorRef={
-        Object {
-          "current": Object {
+        {
+          "current": {
             "value": "something",
           },
         }

@@ -10,7 +10,7 @@ exports[`FeedbackControl component renders 1`] = `
       1="s"
       2="g"
       values={
-        Object {
+        {
           "answerId": "A",
           "boldunderline": <b>
             <u>

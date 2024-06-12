@@ -3,11 +3,11 @@
 exports[`RandomizationCard snapshot snapshot: renders general feedback setting card 1`] = `
 <SettingsOption
   className=""
-  extraSections={Array []}
+  extraSections={[]}
   hasExpandableTextArea={false}
   none={false}
   summary={
-    Object {
+    {
       "defaultMessage": "sUmmary",
     }
   }

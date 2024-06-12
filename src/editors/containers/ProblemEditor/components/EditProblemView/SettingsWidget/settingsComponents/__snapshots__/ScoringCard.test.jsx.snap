@@ -3,7 +3,7 @@
 exports[`ScoringCard snapshot snapshot: scoring setting card 1`] = `
 <SettingsOption
   className="scoringCard"
-  extraSections={Array []}
+  extraSections={[]}
   hasExpandableTextArea={false}
   summary="{weight, plural, =0 {Ungraded} other {# points}} · {attempts, plural, =1 {# attempt} other {# attempts}}"
   title="Scoring"
@@ -78,7 +78,7 @@ exports[`ScoringCard snapshot snapshot: scoring setting card 1`] = `
 exports[`ScoringCard snapshot snapshot: scoring setting card max attempts 1`] = `
 <SettingsOption
   className="scoringCard"
-  extraSections={Array []}
+  extraSections={[]}
   hasExpandableTextArea={false}
   summary="{weight, plural, =0 {Ungraded} other {# points}} · Unlimited attempts"
   title="Scoring"
@@ -153,7 +153,7 @@ exports[`ScoringCard snapshot snapshot: scoring setting card max attempts 1`] = 
 exports[`ScoringCard snapshot snapshot: scoring setting card zero zero weight 1`] = `
 <SettingsOption
   className="scoringCard"
-  extraSections={Array []}
+  extraSections={[]}
   hasExpandableTextArea={false}
   summary="{weight, plural, =0 {Ungraded} other {# points}} · {attempts, plural, =1 {# attempt} other {# attempts}}"
   title="Scoring"

@@ -51,7 +51,7 @@ exports[`EditorProblemView component renders raw editor 1`] = `
       <RawEditor
         content={null}
         editorRef={
-          Object {
+          {
             "current": null,
           }
         }

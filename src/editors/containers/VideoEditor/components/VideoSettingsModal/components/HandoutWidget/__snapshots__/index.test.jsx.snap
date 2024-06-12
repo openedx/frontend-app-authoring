@@ -20,7 +20,7 @@ exports[`HandoutWidget snapshots snapshots: renders as expected with default pro
   </ErrorAlert>
   <UploadErrorAlert
     message={
-      Object {
+      {
         "defaultMessage": "Failed to upload handout. Please try again.",
         "description": "Message presented to user when handout fails to upload",
         "id": "authoring.videoeditor.handout.error.uploadHandoutError",
@@ -29,10 +29,10 @@ exports[`HandoutWidget snapshots snapshots: renders as expected with default pro
   />
   <FileInput
     fileInput={
-      Object {
+      {
         "addFile": [Function],
         "click": [Function],
-        "ref": Object {
+        "ref": {
           "current": undefined,
         },
       }
@@ -43,7 +43,7 @@ exports[`HandoutWidget snapshots snapshots: renders as expected with default pro
   >
     <FormattedMessage
       defaultMessage="Add a handout to accompany this video. Learners can download
-    this file by clicking \\"Download Handout\\" below the video."
+    this file by clicking "Download Handout" below the video."
       description="Message displayed when uploading a handout"
       id="authoring.videoeditor.handout.upload.addHandoutMessage"
     />
@@ -83,7 +83,7 @@ exports[`HandoutWidget snapshots snapshots: renders as expected with handout 1`]
   </ErrorAlert>
   <UploadErrorAlert
     message={
-      Object {
+      {
         "defaultMessage": "Failed to upload handout. Please try again.",
         "description": "Message presented to user when handout fails to upload",
         "id": "authoring.videoeditor.handout.error.uploadHandoutError",
@@ -92,10 +92,10 @@ exports[`HandoutWidget snapshots snapshots: renders as expected with handout 1`]
   />
   <FileInput
     fileInput={
-      Object {
+      {
         "addFile": [Function],
         "click": [Function],
-        "ref": Object {
+        "ref": {
           "current": undefined,
         },
       }
@@ -154,7 +154,7 @@ exports[`HandoutWidget snapshots snapshots: renders as expected with handout 1`]
       </Dropdown>
     </ActionRow>
     <FormattedMessage
-      defaultMessage="Learners can download this file by clicking \\"Download Handout\\" below the video."
+      defaultMessage="Learners can download this file by clicking "Download Handout" below the video."
       description="Message presented to user when a handout is present"
       id="authoring.videoeditor.handout.handoutHelpMessage"
     />

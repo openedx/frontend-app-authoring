@@ -3,7 +3,7 @@
 exports[`TinyMceWidget snapshots ImageUploadModal is not rendered 1`] = `
 <Provider
   store={
-    Object {
+    {
       "dispatch": [Function],
       "getState": [Function],
       "replaceReducer": [Function],
@@ -15,8 +15,8 @@ exports[`TinyMceWidget snapshots ImageUploadModal is not rendered 1`] = `
   <SourceCodeModal
     close={[MockFunction modal.closeModal]}
     editorRef={
-      Object {
-        "current": Object {
+      {
+        "current": {
           "value": "something",
         },
       }
@@ -26,19 +26,19 @@ exports[`TinyMceWidget snapshots ImageUploadModal is not rendered 1`] = `
   <Editor
     disabled={false}
     editorConfig={
-      Object {
+      {
         "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
         "content": undefined,
         "editorContentHtml": undefined,
-        "editorRef": Object {
-          "current": Object {
+        "editorRef": {
+          "current": {
             "value": "something",
           },
         },
         "editorType": "text",
-        "images": Object {
-          "current": Array [
-            Object {
+        "images": {
+          "current": [
+            {
               "externalUrl": "/assets/sOmEaSsET",
             },
           ],
@@ -66,7 +66,7 @@ exports[`TinyMceWidget snapshots ImageUploadModal is not rendered 1`] = `
 exports[`TinyMceWidget snapshots SourcecodeModal is not rendered 1`] = `
 <Provider
   store={
-    Object {
+    {
       "dispatch": [Function],
       "getState": [Function],
       "replaceReducer": [Function],
@@ -79,17 +79,17 @@ exports[`TinyMceWidget snapshots SourcecodeModal is not rendered 1`] = `
     clearSelection={[MockFunction hooks.selectedImage.clearSelection]}
     close={[MockFunction modal.closeModal]}
     editorRef={
-      Object {
-        "current": Object {
+      {
+        "current": {
           "value": "something",
         },
       }
     }
     editorType="problem"
     images={
-      Object {
-        "current": Array [
-          Object {
+      {
+        "current": [
+          {
             "externalUrl": "/assets/sOmEaSsET",
           },
         ],
@@ -103,19 +103,19 @@ exports[`TinyMceWidget snapshots SourcecodeModal is not rendered 1`] = `
   <Editor
     disabled={false}
     editorConfig={
-      Object {
+      {
         "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
         "content": undefined,
         "editorContentHtml": undefined,
-        "editorRef": Object {
-          "current": Object {
+        "editorRef": {
+          "current": {
             "value": "something",
           },
         },
         "editorType": "problem",
-        "images": Object {
-          "current": Array [
-            Object {
+        "images": {
+          "current": [
+            {
               "externalUrl": "/assets/sOmEaSsET",
             },
           ],
@@ -143,7 +143,7 @@ exports[`TinyMceWidget snapshots SourcecodeModal is not rendered 1`] = `
 exports[`TinyMceWidget snapshots renders as expected with default behavior 1`] = `
 <Provider
   store={
-    Object {
+    {
       "dispatch": [Function],
       "getState": [Function],
       "replaceReducer": [Function],
@@ -156,17 +156,17 @@ exports[`TinyMceWidget snapshots renders as expected with default behavior 1`] =
     clearSelection={[MockFunction hooks.selectedImage.clearSelection]}
     close={[MockFunction modal.closeModal]}
     editorRef={
-      Object {
-        "current": Object {
+      {
+        "current": {
           "value": "something",
         },
       }
     }
     editorType="text"
     images={
-      Object {
-        "current": Array [
-          Object {
+      {
+        "current": [
+          {
             "externalUrl": "/assets/sOmEaSsET",
           },
         ],
@@ -180,8 +180,8 @@ exports[`TinyMceWidget snapshots renders as expected with default behavior 1`] =
   <SourceCodeModal
     close={[MockFunction modal.closeModal]}
     editorRef={
-      Object {
-        "current": Object {
+      {
+        "current": {
           "value": "something",
         },
       }
@@ -191,19 +191,19 @@ exports[`TinyMceWidget snapshots renders as expected with default behavior 1`] =
   <Editor
     disabled={false}
     editorConfig={
-      Object {
+      {
         "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
         "content": undefined,
         "editorContentHtml": undefined,
-        "editorRef": Object {
-          "current": Object {
+        "editorRef": {
+          "current": {
             "value": "something",
           },
         },
         "editorType": "text",
-        "images": Object {
-          "current": Array [
-            Object {
+        "images": {
+          "current": [
+            {
               "externalUrl": "/assets/sOmEaSsET",
             },
           ],

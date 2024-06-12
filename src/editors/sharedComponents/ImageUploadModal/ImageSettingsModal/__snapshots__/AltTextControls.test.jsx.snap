@@ -19,7 +19,7 @@ exports[`AltTextControls render snapshot: isDecorative=true errorProps.showAltTe
     floatingLabel="Alt Text"
     isInvalid={false}
     onChange={
-      Object {
+      {
         "hooks.onInputChange": [MockFunction props.setValue],
       }
     }
@@ -30,7 +30,7 @@ exports[`AltTextControls render snapshot: isDecorative=true errorProps.showAltTe
     checked={true}
     className="mt-4.5 decorative-control-label"
     onChange={
-      Object {
+      {
         "hooks.onCheckboxChange": [MockFunction props.setIsDecorative],
       }
     }
@@ -65,7 +65,7 @@ exports[`AltTextControls render snapshot: isDecorative=true errorProps.showAltTe
     floatingLabel="Alt Text"
     isInvalid={true}
     onChange={
-      Object {
+      {
         "hooks.onInputChange": [MockFunction props.setValue],
       }
     }
@@ -85,7 +85,7 @@ exports[`AltTextControls render snapshot: isDecorative=true errorProps.showAltTe
     checked={true}
     className="mt-4.5 decorative-control-label"
     onChange={
-      Object {
+      {
         "hooks.onCheckboxChange": [MockFunction props.setIsDecorative],
       }
     }

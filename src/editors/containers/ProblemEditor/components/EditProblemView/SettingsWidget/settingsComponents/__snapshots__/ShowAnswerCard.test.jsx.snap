@@ -3,7 +3,7 @@
 exports[`ShowAnswerCard snapshot snapshot: show answer setting card 1`] = `
 <SettingsOption
   className=""
-  extraSections={Array []}
+  extraSections={[]}
   hasExpandableTextArea={false}
   summary="After Some Number of Attempts"
   title="Show answer"

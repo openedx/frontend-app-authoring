@@ -110,7 +110,7 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
         </Form.Group>
         <div>
           <FormattedMessage
-            defaultMessage="Allow others to copy, distribute, display and perform only verbatim copies of your work, not derivative works based upon it. This option is incompatible with \\"Share Alike\\"."
+            defaultMessage="Allow others to copy, distribute, display and perform only verbatim copies of your work, not derivative works based upon it. This option is incompatible with "Share Alike"."
             description="No Derivatives card section defining no derivatives license"
             id="authoring.videoeditor.license.noDerivativesSectionDescription"
           />
@@ -139,7 +139,7 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
         </Form.Group>
         <div>
           <FormattedMessage
-            defaultMessage="Allow others to distribute derivative works only under a license identical to the license that governs your work. This option is incompatible with \\"No Derivatives\\"."
+            defaultMessage="Allow others to distribute derivative works only under a license identical to the license that governs your work. This option is incompatible with "No Derivatives"."
             description="Share Alike card section defining no derivatives license"
             id="authoring.videoeditor.license.shareAlikeSectionDescription"
           />

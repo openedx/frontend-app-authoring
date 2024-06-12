@@ -41,9 +41,6 @@ const e = {
 };
 
 describe('Video Settings DurationWidget hooks', () => {
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
   describe('durationWidget', () => {
     const duration = {
       startTime: '00:00:00',
@@ -52,6 +49,9 @@ describe('Video Settings DurationWidget hooks', () => {
     const updateField = jest.fn();
     beforeEach(() => {
       testMethod = hooks.durationWidget({ duration, updateField });
+    });
+    afterEach(() => {
+      jest.restoreAllMocks();
     });
     describe('behavior', () => {
       describe('initialization', () => {
@@ -68,35 +68,45 @@ describe('Video Settings DurationWidget hooks', () => {
       });
     });
     describe('returns', () => {
-      testMethod = hooks.durationWidget({ duration, updateField });
+      beforeEach(() => {
+        testMethod = hooks.durationWidget({ duration, updateField });
+      });
       afterEach(() => {
         jest.restoreAllMocks();
       });
       describe('unsavedDuration, defaulted to duration', () => {
-        expect(testMethod.unsavedDuration).toEqual({ state: hooks.durationString(duration) });
+        it('should default unsavedDuration to duration', () => {
+          expect(testMethod.unsavedDuration).toEqual({ state: hooks.durationString(duration) });
+        });
       });
-      describe('onBlur, calls updateDuration', () => {
-        jest.spyOn(hooks, 'updateDuration').mockImplementation(jest.fn());
-        testMethod.onBlur('IndEX')(e);
-        expect(hooks.updateDuration).toHaveBeenCalled();
+      describe('onBlur', () => {
+        it('calls updateDuration on blur', () => {
+          jest.spyOn(hooks, 'updateDuration').mockImplementation(jest.fn());
+          testMethod.onBlur('IndEX')(e);
+          expect(hooks.updateDuration).toHaveBeenCalled();
+        });
       });
       describe('onChange', () => {
-        testMethod.onChange('IndEX')(e);
-        expect(React.updateState).toHaveBeenCalled();
+        it('calls updateState on change', () => {
+          testMethod.onChange('IndEX')(e);
+          expect(React.updateState).toHaveBeenCalled();
+        });
       });
       describe('onKeyDown', () => {
-        testMethod.onKeyDown('iNDex')(e);
-        expect(React.updateState).toHaveBeenCalled();
+        it('calls updateState on key down', () => {
+          testMethod.onKeyDown('iNDex')(e);
+          expect(React.updateState).toHaveBeenCalled();
+        });
       });
       describe('getTotalLabel', () => {
-        describe('returns fullVideoLength message when no startTime and no stop Time are set', () => {
+        it('returns fullVideoLength message when no startTime and no stop Time are set', () => {
           expect(testMethod.getTotalLabel({
             durationString: {},
             subtitle: true,
             intl,
           })).toEqual(messages.fullVideoLength);
         });
-        describe('returns startAt message for subtitle when only startTime is set', () => {
+        it('returns startAt message for subtitle when only startTime is set', () => {
           expect(testMethod.getTotalLabel({
             durationString: {
               startTime: '00:00:00',
@@ -105,7 +115,7 @@ describe('Video Settings DurationWidget hooks', () => {
             intl,
           })).toEqual(messages.startsAt);
         });
-        describe('returns null for widget (not subtitle) when there only startTime is set', () => {
+        it('returns null for widget (not subtitle) when there only startTime is set', () => {
           expect(testMethod.getTotalLabel({
             durationString: {
               startTime: '00:00:00',
@@ -114,7 +124,7 @@ describe('Video Settings DurationWidget hooks', () => {
             intl,
           })).toEqual(null);
         });
-        describe('returns total message when at least stopTime is set', () => {
+        it('returns total message when at least stopTime is set', () => {
           expect(testMethod.getTotalLabel({
             durationString: {
               startTime: '00:00:00',
@@ -124,7 +134,7 @@ describe('Video Settings DurationWidget hooks', () => {
             intl,
           })).toEqual(messages.total);
         });
-        describe('returns custom message when at least stopTime is set and subtitle is true', () => {
+        it('returns custom message when at least stopTime is set and subtitle is true', () => {
           expect(testMethod.getTotalLabel({
             durationString: {
               startTime: '00:00:00',

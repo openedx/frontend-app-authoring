@@ -21,7 +21,7 @@ exports[`DimensionControls render snapshot 1`] = `
       floatingLabel="Width"
       onBlur={[MockFunction props.updateDimensions]}
       onChange={
-        Object {
+        {
           "hooks.onInputChange": [MockFunction props.setWidth],
         }
       }
@@ -32,7 +32,7 @@ exports[`DimensionControls render snapshot 1`] = `
       floatingLabel="Height"
       onBlur={[MockFunction props.updateDimensions]}
       onChange={
-        Object {
+        {
           "hooks.onInputChange": [MockFunction props.setHeight],
         }
       }
@@ -68,7 +68,7 @@ exports[`DimensionControls render unlocked dimensions 1`] = `
       floatingLabel="Width"
       onBlur={[MockFunction props.updateDimensions]}
       onChange={
-        Object {
+        {
           "hooks.onInputChange": [MockFunction props.setWidth],
         }
       }
@@ -79,7 +79,7 @@ exports[`DimensionControls render unlocked dimensions 1`] = `
       floatingLabel="Height"
       onBlur={[MockFunction props.updateDimensions]}
       onChange={
-        Object {
+        {
           "hooks.onInputChange": [MockFunction props.setHeight],
         }
       }

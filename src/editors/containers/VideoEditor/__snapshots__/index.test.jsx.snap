@@ -11,7 +11,7 @@ exports[`VideoEditor snapshots renders as expected with default behavior 1`] = `
   >
     <div
       style={
-        Object {
+        {
           "left": "50%",
           "position": "absolute",
           "top": "50%",

@@ -7,6 +7,7 @@
     "access": "public"
   },
   "scripts": {
+    "prepare": "make build",
     "build": "make build",
     "i18n_extract": "fedx-scripts formatjs extract",
     "lint": "fedx-scripts eslint --ext .js --ext .jsx .",
@@ -39,10 +40,10 @@
   "homepage": "https://github.com/edx/frontend-lib-content-components#readme",
   "devDependencies": {
     "@edx/browserslist-config": "^1.1.1",
-    "@edx/frontend-platform": "7.0.1",
-    "@edx/react-unit-test-utils": "2.0.0",
+    "@edx/frontend-platform": "8.0.0",
+    "@edx/react-unit-test-utils": "3.0.0",
     "@edx/reactifex": "^2.1.1",
-    "@openedx/frontend-build": "13.1.0",
+    "@openedx/frontend-build": "14.0.3",
     "@openedx/paragon": "^22.0.0",
     "@testing-library/dom": "^8.13.0",
     "@testing-library/jest-dom": "^5.16.5",
@@ -98,7 +99,7 @@
     "xmlchecker": "^0.1.0"
   },
   "peerDependencies": {
-    "@edx/frontend-platform": "^7.0.1",
+    "@edx/frontend-platform": "^7.0.1 || ^8.0.0",
     "@openedx/paragon": "^21.5.7 || ^22.0.0",
     "prop-types": "^15.5.10",
     "react": "^16.14.0 || ^17.0.0",

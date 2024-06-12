@@ -45,7 +45,7 @@ exports[`TranscriptActionMenu Snapshots snapshots: renders as expected with defa
   <FileInput
     acceptedFiles=".srt"
     fileInput={
-      Object {
+      {
         "click": [MockFunction click input],
         "onAddFile": [MockFunction module.hooks.replaceFileCallback],
       }
@@ -99,7 +99,7 @@ exports[`TranscriptActionMenu Snapshots snapshots: renders as expected with tran
   <FileInput
     acceptedFiles=".srt"
     fileInput={
-      Object {
+      {
         "click": [MockFunction click input],
         "onAddFile": [MockFunction module.hooks.replaceFileCallback],
       }

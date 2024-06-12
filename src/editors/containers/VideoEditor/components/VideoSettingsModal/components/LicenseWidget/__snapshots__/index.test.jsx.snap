@@ -5,7 +5,7 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with default pro
   subtitle={
     <div>
       <injectIntl(ShimmedIntlComponent)
-        details={Object {}}
+        details={{}}
         license="all-rights-reserved"
       />
       <div
@@ -30,12 +30,12 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with default pro
         license="all-rights-reserved"
       />
       <injectIntl(ShimmedIntlComponent)
-        details={Object {}}
+        details={{}}
         level="course"
         license="all-rights-reserved"
       />
       <injectIntl(ShimmedIntlComponent)
-        details={Object {}}
+        details={{}}
         license="all-rights-reserved"
         licenseDescription={
           <FormattedMessage
@@ -72,7 +72,7 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with isLibrary t
   subtitle={
     <div>
       <injectIntl(ShimmedIntlComponent)
-        details={Object {}}
+        details={{}}
         license="all-rights-reserved"
       />
       <div
@@ -97,12 +97,12 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with isLibrary t
         license="all-rights-reserved"
       />
       <injectIntl(ShimmedIntlComponent)
-        details={Object {}}
+        details={{}}
         level="library"
         license="all-rights-reserved"
       />
       <injectIntl(ShimmedIntlComponent)
-        details={Object {}}
+        details={{}}
         license="all-rights-reserved"
         licenseDescription={
           <FormattedMessage
@@ -122,7 +122,7 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with licenseType
   subtitle={
     <div>
       <injectIntl(ShimmedIntlComponent)
-        details={Object {}}
+        details={{}}
         license="all-rights-reserved"
       />
       <div
@@ -147,12 +147,12 @@ exports[`LicenseWidget snapshots snapshots: renders as expected with licenseType
         license="all-rights-reserved"
       />
       <injectIntl(ShimmedIntlComponent)
-        details={Object {}}
+        details={{}}
         level="block"
         license="all-rights-reserved"
       />
       <injectIntl(ShimmedIntlComponent)
-        details={Object {}}
+        details={{}}
         license="all-rights-reserved"
         licenseDescription={
           <FormattedMessage

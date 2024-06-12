@@ -11,7 +11,7 @@ exports[`AnswerOption render snapshot: renders correct option with feedback 1`] 
   >
     <Checker
       answer={
-        Object {
+        {
           "correct": true,
           "id": "A",
           "selectedFeedback": "some feedback",
@@ -37,7 +37,7 @@ exports[`AnswerOption render snapshot: renders correct option with feedback 1`] 
     <Body>
       <injectIntl(ShimmedIntlComponent)
         answer={
-          Object {
+          {
             "correct": true,
             "id": "A",
             "selectedFeedback": "some feedback",
@@ -45,7 +45,7 @@ exports[`AnswerOption render snapshot: renders correct option with feedback 1`] 
           }
         }
         intl={
-          Object {
+          {
             "formatMessage": [Function],
           }
         }
@@ -87,7 +87,7 @@ exports[`AnswerOption render snapshot: renders correct option with numeric input
   >
     <Checker
       answer={
-        Object {
+        {
           "correct": true,
           "id": "A",
           "selectedFeedback": "some feedback",
@@ -114,7 +114,7 @@ exports[`AnswerOption render snapshot: renders correct option with numeric input
     <Body>
       <injectIntl(ShimmedIntlComponent)
         answer={
-          Object {
+          {
             "correct": true,
             "id": "A",
             "selectedFeedback": "some feedback",
@@ -122,7 +122,7 @@ exports[`AnswerOption render snapshot: renders correct option with numeric input
           }
         }
         intl={
-          Object {
+          {
             "formatMessage": [Function],
           }
         }
@@ -164,7 +164,7 @@ exports[`AnswerOption render snapshot: renders correct option with numeric input
   >
     <Checker
       answer={
-        Object {
+        {
           "correct": true,
           "id": "A",
           "isAnswerRange": true,
@@ -204,7 +204,7 @@ exports[`AnswerOption render snapshot: renders correct option with numeric input
     <Body>
       <injectIntl(ShimmedIntlComponent)
         answer={
-          Object {
+          {
             "correct": true,
             "id": "A",
             "isAnswerRange": true,
@@ -214,7 +214,7 @@ exports[`AnswerOption render snapshot: renders correct option with numeric input
           }
         }
         intl={
-          Object {
+          {
             "formatMessage": [Function],
           }
         }
@@ -256,7 +256,7 @@ exports[`AnswerOption render snapshot: renders correct option with selected unse
   >
     <Checker
       answer={
-        Object {
+        {
           "correct": true,
           "id": "A",
           "selectedFeedback": "selected feedback",
@@ -283,7 +283,7 @@ exports[`AnswerOption render snapshot: renders correct option with selected unse
     <Body>
       <injectIntl(ShimmedIntlComponent)
         answer={
-          Object {
+          {
             "correct": true,
             "id": "A",
             "selectedFeedback": "selected feedback",
@@ -292,7 +292,7 @@ exports[`AnswerOption render snapshot: renders correct option with selected unse
           }
         }
         intl={
-          Object {
+          {
             "formatMessage": [Function],
           }
         }

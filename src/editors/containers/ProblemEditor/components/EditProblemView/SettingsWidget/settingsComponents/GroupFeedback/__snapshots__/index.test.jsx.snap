@@ -3,7 +3,7 @@
 exports[`HintsCard snapshot snapshot: renders groupFeedbacks setting card multiple groupFeedbacks 1`] = `
 <SettingsOption
   className=""
-  extraSections={Array []}
+  extraSections={[]}
   hasExpandableTextArea={true}
   none={false}
   summary=""
@@ -20,7 +20,7 @@ exports[`HintsCard snapshot snapshot: renders groupFeedbacks setting card multip
   </div>
   <injectIntl(ShimmedIntlComponent)
     answers={
-      Array [
+      [
         "A",
         "B",
         "C",
@@ -30,8 +30,8 @@ exports[`HintsCard snapshot snapshot: renders groupFeedbacks setting card multip
     key="1"
     props="propsValue"
     value={
-      Object {
-        "answers": Array [
+      {
+        "answers": [
           "A",
           "C",
         ],
@@ -43,7 +43,7 @@ exports[`HintsCard snapshot snapshot: renders groupFeedbacks setting card multip
   />
   <injectIntl(ShimmedIntlComponent)
     answers={
-      Array [
+      [
         "A",
         "B",
         "C",
@@ -53,8 +53,8 @@ exports[`HintsCard snapshot snapshot: renders groupFeedbacks setting card multip
     key="2"
     props="propsValue"
     value={
-      Object {
-        "answers": Array [
+      {
+        "answers": [
           "A",
         ],
         "feedback": "sOmE FeEDBACK oTher FeEdback",
@@ -82,7 +82,7 @@ exports[`HintsCard snapshot snapshot: renders groupFeedbacks setting card multip
 exports[`HintsCard snapshot snapshot: renders groupFeedbacks setting card no groupFeedbacks 1`] = `
 <SettingsOption
   className=""
-  extraSections={Array []}
+  extraSections={[]}
   hasExpandableTextArea={true}
   none={true}
   summary="None"
@@ -116,7 +116,7 @@ exports[`HintsCard snapshot snapshot: renders groupFeedbacks setting card no gro
 exports[`HintsCard snapshot snapshot: renders groupFeedbacks setting card one groupFeedback 1`] = `
 <SettingsOption
   className=""
-  extraSections={Array []}
+  extraSections={[]}
   hasExpandableTextArea={true}
   none={false}
   summary="groupFeedback1"
@@ -133,7 +133,7 @@ exports[`HintsCard snapshot snapshot: renders groupFeedbacks setting card one gr
   </div>
   <injectIntl(ShimmedIntlComponent)
     answers={
-      Array [
+      [
         "A",
         "B",
         "C",
@@ -143,8 +143,8 @@ exports[`HintsCard snapshot snapshot: renders groupFeedbacks setting card one gr
     key="1"
     props="propsValue"
     value={
-      Object {
-        "answers": Array [
+      {
+        "answers": [
           "A",
           "C",
         ],

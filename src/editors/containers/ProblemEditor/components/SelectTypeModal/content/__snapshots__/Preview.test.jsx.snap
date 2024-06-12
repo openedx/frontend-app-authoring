@@ -6,7 +6,7 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is ch
 <Container
   className="bg-light-300 rounded p-4"
   style={
-    Object {
+    {
       "height": "400px",
       "width": "494px",
     }
@@ -52,7 +52,7 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is mu
 <Container
   className="bg-light-300 rounded p-4"
   style={
-    Object {
+    {
       "height": "400px",
       "width": "494px",
     }
@@ -98,7 +98,7 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is nu
 <Container
   className="bg-light-300 rounded p-4"
   style={
-    Object {
+    {
       "height": "400px",
       "width": "494px",
     }
@@ -144,7 +144,7 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is op
 <Container
   className="bg-light-300 rounded p-4"
   style={
-    Object {
+    {
       "height": "400px",
       "width": "494px",
     }
@@ -190,7 +190,7 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is st
 <Container
   className="bg-light-300 rounded p-4"
   style={
-    Object {
+    {
       "height": "400px",
       "width": "494px",
     }

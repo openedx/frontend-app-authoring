@@ -3,7 +3,7 @@
 exports[`Video Selector Page snapshots rendering correctly with expected Input 1`] = `
 <Provider
   store={
-    Object {
+    {
       "dispatch": [Function],
       "getState": [Function],
       "replaceReducer": [Function],
@@ -29,7 +29,7 @@ exports[`Video Selector Page snapshots rendering correctly with expected Input 1
 exports[`Video Selector Page snapshots rendering with props to null 1`] = `
 <Provider
   store={
-    Object {
+    {
       "dispatch": [Function],
       "getState": [Function],
       "replaceReducer": [Function],

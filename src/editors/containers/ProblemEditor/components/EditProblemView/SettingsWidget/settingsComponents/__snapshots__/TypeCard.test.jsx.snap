@@ -3,13 +3,13 @@
 exports[`TypeCard snapshot snapshot: renders type setting card 1`] = `
 <SettingsOption
   className=""
-  extraSections={Array []}
+  extraSections={[]}
   hasExpandableTextArea={false}
   summary="Text input"
   title="Type"
 >
   <TypeRow
-    answers={Array []}
+    answers={[]}
     blockTitle="BLocktiTLE"
     correctAnswerCount={0}
     key="multiplechoiceresponse"
@@ -23,7 +23,7 @@ exports[`TypeCard snapshot snapshot: renders type setting card 1`] = `
     updateField={[MockFunction args.updateField]}
   />
   <TypeRow
-    answers={Array []}
+    answers={[]}
     blockTitle="BLocktiTLE"
     correctAnswerCount={0}
     key="choiceresponse"
@@ -37,7 +37,7 @@ exports[`TypeCard snapshot snapshot: renders type setting card 1`] = `
     updateField={[MockFunction args.updateField]}
   />
   <TypeRow
-    answers={Array []}
+    answers={[]}
     blockTitle="BLocktiTLE"
     correctAnswerCount={0}
     key="optionresponse"
@@ -51,7 +51,7 @@ exports[`TypeCard snapshot snapshot: renders type setting card 1`] = `
     updateField={[MockFunction args.updateField]}
   />
   <TypeRow
-    answers={Array []}
+    answers={[]}
     blockTitle="BLocktiTLE"
     correctAnswerCount={0}
     key="numericalresponse"
@@ -65,7 +65,7 @@ exports[`TypeCard snapshot snapshot: renders type setting card 1`] = `
     updateField={[MockFunction args.updateField]}
   />
   <TypeRow
-    answers={Array []}
+    answers={[]}
     blockTitle="BLocktiTLE"
     correctAnswerCount={0}
     key="stringresponse"

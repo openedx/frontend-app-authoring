@@ -3,7 +3,7 @@
 exports[`SourceCodeModal renders as expected with default behavior 1`] = `
 <BaseModal
   bodyStyle={
-    Object {
+    {
       "maxHeight": NaN,
     }
   }

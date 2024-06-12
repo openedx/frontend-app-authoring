@@ -43,10 +43,10 @@ exports[`LanguageSelector snapshot transcript option 1`] = `
   <FileInput
     acceptedFiles=".srt"
     fileInput={
-      Object {
+      {
         "addFile": [Function],
         "click": [Function],
-        "ref": Object {
+        "ref": {
           "current": undefined,
         },
       }
@@ -98,10 +98,10 @@ exports[`LanguageSelector snapshots -- no transcripts no Open Languages, all sho
   <FileInput
     acceptedFiles=".srt"
     fileInput={
-      Object {
+      {
         "addFile": [Function],
         "click": [Function],
-        "ref": Object {
+        "ref": {
           "current": undefined,
         },
       }

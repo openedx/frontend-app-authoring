@@ -74,7 +74,7 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
         >
           <Icon
             style={
-              Object {
+              {
                 "height": "16px",
                 "width": "16px",
               }
@@ -197,7 +197,7 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
         >
           <Icon
             style={
-              Object {
+              {
                 "height": "16px",
                 "width": "16px",
               }
@@ -316,7 +316,7 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
         >
           <Icon
             style={
-              Object {
+              {
                 "height": "16px",
                 "width": "16px",
               }
@@ -556,7 +556,7 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
         >
           <Icon
             style={
-              Object {
+              {
                 "height": "16px",
                 "width": "16px",
               }
@@ -734,7 +734,7 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
         >
           <Icon
             style={
-              Object {
+              {
                 "height": "16px",
                 "width": "16px",
               }
@@ -853,7 +853,7 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
         >
           <Icon
             style={
-              Object {
+              {
                 "height": "16px",
                 "width": "16px",
               }

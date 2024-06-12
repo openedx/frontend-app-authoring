@@ -6,7 +6,7 @@ exports[`AnswersContainer render snapshot: numeric problems: answer range/answer
 >
   <mockAnswerOption
     answer={
-      Object {
+      {
         "correct": true,
         "id": "A",
         "isAnswerRange": true,
@@ -110,7 +110,7 @@ exports[`AnswersContainer render snapshot: numeric problems: answer range/answer
 >
   <mockAnswerOption
     answer={
-      Object {
+      {
         "correct": true,
         "id": "A",
         "isAnswerRange": false,
@@ -124,7 +124,7 @@ exports[`AnswersContainer render snapshot: numeric problems: answer range/answer
   />
   <mockAnswerOption
     answer={
-      Object {
+      {
         "correct": true,
         "id": "B",
         "isAnswerRange": false,
@@ -202,7 +202,7 @@ exports[`AnswersContainer render snapshot: renders correctly with answers 1`] = 
 >
   <mockAnswerOption
     answer={
-      Object {
+      {
         "correct": true,
         "id": "a",
         "title": "sOMetITlE",
@@ -213,7 +213,7 @@ exports[`AnswersContainer render snapshot: renders correctly with answers 1`] = 
   />
   <mockAnswerOption
     answer={
-      Object {
+      {
         "correct": true,
         "id": "b",
         "title": "sOMetITlE",

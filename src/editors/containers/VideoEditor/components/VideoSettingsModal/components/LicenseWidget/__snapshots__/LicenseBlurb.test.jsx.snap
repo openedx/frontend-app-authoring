@@ -7,7 +7,7 @@ exports[`LicenseBlurb snapshots snapshots: renders as expected when details.attr
   <Icon
     className="mr-1"
     style={
-      Object {
+      {
         "height": "18px",
         "width": "18px",
       }
@@ -16,7 +16,7 @@ exports[`LicenseBlurb snapshots snapshots: renders as expected when details.attr
   <Icon
     className="mr-1 text-primary-300"
     style={
-      Object {
+      {
         "height": "18px",
         "width": "18px",
       }
@@ -25,7 +25,7 @@ exports[`LicenseBlurb snapshots snapshots: renders as expected when details.attr
   <Icon
     className="mr-1"
     style={
-      Object {
+      {
         "height": "18px",
         "width": "18px",
       }
@@ -50,7 +50,7 @@ exports[`LicenseBlurb snapshots snapshots: renders as expected when details.attr
   <Icon
     className="mr-1"
     style={
-      Object {
+      {
         "height": "18px",
         "width": "18px",
       }
@@ -59,7 +59,7 @@ exports[`LicenseBlurb snapshots snapshots: renders as expected when details.attr
   <Icon
     className="mr-1 text-primary-300"
     style={
-      Object {
+      {
         "height": "18px",
         "width": "18px",
       }
@@ -68,7 +68,7 @@ exports[`LicenseBlurb snapshots snapshots: renders as expected when details.attr
   <Icon
     className="mr-1"
     style={
-      Object {
+      {
         "height": "18px",
         "width": "18px",
       }
@@ -93,7 +93,7 @@ exports[`LicenseBlurb snapshots snapshots: renders as expected when details.attr
   <Icon
     className="mr-1"
     style={
-      Object {
+      {
         "height": "18px",
         "width": "18px",
       }
@@ -102,7 +102,7 @@ exports[`LicenseBlurb snapshots snapshots: renders as expected when details.attr
   <Icon
     className="mr-1 text-primary-300"
     style={
-      Object {
+      {
         "height": "18px",
         "width": "18px",
       }
@@ -111,7 +111,7 @@ exports[`LicenseBlurb snapshots snapshots: renders as expected when details.attr
   <Icon
     className="mr-1"
     style={
-      Object {
+      {
         "height": "18px",
         "width": "18px",
       }
@@ -136,7 +136,7 @@ exports[`LicenseBlurb snapshots snapshots: renders as expected when details.attr
   <Icon
     className="mr-1"
     style={
-      Object {
+      {
         "height": "18px",
         "width": "18px",
       }
@@ -145,7 +145,7 @@ exports[`LicenseBlurb snapshots snapshots: renders as expected when details.attr
   <Icon
     className="mr-1 text-primary-300"
     style={
-      Object {
+      {
         "height": "18px",
         "width": "18px",
       }
@@ -170,7 +170,7 @@ exports[`LicenseBlurb snapshots snapshots: renders as expected with default prop
   <Icon
     className="mr-1"
     style={
-      Object {
+      {
         "height": "18px",
         "width": "18px",
       }
@@ -195,7 +195,7 @@ exports[`LicenseBlurb snapshots snapshots: renders as expected with license equa
   <Icon
     className="mr-1"
     style={
-      Object {
+      {
         "height": "18px",
         "width": "18px",
       }

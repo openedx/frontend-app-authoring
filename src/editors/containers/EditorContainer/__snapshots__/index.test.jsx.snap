@@ -4,7 +4,7 @@ exports[`EditorContainer component render snapshot: initialized. enable save and
 <div
   className="editor-container d-flex flex-column position-relative zindex-0"
   style={
-    Object {
+    {
       "minHeight": "100%",
     }
   }
@@ -68,8 +68,8 @@ exports[`EditorContainer component render snapshot: initialized. enable save and
     disableSave={false}
     onCancel={[MockFunction openCancelConfirmModal]}
     onSave={
-      Object {
-        "handleSaveClicked": Object {
+      {
+        "handleSaveClicked": {
           "dispatch": [MockFunction react-redux.dispatch],
           "getContent": [MockFunction props.getContent],
           "returnFunction": [MockFunction props.returnFunction],
@@ -85,7 +85,7 @@ exports[`EditorContainer component render snapshot: not initialized. disable sav
 <div
   className="editor-container d-flex flex-column position-relative zindex-0"
   style={
-    Object {
+    {
       "minHeight": "100%",
     }
   }
@@ -145,8 +145,8 @@ exports[`EditorContainer component render snapshot: not initialized. disable sav
     disableSave={true}
     onCancel={[MockFunction openCancelConfirmModal]}
     onSave={
-      Object {
-        "handleSaveClicked": Object {
+      {
+        "handleSaveClicked": {
           "dispatch": [MockFunction react-redux.dispatch],
           "getContent": [MockFunction props.getContent],
           "returnFunction": [MockFunction props.returnFunction],

@@ -7,17 +7,17 @@ exports[`ImageSettingsModal render snapshot 1`] = `
   confirmAction={
     <Button
       onClick={
-        Object {
-          "hooks.onSaveClick": Object {
-            "altText": Object {
-              "error": Object {
+        {
+          "hooks.onSaveClick": {
+            "altText": {
+              "error": {
                 "dismiss": [MockFunction],
                 "show": true,
               },
               "isDecorative": false,
               "value": "alternative Taxes",
             },
-            "dimensions": Object {
+            "dimensions": {
               "height": 13,
               "width": 12,
             },
@@ -74,9 +74,9 @@ exports[`ImageSettingsModal render snapshot 1`] = `
       <Image
         className="img-settings-thumbnail"
         onError={
-          Object {
-            "hooks.dimensions.onImgLoad.callback": Object {
-              "selection": Object {
+          {
+            "hooks.dimensions.onImgLoad.callback": {
+              "selection": {
                 "altText": "AlTTExt",
                 "externalUrl": "ExtERNALurL",
                 "url": "UrL",
@@ -85,9 +85,9 @@ exports[`ImageSettingsModal render snapshot 1`] = `
           }
         }
         onLoad={
-          Object {
-            "hooks.dimensions.onImgLoad.callback": Object {
-              "selection": Object {
+          {
+            "hooks.dimensions.onImgLoad.callback": {
+              "selection": {
                 "altText": "AlTTExt",
                 "externalUrl": "ExtERNALurL",
                 "url": "UrL",
@@ -107,28 +107,28 @@ exports[`ImageSettingsModal render snapshot 1`] = `
       <DimensionControls
         onImgLoad={
           [MockFunction hooks.dimensions.onImgLoad] {
-            "calls": Array [
-              Array [
-                Object {
+            "calls": [
+              [
+                {
                   "altText": "AlTTExt",
                   "externalUrl": "ExtERNALurL",
                   "url": "UrL",
                 },
               ],
-              Array [
-                Object {
+              [
+                {
                   "altText": "AlTTExt",
                   "externalUrl": "ExtERNALurL",
                   "url": "UrL",
                 },
               ],
             ],
-            "results": Array [
-              Object {
+            "results": [
+              {
                 "type": "return",
-                "value": Object {
-                  "hooks.dimensions.onImgLoad.callback": Object {
-                    "selection": Object {
+                "value": {
+                  "hooks.dimensions.onImgLoad.callback": {
+                    "selection": {
                       "altText": "AlTTExt",
                       "externalUrl": "ExtERNALurL",
                       "url": "UrL",
@@ -136,11 +136,11 @@ exports[`ImageSettingsModal render snapshot 1`] = `
                   },
                 },
               },
-              Object {
+              {
                 "type": "return",
-                "value": Object {
-                  "hooks.dimensions.onImgLoad.callback": Object {
-                    "selection": Object {
+                "value": {
+                  "hooks.dimensions.onImgLoad.callback": {
+                    "selection": {
                       "altText": "AlTTExt",
                       "externalUrl": "ExtERNALurL",
                       "url": "UrL",
@@ -152,7 +152,7 @@ exports[`ImageSettingsModal render snapshot 1`] = `
           }
         }
         value={
-          Object {
+          {
             "height": 13,
             "width": 12,
           }
@@ -160,7 +160,7 @@ exports[`ImageSettingsModal render snapshot 1`] = `
       />
       <AltTextControls
         error={
-          Object {
+          {
             "dismiss": [MockFunction],
             "show": true,
           }

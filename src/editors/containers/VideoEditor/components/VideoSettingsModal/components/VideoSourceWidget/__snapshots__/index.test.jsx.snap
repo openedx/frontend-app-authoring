@@ -125,7 +125,7 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with default
       >
         <Icon
           style={
-            Object {
+            {
               "height": "16px",
               "width": "16px",
             }
@@ -278,7 +278,7 @@ exports[`VideoSourceWidget snapshots snapshots: renders as expected with videoSh
       >
         <Icon
           style={
-            Object {
+            {
               "height": "16px",
               "width": "16px",
             }

@@ -3,7 +3,7 @@
 exports[`SelectImageModal component snapshot 1`] = `
 <SelectionModal
   acceptedFiles={
-    Object {
+    {
       "gif": ".gif",
       "ico": ".ico",
       "jpeg": ".jpeg",
@@ -15,16 +15,16 @@ exports[`SelectImageModal component snapshot 1`] = `
   }
   close={[MockFunction props.close]}
   fileInput={
-    Object {
+    {
       "addFile": "imgHooks.fileInput.addFile",
       "click": "imgHooks.fileInput.click",
       "ref": "imgHooks.fileInput.ref",
     }
   }
   galleryError={
-    Object {
+    {
       "dismiss": [MockFunction],
-      "message": Object {
+      "message": {
         "defaultMessage": "Gallery error",
         "description": "Gallery error",
         "id": "Gallery error id",
@@ -34,14 +34,14 @@ exports[`SelectImageModal component snapshot 1`] = `
     }
   }
   galleryProps={
-    Object {
+    {
       "gallery": "props",
     }
   }
   inputError={
-    Object {
+    {
       "dismiss": [MockFunction],
-      "message": Object {
+      "message": {
         "defaultMessage": "Input error",
         "description": "Input error",
         "id": "Input error id",
@@ -52,28 +52,28 @@ exports[`SelectImageModal component snapshot 1`] = `
   }
   isOpen={true}
   modalMessages={
-    Object {
-      "confirmMsg": Object {
+    {
+      "confirmMsg": {
         "defaultMessage": "Next",
         "description": "Label for Next button",
         "id": "authoring.texteditor.selectimagemodal.next.label",
       },
-      "fetchError": Object {
+      "fetchError": {
         "defaultMessage": "Failed to obtain course images. Please try again.",
         "description": "Message presented to user when images are not found",
         "id": "authoring.texteditor.selectimagemodal.error.fetchImagesError",
       },
-      "titleMsg": Object {
+      "titleMsg": {
         "defaultMessage": "Add an image",
         "description": "Title for the select image modal",
         "id": "authoring.texteditor.selectimagemodal.title.label",
       },
-      "uploadButtonMsg": Object {
+      "uploadButtonMsg": {
         "defaultMessage": "Upload a new image (10 MB max)",
         "description": "Label for upload button",
         "id": "authoring.texteditor.selectimagemodal.upload.label",
       },
-      "uploadError": Object {
+      "uploadError": {
         "defaultMessage": "Failed to upload image. Please try again.",
         "description": "Message presented to user when image fails to upload",
         "id": "authoring.texteditor.selectimagemodal.error.uploadImageError",
@@ -81,12 +81,12 @@ exports[`SelectImageModal component snapshot 1`] = `
     }
   }
   searchSortProps={
-    Object {
+    {
       "search": "sortProps",
     }
   }
   selectBtnProps={
-    Object {
+    {
       "select": "btnProps",
     }
   }

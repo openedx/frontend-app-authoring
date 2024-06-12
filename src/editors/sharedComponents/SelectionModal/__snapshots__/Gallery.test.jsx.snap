@@ -3,9 +3,9 @@
 exports[`TextEditor Image Gallery component component snapshot: loaded but no images, show empty gallery 1`] = `
 <[object Object]
   value={
-    Object {
+    {
       "$t": [Function],
-      "defaultFormats": Object {},
+      "defaultFormats": {},
       "defaultLocale": "en",
       "defaultRichTextElements": undefined,
       "fallbackOnEmptyString": true,
@@ -22,8 +22,8 @@ exports[`TextEditor Image Gallery component component snapshot: loaded but no im
       "formatRelativeTime": [Function],
       "formatTime": [Function],
       "formatTimeToParts": [Function],
-      "formats": Object {},
-      "formatters": Object {
+      "formats": {},
+      "formatters": {
         "getDateTimeFormat": [Function],
         "getDisplayNames": [Function],
         "getListFormat": [Function],
@@ -33,7 +33,7 @@ exports[`TextEditor Image Gallery component component snapshot: loaded but no im
         "getRelativeTimeFormat": [Function],
       },
       "locale": "en",
-      "messages": Object {},
+      "messages": {},
       "onError": [Function],
       "onWarn": [Function],
       "textComponent": Symbol(react.fragment),
@@ -44,20 +44,20 @@ exports[`TextEditor Image Gallery component component snapshot: loaded but no im
 >
   <Gallery
     displayList={
-      Array [
-        Object {
+      [
+        {
           "id": 1,
         },
-        Object {
+        {
           "id": 2,
         },
-        Object {
+        {
           "id": 3,
         },
       ]
     }
     emptyGalleryLabel={
-      Object {
+      {
         "defaultMessage": "Empty Gallery",
         "id": "emptyGalleryMsg",
       }
@@ -77,9 +77,9 @@ exports[`TextEditor Image Gallery component component snapshot: loaded but no im
 exports[`TextEditor Image Gallery component component snapshot: loaded but search returns no images, show 0 search result gallery 1`] = `
 <[object Object]
   value={
-    Object {
+    {
       "$t": [Function],
-      "defaultFormats": Object {},
+      "defaultFormats": {},
       "defaultLocale": "en",
       "defaultRichTextElements": undefined,
       "fallbackOnEmptyString": true,
@@ -96,8 +96,8 @@ exports[`TextEditor Image Gallery component component snapshot: loaded but searc
       "formatRelativeTime": [Function],
       "formatTime": [Function],
       "formatTimeToParts": [Function],
-      "formats": Object {},
-      "formatters": Object {
+      "formats": {},
+      "formatters": {
         "getDateTimeFormat": [Function],
         "getDisplayNames": [Function],
         "getListFormat": [Function],
@@ -107,7 +107,7 @@ exports[`TextEditor Image Gallery component component snapshot: loaded but searc
         "getRelativeTimeFormat": [Function],
       },
       "locale": "en",
-      "messages": Object {},
+      "messages": {},
       "onError": [Function],
       "onWarn": [Function],
       "textComponent": Symbol(react.fragment),
@@ -118,20 +118,20 @@ exports[`TextEditor Image Gallery component component snapshot: loaded but searc
 >
   <Gallery
     displayList={
-      Array [
-        Object {
+      [
+        {
           "id": 1,
         },
-        Object {
+        {
           "id": 2,
         },
-        Object {
+        {
           "id": 3,
         },
       ]
     }
     emptyGalleryLabel={
-      Object {
+      {
         "defaultMessage": "Empty Gallery",
         "id": "emptyGalleryMsg",
       }
@@ -151,9 +151,9 @@ exports[`TextEditor Image Gallery component component snapshot: loaded but searc
 exports[`TextEditor Image Gallery component component snapshot: loaded, show gallery 1`] = `
 <[object Object]
   value={
-    Object {
+    {
       "$t": [Function],
-      "defaultFormats": Object {},
+      "defaultFormats": {},
       "defaultLocale": "en",
       "defaultRichTextElements": undefined,
       "fallbackOnEmptyString": true,
@@ -170,8 +170,8 @@ exports[`TextEditor Image Gallery component component snapshot: loaded, show gal
       "formatRelativeTime": [Function],
       "formatTime": [Function],
       "formatTimeToParts": [Function],
-      "formats": Object {},
-      "formatters": Object {
+      "formats": {},
+      "formatters": {
         "getDateTimeFormat": [Function],
         "getDisplayNames": [Function],
         "getListFormat": [Function],
@@ -181,7 +181,7 @@ exports[`TextEditor Image Gallery component component snapshot: loaded, show gal
         "getRelativeTimeFormat": [Function],
       },
       "locale": "en",
-      "messages": Object {},
+      "messages": {},
       "onError": [Function],
       "onWarn": [Function],
       "textComponent": Symbol(react.fragment),
@@ -192,20 +192,20 @@ exports[`TextEditor Image Gallery component component snapshot: loaded, show gal
 >
   <Gallery
     displayList={
-      Array [
-        Object {
+      [
+        {
           "id": 1,
         },
-        Object {
+        {
           "id": 2,
         },
-        Object {
+        {
           "id": 3,
         },
       ]
     }
     emptyGalleryLabel={
-      Object {
+      {
         "defaultMessage": "Empty Gallery",
         "id": "emptyGalleryMsg",
       }
@@ -225,9 +225,9 @@ exports[`TextEditor Image Gallery component component snapshot: loaded, show gal
 exports[`TextEditor Image Gallery component component snapshot: not loaded, show spinner 1`] = `
 <[object Object]
   value={
-    Object {
+    {
       "$t": [Function],
-      "defaultFormats": Object {},
+      "defaultFormats": {},
       "defaultLocale": "en",
       "defaultRichTextElements": undefined,
       "fallbackOnEmptyString": true,
@@ -244,8 +244,8 @@ exports[`TextEditor Image Gallery component component snapshot: not loaded, show
       "formatRelativeTime": [Function],
       "formatTime": [Function],
       "formatTimeToParts": [Function],
-      "formats": Object {},
-      "formatters": Object {
+      "formats": {},
+      "formatters": {
         "getDateTimeFormat": [Function],
         "getDisplayNames": [Function],
         "getListFormat": [Function],
@@ -255,7 +255,7 @@ exports[`TextEditor Image Gallery component component snapshot: not loaded, show
         "getRelativeTimeFormat": [Function],
       },
       "locale": "en",
-      "messages": Object {},
+      "messages": {},
       "onError": [Function],
       "onWarn": [Function],
       "textComponent": Symbol(react.fragment),
@@ -266,20 +266,20 @@ exports[`TextEditor Image Gallery component component snapshot: not loaded, show
 >
   <Gallery
     displayList={
-      Array [
-        Object {
+      [
+        {
           "id": 1,
         },
-        Object {
+        {
           "id": 2,
         },
-        Object {
+        {
           "id": 3,
         },
       ]
     }
     emptyGalleryLabel={
-      Object {
+      {
         "defaultMessage": "Empty Gallery",
         "id": "emptyGalleryMsg",
       }

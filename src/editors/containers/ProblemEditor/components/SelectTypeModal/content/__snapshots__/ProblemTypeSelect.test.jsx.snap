@@ -3,7 +3,7 @@
 exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
 <Container
   style={
-    Object {
+    {
       "height": "400px",
       "width": "494px",
     }
@@ -108,7 +108,7 @@ exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
 exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
 <Container
   style={
-    Object {
+    {
       "height": "400px",
       "width": "494px",
     }
@@ -213,7 +213,7 @@ exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
 exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
 <Container
   style={
-    Object {
+    {
       "height": "400px",
       "width": "494px",
     }
@@ -318,7 +318,7 @@ exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
 exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
 <Container
   style={
-    Object {
+    {
       "height": "400px",
       "width": "494px",
     }
@@ -423,7 +423,7 @@ exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
 exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
 <Container
   style={
-    Object {
+    {
       "height": "400px",
       "width": "494px",
     }

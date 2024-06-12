@@ -8,7 +8,7 @@ exports[`CollapsibleFormWidget render snapshots: renders as expected with defaul
   <Trigger
     className="collapsible-trigger d-flex border-0 align-items-center pt-4 p-0"
     style={
-      Object {
+      {
         "justifyContent": "unset",
       }
     }
@@ -79,7 +79,7 @@ exports[`CollapsibleFormWidget render snapshots: renders with open={true} when t
   <Trigger
     className="collapsible-trigger d-flex border-0 align-items-center pt-4 p-0"
     style={
-      Object {
+      {
         "justifyContent": "unset",
       }
     }
