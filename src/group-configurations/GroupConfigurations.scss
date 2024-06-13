@@ -21,10 +21,9 @@
   margin-bottom: map-get($spacers, 4);
 
   .configuration-card-header {
-    @extend %d-flex;
-    @extend %align-items-center;
-    @extend %align-content-center;
-    @extend %justify-content-between;
+    display: flex;
+    align-items: center;
+    place-content: center space-between;
 
     .configuration-card-header__button {
       display: flex;
