@@ -96,7 +96,7 @@ describe('<LibraryAuthoringPage />', () => {
       index_name: 'studio',
       api_key: 'test-key',
     });
-    //
+
     // The Meilisearch client-side API uses fetch, not Axios.
     fetchMock.post(searchEndpoint, (_url, req) => {
       const requestData = JSON.parse(req.body?.toString() ?? '');

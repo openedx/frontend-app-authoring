@@ -96,6 +96,7 @@ const LibraryAuthoringPage = () => {
           value={searchKeywords}
           placeholder={intl.formatMessage(messages.searchPlaceholder)}
           onChange={(value) => setSearchKeywords(value)}
+          onSubmit={() => {}}
           className="w-50"
         />
         <Tabs
