@@ -42,7 +42,7 @@ const CardItem = ({
   const isShowRerunLink = allowCourseReruns
     && rerunCreatorStatus
     && courseCreatorStatus === COURSE_CREATOR_STATES.granted;
-  const hasDisplayName = displayName.trim().length ? displayName : courseKey;
+  const hasDisplayName = (displayName ?? '').trim().length ? displayName : courseKey;
 
   return (
     <Card className="card-item">

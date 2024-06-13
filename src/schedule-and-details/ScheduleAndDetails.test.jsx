@@ -137,9 +137,7 @@ describe('<ScheduleAndDetails />', () => {
     await waitFor(() => {
       inputs = getAllByPlaceholderText(DATE_FORMAT.toLocaleUpperCase());
     });
-    await act(async () => {
-      fireEvent.change(inputs[0], { target: { value: '06/16/2023' } });
-    });
+    fireEvent.change(inputs[0], { target: { value: '06/16/2023' } });
 
     expect(
       getByText(messages.alertWarning.defaultMessage),
