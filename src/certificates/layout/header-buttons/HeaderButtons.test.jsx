@@ -59,10 +59,10 @@ describe('HeaderButtons Component', () => {
     expect(previewLink).toHaveAttribute('href', expect.stringContaining(certificatesDataMock.courseModes[0]));
 
     const dropdownButton = getByRole('button', { name: certificatesDataMock.courseModes[0] });
-    await userEvent.click(dropdownButton);
+    userEvent.click(dropdownButton);
 
     const verifiedMode = await getByRole('button', { name: certificatesDataMock.courseModes[1] });
-    await userEvent.click(verifiedMode);
+    userEvent.click(verifiedMode);
 
     await waitFor(() => {
       expect(previewLink).toHaveAttribute('href', expect.stringContaining(certificatesDataMock.courseModes[1]));
@@ -78,7 +78,7 @@ describe('HeaderButtons Component', () => {
     const { getByRole, queryByRole } = renderComponent();
 
     const activationButton = getByRole('button', { name: messages.headingActionsActivate.defaultMessage });
-    await userEvent.click(activationButton);
+    userEvent.click(activationButton);
 
     axiosMock.onPost(
       getUpdateCertificateApiUrl(courseId, certificatesDataMock.certificates[0].id),
@@ -110,7 +110,7 @@ describe('HeaderButtons Component', () => {
     const { getByRole, queryByRole } = renderComponent();
 
     const deactivateButton = getByRole('button', { name: messages.headingActionsDeactivate.defaultMessage });
-    await userEvent.click(deactivateButton);
+    userEvent.click(deactivateButton);
 
     axiosMock.onPost(
       getUpdateCertificateApiUrl(courseId, certificatesDataMock.certificates[0].id),

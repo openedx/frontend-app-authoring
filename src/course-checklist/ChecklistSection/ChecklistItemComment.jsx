@@ -79,10 +79,9 @@ const ChecklistItemComment = ({
         <ul className="assignment-list">
           {gradedAssignmentsOutsideDateRange.map(assignment => (
             <li className="assignment-list-item" key={assignment.id}>
-              <Hyperlink
-                content={assignment.displayName}
-                destination={`${outlineUrl}#${assignment.id}`}
-              />
+              <Hyperlink destination={`${outlineUrl}#${assignment.id}`}>
+                {assignment.displayName}
+              </Hyperlink>
             </li>
           ))}
         </ul>
