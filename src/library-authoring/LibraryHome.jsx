@@ -8,7 +8,7 @@ import {
 
 import { NoComponents, NoSearchResults } from './EmptyStates';
 import LibraryCollections from './LibraryCollections';
-import LibraryComponents from './LibraryComponents';
+import LibraryComponents from './components/LibraryComponents';
 import { useLibraryComponentCount } from './data/apiHook';
 import messages from './messages';
 

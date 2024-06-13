@@ -15,7 +15,7 @@ import Loading from '../generic/Loading';
 import SubHeader from '../generic/sub-header/SubHeader';
 import Header from '../header';
 import NotFoundAlert from '../generic/NotFoundAlert';
-import LibraryComponents from './LibraryComponents';
+import LibraryComponents from './components/LibraryComponents';
 import LibraryCollections from './LibraryCollections';
 import LibraryHome from './LibraryHome';
 import { useContentLibrary } from './data/apiHook';

@@ -8,6 +8,7 @@ const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
  * @param {string} libraryId - The ID of the library to fetch.
  */
 export const getContentLibraryApiUrl = (libraryId) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/`;
+// export const getLibraryBlocks = (libraryId) => `${getApiBaseUrl()}/`
 
 /**
  * Fetch a content library by its ID.
