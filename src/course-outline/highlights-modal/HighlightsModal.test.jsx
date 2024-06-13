@@ -5,16 +5,12 @@ import {
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { useSelector } from 'react-redux';
 import { initializeMockApp } from '@edx/frontend-platform';
-import MockAdapter from 'axios-mock-adapter';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider } from '@edx/frontend-platform/react';
 
 import initializeStore from '../../store';
 import HighlightsModal from './HighlightsModal';
 import messages from './messages';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-let axiosMock;
 let store;
 const mockPathname = '/foo-bar';
 
@@ -68,7 +64,6 @@ describe('<HighlightsModal />', () => {
     });
 
     store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     useSelector.mockReturnValue(currentItemMock);
   });
 
