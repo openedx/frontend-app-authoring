@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  act,
   fireEvent,
   screen,
   render,
@@ -129,9 +128,7 @@ describe('<CreateOrRerunCourseForm />', () => {
     render(<RootWrapper {...props} />);
     await mockStore();
     const cancelBtn = screen.getByRole('button', { name: messages.cancelButton.defaultMessage });
-    await act(async () => {
-      fireEvent.click(cancelBtn);
-    });
+    fireEvent.click(cancelBtn);
 
     expect(onClickCancelMock).toHaveBeenCalled();
   });
@@ -147,13 +144,11 @@ describe('<CreateOrRerunCourseForm />', () => {
       const runInput = screen.getByPlaceholderText(messages.courseRunPlaceholder.defaultMessage);
       const createBtn = screen.getByRole('button', { name: messages.createButton.defaultMessage });
 
-      await userEvent.type(displayNameInput, 'foo course name');
-      await act(async () => {
-        fireEvent.click(orgInput);
-      });
-      await userEvent.type(numberInput, '777');
-      await userEvent.type(runInput, '1');
-      await userEvent.click(createBtn);
+      userEvent.type(displayNameInput, 'foo course name');
+      fireEvent.click(orgInput);
+      userEvent.type(numberInput, '777');
+      userEvent.type(runInput, '1');
+      userEvent.click(createBtn);
       await axiosMock.onPost(getCreateOrRerunCourseUrl()).reply(200, { url });
       await executeThunk(updateCreateOrRerunCourseQuery({ org: 'testX', run: 'some' }), store.dispatch);
 
@@ -171,13 +166,11 @@ describe('<CreateOrRerunCourseForm />', () => {
       const createBtn = screen.getByRole('button', { name: messages.createButton.defaultMessage });
       await axiosMock.onPost(getCreateOrRerunCourseUrl()).reply(200, { url, destinationCourseKey });
 
-      await userEvent.type(displayNameInput, 'foo course name');
-      await act(() => {
-        fireEvent.click(orgInput);
-      });
-      await userEvent.type(numberInput, '777');
-      await userEvent.type(runInput, '1');
-      await userEvent.click(createBtn);
+      userEvent.type(displayNameInput, 'foo course name');
+      fireEvent.click(orgInput);
+      userEvent.type(numberInput, '777');
+      userEvent.type(runInput, '1');
+      userEvent.click(createBtn);
       await executeThunk(updateCreateOrRerunCourseQuery({ org: 'testX', run: 'some' }), store.dispatch);
 
       expect(mockedUsedNavigate).toHaveBeenCalledWith(`${url}${destinationCourseKey}`);
@@ -208,12 +201,10 @@ describe('<CreateOrRerunCourseForm />', () => {
     const numberInput = screen.getByPlaceholderText(messages.courseNumberPlaceholder.defaultMessage);
     const runInput = screen.getByPlaceholderText(messages.courseRunPlaceholder.defaultMessage);
 
-    await act(async () => {
-      fireEvent.change(displayNameInput, { target: { value: 'foo course name' } });
-      fireEvent.click(orgInput);
-      fireEvent.change(numberInput, { target: { value: 'number with invalid (+) symbol' } });
-      fireEvent.change(runInput, { target: { value: 'number with invalid (=) symbol' } });
-    });
+    fireEvent.change(displayNameInput, { target: { value: 'foo course name' } });
+    fireEvent.click(orgInput);
+    fireEvent.change(numberInput, { target: { value: 'number with invalid (+) symbol' } });
+    fireEvent.change(runInput, { target: { value: 'number with invalid (=) symbol' } });
 
     waitFor(() => {
       expect(createBtn).toBeDisabled();
@@ -262,9 +253,7 @@ describe('<CreateOrRerunCourseForm />', () => {
     await mockStore();
     const numberInput = screen.getByPlaceholderText(messages.courseNumberPlaceholder.defaultMessage);
 
-    await act(async () => {
-      fireEvent.change(numberInput, { target: { value: 'number with invalid (+) symbol' } });
-    });
+    fireEvent.change(numberInput, { target: { value: 'number with invalid (+) symbol' } });
 
     waitFor(() => {
       expect(screen.getByText(messages.noSpaceError)).toBeInTheDocument();

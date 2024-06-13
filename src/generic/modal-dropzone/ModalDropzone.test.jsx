@@ -116,7 +116,7 @@ describe('<ModalDropzone />', () => {
     const dropzoneInput = getByRole('presentation', { hidden: true }).firstChild;
     const uploadButton = getByRole('button', { name: messages.uploadModal.defaultMessage });
 
-    await userEvent.upload(dropzoneInput, file);
+    userEvent.upload(dropzoneInput, file);
 
     await waitFor(() => {
       expect(uploadButton).not.toBeDisabled();
