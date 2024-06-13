@@ -102,7 +102,6 @@ export function fetchCourseOutlineIndexQuery(courseId) {
       if (error.response && error.response.status === 403) {
         dispatch(updateOutlineIndexLoadingStatus({
           status: RequestStatus.DENIED,
-          errors: getErrorDetails(error, false),
         }));
       } else {
         dispatch(updateOutlineIndexLoadingStatus({

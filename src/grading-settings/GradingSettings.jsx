@@ -8,6 +8,7 @@ import {
   useGradingSettings,
   useGradingSettingUpdater,
 } from 'CourseAuthoring/grading-settings/data/apiHooks';
+import { RequestStatus } from 'CourseAuthoring/data/constants';
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
@@ -47,8 +48,7 @@ const GradingSettings = ({ courseId }) => {
 
   const courseAssignmentLists = gradingSettings?.courseAssignmentLists;
   const courseGradingDetails = gradingSettings?.courseDetails;
-
-  const isLoadingDenied = loadingStatus === RequestStatus.DENIED;
+  const isLoadingDenied = isCourseSettingsLoading === RequestStatus.DENIED;
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const isLoading = isCourseSettingsLoading || isGradingSettingsLoading;
   const [isQueryPending, setIsQueryPending] = useState(false);
