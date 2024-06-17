@@ -1,17 +1,15 @@
 // @ts-check
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   Stack,
   Icon,
   IconButton,
 } from '@openedx/paragon';
-import { useDispatch, useSelector } from 'react-redux';
 import { Close } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { getSidebarBodyComponent } from '../data/selectors';
-import { closeLibrarySidebar } from '../data/slice';
 import messages from '../messages';
 import { AddContentContainer } from '../add-content';
+import { LibraryContext } from '../common';
 
 /**
  * Sidebar container for library pages.
@@ -24,14 +22,13 @@ import { AddContentContainer } from '../add-content';
  */
 const LibrarySidebar = () => {
   const intl = useIntl();
-  const bodyComponent = useSelector(getSidebarBodyComponent);
-  const dispatch = useDispatch();
+  const { sidebarBodyComponent, closeLibrarySidebar } = useContext(LibraryContext);
 
   const bodyComponentMap = {
     'add-content': <AddContentContainer />,
   };
 
-  const buildBody = () => bodyComponentMap[bodyComponent];
+  const buildBody = () => bodyComponentMap[sidebarBodyComponent];
 
   return (
     <div className="p-2 vh-100">
@@ -43,7 +40,7 @@ const LibrarySidebar = () => {
           src={Close}
           iconAs={Icon}
           alt={intl.formatMessage(messages.closeButtonAlt)}
-          onClick={() => dispatch(closeLibrarySidebar())}
+          onClick={closeLibrarySidebar}
           variant="black"
         />
       </Stack>

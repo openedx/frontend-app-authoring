@@ -1,5 +1,5 @@
 // @ts-check
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   Stack,
   Button,
@@ -15,17 +15,16 @@ import {
   VideoCamera,
 } from '@openedx/paragon/icons';
 import { v4 as uuid4 } from 'uuid';
-import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { ToastContext } from '../../generic/toast-context';
 import { useCreateLibraryBlock } from '../data/apiHook';
 import messages from './messages';
-import { showToast } from '../data/slice';
 
 const AddContentContainer = () => {
   const intl = useIntl();
   const { libraryId } = useParams();
   const createBlockMutation = useCreateLibraryBlock();
-  const dispatch = useDispatch();
+  const { showToast } = useContext(ToastContext);
 
   const contentTypes = [
     {
@@ -73,9 +72,9 @@ const AddContentContainer = () => {
         blockType,
         definitionId: `${uuid4()}`,
       }).then(() => {
-        dispatch(showToast({ toastMessage: intl.formatMessage(messages.successCreateMessage) }));
+        showToast(intl.formatMessage(messages.successCreateMessage));
       }).catch(() => {
-        dispatch(showToast({ toastMessage: intl.formatMessage(messages.errorCreateMessage) }));
+        showToast(intl.formatMessage(messages.errorCreateMessage));
       });
     }
   };

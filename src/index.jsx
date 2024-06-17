@@ -14,9 +14,10 @@ import {
 
 import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
+import { Toast } from '@openedx/paragon';
 import messages from './i18n';
 
-import { CreateLibrary, LibraryAuthoringPage } from './library-authoring';
+import { CreateLibrary, LibraryLayout } from './library-authoring';
 import initializeStore from './store';
 import CourseAuthoringRoutes from './CourseAuthoringRoutes';
 import Head from './head/Head';
@@ -28,6 +29,7 @@ import AccessibilityPage from './accessibility-page';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
+import { useToastContext, ToastContext } from './generic/toast-context';
 
 const queryClient = new QueryClient();
 
@@ -53,7 +55,7 @@ const App = () => {
         <Route path="/libraries" element={<StudioHome />} />
         <Route path="/libraries-v1" element={<StudioHome />} />
         <Route path="/library/create" element={<CreateLibrary />} />
-        <Route path="/library/:libraryId/*" element={<LibraryAuthoringPage />} />
+        <Route path="/library/:libraryId/*" element={<LibraryLayout />} />
         <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
         <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
         {getConfig().ENABLE_ACCESSIBILITY_PAGE === 'true' && (
@@ -80,12 +82,27 @@ const App = () => {
     },
   );
 
+  // Global toast context to open a toast in
+  // any component of the MFE.
+  const toastContext = useToastContext();
+  const { toastMessage, closeToast } = toastContext;
+
   return (
     <AppProvider store={initializeStore()} wrapWithRouter={false}>
-      <QueryClientProvider client={queryClient}>
-        <Head />
-        <RouterProvider router={router} />
-      </QueryClientProvider>
+      <ToastContext.Provider value={toastContext}>
+        <QueryClientProvider client={queryClient}>
+          <Head />
+          <RouterProvider router={router} />
+        </QueryClientProvider>
+        { toastMessage && (
+          <Toast
+            show={toastMessage !== null}
+            onClose={closeToast}
+          >
+            {toastMessage}
+          </Toast>
+        )}
+      </ToastContext.Provider>
     </AppProvider>
   );
 };
