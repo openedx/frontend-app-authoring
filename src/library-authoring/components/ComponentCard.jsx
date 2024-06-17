@@ -12,6 +12,8 @@ import { MoreVert } from '@openedx/paragon/icons';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import TagCount from '../../generic/tag-count';
+import getItemIcon from '../../search-modal/utils';
+import getComponentColor from '../utils';
 
 const ComponentCardMenu = () => (
   <Dropdown>
@@ -42,52 +44,59 @@ const ComponentCardMenu = () => (
   </Dropdown>
 );
 
-const ComponentCard = ({ icon, tagCount, blockType }) => (
-  <Container className="library-component-card">
-    <Card>
-      <Card.Header
-        className={`library-component-header-${blockType}`}
-        title={
-          <Icon src={icon} />
-        }
-        actions={(
-          <ActionRow>
-            <ComponentCardMenu />
-          </ActionRow>
-        )}
-      />
-      <Card.Body>
-        <Card.Section>
-          <Stack direction="horizontal" className="d-flex justify-content-between">
-            <Stack direction="horizontal">
-              <Icon src={icon} size="sm" />
-              <span className="small">Type</span>
-            </Stack>
-            <TagCount count={tagCount} />
-          </Stack>
-          <div className="h3 text-truncate mt-2">
-            Este es un titulo largo pero muuuuuyyyyyy largoooooo.
-          </div>
-          <p className="library-component-card-description">
-            This is a long. long. long descriprioooon
-            This is a long. long. long descriprioooon
-            This is a long. long. long descriprioooon
-            This is a long. long. long descriprioooon
-            This is a long. long. long descriprioooon
-            This is a long. long. long descriprioooon
-            This is a long. long. long descriprioooon
-            This is a long. long. long descriprioooon
-            This is a long. long. long descriprioooon
-          </p>
-        </Card.Section>
-      </Card.Body>
+const ComponentCard = ({
+  isLoading,
+  title,
+  description,
+  tagCount,
+  blockType,
+}) => {
+  const componentIcon = getItemIcon(blockType);
 
-    </Card>
-  </Container>
-);
+  return (
+    <Container className="library-component-card">
+      <Card isLoading={isLoading}>
+        <Card.Header
+          className={`library-component-header ${getComponentColor(blockType)}`}
+          title={
+            <Icon src={componentIcon} className="library-component-header-icon" />
+          }
+          actions={(
+            <ActionRow>
+              <ComponentCardMenu />
+            </ActionRow>
+          )}
+        />
+        <Card.Body>
+          <Card.Section>
+            <Stack direction="horizontal" className="d-flex justify-content-between">
+              <Stack direction="horizontal">
+                <Icon src={componentIcon} size="sm" />
+                <span className="small">{blockType}</span>
+              </Stack>
+              <TagCount count={tagCount} />
+            </Stack>
+            <div className="h3 text-truncate mt-2">
+              {title}
+            </div>
+            <p className="library-component-card-description">
+              {description}
+            </p>
+          </Card.Section>
+        </Card.Body>
+      </Card>
+    </Container>
+  );
+};
+
+ComponentCard.defaultProps = {
+  isLoading: false,
+};
 
 ComponentCard.propTypes = {
-  icon: PropTypes.node.isRequired,
+  isLoading: PropTypes.bool,
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
   tagCount: PropTypes.number.isRequired,
   blockType: PropTypes.string.isRequired,
 };

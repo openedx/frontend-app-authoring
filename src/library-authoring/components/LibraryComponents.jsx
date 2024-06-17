@@ -2,11 +2,10 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 
-import { TextFields } from '@openedx/paragon/icons';
 import { CardGrid } from '@openedx/paragon';
 import { NoComponents, NoSearchResults } from '../EmptyStates';
-import { useLibraryComponentCount } from '../data/apiHook';
-import ComponentsCard from './ComponentCard';
+import { useLibraryComponentCount, useLibraryComponents } from '../data/apiHook';
+import ComponentCard from './ComponentCard';
 
 /**
  * @type {React.FC<{
@@ -18,6 +17,7 @@ import ComponentsCard from './ComponentCard';
  */
 const LibraryComponents = ({ libraryId, filter: { searchKeywords } }) => {
   const { componentCount } = useLibraryComponentCount(libraryId, searchKeywords);
+  const { hits, isFetching } = useLibraryComponents(libraryId, searchKeywords);
 
   if (componentCount === 0) {
     return searchKeywords === '' ? <NoComponents /> : <NoSearchResults />;
@@ -31,21 +31,25 @@ const LibraryComponents = ({ libraryId, filter: { searchKeywords } }) => {
         lg: 4,
         xl: 3,
       }}
+      hasEqualColumnHeights
     >
-      <ComponentsCard icon={TextFields} tagCount={10} blockType="html" />
-      <ComponentsCard icon={TextFields} tagCount={10} blockType="html" />
-      <ComponentsCard icon={TextFields} tagCount={10} blockType="html" />
-      <ComponentsCard icon={TextFields} tagCount={10} blockType="html" />
-      <ComponentsCard icon={TextFields} tagCount={10} blockType="html" />
-      <ComponentsCard icon={TextFields} tagCount={10} blockType="html" />
-      <ComponentsCard icon={TextFields} tagCount={10} blockType="html" />
-      <ComponentsCard icon={TextFields} tagCount={10} blockType="html" />
-      <ComponentsCard icon={TextFields} tagCount={10} blockType="html" />
-      <ComponentsCard icon={TextFields} tagCount={10} blockType="html" />
-      <ComponentsCard icon={TextFields} tagCount={10} blockType="html" />
-      <ComponentsCard icon={TextFields} tagCount={10} blockType="html" />
-      <ComponentsCard icon={TextFields} tagCount={10} blockType="html" />
-      <ComponentsCard icon={TextFields} tagCount={10} blockType="html" />
+      { isFetching ? <ComponentCard isLoading />
+        : hits.map((component) => {
+          let tagCount = 0;
+          if (component.tags) {
+            tagCount = component.tags.implicitCount || 0;
+          }
+
+          return (
+            <ComponentCard
+              title={component.displayName}
+              description={component.formatted.content?.htmlContent ?? ''}
+              tagCount={tagCount}
+              blockType={component.blockType}
+            />
+          );
+        })}
+
     </CardGrid>
   );
 };

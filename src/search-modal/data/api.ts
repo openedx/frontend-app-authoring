@@ -98,6 +98,16 @@ export interface ContentHit {
 }
 
 /**
+ * @typedef {Object} ContentHitTags
+ * @property {string[]} taxonomy
+ * @property {string[]} level0
+ * @property {string[]} level1
+ * @property {string[]} level2
+ * @property {string[]} level3
+ * @property {number} implicitCount
+ */
+
+/**
  * Convert search hits to camelCase
  * @param hit A search result directly from Meilisearch
  */
