@@ -18,6 +18,32 @@ export const useContentLibrary = (libraryId) => (
 );
 
 /**
+ * Hook to fetch components in a library.
+ * @param {string} libraryId - The ID of the library to fetch.
+ * @param {string} searchKeywords - Keywords to search for.
+ */
+export const useLibraryComponents = (libraryId, searchKeywords) => {
+  const { data: connectionDetails } = useContentSearchConnection();
+
+  const indexName = connectionDetails?.indexName;
+  const client = React.useMemo(() => {
+    if (connectionDetails?.apiKey === undefined || connectionDetails?.url === undefined) {
+      return undefined;
+    }
+    return new MeiliSearch({ host: connectionDetails.url, apiKey: connectionDetails.apiKey });
+  }, [connectionDetails?.apiKey, connectionDetails?.url]);
+
+  const libFilter = `context_key = "${libraryId}"`;
+
+  return useContentSearchResults({
+    client,
+    indexName,
+    searchKeywords,
+    extraFilter: [libFilter],
+  });
+};
+
+/**
  * Hook to fetch the count of components and collections in a library.
  * @param {string} libraryId - The ID of the library to fetch.
  * @param {string} searchKeywords - Keywords to search for.

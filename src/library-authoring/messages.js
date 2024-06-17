@@ -52,6 +52,11 @@ const messages = defineMessages({
     defaultMessage: 'This is a placeholder for the create library form. This will be replaced with the actual form.',
     description: 'Temp placeholder for the create library container. This will be replaced with the new library form.',
   },
+  recentComponentsTempPlaceholder: {
+    id: 'course-authoring.library-authoring.recent-components-temp-placeholder',
+    defaultMessage: 'Recently modified components and collections will be displayed here.',
+    description: 'Temp placeholder for the recent components container. This will be replaced with the actual list.',
+  },
 });
 
 export default messages;

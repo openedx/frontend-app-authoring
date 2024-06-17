@@ -86,9 +86,19 @@ function formatTagsFilter(tagsFilter) {
  * @property {[{displayName: string}, ...Array<{displayName: string, usageKey: string}>]} breadcrumbs
  *          First one is the name of the course/library itself.
  *          After that is the name and usage key of any parent Section/Subsection/Unit/etc.
- * @property {Record<'taxonomy'|'level0'|'level1'|'level2'|'level3', string[]>} tags
+ * @property {ContentHitTags} tags
  * @property {ContentDetails} [content]
  * @property {{displayName: string, content: ContentDetails}} formatted Same fields with <mark>...</mark> highlights
+ */
+
+/**
+ * @typedef {Object} ContentHitTags
+ * @property {string[]} taxonomy
+ * @property {string[]} level0
+ * @property {string[]} level1
+ * @property {string[]} level2
+ * @property {string[]} level3
+ * @property {number} implicitCount
  */
 
 /**
