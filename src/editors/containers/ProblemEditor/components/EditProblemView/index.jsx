@@ -29,7 +29,6 @@ export const EditProblemView = ({
   // redux
   problemType,
   problemState,
-  assets,
   lmsEndpointUrl,
   returnUrl,
   analytics,
@@ -48,7 +47,6 @@ export const EditProblemView = ({
         openSaveWarningModal,
         isAdvancedProblemType,
         editorRef,
-        assets,
         lmsEndpointUrl,
       })}
       returnFunction={returnFunction}
@@ -70,7 +68,6 @@ export const EditProblemView = ({
                   problem: problemState,
                   isAdvanced: isAdvancedProblemType,
                   ref: editorRef,
-                  assets,
                   lmsEndpointUrl,
                 })(),
                 returnFunction,
@@ -118,7 +115,6 @@ export const EditProblemView = ({
 };
 
 EditProblemView.defaultProps = {
-  assets: null,
   lmsEndpointUrl: null,
   returnFunction: null,
 };
@@ -128,7 +124,6 @@ EditProblemView.propTypes = {
   returnFunction: PropTypes.func,
   // eslint-disable-next-line
   problemState: PropTypes.any.isRequired,
-  assets: PropTypes.shape({}),
   analytics: PropTypes.shape({}).isRequired,
   lmsEndpointUrl: PropTypes.string,
   returnUrl: PropTypes.string.isRequired,
@@ -137,7 +132,6 @@ EditProblemView.propTypes = {
 };
 
 export const mapStateToProps = (state) => ({
-  assets: selectors.app.assets(state),
   analytics: selectors.app.analytics(state),
   lmsEndpointUrl: selectors.app.lmsEndpointUrl(state),
   returnUrl: selectors.app.returnUrl(state),

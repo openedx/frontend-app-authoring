@@ -28,6 +28,9 @@ describe('TextEditor Image Gallery component', () => {
       highlighted: 'props.highlighted',
       onHighlightChange: jest.fn().mockName('props.onHighlightChange'),
       isLoaded: true,
+      fetchNextPage: null,
+      assetCount: 0,
+      allowLazyLoad: false,
     };
     const shallowWithIntl = (component) => shallow(<IntlProvider locale="en">{component}</IntlProvider>);
     test('snapshot: not loaded, show spinner', () => {

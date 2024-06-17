@@ -119,7 +119,7 @@ describe('cms url methods', () => {
   describe('courseAssets', () => {
     it('returns url with studioEndpointUrl and learningContextId', () => {
       expect(courseAssets({ studioEndpointUrl, learningContextId }))
-        .toEqual(`${studioEndpointUrl}/assets/${learningContextId}/?page_size=500`);
+        .toEqual(`${studioEndpointUrl}/assets/${learningContextId}/`);
     });
   });
   describe('thumbnailUpload', () => {

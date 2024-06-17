@@ -5,11 +5,13 @@ import {
   useEffect,
 } from 'react';
 import { a11ycheckerCss } from 'frontend-components-tinymce-advanced-plugins';
+import { isEmpty } from 'lodash-es';
 import tinyMCEStyles from '../../data/constants/tinyMCEStyles';
 import { StrictDict } from '../../utils';
 import pluginConfig from './pluginConfig';
 import * as module from './hooks';
 import tinyMCE from '../../data/constants/tinyMCE';
+import { getRelativeUrl, getStaticUrl } from './utils';
 
 export const state = StrictDict({
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -22,21 +24,20 @@ export const state = StrictDict({
   refReady: (val) => useState(val),
 });
 
-export const addImagesAndDimensionsToRef = ({ imagesRef, assets, editorContentHtml }) => {
-  const imagesWithDimensions = module.filterAssets({ assets }).map((image) => {
+export const addImagesAndDimensionsToRef = ({ imagesRef, images, editorContentHtml }) => {
+  const imagesWithDimensions = Object.values(images).map((image) => {
     const imageFragment = module.getImageFromHtmlString(editorContentHtml, image.url);
     return { ...image, width: imageFragment?.width, height: imageFragment?.height };
   });
-
   imagesRef.current = imagesWithDimensions;
 };
 
-export const useImages = ({ assets, editorContentHtml }) => {
+export const useImages = ({ images, editorContentHtml }) => {
   const imagesRef = useRef([]);
 
   useEffect(() => {
-    module.addImagesAndDimensionsToRef({ imagesRef, assets, editorContentHtml });
-  }, []);
+    module.addImagesAndDimensionsToRef({ imagesRef, images, editorContentHtml });
+  }, [images]);
 
   return { imagesRef };
 };
@@ -69,45 +70,45 @@ export const parseContentForLabels = ({ editor, updateContent }) => {
   }
 };
 
-export const replaceStaticwithAsset = ({
-  editor,
-  imageUrls,
+export const replaceStaticWithAsset = ({
+  initialContent,
+  learningContextId,
   editorType,
   lmsEndpointUrl,
-  updateContent,
 }) => {
-  let content = editor.getContent();
-  const imageSrcs = content.split('src="');
-  imageSrcs.forEach(src => {
+  let content = initialContent;
+  const srcs = content.split(/(src="|src=&quot;|href="|href=&quot)/g).filter(
+    src => src.startsWith('/static') || src.startsWith('/asset'),
+  );
+  if (isEmpty(srcs)) {
+    return initialContent;
+  }
+  srcs.forEach(src => {
     const currentContent = content;
     let staticFullUrl;
     const isStatic = src.startsWith('/static/');
-    const isExpandableAsset = src.startsWith('/assets/') && editorType === 'expandable';
-    if ((isStatic || isExpandableAsset) && imageUrls.length > 0) {
-      const assetSrc = src.substring(0, src.indexOf('"'));
-      const assetName = assetSrc.replace(/\/assets\/.+[^/]\//g, '');
-      const staticName = assetSrc.substring(8);
-      imageUrls.forEach((url) => {
-        if (isExpandableAsset && assetName === url.displayName) {
-          staticFullUrl = `${lmsEndpointUrl}${url.staticFullUrl}`;
-        } else if (staticName === url.displayName) {
-          staticFullUrl = url.staticFullUrl;
-          if (isExpandableAsset) {
-            staticFullUrl = `${lmsEndpointUrl}${url.staticFullUrl}`;
-          }
-        }
-      });
-      if (staticFullUrl) {
-        const currentSrc = src.substring(0, src.indexOf('"'));
-        content = currentContent.replace(currentSrc, staticFullUrl);
-        if (editorType === 'expandable') {
-          updateContent(content);
-        } else {
-          editor.setContent(content);
-        }
+    const assetSrc = src.substring(0, src.indexOf('"'));
+    const staticName = assetSrc.substring(8);
+    const assetName = assetSrc.replace(/\/assets\/.+[^/]\//g, '');
+    const displayName = isStatic ? staticName : assetName;
+    const isCorrectAssetFormat = assetSrc.match(/\/asset-v1:\S+[+]\S+[@]\S+[+]\S+[@]/g)?.length >= 1;
+    // assets in expandable text areas so not support relative urls so all assets must have the lms
+    // endpoint prepended to the relative url
+    if (editorType === 'expandable') {
+      if (isCorrectAssetFormat) {
+        staticFullUrl = `${lmsEndpointUrl}${assetSrc}`;
+      } else {
+        staticFullUrl = `${lmsEndpointUrl}${getRelativeUrl({ courseId: learningContextId, displayName })}`;
       }
+    } else if (!isCorrectAssetFormat) {
+      staticFullUrl = getRelativeUrl({ courseId: learningContextId, displayName });
+    }
+    if (staticFullUrl) {
+      const currentSrc = src.substring(0, src.indexOf('"'));
+      content = currentContent.replace(currentSrc, staticFullUrl);
     }
   });
+  return content;
 };
 
 export const getImageResizeHandler = ({ editor, imagesRef, setImage }) => () => {
@@ -132,10 +133,10 @@ export const setupCustomBehavior = ({
   openImgModal,
   openSourceCodeModal,
   editorType,
-  imageUrls,
   images,
   setImage,
   lmsEndpointUrl,
+  learningContextId,
 }) => (editor) => {
   // image upload button
   editor.ui.registry.addButton(tinyMCE.buttons.imageUploadButton, {
@@ -188,18 +189,24 @@ export const setupCustomBehavior = ({
   });
   if (editorType === 'expandable') {
     editor.on('init', () => {
-      module.replaceStaticwithAsset({
-        editor,
-        imageUrls,
+      const initialContent = editor.getContent();
+      const newContent = module.replaceStaticWithAsset({
+        initialContent,
         editorType,
         lmsEndpointUrl,
-        updateContent,
+        learningContextId,
       });
+      updateContent(newContent);
     });
   }
   editor.on('ExecCommand', (e) => {
     if (editorType === 'text' && e.command === 'mceFocus') {
-      module.replaceStaticwithAsset({ editor, imageUrls });
+      const initialContent = editor.getContent();
+      const newContent = module.replaceStaticWithAsset({
+        initialContent,
+        learningContextId,
+      });
+      editor.setContent(newContent);
     }
     if (e.command === 'RemoveFormat') {
       editor.formatter.remove('blockquote');
@@ -229,6 +236,7 @@ export const editorConfig = ({
   updateContent,
   content,
   minHeight,
+  learningContextId,
 }) => {
   const {
     toolbar,
@@ -267,7 +275,7 @@ export const editorConfig = ({
         setImage: setSelection,
         content,
         images,
-        imageUrls: module.fetchImageUrls(images),
+        learningContextId,
       }),
       quickbars_insert_toolbar: quickbarsInsertToolbar,
       quickbars_selection_toolbar: quickbarsSelectionToolbar,
@@ -380,16 +388,7 @@ export const openModalWithSelectedImage = ({
   openImgModal();
 };
 
-export const filterAssets = ({ assets }) => {
-  let images = [];
-  const assetsList = Object.values(assets);
-  if (assetsList.length > 0) {
-    images = assetsList.filter(asset => asset?.contentType?.startsWith('image/'));
-  }
-  return images;
-};
-
-export const setAssetToStaticUrl = ({ editorValue, assets, lmsEndpointUrl }) => {
+export const setAssetToStaticUrl = ({ editorValue, lmsEndpointUrl }) => {
   /* For assets to remain usable across course instances, we convert their url to be course-agnostic.
    * For example, /assets/course/<asset hash>/filename gets converted to /static/filename. This is
    * important for rerunning courses and importing/exporting course as the /static/ part of the url
@@ -401,40 +400,18 @@ export const setAssetToStaticUrl = ({ editorValue, assets, lmsEndpointUrl }) => 
   const regExLmsEndpointUrl = RegExp(lmsEndpointUrl, 'g');
   let content = editorValue.replace(regExLmsEndpointUrl, '');
 
-  const assetUrls = [];
-  const assetsList = Object.values(assets);
-  assetsList.forEach(asset => {
-    assetUrls.push({ portableUrl: asset.portableUrl, displayName: asset.displayName });
-  });
   const assetSrcs = typeof content === 'string' ? content.split(/(src="|src=&quot;|href="|href=&quot)/g) : [];
   assetSrcs.forEach(src => {
-    if (src.startsWith('/asset') && assetUrls.length > 0) {
+    if (src.startsWith('/asset')) {
       const assetBlockName = src.substring(src.indexOf('@') + 1, src.search(/("|&quot;)/));
       const nameFromEditorSrc = assetBlockName.substring(assetBlockName.indexOf('@') + 1);
-      const nameFromStudioSrc = assetBlockName.substring(assetBlockName.indexOf('/') + 1);
-      let portableUrl;
-      assetUrls.forEach((url) => {
-        const displayName = url.displayName.replace(/\s/g, '_');
-        if (displayName === nameFromEditorSrc || displayName === nameFromStudioSrc) {
-          portableUrl = url.portableUrl;
-        }
-      });
-      if (portableUrl) {
-        const currentSrc = src.substring(0, src.search(/("|&quot;)/));
-        const updatedContent = content.replace(currentSrc, portableUrl);
-        content = updatedContent;
-      }
+      const portableUrl = getStaticUrl({ displayName: nameFromEditorSrc });
+      const currentSrc = src.substring(0, src.search(/("|&quot;)/));
+      const updatedContent = content.replace(currentSrc, portableUrl);
+      content = updatedContent;
     }
   });
   return content;
-};
-
-export const fetchImageUrls = (images) => {
-  const imageUrls = [];
-  images.current.forEach(image => {
-    imageUrls.push({ staticFullUrl: image.staticFullUrl, displayName: image.displayName });
-  });
-  return imageUrls;
 };
 
 export const selectedImage = (val) => {

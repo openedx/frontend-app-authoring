@@ -15,9 +15,11 @@ const initialState = {
   editorInitialized: false,
   studioEndpointUrl: null,
   lmsEndpointUrl: null,
-  assets: {},
+  images: {},
+  imageCount: 0,
   videos: {},
   courseDetails: {},
+  showRawEditor: false,
 };
 
 // eslint-disable-next-line no-unused-vars
@@ -40,15 +42,22 @@ const app = createSlice({
       blockValue: payload,
       blockTitle: payload.data.display_name,
     }),
-
     setStudioView: (state, { payload }) => ({ ...state, studioView: payload }),
     setBlockContent: (state, { payload }) => ({ ...state, blockContent: payload }),
     setBlockTitle: (state, { payload }) => ({ ...state, blockTitle: payload }),
     setSaveResponse: (state, { payload }) => ({ ...state, saveResponse: payload }),
     initializeEditor: (state) => ({ ...state, editorInitialized: true }),
-    setAssets: (state, { payload }) => ({ ...state, assets: payload }),
+    setImages: (state, { payload }) => ({
+      ...state,
+      images: { ...state.images, ...payload.images },
+      imageCount: payload.imageCount,
+    }),
     setVideos: (state, { payload }) => ({ ...state, videos: payload }),
     setCourseDetails: (state, { payload }) => ({ ...state, courseDetails: payload }),
+    setShowRawEditor: (state, { payload }) => ({
+      ...state,
+      showRawEditor: payload.data?.metadata?.editor === 'raw',
+    }),
   },
 });
 

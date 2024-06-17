@@ -43,6 +43,8 @@ exports[`TextEditor Image Gallery component component snapshot: loaded but no im
   }
 >
   <Gallery
+    allowLazyLoad={false}
+    assetCount={0}
     displayList={
       [
         {
@@ -62,6 +64,7 @@ exports[`TextEditor Image Gallery component component snapshot: loaded but no im
         "id": "emptyGalleryMsg",
       }
     }
+    fetchNextPage={null}
     galleryIsEmpty={true}
     height="375px"
     highlighted="props.highlighted"
@@ -117,6 +120,8 @@ exports[`TextEditor Image Gallery component component snapshot: loaded but searc
   }
 >
   <Gallery
+    allowLazyLoad={false}
+    assetCount={0}
     displayList={
       [
         {
@@ -136,6 +141,7 @@ exports[`TextEditor Image Gallery component component snapshot: loaded but searc
         "id": "emptyGalleryMsg",
       }
     }
+    fetchNextPage={null}
     galleryIsEmpty={false}
     height="375px"
     highlighted="props.highlighted"
@@ -191,6 +197,8 @@ exports[`TextEditor Image Gallery component component snapshot: loaded, show gal
   }
 >
   <Gallery
+    allowLazyLoad={false}
+    assetCount={0}
     displayList={
       [
         {
@@ -210,6 +218,7 @@ exports[`TextEditor Image Gallery component component snapshot: loaded, show gal
         "id": "emptyGalleryMsg",
       }
     }
+    fetchNextPage={null}
     galleryIsEmpty={false}
     height="375px"
     highlighted="props.highlighted"
@@ -265,6 +274,8 @@ exports[`TextEditor Image Gallery component component snapshot: not loaded, show
   }
 >
   <Gallery
+    allowLazyLoad={false}
+    assetCount={0}
     displayList={
       [
         {
@@ -284,6 +295,7 @@ exports[`TextEditor Image Gallery component component snapshot: not loaded, show
         "id": "emptyGalleryMsg",
       }
     }
+    fetchNextPage={null}
     galleryIsEmpty={false}
     height="375px"
     highlighted="props.highlighted"

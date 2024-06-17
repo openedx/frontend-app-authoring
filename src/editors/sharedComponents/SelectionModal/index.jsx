@@ -56,6 +56,7 @@ export const SelectionModal = ({
     isLoaded,
     ...galleryProps,
   };
+
   return (
     <BaseModal
       close={close}

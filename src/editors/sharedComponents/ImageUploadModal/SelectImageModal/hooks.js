@@ -43,7 +43,14 @@ export const displayList = ({ sortBy, searchString, images }) => (
     imageList: images,
   }).sort(sortFunctions[sortBy in sortKeys ? sortKeys[sortBy] : sortKeys.dateNewest]));
 
-export const imgListHooks = ({ searchSortProps, setSelection, images }) => {
+export const imgListHooks = ({
+  searchSortProps,
+  setSelection,
+  images,
+  imageCount,
+}) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const dispatch = useDispatch();
   const [highlighted, setHighlighted] = module.state.highlighted(null);
   const [
     showSelectImageError,
@@ -73,6 +80,9 @@ export const imgListHooks = ({ searchSortProps, setSelection, images }) => {
       highlighted,
       onHighlightChange: (e) => setHighlighted(e.target.value),
       emptyGalleryLabel: messages.emptyGalleryLabel,
+      allowLazyLoad: true,
+      fetchNextPage: ({ pageNumber }) => dispatch(thunkActions.app.fetchImages({ pageNumber })),
+      assetCount: imageCount,
     },
     // highlight by id
     selectBtnProps: {
@@ -118,7 +128,7 @@ export const fileInputHooks = ({ setSelection, clearSelection, imgList }) => {
       },
     })) {
       dispatch(
-        thunkActions.app.uploadImage({
+        thunkActions.app.uploadAsset({
           file: selectedFile,
           setSelection,
         }),
@@ -133,9 +143,19 @@ export const fileInputHooks = ({ setSelection, clearSelection, imgList }) => {
   };
 };
 
-export const imgHooks = ({ setSelection, clearSelection, images }) => {
+export const imgHooks = ({
+  setSelection,
+  clearSelection,
+  images,
+  imageCount,
+}) => {
   const searchSortProps = module.searchAndSortHooks();
-  const imgList = module.imgListHooks({ setSelection, searchSortProps, images });
+  const imgList = module.imgListHooks({
+    setSelection,
+    searchSortProps,
+    images,
+    imageCount,
+  });
   const fileInput = module.fileInputHooks({
     setSelection,
     clearSelection,

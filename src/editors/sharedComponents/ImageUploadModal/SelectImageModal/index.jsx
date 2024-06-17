@@ -17,6 +17,7 @@ export const SelectImageModal = ({
   isLoaded,
   isFetchError,
   isUploadError,
+  imageCount,
 }) => {
   const {
     galleryError,
@@ -25,7 +26,12 @@ export const SelectImageModal = ({
     galleryProps,
     searchSortProps,
     selectBtnProps,
-  } = hooks.imgHooks({ setSelection, clearSelection, images: images.current });
+  } = hooks.imgHooks({
+    setSelection,
+    clearSelection,
+    images: images.current,
+    imageCount,
+  });
 
   const modalMessages = {
     confirmMsg: messages.nextButtonLabel,
@@ -66,12 +72,14 @@ SelectImageModal.propTypes = {
   isLoaded: PropTypes.bool.isRequired,
   isFetchError: PropTypes.bool.isRequired,
   isUploadError: PropTypes.bool.isRequired,
+  imageCount: PropTypes.number.isRequired,
 };
 
 export const mapStateToProps = (state) => ({
-  isLoaded: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchAssets }),
-  isFetchError: selectors.requests.isFailed(state, { requestKey: RequestKeys.fetchAssets }),
+  isLoaded: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchImages }),
+  isFetchError: selectors.requests.isFailed(state, { requestKey: RequestKeys.fetchImages }),
   isUploadError: selectors.requests.isFailed(state, { requestKey: RequestKeys.uploadAsset }),
+  imageCount: state.app.imageCount,
 });
 
 export const mapDispatchToProps = {};

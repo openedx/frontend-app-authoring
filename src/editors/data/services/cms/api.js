@@ -26,9 +26,16 @@ export const apiMethods = {
   fetchStudioView: ({ blockId, studioEndpointUrl }) => get(
     urls.blockStudioView({ studioEndpointUrl, blockId }),
   ),
-  fetchAssets: ({ learningContextId, studioEndpointUrl }) => get(
-    urls.courseAssets({ studioEndpointUrl, learningContextId }),
-  ),
+  fetchImages: ({ learningContextId, studioEndpointUrl, pageNumber }) => {
+    const params = {
+      asset_type: 'Images',
+      page: pageNumber,
+    };
+    return get(
+      `${urls.courseAssets({ studioEndpointUrl, learningContextId })}`,
+      { params },
+    );
+  },
   fetchVideos: ({ studioEndpointUrl, learningContextId }) => get(
     urls.courseVideos({ studioEndpointUrl, learningContextId }),
   ),
