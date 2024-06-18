@@ -7,6 +7,19 @@
   .advancedEditorTopMargin {
     margin-top: 40px;
   }
+  .answer-option {
+    .pgn__form-checkbox,
+    .pgn__form-radio {
+      & + .pgn__form-label {
+        min-width: 1.1rem;
+      }
+    }
+  }
+  .settingsOption {
+    .pgn__form-checkbox .pgn__form-label {
+      min-width: .8rem;
+    }
+  }
 }
 
 .tinyMceWidget {
