@@ -47,7 +47,7 @@ const RestrictionSchedules = () => {
   }, []);
 
   return (
-    <div data-testId="restriction-schedules">
+    <div data-testid="restriction-schedules">
       <FieldArray
         name="restrictedDates"
         render={({ push, remove }) => (

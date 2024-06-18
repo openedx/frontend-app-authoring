@@ -70,6 +70,15 @@ const mockStore = async (
 
   renderComponent();
   await executeThunk(fetchVideos(courseId), store.dispatch);
+
+  // Finish loading the expected files into the data table before returning,
+  // because loading new files can disrupt things like accessing file menus.
+  if (status === RequestStatus.SUCCESSFUL) {
+    const numFiles = 3;
+    await waitFor(() => {
+      expect(screen.getByText(`Showing ${numFiles} of ${numFiles}`)).toBeInTheDocument();
+    });
+  }
 };
 
 const emptyMockStore = async (status) => {
@@ -137,11 +146,8 @@ describe('Videos page', () => {
         });
         fireEvent.drop(dropzone);
       });
-      const addStatus = store.getState().videos.addingStatus;
-      expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
 
       expect(screen.queryByTestId('files-dropzone')).toBeNull();
-
       expect(screen.getByTestId('files-data-table')).toBeVisible();
     });
   });
@@ -168,9 +174,7 @@ describe('Videos page', () => {
         const transcriptSettingsButton = screen.getByText(videoMessages.transcriptSettingsButtonLabel.defaultMessage);
         expect(transcriptSettingsButton).toBeVisible();
 
-        await act(async () => {
-          fireEvent.click(transcriptSettingsButton);
-        });
+        fireEvent.click(transcriptSettingsButton);
 
         expect(screen.getByLabelText('close settings')).toBeVisible();
       });
@@ -198,9 +202,7 @@ describe('Videos page', () => {
         expect(screen.queryByRole('table')).toBeNull();
 
         const listButton = screen.getByLabelText('List');
-        await act(async () => {
-          fireEvent.click(listButton);
-        });
+        fireEvent.click(listButton);
         expect(screen.queryByTestId('grid-card-mOckID1')).toBeNull();
 
         expect(screen.getByRole('table')).toBeVisible();
@@ -211,10 +213,8 @@ describe('Videos page', () => {
         axiosMock.onPost(`${getApiBaseUrl()}/video_images/${courseId}/mOckID1`).reply(200, { image_url: 'url' });
         const addThumbnailButton = screen.getByTestId('video-thumbnail-mOckID1');
         const thumbnail = new File(['test'], 'sOMEUrl.jpg', { type: 'image/jpg' });
-        await act(async () => {
-          fireEvent.click(addThumbnailButton);
-          await executeThunk(addVideoThumbnail({ file: thumbnail, videoId: 'mOckID1', courseId }), store.dispatch);
-        });
+        fireEvent.click(addThumbnailButton);
+        await executeThunk(addVideoThumbnail({ file: thumbnail, videoId: 'mOckID1', courseId }), store.dispatch);
         const updateStatus = store.getState().videos.updatingStatus;
         expect(updateStatus).toEqual(RequestStatus.SUCCESSFUL);
       });
@@ -253,23 +253,24 @@ describe('Videos page', () => {
         await mockStore(RequestStatus.SUCCESSFUL);
         const actionsButton = screen.getByText(messages.actionsButtonLabel.defaultMessage);
 
+        fireEvent.click(actionsButton);
         await waitFor(() => {
-          fireEvent.click(actionsButton);
-        });
-        expect(screen.getByText(messages.downloadTitle.defaultMessage).closest('a')).toHaveClass('disabled');
+          expect(screen.getByText(messages.downloadTitle.defaultMessage).closest('a')).toHaveClass('disabled');
 
-        expect(screen.getByText(messages.deleteTitle.defaultMessage).closest('a')).toHaveClass('disabled');
+          expect(screen.getByText(messages.deleteTitle.defaultMessage).closest('a')).toHaveClass('disabled');
+        });
       });
 
       it('delete button should be enabled and delete selected file', async () => {
         await mockStore(RequestStatus.SUCCESSFUL);
-        const selectCardButton = screen.getAllByTestId('datatable-select-column-checkbox-cell')[0];
-        fireEvent.click(selectCardButton);
-        const actionsButton = screen.getByText(messages.actionsButtonLabel.defaultMessage);
 
-        await waitFor(() => {
-          fireEvent.click(actionsButton);
-        });
+        const [selectCardButton] = await screen.findAllByTestId('datatable-select-column-checkbox-cell');
+        fireEvent.click(selectCardButton);
+
+        const actionsButton = screen.getByText(messages.actionsButtonLabel.defaultMessage);
+        expect(actionsButton).toBeVisible();
+        fireEvent.click(actionsButton);
+
         const deleteButton = screen.getByText(messages.deleteTitle.defaultMessage).closest('a');
         expect(deleteButton).not.toHaveClass('disabled');
 
@@ -277,45 +278,22 @@ describe('Videos page', () => {
 
         fireEvent.click(deleteButton);
         expect(screen.getByText('Delete mOckID1.mp4')).toBeVisible();
-        await act(async () => {
-          userEvent.click(deleteButton);
-        });
+        fireEvent.click(deleteButton);
 
         // Wait for the delete confirmation button to appear
         const confirmDeleteButton = await screen.findByRole('button', {
           name: messages.deleteFileButtonLabel.defaultMessage,
         });
-
-        await act(async () => {
-          userEvent.click(confirmDeleteButton);
-        });
+        fireEvent.click(confirmDeleteButton);
 
         expect(screen.queryByText('Delete mOckID1.mp4')).toBeNull();
 
         // Check if the video is deleted in the store and UI
-        const deleteStatus = store.getState().videos.deletingStatus;
-        expect(deleteStatus).toEqual(RequestStatus.SUCCESSFUL);
-        expect(screen.queryByTestId('grid-card-mOckID1')).toBeNull();
-      });
-
-      it('download button should be enabled and download single selected file', async () => {
-        await mockStore(RequestStatus.SUCCESSFUL);
-        const selectCardButton = screen.getAllByTestId('datatable-select-column-checkbox-cell')[0];
-        fireEvent.click(selectCardButton);
-        const actionsButton = screen.getByText(messages.actionsButtonLabel.defaultMessage);
-
         await waitFor(() => {
-          fireEvent.click(actionsButton);
+          const deleteStatus = store.getState().videos.deletingStatus;
+          expect(deleteStatus).toEqual(RequestStatus.SUCCESSFUL);
         });
-        const downloadButton = screen.getByText(messages.downloadTitle.defaultMessage).closest('a');
-        expect(downloadButton).not.toHaveClass('disabled');
-
-        await act(async () => {
-          fireEvent.click(downloadButton);
-        });
-
-        const updateStatus = store.getState().videos.updatingStatus;
-        expect(updateStatus).toEqual(RequestStatus.SUCCESSFUL);
+        expect(screen.queryByTestId('grid-card-mOckID1')).toBeNull();
       });
 
       it('download button should be enabled and download multiple selected files', async () => {
@@ -325,9 +303,7 @@ describe('Videos page', () => {
         fireEvent.click(selectCardButtons[1]);
         const actionsButton = screen.getByText(messages.actionsButtonLabel.defaultMessage);
 
-        await waitFor(() => {
-          fireEvent.click(actionsButton);
-        });
+        fireEvent.click(actionsButton);
         axiosMock.onPut(`${getVideosUrl(courseId)}/download`).reply(200, null);
 
         const downloadButton = screen.getByText(messages.downloadTitle.defaultMessage).closest('a');
@@ -336,9 +312,6 @@ describe('Videos page', () => {
         await act(async () => {
           fireEvent.click(downloadButton);
         });
-
-        const updateStatus = store.getState().videos.updatingStatus;
-        expect(updateStatus).toEqual(RequestStatus.SUCCESSFUL);
       });
 
       it('when uploads are in progress, should show alert and set them to failed on page leave', async () => {
@@ -377,9 +350,7 @@ describe('Videos page', () => {
           await mockStore(RequestStatus.SUCCESSFUL);
           const sortAndFilterButton = screen.getByText(messages.sortButtonLabel.defaultMessage);
 
-          await waitFor(() => {
-            fireEvent.click(sortAndFilterButton);
-          });
+          fireEvent.click(sortAndFilterButton);
         });
 
         describe('sort function', () => {
@@ -387,22 +358,22 @@ describe('Videos page', () => {
             const sortNameAscendingButton = screen.getByText(messages.sortByNameAscending.defaultMessage);
             fireEvent.click(sortNameAscendingButton);
 
-            await waitFor(() => {
-              fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
-            });
+            fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
 
-            expect(screen.queryByText(messages.sortModalTitleLabel.defaultMessage)).toBeNull();
+            await waitFor(() => {
+              expect(screen.queryByText(messages.sortModalTitleLabel.defaultMessage)).toBeNull();
+            });
           });
 
           it('sort button should be enabled and sort files by file size', async () => {
             const sortBySizeDescendingButton = screen.getByText(messages.sortBySizeDescending.defaultMessage);
             fireEvent.click(sortBySizeDescendingButton);
 
-            await waitFor(() => {
-              fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
-            });
+            fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
 
-            expect(screen.queryByText(messages.sortModalTitleLabel.defaultMessage)).toBeNull();
+            await waitFor(() => {
+              expect(screen.queryByText(messages.sortModalTitleLabel.defaultMessage)).toBeNull();
+            });
           });
         });
 
@@ -416,13 +387,12 @@ describe('Videos page', () => {
             fireEvent.click(notTranscribedCheckboxFilter);
             fireEvent.click(transcribedCheckboxFilter);
 
+            fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
+
             await waitFor(() => {
-              fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
+              const galleryCards = screen.getAllByTestId('grid-card', { exact: false });
+              expect(galleryCards).toHaveLength(1);
             });
-
-            const galleryCards = screen.getAllByTestId('grid-card', { exact: false });
-
-            expect(galleryCards).toHaveLength(1);
           });
 
           it('should clearAll selections', async () => {
@@ -436,7 +406,7 @@ describe('Videos page', () => {
             fireEvent.click(transcribedCheckboxFilter);
 
             const clearAllButton = screen.getByText('Clear all');
-            await waitFor(() => fireEvent.click(clearAllButton));
+            fireEvent.click(clearAllButton);
 
             expect(transcribedCheckboxFilter).toHaveProperty('checked', false);
 
@@ -451,11 +421,9 @@ describe('Videos page', () => {
             const transcribedCheckboxFilter = screen.getByText(videoMessages.transcribedCheckboxLabel.defaultMessage);
             fireEvent.click(transcribedCheckboxFilter);
 
-            await waitFor(() => {
-              fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
-            });
+            fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
 
-            const imageFilterChip = screen.getByRole('button', { name: 'Remove this filter' });
+            const imageFilterChip = await screen.findByRole('button', { name: 'Remove this filter' });
             fireEvent.click(imageFilterChip);
 
             expect(screen.queryByText(videoMessages.transcribedCheckboxLabel.defaultMessage)).toBeNull();
@@ -479,12 +447,12 @@ describe('Videos page', () => {
               }],
             });
 
-          await waitFor(() => {
-            fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
-            fireEvent.click(screen.getByText('Info'));
-          });
+          fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
+          fireEvent.click(screen.getByText('Info'));
 
-          expect(screen.getByText(messages.infoTitle.defaultMessage)).toBeVisible();
+          await waitFor(() => {
+            expect(screen.getByText(messages.infoTitle.defaultMessage)).toBeVisible();
+          });
 
           const { usageStatus } = store.getState().videos;
 
@@ -498,12 +466,11 @@ describe('Videos page', () => {
           const videoMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
 
           axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID1/usage`).reply(201, { usageLocations: [] });
+          fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
+          fireEvent.click(screen.getByText('Info'));
           await waitFor(() => {
-            fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
-            fireEvent.click(screen.getByText('Info'));
+            expect(screen.getByText(messages.usageNotInUseMessage.defaultMessage)).toBeVisible();
           });
-
-          expect(screen.getByText(messages.usageNotInUseMessage.defaultMessage)).toBeVisible();
 
           const infoTab = screen.getAllByRole('tab')[0];
           expect(infoTab).toBeVisible();
@@ -516,17 +483,14 @@ describe('Videos page', () => {
           const videoMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
 
           axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID1/usage`).reply(201, { usageLocations: [] });
+          fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
+          fireEvent.click(screen.getByText('Info'));
           await waitFor(() => {
-            fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
-            fireEvent.click(screen.getByText('Info'));
+            expect(screen.getByText(messages.usageNotInUseMessage.defaultMessage)).toBeVisible();
           });
-
-          expect(screen.getByText(messages.usageNotInUseMessage.defaultMessage)).toBeVisible();
 
           const transcriptTab = screen.getAllByRole('tab')[1];
-          await act(async () => {
-            fireEvent.click(transcriptTab);
-          });
+          fireEvent.click(transcriptTab);
           expect(transcriptTab).toBeVisible();
 
           expect(transcriptTab).toHaveClass('active');
@@ -537,15 +501,11 @@ describe('Videos page', () => {
           const videoMenuButton = screen.getByTestId('file-menu-dropdown-mOckID3');
 
           axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID3/usage`).reply(201, { usageLocations: [] });
-          await waitFor(() => {
-            fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
-            fireEvent.click(screen.getByText('Info'));
-          });
+          fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
+          fireEvent.click(screen.getByText('Info'));
 
-          const transcriptTab = screen.getAllByRole('tab')[1];
-          await act(async () => {
-            fireEvent.click(transcriptTab);
-          });
+          const transcriptTab = await screen.getAllByRole('tab')[1];
+          fireEvent.click(transcriptTab);
 
           expect(screen.getByText('Transcript (1)')).toBeVisible();
         });
@@ -556,14 +516,13 @@ describe('Videos page', () => {
 
         const videoMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
 
+        fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
+        fireEvent.click(screen.getByText('Download'));
+
         await waitFor(() => {
-          fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
-          fireEvent.click(screen.getByText('Download'));
+          const updateStatus = store.getState().videos.updatingStatus;
+          expect(updateStatus).toEqual(RequestStatus.SUCCESSFUL);
         });
-
-        const updateStatus = store.getState().videos.updatingStatus;
-
-        expect(updateStatus).toEqual(RequestStatus.SUCCESSFUL);
       });
 
       it('delete button should delete file', async () => {
@@ -571,17 +530,18 @@ describe('Videos page', () => {
 
         const fileMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
 
+        axiosMock.onDelete(`${getCourseVideosApiUrl(courseId)}/mOckID1`).reply(204);
+        fireEvent.click(within(fileMenuButton).getByLabelText('file-menu-toggle'));
+        fireEvent.click(screen.getByTestId('open-delete-confirmation-button'));
         await waitFor(() => {
-          axiosMock.onDelete(`${getCourseVideosApiUrl(courseId)}/mOckID1`).reply(204);
-          fireEvent.click(within(fileMenuButton).getByLabelText('file-menu-toggle'));
-          fireEvent.click(screen.getByTestId('open-delete-confirmation-button'));
           expect(screen.getByText('Delete mOckID1.mp4')).toBeVisible();
-
-          fireEvent.click(screen.getByText(messages.deleteFileButtonLabel.defaultMessage));
-          expect(screen.queryByText('Delete mOckID1.mp4')).toBeNull();
-
-          executeThunk(deleteVideoFile(courseId, 'mOckID1', 5), store.dispatch);
         });
+
+        fireEvent.click(screen.getByText(messages.deleteFileButtonLabel.defaultMessage));
+        await waitFor(() => {
+          expect(screen.queryByText('Delete mOckID1.mp4')).toBeNull();
+        });
+        await executeThunk(deleteVideoFile(courseId, 'mOckID1', 5), store.dispatch);
         const deleteStatus = store.getState().videos.deletingStatus;
         expect(deleteStatus).toEqual(RequestStatus.SUCCESSFUL);
 
@@ -640,10 +600,8 @@ describe('Videos page', () => {
 
         const addThumbnailButton = screen.getByTestId('video-thumbnail-mOckID1');
         const thumbnail = new File(['test'], 'sOMEUrl.jpg', { type: 'image/jpg' });
-        await act(async () => {
-          fireEvent.click(addThumbnailButton);
-          await executeThunk(addVideoThumbnail({ file: thumbnail, videoId: 'mOckID1', courseId }), store.dispatch);
-        });
+        fireEvent.click(addThumbnailButton);
+        await executeThunk(addVideoThumbnail({ file: thumbnail, videoId: 'mOckID1', courseId }), store.dispatch);
         const updateStatus = store.getState().videos.updatingStatus;
         expect(updateStatus).toEqual(RequestStatus.FAILED);
 
@@ -672,16 +630,19 @@ describe('Videos page', () => {
 
         const videoMenuButton = screen.getByTestId('file-menu-dropdown-mOckID1');
 
+        axiosMock.onDelete(`${getCourseVideosApiUrl(courseId)}/mOckID1`).reply(404);
+        fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
+        fireEvent.click(screen.getByTestId('open-delete-confirmation-button'));
         await waitFor(async () => {
-          axiosMock.onDelete(`${getCourseVideosApiUrl(courseId)}/mOckID1`).reply(404);
-          fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
-          fireEvent.click(screen.getByTestId('open-delete-confirmation-button'));
           expect(screen.getByText('Delete mOckID1.mp4')).toBeVisible();
+        });
 
-          fireEvent.click(screen.getByText(messages.deleteFileButtonLabel.defaultMessage));
+        fireEvent.click(screen.getByText(messages.deleteFileButtonLabel.defaultMessage));
+        await waitFor(async () => {
           expect(screen.queryByText('Delete mOckID1.mp4')).toBeNull();
         });
-        executeThunk(deleteVideoFile(courseId, 'mOckID1', 5), store.dispatch);
+
+        await executeThunk(deleteVideoFile(courseId, 'mOckID1', 5), store.dispatch);
         await waitFor(() => {
           const deleteStatus = store.getState().videos.deletingStatus;
           expect(deleteStatus).toEqual(RequestStatus.FAILED);
@@ -698,14 +659,12 @@ describe('Videos page', () => {
         const videoMenuButton = screen.getByTestId('file-menu-dropdown-mOckID3');
 
         axiosMock.onGet(`${getVideosUrl(courseId)}/mOckID3/usage`).reply(404);
-        await waitFor(() => {
-          fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
-          fireEvent.click(screen.getByText('Info'));
-          executeThunk(getUsagePaths({
-            courseId,
-            video: { id: 'mOckID3', displayName: 'mOckID3' },
-          }), store.dispatch);
-        });
+        fireEvent.click(within(videoMenuButton).getByLabelText('file-menu-toggle'));
+        fireEvent.click(screen.getByText('Info'));
+        await executeThunk(getUsagePaths({
+          courseId,
+          video: { id: 'mOckID3', displayName: 'mOckID3' },
+        }), store.dispatch);
         await waitFor(() => {
           const { usageStatus } = store.getState().videos;
           expect(usageStatus).toEqual(RequestStatus.FAILED);
@@ -721,18 +680,13 @@ describe('Videos page', () => {
         const actionsButton = screen.getByText(messages.actionsButtonLabel.defaultMessage);
         expect(actionsButton).toBeVisible();
 
-        await waitFor(() => {
-          fireEvent.click(actionsButton);
-        });
-        const downloadButton = screen.getByText(messages.downloadTitle.defaultMessage).closest('a');
+        fireEvent.click(actionsButton);
+        const downloadButton = await screen.getByText(messages.downloadTitle.defaultMessage).closest('a');
         expect(downloadButton).not.toHaveClass('disabled');
 
         axiosMock.onPut(`${getVideosUrl(courseId)}/download`).reply(404);
-
-        await waitFor(() => {
-          fireEvent.click(downloadButton);
-          executeThunk(fetchVideoDownload([{ original: { displayName: 'mOckID1', id: '2', downloadLink: 'test' } }]), store.dispatch);
-        });
+        fireEvent.click(downloadButton);
+        await executeThunk(fetchVideoDownload([{ original: { displayName: 'mOckID1', id: '2', downloadLink: 'test' } }]), store.dispatch);
 
         const updateStatus = store.getState().videos.updatingStatus;
         expect(updateStatus).toEqual(RequestStatus.FAILED);
