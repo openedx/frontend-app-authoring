@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
+import { Helmet } from 'react-helmet';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   injectIntl,
@@ -7,13 +8,11 @@ import {
   intlShape,
 } from '@edx/frontend-platform/i18n';
 import {
-  useToggle,
   ActionRow,
   Button,
   CheckboxFilter,
   Container,
-  Alert,
-  Spinner,
+  useToggle,
 } from '@openedx/paragon';
 import Placeholder from '@edx/frontend-lib-content-components';
 
@@ -29,6 +28,7 @@ import {
   markVideoUploadsInProgressAsFailed,
   resetErrors,
   updateVideoOrder,
+  cancelAllUploads,
 } from './data/thunks';
 import messages from './messages';
 import VideosPageProvider from './VideosPageProvider';
@@ -41,11 +41,12 @@ import {
   ThumbnailColumn,
   TranscriptColumn,
 } from '../generic';
-import TranscriptSettings from './transcript-settings';
-import VideoThumbnail from './VideoThumbnail';
 import { getFormattedDuration, resampleFile } from './data/utils';
 import FILES_AND_UPLOAD_TYPE_FILTERS from '../generic/constants';
+import TranscriptSettings from './transcript-settings';
 import VideoInfoModalSidebar from './info-sidebar';
+import VideoThumbnail from './VideoThumbnail';
+import UploadTrackerModal from './UploadTrackerModal';
 
 const VideosPage = ({
   courseId,
@@ -58,11 +59,12 @@ const VideosPage = ({
     openTranscriptSettings,
     closeTranscriptSettings,
   ] = useToggle(false);
+  const [
+    isUploadTrackerOpen,
+    openUploadTracker,
+    closeUploadTracker,
+  ] = useToggle(false);
   const courseDetails = useModel('courseDetails', courseId);
-  document.title = getPageHeadTitle(
-    courseDetails?.name,
-    intl.formatMessage(messages.heading),
-  );
 
   useEffect(() => {
     dispatch(fetchVideos(courseId));
@@ -80,7 +82,7 @@ const VideosPage = ({
     pageSettings,
   } = useSelector((state) => state.videos);
 
-  const uploadingIdsRef = useRef([]);
+  const uploadingIdsRef = useRef({ uploadData: {}, uploadCount: 0 });
 
   useEffect(() => {
     window.onbeforeunload = () => {
@@ -90,6 +92,11 @@ const VideosPage = ({
       }
       return undefined;
     };
+    if (addVideoStatus === RequestStatus.IN_PROGRESS) {
+      openUploadTracker();
+    } else {
+      closeUploadTracker();
+    }
   }, [addVideoStatus]);
 
   const {
@@ -103,11 +110,12 @@ const VideosPage = ({
   const supportedFileFormats = {
     'video/*': videoSupportedFileFormats || FILES_AND_UPLOAD_TYPE_FILTERS.video,
   };
-
+  const handleUploadCancel = () => dispatch(cancelAllUploads(courseId, uploadingIdsRef.current.uploadData));
   const handleErrorReset = (error) => dispatch(resetErrors(error));
   const handleAddFile = (files) => {
     handleErrorReset({ errorType: 'add' });
-    files.forEach((file) => dispatch(addVideoFile(courseId, file, videoIds, uploadingIdsRef)));
+    uploadingIdsRef.current.uploadCount = files.length;
+    dispatch(addVideoFile(courseId, files, videoIds, uploadingIdsRef));
   };
   const handleDeleteFile = (id) => dispatch(deleteVideoFile(courseId, id));
   const handleDownloadFile = (selectedRows) => dispatch(fetchVideoDownload({ selectedRows, courseId }));
@@ -222,6 +230,9 @@ const VideosPage = ({
 
   return (
     <VideosPageProvider courseId={courseId}>
+      <Helmet>
+        <title>{getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.heading))}</title>
+      </Helmet>
       <Container size="xl" className="p-4 pt-4.5">
         <EditFileErrors
           resetErrors={handleErrorReset}
@@ -231,11 +242,6 @@ const VideosPage = ({
           updateFileStatus={updateVideoStatus}
           loadingStatus={loadingStatus}
         />
-        <Alert variant="warning" show={addVideoStatus === RequestStatus.IN_PROGRESS}>
-          <div className="video-upload-warning-text"><Spinner animation="border" variant="warning" className="video-upload-spinner mr-3" screenReaderText="loading" />
-            <p className="d-inline"><FormattedMessage {...messages.videoUploadAlertLabel} /></p>
-          </div>
-        </Alert>
         <ActionRow>
           <div className="h2">
             <FormattedMessage {...messages.heading} />
@@ -287,6 +293,13 @@ const VideosPage = ({
             />
           </>
         )}
+        <UploadTrackerModal
+          {...{
+            isUploadTrackerOpen,
+            currentUploadingIdsRef: uploadingIdsRef.current,
+            handleUploadCancel,
+          }}
+        />
       </Container>
     </VideosPageProvider>
   );

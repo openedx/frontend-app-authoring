@@ -104,7 +104,7 @@ GalleryCard.propTypes = {
   handleOpenDeleteConfirmation: PropTypes.func.isRequired,
   handleOpenFileInfo: PropTypes.func.isRequired,
   thumbnailPreview: PropTypes.func.isRequired,
-  fileType: PropTypes.func.isRequired,
+  fileType: PropTypes.string.isRequired,
 };
 
 export default GalleryCard;

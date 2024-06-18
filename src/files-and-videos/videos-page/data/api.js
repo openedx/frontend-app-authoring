@@ -1,7 +1,7 @@
+/* eslint-disable no-param-reassign */
 import saveAs from 'file-saver';
 import { camelCaseObject, ensureConfig, getConfig } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-
+import { getAuthenticatedHttpClient, getHttpClient } from '@edx/frontend-platform/auth';
 import { isEmpty } from 'lodash';
 
 ensureConfig([
@@ -200,16 +200,25 @@ export async function sendVideoUploadStatus(
 export async function uploadVideo(
   uploadUrl,
   uploadFile,
+  uploadingIdsRef,
+  videoId,
+  controller,
 ) {
-  return fetch(uploadUrl, {
-    method: 'PUT',
+  const currentUpload = uploadingIdsRef.current.uploadData[videoId];
+  return getHttpClient().put(uploadUrl, uploadFile, {
     headers: {
       'Content-Disposition': `attachment; filename="${uploadFile.name}"`,
       'Content-Type': uploadFile.type,
-      'Content-Length': uploadFile.size,
     },
     multipart: false,
-    body: uploadFile,
+    signal: controller?.signal,
+    onUploadProgress: ({ loaded, total }) => {
+      const progress = ((loaded / total) * 100).toFixed(2);
+      uploadingIdsRef.current.uploadData[videoId] = {
+        ...currentUpload,
+        progress,
+      };
+    },
   });
 }
 

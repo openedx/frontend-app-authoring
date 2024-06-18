@@ -39,8 +39,43 @@ import {
   failAddVideo,
 } from './slice';
 import { ServerError } from './errors';
-
 import { updateFileValues } from './utils';
+
+let controllers = [];
+
+const updateVideoUploadStatus = async (courseId, edxVideoId, message, status) => {
+  await sendVideoUploadStatus(courseId, edxVideoId, message, status);
+};
+
+export function cancelAllUploads(courseId, uploadData) {
+  return async (dispatch) => {
+    if (controllers) {
+      controllers.forEach(control => {
+        control.abort();
+      });
+    }
+    controllers = [];
+
+    Object.entries(uploadData).forEach(([key, value]) => {
+      if (value.status === RequestStatus.PENDING) {
+        updateVideoUploadStatus(
+          courseId,
+          key,
+          'Upload failed',
+          'upload_failed',
+        );
+        dispatch(
+          updateErrors({
+            error: 'add',
+            message: `Cancelled upload for ${value.name}.`,
+          }),
+        );
+      }
+    });
+
+    dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
+  };
+}
 
 export function fetchVideos(courseId) {
   return async (dispatch) => {
@@ -143,9 +178,9 @@ export function deleteVideoFile(courseId, id) {
 
 export function markVideoUploadsInProgressAsFailed({ uploadingIdsRef, courseId }) {
   return (dispatch) => {
-    uploadingIdsRef.current.forEach((edxVideoId) => {
+    Object.keys(uploadingIdsRef.current.uploadData).forEach((edxVideoId) => {
       try {
-        sendVideoUploadStatus(
+        updateVideoUploadStatus(
           courseId,
           edxVideoId || '',
           'Upload failed',
@@ -155,18 +190,98 @@ export function markVideoUploadsInProgressAsFailed({ uploadingIdsRef, courseId }
         // eslint-disable-next-line no-console
         console.error(`Failed to send "Failed" upload status for ${edxVideoId} onbeforeunload`);
       }
-      dispatch(
-        updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }),
-      );
+      dispatch(updateEditStatus({ editType: 'add', status: '' }));
     });
-    // eslint-disable-next-line no-param-reassign
-    uploadingIdsRef.current = [];
   };
 }
 
+const addVideoToEdxVal = async (courseId, file, dispatch) => {
+  try {
+    const createUrlResponse = await addVideo(courseId, file);
+    // eslint-disable-next-line
+    console.log(`Post Response: ${JSON.stringify(createUrlResponse)}`);
+    if (createUrlResponse.status < 200 || createUrlResponse.status >= 300) {
+      dispatch(failAddVideo({ fileName: file.name }));
+    }
+    const [{ uploadUrl, edxVideoId }] = camelCaseObject(
+      createUrlResponse.data,
+    ).files;
+    return { uploadUrl, edxVideoId };
+  } catch (error) {
+    dispatch(failAddVideo({ fileName: file.name }));
+    return {};
+  }
+};
+
+const uploadToBucket = async ({
+  courseId,
+  uploadUrl,
+  file,
+  uploadingIdsRef,
+  edxVideoId,
+  dispatch,
+}) => {
+  const currentController = new AbortController();
+  controllers.push(currentController);
+  const currentVideoData = uploadingIdsRef.current.uploadData[edxVideoId];
+  try {
+    const putToServerResponse = await uploadVideo(
+      uploadUrl,
+      file,
+      uploadingIdsRef,
+      edxVideoId,
+      currentController,
+    );
+    if (
+      putToServerResponse.status < 200
+      || putToServerResponse.status >= 300
+    ) {
+      throw new ServerError(
+        'Server responded with an error status',
+        putToServerResponse.status,
+      );
+    } else {
+      uploadingIdsRef.current.uploadData[edxVideoId] = {
+        ...currentVideoData,
+        status: RequestStatus.SUCCESSFUL,
+      };
+      updateVideoUploadStatus(
+        courseId,
+        edxVideoId,
+        'Upload completed',
+        'upload_completed',
+      );
+    }
+    return false;
+  } catch (error) {
+    if (error.response && error.response.status === 413) {
+      const message = error.response.data.error;
+      dispatch(updateErrors({ error: 'add', message }));
+    } else {
+      dispatch(
+        updateErrors({
+          error: 'add',
+          message: `Failed to upload ${file.name}.`,
+        }),
+      );
+      uploadingIdsRef.current.uploadData[edxVideoId] = {
+        ...currentVideoData,
+        status: RequestStatus.FAILED,
+      };
+    }
+    updateVideoUploadStatus(
+      courseId,
+      edxVideoId || '',
+      'Upload failed',
+      'upload_failed',
+    );
+    return true;
+  }
+};
+
 export function addVideoFile(
   courseId,
-  file,
+  files,
   videoIds,
   uploadingIdsRef,
 ) {
@@ -174,74 +289,34 @@ export function addVideoFile(
     dispatch(
       updateEditStatus({ editType: 'add', status: RequestStatus.IN_PROGRESS }),
     );
-
-    let edxVideoId;
-    let uploadUrl;
-    try {
-      const createUrlResponse = await addVideo(courseId, file);
-      // eslint-disable-next-line
-      console.log(`Post Response: ${JSON.stringify(createUrlResponse)}`);
-      if (createUrlResponse.status < 200 || createUrlResponse.status >= 300) {
-        dispatch(failAddVideo({ fileName: file.name }));
-      }
-      // eslint-disable-next-line prefer-destructuring
-      [{ edxVideoId, uploadUrl }] = camelCaseObject(
-        createUrlResponse.data,
-      ).files;
-    } catch (error) {
-      dispatch(failAddVideo({ fileName: file.name }));
-      updateEditStatus({ editType: 'add', status: RequestStatus.FAILED });
-      return;
-    }
-    try {
-      uploadingIdsRef.current = [...uploadingIdsRef.current, edxVideoId];
-
-      const putToServerResponse = await uploadVideo(uploadUrl, file);
-      if (
-        putToServerResponse.status < 200
-        || putToServerResponse.status >= 300
-      ) {
-        throw new ServerError(
-          'Server responded with an error status',
-          putToServerResponse.status,
-        );
+    let hasFailure = false;
+    await Promise.all(files.map(async (file, idx) => {
+      const name = file?.name || `Video ${idx + 1}`;
+      const { edxVideoId, uploadUrl } = await addVideoToEdxVal(courseId, file, dispatch);
+      if (uploadUrl && edxVideoId) {
+        uploadingIdsRef.current.uploadData = {
+          ...uploadingIdsRef.current.uploadData,
+          [edxVideoId]: {
+            name,
+            status: RequestStatus.PENDING,
+            progress: 0,
+          },
+        };
+        hasFailure = await uploadToBucket({
+          courseId, uploadUrl, file, uploadingIdsRef, edxVideoId, dispatch,
+        });
       } else {
-        await sendVideoUploadStatus(
-          courseId,
-          edxVideoId,
-          'Upload completed',
-          'upload_completed',
-        );
+        hasFailure = true;
+        uploadingIdsRef.current.uploadData = {
+          ...uploadingIdsRef.current.uploadData,
+          [idx]: {
+            name,
+            status: RequestStatus.FAILED,
+            progress: 0,
+          },
+        };
       }
-      uploadingIdsRef.current = uploadingIdsRef.current.filter(
-        (id) => id !== edxVideoId,
-      );
-    } catch (error) {
-      if (error.response && error.response.status === 413) {
-        const message = error.response.data.error;
-        dispatch(updateErrors({ error: 'add', message }));
-      } else {
-        dispatch(
-          updateErrors({
-            error: 'add',
-            message: `Failed to upload ${file.name}.`,
-          }),
-        );
-      }
-      await sendVideoUploadStatus(
-        courseId,
-        edxVideoId || '',
-        'Upload failed',
-        'upload_failed',
-      );
-      dispatch(
-        updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }),
-      );
-      uploadingIdsRef.current = uploadingIdsRef.current.filter(
-        (id) => id !== edxVideoId,
-      );
-      // return;
-    }
+    }));
     try {
       const { videos } = await fetchVideoList(courseId);
       const newVideos = videos.filter(
@@ -257,14 +332,20 @@ export function addVideoFile(
       );
       // eslint-disable-next-line
       console.error(`fetchVideoList failed with message: ${error.message}`);
+      hasFailure = true;
       dispatch(
         updateErrors({ error: 'add', message: 'Failed to load videos' }),
       );
-      return;
     }
-    dispatch(
-      updateEditStatus({ editType: 'add', status: RequestStatus.SUCCESSFUL }),
-    );
+    if (hasFailure) {
+      dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
+    } else {
+      dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.SUCCESSFUL }));
+    }
+    uploadingIdsRef.current = {
+      uploadData: {},
+      uploadCount: 0,
+    };
   };
 }
 
