@@ -14,7 +14,6 @@ import {
 
 import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
-import { Toast } from '@openedx/paragon';
 import messages from './i18n';
 
 import { CreateLibrary, LibraryLayout } from './library-authoring';

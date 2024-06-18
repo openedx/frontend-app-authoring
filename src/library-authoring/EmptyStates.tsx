@@ -5,7 +5,7 @@ import {
 } from '@openedx/paragon';
 import { Add } from '@openedx/paragon/icons';
 import messages from './messages';
-import { LibraryContext } from './common';
+import { LibraryContext } from './common/context';
 
 export const NoComponents = () => {
   const { openAddContentSidebar } = useContext(LibraryContext);

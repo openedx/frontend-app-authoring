@@ -9,7 +9,7 @@ import { Close } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from '../messages';
 import { AddContentContainer } from '../add-content';
-import { LibraryContext } from '../common';
+import { LibraryContext } from '../common/context';
 
 /**
  * Sidebar container for library pages.

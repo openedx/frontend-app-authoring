@@ -1,16 +1,12 @@
 // @ts-check
 import React from 'react';
-import { LibraryContext, useLibraryContext } from './common';
 import LibraryAuthoringPage from './LibraryAuthoringPage';
+import { LibraryProvider } from './common/context';
 
-const LibraryLayout = () => {
-  const context = useLibraryContext();
-
-  return (
-    <LibraryContext.Provider value={context}>
-      <LibraryAuthoringPage />
-    </LibraryContext.Provider>
-  );
-};
+const LibraryLayout = () => (
+  <LibraryProvider>
+    <LibraryAuthoringPage />
+  </LibraryProvider>
+);
 
 export default LibraryLayout;
