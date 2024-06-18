@@ -26,10 +26,10 @@ import CourseRerun from './course-rerun';
 import { TaxonomyLayout, TaxonomyDetailPage, TaxonomyListPage } from './taxonomy';
 import { ContentTagsDrawer } from './content-tags-drawer';
 import AccessibilityPage from './accessibility-page';
+import { ToastProvider } from './generic/toast-context';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
-import { useToastContext, ToastContext } from './generic/toast-context';
 
 const queryClient = new QueryClient();
 
@@ -82,27 +82,14 @@ const App = () => {
     },
   );
 
-  // Global toast context to open a toast in
-  // any component of the MFE.
-  const toastContext = useToastContext();
-  const { toastMessage, closeToast } = toastContext;
-
   return (
     <AppProvider store={initializeStore()} wrapWithRouter={false}>
-      <ToastContext.Provider value={toastContext}>
+      <ToastProvider>
         <QueryClientProvider client={queryClient}>
           <Head />
           <RouterProvider router={router} />
         </QueryClientProvider>
-        { toastMessage && (
-          <Toast
-            show={toastMessage !== null}
-            onClose={closeToast}
-          >
-            {toastMessage}
-          </Toast>
-        )}
-      </ToastContext.Provider>
+      </ToastProvider>
     </AppProvider>
   );
 };
