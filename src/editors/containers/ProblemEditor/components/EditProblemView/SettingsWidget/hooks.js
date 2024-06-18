@@ -180,8 +180,6 @@ export const useAnswerSettings = (showAnswer, updateSettings) => {
 
   const numberOfAttemptsChoice = [
     ShowAnswerTypesKeys.AFTER_SOME_NUMBER_OF_ATTEMPTS,
-    ShowAnswerTypesKeys.AFTER_ALL_ATTEMPTS,
-    ShowAnswerTypesKeys.AFTER_ALL_ATTEMPTS_OR_CORRECT,
   ];
 
   useEffect(() => {
