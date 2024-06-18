@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Icon, Row, Pagination } from '@openedx/paragon';
+import {
+  Icon,
+  Row,
+  Pagination,
+  Alert,
+  Button,
+} from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig, getPath } from '@edx/frontend-platform';
+import { Error } from '@openedx/paragon/icons';
 
 import { constructLibraryAuthoringURL } from '../../../utils';
 import useListStudioHomeV2Libraries from '../../data/apiHooks';
@@ -10,6 +17,7 @@ import { LoadingSpinner } from '../../../generic/Loading';
 import AlertMessage from '../../../generic/alert-message';
 import CardItem from '../../card-item';
 import messages from '../messages';
+import LibrariesV2Filters from './libraries-v2-filters';
 
 const LibrariesV2Tab = ({
   libraryAuthoringMfeUrl,
@@ -18,18 +26,26 @@ const LibrariesV2Tab = ({
   const intl = useIntl();
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [isFiltered, setIsFiltered] = useState(false);
+  const [filterParams, setFilterParams] = useState({});
 
   const handlePageSelect = (page) => {
     setCurrentPage(page);
+  };
+
+  const handleClearFilters = () => {
+    setFilterParams({});
+    setCurrentPage(1);
+    setIsFiltered(false);
   };
 
   const {
     data,
     isLoading,
     isError,
-  } = useListStudioHomeV2Libraries({ page: currentPage });
+  } = useListStudioHomeV2Libraries({ page: currentPage, ...filterParams });
 
-  if (isLoading) {
+  if (isLoading && !isFiltered) {
     return (
       <Row className="m-0 mt-4 justify-content-center">
         <LoadingSpinner />
@@ -46,6 +62,8 @@ const LibrariesV2Tab = ({
       : `${window.location.origin}${getPath(getConfig().PUBLIC_PATH)}library/${id}`
   );
 
+  const hasV2Libraries = data?.results?.length > 0;
+
   return (
     isError ? (
       <AlertMessage
@@ -61,18 +79,26 @@ const LibrariesV2Tab = ({
     ) : (
       <div className="courses-tab-container">
         <div className="d-flex flex-row justify-content-between my-4">
-          {/* Temporary div to add spacing. This will be replaced with lib search/filters */}
-          <div className="d-flex" />
-          <p data-testid="pagination-info">
-            {intl.formatMessage(messages.coursesPaginationInfo, {
-              length: data.results.length,
-              total: data.count,
-            })}
-          </p>
+          <LibrariesV2Filters
+            isLoading={isLoading}
+            setIsFiltered={setIsFiltered}
+            isFiltered={isFiltered}
+            setFilterParams={setFilterParams}
+            setCurrentPage={setCurrentPage}
+          />
+          { !isLoading
+          && (
+            <p data-testid="pagination-info">
+              {intl.formatMessage(messages.coursesPaginationInfo, {
+                length: data.results.length,
+                total: data.count,
+              })}
+            </p>
+          )}
         </div>
 
-        {
-          data.results.map(({
+        { hasV2Libraries
+          ? data.results.map(({
             id, org, slug, title,
           }) => (
             <CardItem
@@ -83,11 +109,22 @@ const LibrariesV2Tab = ({
               number={slug}
               url={libURL(id)}
             />
-          ))
-        }
+          )) : isFiltered && !isLoading && (
+            <Alert className="mt-4">
+              <Alert.Heading>
+                {intl.formatMessage(messages.librariesV2TabLibraryNotFoundAlertTitle)}
+              </Alert.Heading>
+              <p data-testid="courses-not-found-alert">
+                {intl.formatMessage(messages.librariesV2TabLibraryNotFoundAlertMessage)}
+              </p>
+              <Button variant="primary" onClick={handleClearFilters}>
+                {intl.formatMessage(messages.coursesTabCourseNotFoundAlertCleanFiltersButton)}
+              </Button>
+            </Alert>
+          )}
 
         {
-          data.numPages > 1
+          data?.numPages > 1
           && (
             <Pagination
               className="d-flex justify-content-center"
