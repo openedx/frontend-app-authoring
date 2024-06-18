@@ -258,6 +258,26 @@ describe('Video Settings DurationWidget hooks', () => {
         });
       });
     });
+    describe('if the passed stopTime = startTime', () => {
+      it('sets the startTime value less than stopTime value', () => {
+        testMethod({
+          ...props,
+          duration: { startTime: 86399000, stopTime: 86399000 },
+          unsavedDuration: { startTime: '23:59:59', stopTime: '23:59:59' },
+          index: testStopIndex,
+          inputString: '23:59:59',
+        });
+        expect(props.setUnsavedDuration).toHaveBeenCalledWith({
+          startTime: '23:59:58',
+          stopTime: '23:59:59',
+        });
+        expect(props.setDuration).toHaveBeenCalledWith({
+          ...props.duration,
+          startTime: 86399000 - 1000,
+          stopTime: 86399000,
+        });
+      });
+    });
   });
   describe('onDurationChange', () => {
     beforeEach(() => {

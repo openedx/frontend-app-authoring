@@ -114,6 +114,25 @@ export const updateDuration = ({
   if (newValue > 86399000) {
     newValue = 86399000;
   }
+
+  // stopTime must not be equal to 24:00:00, so when the user types 23:59:59 in the startTime field and stopTime field -
+  // set the startTime field to 23:59:58.
+  if (index === 'stopTime' && duration.startTime === 86399000) {
+    const startTime = 86399000 - 1000;
+
+    setUnsavedDuration({
+      startTime: module.durationStringFromValue(startTime),
+      stopTime: module.durationStringFromValue(newValue),
+    });
+    setDuration({
+      ...duration,
+      startTime,
+      stopTime: newValue,
+    });
+
+    return;
+  }
+
   // stopTime must be at least 1 second, if not zero
   if (index === 'stopTime' && newValue > 0 && newValue < 1000) {
     newValue = 1000;
