@@ -126,9 +126,18 @@ describe('api.js', () => {
         },
       };
       const expectedResult = 'Something';
-      axiosUnauthenticatedMock.onPut(mockUrl).reply(200, expectedResult);
-      const actual = await uploadVideo(mockUrl, mockFile, mockRef, mockVideoId, mockController);
-      expect(actual.data).toEqual(expectedResult);
+      axiosUnauthenticatedMock.onPut(mockUrl).reply((config) => {
+        const total = 1024; // mocked file size
+        const progress = 0.4;
+        if (config.onUploadProgress) {
+          config.onUploadProgress({ loaded: total * progress, total });
+        }
+        return [200, expectedResult];
+      });
+      const { data: actual } = await uploadVideo(mockUrl, mockFile, mockRef, mockVideoId, mockController);
+      expect(actual).toEqual(expectedResult);
+
+      expect(mockRef.current.uploadData.id123.progress).toEqual('40.00');
     });
   });
   describe('sendVideoUploadStatus', () => {

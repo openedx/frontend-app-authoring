@@ -53,27 +53,25 @@ export function cancelAllUploads(courseId, uploadData) {
       controllers.forEach(control => {
         control.abort();
       });
+      Object.entries(uploadData).forEach(([key, value]) => {
+        if (value.status === RequestStatus.PENDING) {
+          updateVideoUploadStatus(
+            courseId,
+            key,
+            'Upload failed',
+            'upload_failed',
+          );
+          dispatch(
+            updateErrors({
+              error: 'add',
+              message: `Cancelled upload for ${value.name}.`,
+            }),
+          );
+        }
+      });
+      dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
     }
     controllers = [];
-
-    Object.entries(uploadData).forEach(([key, value]) => {
-      if (value.status === RequestStatus.PENDING) {
-        updateVideoUploadStatus(
-          courseId,
-          key,
-          'Upload failed',
-          'upload_failed',
-        );
-        dispatch(
-          updateErrors({
-            error: 'add',
-            message: `Cancelled upload for ${value.name}.`,
-          }),
-        );
-      }
-    });
-
-    dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
   };
 }
 

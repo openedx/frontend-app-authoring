@@ -234,19 +234,93 @@ describe('Videos page', () => {
     });
 
     describe('table actions', () => {
-      it('should upload a single file', async () => {
-        await mockStore(RequestStatus.SUCCESSFUL);
+      describe('file upload', () => {
+        it('should upload a single file', async () => {
+          await mockStore(RequestStatus.SUCCESSFUL);
 
-        axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
-        axiosUnauthenticateMock.onPut('http://testing.org').reply(200);
-        axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
+          axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
+          axiosUnauthenticateMock.onPut('http://testing.org').reply(200);
+          axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
 
-        const addFilesButton = screen.getAllByLabelText('file-input')[3];
-        await act(async () => {
-          userEvent.upload(addFilesButton, file);
+          const addFilesButton = screen.getAllByLabelText('file-input')[3];
+          await act(async () => {
+            userEvent.upload(addFilesButton, file);
+          });
+          const addStatus = store.getState().videos.addingStatus;
+          expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
         });
-        const addStatus = store.getState().videos.addingStatus;
-        expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
+
+        it('when uploads are in progress, should show dialog and set them to failed on page leave', async () => {
+          await mockStore(RequestStatus.SUCCESSFUL);
+
+          axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
+          axiosUnauthenticateMock.onPut('http://testing.org').reply(200);
+          axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
+
+          const uploadSpy = jest.spyOn(api, 'uploadVideo');
+          const setFailedSpy = jest.spyOn(api, 'sendVideoUploadStatus').mockImplementation(() => {});
+          uploadSpy.mockResolvedValue(new Promise(() => {}));
+
+          const addFilesButton = screen.getAllByLabelText('file-input')[3];
+          act(async () => {
+            userEvent.upload(addFilesButton, file);
+          });
+          await waitFor(() => {
+            const addStatus = store.getState().videos.addingStatus;
+            expect(addStatus).toEqual(RequestStatus.IN_PROGRESS);
+            expect(uploadSpy).toHaveBeenCalled();
+            expect(screen.getByText(videoMessages.videoUploadTrackerModalTitle.defaultMessage)).toBeVisible();
+          });
+          act(() => {
+            window.dispatchEvent(new Event('beforeunload'));
+          });
+          await waitFor(() => {
+            expect(setFailedSpy).toHaveBeenCalledWith(courseId, expect.any(String), expect.any(String), 'upload_failed');
+          });
+          uploadSpy.mockRestore();
+          setFailedSpy.mockRestore();
+        });
+
+        it('should cancel all in-progress and set them to failed', async () => {
+          await mockStore(RequestStatus.SUCCESSFUL);
+
+          axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
+          axiosUnauthenticateMock.onPut('http://testing.org').reply(200);
+          axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
+
+          const uploadSpy = jest.spyOn(api, 'uploadVideo');
+          const setFailedSpy = jest.spyOn(api, 'sendVideoUploadStatus').mockImplementation(() => {});
+          uploadSpy.mockResolvedValue(new Promise(() => {}));
+
+          const addFilesButton = screen.getAllByLabelText('file-input')[3];
+          act(async () => {
+            userEvent.upload(addFilesButton, file);
+          });
+
+          await waitFor(() => {
+            const addStatus = store.getState().videos.addingStatus;
+            expect(addStatus).toEqual(RequestStatus.IN_PROGRESS);
+
+            expect(uploadSpy).toHaveBeenCalled();
+
+            expect(screen.getByText(videoMessages.videoUploadTrackerModalTitle.defaultMessage)).toBeVisible();
+          });
+
+          act(() => {
+            const cancelButton = screen.getByText(videoMessages.videoUploadTrackerAlertCancelLabel.defaultMessage);
+            fireEvent.click(cancelButton);
+          });
+          await waitFor(() => {
+            const addStatus = store.getState().videos.addingStatus;
+            expect(setFailedSpy).toHaveBeenCalledWith(courseId, expect.any(String), expect.any(String), 'upload_failed');
+
+            expect(addStatus).toEqual(RequestStatus.FAILED);
+
+            expect(screen.getByText('Upload error')).toBeVisible();
+          });
+          uploadSpy.mockRestore();
+          setFailedSpy.mockRestore();
+        });
       });
 
       it('should have disabled action buttons', async () => {
@@ -312,37 +386,6 @@ describe('Videos page', () => {
         await act(async () => {
           fireEvent.click(downloadButton);
         });
-      });
-
-      it('when uploads are in progress, should show alert and set them to failed on page leave', async () => {
-        await mockStore(RequestStatus.SUCCESSFUL);
-
-        axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
-        axiosUnauthenticateMock.onPut('http://testing.org').reply(200);
-        axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
-
-        const uploadSpy = jest.spyOn(api, 'uploadVideo');
-        const setFailedSpy = jest.spyOn(api, 'sendVideoUploadStatus').mockImplementation(() => {});
-        uploadSpy.mockResolvedValue(new Promise(() => {}));
-
-        const addFilesButton = screen.getAllByLabelText('file-input')[3];
-        act(async () => {
-          userEvent.upload(addFilesButton, file);
-        });
-        await waitFor(() => {
-          const addStatus = store.getState().videos.addingStatus;
-          expect(addStatus).toEqual(RequestStatus.IN_PROGRESS);
-          expect(uploadSpy).toHaveBeenCalled();
-          expect(screen.getByText(videoMessages.videoUploadTrackerModalTitle.defaultMessage)).toBeVisible();
-        });
-        act(() => {
-          window.dispatchEvent(new Event('beforeunload'));
-        });
-        await waitFor(() => {
-          expect(setFailedSpy).toHaveBeenCalledWith(courseId, expect.any(String), expect.any(String), 'upload_failed');
-        });
-        uploadSpy.mockRestore();
-        setFailedSpy.mockRestore();
       });
 
       describe('Sort and filter button', () => {

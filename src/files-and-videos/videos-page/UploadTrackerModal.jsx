@@ -51,9 +51,12 @@ const UploadTrackerModal = ({
             <span className="font-weight-bold">
               {intl.formatMessage(messages.videoUploadTrackerAlertEditMessage)}
             </span>
-            <Hyperlink className="ml-2" destination={videosPagePath} target="_blank">
-              {intl.formatMessage(messages.videoUploadTrackerAlertEditHyperlinkLabel)}
-            </Hyperlink>
+            <Hyperlink
+              className="ml-2"
+              destination={videosPagePath}
+              target="_blank"
+              content={intl.formatMessage(messages.videoUploadTrackerAlertEditHyperlinkLabel)}
+            />
           </div>
         </Alert>
         <div className="my-4 text-primary-500">
