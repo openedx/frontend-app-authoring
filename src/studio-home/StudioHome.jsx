@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import {
   Button,
   Container,
@@ -11,7 +11,6 @@ import { Add as AddIcon, Error } from '@openedx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { getConfig, getPath } from '@edx/frontend-platform';
-import { useLocation } from 'react-router-dom';
 
 import { constructLibraryAuthoringURL } from '../utils';
 import Loading from '../generic/Loading';
@@ -20,7 +19,7 @@ import Header from '../header';
 import SubHeader from '../generic/sub-header/SubHeader';
 import HomeSidebar from './home-sidebar';
 import TabsSection from './tabs-section';
-import { isMixedOrV1LibrariesMode, isMixedOrV2LibrariesMode } from './tabs-section/utils';
+import { isMixedOrV2LibrariesMode } from './tabs-section/utils';
 import OrganizationSection from './organization-section';
 import VerifyEmailLayout from './verify-email-layout';
 import CreateNewCourseForm from './create-new-course-form';
@@ -29,8 +28,6 @@ import { useStudioHome } from './hooks';
 import AlertMessage from '../generic/alert-message';
 
 const StudioHome = ({ intl }) => {
-  const location = useLocation();
-
   const isPaginationCoursesEnabled = getConfig().ENABLE_HOME_PAGE_COURSE_API_V2;
   const {
     isLoadingPage,
@@ -50,9 +47,6 @@ const StudioHome = ({ intl }) => {
 
   const libMode = getConfig().LIBRARY_MODE;
 
-  const v1LibraryTab = isMixedOrV1LibrariesMode(libMode) && location?.pathname.split('/').pop() === 'libraries-v1';
-  console.log('v1LibraryTab', v1LibraryTab);
-
   const {
     userIsActive,
     studioShortName,
@@ -61,7 +55,7 @@ const StudioHome = ({ intl }) => {
     redirectToLibraryAuthoringMfe,
   } = studioHomeData;
 
-  const getHeaderButtons = useCallback(() => {
+  function getHeaderButtons() {
     const headerButtons = [];
 
     if (isFailedLoadingPage || !userIsActive) {
@@ -89,7 +83,7 @@ const StudioHome = ({ intl }) => {
     }
 
     let libraryHref = `${getConfig().STUDIO_BASE_URL}/home_library`;
-    if (isMixedOrV2LibrariesMode(libMode) && !v1LibraryTab) {
+    if (isMixedOrV2LibrariesMode(libMode)) {
       libraryHref = libraryAuthoringMfeUrl && redirectToLibraryAuthoringMfe
         ? constructLibraryAuthoringURL(libraryAuthoringMfeUrl, 'create')
         // Redirection to the placeholder is done in the MFE rather than
@@ -97,7 +91,6 @@ const StudioHome = ({ intl }) => {
         // hence why we use the MFE's origin
         : `${window.location.origin}${getPath(getConfig().PUBLIC_PATH)}library/create`;
     }
-    console.log('libraryHref', libraryHref);
 
     headerButtons.push(
       <Button
@@ -113,7 +106,7 @@ const StudioHome = ({ intl }) => {
     );
 
     return headerButtons;
-  }, [location]);
+  }
 
   const headerButtons = userIsActive ? getHeaderButtons() : [];
   if (isLoadingPage && !isFiltered) {
