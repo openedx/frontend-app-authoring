@@ -4,7 +4,7 @@ import React, { useEffect, useMemo } from 'react';
 
 import { CardGrid } from '@openedx/paragon';
 import { NoComponents, NoSearchResults } from '../EmptyStates';
-import { useLibraryComponentCount, useLibraryComponents } from '../data/apiHook';
+import { useLibraryBlockTypes, useLibraryComponentCount, useLibraryComponents } from '../data/apiHook';
 import ComponentCard from './ComponentCard';
 
 /**
@@ -24,6 +24,18 @@ const LibraryComponents = ({ libraryId, filter: { searchKeywords } }) => {
     hasNextPage,
     fetchNextPage,
   } = useLibraryComponents(libraryId, searchKeywords);
+
+  // TODO add this to LibraryContext
+  const { data: blockTypesData } = useLibraryBlockTypes(libraryId);
+  const blockTypes = useMemo(() => {
+    const result = {};
+    if (blockTypesData) {
+      blockTypesData.forEach(blockType => {
+        result[blockType.blockType] = blockType;
+      });
+    }
+    return result;
+  }, [blockTypesData]);
 
   const { showLoading, showContent } = useMemo(() => {
     let resultShowLoading = false;
@@ -80,7 +92,7 @@ const LibraryComponents = ({ libraryId, filter: { searchKeywords } }) => {
       }}
       hasEqualColumnHeights
     >
-      { showContent && hits.map((component) => {
+      { showContent ? hits.map((component) => {
         let tagCount = 0;
         if (component.tags) {
           tagCount = component.tags.implicitCount || 0;
@@ -92,9 +104,10 @@ const LibraryComponents = ({ libraryId, filter: { searchKeywords } }) => {
             description={component.formatted.content?.htmlContent ?? ''}
             tagCount={tagCount}
             blockType={component.blockType}
+            blockTypeDisplayName={blockTypes[component.blockType]?.displayName ?? ''}
           />
         );
-      })}
+      }) : <ComponentCard isLoading />}
       { showLoading && <ComponentCard isLoading /> }
     </CardGrid>
   );

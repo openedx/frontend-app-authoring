@@ -25,17 +25,17 @@ const ComponentCardMenu = () => (
       variant="primary"
     />
     <Dropdown.Menu>
-      <Dropdown.Item>
+      <Dropdown.Item disabled>
         <FormattedMessage
           {...messages.menuEdit}
         />
       </Dropdown.Item>
-      <Dropdown.Item>
+      <Dropdown.Item disabled>
         <FormattedMessage
           {...messages.menuCopyToClipboard}
         />
       </Dropdown.Item>
-      <Dropdown.Item>
+      <Dropdown.Item disabled>
         <FormattedMessage
           {...messages.menuAddToCollection}
         />
@@ -50,6 +50,7 @@ const ComponentCard = ({
   description,
   tagCount,
   blockType,
+  blockTypeDisplayName,
 }) => {
   const componentIcon = getItemIcon(blockType);
 
@@ -70,9 +71,9 @@ const ComponentCard = ({
         <Card.Body>
           <Card.Section>
             <Stack direction="horizontal" className="d-flex justify-content-between">
-              <Stack direction="horizontal">
+              <Stack direction="horizontal" gap="1">
                 <Icon src={componentIcon} size="sm" />
-                <span className="small">{blockType}</span>
+                <span className="small">{blockTypeDisplayName}</span>
               </Stack>
               <TagCount count={tagCount} />
             </Stack>
@@ -99,6 +100,7 @@ ComponentCard.propTypes = {
   description: PropTypes.string.isRequired,
   tagCount: PropTypes.number.isRequired,
   blockType: PropTypes.string.isRequired,
+  blockTypeDisplayName: PropTypes.string.isRequired,
 };
 
 export default ComponentCard;

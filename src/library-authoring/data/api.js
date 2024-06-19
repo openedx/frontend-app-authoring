@@ -8,7 +8,11 @@ const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
  * @param {string} libraryId - The ID of the library to fetch.
  */
 export const getContentLibraryApiUrl = (libraryId) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/`;
-// export const getLibraryBlocks = (libraryId) => `${getApiBaseUrl()}/`
+/**
+ * Get the URL for get block types of library.
+ * @param {string} libraryId - The ID of the library to fetch.
+ */
+export const getLibraryBlockTypesUrl = (libraryId) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/block_types/`;
 
 /**
  * Fetch a content library by its ID.
@@ -21,5 +25,14 @@ export async function getContentLibrary(libraryId) {
   }
 
   const { data } = await getAuthenticatedHttpClient().get(getContentLibraryApiUrl(libraryId));
+  return camelCaseObject(data);
+}
+
+export async function getLibraryBlockTypes(libraryId) {
+  if (!libraryId) {
+    throw new Error('libraryId is required');
+  }
+
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockTypesUrl(libraryId));
   return camelCaseObject(data);
 }
