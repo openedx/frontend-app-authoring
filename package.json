@@ -70,7 +70,7 @@
     "@reduxjs/toolkit": "1.9.7",
     "@tanstack/react-query": "4.36.1",
     "classnames": "2.2.6",
-    "core-js": "3.8.1",
+    "core-js": "3.37.1",
     "email-validator": "2.0.4",
     "file-saver": "^2.0.5",
     "formik": "2.2.6",
