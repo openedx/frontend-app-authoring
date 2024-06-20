@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { uniqBy } from 'lodash';
 import { getConfig } from '@edx/frontend-platform';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
@@ -336,15 +337,13 @@ const PageAlerts = ({
   };
 
   const renderApiErrors = () => {
-    const errorList = Object.entries(errors).filter(obj => obj[1] !== null).map(([k, v]) => {
+    let errorList = Object.entries(errors).filter(obj => obj[1] !== null).map(([k, v]) => {
       switch (v.type) {
         case API_ERROR_TYPES.serverError:
           return {
             key: k,
-            desc: v.data,
-            title: intl.formatMessage(messages.serverErrorAlert, {
-              status: v.status,
-            }),
+            desc: v.data || intl.formatMessage(messages.serverErrorAlertBody),
+            title: intl.formatMessage(messages.serverErrorAlert),
             dismissible: v.dismissible,
           };
         case API_ERROR_TYPES.networkError:
@@ -356,11 +355,12 @@ const PageAlerts = ({
         default:
           return {
             key: k,
-            desc: v.data,
+            title: v.data,
             dismissible: v.dismissible,
           };
       }
     });
+    errorList = uniqBy(errorList, 'title');
     if (!errorList?.length) {
       return null;
     }
@@ -373,10 +373,7 @@ const PageAlerts = ({
             key={msgObj.key}
             dismissError={() => dispatch(dismissError(msgObj.key))}
           >
-            {msgObj.title
-              && (
-                <Alert.Heading>{msgObj.title}</Alert.Heading>
-              )}
+            <Alert.Heading>{msgObj.title}</Alert.Heading>
             {msgObj.desc && <Truncate lines={2}>{msgObj.desc}</Truncate>}
           </ErrorAlert>
         ) : (
@@ -385,10 +382,7 @@ const PageAlerts = ({
             icon={ErrorIcon}
             key={msgObj.key}
           >
-            {msgObj.title
-                && (
-                  <Alert.Heading>{msgObj.title}</Alert.Heading>
-                )}
+            <Alert.Heading>{msgObj.title}</Alert.Heading>
             {msgObj.desc && <Truncate lines={2}>{msgObj.desc}</Truncate>}
           </Alert>
         )

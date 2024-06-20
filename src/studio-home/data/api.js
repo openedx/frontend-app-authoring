@@ -41,6 +41,28 @@ export async function getStudioHomeLibraries() {
 }
 
 /**
+ * Get's studio home v2 Libraries.
+ * @param {object} customParams - Additional custom paramaters for the API request.
+ * @param {string} [customParams.type] - (optional) Library type, default `complex`
+ * @param {number} [customParams.page] - (optional) Page number of results
+ * @param {number} [customParams.pageSize] - (optional) The number of results on each page, default `50`
+ * @param {boolean} [customParams.pagination] - (optional) Whether pagination is supported, default `true`
+ * @returns {Promise<Object>} - A Promise that resolves to the response data container the studio home v2 libraries.
+ */
+export async function getStudioHomeLibrariesV2(customParams) {
+  // Set default params if not passed in
+  const customParamsDefaults = {
+    type: customParams.type || 'complex',
+    page: customParams.page || 1,
+    pageSize: customParams.pageSize || 50,
+    pagination: customParams.pagination !== undefined ? customParams.pagination : true,
+  };
+  const customParamsFormat = snakeCaseObject(customParamsDefaults);
+  const { data } = await getAuthenticatedHttpClient().get(`${getApiBaseUrl()}/api/libraries/v2/`, { params: customParamsFormat });
+  return camelCaseObject(data);
+}
+
+/**
  * Handle course notification requests.
  * @param {string} url
  * @returns {Promise<Object>}

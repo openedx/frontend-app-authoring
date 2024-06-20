@@ -21,6 +21,10 @@ const messages = defineMessages({
     id: 'course-authoring.studio-home.libraries.tab.title',
     defaultMessage: 'Libraries',
   },
+  legacyLibrariesTabTitle: {
+    id: 'course-authoring.studio-home.legacy.libraries.tab.title',
+    defaultMessage: 'Legacy Libraries',
+  },
   archivedTabTitle: {
     id: 'course-authoring.studio-home.archived.tab.title',
     defaultMessage: 'Archived courses',
@@ -45,6 +49,14 @@ const messages = defineMessages({
     id: 'course-authoring.studio-home.taxonomies.tab.title',
     defaultMessage: 'Taxonomies',
     description: 'Title of Taxonomies tab on the home page',
+  },
+  libraryV2PlaceholderTitle: {
+    id: 'course-authoring.studio-home.libraries.placeholder.title',
+    defaultMessage: 'Library V2 Placeholder',
+  },
+  libraryV2PlaceholderBody: {
+    id: 'course-authoring.studio-home.libraries.placeholder.body',
+    defaultMessage: 'This is a placeholder page, as the Library Authoring MFE is not enabled.',
   },
 });
 

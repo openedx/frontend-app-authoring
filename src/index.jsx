@@ -23,6 +23,7 @@ import initializeStore from './store';
 import CourseAuthoringRoutes from './CourseAuthoringRoutes';
 import Head from './head/Head';
 import { StudioHome } from './studio-home';
+import LibraryV2Placeholder from './studio-home/tabs-section/LibraryV2Placeholder';
 import CourseRerun from './course-rerun';
 import { TaxonomyLayout, TaxonomyDetailPage, TaxonomyListPage } from './taxonomy';
 import { ContentTagsDrawer } from './content-tags-drawer';
@@ -52,6 +53,9 @@ const App = () => {
     createRoutesFromElements(
       <Route>
         <Route path="/home" element={<StudioHome />} />
+        <Route path="/libraries" element={<StudioHome />} />
+        <Route path="/libraries-v1" element={<StudioHome />} />
+        <Route path="/library/:libraryId" element={<LibraryV2Placeholder />} />
         <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
         <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
         {getConfig().ENABLE_ACCESSIBILITY_PAGE === 'true' && (
@@ -125,6 +129,7 @@ initialize({
         ENABLE_HOME_PAGE_COURSE_API_V2: process.env.ENABLE_HOME_PAGE_COURSE_API_V2 === 'true',
         ENABLE_CHECKLIST_QUALITY: process.env.ENABLE_CHECKLIST_QUALITY || 'true',
         ENABLE_GRADING_METHOD_IN_PROBLEMS: process.env.ENABLE_GRADING_METHOD_IN_PROBLEMS === 'true',
+        LIBRARY_MODE: process.env.LIBRARY_MODE || 'v1 only',
       }, 'CourseAuthoringConfig');
     },
   },

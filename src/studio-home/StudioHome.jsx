@@ -10,14 +10,16 @@ import {
 import { Add as AddIcon, Error } from '@openedx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { StudioFooter } from '@edx/frontend-component-footer';
-import { getConfig } from '@edx/frontend-platform';
+import { getConfig, getPath } from '@edx/frontend-platform';
 
+import { constructLibraryAuthoringURL } from '../utils';
 import Loading from '../generic/Loading';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import Header from '../header';
 import SubHeader from '../generic/sub-header/SubHeader';
 import HomeSidebar from './home-sidebar';
 import TabsSection from './tabs-section';
+import { isMixedOrV2LibrariesMode } from './tabs-section/utils';
 import OrganizationSection from './organization-section';
 import VerifyEmailLayout from './verify-email-layout';
 import CreateNewCourseForm from './create-new-course-form';
@@ -42,6 +44,8 @@ const StudioHome = ({ intl }) => {
     setShowNewCourseContainer,
     dispatch,
   } = useStudioHome(isPaginationCoursesEnabled);
+
+  const libMode = getConfig().LIBRARY_MODE;
 
   const {
     userIsActive,
@@ -79,8 +83,13 @@ const StudioHome = ({ intl }) => {
     }
 
     let libraryHref = `${getConfig().STUDIO_BASE_URL}/home_library`;
-    if (redirectToLibraryAuthoringMfe) {
-      libraryHref = `${libraryAuthoringMfeUrl}/create`;
+    if (isMixedOrV2LibrariesMode(libMode)) {
+      libraryHref = libraryAuthoringMfeUrl && redirectToLibraryAuthoringMfe
+        ? constructLibraryAuthoringURL(libraryAuthoringMfeUrl, 'create')
+        // Redirection to the placeholder is done in the MFE rather than
+        // through the backend i.e. redirection from cms, because this this will probably change,
+        // hence why we use the MFE's origin
+        : `${window.location.origin}${getPath(getConfig().PUBLIC_PATH)}library/create`;
     }
 
     headerButtons.push(

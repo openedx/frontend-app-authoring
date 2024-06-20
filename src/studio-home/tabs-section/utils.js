@@ -11,5 +11,11 @@ const sortAlphabeticallyArray = (arr) => [...arr]
     return firstDisplayName.localeCompare(secondDisplayName);
   });
 
-// eslint-disable-next-line import/prefer-default-export
-export { sortAlphabeticallyArray };
+const isMixedOrV1LibrariesMode = (libMode) => ['mixed', 'v1 only'].includes(libMode);
+const isMixedOrV2LibrariesMode = (libMode) => ['mixed', 'v2 only'].includes(libMode);
+
+export {
+  sortAlphabeticallyArray,
+  isMixedOrV1LibrariesMode,
+  isMixedOrV2LibrariesMode,
+};
