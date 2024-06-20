@@ -27,17 +27,20 @@ const TAB_LIST = {
   collections: 'collections',
 };
 
-const SubHeaderTitle = ({ title }) => (
-  <>
-    {title}
-    <IconButton
-      src={InfoOutline}
-      iconAs={Icon}
-      alt={<FormattedMessage {...messages.headingInfoAlt} />}
-      className="mr-2"
-    />
-  </>
-);
+const SubHeaderTitle = ({ title }) => {
+  const intl = useIntl();
+  return (
+    <>
+      {title}
+      <IconButton
+        src={InfoOutline}
+        iconAs={Icon}
+        alt={intl.formatMessage(messages.headingInfoAlt)}
+        className="mr-2"
+      />
+    </>
+  );
+};
 
 /**
  * @type {React.FC}
