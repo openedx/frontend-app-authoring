@@ -45,8 +45,8 @@ const LibraryHome = ({ libraryId, filter } : LibraryHomeProps) => {
       <Section title={intl.formatMessage(messages.collectionsTitle, { collectionCount })}>
         <LibraryCollections />
       </Section>
-      <Section title={intl.formatMessage(messages.componentsTitle, { componentCount })}>
-        <LibraryComponents libraryId={libraryId} filter={filter} />
+      <Section title={`Components (${componentCount})`}>
+        <LibraryComponents libraryId={libraryId} filter={filter} variant="preview" />
       </Section>
     </Stack>
   );
