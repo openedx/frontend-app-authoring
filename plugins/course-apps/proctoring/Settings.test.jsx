@@ -15,8 +15,9 @@ import initializeStore from 'CourseAuthoring/store';
 import PagesAndResourcesProvider from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
 import ProctoredExamSettings from './Settings';
 
+const courseId = 'course-v1%3AedX%2BDemoX%2BDemo_Course';
 const defaultProps = {
-  courseId: 'course-v1%3AedX%2BDemoX%2BDemo_Course',
+  courseId,
   onClose: () => {},
 };
 const IntlProctoredExamSettings = injectIntl(ProctoredExamSettings);
@@ -34,7 +35,7 @@ const intlWrapper = children => (
 let axiosMock;
 
 describe('ProctoredExamSettings', () => {
-  function setupApp(isAdmin = true) {
+  function setupApp(isAdmin = true, org = undefined) {
     mergeConfig({
       EXAMS_BASE_URL: 'http://exams.testing.co',
     }, 'CourseAuthoringConfig');
@@ -52,12 +53,18 @@ describe('ProctoredExamSettings', () => {
         courseApps: {
           proctoring: {},
         },
+        courseDetails: {
+          [courseId]: {
+            start: Date(),
+          },
+        },
+        ...(org ? { courseDetails: { [courseId]: { org } } } : {}),
       },
     });
 
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock.onGet(
-      `${ExamsApiService.getExamsBaseUrl()}/api/v1/providers`,
+      `${ExamsApiService.getExamsBaseUrl()}/api/v1/providers${org ? `?org=${org}` : ''}`,
     ).reply(200, [
       {
         name: 'test_lti',
@@ -410,6 +417,16 @@ describe('ProctoredExamSettings', () => {
     it('Enables all proctoring provider options if user is not an administrator and it is before start date', async () => {
       const isAdmin = false;
       setupApp(isAdmin);
+      mockCourseData(mockGetFutureCourseData);
+      await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
+      const providerOption = screen.getByTestId('proctortrack');
+      expect(providerOption.hasAttribute('disabled')).toEqual(false);
+    });
+
+    it('Sends the org to the proctoring provider endpoint', async () => {
+      const isAdmin = false;
+      const org = 'test-org';
+      setupApp(isAdmin, org);
       mockCourseData(mockGetFutureCourseData);
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
       const providerOption = screen.getByTestId('proctortrack');
