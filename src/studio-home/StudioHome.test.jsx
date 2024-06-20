@@ -1,6 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { initializeMockApp } from '@edx/frontend-platform';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { initializeMockApp, getConfig, setConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -12,7 +14,7 @@ import MockAdapter from 'axios-mock-adapter';
 import initializeStore from '../store';
 import { RequestStatus } from '../data/constants';
 import { COURSE_CREATOR_STATES } from '../constants';
-import { executeThunk } from '../utils';
+import { executeThunk, constructLibraryAuthoringURL } from '../utils';
 import { studioHomeMock } from './__mocks__';
 import { getStudioHomeApiUrl } from './data/api';
 import { fetchStudioHomeData } from './data/thunks';
@@ -23,7 +25,6 @@ import { StudioHome } from '.';
 
 let axiosMock;
 let store;
-const mockPathname = '/foo-bar';
 const {
   studioShortName,
   studioRequestEmail,
@@ -34,17 +35,29 @@ jest.mock('react-redux', () => ({
   useSelector: jest.fn(),
 }));
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useLocation: () => ({
-    pathname: mockPathname,
-  }),
-}));
+const queryClient = new QueryClient();
 
 const RootWrapper = () => (
-  <AppProvider store={store}>
+  <AppProvider store={store} wrapWithRouter={false}>
     <IntlProvider locale="en" messages={{}}>
-      <StudioHome intl={injectIntl} />
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={['/home']}>
+          <Routes>
+            <Route
+              path="/home"
+              element={<StudioHome intl={injectIntl} />}
+            />
+            <Route
+              path="/libraries"
+              element={<StudioHome intl={injectIntl} />}
+            />
+            <Route
+              path="/libraries-v1"
+              element={<StudioHome intl={injectIntl} />}
+            />
+          </Routes>
+        </MemoryRouter>
+      </QueryClientProvider>
     </IntlProvider>
   </AppProvider>
 );
@@ -145,7 +158,18 @@ describe('<StudioHome />', () => {
     });
 
     describe('render new library button', () => {
-      it('href should include home_library', async () => {
+      beforeEach(() => {
+        setConfig({
+          ...getConfig(),
+          LIBRARY_MODE: 'mixed',
+        });
+      });
+
+      it('href should include home_library when in "v1 only" lib mode', async () => {
+        setConfig({
+          ...getConfig(),
+          LIBRARY_MODE: 'v1 only',
+        });
         useSelector.mockReturnValue({
           ...studioHomeMock,
           courseCreatorStatus: COURSE_CREATOR_STATES.granted,
@@ -167,7 +191,9 @@ describe('<StudioHome />', () => {
 
         const { getByTestId } = render(<RootWrapper />);
         const createNewLibraryButton = getByTestId('new-library-button');
-        expect(createNewLibraryButton.getAttribute('href')).toBe(`${libraryAuthoringMfeUrl}/create`);
+        expect(createNewLibraryButton.getAttribute('href')).toBe(
+          `${constructLibraryAuthoringURL(libraryAuthoringMfeUrl, 'create')}`,
+        );
       });
     });
 

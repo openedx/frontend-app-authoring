@@ -112,7 +112,7 @@ export const generateGetStudioCoursesApiResponseV2 = () => ({
   },
 });
 
-export const generateGetStuioHomeLibrariesApiResponse = () => ({
+export const generateGetStudioHomeLibrariesApiResponse = () => ({
   libraries: [
     {
       displayName: 'MBA',
@@ -121,6 +121,51 @@ export const generateGetStuioHomeLibrariesApiResponse = () => ({
       org: 'Cambridge',
       number: '123',
       canEdit: true,
+    },
+  ],
+});
+
+export const generateGetStudioHomeLibrariesV2ApiResponse = () => ({
+  next: null,
+  previous: null,
+  count: 2,
+  numPages: 1,
+  currentPage: 1,
+  start: 0,
+  results: [
+    {
+      id: 'lib:SampleTaxonomyOrg1:AL1',
+      type: 'complex',
+      org: 'SampleTaxonomyOrg1',
+      slug: 'AL1',
+      title: 'Another Library 2',
+      description: '',
+      numBlocks: 0,
+      version: 0,
+      lastPublished: null,
+      allowLti: false,
+      allowPublicLearning: false,
+      allowpublicRead: false,
+      hasUnpublishedChanges: false,
+      hasUnpublishedDeletes: false,
+      license: '',
+    },
+    {
+      id: 'lib:SampleTaxonomyOrg1:TL1',
+      type: 'complex',
+      org: 'SampleTaxonomyOrg1',
+      slug: 'TL1',
+      title: 'Test Library 1',
+      description: '',
+      numBlocks: 0,
+      version: 0,
+      lastPublished: null,
+      allowLti: false,
+      allowPublicLearning: false,
+      allowPublicRead: false,
+      hasUnpublishedChanges: false,
+      hasUnpublishedDeletes: false,
+      license: '',
     },
   ],
 });

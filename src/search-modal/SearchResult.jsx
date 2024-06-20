@@ -16,6 +16,7 @@ import {
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
+import { constructLibraryAuthoringURL } from '../utils';
 import { COMPONENT_TYPE_ICON_MAP, TYPE_ICONS_MAP } from '../course-unit/constants';
 import { getStudioHomeData } from '../studio-home/data/selectors';
 import { useSearchContext } from './manager/SearchManager';
@@ -41,7 +42,7 @@ function getItemIcon(blockType) {
 */
 function getLibraryHitUrl(hit, libraryAuthoringMfeUrl) {
   const { contextKey } = hit;
-  return `${libraryAuthoringMfeUrl}library/${contextKey}`;
+  return constructLibraryAuthoringURL(libraryAuthoringMfeUrl, `library/${contextKey}`);
 }
 
 /**
