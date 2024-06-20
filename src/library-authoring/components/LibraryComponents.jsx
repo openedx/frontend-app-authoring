@@ -5,7 +5,7 @@ import React, { useEffect, useMemo } from 'react';
 import { CardGrid } from '@openedx/paragon';
 import { NoComponents, NoSearchResults } from '../EmptyStates';
 import { useLibraryBlockTypes, useLibraryComponentCount, useLibraryComponents } from '../data/apiHook';
-import ComponentCard from './ComponentCard';
+import { ComponentCard, ComponentCardLoading } from './ComponentCard';
 
 /**
  * Library Components to show components grid
@@ -112,13 +112,11 @@ const LibraryComponents = ({
       hasEqualColumnHeights
     >
       { showContent ? componentList.map((component) => {
-        let tagCount = 0;
-        if (component.tags) {
-          tagCount = component.tags.implicitCount || 0;
-        }
+        const tagCount = component.tags?.implicitCount || 0;
 
         return (
           <ComponentCard
+            key={component.id}
             title={component.displayName}
             description={component.formatted.content?.htmlContent ?? ''}
             tagCount={tagCount}
@@ -126,8 +124,8 @@ const LibraryComponents = ({
             blockTypeDisplayName={blockTypes[component.blockType]?.displayName ?? ''}
           />
         );
-      }) : <ComponentCard isLoading />}
-      { showLoading && <ComponentCard isLoading /> }
+      }) : <ComponentCardLoading />}
+      { showLoading && <ComponentCardLoading /> }
     </CardGrid>
   );
 };
