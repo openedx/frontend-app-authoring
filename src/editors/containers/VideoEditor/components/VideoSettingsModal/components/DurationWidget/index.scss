@@ -1,4 +1,7 @@
-@import "@openedx/paragon/scss/core/core";
+// do NOT @import "@openedx/paragon/scss/core/core"; in any files in this repo, or it will add 400 kB of extra CSS
+// to the MFE each time you do so. The following are OK because they are only defining variables like $grey-500:
+@import "@edx/brand/paragon/variables";
+@import "@openedx/paragon/scss/core/_variables";
 
 .total-label {
     border: 1px solid $gray-500;
