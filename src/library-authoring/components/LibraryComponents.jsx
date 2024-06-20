@@ -76,7 +76,7 @@ const LibraryComponents = ({ libraryId, filter: { searchKeywords } }) => {
     return () => {
       window.removeEventListener('scroll', onscroll);
     };
-  }, [hasNextPage, isFetchingNextPage]);
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   if (componentCount === 0) {
     return searchKeywords === '' ? <NoComponents /> : <NoSearchResults />;
