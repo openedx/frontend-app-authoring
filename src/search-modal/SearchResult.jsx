@@ -41,7 +41,7 @@ function getItemIcon(blockType) {
 */
 function getLibraryComponentUrlSuffix(hit) {
   const { contextKey } = hit;
-  return constructLibraryAuthoringURL(libraryAuthoringMfeUrl, `library/${contextKey}`);
+  return `library/${contextKey}`;
 }
 
 /**
