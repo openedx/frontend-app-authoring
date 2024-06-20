@@ -69,7 +69,7 @@
     "@openedx/paragon": "^22.2.1",
     "@reduxjs/toolkit": "1.9.7",
     "@tanstack/react-query": "4.36.1",
-    "classnames": "2.2.6",
+    "classnames": "2.5.1",
     "core-js": "3.8.1",
     "email-validator": "2.0.4",
     "file-saver": "^2.0.5",
