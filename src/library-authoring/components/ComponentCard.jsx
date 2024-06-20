@@ -1,3 +1,5 @@
+// @ts-check
+import React from 'react';
 import {
   ActionRow,
   Card,
@@ -44,7 +46,15 @@ const ComponentCardMenu = () => (
   </Dropdown>
 );
 
-const ComponentCard = ({
+export const ComponentCardLoading = () => (
+  <Container className="library-component-card">
+    <Card isLoading>
+      <Card.Section />
+    </Card>
+  </Container>
+);
+
+export const ComponentCard = ({
   isLoading,
   title,
   description,
@@ -71,7 +81,7 @@ const ComponentCard = ({
         <Card.Body>
           <Card.Section>
             <Stack direction="horizontal" className="d-flex justify-content-between">
-              <Stack direction="horizontal" gap="1">
+              <Stack direction="horizontal" gap={1}>
                 <Icon src={componentIcon} size="sm" />
                 <span className="small">{blockTypeDisplayName}</span>
               </Stack>
@@ -102,5 +112,3 @@ ComponentCard.propTypes = {
   blockType: PropTypes.string.isRequired,
   blockTypeDisplayName: PropTypes.string.isRequired,
 };
-
-export default ComponentCard;

@@ -28,6 +28,11 @@ export async function getContentLibrary(libraryId) {
   return camelCaseObject(data);
 }
 
+/**
+ * Fetch block types of a library
+ * @param {string} libraryId
+ * @returns {Promise<import("./types.mjs").LibraryBlockType[]>}
+ */
 export async function getLibraryBlockTypes(libraryId) {
   if (!libraryId) {
     throw new Error('libraryId is required');

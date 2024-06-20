@@ -1,3 +1,4 @@
+// @ts-check
 import { COMPONENT_TYPES } from '../course-unit/constants';
 
 const COMPONENT_TYPE_COLOR_MAP = {

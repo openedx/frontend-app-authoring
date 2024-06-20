@@ -16,3 +16,9 @@
   * @property {boolean} hasUnpublishedDeletes
   * @property {string} license
   */
+
+/**
+ * @typedef {Object} LibraryBlockType
+ * @property {string} blockType
+ * @property {string} displayName
+ */
