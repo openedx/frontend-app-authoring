@@ -196,7 +196,7 @@ const messages = defineMessages({
     defaultMessage: 'Proctored',
   },
   proctoredExamDescription: {
-    id: 'course-authoring.course-outline.configure-modal.advanced-tab.timed-description',
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.proctored-exam-description',
     defaultMessage: 'Proctored exams are timed and they record video of each learner taking the exam. The videos are then reviewed to ensure that learners follow all examination rules. Please note that setting this exam as proctored will change the visibility settings to "Hide content after due date."',
   },
   onboardingExam: {
@@ -204,7 +204,7 @@ const messages = defineMessages({
     defaultMessage: 'Onboarding',
   },
   onboardingExamDescription: {
-    id: 'course-authoring.course-outline.configure-modal.advanced-tab.timed-description',
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.onboarding-exam-description',
     defaultMessage: 'Use Onboarding to introduce learners to proctoring, verify their identity, and create an onboarding profile. Learners must complete the onboarding profile step prior to taking a proctored exam. Profile reviews take 2+ business days.',
   },
   practiceExam: {
@@ -212,7 +212,7 @@ const messages = defineMessages({
     defaultMessage: 'Practice proctored',
   },
   practiceExamDescription: {
-    id: 'course-authoring.course-outline.configure-modal.advanced-tab.timed-description',
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.practice-exam-description',
     defaultMessage: 'Use a practice proctored exam to introduce learners to the proctoring tools and processes. Results of a practice exam do not affect a learner\'s grade.',
   },
   advancedTabTitle: {

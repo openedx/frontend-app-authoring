@@ -50,7 +50,7 @@ const messages = defineMessages({
     defaultMessage: 'Error importing course',
   },
   stepperHeaderTitle: {
-    id: 'course-authoring.export.stepper.header.title',
+    id: 'course-authoring.import.stepper.header.title',
     defaultMessage: 'Course import status',
   },
 });

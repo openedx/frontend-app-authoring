@@ -58,7 +58,7 @@ const messages = defineMessages({
     defaultMessage: 'Delete',
   },
   menuCopy: {
-    id: 'course-authoring.course-outline.card.menu.delete',
+    id: 'course-authoring.course-outline.card.menu.copy',
     defaultMessage: 'Copy to clipboard',
   },
   menuProctoringLinkText: {

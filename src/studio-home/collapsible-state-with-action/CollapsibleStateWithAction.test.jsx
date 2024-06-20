@@ -43,7 +43,7 @@ const props = {
   state: COURSE_CREATOR_STATES.unrequested,
 };
 
-describe('<CollapsibleStateWithAction />', async () => {
+describe('<CollapsibleStateWithAction />', () => {
   beforeEach(async () => {
     initializeMockApp({
       authenticatedUser: {
