@@ -101,7 +101,7 @@
     "@edx/browserslist-config": "1.2.0",
     "@edx/react-unit-test-utils": "2.0.0",
     "@edx/reactifex": "^1.0.3",
-    "@edx/stylelint-config-edx": "2.3.0",
+    "@edx/stylelint-config-edx": "2.3.3",
     "@edx/typescript-config": "^1.0.1",
     "@openedx/frontend-build": "13.1.0",
     "@testing-library/jest-dom": "5.17.0",
