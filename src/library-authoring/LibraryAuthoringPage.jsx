@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect } from 'react';
 import { StudioFooter } from '@edx/frontend-component-footer';
-import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Container, Icon, IconButton, SearchField, Tab, Tabs,
 } from '@openedx/paragon';
