@@ -1,5 +1,5 @@
 import TranscriptSettings from './transcript-settings';
-import UploadTrackerModal from './UploadTrackerModal';
+import UploadModal from './upload-modal';
 import VideosPage from './VideosPage';
 import VideoThumbnail from './VideoThumbnail';
 import VideoInfoModalSidebar from './info-sidebar';
@@ -7,7 +7,7 @@ import VideoInfoModalSidebar from './info-sidebar';
 export default VideosPage;
 export {
   TranscriptSettings,
-  UploadTrackerModal,
+  UploadModal,
   VideoThumbnail,
   VideoInfoModalSidebar,
 };

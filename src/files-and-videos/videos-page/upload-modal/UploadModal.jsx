@@ -6,18 +6,14 @@ import {
   Alert,
   Button,
   Hyperlink,
-  Icon,
   ModalDialog,
-  ProgressBar,
   Scrollable,
-  Stack,
-  Truncate,
 } from '@openedx/paragon';
-import { Check, ErrorOutline, WarningFilled } from '@openedx/paragon/icons';
-import messages from './messages';
-import { RequestStatus } from '../../data/constants';
+import { WarningFilled } from '@openedx/paragon/icons';
+import messages from '../messages';
+import UploadProgressList from './UploadProgressList';
 
-const UploadTrackerModal = ({
+const UploadModal = ({
   isUploadTrackerOpen,
   handleUploadCancel,
   currentUploadingIdsRef,
@@ -68,41 +64,7 @@ const UploadTrackerModal = ({
       </ModalDialog.Header>
       <Scrollable>
         <ModalDialog.Body>
-          <div role="list" className="text-primary-500">
-            {Object.entries(uploadData).map(([id, video], index) => {
-              const bulletNumber = `${index + 1}. `;
-              const getIcon = () => {
-                switch (video.status) {
-                case RequestStatus.SUCCESSFUL:
-                  return (<Icon src={Check} />);
-                case RequestStatus.FAILED:
-                  return (<Icon src={ErrorOutline} />);
-                default:
-                  return (<div style={{ width: '24px' }} />);
-                }
-              };
-              return (
-                <Stack role="listitem" gap={2} direction="horizontal" className="mb-3 small" key={id}>
-                  <span>{bulletNumber}</span>
-                  <div className="col-5 pl-0">
-                    <Truncate>
-                      {video?.name}
-                    </Truncate>
-                  </div>
-                  <div className="col-6 p-0">
-                    {video.status === RequestStatus.FAILED ? (
-                      <span className="row m-0 justify-content-end font-weight-bold">
-                        {video.status.toUpperCase()}
-                      </span>
-                    ) : (
-                      <ProgressBar now={video.uploadPercentage} variant="info" />
-                    )}
-                  </div>
-                  {getIcon()}
-                </Stack>
-              );
-            })}
-          </div>
+          <UploadProgressList videosList={Object.entries(uploadData)} />
         </ModalDialog.Body>
       </Scrollable>
       <ModalDialog.Footer>
@@ -116,7 +78,7 @@ const UploadTrackerModal = ({
   );
 };
 
-UploadTrackerModal.propTypes = {
+UploadModal.propTypes = {
   isUploadTrackerOpen: PropTypes.bool.isRequired,
   handleUploadCancel: PropTypes.func.isRequired,
   currentUploadingIdsRef: PropTypes.shape({
@@ -129,4 +91,4 @@ UploadTrackerModal.propTypes = {
   }).isRequired,
 };
 
-export default UploadTrackerModal;
+export default UploadModal;

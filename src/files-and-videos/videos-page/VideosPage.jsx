@@ -46,7 +46,7 @@ import FILES_AND_UPLOAD_TYPE_FILTERS from '../generic/constants';
 import TranscriptSettings from './transcript-settings';
 import VideoInfoModalSidebar from './info-sidebar';
 import VideoThumbnail from './VideoThumbnail';
-import UploadTrackerModal from './UploadTrackerModal';
+import UploadModal from './upload-modal';
 
 const VideosPage = ({
   courseId,
@@ -293,7 +293,7 @@ const VideosPage = ({
             />
           </>
         )}
-        <UploadTrackerModal
+        <UploadModal
           {...{
             isUploadTrackerOpen,
             currentUploadingIdsRef: uploadingIdsRef.current,
