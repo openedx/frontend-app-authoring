@@ -115,7 +115,7 @@ const LibraryAuthoringPage = () => {
           />
           <Route
             path={TAB_LIST.components}
-            element={<LibraryComponents libraryId={libraryId} filter={{ searchKeywords }} />}
+            element={<LibraryComponents libraryId={libraryId} filter={{ searchKeywords }} variant="full" />}
           />
           <Route
             path={TAB_LIST.collections}

@@ -8,14 +8,25 @@ import { useLibraryBlockTypes, useLibraryComponentCount, useLibraryComponents } 
 import ComponentCard from './ComponentCard';
 
 /**
+ * Library Components to show components grid
+ *
+ * Use style to:
+ *   - 'full': Show all components with Infinite scroll pagination.
+ *   - 'preview': Show first 4 components without pagination.
+ *
  * @type {React.FC<{
  *   libraryId: string,
  *   filter: {
  *     searchKeywords: string,
  *   },
+ *   variant: 'full'|'preview',
  * }>}
  */
-const LibraryComponents = ({ libraryId, filter: { searchKeywords } }) => {
+const LibraryComponents = ({
+  libraryId,
+  filter: { searchKeywords },
+  variant,
+}) => {
   const { componentCount } = useLibraryComponentCount(libraryId, searchKeywords);
   const {
     hits,
@@ -61,25 +72,33 @@ const LibraryComponents = ({ libraryId, filter: { searchKeywords } }) => {
   }, [isFetching, isFetchingNextPage]);
 
   useEffect(() => {
-    const onscroll = () => {
-      // Verify the position of the scroll to implementa a infinite scroll.
-      // Used `loadLimit` to fetch next page before reach the end of the screen.
-      const loadLimit = 300;
-      const scrolledTo = window.scrollY + window.innerHeight;
-      const scrollDiff = document.body.scrollHeight - scrolledTo;
-      const isNearToBottom = scrollDiff <= loadLimit;
-      if (isNearToBottom && hasNextPage && !isFetchingNextPage) {
-        fetchNextPage();
-      }
-    };
-    window.addEventListener('scroll', onscroll);
-    return () => {
-      window.removeEventListener('scroll', onscroll);
-    };
+    if (variant === 'full') {
+      const onscroll = () => {
+        // Verify the position of the scroll to implementa a infinite scroll.
+        // Used `loadLimit` to fetch next page before reach the end of the screen.
+        const loadLimit = 300;
+        const scrolledTo = window.scrollY + window.innerHeight;
+        const scrollDiff = document.body.scrollHeight - scrolledTo;
+        const isNearToBottom = scrollDiff <= loadLimit;
+        if (isNearToBottom && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      };
+      window.addEventListener('scroll', onscroll);
+      return () => {
+        window.removeEventListener('scroll', onscroll);
+      };
+    }
+    return () => {};
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   if (componentCount === 0) {
     return searchKeywords === '' ? <NoComponents /> : <NoSearchResults />;
+  }
+
+  let componentList = hits;
+  if (variant === 'preview') {
+    componentList = componentList.slice(0, 4);
   }
 
   return (
@@ -92,7 +111,7 @@ const LibraryComponents = ({ libraryId, filter: { searchKeywords } }) => {
       }}
       hasEqualColumnHeights
     >
-      { showContent ? hits.map((component) => {
+      { showContent ? componentList.map((component) => {
         let tagCount = 0;
         if (component.tags) {
           tagCount = component.tags.implicitCount || 0;
