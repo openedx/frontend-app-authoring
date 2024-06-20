@@ -14,8 +14,7 @@ import { MoreVert } from '@openedx/paragon/icons';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import TagCount from '../../generic/tag-count';
-import getItemIcon from '../../search-modal/utils';
-import getComponentColor from '../utils';
+import { getItemIcon, getComponentColor } from '../../generic/block-type-utils';
 
 const ComponentCardMenu = () => (
   <Dropdown>

@@ -16,7 +16,7 @@ import { useSearchContext } from './manager/SearchManager';
 import type { ContentHit } from './data/api';
 import Highlight from './Highlight';
 import messages from './messages';
-import getItemIcon from './utils';
+import { getItemIcon } from '../generic/block-type-utils';
 
 /**
  * Returns the URL Suffix for library/library component hit
