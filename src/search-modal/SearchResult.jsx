@@ -17,7 +17,7 @@ import { getStudioHomeData } from '../studio-home/data/selectors';
 import { useSearchContext } from './manager/SearchManager';
 import Highlight from './Highlight';
 import messages from './messages';
-import getItemIcon from './utils';
+import { getItemIcon } from '../generic/block-type-utils';
 
 /**
  * Returns the URL Suffix for library/library component hit

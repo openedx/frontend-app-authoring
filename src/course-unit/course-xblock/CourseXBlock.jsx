@@ -16,7 +16,7 @@ import SortableItem from '../../generic/drag-helper/SortableItem';
 import { scrollToElement } from '../../course-outline/utils';
 import { COURSE_BLOCK_NAMES } from '../../constants';
 import { copyToClipboard } from '../../generic/data/thunks';
-import { COMPONENT_TYPES } from '../constants';
+import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import XBlockMessages from './xblock-messages/XBlockMessages';
 import messages from './messages';
 
