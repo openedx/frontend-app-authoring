@@ -5,8 +5,8 @@ import {
 import {
   COMPONENT_TYPE_ICON_MAP,
   STRUCTURAL_TYPE_ICONS,
-  COMPONENT_TYPE_COLOR_MAP
-} from './constants'
+  COMPONENT_TYPE_COLOR_MAP,
+} from './constants';
 
 /** @param {string} blockType */
 export function getItemIcon(blockType) {

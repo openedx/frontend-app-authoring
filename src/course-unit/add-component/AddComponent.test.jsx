@@ -14,7 +14,7 @@ import { executeThunk } from '../../utils';
 import { fetchCourseSectionVerticalData } from '../data/thunk';
 import { getCourseSectionVerticalApiUrl } from '../data/api';
 import { courseSectionVerticalMock } from '../__mocks__';
-import { COMPONENT_TYPES } from '../constants';
+import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import AddComponent from './AddComponent';
 import messages from './messages';
 
