@@ -272,21 +272,21 @@ export const validateForm = (cieloHasCredentials, threePlayHasCredentials, provi
     videoSourceLanguage,
   } = data;
   switch (provider) {
-  case 'Cielo24':
-    if (cieloHasCredentials) {
-      return !isEmpty(cielo24Fidelity) && !isEmpty(cielo24Turnaround)
+    case 'Cielo24':
+      if (cieloHasCredentials) {
+        return !isEmpty(cielo24Fidelity) && !isEmpty(cielo24Turnaround)
         && !isEmpty(preferredLanguages) && !isEmpty(videoSourceLanguage);
-    }
-    return !isEmpty(apiKey) && !isEmpty(username);
-  case '3PlayMedia':
-    if (threePlayHasCredentials) {
-      return !isEmpty(threePlayTurnaround) && !isEmpty(preferredLanguages) && !isEmpty(videoSourceLanguage);
-    }
-    return !isEmpty(apiKey) && !isEmpty(apiSecretKey);
-  case 'order':
-    return true;
-  default:
-    break;
+      }
+      return !isEmpty(apiKey) && !isEmpty(username);
+    case '3PlayMedia':
+      if (threePlayHasCredentials) {
+        return !isEmpty(threePlayTurnaround) && !isEmpty(preferredLanguages) && !isEmpty(videoSourceLanguage);
+      }
+      return !isEmpty(apiKey) && !isEmpty(apiSecretKey);
+    case 'order':
+      return true;
+    default:
+      break;
   }
   return false;
 };

@@ -339,25 +339,25 @@ const PageAlerts = ({
   const renderApiErrors = () => {
     let errorList = Object.entries(errors).filter(obj => obj[1] !== null).map(([k, v]) => {
       switch (v.type) {
-      case API_ERROR_TYPES.serverError:
-        return {
-          key: k,
-          desc: v.data || intl.formatMessage(messages.serverErrorAlertBody),
-          title: intl.formatMessage(messages.serverErrorAlert),
-          dismissible: v.dismissible,
-        };
-      case API_ERROR_TYPES.networkError:
-        return {
-          key: k,
-          title: intl.formatMessage(messages.networkErrorAlert),
-          dismissible: v.dismissible,
-        };
-      default:
-        return {
-          key: k,
-          title: v.data,
-          dismissible: v.dismissible,
-        };
+        case API_ERROR_TYPES.serverError:
+          return {
+            key: k,
+            desc: v.data || intl.formatMessage(messages.serverErrorAlertBody),
+            title: intl.formatMessage(messages.serverErrorAlert),
+            dismissible: v.dismissible,
+          };
+        case API_ERROR_TYPES.networkError:
+          return {
+            key: k,
+            title: intl.formatMessage(messages.networkErrorAlert),
+            dismissible: v.dismissible,
+          };
+        default:
+          return {
+            key: k,
+            title: v.data,
+            dismissible: v.dismissible,
+          };
       }
     });
     errorList = uniqBy(errorList, 'title');

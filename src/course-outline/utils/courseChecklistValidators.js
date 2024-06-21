@@ -6,14 +6,14 @@
 export const hasWelcomeMessage = (updates) => updates.hasUpdate;
 
 export const hasGradingPolicy = (grades) => {
-  // eslint-disable-next-line no-shadow
+  // eslint-disable-next-line @typescript-eslint/no-shadow
   const { hasGradingPolicy, sumOfWeights } = grades;
 
   return hasGradingPolicy && parseFloat(sumOfWeights.toPrecision(2), 10) === 1.0;
 };
 
 export const hasCertificate = (certificates) => {
-  // eslint-disable-next-line no-shadow
+  // eslint-disable-next-line @typescript-eslint/no-shadow
   const { isActivated, hasCertificate } = certificates;
 
   return isActivated && hasCertificate;

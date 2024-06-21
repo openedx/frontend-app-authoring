@@ -20,41 +20,41 @@ const AddComponent = ({ blockId, handleCreateNewCourseXBlock }) => {
 
   const handleCreateNewXBlock = (type, moduleName) => {
     switch (type) {
-    case COMPONENT_TYPES.discussion:
-    case COMPONENT_TYPES.dragAndDrop:
-      handleCreateNewCourseXBlock({ type, parentLocator: blockId });
-      break;
-    case COMPONENT_TYPES.problem:
-    case COMPONENT_TYPES.video:
-      handleCreateNewCourseXBlock({ type, parentLocator: blockId }, ({ courseKey, locator }) => {
-        navigate(`/course/${courseKey}/editor/${type}/${locator}`);
-      });
-      break;
-    // TODO: The library functional will be a bit different of current legacy (CMS)
-    //  behaviour and this ticket is on hold (blocked by other development team).
-    case COMPONENT_TYPES.library:
-      handleCreateNewCourseXBlock({ type, category: 'library_content', parentLocator: blockId });
-      break;
-    case COMPONENT_TYPES.advanced:
-      handleCreateNewCourseXBlock({
-        type: moduleName, category: moduleName, parentLocator: blockId,
-      });
-      break;
-    case COMPONENT_TYPES.openassessment:
-      handleCreateNewCourseXBlock({
-        boilerplate: moduleName, category: type, parentLocator: blockId,
-      });
-      break;
-    case COMPONENT_TYPES.html:
-      handleCreateNewCourseXBlock({
-        type,
-        boilerplate: moduleName,
-        parentLocator: blockId,
-      }, ({ courseKey, locator }) => {
-        navigate(`/course/${courseKey}/editor/html/${locator}`);
-      });
-      break;
-    default:
+      case COMPONENT_TYPES.discussion:
+      case COMPONENT_TYPES.dragAndDrop:
+        handleCreateNewCourseXBlock({ type, parentLocator: blockId });
+        break;
+      case COMPONENT_TYPES.problem:
+      case COMPONENT_TYPES.video:
+        handleCreateNewCourseXBlock({ type, parentLocator: blockId }, ({ courseKey, locator }) => {
+          navigate(`/course/${courseKey}/editor/${type}/${locator}`);
+        });
+        break;
+        // TODO: The library functional will be a bit different of current legacy (CMS)
+        //  behaviour and this ticket is on hold (blocked by other development team).
+      case COMPONENT_TYPES.library:
+        handleCreateNewCourseXBlock({ type, category: 'library_content', parentLocator: blockId });
+        break;
+      case COMPONENT_TYPES.advanced:
+        handleCreateNewCourseXBlock({
+          type: moduleName, category: moduleName, parentLocator: blockId,
+        });
+        break;
+      case COMPONENT_TYPES.openassessment:
+        handleCreateNewCourseXBlock({
+          boilerplate: moduleName, category: type, parentLocator: blockId,
+        });
+        break;
+      case COMPONENT_TYPES.html:
+        handleCreateNewCourseXBlock({
+          type,
+          boilerplate: moduleName,
+          parentLocator: blockId,
+        }, ({ courseKey, locator }) => {
+          navigate(`/course/${courseKey}/editor/html/${locator}`);
+        });
+        break;
+      default:
     }
   };
 
@@ -75,37 +75,37 @@ const AddComponent = ({ blockId, handleCreateNewCourseXBlock }) => {
           }
 
           switch (type) {
-          case COMPONENT_TYPES.advanced:
-            modalParams = {
-              open: openAdvanced,
-              close: closeAdvanced,
-              isOpen: isOpenAdvanced,
-            };
-            break;
-          case COMPONENT_TYPES.html:
-            modalParams = {
-              open: openHtml,
-              close: closeHtml,
-              isOpen: isOpenHtml,
-            };
-            break;
-          case COMPONENT_TYPES.openassessment:
-            modalParams = {
-              open: openOpenAssessment,
-              close: closeOpenAssessment,
-              isOpen: isOpenOpenAssessment,
-            };
-            break;
-          default:
-            return (
-              <li key={type}>
-                <AddComponentButton
-                  onClick={() => handleCreateNewXBlock(type)}
-                  displayName={displayName}
-                  type={type}
-                />
-              </li>
-            );
+            case COMPONENT_TYPES.advanced:
+              modalParams = {
+                open: openAdvanced,
+                close: closeAdvanced,
+                isOpen: isOpenAdvanced,
+              };
+              break;
+            case COMPONENT_TYPES.html:
+              modalParams = {
+                open: openHtml,
+                close: closeHtml,
+                isOpen: isOpenHtml,
+              };
+              break;
+            case COMPONENT_TYPES.openassessment:
+              modalParams = {
+                open: openOpenAssessment,
+                close: closeOpenAssessment,
+                isOpen: isOpenOpenAssessment,
+              };
+              break;
+            default:
+              return (
+                <li key={type}>
+                  <AddComponentButton
+                    onClick={() => handleCreateNewXBlock(type)}
+                    displayName={displayName}
+                    type={type}
+                  />
+                </li>
+              );
           }
 
           return (

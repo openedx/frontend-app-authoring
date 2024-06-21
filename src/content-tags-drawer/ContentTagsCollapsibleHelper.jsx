@@ -298,7 +298,7 @@ const useContentTagsCollapsibleHelper = (
         traversal[tag].lineage = tagLineage;
       }
 
-      // eslint-disable-next-line no-unused-expressions
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       isExplicit ? add(value.join(',')) : remove(value.join(','));
       traversal = traversal[tag].children;
     });

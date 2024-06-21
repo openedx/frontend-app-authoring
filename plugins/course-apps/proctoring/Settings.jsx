@@ -64,6 +64,8 @@ const ProctoringSettings = ({ intl, onClose }) => {
   }
 
   const { courseId } = useContext(PagesAndResourcesContext);
+  const courseDetails = useModel('courseDetails', courseId);
+  const org = courseDetails?.org;
   const appInfo = useModel('courseApps', 'proctoring');
   const alertRef = React.createRef();
   const saveStatusAlertRef = React.createRef();
@@ -490,7 +492,7 @@ const ProctoringSettings = ({ intl, onClose }) => {
     Promise.all([
       StudioApiService.getProctoredExamSettingsData(courseId),
       ExamsApiService.isAvailable() ? ExamsApiService.getCourseExamConfiguration(courseId) : Promise.resolve(),
-      ExamsApiService.isAvailable() ? ExamsApiService.getAvailableProviders() : Promise.resolve(),
+      ExamsApiService.isAvailable() ? ExamsApiService.getAvailableProviders(org) : Promise.resolve(),
     ])
       .then(
         ([settingsResponse, examConfigResponse, ltiProvidersResponse]) => {

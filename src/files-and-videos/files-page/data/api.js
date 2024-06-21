@@ -58,7 +58,7 @@ export async function getDownload(selectedRows, courseId) {
           if (!res.ok) {
             throw new Error();
           }
-          return res.blob();
+          return await res.blob();
         } catch (error) {
           downloadErrors.push(`Failed to download ${asset?.displayName}.`);
           return null;
