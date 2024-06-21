@@ -183,17 +183,17 @@ const useCourseOutline = ({ courseId }) => {
 
   const handleConfigureItemSubmit = (...arg) => {
     switch (currentItem.category) {
-    case COURSE_BLOCK_NAMES.chapter.id:
-      dispatch(configureCourseSectionQuery(currentSection.id, ...arg));
-      break;
-    case COURSE_BLOCK_NAMES.sequential.id:
-      dispatch(configureCourseSubsectionQuery(currentItem.id, currentSection.id, ...arg));
-      break;
-    case COURSE_BLOCK_NAMES.vertical.id:
-      dispatch(configureCourseUnitQuery(currentItem.id, currentSection.id, ...arg));
-      break;
-    default:
-      return;
+      case COURSE_BLOCK_NAMES.chapter.id:
+        dispatch(configureCourseSectionQuery(currentSection.id, ...arg));
+        break;
+      case COURSE_BLOCK_NAMES.sequential.id:
+        dispatch(configureCourseSubsectionQuery(currentItem.id, currentSection.id, ...arg));
+        break;
+      case COURSE_BLOCK_NAMES.vertical.id:
+        dispatch(configureCourseUnitQuery(currentItem.id, currentSection.id, ...arg));
+        break;
+      default:
+        return;
     }
     handleConfigureModalClose();
   };
@@ -204,21 +204,21 @@ const useCourseOutline = ({ courseId }) => {
 
   const handleDeleteItemSubmit = () => {
     switch (currentItem.category) {
-    case COURSE_BLOCK_NAMES.chapter.id:
-      dispatch(deleteCourseSectionQuery(currentItem.id));
-      break;
-    case COURSE_BLOCK_NAMES.sequential.id:
-      dispatch(deleteCourseSubsectionQuery(currentItem.id, currentSection.id));
-      break;
-    case COURSE_BLOCK_NAMES.vertical.id:
-      dispatch(deleteCourseUnitQuery(
-        currentItem.id,
-        currentSubsection.id,
-        currentSection.id,
-      ));
-      break;
-    default:
-      return;
+      case COURSE_BLOCK_NAMES.chapter.id:
+        dispatch(deleteCourseSectionQuery(currentItem.id));
+        break;
+      case COURSE_BLOCK_NAMES.sequential.id:
+        dispatch(deleteCourseSubsectionQuery(currentItem.id, currentSection.id));
+        break;
+      case COURSE_BLOCK_NAMES.vertical.id:
+        dispatch(deleteCourseUnitQuery(
+          currentItem.id,
+          currentSubsection.id,
+          currentSection.id,
+        ));
+        break;
+      default:
+        return;
     }
     closeDeleteModal();
   };

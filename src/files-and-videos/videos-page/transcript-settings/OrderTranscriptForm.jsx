@@ -53,32 +53,32 @@ const OrderTranscriptForm = ({
 
   let form;
   switch (transcriptType) {
-  case 'Cielo24':
-    form = (
-      <Cielo24Form
-        {...{
-          hasTranscriptCredentials: cieloHasCredentials,
-          data,
-          setData,
-          transcriptionPlan: transcriptionPlans.Cielo24,
-        }}
-      />
-    );
-    break;
-  case '3PlayMedia':
-    form = (
-      <ThreePlayMediaForm
-        {...{
-          hasTranscriptCredentials: threePlayHasCredentials,
-          data,
-          setData,
-          transcriptionPlan: transcriptionPlans['3PlayMedia'],
-        }}
-      />
-    );
-    break;
-  default:
-    break;
+    case 'Cielo24':
+      form = (
+        <Cielo24Form
+          {...{
+            hasTranscriptCredentials: cieloHasCredentials,
+            data,
+            setData,
+            transcriptionPlan: transcriptionPlans.Cielo24,
+          }}
+        />
+      );
+      break;
+    case '3PlayMedia':
+      form = (
+        <ThreePlayMediaForm
+          {...{
+            hasTranscriptCredentials: threePlayHasCredentials,
+            data,
+            setData,
+            transcriptionPlan: transcriptionPlans['3PlayMedia'],
+          }}
+        />
+      );
+      break;
+    default:
+      break;
   }
   return (
     <>

@@ -201,14 +201,14 @@ const DraggableList = ({
       return;
     }
     switch (activeInfo.category) {
-    case COURSE_BLOCK_NAMES.sequential.id:
-      subsectionDragOver(active, over, activeInfo, overInfo);
-      break;
-    case COURSE_BLOCK_NAMES.vertical.id:
-      unitDragOver(active, over, activeInfo, overInfo);
-      break;
-    default:
-      break;
+      case COURSE_BLOCK_NAMES.sequential.id:
+        subsectionDragOver(active, over, activeInfo, overInfo);
+        break;
+      case COURSE_BLOCK_NAMES.vertical.id:
+        unitDragOver(active, over, activeInfo, overInfo);
+        break;
+      default:
+        break;
     }
   };
 
@@ -237,51 +237,51 @@ const DraggableList = ({
 
     if (activeInfo.index !== overInfo.index || prevContainerInfo.current) {
       switch (activeInfo.category) {
-      case COURSE_BLOCK_NAMES.chapter.id:
-        setSections((prev) => {
-          const result = arrayMove(prev, activeInfo.index, overInfo.index);
-          handleSectionDragAndDrop(result.map(section => section.id), restoreSectionList);
-          return result;
-        });
-        break;
-      case COURSE_BLOCK_NAMES.sequential.id:
-        setSections((prev) => {
-          const [prevCopy, result] = moveSubsection(
-            [...prev],
-            activeInfo.parentIndex,
-            activeInfo.index,
-            overInfo.index,
-          );
-          handleSubsectionDragAndDrop(
-            activeInfo.parent.id,
-            prevContainerInfo.current,
-            result.map(subsection => subsection.id),
-            restoreSectionList,
-          );
-          return prevCopy;
-        });
-        break;
-      case COURSE_BLOCK_NAMES.vertical.id:
-        setSections((prev) => {
-          const [prevCopy, result] = moveUnit(
-            [...prev],
-            activeInfo.grandParentIndex,
-            activeInfo.parentIndex,
-            activeInfo.index,
-            overInfo.index,
-          );
-          handleUnitDragAndDrop(
-            activeInfo.grandParent.id,
-            prevContainerInfo.current,
-            activeInfo.parent.id,
-            result.map(unit => unit.id),
-            restoreSectionList,
-          );
-          return prevCopy;
-        });
-        break;
-      default:
-        break;
+        case COURSE_BLOCK_NAMES.chapter.id:
+          setSections((prev) => {
+            const result = arrayMove(prev, activeInfo.index, overInfo.index);
+            handleSectionDragAndDrop(result.map(section => section.id), restoreSectionList);
+            return result;
+          });
+          break;
+        case COURSE_BLOCK_NAMES.sequential.id:
+          setSections((prev) => {
+            const [prevCopy, result] = moveSubsection(
+              [...prev],
+              activeInfo.parentIndex,
+              activeInfo.index,
+              overInfo.index,
+            );
+            handleSubsectionDragAndDrop(
+              activeInfo.parent.id,
+              prevContainerInfo.current,
+              result.map(subsection => subsection.id),
+              restoreSectionList,
+            );
+            return prevCopy;
+          });
+          break;
+        case COURSE_BLOCK_NAMES.vertical.id:
+          setSections((prev) => {
+            const [prevCopy, result] = moveUnit(
+              [...prev],
+              activeInfo.grandParentIndex,
+              activeInfo.parentIndex,
+              activeInfo.index,
+              overInfo.index,
+            );
+            handleUnitDragAndDrop(
+              activeInfo.grandParent.id,
+              prevContainerInfo.current,
+              activeInfo.parent.id,
+              result.map(unit => unit.id),
+              restoreSectionList,
+            );
+            return prevCopy;
+          });
+          break;
+        default:
+          break;
       }
       prevContainerInfo.current = null;
     }
@@ -301,14 +301,14 @@ const DraggableList = ({
     const filteredContainers = droppableContainers.filter(
       (container) => {
         switch (activeCategory) {
-        case COURSE_BLOCK_NAMES.chapter.id:
-          return container.data?.current?.category === activeCategory;
-        case COURSE_BLOCK_NAMES.sequential.id:
-          return [activeCategory, COURSE_BLOCK_NAMES.chapter.id].includes(container.data?.current?.category);
-        case COURSE_BLOCK_NAMES.vertical.id:
-          return [activeCategory, COURSE_BLOCK_NAMES.sequential.id].includes(container.data?.current?.category);
-        default:
-          return true;
+          case COURSE_BLOCK_NAMES.chapter.id:
+            return container.data?.current?.category === activeCategory;
+          case COURSE_BLOCK_NAMES.sequential.id:
+            return [activeCategory, COURSE_BLOCK_NAMES.chapter.id].includes(container.data?.current?.category);
+          case COURSE_BLOCK_NAMES.vertical.id:
+            return [activeCategory, COURSE_BLOCK_NAMES.sequential.id].includes(container.data?.current?.category);
+          default:
+            return true;
         }
       },
     );

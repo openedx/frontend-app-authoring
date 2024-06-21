@@ -79,7 +79,7 @@ const AppSettingsModal = ({
       success = success && await onSettingsSave(values);
     }
     await setSaveError(!success);
-    !success && alertRef?.current.scrollIntoView(); // eslint-disable-line no-unused-expressions
+    !success && alertRef?.current.scrollIntoView(); // eslint-disable-line @typescript-eslint/no-unused-expressions
   };
 
   const handleFormikSubmit = ({ handleSubmit, errors }) => async (event) => {
