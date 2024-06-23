@@ -62,7 +62,7 @@ const LibrariesV2Tab = ({
       : `${window.location.origin}${getPath(getConfig().PUBLIC_PATH)}library/${id}`
   );
 
-  const hasV2Libraries = data?.results?.length > 0;
+  const hasV2Libraries = (data?.results?.length || 0) > 0;
 
   return (
     isError ? (
@@ -98,7 +98,7 @@ const LibrariesV2Tab = ({
         </div>
 
         { hasV2Libraries
-          ? data.results.map(({
+          ? data?.results.map(({
             id, org, slug, title,
           }) => (
             <CardItem
@@ -124,12 +124,12 @@ const LibrariesV2Tab = ({
           )}
 
         {
-          data?.numPages > 1
+          (data?.numPages || 0) > 1
           && (
             <Pagination
               className="d-flex justify-content-center"
               paginationLabel="pagination navigation"
-              pageCount={data.numPages}
+              pageCount={data?.numPages}
               currentPage={currentPage}
               onPageSelect={handlePageSelect}
             />
