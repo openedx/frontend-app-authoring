@@ -1,3 +1,4 @@
+// @ts-check
 import { camelCaseObject, snakeCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
@@ -8,7 +9,6 @@ export const getCourseNotificationUrl = (url) => new URL(url, getApiBaseUrl()).h
 
 /**
  * Get's studio home data.
- * @param {string} search
  * @returns {Promise<Object>}
  */
 export async function getStudioHomeData() {
@@ -47,7 +47,9 @@ export async function getStudioHomeLibraries() {
  * @param {number} [customParams.page] - (optional) Page number of results
  * @param {number} [customParams.pageSize] - (optional) The number of results on each page, default `50`
  * @param {boolean} [customParams.pagination] - (optional) Whether pagination is supported, default `true`
- * @returns {Promise<Object>} - A Promise that resolves to the response data container the studio home v2 libraries.
+ * @param {string} [customParams.order] - (optional) Library field to order results by. Prefix with '-' for descending
+ * @param {string} [customParams.search] - (optional) Search query to filter v2 Libraries by
+ * @returns {Promise<import("./types.mjs").LibrariesV2Response>} - Promise that resolves to v2 libraries response data
  */
 export async function getStudioHomeLibrariesV2(customParams) {
   // Set default params if not passed in
