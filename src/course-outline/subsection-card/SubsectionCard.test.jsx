@@ -5,16 +5,12 @@ import {
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
-import MockAdapter from 'axios-mock-adapter';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import initializeStore from '../../store';
 import SubsectionCard from './SubsectionCard';
 import cardHeaderMessages from '../card-header/messages';
 
-// eslint-disable-next-line no-unused-vars
-let axiosMock;
 let store;
 const mockPathname = '/foo-bar';
 
@@ -121,7 +117,6 @@ describe('<SubsectionCard />', () => {
     });
 
     store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
 
   it('render SubsectionCard component correctly', () => {

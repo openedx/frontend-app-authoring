@@ -19,20 +19,20 @@ const getItemStatus = ({
   hasChanges,
 }) => {
   switch (true) {
-  case visibilityState === VisibilityTypes.STAFF_ONLY:
-    return ITEM_BADGE_STATUS.staffOnly;
-  case visibilityState === VisibilityTypes.GATED:
-    return ITEM_BADGE_STATUS.gated;
-  case visibilityState === VisibilityTypes.LIVE:
-    return ITEM_BADGE_STATUS.live;
-  case visibilityState === VisibilityTypes.UNSCHEDULED:
-    return ITEM_BADGE_STATUS.unscheduled;
-  case published && !hasChanges:
-    return ITEM_BADGE_STATUS.publishedNotLive;
-  case published && hasChanges:
-    return ITEM_BADGE_STATUS.unpublishedChanges;
-  default:
-    return ITEM_BADGE_STATUS.draft;
+    case visibilityState === VisibilityTypes.STAFF_ONLY:
+      return ITEM_BADGE_STATUS.staffOnly;
+    case visibilityState === VisibilityTypes.GATED:
+      return ITEM_BADGE_STATUS.gated;
+    case visibilityState === VisibilityTypes.LIVE:
+      return ITEM_BADGE_STATUS.live;
+    case visibilityState === VisibilityTypes.UNSCHEDULED:
+      return ITEM_BADGE_STATUS.unscheduled;
+    case published && !hasChanges:
+      return ITEM_BADGE_STATUS.publishedNotLive;
+    case published && hasChanges:
+      return ITEM_BADGE_STATUS.unpublishedChanges;
+    default:
+      return ITEM_BADGE_STATUS.draft;
   }
 };
 
@@ -46,41 +46,41 @@ const getItemStatus = ({
  */
 const getItemStatusBadgeContent = (status, messages, intl) => {
   switch (status) {
-  case ITEM_BADGE_STATUS.gated:
-    return {
-      badgeTitle: intl.formatMessage(messages.statusBadgeGated),
-      badgeIcon: LockIcon,
-    };
-  case ITEM_BADGE_STATUS.live:
-    return {
-      badgeTitle: intl.formatMessage(messages.statusBadgeLive),
-      badgeIcon: CheckCircleIcon,
-    };
-  case ITEM_BADGE_STATUS.publishedNotLive:
-    return {
-      badgeTitle: intl.formatMessage(messages.statusBadgePublishedNotLive),
-      badgeIcon: null,
-    };
-  case ITEM_BADGE_STATUS.staffOnly:
-    return {
-      badgeTitle: intl.formatMessage(messages.statusBadgeStaffOnly),
-      badgeIcon: LockIcon,
-    };
-  case ITEM_BADGE_STATUS.unpublishedChanges:
-    return {
-      badgeTitle: intl.formatMessage(messages.statusBadgeUnpublishedChanges),
-      badgeIcon: DraftIcon,
-    };
-  case ITEM_BADGE_STATUS.draft:
-    return {
-      badgeTitle: intl.formatMessage(messages.statusBadgeDraft),
-      badgeIcon: DraftIcon,
-    };
-  default:
-    return {
-      badgeTitle: '',
-      badgeIcon: null,
-    };
+    case ITEM_BADGE_STATUS.gated:
+      return {
+        badgeTitle: intl.formatMessage(messages.statusBadgeGated),
+        badgeIcon: LockIcon,
+      };
+    case ITEM_BADGE_STATUS.live:
+      return {
+        badgeTitle: intl.formatMessage(messages.statusBadgeLive),
+        badgeIcon: CheckCircleIcon,
+      };
+    case ITEM_BADGE_STATUS.publishedNotLive:
+      return {
+        badgeTitle: intl.formatMessage(messages.statusBadgePublishedNotLive),
+        badgeIcon: null,
+      };
+    case ITEM_BADGE_STATUS.staffOnly:
+      return {
+        badgeTitle: intl.formatMessage(messages.statusBadgeStaffOnly),
+        badgeIcon: LockIcon,
+      };
+    case ITEM_BADGE_STATUS.unpublishedChanges:
+      return {
+        badgeTitle: intl.formatMessage(messages.statusBadgeUnpublishedChanges),
+        badgeIcon: DraftIcon,
+      };
+    case ITEM_BADGE_STATUS.draft:
+      return {
+        badgeTitle: intl.formatMessage(messages.statusBadgeDraft),
+        badgeIcon: DraftIcon,
+      };
+    default:
+      return {
+        badgeTitle: '',
+        badgeIcon: null,
+      };
   }
 };
 
@@ -93,36 +93,36 @@ const getItemStatusBadgeContent = (status, messages, intl) => {
  */
 const getItemStatusBorder = (status) => {
   switch (status) {
-  case ITEM_BADGE_STATUS.live:
-    return {
-      borderLeft: '5px solid #00688D',
-    };
-  case ITEM_BADGE_STATUS.publishedNotLive:
-    return {
-      borderLeft: '5px solid #0D7D4D',
-    };
-  case ITEM_BADGE_STATUS.gated:
-    return {
-      borderLeft: '5px solid #000000',
-    };
-  case ITEM_BADGE_STATUS.staffOnly:
-    return {
-      borderLeft: '5px solid #000000',
-    };
-  case ITEM_BADGE_STATUS.unpublishedChanges:
-    return {
-      borderLeft: '5px solid #F0CC00',
-    };
-  case ITEM_BADGE_STATUS.draft:
-    return {
-      borderLeft: '5px solid #F0CC00',
-    };
-  case ITEM_BADGE_STATUS.unscheduled:
-    return {
-      borderLeft: '5px solid #ccc',
-    };
-  default:
-    return {};
+    case ITEM_BADGE_STATUS.live:
+      return {
+        borderLeft: '5px solid #00688D',
+      };
+    case ITEM_BADGE_STATUS.publishedNotLive:
+      return {
+        borderLeft: '5px solid #0D7D4D',
+      };
+    case ITEM_BADGE_STATUS.gated:
+      return {
+        borderLeft: '5px solid #000000',
+      };
+    case ITEM_BADGE_STATUS.staffOnly:
+      return {
+        borderLeft: '5px solid #000000',
+      };
+    case ITEM_BADGE_STATUS.unpublishedChanges:
+      return {
+        borderLeft: '5px solid #F0CC00',
+      };
+    case ITEM_BADGE_STATUS.draft:
+      return {
+        borderLeft: '5px solid #F0CC00',
+      };
+    case ITEM_BADGE_STATUS.unscheduled:
+      return {
+        borderLeft: '5px solid #ccc',
+      };
+    default:
+      return {};
   }
 };
 
@@ -195,14 +195,14 @@ const scrollToElement = (target, alignWithTop = false) => {
  */
 const getVideoSharingOptionText = (id, messages, intl) => {
   switch (id) {
-  case VIDEO_SHARING_OPTIONS.perVideo:
-    return intl.formatMessage(messages.videoSharingPerVideoText);
-  case VIDEO_SHARING_OPTIONS.allOn:
-    return intl.formatMessage(messages.videoSharingAllOnText);
-  case VIDEO_SHARING_OPTIONS.allOff:
-    return intl.formatMessage(messages.videoSharingAllOffText);
-  default:
-    return '';
+    case VIDEO_SHARING_OPTIONS.perVideo:
+      return intl.formatMessage(messages.videoSharingPerVideoText);
+    case VIDEO_SHARING_OPTIONS.allOn:
+      return intl.formatMessage(messages.videoSharingAllOnText);
+    case VIDEO_SHARING_OPTIONS.allOff:
+      return intl.formatMessage(messages.videoSharingAllOffText);
+    default:
+      return '';
   }
 };
 

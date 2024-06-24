@@ -2,8 +2,6 @@ import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
-import MockAdapter from 'axios-mock-adapter';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider } from '@edx/frontend-platform/react';
 
 import initializeStore from '../../store';
@@ -16,8 +14,6 @@ import {
 } from './__mocks__';
 import messages from './messages';
 
-// eslint-disable-next-line no-unused-vars
-let axiosMock;
 let store;
 const mockPathname = '/foo-bar';
 
@@ -62,7 +58,6 @@ describe('<ConfigureModal /> for Section', () => {
     });
 
     store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
 
   it('renders ConfigureModal component correctly', () => {
@@ -113,7 +108,6 @@ describe('<ConfigureModal /> for Subsection', () => {
     });
 
     store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
 
   it('renders subsection ConfigureModal component correctly', () => {
@@ -199,7 +193,6 @@ describe('<ConfigureModal /> for Unit', () => {
     });
 
     store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
 
   it('renders unit ConfigureModal component correctly', () => {
@@ -258,7 +251,6 @@ describe('<ConfigureModal /> for XBlock', () => {
     });
 
     store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
 
   it('renders unit ConfigureModal component correctly', () => {

@@ -22,10 +22,10 @@ import messages from './messages';
 /** @type {React.FC<{courseId: string, closeSearchModal?: () => void}>} */
 const SearchUI = (props) => {
   const hasCourseId = Boolean(props.courseId);
-  const [_searchThisCourseEnabled, setSearchThisCourse] = React.useState(hasCourseId);
+  const [searchThisCourseEnabled, setSearchThisCourse] = React.useState(hasCourseId);
   const switchToThisCourse = React.useCallback(() => setSearchThisCourse(true), []);
   const switchToAllCourses = React.useCallback(() => setSearchThisCourse(false), []);
-  const searchThisCourse = hasCourseId && _searchThisCourseEnabled;
+  const searchThisCourse = hasCourseId && searchThisCourseEnabled;
 
   return (
     <SearchContextProvider

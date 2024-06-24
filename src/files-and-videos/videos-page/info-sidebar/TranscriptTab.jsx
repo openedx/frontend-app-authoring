@@ -60,40 +60,40 @@ const TranscriptTab = ({
     } = data;
     dispatch(resetErrors({ errorType: 'transcript' }));
     switch (actionType) {
-    case 'delete':
-      if (isEmpty(language)) {
-        const updatedSelection = previousSelection;
-        updatedSelection.shift();
-        setPreviousSelection(updatedSelection);
-      } else {
-        dispatch(deleteVideoTranscript({
+      case 'delete':
+        if (isEmpty(language)) {
+          const updatedSelection = previousSelection;
+          updatedSelection.shift();
+          setPreviousSelection(updatedSelection);
+        } else {
+          dispatch(deleteVideoTranscript({
+            language,
+            videoId: id,
+            apiUrl: transcriptDeleteHandlerUrl,
+            transcripts,
+          }));
+        }
+        break;
+      case 'download':
+        dispatch(downloadVideoTranscript({
+          filename: `${displayName}-${language}.srt`,
           language,
           videoId: id,
-          apiUrl: transcriptDeleteHandlerUrl,
+          apiUrl: transcriptDownloadHandlerUrl,
+        }));
+        break;
+      case 'upload':
+        dispatch(uploadVideoTranscript({
+          language,
+          videoId: id,
+          apiUrl: transcriptUploadHandlerUrl,
+          newLanguage,
+          file,
           transcripts,
         }));
-      }
-      break;
-    case 'download':
-      dispatch(downloadVideoTranscript({
-        filename: `${displayName}-${language}.srt`,
-        language,
-        videoId: id,
-        apiUrl: transcriptDownloadHandlerUrl,
-      }));
-      break;
-    case 'upload':
-      dispatch(uploadVideoTranscript({
-        language,
-        videoId: id,
-        apiUrl: transcriptUploadHandlerUrl,
-        newLanguage,
-        file,
-        transcripts,
-      }));
-      break;
-    default:
-      break;
+        break;
+      default:
+        break;
     }
   };
 

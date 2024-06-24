@@ -467,7 +467,7 @@ describe('FilesAndUploads', () => {
 
         axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID1`).reply(201, { locked: false });
         fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
-        fireEvent.click(screen.getByText('Unlock'));
+        fireEvent.click(await screen.getByText('Unlock'));
         await executeThunk(updateAssetLock({
           courseId,
           assetId: 'mOckID1',
@@ -486,7 +486,7 @@ describe('FilesAndUploads', () => {
 
         axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID3`).reply(201, { locked: true });
         fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
-        fireEvent.click(screen.getByText('Lock'));
+        fireEvent.click(await screen.getByText('Lock'));
         await executeThunk(updateAssetLock({
           courseId,
           assetId: 'mOckID3',
@@ -515,7 +515,8 @@ describe('FilesAndUploads', () => {
 
         axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID1`).reply(204);
         fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
-        fireEvent.click(screen.getByTestId('open-delete-confirmation-button'));
+        const confirmDelete = await screen.getByTestId('open-delete-confirmation-button');
+        fireEvent.click(confirmDelete);
         await waitFor(() => {
           expect(screen.getByText('Delete mOckID1')).toBeVisible();
         });
@@ -600,7 +601,8 @@ describe('FilesAndUploads', () => {
 
         axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID3`).reply(404);
         fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
-        fireEvent.click(screen.getByTestId('open-delete-confirmation-button'));
+        const confirmDelete = await screen.getByTestId('open-delete-confirmation-button');
+        fireEvent.click(confirmDelete);
         await waitFor(() => {
           expect(screen.getByText('Delete mOckID3')).toBeVisible();
         });

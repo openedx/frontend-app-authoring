@@ -38,12 +38,12 @@ jest.mock('@edx/frontend-lib-content-components', () => ({
 
 const courseUpdatesInitialValues = (requestType) => {
   switch (requestType) {
-  case REQUEST_TYPES.add_new_update:
-    return addNewUpdateMock;
-  case REQUEST_TYPES.edit_update:
-    return courseUpdatesMock[0];
-  default:
-    return courseHandoutsMock;
+    case REQUEST_TYPES.add_new_update:
+      return addNewUpdateMock;
+    case REQUEST_TYPES.edit_update:
+      return courseUpdatesMock[0];
+    default:
+      return courseHandoutsMock;
   }
 };
 

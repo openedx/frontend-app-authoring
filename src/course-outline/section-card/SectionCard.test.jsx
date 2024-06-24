@@ -6,15 +6,11 @@ import {
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
-import MockAdapter from 'axios-mock-adapter';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import initializeStore from '../../store';
 import SectionCard from './SectionCard';
 
-// eslint-disable-next-line no-unused-vars
-let axiosMock;
 let store;
 const mockPathname = '/foo-bar';
 
@@ -125,7 +121,6 @@ describe('<SectionCard />', () => {
     });
 
     store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
 
   it('render SectionCard component correctly', () => {

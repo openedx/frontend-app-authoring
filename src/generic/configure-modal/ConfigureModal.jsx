@@ -142,118 +142,118 @@ const ConfigureModal = ({
   const handleSave = (data) => {
     const groupAccess = {};
     switch (category) {
-    case COURSE_BLOCK_NAMES.chapter.id:
-      onConfigureSubmit(data.isVisibleToStaffOnly, data.releaseDate);
-      break;
-    case COURSE_BLOCK_NAMES.sequential.id:
-      onConfigureSubmit(
-        data.isVisibleToStaffOnly,
-        data.releaseDate,
-        data.graderType,
-        data.dueDate,
-        data.isTimeLimited,
-        data.isProctoredExam,
-        data.isOnboardingExam,
-        data.isPracticeExam,
-        data.examReviewRules,
-        data.isTimeLimited ? data.defaultTimeLimitMinutes : 0,
-        data.hideAfterDue,
-        data.showCorrectness,
-        data.isPrereq,
-        data.prereqUsageKey,
-        data.prereqMinScore,
-        data.prereqMinCompletion,
-      );
-      break;
-    case COURSE_BLOCK_NAMES.vertical.id:
-    case COURSE_BLOCK_NAMES.component.id:
+      case COURSE_BLOCK_NAMES.chapter.id:
+        onConfigureSubmit(data.isVisibleToStaffOnly, data.releaseDate);
+        break;
+      case COURSE_BLOCK_NAMES.sequential.id:
+        onConfigureSubmit(
+          data.isVisibleToStaffOnly,
+          data.releaseDate,
+          data.graderType,
+          data.dueDate,
+          data.isTimeLimited,
+          data.isProctoredExam,
+          data.isOnboardingExam,
+          data.isPracticeExam,
+          data.examReviewRules,
+          data.isTimeLimited ? data.defaultTimeLimitMinutes : 0,
+          data.hideAfterDue,
+          data.showCorrectness,
+          data.isPrereq,
+          data.prereqUsageKey,
+          data.prereqMinScore,
+          data.prereqMinCompletion,
+        );
+        break;
+      case COURSE_BLOCK_NAMES.vertical.id:
+      case COURSE_BLOCK_NAMES.component.id:
       // groupAccess should be {partitionId: [group1, group2]} or {} if selectedPartitionIndex === -1
-      if (data.selectedPartitionIndex >= 0) {
-        const partitionId = userPartitionInfo.selectablePartitions[data.selectedPartitionIndex].id;
-        groupAccess[partitionId] = data.selectedGroups.map(g => parseInt(g, 10));
-      }
-      onConfigureSubmit(data.isVisibleToStaffOnly, groupAccess, data.discussionEnabled);
-      break;
-    default:
-      break;
+        if (data.selectedPartitionIndex >= 0) {
+          const partitionId = userPartitionInfo.selectablePartitions[data.selectedPartitionIndex].id;
+          groupAccess[partitionId] = data.selectedGroups.map(g => parseInt(g, 10));
+        }
+        onConfigureSubmit(data.isVisibleToStaffOnly, groupAccess, data.discussionEnabled);
+        break;
+      default:
+        break;
     }
   };
 
   const renderModalBody = (values, setFieldValue) => {
     switch (category) {
-    case COURSE_BLOCK_NAMES.chapter.id:
-      return (
-        <Tabs>
-          <Tab eventKey="basic" title={intl.formatMessage(messages.basicTabTitle)}>
-            <BasicTab
-              values={values}
-              setFieldValue={setFieldValue}
-              isSubsection={isSubsection}
-              courseGraders={courseGraders === 'undefined' ? [] : courseGraders}
-              isSelfPaced={isSelfPaced}
-            />
-          </Tab>
-          <Tab eventKey="visibility" title={intl.formatMessage(messages.visibilityTabTitle)}>
-            <VisibilityTab
-              values={values}
-              setFieldValue={setFieldValue}
-              category={category}
-              isSubsection={isSubsection}
-              showWarning={visibilityState === VisibilityTypes.STAFF_ONLY}
-            />
-          </Tab>
-        </Tabs>
-      );
-    case COURSE_BLOCK_NAMES.sequential.id:
-      return (
-        <Tabs>
-          <Tab eventKey="basic" title={intl.formatMessage(messages.basicTabTitle)}>
-            <BasicTab
-              values={values}
-              setFieldValue={setFieldValue}
-              isSubsection={isSubsection}
-              courseGraders={courseGraders === 'undefined' ? [] : courseGraders}
-              isSelfPaced={isSelfPaced}
-            />
-          </Tab>
-          <Tab eventKey="visibility" title={intl.formatMessage(messages.visibilityTabTitle)}>
-            <VisibilityTab
-              values={values}
-              setFieldValue={setFieldValue}
-              category={category}
-              isSubsection={isSubsection}
-              showWarning={visibilityState === VisibilityTypes.STAFF_ONLY}
-            />
-          </Tab>
-          <Tab eventKey="advanced" title={intl.formatMessage(messages.advancedTabTitle)}>
-            <AdvancedTab
-              values={values}
-              setFieldValue={setFieldValue}
-              prereqs={prereqs}
-              releasedToStudents={releasedToStudents}
-              wasExamEverLinkedWithExternal={wasExamEverLinkedWithExternal}
-              enableProctoredExams={enableProctoredExams}
-              supportsOnboarding={supportsOnboarding}
-              showReviewRules={showReviewRules}
-              wasProctoredExam={isProctoredExam}
-              onlineProctoringRules={onlineProctoringRules}
-            />
-          </Tab>
-        </Tabs>
-      );
-    case COURSE_BLOCK_NAMES.vertical.id:
-    case COURSE_BLOCK_NAMES.component.id:
-      return (
-        <UnitTab
-          isXBlockComponent={COURSE_BLOCK_NAMES.component.id === category}
-          values={values}
-          setFieldValue={setFieldValue}
-          showWarning={visibilityState === VisibilityTypes.STAFF_ONLY && !ancestorHasStaffLock}
-          userPartitionInfo={userPartitionInfo}
-        />
-      );
-    default:
-      return null;
+      case COURSE_BLOCK_NAMES.chapter.id:
+        return (
+          <Tabs>
+            <Tab eventKey="basic" title={intl.formatMessage(messages.basicTabTitle)}>
+              <BasicTab
+                values={values}
+                setFieldValue={setFieldValue}
+                isSubsection={isSubsection}
+                courseGraders={courseGraders === 'undefined' ? [] : courseGraders}
+                isSelfPaced={isSelfPaced}
+              />
+            </Tab>
+            <Tab eventKey="visibility" title={intl.formatMessage(messages.visibilityTabTitle)}>
+              <VisibilityTab
+                values={values}
+                setFieldValue={setFieldValue}
+                category={category}
+                isSubsection={isSubsection}
+                showWarning={visibilityState === VisibilityTypes.STAFF_ONLY}
+              />
+            </Tab>
+          </Tabs>
+        );
+      case COURSE_BLOCK_NAMES.sequential.id:
+        return (
+          <Tabs>
+            <Tab eventKey="basic" title={intl.formatMessage(messages.basicTabTitle)}>
+              <BasicTab
+                values={values}
+                setFieldValue={setFieldValue}
+                isSubsection={isSubsection}
+                courseGraders={courseGraders === 'undefined' ? [] : courseGraders}
+                isSelfPaced={isSelfPaced}
+              />
+            </Tab>
+            <Tab eventKey="visibility" title={intl.formatMessage(messages.visibilityTabTitle)}>
+              <VisibilityTab
+                values={values}
+                setFieldValue={setFieldValue}
+                category={category}
+                isSubsection={isSubsection}
+                showWarning={visibilityState === VisibilityTypes.STAFF_ONLY}
+              />
+            </Tab>
+            <Tab eventKey="advanced" title={intl.formatMessage(messages.advancedTabTitle)}>
+              <AdvancedTab
+                values={values}
+                setFieldValue={setFieldValue}
+                prereqs={prereqs}
+                releasedToStudents={releasedToStudents}
+                wasExamEverLinkedWithExternal={wasExamEverLinkedWithExternal}
+                enableProctoredExams={enableProctoredExams}
+                supportsOnboarding={supportsOnboarding}
+                showReviewRules={showReviewRules}
+                wasProctoredExam={isProctoredExam}
+                onlineProctoringRules={onlineProctoringRules}
+              />
+            </Tab>
+          </Tabs>
+        );
+      case COURSE_BLOCK_NAMES.vertical.id:
+      case COURSE_BLOCK_NAMES.component.id:
+        return (
+          <UnitTab
+            isXBlockComponent={COURSE_BLOCK_NAMES.component.id === category}
+            values={values}
+            setFieldValue={setFieldValue}
+            showWarning={visibilityState === VisibilityTypes.STAFF_ONLY && !ancestorHasStaffLock}
+            userPartitionInfo={userPartitionInfo}
+          />
+        );
+      default:
+        return null;
     }
   };
 
