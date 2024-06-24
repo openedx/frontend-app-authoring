@@ -12,7 +12,7 @@ const UploadStatusIcon = ({ status }) => {
       return (<Icon src={ErrorOutline} />);
     default:
       return (<div style={{ width: '24px' }} />);
-    }
+  }
 };
 
 UploadStatusIcon.defaultProps = {
