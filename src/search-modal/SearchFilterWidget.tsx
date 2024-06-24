@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-// @ts-check
 import React from 'react';
 import { ArrowDropDown } from '@openedx/paragon/icons';
 import {
@@ -19,10 +17,12 @@ import {
  *
  * When clicked, the button will display a dropdown menu containing this
  * element's `children`. So use this to wrap a <RefinementList> etc.
- *
- * @type {React.FC<{appliedFilters: {label: React.ReactNode}[], label: React.ReactNode, children: React.ReactNode}>}
  */
-const SearchFilterWidget = ({ appliedFilters, ...props }) => {
+const SearchFilterWidget: React.FC<{
+  appliedFilters: { label: React.ReactNode }[];
+  label: React.ReactNode;
+  children: React.ReactNode;
+}> = ({ appliedFilters, ...props }) => {
   const [isOpen, open, close] = useToggle(false);
   const [target, setTarget] = React.useState(null);
 

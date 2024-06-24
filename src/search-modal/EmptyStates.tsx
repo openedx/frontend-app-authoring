@@ -1,7 +1,6 @@
-/* eslint-disable react/prop-types */
-// @ts-check
 import React from 'react';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import type { MessageDescriptor } from 'react-intl';
 import { Alert, Stack } from '@openedx/paragon';
 
 import { useSearchContext } from './manager/SearchManager';
@@ -9,11 +8,17 @@ import EmptySearchImage from './images/empty-search.svg';
 import NoResultImage from './images/no-results.svg';
 import messages from './messages';
 
-const InfoMessage = ({ title, subtitle, image }) => (
+interface InfoMessageProps {
+  title: MessageDescriptor;
+  subtitle: MessageDescriptor;
+  image: string;
+}
+
+const InfoMessage = (props: InfoMessageProps) => (
   <Stack className="d-flex mt-6 align-items-center">
-    <p className="lead"> <FormattedMessage {...title} /> </p>
-    <p className="small text-muted"> <FormattedMessage {...subtitle} /> </p>
-    <img src={image} alt="" />
+    <p className="lead"> <FormattedMessage {...props.title} /> </p>
+    <p className="small text-muted"> <FormattedMessage {...props.subtitle} /> </p>
+    <img src={props.image} alt="" />
   </Stack>
 );
 
@@ -21,9 +26,8 @@ const InfoMessage = ({ title, subtitle, image }) => (
  * If the user hasn't put any keywords/filters yet, display an "empty state".
  * Likewise, if the results are empty (0 results), display a special message.
  * Otherwise, display the results, which are assumed to be the children prop.
- * @type {React.FC<{children: React.ReactElement}>}
  */
-const EmptyStates = ({ children }) => {
+const EmptyStates: React.FC<{ children: React.ReactElement }> = ({ children }) => {
   const {
     canClearFilters: hasFiltersApplied,
     totalHits,

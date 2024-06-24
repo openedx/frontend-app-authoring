@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-// @ts-check
 import React from 'react';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import messages from './messages';
@@ -7,9 +5,8 @@ import messages from './messages';
 /**
  * Displays a friendly, localized text name for the given XBlock/component type
  * e.g. `vertical` becomes `"Unit"`
- * @type {React.FC<{type: string}>}
  */
-const BlockTypeLabel = ({ type }) => {
+const BlockTypeLabel: React.FC<{ type: string }> = ({ type }) => {
   // TODO: Load the localized list of Component names from Studio REST API?
   const msg = messages[`blockType.${type}`];
 

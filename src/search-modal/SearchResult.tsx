@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-// @ts-check
 import React from 'react';
 import { getConfig, getPath } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -20,47 +18,40 @@ import { constructLibraryAuthoringURL } from '../utils';
 import { COMPONENT_TYPE_ICON_MAP, TYPE_ICONS_MAP } from '../course-unit/constants';
 import { getStudioHomeData } from '../studio-home/data/selectors';
 import { useSearchContext } from './manager/SearchManager';
+import type { ContentHit } from './data/api';
 import Highlight from './Highlight';
 import messages from './messages';
 
-const STRUCTURAL_TYPE_ICONS = {
+const STRUCTURAL_TYPE_ICONS: Record<string, React.ReactElement> = {
   vertical: TYPE_ICONS_MAP.vertical,
   sequential: Folder,
   chapter: Folder,
 };
 
-/** @param {string} blockType */
-function getItemIcon(blockType) {
+function getItemIcon(blockType: string): React.ReactElement {
   return STRUCTURAL_TYPE_ICONS[blockType] ?? COMPONENT_TYPE_ICON_MAP[blockType] ?? Article;
 }
 
 /**
  * Returns the URL Suffix for library/library component hit
- * @param {import('./data/api').ContentHit} hit
- * @param {string} libraryAuthoringMfeUrl
- * @returns string
 */
-function getLibraryHitUrl(hit, libraryAuthoringMfeUrl) {
+function getLibraryHitUrl(hit: ContentHit, libraryAuthoringMfeUrl: string): string {
   const { contextKey } = hit;
   return constructLibraryAuthoringURL(libraryAuthoringMfeUrl, `library/${contextKey}`);
 }
 
 /**
  * Returns the URL Suffix for a unit hit
- * @param {import('./data/api').ContentHit} hit
- * @returns string
 */
-function getUnitUrlSuffix(hit) {
+function getUnitUrlSuffix(hit: ContentHit): string {
   const { contextKey, usageKey } = hit;
   return `course/${contextKey}/container/${usageKey}`;
 }
 
 /**
  * Returns the URL Suffix for a unit component hit
- * @param {import('./data/api').ContentHit} hit
- * @returns string
 */
-function getUnitComponentUrlSuffix(hit) {
+function getUnitComponentUrlSuffix(hit: ContentHit): string {
   const { breadcrumbs, contextKey, usageKey } = hit;
   if (breadcrumbs.length > 1) {
     let parent = breadcrumbs[breadcrumbs.length - 1];
@@ -86,20 +77,16 @@ function getUnitComponentUrlSuffix(hit) {
 
 /**
  * Returns the URL Suffix for a course component hit
- * @param {import('./data/api').ContentHit} hit
- * @returns string
 */
-function getCourseComponentUrlSuffix(hit) {
+function getCourseComponentUrlSuffix(hit: ContentHit): string {
   const { contextKey, usageKey } = hit;
   return `course/${contextKey}?show=${encodeURIComponent(usageKey)}`;
 }
 
 /**
  * Returns the URL Suffix for the search hit param
- * @param {import('./data/api').ContentHit} hit
- * @returns string
 */
-function getUrlSuffix(hit) {
+function getUrlSuffix(hit: ContentHit): string {
   const { blockType, breadcrumbs } = hit;
 
   // Check if is a unit
@@ -123,9 +110,8 @@ function getUrlSuffix(hit) {
 
 /**
  * A single search result (row), usually represents an XBlock/Component
- * @type {React.FC<{hit: import('./data/api').ContentHit}>}
  */
-const SearchResult = ({ hit }) => {
+const SearchResult: React.FC<{ hit: ContentHit }> = ({ hit }) => {
   const intl = useIntl();
   const navigate = useNavigate();
   const { closeSearchModal } = useSearchContext();
@@ -162,10 +148,8 @@ const SearchResult = ({ hit }) => {
 
   /**
    * Opens the context of the hit in a new window
-   * @param {React.MouseEvent} e
-   * @returns {void}
    */
-  const openContextInNewWindow = (e) => {
+  const openContextInNewWindow = (e: React.MouseEvent): void => {
     e.stopPropagation();
     const newWindowUrl = getContextUrl(true);
     /* istanbul ignore next */
@@ -177,10 +161,8 @@ const SearchResult = ({ hit }) => {
 
   /**
    * Navigates to the context of the hit
-   * @param {(React.MouseEvent | React.KeyboardEvent)} e
-   * @returns {void}
    */
-  const navigateToContext = React.useCallback((e) => {
+  const navigateToContext = React.useCallback((e: React.MouseEvent | React.KeyboardEvent): void => {
     e.stopPropagation();
     const redirectUrl = getContextUrl();
 

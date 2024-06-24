@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-// @ts-check
 import React from 'react';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
@@ -17,9 +15,8 @@ import { useSearchContext } from './manager/SearchManager';
  * A button with a dropdown that allows filtering the current search by component type (XBlock type)
  * e.g. Limit results to "Text" (html) and "Problem" (problem) components.
  * The button displays the first type selected, and a count of how many other types are selected, if more than one.
- * @type {React.FC<Record<never, never>>}
  */
-const FilterByBlockType = () => {
+const FilterByBlockType: React.FC<Record<never, never>> = () => {
   const {
     blockTypes,
     blockTypesFilter,
@@ -35,17 +32,17 @@ const FilterByBlockType = () => {
     };
 
     // If both blocktypes are in the order dictionary, sort them based on the order defined
-    if (order[a] && order[b]) {
+    if (a in order && b in order) {
       return order[a] - order[b];
     }
 
     // If only blocktype 'a' is in the order dictionary, place it before 'b'
-    if (order[a]) {
+    if (a in order) {
       return -1;
     }
 
     // If only blocktype 'b' is in the order dictionary, place it before 'a'
-    if (order[b]) {
+    if (b in order) {
       return 1;
     }
 
@@ -54,7 +51,7 @@ const FilterByBlockType = () => {
   });
 
   // Rebuild sorted blocktypes dictionary
-  const sortedBlockTypes = {};
+  const sortedBlockTypes: Record<string, number> = {};
   sortedBlockTypeKeys.forEach(key => {
     sortedBlockTypes[key] = blockTypes[key];
   });
@@ -95,7 +92,7 @@ const FilterByBlockType = () => {
             }
             {
               // Show a message if there are no options at all to avoid the impression that the dropdown isn't working
-              sortedBlockTypes.length === 0 ? (
+              Object.keys(sortedBlockTypes).length === 0 ? (
                 <MenuItem disabled><FormattedMessage {...messages['blockTypeFilter.empty']} /></MenuItem>
               ) : null
             }
