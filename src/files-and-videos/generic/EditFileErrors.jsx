@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Alert } from '@openedx/paragon';
 import { ErrorAlert } from '@edx/frontend-lib-content-components';
 import { RequestStatus } from '../../data/constants';
 import messages from './messages';
@@ -25,13 +24,10 @@ const EditFileErrors = ({
       {intl.formatMessage(messages.errorAlertMessage, { message: errorMessages.loading })}
     </ErrorAlert>
     <ErrorAlert
-      hideHeading
+      hideHeading={false}
       dismissError={() => resetErrors({ errorType: 'add' })}
       isError={addFileStatus === RequestStatus.FAILED}
     >
-      <Alert.Heading>
-        {intl.formatMessage(messages.uploadErrorAlertTitle)}
-      </Alert.Heading>
       <ul className="p-0">
         {errorMessages.add.map(message => (
           <li key={`add-error-${message}`} style={{ listStyle: 'none' }}>

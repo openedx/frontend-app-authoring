@@ -563,10 +563,7 @@ describe('FilesAndUploads', () => {
           const addStatus = store.getState().assets.addingStatus;
           expect(addStatus).toEqual(RequestStatus.FAILED);
         });
-        const addStatus = store.getState().assets.addingStatus;
-        expect(addStatus).toEqual(RequestStatus.FAILED);
-
-        expect(screen.getByText('Upload error')).toBeVisible();
+        expect(screen.getByText('Error')).toBeVisible();
       });
 
       it('404 validation should show error', async () => {
@@ -578,7 +575,7 @@ describe('FilesAndUploads', () => {
         const addStatus = store.getState().assets.addingStatus;
         expect(addStatus).toEqual(RequestStatus.FAILED);
 
-        expect(screen.getByText('Upload error')).toBeVisible();
+        expect(screen.getByText('Error')).toBeVisible();
       });
 
       it('404 upload should show error', async () => {
@@ -591,7 +588,7 @@ describe('FilesAndUploads', () => {
         const addStatus = store.getState().assets.addingStatus;
         expect(addStatus).toEqual(RequestStatus.FAILED);
 
-        expect(screen.getByText('Upload error')).toBeVisible();
+        expect(screen.getByText('Error')).toBeVisible();
       });
 
       it('404 delete should show error', async () => {
