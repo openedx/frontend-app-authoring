@@ -46,7 +46,7 @@ const ComponentCardMenu = () => (
 );
 
 export const ComponentCardLoading = () => (
-  <Container className="library-component-card">
+  <Container className="library-component-card" data-testid="card-loading">
     <Card isLoading>
       <Card.Section />
     </Card>

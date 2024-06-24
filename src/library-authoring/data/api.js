@@ -30,7 +30,7 @@ export async function getContentLibrary(libraryId) {
 
 /**
  * Fetch block types of a library
- * @param {string} libraryId
+ * @param {string} [libraryId]
  * @returns {Promise<import("./types.mjs").LibraryBlockType[]>}
  */
 export async function getLibraryBlockTypes(libraryId) {
