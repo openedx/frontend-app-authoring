@@ -6,13 +6,13 @@ import { RequestStatus } from '../../../data/constants';
 
 const UploadStatusIcon = ({ status }) => {
   switch (status) {
-  case RequestStatus.SUCCESSFUL:
-    return (<Icon src={Check} />);
-  case RequestStatus.FAILED:
-    return (<Icon src={ErrorOutline} />);
-  default:
-    return (<div style={{ width: '24px' }} />);
-  }
+    case RequestStatus.SUCCESSFUL:
+      return (<Icon src={Check} />);
+    case RequestStatus.FAILED:
+      return (<Icon src={ErrorOutline} />);
+    default:
+      return (<div style={{ width: '24px' }} />);
+    }
 };
 
 UploadStatusIcon.defaultProps = {
