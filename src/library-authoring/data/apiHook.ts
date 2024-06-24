@@ -8,9 +8,8 @@ import { getContentLibrary } from './api';
 
 /**
  * Hook to fetch a content library by its ID.
- * @param {string} [libraryId] - The ID of the library to fetch.
  */
-export const useContentLibrary = (libraryId) => (
+export const useContentLibrary = (libraryId?: string) => (
   useQuery({
     queryKey: ['contentLibrary', libraryId],
     queryFn: () => getContentLibrary(libraryId),
@@ -19,10 +18,8 @@ export const useContentLibrary = (libraryId) => (
 
 /**
  * Hook to fetch the count of components and collections in a library.
- * @param {string} libraryId - The ID of the library to fetch.
- * @param {string} searchKeywords - Keywords to search for.
  */
-export const useLibraryComponentCount = (libraryId, searchKeywords) => {
+export const useLibraryComponentCount = (libraryId: string, searchKeywords: string) => {
   // Meilisearch code to get Collection and Component counts
   const { data: connectionDetails } = useContentSearchConnection();
 

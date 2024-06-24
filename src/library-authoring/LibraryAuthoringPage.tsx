@@ -1,6 +1,5 @@
 // @ts-check
-/* eslint-disable react/prop-types */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -27,7 +26,7 @@ const TAB_LIST = {
   collections: 'collections',
 };
 
-const SubHeaderTitle = ({ title }) => {
+const SubHeaderTitle = ({ title }: { title: string }) => {
   const intl = useIntl();
   return (
     <>
@@ -42,15 +41,12 @@ const SubHeaderTitle = ({ title }) => {
   );
 };
 
-/**
- * @type {React.FC}
- */
 const LibraryAuthoringPage = () => {
   const intl = useIntl();
   const location = useLocation();
   const navigate = useNavigate();
-  const [tabKey, setTabKey] = React.useState(TAB_LIST.home);
-  const [searchKeywords, setSearchKeywords] = React.useState('');
+  const [tabKey, setTabKey] = useState(TAB_LIST.home);
+  const [searchKeywords, setSearchKeywords] = useState('');
 
   const { libraryId } = useParams();
 
@@ -73,10 +69,7 @@ const LibraryAuthoringPage = () => {
     return <NotFoundAlert />;
   }
 
-  /** Handle tab change
-    * @param {string} key
-    */
-  const handleTabChange = (key) => {
+  const handleTabChange = (key: string) => {
     setTabKey(key);
     navigate(key);
   };
@@ -98,7 +91,7 @@ const LibraryAuthoringPage = () => {
         <SearchField
           value={searchKeywords}
           placeholder={intl.formatMessage(messages.searchPlaceholder)}
-          onChange={(value) => setSearchKeywords(value)}
+          onChange={(value: string) => setSearchKeywords(value)}
           onSubmit={() => {}}
           className="w-50"
         />

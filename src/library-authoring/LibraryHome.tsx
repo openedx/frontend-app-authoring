@@ -1,5 +1,4 @@
 // @ts-check
-/* eslint-disable react/prop-types */
 import React from 'react';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
@@ -12,13 +11,7 @@ import LibraryComponents from './LibraryComponents';
 import { useLibraryComponentCount } from './data/apiHook';
 import messages from './messages';
 
-/**
- * @type {React.FC<{
- *   title: string,
- *   children: React.ReactNode,
- * }>}
- */
-const Section = ({ title, children }) => (
+const Section = ({ title, children } : { title: string, children: React.ReactNode }) => (
   <Card>
     <Card.Header
       title={title}
@@ -29,15 +22,14 @@ const Section = ({ title, children }) => (
   </Card>
 );
 
-/**
- * @type {React.FC<{
- *   libraryId: string,
- *   filter: {
- *     searchKeywords: string,
- *   },
- * }>}
- */
-const LibraryHome = ({ libraryId, filter }) => {
+type LibraryHomeProps = {
+  libraryId: string,
+  filter: {
+    searchKeywords: string,
+  },
+};
+
+const LibraryHome = ({ libraryId, filter } : LibraryHomeProps) => {
   const { searchKeywords } = filter;
   const { componentCount, collectionCount } = useLibraryComponentCount(libraryId, searchKeywords);
 

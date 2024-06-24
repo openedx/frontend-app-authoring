@@ -1,5 +1,4 @@
 // @ts-check
-/* eslint-disable react/prop-types */
 import React from 'react';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
@@ -7,15 +6,14 @@ import { NoComponents, NoSearchResults } from './EmptyStates';
 import { useLibraryComponentCount } from './data/apiHook';
 import messages from './messages';
 
-/**
- * @type {React.FC<{
- *   libraryId: string,
- *   filter: {
- *     searchKeywords: string,
- *   },
- * }>}
- */
-const LibraryComponents = ({ libraryId, filter: { searchKeywords } }) => {
+type LibraryComponentsProps = {
+  libraryId: string;
+  filter: {
+    searchKeywords: string;
+  };
+};
+
+const LibraryComponents = ({ libraryId, filter: { searchKeywords } }: LibraryComponentsProps) => {
   const { componentCount } = useLibraryComponentCount(libraryId, searchKeywords);
 
   if (componentCount === 0) {
