@@ -31,6 +31,7 @@ const LibraryComponents = ({
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
+    searchKeywords,
   } = useSearchContext();
 
   const { componentList, tagCounts } = useMemo(() => {

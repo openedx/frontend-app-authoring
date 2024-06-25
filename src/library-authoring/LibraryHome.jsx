@@ -55,7 +55,7 @@ const LibraryHome = ({ libraryId }) => {
         <LibraryCollections />
       </Section>
       <Section title={`Components (${componentCount})`}>
-        <LibraryComponents libraryId={libraryId} filter={filter} variant="preview" />
+        <LibraryComponents libraryId={libraryId} variant="preview" />
       </Section>
     </Stack>
   );
