@@ -1,4 +1,3 @@
-// @ts-check
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { MeiliSearch } from 'meilisearch';

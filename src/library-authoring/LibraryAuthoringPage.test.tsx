@@ -1,4 +1,3 @@
-// @ts-check
 import React from 'react';
 import MockAdapter from 'axios-mock-adapter';
 import { initializeMockApp } from '@edx/frontend-platform';
