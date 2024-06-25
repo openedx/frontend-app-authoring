@@ -15,6 +15,12 @@ import Loading from '../generic/Loading';
 import SubHeader from '../generic/sub-header/SubHeader';
 import Header from '../header';
 import NotFoundAlert from '../generic/NotFoundAlert';
+import { SearchContextProvider } from '../search-modal/manager/SearchManager';
+import SearchKeywordsField from '../search-modal/SearchKeywordsField';
+import ClearFiltersButton from '../search-modal/ClearFiltersButton';
+import FilterByBlockType from '../search-modal/FilterByBlockType';
+import FilterByTags from '../search-modal/FilterByTags';
+import Stats from '../search-modal/Stats';
 import LibraryComponents from './components/LibraryComponents';
 import LibraryCollections from './LibraryCollections';
 import LibraryHome from './LibraryHome';
@@ -87,46 +93,52 @@ const LibraryAuthoringPage = () => {
         contentId={libraryId}
         isLibrary
       />
-      <Container size="xl" className="p-4 mt-3">
-        <SubHeader
-          title={<SubHeaderTitle title={libraryData.title} />}
-          subtitle={intl.formatMessage(messages.headingSubtitle)}
-        />
-        <SearchField
-          value={searchKeywords}
-          placeholder={intl.formatMessage(messages.searchPlaceholder)}
-          onChange={(value) => setSearchKeywords(value)}
-          className="w-50"
-        />
-        <Tabs
-          variant="tabs"
-          activeKey={tabKey}
-          onSelect={handleTabChange}
-          className="my-3"
-        >
-          <Tab eventKey={TAB_LIST.home} title="Home" />
-          <Tab eventKey={TAB_LIST.components} title="Components" />
-          <Tab eventKey={TAB_LIST.collections} title="Collections" />
-        </Tabs>
-        <Routes>
-          <Route
-            path={TAB_LIST.home}
-            element={<LibraryHome libraryId={libraryId} filter={{ searchKeywords }} />}
+      <SearchContextProvider
+        extraFilter={`context_key = "${libraryId}"`}
+      >
+        <Container size="xl" className="p-4 mt-3">
+          <SubHeader
+            title={<SubHeaderTitle title={libraryData.title} />}
+            subtitle={intl.formatMessage(messages.headingSubtitle)}
           />
-          <Route
-            path={TAB_LIST.components}
-            element={<LibraryComponents libraryId={libraryId} filter={{ searchKeywords }} variant="full" />}
-          />
-          <Route
-            path={TAB_LIST.collections}
-            element={<LibraryCollections />}
-          />
-          <Route
-            path="*"
-            element={<NotFoundAlert />}
-          />
-        </Routes>
-      </Container>
+          <SearchKeywordsField className="w-50" />
+          <div className="d-flex mt-3 align-items-center">
+            <FilterByBlockType />
+            <FilterByTags />
+            <ClearFiltersButton />
+            <div className="flex-grow-1" />
+            <div className="text-muted x-small align-middle"><Stats /></div>
+          </div>
+          <Tabs
+            variant="tabs"
+            activeKey={tabKey}
+            onSelect={handleTabChange}
+            className="my-3"
+          >
+            <Tab eventKey={TAB_LIST.home} title="Home" />
+            <Tab eventKey={TAB_LIST.components} title="Components" />
+            <Tab eventKey={TAB_LIST.collections} title="Collections" />
+          </Tabs>
+          <Routes>
+            <Route
+              path={TAB_LIST.home}
+              element={<LibraryHome libraryId={libraryId} filter={{ searchKeywords }} />}
+            />
+            <Route
+              path={TAB_LIST.components}
+              element={<LibraryComponents libraryId={libraryId} filter={{ searchKeywords }} variant="full" />}
+            />
+            <Route
+              path={TAB_LIST.collections}
+              element={<LibraryCollections />}
+            />
+            <Route
+              path="*"
+              element={<NotFoundAlert />}
+            />
+          </Routes>
+        </Container>
+      </SearchContextProvider>
       <StudioFooter />
     </>
   );

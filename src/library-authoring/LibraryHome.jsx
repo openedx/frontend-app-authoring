@@ -7,6 +7,7 @@ import {
 } from '@openedx/paragon';
 
 import { NoComponents, NoSearchResults } from './EmptyStates';
+import { useSearchContext } from '../search-modal/manager/SearchManager';
 import LibraryCollections from './LibraryCollections';
 import LibraryComponents from './components/LibraryComponents';
 import { useLibraryComponentCount } from './data/apiHook';
@@ -39,7 +40,12 @@ const Section = ({ title, children }) => (
  */
 const LibraryHome = ({ libraryId, filter }) => {
   const { searchKeywords } = filter;
-  const { componentCount, collectionCount } = useLibraryComponentCount(libraryId, searchKeywords);
+
+  const {
+    totalHits: componentCount,
+  } = useSearchContext();
+
+  const collectionCount = 0;
 
   if (componentCount === 0) {
     return searchKeywords === '' ? <NoComponents /> : <NoSearchResults />;

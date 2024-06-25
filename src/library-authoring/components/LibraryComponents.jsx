@@ -1,10 +1,11 @@
 // @ts-check
 /* eslint-disable react/prop-types */
 import React, { useEffect, useMemo } from 'react';
-
 import { CardGrid } from '@openedx/paragon';
+
+import { useSearchContext } from '../../search-modal/manager/SearchManager';
 import { NoComponents, NoSearchResults } from '../EmptyStates';
-import { useLibraryBlockTypes, useLibraryComponentCount, useLibraryComponents } from '../data/apiHook';
+import { useLibraryBlockTypes } from '../data/apiHook';
 import { ComponentCard, ComponentCardLoading } from './ComponentCard';
 
 /**
@@ -27,14 +28,14 @@ const LibraryComponents = ({
   filter: { searchKeywords },
   variant,
 }) => {
-  const { componentCount } = useLibraryComponentCount(libraryId, searchKeywords);
   const {
     hits,
+    totalHists: componentCount,
     isFetching,
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
-  } = useLibraryComponents(libraryId, searchKeywords);
+  } = useSearchContext();
 
   const { componentList, tagCounts } = useMemo(() => {
     const result = variant === 'preview' ? hits.slice(0, 4) : hits;
