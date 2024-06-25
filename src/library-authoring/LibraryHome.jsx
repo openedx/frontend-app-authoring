@@ -10,7 +10,6 @@ import { NoComponents, NoSearchResults } from './EmptyStates';
 import { useSearchContext } from '../search-modal/manager/SearchManager';
 import LibraryCollections from './LibraryCollections';
 import LibraryComponents from './components/LibraryComponents';
-import { useLibraryComponentCount } from './data/apiHook';
 import messages from './messages';
 
 /**
@@ -33,16 +32,12 @@ const Section = ({ title, children }) => (
 /**
  * @type {React.FC<{
  *   libraryId: string,
- *   filter: {
- *     searchKeywords: string,
- *   },
  * }>}
  */
-const LibraryHome = ({ libraryId, filter }) => {
-  const { searchKeywords } = filter;
-
+const LibraryHome = ({ libraryId }) => {
   const {
     totalHits: componentCount,
+    searchKeywords,
   } = useSearchContext();
 
   const collectionCount = 0;

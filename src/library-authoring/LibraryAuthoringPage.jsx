@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Container, Icon, IconButton, SearchField, Tab, Tabs,
+  Container, Icon, IconButton, Tab, Tabs,
 } from '@openedx/paragon';
 import { InfoOutline } from '@openedx/paragon/icons';
 import {
@@ -53,7 +53,6 @@ const LibraryAuthoringPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [tabKey, setTabKey] = React.useState(TAB_LIST.home);
-  const [searchKeywords, setSearchKeywords] = React.useState('');
 
   const { libraryId } = useParams();
 
@@ -122,11 +121,11 @@ const LibraryAuthoringPage = () => {
           <Routes>
             <Route
               path={TAB_LIST.home}
-              element={<LibraryHome libraryId={libraryId} filter={{ searchKeywords }} />}
+              element={<LibraryHome libraryId={libraryId} />}
             />
             <Route
               path={TAB_LIST.components}
-              element={<LibraryComponents libraryId={libraryId} filter={{ searchKeywords }} variant="full" />}
+              element={<LibraryComponents libraryId={libraryId} variant="full" />}
             />
             <Route
               path={TAB_LIST.collections}

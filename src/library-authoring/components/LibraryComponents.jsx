@@ -17,20 +17,16 @@ import { ComponentCard, ComponentCardLoading } from './ComponentCard';
  *
  * @type {React.FC<{
  *   libraryId: string,
- *   filter: {
- *     searchKeywords: string,
- *   },
  *   variant: 'full'|'preview',
  * }>}
  */
 const LibraryComponents = ({
   libraryId,
-  filter: { searchKeywords },
   variant,
 }) => {
   const {
     hits,
-    totalHists: componentCount,
+    totalHits: componentCount,
     isFetching,
     isFetchingNextPage,
     hasNextPage,
