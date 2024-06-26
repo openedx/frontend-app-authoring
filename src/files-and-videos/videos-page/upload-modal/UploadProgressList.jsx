@@ -22,7 +22,7 @@ const UploadProgressList = ({ videosList }) => (
                 {video.status.toUpperCase()}
               </span>
             ) : (
-              <ProgressBar now={video.uploadPercentage} variant="info" />
+              <ProgressBar now={video.progress} variant="info" />
             )}
           </div>
           <UploadStatusIcon status={video.status} />
