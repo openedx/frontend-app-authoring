@@ -6,20 +6,15 @@ import { selectors } from '../../../../../data/redux';
 import messages from './messages';
 
 import TinyMceWidget from '../../../../../sharedComponents/TinyMceWidget';
-import { prepareEditorRef, replaceStaticWithAsset } from '../../../../../sharedComponents/TinyMceWidget/hooks';
+import { prepareEditorRef } from '../../../../../sharedComponents/TinyMceWidget/hooks';
 
 export const QuestionWidget = ({
   // redux
   question,
-  learningContextId,
   // injected
   intl,
 }) => {
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
-  const questionContent = replaceStaticWithAsset({
-    initialContent: question,
-    learningContextId,
-  });
   if (!refReady) { return null; }
   return (
     <div className="tinyMceWidget">
@@ -30,7 +25,7 @@ export const QuestionWidget = ({
         id="question"
         editorType="question"
         editorRef={editorRef}
-        editorContentHtml={questionContent}
+        editorContentHtml={question}
         setEditorRef={setEditorRef}
         minHeight={150}
         placeholder={intl.formatMessage(messages.placeholder)}
@@ -42,13 +37,11 @@ export const QuestionWidget = ({
 QuestionWidget.propTypes = {
   // redux
   question: PropTypes.string.isRequired,
-  learningContextId: PropTypes.string.isRequired,
   // injected
   intl: intlShape.isRequired,
 };
 export const mapStateToProps = (state) => ({
   question: selectors.problem.question(state),
-  learningContextId: selectors.app.learningContextId(state),
 });
 
 export default injectIntl(connect(mapStateToProps)(QuestionWidget));

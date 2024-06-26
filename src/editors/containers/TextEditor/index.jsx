@@ -16,31 +16,27 @@ import RawEditor from '../../sharedComponents/RawEditor';
 import * as hooks from './hooks';
 import messages from './messages';
 import TinyMceWidget from '../../sharedComponents/TinyMceWidget';
-import { prepareEditorRef, replaceStaticWithAsset } from '../../sharedComponents/TinyMceWidget/hooks';
+import { prepareEditorRef } from '../../sharedComponents/TinyMceWidget/hooks';
 
 export const TextEditor = ({
   onClose,
   returnFunction,
   // redux
-  showRawEditor,
+  isRaw,
   blockValue,
   blockFailed,
   initializeEditor,
-  blockFinished,
-  learningContextId,
+  assetsFinished,
+  assets,
   // inject
   intl,
 }) => {
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
-  const editorContent = blockValue ? replaceStaticWithAsset({
-    initialContent: blockValue.data.data,
-    learningContextId,
-  }) : '';
 
   if (!refReady) { return null; }
 
   const selectEditor = () => {
-    if (showRawEditor) {
+    if (isRaw) {
       return (
         <RawEditor
           editorRef={editorRef}
@@ -52,7 +48,7 @@ export const TextEditor = ({
       <TinyMceWidget
         editorType="text"
         editorRef={editorRef}
-        editorContentHtml={editorContent}
+        editorContentHtml={blockValue ? blockValue.data.data : ''}
         setEditorRef={setEditorRef}
         minHeight={500}
         height="100%"
@@ -63,7 +59,7 @@ export const TextEditor = ({
 
   return (
     <EditorContainer
-      getContent={hooks.getContent({ editorRef, showRawEditor })}
+      getContent={hooks.getContent({ editorRef, isRaw, assets })}
       onClose={onClose}
       returnFunction={returnFunction}
     >
@@ -72,7 +68,7 @@ export const TextEditor = ({
           <FormattedMessage {...messages.couldNotLoadTextContext} />
         </Toast>
 
-        {(!blockFinished)
+        {(!assetsFinished)
           ? (
             <div className="text-center p-6">
               <Spinner
@@ -88,7 +84,9 @@ export const TextEditor = ({
 };
 TextEditor.defaultProps = {
   blockValue: null,
-  blockFinished: null,
+  isRaw: null,
+  assetsFinished: null,
+  assets: null,
   returnFunction: null,
 };
 TextEditor.propTypes = {
@@ -100,9 +98,9 @@ TextEditor.propTypes = {
   }),
   blockFailed: PropTypes.bool.isRequired,
   initializeEditor: PropTypes.func.isRequired,
-  showRawEditor: PropTypes.bool.isRequired,
-  blockFinished: PropTypes.bool,
-  learningContextId: PropTypes.string.isRequired,
+  isRaw: PropTypes.bool,
+  assetsFinished: PropTypes.bool,
+  assets: PropTypes.shape({}),
   // inject
   intl: intlShape.isRequired,
 };
@@ -110,9 +108,9 @@ TextEditor.propTypes = {
 export const mapStateToProps = (state) => ({
   blockValue: selectors.app.blockValue(state),
   blockFailed: selectors.requests.isFailed(state, { requestKey: RequestKeys.fetchBlock }),
-  showRawEditor: selectors.app.showRawEditor(state),
-  blockFinished: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchBlock }),
-  learningContextId: selectors.app.learningContextId(state),
+  isRaw: selectors.app.isRaw(state),
+  assetsFinished: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchAssets }),
+  assets: selectors.app.assets(state),
 });
 
 export const mapDispatchToProps = {

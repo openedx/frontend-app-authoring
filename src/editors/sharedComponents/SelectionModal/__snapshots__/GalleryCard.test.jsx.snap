@@ -59,14 +59,7 @@ exports[`GalleryCard component snapshot with duration badge 1`] = `
       <h3
         className="text-primary-500"
       >
-        <Truncate
-          elementType="div"
-          ellipsis="..."
-          lines={1}
-          whiteSpace={false}
-        >
-          props.img.displayName
-        </Truncate>
+        props.img.displayName
       </h3>
       <p
         className="text-gray-500"
@@ -143,14 +136,7 @@ exports[`GalleryCard component snapshot with duration transcripts 1`] = `
       <h3
         className="text-primary-500"
       >
-        <Truncate
-          elementType="div"
-          ellipsis="..."
-          lines={1}
-          whiteSpace={false}
-        >
-          props.img.displayName
-        </Truncate>
+        props.img.displayName
       </h3>
       <div
         style={
@@ -242,14 +228,7 @@ exports[`GalleryCard component snapshot with status badge 1`] = `
       <h3
         className="text-primary-500"
       >
-        <Truncate
-          elementType="div"
-          ellipsis="..."
-          lines={1}
-          whiteSpace={false}
-        >
-          props.img.displayName
-        </Truncate>
+        props.img.displayName
       </h3>
       <p
         className="text-gray-500"
@@ -327,14 +306,7 @@ exports[`GalleryCard component snapshot with thumbnail fallback and load error 1
       <h3
         className="text-primary-500"
       >
-        <Truncate
-          elementType="div"
-          ellipsis="..."
-          lines={1}
-          whiteSpace={false}
-        >
-          props.img.displayName
-        </Truncate>
+        props.img.displayName
       </h3>
       <p
         className="text-gray-500"
@@ -412,14 +384,7 @@ exports[`GalleryCard component snapshot with thumbnail fallback and no error 1`]
       <h3
         className="text-primary-500"
       >
-        <Truncate
-          elementType="div"
-          ellipsis="..."
-          lines={1}
-          whiteSpace={false}
-        >
-          props.img.displayName
-        </Truncate>
+        props.img.displayName
       </h3>
       <p
         className="text-gray-500"
@@ -496,14 +461,7 @@ exports[`GalleryCard component snapshot: dateAdded=12345 1`] = `
       <h3
         className="text-primary-500"
       >
-        <Truncate
-          elementType="div"
-          ellipsis="..."
-          lines={1}
-          whiteSpace={false}
-        >
-          props.img.displayName
-        </Truncate>
+        props.img.displayName
       </h3>
       <p
         className="text-gray-500"

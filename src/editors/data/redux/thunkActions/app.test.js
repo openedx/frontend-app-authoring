@@ -10,7 +10,7 @@ jest.mock('./requests', () => ({
   saveBlock: (args) => ({ saveBlock: args }),
   uploadAsset: (args) => ({ uploadAsset: args }),
   fetchStudioView: (args) => ({ fetchStudioView: args }),
-  fetchImages: (args) => ({ fetchImages: args }),
+  fetchAssets: (args) => ({ fetchAssets: args }),
   fetchVideos: (args) => ({ fetchVideos: args }),
   fetchCourseDetails: (args) => ({ fetchCourseDetails: args }),
 }));
@@ -101,24 +101,24 @@ describe('app thunkActions', () => {
       }));
     });
   });
-  describe('fetchImages', () => {
+  describe('fetchAssets', () => {
     beforeEach(() => {
-      thunkActions.fetchImages({ pageNumber: 0 })(dispatch);
+      thunkActions.fetchAssets()(dispatch);
       [[dispatchedAction]] = dispatch.mock.calls;
     });
-    it('dispatches fetchImages action', () => {
-      expect(dispatchedAction.fetchImages).not.toEqual(undefined);
+    it('dispatches fetchAssets action', () => {
+      expect(dispatchedAction.fetchAssets).not.toEqual(undefined);
     });
-    it('dispatches actions.app.setImages on success', () => {
+    it('dispatches actions.app.setAssets on success', () => {
       dispatch.mockClear();
-      dispatchedAction.fetchImages.onSuccess({ images: {}, imageCount: 0 });
-      expect(dispatch).toHaveBeenCalledWith(actions.app.setImages({ images: {}, imageCount: 0 }));
+      dispatchedAction.fetchAssets.onSuccess(testValue);
+      expect(dispatch).toHaveBeenCalledWith(actions.app.setAssets(testValue));
     });
-    it('dispatches failRequest with fetchImages requestKey on failure', () => {
+    it('dispatches failRequest with fetchAssets requestKey on failure', () => {
       dispatch.mockClear();
-      dispatchedAction.fetchImages.onFailure(testValue);
+      dispatchedAction.fetchAssets.onFailure(testValue);
       expect(dispatch).toHaveBeenCalledWith(actions.requests.failRequest({
-        requestKey: RequestKeys.fetchImages,
+        requestKey: RequestKeys.fetchAssets,
         error: testValue,
       }));
     });
@@ -128,7 +128,7 @@ describe('app thunkActions', () => {
       thunkActions.fetchVideos()(dispatch);
       [[dispatchedAction]] = dispatch.mock.calls;
     });
-    it('dispatches fetchImages action', () => {
+    it('dispatches fetchAssets action', () => {
       expect(dispatchedAction.fetchVideos).not.toEqual(undefined);
     });
     it('dispatches actions.app.setVideos on success', () => {
@@ -167,20 +167,20 @@ describe('app thunkActions', () => {
       }));
     });
   });
-  describe('initialize without block type defined', () => {
+  describe('initialize', () => {
     it('dispatches actions.app.initialize, and then fetches both block and unit', () => {
       const {
         fetchBlock,
         fetchUnit,
         fetchStudioView,
-        fetchImages,
+        fetchAssets,
         fetchVideos,
         fetchCourseDetails,
       } = thunkActions;
       thunkActions.fetchBlock = () => 'fetchBlock';
       thunkActions.fetchUnit = () => 'fetchUnit';
       thunkActions.fetchStudioView = () => 'fetchStudioView';
-      thunkActions.fetchImages = () => 'fetchImages';
+      thunkActions.fetchAssets = () => 'fetchAssets';
       thunkActions.fetchVideos = () => 'fetchVideos';
       thunkActions.fetchCourseDetails = () => 'fetchCourseDetails';
       thunkActions.initialize(testValue)(dispatch);
@@ -188,118 +188,15 @@ describe('app thunkActions', () => {
         [actions.app.initialize(testValue)],
         [thunkActions.fetchBlock()],
         [thunkActions.fetchUnit()],
-      ]);
-      thunkActions.fetchBlock = fetchBlock;
-      thunkActions.fetchUnit = fetchUnit;
-      thunkActions.fetchStudioView = fetchStudioView;
-      thunkActions.fetchImages = fetchImages;
-      thunkActions.fetchVideos = fetchVideos;
-      thunkActions.fetchCourseDetails = fetchCourseDetails;
-    });
-  });
-  describe('initialize with block type html', () => {
-    it('dispatches actions.app.initialize, and then fetches both block and unit', () => {
-      const {
-        fetchBlock,
-        fetchUnit,
-        fetchStudioView,
-        fetchImages,
-        fetchVideos,
-        fetchCourseDetails,
-      } = thunkActions;
-      thunkActions.fetchBlock = () => 'fetchBlock';
-      thunkActions.fetchUnit = () => 'fetchUnit';
-      thunkActions.fetchStudioView = () => 'fetchStudioView';
-      thunkActions.fetchImages = () => 'fetchImages';
-      thunkActions.fetchVideos = () => 'fetchVideos';
-      thunkActions.fetchCourseDetails = () => 'fetchCourseDetails';
-      const data = {
-        ...testValue,
-        blockType: 'html',
-      };
-      thunkActions.initialize(data)(dispatch);
-      expect(dispatch.mock.calls).toEqual([
-        [actions.app.initialize(data)],
-        [thunkActions.fetchBlock()],
-        [thunkActions.fetchUnit()],
-        [thunkActions.fetchImages()],
-      ]);
-      thunkActions.fetchBlock = fetchBlock;
-      thunkActions.fetchUnit = fetchUnit;
-      thunkActions.fetchStudioView = fetchStudioView;
-      thunkActions.fetchImages = fetchImages;
-      thunkActions.fetchVideos = fetchVideos;
-      thunkActions.fetchCourseDetails = fetchCourseDetails;
-    });
-  });
-  describe('initialize with block type problem', () => {
-    it('dispatches actions.app.initialize, and then fetches both block and unit', () => {
-      const {
-        fetchBlock,
-        fetchUnit,
-        fetchStudioView,
-        fetchImages,
-        fetchVideos,
-        fetchCourseDetails,
-      } = thunkActions;
-      thunkActions.fetchBlock = () => 'fetchBlock';
-      thunkActions.fetchUnit = () => 'fetchUnit';
-      thunkActions.fetchStudioView = () => 'fetchStudioView';
-      thunkActions.fetchImages = () => 'fetchImages';
-      thunkActions.fetchVideos = () => 'fetchVideos';
-      thunkActions.fetchCourseDetails = () => 'fetchCourseDetails';
-      const data = {
-        ...testValue,
-        blockType: 'problem',
-      };
-      thunkActions.initialize(data)(dispatch);
-      expect(dispatch.mock.calls).toEqual([
-        [actions.app.initialize(data)],
-        [thunkActions.fetchBlock()],
-        [thunkActions.fetchUnit()],
-        [thunkActions.fetchImages()],
-      ]);
-      thunkActions.fetchBlock = fetchBlock;
-      thunkActions.fetchUnit = fetchUnit;
-      thunkActions.fetchStudioView = fetchStudioView;
-      thunkActions.fetchImages = fetchImages;
-      thunkActions.fetchVideos = fetchVideos;
-      thunkActions.fetchCourseDetails = fetchCourseDetails;
-    });
-  });
-  describe('initialize with block type video', () => {
-    it('dispatches actions.app.initialize, and then fetches both block and unit', () => {
-      const {
-        fetchBlock,
-        fetchUnit,
-        fetchStudioView,
-        fetchImages,
-        fetchVideos,
-        fetchCourseDetails,
-      } = thunkActions;
-      thunkActions.fetchBlock = () => 'fetchBlock';
-      thunkActions.fetchUnit = () => 'fetchUnit';
-      thunkActions.fetchStudioView = () => 'fetchStudioView';
-      thunkActions.fetchImages = () => 'fetchImages';
-      thunkActions.fetchVideos = () => 'fetchVideos';
-      thunkActions.fetchCourseDetails = () => 'fetchCourseDetails';
-      const data = {
-        ...testValue,
-        blockType: 'video',
-      };
-      thunkActions.initialize(data)(dispatch);
-      expect(dispatch.mock.calls).toEqual([
-        [actions.app.initialize(data)],
-        [thunkActions.fetchBlock()],
-        [thunkActions.fetchUnit()],
-        [thunkActions.fetchVideos()],
         [thunkActions.fetchStudioView()],
+        [thunkActions.fetchAssets()],
+        [thunkActions.fetchVideos()],
         [thunkActions.fetchCourseDetails()],
       ]);
       thunkActions.fetchBlock = fetchBlock;
       thunkActions.fetchUnit = fetchUnit;
       thunkActions.fetchStudioView = fetchStudioView;
-      thunkActions.fetchImages = fetchImages;
+      thunkActions.fetchAssets = fetchAssets;
       thunkActions.fetchVideos = fetchVideos;
       thunkActions.fetchCourseDetails = fetchCourseDetails;
     });
@@ -328,10 +225,10 @@ describe('app thunkActions', () => {
       expect(returnToUnit).toHaveBeenCalled();
     });
   });
-  describe('uploadAsset', () => {
+  describe('uploadImage', () => {
     const setSelection = jest.fn();
     beforeEach(() => {
-      thunkActions.uploadAsset({ file: testValue, setSelection })(dispatch);
+      thunkActions.uploadImage({ file: testValue, setSelection })(dispatch);
       [[dispatchedAction]] = dispatch.mock.calls;
     });
     it('dispatches uploadAsset action', () => {

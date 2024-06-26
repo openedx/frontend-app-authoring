@@ -6,20 +6,15 @@ import { selectors } from '../../../../../data/redux';
 import messages from './messages';
 
 import TinyMceWidget from '../../../../../sharedComponents/TinyMceWidget';
-import { prepareEditorRef, replaceStaticWithAsset } from '../../../../../sharedComponents/TinyMceWidget/hooks';
+import { prepareEditorRef } from '../../../../../sharedComponents/TinyMceWidget/hooks';
 
 export const ExplanationWidget = ({
   // redux
   settings,
-  learningContextId,
   // injected
   intl,
 }) => {
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
-  const solutionContent = replaceStaticWithAsset({
-    initialContent: settings?.solutionExplanation,
-    learningContextId,
-  });
   if (!refReady) { return null; }
   return (
     <div className="tinyMceWidget mt-4 text-primary-500">
@@ -33,7 +28,7 @@ export const ExplanationWidget = ({
         id="solution"
         editorType="solution"
         editorRef={editorRef}
-        editorContentHtml={solutionContent}
+        editorContentHtml={settings?.solutionExplanation}
         setEditorRef={setEditorRef}
         minHeight={150}
         placeholder={intl.formatMessage(messages.placeholder)}
@@ -46,13 +41,11 @@ ExplanationWidget.propTypes = {
   // redux
   // eslint-disable-next-line
   settings: PropTypes.any.isRequired,
-  learningContextId: PropTypes.string.isRequired,
   // injected
   intl: intlShape.isRequired,
 };
 export const mapStateToProps = (state) => ({
   settings: selectors.problem.settings(state),
-  learningContextId: selectors.app.learningContextId(state),
 });
 
 export default injectIntl(connect(mapStateToProps)(ExplanationWidget));
