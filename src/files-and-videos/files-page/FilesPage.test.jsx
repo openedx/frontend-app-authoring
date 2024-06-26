@@ -563,8 +563,6 @@ describe('FilesAndUploads', () => {
           const addStatus = store.getState().assets.addingStatus;
           expect(addStatus).toEqual(RequestStatus.FAILED);
         });
-        const addStatus = store.getState().assets.addingStatus;
-        expect(addStatus).toEqual(RequestStatus.FAILED);
 
         expect(screen.getByText('Upload error')).toBeVisible();
       });
