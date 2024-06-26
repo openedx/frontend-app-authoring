@@ -92,7 +92,6 @@ const slice = createSlice({
       const { fileName } = payload;
       const currentErrorState = state.errors.add;
       state.errors.add = [...currentErrorState, `Failed to add ${fileName}.`];
-      state.addingStatus = RequestStatus.FAILED;
     },
   },
 });
