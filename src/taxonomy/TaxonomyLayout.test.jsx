@@ -54,7 +54,7 @@ const RootWrapper = () => (
   </AppProvider>
 );
 
-describe('<TaxonomyLayout />', async () => {
+describe('<TaxonomyLayout />', () => {
   beforeEach(async () => {
     initializeMockApp({
       authenticatedUser: {

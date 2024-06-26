@@ -47,14 +47,14 @@ export const getSrc = ({ thumbnail, wrapperType, externalUrl }) => {
     return externalUrl || `${getConfig().STUDIO_BASE_URL}${thumbnail}`;
   }
   switch (wrapperType) {
-  case 'document':
-    return InsertDriveFile;
-  case 'code':
-    return Terminal;
-  case 'audio':
-    return AudioFile;
-  default:
-    return InsertDriveFile;
+    case 'document':
+      return InsertDriveFile;
+    case 'code':
+      return Terminal;
+    case 'audio':
+      return AudioFile;
+    default:
+      return InsertDriveFile;
   }
 };
 

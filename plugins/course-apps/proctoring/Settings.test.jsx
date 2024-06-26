@@ -15,8 +15,9 @@ import initializeStore from 'CourseAuthoring/store';
 import PagesAndResourcesProvider from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
 import ProctoredExamSettings from './Settings';
 
+const courseId = 'course-v1%3AedX%2BDemoX%2BDemo_Course';
 const defaultProps = {
-  courseId: 'course-v1%3AedX%2BDemoX%2BDemo_Course',
+  courseId,
   onClose: () => {},
 };
 const IntlProctoredExamSettings = injectIntl(ProctoredExamSettings);
@@ -34,7 +35,7 @@ const intlWrapper = children => (
 let axiosMock;
 
 describe('ProctoredExamSettings', () => {
-  function setupApp(isAdmin = true) {
+  function setupApp(isAdmin = true, org = undefined) {
     mergeConfig({
       EXAMS_BASE_URL: 'http://exams.testing.co',
     }, 'CourseAuthoringConfig');
@@ -52,12 +53,18 @@ describe('ProctoredExamSettings', () => {
         courseApps: {
           proctoring: {},
         },
+        courseDetails: {
+          [courseId]: {
+            start: Date(),
+          },
+        },
+        ...(org ? { courseDetails: { [courseId]: { org } } } : {}),
       },
     });
 
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock.onGet(
-      `${ExamsApiService.getExamsBaseUrl()}/api/v1/providers`,
+      `${ExamsApiService.getExamsBaseUrl()}/api/v1/providers${org ? `?org=${org}` : ''}`,
     ).reply(200, [
       {
         name: 'test_lti',
@@ -103,9 +110,7 @@ describe('ProctoredExamSettings', () => {
         screen.getByDisplayValue('mockproc');
       });
       const selectElement = screen.getByDisplayValue('mockproc');
-      await act(async () => {
-        fireEvent.change(selectElement, { target: { value: 'proctortrack' } });
-      });
+      fireEvent.change(selectElement, { target: { value: 'proctortrack' } });
       const zendeskTicketInput = screen.getByTestId('createZendeskTicketsNo');
       expect(zendeskTicketInput.checked).toEqual(true);
     });
@@ -115,9 +120,7 @@ describe('ProctoredExamSettings', () => {
         screen.getByDisplayValue('mockproc');
       });
       const selectElement = screen.getByDisplayValue('mockproc');
-      await act(async () => {
-        fireEvent.change(selectElement, { target: { value: 'software_secure' } });
-      });
+      fireEvent.change(selectElement, { target: { value: 'software_secure' } });
       const zendeskTicketInput = screen.getByTestId('createZendeskTicketsYes');
       expect(zendeskTicketInput.checked).toEqual(true);
     });
@@ -127,9 +130,7 @@ describe('ProctoredExamSettings', () => {
         screen.getByDisplayValue('mockproc');
       });
       const selectElement = screen.getByDisplayValue('mockproc');
-      await act(async () => {
-        fireEvent.change(selectElement, { target: { value: 'mockproc' } });
-      });
+      fireEvent.change(selectElement, { target: { value: 'mockproc' } });
       const zendeskTicketInput = screen.getByTestId('createZendeskTicketsYes');
       expect(zendeskTicketInput.checked).toEqual(true);
     });
@@ -176,9 +177,7 @@ describe('ProctoredExamSettings', () => {
 
       let enabledProctoredExamCheck = screen.getAllByLabelText('Proctored exams', { exact: false })[0];
       expect(enabledProctoredExamCheck.checked).toEqual(true);
-      await act(async () => {
-        fireEvent.click(enabledProctoredExamCheck, { target: { value: false } });
-      });
+      fireEvent.click(enabledProctoredExamCheck, { target: { value: false } });
       enabledProctoredExamCheck = screen.getByLabelText('Proctored exams');
       expect(enabledProctoredExamCheck.checked).toEqual(false);
       expect(screen.queryByText('Allow opting out of proctored exams')).toBeNull();
@@ -193,9 +192,7 @@ describe('ProctoredExamSettings', () => {
         screen.getByDisplayValue('mockproc');
       });
       const selectElement = screen.getByDisplayValue('mockproc');
-      await act(async () => {
-        fireEvent.change(selectElement, { target: { value: 'test_lti' } });
-      });
+      fireEvent.change(selectElement, { target: { value: 'test_lti' } });
       expect(screen.queryByTestId('allowOptingOutRadio')).toBeNull();
       expect(screen.queryByTestId('createZendeskTicketsYes')).toBeNull();
       expect(screen.queryByTestId('createZendeskTicketsNo')).toBeNull();
@@ -237,13 +234,9 @@ describe('ProctoredExamSettings', () => {
           screen.getByDisplayValue('proctortrack');
         });
         const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
-        await act(async () => {
-          fireEvent.change(selectEscalationEmailElement, { target: { value: '' } });
-        });
+        fireEvent.change(selectEscalationEmailElement, { target: { value: '' } });
         const selectButton = screen.getByTestId('submissionButton');
-        await act(async () => {
-          fireEvent.click(selectButton);
-        });
+        fireEvent.click(selectButton);
 
         // verify alert content and focus management
         const escalationEmailError = screen.getByTestId('escalationEmailError');
@@ -252,9 +245,7 @@ describe('ProctoredExamSettings', () => {
 
         // verify alert link links to offending input
         const errorLink = screen.getByTestId('escalationEmailErrorLink');
-        await act(async () => {
-          fireEvent.click(errorLink);
-        });
+        fireEvent.click(errorLink);
         const escalationEmailInput = screen.getByTestId('escalationEmail');
         expect(document.activeElement).toEqual(escalationEmailInput);
       });
@@ -265,18 +256,12 @@ describe('ProctoredExamSettings', () => {
         });
 
         const selectElement = screen.getByDisplayValue('proctortrack');
-        await act(async () => {
-          fireEvent.change(selectElement, { target: { value: provider } });
-        });
+        fireEvent.change(selectElement, { target: { value: provider } });
 
         const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
-        await act(async () => {
-          fireEvent.change(selectEscalationEmailElement, { target: { value: 'foo.bar' } });
-        });
-        const selectButton = screen.getByTestId('submissionButton');
-        await act(async () => {
-          fireEvent.click(selectButton);
-        });
+        fireEvent.change(selectEscalationEmailElement, { target: { value: 'foo.bar' } });
+        const proctoringForm = screen.getByTestId('proctoringForm');
+        fireEvent.submit(proctoringForm);
 
         // verify alert content and focus management
         const escalationEmailError = screen.getByTestId('escalationEmailError');
@@ -286,9 +271,7 @@ describe('ProctoredExamSettings', () => {
 
         // verify alert link links to offending input
         const errorLink = screen.getByTestId('escalationEmailErrorLink');
-        await act(async () => {
-          fireEvent.click(errorLink);
-        });
+        fireEvent.click(errorLink);
         const escalationEmailInput = screen.getByTestId('escalationEmail');
         expect(document.activeElement).toEqual(escalationEmailInput);
       });
@@ -298,15 +281,11 @@ describe('ProctoredExamSettings', () => {
           screen.getByDisplayValue('proctortrack');
         });
         const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
-        await act(async () => {
-          fireEvent.change(selectEscalationEmailElement, { target: { value: 'foo.bar' } });
-        });
+        fireEvent.change(selectEscalationEmailElement, { target: { value: 'foo.bar' } });
         const enableProctoringElement = screen.getByText('Proctored exams');
-        await act(async () => fireEvent.click(enableProctoringElement));
+        fireEvent.click(enableProctoringElement);
         const selectButton = screen.getByTestId('submissionButton');
-        await act(async () => {
-          fireEvent.click(selectButton);
-        });
+        fireEvent.click(selectButton);
 
         // verify alert content and focus management
         const escalationEmailError = screen.getByTestId('escalationEmailError');
@@ -320,24 +299,22 @@ describe('ProctoredExamSettings', () => {
           screen.getByDisplayValue('proctortrack');
         });
         const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
-        await act(async () => {
-          fireEvent.change(selectEscalationEmailElement, { target: { value: '' } });
-        });
+        fireEvent.change(selectEscalationEmailElement, { target: { value: '' } });
         const enableProctoringElement = screen.getByText('Proctored exams');
-        await act(async () => fireEvent.click(enableProctoringElement));
+        fireEvent.click(enableProctoringElement);
         const selectButton = screen.getByTestId('submissionButton');
-        await act(async () => {
-          fireEvent.click(selectButton);
-        });
+        fireEvent.click(selectButton);
 
         // verify there is no escalation email alert, and focus has been set on save success alert
         expect(screen.queryByTestId('escalationEmailError')).toBeNull();
 
-        const errorAlert = screen.getByTestId('saveSuccess');
-        expect(errorAlert.textContent).toEqual(
-          expect.stringContaining('Proctored exam settings saved successfully.'),
-        );
-        expect(document.activeElement).toEqual(errorAlert);
+        await waitFor(() => {
+          const errorAlert = screen.getByTestId('saveSuccess');
+          expect(errorAlert.textContent).toEqual(
+            expect.stringContaining('Proctored exam settings saved successfully.'),
+          );
+          expect(document.activeElement).toEqual(errorAlert);
+        });
       });
 
       it(`Has no error when valid proctoring escalation email is provided with ${provider} selected`, async () => {
@@ -345,22 +322,20 @@ describe('ProctoredExamSettings', () => {
           screen.getByDisplayValue('proctortrack');
         });
         const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
-        await act(async () => {
-          fireEvent.change(selectEscalationEmailElement, { target: { value: 'foo@bar.com' } });
-        });
+        fireEvent.change(selectEscalationEmailElement, { target: { value: 'foo@bar.com' } });
         const selectButton = screen.getByTestId('submissionButton');
-        await act(async () => {
-          fireEvent.click(selectButton);
-        });
+        fireEvent.click(selectButton);
 
         // verify there is no escalation email alert, and focus has been set on save success alert
         expect(screen.queryByTestId('escalationEmailError')).toBeNull();
 
-        const errorAlert = screen.getByTestId('saveSuccess');
-        expect(errorAlert.textContent).toEqual(
-          expect.stringContaining('Proctored exam settings saved successfully.'),
-        );
-        expect(document.activeElement).toEqual(errorAlert);
+        await waitFor(() => {
+          const errorAlert = screen.getByTestId('saveSuccess');
+          expect(errorAlert.textContent).toEqual(
+            expect.stringContaining('Proctored exam settings saved successfully.'),
+          );
+          expect(document.activeElement).toEqual(errorAlert);
+        });
       });
 
       it(`Escalation email field hidden when proctoring backend is not ${provider}`, async () => {
@@ -370,9 +345,7 @@ describe('ProctoredExamSettings', () => {
         const proctoringBackendSelect = screen.getByDisplayValue('proctortrack');
         const selectEscalationEmailElement = screen.getByTestId('escalationEmail');
         expect(selectEscalationEmailElement.value).toEqual('test@example.com');
-        await act(async () => {
-          fireEvent.change(proctoringBackendSelect, { target: { value: 'software_secure' } });
-        });
+        fireEvent.change(proctoringBackendSelect, { target: { value: 'software_secure' } });
         expect(screen.queryByTestId('escalationEmail')).toBeNull();
       });
 
@@ -382,13 +355,9 @@ describe('ProctoredExamSettings', () => {
         });
         const proctoringBackendSelect = screen.getByDisplayValue('proctortrack');
         let selectEscalationEmailElement = screen.getByTestId('escalationEmail');
-        await act(async () => {
-          fireEvent.change(proctoringBackendSelect, { target: { value: 'software_secure' } });
-        });
+        fireEvent.change(proctoringBackendSelect, { target: { value: 'software_secure' } });
         expect(screen.queryByTestId('escalationEmail')).toBeNull();
-        await act(async () => {
-          fireEvent.change(proctoringBackendSelect, { target: { value: 'proctortrack' } });
-        });
+        fireEvent.change(proctoringBackendSelect, { target: { value: 'proctortrack' } });
         expect(screen.queryByTestId('escalationEmail')).toBeDefined();
         selectEscalationEmailElement = screen.getByTestId('escalationEmail');
         expect(selectEscalationEmailElement.value).toEqual('test@example.com');
@@ -399,12 +368,8 @@ describe('ProctoredExamSettings', () => {
           screen.getByDisplayValue('proctortrack');
         });
         const selectEscalationEmailElement = screen.getByDisplayValue('test@example.com');
-        await act(async () => {
-          fireEvent.change(selectEscalationEmailElement, { target: { value: '' } });
-        });
-        await act(async () => {
-          fireEvent.submit(selectEscalationEmailElement);
-        });
+        fireEvent.change(selectEscalationEmailElement, { target: { value: '' } });
+        fireEvent.submit(selectEscalationEmailElement);
         // if the error appears, the form has been submitted
         expect(screen.getByTestId('escalationEmailError')).toBeDefined();
       });
@@ -452,6 +417,16 @@ describe('ProctoredExamSettings', () => {
     it('Enables all proctoring provider options if user is not an administrator and it is before start date', async () => {
       const isAdmin = false;
       setupApp(isAdmin);
+      mockCourseData(mockGetFutureCourseData);
+      await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
+      const providerOption = screen.getByTestId('proctortrack');
+      expect(providerOption.hasAttribute('disabled')).toEqual(false);
+    });
+
+    it('Sends the org to the proctoring provider endpoint', async () => {
+      const isAdmin = false;
+      const org = 'test-org';
+      setupApp(isAdmin, org);
       mockCourseData(mockGetFutureCourseData);
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
       const providerOption = screen.getByTestId('proctortrack');
@@ -628,9 +603,7 @@ describe('ProctoredExamSettings', () => {
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
       let submitButton = screen.getByTestId('submissionButton');
       expect(screen.queryByTestId('saveInProgress')).toBeFalsy();
-      act(() => {
-        fireEvent.click(submitButton);
-      });
+      fireEvent.click(submitButton);
 
       submitButton = screen.getByTestId('submissionButton');
       expect(submitButton).toHaveAttribute('disabled');
@@ -640,19 +613,13 @@ describe('ProctoredExamSettings', () => {
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
       // Make a change to the provider to proctortrack and set the email
       const selectElement = screen.getByDisplayValue('mockproc');
-      await act(async () => {
-        fireEvent.change(selectElement, { target: { value: 'proctortrack' } });
-      });
+      fireEvent.change(selectElement, { target: { value: 'proctortrack' } });
       const escalationEmail = screen.getByTestId('escalationEmail');
       expect(escalationEmail.value).toEqual('test@example.com');
-      await act(async () => {
-        fireEvent.change(escalationEmail, { target: { value: 'proctortrack@example.com' } });
-      });
+      fireEvent.change(escalationEmail, { target: { value: 'proctortrack@example.com' } });
       expect(escalationEmail.value).toEqual('proctortrack@example.com');
       const submitButton = screen.getByTestId('submissionButton');
-      await act(async () => {
-        fireEvent.click(submitButton);
-      });
+      fireEvent.click(submitButton);
       expect(axiosMock.history.post.length).toBe(1);
       expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({
         proctored_exam_settings: {
@@ -664,11 +631,13 @@ describe('ProctoredExamSettings', () => {
         },
       });
 
-      const errorAlert = screen.getByTestId('saveSuccess');
-      expect(errorAlert.textContent).toEqual(
-        expect.stringContaining('Proctored exam settings saved successfully.'),
-      );
-      expect(document.activeElement).toEqual(errorAlert);
+      await waitFor(() => {
+        const errorAlert = screen.getByTestId('saveSuccess');
+        expect(errorAlert.textContent).toEqual(
+          expect.stringContaining('Proctored exam settings saved successfully.'),
+        );
+        expect(document.activeElement).toEqual(errorAlert);
+      });
     });
 
     it('Makes API call successfully without proctoring_escalation_email if not proctortrack', async () => {
@@ -678,9 +647,7 @@ describe('ProctoredExamSettings', () => {
       expect(screen.getByDisplayValue('mockproc')).toBeDefined();
 
       const submitButton = screen.getByTestId('submissionButton');
-      await act(async () => {
-        fireEvent.click(submitButton);
-      });
+      fireEvent.click(submitButton);
       expect(axiosMock.history.post.length).toBe(1);
       expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({
         proctored_exam_settings: {
@@ -691,32 +658,28 @@ describe('ProctoredExamSettings', () => {
         },
       });
 
-      const errorAlert = screen.getByTestId('saveSuccess');
-      expect(errorAlert.textContent).toEqual(
-        expect.stringContaining('Proctored exam settings saved successfully.'),
-      );
-      expect(document.activeElement).toEqual(errorAlert);
+      await waitFor(() => {
+        const errorAlert = screen.getByTestId('saveSuccess');
+        expect(errorAlert.textContent).toEqual(
+          expect.stringContaining('Proctored exam settings saved successfully.'),
+        );
+        expect(document.activeElement).toEqual(errorAlert);
+      });
     });
 
     it('Successfully updates exam configuration and studio provider is set to "lti_external" for lti providers', async () => {
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
       // Make a change to the provider to test_lti and set the email
       const selectElement = screen.getByDisplayValue('mockproc');
-      await act(async () => {
-        fireEvent.change(selectElement, { target: { value: 'test_lti' } });
-      });
+      fireEvent.change(selectElement, { target: { value: 'test_lti' } });
 
       const escalationEmail = screen.getByTestId('escalationEmail');
       expect(escalationEmail.value).toEqual('test@example.com');
-      await act(async () => {
-        fireEvent.change(escalationEmail, { target: { value: 'test_lti@example.com' } });
-      });
+      fireEvent.change(escalationEmail, { target: { value: 'test_lti@example.com' } });
       expect(escalationEmail.value).toEqual('test_lti@example.com');
 
       const submitButton = screen.getByTestId('submissionButton');
-      await act(async () => {
-        fireEvent.click(submitButton);
-      });
+      fireEvent.click(submitButton);
 
       // update exam service config
       expect(axiosMock.history.patch.length).toBe(1);
@@ -736,19 +699,19 @@ describe('ProctoredExamSettings', () => {
         },
       });
 
-      const errorAlert = screen.getByTestId('saveSuccess');
-      expect(errorAlert.textContent).toEqual(
-        expect.stringContaining('Proctored exam settings saved successfully.'),
-      );
-      expect(document.activeElement).toEqual(errorAlert);
+      await waitFor(() => {
+        const errorAlert = screen.getByTestId('saveSuccess');
+        expect(errorAlert.textContent).toEqual(
+          expect.stringContaining('Proctored exam settings saved successfully.'),
+        );
+        expect(document.activeElement).toEqual(errorAlert);
+      });
     });
 
     it('Sets exam service provider to null if a non-lti provider is selected', async () => {
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
       const submitButton = screen.getByTestId('submissionButton');
-      await act(async () => {
-        fireEvent.click(submitButton);
-      });
+      fireEvent.click(submitButton);
       // update exam service config
       expect(axiosMock.history.patch.length).toBe(1);
       expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({
@@ -766,11 +729,13 @@ describe('ProctoredExamSettings', () => {
         },
       });
 
-      const errorAlert = screen.getByTestId('saveSuccess');
-      expect(errorAlert.textContent).toEqual(
-        expect.stringContaining('Proctored exam settings saved successfully.'),
-      );
-      expect(document.activeElement).toEqual(errorAlert);
+      await waitFor(() => {
+        const errorAlert = screen.getByTestId('saveSuccess');
+        expect(errorAlert.textContent).toEqual(
+          expect.stringContaining('Proctored exam settings saved successfully.'),
+        );
+        expect(document.activeElement).toEqual(errorAlert);
+      });
     });
 
     it('Does not update exam service if lti is not enabled in studio', async () => {
@@ -790,9 +755,7 @@ describe('ProctoredExamSettings', () => {
 
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
       const submitButton = screen.getByTestId('submissionButton');
-      await act(async () => {
-        fireEvent.click(submitButton);
-      });
+      fireEvent.click(submitButton);
       // does not update exam service config
       expect(axiosMock.history.patch.length).toBe(0);
       // does update studio
@@ -806,11 +769,13 @@ describe('ProctoredExamSettings', () => {
         },
       });
 
-      const errorAlert = screen.getByTestId('saveSuccess');
-      expect(errorAlert.textContent).toEqual(
-        expect.stringContaining('Proctored exam settings saved successfully.'),
-      );
-      expect(document.activeElement).toEqual(errorAlert);
+      await waitFor(() => {
+        const errorAlert = screen.getByTestId('saveSuccess');
+        expect(errorAlert.textContent).toEqual(
+          expect.stringContaining('Proctored exam settings saved successfully.'),
+        );
+        expect(document.activeElement).toEqual(errorAlert);
+      });
     });
 
     it('Makes studio API call generated error', async () => {
@@ -820,15 +785,15 @@ describe('ProctoredExamSettings', () => {
 
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
       const submitButton = screen.getByTestId('submissionButton');
-      await act(async () => {
-        fireEvent.click(submitButton);
-      });
+      fireEvent.click(submitButton);
       expect(axiosMock.history.post.length).toBe(1);
-      const errorAlert = screen.getByTestId('saveError');
-      expect(errorAlert.textContent).toEqual(
-        expect.stringContaining('We encountered a technical error while trying to save proctored exam settings'),
-      );
-      expect(document.activeElement).toEqual(errorAlert);
+      await waitFor(() => {
+        const errorAlert = screen.getByTestId('saveError');
+        expect(errorAlert.textContent).toEqual(
+          expect.stringContaining('We encountered a technical error while trying to save proctored exam settings'),
+        );
+        expect(document.activeElement).toEqual(errorAlert);
+      });
     });
 
     it('Makes exams API call generated error', async () => {
@@ -838,15 +803,15 @@ describe('ProctoredExamSettings', () => {
 
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
       const submitButton = screen.getByTestId('submissionButton');
-      await act(async () => {
-        fireEvent.click(submitButton);
-      });
+      fireEvent.click(submitButton);
       expect(axiosMock.history.post.length).toBe(1);
-      const errorAlert = screen.getByTestId('saveError');
-      expect(errorAlert.textContent).toEqual(
-        expect.stringContaining('We encountered a technical error while trying to save proctored exam settings'),
-      );
-      expect(document.activeElement).toEqual(errorAlert);
+      await waitFor(() => {
+        const errorAlert = screen.getByTestId('saveError');
+        expect(errorAlert.textContent).toEqual(
+          expect.stringContaining('We encountered a technical error while trying to save proctored exam settings'),
+        );
+        expect(document.activeElement).toEqual(errorAlert);
+      });
     });
 
     it('Manages focus correctly after different save statuses', async () => {
@@ -857,30 +822,30 @@ describe('ProctoredExamSettings', () => {
 
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
       const submitButton = screen.getByTestId('submissionButton');
-      await act(async () => {
-        fireEvent.click(submitButton);
-      });
+      fireEvent.click(submitButton);
       expect(axiosMock.history.post.length).toBe(1);
-      const errorAlert = screen.getByTestId('saveError');
-      expect(errorAlert.textContent).toEqual(
-        expect.stringContaining('We encountered a technical error while trying to save proctored exam settings'),
-      );
-      expect(document.activeElement).toEqual(errorAlert);
+      await waitFor(() => {
+        const errorAlert = screen.getByTestId('saveError');
+        expect(errorAlert.textContent).toEqual(
+          expect.stringContaining('We encountered a technical error while trying to save proctored exam settings'),
+        );
+        expect(document.activeElement).toEqual(errorAlert);
+      });
 
       // now make a call that will allow for a successful save
       axiosMock.onPost(
         StudioApiService.getProctoredExamSettingsUrl(defaultProps.courseId),
       ).reply(200, 'success');
-      await act(async () => {
-        fireEvent.click(submitButton);
-      });
+      fireEvent.click(submitButton);
 
       expect(axiosMock.history.post.length).toBe(2);
-      const successAlert = screen.getByTestId('saveSuccess');
-      expect(successAlert.textContent).toEqual(
-        expect.stringContaining('Proctored exam settings saved successfully.'),
-      );
-      expect(document.activeElement).toEqual(successAlert);
+      await waitFor(() => {
+        const successAlert = screen.getByTestId('saveSuccess');
+        expect(successAlert.textContent).toEqual(
+          expect.stringContaining('Proctored exam settings saved successfully.'),
+        );
+        expect(document.activeElement).toEqual(successAlert);
+      });
     });
 
     it('Include Zendesk ticket in post request if user is not an admin', async () => {
@@ -891,13 +856,9 @@ describe('ProctoredExamSettings', () => {
       await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
       // Make a change to the proctoring provider
       const selectElement = screen.getByDisplayValue('mockproc');
-      await act(async () => {
-        fireEvent.change(selectElement, { target: { value: 'proctortrack' } });
-      });
+      fireEvent.change(selectElement, { target: { value: 'proctortrack' } });
       const submitButton = screen.getByTestId('submissionButton');
-      await act(async () => {
-        fireEvent.click(submitButton);
-      });
+      fireEvent.click(submitButton);
       expect(axiosMock.history.post.length).toBe(1);
       expect(JSON.parse(axiosMock.history.post[0].data)).toEqual({
         proctored_exam_settings: {

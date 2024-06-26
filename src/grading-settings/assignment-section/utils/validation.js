@@ -53,90 +53,90 @@ export const validationAssignmentFields = (
   const courseGradingTypes = courseGraders?.map(grade => grade.type);
 
   switch (assignmentName) {
-  case assignmentType:
-    if (assignmentValue === '') {
-      updateAssignmentErrorList(assignmentName, assignmentId, setErrorList, setShowSavePrompt);
-      return;
-    }
-    if (courseGradingTypes.includes(assignmentValue)) {
+    case assignmentType:
+      if (assignmentValue === '') {
+        updateAssignmentErrorList(assignmentName, assignmentId, setErrorList, setShowSavePrompt);
+        return;
+      }
+      if (courseGradingTypes.includes(assignmentValue)) {
+        updateAssignmentErrorList(
+          assignmentName,
+          assignmentId,
+          setErrorList,
+          setShowSavePrompt,
+          DUPLICATE_ASSIGNMENT_NAME,
+        );
+        return;
+      }
       updateAssignmentErrorList(
         assignmentName,
         assignmentId,
         setErrorList,
         setShowSavePrompt,
-        DUPLICATE_ASSIGNMENT_NAME,
+        false,
       );
-      return;
-    }
-    updateAssignmentErrorList(
-      assignmentName,
-      assignmentId,
-      setErrorList,
-      setShowSavePrompt,
-      false,
-    );
-    break;
-  case weightOfTotalGrade:
-    if (assignmentValue < 0 || assignmentValue > 100 || assignmentValue === '-0') {
+      break;
+    case weightOfTotalGrade:
+      if (assignmentValue < 0 || assignmentValue > 100 || assignmentValue === '-0') {
+        updateAssignmentErrorList(
+          assignmentName,
+          assignmentId,
+          setErrorList,
+          setShowSavePrompt,
+        );
+        return;
+      }
       updateAssignmentErrorList(
         assignmentName,
         assignmentId,
         setErrorList,
         setShowSavePrompt,
+        false,
       );
-      return;
-    }
-    updateAssignmentErrorList(
-      assignmentName,
-      assignmentId,
-      setErrorList,
-      setShowSavePrompt,
-      false,
-    );
-    break;
-  case assignmentMinCount:
-    if (assignmentValue <= 0 || assignmentValue === '' || assignmentValue === '-0') {
+      break;
+    case assignmentMinCount:
+      if (assignmentValue <= 0 || assignmentValue === '' || assignmentValue === '-0') {
+        updateAssignmentErrorList(
+          assignmentName,
+          assignmentId,
+          setErrorList,
+          setShowSavePrompt,
+        );
+        return;
+      }
       updateAssignmentErrorList(
         assignmentName,
         assignmentId,
         setErrorList,
         setShowSavePrompt,
+        false,
       );
-      return;
-    }
-    updateAssignmentErrorList(
-      assignmentName,
-      assignmentId,
-      setErrorList,
-      setShowSavePrompt,
-      false,
-    );
-    break;
-  case assignmentDropCount:
-    if (assignmentValue < 0 || assignmentValue === '' || assignmentValue === '-0') {
+      break;
+    case assignmentDropCount:
+      if (assignmentValue < 0 || assignmentValue === '' || assignmentValue === '-0') {
+        updateAssignmentErrorList(
+          assignmentName,
+          assignmentId,
+          setErrorList,
+          setShowSavePrompt,
+        );
+        return;
+      }
       updateAssignmentErrorList(
         assignmentName,
         assignmentId,
         setErrorList,
         setShowSavePrompt,
+        false,
       );
-      return;
-    }
-    updateAssignmentErrorList(
-      assignmentName,
-      assignmentId,
-      setErrorList,
-      setShowSavePrompt,
-      false,
-    );
-    break;
-  default:
-    updateAssignmentErrorList(
-      assignmentName,
-      assignmentId,
-      setErrorList,
-      setShowSavePrompt,
-      false,
-    );
+      break;
+    default:
+      updateAssignmentErrorList(
+        assignmentName,
+        assignmentId,
+        setErrorList,
+        setShowSavePrompt,
+        false,
+      );
   }
 };

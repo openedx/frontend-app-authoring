@@ -6,7 +6,7 @@ const messages = defineMessages({
     defaultMessage: 'New unit',
   },
   pasteButton: {
-    id: 'course-authoring.course-outline.subsection.button.new-unit',
+    id: 'course-authoring.course-outline.subsection.button.paste-unit',
     defaultMessage: 'Paste unit',
   },
 });

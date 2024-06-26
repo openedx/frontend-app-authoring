@@ -67,9 +67,9 @@ export const generateNewPageApiResponse = () => ({
 
 export const getStatusValue = (status) => {
   switch (status) {
-  case RequestStatus.DENIED:
-    return 403;
-  default:
-    return 200;
+    case RequestStatus.DENIED:
+      return 403;
+    default:
+      return 200;
   }
 };

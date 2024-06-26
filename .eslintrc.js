@@ -11,7 +11,6 @@ module.exports = createConfig(
       }],
       'template-curly-spacing': 'off',
       'react-hooks/exhaustive-deps': 'off',
-      indent: ['error', 2],
       'no-restricted-exports': 'off',
     },
     settings: {

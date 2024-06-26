@@ -1,6 +1,5 @@
 import {
   render,
-  act,
   fireEvent,
   screen,
   waitFor,
@@ -71,6 +70,15 @@ const mockStore = async (
   }
   renderComponent();
   await executeThunk(fetchAssets(courseId), store.dispatch);
+
+  // Finish loading the expected files into the data table before returning,
+  // because loading new files can disrupt things like accessing file menus.
+  if (status === RequestStatus.SUCCESSFUL) {
+    const numFiles = skipNextPageFetch ? 13 : 15;
+    await waitFor(() => {
+      expect(screen.getByText(`Showing ${numFiles} of ${numFiles}`)).toBeInTheDocument();
+    });
+  }
 };
 
 const emptyMockStore = async (status) => {
@@ -126,15 +134,13 @@ describe('FilesAndUploads', () => {
     it('should upload a single file', async () => {
       await emptyMockStore(RequestStatus.SUCCESSFUL);
       const dropzone = screen.getByTestId('files-dropzone');
-      await act(async () => {
-        axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=1`).reply(200, { assets: [] });
-        axiosMock.onPost(getAssetsUrl(courseId)).reply(204, generateNewAssetApiResponse());
-        Object.defineProperty(dropzone, 'files', {
-          value: [file],
-        });
-        fireEvent.drop(dropzone);
-        await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
+      axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=1`).reply(200, { assets: [] });
+      axiosMock.onPost(getAssetsUrl(courseId)).reply(204, generateNewAssetApiResponse());
+      Object.defineProperty(dropzone, 'files', {
+        value: [file],
       });
+      fireEvent.drop(dropzone);
+      await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
       const addStatus = store.getState().assets.addingStatus;
       expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
 
@@ -185,9 +191,7 @@ describe('FilesAndUploads', () => {
         expect(screen.queryByRole('table')).toBeNull();
 
         const listButton = screen.getByLabelText('List');
-        await act(async () => {
-          fireEvent.click(listButton);
-        });
+        fireEvent.click(listButton);
         expect(screen.queryByTestId('grid-card-mOckID1')).toBeNull();
 
         expect(screen.getByRole('table')).toBeVisible();
@@ -200,16 +204,13 @@ describe('FilesAndUploads', () => {
           await mockStore(RequestStatus.SUCCESSFUL);
           axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=1`).reply(200, { assets: [] });
           axiosMock.onPost(getAssetsUrl(courseId)).reply(200, generateNewAssetApiResponse());
-          let addFilesButton;
+          const addFilesButton = screen.getByLabelText('file-input');
+          userEvent.upload(addFilesButton, file);
+          await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
           await waitFor(() => {
-            addFilesButton = screen.getByLabelText('file-input');
+            const addStatus = store.getState().assets.addingStatus;
+            expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
           });
-          await act(async () => {
-            userEvent.upload(addFilesButton, file);
-            await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
-          });
-          const addStatus = store.getState().assets.addingStatus;
-          expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
         });
 
         it('should show duplicate file modal', async () => {
@@ -219,14 +220,9 @@ describe('FilesAndUploads', () => {
           axiosMock.onGet(
             `${getAssetsUrl(courseId)}?display_name=mOckID6&page_size=1`,
           ).reply(200, { assets: [{ display_name: 'mOckID6' }] });
-          let addFilesButton;
-          await waitFor(() => {
-            addFilesButton = screen.getByLabelText('file-input');
-          });
-          await act(async () => {
-            userEvent.upload(addFilesButton, file);
-            await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
-          });
+          const addFilesButton = screen.getByLabelText('file-input');
+          userEvent.upload(addFilesButton, file);
+          await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
           expect(screen.getByText(filesPageMessages.overwriteConfirmMessage.defaultMessage)).toBeVisible();
         });
 
@@ -245,26 +241,21 @@ describe('FilesAndUploads', () => {
           };
 
           axiosMock.onPost(getAssetsUrl(courseId)).reply(200, responseData);
-          let addFilesButton;
-          await waitFor(() => {
-            addFilesButton = screen.getByLabelText('file-input');
-          });
-          await act(async () => {
-            userEvent.upload(addFilesButton, file);
-            await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
-          });
+          const addFilesButton = screen.getByLabelText('file-input');
+          userEvent.upload(addFilesButton, file);
+          await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
 
           const overwriteButton = screen.getByText(filesPageMessages.confirmOverwriteButtonLabel.defaultMessage);
-          await act(async () => {
-            fireEvent.click(overwriteButton);
-          });
-
-          const assetData = store.getState().models.assets.mOckID6;
-          const { asset: responseAssetData } = responseData;
-          const [defaultData] = updateFileValues([camelCaseObject(responseAssetData)]);
+          fireEvent.click(overwriteButton);
 
           expect(screen.queryByText(filesPageMessages.overwriteConfirmMessage.defaultMessage)).toBeNull();
-          expect(assetData).toEqual(defaultData);
+          await waitFor(() => {
+            const assetData = store.getState().models.assets.mOckID6;
+            const { asset: responseAssetData } = responseData;
+            const [defaultData] = updateFileValues([camelCaseObject(responseAssetData)]);
+
+            expect(assetData).toEqual(defaultData);
+          });
         });
 
         it('should keep original file', async () => {
@@ -274,19 +265,12 @@ describe('FilesAndUploads', () => {
           axiosMock.onGet(
             `${getAssetsUrl(courseId)}?display_name=mOckID6&page_size=1`,
           ).reply(200, { assets: [{ display_name: 'mOckID6' }] });
-          let addFilesButton;
-          await waitFor(() => {
-            addFilesButton = screen.getByLabelText('file-input');
-          });
-          await act(async () => {
-            userEvent.upload(addFilesButton, file);
-            await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
-          });
+          const addFilesButton = screen.getByLabelText('file-input');
+          userEvent.upload(addFilesButton, file);
+          await executeThunk(validateAssetFiles(courseId, [file]), store.dispatch);
 
           const cancelButton = screen.getByText(filesPageMessages.cancelOverwriteButtonLabel.defaultMessage);
-          await act(async () => {
-            fireEvent.click(cancelButton);
-          });
+          fireEvent.click(cancelButton);
 
           const assetData = store.getState().models.assets.mOckID6;
           const defaultAssets = generateFetchAssetApiResponse().assets;
@@ -299,12 +283,9 @@ describe('FilesAndUploads', () => {
 
       it('should have disabled action buttons', async () => {
         await mockStore(RequestStatus.SUCCESSFUL);
-        let actionsButton;
 
-        await waitFor(() => {
-          actionsButton = screen.getByText(messages.actionsButtonLabel.defaultMessage);
-          fireEvent.click(actionsButton);
-        });
+        const actionsButton = await screen.getByText(messages.actionsButtonLabel.defaultMessage);
+        fireEvent.click(actionsButton);
         expect(screen.getByText(messages.downloadTitle.defaultMessage).closest('a')).toHaveClass('disabled');
 
         expect(screen.getByText(messages.deleteTitle.defaultMessage).closest('a')).toHaveClass('disabled');
@@ -312,19 +293,14 @@ describe('FilesAndUploads', () => {
 
       it('delete button should be enabled and delete selected file', async () => {
         await mockStore(RequestStatus.SUCCESSFUL);
-        let selectCardButton;
 
-        await waitFor(() => {
-          [selectCardButton] = screen.getAllByTestId('datatable-select-column-checkbox-cell');
-          fireEvent.click(selectCardButton);
-        });
+        const [selectCardButton] = await screen.findAllByTestId('datatable-select-column-checkbox-cell');
+        fireEvent.click(selectCardButton);
 
         const actionsButton = screen.getByText(messages.actionsButtonLabel.defaultMessage);
         expect(actionsButton).toBeVisible();
+        fireEvent.click(actionsButton);
 
-        await waitFor(() => {
-          fireEvent.click(actionsButton);
-        });
         const deleteButton = screen.getByText(messages.deleteTitle.defaultMessage).closest('a');
         expect(deleteButton).not.toHaveClass('disabled');
 
@@ -332,24 +308,21 @@ describe('FilesAndUploads', () => {
 
         fireEvent.click(deleteButton);
         expect(screen.getByText('Delete mOckID1')).toBeVisible();
-        await act(async () => {
-          userEvent.click(deleteButton);
-        });
+        fireEvent.click(deleteButton);
 
         // Wait for the delete confirmation button to appear
         const confirmDeleteButton = await screen.findByRole('button', {
           name: messages.deleteFileButtonLabel.defaultMessage,
         });
-
-        await act(async () => {
-          userEvent.click(confirmDeleteButton);
-        });
+        fireEvent.click(confirmDeleteButton);
 
         expect(screen.queryByText('Delete mOckID1')).toBeNull();
 
         // Check if the asset is deleted in the store and UI
-        const deleteStatus = store.getState().assets.deletingStatus;
-        expect(deleteStatus).toEqual(RequestStatus.SUCCESSFUL);
+        await waitFor(() => {
+          const deleteStatus = store.getState().assets.deletingStatus;
+          expect(deleteStatus).toEqual(RequestStatus.SUCCESSFUL);
+        });
         expect(screen.queryByTestId('grid-card-mOckID1')).toBeNull();
       });
 
@@ -360,9 +333,7 @@ describe('FilesAndUploads', () => {
         const actionsButton = screen.getByText(messages.actionsButtonLabel.defaultMessage);
         expect(actionsButton).toBeVisible();
 
-        await waitFor(() => {
-          fireEvent.click(actionsButton);
-        });
+        fireEvent.click(actionsButton);
         const downloadButton = screen.getByText(messages.downloadTitle.defaultMessage).closest('a');
         expect(downloadButton).not.toHaveClass('disabled');
 
@@ -378,9 +349,7 @@ describe('FilesAndUploads', () => {
         const actionsButton = screen.getByText(messages.actionsButtonLabel.defaultMessage);
         expect(actionsButton).toBeVisible();
 
-        await waitFor(() => {
-          fireEvent.click(actionsButton);
-        });
+        fireEvent.click(actionsButton);
         const mockResponseData = { ok: true, blob: () => 'Data' };
         const mockFetchResponse = Promise.resolve(mockResponseData);
         const downloadButton = screen.getByText(messages.downloadTitle.defaultMessage).closest('a');
@@ -396,19 +365,18 @@ describe('FilesAndUploads', () => {
         const sortsButton = screen.getByText(messages.sortButtonLabel.defaultMessage);
         expect(sortsButton).toBeVisible();
 
+        fireEvent.click(sortsButton);
         await waitFor(() => {
-          fireEvent.click(sortsButton);
           expect(screen.getByText(messages.sortModalTitleLabel.defaultMessage)).toBeVisible();
         });
 
         const sortNameAscendingButton = screen.getByText(messages.sortByNameAscending.defaultMessage);
         fireEvent.click(sortNameAscendingButton);
 
+        fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
         await waitFor(() => {
-          fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
+          expect(screen.queryByText(messages.sortModalTitleLabel.defaultMessage)).toBeNull();
         });
-
-        expect(screen.queryByText(messages.sortModalTitleLabel.defaultMessage)).toBeNull();
       });
 
       it('sort button should be enabled and sort files by file size', async () => {
@@ -416,30 +384,26 @@ describe('FilesAndUploads', () => {
         const sortsButton = screen.getByText(messages.sortButtonLabel.defaultMessage);
         expect(sortsButton).toBeVisible();
 
+        fireEvent.click(sortsButton);
         await waitFor(() => {
-          fireEvent.click(sortsButton);
           expect(screen.getByText(messages.sortModalTitleLabel.defaultMessage)).toBeVisible();
         });
 
         const sortBySizeDescendingButton = screen.getByText(messages.sortBySizeDescending.defaultMessage);
         fireEvent.click(sortBySizeDescendingButton);
 
+        fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
         await waitFor(() => {
-          fireEvent.click(screen.getByText(messages.applySortButton.defaultMessage));
+          expect(screen.queryByText(messages.sortModalTitleLabel.defaultMessage)).toBeNull();
         });
-
-        expect(screen.queryByText(messages.sortModalTitleLabel.defaultMessage)).toBeNull();
       });
     });
 
     describe('card menu actions', () => {
       it('should open asset info', async () => {
         await mockStore(RequestStatus.SUCCESSFUL);
-        let assetMenuButton;
 
-        await waitFor(() => {
-          [assetMenuButton] = screen.getAllByTestId('file-menu-dropdown-mOckID1');
-        });
+        const [assetMenuButton] = await screen.getAllByTestId('file-menu-dropdown-mOckID1');
 
         axiosMock.onGet(`${getAssetsUrl(courseId)}mOckID1/usage`)
           .reply(201, {
@@ -450,14 +414,15 @@ describe('FilesAndUploads', () => {
               }],
             },
           });
+        fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
+        fireEvent.click(screen.getByText('Info'));
+
+        await executeThunk(getUsagePaths({
+          courseId,
+          asset: { id: 'mOckID1', displayName: 'mOckID1' },
+          setSelectedRows: jest.fn(),
+        }), store.dispatch);
         await waitFor(() => {
-          fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
-          fireEvent.click(screen.getByText('Info'));
-          executeThunk(getUsagePaths({
-            courseId,
-            asset: { id: 'mOckID1', displayName: 'mOckID1' },
-            setSelectedRows: jest.fn(),
-          }), store.dispatch);
           expect(screen.getAllByLabelText('mOckID1')[0]).toBeVisible();
         });
 
@@ -472,23 +437,23 @@ describe('FilesAndUploads', () => {
 
         axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID1`).reply(201, { locked: false });
         axiosMock.onGet(`${getAssetsUrl(courseId)}mOckID1/usage`).reply(201, { usage_locations: { mOckID1: [] } });
+        fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
+        fireEvent.click(screen.getByText('Info'));
+        await executeThunk(getUsagePaths({
+          courseId,
+          asset: { id: 'mOckID1', displayName: 'mOckID1' },
+          setSelectedRows: jest.fn(),
+        }), store.dispatch);
         await waitFor(() => {
-          fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
-          fireEvent.click(screen.getByText('Info'));
-          executeThunk(getUsagePaths({
-            courseId,
-            asset: { id: 'mOckID1', displayName: 'mOckID1' },
-            setSelectedRows: jest.fn(),
-          }), store.dispatch);
           expect(screen.getAllByLabelText('mOckID1')[0]).toBeVisible();
-
-          fireEvent.click(screen.getByLabelText('Checkbox'));
-          executeThunk(updateAssetLock({
-            courseId,
-            assetId: 'mOckID1',
-            locked: false,
-          }), store.dispatch);
         });
+
+        fireEvent.click(screen.getByLabelText('Checkbox'));
+        await executeThunk(updateAssetLock({
+          courseId,
+          assetId: 'mOckID1',
+          locked: false,
+        }), store.dispatch);
         expect(screen.getByText(messages.usageNotInUseMessage.defaultMessage)).toBeVisible();
 
         const updateStatus = store.getState().assets.updatingStatus;
@@ -500,18 +465,18 @@ describe('FilesAndUploads', () => {
 
         const assetMenuButton = screen.getAllByTestId('file-menu-dropdown-mOckID1')[0];
 
+        axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID1`).reply(201, { locked: false });
+        fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
+        fireEvent.click(await screen.getByText('Unlock'));
+        await executeThunk(updateAssetLock({
+          courseId,
+          assetId: 'mOckID1',
+          locked: false,
+        }), store.dispatch);
         await waitFor(() => {
-          axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID1`).reply(201, { locked: false });
-          fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
-          fireEvent.click(screen.getByText('Unlock'));
-          executeThunk(updateAssetLock({
-            courseId,
-            assetId: 'mOckID1',
-            locked: false,
-          }), store.dispatch);
+          const updateStatus = store.getState().assets.updatingStatus;
+          expect(updateStatus).toEqual(RequestStatus.SUCCESSFUL);
         });
-        const updateStatus = store.getState().assets.updatingStatus;
-        expect(updateStatus).toEqual(RequestStatus.SUCCESSFUL);
       });
 
       it('should lock asset', async () => {
@@ -519,18 +484,18 @@ describe('FilesAndUploads', () => {
 
         const assetMenuButton = screen.getAllByTestId('file-menu-dropdown-mOckID3')[0];
 
+        axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID3`).reply(201, { locked: true });
+        fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
+        fireEvent.click(await screen.getByText('Lock'));
+        await executeThunk(updateAssetLock({
+          courseId,
+          assetId: 'mOckID3',
+          locked: true,
+        }), store.dispatch);
         await waitFor(() => {
-          axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID3`).reply(201, { locked: true });
-          fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
-          fireEvent.click(screen.getByText('Lock'));
-          executeThunk(updateAssetLock({
-            courseId,
-            assetId: 'mOckID3',
-            locked: true,
-          }), store.dispatch);
+          const updateStatus = store.getState().assets.updatingStatus;
+          expect(updateStatus).toEqual(RequestStatus.SUCCESSFUL);
         });
-        const updateStatus = store.getState().assets.updatingStatus;
-        expect(updateStatus).toEqual(RequestStatus.SUCCESSFUL);
       });
 
       it('download button should download file', async () => {
@@ -538,10 +503,8 @@ describe('FilesAndUploads', () => {
 
         const assetMenuButton = screen.getAllByTestId('file-menu-dropdown-mOckID1')[0];
 
-        await waitFor(() => {
-          fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
-          fireEvent.click(screen.getByText('Download'));
-        });
+        fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
+        fireEvent.click(screen.getByText('Download'));
         expect(saveAs).toHaveBeenCalled();
       });
 
@@ -550,17 +513,19 @@ describe('FilesAndUploads', () => {
 
         const assetMenuButton = screen.getAllByTestId('file-menu-dropdown-mOckID1')[0];
 
+        axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID1`).reply(204);
+        fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
+        const confirmDelete = await screen.getByTestId('open-delete-confirmation-button');
+        fireEvent.click(confirmDelete);
         await waitFor(() => {
-          axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID1`).reply(204);
-          fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
-          fireEvent.click(screen.getByTestId('open-delete-confirmation-button'));
           expect(screen.getByText('Delete mOckID1')).toBeVisible();
-
-          fireEvent.click(screen.getByText(messages.deleteFileButtonLabel.defaultMessage));
-          expect(screen.queryByText('Delete mOckID1')).toBeNull();
-
-          executeThunk(deleteAssetFile(courseId, 'mOckID1', 5), store.dispatch);
         });
+
+        fireEvent.click(screen.getByText(messages.deleteFileButtonLabel.defaultMessage));
+        await waitFor(() => {
+          expect(screen.queryByText('Delete mOckID1')).toBeNull();
+        });
+        await executeThunk(deleteAssetFile(courseId, 'mOckID1', 5), store.dispatch);
         const deleteStatus = store.getState().assets.deletingStatus;
         expect(deleteStatus).toEqual(RequestStatus.SUCCESSFUL);
 
@@ -572,9 +537,7 @@ describe('FilesAndUploads', () => {
       it('404 intitial fetch should show error', async () => {
         await mockStore(RequestStatus.FAILED);
         const { loadingStatus } = store.getState().assets;
-        await waitFor(() => {
-          expect(screen.getByText('Error')).toBeVisible();
-        });
+        expect(screen.getByText('Error')).toBeVisible();
 
         expect(loadingStatus).toEqual(RequestStatus.FAILED);
         expect(screen.getByText('Failed to load all files.')).toBeVisible();
@@ -583,9 +546,7 @@ describe('FilesAndUploads', () => {
       it('404 intitial fetch should show error', async () => {
         await mockStore(RequestStatus.SUCCESSFUL, true);
         const { loadingStatus } = store.getState().assets;
-        await waitFor(() => {
-          expect(screen.getByText('Error')).toBeVisible();
-        });
+        expect(screen.getByText('Error')).toBeVisible();
 
         expect(loadingStatus).toEqual(RequestStatus.PARTIAL_FAILURE);
         expect(screen.getByText('Failed to load remaining files.')).toBeVisible();
@@ -597,12 +558,11 @@ describe('FilesAndUploads', () => {
         axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=1`).reply(200, { assets: [] });
         axiosMock.onPost(getAssetsUrl(courseId)).reply(413, { error: errorMessage });
         const addFilesButton = screen.getByLabelText('file-input');
-        await act(async () => {
-          userEvent.upload(addFilesButton, file);
+        userEvent.upload(addFilesButton, file);
+        await waitFor(() => {
+          const addStatus = store.getState().assets.addingStatus;
+          expect(addStatus).toEqual(RequestStatus.FAILED);
         });
-        const addStatus = store.getState().assets.addingStatus;
-        expect(addStatus).toEqual(RequestStatus.FAILED);
-
         expect(screen.getByText('Error')).toBeVisible();
       });
 
@@ -610,10 +570,8 @@ describe('FilesAndUploads', () => {
         await mockStore(RequestStatus.SUCCESSFUL);
         axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=1`).reply(404);
         const addFilesButton = screen.getByLabelText('file-input');
-        await act(async () => {
-          userEvent.upload(addFilesButton, file);
-          await executeThunk(addAssetFile(courseId, file, 1), store.dispatch);
-        });
+        userEvent.upload(addFilesButton, file);
+        await executeThunk(addAssetFile(courseId, file, 1), store.dispatch);
         const addStatus = store.getState().assets.addingStatus;
         expect(addStatus).toEqual(RequestStatus.FAILED);
 
@@ -625,10 +583,8 @@ describe('FilesAndUploads', () => {
         axiosMock.onGet(`${getAssetsUrl(courseId)}?display_name=download.png&page_size=1`).reply(200, { assets: [] });
         axiosMock.onPost(getAssetsUrl(courseId)).reply(404);
         const addFilesButton = screen.getByLabelText('file-input');
-        await act(async () => {
-          userEvent.upload(addFilesButton, file);
-          await executeThunk(addAssetFile(courseId, file, 1), store.dispatch);
-        });
+        userEvent.upload(addFilesButton, file);
+        await executeThunk(addAssetFile(courseId, file, 1), store.dispatch);
         const addStatus = store.getState().assets.addingStatus;
         expect(addStatus).toEqual(RequestStatus.FAILED);
 
@@ -640,17 +596,19 @@ describe('FilesAndUploads', () => {
 
         const assetMenuButton = screen.getAllByTestId('file-menu-dropdown-mOckID3')[0];
 
+        axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID3`).reply(404);
+        fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
+        const confirmDelete = await screen.getByTestId('open-delete-confirmation-button');
+        fireEvent.click(confirmDelete);
         await waitFor(() => {
-          axiosMock.onDelete(`${getAssetsUrl(courseId)}mOckID3`).reply(404);
-          fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
-          fireEvent.click(screen.getByTestId('open-delete-confirmation-button'));
           expect(screen.getByText('Delete mOckID3')).toBeVisible();
-
-          fireEvent.click(screen.getByText(messages.deleteFileButtonLabel.defaultMessage));
-          expect(screen.queryByText('Delete mOckID3')).toBeNull();
-
-          executeThunk(deleteAssetFile(courseId, 'mOckID3', 5), store.dispatch);
         });
+
+        fireEvent.click(screen.getByText(messages.deleteFileButtonLabel.defaultMessage));
+        await waitFor(() => {
+          expect(screen.queryByText('Delete mOckID3')).toBeNull();
+        });
+        await executeThunk(deleteAssetFile(courseId, 'mOckID3', 5), store.dispatch);
         const deleteStatus = store.getState().assets.deletingStatus;
         expect(deleteStatus).toEqual(RequestStatus.FAILED);
 
@@ -665,17 +623,17 @@ describe('FilesAndUploads', () => {
         const assetMenuButton = screen.getAllByTestId('file-menu-dropdown-mOckID3')[0];
 
         axiosMock.onGet(`${getAssetsUrl(courseId)}mOckID3/usage`).reply(404);
+        fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
+        fireEvent.click(screen.getByText('Info'));
+        await executeThunk(getUsagePaths({
+          courseId,
+          asset: { id: 'mOckID3', displayName: 'mOckID3' },
+          setSelectedRows: jest.fn(),
+        }), store.dispatch);
         await waitFor(() => {
-          fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
-          fireEvent.click(screen.getByText('Info'));
-          executeThunk(getUsagePaths({
-            courseId,
-            asset: { id: 'mOckID3', displayName: 'mOckID3' },
-            setSelectedRows: jest.fn(),
-          }), store.dispatch);
+          const { usageStatus } = store.getState().assets;
+          expect(usageStatus).toEqual(RequestStatus.FAILED);
         });
-        const { usageStatus } = store.getState().assets;
-        expect(usageStatus).toEqual(RequestStatus.FAILED);
       });
 
       it('404 lock update should show error', async () => {
@@ -683,19 +641,18 @@ describe('FilesAndUploads', () => {
 
         const assetMenuButton = screen.getAllByTestId('file-menu-dropdown-mOckID3')[0];
 
+        axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID3`).reply(404);
+        fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
+        fireEvent.click(screen.getByText('Lock'));
+        await executeThunk(updateAssetLock({
+          courseId,
+          assetId: 'mOckID3',
+          locked: true,
+        }), store.dispatch);
         await waitFor(() => {
-          axiosMock.onPut(`${getAssetsUrl(courseId)}mOckID3`).reply(404);
-          fireEvent.click(within(assetMenuButton).getByLabelText('file-menu-toggle'));
-          fireEvent.click(screen.getByText('Lock'));
-          executeThunk(updateAssetLock({
-            courseId,
-            assetId: 'mOckID3',
-            locked: true,
-          }), store.dispatch);
+          const updateStatus = store.getState().assets.updatingStatus;
+          expect(updateStatus).toEqual(RequestStatus.FAILED);
         });
-        const updateStatus = store.getState().assets.updatingStatus;
-        expect(updateStatus).toEqual(RequestStatus.FAILED);
-
         expect(screen.getByText('Error')).toBeVisible();
       });
 
@@ -707,17 +664,15 @@ describe('FilesAndUploads', () => {
         const actionsButton = screen.getByText(messages.actionsButtonLabel.defaultMessage);
         expect(actionsButton).toBeVisible();
 
-        await waitFor(() => {
-          fireEvent.click(actionsButton);
-        });
+        fireEvent.click(actionsButton);
         const mockResponseData = { ok: false };
         const mockFetchResponse = Promise.resolve(mockResponseData);
         const downloadButton = screen.getByText(messages.downloadTitle.defaultMessage).closest('a');
         expect(downloadButton).not.toHaveClass('disabled');
 
         global.fetch = jest.fn().mockImplementation(() => mockFetchResponse);
+        fireEvent.click(downloadButton);
         await waitFor(() => {
-          fireEvent.click(downloadButton);
           expect(fetch).toHaveBeenCalledTimes(2);
         });
 

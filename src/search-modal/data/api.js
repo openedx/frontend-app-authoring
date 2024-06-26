@@ -97,6 +97,7 @@ function formatTagsFilter(tagsFilter) {
  * @returns {ContentHit}
  */
 function formatSearchHit(hit) {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   const { _formatted, ...newHit } = hit;
   newHit.formatted = {
     displayName: _formatted.display_name,

@@ -1,4 +1,3 @@
-// @ts-check
 import React from 'react';
 import MockAdapter from 'axios-mock-adapter';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -96,7 +95,7 @@ describe('<LibraryAuthoringPage />', () => {
       index_name: 'studio',
       api_key: 'test-key',
     });
-    //
+
     // The Meilisearch client-side API uses fetch, not Axios.
     fetchMock.post(searchEndpoint, (_url, req) => {
       const requestData = JSON.parse(req.body?.toString() ?? '');
@@ -164,14 +163,13 @@ describe('<LibraryAuthoringPage />', () => {
     expect(getByText('Recently Modified')).toBeInTheDocument();
     expect(getByText('Collections (0)')).toBeInTheDocument();
     expect(getByText('Components (6)')).toBeInTheDocument();
-    expect(getByText('There are 6 components in this library')).toBeInTheDocument();
+    expect(getByText('Test HTML Block')).toBeInTheDocument();
 
     // Navigate to the components tab
     fireEvent.click(getByRole('tab', { name: 'Components' }));
     expect(queryByText('Recently Modified')).not.toBeInTheDocument();
     expect(queryByText('Collections (0)')).not.toBeInTheDocument();
     expect(queryByText('Components (6)')).not.toBeInTheDocument();
-    expect(getByText('There are 6 components in this library')).toBeInTheDocument();
 
     // Navigate to the collections tab
     fireEvent.click(getByRole('tab', { name: 'Collections' }));
@@ -187,7 +185,6 @@ describe('<LibraryAuthoringPage />', () => {
     expect(getByText('Recently Modified')).toBeInTheDocument();
     expect(getByText('Collections (0)')).toBeInTheDocument();
     expect(getByText('Components (6)')).toBeInTheDocument();
-    expect(getByText('There are 6 components in this library')).toBeInTheDocument();
   });
 
   it('show library without components', async () => {

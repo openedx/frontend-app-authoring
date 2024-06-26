@@ -1,5 +1,3 @@
-// @ts-check
-/* eslint-disable react/prop-types */
 import React from 'react';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Container } from '@openedx/paragon';

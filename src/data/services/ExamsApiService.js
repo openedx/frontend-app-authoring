@@ -15,9 +15,9 @@ class ExamsApiService {
     return `${ExamsApiService.getExamsBaseUrl()}/api/v1/configs/course_id/${courseId}`;
   }
 
-  static getAvailableProviders() {
+  static getAvailableProviders(org) {
     const apiClient = getAuthenticatedHttpClient();
-    const providersUrl = `${ExamsApiService.getExamsBaseUrl()}/api/v1/providers`;
+    const providersUrl = `${ExamsApiService.getExamsBaseUrl()}/api/v1/providers${org ? `?org=${org}` : ''}`;
     return apiClient.get(providersUrl);
   }
 
