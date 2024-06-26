@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import {
   Badge,
   Image,
-  Truncate,
 } from '@openedx/paragon';
 import { FormattedMessage, FormattedDate, FormattedTime } from '@edx/frontend-platform/i18n';
 
@@ -65,9 +64,7 @@ export const GalleryCard = ({
           )}
         </div>
         <div className="card-text px-3 py-2" style={{ marginTop: '10px' }}>
-          <h3 className="text-primary-500">
-            <Truncate>{asset.displayName}</Truncate>
-          </h3>
+          <h3 className="text-primary-500">{asset.displayName}</h3>
           { asset.transcripts && (
             <div style={{ margin: '0 0 5px 0' }}>
               <LanguageNamesWidget

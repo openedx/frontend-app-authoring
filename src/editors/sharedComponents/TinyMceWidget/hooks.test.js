@@ -49,7 +49,7 @@ const mockImage = {
   height: initialContentHeight,
 };
 
-const mockImages = {
+const mockAssets = {
   [mockImage.id]: mockImage,
 };
 
@@ -181,32 +181,41 @@ describe('TinyMceEditor hooks', () => {
       });
     });
 
-    describe('replaceStaticWithAsset', () => {
-      const initialContent = '<img src="/static/soMEImagEURl1.jpeg"/><a href="/assets/v1/some-key/test.pdf">test</a>';
-      const learningContextId = 'course+test+run';
-      const lmsEndpointUrl = 'sOmEvaLue.cOm';
-      it('it returns updated src for text editor to update content', () => {
-        const expected = '<img src="/asset+test+run+type@asset+block@soMEImagEURl1.jpeg"/><a href="/asset+test+run+type@asset+block@test.pdf">test</a>';
-        const actual = module.replaceStaticWithAsset({ initialContent, learningContextId });
-        expect(actual).toEqual(expected);
+    describe('replaceStaticwithAsset', () => {
+      test('it calls getContent and setContent for text editor', () => {
+        const editor = { getContent: jest.fn(() => '<img src="/static/soMEImagEURl1.jpeg"/>'), setContent: jest.fn() };
+        const imageUrls = [{ staticFullUrl: '/assets/soMEImagEURl1.jpeg', displayName: 'soMEImagEURl1.jpeg' }];
+        const lmsEndpointUrl = 'sOmEvaLue.cOm';
+        module.replaceStaticwithAsset({ editor, imageUrls, lmsEndpointUrl });
+        expect(editor.getContent).toHaveBeenCalled();
+        expect(editor.setContent).toHaveBeenCalled();
       });
-      it('it returs updated src with absolute url for expandable editor to update content', () => {
+      test('it calls getContent and updateContent for expandable editor', () => {
+        const editor = { getContent: jest.fn(() => '<img src="/static/soMEImagEURl1.jpeg"/>') };
+        const imageUrls = [{ staticFullUrl: '/assets/soMEImagEURl1.jpeg', displayName: 'soMEImagEURl1.jpeg' }];
+        const lmsEndpointUrl = 'sOmEvaLue.cOm';
         const editorType = 'expandable';
-        const expected = `<img src="${lmsEndpointUrl}/asset+test+run+type@asset+block@soMEImagEURl1.jpeg"/><a href="${lmsEndpointUrl}/asset+test+run+type@asset+block@test.pdf">test</a>`;
-        const actual = module.replaceStaticWithAsset({
-          initialContent,
+        const updateContent = jest.fn();
+        module.replaceStaticwithAsset({
+          editor,
+          imageUrls,
           editorType,
           lmsEndpointUrl,
-          learningContextId,
+          updateContent,
         });
-        expect(actual).toEqual(expected);
+        expect(editor.getContent).toHaveBeenCalled();
+        expect(updateContent).toHaveBeenCalled();
       });
     });
     describe('setAssetToStaticUrl', () => {
       it('returns content with updated img links', () => {
-        const editorValue = '<img src="/asset@/soME_ImagE_URl1"/> <a href="/asset@soMEImagEURl">testing link</a>';
+        const editorValue = '<img src="/asset@asset-block/soME_ImagE_URl1"/> <a href="/asset@soMEImagEURl">testing link</a>';
+        const assets = [
+          { portableUrl: '/static/soMEImagEURl', displayName: 'soMEImagEURl' },
+          { portableUrl: '/static/soME_ImagE_URl1', displayName: 'soME ImagE URl1' },
+        ];
         const lmsEndpointUrl = 'sOmEvaLue.cOm';
-        const content = module.setAssetToStaticUrl({ editorValue, lmsEndpointUrl });
+        const content = module.setAssetToStaticUrl({ editorValue, assets, lmsEndpointUrl });
         expect(content).toEqual('<img src="/static/soME_ImagE_URl1"/> <a href="/static/soMEImagEURl">testing link</a>');
       });
     });
@@ -219,7 +228,6 @@ describe('TinyMceEditor hooks', () => {
         studioEndpointUrl: 'sOmEoThEruRl.cOm',
         images: mockImagesRef,
         isLibrary: false,
-        learningContextId: 'course+org+run',
       };
       const evt = 'fakeEvent';
       const editor = 'myEditor';
@@ -336,11 +344,24 @@ describe('TinyMceEditor hooks', () => {
             openImgModal: props.openImgModal,
             openSourceCodeModal: props.openSourceCodeModal,
             setImage: props.setSelection,
+            imageUrls: module.fetchImageUrls(props.images),
             images: mockImagesRef,
             lmsEndpointUrl: props.lmsEndpointUrl,
-            learningContextId: props.learningContextId,
           }),
         );
+      });
+    });
+
+    describe('filterAssets', () => {
+      const emptyAssets = {};
+      const assets = { sOmEaSsET: { contentType: 'image/' } };
+      test('returns an empty array', () => {
+        const emptyFilterAssets = module.filterAssets({ assets: emptyAssets });
+        expect(emptyFilterAssets).toEqual([]);
+      });
+      test('returns filtered array of images', () => {
+        const FilteredAssets = module.filterAssets({ assets });
+        expect(FilteredAssets).toEqual([{ contentType: 'image/' }]);
       });
     });
 
@@ -501,10 +522,11 @@ describe('TinyMceEditor hooks', () => {
     describe('addImagesAndDimensionsToRef', () => {
       it('should add images to ref', () => {
         const imagesRef = { current: null };
+        const assets = { ...mockAssets, height: undefined, width: undefined };
         module.addImagesAndDimensionsToRef(
           {
             imagesRef,
-            images: mockImages,
+            assets,
             editorContentHtml: mockEditorContentHtml,
           },
         );

@@ -126,17 +126,10 @@ describe('cms api', () => {
       });
     });
 
-    describe('fetchImages', () => {
+    describe('fetchAssets', () => {
       it('should call get with url.courseAssets', () => {
-        apiMethods.fetchImages({ learningContextId, studioEndpointUrl, pageNumber: 0 });
-        const params = {
-          asset_type: 'Images',
-          page: 0,
-        };
-        expect(get).toHaveBeenCalledWith(
-          urls.courseAssets({ studioEndpointUrl, learningContextId }),
-          { params },
-        );
+        apiMethods.fetchAssets({ learningContextId, studioEndpointUrl });
+        expect(get).toHaveBeenCalledWith(urls.courseAssets({ studioEndpointUrl, learningContextId }));
       });
     });
 

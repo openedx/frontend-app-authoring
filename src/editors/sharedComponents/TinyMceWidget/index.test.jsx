@@ -30,8 +30,7 @@ jest.mock('../../data/redux', () => ({
       lmsEndpointUrl: jest.fn(state => ({ lmsEndpointUrl: state })),
       studioEndpointUrl: jest.fn(state => ({ studioEndpointUrl: state })),
       isLibrary: jest.fn(state => ({ isLibrary: state })),
-      images: jest.fn(state => ({ images: state })),
-      learningContextId: jest.fn(state => ({ learningContextId: state })),
+      assets: jest.fn(state => ({ assets: state })),
     },
   },
 }));
@@ -53,6 +52,7 @@ jest.mock('./hooks', () => ({
     setSelection: jest.fn().mockName('hooks.selectedImage.setSelection'),
     clearSelection: jest.fn().mockName('hooks.selectedImage.clearSelection'),
   })),
+  filterAssets: jest.fn(() => [{ staTICUrl: staticUrl }]),
   useImages: jest.fn(() => ({ imagesRef: { current: [{ externalUrl: staticUrl }] } })),
 }));
 
@@ -70,13 +70,12 @@ describe('TinyMceWidget', () => {
     editorType: 'text',
     editorRef: { current: { value: 'something' } },
     isLibrary: false,
-    images: { sOmEaSsET: { staTICUrl: staticUrl } },
+    assets: { sOmEaSsET: { staTICUrl: staticUrl } },
     lmsEndpointUrl: 'sOmEvaLue.cOm',
     studioEndpointUrl: 'sOmEoThERvaLue.cOm',
     disabled: false,
     id: 'sOMeiD',
     updateContent: () => ({}),
-    learningContextId: 'course+org+run',
   };
   describe('snapshots', () => {
     imgModalToggle.mockReturnValue({
@@ -115,20 +114,15 @@ describe('TinyMceWidget', () => {
         mapStateToProps(testState).studioEndpointUrl,
       ).toEqual(selectors.app.studioEndpointUrl(testState));
     });
-    test('images from app.images', () => {
+    test('assets from app.assets', () => {
       expect(
-        mapStateToProps(testState).images,
-      ).toEqual(selectors.app.images(testState));
+        mapStateToProps(testState).assets,
+      ).toEqual(selectors.app.assets(testState));
     });
     test('isLibrary from app.isLibrary', () => {
       expect(
         mapStateToProps(testState).isLibrary,
       ).toEqual(selectors.app.isLibrary(testState));
-    });
-    test('learningContextId from app.learningContextId', () => {
-      expect(
-        mapStateToProps(testState).learningContextId,
-      ).toEqual(selectors.app.learningContextId(testState));
     });
   });
 });

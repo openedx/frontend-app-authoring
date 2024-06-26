@@ -11,7 +11,6 @@ import {
 import SelectableBox from '../SelectableBox';
 import messages from './messages';
 import GalleryCard from './GalleryCard';
-import GalleryLoadMoreButton from './GalleryLoadMoreButton';
 
 export const Gallery = ({
   galleryIsEmpty,
@@ -24,13 +23,9 @@ export const Gallery = ({
   height,
   isLoaded,
   thumbnailFallback,
-  allowLazyLoad,
-  fetchNextPage,
-  assetCount,
 }) => {
   const intl = useIntl();
-
-  if (!isLoaded && !allowLazyLoad) {
+  if (!isLoaded) {
     return (
       <div style={{
         position: 'absolute',
@@ -70,7 +65,7 @@ export const Gallery = ({
         type="radio"
         value={highlighted}
       >
-        {displayList.map(asset => (
+        { displayList.map(asset => (
           <GalleryCard
             key={asset.id}
             asset={asset}
@@ -79,16 +74,6 @@ export const Gallery = ({
           />
         )) }
       </SelectableBox.Set>
-      {allowLazyLoad && (
-        <GalleryLoadMoreButton
-          {...{
-            fetchNextPage,
-            assetCount,
-            displayListLength: displayList.length,
-            isLoaded,
-          }}
-        />
-      )}
     </div>
   );
 };
@@ -99,9 +84,6 @@ Gallery.defaultProps = {
   height: '375px',
   show: true,
   thumbnailFallback: undefined,
-  allowLazyLoad: false,
-  fetchNextPage: null,
-  assetCount: 0,
 };
 Gallery.propTypes = {
   show: PropTypes.bool,
@@ -115,9 +97,6 @@ Gallery.propTypes = {
   showIdsOnCards: PropTypes.bool,
   height: PropTypes.string,
   thumbnailFallback: PropTypes.element,
-  allowLazyLoad: PropTypes.bool,
-  fetchNextPage: PropTypes.func,
-  assetCount: PropTypes.number,
 };
 
 export default Gallery;

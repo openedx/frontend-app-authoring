@@ -41,8 +41,7 @@ export const TinyMceWidget = ({
   id,
   editorContentHtml, // editorContent in html form
   // redux
-  learningContextId,
-  images,
+  assets,
   isLibrary,
   lmsEndpointUrl,
   studioEndpointUrl,
@@ -51,7 +50,7 @@ export const TinyMceWidget = ({
 }) => {
   const { isImgOpen, openImgModal, closeImgModal } = hooks.imgModalToggle();
   const { isSourceCodeOpen, openSourceCodeModal, closeSourceCodeModal } = hooks.sourceCodeModalToggle(editorRef);
-  const { imagesRef } = hooks.useImages({ images, editorContentHtml });
+  const { imagesRef } = hooks.useImages({ assets, editorContentHtml });
 
   const imageSelection = hooks.selectedImage(null);
 
@@ -86,7 +85,6 @@ export const TinyMceWidget = ({
             editorType,
             editorRef,
             isLibrary,
-            learningContextId,
             lmsEndpointUrl,
             studioEndpointUrl,
             images: imagesRef,
@@ -105,7 +103,7 @@ TinyMceWidget.defaultProps = {
   editorRef: null,
   lmsEndpointUrl: null,
   studioEndpointUrl: null,
-  images: null,
+  assets: null,
   id: null,
   disabled: false,
   editorContentHtml: undefined,
@@ -114,10 +112,9 @@ TinyMceWidget.defaultProps = {
   ...editorConfigDefaultProps,
 };
 TinyMceWidget.propTypes = {
-  learningContextId: PropTypes.string,
   editorType: PropTypes.string,
   isLibrary: PropTypes.bool,
-  images: PropTypes.shape({}),
+  assets: PropTypes.shape({}),
   editorRef: PropTypes.shape({}),
   lmsEndpointUrl: PropTypes.string,
   studioEndpointUrl: PropTypes.string,
@@ -130,11 +127,10 @@ TinyMceWidget.propTypes = {
 };
 
 export const mapStateToProps = (state) => ({
-  images: selectors.app.images(state),
+  assets: selectors.app.assets(state),
   lmsEndpointUrl: selectors.app.lmsEndpointUrl(state),
   studioEndpointUrl: selectors.app.studioEndpointUrl(state),
   isLibrary: selectors.app.isLibrary(state),
-  learningContextId: selectors.app.learningContextId(state),
 });
 
 export default (connect(mapStateToProps)(TinyMceWidget));

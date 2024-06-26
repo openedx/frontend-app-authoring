@@ -27,7 +27,7 @@ jest.mock('react-redux', () => {
 jest.mock('../../../data/redux', () => ({
   thunkActions: {
     app: {
-      uploadAsset: jest.fn(),
+      uploadImage: jest.fn(),
     },
   },
 }));
@@ -248,7 +248,7 @@ describe('SelectImageModal hooks', () => {
       hook.click();
       expect(click).toHaveBeenCalled();
     });
-    describe('addFile (uploadAsset args)', () => {
+    describe('addFile (uploadImage args)', () => {
       const eventSuccess = { target: { files: [{ value: testValue, size: 2000 }] } };
       const eventFailure = { target: { files: [testValueInvalidImage] } };
       it('image fails to upload if file size is greater than 1000000', () => {
@@ -259,14 +259,14 @@ describe('SelectImageModal hooks', () => {
         expect(spies.checkValidFileSize.mock.calls.length).toEqual(1);
         expect(spies.checkValidFileSize).toHaveReturnedWith(false);
       });
-      it('dispatches uploadAsset thunkAction with the first target file and setSelection', () => {
+      it('dispatches uploadImage thunkAction with the first target file and setSelection', () => {
         const checkValidFileSize = true;
         spies.checkValidFileSize = jest.spyOn(hooks, hookKeys.checkValidFileSize)
           .mockReturnValueOnce(checkValidFileSize);
         hook.addFile(eventSuccess);
         expect(spies.checkValidFileSize.mock.calls.length).toEqual(1);
         expect(spies.checkValidFileSize).toHaveReturnedWith(true);
-        expect(dispatch).toHaveBeenCalledWith(thunkActions.app.uploadAsset({
+        expect(dispatch).toHaveBeenCalledWith(thunkActions.app.uploadImage({
           file: testValue,
           setSelection,
         }));
@@ -281,7 +281,6 @@ describe('SelectImageModal hooks', () => {
     const searchAndSortHooks = { search: 'props' };
     const fileInputHooks = { file: 'input hooks' };
     const images = { sOmEuiMAge: { staTICUrl: '/assets/sOmEuiMAge' } };
-    const imageCount = 1;
 
     const setSelection = jest.fn();
     const clearSelection = jest.fn();
@@ -293,11 +292,9 @@ describe('SelectImageModal hooks', () => {
         .mockReturnValueOnce(searchAndSortHooks);
       spies.file = jest.spyOn(hooks, hookKeys.fileInputHooks)
         .mockReturnValueOnce(fileInputHooks);
-      hook = hooks.imgHooks({
-        setSelection, clearSelection, images, imageCount,
-      });
+      hook = hooks.imgHooks({ setSelection, clearSelection, images });
     });
-    it('forwards fileInputHooks as fileInput, called with uploadAsset prop', () => {
+    it('forwards fileInputHooks as fileInput, called with uploadImage prop', () => {
       expect(hook.fileInput).toEqual(fileInputHooks);
       expect(spies.file.mock.calls.length).toEqual(1);
       expect(spies.file).toHaveBeenCalledWith({
@@ -310,7 +307,6 @@ describe('SelectImageModal hooks', () => {
         setSelection,
         searchSortProps: searchAndSortHooks,
         images,
-        imageCount,
       });
     });
     it('forwards searchAndSortHooks as searchSortProps', () => {

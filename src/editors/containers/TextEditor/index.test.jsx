@@ -30,7 +30,6 @@ jest.mock('../../sharedComponents/TinyMceWidget/hooks', () => ({
     refReady: true,
     setEditorRef: jest.fn().mockName('hooks.prepareEditorRef.setEditorRef'),
   })),
-  replaceStaticWithAsset: jest.fn(() => 'eDiTablE Text'),
 }));
 
 jest.mock('react', () => {
@@ -55,9 +54,9 @@ jest.mock('../../data/redux', () => ({
       blockValue: jest.fn(state => ({ blockValue: state })),
       lmsEndpointUrl: jest.fn(state => ({ lmsEndpointUrl: state })),
       studioEndpointUrl: jest.fn(state => ({ studioEndpointUrl: state })),
-      showRawEditor: jest.fn(state => ({ showRawEditor: state })),
+      isRaw: jest.fn(state => ({ isRaw: state })),
       isLibrary: jest.fn(state => ({ isLibrary: state })),
-      learningContextId: jest.fn(state => ({ learningContextId: state })),
+      assets: jest.fn(state => ({ assets: state })),
     },
     requests: {
       isFailed: jest.fn((state, params) => ({ isFailed: { state, params } })),
@@ -78,9 +77,9 @@ describe('TextEditor', () => {
     blockValue: { data: { data: 'eDiTablE Text' } },
     blockFailed: false,
     initializeEditor: jest.fn().mockName('args.intializeEditor'),
-    showRawEditor: false,
-    blockFinished: true,
-    learningContextId: 'course+org+run',
+    isRaw: false,
+    assetsFinished: true,
+    assets: { sOmEaSsET: { staTICUrl: '/assets/sOmEaSsET' } },
     // inject
     intl: { formatMessage },
   };
@@ -89,10 +88,10 @@ describe('TextEditor', () => {
       expect(shallow(<TextEditor {...props} />).snapshot).toMatchSnapshot();
     });
     test('not yet loaded, Spinner appears', () => {
-      expect(shallow(<TextEditor {...props} blockFinished={false} />).snapshot).toMatchSnapshot();
+      expect(shallow(<TextEditor {...props} assetsFinished={false} />).snapshot).toMatchSnapshot();
     });
     test('loaded, raw editor', () => {
-      expect(shallow(<TextEditor {...props} showRawEditor />).snapshot).toMatchSnapshot();
+      expect(shallow(<TextEditor {...props} isRaw />).snapshot).toMatchSnapshot();
     });
     test('block failed to load, Toast is shown', () => {
       expect(shallow(<TextEditor {...props} blockFailed />).snapshot).toMatchSnapshot();
@@ -106,20 +105,20 @@ describe('TextEditor', () => {
         mapStateToProps(testState).blockValue,
       ).toEqual(selectors.app.blockValue(testState));
     });
+    test('assets from app.assets', () => {
+      expect(
+        mapStateToProps(testState).assets,
+      ).toEqual(selectors.app.assets(testState));
+    });
     test('blockFailed from requests.isFailed', () => {
       expect(
         mapStateToProps(testState).blockFailed,
       ).toEqual(selectors.requests.isFailed(testState, { requestKey: RequestKeys.fetchBlock }));
     });
-    test('blockFinished from requests.isFinished', () => {
+    test('assetssFinished from requests.isFinished', () => {
       expect(
-        mapStateToProps(testState).blockFinished,
-      ).toEqual(selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchBlock }));
-    });
-    test('learningContextId from app.learningContextId', () => {
-      expect(
-        mapStateToProps(testState).learningContextId,
-      ).toEqual(selectors.app.learningContextId(testState));
+        mapStateToProps(testState).assetsFinished,
+      ).toEqual(selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchAssets }));
     });
   });
 

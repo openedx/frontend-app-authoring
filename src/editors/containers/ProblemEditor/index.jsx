@@ -16,17 +16,19 @@ export const ProblemEditor = ({
   problemType,
   blockFinished,
   blockFailed,
+  studioViewFinished,
   blockValue,
   initializeProblemEditor,
+  assetsFinished,
   advancedSettingsFinished,
 }) => {
   React.useEffect(() => {
-    if (blockFinished && !blockFailed) {
+    if (blockFinished && studioViewFinished && assetsFinished && !blockFailed) {
       initializeProblemEditor(blockValue);
     }
-  }, [blockFinished, blockFailed]);
+  }, [blockFinished, studioViewFinished, assetsFinished, blockFailed]);
 
-  if (!blockFinished || !advancedSettingsFinished) {
+  if (!blockFinished || !studioViewFinished || !assetsFinished || !advancedSettingsFinished) {
     return (
       <div className="text-center p-6">
         <Spinner
@@ -53,15 +55,18 @@ export const ProblemEditor = ({
 };
 
 ProblemEditor.defaultProps = {
+  assetsFinished: null,
   returnFunction: null,
 };
 ProblemEditor.propTypes = {
   onClose: PropTypes.func.isRequired,
   returnFunction: PropTypes.func,
   // redux
+  assetsFinished: PropTypes.bool,
   advancedSettingsFinished: PropTypes.bool.isRequired,
   blockFinished: PropTypes.bool.isRequired,
   blockFailed: PropTypes.bool.isRequired,
+  studioViewFinished: PropTypes.bool.isRequired,
   problemType: PropTypes.string.isRequired,
   initializeProblemEditor: PropTypes.func.isRequired,
   blockValue: PropTypes.objectOf(PropTypes.shape({})).isRequired,
@@ -70,8 +75,10 @@ ProblemEditor.propTypes = {
 export const mapStateToProps = (state) => ({
   blockFinished: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchBlock }),
   blockFailed: selectors.requests.isFailed(state, { requestKey: RequestKeys.fetchBlock }),
+  studioViewFinished: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchStudioView }),
   problemType: selectors.problem.problemType(state),
   blockValue: selectors.app.blockValue(state),
+  assetsFinished: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchAssets }),
   advancedSettingsFinished: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchAdvancedSettings }),
 });
 

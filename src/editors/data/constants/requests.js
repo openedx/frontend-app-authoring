@@ -8,12 +8,14 @@ export const RequestStates = StrictDict({
 });
 
 export const RequestKeys = StrictDict({
+  fetchAssets: 'fetchAssets',
   fetchVideos: 'fetchVideos',
   fetchBlock: 'fetchBlock',
   fetchImages: 'fetchImages',
   fetchUnit: 'fetchUnit',
   fetchStudioView: 'fetchStudioView',
   saveBlock: 'saveBlock',
+  uploadAsset: 'uploadAsset',
   uploadVideo: 'uploadVideo',
   allowThumbnailUpload: 'allowThumbnailUpload',
   uploadThumbnail: 'uploadThumbnail',
@@ -24,7 +26,7 @@ export const RequestKeys = StrictDict({
   getTranscriptFile: 'getTranscriptFile',
   checkTranscriptsForImport: 'checkTranscriptsForImport',
   importTranscript: 'importTranscript',
-  uploadAsset: 'uploadAsset',
+  uploadImage: 'uploadImage',
   fetchAdvancedSettings: 'fetchAdvancedSettings',
   fetchVideoFeatures: 'fetchVideoFeatures',
 });

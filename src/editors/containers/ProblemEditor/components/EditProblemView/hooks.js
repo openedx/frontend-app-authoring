@@ -56,13 +56,14 @@ export const parseState = ({
   problem,
   isAdvanced,
   ref,
+  assets,
   lmsEndpointUrl,
 }) => () => {
   const rawOLX = ref?.current?.state.doc.toString();
   const editorObject = fetchEditorContent({ format: '' });
   const reactOLXParser = new ReactStateOLXParser({ problem, editorObject });
   const reactSettingsParser = new ReactStateSettingsParser({ problem, rawOLX });
-  const reactBuiltOlx = setAssetToStaticUrl({ editorValue: reactOLXParser.buildOLX(), lmsEndpointUrl });
+  const reactBuiltOlx = setAssetToStaticUrl({ editorValue: reactOLXParser.buildOLX(), assets, lmsEndpointUrl });
   return {
     settings: isAdvanced ? reactSettingsParser.parseRawOlxSettings() : reactSettingsParser.getSettings(),
     olx: isAdvanced ? rawOLX : reactBuiltOlx,
@@ -142,6 +143,7 @@ export const getContent = ({
   openSaveWarningModal,
   isAdvancedProblemType,
   editorRef,
+  assets,
   lmsEndpointUrl,
 }) => {
   const problem = problemState;
@@ -159,6 +161,7 @@ export const getContent = ({
       isAdvanced: isAdvancedProblemType,
       ref: editorRef,
       problem,
+      assets,
       lmsEndpointUrl,
     })();
     return data;

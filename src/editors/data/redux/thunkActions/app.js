@@ -7,10 +7,7 @@ import { RequestKeys } from '../../constants/requests';
 
 export const fetchBlock = () => (dispatch) => {
   dispatch(requests.fetchBlock({
-    onSuccess: (response) => {
-      dispatch(actions.app.setBlockValue(response));
-      dispatch(actions.app.setShowRawEditor(response));
-    },
+    onSuccess: (response) => dispatch(actions.app.setBlockValue(response)),
     onFailure: (error) => dispatch(actions.requests.failRequest({
       requestKey: RequestKeys.fetchBlock,
       error,
@@ -38,12 +35,11 @@ export const fetchUnit = () => (dispatch) => {
   }));
 };
 
-export const fetchImages = ({ pageNumber }) => (dispatch) => {
-  dispatch(requests.fetchImages({
-    pageNumber,
-    onSuccess: ({ images, imageCount }) => dispatch(actions.app.setImages({ images, imageCount })),
+export const fetchAssets = () => (dispatch) => {
+  dispatch(requests.fetchAssets({
+    onSuccess: (response) => dispatch(actions.app.setAssets(response)),
     onFailure: (error) => dispatch(actions.requests.failRequest({
-      requestKey: RequestKeys.fetchImages,
+      requestKey: RequestKeys.fetchAssets,
       error,
     })),
   }));
@@ -76,25 +72,13 @@ export const fetchCourseDetails = () => (dispatch) => {
  * @param {string} blockType
  */
 export const initialize = (data) => (dispatch) => {
-  const editorType = data.blockType;
   dispatch(actions.app.initialize(data));
   dispatch(module.fetchBlock());
   dispatch(module.fetchUnit());
-  switch (editorType) {
-    case 'problem':
-      dispatch(module.fetchImages({ pageNumber: 0 }));
-      break;
-    case 'video':
-      dispatch(module.fetchVideos());
-      dispatch(module.fetchStudioView());
-      dispatch(module.fetchCourseDetails());
-      break;
-    case 'html':
-      dispatch(module.fetchImages({ pageNumber: 0 }));
-      break;
-    default:
-      break;
-  }
+  dispatch(module.fetchStudioView());
+  dispatch(module.fetchAssets());
+  dispatch(module.fetchVideos());
+  dispatch(module.fetchCourseDetails());
 };
 
 /**
@@ -111,7 +95,7 @@ export const saveBlock = (content, returnToUnit) => (dispatch) => {
   }));
 };
 
-export const uploadAsset = ({ file, setSelection }) => (dispatch) => {
+export const uploadImage = ({ file, setSelection }) => (dispatch) => {
   dispatch(requests.uploadAsset({
     asset: file,
     onSuccess: (response) => setSelection(camelizeKeys(response.data.asset)),
@@ -126,6 +110,6 @@ export default StrictDict({
   fetchVideos,
   initialize,
   saveBlock,
-  fetchImages,
-  uploadAsset,
+  fetchAssets,
+  uploadImage,
 });

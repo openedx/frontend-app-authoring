@@ -12,9 +12,6 @@ jest.mock('../../../../../data/redux', () => ({
     problem: {
       settings: jest.fn(state => ({ question: state })),
     },
-    app: {
-      learningContextId: jest.fn(state => ({ learningContextId: state })),
-    },
   },
   thunkActions: {
     video: {
@@ -28,13 +25,11 @@ jest.mock('../../../../../sharedComponents/TinyMceWidget/hooks', () => ({
     refReady: true,
     setEditorRef: jest.fn().mockName('prepareEditorRef.setEditorRef'),
   })),
-  replaceStaticWithAsset: jest.fn(() => 'This is my solution'),
 }));
 
 describe('SolutionWidget', () => {
   const props = {
-    settings: { solutionExplanation: 'This is my solution' },
-    learningContextId: 'course+org+run',
+    settings: { solutionExplanation: 'This is my question' },
     // injected
     intl: { formatMessage },
   };
@@ -45,11 +40,8 @@ describe('SolutionWidget', () => {
   });
   describe('mapStateToProps', () => {
     const testState = { A: 'pple', B: 'anana', C: 'ucumber' };
-    test('settings from problem.settings', () => {
+    test('question from problem.question', () => {
       expect(mapStateToProps(testState).settings).toEqual(selectors.problem.settings(testState));
-    });
-    test('learningContextId from app.learningContextId', () => {
-      expect(mapStateToProps(testState).learningContextId).toEqual(selectors.app.learningContextId(testState));
     });
   });
 });
