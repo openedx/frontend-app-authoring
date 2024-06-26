@@ -176,11 +176,15 @@ export async function addThumbnail({ courseId, videoId, file }) {
  * @param {blockId} courseId Course ID for the course to operate on
 
  */
-export async function addVideo(courseId, file) {
+export async function addVideo(courseId, file, controller) {
   const postJson = {
     files: [{ file_name: file.name, content_type: file.type }],
   };
-  return getAuthenticatedHttpClient().post(getCourseVideosApiUrl(courseId), postJson);
+  return getAuthenticatedHttpClient().post(
+    getCourseVideosApiUrl(courseId),
+    postJson,
+    { signal: controller?.signal },
+  );
 }
 
 export async function sendVideoUploadStatus(

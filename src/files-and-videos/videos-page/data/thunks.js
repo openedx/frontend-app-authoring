@@ -194,8 +194,10 @@ export function markVideoUploadsInProgressAsFailed({ uploadingIdsRef, courseId }
 }
 
 const addVideoToEdxVal = async (courseId, file, dispatch) => {
+  const currentController = new AbortController();
+  controllers.push(currentController);
   try {
-    const createUrlResponse = await addVideo(courseId, file);
+    const createUrlResponse = await addVideo(courseId, file, currentController);
     // eslint-disable-next-line
     console.log(`Post Response: ${JSON.stringify(createUrlResponse)}`);
     if (createUrlResponse.status < 200 || createUrlResponse.status >= 300) {
