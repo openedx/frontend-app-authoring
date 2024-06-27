@@ -1,15 +1,12 @@
 /* eslint-disable react/no-array-index-key */
-/* eslint-disable react/prop-types */
-// @ts-check
 import React from 'react';
 
 import { highlightPostTag, highlightPreTag } from './data/api';
 
 /**
  * Render some text that contains matching words which should be highlighted
- * @type {React.FC<{text: string}>}
  */
-const Highlight = ({ text }) => {
+const Highlight: React.FC<{ text: string }> = ({ text }) => {
   const parts = text.split(highlightPreTag);
   return (
     <span>

@@ -1,5 +1,4 @@
-/* eslint-disable react/prop-types */
-// @ts-check
+/* eslint-disable react/require-default-props */
 import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { SearchField } from '@openedx/paragon';
@@ -8,9 +7,8 @@ import { useSearchContext } from './manager/SearchManager';
 
 /**
  * The "main" input field where users type in search keywords. The search happens as they type (no need to press enter).
- * @type {React.FC<{className?: string}>}
  */
-const SearchKeywordsField = (props) => {
+const SearchKeywordsField: React.FC<{ className?: string }> = (props) => {
   const intl = useIntl();
   const { searchKeywords, setSearchKeywords } = useSearchContext();
 

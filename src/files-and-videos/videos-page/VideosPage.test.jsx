@@ -10,7 +10,7 @@ import userEvent from '@testing-library/user-event';
 
 import { initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { getAuthenticatedHttpClient, getHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
@@ -30,7 +30,6 @@ import {
 
 import {
   fetchVideos,
-  addVideoFile,
   deleteVideoFile,
   getUsagePaths,
   addVideoThumbnail,
@@ -43,6 +42,7 @@ import messages from '../generic/messages';
 const { getVideosUrl, getCourseVideosApiUrl, getApiBaseUrl } = api;
 
 let axiosMock;
+let axiosUnauthenticateMock;
 let store;
 let file;
 jest.mock('file-saver');
@@ -108,6 +108,7 @@ describe('Videos page', () => {
         models: {},
       });
       axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+      axiosUnauthenticateMock = new MockAdapter(getHttpClient());
       file = new File(['(⌐□_□)'], 'download.mp4', { type: 'video/mp4' });
     });
 
@@ -136,21 +137,14 @@ describe('Videos page', () => {
     it('should upload a single file', async () => {
       await emptyMockStore(RequestStatus.SUCCESSFUL);
       const dropzone = screen.getByTestId('files-dropzone');
-      const mockResponseData = { status: '200', ok: true, blob: () => 'Data' };
-      const mockFetchResponse = Promise.resolve(mockResponseData);
-      global.fetch = jest.fn().mockImplementation(() => mockFetchResponse);
-
-      axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
-      axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
-      Object.defineProperty(dropzone, 'files', {
-        value: [file],
-      });
-      fireEvent.drop(dropzone);
-      await executeThunk(addVideoFile(courseId, file, [], { current: [] }), store.dispatch);
-
-      await waitFor(() => {
-        const addStatus = store.getState().videos.addingStatus;
-        expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
+      await act(async () => {
+        axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
+        axiosUnauthenticateMock.onPut('http://testing.org').reply(200);
+        axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
+        Object.defineProperty(dropzone, 'files', {
+          value: [file],
+        });
+        fireEvent.drop(dropzone);
       });
 
       expect(screen.queryByTestId('files-dropzone')).toBeNull();
@@ -170,6 +164,7 @@ describe('Videos page', () => {
       });
       store = initializeStore({ ...initialState });
       axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+      axiosUnauthenticateMock = new MockAdapter(getHttpClient());
       file = new File(['(⌐□_□)'], 'download.png', { type: 'image/png' });
     });
 
@@ -239,53 +234,93 @@ describe('Videos page', () => {
     });
 
     describe('table actions', () => {
-      it('should upload a single file', async () => {
-        await mockStore(RequestStatus.SUCCESSFUL);
-        const mockResponseData = { status: '200', ok: true, blob: () => 'Data' };
-        const mockFetchResponse = Promise.resolve(mockResponseData);
-        global.fetch = jest.fn().mockImplementation(() => mockFetchResponse);
+      describe('file upload', () => {
+        it('should upload a single file', async () => {
+          await mockStore(RequestStatus.SUCCESSFUL);
 
-        axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
-        axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
+          axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
+          axiosUnauthenticateMock.onPut('http://testing.org').reply(200);
+          axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
 
-        const addFilesButton = screen.getAllByLabelText('file-input')[3];
-        const { videoIds } = store.getState().videos;
-        userEvent.upload(addFilesButton, file);
-        await executeThunk(addVideoFile(courseId, file, videoIds, { current: [] }), store.dispatch);
-        const addStatus = store.getState().videos.addingStatus;
-        expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
-      });
-
-      it('when uploads are in progress, should show alert and set them to failed on page leave', async () => {
-        await mockStore(RequestStatus.SUCCESSFUL);
-
-        const mockResponseData = { status: '200', ok: true, blob: () => 'Data' };
-        const mockFetchResponse = Promise.resolve(mockResponseData);
-        global.fetch = jest.fn().mockImplementation(() => mockFetchResponse);
-
-        axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
-        axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
-
-        const uploadSpy = jest.spyOn(api, 'uploadVideo');
-        const setFailedSpy = jest.spyOn(api, 'sendVideoUploadStatus').mockImplementation(() => {});
-        uploadSpy.mockResolvedValue(new Promise(() => {}));
-
-        const addFilesButton = screen.getAllByLabelText('file-input')[3];
-        userEvent.upload(addFilesButton, file);
-        await waitFor(() => {
+          const addFilesButton = screen.getAllByLabelText('file-input')[3];
+          await act(async () => {
+            userEvent.upload(addFilesButton, file);
+          });
           const addStatus = store.getState().videos.addingStatus;
-          expect(addStatus).toEqual(RequestStatus.IN_PROGRESS);
-          expect(uploadSpy).toHaveBeenCalled();
-          expect(screen.getByText(videoMessages.videoUploadAlertLabel.defaultMessage)).toBeVisible();
+          expect(addStatus).toEqual(RequestStatus.SUCCESSFUL);
         });
-        act(() => {
-          window.dispatchEvent(new Event('beforeunload'));
+
+        it('when uploads are in progress, should show dialog and set them to failed on page leave', async () => {
+          await mockStore(RequestStatus.SUCCESSFUL);
+
+          axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
+          axiosUnauthenticateMock.onPut('http://testing.org').reply(200);
+          axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
+
+          const uploadSpy = jest.spyOn(api, 'uploadVideo');
+          const setFailedSpy = jest.spyOn(api, 'sendVideoUploadStatus').mockImplementation(() => {});
+          uploadSpy.mockResolvedValue(new Promise(() => {}));
+
+          const addFilesButton = screen.getAllByLabelText('file-input')[3];
+          await act(async () => {
+            userEvent.upload(addFilesButton, file);
+          });
+          await waitFor(() => {
+            const addStatus = store.getState().videos.addingStatus;
+            expect(addStatus).toEqual(RequestStatus.IN_PROGRESS);
+            expect(uploadSpy).toHaveBeenCalled();
+            expect(screen.getByText(videoMessages.videoUploadTrackerModalTitle.defaultMessage)).toBeVisible();
+          });
+          await act(async () => {
+            window.dispatchEvent(new Event('beforeunload'));
+          });
+          await waitFor(() => {
+            expect(setFailedSpy).toHaveBeenCalledWith(courseId, expect.any(String), expect.any(String), 'upload_failed');
+          });
+          uploadSpy.mockRestore();
+          setFailedSpy.mockRestore();
         });
-        await waitFor(() => {
-          expect(setFailedSpy).toHaveBeenCalledWith(courseId, expect.any(String), expect.any(String), 'upload_failed');
+
+        it('should cancel all in-progress and set them to failed', async () => {
+          await mockStore(RequestStatus.SUCCESSFUL);
+
+          axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
+          axiosUnauthenticateMock.onPut('http://testing.org').reply(200);
+          axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
+
+          const uploadSpy = jest.spyOn(api, 'uploadVideo');
+          const setFailedSpy = jest.spyOn(api, 'sendVideoUploadStatus').mockImplementation(() => {});
+          uploadSpy.mockResolvedValue(new Promise(() => {}));
+
+          const addFilesButton = screen.getAllByLabelText('file-input')[3];
+          await act(async () => {
+            userEvent.upload(addFilesButton, file);
+          });
+
+          await waitFor(() => {
+            const addStatus = store.getState().videos.addingStatus;
+            expect(addStatus).toEqual(RequestStatus.IN_PROGRESS);
+
+            expect(uploadSpy).toHaveBeenCalled();
+
+            expect(screen.getByText(videoMessages.videoUploadTrackerModalTitle.defaultMessage)).toBeVisible();
+          });
+
+          await act(async () => {
+            const cancelButton = screen.getByText(videoMessages.videoUploadTrackerAlertCancelLabel.defaultMessage);
+            fireEvent.click(cancelButton);
+          });
+          await waitFor(() => {
+            const addStatus = store.getState().videos.addingStatus;
+            expect(setFailedSpy).toHaveBeenCalledWith(courseId, expect.any(String), expect.any(String), 'upload_failed');
+
+            expect(addStatus).toEqual(RequestStatus.FAILED);
+
+            expect(screen.getByText('Upload error')).toBeVisible();
+          });
+          uploadSpy.mockRestore();
+          setFailedSpy.mockRestore();
         });
-        uploadSpy.mockRestore();
-        setFailedSpy.mockRestore();
       });
 
       it('should have disabled action buttons', async () => {
@@ -348,11 +383,8 @@ describe('Videos page', () => {
         const downloadButton = screen.getByText(messages.downloadTitle.defaultMessage).closest('a');
         expect(downloadButton).not.toHaveClass('disabled');
 
-        fireEvent.click(downloadButton);
-
-        await waitFor(() => {
-          const updateStatus = store.getState().videos.updatingStatus;
-          expect(updateStatus).toEqual(RequestStatus.SUCCESSFUL);
+        await act(async () => {
+          fireEvent.click(downloadButton);
         });
       });
 
@@ -574,27 +606,35 @@ describe('Videos page', () => {
         const errorMessage = 'File download.png exceeds maximum size of 5 GB.';
         await mockStore(RequestStatus.SUCCESSFUL);
         axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(413, { error: errorMessage });
+        axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
 
         const addFilesButton = screen.getAllByLabelText('file-input')[3];
-        userEvent.upload(addFilesButton, file);
-        await executeThunk(addVideoFile(courseId, file, undefined, { current: [] }), store.dispatch);
-        const addStatus = store.getState().videos.addingStatus;
-        expect(addStatus).toEqual(RequestStatus.FAILED);
+        await act(async () => {
+          userEvent.upload(addFilesButton, file);
+        });
+        await waitFor(() => {
+          const addStatus = store.getState().videos.addingStatus;
+          expect(addStatus).toEqual(RequestStatus.FAILED);
 
-        expect(screen.getByText('Error')).toBeVisible();
+          expect(screen.getByText('Upload error')).toBeVisible();
+        });
       });
 
       it('404 add file should show error', async () => {
         await mockStore(RequestStatus.SUCCESSFUL);
         axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(404);
+        axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
 
         const addFilesButton = screen.getAllByLabelText('file-input')[3];
-        userEvent.upload(addFilesButton, file);
-        await executeThunk(addVideoFile(courseId, file, undefined, { current: [] }), store.dispatch);
-        const addStatus = store.getState().videos.addingStatus;
-        expect(addStatus).toEqual(RequestStatus.FAILED);
+        await act(async () => {
+          userEvent.upload(addFilesButton, file);
+        });
+        await waitFor(() => {
+          const addStatus = store.getState().videos.addingStatus;
+          expect(addStatus).toEqual(RequestStatus.FAILED);
 
-        expect(screen.getByText('Error')).toBeVisible();
+          expect(screen.getByText('Upload error')).toBeVisible();
+        });
       });
 
       it('404 add thumbnail should show error', async () => {
@@ -613,19 +653,19 @@ describe('Videos page', () => {
 
       it('404 upload file to server should show error', async () => {
         await mockStore(RequestStatus.SUCCESSFUL);
-        const mockResponseData = { status: '404', ok: false, blob: () => 'Data' };
-        const mockFetchResponse = Promise.reject(mockResponseData);
-        global.fetch = jest.fn().mockImplementation(() => mockFetchResponse);
-
         axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
+        axiosUnauthenticateMock.onPut('http://testing.org').reply(404);
         axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
         const addFilesButton = screen.getAllByLabelText('file-input')[3];
-        userEvent.upload(addFilesButton, file);
-        await executeThunk(addVideoFile(courseId, file, undefined, { current: [] }), store.dispatch);
-        const addStatus = store.getState().videos.addingStatus;
-        expect(addStatus).toEqual(RequestStatus.FAILED);
+        await act(async () => {
+          userEvent.upload(addFilesButton, file);
+        });
+        await waitFor(() => {
+          const addStatus = store.getState().videos.addingStatus;
+          expect(addStatus).toEqual(RequestStatus.FAILED);
 
-        expect(screen.getByText('Error')).toBeVisible();
+          expect(screen.getByText('Upload error')).toBeVisible();
+        });
       });
 
       it('404 delete should show error', async () => {
