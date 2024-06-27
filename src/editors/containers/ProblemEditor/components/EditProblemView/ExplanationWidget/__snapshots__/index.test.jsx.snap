@@ -23,7 +23,7 @@ exports[`SolutionWidget render snapshot: renders correct default 1`] = `
     />
   </div>
   <[object Object]
-    editorContentHtml="This is my question"
+    editorContentHtml="This is my solution"
     editorType="solution"
     id="solution"
     minHeight={150}

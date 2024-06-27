@@ -69,7 +69,7 @@ export const fetchByUnitId = ({ blockId, studioEndpointUrl }) => mockPromise({
   data: { ancestors: [{ id: 'unitUrl' }] },
 });
 // eslint-disable-next-line
-export const fetchAssets = ({ learningContextId, studioEndpointUrl }) => mockPromise({
+export const fetchImages = ({ learningContextId, studioEndpointUrl }) => mockPromise({
   data: {
     assets: [
       {

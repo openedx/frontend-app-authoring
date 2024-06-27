@@ -29,6 +29,7 @@ export const SearchSort = ({
   onSwitchClick,
 }) => {
   const intl = useIntl();
+
   return (
     <ActionRow>
       <Form.Group style={{ margin: 0 }}>

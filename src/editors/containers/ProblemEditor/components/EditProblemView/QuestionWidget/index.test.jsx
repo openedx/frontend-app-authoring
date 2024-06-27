@@ -15,9 +15,7 @@ jest.mock('../../../../../data/redux', () => ({
   },
   selectors: {
     app: {
-      isLibrary: jest.fn(state => ({ isLibrary: state })),
-      lmsEndpointUrl: jest.fn(state => ({ lmsEndpointUrl: state })),
-      studioEndpointUrl: jest.fn(state => ({ studioEndpointUrl: state })),
+      learningContextId: jest.fn(state => ({ learningContextId: state })),
     },
     problem: {
       question: jest.fn(state => ({ question: state })),
@@ -35,13 +33,14 @@ jest.mock('../../../../../sharedComponents/TinyMceWidget/hooks', () => ({
     refReady: true,
     setEditorRef: jest.fn().mockName('prepareEditorRef.setEditorRef'),
   })),
-  // problemEditorConfig: jest.fn(args => ({ problemEditorConfig: args })),
+  replaceStaticWithAsset: jest.fn(() => 'This is my question'),
 }));
 
 describe('QuestionWidget', () => {
   const props = {
     question: 'This is my question',
     updateQuestion: jest.fn(),
+    learningContextId: 'course+org+run',
     // injected
     intl: { formatMessage },
   };
@@ -54,6 +53,9 @@ describe('QuestionWidget', () => {
     const testState = { A: 'pple', B: 'anana', C: 'ucumber' };
     test('question from problem.question', () => {
       expect(mapStateToProps(testState).question).toEqual(selectors.problem.question(testState));
+    });
+    test('learningContextId from app.learningContextId', () => {
+      expect(mapStateToProps(testState).learningContextId).toEqual(selectors.app.learningContextId(testState));
     });
   });
 });

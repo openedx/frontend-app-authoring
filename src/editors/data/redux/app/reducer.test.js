@@ -47,10 +47,18 @@ describe('app reducer', () => {
       ['setBlockContent', 'blockContent'],
       ['setBlockTitle', 'blockTitle'],
       ['setSaveResponse', 'saveResponse'],
-      ['setAssets', 'assets'],
       ['setVideos', 'videos'],
       ['setCourseDetails', 'courseDetails'],
     ].map(args => setterTest(...args));
+    describe('setShowRawEditor', () => {
+      it('sets showRawEditor', () => {
+        const blockValue = { data: { metadata: { editor: 'raw' } } };
+        expect(reducer(testingState, actions.setShowRawEditor(blockValue))).toEqual({
+          ...testingState,
+          showRawEditor: true,
+        });
+      });
+    });
     describe('setBlockValue', () => {
       it('sets blockValue, as well as setting the blockTitle from data.display_name', () => {
         const blockValue = { data: { display_name: 'my test name' }, other: 'data' };
@@ -58,6 +66,16 @@ describe('app reducer', () => {
           ...testingState,
           blockValue,
           blockTitle: blockValue.data.display_name,
+        });
+      });
+    });
+    describe('setImages', () => {
+      it('sets images, as well as setting imageCount', () => {
+        const imageData = { images: { id1: { id: 'id1' } }, imageCount: 1 };
+        expect(reducer(testingState, actions.setImages(imageData))).toEqual({
+          ...testingState,
+          images: imageData.images,
+          imageCount: imageData.imageCount,
         });
       });
     });

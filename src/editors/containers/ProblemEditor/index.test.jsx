@@ -45,9 +45,7 @@ describe('ProblemEditor', () => {
     blockValue: { data: { data: 'eDiTablE Text' } },
     blockFinished: false,
     blockFailed: false,
-    studioViewFinished: false,
     initializeProblemEditor: jest.fn().mockName('args.intializeProblemEditor'),
-    assetsFinished: false,
     advancedSettingsFinished: false,
   };
   describe('snapshots', () => {
@@ -56,14 +54,6 @@ describe('ProblemEditor', () => {
     });
     test('block loaded, studio view and assets not yet loaded, Spinner appears', () => {
       const wrapper = shallow(<ProblemEditor {...props} blockFinished />);
-      expect(wrapper.instance.findByType(Spinner)).toBeTruthy();
-    });
-    test('studio view loaded, block and assets not yet loaded, Spinner appears', () => {
-      const wrapper = shallow(<ProblemEditor {...props} studioViewFinished />);
-      expect(wrapper.instance.findByType(Spinner)).toBeTruthy();
-    });
-    test('assets loaded, block and studio view not yet loaded, Spinner appears', () => {
-      const wrapper = shallow(<ProblemEditor {...props} assetsFinished />);
       expect(wrapper.instance.findByType(Spinner)).toBeTruthy();
     });
     test('advanceSettings loaded, block and studio view not yet loaded, Spinner appears', () => {
@@ -75,7 +65,6 @@ describe('ProblemEditor', () => {
         {...props}
         blockFinished
         studioViewFinished
-        assetsFinished
         advancedSettingsFinished
         blockFailed
       />);
@@ -86,7 +75,6 @@ describe('ProblemEditor', () => {
         {...props}
         blockFinished
         studioViewFinished
-        assetsFinished
         advancedSettingsFinished
       />);
       expect(wrapper.instance.findByType('SelectTypeModal')).toHaveLength(1);
@@ -97,7 +85,6 @@ describe('ProblemEditor', () => {
         problemType="multiplechoiceresponse"
         blockFinished
         studioViewFinished
-        assetsFinished
         advancedSettingsFinished
       />);
       expect(wrapper.instance.findByType('EditProblemView')).toHaveLength(1);
@@ -120,16 +107,6 @@ describe('ProblemEditor', () => {
       expect(
         mapStateToProps(testState).blockFinished,
       ).toEqual(selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchBlock }));
-    });
-    test('studioViewFinished from requests.isFinished', () => {
-      expect(
-        mapStateToProps(testState).studioViewFinished,
-      ).toEqual(selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchStudioView }));
-    });
-    test('assetsFinished from requests.isFinished', () => {
-      expect(
-        mapStateToProps(testState).assetsFinished,
-      ).toEqual(selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchAssets }));
     });
     test('advancedSettingsFinished from requests.isFinished', () => {
       expect(

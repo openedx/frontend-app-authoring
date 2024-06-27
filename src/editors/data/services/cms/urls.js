@@ -52,7 +52,7 @@ export const blockStudioView = ({ studioEndpointUrl, blockId }) => (
 );
 
 export const courseAssets = ({ studioEndpointUrl, learningContextId }) => (
-  `${studioEndpointUrl}/assets/${learningContextId}/?page_size=500`
+  `${studioEndpointUrl}/assets/${learningContextId}/`
 );
 
 export const thumbnailUpload = ({ studioEndpointUrl, learningContextId, videoId }) => (
