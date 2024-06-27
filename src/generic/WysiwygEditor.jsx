@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect, Provider } from 'react-redux';
+import { connect, Provider, useSelector } from 'react-redux';
 import { createStore } from 'redux';
 import { getConfig } from '@edx/frontend-platform';
 import {
@@ -18,20 +18,20 @@ export const SUPPORTED_TEXT_EDITORS = {
 };
 
 const mapStateToProps = () => ({
-  assets: {},
+  images: {},
   lmsEndpointUrl: getConfig().LMS_BASE_URL,
   studioEndpointUrl: getConfig().STUDIO_BASE_URL,
   isLibrary: true,
   onEditorChange: () => ({}),
 });
-
 const Editor = connect(mapStateToProps)(TinyMceWidget);
 
 export const WysiwygEditor = ({
   initialValue, editorType, onChange, minHeight,
 }) => {
+  // const courseId = "course+test+test+test"
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
-
+  const { courseId } = useSelector((state) => state.courseDetail);
   const isEquivalentCodeExtraSpaces = (first, second) => {
     // Utils allows to compare code extra spaces
     const removeWhitespace = (str) => str.replace(/\s/g, '');
@@ -75,6 +75,7 @@ export const WysiwygEditor = ({
         setEditorRef={setEditorRef}
         onChange={handleUpdate}
         initializeEditor={() => ({})}
+        learningContextId={courseId}
       />
     </Provider>
   );
