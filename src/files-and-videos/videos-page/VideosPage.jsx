@@ -92,10 +92,19 @@ const VideosPage = ({
       }
       return undefined;
     };
-    if (addVideoStatus === RequestStatus.IN_PROGRESS) {
-      openUploadTracker();
-    } else {
-      closeUploadTracker();
+    switch (addVideoStatus) {
+      case RequestStatus.IN_PROGRESS:
+        openUploadTracker();
+        break;
+      case RequestStatus.SUCCESSFUL:
+        setTimeout(() => closeUploadTracker(), 500);
+        break;
+      case RequestStatus.FAILED:
+        setTimeout(() => closeUploadTracker(), 500);
+        break;
+      default:
+        closeUploadTracker();
+        break;
     }
   }, [addVideoStatus]);
 
@@ -298,6 +307,7 @@ const VideosPage = ({
             isUploadTrackerOpen,
             currentUploadingIdsRef: uploadingIdsRef.current,
             handleUploadCancel,
+            addVideoStatus,
           }}
         />
       </Container>

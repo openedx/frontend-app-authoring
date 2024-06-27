@@ -685,7 +685,6 @@ describe('Videos page', () => {
           expect(screen.queryByText('Delete mOckID1.mp4')).toBeNull();
         });
 
-        await executeThunk(deleteVideoFile(courseId, 'mOckID1', 5), store.dispatch);
         await waitFor(() => {
           const deleteStatus = store.getState().videos.deletingStatus;
           expect(deleteStatus).toEqual(RequestStatus.FAILED);

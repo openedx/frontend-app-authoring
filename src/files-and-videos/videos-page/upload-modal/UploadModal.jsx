@@ -12,15 +12,18 @@ import {
 import { WarningFilled } from '@openedx/paragon/icons';
 import messages from '../messages';
 import UploadProgressList from './UploadProgressList';
+import { RequestStatus } from '../../../data/constants';
 
 const UploadModal = ({
   isUploadTrackerOpen,
   handleUploadCancel,
   currentUploadingIdsRef,
+  addVideoStatus,
 }) => {
   const intl = useIntl();
   const videosPagePath = '';
   const { uploadData, uploadCount } = currentUploadingIdsRef;
+  const cancelIsDisabled = addVideoStatus === RequestStatus.FAILED || addVideoStatus === RequestStatus.SUCCESSFUL;
 
   return (
     <ModalDialog
@@ -69,7 +72,7 @@ const UploadModal = ({
       </Scrollable>
       <ModalDialog.Footer>
         <ActionRow>
-          <Button onClick={handleUploadCancel}>
+          <Button onClick={handleUploadCancel} disabled={cancelIsDisabled}>
             {intl.formatMessage(messages.videoUploadTrackerAlertCancelLabel)}
           </Button>
         </ActionRow>
@@ -89,6 +92,7 @@ UploadModal.propTypes = {
     }).isRequired,
     uploadCount: PropTypes.number.isRequired,
   }).isRequired,
+  addVideoStatus: PropTypes.string.isRequired,
 };
 
 export default UploadModal;
