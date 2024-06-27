@@ -1,6 +1,6 @@
-// @ts-check
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import type { Filter, MeiliSearch, MultiSearchQuery } from 'meilisearch';
 
 export const getContentSearchConfigUrl = () => new URL(
   'api/content_search/v2/studio/',
@@ -15,10 +15,8 @@ export const highlightPostTag = '__/meili-highlight__'; // Indicate the end of a
 
 /**
  * Get the content search configuration from the CMS.
- *
- * @returns {Promise<{url: string, indexName: string, apiKey: string}>}
  */
-export const getContentSearchConfig = async () => {
+export const getContentSearchConfig = async (): Promise<{ url: string, indexName: string, apiKey: string }> => {
   const url = getContentSearchConfigUrl();
   const response = await getAuthenticatedHttpClient().get(url);
   return {
@@ -30,16 +28,19 @@ export const getContentSearchConfig = async () => {
 
 /**
  * Detailed "content" of an XBlock/component, from the block's index_dictionary function. Contents depends on the type.
- * @typedef {{htmlContent?: string, capaContent?: string, [k: string]: any}} ContentDetails
  */
+export interface ContentDetails {
+  htmlContent?: string;
+  capaContent?: string;
+  [k: string]: any;
+}
 
 /**
  * Meilisearch filters can be expressed as strings or arrays.
  * This helper method converts from any supported input format to an array, for consistency.
- * @param {import('meilisearch').Filter} [filter] A filter expression, e.g. 'foo = bar' or [['a = b', 'a = c'], 'd = e']
- * @returns {(string | string[])[]}
+ * @param filter A filter expression, e.g. `'foo = bar'` or `[['a = b', 'a = c'], 'd = e']`
  */
-function forceArray(filter) {
+function forceArray(filter?: Filter): (string | string[])[] {
   if (typeof filter === 'string') {
     return [filter];
   }
@@ -52,12 +53,10 @@ function forceArray(filter) {
 /**
  * Given tag paths like ["Difficulty > Hard", "Subject > Math"], convert them to an array of Meilisearch
  * filter conditions. The tag filters are all AND conditions (not OR).
- * @param {string[]} [tagsFilter] e.g. ["Difficulty > Hard", "Subject > Math"]
- * @returns {string[]}
+ * @param tagsFilter e.g. `["Difficulty > Hard", "Subject > Math"]`
  */
-function formatTagsFilter(tagsFilter) {
-  /** @type {string[]} */
-  const filters = [];
+function formatTagsFilter(tagsFilter?: string[]): string[] {
+  const filters: string[] = [];
 
   tagsFilter?.forEach((tagPath) => {
     const parts = tagPath.split(TAG_SEP);
@@ -74,29 +73,35 @@ function formatTagsFilter(tagsFilter) {
 /**
  * Information about a single XBlock returned in the search results
  * Defined in edx-platform/openedx/core/djangoapps/content/search/documents.py
- * @typedef {Object} ContentHit
- * @property {string} id
- * @property {string} usageKey
- * @property {"course_block"|"library_block"} type
- * @property {string} blockId
- * @property {string} displayName
- * @property {string} blockType The block_type part of the usage key. What type of XBlock this is.
- * @property {string} contextKey The course or library ID
- * @property {string} org
- * @property {[{displayName: string}, ...Array<{displayName: string, usageKey: string}>]} breadcrumbs
- *          First one is the name of the course/library itself.
- *          After that is the name and usage key of any parent Section/Subsection/Unit/etc.
- * @property {Record<'taxonomy'|'level0'|'level1'|'level2'|'level3', string[]>} tags
- * @property {ContentDetails} [content]
- * @property {{displayName: string, content: ContentDetails}} formatted Same fields with <mark>...</mark> highlights
  */
+export interface ContentHit {
+  id: string;
+  usageKey: string;
+  type: 'course_block' | 'library_block';
+  blockId: string;
+  displayName: string;
+  /** The block_type part of the usage key. What type of XBlock this is. */
+  blockType: string;
+  /** The course or library ID */
+  contextKey: string;
+  org: string;
+  /**
+   * Breadcrumbs:
+   * - First one is the name of the course/library itself.
+   * - After that is the name and usage key of any parent Section/Subsection/Unit/etc.
+   */
+  breadcrumbs: [{ displayName: string }, ...Array<{ displayName: string, usageKey: string }>];
+  tags: Record<'taxonomy' | 'level0' | 'level1' | 'level2' | 'level3', string[]>;
+  content?: ContentDetails;
+  /** Same fields with <mark>...</mark> highlights */
+  formatted: { displayName: string, content?: ContentDetails };
+}
 
 /**
  * Convert search hits to camelCase
- * @param {Record<string, any>} hit A search result directly from Meilisearch
- * @returns {ContentHit}
+ * @param hit A search result directly from Meilisearch
  */
-function formatSearchHit(hit) {
+function formatSearchHit(hit: Record<string, any>): ContentHit {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const { _formatted, ...newHit } = hit;
   newHit.formatted = {
@@ -106,36 +111,33 @@ function formatSearchHit(hit) {
   return camelCaseObject(newHit);
 }
 
-/**
- * @param {{
- *   client: import('meilisearch').MeiliSearch,
- *   indexName: string,
- *   searchKeywords: string,
- *   blockTypesFilter?: string[],
- *   tagsFilter?: string[],
- *   extraFilter?: import('meilisearch').Filter,
- *   offset?: number,
- * }} context
- * @returns {Promise<{
- *   hits: ContentHit[],
- *   nextOffset: number|undefined,
- *   totalHits: number,
- *   blockTypes: Record<string, number>,
- * }>}
- */
+interface FetchSearchParams {
+  client: MeiliSearch,
+  indexName: string,
+  searchKeywords: string,
+  blockTypesFilter?: string[],
+  /** The full path of tags that each result MUST have, e.g. ["Difficulty > Hard", "Subject > Math"] */
+  tagsFilter?: string[],
+  extraFilter?: Filter,
+  /** How many results to skip, e.g. if limit=20 then passing offset=20 gets the second page. */
+  offset?: number,
+}
+
 export async function fetchSearchResults({
   client,
   indexName,
   searchKeywords,
   blockTypesFilter,
-  /** The full path of tags that each result MUST have, e.g. ["Difficulty > Hard", "Subject > Math"] */
   tagsFilter,
   extraFilter,
-  /** How many results to skip, e.g. if limit=20 then passing offset=20 gets the second page. */
   offset = 0,
-}) {
-  /** @type {import('meilisearch').MultiSearchQuery[]} */
-  const queries = [];
+}: FetchSearchParams): Promise<{
+    hits: ContentHit[],
+    nextOffset: number | undefined,
+    totalHits: number,
+    blockTypes: Record<string, number>,
+  }> {
+  const queries: MultiSearchQuery[] = [];
 
   // Convert 'extraFilter' into an array
   const extraFilterFormatted = forceArray(extraFilter);
@@ -188,21 +190,17 @@ export async function fetchSearchResults({
   };
 }
 
+/** Information about a single tag in the tag tree, as returned by fetchAvailableTagOptions() */
+export interface TagEntry {
+  tagName: string;
+  tagPath: string;
+  tagCount: number;
+  hasChildren: boolean;
+}
+
 /**
  * In the context of a particular search (which may already be filtered to a specific course, specific block types,
  * and/or have a keyword search applied), get the tree of tags that can be used to further filter/refine the search.
- *
- * @param {object} context
- * @param {import('meilisearch').MeiliSearch} context.client The Meilisearch client instance
- * @param {string} context.indexName Which index to search
- * @param {string} context.searchKeywords Overall query string for the search; may be empty
- * @param {string[]} [context.blockTypesFilter] Filter to only include these block types e.g. ["problem", "html"]
- * @param {import('meilisearch').Filter} [context.extraFilter] Any other filters to apply, e.g. course ID.
- * @param {string} [context.parentTagPath] Only fetch tags below this parent tag/taxonomy e.g. "Places > North America"
- * @returns {Promise<{
- *   tags: {tagName: string, tagPath: string, tagCount: number, hasChildren: boolean}[];
- *   mayBeMissingResults: boolean;
- * }>}
  */
 export async function fetchAvailableTagOptions({
   client,
@@ -212,7 +210,20 @@ export async function fetchAvailableTagOptions({
   extraFilter,
   parentTagPath,
   // Ideally this would include 'tagSearchKeywords' to filter the tag tree by keyword search but that's not possible yet
-}) {
+}: {
+  /** The Meilisearch client instance */
+  client: MeiliSearch;
+  /** Which index to search */
+  indexName: string;
+  /** Overall query string for the search; may be empty */
+  searchKeywords: string;
+  /** Filter to only include these block types e.g. ["problem", "html"] */
+  blockTypesFilter?: string[];
+  /** Any other filters to apply, e.g. course ID. */
+  extraFilter?: Filter;
+  /** Only fetch tags below this parent tag/taxonomy e.g. "Places > North America" */
+  parentTagPath?: string;
+}): Promise<{ tags: TagEntry[]; mayBeMissingResults: boolean; }> {
   const meilisearchFacetLimit = 100; // The 'maxValuesPerFacet' on the index. For Open edX we leave the default, 100.
 
   // Convert 'extraFilter' into an array
@@ -224,8 +235,7 @@ export async function fetchAvailableTagOptions({
   // e.g. "tags.taxonomy" is the facet/attribute that holds the root tags, and "tags.level0" has its child tags.
   let facetName;
   let depth;
-  /** @type {string[]} */
-  let parentFilter = [];
+  let parentFilter: string[] = [];
   if (!parentTagPath) {
     facetName = 'tags.taxonomy';
     depth = 0;
@@ -251,8 +261,7 @@ export async function fetchAvailableTagOptions({
   // Now load the facet values. Doing it with this API gives us much more flexibility in loading than if we just
   // requested the facets by passing { facets: ["tags"] } into the main search request; that works fine for loading the
   // root tags but can't load specific child tags like we can using this approach.
-  /** @type {{tagName: string, tagPath: string, tagCount: number, hasChildren: boolean}[]} */
-  const tags = [];
+  const tags: TagEntry[] = [];
   const { facetHits } = await client.index(indexName).searchForFacetValues({
     facetName,
     // It's not super clear in the documentation, but facetQuery is basically a "startsWith" query, which is what we
@@ -299,8 +308,7 @@ export async function fetchAvailableTagOptions({
       tags.forEach((t) => { t.hasChildren = true; });
     } else if (childFacetHits.length > 0) {
       // Some (or maybe all) of these tags have child tags. Let's figure out which ones exactly.
-      /** @type {Set<string>} */
-      const tagsWithChildren = new Set();
+      const tagsWithChildren = new Set<string>();
       childFacetHits.forEach(({ value }) => {
         // Trim the child tag off: 'Places > North America > New York' becomes 'Places > North America'
         const tagPath = value.split(TAG_SEP).slice(0, -1).join(TAG_SEP);
@@ -324,14 +332,6 @@ export async function fetchAvailableTagOptions({
  * are tagged with "Tag Alpha 1" and 10 XBlocks are tagged with "Tag Alpha 2", a search for "Alpha" may only return
  * ["Tag Alpha 1"] instead of the correct result ["Tag Alpha 1", "Tag Alpha 2"] because we are limited to 1,000 matches,
  * which may all have the same tags.
- *
- * @param {object} context
- * @param {import('meilisearch').MeiliSearch} context.client The Meilisearch client instance
- * @param {string} context.indexName Which index to search
- * @param {string[]} [context.blockTypesFilter] Filter to only include these block types e.g. ["problem", "html"]
- * @param {import('meilisearch').Filter} [context.extraFilter] Any other filters to apply to the overall search.
- * @param {string} [context.tagSearchKeywords] Only show taxonomies/tags that match these keywords
- * @returns {Promise<{ mayBeMissingResults: boolean; matches: {tagPath: string}[] }>}
  */
 export async function fetchTagsThatMatchKeyword({
   client,
@@ -339,7 +339,18 @@ export async function fetchTagsThatMatchKeyword({
   blockTypesFilter,
   extraFilter,
   tagSearchKeywords,
-}) {
+}: {
+  /** The Meilisearch client instance */
+  client: MeiliSearch;
+  /** Which index to search */
+  indexName: string;
+  /** Filter to only include these block types e.g. `["problem", "html"]` */
+  blockTypesFilter?: string[];
+  /** Any other filters to apply to the overall search. */
+  extraFilter?: Filter;
+  /** Only show taxonomies/tags that match these keywords */
+  tagSearchKeywords?: string;
+}): Promise<{ mayBeMissingResults: boolean; matches: { tagPath: string }[] }> {
   if (!tagSearchKeywords || tagSearchKeywords.trim() === '') {
     // This data isn't needed if there is no tag keyword search. Don't bother making a search query.
     return { matches: [], mayBeMissingResults: false };
@@ -359,24 +370,27 @@ export async function fetchTagsThatMatchKeyword({
     attributesToSearchOn: ['tags.taxonomy', 'tags.level0', 'tags.level1', 'tags.level2', 'tags.level3'],
     attributesToRetrieve: ['tags'],
     limit,
-    // We'd like to use 'showMatchesPosition: true' to know exaclty which tags match, but it doesn't provide the
+    // We'd like to use 'showMatchesPosition: true' to know exactly which tags match, but it doesn't provide the
     // detail we need; it's impossible to tell which tag at a given level matched based on the returned _matchesPosition
     // data - https://github.com/orgs/meilisearch/discussions/550
   });
 
   const tagSearchKeywordsLower = tagSearchKeywords.toLocaleLowerCase();
 
-  /** @type {Set<string>} */
-  const matches = new Set();
+  const matches = new Set<string>();
 
   // We have data like this:
   // hits: [
   //   {
-  //     tags: { taxonomy: "Competency", "level0": "Competency > Abilities", "level1": "Competency > Abilities > ..." },
+  //     tags: {
+  //       taxonomy: ["Competency"],
+  //       level0: ["Competency > Abilities"],
+  //       level1: ["Competency > Abilities > ..."]
+  //     }, ...
   //   }, ...
   // ]
   hits.forEach((hit) => {
-    Object.values(hit.tags).forEach((tagPathList) => {
+    Object.values(hit.tags).forEach((tagPathList: string[]) => {
       tagPathList.forEach((tagPath) => {
         if (tagPath.toLocaleLowerCase().includes(tagSearchKeywordsLower)) {
           matches.add(tagPath);

@@ -1,5 +1,4 @@
-/* eslint-disable react/prop-types */
-// @ts-check
+/* eslint-disable react/require-default-props */
 /**
  * This is a search manager that provides search functionality similar to the
  * Instantsearch library. We use it because Instantsearch doesn't support
@@ -7,44 +6,41 @@
  * https://github.com/algolia/instantsearch/issues/1658
  */
 import React from 'react';
-import { MeiliSearch } from 'meilisearch';
+import { MeiliSearch, type Filter } from 'meilisearch';
 
+import { ContentHit } from '../data/api';
 import { useContentSearchConnection, useContentSearchResults } from '../data/apiHooks';
 
-/**
- * @type {React.Context<undefined|{
- *   client?: MeiliSearch,
- *   indexName?: string,
- *   searchKeywords: string,
- *   setSearchKeywords: React.Dispatch<React.SetStateAction<string>>,
- *   blockTypesFilter: string[],
- *   setBlockTypesFilter: React.Dispatch<React.SetStateAction<string[]>>,
- *   tagsFilter: string[],
- *   setTagsFilter: React.Dispatch<React.SetStateAction<string[]>>,
- *   blockTypes: Record<string, number>,
- *   extraFilter?: import('meilisearch').Filter,
- *   canClearFilters: boolean,
- *   clearFilters: () => void,
- *   hits: import('../data/api').ContentHit[],
- *   totalHits: number,
- *   isFetching: boolean,
- *   hasNextPage: boolean | undefined,
- *   isFetchingNextPage: boolean,
- *   fetchNextPage: () => void,
- *   closeSearchModal: () => void,
- *   hasError: boolean,
- * }>}
- */
-const SearchContext = /** @type {any} */(React.createContext(undefined));
+export interface SearchContextData {
+  client?: MeiliSearch;
+  indexName?: string;
+  searchKeywords: string;
+  setSearchKeywords: React.Dispatch<React.SetStateAction<string>>;
+  blockTypesFilter: string[];
+  setBlockTypesFilter: React.Dispatch<React.SetStateAction<string[]>>;
+  tagsFilter: string[];
+  setTagsFilter: React.Dispatch<React.SetStateAction<string[]>>;
+  blockTypes: Record<string, number>;
+  extraFilter?: Filter;
+  canClearFilters: boolean;
+  clearFilters: () => void;
+  hits: ContentHit[];
+  totalHits: number;
+  isFetching: boolean;
+  hasNextPage: boolean | undefined;
+  isFetchingNextPage: boolean;
+  fetchNextPage: () => void;
+  closeSearchModal: () => void;
+  hasError: boolean;
+}
 
-/**
- * @type {React.FC<{
-*   extraFilter?: import('meilisearch').Filter,
-*   children: React.ReactNode,
-*   closeSearchModal?: () => void,
-* }>}
-*/
-export const SearchContextProvider = ({ extraFilter, children, closeSearchModal }) => {
+const SearchContext = React.createContext<SearchContextData | undefined>(undefined);
+
+export const SearchContextProvider: React.FC<{
+  extraFilter?: Filter;
+  children: React.ReactNode,
+  closeSearchModal?: () => void,
+}> = ({ extraFilter, ...props }) => {
   const [searchKeywords, setSearchKeywords] = React.useState('');
   const [blockTypesFilter, setBlockTypesFilter] = React.useState(/** type {string[]} */([]));
   const [tagsFilter, setTagsFilter] = React.useState(/** type {string[]} */([]));
@@ -88,11 +84,11 @@ export const SearchContextProvider = ({ extraFilter, children, closeSearchModal 
       extraFilter,
       canClearFilters,
       clearFilters,
-      closeSearchModal: closeSearchModal ?? (() => {}),
+      closeSearchModal: props.closeSearchModal ?? (() => {}),
       hasError: hasConnectionError || result.isError,
       ...result,
     },
-  }, children);
+  }, props.children);
 };
 
 export const useSearchContext = () => {
