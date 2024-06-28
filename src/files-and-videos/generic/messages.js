@@ -126,12 +126,12 @@ const messages = defineMessages({
     description: 'Label for delete button in card menu dropdown',
   },
   deleteConfirmationTitle: {
-    id: 'course-authoring.files-and-uploads..deleteConfirmation.title',
+    id: 'course-authoring.files-and-uploads.deleteConfirmation.title',
     defaultMessage: 'Delete {fileNumber, plural, one {{fileName}} other {{fileNumber} {fileType}s}}',
     description: 'Title for delete confirmation modal',
   },
   deleteConfirmationMessage: {
-    id: 'course-authoring.files-and-uploads..deleteConfirmation.message',
+    id: 'course-authoring.files-and-uploads.deleteConfirmation.message',
     defaultMessage: `
       Are you sure you want to delete {fileNumber, plural, one {{fileName}} other {{fileNumber} {fileType}s}}?
       This action cannot be undone and may break your course if the {fileNumber, plural, one {{fileType} is} other {{fileType}s are}}
@@ -140,7 +140,7 @@ const messages = defineMessages({
     description: 'Message presented to user listing the number of files they are attempting to delete in the delete confirmation modal',
   },
   deleteConfirmationUsageMessage: {
-    id: 'course-authoring.files-and-uploads..deleteConfirmation.message',
+    id: 'course-authoring.files-and-uploads.deleteConfirmation.usage-message',
     defaultMessage: 'The following {fileNumber, plural, one {{fileType} is} other {{fileType}s are}} used in course content. Consider updating the content before deleting.',
     description: 'Message listing where the files the user is attempting to delete are used in the course',
   },
@@ -202,6 +202,12 @@ const messages = defineMessages({
   failedLabel: {
     id: 'course-authoring.files-and-uploads.filter.failed.label',
     defaultMessage: 'Failed',
+    description: 'Label for failed sort button in sort and filter modal',
+  },
+  uploadErrorAlertTitle: {
+    id: 'course-authoring.files-and-uploads.error.upload.title',
+    defaultMessage: 'Upload error',
+    description: 'Title for upload error alert',
   },
 });
 

@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-// @ts-check
 import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -13,8 +11,10 @@ import {
   waitFor,
   within,
   getByLabelText as getByLabelTextIn,
+  type RenderResult,
 } from '@testing-library/react';
 import fetchMock from 'fetch-mock-jest';
+import type { Store } from 'redux';
 
 import initializeStore from '../store';
 import { executeThunk } from '../utils';
@@ -32,7 +32,7 @@ import { getContentSearchConfigUrl } from './data/api';
 
 // mockResult contains only a single result - this one:
 const mockResultDisplayName = 'Test HTML Block';
-let store;
+let store: Store;
 
 const queryClient = new QueryClient();
 
@@ -51,8 +51,7 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 
-/** @type {React.FC<{children:React.ReactNode}>} */
-const Wrap = ({ children }) => (
+const Wrap: React.FC<{ children:React.ReactNode }> = ({ children }) => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
@@ -61,9 +60,9 @@ const Wrap = ({ children }) => (
     </IntlProvider>
   </AppProvider>
 );
-let axiosMock;
+let axiosMock: MockAdapter;
 
-const returnEmptyResult = (_url, req) => {
+const returnEmptyResult = (_url: string, req) => {
   const requestData = JSON.parse(req.body?.toString() ?? '');
   const query = requestData?.queries[0]?.q ?? '';
   // We have to replace the query (search keywords) in the mock results with the actual query,
@@ -71,7 +70,7 @@ const returnEmptyResult = (_url, req) => {
   mockEmptyResult.results[0].query = query;
   // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
   // eslint-disable-next-line no-underscore-dangle, no-param-reassign
-  mockEmptyResult.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
+  mockEmptyResult.results[0]?.hits.forEach((hit: any) => { hit._formatted = { ...hit }; });
   return mockEmptyResult;
 };
 
@@ -188,8 +187,7 @@ describe('<SearchUI />', () => {
   });
 
   describe('results', () => {
-    /** @type {import('@testing-library/react').RenderResult} */
-    let rendered;
+    let rendered: RenderResult;
     beforeEach(async () => {
       rendered = render(<Wrap><SearchUI {...defaults} /></Wrap>);
       const { getByRole } = rendered;
@@ -376,16 +374,15 @@ describe('<SearchUI />', () => {
   });
 
   describe('filters', () => {
-    /** @type {import('@testing-library/react').RenderResult} */
-    let rendered;
+    let rendered: RenderResult;
     beforeEach(async () => {
       fetchMock.post(facetSearchEndpoint, (_path, req) => {
         const requestData = JSON.parse(req.body?.toString() ?? '');
         switch (requestData.facetName) {
-        case 'tags.taxonomy': return mockTagsFacetResult;
-        case 'tags.level0': return mockTagsFacetResultLevel0;
-        case 'tags.level1': return mockTagsFacetResultLevel1;
-        default: throw new Error(`Facet ${requestData.facetName} not mocked for testing`);
+          case 'tags.taxonomy': return mockTagsFacetResult;
+          case 'tags.level0': return mockTagsFacetResultLevel0;
+          case 'tags.level1': return mockTagsFacetResultLevel1;
+          default: throw new Error(`Facet ${requestData.facetName} not mocked for testing`);
         }
       });
 

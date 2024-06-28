@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-// @ts-check
 import React from 'react';
 import { StatefulButton } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -13,10 +11,8 @@ import messages from './messages';
  *
  * Uses "infinite pagination" to load more pages as needed (if users click the
  * "Show more results" button).
- *
- * @type {React.FC<Record<never, never>>}
  */
-const SearchResults = () => {
+const SearchResults: React.FC<Record<never, never>> = () => {
   const intl = useIntl();
   const {
     hits,

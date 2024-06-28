@@ -55,12 +55,12 @@ const CourseXBlock = ({
 
   const handleEdit = () => {
     switch (type) {
-    case COMPONENT_TYPES.html:
-    case COMPONENT_TYPES.problem:
-    case COMPONENT_TYPES.video:
-      navigate(`/course/${courseId}/editor/${type}/${id}`);
-      break;
-    default:
+      case COMPONENT_TYPES.html:
+      case COMPONENT_TYPES.problem:
+      case COMPONENT_TYPES.video:
+        navigate(`/course/${courseId}/editor/${type}/${id}`);
+        break;
+      default:
     }
   };
 

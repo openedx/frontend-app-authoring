@@ -1,5 +1,4 @@
-/* eslint-disable react/prop-types */
-// @ts-check
+/* eslint-disable react/require-default-props */
 import React from 'react';
 import {
   MenuItem,
@@ -19,13 +18,12 @@ import Stats from './Stats';
 import { SearchContextProvider } from './manager/SearchManager';
 import messages from './messages';
 
-/** @type {React.FC<{courseId: string, closeSearchModal?: () => void}>} */
-const SearchUI = (props) => {
+const SearchUI: React.FC<{ courseId: string, closeSearchModal?: () => void }> = (props) => {
   const hasCourseId = Boolean(props.courseId);
-  const [_searchThisCourseEnabled, setSearchThisCourse] = React.useState(hasCourseId);
+  const [searchThisCourseEnabled, setSearchThisCourse] = React.useState(hasCourseId);
   const switchToThisCourse = React.useCallback(() => setSearchThisCourse(true), []);
   const switchToAllCourses = React.useCallback(() => setSearchThisCourse(false), []);
-  const searchThisCourse = hasCourseId && _searchThisCourseEnabled;
+  const searchThisCourse = hasCourseId && searchThisCourseEnabled;
 
   return (
     <SearchContextProvider

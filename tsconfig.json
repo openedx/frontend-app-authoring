@@ -7,6 +7,6 @@
         "*": ["*"]
       }
     },
-    "include": ["src/**/*"],
+    "include": ["*.js", ".eslintrc.js", "src/**/*", "plugins/**/*"],
     "exclude": ["dist", "node_modules"]
 }

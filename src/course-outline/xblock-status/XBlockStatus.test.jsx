@@ -3,15 +3,11 @@ import { render } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
-import MockAdapter from 'axios-mock-adapter';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import initializeStore from '../../store';
 import XBlockStatus from './XBlockStatus';
 import messages from './messages';
 
-// eslint-disable-next-line no-unused-vars
-let axiosMock;
 let store;
 
 jest.mock('@edx/frontend-platform/i18n', () => ({
@@ -73,7 +69,6 @@ describe('<XBlockStatus /> for Instructor paced Section', () => {
     });
 
     store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
 
   it('render XBlockStatus with explanatoryMessage', () => {
@@ -141,7 +136,6 @@ describe('<XBlockStatus /> for self paced Section', () => {
     });
 
     store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
 
   it('renders XBlockStatus with grading type, due weeks etc.', () => {
@@ -245,7 +239,6 @@ describe('<XBlockStatus /> for Instructor paced Subsection', () => {
     });
 
     store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
 
   it('renders XBlockStatus with release status, grading type, due date etc.', () => {
@@ -375,7 +368,6 @@ describe('<XBlockStatus /> for self paced Subsection', () => {
     });
 
     store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
 
   it('renders XBlockStatus with grading type, due weeks etc.', () => {
@@ -456,7 +448,6 @@ describe('<XBlockStatus /> for unit', () => {
     });
 
     store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
 
   it('renders XBlockStatus with status messages', () => {

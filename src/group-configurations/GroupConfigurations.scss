@@ -23,8 +23,7 @@
   .configuration-card-header {
     display: flex;
     align-items: center;
-    align-content: center;
-    justify-content: space-between;
+    place-content: center space-between;
 
     .configuration-card-header__button {
       display: flex;

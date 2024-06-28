@@ -267,8 +267,6 @@ Tagging/Taxonomy functionality.
 Feature: Libraries V2/Legacy Tabs
 =================================
 
-.. image:: ./docs/readme-images/feature-v2-and-legacy-libs.png
-
 Configuration
 -------------
 

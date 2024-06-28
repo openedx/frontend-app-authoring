@@ -37,7 +37,7 @@ const course = {
 
 const props = { course };
 
-describe('<CourseItem />', async () => {
+describe('<CourseItem />', () => {
   beforeEach(async () => {
     initializeMockApp({
       authenticatedUser: {

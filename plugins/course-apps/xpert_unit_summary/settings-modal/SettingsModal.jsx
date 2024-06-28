@@ -137,12 +137,12 @@ const ResetUnitsButton = ({
 
   const getResetButtonState = () => {
     switch (resetStatusRequestStatus) {
-    case RequestStatus.PENDING:
-      return 'pending';
-    case RequestStatus.SUCCESSFUL:
-      return 'finish';
-    default:
-      return 'default';
+      case RequestStatus.PENDING:
+        return 'pending';
+      case RequestStatus.SUCCESSFUL:
+        return 'finish';
+      default:
+        return 'default';
     }
   };
 
@@ -246,7 +246,7 @@ const SettingsModal = ({
       success = success && await onSettingsSave(values);
     }
     setSaveError(!success);
-    !success && alertRef?.current.scrollIntoView(); // eslint-disable-line no-unused-expressions
+    !success && alertRef?.current.scrollIntoView(); // eslint-disable-line @typescript-eslint/no-unused-expressions
   };
 
   const handleFormikSubmit = ({ handleSubmit, errors }) => async (event) => {

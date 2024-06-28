@@ -50,7 +50,7 @@ const RestrictDatesInput = ({
         className={fieldClasses}
         onBlur={handleFocusOut}
         onFocus={handleSetFocus}
-        data-testId={dataTestId}
+        data-testid={dataTestId}
       />
       <FieldFeedback
         feedbackCondition={inFocus}

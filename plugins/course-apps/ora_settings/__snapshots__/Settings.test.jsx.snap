@@ -5,7 +5,7 @@ exports[`ORASettings should render 1`] = `
   appId="ora_settings"
   hideAppToggle={true}
   initialValues={
-    Object {
+    {
       "enableFlexiblePeerGrade": "abitrary value",
     }
   }
@@ -19,19 +19,25 @@ exports[`ORASettings should render 1`] = `
       <div
         className="pt-3"
       >
-        <withDeprecatedProps(Hyperlink)
+        <ForwardRef
           className="text-primary-500 small"
           destination="https://learnmore.test"
+          externalLinkAlternativeText="in a new tab"
+          externalLinkTitle="Opens in a new tab"
+          isInline={false}
+          onClick={[Function]}
           rel="noreferrer noopener"
+          showLaunchIcon={true}
           target="_blank"
+          variant="default"
         >
           Learn more about open response assessment settings
-        </withDeprecatedProps(Hyperlink)>
+        </ForwardRef>
       </div>
     </div>
   }
   validationSchema={
-    Object {
+    {
       "enableFlexiblePeerGrade": "Yub.boolean",
     }
   }

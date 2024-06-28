@@ -3,15 +3,11 @@ import { render, fireEvent } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
-import MockAdapter from 'axios-mock-adapter';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import initializeStore from '../../store';
 import EnableHighlightsModal from './EnableHighlightsModal';
 import messages from './messages';
 
-// eslint-disable-next-line no-unused-vars
-let axiosMock;
 let store;
 const mockPathname = '/foo-bar';
 
@@ -56,7 +52,6 @@ describe('<EnableHighlightsModal />', () => {
     });
 
     store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
 
   it('renders EnableHighlightsModal component correctly', () => {

@@ -37,26 +37,26 @@ const slice = createSlice({
     updateEditStatus: (state, { payload }) => {
       const { editType, status } = payload;
       switch (editType) {
-      case 'delete':
-        state.deletingStatus = status;
-        break;
-      case 'add':
-        state.addingStatus = status;
-        break;
-      case 'thumbnail':
-        state.updatingStatus = status;
-        break;
-      case 'download':
-        state.updatingStatus = status;
-        break;
-      case 'usageMetrics':
-        state.usageStatus = status;
-        break;
-      case 'transcript':
-        state.transcriptStatus = status;
-        break;
-      default:
-        break;
+        case 'delete':
+          state.deletingStatus = status;
+          break;
+        case 'add':
+          state.addingStatus = status;
+          break;
+        case 'thumbnail':
+          state.updatingStatus = status;
+          break;
+        case 'download':
+          state.updatingStatus = status;
+          break;
+        case 'usageMetrics':
+          state.usageStatus = status;
+          break;
+        case 'transcript':
+          state.transcriptStatus = status;
+          break;
+        default:
+          break;
       }
     },
     deleteVideoSuccess: (state, { payload }) => {
@@ -92,7 +92,6 @@ const slice = createSlice({
       const { fileName } = payload;
       const currentErrorState = state.errors.add;
       state.errors.add = [...currentErrorState, `Failed to add ${fileName}.`];
-      state.addingStatus = RequestStatus.FAILED;
     },
   },
 });
