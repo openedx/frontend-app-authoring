@@ -58,7 +58,7 @@ export async function getStudioHomeLibrariesV2(customParams) {
     page: customParams.page || 1,
     pageSize: customParams.pageSize || 50,
     pagination: customParams.pagination !== undefined ? customParams.pagination : true,
-    order: customParams.order,
+    order: customParams.order || 'title',
     textSearch: customParams.search,
   };
   const customParamsFormat = snakeCaseObject(customParamsDefaults);
