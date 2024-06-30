@@ -1,6 +1,6 @@
-// @ts-check
 import React from 'react';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import type { Filter, MeiliSearch } from 'meilisearch';
 
 import {
   TAG_SEP,
@@ -29,13 +29,6 @@ export const useContentSearchConnection = () => (
 
 /**
  * Get the results of a search
- * @param {object} context
- * @param {import('meilisearch').MeiliSearch} [context.client] The Meilisearch API client
- * @param {string} [context.indexName] Which search index contains the content data
- * @param {import('meilisearch').Filter} [context.extraFilter] Other filters to apply to the search, e.g. course ID
- * @param {string} context.searchKeywords The keywords that the user is searching for, if any
- * @param {string[]} [context.blockTypesFilter] Only search for these block types (e.g. ["html", "problem"])
- * @param {string[]} [context.tagsFilter] Required tags (all must match), e.g. ["Difficulty > Hard", "Subject > Math"]
  */
 export const useContentSearchResults = ({
   client,
@@ -44,6 +37,19 @@ export const useContentSearchResults = ({
   searchKeywords,
   blockTypesFilter = [],
   tagsFilter = [],
+}: {
+  /** The Meilisearch API client */
+  client?: MeiliSearch;
+  /** Which search index contains the content data */
+  indexName?: string;
+  /** Other filters to apply to the search, e.g. course ID */
+  extraFilter?: Filter;
+  /** The keywords that the user is searching for, if any */
+  searchKeywords: string;
+  /** Only search for these block types (e.g. `["html", "problem"]`) */
+  blockTypesFilter: string[];
+  /** Required tags (all must match), e.g. `["Difficulty > Hard", "Subject > Math"]` */
+  tagsFilter: string[];
 }) => {
   const query = useInfiniteQuery({
     enabled: client !== undefined && indexName !== undefined,
@@ -107,16 +113,23 @@ export const useContentSearchResults = ({
 /**
  * Get the available tags that can be used to refine a search, based on the search filters applied so far.
  * Also the user can use a keyword search to find specific tags.
- * @param {object} args
- * @param {import('meilisearch').MeiliSearch} [args.client] The Meilisearch client instance
- * @param {string} [args.indexName] Which index to search
- * @param {string} args.searchKeywords Overall query string for the search; may be empty
- * @param {string[]} [args.blockTypesFilter] Filter to only include these block types e.g. ["problem", "html"]
- * @param {import('meilisearch').Filter} [args.extraFilter] Any other filters to apply to the overall search.
- * @param {string} [args.tagSearchKeywords] Only show taxonomies/tags that match these keywords
- * @param {string} [args.parentTagPath] Only fetch tags below this parent tag/taxonomy e.g. "Places > North America"
  */
-export const useTagFilterOptions = (args) => {
+export const useTagFilterOptions = (args: {
+  /** The Meilisearch client instance */
+  client?: MeiliSearch;
+  /** Which index to search */
+  indexName?: string;
+  /** Overall query string for the search; may be empty */
+  searchKeywords: string;
+  /** Filter to only include these block types e.g. `["problem", "html"]` */
+  blockTypesFilter?: string[];
+  /** Any other filters to apply to the overall search. */
+  extraFilter?: Filter;
+  /** Only show taxonomies/tags that match these keywords */
+  tagSearchKeywords?: string;
+  /** Only fetch tags below this parent tag/taxonomy e.g. `"Places > North America"` */
+  parentTagPath?: string;
+}) => {
   const mainQuery = useQuery({
     enabled: args.client !== undefined && args.indexName !== undefined,
     queryKey: [

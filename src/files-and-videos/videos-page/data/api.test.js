@@ -1,7 +1,7 @@
 import 'file-saver';
 import MockAdapter from 'axios-mock-adapter';
 import { initializeMockApp } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { getAuthenticatedHttpClient, getHttpClient } from '@edx/frontend-platform/auth';
 
 import {
   getDownload, getVideosUrl, getAllUsagePaths, getCourseVideosApiUrl, uploadVideo, sendVideoUploadStatus,
@@ -10,6 +10,7 @@ import {
 jest.mock('file-saver');
 
 let axiosMock;
+let axiosUnauthenticatedMock;
 
 describe('api.js', () => {
   beforeEach(() => {
@@ -22,6 +23,7 @@ describe('api.js', () => {
       },
     });
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    axiosUnauthenticatedMock = new MockAdapter(getHttpClient());
   });
   describe('getDownload', () => {
     describe('selectedRows length is undefined or less than zero', () => {
@@ -110,10 +112,32 @@ describe('api.js', () => {
     it('PUTs to the provided URL', async () => {
       const mockUrl = 'mock.com';
       const mockFile = { mock: 'file' };
+      const mockVideoId = 'id123';
+      const mockController = {};
+      const mockRef = {
+        current: {
+          uploadData: {
+            id123: {
+              progress: 0,
+              name: 'test',
+              status: 'failed',
+            },
+          },
+        },
+      };
       const expectedResult = 'Something';
-      global.fetch = jest.fn().mockResolvedValue(expectedResult);
-      const actual = await uploadVideo(mockUrl, mockFile);
+      axiosUnauthenticatedMock.onPut(mockUrl).reply((config) => {
+        const total = 1024; // mocked file size
+        const progress = 0.4;
+        if (config.onUploadProgress) {
+          config.onUploadProgress({ loaded: total * progress, total });
+        }
+        return [200, expectedResult];
+      });
+      const { data: actual } = await uploadVideo(mockUrl, mockFile, mockRef, mockVideoId, mockController);
       expect(actual).toEqual(expectedResult);
+
+      expect(mockRef.current.uploadData.id123.progress).toEqual('40.00');
     });
   });
   describe('sendVideoUploadStatus', () => {

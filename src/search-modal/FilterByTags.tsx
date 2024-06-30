@@ -1,5 +1,4 @@
-/* eslint-disable react/prop-types */
-// @ts-check
+/* eslint-disable react/require-default-props */
 import React from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -21,18 +20,17 @@ import { TAG_SEP } from './data/api';
 
 /**
  * A menu item with a checkbox and an optional ▼ button (to show/hide children)
- * @type {React.FC<{
- *   label: string;
- *   tagPath: string;
- *   isChecked: boolean;
- *   onClickCheckbox: () => void;
- *   tagCount: number;
- *   hasChildren?: boolean;
- *   isExpanded?: boolean;
- *   onToggleChildren?: (tagPath: string) => void;
- * }>}
  */
-const TagMenuItem = ({
+const TagMenuItem: React.FC<{
+  label: string;
+  tagPath: string;
+  isChecked: boolean;
+  onClickCheckbox: () => void;
+  tagCount: number;
+  hasChildren?: boolean;
+  isExpanded?: boolean;
+  onToggleChildren?: (tagPath: string) => void;
+}> = ({
   label,
   tagPath,
   tagCount,
@@ -83,14 +81,13 @@ const TagMenuItem = ({
 
 /**
  * A list of menu items with all of the options for tags at one level of the hierarchy.
- * @type {React.FC<{
- *   tagSearchKeywords: string;
- *   parentTagPath?: string;
- *   toggleTagChildren?: (tagPath: string) => void;
- *   expandedTags: string[],
- * }>}
  */
-const TagOptions = ({
+const TagOptions: React.FC<{
+  tagSearchKeywords: string;
+  parentTagPath?: string;
+  toggleTagChildren?: (tagPath: string) => void;
+  expandedTags: string[],
+}> = ({
   parentTagPath = '',
   tagSearchKeywords,
   expandedTags,
@@ -164,15 +161,14 @@ const TagOptions = ({
   );
 };
 
-/** @type {React.FC} */
-const FilterByTags = () => {
+const FilterByTags: React.FC<Record<never, never>> = () => {
   const intl = useIntl();
   const { tagsFilter } = useSearchContext();
   const [tagSearchKeywords, setTagSearchKeywords] = React.useState('');
 
   // e.g. {"Location", "Location > North America"} if those two paths of the tag tree are expanded
-  const [expandedTags, setExpandedTags] = React.useState(/** @type {string[]} */([]));
-  const toggleTagChildren = React.useCallback(tagWithLineage => {
+  const [expandedTags, setExpandedTags] = React.useState<string[]>([]);
+  const toggleTagChildren = React.useCallback((tagWithLineage: string) => {
     setExpandedTags(currentList => {
       if (currentList.includes(tagWithLineage)) {
         return currentList.filter(x => x !== tagWithLineage);
