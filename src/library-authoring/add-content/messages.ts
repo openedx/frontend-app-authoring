@@ -50,6 +50,11 @@ const messages = defineMessages({
     defaultMessage: 'There was an error creating the content.',
     description: 'Message when creation of content in library is on error',
   },
+  addContentTitle: {
+    id: 'course-authoring.library-authoring.sidebar.title.add-content',
+    defaultMessage: 'Add Content',
+    description: 'Title of add content in library container.',
+  },
 });
 
 export default messages;

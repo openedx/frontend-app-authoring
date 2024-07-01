@@ -37,6 +37,8 @@ enum TabList {
 
 const SubHeaderTitle = ({ title }: { title: string }) => {
   const intl = useIntl();
+  const { openInfoSidebar } = useContext(LibraryContext);
+
   return (
     <>
       {title}
@@ -45,6 +47,7 @@ const SubHeaderTitle = ({ title }: { title: string }) => {
         iconAs={Icon}
         alt={intl.formatMessage(messages.headingInfoAlt)}
         className="mr-2"
+        onClick={openInfoSidebar}
       />
     </>
   );
@@ -62,7 +65,18 @@ const LibraryAuthoringPage = () => {
 
   const currentPath = location.pathname.split('/').pop();
   const activeKey = (currentPath && currentPath in TabList) ? TabList[currentPath] : TabList.home;
-  const { sidebarBodyComponent, openAddContentSidebar } = useContext(LibraryContext);
+  const {
+    sidebarBodyComponent,
+    openAddContentSidebar,
+    openInfoSidebar,
+  } = useContext(LibraryContext);
+
+  useEffect(() => {
+    // Open Library Info sidebar by default
+    if (!isLoading && libraryData) {
+      openInfoSidebar();
+    };
+  }, [isLoading, libraryData]);
 
   if (isLoading) {
     return <Loading />;
@@ -142,7 +156,7 @@ const LibraryAuthoringPage = () => {
         </Col>
         { sidebarBodyComponent !== null && (
           <Col xs={6} md={4} className="box-shadow-left-1">
-            <LibrarySidebar />
+            <LibrarySidebar library={libraryData}/>
           </Col>
         )}
       </Row>
