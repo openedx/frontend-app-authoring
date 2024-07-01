@@ -77,38 +77,40 @@ export const replaceStaticWithAsset = ({
   lmsEndpointUrl,
 }) => {
   let content = initialContent;
+  let hasChanges = false;
   const srcs = content.split(/(src="|src=&quot;|href="|href=&quot)/g).filter(
     src => src.startsWith('/static') || src.startsWith('/asset'),
   );
-  if (isEmpty(srcs)) {
-    return initialContent;
-  }
-  srcs.forEach(src => {
-    const currentContent = content;
-    let staticFullUrl;
-    const isStatic = src.startsWith('/static/');
-    const assetSrc = src.substring(0, src.indexOf('"'));
-    const staticName = assetSrc.substring(8);
-    const assetName = assetSrc.replace(/\/assets\/.+[^/]\//g, '');
-    const displayName = isStatic ? staticName : assetName;
-    const isCorrectAssetFormat = assetSrc.match(/\/asset-v1:\S+[+]\S+[@]\S+[+]\S+[@]/g)?.length >= 1;
-    // assets in expandable text areas so not support relative urls so all assets must have the lms
-    // endpoint prepended to the relative url
-    if (editorType === 'expandable') {
-      if (isCorrectAssetFormat) {
-        staticFullUrl = `${lmsEndpointUrl}${assetSrc}`;
-      } else {
-        staticFullUrl = `${lmsEndpointUrl}${getRelativeUrl({ courseId: learningContextId, displayName })}`;
+  if (!isEmpty(srcs)) {
+    srcs.forEach(src => {
+      const currentContent = content;
+      let staticFullUrl;
+      const isStatic = src.startsWith('/static/');
+      const assetSrc = src.substring(0, src.indexOf('"'));
+      const staticName = assetSrc.substring(8);
+      const assetName = assetSrc.replace(/\/assets\/.+[^/]\//g, '');
+      const displayName = isStatic ? staticName : assetName;
+      const isCorrectAssetFormat = assetSrc.match(/\/asset-v1:\S+[+]\S+[@]\S+[+]\S+[@]/g)?.length >= 1;
+      // assets in expandable text areas so not support relative urls so all assets must have the lms
+      // endpoint prepended to the relative url
+      if (editorType === 'expandable') {
+        if (isCorrectAssetFormat) {
+          staticFullUrl = `${lmsEndpointUrl}${assetSrc}`;
+        } else {
+          staticFullUrl = `${lmsEndpointUrl}${getRelativeUrl({ courseId: learningContextId, displayName })}`;
+        }
+      } else if (!isCorrectAssetFormat) {
+        staticFullUrl = getRelativeUrl({ courseId: learningContextId, displayName });
       }
-    } else if (!isCorrectAssetFormat) {
-      staticFullUrl = getRelativeUrl({ courseId: learningContextId, displayName });
-    }
-    if (staticFullUrl) {
-      const currentSrc = src.substring(0, src.indexOf('"'));
-      content = currentContent.replace(currentSrc, staticFullUrl);
-    }
-  });
-  return content;
+      if (staticFullUrl) {
+        const currentSrc = src.substring(0, src.indexOf('"'));
+        content = currentContent.replace(currentSrc, staticFullUrl);
+        hasChanges = true;
+      }
+    });
+    if (hasChanges) { return content; }
+  }
+  return false;
 };
 
 export const getImageResizeHandler = ({ editor, imagesRef, setImage }) => () => {
@@ -196,7 +198,7 @@ export const setupCustomBehavior = ({
         lmsEndpointUrl,
         learningContextId,
       });
-      updateContent(newContent);
+      if (newContent) { updateContent(newContent); }
     });
   }
   editor.on('ExecCommand', (e) => {
@@ -206,7 +208,7 @@ export const setupCustomBehavior = ({
         initialContent,
         learningContextId,
       });
-      editor.setContent(newContent);
+      if (newContent) { editor.setContent(newContent); }
     }
     if (e.command === 'RemoveFormat') {
       editor.formatter.remove('blockquote');

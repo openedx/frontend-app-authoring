@@ -87,6 +87,7 @@ export const hooks = {
     updateReactState({ settings, ...args });
 
     close();
+    args.setSelection(null);
   },
   onClose: ({ clearSelection, close }) => () => {
     clearSelection();
@@ -130,7 +131,7 @@ export const ImageUploadModal = ({
       <ImageSettingsModal
         {...{
           isOpen,
-          close: module.hooks.onClose({ editorRef, clearSelection, close }),
+          close: module.hooks.onClose({ clearSelection, close }),
           selection,
           images,
           saveToEditor: module.hooks.createSaveCallback({
@@ -141,6 +142,7 @@ export const ImageUploadModal = ({
             selection,
             setSelection,
             lmsEndpointUrl,
+            clearSelection,
           }),
           returnToSelection: clearSelection,
         }}

@@ -182,17 +182,17 @@ describe('TinyMceEditor hooks', () => {
     });
 
     describe('replaceStaticWithAsset', () => {
-      const initialContent = '<img src="/static/soMEImagEURl1.jpeg"/><a href="/assets/v1/some-key/test.pdf">test</a>';
-      const learningContextId = 'course+test+run';
+      const initialContent = '<img src="/static/soMEImagEURl1.jpeg"/><a href="/assets/v1/some-key/test.pdf">test</a><img src="/asset-v1:org+test+run+type@asset+block@correct.png" />';
+      const learningContextId = 'course-v1:org+test+run';
       const lmsEndpointUrl = 'sOmEvaLue.cOm';
-      it('it returns updated src for text editor to update content', () => {
-        const expected = '<img src="/asset+test+run+type@asset+block@soMEImagEURl1.jpeg"/><a href="/asset+test+run+type@asset+block@test.pdf">test</a>';
+      it('returns updated src for text editor to update content', () => {
+        const expected = '<img src="/asset-v1:org+test+run+type@asset+block@soMEImagEURl1.jpeg"/><a href="/asset-v1:org+test+run+type@asset+block@test.pdf">test</a><img src="/asset-v1:org+test+run+type@asset+block@correct.png" />';
         const actual = module.replaceStaticWithAsset({ initialContent, learningContextId });
         expect(actual).toEqual(expected);
       });
-      it('it returs updated src with absolute url for expandable editor to update content', () => {
+      it('returns updated src with absolute url for expandable editor to update content', () => {
         const editorType = 'expandable';
-        const expected = `<img src="${lmsEndpointUrl}/asset+test+run+type@asset+block@soMEImagEURl1.jpeg"/><a href="${lmsEndpointUrl}/asset+test+run+type@asset+block@test.pdf">test</a>`;
+        const expected = `<img src="${lmsEndpointUrl}/asset-v1:org+test+run+type@asset+block@soMEImagEURl1.jpeg"/><a href="${lmsEndpointUrl}/asset-v1:org+test+run+type@asset+block@test.pdf">test</a><img src="${lmsEndpointUrl}/asset-v1:org+test+run+type@asset+block@correct.png" />`;
         const actual = module.replaceStaticWithAsset({
           initialContent,
           editorType,
@@ -200,6 +200,11 @@ describe('TinyMceEditor hooks', () => {
           learningContextId,
         });
         expect(actual).toEqual(expected);
+      });
+      it('returns false when there are no srcs to update', () => {
+        const content = '<div>Hello world!</div>';
+        const actual = module.replaceStaticWithAsset({ initialContent: content, learningContextId });
+        expect(actual).toBeFalsy();
       });
     });
     describe('setAssetToStaticUrl', () => {

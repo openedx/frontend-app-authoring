@@ -128,6 +128,7 @@ describe('ImageUploadModal', () => {
           expect(updateImageDimensionsSpy.mock.results[0].value.foundMatch).toBe(false);
           expect(images.current).toEqual([mockImage, newImage]);
           expect(close).toBeCalled();
+          expect(setSelection).toBeCalledWith(null);
         },
       );
     });
