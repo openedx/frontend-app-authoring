@@ -5,14 +5,18 @@ import {
   waitFor,
   act,
 } from '@testing-library/react';
+import { AppProvider } from '@edx/frontend-platform/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
+import { initializeMockApp } from '@edx/frontend-platform';
 import moment from 'moment/moment';
 
+import initializeStore from '../../store';
 import { REQUEST_TYPES } from '../constants';
 import { courseHandoutsMock, courseUpdatesMock } from '../__mocks__';
 import UpdateForm from './UpdateForm';
 import messages from './messages';
 
+let store;
 const closeMock = jest.fn();
 const onSubmitMock = jest.fn();
 const addNewUpdateMock = { id: 0, date: moment().utc().toDate(), content: 'Some content' };
@@ -48,18 +52,32 @@ const courseUpdatesInitialValues = (requestType) => {
 };
 
 const renderComponent = ({ requestType }) => render(
-  <IntlProvider locale="en">
-    <UpdateForm
-      isOpen
-      close={closeMock}
-      requestType={requestType}
-      onSubmit={onSubmitMock}
-      courseUpdatesInitialValues={courseUpdatesInitialValues(requestType)}
-    />
-  </IntlProvider>,
+  <AppProvider store={store}>
+    <IntlProvider locale="en">
+      <UpdateForm
+        isOpen
+        close={closeMock}
+        requestType={requestType}
+        onSubmit={onSubmitMock}
+        courseUpdatesInitialValues={courseUpdatesInitialValues(requestType)}
+      />
+    </IntlProvider>
+  </AppProvider>,
 );
 
 describe('<UpdateForm />', () => {
+  beforeEach(() => {
+    initializeMockApp({
+      authenticatedUser: {
+        userId: 3,
+        username: 'abc123',
+        administrator: true,
+        roles: [],
+      },
+    });
+
+    store = initializeStore();
+  });
   it('render Add new update form correctly', async () => {
     const { getByText, getByDisplayValue, getByRole } = renderComponent({ requestType: REQUEST_TYPES.add_new_update });
     const { date } = courseUpdatesInitialValues(REQUEST_TYPES.add_new_update);

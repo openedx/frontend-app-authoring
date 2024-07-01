@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-// @ts-check
 import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { ModalDialog } from '@openedx/paragon';
@@ -7,8 +5,7 @@ import { ModalDialog } from '@openedx/paragon';
 import messages from './messages';
 import SearchUI from './SearchUI';
 
-/** @type {React.FC<{courseId: string, isOpen: boolean, onClose: () => void}>} */
-const SearchModal = ({ courseId, ...props }) => {
+const SearchModal: React.FC<{ courseId: string, isOpen: boolean, onClose: () => void }> = ({ courseId, ...props }) => {
   const intl = useIntl();
   const title = intl.formatMessage(messages.title);
 

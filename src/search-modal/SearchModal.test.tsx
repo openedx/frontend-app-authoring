@@ -6,14 +6,15 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
+import type { Store } from 'redux';
 import MockAdapter from 'axios-mock-adapter';
 
 import initializeStore from '../store';
 import SearchModal from './SearchModal';
 import { getContentSearchConfigUrl } from './data/api';
 
-let store;
-let axiosMock;
+let store: Store;
+let axiosMock: MockAdapter;
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -32,7 +33,7 @@ const RootWrapper = () => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
-        <SearchModal isOpen onClose={() => undefined} />
+        <SearchModal courseId="" isOpen onClose={() => undefined} />
       </QueryClientProvider>
     </IntlProvider>
   </AppProvider>

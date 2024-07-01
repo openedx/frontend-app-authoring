@@ -202,6 +202,12 @@ const messages = defineMessages({
   failedLabel: {
     id: 'course-authoring.files-and-uploads.filter.failed.label',
     defaultMessage: 'Failed',
+    description: 'Label for failed sort button in sort and filter modal',
+  },
+  uploadErrorAlertTitle: {
+    id: 'course-authoring.files-and-uploads.error.upload.title',
+    defaultMessage: 'Upload error',
+    description: 'Title for upload error alert',
   },
 });
 
