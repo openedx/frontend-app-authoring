@@ -25,10 +25,10 @@ const LibrarySidebar = () => {
 
   const bodyComponentMap = {
     'add-content': <AddContentContainer />,
-    'unknown': null,
+    unknown: null,
   };
 
-  const buildBody = () : React.ReactNode|null => bodyComponentMap[sidebarBodyComponent || 'unknown'];
+  const buildBody = () : React.ReactNode | null => bodyComponentMap[sidebarBodyComponent || 'unknown'];
 
   return (
     <div className="p-2 vh-100">

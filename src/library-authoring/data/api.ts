@@ -25,6 +25,21 @@ export interface ContentLibrary {
   license: string;
 }
 
+export interface CreateBlockDataRequest {
+  libraryId: string;
+  blockType: string;
+  definitionId: string;
+}
+
+export interface CreateBlockDataResponse {
+  id: string;
+  blockType: string;
+  defKey: string | null;
+  displayName: string;
+  hasUnpublishedChanges: boolean;
+  tagsCount: number;
+}
+
 /**
  * Fetch a content library by its ID.
  */

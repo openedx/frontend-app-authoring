@@ -6,7 +6,10 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
-  render, waitFor, screen, fireEvent,
+  fireEvent,
+  render,
+  waitFor,
+  screen,
 } from '@testing-library/react';
 import fetchMock from 'fetch-mock-jest';
 
