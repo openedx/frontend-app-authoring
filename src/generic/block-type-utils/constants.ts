@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   BackHand as BackHandIcon,
   BookOpen as BookOpenIcon,
@@ -14,6 +15,11 @@ import {
   Folder,
 } from '@openedx/paragon/icons';
 
+
+interface TypeIconsMap {
+  [key: string]: React.ReactElement;
+}
+
 export const UNIT_ICON_TYPES = ['video', 'other', 'vertical', 'problem', 'lock'];
 
 export const COMPONENT_TYPES = {
@@ -27,7 +33,7 @@ export const COMPONENT_TYPES = {
   dragAndDrop: 'drag-and-drop-v2',
 };
 
-export const TYPE_ICONS_MAP = {
+export const TYPE_ICONS_MAP: TypeIconsMap = {
   video: VideoCameraIcon,
   other: BookOpenIcon,
   vertical: FormatListBulletedIcon,
@@ -35,7 +41,7 @@ export const TYPE_ICONS_MAP = {
   lock: LockIcon,
 };
 
-export const COMPONENT_TYPE_ICON_MAP = {
+export const COMPONENT_TYPE_ICON_MAP: TypeIconsMap = {
   [COMPONENT_TYPES.advanced]: ScienceIcon,
   [COMPONENT_TYPES.discussion]: QuestionAnswerOutlineIcon,
   [COMPONENT_TYPES.library]: LibraryIcon,
@@ -46,7 +52,7 @@ export const COMPONENT_TYPE_ICON_MAP = {
   [COMPONENT_TYPES.dragAndDrop]: BackHandIcon,
 };
 
-export const STRUCTURAL_TYPE_ICONS = {
+export const STRUCTURAL_TYPE_ICONS: TypeIconsMap = {
   vertical: TYPE_ICONS_MAP.vertical,
   sequential: Folder,
   chapter: Folder,

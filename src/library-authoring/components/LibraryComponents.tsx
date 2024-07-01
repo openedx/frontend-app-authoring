@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React, { useEffect, useMemo } from 'react';
 
 import { CardGrid } from '@openedx/paragon';

@@ -16,7 +16,7 @@ export const useContentLibrary = (libraryId?: string) => (
 );
 
 /**
- * Hook to fetch a content library by its ID.
+ *  Hook to fetch block types of a library.
  */
 export const useLibraryBlockTypes = (libraryId?: string) => (
   useQuery({
@@ -27,10 +27,8 @@ export const useLibraryBlockTypes = (libraryId?: string) => (
 
 /**
  * Hook to fetch components in a library.
- * @param {string} libraryId - The ID of the library to fetch.
- * @param {string} searchKeywords - Keywords to search for.
  */
-export const useLibraryComponents = (libraryId, searchKeywords) => {
+export const useLibraryComponents = (libraryId: string, searchKeywords: string) => {
   const { data: connectionDetails } = useContentSearchConnection();
 
   const indexName = connectionDetails?.indexName;
