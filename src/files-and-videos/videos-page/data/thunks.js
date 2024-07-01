@@ -224,6 +224,7 @@ const uploadToBucket = async ({
   const currentController = new AbortController();
   controllers.push(currentController);
   const currentVideoData = uploadingIdsRef.current.uploadData[edxVideoId];
+
   try {
     const putToServerResponse = await uploadVideo(
       uploadUrl,
@@ -279,6 +280,24 @@ const uploadToBucket = async ({
   }
 };
 
+const newUploadData = ({
+  status,
+  edxVideoId,
+  currentData,
+  key,
+  originalValue,
+}) => {
+  const newData = currentData;
+  if (edxVideoId && edxVideoId !== key) {
+    newData[edxVideoId] = { ...originalValue, status };
+    delete newData[key];
+    return newData;
+  }
+
+  newData[key] = { ...originalValue, status };
+  return newData;
+};
+
 export function addVideoFile(
   courseId,
   files,
@@ -292,31 +311,38 @@ export function addVideoFile(
     let hasFailure = false;
     await Promise.all(files.map(async (file, idx) => {
       const name = file?.name || `Video ${idx + 1}`;
+      const progress = 0;
+
+      uploadingIdsRef.current.uploadData = newUploadData({
+        status: RequestStatus.PENDING,
+        currentData: uploadingIdsRef.current.uploadData,
+        originalValue: { name, progress },
+        key: `video_${idx}`,
+      });
+
       const { edxVideoId, uploadUrl } = await addVideoToEdxVal(courseId, file, dispatch);
+
       if (uploadUrl && edxVideoId) {
-        uploadingIdsRef.current.uploadData = {
-          ...uploadingIdsRef.current.uploadData,
-          [edxVideoId]: {
-            name,
-            status: RequestStatus.PENDING,
-            progress: 0,
-          },
-        };
+        uploadingIdsRef.current.uploadData = newUploadData({
+          status: RequestStatus.PENDING,
+          currentData: uploadingIdsRef.current.uploadData,
+          originalValue: { name, progress },
+          key: `video_${idx}`,
+          edxVideoId,
+        });
         hasFailure = await uploadToBucket({
           courseId, uploadUrl, file, uploadingIdsRef, edxVideoId, dispatch,
         });
       } else {
         hasFailure = true;
-        uploadingIdsRef.current.uploadData = {
-          ...uploadingIdsRef.current.uploadData,
-          [idx]: {
-            name,
-            status: RequestStatus.FAILED,
-            progress: 0,
-          },
+        uploadingIdsRef.current.uploadData[idx] = {
+          status: RequestStatus.FAILED,
+          name,
+          progress,
         };
       }
     }));
+
     try {
       const { videos } = await fetchVideoList(courseId);
       const newVideos = videos.filter(
@@ -337,11 +363,13 @@ export function addVideoFile(
         updateErrors({ error: 'add', message: 'Failed to load videos' }),
       );
     }
+
     if (hasFailure) {
       dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.FAILED }));
     } else {
       dispatch(updateEditStatus({ editType: 'add', status: RequestStatus.SUCCESSFUL }));
     }
+
     uploadingIdsRef.current = {
       uploadData: {},
       uploadCount: 0,

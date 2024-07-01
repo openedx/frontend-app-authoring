@@ -243,14 +243,16 @@ const FileTable = ({
           fileType={fileType}
         />
 
-        <ApiStatusToast
-          actionType={intl.formatMessage(messages.apiStatusAddingAction)}
-          selectedRowCount={selectedRows.length}
-          isOpen={isAddOpen}
-          setClose={setAddClose}
-          setSelectedRows={setSelectedRows}
-          fileType={fileType}
-        />
+        {fileType === 'files' && (
+          <ApiStatusToast
+            actionType={intl.formatMessage(messages.apiStatusAddingAction)}
+            selectedRowCount={selectedRows.length}
+            isOpen={isAddOpen}
+            setClose={setAddClose}
+            setSelectedRows={setSelectedRows}
+            fileType={fileType}
+          />
+        )}
 
         <ApiStatusToast
           actionType={intl.formatMessage(messages.apiStatusDownloadingAction)}
