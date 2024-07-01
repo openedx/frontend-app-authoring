@@ -149,7 +149,7 @@ describe('<LibraryAuthoringPage />', () => {
     axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
 
     const {
-      getByRole, getByText, queryByText,
+      getByRole, getByText, queryByText, getAllByText,
     } = render(<RootWrapper />);
 
     // Ensure the search endpoint is called
@@ -163,7 +163,7 @@ describe('<LibraryAuthoringPage />', () => {
     expect(getByText('Recently Modified')).toBeInTheDocument();
     expect(getByText('Collections (0)')).toBeInTheDocument();
     expect(getByText('Components (6)')).toBeInTheDocument();
-    expect(getByText('Test HTML Block')).toBeInTheDocument();
+    expect(getAllByText('Test HTML Block')[0]).toBeInTheDocument();
 
     // Navigate to the components tab
     fireEvent.click(getByRole('tab', { name: 'Components' }));
