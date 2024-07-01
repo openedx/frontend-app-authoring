@@ -12,8 +12,8 @@ export const LibraryContext = React.createContext({
  * React component to provide `LibraryContext`
  * @param {{children?: React.ReactNode}} props The components to wrap
  */
-export const LibraryProvider = (props) => {
-  const [sidebarBodyComponent, setSidebarBodyComponent] = React.useState(/** @type{null|string} */ (null));
+export const LibraryProvider = (props: {children?: React.ReactNode}) => {
+  const [sidebarBodyComponent, setSidebarBodyComponent] = React.useState<string|null>(null);
 
   const closeLibrarySidebar = React.useCallback(() => setSidebarBodyComponent(null), []);
   const openAddContentSidebar = React.useCallback(() => setSidebarBodyComponent('add-content'), []);

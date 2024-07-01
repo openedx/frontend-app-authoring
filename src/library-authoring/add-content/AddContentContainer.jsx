@@ -106,6 +106,4 @@ const AddContentContainer = () => {
   );
 };
 
-AddContentContainer.propTypes = {};
-
 export default AddContentContainer;

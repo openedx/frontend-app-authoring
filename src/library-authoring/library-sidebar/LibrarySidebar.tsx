@@ -1,4 +1,3 @@
-// @ts-check
 import React, { useContext } from 'react';
 import {
   Stack,
@@ -26,9 +25,10 @@ const LibrarySidebar = () => {
 
   const bodyComponentMap = {
     'add-content': <AddContentContainer />,
+    'unknown': null,
   };
 
-  const buildBody = () => bodyComponentMap[sidebarBodyComponent];
+  const buildBody = () : React.ReactNode|null => bodyComponentMap[sidebarBodyComponent || 'unknown'];
 
   return (
     <div className="p-2 vh-100">
@@ -48,7 +48,5 @@ const LibrarySidebar = () => {
     </div>
   );
 };
-
-LibrarySidebar.propTypes = {};
 
 export default LibrarySidebar;

@@ -25,7 +25,7 @@ const messages = defineMessages({
   dragDropTypeButton: {
     id: 'course-authoring.library-authoring.add-content.buttons.types.drag-drop',
     defaultMessage: 'Drag Drop',
-    description: 'Content of button to create a Drag Drog component.',
+    description: 'Content of button to create a Drag Drod component.',
   },
   videoTypeButton: {
     id: 'course-authoring.library-authoring.add-content.buttons.types.video',
