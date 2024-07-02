@@ -53,7 +53,7 @@ const TaxonomyList = ({ contentId }) => {
         values={{
           link: (
             <Button
-              tabIndex="0"
+              tabIndex={0}
               size="inline"
               variant="link"
               className="text-info-500 p-0 enable-taxonomies-button"

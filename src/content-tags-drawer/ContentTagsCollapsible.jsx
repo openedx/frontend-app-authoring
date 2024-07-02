@@ -74,7 +74,7 @@ const CustomMenu = (props) => {
         <div className="d-flex flex-row justify-content-end">
           <div className="d-inline">
             <Button
-              tabIndex="0"
+              tabIndex={0}
               ref={selectCancelRef}
               variant="tertiary"
               className="tags-drawer-cancel-button"
@@ -83,7 +83,7 @@ const CustomMenu = (props) => {
               { intl.formatMessage(messages.collapsibleCancelStagedTagsButtonText) }
             </Button>
             <Button
-              tabIndex="0"
+              tabIndex={0}
               ref={selectAddRef}
               variant="tertiary"
               className="text-info-500 add-tags-button"
@@ -139,7 +139,7 @@ const CustomIndicatorsContainer = (props) => {
             onClick={handleCommitStagedTags}
             onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); }}
             ref={selectInlineAddRef}
-            tabIndex="0"
+            tabIndex={0}
             onKeyDown={disableActionKeys} // To prevent navigating staged tags when button focused
           >
             { intl.formatMessage(messages.collapsibleInlineAddStagedTagsButtonText) }
@@ -240,7 +240,7 @@ const ContentTagsCollapsible = ({
   const selectCancelRef = React.useRef(/** @type {HTMLSelectElement | null} */(null));
   const selectAddRef = React.useRef(/** @type {HTMLSelectElement | null} */(null));
   const selectInlineAddRef = React.useRef(/** @type {HTMLSelectElement | null} */(null));
-  const selectInlineEditModeRef = React.useRef(/** @type {HTMLSelectElement | null} */(null));
+  const selectInlineEditModeRef = React.useRef(/** @type {HTMLButtonElement | null} */(null));
   const selectRef = React.useRef(/** @type {HTMLSelectElement | null} */(null));
 
   const [selectMenuIsOpen, setSelectMenuIsOpen] = React.useState(false);
@@ -393,7 +393,7 @@ const ContentTagsCollapsible = ({
               <div className="mb-3" key={taxonomyId}>
                 <p className="text-gray-500">{intl.formatMessage(messages.collapsibleNoTagsAddedText)}
                   <Button
-                    tabIndex="0"
+                    tabIndex={0}
                     size="inline"
                     ref={selectInlineEditModeRef}
                     variant="link"

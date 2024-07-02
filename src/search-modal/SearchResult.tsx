@@ -22,13 +22,13 @@ import type { ContentHit } from './data/api';
 import Highlight from './Highlight';
 import messages from './messages';
 
-const STRUCTURAL_TYPE_ICONS: Record<string, React.ReactElement> = {
+const STRUCTURAL_TYPE_ICONS: Record<string, React.ComponentType> = {
   vertical: TYPE_ICONS_MAP.vertical,
   sequential: Folder,
   chapter: Folder,
 };
 
-function getItemIcon(blockType: string): React.ReactElement {
+function getItemIcon(blockType: string): React.ComponentType {
   return STRUCTURAL_TYPE_ICONS[blockType] ?? COMPONENT_TYPE_ICON_MAP[blockType] ?? Article;
 }
 

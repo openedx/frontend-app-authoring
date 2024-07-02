@@ -24,7 +24,7 @@ const SearchFilterWidget: React.FC<{
   children: React.ReactNode;
 }> = ({ appliedFilters, ...props }) => {
   const [isOpen, open, close] = useToggle(false);
-  const [target, setTarget] = React.useState(null);
+  const [target, setTarget] = React.useState<HTMLButtonElement | null>(null);
 
   return (
     <>
