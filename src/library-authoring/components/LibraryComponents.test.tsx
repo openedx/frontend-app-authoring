@@ -9,9 +9,9 @@ import MockAdapter from 'axios-mock-adapter';
 import fetchMock from 'fetch-mock-jest';
 import type { Store } from 'redux';
 
-import { getContentSearchConfigUrl } from '../../search-modal/data/api';
+import { getContentSearchConfigUrl } from '../../search-manager/data/api';
+import { SearchContextProvider } from '../../search-manager/SearchManager';
 import mockEmptyResult from '../../search-modal/__mocks__/empty-search-result.json';
-import { SearchContextProvider } from '../../search-modal/manager/SearchManager';
 import initializeStore from '../../store';
 import { libraryComponentsMock } from '../__mocks__';
 import LibraryComponents from './LibraryComponents';
@@ -76,8 +76,8 @@ jest.mock('../data/apiHook', () => ({
   useLibraryBlockTypes: () => mockUseLibraryBlockTypes(),
 }));
 
-jest.mock('../../search-modal/manager/SearchManager', () => ({
-  ...jest.requireActual('../../search-modal/manager/SearchManager'),
+jest.mock('../../search-manager', () => ({
+  ...jest.requireActual('../../search-manager'),
   useSearchContext: () => mockUseSearchContext(),
 }));
 

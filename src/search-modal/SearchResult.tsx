@@ -10,13 +10,14 @@ import { OpenInNew } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { constructLibraryAuthoringURL } from '../utils';
+import { getItemIcon } from '../generic/block-type-utils';
+import { useSearchContext } from '../search-manager';
 import { getStudioHomeData } from '../studio-home/data/selectors';
-import { useSearchContext } from './manager/SearchManager';
-import type { ContentHit } from './data/api';
+import { constructLibraryAuthoringURL } from '../utils';
 import Highlight from './Highlight';
 import messages from './messages';
-import { getItemIcon } from '../generic/block-type-utils';
+
+import type { ContentHit } from '../search-manager';
 
 /**
  * Returns the URL Suffix for library/library component hit

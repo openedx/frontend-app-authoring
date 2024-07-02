@@ -9,7 +9,7 @@ import {
 import SearchFilterWidget from './SearchFilterWidget';
 import messages from './messages';
 import BlockTypeLabel from './BlockTypeLabel';
-import { useSearchContext } from './manager/SearchManager';
+import { useSearchContext } from './SearchManager';
 
 /**
  * A button with a dropdown that allows filtering the current search by component type (XBlock type)

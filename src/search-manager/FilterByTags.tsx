@@ -13,7 +13,7 @@ import {
 import { ArrowDropDown, ArrowDropUp, Warning } from '@openedx/paragon/icons';
 import SearchFilterWidget from './SearchFilterWidget';
 import messages from './messages';
-import { useSearchContext } from './manager/SearchManager';
+import { useSearchContext } from './SearchManager';
 import { useTagFilterOptions } from './data/apiHooks';
 import { LoadingSpinner } from '../generic/Loading';
 import { TAG_SEP } from './data/api';

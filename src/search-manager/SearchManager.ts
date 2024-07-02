@@ -8,8 +8,8 @@
 import React from 'react';
 import { MeiliSearch, type Filter } from 'meilisearch';
 
-import { ContentHit } from '../data/api';
-import { useContentSearchConnection, useContentSearchResults } from '../data/apiHooks';
+import { ContentHit } from './data/api';
+import { useContentSearchConnection, useContentSearchResults } from './data/apiHooks';
 
 export interface SearchContextData {
   client?: MeiliSearch;

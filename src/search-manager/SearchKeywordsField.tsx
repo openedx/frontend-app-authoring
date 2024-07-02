@@ -3,7 +3,7 @@ import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { SearchField } from '@openedx/paragon';
 import messages from './messages';
-import { useSearchContext } from './manager/SearchManager';
+import { useSearchContext } from './SearchManager';
 
 /**
  * The "main" input field where users type in search keywords. The search happens as they type (no need to press enter).

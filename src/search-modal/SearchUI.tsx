@@ -8,14 +8,16 @@ import {
 import { Check } from '@openedx/paragon/icons';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
-import ClearFiltersButton from './ClearFiltersButton';
+import {
+  ClearFiltersButton,
+  FilterByBlockType,
+  FilterByTags,
+  SearchContextProvider,
+  SearchKeywordsField,
+} from '../search-manager';
 import EmptyStates from './EmptyStates';
 import SearchResults from './SearchResults';
-import SearchKeywordsField from './SearchKeywordsField';
-import FilterByBlockType from './FilterByBlockType';
-import FilterByTags from './FilterByTags';
 import Stats from './Stats';
-import { SearchContextProvider } from './manager/SearchManager';
 import messages from './messages';
 
 const SearchUI: React.FC<{ courseId: string, closeSearchModal?: () => void }> = (props) => {

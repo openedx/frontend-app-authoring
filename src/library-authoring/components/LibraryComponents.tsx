@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { CardGrid } from '@openedx/paragon';
 
-import { useSearchContext } from '../../search-modal/manager/SearchManager';
+import { useSearchContext } from '../../search-manager';
 import { NoComponents, NoSearchResults } from '../EmptyStates';
 import { useLibraryBlockTypes } from '../data/apiHook';
 import { ComponentCard, ComponentCardLoading } from './ComponentCard';

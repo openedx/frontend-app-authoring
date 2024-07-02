@@ -13,11 +13,13 @@ import Loading from '../generic/Loading';
 import SubHeader from '../generic/sub-header/SubHeader';
 import Header from '../header';
 import NotFoundAlert from '../generic/NotFoundAlert';
-import { SearchContextProvider } from '../search-modal/manager/SearchManager';
-import SearchKeywordsField from '../search-modal/SearchKeywordsField';
-import ClearFiltersButton from '../search-modal/ClearFiltersButton';
-import FilterByBlockType from '../search-modal/FilterByBlockType';
-import FilterByTags from '../search-modal/FilterByTags';
+import {
+  ClearFiltersButton,
+  FilterByBlockType,
+  FilterByTags,
+  SearchContextProvider,
+  SearchKeywordsField,
+} from '../search-manager';
 import Stats from '../search-modal/Stats';
 import LibraryComponents from './components/LibraryComponents';
 import LibraryCollections from './LibraryCollections';

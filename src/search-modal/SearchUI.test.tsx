@@ -28,7 +28,7 @@ import mockTagsFacetResultLevel0 from './__mocks__/facet-search-level0.json';
 import mockTagsFacetResultLevel1 from './__mocks__/facet-search-level1.json';
 import mockTagsKeywordSearchResult from './__mocks__/tags-keyword-search.json';
 import SearchUI from './SearchUI';
-import { getContentSearchConfigUrl } from './data/api';
+import { getContentSearchConfigUrl } from '../search-manager/data/api';
 
 // mockResult contains only a single result - this one:
 const mockResultDisplayName = 'Test HTML Block';

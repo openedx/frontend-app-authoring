@@ -5,7 +5,7 @@ import {
 } from '@openedx/paragon';
 
 import { NoComponents, NoSearchResults } from './EmptyStates';
-import { useSearchContext } from '../search-modal/manager/SearchManager';
+import { useSearchContext } from '../search-manager';
 import LibraryCollections from './LibraryCollections';
 import LibraryComponents from './components/LibraryComponents';
 import messages from './messages';
