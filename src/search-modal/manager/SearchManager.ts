@@ -42,8 +42,8 @@ export const SearchContextProvider: React.FC<{
   closeSearchModal?: () => void,
 }> = ({ extraFilter, ...props }) => {
   const [searchKeywords, setSearchKeywords] = React.useState('');
-  const [blockTypesFilter, setBlockTypesFilter] = React.useState(/** type {string[]} */([]));
-  const [tagsFilter, setTagsFilter] = React.useState(/** type {string[]} */([]));
+  const [blockTypesFilter, setBlockTypesFilter] = React.useState<string[]>([]);
+  const [tagsFilter, setTagsFilter] = React.useState<string[]>([]);
 
   const canClearFilters = blockTypesFilter.length > 0 || tagsFilter.length > 0;
   const clearFilters = React.useCallback(() => {

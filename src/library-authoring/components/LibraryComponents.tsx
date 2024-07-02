@@ -8,10 +8,7 @@ import { ComponentCard, ComponentCardLoading } from './ComponentCard';
 
 type LibraryComponentsProps = {
   libraryId: string,
-  filter: {
-    searchKeywords: string,
-  },
-  variant: string,
+  variant: 'full' | 'preview',
 };
 
 /**
