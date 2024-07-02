@@ -1,4 +1,3 @@
-// @ts-check
 import React from 'react';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';

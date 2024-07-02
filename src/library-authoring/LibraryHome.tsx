@@ -1,5 +1,3 @@
-// @ts-check
-/* eslint-disable react/prop-types */
 import React from 'react';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
@@ -12,13 +10,7 @@ import LibraryCollections from './LibraryCollections';
 import LibraryComponents from './components/LibraryComponents';
 import messages from './messages';
 
-/**
- * @type {React.FC<{
- *   title: string,
- *   children: React.ReactNode,
- * }>}
- */
-const Section = ({ title, children }) => (
+const Section = ({ title, children } : { title: string, children: React.ReactNode }) => (
   <Card>
     <Card.Header
       title={title}
@@ -29,12 +21,11 @@ const Section = ({ title, children }) => (
   </Card>
 );
 
-/**
- * @type {React.FC<{
- *   libraryId: string,
- * }>}
- */
-const LibraryHome = ({ libraryId }) => {
+type LibraryHomeProps = {
+  libraryId: string,
+};
+
+const LibraryHome = ({ libraryId } : LibraryHomeProps) => {
   const {
     totalHits: componentCount,
     searchKeywords,

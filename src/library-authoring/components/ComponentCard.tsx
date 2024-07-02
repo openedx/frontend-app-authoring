@@ -1,4 +1,3 @@
-// @ts-check
 import React from 'react';
 import {
   ActionRow,
@@ -9,12 +8,19 @@ import {
   Dropdown,
   Stack,
 } from '@openedx/paragon';
-import PropTypes from 'prop-types';
 import { MoreVert } from '@openedx/paragon/icons';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import TagCount from '../../generic/tag-count';
 import { getItemIcon, getComponentColor } from '../../generic/block-type-utils';
+
+type ComponentCardProps = {
+  title: string,
+  description: string,
+  tagCount: number,
+  blockType: string,
+  blockTypeDisplayName: string,
+};
 
 const ComponentCardMenu = () => (
   <Dropdown>
@@ -54,18 +60,17 @@ export const ComponentCardLoading = () => (
 );
 
 export const ComponentCard = ({
-  isLoading,
   title,
   description,
   tagCount,
   blockType,
   blockTypeDisplayName,
-}) => {
+}: ComponentCardProps) => {
   const componentIcon = getItemIcon(blockType);
 
   return (
     <Container className="library-component-card">
-      <Card isLoading={isLoading}>
+      <Card>
         <Card.Header
           className={`library-component-header ${getComponentColor(blockType)}`}
           title={
@@ -97,17 +102,4 @@ export const ComponentCard = ({
       </Card>
     </Container>
   );
-};
-
-ComponentCard.defaultProps = {
-  isLoading: false,
-};
-
-ComponentCard.propTypes = {
-  isLoading: PropTypes.bool,
-  title: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
-  tagCount: PropTypes.number.isRequired,
-  blockType: PropTypes.string.isRequired,
-  blockTypeDisplayName: PropTypes.string.isRequired,
 };

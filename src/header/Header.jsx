@@ -41,7 +41,7 @@ const Header = ({
       items: getToolsMenuItems({ studioBaseUrl, courseId: contentId, intl }),
     },
   ] : [];
-  const outlineLink = !isLibrary ? `${studioBaseUrl}/course/${contentId}` : `${studioBaseUrl}/library/${contentId}`;
+  const outlineLink = !isLibrary ? `${studioBaseUrl}/course/${contentId}` : `/course-authoring/library/${contentId}`;
 
   return (
     <>

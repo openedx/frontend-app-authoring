@@ -1,5 +1,3 @@
-// @ts-check
-/* eslint-disable react/prop-types */
 import React, { useEffect, useMemo } from 'react';
 import { CardGrid } from '@openedx/paragon';
 
@@ -8,22 +6,25 @@ import { NoComponents, NoSearchResults } from '../EmptyStates';
 import { useLibraryBlockTypes } from '../data/apiHook';
 import { ComponentCard, ComponentCardLoading } from './ComponentCard';
 
+type LibraryComponentsProps = {
+  libraryId: string,
+  filter: {
+    searchKeywords: string,
+  },
+  variant: string,
+};
+
 /**
  * Library Components to show components grid
  *
  * Use style to:
  *   - 'full': Show all components with Infinite scroll pagination.
  *   - 'preview': Show first 4 components without pagination.
- *
- * @type {React.FC<{
- *   libraryId: string,
- *   variant: 'full'|'preview',
- * }>}
  */
 const LibraryComponents = ({
   libraryId,
   variant,
-}) => {
+}: LibraryComponentsProps) => {
   const {
     hits,
     totalHits: componentCount,

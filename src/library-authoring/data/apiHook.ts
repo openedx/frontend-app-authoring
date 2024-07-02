@@ -1,13 +1,12 @@
-// @ts-check
+import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import { getContentLibrary, getLibraryBlockTypes } from './api';
 
 /**
  * Hook to fetch a content library by its ID.
- * @param {string} [libraryId] - The ID of the library to fetch.
  */
-export const useContentLibrary = (libraryId) => (
+export const useContentLibrary = (libraryId?: string) => (
   useQuery({
     queryKey: ['contentLibrary', libraryId],
     queryFn: () => getContentLibrary(libraryId),
@@ -15,10 +14,9 @@ export const useContentLibrary = (libraryId) => (
 );
 
 /**
- * Hook to fetch a content library by its ID.
- * @param {string} [libraryId] - The ID of the library to fetch.
+ *  Hook to fetch block types of a library.
  */
-export const useLibraryBlockTypes = (libraryId) => (
+export const useLibraryBlockTypes = (libraryId?: string) => (
   useQuery({
     queryKey: ['contentLibrary', 'libraryBlockTypes', libraryId],
     queryFn: () => getLibraryBlockTypes(libraryId),
