@@ -6,6 +6,9 @@ import {
   ModalPopup,
   useToggle,
 } from '@openedx/paragon';
+import { useIntl } from '@edx/frontend-platform/i18n';
+
+import messages from './messages';
 
 /**
  * A button that represents a filter on the search.
@@ -22,10 +25,17 @@ const SearchFilterWidget: React.FC<{
   appliedFilters: { label: React.ReactNode }[];
   label: React.ReactNode;
   children: React.ReactNode;
+  clearFilter: () => void,
   icon?: React.ReactNode; // eslint-disable-line react/require-default-props
 }> = ({ appliedFilters, ...props }) => {
+  const intl = useIntl();
   const [isOpen, open, close] = useToggle(false);
   const [target, setTarget] = React.useState(null);
+
+  const clearAndClose = React.useCallback(() => {
+    props.clearFilter();
+    close();
+  }, [props.clearFilter]);
 
   return (
     <>
@@ -53,6 +63,21 @@ const SearchFilterWidget: React.FC<{
           style={{ textAlign: 'start' }}
         >
           {props.children}
+
+          {
+            !!appliedFilters.length
+            && (
+              <div className="d-flex justify-content-end">
+                <Button
+                  onClick={clearAndClose}
+                  variant="link"
+                  className="text-info-500 text-decoration-none clear-filter-button"
+                >
+                  { intl.formatMessage(messages.clearFilter) }
+                </Button>
+              </div>
+            )
+          }
         </div>
       </ModalPopup>
     </>

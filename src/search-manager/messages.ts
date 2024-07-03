@@ -70,6 +70,11 @@ const messages = defineMessages({
     defaultMessage: '{numResults, plural, one {# result} other {# results}} found',
     description: 'This count displays how many matching results were found from the user\'s search',
   },
+  clearFilter: {
+    id: 'course-authoring.search-manager.searchFilterWidget.clearFilter',
+    defaultMessage: 'Clear Filter',
+    description: 'Label for the button that removes applied search filters in a specific widget',
+  },
 });
 
 export default messages;

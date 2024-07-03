@@ -70,9 +70,10 @@ const FilterByBlockType: React.FC<Record<never, never>> = () => {
     <SearchFilterWidget
       appliedFilters={blockTypesFilter.map(blockType => ({ label: <BlockTypeLabel type={blockType} /> }))}
       label={<FormattedMessage {...messages.blockTypeFilter} />}
+      clearFilter={() => setBlockTypesFilter([])}
       icon={FilterList}
     >
-      <Form.Group>
+      <Form.Group className="mb-0">
         <Form.CheckboxSet
           name="block-type-filter"
           defaultValue={blockTypesFilter}

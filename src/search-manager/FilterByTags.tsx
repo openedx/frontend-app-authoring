@@ -168,7 +168,7 @@ const TagOptions: React.FC<{
 
 const FilterByTags: React.FC<Record<never, never>> = () => {
   const intl = useIntl();
-  const { tagsFilter } = useSearchContext();
+  const { tagsFilter, setTagsFilter } = useSearchContext();
   const [tagSearchKeywords, setTagSearchKeywords] = React.useState('');
 
   // e.g. {"Location", "Location > North America"} if those two paths of the tag tree are expanded
@@ -186,9 +186,10 @@ const FilterByTags: React.FC<Record<never, never>> = () => {
     <SearchFilterWidget
       appliedFilters={tagsFilter.map(tf => ({ label: tf.split(TAG_SEP).pop() }))}
       label={<FormattedMessage {...messages.blockTagsFilter} />}
+      clearFilter={() => setTagsFilter([])}
       icon={Tag}
     >
-      <Form.Group className="pt-3">
+      <Form.Group className="pt-3 mb-0">
         <SearchField
           onSubmit={setTagSearchKeywords}
           onChange={setTagSearchKeywords}
