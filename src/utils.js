@@ -284,6 +284,21 @@ export const convertToStringFromDate = (date) => {
   return moment(date).format(DATE_TIME_FORMAT);
 };
 
+export const convertToStringFromDateAndFormat = (date, format) => {
+  /**
+   * Convert local time to UTC string from react-datepicker in a format
+   * Note: react-datepicker has a bug where it only interacts with local time
+   * @param {Date} date - date in local time
+   * @param {string} format - format of the date
+   * @return {string} date converted in string in the desired format
+   */
+  if (!date) {
+    return '';
+  }
+
+  return moment(date).format(format);
+};
+
 export const isValidDate = (date) => {
   const formattedValue = convertToStringFromDate(date).split('T')[0];
 

@@ -31,7 +31,11 @@ const LibrarySidebar = ({library}: LibrarySidebarProps) => {
 
   const bodyComponentMap = {
     'add-content': <AddContentContainer />,
-    'info': <LibraryInfo />,
+    'info': <LibraryInfo
+              orgName={library.org}
+              createdAt={library.created}
+              updatedAt={library.updated}
+            />,
     unknown: null,
   };
 
@@ -45,7 +49,7 @@ const LibrarySidebar = ({library}: LibrarySidebarProps) => {
   const buildHeader = (): React.ReactNode | null => headerComponentMap[sidebarBodyComponent || 'unknown'];
 
   return (
-    <div className="p-2 vh-100">
+    <div className="p-2 vh-100 text-primary-700">
       <Stack direction="horizontal" className="d-flex justify-content-between">
         {buildHeader()}
         <IconButton
