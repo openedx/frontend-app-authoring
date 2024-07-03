@@ -63,28 +63,7 @@ const LibraryComponents = ({
     return result;
   }, [blockTypesData]);
 
-  const { showLoading, showContent } = useMemo(() => {
-    let resultShowLoading = false;
-    let resultShowContent = false;
-
-    if (isFetching && !isFetchingNextPage) {
-      // First load; show loading but not content.
-      resultShowLoading = true;
-      resultShowContent = false;
-    } else if (isFetchingNextPage) {
-      // Load next page; show content and loading.
-      resultShowLoading = true;
-      resultShowContent = true;
-    } else if (!isFetching && !isFetchingNextPage) {
-      // State without loads; show content.
-      resultShowLoading = false;
-      resultShowContent = true;
-    }
-    return {
-      showLoading: resultShowLoading,
-      showContent: resultShowContent,
-    };
-  }, [isFetching, isFetchingNextPage]);
+  const showLoading = isFetching || isFetchingNextPage;
 
   useEffect(() => {
     if (variant === 'full') {
@@ -121,7 +100,7 @@ const LibraryComponents = ({
       }}
       hasEqualColumnHeights
     >
-      { showContent ? componentList.map((component) => (
+      {componentList.map((component) => (
         <ComponentCard
           key={component.id}
           title={component.displayName}
@@ -130,7 +109,7 @@ const LibraryComponents = ({
           blockType={component.blockType}
           blockTypeDisplayName={blockTypes[component.blockType]?.displayName ?? ''}
         />
-      )) : <ComponentCardLoading />}
+      ))}
       { showLoading && <ComponentCardLoading /> }
     </CardGrid>
   );
