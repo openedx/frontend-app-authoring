@@ -15,29 +15,6 @@ import { getCourseAppsApiStatus } from './pages-and-resources/data/selectors';
 import { RequestStatus } from './data/constants';
 import Loading from './generic/Loading';
 
-const AppHeader = ({
-  courseNumber, courseOrg, courseTitle, courseId,
-}) => (
-  <Header
-    courseNumber={courseNumber}
-    courseOrg={courseOrg}
-    courseTitle={courseTitle}
-    courseId={courseId}
-  />
-);
-
-AppHeader.propTypes = {
-  courseId: PropTypes.string.isRequired,
-  courseNumber: PropTypes.string,
-  courseOrg: PropTypes.string,
-  courseTitle: PropTypes.string.isRequired,
-};
-
-AppHeader.defaultProps = {
-  courseNumber: null,
-  courseOrg: null,
-};
-
 const CourseAuthoringPage = ({ courseId, children }) => {
   const dispatch = useDispatch();
 
@@ -74,11 +51,11 @@ const CourseAuthoringPage = ({ courseId, children }) => {
       This functionality will be removed in TNL-9591 */}
       {inProgress ? !isEditor && <Loading />
         : (!isEditor && (
-          <AppHeader
-            courseNumber={courseNumber}
-            courseOrg={courseOrg}
-            courseTitle={courseTitle}
-            courseId={courseId}
+          <Header
+            number={courseNumber}
+            org={courseOrg}
+            title={courseTitle}
+            contentId={courseId}
           />
         )
         )}

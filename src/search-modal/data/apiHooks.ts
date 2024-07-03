@@ -35,8 +35,8 @@ export const useContentSearchResults = ({
   indexName,
   extraFilter,
   searchKeywords,
-  blockTypesFilter,
-  tagsFilter,
+  blockTypesFilter = [],
+  tagsFilter = [],
 }: {
   /** The Meilisearch API client */
   client?: MeiliSearch;
@@ -47,9 +47,9 @@ export const useContentSearchResults = ({
   /** The keywords that the user is searching for, if any */
   searchKeywords: string;
   /** Only search for these block types (e.g. `["html", "problem"]`) */
-  blockTypesFilter: string[];
+  blockTypesFilter?: string[];
   /** Required tags (all must match), e.g. `["Difficulty > Hard", "Subject > Math"]` */
-  tagsFilter: string[];
+  tagsFilter?: string[];
 }) => {
   const query = useInfiniteQuery({
     enabled: client !== undefined && indexName !== undefined,

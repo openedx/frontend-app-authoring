@@ -342,9 +342,10 @@ describe('<SearchUI />', () => {
       window.location = location;
     });
 
-    test('click lib component result doesnt navigates to the context withou libraryAuthoringMfe', async () => {
+    test('click lib component result navigates to course-authoring/library without libraryAuthoringMfe', async () => {
       const data = generateGetStudioHomeDataApiResponse();
       data.redirectToLibraryAuthoringMfe = false;
+      data.libraryAuthoringMfeUrl = '';
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, data);
 
       await executeThunk(fetchStudioHomeData(), store.dispatch);
@@ -354,18 +355,21 @@ describe('<SearchUI />', () => {
       const resultItem = await findByRole('button', { name: /Library Content/ });
 
       // Clicking the "Open in new window" button should open the result in a new window:
-      const { open, location } = window;
+      const { open } = window;
       window.open = jest.fn();
       fireEvent.click(within(resultItem).getByRole('button', { name: 'Open in new window' }));
-      expect(window.open).not.toHaveBeenCalled();
+
+      expect(window.open).toHaveBeenCalledWith(
+        '/library/lib:org1:libafter1',
+        '_blank',
+      );
       window.open = open;
 
-      // @ts-ignore
-      window.location = { href: '' };
       // Clicking in the result should navigate to the result's URL:
       fireEvent.click(resultItem);
-      expect(window.location.href === location.href);
-      window.location = location;
+      expect(mockNavigate).toHaveBeenCalledWith(
+        '/library/lib:org1:libafter1',
+      );
     });
   });
 
