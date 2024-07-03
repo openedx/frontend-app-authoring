@@ -22,6 +22,7 @@ const SearchFilterWidget: React.FC<{
   appliedFilters: { label: React.ReactNode }[];
   label: React.ReactNode;
   children: React.ReactNode;
+  icon?: React.ReactNode; // eslint-disable-line react/require-default-props
 }> = ({ appliedFilters, ...props }) => {
   const [isOpen, open, close] = useToggle(false);
   const [target, setTarget] = React.useState(null);
@@ -34,6 +35,7 @@ const SearchFilterWidget: React.FC<{
           variant={appliedFilters.length ? 'light' : 'outline-primary'}
           size="sm"
           onClick={open}
+          iconBefore={props.icon}
           iconAfter={ArrowDropDown}
         >
           {props.label}

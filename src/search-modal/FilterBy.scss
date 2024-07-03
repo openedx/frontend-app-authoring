@@ -1,0 +1,7 @@
+// Options for the "filter by tag/block type" menu
+.pgn__menu.filter-by-refinement-menu {
+  .pgn__menu-item {
+    // Make the "filter by tag/block type" menu expand to fit the tags hierarchy and longer block type names
+    width: 100%;
+  }
+}

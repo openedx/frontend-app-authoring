@@ -6,6 +6,7 @@ import {
   Menu,
   MenuItem,
 } from '@openedx/paragon';
+import { FilterList } from '@openedx/paragon/icons';
 import SearchFilterWidget from './SearchFilterWidget';
 import messages from './messages';
 import BlockTypeLabel from './BlockTypeLabel';
@@ -69,6 +70,7 @@ const FilterByBlockType: React.FC<Record<never, never>> = () => {
     <SearchFilterWidget
       appliedFilters={blockTypesFilter.map(blockType => ({ label: <BlockTypeLabel type={blockType} /> }))}
       label={<FormattedMessage {...messages.blockTypeFilter} />}
+      icon={FilterList}
     >
       <Form.Group>
         <Form.CheckboxSet

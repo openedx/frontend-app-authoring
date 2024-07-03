@@ -99,8 +99,8 @@ const LibraryAuthoringPage = () => {
           />
           <SearchKeywordsField className="w-50" />
           <div className="d-flex mt-3 align-items-center">
-            <FilterByBlockType />
             <FilterByTags />
+            <FilterByBlockType />
             <ClearFiltersButton />
             <div className="flex-grow-1" />
             <div className="text-muted x-small align-middle"><Stats /></div>

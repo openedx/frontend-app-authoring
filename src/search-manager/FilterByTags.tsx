@@ -10,7 +10,12 @@ import {
   MenuItem,
   SearchField,
 } from '@openedx/paragon';
-import { ArrowDropDown, ArrowDropUp, Warning } from '@openedx/paragon/icons';
+import {
+  ArrowDropDown,
+  ArrowDropUp,
+  Warning,
+  Tag,
+} from '@openedx/paragon/icons';
 import SearchFilterWidget from './SearchFilterWidget';
 import messages from './messages';
 import { useSearchContext } from './SearchManager';
@@ -181,6 +186,7 @@ const FilterByTags: React.FC<Record<never, never>> = () => {
     <SearchFilterWidget
       appliedFilters={tagsFilter.map(tf => ({ label: tf.split(TAG_SEP).pop() }))}
       label={<FormattedMessage {...messages.blockTagsFilter} />}
+      icon={Tag}
     >
       <Form.Group className="pt-3">
         <SearchField
@@ -195,7 +201,7 @@ const FilterByTags: React.FC<Record<never, never>> = () => {
           placeholder={intl.formatMessage(messages.searchTagsByKeywordPlaceholder)}
           className="mx-3 mb-1"
         />
-        <Menu className="tags-refinement-menu" style={{ boxShadow: 'none' }}>
+        <Menu className="filter-by-refinement-menu" style={{ boxShadow: 'none' }}>
           <TagOptions
             tagSearchKeywords={tagSearchKeywords}
             toggleTagChildren={toggleTagChildren}
