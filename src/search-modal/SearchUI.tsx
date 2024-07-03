@@ -18,7 +18,7 @@ import Stats from './Stats';
 import { SearchContextProvider } from './manager/SearchManager';
 import messages from './messages';
 
-const SearchUI: React.FC<{ courseId: string, closeSearchModal?: () => void }> = (props) => {
+const SearchUI: React.FC<{ courseId?: string, closeSearchModal?: () => void }> = (props) => {
   const hasCourseId = Boolean(props.courseId);
   const [searchThisCourseEnabled, setSearchThisCourse] = React.useState(hasCourseId);
   const switchToThisCourse = React.useCallback(() => setSearchThisCourse(true), []);
