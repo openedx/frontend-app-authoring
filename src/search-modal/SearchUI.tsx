@@ -14,10 +14,10 @@ import {
   FilterByTags,
   SearchContextProvider,
   SearchKeywordsField,
+  Stats,
 } from '../search-manager';
 import EmptyStates from './EmptyStates';
 import SearchResults from './SearchResults';
-import Stats from './Stats';
 import messages from './messages';
 
 const SearchUI: React.FC<{ courseId: string, closeSearchModal?: () => void }> = (props) => {

@@ -19,8 +19,8 @@ import {
   FilterByTags,
   SearchContextProvider,
   SearchKeywordsField,
+  Stats,
 } from '../search-manager';
-import Stats from '../search-modal/Stats';
 import LibraryComponents from './components/LibraryComponents';
 import LibraryCollections from './LibraryCollections';
 import LibraryHome from './LibraryHome';

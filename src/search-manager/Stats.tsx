@@ -1,12 +1,12 @@
 import React from 'react';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import messages from './messages';
-import { useSearchContext } from '../search-manager';
+import { useSearchContext } from './SearchManager';
 
 /**
  * Simple component that displays the # of matching results
  */
-const Stats: React.FC<Record<never, never>> = () => {
+const Stats: React.FC = () => {
   const { totalHits, searchKeywords, canClearFilters } = useSearchContext();
 
   if (!searchKeywords && !canClearFilters) {

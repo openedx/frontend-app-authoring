@@ -65,6 +65,11 @@ const messages = defineMessages({
     defaultMessage: 'Submit tag keyword search',
     description: 'Text shown to screen reader users for the search button on the tags keyword search',
   },
+  numResults: {
+    id: 'course-authoring.course-search.num-results',
+    defaultMessage: '{numResults, plural, one {# result} other {# results}} found',
+    description: 'This count displays how many matching results were found from the user\'s search',
+  },
 });
 
 export default messages;

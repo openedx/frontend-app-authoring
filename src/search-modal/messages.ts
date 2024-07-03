@@ -60,11 +60,6 @@ const messages = defineMessages({
     defaultMessage: 'Video',
     description: 'Name of the "Video" component type in Studio',
   },
-  numResults: {
-    id: 'course-authoring.course-search.num-results',
-    defaultMessage: '{numResults, plural, one {# result} other {# results}} found',
-    description: 'This count displays how many matching results were found from the user\'s search',
-  },
   searchAllCourses: {
     id: 'course-authoring.course-search.searchAllCourses',
     defaultMessage: 'All courses',
