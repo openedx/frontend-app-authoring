@@ -58,7 +58,7 @@ const TagMenuItem: React.FC<{
         onChange={onClickCheckbox}
         className="pgn__form-checkbox-input flex-shrink-0"
       />
-      <label htmlFor={checkboxId} className="flex-shrink-1">
+      <label htmlFor={checkboxId} className="flex-shrink-1 mb-0">
         {label}{' '}
         <Badge variant="light" pill>{tagCount}</Badge>
       </label>
