@@ -109,9 +109,9 @@ const LibraryAuthoringPage = () => {
             onSelect={handleTabChange}
             className="my-3"
           >
-            <Tab eventKey={TAB_LIST.home} title="Home" />
-            <Tab eventKey={TAB_LIST.components} title="Components" />
-            <Tab eventKey={TAB_LIST.collections} title="Collections" />
+            <Tab eventKey={TAB_LIST.home} title={intl.formatMessage(messages.homeTab)} />
+            <Tab eventKey={TAB_LIST.components} title={intl.formatMessage(messages.componentsTab)} />
+            <Tab eventKey={TAB_LIST.collections} title={intl.formatMessage(messages.collectionsTab)} />
           </Tabs>
           <Routes>
             <Route
