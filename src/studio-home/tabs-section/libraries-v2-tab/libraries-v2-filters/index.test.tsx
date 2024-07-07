@@ -4,21 +4,20 @@ import {
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
-import LibrariesV2Filters from '.';
+import LibrariesV2Filters, { LibrariesV2FiltersProps } from '.';
 
 describe('LibrariesV2Filters', () => {
   const setIsFilteredMock = jest.fn();
   const setFilterParamsMock = jest.fn();
   const setCurrentPageMock = jest.fn();
 
-  // eslint-disable-next-line react/prop-types
-  const IntlProviderWrapper = ({ children }) => (
+  const IntlProviderWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
     <IntlProvider locale="en" messages={{}}>
       {children}
     </IntlProvider>
   );
 
-  const renderComponent = (overrideProps = {}) => render(
+  const renderComponent = (overrideProps: Partial<LibrariesV2FiltersProps> = {}) => render(
     <IntlProviderWrapper>
       <LibrariesV2Filters
         setIsFiltered={setIsFilteredMock}
@@ -27,7 +26,6 @@ describe('LibrariesV2Filters', () => {
         {...overrideProps}
       />
     </IntlProviderWrapper>,
-
   );
 
   beforeEach(() => {
@@ -81,7 +79,7 @@ describe('LibrariesV2Filters', () => {
       </IntlProviderWrapper>,
     );
 
-    await waitFor(() => expect(screen.getByRole('searchbox').value).toBe(''));
+    await waitFor(() => expect((screen.getByRole('searchbox') as HTMLInputElement).value).toBe(''));
   });
 
   it('should update states with the correct parameters when a order menu item is selected', () => {
@@ -134,10 +132,16 @@ describe('LibrariesV2Filters', () => {
 
   it('should clear the search input and call dispatch when the reset button is clicked', async () => {
     renderComponent();
-    const searchInput = screen.getByRole('searchbox');
+    const searchInput = screen.getByRole('searchbox') as HTMLInputElement;
     fireEvent.change(searchInput, { target: { value: 'test' } });
     const form = searchInput.closest('form');
+    if (!form) {
+      throw new Error('Form not found');
+    }
     const resetButton = form.querySelector('button[type="reset"]');
+    if (!resetButton || !(resetButton instanceof HTMLButtonElement)) {
+      throw new Error('Reset button not found');
+    }
     fireEvent.click(resetButton);
     expect(searchInput.value).toBe('');
   });

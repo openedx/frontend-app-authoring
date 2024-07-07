@@ -41,32 +41,6 @@ export async function getStudioHomeLibraries() {
 }
 
 /**
- * Get's studio home v2 Libraries.
- * @param {object} customParams - Additional custom paramaters for the API request.
- * @param {string} [customParams.type] - (optional) Library type, default `complex`
- * @param {number} [customParams.page] - (optional) Page number of results
- * @param {number} [customParams.pageSize] - (optional) The number of results on each page, default `50`
- * @param {boolean} [customParams.pagination] - (optional) Whether pagination is supported, default `true`
- * @param {string} [customParams.order] - (optional) Library field to order results by. Prefix with '-' for descending
- * @param {string} [customParams.search] - (optional) Search query to filter v2 Libraries by
- * @returns {Promise<import("./types.mjs").LibrariesV2Response>} - Promise that resolves to v2 libraries response data
- */
-export async function getStudioHomeLibrariesV2(customParams) {
-  // Set default params if not passed in
-  const customParamsDefaults = {
-    type: customParams.type || 'complex',
-    page: customParams.page || 1,
-    pageSize: customParams.pageSize || 50,
-    pagination: customParams.pagination !== undefined ? customParams.pagination : true,
-    order: customParams.order || 'title',
-    textSearch: customParams.search,
-  };
-  const customParamsFormat = snakeCaseObject(customParamsDefaults);
-  const { data } = await getAuthenticatedHttpClient().get(`${getApiBaseUrl()}/api/libraries/v2/`, { params: customParamsFormat });
-  return camelCaseObject(data);
-}
-
-/**
  * Handle course notification requests.
  * @param {string} url
  * @returns {Promise<Object>}

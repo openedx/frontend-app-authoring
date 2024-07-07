@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect } from 'react';
-import PropTypes from 'prop-types';
+/* eslint-disable react/require-default-props */
+import React, { useState, useCallback, useEffect } from 'react';
 import { SearchField } from '@openedx/paragon';
 import { debounce } from 'lodash';
 
@@ -11,9 +11,17 @@ import LibrariesV2OrderFilterMenu from './libraries-v2-order-filter-menu';
 */
 const regexOnlyWhiteSpaces = /^\s+$/;
 
-const LibrariesV2Filters = ({
-  isLoading,
-  isFiltered,
+export interface LibrariesV2FiltersProps {
+  isLoading?: boolean;
+  isFiltered?: boolean;
+  setIsFiltered: React.Dispatch<React.SetStateAction<boolean>>;
+  setFilterParams: React.Dispatch<React.SetStateAction<{ search: string | undefined, order: string }>>;
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const LibrariesV2Filters: React.FC<LibrariesV2FiltersProps> = ({
+  isLoading = false,
+  isFiltered = false,
   setIsFiltered,
   setFilterParams,
   setCurrentPage,
@@ -29,7 +37,7 @@ const LibrariesV2Filters = ({
     }
   }, [isFiltered, setSearch, setOrder]);
 
-  const getOrderFromFilterType = (filterType) => {
+  const getOrderFromFilterType = (filterType: string) => {
     const orders = {
       azLibrariesV2: 'title',
       zaLibrariesV2: '-title',
@@ -41,14 +49,14 @@ const LibrariesV2Filters = ({
     return orders[filterType] || 'title';
   };
 
-  const getFilterTypeData = (baseFilters) => ({
+  const getFilterTypeData = (baseFilters: { search: string | undefined; order: string; }) => ({
     azLibrariesV2: { ...baseFilters, order: 'title' },
     zaLibrariesV2: { ...baseFilters, order: '-title' },
     newestLibrariesV2: { ...baseFilters, order: '-created' },
     oldestLibrariesV2: { ...baseFilters, order: 'created' },
   });
 
-  const handleMenuFilterItemSelected = (filterType) => {
+  const handleMenuFilterItemSelected = (filterType: string) => {
     setOrder(getOrderFromFilterType(filterType));
     setIsFiltered(true);
 
@@ -64,7 +72,7 @@ const LibrariesV2Filters = ({
     setCurrentPage(1);
   };
 
-  const handleSearchLibrariesV2 = (searchValueDebounced) => {
+  const handleSearchLibrariesV2 = (searchValueDebounced: string) => {
     const valueFormatted = searchValueDebounced.trim();
     const filterParams = {
       search: valueFormatted.length > 0 ? valueFormatted : undefined,
@@ -80,7 +88,7 @@ const LibrariesV2Filters = ({
   };
 
   const handleSearchLibrariesV2Debounced = useCallback(
-    debounce((value) => handleSearchLibrariesV2(value), 400),
+    debounce((value: string) => handleSearchLibrariesV2(value), 400),
     [order, search],
   );
 
@@ -105,19 +113,6 @@ const LibrariesV2Filters = ({
       <LibrariesV2OrderFilterMenu onItemMenuSelected={handleMenuFilterItemSelected} isFiltered={isFiltered} />
     </div>
   );
-};
-
-LibrariesV2Filters.defaultProps = {
-  isLoading: false,
-  isFiltered: false,
-};
-
-LibrariesV2Filters.propTypes = {
-  isLoading: PropTypes.bool,
-  isFiltered: PropTypes.bool,
-  setIsFiltered: PropTypes.func.isRequired,
-  setFilterParams: PropTypes.func.isRequired,
-  setCurrentPage: PropTypes.func.isRequired,
 };
 
 export default LibrariesV2Filters;

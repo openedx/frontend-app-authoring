@@ -1,12 +1,14 @@
-import { useMemo } from 'react';
-import PropTypes from 'prop-types';
+import React, { useMemo } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
 
 import LibrariesV2FilterMenu from '../libraries-v2-filter-menu';
 
-const LibrariesV2OrderFilterMenu = ({ onItemMenuSelected, isFiltered }) => {
+const LibrariesV2OrderFilterMenu: React.FC<{
+  onItemMenuSelected: (value: string) => void;
+  isFiltered: boolean;
+}> = ({ onItemMenuSelected, isFiltered }) => {
   const intl = useIntl();
 
   const libraryV2Orders = useMemo(
@@ -35,7 +37,7 @@ const LibrariesV2OrderFilterMenu = ({ onItemMenuSelected, isFiltered }) => {
     [intl],
   );
 
-  const handleLibraryV2OrderSelected = (libraryV2Order) => {
+  const handleLibraryV2OrderSelected = (libraryV2Order: string) => {
     onItemMenuSelected(libraryV2Order);
   };
 
@@ -48,11 +50,6 @@ const LibrariesV2OrderFilterMenu = ({ onItemMenuSelected, isFiltered }) => {
       isFiltered={isFiltered}
     />
   );
-};
-
-LibrariesV2OrderFilterMenu.propTypes = {
-  onItemMenuSelected: PropTypes.func.isRequired,
-  isFiltered: PropTypes.bool.isRequired,
 };
 
 export default LibrariesV2OrderFilterMenu;

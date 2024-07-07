@@ -1,22 +1,27 @@
-import { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useEffect } from 'react';
 import { Icon, Dropdown } from '@openedx/paragon';
 import { Check } from '@openedx/paragon/icons';
 
-const LibrariesV2FilterMenu = ({
+const LibrariesV2FilterMenu: React.FC<{
+  id: string;
+  menuItems: { id: string, name: string, value: string }[];
+  onItemMenuSelected: (value: string) => void;
+  defaultItemSelectedText: string;
+  isFiltered: boolean;
+}> = ({
   id: idProp,
-  menuItems,
+  menuItems = [],
   onItemMenuSelected,
-  defaultItemSelectedText,
+  defaultItemSelectedText = '',
   isFiltered,
 }) => {
   const [itemMenuSelected, setItemMenuSelected] = useState(defaultItemSelectedText);
-  const handleCourseTypeSelected = (name, value) => {
+  const handleCourseTypeSelected = (name: string, value: string) => {
     setItemMenuSelected(name);
     onItemMenuSelected(value);
   };
 
-  const libraryV2TypeSelectedIcon = (itemValue) => (itemValue === itemMenuSelected ? (
+  const libraryV2TypeSelectedIcon = (itemValue: string) => (itemValue === itemMenuSelected ? (
     <Icon src={Check} className="ml-2" data-testid="menu-item-icon" />
   ) : null);
 
@@ -50,25 +55,6 @@ const LibrariesV2FilterMenu = ({
       </Dropdown.Menu>
     </Dropdown>
   );
-};
-
-LibrariesV2FilterMenu.defaultProps = {
-  defaultItemSelectedText: '',
-  menuItems: [],
-};
-
-LibrariesV2FilterMenu.propTypes = {
-  onItemMenuSelected: PropTypes.func.isRequired,
-  defaultItemSelectedText: PropTypes.string,
-  id: PropTypes.string.isRequired,
-  menuItems: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      value: PropTypes.string.isRequired,
-    }),
-  ),
-  isFiltered: PropTypes.bool.isRequired,
 };
 
 export default LibrariesV2FilterMenu;
