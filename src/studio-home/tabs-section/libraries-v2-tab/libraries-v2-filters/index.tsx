@@ -1,15 +1,11 @@
 /* eslint-disable react/require-default-props */
 import React, { useState, useCallback, useEffect } from 'react';
 import { SearchField } from '@openedx/paragon';
-import { debounce } from 'lodash';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { LoadingSpinner } from '../../../../generic/Loading';
 import LibrariesV2OrderFilterMenu from './libraries-v2-order-filter-menu';
-
-/* regex to check if a string has only whitespace
-  example "    "
-*/
-const regexOnlyWhiteSpaces = /^\s+$/;
+import messages from '../../messages';
 
 export interface LibrariesV2FiltersProps {
   isLoading?: boolean;
@@ -26,6 +22,8 @@ const LibrariesV2Filters: React.FC<LibrariesV2FiltersProps> = ({
   setFilterParams,
   setCurrentPage,
 }) => {
+  const intl = useIntl();
+
   const [search, setSearch] = useState('');
   const [order, setOrder] = useState('title');
 
@@ -72,36 +70,32 @@ const LibrariesV2Filters: React.FC<LibrariesV2FiltersProps> = ({
     setCurrentPage(1);
   };
 
-  const handleSearchLibrariesV2 = (searchValueDebounced: string) => {
-    const valueFormatted = searchValueDebounced.trim();
+  const handleSearchLibrariesV2 = useCallback((searchValue: string) => {
+    const valueFormatted = searchValue.trim();
     const filterParams = {
       search: valueFormatted.length > 0 ? valueFormatted : undefined,
       order,
     };
-    const hasOnlySpaces = regexOnlyWhiteSpaces.test(searchValueDebounced);
-    if (valueFormatted !== search && !hasOnlySpaces) {
+
+    // Check if the search is different from the current search and it's not only spaces
+    if (valueFormatted !== search || valueFormatted) {
       setIsFiltered(true);
       setSearch(valueFormatted);
       setFilterParams(filterParams);
       setCurrentPage(1);
     }
-  };
-
-  const handleSearchLibrariesV2Debounced = useCallback(
-    debounce((value: string) => handleSearchLibrariesV2(value), 400),
-    [order, search],
-  );
+  }, [order, search]);
 
   return (
     <div className="d-flex">
       <div className="d-flex flex-row">
         <SearchField
           onSubmit={() => {}}
-          onChange={handleSearchLibrariesV2Debounced}
+          onChange={handleSearchLibrariesV2}
           value={search}
           className="mr-4"
           data-testid="input-filter-libraries-v2-search"
-          placeholder="Search"
+          placeholder={intl.formatMessage(messages.librariesV2TabLibrarySearchPlaceholder)}
         />
         {isLoading && (
           <span className="search-field-loading" data-testid="loading-search-spinner">

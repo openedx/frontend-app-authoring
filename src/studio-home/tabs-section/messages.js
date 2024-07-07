@@ -58,6 +58,10 @@ const messages = defineMessages({
     id: 'course-authoring.studio-home.libraries.placeholder.body',
     defaultMessage: 'This is a placeholder page, as the Library Authoring MFE is not enabled.',
   },
+  librariesV2TabLibrarySearchPlaceholder: {
+    id: 'course-authoring.studio-home.libraries.tab.library.search-placeholder',
+    defaultMessage: 'Search',
+  },
   librariesV2TabLibraryNotFoundAlertTitle: {
     id: 'course-authoring.studio-home.libraries.tab.library.not.found.alert.title',
     defaultMessage: 'We could not find any result',
