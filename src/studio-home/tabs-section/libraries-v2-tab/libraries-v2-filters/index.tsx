@@ -37,10 +37,10 @@ const LibrariesV2Filters: React.FC<LibrariesV2FiltersProps> = ({
 
   const getOrderFromFilterType = (filterType: string) => {
     const orders = {
-      azLibrariesV2: 'title',
-      zaLibrariesV2: '-title',
-      newestLibrariesV2: '-created',
-      oldestLibrariesV2: 'created',
+      sortLibrariesV2AZ: 'title',
+      sortLibrariesV2ZA: '-title',
+      sortLibrariesV2Newest: '-created',
+      sortLibrariesV2Oldest: 'created',
     };
 
     // Default to 'A-Z` if invalid filtertype
@@ -48,10 +48,10 @@ const LibrariesV2Filters: React.FC<LibrariesV2FiltersProps> = ({
   };
 
   const getFilterTypeData = (baseFilters: { search: string | undefined; order: string; }) => ({
-    azLibrariesV2: { ...baseFilters, order: 'title' },
-    zaLibrariesV2: { ...baseFilters, order: '-title' },
-    newestLibrariesV2: { ...baseFilters, order: '-created' },
-    oldestLibrariesV2: { ...baseFilters, order: 'created' },
+    sortLibrariesV2AZ: { ...baseFilters, order: 'title' },
+    sortLibrariesV2ZA: { ...baseFilters, order: '-title' },
+    sortLibrariesV2Newest: { ...baseFilters, order: '-created' },
+    sortLibrariesV2Oldest: { ...baseFilters, order: 'created' },
   });
 
   const handleMenuFilterItemSelected = (filterType: string) => {
@@ -92,11 +92,10 @@ const LibrariesV2Filters: React.FC<LibrariesV2FiltersProps> = ({
           onChange={handleSearchLibrariesV2}
           value={search}
           className="mr-4"
-          data-testid="input-filter-libraries-v2-search"
           placeholder={intl.formatMessage(messages.librariesV2TabLibrarySearchPlaceholder)}
         />
         {isLoading && (
-          <span className="search-field-loading" data-testid="loading-search-spinner">
+          <span className="search-field-loading">
             <LoadingSpinner size="sm" />
           </span>
         )}

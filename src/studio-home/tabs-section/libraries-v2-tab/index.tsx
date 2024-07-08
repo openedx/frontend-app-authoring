@@ -90,7 +90,7 @@ const LibrariesV2Tab: React.FC<{
           />
           { !isLoading
           && (
-            <p data-testid="pagination-info">
+            <p>
               {intl.formatMessage(messages.coursesPaginationInfo, {
                 length: data!.results.length,
                 total: data!.count,
@@ -116,7 +116,7 @@ const LibrariesV2Tab: React.FC<{
               <Alert.Heading>
                 {intl.formatMessage(messages.librariesV2TabLibraryNotFoundAlertTitle)}
               </Alert.Heading>
-              <p data-testid="courses-not-found-alert">
+              <p>
                 {intl.formatMessage(messages.librariesV2TabLibraryNotFoundAlertMessage)}
               </p>
               <Button variant="primary" onClick={handleClearFilters}>

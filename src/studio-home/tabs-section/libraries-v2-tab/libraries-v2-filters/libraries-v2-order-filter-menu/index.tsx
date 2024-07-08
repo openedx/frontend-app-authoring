@@ -14,24 +14,24 @@ const LibrariesV2OrderFilterMenu: React.FC<{
   const libraryV2Orders = useMemo(
     () => [
       {
-        id: 'az-libraries-v2',
+        id: 'sort-libraries-v2-az',
         name: intl.formatMessage(messages.librariesV2OrderFilterMenuAscendantLibrariesV2),
-        value: 'azLibrariesV2',
+        value: 'sortLibrariesV2AZ',
       },
       {
-        id: 'za-libraries-v2',
+        id: 'sort-libraries-v2-za',
         name: intl.formatMessage(messages.librariesV2OrderFilterMenuDescendantLibrariesV2),
-        value: 'zaLibrariesV2',
+        value: 'sortLibrariesV2ZA',
       },
       {
-        id: 'newest-libraries-v2',
+        id: 'sort-libraries-v2-newest',
         name: intl.formatMessage(messages.librariesV2OrderFilterMenuNewestLibrariesV2),
-        value: 'newestLibrariesV2',
+        value: 'sortLibrariesV2Newest',
       },
       {
-        id: 'oldest-libraries-v2',
+        id: 'sort-libraries-v2-oldest',
         name: intl.formatMessage(messages.librariesV2OrderFilterMenuOldestLibrariesV2),
-        value: 'oldestLibrariesV2',
+        value: 'sortLibrariesV2Oldest',
       },
     ],
     [intl],

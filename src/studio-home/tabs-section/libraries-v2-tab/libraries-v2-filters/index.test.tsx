@@ -33,9 +33,9 @@ describe('LibrariesV2Filters', () => {
 
   it('should render search field and order filter', () => {
     renderComponent();
-    const searchInput = screen.getByTestId('input-filter-libraries-v2-search');
+    const searchInput = screen.getByRole('searchbox');
     expect(searchInput).toBeInTheDocument();
-    const orderFilter = screen.getByTestId('dropdown-toggle-libraries-v2-order-menu');
+    const orderFilter = screen.getByText('Name A-Z');
     expect(orderFilter).toBeInTheDocument();
   });
 
@@ -47,11 +47,11 @@ describe('LibrariesV2Filters', () => {
     await waitFor(() => expect(setCurrentPageMock).toHaveBeenCalled());
   });
 
-  it('should call setFilterParams and setCurrentPage when a menu item order menu is selected', () => {
+  it('should call setFilterParams and setCurrentPage when a menu item order menu is selected', async () => {
     renderComponent();
-    const libraryV2OrderMenuFilter = screen.getByTestId('dropdown-toggle-libraries-v2-order-menu');
+    const libraryV2OrderMenuFilter = screen.getByText('Name A-Z');
     fireEvent.click(libraryV2OrderMenuFilter);
-    const newestLibV2sMenuItem = screen.getByTestId('item-menu-newest-libraries-v2');
+    const newestLibV2sMenuItem = screen.getByText('Newest');
     fireEvent.click(newestLibV2sMenuItem);
     expect(setFilterParamsMock).toHaveBeenCalled();
     expect(setCurrentPageMock).toHaveBeenCalled();
@@ -80,9 +80,9 @@ describe('LibrariesV2Filters', () => {
 
   it('should update states with the correct parameters when a order menu item is selected', () => {
     renderComponent();
-    const libraryV2OrderMenuFilter = screen.getByTestId('dropdown-toggle-libraries-v2-order-menu');
+    const libraryV2OrderMenuFilter = screen.getByText('Name A-Z');
     fireEvent.click(libraryV2OrderMenuFilter);
-    const oldestLibV2sMenuItem = screen.getByTestId('item-menu-oldest-libraries-v2');
+    const oldestLibV2sMenuItem = screen.getByText('Oldest');
     fireEvent.click(oldestLibV2sMenuItem);
 
     // Check that setFilterParams is called with the correct payload
@@ -116,13 +116,13 @@ describe('LibrariesV2Filters', () => {
 
   it('should display the loading spinner when isLoading is true', () => {
     renderComponent({ isLoading: true });
-    const spinner = screen.getByTestId('loading-search-spinner');
+    const spinner = screen.getByText('Loading...');
     expect(spinner).toBeInTheDocument();
   });
 
   it('should not display the loading spinner when isLoading is false', () => {
     renderComponent({ isLoading: false });
-    const spinner = screen.queryByTestId('loading-search-spinner');
+    const spinner = screen.queryByText('Loading...');
     expect(spinner).not.toBeInTheDocument();
   });
 

@@ -16,13 +16,13 @@ const LibrariesV2FilterMenu: React.FC<{
   isFiltered,
 }) => {
   const [itemMenuSelected, setItemMenuSelected] = useState(defaultItemSelectedText);
-  const handleCourseTypeSelected = (name: string, value: string) => {
+  const handleOrderSelected = (name: string, value: string) => {
     setItemMenuSelected(name);
     onItemMenuSelected(value);
   };
 
-  const libraryV2TypeSelectedIcon = (itemValue: string) => (itemValue === itemMenuSelected ? (
-    <Icon src={Check} className="ml-2" data-testid="menu-item-icon" />
+  const libraryV2OrderSelectedIcon = (itemValue: string) => (itemValue === itemMenuSelected ? (
+    <Icon src={Check} className="ml-2" />
   ) : null);
 
   useEffect(() => {
@@ -38,7 +38,6 @@ const LibrariesV2FilterMenu: React.FC<{
         id={idProp}
         variant="none"
         className="dropdown-toggle-menu-items"
-        data-testid={idProp}
       >
         {itemMenuSelected}
       </Dropdown.Toggle>
@@ -46,10 +45,9 @@ const LibrariesV2FilterMenu: React.FC<{
         {menuItems.map(({ id, name, value }) => (
           <Dropdown.Item
             key={id}
-            onClick={() => handleCourseTypeSelected(name, value)}
-            data-testid={`item-menu-${id}`}
+            onClick={() => handleOrderSelected(name, value)}
           >
-            {name} {libraryV2TypeSelectedIcon(name)}
+            {name} {libraryV2OrderSelectedIcon(name)}
           </Dropdown.Item>
         ))}
       </Dropdown.Menu>
