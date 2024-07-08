@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import {
   Icon,
   Row,
@@ -19,24 +18,27 @@ import CardItem from '../../card-item';
 import messages from '../messages';
 import LibrariesV2Filters from './libraries-v2-filters';
 
-const LibrariesV2Tab = ({
+const LibrariesV2Tab: React.FC<{
+  libraryAuthoringMfeUrl: string,
+  redirectToLibraryAuthoringMfe: boolean
+}> = ({
   libraryAuthoringMfeUrl,
   redirectToLibraryAuthoringMfe,
 }) => {
   const intl = useIntl();
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [isFiltered, setIsFiltered] = useState(false);
   const [filterParams, setFilterParams] = useState({});
 
-  const handlePageSelect = (page) => {
+  const isFiltered = Object.keys(filterParams).length > 0;
+
+  const handlePageSelect = (page: number) => {
     setCurrentPage(page);
   };
 
   const handleClearFilters = () => {
     setFilterParams({});
     setCurrentPage(1);
-    setIsFiltered(false);
   };
 
   const {
@@ -53,7 +55,7 @@ const LibrariesV2Tab = ({
     );
   }
 
-  const libURL = (id) => (
+  const libURL = (id: string) => (
     libraryAuthoringMfeUrl && redirectToLibraryAuthoringMfe
       ? constructLibraryAuthoringURL(libraryAuthoringMfeUrl, `library/${id}`)
       // Redirection to the placeholder is done in the MFE rather than
@@ -81,8 +83,8 @@ const LibrariesV2Tab = ({
         <div className="d-flex flex-row justify-content-between my-4">
           <LibrariesV2Filters
             isLoading={isLoading}
-            setIsFiltered={setIsFiltered}
             isFiltered={isFiltered}
+            filterParams={filterParams}
             setFilterParams={setFilterParams}
             setCurrentPage={setCurrentPage}
           />
@@ -138,11 +140,6 @@ const LibrariesV2Tab = ({
       </div>
     )
   );
-};
-
-LibrariesV2Tab.propTypes = {
-  libraryAuthoringMfeUrl: PropTypes.string.isRequired,
-  redirectToLibraryAuthoringMfe: PropTypes.bool.isRequired,
 };
 
 export default LibrariesV2Tab;

@@ -10,7 +10,7 @@ import messages from '../../messages';
 export interface LibrariesV2FiltersProps {
   isLoading?: boolean;
   isFiltered?: boolean;
-  setIsFiltered: React.Dispatch<React.SetStateAction<boolean>>;
+  filterParams: { search?: string | undefined, order?: string };
   setFilterParams: React.Dispatch<React.SetStateAction<{ search: string | undefined, order: string }>>;
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
 }
@@ -18,22 +18,22 @@ export interface LibrariesV2FiltersProps {
 const LibrariesV2Filters: React.FC<LibrariesV2FiltersProps> = ({
   isLoading = false,
   isFiltered = false,
-  setIsFiltered,
+  filterParams,
   setFilterParams,
   setCurrentPage,
 }) => {
   const intl = useIntl();
 
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState<string | undefined>('');
   const [order, setOrder] = useState('title');
 
   // Reset search & order when filters cleared
   useEffect(() => {
     if (!isFiltered) {
-      setSearch('');
+      setSearch(filterParams.search);
       setOrder('title');
     }
-  }, [isFiltered, setSearch, setOrder]);
+  }, [isFiltered, setSearch, search, setOrder, filterParams.search]);
 
   const getOrderFromFilterType = (filterType: string) => {
     const orders = {
@@ -56,15 +56,14 @@ const LibrariesV2Filters: React.FC<LibrariesV2FiltersProps> = ({
 
   const handleMenuFilterItemSelected = (filterType: string) => {
     setOrder(getOrderFromFilterType(filterType));
-    setIsFiltered(true);
 
     const baseFilters = {
       search,
       order,
     };
 
-    const filterParams = getFilterTypeData(baseFilters);
-    const filterParamsFormat = filterParams[filterType] || baseFilters;
+    const menuFilterParams = getFilterTypeData(baseFilters);
+    const filterParamsFormat = menuFilterParams[filterType] || baseFilters;
 
     setFilterParams(filterParamsFormat);
     setCurrentPage(1);
@@ -72,16 +71,15 @@ const LibrariesV2Filters: React.FC<LibrariesV2FiltersProps> = ({
 
   const handleSearchLibrariesV2 = useCallback((searchValue: string) => {
     const valueFormatted = searchValue.trim();
-    const filterParams = {
+    const updatedFilterParams = {
       search: valueFormatted.length > 0 ? valueFormatted : undefined,
       order,
     };
 
     // Check if the search is different from the current search and it's not only spaces
     if (valueFormatted !== search || valueFormatted) {
-      setIsFiltered(true);
       setSearch(valueFormatted);
-      setFilterParams(filterParams);
+      setFilterParams(updatedFilterParams);
       setCurrentPage(1);
     }
   }, [order, search]);

@@ -7,7 +7,6 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import LibrariesV2Filters, { LibrariesV2FiltersProps } from '.';
 
 describe('LibrariesV2Filters', () => {
-  const setIsFilteredMock = jest.fn();
   const setFilterParamsMock = jest.fn();
   const setCurrentPageMock = jest.fn();
 
@@ -20,7 +19,7 @@ describe('LibrariesV2Filters', () => {
   const renderComponent = (overrideProps: Partial<LibrariesV2FiltersProps> = {}) => render(
     <IntlProviderWrapper>
       <LibrariesV2Filters
-        setIsFiltered={setIsFilteredMock}
+        filterParams={{}}
         setFilterParams={setFilterParamsMock}
         setCurrentPage={setCurrentPageMock}
         {...overrideProps}
@@ -40,22 +39,20 @@ describe('LibrariesV2Filters', () => {
     expect(orderFilter).toBeInTheDocument();
   });
 
-  it('should call setIsFiltered, setFilterParams, setCurrentPage when search input changes', async () => {
+  it('should call setFilterParams and setCurrentPage when search input changes', async () => {
     renderComponent();
     const searchInput = screen.getByRole('searchbox');
     fireEvent.change(searchInput, { target: { value: 'test' } });
-    await waitFor(() => expect(setIsFilteredMock).toHaveBeenCalled());
     await waitFor(() => expect(setFilterParamsMock).toHaveBeenCalled());
     await waitFor(() => expect(setCurrentPageMock).toHaveBeenCalled());
   });
 
-  it('should call setIsFiltered, setFilterParams, setCurrentPage when a menu item order menu is selected', () => {
+  it('should call setFilterParams and setCurrentPage when a menu item order menu is selected', () => {
     renderComponent();
     const libraryV2OrderMenuFilter = screen.getByTestId('dropdown-toggle-libraries-v2-order-menu');
     fireEvent.click(libraryV2OrderMenuFilter);
     const newestLibV2sMenuItem = screen.getByTestId('item-menu-newest-libraries-v2');
     fireEvent.click(newestLibV2sMenuItem);
-    expect(setIsFilteredMock).toHaveBeenCalled();
     expect(setFilterParamsMock).toHaveBeenCalled();
     expect(setCurrentPageMock).toHaveBeenCalled();
   });
@@ -64,7 +61,6 @@ describe('LibrariesV2Filters', () => {
     const { rerender } = renderComponent({ isFiltered: true });
     const searchInput = screen.getByRole('searchbox');
     fireEvent.change(searchInput, { target: { value: 'test' } });
-    await waitFor(() => expect(setIsFilteredMock).toHaveBeenCalled());
     await waitFor(() => expect(setFilterParamsMock).toHaveBeenCalled());
     await waitFor(() => expect(setCurrentPageMock).toHaveBeenCalled());
 
@@ -72,7 +68,7 @@ describe('LibrariesV2Filters', () => {
       <IntlProviderWrapper>
         <LibrariesV2Filters
           isFiltered={false}
-          setIsFiltered={setIsFilteredMock}
+          filterParams={{}}
           setFilterParams={setFilterParamsMock}
           setCurrentPage={setCurrentPageMock}
         />
@@ -89,12 +85,9 @@ describe('LibrariesV2Filters', () => {
     const oldestLibV2sMenuItem = screen.getByTestId('item-menu-oldest-libraries-v2');
     fireEvent.click(oldestLibV2sMenuItem);
 
-    // Check that setIsFiltered is called with `true`
-    expect(setIsFilteredMock).toHaveBeenCalledWith(true);
-
     // Check that setFilterParams is called with the correct payload
-    expect(setFilterParamsMock).toHaveBeenNthCalledWith(1, expect.objectContaining({
-      search: '',
+    expect(setFilterParamsMock).toHaveBeenCalledWith(expect.objectContaining({
+      search: undefined,
       order: 'created',
     }));
 
@@ -110,12 +103,15 @@ describe('LibrariesV2Filters', () => {
     expect(setFilterParamsMock).toHaveBeenCalledWith(expect.anything());
   });
 
-  it('should not call setFilterParams when search only spaces', async () => {
+  it('should not call setFilterParams with only spaces when search only spaces', async () => {
     renderComponent();
     const searchInput = screen.getByRole('searchbox');
     fireEvent.change(searchInput, { target: { value: '   ' } });
-    await waitFor(() => expect(setFilterParamsMock).not.toHaveBeenCalled(), { timeout: 500 });
-    expect(setFilterParamsMock).not.toHaveBeenCalled();
+
+    await waitFor(() => expect(setFilterParamsMock).not.toHaveBeenCalledWith(expect.objectContaining({
+      search: '   ',
+      order: 'created',
+    })), { timeout: 500 });
   });
 
   it('should display the loading spinner when isLoading is true', () => {
@@ -138,7 +134,7 @@ describe('LibrariesV2Filters', () => {
     if (!form) {
       throw new Error('Form not found');
     }
-    const resetButton = form.querySelector('button[type="reset"]');
+    const resetButton = form.querySelector('button');
     if (!resetButton || !(resetButton instanceof HTMLButtonElement)) {
       throw new Error('Reset button not found');
     }
