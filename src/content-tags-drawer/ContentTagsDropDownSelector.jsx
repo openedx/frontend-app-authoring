@@ -309,7 +309,7 @@ const ContentTagsDropDownSelector = ({
         ? (
           <div>
             <Button
-              tabIndex="0"
+              tabIndex={0}
               variant="tertiary"
               iconBefore={Add}
               onClick={loadMoreTags}

@@ -69,7 +69,7 @@ const VideoThumbnail = ({
               variant="primary"
               size="sm"
               onClick={fileInputControl.click}
-              tabIndex="0"
+              tabIndex={0}
             >
               {addThumbnailMessage}
             </Button>

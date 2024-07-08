@@ -14,7 +14,7 @@ const PasteComponent = ({
   const handlePopoverToggle = (isOpen) => togglePopover(isOpen);
 
   const renderPopover = (props) => (
-    <div role="link" ref={popoverElementRef} tabIndex="0">
+    <div role="link" ref={popoverElementRef} tabIndex={0}>
       <Popover
         className="clipboard-popover"
         id="popover-positioned"
