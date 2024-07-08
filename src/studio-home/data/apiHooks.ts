@@ -9,6 +9,7 @@ const useListStudioHomeV2Libraries = (customParams: GetLibrariesV2CustomParams) 
   useQuery({
     queryKey: ['listV2Libraries', customParams],
     queryFn: () => getStudioHomeLibrariesV2(customParams),
+    keepPreviousData: true,
   })
 );
 
