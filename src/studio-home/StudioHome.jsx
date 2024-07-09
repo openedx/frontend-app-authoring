@@ -10,7 +10,7 @@ import {
 import { Add as AddIcon, Error } from '@openedx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { StudioFooter } from '@edx/frontend-component-footer';
-import { getConfig, getPath } from '@edx/frontend-platform';
+import { getConfig } from '@edx/frontend-platform';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { constructLibraryAuthoringURL } from '../utils';
