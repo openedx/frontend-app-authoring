@@ -30,7 +30,7 @@ const SearchFilterWidget: React.FC<{
 }> = ({ appliedFilters, ...props }) => {
   const intl = useIntl();
   const [isOpen, open, close] = useToggle(false);
-  const [target, setTarget] = React.useState(null);
+  const [target, setTarget] = React.useState<HTMLButtonElement | null>(null);
 
   const clearAndClose = React.useCallback(() => {
     props.clearFilter();

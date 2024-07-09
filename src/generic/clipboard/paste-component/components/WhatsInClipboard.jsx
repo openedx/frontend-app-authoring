@@ -34,7 +34,7 @@ const WhatsInClipboard = ({
       />
       <p
         /* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */
-        tabIndex="0"
+        tabIndex={0}
         role="presentation"
         ref={triggerElementRef}
         className="whats-in-clipboard-text m-0"

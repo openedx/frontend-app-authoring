@@ -13,8 +13,8 @@ import {
   getStudioHomeCourses,
   getStudioHomeCoursesV2,
   getStudioHomeLibraries,
-  getStudioHomeLibrariesV2,
 } from './api';
+import { getStudioHomeLibrariesV2 } from '../../library/data/api';
 import {
   generateGetStudioCoursesApiResponse,
   generateGetStudioHomeDataApiResponse,
