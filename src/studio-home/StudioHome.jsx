@@ -111,7 +111,7 @@ const StudioHome = ({ intl }) => {
     );
 
     return headerButtons;
-  }, [location]);
+  }, [location, userIsActive, isFailedLoadingPage]);
 
   const headerButtons = userIsActive ? getHeaderButtons() : [];
   if (isLoadingPage && !isFiltered) {
