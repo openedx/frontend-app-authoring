@@ -31,17 +31,13 @@ const LibrarySidebar = ({library}: LibrarySidebarProps) => {
 
   const bodyComponentMap = {
     'add-content': <AddContentContainer />,
-    'info': <LibraryInfo
-              orgName={library.org}
-              createdAt={library.created}
-              updatedAt={library.updated}
-            />,
+    'info': <LibraryInfo library={library}/>,
     unknown: null,
   };
 
   const headerComponentMap = {
     'add-content': <AddContentHeader />,
-    info: <LibraryInfoHeader displayName={library.title} canEditLibrary={library.canEditLibrary} />,
+    info: <LibraryInfoHeader library={library} />,
     unknown: null,
   };
 

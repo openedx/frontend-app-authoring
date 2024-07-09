@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -72,11 +72,8 @@ const LibraryAuthoringPage = () => {
   } = useContext(LibraryContext);
 
   useEffect(() => {
-    // Open Library Info sidebar by default
-    if (!isLoading && libraryData) {
-      openInfoSidebar();
-    };
-  }, [isLoading, libraryData]);
+    openInfoSidebar();
+  }, []);
 
   if (isLoading) {
     return <Loading />;

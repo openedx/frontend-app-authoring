@@ -3,21 +3,21 @@ import { Icon, IconButton, Stack } from "@openedx/paragon";
 import { Edit } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from "./messages";
+import { ContentLibrary } from "../data/api";
 
 type LibraryInfoHeaderProps = {
-  displayName: string,
-  canEditLibrary: boolean,
+  library: ContentLibrary,
 };
 
-const LibraryInfoHeader = ({ displayName, canEditLibrary} : LibraryInfoHeaderProps) => {
+const LibraryInfoHeader = ({ library } : LibraryInfoHeaderProps) => {
   const intl = useIntl();
 
   return (
     <Stack direction='horizontal'>
       <span className="font-weight-bold m-1.5">
-        {displayName}
+        {library.title}
       </span>
-      {canEditLibrary && (
+      {library.canEditLibrary && (
         <IconButton
           src={Edit}
           iconAs={Icon}

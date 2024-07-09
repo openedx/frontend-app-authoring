@@ -16,6 +16,11 @@ export const getLibraryBlockTypesUrl = (libraryId: string) => `${getApiBaseUrl()
  */
 export const getCreateLibraryBlockUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/blocks/`;
 export const getContentLibraryV2ListApiUrl = () => `${getApiBaseUrl()}/api/libraries/v2/`;
+/**
+ * Get the URL for commit/revert changes in library.
+ */
+export const getCommitLibraryChangesUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/commit/`
+
 
 export interface ContentLibrary {
   id: string;
@@ -27,6 +32,9 @@ export interface ContentLibrary {
   numBlocks: number;
   version: number;
   lastPublished: Date | null;
+  lastDraftCreated: Date | null;
+  publishedBy: string | null;
+  lastDraftCreatedBy: string | null;
   allowLti: boolean;
   allowPublicLearning: boolean;
   allowPublicRead: boolean;
@@ -139,5 +147,27 @@ export async function getContentLibraryV2List(customParams: GetLibrariesV2Custom
   const customParamsFormated = snakeCaseObject(customParamsDefaults);
   const { data } = await getAuthenticatedHttpClient()
     .get(getContentLibraryV2ListApiUrl(), { params: customParamsFormated });
+  return camelCaseObject(data);
+}
+
+/**
+ * Commit library changes.
+ */
+export async function commitLibraryChanges(libraryId: string): Promise<any> {
+  const client = getAuthenticatedHttpClient();
+
+  const { data } = await client.post(getCommitLibraryChangesUrl(libraryId));
+
+  return camelCaseObject(data);
+}
+
+/**
+ * Revert library changes.
+ */
+export async function revertLibraryChanges(libraryId: string): Promise<any> {
+  const client = getAuthenticatedHttpClient();
+
+  const { data } = await client.delete(getCommitLibraryChangesUrl(libraryId));
+
   return camelCaseObject(data);
 }

@@ -1,30 +1,28 @@
+import React from "react";
 import { Stack } from "@openedx/paragon";
 import { useIntl } from '@edx/frontend-platform/i18n';
-import React from "react";
 import messages from "./messages";
 import { convertToStringFromDateAndFormat } from "../../utils";
 import { COMMA_SEPARATED_DATE_FORMAT } from "../../constants";
+import LibraryPublishStatus from "./LibraryPublishStatus";
+import { ContentLibrary } from "../data/api";
 
 type LibraryInfoProps = {
-  orgName: string,
-  createdAt: Date,
-  updatedAt: Date,
+  library: ContentLibrary,
 };
 
-const LibraryInfo = ({ orgName, createdAt, updatedAt } : LibraryInfoProps) => {
+const LibraryInfo = ({ library } : LibraryInfoProps) => {
   const intl = useIntl();
 
   return (
     <Stack direction='vertical' gap={2.5}>
-      <div>
-        Published section
-      </div>
+      <LibraryPublishStatus library={library}/>
       <Stack direction='vertical'>
         <span className="font-weight-bold">
           {intl.formatMessage(messages.organizationSectionTitle)}
         </span>
         <span>
-          {orgName}
+          {library.org}
         </span>
       </Stack>
       <Stack>
@@ -36,7 +34,7 @@ const LibraryInfo = ({ orgName, createdAt, updatedAt } : LibraryInfoProps) => {
             {intl.formatMessage(messages.lastModifiedLabel)}
           </span>
           <span className="small">
-            {convertToStringFromDateAndFormat(updatedAt, COMMA_SEPARATED_DATE_FORMAT)}
+            {convertToStringFromDateAndFormat(library.updated, COMMA_SEPARATED_DATE_FORMAT)}
           </span>
         </Stack>
         <Stack>
@@ -44,7 +42,7 @@ const LibraryInfo = ({ orgName, createdAt, updatedAt } : LibraryInfoProps) => {
             {intl.formatMessage(messages.createdLabel)}
           </span>
           <span className="small">
-            {convertToStringFromDateAndFormat(createdAt, COMMA_SEPARATED_DATE_FORMAT)}
+            {convertToStringFromDateAndFormat(library.created, COMMA_SEPARATED_DATE_FORMAT)}
           </span>
         </Stack>
       </Stack>
