@@ -4,6 +4,7 @@ import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { StudioHeader } from '@edx/frontend-component-header';
 import { useToggle } from '@openedx/paragon';
+import { generatePath, useHref } from 'react-router-dom';
 
 import { SearchModal } from '../search-modal';
 import { getContentMenuItems, getSettingMenuItems, getToolsMenuItems } from './utils';
@@ -27,6 +28,7 @@ const Header = ({
   isLibrary = false,
 }: HeaderProps) => {
   const intl = useIntl();
+  const libraryHref = useHref('/library/:libraryId');
 
   const [isShowSearchModalOpen, openSearchModal, closeSearchModal] = useToggle(false);
 
@@ -49,7 +51,9 @@ const Header = ({
       items: getToolsMenuItems({ studioBaseUrl, courseId: contextId, intl }),
     },
   ] : [];
-  const outlineLink = !isLibrary ? `${studioBaseUrl}/course/${contextId}` : `/course-authoring/library/${contextId}`;
+  const outlineLink = !isLibrary
+    ? `${studioBaseUrl}/course/${contextId}`
+    : generatePath(libraryHref, { libraryId: contextId });
 
   return (
     <>
