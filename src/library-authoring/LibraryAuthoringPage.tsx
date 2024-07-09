@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -19,11 +19,11 @@ import LibraryHome from './LibraryHome';
 import { useContentLibrary } from './data/apiHook';
 import messages from './messages';
 
-const TAB_LIST = {
-  home: '',
-  components: 'components',
-  collections: 'collections',
-};
+enum TabList {
+  home = '',
+  components = 'components',
+  collections = 'collections',
+}
 
 const SubHeaderTitle = ({ title }: { title: string }) => {
   const intl = useIntl();
@@ -44,21 +44,14 @@ const LibraryAuthoringPage = () => {
   const intl = useIntl();
   const location = useLocation();
   const navigate = useNavigate();
-  const [tabKey, setTabKey] = useState(TAB_LIST.home);
   const [searchKeywords, setSearchKeywords] = useState('');
 
   const { libraryId } = useParams();
 
   const { data: libraryData, isLoading } = useContentLibrary(libraryId);
 
-  useEffect(() => {
-    const currentPath = location.pathname.split('/').pop();
-    if (currentPath && Object.values(TAB_LIST).includes(currentPath)) {
-      setTabKey(currentPath);
-    } else {
-      setTabKey(TAB_LIST.home);
-    }
-  }, [location]);
+  const currentPath = location.pathname.split('/').pop();
+  const activeKey = (currentPath && currentPath in TabList) ? TabList[currentPath] : TabList.home;
 
   if (isLoading) {
     return <Loading />;
@@ -69,7 +62,7 @@ const LibraryAuthoringPage = () => {
   }
 
   const handleTabChange = (key: string) => {
-    setTabKey(key);
+    // setTabKey(key);
     navigate(key);
   };
 
@@ -96,25 +89,25 @@ const LibraryAuthoringPage = () => {
         />
         <Tabs
           variant="tabs"
-          activeKey={tabKey}
+          activeKey={activeKey}
           onSelect={handleTabChange}
           className="my-3"
         >
-          <Tab eventKey={TAB_LIST.home} title={intl.formatMessage(messages.homeTab)} />
-          <Tab eventKey={TAB_LIST.components} title={intl.formatMessage(messages.componentsTab)} />
-          <Tab eventKey={TAB_LIST.collections} title={intl.formatMessage(messages.collectionsTab)} />
+          <Tab eventKey={TabList.home} title={intl.formatMessage(messages.homeTab)} />
+          <Tab eventKey={TabList.components} title={intl.formatMessage(messages.componentsTab)} />
+          <Tab eventKey={TabList.collections} title={intl.formatMessage(messages.collectionsTab)} />
         </Tabs>
         <Routes>
           <Route
-            path={TAB_LIST.home}
+            path={TabList.home}
             element={<LibraryHome libraryId={libraryId} filter={{ searchKeywords }} />}
           />
           <Route
-            path={TAB_LIST.components}
+            path={TabList.components}
             element={<LibraryComponents libraryId={libraryId} filter={{ searchKeywords }} />}
           />
           <Route
-            path={TAB_LIST.collections}
+            path={TabList.collections}
             element={<LibraryCollections />}
           />
           <Route
