@@ -77,7 +77,7 @@ const messages = defineMessages({
   },
   recentlyModifiedTitle: {
     id: 'course-authoring.library-authoring.recently-modified-title',
-    defaultMessage: 'Recently modified',
+    defaultMessage: 'Recently Modified',
     description: 'Title for the recently modified components and collections container',
   },
   collectionsTitle: {
