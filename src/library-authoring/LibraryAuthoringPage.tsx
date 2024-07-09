@@ -79,7 +79,7 @@ const LibraryAuthoringPage = () => {
         number={libraryData.slug}
         title={libraryData.title}
         org={libraryData.org}
-        contentId={libraryId}
+        contextId={libraryId}
         isLibrary
       />
       <Container size="xl" className="p-4 mt-3">
