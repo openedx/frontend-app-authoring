@@ -13,7 +13,7 @@ import { getContentSearchConfigUrl } from '../search-modal/data/api';
 import mockResult from '../search-modal/__mocks__/search-result.json';
 import mockEmptyResult from '../search-modal/__mocks__/empty-search-result.json';
 import LibraryAuthoringPage from './LibraryAuthoringPage';
-import { getContentLibraryApiUrl } from './data/api';
+import { getContentLibraryApiUrl, type ContentLibrary } from './data/api';
 
 let store;
 const mockUseParams = jest.fn();
@@ -46,7 +46,7 @@ const returnEmptyResult = (_url, req) => {
   return mockEmptyResult;
 };
 
-const libraryData = {
+const libraryData: ContentLibrary = {
   id: 'lib:org1:lib1',
   type: 'complex',
   org: 'org1',
@@ -57,10 +57,10 @@ const libraryData = {
   version: 0,
   lastPublished: null,
   allowLti: false,
-  allowPublic_learning: false,
-  allowPublic_read: false,
-  hasUnpublished_changes: true,
-  hasUnpublished_deletes: false,
+  allowPublicLearning: false,
+  allowPublicRead: false,
+  hasUnpublishedChanges: true,
+  hasUnpublishedDeletes: false,
   license: '',
 };
 
