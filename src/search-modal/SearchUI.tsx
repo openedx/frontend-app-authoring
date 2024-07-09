@@ -20,7 +20,7 @@ import EmptyStates from './EmptyStates';
 import SearchResults from './SearchResults';
 import messages from './messages';
 
-const SearchUI: React.FC<{ courseId: string, closeSearchModal?: () => void }> = (props) => {
+const SearchUI: React.FC<{ courseId?: string, closeSearchModal?: () => void }> = (props) => {
   const hasCourseId = Boolean(props.courseId);
   const [searchThisCourseEnabled, setSearchThisCourse] = React.useState(hasCourseId);
   const switchToThisCourse = React.useCallback(() => setSearchThisCourse(true), []);

@@ -1,6 +1,5 @@
-// @ts-check
+/* eslint-disable react/require-default-props */
 import React from 'react';
-import PropTypes from 'prop-types';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { StudioHeader } from '@edx/frontend-component-header';
@@ -10,14 +9,23 @@ import { SearchModal } from '../search-modal';
 import { getContentMenuItems, getSettingMenuItems, getToolsMenuItems } from './utils';
 import messages from './messages';
 
+interface HeaderProps {
+  contentId?: string,
+  number?: string,
+  org?: string,
+  title?: string,
+  isHiddenMainMenu?: boolean,
+  isLibrary?: boolean,
+}
+
 const Header = ({
-  contentId,
-  org,
-  number,
-  title,
-  isHiddenMainMenu,
-  isLibrary,
-}) => {
+  contentId = '',
+  org = '',
+  number = '',
+  title = '',
+  isHiddenMainMenu = false,
+  isLibrary = false,
+}: HeaderProps) => {
   const intl = useIntl();
 
   const [isShowSearchModalOpen, openSearchModal, closeSearchModal] = useToggle(false);
@@ -63,24 +71,6 @@ const Header = ({
       )}
     </>
   );
-};
-
-Header.propTypes = {
-  contentId: PropTypes.string,
-  number: PropTypes.string,
-  org: PropTypes.string,
-  title: PropTypes.string,
-  isHiddenMainMenu: PropTypes.bool,
-  isLibrary: PropTypes.bool,
-};
-
-Header.defaultProps = {
-  contentId: '',
-  number: '',
-  org: '',
-  title: '',
-  isHiddenMainMenu: false,
-  isLibrary: false,
 };
 
 export default Header;

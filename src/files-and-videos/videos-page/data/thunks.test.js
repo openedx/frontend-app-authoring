@@ -7,8 +7,8 @@ describe('addVideoFile', () => {
   const courseId = 'course-123';
   const mockFile = {
     name: 'mockName',
-
   };
+  const uploadingIdsRef = { current: { uploadData: {} } };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -18,7 +18,7 @@ describe('addVideoFile', () => {
       status: 404,
     });
 
-    await addVideoFile(courseId, [mockFile], undefined, { current: [] })(dispatch, getState);
+    await addVideoFile(courseId, [mockFile], undefined, uploadingIdsRef)(dispatch, getState);
 
     expect(dispatch).toHaveBeenCalledWith({
       payload: {
@@ -43,7 +43,7 @@ describe('addVideoFile', () => {
     jest.spyOn(api, 'uploadVideo').mockResolvedValue({
       status: 404,
     });
-    await addVideoFile(courseId, [mockFile], undefined, { current: [] })(dispatch, getState);
+    await addVideoFile(courseId, [mockFile], undefined, uploadingIdsRef)(dispatch, getState);
     expect(videoStatusMock).toHaveBeenCalledWith(courseId, mockEdxVideoId, 'Upload failed', 'upload_failed');
     expect(dispatch).toHaveBeenCalledWith({
       payload: {
@@ -70,7 +70,7 @@ describe('addVideoFile', () => {
     jest.spyOn(api, 'uploadVideo').mockResolvedValue({
       status: 200,
     });
-    await addVideoFile(courseId, [mockFile], undefined, { current: [] })(dispatch, getState);
+    await addVideoFile(courseId, [mockFile], undefined, uploadingIdsRef)(dispatch, getState);
     expect(videoStatusMock).toHaveBeenCalledWith(courseId, mockEdxVideoId, 'Upload completed', 'upload_completed');
   });
 });
