@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Card, Stack,
 } from '@openedx/paragon';
@@ -29,6 +29,7 @@ type LibraryHomeProps = {
 };
 
 const LibraryHome = ({ libraryId, filter } : LibraryHomeProps) => {
+  const intl = useIntl();
   const { searchKeywords } = filter;
   const { componentCount, collectionCount } = useLibraryComponentCount(libraryId, searchKeywords);
 
@@ -38,13 +39,13 @@ const LibraryHome = ({ libraryId, filter } : LibraryHomeProps) => {
 
   return (
     <Stack gap={3}>
-      <Section title="Recently Modified">
-        <FormattedMessage {...messages.recentComponentsTempPlaceholder} />
+      <Section title={intl.formatMessage(messages.recentlyModifiedTitle)}>
+        { intl.formatMessage(messages.recentComponentsTempPlaceholder) }
       </Section>
-      <Section title={`Collections (${collectionCount})`}>
+      <Section title={intl.formatMessage(messages.collectionsTitle, { collectionCount })}>
         <LibraryCollections />
       </Section>
-      <Section title={`Components (${componentCount})`}>
+      <Section title={intl.formatMessage(messages.componentsTitle, { componentCount })}>
         <LibraryComponents libraryId={libraryId} filter={filter} />
       </Section>
     </Stack>
