@@ -8,7 +8,7 @@
 import React from 'react';
 import { MeiliSearch, type Filter } from 'meilisearch';
 
-import { ContentHit } from './data/api';
+import { ContentHit, SearchSortOption } from './data/api';
 import { useContentSearchConnection, useContentSearchResults } from './data/apiHooks';
 
 export interface SearchContextData {
@@ -24,6 +24,8 @@ export interface SearchContextData {
   extraFilter?: Filter;
   canClearFilters: boolean;
   clearFilters: () => void;
+  searchSortOrder: SearchSortOption;
+  setSearchSortOrder: React.Dispatch<React.SetStateAction<SearchSortOption>>;
   hits: ContentHit[];
   totalHits: number;
   isFetching: boolean;
@@ -44,6 +46,11 @@ export const SearchContextProvider: React.FC<{
   const [searchKeywords, setSearchKeywords] = React.useState('');
   const [blockTypesFilter, setBlockTypesFilter] = React.useState<string[]>([]);
   const [tagsFilter, setTagsFilter] = React.useState<string[]>([]);
+
+  // Use the selected search order option
+  // Note: SearchSortOption.RELEVANCE is special -- it is empty string, and represents the default sort setting.
+  const [searchSortOrder, setSearchSortOrder] = React.useState(SearchSortOption.RELEVANCE);
+  const sort = searchSortOrder ? [searchSortOrder] : [];
 
   const canClearFilters = blockTypesFilter.length > 0 || tagsFilter.length > 0;
   const clearFilters = React.useCallback(() => {
@@ -69,6 +76,7 @@ export const SearchContextProvider: React.FC<{
     searchKeywords,
     blockTypesFilter,
     tagsFilter,
+    sort,
   });
 
   return React.createElement(SearchContext.Provider, {
@@ -84,6 +92,8 @@ export const SearchContextProvider: React.FC<{
       extraFilter,
       canClearFilters,
       clearFilters,
+      searchSortOrder,
+      setSearchSortOrder,
       closeSearchModal: props.closeSearchModal ?? (() => {}),
       hasError: hasConnectionError || result.isError,
       ...result,

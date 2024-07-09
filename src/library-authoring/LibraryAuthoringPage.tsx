@@ -19,6 +19,7 @@ import {
   FilterByTags,
   SearchContextProvider,
   SearchKeywordsField,
+  SearchSortWidget,
 } from '../search-manager';
 import LibraryComponents from './components/LibraryComponents';
 import LibraryCollections from './LibraryCollections';
@@ -102,6 +103,7 @@ const LibraryAuthoringPage = () => {
             <FilterByBlockType />
             <ClearFiltersButton />
             <div className="flex-grow-1" />
+            <SearchSortWidget />
           </div>
           <Tabs
             variant="tabs"

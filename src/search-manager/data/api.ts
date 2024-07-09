@@ -13,6 +13,16 @@ export const HIGHLIGHT_POST_TAG = '__/meili-highlight__'; // Indicate the end of
 /** The separator used for hierarchical tags in the search index, e.g. tags.level1 = "Subject > Math > Calculus" */
 export const TAG_SEP = ' > ';
 
+export enum SearchSortOption {
+  RELEVANCE = '', // Default; sorts results by keyword search ranking
+  TITLE_AZ = 'display_name:asc',
+  TITLE_ZA = 'display_name:desc',
+  NEWEST = 'created:desc',
+  OLDEST = 'created:asc',
+  RECENTLY_PUBLISHED = 'last_published:desc',
+  RECENTLY_MODIFIED = 'modified:desc',
+}
+
 /**
  * Get the content search configuration from the CMS.
  */
@@ -119,6 +129,7 @@ interface FetchSearchParams {
   /** The full path of tags that each result MUST have, e.g. ["Difficulty > Hard", "Subject > Math"] */
   tagsFilter?: string[],
   extraFilter?: Filter,
+  sort?: SearchSortOption[],
   /** How many results to skip, e.g. if limit=20 then passing offset=20 gets the second page. */
   offset?: number,
 }
@@ -130,6 +141,7 @@ export async function fetchSearchResults({
   blockTypesFilter,
   tagsFilter,
   extraFilter,
+  sort,
   offset = 0,
 }: FetchSearchParams): Promise<{
     hits: ContentHit[],
@@ -164,6 +176,7 @@ export async function fetchSearchResults({
     highlightPostTag: HIGHLIGHT_POST_TAG,
     attributesToCrop: ['content'],
     cropLength: 20,
+    sort,
     offset,
     limit,
   });

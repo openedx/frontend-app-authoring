@@ -3,6 +3,7 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import type { Filter, MeiliSearch } from 'meilisearch';
 
 import {
+  SearchSortOption,
   TAG_SEP,
   fetchAvailableTagOptions,
   fetchSearchResults,
@@ -37,6 +38,7 @@ export const useContentSearchResults = ({
   searchKeywords,
   blockTypesFilter = [],
   tagsFilter = [],
+  sort = [],
 }: {
   /** The Meilisearch API client */
   client?: MeiliSearch;
@@ -50,6 +52,8 @@ export const useContentSearchResults = ({
   blockTypesFilter?: string[];
   /** Required tags (all must match), e.g. `["Difficulty > Hard", "Subject > Math"]` */
   tagsFilter?: string[];
+  /** Sort search results using these options */
+  sort?: SearchSortOption[];
 }) => {
   const query = useInfiniteQuery({
     enabled: client !== undefined && indexName !== undefined,
@@ -63,6 +67,7 @@ export const useContentSearchResults = ({
       searchKeywords,
       blockTypesFilter,
       tagsFilter,
+      sort,
     ],
     queryFn: ({ pageParam = 0 }) => {
       if (client === undefined || indexName === undefined) {
@@ -75,6 +80,7 @@ export const useContentSearchResults = ({
         searchKeywords,
         blockTypesFilter,
         tagsFilter,
+        sort,
         // For infinite pagination of results, we can retrieve additional pages if requested.
         // Note that if there are 20 results per page, the "second page" has offset=20, not 2.
         offset: pageParam,
