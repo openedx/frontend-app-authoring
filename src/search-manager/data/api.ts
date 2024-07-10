@@ -105,6 +105,8 @@ export interface ContentHit {
   content?: ContentDetails;
   /** Same fields with <mark>...</mark> highlights */
   formatted: { displayName: string, content?: ContentDetails };
+  created: number;
+  modified: number;
 }
 
 /**
