@@ -175,7 +175,8 @@ describe('<SearchUI />', () => {
     expect(fetchMock).toHaveLastFetched((_url, req) => {
       const requestData = JSON.parse(req.body?.toString() ?? '');
       const requestedFilter = requestData?.queries[0].filter;
-      return requestedFilter?.[0] === 'context_key = "course-v1:org+test+123"';
+      return requestedFilter?.[0] === 'type = "course_block"'
+        && requestedFilter?.[1] === 'context_key = "course-v1:org+test+123"';
     });
     // Now we should see the results:
     expect(queryByText('Enter a keyword')).toBeNull();
@@ -394,7 +395,8 @@ describe('<SearchUI />', () => {
       expect(fetchMock).toHaveLastFetched((_url, req) => {
         const requestData = JSON.parse(req.body?.toString() ?? '');
         const requestedFilter = requestData?.queries[0].filter;
-        return (requestedFilter?.length === 1); // the filter is: 'context_key = "course-v1:org+test+123"'
+        // the filter is: ['type = "course_block"', 'context_key = "course-v1:org+test+123"']
+        return (requestedFilter?.length === 2);
       });
       // Now we should see the results:
       expect(getByText('6 results found')).toBeInTheDocument();
@@ -419,6 +421,7 @@ describe('<SearchUI />', () => {
         const requestData = JSON.parse(req.body?.toString() ?? '');
         const requestedFilter = requestData?.queries[0].filter;
         return JSON.stringify(requestedFilter) === JSON.stringify([
+          'type = "course_block"',
           'context_key = "course-v1:org+test+123"',
           ['block_type = problem'], // <-- the newly added filter, sent with the request
         ]);
@@ -444,6 +447,7 @@ describe('<SearchUI />', () => {
         const requestData = JSON.parse(req.body?.toString() ?? '');
         const requestedFilter = requestData?.queries?.[0]?.filter;
         return JSON.stringify(requestedFilter) === JSON.stringify([
+          'type = "course_block"',
           'context_key = "course-v1:org+test+123"',
           'tags.taxonomy = "ESDC Skills and Competencies"', // <-- the newly added filter, sent with the request
         ]);
@@ -477,6 +481,7 @@ describe('<SearchUI />', () => {
         const requestData = JSON.parse(req.body?.toString() ?? '');
         const requestedFilter = requestData?.queries?.[0]?.filter;
         return JSON.stringify(requestedFilter) === JSON.stringify([
+          'type = "course_block"',
           'context_key = "course-v1:org+test+123"',
           'tags.level0 = "ESDC Skills and Competencies > Abilities"',
         ]);
