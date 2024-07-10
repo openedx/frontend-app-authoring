@@ -8,43 +8,6 @@ exports[`EditorFooter render snapshot: default args (disableSave: false, saveFai
     className="shadow-sm"
   >
     <ActionRow>
-      <ActionRow.Spacer />
-      <Button
-        aria-label="Discard changes and return to learning context"
-        onClick={[MockFunction args.onCancel]}
-        variant="tertiary"
-      >
-        <FormattedMessage
-          defaultMessage="Cancel"
-          description="Label for cancel button"
-          id="authoring.editorfooter.cancelButton.label"
-        />
-      </Button>
-      <Button
-        aria-label="Save changes and return to learning context"
-        disabled={false}
-        onClick={[MockFunction args.onSave]}
-      >
-        <FormattedMessage
-          defaultMessage="Save"
-          description="Label for Save button"
-          id="authoring.editorfooter.savebutton.label"
-        />
-      </Button>
-    </ActionRow>
-  </ModalDialog.Footer>
-</div>
-`;
-
-exports[`EditorFooter render snapshot: dont show feedback link 1`] = `
-<div
-  className="editor-footer fixed-bottom"
->
-  <ModalDialog.Footer
-    className="shadow-sm"
-  >
-    <ActionRow>
-      <ActionRow.Spacer />
       <Button
         aria-label="Discard changes and return to learning context"
         onClick={[MockFunction args.onCancel]}
@@ -80,7 +43,6 @@ exports[`EditorFooter render snapshot: save disabled. Show button spinner 1`] = 
     className="shadow-sm"
   >
     <ActionRow>
-      <ActionRow.Spacer />
       <Button
         aria-label="Discard changes and return to learning context"
         onClick={[MockFunction args.onCancel]}
@@ -124,49 +86,6 @@ exports[`EditorFooter render snapshot: save failed.  Show error message 1`] = `
     className="shadow-sm"
   >
     <ActionRow>
-      <ActionRow.Spacer />
-      <Button
-        aria-label="Discard changes and return to learning context"
-        onClick={[MockFunction args.onCancel]}
-        variant="tertiary"
-      >
-        <FormattedMessage
-          defaultMessage="Cancel"
-          description="Label for cancel button"
-          id="authoring.editorfooter.cancelButton.label"
-        />
-      </Button>
-      <Button
-        aria-label="Save changes and return to learning context"
-        disabled={false}
-        onClick={[MockFunction args.onSave]}
-      >
-        <FormattedMessage
-          defaultMessage="Save"
-          description="Label for Save button"
-          id="authoring.editorfooter.savebutton.label"
-        />
-      </Button>
-    </ActionRow>
-  </ModalDialog.Footer>
-</div>
-`;
-
-exports[`EditorFooter render snapshot: show feedback link 1`] = `
-<div
-  className="editor-footer fixed-bottom"
->
-  <ModalDialog.Footer
-    className="shadow-sm"
-  >
-    <ActionRow>
-      <Hyperlink
-        destination="https://docs.google.com/forms/d/e/1FAIpQLSdmtO5at9WWHLcWLrOgk1oMz97gYYYrUq4cvH8Vzd-WQwM0Cg/viewform?usp=sharing"
-        target="_blank"
-      >
-        Share Feedback
-      </Hyperlink>
-      <ActionRow.Spacer />
       <Button
         aria-label="Discard changes and return to learning context"
         onClick={[MockFunction args.onCancel]}
