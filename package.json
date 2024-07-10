@@ -46,7 +46,7 @@
     "@edx/frontend-component-footer": "^14.0.3",
     "@edx/frontend-component-header": "^5.3.3",
     "@edx/frontend-enterprise-hotjar": "^2.0.0",
-    "@edx/frontend-lib-content-components": "^2.4.2",
+    "@edx/frontend-lib-content-components": "^2.5.0",
     "@edx/frontend-platform": "^8.0.3",
     "@edx/openedx-atlas": "^0.6.0",
     "@openedx-plugins/course-app-calculator": "file:plugins/course-apps/calculator",
