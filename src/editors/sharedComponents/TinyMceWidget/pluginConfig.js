@@ -15,6 +15,7 @@ const pluginConfig = ({ isLibrary, placeholder, editorType }) => {
   const inline = editorType === 'expandable';
   const toolbar = editorType !== 'expandable';
   const defaultFormat = (editorType === 'question' || editorType === 'expandable') ? 'div' : 'p';
+  const hasStudioHeader = document.querySelector('.studio-header');
 
   return (
     StrictDict({
@@ -92,7 +93,7 @@ const pluginConfig = ({ isLibrary, placeholder, editorType }) => {
         menubar: false,
         toolbar_mode: 'sliding',
         toolbar_sticky: true,
-        toolbar_sticky_offset: 76,
+        toolbar_sticky_offset: hasStudioHeader ? 0 : 76,
         relative_urls: true,
         convert_urls: false,
         placeholder,
