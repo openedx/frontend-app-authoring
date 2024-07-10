@@ -191,3 +191,52 @@ exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
   </div>
 </EditorContainer>
 `;
+
+exports[`TextEditor snapshots renders static images with relative paths 1`] = `
+<EditorContainer
+  getContent={
+    {
+      "getContent": {
+        "editorRef": {
+          "current": {
+            "value": "something",
+          },
+        },
+        "showRawEditor": false,
+      },
+    }
+  }
+  onClose={[MockFunction props.onClose]}
+  returnFunction={null}
+>
+  <div
+    className="editor-body h-75 overflow-auto"
+  >
+    <Toast
+      onClose={[MockFunction hooks.nullMethod]}
+      show={false}
+    >
+      <FormattedMessage
+        defaultMessage="Error: Could Not Load Text Content"
+        description="Error Message Dispayed When HTML content fails to Load"
+        id="authoring.texteditor.load.error"
+      />
+    </Toast>
+    <[object Object]
+      editorContentHtml="eDiTablE Text with <img src="/asset+org+run+type@asset+block@img.jpg" />"
+      editorRef={
+        {
+          "current": {
+            "value": "something",
+          },
+        }
+      }
+      editorType="text"
+      height="100%"
+      initializeEditor={[MockFunction args.intializeEditor]}
+      minHeight={500}
+      setEditorRef={[MockFunction hooks.prepareEditorRef.setEditorRef]}
+    />
+  </div>
+</EditorContainer>
+`;

@@ -403,15 +403,20 @@ export const setAssetToStaticUrl = ({ editorValue, lmsEndpointUrl }) => {
   let content = editorValue.replace(regExLmsEndpointUrl, '');
 
   const assetSrcs = typeof content === 'string' ? content.split(/(src="|src=&quot;|href="|href=&quot)/g) : [];
-  assetSrcs.forEach(src => {
-    if (src.startsWith('/asset')) {
+  assetSrcs.filter(src => src.startsWith('/asset')).forEach(src => {
+    let nameFromEditorSrc;
+    if (src.match(/\/assets\/.+\/asset-v1:\S+[+]\S+[@]\S+[+]\S+\//)?.length >= 1) {
+      const assetBlockName = src.substring(0, src.search(/("|&quot;)/));
+      const dividedSrc = assetBlockName.split(/\/assets\/.+\/asset-v1:\S+[+]\S+[@]\S+[+]\S+\//);
+      [, nameFromEditorSrc] = dividedSrc;
+    } else {
       const assetBlockName = src.substring(src.indexOf('@') + 1, src.search(/("|&quot;)/));
-      const nameFromEditorSrc = assetBlockName.substring(assetBlockName.indexOf('@') + 1);
-      const portableUrl = getStaticUrl({ displayName: nameFromEditorSrc });
-      const currentSrc = src.substring(0, src.search(/("|&quot;)/));
-      const updatedContent = content.replace(currentSrc, portableUrl);
-      content = updatedContent;
+      nameFromEditorSrc = assetBlockName.substring(assetBlockName.indexOf('@') + 1);
     }
+    const portableUrl = getStaticUrl({ displayName: nameFromEditorSrc });
+    const currentSrc = src.substring(0, src.search(/("|&quot;)/));
+    const updatedContent = content.replace(currentSrc, portableUrl);
+    content = updatedContent;
   });
   return content;
 };

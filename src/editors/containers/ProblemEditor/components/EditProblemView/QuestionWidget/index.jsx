@@ -16,10 +16,12 @@ export const QuestionWidget = ({
   intl,
 }) => {
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
-  const questionContent = replaceStaticWithAsset({
-    initialContent: question,
+  const initialContent = question;
+  const newContent = replaceStaticWithAsset({
+    initialContent,
     learningContextId,
   });
+  const questionContent = newContent || initialContent;
   if (!refReady) { return null; }
   return (
     <div className="tinyMceWidget">

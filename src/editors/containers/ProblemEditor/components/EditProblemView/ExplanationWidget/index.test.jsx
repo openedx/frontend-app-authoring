@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 import { formatMessage } from '../../../../../../testUtils';
@@ -24,11 +23,11 @@ jest.mock('../../../../../data/redux', () => ({
 }));
 
 jest.mock('../../../../../sharedComponents/TinyMceWidget/hooks', () => ({
+  ...jest.requireActual('../../../../../sharedComponents/TinyMceWidget/hooks'),
   prepareEditorRef: jest.fn(() => ({
     refReady: true,
     setEditorRef: jest.fn().mockName('prepareEditorRef.setEditorRef'),
   })),
-  replaceStaticWithAsset: jest.fn(() => 'This is my solution'),
 }));
 
 describe('SolutionWidget', () => {

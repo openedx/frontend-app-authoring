@@ -25,12 +25,12 @@ jest.mock('./hooks', () => ({
 }));
 
 jest.mock('../../sharedComponents/TinyMceWidget/hooks', () => ({
+  ...jest.requireActual('../../sharedComponents/TinyMceWidget/hooks'),
   prepareEditorRef: jest.fn(() => ({
     editorRef: { current: { value: 'something' } },
     refReady: true,
     setEditorRef: jest.fn().mockName('hooks.prepareEditorRef.setEditorRef'),
   })),
-  replaceStaticWithAsset: jest.fn(() => 'eDiTablE Text'),
 }));
 
 jest.mock('react', () => {
@@ -87,6 +87,13 @@ describe('TextEditor', () => {
   describe('snapshots', () => {
     test('renders as expected with default behavior', () => {
       expect(shallow(<TextEditor {...props} />).snapshot).toMatchSnapshot();
+    });
+    test('renders static images with relative paths', () => {
+      const updatedProps = {
+        ...props,
+        blockValue: { data: { data: 'eDiTablE Text with <img src="/static/img.jpg" />' } },
+      };
+      expect(shallow(<TextEditor {...updatedProps} />).snapshot).toMatchSnapshot();
     });
     test('not yet loaded, Spinner appears', () => {
       expect(shallow(<TextEditor {...props} blockFinished={false} />).snapshot).toMatchSnapshot();

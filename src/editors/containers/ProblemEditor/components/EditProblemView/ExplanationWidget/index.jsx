@@ -16,10 +16,12 @@ export const ExplanationWidget = ({
   intl,
 }) => {
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
-  const solutionContent = replaceStaticWithAsset({
-    initialContent: settings?.solutionExplanation || '',
+  const initialContent = settings?.solutionExplanation || '';
+  const newContent = replaceStaticWithAsset({
+    initialContent,
     learningContextId,
   });
+  const solutionContent = newContent || initialContent;
   if (!refReady) { return null; }
   return (
     <div className="tinyMceWidget mt-4 text-primary-500">

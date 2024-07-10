@@ -32,10 +32,12 @@ export const TextEditor = ({
   intl,
 }) => {
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
-  const editorContent = blockValue ? replaceStaticWithAsset({
-    initialContent: blockValue.data.data,
+  const initialContent = blockValue ? blockValue.data.data : '';
+  const newContent = replaceStaticWithAsset({
+    initialContent,
     learningContextId,
-  }) : '';
+  });
+  const editorContent = newContent || initialContent;
 
   if (!refReady) { return null; }
 

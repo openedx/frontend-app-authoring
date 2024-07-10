@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Alert } from '@openedx/paragon';
 
 import CodeEditor from '../CodeEditor';
+import { setAssetToStaticUrl } from '../TinyMceWidget/hooks';
 
 function getValue(content) {
   if (!content) { return null; }
@@ -15,7 +16,8 @@ export const RawEditor = ({
   content,
   lang,
 }) => {
-  const value = getValue(content);
+  const value = getValue(content) || '';
+  const staticUpdate = setAssetToStaticUrl({ editorValue: value });
 
   return (
     <div>
@@ -27,8 +29,9 @@ export const RawEditor = ({
       { value ? (
         <CodeEditor
           innerRef={editorRef}
-          value={value}
+          value={staticUpdate}
           lang={lang}
+          data-testid="code-editor"
         />
       ) : null}
 
