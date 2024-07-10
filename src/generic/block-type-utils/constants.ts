@@ -28,7 +28,7 @@ export const COMPONENT_TYPES = {
   dragAndDrop: 'drag-and-drop-v2',
 };
 
-export const TYPE_ICONS_MAP: Record<string, React.ReactElement> = {
+export const TYPE_ICONS_MAP: Record<string, React.ComponentType> = {
   video: VideoCameraIcon,
   other: BookOpenIcon,
   vertical: FormatListBulletedIcon,
@@ -36,7 +36,7 @@ export const TYPE_ICONS_MAP: Record<string, React.ReactElement> = {
   lock: LockIcon,
 };
 
-export const COMPONENT_TYPE_ICON_MAP: Record<string, React.ReactElement> = {
+export const COMPONENT_TYPE_ICON_MAP: Record<string, React.ComponentType> = {
   [COMPONENT_TYPES.advanced]: ScienceIcon,
   [COMPONENT_TYPES.discussion]: QuestionAnswerOutlineIcon,
   [COMPONENT_TYPES.library]: LibraryIcon,
@@ -47,7 +47,7 @@ export const COMPONENT_TYPE_ICON_MAP: Record<string, React.ReactElement> = {
   [COMPONENT_TYPES.dragAndDrop]: BackHandIcon,
 };
 
-export const STRUCTURAL_TYPE_ICONS: Record<string, React.ReactElement> = {
+export const STRUCTURAL_TYPE_ICONS: Record<string, React.ComponentType> = {
   vertical: TYPE_ICONS_MAP.vertical,
   sequential: Folder,
   chapter: Folder,
