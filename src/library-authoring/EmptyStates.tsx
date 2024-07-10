@@ -13,7 +13,7 @@ export const NoComponents = () => {
   return (
     <Stack direction="horizontal" gap={3} className="mt-6 justify-content-center">
       <FormattedMessage {...messages.noComponents} />
-      <Button iconBefore={Add} onClick={openAddContentSidebar}>
+      <Button iconBefore={Add} onClick={() => openAddContentSidebar()}>
         <FormattedMessage {...messages.addComponent} />
       </Button>
     </Stack>
