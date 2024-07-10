@@ -92,7 +92,7 @@
     "react-textarea-autosize": "^8.5.3",
     "react-transition-group": "4.4.5",
     "redux": "4.0.5",
-    "regenerator-runtime": "0.13.7",
+    "regenerator-runtime": "0.14.1",
     "start": "^5.1.0",
     "universal-cookie": "^4.0.4",
     "uuid": "^3.4.0",
