@@ -35,6 +35,13 @@ jest.mock('react-redux', () => ({
   useSelector: jest.fn(),
 }));
 
+const mockNavigate = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'), // use actual for all non-hook parts
+  useNavigate: () => mockNavigate,
+}));
+
 const queryClient = new QueryClient();
 
 const RootWrapper = () => (
@@ -165,7 +172,7 @@ describe('<StudioHome />', () => {
         });
       });
 
-      it('href should include home_library when in "v1 only" lib mode', async () => {
+      it('should navigate to home_library when in "v1 only" lib mode', () => {
         setConfig({
           ...getConfig(),
           LIBRARY_MODE: 'v1 only',
@@ -178,9 +185,15 @@ describe('<StudioHome />', () => {
 
         const { getByTestId } = render(<RootWrapper />);
         const createNewLibraryButton = getByTestId('new-library-button');
-        expect(createNewLibraryButton.getAttribute('href')).toBe(`${studioBaseUrl}/home_library`);
+
+        const { open } = window;
+        window.open = jest.fn();
+        fireEvent.click(createNewLibraryButton);
+        expect(window.open).toHaveBeenCalledWith(`${studioBaseUrl}/home_library`);
+        window.open = open;
       });
-      it('href should include create', async () => {
+
+      it('should navigate to the library authoring mfe', () => {
         useSelector.mockReturnValue({
           ...studioHomeMock,
           courseCreatorStatus: COURSE_CREATOR_STATES.granted,
@@ -191,9 +204,27 @@ describe('<StudioHome />', () => {
 
         const { getByTestId } = render(<RootWrapper />);
         const createNewLibraryButton = getByTestId('new-library-button');
-        expect(createNewLibraryButton.getAttribute('href')).toBe(
+
+        const { open } = window;
+        window.open = jest.fn();
+        fireEvent.click(createNewLibraryButton);
+        expect(window.open).toHaveBeenCalledWith(
           `${constructLibraryAuthoringURL(libraryAuthoringMfeUrl, 'create')}`,
         );
+        window.open = open;
+      });
+
+      it('should navigate to the library authoring page in course authoring', () => {
+        useSelector.mockReturnValue({
+          ...studioHomeMock,
+          LIBRARY_MODE: 'v2 only',
+        });
+        const { getByTestId } = render(<RootWrapper />);
+        const createNewLibraryButton = getByTestId('new-library-button');
+
+        fireEvent.click(createNewLibraryButton);
+
+        expect(mockNavigate).toHaveBeenCalledWith('/library/create');
       });
     });
 

@@ -35,9 +35,9 @@ function getItemIcon(blockType: string): React.ComponentType {
 /**
  * Returns the URL Suffix for library/library component hit
 */
-function getLibraryHitUrl(hit: ContentHit, libraryAuthoringMfeUrl: string): string {
+function getLibraryComponentUrlSuffix(hit: ContentHit) {
   const { contextKey } = hit;
-  return constructLibraryAuthoringURL(libraryAuthoringMfeUrl, `library/${contextKey}`);
+  return `library/${contextKey}`;
 }
 
 /**
@@ -117,10 +117,6 @@ const SearchResult: React.FC<{ hit: ContentHit }> = ({ hit }) => {
   const { closeSearchModal } = useSearchContext();
   const { libraryAuthoringMfeUrl, redirectToLibraryAuthoringMfe } = useSelector(getStudioHomeData);
 
-  const { usageKey } = hit;
-
-  const noRedirectUrl = usageKey.startsWith('lb:') && !redirectToLibraryAuthoringMfe;
-
   /**
    * Returns the URL for the context of the hit
    */
@@ -136,13 +132,19 @@ const SearchResult: React.FC<{ hit: ContentHit }> = ({ hit }) => {
       return `/${urlSuffix}`;
     }
 
-    if (usageKey.startsWith('lb:')) {
-      if (redirectToLibraryAuthoringMfe) {
-        return getLibraryHitUrl(hit, libraryAuthoringMfeUrl);
+    if (contextKey.startsWith('lib:')) {
+      const urlSuffix = getLibraryComponentUrlSuffix(hit);
+      if (redirectToLibraryAuthoringMfe && libraryAuthoringMfeUrl) {
+        return constructLibraryAuthoringURL(libraryAuthoringMfeUrl, urlSuffix);
       }
+
+      if (newWindow) {
+        return `${getPath(getConfig().PUBLIC_PATH)}${urlSuffix}`;
+      }
+      return `/${urlSuffix}`;
     }
 
-    // No context URL for this hit (e.g. a library without library authoring mfe)
+    // istanbul ignore next - This case should never be reached
     return undefined;
   }, [libraryAuthoringMfeUrl, redirectToLibraryAuthoringMfe, hit]);
 
@@ -189,12 +191,12 @@ const SearchResult: React.FC<{ hit: ContentHit }> = ({ hit }) => {
 
   return (
     <Stack
-      className={`border-bottom search-result p-2 align-items-start ${noRedirectUrl ? 'text-muted' : ''}`}
+      className="border-bottom search-result p-2 align-items-start"
       direction="horizontal"
       gap={3}
       onClick={navigateToContext}
       onKeyDown={navigateToContext}
-      tabIndex={noRedirectUrl ? undefined : 0}
+      tabIndex={0}
       role="button"
     >
       <Icon className="text-muted" src={getItemIcon(hit.blockType)} />
@@ -213,7 +215,6 @@ const SearchResult: React.FC<{ hit: ContentHit }> = ({ hit }) => {
       <IconButton
         src={OpenInNew}
         iconAs={Icon}
-        disabled={noRedirectUrl ? true : undefined}
         onClick={openContextInNewWindow}
         alt={intl.formatMessage(messages.openInNewWindow)}
       />
