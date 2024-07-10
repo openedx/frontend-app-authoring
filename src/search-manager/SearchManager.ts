@@ -6,6 +6,7 @@
  * https://github.com/algolia/instantsearch/issues/1658
  */
 import React from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { MeiliSearch, type Filter } from 'meilisearch';
 
 import { ContentHit, SearchSortOption } from './data/api';
@@ -46,11 +47,22 @@ export const SearchContextProvider: React.FC<{
   const [searchKeywords, setSearchKeywords] = React.useState('');
   const [blockTypesFilter, setBlockTypesFilter] = React.useState<string[]>([]);
   const [tagsFilter, setTagsFilter] = React.useState<string[]>([]);
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  // Use the selected search order option
-  // Note: SearchSortOption.RELEVANCE is special -- it is empty string, and represents the default sort setting.
-  const [searchSortOrder, setSearchSortOrder] = React.useState(SearchSortOption.RELEVANCE);
-  const sort = searchSortOrder ? [searchSortOrder] : [];
+  // The search sort order can be set in the query string, or the state.
+  // E.g. ?sort=display_name:desc maps to SearchSortOption.TITLE_ZA.
+  // TODO: generalize this approach in case we want to use it for keyword / filters too.
+  const [tmpSearchSortOrder, tmpSetSearchSortOrder] = React.useState(SearchSortOption.RELEVANCE);
+  const sortParam: SearchSortOption | string | undefined = searchParams.get('sort');
+  const searchSortOrder = Object.values(SearchSortOption).includes(sortParam) ? sortParam : tmpSearchSortOrder;
+  const setSearchSortOrder = (value: SearchSortOption) => {
+    // Update the URL parameters to store the selected search option
+    setSearchParams({ ...searchParams, sort: value }, { replace: true });
+    tmpSetSearchSortOrder(value);
+  };
+  // Note: SearchSortOption.RELEVANCE is special -- it means "no custom
+  // sorting", so we send it as an empty array.
+  const sort = searchSortOrder === SearchSortOption.RELEVANCE ? [] : [searchSortOrder];
 
   const canClearFilters = blockTypesFilter.length > 0 || tagsFilter.length > 0;
   const clearFilters = React.useCallback(() => {
