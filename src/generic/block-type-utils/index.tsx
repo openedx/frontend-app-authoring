@@ -6,7 +6,7 @@ import {
   COMPONENT_TYPE_COLOR_MAP,
 } from './constants';
 
-export function getItemIcon(blockType: string): React.ReactElement {
+export function getItemIcon(blockType: string): React.ComponentType {
   return STRUCTURAL_TYPE_ICONS[blockType] ?? COMPONENT_TYPE_ICON_MAP[blockType] ?? Article;
 }
 
