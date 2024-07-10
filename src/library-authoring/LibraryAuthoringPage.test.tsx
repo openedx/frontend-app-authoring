@@ -62,6 +62,7 @@ const libraryData: ContentLibrary = {
   hasUnpublishedChanges: true,
   hasUnpublishedDeletes: false,
   license: '',
+  canEditLibrary: false,
 };
 
 const RootWrapper = () => (

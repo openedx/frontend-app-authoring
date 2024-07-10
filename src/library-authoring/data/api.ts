@@ -23,6 +23,7 @@ export interface ContentLibrary {
   hasUnpublishedChanges: boolean;
   hasUnpublishedDeletes: boolean;
   license: string;
+  canEditLibrary: boolean;
 }
 
 /**
