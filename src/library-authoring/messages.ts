@@ -70,10 +70,20 @@ const messages = defineMessages({
     defaultMessage: 'This is a placeholder for the create library form. This will be replaced with the actual form.',
     description: 'Temp placeholder for the create library container. This will be replaced with the new library form.',
   },
-  recentComponentsTempPlaceholder: {
-    id: 'course-authoring.library-authoring.recent-components-temp-placeholder',
-    defaultMessage: 'Recently modified components and collections will be displayed here.',
-    description: 'Temp placeholder for the recent components container. This will be replaced with the actual list.',
+  recentlyModifiedSectionTitle: {
+    id: 'course-authoring.library-authoring.recently-modified-section-title',
+    defaultMessage: 'Recently Modified',
+    description: 'Title for the Recently Modified section in library home',
+  },
+  collectionsSectionTitle: {
+    id: 'course-authoring.library-authoring.collections-section-title',
+    defaultMessage: 'Collections ({collectionCount})',
+    description: 'Title for the Recently Modified section in library home',
+  },
+  componentsSectionTitle: {
+    id: 'course-authoring.library-authoring.recently-modified-section-title',
+    defaultMessage: 'Components ({componentCount})',
+    description: 'Title for the Recently Modified section in library home',
   },
 });
 
