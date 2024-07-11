@@ -1,27 +1,35 @@
 /* eslint-disable react/prop-types */
-// @ts-check
-import { Toast } from '@openedx/paragon';
 import React from 'react';
+import { Toast } from '@openedx/paragon';
+
+export interface ToastContextData {
+  toastMessage: string | null;
+  showToast: Function;
+  closeToast: Function;
+}
+
+export interface ToastProviderProps {
+  children: React.ReactNode;
+}
 
 /**
  * Global context to keep track of popup message(s) that appears to user after
  * they take an action like creating or deleting something.
  */
 export const ToastContext = React.createContext({
-  toastMessage: /** @type{null|string} */ (null),
-  showToast: /** @type{function} */ (() => {}),
-  closeToast: /** @type{function} */ (() => {}),
-});
+  toastMessage: null,
+  showToast: () => {},
+  closeToast: () => {},
+} as ToastContextData);
 
 /**
  * React component to provide `ToastContext` to the app
- * @param {{children?: React.ReactNode}} props The components to wrap
  */
-export const ToastProvider = (props) => {
+export const ToastProvider = (props: ToastProviderProps) => {
   // TODO, We can convert this to a queue of messages,
   // see: https://github.com/open-craft/frontend-app-course-authoring/pull/38#discussion_r1638990647
 
-  const [toastMessage, setToastMessage] = React.useState(/** @type{null|string} */ (null));
+  const [toastMessage, setToastMessage] = React.useState<string | null>(null);
 
   React.useEffect(() => () => {
     // Cleanup function to avoid updating state on unmounted component
