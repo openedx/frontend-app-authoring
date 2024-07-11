@@ -5,6 +5,7 @@ import { useSearchContext } from '../../search-manager';
 import { NoComponents, NoSearchResults } from '../EmptyStates';
 import { useLibraryBlockTypes } from '../data/apiHook';
 import { ComponentCard, ComponentCardLoading } from './ComponentCard';
+import { LIBRARY_SECTION_PREVIEW_LIMIT } from './LibrarySection';
 
 type LibraryComponentsProps = {
   libraryId: string,
@@ -33,7 +34,7 @@ const LibraryComponents = ({
   } = useSearchContext();
 
   const { componentList, tagCounts } = useMemo(() => {
-    const result = variant === 'preview' ? hits.slice(0, 4) : hits;
+    const result = variant === 'preview' ? hits.slice(0, LIBRARY_SECTION_PREVIEW_LIMIT) : hits;
     const tagsCountsResult = {};
     result.forEach((component) => {
       if (!component.tags) {

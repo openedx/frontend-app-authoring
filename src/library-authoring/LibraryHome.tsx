@@ -10,9 +10,11 @@ import LibraryRecentlyModified from './LibraryRecentlyModified';
 
 type LibraryHomeProps = {
   libraryId: string,
+  tabList: { home: string, components: string, collections: string },
+  handleTabChange: (key: string) => void,
 };
 
-const LibraryHome = ({ libraryId } : LibraryHomeProps) => {
+const LibraryHome = ({ libraryId, tabList, handleTabChange } : LibraryHomeProps) => {
   const {
     totalHits: componentCount,
     searchKeywords,
@@ -34,10 +36,18 @@ const LibraryHome = ({ libraryId } : LibraryHomeProps) => {
         renderEmptyState()
         || (
           <>
-            <LibrarySection title={`Collections (${collectionCount})`}>
+            <LibrarySection
+              title={`Collections (${collectionCount})`}
+              contentCount={collectionCount}
+              // TODO: add viewAllAction here once collections implemented
+            >
               <LibraryCollections />
             </LibrarySection>
-            <LibrarySection title={`Components (${componentCount})`}>
+            <LibrarySection
+              title={`Components (${componentCount})`}
+              contentCount={componentCount}
+              viewAllAction={() => handleTabChange(tabList.components)}
+            >
               <LibraryComponents libraryId={libraryId} variant="preview" />
             </LibrarySection>
           </>

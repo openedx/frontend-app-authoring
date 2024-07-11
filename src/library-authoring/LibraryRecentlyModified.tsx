@@ -10,7 +10,10 @@ const RecentlyModified: React.FC<{ libraryId: string }> = ({ libraryId }) => {
 
   return componentCount > 0
     ? (
-      <LibrarySection title="Recently Modified">
+      <LibrarySection
+        title="Recently Modified"
+        contentCount={componentCount}
+      >
         <LibraryComponents libraryId={libraryId} variant="preview" />
       </LibrarySection>
     )
