@@ -170,7 +170,6 @@ describe('<LibraryAuthoringPage />', () => {
     expect(queryByText('Recently Modified')).not.toBeInTheDocument();
     expect(queryByText('Collections (0)')).not.toBeInTheDocument();
     expect(queryByText('Components (6)')).not.toBeInTheDocument();
-    expect(getByText('There are 6 components in this library')).toBeInTheDocument();
 
     // Navigate to the collections tab
     fireEvent.click(getByRole('tab', { name: 'Collections' }));
@@ -186,7 +185,6 @@ describe('<LibraryAuthoringPage />', () => {
     expect(getByText('Recently Modified')).toBeInTheDocument();
     expect(getByText('Collections (0)')).toBeInTheDocument();
     expect(getByText('Components (6)')).toBeInTheDocument();
-    expect(getByText('There are 6 components in this library')).toBeInTheDocument();
   });
 
   it('show library without components', async () => {

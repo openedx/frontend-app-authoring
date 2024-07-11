@@ -5,26 +5,26 @@ import { NoComponents, NoSearchResults } from '../EmptyStates';
 import { useLibraryBlockTypes, useLibraryComponentCount, useLibraryComponents } from '../data/apiHook';
 import { ComponentCard, ComponentCardLoading } from './ComponentCard';
 
+type LibraryComponentsProps = {
+  libraryId: string,
+  filter: {
+    searchKeywords: string,
+  },
+  variant: string,
+};
+
 /**
  * Library Components to show components grid
  *
  * Use style to:
  *   - 'full': Show all components with Infinite scroll pagination.
  *   - 'preview': Show first 4 components without pagination.
- *
- * @type {React.FC<{
- *   libraryId: string,
- *   filter: {
- *     searchKeywords: string,
- *   },
- *   variant: 'full'|'preview',
- * }>}
  */
 const LibraryComponents = ({
   libraryId,
   filter: { searchKeywords },
   variant,
-}) => {
+}: LibraryComponentsProps) => {
   const { componentCount } = useLibraryComponentCount(libraryId, searchKeywords);
   const {
     hits,
