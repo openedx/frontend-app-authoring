@@ -356,4 +356,3 @@ function useRanger(_ref) {
 }
 
 export { useRanger };
-// # sourceMappingURL=react-ranger.mjs.map
