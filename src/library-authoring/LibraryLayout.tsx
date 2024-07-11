@@ -1,4 +1,3 @@
-// @ts-check
 import React from 'react';
 import LibraryAuthoringPage from './LibraryAuthoringPage';
 import { LibraryProvider } from './common/context';

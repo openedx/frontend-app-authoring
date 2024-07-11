@@ -17,9 +17,8 @@ import initializeStore from '../store';
 import { getContentSearchConfigUrl } from '../search-modal/data/api';
 import mockResult from '../search-modal/__mocks__/search-result.json';
 import mockEmptyResult from '../search-modal/__mocks__/empty-search-result.json';
-import LibraryAuthoringPage from './LibraryAuthoringPage';
 import { getContentLibraryApiUrl, type ContentLibrary } from './data/api';
-import { LibraryProvider } from './common/context';
+import LibraryLayout from './LibraryLayout';
 
 let store;
 const mockUseParams = jest.fn();
@@ -75,9 +74,7 @@ const RootWrapper = () => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
-        <LibraryProvider>
-          <LibraryAuthoringPage />
-        </LibraryProvider>
+        <LibraryLayout />
       </QueryClientProvider>
     </IntlProvider>
   </AppProvider>
