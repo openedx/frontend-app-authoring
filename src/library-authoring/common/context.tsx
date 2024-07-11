@@ -9,14 +9,13 @@ export interface LibraryContextData {
 }
 
 export const LibraryContext = React.createContext({
-  sidebarBodyComponent: /** @type{null|string} */ (null),
-  closeLibrarySidebar: /** @type{function} */ (() => {}),
-  openAddContentSidebar: /** @type{function} */ (() => {}),
-});
+  sidebarBodyComponent: null,
+  closeLibrarySidebar: () => {},
+  openAddContentSidebar: () => {},
+} as LibraryContextData);
 
 /**
  * React component to provide `LibraryContext`
- * @param {{children?: React.ReactNode}} props The components to wrap
  */
 export const LibraryProvider = (props: { children?: React.ReactNode }) => {
   const [sidebarBodyComponent, setSidebarBodyComponent] = React.useState<string | null>(null);

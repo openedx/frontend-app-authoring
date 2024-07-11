@@ -1,4 +1,3 @@
-// @ts-check
 import React, { useContext } from 'react';
 import {
   Stack,
@@ -65,7 +64,7 @@ const AddContentContainer = () => {
     },
   ];
 
-  const onCreateContent = (blockType) => {
+  const onCreateContent = (blockType: string) => {
     if (libraryId) {
       createBlockMutation.mutateAsync({
         libraryId,

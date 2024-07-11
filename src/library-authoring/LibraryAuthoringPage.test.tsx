@@ -19,6 +19,7 @@ import mockResult from '../search-modal/__mocks__/search-result.json';
 import mockEmptyResult from '../search-modal/__mocks__/empty-search-result.json';
 import LibraryAuthoringPage from './LibraryAuthoringPage';
 import { getContentLibraryApiUrl, type ContentLibrary } from './data/api';
+import { LibraryProvider } from './common/context';
 
 let store;
 const mockUseParams = jest.fn();
@@ -74,7 +75,9 @@ const RootWrapper = () => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
-        <LibraryAuthoringPage />
+        <LibraryProvider>
+          <LibraryAuthoringPage />
+        </LibraryProvider>
       </QueryClientProvider>
     </IntlProvider>
   </AppProvider>
@@ -211,6 +214,16 @@ describe('<LibraryAuthoringPage />', () => {
     expect(getByText('You have not added any content to this library yet.')).toBeInTheDocument();
   });
 
+  it('show new content button', async () => {
+    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
+    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
+
+    render(<RootWrapper />);
+
+    expect(await screen.findByRole('heading')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /new/i })).toBeInTheDocument();
+  });
+
   it('show library without search results', async () => {
     mockUseParams.mockReturnValue({ libraryId: libraryData.id });
     axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
@@ -240,23 +253,13 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.click(getByRole('tab', { name: 'Home' }));
   });
 
-  it('show new content button', async () => {
-    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
-    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
-
-    render(<RootWrapper />);
-
-    expect(await screen.findByRole('heading', `Content library${libraryData.title}`)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /new/i })).toBeInTheDocument();
-  });
-
   it('should open and close new content sidebar', async () => {
     mockUseParams.mockReturnValue({ libraryId: libraryData.id });
     axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
 
     render(<RootWrapper />);
 
-    expect(await screen.findByRole('heading', `Content library${libraryData.title}`)).toBeInTheDocument();
+    expect(await screen.findByRole('heading')).toBeInTheDocument();
     expect(screen.queryByText(/add content/i)).not.toBeInTheDocument();
 
     const newButton = screen.getByRole('button', { name: /new/i });

@@ -81,7 +81,7 @@ const LibraryAuthoringPage = () => {
       <Row>
         <Col>
           <Header
-            number={libraryData.version.toString()}
+            number={libraryData.slug}
             title={libraryData.title}
             org={libraryData.org}
             contextId={libraryId}

@@ -1,31 +1,11 @@
-// @ts-check
-import React from 'react';
-
+import MockAdapter from 'axios-mock-adapter';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { renderHook } from '@testing-library/react-hooks';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import MockAdapter from 'axios-mock-adapter';
-import { getCreateLibraryBlockUrl } from './api';
-import { useCreateLibraryBlock } from './apiHook';
+import { createLibraryBlock, getCreateLibraryBlockUrl } from './api';
 
 let axiosMock;
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-    },
-  },
-});
-
-const wrapper = ({ children }) => (
-  <QueryClientProvider client={queryClient}>
-    {children}
-  </QueryClientProvider>
-);
-
-describe('library api hooks', () => {
+describe('library api calls', () => {
   beforeEach(() => {
     initializeMockApp({
       authenticatedUser: {
@@ -35,15 +15,19 @@ describe('library api hooks', () => {
         roles: [],
       },
     });
+
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should create library block', async () => {
     const libraryId = 'lib:org:1';
     const url = getCreateLibraryBlockUrl(libraryId);
     axiosMock.onPost(url).reply(200);
-    const { result } = renderHook(() => useCreateLibraryBlock(), { wrapper });
-    await result.current.mutateAsync({
+    await createLibraryBlock({
       libraryId,
       blockType: 'html',
       definitionId: '1',

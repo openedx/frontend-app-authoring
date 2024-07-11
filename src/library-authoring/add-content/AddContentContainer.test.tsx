@@ -1,3 +1,4 @@
+import React from 'react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
