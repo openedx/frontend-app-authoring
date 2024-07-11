@@ -6,7 +6,7 @@ import {
 } from '@openedx/paragon';
 import { InfoOutline } from '@openedx/paragon/icons';
 import {
-  Routes, Route, useLocation, useNavigate, useParams,
+  Routes, Route, useLocation, useNavigate, useParams, useSearchParams,
 } from 'react-router-dom';
 
 import Loading from '../generic/Loading';
@@ -55,8 +55,9 @@ const LibraryAuthoringPage = () => {
   const [tabKey, setTabKey] = useState(TAB_LIST.home);
 
   const { libraryId } = useParams();
-
   const { data: libraryData, isLoading } = useContentLibrary(libraryId);
+
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     const currentPath = location.pathname.split('/').pop();
@@ -78,6 +79,7 @@ const LibraryAuthoringPage = () => {
   const handleTabChange = (key: string) => {
     setTabKey(key);
     navigate(key);
+    setSearchParams(searchParams);
   };
 
   return (

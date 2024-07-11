@@ -39,6 +39,49 @@ export interface SearchContextData {
 
 const SearchContext = React.createContext<SearchContextData | undefined>(undefined);
 
+/**
+ * Hook which lets you store state variables in the URL search parameters.
+ *
+ * It wraps useState with functions that get/set a query string
+ * search parameter when returning/setting the state variable.
+ *
+ */
+function useStateWithUrlSearchParam<Type>(
+  defaultValue: Type,
+  paramName: string,
+  // Returns the Type equivalent of the given string value, or
+  // undefined if value is invalid.
+  fromString: (value: string | null) => Type | undefined,
+  // Returns the string equivalent of the given Type value.
+  // Returning empty string/undefined will clear the url search paramName.
+  toString: (value: Type) => string | undefined,
+): [value: Type, setter: React.Dispatch<React.SetStateAction<Type>>] {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [stateValue, stateSetter] = React.useState<Type>(defaultValue);
+
+  // The converted search parameter value takes precedence over the state value.
+  const returnValue: Type = fromString(searchParams.get(paramName)) ?? stateValue ?? defaultValue;
+
+  // Before updating the state value, update the url search parameter
+  const returnSetter: React.Dispatch<React.SetStateAction<Type>> = ((value: Type) => {
+    const paramValue: string = toString(value) ?? '';
+    if (paramValue) {
+      searchParams.set(paramName, paramValue);
+    } else {
+      // If no paramValue, remove it from the search params, so
+      // we don't get dangling parameter values like ?paramName=
+      // Another way to decide this would be to check value === defaultValue,
+      // and ensure that default values are never stored in the search string.
+      searchParams.delete(paramName);
+    }
+    setSearchParams(searchParams, { replace: true });
+    return stateSetter(value);
+  });
+
+  // Return the computed value and wrapped set state function
+  return [returnValue, returnSetter];
+}
+
 export const SearchContextProvider: React.FC<{
   extraFilter?: Filter;
   children: React.ReactNode,
@@ -47,22 +90,18 @@ export const SearchContextProvider: React.FC<{
   const [searchKeywords, setSearchKeywords] = React.useState('');
   const [blockTypesFilter, setBlockTypesFilter] = React.useState<string[]>([]);
   const [tagsFilter, setTagsFilter] = React.useState<string[]>([]);
-  const [searchParams, setSearchParams] = useSearchParams();
 
-  // The search sort order can be set in the query string, or the state.
+  // The search sort order can be set via the query string
   // E.g. ?sort=display_name:desc maps to SearchSortOption.TITLE_ZA.
-  // TODO: generalize this approach in case we want to use it for keyword / filters too.
-  const [tmpSearchSortOrder, tmpSetSearchSortOrder] = React.useState(SearchSortOption.RELEVANCE);
-  const sortParam: SearchSortOption | string | undefined = searchParams.get('sort');
-  const searchSortOrder = Object.values(SearchSortOption).includes(sortParam) ? sortParam : tmpSearchSortOrder;
-  const setSearchSortOrder = (value: SearchSortOption) => {
-    // Update the URL parameters to store the selected search option
-    setSearchParams({ ...searchParams, sort: value }, { replace: true });
-    tmpSetSearchSortOrder(value);
-  };
-  // Note: SearchSortOption.RELEVANCE is special -- it means "no custom
-  // sorting", so we send it as an empty array.
-  const sort = searchSortOrder === SearchSortOption.RELEVANCE ? [] : [searchSortOrder];
+  const [searchSortOrder, setSearchSortOrder] = useStateWithUrlSearchParam<SearchSortOption>(
+    SearchSortOption.RELEVANCE,
+    'sort',
+    (value: string) => Object.values(SearchSortOption).find((enumValue) => value === `${enumValue}`),
+    (value: SearchSortOption) => value.toString(),
+  );
+  // Note: SearchSortOption.RELEVANCE is special, it means "no custom sorting",
+  // so we send it to useContentSearchResults as an empty array.
+  const sort: SearchSortOption[] = searchSortOrder === SearchSortOption.RELEVANCE ? [] : [searchSortOrder];
 
   const canClearFilters = blockTypesFilter.length > 0 || tagsFilter.length > 0;
   const clearFilters = React.useCallback(() => {

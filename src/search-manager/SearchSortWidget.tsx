@@ -13,37 +13,37 @@ export const SearchSortWidget: React.FC<Record<never, never>> = () => {
     () => [
       {
         // Default; sorts results by keyword search ranking
-        id: 'sort-content-relevance',
+        id: 'search-sort-option-relevance',
         name: intl.formatMessage(messages.searchSortRelevance),
         value: SearchSortOption.RELEVANCE,
       },
       {
-        id: 'sort-content-title-az',
+        id: 'search-sort-option-title-az',
         name: intl.formatMessage(messages.searchSortTitleAZ),
         value: SearchSortOption.TITLE_AZ,
       },
       {
-        id: 'sort-content-title-za',
+        id: 'search-sort-option-title-za',
         name: intl.formatMessage(messages.searchSortTitleZA),
         value: SearchSortOption.TITLE_ZA,
       },
       {
-        id: 'sort-content-newest',
+        id: 'search-sort-option-newest',
         name: intl.formatMessage(messages.searchSortNewest),
         value: SearchSortOption.NEWEST,
       },
       {
-        id: 'sort-content-oldest',
+        id: 'search-sort-option-oldest',
         name: intl.formatMessage(messages.searchSortOldest),
         value: SearchSortOption.OLDEST,
       },
       {
-        id: 'sort-content-recently-published',
+        id: 'search-sort-option-recently-published',
         name: intl.formatMessage(messages.searchSortRecentlyPublished),
         value: SearchSortOption.RECENTLY_PUBLISHED,
       },
       {
-        id: 'sort-content-recently-modified',
+        id: 'search-sort-option-recently-modified',
         name: intl.formatMessage(messages.searchSortRecentlyModified),
         value: SearchSortOption.RECENTLY_MODIFIED,
       },
@@ -58,9 +58,11 @@ export const SearchSortWidget: React.FC<Record<never, never>> = () => {
   ).name;
 
   return (
-    <Dropdown>
+    <Dropdown id="search-sort-dropdown">
       <Dropdown.Toggle
+        id="search-sort-toggle"
         title={intl.formatMessage(messages.searchSortWidgetAltTitle)}
+        alt={intl.formatMessage(messages.searchSortWidgetAltTitle)}
         variant="none"
         className="dropdown-toggle-menu-items form-control d-flex"
       >
