@@ -103,7 +103,7 @@ export const SearchContextProvider: React.FC<{
   // Note: SearchSortOption.RELEVANCE is special, it means "no custom sorting",
   // so we send it to useContentSearchResults as an empty array.
   const sort: SearchSortOption[] = (overrideSearchSortOrder && [overrideSearchSortOrder])
-    || searchSortOrder === SearchSortOption.RELEVANCE ? [] : [searchSortOrder];
+    || (searchSortOrder === SearchSortOption.RELEVANCE ? [] : [searchSortOrder]);
 
   const canClearFilters = blockTypesFilter.length > 0 || tagsFilter.length > 0;
   const clearFilters = React.useCallback(() => {

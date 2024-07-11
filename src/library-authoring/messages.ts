@@ -78,12 +78,12 @@ const messages = defineMessages({
   collectionsSectionTitle: {
     id: 'course-authoring.library-authoring.collections-section-title',
     defaultMessage: 'Collections ({collectionCount})',
-    description: 'Title for the Recently Modified section in library home',
+    description: 'Title for the Collections section in library home',
   },
   componentsSectionTitle: {
-    id: 'course-authoring.library-authoring.recently-modified-section-title',
+    id: 'course-authoring.library-authoring.components-section-title',
     defaultMessage: 'Components ({componentCount})',
-    description: 'Title for the Recently Modified section in library home',
+    description: 'Title for the Components section in library home',
   },
 });
 
