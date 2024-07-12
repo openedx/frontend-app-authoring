@@ -6,7 +6,7 @@ import {
 import { createLibraryV2 } from './api';
 
 /**
- * Builds the mutation to create a new content library.
+ * Hook that provides a "mutation" that can be used to create a new content library.
  */
 // eslint-disable-next-line import/prefer-default-export
 export const useCreateLibraryV2 = () => {
