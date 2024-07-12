@@ -73,13 +73,13 @@ describe('<CreateLibrary />', () => {
       id: 'library-id',
     });
 
-    const { getByRole, getByTestId } = render(<RootWrapper />);
+    const { getByRole } = render(<RootWrapper />);
 
     const titleInput = getByRole('textbox', { name: /library name/i });
     userEvent.click(titleInput);
     userEvent.type(titleInput, 'Test Library Name');
 
-    const orgInput = getByTestId('autosuggest-textbox-input');
+    const orgInput = getByRole('combobox', { name: /organization/i });
     userEvent.click(orgInput);
     userEvent.type(orgInput, 'org1');
     userEvent.tab();
