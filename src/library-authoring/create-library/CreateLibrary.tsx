@@ -2,7 +2,6 @@ import React from 'react';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Alert,
   Container,
   Form,
   StatefulButton,
@@ -15,18 +14,11 @@ import { REGEX_RULES } from '../../constants';
 import Header from '../../header';
 import FormikControl from '../../generic/FormikControl';
 import FormikErrorFeedback from '../../generic/FormikErrorFeedback';
+import AlertError from '../../generic/alert-error';
 import { useOrganizationListData } from '../../generic/data/apiHooks';
 import SubHeader from '../../generic/sub-header/SubHeader';
 import { useCreateLibraryV2 } from './data/apiHooks';
 import messages from './messages';
-
-const ErrorAlert = ({ error }: { error: any }) => (
-  <Alert variant="danger" className="mt-3">
-    {error?.message}
-    <br />
-    {error?.response?.data && JSON.stringify(error.response.data)}
-  </Alert>
-);
 
 const CreateLibrary = () => {
   const intl = useIntl();
@@ -136,7 +128,7 @@ const CreateLibrary = () => {
             </Form>
           )}
         </Formik>
-        {isError && (<ErrorAlert error={error} />)}
+        {isError && (<AlertError error={error} />)}
       </Container>
       <StudioFooter />
     </>
