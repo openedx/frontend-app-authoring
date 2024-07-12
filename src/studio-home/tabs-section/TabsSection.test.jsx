@@ -11,7 +11,7 @@ import { AppProvider } from '@edx/frontend-platform/react';
 import MockAdapter from 'axios-mock-adapter';
 
 import initializeStore from '../../store';
-import { studioHomeMock, listStudioHomeV2LibrariesMock } from '../__mocks__';
+import { studioHomeMock } from '../__mocks__';
 import messages from '../messages';
 import tabMessages from './messages';
 import TabsSection from '.';
@@ -25,26 +25,8 @@ import {
 import { getApiBaseUrl, getStudioHomeApiUrl } from '../data/api';
 import { executeThunk } from '../../utils';
 import { fetchLibraryData, fetchStudioHomeData } from '../data/thunks';
-
-import useListStudioHomeV2Libraries from '../data/apiHooks';
-
-jest.mock('../data/apiHooks', () => ({
-  // Since only useListStudioHomeV2Libraries is exported as default
-  __esModule: true,
-  default: jest.fn(() => ({
-    data: {
-      next: null,
-      previous: null,
-      count: 2,
-      num_pages: 1,
-      current_page: 1,
-      start: 0,
-      results: [],
-    },
-    isLoading: false,
-    isError: false,
-  })),
-}));
+import { getContentLibraryV2ListApiUrl } from '../../library-authoring/data/api';
+import contentLibrariesListV2 from '../../library-authoring/__mocks__/contentLibrariesListV2';
 
 const { studioShortName } = studioHomeMock;
 
@@ -108,6 +90,7 @@ describe('<TabsSection />', () => {
       ...getConfig(),
       LIBRARY_MODE: 'mixed',
     });
+    axiosMock.onGet(getContentLibraryV2ListApiUrl()).reply(200, contentLibrariesListV2);
   });
 
   it('should render all tabs correctly', async () => {
@@ -384,12 +367,6 @@ describe('<TabsSection />', () => {
     });
 
     it('should switch to Libraries tab and render specific v2 library details', async () => {
-      useListStudioHomeV2Libraries.mockReturnValue({
-        data: listStudioHomeV2LibrariesMock,
-        isLoading: false,
-        isError: false,
-      });
-
       render(<RootWrapper />);
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
       await executeThunk(fetchStudioHomeData(), store.dispatch);
@@ -403,14 +380,14 @@ describe('<TabsSection />', () => {
 
       expect(screen.getByText('Showing 2 of 2')).toBeVisible();
 
-      expect(screen.getByText(listStudioHomeV2LibrariesMock.results[0].title)).toBeVisible();
+      expect(screen.getByText(contentLibrariesListV2.results[0].title)).toBeVisible();
       expect(screen.getByText(
-        `${listStudioHomeV2LibrariesMock.results[0].org} / ${listStudioHomeV2LibrariesMock.results[0].slug}`,
+        `${contentLibrariesListV2.results[0].org} / ${contentLibrariesListV2.results[0].slug}`,
       )).toBeVisible();
 
-      expect(screen.getByText(listStudioHomeV2LibrariesMock.results[1].title)).toBeVisible();
+      expect(screen.getByText(contentLibrariesListV2.results[1].title)).toBeVisible();
       expect(screen.getByText(
-        `${listStudioHomeV2LibrariesMock.results[1].org} / ${listStudioHomeV2LibrariesMock.results[1].slug}`,
+        `${contentLibrariesListV2.results[1].org} / ${contentLibrariesListV2.results[1].slug}`,
       )).toBeVisible();
     });
 
@@ -444,12 +421,6 @@ describe('<TabsSection />', () => {
         LIBRARY_MODE: 'v2 only',
       });
 
-      useListStudioHomeV2Libraries.mockReturnValue({
-        data: listStudioHomeV2LibrariesMock,
-        isLoading: false,
-        isError: false,
-      });
-
       render(<RootWrapper />);
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
       await executeThunk(fetchStudioHomeData(), store.dispatch);
@@ -463,14 +434,14 @@ describe('<TabsSection />', () => {
 
       expect(screen.getByText('Showing 2 of 2')).toBeVisible();
 
-      expect(screen.getByText(listStudioHomeV2LibrariesMock.results[0].title)).toBeVisible();
+      expect(screen.getByText(contentLibrariesListV2.results[0].title)).toBeVisible();
       expect(screen.getByText(
-        `${listStudioHomeV2LibrariesMock.results[0].org} / ${listStudioHomeV2LibrariesMock.results[0].slug}`,
+        `${contentLibrariesListV2.results[0].org} / ${contentLibrariesListV2.results[0].slug}`,
       )).toBeVisible();
 
-      expect(screen.getByText(listStudioHomeV2LibrariesMock.results[1].title)).toBeVisible();
+      expect(screen.getByText(contentLibrariesListV2.results[1].title)).toBeVisible();
       expect(screen.getByText(
-        `${listStudioHomeV2LibrariesMock.results[1].org} / ${listStudioHomeV2LibrariesMock.results[1].slug}`,
+        `${contentLibrariesListV2.results[1].org} / ${contentLibrariesListV2.results[1].slug}`,
       )).toBeVisible();
     });
 
