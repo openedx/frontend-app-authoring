@@ -10,8 +10,8 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig, getPath } from '@edx/frontend-platform';
 import { Error } from '@openedx/paragon/icons';
 
+import { useContentLibraryV2List } from '../../../library-authoring';
 import { constructLibraryAuthoringURL } from '../../../utils';
-import useListStudioHomeV2Libraries from '../../data/apiHooks';
 import { LoadingSpinner } from '../../../generic/Loading';
 import AlertMessage from '../../../generic/alert-message';
 import CardItem from '../../card-item';
@@ -45,7 +45,7 @@ const LibrariesV2Tab: React.FC<{
     data,
     isLoading,
     isError,
-  } = useListStudioHomeV2Libraries({ page: currentPage, ...filterParams });
+  } = useContentLibraryV2List({ page: currentPage, ...filterParams });
 
   if (isLoading && !isFiltered) {
     return (
