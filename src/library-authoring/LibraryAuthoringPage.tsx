@@ -57,7 +57,7 @@ const LibraryAuthoringPage = () => {
   const { libraryId } = useParams();
   const { data: libraryData, isLoading } = useContentLibrary(libraryId);
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     const currentPath = location.pathname.split('/').pop();
@@ -78,8 +78,10 @@ const LibraryAuthoringPage = () => {
 
   const handleTabChange = (key: string) => {
     setTabKey(key);
-    navigate(key);
-    setSearchParams(searchParams);
+    navigate({
+      pathname: key,
+      search: searchParams.toString(),
+    });
   };
 
   return (

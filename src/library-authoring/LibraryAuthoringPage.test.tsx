@@ -324,4 +324,40 @@ describe('<LibraryAuthoringPage />', () => {
     // is less than the preview limit (4)
     expect(queryByText('View All')).not.toBeInTheDocument();
   });
+
+  it('sort library components', async () => {
+    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
+    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
+    fetchMock.post(searchEndpoint, returnEmptyResult, { overwriteRoutes: true });
+
+    const { findByText, getByText, getByTitle } = render(<RootWrapper />);
+
+    // Default sorts by relevance
+    expect(await findByText('Most Relevant')).toBeInTheDocument();
+
+    const testSortOption = (async (optionText, sortBy) => {
+      fireEvent.click(getByTitle('Sort search results'));
+      fireEvent.click(getByText(optionText));
+      const bodyText = sortBy ? `"sort":["${sortBy}"]` : '"sort":[]';
+      const searchText = sortBy ? `?sort=${encodeURIComponent(sortBy)}` : '';
+      await waitFor(() => {
+        expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+          body: expect.stringContaining(bodyText),
+          method: 'POST',
+          headers: expect.anything(),
+        });
+      });
+      expect(window.location.search).toEqual(searchText);
+    });
+
+    await testSortOption('Title, A-Z', 'display_name:asc');
+    await testSortOption('Title, Z-A', 'display_name:desc');
+    await testSortOption('Newest', 'created:desc');
+    await testSortOption('Oldest', 'created:asc');
+    await testSortOption('Recently Published', 'last_published:desc');
+    await testSortOption('Recently Modified', 'modified:desc');
+
+    // Selecting the default sort option clears the url search param
+    await testSortOption('Most Relevant', '');
+  });
 });
