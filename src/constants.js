@@ -69,3 +69,8 @@ export const CLIPBOARD_STATUS = {
 };
 
 export const STRUCTURAL_XBLOCK_TYPES = ['vertical', 'sequential', 'chapter', 'course'];
+
+export const REGEX_RULES = {
+  specialCharsRule: /^[a-zA-Z0-9_\-.'*~\s]+$/,
+  noSpaceRule: /^\S*$/,
+};

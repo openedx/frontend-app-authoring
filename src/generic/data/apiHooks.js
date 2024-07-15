@@ -8,7 +8,7 @@ import { getOrganizations, getTagsCount } from './api';
 export const useOrganizationListData = () => (
   useQuery({
     queryKey: ['organizationList'],
-    queryFn: () => getOrganizations(),
+    queryFn: getOrganizations,
   })
 );
 

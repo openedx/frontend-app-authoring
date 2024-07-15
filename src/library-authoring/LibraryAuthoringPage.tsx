@@ -24,7 +24,7 @@ import NotFoundAlert from '../generic/NotFoundAlert';
 import LibraryComponents from './LibraryComponents';
 import LibraryCollections from './LibraryCollections';
 import LibraryHome from './LibraryHome';
-import { useContentLibrary } from './data/apiHook';
+import { useContentLibrary } from './data/apiHooks';
 import messages from './messages';
 import { LibrarySidebar } from './library-sidebar';
 import { LibraryContext } from './common/context';

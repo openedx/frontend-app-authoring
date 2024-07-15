@@ -6,7 +6,7 @@ import { renderHook } from '@testing-library/react-hooks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MockAdapter from 'axios-mock-adapter';
 import { getCreateLibraryBlockUrl } from './api';
-import { useCreateLibraryBlock } from './apiHook';
+import { useCreateLibraryBlock } from './apiHooks';
 
 let axiosMock;
 

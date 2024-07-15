@@ -3,16 +3,23 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { MeiliSearch } from 'meilisearch';
 
 import { useContentSearchConnection, useContentSearchResults } from '../../search-modal';
-import { createLibraryBlock, getContentLibrary } from './api';
+import {
+  type GetLibrariesV2CustomParams,
+  createLibraryBlock,
+  getContentLibrary,
+  getContentLibraryV2List,
+} from './api';
 
-export const libraryQueryKeys = {
-  /**
-   * Used in all query keys.
-   * You can use these key to invalidate all queries.
-   */
+export const libraryAuthoringQueryKeys = {
   all: ['contentLibrary'],
-  contentLibrary: (libraryId) => [
-    libraryQueryKeys.all, libraryId,
+  /**
+   * Base key for data specific to a contentLibrary
+   */
+  contentLibrary: (contentLibraryId?: string) => [...libraryAuthoringQueryKeys.all, contentLibraryId],
+  contentLibraryList: (customParams?: GetLibrariesV2CustomParams) => [
+    ...libraryAuthoringQueryKeys.all,
+    'list',
+    ...(customParams ? [customParams] : []),
   ],
 };
 
@@ -21,7 +28,7 @@ export const libraryQueryKeys = {
  */
 export const useContentLibrary = (libraryId?: string) => (
   useQuery({
-    queryKey: ['contentLibrary', libraryId],
+    queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId),
     queryFn: () => getContentLibrary(libraryId),
   })
 );
@@ -34,7 +41,7 @@ export const useCreateLibraryBlock = () => {
   return useMutation({
     mutationFn: createLibraryBlock,
     onSettled: (_data, _error, variables) => {
-      queryClient.invalidateQueries({ queryKey: libraryQueryKeys.contentLibrary(variables.libraryId) });
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(variables.libraryId) });
       queryClient.invalidateQueries({ queryKey: ['content_search'] });
     },
   });
@@ -71,3 +78,14 @@ export const useLibraryComponentCount = (libraryId: string, searchKeywords: stri
     collectionCount,
   };
 };
+
+/**
+ * Builds the query to fetch list of V2 Libraries
+ */
+export const useContentLibraryV2List = (customParams: GetLibrariesV2CustomParams) => (
+  useQuery({
+    queryKey: libraryAuthoringQueryKeys.contentLibraryList(customParams),
+    queryFn: () => getContentLibraryV2List(customParams),
+    keepPreviousData: true,
+  })
+);

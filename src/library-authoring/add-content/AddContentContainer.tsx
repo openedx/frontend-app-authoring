@@ -16,7 +16,7 @@ import {
 import { v4 as uuid4 } from 'uuid';
 import { useParams } from 'react-router-dom';
 import { ToastContext } from '../../generic/toast-context';
-import { useCreateLibraryBlock } from '../data/apiHook';
+import { useCreateLibraryBlock } from '../data/apiHooks';
 import messages from './messages';
 
 const AddContentContainer = () => {

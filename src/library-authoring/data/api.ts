@@ -1,7 +1,8 @@
-import { camelCaseObject, getConfig } from '@edx/frontend-platform';
+import { camelCaseObject, getConfig, snakeCaseObject } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
+
 /**
  * Get the URL for the content library API.
  */
@@ -10,6 +11,7 @@ export const getContentLibraryApiUrl = (libraryId: string) => `${getApiBaseUrl()
  * Get the URL for create content in library.
  */
 export const getCreateLibraryBlockUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/blocks/`;
+export const getContentLibraryV2ListApiUrl = () => `${getApiBaseUrl()}/api/libraries/v2/`;
 
 export interface ContentLibrary {
   id: string;
@@ -28,6 +30,32 @@ export interface ContentLibrary {
   hasUnpublishedDeletes: boolean;
   canEditLibrary: boolean;
   license: string;
+}
+
+export interface LibrariesV2Response {
+  next: string | null,
+  previous: string | null,
+  count: number,
+  numPages: number,
+  currentPage: number,
+  start: number,
+  results: ContentLibrary[],
+}
+
+/* Additional custom parameters for the API request. */
+export interface GetLibrariesV2CustomParams {
+  /* (optional) Library type, default `complex` */
+  type?: string,
+  /* (optional) Page number of results */
+  page?: number,
+  /* (optional) The number of results on each page, default `50` */
+  pageSize?: number,
+  /* (optional) Whether pagination is supported, default `true` */
+  pagination?: boolean,
+  /* (optional) Library field to order results by. Prefix with '-' for descending */
+  order?: string,
+  /* (optional) Search query to filter v2 Libraries by */
+  search?: string,
 }
 
 export interface CreateBlockDataRequest {
@@ -70,6 +98,24 @@ export async function createLibraryBlock({
       definition_id: definitionId,
     },
   );
+  return data;
+}
 
+/**
+ * Get a list of content libraries.
+ */
+export async function getContentLibraryV2List(customParams: GetLibrariesV2CustomParams): Promise<LibrariesV2Response> {
+  // Set default params if not passed in
+  const customParamsDefaults = {
+    type: customParams.type || 'complex',
+    page: customParams.page || 1,
+    pageSize: customParams.pageSize || 50,
+    pagination: customParams.pagination !== undefined ? customParams.pagination : true,
+    order: customParams.order || 'title',
+    textSearch: customParams.search,
+  };
+  const customParamsFormated = snakeCaseObject(customParamsDefaults);
+  const { data } = await getAuthenticatedHttpClient()
+    .get(getContentLibraryV2ListApiUrl(), { params: customParamsFormated });
   return camelCaseObject(data);
 }
