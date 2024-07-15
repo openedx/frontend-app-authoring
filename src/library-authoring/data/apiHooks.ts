@@ -3,14 +3,27 @@ import { useQuery } from '@tanstack/react-query';
 import { MeiliSearch } from 'meilisearch';
 
 import { useContentSearchConnection, useContentSearchResults } from '../../search-modal';
-import { getContentLibrary, getLibraryBlockTypes } from './api';
+import { type GetLibrariesV2CustomParams, getContentLibrary, getLibraryBlockTypes, getContentLibraryV2List } from './api';
+
+export const libraryAuthoringQueryKeys = {
+  all: ['contentLibrary'],
+  /**
+   * Base key for data specific to a contentLibrary
+   */
+  contentLibrary: (contentLibraryId?: string) => [...libraryAuthoringQueryKeys.all, contentLibraryId],
+  contentLibraryList: (customParams?: GetLibrariesV2CustomParams) => [
+    ...libraryAuthoringQueryKeys.all,
+    'list',
+    ...(customParams ? [customParams] : []),
+  ],
+};
 
 /**
  * Hook to fetch a content library by its ID.
  */
 export const useContentLibrary = (libraryId?: string) => (
   useQuery({
-    queryKey: ['contentLibrary', libraryId],
+    queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId),
     queryFn: () => getContentLibrary(libraryId),
   })
 );
@@ -80,3 +93,14 @@ export const useLibraryComponentCount = (libraryId: string, searchKeywords: stri
     collectionCount,
   };
 };
+
+/**
+ * Builds the query to fetch list of V2 Libraries
+ */
+export const useContentLibraryV2List = (customParams: GetLibrariesV2CustomParams) => (
+  useQuery({
+    queryKey: libraryAuthoringQueryKeys.contentLibraryList(customParams),
+    queryFn: () => getContentLibraryV2List(customParams),
+    keepPreviousData: true,
+  })
+);

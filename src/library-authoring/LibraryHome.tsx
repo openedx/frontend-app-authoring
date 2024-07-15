@@ -6,8 +6,8 @@ import {
 
 import { NoComponents, NoSearchResults } from './EmptyStates';
 import LibraryCollections from './LibraryCollections';
-import LibraryComponents from './components/LibraryComponents';
-import { useLibraryComponentCount } from './data/apiHook';
+import LibraryComponents from './LibraryComponents';
+import { useLibraryComponentCount } from './data/apiHooks';
 import messages from './messages';
 
 const Section = ({ title, children } : { title: string, children: React.ReactNode }) => (

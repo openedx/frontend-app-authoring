@@ -1,2 +1,3 @@
 export { default as LibraryAuthoringPage } from './LibraryAuthoringPage';
-export { default as CreateLibrary } from './CreateLibrary';
+export { CreateLibrary } from './create-library';
+export { libraryAuthoringQueryKeys, useContentLibraryV2List } from './data/apiHooks';

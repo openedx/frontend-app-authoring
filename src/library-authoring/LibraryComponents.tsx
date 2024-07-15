@@ -2,7 +2,7 @@ import React from 'react';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import { NoComponents, NoSearchResults } from './EmptyStates';
-import { useLibraryComponentCount } from './data/apiHook';
+import { useLibraryComponentCount } from './data/apiHooks';
 import messages from './messages';
 
 type LibraryComponentsProps = {
