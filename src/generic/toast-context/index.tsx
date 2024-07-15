@@ -1,11 +1,10 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
 import { Toast } from '@openedx/paragon';
 
 export interface ToastContextData {
   toastMessage: string | null;
-  showToast: Function;
-  closeToast: Function;
+  showToast: (message: string) => void;
+  closeToast: () => void;
 }
 
 export interface ToastProviderProps {
