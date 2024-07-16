@@ -117,14 +117,6 @@ const messages = defineMessages({
     id: 'course-authoring.create-or-rerun-course.no-space.error',
     defaultMessage: 'Please do not use any spaces in this field.',
   },
-  alertErrorExistsAriaLabelledBy: {
-    id: 'course-authoring.create-or-rerun-course.error.already-exists.labelledBy',
-    defaultMessage: 'alert-already-exists-title',
-  },
-  alertErrorExistsAriaDescribedBy: {
-    id: 'course-authoring.create-or-rerun-course.error.already-exists.aria.describedBy',
-    defaultMessage: 'alert-confirmation-description',
-  },
 });
 
 export default messages;

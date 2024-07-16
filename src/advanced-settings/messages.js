@@ -57,30 +57,6 @@ const messages = defineMessages({
     id: 'course-authoring.advanced-settings.deprecated.button.hide',
     defaultMessage: 'Hide',
   },
-  alertWarningAriaLabelledby: {
-    id: 'course-authoring.advanced-settings.alert.warning.aria.labelledby',
-    defaultMessage: 'notification-warning-title',
-  },
-  alertWarningAriaDescribedby: {
-    id: 'course-authoring.advanced-settings.alert.warning.aria.describedby',
-    defaultMessage: 'notification-warning-description',
-  },
-  alertSuccessAriaLabelledby: {
-    id: 'course-authoring.advanced-settings.alert.success.aria.labelledby',
-    defaultMessage: 'alert-confirmation-title',
-  },
-  alertSuccessAriaDescribedby: {
-    id: 'course-authoring.advanced-settings.alert.success.aria.describedby',
-    defaultMessage: 'alert-confirmation-description',
-  },
-  alertProctoringAriaLabelledby: {
-    id: 'course-authoring.advanced-settings.alert.proctoring.error.aria.labelledby',
-    defaultMessage: 'alert-danger-title',
-  },
-  alertProctoringDescribedby: {
-    id: 'course-authoring.advanced-settings.alert.proctoring.error.aria.describedby',
-    defaultMessage: 'alert-danger-description',
-  },
 });
 
 export default messages;

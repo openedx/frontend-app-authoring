@@ -45,11 +45,11 @@ const SavingErrorAlert = ({
         errorMessage || intl.formatMessage(messages.warningDescription)
       }
       aria-hidden="true"
-      aria-labelledby={intl.formatMessage(
-        messages.warningTitleAriaLabelledBy,
+      aria-label={intl.formatMessage(
+        messages.warningTitle,
       )}
-      aria-describedby={intl.formatMessage(
-        messages.warningDescriptionAriaDescribedBy,
+      aria-description={intl.formatMessage(
+        messages.warningDescription,
       )}
     />
   );

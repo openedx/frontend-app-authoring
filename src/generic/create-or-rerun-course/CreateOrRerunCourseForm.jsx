@@ -208,12 +208,7 @@ const CreateOrRerunCourseForm = ({
             icon={InfoIcon}
             title={postErrors.errMsg}
             aria-hidden="true"
-            aria-labelledby={intl.formatMessage(
-              messages.alertErrorExistsAriaLabelledBy,
-            )}
-            aria-describedby={intl.formatMessage(
-              messages.alertErrorExistsAriaDescribedBy,
-            )}
+            aria-label={postErrors.errMsg}
           />
         ) : null}
       </TransitionReplace>

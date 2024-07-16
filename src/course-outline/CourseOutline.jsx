@@ -256,15 +256,15 @@ const CourseOutline = ({ courseId }) => {
           <TransitionReplace>
             {showSuccessAlert ? (
               <AlertMessage
-                key={intl.formatMessage(messages.alertSuccessAriaLabelledby)}
+                key="alert-confirmation-title"
                 show={showSuccessAlert}
                 variant="success"
                 icon={CheckCircleIcon}
                 title={intl.formatMessage(messages.alertSuccessTitle)}
                 description={intl.formatMessage(messages.alertSuccessDescription)}
                 aria-hidden="true"
-                aria-labelledby={intl.formatMessage(messages.alertSuccessAriaLabelledby)}
-                aria-describedby={intl.formatMessage(messages.alertSuccessAriaDescribedby)}
+                aria-label={intl.formatMessage(messages.alertSuccessTitle)}
+                aria-description={intl.formatMessage(messages.alertSuccessDescription)}
               />
             ) : null}
           </TransitionReplace>

@@ -54,11 +54,11 @@ const InternetConnectionAlert = ({
       title={intl.formatMessage(messages.offlineWarningTitle)}
       description={intl.formatMessage(messages.offlineWarningDescription)}
       aria-hidden="true"
-      aria-labelledby={intl.formatMessage(
-        messages.offlineWarningTitleAriaLabelledBy,
+      aria-label={intl.formatMessage(
+        messages.offlineWarningTitle,
       )}
-      aria-describedby={intl.formatMessage(
-        messages.offlineWarningDescriptionAriaDescribedBy,
+      aria-description={intl.formatMessage(
+        messages.offlineWarningDescription,
       )}
     />
   );

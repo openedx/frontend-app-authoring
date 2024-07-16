@@ -41,22 +41,6 @@ const messages = defineMessages({
     id: 'course-authoring.grading-settings.alert.button.cancel',
     defaultMessage: 'Cancel',
   },
-  alertWarningAriaLabelledby: {
-    id: 'course-authoring.grading-settings.alert.warning.aria.labelledby',
-    defaultMessage: 'notification-warning-title',
-  },
-  alertWarningAriaDescribedby: {
-    id: 'course-authoring.grading-settings.alert.warning.aria.describedby',
-    defaultMessage: 'notification-warning-description',
-  },
-  alertSuccessAriaLabelledby: {
-    id: 'course-authoring.grading-settings.alert.success.aria.labelledby',
-    defaultMessage: 'alert-confirmation-title',
-  },
-  alertSuccessAriaDescribedby: {
-    id: 'course-authoring.grading-settings.alert.success.aria.describedby',
-    defaultMessage: 'alert-confirmation-description',
-  },
   creditEligibilitySectionTitle: {
     id: 'course-authoring.grading-settings.credit-eligibility.title',
     defaultMessage: 'Credit eligibility',

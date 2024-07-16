@@ -20,7 +20,6 @@ import { RequestStatus } from '../../data/constants';
 import AlertMessage from '../../generic/alert-message';
 import AlertProctoringError from '../../generic/AlertProctoringError';
 import messages from './messages';
-import advancedSettingsMessages from '../../advanced-settings/messages';
 import { getPasteFileNotices } from '../data/selectors';
 import { dismissError, removePasteFileNotices } from '../data/slice';
 import { API_ERROR_TYPES } from '../constants';
@@ -195,8 +194,8 @@ const PageAlerts = ({
           icon={InfoOutlineIcon}
           proctoringErrorsData={proctoringErrors}
           aria-hidden="true"
-          aria-labelledby={intl.formatMessage(advancedSettingsMessages.alertProctoringAriaLabelledby)}
-          aria-describedby={intl.formatMessage(advancedSettingsMessages.alertProctoringDescribedby)}
+          aria-label={intl.formatMessage(messages.proctoringErrorTitle)}
+          aria-description={intl.formatMessage(messages.proctoringErrorText)}
         >
           <Alert.Heading>
             {intl.formatMessage(messages.proctoringErrorTitle)}

@@ -123,8 +123,7 @@ const GradingSettings = ({ intl, courseId }) => {
             icon={CheckCircle}
             title={intl.formatMessage(messages.alertSuccess)}
             aria-hidden="true"
-            aria-labelledby={intl.formatMessage(messages.alertSuccessAriaLabelledby)}
-            aria-describedby={intl.formatMessage(messages.alertSuccessAriaDescribedby)}
+            aria-label={intl.formatMessage(messages.alertSuccess)}
           />
         </div>
         <div>
@@ -235,8 +234,8 @@ const GradingSettings = ({ intl, courseId }) => {
         <AlertMessage
           show={showSavePrompt}
           aria-hidden={!showSavePrompt}
-          aria-labelledby={intl.formatMessage(messages.alertWarningAriaLabelledby)}
-          aria-describedby={intl.formatMessage(messages.alertWarningAriaDescribedby)}
+          aria-label={intl.formatMessage(messages.alertWarning)}
+          aria-description={intl.formatMessage(messages.alertWarningDescriptions)}
           data-testid="grading-settings-save-alert"
           role="dialog"
           actions={[

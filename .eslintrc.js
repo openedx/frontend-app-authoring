@@ -12,6 +12,10 @@ module.exports = createConfig(
       'template-curly-spacing': 'off',
       'react-hooks/exhaustive-deps': 'off',
       'no-restricted-exports': 'off',
+      // This added because 'aria-description' is not reconginzed as valid prop for reac <=17
+      // ref: https://github.com/facebook/react/issues/21035 because it's new.
+      // once this MFE upgrade to react >18, it can be removed.
+      'jsx-a11y/aria-props': 'off',
     },
     settings: {
       // Import URLs should be resolved using aliases

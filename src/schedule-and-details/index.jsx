@@ -181,11 +181,8 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
             icon={CheckCircleIcon}
             title={intl.formatMessage(messages.alertSuccess)}
             aria-hidden="true"
-            aria-labelledby={intl.formatMessage(
-              messages.alertSuccessAriaLabelledby,
-            )}
-            aria-describedby={intl.formatMessage(
-              messages.alertSuccessAriaDescribedby,
+            aria-label={intl.formatMessage(
+              messages.alertSuccess,
             )}
           />
           <AlertMessage
@@ -194,11 +191,8 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
             icon={ErrorOutlineIcon}
             title={intl.formatMessage(messages.alertLoadFail)}
             aria-hidden="true"
-            aria-labelledby={intl.formatMessage(
-              messages.alertFailAriaLabelledby,
-            )}
-            aria-describedby={intl.formatMessage(
-              messages.alertFailAriaDescribedby,
+            aria-label={intl.formatMessage(
+              messages.alertLoadFail,
             )}
           />
           <AlertMessage
@@ -207,11 +201,8 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
             icon={ErrorOutlineIcon}
             title={intl.formatMessage(messages.alertFail)}
             aria-hidden="true"
-            aria-labelledby={intl.formatMessage(
-              messages.alertFailAriaLabelledby,
-            )}
-            aria-describedby={intl.formatMessage(
-              messages.alertFailAriaDescribedby,
+            aria-label={intl.formatMessage(
+              messages.alertFail,
             )}
           />
           <header>
@@ -351,12 +342,8 @@ const ScheduleAndDetails = ({ intl, courseId }) => {
         <AlertMessage
           show={showModifiedAlert}
           aria-hidden={showModifiedAlert}
-          aria-labelledby={intl.formatMessage(
-            messages.alertWarningAriaLabelledby,
-          )}
-          aria-describedby={intl.formatMessage(
-            messages.alertWarningAriaDescribedby,
-          )}
+          aria-label={alertWhileSavingTitle}
+          aria-description={alertWhileSavingDescription}
           role="dialog"
           actions={[
             !isQueryPending && (

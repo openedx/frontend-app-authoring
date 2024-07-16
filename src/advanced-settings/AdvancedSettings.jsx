@@ -137,22 +137,20 @@ const AdvancedSettings = ({ intl, courseId }) => {
               icon={Info}
               proctoringErrorsData={proctoringErrors}
               aria-hidden="true"
-              aria-labelledby={intl.formatMessage(messages.alertProctoringAriaLabelledby)}
-              aria-describedby={intl.formatMessage(messages.alertProctoringDescribedby)}
             />
           )}
           <TransitionReplace>
             {showSuccessAlert ? (
               <AlertMessage
-                key={intl.formatMessage(messages.alertSuccessAriaLabelledby)}
+                key="alert-confirmation-title"
                 show={showSuccessAlert}
                 variant="success"
                 icon={CheckCircle}
                 title={intl.formatMessage(messages.alertSuccess)}
                 description={intl.formatMessage(messages.alertSuccessDescriptions)}
                 aria-hidden="true"
-                aria-labelledby={intl.formatMessage(messages.alertSuccessAriaLabelledby)}
-                aria-describedby={intl.formatMessage(messages.alertSuccessAriaDescribedby)}
+                aria-label={intl.formatMessage(messages.alertSuccess)}
+                aria-description={intl.formatMessage(messages.alertSuccessDescriptions)}
               />
             ) : null}
           </TransitionReplace>
@@ -244,8 +242,8 @@ const AdvancedSettings = ({ intl, courseId }) => {
         <AlertMessage
           show={saveSettingsPrompt}
           aria-hidden={saveSettingsPrompt}
-          aria-labelledby={intl.formatMessage(messages.alertWarningAriaLabelledby)}
-          aria-describedby={intl.formatMessage(messages.alertWarningAriaDescribedby)}
+          aria-label={intl.formatMessage(messages.alertWarning)}
+          aria-description={intl.formatMessage(messages.alertWarningDescriptions)}
           role="dialog"
           actions={[
             !isQueryPending && (

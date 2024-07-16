@@ -21,14 +21,6 @@ const messages = defineMessages({
     id: 'course-authoring.schedule.alert.button.cancel',
     defaultMessage: 'Cancel',
   },
-  alertWarningAriaLabelledby: {
-    id: 'course-authoring.schedule.alert.warning.aria.labelledby',
-    defaultMessage: 'notification-warning-title',
-  },
-  alertWarningAriaDescribedby: {
-    id: 'course-authoring.schedule.alert.warning.aria.describedby',
-    defaultMessage: 'notification-warning-description',
-  },
   alertWarning: {
     id: 'course-authoring.schedule.alert.warning',
     defaultMessage: 'You\'ve made some changes',
@@ -45,37 +37,13 @@ const messages = defineMessages({
     id: 'course-authoring.schedule.alert.warning.save.descriptions.error',
     defaultMessage: 'Please address the errors on this page first, and then save your progress.',
   },
-  alertSuccessAriaLabelledby: {
-    id: 'course-authoring.schedule.alert.success.aria.labelledby',
-    defaultMessage: 'alert-confirmation-title',
-  },
-  alertSuccessAriaDescribedby: {
-    id: 'course-authoring.schedule.alert.success.aria.describedby',
-    defaultMessage: 'alert-confirmation-description',
-  },
   alertSuccess: {
     id: 'course-authoring.schedule.alert.success',
     defaultMessage: 'Your changes have been saved.',
   },
-  alertLoadFailAriaLabelledby: {
-    id: 'course-authoring.schedule.alert.load.fail.aria.labelledby',
-    defaultMessage: 'alert-confirmation-title',
-  },
-  alertLoadFailAriaDescribedby: {
-    id: 'course-authoring.schedule.alert.load.fail.aria.describedby',
-    defaultMessage: 'alert-confirmation-description',
-  },
   alertLoadFail: {
     id: 'course-authoring.schedule.alert.load.fail',
     defaultMessage: 'We encountered an error when loading your settings.',
-  },
-  alertFailAriaLabelledby: {
-    id: 'course-authoring.schedule.alert.fail.aria.labelledby',
-    defaultMessage: 'alert-confirmation-title',
-  },
-  alertFailAriaDescribedby: {
-    id: 'course-authoring.schedule.alert.fail.aria.describedby',
-    defaultMessage: 'alert-confirmation-description',
   },
   alertFail: {
     id: 'course-authoring.schedule.alert.fail',
