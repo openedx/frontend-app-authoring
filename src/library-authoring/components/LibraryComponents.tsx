@@ -34,24 +34,7 @@ const LibraryComponents = ({
     fetchNextPage,
   } = useLibraryComponents(libraryId, searchKeywords);
 
-  const { componentList, tagCounts } = useMemo(() => {
-    const result = variant === 'preview' ? hits.slice(0, 4) : hits;
-    const tagsCountsResult = {};
-    result.forEach((component) => {
-      if (!component.tags) {
-        tagsCountsResult[component.id] = 0;
-      } else {
-        tagsCountsResult[component.id] = (component.tags.level0?.length || 0)
-              + (component.tags.level1?.length || 0)
-              + (component.tags.level2?.length || 0)
-              + (component.tags.level3?.length || 0);
-      }
-    });
-    return {
-      componentList: result,
-      tagCounts: tagsCountsResult,
-    };
-  }, [hits]);
+  const componentList = variant === 'preview' ? hits.slice(0, 4) : hits;
 
   // TODO add this to LibraryContext
   const { data: blockTypesData } = useLibraryBlockTypes(libraryId);
@@ -123,14 +106,11 @@ const LibraryComponents = ({
       }}
       hasEqualColumnHeights
     >
-      { showContent ? componentList.map((component) => (
+      { showContent ? componentList.map((contentHit) => (
         <ComponentCard
-          key={component.id}
-          title={component.displayName}
-          description={component.formatted.content?.htmlContent ?? ''}
-          tagCount={tagCounts[component.id] || 0}
-          blockType={component.blockType}
-          blockTypeDisplayName={blockTypes[component.blockType]?.displayName ?? ''}
+          key={contentHit.id}
+          contentHit={contentHit}
+          blockTypeDisplayName={blockTypes[contentHit.blockType]?.displayName ?? ''}
         />
       )) : <ComponentCardLoading />}
       { showLoading && <ComponentCardLoading /> }

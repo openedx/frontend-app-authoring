@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   ActionRow,
   Card,
@@ -14,12 +14,10 @@ import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import TagCount from '../../generic/tag-count';
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
+import { ContentHit } from '../../search-modal/data/api';
 
 type ComponentCardProps = {
-  title: string,
-  description: string,
-  tagCount: number,
-  blockType: string,
+  contentHit: ContentHit,
   blockTypeDisplayName: string,
 };
 
@@ -59,13 +57,23 @@ export const ComponentCardLoading = () => (
   </Container>
 );
 
-export const ComponentCard = ({
-  title,
-  description,
-  tagCount,
-  blockType,
-  blockTypeDisplayName,
-}: ComponentCardProps) => {
+export const ComponentCard = ({contentHit, blockTypeDisplayName} : ComponentCardProps) => {
+  const {
+    blockType,
+    displayName,
+    formatted,
+    tags,
+  } = contentHit;
+  const description = formatted?.content?.htmlContent ?? '';
+  const tagCount = useMemo(() => {
+    if (!tags) {
+      return 0;
+    }
+    return (tags.level0?.length || 0) + (tags.level1?.length || 0)
+            + (tags.level2?.length || 0) + (tags.level3?.length || 0);
+  }, [tags]);
+
+
   const componentIcon = getItemIcon(blockType);
 
   return (
@@ -92,7 +100,7 @@ export const ComponentCard = ({
               <TagCount count={tagCount} />
             </Stack>
             <Truncate lines={1} className="h3 mt-2">
-              {title}
+              {displayName}
             </Truncate>
             <Truncate lines={3}>
               {description}
