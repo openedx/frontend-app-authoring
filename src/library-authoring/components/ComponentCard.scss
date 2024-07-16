@@ -21,17 +21,4 @@
       margin: .25rem 0 .25rem 1rem;
     }
   }
-
-  .library-component-card-description {
-    /*
-      Set overflow to description
-      I added '-webkit-box' to truncate multiple lines
-    */
-    font-size: 18px;
-    display: -webkit-box; /* stylelint-disable-line value-no-vendor-prefix */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    max-height: 220px;
-    -webkit-line-clamp: 3;
-  }
 }

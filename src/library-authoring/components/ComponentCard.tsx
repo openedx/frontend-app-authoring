@@ -7,6 +7,7 @@ import {
   IconButton,
   Dropdown,
   Stack,
+  Truncate,
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
@@ -90,12 +91,12 @@ export const ComponentCard = ({
               </Stack>
               <TagCount count={tagCount} />
             </Stack>
-            <div className="h3 text-truncate mt-2">
+            <Truncate lines={1} className="h3 mt-2">
               {title}
-            </div>
-            <p className="library-component-card-description">
+            </Truncate>
+            <Truncate lines={3}>
               {description}
-            </p>
+            </Truncate>
           </Card.Section>
         </Card.Body>
       </Card>
