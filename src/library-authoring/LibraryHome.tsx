@@ -6,9 +6,9 @@ import {
 
 import { NoComponents, NoSearchResults } from './EmptyStates';
 import LibraryCollections from './LibraryCollections';
-import LibraryComponents from './LibraryComponents';
 import { useLibraryComponentCount } from './data/apiHooks';
 import messages from './messages';
+import { LibraryComponents } from './components';
 
 const Section = ({ title, children } : { title: string, children: React.ReactNode }) => (
   <Card>

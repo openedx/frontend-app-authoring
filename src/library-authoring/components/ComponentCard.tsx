@@ -49,14 +49,6 @@ const ComponentCardMenu = () => (
   </Dropdown>
 );
 
-export const ComponentCardLoading = () => (
-  <Container className="library-component-card" data-testid="card-loading">
-    <Card isLoading>
-      <Card.Section />
-    </Card>
-  </Container>
-);
-
 export const ComponentCard = ({contentHit, blockTypeDisplayName} : ComponentCardProps) => {
   const {
     blockType,

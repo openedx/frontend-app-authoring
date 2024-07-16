@@ -3,7 +3,7 @@ import React, { useEffect, useMemo } from 'react';
 import { CardGrid } from '@openedx/paragon';
 import { NoComponents, NoSearchResults } from '../EmptyStates';
 import { useLibraryBlockTypes, useLibraryComponentCount, useLibraryComponents } from '../data/apiHooks';
-import { ComponentCard, ComponentCardLoading } from './ComponentCard';
+import { ComponentCard } from './ComponentCard';
 
 type LibraryComponentsProps = {
   libraryId: string,
@@ -48,29 +48,6 @@ const LibraryComponents = ({
     return result;
   }, [blockTypesData]);
 
-  const { showLoading, showContent } = useMemo(() => {
-    let resultShowLoading = false;
-    let resultShowContent = false;
-
-    if (isFetching && !isFetchingNextPage) {
-      // First load; show loading but not content.
-      resultShowLoading = true;
-      resultShowContent = false;
-    } else if (isFetchingNextPage) {
-      // Load next page; show content and loading.
-      resultShowLoading = true;
-      resultShowContent = true;
-    } else if (!isFetching && !isFetchingNextPage) {
-      // State without loads; show content.
-      resultShowLoading = false;
-      resultShowContent = true;
-    }
-    return {
-      showLoading: resultShowLoading,
-      showContent: resultShowContent,
-    };
-  }, [isFetching, isFetchingNextPage]);
-
   useEffect(() => {
     if (variant === 'full') {
       const onscroll = () => {
@@ -106,14 +83,13 @@ const LibraryComponents = ({
       }}
       hasEqualColumnHeights
     >
-      { showContent ? componentList.map((contentHit) => (
+      { componentList.map((contentHit) => (
         <ComponentCard
           key={contentHit.id}
           contentHit={contentHit}
           blockTypeDisplayName={blockTypes[contentHit.blockType]?.displayName ?? ''}
         />
-      )) : <ComponentCardLoading />}
-      { showLoading && <ComponentCardLoading /> }
+      )) }
     </CardGrid>
   );
 };
