@@ -12,7 +12,7 @@ import { MoreVert } from '@openedx/paragon/icons';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import TagCount from '../../generic/tag-count';
-import { getItemIcon, getComponentColor } from '../../generic/block-type-utils';
+import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
 
 type ComponentCardProps = {
   title: string,
@@ -25,7 +25,6 @@ type ComponentCardProps = {
 const ComponentCardMenu = () => (
   <Dropdown>
     <Dropdown.Toggle
-      id="dropdown-toggle-with-iconbutton"
       as={IconButton}
       src={MoreVert}
       iconAs={Icon}
@@ -72,7 +71,7 @@ export const ComponentCard = ({
     <Container className="library-component-card">
       <Card>
         <Card.Header
-          className={`library-component-header ${getComponentColor(blockType)}`}
+          className={`library-component-header ${getComponentStyleColor(blockType)}`}
           title={
             <Icon src={componentIcon} className="library-component-header-icon" />
           }

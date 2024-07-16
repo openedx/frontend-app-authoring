@@ -16,6 +16,12 @@ export const libraryAuthoringQueryKeys = {
     'list',
     ...(customParams ? [customParams] : []),
   ],
+  contentLibraryBlockTypes: (contentLibraryId?: string) => [
+    ...libraryAuthoringQueryKeys.all,
+    ...libraryAuthoringQueryKeys.contentLibrary(contentLibraryId),
+    'content',
+    'libraryBlockTypes',
+  ]
 };
 
 /**
@@ -33,7 +39,7 @@ export const useContentLibrary = (libraryId?: string) => (
  */
 export const useLibraryBlockTypes = (libraryId) => (
   useQuery({
-    queryKey: ['contentLibrary', 'libraryBlockTypes', libraryId],
+    queryKey: libraryAuthoringQueryKeys.contentLibraryBlockTypes(libraryId),
     queryFn: () => getLibraryBlockTypes(libraryId),
   })
 );

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 
 import { CardGrid } from '@openedx/paragon';
 import { NoComponents, NoSearchResults } from '../EmptyStates';
-import { useLibraryBlockTypes, useLibraryComponentCount, useLibraryComponents } from '../data/apiHook';
+import { useLibraryBlockTypes, useLibraryComponentCount, useLibraryComponents } from '../data/apiHooks';
 import { ComponentCard, ComponentCardLoading } from './ComponentCard';
 
 type LibraryComponentsProps = {
