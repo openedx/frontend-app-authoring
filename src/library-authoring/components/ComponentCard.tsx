@@ -49,7 +49,7 @@ const ComponentCardMenu = () => (
   </Dropdown>
 );
 
-export const ComponentCard = ({contentHit, blockTypeDisplayName} : ComponentCardProps) => {
+const ComponentCard = ({ contentHit, blockTypeDisplayName } : ComponentCardProps) => {
   const {
     blockType,
     displayName,
@@ -64,7 +64,6 @@ export const ComponentCard = ({contentHit, blockTypeDisplayName} : ComponentCard
     return (tags.level0?.length || 0) + (tags.level1?.length || 0)
             + (tags.level2?.length || 0) + (tags.level3?.length || 0);
   }, [tags]);
-
 
   const componentIcon = getItemIcon(blockType);
 
@@ -103,3 +102,5 @@ export const ComponentCard = ({contentHit, blockTypeDisplayName} : ComponentCard
     </Container>
   );
 };
+
+export default ComponentCard;

@@ -28,7 +28,7 @@ export const COMPONENT_TYPES = {
   dragAndDrop: 'drag-and-drop-v2',
 };
 
-export const TYPE_ICONS_MAP: Record<string, React.ComponentType> = {
+export const UNIT_TYPE_ICONS_MAP: Record<string, React.ComponentType> = {
   video: VideoCameraIcon,
   other: BookOpenIcon,
   vertical: FormatListBulletedIcon,
@@ -48,7 +48,7 @@ export const COMPONENT_TYPE_ICON_MAP: Record<string, React.ComponentType> = {
 };
 
 export const STRUCTURAL_TYPE_ICONS: Record<string, React.ComponentType> = {
-  vertical: TYPE_ICONS_MAP.vertical,
+  vertical: UNIT_TYPE_ICONS_MAP.vertical,
   sequential: Folder,
   chapter: Folder,
 };

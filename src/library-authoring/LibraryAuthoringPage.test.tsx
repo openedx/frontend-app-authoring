@@ -154,7 +154,8 @@ describe('<LibraryAuthoringPage />', () => {
     } = render(<RootWrapper />);
 
     // Ensure the search endpoint is called
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+    // One called for LibraryComponents and another called for components count
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
 
     expect(getByText('Content library')).toBeInTheDocument();
     expect(getByText(libraryData.title)).toBeInTheDocument();

@@ -3,7 +3,12 @@ import { useQuery } from '@tanstack/react-query';
 import { MeiliSearch } from 'meilisearch';
 
 import { useContentSearchConnection, useContentSearchResults } from '../../search-modal';
-import { type GetLibrariesV2CustomParams, getContentLibrary, getLibraryBlockTypes, getContentLibraryV2List } from './api';
+import {
+  type GetLibrariesV2CustomParams,
+  getContentLibrary,
+  getLibraryBlockTypes,
+  getContentLibraryV2List,
+} from './api';
 
 export const libraryAuthoringQueryKeys = {
   all: ['contentLibrary'],
@@ -21,7 +26,7 @@ export const libraryAuthoringQueryKeys = {
     ...libraryAuthoringQueryKeys.contentLibrary(contentLibraryId),
     'content',
     'libraryBlockTypes',
-  ]
+  ],
 };
 
 /**

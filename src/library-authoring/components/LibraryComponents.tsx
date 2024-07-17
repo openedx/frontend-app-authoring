@@ -3,7 +3,7 @@ import React, { useEffect, useMemo } from 'react';
 import { CardGrid } from '@openedx/paragon';
 import { NoComponents, NoSearchResults } from '../EmptyStates';
 import { useLibraryBlockTypes, useLibraryComponentCount, useLibraryComponents } from '../data/apiHooks';
-import { ComponentCard } from './ComponentCard';
+import ComponentCard from './ComponentCard';
 
 type LibraryComponentsProps = {
   libraryId: string,
@@ -28,7 +28,6 @@ const LibraryComponents = ({
   const { componentCount } = useLibraryComponentCount(libraryId, searchKeywords);
   const {
     hits,
-    isFetching,
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
