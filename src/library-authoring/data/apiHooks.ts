@@ -1,9 +1,14 @@
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { MeiliSearch } from 'meilisearch';
 
 import { useContentSearchConnection, useContentSearchResults } from '../../search-modal';
-import { type GetLibrariesV2CustomParams, getContentLibrary, getContentLibraryV2List } from './api';
+import {
+  type GetLibrariesV2CustomParams,
+  createLibraryBlock,
+  getContentLibrary,
+  getContentLibraryV2List,
+} from './api';
 
 export const libraryAuthoringQueryKeys = {
   all: ['contentLibrary'],
@@ -27,6 +32,20 @@ export const useContentLibrary = (libraryId?: string) => (
     queryFn: () => getContentLibrary(libraryId),
   })
 );
+
+/**
+ * Use this mutation to create a block in a library
+ */
+export const useCreateLibraryBlock = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createLibraryBlock,
+    onSettled: (_data, _error, variables) => {
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(variables.libraryId) });
+      queryClient.invalidateQueries({ queryKey: ['content_search'] });
+    },
+  });
+};
 
 /**
  * Hook to fetch the count of components and collections in a library.

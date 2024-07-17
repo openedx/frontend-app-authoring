@@ -7,6 +7,10 @@ const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
  * Get the URL for the content library API.
  */
 export const getContentLibraryApiUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/`;
+/**
+ * Get the URL for create content in library.
+ */
+export const getCreateLibraryBlockUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/blocks/`;
 export const getContentLibraryV2ListApiUrl = () => `${getApiBaseUrl()}/api/libraries/v2/`;
 
 export interface ContentLibrary {
@@ -24,20 +28,8 @@ export interface ContentLibrary {
   allowPublicRead: boolean;
   hasUnpublishedChanges: boolean;
   hasUnpublishedDeletes: boolean;
-  license: string;
   canEditLibrary: boolean;
-}
-
-/**
- * Fetch a content library by its ID.
- */
-export async function getContentLibrary(libraryId?: string): Promise<ContentLibrary> {
-  if (!libraryId) {
-    throw new Error('libraryId is required');
-  }
-
-  const { data } = await getAuthenticatedHttpClient().get(getContentLibraryApiUrl(libraryId));
-  return camelCaseObject(data);
+  license: string;
 }
 
 export interface LibrariesV2Response {
@@ -64,6 +56,49 @@ export interface GetLibrariesV2CustomParams {
   order?: string,
   /* (optional) Search query to filter v2 Libraries by */
   search?: string,
+}
+
+export interface CreateBlockDataRequest {
+  libraryId: string;
+  blockType: string;
+  definitionId: string;
+}
+
+export interface CreateBlockDataResponse {
+  id: string;
+  blockType: string;
+  defKey: string | null;
+  displayName: string;
+  hasUnpublishedChanges: boolean;
+  tagsCount: number;
+}
+
+/**
+ * Fetch a content library by its ID.
+ */
+export async function getContentLibrary(libraryId?: string): Promise<ContentLibrary> {
+  if (!libraryId) {
+    throw new Error('libraryId is required');
+  }
+
+  const { data } = await getAuthenticatedHttpClient().get(getContentLibraryApiUrl(libraryId));
+  return camelCaseObject(data);
+}
+
+export async function createLibraryBlock({
+  libraryId,
+  blockType,
+  definitionId,
+}: CreateBlockDataRequest): Promise<CreateBlockDataResponse> {
+  const client = getAuthenticatedHttpClient();
+  const { data } = await client.post(
+    getCreateLibraryBlockUrl(libraryId),
+    {
+      block_type: blockType,
+      definition_id: definitionId,
+    },
+  );
+  return data;
 }
 
 /**
