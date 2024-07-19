@@ -29,7 +29,6 @@ const Editor = connect(mapStateToProps)(TinyMceWidget);
 export const WysiwygEditor = ({
   initialValue, editorType, onChange, minHeight,
 }) => {
-  // const courseId = "course+test+test+test"
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
   const { courseId } = useSelector((state) => state.courseDetail);
   const isEquivalentCodeExtraSpaces = (first, second) => {
