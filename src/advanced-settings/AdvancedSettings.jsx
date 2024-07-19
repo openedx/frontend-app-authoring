@@ -242,8 +242,8 @@ const AdvancedSettings = ({ intl, courseId }) => {
         <AlertMessage
           show={saveSettingsPrompt}
           aria-hidden={saveSettingsPrompt}
-          aria-label={intl.formatMessage(messages.alertWarning)}
-          aria-description={intl.formatMessage(messages.alertWarningDescriptions)}
+          aria-labelledby="advancedSettingsAlertWarningTitle"
+          aria-describedby="advancedSettingsAlertWarningDesc"
           role="dialog"
           actions={[
             !isQueryPending && (
@@ -261,7 +261,9 @@ const AdvancedSettings = ({ intl, courseId }) => {
           variant="warning"
           icon={Warning}
           title={intl.formatMessage(messages.alertWarning)}
+          titleId="advancedSettingsAlertWarningTitle"
           description={intl.formatMessage(messages.alertWarningDescriptions)}
+          descriptoinId="advancedSettingsAlertWarningDesc"
         />
       </div>
       <ModalError
