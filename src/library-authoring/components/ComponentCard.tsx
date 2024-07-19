@@ -7,7 +7,6 @@ import {
   IconButton,
   Dropdown,
   Stack,
-  Truncate,
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
@@ -15,6 +14,7 @@ import messages from './messages';
 import TagCount from '../../generic/tag-count';
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
 import { ContentHit } from '../../search-modal/data/api';
+import Highlight from '../../search-modal/Highlight';
 
 type ComponentCardProps = {
   contentHit: ContentHit,
@@ -52,11 +52,11 @@ const ComponentCardMenu = () => (
 const ComponentCard = ({ contentHit, blockTypeDisplayName } : ComponentCardProps) => {
   const {
     blockType,
-    displayName,
     formatted,
     tags,
   } = contentHit;
   const description = formatted?.content?.htmlContent ?? '';
+  const displayName = formatted?.displayName ?? '';
   const tagCount = useMemo(() => {
     if (!tags) {
       return 0;
@@ -90,12 +90,10 @@ const ComponentCard = ({ contentHit, blockTypeDisplayName } : ComponentCardProps
               </Stack>
               <TagCount count={tagCount} />
             </Stack>
-            <Truncate lines={1} className="h3 mt-2">
-              {displayName}
-            </Truncate>
-            <Truncate lines={3}>
-              {description}
-            </Truncate>
+            <div className="text-truncate h3 mt-2">
+              <Highlight text={displayName} />
+            </div>
+            <Highlight text={description} />
           </Card.Section>
         </Card.Body>
       </Card>
