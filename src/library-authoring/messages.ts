@@ -90,6 +90,21 @@ const messages = defineMessages({
     defaultMessage: 'Recently modified components and collections will be displayed here.',
     description: 'Temp placeholder for the recent components container. This will be replaced with the actual list.',
   },
+  addContentTitle: {
+    id: 'course-authoring.library-authoring.drawer.title.add-content',
+    defaultMessage: 'Add Content',
+    description: 'Title of add content in library container.',
+  },
+  newContentButton: {
+    id: 'course-authoring.library-authoring.buttons.new-content.text',
+    defaultMessage: 'New',
+    description: 'Text of button to open "Add content drawer"',
+  },
+  closeButtonAlt: {
+    id: 'course-authoring.library-authoring.buttons.close.alt',
+    defaultMessage: 'Close',
+    description: 'Alt text of close button',
+  },
 });
 
 export default messages;
