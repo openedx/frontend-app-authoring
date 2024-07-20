@@ -97,7 +97,7 @@ export const SearchContextProvider: React.FC<{
   const [searchSortOrder, setSearchSortOrder] = useStateWithUrlSearchParam<SearchSortOption>(
     SearchSortOption.RELEVANCE,
     'sort',
-    (value: string) => Object.values(SearchSortOption).find((enumValue) => value === `${enumValue}`),
+    (value: string) => Object.values(SearchSortOption).find((enumValue) => value === enumValue),
     (value: SearchSortOption) => value.toString(),
   );
   // Note: SearchSortOption.RELEVANCE is special, it means "no custom sorting",
