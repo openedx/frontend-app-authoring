@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   ActionRow,
   Card,
@@ -10,22 +10,20 @@ import {
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import messages from './messages';
+
+import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
 import TagCount from '../../generic/tag-count';
-import { getItemIcon, getComponentColor } from '../../generic/block-type-utils';
+import { type ContentHit, Highlight } from '../../search-manager';
+import messages from './messages';
 
 type ComponentCardProps = {
-  title: string,
-  description: string,
-  tagCount: number,
-  blockType: string,
+  contentHit: ContentHit,
   blockTypeDisplayName: string,
 };
 
 const ComponentCardMenu = () => (
   <Dropdown>
     <Dropdown.Toggle
-      id="dropdown-toggle-with-iconbutton"
       as={IconButton}
       src={MoreVert}
       iconAs={Icon}
@@ -51,28 +49,29 @@ const ComponentCardMenu = () => (
   </Dropdown>
 );
 
-export const ComponentCardLoading = () => (
-  <Container className="library-component-card" data-testid="card-loading">
-    <Card isLoading>
-      <Card.Section />
-    </Card>
-  </Container>
-);
+const ComponentCard = ({ contentHit, blockTypeDisplayName } : ComponentCardProps) => {
+  const {
+    blockType,
+    formatted,
+    tags,
+  } = contentHit;
+  const description = formatted?.content?.htmlContent ?? '';
+  const displayName = formatted?.displayName ?? '';
+  const tagCount = useMemo(() => {
+    if (!tags) {
+      return 0;
+    }
+    return (tags.level0?.length || 0) + (tags.level1?.length || 0)
+            + (tags.level2?.length || 0) + (tags.level3?.length || 0);
+  }, [tags]);
 
-export const ComponentCard = ({
-  title,
-  description,
-  tagCount,
-  blockType,
-  blockTypeDisplayName,
-}: ComponentCardProps) => {
   const componentIcon = getItemIcon(blockType);
 
   return (
     <Container className="library-component-card">
       <Card>
         <Card.Header
-          className={`library-component-header ${getComponentColor(blockType)}`}
+          className={`library-component-header ${getComponentStyleColor(blockType)}`}
           title={
             <Icon src={componentIcon} className="library-component-header-icon" />
           }
@@ -91,15 +90,15 @@ export const ComponentCard = ({
               </Stack>
               <TagCount count={tagCount} />
             </Stack>
-            <div className="h3 text-truncate mt-2">
-              {title}
+            <div className="text-truncate h3 mt-2">
+              <Highlight text={displayName} />
             </div>
-            <p className="library-component-card-description">
-              {description}
-            </p>
+            <Highlight text={description} />
           </Card.Section>
         </Card.Body>
       </Card>
     </Container>
   );
 };
+
+export default ComponentCard;

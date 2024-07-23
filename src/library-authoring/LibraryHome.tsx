@@ -1,13 +1,13 @@
 import React from 'react';
-import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Card, Stack,
 } from '@openedx/paragon';
 
-import { NoComponents, NoSearchResults } from './EmptyStates';
 import { useSearchContext } from '../search-manager';
+import { NoComponents, NoSearchResults } from './EmptyStates';
 import LibraryCollections from './LibraryCollections';
-import LibraryComponents from './components/LibraryComponents';
+import { LibraryComponents } from './components';
 import messages from './messages';
 
 const Section = ({ title, children } : { title: string, children: React.ReactNode }) => (
@@ -26,6 +26,8 @@ type LibraryHomeProps = {
 };
 
 const LibraryHome = ({ libraryId } : LibraryHomeProps) => {
+  const intl = useIntl();
+
   const {
     totalHits: componentCount,
     searchKeywords,
@@ -39,10 +41,10 @@ const LibraryHome = ({ libraryId } : LibraryHomeProps) => {
 
   return (
     <Stack gap={3}>
-      <Section title="Recently Modified">
-        <FormattedMessage {...messages.recentComponentsTempPlaceholder} />
+      <Section title={intl.formatMessage(messages.recentlyModifiedTitle)}>
+        { intl.formatMessage(messages.recentComponentsTempPlaceholder) }
       </Section>
-      <Section title={`Collections (${collectionCount})`}>
+      <Section title={intl.formatMessage(messages.collectionsTitle, { collectionCount })}>
         <LibraryCollections />
       </Section>
       <Section title={`Components (${componentCount})`}>

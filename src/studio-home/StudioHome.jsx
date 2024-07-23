@@ -10,8 +10,8 @@ import {
 import { Add as AddIcon, Error } from '@openedx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { StudioFooter } from '@edx/frontend-component-footer';
-import { getConfig, getPath } from '@edx/frontend-platform';
-import { useLocation } from 'react-router-dom';
+import { getConfig } from '@edx/frontend-platform';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { constructLibraryAuthoringURL } from '../utils';
 import Loading from '../generic/Loading';
@@ -30,6 +30,7 @@ import AlertMessage from '../generic/alert-message';
 
 const StudioHome = ({ intl }) => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isPaginationCoursesEnabled = getConfig().ENABLE_HOME_PAGE_COURSE_API_V2;
   const {
@@ -87,15 +88,20 @@ const StudioHome = ({ intl }) => {
       );
     }
 
-    let libraryHref = `${getConfig().STUDIO_BASE_URL}/home_library`;
-    if (isMixedOrV2LibrariesMode(libMode) && !v1LibraryTab) {
-      libraryHref = libraryAuthoringMfeUrl && redirectToLibraryAuthoringMfe
-        ? constructLibraryAuthoringURL(libraryAuthoringMfeUrl, 'create')
-        // Redirection to the placeholder is done in the MFE rather than
-        // through the backend i.e. redirection from cms, because this this will probably change,
-        // hence why we use the MFE's origin
-        : `${window.location.origin}${getPath(getConfig().PUBLIC_PATH)}library/create`;
-    }
+    const newLibraryClick = () => {
+      if (isMixedOrV2LibrariesMode(libMode) && !v1LibraryTab) {
+        if (libraryAuthoringMfeUrl && redirectToLibraryAuthoringMfe) {
+          // Library authoring MFE
+          window.open(constructLibraryAuthoringURL(libraryAuthoringMfeUrl, 'create'));
+        } else {
+          // Use course-authoring route
+          navigate('/library/create');
+        }
+      } else {
+        // Studio home library for legacy libraries
+        window.open(`${getConfig().STUDIO_BASE_URL}/home_library`);
+      }
+    };
 
     headerButtons.push(
       <Button
@@ -103,7 +109,7 @@ const StudioHome = ({ intl }) => {
         iconBefore={AddIcon}
         size="sm"
         disabled={showNewCourseContainer}
-        href={libraryHref}
+        onClick={newLibraryClick}
         data-testid="new-library-button"
       >
         {intl.formatMessage(messages.addNewLibraryBtnText)}
@@ -111,7 +117,7 @@ const StudioHome = ({ intl }) => {
     );
 
     return headerButtons;
-  }, [location]);
+  }, [location, userIsActive, isFailedLoadingPage]);
 
   const headerButtons = userIsActive ? getHeaderButtons() : [];
   if (isLoadingPage && !isFiltered) {

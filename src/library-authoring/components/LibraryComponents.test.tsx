@@ -72,7 +72,7 @@ const blockTypeData = {
   ],
 };
 
-jest.mock('../data/apiHook', () => ({
+jest.mock('../data/apiHooks', () => ({
   useLibraryBlockTypes: () => mockUseLibraryBlockTypes(),
 }));
 
@@ -130,11 +130,6 @@ describe('<LibraryComponents />', () => {
 
     render(<RootWrapper />);
     expect(await screen.findByText(/you have not added any content to this library yet\./i));
-  });
-
-  it('should render loading', async () => {
-    render(<RootWrapper />);
-    expect((await screen.findAllByTestId('card-loading'))[0]).toBeInTheDocument();
   });
 
   it('should render components in full variant', async () => {
@@ -203,22 +198,5 @@ describe('<LibraryComponents />', () => {
     fireEvent.scroll(window, { target: { scrollY: 1000 } });
 
     expect(mockFetchNextPage).not.toHaveBeenCalled();
-  });
-
-  it('should render content and loading when fetching next page', async () => {
-    mockUseSearchContext.mockReturnValue({
-      ...data,
-      hits: libraryComponentsMock,
-      isFetching: true,
-      isFetchingNextPage: true,
-      hasNextPage: true,
-    });
-
-    render(<RootWrapper variant="full" />);
-
-    expect(await screen.findByText('This is a text: ID=1')).toBeInTheDocument();
-    expect(screen.getByText('This is a problem: ID=6')).toBeInTheDocument();
-
-    expect((await screen.findAllByTestId('card-loading'))[0]).toBeInTheDocument();
   });
 });

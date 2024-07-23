@@ -20,42 +20,5 @@
     .pgn__card-header-actions {
       margin: .25rem 0 .25rem 1rem;
     }
-
-    &.bg-component {
-      background-color: #005C9E;
-    }
-
-    &.bg-html {
-      background-color: #9747FF;
-    }
-
-    &.bg-collection {
-      background-color: #FFCD29;
-    }
-
-    &.bg-video {
-      background-color: #358F0A;
-    }
-
-    &.bg-vertical {
-      background-color: #0B8E77;
-    }
-
-    &.bg-other {
-      background-color: #666666;
-    }
-  }
-
-  .library-component-card-description {
-    /*
-      Set overflow to description
-      I added '-webkit-box' to truncate multiple lines
-    */
-    font-size: 18px;
-    display: -webkit-box; /* stylelint-disable-line value-no-vendor-prefix */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    max-height: 220px;
-    -webkit-line-clamp: 3;
   }
 }

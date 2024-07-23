@@ -70,10 +70,40 @@ const messages = defineMessages({
     defaultMessage: 'This is a placeholder for the create library form. This will be replaced with the actual form.',
     description: 'Temp placeholder for the create library container. This will be replaced with the new library form.',
   },
+  recentlyModifiedTitle: {
+    id: 'course-authoring.library-authoring.recently-modified-title',
+    defaultMessage: 'Recently Modified',
+    description: 'Title for the recently modified components and collections container',
+  },
+  collectionsTitle: {
+    id: 'course-authoring.library-authoring.collections-title',
+    defaultMessage: 'Collections ({collectionCount})',
+    description: 'Title for the collections container',
+  },
+  componentsTitle: {
+    id: 'course-authoring.library-authoring.components-title',
+    defaultMessage: 'Components ({componentCount})',
+    description: 'Title for the components container',
+  },
   recentComponentsTempPlaceholder: {
     id: 'course-authoring.library-authoring.recent-components-temp-placeholder',
     defaultMessage: 'Recently modified components and collections will be displayed here.',
     description: 'Temp placeholder for the recent components container. This will be replaced with the actual list.',
+  },
+  addContentTitle: {
+    id: 'course-authoring.library-authoring.drawer.title.add-content',
+    defaultMessage: 'Add Content',
+    description: 'Title of add content in library container.',
+  },
+  newContentButton: {
+    id: 'course-authoring.library-authoring.buttons.new-content.text',
+    defaultMessage: 'New',
+    description: 'Text of button to open "Add content drawer"',
+  },
+  closeButtonAlt: {
+    id: 'course-authoring.library-authoring.buttons.close.alt',
+    defaultMessage: 'Close',
+    description: 'Alt text of close button',
   },
 });
 

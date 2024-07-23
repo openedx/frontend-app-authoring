@@ -28,7 +28,7 @@ export const COMPONENT_TYPES = {
   dragAndDrop: 'drag-and-drop-v2',
 };
 
-export const TYPE_ICONS_MAP: Record<string, React.ReactElement> = {
+export const UNIT_TYPE_ICONS_MAP: Record<string, React.ComponentType> = {
   video: VideoCameraIcon,
   other: BookOpenIcon,
   vertical: FormatListBulletedIcon,
@@ -36,7 +36,7 @@ export const TYPE_ICONS_MAP: Record<string, React.ReactElement> = {
   lock: LockIcon,
 };
 
-export const COMPONENT_TYPE_ICON_MAP: Record<string, React.ReactElement> = {
+export const COMPONENT_TYPE_ICON_MAP: Record<string, React.ComponentType> = {
   [COMPONENT_TYPES.advanced]: ScienceIcon,
   [COMPONENT_TYPES.discussion]: QuestionAnswerOutlineIcon,
   [COMPONENT_TYPES.library]: LibraryIcon,
@@ -47,23 +47,23 @@ export const COMPONENT_TYPE_ICON_MAP: Record<string, React.ReactElement> = {
   [COMPONENT_TYPES.dragAndDrop]: BackHandIcon,
 };
 
-export const STRUCTURAL_TYPE_ICONS: Record<string, React.ReactElement> = {
-  vertical: TYPE_ICONS_MAP.vertical,
+export const STRUCTURAL_TYPE_ICONS: Record<string, React.ComponentType> = {
+  vertical: UNIT_TYPE_ICONS_MAP.vertical,
   sequential: Folder,
   chapter: Folder,
 };
 
-export const COMPONENT_TYPE_COLOR_MAP = {
-  [COMPONENT_TYPES.advanced]: 'bg-other',
-  [COMPONENT_TYPES.discussion]: 'bg-component',
-  [COMPONENT_TYPES.library]: 'bg-component',
-  [COMPONENT_TYPES.html]: 'bg-html',
-  [COMPONENT_TYPES.openassessment]: 'bg-component',
-  [COMPONENT_TYPES.problem]: 'bg-component',
-  [COMPONENT_TYPES.video]: 'bg-video',
-  [COMPONENT_TYPES.dragAndDrop]: 'bg-component',
-  vertical: 'bg-vertical',
-  sequential: 'bg-component',
-  chapter: 'bg-component',
-  collection: 'bg-collection',
+export const COMPONENT_TYPE_STYLE_COLOR_MAP = {
+  [COMPONENT_TYPES.advanced]: 'component-style-other',
+  [COMPONENT_TYPES.discussion]: 'component-style-default',
+  [COMPONENT_TYPES.library]: 'component-style-default',
+  [COMPONENT_TYPES.html]: 'component-style-html',
+  [COMPONENT_TYPES.openassessment]: 'component-style-default',
+  [COMPONENT_TYPES.problem]: 'component-style-default',
+  [COMPONENT_TYPES.video]: 'component-style-video',
+  [COMPONENT_TYPES.dragAndDrop]: 'component-style-default',
+  vertical: 'component-style-vertical',
+  sequential: 'component-style-default',
+  chapter: 'component-style-default',
+  collection: 'component-style-collection',
 };

@@ -1,6 +1,3 @@
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
-
 import {
   APP_INIT_ERROR, APP_READY, subscribe, initialize, mergeConfig, getConfig, getPath,
 } from '@edx/frontend-platform';
@@ -19,7 +16,7 @@ import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
 import messages from './i18n';
 
-import { CreateLibrary, LibraryAuthoringPage } from './library-authoring';
+import { CreateLibrary, LibraryLayout } from './library-authoring';
 import initializeStore from './store';
 import CourseAuthoringRoutes from './CourseAuthoringRoutes';
 import Head from './head/Head';
@@ -28,6 +25,7 @@ import CourseRerun from './course-rerun';
 import { TaxonomyLayout, TaxonomyDetailPage, TaxonomyListPage } from './taxonomy';
 import { ContentTagsDrawer } from './content-tags-drawer';
 import AccessibilityPage from './accessibility-page';
+import { ToastProvider } from './generic/toast-context';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
@@ -56,7 +54,7 @@ const App = () => {
         <Route path="/libraries" element={<StudioHome />} />
         <Route path="/libraries-v1" element={<StudioHome />} />
         <Route path="/library/create" element={<CreateLibrary />} />
-        <Route path="/library/:libraryId/*" element={<LibraryAuthoringPage />} />
+        <Route path="/library/:libraryId/*" element={<LibraryLayout />} />
         <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
         <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
         {getConfig().ENABLE_ACCESSIBILITY_PAGE === 'true' && (
@@ -85,10 +83,12 @@ const App = () => {
 
   return (
     <AppProvider store={initializeStore()} wrapWithRouter={false}>
-      <QueryClientProvider client={queryClient}>
-        <Head />
-        <RouterProvider router={router} />
-      </QueryClientProvider>
+      <ToastProvider>
+        <QueryClientProvider client={queryClient}>
+          <Head />
+          <RouterProvider router={router} />
+        </QueryClientProvider>
+      </ToastProvider>
     </AppProvider>
   );
 };

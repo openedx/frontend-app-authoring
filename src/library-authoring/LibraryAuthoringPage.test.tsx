@@ -5,15 +5,19 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, waitFor } from '@testing-library/react';
+import {
+  fireEvent,
+  render,
+  waitFor,
+  screen,
+} from '@testing-library/react';
 import fetchMock from 'fetch-mock-jest';
-
 import initializeStore from '../store';
 import { getContentSearchConfigUrl } from '../search-manager/data/api';
 import mockResult from '../search-modal/__mocks__/search-result.json';
 import mockEmptyResult from '../search-modal/__mocks__/empty-search-result.json';
-import LibraryAuthoringPage from './LibraryAuthoringPage';
-import { getContentLibraryApiUrl } from './data/api';
+import { getContentLibraryApiUrl, type ContentLibrary } from './data/api';
+import LibraryLayout from './LibraryLayout';
 
 let store;
 const mockUseParams = jest.fn();
@@ -46,7 +50,7 @@ const returnEmptyResult = (_url, req) => {
   return mockEmptyResult;
 };
 
-const libraryData = {
+const libraryData: ContentLibrary = {
   id: 'lib:org1:lib1',
   type: 'complex',
   org: 'org1',
@@ -57,10 +61,11 @@ const libraryData = {
   version: 0,
   lastPublished: null,
   allowLti: false,
-  allowPublic_learning: false,
-  allowPublic_read: false,
-  hasUnpublished_changes: true,
-  hasUnpublished_deletes: false,
+  allowPublicLearning: false,
+  allowPublicRead: false,
+  hasUnpublishedChanges: true,
+  hasUnpublishedDeletes: false,
+  canEditLibrary: true,
   license: '',
 };
 
@@ -68,7 +73,7 @@ const RootWrapper = () => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
-        <LibraryAuthoringPage />
+        <LibraryLayout />
       </QueryClientProvider>
     </IntlProvider>
   </AppProvider>
@@ -149,7 +154,7 @@ describe('<LibraryAuthoringPage />', () => {
     axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
 
     const {
-      getByRole, getByText, queryByText, getAllByText,
+      getByRole, getByText, queryByText, findByText,
     } = render(<RootWrapper />);
 
     // Ensure the search endpoint is called
@@ -163,7 +168,7 @@ describe('<LibraryAuthoringPage />', () => {
     expect(getByText('Recently Modified')).toBeInTheDocument();
     expect(getByText('Collections (0)')).toBeInTheDocument();
     expect(getByText('Components (6)')).toBeInTheDocument();
-    expect(getAllByText('Test HTML Block')[0]).toBeInTheDocument();
+    expect(await findByText('Test HTML Block')).toBeInTheDocument();
 
     // Navigate to the components tab
     fireEvent.click(getByRole('tab', { name: 'Components' }));
@@ -203,6 +208,16 @@ describe('<LibraryAuthoringPage />', () => {
     expect(getByText('You have not added any content to this library yet.')).toBeInTheDocument();
   });
 
+  it('show new content button', async () => {
+    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
+    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
+
+    render(<RootWrapper />);
+
+    expect(await screen.findByRole('heading')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /new/i })).toBeInTheDocument();
+  });
+
   it('show library without search results', async () => {
     mockUseParams.mockReturnValue({ libraryId: libraryData.id });
     axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
@@ -230,5 +245,25 @@ describe('<LibraryAuthoringPage />', () => {
     // Go back to Home tab
     // This step is necessary to avoid the url change leak to other tests
     fireEvent.click(getByRole('tab', { name: 'Home' }));
+  });
+
+  it('should open and close new content sidebar', async () => {
+    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
+    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
+
+    render(<RootWrapper />);
+
+    expect(await screen.findByRole('heading')).toBeInTheDocument();
+    expect(screen.queryByText(/add content/i)).not.toBeInTheDocument();
+
+    const newButton = screen.getByRole('button', { name: /new/i });
+    fireEvent.click(newButton);
+
+    expect(screen.getByText(/add content/i)).toBeInTheDocument();
+
+    const closeButton = screen.getByRole('button', { name: /close/i });
+    fireEvent.click(closeButton);
+
+    expect(screen.queryByText(/add content/i)).not.toBeInTheDocument();
   });
 });

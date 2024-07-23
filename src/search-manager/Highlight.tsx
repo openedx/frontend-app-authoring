@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 import React from 'react';
 
-import { HIGHLIGHT_POST_TAG, HIGHLIGHT_PRE_TAG } from '../search-manager';
+import { HIGHLIGHT_POST_TAG, HIGHLIGHT_PRE_TAG } from './data/api';
 
 /**
  * Render some text that contains matching words which should be highlighted

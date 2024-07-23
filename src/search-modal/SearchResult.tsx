@@ -11,13 +11,10 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { getItemIcon } from '../generic/block-type-utils';
-import { useSearchContext } from '../search-manager';
+import { useSearchContext, type ContentHit, Highlight } from '../search-manager';
 import { getStudioHomeData } from '../studio-home/data/selectors';
 import { constructLibraryAuthoringURL } from '../utils';
-import Highlight from './Highlight';
 import messages from './messages';
-
-import type { ContentHit } from '../search-manager';
 
 /**
  * Returns the URL Suffix for library/library component hit

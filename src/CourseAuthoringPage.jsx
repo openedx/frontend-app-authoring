@@ -55,7 +55,7 @@ const CourseAuthoringPage = ({ courseId, children }) => {
             number={courseNumber}
             org={courseOrg}
             title={courseTitle}
-            contentId={courseId}
+            contextId={courseId}
           />
         )
         )}

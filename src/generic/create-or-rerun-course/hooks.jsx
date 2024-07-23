@@ -5,6 +5,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 
+import { REGEX_RULES } from '../../constants';
 import { RequestStatus } from '../../data/constants';
 import { getStudioHomeData } from '../../studio-home/data/selectors';
 import {
@@ -32,8 +33,8 @@ const useCreateOrRerunCourse = (initialValues) => {
   const [isFormFilled, setFormFilled] = useState(false);
   const [showErrorBanner, setShowErrorBanner] = useState(false);
   const organizations = allowToCreateNewOrg ? allOrganizations : allowedOrganizations;
-  const specialCharsRule = /^[a-zA-Z0-9_\-.'*~\s]+$/;
-  const noSpaceRule = /^\S*$/;
+
+  const { specialCharsRule, noSpaceRule } = REGEX_RULES;
   const validationSchema = Yup.object().shape({
     displayName: Yup.string().required(
       intl.formatMessage(messages.requiredFieldError),

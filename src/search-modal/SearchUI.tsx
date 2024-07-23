@@ -29,7 +29,10 @@ const SearchUI: React.FC<{ courseId?: string, closeSearchModal?: () => void }> =
 
   return (
     <SearchContextProvider
-      extraFilter={searchThisCourse ? `context_key = "${props.courseId}"` : undefined}
+      extraFilter={[
+        'type = "course_block"',
+        ...(searchThisCourse ? [`context_key = "${props.courseId}"`] : []),
+      ]}
       closeSearchModal={props.closeSearchModal}
     >
       {/* We need to override z-index here or the <Dropdown.Menu> appears behind the <ModalDialog.Body>
