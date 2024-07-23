@@ -1,16 +1,14 @@
 import React, { useEffect, useMemo } from 'react';
-
 import { CardGrid } from '@openedx/paragon';
+
+import { useSearchContext } from '../../search-manager';
 import { NoComponents, NoSearchResults } from '../EmptyStates';
-import { useLibraryBlockTypes, useLibraryComponentCount, useLibraryComponents } from '../data/apiHooks';
+import { useLibraryBlockTypes } from '../data/apiHooks';
 import ComponentCard from './ComponentCard';
 
 type LibraryComponentsProps = {
   libraryId: string,
-  filter: {
-    searchKeywords: string,
-  },
-  variant: string,
+  variant: 'full' | 'preview',
 };
 
 /**
@@ -22,16 +20,16 @@ type LibraryComponentsProps = {
  */
 const LibraryComponents = ({
   libraryId,
-  filter: { searchKeywords },
   variant,
 }: LibraryComponentsProps) => {
-  const { componentCount } = useLibraryComponentCount(libraryId, searchKeywords);
   const {
     hits,
+    totalHits: componentCount,
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
-  } = useLibraryComponents(libraryId, searchKeywords);
+    searchKeywords,
+  } = useSearchContext();
 
   const componentList = variant === 'preview' ? hits.slice(0, 4) : hits;
 

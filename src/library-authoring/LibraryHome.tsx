@@ -4,11 +4,11 @@ import {
   Card, Stack,
 } from '@openedx/paragon';
 
+import { useSearchContext } from '../search-manager';
 import { NoComponents, NoSearchResults } from './EmptyStates';
 import LibraryCollections from './LibraryCollections';
-import { useLibraryComponentCount } from './data/apiHooks';
-import messages from './messages';
 import { LibraryComponents } from './components';
+import messages from './messages';
 
 const Section = ({ title, children } : { title: string, children: React.ReactNode }) => (
   <Card>
@@ -23,15 +23,17 @@ const Section = ({ title, children } : { title: string, children: React.ReactNod
 
 type LibraryHomeProps = {
   libraryId: string,
-  filter: {
-    searchKeywords: string,
-  },
 };
 
-const LibraryHome = ({ libraryId, filter } : LibraryHomeProps) => {
+const LibraryHome = ({ libraryId } : LibraryHomeProps) => {
   const intl = useIntl();
-  const { searchKeywords } = filter;
-  const { componentCount, collectionCount } = useLibraryComponentCount(libraryId, searchKeywords);
+
+  const {
+    totalHits: componentCount,
+    searchKeywords,
+  } = useSearchContext();
+
+  const collectionCount = 0;
 
   if (componentCount === 0) {
     return searchKeywords === '' ? <NoComponents /> : <NoSearchResults />;
@@ -46,7 +48,7 @@ const LibraryHome = ({ libraryId, filter } : LibraryHomeProps) => {
         <LibraryCollections />
       </Section>
       <Section title={`Components (${componentCount})`}>
-        <LibraryComponents libraryId={libraryId} filter={filter} variant="preview" />
+        <LibraryComponents libraryId={libraryId} variant="preview" />
       </Section>
     </Stack>
   );

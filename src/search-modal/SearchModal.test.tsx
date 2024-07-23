@@ -11,7 +11,7 @@ import MockAdapter from 'axios-mock-adapter';
 
 import initializeStore from '../store';
 import SearchModal from './SearchModal';
-import { getContentSearchConfigUrl } from './data/api';
+import { getContentSearchConfigUrl } from '../search-manager/data/api';
 
 let store: Store;
 let axiosMock: MockAdapter;

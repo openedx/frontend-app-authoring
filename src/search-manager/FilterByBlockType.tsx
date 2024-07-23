@@ -6,10 +6,11 @@ import {
   Menu,
   MenuItem,
 } from '@openedx/paragon';
+import { FilterList } from '@openedx/paragon/icons';
 import SearchFilterWidget from './SearchFilterWidget';
 import messages from './messages';
 import BlockTypeLabel from './BlockTypeLabel';
-import { useSearchContext } from './manager/SearchManager';
+import { useSearchContext } from './SearchManager';
 
 /**
  * A button with a dropdown that allows filtering the current search by component type (XBlock type)
@@ -69,8 +70,10 @@ const FilterByBlockType: React.FC<Record<never, never>> = () => {
     <SearchFilterWidget
       appliedFilters={blockTypesFilter.map(blockType => ({ label: <BlockTypeLabel type={blockType} /> }))}
       label={<FormattedMessage {...messages.blockTypeFilter} />}
+      clearFilter={() => setBlockTypesFilter([])}
+      icon={FilterList}
     >
-      <Form.Group>
+      <Form.Group className="mb-0">
         <Form.CheckboxSet
           name="block-type-filter"
           defaultValue={blockTypesFilter}

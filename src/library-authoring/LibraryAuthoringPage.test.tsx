@@ -12,9 +12,8 @@ import {
   screen,
 } from '@testing-library/react';
 import fetchMock from 'fetch-mock-jest';
-
 import initializeStore from '../store';
-import { getContentSearchConfigUrl } from '../search-modal/data/api';
+import { getContentSearchConfigUrl } from '../search-manager/data/api';
 import mockResult from '../search-modal/__mocks__/search-result.json';
 import mockEmptyResult from '../search-modal/__mocks__/empty-search-result.json';
 import { getContentLibraryApiUrl, type ContentLibrary } from './data/api';
@@ -159,8 +158,7 @@ describe('<LibraryAuthoringPage />', () => {
     } = render(<RootWrapper />);
 
     // Ensure the search endpoint is called
-    // One called for LibraryComponents and another called for components count
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
 
     expect(getByText('Content library')).toBeInTheDocument();
     expect(getByText(libraryData.title)).toBeInTheDocument();

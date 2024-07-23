@@ -3,14 +3,13 @@ import { StudioFooter } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
+  Col,
   Container,
   Icon,
   IconButton,
-  SearchField,
+  Row,
   Tab,
   Tabs,
-  Row,
-  Col,
 } from '@openedx/paragon';
 import { Add, InfoOutline } from '@openedx/paragon/icons';
 import {
@@ -21,13 +20,20 @@ import Loading from '../generic/Loading';
 import SubHeader from '../generic/sub-header/SubHeader';
 import Header from '../header';
 import NotFoundAlert from '../generic/NotFoundAlert';
+import {
+  ClearFiltersButton,
+  FilterByBlockType,
+  FilterByTags,
+  SearchContextProvider,
+  SearchKeywordsField,
+} from '../search-manager';
 import LibraryComponents from './components/LibraryComponents';
 import LibraryCollections from './LibraryCollections';
 import LibraryHome from './LibraryHome';
 import { useContentLibrary } from './data/apiHooks';
-import messages from './messages';
 import { LibrarySidebar } from './library-sidebar';
 import { LibraryContext } from './common/context';
+import messages from './messages';
 
 enum TabList {
   home = '',
@@ -54,7 +60,6 @@ const LibraryAuthoringPage = () => {
   const intl = useIntl();
   const location = useLocation();
   const navigate = useNavigate();
-  const [searchKeywords, setSearchKeywords] = React.useState('');
 
   const { libraryId } = useParams();
 
@@ -87,57 +92,61 @@ const LibraryAuthoringPage = () => {
             contextId={libraryId}
             isLibrary
           />
-          <Container size="xl" className="p-4 mt-3">
-            <SubHeader
-              title={<SubHeaderTitle title={libraryData.title} />}
-              subtitle={intl.formatMessage(messages.headingSubtitle)}
-              headerActions={[
-                <Button
-                  iconBefore={Add}
-                  variant="primary rounded-0"
-                  onClick={() => openAddContentSidebar()}
-                  disabled={!libraryData.canEditLibrary}
-                >
-                  {intl.formatMessage(messages.newContentButton)}
-                </Button>,
-              ]}
-            />
-            <SearchField
-              value={searchKeywords}
-              placeholder={intl.formatMessage(messages.searchPlaceholder)}
-              onChange={(value: string) => setSearchKeywords(value)}
-              onSubmit={() => {}}
-              className="w-50"
-            />
-            <Tabs
-              variant="tabs"
-              activeKey={activeKey}
-              onSelect={handleTabChange}
-              className="my-3"
-            >
-              <Tab eventKey={TabList.home} title={intl.formatMessage(messages.homeTab)} />
-              <Tab eventKey={TabList.components} title={intl.formatMessage(messages.componentsTab)} />
-              <Tab eventKey={TabList.collections} title={intl.formatMessage(messages.collectionsTab)} />
-            </Tabs>
-            <Routes>
-              <Route
-                path={TabList.home}
-                element={<LibraryHome libraryId={libraryId} filter={{ searchKeywords }} />}
+          <SearchContextProvider
+            extraFilter={`context_key = "${libraryId}"`}
+          >
+            <Container size="xl" className="p-4 mt-3">
+              <SubHeader
+                title={<SubHeaderTitle title={libraryData.title} />}
+                subtitle={intl.formatMessage(messages.headingSubtitle)}
+                headerActions={[
+                  <Button
+                    iconBefore={Add}
+                    variant="primary rounded-0"
+                    onClick={openAddContentSidebar}
+                    disabled={!libraryData.canEditLibrary}
+                  >
+                    {intl.formatMessage(messages.newContentButton)}
+                  </Button>,
+                ]}
               />
-              <Route
-                path={TabList.components}
-                element={<LibraryComponents libraryId={libraryId} filter={{ searchKeywords }} variant="full" />}
-              />
-              <Route
-                path={TabList.collections}
-                element={<LibraryCollections />}
-              />
-              <Route
-                path="*"
-                element={<NotFoundAlert />}
-              />
-            </Routes>
-          </Container>
+              <SearchKeywordsField className="w-50" />
+              <div className="d-flex mt-3 align-items-center">
+                <FilterByTags />
+                <FilterByBlockType />
+                <ClearFiltersButton />
+                <div className="flex-grow-1" />
+              </div>
+              <Tabs
+                variant="tabs"
+                activeKey={activeKey}
+                onSelect={handleTabChange}
+                className="my-3"
+              >
+                <Tab eventKey={TabList.home} title={intl.formatMessage(messages.homeTab)} />
+                <Tab eventKey={TabList.components} title={intl.formatMessage(messages.componentsTab)} />
+                <Tab eventKey={TabList.collections} title={intl.formatMessage(messages.collectionsTab)} />
+              </Tabs>
+              <Routes>
+                <Route
+                  path={TabList.home}
+                  element={<LibraryHome libraryId={libraryId} />}
+                />
+                <Route
+                  path={TabList.components}
+                  element={<LibraryComponents libraryId={libraryId} variant="full" />}
+                />
+                <Route
+                  path={TabList.collections}
+                  element={<LibraryCollections />}
+                />
+                <Route
+                  path="*"
+                  element={<NotFoundAlert />}
+                />
+              </Routes>
+            </Container>
+          </SearchContextProvider>
           <StudioFooter />
         </Col>
         { sidebarBodyComponent !== null && (
