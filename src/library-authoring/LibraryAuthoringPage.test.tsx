@@ -17,7 +17,7 @@ import { getContentSearchConfigUrl } from '../search-manager/data/api';
 import mockResult from '../search-modal/__mocks__/search-result.json';
 import mockEmptyResult from '../search-modal/__mocks__/empty-search-result.json';
 import { getContentLibraryApiUrl, type ContentLibrary } from './data/api';
-import LibraryLayout from './LibraryLayout';
+import { LibraryLayout } from '.';
 
 let store;
 const mockUseParams = jest.fn();
