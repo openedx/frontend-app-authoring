@@ -155,11 +155,12 @@ describe('<LibraryAuthoringPage />', () => {
     axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
 
     const {
-      getByRole, getByText, queryByText,
+      getByRole, getByText, queryByText, findByText,
     } = render(<RootWrapper />);
 
     // Ensure the search endpoint is called
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+    // One called for LibraryComponents and another called for components count
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
 
     expect(getByText('Content library')).toBeInTheDocument();
     expect(getByText(libraryData.title)).toBeInTheDocument();
@@ -169,14 +170,13 @@ describe('<LibraryAuthoringPage />', () => {
     expect(getByText('Recently Modified')).toBeInTheDocument();
     expect(getByText('Collections (0)')).toBeInTheDocument();
     expect(getByText('Components (6)')).toBeInTheDocument();
-    expect(getByText('There are 6 components in this library')).toBeInTheDocument();
+    expect(await findByText('Test HTML Block')).toBeInTheDocument();
 
     // Navigate to the components tab
     fireEvent.click(getByRole('tab', { name: 'Components' }));
     expect(queryByText('Recently Modified')).not.toBeInTheDocument();
     expect(queryByText('Collections (0)')).not.toBeInTheDocument();
     expect(queryByText('Components (6)')).not.toBeInTheDocument();
-    expect(getByText('There are 6 components in this library')).toBeInTheDocument();
 
     // Navigate to the collections tab
     fireEvent.click(getByRole('tab', { name: 'Collections' }));
@@ -192,7 +192,6 @@ describe('<LibraryAuthoringPage />', () => {
     expect(getByText('Recently Modified')).toBeInTheDocument();
     expect(getByText('Collections (0)')).toBeInTheDocument();
     expect(getByText('Components (6)')).toBeInTheDocument();
-    expect(getByText('There are 6 components in this library')).toBeInTheDocument();
   });
 
   it('show library without components', async () => {

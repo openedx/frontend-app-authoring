@@ -5,8 +5,9 @@ import { MeiliSearch } from 'meilisearch';
 import { useContentSearchConnection, useContentSearchResults } from '../../search-modal';
 import {
   type GetLibrariesV2CustomParams,
-  createLibraryBlock,
   getContentLibrary,
+  getLibraryBlockTypes,
+  createLibraryBlock,
   getContentLibraryV2List,
 } from './api';
 
@@ -21,6 +22,12 @@ export const libraryAuthoringQueryKeys = {
     'list',
     ...(customParams ? [customParams] : []),
   ],
+  contentLibraryBlockTypes: (contentLibraryId?: string) => [
+    ...libraryAuthoringQueryKeys.all,
+    ...libraryAuthoringQueryKeys.contentLibrary(contentLibraryId),
+    'content',
+    'libraryBlockTypes',
+  ],
 };
 
 /**
@@ -32,6 +39,40 @@ export const useContentLibrary = (libraryId?: string) => (
     queryFn: () => getContentLibrary(libraryId),
   })
 );
+
+/**
+ *  Hook to fetch block types of a library.
+ */
+export const useLibraryBlockTypes = (libraryId) => (
+  useQuery({
+    queryKey: libraryAuthoringQueryKeys.contentLibraryBlockTypes(libraryId),
+    queryFn: () => getLibraryBlockTypes(libraryId),
+  })
+);
+
+/**
+ * Hook to fetch components in a library.
+ */
+export const useLibraryComponents = (libraryId: string, searchKeywords: string) => {
+  const { data: connectionDetails } = useContentSearchConnection();
+
+  const indexName = connectionDetails?.indexName;
+  const client = React.useMemo(() => {
+    if (connectionDetails?.apiKey === undefined || connectionDetails?.url === undefined) {
+      return undefined;
+    }
+    return new MeiliSearch({ host: connectionDetails.url, apiKey: connectionDetails.apiKey });
+  }, [connectionDetails?.apiKey, connectionDetails?.url]);
+
+  const libFilter = `context_key = "${libraryId}"`;
+
+  return useContentSearchResults({
+    client,
+    indexName,
+    searchKeywords,
+    extraFilter: [libFilter],
+  });
+};
 
 /**
  * Use this mutation to create a block in a library

@@ -6,31 +6,17 @@ import {
   IconButton,
   Stack,
 } from '@openedx/paragon';
-import {
-  Article,
-  Folder,
-  OpenInNew,
-} from '@openedx/paragon/icons';
+import { OpenInNew } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { constructLibraryAuthoringURL } from '../utils';
-import { COMPONENT_TYPE_ICON_MAP, TYPE_ICONS_MAP } from '../course-unit/constants';
 import { getStudioHomeData } from '../studio-home/data/selectors';
 import { useSearchContext } from './manager/SearchManager';
 import type { ContentHit } from './data/api';
 import Highlight from './Highlight';
 import messages from './messages';
-
-const STRUCTURAL_TYPE_ICONS: Record<string, React.ComponentType> = {
-  vertical: TYPE_ICONS_MAP.vertical,
-  sequential: Folder,
-  chapter: Folder,
-};
-
-function getItemIcon(blockType: string): React.ComponentType {
-  return STRUCTURAL_TYPE_ICONS[blockType] ?? COMPONENT_TYPE_ICON_MAP[blockType] ?? Article;
-}
+import { getItemIcon } from '../generic/block-type-utils';
 
 /**
  * Returns the URL Suffix for library/library component hit

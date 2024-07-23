@@ -60,10 +60,15 @@ const messages = defineMessages({
     defaultMessage: 'Coming soon!',
     description: 'Temp placeholder for the collections container. This will be replaced with the actual collection list.',
   },
-  recentComponentsTempPlaceholder: {
-    id: 'course-authoring.library-authoring.recent-components-temp-placeholder',
-    defaultMessage: 'Recently modified components and collections will be displayed here.',
-    description: 'Temp placeholder for the recent components container. This will be replaced with the actual list.',
+  createLibrary: {
+    id: 'course-authoring.library-authoring.create-library',
+    defaultMessage: 'Create library',
+    description: 'Header for the create library form',
+  },
+  createLibraryTempPlaceholder: {
+    id: 'course-authoring.library-authoring.create-library-temp-placeholder',
+    defaultMessage: 'This is a placeholder for the create library form. This will be replaced with the actual form.',
+    description: 'Temp placeholder for the create library container. This will be replaced with the new library form.',
   },
   recentlyModifiedTitle: {
     id: 'course-authoring.library-authoring.recently-modified-title',
@@ -79,6 +84,11 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.components-title',
     defaultMessage: 'Components ({componentCount})',
     description: 'Title for the components container',
+  },
+  recentComponentsTempPlaceholder: {
+    id: 'course-authoring.library-authoring.recent-components-temp-placeholder',
+    defaultMessage: 'Recently modified components and collections will be displayed here.',
+    description: 'Temp placeholder for the recent components container. This will be replaced with the actual list.',
   },
   addContentTitle: {
     id: 'course-authoring.library-authoring.drawer.title.add-content',

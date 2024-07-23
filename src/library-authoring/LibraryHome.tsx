@@ -6,9 +6,9 @@ import {
 
 import { NoComponents, NoSearchResults } from './EmptyStates';
 import LibraryCollections from './LibraryCollections';
-import LibraryComponents from './LibraryComponents';
 import { useLibraryComponentCount } from './data/apiHooks';
 import messages from './messages';
+import { LibraryComponents } from './components';
 
 const Section = ({ title, children } : { title: string, children: React.ReactNode }) => (
   <Card>
@@ -45,8 +45,8 @@ const LibraryHome = ({ libraryId, filter } : LibraryHomeProps) => {
       <Section title={intl.formatMessage(messages.collectionsTitle, { collectionCount })}>
         <LibraryCollections />
       </Section>
-      <Section title={intl.formatMessage(messages.componentsTitle, { componentCount })}>
-        <LibraryComponents libraryId={libraryId} filter={filter} />
+      <Section title={`Components (${componentCount})`}>
+        <LibraryComponents libraryId={libraryId} filter={filter} variant="preview" />
       </Section>
     </Stack>
   );

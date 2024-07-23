@@ -21,7 +21,7 @@ import Loading from '../generic/Loading';
 import SubHeader from '../generic/sub-header/SubHeader';
 import Header from '../header';
 import NotFoundAlert from '../generic/NotFoundAlert';
-import LibraryComponents from './LibraryComponents';
+import LibraryComponents from './components/LibraryComponents';
 import LibraryCollections from './LibraryCollections';
 import LibraryHome from './LibraryHome';
 import { useContentLibrary } from './data/apiHooks';
@@ -126,7 +126,7 @@ const LibraryAuthoringPage = () => {
               />
               <Route
                 path={TabList.components}
-                element={<LibraryComponents libraryId={libraryId} filter={{ searchKeywords }} />}
+                element={<LibraryComponents libraryId={libraryId} filter={{ searchKeywords }} variant="full" />}
               />
               <Route
                 path={TabList.collections}

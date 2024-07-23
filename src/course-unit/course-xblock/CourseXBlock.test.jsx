@@ -16,7 +16,8 @@ import { getCourseSectionVerticalApiUrl, getXBlockBaseApiUrl } from '../data/api
 import { fetchCourseSectionVerticalData } from '../data/thunk';
 import { executeThunk } from '../../utils';
 import { getCourseId } from '../data/selectors';
-import { PUBLISH_TYPES, COMPONENT_TYPES } from '../constants';
+import { PUBLISH_TYPES } from '../constants';
+import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import { courseSectionVerticalMock, courseVerticalChildrenMock } from '../__mocks__';
 import CourseXBlock from './CourseXBlock';
 import messages from './messages';

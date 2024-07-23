@@ -29,6 +29,7 @@
 @import "search-modal/SearchModal";
 @import "certificates/scss/Certificates";
 @import "group-configurations/GroupConfigurations";
+@import "library-authoring";
 
 // To apply the glow effect to the selected Section/Subsection, in the Course Outline
 div.row:has(> div > div.highlight) {
