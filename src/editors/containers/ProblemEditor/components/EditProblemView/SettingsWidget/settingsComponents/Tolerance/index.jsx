@@ -61,7 +61,7 @@ export const ToleranceCard = ({
       { isAnswerRange
        && (
        <Alert
-         varaint="info"
+         variant="info"
        >
          <FormattedMessage {...messages.toleranceAnswerRangeWarning} />
        </Alert>
