@@ -52,6 +52,7 @@ export async function getLibraryBlockTypes(libraryId?: string): Promise<LibraryB
   const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockTypesUrl(libraryId));
   return camelCaseObject(data);
 }
+
 export interface LibrariesV2Response {
   next: string | null,
   previous: string | null,

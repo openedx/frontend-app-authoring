@@ -3,7 +3,7 @@ import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import type { MessageDescriptor } from 'react-intl';
 import { Alert, Stack } from '@openedx/paragon';
 
-import { useSearchContext } from './manager/SearchManager';
+import { useSearchContext } from '../search-manager';
 import EmptySearchImage from './images/empty-search.svg';
 import NoResultImage from './images/no-results.svg';
 import messages from './messages';

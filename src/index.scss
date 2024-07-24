@@ -26,7 +26,8 @@
 @import "textbooks/Textbooks";
 @import "content-tags-drawer/ContentTagsDropDownSelector";
 @import "content-tags-drawer/ContentTagsCollapsible";
-@import "search-modal/SearchModal";
+@import "search-modal";
+@import "search-manager";
 @import "certificates/scss/Certificates";
 @import "group-configurations/GroupConfigurations";
 @import "library-authoring";

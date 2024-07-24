@@ -10,11 +10,11 @@ import {
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import messages from './messages';
-import TagCount from '../../generic/tag-count';
+
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
-import { ContentHit } from '../../search-modal/data/api';
-import Highlight from '../../search-modal/Highlight';
+import TagCount from '../../generic/tag-count';
+import { type ContentHit, Highlight } from '../../search-manager';
+import messages from './messages';
 
 type ComponentCardProps = {
   contentHit: ContentHit,

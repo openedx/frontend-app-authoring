@@ -1,19 +1,40 @@
 import React from 'react';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, fireEvent } from '@testing-library/react';
-import LibraryComponents from './LibraryComponents';
+import MockAdapter from 'axios-mock-adapter';
+import fetchMock from 'fetch-mock-jest';
+import type { Store } from 'redux';
 
+import { getContentSearchConfigUrl } from '../../search-manager/data/api';
+import { SearchContextProvider } from '../../search-manager/SearchManager';
+import mockEmptyResult from '../../search-modal/__mocks__/empty-search-result.json';
 import initializeStore from '../../store';
 import { libraryComponentsMock } from '../__mocks__';
+import LibraryComponents from './LibraryComponents';
 
-const mockUseLibraryComponents = jest.fn();
-const mockUseLibraryComponentCount = jest.fn();
+const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
+
 const mockUseLibraryBlockTypes = jest.fn();
 const mockFetchNextPage = jest.fn();
-let store;
+const mockUseSearchContext = jest.fn();
+
+const data = {
+  totalHits: 1,
+  hits: [],
+  isFetching: true,
+  isFetchingNextPage: false,
+  hasNextPage: false,
+  fetchNextPage: mockFetchNextPage,
+  searchKeywords: '',
+};
+
+let store: Store;
+let axiosMock: MockAdapter;
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -22,17 +43,18 @@ const queryClient = new QueryClient({
   },
 });
 
-const data = {
-  hits: [],
-  isFetching: true,
-  isFetchingNextPage: false,
-  hasNextPage: false,
-  fetchNextPage: mockFetchNextPage,
+const returnEmptyResult = (_url: string, req) => {
+  const requestData = JSON.parse(req.body?.toString() ?? '');
+  const query = requestData?.queries[0]?.q ?? '';
+  // We have to replace the query (search keywords) in the mock results with the actual query,
+  // because otherwise we may have an inconsistent state that causes more queries and unexpected results.
+  mockEmptyResult.results[0].query = query;
+  // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
+  // eslint-disable-next-line no-underscore-dangle, no-param-reassign
+  mockEmptyResult.results[0]?.hits.forEach((hit: any) => { hit._formatted = { ...hit }; });
+  return mockEmptyResult;
 };
-const countData = {
-  componentCount: 1,
-  collectionCount: 0,
-};
+
 const blockTypeData = {
   data: [
     {
@@ -51,16 +73,21 @@ const blockTypeData = {
 };
 
 jest.mock('../data/apiHooks', () => ({
-  useLibraryComponents: () => mockUseLibraryComponents(),
-  useLibraryComponentCount: () => mockUseLibraryComponentCount(),
   useLibraryBlockTypes: () => mockUseLibraryBlockTypes(),
+}));
+
+jest.mock('../../search-manager', () => ({
+  ...jest.requireActual('../../search-manager'),
+  useSearchContext: () => mockUseSearchContext(),
 }));
 
 const RootWrapper = (props) => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
-        <LibraryComponents libraryId="1" filter={{ searchKeywords: '' }} {...props} />
+        <SearchContextProvider>
+          <LibraryComponents libraryId="1" {...props} />
+        </SearchContextProvider>
       </QueryClientProvider>
     </IntlProvider>
   </AppProvider>
@@ -77,9 +104,18 @@ describe('<LibraryComponents />', () => {
       },
     });
     store = initializeStore();
-    mockUseLibraryComponents.mockReturnValue(data);
-    mockUseLibraryComponentCount.mockReturnValue(countData);
     mockUseLibraryBlockTypes.mockReturnValue(blockTypeData);
+    mockUseSearchContext.mockReturnValue(data);
+
+    fetchMock.post(searchEndpoint, returnEmptyResult, { overwriteRoutes: true });
+
+    // The API method to get the Meilisearch connection details uses Axios:
+    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    axiosMock.onGet(getContentSearchConfigUrl()).reply(200, {
+      url: 'http://mock.meilisearch.local',
+      index_name: 'studio',
+      api_key: 'test-key',
+    });
   });
 
   afterEach(() => {
@@ -87,16 +123,17 @@ describe('<LibraryComponents />', () => {
   });
 
   it('should render empty state', async () => {
-    mockUseLibraryComponentCount.mockReturnValueOnce({
-      ...countData,
-      componentCount: 0,
+    mockUseSearchContext.mockReturnValue({
+      ...data,
+      totalHits: 0,
     });
+
     render(<RootWrapper />);
     expect(await screen.findByText(/you have not added any content to this library yet\./i));
   });
 
   it('should render components in full variant', async () => {
-    mockUseLibraryComponents.mockReturnValue({
+    mockUseSearchContext.mockReturnValue({
       ...data,
       hits: libraryComponentsMock,
       isFetching: false,
@@ -112,7 +149,7 @@ describe('<LibraryComponents />', () => {
   });
 
   it('should render components in preview variant', async () => {
-    mockUseLibraryComponents.mockReturnValue({
+    mockUseSearchContext.mockReturnValue({
       ...data,
       hits: libraryComponentsMock,
       isFetching: false,
@@ -128,7 +165,7 @@ describe('<LibraryComponents />', () => {
   });
 
   it('should call `fetchNextPage` on scroll to bottom in full variant', async () => {
-    mockUseLibraryComponents.mockReturnValue({
+    mockUseSearchContext.mockReturnValue({
       ...data,
       hits: libraryComponentsMock,
       isFetching: false,
@@ -146,7 +183,7 @@ describe('<LibraryComponents />', () => {
   });
 
   it('should not call `fetchNextPage` on croll to bottom in preview variant', async () => {
-    mockUseLibraryComponents.mockReturnValue({
+    mockUseSearchContext.mockReturnValue({
       ...data,
       hits: libraryComponentsMock,
       isFetching: false,
