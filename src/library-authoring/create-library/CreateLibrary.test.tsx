@@ -9,7 +9,7 @@ import { fireEvent, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import initializeStore from '../../store';
-import CreateLibrary from './CreateLibrary';
+import { CreateLibrary } from '.';
 import { getContentLibraryV2CreateApiUrl } from './data/api';
 
 let store;
