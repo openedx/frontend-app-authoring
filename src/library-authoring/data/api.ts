@@ -42,8 +42,8 @@ export interface ContentLibrary {
   hasUnpublishedDeletes: boolean;
   canEditLibrary: boolean;
   license: string;
-  created: Date;
-  updated: Date;
+  created: Date | null;
+  updated: Date | null;
 }
 
 export interface LibraryBlockType {

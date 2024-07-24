@@ -4,7 +4,7 @@ import { ContentLibrary } from "../data/api";
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from "./messages";
 import classNames from 'classnames';
-import { useCommitLibraryChanges, useRevertLibraryChanges } from "../data/apiHook";
+import { useCommitLibraryChanges, useRevertLibraryChanges } from "../data/apiHooks";
 import { ToastContext } from "../../generic/toast-context";
 import { convertToStringFromDateAndFormat } from "../../utils";
 import { COMMA_SEPARATED_DATE_FORMAT, TIME_FORMAT } from "../../constants";

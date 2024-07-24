@@ -9,6 +9,8 @@ import {
   getLibraryBlockTypes,
   createLibraryBlock,
   getContentLibraryV2List,
+  commitLibraryChanges,
+  revertLibraryChanges,
 } from './api';
 
 export const libraryAuthoringQueryKeys = {
@@ -130,3 +132,24 @@ export const useContentLibraryV2List = (customParams: GetLibrariesV2CustomParams
     keepPreviousData: true,
   })
 );
+
+
+export const useCommitLibraryChanges = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: commitLibraryChanges,
+    onSettled: (_data, _error, libraryId) => {
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId) });
+    },
+  });
+};
+
+export const useRevertLibraryChanges = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: revertLibraryChanges,
+    onSettled: (_data, _error, libraryId) => {
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId) });
+    },
+  });
+};

@@ -61,6 +61,9 @@ const libraryData: ContentLibrary = {
   numBlocks: 2,
   version: 0,
   lastPublished: null,
+  lastDraftCreated: null,
+  publishedBy: 'staff',
+  lastDraftCreatedBy: null,
   allowLti: false,
   allowPublicLearning: false,
   allowPublicRead: false,
@@ -68,6 +71,8 @@ const libraryData: ContentLibrary = {
   hasUnpublishedDeletes: false,
   canEditLibrary: true,
   license: '',
+  created: null,
+  updated: null,
 };
 
 const RootWrapper = () => (
