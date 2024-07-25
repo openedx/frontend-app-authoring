@@ -153,7 +153,7 @@ const LibraryAuthoringPage = () => {
         </Col>
         { sidebarBodyComponent !== null && (
           <Col xs={6} md={4} className="box-shadow-left-1">
-            <LibrarySidebar library={libraryData}/>
+            <LibrarySidebar library={libraryData} />
           </Col>
         )}
       </Row>

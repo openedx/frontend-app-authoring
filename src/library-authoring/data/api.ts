@@ -19,8 +19,7 @@ export const getContentLibraryV2ListApiUrl = () => `${getApiBaseUrl()}/api/libra
 /**
  * Get the URL for commit/revert changes in library.
  */
-export const getCommitLibraryChangesUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/commit/`
-
+export const getCommitLibraryChangesUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/commit/`;
 
 export interface ContentLibrary {
   id: string;
@@ -51,17 +50,6 @@ export interface LibraryBlockType {
   displayName: string;
 }
 
-/**
- * Fetch block types of a library
- */
-export async function getLibraryBlockTypes(libraryId?: string): Promise<LibraryBlockType[]> {
-  if (!libraryId) {
-    throw new Error('libraryId is required');
-  }
-
-  const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockTypesUrl(libraryId));
-  return camelCaseObject(data);
-}
 export interface LibrariesV2Response {
   next: string | null,
   previous: string | null,
@@ -103,6 +91,28 @@ export interface CreateBlockDataResponse {
   tagsCount: number;
 }
 
+export interface UpdateBlockDataRequest {
+  id: string;
+  title?: string | null;
+  description?: string | null;
+  allow_public_learning?: boolean | null;
+  allow_public_read?: boolean | null;
+  type?: string | null;
+  license?: string | null;
+}
+
+/**
+ * Fetch block types of a library
+ */
+export async function getLibraryBlockTypes(libraryId?: string): Promise<LibraryBlockType[]> {
+  if (!libraryId) {
+    throw new Error('libraryId is required');
+  }
+
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockTypesUrl(libraryId));
+  return camelCaseObject(data);
+}
+
 /**
  * Fetch a content library by its ID.
  */
@@ -132,6 +142,16 @@ export async function createLibraryBlock({
 }
 
 /**
+ * Update library metadata.
+ */
+export async function updateLibraryMetadata(libraryData: UpdateBlockDataRequest): Promise<ContentLibrary> {
+  const client = getAuthenticatedHttpClient();
+  const { data } = await client.patch(getContentLibraryApiUrl(libraryData.id), libraryData);
+
+  return camelCaseObject(data);
+}
+
+/**
  * Get a list of content libraries.
  */
 export async function getContentLibraryV2List(customParams: GetLibrariesV2CustomParams): Promise<LibrariesV2Response> {
@@ -153,21 +173,15 @@ export async function getContentLibraryV2List(customParams: GetLibrariesV2Custom
 /**
  * Commit library changes.
  */
-export async function commitLibraryChanges(libraryId: string): Promise<any> {
+export async function commitLibraryChanges(libraryId: string) {
   const client = getAuthenticatedHttpClient();
-
-  const { data } = await client.post(getCommitLibraryChangesUrl(libraryId));
-
-  return camelCaseObject(data);
+  await client.post(getCommitLibraryChangesUrl(libraryId));
 }
 
 /**
  * Revert library changes.
  */
-export async function revertLibraryChanges(libraryId: string): Promise<any> {
+export async function revertLibraryChanges(libraryId: string) {
   const client = getAuthenticatedHttpClient();
-
-  const { data } = await client.delete(getCommitLibraryChangesUrl(libraryId));
-
-  return camelCaseObject(data);
+  await client.delete(getCommitLibraryChangesUrl(libraryId));
 }

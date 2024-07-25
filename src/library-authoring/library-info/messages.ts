@@ -96,6 +96,16 @@ const messages = defineMessages({
     defaultMessage: 'There was an error reverting changes in the library.',
     description: 'Message when there is an error when reverting changes in the library.',
   },
+  updateLibrarySuccessMsg: {
+    id: 'course-authoring.library-authoring.library.update.success',
+    defaultMessage: 'Library updated successfully',
+    description: 'Message when the library is updated successfully',
+  },
+  updateLibraryErrorMsg: {
+    id: 'course-authoring.library-authoring.library.update.error',
+    defaultMessage: 'There was an error updating the library',
+    description: 'Message when there is an error when updating the library',
+  },
 });
 
 export default messages;

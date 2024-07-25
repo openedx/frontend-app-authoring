@@ -1,11 +1,11 @@
-import React from "react";
-import { Stack } from "@openedx/paragon";
+import React from 'react';
+import { Stack } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import messages from "./messages";
-import { convertToStringFromDateAndFormat } from "../../utils";
-import { COMMA_SEPARATED_DATE_FORMAT } from "../../constants";
-import LibraryPublishStatus from "./LibraryPublishStatus";
-import { ContentLibrary } from "../data/api";
+import messages from './messages';
+import { convertToStringFromDateAndFormat } from '../../utils';
+import { COMMA_SEPARATED_DATE_FORMAT } from '../../constants';
+import LibraryPublishStatus from './LibraryPublishStatus';
+import { ContentLibrary } from '../data/api';
 
 type LibraryInfoProps = {
   library: ContentLibrary,
@@ -15,9 +15,9 @@ const LibraryInfo = ({ library } : LibraryInfoProps) => {
   const intl = useIntl();
 
   return (
-    <Stack direction='vertical' gap={2.5}>
-      <LibraryPublishStatus library={library}/>
-      <Stack direction='vertical'>
+    <Stack direction="vertical" gap={2.5}>
+      <LibraryPublishStatus library={library} />
+      <Stack direction="vertical">
         <span className="font-weight-bold">
           {intl.formatMessage(messages.organizationSectionTitle)}
         </span>

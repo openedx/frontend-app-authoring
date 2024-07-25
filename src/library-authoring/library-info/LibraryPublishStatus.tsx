@@ -1,17 +1,17 @@
-import React, { useCallback, useContext, useMemo } from "react";
-import { Button, Container, Stack } from "@openedx/paragon";
-import { ContentLibrary } from "../data/api";
-import { useIntl } from '@edx/frontend-platform/i18n';
-import messages from "./messages";
+import React, { useCallback, useContext, useMemo } from 'react';
 import classNames from 'classnames';
-import { useCommitLibraryChanges, useRevertLibraryChanges } from "../data/apiHooks";
-import { ToastContext } from "../../generic/toast-context";
-import { convertToStringFromDateAndFormat } from "../../utils";
-import { COMMA_SEPARATED_DATE_FORMAT, TIME_FORMAT } from "../../constants";
+import { Button, Container, Stack } from '@openedx/paragon';
+import { useIntl } from '@edx/frontend-platform/i18n';
+import { useCommitLibraryChanges, useRevertLibraryChanges } from '../data/apiHooks';
+import { ContentLibrary } from '../data/api';
+import { ToastContext } from '../../generic/toast-context';
+import { convertToStringFromDateAndFormat } from '../../utils';
+import { COMMA_SEPARATED_DATE_FORMAT, TIME_FORMAT } from '../../constants';
+import messages from './messages';
 
 type LibraryPublishStatusProps = {
   library: ContentLibrary,
-}
+};
 
 const LibraryPublishStatus = ({ library } : LibraryPublishStatusProps) => {
   const intl = useIntl();
@@ -21,20 +21,20 @@ const LibraryPublishStatus = ({ library } : LibraryPublishStatusProps) => {
 
   const commit = useCallback(() => {
     commitLibraryChanges.mutateAsync(library.id)
-    .then(() => {
-      showToast(intl.formatMessage(messages.publishSuccessMsg));
-    }).catch(() => {
-      showToast(intl.formatMessage(messages.publishErrorMsg));
-    });
+      .then(() => {
+        showToast(intl.formatMessage(messages.publishSuccessMsg));
+      }).catch(() => {
+        showToast(intl.formatMessage(messages.publishErrorMsg));
+      });
   }, []);
 
   const revert = useCallback(() => {
     revertLibraryChanges.mutateAsync(library.id)
-    .then(() => {
-      showToast(intl.formatMessage(messages.revertSuccessMsg));
-    }).catch(() => {
-      showToast(intl.formatMessage(messages.revertErrorMsg));
-    });
+      .then(() => {
+        showToast(intl.formatMessage(messages.revertSuccessMsg));
+      }).catch(() => {
+        showToast(intl.formatMessage(messages.revertErrorMsg));
+      });
   }, []);
 
   const {
@@ -43,10 +43,10 @@ const LibraryPublishStatus = ({ library } : LibraryPublishStatusProps) => {
     extraStatusMessage,
     bodyMessage,
   } = useMemo(() => {
-    let isPublished : boolean;
-    let statusMessage : string;
-    let extraStatusMessage : string | undefined = undefined;
-    let bodyMessage : string | undefined = undefined;
+    let isPublishedResult: boolean;
+    let statusMessageResult : string;
+    let extraStatusMessageResult : string | undefined;
+    let bodyMessageResult : string | undefined;
     const buildDraftBodyMessage = (() => {
       if (library.lastDraftCreatedBy) {
         return intl.formatMessage(messages.lastDraftMsg, {
@@ -54,57 +54,57 @@ const LibraryPublishStatus = ({ library } : LibraryPublishStatusProps) => {
           time: <b>{convertToStringFromDateAndFormat(library.lastDraftCreated, TIME_FORMAT)}</b>,
           user: <b>{library.lastDraftCreatedBy}</b>,
         });
-      } else {
-        return intl.formatMessage(messages.lastDraftMsgWithoutUser, {
-          date: <b>{convertToStringFromDateAndFormat(library.lastDraftCreated, COMMA_SEPARATED_DATE_FORMAT)}</b>,
-          time: <b>{convertToStringFromDateAndFormat(library.lastDraftCreated, TIME_FORMAT)}</b>,
-        });
       }
+      return intl.formatMessage(messages.lastDraftMsgWithoutUser, {
+        date: <b>{convertToStringFromDateAndFormat(library.lastDraftCreated, COMMA_SEPARATED_DATE_FORMAT)}</b>,
+        time: <b>{convertToStringFromDateAndFormat(library.lastDraftCreated, TIME_FORMAT)}</b>,
+      });
     });
 
     if (!library.lastPublished) {
       // Library is never published (new)
-      isPublished = false;
-      statusMessage = intl.formatMessage(messages.draftStatusLabel);
-      extraStatusMessage = intl.formatMessage(messages.neverPublishedLabel);
-      bodyMessage = buildDraftBodyMessage();
+      isPublishedResult = false;
+      statusMessageResult = intl.formatMessage(messages.draftStatusLabel);
+      extraStatusMessageResult = intl.formatMessage(messages.neverPublishedLabel);
+      bodyMessageResult = buildDraftBodyMessage();
     } else if (library.hasUnpublishedChanges || library.hasUnpublishedDeletes) {
       // Library is on Draft state
-      isPublished = false;
-      statusMessage = intl.formatMessage(messages.draftStatusLabel);
-      extraStatusMessage = intl.formatMessage(messages.unpublishedStatusLabel);
-      bodyMessage = buildDraftBodyMessage();
+      isPublishedResult = false;
+      statusMessageResult = intl.formatMessage(messages.draftStatusLabel);
+      extraStatusMessageResult = intl.formatMessage(messages.unpublishedStatusLabel);
+      bodyMessageResult = buildDraftBodyMessage();
     } else {
       // Library is published
-      isPublished = true;
-      statusMessage = intl.formatMessage(messages.publishedStatusLabel);
+      isPublishedResult = true;
+      statusMessageResult = intl.formatMessage(messages.publishedStatusLabel);
       if (library.publishedBy) {
-        bodyMessage = intl.formatMessage(messages.lastPublishedMsg, {
+        bodyMessageResult = intl.formatMessage(messages.lastPublishedMsg, {
           date: <b>{convertToStringFromDateAndFormat(library.lastPublished, COMMA_SEPARATED_DATE_FORMAT)}</b>,
           time: <b>{convertToStringFromDateAndFormat(library.lastPublished, TIME_FORMAT)}</b>,
           user: <b>{library.publishedBy}</b>,
-        })
+        });
       } else {
-        bodyMessage = intl.formatMessage(messages.lastPublishedMsgWithoutUser, {
+        bodyMessageResult = intl.formatMessage(messages.lastPublishedMsgWithoutUser, {
           date: <b>{convertToStringFromDateAndFormat(library.lastPublished, COMMA_SEPARATED_DATE_FORMAT)}</b>,
           time: <b>{convertToStringFromDateAndFormat(library.lastPublished, TIME_FORMAT)}</b>,
-        })
+        });
       }
     }
     return {
-      isPublished,
-      statusMessage,
-      extraStatusMessage,
-      bodyMessage,
-    }
-  }, [library])
-  
+      isPublished: isPublishedResult,
+      statusMessage: statusMessageResult,
+      extraStatusMessage: extraStatusMessageResult,
+      bodyMessage: bodyMessageResult,
+    };
+  }, [library]);
+
   return (
     <Stack>
-      <Container className={classNames("library-publish-status", {
-        "draft-status": !isPublished,
-        "published-status": isPublished,
-      })}>
+      <Container className={classNames('library-publish-status', {
+        'draft-status': !isPublished,
+        'published-status': isPublished,
+      })}
+      >
         <span className="font-weight-bold">
           {statusMessage}
         </span>
@@ -122,10 +122,10 @@ const LibraryPublishStatus = ({ library } : LibraryPublishStatusProps) => {
           <Button disabled={isPublished} onClick={commit}>
             {intl.formatMessage(messages.publishButtonLabel)}
           </Button>
-          <div className='d-flex justify-content-end'>
-            <Button disabled={isPublished} variant='link' onClick={revert}>
+          <div className="d-flex justify-content-end">
+            <Button disabled={isPublished} variant="link" onClick={revert}>
               {intl.formatMessage(messages.discardChangesButtonLabel)}
-            </Button>  
+            </Button>
           </div>
         </Stack>
       </Container>

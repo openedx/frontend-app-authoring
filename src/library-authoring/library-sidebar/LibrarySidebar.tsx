@@ -8,13 +8,13 @@ import { Close } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from '../messages';
 import { AddContentContainer, AddContentHeader } from '../add-content';
-import { LibraryContext } from '../common/context';
+import { LibraryContext, SidebarBodyComponentId } from '../common/context';
 import { LibraryInfo, LibraryInfoHeader } from '../library-info';
 import { ContentLibrary } from '../data/api';
 
 type LibrarySidebarProps = {
   library: ContentLibrary,
-}
+};
 
 /**
  * Sidebar container for library pages.
@@ -25,13 +25,13 @@ type LibrarySidebarProps = {
  * You can add more components in `bodyComponentMap`.
  * Use the slice actions to open and close this sidebar.
  */
-const LibrarySidebar = ({library}: LibrarySidebarProps) => {
+const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
   const intl = useIntl();
   const { sidebarBodyComponent, closeLibrarySidebar } = useContext(LibraryContext);
 
   const bodyComponentMap = {
-    'add-content': <AddContentContainer />,
-    'info': <LibraryInfo library={library}/>,
+    [SidebarBodyComponentId.AddContent]: <AddContentContainer />,
+    [SidebarBodyComponentId.Info]: <LibraryInfo library={library} />,
     unknown: null,
   };
 
