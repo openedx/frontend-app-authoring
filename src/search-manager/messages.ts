@@ -130,6 +130,46 @@ const messages = defineMessages({
     defaultMessage: 'Clear Filter',
     description: 'Label for the button that removes applied search filters in a specific widget',
   },
+  searchSortWidgetLabel: {
+    id: 'course-authoring.course-search.searchSortWidget.label',
+    defaultMessage: 'Sort',
+    description: 'Label displayed to users when default sorting is used by the content search drop-down menu',
+  },
+  searchSortWidgetAltTitle: {
+    id: 'course-authoring.course-search.searchSortWidget.title',
+    defaultMessage: 'Sort search results',
+    description: 'Alt/title text for the content search sort drop-down menu',
+  },
+  searchSortTitleAZ: {
+    id: 'course-authoring.course-search.searchSort.titleAZ',
+    defaultMessage: 'Title, A-Z',
+    description: 'Label for the content search sort drop-down which sorts by content title, ascending',
+  },
+  searchSortTitleZA: {
+    id: 'course-authoring.course-search.searchSort.titleZA',
+    defaultMessage: 'Title, Z-A',
+    description: 'Label for the content search sort drop-down which sorts by content title, descending',
+  },
+  searchSortNewest: {
+    id: 'course-authoring.course-search.searchSort.newest',
+    defaultMessage: 'Newest',
+    description: 'Label for the content search sort drop-down which sorts by creation date, descending',
+  },
+  searchSortOldest: {
+    id: 'course-authoring.course-search.searchSort.oldest',
+    defaultMessage: 'Oldest',
+    description: 'Label for the content search sort drop-down which sorts by creation date, ascending',
+  },
+  searchSortRecentlyPublished: {
+    id: 'course-authoring.course-search.searchSort.recentlyPublished',
+    defaultMessage: 'Recently Published',
+    description: 'Label for the content search sort drop-down which sorts by published date, descending',
+  },
+  searchSortRecentlyModified: {
+    id: 'course-authoring.course-search.searchSort.recentlyModified',
+    defaultMessage: 'Recently Modified',
+    description: 'Label for the content search sort drop-down which sorts by modified date, descending',
+  },
 });
 
 export default messages;

@@ -266,4 +266,50 @@ describe('<LibraryAuthoringPage />', () => {
 
     expect(screen.queryByText(/add content/i)).not.toBeInTheDocument();
   });
+
+  it('sort library components', async () => {
+    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
+    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
+    fetchMock.post(searchEndpoint, returnEmptyResult, { overwriteRoutes: true });
+
+    const { findByTitle, getByText, getByTitle } = render(<RootWrapper />);
+
+    expect(await findByTitle('Sort search results')).toBeInTheDocument();
+
+    const testSortOption = (async (optionText, sortBy) => {
+      if (optionText) {
+        fireEvent.click(getByTitle('Sort search results'));
+        fireEvent.click(getByText(optionText));
+      }
+      const bodyText = sortBy ? `"sort":["${sortBy}"]` : '"sort":[]';
+      const searchText = sortBy ? `?sort=${encodeURIComponent(sortBy)}` : '';
+      await waitFor(() => {
+        expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+          body: expect.stringContaining(bodyText),
+          method: 'POST',
+          headers: expect.anything(),
+        });
+      });
+      expect(window.location.search).toEqual(searchText);
+    });
+
+    await testSortOption('Title, A-Z', 'display_name:asc');
+    await testSortOption('Title, Z-A', 'display_name:desc');
+    await testSortOption('Newest', 'created:desc');
+    await testSortOption('Oldest', 'created:asc');
+
+    // Sorting by Recently Published also excludes unpublished components
+    await testSortOption('Recently Published', 'last_published:desc');
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+        body: expect.stringContaining('last_published IS NOT EMPTY'),
+        method: 'POST',
+        headers: expect.anything(),
+      });
+    });
+
+    // Clearing filters clears the url search param and uses default sort
+    fireEvent.click(getByText('Clear Filters'));
+    await testSortOption('', '');
+  });
 });
