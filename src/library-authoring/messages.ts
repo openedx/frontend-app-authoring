@@ -85,11 +85,6 @@ const messages = defineMessages({
     defaultMessage: 'Components ({componentCount})',
     description: 'Title for the components container',
   },
-  recentComponentsTempPlaceholder: {
-    id: 'course-authoring.library-authoring.recent-components-temp-placeholder',
-    defaultMessage: 'Recently modified components and collections will be displayed here.',
-    description: 'Temp placeholder for the recent components container. This will be replaced with the actual list.',
-  },
   addContentTitle: {
     id: 'course-authoring.library-authoring.drawer.title.add-content',
     defaultMessage: 'Add Content',

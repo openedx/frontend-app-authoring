@@ -84,9 +84,10 @@ function useStateWithUrlSearchParam<Type>(
 
 export const SearchContextProvider: React.FC<{
   extraFilter?: Filter;
+  overrideSearchSortOrder?: SearchSortOption
   children: React.ReactNode,
   closeSearchModal?: () => void,
-}> = ({ ...props }) => {
+}> = ({ overrideSearchSortOrder, ...props }) => {
   const [searchKeywords, setSearchKeywords] = React.useState('');
   const [blockTypesFilter, setBlockTypesFilter] = React.useState<string[]>([]);
   const [tagsFilter, setTagsFilter] = React.useState<string[]>([]);
@@ -103,16 +104,17 @@ export const SearchContextProvider: React.FC<{
   );
   // SearchSortOption.RELEVANCE is special, it means "no custom sorting", so we
   // send it to useContentSearchResults as an empty array.
-  const sort: SearchSortOption[] = (searchSortOrder === defaultSortOption ? [] : [searchSortOrder]);
+  const searchSortOrderToUse = overrideSearchSortOrder ?? searchSortOrder;
+  const sort: SearchSortOption[] = (searchSortOrderToUse === defaultSortOption ? [] : [searchSortOrderToUse]);
   // Selecting SearchSortOption.RECENTLY_PUBLISHED also excludes unpublished components.
-  if (searchSortOrder === SearchSortOption.RECENTLY_PUBLISHED) {
+  if (searchSortOrderToUse === SearchSortOption.RECENTLY_PUBLISHED) {
     extraFilter.push('last_published IS NOT EMPTY');
   }
 
   const canClearFilters = (
     blockTypesFilter.length > 0
     || tagsFilter.length > 0
-    || searchSortOrder !== defaultSortOption
+    || searchSortOrderToUse !== defaultSortOption
   );
   const clearFilters = React.useCallback(() => {
     setBlockTypesFilter([]);

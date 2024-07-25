@@ -1,33 +1,23 @@
 import React from 'react';
+import { Stack } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import {
-  Card, Stack,
-} from '@openedx/paragon';
 
 import { useSearchContext } from '../search-manager';
 import { NoComponents, NoSearchResults } from './EmptyStates';
 import LibraryCollections from './LibraryCollections';
 import { LibraryComponents } from './components';
+import LibrarySection from './components/LibrarySection';
+import LibraryRecentlyModified from './LibraryRecentlyModified';
 import messages from './messages';
-
-const Section = ({ title, children } : { title: string, children: React.ReactNode }) => (
-  <Card>
-    <Card.Header
-      title={title}
-    />
-    <Card.Section>
-      {children}
-    </Card.Section>
-  </Card>
-);
 
 type LibraryHomeProps = {
   libraryId: string,
+  tabList: { home: string, components: string, collections: string },
+  handleTabChange: (key: string) => void,
 };
 
-const LibraryHome = ({ libraryId } : LibraryHomeProps) => {
+const LibraryHome = ({ libraryId, tabList, handleTabChange } : LibraryHomeProps) => {
   const intl = useIntl();
-
   const {
     totalHits: componentCount,
     searchKeywords,
@@ -35,21 +25,37 @@ const LibraryHome = ({ libraryId } : LibraryHomeProps) => {
 
   const collectionCount = 0;
 
-  if (componentCount === 0) {
-    return searchKeywords === '' ? <NoComponents /> : <NoSearchResults />;
-  }
+  const renderEmptyState = () => {
+    if (componentCount === 0) {
+      return searchKeywords === '' ? <NoComponents /> : <NoSearchResults />;
+    }
+    return null;
+  };
 
   return (
     <Stack gap={3}>
-      <Section title={intl.formatMessage(messages.recentlyModifiedTitle)}>
-        { intl.formatMessage(messages.recentComponentsTempPlaceholder) }
-      </Section>
-      <Section title={intl.formatMessage(messages.collectionsTitle, { collectionCount })}>
-        <LibraryCollections />
-      </Section>
-      <Section title={`Components (${componentCount})`}>
-        <LibraryComponents libraryId={libraryId} variant="preview" />
-      </Section>
+      <LibraryRecentlyModified libraryId={libraryId} />
+      {
+        renderEmptyState()
+        || (
+          <>
+            <LibrarySection
+              title={intl.formatMessage(messages.collectionsTitle, { collectionCount })}
+              contentCount={collectionCount}
+              // TODO: add viewAllAction here once collections implemented
+            >
+              <LibraryCollections />
+            </LibrarySection>
+            <LibrarySection
+              title={intl.formatMessage(messages.componentsTitle, { componentCount })}
+              contentCount={componentCount}
+              viewAllAction={() => handleTabChange(tabList.components)}
+            >
+              <LibraryComponents libraryId={libraryId} variant="preview" />
+            </LibrarySection>
+          </>
+        )
+      }
     </Stack>
   );
 };

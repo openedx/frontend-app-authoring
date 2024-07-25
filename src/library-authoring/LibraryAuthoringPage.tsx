@@ -136,7 +136,13 @@ const LibraryAuthoringPage = () => {
               <Routes>
                 <Route
                   path={TabList.home}
-                  element={<LibraryHome libraryId={libraryId} />}
+                  element={(
+                    <LibraryHome
+                      libraryId={libraryId}
+                      tabList={TabList}
+                      handleTabChange={handleTabChange}
+                    />
+                  )}
                 />
                 <Route
                   path={TabList.components}
