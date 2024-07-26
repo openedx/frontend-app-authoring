@@ -159,14 +159,14 @@ describe('<LibraryAuthoringPage />', () => {
     axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
 
     const {
-      getByRole, getByText, queryByText, findByText,
+      getByRole, getByText, queryByText, findByText, findAllByText,
     } = render(<RootWrapper />);
 
     // Ensure the search endpoint is called
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
 
-    expect(getByText('Content library')).toBeInTheDocument();
-    expect(getByText(libraryData.title)).toBeInTheDocument();
+    expect(await findByText('Content library')).toBeInTheDocument();
+    expect((await findAllByText(libraryData.title))[0]).toBeInTheDocument();
 
     expect(queryByText('You have not added any content to this library yet.')).not.toBeInTheDocument();
 
@@ -202,10 +202,10 @@ describe('<LibraryAuthoringPage />', () => {
     axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
     fetchMock.post(searchEndpoint, returnEmptyResult, { overwriteRoutes: true });
 
-    const { findByText, getByText } = render(<RootWrapper />);
+    const { findByText, getByText, findAllByText } = render(<RootWrapper />);
 
     expect(await findByText('Content library')).toBeInTheDocument();
-    expect(await findByText(libraryData.title)).toBeInTheDocument();
+    expect((await findAllByText(libraryData.title))[0]).toBeInTheDocument();
 
     // Ensure the search endpoint is called
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
@@ -228,10 +228,15 @@ describe('<LibraryAuthoringPage />', () => {
     axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
     fetchMock.post(searchEndpoint, returnEmptyResult, { overwriteRoutes: true });
 
-    const { findByText, getByRole, getByText } = render(<RootWrapper />);
+    const {
+      findByText,
+      getByRole,
+      getByText,
+      findAllByText,
+    } = render(<RootWrapper />);
 
     expect(await findByText('Content library')).toBeInTheDocument();
-    expect(await findByText(libraryData.title)).toBeInTheDocument();
+    expect((await findAllByText(libraryData.title))[0]).toBeInTheDocument();
 
     // Ensure the search endpoint is called
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
