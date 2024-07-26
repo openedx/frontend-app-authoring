@@ -86,8 +86,9 @@ describe('generic api calls', () => {
     expect(contentTagsCountMock[contentId]).toEqual(15);
   });
 
-  it('should get null on empty pattern', async () => {
-    const result = await getTagsCount('');
-    expect(result).toEqual(null);
+  it('should throw an error if no pattern is provided', async () => {
+    const pattern = undefined;
+    expect(getTagsCount(pattern)).rejects.toThrow('contentPattern is required');
+    expect(axiosMock.history.get.length).toEqual(0);
   });
 });
