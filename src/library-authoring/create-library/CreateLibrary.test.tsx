@@ -128,4 +128,13 @@ describe('<CreateLibrary />', () => {
       expect(getByRole('alert')).toHaveTextContent('{"field":"Error message"}');
     });
   });
+
+  test('cancel creating library navigates to libraries page', async () => {
+    const { getByRole } = render(<RootWrapper />);
+
+    fireEvent.click(getByRole('button', { name: /cancel/i }));
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/libraries');
+    });
+  });
 });
