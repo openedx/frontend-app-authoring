@@ -4,7 +4,9 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Container,
   Form,
+  Button,
   StatefulButton,
+  ActionRow,
 } from '@openedx/paragon';
 import { Formik } from 'formik';
 import { useNavigate } from 'react-router-dom';
@@ -39,6 +41,10 @@ const CreateLibrary = () => {
     data: organizationListData,
     isLoading: isOrganizationListLoading,
   } = useOrganizationListData();
+
+  const handleOnClickCancel = () => {
+    navigate('/libraries');
+  };
 
   if (data) {
     navigate(`/library/${data.id}`);
@@ -114,17 +120,25 @@ const CreateLibrary = () => {
                 className=""
                 controlClasses="pb-2"
               />
-              <StatefulButton
-                type="submit"
-                variant="primary"
-                className="action btn-primary"
-                state={isLoading ? 'disabled' : 'enabled'}
-                disabledStates={['disabled']}
-                labels={{
-                  enabled: intl.formatMessage(messages.createLibraryButton),
-                  disabled: intl.formatMessage(messages.createLibraryButtonPending),
-                }}
-              />
+              <ActionRow className="justify-content-start">
+                <Button
+                  variant="outline-primary"
+                  onClick={handleOnClickCancel}
+                >
+                  {intl.formatMessage(messages.cancelCreateLibraryButton)}
+                </Button>
+                <StatefulButton
+                  type="submit"
+                  variant="primary"
+                  className="action btn-primary"
+                  state={isLoading ? 'disabled' : 'enabled'}
+                  disabledStates={['disabled']}
+                  labels={{
+                    enabled: intl.formatMessage(messages.createLibraryButton),
+                    disabled: intl.formatMessage(messages.createLibraryButtonPending),
+                  }}
+                />
+              </ActionRow>
             </Form>
           )}
         </Formik>
