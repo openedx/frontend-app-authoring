@@ -17,7 +17,7 @@ const LibraryInfo = ({ library } : LibraryInfoProps) => {
   return (
     <Stack direction="vertical" gap={2.5}>
       <LibraryPublishStatus library={library} />
-      <Stack direction="vertical">
+      <Stack gap={3} direction="vertical">
         <span className="font-weight-bold">
           {intl.formatMessage(messages.organizationSectionTitle)}
         </span>
@@ -25,11 +25,11 @@ const LibraryInfo = ({ library } : LibraryInfoProps) => {
           {library.org}
         </span>
       </Stack>
-      <Stack>
+      <Stack gap={3}>
         <span className="font-weight-bold">
           {intl.formatMessage(messages.libraryHistorySectionTitle)}
         </span>
-        <Stack>
+        <Stack gap={1}>
           <span className="small text-gray-500">
             {intl.formatMessage(messages.lastModifiedLabel)}
           </span>
@@ -37,7 +37,7 @@ const LibraryInfo = ({ library } : LibraryInfoProps) => {
             {convertToStringFromDateAndFormat(library.updated, COMMA_SEPARATED_DATE_FORMAT)}
           </span>
         </Stack>
-        <Stack>
+        <Stack gap={1}>
           <span className="small text-gray-500">
             {intl.formatMessage(messages.createdLabel)}
           </span>

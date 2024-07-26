@@ -105,6 +105,11 @@ const messages = defineMessages({
     defaultMessage: 'Close',
     description: 'Alt text of close button',
   },
+  libraryInfoButton: {
+    id: 'course-authoring.library-authoring.buttons.library-info.text',
+    defaultMessage: 'Library Info',
+    description: 'Text of button to open "Library Info sidebar"',
+  },
 });
 
 export default messages;

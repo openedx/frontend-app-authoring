@@ -47,6 +47,7 @@ const LibraryPublishStatus = ({ library } : LibraryPublishStatusProps) => {
     let statusMessageResult : string;
     let extraStatusMessageResult : string | undefined;
     let bodyMessageResult : string | undefined;
+
     const buildDraftBodyMessage = (() => {
       if (library.lastDraftCreatedBy) {
         return intl.formatMessage(messages.lastDraftMsg, {
@@ -114,8 +115,8 @@ const LibraryPublishStatus = ({ library } : LibraryPublishStatusProps) => {
           </span>
         )}
       </Container>
-      <Container>
-        <Stack>
+      <Container className="mt-3">
+        <Stack gap={3}>
           <span>
             {bodyMessage}
           </span>

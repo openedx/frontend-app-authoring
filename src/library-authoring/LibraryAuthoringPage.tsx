@@ -4,8 +4,6 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
   Container,
-  Icon,
-  IconButton,
   SearchField,
   Tab,
   Tabs,
@@ -35,20 +33,34 @@ enum TabList {
   collections = 'collections',
 }
 
-const SubHeaderTitle = ({ title }: { title: string }) => {
+interface HeaderActionsProps {
+  canEditLibrary: boolean;
+}
+
+const HeaderActions = ({ canEditLibrary }: HeaderActionsProps) => {
   const intl = useIntl();
-  const { openInfoSidebar } = useContext(LibraryContext);
+  const {
+    openAddContentSidebar,
+    openInfoSidebar,
+  } = useContext(LibraryContext);
 
   return (
     <>
-      {title}
-      <IconButton
-        src={InfoOutline}
-        iconAs={Icon}
-        alt={intl.formatMessage(messages.headingInfoAlt)}
-        className="mr-2"
-        onClick={openInfoSidebar}
-      />
+      <Button
+        iconBefore={InfoOutline}
+        variant="outline-primary rounded-0"
+        onClick={() => openInfoSidebar()}
+      >
+        {intl.formatMessage(messages.libraryInfoButton)}
+      </Button>
+      <Button
+        iconBefore={Add}
+        variant="primary rounded-0"
+        onClick={() => openAddContentSidebar()}
+        disabled={!canEditLibrary}
+      >
+        {intl.formatMessage(messages.newContentButton)}
+      </Button>
     </>
   );
 };
@@ -67,7 +79,6 @@ const LibraryAuthoringPage = () => {
   const activeKey = (currentPath && currentPath in TabList) ? TabList[currentPath] : TabList.home;
   const {
     sidebarBodyComponent,
-    openAddContentSidebar,
     openInfoSidebar,
   } = useContext(LibraryContext);
 
@@ -100,18 +111,9 @@ const LibraryAuthoringPage = () => {
           />
           <Container size="xl" className="p-4 mt-3">
             <SubHeader
-              title={<SubHeaderTitle title={libraryData.title} />}
+              title={libraryData.title}
               subtitle={intl.formatMessage(messages.headingSubtitle)}
-              headerActions={[
-                <Button
-                  iconBefore={Add}
-                  variant="primary rounded-0"
-                  onClick={() => openAddContentSidebar()}
-                  disabled={!libraryData.canEditLibrary}
-                >
-                  {intl.formatMessage(messages.newContentButton)}
-                </Button>,
-              ]}
+              headerActions={<HeaderActions canEditLibrary={libraryData.canEditLibrary} />}
             />
             <SearchField
               value={searchKeywords}
@@ -152,7 +154,7 @@ const LibraryAuthoringPage = () => {
           <StudioFooter />
         </Col>
         { sidebarBodyComponent !== null && (
-          <Col xs={6} md={4} className="box-shadow-left-1">
+          <Col xs={3} md={3} className="box-shadow-left-1">
             <LibrarySidebar library={libraryData} />
           </Col>
         )}

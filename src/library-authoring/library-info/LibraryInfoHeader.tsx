@@ -71,9 +71,7 @@ const LibraryInfoHeader = ({ library } : LibraryInfoHeaderProps) => {
               />
             )}
           </>
-        )
-      }
-
+        )}
     </Stack>
   );
 };

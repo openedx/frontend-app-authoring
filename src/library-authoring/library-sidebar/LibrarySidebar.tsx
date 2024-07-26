@@ -45,7 +45,7 @@ const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
   const buildHeader = (): React.ReactNode | null => headerComponentMap[sidebarBodyComponent || 'unknown'];
 
   return (
-    <div className="p-2 vh-100 text-primary-700">
+    <Stack gap={4} className="p-2 vh-100 text-primary-700">
       <Stack direction="horizontal" className="d-flex justify-content-between">
         {buildHeader()}
         <IconButton
@@ -56,8 +56,10 @@ const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
           variant="black"
         />
       </Stack>
-      {buildBody()}
-    </div>
+      <div>
+        {buildBody()}
+      </div>
+    </Stack>
   );
 };
 
