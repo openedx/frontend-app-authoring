@@ -10,10 +10,15 @@ import {
   MenuItem,
   SearchField,
 } from '@openedx/paragon';
-import { ArrowDropDown, ArrowDropUp, Warning } from '@openedx/paragon/icons';
+import {
+  ArrowDropDown,
+  ArrowDropUp,
+  Warning,
+  Tag,
+} from '@openedx/paragon/icons';
 import SearchFilterWidget from './SearchFilterWidget';
 import messages from './messages';
-import { useSearchContext } from './manager/SearchManager';
+import { useSearchContext } from './SearchManager';
 import { useTagFilterOptions } from './data/apiHooks';
 import { LoadingSpinner } from '../generic/Loading';
 import { TAG_SEP } from './data/api';
@@ -53,7 +58,7 @@ const TagMenuItem: React.FC<{
         onChange={onClickCheckbox}
         className="pgn__form-checkbox-input flex-shrink-0"
       />
-      <label htmlFor={checkboxId} className="flex-shrink-1">
+      <label htmlFor={checkboxId} className="flex-shrink-1 mb-0">
         {label}{' '}
         <Badge variant="light" pill>{tagCount}</Badge>
       </label>
@@ -163,7 +168,7 @@ const TagOptions: React.FC<{
 
 const FilterByTags: React.FC<Record<never, never>> = () => {
   const intl = useIntl();
-  const { tagsFilter } = useSearchContext();
+  const { tagsFilter, setTagsFilter } = useSearchContext();
   const [tagSearchKeywords, setTagSearchKeywords] = React.useState('');
 
   // e.g. {"Location", "Location > North America"} if those two paths of the tag tree are expanded
@@ -181,8 +186,10 @@ const FilterByTags: React.FC<Record<never, never>> = () => {
     <SearchFilterWidget
       appliedFilters={tagsFilter.map(tf => ({ label: tf.split(TAG_SEP).pop() }))}
       label={<FormattedMessage {...messages.blockTagsFilter} />}
+      clearFilter={() => setTagsFilter([])}
+      icon={Tag}
     >
-      <Form.Group className="pt-3">
+      <Form.Group className="pt-3 mb-0">
         <SearchField
           onSubmit={setTagSearchKeywords}
           onChange={setTagSearchKeywords}
@@ -195,7 +202,7 @@ const FilterByTags: React.FC<Record<never, never>> = () => {
           placeholder={intl.formatMessage(messages.searchTagsByKeywordPlaceholder)}
           className="mx-3 mb-1"
         />
-        <Menu className="tags-refinement-menu" style={{ boxShadow: 'none' }}>
+        <Menu className="filter-by-refinement-menu" style={{ boxShadow: 'none' }}>
           <TagOptions
             tagSearchKeywords={tagSearchKeywords}
             toggleTagChildren={toggleTagChildren}

@@ -2,7 +2,7 @@ import React from 'react';
 import { StatefulButton } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-import { useSearchContext } from './manager/SearchManager';
+import { useSearchContext } from '../search-manager';
 import SearchResult from './SearchResult';
 import messages from './messages';
 

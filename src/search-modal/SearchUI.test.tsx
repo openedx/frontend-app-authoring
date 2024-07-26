@@ -28,7 +28,7 @@ import mockTagsFacetResultLevel0 from './__mocks__/facet-search-level0.json';
 import mockTagsFacetResultLevel1 from './__mocks__/facet-search-level1.json';
 import mockTagsKeywordSearchResult from './__mocks__/tags-keyword-search.json';
 import SearchUI from './SearchUI';
-import { getContentSearchConfigUrl } from './data/api';
+import { getContentSearchConfigUrl } from '../search-manager/data/api';
 
 // mockResult contains only a single result - this one:
 const mockResultDisplayName = 'Test HTML Block';
@@ -416,7 +416,9 @@ describe('<SearchUI />', () => {
       const popupMenu = getByRole('group');
       const problemFilterCheckbox = getByLabelTextIn(popupMenu, /Problem/i);
       fireEvent.click(problemFilterCheckbox, {});
-      await waitFor(() => { expect(rendered.getByText('Type: Problem')).toBeInTheDocument(); });
+      await waitFor(() => {
+        expect(rendered.getByRole('button', { name: /type: problem/i, hidden: true })).toBeInTheDocument();
+      });
       // Now wait for the filter to be applied and the new results to be fetched.
       await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(3, searchEndpoint, 'post'); });
       // Because we're mocking the results, there's no actual changes to the mock results,

@@ -9,7 +9,7 @@ import { fireEvent, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import initializeStore from '../../store';
-import CreateLibrary from './CreateLibrary';
+import { CreateLibrary } from '.';
 import { getContentLibraryV2CreateApiUrl } from './data/api';
 
 let store;
@@ -126,6 +126,15 @@ describe('<CreateLibrary />', () => {
       expect(mockNavigate).not.toHaveBeenCalled();
       expect(getByRole('alert')).toHaveTextContent('Request failed with status code 400');
       expect(getByRole('alert')).toHaveTextContent('{"field":"Error message"}');
+    });
+  });
+
+  test('cancel creating library navigates to libraries page', async () => {
+    const { getByRole } = render(<RootWrapper />);
+
+    fireEvent.click(getByRole('button', { name: /cancel/i }));
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/libraries');
     });
   });
 });

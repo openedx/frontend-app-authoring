@@ -83,6 +83,11 @@ const messages = defineMessages({
     defaultMessage: 'Creating..',
     description: 'Button text while the library is being created.',
   },
+  cancelCreateLibraryButton: {
+    id: 'course-authoring.library-authoring.create-library.form.create-library.cancel.button',
+    defaultMessage: 'Cancel',
+    description: 'Button text to cancel creating a new library.',
+  },
 });
 
 export default messages;

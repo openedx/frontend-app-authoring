@@ -10,18 +10,16 @@ import { OpenInNew } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import { constructLibraryAuthoringURL } from '../utils';
-import { getStudioHomeData } from '../studio-home/data/selectors';
-import { useSearchContext } from './manager/SearchManager';
-import type { ContentHit } from './data/api';
-import Highlight from './Highlight';
-import messages from './messages';
 import { getItemIcon } from '../generic/block-type-utils';
+import { useSearchContext, type ContentHit, Highlight } from '../search-manager';
+import { getStudioHomeData } from '../studio-home/data/selectors';
+import { constructLibraryAuthoringURL } from '../utils';
+import messages from './messages';
 
 /**
  * Returns the URL Suffix for library/library component hit
 */
-function getLibraryComponentUrlSuffix(hit: ContentHit) {
+function getLibraryComponentUrlSuffix(hit: ContentHit): string {
   const { contextKey } = hit;
   return `library/${contextKey}`;
 }
@@ -44,7 +42,7 @@ function getUnitComponentUrlSuffix(hit: ContentHit): string {
 
     if ('usageKey' in parent) {
       // Handle case for library component in unit
-      let libComponentUsageKey;
+      let libComponentUsageKey: string | undefined;
       if (parent.usageKey.includes('type@library_content') && breadcrumbs.length > 2) {
         libComponentUsageKey = parent.usageKey;
         parent = breadcrumbs[breadcrumbs.length - 2];
