@@ -395,7 +395,7 @@ describe('<LibraryAuthoringPage />', () => {
     await testSortOption('Recently Published', 'last_published:desc');
     await waitFor(() => {
       expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
-        body: expect.stringContaining('last_published IS NOT EMPTY'),
+        body: expect.stringContaining('last_published IS NOT NULL'),
         method: 'POST',
         headers: expect.anything(),
       });

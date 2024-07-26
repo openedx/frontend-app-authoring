@@ -108,7 +108,7 @@ export const SearchContextProvider: React.FC<{
   const sort: SearchSortOption[] = (searchSortOrderToUse === defaultSortOption ? [] : [searchSortOrderToUse]);
   // Selecting SearchSortOption.RECENTLY_PUBLISHED also excludes unpublished components.
   if (searchSortOrderToUse === SearchSortOption.RECENTLY_PUBLISHED) {
-    extraFilter.push('last_published IS NOT EMPTY');
+    extraFilter.push('last_published IS NOT NULL');
   }
 
   const canClearFilters = (
