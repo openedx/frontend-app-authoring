@@ -305,12 +305,11 @@ describe('<LibraryAuthoringPage />', () => {
     expect(getByText('Content library')).toBeInTheDocument();
     expect(getByText(libraryData.title)).toBeInTheDocument();
 
-    expect(queryByText('You have not added any content to this library yet.')).not.toBeInTheDocument();
-
     expect(getByText('Recently Modified')).toBeInTheDocument();
     expect(getByText('Collections (0)')).toBeInTheDocument();
     expect(getByText('Components (6)')).toBeInTheDocument();
     expect(getAllByText('Test HTML Block')[0]).toBeInTheDocument();
+    expect(queryByText('You have not added any content to this library yet.')).not.toBeInTheDocument();
 
     // There should only be one "View All" button, since the Components count
     // are above the preview limit (4)
