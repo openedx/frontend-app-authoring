@@ -348,12 +348,12 @@ describe('<LibraryAuthoringPage />', () => {
     expect(getByText('Content library')).toBeInTheDocument();
     expect(getByText(libraryData.title)).toBeInTheDocument();
 
-    expect(queryByText('You have not added any content to this library yet.')).not.toBeInTheDocument();
-
     expect(getByText('Recently Modified')).toBeInTheDocument();
     expect(getByText('Collections (0)')).toBeInTheDocument();
     expect(getByText('Components (2)')).toBeInTheDocument();
     expect(getAllByText('Test HTML Block')[0]).toBeInTheDocument();
+
+    expect(queryByText('You have not added any content to this library yet.')).not.toBeInTheDocument();
 
     // There should not be any "View All" button on page since Components count
     // is less than the preview limit (4)
@@ -365,7 +365,9 @@ describe('<LibraryAuthoringPage />', () => {
     axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
     fetchMock.post(searchEndpoint, returnEmptyResult, { overwriteRoutes: true });
 
-    const { findByTitle, getByText, getByTitle } = render(<RootWrapper />);
+    const {
+      findByTitle, getAllByText, getByText, getByTitle,
+    } = render(<RootWrapper />);
 
     expect(await findByTitle('Sort search results')).toBeInTheDocument();
 
@@ -402,7 +404,7 @@ describe('<LibraryAuthoringPage />', () => {
     });
 
     // Clearing filters clears the url search param and uses default sort
-    fireEvent.click(getByText('Clear Filters'));
+    fireEvent.click(getAllByText('Clear Filters')[0]);
     await testSortOption('', '');
   });
 });

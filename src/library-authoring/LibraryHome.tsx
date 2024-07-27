@@ -20,14 +20,14 @@ const LibraryHome = ({ libraryId, tabList, handleTabChange } : LibraryHomeProps)
   const intl = useIntl();
   const {
     totalHits: componentCount,
-    searchKeywords,
+    isFiltered,
   } = useSearchContext();
 
   const collectionCount = 0;
 
   const renderEmptyState = () => {
     if (componentCount === 0) {
-      return searchKeywords === '' ? <NoComponents /> : <NoSearchResults />;
+      return isFiltered ? <NoSearchResults /> : <NoComponents />;
     }
     return null;
   };

@@ -29,7 +29,7 @@ const LibraryComponents = ({
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
-    searchKeywords,
+    isFiltered,
   } = useSearchContext();
 
   const componentList = variant === 'preview' ? hits.slice(0, LIBRARY_SECTION_PREVIEW_LIMIT) : hits;
@@ -68,7 +68,7 @@ const LibraryComponents = ({
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   if (componentCount === 0) {
-    return searchKeywords === '' ? <NoComponents /> : <NoSearchResults />;
+    return isFiltered ? <NoSearchResults /> : <NoComponents />;
   }
 
   return (

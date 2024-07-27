@@ -30,6 +30,7 @@ const data = {
   hasNextPage: false,
   fetchNextPage: mockFetchNextPage,
   searchKeywords: '',
+  isFiltered: false,
 };
 
 let store: Store;

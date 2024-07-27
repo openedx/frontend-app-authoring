@@ -25,6 +25,7 @@ export interface SearchContextData {
   extraFilter?: Filter;
   canClearFilters: boolean;
   clearFilters: () => void;
+  isFiltered: boolean;
   searchSortOrder: SearchSortOption;
   setSearchSortOrder: React.Dispatch<React.SetStateAction<SearchSortOption>>;
   hits: ContentHit[];
@@ -116,6 +117,7 @@ export const SearchContextProvider: React.FC<{
     || tagsFilter.length > 0
     || searchSortOrderToUse !== defaultSortOption
   );
+  const isFiltered = canClearFilters || (searchKeywords !== '');
   const clearFilters = React.useCallback(() => {
     setBlockTypesFilter([]);
     setTagsFilter([]);
@@ -154,6 +156,7 @@ export const SearchContextProvider: React.FC<{
       tagsFilter,
       setTagsFilter,
       extraFilter,
+      isFiltered,
       canClearFilters,
       clearFilters,
       searchSortOrder,
