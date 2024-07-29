@@ -11,7 +11,7 @@ import {
   TransitionReplace,
 } from '@openedx/paragon';
 import { ChevronLeft, ChevronRight, Close } from '@openedx/paragon/icons';
-import AITranslationsComponent from '@edx/frontend-component-ai-translations';
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import OrderTranscriptForm from './OrderTranscriptForm';
 import messages from './messages';
 import {
@@ -117,11 +117,13 @@ const TranscriptSettings = ({
         {(!transcriptType && isAiTranslationsEnabled) && (
           <TransitionReplace>
             <div data-testid="ai-translations-component">
-              <AITranslationsComponent
-                setIsAiTranslations={setIsAiTranslations}
-                closeTranscriptSettings={closeTranscriptSettings}
-                courseId={courseId}
-                key="ai-component"
+              <PluginSlot
+                id="ai_translations_ui_component_slot"
+                pluginProps={{
+                  setIsAiTranslations,
+                  closeTranscriptSettings,
+                  courseId,
+                }}
               />
             </div>
           </TransitionReplace>
