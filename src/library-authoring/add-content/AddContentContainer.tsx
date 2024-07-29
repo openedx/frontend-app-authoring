@@ -20,13 +20,15 @@ import { useParams } from 'react-router-dom';
 import { ToastContext } from '../../generic/toast-context';
 import { useCopyToClipboard } from '../../generic/clipboard';
 import { getCanEdit } from '../../course-unit/data/selectors';
-import { useCreateLibraryBlock } from '../data/apiHooks';
+import { useCreateLibraryBlock, useLibraryPasteClipboard } from '../data/apiHooks';
+
 import messages from './messages';
 
 const AddContentContainer = () => {
   const intl = useIntl();
   const { libraryId } = useParams();
   const createBlockMutation = useCreateLibraryBlock();
+  const pasteClipboardMutation = useLibraryPasteClipboard();
   const { showToast } = useContext(ToastContext);
   const canEdit = useSelector(getCanEdit);
   const { showPasteXBlock } = useCopyToClipboard(canEdit);
@@ -84,17 +86,32 @@ const AddContentContainer = () => {
 
   const onCreateContent = (blockType: string) => {
     if (libraryId) {
-      createBlockMutation.mutateAsync({
-        libraryId,
-        blockType,
-        definitionId: `${uuid4()}`,
-      }).then(() => {
-        showToast(intl.formatMessage(messages.successCreateMessage));
-      }).catch(() => {
-        showToast(intl.formatMessage(messages.errorCreateMessage));
-      });
+      if (blockType === 'paste') {
+        pasteClipboardMutation.mutateAsync({
+          libraryId,
+          blockId: `${uuid4()}`,
+        }).then(() => {
+          showToast(intl.formatMessage(messages.successPasteClipboardMessage));
+        }).catch(() => {
+          showToast(intl.formatMessage(messages.errorPasteClipboardMessage));
+        });
+      } else {
+        createBlockMutation.mutateAsync({
+          libraryId,
+          blockType,
+          definitionId: `${uuid4()}`,
+        }).then(() => {
+          showToast(intl.formatMessage(messages.successCreateMessage));
+        }).catch(() => {
+          showToast(intl.formatMessage(messages.errorCreateMessage));
+        });
+      }
     }
   };
+
+  if (pasteClipboardMutation.isLoading) {
+    showToast(intl.formatMessage(messages.pastingClipboardMessage));
+  }
 
   return (
     <Stack direction="vertical">

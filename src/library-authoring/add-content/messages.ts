@@ -60,6 +60,21 @@ const messages = defineMessages({
     defaultMessage: 'Add Content',
     description: 'Title of add content in library container.',
   },
+  successPasteClipboardMessage: {
+    id: 'course-authoring.library-authoring.paste-clipboard.success.text',
+    defaultMessage: 'Content pasted successfully.',
+    description: 'Message when pasting clipboard in library is successful',
+  },
+  errorPasteClipboardMessage: {
+    id: 'course-authoring.library-authoring.paste-clipboard.error.text',
+    defaultMessage: 'There was an error pasting the content.',
+    description: 'Message when pasting clipboard in library errors',
+  },
+  pastingClipboardMessage: {
+    id: 'course-authoring.library-authoring.paste-clipboard.loading.text',
+    defaultMessage: 'Pasting content from clipboard...',
+    description: 'Message when in process of pasting content in library',
+  },
 });
 
 export default messages;
