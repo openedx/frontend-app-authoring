@@ -38,6 +38,9 @@ const queryClient = new QueryClient({
   },
 });
 
+/**
+ * Returns 0 components from the search query.
+*/
 const returnEmptyResult = (_url, req) => {
   const requestData = JSON.parse(req.body?.toString() ?? '');
   const query = requestData?.queries[0]?.q ?? '';
@@ -50,6 +53,11 @@ const returnEmptyResult = (_url, req) => {
   return mockEmptyResult;
 };
 
+/**
+ * Returns 2 components from the search query.
+ * This lets us test that the StudioHome "View All" button is hidden when a
+ * low number of search results are shown (<=4 by default).
+*/
 const returnLowNumberResults = (_url, req) => {
   const requestData = JSON.parse(req.body?.toString() ?? '');
   const query = requestData?.queries[0]?.q ?? '';
