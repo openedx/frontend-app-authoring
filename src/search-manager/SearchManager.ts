@@ -58,26 +58,25 @@ function useStateWithUrlSearchParam<Type>(
   toString: (value: Type) => string | undefined,
 ): [value: Type, setter: React.Dispatch<React.SetStateAction<Type>>] {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [stateValue, stateSetter] = React.useState<Type>(defaultValue);
-
   // The converted search parameter value takes precedence over the state value.
-  const returnValue: Type = fromString(searchParams.get(paramName)) ?? stateValue ?? defaultValue;
-
-  // Before updating the state value, update the url search parameter
-  const returnSetter: React.Dispatch<React.SetStateAction<Type>> = ((value: Type) => {
-    const paramValue: string = toString(value) ?? '';
-    if (paramValue) {
-      searchParams.set(paramName, paramValue);
-    } else {
-      // If no paramValue, remove it from the search params, so
-      // we don't get dangling parameter values like ?paramName=
-      // Another way to decide this would be to check value === defaultValue,
-      // and ensure that default values are never stored in the search string.
-      searchParams.delete(paramName);
-    }
-    setSearchParams(searchParams, { replace: true });
-    return stateSetter(value);
-  });
+  const returnValue: Type = fromString(searchParams.get(paramName)) ?? defaultValue;
+  // Function to update the url search parameter
+  const returnSetter: React.Dispatch<React.SetStateAction<Type>> = React.useCallback((value: Type) => {
+    setSearchParams((prevParams) => {
+      const paramValue: string = toString(value) ?? '';
+      const newSearchParams = new URLSearchParams(prevParams);
+      if (paramValue) {
+        newSearchParams.set(paramName, paramValue);
+      } else {
+        // If no paramValue, remove it from the search params, so
+        // we don't get dangling parameter values like ?paramName=
+        // Another way to decide this would be to check value === defaultValue,
+        // and ensure that default values are never stored in the search string.
+        newSearchParams.delete(paramName);
+      }
+      return newSearchParams;
+    }, { replace: true });
+  }, [setSearchParams]);
 
   // Return the computed value and wrapped set state function
   return [returnValue, returnSetter];
