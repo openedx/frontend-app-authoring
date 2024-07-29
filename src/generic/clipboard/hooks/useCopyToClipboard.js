@@ -1,6 +1,9 @@
+// @ts-check
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
+import { getClipboard } from '../../data/api';
+import { updateClipboardData } from '../../data/slice';
 import { CLIPBOARD_STATUS, STRUCTURAL_XBLOCK_TYPES, STUDIO_CLIPBOARD_CHANNEL } from '../../../constants';
 import { getClipboardData } from '../../data/selectors';
 
@@ -14,6 +17,7 @@ import { getClipboardData } from '../../data/selectors';
  * @property {Object} sharedClipboardData - The shared clipboard data object.
  */
 const useCopyToClipboard = (canEdit = true) => {
+  const dispatch = useDispatch();
   const [clipboardBroadcastChannel] = useState(() => new BroadcastChannel(STUDIO_CLIPBOARD_CHANNEL));
   const [showPasteUnit, setShowPasteUnit] = useState(false);
   const [showPasteXBlock, setShowPasteXBlock] = useState(false);
@@ -29,6 +33,22 @@ const useCopyToClipboard = (canEdit = true) => {
     setShowPasteXBlock(!!isPasteableXBlock);
     setShowPasteUnit(!!isPasteableUnit);
   };
+
+  // Called on initial render to fetch and populate the initial clipboard data in redux state.
+  // Without this, the initial clipboard data redux state is always null.
+  useEffect(() => {
+    const fetchInitialClipboardData = async () => {
+      try {
+        const userClipboard = await getClipboard();
+        dispatch(updateClipboardData(userClipboard));
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(`Failed to fetch initial clipboard data: ${error}`);
+      }
+    };
+
+    fetchInitialClipboardData();
+  }, [dispatch]);
 
   useEffect(() => {
     // Handle updates to clipboard data

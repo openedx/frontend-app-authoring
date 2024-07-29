@@ -40,6 +40,11 @@ const messages = defineMessages({
     defaultMessage: 'Advanced / Other',
     description: 'Content of button to create a Advanced / Other component.',
   },
+  pasteButton: {
+    id: 'course-authoring.library-authoring.add-content.buttons.paste',
+    defaultMessage: 'Paste From Clipboard',
+    description: 'Content of button to paste from clipboard.',
+  },
   successCreateMessage: {
     id: 'course-authoring.library-authoring.add-content.success.text',
     defaultMessage: 'Content created successfully.',

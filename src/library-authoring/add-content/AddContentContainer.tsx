@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import { useSelector } from 'react-redux';
 import {
   Stack,
   Button,
@@ -12,10 +13,13 @@ import {
   ThumbUpOutline,
   Question,
   VideoCamera,
+  ContentPaste,
 } from '@openedx/paragon/icons';
 import { v4 as uuid4 } from 'uuid';
 import { useParams } from 'react-router-dom';
 import { ToastContext } from '../../generic/toast-context';
+import { useCopyToClipboard } from '../../generic/clipboard';
+import { getCanEdit } from '../../course-unit/data/selectors';
 import { useCreateLibraryBlock } from '../data/apiHooks';
 import messages from './messages';
 
@@ -24,6 +28,8 @@ const AddContentContainer = () => {
   const { libraryId } = useParams();
   const createBlockMutation = useCreateLibraryBlock();
   const { showToast } = useContext(ToastContext);
+  const canEdit = useSelector(getCanEdit);
+  const { showPasteXBlock } = useCopyToClipboard(canEdit);
 
   const contentTypes = [
     {
@@ -63,6 +69,18 @@ const AddContentContainer = () => {
       blockType: 'other', // This block doesn't exist yet.
     },
   ];
+
+  // Include the 'Paste from Clipboard' button if there is an Xblock in the clipboard
+  // that can be pasted
+  if (showPasteXBlock) {
+    const pasteButton = {
+      name: intl.formatMessage(messages.pasteButton),
+      disabled: false,
+      icon: ContentPaste,
+      blockType: 'paste',
+    };
+    contentTypes.push(pasteButton);
+  }
 
   const onCreateContent = (blockType: string) => {
     if (libraryId) {
