@@ -1,3 +1,4 @@
+/* eslint-disable react/require-default-props */
 import React from 'react';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Button } from '@openedx/paragon';
@@ -9,17 +10,12 @@ type ClearFiltersButtonProps = {
   size?: 'sm' | 'md' | 'lg' | 'inline',
 };
 
-const defaultProps : ClearFiltersButtonProps = {
-  variant: 'link',
-  size: 'sm',
-};
-
 /**
  * A button that appears when at least one filter is active, and will clear the filters when clicked.
  */
 const ClearFiltersButton = ({
-  variant,
-  size,
+  variant = 'link',
+  size = 'sm',
 }: ClearFiltersButtonProps) => {
   const { canClearFilters, clearFilters } = useSearchContext();
   if (canClearFilters) {
@@ -31,7 +27,5 @@ const ClearFiltersButton = ({
   }
   return null;
 };
-
-ClearFiltersButton.defaultProps = defaultProps;
 
 export default ClearFiltersButton;
