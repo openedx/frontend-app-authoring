@@ -68,7 +68,7 @@ const messages = defineMessages({
   },
   videoUploadTrackerAlertEditMessage: {
     id: 'course-authoring.files-and-videos.video-upload-tracker-alert.edit.message',
-    defaultMessage: 'Want to coninue editing in Studio during this upload?',
+    defaultMessage: 'Want to continue editing in Studio during this upload?',
     description: 'Continue editing message for the Upload Tracker Alert',
   },
   videoUploadTrackerAlertEditHyperlinkLabel: {

@@ -1,8 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ProgressBar, Stack, Truncate } from '@openedx/paragon';
+import { Stack, Truncate } from '@openedx/paragon';
 import UploadStatusIcon from './UploadStatusIcon';
 import { RequestStatus } from '../../../data/constants';
+
+const getVideoStatus = (status) => {
+  switch (status) {
+    case RequestStatus.IN_PROGRESS:
+      return 'UPLOADING';
+    case RequestStatus.PENDING:
+      return 'QUEUED';
+    case RequestStatus.SUCCESSFUL:
+      return '';
+    default:
+      return status.toUpperCase();
+  }
+};
 
 const UploadProgressList = ({ videosList }) => (
   <div role="list" className="text-primary-500">
@@ -17,13 +30,9 @@ const UploadProgressList = ({ videosList }) => (
             </Truncate>
           </div>
           <div className="col-6 p-0">
-            {video.status === RequestStatus.FAILED ? (
-              <span className="row m-0 justify-content-end font-weight-bold">
-                {video.status.toUpperCase()}
-              </span>
-            ) : (
-              <ProgressBar now={video.progress} variant="info" />
-            )}
+            <span className="row m-0 justify-content-end font-weight-bold">
+              {getVideoStatus(video.status)}
+            </span>
           </div>
           <UploadStatusIcon status={video.status} />
         </Stack>
