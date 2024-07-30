@@ -313,7 +313,7 @@ describe('<LibraryAuthoringPage />', () => {
     expect(getByText('Content library')).toBeInTheDocument();
     expect(getByText(libraryData.title)).toBeInTheDocument();
 
-    expect(getByText('Recently Modified')).toBeInTheDocument();
+    await waitFor(() => { expect(getByText('Recently Modified')).toBeInTheDocument(); });
     expect(getByText('Collections (0)')).toBeInTheDocument();
     expect(getByText('Components (6)')).toBeInTheDocument();
     expect(getAllByText('Test HTML Block')[0]).toBeInTheDocument();
@@ -355,11 +355,10 @@ describe('<LibraryAuthoringPage />', () => {
     expect(getByText('Content library')).toBeInTheDocument();
     expect(getByText(libraryData.title)).toBeInTheDocument();
 
-    expect(getByText('Recently Modified')).toBeInTheDocument();
+    await waitFor(() => { expect(getByText('Recently Modified')).toBeInTheDocument(); });
     expect(getByText('Collections (0)')).toBeInTheDocument();
     expect(getByText('Components (2)')).toBeInTheDocument();
     expect(getAllByText('Test HTML Block')[0]).toBeInTheDocument();
-
     expect(queryByText('You have not added any content to this library yet.')).not.toBeInTheDocument();
 
     // There should not be any "View All" button on page since Components count
