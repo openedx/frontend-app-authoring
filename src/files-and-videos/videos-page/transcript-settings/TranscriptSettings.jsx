@@ -114,20 +114,19 @@ const TranscriptSettings = ({
             </TransitionReplace>
           </>
         )}
-        {(!transcriptType && isAiTranslationsEnabled) && (
-          <TransitionReplace>
-            <div data-testid="ai-translations-component">
-              <PluginSlot
-                id="ai_translations_ui_component_slot"
-                pluginProps={{
-                  setIsAiTranslations,
-                  closeTranscriptSettings,
-                  courseId,
-                }}
-              />
-            </div>
-          </TransitionReplace>
-        )}
+        <TransitionReplace>
+          <div data-testid="translations-component">
+            <PluginSlot
+              id="additonal_translations_component_slot"
+              pluginProps={{
+                setIsAiTranslations,
+                closeTranscriptSettings,
+                courseId,
+                additionalProps: { transcriptType, isAiTranslationsEnabled },
+              }}
+            />
+          </div>
+        </TransitionReplace>
       </div>
     </Sheet>
   );
