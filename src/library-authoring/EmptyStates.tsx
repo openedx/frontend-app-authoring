@@ -4,6 +4,7 @@ import {
   Button, Stack,
 } from '@openedx/paragon';
 import { Add } from '@openedx/paragon/icons';
+import { ClearFiltersButton } from '../search-manager';
 import messages from './messages';
 import { LibraryContext } from './common/context';
 
@@ -21,7 +22,8 @@ export const NoComponents = () => {
 };
 
 export const NoSearchResults = () => (
-  <div className="d-flex mt-6 justify-content-center">
+  <Stack direction="horizontal" gap={3} className="mt-6 justify-content-center">
     <FormattedMessage {...messages.noSearchResults} />
-  </div>
+    <ClearFiltersButton variant="primary" size="md" />
+  </Stack>
 );
