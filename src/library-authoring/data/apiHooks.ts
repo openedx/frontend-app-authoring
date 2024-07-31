@@ -1,6 +1,10 @@
 import { camelCaseObject } from '@edx/frontend-platform';
 import {
-  useQuery, useMutation, useQueryClient, type Query,
+  useQuery,
+  useMutation,
+  useQueryClient,
+  type Query,
+  type QueryClient,
 } from '@tanstack/react-query';
 
 import {
@@ -60,6 +64,22 @@ export const libraryAuthoringQueryKeys = {
     usageKey,
   ],
 };
+
+/**
+ * Tell react-query to refresh its cache of any data related to the given
+ * component (XBlock).
+ *
+ * Note that technically it's possible to derive the library key from the
+ * usageKey, so we could refactor this to only require the usageKey.
+ *
+ * @param queryClient The query client - get it via useQueryClient()
+ * @param contentLibraryId The ID of library that holds the XBlock ("lib:...")
+ * @param usageKey The usage ID of the XBlock ("lb:...")
+ */
+export function invalidateComponentData(queryClient: QueryClient, contentLibraryId: string, usageKey: string) {
+  queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.xblockFields(contentLibraryId, usageKey) });
+  queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, contentLibraryId) });
+}
 
 /**
  * Hook to fetch a content library by its ID.
@@ -205,8 +225,7 @@ export const useUpdateXBlockFields = (contentLibraryId: string, usageKey: string
       );
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.xblockFields(contentLibraryId, usageKey) });
-      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, contentLibraryId) });
+      invalidateComponentData(queryClient, contentLibraryId, usageKey);
     },
   });
 };

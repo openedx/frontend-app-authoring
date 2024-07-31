@@ -1,5 +1,5 @@
 import React, { useContext, useMemo, useState } from 'react';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
   Card,
@@ -10,6 +10,7 @@ import {
   Stack,
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
+import { Link, useParams } from 'react-router-dom';
 
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
 import { updateClipboard } from '../../generic/data/api';
@@ -27,6 +28,9 @@ type ComponentCardProps = {
 
 export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   const intl = useIntl();
+  // Get the block type (e.g. "html") from a lib block usage key string like "lb:org:lib:block_type:id"
+  const blockType: string = usageKey.split(':')[3] ?? 'unknown';
+  const { libraryId } = useParams();
   const { showToast } = useContext(ToastContext);
   const [clipboardBroadcastChannel] = useState(() => new BroadcastChannel(STUDIO_CLIPBOARD_CHANNEL));
   const updateClipboardClick = () => {
@@ -50,14 +54,22 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
         data-testid="component-card-menu-toggle"
       />
       <Dropdown.Menu>
-        <Dropdown.Item disabled>
-          {intl.formatMessage(messages.menuEdit)}
-        </Dropdown.Item>
+        {
+          blockType === 'html' ? (
+            <Dropdown.Item as={Link} to={`/library/${libraryId}/editor/${blockType}/${usageKey}`}>
+              <FormattedMessage {...messages.menuEdit} />
+            </Dropdown.Item>
+          ) : (
+            <Dropdown.Item disabled>
+              <FormattedMessage {...messages.menuEdit} />
+            </Dropdown.Item>
+          )
+        }
         <Dropdown.Item onClick={updateClipboardClick}>
-          {intl.formatMessage(messages.menuCopyToClipboard)}
+          <FormattedMessage {...messages.menuCopyToClipboard} />
         </Dropdown.Item>
         <Dropdown.Item disabled>
-          {intl.formatMessage(messages.menuAddToCollection)}
+          <FormattedMessage {...messages.menuAddToCollection} />
         </Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
