@@ -11,7 +11,7 @@ import {
 } from '@openedx/paragon';
 import { Add, InfoOutline } from '@openedx/paragon/icons';
 import {
-  Routes, Route, useLocation, useNavigate, useParams,
+  Routes, Route, useLocation, useNavigate, useParams, useSearchParams,
 } from 'react-router-dom';
 
 import Loading from '../generic/Loading';
@@ -24,6 +24,7 @@ import {
   FilterByTags,
   SearchContextProvider,
   SearchKeywordsField,
+  SearchSortWidget,
 } from '../search-manager';
 import LibraryComponents from './components/LibraryComponents';
 import LibraryCollections from './LibraryCollections';
@@ -77,7 +78,6 @@ const LibraryAuthoringPage = () => {
   const navigate = useNavigate();
 
   const { libraryId } = useParams();
-
   const { data: libraryData, isLoading } = useContentLibrary(libraryId);
 
   const currentPath = location.pathname.split('/').pop();
@@ -91,6 +91,8 @@ const LibraryAuthoringPage = () => {
     openInfoSidebar();
   }, []);
 
+  const [searchParams] = useSearchParams();
+
   if (isLoading) {
     return <Loading />;
   }
@@ -100,7 +102,10 @@ const LibraryAuthoringPage = () => {
   }
 
   const handleTabChange = (key: string) => {
-    navigate(key);
+    navigate({
+      pathname: key,
+      search: searchParams.toString(),
+    });
   };
 
   return (
@@ -129,6 +134,7 @@ const LibraryAuthoringPage = () => {
                 <FilterByBlockType />
                 <ClearFiltersButton />
                 <div className="flex-grow-1" />
+                <SearchSortWidget />
               </div>
               <Tabs
                 variant="tabs"
@@ -143,7 +149,13 @@ const LibraryAuthoringPage = () => {
               <Routes>
                 <Route
                   path={TabList.home}
-                  element={<LibraryHome libraryId={libraryId} />}
+                  element={(
+                    <LibraryHome
+                      libraryId={libraryId}
+                      tabList={TabList}
+                      handleTabChange={handleTabChange}
+                    />
+                  )}
                 />
                 <Route
                   path={TabList.components}

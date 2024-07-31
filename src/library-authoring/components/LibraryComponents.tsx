@@ -5,6 +5,7 @@ import { useSearchContext } from '../../search-manager';
 import { NoComponents, NoSearchResults } from '../EmptyStates';
 import { useLibraryBlockTypes } from '../data/apiHooks';
 import ComponentCard from './ComponentCard';
+import { LIBRARY_SECTION_PREVIEW_LIMIT } from './LibrarySection';
 
 type LibraryComponentsProps = {
   libraryId: string,
@@ -28,10 +29,10 @@ const LibraryComponents = ({
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
-    searchKeywords,
+    isFiltered,
   } = useSearchContext();
 
-  const componentList = variant === 'preview' ? hits.slice(0, 4) : hits;
+  const componentList = variant === 'preview' ? hits.slice(0, LIBRARY_SECTION_PREVIEW_LIMIT) : hits;
 
   // TODO add this to LibraryContext
   const { data: blockTypesData } = useLibraryBlockTypes(libraryId);
@@ -67,7 +68,7 @@ const LibraryComponents = ({
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   if (componentCount === 0) {
-    return searchKeywords === '' ? <NoComponents /> : <NoSearchResults />;
+    return isFiltered ? <NoSearchResults /> : <NoComponents />;
   }
 
   return (
