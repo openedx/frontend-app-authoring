@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
   Card,
@@ -9,10 +10,11 @@ import {
   Stack,
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
-import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
+import { updateClipboard } from '../../generic/data/api';
 import TagCount from '../../generic/tag-count';
+import { ToastContext } from '../../generic/toast-context';
 import { type ContentHit, Highlight } from '../../search-manager';
 import messages from './messages';
 
@@ -21,39 +23,47 @@ type ComponentCardProps = {
   blockTypeDisplayName: string,
 };
 
-const ComponentCardMenu = () => (
-  <Dropdown>
-    <Dropdown.Toggle
-      as={IconButton}
-      src={MoreVert}
-      iconAs={Icon}
-      variant="primary"
-    />
-    <Dropdown.Menu>
-      <Dropdown.Item disabled>
-        <FormattedMessage
-          {...messages.menuEdit}
-        />
-      </Dropdown.Item>
-      <Dropdown.Item disabled>
-        <FormattedMessage
-          {...messages.menuCopyToClipboard}
-        />
-      </Dropdown.Item>
-      <Dropdown.Item disabled>
-        <FormattedMessage
-          {...messages.menuAddToCollection}
-        />
-      </Dropdown.Item>
-    </Dropdown.Menu>
-  </Dropdown>
-);
+const ComponentCardMenu = ({ usageKey }: { usageKey: string }) => {
+  const intl = useIntl();
+  const { showToast } = useContext(ToastContext);
+  const updateClipboardClick = () => {
+    updateClipboard(usageKey)
+      .then(() => showToast(intl.formatMessage(messages.copyToClipboardSuccess)))
+      .catch(() => showToast(intl.formatMessage(messages.copyToClipboardError)));
+  };
+
+  return (
+    <Dropdown id="component-card-dropdown">
+      <Dropdown.Toggle
+        id="component-card-menu-toggle"
+        as={IconButton}
+        src={MoreVert}
+        iconAs={Icon}
+        variant="primary"
+        alt="component-card-menu-toggle" // FixMe: Add alt text
+        data-testid="component-card-menu-toggle"
+      />
+      <Dropdown.Menu>
+        <Dropdown.Item disabled>
+          {intl.formatMessage(messages.menuEdit)}
+        </Dropdown.Item>
+        <Dropdown.Item onClick={updateClipboardClick} data-testid="component-card-menu-copy-clipboard">
+          {intl.formatMessage(messages.menuCopyToClipboard)}
+        </Dropdown.Item>
+        <Dropdown.Item disabled>
+          {intl.formatMessage(messages.menuAddToCollection)}
+        </Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
+  );
+};
 
 const ComponentCard = ({ contentHit, blockTypeDisplayName } : ComponentCardProps) => {
   const {
     blockType,
     formatted,
     tags,
+    usageKey,
   } = contentHit;
   const description = formatted?.content?.htmlContent ?? '';
   const displayName = formatted?.displayName ?? '';
@@ -77,7 +87,7 @@ const ComponentCard = ({ contentHit, blockTypeDisplayName } : ComponentCardProps
           }
           actions={(
             <ActionRow>
-              <ComponentCardMenu />
+              <ComponentCardMenu usageKey={usageKey} />
             </ActionRow>
           )}
         />

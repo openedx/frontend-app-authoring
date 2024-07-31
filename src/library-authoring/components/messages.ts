@@ -1,4 +1,5 @@
 import { defineMessages as _defineMessages } from '@edx/frontend-platform/i18n';
+
 import type { defineMessages as defineMessagesType } from 'react-intl';
 
 // frontend-platform currently doesn't provide types... do it ourselves.
@@ -12,13 +13,23 @@ const messages = defineMessages({
   },
   menuCopyToClipboard: {
     id: 'course-authoring.library-authoring.component.menu.copy',
-    defaultMessage: 'Copy to Clipboard',
+    defaultMessage: 'Copy to clipboard',
     description: 'Menu item for copy a component.',
   },
   menuAddToCollection: {
     id: 'course-authoring.library-authoring.component.menu.add',
-    defaultMessage: 'Add to Collection',
+    defaultMessage: 'Add to collection',
     description: 'Menu item for add a component to collection.',
+  },
+  copyToClipboardSuccess: {
+    id: 'course-authoring.library-authoring.component.copyToClipboardSuccess',
+    defaultMessage: 'Component copied to clipboard',
+    description: 'Message for successful copy component to clipboard.',
+  },
+  copyToClipboardError: {
+    id: 'course-authoring.library-authoring.component.copyToClipboardError',
+    defaultMessage: 'Failed to copy component to clipboard',
+    description: 'Message for failed to copy component to clipboard.',
   },
 });
 
