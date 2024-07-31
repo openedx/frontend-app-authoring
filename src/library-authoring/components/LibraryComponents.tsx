@@ -10,6 +10,7 @@ import { LIBRARY_SECTION_PREVIEW_LIMIT } from './LibrarySection';
 type LibraryComponentsProps = {
   libraryId: string,
   variant: 'full' | 'preview',
+  canEditLibrary: boolean,
 };
 
 /**
@@ -22,6 +23,7 @@ type LibraryComponentsProps = {
 const LibraryComponents = ({
   libraryId,
   variant,
+  canEditLibrary,
 }: LibraryComponentsProps) => {
   const {
     hits,
@@ -68,7 +70,7 @@ const LibraryComponents = ({
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   if (componentCount === 0) {
-    return isFiltered ? <NoSearchResults /> : <NoComponents />;
+    return isFiltered ? <NoSearchResults /> : <NoComponents canEditLibrary={canEditLibrary} />;
   }
 
   return (

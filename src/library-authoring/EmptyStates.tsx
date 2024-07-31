@@ -8,15 +8,21 @@ import { ClearFiltersButton } from '../search-manager';
 import messages from './messages';
 import { LibraryContext } from './common/context';
 
-export const NoComponents = () => {
+interface NoComponentsPorps {
+  canEditLibrary: boolean
+}
+
+export const NoComponents = ({ canEditLibrary } : NoComponentsPorps) => {
   const { openAddContentSidebar } = useContext(LibraryContext);
 
   return (
     <Stack direction="horizontal" gap={3} className="mt-6 justify-content-center">
       <FormattedMessage {...messages.noComponents} />
-      <Button iconBefore={Add} onClick={() => openAddContentSidebar()}>
-        <FormattedMessage {...messages.addComponent} />
-      </Button>
+      {canEditLibrary && (
+        <Button iconBefore={Add} onClick={() => openAddContentSidebar()}>
+          <FormattedMessage {...messages.addComponent} />
+        </Button>
+      )}
     </Stack>
   );
 };

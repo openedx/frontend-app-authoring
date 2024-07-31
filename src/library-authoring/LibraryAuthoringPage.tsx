@@ -42,6 +42,28 @@ enum TabList {
   collections = 'collections',
 }
 
+interface HeaderActionsProps {
+  canEditLibrary: boolean;
+}
+
+const HeaderActions = ({ canEditLibrary }: HeaderActionsProps) => {
+  const intl = useIntl();
+  const {
+    openAddContentSidebar,
+  } = useContext(LibraryContext);
+
+  return (canEditLibrary && (
+    <Button
+      iconBefore={Add}
+      variant="primary rounded-0"
+      onClick={() => openAddContentSidebar()}
+      disabled={!canEditLibrary}
+    >
+      {intl.formatMessage(messages.newContentButton)}
+    </Button>
+  ));
+};
+
 const SubHeaderTitle = ({ title }: { title: string }) => {
   const intl = useIntl();
   return (
@@ -67,7 +89,7 @@ const LibraryAuthoringPage = () => {
 
   const currentPath = location.pathname.split('/').pop();
   const activeKey = (currentPath && currentPath in TabList) ? TabList[currentPath] : TabList.home;
-  const { sidebarBodyComponent, openAddContentSidebar } = useContext(LibraryContext);
+  const { sidebarBodyComponent } = useContext(LibraryContext);
 
   const [searchParams] = useSearchParams();
 
@@ -104,16 +126,7 @@ const LibraryAuthoringPage = () => {
               <SubHeader
                 title={<SubHeaderTitle title={libraryData.title} />}
                 subtitle={intl.formatMessage(messages.headingSubtitle)}
-                headerActions={[
-                  <Button
-                    iconBefore={Add}
-                    variant="primary rounded-0"
-                    onClick={openAddContentSidebar}
-                    disabled={!libraryData.canEditLibrary}
-                  >
-                    {intl.formatMessage(messages.newContentButton)}
-                  </Button>,
-                ]}
+                headerActions={<HeaderActions canEditLibrary={libraryData.canEditLibrary} />}
               />
               <SearchKeywordsField className="w-50" />
               <div className="d-flex mt-3 align-items-center">
@@ -141,12 +154,13 @@ const LibraryAuthoringPage = () => {
                       libraryId={libraryId}
                       tabList={TabList}
                       handleTabChange={handleTabChange}
+                      canEditLibrary={libraryData.canEditLibrary}
                     />
                   )}
                 />
                 <Route
                   path={TabList.components}
-                  element={<LibraryComponents libraryId={libraryId} variant="full" />}
+                  element={<LibraryComponents libraryId={libraryId} variant="full" canEditLibrary={libraryData.canEditLibrary} />}
                 />
                 <Route
                   path={TabList.collections}

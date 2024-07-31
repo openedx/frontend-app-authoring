@@ -14,9 +14,15 @@ type LibraryHomeProps = {
   libraryId: string,
   tabList: { home: string, components: string, collections: string },
   handleTabChange: (key: string) => void,
+  canEditLibrary: boolean,
 };
 
-const LibraryHome = ({ libraryId, tabList, handleTabChange } : LibraryHomeProps) => {
+const LibraryHome = ({
+  libraryId,
+  tabList,
+  handleTabChange,
+  canEditLibrary,
+} : LibraryHomeProps) => {
   const intl = useIntl();
   const {
     totalHits: componentCount,
@@ -27,14 +33,14 @@ const LibraryHome = ({ libraryId, tabList, handleTabChange } : LibraryHomeProps)
 
   const renderEmptyState = () => {
     if (componentCount === 0) {
-      return isFiltered ? <NoSearchResults /> : <NoComponents />;
+      return isFiltered ? <NoSearchResults /> : <NoComponents canEditLibrary={canEditLibrary} />;
     }
     return null;
   };
 
   return (
     <Stack gap={3}>
-      <LibraryRecentlyModified libraryId={libraryId} />
+      <LibraryRecentlyModified libraryId={libraryId} canEditLibrary={canEditLibrary} />
       {
         renderEmptyState()
         || (
@@ -51,7 +57,7 @@ const LibraryHome = ({ libraryId, tabList, handleTabChange } : LibraryHomeProps)
               contentCount={componentCount}
               viewAllAction={() => handleTabChange(tabList.components)}
             >
-              <LibraryComponents libraryId={libraryId} variant="preview" />
+              <LibraryComponents libraryId={libraryId} variant="preview" canEditLibrary={canEditLibrary} />
             </LibrarySection>
           </>
         )
