@@ -29,7 +29,7 @@ export async function getOrganizations(): Promise<string[]> {
 /**
  * Get's course rerun data.
  */
-export async function getCourseRerun(courseId: string): Promise<Object> {
+export async function getCourseRerun(courseId: string): Promise<unknown> {
   const { data } = await getAuthenticatedHttpClient().get(
     getCourseRerunUrl(courseId),
   );
@@ -39,7 +39,7 @@ export async function getCourseRerun(courseId: string): Promise<Object> {
 /**
  * Create or rerun course with data.
  */
-export async function createOrRerunCourse(courseData: Object): Promise<Object> {
+export async function createOrRerunCourse(courseData: Object): Promise<unknown> {
   const { data } = await getAuthenticatedHttpClient().post(
     getCreateOrRerunCourseUrl(),
     convertObjectToSnakeCase(courseData, true),
@@ -50,7 +50,7 @@ export async function createOrRerunCourse(courseData: Object): Promise<Object> {
 /**
  * Retrieves user's clipboard.
  */
-export async function getClipboard(): Promise<Object> {
+export async function getClipboard(): Promise<unknown> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getClipboardUrl());
 
@@ -60,7 +60,7 @@ export async function getClipboard(): Promise<Object> {
 /**
  * Updates user's clipboard.
  */
-export async function updateClipboard(usageKey: string): Promise<Object> {
+export async function updateClipboard(usageKey: string): Promise<unknown> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getClipboardUrl(), { usage_key: usageKey });
 
