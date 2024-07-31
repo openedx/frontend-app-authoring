@@ -18,6 +18,7 @@ import mockResult from '../search-modal/__mocks__/search-result.json';
 import mockEmptyResult from '../search-modal/__mocks__/empty-search-result.json';
 import { getContentLibraryApiUrl, type ContentLibrary } from './data/api';
 import { LibraryLayout } from '.';
+import { convertToDateFromString } from '../utils';
 
 let store;
 const mockUseParams = jest.fn();
@@ -60,9 +61,9 @@ const libraryData: ContentLibrary = {
   numBlocks: 2,
   version: 0,
   lastPublished: null,
-  lastDraftCreated: null,
+  lastDraftCreated: convertToDateFromString('2024-07-22') as Date,
   publishedBy: 'staff',
-  lastDraftCreatedBy: null,
+  lastDraftCreatedBy: 'staff',
   allowLti: false,
   allowPublicLearning: false,
   allowPublicRead: false,
@@ -70,8 +71,8 @@ const libraryData: ContentLibrary = {
   hasUnpublishedDeletes: false,
   canEditLibrary: true,
   license: '',
-  created: null,
-  updated: null,
+  created: convertToDateFromString('2024-06-26') as Date,
+  updated: convertToDateFromString('2024-07-20') as Date,
 };
 
 const RootWrapper = () => (
@@ -275,5 +276,44 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.click(closeButton);
 
     expect(screen.queryByText(/add content/i)).not.toBeInTheDocument();
+  });
+
+  it('should open Library Info by default', async () => {
+    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
+    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
+
+    render(<RootWrapper />);
+
+    expect(await screen.findByText('Content library')).toBeInTheDocument();
+    expect((await screen.findAllByText(libraryData.title))[0]).toBeInTheDocument();
+    expect((await screen.findAllByText(libraryData.title))[1]).toBeInTheDocument();
+
+    expect(screen.getByText('Draft')).toBeInTheDocument();
+    expect(screen.getByText('(Never Published)')).toBeInTheDocument();
+    expect(screen.getByText('July 22, 2024')).toBeInTheDocument();
+    expect(screen.getByText('staff')).toBeInTheDocument();
+    expect(screen.getByText(libraryData.org)).toBeInTheDocument();
+    expect(screen.getByText('July 20, 2024')).toBeInTheDocument();
+    expect(screen.getByText('June 26, 2024')).toBeInTheDocument();
+  });
+
+  it('should close and open Library Info', async () => {
+    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
+    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
+
+    render(<RootWrapper />);
+
+    expect(await screen.findByText('Content library')).toBeInTheDocument();
+    expect((await screen.findAllByText(libraryData.title))[0]).toBeInTheDocument();
+    expect((await screen.findAllByText(libraryData.title))[1]).toBeInTheDocument();
+
+    const closeButton = screen.getByRole('button', { name: /close/i });
+    fireEvent.click(closeButton);
+
+    const libraryInfoButton = screen.getByRole('button', { name: /library info/i });
+    fireEvent.click(libraryInfoButton);
+
+    expect(screen.getByText('Draft')).toBeInTheDocument();
+    expect(screen.getByText('(Never Published)')).toBeInTheDocument();
   });
 });
