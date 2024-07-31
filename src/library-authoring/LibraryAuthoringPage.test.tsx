@@ -263,7 +263,7 @@ describe('<LibraryAuthoringPage />', () => {
     expect(screen.getByRole('button', { name: /new/i })).toBeInTheDocument();
   });
 
-  it('not show new content button without permission', async () => {
+  it('read only state of library', async () => {
     const data = {
       ...libraryData,
       canEditLibrary: false,
@@ -274,6 +274,8 @@ describe('<LibraryAuthoringPage />', () => {
     render(<RootWrapper />);
     expect(await screen.findByRole('heading')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /new/i })).not.toBeInTheDocument();
+
+    expect(screen.getByText('Read Only')).toBeInTheDocument();
   });
 
   it('show library without search results', async () => {

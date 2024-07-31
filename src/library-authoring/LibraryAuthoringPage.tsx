@@ -2,12 +2,14 @@ import React, { useContext } from 'react';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
+  Badge,
   Button,
   Col,
   Container,
   Icon,
   IconButton,
   Row,
+  Stack,
   Tab,
   Tabs,
 } from '@openedx/paragon';
@@ -52,7 +54,11 @@ const HeaderActions = ({ canEditLibrary }: HeaderActionsProps) => {
     openAddContentSidebar,
   } = useContext(LibraryContext);
 
-  return (canEditLibrary && (
+  if (!canEditLibrary) {
+    return null;
+  }
+
+  return (
     <Button
       iconBefore={Add}
       variant="primary rounded-0"
@@ -61,21 +67,30 @@ const HeaderActions = ({ canEditLibrary }: HeaderActionsProps) => {
     >
       {intl.formatMessage(messages.newContentButton)}
     </Button>
-  ));
+  );
 };
 
-const SubHeaderTitle = ({ title }: { title: string }) => {
+const SubHeaderTitle = ({ title, canEditLibrary }: { title: string, canEditLibrary: boolean }) => {
   const intl = useIntl();
   return (
-    <>
-      {title}
-      <IconButton
-        src={InfoOutline}
-        iconAs={Icon}
-        alt={intl.formatMessage(messages.headingInfoAlt)}
-        className="mr-2"
-      />
-    </>
+    <Stack direction="vertical">
+      <Stack direction="horizontal">
+        {title}
+        <IconButton
+          src={InfoOutline}
+          iconAs={Icon}
+          alt={intl.formatMessage(messages.headingInfoAlt)}
+          className="mr-2"
+        />
+      </Stack>
+      { !canEditLibrary && (
+        <div>
+          <Badge variant="primary" style={{ fontSize: '50%' }}>
+            {intl.formatMessage(messages.readOnlyBadge)}
+          </Badge>
+        </div>
+      )}
+    </Stack>
   );
 };
 
@@ -124,7 +139,7 @@ const LibraryAuthoringPage = () => {
           >
             <Container size="xl" className="p-4 mt-3">
               <SubHeader
-                title={<SubHeaderTitle title={libraryData.title} />}
+                title={<SubHeaderTitle title={libraryData.title} canEditLibrary={libraryData.canEditLibrary} />}
                 subtitle={intl.formatMessage(messages.headingSubtitle)}
                 headerActions={<HeaderActions canEditLibrary={libraryData.canEditLibrary} />}
               />
