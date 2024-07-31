@@ -74,6 +74,7 @@ export async function createCourseXblock({
     parent_locator: parentLocator,
     display_name: displayName,
     staged_content: stagedContent,
+	link_to_upstream: true,
   };
 
   const { data } = await getAuthenticatedHttpClient()
@@ -146,6 +147,16 @@ export async function duplicateUnitItem(itemId, XBlockId) {
       duplicate_source_locator: XBlockId,
     });
 
+  return data;
+}
+
+/**
+ * Sync a unit item to its upstream library item.
+ * @param {string} itemId
+ * @returns {Promise<Object>}
+ */
+export async function syncUnitItem(itemId, XBlockId, syncUrl) {
+  const { data } = await getAuthenticatedHttpClient().post(`${getStudioBaseUrl()}${syncUrl}`);
   return data;
 }
 

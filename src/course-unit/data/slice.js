@@ -100,6 +100,7 @@ const slice = createSlice({
         }),
       };
     },
+    syncXBlock: (state, { payload }) => {},
     fetchStaticFileNoticesSuccess: (state, { payload }) => {
       state.staticFileNotices = payload;
     },
