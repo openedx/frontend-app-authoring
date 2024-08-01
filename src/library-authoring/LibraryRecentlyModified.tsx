@@ -7,12 +7,7 @@ import LibraryComponents from './components/LibraryComponents';
 import LibrarySection from './components/LibrarySection';
 import messages from './messages';
 
-interface RecentlyModifiedProps {
-  libraryId: string,
-  canEditLibrary: boolean,
-}
-
-const RecentlyModified = ({ libraryId, canEditLibrary } : RecentlyModifiedProps) => {
+const RecentlyModified: React.FC<{ libraryId: string }> = ({ libraryId }) => {
   const intl = useIntl();
   const { totalHits: componentCount } = useSearchContext();
 
@@ -22,18 +17,18 @@ const RecentlyModified = ({ libraryId, canEditLibrary } : RecentlyModifiedProps)
         title={intl.formatMessage(messages.recentlyModifiedTitle)}
         contentCount={componentCount}
       >
-        <LibraryComponents libraryId={libraryId} variant="preview" canEditLibrary={canEditLibrary} />
+        <LibraryComponents libraryId={libraryId} variant="preview" />
       </LibrarySection>
     )
     : null;
 };
 
-const LibraryRecentlyModified = ({ libraryId, canEditLibrary } : RecentlyModifiedProps) => (
+const LibraryRecentlyModified: React.FC<{ libraryId: string }> = ({ libraryId }) => (
   <SearchContextProvider
     extraFilter={`context_key = "${libraryId}"`}
     overrideSearchSortOrder={SearchSortOption.RECENTLY_MODIFIED}
   >
-    <RecentlyModified libraryId={libraryId} canEditLibrary={canEditLibrary} />
+    <RecentlyModified libraryId={libraryId} />
   </SearchContextProvider>
 );
 

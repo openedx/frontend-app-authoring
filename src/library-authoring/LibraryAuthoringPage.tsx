@@ -169,13 +169,12 @@ const LibraryAuthoringPage = () => {
                       libraryId={libraryId}
                       tabList={TabList}
                       handleTabChange={handleTabChange}
-                      canEditLibrary={libraryData.canEditLibrary}
                     />
                   )}
                 />
                 <Route
                   path={TabList.components}
-                  element={<LibraryComponents libraryId={libraryId} variant="full" canEditLibrary={libraryData.canEditLibrary} />}
+                  element={<LibraryComponents libraryId={libraryId} variant="full" />}
                 />
                 <Route
                   path={TabList.collections}

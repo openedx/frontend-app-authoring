@@ -233,7 +233,6 @@ describe('<LibraryAuthoringPage />', () => {
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
 
     expect(getByText('You have not added any content to this library yet.')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /add component/i })).toBeInTheDocument();
   });
 
   it('show library without components without permission', async () => {

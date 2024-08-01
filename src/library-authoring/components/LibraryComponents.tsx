@@ -10,7 +10,6 @@ import { LIBRARY_SECTION_PREVIEW_LIMIT } from './LibrarySection';
 type LibraryComponentsProps = {
   libraryId: string,
   variant: 'full' | 'preview',
-  canEditLibrary: boolean,
 };
 
 /**
@@ -20,11 +19,7 @@ type LibraryComponentsProps = {
  *   - 'full': Show all components with Infinite scroll pagination.
  *   - 'preview': Show first 4 components without pagination.
  */
-const LibraryComponents = ({
-  libraryId,
-  variant,
-  canEditLibrary,
-}: LibraryComponentsProps) => {
+const LibraryComponents = ({ libraryId, variant }: LibraryComponentsProps) => {
   const {
     hits,
     totalHits: componentCount,
@@ -70,7 +65,7 @@ const LibraryComponents = ({
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   if (componentCount === 0) {
-    return isFiltered ? <NoSearchResults /> : <NoComponents canEditLibrary={canEditLibrary} />;
+    return isFiltered ? <NoSearchResults /> : <NoComponents />;
   }
 
   return (
