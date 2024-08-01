@@ -36,8 +36,17 @@ const LibraryInfoHeader = ({ library } : LibraryInfoHeaderProps) => {
     }
     setIsActive(false);
   };
+
   const handleClick = () => {
     setIsActive(true);
+  };
+
+  const hanldeOnKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleSaveTitle(event);
+    } else if (event.key === 'Escape') {
+      setIsActive(false);
+    }
   };
 
   return (
@@ -52,9 +61,7 @@ const LibraryInfoHeader = ({ library } : LibraryInfoHeaderProps) => {
             aria-label="Title input"
             defaultValue={library.title}
             onBlur={handleSaveTitle}
-            onKeyDown={event => {
-              if (event.key === 'Enter') { handleSaveTitle(event); }
-            }}
+            onKeyDown={hanldeOnKeyDown}
           />
         )
         : (

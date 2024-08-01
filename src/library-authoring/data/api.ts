@@ -91,14 +91,14 @@ export interface CreateBlockDataResponse {
   tagsCount: number;
 }
 
-export interface UpdateBlockDataRequest {
+export interface UpdateLibraryDataRequest {
   id: string;
-  title?: string | null;
-  description?: string | null;
-  allow_public_learning?: boolean | null;
-  allow_public_read?: boolean | null;
-  type?: string | null;
-  license?: string | null;
+  title?: string;
+  description?: string;
+  allow_public_learning?: boolean;
+  allow_public_read?: boolean;
+  type?: string;
+  license?: string;
 }
 
 /**
@@ -144,7 +144,7 @@ export async function createLibraryBlock({
 /**
  * Update library metadata.
  */
-export async function updateLibraryMetadata(libraryData: UpdateBlockDataRequest): Promise<ContentLibrary> {
+export async function updateLibraryMetadata(libraryData: UpdateLibraryDataRequest): Promise<ContentLibrary> {
   const client = getAuthenticatedHttpClient();
   const { data } = await client.patch(getContentLibraryApiUrl(libraryData.id), libraryData);
 

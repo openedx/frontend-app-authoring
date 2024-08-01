@@ -340,6 +340,9 @@ describe('<LibraryAuthoringPage />', () => {
     const closeButton = screen.getByRole('button', { name: /close/i });
     fireEvent.click(closeButton);
 
+    expect(screen.queryByText('Draft')).not.toBeInTheDocument();
+    expect(screen.queryByText('(Never Published)')).not.toBeInTheDocument();
+
     const libraryInfoButton = screen.getByRole('button', { name: /library info/i });
     fireEvent.click(libraryInfoButton);
 
