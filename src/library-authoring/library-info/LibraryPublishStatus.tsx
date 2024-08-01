@@ -150,11 +150,15 @@ const LibraryPublishStatus = ({ library } : LibraryPublishStatusProps) => {
           <Button disabled={isPublished} onClick={commit}>
             {intl.formatMessage(messages.publishButtonLabel)}
           </Button>
-          <div className="d-flex justify-content-end">
-            <Button disabled={isPublished} variant="link" onClick={revert}>
-              {intl.formatMessage(messages.discardChangesButtonLabel)}
-            </Button>
-          </div>
+          { /*
+             * TODO, the discard changes breaks the library.
+             * Discomment this when discard changes is fixed.
+            <div className="d-flex justify-content-end">
+              <Button disabled={isPublished} variant="link" onClick={revert}>
+                {intl.formatMessage(messages.discardChangesButtonLabel)}
+              </Button>
+            </div>
+          */ }
         </Stack>
       </Container>
     </Stack>
