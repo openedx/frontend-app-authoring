@@ -408,9 +408,9 @@ export const setAssetToStaticUrl = ({ editorValue, lmsEndpointUrl }) => {
   const assetSrcs = typeof content === 'string' ? content.split(/(src="|src=&quot;|href="|href=&quot)/g) : [];
   assetSrcs.filter(src => src.startsWith('/asset')).forEach(src => {
     let nameFromEditorSrc;
-    if (src.match(/\/assets\/.+\/asset-v1:\S+[+]\S+[@]\S+[+]\S+\//)?.length >= 1) {
+    if (src.match(/\/asset-v1:\S+[+]\S+[@]\S+[+]\S+\/\w/)?.length >= 1) {
       const assetBlockName = src.substring(0, src.search(/("|&quot;)/));
-      const dividedSrc = assetBlockName.split(/\/assets\/.+\/asset-v1:\S+[+]\S+[@]\S+[+]\S+\//);
+      const dividedSrc = assetBlockName.split(/\/asset-v1:\S+[+]\S+[@]\S+[+]\S+\//);
       [, nameFromEditorSrc] = dividedSrc;
     } else {
       const assetBlockName = src.substring(src.indexOf('@') + 1, src.search(/("|&quot;)/));
