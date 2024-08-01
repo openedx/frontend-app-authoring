@@ -30,8 +30,8 @@ export interface ContentLibrary {
   description: string;
   numBlocks: number;
   version: number;
-  lastPublished: Date | null;
-  lastDraftCreated: Date | null;
+  lastPublished: string | null;
+  lastDraftCreated: string | null;
   publishedBy: string | null;
   lastDraftCreatedBy: string | null;
   allowLti: boolean;
@@ -41,8 +41,8 @@ export interface ContentLibrary {
   hasUnpublishedDeletes: boolean;
   canEditLibrary: boolean;
   license: string;
-  created: Date | null;
-  updated: Date | null;
+  created: string | null;
+  updated: string | null;
 }
 
 export interface LibraryBlockType {

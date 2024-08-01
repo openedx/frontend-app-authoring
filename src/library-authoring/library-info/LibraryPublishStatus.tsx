@@ -1,12 +1,10 @@
 import React, { useCallback, useContext, useMemo } from 'react';
 import classNames from 'classnames';
 import { Button, Container, Stack } from '@openedx/paragon';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedDate, FormattedTime, useIntl } from '@edx/frontend-platform/i18n';
 import { useCommitLibraryChanges, useRevertLibraryChanges } from '../data/apiHooks';
 import { ContentLibrary } from '../data/api';
 import { ToastContext } from '../../generic/toast-context';
-import { convertToStringFromDateAndFormat } from '../../utils';
-import { COMMA_SEPARATED_DATE_FORMAT, TIME_FORMAT } from '../../constants';
 import messages from './messages';
 
 type LibraryPublishStatusProps = {
@@ -48,18 +46,47 @@ const LibraryPublishStatus = ({ library } : LibraryPublishStatusProps) => {
     let extraStatusMessageResult : string | undefined;
     let bodyMessageResult : string | undefined;
 
+    const buildDate = ((date : string) => (
+      <b>
+        <FormattedDate
+          value={date}
+          year="numeric"
+          month="long"
+          day="2-digit"
+        />
+      </b>
+    ));
+
+    const buildTime = ((date: string) => (
+      <b>
+        <FormattedTime
+          value={date}
+          hour12={false}
+        />
+      </b>
+    ));
+
     const buildDraftBodyMessage = (() => {
-      if (library.lastDraftCreatedBy) {
+      if (library.lastDraftCreatedBy && library.lastDraftCreated) {
         return intl.formatMessage(messages.lastDraftMsg, {
-          date: <b>{convertToStringFromDateAndFormat(library.lastDraftCreated, COMMA_SEPARATED_DATE_FORMAT)}</b>,
-          time: <b>{convertToStringFromDateAndFormat(library.lastDraftCreated, TIME_FORMAT)}</b>,
+          date: buildDate(library.lastDraftCreated),
+          time: buildTime(library.lastDraftCreated),
           user: <b>{library.lastDraftCreatedBy}</b>,
         });
       }
-      return intl.formatMessage(messages.lastDraftMsgWithoutUser, {
-        date: <b>{convertToStringFromDateAndFormat(library.lastDraftCreated, COMMA_SEPARATED_DATE_FORMAT)}</b>,
-        time: <b>{convertToStringFromDateAndFormat(library.lastDraftCreated, TIME_FORMAT)}</b>,
-      });
+      if (library.lastDraftCreated) {
+        return intl.formatMessage(messages.lastDraftMsgWithoutUser, {
+          date: buildDate(library.lastDraftCreated),
+          time: buildTime(library.lastDraftCreated),
+        });
+      }
+      if (library.created) {
+        return intl.formatMessage(messages.lastDraftMsgWithoutUser, {
+          date: buildDate(library.created),
+          time: buildTime(library.created),
+        });
+      }
+      return '';
     });
 
     if (!library.lastPublished) {
@@ -80,14 +107,14 @@ const LibraryPublishStatus = ({ library } : LibraryPublishStatusProps) => {
       statusMessageResult = intl.formatMessage(messages.publishedStatusLabel);
       if (library.publishedBy) {
         bodyMessageResult = intl.formatMessage(messages.lastPublishedMsg, {
-          date: <b>{convertToStringFromDateAndFormat(library.lastPublished, COMMA_SEPARATED_DATE_FORMAT)}</b>,
-          time: <b>{convertToStringFromDateAndFormat(library.lastPublished, TIME_FORMAT)}</b>,
+          date: buildDate(library.lastPublished),
+          time: buildTime(library.lastPublished),
           user: <b>{library.publishedBy}</b>,
         });
       } else {
         bodyMessageResult = intl.formatMessage(messages.lastPublishedMsgWithoutUser, {
-          date: <b>{convertToStringFromDateAndFormat(library.lastPublished, COMMA_SEPARATED_DATE_FORMAT)}</b>,
-          time: <b>{convertToStringFromDateAndFormat(library.lastPublished, TIME_FORMAT)}</b>,
+          date: buildDate(library.lastPublished),
+          time: buildTime(library.lastPublished),
         });
       }
     }

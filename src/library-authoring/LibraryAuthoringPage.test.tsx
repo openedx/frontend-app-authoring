@@ -18,7 +18,6 @@ import mockResult from '../search-modal/__mocks__/search-result.json';
 import mockEmptyResult from '../search-modal/__mocks__/empty-search-result.json';
 import { getContentLibraryApiUrl, type ContentLibrary } from './data/api';
 import { LibraryLayout } from '.';
-import { convertToDateFromString } from '../utils';
 
 let store;
 const mockUseParams = jest.fn();
@@ -84,7 +83,7 @@ const libraryData: ContentLibrary = {
   numBlocks: 2,
   version: 0,
   lastPublished: null,
-  lastDraftCreated: convertToDateFromString('2024-07-22') as Date,
+  lastDraftCreated: '2024-07-22',
   publishedBy: 'staff',
   lastDraftCreatedBy: 'staff',
   allowLti: false,
@@ -94,8 +93,8 @@ const libraryData: ContentLibrary = {
   hasUnpublishedDeletes: false,
   canEditLibrary: true,
   license: '',
-  created: convertToDateFromString('2024-06-26') as Date,
-  updated: convertToDateFromString('2024-07-20') as Date,
+  created: '2024-06-26',
+  updated: '2024-07-20',
 };
 
 const RootWrapper = () => (

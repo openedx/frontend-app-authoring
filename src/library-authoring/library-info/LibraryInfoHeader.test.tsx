@@ -11,7 +11,6 @@ import {
   fireEvent,
   waitFor,
 } from '@testing-library/react';
-import { convertToDateFromString } from '../../utils';
 import { ContentLibrary, getContentLibraryApiUrl } from '../data/api';
 import initializeStore from '../../store';
 import { ToastProvider } from '../../generic/toast-context';
@@ -37,7 +36,7 @@ const libraryData: ContentLibrary = {
   numBlocks: 2,
   version: 0,
   lastPublished: null,
-  lastDraftCreated: convertToDateFromString('2024-07-22') as Date,
+  lastDraftCreated: '2024-07-22',
   publishedBy: 'staff',
   lastDraftCreatedBy: 'staff',
   allowLti: false,
@@ -47,8 +46,8 @@ const libraryData: ContentLibrary = {
   hasUnpublishedDeletes: false,
   canEditLibrary: true,
   license: '',
-  created: convertToDateFromString('2024-06-26') as Date,
-  updated: convertToDateFromString('2024-07-20') as Date,
+  created: '2024-06-26',
+  updated: '2024-07-20',
 };
 
 interface WrapperProps {

@@ -1,9 +1,7 @@
 import React from 'react';
 import { Stack } from '@openedx/paragon';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
-import { convertToStringFromDateAndFormat } from '../../utils';
-import { COMMA_SEPARATED_DATE_FORMAT } from '../../constants';
 import LibraryPublishStatus from './LibraryPublishStatus';
 import { ContentLibrary } from '../data/api';
 
@@ -34,7 +32,12 @@ const LibraryInfo = ({ library } : LibraryInfoProps) => {
             {intl.formatMessage(messages.lastModifiedLabel)}
           </span>
           <span className="small">
-            {convertToStringFromDateAndFormat(library.updated, COMMA_SEPARATED_DATE_FORMAT)}
+            <FormattedDate
+              value={library.updated}
+              year="numeric"
+              month="long"
+              day="2-digit"
+            />
           </span>
         </Stack>
         <Stack gap={1}>
@@ -42,7 +45,12 @@ const LibraryInfo = ({ library } : LibraryInfoProps) => {
             {intl.formatMessage(messages.createdLabel)}
           </span>
           <span className="small">
-            {convertToStringFromDateAndFormat(library.created, COMMA_SEPARATED_DATE_FORMAT)}
+            <FormattedDate
+              value={library.created}
+              year="numeric"
+              month="long"
+              day="2-digit"
+            />
           </span>
         </Stack>
       </Stack>
