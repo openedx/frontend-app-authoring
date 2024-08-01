@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useMemo } from 'react';
 import classNames from 'classnames';
 import { Button, Container, Stack } from '@openedx/paragon';
 import { FormattedDate, FormattedTime, useIntl } from '@edx/frontend-platform/i18n';
-import { useCommitLibraryChanges, useRevertLibraryChanges } from '../data/apiHooks';
+import { useCommitLibraryChanges } from '../data/apiHooks';
 import { ContentLibrary } from '../data/api';
 import { ToastContext } from '../../generic/toast-context';
 import messages from './messages';
@@ -14,7 +14,6 @@ type LibraryPublishStatusProps = {
 const LibraryPublishStatus = ({ library } : LibraryPublishStatusProps) => {
   const intl = useIntl();
   const commitLibraryChanges = useCommitLibraryChanges();
-  const revertLibraryChanges = useRevertLibraryChanges();
   const { showToast } = useContext(ToastContext);
 
   const commit = useCallback(() => {
@@ -26,6 +25,9 @@ const LibraryPublishStatus = ({ library } : LibraryPublishStatusProps) => {
       });
   }, []);
 
+  /**
+   * TODO, the discard changes breaks the library.
+   * Discomment this when discard changes is fixed.
   const revert = useCallback(() => {
     revertLibraryChanges.mutateAsync(library.id)
       .then(() => {
@@ -34,6 +36,7 @@ const LibraryPublishStatus = ({ library } : LibraryPublishStatusProps) => {
         showToast(intl.formatMessage(messages.revertErrorMsg));
       });
   }, []);
+  */
 
   const {
     isPublished,
