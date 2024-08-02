@@ -5,8 +5,8 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { renderHook } from '@testing-library/react-hooks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MockAdapter from 'axios-mock-adapter';
-import { getCreateLibraryBlockUrl } from './api';
-import { useCreateLibraryBlock } from './apiHooks';
+import { getCommitLibraryChangesUrl, getCreateLibraryBlockUrl } from './api';
+import { useCommitLibraryChanges, useCreateLibraryBlock, useRevertLibraryChanges } from './apiHooks';
 
 let axiosMock;
 
@@ -49,5 +49,25 @@ describe('library api hooks', () => {
     });
 
     expect(axiosMock.history.post[0].url).toEqual(url);
+  });
+
+  it('should commit library changes', async () => {
+    const libraryId = 'lib:org:1';
+    const url = getCommitLibraryChangesUrl(libraryId);
+    axiosMock.onPost(url).reply(200);
+    const { result } = renderHook(() => useCommitLibraryChanges(), { wrapper });
+    await result.current.mutateAsync(libraryId);
+
+    expect(axiosMock.history.post[0].url).toEqual(url);
+  });
+
+  it('should revert library changes', async () => {
+    const libraryId = 'lib:org:1';
+    const url = getCommitLibraryChangesUrl(libraryId);
+    axiosMock.onDelete(url).reply(200);
+    const { result } = renderHook(() => useRevertLibraryChanges(), { wrapper });
+    await result.current.mutateAsync(libraryId);
+
+    expect(axiosMock.history.delete[0].url).toEqual(url);
   });
 });

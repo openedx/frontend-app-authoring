@@ -116,9 +116,26 @@ describe('<LibraryInfoHeader />', () => {
     fireEvent.change(textBox, { target: { value: 'New Library Title' } });
     fireEvent.keyDown(textBox, { key: 'Enter', code: 'Enter', charCode: 13 });
 
+    expect(textBox).not.toBeInTheDocument();
     expect(await screen.findByText('Library updated successfully')).toBeInTheDocument();
 
     await waitFor(() => expect(axiosMock.history.patch[0].url).toEqual(url));
+  });
+
+  it('should close edit library title on press Escape', async () => {
+    const url = getContentLibraryApiUrl(libraryData.id);
+    axiosMock.onPatch(url).reply(200);
+    render(<RootWrapper data={libraryData} />);
+
+    const editTitleButton = screen.getByRole('button', { name: /edit library name/i });
+    fireEvent.click(editTitleButton);
+
+    const textBox = screen.getByRole('textbox', { name: /title input/i });
+    fireEvent.keyDown(textBox, { key: 'Escape', code: 'Escape', charCode: 27 });
+
+    expect(textBox).not.toBeInTheDocument();
+
+    await waitFor(() => expect(axiosMock.history.patch.length).toEqual(0));
   });
 
   it('should show error on edit library tittle', async () => {

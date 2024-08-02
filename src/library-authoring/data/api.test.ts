@@ -1,7 +1,13 @@
 import MockAdapter from 'axios-mock-adapter';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { createLibraryBlock, getCreateLibraryBlockUrl } from './api';
+import {
+  commitLibraryChanges,
+  createLibraryBlock,
+  getCommitLibraryChangesUrl,
+  getCreateLibraryBlockUrl,
+  revertLibraryChanges,
+} from './api';
 
 let axiosMock;
 
@@ -21,6 +27,7 @@ describe('library api calls', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+    axiosMock.restore();
   });
 
   it('should create library block', async () => {
@@ -34,5 +41,25 @@ describe('library api calls', () => {
     });
 
     expect(axiosMock.history.post[0].url).toEqual(url);
+  });
+
+  it('should commit library changes', async () => {
+    const libraryId = 'lib:org:1';
+    const url = getCommitLibraryChangesUrl(libraryId);
+    axiosMock.onPost(url).reply(200);
+
+    await commitLibraryChanges(libraryId);
+
+    expect(axiosMock.history.post[0].url).toEqual(url);
+  });
+
+  it('should revert library changes', async () => {
+    const libraryId = 'lib:org:1';
+    const url = getCommitLibraryChangesUrl(libraryId);
+    axiosMock.onDelete(url).reply(200);
+
+    await revertLibraryChanges(libraryId);
+
+    expect(axiosMock.history.delete[0].url).toEqual(url);
   });
 });

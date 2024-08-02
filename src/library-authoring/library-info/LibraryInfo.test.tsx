@@ -97,6 +97,20 @@ describe('<LibraryInfo />', () => {
     expect(screen.getByText('June 26, 2024')).toBeInTheDocument();
   });
 
+  it('should render Library info in draft state without user', () => {
+    const data = {
+      ...libraryData,
+      lastDraftCreatedBy: null,
+    };
+
+    render(<RootWrapper data={data} />);
+
+    expect(screen.getByText('Draft')).toBeInTheDocument();
+    expect(screen.getByText('(Never Published)')).toBeInTheDocument();
+    expect(screen.getByText('July 22, 2024')).toBeInTheDocument();
+    expect(screen.queryByText('staff')).not.toBeInTheDocument();
+  });
+
   it('should render Library creation date if last draft created date is null', () => {
     const data = {
       ...libraryData,
@@ -109,6 +123,19 @@ describe('<LibraryInfo />', () => {
     expect(screen.getByText('(Never Published)')).toBeInTheDocument();
     expect(screen.getAllByText('June 26, 2024')[0]).toBeInTheDocument();
     expect(screen.getAllByText('June 26, 2024')[1]).toBeInTheDocument();
+  });
+
+  it('should render library info in draft state without date', () => {
+    const data = {
+      ...libraryData,
+      lastDraftCreated: null,
+      created: null,
+    };
+
+    render(<RootWrapper data={data} />);
+
+    expect(screen.getByText('Draft')).toBeInTheDocument();
+    expect(screen.getByText('(Never Published)')).toBeInTheDocument();
   });
 
   it('should render draft library info sidebar', () => {
@@ -136,6 +163,20 @@ describe('<LibraryInfo />', () => {
     expect(screen.getByText('Published')).toBeInTheDocument();
     expect(screen.getByText('July 26, 2024')).toBeInTheDocument();
     expect(screen.getByText('staff')).toBeInTheDocument();
+  });
+
+  it('should render published library info without user', () => {
+    const data = {
+      ...libraryData,
+      lastPublished: '2024-07-26',
+      hasUnpublishedChanges: false,
+      publishedBy: null,
+    };
+
+    render(<RootWrapper data={data} />);
+    expect(screen.getByText('Published')).toBeInTheDocument();
+    expect(screen.getByText('July 26, 2024')).toBeInTheDocument();
+    expect(screen.queryByText('staff')).not.toBeInTheDocument();
   });
 
   it('should publish library', async () => {
