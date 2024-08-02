@@ -1,4 +1,3 @@
-// @ts-check
 import { useQuery } from '@tanstack/react-query';
 import { getOrganizations, getTagsCount } from './api';
 
@@ -15,11 +14,10 @@ export const useOrganizationListData = () => (
 /**
  * Builds the query to get tags count of the whole contentId course and
  * returns the tags count of the specific contentId.
- * @param {string} contentId
  */
-export const useContentTagsCount = (contentId) => {
-  let contentPattern;
-  if (contentId.includes('course-v1')) {
+export const useContentTagsCount = (contentId?: string) => {
+  let contentPattern: string | undefined;
+  if (!contentId || contentId.includes('course-v1')) {
     // If the contentId is a course, we want to get the tags count only for the course
     contentPattern = contentId;
   } else {
@@ -28,7 +26,8 @@ export const useContentTagsCount = (contentId) => {
   }
   return useQuery({
     queryKey: ['contentTagsCount', contentPattern],
-    queryFn: /* istanbul ignore next */ () => getTagsCount(contentPattern),
-    select: (data) => data[contentId] || 0, // Return the tags count of the specific contentId
+    queryFn: () => getTagsCount(contentPattern),
+    select: (data) => (contentId ? (data[contentId] || 0) : 0), // Return the tags count of the specific contentId
+    enabled: !!contentId,
   });
 };

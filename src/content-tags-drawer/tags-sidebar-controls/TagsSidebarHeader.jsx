@@ -15,7 +15,7 @@ const TagsSidebarHeader = () => {
   const {
     data: contentTagsCount,
     isSuccess: isContentTagsCountLoaded,
-  } = useContentTagsCount(contentId || '');
+  } = useContentTagsCount(contentId);
 
   return (
     <Stack
