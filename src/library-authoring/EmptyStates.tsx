@@ -17,7 +17,7 @@ export const NoComponents = () => {
   const canEditLibrary = libraryData?.canEditLibrary ?? false;
 
   return (
-    <Stack direction="horizontal" gap={3} className="mt-6 just  ify-content-center">
+    <Stack direction="horizontal" gap={3} className="mt-6 justify-content-center">
       <FormattedMessage {...messages.noComponents} />
       {canEditLibrary && (
         <Button iconBefore={Add} onClick={() => openAddContentSidebar()}>
