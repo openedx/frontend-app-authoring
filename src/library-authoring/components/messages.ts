@@ -6,6 +6,11 @@ import type { defineMessages as defineMessagesType } from 'react-intl';
 const defineMessages = _defineMessages as typeof defineMessagesType;
 
 const messages = defineMessages({
+  componentCardMenuAlt: {
+    id: 'course-authoring.library-authoring.component.menu',
+    defaultMessage: 'Component actions menu',
+    description: 'Alt/title text for the component card menu button.',
+  },
   menuEdit: {
     id: 'course-authoring.library-authoring.component.menu.edit',
     defaultMessage: 'Edit',

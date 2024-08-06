@@ -40,7 +40,7 @@ const ComponentCardMenu = ({ usageKey }: { usageKey: string }) => {
         src={MoreVert}
         iconAs={Icon}
         variant="primary"
-        alt="component-card-menu-toggle" // FixMe: Add alt text
+        alt={intl.formatMessage(messages.componentCardMenuAlt)}
         data-testid="component-card-menu-toggle"
       />
       <Dropdown.Menu>
