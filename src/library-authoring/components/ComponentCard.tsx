@@ -47,7 +47,7 @@ const ComponentCardMenu = ({ usageKey }: { usageKey: string }) => {
         <Dropdown.Item disabled>
           {intl.formatMessage(messages.menuEdit)}
         </Dropdown.Item>
-        <Dropdown.Item onClick={updateClipboardClick} data-testid="component-card-menu-copy-clipboard">
+        <Dropdown.Item onClick={updateClipboardClick}>
           {intl.formatMessage(messages.menuCopyToClipboard)}
         </Dropdown.Item>
         <Dropdown.Item disabled>
