@@ -37,11 +37,13 @@ const LibraryPublishStatus = ({ library } : LibraryPublishStatusProps) => {
 
   const {
     isPublished,
+    isNew,
     statusMessage,
     extraStatusMessage,
     bodyMessage,
   } = useMemo(() => {
     let isPublishedResult: boolean;
+    let isNewResult = false;
     let statusMessageResult : string;
     let extraStatusMessageResult : string | undefined;
     let bodyMessageResult : string | undefined;
@@ -91,6 +93,7 @@ const LibraryPublishStatus = ({ library } : LibraryPublishStatusProps) => {
 
     if (!library.lastPublished) {
       // Library is never published (new)
+      isNewResult = library.numBlocks === 0; // allow discarding if components are added
       isPublishedResult = false;
       statusMessageResult = intl.formatMessage(messages.draftStatusLabel);
       extraStatusMessageResult = intl.formatMessage(messages.neverPublishedLabel);
@@ -120,6 +123,7 @@ const LibraryPublishStatus = ({ library } : LibraryPublishStatusProps) => {
     }
     return {
       isPublished: isPublishedResult,
+      isNew: isNewResult,
       statusMessage: statusMessageResult,
       extraStatusMessage: extraStatusMessageResult,
       bodyMessage: bodyMessageResult,
@@ -151,7 +155,7 @@ const LibraryPublishStatus = ({ library } : LibraryPublishStatusProps) => {
             {intl.formatMessage(messages.publishButtonLabel)}
           </Button>
           <div className="d-flex justify-content-end">
-            <Button disabled={isPublished} variant="link" onClick={revert}>
+            <Button disabled={isPublished || isNew} variant="link" onClick={revert}>
               {intl.formatMessage(messages.discardChangesButtonLabel)}
             </Button>
           </div>

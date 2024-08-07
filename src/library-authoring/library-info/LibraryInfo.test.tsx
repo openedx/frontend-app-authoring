@@ -230,4 +230,18 @@ describe('<LibraryInfo />', () => {
 
     await waitFor(() => expect(axiosMock.history.delete[0].url).toEqual(url));
   });
+
+  it('discard changes btn should be disabled for new libraries', async () => {
+    render(<RootWrapper data={{ ...libraryData, lastPublished: null, numBlocks: 0 }} />);
+    const discardButton = screen.getByRole('button', { name: /discard changes/i });
+
+    expect(discardButton).toBeDisabled();
+  });
+
+  it('discard changes btn should be enabled for new libraries if components are added', async () => {
+    render(<RootWrapper data={{ ...libraryData, lastPublished: null, numBlocks: 2 }} />);
+    const discardButton = screen.getByRole('button', { name: /discard changes/i });
+
+    expect(discardButton).not.toBeDisabled();
+  });
 });
