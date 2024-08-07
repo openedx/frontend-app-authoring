@@ -204,4 +204,30 @@ describe('<LibraryInfo />', () => {
 
     await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(url));
   });
+
+  it('should discard changes', async () => {
+    const url = getCommitLibraryChangesUrl(libraryData.id);
+    axiosMock.onDelete(url).reply(200);
+
+    render(<RootWrapper data={libraryData} />);
+    const discardButton = screen.getByRole('button', { name: /discard changes/i });
+    fireEvent.click(discardButton);
+
+    expect(await screen.findByText('Library changes reverted successfully')).toBeInTheDocument();
+
+    await waitFor(() => expect(axiosMock.history.delete[0].url).toEqual(url));
+  });
+
+  it('should show error on discard changes', async () => {
+    const url = getCommitLibraryChangesUrl(libraryData.id);
+    axiosMock.onDelete(url).reply(500);
+
+    render(<RootWrapper data={libraryData} />);
+    const discardButton = screen.getByRole('button', { name: /discard changes/i });
+    fireEvent.click(discardButton);
+
+    expect(await screen.findByText('There was an error reverting changes in the library.')).toBeInTheDocument();
+
+    await waitFor(() => expect(axiosMock.history.delete[0].url).toEqual(url));
+  });
 });

@@ -121,6 +121,7 @@ export const useRevertLibraryChanges = () => {
     mutationFn: revertLibraryChanges,
     onSettled: (_data, _error, libraryId) => {
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId) });
+      queryClient.invalidateQueries({ queryKey: ['content_search'] });
     },
   });
 };
