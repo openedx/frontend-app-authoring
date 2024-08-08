@@ -100,6 +100,11 @@ const messages = defineMessages({
     defaultMessage: 'Close',
     description: 'Alt text of close button',
   },
+  readOnlyBadge: {
+    id: 'course-authoring.library-authoring.badge.read-only',
+    defaultMessage: 'Read Only',
+    description: 'Text in badge when the user has read only access',
+  },
 });
 
 export default messages;

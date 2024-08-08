@@ -21,6 +21,7 @@ const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
 const mockUseLibraryBlockTypes = jest.fn();
 const mockFetchNextPage = jest.fn();
 const mockUseSearchContext = jest.fn();
+const mockUseContentLibrary = jest.fn();
 
 const data = {
   totalHits: 1,
@@ -75,6 +76,7 @@ const blockTypeData = {
 
 jest.mock('../data/apiHooks', () => ({
   useLibraryBlockTypes: () => mockUseLibraryBlockTypes(),
+  useContentLibrary: () => mockUseContentLibrary(),
 }));
 
 jest.mock('../../search-manager', () => ({
@@ -128,9 +130,31 @@ describe('<LibraryComponents />', () => {
       ...data,
       totalHits: 0,
     });
+    mockUseContentLibrary.mockReturnValue({
+      data: {
+        canEditLibrary: true,
+      },
+    });
 
     render(<RootWrapper />);
     expect(await screen.findByText(/you have not added any content to this library yet\./i));
+    expect(screen.getByRole('button', { name: /add component/i })).toBeInTheDocument();
+  });
+
+  it('should render empty state without add content button', async () => {
+    mockUseSearchContext.mockReturnValue({
+      ...data,
+      totalHits: 0,
+    });
+    mockUseContentLibrary.mockReturnValue({
+      data: {
+        canEditLibrary: false,
+      },
+    });
+
+    render(<RootWrapper />);
+    expect(await screen.findByText(/you have not added any content to this library yet\./i));
+    expect(screen.queryByRole('button', { name: /add component/i })).not.toBeInTheDocument();
   });
 
   it('should render components in full variant', async () => {
