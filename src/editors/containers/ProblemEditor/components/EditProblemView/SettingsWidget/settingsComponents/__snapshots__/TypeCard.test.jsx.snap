@@ -1,0 +1,82 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TypeCard snapshot snapshot: renders type setting card 1`] = `
+<SettingsOption
+  className=""
+  extraSections={[]}
+  hasExpandableTextArea={false}
+  summary="Text input"
+  title="Type"
+>
+  <TypeRow
+    answers={[]}
+    blockTitle="BLocktiTLE"
+    correctAnswerCount={0}
+    key="multiplechoiceresponse"
+    label="Single select"
+    lastRow={false}
+    problemType="stringresponse"
+    selected={true}
+    setBlockTitle={[MockFunction args.setBlockTitle]}
+    typeKey="multiplechoiceresponse"
+    updateAnswer={[MockFunction args.updateAnswer]}
+    updateField={[MockFunction args.updateField]}
+  />
+  <TypeRow
+    answers={[]}
+    blockTitle="BLocktiTLE"
+    correctAnswerCount={0}
+    key="choiceresponse"
+    label="Multi-select"
+    lastRow={false}
+    problemType="stringresponse"
+    selected={true}
+    setBlockTitle={[MockFunction args.setBlockTitle]}
+    typeKey="choiceresponse"
+    updateAnswer={[MockFunction args.updateAnswer]}
+    updateField={[MockFunction args.updateField]}
+  />
+  <TypeRow
+    answers={[]}
+    blockTitle="BLocktiTLE"
+    correctAnswerCount={0}
+    key="optionresponse"
+    label="Dropdown"
+    lastRow={false}
+    problemType="stringresponse"
+    selected={true}
+    setBlockTitle={[MockFunction args.setBlockTitle]}
+    typeKey="optionresponse"
+    updateAnswer={[MockFunction args.updateAnswer]}
+    updateField={[MockFunction args.updateField]}
+  />
+  <TypeRow
+    answers={[]}
+    blockTitle="BLocktiTLE"
+    correctAnswerCount={0}
+    key="numericalresponse"
+    label="Numerical input"
+    lastRow={false}
+    problemType="stringresponse"
+    selected={true}
+    setBlockTitle={[MockFunction args.setBlockTitle]}
+    typeKey="numericalresponse"
+    updateAnswer={[MockFunction args.updateAnswer]}
+    updateField={[MockFunction args.updateField]}
+  />
+  <TypeRow
+    answers={[]}
+    blockTitle="BLocktiTLE"
+    correctAnswerCount={0}
+    key="stringresponse"
+    label="Text input"
+    lastRow={true}
+    problemType="stringresponse"
+    selected={false}
+    setBlockTitle={[MockFunction args.setBlockTitle]}
+    typeKey="stringresponse"
+    updateAnswer={[MockFunction args.updateAnswer]}
+    updateField={[MockFunction args.updateField]}
+  />
+</SettingsOption>
+`;

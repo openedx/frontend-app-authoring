@@ -1,0 +1,109 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SettingsOption default with children snapshot: renders correct 1`] = `
+<Card
+  className=" settingsOption border border-light-700 shadow-none"
+>
+  <Card.Section
+    className="settingsCardTitleSection"
+    key="settingsOption-Settings Option Title-header"
+  >
+    <Advanced
+      onToggle={[Function]}
+      open={false}
+    >
+      <Trigger
+        className="collapsible-trigger d-flex"
+      >
+        <span
+          className="flex-grow-1 text-primary-500 x-small"
+        >
+          Settings Option Title
+        </span>
+        <Visible
+          whenClosed={true}
+        >
+          <Icon />
+        </Visible>
+        <Visible
+          whenOpen={true}
+        >
+          <Icon />
+        </Visible>
+      </Trigger>
+    </Advanced>
+  </Card.Section>
+  <CardSection
+    isCardCollapsibleOpen={false}
+    key="settingsOption-Settings Option Title-children"
+    none={false}
+    summary="Settings Option Summary"
+  >
+    <h1>
+      My test content
+    </h1>
+  </CardSection>
+</Card>
+`;
+
+exports[`SettingsOption with additional sections snapshot: renders correct 1`] = `
+<Card
+  className=" settingsOption border border-light-700 shadow-none"
+>
+  <Card.Section
+    className="settingsCardTitleSection"
+    key="settingsOption-Settings Option Title-header"
+  >
+    <Advanced
+      onToggle={[Function]}
+      open={false}
+    >
+      <Trigger
+        className="collapsible-trigger d-flex"
+      >
+        <span
+          className="flex-grow-1 text-primary-500 x-small"
+        >
+          Settings Option Title
+        </span>
+        <Visible
+          whenClosed={true}
+        >
+          <Icon />
+        </Visible>
+        <Visible
+          whenOpen={true}
+        >
+          <Icon />
+        </Visible>
+      </Trigger>
+    </Advanced>
+  </Card.Section>
+  <CardSection
+    isCardCollapsibleOpen={false}
+    key="settingsOption-Settings Option Title-children"
+    none={false}
+    summary="Settings Option Summary"
+  >
+    <h1>
+      First Section
+    </h1>
+  </CardSection>
+  <Fragment>
+    <CardSection
+      isCardCollapsibleOpen={false}
+      key="settingsOption-Settings Option Title-0"
+      none={false}
+      summary={null}
+    />
+  </Fragment>
+  <Fragment>
+    <CardSection
+      isCardCollapsibleOpen={false}
+      key="settingsOption-Settings Option Title-1"
+      none={false}
+      summary={null}
+    />
+  </Fragment>
+</Card>
+`;

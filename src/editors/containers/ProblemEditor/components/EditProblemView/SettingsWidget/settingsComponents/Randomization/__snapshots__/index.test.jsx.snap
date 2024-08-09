@@ -1,0 +1,157 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RandomizationCard snapshot snapshot: renders randomization setting card with default randomization 1`] = `
+<SettingsOption
+  className=""
+  extraSections={[]}
+  hasExpandableTextArea={false}
+  none={true}
+  summary="sUmmary"
+  title="Randomization"
+>
+  <div
+    className="mb-3"
+  >
+    {randomization, select,
+      null {No Python based randomization is present in this problem.}
+      other {Defines when to randomize the variables specified in the associated Python script. For problems that do not randomize values, specify "Never".}
+    }
+  </div>
+  <Form.Group>
+    <Form.Control
+      as="select"
+      onChange={[MockFunction randomizationCardHooks.handleChange]}
+      value="default_vAlUE"
+    >
+      <option
+        key="never"
+        value="never"
+      >
+        Never
+      </option>
+      <option
+        key="always"
+        value="always"
+      >
+        Always
+      </option>
+      <option
+        key="onreset"
+        value="onreset"
+      >
+        On Reset
+      </option>
+      <option
+        key="per_student"
+        value="per_student"
+      >
+        Per Student
+      </option>
+    </Form.Control>
+  </Form.Group>
+</SettingsOption>
+`;
+
+exports[`RandomizationCard snapshot snapshot: renders randomization setting card with randomization defined 1`] = `
+<SettingsOption
+  className=""
+  extraSections={[]}
+  hasExpandableTextArea={false}
+  none={false}
+  summary="sUmmary"
+  title="Randomization"
+>
+  <div
+    className="mb-3"
+  >
+    {randomization, select,
+      null {No Python based randomization is present in this problem.}
+      other {Defines when to randomize the variables specified in the associated Python script. For problems that do not randomize values, specify "Never".}
+    }
+  </div>
+  <Form.Group>
+    <Form.Control
+      as="select"
+      onChange={[MockFunction randomizationCardHooks.handleChange]}
+      value="sOmE_vAlUE"
+    >
+      <option
+        key="never"
+        value="never"
+      >
+        Never
+      </option>
+      <option
+        key="always"
+        value="always"
+      >
+        Always
+      </option>
+      <option
+        key="onreset"
+        value="onreset"
+      >
+        On Reset
+      </option>
+      <option
+        key="per_student"
+        value="per_student"
+      >
+        Per Student
+      </option>
+    </Form.Control>
+  </Form.Group>
+</SettingsOption>
+`;
+
+exports[`RandomizationCard snapshot snapshot: renders randomization setting card with randomization null 1`] = `
+<SettingsOption
+  className=""
+  extraSections={[]}
+  hasExpandableTextArea={false}
+  none={true}
+  summary="sUmmary"
+  title="Randomization"
+>
+  <div
+    className="mb-3"
+  >
+    {randomization, select,
+      null {No Python based randomization is present in this problem.}
+      other {Defines when to randomize the variables specified in the associated Python script. For problems that do not randomize values, specify "Never".}
+    }
+  </div>
+  <Form.Group>
+    <Form.Control
+      as="select"
+      onChange={[MockFunction randomizationCardHooks.handleChange]}
+      value={null}
+    >
+      <option
+        key="never"
+        value="never"
+      >
+        Never
+      </option>
+      <option
+        key="always"
+        value="always"
+      >
+        Always
+      </option>
+      <option
+        key="onreset"
+        value="onreset"
+      >
+        On Reset
+      </option>
+      <option
+        key="per_student"
+        value="per_student"
+      >
+        Per Student
+      </option>
+    </Form.Control>
+  </Form.Group>
+</SettingsOption>
+`;

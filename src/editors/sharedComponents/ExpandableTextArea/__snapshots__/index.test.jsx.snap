@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ExpandableTextArea snapshots renders as expected with default behavior 1`] = `
+<Fragment>
+  <div
+    className="expandable-mce error"
+  >
+    <TinyMceWidget
+      editorContentHtml="text"
+      editorRef={
+        {
+          "current": null,
+        }
+      }
+      editorType="expandable"
+      placeholder={null}
+      setEditorRef={[Function]}
+      updateContent={[MockFunction]}
+    />
+  </div>
+</Fragment>
+`;
+
+exports[`ExpandableTextArea snapshots renders error message 1`] = `
+<Fragment>
+  <div
+    className="expandable-mce error"
+  >
+    <TinyMceWidget
+      editorContentHtml="text"
+      editorRef={
+        {
+          "current": null,
+        }
+      }
+      editorType="expandable"
+      placeholder={null}
+      setEditorRef={[Function]}
+      updateContent={[MockFunction]}
+    />
+  </div>
+  <div
+    className="text-danger-500 x-small"
+  />
+</Fragment>
+`;

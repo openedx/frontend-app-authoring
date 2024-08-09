@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HintRow snapshot snapshot: renders hints row 1`] = `
+<ActionRow
+  className="mb-4"
+>
+  <Container
+    className="p-0"
+    fluid={true}
+  >
+    <ExpandableTextArea
+      error={false}
+      errorMessage={null}
+      id="hint-0"
+      placeholder="Hint"
+      setContent={[MockFunction]}
+      value="hint_1"
+    />
+  </Container>
+  <div
+    className="d-flex flex-row flex-nowrap"
+  >
+    <IconButton
+      alt="Delete answer"
+      iconAs="Icon"
+      onClick={[MockFunction]}
+      variant="primary"
+    />
+  </div>
+</ActionRow>
+`;

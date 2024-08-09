@@ -1,0 +1,196 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Editor Page rendered with empty props should only have one button (try again) 1`] = `
+<Container
+  className="py-5 justify-content-center align-items-start text-center"
+  fluid={true}
+>
+  <Row>
+    <Col>
+      <p
+        className="text-muted"
+      >
+        An unexpected error occurred. Please click the button below to refresh the page.
+      </p>
+      <Row
+        className="justify-content-center"
+      >
+        <Button
+          className="ml-2"
+          onClick={[Function]}
+        >
+          Try again
+        </Button>
+      </Row>
+    </Col>
+  </Row>
+</Container>
+`;
+
+exports[`Editor Page rendered with pass through props defined should have custom message 1`] = `
+<Container
+  className="py-5 justify-content-center align-items-start text-center"
+  fluid={true}
+>
+  <Row>
+    <Col>
+      <p
+        className="text-muted"
+      >
+        An unexpected error occurred. Please click the button below to refresh the page.
+      </p>
+      <div
+        className="my-4"
+        role="alert"
+      >
+        <p>
+          cUStomMEssagE
+        </p>
+      </div>
+      <Row
+        className="justify-content-center"
+      >
+        <Button
+          className="mr-2"
+          onClick={[Function]}
+          variant="outline-primary"
+        >
+          Return to course outline
+        </Button>
+        <Button
+          className="ml-2"
+          onClick={[Function]}
+        >
+          Try again
+        </Button>
+      </Row>
+    </Col>
+  </Row>
+</Container>
+`;
+
+exports[`Editor Page rendered with pass through props defined shows two buttons the first button should correspond to returning to the course outline 1`] = `
+<Container
+  className="py-5 justify-content-center align-items-start text-center"
+  fluid={true}
+>
+  <Row>
+    <Col>
+      <p
+        className="text-muted"
+      >
+        An unexpected error occurred. Please click the button below to refresh the page.
+      </p>
+      <div
+        className="my-4"
+        role="alert"
+      >
+        <p>
+          cUStomMEssagE
+        </p>
+      </div>
+      <Row
+        className="justify-content-center"
+      >
+        <Button
+          className="mr-2"
+          onClick={[Function]}
+          variant="outline-primary"
+        >
+          Return to course outline
+        </Button>
+        <Button
+          className="ml-2"
+          onClick={[Function]}
+        >
+          Try again
+        </Button>
+      </Row>
+    </Col>
+  </Row>
+</Container>
+`;
+
+exports[`Editor Page rendered with pass through props defined shows two buttons the first button should correspond to returning to the unit page 1`] = `
+<Container
+  className="py-5 justify-content-center align-items-start text-center"
+  fluid={true}
+>
+  <Row>
+    <Col>
+      <p
+        className="text-muted"
+      >
+        An unexpected error occurred. Please click the button below to refresh the page.
+      </p>
+      <div
+        className="my-4"
+        role="alert"
+      >
+        <p>
+          cUStomMEssagE
+        </p>
+      </div>
+      <Row
+        className="justify-content-center"
+      >
+        <Button
+          className="mr-2"
+          onClick={[Function]}
+          variant="outline-primary"
+        >
+          Return to unit page
+        </Button>
+        <Button
+          className="ml-2"
+          onClick={[Function]}
+        >
+          Try again
+        </Button>
+      </Row>
+    </Col>
+  </Row>
+</Container>
+`;
+
+exports[`Editor Page rendered with pass through props defined shows two buttons the first button should correspond to returning to the unit page 2`] = `
+<Container
+  className="py-5 justify-content-center align-items-start text-center"
+  fluid={true}
+>
+  <Row>
+    <Col>
+      <p
+        className="text-muted"
+      >
+        An unexpected error occurred. Please click the button below to refresh the page.
+      </p>
+      <div
+        className="my-4"
+        role="alert"
+      >
+        <p>
+          cUStomMEssagE
+        </p>
+      </div>
+      <Row
+        className="justify-content-center"
+      >
+        <Button
+          className="mr-2"
+          onClick={[Function]}
+          variant="outline-primary"
+        >
+          Return to unit page
+        </Button>
+        <Button
+          className="ml-2"
+          onClick={[Function]}
+        >
+          Try again
+        </Button>
+      </Row>
+    </Col>
+  </Row>
+</Container>
+`;

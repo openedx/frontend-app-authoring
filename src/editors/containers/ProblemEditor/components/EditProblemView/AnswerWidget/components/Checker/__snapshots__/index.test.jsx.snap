@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Checker component with disabled 1`] = `
+<Fragment>
+  <Radio
+    checked={true}
+    className="pt-2.5"
+    disabled={true}
+    isValid={true}
+    onChange={[Function]}
+    value="A"
+  />
+  <Form.Label
+    className="pt-2"
+  >
+    A
+  </Form.Label>
+</Fragment>
+`;
+
+exports[`Checker component with multiple answers 1`] = `
+<Fragment>
+  <Form.Checkbox
+    checked={true}
+    className="pt-2.5"
+    disabled={false}
+    isValid={true}
+    onChange={[Function]}
+    value="A"
+  />
+  <Form.Label
+    className="pt-2"
+  >
+    A
+  </Form.Label>
+</Fragment>
+`;
+
+exports[`Checker component with single answer 1`] = `
+<Fragment>
+  <Radio
+    checked={true}
+    className="pt-2.5"
+    disabled={false}
+    isValid={true}
+    onChange={[Function]}
+    value="A"
+  />
+  <Form.Label
+    className="pt-2"
+  >
+    A
+  </Form.Label>
+</Fragment>
+`;

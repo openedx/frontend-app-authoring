@@ -1,0 +1,171 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HintsCard snapshot snapshot: renders groupFeedbacks setting card multiple groupFeedbacks 1`] = `
+<SettingsOption
+  className=""
+  extraSections={[]}
+  hasExpandableTextArea={true}
+  none={false}
+  summary=""
+  title="Group Feedback"
+>
+  <div
+    className="pb-3"
+  >
+    <FormattedMessage
+      defaultMessage="Group feedback will appear when a student selects a specific set of answers."
+      description="label for group feedback input"
+      id="authoring.problemeditor.settings.GroupFeedbackInputLabel"
+    />
+  </div>
+  <injectIntl(ShimmedIntlComponent)
+    answers={
+      [
+        "A",
+        "B",
+        "C",
+      ]
+    }
+    id={1}
+    key="1"
+    props="propsValue"
+    value={
+      {
+        "answers": [
+          "A",
+          "C",
+        ],
+        "feedback": "sOmE FeEDBACK",
+        "id": 1,
+        "value": "groupFeedback1",
+      }
+    }
+  />
+  <injectIntl(ShimmedIntlComponent)
+    answers={
+      [
+        "A",
+        "B",
+        "C",
+      ]
+    }
+    id={2}
+    key="2"
+    props="propsValue"
+    value={
+      {
+        "answers": [
+          "A",
+        ],
+        "feedback": "sOmE FeEDBACK oTher FeEdback",
+        "id": 2,
+        "value": "",
+      }
+    }
+  />
+  <Button
+    className="m-0 p-0 font-weight-bold"
+    onClick={[MockFunction groupFeedbacksCardHooks.handleAdd]}
+    size="sm"
+    text={null}
+    variant="add"
+  >
+    <FormattedMessage
+      defaultMessage="Add group feedback"
+      description="addGroupFeedbackButtonText"
+      id="authoring.problemeditor.settings.addGroupFeedbackButtonText"
+    />
+  </Button>
+</SettingsOption>
+`;
+
+exports[`HintsCard snapshot snapshot: renders groupFeedbacks setting card no groupFeedbacks 1`] = `
+<SettingsOption
+  className=""
+  extraSections={[]}
+  hasExpandableTextArea={true}
+  none={true}
+  summary="None"
+  title="Group Feedback"
+>
+  <div
+    className="pb-3"
+  >
+    <FormattedMessage
+      defaultMessage="Group feedback will appear when a student selects a specific set of answers."
+      description="label for group feedback input"
+      id="authoring.problemeditor.settings.GroupFeedbackInputLabel"
+    />
+  </div>
+  <Button
+    className="m-0 p-0 font-weight-bold"
+    onClick={[MockFunction groupFeedbacksCardHooks.handleAdd]}
+    size="sm"
+    text={null}
+    variant="add"
+  >
+    <FormattedMessage
+      defaultMessage="Add group feedback"
+      description="addGroupFeedbackButtonText"
+      id="authoring.problemeditor.settings.addGroupFeedbackButtonText"
+    />
+  </Button>
+</SettingsOption>
+`;
+
+exports[`HintsCard snapshot snapshot: renders groupFeedbacks setting card one groupFeedback 1`] = `
+<SettingsOption
+  className=""
+  extraSections={[]}
+  hasExpandableTextArea={true}
+  none={false}
+  summary="groupFeedback1"
+  title="Group Feedback"
+>
+  <div
+    className="pb-3"
+  >
+    <FormattedMessage
+      defaultMessage="Group feedback will appear when a student selects a specific set of answers."
+      description="label for group feedback input"
+      id="authoring.problemeditor.settings.GroupFeedbackInputLabel"
+    />
+  </div>
+  <injectIntl(ShimmedIntlComponent)
+    answers={
+      [
+        "A",
+        "B",
+        "C",
+      ]
+    }
+    id={1}
+    key="1"
+    props="propsValue"
+    value={
+      {
+        "answers": [
+          "A",
+          "C",
+        ],
+        "feedback": "sOmE FeEDBACK",
+        "id": 1,
+        "value": "groupFeedback1",
+      }
+    }
+  />
+  <Button
+    className="m-0 p-0 font-weight-bold"
+    onClick={[MockFunction groupFeedbacksCardHooks.handleAdd]}
+    size="sm"
+    text={null}
+    variant="add"
+  >
+    <FormattedMessage
+      defaultMessage="Add group feedback"
+      description="addGroupFeedbackButtonText"
+      id="authoring.problemeditor.settings.addGroupFeedbackButtonText"
+    />
+  </Button>
+</SettingsOption>
+`;

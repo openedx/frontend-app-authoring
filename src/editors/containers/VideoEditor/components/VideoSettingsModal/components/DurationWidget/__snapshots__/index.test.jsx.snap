@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DurationWidget render snapshots: renders as expected with default props 1`] = `
+<injectIntl(ShimmedIntlComponent)
+  fontSize="x-small"
+  subtitle="Custom: 00:00:00"
+  title="Duration"
+>
+  <FormattedMessage
+    defaultMessage="Set a specific section of the video to play."
+    description="Description of Duration widget"
+    id="authoring.videoeditor.duration.description"
+  />
+  <Form.Row
+    className="mt-4.5"
+  >
+    <Form.Group
+      as="Col"
+    >
+      <Form.Control
+        floatingLabel="Start time"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onKeyDown={[Function]}
+        value="00:00:00"
+      />
+      <Form.Control.Feedback>
+        <FormattedMessage
+          defaultMessage="Enter time as HH:MM:SS"
+          description="Hint text for start and stop time input fields"
+          id="authoring.videoeditor.duration.hint"
+        />
+      </Form.Control.Feedback>
+    </Form.Group>
+    <Form.Group
+      as="Col"
+    >
+      <Form.Control
+        floatingLabel="Stop time"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onKeyDown={[Function]}
+        value="00:00:00"
+      />
+      <Form.Control.Feedback>
+        <FormattedMessage
+          defaultMessage="Enter time as HH:MM:SS"
+          description="Hint text for start and stop time input fields"
+          id="authoring.videoeditor.duration.hint"
+        />
+      </Form.Control.Feedback>
+    </Form.Group>
+  </Form.Row>
+  <div
+    className="mt-4 mx-2 text-right"
+  >
+    <span
+      className="p-2 total-label rounded"
+    >
+      Total: 00:00:00
+    </span>
+  </div>
+</injectIntl(ShimmedIntlComponent)>
+`;

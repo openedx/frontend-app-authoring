@@ -1,0 +1,143 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EditorProblemView component renders raw editor 1`] = `
+<injectIntl(ShimmedIntlComponent)
+  getContent={[Function]}
+  returnFunction={null}
+>
+  <AlertModal
+    footerNode={
+      <ActionRow>
+        <Button
+          onClick={[Function]}
+          variant="tertiary"
+        >
+          <FormattedMessage
+            defaultMessage="Cancel"
+            description="Label for cancel button in the save warning modal"
+            id="authoring.problemEditor.editProblemView.saveWarningModal.cancelButton.label"
+          />
+        </Button>
+        <Button
+          onClick={[Function]}
+        >
+          <FormattedMessage
+            defaultMessage="Ok"
+            description="Label for save button in the save warning modal"
+            id="authoring.problemEditor.editProblemView.saveWarningModal.saveButton.label"
+          />
+        </Button>
+      </ActionRow>
+    }
+    isOpen={false}
+    onClose={[Function]}
+    title="OLX settings discrepancy"
+  >
+    <FormattedMessage
+      defaultMessage="A discrepancy was found between the settings defined in the OLX's problem tag and the
+      settings selected in the sidebar. The settings defined in the OLX's problem tag will be saved and
+      corresponding values in the sidebar will be discarded."
+      description="Explanation in body of mismatched settings modal"
+      id="authoring.problemEditor.editProblemView.saveWarningModal.olxSettingDiscrepancy.body.explanation"
+    />
+  </AlertModal>
+  <div
+    className="editProblemView d-flex flex-row flex-nowrap justify-content-end"
+  >
+    <Container
+      className="advancedEditorTopMargin p-0"
+      fluid={true}
+    >
+      <RawEditor
+        content={null}
+        editorRef={
+          {
+            "current": null,
+          }
+        }
+        lang="xml"
+      />
+    </Container>
+    <span
+      className="editProblemView-settingsColumn"
+    >
+      <injectIntl(ShimmedIntlComponent)
+        problemType="advanced"
+      />
+    </span>
+  </div>
+</injectIntl(ShimmedIntlComponent)>
+`;
+
+exports[`EditorProblemView component renders simple view 1`] = `
+<injectIntl(ShimmedIntlComponent)
+  getContent={[Function]}
+  returnFunction={null}
+>
+  <AlertModal
+    footerNode={
+      <ActionRow>
+        <Button
+          onClick={[Function]}
+          variant="tertiary"
+        >
+          <FormattedMessage
+            defaultMessage="Cancel"
+            description="Label for cancel button in the save warning modal"
+            id="authoring.problemEditor.editProblemView.saveWarningModal.cancelButton.label"
+          />
+        </Button>
+        <Button
+          onClick={[Function]}
+        >
+          <FormattedMessage
+            defaultMessage="Ok"
+            description="Label for save button in the save warning modal"
+            id="authoring.problemEditor.editProblemView.saveWarningModal.saveButton.label"
+          />
+        </Button>
+      </ActionRow>
+    }
+    isOpen={false}
+    onClose={[Function]}
+    title="No answer specified"
+  >
+    <Fragment>
+      <div>
+        <FormattedMessage
+          defaultMessage="Are you sure you want to exit the editor?"
+          description="Question in body of save warning modal"
+          id="authoring.problemEditor.editProblemView.saveWarningModal.body.question"
+        />
+      </div>
+      <div>
+        <FormattedMessage
+          defaultMessage="No correct answer has been specified."
+          description="Explanation in body of no answer modal"
+          id="authoring.problemEditor.editProblemView.saveWarningModal.noAnswer.body.explanation"
+        />
+      </div>
+    </Fragment>
+  </AlertModal>
+  <div
+    className="editProblemView d-flex flex-row flex-nowrap justify-content-end"
+  >
+    <span
+      className="flex-grow-1 mb-5"
+    >
+      <injectIntl(ShimmedIntlComponent) />
+      <injectIntl(ShimmedIntlComponent) />
+      <injectIntl(ShimmedIntlComponent)
+        problemType="multiplechoiceresponse"
+      />
+    </span>
+    <span
+      className="editProblemView-settingsColumn"
+    >
+      <injectIntl(ShimmedIntlComponent)
+        problemType="multiplechoiceresponse"
+      />
+    </span>
+  </div>
+</injectIntl(ShimmedIntlComponent)>
+`;

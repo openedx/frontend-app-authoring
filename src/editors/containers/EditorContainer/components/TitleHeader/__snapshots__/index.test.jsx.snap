@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TitleHeader snapshots editing 1`] = `
+<EditableHeader
+  handleChange={[MockFunction localTitleHooks.handleChange]}
+  handleKeyDown={[MockFunction localTitleHooks.handleKeyDown]}
+  inputRef={[MockFunction localTitleHooks.inputRef]}
+  localTitle="TeST LocALtitLE"
+  updateTitle={[MockFunction localTitleHooks.updateTitle]}
+/>
+`;
+
+exports[`TitleHeader snapshots initialized 1`] = `
+<div
+  className="d-flex flex-row align-items-center mt-1"
+>
+  <Truncate>
+    {
+      "useSelector": [Function],
+    }
+  </Truncate>
+  <IconButton
+    alt="Edit Title"
+    className="mx-2"
+    iconAs="Icon"
+    onClick={[MockFunction localTitleHooks.startEditing]}
+    size="sm"
+  />
+</div>
+`;
+
+exports[`TitleHeader snapshots not initialized 1`] = `"Loading..."`;

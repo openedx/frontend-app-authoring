@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RandomizationCard snapshot snapshot: renders general feedback setting card 1`] = `
+<SettingsOption
+  className=""
+  extraSections={[]}
+  hasExpandableTextArea={false}
+  none={false}
+  summary={
+    {
+      "defaultMessage": "sUmmary",
+    }
+  }
+  title="General Feedback"
+>
+  <div
+    className="halfSpacedMessage"
+  >
+    <span>
+      <FormattedMessage
+        defaultMessage="Enter the feedback to appear when a student submits a wrong answer. This will be overridden if you add answer-specific feedback."
+        description="description for general feedback input, clariying useage"
+        id="authoring.problemeditor.settings.generalFeedbackInputDescription"
+      />
+    </span>
+  </div>
+  <Form.Group>
+    <Form.Control
+      floatingLabel="Enter General Feedback"
+      onChange={[MockFunction randomizationCardHooks.handleChange]}
+      value="sOmE_vAlUE"
+    />
+  </Form.Group>
+</SettingsOption>
+`;

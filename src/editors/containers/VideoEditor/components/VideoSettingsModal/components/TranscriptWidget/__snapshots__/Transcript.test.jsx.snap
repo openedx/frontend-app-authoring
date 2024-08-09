@@ -1,0 +1,103 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Transcript Component component component snapshots: renders as expected with default props: dont show confirm delete 1`] = `
+<Fragment>
+  <ActionRow>
+    <LanguageSelector
+      language="lAnG"
+      title="sOmenUmBer"
+    />
+    <ActionRow.Spacer />
+    <TranscriptActionMenu
+      index="sOmenUmBer"
+      language="lAnG"
+      launchDeleteConfirmation={[MockFunction launchDeleteConfirmation]}
+    />
+  </ActionRow>
+</Fragment>
+`;
+
+exports[`Transcript Component component component snapshots: renders as expected with default props: dont show confirm delete, language is blank so delete is shown instead of action menu 1`] = `
+<Fragment>
+  <ActionRow>
+    <LanguageSelector
+      language=""
+      title="sOmenUmBer"
+    />
+    <ActionRow.Spacer />
+    <IconButton
+      iconAs="Icon"
+      onClick={[Function]}
+    />
+  </ActionRow>
+</Fragment>
+`;
+
+exports[`Transcript Component component component snapshots: renders as expected with default props: show confirm delete 1`] = `
+<Fragment>
+  <Card
+    className="mb-2"
+  >
+    <Card.Header
+      title={
+        <FormattedMessage
+          defaultMessage="Delete this transcript?"
+          description="Title for Warning which allows users to select next step in the process of deleting a transcript"
+          id="authoring.videoeditor.transcripts.deleteConfirmationTitle"
+        />
+      }
+    />
+    <Card.Body>
+      <Card.Section>
+        <FormattedMessage
+          defaultMessage="Are you sure you want to delete this transcript?"
+          description="Warning which allows users to select next step in the process of deleting a transcript"
+          id="authoring.videoeditor.transcripts.deleteConfirmationMessage"
+        />
+      </Card.Section>
+      <Card.Footer>
+        <Button
+          className="mb-2 mb-sm-0"
+          onClick={[MockFunction cancelDelete]}
+          variant="tertiary"
+        >
+          <FormattedMessage
+            defaultMessage="Cancel"
+            description="Label For Button, which allows users to stop the process of deleting a transcript"
+            id="authoring.videoeditor.transcripts.cancelDeleteLabel"
+          />
+        </Button>
+        <Button
+          className="mb-2 mb-sm-0"
+          onClick={[Function]}
+          variant="danger"
+        >
+          <FormattedMessage
+            defaultMessage="Delete"
+            description="Label For Button, which allows users to confirm the process of deleting a transcript"
+            id="authoring.videoeditor.transcripts.confirmDeleteLabel"
+          />
+        </Button>
+      </Card.Footer>
+    </Card.Body>
+  </Card>
+</Fragment>
+`;
+
+exports[`Transcript Component component component snapshots: renders as expected with transcriptUrl 1`] = `
+<Fragment>
+  <ActionRow>
+    <LanguageSelector
+      language="lAnG"
+      title="sOmenUmBer"
+    />
+    <ActionRow.Spacer />
+    <TranscriptActionMenu
+      index="sOmenUmBer"
+      language="lAnG"
+      launchDeleteConfirmation={[MockFunction launchDeleteConfirmation]}
+      transcriptUrl="url"
+    />
+  </ActionRow>
+</Fragment>
+`;

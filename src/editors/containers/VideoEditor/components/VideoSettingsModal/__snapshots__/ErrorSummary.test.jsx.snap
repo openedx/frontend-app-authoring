@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ErrorSummary render snapshots: renders as expected when there are errors 1`] = `
+<Alert
+  show={true}
+  variant="danger"
+>
+  <Alert.Heading>
+    <FormattedMessage
+      defaultMessage="We couldn't add your video."
+      description="Title of validation error."
+      id="authoring.videoeditor.validate.error.title"
+    />
+  </Alert.Heading>
+  <p>
+    <FormattedMessage
+      defaultMessage="Please check your entries and try again."
+      description="Body of validation error."
+      id="authoring.videoeditor.validate.error.body"
+    />
+  </p>
+</Alert>
+`;
+
+exports[`ErrorSummary render snapshots: renders as expected when there are no errors 1`] = `
+<Alert
+  show={false}
+  variant="danger"
+>
+  <Alert.Heading>
+    <FormattedMessage
+      defaultMessage="We couldn't add your video."
+      description="Title of validation error."
+      id="authoring.videoeditor.validate.error.title"
+    />
+  </Alert.Heading>
+  <p>
+    <FormattedMessage
+      defaultMessage="Please check your entries and try again."
+      description="Body of validation error."
+      id="authoring.videoeditor.validate.error.body"
+    />
+  </p>
+</Alert>
+`;

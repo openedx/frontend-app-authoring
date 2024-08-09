@@ -1,0 +1,145 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CollapsibleFormWidget render snapshots: renders as expected with default props 1`] = `
+<Advanced
+  className="collapsible-card rounded mx-4 my-3 px-4 text-primary-500"
+  defaultOpen={true}
+>
+  <Trigger
+    className="collapsible-trigger d-flex border-0 align-items-center pt-4 p-0"
+    style={
+      {
+        "justifyContent": "unset",
+      }
+    }
+  >
+    <Visible
+      className="p-0 pb-3"
+      whenClosed={true}
+    >
+      <div
+        className="d-flex flex-column flex-grow-1"
+      >
+        <div
+          className="d-flex flex-grow-1 w-75 x-small"
+        >
+          tiTLE
+        </div>
+        <div
+          className=" mb-4 mt-3"
+        >
+          SuBTItle
+        </div>
+      </div>
+      <div
+        className="d-flex flex-row align-self-start"
+      >
+        <IconButton
+          alt="Expand"
+          iconAs="Icon"
+          variant="dark"
+        />
+      </div>
+    </Visible>
+    <Visible
+      whenOpen={true}
+    >
+      <div
+        className="d-flex flex-grow-1 w-75 x-small"
+      >
+        tiTLE
+      </div>
+      <div
+        className="align-self-start"
+      >
+        <IconButton
+          alt="Collapse"
+          iconAs="Icon"
+          variant="dark"
+        />
+      </div>
+    </Visible>
+  </Trigger>
+  <Body
+    className="collapsible-body rounded px-0  pb-4"
+  >
+    <p>
+      Some test string
+    </p>
+  </Body>
+</Advanced>
+`;
+
+exports[`CollapsibleFormWidget render snapshots: renders with open={true} when there is error 1`] = `
+<Advanced
+  className="collapsible-card rounded mx-4 my-3 px-4 text-primary-500"
+  defaultOpen={true}
+  open={true}
+>
+  <Trigger
+    className="collapsible-trigger d-flex border-0 align-items-center pt-4 p-0"
+    style={
+      {
+        "justifyContent": "unset",
+      }
+    }
+  >
+    <Visible
+      className="p-0 pb-3"
+      whenClosed={true}
+    >
+      <div
+        className="d-flex flex-column flex-grow-1"
+      >
+        <div
+          className="d-flex flex-grow-1 w-75 x-small"
+        >
+          tiTLE
+        </div>
+        <div
+          className=" mb-4 mt-3"
+        >
+          SuBTItle
+        </div>
+      </div>
+      <div
+        className="d-flex flex-row align-self-start"
+      >
+        <Icon
+          className="alert-icon"
+        />
+        <IconButton
+          alt="Expand"
+          iconAs="Icon"
+          variant="dark"
+        />
+      </div>
+    </Visible>
+    <Visible
+      whenOpen={true}
+    >
+      <div
+        className="d-flex flex-grow-1 w-75 x-small"
+      >
+        tiTLE
+      </div>
+      <div
+        className="align-self-start"
+      >
+        <IconButton
+          alt="Collapse"
+          iconAs="Icon"
+          variant="dark"
+        />
+      </div>
+    </Visible>
+  </Trigger>
+  <Body
+    className="collapsible-body rounded px-0  pb-4"
+  >
+    <p>
+      Some test string
+    </p>
+  </Body>
+</Advanced>
+`;

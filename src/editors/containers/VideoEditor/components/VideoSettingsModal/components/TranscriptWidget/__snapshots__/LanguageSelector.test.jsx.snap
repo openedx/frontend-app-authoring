@@ -1,0 +1,111 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LanguageSelector snapshot transcript option 1`] = `
+<Fragment>
+  <Dropdown
+    className="w-100 mb-2"
+  >
+    <Dropdown.Toggle
+      aria-label="Languages"
+      block={true}
+      className="w-100"
+      iconAs="Button"
+      id="selectLanguage-form-undefined"
+      variant="outline-primary"
+    >
+      <ActionRow>
+        kLinGon
+        <ActionRow.Spacer />
+        <Icon
+          className="text-primary-500"
+        />
+      </ActionRow>
+    </Dropdown.Toggle>
+    <Dropdown.Menu>
+      <Dropdown.Item>
+        kLinGon
+        <Icon
+          className="text-primary-500"
+        />
+      </Dropdown.Item>
+      <Dropdown.Item
+        onClick={[Function]}
+      >
+        eLvIsh
+      </Dropdown.Item>
+      <Dropdown.Item
+        onClick={[Function]}
+      >
+        sImLisH
+      </Dropdown.Item>
+    </Dropdown.Menu>
+  </Dropdown>
+  <FileInput
+    acceptedFiles=".srt"
+    fileInput={
+      {
+        "addFile": [Function],
+        "click": [Function],
+        "ref": {
+          "current": undefined,
+        },
+      }
+    }
+  />
+</Fragment>
+`;
+
+exports[`LanguageSelector snapshots -- no transcripts no Open Languages, all should be disabled 1`] = `
+<Fragment>
+  <Dropdown
+    className="w-100 mb-2"
+  >
+    <Dropdown.Toggle
+      aria-label="Languages"
+      block={true}
+      className="w-100"
+      iconAs="Button"
+      id="selectLanguage-form-undefined"
+      variant="outline-primary"
+    >
+      <ActionRow>
+        kLinGon
+        <ActionRow.Spacer />
+        <Icon
+          className="text-primary-500"
+        />
+      </ActionRow>
+    </Dropdown.Toggle>
+    <Dropdown.Menu>
+      <Dropdown.Item>
+        kLinGon
+        <Icon
+          className="text-primary-500"
+        />
+      </Dropdown.Item>
+      <Dropdown.Item
+        className="disabled"
+      >
+        eLvIsh
+      </Dropdown.Item>
+      <Dropdown.Item
+        className="disabled"
+      >
+        sImLisH
+      </Dropdown.Item>
+    </Dropdown.Menu>
+  </Dropdown>
+  <FileInput
+    acceptedFiles=".srt"
+    fileInput={
+      {
+        "addFile": [Function],
+        "click": [Function],
+        "ref": {
+          "current": undefined,
+        },
+      }
+    }
+  />
+</Fragment>
+`;

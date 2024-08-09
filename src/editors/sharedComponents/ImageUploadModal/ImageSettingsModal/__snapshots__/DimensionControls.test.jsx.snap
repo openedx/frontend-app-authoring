@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DimensionControls render null value: empty snapshot 1`] = `false`;
+
+exports[`DimensionControls render snapshot 1`] = `
+<Form.Group>
+  <Form.Label
+    as="h4"
+  >
+    <FormattedMessage
+      defaultMessage="Image Dimensions"
+      description="Label title for the image dimensions section."
+      id="authoring.texteditor.imagesettingsmodal.imageDimensionsLabel"
+    />
+  </Form.Label>
+  <div
+    className="mt-4.5"
+  >
+    <Form.Control
+      className="dimension-input"
+      floatingLabel="Width"
+      onBlur={[MockFunction props.updateDimensions]}
+      onChange={
+        {
+          "hooks.onInputChange": [MockFunction props.setWidth],
+        }
+      }
+      value={20}
+    />
+    <Form.Control
+      className="dimension-input"
+      floatingLabel="Height"
+      onBlur={[MockFunction props.updateDimensions]}
+      onChange={
+        {
+          "hooks.onInputChange": [MockFunction props.setHeight],
+        }
+      }
+      value={40}
+    />
+    <IconButton
+      alt="unlock dimensions"
+      className="d-inline-block"
+      iconAs="Icon"
+      onClick={[MockFunction props.unlock]}
+      src={[MockFunction icons.Locked]}
+    />
+  </div>
+</Form.Group>
+`;
+
+exports[`DimensionControls render unlocked dimensions 1`] = `
+<Form.Group>
+  <Form.Label
+    as="h4"
+  >
+    <FormattedMessage
+      defaultMessage="Image Dimensions"
+      description="Label title for the image dimensions section."
+      id="authoring.texteditor.imagesettingsmodal.imageDimensionsLabel"
+    />
+  </Form.Label>
+  <div
+    className="mt-4.5"
+  >
+    <Form.Control
+      className="dimension-input"
+      floatingLabel="Width"
+      onBlur={[MockFunction props.updateDimensions]}
+      onChange={
+        {
+          "hooks.onInputChange": [MockFunction props.setWidth],
+        }
+      }
+      value={20}
+    />
+    <Form.Control
+      className="dimension-input"
+      floatingLabel="Height"
+      onBlur={[MockFunction props.updateDimensions]}
+      onChange={
+        {
+          "hooks.onInputChange": [MockFunction props.setHeight],
+        }
+      }
+      value={40}
+    />
+    <IconButton
+      alt="lock dimensions"
+      className="d-inline-block"
+      iconAs="Icon"
+      onClick={[MockFunction props.lock]}
+      src={[MockFunction icons.Unlocked]}
+    />
+  </div>
+</Form.Group>
+`;

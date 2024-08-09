@@ -1,0 +1,309 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TextEditor Image Gallery component component snapshot: loaded but no images, show empty gallery 1`] = `
+<[object Object]
+  value={
+    {
+      "$t": [Function],
+      "defaultFormats": {},
+      "defaultLocale": "en",
+      "defaultRichTextElements": undefined,
+      "fallbackOnEmptyString": true,
+      "formatDate": [Function],
+      "formatDateTimeRange": [Function],
+      "formatDateToParts": [Function],
+      "formatDisplayName": [Function],
+      "formatList": [Function],
+      "formatListToParts": [Function],
+      "formatMessage": [Function],
+      "formatNumber": [Function],
+      "formatNumberToParts": [Function],
+      "formatPlural": [Function],
+      "formatRelativeTime": [Function],
+      "formatTime": [Function],
+      "formatTimeToParts": [Function],
+      "formats": {},
+      "formatters": {
+        "getDateTimeFormat": [Function],
+        "getDisplayNames": [Function],
+        "getListFormat": [Function],
+        "getMessageFormat": [Function],
+        "getNumberFormat": [Function],
+        "getPluralRules": [Function],
+        "getRelativeTimeFormat": [Function],
+      },
+      "locale": "en",
+      "messages": {},
+      "onError": [Function],
+      "onWarn": [Function],
+      "textComponent": Symbol(react.fragment),
+      "timeZone": undefined,
+      "wrapRichTextChunksInFragment": undefined,
+    }
+  }
+>
+  <Gallery
+    allowLazyLoad={false}
+    assetCount={0}
+    displayList={
+      [
+        {
+          "id": 1,
+        },
+        {
+          "id": 2,
+        },
+        {
+          "id": 3,
+        },
+      ]
+    }
+    emptyGalleryLabel={
+      {
+        "defaultMessage": "Empty Gallery",
+        "id": "emptyGalleryMsg",
+      }
+    }
+    fetchNextPage={null}
+    galleryIsEmpty={true}
+    height="375px"
+    highlighted="props.highlighted"
+    isLoaded={true}
+    onHighlightChange={[MockFunction props.onHighlightChange]}
+    searchIsEmpty={false}
+    show={true}
+    showIdsOnCards={false}
+  />
+</[object Object]>
+`;
+
+exports[`TextEditor Image Gallery component component snapshot: loaded but search returns no images, show 0 search result gallery 1`] = `
+<[object Object]
+  value={
+    {
+      "$t": [Function],
+      "defaultFormats": {},
+      "defaultLocale": "en",
+      "defaultRichTextElements": undefined,
+      "fallbackOnEmptyString": true,
+      "formatDate": [Function],
+      "formatDateTimeRange": [Function],
+      "formatDateToParts": [Function],
+      "formatDisplayName": [Function],
+      "formatList": [Function],
+      "formatListToParts": [Function],
+      "formatMessage": [Function],
+      "formatNumber": [Function],
+      "formatNumberToParts": [Function],
+      "formatPlural": [Function],
+      "formatRelativeTime": [Function],
+      "formatTime": [Function],
+      "formatTimeToParts": [Function],
+      "formats": {},
+      "formatters": {
+        "getDateTimeFormat": [Function],
+        "getDisplayNames": [Function],
+        "getListFormat": [Function],
+        "getMessageFormat": [Function],
+        "getNumberFormat": [Function],
+        "getPluralRules": [Function],
+        "getRelativeTimeFormat": [Function],
+      },
+      "locale": "en",
+      "messages": {},
+      "onError": [Function],
+      "onWarn": [Function],
+      "textComponent": Symbol(react.fragment),
+      "timeZone": undefined,
+      "wrapRichTextChunksInFragment": undefined,
+    }
+  }
+>
+  <Gallery
+    allowLazyLoad={false}
+    assetCount={0}
+    displayList={
+      [
+        {
+          "id": 1,
+        },
+        {
+          "id": 2,
+        },
+        {
+          "id": 3,
+        },
+      ]
+    }
+    emptyGalleryLabel={
+      {
+        "defaultMessage": "Empty Gallery",
+        "id": "emptyGalleryMsg",
+      }
+    }
+    fetchNextPage={null}
+    galleryIsEmpty={false}
+    height="375px"
+    highlighted="props.highlighted"
+    isLoaded={true}
+    onHighlightChange={[MockFunction props.onHighlightChange]}
+    searchIsEmpty={true}
+    show={true}
+    showIdsOnCards={false}
+  />
+</[object Object]>
+`;
+
+exports[`TextEditor Image Gallery component component snapshot: loaded, show gallery 1`] = `
+<[object Object]
+  value={
+    {
+      "$t": [Function],
+      "defaultFormats": {},
+      "defaultLocale": "en",
+      "defaultRichTextElements": undefined,
+      "fallbackOnEmptyString": true,
+      "formatDate": [Function],
+      "formatDateTimeRange": [Function],
+      "formatDateToParts": [Function],
+      "formatDisplayName": [Function],
+      "formatList": [Function],
+      "formatListToParts": [Function],
+      "formatMessage": [Function],
+      "formatNumber": [Function],
+      "formatNumberToParts": [Function],
+      "formatPlural": [Function],
+      "formatRelativeTime": [Function],
+      "formatTime": [Function],
+      "formatTimeToParts": [Function],
+      "formats": {},
+      "formatters": {
+        "getDateTimeFormat": [Function],
+        "getDisplayNames": [Function],
+        "getListFormat": [Function],
+        "getMessageFormat": [Function],
+        "getNumberFormat": [Function],
+        "getPluralRules": [Function],
+        "getRelativeTimeFormat": [Function],
+      },
+      "locale": "en",
+      "messages": {},
+      "onError": [Function],
+      "onWarn": [Function],
+      "textComponent": Symbol(react.fragment),
+      "timeZone": undefined,
+      "wrapRichTextChunksInFragment": undefined,
+    }
+  }
+>
+  <Gallery
+    allowLazyLoad={false}
+    assetCount={0}
+    displayList={
+      [
+        {
+          "id": 1,
+        },
+        {
+          "id": 2,
+        },
+        {
+          "id": 3,
+        },
+      ]
+    }
+    emptyGalleryLabel={
+      {
+        "defaultMessage": "Empty Gallery",
+        "id": "emptyGalleryMsg",
+      }
+    }
+    fetchNextPage={null}
+    galleryIsEmpty={false}
+    height="375px"
+    highlighted="props.highlighted"
+    isLoaded={true}
+    onHighlightChange={[MockFunction props.onHighlightChange]}
+    searchIsEmpty={false}
+    show={true}
+    showIdsOnCards={false}
+  />
+</[object Object]>
+`;
+
+exports[`TextEditor Image Gallery component component snapshot: not loaded, show spinner 1`] = `
+<[object Object]
+  value={
+    {
+      "$t": [Function],
+      "defaultFormats": {},
+      "defaultLocale": "en",
+      "defaultRichTextElements": undefined,
+      "fallbackOnEmptyString": true,
+      "formatDate": [Function],
+      "formatDateTimeRange": [Function],
+      "formatDateToParts": [Function],
+      "formatDisplayName": [Function],
+      "formatList": [Function],
+      "formatListToParts": [Function],
+      "formatMessage": [Function],
+      "formatNumber": [Function],
+      "formatNumberToParts": [Function],
+      "formatPlural": [Function],
+      "formatRelativeTime": [Function],
+      "formatTime": [Function],
+      "formatTimeToParts": [Function],
+      "formats": {},
+      "formatters": {
+        "getDateTimeFormat": [Function],
+        "getDisplayNames": [Function],
+        "getListFormat": [Function],
+        "getMessageFormat": [Function],
+        "getNumberFormat": [Function],
+        "getPluralRules": [Function],
+        "getRelativeTimeFormat": [Function],
+      },
+      "locale": "en",
+      "messages": {},
+      "onError": [Function],
+      "onWarn": [Function],
+      "textComponent": Symbol(react.fragment),
+      "timeZone": undefined,
+      "wrapRichTextChunksInFragment": undefined,
+    }
+  }
+>
+  <Gallery
+    allowLazyLoad={false}
+    assetCount={0}
+    displayList={
+      [
+        {
+          "id": 1,
+        },
+        {
+          "id": 2,
+        },
+        {
+          "id": 3,
+        },
+      ]
+    }
+    emptyGalleryLabel={
+      {
+        "defaultMessage": "Empty Gallery",
+        "id": "emptyGalleryMsg",
+      }
+    }
+    fetchNextPage={null}
+    galleryIsEmpty={false}
+    height="375px"
+    highlighted="props.highlighted"
+    isLoaded={false}
+    onHighlightChange={[MockFunction props.onHighlightChange]}
+    searchIsEmpty={false}
+    show={true}
+    showIdsOnCards={false}
+  />
+</[object Object]>
+`;

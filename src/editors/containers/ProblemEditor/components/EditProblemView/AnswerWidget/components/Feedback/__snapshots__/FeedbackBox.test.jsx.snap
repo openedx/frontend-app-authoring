@@ -1,0 +1,142 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FeedbackBox component renders as expected with a multi select problem 1`] = `
+<div
+  className="bg-light-300 p-4 mt-3 rounded text-primary-500"
+>
+  <FeedbackControl
+    answer={
+      {
+        "correct": true,
+        "id": "A",
+        "problemType": "sOMepRObleM",
+        "selectedFeedback": "some feedback",
+        "title": "Answer 1",
+        "unselectedFeedback": "unselectedFeedback",
+      }
+    }
+    feedback="some feedback"
+    intl={{}}
+    key="selectedfeedback-A"
+    labelMessage={
+      {
+        "defaultMessage": "Show following feedback when {answerId} {boldunderline}:",
+        "description": "Label text for feedback if option is selected",
+        "id": "authoring.answerwidget.feedback.selected.label",
+      }
+    }
+    labelMessageBoldUnderline={
+      {
+        "defaultMessage": "is selected",
+        "description": "Bold & underlined text for feedback if option is selected",
+        "id": "authoring.answerwidget.feedback.selected.label.boldunderline",
+      }
+    }
+    type="selected"
+  />
+  <FeedbackControl
+    answer={
+      {
+        "correct": true,
+        "id": "A",
+        "problemType": "sOMepRObleM",
+        "selectedFeedback": "some feedback",
+        "title": "Answer 1",
+        "unselectedFeedback": "unselectedFeedback",
+      }
+    }
+    feedback="unselectedFeedback"
+    intl={{}}
+    key="unselectedfeedback-A"
+    labelMessage={
+      {
+        "defaultMessage": "Show following feedback when {answerId} {boldunderline}:",
+        "description": "Label text for feedback if option is not selected",
+        "id": "authoring.answerwidget.feedback.unselected.label",
+      }
+    }
+    labelMessageBoldUnderline={
+      {
+        "defaultMessage": "is not selected",
+        "description": "Bold & underlined text for feedback if option is not selected",
+        "id": "authoring.answerwidget.feedback.unselected.label.boldunderline",
+      }
+    }
+    type="unselected"
+  />
+</div>
+`;
+
+exports[`FeedbackBox component renders as expected with a numeric input problem 1`] = `
+<div
+  className="bg-light-300 p-4 mt-3 rounded text-primary-500"
+>
+  <FeedbackControl
+    answer={
+      {
+        "correct": true,
+        "id": "A",
+        "problemType": "sOMepRObleM",
+        "selectedFeedback": "some feedback",
+        "title": "Answer 1",
+        "unselectedFeedback": "unselectedFeedback",
+      }
+    }
+    feedback="some feedback"
+    intl={{}}
+    key="selectedfeedback-A"
+    labelMessage={
+      {
+        "defaultMessage": "Show following feedback when {answerId} {boldunderline}:",
+        "description": "Label text for feedback if option is selected",
+        "id": "authoring.answerwidget.feedback.selected.label",
+      }
+    }
+    labelMessageBoldUnderline={
+      {
+        "defaultMessage": "is selected",
+        "description": "Bold & underlined text for feedback if option is selected",
+        "id": "authoring.answerwidget.feedback.selected.label.boldunderline",
+      }
+    }
+    type="selected"
+  />
+</div>
+`;
+
+exports[`FeedbackBox component renders as expected with default props 1`] = `
+<div
+  className="bg-light-300 p-4 mt-3 rounded text-primary-500"
+>
+  <FeedbackControl
+    answer={
+      {
+        "correct": true,
+        "id": "A",
+        "problemType": "sOMepRObleM",
+        "selectedFeedback": "some feedback",
+        "title": "Answer 1",
+        "unselectedFeedback": "unselectedFeedback",
+      }
+    }
+    feedback="some feedback"
+    intl={{}}
+    key="selectedfeedback-A"
+    labelMessage={
+      {
+        "defaultMessage": "Show following feedback when {answerId} {boldunderline}:",
+        "description": "Label text for feedback if option is selected",
+        "id": "authoring.answerwidget.feedback.selected.label",
+      }
+    }
+    labelMessageBoldUnderline={
+      {
+        "defaultMessage": "is selected",
+        "description": "Bold & underlined text for feedback if option is selected",
+        "id": "authoring.answerwidget.feedback.selected.label.boldunderline",
+      }
+    }
+    type="selected"
+  />
+</div>
+`;

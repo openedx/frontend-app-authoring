@@ -1,0 +1,94 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SelectImageModal component snapshot 1`] = `
+<SelectionModal
+  acceptedFiles={
+    {
+      "gif": ".gif",
+      "ico": ".ico",
+      "jpeg": ".jpeg",
+      "jpg": ".jpg",
+      "png": ".png",
+      "tif": ".tif",
+      "tiff": ".tiff",
+    }
+  }
+  close={[MockFunction props.close]}
+  fileInput={
+    {
+      "addFile": "imgHooks.fileInput.addFile",
+      "click": "imgHooks.fileInput.click",
+      "ref": "imgHooks.fileInput.ref",
+    }
+  }
+  galleryError={
+    {
+      "dismiss": [MockFunction],
+      "message": {
+        "defaultMessage": "Gallery error",
+        "description": "Gallery error",
+        "id": "Gallery error id",
+      },
+      "set": [MockFunction],
+      "show": "ShoWERror gAlLery",
+    }
+  }
+  galleryProps={
+    {
+      "gallery": "props",
+    }
+  }
+  inputError={
+    {
+      "dismiss": [MockFunction],
+      "message": {
+        "defaultMessage": "Input error",
+        "description": "Input error",
+        "id": "Input error id",
+      },
+      "set": [MockFunction],
+      "show": "ShoWERror inPUT",
+    }
+  }
+  isOpen={true}
+  modalMessages={
+    {
+      "confirmMsg": {
+        "defaultMessage": "Next",
+        "description": "Label for Next button",
+        "id": "authoring.texteditor.selectimagemodal.next.label",
+      },
+      "fetchError": {
+        "defaultMessage": "Failed to obtain course images. Please try again.",
+        "description": "Message presented to user when images are not found",
+        "id": "authoring.texteditor.selectimagemodal.error.fetchImagesError",
+      },
+      "titleMsg": {
+        "defaultMessage": "Add an image",
+        "description": "Title for the select image modal",
+        "id": "authoring.texteditor.selectimagemodal.title.label",
+      },
+      "uploadButtonMsg": {
+        "defaultMessage": "Upload a new image (10 MB max)",
+        "description": "Label for upload button",
+        "id": "authoring.texteditor.selectimagemodal.upload.label",
+      },
+      "uploadError": {
+        "defaultMessage": "Failed to upload image. Please try again.",
+        "description": "Message presented to user when image fails to upload",
+        "id": "authoring.texteditor.selectimagemodal.error.uploadImageError",
+      },
+    }
+  }
+  searchSortProps={
+    {
+      "search": "sortProps",
+    }
+  }
+  selectBtnProps={
+    {
+      "select": "btnProps",
+    }
+  }
+/>
+`;

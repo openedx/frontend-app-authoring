@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SelectTypeWrapper snapshot 1`] = `
+<div
+  className="position-relative zindex-0"
+>
+  <ModalDialog.Header
+    className="shadow-sm zindex-10"
+  >
+    <ModalDialog.Title>
+      <FormattedMessage
+        defaultMessage="Select problem type"
+        description="Title for select problem type modal"
+        id="authoring.problemEditor.selectType.title"
+      />
+      <div
+        className="pgn__modal-close-container"
+      >
+        <IconButton
+          iconAs="Icon"
+          src={[MockFunction icons.Close]}
+        />
+      </div>
+    </ModalDialog.Title>
+  </ModalDialog.Header>
+  <ModalDialog.Body
+    className="pb-6"
+  >
+    <h1>
+      test child
+    </h1>
+  </ModalDialog.Body>
+  <injectIntl(ShimmedIntlComponent)
+    selected="iMAsElecTedValUE"
+  />
+</div>
+`;

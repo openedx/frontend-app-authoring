@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Video Selector Page snapshots rendering correctly with expected Input 1`] = `
+<Provider
+  store={
+    {
+      "dispatch": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+      Symbol(Symbol.observable): [Function],
+    }
+  }
+>
+  <ErrorBoundary
+    learningContextId="course-v1:edX+DemoX+Demo_Course"
+    studioEndpointUrl="fakeurl.com"
+  >
+    <VideoSelector
+      blockId="block-v1:edX+DemoX+Demo_Course+type@html+block@030e35c4756a4ddc8d40b95fbbfff4d4"
+      learningContextId="course-v1:edX+DemoX+Demo_Course"
+      lmsEndpointUrl="evenfakerurl.com"
+      studioEndpointUrl="fakeurl.com"
+    />
+  </ErrorBoundary>
+</Provider>
+`;
+
+exports[`Video Selector Page snapshots rendering with props to null 1`] = `
+<Provider
+  store={
+    {
+      "dispatch": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+      Symbol(Symbol.observable): [Function],
+    }
+  }
+>
+  <ErrorBoundary
+    learningContextId={null}
+    studioEndpointUrl={null}
+  >
+    <VideoSelector
+      blockId={null}
+      learningContextId={null}
+      lmsEndpointUrl={null}
+      studioEndpointUrl={null}
+    />
+  </ErrorBoundary>
+</Provider>
+`;
