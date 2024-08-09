@@ -16,7 +16,7 @@ import { Spinner } from '@openedx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import EditorContainer from '../EditorContainer';
-import * as module from '.';
+import * as module from '..';
 import { actions, selectors } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
 

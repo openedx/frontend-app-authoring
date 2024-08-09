@@ -1,8 +1,0 @@
-# openedx.yaml
-
----
-owner: openedx/2u-tnl
-tags:
-  - library
-  - component
-  - react

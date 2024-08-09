@@ -4,7 +4,7 @@ import TestRenderer from 'react-test-renderer';
 import { AppContext } from '@edx/frontend-platform/react';
 import { Context as ResponsiveContext } from 'react-responsive';
 
-import Placeholder from './index';
+import Placeholder from '../index';
 
 describe('<Placeholder />', () => {
   it('renders correctly', () => {
