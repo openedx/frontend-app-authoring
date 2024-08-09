@@ -4,7 +4,7 @@ import { selectors } from '../../data/redux';
 import SourceCodeModal from '../SourceCodeModal';
 import ImageUploadModal from '../ImageUploadModal';
 import { imgModalToggle, sourceCodeModalToggle } from './hooks';
-import { TinyMceWidget, mapStateToProps } from '.';
+import { TinyMceWidgetInternal as TinyMceWidget, mapStateToProps } from '.';
 
 const staticUrl = '/assets/sOmEaSsET';
 

@@ -89,10 +89,12 @@ jest.mock('./Gallery', () => function mockGallery(componentProps) {
   mockGalleryFn(componentProps);
   return (<div>Gallery</div>);
 });
-jest.mock('../FileInput', () => function mockFileInput(componentProps) {
-  mockFileInputFn(componentProps);
-  return (<div>FileInput</div>);
-});
+jest.mock('../FileInput', () => ({
+  FileInput: function mockFileInput(componentProps) {
+    mockFileInputFn(componentProps);
+    return (<div>FileInput</div>);
+  },
+}));
 jest.mock('../ErrorAlerts/ErrorAlert', () => function mockErrorAlert() {
   return <div>ErrorAlert</div>;
 });

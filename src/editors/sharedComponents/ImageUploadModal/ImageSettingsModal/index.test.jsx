@@ -1,14 +1,15 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 
-import { formatMessage } from '../../../../testUtils';
-import { ImageSettingsModal } from '.';
+import { formatMessage } from '../../../testUtils';
+import { ImageSettingsModalInternal as ImageSettingsModal } from '.';
 
 jest.mock('./AltTextControls', () => 'AltTextControls');
 jest.mock('./DimensionControls', () => 'DimensionControls');
 
 jest.mock('./hooks', () => ({
-  altText: () => ({
+  altTextHooks: () => ({
     error: {
       show: true,
       dismiss: jest.fn(),
@@ -16,7 +17,7 @@ jest.mock('./hooks', () => ({
     isDecorative: false,
     value: 'alternative Taxes',
   }),
-  dimensions: () => ({
+  dimensionHooks: () => ({
     onImgLoad: jest.fn(
       (selection) => ({ 'hooks.dimensions.onImgLoad.callback': { selection } }),
     ).mockName('hooks.dimensions.onImgLoad'),

@@ -1,13 +1,12 @@
 /* eslint-disable react/prop-types */
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 import { act, render, waitFor } from '@testing-library/react';
 
 import { actions, selectors } from '../../../../../data/redux';
 
-import * as module from './AnswersContainer';
-
-import { AnswersContainer as AnswersContainerWithoutHOC } from './AnswersContainer';
+import { AnswersContainerInternal as AnswersContainer, mapStateToProps, mapDispatchToProps } from './AnswersContainer';
 import { ProblemTypeKeys } from '../../../../../data/constants/problem';
 
 jest.mock('@edx/frontend-platform/i18n', () => ({
@@ -44,13 +43,13 @@ describe('AnswersContainer', () => {
   describe('render', () => {
     test('snapshot: renders correct default', () => {
       act(() => {
-        expect(shallow(<module.AnswersContainer {...props} />).snapshot).toMatchSnapshot();
+        expect(shallow(<AnswersContainer {...props} />).snapshot).toMatchSnapshot();
       });
     });
     test('snapshot: renders correctly with answers', () => {
       act(() => {
         expect(shallow(
-          <module.AnswersContainer
+          <AnswersContainer
             {...props}
             answers={[{ id: 'a', title: 'sOMetITlE', correct: true }, { id: 'b', title: 'sOMetITlE', correct: true }]}
           />,
@@ -67,7 +66,7 @@ describe('AnswersContainer', () => {
           addAnswerRange: jest.fn(),
         };
         expect(shallow(
-          <module.AnswersContainer
+          <AnswersContainer
             {...emptyAnswerProps}
           />,
         ).snapshot).toMatchSnapshot();
@@ -90,7 +89,7 @@ describe('AnswersContainer', () => {
           addAnswerRange: jest.fn(),
         };
         expect(shallow(
-          <module.AnswersContainer
+          <AnswersContainer
             {...answerRangeProps}
           />,
         ).snapshot).toMatchSnapshot();
@@ -122,7 +121,7 @@ describe('AnswersContainer', () => {
           addAnswerRange: jest.fn(),
         };
         expect(shallow(
-          <module.AnswersContainer
+          <AnswersContainer
             {...answersProps}
           />,
         ).snapshot).toMatchSnapshot();
@@ -133,7 +132,7 @@ describe('AnswersContainer', () => {
       let container = null;
       await act(async () => {
         const wrapper = render(
-          <AnswersContainerWithoutHOC
+          <AnswersContainer
             {...props}
             answers={[{ id: 'a', title: 'sOMetITlE', correct: true }, { id: 'b', title: 'sOMetITlE', correct: true }]}
           />,
@@ -142,7 +141,7 @@ describe('AnswersContainer', () => {
       });
 
       await waitFor(() => expect(container.querySelector('button')).toBeTruthy());
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => { setTimeout(resolve, 500); });
 
       expect(props.updateField).toHaveBeenCalledWith(expect.objectContaining({ correctAnswerCount: 2 }));
     });
@@ -151,16 +150,16 @@ describe('AnswersContainer', () => {
     const testState = { A: 'pple', B: 'anana', C: 'ucumber' };
     test('answers from problem.answers', () => {
       expect(
-        module.mapStateToProps(testState).answers,
+        mapStateToProps(testState).answers,
       ).toEqual(selectors.problem.answers(testState));
     });
   });
   describe('mapDispatchToProps', () => {
     test('updateField from actions.problem.updateField', () => {
-      expect(module.mapDispatchToProps.updateField).toEqual(actions.problem.updateField);
+      expect(mapDispatchToProps.updateField).toEqual(actions.problem.updateField);
     });
     test('updateField from actions.problem.addAnswer', () => {
-      expect(module.mapDispatchToProps.addAnswer).toEqual(actions.problem.addAnswer);
+      expect(mapDispatchToProps.addAnswer).toEqual(actions.problem.addAnswer);
     });
   });
 });

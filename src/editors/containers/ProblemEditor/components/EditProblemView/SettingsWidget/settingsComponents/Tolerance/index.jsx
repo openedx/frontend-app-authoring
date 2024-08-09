@@ -42,7 +42,7 @@ export const getSummary = ({ tolerance, intl }) => {
   }
 };
 
-export const ToleranceCard = ({
+const ToleranceCard = ({
   tolerance,
   answers,
   updateSettings,
@@ -119,4 +119,5 @@ ToleranceCard.propTypes = {
   intl: intlShape.isRequired,
 };
 
+export const ToleranceCardInternal = ToleranceCard; // For testing only
 export default injectIntl(ToleranceCard);

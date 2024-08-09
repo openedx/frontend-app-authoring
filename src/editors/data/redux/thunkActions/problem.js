@@ -1,6 +1,5 @@
-import _ from 'lodash-es';
-/* eslint-disable import/no-cycle */
-import { actions } from '..';
+import _ from 'lodash';
+import { actions as problemActions } from '../problem';
 import * as requests from './requests';
 import { OLXParser } from '../../../containers/ProblemEditor/data/OLXParser';
 import { parseSettings } from '../../../containers/ProblemEditor/data/SettingsParser';
@@ -9,6 +8,9 @@ import ReactStateOLXParser from '../../../containers/ProblemEditor/data/ReactSta
 import { blankProblemOLX } from '../../../containers/ProblemEditor/data/mockData/olxTestData';
 import { camelizeKeys } from '../../../utils';
 import { fetchEditorContent } from '../../../containers/ProblemEditor/components/EditProblemView/hooks';
+
+// Similar to `import { actions, selectors } from '..';` but avoid circular imports:
+const actions = { problem: problemActions };
 
 export const switchToAdvancedEditor = () => (dispatch, getState) => {
   const state = getState();

@@ -13,7 +13,7 @@ import messages from './messages';
 import GalleryCard from './GalleryCard';
 import GalleryLoadMoreButton from './GalleryLoadMoreButton';
 
-export const Gallery = ({
+const Gallery = ({
   galleryIsEmpty,
   searchIsEmpty,
   displayList,

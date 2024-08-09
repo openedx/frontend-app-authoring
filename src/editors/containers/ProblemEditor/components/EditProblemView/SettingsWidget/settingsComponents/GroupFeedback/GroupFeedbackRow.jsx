@@ -7,7 +7,7 @@ import { DeleteOutline } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
 import messages from '../../messages';
 
-export const GroupFeedbackRow = ({
+const GroupFeedbackRow = ({
   value,
   handleAnswersSelectedChange,
   handleFeedbackChange,
@@ -76,4 +76,5 @@ GroupFeedbackRow.propTypes = {
   intl: intlShape.isRequired,
 };
 
+export const GroupFeedbackRowInternal = GroupFeedbackRow; // For testing only
 export default injectIntl(GroupFeedbackRow);

@@ -1,5 +1,11 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import { actions } from '..';
-import * as module from './problem';
+import {
+  initializeProblem,
+  switchToAdvancedEditor,
+  fetchAdvancedSettings,
+  loadProblem,
+} from './problem';
 import { checkboxesOLXWithFeedbackAndHintsOLX, advancedProblemOlX, blankProblemOLX } from '../../../containers/ProblemEditor/data/mockData/olxTestData';
 import { ProblemTypeKeys } from '../../constants/problem';
 
@@ -7,13 +13,11 @@ const mockOlx = 'SOmEVALue';
 const mockBuildOlx = jest.fn(() => mockOlx);
 jest.mock('../../../containers/ProblemEditor/data/ReactStateOLXParser', () => jest.fn().mockImplementation(() => ({ buildOLX: mockBuildOlx })));
 
-jest.mock('..', () => ({
+jest.mock('../problem', () => ({
   actions: {
-    problem: {
-      load: () => {},
-      setEnableTypeSelection: () => {},
-      updateField: (args) => args,
-    },
+    load: () => {},
+    setEnableTypeSelection: () => {},
+    updateField: (args) => args,
   },
 }));
 
@@ -48,31 +52,31 @@ describe('problem thunkActions', () => {
     jest.restoreAllMocks();
   });
   test('initializeProblem visual Problem :', () => {
-    module.initializeProblem(blockValue)(dispatch);
+    initializeProblem(blockValue)(dispatch);
     expect(dispatch).toHaveBeenCalled();
   });
   test('switchToAdvancedEditor visual Problem', () => {
-    module.switchToAdvancedEditor()(dispatch, getState);
+    switchToAdvancedEditor()(dispatch, getState);
     expect(dispatch).toHaveBeenCalledWith(
       actions.problem.updateField({ problemType: ProblemTypeKeys.ADVANCED, rawOLX: mockOlx }),
     );
   });
   describe('fetchAdvanceSettings', () => {
     it('dispatches fetchAdvanceSettings action', () => {
-      module.fetchAdvancedSettings({ rawOLX, rawSettings })(dispatch);
+      fetchAdvancedSettings({ rawOLX, rawSettings })(dispatch);
       [[dispatchedAction]] = dispatch.mock.calls;
       expect(dispatchedAction.fetchAdvanceSettings).not.toEqual(undefined);
     });
     it('dispatches actions.problem.updateField and loadProblem on success', () => {
       dispatch.mockClear();
-      module.fetchAdvancedSettings({ rawOLX, rawSettings })(dispatch);
+      fetchAdvancedSettings({ rawOLX, rawSettings })(dispatch);
       [[dispatchedAction]] = dispatch.mock.calls;
       dispatchedAction.fetchAdvanceSettings.onSuccess({ data: { key: 'test', max_attempts: 1 } });
       expect(dispatch).toHaveBeenCalledWith(actions.problem.load());
     });
     it('calls loadProblem on failure', () => {
       dispatch.mockClear();
-      module.fetchAdvancedSettings({ rawOLX, rawSettings })(dispatch);
+      fetchAdvancedSettings({ rawOLX, rawSettings })(dispatch);
       [[dispatchedAction]] = dispatch.mock.calls;
       dispatchedAction.fetchAdvanceSettings.onFailure();
       expect(dispatch).toHaveBeenCalledWith(actions.problem.load());
@@ -81,12 +85,12 @@ describe('problem thunkActions', () => {
   describe('loadProblem', () => {
     test('initializeProblem advanced Problem', () => {
       rawOLX = advancedProblemOlX.rawOLX;
-      module.loadProblem({ rawOLX, rawSettings, defaultSettings })(dispatch);
+      loadProblem({ rawOLX, rawSettings, defaultSettings })(dispatch);
       expect(dispatch).toHaveBeenCalledWith(actions.problem.load());
     });
     test('initializeProblem blank Problem', () => {
       rawOLX = blankProblemOLX.rawOLX;
-      module.loadProblem({ rawOLX, rawSettings, defaultSettings })(dispatch);
+      loadProblem({ rawOLX, rawSettings, defaultSettings })(dispatch);
       expect(dispatch).toHaveBeenCalledWith(actions.problem.setEnableTypeSelection());
     });
   });

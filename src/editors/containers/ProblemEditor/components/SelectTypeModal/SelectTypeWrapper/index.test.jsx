@@ -1,7 +1,8 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 import { IconButton } from '@openedx/paragon';
-import * as module from '.';
+import { SelectTypeWrapperInternal as SelectTypeWrapper } from '.';
 import { handleCancel } from '../../../../EditorContainer/hooks';
 
 jest.mock('../../../../EditorContainer/hooks', () => ({
@@ -16,13 +17,13 @@ describe('SelectTypeWrapper', () => {
   };
 
   test('snapshot', () => {
-    expect(shallow(<module.SelectTypeWrapper {...props} />).snapshot).toMatchSnapshot();
+    expect(shallow(<SelectTypeWrapper {...props} />).snapshot).toMatchSnapshot();
   });
 
   describe('behavior', () => {
     let el;
     beforeEach(() => {
-      el = shallow(<module.SelectTypeWrapper {...props} />);
+      el = shallow(<SelectTypeWrapper {...props} />);
     });
     test('close behavior is linked to modal onClose', () => {
       const expected = handleCancel({ onClose: props.onClose });

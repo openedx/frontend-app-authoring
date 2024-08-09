@@ -11,7 +11,7 @@ import hooks from './hooks';
 import LanguageNamesWidget from './LanguageNamesWidget';
 import videoThumbnail from '../../../../../../data/images/videoThumbnail.svg';
 
-export const VideoPreviewWidget = ({
+const VideoPreviewWidget = ({
   thumbnail,
   videoSource,
   transcripts,

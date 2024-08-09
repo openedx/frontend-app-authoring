@@ -8,7 +8,7 @@
 
 /* Sort options come in pairs of ascending and descending. */
 .search-sort-menu .pgn__menu > div:nth-child(even) {
-    border-bottom: 1px solid #f4f3f6;
+    border-bottom: 1px solid #F4F3F6;
 }
 
 .search-sort-menu .pgn__menu > div:last-child {
@@ -27,6 +27,6 @@
 
 .selection-modal .pgn__vstack > .alert > .alert-icon {
     /* Vertical margin equal to the vertical padding of the "Dismiss" button. */
-    margin-bottom: 0.4375rem;
-    margin-top: 0.4375rem;
+    margin-bottom: .4375rem;
+    margin-top: .4375rem;
 }

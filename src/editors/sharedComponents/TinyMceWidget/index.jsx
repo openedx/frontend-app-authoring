@@ -16,6 +16,8 @@ import SourceCodeModal from '../SourceCodeModal';
 import * as hooks from './hooks';
 import './customTinyMcePlugins/embedIframePlugin';
 
+export { prepareEditorRef } from './hooks';
+
 const editorConfigDefaultProps = {
   setEditorRef: undefined,
   placeholder: undefined,
@@ -34,7 +36,7 @@ const editorConfigPropTypes = {
   minHeight: PropTypes.any,
 };
 
-export const TinyMceWidget = ({
+const TinyMceWidget = ({
   editorType,
   editorRef,
   disabled,
@@ -137,4 +139,5 @@ export const mapStateToProps = (state) => ({
   learningContextId: selectors.app.learningContextId(state),
 });
 
+export const TinyMceWidgetInternal = TinyMceWidget; // For testing only
 export default (connect(mapStateToProps)(TinyMceWidget));

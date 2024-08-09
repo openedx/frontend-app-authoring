@@ -33,7 +33,7 @@ export const hooks = {
   },
 };
 
-export const ErrorAlert = ({
+const ErrorAlert = ({
   dismissError,
   hideHeading,
   isError,

@@ -1,7 +1,8 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 
-import { LicenseBlurb } from './LicenseBlurb';
+import { LicenseBlurbInternal as LicenseBlurb } from './LicenseBlurb';
 
 describe('LicenseBlurb', () => {
   const props = {

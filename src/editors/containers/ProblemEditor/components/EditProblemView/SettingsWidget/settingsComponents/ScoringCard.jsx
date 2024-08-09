@@ -1,5 +1,5 @@
 import React from 'react';
-import _ from 'lodash-es';
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -9,7 +9,7 @@ import SettingsOption from '../SettingsOption';
 import messages from '../messages';
 import { scoringCardHooks } from '../hooks';
 
-export const ScoringCard = ({
+const ScoringCard = ({
   scoring,
   defaultValue,
   updateSettings,
@@ -113,4 +113,5 @@ export const mapStateToProps = (state) => ({
 
 export const mapDispatchToProps = {};
 
+export const ScoringCardInternal = ScoringCard; // For testing only
 export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(ScoringCard));

@@ -1,13 +1,16 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 
 import { EditorState } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import { html } from '@codemirror/lang-html';
-import { formatMessage, MockUseState } from '../../../testUtils';
+import { formatMessage, MockUseState } from '../../testUtils';
 import alphanumericMap from './constants';
 import * as module from './index';
 import * as hooks from './hooks';
+
+const CodeEditor = module.CodeEditorInternal;
 
 jest.mock('@codemirror/view');
 
@@ -171,7 +174,7 @@ describe('CodeEditor', () => {
       test('Renders and calls Hooks ', () => {
         jest.spyOn(hooks, 'prepareShowBtnEscapeHTML').mockImplementation(() => ({ showBtnEscapeHTML: true, hideBtn: mockHideBtn }));
         // Note: ref won't show up as it is not acutaly a DOM attribute.
-        expect(shallow(<module.CodeEditor {...props} />).snapshot).toMatchSnapshot();
+        expect(shallow(<CodeEditor {...props} />).snapshot).toMatchSnapshot();
         expect(hooks.createCodeMirrorDomNode).toHaveBeenCalled();
       });
     });

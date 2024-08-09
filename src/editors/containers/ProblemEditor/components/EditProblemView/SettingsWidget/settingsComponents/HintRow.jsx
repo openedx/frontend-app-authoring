@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import messages from '../messages';
 import ExpandableTextArea from '../../../../../../sharedComponents/ExpandableTextArea';
 
-export const HintRow = ({
+const HintRow = ({
   value,
   handleChange,
   handleDelete,
@@ -49,4 +49,5 @@ HintRow.propTypes = {
   intl: intlShape.isRequired,
 };
 
+export const HintRowInternal = HintRow; // For testing only
 export default injectIntl(HintRow);

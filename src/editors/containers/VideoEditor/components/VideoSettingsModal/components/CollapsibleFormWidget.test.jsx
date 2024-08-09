@@ -1,8 +1,9 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 
-import { formatMessage } from '../../../../../../testUtils';
-import { CollapsibleFormWidget } from './CollapsibleFormWidget';
+import { formatMessage } from '../../../../../testUtils';
+import { CollapsibleFormWidgetInternal as CollapsibleFormWidget } from './CollapsibleFormWidget';
 
 describe('CollapsibleFormWidget', () => {
   const props = {

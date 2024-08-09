@@ -8,7 +8,7 @@ import { hintsCardHooks, hintsRowHooks } from '../hooks';
 import HintRow from './HintRow';
 import Button from '../../../../../../sharedComponents/Button';
 
-export const HintsCard = ({
+const HintsCard = ({
   hints,
   problemType,
   updateSettings,
@@ -56,4 +56,5 @@ HintsCard.propTypes = {
   updateSettings: PropTypes.func.isRequired,
 };
 
+export const HintsCardInternal = HintsCard; // For testing only
 export default injectIntl(HintsCard);

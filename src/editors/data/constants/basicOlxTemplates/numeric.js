@@ -1,5 +1,5 @@
 /* eslint-disable */
-export const numeric = `<problem>
+const numeric = `<problem>
   <numericalresponse>
     <responseparam type="tolerance" default="5"/>
     <formulaequationinput/>

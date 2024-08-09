@@ -1,4 +1,4 @@
-import { snakeCase } from 'lodash-es';
+import { snakeCase } from 'lodash';
 
 const snakeCaseKeys = (obj) => {
   if (Array.isArray(obj)) {

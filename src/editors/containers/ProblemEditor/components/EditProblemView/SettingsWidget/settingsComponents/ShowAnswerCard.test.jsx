@@ -1,8 +1,9 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import { formatMessage } from '../../../../../../../testUtils';
+import { formatMessage } from '../../../../../../testUtils';
 import { selectors } from '../../../../../../data/redux';
-import { ShowAnswerCard, mapStateToProps, mapDispatchToProps } from './ShowAnswerCard';
+import { ShowAnswerCardInternal as ShowAnswerCard, mapStateToProps, mapDispatchToProps } from './ShowAnswerCard';
 import { useAnswerSettings } from '../hooks';
 
 jest.mock('../hooks', () => ({

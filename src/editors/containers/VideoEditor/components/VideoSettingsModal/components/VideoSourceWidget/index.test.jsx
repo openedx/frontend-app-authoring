@@ -1,9 +1,10 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { dispatch } from 'react-redux';
 import { shallow } from '@edx/react-unit-test-utils';
 
-import { formatMessage } from '../../../../../../../testUtils';
-import { VideoSourceWidget } from '.';
+import { formatMessage } from '../../../../../../testUtils';
+import { VideoSourceWidgetInternal as VideoSourceWidget } from '.';
 import * as hooks from './hooks';
 
 jest.mock('react-redux', () => {

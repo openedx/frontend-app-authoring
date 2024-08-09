@@ -15,6 +15,10 @@ import { thunkActions, selectors } from '../../../../../../data/redux';
 import { videoTranscriptLanguages } from '../../../../../../data/constants/video';
 import { FileInput, fileInput } from '../../../../../../sharedComponents/FileInput';
 import messages from './messages';
+// This 'module' self-import hack enables mocking during tests.
+// See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
+// should be re-thought and cleaned up to avoid this pattern.
+// eslint-disable-next-line import/no-self-import
 import * as module from './LanguageSelector';
 
 export const hooks = {
@@ -45,7 +49,7 @@ export const hooks = {
 
 };
 
-export const LanguageSelector = ({
+const LanguageSelector = ({
   index, // For a unique id for the form control
   language,
   // Redux
@@ -129,4 +133,5 @@ export const mapStateToProps = (state) => ({
 
 export const mapDispatchToProps = {};
 
+export const LanguageSelectorInternal = LanguageSelector; // For testing only
 export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(LanguageSelector));

@@ -8,7 +8,6 @@ import * as video from './video';
 import * as problem from './problem';
 import * as game from './game';
 
-/* eslint-disable import/no-cycle */
 export { default as thunkActions } from './thunkActions';
 
 const modules = {

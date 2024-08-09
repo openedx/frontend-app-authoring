@@ -16,7 +16,7 @@ import messages from './messages';
  * @param {func} setValue - update alt-text value
  * @param {string} value - current alt-text value
  */
-export const AltTextControls = ({
+const AltTextControls = ({
   isDecorative,
   setIsDecorative,
   setValue,
@@ -70,4 +70,5 @@ AltTextControls.propTypes = {
   intl: intlShape.isRequired,
 };
 
+export const AltTextControlsInternal = AltTextControls; // For testing only
 export default injectIntl(AltTextControls);

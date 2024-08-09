@@ -15,7 +15,7 @@ import { Close } from '@openedx/paragon/icons';
 import messages from './messages';
 import { thunkActions } from '../../../../../../data/redux';
 
-export const ImportTranscriptCard = ({
+const ImportTranscriptCard = ({
   setOpen,
   // redux
   importTranscript,
@@ -57,4 +57,5 @@ export const mapDispatchToProps = {
   importTranscript: thunkActions.video.importTranscript,
 };
 
+export const ImportTranscriptCardInternal = ImportTranscriptCard; // For testing only
 export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(ImportTranscriptCard));

@@ -1,11 +1,19 @@
-/* eslint-disable import/no-cycle */
-import _, { isEmpty } from 'lodash-es';
-import { actions, selectors } from '..';
+import _, { isEmpty } from 'lodash';
 import { removeItemOnce } from '../../../utils';
 import * as requests from './requests';
+// This 'module' self-import hack enables mocking during tests.
+// See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
+// should be re-thought and cleaned up to avoid this pattern.
+// eslint-disable-next-line import/no-self-import
 import * as module from './video';
 import { valueFromDuration } from '../../../containers/VideoEditor/components/VideoSettingsModal/components/DurationWidget/hooks';
 import { parseYoutubeId } from '../../services/cms/api';
+import { selectors as appSelectors } from '../app';
+import { actions as videoActions, selectors as videoSelectors } from '../video';
+
+// Similar to `import { actions, selectors } from '..';` but avoid circular imports:
+const actions = { video: videoActions };
+const selectors = { app: appSelectors, video: videoSelectors };
 
 export const loadVideoData = (selectedVideoId, selectedVideoUrl) => (dispatch, getState) => {
   const state = getState();

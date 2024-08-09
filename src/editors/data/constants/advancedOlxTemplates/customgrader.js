@@ -4,7 +4,7 @@
 //     display_name: Custom Python-Evaluated Input
 //     markdown: !!null
 // data: |
-export const customGrader = `<problem>
+const customGrader = `<problem>
     <p>
         In custom Python-evaluated input (also called "write-your-own-grader"
         problems), the grader uses a Python script that you create and embed in

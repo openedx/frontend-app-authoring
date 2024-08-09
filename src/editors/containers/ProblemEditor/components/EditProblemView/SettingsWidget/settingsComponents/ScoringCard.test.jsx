@@ -1,8 +1,9 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import { formatMessage } from '../../../../../../../testUtils';
+import { formatMessage } from '../../../../../../testUtils';
 import { scoringCardHooks } from '../hooks';
-import { ScoringCard } from './ScoringCard';
+import { ScoringCardInternal as ScoringCard } from './ScoringCard';
 
 jest.mock('../hooks', () => ({
   scoringCardHooks: jest.fn(),

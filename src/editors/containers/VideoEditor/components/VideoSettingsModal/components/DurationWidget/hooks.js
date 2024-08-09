@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react';
 
 import messages from '../messages';
 
+// This 'module' self-import hack enables mocking during tests.
+// See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
+// should be re-thought and cleaned up to avoid this pattern.
+// eslint-disable-next-line import/no-self-import
 import * as module from './hooks';
 
 const durationMatcher = /^(\d{0,2}):?(\d{0,2})?:?(\d{0,2})?$/i;
@@ -227,14 +231,4 @@ export const valueFromDuration = (duration) => {
   }
   const [hours, minutes, seconds] = matches.map(x => parseInt(x, 10) || 0);
   return ((hours * 60 + minutes) * 60 + seconds) * 1000;
-};
-
-export default {
-  durationWidget,
-  durationString,
-  durationStringFromValue,
-  updateDuration,
-  onDurationChange,
-  onDurationKeyDown,
-  valueFromDuration,
 };

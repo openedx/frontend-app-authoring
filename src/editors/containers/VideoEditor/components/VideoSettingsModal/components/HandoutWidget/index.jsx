@@ -21,9 +21,9 @@ import { actions, selectors } from '../../../../../../data/redux';
 import * as hooks from './hooks';
 import messages from './messages';
 
-import FileInput from '../../../../../../sharedComponents/FileInput';
-import { ErrorAlert } from '../../../../../../sharedComponents/ErrorAlerts/ErrorAlert';
-import { UploadErrorAlert } from '../../../../../../sharedComponents/ErrorAlerts/UploadErrorAlert';
+import { FileInput } from '../../../../../../sharedComponents/FileInput';
+import ErrorAlert from '../../../../../../sharedComponents/ErrorAlerts/ErrorAlert';
+import UploadErrorAlert from '../../../../../../sharedComponents/ErrorAlerts/UploadErrorAlert';
 import CollapsibleFormWidget from '../CollapsibleFormWidget';
 import { ErrorContext } from '../../../../hooks';
 import { RequestKeys } from '../../../../../../data/constants/requests';
@@ -31,7 +31,7 @@ import { RequestKeys } from '../../../../../../data/constants/requests';
 /**
  * Collapsible Form widget controlling video handouts
  */
-export const HandoutWidget = ({
+const HandoutWidget = ({
   // injected
   intl,
   // redux
@@ -134,4 +134,5 @@ export const mapDispatchToProps = (dispatch) => ({
   updateField: (payload) => dispatch(actions.video.updateField(payload)),
 });
 
+export const HandoutWidgetInternal = HandoutWidget; // For testing only
 export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(HandoutWidget));

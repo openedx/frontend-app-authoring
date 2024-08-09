@@ -1,7 +1,8 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import { LanguageSelector } from './LanguageSelector';
-import { formatMessage } from '../../../../../../../testUtils';
+import { LanguageSelectorInternal as LanguageSelector } from './LanguageSelector';
+import { formatMessage } from '../../../../../../testUtils';
 
 const lang1 = 'kLinGon';
 const lang1Code = 'kl';

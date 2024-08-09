@@ -4,7 +4,7 @@
 //     display_name: Problem with Adaptive Hint
 //     markdown: !!null
 // data: |
-export const problemWithHint = `<problem>
+const problemWithHint = `<problem>
     <text>
         <p><h4>Problem With Adaptive Hint</h4></p>
         <p>This problem demonstrates a question with hints, based on using the <tt class="tt">hintfn</tt> method. </p>

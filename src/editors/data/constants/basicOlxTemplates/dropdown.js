@@ -1,5 +1,5 @@
 /* eslint-disable */
-export const dropdown = `<problem>
+const dropdown = `<problem>
   <optionresponse>
     <optioninput>
       <option correct="True"></option>

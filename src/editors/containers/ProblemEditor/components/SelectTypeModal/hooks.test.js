@@ -1,6 +1,10 @@
 /* eslint-disable prefer-destructuring */
 import React from 'react';
-import { MockUseState } from '../../../../../testUtils';
+import { MockUseState } from '../../../../testUtils';
+// This 'module' self-import hack enables mocking during tests.
+// See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
+// should be re-thought and cleaned up to avoid this pattern.
+// eslint-disable-next-line import/no-self-import
 import * as module from './hooks';
 import { AdvanceProblems, ProblemTypeKeys, ProblemTypes } from '../../../../data/constants/problem';
 import { getDataFromOlx } from '../../../../data/redux/thunkActions/problem';

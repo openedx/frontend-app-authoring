@@ -1,8 +1,9 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { useSelector } from 'react-redux';
 
 import { actions, selectors } from '../../../../data/redux';
-import { MockUseState } from '../../../../../testUtils';
+import { MockUseState } from '../../../../testUtils';
 import * as hooks from './hooks';
 
 jest.mock('react', () => {

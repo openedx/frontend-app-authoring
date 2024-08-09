@@ -14,7 +14,7 @@ import messages from './messages';
 import './index.scss';
 import { sortKeys, sortMessages } from '../../containers/VideoGallery/utils';
 
-export const SearchSort = ({
+const SearchSort = ({
   searchString,
   onSearchChange,
   clearSearchString,

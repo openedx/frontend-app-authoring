@@ -1,5 +1,5 @@
 .dropzone-middle {
-  border: 2px dashed #ccc;
+  border: 2px dashed #CCCCCC;
 
   &.active {
     border: 2px solid #262626; /* change color when active */
@@ -12,7 +12,6 @@
 }
 
 .video-id-prompt {
-
   input::placeholder {
     color: #454545;
     // color: #5E35B1;
@@ -34,6 +33,6 @@
   }
 
   .prompt-button {
-    background: rgba(239, 234, 247, 0.70);
+    background: rgba(239 234 247 / .70);
   }
 }

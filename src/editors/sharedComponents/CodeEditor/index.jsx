@@ -11,7 +11,7 @@ import './index.scss';
 
 import * as hooks from './hooks';
 
-export const CodeEditor = ({
+const CodeEditor = ({
   innerRef,
   value,
   lang,
@@ -53,4 +53,5 @@ CodeEditor.propTypes = {
   lang: PropTypes.string.isRequired,
 };
 
+export const CodeEditorInternal = CodeEditor; // For testing only
 export default injectIntl(CodeEditor);

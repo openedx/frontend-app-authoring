@@ -6,7 +6,7 @@ import store from './data/store';
 import Editor from './Editor';
 import ErrorBoundary from './sharedComponents/ErrorBoundary';
 
-export const EditorPage = ({
+const EditorPage = ({
   courseId,
   blockType,
   blockId,

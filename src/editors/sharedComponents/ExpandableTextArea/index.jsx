@@ -4,7 +4,7 @@ import TinyMceWidget from '../TinyMceWidget';
 import { prepareEditorRef } from '../TinyMceWidget/hooks';
 import './index.scss';
 
-export const ExpandableTextArea = ({
+const ExpandableTextArea = ({
   value,
   setContent,
   error,

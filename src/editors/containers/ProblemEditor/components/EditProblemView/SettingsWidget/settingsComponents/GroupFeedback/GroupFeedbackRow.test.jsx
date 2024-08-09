@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import { formatMessage } from '../../../../../../../../testUtils';
-import { GroupFeedbackRow } from './GroupFeedbackRow';
+import { formatMessage } from '../../../../../../../testUtils';
+import { GroupFeedbackRowInternal as GroupFeedbackRow } from './GroupFeedbackRow';
 
 jest.mock('@openedx/paragon', () => ({
   ...jest.requireActual('@openedx/paragon'),

@@ -9,7 +9,7 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import {
   filterKeys, filterMessages, sortKeys, sortMessages,
 } from '../../containers/VideoGallery/utils';
-import { SearchSort } from './SearchSort';
+import SearchSort from './SearchSort';
 import messages from './messages';
 
 jest.unmock('react-redux');

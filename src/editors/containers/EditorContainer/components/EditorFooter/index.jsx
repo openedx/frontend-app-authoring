@@ -12,7 +12,7 @@ import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/
 
 import messages from './messages';
 
-export const EditorFooter = ({
+const EditorFooter = ({
   clearSaveFailed,
   disableSave,
   onCancel,
@@ -60,4 +60,5 @@ EditorFooter.propTypes = {
   intl: intlShape.isRequired,
 };
 
+export const EditorFooterInternal = EditorFooter; // For testing only
 export default injectIntl(EditorFooter);

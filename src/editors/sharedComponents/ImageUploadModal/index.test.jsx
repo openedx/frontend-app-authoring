@@ -3,15 +3,18 @@ import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 
 import { keyStore } from '../../utils';
-import tinyMCEKeys from '../../data/constants/tinyMCE';
-
+import * as tinyMCEKeys from '../../data/constants/tinyMCE';
+// This 'module' self-import hack enables mocking during tests.
+// See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
+// should be re-thought and cleaned up to avoid this pattern.
+// eslint-disable-next-line import/no-self-import
 import * as module from '.';
 import * as tinyMceHooks from '../TinyMceWidget/hooks';
 
 jest.mock('./ImageSettingsModal', () => 'ImageSettingsModal');
 jest.mock('./SelectImageModal', () => 'SelectImageModal');
 
-const { ImageUploadModal } = module;
+const { ImageUploadModalInternal: ImageUploadModal } = module;
 const hookKeys = keyStore(module.hooks);
 
 const settings = {

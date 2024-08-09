@@ -13,7 +13,7 @@ import AnswerOption from './AnswerOption';
 import Button from '../../../../../sharedComponents/Button';
 import { ProblemTypeKeys } from '../../../../../data/constants/problem';
 
-export const AnswersContainer = ({
+const AnswersContainer = ({
   problemType,
   // Redux
   answers,
@@ -95,4 +95,5 @@ export const mapDispatchToProps = {
   updateField: actions.problem.updateField,
 };
 
+export const AnswersContainerInternal = AnswersContainer; // For testing only
 export default connect(mapStateToProps, mapDispatchToProps)(AnswersContainer);

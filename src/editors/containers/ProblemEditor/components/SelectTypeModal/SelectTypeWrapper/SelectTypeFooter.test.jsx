@@ -1,11 +1,14 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 
 import { Button } from '@openedx/paragon';
-import { formatMessage } from '../../../../../../testUtils';
+import { formatMessage } from '../../../../../testUtils';
 import * as module from './SelectTypeFooter';
-import hooks from '../hooks';
+import * as hooks from '../hooks';
 import { actions } from '../../../../../data/redux';
+
+const SelectTypeFooter = module.SelectTypeFooterInternal;
 
 jest.mock('../hooks', () => ({
   onSelect: jest.fn().mockName('onSelect'),
@@ -23,13 +26,13 @@ describe('SelectTypeFooter', () => {
   };
 
   test('snapshot', () => {
-    expect(shallow(<module.SelectTypeFooter {...props} />).snapshot).toMatchSnapshot();
+    expect(shallow(<SelectTypeFooter {...props} />).snapshot).toMatchSnapshot();
   });
 
   describe('behavior', () => {
     let el;
     beforeEach(() => {
-      el = shallow(<module.SelectTypeFooter {...props} />);
+      el = shallow(<SelectTypeFooter {...props} />);
     });
     test('close behavior is linked to modal onCancel', () => {
       const expected = props.onCancel;

@@ -6,7 +6,7 @@ import React from 'react';
 import messages from '../messages';
 import { hooks as transcriptHooks } from '../TranscriptWidget';
 
-export const LanguageNamesWidget = ({ transcripts, intl }) => {
+const LanguageNamesWidget = ({ transcripts, intl }) => {
   let icon = ClosedCaptionOff;
   const hasTranscripts = transcriptHooks.hasTranscripts(transcripts);
   let message = intl.formatMessage(messages.noTranscriptsAdded);

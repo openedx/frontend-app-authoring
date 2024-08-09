@@ -1,4 +1,4 @@
-export const messages = {
+const messages = {
   searchPlaceholder: {
     id: 'authoring.selectionmodal.search.placeholder',
     defaultMessage: 'Search',

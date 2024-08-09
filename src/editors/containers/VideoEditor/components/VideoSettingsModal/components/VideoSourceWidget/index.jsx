@@ -21,13 +21,13 @@ import * as widgetHooks from '../hooks';
 import * as hooks from './hooks';
 import messages from './messages';
 
-import { ErrorAlert } from '../../../../../../sharedComponents/ErrorAlerts/ErrorAlert';
+import ErrorAlert from '../../../../../../sharedComponents/ErrorAlerts/ErrorAlert';
 import CollapsibleFormWidget from '../CollapsibleFormWidget';
 
 /**
  * Collapsible Form widget controlling video source as well as fallback sources
  */
-export const VideoSourceWidget = ({
+const VideoSourceWidget = ({
   // injected
   intl,
 }) => {
@@ -157,4 +157,5 @@ VideoSourceWidget.propTypes = {
   intl: intlShape.isRequired,
 };
 
+export const VideoSourceWidgetInternal = VideoSourceWidget; // For testing only
 export default injectIntl(VideoSourceWidget);

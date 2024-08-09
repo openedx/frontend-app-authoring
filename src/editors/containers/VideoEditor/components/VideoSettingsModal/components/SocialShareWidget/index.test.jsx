@@ -1,9 +1,10 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 
-import { formatMessage } from '../../../../../../../testUtils';
+import { formatMessage } from '../../../../../../testUtils';
 import { actions, selectors } from '../../../../../../data/redux';
-import { SocialShareWidget, mapStateToProps, mapDispatchToProps } from '.';
+import { SocialShareWidgetInternal as SocialShareWidget, mapStateToProps, mapDispatchToProps } from '.';
 import messages from './messages';
 
 jest.mock('react', () => {

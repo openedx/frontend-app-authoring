@@ -1,9 +1,10 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 import { Button, IconButton } from '@openedx/paragon';
 
 import { thunkActions } from '../../../../../../data/redux';
-import * as module from './ImportTranscriptCard';
+import { ImportTranscriptCardInternal as ImportTranscriptCard, mapDispatchToProps, mapStateToProps } from './ImportTranscriptCard';
 
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
@@ -27,13 +28,13 @@ describe('ImportTranscriptCard', () => {
   describe('snapshots', () => {
     test('snapshots: renders as expected with default props', () => {
       expect(
-        shallow(<module.ImportTranscriptCard {...props} />).snapshot,
+        shallow(<ImportTranscriptCard {...props} />).snapshot,
       ).toMatchSnapshot();
     });
   });
   describe('behavior inspection', () => {
     beforeEach(() => {
-      el = shallow(<module.ImportTranscriptCard {...props} />);
+      el = shallow(<ImportTranscriptCard {...props} />);
     });
     test('close behavior is linked to IconButton', () => {
       expect(el.instance.findByType(IconButton)[0]
@@ -46,12 +47,12 @@ describe('ImportTranscriptCard', () => {
   });
   describe('mapStateToProps', () => {
     it('returns an empty object', () => {
-      expect(module.mapStateToProps()).toEqual({});
+      expect(mapStateToProps()).toEqual({});
     });
   });
   describe('mapDispatchToProps', () => {
     test('updateField from thunkActions.video.importTranscript', () => {
-      expect(module.mapDispatchToProps.importTranscript).toEqual(thunkActions.video.importTranscript);
+      expect(mapDispatchToProps.importTranscript).toEqual(thunkActions.video.importTranscript);
     });
   });
 });

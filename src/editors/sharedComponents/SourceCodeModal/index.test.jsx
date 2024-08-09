@@ -1,9 +1,10 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import hooks from './hooks';
-import { formatMessage } from '../../../testUtils';
+import * as hooks from './hooks';
+import { formatMessage } from '../../testUtils';
 
-import { SourceCodeModal } from '.';
+import { SourceCodeModalInternal as SourceCodeModal } from '.';
 
 jest.mock('./hooks', () => ({
   prepareSourceCodeModal: jest.fn(() => {

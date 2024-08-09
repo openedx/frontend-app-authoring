@@ -11,7 +11,7 @@ import {
 } from '@openedx/paragon/icons';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
-import hooks from './hooks';
+import * as hooks from './hooks';
 import messages from './messages';
 
 /**
@@ -24,7 +24,7 @@ import messages from './messages';
  * @param {func} updateDimensions - update dimensions callback
  * @param {obj} value - local dimension values { height, width }
  */
-export const DimensionControls = ({
+const DimensionControls = ({
   isLocked,
   lock,
   setHeight,
@@ -89,4 +89,5 @@ DimensionControls.propTypes = ({
   intl: intlShape.isRequired,
 });
 
+export const DimensionControlsInternal = DimensionControls; // For testing only
 export default injectIntl(DimensionControls);

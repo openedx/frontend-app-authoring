@@ -1,5 +1,6 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import * as reactRedux from 'react-redux';
-import { MockUseState } from '../../../testUtils';
+import { MockUseState } from '../../testUtils';
 
 import { RequestKeys } from '../../data/constants/requests';
 import { selectors } from '../../data/redux';

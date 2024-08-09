@@ -59,12 +59,7 @@ exports[`GalleryCard component snapshot with duration badge 1`] = `
       <h3
         className="text-primary-500"
       >
-        <Truncate
-          elementType="div"
-          ellipsis="..."
-          lines={1}
-          whiteSpace={false}
-        >
+        <Truncate>
           props.img.displayName
         </Truncate>
       </h3>
@@ -143,12 +138,7 @@ exports[`GalleryCard component snapshot with duration transcripts 1`] = `
       <h3
         className="text-primary-500"
       >
-        <Truncate
-          elementType="div"
-          ellipsis="..."
-          lines={1}
-          whiteSpace={false}
-        >
+        <Truncate>
           props.img.displayName
         </Truncate>
       </h3>
@@ -242,12 +232,7 @@ exports[`GalleryCard component snapshot with status badge 1`] = `
       <h3
         className="text-primary-500"
       >
-        <Truncate
-          elementType="div"
-          ellipsis="..."
-          lines={1}
-          whiteSpace={false}
-        >
+        <Truncate>
           props.img.displayName
         </Truncate>
       </h3>
@@ -327,12 +312,7 @@ exports[`GalleryCard component snapshot with thumbnail fallback and load error 1
       <h3
         className="text-primary-500"
       >
-        <Truncate
-          elementType="div"
-          ellipsis="..."
-          lines={1}
-          whiteSpace={false}
-        >
+        <Truncate>
           props.img.displayName
         </Truncate>
       </h3>
@@ -412,12 +392,7 @@ exports[`GalleryCard component snapshot with thumbnail fallback and no error 1`]
       <h3
         className="text-primary-500"
       >
-        <Truncate
-          elementType="div"
-          ellipsis="..."
-          lines={1}
-          whiteSpace={false}
-        >
+        <Truncate>
           props.img.displayName
         </Truncate>
       </h3>
@@ -496,12 +471,7 @@ exports[`GalleryCard component snapshot: dateAdded=12345 1`] = `
       <h3
         className="text-primary-500"
       >
-        <Truncate
-          elementType="div"
-          ellipsis="..."
-          lines={1}
-          whiteSpace={false}
-        >
+        <Truncate>
           props.img.displayName
         </Truncate>
       </h3>

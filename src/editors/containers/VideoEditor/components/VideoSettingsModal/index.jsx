@@ -8,7 +8,7 @@ import {
 } from '@edx/frontend-platform/i18n';
 
 // import VideoPreview from './components/VideoPreview';
-import ErrorSummary from './ErrorSummary';
+import { ErrorSummary } from './ErrorSummary';
 import DurationWidget from './components/DurationWidget';
 import HandoutWidget from './components/HandoutWidget';
 import LicenseWidget from './components/LicenseWidget';
@@ -20,7 +20,7 @@ import './index.scss';
 import SocialShareWidget from './components/SocialShareWidget';
 import messages from '../../messages';
 
-export const VideoSettingsModal = ({
+const VideoSettingsModal = ({
   onReturn,
   isLibrary,
 }) => (

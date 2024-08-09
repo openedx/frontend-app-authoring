@@ -14,7 +14,7 @@ import messages from './messages';
 import { formatDuration } from '../../utils';
 import LanguageNamesWidget from '../../containers/VideoEditor/components/VideoSettingsModal/components/VideoPreviewWidget/LanguageNamesWidget';
 
-export const GalleryCard = ({
+const GalleryCard = ({
   asset,
   thumbnailFallback,
 }) => {

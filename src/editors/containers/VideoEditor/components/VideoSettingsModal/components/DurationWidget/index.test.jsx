@@ -1,9 +1,10 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 
 import { actions, selectors } from '../../../../../../data/redux';
-import { formatMessage } from '../../../../../../../testUtils';
-import { DurationWidget, mapStateToProps, mapDispatchToProps } from '.';
+import { formatMessage } from '../../../../../../testUtils';
+import { DurationWidgetInternal as DurationWidget, mapStateToProps, mapDispatchToProps } from '.';
 
 jest.mock('../../../../../../data/redux', () => ({
   actions: {

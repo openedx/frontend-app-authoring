@@ -1,9 +1,10 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import { shallow } from '@edx/react-unit-test-utils';
 import { useDispatch } from 'react-redux';
 
-import { EditorContainer } from '.';
+import { EditorContainerInternal as EditorContainer } from '.';
 import * as hooks from './hooks';
-import { formatMessage } from '../../../testUtils';
+import { formatMessage } from '../../testUtils';
 
 const props = {
   getContent: jest.fn().mockName('props.getContent'),

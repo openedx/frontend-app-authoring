@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { MockUseState } from '../../../../../../../../testUtils';
+import { MockUseState } from '../../../../../../../testUtils';
 import messages from './messages';
 import * as hooks from './hooks';
 

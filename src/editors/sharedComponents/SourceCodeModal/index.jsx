@@ -9,12 +9,12 @@ import {
 
 import { Button, useWindowSize } from '@openedx/paragon';
 import messages from './messages';
-import hooks from './hooks';
+import * as hooks from './hooks';
 import BaseModal from '../BaseModal';
 
 import CodeEditor from '../CodeEditor';
 
-export const SourceCodeModal = ({
+const SourceCodeModal = ({
   isOpen,
   close,
   editorRef,
@@ -59,4 +59,5 @@ SourceCodeModal.propTypes = {
   intl: intlShape.isRequired,
 };
 
+export const SourceCodeModalInternal = SourceCodeModal; // For testing only
 export default injectIntl(SourceCodeModal);

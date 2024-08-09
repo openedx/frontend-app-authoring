@@ -24,7 +24,7 @@ export const fetchEditorContent = ({ format }) => {
   const editorObject = { hints: [] };
   const EditorsArray = window.tinymce.editors;
   Object.entries(EditorsArray).forEach(([id, editor]) => {
-    if (Number.isNaN(parseInt(id))) {
+    if (Number.isNaN(parseInt(id, 10))) {
       if (id.startsWith('answer')) {
         const { answers } = editorObject;
         const answerId = id.substring(id.indexOf('-') + 1);

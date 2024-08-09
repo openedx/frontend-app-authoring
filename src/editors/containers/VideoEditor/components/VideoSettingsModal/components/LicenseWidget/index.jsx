@@ -13,7 +13,7 @@ import {
 import { Add } from '@openedx/paragon/icons';
 
 import { actions, selectors } from '../../../../../../data/redux';
-import hooks from './hooks';
+import * as hooks from './hooks';
 import messages from './messages';
 import CollapsibleFormWidget from '../CollapsibleFormWidget';
 import LicenseBlurb from './LicenseBlurb';
@@ -24,7 +24,7 @@ import LicenseDisplay from './LicenseDisplay';
 /**
  * Collapsible Form widget controlling video license type and details
  */
-export const LicenseWidget = ({
+const LicenseWidget = ({
   // injected
   intl,
   // redux
@@ -108,4 +108,5 @@ export const mapDispatchToProps = (dispatch) => ({
   updateField: (stateUpdate) => dispatch(actions.video.updateField(stateUpdate)),
 });
 
+export const LicenseWidgetInternal = LicenseWidget; // For testing only
 export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(LicenseWidget));

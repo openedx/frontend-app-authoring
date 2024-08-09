@@ -6,7 +6,7 @@ import { typeRowHooks } from '../hooks';
 
 import Button from '../../../../../../sharedComponents/Button';
 
-export const TypeRow = ({
+const TypeRow = ({
   answers,
   blockTitle,
   correctAnswerCount,

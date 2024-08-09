@@ -2,6 +2,10 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import { thunkActions } from '../../../data/redux';
+// This 'module' self-import hack enables mocking during tests.
+// See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
+// should be re-thought and cleaned up to avoid this pattern.
+// eslint-disable-next-line import/no-self-import
 import * as module from './hooks';
 import { sortFunctions, sortKeys, sortMessages } from './utils';
 import messages from './messages';
@@ -176,8 +180,4 @@ export const imgHooks = ({
     searchSortProps,
     selectBtnProps,
   };
-};
-
-export default {
-  imgHooks,
 };

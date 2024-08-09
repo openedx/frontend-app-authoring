@@ -1,18 +1,11 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import { EditProblemView } from '.';
-import AnswerWidget from './AnswerWidget';
+import { EditProblemViewInternal as EditProblemView } from '.';
+import { AnswerWidgetInternal as AnswerWidget } from './AnswerWidget';
 import { ProblemTypeKeys } from '../../../../data/constants/problem';
 import RawEditor from '../../../../sharedComponents/RawEditor';
-import { formatMessage } from '../../../../../testUtils';
-
-jest.mock('@openedx/paragon', () => ({
-  ...jest.requireActual('@openedx/paragon'),
-  Container: 'Container',
-  Button: 'Button',
-  AlertModal: 'AlertModal',
-  ActionRow: 'ActionRow',
-}));
+import { formatMessage } from '../../../../testUtils';
 
 describe('EditorProblemView component', () => {
   test('renders simple view', () => {

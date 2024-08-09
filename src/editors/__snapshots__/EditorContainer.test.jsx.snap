@@ -9,6 +9,8 @@ exports[`Editor Container snapshots rendering correctly with expected Input 1`] 
     blockType="html"
     courseId="cOuRsEId"
     lmsEndpointUrl="http://localhost:18000"
+    onClose={null}
+    returnFunction={null}
     studioEndpointUrl="http://localhost:18010"
   />
 </div>

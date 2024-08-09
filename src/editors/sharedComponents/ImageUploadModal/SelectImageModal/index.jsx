@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import hooks from './hooks';
+import * as hooks from './hooks';
 import { acceptedImgKeys } from './utils';
 import SelectionModal from '../../SelectionModal';
 import messages from './messages';
 import { RequestKeys } from '../../../data/constants/requests';
 import { selectors } from '../../../data/redux';
 
-export const SelectImageModal = ({
+const SelectImageModal = ({
   isOpen,
   close,
   setSelection,
@@ -84,4 +84,5 @@ export const mapStateToProps = (state) => ({
 
 export const mapDispatchToProps = {};
 
+export const SelectImageModalInternal = SelectImageModal; // For testing only
 export default connect(mapStateToProps, mapDispatchToProps)(SelectImageModal);

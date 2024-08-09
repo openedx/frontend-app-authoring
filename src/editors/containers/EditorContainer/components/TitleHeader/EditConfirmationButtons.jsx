@@ -7,7 +7,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
 
-export const EditConfirmationButtons = ({
+const EditConfirmationButtons = ({
   updateTitle,
   cancelEdit,
   // injected
@@ -37,4 +37,5 @@ EditConfirmationButtons.propTypes = {
   // injected
   intl: intlShape.isRequired,
 };
+export const EditConfirmationButtonsInternal = EditConfirmationButtons; // For testing only
 export default injectIntl(EditConfirmationButtons);

@@ -5,13 +5,13 @@ import {
   Spinner,
   Button,
 } from '@openedx/paragon';
-import { SelectableBox } from '@edx/frontend-lib-content-components';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { ArrowDropDown, ArrowDropUp, Add } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
-import messages from './messages';
 
+import SelectableBox from '../editors/sharedComponents/SelectableBox';
 import { useTaxonomyTagsData } from './data/apiHooks';
+import messages from './messages';
 
 const HighlightedText = ({ text, highlight }) => {
   if (!highlight) {

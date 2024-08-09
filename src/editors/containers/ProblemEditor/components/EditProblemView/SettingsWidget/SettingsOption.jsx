@@ -11,7 +11,7 @@ import {
 import { showFullCard } from './hooks';
 import CardSection from './CardSection';
 
-export const SettingsOption = ({
+const SettingsOption = ({
   title, className, extraSections, children, summary, hasExpandableTextArea, ...passThroughProps
 }) => {
   const { isCardCollapsibleOpen, toggleCardCollapse } = showFullCard(hasExpandableTextArea);

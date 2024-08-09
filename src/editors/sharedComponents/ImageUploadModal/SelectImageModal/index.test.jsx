@@ -1,10 +1,10 @@
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 
-import { formatMessage } from '../../../../testUtils';
+import { formatMessage } from '../../../testUtils';
 import SelectionModal from '../../SelectionModal';
-import hooks from './hooks';
-import { SelectImageModal } from '.';
+import * as hooks from './hooks';
+import { SelectImageModalInternal as SelectImageModal } from '.';
 
 const mockImage = {
   displayName: 'DALL·E 2023-03-10.png',

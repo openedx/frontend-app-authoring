@@ -1,9 +1,12 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 
 import { thunkActions, selectors } from '../../../../../../data/redux';
 
 import * as module from './TranscriptActionMenu';
+
+const TranscriptActionMenu = module.TranscriptActionMenuInternal;
 
 jest.mock('react-redux', () => {
   const dispatchFn = jest.fn().mockName('mockUseDispatch');
@@ -71,13 +74,13 @@ describe('TranscriptActionMenu', () => {
     test('snapshots: renders as expected with default props: dont show confirm delete', () => {
       jest.spyOn(module.hooks, 'replaceFileCallback').mockImplementationOnce(() => jest.fn().mockName('module.hooks.replaceFileCallback'));
       expect(
-        shallow(<module.TranscriptActionMenu {...props} />).snapshot,
+        shallow(<TranscriptActionMenu {...props} />).snapshot,
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected with transcriptUrl props: dont show confirm delete', () => {
       jest.spyOn(module.hooks, 'replaceFileCallback').mockImplementationOnce(() => jest.fn().mockName('module.hooks.replaceFileCallback'));
       expect(
-        shallow(<module.TranscriptActionMenu {...props} transcriptUrl="url" />).snapshot,
+        shallow(<TranscriptActionMenu {...props} transcriptUrl="url" />).snapshot,
       ).toMatchSnapshot();
     });
   });

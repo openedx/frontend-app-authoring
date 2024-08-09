@@ -5,7 +5,7 @@
 //     markdown: !!null
 //     showanswer: never
 // data: |
-export const jsInputResponse = `<problem>
+const jsInputResponse = `<problem>
     <p>
         In these problems (also called custom JavaScript problems or JS Input
         problems), you add a problem or tool that uses JavaScript in Studio.

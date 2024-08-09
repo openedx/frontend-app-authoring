@@ -1,10 +1,11 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { shallow } from '@edx/react-unit-test-utils';
 
-import { formatMessage } from '../../../../../testUtils';
+import { formatMessage } from '../../../../testUtils';
 import { localTitleHooks } from './hooks';
-import * as module from '.';
+import { TitleHeaderInternal as TitleHeader } from '.';
 
 jest.mock('./hooks', () => ({
   localTitleHooks: jest.fn(),
@@ -37,7 +38,7 @@ describe('TitleHeader', () => {
   describe('behavior', () => {
     it(' calls localTitleHooks with initialization args', () => {
       localTitleHooks.mockReturnValue(localTitleHooksProps);
-      shallow(<module.TitleHeader {...props} isInitialized />);
+      shallow(<TitleHeader {...props} isInitialized />);
       const dispatch = useDispatch();
       expect(localTitleHooks).toHaveBeenCalledWith({
         dispatch,
@@ -47,15 +48,15 @@ describe('TitleHeader', () => {
 
   describe('snapshots', () => {
     test('not initialized', () => {
-      expect(shallow(<module.TitleHeader {...props} />).snapshot).toMatchSnapshot();
+      expect(shallow(<TitleHeader {...props} />).snapshot).toMatchSnapshot();
     });
     test('initialized', () => {
       localTitleHooks.mockReturnValue(localTitleHooksProps);
-      expect(shallow(<module.TitleHeader {...props} isInitialized />).shallowWrapper).toMatchSnapshot();
+      expect(shallow(<TitleHeader {...props} isInitialized />).shallowWrapper).toMatchSnapshot();
     });
     test('editing', () => {
       localTitleHooks.mockReturnValue({ ...localTitleHooksProps, isEditing: true });
-      expect(shallow(<module.TitleHeader {...props} isInitialized />).snapshot).toMatchSnapshot();
+      expect(shallow(<TitleHeader {...props} isInitialized />).snapshot).toMatchSnapshot();
     });
   });
 });

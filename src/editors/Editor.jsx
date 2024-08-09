@@ -8,7 +8,7 @@ import * as hooks from './hooks';
 
 import supportedEditors from './supportedEditors';
 
-export const Editor = ({
+const Editor = ({
   learningContextId,
   blockType,
   blockId,

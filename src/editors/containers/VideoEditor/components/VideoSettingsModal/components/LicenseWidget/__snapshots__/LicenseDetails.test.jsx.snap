@@ -25,7 +25,7 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
         className="border-primary-100 border-bottom pb-4"
       >
         <Form.Group>
-          <[object Object]>
+          <ActionRow>
             <Icon
               className="text-primary-500"
             />
@@ -44,7 +44,7 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
               checked={true}
               disabled={true}
             />
-          </[object Object]>
+          </ActionRow>
         </Form.Group>
         <div>
           <FormattedMessage
@@ -58,7 +58,7 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
         className="border-primary-100 border-bottom pb-4"
       >
         <Form.Group>
-          <[object Object]>
+          <ActionRow>
             <Icon />
             <Form.Label
               className="my-0 text-primary-500"
@@ -75,7 +75,7 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
               disabled={false}
               onChange={[Function]}
             />
-          </[object Object]>
+          </ActionRow>
         </Form.Group>
         <div>
           <FormattedMessage
@@ -89,7 +89,7 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
         className="border-primary-100 border-bottom pb-4"
       >
         <Form.Group>
-          <[object Object]>
+          <ActionRow>
             <Icon />
             <Form.Label
               className="my-0 text-primary-500"
@@ -106,7 +106,7 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
               disabled={false}
               onChange={[Function]}
             />
-          </[object Object]>
+          </ActionRow>
         </Form.Group>
         <div>
           <FormattedMessage
@@ -118,7 +118,7 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
       </div>
       <div>
         <Form.Group>
-          <[object Object]>
+          <ActionRow>
             <Icon />
             <Form.Label
               className="my-0 text-primary-500"
@@ -135,7 +135,7 @@ exports[`LicenseDetails snapshots snapshots: renders as expected with level set 
               disabled={false}
               onChange={[Function]}
             />
-          </[object Object]>
+          </ActionRow>
         </Form.Group>
         <div>
           <FormattedMessage

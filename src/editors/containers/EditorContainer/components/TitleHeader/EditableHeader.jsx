@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { Form } from '@openedx/paragon';
-import EditConfirmationButtons from './EditConfirmationButtons';
+import { EditConfirmationButtonsInternal as EditConfirmationButtons } from './EditConfirmationButtons';
 
-export const EditableHeader = ({
+const EditableHeader = ({
   handleChange,
   updateTitle,
   handleKeyDown,
@@ -41,4 +41,5 @@ EditableHeader.propTypes = {
   cancelEdit: PropTypes.func.isRequired,
 };
 
+export const EditableHeaderInternal = EditableHeader; // For testing only
 export default EditableHeader;

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { MockUseState } from '../../../../../../testUtils';
+import { MockUseState } from '../../../../../testUtils';
 import messages from './messages';
 import { keyStore } from '../../../../../utils';
 import * as hooks from './hooks';
@@ -286,7 +286,9 @@ describe('Problem settings hooks', () => {
     test('test handleAttemptsChange', () => {
       const value = 3;
       output.handleAttemptsChange({ target: { value } });
-      expect(updateSettings).toHaveBeenCalledWith({ showAnswer: { ...showAnswer, afterAttempts: parseInt(value) } });
+      expect(updateSettings).toHaveBeenCalledWith({
+        showAnswer: { ...showAnswer, afterAttempts: parseInt(value, 10) },
+      });
     });
   });
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { dispatch } from 'react-redux';
 import { thunkActions } from '../../../../../../data/redux';
-import { MockUseState } from '../../../../../../../testUtils';
+import { MockUseState } from '../../../../../../testUtils';
 import { keyStore } from '../../../../../../utils';
 import * as hooks from './hooks';
 

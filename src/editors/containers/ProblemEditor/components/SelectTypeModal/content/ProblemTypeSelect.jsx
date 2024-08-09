@@ -8,7 +8,7 @@ import SelectableBox from '../../../../../sharedComponents/SelectableBox';
 import { ProblemTypes, ProblemTypeKeys, AdvanceProblemKeys } from '../../../../../data/constants/problem';
 import messages from './messages';
 
-export const ProblemTypeSelect = ({
+const ProblemTypeSelect = ({
   selected,
   setSelected,
 }) => {
@@ -50,4 +50,5 @@ ProblemTypeSelect.propTypes = {
   setSelected: PropTypes.func.isRequired,
 };
 
+export const ProblemTypeSelectInternal = ProblemTypeSelect; // For testing only
 export default injectIntl(ProblemTypeSelect);

@@ -9,7 +9,7 @@ import { selectors, thunkActions } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
 import messages from './messages';
 
-export const ProblemEditor = ({
+const ProblemEditor = ({
   onClose,
   returnFunction,
   // Redux
@@ -79,4 +79,5 @@ export const mapDispatchToProps = {
   initializeProblemEditor: thunkActions.problem.initializeProblem,
 };
 
+export const ProblemEditorInternal = ProblemEditor; // For testing only
 export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(ProblemEditor));

@@ -1,8 +1,9 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import { formatMessage } from '../../../../../../testUtils';
+import { formatMessage } from '../../../../../testUtils';
 import { selectors } from '../../../../../data/redux';
-import { AnswerOption, mapStateToProps } from './AnswerOption';
+import { AnswerOptionInternal as AnswerOption, mapStateToProps } from './AnswerOption';
 
 jest.mock('../../../../../data/redux', () => ({
   __esModule: true,

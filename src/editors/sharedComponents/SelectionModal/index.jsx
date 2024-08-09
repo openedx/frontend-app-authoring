@@ -11,14 +11,14 @@ import {
 import BaseModal from '../BaseModal';
 import SearchSort from './SearchSort';
 import Gallery from './Gallery';
-import FileInput from '../FileInput';
+import { FileInput } from '../FileInput';
 import ErrorAlert from '../ErrorAlerts/ErrorAlert';
 import FetchErrorAlert from '../ErrorAlerts/FetchErrorAlert';
 import UploadErrorAlert from '../ErrorAlerts/UploadErrorAlert';
 
 import './index.scss';
 
-export const SelectionModal = ({
+const SelectionModal = ({
   isOpen,
   close,
   size,

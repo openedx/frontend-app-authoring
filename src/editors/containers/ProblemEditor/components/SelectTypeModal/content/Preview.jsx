@@ -9,7 +9,7 @@ import {
 import messages from './messages';
 import { ProblemTypes } from '../../../../../data/constants/problem';
 
-export const Preview = ({
+const Preview = ({
   problemType,
   // injected
   intl,
@@ -52,4 +52,5 @@ Preview.propTypes = {
   intl: intlShape.isRequired,
 };
 
+export const PreviewInternal = Preview; // For testing only
 export default injectIntl(Preview);

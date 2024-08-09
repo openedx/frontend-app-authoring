@@ -11,7 +11,7 @@ function getValue(content) {
   return content.data?.data;
 }
 
-export const RawEditor = ({
+const RawEditor = ({
   editorRef,
   content,
   lang,

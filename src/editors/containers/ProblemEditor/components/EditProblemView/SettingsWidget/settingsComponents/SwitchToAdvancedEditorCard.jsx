@@ -10,7 +10,7 @@ import Button from '../../../../../../sharedComponents/Button';
 import { confirmSwitchToAdvancedEditor } from '../hooks';
 import { ProblemTypeKeys } from '../../../../../../data/constants/problem';
 
-export const SwitchToAdvancedEditorCard = ({
+const SwitchToAdvancedEditorCard = ({
   problemType,
   switchToAdvancedEditor,
 }) => {
@@ -59,4 +59,5 @@ export const mapDispatchToProps = {
   switchToAdvancedEditor: thunkActions.problem.switchToAdvancedEditor,
 };
 
+export const SwitchToAdvancedEditorCardInternal = SwitchToAdvancedEditorCard; // For testing only
 export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(SwitchToAdvancedEditorCard));

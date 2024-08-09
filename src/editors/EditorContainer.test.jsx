@@ -2,8 +2,6 @@ import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 import EditorContainer from './EditorContainer';
 
-jest.mock('@edx/frontend-lib-content-components', () => ({ EditorPage: () => 'HeaderTitle' }));
-
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'), // use actual for all non-hook parts
   useParams: () => ({

@@ -4,8 +4,8 @@ import {
 import React from 'react';
 import messages from './messages';
 import { ToleranceTypes } from './constants';
-import { ToleranceCard } from './index';
-import { formatMessage } from '../../../../../../../../testUtils';
+import { ToleranceCardInternal as ToleranceCard } from './index';
+import { formatMessage } from '../../../../../../../testUtils';
 
 jest.mock('@edx/frontend-platform/i18n', () => ({
   __esmodule: true,

@@ -19,7 +19,7 @@ import * as hooks from './hooks';
 /**
  * Collapsible Form widget controlling video thumbnail
  */
-export const SocialShareWidget = ({
+const SocialShareWidget = ({
   // injected
   intl,
   // redux
@@ -116,4 +116,5 @@ export const mapDispatchToProps = (dispatch) => ({
   updateField: (stateUpdate) => dispatch(actions.video.updateField(stateUpdate)),
 });
 
+export const SocialShareWidgetInternal = SocialShareWidget; // For testing only
 export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(SocialShareWidget));

@@ -4,7 +4,6 @@
     "description": "Live course configuration for courses using it",
     "peerDependencies": {
         "@edx/frontend-app-course-authoring": "*",
-        "@edx/frontend-lib-content-components": "*",
         "@edx/frontend-platform": "*",
         "@openedx/paragon": "*",
         "@reduxjs/toolkit": "*",

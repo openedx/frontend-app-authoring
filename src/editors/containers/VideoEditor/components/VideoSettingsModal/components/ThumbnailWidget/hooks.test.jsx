@@ -1,7 +1,8 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
-import { dispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { actions, thunkActions } from '../../../../../../data/redux';
-import { MockUseState } from '../../../../../../../testUtils';
+import { MockUseState } from '../../../../../../testUtils';
 import { keyStore } from '../../../../../../utils';
 import * as hooks from './hooks';
 
@@ -11,15 +12,6 @@ jest.mock('react', () => ({
   useEffect: jest.fn(),
   useCallback: (cb, prereqs) => ({ cb, prereqs }),
 }));
-
-jest.mock('react-redux', () => {
-  const dispatchFn = jest.fn();
-  return {
-    ...jest.requireActual('react-redux'),
-    dispatch: dispatchFn,
-    useDispatch: jest.fn(() => dispatchFn),
-  };
-});
 
 jest.mock('../../../../../../data/redux', () => ({
   actions: {
@@ -128,6 +120,7 @@ describe('fileInput', () => {
       expect(spies.checkValidSize).toHaveReturnedWith(false);
     });
     it('dispatches updateField action with the first target file', () => {
+      const dispatch = useDispatch(); // Access the mock 'dispatch()' set up in setupEditorTest
       const checkValidSize = true;
       spies.checkValidSize = jest.spyOn(hooks, hookKeys.checkValidSize)
         .mockReturnValueOnce(checkValidSize);
@@ -142,6 +135,7 @@ describe('fileInput', () => {
     });
   });
   describe('deleteThumbnail', () => {
+    const dispatch = useDispatch(); // Access the mock 'dispatch()' set up in setupEditorTest
     const testFile = new File([selectedFileSuccess], 'sOMEUrl.jpg');
     hooks.deleteThumbnail({ dispatch })();
     expect(dispatch).toHaveBeenNthCalledWith(1, actions.video.updateField({ thumbnail: null }));

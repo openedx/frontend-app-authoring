@@ -3,10 +3,7 @@ import PropTypes from 'prop-types';
 import { connect, Provider, useSelector } from 'react-redux';
 import { createStore } from 'redux';
 import { getConfig } from '@edx/frontend-platform';
-import {
-  prepareEditorRef,
-  TinyMceWidget,
-} from '@edx/frontend-lib-content-components';
+import TinyMceWidget, { prepareEditorRef } from '../editors/sharedComponents/TinyMceWidget';
 
 import { DEFAULT_EMPTY_WYSIWYG_VALUE } from '../constants';
 

@@ -23,7 +23,7 @@ import { ProblemTypeKeys } from '../../../../../data/constants/problem';
 import Randomization from './settingsComponents/Randomization';
 
 // This widget should be connected, grab all settings from store, update them as needed.
-export const SettingsWidget = ({
+const SettingsWidget = ({
   problemType,
   // redux
   answers,
@@ -192,4 +192,5 @@ export const mapDispatchToProps = {
   updateAnswer: actions.problem.updateAnswer,
 };
 
+export const SettingsWidgetInternal = SettingsWidget; // For testing only
 export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(SettingsWidget));

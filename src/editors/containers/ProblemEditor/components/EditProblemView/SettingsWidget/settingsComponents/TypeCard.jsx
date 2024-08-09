@@ -6,7 +6,7 @@ import { ProblemTypeKeys, ProblemTypes } from '../../../../../../data/constants/
 import messages from '../messages';
 import TypeRow from './TypeRow';
 
-export const TypeCard = ({
+const TypeCard = ({
   answers,
   blockTitle,
   correctAnswerCount,
@@ -64,4 +64,5 @@ TypeCard.propTypes = {
   intl: intlShape.isRequired,
 };
 
+export const TypeCardInternal = TypeCard; // For testing only
 export default injectIntl(TypeCard);

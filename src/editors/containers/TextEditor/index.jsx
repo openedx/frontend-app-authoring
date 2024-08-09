@@ -18,7 +18,7 @@ import messages from './messages';
 import TinyMceWidget from '../../sharedComponents/TinyMceWidget';
 import { prepareEditorRef, replaceStaticWithAsset } from '../../sharedComponents/TinyMceWidget/hooks';
 
-export const TextEditor = ({
+const TextEditor = ({
   onClose,
   returnFunction,
   // redux
@@ -121,4 +121,5 @@ export const mapDispatchToProps = {
   initializeEditor: actions.app.initializeEditor,
 };
 
+export const TextEditorInternal = TextEditor; // For testing only
 export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(TextEditor));

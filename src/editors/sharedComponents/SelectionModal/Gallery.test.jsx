@@ -3,7 +3,7 @@ import { shallow } from '@edx/react-unit-test-utils';
 
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
-import { Gallery } from './Gallery';
+import Gallery from './Gallery';
 
 jest.mock('../../data/redux', () => ({
   selectors: {

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import VideoGallery from './containers/VideoGallery';
 import * as hooks from './hooks';
 
-export const VideoSelector = ({
+const VideoSelector = ({
   blockId,
   learningContextId,
   lmsEndpointUrl,

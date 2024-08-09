@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { sendTrackEvent } from '@edx/frontend-platform/analytics';
 import { selectors } from '../../../../../../data/redux';
-import analyticsEvents from './constants';
+import { analyticsEvents } from './constants';
 
 export const useTrackSocialSharingChange = ({ updateField }) => {
   const analytics = useSelector(selectors.app.analytics);

@@ -7,7 +7,7 @@ import {
 } from '@openedx/paragon';
 import { Add, ExpandLess, ExpandMore } from '@openedx/paragon/icons';
 import PropTypes from 'prop-types';
-import { sortBy } from 'lodash-es';
+import { sortBy } from 'lodash';
 // eslint-disable-next-line import/no-unresolved
 import onClickOutside from 'react-onclickoutside';
 import FormGroup from './FormGroup';

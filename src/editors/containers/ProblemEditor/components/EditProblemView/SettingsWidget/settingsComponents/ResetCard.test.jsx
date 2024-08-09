@@ -1,7 +1,9 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import { formatMessage } from '../../../../../../../testUtils';
-import { ResetCard } from './ResetCard';
+import { useSelector } from 'react-redux';
+import { formatMessage } from '../../../../../../testUtils';
+import { ResetCardInternal as ResetCard } from './ResetCard';
 import { resetCardHooks } from '../hooks';
 
 jest.mock('../hooks', () => ({
@@ -17,9 +19,7 @@ jest.mock('../../../../../../data/redux', () => ({
   },
 }));
 
-jest.mock('react-redux', () => ({
-  useSelector: jest.fn().mockImplementation((args) => args),
-}));
+useSelector.mockImplementation((args) => args);
 
 describe('ResetCard', () => {
   const props = {

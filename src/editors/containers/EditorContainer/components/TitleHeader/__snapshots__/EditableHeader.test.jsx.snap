@@ -15,7 +15,7 @@ exports[`EditableHeader snapshot snapshot 1`] = `
       }
     }
     trailingElement={
-      <injectIntl(ShimmedIntlComponent)
+      <EditConfirmationButtons
         cancelEdit={[MockFunction args.cancelEdit]}
         updateTitle={[MockFunction args.updateTitle]}
       />

@@ -1,3 +1,4 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React, { useEffect } from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 import * as paragon from '@openedx/paragon';
@@ -6,12 +7,12 @@ import * as icons from '@openedx/paragon/icons';
 import {
   fireEvent, render, screen, waitFor,
 } from '@testing-library/react';
-import { formatMessage } from '../../../../testUtils';
-import { DimensionControls } from './DimensionControls';
-import hooks from './hooks';
+import { formatMessage } from '../../../testUtils';
+import { DimensionControlsInternal as DimensionControls } from './DimensionControls';
+import * as hooks from './hooks';
 
 const WrappedDimensionControls = () => {
-  const dimensions = hooks.dimensions('altText');
+  const dimensions = hooks.dimensionHooks('altText');
 
   useEffect(() => {
     dimensions.onImgLoad({ })({ target: { naturalWidth: 1517, naturalHeight: 803 } });
@@ -21,7 +22,7 @@ const WrappedDimensionControls = () => {
 };
 
 const UnlockedDimensionControls = () => {
-  const dimensions = hooks.dimensions('altText');
+  const dimensions = hooks.dimensionHooks('altText');
 
   useEffect(() => {
     dimensions.onImgLoad({ })({ target: { naturalWidth: 1517, naturalHeight: 803 } });

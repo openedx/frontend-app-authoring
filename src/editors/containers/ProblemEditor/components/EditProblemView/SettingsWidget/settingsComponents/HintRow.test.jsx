@@ -1,7 +1,8 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import { formatMessage } from '../../../../../../../testUtils';
-import { HintRow } from './HintRow';
+import { formatMessage } from '../../../../../../testUtils';
+import { HintRowInternal as HintRow } from './HintRow';
 
 describe('HintRow', () => {
   const props = {

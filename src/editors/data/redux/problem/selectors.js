@@ -1,4 +1,8 @@
 import { createSelector } from 'reselect';
+// This 'module' self-import hack enables mocking during tests.
+// See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
+// should be re-thought and cleaned up to avoid this pattern.
+// eslint-disable-next-line import/no-self-import
 import * as module from './selectors';
 
 export const problemState = (state) => state.problem;

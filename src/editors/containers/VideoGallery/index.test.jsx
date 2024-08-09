@@ -7,7 +7,7 @@ import {
   act, fireEvent, render, screen,
 } from '@testing-library/react';
 
-import { VideoGallery } from './index';
+import VideoGallery from './index';
 
 jest.unmock('react-redux');
 jest.unmock('@edx/frontend-platform/i18n');

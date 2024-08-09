@@ -18,7 +18,7 @@ import * as hooks from './hooks';
 import { ProblemTypeKeys } from '../../../../../data/constants/problem';
 import ExpandableTextArea from '../../../../../sharedComponents/ExpandableTextArea';
 
-export const AnswerOption = ({
+const AnswerOption = ({
   answer,
   hasSingleAnswer,
   // injected
@@ -142,4 +142,5 @@ export const mapStateToProps = (state) => ({
 });
 
 export const mapDispatchToProps = {};
+export const AnswerOptionInternal = AnswerOption; // For testing only
 export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(memo(AnswerOption)));

@@ -34,4 +34,5 @@ AnswerWidget.propTypes = {
   // injected
   intl: intlShape.isRequired,
 };
+export const AnswerWidgetInternal = AnswerWidget; // For testing only
 export default injectIntl(AnswerWidget);

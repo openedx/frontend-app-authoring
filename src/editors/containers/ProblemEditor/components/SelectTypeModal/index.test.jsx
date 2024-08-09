@@ -1,6 +1,7 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import * as module from '.';
+import SelectTypeModal from '.';
 
 jest.mock('./hooks', () => ({
   selectHooks: jest.fn(() => ({
@@ -16,6 +17,6 @@ describe('SelectTypeModal', () => {
   };
 
   test('snapshot', () => {
-    expect(shallow(<module.SelectTypeModal {...props} />).snapshot).toMatchSnapshot();
+    expect(shallow(<SelectTypeModal {...props} />).snapshot).toMatchSnapshot();
   });
 });

@@ -1,6 +1,7 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import { UploadErrorAlert } from './UploadErrorAlert';
+import UploadErrorAlert from './UploadErrorAlert';
 
 jest.mock('../../data/redux', () => ({
   selectors: {

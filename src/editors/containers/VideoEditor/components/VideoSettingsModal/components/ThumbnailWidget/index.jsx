@@ -24,14 +24,14 @@ import * as hooks from './hooks';
 import messages from './messages';
 
 import CollapsibleFormWidget from '../CollapsibleFormWidget';
-import FileInput from '../../../../../../sharedComponents/FileInput';
+import { FileInput } from '../../../../../../sharedComponents/FileInput';
 import ErrorAlert from '../../../../../../sharedComponents/ErrorAlerts/ErrorAlert';
 import { ErrorContext } from '../../../../hooks';
 
 /**
  * Collapsible Form widget controlling video thumbnail
  */
-export const ThumbnailWidget = ({
+const ThumbnailWidget = ({
   // injected
   intl,
   // redux
@@ -143,4 +143,5 @@ export const mapStateToProps = (state) => ({
 
 export const mapDispatchToProps = {};
 
+export const ThumbnailWidgetInternal = ThumbnailWidget; // For testing only
 export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(ThumbnailWidget));

@@ -1,6 +1,7 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import { TypeRow } from './TypeRow';
+import TypeRow from './TypeRow';
 import { typeRowHooks } from '../hooks';
 
 jest.mock('../hooks', () => ({

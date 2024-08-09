@@ -1,5 +1,5 @@
 /* eslint-disable */
-export const singleSelect = `<problem>
+const singleSelect = `<problem>
   <multiplechoiceresponse>
     <choicegroup>
       <choice correct="true"></choice>

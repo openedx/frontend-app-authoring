@@ -1,7 +1,9 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import { formatMessage } from '../../../../../testUtils';
-import * as module from './EditConfirmationButtons';
+import { formatMessage } from '../../../../testUtils';
+
+import { EditConfirmationButtonsInternal as EditConfirmationButtons } from './EditConfirmationButtons';
 
 describe('EditConfirmationButtons', () => {
   const props = {
@@ -11,7 +13,7 @@ describe('EditConfirmationButtons', () => {
   };
   describe('snapshot', () => {
     test('snapshot', () => {
-      expect(shallow(<module.EditConfirmationButtons {...props} />).snapshot).toMatchSnapshot();
+      expect(shallow(<EditConfirmationButtons {...props} />).snapshot).toMatchSnapshot();
     });
   });
 });

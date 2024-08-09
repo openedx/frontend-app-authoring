@@ -9,7 +9,7 @@ import { selectors } from '../../../../../../data/redux';
 import messages from '../messages';
 import { useAnswerSettings } from '../hooks';
 
-export const ShowAnswerCard = ({
+const ShowAnswerCard = ({
   showAnswer,
   updateSettings,
   defaultValue,
@@ -113,4 +113,5 @@ export const mapStateToProps = (state) => ({
 
 export const mapDispatchToProps = {};
 
+export const ShowAnswerCardInternal = ShowAnswerCard; // For testing only
 export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(ShowAnswerCard));

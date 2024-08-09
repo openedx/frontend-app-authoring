@@ -1,7 +1,8 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import { formatMessage } from '../../../../../../../testUtils';
-import { TimerCard } from './TimerCard';
+import { formatMessage } from '../../../../../../testUtils';
+import { TimerCardInternal as TimerCard } from './TimerCard';
 import { timerCardHooks } from '../hooks';
 
 jest.mock('../hooks', () => ({

@@ -1,8 +1,9 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 
 import { actions } from '../../../../../../data/redux';
-import { LicenseDetails, mapStateToProps, mapDispatchToProps } from './LicenseDetails';
+import { LicenseDetailsInternal as LicenseDetails, mapStateToProps, mapDispatchToProps } from './LicenseDetails';
 
 jest.mock('react', () => {
   const updateState = jest.fn();
@@ -19,18 +20,6 @@ jest.mock('../../../../../../data/redux', () => ({
       updateField: jest.fn().mockName('actions.video.updateField'),
     },
   },
-}));
-
-jest.mock('@openedx/paragon', () => ({
-  ...jest.requireActual('@openedx/paragon'),
-  CheckboxControl: 'CheckboxControl',
-  Stack: 'Stack',
-  Icon: 'Icon',
-  Form: {
-    Group: 'Form.Group',
-    Label: 'Form.Label',
-  },
-  ActionRow: { Spacer: 'ActionRow.Spacer' },
 }));
 
 describe('LicenseDetails', () => {

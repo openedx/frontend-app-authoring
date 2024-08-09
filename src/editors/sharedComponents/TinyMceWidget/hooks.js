@@ -6,12 +6,16 @@ import {
 } from 'react';
 import { getLocale, isRtl } from '@edx/frontend-platform/i18n';
 import { a11ycheckerCss } from 'frontend-components-tinymce-advanced-plugins';
-import { isEmpty } from 'lodash-es';
+import { isEmpty } from 'lodash';
 import tinyMCEStyles from '../../data/constants/tinyMCEStyles';
 import { StrictDict } from '../../utils';
 import pluginConfig from './pluginConfig';
+// This 'module' self-import hack enables mocking during tests.
+// See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
+// should be re-thought and cleaned up to avoid this pattern.
+// eslint-disable-next-line import/no-self-import
 import * as module from './hooks';
-import tinyMCE from '../../data/constants/tinyMCE';
+import * as tinyMCE from '../../data/constants/tinyMCE';
 import { getRelativeUrl, getStaticUrl, parseAssetName } from './utils';
 
 export const state = StrictDict({
@@ -30,6 +34,7 @@ export const addImagesAndDimensionsToRef = ({ imagesRef, images, editorContentHt
     const imageFragment = module.getImageFromHtmlString(editorContentHtml, image.url);
     return { ...image, width: imageFragment?.width, height: imageFragment?.height };
   });
+  // eslint-disable-next-line no-param-reassign
   imagesRef.current = imagesWithDimensions;
 };
 
@@ -119,6 +124,7 @@ export const getImageResizeHandler = ({ editor, imagesRef, setImage }) => () => 
     src, alt, width, height,
   } = editor.selection.getNode();
 
+  // eslint-disable-next-line no-param-reassign
   imagesRef.current = module.updateImageDimensions({
     images: imagesRef.current, url: src, width, height,
   }).result;

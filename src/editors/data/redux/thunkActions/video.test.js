@@ -2,23 +2,23 @@ import { actions } from '..';
 import keyStore from '../../../utils/keyStore';
 import * as thunkActions from './video';
 
-jest.mock('..', () => ({
+jest.mock('../video', () => ({
+  ...jest.requireActual('../video'),
   actions: {
-    video: {
-      load: (args) => ({ load: args }),
-      updateField: (args) => ({ updateField: args }),
-    },
+    load: (args) => ({ load: args }),
+    updateField: (args) => ({ updateField: args }),
   },
   selectors: {
-    app: {
-      courseDetails: (state) => ({ courseDetails: state }),
-      videos: (state) => ({ videos: state.app.videos }),
-    },
-    video: {
-      videoId: (state) => ({ videoId: state }),
-      videoSettings: (state) => ({ videoSettings: state }),
-      getTranscriptDownloadUrl: (state) => ({ getTranscriptDownloadUrl: state }),
-    },
+    videoId: (state) => ({ videoId: state }),
+    videoSettings: (state) => ({ videoSettings: state }),
+    getTranscriptDownloadUrl: (state) => ({ getTranscriptDownloadUrl: state }),
+  },
+}));
+jest.mock('../app', () => ({
+  ...jest.requireActual('../app'),
+  selectors: {
+    courseDetails: (state) => ({ courseDetails: state }),
+    videos: (state) => ({ videos: state.app.videos }),
   },
 }));
 jest.mock('./requests', () => ({

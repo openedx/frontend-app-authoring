@@ -6,7 +6,7 @@ import { ArrowBackIos } from '@openedx/paragon/icons';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import './index.scss';
-import hooks from './hooks';
+import * as hooks from './hooks';
 import messages from './messages';
 import BaseModal from '../../BaseModal';
 import AltTextControls from './AltTextControls';
@@ -23,7 +23,7 @@ import ErrorAlert from '../../ErrorAlerts/ErrorAlert';
  * @param {func} saveToEditor - save the current settings to the editor
  * @param {func} returnToSelection - return to image selection
  */
-export const ImageSettingsModal = ({
+const ImageSettingsModal = ({
   close,
   isOpen,
   returnToSelection,
@@ -32,8 +32,8 @@ export const ImageSettingsModal = ({
   // inject
   intl,
 }) => {
-  const altText = hooks.altText(selection.altText);
-  const dimensions = hooks.dimensions(altText);
+  const altText = hooks.altTextHooks(selection.altText);
+  const dimensions = hooks.dimensionHooks(altText);
   const onSaveClick = hooks.onSaveClick({
     altText,
     dimensions: dimensions.value,
@@ -102,4 +102,5 @@ ImageSettingsModal.propTypes = {
   // inject
   intl: intlShape.isRequired,
 };
+export const ImageSettingsModalInternal = ImageSettingsModal; // For testing only
 export default injectIntl(ImageSettingsModal);

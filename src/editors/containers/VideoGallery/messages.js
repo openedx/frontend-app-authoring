@@ -1,4 +1,4 @@
-export const messages = {
+const messages = {
   // Gallery
   emptyGalleryLabel: {
     id: 'authoring.selectvideomodal.emptyGalleryLabel',

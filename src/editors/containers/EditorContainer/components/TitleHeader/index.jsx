@@ -11,7 +11,7 @@ import { localTitleHooks } from './hooks';
 import messages from './messages';
 import EditableHeader from './EditableHeader';
 
-export const TitleHeader = ({
+const TitleHeader = ({
   isInitialized,
   // injected
   intl,
@@ -70,4 +70,5 @@ TitleHeader.propTypes = {
   intl: intlShape.isRequired,
 };
 
+export const TitleHeaderInternal = TitleHeader; // For testing only
 export default injectIntl(TitleHeader);

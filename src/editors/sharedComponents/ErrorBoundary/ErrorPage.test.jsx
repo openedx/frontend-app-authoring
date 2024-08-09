@@ -1,8 +1,9 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 import { selectors } from '../../data/redux';
-import { formatMessage } from '../../../testUtils';
-import { ErrorPage, mapStateToProps } from './ErrorPage';
+import { formatMessage } from '../../testUtils';
+import { ErrorPageInternal as ErrorPage, mapStateToProps } from './ErrorPage';
 
 jest.mock('../../data/redux', () => ({
   selectors: {

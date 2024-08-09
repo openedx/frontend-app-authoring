@@ -1,7 +1,8 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 import { showAdvancedSettingsCards } from './hooks';
-import { SettingsWidget, mapDispatchToProps } from '.';
+import { SettingsWidgetInternal as SettingsWidget, mapDispatchToProps } from '.';
 import { ProblemTypeKeys } from '../../../../../data/constants/problem';
 import { actions } from '../../../../../data/redux';
 

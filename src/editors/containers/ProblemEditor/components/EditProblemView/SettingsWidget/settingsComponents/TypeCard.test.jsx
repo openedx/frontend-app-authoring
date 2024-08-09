@@ -1,7 +1,8 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import { formatMessage } from '../../../../../../../testUtils';
-import { TypeCard } from './TypeCard';
+import { formatMessage } from '../../../../../../testUtils';
+import { TypeCardInternal as TypeCard } from './TypeCard';
 import { ProblemTypeKeys } from '../../../../../../data/constants/problem';
 
 describe('TypeCard', () => {

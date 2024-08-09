@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash-es';
+import _ from 'lodash';
 import { Form } from '@openedx/paragon';
 
 const FormGroup = (props) => {

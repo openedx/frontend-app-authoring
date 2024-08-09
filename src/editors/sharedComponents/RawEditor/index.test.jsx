@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import '@testing-library/jest-dom/extend-expect';
 
-import { RawEditor } from '.';
+import RawEditor from '.';
 
 jest.unmock('@openedx/paragon');
 

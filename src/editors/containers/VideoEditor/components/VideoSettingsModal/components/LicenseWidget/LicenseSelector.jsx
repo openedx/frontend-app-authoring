@@ -15,11 +15,11 @@ import {
 import { DeleteOutline } from '@openedx/paragon/icons';
 
 import { actions, selectors } from '../../../../../../data/redux';
-import hooks from './hooks';
+import * as hooks from './hooks';
 import messages from './messages';
 import { LicenseLevel, LicenseNames, LicenseTypes } from '../../../../../../data/constants/licenses';
 
-export const LicenseSelector = ({
+const LicenseSelector = ({
   license,
   level,
   // injected
@@ -89,4 +89,5 @@ export const mapDispatchToProps = (dispatch) => ({
   updateField: (stateUpdate) => dispatch(actions.video.updateField(stateUpdate)),
 });
 
+export const LicenseSelectorInternal = LicenseSelector; // For testing only
 export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(LicenseSelector));

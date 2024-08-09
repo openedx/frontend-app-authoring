@@ -1,6 +1,7 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import { SwitchToAdvancedEditorCard, mapDispatchToProps } from './SwitchToAdvancedEditorCard';
+import { SwitchToAdvancedEditorCardInternal as SwitchToAdvancedEditorCard, mapDispatchToProps } from './SwitchToAdvancedEditorCard';
 import { thunkActions } from '../../../../../../data/redux';
 
 describe('SwitchToAdvancedEditorCard snapshot', () => {

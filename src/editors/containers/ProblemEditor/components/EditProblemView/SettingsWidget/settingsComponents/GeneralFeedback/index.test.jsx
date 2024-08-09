@@ -1,6 +1,7 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import { formatMessage } from '../../../../../../../../testUtils';
+import { formatMessage } from '../../../../../../../testUtils';
 import { GeneralFeedbackCard } from './index';
 import { generalFeedbackHooks } from './hooks';
 

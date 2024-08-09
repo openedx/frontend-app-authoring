@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 import * as urls from './urls';
 
-const mockPromise = (returnValue) => new Promise(resolve => resolve(returnValue));
+const mockPromise = (returnValue) => new Promise(resolve => { resolve(returnValue); });
 
 // TODO: update to return block data appropriate per block ID, which will equal block type
 // eslint-disable-next-line

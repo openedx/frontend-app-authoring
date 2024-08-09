@@ -1,7 +1,8 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { shallow } from '@edx/react-unit-test-utils';
-import { Editor } from './Editor';
+import Editor from './Editor';
 import supportedEditors from './supportedEditors';
 import * as hooks from './hooks';
 import { blockTypes } from './data/constants/app';

@@ -1,8 +1,9 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 import { Form } from '@openedx/paragon';
-import * as module from './EditableHeader';
-import EditConfirmationButtons from './EditConfirmationButtons';
+import { EditableHeaderInternal as EditableHeader } from './EditableHeader';
+import { EditConfirmationButtonsInternal as EditConfirmationButtons } from './EditConfirmationButtons';
 
 describe('EditableHeader', () => {
   const props = {
@@ -15,7 +16,7 @@ describe('EditableHeader', () => {
   };
   let el;
   beforeEach(() => {
-    el = shallow(<module.EditableHeader {...props} />);
+    el = shallow(<EditableHeader {...props} />);
   });
 
   describe('snapshot', () => {

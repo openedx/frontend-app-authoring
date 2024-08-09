@@ -1,15 +1,9 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 
 import { Image } from '@openedx/paragon';
-import { GalleryCard } from './GalleryCard';
-
-jest.mock('@openedx/paragon', () => ({
-  ...jest.requireActual('@openedx/paragon'),
-  Badge: 'Badge',
-  SelectableBox: 'SelectableBox',
-  Image: 'Image',
-}));
+import GalleryCard from './GalleryCard';
 
 describe('GalleryCard component', () => {
   const asset = {

@@ -10,8 +10,8 @@ import {
   Warning as WarningIcon,
 } from '@openedx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import Placeholder from '@edx/frontend-lib-content-components';
 
+import Placeholder from '../editors/Placeholder';
 import { RequestStatus } from '../data/constants';
 import { useModel } from '../generic/model-store';
 import AlertMessage from '../generic/alert-message';

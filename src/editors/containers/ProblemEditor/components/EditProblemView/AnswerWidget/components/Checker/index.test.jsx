@@ -1,3 +1,4 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import { shallow } from '@edx/react-unit-test-utils';
 import Checker from '.';
 

@@ -40,5 +40,3 @@ FileInput.propTypes = {
     ]),
   }).isRequired,
 };
-
-export default FileInput;

@@ -7,7 +7,7 @@ import { groupFeedbackCardHooks, groupFeedbackRowHooks } from './hooks';
 import GroupFeedbackRow from './GroupFeedbackRow';
 import Button from '../../../../../../../sharedComponents/Button';
 
-export const GroupFeedbackCard = ({
+const GroupFeedbackCard = ({
   groupFeedbacks,
   updateSettings,
   answers,
@@ -63,4 +63,5 @@ GroupFeedbackCard.propTypes = {
   updateSettings: PropTypes.func.isRequired,
 };
 
+export const GroupFeedbackCardInternal = GroupFeedbackCard; // For testing only
 export default injectIntl(GroupFeedbackCard);

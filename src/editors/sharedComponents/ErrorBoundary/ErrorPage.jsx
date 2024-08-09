@@ -14,7 +14,7 @@ import { selectors } from '../../data/redux';
  * An error page that displays a generic message for unexpected errors.  Also contains a "Try
  * Again" button to refresh the page.
  */
-export const ErrorPage = ({
+const ErrorPage = ({
   message,
   studioEndpointUrl,
   learningContextId,
@@ -86,4 +86,5 @@ export const mapStateToProps = (state) => ({
   unitData: selectors.app.unitUrl(state),
 });
 
+export const ErrorPageInternal = ErrorPage; // For testing only
 export default injectIntl(connect(mapStateToProps)(ErrorPage));

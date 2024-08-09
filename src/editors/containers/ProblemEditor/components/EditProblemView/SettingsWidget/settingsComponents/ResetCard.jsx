@@ -8,7 +8,7 @@ import messages from '../messages';
 import { resetCardHooks } from '../hooks';
 import { selectors } from '../../../../../../data/redux';
 
-export const ResetCard = ({
+const ResetCard = ({
   showResetButton,
   defaultValue,
   updateSettings,
@@ -58,4 +58,5 @@ ResetCard.propTypes = {
   intl: intlShape.isRequired,
 };
 
+export const ResetCardInternal = ResetCard; // For testing only
 export default injectIntl(ResetCard);

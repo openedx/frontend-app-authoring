@@ -8,7 +8,7 @@ import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/
 import { actions, selectors } from '../../../../../../data/redux';
 import { keyStore } from '../../../../../../utils';
 import CollapsibleFormWidget from '../CollapsibleFormWidget';
-import hooks from './hooks';
+import * as hooks from './hooks';
 import messages from '../messages';
 
 import './index.scss';
@@ -17,7 +17,7 @@ import './index.scss';
  * Collapsible Form widget controlling video start and end times
  * Also displays the total run time of the video.
  */
-export const DurationWidget = ({
+const DurationWidget = ({
   // redux
   duration,
   updateField,
@@ -100,4 +100,5 @@ export const mapDispatchToProps = {
   updateField: actions.video.updateField,
 };
 
+export const DurationWidgetInternal = DurationWidget; // For testing only
 export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(DurationWidget));

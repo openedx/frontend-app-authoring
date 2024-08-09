@@ -4,7 +4,7 @@
 //     display_name: Circuit Schematic Builder
 //     markdown: !!null
 // data: |
-export const circuitSchematic = `<problem>
+const circuitSchematic = `<problem>
     <p>
         Circuit schematic problems allow students to create virtual circuits by
         arranging elements such as voltage sources, capacitors, resistors, and

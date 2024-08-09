@@ -8,7 +8,7 @@ import SelectTypeFooter from './SelectTypeFooter';
 import * as hooks from '../../../../EditorContainer/hooks';
 import messages from './messages';
 
-export const SelectTypeWrapper = ({
+const SelectTypeWrapper = ({
   children,
   onClose,
   selected,
@@ -51,4 +51,5 @@ SelectTypeWrapper.propTypes = {
   onClose: PropTypes.func,
 };
 
+export const SelectTypeWrapperInternal = SelectTypeWrapper; // For testing only
 export default injectIntl(SelectTypeWrapper);

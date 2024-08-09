@@ -1,8 +1,9 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 
-import { formatMessage } from '../../../../../testUtils';
-import { EditorFooter } from '.';
+import { formatMessage } from '../../../../testUtils';
+import { EditorFooterInternal as EditorFooter } from '.';
 
 jest.mock('../../hooks', () => ({
   nullMethod: jest.fn().mockName('hooks.nullMethod'),

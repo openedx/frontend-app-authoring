@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 
-import _ from 'lodash-es';
+import _ from 'lodash';
+// This 'module' self-import hack enables mocking during tests.
+// See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
+// should be re-thought and cleaned up to avoid this pattern.
+// eslint-disable-next-line import/no-self-import
 import * as module from './hooks';
 import messages from './messages';
 import {
@@ -129,7 +133,7 @@ export const scoringCardHooks = (scoring, updateSettings, defaultValue) => {
 
   const handleMaxAttemptChange = (event) => {
     let unlimitedAttempts = false;
-    let attemptNumber = parseInt(event.target.value);
+    let attemptNumber = parseInt(event.target.value, 10);
 
     if (!_.isFinite(attemptNumber) || attemptNumber === defaultValue) {
       attemptNumber = null;
@@ -147,7 +151,7 @@ export const scoringCardHooks = (scoring, updateSettings, defaultValue) => {
   };
 
   const handleOnChange = (event) => {
-    let newMaxAttempt = parseInt(event.target.value);
+    let newMaxAttempt = parseInt(event.target.value, 10);
     if (newMaxAttempt === defaultValue) {
       newMaxAttempt = `${defaultValue} (Default)`;
     } else if (_.isNaN(newMaxAttempt)) {
@@ -193,7 +197,7 @@ export const useAnswerSettings = (showAnswer, updateSettings) => {
   };
 
   const handleAttemptsChange = (event) => {
-    let attempts = parseInt(event.target.value);
+    let attempts = parseInt(event.target.value, 10);
     if (_.isNaN(attempts)) {
       attempts = 0;
     }
@@ -209,7 +213,7 @@ export const useAnswerSettings = (showAnswer, updateSettings) => {
 
 export const timerCardHooks = (updateSettings) => ({
   handleChange: (event) => {
-    let time = parseInt(event.target.value);
+    let time = parseInt(event.target.value, 10);
     if (_.isNaN(time)) {
       time = 0;
     }

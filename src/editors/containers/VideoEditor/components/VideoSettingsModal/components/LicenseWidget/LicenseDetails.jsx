@@ -23,7 +23,7 @@ import { actions } from '../../../../../../data/redux';
 import { LicenseLevel, LicenseTypes } from '../../../../../../data/constants/licenses';
 import messages from './messages';
 
-export const LicenseDetails = ({
+const LicenseDetails = ({
   license,
   details,
   level,
@@ -166,4 +166,5 @@ export const mapDispatchToProps = (dispatch) => ({
   updateField: (stateUpdate) => dispatch(actions.video.updateField(stateUpdate)),
 });
 
+export const LicenseDetailsInternal = LicenseDetails; // For testing only
 export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(LicenseDetails));

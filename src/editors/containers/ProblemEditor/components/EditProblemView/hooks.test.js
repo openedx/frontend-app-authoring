@@ -1,6 +1,6 @@
 import { ProblemTypeKeys, ShowAnswerTypesKeys } from '../../../../data/constants/problem';
 import * as hooks from './hooks';
-import { MockUseState } from '../../../../../testUtils';
+import { MockUseState } from '../../../../testUtils';
 
 const mockRawOLX = '<problem>rawOLX</problem>';
 const mockBuiltOLX = 'builtOLX';

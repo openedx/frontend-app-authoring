@@ -1,5 +1,6 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import { sendTrackEvent } from '@edx/frontend-platform/analytics';
-import analyticsEvents from './constants';
+import { analyticsEvents } from './constants';
 import * as hooks from './hooks';
 
 jest.mock('../../../../../../data/redux', () => ({

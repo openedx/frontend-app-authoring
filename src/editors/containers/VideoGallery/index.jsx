@@ -2,14 +2,14 @@ import React, { useEffect } from 'react';
 import { Image } from '@openedx/paragon';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../data/redux';
-import hooks from './hooks';
+import * as hooks from './hooks';
 import SelectionModal from '../../sharedComponents/SelectionModal';
 import { acceptedImgKeys } from './utils';
 import messages from './messages';
 import { RequestKeys } from '../../data/constants/requests';
 import videoThumbnail from '../../data/images/videoThumbnail.svg';
 
-export const VideoGallery = () => {
+const VideoGallery = () => {
   const rawVideos = useSelector(selectors.app.videos);
   const isLoaded = useSelector(
     (state) => selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchVideos }),

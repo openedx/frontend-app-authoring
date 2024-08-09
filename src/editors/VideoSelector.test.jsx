@@ -1,3 +1,4 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { shallow } from '@edx/react-unit-test-utils';

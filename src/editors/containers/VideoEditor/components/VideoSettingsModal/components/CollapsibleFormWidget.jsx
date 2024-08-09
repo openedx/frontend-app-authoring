@@ -14,7 +14,7 @@ import messages from './messages';
  *   <div>My Widget</div>
  * </CollapsibleFormWidget>
  */
-export const CollapsibleFormWidget = ({
+const CollapsibleFormWidget = ({
   children,
   isError,
   subtitle,
@@ -70,4 +70,5 @@ CollapsibleFormWidget.propTypes = {
   intl: intlShape.isRequired,
 };
 
+export const CollapsibleFormWidgetInternal = CollapsibleFormWidget; // For testing only
 export default injectIntl(CollapsibleFormWidget);

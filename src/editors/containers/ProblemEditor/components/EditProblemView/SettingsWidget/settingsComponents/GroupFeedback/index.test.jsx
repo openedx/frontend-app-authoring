@@ -1,7 +1,8 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import { formatMessage } from '../../../../../../../../testUtils';
-import { GroupFeedbackCard } from './index';
+import { formatMessage } from '../../../../../../../testUtils';
+import { GroupFeedbackCardInternal as GroupFeedbackCard } from './index';
 import { groupFeedbackRowHooks, groupFeedbackCardHooks } from './hooks';
 import messages from './messages';
 

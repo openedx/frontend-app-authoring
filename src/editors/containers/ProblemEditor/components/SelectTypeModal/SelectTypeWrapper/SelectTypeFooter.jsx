@@ -9,11 +9,11 @@ import {
 } from '@openedx/paragon';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import messages from './messages';
-import hooks from '../hooks';
+import * as hooks from '../hooks';
 
 import { actions, selectors } from '../../../../../data/redux';
 
-export const SelectTypeFooter = ({
+const SelectTypeFooter = ({
   onCancel,
   selected,
   // redux
@@ -79,4 +79,5 @@ export const mapDispatchToProps = {
   setBlockTitle: actions.app.setBlockTitle,
 };
 
+export const SelectTypeFooterInternal = SelectTypeFooter; // For testing only
 export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(SelectTypeFooter));

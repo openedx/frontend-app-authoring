@@ -1,6 +1,6 @@
 import { dispatch } from 'react-redux';
 import { actions } from '../../../../../../data/redux';
-import { MockUseState } from '../../../../../../../testUtils';
+import { MockUseState } from '../../../../../../testUtils';
 import * as requests from '../../../../../../data/redux/thunkActions/requests';
 import * as hooks from './hooks';
 

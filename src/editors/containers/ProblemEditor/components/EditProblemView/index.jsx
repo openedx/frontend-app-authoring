@@ -24,7 +24,7 @@ import messages from './messages';
 import ExplanationWidget from './ExplanationWidget';
 import { saveBlock } from '../../../../hooks';
 
-export const EditProblemView = ({
+const EditProblemView = ({
   returnFunction,
   // redux
   problemType,
@@ -139,4 +139,5 @@ export const mapStateToProps = (state) => ({
   problemState: selectors.problem.completeState(state),
 });
 
+export const EditProblemViewInternal = EditProblemView; // For testing only
 export default injectIntl(connect(mapStateToProps)(EditProblemView));

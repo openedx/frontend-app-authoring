@@ -1,9 +1,12 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 
 import * as module from './Transcript';
 
-import { MockUseState } from '../../../../../../../testUtils';
+import { MockUseState } from '../../../../../../testUtils';
+
+const Transcript = module.TranscriptInternal;
 
 jest.mock('./LanguageSelector', () => 'LanguageSelector');
 jest.mock('./TranscriptActionMenu', () => 'TranscriptActionMenu');
@@ -57,7 +60,7 @@ describe('Transcript Component', () => {
           cancelDelete: jest.fn().mockName('cancelDelete'),
         }));
         expect(
-          shallow(<module.Transcript {...props} />).snapshot,
+          shallow(<Transcript {...props} />).snapshot,
         ).toMatchSnapshot();
       });
       test('snapshots: renders as expected with default props: dont show confirm delete, language is blank so delete is shown instead of action menu', () => {
@@ -67,7 +70,7 @@ describe('Transcript Component', () => {
           cancelDelete: jest.fn().mockName('cancelDelete'),
         }));
         expect(
-          shallow(<module.Transcript {...props} language="" />).snapshot,
+          shallow(<Transcript {...props} language="" />).snapshot,
         ).toMatchSnapshot();
       });
       test('snapshots: renders as expected with default props: show confirm delete', () => {
@@ -77,7 +80,7 @@ describe('Transcript Component', () => {
           cancelDelete: jest.fn().mockName('cancelDelete'),
         }));
         expect(
-          shallow(<module.Transcript {...props} />).snapshot,
+          shallow(<Transcript {...props} />).snapshot,
         ).toMatchSnapshot();
       });
       test('snapshots: renders as expected with transcriptUrl', () => {
@@ -87,7 +90,7 @@ describe('Transcript Component', () => {
           cancelDelete: jest.fn().mockName('cancelDelete'),
         }));
         expect(
-          shallow(<module.Transcript {...props} transcriptUrl="url" />).snapshot,
+          shallow(<Transcript {...props} transcriptUrl="url" />).snapshot,
         ).toMatchSnapshot();
       });
     });

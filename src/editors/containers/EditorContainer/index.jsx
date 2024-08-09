@@ -15,7 +15,7 @@ import * as hooks from './hooks';
 import messages from './messages';
 import './index.scss';
 
-export const EditorContainer = ({
+const EditorContainer = ({
   children,
   getContent,
   onClose,
@@ -99,4 +99,5 @@ EditorContainer.propTypes = {
   intl: intlShape.isRequired,
 };
 
+export const EditorContainerInternal = EditorContainer; // For testing only
 export default injectIntl(EditorContainer);

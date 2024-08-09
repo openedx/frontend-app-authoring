@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { MockUseState } from '../../../../../../../../testUtils';
+import { MockUseState } from '../../../../../../../testUtils';
 import * as hooks from './hooks';
 import { RandomizationTypes, RandomizationTypesKeys } from '../../../../../../../data/constants/problem';
 

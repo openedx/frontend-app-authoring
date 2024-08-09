@@ -15,7 +15,7 @@ import VideoEditorModal from './components/VideoEditorModal';
 import { ErrorContext, errorsHook, fetchVideoContent } from './hooks';
 import messages from './messages';
 
-export const VideoEditor = ({
+const VideoEditor = ({
   onClose,
   returnFunction,
   // injected
@@ -81,4 +81,5 @@ export const mapStateToProps = (state) => ({
 
 export const mapDispatchToProps = {};
 
+export const VideoEditorInternal = VideoEditor; // For testing only
 export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(VideoEditor));

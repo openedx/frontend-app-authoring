@@ -5,7 +5,7 @@ import './index.scss';
 import messages from './messages';
 import { VideoUploader } from './VideoUploader';
 
-export const VideoUploadEditor = () => {
+const VideoUploadEditor = () => {
   const [loading, setLoading] = React.useState(false);
   const intl = useIntl();
 

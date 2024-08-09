@@ -16,7 +16,7 @@ import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/
 import { AdvanceProblems, ProblemTypeKeys } from '../../../../../data/constants/problem';
 import messages from './messages';
 
-export const AdvanceTypeSelect = ({
+const AdvanceTypeSelect = ({
   selected,
   setSelected,
   // injected
@@ -97,4 +97,5 @@ AdvanceTypeSelect.propTypes = {
   intl: intlShape.isRequired,
 };
 
+export const AdvanceTypeSelectInternal = AdvanceTypeSelect; // For testing only
 export default injectIntl(AdvanceTypeSelect);

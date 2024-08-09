@@ -12,7 +12,7 @@ import {
   TransitionReplace,
 } from '@openedx/paragon';
 import { Info as InfoIcon } from '@openedx/paragon/icons';
-import { TypeaheadDropdown } from '@edx/frontend-lib-content-components';
+import TypeaheadDropdown from '../../editors/sharedComponents/TypeaheadDropdown';
 
 import AlertMessage from '../alert-message';
 import { STATEFUL_BUTTON_STATES } from '../../constants';

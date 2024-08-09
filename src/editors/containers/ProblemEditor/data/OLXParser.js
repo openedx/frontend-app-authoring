@@ -2,7 +2,7 @@
 /* eslint no-eval: 0 */
 
 import { XMLParser, XMLBuilder } from 'fast-xml-parser';
-import _ from 'lodash-es';
+import _ from 'lodash';
 import { ProblemTypeKeys, RichTextProblems, settingsOlxAttributes } from '../../../data/constants/problem';
 
 export const indexToLetterMap = [...Array(26)].map((val, i) => String.fromCharCode(i + 65));
@@ -719,9 +719,9 @@ export class OLXParser {
       if (!toleranceValue || toleranceValue.length === 0) {
         settings.tolerance = { value: null, type: 'None' };
       } else if (toleranceValue.includes('%')) {
-        settings.tolerance = { value: parseInt(toleranceValue.slice(0, -1)), type: 'Percent' };
+        settings.tolerance = { value: parseInt(toleranceValue.slice(0, -1), 10), type: 'Percent' };
       } else {
-        settings.tolerance = { value: parseInt(toleranceValue), type: 'Number' };
+        settings.tolerance = { value: parseInt(toleranceValue, 10), type: 'Number' };
       }
     } else {
       settings.tolerance = { value: null, type: 'None' };

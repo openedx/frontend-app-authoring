@@ -1,10 +1,15 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import PropTypes from 'prop-types';
 
 import { injectIntl } from '@edx/frontend-platform/i18n';
-import tinyMCEKeys from '../../data/constants/tinyMCE';
+import * as tinyMCEKeys from '../../data/constants/tinyMCE';
 import ImageSettingsModal from './ImageSettingsModal';
 import SelectImageModal from './SelectImageModal';
+// This 'module' self-import hack enables mocking during tests.
+// See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
+// should be re-thought and cleaned up to avoid this pattern.
+// eslint-disable-next-line import/no-self-import
 import * as module from '.';
 import { updateImageDimensions } from '../TinyMceWidget/hooks';
 
@@ -55,6 +60,7 @@ export const updateImagesRef = ({
     images: images.current, url: selection.externalUrl, height, width,
   });
 
+  // eslint-disable-next-line no-param-reassign
   images.current = imageAlreadyExists ? mappedImages : [...images.current, newImage];
 };
 
@@ -114,7 +120,7 @@ export const hooks = {
   propsString,
 };
 
-export const ImageUploadModal = ({
+const ImageUploadModal = ({
   // eslint-disable-next-line
   editorRef,
   isOpen,
@@ -187,4 +193,5 @@ ImageUploadModal.propTypes = {
   editorType: PropTypes.string,
 };
 
+export const ImageUploadModalInternal = ImageUploadModal; // For testing only
 export default injectIntl(ImageUploadModal);

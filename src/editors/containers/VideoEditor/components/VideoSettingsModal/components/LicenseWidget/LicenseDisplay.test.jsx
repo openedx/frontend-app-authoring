@@ -1,7 +1,8 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 
-import { LicenseDisplay } from './LicenseDisplay';
+import { LicenseDisplayInternal as LicenseDisplay } from './LicenseDisplay';
 
 jest.mock('react', () => ({
   ...jest.requireActual('react'),

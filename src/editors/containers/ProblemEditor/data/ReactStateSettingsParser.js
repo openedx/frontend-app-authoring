@@ -1,5 +1,5 @@
 import { XMLParser } from 'fast-xml-parser';
-import _ from 'lodash-es';
+import _ from 'lodash';
 
 import {
   ShowAnswerTypesKeys,
@@ -61,7 +61,7 @@ class ReactStateSettingsParser {
       const attributeKey = attribute.substring(2);
       if (SETTING_KEYS.includes(attributeKey)) {
         if (attributeKey === 'max_attempts' || attributeKey === 'weight') {
-          rawOlxSettings[attributeKey] = parseInt(olx.problem[attribute]);
+          rawOlxSettings[attributeKey] = parseInt(olx.problem[attribute], 10);
         } else {
           rawOlxSettings[attributeKey] = olx.problem[attribute];
         }

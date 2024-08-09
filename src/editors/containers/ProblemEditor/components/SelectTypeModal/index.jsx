@@ -6,10 +6,10 @@ import ProblemTypeSelect from './content/ProblemTypeSelect';
 import Preview from './content/Preview';
 import AdvanceTypeSelect from './content/AdvanceTypeSelect';
 import SelectTypeWrapper from './SelectTypeWrapper';
-import hooks from './hooks';
+import * as hooks from './hooks';
 import { AdvanceProblemKeys } from '../../../../data/constants/problem';
 
-export const SelectTypeModal = ({
+const SelectTypeModal = ({
   onClose,
 }) => {
   const { selected, setSelected } = hooks.selectHooks();

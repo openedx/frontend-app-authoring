@@ -1,10 +1,11 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 
-import { formatMessage } from '../../../testUtils';
+import { formatMessage } from '../../testUtils';
 import { selectors } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
-import { VideoEditor, mapStateToProps, mapDispatchToProps } from '.';
+import { VideoEditorInternal as VideoEditor, mapStateToProps, mapDispatchToProps } from '.';
 
 jest.mock('../EditorContainer', () => 'EditorContainer');
 jest.mock('./components/VideoEditorModal', () => 'VideoEditorModal');

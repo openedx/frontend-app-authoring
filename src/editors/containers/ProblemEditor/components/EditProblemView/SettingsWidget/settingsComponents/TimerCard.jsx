@@ -6,7 +6,7 @@ import SettingsOption from '../SettingsOption';
 import messages from '../messages';
 import { timerCardHooks } from '../hooks';
 
-export const TimerCard = ({
+const TimerCard = ({
   timeBetween,
   updateSettings,
   // inject
@@ -42,4 +42,5 @@ TimerCard.propTypes = {
   intl: intlShape.isRequired,
 };
 
+export const TimerCardInternal = TimerCard; // For testing only
 export default injectIntl(TimerCard);

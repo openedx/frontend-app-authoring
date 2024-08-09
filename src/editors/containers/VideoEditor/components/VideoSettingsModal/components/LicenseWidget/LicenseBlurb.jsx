@@ -17,7 +17,7 @@ import {
 import messages from './messages';
 import { LicenseTypes } from '../../../../../../data/constants/licenses';
 
-export const LicenseBlurb = ({
+const LicenseBlurb = ({
   license,
   details,
 }) => (
@@ -48,4 +48,5 @@ LicenseBlurb.propTypes = {
   }).isRequired,
 };
 
+export const LicenseBlurbInternal = LicenseBlurb; // For testing only
 export default injectIntl(LicenseBlurb);

@@ -15,7 +15,7 @@ import { LicenseTypes } from '../../../../../../data/constants/licenses';
 import LicenseBlurb from './LicenseBlurb';
 import messages from './messages';
 
-export const LicenseDisplay = ({
+const LicenseDisplay = ({
   license,
   details,
   licenseDescription,
@@ -53,4 +53,5 @@ LicenseDisplay.propTypes = {
   licenseDescription: PropTypes.string.isRequired,
 };
 
+export const LicenseDisplayInternal = LicenseDisplay; // For testing only
 export default injectIntl(LicenseDisplay);

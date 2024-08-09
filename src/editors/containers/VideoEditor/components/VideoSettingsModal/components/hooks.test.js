@@ -1,9 +1,11 @@
+import 'CourseAuthoring/editors/setupEditorTest';
+
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 import { keyStore } from '../../../../../utils';
 import { actions, selectors } from '../../../../../data/redux';
-import { MockUseState } from '../../../../../../testUtils';
+import { MockUseState } from '../../../../../testUtils';
 
 import * as handlers from './handlers';
 import * as hooks from './hooks';

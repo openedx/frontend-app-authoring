@@ -8,7 +8,7 @@ import messages from './messages';
 import TinyMceWidget from '../../../../../sharedComponents/TinyMceWidget';
 import { prepareEditorRef, replaceStaticWithAsset } from '../../../../../sharedComponents/TinyMceWidget/hooks';
 
-export const ExplanationWidget = ({
+const ExplanationWidget = ({
   // redux
   settings,
   learningContextId,
@@ -57,4 +57,5 @@ export const mapStateToProps = (state) => ({
   learningContextId: selectors.app.learningContextId(state),
 });
 
+export const ExplanationWidgetInternal = ExplanationWidget; // For testing only
 export default injectIntl(connect(mapStateToProps)(ExplanationWidget));

@@ -1,9 +1,8 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import * as module from './ErrorAlert';
-import { MockUseState } from '../../../testUtils';
-
-const { ErrorAlert } = module;
+import ErrorAlert, { hooks } from './ErrorAlert';
+import { MockUseState } from '../../testUtils';
 
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
@@ -12,7 +11,7 @@ jest.mock('react', () => ({
   useCallback: (cb, prereqs) => ({ cb, prereqs }),
 }));
 
-const state = new MockUseState(module.hooks);
+const state = new MockUseState(hooks);
 let hook;
 const testValue = 'testVALUE';
 
@@ -33,7 +32,7 @@ describe('ErrorAlert component', () => {
           isError: testValue,
         };
         beforeEach(() => {
-          hook = module.hooks.dismissalHooks(props);
+          hook = hooks.dismissalHooks(props);
         });
         it('returns isDismissed value, initialized to false', () => {
           expect(state.stateVals.isDismissed).toEqual(hook.isDismissed);
@@ -61,7 +60,7 @@ describe('ErrorAlert component', () => {
         props = {
           dismissError: jest.fn(),
         };
-        jest.spyOn(module.hooks, 'dismissalHooks').mockImplementation(() => ({
+        jest.spyOn(hooks, 'dismissalHooks').mockImplementation(() => ({
           isDismissed: false,
           dismissAlert: jest.fn().mockName('dismissAlert'),
         }));

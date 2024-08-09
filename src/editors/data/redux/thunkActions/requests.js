@@ -1,11 +1,19 @@
 import { StrictDict } from '../../../utils';
 
 import { RequestKeys } from '../../constants/requests';
-/* eslint-disable import/no-cycle */
-import { actions, selectors } from '..';
 import api, { loadImages } from '../../services/cms/api';
+import { actions as requestsActions } from '../requests';
+import { selectors as appSelectors } from '../app';
 
+// This 'module' self-import hack enables mocking during tests.
+// See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
+// should be re-thought and cleaned up to avoid this pattern.
+// eslint-disable-next-line import/no-self-import
 import * as module from './requests';
+
+// Similar to `import { actions, selectors } from '..';` but avoid circular imports:
+const actions = { requests: requestsActions };
+const selectors = { app: appSelectors };
 
 /**
  * Wrapper around a network request promise, that sends actions to the redux store to

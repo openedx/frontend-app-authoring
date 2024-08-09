@@ -1,11 +1,18 @@
+import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 
 import { RequestKeys } from '../../../../../../data/constants/requests';
 
-import { formatMessage } from '../../../../../../../testUtils';
+import { formatMessage } from '../../../../../../testUtils';
 import { actions, selectors } from '../../../../../../data/redux';
+// This 'module' self-import hack enables mocking during tests.
+// See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
+// should be re-thought and cleaned up to avoid this pattern.
+// eslint-disable-next-line import/no-self-import
 import * as module from './index';
+
+const TranscriptWidget = module.TranscriptWidgetInternal;
 
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
@@ -101,47 +108,47 @@ describe('TranscriptWidget', () => {
     describe('snapshots', () => {
       test('snapshots: renders as expected with default props', () => {
         expect(
-          shallow(<module.TranscriptWidget {...props} />).snapshot,
+          shallow(<TranscriptWidget {...props} />).snapshot,
         ).toMatchSnapshot();
       });
       test('snapshots: renders as expected with allowTranscriptImport true', () => {
         expect(
-          shallow(<module.TranscriptWidget {...props} allowTranscriptImport />).snapshot,
+          shallow(<TranscriptWidget {...props} allowTranscriptImport />).snapshot,
         ).toMatchSnapshot();
       });
       test('snapshots: renders as expected with transcripts', () => {
         expect(
-          shallow(<module.TranscriptWidget {...props} transcripts={['en']} />).snapshot,
+          shallow(<TranscriptWidget {...props} transcripts={['en']} />).snapshot,
         ).toMatchSnapshot();
       });
       test('snapshots: renders as expected with transcript urls', () => {
         expect(
-          shallow(<module.TranscriptWidget {...props} selectedVideoTranscriptUrls={{ en: 'url' }} />).snapshot,
+          shallow(<TranscriptWidget {...props} selectedVideoTranscriptUrls={{ en: 'url' }} />).snapshot,
         ).toMatchSnapshot();
       });
       test('snapshots: renders as expected with transcripts and urls', () => {
         expect(
-          shallow(<module.TranscriptWidget {...props} transcripts={['es']} selectedVideoTranscriptUrls={{ en: 'url' }} />).snapshot,
+          shallow(<TranscriptWidget {...props} transcripts={['es']} selectedVideoTranscriptUrls={{ en: 'url' }} />).snapshot,
         ).toMatchSnapshot();
       });
       test('snapshots: renders as expected with allowTranscriptDownloads true', () => {
         expect(
-          shallow(<module.TranscriptWidget {...props} allowTranscriptDownloads transcripts={['en']} />).snapshot,
+          shallow(<TranscriptWidget {...props} allowTranscriptDownloads transcripts={['en']} />).snapshot,
         ).toMatchSnapshot();
       });
       test('snapshots: renders as expected with showTranscriptByDefault true', () => {
         expect(
-          shallow(<module.TranscriptWidget {...props} showTranscriptByDefault transcripts={['en']} />).snapshot,
+          shallow(<TranscriptWidget {...props} showTranscriptByDefault transcripts={['en']} />).snapshot,
         ).toMatchSnapshot();
       });
       test('snapshot: renders ErrorAlert with upload error message', () => {
         expect(
-          shallow(<module.TranscriptWidget {...props} isUploadError transcripts={['en', 'fr']} />).snapshot,
+          shallow(<TranscriptWidget {...props} isUploadError transcripts={['en', 'fr']} />).snapshot,
         ).toMatchSnapshot();
       });
       test('snapshot: renders ErrorAlert with delete error message', () => {
         expect(
-          shallow(<module.TranscriptWidget {...props} isDeleteError transcripts={['en']} />).snapshot,
+          shallow(<TranscriptWidget {...props} isDeleteError transcripts={['en']} />).snapshot,
         ).toMatchSnapshot();
       });
     });

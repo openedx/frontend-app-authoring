@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 
-import flatten from 'lodash.flatten';
+import { flatten } from 'lodash';
 
 /**
  * flattenSubNodes - appends a nodes children to a given array 'subNodes' in a flattened format.
