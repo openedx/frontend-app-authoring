@@ -12,7 +12,7 @@ import { StrictDict } from '../../utils';
 import pluginConfig from './pluginConfig';
 import * as module from './hooks';
 import tinyMCE from '../../data/constants/tinyMCE';
-import { getRelativeUrl, getStaticUrl } from './utils';
+import { getRelativeUrl, getStaticUrl, parseAssetName } from './utils';
 
 export const state = StrictDict({
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -89,9 +89,9 @@ export const replaceStaticWithAsset = ({
       const isStatic = src.startsWith('/static/');
       const assetSrc = src.substring(0, src.indexOf('"'));
       const staticName = assetSrc.substring(8);
-      const assetName = assetSrc.replace(/\/assets\/.+[^/]\//g, '');
+      const assetName = parseAssetName(src);
       const displayName = isStatic ? staticName : assetName;
-      const isCorrectAssetFormat = assetSrc.match(/\/asset-v1:\S+[+]\S+[@]\S+[+]\S+[@]/g)?.length >= 1;
+      const isCorrectAssetFormat = assetSrc.startsWith('/asset') && assetSrc.match(/\/asset-v1:\S+[+]\S+[@]\S+[+]\S+[@]/g)?.length >= 1;
       // assets in expandable text areas so not support relative urls so all assets must have the lms
       // endpoint prepended to the relative url
       if (editorType === 'expandable') {
@@ -407,15 +407,7 @@ export const setAssetToStaticUrl = ({ editorValue, lmsEndpointUrl }) => {
 
   const assetSrcs = typeof content === 'string' ? content.split(/(src="|src=&quot;|href="|href=&quot)/g) : [];
   assetSrcs.filter(src => src.startsWith('/asset')).forEach(src => {
-    let nameFromEditorSrc;
-    if (src.match(/\/asset-v1:\S+[+]\S+[@]\S+[+]\S+\/\w/)?.length >= 1) {
-      const assetBlockName = src.substring(0, src.search(/("|&quot;)/));
-      const dividedSrc = assetBlockName.split(/\/asset-v1:\S+[+]\S+[@]\S+[+]\S+\//);
-      [, nameFromEditorSrc] = dividedSrc;
-    } else {
-      const assetBlockName = src.substring(src.indexOf('@') + 1, src.search(/("|&quot;)/));
-      nameFromEditorSrc = assetBlockName.substring(assetBlockName.indexOf('@') + 1);
-    }
+    const nameFromEditorSrc = parseAssetName(src);
     const portableUrl = getStaticUrl({ displayName: nameFromEditorSrc });
     const currentSrc = src.substring(0, src.search(/("|&quot;)/));
     const updatedContent = content.replace(currentSrc, portableUrl);
