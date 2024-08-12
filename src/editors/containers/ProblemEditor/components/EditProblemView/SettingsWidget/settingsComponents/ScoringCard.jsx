@@ -49,6 +49,8 @@ export const ScoringCard = ({
       <Form.Group>
         <Form.Control
           type="number"
+          min={0}
+          step={0.1}
           value={scoring.weight}
           onChange={handleWeightChange}
           floatingLabel={intl.formatMessage(messages.scoringWeightInputLabel)}
@@ -59,6 +61,8 @@ export const ScoringCard = ({
       </Form.Group>
       <Form.Group>
         <Form.Control
+          type="number"
+          min={0}
           value={attemptDisplayValue}
           onChange={handleOnChange}
           onBlur={handleMaxAttemptChange}

@@ -138,7 +138,7 @@ describe('ToleranceCard', () => {
       const { queryByTestId } = render(<ToleranceCard tolerance={mockToleranceNull} {...props} />);
       expect(queryByTestId('input')).toBeFalsy();
     });
-    it('Renders with intial value of tolerance', async () => {
+    it('Renders with initial value of tolerance', async () => {
       const { queryByTestId } = render(<ToleranceCard tolerance={mockToleranceNumber} {...props} />);
       expect(queryByTestId('input')).toBeTruthy();
       expect(screen.getByDisplayValue('0')).toBeTruthy();
@@ -146,7 +146,12 @@ describe('ToleranceCard', () => {
     it('Calls change function on change.', () => {
       const { queryByTestId } = render(<ToleranceCard tolerance={mockToleranceNumber} {...props} />);
       fireEvent.change(queryByTestId('input'), { target: { value: 52 } });
-      expect(props.updateSettings).toHaveBeenCalledWith({ tolerance: { type: ToleranceTypes.number.type, value: '52' } });
+      expect(props.updateSettings).toHaveBeenCalledWith({ tolerance: { type: ToleranceTypes.number.type, value: 52 } });
+    });
+    it('Resets negative value on change.', () => {
+      const { queryByTestId } = render(<ToleranceCard tolerance={mockToleranceNumber} {...props} />);
+      fireEvent.change(queryByTestId('input'), { target: { value: -52 } });
+      expect(props.updateSettings).toHaveBeenCalledWith({ tolerance: { type: ToleranceTypes.number.type, value: 0 } });
     });
   });
 });

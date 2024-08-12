@@ -24,7 +24,11 @@ export const handleToleranceTypeChange = ({ updateSettings, tolerance, answers }
 
 export const handleToleranceValueChange = ({ updateSettings, tolerance, answers }) => (event) => {
   if (!isAnswerRangeSet({ answers })) {
-    const newTolerance = { value: event.target.value, type: tolerance.type };
+    let value = parseFloat(event.target.value);
+    if (value < 0) {
+      value = 0;
+    }
+    const newTolerance = { value, type: tolerance.type };
     updateSettings({ tolerance: newTolerance });
   }
 };
@@ -92,6 +96,8 @@ export const ToleranceCard = ({
           <Form.Control
             className="mt-4"
             type="number"
+            min={0}
+            step={0.1}
             value={tolerance.value}
             onChange={handleToleranceValueChange({ updateSettings, tolerance, answers })}
             floatingLabel={intl.formatMessage(messages.toleranceValueInputLabel)}

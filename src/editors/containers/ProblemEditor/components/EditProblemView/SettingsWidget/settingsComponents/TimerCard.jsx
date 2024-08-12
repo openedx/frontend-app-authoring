@@ -27,6 +27,7 @@ export const TimerCard = ({
       <Form.Group>
         <Form.Control
           type="number"
+          min={0}
           value={timeBetween}
           onChange={handleChange}
           floatingLabel={intl.formatMessage(messages.timerInputLabel)}
