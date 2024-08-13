@@ -105,6 +105,11 @@ const messages = defineMessages({
     defaultMessage: 'Library Info',
     description: 'Text of button to open "Library Info sidebar"',
   },
+  readOnlyBadge: {
+    id: 'course-authoring.library-authoring.badge.read-only',
+    defaultMessage: 'Read Only',
+    description: 'Text in badge when the user has read only access',
+  },
 });
 
 export default messages;

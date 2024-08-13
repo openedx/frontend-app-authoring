@@ -240,6 +240,23 @@ describe('<LibraryAuthoringPage />', () => {
     expect(getByText('You have not added any content to this library yet.')).toBeInTheDocument();
   });
 
+  it('show library without components without permission', async () => {
+    const data = {
+      ...libraryData,
+      canEditLibrary: false,
+    };
+    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
+    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, data);
+    fetchMock.post(searchEndpoint, returnEmptyResult, { overwriteRoutes: true });
+
+    render(<RootWrapper />);
+
+    expect(await screen.findByText('Content library')).toBeInTheDocument();
+
+    expect(screen.getByText('You have not added any content to this library yet.')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /add component/i })).not.toBeInTheDocument();
+  });
+
   it('show new content button', async () => {
     mockUseParams.mockReturnValue({ libraryId: libraryData.id });
     axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
@@ -248,6 +265,21 @@ describe('<LibraryAuthoringPage />', () => {
 
     expect(await screen.findByRole('heading')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /new/i })).toBeInTheDocument();
+  });
+
+  it('read only state of library', async () => {
+    const data = {
+      ...libraryData,
+      canEditLibrary: false,
+    };
+    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
+    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, data);
+
+    render(<RootWrapper />);
+    expect(await screen.findByRole('heading')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /new/i })).not.toBeInTheDocument();
+
+    expect(screen.getByText('Read Only')).toBeInTheDocument();
   });
 
   it('show library without search results', async () => {

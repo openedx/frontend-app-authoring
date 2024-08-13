@@ -2,10 +2,12 @@ import React, { useContext, useEffect } from 'react';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
+  Badge,
   Button,
   Col,
   Container,
   Row,
+  Stack,
   Tab,
   Tabs,
 } from '@openedx/paragon';
@@ -51,6 +53,10 @@ const HeaderActions = ({ canEditLibrary }: HeaderActionsProps) => {
     openInfoSidebar,
   } = useContext(LibraryContext);
 
+  if (!canEditLibrary) {
+    return null;
+  }
+
   return (
     <>
       <Button
@@ -63,12 +69,29 @@ const HeaderActions = ({ canEditLibrary }: HeaderActionsProps) => {
       <Button
         iconBefore={Add}
         variant="primary rounded-0"
-        onClick={openAddContentSidebar}
+        onClick={() => openAddContentSidebar()}
         disabled={!canEditLibrary}
       >
         {intl.formatMessage(messages.newContentButton)}
       </Button>
     </>
+  );
+};
+
+const SubHeaderTitle = ({ title, canEditLibrary }: { title: string, canEditLibrary: boolean }) => {
+  const intl = useIntl();
+
+  return (
+    <Stack direction="vertical">
+      {title}
+      { !canEditLibrary && (
+        <div>
+          <Badge variant="primary" style={{ fontSize: '50%' }}>
+            {intl.formatMessage(messages.readOnlyBadge)}
+          </Badge>
+        </div>
+      )}
+    </Stack>
   );
 };
 
@@ -124,7 +147,7 @@ const LibraryAuthoringPage = () => {
           >
             <Container size="xl" className="p-4 mt-3">
               <SubHeader
-                title={libraryData.title}
+                title={<SubHeaderTitle title={libraryData.title} canEditLibrary={libraryData.canEditLibrary} />}
                 subtitle={intl.formatMessage(messages.headingSubtitle)}
                 headerActions={<HeaderActions canEditLibrary={libraryData.canEditLibrary} />}
               />

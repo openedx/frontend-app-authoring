@@ -104,6 +104,7 @@ describe('<LibraryInfoHeader />', () => {
   });
 
   it('should edit library title', async () => {
+    queryClient.getQueriesData = jest.fn().mockReturnValue([[null, { id: 1, title: 'Old Title' }]]);
     const url = getContentLibraryApiUrl(libraryData.id);
     axiosMock.onPatch(url).reply(200);
     render(<RootWrapper data={libraryData} />);

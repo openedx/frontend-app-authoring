@@ -9,6 +9,7 @@ import {
   commitLibraryChanges,
   revertLibraryChanges,
   updateLibraryMetadata,
+  ContentLibrary,
 } from './api';
 
 export const libraryAuthoringQueryKeys = {
@@ -68,6 +69,25 @@ export const useUpdateLibraryMetadata = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: updateLibraryMetadata,
+    onMutate: async (data) => {
+      const queryKey = libraryAuthoringQueryKeys.contentLibrary(data.id);
+      const previousLibraryData = queryClient.getQueriesData(queryKey)[0][1] as ContentLibrary;
+
+      const newLibraryData = {
+        ...previousLibraryData,
+        title: data.title,
+      };
+
+      queryClient.setQueryData(queryKey, newLibraryData);
+
+      return { previousLibraryData, newLibraryData };
+    },
+    onError: (_err, data, context) => {
+      queryClient.setQueryData(
+        libraryAuthoringQueryKeys.contentLibrary(data.id),
+        context?.previousLibraryData,
+      );
+    },
     onSettled: (_data, _error, variables) => {
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(variables.id) });
     },
