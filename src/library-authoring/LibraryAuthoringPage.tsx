@@ -69,7 +69,7 @@ const HeaderActions = ({ canEditLibrary }: HeaderActionsProps) => {
       <Button
         iconBefore={Add}
         variant="primary rounded-0"
-        onClick={() => openAddContentSidebar()}
+        onClick={openAddContentSidebar}
         disabled={!canEditLibrary}
       >
         {intl.formatMessage(messages.newContentButton)}
