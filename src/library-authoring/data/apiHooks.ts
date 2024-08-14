@@ -1,4 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  useQuery, useMutation, useQueryClient, Query,
+} from '@tanstack/react-query';
 
 import {
   type GetLibrariesV2CustomParams,
@@ -121,7 +123,17 @@ export const useRevertLibraryChanges = () => {
     mutationFn: revertLibraryChanges,
     onSettled: (_data, _error, libraryId) => {
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId) });
-      queryClient.invalidateQueries({ queryKey: ['content_search'] });
+      queryClient.invalidateQueries({
+        // Invalidate all content queries related to this library
+        predicate: /* istanbul ignore next */ (query: Query): boolean => {
+          // extraFilter contains library id
+          const extraFilter = query.queryKey[5];
+          if (!(Array.isArray(extraFilter) || typeof extraFilter === 'string')) {
+            return false;
+          }
+          return query.queryKey[0] === 'content_search' && extraFilter?.includes(`context_key = "${libraryId}"`);
+        },
+      });
     },
   });
 };
