@@ -124,7 +124,12 @@ export const useRevertLibraryChanges = () => {
     onSettled: (_data, _error, libraryId) => {
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId) });
       queryClient.invalidateQueries({
-        // Invalidate all content queries related to this library
+        // Invalidate all content queries related to this library.
+        // If we allow searching "all courses and libraries" in the future,
+        // then we'd have to invalidate all `["content_search", "results"]`
+        // queries, and not just the ones for this library, because items from
+        // this library could be included in an "all courses and libraries"
+        // search. For now we only allow searching individual libraries.
         predicate: /* istanbul ignore next */ (query: Query): boolean => {
           // extraFilter contains library id
           const extraFilter = query.queryKey[5];
