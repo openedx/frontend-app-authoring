@@ -121,4 +121,21 @@ describe('<AddContentContainer />', () => {
 
     await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(pasteUrl));
   });
+
+  it('should fail pasting content', async () => {
+    const clipboardUrl = getClipboardUrl();
+    axiosMock.onGet(clipboardUrl).reply(200, clipboardXBlock);
+
+    const pasteUrl = getLibraryPasteClipboardUrl(libraryId);
+    axiosMock.onPost(pasteUrl).reply(400);
+
+    render(<RootWrapper />);
+
+    await waitFor(() => expect(axiosMock.history.get[0].url).toEqual(clipboardUrl));
+
+    const pasteButton = screen.getByRole('button', { name: /paste from clipboard/i });
+    fireEvent.click(pasteButton);
+
+    await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(pasteUrl));
+  });
 });
