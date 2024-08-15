@@ -20,6 +20,10 @@ export const getContentLibraryV2ListApiUrl = () => `${getApiBaseUrl()}/api/libra
  * Get the URL for commit/revert changes in library.
  */
 export const getCommitLibraryChangesUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/commit/`;
+/**
+ * Get the URL for paste clipboard content into library.
+ */
+export const getLibraryPasteClipboardUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/paste_clipboard/`;
 
 export interface ContentLibrary {
   id: string;
@@ -99,6 +103,11 @@ export interface UpdateLibraryDataRequest {
   allow_public_read?: boolean;
   type?: string;
   license?: string;
+}
+
+export interface LibraryPasteClipboardRequest {
+  libraryId: string;
+  blockId: string;
 }
 
 /**
@@ -184,4 +193,21 @@ export async function commitLibraryChanges(libraryId: string) {
 export async function revertLibraryChanges(libraryId: string) {
   const client = getAuthenticatedHttpClient();
   await client.delete(getCommitLibraryChangesUrl(libraryId));
+}
+
+/**
+ * Paste clipboard content into library.
+ */
+export async function libraryPasteClipboard({
+  libraryId,
+  blockId,
+}: LibraryPasteClipboardRequest): Promise<CreateBlockDataResponse> {
+  const client = getAuthenticatedHttpClient();
+  const { data } = await client.post(
+    getLibraryPasteClipboardUrl(libraryId),
+    {
+      block_id: blockId,
+    },
+  );
+  return data;
 }

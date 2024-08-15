@@ -97,6 +97,13 @@ const libraryData: ContentLibrary = {
   updated: '2024-07-20',
 };
 
+const clipboardBroadcastChannelMock = {
+  postMessage: jest.fn(),
+  close: jest.fn(),
+};
+
+(global as any).BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
+
 const RootWrapper = () => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>

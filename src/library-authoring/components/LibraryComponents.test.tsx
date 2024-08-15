@@ -84,6 +84,13 @@ jest.mock('../../search-manager', () => ({
   useSearchContext: () => mockUseSearchContext(),
 }));
 
+const clipboardBroadcastChannelMock = {
+  postMessage: jest.fn(),
+  close: jest.fn(),
+};
+
+(global as any).BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
+
 const RootWrapper = (props) => (
   <AppProvider store={store}>
     <IntlProvider locale="en" messages={{}}>
