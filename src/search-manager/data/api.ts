@@ -168,6 +168,12 @@ export async function fetchSearchResults({
 
   const limit = 20; // How many results to retrieve per page.
 
+  // To filter normal block types and problem types as 'OR' query
+  const typeFilters = [[
+    ...blockTypesFilterFormatted,
+    ...problemTypesFilterFormatted,
+  ].flat()];
+
   // First query is always to get the hits, with all the filters applied.
   queries.push({
     indexUid: indexName,
@@ -175,10 +181,9 @@ export async function fetchSearchResults({
     filter: [
       // top-level entries in the array are AND conditions and must all match
       // Inner arrays are OR conditions, where only one needs to match.
+      ...typeFilters,
       ...extraFilterFormatted,
-      ...blockTypesFilterFormatted,
       ...tagsFilterFormatted,
-      ...problemTypesFilterFormatted,
     ],
     attributesToHighlight: ['display_name', 'content'],
     highlightPreTag: HIGHLIGHT_PRE_TAG,

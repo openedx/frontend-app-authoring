@@ -10,16 +10,19 @@ import {
   ModalPopup,
   useToggle,
 } from '@openedx/paragon';
-import { KeyboardArrowRight } from '@openedx/paragon/icons';
-import { FilterList } from '@openedx/paragon/icons';
+import { KeyboardArrowRight, FilterList } from '@openedx/paragon/icons';
 import SearchFilterWidget from './SearchFilterWidget';
 import messages from './messages';
 import BlockTypeLabel from './BlockTypeLabel';
 import { useSearchContext } from './SearchManager';
 
-const FilterItem = ({blockType, count}) => {
+interface FilterItemProps {
+  blockType: string,
+  count: number,
+}
+
+const FilterItem = ({ blockType, count } : FilterItemProps) => {
   const {
-    blockTypesFilter,
     setBlockTypesFilter,
     problemTypes,
     problemTypesFilter,
@@ -27,6 +30,7 @@ const FilterItem = ({blockType, count}) => {
   } = useSearchContext();
 
   const [isProblemItemOpen, openProblemItem, closeProblemItem] = useToggle(false);
+  const [isProblemIndeterminate, setIsProblemIndeterminate] = React.useState(false);
   const [problemItemTarget, setProblemItemTarget] = React.useState<HTMLButtonElement | null>(null);
 
   const handleCheckboxChange = React.useCallback((e) => {
@@ -38,34 +42,62 @@ const FilterItem = ({blockType, count}) => {
     });
   }, [setBlockTypesFilter]);
 
-  const handleProblemCheckboxChange = React.useCallback((e) => {
-    setProblemTypesFilter(currentFilters => {
-      if (currentFilters.includes(e.target.value)) {
-        return currentFilters.filter(x => x !== e.target.value);
-      }
-      return [...currentFilters, e.target.value];
-    });
-  }, [setProblemTypesFilter]);
+  const handleCheckBoxChangeOnProblem = React.useCallback((e) => {
+    handleCheckboxChange(e);
+    if (e.target.checked) {
+      setProblemTypesFilter(Object.keys(problemTypes));
+    } else {
+      setProblemTypesFilter([]);
+    }
+  }, [handleCheckboxChange, setProblemTypesFilter]);
 
-  if (blockType == 'problem') {
+  const handleProblemCheckboxChange = React.useCallback((e) => {
+    setProblemTypesFilter(currentFiltersProblem => {
+      let result;
+      if (currentFiltersProblem.includes(e.target.value)) {
+        result = currentFiltersProblem.filter(x => x !== e.target.value);
+      } else {
+        result = [...currentFiltersProblem, e.target.value];
+      }
+
+      if (e.target.checked) {
+        setIsProblemIndeterminate(true);
+      } else if (result.length === 0) {
+        setIsProblemIndeterminate(false);
+        setBlockTypesFilter(currentFilters => {
+          if (currentFilters.includes('problem')) {
+            return currentFilters.filter(x => x !== 'problem');
+          }
+          return [...currentFilters, 'problem'];
+        });
+      } else {
+        setIsProblemIndeterminate(true);
+      }
+
+      return result;
+    });
+  }, [setProblemTypesFilter, problemTypesFilter, setBlockTypesFilter]);
+
+  if (blockType === 'problem') {
     // Build Capa Problem types filter submenu
     return (
-      <div className='problem-menu-item'>
+      <div className="problem-menu-item">
         <MenuItem
           key={blockType}
           as={Form.Checkbox}
           value={blockType}
-          checked={blockTypesFilter.includes(blockType)}
-          onChange={handleCheckboxChange}
+          onChange={handleCheckBoxChangeOnProblem}
+          isIndeterminate={isProblemIndeterminate}
         >
-          <div className='d-flex justify-content-between align-items-center'>
+          <div className="d-flex justify-content-between align-items-center">
             <div>
               <BlockTypeLabel type={blockType} />{' '}
               <Badge variant="light" pill>{count}</Badge>
             </div>
-            { Object.keys(problemTypes).length !== 0 && ( <IconButton
+            { Object.keys(problemTypes).length !== 0 && (
+              <IconButton
                 ref={setProblemItemTarget}
-                variant={"dark"}
+                variant="dark"
                 iconAs={Icon}
                 src={KeyboardArrowRight}
                 onClick={openProblemItem}
@@ -78,7 +110,7 @@ const FilterItem = ({blockType, count}) => {
           isOpen={isProblemItemOpen}
           onClose={closeProblemItem}
         >
-          <div 
+          <div
             className="bg-white rounded shadow problem-sub-menu-item"
             style={{ textAlign: 'start' }}
           >
@@ -102,7 +134,8 @@ const FilterItem = ({blockType, count}) => {
                     </MenuItem>
                   ))}
                   {
-                    // Show a message if there are no options at all to avoid the impression that the dropdown isn't working
+                    // Show a message if there are no options at all to avoid the
+                    // impression that the dropdown isn't working
                     Object.keys(problemTypes).length === 0 ? (
                       <MenuItem disabled><FormattedMessage {...messages['blockTypeFilter.empty']} /></MenuItem>
                     ) : null
@@ -113,7 +146,7 @@ const FilterItem = ({blockType, count}) => {
           </div>
         </ModalPopup>
       </div>
-    )  
+    );
   }
 
   return (
@@ -128,7 +161,7 @@ const FilterItem = ({blockType, count}) => {
         <Badge variant="light" pill>{count}</Badge>
       </div>
     </MenuItem>
-  )
+  );
 };
 
 /**
