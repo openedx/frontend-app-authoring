@@ -418,7 +418,7 @@ export class OLXParser {
         [type]: defaultValue,
       };
     }
-    const isAnswerRange = /[([]\d*,\d*[)\]]/gm.test(numericalresponse['@_answer']);
+    const isAnswerRange = /[([]\s*\d*,\s*\d*\s*[)\]]/gm.test(numericalresponse['@_answer']);
     answers.push({
       id: indexToLetterMap[answers.length],
       title: numericalresponse['@_answer'],
