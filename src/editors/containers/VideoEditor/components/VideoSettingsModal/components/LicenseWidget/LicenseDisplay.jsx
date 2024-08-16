@@ -28,13 +28,15 @@ export const LicenseDisplay = ({
           <LicenseBlurb license={license} details={details} />
           <div className="x-small mt-3">{licenseDescription}</div>
         </div>
-        <Hyperlink
-          className="text-primary-500 x-small"
-          destination="https://creativecommons.org/about"
-          target="_blank"
-        >
-          <FormattedMessage {...messages.viewLicenseDetailsLabel} />
-        </Hyperlink>
+        {license === LicenseTypes.creativeCommons && (
+          <Hyperlink
+            className="text-primary-500 x-small"
+            destination="https://creativecommons.org/about"
+            target="_blank"
+          >
+            <FormattedMessage {...messages.viewLicenseDetailsLabel} />
+          </Hyperlink>
+        )}
       </Stack>
     );
   }

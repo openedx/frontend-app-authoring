@@ -123,7 +123,7 @@ export const LicenseDetails = ({
                     </Form.Label>
                     <ActionRow.Spacer />
                     <CheckboxControl
-                      cchecked={details.shareAlike}
+                      checked={details.shareAlike}
                       disabled={level === LicenseLevel.course}
                       onChange={(e) => updateField({
                         licenseDetails: {
