@@ -4,6 +4,7 @@ import React from 'react';
 export enum SidebarBodyComponentId {
   AddContent = 'add-content',
   Info = 'info',
+  ComponentInfo = 'component-info',
 }
 
 export interface LibraryContextData {
@@ -11,6 +12,8 @@ export interface LibraryContextData {
   closeLibrarySidebar: () => void;
   openAddContentSidebar: () => void;
   openInfoSidebar: () => void;
+  openComponentInfoSidebar: (usageKey: string) => void;
+  currentComponentUsageKey?: string;
 }
 
 export const LibraryContext = React.createContext({
@@ -18,6 +21,7 @@ export const LibraryContext = React.createContext({
   closeLibrarySidebar: () => {},
   openAddContentSidebar: () => {},
   openInfoSidebar: () => {},
+  openComponentInfoSidebar: (_usageKey: string) => {}, // eslint-disable-line @typescript-eslint/no-unused-vars
 } as LibraryContextData);
 
 /**
@@ -25,21 +29,42 @@ export const LibraryContext = React.createContext({
  */
 export const LibraryProvider = (props: { children?: React.ReactNode }) => {
   const [sidebarBodyComponent, setSidebarBodyComponent] = React.useState<SidebarBodyComponentId | null>(null);
+  const [currentComponentUsageKey, setCurrentComponentUsageKey] = React.useState<string>();
 
-  const closeLibrarySidebar = React.useCallback(() => setSidebarBodyComponent(null), []);
-  const openAddContentSidebar = React.useCallback(() => setSidebarBodyComponent(SidebarBodyComponentId.AddContent), []);
-  const openInfoSidebar = React.useCallback(() => setSidebarBodyComponent(SidebarBodyComponentId.Info), []);
+  const closeLibrarySidebar = React.useCallback(() => {
+    setSidebarBodyComponent(null);
+    setCurrentComponentUsageKey(undefined);
+  }, []);
+  const openAddContentSidebar = React.useCallback(() => {
+    setCurrentComponentUsageKey(undefined);
+    setSidebarBodyComponent(SidebarBodyComponentId.AddContent);
+  }, []);
+  const openInfoSidebar = React.useCallback(() => {
+    setCurrentComponentUsageKey(undefined);
+    setSidebarBodyComponent(SidebarBodyComponentId.Info);
+  }, []);
+  const openComponentInfoSidebar = React.useCallback(
+    (usageKey: string) => {
+      setCurrentComponentUsageKey(usageKey);
+      setSidebarBodyComponent(SidebarBodyComponentId.ComponentInfo);
+    },
+    [],
+  );
 
   const context = React.useMemo(() => ({
     sidebarBodyComponent,
     closeLibrarySidebar,
     openAddContentSidebar,
     openInfoSidebar,
+    openComponentInfoSidebar,
+    currentComponentUsageKey,
   }), [
     sidebarBodyComponent,
     closeLibrarySidebar,
     openAddContentSidebar,
     openInfoSidebar,
+    openComponentInfoSidebar,
+    currentComponentUsageKey,
   ]);
 
   return (

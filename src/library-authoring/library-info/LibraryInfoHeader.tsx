@@ -8,7 +8,7 @@ import {
 import { Edit } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
-import { ContentLibrary } from '../data/api';
+import type { ContentLibrary } from '../data/api';
 import { useUpdateLibraryMetadata } from '../data/apiHooks';
 import { ToastContext } from '../../generic/toast-context';
 

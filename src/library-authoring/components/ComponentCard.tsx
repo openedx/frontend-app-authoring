@@ -16,6 +16,7 @@ import { updateClipboard } from '../../generic/data/api';
 import TagCount from '../../generic/tag-count';
 import { ToastContext } from '../../generic/toast-context';
 import { type ContentHit, Highlight } from '../../search-manager';
+import { LibraryContext } from '../common/context';
 import messages from './messages';
 import { STUDIO_CLIPBOARD_CHANNEL } from '../../constants';
 
@@ -24,7 +25,7 @@ type ComponentCardProps = {
   blockTypeDisplayName: string,
 };
 
-const ComponentCardMenu = ({ usageKey }: { usageKey: string }) => {
+export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const [clipboardBroadcastChannel] = useState(() => new BroadcastChannel(STUDIO_CLIPBOARD_CHANNEL));
@@ -38,7 +39,7 @@ const ComponentCardMenu = ({ usageKey }: { usageKey: string }) => {
   };
 
   return (
-    <Dropdown id="component-card-dropdown">
+    <Dropdown id="component-card-dropdown" onClick={(e) => e.stopPropagation()}>
       <Dropdown.Toggle
         id="component-card-menu-toggle"
         as={IconButton}
@@ -65,6 +66,10 @@ const ComponentCardMenu = ({ usageKey }: { usageKey: string }) => {
 
 const ComponentCard = ({ contentHit, blockTypeDisplayName } : ComponentCardProps) => {
   const {
+    openComponentInfoSidebar,
+  } = useContext(LibraryContext);
+
+  const {
     blockType,
     formatted,
     tags,
@@ -84,7 +89,10 @@ const ComponentCard = ({ contentHit, blockTypeDisplayName } : ComponentCardProps
 
   return (
     <Container className="library-component-card">
-      <Card>
+      <Card
+        isClickable
+        onClick={() => openComponentInfoSidebar(usageKey)}
+      >
         <Card.Header
           className={`library-component-header ${getComponentStyleColor(blockType)}`}
           title={
@@ -92,7 +100,7 @@ const ComponentCard = ({ contentHit, blockTypeDisplayName } : ComponentCardProps
           }
           actions={(
             <ActionRow>
-              <ComponentCardMenu usageKey={usageKey} />
+              <ComponentMenu usageKey={usageKey} />
             </ActionRow>
           )}
         />

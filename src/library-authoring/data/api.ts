@@ -24,6 +24,10 @@ export const getCommitLibraryChangesUrl = (libraryId: string) => `${getApiBaseUr
  * Get the URL for paste clipboard content into library.
  */
 export const getLibraryPasteClipboardUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/paste_clipboard/`;
+/**
+  * Get the URL for the xblock metadata API.
+  */
+export const getXBlockFieldsApiUrl = (usageKey: string) => `${getApiBaseUrl()}/api/xblock/v2/xblocks/${usageKey}/fields/`;
 
 export interface ContentLibrary {
   id: string;
@@ -62,6 +66,12 @@ export interface LibrariesV2Response {
   currentPage: number,
   start: number,
   results: ContentLibrary[],
+}
+
+export interface XBlockFields {
+  displayName: string;
+  metadata: Record<string, unknown>;
+  data: string;
 }
 
 /* Additional custom parameters for the API request. */
@@ -108,6 +118,13 @@ export interface UpdateLibraryDataRequest {
 export interface LibraryPasteClipboardRequest {
   libraryId: string;
   blockId: string;
+}
+
+export interface UpdateXBlockFieldsRequest {
+  data?: unknown;
+  metadata?: {
+    display_name?: string;
+  };
 }
 
 /**
@@ -210,4 +227,20 @@ export async function libraryPasteClipboard({
     },
   );
   return data;
+}
+
+/**
+ * Fetch xblock fields.
+ */
+export async function getXBlockFields(usageKey: string): Promise<XBlockFields> {
+  const { data } = await getAuthenticatedHttpClient().get(getXBlockFieldsApiUrl(usageKey));
+  return camelCaseObject(data);
+}
+
+/**
+ * Update xblock fields.
+ */
+export async function updateXBlockFields(usageKey:string, xblockData: UpdateXBlockFieldsRequest) {
+  const client = getAuthenticatedHttpClient();
+  await client.post(getXBlockFieldsApiUrl(usageKey), xblockData);
 }
