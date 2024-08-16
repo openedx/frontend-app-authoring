@@ -5,8 +5,6 @@ import { Badge, Icon } from '@openedx/paragon';
 import { Settings as IconSettings } from '@openedx/paragon/icons';
 import { capitalize } from 'lodash';
 
-import { NOTIFICATION_MESSAGES } from '../../constants';
-
 const ProcessingNotification = ({ isShow, title }) => (
   <Badge
     className={classNames('processing-notification', {
@@ -24,7 +22,7 @@ const ProcessingNotification = ({ isShow, title }) => (
 
 ProcessingNotification.propTypes = {
   isShow: PropTypes.bool.isRequired,
-  title: PropTypes.oneOf(Object.values(NOTIFICATION_MESSAGES)).isRequired,
+  title: PropTypes.string.isRequired,
 };
 
 export default ProcessingNotification;
