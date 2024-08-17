@@ -11,7 +11,10 @@ const INPUT_TYPES = [
   'checkbox',
 ];
 
-const SelectableBox = React.forwardRef(({
+// The 'type: any' below is to avoid some errors while this file lacks proper
+// types. But we can probably soon just delete this file and use the upstream
+// Paragon.
+const SelectableBox = /** @type {any} */ (React.forwardRef(({
   type,
   value,
   checked,
@@ -74,7 +77,7 @@ const SelectableBox = React.forwardRef(({
       {children}
     </div>
   );
-});
+}));
 
 SelectableBox.propTypes = {
   /** Content of the `SelectableBox`. */
