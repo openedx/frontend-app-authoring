@@ -69,6 +69,7 @@ const ShowAnswerCard = ({
         <Form.Group className="pb-0 mb-0 mt-4">
           <Form.Control
             type="number"
+            min={0}
             value={showAnswer.afterAttempts}
             onChange={handleAttemptsChange}
             floatingLabel={intl.formatMessage(messages.showAnswerAttemptsInputLabel)}

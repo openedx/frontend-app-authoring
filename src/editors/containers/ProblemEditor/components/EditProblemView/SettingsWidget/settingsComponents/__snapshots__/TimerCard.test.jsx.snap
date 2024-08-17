@@ -22,6 +22,7 @@ exports[`TimerCard snapshot snapshot: renders reset true setting card 1`] = `
   <Form.Group>
     <Form.Control
       floatingLabel="Seconds"
+      min={0}
       onChange={[MockFunction timerCardHooks.handleChange]}
       type="number"
       value={5}
