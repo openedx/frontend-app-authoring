@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -17,6 +17,7 @@ import TagCount from '../../generic/tag-count';
 import { ToastContext } from '../../generic/toast-context';
 import { type ContentHit, Highlight } from '../../search-manager';
 import messages from './messages';
+import { STUDIO_CLIPBOARD_CHANNEL } from '../../constants';
 
 type ComponentCardProps = {
   contentHit: ContentHit,
@@ -26,9 +27,13 @@ type ComponentCardProps = {
 const ComponentCardMenu = ({ usageKey }: { usageKey: string }) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
+  const [clipboardBroadcastChannel] = useState(() => new BroadcastChannel(STUDIO_CLIPBOARD_CHANNEL));
   const updateClipboardClick = () => {
     updateClipboard(usageKey)
-      .then(() => showToast(intl.formatMessage(messages.copyToClipboardSuccess)))
+      .then((clipboardData) => {
+        clipboardBroadcastChannel.postMessage(clipboardData);
+        showToast(intl.formatMessage(messages.copyToClipboardSuccess));
+      })
       .catch(() => showToast(intl.formatMessage(messages.copyToClipboardError)));
   };
 

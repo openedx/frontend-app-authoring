@@ -6,6 +6,11 @@ import {
   getLibraryBlockTypes,
   createLibraryBlock,
   getContentLibraryV2List,
+  commitLibraryChanges,
+  revertLibraryChanges,
+  updateLibraryMetadata,
+  ContentLibrary,
+  libraryPasteClipboard,
 } from './api';
 
 export const libraryAuthoringQueryKeys = {
@@ -61,6 +66,35 @@ export const useCreateLibraryBlock = () => {
   });
 };
 
+export const useUpdateLibraryMetadata = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateLibraryMetadata,
+    onMutate: async (data) => {
+      const queryKey = libraryAuthoringQueryKeys.contentLibrary(data.id);
+      const previousLibraryData = queryClient.getQueriesData(queryKey)[0][1] as ContentLibrary;
+
+      const newLibraryData = {
+        ...previousLibraryData,
+        title: data.title,
+      };
+
+      queryClient.setQueryData(queryKey, newLibraryData);
+
+      return { previousLibraryData, newLibraryData };
+    },
+    onError: (_err, data, context) => {
+      queryClient.setQueryData(
+        libraryAuthoringQueryKeys.contentLibrary(data.id),
+        context?.previousLibraryData,
+      );
+    },
+    onSettled: (_data, _error, variables) => {
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(variables.id) });
+    },
+  });
+};
+
 /**
  * Builds the query to fetch list of V2 Libraries
  */
@@ -71,3 +105,34 @@ export const useContentLibraryV2List = (customParams: GetLibrariesV2CustomParams
     keepPreviousData: true,
   })
 );
+
+export const useCommitLibraryChanges = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: commitLibraryChanges,
+    onSettled: (_data, _error, libraryId) => {
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId) });
+    },
+  });
+};
+
+export const useRevertLibraryChanges = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: revertLibraryChanges,
+    onSettled: (_data, _error, libraryId) => {
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId) });
+    },
+  });
+};
+
+export const useLibraryPasteClipboard = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: libraryPasteClipboard,
+    onSettled: (_data, _error, variables) => {
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(variables.libraryId) });
+      queryClient.invalidateQueries({ queryKey: ['content_search'] });
+    },
+  });
+};

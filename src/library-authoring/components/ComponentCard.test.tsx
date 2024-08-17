@@ -40,6 +40,13 @@ const contentHit: ContentHit = {
   lastPublished: null,
 };
 
+const clipboardBroadcastChannelMock = {
+  postMessage: jest.fn(),
+  close: jest.fn(),
+};
+
+(global as any).BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
+
 const RootWrapper = () => (
   <AppProvider store={store}>
     <IntlProvider locale="en">
