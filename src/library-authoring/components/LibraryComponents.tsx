@@ -19,10 +19,7 @@ type LibraryComponentsProps = {
  *   - 'full': Show all components with Infinite scroll pagination.
  *   - 'preview': Show first 4 components without pagination.
  */
-const LibraryComponents = ({
-  libraryId,
-  variant,
-}: LibraryComponentsProps) => {
+const LibraryComponents = ({ libraryId, variant }: LibraryComponentsProps) => {
   const {
     hits,
     totalHits: componentCount,

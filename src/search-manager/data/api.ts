@@ -81,6 +81,17 @@ function formatTagsFilter(tagsFilter?: string[]): string[] {
 }
 
 /**
+ * The tags that are associated with a search result, at various levels of the tag hierarchy.
+ */
+interface ContentHitTags {
+  taxonomy?: string[];
+  level0?: string[];
+  level1?: string[];
+  level2?: string[];
+  level3?: string[];
+}
+
+/**
  * Information about a single XBlock returned in the search results
  * Defined in edx-platform/openedx/core/djangoapps/content/search/documents.py
  */
@@ -101,13 +112,13 @@ export interface ContentHit {
    * - After that is the name and usage key of any parent Section/Subsection/Unit/etc.
    */
   breadcrumbs: [{ displayName: string }, ...Array<{ displayName: string, usageKey: string }>];
-  tags: Record<'taxonomy' | 'level0' | 'level1' | 'level2' | 'level3', string[]>;
+  tags: ContentHitTags;
   content?: ContentDetails;
   /** Same fields with <mark>...</mark> highlights */
   formatted: { displayName: string, content?: ContentDetails };
   created: number;
   modified: number;
-  last_published: number;
+  lastPublished: number | null;
 }
 
 /**

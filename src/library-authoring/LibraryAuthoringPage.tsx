@@ -1,13 +1,13 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
+  Badge,
   Button,
   Col,
   Container,
-  Icon,
-  IconButton,
   Row,
+  Stack,
   Tab,
   Tabs,
 } from '@openedx/paragon';
@@ -42,18 +42,56 @@ enum TabList {
   collections = 'collections',
 }
 
-const SubHeaderTitle = ({ title }: { title: string }) => {
+interface HeaderActionsProps {
+  canEditLibrary: boolean;
+}
+
+const HeaderActions = ({ canEditLibrary }: HeaderActionsProps) => {
   const intl = useIntl();
+  const {
+    openAddContentSidebar,
+    openInfoSidebar,
+  } = useContext(LibraryContext);
+
+  if (!canEditLibrary) {
+    return null;
+  }
+
   return (
     <>
-      {title}
-      <IconButton
-        src={InfoOutline}
-        iconAs={Icon}
-        alt={intl.formatMessage(messages.headingInfoAlt)}
-        className="mr-2"
-      />
+      <Button
+        iconBefore={InfoOutline}
+        variant="outline-primary rounded-0"
+        onClick={openInfoSidebar}
+      >
+        {intl.formatMessage(messages.libraryInfoButton)}
+      </Button>
+      <Button
+        iconBefore={Add}
+        variant="primary rounded-0"
+        onClick={openAddContentSidebar}
+        disabled={!canEditLibrary}
+      >
+        {intl.formatMessage(messages.newContentButton)}
+      </Button>
     </>
+  );
+};
+
+const SubHeaderTitle = ({ title, canEditLibrary }: { title: string, canEditLibrary: boolean }) => {
+  const intl = useIntl();
+
+  return (
+    <Stack direction="vertical">
+      {title}
+      { !canEditLibrary && (
+        <div>
+          <Badge variant="primary" style={{ fontSize: '50%' }}>
+            {intl.formatMessage(messages.readOnlyBadge)}
+          </Badge>
+        </div>
+      )}
+    </Stack>
   );
 };
 
@@ -67,7 +105,14 @@ const LibraryAuthoringPage = () => {
 
   const currentPath = location.pathname.split('/').pop();
   const activeKey = (currentPath && currentPath in TabList) ? TabList[currentPath] : TabList.home;
-  const { sidebarBodyComponent, openAddContentSidebar } = useContext(LibraryContext);
+  const {
+    sidebarBodyComponent,
+    openInfoSidebar,
+  } = useContext(LibraryContext);
+
+  useEffect(() => {
+    openInfoSidebar();
+  }, []);
 
   const [searchParams] = useSearchParams();
 
@@ -102,18 +147,9 @@ const LibraryAuthoringPage = () => {
           >
             <Container size="xl" className="p-4 mt-3">
               <SubHeader
-                title={<SubHeaderTitle title={libraryData.title} />}
+                title={<SubHeaderTitle title={libraryData.title} canEditLibrary={libraryData.canEditLibrary} />}
                 subtitle={intl.formatMessage(messages.headingSubtitle)}
-                headerActions={[
-                  <Button
-                    iconBefore={Add}
-                    variant="primary rounded-0"
-                    onClick={openAddContentSidebar}
-                    disabled={!libraryData.canEditLibrary}
-                  >
-                    {intl.formatMessage(messages.newContentButton)}
-                  </Button>,
-                ]}
+                headerActions={<HeaderActions canEditLibrary={libraryData.canEditLibrary} />}
               />
               <SearchKeywordsField className="w-50" />
               <div className="d-flex mt-3 align-items-center">
@@ -162,8 +198,8 @@ const LibraryAuthoringPage = () => {
           <StudioFooter />
         </Col>
         { sidebarBodyComponent !== null && (
-          <Col xs={6} md={4} className="box-shadow-left-1">
-            <LibrarySidebar />
+          <Col xs={3} md={3} className="box-shadow-left-1">
+            <LibrarySidebar library={libraryData} />
           </Col>
         )}
       </Row>

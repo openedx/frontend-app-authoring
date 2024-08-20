@@ -16,6 +16,14 @@ export const getLibraryBlockTypesUrl = (libraryId: string) => `${getApiBaseUrl()
  */
 export const getCreateLibraryBlockUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/blocks/`;
 export const getContentLibraryV2ListApiUrl = () => `${getApiBaseUrl()}/api/libraries/v2/`;
+/**
+ * Get the URL for commit/revert changes in library.
+ */
+export const getCommitLibraryChangesUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/commit/`;
+/**
+ * Get the URL for paste clipboard content into library.
+ */
+export const getLibraryPasteClipboardUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/paste_clipboard/`;
 
 export interface ContentLibrary {
   id: string;
@@ -26,7 +34,10 @@ export interface ContentLibrary {
   description: string;
   numBlocks: number;
   version: number;
-  lastPublished: Date | null;
+  lastPublished: string | null;
+  lastDraftCreated: string | null;
+  publishedBy: string | null;
+  lastDraftCreatedBy: string | null;
   allowLti: boolean;
   allowPublicLearning: boolean;
   allowPublicRead: boolean;
@@ -34,23 +45,13 @@ export interface ContentLibrary {
   hasUnpublishedDeletes: boolean;
   canEditLibrary: boolean;
   license: string;
+  created: string | null;
+  updated: string | null;
 }
 
 export interface LibraryBlockType {
   blockType: string;
   displayName: string;
-}
-
-/**
- * Fetch block types of a library
- */
-export async function getLibraryBlockTypes(libraryId?: string): Promise<LibraryBlockType[]> {
-  if (!libraryId) {
-    throw new Error('libraryId is required');
-  }
-
-  const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockTypesUrl(libraryId));
-  return camelCaseObject(data);
 }
 
 export interface LibrariesV2Response {
@@ -94,6 +95,33 @@ export interface CreateBlockDataResponse {
   tagsCount: number;
 }
 
+export interface UpdateLibraryDataRequest {
+  id: string;
+  title?: string;
+  description?: string;
+  allow_public_learning?: boolean;
+  allow_public_read?: boolean;
+  type?: string;
+  license?: string;
+}
+
+export interface LibraryPasteClipboardRequest {
+  libraryId: string;
+  blockId: string;
+}
+
+/**
+ * Fetch block types of a library
+ */
+export async function getLibraryBlockTypes(libraryId?: string): Promise<LibraryBlockType[]> {
+  if (!libraryId) {
+    throw new Error('libraryId is required');
+  }
+
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockTypesUrl(libraryId));
+  return camelCaseObject(data);
+}
+
 /**
  * Fetch a content library by its ID.
  */
@@ -123,6 +151,16 @@ export async function createLibraryBlock({
 }
 
 /**
+ * Update library metadata.
+ */
+export async function updateLibraryMetadata(libraryData: UpdateLibraryDataRequest): Promise<ContentLibrary> {
+  const client = getAuthenticatedHttpClient();
+  const { data } = await client.patch(getContentLibraryApiUrl(libraryData.id), libraryData);
+
+  return camelCaseObject(data);
+}
+
+/**
  * Get a list of content libraries.
  */
 export async function getContentLibraryV2List(customParams: GetLibrariesV2CustomParams): Promise<LibrariesV2Response> {
@@ -139,4 +177,37 @@ export async function getContentLibraryV2List(customParams: GetLibrariesV2Custom
   const { data } = await getAuthenticatedHttpClient()
     .get(getContentLibraryV2ListApiUrl(), { params: customParamsFormated });
   return camelCaseObject(data);
+}
+
+/**
+ * Commit library changes.
+ */
+export async function commitLibraryChanges(libraryId: string) {
+  const client = getAuthenticatedHttpClient();
+  await client.post(getCommitLibraryChangesUrl(libraryId));
+}
+
+/**
+ * Revert library changes.
+ */
+export async function revertLibraryChanges(libraryId: string) {
+  const client = getAuthenticatedHttpClient();
+  await client.delete(getCommitLibraryChangesUrl(libraryId));
+}
+
+/**
+ * Paste clipboard content into library.
+ */
+export async function libraryPasteClipboard({
+  libraryId,
+  blockId,
+}: LibraryPasteClipboardRequest): Promise<CreateBlockDataResponse> {
+  const client = getAuthenticatedHttpClient();
+  const { data } = await client.post(
+    getLibraryPasteClipboardUrl(libraryId),
+    {
+      block_id: blockId,
+    },
+  );
+  return data;
 }

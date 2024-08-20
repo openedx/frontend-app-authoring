@@ -616,36 +616,7 @@ describe('TranscriptSettings', () => {
     });
   });
 
-  describe('Ai translations component fails', () => {
-    beforeEach(async () => {
-      initializeMockApp({
-        authenticatedUser: {
-          userId: 3,
-          username: 'abc123',
-          administrator: false,
-          roles: [],
-        },
-      });
-      store = initializeStore({
-        ...initialState,
-        videos: {
-          ...initialState.videos,
-          pageSettings: {
-            ...initialState.videos.pageSettings,
-          },
-        },
-      });
-      axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-
-      renderComponent(defaultProps);
-    });
-
-    it('doesn\'t display AI translations component if not enabled', () => {
-      expect(screen.queryByTestId('ai-translations-component')).not.toBeInTheDocument();
-    });
-  });
-
-  describe('Ai translations component success', () => {
+  describe('Translations component success', () => {
     beforeEach(async () => {
       initializeMockApp({
         authenticatedUser: {
@@ -671,7 +642,7 @@ describe('TranscriptSettings', () => {
     });
 
     it('displays AI translations component if enabled', () => {
-      const component = screen.getByTestId('ai-translations-component');
+      const component = screen.getByTestId('translations-component');
       expect(component).toBeInTheDocument();
     });
   });

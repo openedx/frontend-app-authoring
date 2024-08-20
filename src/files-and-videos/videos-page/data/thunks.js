@@ -54,7 +54,7 @@ export function cancelAllUploads(courseId, uploadData) {
         control.abort();
       });
       Object.entries(uploadData).forEach(([key, value]) => {
-        if (value.status === RequestStatus.PENDING) {
+        if (value.status === RequestStatus.IN_PROGRESS) {
           updateVideoUploadStatus(
             courseId,
             key,
@@ -324,7 +324,7 @@ export function addVideoFile(
 
       if (uploadUrl && edxVideoId) {
         uploadingIdsRef.current.uploadData = newUploadData({
-          status: RequestStatus.PENDING,
+          status: RequestStatus.IN_PROGRESS,
           currentData: uploadingIdsRef.current.uploadData,
           originalValue: { name, progress },
           key: `video_${idx}`,
