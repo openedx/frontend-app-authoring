@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   Badge,
@@ -26,12 +26,23 @@ const FilterItem = ({ blockType, count } : FilterItemProps) => {
     setBlockTypesFilter,
     problemTypes,
     problemTypesFilter,
+    blockTypesFilter,
     setProblemTypesFilter,
   } = useSearchContext();
+
+  const problemTypesLength = Object.values(problemTypes).length
 
   const [isProblemItemOpen, openProblemItem, closeProblemItem] = useToggle(false);
   const [isProblemIndeterminate, setIsProblemIndeterminate] = React.useState(false);
   const [problemItemTarget, setProblemItemTarget] = React.useState<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    if (blockType === 'problem' &&
+          problemTypesFilter.length !== 0 &&
+          ! blockTypesFilter.includes('problem')) {
+      setIsProblemIndeterminate(true);
+    }
+  }, [])
 
   const handleCheckboxChange = React.useCallback((e) => {
     setBlockTypesFilter(currentFilters => {
@@ -59,24 +70,32 @@ const FilterItem = ({ blockType, count } : FilterItemProps) => {
       } else {
         result = [...currentFiltersProblem, e.target.value];
       }
-
       if (e.target.checked) {
-        setIsProblemIndeterminate(true);
-      } else if (result.length === 0) {
-        setIsProblemIndeterminate(false);
+        if (result.length == problemTypesLength) {
+          // Add 'problem' to type filter if all problem types are selected.
+          setIsProblemIndeterminate(false);
+          setBlockTypesFilter(currentFilters => [...currentFilters, 'problem']);
+        } else {
+          setIsProblemIndeterminate(true);
+        }
+      } else {
+        // Delete 'problem' filter if a problem is deselected.
         setBlockTypesFilter(currentFilters => {
           if (currentFilters.includes('problem')) {
             return currentFilters.filter(x => x !== 'problem');
           }
-          return [...currentFilters, 'problem'];
+          return [...currentFilters];
         });
-      } else {
-        setIsProblemIndeterminate(true);
+        setIsProblemIndeterminate(result.length !== 0);
       }
-
       return result;
     });
-  }, [setProblemTypesFilter, problemTypesFilter, setBlockTypesFilter]);
+  }, [
+    setProblemTypesFilter,
+    problemTypesFilter,
+    setBlockTypesFilter,
+    problemTypesLength,
+  ]);
 
   if (blockType === 'problem') {
     // Build Capa Problem types filter submenu
@@ -117,7 +136,7 @@ const FilterItem = ({ blockType, count } : FilterItemProps) => {
             <Form.Group className="mb-0">
               <Form.CheckboxSet
                 name="block-type-filter"
-                defaultValue={problemTypesFilter}
+                value={problemTypesFilter}
               >
                 <Menu style={{ textAlign: 'start' }}>
                   { Object.entries(problemTypes).map(([problemType, problemTypeCount]) => (
@@ -174,7 +193,13 @@ const FilterByBlockType: React.FC<Record<never, never>> = () => {
     blockTypes,
     blockTypesFilter,
     setBlockTypesFilter,
+    setProblemTypesFilter,
   } = useSearchContext();
+
+  const clearFilters = useCallback(() => {
+    setBlockTypesFilter([]);
+    setProblemTypesFilter([]);
+  }, []);
 
   // Sort blocktypes in order of hierarchy followed by alphabetically for components
   const sortedBlockTypeKeys = Object.keys(blockTypes).sort((a, b) => {
@@ -213,13 +238,13 @@ const FilterByBlockType: React.FC<Record<never, never>> = () => {
     <SearchFilterWidget
       appliedFilters={blockTypesFilter.map(blockType => ({ label: <BlockTypeLabel type={blockType} /> }))}
       label={<FormattedMessage {...messages.blockTypeFilter} />}
-      clearFilter={() => setBlockTypesFilter([])}
+      clearFilter={clearFilters}
       icon={FilterList}
     >
       <Form.Group className="mb-0">
         <Form.CheckboxSet
           name="block-type-filter"
-          defaultValue={blockTypesFilter}
+          value={blockTypesFilter}
         >
           <Menu className="block-type-refinement-menu" style={{ boxShadow: 'none' }}>
             {
