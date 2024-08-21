@@ -29,6 +29,25 @@ describe('header utils', () => {
     });
   });
 
+  describe('getSettingsMenuitems', () => {
+    it('should include certificates option', () => {
+      setConfig({
+        ...getConfig(),
+        ENABLE_CERTIFICATE_PAGE: 'true',
+      });
+      const actualItems = getSettingMenuItems(props);
+      expect(actualItems).toHaveLength(5);
+    });
+    it('should not include certificates option', () => {
+      setConfig({
+        ...getConfig(),
+        ENABLE_CERTIFICATE_PAGE: 'false',
+      });
+      const actualItems = getSettingMenuItems(props);
+      expect(actualItems).toHaveLength(4);
+    });
+  });
+
   describe('getToolsMenuItems', () => {
     it('should include export tags option', () => {
       setConfig({
