@@ -36,7 +36,7 @@ describe('header utils', () => {
         ENABLE_CERTIFICATE_PAGE: 'true',
       });
       const actualItems = getSettingMenuItems(props);
-      expect(actualItems).toHaveLength(5);
+      expect(actualItems).toHaveLength(6);
     });
     it('should not include certificates option', () => {
       setConfig({
@@ -44,7 +44,7 @@ describe('header utils', () => {
         ENABLE_CERTIFICATE_PAGE: 'false',
       });
       const actualItems = getSettingMenuItems(props);
-      expect(actualItems).toHaveLength(4);
+      expect(actualItems).toHaveLength(5);
     });
   });
 
