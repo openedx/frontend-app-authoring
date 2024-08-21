@@ -132,7 +132,7 @@ const messages = defineMessages({
   },
   searchSortWidgetLabel: {
     id: 'course-authoring.course-search.searchSortWidget.label',
-    defaultMessage: 'Sort',
+    defaultMessage: 'Sort By',
     description: 'Label displayed to users when default sorting is used by the content search drop-down menu',
   },
   searchSortWidgetAltTitle: {
@@ -169,6 +169,11 @@ const messages = defineMessages({
     id: 'course-authoring.course-search.searchSort.recentlyModified',
     defaultMessage: 'Recently Modified',
     description: 'Label for the content search sort drop-down which sorts by modified date, descending',
+  },
+  searchSortMostRelevant: {
+    id: 'course-authoring.course-search.searchSort.mostRelevant',
+    defaultMessage: 'Most Relevant',
+    description: 'Label for the content search sort drop-down which sorts keyword searches by relevance',
   },
 });
 

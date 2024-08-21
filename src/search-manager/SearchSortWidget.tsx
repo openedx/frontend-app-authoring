@@ -9,47 +9,71 @@ import { useSearchContext } from './SearchManager';
 
 export const SearchSortWidget: React.FC<Record<never, never>> = () => {
   const intl = useIntl();
+  const {
+    searchSortOrder,
+    setSearchSortOrder,
+    defaultSearchSortOrder,
+  } = useSearchContext();
+
   const menuItems = useMemo(
     () => [
       {
-        id: 'search-sort-option-title-az',
-        name: intl.formatMessage(messages.searchSortTitleAZ),
-        value: SearchSortOption.TITLE_AZ,
-      },
-      {
-        id: 'search-sort-option-title-za',
-        name: intl.formatMessage(messages.searchSortTitleZA),
-        value: SearchSortOption.TITLE_ZA,
-      },
-      {
-        id: 'search-sort-option-newest',
-        name: intl.formatMessage(messages.searchSortNewest),
-        value: SearchSortOption.NEWEST,
-      },
-      {
-        id: 'search-sort-option-oldest',
-        name: intl.formatMessage(messages.searchSortOldest),
-        value: SearchSortOption.OLDEST,
-      },
-      {
-        id: 'search-sort-option-recently-published',
-        name: intl.formatMessage(messages.searchSortRecentlyPublished),
-        value: SearchSortOption.RECENTLY_PUBLISHED,
+        id: 'search-sort-option-most-relevant',
+        name: intl.formatMessage(messages.searchSortMostRelevant),
+        value: SearchSortOption.RELEVANCE,
+        show: (defaultSearchSortOrder === SearchSortOption.RELEVANCE),
       },
       {
         id: 'search-sort-option-recently-modified',
         name: intl.formatMessage(messages.searchSortRecentlyModified),
         value: SearchSortOption.RECENTLY_MODIFIED,
+        show: true,
+      },
+      {
+        id: 'search-sort-option-recently-published',
+        name: intl.formatMessage(messages.searchSortRecentlyPublished),
+        value: SearchSortOption.RECENTLY_PUBLISHED,
+        show: true,
+      },
+      {
+        id: 'search-sort-option-title-az',
+        name: intl.formatMessage(messages.searchSortTitleAZ),
+        value: SearchSortOption.TITLE_AZ,
+        show: true,
+      },
+      {
+        id: 'search-sort-option-title-za',
+        name: intl.formatMessage(messages.searchSortTitleZA),
+        value: SearchSortOption.TITLE_ZA,
+        show: true,
+      },
+      {
+        id: 'search-sort-option-newest',
+        name: intl.formatMessage(messages.searchSortNewest),
+        value: SearchSortOption.NEWEST,
+        show: true,
+      },
+      {
+        id: 'search-sort-option-oldest',
+        name: intl.formatMessage(messages.searchSortOldest),
+        value: SearchSortOption.OLDEST,
+        show: true,
       },
     ],
-    [intl],
+    [intl, defaultSearchSortOrder],
   );
 
-  const { searchSortOrder, setSearchSortOrder } = useSearchContext();
-  const selectedSortOption = menuItems.find((menuItem) => menuItem.value === searchSortOrder);
-  const searchSortLabel = (
-    selectedSortOption ? selectedSortOption.name : intl.formatMessage(messages.searchSortWidgetLabel)
+  const menuHeader = intl.formatMessage(messages.searchSortWidgetLabel);
+  const defaultSortOption = menuItems.find(
+    ({ value }) => (value === defaultSearchSortOrder),
   );
+  const shownMenuItems = menuItems.filter(({ show }) => show);
+
+  // Show the currently selected sort option as the toggle button label.
+  const selectedSortOption = shownMenuItems.find(
+    ({ value }) => (value === searchSortOrder),
+  ) ?? defaultSortOption;
+  const toggleLabel = selectedSortOption ? selectedSortOption.name : menuHeader;
 
   return (
     <Dropdown id="search-sort-dropdown">
@@ -62,10 +86,11 @@ export const SearchSortWidget: React.FC<Record<never, never>> = () => {
         size="sm"
       >
         <Icon src={SwapVert} className="d-inline" />
-        {searchSortLabel}
+        {toggleLabel}
       </Dropdown.Toggle>
       <Dropdown.Menu>
-        {menuItems.map(({ id, name, value }) => (
+        <Dropdown.Header>{menuHeader}</Dropdown.Header>
+        {shownMenuItems.map(({ id, name, value }) => (
           <Dropdown.Item
             key={id}
             onClick={() => setSearchSortOrder(value)}
