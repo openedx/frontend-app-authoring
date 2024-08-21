@@ -86,7 +86,7 @@ export const SearchSortWidget: React.FC<Record<never, never>> = () => {
         size="sm"
       >
         <Icon src={SwapVert} className="d-inline" />
-        {toggleLabel}
+        <div className="search-sort-toggle-label">{toggleLabel}</div>
       </Dropdown.Toggle>
       <Dropdown.Menu>
         <Dropdown.Header>{menuHeader}</Dropdown.Header>
