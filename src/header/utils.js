@@ -54,13 +54,13 @@ export const getSettingMenuItems = ({ studioBaseUrl, courseId, intl }) => {
       title: intl.formatMessage(messages['header.links.advancedSettings']),
     },
   ];
-  if (getConfig().ENABLE_CERTIFICATE_PAGE === 'true'){
-  items.push({
-    href: `${studioBaseUrl}/certificates/${courseId}`,
-    title: intl.formatMessage(messages['header.links.certificates']),
-  })
-}
-return items;
+  if (getConfig().ENABLE_CERTIFICATE_PAGE === 'true') {
+    items.push({
+      href: `${studioBaseUrl}/certificates/${courseId}`,
+      title: intl.formatMessage(messages['header.links.certificates']),
+    });
+  }
+  return items;
 };
 
 export const getToolsMenuItems = ({ studioBaseUrl, courseId, intl }) => ([

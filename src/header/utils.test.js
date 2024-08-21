@@ -1,5 +1,5 @@
 import { getConfig, setConfig } from '@edx/frontend-platform';
-import { getContentMenuItems, getToolsMenuItems } from './utils';
+import { getContentMenuItems, getToolsMenuItems, getSettingMenuItems } from './utils';
 
 const props = {
   studioBaseUrl: 'UrLSTuiO',
