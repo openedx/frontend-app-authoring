@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Badge,
   Form,
@@ -29,6 +29,7 @@ const FilterItem = ({ blockType, count } : FilterItemProps) => {
     blockTypesFilter,
     setProblemTypesFilter,
   } = useSearchContext();
+  const intl = useIntl();
 
   const problemTypesLength = Object.values(problemTypes).length;
 
@@ -121,6 +122,7 @@ const FilterItem = ({ blockType, count } : FilterItemProps) => {
                 src={KeyboardArrowRight}
                 onClick={openProblemItem}
                 data-testid="open-problem-item-button"
+                alt={intl.formatMessage(messages.openProblemSubmenuAlt)}
               />
             )}
           </div>

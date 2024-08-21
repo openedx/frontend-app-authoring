@@ -195,6 +195,11 @@ const messages = defineMessages({
     defaultMessage: 'Recently Modified',
     description: 'Label for the content search sort drop-down which sorts by modified date, descending',
   },
+  openProblemSubmenuAlt: {
+    id: 'course-authoring.filter.problem-submenu.icon-button.alt',
+    defaultMessage: 'Open problem types filters',
+    description: 'Alt of the icon button to open problem types filters',
+  },
 });
 
 export default messages;
