@@ -30,19 +30,19 @@ const FilterItem = ({ blockType, count } : FilterItemProps) => {
     setProblemTypesFilter,
   } = useSearchContext();
 
-  const problemTypesLength = Object.values(problemTypes).length
+  const problemTypesLength = Object.values(problemTypes).length;
 
   const [isProblemItemOpen, openProblemItem, closeProblemItem] = useToggle(false);
   const [isProblemIndeterminate, setIsProblemIndeterminate] = React.useState(false);
   const [problemItemTarget, setProblemItemTarget] = React.useState<HTMLButtonElement | null>(null);
 
   useEffect(() => {
-    if (blockType === 'problem' &&
-          problemTypesFilter.length !== 0 &&
-          ! blockTypesFilter.includes('problem')) {
+    if (blockType === 'problem'
+        && problemTypesFilter.length !== 0
+        && !blockTypesFilter.includes('problem')) {
       setIsProblemIndeterminate(true);
     }
-  }, [])
+  }, []);
 
   const handleCheckboxChange = React.useCallback((e) => {
     setBlockTypesFilter(currentFilters => {
@@ -71,7 +71,7 @@ const FilterItem = ({ blockType, count } : FilterItemProps) => {
         result = [...currentFiltersProblem, e.target.value];
       }
       if (e.target.checked) {
-        if (result.length == problemTypesLength) {
+        if (result.length === problemTypesLength) {
           // Add 'problem' to type filter if all problem types are selected.
           setIsProblemIndeterminate(false);
           setBlockTypesFilter(currentFilters => [...currentFilters, 'problem']);
@@ -101,31 +101,30 @@ const FilterItem = ({ blockType, count } : FilterItemProps) => {
     // Build Capa Problem types filter submenu
     return (
       <div className="problem-menu-item">
-        <label key={blockType} className="d-inline">
-          <MenuItem
-            key={blockType}
-            as={Form.Checkbox}
-            value={blockType}
-            onChange={handleCheckBoxChangeOnProblem}
-            isIndeterminate={isProblemIndeterminate}
-          >
-            <div className="d-flex justify-content-between align-items-center">
-              <div>
-                <BlockTypeLabel type={blockType} />{' '}
-                <Badge variant="light" pill>{count}</Badge>
-              </div>
-              { Object.keys(problemTypes).length !== 0 && (
-                <IconButton
-                  ref={setProblemItemTarget}
-                  variant="dark"
-                  iconAs={Icon}
-                  src={KeyboardArrowRight}
-                  onClick={openProblemItem}
-                />
-              )}
+        <MenuItem
+          key={blockType}
+          as={Form.Checkbox}
+          value={blockType}
+          onChange={handleCheckBoxChangeOnProblem}
+          isIndeterminate={isProblemIndeterminate}
+        >
+          <div className="d-flex justify-content-between align-items-center">
+            <div>
+              <BlockTypeLabel type={blockType} />{' '}
+              <Badge variant="light" pill>{count}</Badge>
             </div>
-          </MenuItem>
-        </label>
+            { Object.keys(problemTypes).length !== 0 && (
+              <IconButton
+                ref={setProblemItemTarget}
+                variant="dark"
+                iconAs={Icon}
+                src={KeyboardArrowRight}
+                onClick={openProblemItem}
+                data-testid="open-problem-item-button"
+              />
+            )}
+          </div>
+        </MenuItem>
         <ModalPopup
           positionRef={problemItemTarget}
           isOpen={isProblemItemOpen}
@@ -142,19 +141,17 @@ const FilterItem = ({ blockType, count } : FilterItemProps) => {
               >
                 <Menu style={{ textAlign: 'start' }}>
                   { Object.entries(problemTypes).map(([problemType, problemTypeCount]) => (
-                    <label key={blockType} className="d-inline">
-                      <MenuItem
-                        key={problemType}
-                        as={Form.Checkbox}
-                        value={problemType}
-                        onChange={handleProblemCheckboxChange}
-                      >
-                        <div style={{ textAlign: 'start' }}>
-                          <BlockTypeLabel type={problemType} />{' '}
-                          <Badge variant="light" pill>{problemTypeCount}</Badge>
-                        </div>
-                      </MenuItem>
-                    </label>
+                    <MenuItem
+                      key={problemType}
+                      as={Form.Checkbox}
+                      value={problemType}
+                      onChange={handleProblemCheckboxChange}
+                    >
+                      <div style={{ textAlign: 'start' }}>
+                        <BlockTypeLabel type={problemType} />{' '}
+                        <Badge variant="light" pill>{problemTypeCount}</Badge>
+                      </div>
+                    </MenuItem>
                   ))}
                   {
                     // Show a message if there are no options at all to avoid the
@@ -173,19 +170,17 @@ const FilterItem = ({ blockType, count } : FilterItemProps) => {
   }
 
   return (
-    <label key={blockType} className="d-inline">
-      <MenuItem
-        key={blockType}
-        as={Form.Checkbox}
-        value={blockType}
-        onChange={handleCheckboxChange}
-      >
-        <div style={{ textAlign: 'start' }}>
-          <BlockTypeLabel type={blockType} />{' '}
-          <Badge variant="light" pill>{count}</Badge>
-        </div>
-      </MenuItem>
-    </label>
+    <MenuItem
+      key={blockType}
+      as={Form.Checkbox}
+      value={blockType}
+      onChange={handleCheckboxChange}
+    >
+      <div style={{ textAlign: 'start' }}>
+        <BlockTypeLabel type={blockType} />{' '}
+        <Badge variant="light" pill>{count}</Badge>
+      </div>
+    </MenuItem>
   );
 };
 

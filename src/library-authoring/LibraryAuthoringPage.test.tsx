@@ -504,4 +504,45 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.click(getAllByText('Clear Filters')[0]);
     await testSortOption('', '');
   });
+
+  it('filter by capa problem type', async () => {
+    const data = {
+      ...libraryData,
+      canEditLibrary: false,
+    };
+    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
+    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, data);
+
+    render(<RootWrapper />);
+
+    // Ensure the search endpoint is called:
+    // Call 1: To fetch searchable/filterable/sortable library data
+    // Call 2: To fetch the recently modified components only
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
+    const filterButton = screen.getByRole('button', { name: /type/i });
+    fireEvent.click(filterButton);
+
+    const openProblemItem = screen.getByTestId('open-problem-item-button');
+    fireEvent.click(openProblemItem);
+
+    const validateSubmenu = async (submenuText : string) => {
+      const submenu = screen.getByText(submenuText);
+      expect(submenu).toBeInTheDocument();
+      fireEvent.click(submenu);
+
+      await waitFor(() => {
+        expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+          body: expect.stringContaining(`content.problem_types = ${submenuText}`),
+          method: 'POST',
+          headers: expect.anything(),
+        });
+      });
+    };
+
+    validateSubmenu('Multiple Choice');
+    validateSubmenu('Checkboxes');
+    validateSubmenu('Numerical Input');
+    validateSubmenu('Dropdown');
+    validateSubmenu('Text Input');
+  });
 });
