@@ -93,7 +93,11 @@ export const SearchSortWidget: React.FC<Record<never, never>> = () => {
         {shownMenuItems.map(({ id, name, value }) => (
           <Dropdown.Item
             key={id}
-            onClick={() => setSearchSortOrder(value)}
+            onClick={() => {
+              // If the selected sort option was re-clicked, de-select it (reset to default)
+              const searchOrder = value === searchSortOrder ? defaultSearchSortOrder : value;
+              setSearchSortOrder(searchOrder);
+            }}
           >
             {name}
             {(value === searchSortOrder) && <Icon src={Check} className="ml-2" />}

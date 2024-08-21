@@ -113,13 +113,11 @@ export const SearchContextProvider: React.FC<{
   const canClearFilters = (
     blockTypesFilter.length > 0
     || tagsFilter.length > 0
-    || searchSortOrderToUse !== defaultSortOption
   );
   const isFiltered = canClearFilters || (searchKeywords !== '');
   const clearFilters = React.useCallback(() => {
     setBlockTypesFilter([]);
     setTagsFilter([]);
-    setSearchSortOrder(defaultSortOption);
   }, []);
 
   // Initialize a connection to Meilisearch:
