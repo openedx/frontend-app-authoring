@@ -1,5 +1,5 @@
 import { getConfig, setConfig } from '@edx/frontend-platform';
-import { getContentMenuItems, getToolsMenuItems } from './utils';
+import { getContentMenuItems, getToolsMenuItems, getSettingMenuItems } from './utils';
 
 const props = {
   studioBaseUrl: 'UrLSTuiO',
@@ -26,6 +26,25 @@ describe('header utils', () => {
       });
       const actualItems = getContentMenuItems(props);
       expect(actualItems).toHaveLength(4);
+    });
+  });
+
+  describe('getSettingsMenuitems', () => {
+    it('should include certificates option', () => {
+      setConfig({
+        ...getConfig(),
+        ENABLE_CERTIFICATE_PAGE: 'true',
+      });
+      const actualItems = getSettingMenuItems(props);
+      expect(actualItems).toHaveLength(6);
+    });
+    it('should not include certificates option', () => {
+      setConfig({
+        ...getConfig(),
+        ENABLE_CERTIFICATE_PAGE: 'false',
+      });
+      const actualItems = getSettingMenuItems(props);
+      expect(actualItems).toHaveLength(5);
     });
   });
 
