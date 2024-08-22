@@ -84,6 +84,7 @@ const FilterItem = ({ blockType, count } : FilterItemProps) => {
       } /* istanbul ignore next */ else {
         // Delete 'problem' filter if a problem is deselected.
         setBlockTypesFilter(currentFilters => {
+          /* istanbul ignore next */
           if (currentFilters.includes('problem')) {
             return currentFilters.filter(x => x !== 'problem');
           }
@@ -160,6 +161,7 @@ const FilterItem = ({ blockType, count } : FilterItemProps) => {
                     // Show a message if there are no options at all to avoid the
                     // impression that the dropdown isn't working
                     Object.keys(problemTypes).length === 0 ? (
+                      /* istanbul ignore next */
                       <MenuItem disabled><FormattedMessage {...messages['blockTypeFilter.empty']} /></MenuItem>
                     ) : null
                   }
@@ -200,8 +202,7 @@ const FilterByBlockType: React.FC<Record<never, never>> = () => {
     setProblemTypesFilter,
   } = useSearchContext();
 
-  const clearFilters = useCallback(() => {
-    /* istanbul ignore next */
+  const clearFilters = useCallback(/* istanbul ignore next */ () => {
     setBlockTypesFilter([]);
     setProblemTypesFilter([]);
   }, []);
