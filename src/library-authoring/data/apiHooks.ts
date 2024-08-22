@@ -20,6 +20,21 @@ import {
   updateXBlockFields,
 } from './api';
 
+const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
+  // Invalidate all content queries related to this library.
+  // If we allow searching "all courses and libraries" in the future,
+  // then we'd have to invalidate all `["content_search", "results"]`
+  // queries, and not just the ones for this library, because items from
+  // this library could be included in an "all courses and libraries"
+  // search. For now we only allow searching individual libraries.
+  const extraFilter = query.queryKey[5]; // extraFilter contains library id
+  if (!(Array.isArray(extraFilter) || typeof extraFilter === 'string')) {
+    return false;
+  }
+
+  return query.queryKey[0] === 'content_search' && extraFilter?.includes(`context_key = "${libraryId}"`);
+};
+
 export const libraryAuthoringQueryKeys = {
   all: ['contentLibrary'],
   /**
@@ -136,22 +151,7 @@ export const useRevertLibraryChanges = () => {
     mutationFn: revertLibraryChanges,
     onSettled: (_data, _error, libraryId) => {
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId) });
-      queryClient.invalidateQueries({
-        // Invalidate all content queries related to this library.
-        // If we allow searching "all courses and libraries" in the future,
-        // then we'd have to invalidate all `["content_search", "results"]`
-        // queries, and not just the ones for this library, because items from
-        // this library could be included in an "all courses and libraries"
-        // search. For now we only allow searching individual libraries.
-        predicate: /* istanbul ignore next */ (query: Query): boolean => {
-          // extraFilter contains library id
-          const extraFilter = query.queryKey[5];
-          if (!(Array.isArray(extraFilter) || typeof extraFilter === 'string')) {
-            return false;
-          }
-          return query.queryKey[0] === 'content_search' && extraFilter?.includes(`context_key = "${libraryId}"`);
-        },
-      });
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
     },
   });
 };
@@ -162,7 +162,7 @@ export const useLibraryPasteClipboard = () => {
     mutationFn: libraryPasteClipboard,
     onSettled: (_data, _error, variables) => {
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(variables.libraryId) });
-      queryClient.invalidateQueries({ queryKey: ['content_search'] });
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, variables.libraryId) });
     },
   });
 };
@@ -205,7 +205,7 @@ export const useUpdateXBlockFields = (contentLibraryId: string, usageKey: string
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.xblockFields(contentLibraryId, usageKey) });
-      queryClient.invalidateQueries({ queryKey: ['content_search'] });
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, contentLibraryId) });
     },
   });
 };
