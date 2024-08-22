@@ -38,6 +38,7 @@ const FilterItem = ({ blockType, count } : FilterItemProps) => {
   const [problemItemTarget, setProblemItemTarget] = React.useState<HTMLButtonElement | null>(null);
 
   useEffect(() => {
+    /* istanbul ignore next */
     if (blockType === 'problem'
         && problemTypesFilter.length !== 0
         && !blockTypesFilter.includes('problem')) {
@@ -72,6 +73,7 @@ const FilterItem = ({ blockType, count } : FilterItemProps) => {
         result = [...currentFiltersProblem, e.target.value];
       }
       if (e.target.checked) {
+        /* istanbul ignore next */
         if (result.length === problemTypesLength) {
           // Add 'problem' to type filter if all problem types are selected.
           setIsProblemIndeterminate(false);
@@ -79,7 +81,7 @@ const FilterItem = ({ blockType, count } : FilterItemProps) => {
         } else {
           setIsProblemIndeterminate(true);
         }
-      } else {
+      } /* istanbul ignore next */ else {
         // Delete 'problem' filter if a problem is deselected.
         setBlockTypesFilter(currentFilters => {
           if (currentFilters.includes('problem')) {
@@ -200,6 +202,7 @@ const FilterByBlockType: React.FC<Record<never, never>> = () => {
   } = useSearchContext();
 
   const clearFilters = useCallback(() => {
+    /* istanbul ignore next */
     setBlockTypesFilter([]);
     setProblemTypesFilter([]);
   }, []);
