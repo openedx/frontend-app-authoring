@@ -136,14 +136,13 @@ const FilterItem = ({ blockType, count } : FilterItemProps) => {
         >
           <div
             className="bg-white rounded shadow problem-sub-menu-item"
-            style={{ textAlign: 'start' }}
           >
             <Form.Group className="mb-0">
               <Form.CheckboxSet
                 name="block-type-filter"
                 value={problemTypesFilter}
               >
-                <Menu style={{ textAlign: 'start' }}>
+                <Menu>
                   { Object.entries(problemTypes).map(([problemType, problemTypeCount]) => (
                     <MenuItem
                       key={problemType}
@@ -180,7 +179,7 @@ const FilterItem = ({ blockType, count } : FilterItemProps) => {
       value={blockType}
       onChange={handleCheckboxChange}
     >
-      <div style={{ textAlign: 'start' }}>
+      <div>
         <BlockTypeLabel type={blockType} />{' '}
         <Badge variant="light" pill>{count}</Badge>
       </div>
