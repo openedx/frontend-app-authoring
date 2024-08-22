@@ -92,6 +92,11 @@ const ComponentCard = ({ contentHit, blockTypeDisplayName } : ComponentCardProps
       <Card
         isClickable
         onClick={() => openComponentInfoSidebar(usageKey)}
+        onKeyDown={(e: React.KeyboardEvent) => {
+          if (['Enter', ' '].includes(e.key)) {
+            openComponentInfoSidebar(usageKey);
+          }
+        }}
       >
         <Card.Header
           className={`library-component-header ${getComponentStyleColor(blockType)}`}
