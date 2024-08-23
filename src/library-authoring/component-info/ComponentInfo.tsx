@@ -19,7 +19,7 @@ const ComponentInfo = ({ usageKey } : ComponentInfoProps) => {
 
   return (
     <Stack>
-      <Stack direction="horizontal" className="d-flex justify-content-around">
+      <Stack direction="horizontal" gap={1} className="d-flex justify-content-around">
         <Button disabled variant="outline-primary rounded-0">
           {intl.formatMessage(messages.editComponentButtonTitle)}
         </Button>
