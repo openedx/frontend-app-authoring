@@ -1,4 +1,3 @@
-/* eslint-disable react/require-default-props */
 import React, { useState, useContext, useCallback } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
