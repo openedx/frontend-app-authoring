@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   render,
   fireEvent,
+  screen,
   waitFor,
 } from '@testing-library/react';
 import { ContentLibrary, getXBlockFieldsApiUrl } from '../data/api';
@@ -95,10 +96,10 @@ describe('<ComponentInfoHeader />', () => {
   });
 
   it('should render component info Header', async () => {
-    const { findByText, getByRole } = render(<RootWrapper />);
+    render(<RootWrapper />);
 
-    expect(await findByText('Test HTML Block')).toBeInTheDocument();
-    expect(getByRole('button', { name: /edit component name/i })).toBeInTheDocument();
+    expect(await screen.findByText('Test HTML Block')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /edit component name/i })).toBeInTheDocument();
   });
 
   it('should not render edit title button without permission', () => {
@@ -107,19 +108,19 @@ describe('<ComponentInfoHeader />', () => {
       canEditLibrary: false,
     };
 
-    const { queryByRole } = render(<RootWrapper library={library} />);
+    render(<RootWrapper library={library} />);
 
-    expect(queryByRole('button', { name: /edit component name/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /edit component name/i })).not.toBeInTheDocument();
   });
 
   it('should edit component title', async () => {
     const url = getXBlockFieldsApiUrl(usageKey);
     axiosMock.onPost(url).reply(200);
-    const { getByRole, getByText } = render(<RootWrapper />);
+    render(<RootWrapper />);
 
-    fireEvent.click(getByRole('button', { name: /edit component name/i }));
+    fireEvent.click(screen.getByRole('button', { name: /edit component name/i }));
 
-    const textBox = getByRole('textbox', { name: /display name input/i });
+    const textBox = screen.getByRole('textbox', { name: /display name input/i });
 
     fireEvent.change(textBox, { target: { value: 'New component name' } });
     fireEvent.keyDown(textBox, { key: 'Enter', code: 'Enter', charCode: 13 });
@@ -132,18 +133,18 @@ describe('<ComponentInfoHeader />', () => {
       expect(axiosMock.history.post[0].data).toStrictEqual(JSON.stringify({
         metadata: { display_name: 'New component name' },
       }));
-      expect(getByText('Component updated successfully.'));
+      expect(screen.getByText('Component updated successfully.')).toBeInTheDocument();
     });
   });
 
   it('should close edit library title on press Escape', async () => {
     const url = getXBlockFieldsApiUrl(usageKey);
     axiosMock.onPost(url).reply(200);
-    const { getByRole } = render(<RootWrapper />);
+    render(<RootWrapper />);
 
-    fireEvent.click(getByRole('button', { name: /edit component name/i }));
+    fireEvent.click(screen.getByRole('button', { name: /edit component name/i }));
 
-    const textBox = getByRole('textbox', { name: /display name input/i });
+    const textBox = screen.getByRole('textbox', { name: /display name input/i });
 
     fireEvent.change(textBox, { target: { value: 'New component name' } });
     fireEvent.keyDown(textBox, { key: 'Escape', code: 'Escape', charCode: 27 });
@@ -157,11 +158,11 @@ describe('<ComponentInfoHeader />', () => {
     const url = getXBlockFieldsApiUrl(usageKey);
     axiosMock.onPatch(url).reply(500);
 
-    const { getByRole, getByText } = render(<RootWrapper />);
+    render(<RootWrapper />);
 
-    fireEvent.click(getByRole('button', { name: /edit component name/i }));
+    fireEvent.click(screen.getByRole('button', { name: /edit component name/i }));
 
-    const textBox = getByRole('textbox', { name: /display name input/i });
+    const textBox = screen.getByRole('textbox', { name: /display name input/i });
 
     fireEvent.change(textBox, { target: { value: 'New component name' } });
     fireEvent.keyDown(textBox, { key: 'Enter', code: 'Enter', charCode: 13 });
@@ -172,7 +173,8 @@ describe('<ComponentInfoHeader />', () => {
       expect(axiosMock.history.post[0].data).toStrictEqual(JSON.stringify({
         metadata: { display_name: 'New component name' },
       }));
-      expect(getByText('There was an error updating the component.'));
+
+      expect(screen.getByText('There was an error updating the component.')).toBeInTheDocument();
     });
   });
 });
