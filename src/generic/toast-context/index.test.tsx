@@ -50,6 +50,7 @@ describe('<ToastProvider />', () => {
       },
     });
     store = initializeStore();
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -59,6 +60,13 @@ describe('<ToastProvider />', () => {
   it('should show toast', async () => {
     render(<RootWrapper><TestComponentToShow /></RootWrapper>);
     expect(await screen.findByText('This is the toast!')).toBeInTheDocument();
+  });
+
+  it('should close toast after 5000ms', async () => {
+    render(<RootWrapper><TestComponentToShow /></RootWrapper>);
+    expect(await screen.findByText('This is the toast!')).toBeInTheDocument();
+    jest.advanceTimersByTime(6000);
+    expect(screen.queryByText('This is the toast!')).not.toBeInTheDocument();
   });
 
   it('should close toast', async () => {
