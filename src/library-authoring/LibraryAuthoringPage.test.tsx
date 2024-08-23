@@ -83,6 +83,9 @@ const libraryData: ContentLibrary = {
   numBlocks: 2,
   version: 0,
   lastPublished: null,
+  lastDraftCreated: '2024-07-22',
+  publishedBy: 'staff',
+  lastDraftCreatedBy: 'staff',
   allowLti: false,
   allowPublicLearning: false,
   allowPublicRead: false,
@@ -90,7 +93,16 @@ const libraryData: ContentLibrary = {
   hasUnpublishedDeletes: false,
   canEditLibrary: true,
   license: '',
+  created: '2024-06-26',
+  updated: '2024-07-20',
 };
+
+const clipboardBroadcastChannelMock = {
+  postMessage: jest.fn(),
+  close: jest.fn(),
+};
+
+(global as any).BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
 
 const RootWrapper = () => (
   <AppProvider store={store}>
@@ -177,7 +189,7 @@ describe('<LibraryAuthoringPage />', () => {
     axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
 
     const {
-      getByRole, getByText, getAllByText, queryByText,
+      getByRole, getByText, queryByText, findByText, findAllByText,
     } = render(<RootWrapper />);
 
     // Ensure the search endpoint is called:
@@ -185,15 +197,15 @@ describe('<LibraryAuthoringPage />', () => {
     // Call 2: To fetch the recently modified components only
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
 
-    expect(getByText('Content library')).toBeInTheDocument();
-    expect(getByText(libraryData.title)).toBeInTheDocument();
+    expect(await findByText('Content library')).toBeInTheDocument();
+    expect((await findAllByText(libraryData.title))[0]).toBeInTheDocument();
 
     expect(queryByText('You have not added any content to this library yet.')).not.toBeInTheDocument();
 
     expect(getByText('Recently Modified')).toBeInTheDocument();
     expect(getByText('Collections (0)')).toBeInTheDocument();
     expect(getByText('Components (6)')).toBeInTheDocument();
-    expect(getAllByText('Test HTML Block')[0]).toBeInTheDocument();
+    expect((await findAllByText('Test HTML Block'))[0]).toBeInTheDocument();
 
     // Navigate to the components tab
     fireEvent.click(getByRole('tab', { name: 'Components' }));
@@ -222,10 +234,10 @@ describe('<LibraryAuthoringPage />', () => {
     axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
     fetchMock.post(searchEndpoint, returnEmptyResult, { overwriteRoutes: true });
 
-    const { findByText, getByText } = render(<RootWrapper />);
+    const { findByText, getByText, findAllByText } = render(<RootWrapper />);
 
     expect(await findByText('Content library')).toBeInTheDocument();
-    expect(await findByText(libraryData.title)).toBeInTheDocument();
+    expect((await findAllByText(libraryData.title))[0]).toBeInTheDocument();
 
     // Ensure the search endpoint is called:
     // Call 1: To fetch searchable/filterable/sortable library data
@@ -282,10 +294,15 @@ describe('<LibraryAuthoringPage />', () => {
     axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
     fetchMock.post(searchEndpoint, returnEmptyResult, { overwriteRoutes: true });
 
-    const { findByText, getByRole, getByText } = render(<RootWrapper />);
+    const {
+      findByText,
+      getByRole,
+      getByText,
+      findAllByText,
+    } = render(<RootWrapper />);
 
     expect(await findByText('Content library')).toBeInTheDocument();
-    expect(await findByText(libraryData.title)).toBeInTheDocument();
+    expect((await findAllByText(libraryData.title))[0]).toBeInTheDocument();
 
     // Ensure the search endpoint is called:
     // Call 1: To fetch searchable/filterable/sortable library data
@@ -329,12 +346,54 @@ describe('<LibraryAuthoringPage />', () => {
     expect(screen.queryByText(/add content/i)).not.toBeInTheDocument();
   });
 
+  it('should open Library Info by default', async () => {
+    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
+    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
+
+    render(<RootWrapper />);
+
+    expect(await screen.findByText('Content library')).toBeInTheDocument();
+    expect((await screen.findAllByText(libraryData.title))[0]).toBeInTheDocument();
+    expect((await screen.findAllByText(libraryData.title))[1]).toBeInTheDocument();
+
+    expect(screen.getByText('Draft')).toBeInTheDocument();
+    expect(screen.getByText('(Never Published)')).toBeInTheDocument();
+    expect(screen.getByText('July 22, 2024')).toBeInTheDocument();
+    expect(screen.getByText('staff')).toBeInTheDocument();
+    expect(screen.getByText(libraryData.org)).toBeInTheDocument();
+    expect(screen.getByText('July 20, 2024')).toBeInTheDocument();
+    expect(screen.getByText('June 26, 2024')).toBeInTheDocument();
+  });
+
+  it('should close and open Library Info', async () => {
+    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
+    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
+
+    render(<RootWrapper />);
+
+    expect(await screen.findByText('Content library')).toBeInTheDocument();
+    expect((await screen.findAllByText(libraryData.title))[0]).toBeInTheDocument();
+    expect((await screen.findAllByText(libraryData.title))[1]).toBeInTheDocument();
+
+    const closeButton = screen.getByRole('button', { name: /close/i });
+    fireEvent.click(closeButton);
+
+    expect(screen.queryByText('Draft')).not.toBeInTheDocument();
+    expect(screen.queryByText('(Never Published)')).not.toBeInTheDocument();
+
+    const libraryInfoButton = screen.getByRole('button', { name: /library info/i });
+    fireEvent.click(libraryInfoButton);
+
+    expect(screen.getByText('Draft')).toBeInTheDocument();
+    expect(screen.getByText('(Never Published)')).toBeInTheDocument();
+  });
+
   it('show the "View All" button when viewing library with many components', async () => {
     mockUseParams.mockReturnValue({ libraryId: libraryData.id });
     axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
 
     const {
-      getByRole, getByText, queryByText, getAllByText,
+      getByRole, getByText, queryByText, getAllByText, findAllByText,
     } = render(<RootWrapper />);
 
     // Ensure the search endpoint is called:
@@ -343,7 +402,7 @@ describe('<LibraryAuthoringPage />', () => {
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
 
     expect(getByText('Content library')).toBeInTheDocument();
-    expect(getByText(libraryData.title)).toBeInTheDocument();
+    expect((await findAllByText(libraryData.title))[0]).toBeInTheDocument();
 
     await waitFor(() => { expect(getByText('Recently Modified')).toBeInTheDocument(); });
     expect(getByText('Collections (0)')).toBeInTheDocument();
@@ -376,7 +435,7 @@ describe('<LibraryAuthoringPage />', () => {
     fetchMock.post(searchEndpoint, returnLowNumberResults, { overwriteRoutes: true });
 
     const {
-      getByText, queryByText, getAllByText,
+      getByText, queryByText, getAllByText, findAllByText,
     } = render(<RootWrapper />);
 
     // Ensure the search endpoint is called:
@@ -385,7 +444,7 @@ describe('<LibraryAuthoringPage />', () => {
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
 
     expect(getByText('Content library')).toBeInTheDocument();
-    expect(getByText(libraryData.title)).toBeInTheDocument();
+    expect((await findAllByText(libraryData.title))[0]).toBeInTheDocument();
 
     await waitFor(() => { expect(getByText('Recently Modified')).toBeInTheDocument(); });
     expect(getByText('Collections (0)')).toBeInTheDocument();

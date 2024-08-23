@@ -1,4 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  useQuery, useMutation, useQueryClient, Query,
+} from '@tanstack/react-query';
 
 import {
   type GetLibrariesV2CustomParams,
@@ -6,6 +8,11 @@ import {
   getLibraryBlockTypes,
   createLibraryBlock,
   getContentLibraryV2List,
+  commitLibraryChanges,
+  revertLibraryChanges,
+  updateLibraryMetadata,
+  ContentLibrary,
+  libraryPasteClipboard,
 } from './api';
 
 export const libraryAuthoringQueryKeys = {
@@ -61,6 +68,35 @@ export const useCreateLibraryBlock = () => {
   });
 };
 
+export const useUpdateLibraryMetadata = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateLibraryMetadata,
+    onMutate: async (data) => {
+      const queryKey = libraryAuthoringQueryKeys.contentLibrary(data.id);
+      const previousLibraryData = queryClient.getQueriesData(queryKey)[0][1] as ContentLibrary;
+
+      const newLibraryData = {
+        ...previousLibraryData,
+        title: data.title,
+      };
+
+      queryClient.setQueryData(queryKey, newLibraryData);
+
+      return { previousLibraryData, newLibraryData };
+    },
+    onError: (_err, data, context) => {
+      queryClient.setQueryData(
+        libraryAuthoringQueryKeys.contentLibrary(data.id),
+        context?.previousLibraryData,
+      );
+    },
+    onSettled: (_data, _error, variables) => {
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(variables.id) });
+    },
+  });
+};
+
 /**
  * Builds the query to fetch list of V2 Libraries
  */
@@ -71,3 +107,50 @@ export const useContentLibraryV2List = (customParams: GetLibrariesV2CustomParams
     keepPreviousData: true,
   })
 );
+
+export const useCommitLibraryChanges = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: commitLibraryChanges,
+    onSettled: (_data, _error, libraryId) => {
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId) });
+    },
+  });
+};
+
+export const useRevertLibraryChanges = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: revertLibraryChanges,
+    onSettled: (_data, _error, libraryId) => {
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId) });
+      queryClient.invalidateQueries({
+        // Invalidate all content queries related to this library.
+        // If we allow searching "all courses and libraries" in the future,
+        // then we'd have to invalidate all `["content_search", "results"]`
+        // queries, and not just the ones for this library, because items from
+        // this library could be included in an "all courses and libraries"
+        // search. For now we only allow searching individual libraries.
+        predicate: /* istanbul ignore next */ (query: Query): boolean => {
+          // extraFilter contains library id
+          const extraFilter = query.queryKey[5];
+          if (!(Array.isArray(extraFilter) || typeof extraFilter === 'string')) {
+            return false;
+          }
+          return query.queryKey[0] === 'content_search' && extraFilter?.includes(`context_key = "${libraryId}"`);
+        },
+      });
+    },
+  });
+};
+
+export const useLibraryPasteClipboard = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: libraryPasteClipboard,
+    onSettled: (_data, _error, variables) => {
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(variables.libraryId) });
+      queryClient.invalidateQueries({ queryKey: ['content_search'] });
+    },
+  });
+};

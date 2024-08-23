@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -6,8 +6,6 @@ import {
   Button,
   Col,
   Container,
-  Icon,
-  IconButton,
   Row,
   Stack,
   Tab,
@@ -52,6 +50,7 @@ const HeaderActions = ({ canEditLibrary }: HeaderActionsProps) => {
   const intl = useIntl();
   const {
     openAddContentSidebar,
+    openInfoSidebar,
   } = useContext(LibraryContext);
 
   if (!canEditLibrary) {
@@ -59,30 +58,32 @@ const HeaderActions = ({ canEditLibrary }: HeaderActionsProps) => {
   }
 
   return (
-    <Button
-      iconBefore={Add}
-      variant="primary rounded-0"
-      onClick={() => openAddContentSidebar()}
-      disabled={!canEditLibrary}
-    >
-      {intl.formatMessage(messages.newContentButton)}
-    </Button>
+    <>
+      <Button
+        iconBefore={InfoOutline}
+        variant="outline-primary rounded-0"
+        onClick={openInfoSidebar}
+      >
+        {intl.formatMessage(messages.libraryInfoButton)}
+      </Button>
+      <Button
+        iconBefore={Add}
+        variant="primary rounded-0"
+        onClick={openAddContentSidebar}
+        disabled={!canEditLibrary}
+      >
+        {intl.formatMessage(messages.newContentButton)}
+      </Button>
+    </>
   );
 };
 
 const SubHeaderTitle = ({ title, canEditLibrary }: { title: string, canEditLibrary: boolean }) => {
   const intl = useIntl();
+
   return (
     <Stack direction="vertical">
-      <Stack direction="horizontal">
-        {title}
-        <IconButton
-          src={InfoOutline}
-          iconAs={Icon}
-          alt={intl.formatMessage(messages.headingInfoAlt)}
-          className="mr-2"
-        />
-      </Stack>
+      {title}
       { !canEditLibrary && (
         <div>
           <Badge variant="primary" style={{ fontSize: '50%' }}>
@@ -104,7 +105,14 @@ const LibraryAuthoringPage = () => {
 
   const currentPath = location.pathname.split('/').pop();
   const activeKey = (currentPath && currentPath in TabList) ? TabList[currentPath] : TabList.home;
-  const { sidebarBodyComponent } = useContext(LibraryContext);
+  const {
+    sidebarBodyComponent,
+    openInfoSidebar,
+  } = useContext(LibraryContext);
+
+  useEffect(() => {
+    openInfoSidebar();
+  }, []);
 
   const [searchParams] = useSearchParams();
 
@@ -190,8 +198,8 @@ const LibraryAuthoringPage = () => {
           <StudioFooter />
         </Col>
         { sidebarBodyComponent !== null && (
-          <Col xs={6} md={4} className="box-shadow-left-1">
-            <LibrarySidebar />
+          <Col xs={3} md={3} className="box-shadow-left-1">
+            <LibrarySidebar library={libraryData} />
           </Col>
         )}
       </Row>

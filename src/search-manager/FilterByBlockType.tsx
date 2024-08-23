@@ -81,16 +81,17 @@ const FilterByBlockType: React.FC<Record<never, never>> = () => {
           <Menu className="block-type-refinement-menu" style={{ boxShadow: 'none' }}>
             {
               Object.entries(sortedBlockTypes).map(([blockType, count]) => (
-                <MenuItem
-                  key={blockType}
-                  as={Form.Checkbox}
-                  value={blockType}
-                  checked={blockTypesFilter.includes(blockType)}
-                  onChange={handleCheckboxChange}
-                >
-                  <BlockTypeLabel type={blockType} />{' '}
-                  <Badge variant="light" pill>{count}</Badge>
-                </MenuItem>
+                <label key={blockType} className="d-inline">
+                  <MenuItem
+                    as={Form.Checkbox}
+                    value={blockType}
+                    checked={blockTypesFilter.includes(blockType)}
+                    onChange={handleCheckboxChange}
+                  >
+                    <BlockTypeLabel type={blockType} />{' '}
+                    <Badge variant="light" pill>{count}</Badge>
+                  </MenuItem>
+                </label>
               ))
             }
             {

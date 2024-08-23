@@ -18,6 +18,7 @@
 @import "export-page/CourseExportPage";
 @import "import-page/CourseImportPage";
 @import "taxonomy";
+@import "library-authoring";
 @import "files-and-videos";
 @import "content-tags-drawer";
 @import "course-outline/CourseOutline";
@@ -30,7 +31,6 @@
 @import "search-manager";
 @import "certificates/scss/Certificates";
 @import "group-configurations/GroupConfigurations";
-@import "library-authoring";
 
 // To apply the glow effect to the selected Section/Subsection, in the Course Outline
 div.row:has(> div > div.highlight) {
