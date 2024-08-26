@@ -1,5 +1,6 @@
 import React from 'react';
-import { Toast } from '@openedx/paragon';
+
+import ProcessingNotification from '../processing-notification';
 
 export interface ToastContextData {
   toastMessage: string | null;
@@ -35,7 +36,13 @@ export const ToastProvider = (props: ToastProviderProps) => {
     setToastMessage(null);
   }, []);
 
-  const showToast = React.useCallback((message) => setToastMessage(message), [setToastMessage]);
+  const showToast = React.useCallback((message) => {
+    setToastMessage(message);
+    // Close the toast after 5 seconds
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 5000);
+  }, [setToastMessage]);
   const closeToast = React.useCallback(() => setToastMessage(null), [setToastMessage]);
 
   const context = React.useMemo(() => ({
@@ -48,9 +55,7 @@ export const ToastProvider = (props: ToastProviderProps) => {
     <ToastContext.Provider value={context}>
       {props.children}
       { toastMessage && (
-        <Toast show={toastMessage !== null} onClose={closeToast}>
-          {toastMessage}
-        </Toast>
+        <ProcessingNotification isShow={toastMessage !== null} title={toastMessage} />
       )}
     </ToastContext.Provider>
   );

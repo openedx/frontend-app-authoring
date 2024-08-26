@@ -209,28 +209,33 @@ describe('<LibraryAuthoringPage />', () => {
 
   it('show library data', async () => {
     const {
-      getByRole, getByText, queryByText, findByText, findAllByText,
+      getByRole, getAllByText, getByText, queryByText, findByText, findAllByText,
     } = await renderLibraryPage();
+
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
 
     expect(await findByText('Content library')).toBeInTheDocument();
     expect((await findAllByText(libraryData.title))[0]).toBeInTheDocument();
 
     expect(queryByText('You have not added any content to this library yet.')).not.toBeInTheDocument();
 
-    expect(getByText('Recently Modified')).toBeInTheDocument();
+    // "Recently Modified" header + sort shown
+    expect(getAllByText('Recently Modified').length).toEqual(2);
     expect(getByText('Collections (0)')).toBeInTheDocument();
     expect(getByText('Components (6)')).toBeInTheDocument();
     expect((await findAllByText('Test HTML Block'))[0]).toBeInTheDocument();
 
     // Navigate to the components tab
     fireEvent.click(getByRole('tab', { name: 'Components' }));
-    expect(queryByText('Recently Modified')).not.toBeInTheDocument();
+    // "Recently Modified" default sort shown
+    expect(getAllByText('Recently Modified').length).toEqual(1);
     expect(queryByText('Collections (0)')).not.toBeInTheDocument();
     expect(queryByText('Components (6)')).not.toBeInTheDocument();
 
     // Navigate to the collections tab
     fireEvent.click(getByRole('tab', { name: 'Collections' }));
-    expect(queryByText('Recently Modified')).not.toBeInTheDocument();
+    // "Recently Modified" default sort shown
+    expect(getAllByText('Recently Modified').length).toEqual(1);
     expect(queryByText('Collections (0)')).not.toBeInTheDocument();
     expect(queryByText('Components (6)')).not.toBeInTheDocument();
     expect(queryByText('There are 6 components in this library')).not.toBeInTheDocument();
@@ -239,7 +244,8 @@ describe('<LibraryAuthoringPage />', () => {
     // Go back to Home tab
     // This step is necessary to avoid the url change leak to other tests
     fireEvent.click(getByRole('tab', { name: 'Home' }));
-    expect(getByText('Recently Modified')).toBeInTheDocument();
+    // "Recently Modified" header + sort shown
+    expect(getAllByText('Recently Modified').length).toEqual(2);
     expect(getByText('Collections (0)')).toBeInTheDocument();
     expect(getByText('Components (6)')).toBeInTheDocument();
   });
@@ -254,10 +260,7 @@ describe('<LibraryAuthoringPage />', () => {
     expect(await findByText('Content library')).toBeInTheDocument();
     expect((await findAllByText(libraryData.title))[0]).toBeInTheDocument();
 
-    // Ensure the search endpoint is called:
-    // Call 1: To fetch searchable/filterable/sortable library data
-    // Call 2: To fetch the recently modified components only
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
 
     expect(getByText('You have not added any content to this library yet.')).toBeInTheDocument();
   });
@@ -316,16 +319,13 @@ describe('<LibraryAuthoringPage />', () => {
     expect(await findByText('Content library')).toBeInTheDocument();
     expect((await findAllByText(libraryData.title))[0]).toBeInTheDocument();
 
-    // Ensure the search endpoint is called:
-    // Call 1: To fetch searchable/filterable/sortable library data
-    // Call 2: To fetch the recently modified components only
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
 
     fireEvent.change(getByRole('searchbox'), { target: { value: 'noresults' } });
 
     // Ensure the search endpoint is called again, only once more since the recently modified call
     // should not be impacted by the search
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(3, searchEndpoint, 'post'); });
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
 
     expect(getByText('No matching components found in this library.')).toBeInTheDocument();
 
@@ -399,7 +399,8 @@ describe('<LibraryAuthoringPage />', () => {
     expect(getByText('Content library')).toBeInTheDocument();
     expect((await findAllByText(libraryData.title))[0]).toBeInTheDocument();
 
-    await waitFor(() => { expect(getByText('Recently Modified')).toBeInTheDocument(); });
+    // "Recently Modified" header + sort shown
+    await waitFor(() => { expect(getAllByText('Recently Modified').length).toEqual(2); });
     expect(getByText('Collections (0)')).toBeInTheDocument();
     expect(getByText('Components (6)')).toBeInTheDocument();
     expect(getAllByText('Test HTML Block')[0]).toBeInTheDocument();
@@ -411,7 +412,8 @@ describe('<LibraryAuthoringPage />', () => {
 
     // Clicking on "View All" button should navigate to the Components tab
     fireEvent.click(getByText('View All'));
-    expect(queryByText('Recently Modified')).not.toBeInTheDocument();
+    // "Recently Modified" default sort shown
+    expect(getAllByText('Recently Modified').length).toEqual(1);
     expect(queryByText('Collections (0)')).not.toBeInTheDocument();
     expect(queryByText('Components (6)')).not.toBeInTheDocument();
     expect(getAllByText('Test HTML Block')[0]).toBeInTheDocument();
@@ -419,7 +421,8 @@ describe('<LibraryAuthoringPage />', () => {
     // Go back to Home tab
     // This step is necessary to avoid the url change leak to other tests
     fireEvent.click(getByRole('tab', { name: 'Home' }));
-    expect(getByText('Recently Modified')).toBeInTheDocument();
+    // "Recently Modified" header + sort shown
+    expect(getAllByText('Recently Modified').length).toEqual(2);
     expect(getByText('Collections (0)')).toBeInTheDocument();
     expect(getByText('Components (6)')).toBeInTheDocument();
   });
@@ -433,15 +436,13 @@ describe('<LibraryAuthoringPage />', () => {
       getByText, queryByText, getAllByText, findAllByText,
     } = render(<RootWrapper />);
 
-    // Ensure the search endpoint is called:
-    // Call 1: To fetch searchable/filterable/sortable library data
-    // Call 2: To fetch the recently modified components only
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
 
     expect(getByText('Content library')).toBeInTheDocument();
     expect((await findAllByText(libraryData.title))[0]).toBeInTheDocument();
 
-    await waitFor(() => { expect(getByText('Recently Modified')).toBeInTheDocument(); });
+    // "Recently Modified" header + sort shown
+    await waitFor(() => { expect(getAllByText('Recently Modified').length).toEqual(2); });
     expect(getByText('Collections (0)')).toBeInTheDocument();
     expect(getByText('Components (2)')).toBeInTheDocument();
     expect(getAllByText('Test HTML Block')[0]).toBeInTheDocument();
@@ -454,18 +455,25 @@ describe('<LibraryAuthoringPage />', () => {
 
   it('sort library components', async () => {
     const {
-      findByTitle, getAllByText, getByText, getByTitle,
+      findByTitle, getAllByText, getByRole, getByTitle,
     } = await renderLibraryPage();
 
     expect(await findByTitle('Sort search results')).toBeInTheDocument();
 
-    const testSortOption = (async (optionText, sortBy) => {
-      if (optionText) {
-        fireEvent.click(getByTitle('Sort search results'));
-        fireEvent.click(getByText(optionText));
-      }
+    const testSortOption = (async (optionText, sortBy, isDefault) => {
+      // Open the drop-down menu
+      fireEvent.click(getByTitle('Sort search results'));
+
+      // Click the option with the given text
+      // Since the sort drop-down also shows the selected sort
+      // option in its toggle button, we need to make sure we're
+      // clicking on the last one found.
+      const options = getAllByText(optionText);
+      expect(options.length).toBeGreaterThan(0);
+      fireEvent.click(options[options.length - 1]);
+
+      // Did the search happen with the expected sort option?
       const bodyText = sortBy ? `"sort":["${sortBy}"]` : '"sort":[]';
-      const searchText = sortBy ? `?sort=${encodeURIComponent(sortBy)}` : '';
       await waitFor(() => {
         expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
           body: expect.stringContaining(bodyText),
@@ -473,16 +481,23 @@ describe('<LibraryAuthoringPage />', () => {
           headers: expect.anything(),
         });
       });
+
+      // Is the sort option stored in the query string?
+      const searchText = isDefault ? '' : `?sort=${encodeURIComponent(sortBy)}`;
       expect(window.location.search).toEqual(searchText);
+
+      // Is the selected sort option shown in the toggle button (if not default)
+      // as well as in the drop-down menu?
+      expect(getAllByText(optionText).length).toEqual(isDefault ? 1 : 2);
     });
 
-    await testSortOption('Title, A-Z', 'display_name:asc');
-    await testSortOption('Title, Z-A', 'display_name:desc');
-    await testSortOption('Newest', 'created:desc');
-    await testSortOption('Oldest', 'created:asc');
+    await testSortOption('Title, A-Z', 'display_name:asc', false);
+    await testSortOption('Title, Z-A', 'display_name:desc', false);
+    await testSortOption('Newest', 'created:desc', false);
+    await testSortOption('Oldest', 'created:asc', false);
 
     // Sorting by Recently Published also excludes unpublished components
-    await testSortOption('Recently Published', 'last_published:desc');
+    await testSortOption('Recently Published', 'last_published:desc', false);
     await waitFor(() => {
       expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
         body: expect.stringContaining('last_published IS NOT NULL'),
@@ -491,9 +506,23 @@ describe('<LibraryAuthoringPage />', () => {
       });
     });
 
-    // Clearing filters clears the url search param and uses default sort
-    fireEvent.click(getAllByText('Clear Filters')[0]);
-    await testSortOption('', '');
+    // Re-selecting the previous sort option resets sort to default "Recently Modified"
+    await testSortOption('Recently Published', 'modified:desc', true);
+    expect(getAllByText('Recently Modified').length).toEqual(2);
+
+    // Enter a keyword into the search box
+    const searchBox = getByRole('searchbox');
+    fireEvent.change(searchBox, { target: { value: 'words to find' } });
+
+    // Default sort option changes to "Most Relevant"
+    expect(getAllByText('Most Relevant').length).toEqual(2);
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+        body: expect.stringContaining('"sort":[]'),
+        method: 'POST',
+        headers: expect.anything(),
+      });
+    });
   });
 
   it('should open and close the component sidebar', async () => {
