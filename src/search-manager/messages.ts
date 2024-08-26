@@ -157,7 +157,7 @@ const messages = defineMessages({
   },
   searchSortWidgetLabel: {
     id: 'course-authoring.course-search.searchSortWidget.label',
-    defaultMessage: 'Sort',
+    defaultMessage: 'Sort By',
     description: 'Label displayed to users when default sorting is used by the content search drop-down menu',
   },
   searchSortWidgetAltTitle: {
@@ -199,6 +199,11 @@ const messages = defineMessages({
     id: 'course-authoring.filter.problem-submenu.icon-button.alt',
     defaultMessage: 'Open problem types filters',
     description: 'Alt of the icon button to open problem types filters',
+  },
+  searchSortMostRelevant: {
+    id: 'course-authoring.course-search.searchSort.mostRelevant',
+    defaultMessage: 'Most Relevant',
+    description: 'Label for the content search sort drop-down which sorts keyword searches by relevance',
   },
 });
 

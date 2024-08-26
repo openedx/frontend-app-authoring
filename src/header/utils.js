@@ -31,32 +31,37 @@ export const getContentMenuItems = ({ studioBaseUrl, courseId, intl }) => {
   return items;
 };
 
-export const getSettingMenuItems = ({ studioBaseUrl, courseId, intl }) => ([
-  {
-    href: `${studioBaseUrl}/settings/details/${courseId}`,
-    title: intl.formatMessage(messages['header.links.scheduleAndDetails']),
-  },
-  {
-    href: `${studioBaseUrl}/settings/grading/${courseId}`,
-    title: intl.formatMessage(messages['header.links.grading']),
-  },
-  {
-    href: `${studioBaseUrl}/course_team/${courseId}`,
-    title: intl.formatMessage(messages['header.links.courseTeam']),
-  },
-  {
-    href: `${studioBaseUrl}/group_configurations/${courseId}`,
-    title: intl.formatMessage(messages['header.links.groupConfigurations']),
-  },
-  {
-    href: `${studioBaseUrl}/settings/advanced/${courseId}`,
-    title: intl.formatMessage(messages['header.links.advancedSettings']),
-  },
-  {
-    href: `${studioBaseUrl}/certificates/${courseId}`,
-    title: intl.formatMessage(messages['header.links.certificates']),
-  },
-]);
+export const getSettingMenuItems = ({ studioBaseUrl, courseId, intl }) => {
+  const items = [
+    {
+      href: `${studioBaseUrl}/settings/details/${courseId}`,
+      title: intl.formatMessage(messages['header.links.scheduleAndDetails']),
+    },
+    {
+      href: `${studioBaseUrl}/settings/grading/${courseId}`,
+      title: intl.formatMessage(messages['header.links.grading']),
+    },
+    {
+      href: `${studioBaseUrl}/course_team/${courseId}`,
+      title: intl.formatMessage(messages['header.links.courseTeam']),
+    },
+    {
+      href: `${studioBaseUrl}/group_configurations/${courseId}`,
+      title: intl.formatMessage(messages['header.links.groupConfigurations']),
+    },
+    {
+      href: `${studioBaseUrl}/settings/advanced/${courseId}`,
+      title: intl.formatMessage(messages['header.links.advancedSettings']),
+    },
+  ];
+  if (getConfig().ENABLE_CERTIFICATE_PAGE === 'true') {
+    items.push({
+      href: `${studioBaseUrl}/certificates/${courseId}`,
+      title: intl.formatMessage(messages['header.links.certificates']),
+    });
+  }
+  return items;
+};
 
 export const getToolsMenuItems = ({ studioBaseUrl, courseId, intl }) => ([
   {

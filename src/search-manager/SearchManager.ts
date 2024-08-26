@@ -31,6 +31,7 @@ export interface SearchContextData {
   isFiltered: boolean;
   searchSortOrder: SearchSortOption;
   setSearchSortOrder: React.Dispatch<React.SetStateAction<SearchSortOption>>;
+  defaultSearchSortOrder: SearchSortOption;
   hits: ContentHit[];
   totalHits: number;
   isFetching: boolean;
@@ -68,14 +69,11 @@ function useStateWithUrlSearchParam<Type>(
     setSearchParams((prevParams) => {
       const paramValue: string = toString(value) ?? '';
       const newSearchParams = new URLSearchParams(prevParams);
-      if (paramValue) {
-        newSearchParams.set(paramName, paramValue);
-      } else {
-        // If no paramValue, remove it from the search params, so
-        // we don't get dangling parameter values like ?paramName=
-        // Another way to decide this would be to check value === defaultValue,
-        // and ensure that default values are never stored in the search string.
+      // If using the default paramValue, remove it from the search params.
+      if (paramValue === defaultValue) {
         newSearchParams.delete(paramName);
+      } else {
+        newSearchParams.set(paramName, paramValue);
       }
       return newSearchParams;
     }, { replace: true });
@@ -99,9 +97,10 @@ export const SearchContextProvider: React.FC<{
 
   // The search sort order can be set via the query string
   // E.g. ?sort=display_name:desc maps to SearchSortOption.TITLE_ZA.
-  const defaultSortOption = SearchSortOption.RELEVANCE;
+  // Default sort by Most Relevant if there's search keyword(s), else by Recently Modified.
+  const defaultSearchSortOrder = searchKeywords ? SearchSortOption.RELEVANCE : SearchSortOption.RECENTLY_MODIFIED;
   const [searchSortOrder, setSearchSortOrder] = useStateWithUrlSearchParam<SearchSortOption>(
-    defaultSortOption,
+    defaultSearchSortOrder,
     'sort',
     (value: string) => Object.values(SearchSortOption).find((enumValue) => value === enumValue),
     (value: SearchSortOption) => value.toString(),
@@ -109,7 +108,7 @@ export const SearchContextProvider: React.FC<{
   // SearchSortOption.RELEVANCE is special, it means "no custom sorting", so we
   // send it to useContentSearchResults as an empty array.
   const searchSortOrderToUse = overrideSearchSortOrder ?? searchSortOrder;
-  const sort: SearchSortOption[] = (searchSortOrderToUse === defaultSortOption ? [] : [searchSortOrderToUse]);
+  const sort: SearchSortOption[] = (searchSortOrderToUse === SearchSortOption.RELEVANCE ? [] : [searchSortOrderToUse]);
   // Selecting SearchSortOption.RECENTLY_PUBLISHED also excludes unpublished components.
   if (searchSortOrderToUse === SearchSortOption.RECENTLY_PUBLISHED) {
     extraFilter.push('last_published IS NOT NULL');
@@ -119,14 +118,12 @@ export const SearchContextProvider: React.FC<{
     blockTypesFilter.length > 0
     || problemTypesFilter.length > 0
     || tagsFilter.length > 0
-    || searchSortOrderToUse !== defaultSortOption
   );
   const isFiltered = canClearFilters || (searchKeywords !== '');
   const clearFilters = React.useCallback(() => {
     setBlockTypesFilter([]);
     setTagsFilter([]);
     setProblemTypesFilter([]);
-    setSearchSortOrder(defaultSortOption);
   }, []);
 
   // Initialize a connection to Meilisearch:
@@ -169,6 +166,7 @@ export const SearchContextProvider: React.FC<{
       clearFilters,
       searchSortOrder,
       setSearchSortOrder,
+      defaultSearchSortOrder,
       closeSearchModal: props.closeSearchModal ?? (() => {}),
       hasError: hasConnectionError || result.isError,
       ...result,

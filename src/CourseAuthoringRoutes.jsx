@@ -124,7 +124,7 @@ const CourseAuthoringRoutes = () => {
         />
         <Route
           path="certificates"
-          element={<PageWrap><Certificates courseId={courseId} /></PageWrap>}
+          element={getConfig().ENABLE_CERTIFICATE_PAGE === 'true' ? <PageWrap><Certificates courseId={courseId} /></PageWrap> : null}
         />
         <Route
           path="textbooks"
