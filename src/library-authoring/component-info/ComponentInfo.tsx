@@ -19,15 +19,15 @@ const ComponentInfo = ({ usageKey } : ComponentInfoProps) => {
 
   return (
     <Stack>
-      <Stack direction="horizontal" gap={1} className="d-flex justify-content-around">
-        <Button disabled variant="outline-primary rounded-0">
+      <div className="d-flex flex-wrap">
+        <Button disabled variant="outline-primary" className="m-1 text-nowrap flex-grow-1">
           {intl.formatMessage(messages.editComponentButtonTitle)}
         </Button>
-        <Button disabled variant="outline-primary rounded-0">
+        <Button disabled variant="outline-primary" className="m-1 text-nowrap flex-grow-1">
           {intl.formatMessage(messages.publishComponentButtonTitle)}
         </Button>
         <ComponentMenu usageKey={usageKey} />
-      </Stack>
+      </div>
       <Tabs
         variant="tabs"
         className="my-3 d-flex justify-content-around"
