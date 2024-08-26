@@ -132,78 +132,80 @@ const LibraryAuthoringPage = () => {
   };
 
   return (
-    <Container>
-      <Row>
-        <Col>
-          <Header
-            number={libraryData.slug}
-            title={libraryData.title}
-            org={libraryData.org}
-            contextId={libraryId}
-            isLibrary
-          />
-          <SearchContextProvider
-            extraFilter={`context_key = "${libraryId}"`}
-          >
-            <Container size="xl" className="p-4 mt-3">
-              <SubHeader
-                title={<SubHeaderTitle title={libraryData.title} canEditLibrary={libraryData.canEditLibrary} />}
-                subtitle={intl.formatMessage(messages.headingSubtitle)}
-                headerActions={<HeaderActions canEditLibrary={libraryData.canEditLibrary} />}
-              />
-              <SearchKeywordsField className="w-50" />
-              <div className="d-flex mt-3 align-items-center">
-                <FilterByTags />
-                <FilterByBlockType />
-                <ClearFiltersButton />
-                <div className="flex-grow-1" />
-                <SearchSortWidget />
-              </div>
-              <Tabs
-                variant="tabs"
-                activeKey={activeKey}
-                onSelect={handleTabChange}
-                className="my-3"
+    <>
+      <Header
+        number={libraryData.slug}
+        title={libraryData.title}
+        org={libraryData.org}
+        contextId={libraryId}
+        isLibrary
+      />
+      <Container>
+        <Row>
+          <Col>
+            <Container size="xl" className="mt-3">
+              <SearchContextProvider
+                extraFilter={`context_key = "${libraryId}"`}
               >
-                <Tab eventKey={TabList.home} title={intl.formatMessage(messages.homeTab)} />
-                <Tab eventKey={TabList.components} title={intl.formatMessage(messages.componentsTab)} />
-                <Tab eventKey={TabList.collections} title={intl.formatMessage(messages.collectionsTab)} />
-              </Tabs>
-              <Routes>
-                <Route
-                  path={TabList.home}
-                  element={(
-                    <LibraryHome
-                      libraryId={libraryId}
-                      tabList={TabList}
-                      handleTabChange={handleTabChange}
-                    />
-                  )}
+                <SubHeader
+                  title={<SubHeaderTitle title={libraryData.title} canEditLibrary={libraryData.canEditLibrary} />}
+                  subtitle={intl.formatMessage(messages.headingSubtitle)}
+                  headerActions={<HeaderActions canEditLibrary={libraryData.canEditLibrary} />}
                 />
-                <Route
-                  path={TabList.components}
-                  element={<LibraryComponents libraryId={libraryId} variant="full" />}
-                />
-                <Route
-                  path={TabList.collections}
-                  element={<LibraryCollections />}
-                />
-                <Route
-                  path="*"
-                  element={<NotFoundAlert />}
-                />
-              </Routes>
+                <SearchKeywordsField className="w-50" />
+                <div className="d-flex mt-3 align-items-center">
+                  <FilterByTags />
+                  <FilterByBlockType />
+                  <ClearFiltersButton />
+                  <div className="flex-grow-1" />
+                  <SearchSortWidget />
+                </div>
+                <Tabs
+                  variant="tabs"
+                  activeKey={activeKey}
+                  onSelect={handleTabChange}
+                  className="my-3"
+                >
+                  <Tab eventKey={TabList.home} title={intl.formatMessage(messages.homeTab)} />
+                  <Tab eventKey={TabList.components} title={intl.formatMessage(messages.componentsTab)} />
+                  <Tab eventKey={TabList.collections} title={intl.formatMessage(messages.collectionsTab)} />
+                </Tabs>
+                <Routes>
+                  <Route
+                    path={TabList.home}
+                    element={(
+                      <LibraryHome
+                        libraryId={libraryId}
+                        tabList={TabList}
+                        handleTabChange={handleTabChange}
+                      />
+                    )}
+                  />
+                  <Route
+                    path={TabList.components}
+                    element={<LibraryComponents libraryId={libraryId} variant="full" />}
+                  />
+                  <Route
+                    path={TabList.collections}
+                    element={<LibraryCollections />}
+                  />
+                  <Route
+                    path="*"
+                    element={<NotFoundAlert />}
+                  />
+                </Routes>
+              </SearchContextProvider>
             </Container>
-          </SearchContextProvider>
-          <StudioFooter />
-        </Col>
-        { !!sidebarBodyComponent && (
-          <Col md={4} xl={3} className="box-shadow-left-1">
-            <LibrarySidebar library={libraryData} />
           </Col>
-        )}
-      </Row>
-    </Container>
+          { !!sidebarBodyComponent && (
+            <Col lg={5} xl={4} className="box-shadow-left-1 bg-white">
+              <LibrarySidebar library={libraryData} />
+            </Col>
+          )}
+        </Row>
+      </Container>
+      <StudioFooter />
+    </>
   );
 };
 
