@@ -66,7 +66,7 @@ const LibraryInfoHeader = ({ library } : LibraryInfoHeaderProps) => {
         )
         : (
           <>
-            <span className="font-weight-bold m-1.5">
+            <span className="font-weight-bold mt-1.5 ml-1.5">
               {library.title}
             </span>
             {library.canEditLibrary && (
@@ -75,6 +75,8 @@ const LibraryInfoHeader = ({ library } : LibraryInfoHeaderProps) => {
                 iconAs={Icon}
                 alt={intl.formatMessage(messages.editNameButtonAlt)}
                 onClick={handleClick}
+                className="mt-1"
+                size="inline"
               />
             )}
           </>
