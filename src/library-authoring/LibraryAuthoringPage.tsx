@@ -198,7 +198,7 @@ const LibraryAuthoringPage = () => {
             </Container>
           </Col>
           { !!sidebarBodyComponent && (
-            <Col lg={4} className="mw-xs ox-shadow-left-1 bg-white">
+            <Col lg={4} className="mw-xs box-shadow-left-1 bg-white">
               <LibrarySidebar library={libraryData} />
             </Col>
           )}
