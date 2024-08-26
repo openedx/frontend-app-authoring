@@ -175,8 +175,7 @@ describe('<LibraryAuthoringPage />', () => {
 
     // Ensure the search endpoint is called:
     // Call 1: To fetch searchable/filterable/sortable library data
-    // Call 2: To fetch the recently modified components only
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
 
     return result;
   };
@@ -508,7 +507,7 @@ describe('<LibraryAuthoringPage />', () => {
 
     // Re-selecting the previous sort option resets sort to default "Recently Modified"
     await testSortOption('Recently Published', 'modified:desc', true);
-    expect(getAllByText('Recently Modified').length).toEqual(2);
+    expect(getAllByText('Recently Modified').length).toEqual(3);
 
     // Enter a keyword into the search box
     const searchBox = getByRole('searchbox');
