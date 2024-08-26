@@ -531,10 +531,11 @@ describe('<LibraryAuthoringPage />', () => {
 
   it('should open and close the component sidebar', async () => {
     const usageKey = mockResult.results[0].hits[0].usage_key;
-    const { getAllByText, queryByTestId } = await renderLibraryPage();
+    const { getAllByText, queryByTestId, queryByText } = await renderLibraryPage();
     axiosMock.onGet(getXBlockFieldsApiUrl(usageKey)).reply(200, xBlockFields);
 
     // Click on the first component
+    waitFor(() => expect(queryByText('Test HTML Block')).toBeInTheDocument());
     fireEvent.click(getAllByText('Test HTML Block')[0]);
 
     const sidebar = screen.getByTestId('library-sidebar');
