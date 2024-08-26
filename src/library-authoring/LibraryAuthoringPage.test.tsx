@@ -370,17 +370,22 @@ describe('<LibraryAuthoringPage />', () => {
     expect((await screen.findAllByText(libraryData.title))[0]).toBeInTheDocument();
     expect((await screen.findAllByText(libraryData.title))[1]).toBeInTheDocument();
 
+    // Open by default; close the library info sidebar
     const closeButton = screen.getByRole('button', { name: /close/i });
     fireEvent.click(closeButton);
-
     expect(screen.queryByText('Draft')).not.toBeInTheDocument();
     expect(screen.queryByText('(Never Published)')).not.toBeInTheDocument();
 
+    // Open library info sidebar with 'Library info' button
     const libraryInfoButton = screen.getByRole('button', { name: /library info/i });
     fireEvent.click(libraryInfoButton);
-
     expect(screen.getByText('Draft')).toBeInTheDocument();
     expect(screen.getByText('(Never Published)')).toBeInTheDocument();
+
+    // CLose library info sidebar with 'Library info' button
+    fireEvent.click(libraryInfoButton);
+    expect(screen.queryByText('Draft')).not.toBeInTheDocument();
+    expect(screen.queryByText('(Never Published)')).not.toBeInTheDocument();
   });
 
   it('show the "View All" button when viewing library with many components', async () => {
