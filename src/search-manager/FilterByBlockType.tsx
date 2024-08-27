@@ -216,6 +216,7 @@ const FilterByBlockType: React.FC<Record<never, never>> = () => {
   const {
     blockTypes,
     blockTypesFilter,
+    problemTypesFilter,
     setBlockTypesFilter,
     setProblemTypesFilter,
   } = useSearchContext();
@@ -258,9 +259,13 @@ const FilterByBlockType: React.FC<Record<never, never>> = () => {
     sortedBlockTypes[key] = blockTypes[key];
   });
 
+  const appliedFilters = [...blockTypesFilter, ...problemTypesFilter].map(
+    blockType => ({ label: <BlockTypeLabel type={blockType} /> }),
+  );
+
   return (
     <SearchFilterWidget
-      appliedFilters={blockTypesFilter.map(blockType => ({ label: <BlockTypeLabel type={blockType} /> }))}
+      appliedFilters={appliedFilters}
       label={<FormattedMessage {...messages.blockTypeFilter} />}
       clearFilter={clearFilters}
       icon={FilterList}
