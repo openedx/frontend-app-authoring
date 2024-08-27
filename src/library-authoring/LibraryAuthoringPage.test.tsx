@@ -545,10 +545,8 @@ describe('<LibraryAuthoringPage />', () => {
 
     render(<RootWrapper />);
 
-    // Ensure the search endpoint is called:
-    // Call 1: To fetch searchable/filterable/sortable library data
-    // Call 2: To fetch the recently modified components only
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
+    // Ensure the search endpoint is called
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
     const filterButton = screen.getByRole('button', { name: /type/i });
     fireEvent.click(filterButton);
 
@@ -629,7 +627,7 @@ describe('<LibraryAuthoringPage />', () => {
 
     render(<RootWrapper />);
 
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
 
     const filterButton = screen.getByRole('button', { name: /type/i });
     fireEvent.click(filterButton);
