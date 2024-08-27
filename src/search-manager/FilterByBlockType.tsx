@@ -16,12 +16,18 @@ import messages from './messages';
 import BlockTypeLabel from './BlockTypeLabel';
 import { useSearchContext } from './SearchManager';
 
+interface ProblemFilterItemProps {
+  count: number,
+  handleCheckboxChange: Function,
+}
 interface FilterItemProps {
   blockType: string,
   count: number,
 }
 
-const FilterItem = ({ blockType, count } : FilterItemProps) => {
+const ProblemFilterItem = ({ count, handleCheckboxChange } : ProblemFilterItemProps) => {
+  const blockType = 'problem';
+
   const {
     setBlockTypesFilter,
     problemTypes,
@@ -39,21 +45,11 @@ const FilterItem = ({ blockType, count } : FilterItemProps) => {
 
   useEffect(() => {
     /* istanbul ignore next */
-    if (blockType === 'problem'
-        && problemTypesFilter.length !== 0
-        && !blockTypesFilter.includes('problem')) {
+    if (problemTypesFilter.length !== 0
+        && !blockTypesFilter.includes(blockType)) {
       setIsProblemIndeterminate(true);
     }
   }, []);
-
-  const handleCheckboxChange = React.useCallback((e) => {
-    setBlockTypesFilter(currentFilters => {
-      if (currentFilters.includes(e.target.value)) {
-        return currentFilters.filter(x => x !== e.target.value);
-      }
-      return [...currentFilters, e.target.value];
-    });
-  }, [setBlockTypesFilter]);
 
   const handleCheckBoxChangeOnProblem = React.useCallback((e) => {
     handleCheckboxChange(e);
@@ -101,76 +97,98 @@ const FilterItem = ({ blockType, count } : FilterItemProps) => {
     problemTypesLength,
   ]);
 
+  return (
+    <div className="problem-menu-item">
+      <MenuItem
+        key={blockType}
+        as={Form.Checkbox}
+        value={blockType}
+        onChange={handleCheckBoxChangeOnProblem}
+        isIndeterminate={isProblemIndeterminate}
+      >
+        <div className="d-flex justify-content-between align-items-center">
+          <div>
+            <BlockTypeLabel type={blockType} />{' '}
+            <Badge variant="light" pill>{count}</Badge>
+          </div>
+          { Object.keys(problemTypes).length !== 0 && (
+            <IconButton
+              ref={setProblemItemTarget}
+              variant="dark"
+              iconAs={Icon}
+              src={KeyboardArrowRight}
+              onClick={openProblemItem}
+              data-testid="open-problem-item-button"
+              alt={intl.formatMessage(messages.openProblemSubmenuAlt)}
+            />
+          )}
+        </div>
+      </MenuItem>
+      <ModalPopup
+        positionRef={problemItemTarget}
+        isOpen={isProblemItemOpen}
+        onClose={closeProblemItem}
+      >
+        <div
+          className="bg-white rounded shadow problem-sub-menu-item"
+        >
+          <Form.Group className="mb-0">
+            <Form.CheckboxSet
+              name="block-type-filter"
+              value={problemTypesFilter}
+            >
+              <Menu>
+                { Object.entries(problemTypes).map(([problemType, problemTypeCount]) => (
+                  <MenuItem
+                    key={problemType}
+                    as={Form.Checkbox}
+                    value={problemType}
+                    onChange={handleProblemCheckboxChange}
+                  >
+                    <div style={{ textAlign: 'start' }}>
+                      <BlockTypeLabel type={problemType} />{' '}
+                      <Badge variant="light" pill>{problemTypeCount}</Badge>
+                    </div>
+                  </MenuItem>
+                ))}
+                {
+                  // Show a message if there are no options at all to avoid the
+                  // impression that the dropdown isn't working
+                  Object.keys(problemTypes).length === 0 ? (
+                    /* istanbul ignore next */
+                    <MenuItem disabled><FormattedMessage {...messages['blockTypeFilter.empty']} /></MenuItem>
+                  ) : null
+                }
+              </Menu>
+            </Form.CheckboxSet>
+          </Form.Group>
+        </div>
+      </ModalPopup>
+    </div>
+  );
+};
+
+const FilterItem = ({ blockType, count } : FilterItemProps) => {
+  const {
+    setBlockTypesFilter,
+  } = useSearchContext();
+
+  const handleCheckboxChange = React.useCallback((e) => {
+    setBlockTypesFilter(currentFilters => {
+      if (currentFilters.includes(e.target.value)) {
+        return currentFilters.filter(x => x !== e.target.value);
+      }
+      return [...currentFilters, e.target.value];
+    });
+  }, [setBlockTypesFilter]);
+
   if (blockType === 'problem') {
     // Build Capa Problem types filter submenu
     return (
-      <div className="problem-menu-item">
-        <MenuItem
-          key={blockType}
-          as={Form.Checkbox}
-          value={blockType}
-          onChange={handleCheckBoxChangeOnProblem}
-          isIndeterminate={isProblemIndeterminate}
-        >
-          <div className="d-flex justify-content-between align-items-center">
-            <div>
-              <BlockTypeLabel type={blockType} />{' '}
-              <Badge variant="light" pill>{count}</Badge>
-            </div>
-            { Object.keys(problemTypes).length !== 0 && (
-              <IconButton
-                ref={setProblemItemTarget}
-                variant="dark"
-                iconAs={Icon}
-                src={KeyboardArrowRight}
-                onClick={openProblemItem}
-                data-testid="open-problem-item-button"
-                alt={intl.formatMessage(messages.openProblemSubmenuAlt)}
-              />
-            )}
-          </div>
-        </MenuItem>
-        <ModalPopup
-          positionRef={problemItemTarget}
-          isOpen={isProblemItemOpen}
-          onClose={closeProblemItem}
-        >
-          <div
-            className="bg-white rounded shadow problem-sub-menu-item"
-          >
-            <Form.Group className="mb-0">
-              <Form.CheckboxSet
-                name="block-type-filter"
-                value={problemTypesFilter}
-              >
-                <Menu>
-                  { Object.entries(problemTypes).map(([problemType, problemTypeCount]) => (
-                    <MenuItem
-                      key={problemType}
-                      as={Form.Checkbox}
-                      value={problemType}
-                      onChange={handleProblemCheckboxChange}
-                    >
-                      <div style={{ textAlign: 'start' }}>
-                        <BlockTypeLabel type={problemType} />{' '}
-                        <Badge variant="light" pill>{problemTypeCount}</Badge>
-                      </div>
-                    </MenuItem>
-                  ))}
-                  {
-                    // Show a message if there are no options at all to avoid the
-                    // impression that the dropdown isn't working
-                    Object.keys(problemTypes).length === 0 ? (
-                      /* istanbul ignore next */
-                      <MenuItem disabled><FormattedMessage {...messages['blockTypeFilter.empty']} /></MenuItem>
-                    ) : null
-                  }
-                </Menu>
-              </Form.CheckboxSet>
-            </Form.Group>
-          </div>
-        </ModalPopup>
-      </div>
+      <ProblemFilterItem
+        count={count}
+        handleCheckboxChange={handleCheckboxChange}
+      />
     );
   }
 

@@ -130,6 +130,11 @@ const messages = defineMessages({
     defaultMessage: 'Text Input',
     description: 'Name of the "stringresponse" component type in Studio',
   },
+  'blockType.formularesponse': {
+    id: 'course-authoring.course-search.blockType.formularesponse',
+    defaultMessage: 'Math Expression',
+    description: 'Name of the "formularesponse" component type in Studio',
+  },
   blockTagsFilter: {
     id: 'course-authoring.search-manager.blockTagsFilter',
     defaultMessage: 'Tags',
