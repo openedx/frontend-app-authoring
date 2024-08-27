@@ -60,11 +60,9 @@ const problem = createSlice({
         if (obj.id === id) {
           if (_.has(answer, 'correct') && payload.correct) {
             correctAnswerCount += 1;
-            return { ...obj, ...answer };
           }
-          if (_.has(answer, 'correct') && payload.correct === false) {
+          if (_.has(answer, 'correct') && payload.correct === false && correctAnswerCount > 0) {
             correctAnswerCount -= 1;
-            return { ...obj, ...answer };
           }
           return { ...obj, ...answer };
         }
