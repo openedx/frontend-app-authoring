@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { Form } from '@openedx/paragon';
-import { EditConfirmationButtonsInternal as EditConfirmationButtons } from './EditConfirmationButtons';
+import EditConfirmationButtons from './EditConfirmationButtons';
 
 const EditableHeader = ({
   handleChange,

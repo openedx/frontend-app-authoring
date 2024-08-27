@@ -8,6 +8,7 @@ jest.mock('@edx/frontend-platform/i18n', () => {
   const PropTypes = jest.requireActual('prop-types');
   return {
     ...i18n,
+    useIntl: () => ({ formatMessage: (m) => m.defaultMessage }),
     intlShape: PropTypes.shape({
       formatMessage: PropTypes.func,
     }),

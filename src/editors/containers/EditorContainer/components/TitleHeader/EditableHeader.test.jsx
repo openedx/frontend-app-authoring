@@ -3,7 +3,7 @@ import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 import { Form } from '@openedx/paragon';
 import { EditableHeaderInternal as EditableHeader } from './EditableHeader';
-import { EditConfirmationButtonsInternal as EditConfirmationButtons } from './EditConfirmationButtons';
+import EditConfirmationButtons from './EditConfirmationButtons';
 
 describe('EditableHeader', () => {
   const props = {
