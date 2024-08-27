@@ -49,11 +49,13 @@ const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
       <Stack direction="horizontal" className="d-flex justify-content-between">
         {buildHeader()}
         <IconButton
+          className="mt-1"
           src={Close}
           iconAs={Icon}
           alt={intl.formatMessage(messages.closeButtonAlt)}
           onClick={closeLibrarySidebar}
           variant="black"
+          size="inline"
         />
       </Stack>
       <div>

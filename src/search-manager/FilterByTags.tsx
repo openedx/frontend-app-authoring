@@ -49,38 +49,43 @@ const TagMenuItem: React.FC<{
   const randomNumber = React.useMemo(() => Math.floor(Math.random() * 1000), []);
   const checkboxId = tagPath.replace(/[\W]/g, '_') + randomNumber;
 
+  const expandChildrenClick = React.useCallback((e) => {
+    e.preventDefault();
+    onToggleChildren?.(tagPath);
+  }, [onToggleChildren, tagPath]);
+
   return (
-    <div className="pgn__menu-item pgn__form-checkbox tag-toggle-item" role="group">
-      <input
-        type="checkbox"
-        id={checkboxId}
-        checked={isChecked}
-        onChange={onClickCheckbox}
-        className="pgn__form-checkbox-input flex-shrink-0"
-      />
-      <label htmlFor={checkboxId} className="flex-shrink-1 mb-0">
-        {label}{' '}
-        <Badge variant="light" pill>{tagCount}</Badge>
-      </label>
-      {
-        hasChildren
-          ? (
-            <IconButton
-              src={isExpanded ? ArrowDropUp : ArrowDropDown}
-              iconAs={Icon}
-              alt={
-                intl.formatMessage(
-                  isExpanded ? messages.childTagsCollapse : messages.childTagsExpand,
-                  { tagName: label },
-                )
-              }
-              onClick={() => onToggleChildren?.(tagPath)}
-              variant="primary"
-              size="sm"
-            />
-          ) : null
-      }
-    </div>
+    <label className="d-inline">
+      <div className="pgn__menu-item pgn__form-checkbox tag-toggle-item" role="group">
+        <input
+          type="checkbox"
+          id={checkboxId}
+          checked={isChecked}
+          onChange={onClickCheckbox}
+          className="pgn__form-checkbox-input flex-shrink-0"
+        />
+        {label}
+        <Badge variant="light" pill className="ml-1">{tagCount}</Badge>
+        {
+          hasChildren
+            ? (
+              <IconButton
+                src={isExpanded ? ArrowDropUp : ArrowDropDown}
+                iconAs={Icon}
+                alt={
+                  intl.formatMessage(
+                    isExpanded ? messages.childTagsCollapse : messages.childTagsExpand,
+                    { tagName: label },
+                  )
+                }
+                onClick={expandChildrenClick}
+                variant="primary"
+                size="sm"
+              />
+            ) : null
+        }
+      </div>
+    </label>
   );
 };
 
@@ -125,7 +130,6 @@ const TagOptions: React.FC<{
           return (
             <React.Fragment key={tagName}>
               <TagMenuItem
-                key={tagName}
                 label={tagName}
                 tagCount={t.tagCount}
                 tagPath={tagPath}

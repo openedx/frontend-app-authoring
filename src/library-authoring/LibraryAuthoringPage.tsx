@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from 'react';
+import classNames from 'classnames';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -33,7 +34,7 @@ import LibraryCollections from './LibraryCollections';
 import LibraryHome from './LibraryHome';
 import { useContentLibrary } from './data/apiHooks';
 import { LibrarySidebar } from './library-sidebar';
-import { LibraryContext } from './common/context';
+import { LibraryContext, SidebarBodyComponentId } from './common/context';
 import messages from './messages';
 
 enum TabList {
@@ -51,22 +52,41 @@ const HeaderActions = ({ canEditLibrary }: HeaderActionsProps) => {
   const {
     openAddContentSidebar,
     openInfoSidebar,
+    closeLibrarySidebar,
+    sidebarBodyComponent,
   } = useContext(LibraryContext);
 
   if (!canEditLibrary) {
     return null;
   }
 
+  const infoSidebarIsOpen = () => (
+    sidebarBodyComponent === SidebarBodyComponentId.Info
+  );
+
+  const handleOnClickInfoSidebar = () => {
+    if (infoSidebarIsOpen()) {
+      closeLibrarySidebar();
+    } else {
+      openInfoSidebar();
+    }
+  };
+
   return (
-    <>
+    <div className="header-actions">
       <Button
+        className={classNames('mr-1', {
+          'normal-border': !infoSidebarIsOpen(),
+          'open-border': infoSidebarIsOpen(),
+        })}
         iconBefore={InfoOutline}
         variant="outline-primary rounded-0"
-        onClick={openInfoSidebar}
+        onClick={handleOnClickInfoSidebar}
       >
         {intl.formatMessage(messages.libraryInfoButton)}
       </Button>
       <Button
+        className="ml-1"
         iconBefore={Add}
         variant="primary rounded-0"
         onClick={openAddContentSidebar}
@@ -74,7 +94,7 @@ const HeaderActions = ({ canEditLibrary }: HeaderActionsProps) => {
       >
         {intl.formatMessage(messages.newContentButton)}
       </Button>
-    </>
+    </div>
   );
 };
 
@@ -132,7 +152,7 @@ const LibraryAuthoringPage = () => {
   };
 
   return (
-    <Container>
+    <Container className="library-authoring-page">
       <Row>
         <Col>
           <Header
