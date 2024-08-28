@@ -140,6 +140,7 @@ interface FetchSearchParams {
   indexName: string,
   searchKeywords: string,
   blockTypesFilter?: string[],
+  problemTypesFilter?: string[],
   /** The full path of tags that each result MUST have, e.g. ["Difficulty > Hard", "Subject > Math"] */
   tagsFilter?: string[],
   extraFilter?: Filter,
@@ -153,6 +154,7 @@ export async function fetchSearchResults({
   indexName,
   searchKeywords,
   blockTypesFilter,
+  problemTypesFilter,
   tagsFilter,
   extraFilter,
   sort,
@@ -162,6 +164,7 @@ export async function fetchSearchResults({
     nextOffset: number | undefined,
     totalHits: number,
     blockTypes: Record<string, number>,
+    problemTypes: Record<string, number>,
   }> {
   const queries: MultiSearchQuery[] = [];
 
@@ -170,9 +173,17 @@ export async function fetchSearchResults({
 
   const blockTypesFilterFormatted = blockTypesFilter?.length ? [blockTypesFilter.map(bt => `block_type = ${bt}`)] : [];
 
+  const problemTypesFilterFormatted = problemTypesFilter?.length ? [problemTypesFilter.map(pt => `content.problem_types = ${pt}`)] : [];
+
   const tagsFilterFormatted = formatTagsFilter(tagsFilter);
 
   const limit = 20; // How many results to retrieve per page.
+
+  // To filter normal block types and problem types as 'OR' query
+  const typeFilters = [[
+    ...blockTypesFilterFormatted,
+    ...problemTypesFilterFormatted,
+  ].flat()];
 
   // First query is always to get the hits, with all the filters applied.
   queries.push({
@@ -181,8 +192,8 @@ export async function fetchSearchResults({
     filter: [
       // top-level entries in the array are AND conditions and must all match
       // Inner arrays are OR conditions, where only one needs to match.
+      ...typeFilters,
       ...extraFilterFormatted,
-      ...blockTypesFilterFormatted,
       ...tagsFilterFormatted,
     ],
     attributesToHighlight: ['display_name', 'content'],
@@ -199,7 +210,7 @@ export async function fetchSearchResults({
   queries.push({
     indexUid: indexName,
     q: searchKeywords,
-    facets: ['block_type'],
+    facets: ['block_type', 'content.problem_types'],
     filter: [
       ...extraFilterFormatted,
       // We exclude the block type filter here so we get all the other available options for it.
@@ -213,6 +224,7 @@ export async function fetchSearchResults({
     hits: results[0].hits.map(formatSearchHit),
     totalHits: results[0].totalHits ?? results[0].estimatedTotalHits ?? results[0].hits.length,
     blockTypes: results[1].facetDistribution?.block_type ?? {},
+    problemTypes: results[1].facetDistribution?.['content.problem_types'] ?? {},
     nextOffset: results[0].hits.length === limit ? offset + limit : undefined,
   };
 }

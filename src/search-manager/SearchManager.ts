@@ -19,9 +19,12 @@ export interface SearchContextData {
   setSearchKeywords: React.Dispatch<React.SetStateAction<string>>;
   blockTypesFilter: string[];
   setBlockTypesFilter: React.Dispatch<React.SetStateAction<string[]>>;
+  problemTypesFilter: string[];
+  setProblemTypesFilter: React.Dispatch<React.SetStateAction<string[]>>;
   tagsFilter: string[];
   setTagsFilter: React.Dispatch<React.SetStateAction<string[]>>;
   blockTypes: Record<string, number>;
+  problemTypes: Record<string, number>;
   extraFilter?: Filter;
   canClearFilters: boolean;
   clearFilters: () => void;
@@ -88,6 +91,7 @@ export const SearchContextProvider: React.FC<{
 }> = ({ overrideSearchSortOrder, ...props }) => {
   const [searchKeywords, setSearchKeywords] = React.useState('');
   const [blockTypesFilter, setBlockTypesFilter] = React.useState<string[]>([]);
+  const [problemTypesFilter, setProblemTypesFilter] = React.useState<string[]>([]);
   const [tagsFilter, setTagsFilter] = React.useState<string[]>([]);
   const extraFilter: string[] = forceArray(props.extraFilter);
 
@@ -112,12 +116,14 @@ export const SearchContextProvider: React.FC<{
 
   const canClearFilters = (
     blockTypesFilter.length > 0
+    || problemTypesFilter.length > 0
     || tagsFilter.length > 0
   );
   const isFiltered = canClearFilters || (searchKeywords !== '');
   const clearFilters = React.useCallback(() => {
     setBlockTypesFilter([]);
     setTagsFilter([]);
+    setProblemTypesFilter([]);
   }, []);
 
   // Initialize a connection to Meilisearch:
@@ -137,6 +143,7 @@ export const SearchContextProvider: React.FC<{
     extraFilter,
     searchKeywords,
     blockTypesFilter,
+    problemTypesFilter,
     tagsFilter,
     sort,
   });
@@ -149,6 +156,8 @@ export const SearchContextProvider: React.FC<{
       setSearchKeywords,
       blockTypesFilter,
       setBlockTypesFilter,
+      problemTypesFilter,
+      setProblemTypesFilter,
       tagsFilter,
       setTagsFilter,
       extraFilter,

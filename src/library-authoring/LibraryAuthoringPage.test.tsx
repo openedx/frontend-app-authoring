@@ -549,4 +549,108 @@ describe('<LibraryAuthoringPage />', () => {
 
     await waitFor(() => expect(queryByTestId('library-sidebar')).not.toBeInTheDocument());
   });
+
+  it('filter by capa problem type', async () => {
+    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
+    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
+
+    const problemTypes = {
+      'Multiple Choice': 'choiceresponse',
+      Checkboxes: 'multiplechoiceresponse',
+      'Numerical Input': 'numericalresponse',
+      Dropdown: 'optionresponse',
+      'Text Input': 'stringresponse',
+    };
+
+    render(<RootWrapper />);
+
+    // Ensure the search endpoint is called
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+    const filterButton = screen.getByRole('button', { name: /type/i });
+    fireEvent.click(filterButton);
+
+    const openProblemItem = screen.getByTestId('open-problem-item-button');
+    fireEvent.click(openProblemItem);
+
+    const validateSubmenu = async (submenuText : string) => {
+      const submenu = screen.getByText(submenuText);
+      expect(submenu).toBeInTheDocument();
+      fireEvent.click(submenu);
+
+      await waitFor(() => {
+        expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+          body: expect.stringContaining(`content.problem_types = ${problemTypes[submenuText]}`),
+          method: 'POST',
+          headers: expect.anything(),
+        });
+      });
+
+      fireEvent.click(submenu);
+      await waitFor(() => {
+        expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+          body: expect.not.stringContaining(`content.problem_types = ${problemTypes[submenuText]}`),
+          method: 'POST',
+          headers: expect.anything(),
+        });
+      });
+    };
+
+    // Validate per submenu
+    // eslint-disable-next-line no-restricted-syntax
+    for (const key of Object.keys(problemTypes)) {
+      // eslint-disable-next-line no-await-in-loop
+      await validateSubmenu(key);
+    }
+
+    // Validate click on Problem type
+    const problemMenu = screen.getByText('Problem');
+    expect(problemMenu).toBeInTheDocument();
+    fireEvent.click(problemMenu);
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+        body: expect.stringContaining('block_type = problem'),
+        method: 'POST',
+        headers: expect.anything(),
+      });
+    });
+
+    fireEvent.click(problemMenu);
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+        body: expect.not.stringContaining('block_type = problem'),
+        method: 'POST',
+        headers: expect.anything(),
+      });
+    });
+
+    // Validate clear filters
+    const submenu = screen.getByText('Checkboxes');
+    expect(submenu).toBeInTheDocument();
+    fireEvent.click(submenu);
+
+    const clearFitlersButton = screen.getByRole('button', { name: /clear filters/i });
+    fireEvent.click(clearFitlersButton);
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+        body: expect.not.stringContaining(`content.problem_types = ${problemTypes.Checkboxes}`),
+        method: 'POST',
+        headers: expect.anything(),
+      });
+    });
+  });
+
+  it('empty type filter', async () => {
+    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
+    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
+    fetchMock.post(searchEndpoint, returnEmptyResult, { overwriteRoutes: true });
+
+    render(<RootWrapper />);
+
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+
+    const filterButton = screen.getByRole('button', { name: /type/i });
+    fireEvent.click(filterButton);
+
+    expect(screen.getByText(/no matching components/i)).toBeInTheDocument();
+  });
 });
