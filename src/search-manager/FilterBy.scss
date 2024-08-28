@@ -9,3 +9,19 @@
 .clear-filter-button:hover {
   color: $info-900 !important;
 }
+
+.problem-menu-item {
+  .pgn__menu-item-text {
+    width: 100%;
+  }
+
+  .pgn__form-checkbox > div:first-of-type {
+    width: 100%;
+  }
+
+  .problem-sub-menu-item {
+    position: absolute;
+    left: 3.8rem;
+    top: -3rem;
+  }
+}

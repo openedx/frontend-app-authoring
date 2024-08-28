@@ -105,6 +105,36 @@ const messages = defineMessages({
     defaultMessage: 'Video',
     description: 'Name of the "Video" component type in Studio',
   },
+  'blockType.choiceresponse': {
+    id: 'course-authoring.course-search.blockType.choiceresponse',
+    defaultMessage: 'Multiple Choice',
+    description: 'Name of the "choiceresponse" component type in Studio',
+  },
+  'blockType.multiplechoiceresponse': {
+    id: 'course-authoring.course-search.blockType.multiplechoiceresponse',
+    defaultMessage: 'Checkboxes',
+    description: 'Name of the "multiplechoiceresponse" component type in Studio',
+  },
+  'blockType.numericalresponse': {
+    id: 'course-authoring.course-search.blockType.numericalresponse',
+    defaultMessage: 'Numerical Input',
+    description: 'Name of the "numericalresponse" component type in Studio',
+  },
+  'blockType.optionresponse': {
+    id: 'course-authoring.course-search.blockType.optionresponse',
+    defaultMessage: 'Dropdown',
+    description: 'Name of the "optionresponse" component type in Studio',
+  },
+  'blockType.stringresponse': {
+    id: 'course-authoring.course-search.blockType.stringresponse',
+    defaultMessage: 'Text Input',
+    description: 'Name of the "stringresponse" component type in Studio',
+  },
+  'blockType.formularesponse': {
+    id: 'course-authoring.course-search.blockType.formularesponse',
+    defaultMessage: 'Math Expression',
+    description: 'Name of the "formularesponse" component type in Studio',
+  },
   blockTagsFilter: {
     id: 'course-authoring.search-manager.blockTagsFilter',
     defaultMessage: 'Tags',
@@ -169,6 +199,11 @@ const messages = defineMessages({
     id: 'course-authoring.course-search.searchSort.recentlyModified',
     defaultMessage: 'Recently Modified',
     description: 'Label for the content search sort drop-down which sorts by modified date, descending',
+  },
+  openProblemSubmenuAlt: {
+    id: 'course-authoring.filter.problem-submenu.icon-button.alt',
+    defaultMessage: 'Open problem types filters',
+    description: 'Alt of the icon button to open problem types filters',
   },
   searchSortMostRelevant: {
     id: 'course-authoring.course-search.searchSort.mostRelevant',
