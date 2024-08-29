@@ -52,6 +52,7 @@ const StudioHome = ({ intl }) => {
   const libMode = getConfig().LIBRARY_MODE;
 
   const v1LibraryTab = isMixedOrV1LibrariesMode(libMode) && location?.pathname.split('/').pop() === 'libraries-v1';
+  const showV2LibraryURL = isMixedOrV2LibrariesMode(libMode) && !v1LibraryTab;
 
   const {
     userIsActive,
@@ -89,9 +90,9 @@ const StudioHome = ({ intl }) => {
       );
     }
 
-    if (showNewLibraryButton) {
+    if (showNewLibraryButton || showV2LibraryURL) {
       const newLibraryClick = () => {
-        if (isMixedOrV2LibrariesMode(libMode) && !v1LibraryTab) {
+        if (showV2LibraryURL) {
           if (libraryAuthoringMfeUrl && redirectToLibraryAuthoringMfe) {
             // Library authoring MFE
             window.open(constructLibraryAuthoringURL(libraryAuthoringMfeUrl, 'create'));
