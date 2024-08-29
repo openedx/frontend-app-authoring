@@ -72,7 +72,7 @@ const LibraryComponents = ({ libraryId, variant }: LibraryComponentsProps) => {
     <CardGrid
       columnSizes={{
         sm: 12,
-        md: 5,
+        md: 6,
         lg: 4,
         xl: 3,
       }}

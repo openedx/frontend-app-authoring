@@ -10,7 +10,6 @@ import {
   render,
   waitFor,
   within,
-  getByLabelText as getByLabelTextIn,
   type RenderResult,
 } from '@testing-library/react';
 import fetchMock from 'fetch-mock-jest';
@@ -175,8 +174,8 @@ describe('<SearchUI />', () => {
     expect(fetchMock).toHaveLastFetched((_url, req) => {
       const requestData = JSON.parse(req.body?.toString() ?? '');
       const requestedFilter = requestData?.queries[0].filter;
-      return requestedFilter?.[0] === 'type = "course_block"'
-        && requestedFilter?.[1] === 'context_key = "course-v1:org+test+123"';
+      return requestedFilter?.[1] === 'type = "course_block"'
+        && requestedFilter?.[2] === 'context_key = "course-v1:org+test+123"';
     });
     // Now we should see the results:
     expect(queryByText('Enter a keyword')).toBeNull();
@@ -400,7 +399,7 @@ describe('<SearchUI />', () => {
         const requestData = JSON.parse(req.body?.toString() ?? '');
         const requestedFilter = requestData?.queries[0].filter;
         // the filter is: ['type = "course_block"', 'context_key = "course-v1:org+test+123"']
-        return (requestedFilter?.length === 2);
+        return (requestedFilter?.length === 3);
       });
       // Now we should see the results:
       expect(getByText('6 results found')).toBeInTheDocument();
@@ -408,13 +407,12 @@ describe('<SearchUI />', () => {
     });
 
     it('can filter results by component/XBlock type', async () => {
-      const { getByRole } = rendered;
+      const { getByRole, getByText } = rendered;
       // Now open the filters menu:
       fireEvent.click(getByRole('button', { name: 'Type' }), {});
       // The dropdown menu has role="group"
       await waitFor(() => { expect(getByRole('group')).toBeInTheDocument(); });
-      const popupMenu = getByRole('group');
-      const problemFilterCheckbox = getByLabelTextIn(popupMenu, /Problem/i);
+      const problemFilterCheckbox = getByText(/Problem/i);
       fireEvent.click(problemFilterCheckbox, {});
       await waitFor(() => {
         expect(rendered.getByRole('button', { name: /type: problem/i, hidden: true })).toBeInTheDocument();
@@ -427,9 +425,16 @@ describe('<SearchUI />', () => {
         const requestData = JSON.parse(req.body?.toString() ?? '');
         const requestedFilter = requestData?.queries[0].filter;
         return JSON.stringify(requestedFilter) === JSON.stringify([
+          [
+            'block_type = problem',
+            'content.problem_types = choiceresponse',
+            'content.problem_types = multiplechoiceresponse',
+            'content.problem_types = numericalresponse',
+            'content.problem_types = optionresponse',
+            'content.problem_types = stringresponse',
+          ],
           'type = "course_block"',
           'context_key = "course-v1:org+test+123"',
-          ['block_type = problem'], // <-- the newly added filter, sent with the request
         ]);
       });
     });
@@ -453,6 +458,7 @@ describe('<SearchUI />', () => {
         const requestData = JSON.parse(req.body?.toString() ?? '');
         const requestedFilter = requestData?.queries?.[0]?.filter;
         return JSON.stringify(requestedFilter) === JSON.stringify([
+          [],
           'type = "course_block"',
           'context_key = "course-v1:org+test+123"',
           'tags.taxonomy = "ESDC Skills and Competencies"', // <-- the newly added filter, sent with the request
@@ -487,6 +493,7 @@ describe('<SearchUI />', () => {
         const requestData = JSON.parse(req.body?.toString() ?? '');
         const requestedFilter = requestData?.queries?.[0]?.filter;
         return JSON.stringify(requestedFilter) === JSON.stringify([
+          [],
           'type = "course_block"',
           'context_key = "course-v1:org+test+123"',
           'tags.level0 = "ESDC Skills and Competencies > Abilities"',

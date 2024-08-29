@@ -10,6 +10,7 @@ import messages from '../messages';
 import { AddContentContainer, AddContentHeader } from '../add-content';
 import { LibraryContext, SidebarBodyComponentId } from '../common/context';
 import { LibraryInfo, LibraryInfoHeader } from '../library-info';
+import { ComponentInfo, ComponentInfoHeader } from '../component-info';
 import { ContentLibrary } from '../data/api';
 
 type LibrarySidebarProps = {
@@ -27,25 +28,35 @@ type LibrarySidebarProps = {
  */
 const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
   const intl = useIntl();
-  const { sidebarBodyComponent, closeLibrarySidebar } = useContext(LibraryContext);
+  const {
+    sidebarBodyComponent,
+    closeLibrarySidebar,
+    currentComponentUsageKey,
+  } = useContext(LibraryContext);
 
   const bodyComponentMap = {
     [SidebarBodyComponentId.AddContent]: <AddContentContainer />,
     [SidebarBodyComponentId.Info]: <LibraryInfo library={library} />,
+    [SidebarBodyComponentId.ComponentInfo]: (
+      currentComponentUsageKey && <ComponentInfo usageKey={currentComponentUsageKey} />
+    ),
     unknown: null,
   };
 
   const headerComponentMap = {
-    'add-content': <AddContentHeader />,
-    info: <LibraryInfoHeader library={library} />,
+    [SidebarBodyComponentId.AddContent]: <AddContentHeader />,
+    [SidebarBodyComponentId.Info]: <LibraryInfoHeader library={library} />,
+    [SidebarBodyComponentId.ComponentInfo]: (
+      currentComponentUsageKey && <ComponentInfoHeader library={library} usageKey={currentComponentUsageKey} />
+    ),
     unknown: null,
   };
 
-  const buildBody = () : React.ReactNode | null => bodyComponentMap[sidebarBodyComponent || 'unknown'];
-  const buildHeader = (): React.ReactNode | null => headerComponentMap[sidebarBodyComponent || 'unknown'];
+  const buildBody = () : React.ReactNode => bodyComponentMap[sidebarBodyComponent || 'unknown'];
+  const buildHeader = (): React.ReactNode => headerComponentMap[sidebarBodyComponent || 'unknown'];
 
   return (
-    <Stack gap={4} className="p-2 vh-100 text-primary-700">
+    <Stack gap={4} className="p-2 text-primary-700">
       <Stack direction="horizontal" className="d-flex justify-content-between">
         {buildHeader()}
         <IconButton

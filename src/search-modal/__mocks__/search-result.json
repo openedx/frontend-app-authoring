@@ -355,6 +355,13 @@
           "problem": 16,
           "vertical": 2,
           "video": 1
+        },
+        "content.problem_types": {
+          "choiceresponse": 2,
+          "multiplechoiceresponse": 6,
+          "numericalresponse": 3,
+          "optionresponse": 4,
+          "stringresponse": 1
         }
       },
       "facetStats": {}

@@ -10,13 +10,14 @@ import {
   render,
   waitFor,
   screen,
+  within,
 } from '@testing-library/react';
 import fetchMock from 'fetch-mock-jest';
 import initializeStore from '../store';
 import { getContentSearchConfigUrl } from '../search-manager/data/api';
 import mockResult from '../search-modal/__mocks__/search-result.json';
 import mockEmptyResult from '../search-modal/__mocks__/empty-search-result.json';
-import { getContentLibraryApiUrl, type ContentLibrary } from './data/api';
+import { getContentLibraryApiUrl, getXBlockFieldsApiUrl, type ContentLibrary } from './data/api';
 import { LibraryLayout } from '.';
 
 let store;
@@ -61,16 +62,17 @@ const returnEmptyResult = (_url, req) => {
 const returnLowNumberResults = (_url, req) => {
   const requestData = JSON.parse(req.body?.toString() ?? '');
   const query = requestData?.queries[0]?.q ?? '';
+  const newMockResult = { ...mockResult };
   // We have to replace the query (search keywords) in the mock results with the actual query,
   // because otherwise we may have an inconsistent state that causes more queries and unexpected results.
-  mockResult.results[0].query = query;
+  newMockResult.results[0].query = query;
   // Limit number of results to just 2
-  mockResult.results[0].hits = mockResult.results[0]?.hits.slice(0, 2);
-  mockResult.results[0].estimatedTotalHits = 2;
+  newMockResult.results[0].hits = mockResult.results[0]?.hits.slice(0, 2);
+  newMockResult.results[0].estimatedTotalHits = 2;
   // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
   // eslint-disable-next-line no-underscore-dangle, no-param-reassign
-  mockResult.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
-  return mockResult;
+  newMockResult.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
+  return newMockResult;
 };
 
 const libraryData: ContentLibrary = {
@@ -95,6 +97,13 @@ const libraryData: ContentLibrary = {
   license: '',
   created: '2024-06-26',
   updated: '2024-07-20',
+};
+
+const xBlockFields = {
+  display_name: 'Test HTML Block',
+  metadata: {
+    display_name: 'Test HTML Block',
+  },
 };
 
 const clipboardBroadcastChannelMock = {
@@ -158,6 +167,19 @@ describe('<LibraryAuthoringPage />', () => {
     queryClient.clear();
   });
 
+  const renderLibraryPage = async () => {
+    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
+    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
+
+    const result = render(<RootWrapper />);
+
+    // Ensure the search endpoint is called:
+    // Call 1: To fetch searchable/filterable/sortable library data
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+
+    return result;
+  };
+
   it('shows the spinner before the query is complete', () => {
     mockUseParams.mockReturnValue({ libraryId: '1' });
     // @ts-ignore Use unresolved promise to keep the Loading visible
@@ -185,12 +207,9 @@ describe('<LibraryAuthoringPage />', () => {
   });
 
   it('show library data', async () => {
-    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
-    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
-
     const {
       getByRole, getAllByText, getByText, queryByText, findByText, findAllByText,
-    } = render(<RootWrapper />);
+    } = await renderLibraryPage();
 
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
 
@@ -263,10 +282,7 @@ describe('<LibraryAuthoringPage />', () => {
   });
 
   it('show new content button', async () => {
-    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
-    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
-
-    render(<RootWrapper />);
+    await renderLibraryPage();
 
     expect(await screen.findByRole('heading')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /new/i })).toBeInTheDocument();
@@ -322,10 +338,7 @@ describe('<LibraryAuthoringPage />', () => {
   });
 
   it('should open and close new content sidebar', async () => {
-    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
-    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
-
-    render(<RootWrapper />);
+    await renderLibraryPage();
 
     expect(await screen.findByRole('heading')).toBeInTheDocument();
     expect(screen.queryByText(/add content/i)).not.toBeInTheDocument();
@@ -342,10 +355,7 @@ describe('<LibraryAuthoringPage />', () => {
   });
 
   it('should open Library Info by default', async () => {
-    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
-    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
-
-    render(<RootWrapper />);
+    await renderLibraryPage();
 
     expect(await screen.findByText('Content library')).toBeInTheDocument();
     expect((await screen.findAllByText(libraryData.title))[0]).toBeInTheDocument();
@@ -361,10 +371,7 @@ describe('<LibraryAuthoringPage />', () => {
   });
 
   it('should close and open Library Info', async () => {
-    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
-    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
-
-    render(<RootWrapper />);
+    await renderLibraryPage();
 
     expect(await screen.findByText('Content library')).toBeInTheDocument();
     expect((await screen.findAllByText(libraryData.title))[0]).toBeInTheDocument();
@@ -389,14 +396,9 @@ describe('<LibraryAuthoringPage />', () => {
   });
 
   it('show the "View All" button when viewing library with many components', async () => {
-    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
-    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
-
     const {
       getByRole, getByText, queryByText, getAllByText, findAllByText,
-    } = render(<RootWrapper />);
-
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+    } = await renderLibraryPage();
 
     expect(getByText('Content library')).toBeInTheDocument();
     expect((await findAllByText(libraryData.title))[0]).toBeInTheDocument();
@@ -456,13 +458,9 @@ describe('<LibraryAuthoringPage />', () => {
   });
 
   it('sort library components', async () => {
-    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
-    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
-    fetchMock.post(searchEndpoint, returnEmptyResult, { overwriteRoutes: true });
-
     const {
       findByTitle, getAllByText, getByRole, getByTitle,
-    } = render(<RootWrapper />);
+    } = await renderLibraryPage();
 
     expect(await findByTitle('Sort search results')).toBeInTheDocument();
 
@@ -514,7 +512,7 @@ describe('<LibraryAuthoringPage />', () => {
 
     // Re-selecting the previous sort option resets sort to default "Recently Modified"
     await testSortOption('Recently Published', 'modified:desc', true);
-    expect(getAllByText('Recently Modified').length).toEqual(2);
+    expect(getAllByText('Recently Modified').length).toEqual(3);
 
     // Enter a keyword into the search box
     const searchBox = getByRole('searchbox');
@@ -529,5 +527,130 @@ describe('<LibraryAuthoringPage />', () => {
         headers: expect.anything(),
       });
     });
+  });
+
+  it('should open and close the component sidebar', async () => {
+    const usageKey = mockResult.results[0].hits[0].usage_key;
+    const { getAllByText, queryByTestId, queryByText } = await renderLibraryPage();
+    axiosMock.onGet(getXBlockFieldsApiUrl(usageKey)).reply(200, xBlockFields);
+
+    // Click on the first component
+    waitFor(() => expect(queryByText('Test HTML Block')).toBeInTheDocument());
+    fireEvent.click(getAllByText('Test HTML Block')[0]);
+
+    const sidebar = screen.getByTestId('library-sidebar');
+
+    const { getByRole, getByText } = within(sidebar);
+
+    await waitFor(() => expect(getByText('Test HTML Block')).toBeInTheDocument());
+
+    const closeButton = getByRole('button', { name: /close/i });
+    fireEvent.click(closeButton);
+
+    await waitFor(() => expect(queryByTestId('library-sidebar')).not.toBeInTheDocument());
+  });
+
+  it('filter by capa problem type', async () => {
+    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
+    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
+
+    const problemTypes = {
+      'Multiple Choice': 'choiceresponse',
+      Checkboxes: 'multiplechoiceresponse',
+      'Numerical Input': 'numericalresponse',
+      Dropdown: 'optionresponse',
+      'Text Input': 'stringresponse',
+    };
+
+    render(<RootWrapper />);
+
+    // Ensure the search endpoint is called
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+    const filterButton = screen.getByRole('button', { name: /type/i });
+    fireEvent.click(filterButton);
+
+    const openProblemItem = screen.getByTestId('open-problem-item-button');
+    fireEvent.click(openProblemItem);
+
+    const validateSubmenu = async (submenuText : string) => {
+      const submenu = screen.getByText(submenuText);
+      expect(submenu).toBeInTheDocument();
+      fireEvent.click(submenu);
+
+      await waitFor(() => {
+        expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+          body: expect.stringContaining(`content.problem_types = ${problemTypes[submenuText]}`),
+          method: 'POST',
+          headers: expect.anything(),
+        });
+      });
+
+      fireEvent.click(submenu);
+      await waitFor(() => {
+        expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+          body: expect.not.stringContaining(`content.problem_types = ${problemTypes[submenuText]}`),
+          method: 'POST',
+          headers: expect.anything(),
+        });
+      });
+    };
+
+    // Validate per submenu
+    // eslint-disable-next-line no-restricted-syntax
+    for (const key of Object.keys(problemTypes)) {
+      // eslint-disable-next-line no-await-in-loop
+      await validateSubmenu(key);
+    }
+
+    // Validate click on Problem type
+    const problemMenu = screen.getByText('Problem');
+    expect(problemMenu).toBeInTheDocument();
+    fireEvent.click(problemMenu);
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+        body: expect.stringContaining('block_type = problem'),
+        method: 'POST',
+        headers: expect.anything(),
+      });
+    });
+
+    fireEvent.click(problemMenu);
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+        body: expect.not.stringContaining('block_type = problem'),
+        method: 'POST',
+        headers: expect.anything(),
+      });
+    });
+
+    // Validate clear filters
+    const submenu = screen.getByText('Checkboxes');
+    expect(submenu).toBeInTheDocument();
+    fireEvent.click(submenu);
+
+    const clearFitlersButton = screen.getByRole('button', { name: /clear filters/i });
+    fireEvent.click(clearFitlersButton);
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+        body: expect.not.stringContaining(`content.problem_types = ${problemTypes.Checkboxes}`),
+        method: 'POST',
+        headers: expect.anything(),
+      });
+    });
+  });
+
+  it('empty type filter', async () => {
+    mockUseParams.mockReturnValue({ libraryId: libraryData.id });
+    axiosMock.onGet(getContentLibraryApiUrl(libraryData.id)).reply(200, libraryData);
+    fetchMock.post(searchEndpoint, returnEmptyResult, { overwriteRoutes: true });
+
+    render(<RootWrapper />);
+
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+
+    const filterButton = screen.getByRole('button', { name: /type/i });
+    fireEvent.click(filterButton);
+
+    expect(screen.getByText(/no matching components/i)).toBeInTheDocument();
   });
 });

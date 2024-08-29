@@ -37,6 +37,7 @@ export const useContentSearchResults = ({
   extraFilter,
   searchKeywords,
   blockTypesFilter = [],
+  problemTypesFilter = [],
   tagsFilter = [],
   sort = [],
 }: {
@@ -50,6 +51,8 @@ export const useContentSearchResults = ({
   searchKeywords: string;
   /** Only search for these block types (e.g. `["html", "problem"]`) */
   blockTypesFilter?: string[];
+  /** Only search for these problem types (e.g. `["choiceresponse", "multiplechoiceresponse"]`) */
+  problemTypesFilter?: string[];
   /** Required tags (all must match), e.g. `["Difficulty > Hard", "Subject > Math"]` */
   tagsFilter?: string[];
   /** Sort search results using these options */
@@ -66,6 +69,7 @@ export const useContentSearchResults = ({
       extraFilter,
       searchKeywords,
       blockTypesFilter,
+      problemTypesFilter,
       tagsFilter,
       sort,
     ],
@@ -79,6 +83,7 @@ export const useContentSearchResults = ({
         indexName,
         searchKeywords,
         blockTypesFilter,
+        problemTypesFilter,
         tagsFilter,
         sort,
         // For infinite pagination of results, we can retrieve additional pages if requested.
@@ -102,6 +107,7 @@ export const useContentSearchResults = ({
     hits,
     // The distribution of block type filter options
     blockTypes: pages?.[0]?.blockTypes ?? {},
+    problemTypes: pages?.[0]?.problemTypes ?? {},
     status: query.status,
     isFetching: query.isFetching,
     isError: query.isError,
