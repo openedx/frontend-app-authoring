@@ -5,9 +5,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Badge,
   Button,
-  Col,
   Container,
-  Row,
   Stack,
   Tab,
   Tabs,
@@ -152,78 +150,76 @@ const LibraryAuthoringPage = () => {
   };
 
   return (
-    <Container className="library-authoring-page">
-      <Row>
-        <Col>
-          <Header
-            number={libraryData.slug}
-            title={libraryData.title}
-            org={libraryData.org}
-            contextId={libraryId}
-            isLibrary
-          />
+    <div className="d-flex overflow-auto">
+      <div className="flex-grow-1 align-content-center">
+        <Header
+          number={libraryData.slug}
+          title={libraryData.title}
+          org={libraryData.org}
+          contextId={libraryId}
+          isLibrary
+        />
+        <Container size="xl" className="px-4 mt-4 mb-5 library-authoring-page">
           <SearchContextProvider
             extraFilter={`context_key = "${libraryId}"`}
           >
-            <Container size="xl" className="p-4 mt-3">
-              <SubHeader
-                title={<SubHeaderTitle title={libraryData.title} canEditLibrary={libraryData.canEditLibrary} />}
-                subtitle={intl.formatMessage(messages.headingSubtitle)}
-                headerActions={<HeaderActions canEditLibrary={libraryData.canEditLibrary} />}
+            <SubHeader
+              title={<SubHeaderTitle title={libraryData.title} canEditLibrary={libraryData.canEditLibrary} />}
+              subtitle={intl.formatMessage(messages.headingSubtitle)}
+              headerActions={<HeaderActions canEditLibrary={libraryData.canEditLibrary} />}
+            />
+            <SearchKeywordsField className="w-50" />
+            <div className="d-flex mt-3 align-items-center">
+              <FilterByTags />
+              <FilterByBlockType />
+              <ClearFiltersButton />
+              <div className="flex-grow-1" />
+              <SearchSortWidget />
+            </div>
+            <Tabs
+              variant="tabs"
+              activeKey={activeKey}
+              onSelect={handleTabChange}
+              className="my-3"
+            >
+              <Tab eventKey={TabList.home} title={intl.formatMessage(messages.homeTab)} />
+              <Tab eventKey={TabList.components} title={intl.formatMessage(messages.componentsTab)} />
+              <Tab eventKey={TabList.collections} title={intl.formatMessage(messages.collectionsTab)} />
+            </Tabs>
+            <Routes>
+              <Route
+                path={TabList.home}
+                element={(
+                  <LibraryHome
+                    libraryId={libraryId}
+                    tabList={TabList}
+                    handleTabChange={handleTabChange}
+                  />
+                )}
               />
-              <SearchKeywordsField className="w-50" />
-              <div className="d-flex mt-3 align-items-center">
-                <FilterByTags />
-                <FilterByBlockType />
-                <ClearFiltersButton />
-                <div className="flex-grow-1" />
-                <SearchSortWidget />
-              </div>
-              <Tabs
-                variant="tabs"
-                activeKey={activeKey}
-                onSelect={handleTabChange}
-                className="my-3"
-              >
-                <Tab eventKey={TabList.home} title={intl.formatMessage(messages.homeTab)} />
-                <Tab eventKey={TabList.components} title={intl.formatMessage(messages.componentsTab)} />
-                <Tab eventKey={TabList.collections} title={intl.formatMessage(messages.collectionsTab)} />
-              </Tabs>
-              <Routes>
-                <Route
-                  path={TabList.home}
-                  element={(
-                    <LibraryHome
-                      libraryId={libraryId}
-                      tabList={TabList}
-                      handleTabChange={handleTabChange}
-                    />
-                  )}
-                />
-                <Route
-                  path={TabList.components}
-                  element={<LibraryComponents libraryId={libraryId} variant="full" />}
-                />
-                <Route
-                  path={TabList.collections}
-                  element={<LibraryCollections />}
-                />
-                <Route
-                  path="*"
-                  element={<NotFoundAlert />}
-                />
-              </Routes>
-            </Container>
+              <Route
+                path={TabList.components}
+                element={<LibraryComponents libraryId={libraryId} variant="full" />}
+              />
+              <Route
+                path={TabList.collections}
+                element={<LibraryCollections />}
+              />
+              <Route
+                path="*"
+                element={<NotFoundAlert />}
+              />
+            </Routes>
           </SearchContextProvider>
-          <StudioFooter />
-        </Col>
-        { sidebarBodyComponent !== null && (
-          <Col xs={3} md={3} className="box-shadow-left-1">
-            <LibrarySidebar library={libraryData} />
-          </Col>
-        )}
-      </Row>
-    </Container>
+        </Container>
+        <StudioFooter />
+      </div>
+      { !!sidebarBodyComponent && (
+        <div className="library-authoring-sidebar box-shadow-left-1 bg-white" data-testid="library-sidebar">
+          <LibrarySidebar library={libraryData} />
+        </div>
+      )}
+    </div>
   );
 };
 
