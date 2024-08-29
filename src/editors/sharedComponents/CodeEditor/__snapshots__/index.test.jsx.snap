@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CodeEditor Component Snapshots Renders and calls Hooks  1`] = `
+<div>
+  <div
+    id="CodeMirror"
+  />
+  <Button
+    aria-label="Unescape HTML Literals"
+    onClick={[Function]}
+    variant="tertiary"
+  >
+    <FormattedMessage
+      defaultMessage="Unescape HTML Literals"
+      description="Label For escape special html charectars button"
+      id="authoring.texteditor.codeEditor.escapeHTMLButton"
+    />
+  </Button>
+</div>
+`;

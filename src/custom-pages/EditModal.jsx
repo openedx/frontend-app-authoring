@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { getConfig } from '@edx/frontend-platform';
 
-import { EditorPage } from '@edx/frontend-lib-content-components';
+import EditorPage from '../editors/EditorPage';
 
 const EditModal = ({
   pageId,

@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FileInput component snapshot 1`] = `
+<div>
+  <input
+    accept=".srt"
+    class="upload d-none"
+    type="file"
+  />
+</div>
+`;

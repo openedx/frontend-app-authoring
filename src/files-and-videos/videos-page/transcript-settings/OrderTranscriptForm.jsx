@@ -7,7 +7,8 @@ import {
   intlShape,
 } from '@edx/frontend-platform/i18n';
 import { Button, Stack } from '@openedx/paragon';
-import { ErrorAlert, SelectableBox } from '@edx/frontend-lib-content-components';
+import ErrorAlert from '../../../editors/sharedComponents/ErrorAlerts/ErrorAlert';
+import SelectableBox from '../../../editors/sharedComponents/SelectableBox';
 import Cielo24Form from './Cielo24Form';
 import ThreePlayMediaForm from './ThreePlayMediaForm';
 import { RequestStatus } from '../../../data/constants';

@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EditableHeader snapshot snapshot 1`] = `
+<Form.Group
+  onBlur={[Function]}
+>
+  <Form.Control
+    autoFocus={true}
+    onChange={[MockFunction args.handleChange]}
+    onKeyDown={[MockFunction args.handleKeyDown]}
+    placeholder="Title"
+    style={
+      {
+        "paddingInlineEnd": "calc(1rem + 84px)",
+      }
+    }
+    trailingElement={
+      <EditConfirmationButtons
+        cancelEdit={[MockFunction args.cancelEdit]}
+        updateTitle={[MockFunction args.updateTitle]}
+      />
+    }
+    value="test-title-text"
+  />
+</Form.Group>
+`;

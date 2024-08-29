@@ -4,8 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
 import { Button, Form, FormLabel } from '@openedx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { TypeaheadDropdown } from '@edx/frontend-lib-content-components';
 
+import TypeaheadDropdown from '../../editors/sharedComponents/TypeaheadDropdown';
 import { getOrganizations } from '../../generic/data/selectors';
 import { fetchOrganizationsQuery } from '../../generic/data/thunks';
 import messages from '../messages';

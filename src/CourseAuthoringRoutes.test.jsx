@@ -21,9 +21,10 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-// Mock the TinyMceWidget from frontend-lib-content-components
-jest.mock('@edx/frontend-lib-content-components', () => ({
-  TinyMceWidget: () => <div>Widget</div>,
+// Mock the TinyMceWidget
+jest.mock('./editors/sharedComponents/TinyMceWidget', () => ({
+  __esModule: true, // Required to mock a default export
+  default: () => <div>Widget</div>,
   Footer: () => <div>Footer</div>,
   prepareEditorRef: jest.fn(() => ({
     refReady: true,

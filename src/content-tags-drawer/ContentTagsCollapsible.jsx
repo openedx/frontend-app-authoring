@@ -12,9 +12,10 @@ import {
   Icon,
 } from '@openedx/paragon';
 import { Tag, KeyboardArrowDown, KeyboardArrowUp } from '@openedx/paragon/icons';
-import { SelectableBox } from '@edx/frontend-lib-content-components';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { debounce } from 'lodash';
+
+import SelectableBox from '../editors/sharedComponents/SelectableBox';
 import messages from './messages';
 
 import ContentTagsDropDownSelector from './ContentTagsDropDownSelector';

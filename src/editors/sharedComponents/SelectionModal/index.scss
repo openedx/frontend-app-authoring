@@ -1,0 +1,32 @@
+.search-sort-menu .pgn__menu-item-text {
+    text-transform: capitalize;
+}
+
+.search-sort-menu .pgn__menu .search-sort-menu-by {
+    display: none;
+}
+
+/* Sort options come in pairs of ascending and descending. */
+.search-sort-menu .pgn__menu > div:nth-child(even) {
+    border-bottom: 1px solid #F4F3F6;
+}
+
+.search-sort-menu .pgn__menu > div:last-child {
+    border-bottom: none;
+}
+
+.selection-modal .pgn__vstack > .alert {
+    margin-bottom: 0;
+    margin-top: 1.5rem;
+}
+
+/* Set top padding to 0 when there is an alert above. */
+.selection-modal .pgn__scrollable-body-content > .pgn__vstack > .alert + .gallery > .p-4 {
+    padding-top: 0 !important;
+}
+
+.selection-modal .pgn__vstack > .alert > .alert-icon {
+    /* Vertical margin equal to the vertical padding of the "Dismiss" button. */
+    margin-bottom: .4375rem;
+    margin-top: .4375rem;
+}

@@ -1,0 +1,899 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with delete error message 1`] = `
+<CollapsibleFormWidget
+  fontSize="x-small"
+  isError={true}
+  subtitle="English"
+  title="Transcripts"
+>
+  <ErrorAlert
+    dismissError={null}
+    hideHeading={true}
+    isError={false}
+  >
+    <FormattedMessage
+      defaultMessage="Failed to upload transcript. Please try again."
+      description="Message presented to user when transcript fails to upload"
+      id="authoring.videoeditor.transcript.error.uploadTranscriptError"
+    />
+  </ErrorAlert>
+  <ErrorAlert
+    dismissError={null}
+    hideHeading={true}
+    isError={true}
+  >
+    <FormattedMessage
+      defaultMessage="Failed to delete transcript. Please try again."
+      description="Message presented to user when transcript fails to delete"
+      id="authoring.videoeditor.transcript.error.deleteTranscriptError"
+    />
+  </ErrorAlert>
+  <Stack
+    gap={3}
+  >
+    <Form.Group
+      className="border-primary-100 border-bottom"
+    >
+      <Transcript
+        index={0}
+        language="en"
+      />
+      <ActionRow
+        className="mt-3.5"
+      >
+        <Form.Checkbox
+          checked={false}
+          className="decorative-control-label"
+          onChange={[Function]}
+        >
+          <div
+            className="small text-gray-700"
+          >
+            <FormattedMessage
+              defaultMessage="Allow transcript downloads"
+              description="Label for allow transcript downloads checkbox"
+              id="authoring.videoeditor.transcripts.allowDownloadCheckboxLabel"
+            />
+          </div>
+        </Form.Checkbox>
+        <OverlayTrigger
+          key="top"
+          overlay={
+            <Tooltip
+              id="tooltip-top"
+            >
+              <FormattedMessage
+                defaultMessage="Learners will see a link to download the transcript below the video."
+                description="Message for show by default checkbox"
+                id="authoring.videoeditor.transcripts.upload.allowDownloadTooltipMessage"
+              />
+            </Tooltip>
+          }
+          placement="top"
+        >
+          <Icon
+            style={
+              {
+                "height": "16px",
+                "width": "16px",
+              }
+            }
+          />
+        </OverlayTrigger>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <Form.Checkbox
+        checked={false}
+        className="mt-3 decorative-control-label"
+        onChange={[Function]}
+      >
+        <div
+          className="small text-gray-700"
+        >
+          <FormattedMessage
+            defaultMessage="Show transcript in the video player by default"
+            description="Label for show by default checkbox"
+            id="authoring.videoeditor.transcripts.upload.showByDefaultCheckboxLabel"
+          />
+        </div>
+      </Form.Checkbox>
+    </Form.Group>
+    <div
+      className="mt-2"
+    >
+      <Button
+        className="text-primary-500 font-weight-bold justify-content-start pl-0"
+        onClick={[Function]}
+        size="sm"
+        variant="link"
+      >
+        <FormattedMessage
+          defaultMessage="Add a transcript"
+          description="Label for upload button"
+          id="authoring.videoeditor.transcripts.upload.label"
+        />
+      </Button>
+    </div>
+  </Stack>
+</CollapsibleFormWidget>
+`;
+
+exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with upload error message 1`] = `
+<CollapsibleFormWidget
+  fontSize="x-small"
+  isError={true}
+  subtitle="English, French"
+  title="Transcripts"
+>
+  <ErrorAlert
+    dismissError={null}
+    hideHeading={true}
+    isError={true}
+  >
+    <FormattedMessage
+      defaultMessage="Failed to upload transcript. Please try again."
+      description="Message presented to user when transcript fails to upload"
+      id="authoring.videoeditor.transcript.error.uploadTranscriptError"
+    />
+  </ErrorAlert>
+  <ErrorAlert
+    dismissError={null}
+    hideHeading={true}
+    isError={false}
+  >
+    <FormattedMessage
+      defaultMessage="Failed to delete transcript. Please try again."
+      description="Message presented to user when transcript fails to delete"
+      id="authoring.videoeditor.transcript.error.deleteTranscriptError"
+    />
+  </ErrorAlert>
+  <Stack
+    gap={3}
+  >
+    <Form.Group
+      className="border-primary-100 border-bottom"
+    >
+      <Transcript
+        index={0}
+        language="en"
+      />
+      <Transcript
+        index={1}
+        language="fr"
+      />
+      <ActionRow
+        className="mt-3.5"
+      >
+        <Form.Checkbox
+          checked={false}
+          className="decorative-control-label"
+          onChange={[Function]}
+        >
+          <div
+            className="small text-gray-700"
+          >
+            <FormattedMessage
+              defaultMessage="Allow transcript downloads"
+              description="Label for allow transcript downloads checkbox"
+              id="authoring.videoeditor.transcripts.allowDownloadCheckboxLabel"
+            />
+          </div>
+        </Form.Checkbox>
+        <OverlayTrigger
+          key="top"
+          overlay={
+            <Tooltip
+              id="tooltip-top"
+            >
+              <FormattedMessage
+                defaultMessage="Learners will see a link to download the transcript below the video."
+                description="Message for show by default checkbox"
+                id="authoring.videoeditor.transcripts.upload.allowDownloadTooltipMessage"
+              />
+            </Tooltip>
+          }
+          placement="top"
+        >
+          <Icon
+            style={
+              {
+                "height": "16px",
+                "width": "16px",
+              }
+            }
+          />
+        </OverlayTrigger>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <Form.Checkbox
+        checked={false}
+        className="mt-3 decorative-control-label"
+        onChange={[Function]}
+      >
+        <div
+          className="small text-gray-700"
+        >
+          <FormattedMessage
+            defaultMessage="Show transcript in the video player by default"
+            description="Label for show by default checkbox"
+            id="authoring.videoeditor.transcripts.upload.showByDefaultCheckboxLabel"
+          />
+        </div>
+      </Form.Checkbox>
+    </Form.Group>
+    <div
+      className="mt-2"
+    >
+      <Button
+        className="text-primary-500 font-weight-bold justify-content-start pl-0"
+        onClick={[Function]}
+        size="sm"
+        variant="link"
+      >
+        <FormattedMessage
+          defaultMessage="Add a transcript"
+          description="Label for upload button"
+          id="authoring.videoeditor.transcripts.upload.label"
+        />
+      </Button>
+    </div>
+  </Stack>
+</CollapsibleFormWidget>
+`;
+
+exports[`TranscriptWidget component snapshots snapshots: renders as expected with allowTranscriptDownloads true 1`] = `
+<CollapsibleFormWidget
+  fontSize="x-small"
+  isError={true}
+  subtitle="English"
+  title="Transcripts"
+>
+  <ErrorAlert
+    dismissError={null}
+    hideHeading={true}
+    isError={false}
+  >
+    <FormattedMessage
+      defaultMessage="Failed to upload transcript. Please try again."
+      description="Message presented to user when transcript fails to upload"
+      id="authoring.videoeditor.transcript.error.uploadTranscriptError"
+    />
+  </ErrorAlert>
+  <ErrorAlert
+    dismissError={null}
+    hideHeading={true}
+    isError={false}
+  >
+    <FormattedMessage
+      defaultMessage="Failed to delete transcript. Please try again."
+      description="Message presented to user when transcript fails to delete"
+      id="authoring.videoeditor.transcript.error.deleteTranscriptError"
+    />
+  </ErrorAlert>
+  <Stack
+    gap={3}
+  >
+    <Form.Group
+      className="border-primary-100 border-bottom"
+    >
+      <Transcript
+        index={0}
+        language="en"
+      />
+      <ActionRow
+        className="mt-3.5"
+      >
+        <Form.Checkbox
+          checked={true}
+          className="decorative-control-label"
+          onChange={[Function]}
+        >
+          <div
+            className="small text-gray-700"
+          >
+            <FormattedMessage
+              defaultMessage="Allow transcript downloads"
+              description="Label for allow transcript downloads checkbox"
+              id="authoring.videoeditor.transcripts.allowDownloadCheckboxLabel"
+            />
+          </div>
+        </Form.Checkbox>
+        <OverlayTrigger
+          key="top"
+          overlay={
+            <Tooltip
+              id="tooltip-top"
+            >
+              <FormattedMessage
+                defaultMessage="Learners will see a link to download the transcript below the video."
+                description="Message for show by default checkbox"
+                id="authoring.videoeditor.transcripts.upload.allowDownloadTooltipMessage"
+              />
+            </Tooltip>
+          }
+          placement="top"
+        >
+          <Icon
+            style={
+              {
+                "height": "16px",
+                "width": "16px",
+              }
+            }
+          />
+        </OverlayTrigger>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <Form.Checkbox
+        checked={false}
+        className="mt-3 decorative-control-label"
+        onChange={[Function]}
+      >
+        <div
+          className="small text-gray-700"
+        >
+          <FormattedMessage
+            defaultMessage="Show transcript in the video player by default"
+            description="Label for show by default checkbox"
+            id="authoring.videoeditor.transcripts.upload.showByDefaultCheckboxLabel"
+          />
+        </div>
+      </Form.Checkbox>
+    </Form.Group>
+    <div
+      className="mt-2"
+    >
+      <Button
+        className="text-primary-500 font-weight-bold justify-content-start pl-0"
+        onClick={[Function]}
+        size="sm"
+        variant="link"
+      >
+        <FormattedMessage
+          defaultMessage="Add a transcript"
+          description="Label for upload button"
+          id="authoring.videoeditor.transcripts.upload.label"
+        />
+      </Button>
+    </div>
+  </Stack>
+</CollapsibleFormWidget>
+`;
+
+exports[`TranscriptWidget component snapshots snapshots: renders as expected with allowTranscriptImport true 1`] = `
+<CollapsibleFormWidget
+  fontSize="x-small"
+  isError={true}
+  subtitle="None"
+  title="Transcripts"
+>
+  <ErrorAlert
+    dismissError={null}
+    hideHeading={true}
+    isError={false}
+  >
+    <FormattedMessage
+      defaultMessage="Failed to upload transcript. Please try again."
+      description="Message presented to user when transcript fails to upload"
+      id="authoring.videoeditor.transcript.error.uploadTranscriptError"
+    />
+  </ErrorAlert>
+  <ErrorAlert
+    dismissError={null}
+    hideHeading={true}
+    isError={false}
+  >
+    <FormattedMessage
+      defaultMessage="Failed to delete transcript. Please try again."
+      description="Message presented to user when transcript fails to delete"
+      id="authoring.videoeditor.transcript.error.deleteTranscriptError"
+    />
+  </ErrorAlert>
+  <Stack
+    gap={3}
+  >
+    <Fragment>
+      <FormattedMessage
+        defaultMessage="Add video transcripts (.srt files only) for improved accessibility."
+        description="Message for adding first transcript"
+        id="authoring.videoeditor.transcripts.upload.firstTranscriptMessage"
+      />
+      <injectIntl(ShimmedIntlComponent)
+        setOpen={[Function]}
+      />
+    </Fragment>
+    <div
+      className="mt-2"
+    >
+      <Button
+        className="text-primary-500 font-weight-bold justify-content-start pl-0"
+        onClick={[Function]}
+        size="sm"
+        variant="link"
+      >
+        <FormattedMessage
+          defaultMessage="Add a transcript"
+          description="Label for upload button"
+          id="authoring.videoeditor.transcripts.upload.label"
+        />
+      </Button>
+    </div>
+  </Stack>
+</CollapsibleFormWidget>
+`;
+
+exports[`TranscriptWidget component snapshots snapshots: renders as expected with default props 1`] = `
+<CollapsibleFormWidget
+  fontSize="x-small"
+  isError={true}
+  subtitle="None"
+  title="Transcripts"
+>
+  <ErrorAlert
+    dismissError={null}
+    hideHeading={true}
+    isError={false}
+  >
+    <FormattedMessage
+      defaultMessage="Failed to upload transcript. Please try again."
+      description="Message presented to user when transcript fails to upload"
+      id="authoring.videoeditor.transcript.error.uploadTranscriptError"
+    />
+  </ErrorAlert>
+  <ErrorAlert
+    dismissError={null}
+    hideHeading={true}
+    isError={false}
+  >
+    <FormattedMessage
+      defaultMessage="Failed to delete transcript. Please try again."
+      description="Message presented to user when transcript fails to delete"
+      id="authoring.videoeditor.transcript.error.deleteTranscriptError"
+    />
+  </ErrorAlert>
+  <Stack
+    gap={3}
+  >
+    <Fragment>
+      <FormattedMessage
+        defaultMessage="Add video transcripts (.srt files only) for improved accessibility."
+        description="Message for adding first transcript"
+        id="authoring.videoeditor.transcripts.upload.firstTranscriptMessage"
+      />
+    </Fragment>
+    <div
+      className="mt-2"
+    >
+      <Button
+        className="text-primary-500 font-weight-bold justify-content-start pl-0"
+        onClick={[Function]}
+        size="sm"
+        variant="link"
+      >
+        <FormattedMessage
+          defaultMessage="Add a transcript"
+          description="Label for upload button"
+          id="authoring.videoeditor.transcripts.upload.label"
+        />
+      </Button>
+    </div>
+  </Stack>
+</CollapsibleFormWidget>
+`;
+
+exports[`TranscriptWidget component snapshots snapshots: renders as expected with showTranscriptByDefault true 1`] = `
+<CollapsibleFormWidget
+  fontSize="x-small"
+  isError={true}
+  subtitle="English"
+  title="Transcripts"
+>
+  <ErrorAlert
+    dismissError={null}
+    hideHeading={true}
+    isError={false}
+  >
+    <FormattedMessage
+      defaultMessage="Failed to upload transcript. Please try again."
+      description="Message presented to user when transcript fails to upload"
+      id="authoring.videoeditor.transcript.error.uploadTranscriptError"
+    />
+  </ErrorAlert>
+  <ErrorAlert
+    dismissError={null}
+    hideHeading={true}
+    isError={false}
+  >
+    <FormattedMessage
+      defaultMessage="Failed to delete transcript. Please try again."
+      description="Message presented to user when transcript fails to delete"
+      id="authoring.videoeditor.transcript.error.deleteTranscriptError"
+    />
+  </ErrorAlert>
+  <Stack
+    gap={3}
+  >
+    <Form.Group
+      className="border-primary-100 border-bottom"
+    >
+      <Transcript
+        index={0}
+        language="en"
+      />
+      <ActionRow
+        className="mt-3.5"
+      >
+        <Form.Checkbox
+          checked={false}
+          className="decorative-control-label"
+          onChange={[Function]}
+        >
+          <div
+            className="small text-gray-700"
+          >
+            <FormattedMessage
+              defaultMessage="Allow transcript downloads"
+              description="Label for allow transcript downloads checkbox"
+              id="authoring.videoeditor.transcripts.allowDownloadCheckboxLabel"
+            />
+          </div>
+        </Form.Checkbox>
+        <OverlayTrigger
+          key="top"
+          overlay={
+            <Tooltip
+              id="tooltip-top"
+            >
+              <FormattedMessage
+                defaultMessage="Learners will see a link to download the transcript below the video."
+                description="Message for show by default checkbox"
+                id="authoring.videoeditor.transcripts.upload.allowDownloadTooltipMessage"
+              />
+            </Tooltip>
+          }
+          placement="top"
+        >
+          <Icon
+            style={
+              {
+                "height": "16px",
+                "width": "16px",
+              }
+            }
+          />
+        </OverlayTrigger>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <Form.Checkbox
+        checked={true}
+        className="mt-3 decorative-control-label"
+        onChange={[Function]}
+      >
+        <div
+          className="small text-gray-700"
+        >
+          <FormattedMessage
+            defaultMessage="Show transcript in the video player by default"
+            description="Label for show by default checkbox"
+            id="authoring.videoeditor.transcripts.upload.showByDefaultCheckboxLabel"
+          />
+        </div>
+      </Form.Checkbox>
+    </Form.Group>
+    <div
+      className="mt-2"
+    >
+      <Button
+        className="text-primary-500 font-weight-bold justify-content-start pl-0"
+        onClick={[Function]}
+        size="sm"
+        variant="link"
+      >
+        <FormattedMessage
+          defaultMessage="Add a transcript"
+          description="Label for upload button"
+          id="authoring.videoeditor.transcripts.upload.label"
+        />
+      </Button>
+    </div>
+  </Stack>
+</CollapsibleFormWidget>
+`;
+
+exports[`TranscriptWidget component snapshots snapshots: renders as expected with transcript urls 1`] = `
+<CollapsibleFormWidget
+  fontSize="x-small"
+  isError={true}
+  subtitle="None"
+  title="Transcripts"
+>
+  <ErrorAlert
+    dismissError={null}
+    hideHeading={true}
+    isError={false}
+  >
+    <FormattedMessage
+      defaultMessage="Failed to upload transcript. Please try again."
+      description="Message presented to user when transcript fails to upload"
+      id="authoring.videoeditor.transcript.error.uploadTranscriptError"
+    />
+  </ErrorAlert>
+  <ErrorAlert
+    dismissError={null}
+    hideHeading={true}
+    isError={false}
+  >
+    <FormattedMessage
+      defaultMessage="Failed to delete transcript. Please try again."
+      description="Message presented to user when transcript fails to delete"
+      id="authoring.videoeditor.transcript.error.deleteTranscriptError"
+    />
+  </ErrorAlert>
+  <Stack
+    gap={3}
+  >
+    <Fragment>
+      <FormattedMessage
+        defaultMessage="Add video transcripts (.srt files only) for improved accessibility."
+        description="Message for adding first transcript"
+        id="authoring.videoeditor.transcripts.upload.firstTranscriptMessage"
+      />
+    </Fragment>
+    <div
+      className="mt-2"
+    >
+      <Button
+        className="text-primary-500 font-weight-bold justify-content-start pl-0"
+        onClick={[Function]}
+        size="sm"
+        variant="link"
+      >
+        <FormattedMessage
+          defaultMessage="Add a transcript"
+          description="Label for upload button"
+          id="authoring.videoeditor.transcripts.upload.label"
+        />
+      </Button>
+    </div>
+  </Stack>
+</CollapsibleFormWidget>
+`;
+
+exports[`TranscriptWidget component snapshots snapshots: renders as expected with transcripts 1`] = `
+<CollapsibleFormWidget
+  fontSize="x-small"
+  isError={true}
+  subtitle="English"
+  title="Transcripts"
+>
+  <ErrorAlert
+    dismissError={null}
+    hideHeading={true}
+    isError={false}
+  >
+    <FormattedMessage
+      defaultMessage="Failed to upload transcript. Please try again."
+      description="Message presented to user when transcript fails to upload"
+      id="authoring.videoeditor.transcript.error.uploadTranscriptError"
+    />
+  </ErrorAlert>
+  <ErrorAlert
+    dismissError={null}
+    hideHeading={true}
+    isError={false}
+  >
+    <FormattedMessage
+      defaultMessage="Failed to delete transcript. Please try again."
+      description="Message presented to user when transcript fails to delete"
+      id="authoring.videoeditor.transcript.error.deleteTranscriptError"
+    />
+  </ErrorAlert>
+  <Stack
+    gap={3}
+  >
+    <Form.Group
+      className="border-primary-100 border-bottom"
+    >
+      <Transcript
+        index={0}
+        language="en"
+      />
+      <ActionRow
+        className="mt-3.5"
+      >
+        <Form.Checkbox
+          checked={false}
+          className="decorative-control-label"
+          onChange={[Function]}
+        >
+          <div
+            className="small text-gray-700"
+          >
+            <FormattedMessage
+              defaultMessage="Allow transcript downloads"
+              description="Label for allow transcript downloads checkbox"
+              id="authoring.videoeditor.transcripts.allowDownloadCheckboxLabel"
+            />
+          </div>
+        </Form.Checkbox>
+        <OverlayTrigger
+          key="top"
+          overlay={
+            <Tooltip
+              id="tooltip-top"
+            >
+              <FormattedMessage
+                defaultMessage="Learners will see a link to download the transcript below the video."
+                description="Message for show by default checkbox"
+                id="authoring.videoeditor.transcripts.upload.allowDownloadTooltipMessage"
+              />
+            </Tooltip>
+          }
+          placement="top"
+        >
+          <Icon
+            style={
+              {
+                "height": "16px",
+                "width": "16px",
+              }
+            }
+          />
+        </OverlayTrigger>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <Form.Checkbox
+        checked={false}
+        className="mt-3 decorative-control-label"
+        onChange={[Function]}
+      >
+        <div
+          className="small text-gray-700"
+        >
+          <FormattedMessage
+            defaultMessage="Show transcript in the video player by default"
+            description="Label for show by default checkbox"
+            id="authoring.videoeditor.transcripts.upload.showByDefaultCheckboxLabel"
+          />
+        </div>
+      </Form.Checkbox>
+    </Form.Group>
+    <div
+      className="mt-2"
+    >
+      <Button
+        className="text-primary-500 font-weight-bold justify-content-start pl-0"
+        onClick={[Function]}
+        size="sm"
+        variant="link"
+      >
+        <FormattedMessage
+          defaultMessage="Add a transcript"
+          description="Label for upload button"
+          id="authoring.videoeditor.transcripts.upload.label"
+        />
+      </Button>
+    </div>
+  </Stack>
+</CollapsibleFormWidget>
+`;
+
+exports[`TranscriptWidget component snapshots snapshots: renders as expected with transcripts and urls 1`] = `
+<CollapsibleFormWidget
+  fontSize="x-small"
+  isError={true}
+  subtitle="Spanish"
+  title="Transcripts"
+>
+  <ErrorAlert
+    dismissError={null}
+    hideHeading={true}
+    isError={false}
+  >
+    <FormattedMessage
+      defaultMessage="Failed to upload transcript. Please try again."
+      description="Message presented to user when transcript fails to upload"
+      id="authoring.videoeditor.transcript.error.uploadTranscriptError"
+    />
+  </ErrorAlert>
+  <ErrorAlert
+    dismissError={null}
+    hideHeading={true}
+    isError={false}
+  >
+    <FormattedMessage
+      defaultMessage="Failed to delete transcript. Please try again."
+      description="Message presented to user when transcript fails to delete"
+      id="authoring.videoeditor.transcript.error.deleteTranscriptError"
+    />
+  </ErrorAlert>
+  <Stack
+    gap={3}
+  >
+    <Form.Group
+      className="border-primary-100 border-bottom"
+    >
+      <Transcript
+        index={0}
+        language="es"
+      />
+      <ActionRow
+        className="mt-3.5"
+      >
+        <Form.Checkbox
+          checked={false}
+          className="decorative-control-label"
+          onChange={[Function]}
+        >
+          <div
+            className="small text-gray-700"
+          >
+            <FormattedMessage
+              defaultMessage="Allow transcript downloads"
+              description="Label for allow transcript downloads checkbox"
+              id="authoring.videoeditor.transcripts.allowDownloadCheckboxLabel"
+            />
+          </div>
+        </Form.Checkbox>
+        <OverlayTrigger
+          key="top"
+          overlay={
+            <Tooltip
+              id="tooltip-top"
+            >
+              <FormattedMessage
+                defaultMessage="Learners will see a link to download the transcript below the video."
+                description="Message for show by default checkbox"
+                id="authoring.videoeditor.transcripts.upload.allowDownloadTooltipMessage"
+              />
+            </Tooltip>
+          }
+          placement="top"
+        >
+          <Icon
+            style={
+              {
+                "height": "16px",
+                "width": "16px",
+              }
+            }
+          />
+        </OverlayTrigger>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <Form.Checkbox
+        checked={false}
+        className="mt-3 decorative-control-label"
+        onChange={[Function]}
+      >
+        <div
+          className="small text-gray-700"
+        >
+          <FormattedMessage
+            defaultMessage="Show transcript in the video player by default"
+            description="Label for show by default checkbox"
+            id="authoring.videoeditor.transcripts.upload.showByDefaultCheckboxLabel"
+          />
+        </div>
+      </Form.Checkbox>
+    </Form.Group>
+    <div
+      className="mt-2"
+    >
+      <Button
+        className="text-primary-500 font-weight-bold justify-content-start pl-0"
+        onClick={[Function]}
+        size="sm"
+        variant="link"
+      >
+        <FormattedMessage
+          defaultMessage="Add a transcript"
+          description="Label for upload button"
+          id="authoring.videoeditor.transcripts.upload.label"
+        />
+      </Button>
+    </div>
+  </Stack>
+</CollapsibleFormWidget>
+`;

@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
-import { EditorPage } from '@edx/frontend-lib-content-components';
 import { getConfig } from '@edx/frontend-platform';
+
+import EditorPage from './EditorPage';
 
 const EditorContainer = ({
   courseId,

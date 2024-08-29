@@ -1,0 +1,174 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ImageSettingsModal render snapshot 1`] = `
+<BaseModal
+  bodyStyle={null}
+  close={[MockFunction props.close]}
+  confirmAction={
+    <Button
+      onClick={
+        {
+          "hooks.onSaveClick": {
+            "altText": {
+              "error": {
+                "dismiss": [MockFunction],
+                "show": true,
+              },
+              "isDecorative": false,
+              "value": "alternative Taxes",
+            },
+            "dimensions": {
+              "height": 13,
+              "width": 12,
+            },
+            "isDecorative": false,
+            "saveToEditor": [MockFunction props.saveToEditor],
+          },
+        }
+      }
+      variant="primary"
+    >
+      <FormattedMessage
+        defaultMessage="Save"
+        description="Label for save button."
+        id="authoring.texteditor.imagesettingsmodal.saveButtonLabel"
+      />
+    </Button>
+  }
+  footerAction={null}
+  headerComponent={null}
+  isFullscreenScroll={true}
+  isOpen={false}
+  size="lg"
+  title="Image Settings"
+>
+  <ErrorAlert
+    dismissError={[MockFunction]}
+    hideHeading={true}
+    isError={true}
+  >
+    <FormattedMessage
+      defaultMessage="Enter alt text or specify that the image is decorative only."
+      description="Message presented to user when user attempts to save unaccepted altText configuration."
+      id="authoring.texteditor.imagesettingsmodal.error.altTextError"
+    />
+  </ErrorAlert>
+  <Button
+    onClick={[MockFunction props.returnToSelector]}
+    size="inline"
+    variant="link"
+  >
+    <FormattedMessage
+      defaultMessage="Replace image"
+      description="Label for replace image button."
+      id="authoring.texteditor.imagesettingsmodal.replaceImageButtonLabel"
+    />
+  </Button>
+  <br />
+  <div
+    className="d-flex flex-row m-2 img-settings-form-container"
+  >
+    <div
+      className="img-settings-thumbnail-container"
+    >
+      <Image
+        className="img-settings-thumbnail"
+        onError={
+          {
+            "hooks.dimensions.onImgLoad.callback": {
+              "selection": {
+                "altText": "AlTTExt",
+                "externalUrl": "ExtERNALurL",
+                "url": "UrL",
+              },
+            },
+          }
+        }
+        onLoad={
+          {
+            "hooks.dimensions.onImgLoad.callback": {
+              "selection": {
+                "altText": "AlTTExt",
+                "externalUrl": "ExtERNALurL",
+                "url": "UrL",
+              },
+            },
+          }
+        }
+        src="ExtERNALurL"
+      />
+    </div>
+    <hr
+      className="h-100 bg-primary-200 m-0"
+    />
+    <div
+      className="img-settings-form-controls"
+    >
+      <DimensionControls
+        onImgLoad={
+          [MockFunction hooks.dimensions.onImgLoad] {
+            "calls": [
+              [
+                {
+                  "altText": "AlTTExt",
+                  "externalUrl": "ExtERNALurL",
+                  "url": "UrL",
+                },
+              ],
+              [
+                {
+                  "altText": "AlTTExt",
+                  "externalUrl": "ExtERNALurL",
+                  "url": "UrL",
+                },
+              ],
+            ],
+            "results": [
+              {
+                "type": "return",
+                "value": {
+                  "hooks.dimensions.onImgLoad.callback": {
+                    "selection": {
+                      "altText": "AlTTExt",
+                      "externalUrl": "ExtERNALurL",
+                      "url": "UrL",
+                    },
+                  },
+                },
+              },
+              {
+                "type": "return",
+                "value": {
+                  "hooks.dimensions.onImgLoad.callback": {
+                    "selection": {
+                      "altText": "AlTTExt",
+                      "externalUrl": "ExtERNALurL",
+                      "url": "UrL",
+                    },
+                  },
+                },
+              },
+            ],
+          }
+        }
+        value={
+          {
+            "height": 13,
+            "width": 12,
+          }
+        }
+      />
+      <AltTextControls
+        error={
+          {
+            "dismiss": [MockFunction],
+            "show": true,
+          }
+        }
+        isDecorative={false}
+        value="alternative Taxes"
+      />
+    </div>
+  </div>
+</BaseModal>
+`;

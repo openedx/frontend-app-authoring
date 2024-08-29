@@ -1,0 +1,202 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LicenseDetails snapshots snapshots: renders as expected with default props 1`] = `null`;
+
+exports[`LicenseDetails snapshots snapshots: renders as expected with level set to block and license set to Creative Commons 1`] = `
+<div
+  className="x-small border-primary-100 border-bottom m-0 pr-1"
+>
+  <Form.Group
+    className="pb-2"
+  >
+    <div
+      className="mb-3"
+    >
+      <FormattedMessage
+        defaultMessage="License Details"
+        description="Title for license detatils subsection"
+        id="authoring.videoeditor.license.detailsSubsection.title"
+      />
+    </div>
+    <Stack
+      gap={4}
+    >
+      <div
+        className="border-primary-100 border-bottom pb-4"
+      >
+        <Form.Group>
+          <ActionRow>
+            <Icon
+              className="text-primary-500"
+            />
+            <Form.Label
+              className="my-0 text-primary-500"
+            >
+              <FormattedMessage
+                defaultMessage="Attribution"
+                description="Label for attribution checkbox"
+                id="authoring.videoeditor.license.attributionCheckboxLabel"
+              />
+            </Form.Label>
+            <ActionRow.Spacer />
+            <CheckboxControl
+              aria-label="Checkbox"
+              checked={true}
+              disabled={true}
+            />
+          </ActionRow>
+        </Form.Group>
+        <div>
+          <FormattedMessage
+            defaultMessage="Allow others to copy, distribute, display and perform your copyrighted work but only if they give credit the way you request. Currently, this option is required."
+            description="Attribution card section defining attribution license"
+            id="authoring.videoeditor.license.attributionSectionDescription"
+          />
+        </div>
+      </div>
+      <div
+        className="border-primary-100 border-bottom pb-4"
+      >
+        <Form.Group>
+          <ActionRow>
+            <Icon />
+            <Form.Label
+              className="my-0 text-primary-500"
+            >
+              <FormattedMessage
+                defaultMessage="Noncommercial"
+                description="Label for noncommercial checkbox"
+                id="authoring.videoeditor.license.noncommercialCheckboxLabel"
+              />
+            </Form.Label>
+            <ActionRow.Spacer />
+            <CheckboxControl
+              aria-label="Checkbox"
+              disabled={false}
+              onChange={[Function]}
+            />
+          </ActionRow>
+        </Form.Group>
+        <div>
+          <FormattedMessage
+            defaultMessage="Allow others to copy, distribute, display and perform your work - and derivative works based upon it - but for noncommercial purposes only."
+            description="Noncommercial card section defining noncommercial license"
+            id="authoring.videoeditor.license.noncommercialSectionDescription"
+          />
+        </div>
+      </div>
+      <div
+        className="border-primary-100 border-bottom pb-4"
+      >
+        <Form.Group>
+          <ActionRow>
+            <Icon />
+            <Form.Label
+              className="my-0 text-primary-500"
+            >
+              <FormattedMessage
+                defaultMessage="No Derivatives"
+                description="Label for No Derivatives checkbox"
+                id="authoring.videoeditor.license.noDerivativesCheckboxLabel"
+              />
+            </Form.Label>
+            <ActionRow.Spacer />
+            <CheckboxControl
+              aria-label="Checkbox"
+              disabled={false}
+              onChange={[Function]}
+            />
+          </ActionRow>
+        </Form.Group>
+        <div>
+          <FormattedMessage
+            defaultMessage="Allow others to copy, distribute, display and perform only verbatim copies of your work, not derivative works based upon it. This option is incompatible with "Share Alike"."
+            description="No Derivatives card section defining no derivatives license"
+            id="authoring.videoeditor.license.noDerivativesSectionDescription"
+          />
+        </div>
+      </div>
+      <div>
+        <Form.Group>
+          <ActionRow>
+            <Icon />
+            <Form.Label
+              className="my-0 text-primary-500"
+            >
+              <FormattedMessage
+                defaultMessage="Share Alike"
+                description="Label for Share Alike checkbox"
+                id="authoring.videoeditor.license.shareAlikeCheckboxLabel"
+              />
+            </Form.Label>
+            <ActionRow.Spacer />
+            <CheckboxControl
+              aria-label="Checkbox"
+              disabled={false}
+              onChange={[Function]}
+            />
+          </ActionRow>
+        </Form.Group>
+        <div>
+          <FormattedMessage
+            defaultMessage="Allow others to distribute derivative works only under a license identical to the license that governs your work. This option is incompatible with "No Derivatives"."
+            description="Share Alike card section defining no derivatives license"
+            id="authoring.videoeditor.license.shareAlikeSectionDescription"
+          />
+        </div>
+      </div>
+    </Stack>
+  </Form.Group>
+</div>
+`;
+
+exports[`LicenseDetails snapshots snapshots: renders as expected with level set to block and license set to all rights reserved 1`] = `
+<div
+  className="x-small border-primary-100 border-bottom m-0 pr-1"
+>
+  <Form.Group
+    className="pb-2"
+  >
+    <div
+      className="mb-3"
+    >
+      <FormattedMessage
+        defaultMessage="License Details"
+        description="Title for license detatils subsection"
+        id="authoring.videoeditor.license.detailsSubsection.title"
+      />
+    </div>
+    <div
+      className="mt-2"
+    >
+      <FormattedMessage
+        defaultMessage="You reserve all rights for your work."
+        description="All Rights Reserved section message"
+        id="authoring.videoeditor.license.allRightsReservedSectionMessage"
+      />
+    </div>
+  </Form.Group>
+</div>
+`;
+
+exports[`LicenseDetails snapshots snapshots: renders as expected with level set to block and license set to select 1`] = `null`;
+
+exports[`LicenseDetails snapshots snapshots: renders as expected with level set to library 1`] = `
+<div
+  className="x-small border-primary-100 border-bottom m-0 pr-1"
+>
+  <Form.Group
+    className="pb-2"
+  >
+    <div
+      className="mb-3"
+    >
+      <FormattedMessage
+        defaultMessage="License Details"
+        description="Title for license detatils subsection"
+        id="authoring.videoeditor.license.detailsSubsection.title"
+      />
+    </div>
+  </Form.Group>
+</div>
+`;

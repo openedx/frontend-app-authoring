@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GroupFeedbackRow snapshot snapshot: renders hints row 1`] = `
+<div
+  className="mb-4"
+>
+  <ActionRow
+    className="mb-2"
+  >
+    <Form.Control
+      onChange={[MockFunction handleFeedbackChange]}
+      value="sOmE FeEDBACK"
+    />
+    <div
+      className="d-flex flex-row flex-nowrap"
+    >
+      <IconButton
+        alt="Delete answer"
+        iconAs="Icon"
+        onClick={[MockFunction handleDelete]}
+        src="DeleteOutline"
+        variant="primary"
+      />
+    </div>
+  </ActionRow>
+  <Form.CheckboxSet
+    onChange={[MockFunction handleAnswersSelectedChange]}
+    value={
+      [
+        "A",
+        "C",
+      ]
+    }
+  >
+    <Row
+      className="mx-0"
+    >
+      <Form.CheckboxSet
+        checked={-1}
+        className="mr-4 mt-1"
+        isValid={false}
+      >
+        <div
+          className="x-small"
+        />
+      </Form.CheckboxSet>
+      <Form.CheckboxSet
+        checked={-1}
+        className="mr-4 mt-1"
+        isValid={false}
+      >
+        <div
+          className="x-small"
+        />
+      </Form.CheckboxSet>
+      <Form.CheckboxSet
+        checked={-1}
+        className="mr-4 mt-1"
+        isValid={false}
+      >
+        <div
+          className="x-small"
+        />
+      </Form.CheckboxSet>
+      <Form.CheckboxSet
+        checked={-1}
+        className="mr-4 mt-1"
+        isValid={false}
+      >
+        <div
+          className="x-small"
+        />
+      </Form.CheckboxSet>
+    </Row>
+  </Form.CheckboxSet>
+</div>
+`;

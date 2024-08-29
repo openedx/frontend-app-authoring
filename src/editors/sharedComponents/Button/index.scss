@@ -1,0 +1,9 @@
+.button-variant-add {
+  &:not(:disabled) {
+    &:not(.disabled) {
+      &:hover, &:active, &:focus {
+        background-color: transparent;
+      }
+    }
+  }
+}

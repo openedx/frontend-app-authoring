@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ErrorAlert component Component Snapshots snapshot: Does not load heading when hideHeading is true 1`] = `
+<Alert
+  dismissible={true}
+  onClose={[MockFunction dismissAlert]}
+  variant="danger"
+>
+  <p>
+     An Error Message 
+  </p>
+</Alert>
+`;
+
+exports[`ErrorAlert component Component Snapshots snapshot: Loads children and component when error (ErrorAlert) 1`] = `
+<Alert
+  dismissible={true}
+  onClose={[MockFunction dismissAlert]}
+  variant="danger"
+>
+  <Alert.Heading>
+    <FormattedMessage
+      defaultMessage="Error"
+      description="Title of message presented to user when something goes wrong"
+      id="authoring.texteditor.selectimagemodal.error.errorTitle"
+    />
+  </Alert.Heading>
+  <p>
+     An Error Message 
+  </p>
+</Alert>
+`;
+
+exports[`ErrorAlert component Component Snapshots snapshot: is Null when no error (ErrorAlert) 1`] = `null`;

@@ -1,0 +1,238 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ScoringCard snapshot snapshot: scoring setting card 1`] = `
+<SettingsOption
+  className="scoringCard"
+  extraSections={[]}
+  hasExpandableTextArea={false}
+  summary="{weight, plural, =0 {Ungraded} other {# points}} · {attempts, plural, =1 {# attempt} other {# attempts}}"
+  title="Scoring"
+>
+  <div
+    className="mb-4"
+  >
+    <FormattedMessage
+      defaultMessage="Specify point weight and the number of answer attempts"
+      description="Descriptive text for scoring settings"
+      id="authoring.problemeditor.settings.scoring.label"
+    />
+  </div>
+  <Form.Group>
+    <Form.Control
+      floatingLabel="Points"
+      min={0}
+      onChange={[MockFunction scoringCardHooks.handleWeightChange]}
+      step={0.1}
+      type="number"
+      value={1.5}
+    />
+    <Form.Control.Feedback>
+      <FormattedMessage
+        defaultMessage="If a value is not set, the problem is worth one point"
+        description="Summary text for scoring weight"
+        id="authoring.problemeditor.settings.scoring.weight.hint"
+      />
+    </Form.Control.Feedback>
+  </Form.Group>
+  <Form.Group>
+    <Form.Control
+      disabled={false}
+      floatingLabel="Attempts"
+      min={0}
+      onBlur={[MockFunction scoringCardHooks.handleMaxAttemptChange]}
+      onChange={[MockFunction scoringCardHooks.handleOnChange]}
+      type="number"
+    />
+    <Form.Control.Feedback>
+      <FormattedMessage
+        defaultMessage="If a default value is not set in advanced settings, unlimited attempts are allowed"
+        description="Summary text for scoring weight"
+        id="authoring.problemeditor.settings.scoring.attempts.hint"
+      />
+    </Form.Control.Feedback>
+    <Form.Checkbox
+      checked={false}
+      className="mt-3 decoration-control-label"
+      disabled={true}
+    >
+      <div
+        className="x-small"
+      >
+        <FormattedMessage
+          defaultMessage="Unlimited attempts"
+          description="Label for unlimited attempts checkbox"
+          id="authoring.problemeditor.settings.scoring.attempts.unlimitedCheckbox"
+        />
+      </div>
+    </Form.Checkbox>
+  </Form.Group>
+  <Hyperlink
+    destination="undefined/settings/advanced/null#max_attempts"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Set a default value in advanced settings"
+      description="Advanced settings link text"
+      id="authoring.problemeditor.settings.advancedSettingLink.text"
+    />
+  </Hyperlink>
+</SettingsOption>
+`;
+
+exports[`ScoringCard snapshot snapshot: scoring setting card max attempts 1`] = `
+<SettingsOption
+  className="scoringCard"
+  extraSections={[]}
+  hasExpandableTextArea={false}
+  summary="{weight, plural, =0 {Ungraded} other {# points}} · Unlimited attempts"
+  title="Scoring"
+>
+  <div
+    className="mb-4"
+  >
+    <FormattedMessage
+      defaultMessage="Specify point weight and the number of answer attempts"
+      description="Descriptive text for scoring settings"
+      id="authoring.problemeditor.settings.scoring.label"
+    />
+  </div>
+  <Form.Group>
+    <Form.Control
+      floatingLabel="Points"
+      min={0}
+      onChange={[MockFunction scoringCardHooks.handleWeightChange]}
+      step={0.1}
+      type="number"
+      value={1.5}
+    />
+    <Form.Control.Feedback>
+      <FormattedMessage
+        defaultMessage="If a value is not set, the problem is worth one point"
+        description="Summary text for scoring weight"
+        id="authoring.problemeditor.settings.scoring.weight.hint"
+      />
+    </Form.Control.Feedback>
+  </Form.Group>
+  <Form.Group>
+    <Form.Control
+      disabled={true}
+      floatingLabel="Attempts"
+      min={0}
+      onBlur={[MockFunction scoringCardHooks.handleMaxAttemptChange]}
+      onChange={[MockFunction scoringCardHooks.handleOnChange]}
+      type="number"
+    />
+    <Form.Control.Feedback>
+      <FormattedMessage
+        defaultMessage="If a default value is not set in advanced settings, unlimited attempts are allowed"
+        description="Summary text for scoring weight"
+        id="authoring.problemeditor.settings.scoring.attempts.hint"
+      />
+    </Form.Control.Feedback>
+    <Form.Checkbox
+      checked={true}
+      className="mt-3 decoration-control-label"
+      disabled={true}
+    >
+      <div
+        className="x-small"
+      >
+        <FormattedMessage
+          defaultMessage="Unlimited attempts"
+          description="Label for unlimited attempts checkbox"
+          id="authoring.problemeditor.settings.scoring.attempts.unlimitedCheckbox"
+        />
+      </div>
+    </Form.Checkbox>
+  </Form.Group>
+  <Hyperlink
+    destination="undefined/settings/advanced/null#max_attempts"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Set a default value in advanced settings"
+      description="Advanced settings link text"
+      id="authoring.problemeditor.settings.advancedSettingLink.text"
+    />
+  </Hyperlink>
+</SettingsOption>
+`;
+
+exports[`ScoringCard snapshot snapshot: scoring setting card zero zero weight 1`] = `
+<SettingsOption
+  className="scoringCard"
+  extraSections={[]}
+  hasExpandableTextArea={false}
+  summary="{weight, plural, =0 {Ungraded} other {# points}} · {attempts, plural, =1 {# attempt} other {# attempts}}"
+  title="Scoring"
+>
+  <div
+    className="mb-4"
+  >
+    <FormattedMessage
+      defaultMessage="Specify point weight and the number of answer attempts"
+      description="Descriptive text for scoring settings"
+      id="authoring.problemeditor.settings.scoring.label"
+    />
+  </div>
+  <Form.Group>
+    <Form.Control
+      floatingLabel="Points"
+      min={0}
+      onChange={[MockFunction scoringCardHooks.handleWeightChange]}
+      step={0.1}
+      type="number"
+      value={0}
+    />
+    <Form.Control.Feedback>
+      <FormattedMessage
+        defaultMessage="If a value is not set, the problem is worth one point"
+        description="Summary text for scoring weight"
+        id="authoring.problemeditor.settings.scoring.weight.hint"
+      />
+    </Form.Control.Feedback>
+  </Form.Group>
+  <Form.Group>
+    <Form.Control
+      disabled={false}
+      floatingLabel="Attempts"
+      min={0}
+      onBlur={[MockFunction scoringCardHooks.handleMaxAttemptChange]}
+      onChange={[MockFunction scoringCardHooks.handleOnChange]}
+      type="number"
+    />
+    <Form.Control.Feedback>
+      <FormattedMessage
+        defaultMessage="If a default value is not set in advanced settings, unlimited attempts are allowed"
+        description="Summary text for scoring weight"
+        id="authoring.problemeditor.settings.scoring.attempts.hint"
+      />
+    </Form.Control.Feedback>
+    <Form.Checkbox
+      checked={false}
+      className="mt-3 decoration-control-label"
+      disabled={true}
+    >
+      <div
+        className="x-small"
+      >
+        <FormattedMessage
+          defaultMessage="Unlimited attempts"
+          description="Label for unlimited attempts checkbox"
+          id="authoring.problemeditor.settings.scoring.attempts.unlimitedCheckbox"
+        />
+      </div>
+    </Form.Checkbox>
+  </Form.Group>
+  <Hyperlink
+    destination="undefined/settings/advanced/null#max_attempts"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Set a default value in advanced settings"
+      description="Advanced settings link text"
+      id="authoring.problemeditor.settings.advancedSettingLink.text"
+    />
+  </Hyperlink>
+</SettingsOption>
+`;

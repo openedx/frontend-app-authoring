@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`HintsCard snapshot snapshot: renders hints setting card multiple hints 1`] = `
+<SettingsOption
+  className=""
+  extraSections={[]}
+  hasExpandableTextArea={true}
+  none={false}
+  summary=" {count, plural, =0 {} other {(+# more)}}"
+  title="Hints"
+>
+  <injectIntl(ShimmedIntlComponent)
+    handleChange={[MockFunction hintsRowHooks.handleChange]}
+    handleDelete={[MockFunction hintsRowHooks.handleDelete]}
+    id={1}
+    key="1"
+    value="hint1"
+  />
+  <injectIntl(ShimmedIntlComponent)
+    handleChange={[MockFunction hintsRowHooks.handleChange]}
+    handleDelete={[MockFunction hintsRowHooks.handleDelete]}
+    id={2}
+    key="2"
+    value=""
+  />
+  <Button
+    className="m-0 p-0 font-weight-bold"
+    onClick={[MockFunction hintsCardHooks.handleAdd]}
+    size="sm"
+    text={null}
+    variant="add"
+  >
+    <FormattedMessage
+      defaultMessage="Add hint"
+      description="Add hint button text"
+      id="authoring.problemeditor.settings.hint.addHintButton"
+    />
+  </Button>
+</SettingsOption>
+`;
+
+exports[`HintsCard snapshot snapshot: renders hints setting card no hints 1`] = `
+<SettingsOption
+  className=""
+  extraSections={[]}
+  hasExpandableTextArea={true}
+  none={true}
+  summary="None"
+  title="Hints"
+>
+  <Button
+    className="m-0 p-0 font-weight-bold"
+    onClick={[MockFunction hintsCardHooks.handleAdd]}
+    size="sm"
+    text={null}
+    variant="add"
+  >
+    <FormattedMessage
+      defaultMessage="Add hint"
+      description="Add hint button text"
+      id="authoring.problemeditor.settings.hint.addHintButton"
+    />
+  </Button>
+</SettingsOption>
+`;
+
+exports[`HintsCard snapshot snapshot: renders hints setting card one hint 1`] = `
+<SettingsOption
+  className=""
+  extraSections={[]}
+  hasExpandableTextArea={true}
+  none={false}
+  summary="hint1 {count, plural, =0 {} other {(+# more)}}"
+  title="Hints"
+>
+  <injectIntl(ShimmedIntlComponent)
+    handleChange={[MockFunction hintsRowHooks.handleChange]}
+    handleDelete={[MockFunction hintsRowHooks.handleDelete]}
+    id={1}
+    key="1"
+    value="hint1"
+  />
+  <Button
+    className="m-0 p-0 font-weight-bold"
+    onClick={[MockFunction hintsCardHooks.handleAdd]}
+    size="sm"
+    text={null}
+    variant="add"
+  >
+    <FormattedMessage
+      defaultMessage="Add hint"
+      description="Add hint button text"
+      id="authoring.problemeditor.settings.hint.addHintButton"
+    />
+  </Button>
+</SettingsOption>
+`;

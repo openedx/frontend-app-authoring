@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ProblemEditor snapshots block failed, message appears 1`] = `
+<div
+  className="text-center p-6"
+>
+  <FormattedMessage
+    defaultMessage="Problem failed to load"
+    description="Error message for problem block failing to load"
+    id="authoring.problemEditor.blockFailed"
+  />
+</div>
+`;
+
+exports[`ProblemEditor snapshots renders as expected with default behavior 1`] = `
+<div
+  className="text-center p-6"
+>
+  <Spinner
+    animation="border"
+    className="m-3"
+    screenreadertext="Loading Problem Editor"
+  />
+</div>
+`;

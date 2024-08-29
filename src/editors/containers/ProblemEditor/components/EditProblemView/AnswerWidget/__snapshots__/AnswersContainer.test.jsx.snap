@@ -1,0 +1,238 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AnswersContainer render snapshot: numeric problems: answer range/answer select button: Range disables the additon of more adds 1`] = `
+<div
+  className="answers-container border border-light-700 rounded py-4 pl-4 pr-3"
+>
+  <mockAnswerOption
+    answer={
+      {
+        "correct": true,
+        "id": "A",
+        "isAnswerRange": true,
+        "selectedFeedback": "selected feedback",
+        "title": "Answer 1",
+        "unselectedFeedback": "unselected feedback",
+      }
+    }
+    hasSingleAnswer={false}
+    key="A"
+  />
+  <Dropdown>
+    <Dropdown.Toggle
+      className="pl-0"
+      id="Add-Answer-Or-Answer-Range"
+      variant="tertiary"
+    >
+      <Icon />
+      <FormattedMessage
+        defaultMessage="Add answer"
+        description="Button text to add answer"
+        id="authoring.answerwidget.answer.addAnswerButton"
+      />
+    </Dropdown.Toggle>
+    <Dropdown.Menu>
+      <Dropdown.Item
+        className="AddAnswerRange disabled"
+        key="add-answer"
+        onClick={[MockFunction]}
+      >
+        <FormattedMessage
+          defaultMessage="Add answer"
+          description="Button text to add answer"
+          id="authoring.answerwidget.answer.addAnswerButton"
+        />
+      </Dropdown.Item>
+      <Dropdown.Item
+        className="AddAnswerRange disabled"
+        key="add-answer-range"
+        onClick={[MockFunction]}
+      >
+        <FormattedMessage
+          defaultMessage="Add answer range"
+          description="Button text to add a range of answers"
+          id="authoring.answerwidget.answer.addAnswerRangeButton"
+        />
+      </Dropdown.Item>
+    </Dropdown.Menu>
+  </Dropdown>
+</div>
+`;
+
+exports[`AnswersContainer render snapshot: numeric problems: answer range/answer select button: empty 1`] = `
+<div
+  className="answers-container border border-light-700 rounded py-4 pl-4 pr-3"
+>
+  <Dropdown>
+    <Dropdown.Toggle
+      className="pl-0"
+      id="Add-Answer-Or-Answer-Range"
+      variant="tertiary"
+    >
+      <Icon />
+      <FormattedMessage
+        defaultMessage="Add answer"
+        description="Button text to add answer"
+        id="authoring.answerwidget.answer.addAnswerButton"
+      />
+    </Dropdown.Toggle>
+    <Dropdown.Menu>
+      <Dropdown.Item
+        className="AddAnswerRange "
+        key="add-answer"
+        onClick={[MockFunction]}
+      >
+        <FormattedMessage
+          defaultMessage="Add answer"
+          description="Button text to add answer"
+          id="authoring.answerwidget.answer.addAnswerButton"
+        />
+      </Dropdown.Item>
+      <Dropdown.Item
+        className="AddAnswerRange "
+        key="add-answer-range"
+        onClick={[MockFunction]}
+      >
+        <FormattedMessage
+          defaultMessage="Add answer range"
+          description="Button text to add a range of answers"
+          id="authoring.answerwidget.answer.addAnswerRangeButton"
+        />
+      </Dropdown.Item>
+    </Dropdown.Menu>
+  </Dropdown>
+</div>
+`;
+
+exports[`AnswersContainer render snapshot: numeric problems: answer range/answer select button: multiple answers disables range. 1`] = `
+<div
+  className="answers-container border border-light-700 rounded py-4 pl-4 pr-3"
+>
+  <mockAnswerOption
+    answer={
+      {
+        "correct": true,
+        "id": "A",
+        "isAnswerRange": false,
+        "selectedFeedback": "selected feedback",
+        "title": "Answer 1",
+        "unselectedFeedback": "unselected feedback",
+      }
+    }
+    hasSingleAnswer={false}
+    key="A"
+  />
+  <mockAnswerOption
+    answer={
+      {
+        "correct": true,
+        "id": "B",
+        "isAnswerRange": false,
+        "selectedFeedback": "selected feedback",
+        "title": "Answer 1",
+        "unselectedFeedback": "unselected feedback",
+      }
+    }
+    hasSingleAnswer={false}
+    key="B"
+  />
+  <Dropdown>
+    <Dropdown.Toggle
+      className="pl-0"
+      id="Add-Answer-Or-Answer-Range"
+      variant="tertiary"
+    >
+      <Icon />
+      <FormattedMessage
+        defaultMessage="Add answer"
+        description="Button text to add answer"
+        id="authoring.answerwidget.answer.addAnswerButton"
+      />
+    </Dropdown.Toggle>
+    <Dropdown.Menu>
+      <Dropdown.Item
+        className="AddAnswerRange "
+        key="add-answer"
+        onClick={[MockFunction]}
+      >
+        <FormattedMessage
+          defaultMessage="Add answer"
+          description="Button text to add answer"
+          id="authoring.answerwidget.answer.addAnswerButton"
+        />
+      </Dropdown.Item>
+      <Dropdown.Item
+        className="AddAnswerRange disabled"
+        key="add-answer-range"
+        onClick={[MockFunction]}
+      >
+        <FormattedMessage
+          defaultMessage="Add answer range"
+          description="Button text to add a range of answers"
+          id="authoring.answerwidget.answer.addAnswerRangeButton"
+        />
+      </Dropdown.Item>
+    </Dropdown.Menu>
+  </Dropdown>
+</div>
+`;
+
+exports[`AnswersContainer render snapshot: renders correct default 1`] = `
+<div
+  className="answers-container border border-light-700 rounded py-4 pl-4 pr-3"
+>
+  <Button
+    className={null}
+    onClick={[MockFunction]}
+    text={null}
+    variant="add"
+  >
+    <FormattedMessage
+      defaultMessage="Add answer"
+      description="Button text to add answer"
+      id="authoring.answerwidget.answer.addAnswerButton"
+    />
+  </Button>
+</div>
+`;
+
+exports[`AnswersContainer render snapshot: renders correctly with answers 1`] = `
+<div
+  className="answers-container border border-light-700 rounded py-4 pl-4 pr-3"
+>
+  <mockAnswerOption
+    answer={
+      {
+        "correct": true,
+        "id": "a",
+        "title": "sOMetITlE",
+      }
+    }
+    hasSingleAnswer={false}
+    key="a"
+  />
+  <mockAnswerOption
+    answer={
+      {
+        "correct": true,
+        "id": "b",
+        "title": "sOMetITlE",
+      }
+    }
+    hasSingleAnswer={false}
+    key="b"
+  />
+  <Button
+    className={null}
+    onClick={[MockFunction]}
+    text={null}
+    variant="add"
+  >
+    <FormattedMessage
+      defaultMessage="Add answer"
+      description="Button text to add answer"
+      id="authoring.answerwidget.answer.addAnswerButton"
+    />
+  </Button>
+</div>
+`;

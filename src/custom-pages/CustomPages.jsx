@@ -18,11 +18,9 @@ import {
   Container,
 } from '@openedx/paragon';
 import { Add, SpinnerSimple } from '@openedx/paragon/icons';
-import Placeholder, {
-  DraggableList,
-  SortableItem,
-  ErrorAlert,
-} from '@edx/frontend-lib-content-components';
+import Placeholder from '../editors/Placeholder';
+import DraggableList, { SortableItem } from '../editors/sharedComponents/DraggableList';
+import ErrorAlert from '../editors/sharedComponents/ErrorAlerts/ErrorAlert';
 
 import { RequestStatus } from '../data/constants';
 import { useModels, useModel } from '../generic/model-store';

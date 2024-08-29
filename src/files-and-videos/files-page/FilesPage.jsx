@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
 import { CheckboxFilter, Container } from '@openedx/paragon';
-import Placeholder from '@edx/frontend-lib-content-components';
+import Placeholder from '../../editors/Placeholder';
 
 import { RequestStatus } from '../../data/constants';
 import { useModels, useModel } from '../../generic/model-store';

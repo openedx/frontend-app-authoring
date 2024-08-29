@@ -1,0 +1,92 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ImageUploadModal component snapshot: no selection (Select Image Modal) 1`] = `
+<SelectImageModal
+  clearSelection={[MockFunction props.clearSelection]}
+  close={[MockFunction props.close]}
+  images={
+    {
+      "current": [
+        {
+          "contentType": "image/png",
+          "dateAdded": 1682009100000,
+          "displayName": "DALL·E 2023-03-10.png",
+          "externalUrl": "http://localhost:18000/asset-v1:TestX+Test01+Test0101+type@asset+block@DALL_E_2023-03-10.png",
+          "height": 150,
+          "id": "asset-v1:TestX+Test01+Test0101+type@asset+block@DALL_E_2023-03-10.png",
+          "locked": false,
+          "portableUrl": "/static/DALL_E_2023-03-10.png",
+          "staticFullUrl": "/assets/courseware/v1/af2bf9ac70804e54c534107160a8e51e/asset-v1:TestX+Test01+Test0101+type@asset+block@DALL_E_2023-03-10.png",
+          "thumbnail": "/asset-v1:TestX+Test01+Test0101+type@thumbnail+block@DALL_E_2023-03-10.jpg",
+          "url": "/asset-v1:TestX+Test01+Test0101+type@asset+block@DALL_E_2023-03-10.png",
+          "width": 100,
+        },
+      ],
+    }
+  }
+  isOpen={false}
+  setSelection={[MockFunction props.setSelection]}
+/>
+`;
+
+exports[`ImageUploadModal component snapshot: selection has no externalUrl (Select Image Modal) 1`] = `
+<SelectImageModal
+  clearSelection={[MockFunction props.clearSelection]}
+  close={[MockFunction props.close]}
+  images={
+    {
+      "current": [
+        {
+          "contentType": "image/png",
+          "dateAdded": 1682009100000,
+          "displayName": "DALL·E 2023-03-10.png",
+          "externalUrl": "http://localhost:18000/asset-v1:TestX+Test01+Test0101+type@asset+block@DALL_E_2023-03-10.png",
+          "height": 150,
+          "id": "asset-v1:TestX+Test01+Test0101+type@asset+block@DALL_E_2023-03-10.png",
+          "locked": false,
+          "portableUrl": "/static/DALL_E_2023-03-10.png",
+          "staticFullUrl": "/assets/courseware/v1/af2bf9ac70804e54c534107160a8e51e/asset-v1:TestX+Test01+Test0101+type@asset+block@DALL_E_2023-03-10.png",
+          "thumbnail": "/asset-v1:TestX+Test01+Test0101+type@thumbnail+block@DALL_E_2023-03-10.jpg",
+          "url": "/asset-v1:TestX+Test01+Test0101+type@asset+block@DALL_E_2023-03-10.png",
+          "width": 100,
+        },
+      ],
+    }
+  }
+  isOpen={false}
+  setSelection={[MockFunction props.setSelection]}
+/>
+`;
+
+exports[`ImageUploadModal component snapshot: with selection content (ImageSettingsUpload) 1`] = `
+<ImageSettingsModal
+  images={
+    {
+      "current": [
+        {
+          "contentType": "image/png",
+          "dateAdded": 1682009100000,
+          "displayName": "DALL·E 2023-03-10.png",
+          "externalUrl": "http://localhost:18000/asset-v1:TestX+Test01+Test0101+type@asset+block@DALL_E_2023-03-10.png",
+          "height": 150,
+          "id": "asset-v1:TestX+Test01+Test0101+type@asset+block@DALL_E_2023-03-10.png",
+          "locked": false,
+          "portableUrl": "/static/DALL_E_2023-03-10.png",
+          "staticFullUrl": "/assets/courseware/v1/af2bf9ac70804e54c534107160a8e51e/asset-v1:TestX+Test01+Test0101+type@asset+block@DALL_E_2023-03-10.png",
+          "thumbnail": "/asset-v1:TestX+Test01+Test0101+type@thumbnail+block@DALL_E_2023-03-10.jpg",
+          "url": "/asset-v1:TestX+Test01+Test0101+type@asset+block@DALL_E_2023-03-10.png",
+          "width": 100,
+        },
+      ],
+    }
+  }
+  isOpen={false}
+  returnToSelection={[MockFunction props.clearSelection]}
+  selection={
+    {
+      "externalUrl": "sOmEuRl.cOm",
+      "some": "images",
+    }
+  }
+/>
+`;

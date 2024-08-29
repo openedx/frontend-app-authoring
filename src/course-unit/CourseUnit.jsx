@@ -7,8 +7,8 @@ import { getConfig } from '@edx/frontend-platform';
 import { useIntl, injectIntl } from '@edx/frontend-platform/i18n';
 import { Warning as WarningIcon } from '@openedx/paragon/icons';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { DraggableList } from '@edx/frontend-lib-content-components';
 
+import DraggableList from '../editors/sharedComponents/DraggableList';
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
 import SubHeader from '../generic/sub-header/SubHeader';
 import { RequestStatus } from '../data/constants';

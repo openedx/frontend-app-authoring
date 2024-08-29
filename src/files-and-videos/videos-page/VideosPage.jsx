@@ -14,8 +14,8 @@ import {
   Container,
   useToggle,
 } from '@openedx/paragon';
-import Placeholder from '@edx/frontend-lib-content-components';
 
+import Placeholder from '../../editors/Placeholder';
 import { RequestStatus } from '../../data/constants';
 import { useModels, useModel } from '../../generic/model-store';
 import {

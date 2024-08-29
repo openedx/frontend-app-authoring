@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UploadErrorAlert Snapshots snapshot:  is ErrorAlert with Message error (ErrorAlert) 1`] = `
+<ErrorAlert
+  dismissError={null}
+  hideHeading={false}
+  isError={true}
+>
+  <FormattedMessage />
+</ErrorAlert>
+`;

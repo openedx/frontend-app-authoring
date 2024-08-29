@@ -2,10 +2,11 @@ import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { isEmpty } from 'lodash';
-import { ErrorAlert } from '@edx/frontend-lib-content-components';
 import { Button, Stack } from '@openedx/paragon';
 import { Add } from '@openedx/paragon/icons';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+
+import ErrorAlert from '../../../editors/sharedComponents/ErrorAlerts/ErrorAlert';
 import { getLanguages, getSortedTranscripts } from '../data/utils';
 import Transcript from './transcript-item';
 import {

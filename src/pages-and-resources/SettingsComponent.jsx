@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { ErrorAlert } from '@edx/frontend-lib-content-components';
 
+import ErrorAlert from '../editors/sharedComponents/ErrorAlerts/ErrorAlert';
 import messages from './messages';
 
 const PluginLoadFailedError = () => {

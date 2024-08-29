@@ -1,0 +1,233 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Preview snapshots snapshots: renders as expected with default props 1`] = `null`;
+
+exports[`Preview snapshots snapshots: renders as expected with problemType is choiceresponse 1`] = `
+<Container
+  className="bg-light-300 rounded p-4"
+  style={
+    {
+      "height": "400px",
+      "width": "494px",
+    }
+  }
+>
+  <div
+    className="small"
+  >
+    Multi-select problem
+  </div>
+  <Image
+    alt="A preview illustration of a {problemType, select,
+      multiplechoiceresponse {single select}
+      stringreponse {text input}
+      numericalresponse {numerical input}
+      optionresponse {dropdown}
+      choiceresponse {multiple select}
+      other {null}
+    } problem"
+    className="my-3"
+    fluid={true}
+    src="test-file-stub"
+  />
+  <div
+    className="mb-3"
+  >
+    Learners must select all correct answers from a list of possible options.
+  </div>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/checkbox.html"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more"
+      description="Label for Learn more button"
+      id="authoring.problemEditor.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Container>
+`;
+
+exports[`Preview snapshots snapshots: renders as expected with problemType is multiplechoiceresponse 1`] = `
+<Container
+  className="bg-light-300 rounded p-4"
+  style={
+    {
+      "height": "400px",
+      "width": "494px",
+    }
+  }
+>
+  <div
+    className="small"
+  >
+    Single select problem
+  </div>
+  <Image
+    alt="A preview illustration of a {problemType, select,
+      multiplechoiceresponse {single select}
+      stringreponse {text input}
+      numericalresponse {numerical input}
+      optionresponse {dropdown}
+      choiceresponse {multiple select}
+      other {null}
+    } problem"
+    className="my-3"
+    fluid={true}
+    src="test-file-stub"
+  />
+  <div
+    className="mb-3"
+  >
+    Learners must select the correct answer from a list of possible options.
+  </div>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/multiple_choice.html"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more"
+      description="Label for Learn more button"
+      id="authoring.problemEditor.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Container>
+`;
+
+exports[`Preview snapshots snapshots: renders as expected with problemType is numericalresponse 1`] = `
+<Container
+  className="bg-light-300 rounded p-4"
+  style={
+    {
+      "height": "400px",
+      "width": "494px",
+    }
+  }
+>
+  <div
+    className="small"
+  >
+    Numerical input problem
+  </div>
+  <Image
+    alt="A preview illustration of a {problemType, select,
+      multiplechoiceresponse {single select}
+      stringreponse {text input}
+      numericalresponse {numerical input}
+      optionresponse {dropdown}
+      choiceresponse {multiple select}
+      other {null}
+    } problem"
+    className="my-3"
+    fluid={true}
+    src="test-file-stub"
+  />
+  <div
+    className="mb-3"
+  >
+    Specify one or more correct numeric answers, submitted in a response field.
+  </div>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/numerical_input.html"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more"
+      description="Label for Learn more button"
+      id="authoring.problemEditor.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Container>
+`;
+
+exports[`Preview snapshots snapshots: renders as expected with problemType is optionresponse 1`] = `
+<Container
+  className="bg-light-300 rounded p-4"
+  style={
+    {
+      "height": "400px",
+      "width": "494px",
+    }
+  }
+>
+  <div
+    className="small"
+  >
+    Dropdown problem
+  </div>
+  <Image
+    alt="A preview illustration of a {problemType, select,
+      multiplechoiceresponse {single select}
+      stringreponse {text input}
+      numericalresponse {numerical input}
+      optionresponse {dropdown}
+      choiceresponse {multiple select}
+      other {null}
+    } problem"
+    className="my-3"
+    fluid={true}
+    src="test-file-stub"
+  />
+  <div
+    className="mb-3"
+  >
+    Learners must select the correct answer from a list of possible options
+  </div>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/dropdown.html"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more"
+      description="Label for Learn more button"
+      id="authoring.problemEditor.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Container>
+`;
+
+exports[`Preview snapshots snapshots: renders as expected with problemType is stringresponse 1`] = `
+<Container
+  className="bg-light-300 rounded p-4"
+  style={
+    {
+      "height": "400px",
+      "width": "494px",
+    }
+  }
+>
+  <div
+    className="small"
+  >
+    Text input problem
+  </div>
+  <Image
+    alt="A preview illustration of a {problemType, select,
+      multiplechoiceresponse {single select}
+      stringreponse {text input}
+      numericalresponse {numerical input}
+      optionresponse {dropdown}
+      choiceresponse {multiple select}
+      other {null}
+    } problem"
+    className="my-3"
+    fluid={true}
+    src="test-file-stub"
+  />
+  <div
+    className="mb-3"
+  >
+    Specify one or more correct text answers, including numbers and special characters, submitted in a response field.
+  </div>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/text_input.html"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more"
+      description="Label for Learn more button"
+      id="authoring.problemEditor.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Container>
+`;

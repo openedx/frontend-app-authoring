@@ -1,0 +1,203 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LicenseSelector snapshots snapshots: renders as expected with block level 1`] = `
+<Fragment>
+  <ActionRow>
+    <Form.Control
+      as="select"
+      className="w-100 m-0 p-0"
+      defaultValue="all-rights-reserved"
+      disabled={false}
+      floatingLabel="License Type"
+      onChange={[Function]}
+    >
+      <option
+        hidden={true}
+      >
+        Select
+      </option>
+      <option
+        value="all-rights-reserved"
+      >
+        All Rights Reserved
+      </option>
+      <option
+        value="creative-commons"
+      >
+        Creative Commons
+      </option>
+    </Form.Control>
+    <Fragment>
+      <ActionRow.Spacer />
+      <IconButtonWithTooltip
+        iconAs="Icon"
+        onClick={[Function]}
+        tooltipContent={
+          <FormattedMessage
+            defaultMessage="Clear and apply the course-level license"
+            description="Message presented to user for action to delete license selection"
+            id="authoring.videoeditor.license.deleteLicenseSelection"
+          />
+        }
+        tooltipPlacement="top"
+      />
+    </Fragment>
+  </ActionRow>
+  <div
+    className="x-small mt-3"
+  >
+    <FormattedMessage
+      defaultMessage="This license is set specifically for this video"
+      description="Helper text for license type when choosing for a spcific video"
+      id="authoring.videoeditor.license.defaultLevelDescription.helperText"
+    />
+  </div>
+  <div
+    className="border-primary-100 mt-3 border-bottom"
+  />
+</Fragment>
+`;
+
+exports[`LicenseSelector snapshots snapshots: renders as expected with default props 1`] = `
+<Fragment>
+  <ActionRow>
+    <Form.Control
+      as="select"
+      className="w-100 m-0 p-0"
+      defaultValue="all-rights-reserved"
+      disabled={true}
+      floatingLabel="License Type"
+      onChange={[Function]}
+    >
+      <option
+        hidden={true}
+      >
+        Select
+      </option>
+      <option
+        value="all-rights-reserved"
+      >
+        All Rights Reserved
+      </option>
+      <option
+        value="creative-commons"
+      >
+        Creative Commons
+      </option>
+    </Form.Control>
+  </ActionRow>
+  <div
+    className="x-small mt-3"
+  >
+    <FormattedMessage
+      defaultMessage="This license currently set at the course level"
+      description="Helper text for license type when using course license"
+      id="authoring.videoeditor.license.courseLevelDescription.helperText"
+    />
+  </div>
+  <div
+    className="border-primary-100 mt-3 border-bottom"
+  />
+</Fragment>
+`;
+
+exports[`LicenseSelector snapshots snapshots: renders as expected with library level 1`] = `
+<Fragment>
+  <ActionRow>
+    <Form.Control
+      as="select"
+      className="w-100 m-0 p-0"
+      defaultValue="all-rights-reserved"
+      disabled={false}
+      floatingLabel="License Type"
+      onChange={[Function]}
+    >
+      <option
+        hidden={true}
+      >
+        Select
+      </option>
+      <option
+        value="all-rights-reserved"
+      >
+        All Rights Reserved
+      </option>
+      <option
+        value="creative-commons"
+      >
+        Creative Commons
+      </option>
+    </Form.Control>
+    <Fragment>
+      <ActionRow.Spacer />
+      <IconButtonWithTooltip
+        iconAs="Icon"
+        onClick={[Function]}
+        tooltipContent={
+          <FormattedMessage
+            defaultMessage="Clear and apply the course-level license"
+            description="Message presented to user for action to delete license selection"
+            id="authoring.videoeditor.license.deleteLicenseSelection"
+          />
+        }
+        tooltipPlacement="top"
+      />
+    </Fragment>
+  </ActionRow>
+  <div
+    className="x-small mt-3"
+  >
+    <FormattedMessage
+      defaultMessage="This license currently set at the library level"
+      description="Helper text for license type when using library license"
+      id="authoring.videoeditor.license.libraryLevelDescription.helperText"
+    />
+  </div>
+  <div
+    className="border-primary-100 mt-3 border-bottom"
+  />
+</Fragment>
+`;
+
+exports[`LicenseSelector snapshots snapshots: renders as expected with no license 1`] = `
+<Fragment>
+  <ActionRow>
+    <Form.Control
+      as="select"
+      className="w-100 m-0 p-0"
+      defaultValue=""
+      disabled={true}
+      floatingLabel="License Type"
+      onChange={[Function]}
+    >
+      <option
+        hidden={true}
+      >
+        Select
+      </option>
+      <option
+        value="all-rights-reserved"
+      >
+        All Rights Reserved
+      </option>
+      <option
+        value="creative-commons"
+      >
+        Creative Commons
+      </option>
+    </Form.Control>
+  </ActionRow>
+  <div
+    className="x-small mt-3"
+  >
+    <FormattedMessage
+      defaultMessage="This license currently set at the course level"
+      description="Helper text for license type when using course license"
+      id="authoring.videoeditor.license.courseLevelDescription.helperText"
+    />
+  </div>
+  <div
+    className="border-primary-100 mt-3 border-bottom"
+  />
+</Fragment>
+`;

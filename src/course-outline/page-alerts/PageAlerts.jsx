@@ -4,7 +4,6 @@ import { uniqBy } from 'lodash';
 import { getConfig } from '@edx/frontend-platform';
 import { useDispatch, useSelector } from 'react-redux';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { ErrorAlert } from '@edx/frontend-lib-content-components';
 import {
   Campaign as CampaignIcon,
   InfoOutline as InfoOutlineIcon,
@@ -16,6 +15,7 @@ import {
 } from '@openedx/paragon';
 import { Link } from 'react-router-dom';
 
+import ErrorAlert from '../../editors/sharedComponents/ErrorAlerts/ErrorAlert';
 import { RequestStatus } from '../../data/constants';
 import AlertMessage from '../../generic/alert-message';
 import AlertProctoringError from '../../generic/AlertProctoringError';

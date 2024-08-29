@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TimerCard snapshot snapshot: renders reset true setting card 1`] = `
+<SettingsOption
+  className=""
+  extraSections={[]}
+  hasExpandableTextArea={false}
+  summary="5 seconds"
+  title="Time between attempts"
+>
+  <div
+    className="spacedMessage"
+  >
+    <span>
+      <FormattedMessage
+        defaultMessage="Seconds a student must wait between submissions for a problem with multiple attempts."
+        description="Timer settings card text"
+        id="authoring.problemeditor.settings.timer.text"
+      />
+    </span>
+  </div>
+  <Form.Group>
+    <Form.Control
+      floatingLabel="Seconds"
+      min={0}
+      onChange={[MockFunction timerCardHooks.handleChange]}
+      type="number"
+      value={5}
+    />
+  </Form.Group>
+</SettingsOption>
+`;

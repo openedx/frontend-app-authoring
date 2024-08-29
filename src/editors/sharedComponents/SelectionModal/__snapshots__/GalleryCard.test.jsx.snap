@@ -1,0 +1,505 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GalleryCard component snapshot with duration badge 1`] = `
+<ForwardRef
+  checked={false}
+  className="card bg-white shadow-none border-0 py-0"
+  inputHidden={true}
+  isIndeterminate={false}
+  isInvalid={false}
+  key="props.img.externalUrl"
+  onClick={[Function]}
+  onFocus={[Function]}
+  type="radio"
+>
+  <div
+    className="card-div d-flex flex-row flex-nowrap align-items-center"
+  >
+    <div
+      className="position-relative"
+      style={
+        {
+          "height": "100px",
+          "width": "200px",
+        }
+      }
+    >
+      <Image
+        src="props.img.externalUrl"
+        style={
+          {
+            "border": "none",
+            "height": "100px",
+            "width": "200px",
+          }
+        }
+      />
+      <Badge
+        style={
+          {
+            "backgroundColor": "black",
+            "bottom": "6px",
+            "position": "absolute",
+            "right": "6px",
+          }
+        }
+        variant="dark"
+      >
+        01:00
+      </Badge>
+    </div>
+    <div
+      className="card-text px-3 py-2"
+      style={
+        {
+          "marginTop": "10px",
+        }
+      }
+    >
+      <h3
+        className="text-primary-500"
+      >
+        <Truncate>
+          props.img.displayName
+        </Truncate>
+      </h3>
+      <p
+        className="text-gray-500"
+        style={
+          {
+            "fontSize": "11px",
+          }
+        }
+      >
+        <FormattedMessage
+          defaultMessage="Added {date} at {time}"
+          description="File date-added string"
+          id="authoring.selectionmodal.addedDate.label"
+          values={
+            {
+              "date": <FormattedDate
+                value={12345}
+              />,
+              "time": <FormattedTime
+                value={12345}
+              />,
+            }
+          }
+        />
+      </p>
+    </div>
+  </div>
+</ForwardRef>
+`;
+
+exports[`GalleryCard component snapshot with duration transcripts 1`] = `
+<ForwardRef
+  checked={false}
+  className="card bg-white shadow-none border-0 py-0"
+  inputHidden={true}
+  isIndeterminate={false}
+  isInvalid={false}
+  key="props.img.externalUrl"
+  onClick={[Function]}
+  onFocus={[Function]}
+  type="radio"
+>
+  <div
+    className="card-div d-flex flex-row flex-nowrap align-items-center"
+  >
+    <div
+      className="position-relative"
+      style={
+        {
+          "height": "100px",
+          "width": "200px",
+        }
+      }
+    >
+      <Image
+        src="props.img.externalUrl"
+        style={
+          {
+            "border": "none",
+            "height": "100px",
+            "width": "200px",
+          }
+        }
+      />
+    </div>
+    <div
+      className="card-text px-3 py-2"
+      style={
+        {
+          "marginTop": "10px",
+        }
+      }
+    >
+      <h3
+        className="text-primary-500"
+      >
+        <Truncate>
+          props.img.displayName
+        </Truncate>
+      </h3>
+      <div
+        style={
+          {
+            "margin": "0 0 5px 0",
+          }
+        }
+      >
+        <injectIntl(ShimmedIntlComponent)
+          transcripts={
+            [
+              "es",
+            ]
+          }
+        />
+      </div>
+      <p
+        className="text-gray-500"
+        style={
+          {
+            "fontSize": "11px",
+          }
+        }
+      >
+        <FormattedMessage
+          defaultMessage="Added {date} at {time}"
+          description="File date-added string"
+          id="authoring.selectionmodal.addedDate.label"
+          values={
+            {
+              "date": <FormattedDate
+                value={12345}
+              />,
+              "time": <FormattedTime
+                value={12345}
+              />,
+            }
+          }
+        />
+      </p>
+    </div>
+  </div>
+</ForwardRef>
+`;
+
+exports[`GalleryCard component snapshot with status badge 1`] = `
+<ForwardRef
+  checked={false}
+  className="card bg-white shadow-none border-0 py-0"
+  inputHidden={true}
+  isIndeterminate={false}
+  isInvalid={false}
+  key="props.img.externalUrl"
+  onClick={[Function]}
+  onFocus={[Function]}
+  type="radio"
+>
+  <div
+    className="card-div d-flex flex-row flex-nowrap align-items-center"
+  >
+    <div
+      className="position-relative"
+      style={
+        {
+          "height": "100px",
+          "width": "200px",
+        }
+      }
+    >
+      <Image
+        src="props.img.externalUrl"
+        style={
+          {
+            "border": "none",
+            "height": "100px",
+            "width": "200px",
+          }
+        }
+      />
+    </div>
+    <div
+      className="card-text px-3 py-2"
+      style={
+        {
+          "marginTop": "10px",
+        }
+      }
+    >
+      <h3
+        className="text-primary-500"
+      >
+        <Truncate>
+          props.img.displayName
+        </Truncate>
+      </h3>
+      <p
+        className="text-gray-500"
+        style={
+          {
+            "fontSize": "11px",
+          }
+        }
+      >
+        <FormattedMessage
+          defaultMessage="Added {date} at {time}"
+          description="File date-added string"
+          id="authoring.selectionmodal.addedDate.label"
+          values={
+            {
+              "date": <FormattedDate
+                value={12345}
+              />,
+              "time": <FormattedTime
+                value={12345}
+              />,
+            }
+          }
+        />
+      </p>
+    </div>
+  </div>
+</ForwardRef>
+`;
+
+exports[`GalleryCard component snapshot with thumbnail fallback and load error 1`] = `
+<ForwardRef
+  checked={false}
+  className="card bg-white shadow-none border-0 py-0"
+  inputHidden={true}
+  isIndeterminate={false}
+  isInvalid={false}
+  key="props.img.externalUrl"
+  onClick={[Function]}
+  onFocus={[Function]}
+  type="radio"
+>
+  <div
+    className="card-div d-flex flex-row flex-nowrap align-items-center"
+  >
+    <div
+      className="position-relative"
+      style={
+        {
+          "height": "100px",
+          "width": "200px",
+        }
+      }
+    >
+      <Image
+        onError={[Function]}
+        src="props.img.externalUrl"
+        style={
+          {
+            "border": "none",
+            "height": "100px",
+            "width": "200px",
+          }
+        }
+      />
+    </div>
+    <div
+      className="card-text px-3 py-2"
+      style={
+        {
+          "marginTop": "10px",
+        }
+      }
+    >
+      <h3
+        className="text-primary-500"
+      >
+        <Truncate>
+          props.img.displayName
+        </Truncate>
+      </h3>
+      <p
+        className="text-gray-500"
+        style={
+          {
+            "fontSize": "11px",
+          }
+        }
+      >
+        <FormattedMessage
+          defaultMessage="Added {date} at {time}"
+          description="File date-added string"
+          id="authoring.selectionmodal.addedDate.label"
+          values={
+            {
+              "date": <FormattedDate
+                value={12345}
+              />,
+              "time": <FormattedTime
+                value={12345}
+              />,
+            }
+          }
+        />
+      </p>
+    </div>
+  </div>
+</ForwardRef>
+`;
+
+exports[`GalleryCard component snapshot with thumbnail fallback and no error 1`] = `
+<ForwardRef
+  checked={false}
+  className="card bg-white shadow-none border-0 py-0"
+  inputHidden={true}
+  isIndeterminate={false}
+  isInvalid={false}
+  key="props.img.externalUrl"
+  onClick={[Function]}
+  onFocus={[Function]}
+  type="radio"
+>
+  <div
+    className="card-div d-flex flex-row flex-nowrap align-items-center"
+  >
+    <div
+      className="position-relative"
+      style={
+        {
+          "height": "100px",
+          "width": "200px",
+        }
+      }
+    >
+      <Image
+        onError={[Function]}
+        src="props.img.externalUrl"
+        style={
+          {
+            "border": "none",
+            "height": "100px",
+            "width": "200px",
+          }
+        }
+      />
+    </div>
+    <div
+      className="card-text px-3 py-2"
+      style={
+        {
+          "marginTop": "10px",
+        }
+      }
+    >
+      <h3
+        className="text-primary-500"
+      >
+        <Truncate>
+          props.img.displayName
+        </Truncate>
+      </h3>
+      <p
+        className="text-gray-500"
+        style={
+          {
+            "fontSize": "11px",
+          }
+        }
+      >
+        <FormattedMessage
+          defaultMessage="Added {date} at {time}"
+          description="File date-added string"
+          id="authoring.selectionmodal.addedDate.label"
+          values={
+            {
+              "date": <FormattedDate
+                value={12345}
+              />,
+              "time": <FormattedTime
+                value={12345}
+              />,
+            }
+          }
+        />
+      </p>
+    </div>
+  </div>
+</ForwardRef>
+`;
+
+exports[`GalleryCard component snapshot: dateAdded=12345 1`] = `
+<ForwardRef
+  checked={false}
+  className="card bg-white shadow-none border-0 py-0"
+  inputHidden={true}
+  isIndeterminate={false}
+  isInvalid={false}
+  key="props.img.externalUrl"
+  onClick={[Function]}
+  onFocus={[Function]}
+  type="radio"
+>
+  <div
+    className="card-div d-flex flex-row flex-nowrap align-items-center"
+  >
+    <div
+      className="position-relative"
+      style={
+        {
+          "height": "100px",
+          "width": "200px",
+        }
+      }
+    >
+      <Image
+        src="props.img.externalUrl"
+        style={
+          {
+            "border": "none",
+            "height": "100px",
+            "width": "200px",
+          }
+        }
+      />
+    </div>
+    <div
+      className="card-text px-3 py-2"
+      style={
+        {
+          "marginTop": "10px",
+        }
+      }
+    >
+      <h3
+        className="text-primary-500"
+      >
+        <Truncate>
+          props.img.displayName
+        </Truncate>
+      </h3>
+      <p
+        className="text-gray-500"
+        style={
+          {
+            "fontSize": "11px",
+          }
+        }
+      >
+        <FormattedMessage
+          defaultMessage="Added {date} at {time}"
+          description="File date-added string"
+          id="authoring.selectionmodal.addedDate.label"
+          values={
+            {
+              "date": <FormattedDate
+                value={12345}
+              />,
+              "time": <FormattedTime
+                value={12345}
+              />,
+            }
+          }
+        />
+      </p>
+    </div>
+  </div>
+</ForwardRef>
+`;

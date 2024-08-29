@@ -1,0 +1,232 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TinyMceWidget snapshots ImageUploadModal is not rendered 1`] = `
+<Provider
+  store={
+    {
+      "dispatch": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+      Symbol(Symbol.observable): [Function],
+    }
+  }
+>
+  <SourceCodeModal
+    close={[MockFunction modal.closeModal]}
+    editorRef={
+      {
+        "current": {
+          "value": "something",
+        },
+      }
+    }
+    isOpen={false}
+  />
+  <Editor
+    disabled={false}
+    editorConfig={
+      {
+        "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
+        "content": undefined,
+        "editorContentHtml": undefined,
+        "editorRef": {
+          "current": {
+            "value": "something",
+          },
+        },
+        "editorType": "text",
+        "images": {
+          "current": [
+            {
+              "externalUrl": "/assets/sOmEaSsET",
+            },
+          ],
+        },
+        "initializeEditor": undefined,
+        "isLibrary": true,
+        "learningContextId": "course+org+run",
+        "lmsEndpointUrl": "sOmEvaLue.cOm",
+        "minHeight": undefined,
+        "openImgModal": [MockFunction modal.openModal],
+        "openSourceCodeModal": [MockFunction modal.openModal],
+        "placeholder": undefined,
+        "selection": "hooks.selectedImage.selection",
+        "setEditorRef": undefined,
+        "setSelection": [MockFunction hooks.selectedImage.setSelection],
+        "studioEndpointUrl": "sOmEoThERvaLue.cOm",
+        "updateContent": [Function],
+      }
+    }
+    id="sOMeiD"
+    onEditorChange={[Function]}
+  />
+</Provider>
+`;
+
+exports[`TinyMceWidget snapshots SourcecodeModal is not rendered 1`] = `
+<Provider
+  store={
+    {
+      "dispatch": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+      Symbol(Symbol.observable): [Function],
+    }
+  }
+>
+  <ImageUploadModal
+    clearSelection={[MockFunction hooks.selectedImage.clearSelection]}
+    close={[MockFunction modal.closeModal]}
+    editorRef={
+      {
+        "current": {
+          "value": "something",
+        },
+      }
+    }
+    editorType="problem"
+    images={
+      {
+        "current": [
+          {
+            "externalUrl": "/assets/sOmEaSsET",
+          },
+        ],
+      }
+    }
+    isOpen={false}
+    lmsEndpointUrl="sOmEvaLue.cOm"
+    selection="hooks.selectedImage.selection"
+    setSelection={[MockFunction hooks.selectedImage.setSelection]}
+  />
+  <Editor
+    disabled={false}
+    editorConfig={
+      {
+        "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
+        "content": undefined,
+        "editorContentHtml": undefined,
+        "editorRef": {
+          "current": {
+            "value": "something",
+          },
+        },
+        "editorType": "problem",
+        "images": {
+          "current": [
+            {
+              "externalUrl": "/assets/sOmEaSsET",
+            },
+          ],
+        },
+        "initializeEditor": undefined,
+        "isLibrary": false,
+        "learningContextId": "course+org+run",
+        "lmsEndpointUrl": "sOmEvaLue.cOm",
+        "minHeight": undefined,
+        "openImgModal": [MockFunction modal.openModal],
+        "openSourceCodeModal": [MockFunction modal.openModal],
+        "placeholder": undefined,
+        "selection": "hooks.selectedImage.selection",
+        "setEditorRef": undefined,
+        "setSelection": [MockFunction hooks.selectedImage.setSelection],
+        "studioEndpointUrl": "sOmEoThERvaLue.cOm",
+        "updateContent": [Function],
+      }
+    }
+    id="sOMeiD"
+    onEditorChange={[Function]}
+  />
+</Provider>
+`;
+
+exports[`TinyMceWidget snapshots renders as expected with default behavior 1`] = `
+<Provider
+  store={
+    {
+      "dispatch": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+      Symbol(Symbol.observable): [Function],
+    }
+  }
+>
+  <ImageUploadModal
+    clearSelection={[MockFunction hooks.selectedImage.clearSelection]}
+    close={[MockFunction modal.closeModal]}
+    editorRef={
+      {
+        "current": {
+          "value": "something",
+        },
+      }
+    }
+    editorType="text"
+    images={
+      {
+        "current": [
+          {
+            "externalUrl": "/assets/sOmEaSsET",
+          },
+        ],
+      }
+    }
+    isOpen={false}
+    lmsEndpointUrl="sOmEvaLue.cOm"
+    selection="hooks.selectedImage.selection"
+    setSelection={[MockFunction hooks.selectedImage.setSelection]}
+  />
+  <SourceCodeModal
+    close={[MockFunction modal.closeModal]}
+    editorRef={
+      {
+        "current": {
+          "value": "something",
+        },
+      }
+    }
+    isOpen={false}
+  />
+  <Editor
+    disabled={false}
+    editorConfig={
+      {
+        "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
+        "content": undefined,
+        "editorContentHtml": undefined,
+        "editorRef": {
+          "current": {
+            "value": "something",
+          },
+        },
+        "editorType": "text",
+        "images": {
+          "current": [
+            {
+              "externalUrl": "/assets/sOmEaSsET",
+            },
+          ],
+        },
+        "initializeEditor": undefined,
+        "isLibrary": false,
+        "learningContextId": "course+org+run",
+        "lmsEndpointUrl": "sOmEvaLue.cOm",
+        "minHeight": undefined,
+        "openImgModal": [MockFunction modal.openModal],
+        "openSourceCodeModal": [MockFunction modal.openModal],
+        "placeholder": undefined,
+        "selection": "hooks.selectedImage.selection",
+        "setEditorRef": undefined,
+        "setSelection": [MockFunction hooks.selectedImage.setSelection],
+        "studioEndpointUrl": "sOmEoThERvaLue.cOm",
+        "updateContent": [Function],
+      }
+    }
+    id="sOMeiD"
+    onEditorChange={[Function]}
+  />
+</Provider>
+`;

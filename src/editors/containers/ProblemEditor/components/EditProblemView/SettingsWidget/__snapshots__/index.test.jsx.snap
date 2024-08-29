@@ -1,0 +1,253 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SettingsWidget snapshot snapshot: renders Settings widget for Advanced Problem with correct widgets 1`] = `
+<div
+  className="settingsWidget ml-4"
+>
+  <div
+    className="mb-3"
+  >
+    <TypeCard
+      problemType="stringresponse"
+    />
+  </div>
+  <div
+    className="my-3"
+  >
+    <ScoringCard
+      defaultValue={2}
+    />
+  </div>
+  <div
+    className="mt-3"
+  >
+    <HintsCard
+      problemType="stringresponse"
+    />
+  </div>
+  <Fragment />
+  <div>
+    <Advanced
+      open={false}
+    >
+      <Body
+        className="collapsible-body small"
+      >
+        <Button
+          className="my-3 px-0 text-info-500"
+          size="inline"
+          variant="link"
+        >
+          <FormattedMessage
+            defaultMessage="Show advanced settings"
+            description="Button text to show advanced settings"
+            id="authoring.problemeditor.settings.showAdvancedButton"
+          />
+        </Button>
+      </Body>
+    </Advanced>
+  </div>
+  <Advanced
+    open={true}
+  >
+    <Body
+      className="collapsible-body"
+    >
+      <div
+        className="my-3"
+      >
+        <ShowAnswerCard
+          defaultValue="finished"
+        />
+      </div>
+      <div
+        className="my-3"
+      >
+        <ResetCard
+          defaultValue={false}
+        />
+      </div>
+      <div
+        className="my-3"
+      >
+        <TimerCard />
+      </div>
+      <div
+        className="my-3"
+      >
+        <SwitchToAdvancedEditorCard
+          problemType="stringresponse"
+        />
+      </div>
+    </Body>
+  </Advanced>
+</div>
+`;
+
+exports[`SettingsWidget snapshot snapshot: renders Settings widget page 1`] = `
+<div
+  className="settingsWidget ml-4"
+>
+  <div
+    className="mb-3"
+  >
+    <TypeCard
+      problemType="stringresponse"
+    />
+  </div>
+  <div
+    className="my-3"
+  >
+    <ScoringCard
+      defaultValue={2}
+    />
+  </div>
+  <div
+    className="mt-3"
+  >
+    <HintsCard
+      problemType="stringresponse"
+    />
+  </div>
+  <Fragment />
+  <div>
+    <Advanced
+      open={true}
+    >
+      <Body
+        className="collapsible-body small"
+      >
+        <Button
+          className="my-3 px-0 text-info-500"
+          size="inline"
+          variant="link"
+        >
+          <FormattedMessage
+            defaultMessage="Show advanced settings"
+            description="Button text to show advanced settings"
+            id="authoring.problemeditor.settings.showAdvancedButton"
+          />
+        </Button>
+      </Body>
+    </Advanced>
+  </div>
+  <Advanced
+    open={false}
+  >
+    <Body
+      className="collapsible-body"
+    >
+      <div
+        className="my-3"
+      >
+        <ShowAnswerCard
+          defaultValue="finished"
+        />
+      </div>
+      <div
+        className="my-3"
+      >
+        <ResetCard
+          defaultValue={false}
+        />
+      </div>
+      <div
+        className="my-3"
+      >
+        <TimerCard />
+      </div>
+      <div
+        className="my-3"
+      >
+        <SwitchToAdvancedEditorCard
+          problemType="stringresponse"
+        />
+      </div>
+    </Body>
+  </Advanced>
+</div>
+`;
+
+exports[`SettingsWidget snapshot snapshot: renders Settings widget page advanced settings visible 1`] = `
+<div
+  className="settingsWidget ml-4"
+>
+  <div
+    className="mb-3"
+  >
+    <TypeCard
+      problemType="stringresponse"
+    />
+  </div>
+  <div
+    className="my-3"
+  >
+    <ScoringCard
+      defaultValue={2}
+    />
+  </div>
+  <div
+    className="mt-3"
+  >
+    <HintsCard
+      problemType="stringresponse"
+    />
+  </div>
+  <Fragment />
+  <div>
+    <Advanced
+      open={false}
+    >
+      <Body
+        className="collapsible-body small"
+      >
+        <Button
+          className="my-3 px-0 text-info-500"
+          size="inline"
+          variant="link"
+        >
+          <FormattedMessage
+            defaultMessage="Show advanced settings"
+            description="Button text to show advanced settings"
+            id="authoring.problemeditor.settings.showAdvancedButton"
+          />
+        </Button>
+      </Body>
+    </Advanced>
+  </div>
+  <Advanced
+    open={true}
+  >
+    <Body
+      className="collapsible-body"
+    >
+      <div
+        className="my-3"
+      >
+        <ShowAnswerCard
+          defaultValue="finished"
+        />
+      </div>
+      <div
+        className="my-3"
+      >
+        <ResetCard
+          defaultValue={false}
+        />
+      </div>
+      <div
+        className="my-3"
+      >
+        <TimerCard />
+      </div>
+      <div
+        className="my-3"
+      >
+        <SwitchToAdvancedEditorCard
+          problemType="stringresponse"
+        />
+      </div>
+    </Body>
+  </Advanced>
+</div>
+`;

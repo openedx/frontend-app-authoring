@@ -1,0 +1,29 @@
+.expandable-mce {
+  .error {
+    outline: 2px solid #CA3A2F;
+  }
+
+  .mce-content-body {
+    padding: 10px;
+
+    p {
+      margin: 0;
+    }
+
+    blockquote {
+      margin: 16px 40px;
+    }
+  }
+  
+  *[contentEditable="false"] {
+    outline: 1px solid #D7D3D1;
+  }
+
+  *[contentEditable="true"] {
+    outline: 1px solid #707070;
+
+    &:focus, &:active {
+      outline: 2px solid #000000;
+    }
+  }
+}

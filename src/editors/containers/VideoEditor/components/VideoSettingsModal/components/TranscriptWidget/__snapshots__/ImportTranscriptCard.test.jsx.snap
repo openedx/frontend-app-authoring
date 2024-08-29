@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ImportTranscriptCard snapshots snapshots: renders as expected with default props 1`] = `
+<Stack
+  className="border rounded border-primary-200 p-4"
+  gap={3}
+>
+  <ActionRow
+    className="h5"
+  >
+    <FormattedMessage
+      defaultMessage="Import transcript from YouTube?"
+      description="Header for import transcript card"
+      id="authoring.videoEditor.transcripts.importCard.header"
+    />
+    <ActionRow.Spacer />
+    <IconButton
+      iconAs="Icon"
+      onClick={[Function]}
+      src={[MockFunction icons.Close]}
+    />
+  </ActionRow>
+  <FormattedMessage
+    defaultMessage="We found transcript for this video on YouTube. Would you like to import it now?"
+    description="Message for import transcript card asking user if they want to import transcript"
+    id="authoring.videoEditor.transcrtipts.importCard.message"
+  />
+  <Button
+    onClick={[MockFunction args.importTranscript]}
+    size="sm"
+    variant="outline-primary"
+  >
+    <FormattedMessage
+      defaultMessage="Import Transcript"
+      description="Label for youTube import transcript button"
+      id="authoring.videoEditor.transcripts.importButton.label"
+    />
+  </Button>
+</Stack>
+`;

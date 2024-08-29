@@ -1,0 +1,38 @@
+.dropzone-middle {
+  border: 2px dashed #CCCCCC;
+
+  &.active {
+    border: 2px solid #262626; /* change color when active */
+  }
+}
+
+.pgn__dropzone {
+  height: 96vh;
+  width: 100%;
+}
+
+.video-id-prompt {
+  input::placeholder {
+    color: #454545;
+    // color: #5E35B1;
+    font-weight: '500';
+    word-wrap: 'break-word';
+  }
+
+  button {
+    border: none !important;
+    background-color: #FFFFFF;
+  }
+
+  .btn-icon.url-submit-button {
+    &, &:active, &:hover {
+      background-color: transparent !important;
+      border: none !important;
+      color: #707070 !important;
+    }
+  }
+
+  .prompt-button {
+    background: rgba(239 234 247 / .70);
+  }
+}

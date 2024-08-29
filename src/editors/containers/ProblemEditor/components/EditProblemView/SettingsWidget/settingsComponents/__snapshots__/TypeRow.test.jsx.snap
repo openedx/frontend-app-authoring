@@ -1,0 +1,82 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TypeRow snapshot snapshot: renders type row setting card 1`] = `
+<Fragment>
+  <Button
+    className="d-flex p-0 flex-row justify-content-between w-100"
+    onClick={[MockFunction typeRowHooks.onClick]}
+    text={null}
+    variant="default"
+  >
+    <span
+      className="small text-primary-500"
+    >
+      Text Input Problem
+    </span>
+    <span
+      hidden={true}
+    >
+      <Icon
+        className="text-success"
+      />
+    </span>
+  </Button>
+  <hr
+    className="d-block"
+  />
+</Fragment>
+`;
+
+exports[`TypeRow snapshot snapshot: renders type row setting card last row 1`] = `
+<Fragment>
+  <Button
+    className="d-flex p-0 flex-row justify-content-between w-100"
+    onClick={[MockFunction typeRowHooks.onClick]}
+    text={null}
+    variant="default"
+  >
+    <span
+      className="small text-primary-500"
+    >
+      Text Input Problem
+    </span>
+    <span
+      hidden={true}
+    >
+      <Icon
+        className="text-success"
+      />
+    </span>
+  </Button>
+  <hr
+    className="d-none"
+  />
+</Fragment>
+`;
+
+exports[`TypeRow snapshot snapshot: renders type row setting card not selected 1`] = `
+<Fragment>
+  <Button
+    className="d-flex p-0 flex-row justify-content-between w-100"
+    onClick={[MockFunction typeRowHooks.onClick]}
+    text={null}
+    variant="default"
+  >
+    <span
+      className="small text-primary-500"
+    >
+      Text Input Problem
+    </span>
+    <span
+      hidden={false}
+    >
+      <Icon
+        className="text-success"
+      />
+    </span>
+  </Button>
+  <hr
+    className="d-block"
+  />
+</Fragment>
+`;

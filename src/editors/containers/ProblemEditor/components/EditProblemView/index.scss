@@ -1,0 +1,55 @@
+.editProblemView {
+  .editProblemView-settingsColumn {
+    width: 320px;
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+
+  .advancedEditorTopMargin {
+    margin-top: 40px;
+  }
+
+  .answer-option {
+    .pgn__form-checkbox,
+    .pgn__form-radio {
+      & + .pgn__form-label {
+        min-width: 1.1rem;
+      }
+    }
+  }
+
+  .settingsOption {
+    .pgn__form-checkbox .pgn__form-label {
+      min-width: .8rem;
+    }
+  }
+}
+
+.tinyMceWidget {
+  .tox-tinymce {
+    border-radius: .375rem;
+  }
+
+  .tox {
+    .tox-toolbar__primary {
+      background: none;
+    }
+  }
+
+  .tox-statusbar {
+    border-top: none;
+  }
+
+  .tox-toolbar__group:not(:last-of-type) {
+    // TODO: Find a way to override the border without !important
+    border-right: none !important;
+
+    &::after {
+      content: '';
+      position: relative;
+      left: 5px;
+      border: 1px solid #EAE6E5;
+      height: 24px;
+    }
+  }
+}

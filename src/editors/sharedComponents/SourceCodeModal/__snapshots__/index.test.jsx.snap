@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SourceCodeModal renders as expected with default behavior 1`] = `
+<BaseModal
+  bodyStyle={
+    {
+      "maxHeight": NaN,
+    }
+  }
+  close={[MockFunction]}
+  confirmAction={
+    <Button
+      0="S"
+      1="o"
+      2="M"
+      3="e"
+      4="v"
+      5="A"
+      6="l"
+      7="u"
+      8="e"
+      variant="primary"
+    >
+      <FormattedMessage
+        defaultMessage="Save"
+        description="Label for Save button for the source code editor"
+        id="authoring.texteditor.sourcecodemodal.next.label"
+      />
+    </Button>
+  }
+  footerAction={null}
+  headerComponent={null}
+  isFullscreenScroll={true}
+  isOpen={false}
+  size="xl"
+  title="Edit Source Code"
+>
+  <div
+    className="px-4.5 pt-2.5"
+  >
+    <injectIntl(ShimmedIntlComponent)
+      innerRef="moCKrEf"
+      value="mOckHtMl"
+    />
+  </div>
+</BaseModal>
+`;

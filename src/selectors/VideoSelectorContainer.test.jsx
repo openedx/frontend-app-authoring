@@ -2,7 +2,10 @@ import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 import VideoSelectorContainer from './VideoSelectorContainer';
 
-jest.mock('@edx/frontend-lib-content-components', () => ({ VideoSelectorPage: () => 'HeaderTitle' }));
+jest.mock('../editors/VideoSelectorPage', () => ({
+  default: function VideoSelectorPage() { return 'HeaderTitle'; },
+  __esModule: true, // Required to mock a default export
+}));
 
 jest.mock('react-router', () => ({
   ...jest.requireActual('react-router'), // use actual for all non-hook parts

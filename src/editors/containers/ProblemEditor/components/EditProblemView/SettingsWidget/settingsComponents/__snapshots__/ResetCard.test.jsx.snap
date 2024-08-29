@@ -1,0 +1,127 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ResetCard snapshot snapshot: renders reset true setting card 1`] = `
+<SettingsOption
+  className="resetCard"
+  extraSections={[]}
+  hasExpandableTextArea={false}
+  summary="False"
+  title="Show reset option"
+>
+  <div
+    className="halfSpacedMessage"
+  >
+    <span>
+      <FormattedMessage
+        defaultMessage="Determines whether a 'Reset' button is shown so the user may reset their answer, generally for use in practice or formative assessments."
+        description="Reset settings card text"
+        id="authoring.problemeditor.settings.reset.text"
+      />
+    </span>
+  </div>
+  <div
+    className="spacedMessage"
+  >
+    <Hyperlink
+      destination="sTuDioEndpOintUrl/settings/advanced/leArningCoNteXtId#show_reset_button"
+      target="_blank"
+    >
+      <FormattedMessage
+        defaultMessage="Set a default value in advanced settings"
+        description="Advanced settings link text"
+        id="authoring.problemeditor.settings.advancedSettingLink.text"
+      />
+    </Hyperlink>
+  </div>
+  <ButtonGroup
+    className="resetSettingsButtons mb-2"
+    size="sm"
+  >
+    <Button
+      onClick={[MockFunction resetCardHooks.setResetFalse]}
+      size="sm"
+      variant="primary"
+    >
+      <FormattedMessage
+        defaultMessage="False"
+        description="False option for reset"
+        id="authoring.problemeditor.settings.reset.false"
+      />
+    </Button>
+    <Button
+      onClick={[MockFunction resetCardHooks.setResetTrue]}
+      size="sm"
+      variant="outline-primary"
+    >
+      <FormattedMessage
+        defaultMessage="True"
+        description="True option for reset"
+        id="authoring.problemeditor.settings.reset.true"
+      />
+    </Button>
+  </ButtonGroup>
+</SettingsOption>
+`;
+
+exports[`ResetCard snapshot snapshot: renders reset true setting card 2`] = `
+<SettingsOption
+  className="resetCard"
+  extraSections={[]}
+  hasExpandableTextArea={false}
+  summary="True"
+  title="Show reset option"
+>
+  <div
+    className="halfSpacedMessage"
+  >
+    <span>
+      <FormattedMessage
+        defaultMessage="Determines whether a 'Reset' button is shown so the user may reset their answer, generally for use in practice or formative assessments."
+        description="Reset settings card text"
+        id="authoring.problemeditor.settings.reset.text"
+      />
+    </span>
+  </div>
+  <div
+    className="spacedMessage"
+  >
+    <Hyperlink
+      destination="sTuDioEndpOintUrl/settings/advanced/leArningCoNteXtId#show_reset_button"
+      target="_blank"
+    >
+      <FormattedMessage
+        defaultMessage="Set a default value in advanced settings"
+        description="Advanced settings link text"
+        id="authoring.problemeditor.settings.advancedSettingLink.text"
+      />
+    </Hyperlink>
+  </div>
+  <ButtonGroup
+    className="resetSettingsButtons mb-2"
+    size="sm"
+  >
+    <Button
+      onClick={[MockFunction resetCardHooks.setResetFalse]}
+      size="sm"
+      variant="outline-primary"
+    >
+      <FormattedMessage
+        defaultMessage="False"
+        description="False option for reset"
+        id="authoring.problemeditor.settings.reset.false"
+      />
+    </Button>
+    <Button
+      onClick={[MockFunction resetCardHooks.setResetTrue]}
+      size="sm"
+      variant="primary"
+    >
+      <FormattedMessage
+        defaultMessage="True"
+        description="True option for reset"
+        id="authoring.problemeditor.settings.reset.true"
+      />
+    </Button>
+  </ButtonGroup>
+</SettingsOption>
+`;

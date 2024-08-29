@@ -1,0 +1,85 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SocialShareWidget rendered with videoSharingEnabled false with default props should return null 1`] = `null`;
+
+exports[`SocialShareWidget rendered with videoSharingEnabled false with videoSharingEnabledForAll false and isLibrary true should return null 1`] = `null`;
+
+exports[`SocialShareWidget rendered with videoSharingEnabled false with videoSharingEnabledForCourse and isLibrary false and videoSharingEnabledForAll true should return null 1`] = `null`;
+
+exports[`SocialShareWidget rendered with videoSharingEnabled true and allowVideoSharing value equals false should have subtitle with text that reads Enabled 1`] = `
+<injectIntl(ShimmedIntlComponent)
+  fontSize="x-small"
+  subtitle="Disabled"
+  title="Social Sharing"
+>
+  <div>
+    <FormattedMessage
+      defaultMessage="Allow this video to be shareable to social media"
+      description="Description for sociail sharing setting"
+      id="authoring.videoeditor.socialShare.description"
+    />
+  </div>
+  <Form.Checkbox
+    checked={false}
+    className="mt-3"
+    disabled={false}
+    onChange={[Function]}
+  >
+    <div
+      className="small text-gray-700"
+    >
+      This video is shareable to social media
+    </div>
+  </Form.Checkbox>
+  <div
+    className="mt-3"
+  >
+    <Hyperlink
+      className="text-primary-500"
+      destination="sOMeURl.cOM"
+      target="_blank"
+    >
+      Learn more about social sharing
+    </Hyperlink>
+  </div>
+</injectIntl(ShimmedIntlComponent)>
+`;
+
+exports[`SocialShareWidget rendered with videoSharingEnabled true and allowVideoSharing value equals true should have subtitle with text that reads Enabled 1`] = `
+<injectIntl(ShimmedIntlComponent)
+  fontSize="x-small"
+  subtitle="Enabled"
+  title="Social Sharing"
+>
+  <div>
+    <FormattedMessage
+      defaultMessage="Allow this video to be shareable to social media"
+      description="Description for sociail sharing setting"
+      id="authoring.videoeditor.socialShare.description"
+    />
+  </div>
+  <Form.Checkbox
+    checked={true}
+    className="mt-3"
+    disabled={false}
+    onChange={[Function]}
+  >
+    <div
+      className="small text-gray-700"
+    >
+      This video is shareable to social media
+    </div>
+  </Form.Checkbox>
+  <div
+    className="mt-3"
+  >
+    <Hyperlink
+      className="text-primary-500"
+      destination="sOMeURl.cOM"
+      target="_blank"
+    >
+      Learn more about social sharing
+    </Hyperlink>
+  </div>
+</injectIntl(ShimmedIntlComponent)>
+`;

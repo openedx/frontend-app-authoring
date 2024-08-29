@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`QuestionWidget render snapshot: renders correct default 1`] = `
+<div
+  className="tinyMceWidget"
+>
+  <div
+    className="h4 mb-3"
+  >
+    <FormattedMessage
+      defaultMessage="Question"
+      description="Question Title"
+      id="authoring.questionwidget.question.questionWidgetTitle"
+    />
+  </div>
+  <[object Object]
+    editorContentHtml="This is my question"
+    editorType="question"
+    id="question"
+    minHeight={150}
+    placeholder="Enter your question"
+    setEditorRef={[MockFunction prepareEditorRef.setEditorRef]}
+  />
+</div>
+`;

@@ -145,10 +145,6 @@ Feature Description
 
 When a corresponding waffle flag is set, upon editing a block in Studio, the view is rendered by this MFE instead of by the XBlock's authoring view.  The user remains in Studio.
 
-.. note::
-
-   The new editors themselves are currently implemented in a repository outside ``openedx``: `frontend-lib-content-components <https://github.com/edx/frontend-lib-content-components/>`_, a dependency of this MFE.  This repository is slated to be moved to the ``openedx`` org, however.
-
 Feature: New Proctoring Exams View
 ==================================
 

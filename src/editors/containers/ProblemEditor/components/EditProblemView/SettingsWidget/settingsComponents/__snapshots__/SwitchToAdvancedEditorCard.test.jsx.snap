@@ -1,0 +1,59 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SwitchToAdvancedEditorCard snapshot snapshot: SwitchToAdvancedEditorCard 1`] = `
+<Card
+  className="border border-light-700 shadow-none"
+>
+  <BaseModal
+    bodyStyle={null}
+    close={[Function]}
+    confirmAction={
+      <Button
+        className={null}
+        onClick={[Function]}
+        text={null}
+        variant="primary"
+      >
+        <FormattedMessage
+          defaultMessage="Switch to advanced editor"
+          description="message to confirm that a user wants to use the advanced editor"
+          id="authoring.problemeditor.settings.switchtoadvancededitor.ConfirmSwitchButtonLabel"
+        />
+      </Button>
+    }
+    footerAction={null}
+    headerComponent={null}
+    isFullscreenScroll={true}
+    isOpen={false}
+    size="md"
+    title={
+      <FormattedMessage
+        defaultMessage="Convert to OLX?"
+        description="message to confirm that a user wants to use the advanced editor"
+        id="authoring.problemeditor.settings.switchtoadvancededitor.ConfirmSwitchMessageTitle"
+      />
+    }
+  >
+    <FormattedMessage
+      defaultMessage="If you use the advanced editor, this problem will be converted to OLX and you will not be able to return to the simple editor."
+      description="message to confirm that a user wants to use the advanced editor"
+      id="authoring.problemeditor.settings.switchtoadvancededitor.ConfirmSwitchMessage"
+    />
+  </BaseModal>
+  <Button
+    className="my-3 ml-2 py-0"
+    onClick={[Function]}
+    size="sm"
+    text={null}
+    variant="link"
+  >
+    <FormattedMessage
+      defaultMessage="Switch to advanced editor"
+      description="button to switch to the advanced mode of the editor."
+      id="authoring.problemeditor.settings.switchtoadvancededitor.label"
+    />
+  </Button>
+</Card>
+`;
+
+exports[`SwitchToAdvancedEditorCard snapshot snapshot: SwitchToAdvancedEditorCard returns null 1`] = `null`;

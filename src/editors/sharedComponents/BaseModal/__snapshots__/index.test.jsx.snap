@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BaseModal ImageUploadModal template component snapshot 1`] = `
+<ModalDialog
+  hasCloseButton={true}
+  isFullscreenOnMobile={true}
+  isFullscreenScroll={true}
+  isOpen={true}
+  onClose={[MockFunction props.close]}
+  size="lg"
+  title="props.title node"
+  variant="default"
+>
+  <ModalDialog.Header
+    style={
+      {
+        "boxShadow": "2px 2px 5px rgba(0, 0, 0, 0.3)",
+        "zIndex": 1,
+      }
+    }
+  >
+    <ModalDialog.Title>
+      props.title node
+    </ModalDialog.Title>
+  </ModalDialog.Header>
+  <Scrollable
+    style={null}
+  >
+    <ModalDialog.Body>
+      props.children node
+    </ModalDialog.Body>
+  </Scrollable>
+  <ModalDialog.Footer>
+    <ActionRow>
+      props.footerAction node
+      <ActionRow.Spacer />
+      <ModalDialog.CloseButton
+        onClick={[MockFunction props.close]}
+        variant="tertiary"
+      >
+        <FormattedMessage
+          defaultMessage="Cancel"
+          description="Label for cancel button."
+          id="authoring.baseModal.cancelButtonLabel"
+        />
+      </ModalDialog.CloseButton>
+      props.confirmAction node
+    </ActionRow>
+  </ModalDialog.Footer>
+</ModalDialog>
+`;

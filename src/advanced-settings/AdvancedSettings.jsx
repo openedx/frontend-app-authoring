@@ -6,7 +6,7 @@ import {
 } from '@openedx/paragon';
 import { CheckCircle, Info, Warning } from '@openedx/paragon/icons';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import Placeholder from '@edx/frontend-lib-content-components';
+import Placeholder from '../editors/Placeholder';
 
 import AlertProctoringError from '../generic/AlertProctoringError';
 import { useModel } from '../generic/model-store';

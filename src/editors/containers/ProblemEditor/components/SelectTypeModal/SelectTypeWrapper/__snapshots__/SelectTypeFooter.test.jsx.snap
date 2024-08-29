@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SelectTypeFooter snapshot 1`] = `
+<div
+  className="editor-footer fixed-bottom"
+>
+  <ModalDialog.Footer
+    className="border-top-0"
+  >
+    <ActionRow>
+      <ActionRow.Spacer />
+      <Button
+        aria-label="Cancel"
+        onClick={[MockFunction onCancel]}
+        variant="tertiary"
+      >
+        <FormattedMessage
+          defaultMessage="Cancel"
+          description="Label for cancel button."
+          id="authoring.problemeditor.selecttype.cancelButton.label"
+        />
+      </Button>
+      <Button
+        aria-label="Select"
+        disabled={true}
+      >
+        <FormattedMessage
+          defaultMessage="Select"
+          description="Label for select button."
+          id="authoring.problemeditor.selecttype.selectButton.label"
+        />
+      </Button>
+    </ActionRow>
+  </ModalDialog.Footer>
+</div>
+`;

@@ -1,0 +1,130 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LicenseDisplay snapshots snapshots: renders as expected with default props 1`] = `
+<Stack
+  gap={3}
+>
+  <div
+    className="x-small"
+  >
+    <FormattedMessage
+      defaultMessage="License Display"
+      description="Title for license display subsection"
+      id="authoring.videoeditor.license.displaySubsection.title"
+    />
+  </div>
+  <div
+    className="small border border-gray-300 rounded p-4"
+  >
+    <injectIntl(ShimmedIntlComponent)
+      details={{}}
+      license="all-rights-reserved"
+    />
+    <div
+      className="x-small mt-3"
+    >
+      FormattedMessage component with license description
+    </div>
+  </div>
+</Stack>
+`;
+
+exports[`LicenseDisplay snapshots snapshots: renders as expected with level set to block 1`] = `
+<Stack
+  gap={3}
+>
+  <div
+    className="x-small"
+  >
+    <FormattedMessage
+      defaultMessage="License Display"
+      description="Title for license display subsection"
+      id="authoring.videoeditor.license.displaySubsection.title"
+    />
+  </div>
+  <div
+    className="small border border-gray-300 rounded p-4"
+  >
+    <injectIntl(ShimmedIntlComponent)
+      details={{}}
+      license="all-rights-reserved"
+    />
+    <div
+      className="x-small mt-3"
+    >
+      FormattedMessage component with license description
+    </div>
+  </div>
+</Stack>
+`;
+
+exports[`LicenseDisplay snapshots snapshots: renders as expected with level set to block and license set to Creative Commons 1`] = `
+<Stack
+  gap={3}
+>
+  <div
+    className="x-small"
+  >
+    <FormattedMessage
+      defaultMessage="License Display"
+      description="Title for license display subsection"
+      id="authoring.videoeditor.license.displaySubsection.title"
+    />
+  </div>
+  <div
+    className="small border border-gray-300 rounded p-4"
+  >
+    <injectIntl(ShimmedIntlComponent)
+      details={{}}
+      license="creative-commons"
+    />
+    <div
+      className="x-small mt-3"
+    >
+      FormattedMessage component with license description
+    </div>
+  </div>
+  <Hyperlink
+    className="text-primary-500 x-small"
+    destination="https://creativecommons.org/about"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="View license details"
+      description="Label for view license details button"
+      id="authoring.videoeditor.license.viewLicenseDetailsLabel.label"
+    />
+  </Hyperlink>
+</Stack>
+`;
+
+exports[`LicenseDisplay snapshots snapshots: renders as expected with level set to block and license set to select 1`] = `null`;
+
+exports[`LicenseDisplay snapshots snapshots: renders as expected with level set to library 1`] = `
+<Stack
+  gap={3}
+>
+  <div
+    className="x-small"
+  >
+    <FormattedMessage
+      defaultMessage="License Display"
+      description="Title for license display subsection"
+      id="authoring.videoeditor.license.displaySubsection.title"
+    />
+  </div>
+  <div
+    className="small border border-gray-300 rounded p-4"
+  >
+    <injectIntl(ShimmedIntlComponent)
+      details={{}}
+      license="all-rights-reserved"
+    />
+    <div
+      className="x-small mt-3"
+    >
+      FormattedMessage component with license description
+    </div>
+  </div>
+</Stack>
+`;

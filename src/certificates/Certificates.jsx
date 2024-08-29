@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet';
 import PropTypes from 'prop-types';
-import Placeholder from '@edx/frontend-lib-content-components';
 
+import Placeholder from '../editors/Placeholder';
 import { RequestStatus } from '../data/constants';
 import Loading from '../generic/Loading';
 import useCertificates from './hooks/useCertificates';
