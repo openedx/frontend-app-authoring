@@ -15,7 +15,7 @@ interface ComponentInfoProps {
   usageKey: string;
 }
 
-const ComponentInfo= ({ usageKey }: ComponentInfoProps) => {
+const ComponentInfo = ({ usageKey }: ComponentInfoProps) => {
   const intl = useIntl();
 
   return (

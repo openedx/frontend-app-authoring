@@ -19,7 +19,6 @@ import {
   getXBlockFields,
   updateXBlockFields,
   getXBlockRender,
-  getXBlockHandlerUrl,
 } from './api';
 
 const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {

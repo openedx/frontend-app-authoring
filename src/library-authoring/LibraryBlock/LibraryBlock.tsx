@@ -1,3 +1,4 @@
+/* eslint-disable react/require-default-props */
 import React, {
   useEffect, useMemo, useRef, useState,
 } from 'react';
