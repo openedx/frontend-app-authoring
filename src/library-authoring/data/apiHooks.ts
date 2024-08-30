@@ -18,6 +18,8 @@ import {
   libraryPasteClipboard,
   getXBlockFields,
   updateXBlockFields,
+  getXBlockRender,
+  getXBlockHandlerUrl,
 } from './api';
 
 const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
@@ -52,12 +54,29 @@ export const libraryAuthoringQueryKeys = {
     'content',
     'libraryBlockTypes',
   ],
+  // FixMe: Move to xblockQueryKeys
   xblockFields: (contentLibraryId: string, usageKey: string) => [
-    ...libraryAuthoringQueryKeys.all,
     ...libraryAuthoringQueryKeys.contentLibrary(contentLibraryId),
     'content',
-    'xblockFields',
     usageKey,
+    'xblockFields',
+  ],
+};
+
+export const xblockQueryKeys = {
+  all: ['xblock'],
+  /**
+   * Base key for data specific to a xblock
+   */
+  xblock: (usageKey?: string) => [...xblockQueryKeys.all, usageKey],
+  render: (usageKey: string) => [
+    ...xblockQueryKeys.xblock(usageKey),
+    'render',
+  ],
+  handlerUrl: (usageKey: string, handlerName: string) => [
+    ...xblockQueryKeys.xblock(usageKey),
+    'handlerUrl',
+    handlerName,
   ],
 };
 
@@ -209,3 +228,19 @@ export const useUpdateXBlockFields = (contentLibraryId: string, usageKey: string
     },
   });
 };
+
+export const useXBlockRender = (usageKey: string) => (
+  useQuery({
+    queryKey: xblockQueryKeys.render(usageKey),
+    queryFn: () => getXBlockRender(usageKey),
+    enabled: !!usageKey,
+  })
+);
+
+export const useXBlockHandlerUrl = (usageKey: string, handlerName: string) => (
+  useQuery({
+    queryKey: xblockQueryKeys.handlerUrl(usageKey, handlerName),
+    queryFn: () => getXBlockHandlerUrl(usageKey, handlerName),
+    enabled: !!usageKey,
+  })
+);

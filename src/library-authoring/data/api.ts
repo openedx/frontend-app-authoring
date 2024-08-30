@@ -7,27 +7,43 @@ const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
  * Get the URL for the content library API.
  */
 export const getContentLibraryApiUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/`;
+
 /**
  * Get the URL for get block types of library.
  */
 export const getLibraryBlockTypesUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/block_types/`;
+
 /**
  * Get the URL for create content in library.
  */
 export const getCreateLibraryBlockUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/blocks/`;
+
 export const getContentLibraryV2ListApiUrl = () => `${getApiBaseUrl()}/api/libraries/v2/`;
+
 /**
  * Get the URL for commit/revert changes in library.
  */
 export const getCommitLibraryChangesUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/commit/`;
+
 /**
  * Get the URL for paste clipboard content into library.
  */
 export const getLibraryPasteClipboardUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/paste_clipboard/`;
+
 /**
   * Get the URL for the xblock metadata API.
   */
 export const getXBlockFieldsApiUrl = (usageKey: string) => `${getApiBaseUrl()}/api/xblock/v2/xblocks/${usageKey}/fields/`;
+
+/**
+  * Get the URL that render the XBlock in the LMS.
+  */
+export const getXBlockRenderUrl = (usageKey: string) => `${getApiBaseUrl()}/api/xblock/v2/xblocks/${usageKey}/view/student_view/`;
+
+/**
+ * Get the URL for the xblock handler API.
+ */
+export const getXBlockHandlerUrlUrl = (usageKey: string, handlerName: string) => `${getApiBaseUrl()}/api/xblock/v2/xblocks/${usageKey}/handler_url/${handlerName}/`;
 
 export interface ContentLibrary {
   id: string;
@@ -125,6 +141,18 @@ export interface UpdateXBlockFieldsRequest {
   metadata?: {
     display_name?: string;
   };
+}
+
+export interface XBlockRenderResource {
+  data: string;
+  kind: 'url';
+  mimetype: string;
+  placement: 'head' | 'foot';
+}
+
+export interface XBlockRenderResponse {
+  content: string;
+  resources: XBlockRenderResource[];
 }
 
 /**
@@ -244,3 +272,19 @@ export async function updateXBlockFields(usageKey:string, xblockData: UpdateXBlo
   const client = getAuthenticatedHttpClient();
   await client.post(getXBlockFieldsApiUrl(usageKey), xblockData);
 }
+
+/**
+  * Get rendered xblock
+ */
+export async function getXBlockRender(usageKey: string): Promise<XBlockRenderResponse> {
+  const { data } = await getAuthenticatedHttpClient().get(getXBlockRenderUrl(usageKey));
+  return camelCaseObject(data);
+}
+
+/**
+  * Get the URL of the xblock handler.
+ */
+export const getXBlockHandlerUrl = async (usageKey: string, handlerName: string): Promise<string> => {
+  const { data } = await getAuthenticatedHttpClient().get(getXBlockHandlerUrlUrl(usageKey, handlerName));
+  return data.handler_url;
+};
