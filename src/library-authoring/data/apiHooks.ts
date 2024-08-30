@@ -54,7 +54,7 @@ export const libraryAuthoringQueryKeys = {
     'content',
     'libraryBlockTypes',
   ],
-  // FixMe: Move to xblockQueryKeys
+  // ToDo: Move to xblockQueryKeys
   xblockFields: (contentLibraryId: string, usageKey: string) => [
     ...libraryAuthoringQueryKeys.contentLibrary(contentLibraryId),
     'content',
@@ -72,11 +72,6 @@ export const xblockQueryKeys = {
   render: (usageKey: string) => [
     ...xblockQueryKeys.xblock(usageKey),
     'render',
-  ],
-  handlerUrl: (usageKey: string, handlerName: string) => [
-    ...xblockQueryKeys.xblock(usageKey),
-    'handlerUrl',
-    handlerName,
   ],
 };
 
@@ -233,14 +228,6 @@ export const useXBlockRender = (usageKey: string) => (
   useQuery({
     queryKey: xblockQueryKeys.render(usageKey),
     queryFn: () => getXBlockRender(usageKey),
-    enabled: !!usageKey,
-  })
-);
-
-export const useXBlockHandlerUrl = (usageKey: string, handlerName: string) => (
-  useQuery({
-    queryKey: xblockQueryKeys.handlerUrl(usageKey, handlerName),
-    queryFn: () => getXBlockHandlerUrl(usageKey, handlerName),
     enabled: !!usageKey,
   })
 );

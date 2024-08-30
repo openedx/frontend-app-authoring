@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { useXBlockRender } from '../data/apiHooks';
-import { getXBlockHandlerUrl } from '../data/api';
 import { LibraryBlock } from '../LibraryBlock';
+import { getXBlockHandlerUrl } from '../data/api';
+import { useXBlockRender } from '../data/apiHooks';
 
 interface ComponentPreviewProps {
   usageKey: string;
@@ -11,7 +11,7 @@ interface ComponentPreviewProps {
 const ComponentPreview = ({ usageKey }: ComponentPreviewProps) => {
   const { data: view } = useXBlockRender(usageKey);
 
-  const getHandlerUrl = () => getXBlockHandlerUrl(usageKey, 'handler_name');
+  const getHandlerUrl = () => getXBlockHandlerUrl(usageKey);
 
   return (
     <div>

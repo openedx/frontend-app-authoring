@@ -3,11 +3,17 @@ import React, {
 } from 'react';
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
 
+import type { XBlockRenderResponse } from '../data/api';
 import wrapBlockHtmlForIFrame from './wrap';
 
 // FixMe: We need this?
 ensureConfig(['LMS_BASE_URL', 'SECURE_ORIGIN_XBLOCK_BOOTSTRAP_HTML_URL'], 'library block component');
 
+interface LibraryBlockProps {
+  getHandlerUrl: (usageId: string) => Promise<string>;
+  onBlockNotification?: (event: { eventType: string; [key: string]: any }) => void;
+  view: XBlockRenderResponse
+}
 /**
  * React component that displays an XBlock in a sandboxed IFrame.
  *
@@ -17,7 +23,7 @@ ensureConfig(['LMS_BASE_URL', 'SECURE_ORIGIN_XBLOCK_BOOTSTRAP_HTML_URL'], 'libra
  * cannot access things like the user's cookies, nor can it make GET/POST
  * requests as the user. However, it is allowed to call any XBlock handlers.
  */
-const LibraryBlock = ({ getHandlerUrl, onBlockNotification, view }) => {
+const LibraryBlock = ({ getHandlerUrl, onBlockNotification, view }: LibraryBlockProps) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [iFrameHeight, setIFrameHeight] = useState(400);
 

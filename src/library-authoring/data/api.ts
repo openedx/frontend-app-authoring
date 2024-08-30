@@ -42,8 +42,9 @@ export const getXBlockRenderUrl = (usageKey: string) => `${getApiBaseUrl()}/api/
 
 /**
  * Get the URL for the xblock handler API.
+ * The string `handler_name` is a placeholder for the name of the handler.
  */
-export const getXBlockHandlerUrlUrl = (usageKey: string, handlerName: string) => `${getApiBaseUrl()}/api/xblock/v2/xblocks/${usageKey}/handler_url/${handlerName}/`;
+export const getXBlockHandlerUrlUrl = (usageKey: string) => `${getApiBaseUrl()}/api/xblock/v2/xblocks/${usageKey}/handler_url/handler_name/`;
 
 export interface ContentLibrary {
   id: string;
@@ -284,7 +285,7 @@ export async function getXBlockRender(usageKey: string): Promise<XBlockRenderRes
 /**
   * Get the URL of the xblock handler.
  */
-export const getXBlockHandlerUrl = async (usageKey: string, handlerName: string): Promise<string> => {
-  const { data } = await getAuthenticatedHttpClient().get(getXBlockHandlerUrlUrl(usageKey, handlerName));
+export const getXBlockHandlerUrl = async (usageKey: string): Promise<string> => {
+  const { data } = await getAuthenticatedHttpClient().get(getXBlockHandlerUrlUrl(usageKey));
   return data.handler_url;
 };
