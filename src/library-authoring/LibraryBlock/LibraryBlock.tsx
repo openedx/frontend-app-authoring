@@ -1,5 +1,5 @@
 import React, {
-  useCallback, useEffect, useRef, useState,
+  useEffect, useMemo, useRef, useState,
 } from 'react';
 import { ensureConfig, getConfig } from '@edx/frontend-platform';
 
@@ -19,15 +19,25 @@ ensureConfig(['LMS_BASE_URL', 'SECURE_ORIGIN_XBLOCK_BOOTSTRAP_HTML_URL'], 'libra
  */
 const LibraryBlock = ({ getHandlerUrl, onBlockNotification, view }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [html, setHtml] = useState<string | null>(null);
   const [iFrameHeight, setIFrameHeight] = useState(400);
-  const [iFrameKey, setIFrameKey] = useState(0);
+
+  const html = useMemo(() => {
+    if (!view) {
+      return null;
+    }
+
+    return wrapBlockHtmlForIFrame(
+      view.content,
+      view.resources,
+      getConfig().LMS_BASE_URL,
+    );
+  }, [view]);
 
   /**
    * Handle any messages we receive from the XBlock Runtime code in the IFrame.
    * See wrap.ts to see the code that sends these messages.
    */
-  const receivedWindowMessage = useCallback(async (event) => {
+  const receivedWindowMessage = async (event) => {
     if (!iframeRef.current || event.source !== iframeRef.current.contentWindow) {
       return; // This is some other random message.
     }
@@ -54,24 +64,7 @@ const LibraryBlock = ({ getHandlerUrl, onBlockNotification, view }) => {
         });
       }
     }
-  }, [html]);
-
-  const processView = useCallback(() => {
-    if (!view) {
-      return;
-    }
-
-    const newHtml = wrapBlockHtmlForIFrame(
-      view.content,
-      view.resources,
-      getConfig().LMS_BASE_URL,
-    );
-
-    // Load the XBlock HTML into the IFrame:
-    //   iframe will only re-render in react when its property changes (key here)
-    setHtml(newHtml);
-    setIFrameKey(prevValue => prevValue + 1);
-  }, [view]);
+  };
 
   /**
    * Load the XBlock data from the LMS and then inject it into our IFrame.
@@ -82,12 +75,10 @@ const LibraryBlock = ({ getHandlerUrl, onBlockNotification, view }) => {
     // with the surrounding UI.
     window.addEventListener('message', receivedWindowMessage);
 
-    processView();
-
     return () => {
       window.removeEventListener('message', receivedWindowMessage);
     };
-  }, [view, html]);
+  }, [view]);
 
   /* Only draw the iframe if the HTML has already been set.  This is because xblock-bootstrap.html will only request
    * HTML once, upon being rendered. */
@@ -107,7 +98,7 @@ const LibraryBlock = ({ getHandlerUrl, onBlockNotification, view }) => {
     }}
     >
       <iframe
-        key={iFrameKey}
+        key={view.content}
         ref={iframeRef}
         title="block"
         src={getConfig().SECURE_ORIGIN_XBLOCK_BOOTSTRAP_HTML_URL || 'https://metadata-test233.s3.amazonaws.com/xblock-bootstrap.html'}
