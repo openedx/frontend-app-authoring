@@ -33,7 +33,7 @@ const useStudioHome = (isPaginated = false) => {
 
   useEffect(() => {
     if (!isPaginated) {
-      dispatch(fetchStudioHomeData(location.search ?? ''));
+      dispatch(fetchStudioHomeData(location.search ?? '', false, { active_only: true }));
       setShowNewCourseContainer(false);
     }
   }, [location.search]);
@@ -41,21 +41,21 @@ const useStudioHome = (isPaginated = false) => {
   useEffect(() => {
     if (isPaginated) {
       const firstPage = 1;
-      dispatch(fetchStudioHomeData(location.search ?? '', false, { page: firstPage }, true));
+      dispatch(fetchStudioHomeData(location.search ?? '', false, { page: firstPage, active_only: true }, true));
     }
   }, []);
 
   useEffect(() => {
     if (courseCreatorSavingStatus === RequestStatus.SUCCESSFUL) {
       dispatch(updateSavingStatuses({ courseCreatorSavingStatus: '' }));
-      dispatch(fetchStudioHomeData());
+      dispatch(fetchStudioHomeData('', false, { active_only: true }));
     }
   }, [courseCreatorSavingStatus]);
 
   useEffect(() => {
     if (deleteNotificationSavingStatus === RequestStatus.SUCCESSFUL) {
       dispatch(updateSavingStatuses({ courseCreatorSavingStatus: '' }));
-      dispatch(fetchStudioHomeData());
+      dispatch(fetchStudioHomeData('', false, { active_only: true }));
     } else if (deleteNotificationSavingStatus === RequestStatus.FAILED) {
       dispatch(updateSavingStatuses({ deleteNotificationSavingStatus: '' }));
     }
