@@ -100,7 +100,6 @@ const LibraryBlock = ({ getHandlerUrl, onBlockNotification, view }: LibraryBlock
       position: 'relative',
       overflow: 'hidden',
       minHeight: '200px',
-      margin: '12px',
       border: '1px solid #ccc',
     }}
     >
@@ -108,6 +107,7 @@ const LibraryBlock = ({ getHandlerUrl, onBlockNotification, view }: LibraryBlock
         key={view.content}
         ref={iframeRef}
         title="block"
+        /* FixMe: Remove hardcoded URL */
         src={getConfig().SECURE_ORIGIN_XBLOCK_BOOTSTRAP_HTML_URL || 'https://metadata-test233.s3.amazonaws.com/xblock-bootstrap.html'}
         data-testid="block-preview"
         style={{
