@@ -8,7 +8,7 @@ const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
  */
 export const getContentLibraryApiUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/`;
 /**
- * Get the URL for get block types of library.
+ * Get the URL for getting block types of a library (what types can be created).
  */
 export const getLibraryBlockTypesUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/block_types/`;
 /**
@@ -128,13 +128,12 @@ export interface UpdateXBlockFieldsRequest {
 }
 
 /**
- * Fetch block types of a library
+ * Fetch the list of XBlock types that can be added to this library
  */
-export async function getLibraryBlockTypes(libraryId?: string): Promise<LibraryBlockType[]> {
+export async function getLibraryBlockTypes(libraryId: string): Promise<LibraryBlockType[]> {
   if (!libraryId) {
-    throw new Error('libraryId is required');
+    throw new Error('The current API for block types requires a libraryId.');
   }
-
   const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockTypesUrl(libraryId));
   return camelCaseObject(data);
 }
@@ -142,11 +141,10 @@ export async function getLibraryBlockTypes(libraryId?: string): Promise<LibraryB
 /**
  * Fetch a content library by its ID.
  */
-export async function getContentLibrary(libraryId?: string): Promise<ContentLibrary> {
+export async function getContentLibrary(libraryId: string): Promise<ContentLibrary> {
   if (!libraryId) {
-    throw new Error('libraryId is required');
+    throw new Error('libraryId is required for getContentLibrary / useContentLibrary');
   }
-
   const { data } = await getAuthenticatedHttpClient().get(getContentLibraryApiUrl(libraryId));
   return camelCaseObject(data);
 }
