@@ -7,6 +7,7 @@ import {
   type QueryClient,
 } from '@tanstack/react-query';
 
+import { getLibraryId } from '../components/utils';
 import {
   type GetLibrariesV2CustomParams,
   type ContentLibrary,
@@ -22,6 +23,7 @@ import {
   libraryPasteClipboard,
   getXBlockFields,
   updateXBlockFields,
+  getXBlockOLX,
 } from './api';
 
 const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
@@ -56,12 +58,21 @@ export const libraryAuthoringQueryKeys = {
     'content',
     'libraryBlockTypes',
   ],
-  xblockFields: (contentLibraryId: string, usageKey: string) => [
+  xblockFields: (usageKey: string) => [
     ...libraryAuthoringQueryKeys.all,
-    ...libraryAuthoringQueryKeys.contentLibrary(contentLibraryId),
+    ...libraryAuthoringQueryKeys.contentLibrary(getLibraryId(usageKey)),
     'content',
-    'xblockFields',
+    'xblock',
     usageKey,
+    'fields',
+  ],
+  xblockOLX: (usageKey: string) => [
+    ...libraryAuthoringQueryKeys.all,
+    ...libraryAuthoringQueryKeys.contentLibrary(getLibraryId(usageKey)),
+    'content',
+    'xblock',
+    usageKey,
+    'OLX',
   ],
 };
 
@@ -77,7 +88,7 @@ export const libraryAuthoringQueryKeys = {
  * @param usageKey The usage ID of the XBlock ("lb:...")
  */
 export function invalidateComponentData(queryClient: QueryClient, contentLibraryId: string, usageKey: string) {
-  queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.xblockFields(contentLibraryId, usageKey) });
+  queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.xblockFields(usageKey) });
   queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, contentLibraryId) });
 }
 
@@ -188,20 +199,21 @@ export const useLibraryPasteClipboard = () => {
   });
 };
 
-export const useXBlockFields = (contentLibrayId: string, usageKey: string) => (
+export const useXBlockFields = (usageKey: string) => (
   useQuery({
-    queryKey: libraryAuthoringQueryKeys.xblockFields(contentLibrayId, usageKey),
+    queryKey: libraryAuthoringQueryKeys.xblockFields(usageKey),
     queryFn: () => getXBlockFields(usageKey),
     enabled: !!usageKey,
   })
 );
 
-export const useUpdateXBlockFields = (contentLibraryId: string, usageKey: string) => {
+export const useUpdateXBlockFields = (usageKey: string) => {
+  const contentLibraryId = getLibraryId(usageKey);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: UpdateXBlockFieldsRequest) => updateXBlockFields(usageKey, data),
     onMutate: async (data) => {
-      const queryKey = libraryAuthoringQueryKeys.xblockFields(contentLibraryId, usageKey);
+      const queryKey = libraryAuthoringQueryKeys.xblockFields(usageKey);
       const previousBlockData = queryClient.getQueriesData(queryKey)[0][1] as XBlockFields;
       const formatedData = camelCaseObject(data);
 
@@ -220,7 +232,7 @@ export const useUpdateXBlockFields = (contentLibraryId: string, usageKey: string
     },
     onError: (_err, _data, context) => {
       queryClient.setQueryData(
-        libraryAuthoringQueryKeys.xblockFields(contentLibraryId, usageKey),
+        libraryAuthoringQueryKeys.xblockFields(usageKey),
         context?.previousBlockData,
       );
     },
@@ -229,3 +241,11 @@ export const useUpdateXBlockFields = (contentLibraryId: string, usageKey: string
     },
   });
 };
+
+export const useXBlockOLX = (usageKey: string) => (
+  useQuery({
+    queryKey: libraryAuthoringQueryKeys.xblockOLX(usageKey),
+    queryFn: () => getXBlockOLX(usageKey),
+    enabled: !!usageKey,
+  })
+);
