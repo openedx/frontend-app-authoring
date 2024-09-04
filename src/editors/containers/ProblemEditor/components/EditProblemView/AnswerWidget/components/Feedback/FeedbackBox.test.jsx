@@ -8,6 +8,9 @@ const answerWithFeedback = {
   selectedFeedback: 'some feedback',
   unselectedFeedback: 'unselectedFeedback',
   problemType: 'sOMepRObleM',
+  images: {},
+  isLibrary: false,
+  learningContextId: 'course+org+run',
 };
 
 const props = {

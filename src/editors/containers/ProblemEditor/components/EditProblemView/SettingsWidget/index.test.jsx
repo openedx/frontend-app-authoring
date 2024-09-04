@@ -30,6 +30,9 @@ describe('SettingsWidget', () => {
       showanswer: 'finished',
       showResetButton: false,
     },
+    images: {},
+    isLibrary: false,
+    learningContextId: 'course+org+run',
   };
 
   describe('behavior', () => {
