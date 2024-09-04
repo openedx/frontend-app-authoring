@@ -103,8 +103,14 @@ export const useContentSearchResults = ({
     [pages],
   );
 
+  const collectionHits = React.useMemo(
+    () => pages?.reduce((allHits, page) => [...allHits, ...page.collectionHits], []) ?? [],
+    [pages],
+  );
+
   return {
     hits,
+    collectionHits,
     // The distribution of block type filter options
     blockTypes: pages?.[0]?.blockTypes ?? {},
     problemTypes: pages?.[0]?.problemTypes ?? {},
@@ -119,6 +125,8 @@ export const useContentSearchResults = ({
     hasNextPage: query.hasNextPage,
     // The last page has the most accurate count of total hits
     totalHits: pages?.[pages.length - 1]?.totalHits ?? 0,
+    // The last page has the most accurate count of total hits
+    totalCollectionHits: pages?.[pages.length - 1]?.totalCollectionHits ?? 0,
   };
 };
 

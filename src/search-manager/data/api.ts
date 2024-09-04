@@ -122,6 +122,31 @@ export interface ContentHit {
 }
 
 /**
+ * Information about a single collection returned in the search results
+ * Defined in edx-platform/openedx/core/djangoapps/content/search/documents.py
+ */
+export interface CollectionHit {
+  id: string;
+  type: 'collection';
+  displayName: string;
+  description: string;
+  /** The course or library ID */
+  contextKey: string;
+  org: string;
+  /**
+   * Breadcrumbs:
+   * - First one is the name of the course/library itself.
+   * - After that is the name and usage key of any parent Section/Subsection/Unit/etc.
+   */
+  breadcrumbs: Array<{ displayName: string }>;
+  // tags: ContentHitTags;
+  /** Same fields with <mark>...</mark> highlights */
+  created: number;
+  modified: number;
+  accessId: number;
+}
+
+/**
  * Convert search hits to camelCase
  * @param hit A search result directly from Meilisearch
  */
@@ -185,6 +210,8 @@ export async function fetchSearchResults({
     ...problemTypesFilterFormatted,
   ].flat()];
 
+  const collectionsFilter = 'type = "collection"'
+
   // First query is always to get the hits, with all the filters applied.
   queries.push({
     indexUid: indexName,
@@ -192,6 +219,7 @@ export async function fetchSearchResults({
     filter: [
       // top-level entries in the array are AND conditions and must all match
       // Inner arrays are OR conditions, where only one needs to match.
+      `NOT ${collectionsFilter}`,  // exclude collections
       ...typeFilters,
       ...extraFilterFormatted,
       ...tagsFilterFormatted,
@@ -219,6 +247,28 @@ export async function fetchSearchResults({
     limit: 0, // We don't need any "hits" for this - just the facetDistribution
   });
 
+  // Third query is to get the hits for collections, with all the filters applied.
+  queries.push({
+    indexUid: indexName,
+    q: searchKeywords,
+    filter: [
+      // top-level entries in the array are AND conditions and must all match
+      // Inner arrays are OR conditions, where only one needs to match.
+      collectionsFilter,  // include only collections
+      ...typeFilters,
+      ...extraFilterFormatted,
+      ...tagsFilterFormatted,
+    ],
+    attributesToHighlight: ['display_name', 'content'],
+    highlightPreTag: HIGHLIGHT_PRE_TAG,
+    highlightPostTag: HIGHLIGHT_POST_TAG,
+    attributesToCrop: ['content'],
+    cropLength: 20,
+    sort,
+    offset,
+    limit,
+  });
+
   const { results } = await client.multiSearch(({ queries }));
   return {
     hits: results[0].hits.map(formatSearchHit),
@@ -226,6 +276,8 @@ export async function fetchSearchResults({
     blockTypes: results[1].facetDistribution?.block_type ?? {},
     problemTypes: results[1].facetDistribution?.['content.problem_types'] ?? {},
     nextOffset: results[0].hits.length === limit ? offset + limit : undefined,
+    collectionHits: results[2].hits.map(formatSearchHit),
+    totalCollectionHits: results[2].totalHits ?? results[2].estimatedTotalHits ?? results[2].hits.length,
   };
 }
 
