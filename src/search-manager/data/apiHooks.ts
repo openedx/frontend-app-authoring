@@ -125,7 +125,6 @@ export const useContentSearchResults = ({
     hasNextPage: query.hasNextPage,
     // The last page has the most accurate count of total hits
     totalHits: pages?.[pages.length - 1]?.totalHits ?? 0,
-    // The last page has the most accurate count of total hits
     totalCollectionHits: pages?.[pages.length - 1]?.totalCollectionHits ?? 0,
   };
 };
