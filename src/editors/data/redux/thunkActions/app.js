@@ -89,7 +89,7 @@ export const initialize = (data) => (dispatch) => {
   const editorType = data.blockType;
   dispatch(actions.app.initialize(data));
   dispatch(module.fetchBlock());
-  if (data.blockId.startsWith('block-v1:')) {
+  if (data.blockId?.startsWith('block-v1:')) {
     dispatch(module.fetchUnit());
   }
   switch (editorType) {
@@ -102,7 +102,7 @@ export const initialize = (data) => (dispatch) => {
       dispatch(module.fetchCourseDetails());
       break;
     case 'html':
-      if (data.learningContextId.startsWith('lib:')) {
+      if (data.learningContextId?.startsWith('lib:')) {
         // eslint-disable-next-line no-console
         console.log('Not fetching image assets - not implemented yet for content libraries.');
       } else {
