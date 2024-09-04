@@ -10,7 +10,7 @@ import {
   Stack,
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
 import { updateClipboard } from '../../generic/data/api';
@@ -20,6 +20,7 @@ import { type ContentHit, Highlight } from '../../search-manager';
 import { LibraryContext } from '../common/context';
 import messages from './messages';
 import { STUDIO_CLIPBOARD_CHANNEL } from '../../constants';
+import { getEditUrl } from './utils';
 
 type ComponentCardProps = {
   contentHit: ContentHit,
@@ -28,9 +29,7 @@ type ComponentCardProps = {
 
 export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   const intl = useIntl();
-  // Get the block type (e.g. "html") from a lib block usage key string like "lb:org:lib:block_type:id"
-  const blockType: string = usageKey.split(':')[3] ?? 'unknown';
-  const { libraryId } = useParams();
+  const editUrl = getEditUrl(usageKey);
   const { showToast } = useContext(ToastContext);
   const [clipboardBroadcastChannel] = useState(() => new BroadcastChannel(STUDIO_CLIPBOARD_CHANNEL));
   const updateClipboardClick = () => {
@@ -55,8 +54,8 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
       />
       <Dropdown.Menu>
         {
-          blockType === 'html' ? (
-            <Dropdown.Item as={Link} to={`/library/${libraryId}/editor/${blockType}/${usageKey}`}>
+          editUrl ? (
+            <Dropdown.Item as={Link} to={editUrl}>
               <FormattedMessage {...messages.menuEdit} />
             </Dropdown.Item>
           ) : (
