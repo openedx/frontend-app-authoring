@@ -23,6 +23,7 @@ import { getCanEdit } from '../../course-unit/data/selectors';
 import { useCreateLibraryBlock, useLibraryPasteClipboard } from '../data/apiHooks';
 
 import messages from './messages';
+import { LibraryContext } from '../common/context';
 
 type ContentType = {
   name: string,
@@ -65,6 +66,9 @@ const AddContentContainer = () => {
   const { showToast } = useContext(ToastContext);
   const canEdit = useSelector(getCanEdit);
   const { showPasteXBlock } = useCopyToClipboard(canEdit);
+  const {
+    openCreateCollectionModal,
+  } = React.useContext(LibraryContext);
 
   const collectionButtonData = {
     name: intl.formatMessage(messages.collectionButton),
@@ -135,7 +139,7 @@ const AddContentContainer = () => {
           showToast(intl.formatMessage(messages.errorPasteClipboardMessage));
         });
       } else if (blockType === 'collection') {
-        // TODO
+        openCreateCollectionModal();
       } else {
         createBlockMutation.mutateAsync({
           libraryId,
