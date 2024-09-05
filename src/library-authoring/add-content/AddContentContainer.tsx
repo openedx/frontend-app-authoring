@@ -24,6 +24,39 @@ import { useCreateLibraryBlock, useLibraryPasteClipboard } from '../data/apiHook
 
 import messages from './messages';
 
+type ContentType = {
+  name: string,
+  disabled: boolean,
+  icon: React.ComponentType,
+  blockType: string,
+};
+
+type AddContentButtonProps = {
+  contentType: ContentType,
+  onCreateContent: (blockType: string) => void,
+};
+
+const AddContentButton = ({ contentType, onCreateContent } : AddContentButtonProps) => {
+  const {
+    name,
+    disabled,
+    icon,
+    blockType,
+  } = contentType;
+  return (
+    <Button
+      key={`add-content-${blockType}`}
+      variant="outline-primary"
+      disabled={disabled}
+      className="m-2 rounded-0"
+      iconBefore={icon}
+      onClick={() => onCreateContent(blockType)}
+    >
+      {name}
+    </Button>
+  );
+};
+
 const AddContentContainer = () => {
   const intl = useIntl();
   const { libraryId } = useParams();
@@ -33,6 +66,12 @@ const AddContentContainer = () => {
   const canEdit = useSelector(getCanEdit);
   const { showPasteXBlock } = useCopyToClipboard(canEdit);
 
+  const collectionButtonData = {
+    name: intl.formatMessage(messages.collectionButton),
+    disabled: false,
+    icon: BookOpen,
+    blockType: 'collection',
+  };
   const contentTypes = [
     {
       name: intl.formatMessage(messages.textTypeButton),
@@ -95,6 +134,8 @@ const AddContentContainer = () => {
         }).catch(() => {
           showToast(intl.formatMessage(messages.errorPasteClipboardMessage));
         });
+      } else if (blockType === 'collection') {
+        // TODO
       } else {
         createBlockMutation.mutateAsync({
           libraryId,
@@ -115,26 +156,10 @@ const AddContentContainer = () => {
 
   return (
     <Stack direction="vertical">
-      <Button
-        variant="outline-primary"
-        disabled
-        className="m-2 rounded-0"
-        iconBefore={BookOpen}
-      >
-        {intl.formatMessage(messages.collectionButton)}
-      </Button>
+      <AddContentButton contentType={collectionButtonData} onCreateContent={onCreateContent} />
       <hr className="w-100 bg-gray-500" />
       {contentTypes.map((contentType) => (
-        <Button
-          key={`add-content-${contentType.blockType}`}
-          variant="outline-primary"
-          disabled={contentType.disabled}
-          className="m-2 rounded-0"
-          iconBefore={contentType.icon}
-          onClick={() => onCreateContent(contentType.blockType)}
-        >
-          {contentType.name}
-        </Button>
+        <AddContentButton contentType={contentType} onCreateContent={onCreateContent} />
       ))}
     </Stack>
   );
