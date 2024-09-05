@@ -43,7 +43,7 @@ const LibraryHome = ({ libraryId, tabList, handleTabChange } : LibraryHomeProps)
               contentCount={collectionCount}
               viewAllAction={() => handleTabChange(tabList.collections)}
             >
-              <LibraryCollections libraryId={libraryId} variant="preview" />
+              <LibraryCollections variant="preview" />
             </LibrarySection>
             <LibrarySection
               title={intl.formatMessage(messages.componentsTitle, { componentCount })}

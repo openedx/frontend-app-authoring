@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -6,19 +6,14 @@ import {
   Container,
   Icon,
   IconButton,
-  Dropdown,
   Stack,
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
-import { updateClipboard } from '../../generic/data/api';
 import TagCount from '../../generic/tag-count';
-import { ToastContext } from '../../generic/toast-context';
 import { type CollectionHit, Highlight } from '../../search-manager';
-import { LibraryContext } from '../common/context';
 import messages from './messages';
-import { STUDIO_CLIPBOARD_CHANNEL } from '../../constants';
 
 type CollectionCardProps = {
   collectionHit: CollectionHit,

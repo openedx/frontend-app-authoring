@@ -213,7 +213,7 @@ export async function fetchSearchResults({
     ...problemTypesFilterFormatted,
   ].flat()];
 
-  const collectionsFilter = 'type = "collection"'
+  const collectionsFilter = 'type = "collection"';
 
   // First query is always to get the hits, with all the filters applied.
   queries.push({
@@ -222,7 +222,7 @@ export async function fetchSearchResults({
     filter: [
       // top-level entries in the array are AND conditions and must all match
       // Inner arrays are OR conditions, where only one needs to match.
-      `NOT ${collectionsFilter}`,  // exclude collections
+      `NOT ${collectionsFilter}`, // exclude collections
       ...typeFilters,
       ...extraFilterFormatted,
       ...tagsFilterFormatted,
@@ -257,7 +257,7 @@ export async function fetchSearchResults({
     filter: [
       // top-level entries in the array are AND conditions and must all match
       // Inner arrays are OR conditions, where only one needs to match.
-      collectionsFilter,  // include only collections
+      collectionsFilter, // include only collections
       ...extraFilterFormatted,
       // We exclude the block type filter as collections are only of 1 type i.e. collection.
       ...tagsFilterFormatted,

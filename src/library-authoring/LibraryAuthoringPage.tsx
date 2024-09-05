@@ -206,7 +206,7 @@ const LibraryAuthoringPage = () => {
               />
               <Route
                 path={TabList.collections}
-                element={<LibraryCollections libraryId={libraryId} variant="full" />}
+                element={<LibraryCollections variant="full" />}
               />
               <Route
                 path="*"

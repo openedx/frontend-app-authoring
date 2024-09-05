@@ -1,15 +1,12 @@
-import React, { useEffect, useMemo } from 'react';
-import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import React, { useEffect } from 'react';
 import { CardGrid } from '@openedx/paragon';
 
-import messages from './messages';
 import { useSearchContext } from '../search-manager';
 import { NoComponents, NoSearchResults } from './EmptyStates';
 import CollectionCard from './components/CollectionCard';
 import { LIBRARY_SECTION_PREVIEW_LIMIT } from './components/LibrarySection';
 
 type LibraryCollectionsProps = {
-  libraryId: string,
   variant: 'full' | 'preview',
 };
 
@@ -20,7 +17,7 @@ type LibraryCollectionsProps = {
  *   - 'full': Show all collections with Infinite scroll pagination.
  *   - 'preview': Show first 4 collections without pagination.
  */
-const LibraryCollections = ({ libraryId, variant }: LibraryCollectionsProps) => {
+const LibraryCollections = ({ variant }: LibraryCollectionsProps) => {
   const {
     collectionHits,
     totalCollectionHits,
@@ -28,7 +25,6 @@ const LibraryCollections = ({ libraryId, variant }: LibraryCollectionsProps) => 
     hasNextPage,
     fetchNextPage,
     isFiltered,
-    setExtraFilter,
   } = useSearchContext();
 
   const collectionList = variant === 'preview' ? collectionHits.slice(0, LIBRARY_SECTION_PREVIEW_LIMIT) : collectionHits;
