@@ -144,18 +144,21 @@ export interface CollectionHit {
   created: number;
   modified: number;
   accessId: number;
+  /** Same fields with <mark>...</mark> highlights */
+  formatted: { displayName: string, description: string };
 }
 
 /**
  * Convert search hits to camelCase
  * @param hit A search result directly from Meilisearch
  */
-function formatSearchHit(hit: Record<string, any>): ContentHit {
+function formatSearchHit(hit: Record<string, any>): ContentHit | CollectionHit {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const { _formatted, ...newHit } = hit;
   newHit.formatted = {
     displayName: _formatted.display_name,
     content: _formatted.content ?? {},
+    description: _formatted.description,
   };
   return camelCaseObject(newHit);
 }
@@ -255,15 +258,15 @@ export async function fetchSearchResults({
       // top-level entries in the array are AND conditions and must all match
       // Inner arrays are OR conditions, where only one needs to match.
       collectionsFilter,  // include only collections
-      ...typeFilters,
       ...extraFilterFormatted,
+      // We exclude the block type filter as collections are only of 1 type i.e. collection.
       ...tagsFilterFormatted,
     ],
-    attributesToHighlight: ['display_name', 'content'],
+    attributesToHighlight: ['display_name', 'description'],
     highlightPreTag: HIGHLIGHT_PRE_TAG,
     highlightPostTag: HIGHLIGHT_POST_TAG,
-    attributesToCrop: ['content'],
-    cropLength: 20,
+    attributesToCrop: ['description'],
+    cropLength: 15,
     sort,
     offset,
     limit,
@@ -275,7 +278,7 @@ export async function fetchSearchResults({
     totalHits: results[0].totalHits ?? results[0].estimatedTotalHits ?? results[0].hits.length,
     blockTypes: results[1].facetDistribution?.block_type ?? {},
     problemTypes: results[1].facetDistribution?.['content.problem_types'] ?? {},
-    nextOffset: results[0].hits.length === limit ? offset + limit : undefined,
+    nextOffset: results[0].hits.length === limit || results[2].hits.length === limit ? offset + limit : undefined,
     collectionHits: results[2].hits.map(formatSearchHit),
     totalCollectionHits: results[2].totalHits ?? results[2].estimatedTotalHits ?? results[2].hits.length,
   };

@@ -5,7 +5,7 @@ import { CardGrid } from '@openedx/paragon';
 import messages from './messages';
 import { useSearchContext } from '../search-manager';
 import { NoComponents, NoSearchResults } from './EmptyStates';
-import ComponentCard from './components/ComponentCard';
+import CollectionCard from './components/CollectionCard';
 import { LIBRARY_SECTION_PREVIEW_LIMIT } from './components/LibrarySection';
 
 type LibraryCollectionsProps = {
@@ -68,11 +68,10 @@ const LibraryCollections = ({ libraryId, variant }: LibraryCollectionsProps) => 
       }}
       hasEqualColumnHeights
     >
-      { collectionList.map((contentHit) => (
-        <ComponentCard
-          key={contentHit.id}
-          contentHit={contentHit}
-          blockTypeDisplayName={'Collection'}
+      { collectionList.map((collectionHit) => (
+        <CollectionCard
+          key={collectionHit.id}
+          collectionHit={collectionHit}
         />
       )) }
     </CardGrid>
