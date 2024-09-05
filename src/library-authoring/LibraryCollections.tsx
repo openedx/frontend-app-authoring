@@ -51,7 +51,7 @@ const LibraryCollections = ({ variant }: LibraryCollectionsProps) => {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   if (totalCollectionHits === 0) {
-    return isFiltered ? <NoSearchResults /> : <NoComponents />;
+    return isFiltered ? <NoSearchResults searchType="collection" /> : <NoComponents searchType="collection" />;
   }
 
   return (

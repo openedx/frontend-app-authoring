@@ -1,3 +1,4 @@
+/* eslint-disable react/require-default-props */
 import React, { useContext } from 'react';
 import { useParams } from 'react-router';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
@@ -10,7 +11,11 @@ import messages from './messages';
 import { LibraryContext } from './common/context';
 import { useContentLibrary } from './data/apiHooks';
 
-export const NoComponents = () => {
+type NoSearchResultsProps = {
+  searchType?: 'collection' | 'component',
+};
+
+export const NoComponents = ({ searchType = 'component' }: NoSearchResultsProps) => {
   const { openAddContentSidebar } = useContext(LibraryContext);
   const { libraryId } = useParams();
   const { data: libraryData } = useContentLibrary(libraryId);
@@ -18,19 +23,25 @@ export const NoComponents = () => {
 
   return (
     <Stack direction="horizontal" gap={3} className="mt-6 justify-content-center">
-      <FormattedMessage {...messages.noComponents} />
+      {searchType === 'collection'
+        ? <FormattedMessage {...messages.noCollections} />
+        : <FormattedMessage {...messages.noComponents} />}
       {canEditLibrary && (
         <Button iconBefore={Add} onClick={() => openAddContentSidebar()}>
-          <FormattedMessage {...messages.addComponent} />
+          {searchType === 'collection'
+            ? <FormattedMessage {...messages.addCollection} />
+            : <FormattedMessage {...messages.addComponent} />}
         </Button>
       )}
     </Stack>
   );
 };
 
-export const NoSearchResults = () => (
-  <Stack direction="horizontal" gap={3} className="mt-6 justify-content-center">
-    <FormattedMessage {...messages.noSearchResults} />
+export const NoSearchResults = ({ searchType = 'component' }: NoSearchResultsProps) => (
+  <Stack direction="horizontal" gap={3} className="my-6 justify-content-center">
+    {searchType === 'collection'
+      ? <FormattedMessage {...messages.noSearchResultsCollections} />
+      : <FormattedMessage {...messages.noSearchResults} />}
     <ClearFiltersButton variant="primary" size="md" />
   </Stack>
 );
