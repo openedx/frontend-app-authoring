@@ -365,6 +365,208 @@
         }
       },
       "facetStats": {}
+    },
+    {
+      "indexUid": "studio",
+      "hits": [
+        {
+          "display_name": "Collection 1",
+          "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque et mi ac nisi accumsan imperdiet vitae at odio. Vivamus tempor nec lorem eget lacinia. Vivamus efficitur lacus non dapibus porta. Nulla venenatis luctus nisi id posuere. Sed sollicitudin magna a sem ultrices accumsan. Praesent volutpat tortor vitae luctus rutrum. Integer.",
+          "id": 1,
+          "type": "collection",
+          "breadcrumbs": [
+            {
+              "display_name": "CS problems 2"
+            }
+          ],
+          "created": 1725534795.628254,
+          "modified": 1725534795.628266,
+          "context_key": "lib:OpenedX:CSPROB2",
+          "org": "OpenedX",
+          "access_id": 16,
+          "_formatted": {
+            "display_name": "Collection 1",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque et mi ac nisi accumsan imperdiet…",
+            "id": "1",
+            "type": "collection",
+            "breadcrumbs": [
+              {
+                "display_name": "CS problems 2"
+              }
+            ],
+            "created": "1725534795.628254",
+            "modified": "1725534795.628266",
+            "context_key": "lib:OpenedX:CSPROB2",
+            "org": "OpenedX",
+            "access_id": "16"
+          }
+        },
+        {
+          "display_name": "Collection 2",
+          "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque et mi ac nisi accumsan imperdiet vitae at odio. Vivamus tempor nec lorem eget lacinia. Vivamus efficitur lacus non dapibus porta. Nulla venenatis luctus nisi id posuere. Sed sollicitudin magna a sem ultrices accumsan. Praesent volutpat tortor vitae luctus rutrum. Integer. Descrition 58",
+          "id": 2,
+          "type": "collection",
+          "breadcrumbs": [
+            {
+              "display_name": "CS problems 2"
+            }
+          ],
+          "created": 1725534795.619101,
+          "modified": 1725534795.619113,
+          "context_key": "lib:OpenedX:CSPROB2",
+          "org": "OpenedX",
+          "access_id": 16,
+          "_formatted": {
+            "display_name": "Collection 2",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque et mi ac nisi accumsan imperdiet…",
+            "id": "2",
+            "type": "collection",
+            "breadcrumbs": [
+              {
+                "display_name": "CS problems 2"
+              }
+            ],
+            "created": "1725534795.619101",
+            "modified": "1725534795.619113",
+            "context_key": "lib:OpenedX:CSPROB2",
+            "org": "OpenedX",
+            "access_id": "16"
+          }
+        },
+        {
+          "display_name": "Collection 3",
+          "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque et mi ac nisi accumsan imperdiet vitae at odio. Vivamus tempor nec lorem eget lacinia. Vivamus efficitur lacus non dapibus porta. Nulla venenatis luctus nisi id posuere. Sed sollicitudin magna a sem ultrices accumsan. Praesent volutpat tortor vitae luctus rutrum. Integer. Descrition 57",
+          "id": 3,
+          "type": "collection",
+          "breadcrumbs": [
+            {
+              "display_name": "CS problems 2"
+            }
+          ],
+          "created": 1725534795.609781,
+          "modified": 1725534795.609794,
+          "context_key": "lib:OpenedX:CSPROB2",
+          "org": "OpenedX",
+          "access_id": 16,
+          "_formatted": {
+            "display_name": "Collection 3",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque et mi ac nisi accumsan imperdiet…",
+            "id": "3",
+            "type": "collection",
+            "breadcrumbs": [
+              {
+                "display_name": "CS problems 2"
+              }
+            ],
+            "created": "1725534795.609781",
+            "modified": "1725534795.609794",
+            "context_key": "lib:OpenedX:CSPROB2",
+            "org": "OpenedX",
+            "access_id": "16"
+          }
+        },
+        {
+          "display_name": "Collection 4",
+          "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque et mi ac nisi accumsan imperdiet vitae at odio. Vivamus tempor nec lorem eget lacinia. Vivamus efficitur lacus non dapibus porta. Nulla venenatis luctus nisi id posuere. Sed sollicitudin magna a sem ultrices accumsan. Praesent volutpat tortor vitae luctus rutrum. Integer. Descrition 56",
+          "id": 4,
+          "type": "collection",
+          "breadcrumbs": [
+            {
+              "display_name": "CS problems 2"
+            }
+          ],
+          "created": 1725534795.596287,
+          "modified": 1725534795.5963,
+          "context_key": "lib:OpenedX:CSPROB2",
+          "org": "OpenedX",
+          "access_id": 16,
+          "_formatted": {
+            "display_name": "Collection 4",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque et mi ac nisi accumsan imperdiet…",
+            "id": "4",
+            "type": "collection",
+            "breadcrumbs": [
+              {
+                "display_name": "CS problems 2"
+              }
+            ],
+            "created": "1725534795.596287",
+            "modified": "1725534795.5963",
+            "context_key": "lib:OpenedX:CSPROB2",
+            "org": "OpenedX",
+            "access_id": "16"
+          }
+        },
+        {
+          "display_name": "Collection 5",
+          "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque et mi ac nisi accumsan imperdiet vitae at odio. Vivamus tempor nec lorem eget lacinia. Vivamus efficitur lacus non dapibus porta. Nulla venenatis luctus nisi id posuere. Sed sollicitudin magna a sem ultrices accumsan. Praesent volutpat tortor vitae luctus rutrum. Integer. Descrition 55",
+          "id": 5,
+          "type": "collection",
+          "breadcrumbs": [
+            {
+              "display_name": "CS problems 2"
+            }
+          ],
+          "created": 1725534795.583068,
+          "modified": 1725534795.583082,
+          "context_key": "lib:OpenedX:CSPROB2",
+          "org": "OpenedX",
+          "access_id": 16,
+          "_formatted": {
+            "display_name": "Collection 5",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque et mi ac nisi accumsan imperdiet…",
+            "id": "5",
+            "type": "collection",
+            "breadcrumbs": [
+              {
+                "display_name": "CS problems 2"
+              }
+            ],
+            "created": "1725534795.583068",
+            "modified": "1725534795.583082",
+            "context_key": "lib:OpenedX:CSPROB2",
+            "org": "OpenedX",
+            "access_id": "16"
+          }
+        },
+        {
+          "display_name": "Collection 6",
+          "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque et mi ac nisi accumsan imperdiet vitae at odio. Vivamus tempor nec lorem eget lacinia. Vivamus efficitur lacus non dapibus porta. Nulla venenatis luctus nisi id posuere. Sed sollicitudin magna a sem ultrices accumsan. Praesent volutpat tortor vitae luctus rutrum. Integer. Descrition 54",
+          "id": 6,
+          "type": "collection",
+          "breadcrumbs": [
+            {
+              "display_name": "CS problems 2"
+            }
+          ],
+          "created": 1725534795.573794,
+          "modified": 1725534795.573808,
+          "context_key": "lib:OpenedX:CSPROB2",
+          "org": "OpenedX",
+          "access_id": 16,
+          "_formatted": {
+            "display_name": "Collection 6",
+            "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque et mi ac nisi accumsan imperdiet…",
+            "id": "6",
+            "type": "collection",
+            "breadcrumbs": [
+              {
+                "display_name": "CS problems 2"
+              }
+            ],
+            "created": "1725534795.573794",
+            "modified": "1725534795.573808",
+            "context_key": "lib:OpenedX:CSPROB2",
+            "org": "OpenedX",
+            "access_id": "16"
+          }
+        }
+      ],
+      "query": "learn",
+      "processingTimeMs": 1,
+      "limit": 6,
+      "offset": 0,
+      "estimatedTotalHits": 6
     }
   ]
 }

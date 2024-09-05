@@ -139,7 +139,7 @@ export interface CollectionHit {
    * - After that is the name and usage key of any parent Section/Subsection/Unit/etc.
    */
   breadcrumbs: Array<{ displayName: string }>;
-  // tags: ContentHitTags;
+  tags: ContentHitTags;
   /** Same fields with <mark>...</mark> highlights */
   created: number;
   modified: number;
@@ -193,6 +193,8 @@ export async function fetchSearchResults({
     totalHits: number,
     blockTypes: Record<string, number>,
     problemTypes: Record<string, number>,
+    collectionHits: CollectionHit[],
+    totalCollectionHits: number,
   }> {
   const queries: MultiSearchQuery[] = [];
 
@@ -274,12 +276,12 @@ export async function fetchSearchResults({
 
   const { results } = await client.multiSearch(({ queries }));
   return {
-    hits: results[0].hits.map(formatSearchHit),
+    hits: results[0].hits.map(formatSearchHit) as ContentHit[],
     totalHits: results[0].totalHits ?? results[0].estimatedTotalHits ?? results[0].hits.length,
     blockTypes: results[1].facetDistribution?.block_type ?? {},
     problemTypes: results[1].facetDistribution?.['content.problem_types'] ?? {},
     nextOffset: results[0].hits.length === limit || results[2].hits.length === limit ? offset + limit : undefined,
-    collectionHits: results[2].hits.map(formatSearchHit),
+    collectionHits: results[2].hits.map(formatSearchHit) as CollectionHit[],
     totalCollectionHits: results[2].totalHits ?? results[2].estimatedTotalHits ?? results[2].hits.length,
   };
 }
