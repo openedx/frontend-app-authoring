@@ -11,6 +11,9 @@ describe('HintRow', () => {
     handleDelete: jest.fn(),
     id: '0',
     intl: { formatMessage },
+    images: {},
+    isLibrary: false,
+    learningContextId: 'course+org+run',
   };
 
   describe('snapshot', () => {

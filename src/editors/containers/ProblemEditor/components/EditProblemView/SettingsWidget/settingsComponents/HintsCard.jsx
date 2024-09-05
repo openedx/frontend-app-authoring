@@ -12,6 +12,9 @@ const HintsCard = ({
   hints,
   problemType,
   updateSettings,
+  images,
+  isLibrary,
+  learningContextId,
   // inject
   intl,
 }) => {
@@ -31,7 +34,12 @@ const HintsCard = ({
           key={hint.id}
           id={hint.id}
           value={hint.value}
-          {...hintsRowHooks(hint.id, hints, updateSettings)}
+          {...{
+            ...hintsRowHooks(hint.id, hints, updateSettings),
+            images,
+            isLibrary,
+            learningContextId,
+          }}
         />
       ))}
       <Button
@@ -54,6 +62,9 @@ HintsCard.propTypes = {
   })).isRequired,
   problemType: PropTypes.string.isRequired,
   updateSettings: PropTypes.func.isRequired,
+  images: PropTypes.shape({}).isRequired,
+  learningContextId: PropTypes.string.isRequired,
+  isLibrary: PropTypes.bool.isRequired,
 };
 
 export const HintsCardInternal = HintsCard; // For testing only

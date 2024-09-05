@@ -18,6 +18,9 @@ const props = {
   onChange: jest.fn(),
   labelMessage: 'msg',
   labelMessageBoldUnderline: 'msg',
+  images: {},
+  isLibrary: false,
+  learningContextId: 'course+org+run',
 };
 
 describe('FeedbackControl component', () => {

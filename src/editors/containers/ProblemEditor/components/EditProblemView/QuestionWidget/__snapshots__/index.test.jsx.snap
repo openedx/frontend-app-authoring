@@ -13,13 +13,21 @@ exports[`QuestionWidget render snapshot: renders correct default 1`] = `
       id="authoring.questionwidget.question.questionWidgetTitle"
     />
   </div>
-  <[object Object]
+  <TinyMceWidget
+    disabled={false}
     editorContentHtml="This is my question"
+    editorRef={null}
     editorType="question"
     id="question"
+    images={{}}
+    isLibrary={false}
+    learningContextId="course+org+run"
+    lmsEndpointUrl=""
     minHeight={150}
+    onChange={[Function]}
     placeholder="Enter your question"
     setEditorRef={[MockFunction prepareEditorRef.setEditorRef]}
+    studioEndpointUrl=""
   />
 </div>
 `;

@@ -9,6 +9,9 @@ exports[`FeedbackBox component renders as expected with a multi select problem 1
       {
         "correct": true,
         "id": "A",
+        "images": {},
+        "isLibrary": false,
+        "learningContextId": "course+org+run",
         "problemType": "sOMepRObleM",
         "selectedFeedback": "some feedback",
         "title": "Answer 1",
@@ -39,6 +42,9 @@ exports[`FeedbackBox component renders as expected with a multi select problem 1
       {
         "correct": true,
         "id": "A",
+        "images": {},
+        "isLibrary": false,
+        "learningContextId": "course+org+run",
         "problemType": "sOMepRObleM",
         "selectedFeedback": "some feedback",
         "title": "Answer 1",
@@ -76,6 +82,9 @@ exports[`FeedbackBox component renders as expected with a numeric input problem 
       {
         "correct": true,
         "id": "A",
+        "images": {},
+        "isLibrary": false,
+        "learningContextId": "course+org+run",
         "problemType": "sOMepRObleM",
         "selectedFeedback": "some feedback",
         "title": "Answer 1",
@@ -113,6 +122,9 @@ exports[`FeedbackBox component renders as expected with default props 1`] = `
       {
         "correct": true,
         "id": "A",
+        "images": {},
+        "isLibrary": false,
+        "learningContextId": "course+org+run",
         "problemType": "sOMepRObleM",
         "selectedFeedback": "some feedback",
         "title": "Answer 1",

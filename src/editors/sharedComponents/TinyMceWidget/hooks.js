@@ -4,6 +4,7 @@ import {
   useCallback,
   useEffect,
 } from 'react';
+import { getConfig } from '@edx/frontend-platform';
 import { getLocale, isRtl } from '@edx/frontend-platform/i18n';
 import { a11ycheckerCss } from 'frontend-components-tinymce-advanced-plugins';
 import { isEmpty } from 'lodash';
@@ -234,8 +235,6 @@ export const editorConfig = ({
   setEditorRef,
   editorContentHtml,
   images,
-  lmsEndpointUrl,
-  studioEndpointUrl,
   isLibrary,
   placeholder,
   initializeEditor,
@@ -247,6 +246,8 @@ export const editorConfig = ({
   minHeight,
   learningContextId,
 }) => {
+  const lmsEndpointUrl = getConfig().LMS_BASE_URL;
+  const studioEndpointUrl = getConfig().STUDIO_BASE_URL;
   const {
     toolbar,
     config,

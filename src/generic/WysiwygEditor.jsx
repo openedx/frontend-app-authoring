@@ -1,32 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect, Provider, useSelector } from 'react-redux';
-import { createStore } from 'redux';
-import { getConfig } from '@edx/frontend-platform';
+import { useSelector } from 'react-redux';
 import TinyMceWidget, { prepareEditorRef } from '../editors/sharedComponents/TinyMceWidget';
 
 import { DEFAULT_EMPTY_WYSIWYG_VALUE } from '../constants';
-
-const store = createStore(() => ({}));
 
 export const SUPPORTED_TEXT_EDITORS = {
   text: 'text',
   expandable: 'expandable',
 };
 
-const mapStateToProps = () => ({
-  images: {},
-  lmsEndpointUrl: getConfig().LMS_BASE_URL,
-  studioEndpointUrl: getConfig().STUDIO_BASE_URL,
-  isLibrary: true,
-  onEditorChange: () => ({}),
-});
-const Editor = connect(mapStateToProps)(TinyMceWidget);
-
 export const WysiwygEditor = ({
   initialValue, editorType, onChange, minHeight,
 }) => {
-  // const courseId = "course+test+test+test"
   const { editorRef, refReady, setEditorRef } = prepareEditorRef();
   const { courseId } = useSelector((state) => state.courseDetail);
   const isEquivalentCodeExtraSpaces = (first, second) => {
@@ -61,20 +47,21 @@ export const WysiwygEditor = ({
   }
 
   return (
-    <Provider store={store}>
-      <Editor
-        textValue={initialValue}
-        editorRef={editorRef}
-        editorType={editorType}
-        initialValue={initialValue}
-        minHeight={minHeight}
-        editorContentHtml={initialValue}
-        setEditorRef={setEditorRef}
-        onChange={handleUpdate}
-        initializeEditor={() => ({})}
-        learningContextId={courseId}
-      />
-    </Provider>
+    <TinyMceWidget
+      textValue={initialValue}
+      editorRef={editorRef}
+      editorType={editorType}
+      initialValue={initialValue}
+      minHeight={minHeight}
+      editorContentHtml={initialValue}
+      setEditorRef={setEditorRef}
+      onChange={handleUpdate}
+      initializeEditor={() => ({})}
+      learningContextId={courseId}
+      images={{}}
+      isLibrary
+      onEditorChange={() => ({})}
+    />
   );
 };
 

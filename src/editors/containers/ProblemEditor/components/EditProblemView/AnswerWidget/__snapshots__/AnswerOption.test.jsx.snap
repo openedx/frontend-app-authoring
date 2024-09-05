@@ -30,6 +30,9 @@ exports[`AnswerOption render snapshot: renders correct option with feedback 1`] 
       error={false}
       errorMessage={null}
       id="answer-A"
+      images={{}}
+      isLibrary={false}
+      learningContextId="course+org+run"
       placeholder="Enter an answer"
       setContent={[Function]}
       value="Answer 1"
@@ -44,11 +47,14 @@ exports[`AnswerOption render snapshot: renders correct option with feedback 1`] 
             "title": "Answer 1",
           }
         }
+        images={{}}
         intl={
           {
             "formatMessage": [Function],
           }
         }
+        isLibrary={false}
+        learningContextId="course+org+run"
         problemType="multiplechoiceresponse"
         setSelectedFeedback={[Function]}
         setUnselectedFeedback={[Function]}
@@ -121,11 +127,14 @@ exports[`AnswerOption render snapshot: renders correct option with numeric input
             "title": "Answer 1",
           }
         }
+        images={{}}
         intl={
           {
             "formatMessage": [Function],
           }
         }
+        isLibrary={false}
+        learningContextId="course+org+run"
         problemType="numericalresponse"
         setSelectedFeedback={[Function]}
         setUnselectedFeedback={[Function]}
@@ -213,11 +222,14 @@ exports[`AnswerOption render snapshot: renders correct option with numeric input
             "unselectedFeedback": "unselected feedback",
           }
         }
+        images={{}}
         intl={
           {
             "formatMessage": [Function],
           }
         }
+        isLibrary={false}
+        learningContextId="course+org+run"
         problemType="numericalresponse"
         setSelectedFeedback={[Function]}
         setUnselectedFeedback={[Function]}
@@ -276,6 +288,9 @@ exports[`AnswerOption render snapshot: renders correct option with selected unse
       error={false}
       errorMessage={null}
       id="answer-A"
+      images={{}}
+      isLibrary={false}
+      learningContextId="course+org+run"
       placeholder="Enter an answer"
       setContent={[Function]}
       value="Answer 1"
@@ -291,11 +306,14 @@ exports[`AnswerOption render snapshot: renders correct option with selected unse
             "unselectedFeedback": "unselected feedback",
           }
         }
+        images={{}}
         intl={
           {
             "formatMessage": [Function],
           }
         }
+        isLibrary={false}
+        learningContextId="course+org+run"
         problemType="choiceresponse"
         setSelectedFeedback={[Function]}
         setUnselectedFeedback={[Function]}

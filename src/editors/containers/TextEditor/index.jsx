@@ -28,6 +28,8 @@ const TextEditor = ({
   initializeEditor,
   blockFinished,
   learningContextId,
+  images,
+  isLibrary,
   // inject
   intl,
 }) => {
@@ -59,6 +61,11 @@ const TextEditor = ({
         minHeight={500}
         height="100%"
         initializeEditor={initializeEditor}
+        {...{
+          images,
+          isLibrary,
+          learningContextId,
+        }}
       />
     );
   };
@@ -105,6 +112,8 @@ TextEditor.propTypes = {
   showRawEditor: PropTypes.bool.isRequired,
   blockFinished: PropTypes.bool,
   learningContextId: PropTypes.string.isRequired,
+  images: PropTypes.shape({}).isRequired,
+  isLibrary: PropTypes.bool.isRequired,
   // inject
   intl: intlShape.isRequired,
 };
@@ -115,6 +124,8 @@ export const mapStateToProps = (state) => ({
   showRawEditor: selectors.app.showRawEditor(state),
   blockFinished: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchBlock }),
   learningContextId: selectors.app.learningContextId(state),
+  images: selectors.app.images(state),
+  isLibrary: selectors.app.isLibrary(state),
 });
 
 export const mapDispatchToProps = {

@@ -22,13 +22,21 @@ exports[`SolutionWidget render snapshot: renders correct default 1`] = `
       id="authoring.problemEditor.solutionwidget.solutionDescriptionText"
     />
   </div>
-  <[object Object]
+  <TinyMceWidget
+    disabled={false}
     editorContentHtml="This is my solution"
+    editorRef={null}
     editorType="solution"
     id="solution"
+    images={{}}
+    isLibrary={false}
+    learningContextId="course+org+run"
+    lmsEndpointUrl=""
     minHeight={150}
+    onChange={[Function]}
     placeholder="Enter your explanation"
     setEditorRef={[MockFunction prepareEditorRef.setEditorRef]}
+    studioEndpointUrl=""
   />
 </div>
 `;

@@ -1,10 +1,9 @@
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
-import { selectors } from '../../data/redux';
 import SourceCodeModal from '../SourceCodeModal';
 import ImageUploadModal from '../ImageUploadModal';
 import { imgModalToggle, sourceCodeModalToggle } from './hooks';
-import { TinyMceWidgetInternal as TinyMceWidget, mapStateToProps } from '.';
+import { TinyMceWidgetInternal as TinyMceWidget } from '.';
 
 const staticUrl = '/assets/sOmEaSsET';
 
@@ -21,20 +20,6 @@ jest.mock('@tinymce/tinymce-react', () => {
 
 jest.mock('../ImageUploadModal', () => 'ImageUploadModal');
 jest.mock('../SourceCodeModal', () => 'SourceCodeModal');
-
-jest.mock('../../data/redux', () => ({
-  __esModule: true,
-  default: jest.fn(),
-  selectors: {
-    app: {
-      lmsEndpointUrl: jest.fn(state => ({ lmsEndpointUrl: state })),
-      studioEndpointUrl: jest.fn(state => ({ studioEndpointUrl: state })),
-      isLibrary: jest.fn(state => ({ isLibrary: state })),
-      images: jest.fn(state => ({ images: state })),
-      learningContextId: jest.fn(state => ({ learningContextId: state })),
-    },
-  },
-}));
 
 jest.mock('./hooks', () => ({
   editorConfig: jest.fn(args => ({ editorConfig: args })),
@@ -54,15 +39,6 @@ jest.mock('./hooks', () => ({
     clearSelection: jest.fn().mockName('hooks.selectedImage.clearSelection'),
   })),
   useImages: jest.fn(() => ({ imagesRef: { current: [{ externalUrl: staticUrl }] } })),
-}));
-
-jest.mock('react-redux', () => ({
-  Provider: 'Provider',
-  connect: (mapStateToProp, mapDispatchToProps) => (component) => ({
-    mapStateToProp,
-    mapDispatchToProps,
-    component,
-  }),
 }));
 
 describe('TinyMceWidget', () => {
@@ -101,34 +77,6 @@ describe('TinyMceWidget', () => {
       const wrapper = shallow(<TinyMceWidget {...props} isLibrary />);
       expect(wrapper.snapshot).toMatchSnapshot();
       expect(wrapper.instance.findByType(ImageUploadModal).length).toBe(0);
-    });
-  });
-  describe('mapStateToProps', () => {
-    const testState = { A: 'pple', B: 'anana', C: 'ucumber' };
-    test('lmsEndpointUrl from app.lmsEndpointUrl', () => {
-      expect(
-        mapStateToProps(testState).lmsEndpointUrl,
-      ).toEqual(selectors.app.lmsEndpointUrl(testState));
-    });
-    test('studioEndpointUrl from app.studioEndpointUrl', () => {
-      expect(
-        mapStateToProps(testState).studioEndpointUrl,
-      ).toEqual(selectors.app.studioEndpointUrl(testState));
-    });
-    test('images from app.images', () => {
-      expect(
-        mapStateToProps(testState).images,
-      ).toEqual(selectors.app.images(testState));
-    });
-    test('isLibrary from app.isLibrary', () => {
-      expect(
-        mapStateToProps(testState).isLibrary,
-      ).toEqual(selectors.app.isLibrary(testState));
-    });
-    test('learningContextId from app.learningContextId', () => {
-      expect(
-        mapStateToProps(testState).learningContextId,
-      ).toEqual(selectors.app.learningContextId(testState));
     });
   });
 });
