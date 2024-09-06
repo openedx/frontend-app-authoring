@@ -160,7 +160,7 @@ export async function createLibraryBlock({
       definition_id: definitionId,
     },
   );
-  return data;
+  return camelCaseObject(data);
 }
 
 /**
