@@ -228,6 +228,32 @@ describe('<StudioHome />', () => {
       });
     });
 
+    it('do not render new library button for "v1 only" mode if showNewLibraryButton is False', () => {
+      setConfig({
+        ...getConfig(),
+        LIBRARY_MODE: 'v1 only',
+      });
+      useSelector.mockReturnValue({
+        ...studioHomeMock,
+        showNewLibraryButton: false,
+      });
+      const { queryByTestId } = render(<RootWrapper />);
+      expect(queryByTestId('new-library-button')).not.toBeInTheDocument();
+    });
+
+    it('render new library button for "v2 only" mode even if showNewLibraryButton is False', () => {
+      setConfig({
+        ...getConfig(),
+        LIBRARY_MODE: 'v2 only',
+      });
+      useSelector.mockReturnValue({
+        ...studioHomeMock,
+        showNewLibraryButton: false,
+      });
+      const { queryByTestId } = render(<RootWrapper />);
+      expect(queryByTestId('new-library-button')).toBeInTheDocument();
+    });
+
     it('should render create new course container', async () => {
       useSelector.mockReturnValue({
         ...studioHomeMock,
