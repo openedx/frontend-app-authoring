@@ -5,7 +5,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
-import { RequestStatus } from '../../data/constants';
+import { RequestStatus, MAX_TOTAL_LENGTH, TOTAL_LENGTH_KEY } from '../../data/constants';
 import { getStudioHomeData } from '../../studio-home/data/selectors';
 import {
   getRedirectUrlObj,
@@ -58,6 +58,12 @@ const useCreateOrRerunCourse = (initialValues) => {
         intl.formatMessage(messages.disallowedCharsError),
       )
       .matches(noSpaceRule, intl.formatMessage(messages.noSpaceError)),
+  }).test(TOTAL_LENGTH_KEY, intl.formatMessage(messages.totalLengthError), function validateTotalLength() {
+    const { org, number, run } = this?.options.originalValue || {};
+    if ((org?.length || 0) + (number?.length || 0) + (run?.length || 0) > MAX_TOTAL_LENGTH) {
+      return this.createError({ path: TOTAL_LENGTH_KEY, message: intl.formatMessage(messages.totalLengthError) });
+    }
+    return true;
   });
 
   const {
