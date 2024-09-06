@@ -7,7 +7,7 @@ import { useToggle } from '@openedx/paragon';
 import { generatePath, useHref } from 'react-router-dom';
 
 import { SearchModal } from '../search-modal';
-import { getContentMenuItems, getSettingMenuItems, getToolsMenuItems } from './utils';
+import { useContentMenuItems, useSettingMenuItems, useToolsMenuItems } from './hooks';
 import messages from './messages';
 
 interface HeaderProps {
@@ -34,23 +34,28 @@ const Header = ({
 
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
   const meiliSearchEnabled = [true, 'true'].includes(getConfig().MEILISEARCH_ENABLED);
+
+  const contentMenuItems = useContentMenuItems(contextId);
+  const settingMenuItems = useSettingMenuItems(contextId);
+  const toolsMenuItems = useToolsMenuItems(contextId);
   const mainMenuDropdowns = !isLibrary ? [
     {
       id: `${intl.formatMessage(messages['header.links.content'])}-dropdown-menu`,
       buttonTitle: intl.formatMessage(messages['header.links.content']),
-      items: getContentMenuItems({ studioBaseUrl, courseId: contextId, intl }),
+      items: contentMenuItems,
     },
     {
       id: `${intl.formatMessage(messages['header.links.settings'])}-dropdown-menu`,
       buttonTitle: intl.formatMessage(messages['header.links.settings']),
-      items: getSettingMenuItems({ studioBaseUrl, courseId: contextId, intl }),
+      items: settingMenuItems,
     },
     {
       id: `${intl.formatMessage(messages['header.links.tools'])}-dropdown-menu`,
       buttonTitle: intl.formatMessage(messages['header.links.tools']),
-      items: getToolsMenuItems({ studioBaseUrl, courseId: contextId, intl }),
+      items: toolsMenuItems,
     },
   ] : [];
+
   const outlineLink = !isLibrary
     ? `${studioBaseUrl}/course/${contextId}`
     : generatePath(libraryHref, { libraryId: contextId });
