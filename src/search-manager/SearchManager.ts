@@ -184,3 +184,34 @@ export const useSearchContext = () => {
   }
   return ctx;
 };
+
+/**
+ * Hook which loads next page of items on scroll
+ */
+export const useLoadOnScroll = (
+  hasNextPage: boolean | undefined,
+  isFetchingNextPage: boolean,
+  fetchNextPage: () => void,
+  enabled: boolean,
+) => {
+  React.useEffect(() => {
+    if (enabled) {
+      const onscroll = () => {
+        // Verify the position of the scroll to implementa a infinite scroll.
+        // Used `loadLimit` to fetch next page before reach the end of the screen.
+        const loadLimit = 300;
+        const scrolledTo = window.scrollY + window.innerHeight;
+        const scrollDiff = document.body.scrollHeight - scrolledTo;
+        const isNearToBottom = scrollDiff <= loadLimit;
+        if (isNearToBottom && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      };
+      window.addEventListener('scroll', onscroll);
+      return () => {
+        window.removeEventListener('scroll', onscroll);
+      };
+    }
+    return () => {};
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+};

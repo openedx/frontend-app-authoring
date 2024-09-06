@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
 import { CardGrid } from '@openedx/paragon';
 
-import { useSearchContext } from '../search-manager';
+import { useLoadOnScroll, useSearchContext } from '../search-manager';
 import { NoComponents, NoSearchResults } from './EmptyStates';
 import CollectionCard from './components/CollectionCard';
 import { LIBRARY_SECTION_PREVIEW_LIMIT } from './components/LibrarySection';
@@ -29,26 +28,12 @@ const LibraryCollections = ({ variant }: LibraryCollectionsProps) => {
 
   const collectionList = variant === 'preview' ? collectionHits.slice(0, LIBRARY_SECTION_PREVIEW_LIMIT) : collectionHits;
 
-  useEffect(() => {
-    if (variant === 'full') {
-      const onscroll = () => {
-        // Verify the position of the scroll to implementa a infinite scroll.
-        // Used `loadLimit` to fetch next page before reach the end of the screen.
-        const loadLimit = 300;
-        const scrolledTo = window.scrollY + window.innerHeight;
-        const scrollDiff = document.body.scrollHeight - scrolledTo;
-        const isNearToBottom = scrollDiff <= loadLimit;
-        if (isNearToBottom && hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
-        }
-      };
-      window.addEventListener('scroll', onscroll);
-      return () => {
-        window.removeEventListener('scroll', onscroll);
-      };
-    }
-    return () => {};
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+  useLoadOnScroll(
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    variant === 'full',
+  );
 
   if (totalCollectionHits === 0) {
     return isFiltered ? <NoSearchResults searchType="collection" /> : <NoComponents searchType="collection" />;

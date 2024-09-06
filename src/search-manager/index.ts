@@ -1,4 +1,4 @@
-export { SearchContextProvider, useSearchContext } from './SearchManager';
+export { SearchContextProvider, useLoadOnScroll, useSearchContext } from './SearchManager';
 export { default as ClearFiltersButton } from './ClearFiltersButton';
 export { default as FilterByBlockType } from './FilterByBlockType';
 export { default as FilterByTags } from './FilterByTags';
