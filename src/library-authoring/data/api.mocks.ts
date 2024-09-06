@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import { createAxiosError } from '../../testUtils';
 import * as api from './api';
 

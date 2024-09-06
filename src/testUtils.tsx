@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 /* eslint-disable react/require-default-props */
 /* eslint-disable react/prop-types */
 /* eslint-disable import/no-extraneous-dependencies */

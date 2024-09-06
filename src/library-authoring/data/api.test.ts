@@ -1,65 +1,63 @@
-import MockAdapter from 'axios-mock-adapter';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import {
-  commitLibraryChanges,
-  createLibraryBlock,
-  getCommitLibraryChangesUrl,
-  getCreateLibraryBlockUrl,
-  revertLibraryChanges,
-} from './api';
+import { initializeMocks } from '../../testUtils';
+import * as api from './api';
 
-let axiosMock;
-
-describe('library api calls', () => {
-  beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
+describe('library data API', () => {
+  describe('getLibraryBlockTypes', () => {
+    it('throws an error for invalid libraryId', () => {
+      const err = 'The current API for block types requires a libraryId.';
+      expect(() => api.getLibraryBlockTypes('')).rejects.toThrow(err);
+      // @ts-ignore
+      expect(() => api.getLibraryBlockTypes()).rejects.toThrow(err);
     });
-
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-    axiosMock.restore();
-  });
-
-  it('should create library block', async () => {
-    const libraryId = 'lib:org:1';
-    const url = getCreateLibraryBlockUrl(libraryId);
-    axiosMock.onPost(url).reply(200);
-    await createLibraryBlock({
-      libraryId,
-      blockType: 'html',
-      definitionId: '1',
+  describe('getContentLibrary', () => {
+    it('throws an error for invalid libraryId', () => {
+      expect(api.getContentLibrary('')).rejects.toThrow('libraryId is required');
+      // @ts-ignore
+      expect(() => api.getContentLibrary()).rejects.toThrow('libraryId is required');
     });
-
-    expect(axiosMock.history.post[0].url).toEqual(url);
   });
 
-  it('should commit library changes', async () => {
-    const libraryId = 'lib:org:1';
-    const url = getCommitLibraryChangesUrl(libraryId);
-    axiosMock.onPost(url).reply(200);
+  describe('createLibraryBlock', () => {
+    it('should create library block', async () => {
+      const { axiosMock } = initializeMocks();
+      const libraryId = 'lib:org:1';
+      const url = api.getCreateLibraryBlockUrl(libraryId);
+      axiosMock.onPost(url).reply(200);
+      await api.createLibraryBlock({
+        libraryId,
+        blockType: 'html',
+        definitionId: '1',
+      });
 
-    await commitLibraryChanges(libraryId);
-
-    expect(axiosMock.history.post[0].url).toEqual(url);
+      expect(axiosMock.history.post[0].url).toEqual(url);
+    });
   });
 
-  it('should revert library changes', async () => {
-    const libraryId = 'lib:org:1';
-    const url = getCommitLibraryChangesUrl(libraryId);
-    axiosMock.onDelete(url).reply(200);
+  describe('commitLibraryChanges', () => {
+    it('should commit library changes', async () => {
+      const { axiosMock } = initializeMocks();
+      const libraryId = 'lib:org:1';
+      const url = api.getCommitLibraryChangesUrl(libraryId);
+      axiosMock.onPost(url).reply(200);
 
-    await revertLibraryChanges(libraryId);
+      await api.commitLibraryChanges(libraryId);
 
-    expect(axiosMock.history.delete[0].url).toEqual(url);
+      expect(axiosMock.history.post[0].url).toEqual(url);
+    });
+  });
+
+  describe('revertLibraryChanges', () => {
+    it('should revert library changes', async () => {
+      const { axiosMock } = initializeMocks();
+      const libraryId = 'lib:org:1';
+      const url = api.getCommitLibraryChangesUrl(libraryId);
+      axiosMock.onDelete(url).reply(200);
+
+      await api.revertLibraryChanges(libraryId);
+
+      expect(axiosMock.history.delete[0].url).toEqual(url);
+    });
   });
 });
