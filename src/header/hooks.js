@@ -1,6 +1,8 @@
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { useSelector } from 'react-redux';
 import { getPagePath } from '../utils';
+import { getStudioHomeData } from '../studio-home/data/selectors';
 import messages from './messages';
 
 export const useContentMenuItems = courseId => {
@@ -38,6 +40,7 @@ export const useContentMenuItems = courseId => {
 export const useSettingMenuItems = courseId => {
   const intl = useIntl();
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
+  const { canAccessAdvancedSettings } = useSelector(getStudioHomeData);
 
   const items = [
     {
@@ -56,10 +59,12 @@ export const useSettingMenuItems = courseId => {
       href: `${studioBaseUrl}/group_configurations/${courseId}`,
       title: intl.formatMessage(messages['header.links.groupConfigurations']),
     },
-    {
-      href: `${studioBaseUrl}/settings/advanced/${courseId}`,
-      title: intl.formatMessage(messages['header.links.advancedSettings']),
-    },
+    ...(canAccessAdvancedSettings === true
+      ? [{
+        href: `${studioBaseUrl}/settings/advanced/${courseId}`,
+        title: intl.formatMessage(messages['header.links.advancedSettings']),
+      }] : []
+    ),
   ];
   if (getConfig().ENABLE_CERTIFICATE_PAGE === 'true') {
     items.push({

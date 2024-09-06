@@ -1,3 +1,4 @@
+import { useSelector } from 'react-redux';
 import { getConfig, setConfig } from '@edx/frontend-platform';
 import { renderHook } from '@testing-library/react-hooks';
 import { useContentMenuItems, useToolsMenuItems, useSettingMenuItems } from './hooks';
@@ -7,6 +8,11 @@ jest.mock('@edx/frontend-platform/i18n', () => ({
   useIntl: () => ({
     formatMessage: jest.fn(message => message.defaultMessage),
   }),
+}));
+
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useSelector: jest.fn(),
 }));
 
 describe('header utils', () => {
@@ -30,6 +36,8 @@ describe('header utils', () => {
   });
 
   describe('getSettingsMenuitems', () => {
+    useSelector.mockReturnValue({ canAccessAdvancedSettings: true });
+
     it('should include certificates option', () => {
       setConfig({
         ...getConfig(),
@@ -45,6 +53,15 @@ describe('header utils', () => {
       });
       const actualItems = renderHook(() => useSettingMenuItems('course-123')).result.current;
       expect(actualItems).toHaveLength(5);
+    });
+    it('should include advanced settings option', () => {
+      const actualItemsTitle = renderHook(() => useSettingMenuItems('course-123')).result.current.map((item) => item.title);
+      expect(actualItemsTitle).toContain('Advanced Settings');
+    });
+    it('should not include advanced settings option', () => {
+      useSelector.mockReturnValue({ canAccessAdvancedSettings: false });
+      const actualItemsTitle = renderHook(() => useSettingMenuItems('course-123')).result.current.map((item) => item.title);
+      expect(actualItemsTitle).not.toContain('Advanced Settings');
     });
   });
 
