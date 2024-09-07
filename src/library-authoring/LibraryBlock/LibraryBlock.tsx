@@ -43,7 +43,7 @@ const LibraryBlock = ({ getHandlerUrl, onBlockNotification, view }: LibraryBlock
    * Handle any messages we receive from the XBlock Runtime code in the IFrame.
    * See wrap.ts to see the code that sends these messages.
    */
-   /* istanbul ignore next */
+  /* istanbul ignore next */
   const receivedWindowMessage = async (event) => {
     if (!iframeRef.current || event.source !== iframeRef.current.contentWindow) {
       return; // This is some other random message.
