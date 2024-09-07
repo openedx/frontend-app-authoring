@@ -18,9 +18,11 @@ import {
   libraryPasteClipboard,
   getXBlockFields,
   updateXBlockFields,
+  createCollection,
+  CreateLibraryCollectionDataRequest,
 } from './api';
 
-const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
+const libraryQueryPredicate = (query: Query, libraryId?: string): boolean => {
   // Invalidate all content queries related to this library.
   // If we allow searching "all courses and libraries" in the future,
   // then we'd have to invalidate all `["content_search", "results"]`
@@ -206,6 +208,19 @@ export const useUpdateXBlockFields = (contentLibraryId: string, usageKey: string
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.xblockFields(contentLibraryId, usageKey) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, contentLibraryId) });
+    },
+  });
+};
+
+/**
+ * Use this mutation to create a library collection
+ */
+export const useCreateLibraryCollection = (libraryId?: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: CreateLibraryCollectionDataRequest) => createCollection(data, libraryId),
+    onSettled: () => {
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
     },
   });
 };

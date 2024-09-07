@@ -6,41 +6,73 @@ import {
   ModalDialog,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { useParams } from 'react-router-dom';
 import { LibraryContext } from '../common/context';
 import messages from './messages';
+import { useCreateLibraryCollection } from '../data/apiHooks';
+import { ToastContext } from '../../generic/toast-context';
 
 const CreateCollectionModal = () => {
   const intl = useIntl();
+  const { libraryId } = useParams();
+  const create = useCreateLibraryCollection(libraryId);
   const {
     isCreateCollectionModalOpen,
     closeCreateCollectionModal,
   } = React.useContext(LibraryContext);
+  const { showToast } = React.useContext(ToastContext);
 
   const [collectionName, setCollectionName] = React.useState<string | null>(null);
-  const [isCollectionNameInvalid, setIsCollectionNameInvalid] = React.useState<boolean>(false);
+  const [collectionNameInvalidMsg, setCollectionNameInvalidMsg] = React.useState<string | null>(null);
   const [collectionDescription, setCollectionDescription] = React.useState<string | null>(null);
+  const [isCreatingCollection, setIsCreatingCollection] = React.useState<boolean>(false);
 
   const handleNameOnChange = React.useCallback((value : string) => {
     setCollectionName(value);
-    setIsCollectionNameInvalid(false);
+    setCollectionNameInvalidMsg(null);
+  }, []);
+
+  const handleOnClose = React.useCallback(() => {
+    closeCreateCollectionModal();
+    setCollectionNameInvalidMsg(null);
+    setCollectionName(null);
+    setCollectionDescription(null);
+    setIsCreatingCollection(false);
   }, []);
 
   const handleCreate = React.useCallback(() => {
     if (collectionName === null || collectionName === '') {
-      setIsCollectionNameInvalid(true);
+      setCollectionNameInvalidMsg(
+        intl.formatMessage(messages.createCollectionModalNameInvalid),
+      );
       return;
     }
-    // TODO call API
-    setCollectionName(null);
-    setCollectionDescription(null);
-    closeCreateCollectionModal();
+
+    setIsCreatingCollection(true);
+
+    create.mutateAsync({
+      title: collectionName,
+      description: collectionDescription || '',
+    }).then(() => {
+      handleOnClose();
+      showToast(intl.formatMessage(messages.createCollectionSuccess));
+    }).catch((err) => {
+      setIsCreatingCollection(false);
+      if (err.customAttributes.httpErrorStatus === 409) {
+        setCollectionNameInvalidMsg(
+          intl.formatMessage(messages.createCollectionModalNameConflict),
+        );
+      } else {
+        showToast(intl.formatMessage(messages.createCollectionError));
+      }
+    });
   }, [collectionName, collectionDescription]);
 
   return (
     <ModalDialog
       title={intl.formatMessage(messages.createCollectionModalTitle)}
       isOpen={isCreateCollectionModalOpen}
-      onClose={closeCreateCollectionModal}
+      onClose={handleOnClose}
       size="xl"
       hasCloseButton
       isFullscreenOnMobile
@@ -62,9 +94,9 @@ const CreateCollectionModal = () => {
               value={collectionName}
               onChange={(e) => handleNameOnChange(e.target.value)}
             />
-            { isCollectionNameInvalid && (
+            { collectionNameInvalidMsg && (
               <Form.Control.Feedback type="invalid">
-                {intl.formatMessage(messages.createCollectionModalNameInvalid)}
+                {collectionNameInvalidMsg}
               </Form.Control.Feedback>
             )}
           </Form.Group>
@@ -90,7 +122,7 @@ const CreateCollectionModal = () => {
           <ModalDialog.CloseButton variant="tertiary">
             {intl.formatMessage(messages.createCollectionModalCancel)}
           </ModalDialog.CloseButton>
-          <Button variant="primary" onClick={handleCreate}>
+          <Button variant="primary" onClick={handleCreate} disabled={isCreatingCollection}>
             {intl.formatMessage(messages.createCollectionModalCreate)}
           </Button>
         </ActionRow>

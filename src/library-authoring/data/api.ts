@@ -25,9 +25,13 @@ export const getCommitLibraryChangesUrl = (libraryId: string) => `${getApiBaseUr
  */
 export const getLibraryPasteClipboardUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/paste_clipboard/`;
 /**
-  * Get the URL for the xblock metadata API.
-  */
+ * Get the URL for the xblock metadata API.
+ */
 export const getXBlockFieldsApiUrl = (usageKey: string) => `${getApiBaseUrl()}/api/xblock/v2/xblocks/${usageKey}/fields/`;
+/**
+ * Get the URL for the Library Collections API.
+ */
+export const getLibraryCollectionsApiUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/collections/`;
 
 export interface ContentLibrary {
   id: string;
@@ -125,6 +129,11 @@ export interface UpdateXBlockFieldsRequest {
   metadata?: {
     display_name?: string;
   };
+}
+
+export interface CreateLibraryCollectionDataRequest {
+  title: string;
+  description: string | null;
 }
 
 /**
@@ -240,7 +249,18 @@ export async function getXBlockFields(usageKey: string): Promise<XBlockFields> {
 /**
  * Update xblock fields.
  */
-export async function updateXBlockFields(usageKey:string, xblockData: UpdateXBlockFieldsRequest) {
+export async function updateXBlockFields(usageKey: string, xblockData: UpdateXBlockFieldsRequest) {
   const client = getAuthenticatedHttpClient();
   await client.post(getXBlockFieldsApiUrl(usageKey), xblockData);
+}
+
+export async function createCollection(collectionData: CreateLibraryCollectionDataRequest, libraryId?: string) {
+  if (!libraryId) {
+    throw new Error('libraryId is required');
+  }
+
+  const client = getAuthenticatedHttpClient();
+  const { data } = await client.post(getLibraryCollectionsApiUrl(libraryId), collectionData);
+
+  return camelCaseObject(data);
 }

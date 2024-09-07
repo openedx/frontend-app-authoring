@@ -35,6 +35,11 @@ const messages = defineMessages({
     defaultMessage: 'Collection name is required',
     description: 'Mesasge when the Name field of the Create Collection modal form is invalid',
   },
+  createCollectionModalNameConflict: {
+    id: 'course-authoring.library-authoring.modals.create-collection.form.name.conflict',
+    defaultMessage: 'There is another collection with the same name',
+    description: 'Mesasge when the Name field of the Create Collection modal form is not unique',
+  },
   createCollectionModalDescriptionLabel: {
     id: 'course-authoring.library-authoring.modals.create-collection.form.description',
     defaultMessage: 'Add a description (optional)',
@@ -49,6 +54,16 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.modals.create-collection.form.description.details',
     defaultMessage: 'Descriptions can help you and your team better organize and find what you are looking for',
     description: 'Details of the Description field of the Create Collection modal form',
+  },
+  createCollectionSuccess: {
+    id: 'course-authoring.library-authoring.modals.create-collection.success',
+    defaultMessage: 'Collection created successfully',
+    description: 'Success message when creating a library collection',
+  },
+  createCollectionError: {
+    id: 'course-authoring.library-authoring.modals.create-collection.error',
+    defaultMessage: 'There is an error when creating the library collection',
+    description: 'Error message when creating a library collection',
   },
 });
 
