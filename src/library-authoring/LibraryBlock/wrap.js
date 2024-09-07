@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+/* istanbul ignore file */
 /**
  * Code to wrap an XBlock so that we can embed it in an IFrame
  */

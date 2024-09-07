@@ -7,7 +7,6 @@ import { ensureConfig, getConfig } from '@edx/frontend-platform';
 import type { XBlockRenderResponse } from '../data/api';
 import wrapBlockHtmlForIFrame from './wrap';
 
-// FixMe: We need this?
 ensureConfig(['LMS_BASE_URL', 'SECURE_ORIGIN_XBLOCK_BOOTSTRAP_HTML_URL'], 'library block component');
 
 interface LibraryBlockProps {
@@ -107,8 +106,7 @@ const LibraryBlock = ({ getHandlerUrl, onBlockNotification, view }: LibraryBlock
         key={view.content}
         ref={iframeRef}
         title="block"
-        /* FixMe: Remove hardcoded URL */
-        src={getConfig().SECURE_ORIGIN_XBLOCK_BOOTSTRAP_HTML_URL || 'https://metadata-test233.s3.amazonaws.com/xblock-bootstrap.html'}
+        src={getConfig().SECURE_ORIGIN_XBLOCK_BOOTSTRAP_HTML_URL}
         data-testid="block-preview"
         style={{
           position: 'absolute',

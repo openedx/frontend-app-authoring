@@ -35,6 +35,7 @@ const ModalComponentPreview = ({ isOpen, close, usageKey }: ModalComponentPrevie
           {intl.formatMessage(messages.previewModalCloseButtonTitle)}
         </Button>
       )}
+      className="component-preview-modal"
     >
       <PreviewOverlay />
       { view && <LibraryBlock getHandlerUrl={getHandlerUrl} view={view} /> }
