@@ -5,11 +5,11 @@ import {
   Form,
   ModalDialog,
 } from '@openedx/paragon';
+import { useParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import FormikControl from '../../generic/FormikControl';
-import { useParams } from 'react-router-dom';
 import { LibraryContext } from '../common/context';
 import messages from './messages';
 import { useCreateLibraryCollection } from '../data/apiHooks';
@@ -60,44 +60,44 @@ const CreateCollectionModal = () => {
       </ModalDialog.Header>
 
       <Formik
-          initialValues={{
-            title: '',
-            description: '',
-          }}
-          validationSchema={
-            Yup.object().shape({
-              title: Yup.string()
-                .required(intl.formatMessage(messages.createCollectionModalNameInvalid)),
-              description: Yup.string(),
-            })
-          }
-          onSubmit={(values) => handleCreate(values)}
-        >
+        initialValues={{
+          title: '',
+          description: '',
+        }}
+        validationSchema={
+          Yup.object().shape({
+            title: Yup.string()
+              .required(intl.formatMessage(messages.createCollectionModalNameInvalid)),
+            description: Yup.string(),
+          })
+        }
+        onSubmit={(values) => handleCreate(values)}
+      >
         {(formikProps) => (
           <>
             <ModalDialog.Body className="mw-sm">
               <Form onSubmit={formikProps.handleSubmit}>
                 <FormikControl
                   name="title"
-                  label={
+                  label={(
                     <Form.Label className="font-weight-bold h3">
                       {intl.formatMessage(messages.createCollectionModalNameLabel)}
                     </Form.Label>
-                  }
+                  )}
                   value={formikProps.values.title}
                   placeholder={intl.formatMessage(messages.createCollectionModalNamePlaceholder)}
                   help=""
                   className=""
                   controlClasses="pb-2"
-                />              
+                />
                 <FormikControl
                   name="description"
                   as="textarea"
-                  label={
+                  label={(
                     <Form.Label className="font-weight-bold h3">
                       {intl.formatMessage(messages.createCollectionModalDescriptionLabel)}
                     </Form.Label>
-                  }
+                  )}
                   value={formikProps.values.description}
                   placeholder={intl.formatMessage(messages.createCollectionModalDescriptionPlaceholder)}
                   help={intl.formatMessage(messages.createCollectionModalDescriptionDetails)}
