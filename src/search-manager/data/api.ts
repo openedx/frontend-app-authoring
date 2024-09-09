@@ -83,7 +83,7 @@ function formatTagsFilter(tagsFilter?: string[]): string[] {
 /**
  * The tags that are associated with a search result, at various levels of the tag hierarchy.
  */
-interface ContentHitTags {
+export interface ContentHitTags {
   taxonomy?: string[];
   level0?: string[];
   level1?: string[];
