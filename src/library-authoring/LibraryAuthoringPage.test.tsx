@@ -1,10 +1,11 @@
 import fetchMock from 'fetch-mock-jest';
 import {
   fireEvent,
+  initializeMocks,
   render,
+  screen,
   waitFor,
   within,
-  initializeMocks,
 } from '../testUtils';
 import { getContentSearchConfigUrl } from '../search-manager/data/api';
 import mockResult from './__mocks__/library-search.json';
@@ -96,87 +97,83 @@ describe('<LibraryAuthoringPage />', () => {
   });
 
   const renderLibraryPage = async () => {
-    const doc = render(<LibraryLayout />, { path, params: { libraryId: mockContentLibrary.libraryId } });
+    render(<LibraryLayout />, { path, params: { libraryId: mockContentLibrary.libraryId } });
 
     // Ensure the search endpoint is called:
     // Call 1: To fetch searchable/filterable/sortable library data
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
-
-    return doc;
   };
 
   it('shows the spinner before the query is complete', () => {
     // This mock will never return data about the library (it loads forever):
     const libraryId = mockContentLibrary.libraryIdThatNeverLoads;
-    const doc = render(<LibraryLayout />, { path, params: { libraryId } });
-    const spinner = doc.getByRole('status');
+    render(<LibraryLayout />, { path, params: { libraryId } });
+    const spinner = screen.getByRole('status');
     expect(spinner.textContent).toEqual('Loading...');
   });
 
   it('shows an error component if no library returned', async () => {
     // This mock will simulate a 404 error:
     const libraryId = mockContentLibrary.library404;
-    const doc = render(<LibraryLayout />, { path, params: { libraryId } });
-    expect(await doc.findByTestId('notFoundAlert')).toBeInTheDocument();
+    render(<LibraryLayout />, { path, params: { libraryId } });
+    expect(await screen.findByTestId('notFoundAlert')).toBeInTheDocument();
   });
 
   it('shows library data', async () => {
-    const {
-      getByRole, getAllByText, getByText, queryByText, findByText, findAllByText,
-    } = await renderLibraryPage();
+    await renderLibraryPage();
 
-    expect(await findByText('Content library')).toBeInTheDocument();
-    expect((await findAllByText(libraryTitle))[0]).toBeInTheDocument();
+    expect(await screen.findByText('Content library')).toBeInTheDocument();
+    expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
 
-    expect(queryByText('You have not added any content to this library yet.')).not.toBeInTheDocument();
+    expect(screen.queryByText('You have not added any content to this library yet.')).not.toBeInTheDocument();
 
     // "Recently Modified" header + sort shown
-    expect(getAllByText('Recently Modified').length).toEqual(2);
-    expect(getByText('Collections (0)')).toBeInTheDocument();
-    expect(getByText('Components (10)')).toBeInTheDocument();
-    expect((await findAllByText('Introduction to Testing'))[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Recently Modified').length).toEqual(2);
+    expect(screen.getByText('Collections (0)')).toBeInTheDocument();
+    expect(screen.getByText('Components (10)')).toBeInTheDocument();
+    expect((await screen.findAllByText('Introduction to Testing'))[0]).toBeInTheDocument();
 
     // Navigate to the components tab
-    fireEvent.click(getByRole('tab', { name: 'Components' }));
+    fireEvent.click(screen.getByRole('tab', { name: 'Components' }));
     // "Recently Modified" default sort shown
-    expect(getAllByText('Recently Modified').length).toEqual(1);
-    expect(queryByText('Collections (0)')).not.toBeInTheDocument();
-    expect(queryByText('Components (10)')).not.toBeInTheDocument();
+    expect(screen.getAllByText('Recently Modified').length).toEqual(1);
+    expect(screen.queryByText('Collections (0)')).not.toBeInTheDocument();
+    expect(screen.queryByText('Components (10)')).not.toBeInTheDocument();
 
     // Navigate to the collections tab
-    fireEvent.click(getByRole('tab', { name: 'Collections' }));
+    fireEvent.click(screen.getByRole('tab', { name: 'Collections' }));
     // "Recently Modified" default sort shown
-    expect(getAllByText('Recently Modified').length).toEqual(1);
-    expect(queryByText('Collections (0)')).not.toBeInTheDocument();
-    expect(queryByText('Components (10)')).not.toBeInTheDocument();
-    expect(queryByText('There are 10 components in this library')).not.toBeInTheDocument();
-    expect(getByText('Coming soon!')).toBeInTheDocument();
+    expect(screen.getAllByText('Recently Modified').length).toEqual(1);
+    expect(screen.queryByText('Collections (0)')).not.toBeInTheDocument();
+    expect(screen.queryByText('Components (10)')).not.toBeInTheDocument();
+    expect(screen.queryByText('There are 10 components in this library')).not.toBeInTheDocument();
+    expect(screen.getByText('Coming soon!')).toBeInTheDocument();
 
     // Go back to Home tab
     // This step is necessary to avoid the url change leak to other tests
-    fireEvent.click(getByRole('tab', { name: 'Home' }));
+    fireEvent.click(screen.getByRole('tab', { name: 'Home' }));
     // "Recently Modified" header + sort shown
-    expect(getAllByText('Recently Modified').length).toEqual(2);
-    expect(getByText('Collections (0)')).toBeInTheDocument();
-    expect(getByText('Components (10)')).toBeInTheDocument();
+    expect(screen.getAllByText('Recently Modified').length).toEqual(2);
+    expect(screen.getByText('Collections (0)')).toBeInTheDocument();
+    expect(screen.getByText('Components (10)')).toBeInTheDocument();
   });
 
   it('shows a library without components', async () => {
     fetchMock.post(searchEndpoint, returnEmptyResult, { overwriteRoutes: true });
-    const doc = await renderLibraryPage();
+    await renderLibraryPage();
 
-    expect(await doc.findByText('Content library')).toBeInTheDocument();
-    expect((await doc.findAllByText(libraryTitle))[0]).toBeInTheDocument();
+    expect(await screen.findByText('Content library')).toBeInTheDocument();
+    expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
 
-    expect(doc.getByText('You have not added any content to this library yet.')).toBeInTheDocument();
+    expect(screen.getByText('You have not added any content to this library yet.')).toBeInTheDocument();
   });
 
   it('shows the new content button', async () => {
-    const doc = await renderLibraryPage();
+    await renderLibraryPage();
 
-    expect(await doc.findByRole('heading')).toBeInTheDocument();
-    expect(doc.getByRole('button', { name: /new/i })).toBeInTheDocument();
-    expect(doc.queryByText('Read Only')).not.toBeInTheDocument();
+    expect(await screen.findByRole('heading')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /new/i })).toBeInTheDocument();
+    expect(screen.queryByText('Read Only')).not.toBeInTheDocument();
   });
 
   it('shows an empty read-only library, without a "create component" button', async () => {
@@ -184,166 +181,166 @@ describe('<LibraryAuthoringPage />', () => {
     const libraryId = mockContentLibrary.libraryIdReadOnly;
     // Update search mock so it returns no results:
     fetchMock.post(searchEndpoint, returnEmptyResult, { overwriteRoutes: true });
-    const doc = render(<LibraryLayout />, { path, params: { libraryId } });
+    render(<LibraryLayout />, { path, params: { libraryId } });
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
 
-    expect(await doc.findByText('Content library')).toBeInTheDocument();
-    expect(doc.getByText('You have not added any content to this library yet.')).toBeInTheDocument();
-    expect(doc.queryByRole('button', { name: /add component/i })).not.toBeInTheDocument();
-    expect(doc.getByText('Read Only')).toBeInTheDocument();
+    expect(await screen.findByText('Content library')).toBeInTheDocument();
+    expect(screen.getByText('You have not added any content to this library yet.')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /add component/i })).not.toBeInTheDocument();
+    expect(screen.getByText('Read Only')).toBeInTheDocument();
   });
 
   it('show a library without search results', async () => {
     // Update search mock so it returns no results:
     fetchMock.post(searchEndpoint, returnEmptyResult, { overwriteRoutes: true });
-    const doc = await renderLibraryPage();
+    await renderLibraryPage();
 
-    expect(await doc.findByText('Content library')).toBeInTheDocument();
-    expect((await doc.findAllByText(libraryTitle))[0]).toBeInTheDocument();
+    expect(await screen.findByText('Content library')).toBeInTheDocument();
+    expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
 
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
 
-    fireEvent.change(doc.getByRole('searchbox'), { target: { value: 'noresults' } });
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'noresults' } });
 
     // Ensure the search endpoint is called again, only once more since the recently modified call
     // should not be impacted by the search
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
 
-    expect(doc.getByText('No matching components found in this library.')).toBeInTheDocument();
+    expect(screen.getByText('No matching components found in this library.')).toBeInTheDocument();
 
     // Navigate to the components tab
-    fireEvent.click(doc.getByRole('tab', { name: 'Components' }));
-    expect(doc.getByText('No matching components found in this library.')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('tab', { name: 'Components' }));
+    expect(screen.getByText('No matching components found in this library.')).toBeInTheDocument();
   });
 
   it('should open and close new content sidebar', async () => {
-    const doc = await renderLibraryPage();
+    await renderLibraryPage();
 
-    expect(await doc.findByRole('heading')).toBeInTheDocument();
-    expect(doc.queryByText(/add content/i)).not.toBeInTheDocument();
+    expect(await screen.findByRole('heading')).toBeInTheDocument();
+    expect(screen.queryByText(/add content/i)).not.toBeInTheDocument();
 
-    const newButton = doc.getByRole('button', { name: /new/i });
+    const newButton = screen.getByRole('button', { name: /new/i });
     fireEvent.click(newButton);
 
-    expect(doc.getByText(/add content/i)).toBeInTheDocument();
+    expect(screen.getByText(/add content/i)).toBeInTheDocument();
 
-    const closeButton = doc.getByRole('button', { name: /close/i });
+    const closeButton = screen.getByRole('button', { name: /close/i });
     fireEvent.click(closeButton);
 
-    expect(doc.queryByText(/add content/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/add content/i)).not.toBeInTheDocument();
   });
 
   it('should open Library Info by default', async () => {
-    const doc = await renderLibraryPage();
+    await renderLibraryPage();
 
-    expect(await doc.findByText('Content library')).toBeInTheDocument();
-    expect((await doc.findAllByText(libraryTitle))[0]).toBeInTheDocument();
-    expect((await doc.findAllByText(libraryTitle))[1]).toBeInTheDocument();
+    expect(await screen.findByText('Content library')).toBeInTheDocument();
+    expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
+    expect((await screen.findAllByText(libraryTitle))[1]).toBeInTheDocument();
 
-    expect(doc.getByText('Draft')).toBeInTheDocument();
-    expect(doc.getByText('(Never Published)')).toBeInTheDocument();
+    expect(screen.getByText('Draft')).toBeInTheDocument();
+    expect(screen.getByText('(Never Published)')).toBeInTheDocument();
     // Draft saved on date:
-    expect(doc.getByText('July 22, 2024')).toBeInTheDocument();
+    expect(screen.getByText('July 22, 2024')).toBeInTheDocument();
 
-    expect(doc.getByText(mockContentLibrary.libraryData.org)).toBeInTheDocument();
+    expect(screen.getByText(mockContentLibrary.libraryData.org)).toBeInTheDocument();
     // Updated:
-    expect(doc.getByText('July 20, 2024')).toBeInTheDocument();
+    expect(screen.getByText('July 20, 2024')).toBeInTheDocument();
     // Created:
-    expect(doc.getByText('June 26, 2024')).toBeInTheDocument();
+    expect(screen.getByText('June 26, 2024')).toBeInTheDocument();
   });
 
   it('should close and open Library Info', async () => {
-    const doc = await renderLibraryPage();
+    await renderLibraryPage();
 
-    expect(await doc.findByText('Content library')).toBeInTheDocument();
-    expect((await doc.findAllByText(libraryTitle))[0]).toBeInTheDocument();
-    expect((await doc.findAllByText(libraryTitle))[1]).toBeInTheDocument();
+    expect(await screen.findByText('Content library')).toBeInTheDocument();
+    expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
+    expect((await screen.findAllByText(libraryTitle))[1]).toBeInTheDocument();
 
     // Open by default; close the library info sidebar
-    const closeButton = doc.getByRole('button', { name: /close/i });
+    const closeButton = screen.getByRole('button', { name: /close/i });
     fireEvent.click(closeButton);
-    expect(doc.queryByText('Draft')).not.toBeInTheDocument();
-    expect(doc.queryByText('(Never Published)')).not.toBeInTheDocument();
+    expect(screen.queryByText('Draft')).not.toBeInTheDocument();
+    expect(screen.queryByText('(Never Published)')).not.toBeInTheDocument();
 
     // Open library info sidebar with 'Library info' button
-    const libraryInfoButton = doc.getByRole('button', { name: /library info/i });
+    const libraryInfoButton = screen.getByRole('button', { name: /library info/i });
     fireEvent.click(libraryInfoButton);
-    expect(doc.getByText('Draft')).toBeInTheDocument();
-    expect(doc.getByText('(Never Published)')).toBeInTheDocument();
+    expect(screen.getByText('Draft')).toBeInTheDocument();
+    expect(screen.getByText('(Never Published)')).toBeInTheDocument();
 
     // Close library info sidebar with 'Library info' button
     fireEvent.click(libraryInfoButton);
-    expect(doc.queryByText('Draft')).not.toBeInTheDocument();
-    expect(doc.queryByText('(Never Published)')).not.toBeInTheDocument();
+    expect(screen.queryByText('Draft')).not.toBeInTheDocument();
+    expect(screen.queryByText('(Never Published)')).not.toBeInTheDocument();
   });
 
   it('show the "View All" button when viewing library with many components', async () => {
-    const doc = await renderLibraryPage();
+    await renderLibraryPage();
 
-    expect(doc.getByText('Content library')).toBeInTheDocument();
-    expect((await doc.findAllByText(libraryTitle))[0]).toBeInTheDocument();
+    expect(screen.getByText('Content library')).toBeInTheDocument();
+    expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
 
     // "Recently Modified" header + sort shown
-    await waitFor(() => { expect(doc.getAllByText('Recently Modified').length).toEqual(2); });
-    expect(doc.getByText('Collections (0)')).toBeInTheDocument();
-    expect(doc.getByText('Components (10)')).toBeInTheDocument();
-    expect(doc.getAllByText('Introduction to Testing')[0]).toBeInTheDocument();
-    expect(doc.queryByText('You have not added any content to this library yet.')).not.toBeInTheDocument();
+    await waitFor(() => { expect(screen.getAllByText('Recently Modified').length).toEqual(2); });
+    expect(screen.getByText('Collections (0)')).toBeInTheDocument();
+    expect(screen.getByText('Components (10)')).toBeInTheDocument();
+    expect(screen.getAllByText('Introduction to Testing')[0]).toBeInTheDocument();
+    expect(screen.queryByText('You have not added any content to this library yet.')).not.toBeInTheDocument();
 
     // There should only be one "View All" button, since the Components count
     // are above the preview limit (4)
-    expect(doc.getByText('View All')).toBeInTheDocument();
+    expect(screen.getByText('View All')).toBeInTheDocument();
 
     // Clicking on "View All" button should navigate to the Components tab
-    fireEvent.click(doc.getByText('View All'));
+    fireEvent.click(screen.getByText('View All'));
     // "Recently Modified" default sort shown
-    expect(doc.getAllByText('Recently Modified').length).toEqual(1);
-    expect(doc.queryByText('Collections (0)')).not.toBeInTheDocument();
-    expect(doc.queryByText('Components (10)')).not.toBeInTheDocument();
-    expect(doc.getAllByText('Introduction to Testing')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Recently Modified').length).toEqual(1);
+    expect(screen.queryByText('Collections (0)')).not.toBeInTheDocument();
+    expect(screen.queryByText('Components (10)')).not.toBeInTheDocument();
+    expect(screen.getAllByText('Introduction to Testing')[0]).toBeInTheDocument();
 
     // Go back to Home tab
     // This step is necessary to avoid the url change leak to other tests
-    fireEvent.click(doc.getByRole('tab', { name: 'Home' }));
+    fireEvent.click(screen.getByRole('tab', { name: 'Home' }));
     // "Recently Modified" header + sort shown
-    expect(doc.getAllByText('Recently Modified').length).toEqual(2);
-    expect(doc.getByText('Collections (0)')).toBeInTheDocument();
-    expect(doc.getByText('Components (10)')).toBeInTheDocument();
+    expect(screen.getAllByText('Recently Modified').length).toEqual(2);
+    expect(screen.getByText('Collections (0)')).toBeInTheDocument();
+    expect(screen.getByText('Components (10)')).toBeInTheDocument();
   });
 
   it('should not show the "View All" button when viewing library with low number of components', async () => {
     fetchMock.post(searchEndpoint, returnLowNumberResults, { overwriteRoutes: true });
-    const doc = await renderLibraryPage();
+    await renderLibraryPage();
 
-    expect(doc.getByText('Content library')).toBeInTheDocument();
-    expect((await doc.findAllByText(libraryTitle))[0]).toBeInTheDocument();
+    expect(screen.getByText('Content library')).toBeInTheDocument();
+    expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
 
     // "Recently Modified" header + sort shown
-    await waitFor(() => { expect(doc.getAllByText('Recently Modified').length).toEqual(2); });
-    expect(doc.getByText('Collections (0)')).toBeInTheDocument();
-    expect(doc.getByText('Components (2)')).toBeInTheDocument();
-    expect(doc.getAllByText('Introduction to Testing')[0]).toBeInTheDocument();
-    expect(doc.queryByText('You have not added any content to this library yet.')).not.toBeInTheDocument();
+    await waitFor(() => { expect(screen.getAllByText('Recently Modified').length).toEqual(2); });
+    expect(screen.getByText('Collections (0)')).toBeInTheDocument();
+    expect(screen.getByText('Components (2)')).toBeInTheDocument();
+    expect(screen.getAllByText('Introduction to Testing')[0]).toBeInTheDocument();
+    expect(screen.queryByText('You have not added any content to this library yet.')).not.toBeInTheDocument();
 
     // There should not be any "View All" button on page since Components count
     // is less than the preview limit (4)
-    expect(doc.queryByText('View All')).not.toBeInTheDocument();
+    expect(screen.queryByText('View All')).not.toBeInTheDocument();
   });
 
   it('sorts library components', async () => {
-    const doc = await renderLibraryPage();
+    await renderLibraryPage();
 
-    expect(await doc.findByTitle('Sort search results')).toBeInTheDocument();
+    expect(await screen.findByTitle('Sort search results')).toBeInTheDocument();
 
     const testSortOption = (async (optionText, sortBy, isDefault) => {
       // Open the drop-down menu
-      fireEvent.click(doc.getByTitle('Sort search results'));
+      fireEvent.click(screen.getByTitle('Sort search results'));
 
       // Click the option with the given text
       // Since the sort drop-down also shows the selected sort
       // option in its toggle button, we need to make sure we're
       // clicking on the last one found.
-      const options = doc.getAllByText(optionText);
+      const options = screen.getAllByText(optionText);
       expect(options.length).toBeGreaterThan(0);
       fireEvent.click(options[options.length - 1]);
 
@@ -364,7 +361,7 @@ describe('<LibraryAuthoringPage />', () => {
 
       // Is the selected sort option shown in the toggle button (if not default)
       // as well as in the drop-down menu?
-      expect(doc.getAllByText(optionText).length).toEqual(isDefault ? 1 : 2);
+      expect(screen.getAllByText(optionText).length).toEqual(isDefault ? 1 : 2);
     });
 
     await testSortOption('Title, A-Z', 'display_name:asc', false);
@@ -384,14 +381,14 @@ describe('<LibraryAuthoringPage />', () => {
 
     // Re-selecting the previous sort option resets sort to default "Recently Modified"
     await testSortOption('Recently Published', 'modified:desc', true);
-    expect(doc.getAllByText('Recently Modified').length).toEqual(3);
+    expect(screen.getAllByText('Recently Modified').length).toEqual(3);
 
     // Enter a keyword into the search box
-    const searchBox = doc.getByRole('searchbox');
+    const searchBox = screen.getByRole('searchbox');
     fireEvent.change(searchBox, { target: { value: 'words to find' } });
 
     // Default sort option changes to "Most Relevant"
-    expect(doc.getAllByText('Most Relevant').length).toEqual(2);
+    expect(screen.getAllByText('Most Relevant').length).toEqual(2);
     await waitFor(() => {
       expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
         body: expect.stringContaining('"sort":[]'),
@@ -405,13 +402,13 @@ describe('<LibraryAuthoringPage />', () => {
     const mockResult0 = mockResult.results[0].hits[0];
     const displayName = 'Introduction to Testing';
     expect(mockResult0.display_name).toStrictEqual(displayName);
-    const doc = await renderLibraryPage();
+    await renderLibraryPage();
 
     // Click on the first component
-    waitFor(() => expect(doc.queryByText(displayName)).toBeInTheDocument());
-    fireEvent.click(doc.getAllByText(displayName)[0]);
+    waitFor(() => expect(screen.queryByText(displayName)).toBeInTheDocument());
+    fireEvent.click(screen.getAllByText(displayName)[0]);
 
-    const sidebar = doc.getByTestId('library-sidebar');
+    const sidebar = screen.getByTestId('library-sidebar');
 
     const { getByRole, getByText } = within(sidebar);
 
@@ -420,7 +417,7 @@ describe('<LibraryAuthoringPage />', () => {
     const closeButton = getByRole('button', { name: /close/i });
     fireEvent.click(closeButton);
 
-    await waitFor(() => expect(doc.queryByTestId('library-sidebar')).not.toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
   });
 
   it('can filter by capa problem type', async () => {
@@ -432,21 +429,21 @@ describe('<LibraryAuthoringPage />', () => {
       'Text Input': 'stringresponse',
     };
 
-    const doc = await renderLibraryPage();
+    await renderLibraryPage();
 
     // Ensure the search endpoint is called
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
-    const filterButton = doc.getByRole('button', { name: /type/i });
+    const filterButton = screen.getByRole('button', { name: /type/i });
     fireEvent.click(filterButton);
 
-    const problemFilterCheckbox = doc.getByRole('checkbox', { name: /problem/i });
+    const problemFilterCheckbox = screen.getByRole('checkbox', { name: /problem/i });
     const problemFilterMenuItem = problemFilterCheckbox.parentElement; // div.pgn__menu-item
     const showProbTypesSubmenuBtn = problemFilterMenuItem!.querySelector('button[aria-label="Open problem types filters"]');
     expect(showProbTypesSubmenuBtn).not.toBeNull();
     fireEvent.click(showProbTypesSubmenuBtn!);
 
     const validateSubmenu = async (submenuText : string) => {
-      const submenu = doc.getByText(submenuText);
+      const submenu = screen.getByText(submenuText);
       expect(submenu).toBeInTheDocument();
       fireEvent.click(submenu);
 
@@ -476,7 +473,7 @@ describe('<LibraryAuthoringPage />', () => {
     }
 
     // Validate click on Problem type
-    const problemMenu = doc.getByText('Problem');
+    const problemMenu = screen.getByText('Problem');
     expect(problemMenu).toBeInTheDocument();
     fireEvent.click(problemMenu);
     await waitFor(() => {
@@ -497,11 +494,11 @@ describe('<LibraryAuthoringPage />', () => {
     });
 
     // Validate clear filters
-    const submenu = doc.getByText('Checkboxes');
+    const submenu = screen.getByText('Checkboxes');
     expect(submenu).toBeInTheDocument();
     fireEvent.click(submenu);
 
-    const clearFitlersButton = doc.getByRole('button', { name: /clear filters/i });
+    const clearFitlersButton = screen.getByRole('button', { name: /clear filters/i });
     fireEvent.click(clearFitlersButton);
     await waitFor(() => {
       expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
@@ -514,11 +511,11 @@ describe('<LibraryAuthoringPage />', () => {
 
   it('has an empty type filter when there are no results', async () => {
     fetchMock.post(searchEndpoint, returnEmptyResult, { overwriteRoutes: true });
-    const doc = await renderLibraryPage();
+    await renderLibraryPage();
 
-    const filterButton = doc.getByRole('button', { name: /type/i });
+    const filterButton = screen.getByRole('button', { name: /type/i });
     fireEvent.click(filterButton);
 
-    expect(doc.getByText(/no matching components/i)).toBeInTheDocument();
+    expect(screen.getByText(/no matching components/i)).toBeInTheDocument();
   });
 });
