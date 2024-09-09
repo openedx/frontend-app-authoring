@@ -33,7 +33,7 @@ const LibraryInfo = ({ library } : LibraryInfoProps) => {
           </span>
           <span className="small">
             <FormattedDate
-              value={library.updated}
+              value={library.updated ?? undefined}
               year="numeric"
               month="long"
               day="2-digit"
@@ -46,7 +46,7 @@ const LibraryInfo = ({ library } : LibraryInfoProps) => {
           </span>
           <span className="small">
             <FormattedDate
-              value={library.created}
+              value={library.created ?? undefined}
               year="numeric"
               month="long"
               day="2-digit"
