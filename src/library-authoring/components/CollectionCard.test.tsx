@@ -3,7 +3,7 @@ import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import type { Store } from 'redux';
 
@@ -66,9 +66,9 @@ describe('<CollectionCard />', () => {
   });
 
   it('should render the card with title and description', () => {
-    const { getByText } = render(<RootWrapper />);
+    render(<RootWrapper />);
 
-    expect(getByText('Collection Display Formated Name')).toBeInTheDocument();
-    expect(getByText('Collection description')).toBeInTheDocument();
+    expect(screen.getByText('Collection Display Formated Name')).toBeInTheDocument();
+    expect(screen.getByText('Collection description')).toBeInTheDocument();
   });
 });

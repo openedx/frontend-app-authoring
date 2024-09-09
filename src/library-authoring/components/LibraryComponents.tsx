@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 import { CardGrid } from '@openedx/paragon';
 
-import { useLoadOnScroll, useSearchContext } from '../../search-manager';
+import { useLoadOnScroll } from '../../hooks';
+import { useSearchContext } from '../../search-manager';
 import { NoComponents, NoSearchResults } from '../EmptyStates';
 import { useLibraryBlockTypes } from '../data/apiHooks';
 import ComponentCard from './ComponentCard';

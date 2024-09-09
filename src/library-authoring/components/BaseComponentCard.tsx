@@ -5,7 +5,6 @@ import {
   Icon,
   Stack,
 } from '@openedx/paragon';
-import { ReactNodeLike } from 'prop-types';
 
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
 import TagCount from '../../generic/tag-count';
@@ -16,7 +15,7 @@ type BaseComponentCardProps = {
   displayName: string,
   description: string,
   tags: ContentHitTags,
-  actions: ReactNodeLike,
+  actions: React.ReactNode,
   blockTypeDisplayName: string,
   openInfoSidebar: () => void
 };

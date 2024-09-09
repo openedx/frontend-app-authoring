@@ -1,6 +1,7 @@
 import { CardGrid } from '@openedx/paragon';
 
-import { useLoadOnScroll, useSearchContext } from '../search-manager';
+import { useLoadOnScroll } from '../hooks';
+import { useSearchContext } from '../search-manager';
 import { NoComponents, NoSearchResults } from './EmptyStates';
 import CollectionCard from './components/CollectionCard';
 import { LIBRARY_SECTION_PREVIEW_LIMIT } from './components/LibrarySection';
