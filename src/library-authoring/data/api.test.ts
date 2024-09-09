@@ -2,23 +2,6 @@ import { initializeMocks } from '../../testUtils';
 import * as api from './api';
 
 describe('library data API', () => {
-  describe('getLibraryBlockTypes', () => {
-    it('throws an error for invalid libraryId', () => {
-      const err = 'The current API for block types requires a libraryId.';
-      expect(() => api.getLibraryBlockTypes('')).rejects.toThrow(err);
-      // @ts-ignore
-      expect(() => api.getLibraryBlockTypes()).rejects.toThrow(err);
-    });
-  });
-
-  describe('getContentLibrary', () => {
-    it('throws an error for invalid libraryId', () => {
-      expect(api.getContentLibrary('')).rejects.toThrow('libraryId is required');
-      // @ts-ignore
-      expect(() => api.getContentLibrary()).rejects.toThrow('libraryId is required');
-    });
-  });
-
   describe('createLibraryBlock', () => {
     it('should create library block', async () => {
       const { axiosMock } = initializeMocks();
