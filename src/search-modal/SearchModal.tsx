@@ -5,7 +5,6 @@ import { ModalDialog } from '@openedx/paragon';
 import messages from './messages';
 import SearchUI from './SearchUI';
 
-// eslint-disable-next-line react/require-default-props
 const SearchModal: React.FC<{ courseId?: string, isOpen: boolean, onClose: () => void }> = ({ courseId, ...props }) => {
   const intl = useIntl();
   const title = intl.formatMessage(messages.title);

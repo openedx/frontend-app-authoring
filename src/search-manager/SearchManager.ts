@@ -1,4 +1,3 @@
-/* eslint-disable react/require-default-props */
 /**
  * This is a search manager that provides search functionality similar to the
  * Instantsearch library. We use it because Instantsearch doesn't support
