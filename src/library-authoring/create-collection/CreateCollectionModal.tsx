@@ -6,6 +6,9 @@ import {
   ModalDialog,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+import FormikControl from '../../generic/FormikControl';
 import { useParams } from 'react-router-dom';
 import { LibraryContext } from '../common/context';
 import messages from './messages';
@@ -22,51 +25,24 @@ const CreateCollectionModal = () => {
   } = React.useContext(LibraryContext);
   const { showToast } = React.useContext(ToastContext);
 
-  const [collectionName, setCollectionName] = React.useState<string | null>(null);
-  const [collectionNameInvalidMsg, setCollectionNameInvalidMsg] = React.useState<string | null>(null);
-  const [collectionDescription, setCollectionDescription] = React.useState<string | null>(null);
   const [isCreatingCollection, setIsCreatingCollection] = React.useState<boolean>(false);
-
-  const handleNameOnChange = React.useCallback((value : string) => {
-    setCollectionName(value);
-    setCollectionNameInvalidMsg(null);
-  }, []);
 
   const handleOnClose = React.useCallback(() => {
     closeCreateCollectionModal();
-    setCollectionNameInvalidMsg(null);
-    setCollectionName(null);
-    setCollectionDescription(null);
     setIsCreatingCollection(false);
   }, []);
 
-  const handleCreate = React.useCallback(() => {
-    if (collectionName === null || collectionName === '') {
-      setCollectionNameInvalidMsg(
-        intl.formatMessage(messages.createCollectionModalNameInvalid),
-      );
-      return;
-    }
-
+  const handleCreate = React.useCallback((values) => {
     setIsCreatingCollection(true);
 
-    create.mutateAsync({
-      title: collectionName,
-      description: collectionDescription || '',
-    }).then(() => {
+    create.mutateAsync(values).then(() => {
       handleOnClose();
       showToast(intl.formatMessage(messages.createCollectionSuccess));
-    }).catch((err) => {
+    }).catch(() => {
       setIsCreatingCollection(false);
-      if (err.response.status === 409) {
-        setCollectionNameInvalidMsg(
-          intl.formatMessage(messages.createCollectionModalNameConflict),
-        );
-      } else {
-        showToast(intl.formatMessage(messages.createCollectionError));
-      }
+      showToast(intl.formatMessage(messages.createCollectionError));
     });
-  }, [collectionName, collectionDescription]);
+  }, []);
 
   return (
     <ModalDialog
@@ -83,50 +59,71 @@ const CreateCollectionModal = () => {
         </ModalDialog.Title>
       </ModalDialog.Header>
 
-      <ModalDialog.Body className="mw-sm">
-        <Form>
-          <Form.Group>
-            <Form.Label className="font-weight-bold h3">
-              {intl.formatMessage(messages.createCollectionModalNameLabel)}
-            </Form.Label>
-            <Form.Control
-              placeholder={intl.formatMessage(messages.createCollectionModalNamePlaceholder)}
-              value={collectionName}
-              onChange={(e) => handleNameOnChange(e.target.value)}
-            />
-            { collectionNameInvalidMsg && (
-              <Form.Control.Feedback type="invalid">
-                {collectionNameInvalidMsg}
-              </Form.Control.Feedback>
-            )}
-          </Form.Group>
-          <Form.Group>
-            <Form.Label className="font-weight-bold h3">
-              {intl.formatMessage(messages.createCollectionModalDescriptionLabel)}
-            </Form.Label>
-            <Form.Control
-              as="textarea"
-              placeholder={intl.formatMessage(messages.createCollectionModalDescriptionPlaceholder)}
-              value={collectionDescription}
-              onChange={(e) => setCollectionDescription(e.target.value)}
-              rows="5"
-            />
-            <Form.Text muted>
-              {intl.formatMessage(messages.createCollectionModalDescriptionDetails)}
-            </Form.Text>
-          </Form.Group>
-        </Form>
-      </ModalDialog.Body>
-      <ModalDialog.Footer>
-        <ActionRow>
-          <ModalDialog.CloseButton variant="tertiary">
-            {intl.formatMessage(messages.createCollectionModalCancel)}
-          </ModalDialog.CloseButton>
-          <Button variant="primary" onClick={handleCreate} disabled={isCreatingCollection}>
-            {intl.formatMessage(messages.createCollectionModalCreate)}
-          </Button>
-        </ActionRow>
-      </ModalDialog.Footer>
+      <Formik
+          initialValues={{
+            title: '',
+            description: '',
+          }}
+          validationSchema={
+            Yup.object().shape({
+              title: Yup.string()
+                .required(intl.formatMessage(messages.createCollectionModalNameInvalid)),
+              description: Yup.string(),
+            })
+          }
+          onSubmit={(values) => handleCreate(values)}
+        >
+        {(formikProps) => (
+          <>
+            <ModalDialog.Body className="mw-sm">
+              <Form onSubmit={formikProps.handleSubmit}>
+                <FormikControl
+                  name="title"
+                  label={
+                    <Form.Label className="font-weight-bold h3">
+                      {intl.formatMessage(messages.createCollectionModalNameLabel)}
+                    </Form.Label>
+                  }
+                  value={formikProps.values.title}
+                  placeholder={intl.formatMessage(messages.createCollectionModalNamePlaceholder)}
+                  help=""
+                  className=""
+                  controlClasses="pb-2"
+                />              
+                <FormikControl
+                  name="description"
+                  as="textarea"
+                  label={
+                    <Form.Label className="font-weight-bold h3">
+                      {intl.formatMessage(messages.createCollectionModalDescriptionLabel)}
+                    </Form.Label>
+                  }
+                  value={formikProps.values.description}
+                  placeholder={intl.formatMessage(messages.createCollectionModalDescriptionPlaceholder)}
+                  help={intl.formatMessage(messages.createCollectionModalDescriptionDetails)}
+                  className=""
+                  controlClasses="pb-2"
+                  rows="5"
+                />
+              </Form>
+            </ModalDialog.Body>
+            <ModalDialog.Footer>
+              <ActionRow>
+                <ModalDialog.CloseButton variant="tertiary">
+                  {intl.formatMessage(messages.createCollectionModalCancel)}
+                </ModalDialog.CloseButton>
+                <Button
+                  variant="primary"
+                  onClick={formikProps.submitForm}
+                  disabled={isCreatingCollection}
+                >
+                  {intl.formatMessage(messages.createCollectionModalCreate)}
+                </Button>
+              </ActionRow>
+            </ModalDialog.Footer>
+          </>
+        )}
+      </Formik>
     </ModalDialog>
   );
 };

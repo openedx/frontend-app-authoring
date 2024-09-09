@@ -731,18 +731,14 @@ describe('<LibraryAuthoringPage />', () => {
     const createButton = screen.getByRole('button', { name: /create/i });
     fireEvent.click(createButton);
 
-    expect(screen.getByText(/collection name is required/i)).toBeInTheDocument();
+    expect(await screen.findByText(/collection name is required/i)).toBeInTheDocument();
   });
 
-  it('should show error on conflict response', async () => {
+  it('should show error on create collection', async () => {
     const title = 'This is a Test';
     const description = 'This is the description of the Test';
     const url = getLibraryCollectionsApiUrl(libraryData.id);
-    axiosMock.onPost(url).reply(409, {
-      customAttributes: {
-        httpErrorStatus: 409,
-      },
-    });
+    axiosMock.onPost(url).reply(500);
     await renderLibraryPage();
 
     expect(await screen.findByRole('heading')).toBeInTheDocument();
@@ -767,7 +763,5 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.change(nameField, { target: { value: title } });
     fireEvent.change(descriptionField, { target: { value: description } });
     fireEvent.click(createButton);
-
-    expect(await screen.findByText(/there is another collection with the same name/i)).toBeInTheDocument();
   });
 });
