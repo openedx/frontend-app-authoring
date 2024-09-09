@@ -95,29 +95,37 @@ interface ContentHitTags {
  * Information about a single XBlock returned in the search results
  * Defined in edx-platform/openedx/core/djangoapps/content/search/documents.py
  */
-export interface ContentHit {
+interface BaseContentHit {
   id: string;
-  usageKey: string;
-  type: 'course_block' | 'library_block';
-  blockId: string;
+  type: 'course_block' | 'library_block' | 'collection';
   displayName: string;
-  /** The block_type part of the usage key. What type of XBlock this is. */
-  blockType: string;
   /** The course or library ID */
   contextKey: string;
   org: string;
+  breadcrumbs: Array<{ displayName: string }>;
+  tags: ContentHitTags;
+  /** Same fields with <mark>...</mark> highlights */
+  formatted: { displayName: string, content?: ContentDetails, description?: string };
+  created: number;
+  modified: number;
+}
+
+/**
+ * Information about a single XBlock returned in the search results
+ * Defined in edx-platform/openedx/core/djangoapps/content/search/documents.py
+ */
+export interface ContentHit extends BaseContentHit {
+  usageKey: string;
+  blockId: string;
+  /** The block_type part of the usage key. What type of XBlock this is. */
+  blockType: string;
   /**
    * Breadcrumbs:
    * - First one is the name of the course/library itself.
    * - After that is the name and usage key of any parent Section/Subsection/Unit/etc.
    */
   breadcrumbs: [{ displayName: string }, ...Array<{ displayName: string, usageKey: string }>];
-  tags: ContentHitTags;
   content?: ContentDetails;
-  /** Same fields with <mark>...</mark> highlights */
-  formatted: { displayName: string, content?: ContentDetails };
-  created: number;
-  modified: number;
   lastPublished: number | null;
 }
 
@@ -125,27 +133,10 @@ export interface ContentHit {
  * Information about a single collection returned in the search results
  * Defined in edx-platform/openedx/core/djangoapps/content/search/documents.py
  */
-export interface CollectionHit {
-  id: string;
-  type: 'collection';
-  displayName: string;
+export interface CollectionHit extends BaseContentHit {
   description: string;
-  /** The course or library ID */
-  contextKey: string;
-  org: string;
-  /**
-   * Breadcrumbs:
-   * - First one is the name of the course/library itself.
-   * - After that is the name and usage key of any parent Section/Subsection/Unit/etc.
-   */
-  breadcrumbs: Array<{ displayName: string }>;
-  tags: ContentHitTags;
-  /** Same fields with <mark>...</mark> highlights */
-  created: number;
-  modified: number;
   accessId: number;
-  /** Same fields with <mark>...</mark> highlights */
-  formatted: { displayName: string, description: string };
+  componentCount?: number;
 }
 
 /**

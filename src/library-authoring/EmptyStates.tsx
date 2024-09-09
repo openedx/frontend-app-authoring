@@ -1,4 +1,3 @@
-/* eslint-disable react/require-default-props */
 import React, { useContext } from 'react';
 import { useParams } from 'react-router';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
