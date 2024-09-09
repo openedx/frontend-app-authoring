@@ -46,7 +46,6 @@ const AddContentButton = ({ contentType, onCreateContent } : AddContentButtonPro
   } = contentType;
   return (
     <Button
-      key={`add-content-${blockType}`}
       variant="outline-primary"
       disabled={disabled}
       className="m-2 rounded-0"
@@ -163,7 +162,11 @@ const AddContentContainer = () => {
       <AddContentButton contentType={collectionButtonData} onCreateContent={onCreateContent} />
       <hr className="w-100 bg-gray-500" />
       {contentTypes.map((contentType) => (
-        <AddContentButton contentType={contentType} onCreateContent={onCreateContent} />
+        <AddContentButton
+          key={`add-content-${contentType.blockType}`}
+          contentType={contentType}
+          onCreateContent={onCreateContent}
+        />
       ))}
     </Stack>
   );

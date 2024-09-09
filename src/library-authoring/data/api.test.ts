@@ -71,10 +71,10 @@ describe('library api calls', () => {
 
     axiosMock.onPost(url).reply(200);
 
-    await createCollection({
+    await createCollection(libraryId, {
       title: 'This is a test',
       description: 'This is only a test',
-    }, libraryId);
+    });
 
     expect(axiosMock.history.post[0].url).toEqual(url);
   });

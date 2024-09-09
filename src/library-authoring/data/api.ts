@@ -257,11 +257,7 @@ export async function updateXBlockFields(usageKey: string, xblockData: UpdateXBl
 /**
  * Create a library collection
  */
-export async function createCollection(collectionData: CreateLibraryCollectionDataRequest, libraryId?: string) {
-  if (!libraryId) {
-    throw new Error('libraryId is required');
-  }
-
+export async function createCollection(libraryId: string, collectionData: CreateLibraryCollectionDataRequest) {
   const client = getAuthenticatedHttpClient();
   const { data } = await client.post(getLibraryCollectionsApiUrl(libraryId), collectionData);
 

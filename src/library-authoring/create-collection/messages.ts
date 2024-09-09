@@ -33,12 +33,12 @@ const messages = defineMessages({
   createCollectionModalNameInvalid: {
     id: 'course-authoring.library-authoring.modals.create-collection.form.name.invalid',
     defaultMessage: 'Collection name is required',
-    description: 'Mesasge when the Name field of the Create Collection modal form is invalid',
+    description: 'Message when the Name field of the Create Collection modal form is invalid',
   },
   createCollectionModalNameConflict: {
     id: 'course-authoring.library-authoring.modals.create-collection.form.name.conflict',
     defaultMessage: 'There is another collection with the same name',
-    description: 'Mesasge when the Name field of the Create Collection modal form is not unique',
+    description: 'Message when the Name field of the Create Collection modal form is not unique',
   },
   createCollectionModalDescriptionLabel: {
     id: 'course-authoring.library-authoring.modals.create-collection.form.description',

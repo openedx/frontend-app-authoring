@@ -22,7 +22,7 @@ import {
   CreateLibraryCollectionDataRequest,
 } from './api';
 
-const libraryQueryPredicate = (query: Query, libraryId?: string): boolean => {
+const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
   // Invalidate all content queries related to this library.
   // If we allow searching "all courses and libraries" in the future,
   // then we'd have to invalidate all `["content_search", "results"]`
@@ -215,12 +215,19 @@ export const useUpdateXBlockFields = (contentLibraryId: string, usageKey: string
 /**
  * Use this mutation to create a library collection
  */
-export const useCreateLibraryCollection = (libraryId?: string) => {
+export const useCreateLibraryCollection = (libraryId: string | undefined) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: CreateLibraryCollectionDataRequest) => createCollection(data, libraryId),
+    mutationFn: (data: CreateLibraryCollectionDataRequest) => {
+      if (libraryId) {
+        return createCollection(libraryId, data);
+      }
+      return Promise.resolve();
+    },
     onSettled: () => {
-      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+      if (libraryId) {
+        queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+      }
     },
   });
 };
