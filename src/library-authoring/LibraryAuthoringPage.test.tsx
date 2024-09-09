@@ -433,8 +433,8 @@ describe('<LibraryAuthoringPage />', () => {
     await renderLibraryPage();
 
     // Click on the first component
-    waitFor(() => expect(screen.queryByText(displayName)).toBeInTheDocument());
-    fireEvent.click(screen.getAllByText(displayName)[0]);
+    expect((await screen.findAllByText(displayName))[0]).toBeInTheDocument();
+    fireEvent.click((await screen.findAllByText(displayName))[0]);
 
     const sidebar = screen.getByTestId('library-sidebar');
 
@@ -545,5 +545,21 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.click(filterButton);
 
     expect(screen.getByText(/no matching components/i)).toBeInTheDocument();
+  });
+
+  it('shows both components and collections in recently modified section', async () => {
+    const doc = await renderLibraryPage();
+
+    expect(await doc.findByText('Content library')).toBeInTheDocument();
+    expect((await doc.findAllByText(libraryTitle))[0]).toBeInTheDocument();
+
+    // "Recently Modified" header + sort shown
+    expect(doc.getAllByText('Recently Modified').length).toEqual(2);
+    const recentModifiedContainer = (await doc.findAllByText('Recently Modified'))[1].parentElement?.parentElement?.parentElement;
+    if (recentModifiedContainer) {
+      const container = within(recentModifiedContainer);
+      expect(container.queryAllByText('Text').length).toBeGreaterThan(0);
+      expect(container.queryAllByText('Collection').length).toBeGreaterThan(0);
+    }
   });
 });
