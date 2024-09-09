@@ -13,11 +13,16 @@ import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, type RenderResult } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import {
+  MemoryRouter,
+  MemoryRouterProps,
+  Route,
+  Routes,
+} from 'react-router-dom';
 
 import initializeReduxStore from './store';
 
-/** @deprecated */
+/** @deprecated Use React Query and/or regular React Context instead of redux */
 let reduxStore;
 let queryClient;
 let axiosMock: MockAdapter;
@@ -27,21 +32,64 @@ export interface RouteOptions {
   path?: string;
   /** The URL parameters, like {libraryId: 'lib:org:123'} */
   params?: Record<string, string>;
+  /** and/or instead of specifying path and params, specify MemoryRouterProps */
+  routerProps?: MemoryRouterProps;
 }
 
-const RouterAndRoute: React.FC<RouteOptions> = ({ children, path = '/', params = {} }) => {
+/**
+ * This component works together with the custom `render()` method we have in
+ * this file to provide whatever react-router context you need for your
+ * component.
+ *
+ * In the simplest case, you don't need to worry about the router at all, so
+ * just render your component using `render(<TheComponent />)`.
+ *
+ * The next simplest way to use it is to specify `path` (the route matching rule
+ * that is normally used to determine when to show the component or its parent
+ * page) and `params` like this:
+ *
+ * ```
+ * render(<LibraryLayout />, { path: '/library/:libraryId/*', params: { libraryId: 'lib:Axim:testlib' } });
+ * ```
+ *
+ * In this case, components that use the `useParams` hook will get the right
+ * library ID, and we don't even have to mock anything.
+ *
+ * In other cases, such as when you have routes inside routes, you'll need to
+ * set the router's `initialEntries` (URL history) prop yourself, like this:
+ *
+ * ```
+ * render(<LibraryLayout />, {
+ *   path: '/library/:libraryId/*',
+ *   // The root component is mounted on the above path, as it is in the "real"
+ *   // MFE. But to access the 'settings' sub-route/component for this test, we
+ *   // need tospecify the URL like this:
+ *   routerProps: { initialEntries: [`/library/${libraryId}/settings`] },
+ * });
+ * ```
+ */
+const RouterAndRoute: React.FC<RouteOptions> = ({
+  children,
+  path = '/',
+  params = {},
+  routerProps = {},
+}) => {
   if (Object.entries(params).length > 0 || path !== '/') {
-    // Substitute the params into the URL so '/library/:libraryId' becomes '/library/lib:org:123'
-    let pathWithParams = path;
-    for (const [key, value] of Object.entries(params)) {
-      pathWithParams = pathWithParams.replaceAll(`:${key}`, value);
-    }
-    if (pathWithParams.endsWith('/*')) {
-      // Some routes (that contain child routes) need to end with /* in the <Route> but not in the router
-      pathWithParams = pathWithParams.substring(0, pathWithParams.length - 1);
+    const newRouterProps = { ...routerProps };
+    if (!routerProps.initialEntries) {
+      // Substitute the params into the URL so '/library/:libraryId' becomes '/library/lib:org:123'
+      let pathWithParams = path;
+      for (const [key, value] of Object.entries(params)) {
+        pathWithParams = pathWithParams.replaceAll(`:${key}`, value);
+      }
+      if (pathWithParams.endsWith('/*')) {
+        // Some routes (that contain child routes) need to end with /* in the <Route> but not in the router
+        pathWithParams = pathWithParams.substring(0, pathWithParams.length - 1);
+      }
+      newRouterProps.initialEntries = [pathWithParams];
     }
     return (
-      <MemoryRouter initialEntries={[pathWithParams]}>
+      <MemoryRouter {...newRouterProps}>
         <Routes>
           <Route path={path} element={children} />
         </Routes>
@@ -49,7 +97,7 @@ const RouterAndRoute: React.FC<RouteOptions> = ({ children, path = '/', params =
     );
   }
   return (
-    <MemoryRouter>{children}</MemoryRouter>
+    <MemoryRouter {...routerProps}>{children}</MemoryRouter>
   );
 };
 
@@ -81,8 +129,15 @@ const defaultUser = {
   username: 'abc123',
   administrator: true,
   roles: [],
-};
+} as const;
 
+/**
+ * Initialize common mocks that many of our React components will require.
+ *
+ * This should be called within each test case, or in `beforeEach()`.
+ *
+ * Returns the new `axiosMock` in case you need to mock out axios requests.
+ */
 export function initializeMocks({ user = defaultUser } = {}) {
   initializeMockApp({
     authenticatedUser: user,
