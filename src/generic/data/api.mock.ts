@@ -38,3 +38,12 @@ export async function mockClipboardHtml(): Promise<api.ClipboardStatus> {
 }
 mockClipboardHtml.applyMock = () => jest.spyOn(api, 'getClipboard').mockImplementation(mockClipboardHtml);
 mockClipboardHtml.applyMockOnce = () => jest.spyOn(api, 'getClipboard').mockImplementationOnce(mockClipboardHtml);
+
+/** Mock the DOM `BroadcastChannel` API which the clipboard code uses */
+export function mockBroadcastChannel() {
+  const clipboardBroadcastChannelMock = {
+    postMessage: jest.fn(),
+    close: jest.fn(),
+  };
+  (global as any).BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
+}

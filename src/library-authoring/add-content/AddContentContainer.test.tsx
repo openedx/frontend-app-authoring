@@ -6,18 +6,13 @@ import {
 } from '../../testUtils';
 import { mockContentLibrary } from '../data/api.mocks';
 import { getCreateLibraryBlockUrl, getLibraryPasteClipboardUrl } from '../data/api';
-import { mockClipboardEmpty, mockClipboardHtml } from '../../generic/data/api.mock';
+import { mockBroadcastChannel, mockClipboardEmpty, mockClipboardHtml } from '../../generic/data/api.mock';
 import AddContentContainer from './AddContentContainer';
+
+mockBroadcastChannel();
 
 const { libraryId } = mockContentLibrary;
 const renderOpts = { path: '/library/:libraryId/*', params: { libraryId } };
-
-const clipboardBroadcastChannelMock = {
-  postMessage: jest.fn(),
-  close: jest.fn(),
-};
-
-(global as any).BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
 
 describe('<AddContentContainer />', () => {
   it('should render content buttons', () => {
