@@ -58,7 +58,7 @@ const CreateCollectionModal = () => {
       showToast(intl.formatMessage(messages.createCollectionSuccess));
     }).catch((err) => {
       setIsCreatingCollection(false);
-      if (err.customAttributes.httpErrorStatus === 409) {
+      if (err.response.status === 409) {
         setCollectionNameInvalidMsg(
           intl.formatMessage(messages.createCollectionModalNameConflict),
         );

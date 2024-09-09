@@ -3,9 +3,11 @@ import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import {
   commitLibraryChanges,
+  createCollection,
   createLibraryBlock,
   getCommitLibraryChangesUrl,
   getCreateLibraryBlockUrl,
+  getLibraryCollectionsApiUrl,
   revertLibraryChanges,
 } from './api';
 
@@ -61,5 +63,19 @@ describe('library api calls', () => {
     await revertLibraryChanges(libraryId);
 
     expect(axiosMock.history.delete[0].url).toEqual(url);
+  });
+
+  it('should create collection', async () => {
+    const libraryId = 'lib:org:1';
+    const url = getLibraryCollectionsApiUrl(libraryId);
+
+    axiosMock.onPost(url).reply(200);
+
+    await createCollection({
+      title: 'This is a test',
+      description: 'This is only a test',
+    }, libraryId);
+
+    expect(axiosMock.history.post[0].url).toEqual(url);
   });
 });
