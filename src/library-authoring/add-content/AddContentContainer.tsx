@@ -48,7 +48,7 @@ const AddContentButton = ({ contentType, onCreateContent } : AddContentButtonPro
     <Button
       variant="outline-primary"
       disabled={disabled}
-      className="m-2 rounded-0"
+      className="m-2"
       iconBefore={icon}
       onClick={() => onCreateContent(blockType)}
     >
