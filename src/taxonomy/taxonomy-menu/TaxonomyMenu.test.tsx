@@ -1,19 +1,15 @@
-// @ts-check
-/* eslint-disable react/prop-types */
-// ^ eslint doesn't 'see' JSDoc types; remove this lint directive when converting this to .tsx
 import React, { useMemo } from 'react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, fireEvent, waitFor } from '@testing-library/react';
 
+import {
+  fireEvent,
+  initializeMocks,
+  render,
+  waitFor,
+} from '../../testUtils';
 import { TaxonomyContext } from '../common/context';
-import initializeStore from '../../store';
 import { deleteTaxonomy, getTaxonomy, getTaxonomyExportFile } from '../data/api';
 import { TaxonomyMenu } from '.';
 
-let store;
 const taxonomyId = 1;
 const taxonomyName = 'Taxonomy 1';
 
@@ -24,19 +20,17 @@ jest.mock('../data/api', () => ({
   getTaxonomy: jest.fn(),
 }));
 
-const queryClient = new QueryClient();
-
 const mockSetToastMessage = jest.fn();
 
 /**
- * @type {React.FC<{
- *   iconMenu: boolean,
- *   systemDefined?: boolean,
- *   canChangeTaxonomy?: boolean,
- *   canDeleteTaxonomy?: boolean,
- * }>}
+ * @type {}
  */
-const TaxonomyMenuComponent = ({
+const TaxonomyMenuComponent: React.FC<{
+  iconMenu: boolean,
+  systemDefined?: boolean,
+  canChangeTaxonomy?: boolean,
+  canDeleteTaxonomy?: boolean,
+}> = ({
   iconMenu,
   systemDefined = false,
   canChangeTaxonomy = true,
@@ -50,43 +44,25 @@ const TaxonomyMenuComponent = ({
   }), []);
 
   return (
-    <AppProvider store={store}>
-      <IntlProvider locale="en" messages={{}}>
-        <QueryClientProvider client={queryClient}>
-          <TaxonomyContext.Provider value={context}>
-            <TaxonomyMenu
-              taxonomy={{
-                id: taxonomyId,
-                name: taxonomyName,
-                tagsCount: 0,
-                systemDefined,
-                canChangeTaxonomy,
-                canDeleteTaxonomy,
-              }}
-              iconMenu={iconMenu}
-            />
-          </TaxonomyContext.Provider>
-        </QueryClientProvider>
-      </IntlProvider>
-    </AppProvider>
+    <TaxonomyContext.Provider value={context}>
+      <TaxonomyMenu
+        taxonomy={{
+          id: taxonomyId,
+          name: taxonomyName,
+          tagsCount: 0,
+          systemDefined,
+          canChangeTaxonomy,
+          canDeleteTaxonomy,
+        }}
+        iconMenu={iconMenu}
+      />
+    </TaxonomyContext.Provider>
   );
 };
 
 describe.each([true, false])('<TaxonomyMenu iconMenu=%s />', (iconMenu) => {
   beforeEach(async () => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-    store = initializeStore();
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
+    initializeMocks();
   });
 
   test('should open and close menu on button click', () => {
