@@ -198,6 +198,30 @@ describe('<CreateOrRerunCourseForm />', () => {
     expect(rerunBtn).toBeDisabled();
   });
 
+  it('shows error message when total length exceeds 65 characters', async () => {
+    const updatedProps = {
+      ...props,
+      initialValues: {
+        displayName: 'Long Title Course',
+        org: 'long-org',
+        number: 'number',
+        run: '2024',
+      },
+    };
+
+    render(<RootWrapper {...updatedProps} />);
+    await mockStore();
+    const numberInput = screen.getByPlaceholderText(messages.courseNumberPlaceholder.defaultMessage);
+
+    await act(async () => {
+      fireEvent.change(numberInput, { target: { value: 'long-name-which-is-longer-than-65-characters-to-check-for-errors' } });
+    });
+
+    waitFor(() => {
+      expect(screen.getByText(messages.totalLengthError)).toBeInTheDocument();
+    });
+  });
+
   it('should be disabled create button if form has error', async () => {
     render(<RootWrapper {...props} />);
     await mockStore();

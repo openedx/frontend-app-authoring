@@ -16,7 +16,7 @@ import { TypeaheadDropdown } from '@edx/frontend-lib-content-components';
 
 import AlertMessage from '../alert-message';
 import { STATEFUL_BUTTON_STATES } from '../../constants';
-import { RequestStatus } from '../../data/constants';
+import { RequestStatus, TOTAL_LENGTH_KEY } from '../../data/constants';
 import { getSavingStatus } from '../data/selectors';
 import { getStudioHomeData } from '../../studio-home/data/selectors';
 import { updatePostErrors } from '../data/slice';
@@ -132,6 +132,8 @@ const CreateOrRerunCourseForm = ({
     },
   ];
 
+  const errorMessage = errors[TOTAL_LENGTH_KEY] || postErrors?.errMsg;
+
   const createButtonState = {
     labels: {
       default: intl.formatMessage(isCreateNewCourse ? messages.createButton : messages.rerunCreateButton),
@@ -202,11 +204,11 @@ const CreateOrRerunCourseForm = ({
   return (
     <div className="create-or-rerun-course-form">
       <TransitionReplace>
-        {showErrorBanner ? (
+        {(errors[TOTAL_LENGTH_KEY] || showErrorBanner) ? (
           <AlertMessage
             variant="danger"
             icon={InfoIcon}
-            title={postErrors.errMsg}
+            title={errorMessage}
             aria-hidden="true"
             aria-labelledby={intl.formatMessage(
               messages.alertErrorExistsAriaLabelledBy,
