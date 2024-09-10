@@ -1,4 +1,3 @@
-/* eslint-disable react/require-default-props */
 import { useToggle } from '@openedx/paragon';
 import React from 'react';
 

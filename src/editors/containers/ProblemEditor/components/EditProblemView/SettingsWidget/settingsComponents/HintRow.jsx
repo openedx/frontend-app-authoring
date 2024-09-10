@@ -16,6 +16,9 @@ const HintRow = ({
   handleChange,
   handleDelete,
   id,
+  images,
+  isLibrary,
+  learningContextId,
   // injected
   intl,
 }) => (
@@ -26,6 +29,11 @@ const HintRow = ({
         setContent={handleChange}
         placeholder={intl.formatMessage(messages.hintInputLabel)}
         id={`hint-${id}`}
+        {...{
+          images,
+          isLibrary,
+          learningContextId,
+        }}
       />
     </Container>
     <div className="d-flex flex-row flex-nowrap">
@@ -45,6 +53,9 @@ HintRow.propTypes = {
   handleChange: PropTypes.func.isRequired,
   handleDelete: PropTypes.func.isRequired,
   id: PropTypes.string.isRequired,
+  images: PropTypes.shape({}).isRequired,
+  learningContextId: PropTypes.string.isRequired,
+  isLibrary: PropTypes.bool.isRequired,
   // injected
   intl: intlShape.isRequired,
 };

@@ -42,22 +42,22 @@ export const setAnswerTitle = ({
   dispatch(actions.problem.updateAnswer({ id: answer.id, hasSingleAnswer, title }));
 };
 
-export const setSelectedFeedback = ({ answer, hasSingleAnswer, dispatch }) => (e) => {
-  if (e.target) {
+export const setSelectedFeedback = ({ answer, hasSingleAnswer, dispatch }) => (value) => {
+  if (value) {
     dispatch(actions.problem.updateAnswer({
       id: answer.id,
       hasSingleAnswer,
-      selectedFeedback: e.target.value,
+      selectedFeedback: value,
     }));
   }
 };
 
-export const setUnselectedFeedback = ({ answer, hasSingleAnswer, dispatch }) => (e) => {
-  if (e.target) {
+export const setUnselectedFeedback = ({ answer, hasSingleAnswer, dispatch }) => (value) => {
+  if (value) {
     dispatch(actions.problem.updateAnswer({
       id: answer.id,
       hasSingleAnswer,
-      unselectedFeedback: e.target.value,
+      unselectedFeedback: value,
     }));
   }
 };

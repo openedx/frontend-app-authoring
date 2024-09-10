@@ -46,7 +46,7 @@ const LibraryPublishStatus = ({ library } : LibraryPublishStatusProps) => {
     let isNewResult = false;
     let statusMessageResult : string;
     let extraStatusMessageResult : string | undefined;
-    let bodyMessageResult : string | undefined;
+    let bodyMessageResult : React.ReactNode | undefined;
 
     const buildDate = ((date : string) => (
       <b>

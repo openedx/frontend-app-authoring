@@ -1,4 +1,5 @@
 import 'CourseAuthoring/editors/setupEditorTest';
+import { getConfig } from '@edx/frontend-platform';
 import { MockUseState } from '../../testUtils';
 
 import * as tinyMCE from '../../data/constants/tinyMCE';
@@ -125,7 +126,7 @@ describe('TinyMceEditor hooks', () => {
         const setImage = jest.fn();
         const updateContent = jest.fn();
         const editorType = 'expandable';
-        const lmsEndpointUrl = 'sOmEvaLue.cOm';
+        const lmsEndpointUrl = getConfig().LMS_BASE_URL;
         const editor = {
           ui: { registry: { addButton, addToggleButton, addIcon } },
           on: jest.fn(),
@@ -190,7 +191,7 @@ describe('TinyMceEditor hooks', () => {
     describe('replaceStaticWithAsset', () => {
       const initialContent = `<img src="/static/soMEImagEURl1.jpeg"/><a href="/assets/v1/${baseAssetUrl}/test.pdf">test</a><img src="/${baseAssetUrl}@correct.png" /><img src="/${baseAssetUrl}/correct.png" />`;
       const learningContextId = 'course-v1:org+test+run';
-      const lmsEndpointUrl = 'sOmEvaLue.cOm';
+      const lmsEndpointUrl = getConfig().LMS_BASE_URL;
       it('returns updated src for text editor to update content', () => {
         const expected = `<img src="/${baseAssetUrl}@soMEImagEURl1.jpeg"/><a href="/${baseAssetUrl}@test.pdf">test</a><img src="/${baseAssetUrl}@correct.png" /><img src="/${baseAssetUrl}@correct.png" />`;
         const actual = module.replaceStaticWithAsset({ initialContent, learningContextId });
@@ -216,7 +217,7 @@ describe('TinyMceEditor hooks', () => {
     describe('setAssetToStaticUrl', () => {
       it('returns content with updated img links', () => {
         const editorValue = `<img src="/${baseAssetUrl}/soME_ImagE_URl1"/> <a href="/${baseAssetUrl}@soMEImagEURl">testing link</a>`;
-        const lmsEndpointUrl = 'sOmEvaLue.cOm';
+        const lmsEndpointUrl = getConfig().LMS_BASE_URL;
         const content = module.setAssetToStaticUrl({ editorValue, lmsEndpointUrl });
         expect(content).toEqual('<img src="/static/soME_ImagE_URl1"/> <a href="/static/soMEImagEURl">testing link</a>');
       });
@@ -226,8 +227,8 @@ describe('TinyMceEditor hooks', () => {
       const props = {
         editorContentHtml: null,
         editorType: 'text',
-        lmsEndpointUrl: 'sOmEuRl.cOm',
-        studioEndpointUrl: 'sOmEoThEruRl.cOm',
+        lmsEndpointUrl: getConfig().LMS_BASE_URL,
+        studioEndpointUrl: getConfig().STUDIO_BASE_URL,
         images: mockImagesRef,
         isLibrary: false,
         learningContextId: 'course+org+run',

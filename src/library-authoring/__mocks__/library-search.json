@@ -1,0 +1,273 @@
+{
+    "comment": "This mock is captured from a real search result and roughly edited to match the mocks in src/library-authoring/data/api.mocks.ts",
+    "note": "The _formatted fields have been removed from this result and should be re-added programatically when mocking.",
+    "results": [
+        {
+            "indexUid": "studio_content",
+            "hits": [
+                {
+                    "id": "lbaximtesthtml571fe018-f3ce-45c9-8f53-5dafcb422fdd-273ebd90",
+                    "display_name": "Introduction to Testing",
+                    "block_id": "571fe018-f3ce-45c9-8f53-5dafcb422fdd",
+                    "content": {
+                        "html_content": "This is a text component which uses HTML."
+                    },
+                    "tags": {},
+                    "type": "library_block",
+                    "breadcrumbs": [
+                        {
+                            "display_name": "Test Library"
+                        }
+                    ],
+                    "created": 1721857069.042984,
+                    "modified": 1725398676.078056,
+                    "last_published": 1725035862.450613,
+                    "usage_key": "lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd",
+                    "block_type": "html",
+                    "context_key": "lib:Axim:TEST",
+                    "org": "Axim",
+                    "access_id": 15
+                },
+                {
+                    "id": "lbaximtesthtml73a22298-bcd9-4f4c-ae34-0bc2b0612480-46b4a7f2",
+                    "display_name": "Second Text Component",
+                    "block_id": "73a22298-bcd9-4f4c-ae34-0bc2b0612480",
+                    "content": {
+                        "html_content": "Preview of the second text component here"
+                    },
+                    "type": "library_block",
+                    "breadcrumbs": [
+                        {
+                            "display_name": "Test Library"
+                        }
+                    ],
+                    "created": 1724879593.066427,
+                    "modified": 1725034981.663482,
+                    "last_published": 1725035862.450613,
+                    "usage_key": "lb:Axim:TEST:html:73a22298-bcd9-4f4c-ae34-0bc2b0612480",
+                    "block_type": "html",
+                    "context_key": "lib:Axim:TEST",
+                    "org": "Axim",
+                    "access_id": 15
+                },
+                {
+                    "id": "lbaximtesthtmlbe5b5db9-26ba-4fac-86af-654538c70b5e-73dbaa95",
+                    "display_name": "Third Text component",
+                    "block_id": "be5b5db9-26ba-4fac-86af-654538c70b5e",
+                    "content": {
+                        "html_content": "This is a text component that I've edited within the library. "
+                    },
+                    "tags": {},
+                    "type": "library_block",
+                    "breadcrumbs": [
+                        {
+                            "display_name": "Test Library"
+                        }
+                    ],
+                    "created": 1721857034.455737,
+                    "modified": 1722551300.377488,
+                    "last_published": 1724879092.002222,
+                    "usage_key": "lb:Axim:TEST:html:be5b5db9-26ba-4fac-86af-654538c70b5e",
+                    "block_type": "html",
+                    "context_key": "lib:Axim:TEST",
+                    "org": "Axim",
+                    "access_id": 15
+                },
+                {
+                    "id": "lbaximtesthtmle59e8c73-4056-4894-bca4-062781fb3f68-46a404b2",
+                    "display_name": "Text 4",
+                    "block_id": "e59e8c73-4056-4894-bca4-062781fb3f68",
+                    "content": {
+                        "html_content": ""
+                    },
+                    "tags": {},
+                    "type": "library_block",
+                    "breadcrumbs": [
+                        {
+                            "display_name": "Test Library"
+                        }
+                    ],
+                    "created": 1720774228.49832,
+                    "modified": 1720774228.49832,
+                    "last_published": 1724879092.002222,
+                    "usage_key": "lb:Axim:TEST:html:e59e8c73-4056-4894-bca4-062781fb3f68",
+                    "block_type": "html",
+                    "context_key": "lib:Axim:TEST",
+                    "org": "Axim",
+                    "access_id": 15
+                },
+                {
+                    "id": "lbaximtestproblemf16116c9-516e-4bb9-b99e-103599f62417-f2798115",
+                    "display_name": "Blank Problem",
+                    "block_id": "f16116c9-516e-4bb9-b99e-103599f62417",
+                    "content": {
+                        "problem_types": [],
+                        "capa_content": " "
+                    },
+                    "type": "library_block",
+                    "breadcrumbs": [
+                        {
+                            "display_name": "Test Library"
+                        }
+                    ],
+                    "created": 1724725821.973896,
+                    "modified": 1724725821.973896,
+                    "last_published": 1724879092.002222,
+                    "usage_key": "lb:Axim:TEST:problem:f16116c9-516e-4bb9-b99e-103599f62417",
+                    "block_type": "problem",
+                    "context_key": "lib:Axim:TEST",
+                    "org": "Axim",
+                    "access_id": 15
+                },
+                {
+                    "id": "lbaximtestproblem2ace6b9b-6620-413c-a66f-19c797527f34-3a7973b7",
+                    "display_name": "Multiple Choice Problem",
+                    "block_id": "2ace6b9b-6620-413c-a66f-19c797527f34",
+                    "content": {
+                        "problem_types": ["multiplechoiceresponse"],
+                        "capa_content": "What is the gradient of an inverted hyperspace manifold?cos (x) ey ln(z) i + sin(x)ey ln(z)j + sin(x) ey(1/z)k "
+                    },
+                    "tags": {},
+                    "type": "library_block",
+                    "breadcrumbs": [
+                        {
+                            "display_name": "Test Library"
+                        }
+                    ],
+                    "created": 1720774232.76135,
+                    "modified": 1720774232.76135,
+                    "last_published": 1724879092.002222,
+                    "usage_key": "lb:Axim:TEST:problem:2ace6b9b-6620-413c-a66f-19c797527f34",
+                    "block_type": "problem",
+                    "context_key": "lib:Axim:TEST",
+                    "org": "Axim",
+                    "access_id": 15
+                },
+                {
+                    "id": "lbaximtestproblem7d7e98ba-3ac9-4aa8-8946-159129b39a28-3a7973b7",
+                    "display_name": "Single Choice Problem",
+                    "block_id": "7d7e98ba-3ac9-4aa8-8946-159129b39a28",
+                    "content": {
+                        "problem_types": ["choiceresponse"],
+                        "capa_content": "Blah blah?"
+                    },
+                    "tags": {},
+                    "type": "library_block",
+                    "breadcrumbs": [
+                        {
+                            "display_name": "Test Library"
+                        }
+                    ],
+                    "created": 1720774232.76135,
+                    "modified": 1720774232.76135,
+                    "last_published": 1724879092.002222,
+                    "usage_key": "lb:Axim:TEST:problem:7d7e98ba-3ac9-4aa8-8946-159129b39a28",
+                    "block_type": "problem",
+                    "context_key": "lib:Axim:TEST",
+                    "org": "Axim",
+                    "access_id": 15
+                },
+                {
+                    "id": "lbaximtestproblem4e1a72f9-ac93-42aa-a61c-ab5f9698c398-3a7973b7",
+                    "display_name": "Numerical Response Problem",
+                    "block_id": "4e1a72f9-ac93-42aa-a61c-ab5f9698c398",
+                    "content": {
+                        "problem_types": ["numericalresponse"],
+                        "capa_content": "What is 1 + 1?"
+                    },
+                    "tags": {},
+                    "type": "library_block",
+                    "breadcrumbs": [
+                        {
+                            "display_name": "Test Library"
+                        }
+                    ],
+                    "created": 1720774232.76135,
+                    "modified": 1720774232.76135,
+                    "last_published": 1724879092.002222,
+                    "usage_key": "lb:Axim:TEST:problem:4e1a72f9-ac93-42aa-a61c-ab5f9698c398",
+                    "block_type": "problem",
+                    "context_key": "lib:Axim:TEST",
+                    "org": "Axim",
+                    "access_id": 15
+                },
+                {
+                    "id": "lbaximtestproblemad483625-ade2-4712-88d8-c9743abbd291-3a7973b7",
+                    "display_name": "Option Response Problem",
+                    "block_id": "ad483625-ade2-4712-88d8-c9743abbd291",
+                    "content": {
+                        "problem_types": ["optionresponse"],
+                        "capa_content": "What is foobar?"
+                    },
+                    "tags": {},
+                    "type": "library_block",
+                    "breadcrumbs": [
+                        {
+                            "display_name": "Test Library"
+                        }
+                    ],
+                    "created": 1720774232.76135,
+                    "modified": 1720774232.76135,
+                    "last_published": 1724879092.002222,
+                    "usage_key": "lb:Axim:TEST:problem:ad483625-ade2-4712-88d8-c9743abbd291",
+                    "block_type": "problem",
+                    "context_key": "lib:Axim:TEST",
+                    "org": "Axim",
+                    "access_id": 15
+                },
+                {
+                    "id": "lbaximtestproblemb4c859cb-de70-421a-917b-e6e01ce44bd8-3a7973b7",
+                    "display_name": "String Response Problem",
+                    "block_id": "b4c859cb-de70-421a-917b-e6e01ce44bd8",
+                    "content": {
+                        "problem_types": ["stringresponse"],
+                        "capa_content": "What is your name?"
+                    },
+                    "tags": {},
+                    "type": "library_block",
+                    "breadcrumbs": [
+                        {
+                            "display_name": "Test Library"
+                        }
+                    ],
+                    "created": 1720774232.76135,
+                    "modified": 1720774232.76135,
+                    "last_published": 1724879092.002222,
+                    "usage_key": "lb:Axim:TEST:problem:b4c859cb-de70-421a-917b-e6e01ce44bd8",
+                    "block_type": "problem",
+                    "context_key": "lib:Axim:TEST",
+                    "org": "Axim",
+                    "access_id": 15
+                }
+            ],
+            "query": "",
+            "processingTimeMs": 1,
+            "limit": 20,
+            "offset": 0,
+            "estimatedTotalHits": 10
+        },
+        {
+            "indexUid": "studio_content",
+            "hits": [],
+            "query": "",
+            "processingTimeMs": 0,
+            "limit": 0,
+            "offset": 0,
+            "estimatedTotalHits": 10,
+            "facetDistribution": {
+                "block_type": {
+                    "html": 4,
+                    "problem": 6
+                },
+                "content.problem_types": {
+                    "multiplechoiceresponse": 1,
+                    "choiceresponse": 1,
+                    "numericalresponse": 1,
+                    "optionresponse": 1,
+                    "stringresponse": 1
+                }
+            },
+            "facetStats": {}
+        }
+    ]
+}

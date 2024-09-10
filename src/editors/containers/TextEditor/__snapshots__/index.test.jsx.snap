@@ -30,7 +30,8 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
         id="authoring.texteditor.load.error"
       />
     </Toast>
-    <[object Object]
+    <TinyMceWidget
+      disabled={false}
       editorContentHtml="eDiTablE Text"
       editorRef={
         {
@@ -41,9 +42,16 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
       }
       editorType="text"
       height="100%"
+      id={null}
+      images={{}}
       initializeEditor={[MockFunction args.intializeEditor]}
+      isLibrary={null}
+      learningContextId="course+org+run"
+      lmsEndpointUrl=""
       minHeight={500}
+      onChange={[Function]}
       setEditorRef={[MockFunction hooks.prepareEditorRef.setEditorRef]}
+      studioEndpointUrl=""
     />
   </div>
 </EditorContainer>
@@ -173,7 +181,8 @@ exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
         id="authoring.texteditor.load.error"
       />
     </Toast>
-    <[object Object]
+    <TinyMceWidget
+      disabled={false}
       editorContentHtml="eDiTablE Text"
       editorRef={
         {
@@ -184,9 +193,16 @@ exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
       }
       editorType="text"
       height="100%"
+      id={null}
+      images={{}}
       initializeEditor={[MockFunction args.intializeEditor]}
+      isLibrary={null}
+      learningContextId="course+org+run"
+      lmsEndpointUrl=""
       minHeight={500}
+      onChange={[Function]}
       setEditorRef={[MockFunction hooks.prepareEditorRef.setEditorRef]}
+      studioEndpointUrl=""
     />
   </div>
 </EditorContainer>
@@ -222,7 +238,8 @@ exports[`TextEditor snapshots renders static images with relative paths 1`] = `
         id="authoring.texteditor.load.error"
       />
     </Toast>
-    <[object Object]
+    <TinyMceWidget
+      disabled={false}
       editorContentHtml="eDiTablE Text with <img src="/asset+org+run+type@asset+block@img.jpg" />"
       editorRef={
         {
@@ -233,9 +250,16 @@ exports[`TextEditor snapshots renders static images with relative paths 1`] = `
       }
       editorType="text"
       height="100%"
+      id={null}
+      images={{}}
       initializeEditor={[MockFunction args.intializeEditor]}
+      isLibrary={null}
+      learningContextId="course+org+run"
+      lmsEndpointUrl=""
       minHeight={500}
+      onChange={[Function]}
       setEditorRef={[MockFunction hooks.prepareEditorRef.setEditorRef]}
+      studioEndpointUrl=""
     />
   </div>
 </EditorContainer>

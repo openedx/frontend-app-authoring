@@ -26,6 +26,9 @@ describe('HintsCard', () => {
   const hintsRowHooksProps = {
     handleChange: jest.fn().mockName('hintsRowHooks.handleChange'),
     handleDelete: jest.fn().mockName('hintsRowHooks.handleDelete'),
+    images: {},
+    isLibrary: false,
+    learningContextId: 'course+org+run',
   };
   hintsRowHooks.mockReturnValue(hintsRowHooksProps);
 
