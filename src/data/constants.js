@@ -53,3 +53,7 @@ export const VisibilityTypes = /** @type {const} */ ({
   UNSCHEDULED: 'unscheduled',
   NEEDS_ATTENTION: 'needs_attention',
 });
+
+export const TOTAL_LENGTH_KEY = 'total-length';
+
+export const MAX_TOTAL_LENGTH = 65;

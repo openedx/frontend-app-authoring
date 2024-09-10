@@ -1,4 +1,5 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
+import { MAX_TOTAL_LENGTH } from '../../data/constants';
 
 const messages = defineMessages({
   courseDisplayNameLabel: {
@@ -116,6 +117,10 @@ const messages = defineMessages({
   noSpaceError: {
     id: 'course-authoring.create-or-rerun-course.no-space.error',
     defaultMessage: 'Please do not use any spaces in this field.',
+  },
+  totalLengthError: {
+    id: 'course-authoring.create-or-rerun-course.total-length-error.error',
+    defaultMessage: `The combined length of the organization, course number and course run fields cannot be more than ${MAX_TOTAL_LENGTH} characters.`,
   },
   alertErrorExistsAriaLabelledBy: {
     id: 'course-authoring.create-or-rerun-course.error.already-exists.labelledBy',
