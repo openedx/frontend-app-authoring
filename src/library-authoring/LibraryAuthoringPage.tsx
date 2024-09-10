@@ -119,6 +119,9 @@ const LibraryAuthoringPage = () => {
   const navigate = useNavigate();
 
   const { libraryId } = useParams();
+  if (!libraryId) {
+    throw new Error('Rendered without libraryId URL parameter');
+  }
   const { data: libraryData, isLoading } = useContentLibrary(libraryId);
 
   const currentPath = location.pathname.split('/').pop();
@@ -138,7 +141,7 @@ const LibraryAuthoringPage = () => {
     return <Loading />;
   }
 
-  if (!libraryId || !libraryData) {
+  if (!libraryData) {
     return <NotFoundAlert />;
   }
 

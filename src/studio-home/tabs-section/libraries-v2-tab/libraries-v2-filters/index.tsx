@@ -1,4 +1,3 @@
-/* eslint-disable react/require-default-props */
 import React, { useState, useCallback, useEffect } from 'react';
 import { SearchField } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';

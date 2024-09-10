@@ -64,10 +64,11 @@ export const libraryAuthoringQueryKeys = {
 /**
  * Hook to fetch a content library by its ID.
  */
-export const useContentLibrary = (libraryId?: string) => (
+export const useContentLibrary = (libraryId: string | undefined) => (
   useQuery({
     queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId),
-    queryFn: () => getContentLibrary(libraryId),
+    queryFn: () => getContentLibrary(libraryId!),
+    enabled: libraryId !== undefined,
   })
 );
 

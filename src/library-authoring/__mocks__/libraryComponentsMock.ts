@@ -1,6 +1,7 @@
-module.exports = [
+export default [
   {
     id: '1',
+    usageKey: 'lb:org:lib:html:1',
     displayName: 'Text',
     formatted: {
       content: {
@@ -14,6 +15,7 @@ module.exports = [
   },
   {
     id: '2',
+    usageKey: 'lb:org:lib:html:2',
     displayName: 'Text',
     formatted: {
       content: {
@@ -27,6 +29,7 @@ module.exports = [
   },
   {
     id: '3',
+    usageKey: 'lb:org:lib:video:3',
     displayName: 'Video',
     formatted: {
       content: {
@@ -40,6 +43,7 @@ module.exports = [
   },
   {
     id: '4',
+    usageKey: 'lb:org:lib:video:4',
     displayName: 'Video',
     formatted: {
       content: {
@@ -53,6 +57,7 @@ module.exports = [
   },
   {
     id: '5',
+    usageKey: 'lb:org:lib:problem:5',
     displayName: 'Problem',
     formatted: {
       content: {
@@ -63,6 +68,7 @@ module.exports = [
   },
   {
     id: '6',
+    usageKey: 'lb:org:lib:problem:6',
     displayName: 'Problem',
     formatted: {
       content: {
