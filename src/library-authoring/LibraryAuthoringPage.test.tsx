@@ -548,14 +548,14 @@ describe('<LibraryAuthoringPage />', () => {
   });
 
   it('shows both components and collections in recently modified section', async () => {
-    const doc = await renderLibraryPage();
+    await renderLibraryPage();
 
-    expect(await doc.findByText('Content library')).toBeInTheDocument();
-    expect((await doc.findAllByText(libraryTitle))[0]).toBeInTheDocument();
+    expect(await screen.findByText('Content library')).toBeInTheDocument();
+    expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
 
     // "Recently Modified" header + sort shown
-    expect(doc.getAllByText('Recently Modified').length).toEqual(2);
-    const recentModifiedContainer = (await doc.findAllByText('Recently Modified'))[1].parentElement?.parentElement?.parentElement;
+    expect(screen.getAllByText('Recently Modified').length).toEqual(2);
+    const recentModifiedContainer = (await screen.findAllByText('Recently Modified'))[1].parentElement?.parentElement?.parentElement;
     if (recentModifiedContainer) {
       const container = within(recentModifiedContainer);
       expect(container.queryAllByText('Text').length).toBeGreaterThan(0);
