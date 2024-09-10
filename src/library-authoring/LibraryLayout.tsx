@@ -18,7 +18,8 @@ const LibraryLayout = () => {
   const queryClient = useQueryClient();
 
   if (libraryId === undefined) {
-    throw new Error('Error: route is missing libraryId.'); // Should never happen
+    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
+    throw new Error('Error: route is missing libraryId.');
   }
 
   const navigate = useNavigate();

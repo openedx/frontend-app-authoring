@@ -21,7 +21,7 @@ const EditorContainer: React.FC<Props> = ({
 }) => {
   const { blockType, blockId } = useParams();
   if (blockType === undefined || blockId === undefined) {
-    // This shouldn't be possible; it's just here to satisfy the type checker.
+    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
     return <div>Error: missing URL parameters</div>;
   }
   return (

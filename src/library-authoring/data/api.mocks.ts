@@ -115,6 +115,9 @@ export async function mockCreateLibraryBlock(
   if (args.blockType === 'html' && args.libraryId === mockContentLibrary.libraryId) {
     return mockCreateLibraryBlock.newHtmlData;
   }
+  if (args.blockType === 'problem' && args.libraryId === mockContentLibrary.libraryId) {
+    return mockCreateLibraryBlock.newProblemData;
+  }
   throw new Error(`mockCreateLibraryBlock doesn't know how to mock ${JSON.stringify(args)}`);
 }
 mockCreateLibraryBlock.newHtmlData = {
@@ -122,6 +125,14 @@ mockCreateLibraryBlock.newHtmlData = {
   defKey: '123',
   blockType: 'html',
   displayName: 'New Text Component',
+  hasUnpublishedChanges: true,
+  tagsCount: 0,
+} satisfies api.CreateBlockDataResponse;
+mockCreateLibraryBlock.newProblemData = {
+  id: 'lb:Axim:TEST:problem:prob1',
+  defKey: 'prob1',
+  blockType: 'problem',
+  displayName: 'New Problem',
   hasUnpublishedChanges: true,
   tagsCount: 0,
 } satisfies api.CreateBlockDataResponse;

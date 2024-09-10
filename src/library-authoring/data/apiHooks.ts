@@ -242,6 +242,7 @@ export const useUpdateXBlockFields = (usageKey: string) => {
   });
 };
 
+/* istanbul ignore next */ // This is only used in developer builds, and the associated UI doesn't work in test or prod
 export const useXBlockOLX = (usageKey: string) => (
   useQuery({
     queryKey: libraryAuthoringQueryKeys.xblockOLX(usageKey),

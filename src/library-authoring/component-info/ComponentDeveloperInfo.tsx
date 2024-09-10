@@ -9,6 +9,7 @@ interface Props {
   usageKey: string;
 }
 
+/* istanbul ignore next */
 export const ComponentDeveloperInfo: React.FC<Props> = ({ usageKey }) => {
   const { data: olx, isLoading: isOLXLoading } = useXBlockOLX(usageKey);
   return (

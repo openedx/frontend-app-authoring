@@ -47,11 +47,8 @@ const renderOpts = {
 };
 
 describe('AddContentWorkflow test', () => {
-  beforeEach(() => {
-    initializeMocks();
-  });
-
   it('can create an HTML component', async () => {
+    initializeMocks();
     render(<LibraryLayout />, renderOpts);
 
     // Click "New [Component]"
@@ -85,5 +82,23 @@ describe('AddContentWorkflow test', () => {
     const saveButton = screen.getByLabelText('Save changes and return to learning context');
     fireEvent.click(saveButton);
     expect(saveSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('can create a Problem component', async () => {
+    const { mockShowToast } = initializeMocks();
+    render(<LibraryLayout />, renderOpts);
+
+    // Click "New [Component]"
+    const newComponentButton = await screen.findByRole('button', { name: /New/ });
+    fireEvent.click(newComponentButton);
+
+    // Pre-condition - this is NOT shown yet:
+    expect(screen.queryByText('Content created successfully.')).not.toBeInTheDocument();
+
+    // Click "Problem" to create a capa problem component
+    fireEvent.click(await screen.findByRole('button', { name: /Problem/ }));
+
+    // We haven't yet implemented the problem editor, so we expect only a toast to appear
+    await waitFor(() => expect(mockShowToast).toHaveBeenCalledWith('Content created successfully.'));
   });
 });

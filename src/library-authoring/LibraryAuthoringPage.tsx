@@ -120,6 +120,7 @@ const LibraryAuthoringPage = () => {
 
   const { libraryId } = useParams();
   if (!libraryId) {
+    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
     throw new Error('Rendered without libraryId URL parameter');
   }
   const { data: libraryData, isLoading } = useContentLibrary(libraryId);
