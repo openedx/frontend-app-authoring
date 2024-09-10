@@ -111,7 +111,7 @@ const VideoSourceWidget = ({
               src={DeleteOutline}
               iconAs={Icon}
               alt={intl.formatMessage(messages.deleteFallbackVideo)}
-              onClick={() => deleteFallbackVideo(videoUrl)}
+              onClick={() => deleteFallbackVideo(index)}
             />
           </Form.Row>
         )) : null}

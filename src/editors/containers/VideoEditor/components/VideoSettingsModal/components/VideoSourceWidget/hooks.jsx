@@ -39,8 +39,12 @@ export const sourceHooks = ({ dispatch, previousVideoId, setAlert }) => ({
 
 export const fallbackHooks = ({ fallbackVideos, dispatch }) => ({
   addFallbackVideo: () => dispatch(actions.video.updateField({ fallbackVideos: [...fallbackVideos, ''] })),
-  deleteFallbackVideo: (videoUrl) => {
-    const updatedFallbackVideos = fallbackVideos.splice(fallbackVideos.indexOf(videoUrl), 1);
+  deleteFallbackVideo: (videoIndex) => {
+    const updatedFallbackVideos = fallbackVideos.reduce((result, currentItem, index) => {
+      if (index === videoIndex) { return result; }
+      return [...result, currentItem];
+    }, []);
+
     dispatch(actions.video.updateField({ fallbackVideos: updatedFallbackVideos }));
   },
 });
