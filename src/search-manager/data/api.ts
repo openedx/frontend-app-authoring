@@ -135,7 +135,6 @@ export interface ContentHit extends BaseContentHit {
  */
 export interface CollectionHit extends BaseContentHit {
   description: string;
-  accessId: number;
   componentCount?: number;
 }
 

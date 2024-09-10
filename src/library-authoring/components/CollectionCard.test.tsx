@@ -29,7 +29,6 @@ const CollectionHitSample: CollectionHit = {
   },
   created: 1722434322294,
   modified: 1722434322294,
-  accessId: 1,
   tags: {},
 };
 
