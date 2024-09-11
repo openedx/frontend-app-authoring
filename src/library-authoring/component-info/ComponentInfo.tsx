@@ -24,17 +24,13 @@ const ComponentInfo = ({ usageKey } : ComponentInfoProps) => {
   return (
     <Stack>
       <div className="d-flex flex-wrap">
-        {
-          editUrl ? (
-            <Button as={Link} to={editUrl} variant="outline-primary" className="m-1 text-nowrap flex-grow-1">
-              {intl.formatMessage(messages.editComponentButtonTitle)}
-            </Button>
-          ) : (
-            <Button disabled variant="outline-primary" className="m-1 text-nowrap flex-grow-1">
-              {intl.formatMessage(messages.editComponentButtonTitle)}
-            </Button>
-          )
-        }
+        <Button
+          {...(editUrl ? { as: Link, to: editUrl } : { disabled: true, to: '#' })}
+          variant="outline-primary"
+          className="m-1 text-nowrap flex-grow-1"
+        >
+          {intl.formatMessage(messages.editComponentButtonTitle)}
+        </Button>
         <Button disabled variant="outline-primary" className="m-1 text-nowrap flex-grow-1">
           {intl.formatMessage(messages.publishComponentButtonTitle)}
         </Button>

@@ -1,4 +1,3 @@
-/* eslint-disable react/require-default-props */
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { getConfig } from '@edx/frontend-platform';
@@ -10,14 +9,14 @@ interface Props {
   learningContextId: string;
   /** Event handler for when user cancels out of the editor page */
   onClose?: () => void;
-  /** Event handler for when user saves changes using an editor */
-  onSave?: () => (newData: Record<string, any>) => void;
+  /** Event handler called after when user saves their changes using an editor */
+  afterSave?: () => (newData: Record<string, any>) => void;
 }
 
 const EditorContainer: React.FC<Props> = ({
   learningContextId,
   onClose,
-  onSave,
+  afterSave,
 }) => {
   const { blockType, blockId } = useParams();
   if (blockType === undefined || blockId === undefined) {
@@ -33,7 +32,7 @@ const EditorContainer: React.FC<Props> = ({
         studioEndpointUrl={getConfig().STUDIO_BASE_URL}
         lmsEndpointUrl={getConfig().LMS_BASE_URL}
         onClose={onClose}
-        returnFunction={onSave}
+        returnFunction={afterSave}
       />
     </div>
   );

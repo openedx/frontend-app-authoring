@@ -24,11 +24,8 @@ const LibraryLayout = () => {
 
   const navigate = useNavigate();
   const goBack = React.useCallback(() => {
-    if (window.history.length > 1) {
-      navigate(-1); // go back
-    } else {
-      navigate(`/library/${libraryId}`);
-    }
+    // Go back to the library
+    navigate(`/library/${libraryId}`);
     // The following function is called only if changes are saved:
     return ({ id: usageKey }) => {
       // invalidate any queries that involve this XBlock:
@@ -43,7 +40,7 @@ const LibraryLayout = () => {
           path="editor/:blockType/:blockId?"
           element={(
             <PageWrap>
-              <EditorContainer learningContextId={libraryId} onClose={goBack} onSave={goBack} />
+              <EditorContainer learningContextId={libraryId} onClose={goBack} afterSave={goBack} />
             </PageWrap>
           )}
         />

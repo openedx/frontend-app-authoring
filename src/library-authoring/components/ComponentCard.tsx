@@ -29,7 +29,7 @@ type ComponentCardProps = {
 
 export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   const intl = useIntl();
-  const editUrl = getEditUrl(usageKey);
+  const editUrl = usageKey && getEditUrl(usageKey);
   const { showToast } = useContext(ToastContext);
   const [clipboardBroadcastChannel] = useState(() => new BroadcastChannel(STUDIO_CLIPBOARD_CHANNEL));
   const updateClipboardClick = () => {
@@ -53,17 +53,9 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
         data-testid="component-card-menu-toggle"
       />
       <Dropdown.Menu>
-        {
-          editUrl ? (
-            <Dropdown.Item as={Link} to={editUrl}>
-              <FormattedMessage {...messages.menuEdit} />
-            </Dropdown.Item>
-          ) : (
-            <Dropdown.Item disabled>
-              <FormattedMessage {...messages.menuEdit} />
-            </Dropdown.Item>
-          )
-        }
+        <Dropdown.Item {...(editUrl ? { as: Link, to: editUrl } : { disabled: true, to: '#' })}>
+          <FormattedMessage {...messages.menuEdit} />
+        </Dropdown.Item>
         <Dropdown.Item onClick={updateClipboardClick}>
           <FormattedMessage {...messages.menuCopyToClipboard} />
         </Dropdown.Item>
