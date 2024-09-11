@@ -1,10 +1,16 @@
 /**
  * Given a usage key like `lb:org:lib:html:id`, get the type (e.g. `html`)
  * @param usageKey e.g. `lb:org:lib:html:id`
- * @returns The block type as a string, or 'unknown'
+ * @returns The block type as a string
  */
 export function getBlockType(usageKey: string): string {
-  return usageKey.split(':')[3] ?? 'unknown';
+  if (usageKey && usageKey.startsWith('lb:')) {
+    const blockType = usageKey.split(':')[3];
+    if (blockType) {
+      return blockType;
+    }
+  }
+  throw new Error(`Invalid usageKey: ${usageKey}`);
 }
 
 /**
@@ -13,14 +19,25 @@ export function getBlockType(usageKey: string): string {
  * @returns The library key, e.g. `lib:org:lib`
  */
 export function getLibraryId(usageKey: string): string {
-  const org = usageKey.split(':')[1] ?? 'unknown';
-  const lib = usageKey.split(':')[2] ?? 'unknown';
-  return `lib:${org}:${lib}`;
+  if (usageKey && usageKey.startsWith('lb:')) {
+    const org = usageKey.split(':')[1];
+    const lib = usageKey.split(':')[2];
+    if (org && lib) {
+      return `lib:${org}:${lib}`;
+    }
+  }
+  throw new Error(`Invalid usageKey: ${usageKey}`);
 }
 
 export function getEditUrl(usageKey: string): string | undefined {
-  const blockType = getBlockType(usageKey);
-  const libraryId = getLibraryId(usageKey);
+  let blockType: string;
+  let libraryId: string;
+  try {
+    blockType = getBlockType(usageKey);
+    libraryId = getLibraryId(usageKey);
+  } catch {
+    return undefined;
+  }
 
   const mfeEditorTypes = ['html'];
   if (mfeEditorTypes.includes(blockType)) {
