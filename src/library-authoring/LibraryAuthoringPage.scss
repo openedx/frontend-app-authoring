@@ -20,3 +20,8 @@
   height: 100vh;
   overflow-y: auto;
 }
+
+// Reduce breadcrumb bottom margin
+ol.list-inline {
+  margin-bottom: 0rem;
+}

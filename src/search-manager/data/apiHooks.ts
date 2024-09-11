@@ -1,6 +1,6 @@
 import React from 'react';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import type { Filter, MeiliSearch } from 'meilisearch';
+import { type Filter, MeiliSearch } from 'meilisearch';
 
 import {
   SearchSortOption,
@@ -9,6 +9,7 @@ import {
   fetchSearchResults,
   fetchTagsThatMatchKeyword,
   getContentSearchConfig,
+  fetchDocumentById,
 } from './api';
 
 /**
@@ -16,8 +17,12 @@ import {
  * to the current user that allows it to search all content he have permission to view.
  *
  */
-export const useContentSearchConnection = () => (
-  useQuery({
+export const useContentSearchConnection = (): {
+  client?: MeiliSearch,
+  indexName?: string,
+  hasConnectionError: boolean;
+} => {
+  const { data: connectionDetails, isError: hasConnectionError } = useQuery({
     queryKey: ['content_search'],
     queryFn: getContentSearchConfig,
     cacheTime: 60 * 60_000, // Even if we're not actively using the search modal, keep it in memory up to an hour
@@ -25,8 +30,18 @@ export const useContentSearchConnection = () => (
     refetchInterval: 60 * 60_000,
     refetchOnWindowFocus: false, // This doesn't need to be refreshed when the user switches back to this tab.
     refetchOnMount: false,
-  })
-);
+  });
+
+  const indexName = connectionDetails?.indexName;
+  const client = React.useMemo(() => {
+    if (connectionDetails?.apiKey === undefined || connectionDetails?.url === undefined) {
+      return undefined;
+    }
+    return new MeiliSearch({ host: connectionDetails.url, apiKey: connectionDetails.apiKey });
+  }, [connectionDetails?.apiKey, connectionDetails?.url]);
+
+  return { client, indexName, hasConnectionError };
+};
 
 /**
  * Get the results of a search
@@ -40,6 +55,7 @@ export const useContentSearchResults = ({
   problemTypesFilter = [],
   tagsFilter = [],
   sort = [],
+  fetchCollections = false,
 }: {
   /** The Meilisearch API client */
   client?: MeiliSearch;
@@ -57,6 +73,8 @@ export const useContentSearchResults = ({
   tagsFilter?: string[];
   /** Sort search results using these options */
   sort?: SearchSortOption[];
+  /** Set true to fetch collections along with components */
+  fetchCollections?: boolean;
 }) => {
   const query = useInfiniteQuery({
     enabled: client !== undefined && indexName !== undefined,
@@ -89,6 +107,7 @@ export const useContentSearchResults = ({
         // For infinite pagination of results, we can retrieve additional pages if requested.
         // Note that if there are 20 results per page, the "second page" has offset=20, not 2.
         offset: pageParam,
+        fetchCollections,
       });
     },
     getNextPageParam: (lastPage) => lastPage.nextOffset,

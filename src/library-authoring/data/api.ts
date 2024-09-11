@@ -50,6 +50,10 @@ export const getXBlockOLXApiUrl = (usageKey: string) => `${getApiBaseUrl()}/api/
  * Get the URL for the Library Collections API.
  */
 export const getLibraryCollectionsApiUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/collections/`;
+/**
+ * Get the URL for the collection API.
+ */
+export const getLibraryCollectionApiUrl = (libraryId: string, collectionId: string) => `${getLibraryCollectionsApiUrl(libraryId)}${collectionId}/`;
 
 export interface ContentLibrary {
   id: string;
@@ -73,6 +77,20 @@ export interface ContentLibrary {
   license: string;
   created: string | null;
   updated: string | null;
+}
+
+export interface Collection {
+  id: number;
+  key: string;
+  title: string;
+  description: string;
+  enabled: boolean;
+  createdBy: string | null;
+  created: string;
+  modified: string;
+  // TODO: Update the type below once entities are properly linked
+  entities: Array<any>;
+  learningPackage: number;
 }
 
 export interface LibraryBlockType {
@@ -294,3 +312,12 @@ export async function getXBlockOLX(usageKey: string): Promise<string> {
   const { data } = await getAuthenticatedHttpClient().get(getXBlockOLXApiUrl(usageKey));
   return data.olx;
 }
+
+/**
+ * Fetch a collection by its ID.
+ */
+export async function getCollection(libraryId: string, collectionId: string): Promise<Collection> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryCollectionApiUrl(libraryId, collectionId));
+  return camelCaseObject(data);
+}
+

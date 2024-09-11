@@ -91,7 +91,8 @@ export const SearchContextProvider: React.FC<{
   overrideSearchSortOrder?: SearchSortOption
   children: React.ReactNode,
   closeSearchModal?: () => void,
-}> = ({ overrideSearchSortOrder, ...props }) => {
+  fetchCollections?: boolean,
+}> = ({ overrideSearchSortOrder, fetchCollections, ...props }) => {
   const [searchKeywords, setSearchKeywords] = React.useState('');
   const [blockTypesFilter, setBlockTypesFilter] = React.useState<string[]>([]);
   const [problemTypesFilter, setProblemTypesFilter] = React.useState<string[]>([]);
@@ -130,14 +131,7 @@ export const SearchContextProvider: React.FC<{
   }, []);
 
   // Initialize a connection to Meilisearch:
-  const { data: connectionDetails, isError: hasConnectionError } = useContentSearchConnection();
-  const indexName = connectionDetails?.indexName;
-  const client = React.useMemo(() => {
-    if (connectionDetails?.apiKey === undefined || connectionDetails?.url === undefined) {
-      return undefined;
-    }
-    return new MeiliSearch({ host: connectionDetails.url, apiKey: connectionDetails.apiKey });
-  }, [connectionDetails?.apiKey, connectionDetails?.url]);
+  const { client, indexName, hasConnectionError } = useContentSearchConnection();
 
   // Run the search
   const result = useContentSearchResults({
@@ -149,6 +143,7 @@ export const SearchContextProvider: React.FC<{
     problemTypesFilter,
     tagsFilter,
     sort,
+    fetchCollections,
   });
 
   return React.createElement(SearchContext.Provider, {

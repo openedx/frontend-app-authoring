@@ -165,6 +165,7 @@ interface FetchSearchParams {
   sort?: SearchSortOption[],
   /** How many results to skip, e.g. if limit=20 then passing offset=20 gets the second page. */
   offset?: number,
+  fetchCollections?: boolean,
 }
 
 export async function fetchSearchResults({
@@ -177,6 +178,7 @@ export async function fetchSearchResults({
   extraFilter,
   sort,
   offset = 0,
+  fetchCollections = false,
 }: FetchSearchParams): Promise<{
     hits: ContentHit[],
     nextOffset: number | undefined,
@@ -243,26 +245,28 @@ export async function fetchSearchResults({
   });
 
   // Third query is to get the hits for collections, with all the filters applied.
-  queries.push({
-    indexUid: indexName,
-    q: searchKeywords,
-    filter: [
-      // top-level entries in the array are AND conditions and must all match
-      // Inner arrays are OR conditions, where only one needs to match.
-      collectionsFilter, // include only collections
-      ...extraFilterFormatted,
-      // We exclude the block type filter as collections are only of 1 type i.e. collection.
-      ...tagsFilterFormatted,
-    ],
-    attributesToHighlight: ['display_name', 'description'],
-    highlightPreTag: HIGHLIGHT_PRE_TAG,
-    highlightPostTag: HIGHLIGHT_POST_TAG,
-    attributesToCrop: ['description'],
-    cropLength: 15,
-    sort,
-    offset,
-    limit,
-  });
+  if (fetchCollections) {
+    queries.push({
+      indexUid: indexName,
+      q: searchKeywords,
+      filter: [
+        // top-level entries in the array are AND conditions and must all match
+        // Inner arrays are OR conditions, where only one needs to match.
+        collectionsFilter, // include only collections
+        ...extraFilterFormatted,
+        // We exclude the block type filter as collections are only of 1 type i.e. collection.
+        ...tagsFilterFormatted,
+      ],
+      attributesToHighlight: ['display_name', 'description'],
+      highlightPreTag: HIGHLIGHT_PRE_TAG,
+      highlightPostTag: HIGHLIGHT_POST_TAG,
+      attributesToCrop: ['description'],
+      cropLength: 15,
+      sort,
+      offset,
+      limit,
+    });
+  }
 
   const { results } = await client.multiSearch(({ queries }));
   return {
@@ -270,9 +274,9 @@ export async function fetchSearchResults({
     totalHits: results[0].totalHits ?? results[0].estimatedTotalHits ?? results[0].hits.length,
     blockTypes: results[1].facetDistribution?.block_type ?? {},
     problemTypes: results[1].facetDistribution?.['content.problem_types'] ?? {},
-    nextOffset: results[0].hits.length === limit || results[2].hits.length === limit ? offset + limit : undefined,
-    collectionHits: results[2].hits.map(formatSearchHit) as CollectionHit[],
-    totalCollectionHits: results[2].totalHits ?? results[2].estimatedTotalHits ?? results[2].hits.length,
+    nextOffset: results[0].hits.length === limit || (fetchCollections && results[2].hits.length === limit) ? offset + limit : undefined,
+    collectionHits: fetchCollections ? results[2].hits.map(formatSearchHit) as CollectionHit[] : [],
+    totalCollectionHits: fetchCollections ? results[2].totalHits ?? results[2].estimatedTotalHits ?? results[2].hits.length: 0,
   };
 }
 

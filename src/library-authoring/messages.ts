@@ -6,6 +6,11 @@ const messages = defineMessages({
     defaultMessage: 'Content library',
     description: 'The page heading for the library page.',
   },
+  allCollections: {
+    id: 'course-authoring.library-authoring.all-collections',
+    defaultMessage: 'All Collections',
+    description: 'Breadcrumbs text to navigate back to all collections',
+  },
   headingInfoAlt: {
     id: 'course-authoring.library-authoring.heading-info-alt',
     defaultMessage: 'Info',
@@ -115,6 +120,11 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.buttons.library-info.text',
     defaultMessage: 'Library Info',
     description: 'Text of button to open "Library Info sidebar"',
+  },
+  collectionInfoButton: {
+    id: 'course-authoring.library-authoring.buttons.collection-info.alt-text',
+    defaultMessage: 'Collection Info',
+    description: 'Alt text for collection info button besides the collection title',
   },
   readOnlyBadge: {
     id: 'course-authoring.library-authoring.badge.read-only',

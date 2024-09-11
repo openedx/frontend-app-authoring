@@ -13,6 +13,7 @@ import LibraryAuthoringPage from './LibraryAuthoringPage';
 import { LibraryProvider } from './common/context';
 import { CreateCollectionModal } from './create-collection';
 import { invalidateComponentData } from './data/apiHooks';
+import LibraryCollectionPageWrapper from './LibraryCollectionPage';
 
 const LibraryLayout = () => {
   const { libraryId } = useParams();
@@ -57,6 +58,10 @@ const LibraryLayout = () => {
               <EditorContainer learningContextId={libraryId} onClose={goBack} returnFunction={returnFunction} />
             </PageWrap>
           )}
+        />
+        <Route
+          path="collections/:collectionId"
+          element={<LibraryCollectionPageWrapper />}
         />
         <Route
           path="*"
