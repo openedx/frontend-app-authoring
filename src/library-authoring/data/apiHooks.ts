@@ -18,7 +18,6 @@ import {
   libraryPasteClipboard,
   getXBlockFields,
   updateXBlockFields,
-  getXBlockRender,
 } from './api';
 
 const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
@@ -53,24 +52,11 @@ export const libraryAuthoringQueryKeys = {
     'content',
     'libraryBlockTypes',
   ],
-  // ToDo: Move to xblockQueryKeys
   xblockFields: (contentLibraryId: string, usageKey: string) => [
     ...libraryAuthoringQueryKeys.contentLibrary(contentLibraryId),
     'content',
     usageKey,
     'xblockFields',
-  ],
-};
-
-export const xblockQueryKeys = {
-  all: ['xblock'],
-  /**
-   * Base key for data specific to a xblock
-   */
-  xblock: (usageKey?: string) => [...xblockQueryKeys.all, usageKey],
-  render: (usageKey: string) => [
-    ...xblockQueryKeys.xblock(usageKey),
-    'render',
   ],
 };
 
@@ -222,11 +208,3 @@ export const useUpdateXBlockFields = (contentLibraryId: string, usageKey: string
     },
   });
 };
-
-export const useXBlockRender = (usageKey: string) => (
-  useQuery({
-    queryKey: xblockQueryKeys.render(usageKey),
-    queryFn: () => getXBlockRender(usageKey),
-    enabled: !!usageKey,
-  })
-);

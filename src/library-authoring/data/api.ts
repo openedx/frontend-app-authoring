@@ -35,17 +35,6 @@ export const getLibraryPasteClipboardUrl = (libraryId: string) => `${getApiBaseU
   */
 export const getXBlockFieldsApiUrl = (usageKey: string) => `${getApiBaseUrl()}/api/xblock/v2/xblocks/${usageKey}/fields/`;
 
-/**
-  * Get the URL that render the XBlock in the LMS.
-  */
-export const getXBlockRenderUrl = (usageKey: string) => `${getApiBaseUrl()}/api/xblock/v2/xblocks/${usageKey}/view/student_view/`;
-
-/**
- * Get the URL for the xblock handler API.
- * The string `handler_name` is a placeholder for the name of the handler.
- */
-export const getXBlockHandlerUrlUrl = (usageKey: string) => `${getApiBaseUrl()}/api/xblock/v2/xblocks/${usageKey}/handler_url/handler_name/`;
-
 export interface ContentLibrary {
   id: string;
   type: string;
@@ -142,18 +131,6 @@ export interface UpdateXBlockFieldsRequest {
   metadata?: {
     display_name?: string;
   };
-}
-
-export interface XBlockRenderResource {
-  data: string;
-  kind: 'url';
-  mimetype: string;
-  placement: 'head' | 'foot';
-}
-
-export interface XBlockRenderResponse {
-  content: string;
-  resources: XBlockRenderResource[];
 }
 
 /**
@@ -273,19 +250,3 @@ export async function updateXBlockFields(usageKey:string, xblockData: UpdateXBlo
   const client = getAuthenticatedHttpClient();
   await client.post(getXBlockFieldsApiUrl(usageKey), xblockData);
 }
-
-/**
-  * Get rendered xblock
- */
-export async function getXBlockRender(usageKey: string): Promise<XBlockRenderResponse> {
-  const { data } = await getAuthenticatedHttpClient().get(getXBlockRenderUrl(usageKey));
-  return camelCaseObject(data);
-}
-
-/**
-  * Get the URL of the xblock handler.
- */
-export const getXBlockHandlerUrl = async (usageKey: string): Promise<string> => {
-  const { data } = await getAuthenticatedHttpClient().get(getXBlockHandlerUrlUrl(usageKey));
-  return data.handler_url;
-};

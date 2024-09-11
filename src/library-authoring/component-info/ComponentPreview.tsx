@@ -4,8 +4,6 @@ import { Button, StandardModal, useToggle } from '@openedx/paragon';
 import { OpenInFull } from '@openedx/paragon/icons';
 
 import { LibraryBlock } from '../LibraryBlock';
-import { getXBlockHandlerUrl } from '../data/api';
-import { useXBlockRender } from '../data/apiHooks';
 import messages from './messages';
 
 // This is a simple overlay to prevent interaction with the preview
