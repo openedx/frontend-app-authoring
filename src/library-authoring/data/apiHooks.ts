@@ -19,7 +19,7 @@ import {
   getXBlockFields,
   updateXBlockFields,
   createCollection,
-  CreateLibraryCollectionDataRequest,
+  type CreateLibraryCollectionDataRequest,
 } from './api';
 
 const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {

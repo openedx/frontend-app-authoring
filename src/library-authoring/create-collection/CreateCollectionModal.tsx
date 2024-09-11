@@ -25,21 +25,11 @@ const CreateCollectionModal = () => {
   } = React.useContext(LibraryContext);
   const { showToast } = React.useContext(ToastContext);
 
-  const [isCreatingCollection, setIsCreatingCollection] = React.useState<boolean>(false);
-
-  const handleOnClose = React.useCallback(() => {
-    closeCreateCollectionModal();
-    setIsCreatingCollection(false);
-  }, []);
-
   const handleCreate = React.useCallback((values) => {
-    setIsCreatingCollection(true);
-
     create.mutateAsync(values).then(() => {
-      handleOnClose();
+      closeCreateCollectionModal();
       showToast(intl.formatMessage(messages.createCollectionSuccess));
     }).catch(() => {
-      setIsCreatingCollection(false);
       showToast(intl.formatMessage(messages.createCollectionError));
     });
   }, []);
@@ -48,7 +38,7 @@ const CreateCollectionModal = () => {
     <ModalDialog
       title={intl.formatMessage(messages.createCollectionModalTitle)}
       isOpen={isCreateCollectionModalOpen}
-      onClose={handleOnClose}
+      onClose={closeCreateCollectionModal}
       size="xl"
       hasCloseButton
       isFullscreenOnMobile
@@ -71,7 +61,7 @@ const CreateCollectionModal = () => {
             description: Yup.string(),
           })
         }
-        onSubmit={(values) => handleCreate(values)}
+        onSubmit={handleCreate}
       >
         {(formikProps) => (
           <>
@@ -115,7 +105,7 @@ const CreateCollectionModal = () => {
                 <Button
                   variant="primary"
                   onClick={formikProps.submitForm}
-                  disabled={isCreatingCollection}
+                  disabled={formikProps.isSubmitting || !formikProps.isValid || !formikProps.dirty}
                 >
                   {intl.formatMessage(messages.createCollectionModalCreate)}
                 </Button>

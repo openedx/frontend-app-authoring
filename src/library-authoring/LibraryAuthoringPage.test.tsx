@@ -591,6 +591,10 @@ describe('<LibraryAuthoringPage />', () => {
     const collectionModalHeading = await screen.findByRole('heading', { name: /new collection/i });
     expect(collectionModalHeading).toBeInTheDocument();
 
+    const nameField = screen.getByRole('textbox', { name: /name your collection/i });
+    fireEvent.focus(nameField);
+    fireEvent.blur(nameField);
+
     // Click on create with an empty name
     const createButton = screen.getByRole('button', { name: /create/i });
     fireEvent.click(createButton);
