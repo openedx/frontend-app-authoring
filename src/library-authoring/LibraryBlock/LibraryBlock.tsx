@@ -17,7 +17,7 @@ interface LibraryBlockProps {
  */
 const LibraryBlock = ({ onBlockNotification, usageKey }: LibraryBlockProps) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [iFrameHeight, setIFrameHeight] = useState(400);
+  const [iFrameHeight, setIFrameHeight] = useState(600);
   const lmsBaseUrl = getConfig().LMS_BASE_URL;
 
   /**
@@ -70,7 +70,6 @@ const LibraryBlock = ({ onBlockNotification, usageKey }: LibraryBlockProps) => {
       position: 'relative',
       overflow: 'hidden',
       minHeight: '200px',
-      border: '1px solid #ccc',
     }}
     >
       <iframe
@@ -79,14 +78,10 @@ const LibraryBlock = ({ onBlockNotification, usageKey }: LibraryBlockProps) => {
         src={`${lmsBaseUrl}/xblocks/v2/${usageKey}/embed/student_view/`}
         data-testid="block-preview"
         style={{
-          position: 'absolute',
-          left: 0,
-          top: 0,
           width: '100%',
           height: '100%',
           minHeight: '200px',
           border: '0 none',
-          backgroundColor: 'white',
         }}
         // allowing 'autoplay' is required to allow the video XBlock to control the YouTube iframe it has.
         allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"

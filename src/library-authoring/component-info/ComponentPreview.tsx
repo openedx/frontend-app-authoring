@@ -34,7 +34,6 @@ const ModalComponentPreview = ({ isOpen, close, usageKey }: ModalComponentPrevie
       )}
       className="component-preview-modal"
     >
-      <PreviewOverlay />
       <LibraryBlock usageKey={usageKey} />
     </StandardModal>
   );
