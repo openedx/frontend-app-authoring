@@ -393,9 +393,8 @@ describe('<LibraryAuthoringPage />', () => {
     expect(mockResult0.display_name).toStrictEqual(displayName);
     await renderLibraryPage();
 
-    // Click on the first component
-    waitFor(() => expect(screen.queryByText(displayName)).toBeInTheDocument());
-    fireEvent.click(screen.getAllByText(displayName)[0]);
+    // Click on the first component. It should appear twice, in both "Recently Modified" and "Components"
+    fireEvent.click((await screen.findAllByText(displayName))[0]);
 
     const sidebar = screen.getByTestId('library-sidebar');
 
