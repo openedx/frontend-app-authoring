@@ -23,6 +23,16 @@ const EditorContainer: React.FC<Props> = ({
     // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
     return <div>Error: missing URL parameters</div>;
   }
+  if (!!onClose !== !!afterSave) {
+    /* istanbul ignore next */
+    throw new Error('You must specify both onClose and afterSave or neither.');
+    // These parameters are a bit messy so I'm trying to help make it more
+    // consistent here. For example, if you specify onClose, then returnFunction
+    // is only called if the save is successful. But if you leave onClose
+    // undefined, then returnFunction is called in either case, and with
+    // different arguments. The underlying EditorPage should be refactored to
+    // have more clear events like onCancel and onSaveSuccess
+  }
   return (
     <div className="editor-page">
       <EditorPage
