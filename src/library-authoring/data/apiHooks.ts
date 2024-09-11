@@ -58,22 +58,18 @@ export const libraryAuthoringQueryKeys = {
     'content',
     'libraryBlockTypes',
   ],
-  xblockFields: (usageKey: string) => [
-    ...libraryAuthoringQueryKeys.all,
-    ...libraryAuthoringQueryKeys.contentLibrary(getLibraryId(usageKey)),
-    'content',
-    'xblock',
-    usageKey,
-    'fields',
-  ],
-  xblockOLX: (usageKey: string) => [
-    ...libraryAuthoringQueryKeys.all,
-    ...libraryAuthoringQueryKeys.contentLibrary(getLibraryId(usageKey)),
-    'content',
-    'xblock',
-    usageKey,
-    'OLX',
-  ],
+};
+
+export const xblockQueryKeys = {
+  all: ['xblock'],
+  /**
+   * Base key for data specific to a xblock
+   */
+  xblock: (usageKey?: string) => [...xblockQueryKeys.all, usageKey],
+  /** Fields (i.e. the content, display name, etc.) of an XBlock */
+  xblockFields: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'fields'],
+  /** OLX (XML representation of the fields/content) */
+  xblockOLX: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'OLX'],
 };
 
 /**
@@ -88,7 +84,7 @@ export const libraryAuthoringQueryKeys = {
  * @param usageKey The usage ID of the XBlock ("lb:...")
  */
 export function invalidateComponentData(queryClient: QueryClient, contentLibraryId: string, usageKey: string) {
-  queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.xblockFields(usageKey) });
+  queryClient.invalidateQueries({ queryKey: xblockQueryKeys.xblockFields(usageKey) });
   queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, contentLibraryId) });
 }
 
@@ -201,7 +197,7 @@ export const useLibraryPasteClipboard = () => {
 
 export const useXBlockFields = (usageKey: string) => (
   useQuery({
-    queryKey: libraryAuthoringQueryKeys.xblockFields(usageKey),
+    queryKey: xblockQueryKeys.xblockFields(usageKey),
     queryFn: () => getXBlockFields(usageKey),
     enabled: !!usageKey,
   })
@@ -213,7 +209,7 @@ export const useUpdateXBlockFields = (usageKey: string) => {
   return useMutation({
     mutationFn: (data: UpdateXBlockFieldsRequest) => updateXBlockFields(usageKey, data),
     onMutate: async (data) => {
-      const queryKey = libraryAuthoringQueryKeys.xblockFields(usageKey);
+      const queryKey = xblockQueryKeys.xblockFields(usageKey);
       const previousBlockData = queryClient.getQueriesData(queryKey)[0][1] as XBlockFields;
       const formatedData = camelCaseObject(data);
 
@@ -232,7 +228,7 @@ export const useUpdateXBlockFields = (usageKey: string) => {
     },
     onError: (_err, _data, context) => {
       queryClient.setQueryData(
-        libraryAuthoringQueryKeys.xblockFields(usageKey),
+        xblockQueryKeys.xblockFields(usageKey),
         context?.previousBlockData,
       );
     },
@@ -245,7 +241,7 @@ export const useUpdateXBlockFields = (usageKey: string) => {
 /* istanbul ignore next */ // This is only used in developer builds, and the associated UI doesn't work in test or prod
 export const useXBlockOLX = (usageKey: string) => (
   useQuery({
-    queryKey: libraryAuthoringQueryKeys.xblockOLX(usageKey),
+    queryKey: xblockQueryKeys.xblockOLX(usageKey),
     queryFn: () => getXBlockOLX(usageKey),
     enabled: !!usageKey,
   })
