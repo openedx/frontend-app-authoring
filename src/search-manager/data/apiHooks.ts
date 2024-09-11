@@ -240,3 +240,26 @@ export const useTagFilterOptions = (args: {
 
   return { ...mainQuery, data };
 };
+
+export const useGetSingleDocument = ({ client, indexName, id }: {
+  client?: MeiliSearch;
+  indexName?: string;
+  id: string | number;
+}) => (
+  useQuery({
+    enabled: client !== undefined && indexName !== undefined,
+    queryKey: [
+      'content_search',
+      client?.config.apiKey,
+      client?.config.host,
+      indexName,
+      id,
+    ],
+    queryFn: () => {
+      if (client === undefined || indexName === undefined) {
+        throw new Error('Required data unexpectedly undefined. Check "enable" condition of useQuery.');
+      }
+      return fetchDocumentById({ client, indexName, id });
+    },
+  })
+)

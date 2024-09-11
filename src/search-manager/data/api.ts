@@ -491,3 +491,18 @@ export async function fetchTagsThatMatchKeyword({
 
   return { matches: Array.from(matches).map((tagPath) => ({ tagPath })), mayBeMissingResults: hits.length === limit };
 }
+
+/**
+ * Fetch single document by its id
+ */
+export async function fetchDocumentById({ client, indexName, id } : {
+  /** The Meilisearch client instance */
+  client: MeiliSearch;
+  /** Which index to search */
+  indexName: string;
+  /** document id */
+  id: string | number;
+}): Promise<ContentHit | CollectionHit> {
+  const doc = await client.index(indexName).getDocument(id);
+  return formatSearchHit(doc);
+}
