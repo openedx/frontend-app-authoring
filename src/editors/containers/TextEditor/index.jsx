@@ -6,7 +6,7 @@ import {
   Spinner,
   Toast,
 } from '@openedx/paragon';
-import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import { actions, selectors } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
@@ -78,7 +78,7 @@ const TextEditor = ({
     >
       <div className="editor-body h-75 overflow-auto">
         <Toast show={blockFailed} onClose={hooks.nullMethod}>
-          <FormattedMessage {...messages.couldNotLoadTextContext} />
+          { intl.formatMessage(messages.couldNotLoadTextContext) }
         </Toast>
 
         {(!blockFinished)
