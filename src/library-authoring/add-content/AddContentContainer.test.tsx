@@ -1,6 +1,7 @@
 import {
   fireEvent,
   render,
+  screen,
   waitFor,
   initializeMocks,
 } from '../../testUtils';
@@ -18,15 +19,15 @@ describe('<AddContentContainer />', () => {
   it('should render content buttons', () => {
     initializeMocks();
     mockClipboardEmpty.applyMock();
-    const doc = render(<AddContentContainer />);
-    expect(doc.getByRole('button', { name: /collection/i })).toBeInTheDocument();
-    expect(doc.getByRole('button', { name: /text/i })).toBeInTheDocument();
-    expect(doc.getByRole('button', { name: /problem/i })).toBeInTheDocument();
-    expect(doc.getByRole('button', { name: /open reponse/i })).toBeInTheDocument();
-    expect(doc.getByRole('button', { name: /drag drop/i })).toBeInTheDocument();
-    expect(doc.getByRole('button', { name: /video/i })).toBeInTheDocument();
-    expect(doc.getByRole('button', { name: /advanced \/ other/i })).toBeInTheDocument();
-    expect(doc.queryByRole('button', { name: /copy from clipboard/i })).not.toBeInTheDocument();
+    render(<AddContentContainer />);
+    expect(screen.getByRole('button', { name: /collection/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /text/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /problem/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /open reponse/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /drag drop/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /video/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /advanced \/ other/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /copy from clipboard/i })).not.toBeInTheDocument();
   });
 
   it('should create a content', async () => {
@@ -35,9 +36,9 @@ describe('<AddContentContainer />', () => {
     const url = getCreateLibraryBlockUrl(libraryId);
     axiosMock.onPost(url).reply(200);
 
-    const doc = render(<AddContentContainer />, renderOpts);
+    render(<AddContentContainer />, renderOpts);
 
-    const textButton = doc.getByRole('button', { name: /text/i });
+    const textButton = screen.getByRole('button', { name: /text/i });
     fireEvent.click(textButton);
 
     await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(url));
@@ -60,12 +61,11 @@ describe('<AddContentContainer />', () => {
     const pasteUrl = getLibraryPasteClipboardUrl(libraryId);
     axiosMock.onPost(pasteUrl).reply(200);
 
-    const doc = render(<AddContentContainer />, renderOpts);
+    render(<AddContentContainer />, renderOpts);
 
     expect(getClipboardSpy).toHaveBeenCalled(); // Hmm, this is getting called four times! Refactor to use react-query.
 
-    await waitFor(() => expect(doc.queryByRole('button', { name: /paste from clipboard/i })).toBeInTheDocument());
-    const pasteButton = doc.getByRole('button', { name: /paste from clipboard/i });
+    const pasteButton = await screen.findByRole('button', { name: /paste from clipboard/i });
     fireEvent.click(pasteButton);
 
     await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(pasteUrl));
@@ -79,10 +79,9 @@ describe('<AddContentContainer />', () => {
     const pasteUrl = getLibraryPasteClipboardUrl(libraryId);
     axiosMock.onPost(pasteUrl).reply(400);
 
-    const doc = render(<AddContentContainer />, renderOpts);
+    render(<AddContentContainer />, renderOpts);
 
-    await waitFor(() => expect(doc.queryByRole('button', { name: /paste from clipboard/i })).toBeInTheDocument());
-    const pasteButton = doc.getByRole('button', { name: /paste from clipboard/i });
+    const pasteButton = await screen.findByRole('button', { name: /paste from clipboard/i });
     fireEvent.click(pasteButton);
 
     await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(pasteUrl));
