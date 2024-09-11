@@ -1,18 +1,10 @@
 /* eslint-disable react/require-default-props */
-import React, {
-  useEffect, useMemo, useRef, useState,
-} from 'react';
-import { ensureConfig, getConfig } from '@edx/frontend-platform';
-
-import type { XBlockRenderResponse } from '../data/api';
-import wrapBlockHtmlForIFrame from './wrap';
-
-ensureConfig(['LMS_BASE_URL', 'SECURE_ORIGIN_XBLOCK_BOOTSTRAP_HTML_URL'], 'library block component');
+import React, { useEffect, useRef, useState } from 'react';
+import { getConfig } from '@edx/frontend-platform';
 
 interface LibraryBlockProps {
-  getHandlerUrl: (usageId: string) => Promise<string>;
   onBlockNotification?: (event: { eventType: string; [key: string]: any }) => void;
-  view: XBlockRenderResponse
+  usageKey: string;
 }
 /**
  * React component that displays an XBlock in a sandboxed IFrame.
@@ -23,21 +15,10 @@ interface LibraryBlockProps {
  * cannot access things like the user's cookies, nor can it make GET/POST
  * requests as the user. However, it is allowed to call any XBlock handlers.
  */
-const LibraryBlock = ({ getHandlerUrl, onBlockNotification, view }: LibraryBlockProps) => {
+const LibraryBlock = ({ onBlockNotification, usageKey }: LibraryBlockProps) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [iFrameHeight, setIFrameHeight] = useState(400);
-
-  const html = useMemo(() => {
-    if (!view) {
-      return null;
-    }
-
-    return wrapBlockHtmlForIFrame(
-      view.content,
-      view.resources,
-      getConfig().LMS_BASE_URL,
-    );
-  }, [view]);
+  const lmsBaseUrl = getConfig().LMS_BASE_URL;
 
   /**
    * Handle any messages we receive from the XBlock Runtime code in the IFrame.
@@ -50,17 +31,12 @@ const LibraryBlock = ({ getHandlerUrl, onBlockNotification, view }: LibraryBlock
     }
 
     const { method, replyKey, ...args } = event.data;
-    const frame = iframeRef.current.contentWindow;
-    const sendReply = async (data) => {
-      frame?.postMessage({ ...data, replyKey }, '*');
-    };
+    // const frame = iframeRef.current.contentWindow;
+    // const sendReply = async (data) => {
+    //   frame?.postMessage({ ...data, replyKey }, '*');
+    // };
 
-    if (method === 'bootstrap') {
-      sendReply({ initialHtml: html });
-    } else if (method === 'get_handler_url') {
-      const handlerUrl = await getHandlerUrl(args.usageId);
-      sendReply({ handlerUrl });
-    } else if (method === 'update_frame_height') {
+    if (method === 'update_frame_height') {
       setIFrameHeight(args.height);
     } else if (method?.indexOf('xblock:') === 0) {
       // This is a notification from the XBlock's frontend via 'runtime.notify(event, args)'
@@ -85,13 +61,7 @@ const LibraryBlock = ({ getHandlerUrl, onBlockNotification, view }: LibraryBlock
     return () => {
       window.removeEventListener('message', receivedWindowMessage);
     };
-  }, [view]);
-
-  /* Only draw the iframe if the HTML has already been set.  This is because xblock-bootstrap.html will only request
-   * HTML once, upon being rendered. */
-  if (!html) {
-    return null;
-  }
+  }, []);
 
   return (
     <div style={{
@@ -104,10 +74,9 @@ const LibraryBlock = ({ getHandlerUrl, onBlockNotification, view }: LibraryBlock
     }}
     >
       <iframe
-        key={view.content}
         ref={iframeRef}
-        title="block"
-        src={getConfig().SECURE_ORIGIN_XBLOCK_BOOTSTRAP_HTML_URL}
+        title="preview" // FIXME: i18n needed
+        src={`${lmsBaseUrl}/xblocks/v2/${usageKey}/embed/student_view/`}
         data-testid="block-preview"
         style={{
           position: 'absolute',
@@ -121,18 +90,7 @@ const LibraryBlock = ({ getHandlerUrl, onBlockNotification, view }: LibraryBlock
         }}
         // allowing 'autoplay' is required to allow the video XBlock to control the YouTube iframe it has.
         allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-        sandbox={[
-          'allow-forms',
-          'allow-modals',
-          'allow-popups',
-          'allow-popups-to-escape-sandbox',
-          'allow-presentation',
-          'allow-same-origin', // This is only secure IF the IFrame source
-          // is served from a completely different domain name
-          // e.g. labxchange-xblocks.net vs www.labxchange.org
-          'allow-scripts',
-          'allow-top-navigation-by-user-activation',
-        ].join(' ')}
+
       />
     </div>
   );

@@ -21,9 +21,6 @@ interface ModalComponentPreviewProps {
 
 const ModalComponentPreview = ({ isOpen, close, usageKey }: ModalComponentPreviewProps) => {
   const intl = useIntl();
-  const { data: view } = useXBlockRender(usageKey);
-
-  const getHandlerUrl = () => getXBlockHandlerUrl(usageKey);
 
   return (
     <StandardModal
@@ -38,7 +35,7 @@ const ModalComponentPreview = ({ isOpen, close, usageKey }: ModalComponentPrevie
       className="component-preview-modal"
     >
       <PreviewOverlay />
-      { view && <LibraryBlock getHandlerUrl={getHandlerUrl} view={view} /> }
+      <LibraryBlock usageKey={usageKey} />
     </StandardModal>
   );
 };
@@ -49,9 +46,6 @@ interface ComponentPreviewProps {
 
 const ComponentPreview = ({ usageKey }: ComponentPreviewProps) => {
   const intl = useIntl();
-  const { data: view } = useXBlockRender(usageKey);
-
-  const getHandlerUrl = () => getXBlockHandlerUrl(usageKey);
 
   const [isModalOpen, openModal, closeModal] = useToggle();
 
@@ -68,7 +62,7 @@ const ComponentPreview = ({ usageKey }: ComponentPreviewProps) => {
         >
           {intl.formatMessage(messages.previewExpandButtonTitle)}
         </Button>
-        { view && <LibraryBlock getHandlerUrl={getHandlerUrl} view={view} /> }
+        <LibraryBlock usageKey={usageKey} />
       </div>
       <ModalComponentPreview isOpen={isModalOpen} close={closeModal} usageKey={usageKey} />
     </>
