@@ -111,7 +111,7 @@ TextEditor.propTypes = {
   initializeEditor: PropTypes.func.isRequired,
   showRawEditor: PropTypes.bool.isRequired,
   blockFinished: PropTypes.bool,
-  learningContextId: PropTypes.string.isRequired,
+  learningContextId: PropTypes.string, // This should be required but is NULL when the store is in initial state :/
   images: PropTypes.shape({}).isRequired,
   isLibrary: PropTypes.bool.isRequired,
   // inject
