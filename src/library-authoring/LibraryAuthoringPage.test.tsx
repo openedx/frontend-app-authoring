@@ -556,10 +556,10 @@ describe('<LibraryAuthoringPage />', () => {
     // "Recently Modified" header + sort shown
     expect(screen.getAllByText('Recently Modified').length).toEqual(2);
     const recentModifiedContainer = (await screen.findAllByText('Recently Modified'))[1].parentElement?.parentElement?.parentElement;
-    if (recentModifiedContainer) {
-      const container = within(recentModifiedContainer);
-      expect(container.queryAllByText('Text').length).toBeGreaterThan(0);
-      expect(container.queryAllByText('Collection').length).toBeGreaterThan(0);
-    }
+    expect(recentModifiedContainer).toBeTruthy();
+
+    const container = within(recentModifiedContainer);
+    expect(container.queryAllByText('Text').length).toBeGreaterThan(0);
+    expect(container.queryAllByText('Collection').length).toBeGreaterThan(0);
   });
 });

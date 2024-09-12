@@ -48,7 +48,7 @@ export const useLoadOnScroll = (
   useEffect(() => {
     if (enabled) {
       const onscroll = () => {
-        // Verify the position of the scroll to implementa a infinite scroll.
+        // Verify the position of the scroll to implement an infinite scroll.
         // Used `loadLimit` to fetch next page before reach the end of the screen.
         const loadLimit = 300;
         const scrolledTo = window.scrollY + window.innerHeight;
