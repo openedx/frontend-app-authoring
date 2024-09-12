@@ -82,7 +82,11 @@ const useCreateOrRerunCourse = (initialValues) => {
   }, []);
 
   useEffect(() => {
-    setFormFilled(Object.values(values).every((i) => i));
+    setFormFilled(
+      Object.entries(values)
+        ?.filter(([key]) => key !== 'undefined')
+        .every(([, value]) => value),
+    );
     dispatch(updatePostErrors({}));
   }, [values]);
 
