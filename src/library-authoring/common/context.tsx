@@ -18,7 +18,7 @@ export interface LibraryContextData {
   isCreateCollectionModalOpen: boolean;
   openCreateCollectionModal: () => void;
   closeCreateCollectionModal: () => void;
-  openCollectionInfoSidebar: (collectionId: string) => void;
+  openCollectionInfoSidebar: () => void;
 }
 
 export const LibraryContext = React.createContext({
@@ -30,7 +30,7 @@ export const LibraryContext = React.createContext({
   isCreateCollectionModalOpen: false,
   openCreateCollectionModal: () => {},
   closeCreateCollectionModal: () => {},
-  openCollectionInfoSidebar: (_collectionId: string) => {}, // eslint-disable-line @typescript-eslint/no-unused-vars
+  openCollectionInfoSidebar: () => {}, // eslint-disable-line @typescript-eslint/no-unused-vars
 } as LibraryContextData);
 
 /**
@@ -61,13 +61,10 @@ export const LibraryProvider = (props: { children?: React.ReactNode }) => {
     },
     [],
   );
-  const openCollectionInfoSidebar = React.useCallback(
-    (collectionId: string) => {
-      setCurrentComponentKey(collectionId);
-      setSidebarBodyComponent(SidebarBodyComponentId.CollectionInfo);
-    },
-    [],
-  );
+  const openCollectionInfoSidebar = React.useCallback(() => {
+    setCurrentComponentKey(undefined);
+    setSidebarBodyComponent(SidebarBodyComponentId.CollectionInfo);
+  }, []);
 
   const context = React.useMemo(() => ({
     sidebarBodyComponent,

@@ -3,6 +3,7 @@ import { useSearchContext } from '../../search-manager';
 import { NoComponents, NoSearchResults } from '../EmptyStates';
 import CollectionCard from '../components/CollectionCard';
 import { LIBRARY_SECTION_PREVIEW_LIMIT } from '../components/LibrarySection';
+import messages from '../messages';
 
 type LibraryCollectionsProps = {
   variant: 'full' | 'preview',
@@ -35,7 +36,9 @@ const LibraryCollections = ({ variant }: LibraryCollectionsProps) => {
   );
 
   if (totalCollectionHits === 0) {
-    return isFiltered ? <NoSearchResults searchType="collection" /> : <NoComponents searchType="collection" />;
+    return isFiltered ?
+      <NoSearchResults infoText={messages.noSearchResultsCollections} />
+      : <NoComponents infoText={messages.noCollections} addBtnText={messages.addCollection} />;
   }
 
   return (

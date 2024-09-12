@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -8,6 +8,7 @@ import {
   Container,
   Icon,
   IconButton,
+  Row,
   Stack,
 } from '@openedx/paragon';
 import { Add, InfoOutline } from '@openedx/paragon/icons';
@@ -29,12 +30,9 @@ import { useCollection, useContentLibrary } from '../data/apiHooks';
 import { LibraryContext } from '../common/context';
 import messages from '../messages';
 import { LibrarySidebar } from '../library-sidebar';
+import LibraryCollectionComponents from './LibraryCollectionComponents';
 
-interface HeaderActionsProps {
-  canEditLibrary: boolean;
-}
-
-const HeaderActions = ({ canEditLibrary }: HeaderActionsProps) => {
+const HeaderActions = ({ canEditLibrary }: { canEditLibrary: boolean; }) => {
   const intl = useIntl();
   const {
     openAddContentSidebar,
@@ -59,7 +57,15 @@ const HeaderActions = ({ canEditLibrary }: HeaderActionsProps) => {
   );
 };
 
-const SubHeaderTitle = ({ title, canEditLibrary, infoClickHandler }: { title: string, canEditLibrary: boolean, infoClickHandler: () => void }) => {
+const SubHeaderTitle = ({
+  title,
+  canEditLibrary,
+  infoClickHandler,
+}: {
+  title: string;
+  canEditLibrary: boolean;
+  infoClickHandler: () => void;
+}) => {
   const intl = useIntl();
 
   return (
@@ -85,7 +91,13 @@ const SubHeaderTitle = ({ title, canEditLibrary, infoClickHandler }: { title: st
   );
 };
 
-const LibraryCollectionPage = ({ libraryId, collectionId }: { libraryId: string, collectionId: string }) => {
+const LibraryCollectionPage = ({
+  libraryId,
+  collectionId,
+}: {
+  libraryId: string;
+  collectionId: string;
+}) => {
   const intl = useIntl();
 
   const {
@@ -94,7 +106,7 @@ const LibraryCollectionPage = ({ libraryId, collectionId }: { libraryId: string,
   } = useContext(LibraryContext);
 
   useEffect(() => {
-    openCollectionInfoSidebar(collectionId);
+    openCollectionInfoSidebar();
   }, []);
 
   const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
@@ -139,7 +151,7 @@ const LibraryCollectionPage = ({ libraryId, collectionId }: { libraryId: string,
             title={<SubHeaderTitle
               title={collectionData.title}
               canEditLibrary={libraryData.canEditLibrary}
-              infoClickHandler={() => openCollectionInfoSidebar(collectionId)}
+              infoClickHandler={openCollectionInfoSidebar}
             />}
             breadcrumbs={(
               <Breadcrumb
@@ -151,19 +163,20 @@ const LibraryCollectionPage = ({ libraryId, collectionId }: { libraryId: string,
             headerActions={<HeaderActions canEditLibrary={libraryData.canEditLibrary} />}
           />
           <SearchKeywordsField className="w-50" />
-          <div className="d-flex mt-3 align-items-center">
+          <div className="d-flex mt-3 mb-4 align-items-center">
             <FilterByTags />
             <FilterByBlockType />
             <ClearFiltersButton />
             <div className="flex-grow-1" />
             <SearchSortWidget />
           </div>
+          <LibraryCollectionComponents libraryId={libraryId} />
         </Container>
         <StudioFooter />
       </div>
       { !!sidebarBodyComponent && (
         <div className="library-authoring-sidebar box-shadow-left-1 bg-white" data-testid="library-sidebar">
-          <LibrarySidebar library={libraryData} />
+          <LibrarySidebar library={libraryData} collection={collectionData} />
         </div>
       )}
     </div>
@@ -178,7 +191,8 @@ const LibraryCollectionPageWrapper = () => {
 
   return (
     <SearchContextProvider
-      extraFilter={`context_key = "${libraryId}"`}
+      extraFilter={[`context_key = "${libraryId}"`, `collections.key = "${collectionId}"`]}
+      fetchCollections={false}
     >
       <LibraryCollectionPage libraryId={libraryId} collectionId={collectionId} />
     </SearchContextProvider>
