@@ -1,19 +1,7 @@
-import React from 'react';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { render, screen } from '@testing-library/react';
-import MockAdapter from 'axios-mock-adapter';
-import type { Store } from 'redux';
+import { initializeMocks, render, screen } from '../../testUtils';
 
-import { ToastProvider } from '../../generic/toast-context';
 import { type CollectionHit } from '../../search-manager';
-import initializeStore from '../../store';
 import CollectionCard from './CollectionCard';
-
-let store: Store;
-let axiosMock: MockAdapter;
 
 const CollectionHitSample: CollectionHit = {
   id: '1',
@@ -32,40 +20,17 @@ const CollectionHitSample: CollectionHit = {
   tags: {},
 };
 
-const RootWrapper = () => (
-  <AppProvider store={store}>
-    <IntlProvider locale="en">
-      <ToastProvider>
-        <CollectionCard
-          collectionHit={CollectionHitSample}
-        />
-      </ToastProvider>
-    </IntlProvider>
-  </AppProvider>
-);
-
 describe('<CollectionCard />', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-    store = initializeStore();
-
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    initializeMocks();
   });
 
   afterEach(() => {
     jest.clearAllMocks();
-    axiosMock.restore();
   });
 
   it('should render the card with title and description', () => {
-    render(<RootWrapper />);
+    render(<CollectionCard collectionHit={CollectionHitSample} />);
 
     expect(screen.getByText('Collection Display Formated Name')).toBeInTheDocument();
     expect(screen.getByText('Collection description')).toBeInTheDocument();

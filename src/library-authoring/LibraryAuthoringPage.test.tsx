@@ -558,7 +558,7 @@ describe('<LibraryAuthoringPage />', () => {
     const recentModifiedContainer = (await screen.findAllByText('Recently Modified'))[1].parentElement?.parentElement?.parentElement;
     expect(recentModifiedContainer).toBeTruthy();
 
-    const container = within(recentModifiedContainer);
+    const container = within(recentModifiedContainer!);
     expect(container.queryAllByText('Text').length).toBeGreaterThan(0);
     expect(container.queryAllByText('Collection').length).toBeGreaterThan(0);
   });
