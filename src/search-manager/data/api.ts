@@ -83,7 +83,7 @@ function formatTagsFilter(tagsFilter?: string[]): string[] {
 /**
  * The tags that are associated with a search result, at various levels of the tag hierarchy.
  */
-interface ContentHitTags {
+export interface ContentHitTags {
   taxonomy?: string[];
   level0?: string[];
   level1?: string[];
@@ -95,42 +95,60 @@ interface ContentHitTags {
  * Information about a single XBlock returned in the search results
  * Defined in edx-platform/openedx/core/djangoapps/content/search/documents.py
  */
-export interface ContentHit {
+interface BaseContentHit {
   id: string;
-  usageKey: string;
-  type: 'course_block' | 'library_block';
-  blockId: string;
+  type: 'course_block' | 'library_block' | 'collection';
   displayName: string;
-  /** The block_type part of the usage key. What type of XBlock this is. */
-  blockType: string;
   /** The course or library ID */
   contextKey: string;
   org: string;
+  breadcrumbs: Array<{ displayName: string }>;
+  tags: ContentHitTags;
+  /** Same fields with <mark>...</mark> highlights */
+  formatted: { displayName: string, content?: ContentDetails, description?: string };
+  created: number;
+  modified: number;
+}
+
+/**
+ * Information about a single XBlock returned in the search results
+ * Defined in edx-platform/openedx/core/djangoapps/content/search/documents.py
+ */
+export interface ContentHit extends BaseContentHit {
+  usageKey: string;
+  blockId: string;
+  /** The block_type part of the usage key. What type of XBlock this is. */
+  blockType: string;
   /**
    * Breadcrumbs:
    * - First one is the name of the course/library itself.
    * - After that is the name and usage key of any parent Section/Subsection/Unit/etc.
    */
   breadcrumbs: [{ displayName: string }, ...Array<{ displayName: string, usageKey: string }>];
-  tags: ContentHitTags;
   content?: ContentDetails;
-  /** Same fields with <mark>...</mark> highlights */
-  formatted: { displayName: string, content?: ContentDetails };
-  created: number;
-  modified: number;
   lastPublished: number | null;
+}
+
+/**
+ * Information about a single collection returned in the search results
+ * Defined in edx-platform/openedx/core/djangoapps/content/search/documents.py
+ */
+export interface CollectionHit extends BaseContentHit {
+  description: string;
+  componentCount?: number;
 }
 
 /**
  * Convert search hits to camelCase
  * @param hit A search result directly from Meilisearch
  */
-function formatSearchHit(hit: Record<string, any>): ContentHit {
+function formatSearchHit(hit: Record<string, any>): ContentHit | CollectionHit {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const { _formatted, ...newHit } = hit;
   newHit.formatted = {
     displayName: _formatted.display_name,
     content: _formatted.content ?? {},
+    description: _formatted.description,
   };
   return camelCaseObject(newHit);
 }
@@ -165,6 +183,8 @@ export async function fetchSearchResults({
     totalHits: number,
     blockTypes: Record<string, number>,
     problemTypes: Record<string, number>,
+    collectionHits: CollectionHit[],
+    totalCollectionHits: number,
   }> {
   const queries: MultiSearchQuery[] = [];
 
@@ -185,6 +205,8 @@ export async function fetchSearchResults({
     ...problemTypesFilterFormatted,
   ].flat()];
 
+  const collectionsFilter = 'type = "collection"';
+
   // First query is always to get the hits, with all the filters applied.
   queries.push({
     indexUid: indexName,
@@ -192,6 +214,7 @@ export async function fetchSearchResults({
     filter: [
       // top-level entries in the array are AND conditions and must all match
       // Inner arrays are OR conditions, where only one needs to match.
+      `NOT ${collectionsFilter}`, // exclude collections
       ...typeFilters,
       ...extraFilterFormatted,
       ...tagsFilterFormatted,
@@ -219,13 +242,37 @@ export async function fetchSearchResults({
     limit: 0, // We don't need any "hits" for this - just the facetDistribution
   });
 
+  // Third query is to get the hits for collections, with all the filters applied.
+  queries.push({
+    indexUid: indexName,
+    q: searchKeywords,
+    filter: [
+      // top-level entries in the array are AND conditions and must all match
+      // Inner arrays are OR conditions, where only one needs to match.
+      collectionsFilter, // include only collections
+      ...extraFilterFormatted,
+      // We exclude the block type filter as collections are only of 1 type i.e. collection.
+      ...tagsFilterFormatted,
+    ],
+    attributesToHighlight: ['display_name', 'description'],
+    highlightPreTag: HIGHLIGHT_PRE_TAG,
+    highlightPostTag: HIGHLIGHT_POST_TAG,
+    attributesToCrop: ['description'],
+    cropLength: 15,
+    sort,
+    offset,
+    limit,
+  });
+
   const { results } = await client.multiSearch(({ queries }));
   return {
-    hits: results[0].hits.map(formatSearchHit),
+    hits: results[0].hits.map(formatSearchHit) as ContentHit[],
     totalHits: results[0].totalHits ?? results[0].estimatedTotalHits ?? results[0].hits.length,
     blockTypes: results[1].facetDistribution?.block_type ?? {},
     problemTypes: results[1].facetDistribution?.['content.problem_types'] ?? {},
-    nextOffset: results[0].hits.length === limit ? offset + limit : undefined,
+    nextOffset: results[0].hits.length === limit || results[2].hits.length === limit ? offset + limit : undefined,
+    collectionHits: results[2].hits.map(formatSearchHit) as CollectionHit[],
+    totalCollectionHits: results[2].totalHits ?? results[2].estimatedTotalHits ?? results[2].hits.length,
   };
 }
 
