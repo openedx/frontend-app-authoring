@@ -12,6 +12,7 @@ import { LibraryContext, SidebarBodyComponentId } from '../common/context';
 import { LibraryInfo, LibraryInfoHeader } from '../library-info';
 import { ComponentInfo, ComponentInfoHeader } from '../component-info';
 import { ContentLibrary } from '../data/api';
+import { CollectionInfo } from '../collections';
 
 type LibrarySidebarProps = {
   library: ContentLibrary,
@@ -31,14 +32,17 @@ const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
   const {
     sidebarBodyComponent,
     closeLibrarySidebar,
-    currentComponentUsageKey,
+    currentComponentKey,
   } = useContext(LibraryContext);
 
   const bodyComponentMap = {
     [SidebarBodyComponentId.AddContent]: <AddContentContainer />,
     [SidebarBodyComponentId.Info]: <LibraryInfo library={library} />,
     [SidebarBodyComponentId.ComponentInfo]: (
-      currentComponentUsageKey && <ComponentInfo usageKey={currentComponentUsageKey} />
+      currentComponentKey && <ComponentInfo usageKey={currentComponentKey} />
+    ),
+    [SidebarBodyComponentId.CollectionInfo]: (
+      currentComponentKey && <CollectionInfo libraryId={library.id} collectionId={currentComponentKey} />
     ),
     unknown: null,
   };
@@ -47,8 +51,11 @@ const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
     [SidebarBodyComponentId.AddContent]: <AddContentHeader />,
     [SidebarBodyComponentId.Info]: <LibraryInfoHeader library={library} />,
     [SidebarBodyComponentId.ComponentInfo]: (
-      currentComponentUsageKey && <ComponentInfoHeader library={library} usageKey={currentComponentUsageKey} />
+      currentComponentKey && <ComponentInfoHeader library={library} usageKey={currentComponentKey} />
     ),
+    //[SidebarBodyComponentId.CollectionInfo]: (
+    //  currentComponentKey && <CollectionInfoHeader library={library} collectionId={currentComponentKey} />
+    //),
     unknown: null,
   };
 

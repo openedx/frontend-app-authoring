@@ -1,8 +1,8 @@
-import { useLoadOnScroll } from '../hooks';
-import { useSearchContext } from '../search-manager';
-import { NoComponents, NoSearchResults } from './EmptyStates';
-import CollectionCard from './components/CollectionCard';
-import { LIBRARY_SECTION_PREVIEW_LIMIT } from './components/LibrarySection';
+import { useLoadOnScroll } from '../../hooks';
+import { useSearchContext } from '../../search-manager';
+import { NoComponents, NoSearchResults } from '../EmptyStates';
+import CollectionCard from '../components/CollectionCard';
+import { LIBRARY_SECTION_PREVIEW_LIMIT } from '../components/LibrarySection';
 
 type LibraryCollectionsProps = {
   variant: 'full' | 'preview',

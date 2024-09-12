@@ -4,7 +4,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { useSearchContext } from '../search-manager';
 import { NoComponents, NoSearchResults } from './EmptyStates';
-import LibraryCollections from './LibraryCollections';
+import LibraryCollections from './collections/LibraryCollections';
 import { LibraryComponents } from './components';
 import LibrarySection from './components/LibrarySection';
 import LibraryRecentlyModified from './LibraryRecentlyModified';

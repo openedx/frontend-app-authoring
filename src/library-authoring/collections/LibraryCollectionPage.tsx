@@ -1,5 +1,4 @@
-import React, { useContext } from 'react';
-import classNames from 'classnames';
+import React, { useContext, useEffect } from 'react';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -14,10 +13,10 @@ import {
 import { Add, InfoOutline } from '@openedx/paragon/icons';
 import { Link, useParams } from 'react-router-dom';
 
-import Loading from '../generic/Loading';
-import SubHeader from '../generic/sub-header/SubHeader';
-import Header from '../header';
-import NotFoundAlert from '../generic/NotFoundAlert';
+import Loading from '../../generic/Loading';
+import SubHeader from '../../generic/sub-header/SubHeader';
+import Header from '../../header';
+import NotFoundAlert from '../../generic/NotFoundAlert';
 import {
   ClearFiltersButton,
   FilterByBlockType,
@@ -25,10 +24,11 @@ import {
   SearchContextProvider,
   SearchKeywordsField,
   SearchSortWidget,
-} from '../search-manager';
-import { useCollection, useContentLibrary } from './data/apiHooks';
-import { LibraryContext, SidebarBodyComponentId } from './common/context';
-import messages from './messages';
+} from '../../search-manager';
+import { useCollection, useContentLibrary } from '../data/apiHooks';
+import { LibraryContext } from '../common/context';
+import messages from '../messages';
+import { LibrarySidebar } from '../library-sidebar';
 
 interface HeaderActionsProps {
   canEditLibrary: boolean;
@@ -38,40 +38,14 @@ const HeaderActions = ({ canEditLibrary }: HeaderActionsProps) => {
   const intl = useIntl();
   const {
     openAddContentSidebar,
-    openInfoSidebar,
-    closeLibrarySidebar,
-    sidebarBodyComponent,
   } = useContext(LibraryContext);
 
   if (!canEditLibrary) {
     return null;
   }
 
-  const infoSidebarIsOpen = () => (
-    sidebarBodyComponent === SidebarBodyComponentId.Info
-  );
-
-  const handleOnClickInfoSidebar = () => {
-    if (infoSidebarIsOpen()) {
-      closeLibrarySidebar();
-    } else {
-      openInfoSidebar();
-    }
-  };
-
   return (
     <div className="header-actions">
-      <Button
-        className={classNames('mr-1', {
-          'normal-border': !infoSidebarIsOpen(),
-          'open-border': infoSidebarIsOpen(),
-        })}
-        iconBefore={InfoOutline}
-        variant="outline-primary rounded-0"
-        onClick={handleOnClickInfoSidebar}
-      >
-        {intl.formatMessage(messages.libraryInfoButton)}
-      </Button>
       <Button
         className="ml-1"
         iconBefore={Add}
@@ -85,7 +59,7 @@ const HeaderActions = ({ canEditLibrary }: HeaderActionsProps) => {
   );
 };
 
-const SubHeaderTitle = ({ title, canEditLibrary }: { title: string, canEditLibrary: boolean }) => {
+const SubHeaderTitle = ({ title, canEditLibrary, infoClickHandler }: { title: string, canEditLibrary: boolean, infoClickHandler: () => void }) => {
   const intl = useIntl();
 
   return (
@@ -96,7 +70,7 @@ const SubHeaderTitle = ({ title, canEditLibrary }: { title: string, canEditLibra
           src={InfoOutline}
           iconAs={Icon}
           alt={intl.formatMessage(messages.collectionInfoButton)}
-          onClick={() => {}}
+          onClick={infoClickHandler}
           variant="primary"
         />
       </Stack>
@@ -113,6 +87,15 @@ const SubHeaderTitle = ({ title, canEditLibrary }: { title: string, canEditLibra
 
 const LibraryCollectionPage = ({ libraryId, collectionId }: { libraryId: string, collectionId: string }) => {
   const intl = useIntl();
+
+  const {
+    sidebarBodyComponent,
+    openCollectionInfoSidebar,
+  } = useContext(LibraryContext);
+
+  useEffect(() => {
+    openCollectionInfoSidebar(collectionId);
+  }, []);
 
   const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
   const { data: collectionData, isLoading: isCollectionLoading } = useCollection(libraryId, collectionId);
@@ -153,7 +136,11 @@ const LibraryCollectionPage = ({ libraryId, collectionId }: { libraryId: string,
         />
         <Container size="xl" className="px-4 mt-4 mb-5 library-authoring-page">
           <SubHeader
-            title={<SubHeaderTitle title={collectionData.title} canEditLibrary={libraryData.canEditLibrary} />}
+            title={<SubHeaderTitle
+              title={collectionData.title}
+              canEditLibrary={libraryData.canEditLibrary}
+              infoClickHandler={() => openCollectionInfoSidebar(collectionId)}
+            />}
             breadcrumbs={(
               <Breadcrumb
                 ariaLabel={intl.formatMessage(messages.allCollections)}
@@ -174,6 +161,11 @@ const LibraryCollectionPage = ({ libraryId, collectionId }: { libraryId: string,
         </Container>
         <StudioFooter />
       </div>
+      { !!sidebarBodyComponent && (
+        <div className="library-authoring-sidebar box-shadow-left-1 bg-white" data-testid="library-sidebar">
+          <LibrarySidebar library={libraryData} />
+        </div>
+      )}
     </div>
   );
 };

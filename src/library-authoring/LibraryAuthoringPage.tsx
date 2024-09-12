@@ -29,7 +29,7 @@ import {
   SearchSortWidget,
 } from '../search-manager';
 import LibraryComponents from './components/LibraryComponents';
-import LibraryCollections from './LibraryCollections';
+import LibraryCollections from './collections/LibraryCollections';
 import LibraryHome from './LibraryHome';
 import { useContentLibrary } from './data/apiHooks';
 import { LibrarySidebar } from './library-sidebar';
