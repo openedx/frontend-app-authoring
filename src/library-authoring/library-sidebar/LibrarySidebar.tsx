@@ -21,10 +21,10 @@ type LibrarySidebarProps = {
  * Sidebar container for library pages.
  *
  * It's designed to "squash" the page when open.
- * Uses `sidebarBodyComponent` of the `store` to
+ * Uses `sidebarBodyComponent` of the `context` to
  * choose which component is rendered.
  * You can add more components in `bodyComponentMap`.
- * Use the slice actions to open and close this sidebar.
+ * Use the returned actions to open and close this sidebar.
  */
 const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
   const intl = useIntl();

@@ -36,6 +36,16 @@ const messages = defineMessages({
     defaultMessage: 'Manage',
     description: 'Title for manage tab',
   },
+  manageTabTagsTitle: {
+    id: 'course-authoring.library-authoring.component.manage-tab.tags-title',
+    defaultMessage: 'Tags',
+    description: 'Title for the Tags container in the management tab',
+  },
+  manageTabCollectionsTitle: {
+    id: 'course-authoring.library-authoring.component.manage-tab.collections-title',
+    defaultMessage: 'Collections',
+    description: 'Title for the Collections container in the management tab',
+  },
   detailsTabTitle: {
     id: 'course-authoring.library-authoring.component.details-tab.title',
     defaultMessage: 'Details',

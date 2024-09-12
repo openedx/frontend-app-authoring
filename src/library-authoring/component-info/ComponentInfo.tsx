@@ -8,6 +8,7 @@ import {
 } from '@openedx/paragon';
 
 import { ComponentMenu } from '../components';
+import ComponentManagement from './ComponentManagement';
 import messages from './messages';
 
 interface ComponentInfoProps {
@@ -37,7 +38,7 @@ const ComponentInfo = ({ usageKey } : ComponentInfoProps) => {
           Preview tab placeholder
         </Tab>
         <Tab eventKey="manage" title={intl.formatMessage(messages.manageTabTitle)}>
-          Manage tab placeholder
+          <ComponentManagement usageKey={usageKey} />
         </Tab>
         <Tab eventKey="details" title={intl.formatMessage(messages.detailsTabTitle)}>
           Details tab placeholder

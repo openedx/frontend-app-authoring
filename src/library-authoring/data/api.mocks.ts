@@ -127,3 +127,33 @@ mockXBlockFields.dataHtml = {
   metadata: { displayName: 'Introduction to Testing' },
 } satisfies api.XBlockFields;
 mockXBlockFields.applyMock = () => { jest.spyOn(api, 'getXBlockFields').mockImplementation(mockXBlockFields); };
+
+/**
+ * Mock for `getLibraryBlockMetadata()`
+ *
+ * This mock returns different data/responses depending on the ID of the block
+ * that you request. Use `mockLibraryBlockMetadata.applyMock()` to apply it to the whole
+ * test suite.
+ */
+export async function mockLibraryBlockMetadata(usageKey: string): Promise<api.LibraryBlockMetadata> {
+  const thisMock = mockLibraryBlockMetadata;
+  switch (usageKey) {
+    case thisMock.usageKeyNeverPublished: return thisMock.dataNeverPublished;
+    default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
+  }
+}
+mockLibraryBlockMetadata.usageKeyNeverPublished = 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd';
+mockLibraryBlockMetadata.dataNeverPublished = {
+  id: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
+  defKey: null,
+  blockType: 'html',
+  displayName: 'Introduction to Testing',
+  lastPublished: null,
+  publishedBy: null,
+  lastDraftCreated: null,
+  lastDraftCreatedBy: null,
+  hasUnpublishedChanges: false,
+  created: '2024-06-20T13:54:21Z',
+  tagsCount: 0,
+} satisfies api.LibraryBlockMetadata;
+mockLibraryBlockMetadata.applyMock = () => { jest.spyOn(api, 'getLibraryBlockMetadata').mockImplementation(mockLibraryBlockMetadata); };

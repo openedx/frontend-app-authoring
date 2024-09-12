@@ -16,6 +16,7 @@ import {
   revertLibraryChanges,
   updateLibraryMetadata,
   libraryPasteClipboard,
+  getLibraryBlockMetadata,
   getXBlockFields,
   updateXBlockFields,
 } from './api';
@@ -51,6 +52,14 @@ export const libraryAuthoringQueryKeys = {
     ...libraryAuthoringQueryKeys.contentLibrary(contentLibraryId),
     'content',
     'libraryBlockTypes',
+  ],
+  // FixMe: Move this to another key map
+  componentMetadata: (usageKey: string) => [
+    ...libraryAuthoringQueryKeys.all,
+    ...libraryAuthoringQueryKeys.contentLibrary('lib'),
+    'content',
+    usageKey,
+    'componentMetadata',
   ],
   xblockFields: (contentLibraryId: string, usageKey: string) => [
     ...libraryAuthoringQueryKeys.all,
@@ -167,6 +176,13 @@ export const useLibraryPasteClipboard = () => {
     },
   });
 };
+
+export const useLibraryBlockMetadata = (usageId: string) => (
+  useQuery({
+    queryKey: libraryAuthoringQueryKeys.componentMetadata(usageId),
+    queryFn: () => getLibraryBlockMetadata(usageId),
+  })
+);
 
 export const useXBlockFields = (contentLibrayId: string, usageKey: string) => (
   useQuery({

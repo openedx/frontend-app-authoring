@@ -1,4 +1,3 @@
-import React from 'react';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
