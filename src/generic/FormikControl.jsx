@@ -41,8 +41,8 @@ const FormikControl = ({
 
 FormikControl.propTypes = {
   name: PropTypes.string.isRequired,
-  label: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
-  help: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
+  label: PropTypes.element,
+  help: PropTypes.element,
   className: PropTypes.string,
   controlClasses: PropTypes.string,
   value: PropTypes.oneOfType([
