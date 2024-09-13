@@ -15,6 +15,6 @@ const supportedEditors = {
   [blockTypes.video_upload]: VideoUploadEditor,
   // ADDED_EDITORS GO BELOW
   [blockTypes.game]: GameEditor,
-};
+} as const;
 
 export default supportedEditors;

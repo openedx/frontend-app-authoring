@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import { Row, Stack } from '@openedx/paragon';
 import ProblemTypeSelect from './content/ProblemTypeSelect';
@@ -9,7 +8,11 @@ import SelectTypeWrapper from './SelectTypeWrapper';
 import * as hooks from './hooks';
 import { AdvanceProblemKeys } from '../../../../data/constants/problem';
 
-const SelectTypeModal = ({
+interface Props {
+  onClose: (() => void) | null;
+}
+
+const SelectTypeModal: React.FC<Props> = ({
   onClose,
 }) => {
   const { selected, setSelected } = hooks.selectHooks();
@@ -27,10 +30,6 @@ const SelectTypeModal = ({
       </Row>
     </SelectTypeWrapper>
   );
-};
-
-SelectTypeModal.propTypes = {
-  onClose: PropTypes.func.isRequired,
 };
 
 export default SelectTypeModal;

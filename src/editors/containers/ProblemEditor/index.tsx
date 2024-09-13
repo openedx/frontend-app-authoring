@@ -8,10 +8,9 @@ import { selectors, thunkActions } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
 import messages from './messages';
 import { ProblemType } from '../../data/constants/problem';
+import type { EditorComponent } from '../../EditorComponent';
 
-interface Props {
-  onClose: () => void | null;
-  returnFunction?: () => (result: any) => void | null;
+export interface Props extends EditorComponent {
   // redux
   advancedSettingsFinished: boolean;
   blockFinished: boolean;
