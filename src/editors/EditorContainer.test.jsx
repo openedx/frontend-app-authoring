@@ -10,7 +10,7 @@ jest.mock('react-router', () => ({
   }),
 }));
 
-const props = { courseId: 'cOuRsEId' };
+const props = { learningContextId: 'cOuRsEId' };
 
 describe('Editor Container', () => {
   describe('snapshots', () => {

@@ -100,7 +100,6 @@ const ProblemFilterItem = ({ count, handleCheckboxChange } : ProblemFilterItemPr
   return (
     <div className="problem-menu-item">
       <MenuItem
-        key={blockType}
         as={Form.Checkbox}
         value={blockType}
         onChange={handleCheckBoxChangeOnProblem}
@@ -194,7 +193,6 @@ const FilterItem = ({ blockType, count } : FilterItemProps) => {
 
   return (
     <MenuItem
-      key={blockType}
       as={Form.Checkbox}
       value={blockType}
       onChange={handleCheckboxChange}
@@ -278,7 +276,7 @@ const FilterByBlockType: React.FC<Record<never, never>> = () => {
           <Menu className="block-type-refinement-menu" style={{ boxShadow: 'none' }}>
             {
               Object.entries(sortedBlockTypes).map(([blockType, count]) => (
-                <FilterItem blockType={blockType} count={count} />
+                <FilterItem key={blockType} blockType={blockType} count={count} />
               ))
             }
             {

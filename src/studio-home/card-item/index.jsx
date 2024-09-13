@@ -20,14 +20,14 @@ import { trimSlashes } from './utils';
 const CardItem = ({
   intl,
   displayName,
-  lmsLink,
-  rerunLink,
+  lmsLink = '',
+  rerunLink = '',
   org,
   number,
-  run,
-  isLibraries,
-  courseKey,
-  isPaginated,
+  run = '',
+  isLibraries = false,
+  courseKey = '',
+  isPaginated = false,
   url,
 }) => {
   const {
@@ -103,15 +103,6 @@ const CardItem = ({
       />
     </Card>
   );
-};
-
-CardItem.defaultProps = {
-  isLibraries: false,
-  isPaginated: false,
-  courseKey: '',
-  rerunLink: '',
-  lmsLink: '',
-  run: '',
 };
 
 CardItem.propTypes = {

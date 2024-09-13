@@ -36,6 +36,9 @@ const SettingsWidget = ({
   updateField,
   updateAnswer,
   defaultSettings,
+  images,
+  isLibrary,
+  learningContextId,
 }) => {
   const { isAdvancedCardsVisible, showAdvancedCards } = showAdvancedSettingsCards();
 
@@ -85,7 +88,16 @@ const SettingsWidget = ({
         />
       </div>
       <div className="mt-3">
-        <HintsCard problemType={problemType} hints={settings.hints} updateSettings={updateSettings} />
+        <HintsCard
+          problemType={problemType}
+          hints={settings.hints}
+          updateSettings={updateSettings}
+          {...{
+            images,
+            isLibrary,
+            learningContextId,
+          }}
+        />
       </div>
       {feedbackCard()}
       <div>
@@ -172,6 +184,9 @@ SettingsWidget.propTypes = {
     showResetButton: PropTypes.bool,
     rerandomize: PropTypes.string,
   }).isRequired,
+  images: PropTypes.shape({}).isRequired,
+  learningContextId: PropTypes.string.isRequired,
+  isLibrary: PropTypes.bool.isRequired,
   // eslint-disable-next-line
   settings: PropTypes.any.isRequired,
 };
@@ -183,6 +198,9 @@ const mapStateToProps = (state) => ({
   blockTitle: selectors.app.blockTitle(state),
   correctAnswerCount: selectors.problem.correctAnswerCount(state),
   defaultSettings: selectors.problem.defaultSettings(state),
+  images: selectors.app.images(state),
+  isLibrary: selectors.app.isLibrary(state),
+  learningContextId: selectors.app.learningContextId(state),
 });
 
 export const mapDispatchToProps = {

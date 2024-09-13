@@ -6,7 +6,7 @@ import {
   Spinner,
   Toast,
 } from '@openedx/paragon';
-import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
 import { actions, selectors } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
@@ -28,6 +28,8 @@ const TextEditor = ({
   initializeEditor,
   blockFinished,
   learningContextId,
+  images,
+  isLibrary,
   // inject
   intl,
 }) => {
@@ -59,6 +61,11 @@ const TextEditor = ({
         minHeight={500}
         height="100%"
         initializeEditor={initializeEditor}
+        {...{
+          images,
+          isLibrary,
+          learningContextId,
+        }}
       />
     );
   };
@@ -71,7 +78,7 @@ const TextEditor = ({
     >
       <div className="editor-body h-75 overflow-auto">
         <Toast show={blockFailed} onClose={hooks.nullMethod}>
-          <FormattedMessage {...messages.couldNotLoadTextContext} />
+          { intl.formatMessage(messages.couldNotLoadTextContext) }
         </Toast>
 
         {(!blockFinished)
@@ -104,7 +111,9 @@ TextEditor.propTypes = {
   initializeEditor: PropTypes.func.isRequired,
   showRawEditor: PropTypes.bool.isRequired,
   blockFinished: PropTypes.bool,
-  learningContextId: PropTypes.string.isRequired,
+  learningContextId: PropTypes.string, // This should be required but is NULL when the store is in initial state :/
+  images: PropTypes.shape({}).isRequired,
+  isLibrary: PropTypes.bool.isRequired,
   // inject
   intl: intlShape.isRequired,
 };
@@ -115,6 +124,8 @@ export const mapStateToProps = (state) => ({
   showRawEditor: selectors.app.showRawEditor(state),
   blockFinished: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchBlock }),
   learningContextId: selectors.app.learningContextId(state),
+  images: selectors.app.images(state),
+  isLibrary: selectors.app.isLibrary(state),
 });
 
 export const mapDispatchToProps = {

@@ -14,4 +14,9 @@
   min-width: 300px;
   max-width: map-get($grid-breakpoints, "sm");
   z-index: 1001; // to appear over header
+  position: sticky;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  overflow-y: auto;
 }

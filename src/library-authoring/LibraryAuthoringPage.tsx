@@ -119,6 +119,10 @@ const LibraryAuthoringPage = () => {
   const navigate = useNavigate();
 
   const { libraryId } = useParams();
+  if (!libraryId) {
+    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
+    throw new Error('Rendered without libraryId URL parameter');
+  }
   const { data: libraryData, isLoading } = useContentLibrary(libraryId);
 
   const currentPath = location.pathname.split('/').pop();
@@ -138,7 +142,7 @@ const LibraryAuthoringPage = () => {
     return <Loading />;
   }
 
-  if (!libraryId || !libraryData) {
+  if (!libraryData) {
     return <NotFoundAlert />;
   }
 
@@ -150,8 +154,8 @@ const LibraryAuthoringPage = () => {
   };
 
   return (
-    <div className="d-flex overflow-auto">
-      <div className="flex-grow-1 align-content-center">
+    <div className="d-flex">
+      <div className="flex-grow-1">
         <Header
           number={libraryData.slug}
           title={libraryData.title}
@@ -203,7 +207,7 @@ const LibraryAuthoringPage = () => {
               />
               <Route
                 path={TabList.collections}
-                element={<LibraryCollections />}
+                element={<LibraryCollections variant="full" />}
               />
               <Route
                 path="*"

@@ -16,6 +16,8 @@ jest.mock('../../../../../data/redux', () => ({
   selectors: {
     app: {
       learningContextId: jest.fn(state => ({ learningContextId: state })),
+      images: jest.fn(state => ({ images: state })),
+      isLibrary: jest.fn(state => ({ isLibrary: state })),
     },
     problem: {
       question: jest.fn(state => ({ question: state })),
@@ -41,6 +43,8 @@ describe('QuestionWidget', () => {
     question: 'This is my question',
     updateQuestion: jest.fn(),
     learningContextId: 'course+org+run',
+    images: {},
+    isLibrary: false,
     // injected
     intl: { formatMessage },
   };
@@ -56,6 +60,16 @@ describe('QuestionWidget', () => {
     });
     test('learningContextId from app.learningContextId', () => {
       expect(mapStateToProps(testState).learningContextId).toEqual(selectors.app.learningContextId(testState));
+    });
+    test('images from app.images', () => {
+      expect(
+        mapStateToProps(testState).images,
+      ).toEqual(selectors.app.images(testState));
+    });
+    test('isLibrary from app.isLibrary', () => {
+      expect(
+        mapStateToProps(testState).isLibrary,
+      ).toEqual(selectors.app.isLibrary(testState));
     });
   });
 });

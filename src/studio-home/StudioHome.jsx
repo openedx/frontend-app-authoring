@@ -52,6 +52,7 @@ const StudioHome = ({ intl }) => {
   const libMode = getConfig().LIBRARY_MODE;
 
   const v1LibraryTab = isMixedOrV1LibrariesMode(libMode) && location?.pathname.split('/').pop() === 'libraries-v1';
+  const showV2LibraryURL = isMixedOrV2LibrariesMode(libMode) && !v1LibraryTab;
 
   const {
     userIsActive,
@@ -59,6 +60,7 @@ const StudioHome = ({ intl }) => {
     studioRequestEmail,
     libraryAuthoringMfeUrl,
     redirectToLibraryAuthoringMfe,
+    showNewLibraryButton,
   } = studioHomeData;
 
   const getHeaderButtons = useCallback(() => {
@@ -88,33 +90,35 @@ const StudioHome = ({ intl }) => {
       );
     }
 
-    const newLibraryClick = () => {
-      if (isMixedOrV2LibrariesMode(libMode) && !v1LibraryTab) {
-        if (libraryAuthoringMfeUrl && redirectToLibraryAuthoringMfe) {
-          // Library authoring MFE
-          window.open(constructLibraryAuthoringURL(libraryAuthoringMfeUrl, 'create'));
+    if (showNewLibraryButton || showV2LibraryURL) {
+      const newLibraryClick = () => {
+        if (showV2LibraryURL) {
+          if (libraryAuthoringMfeUrl && redirectToLibraryAuthoringMfe) {
+            // Library authoring MFE
+            window.open(constructLibraryAuthoringURL(libraryAuthoringMfeUrl, 'create'));
+          } else {
+            // Use course-authoring route
+            navigate('/library/create');
+          }
         } else {
-          // Use course-authoring route
-          navigate('/library/create');
+          // Studio home library for legacy libraries
+          window.open(`${getConfig().STUDIO_BASE_URL}/home_library`);
         }
-      } else {
-        // Studio home library for legacy libraries
-        window.open(`${getConfig().STUDIO_BASE_URL}/home_library`);
-      }
-    };
+      };
 
-    headerButtons.push(
-      <Button
-        variant="outline-primary"
-        iconBefore={AddIcon}
-        size="sm"
-        disabled={showNewCourseContainer}
-        onClick={newLibraryClick}
-        data-testid="new-library-button"
-      >
-        {intl.formatMessage(messages.addNewLibraryBtnText)}
-      </Button>,
-    );
+      headerButtons.push(
+        <Button
+          variant="outline-primary"
+          iconBefore={AddIcon}
+          size="sm"
+          disabled={showNewCourseContainer}
+          onClick={newLibraryClick}
+          data-testid="new-library-button"
+        >
+          {intl.formatMessage(messages.addNewLibraryBtnText)}
+        </Button>,
+      );
+    }
 
     return headerButtons;
   }, [location, userIsActive, isFailedLoadingPage]);

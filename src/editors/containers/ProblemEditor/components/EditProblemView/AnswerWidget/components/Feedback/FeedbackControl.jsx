@@ -15,6 +15,9 @@ const FeedbackControl = ({
   answer,
   intl,
   type,
+  images,
+  isLibrary,
+  learningContextId,
 }) => (
   <Form.Group>
     <Form.Label className="mb-3">
@@ -31,6 +34,11 @@ const FeedbackControl = ({
       value={feedback}
       setContent={onChange}
       placeholder={intl.formatMessage(messages.feedbackPlaceholder)}
+      {...{
+        images,
+        isLibrary,
+        learningContextId,
+      }}
     />
   </Form.Group>
 );
@@ -41,6 +49,9 @@ FeedbackControl.propTypes = {
   labelMessageBoldUnderline: PropTypes.string.isRequired,
   answer: answerOptionProps.isRequired,
   type: PropTypes.string.isRequired,
+  images: PropTypes.shape({}).isRequired,
+  learningContextId: PropTypes.string.isRequired,
+  isLibrary: PropTypes.bool.isRequired,
   intl: intlShape.isRequired,
 };
 

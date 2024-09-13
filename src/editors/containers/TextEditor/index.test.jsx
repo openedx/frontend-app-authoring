@@ -57,6 +57,7 @@ jest.mock('../../data/redux', () => ({
       lmsEndpointUrl: jest.fn(state => ({ lmsEndpointUrl: state })),
       studioEndpointUrl: jest.fn(state => ({ studioEndpointUrl: state })),
       showRawEditor: jest.fn(state => ({ showRawEditor: state })),
+      images: jest.fn(state => ({ images: state })),
       isLibrary: jest.fn(state => ({ isLibrary: state })),
       learningContextId: jest.fn(state => ({ learningContextId: state })),
     },
@@ -82,6 +83,7 @@ describe('TextEditor', () => {
     showRawEditor: false,
     blockFinished: true,
     learningContextId: 'course+org+run',
+    images: {},
     // inject
     intl: { formatMessage },
   };
@@ -128,6 +130,11 @@ describe('TextEditor', () => {
       expect(
         mapStateToProps(testState).learningContextId,
       ).toEqual(selectors.app.learningContextId(testState));
+    });
+    test('images from app.images', () => {
+      expect(
+        mapStateToProps(testState).images,
+      ).toEqual(selectors.app.images(testState));
     });
   });
 

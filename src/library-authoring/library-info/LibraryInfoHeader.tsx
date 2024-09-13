@@ -75,7 +75,7 @@ const LibraryInfoHeader = ({ library } : LibraryInfoHeaderProps) => {
                 iconAs={Icon}
                 alt={intl.formatMessage(messages.editNameButtonAlt)}
                 onClick={handleClick}
-                className="mt-1"
+                className="mt-1 ml-2"
                 size="inline"
               />
             )}

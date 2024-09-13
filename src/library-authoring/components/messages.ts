@@ -1,15 +1,20 @@
-import { defineMessages as _defineMessages } from '@edx/frontend-platform/i18n';
-
-import type { defineMessages as defineMessagesType } from 'react-intl';
-
-// frontend-platform currently doesn't provide types... do it ourselves.
-const defineMessages = _defineMessages as typeof defineMessagesType;
+import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
   componentCardMenuAlt: {
     id: 'course-authoring.library-authoring.component.menu',
     defaultMessage: 'Component actions menu',
     description: 'Alt/title text for the component card menu button.',
+  },
+  collectionCardMenuAlt: {
+    id: 'course-authoring.library-authoring.collection.menu',
+    defaultMessage: 'Collection actions menu',
+    description: 'Alt/title text for the collection card menu button.',
+  },
+  collectionType: {
+    id: 'course-authoring.library-authoring.collection.type',
+    defaultMessage: 'Collection',
+    description: 'Collection type text',
   },
   menuEdit: {
     id: 'course-authoring.library-authoring.component.menu.edit',

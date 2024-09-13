@@ -22,6 +22,9 @@ exports[`SettingsWidget snapshot snapshot: renders Settings widget for Advanced 
     className="mt-3"
   >
     <HintsCard
+      images={{}}
+      isLibrary={false}
+      learningContextId="course+org+run"
       problemType="stringresponse"
     />
   </div>
@@ -106,6 +109,9 @@ exports[`SettingsWidget snapshot snapshot: renders Settings widget page 1`] = `
     className="mt-3"
   >
     <HintsCard
+      images={{}}
+      isLibrary={false}
+      learningContextId="course+org+run"
       problemType="stringresponse"
     />
   </div>
@@ -190,6 +196,9 @@ exports[`SettingsWidget snapshot snapshot: renders Settings widget page advanced
     className="mt-3"
   >
     <HintsCard
+      images={{}}
+      isLibrary={false}
+      learningContextId="course+org+run"
       problemType="stringresponse"
     />
   </div>

@@ -12,6 +12,8 @@ const QuestionWidget = ({
   // redux
   question,
   learningContextId,
+  images,
+  isLibrary,
   // injected
   intl,
 }) => {
@@ -36,6 +38,11 @@ const QuestionWidget = ({
         setEditorRef={setEditorRef}
         minHeight={150}
         placeholder={intl.formatMessage(messages.placeholder)}
+        {...{
+          images,
+          isLibrary,
+          learningContextId,
+        }}
       />
     </div>
   );
@@ -45,12 +52,16 @@ QuestionWidget.propTypes = {
   // redux
   question: PropTypes.string.isRequired,
   learningContextId: PropTypes.string.isRequired,
+  images: PropTypes.shape({}).isRequired,
+  isLibrary: PropTypes.bool.isRequired,
   // injected
   intl: intlShape.isRequired,
 };
 export const mapStateToProps = (state) => ({
   question: selectors.problem.question(state),
   learningContextId: selectors.app.learningContextId(state),
+  images: selectors.app.images(state),
+  isLibrary: selectors.app.isLibrary(state),
 });
 
 export const QuestionWidgetInternal = QuestionWidget; // For testing only

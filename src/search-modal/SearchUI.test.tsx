@@ -100,9 +100,12 @@ describe('<SearchUI />', () => {
       // because otherwise Instantsearch will update the UI and change the query,
       // leading to unexpected results in the test cases.
       mockResult.results[0].query = query;
+      mockResult.results[2].query = query;
       // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
       // eslint-disable-next-line no-underscore-dangle, no-param-reassign
       mockResult.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
+      // eslint-disable-next-line no-underscore-dangle, no-param-reassign
+      mockResult.results[2]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
       return mockResult;
     });
     fetchMock.post(tagsKeywordSearchEndpoint, mockTagsKeywordSearchResult);
@@ -174,8 +177,8 @@ describe('<SearchUI />', () => {
     expect(fetchMock).toHaveLastFetched((_url, req) => {
       const requestData = JSON.parse(req.body?.toString() ?? '');
       const requestedFilter = requestData?.queries[0].filter;
-      return requestedFilter?.[1] === 'type = "course_block"'
-        && requestedFilter?.[2] === 'context_key = "course-v1:org+test+123"';
+      return requestedFilter?.[2] === 'type = "course_block"'
+        && requestedFilter?.[3] === 'context_key = "course-v1:org+test+123"';
     });
     // Now we should see the results:
     expect(queryByText('Enter a keyword')).toBeNull();
@@ -398,8 +401,9 @@ describe('<SearchUI />', () => {
       expect(fetchMock).toHaveLastFetched((_url, req) => {
         const requestData = JSON.parse(req.body?.toString() ?? '');
         const requestedFilter = requestData?.queries[0].filter;
-        // the filter is: ['type = "course_block"', 'context_key = "course-v1:org+test+123"']
-        return (requestedFilter?.length === 3);
+        // the filter is:
+        // ['NOT type == "collection"', '', 'type = "course_block"', 'context_key = "course-v1:org+test+123"']
+        return (requestedFilter?.length === 4);
       });
       // Now we should see the results:
       expect(getByText('6 results found')).toBeInTheDocument();
@@ -425,6 +429,7 @@ describe('<SearchUI />', () => {
         const requestData = JSON.parse(req.body?.toString() ?? '');
         const requestedFilter = requestData?.queries[0].filter;
         return JSON.stringify(requestedFilter) === JSON.stringify([
+          'NOT type = "collection"',
           [
             'block_type = problem',
             'content.problem_types = choiceresponse',
@@ -458,6 +463,7 @@ describe('<SearchUI />', () => {
         const requestData = JSON.parse(req.body?.toString() ?? '');
         const requestedFilter = requestData?.queries?.[0]?.filter;
         return JSON.stringify(requestedFilter) === JSON.stringify([
+          'NOT type = "collection"',
           [],
           'type = "course_block"',
           'context_key = "course-v1:org+test+123"',
@@ -493,6 +499,7 @@ describe('<SearchUI />', () => {
         const requestData = JSON.parse(req.body?.toString() ?? '');
         const requestedFilter = requestData?.queries?.[0]?.filter;
         return JSON.stringify(requestedFilter) === JSON.stringify([
+          'NOT type = "collection"',
           [],
           'type = "course_block"',
           'context_key = "course-v1:org+test+123"',

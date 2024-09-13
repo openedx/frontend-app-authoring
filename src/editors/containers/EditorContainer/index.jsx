@@ -63,6 +63,7 @@ const EditorContainer = ({
             src={Close}
             iconAs={Icon}
             onClick={openCancelConfirmModal}
+            alt={intl.formatMessage(messages.exitButtonAlt)}
           />
         </div>
       </ModalDialog.Header>
