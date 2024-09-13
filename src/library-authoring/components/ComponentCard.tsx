@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
   Icon,
@@ -7,6 +7,7 @@ import {
   Dropdown,
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
+import { Link } from 'react-router-dom';
 
 import { updateClipboard } from '../../generic/data/api';
 import { ToastContext } from '../../generic/toast-context';
@@ -14,6 +15,7 @@ import { type ContentHit } from '../../search-manager';
 import { LibraryContext } from '../common/context';
 import messages from './messages';
 import { STUDIO_CLIPBOARD_CHANNEL } from '../../constants';
+import { getEditUrl } from './utils';
 import BaseComponentCard from './BaseComponentCard';
 
 type ComponentCardProps = {
@@ -23,6 +25,7 @@ type ComponentCardProps = {
 
 export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   const intl = useIntl();
+  const editUrl = usageKey && getEditUrl(usageKey);
   const { showToast } = useContext(ToastContext);
   const [clipboardBroadcastChannel] = useState(() => new BroadcastChannel(STUDIO_CLIPBOARD_CHANNEL));
   const updateClipboardClick = () => {
@@ -46,14 +49,14 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
         data-testid="component-card-menu-toggle"
       />
       <Dropdown.Menu>
-        <Dropdown.Item disabled>
-          {intl.formatMessage(messages.menuEdit)}
+        <Dropdown.Item {...(editUrl ? { as: Link, to: editUrl } : { disabled: true, to: '#' })}>
+          <FormattedMessage {...messages.menuEdit} />
         </Dropdown.Item>
         <Dropdown.Item onClick={updateClipboardClick}>
-          {intl.formatMessage(messages.menuCopyToClipboard)}
+          <FormattedMessage {...messages.menuCopyToClipboard} />
         </Dropdown.Item>
         <Dropdown.Item disabled>
-          {intl.formatMessage(messages.menuAddToCollection)}
+          <FormattedMessage {...messages.menuAddToCollection} />
         </Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>

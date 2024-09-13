@@ -51,6 +51,7 @@ exports[`EditorContainer component render snapshot: initialized. enable save and
         />
       </h2>
       <IconButton
+        alt="Exit the editor"
         iconAs="Icon"
         onClick={[MockFunction openCancelConfirmModal]}
         src={[MockFunction icons.Close]}
@@ -132,6 +133,7 @@ exports[`EditorContainer component render snapshot: not initialized. disable sav
         />
       </h2>
       <IconButton
+        alt="Exit the editor"
         iconAs="Icon"
         onClick={[MockFunction openCancelConfirmModal]}
         src={[MockFunction icons.Close]}

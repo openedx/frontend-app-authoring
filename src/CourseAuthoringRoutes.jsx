@@ -88,7 +88,7 @@ const CourseAuthoringRoutes = () => {
         />
         <Route
           path="editor/:blockType/:blockId?"
-          element={<PageWrap><EditorContainer courseId={courseId} /></PageWrap>}
+          element={<PageWrap><EditorContainer learningContextId={courseId} /></PageWrap>}
         />
         <Route
           path="settings/details"

@@ -38,11 +38,7 @@ export const blockAncestor = ({ studioEndpointUrl, blockId }) => {
   if (blockId.includes('block-v1')) {
     return `${block({ studioEndpointUrl, blockId })}?fields=ancestorInfo`;
   }
-  // this url only need to get info to build the return url, which isn't used by V2 blocks
-  // (temporary) don't throw error, just return empty url. it will fail it's network connection but otherwise
-  // the app will run
-  // throw new Error('Block ancestor not available (and not needed) for V2 blocks');
-  return '';
+  throw new Error('Block ancestor not available (and not needed) for V2 blocks');
 };
 
 export const blockStudioView = ({ studioEndpointUrl, blockId }) => (

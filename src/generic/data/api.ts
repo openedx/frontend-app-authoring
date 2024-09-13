@@ -47,10 +47,27 @@ export async function createOrRerunCourse(courseData: Object): Promise<unknown> 
   return camelCaseObject(data);
 }
 
+export interface ClipboardStatus {
+  content: {
+    id: number;
+    userId: number;
+    created: string; // e.g. '2024-08-28T19:02:08.272192Z'
+    purpose: 'clipboard';
+    status: 'ready' | 'loading' | 'expired' | 'error';
+    blockType: string;
+    blockTypeDisplay: string;
+    olxUrl: string;
+    displayName: string;
+  } | null;
+  sourceUsageKey: string; // May be an empty string
+  sourceContextTitle: string; // May be an empty string
+  sourceEditUrl: string; // May be an empty string
+}
+
 /**
  * Retrieves user's clipboard.
  */
-export async function getClipboard(): Promise<unknown> {
+export async function getClipboard(): Promise<ClipboardStatus> {
   const { data } = await getAuthenticatedHttpClient()
     .get(getClipboardUrl());
 
@@ -60,7 +77,7 @@ export async function getClipboard(): Promise<unknown> {
 /**
  * Updates user's clipboard.
  */
-export async function updateClipboard(usageKey: string): Promise<unknown> {
+export async function updateClipboard(usageKey: string): Promise<ClipboardStatus> {
   const { data } = await getAuthenticatedHttpClient()
     .post(getClipboardUrl(), { usage_key: usageKey });
 

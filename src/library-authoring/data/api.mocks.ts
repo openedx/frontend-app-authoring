@@ -104,7 +104,42 @@ mockContentLibrary.libraryIdReadOnly = 'lib:Axim:readOnly';
 mockContentLibrary.libraryIdThatNeverLoads = 'lib:Axim:infiniteLoading';
 mockContentLibrary.library404 = 'lib:Axim:error404';
 mockContentLibrary.library500 = 'lib:Axim:error500';
-mockContentLibrary.applyMock = () => { jest.spyOn(api, 'getContentLibrary').mockImplementation(mockContentLibrary); };
+mockContentLibrary.applyMock = () => jest.spyOn(api, 'getContentLibrary').mockImplementation(mockContentLibrary);
+
+/**
+ * Mock for `createLibraryBlock()`
+ */
+export async function mockCreateLibraryBlock(
+  args: api.CreateBlockDataRequest,
+): ReturnType<typeof api.createLibraryBlock> {
+  if (args.blockType === 'html' && args.libraryId === mockContentLibrary.libraryId) {
+    return mockCreateLibraryBlock.newHtmlData;
+  }
+  if (args.blockType === 'problem' && args.libraryId === mockContentLibrary.libraryId) {
+    return mockCreateLibraryBlock.newProblemData;
+  }
+  throw new Error(`mockCreateLibraryBlock doesn't know how to mock ${JSON.stringify(args)}`);
+}
+mockCreateLibraryBlock.newHtmlData = {
+  id: 'lb:Axim:TEST:html:123',
+  defKey: '123',
+  blockType: 'html',
+  displayName: 'New Text Component',
+  hasUnpublishedChanges: true,
+  tagsCount: 0,
+} satisfies api.CreateBlockDataResponse;
+mockCreateLibraryBlock.newProblemData = {
+  id: 'lb:Axim:TEST:problem:prob1',
+  defKey: 'prob1',
+  blockType: 'problem',
+  displayName: 'New Problem',
+  hasUnpublishedChanges: true,
+  tagsCount: 0,
+} satisfies api.CreateBlockDataResponse;
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockCreateLibraryBlock.applyMock = () => (
+  jest.spyOn(api, 'createLibraryBlock').mockImplementation(mockCreateLibraryBlock)
+);
 
 /**
  * Mock for `getXBlockFields()`
@@ -117,13 +152,23 @@ export async function mockXBlockFields(usageKey: string): Promise<api.XBlockFiel
   const thisMock = mockXBlockFields;
   switch (usageKey) {
     case thisMock.usageKeyHtml: return thisMock.dataHtml;
+    case thisMock.usageKeyNewHtml: return thisMock.dataNewHtml;
     default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
   }
 }
+// Mock of a "regular" HTML (Text) block:
 mockXBlockFields.usageKeyHtml = 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd';
 mockXBlockFields.dataHtml = {
   displayName: 'Introduction to Testing',
   data: '<p>This is a text component which uses <strong>HTML</strong>.</p>',
   metadata: { displayName: 'Introduction to Testing' },
 } satisfies api.XBlockFields;
-mockXBlockFields.applyMock = () => { jest.spyOn(api, 'getXBlockFields').mockImplementation(mockXBlockFields); };
+// Mock of a blank/new HTML (Text) block:
+mockXBlockFields.usageKeyNewHtml = 'lb:Axim:TEST:html:123';
+mockXBlockFields.dataNewHtml = {
+  displayName: 'New Text Component',
+  data: '',
+  metadata: { displayName: 'New Text Component' },
+} satisfies api.XBlockFields;
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockXBlockFields.applyMock = () => jest.spyOn(api, 'getXBlockFields').mockImplementation(mockXBlockFields);

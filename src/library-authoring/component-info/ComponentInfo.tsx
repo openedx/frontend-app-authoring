@@ -6,8 +6,11 @@ import {
   Tabs,
   Stack,
 } from '@openedx/paragon';
+import { Link } from 'react-router-dom';
 
+import { getEditUrl } from '../components/utils';
 import { ComponentMenu } from '../components';
+import { ComponentDeveloperInfo } from './ComponentDeveloperInfo';
 import messages from './messages';
 
 interface ComponentInfoProps {
@@ -16,11 +19,16 @@ interface ComponentInfoProps {
 
 const ComponentInfo = ({ usageKey } : ComponentInfoProps) => {
   const intl = useIntl();
+  const editUrl = getEditUrl(usageKey);
 
   return (
     <Stack>
       <div className="d-flex flex-wrap">
-        <Button disabled variant="outline-primary" className="m-1 text-nowrap flex-grow-1">
+        <Button
+          {...(editUrl ? { as: Link, to: editUrl } : { disabled: true, to: '#' })}
+          variant="outline-primary"
+          className="m-1 text-nowrap flex-grow-1"
+        >
           {intl.formatMessage(messages.editComponentButtonTitle)}
         </Button>
         <Button disabled variant="outline-primary" className="m-1 text-nowrap flex-grow-1">
@@ -41,6 +49,10 @@ const ComponentInfo = ({ usageKey } : ComponentInfoProps) => {
         </Tab>
         <Tab eventKey="details" title={intl.formatMessage(messages.detailsTabTitle)}>
           Details tab placeholder
+
+          {
+            (process.env.NODE_ENV === 'development' ? <ComponentDeveloperInfo usageKey={usageKey} /> : null)
+          }
         </Tab>
       </Tabs>
     </Stack>

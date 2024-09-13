@@ -25,9 +25,13 @@ export const getCommitLibraryChangesUrl = (libraryId: string) => `${getApiBaseUr
  */
 export const getLibraryPasteClipboardUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/paste_clipboard/`;
 /**
- * Get the URL for the xblock metadata API.
- */
+  * Get the URL for the xblock fields/metadata API.
+  */
 export const getXBlockFieldsApiUrl = (usageKey: string) => `${getApiBaseUrl()}/api/xblock/v2/xblocks/${usageKey}/fields/`;
+/**
+  * Get the URL for the xblock OLX API
+  */
+export const getXBlockOLXApiUrl = (usageKey: string) => `${getApiBaseUrl()}/api/libraries/v2/blocks/${usageKey}/olx/`;
 /**
  * Get the URL for the Library Collections API.
  */
@@ -165,7 +169,7 @@ export async function createLibraryBlock({
       definition_id: definitionId,
     },
   );
-  return data;
+  return camelCaseObject(data);
 }
 
 /**
@@ -254,4 +258,12 @@ export async function createCollection(libraryId: string, collectionData: Create
   const { data } = await client.post(getLibraryCollectionsApiUrl(libraryId), collectionData);
 
   return camelCaseObject(data);
+}
+
+/**
+ * Fetch the OLX for the given XBlock.
+ */
+export async function getXBlockOLX(usageKey: string): Promise<string> {
+  const { data } = await getAuthenticatedHttpClient().get(getXBlockOLXApiUrl(usageKey));
+  return data.olx;
 }

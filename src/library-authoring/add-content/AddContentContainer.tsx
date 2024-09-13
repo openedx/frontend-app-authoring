@@ -16,11 +16,13 @@ import {
   ContentPaste,
 } from '@openedx/paragon/icons';
 import { v4 as uuid4 } from 'uuid';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+
 import { ToastContext } from '../../generic/toast-context';
 import { useCopyToClipboard } from '../../generic/clipboard';
 import { getCanEdit } from '../../course-unit/data/selectors';
 import { useCreateLibraryBlock, useLibraryPasteClipboard } from '../data/apiHooks';
+import { getEditUrl } from '../components/utils';
 
 import messages from './messages';
 import { LibraryContext } from '../common/context';
@@ -59,6 +61,7 @@ const AddContentButton = ({ contentType, onCreateContent } : AddContentButtonPro
 
 const AddContentContainer = () => {
   const intl = useIntl();
+  const navigate = useNavigate();
   const { libraryId } = useParams();
   const createBlockMutation = useCreateLibraryBlock();
   const pasteClipboardMutation = useLibraryPasteClipboard();
@@ -144,8 +147,14 @@ const AddContentContainer = () => {
           libraryId,
           blockType,
           definitionId: `${uuid4()}`,
-        }).then(() => {
-          showToast(intl.formatMessage(messages.successCreateMessage));
+        }).then((data) => {
+          const editUrl = getEditUrl(data.id);
+          if (editUrl) {
+            navigate(editUrl);
+          } else {
+            // We can't start editing this right away so just show a toast message:
+            showToast(intl.formatMessage(messages.successCreateMessage));
+          }
         }).catch(() => {
           showToast(intl.formatMessage(messages.errorCreateMessage));
         });
