@@ -360,6 +360,22 @@ describe('EditProblemView hooks parseState', () => {
       expect(openSaveWarningModal).toHaveBeenCalled();
       expect(content).toEqual(null);
     });
+    it('should return the correct content if the user entered a number as the correct answer for a dropdown type problem', () => {
+      const problem = { ...problemState, answers: [{ id: 'A', title: 1234, correct: true }] };
+      const content = hooks.getContent({
+        isAdvancedProblemType: false,
+        problemState: problem,
+        editorRef,
+        assets,
+        lmsEndpointUrl,
+        openSaveWarningModal,
+      });
+      expect(openSaveWarningModal).toHaveBeenCalled();
+      expect(content).toEqual({
+        olx: mockBuiltOLX,
+        settings: expectedSettings,
+      });
+    });
   });
 });
 
