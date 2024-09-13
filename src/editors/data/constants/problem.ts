@@ -14,7 +14,7 @@ export const ProblemTypeKeys = StrictDict({
   NUMERIC: 'numericalresponse',
   TEXTINPUT: 'stringresponse',
   ADVANCED: 'advanced',
-});
+} as const);
 
 export const ProblemTypes = StrictDict({
   [ProblemTypeKeys.SINGLESELECT]: {
@@ -84,7 +84,7 @@ export const AdvanceProblemKeys = StrictDict({
   IMAGE: 'imageresponse',
   FORMULA: 'formularesponse',
   PROBLEMWITHHINT: 'problemwithhint',
-});
+} as const);
 
 export const AdvanceProblems = StrictDict({
   [AdvanceProblemKeys.BLANK]: {
@@ -122,7 +122,7 @@ export const AdvanceProblems = StrictDict({
     status: 'Not supported',
     template: advancedOlxTemplates.problemWithHint,
   },
-});
+} as const);
 
 export const ShowAnswerTypesKeys = StrictDict({
   ALWAYS: 'always',
@@ -137,7 +137,7 @@ export const ShowAnswerTypesKeys = StrictDict({
   AFTER_ALL_ATTEMPTS: 'after_all_attempts',
   AFTER_ALL_ATTEMPTS_OR_CORRECT: 'after_all_attempts_or_correct',
   ATTEMPTED_NO_PAST_DUE: 'attempted_no_past_due',
-});
+} as const);
 
 export const ShowAnswerTypes = StrictDict({
   [ShowAnswerTypesKeys.ALWAYS]: {
@@ -188,14 +188,14 @@ export const ShowAnswerTypes = StrictDict({
     id: 'authoring.problemeditor.settings.showanswertype.attempted_no_past_due',
     defaultMessage: 'Attempted',
   },
-});
+} as const);
 
 export const RandomizationTypesKeys = StrictDict({
   NEVER: 'never',
   ALWAYS: 'always',
   ONRESET: 'onreset',
   PERSTUDENT: 'per_student',
-});
+} as const);
 
 export const RandomizationTypes = StrictDict({
   [RandomizationTypesKeys.ALWAYS]: {
@@ -214,9 +214,9 @@ export const RandomizationTypes = StrictDict({
     id: 'authoring.problemeditor.settings.RandomizationTypes.perstudent',
     defaultMessage: 'Per Student',
   },
-});
+} as const);
 
-export const RichTextProblems = [ProblemTypeKeys.SINGLESELECT, ProblemTypeKeys.MULTISELECT];
+export const RichTextProblems = [ProblemTypeKeys.SINGLESELECT, ProblemTypeKeys.MULTISELECT] as const;
 
 export const settingsOlxAttributes = [
   '@_display_name',
@@ -226,4 +226,4 @@ export const settingsOlxAttributes = [
   '@_show_reset_button',
   '@_submission_wait_seconds',
   '@_attempts_before_showanswer_button',
-];
+] as const;
