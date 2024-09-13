@@ -1,8 +1,14 @@
 import { getConfig } from '@edx/frontend-platform';
+import { useIntl } from '@edx/frontend-platform/i18n';
+import { useSelector } from 'react-redux';
 import { getPagePath } from '../utils';
+import { getStudioHomeData } from '../studio-home/data/selectors';
 import messages from './messages';
 
-export const getContentMenuItems = ({ studioBaseUrl, courseId, intl }) => {
+export const useContentMenuItems = courseId => {
+  const intl = useIntl();
+  const studioBaseUrl = getConfig().STUDIO_BASE_URL;
+
   const items = [
     {
       href: `${studioBaseUrl}/course/${courseId}`,
@@ -31,7 +37,11 @@ export const getContentMenuItems = ({ studioBaseUrl, courseId, intl }) => {
   return items;
 };
 
-export const getSettingMenuItems = ({ studioBaseUrl, courseId, intl }) => {
+export const useSettingMenuItems = courseId => {
+  const intl = useIntl();
+  const studioBaseUrl = getConfig().STUDIO_BASE_URL;
+  const { canAccessAdvancedSettings } = useSelector(getStudioHomeData);
+
   const items = [
     {
       href: `${studioBaseUrl}/settings/details/${courseId}`,
@@ -49,10 +59,12 @@ export const getSettingMenuItems = ({ studioBaseUrl, courseId, intl }) => {
       href: `${studioBaseUrl}/group_configurations/${courseId}`,
       title: intl.formatMessage(messages['header.links.groupConfigurations']),
     },
-    {
-      href: `${studioBaseUrl}/settings/advanced/${courseId}`,
-      title: intl.formatMessage(messages['header.links.advancedSettings']),
-    },
+    ...(canAccessAdvancedSettings === true
+      ? [{
+        href: `${studioBaseUrl}/settings/advanced/${courseId}`,
+        title: intl.formatMessage(messages['header.links.advancedSettings']),
+      }] : []
+    ),
   ];
   if (getConfig().ENABLE_CERTIFICATE_PAGE === 'true') {
     items.push({
@@ -63,23 +75,29 @@ export const getSettingMenuItems = ({ studioBaseUrl, courseId, intl }) => {
   return items;
 };
 
-export const getToolsMenuItems = ({ studioBaseUrl, courseId, intl }) => ([
-  {
-    href: `${studioBaseUrl}/import/${courseId}`,
-    title: intl.formatMessage(messages['header.links.import']),
-  },
-  {
-    href: `${studioBaseUrl}/export/${courseId}`,
-    title: intl.formatMessage(messages['header.links.exportCourse']),
-  },
-  ...(getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true'
-    ? [{
-      href: '#export-tags',
-      title: intl.formatMessage(messages['header.links.exportTags']),
-    }] : []
-  ),
-  {
-    href: `${studioBaseUrl}/checklists/${courseId}`,
-    title: intl.formatMessage(messages['header.links.checklists']),
-  },
-]);
+export const useToolsMenuItems = courseId => {
+  const intl = useIntl();
+  const studioBaseUrl = getConfig().STUDIO_BASE_URL;
+
+  const items = [
+    {
+      href: `${studioBaseUrl}/import/${courseId}`,
+      title: intl.formatMessage(messages['header.links.import']),
+    },
+    {
+      href: `${studioBaseUrl}/export/${courseId}`,
+      title: intl.formatMessage(messages['header.links.exportCourse']),
+    },
+    ...(getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true'
+      ? [{
+        href: '#export-tags',
+        title: intl.formatMessage(messages['header.links.exportTags']),
+      }] : []
+    ),
+    {
+      href: `${studioBaseUrl}/checklists/${courseId}`,
+      title: intl.formatMessage(messages['header.links.checklists']),
+    },
+  ];
+  return items;
+};

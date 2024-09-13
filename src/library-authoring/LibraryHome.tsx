@@ -20,13 +20,12 @@ const LibraryHome = ({ libraryId, tabList, handleTabChange } : LibraryHomeProps)
   const intl = useIntl();
   const {
     totalHits: componentCount,
+    totalCollectionHits: collectionCount,
     isFiltered,
   } = useSearchContext();
 
-  const collectionCount = 0;
-
   const renderEmptyState = () => {
-    if (componentCount === 0) {
+    if (componentCount === 0 && collectionCount === 0) {
       return isFiltered ? <NoSearchResults /> : <NoComponents />;
     }
     return null;
@@ -42,9 +41,9 @@ const LibraryHome = ({ libraryId, tabList, handleTabChange } : LibraryHomeProps)
             <LibrarySection
               title={intl.formatMessage(messages.collectionsTitle, { collectionCount })}
               contentCount={collectionCount}
-              // TODO: add viewAllAction here once collections implemented
+              viewAllAction={() => handleTabChange(tabList.collections)}
             >
-              <LibraryCollections />
+              <LibraryCollections variant="preview" />
             </LibrarySection>
             <LibrarySection
               title={intl.formatMessage(messages.componentsTitle, { componentCount })}
