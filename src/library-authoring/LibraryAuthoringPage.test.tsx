@@ -7,15 +7,18 @@ import {
   waitFor,
   within,
 } from '../testUtils';
-import { getContentSearchConfigUrl } from '../search-manager/data/api';
 import mockResult from './__mocks__/library-search.json';
 import mockEmptyResult from '../search-modal/__mocks__/empty-search-result.json';
 import { mockContentLibrary, mockLibraryBlockTypes, mockXBlockFields } from './data/api.mocks';
+import { mockContentSearchConfig } from '../search-manager/data/api.mock';
+import { mockBroadcastChannel } from '../generic/data/api.mock';
 import { LibraryLayout } from '.';
 
+mockContentSearchConfig.applyMock();
 mockContentLibrary.applyMock();
 mockLibraryBlockTypes.applyMock();
 mockXBlockFields.applyMock();
+mockBroadcastChannel();
 
 const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
 
@@ -62,26 +65,12 @@ const returnLowNumberResults = (_url, req) => {
   return newMockResult;
 };
 
-const clipboardBroadcastChannelMock = {
-  postMessage: jest.fn(),
-  close: jest.fn(),
-};
-
-(global as any).BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
-
 const path = '/library/:libraryId/*';
 const libraryTitle = mockContentLibrary.libraryData.title;
 
 describe('<LibraryAuthoringPage />', () => {
   beforeEach(() => {
-    const { axiosMock } = initializeMocks();
-
-    // The API method to get the Meilisearch connection details uses Axios:
-    axiosMock.onGet(getContentSearchConfigUrl()).reply(200, {
-      url: 'http://mock.meilisearch.local',
-      index_name: 'studio',
-      api_key: 'test-key',
-    });
+    initializeMocks();
 
     // The Meilisearch client-side API uses fetch, not Axios.
     fetchMock.post(searchEndpoint, (_url, req) => {
@@ -432,8 +421,7 @@ describe('<LibraryAuthoringPage />', () => {
     expect(mockResult0.display_name).toStrictEqual(displayName);
     await renderLibraryPage();
 
-    // Click on the first component
-    expect((await screen.findAllByText(displayName))[0]).toBeInTheDocument();
+    // Click on the first component. It should appear twice, in both "Recently Modified" and "Components"
     fireEvent.click((await screen.findAllByText(displayName))[0]);
 
     const sidebar = screen.getByTestId('library-sidebar');

@@ -24,9 +24,9 @@ const ComponentInfoHeader = ({ library, usageKey }: ComponentInfoHeaderProps) =>
 
   const {
     data: xblockFields,
-  } = useXBlockFields(library.id, usageKey);
+  } = useXBlockFields(usageKey);
 
-  const updateMutation = useUpdateXBlockFields(library.id, usageKey);
+  const updateMutation = useUpdateXBlockFields(usageKey);
   const { showToast } = useContext(ToastContext);
 
   const handleSaveDisplayName = useCallback(
