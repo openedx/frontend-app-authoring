@@ -18,6 +18,9 @@ import { ToastContext } from '../../generic/toast-context';
 const CreateCollectionModal = () => {
   const intl = useIntl();
   const { libraryId } = useParams();
+  if (!libraryId) {
+    throw new Error('Rendered without libraryId URL parameter');
+  }
   const create = useCreateLibraryCollection(libraryId!);
   const {
     isCreateCollectionModalOpen,
