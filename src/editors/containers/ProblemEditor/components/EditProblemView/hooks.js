@@ -122,8 +122,8 @@ export const checkForNoAnswers = ({ openSaveWarningModal, problem }) => {
     let correctAnswer;
     answers.forEach(answer => {
       if (answer.correct) {
-        const title = simpleTextAreaProblems.includes(problemType) ? answer.title : answerTitles[answer.id];
-        if (title?.length > 0) {
+        const title = simpleTextAreaProblems.includes(problemType) ? answer.title.toString() : answerTitles[answer.id];
+        if (title.length > 0) {
           correctAnswer = true;
         }
       }
