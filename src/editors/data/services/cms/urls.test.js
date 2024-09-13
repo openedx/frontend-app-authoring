@@ -95,14 +95,9 @@ describe('cms url methods', () => {
       expect(blockAncestor({ studioEndpointUrl, blockId }))
         .toEqual(`${block({ studioEndpointUrl, blockId })}?fields=ancestorInfo`);
     });
-    // This test will probably be used in the future
-    // it('throws error with studioEndpointUrl, v2 blockId and ancestor query', () => {
-    //   expect(() => { blockAncestor({ studioEndpointUrl, blockId: v2BlockId }); })
-    //     .toThrow('Block ancestor not available (and not needed) for V2 blocks');
-    // });
-    it('returns blank url with studioEndpointUrl, v2 blockId and ancestor query', () => {
-      expect(blockAncestor({ studioEndpointUrl, blockId: v2BlockId }))
-        .toEqual('');
+    it('throws error with studioEndpointUrl, v2 blockId and ancestor query', () => {
+      expect(() => { blockAncestor({ studioEndpointUrl, blockId: v2BlockId }); })
+        .toThrow('Block ancestor not available (and not needed) for V2 blocks');
     });
   });
   describe('blockStudioView', () => {

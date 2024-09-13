@@ -24,11 +24,7 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
       onClose={[MockFunction hooks.nullMethod]}
       show={true}
     >
-      <FormattedMessage
-        defaultMessage="Error: Could Not Load Text Content"
-        description="Error Message Dispayed When HTML content fails to Load"
-        id="authoring.texteditor.load.error"
-      />
+      Error: Could Not Load Text Content
     </Toast>
     <TinyMceWidget
       disabled={false}
@@ -81,11 +77,7 @@ exports[`TextEditor snapshots loaded, raw editor 1`] = `
       onClose={[MockFunction hooks.nullMethod]}
       show={false}
     >
-      <FormattedMessage
-        defaultMessage="Error: Could Not Load Text Content"
-        description="Error Message Dispayed When HTML content fails to Load"
-        id="authoring.texteditor.load.error"
-      />
+      Error: Could Not Load Text Content
     </Toast>
     <RawEditor
       content={
@@ -132,11 +124,7 @@ exports[`TextEditor snapshots not yet loaded, Spinner appears 1`] = `
       onClose={[MockFunction hooks.nullMethod]}
       show={false}
     >
-      <FormattedMessage
-        defaultMessage="Error: Could Not Load Text Content"
-        description="Error Message Dispayed When HTML content fails to Load"
-        id="authoring.texteditor.load.error"
-      />
+      Error: Could Not Load Text Content
     </Toast>
     <div
       className="text-center p-6"
@@ -175,11 +163,7 @@ exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
       onClose={[MockFunction hooks.nullMethod]}
       show={false}
     >
-      <FormattedMessage
-        defaultMessage="Error: Could Not Load Text Content"
-        description="Error Message Dispayed When HTML content fails to Load"
-        id="authoring.texteditor.load.error"
-      />
+      Error: Could Not Load Text Content
     </Toast>
     <TinyMceWidget
       disabled={false}
@@ -232,11 +216,7 @@ exports[`TextEditor snapshots renders static images with relative paths 1`] = `
       onClose={[MockFunction hooks.nullMethod]}
       show={false}
     >
-      <FormattedMessage
-        defaultMessage="Error: Could Not Load Text Content"
-        description="Error Message Dispayed When HTML content fails to Load"
-        id="authoring.texteditor.load.error"
-      />
+      Error: Could Not Load Text Content
     </Toast>
     <TinyMceWidget
       disabled={false}

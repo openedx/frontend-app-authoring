@@ -1,8 +1,13 @@
 import { camelCaseObject } from '@edx/frontend-platform';
 import {
-  useQuery, useMutation, useQueryClient, type Query,
+  useQuery,
+  useMutation,
+  useQueryClient,
+  type Query,
+  type QueryClient,
 } from '@tanstack/react-query';
 
+import { getLibraryId } from '../components/utils';
 import {
   type GetLibrariesV2CustomParams,
   type ContentLibrary,
@@ -19,6 +24,7 @@ import {
   getLibraryBlockMetadata,
   getXBlockFields,
   updateXBlockFields,
+  getXBlockOLX,
 } from './api';
 
 const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
@@ -53,22 +59,36 @@ export const libraryAuthoringQueryKeys = {
     'content',
     'libraryBlockTypes',
   ],
-  // FixMe: Move this to another key map
-  componentMetadata: (usageKey: string) => [
-    ...libraryAuthoringQueryKeys.all,
-    ...libraryAuthoringQueryKeys.contentLibrary('lib'),
-    'content',
-    usageKey,
-    'componentMetadata',
-  ],
-  xblockFields: (contentLibraryId: string, usageKey: string) => [
-    ...libraryAuthoringQueryKeys.all,
-    ...libraryAuthoringQueryKeys.contentLibrary(contentLibraryId),
-    'content',
-    'xblockFields',
-    usageKey,
-  ],
 };
+
+export const xblockQueryKeys = {
+  all: ['xblock'],
+  /**
+   * Base key for data specific to a xblock
+   */
+  xblock: (usageKey?: string) => [...xblockQueryKeys.all, usageKey],
+  /** Fields (i.e. the content, display name, etc.) of an XBlock */
+  xblockFields: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'fields'],
+  /** OLX (XML representation of the fields/content) */
+  xblockOLX: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'OLX'],
+  componentMetadata: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'componentMetadata'],
+};
+
+/**
+ * Tell react-query to refresh its cache of any data related to the given
+ * component (XBlock).
+ *
+ * Note that technically it's possible to derive the library key from the
+ * usageKey, so we could refactor this to only require the usageKey.
+ *
+ * @param queryClient The query client - get it via useQueryClient()
+ * @param contentLibraryId The ID of library that holds the XBlock ("lib:...")
+ * @param usageKey The usage ID of the XBlock ("lb:...")
+ */
+export function invalidateComponentData(queryClient: QueryClient, contentLibraryId: string, usageKey: string) {
+  queryClient.invalidateQueries({ queryKey: xblockQueryKeys.xblockFields(usageKey) });
+  queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, contentLibraryId) });
+}
 
 /**
  * Hook to fetch a content library by its ID.
@@ -179,25 +199,26 @@ export const useLibraryPasteClipboard = () => {
 
 export const useLibraryBlockMetadata = (usageId: string) => (
   useQuery({
-    queryKey: libraryAuthoringQueryKeys.componentMetadata(usageId),
+    queryKey: xblockQueryKeys.componentMetadata(usageId),
     queryFn: () => getLibraryBlockMetadata(usageId),
   })
 );
 
-export const useXBlockFields = (contentLibrayId: string, usageKey: string) => (
+export const useXBlockFields = (usageKey: string) => (
   useQuery({
-    queryKey: libraryAuthoringQueryKeys.xblockFields(contentLibrayId, usageKey),
+    queryKey: xblockQueryKeys.xblockFields(usageKey),
     queryFn: () => getXBlockFields(usageKey),
     enabled: !!usageKey,
   })
 );
 
-export const useUpdateXBlockFields = (contentLibraryId: string, usageKey: string) => {
+export const useUpdateXBlockFields = (usageKey: string) => {
+  const contentLibraryId = getLibraryId(usageKey);
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: UpdateXBlockFieldsRequest) => updateXBlockFields(usageKey, data),
     onMutate: async (data) => {
-      const queryKey = libraryAuthoringQueryKeys.xblockFields(contentLibraryId, usageKey);
+      const queryKey = xblockQueryKeys.xblockFields(usageKey);
       const previousBlockData = queryClient.getQueriesData(queryKey)[0][1] as XBlockFields;
       const formatedData = camelCaseObject(data);
 
@@ -216,13 +237,21 @@ export const useUpdateXBlockFields = (contentLibraryId: string, usageKey: string
     },
     onError: (_err, _data, context) => {
       queryClient.setQueryData(
-        libraryAuthoringQueryKeys.xblockFields(contentLibraryId, usageKey),
+        xblockQueryKeys.xblockFields(usageKey),
         context?.previousBlockData,
       );
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.xblockFields(contentLibraryId, usageKey) });
-      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, contentLibraryId) });
+      invalidateComponentData(queryClient, contentLibraryId, usageKey);
     },
   });
 };
+
+/* istanbul ignore next */ // This is only used in developer builds, and the associated UI doesn't work in test or prod
+export const useXBlockOLX = (usageKey: string) => (
+  useQuery({
+    queryKey: xblockQueryKeys.xblockOLX(usageKey),
+    queryFn: () => getXBlockOLX(usageKey),
+    enabled: !!usageKey,
+  })
+);

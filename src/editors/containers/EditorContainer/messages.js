@@ -12,6 +12,11 @@ const messages = defineMessages({
     defaultMessage: 'Are you sure you want to exit the editor? Any unsaved changes will be lost.',
     description: 'Description text for modal confirming cancellation',
   },
+  exitButtonAlt: {
+    id: 'authoring.editorContainer.exitButton.alt',
+    defaultMessage: 'Exit the editor',
+    description: 'Alt text for the Exit button',
+  },
   okButtonLabel: {
     id: 'authoring.editorContainer.okButton.label',
     defaultMessage: 'OK',

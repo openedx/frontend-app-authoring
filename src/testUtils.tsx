@@ -6,6 +6,7 @@
  */
 import React from 'react';
 import { AxiosError } from 'axios';
+import { jest } from '@jest/globals';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
@@ -20,12 +21,20 @@ import {
   Routes,
 } from 'react-router-dom';
 
+import { ToastContext, type ToastContextData } from './generic/toast-context';
 import initializeReduxStore from './store';
 
 /** @deprecated Use React Query and/or regular React Context instead of redux */
 let reduxStore;
 let queryClient;
 let axiosMock: MockAdapter;
+
+/** To use this: `const { mockShowToast } = initializeMocks()` and `expect(mockShowToast).toHaveBeenCalled()` */
+let mockToastContext: ToastContextData = {
+  showToast: jest.fn(),
+  closeToast: jest.fn(),
+  toastMessage: null,
+};
 
 export interface RouteOptions {
   /** The URL path, like '/libraries/:libraryId' */
@@ -106,9 +115,11 @@ function makeWrapper({ ...routeArgs }: RouteOptions) {
     <AppProvider store={reduxStore} wrapWithRouter={false}>
       <IntlProvider locale="en" messages={{}}>
         <QueryClientProvider client={queryClient}>
-          <RouterAndRoute {...routeArgs}>
-            {children}
-          </RouterAndRoute>
+          <ToastContext.Provider value={mockToastContext}>
+            <RouterAndRoute {...routeArgs}>
+              {children}
+            </RouterAndRoute>
+          </ToastContext.Provider>
         </QueryClientProvider>
       </IntlProvider>
     </AppProvider>
@@ -152,9 +163,17 @@ export function initializeMocks({ user = defaultUser } = {}) {
   });
   axiosMock = new MockAdapter(getAuthenticatedHttpClient());
 
+  // Reset `mockToastContext` for this current test
+  mockToastContext = {
+    showToast: jest.fn(),
+    closeToast: jest.fn(),
+    toastMessage: null,
+  };
+
   return {
     reduxStore,
     axiosMock,
+    mockShowToast: mockToastContext.showToast,
   };
 }
 

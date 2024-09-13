@@ -16,11 +16,11 @@ export interface ToastProviderProps {
  * Global context to keep track of popup message(s) that appears to user after
  * they take an action like creating or deleting something.
  */
-export const ToastContext = React.createContext({
+export const ToastContext = React.createContext<ToastContextData>({
   toastMessage: null,
   showToast: () => {},
   closeToast: () => {},
-} as ToastContextData);
+});
 
 /**
  * React component to provide `ToastContext` to the app
