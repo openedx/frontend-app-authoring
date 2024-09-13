@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`SelectTypeModal snapshot 1`] = `
-<injectIntl(ShimmedIntlComponent)
+<SelectTypeWrapper
   onClose={[MockFunction]}
   selected="mOcKsELEcted"
 >
@@ -13,7 +13,7 @@ exports[`SelectTypeModal snapshot 1`] = `
       direction="horizontal"
       gap={4}
     >
-      <injectIntl(ShimmedIntlComponent)
+      <ProblemTypeSelect
         selected="mOcKsELEcted"
         setSelected={[MockFunction setSelected]}
       />
@@ -22,5 +22,5 @@ exports[`SelectTypeModal snapshot 1`] = `
       />
     </Stack>
   </Row>
-</injectIntl(ShimmedIntlComponent)>
+</SelectTypeWrapper>
 `;

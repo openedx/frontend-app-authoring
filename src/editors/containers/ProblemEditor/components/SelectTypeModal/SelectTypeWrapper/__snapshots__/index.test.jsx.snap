@@ -17,6 +17,7 @@ exports[`SelectTypeWrapper snapshot 1`] = `
         className="pgn__modal-close-container"
       >
         <IconButton
+          alt="Exit the editor"
           iconAs="Icon"
           src={[MockFunction icons.Close]}
         />
