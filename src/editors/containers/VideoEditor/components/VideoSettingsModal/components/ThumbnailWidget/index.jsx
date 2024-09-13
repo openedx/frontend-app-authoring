@@ -75,7 +75,7 @@ const ThumbnailWidget = ({
       >
         <FormattedMessage {...messages.fileSizeError} />
       </ErrorAlert>
-      {allowThumbnailUpload ? null : (
+      {!allowThumbnailUpload && (
         <Alert variant="light">
           <FormattedMessage {...messages.unavailableMessage} />
         </Alert>
@@ -90,7 +90,7 @@ const ThumbnailWidget = ({
             src={thumbnailSrc || thumbnail}
             alt={intl.formatMessage(messages.thumbnailAltText)}
           />
-          {allowThumbnailUpload ? (
+          {allowThumbnailUpload && (
             <IconButtonWithTooltip
               tooltipPlacement="top"
               tooltipContent={intl.formatMessage(messages.deleteThumbnail)}
@@ -98,7 +98,7 @@ const ThumbnailWidget = ({
               src={DeleteOutline}
               onClick={deleteThumbnail}
             />
-          ) : null }
+          )}
         </Stack>
       ) : (
         <Stack gap={4}>
