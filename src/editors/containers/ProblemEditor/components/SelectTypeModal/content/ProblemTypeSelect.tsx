@@ -23,6 +23,7 @@ const ProblemTypeSelect: React.FC<Props> = ({
   return (
     <Container style={{ width: '494px', height: '400px' }}>
       <SelectableBox.Set
+        name="problem-type"
         columns={1}
         onChange={handleChange}
         type={settings.type}

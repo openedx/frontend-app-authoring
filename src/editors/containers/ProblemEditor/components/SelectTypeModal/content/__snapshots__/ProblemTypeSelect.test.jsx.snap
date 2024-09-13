@@ -11,6 +11,7 @@ exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
 >
   <ForwardRef
     columns={1}
+    name="problem-type"
     onChange={[Function]}
     type="radio"
     value="optionresponse"
@@ -121,6 +122,7 @@ exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
 >
   <ForwardRef
     columns={1}
+    name="problem-type"
     onChange={[Function]}
     type="radio"
     value="choiceresponse"
@@ -231,6 +233,7 @@ exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
 >
   <ForwardRef
     columns={1}
+    name="problem-type"
     onChange={[Function]}
     type="radio"
     value="numericalresponse"
@@ -341,6 +344,7 @@ exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
 >
   <ForwardRef
     columns={1}
+    name="problem-type"
     onChange={[Function]}
     type="radio"
     value="multiplechoiceresponse"
@@ -451,6 +455,7 @@ exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
 >
   <ForwardRef
     columns={1}
+    name="problem-type"
     onChange={[Function]}
     type="radio"
     value="stringresponse"
