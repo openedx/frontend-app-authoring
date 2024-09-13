@@ -113,11 +113,11 @@ export interface LibraryBlockMetadata {
   defKey: string | null;
   displayName: string;
   lastPublished: string | null;
-  publishedBy: null,
-  lastDraftCreated: null,
-  lastDraftCreatedBy: null,
+  publishedBy: string | null,
+  lastDraftCreated: string | null,
+  lastDraftCreatedBy: string | null,
   hasUnpublishedChanges: boolean;
-  created: '2024-06-20T13:54:21Z',
+  created: string | null,
   tagsCount: number;
 }
 

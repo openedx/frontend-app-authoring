@@ -126,16 +126,26 @@ mockCreateLibraryBlock.newHtmlData = {
   blockType: 'html',
   displayName: 'New Text Component',
   hasUnpublishedChanges: true,
+  lastPublished: null, // or e.g. '2024-08-30T16:37:42Z',
+  publishedBy: null, // or e.g. 'test_author',
+  lastDraftCreated: '2024-07-22T21:37:49Z',
+  lastDraftCreatedBy: null,
+  created: '2024-07-22T21:37:49Z',
   tagsCount: 0,
-} satisfies api.CreateBlockDataResponse;
+} satisfies api.LibraryBlockMetadata;
 mockCreateLibraryBlock.newProblemData = {
   id: 'lb:Axim:TEST:problem:prob1',
   defKey: 'prob1',
   blockType: 'problem',
   displayName: 'New Problem',
   hasUnpublishedChanges: true,
+  lastPublished: null, // or e.g. '2024-08-30T16:37:42Z',
+  publishedBy: null, // or e.g. 'test_author',
+  lastDraftCreated: '2024-07-22T21:37:49Z',
+  lastDraftCreatedBy: null,
+  created: '2024-07-22T21:37:49Z',
   tagsCount: 0,
-} satisfies api.CreateBlockDataResponse;
+} satisfies api.LibraryBlockMetadata;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockCreateLibraryBlock.applyMock = () => (
   jest.spyOn(api, 'createLibraryBlock').mockImplementation(mockCreateLibraryBlock)
