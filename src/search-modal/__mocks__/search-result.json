@@ -365,6 +365,15 @@
         }
       },
       "facetStats": {}
+    },
+    {
+      "indexUid": "studio",
+      "hits": [],
+      "query": "learn",
+      "processingTimeMs": 1,
+      "limit": 20,
+      "offset": 0,
+      "estimatedTotalHits": 0
     }
   ]
 }

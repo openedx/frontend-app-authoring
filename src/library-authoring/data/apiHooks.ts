@@ -216,19 +216,12 @@ export const useUpdateXBlockFields = (contentLibraryId: string, usageKey: string
 /**
  * Use this mutation to create a library collection
  */
-export const useCreateLibraryCollection = (libraryId: string | undefined) => {
+export const useCreateLibraryCollection = (libraryId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: CreateLibraryCollectionDataRequest) => {
-      if (libraryId) {
-        return createCollection(libraryId, data);
-      }
-      return Promise.resolve();
-    },
+    mutationFn: (data: CreateLibraryCollectionDataRequest) => createCollection(libraryId, data),
     onSettled: () => {
-      if (libraryId) {
-        queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
-      }
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
     },
   });
 };

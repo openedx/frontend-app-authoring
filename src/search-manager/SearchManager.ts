@@ -8,7 +8,9 @@ import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { MeiliSearch, type Filter } from 'meilisearch';
 
-import { ContentHit, SearchSortOption, forceArray } from './data/api';
+import {
+  CollectionHit, ContentHit, SearchSortOption, forceArray,
+} from './data/api';
 import { useContentSearchConnection, useContentSearchResults } from './data/apiHooks';
 
 export interface SearchContextData {
@@ -39,6 +41,8 @@ export interface SearchContextData {
   fetchNextPage: () => void;
   closeSearchModal: () => void;
   hasError: boolean;
+  collectionHits: CollectionHit[];
+  totalCollectionHits: number;
 }
 
 const SearchContext = React.createContext<SearchContextData | undefined>(undefined);

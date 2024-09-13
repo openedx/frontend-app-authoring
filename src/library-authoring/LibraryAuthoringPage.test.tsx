@@ -29,9 +29,12 @@ const returnEmptyResult = (_url, req) => {
   // We have to replace the query (search keywords) in the mock results with the actual query,
   // because otherwise we may have an inconsistent state that causes more queries and unexpected results.
   mockEmptyResult.results[0].query = query;
+  mockEmptyResult.results[2].query = query;
   // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
   // eslint-disable-next-line no-underscore-dangle, no-param-reassign
   mockEmptyResult.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
+  // eslint-disable-next-line no-underscore-dangle, no-param-reassign
+  mockEmptyResult.results[2]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
   return mockEmptyResult;
 };
 
@@ -49,10 +52,14 @@ const returnLowNumberResults = (_url, req) => {
   newMockResult.results[0].query = query;
   // Limit number of results to just 2
   newMockResult.results[0].hits = mockResult.results[0]?.hits.slice(0, 2);
+  newMockResult.results[2].hits = mockResult.results[2]?.hits.slice(0, 2);
   newMockResult.results[0].estimatedTotalHits = 2;
+  newMockResult.results[2].estimatedTotalHits = 2;
   // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
   // eslint-disable-next-line no-underscore-dangle, no-param-reassign
   newMockResult.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
+  // eslint-disable-next-line no-underscore-dangle, no-param-reassign
+  newMockResult.results[2]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
   return newMockResult;
 };
 
@@ -130,7 +137,7 @@ describe('<LibraryAuthoringPage />', () => {
 
     // "Recently Modified" header + sort shown
     expect(screen.getAllByText('Recently Modified').length).toEqual(2);
-    expect(screen.getByText('Collections (0)')).toBeInTheDocument();
+    expect(screen.getByText('Collections (6)')).toBeInTheDocument();
     expect(screen.getByText('Components (10)')).toBeInTheDocument();
     expect((await screen.findAllByText('Introduction to Testing'))[0]).toBeInTheDocument();
 
@@ -138,34 +145,38 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.click(screen.getByRole('tab', { name: 'Components' }));
     // "Recently Modified" default sort shown
     expect(screen.getAllByText('Recently Modified').length).toEqual(1);
-    expect(screen.queryByText('Collections (0)')).not.toBeInTheDocument();
+    expect(screen.queryByText('Collections (6)')).not.toBeInTheDocument();
     expect(screen.queryByText('Components (10)')).not.toBeInTheDocument();
 
     // Navigate to the collections tab
     fireEvent.click(screen.getByRole('tab', { name: 'Collections' }));
     // "Recently Modified" default sort shown
     expect(screen.getAllByText('Recently Modified').length).toEqual(1);
-    expect(screen.queryByText('Collections (0)')).not.toBeInTheDocument();
+    expect(screen.queryByText('Collections (6)')).not.toBeInTheDocument();
     expect(screen.queryByText('Components (10)')).not.toBeInTheDocument();
     expect(screen.queryByText('There are 10 components in this library')).not.toBeInTheDocument();
-    expect(screen.getByText('Coming soon!')).toBeInTheDocument();
+    expect((await screen.findAllByText('Collection 1'))[0]).toBeInTheDocument();
 
     // Go back to Home tab
     // This step is necessary to avoid the url change leak to other tests
     fireEvent.click(screen.getByRole('tab', { name: 'Home' }));
     // "Recently Modified" header + sort shown
     expect(screen.getAllByText('Recently Modified').length).toEqual(2);
-    expect(screen.getByText('Collections (0)')).toBeInTheDocument();
+    expect(screen.getByText('Collections (6)')).toBeInTheDocument();
     expect(screen.getByText('Components (10)')).toBeInTheDocument();
   });
 
-  it('shows a library without components', async () => {
+  it('shows a library without components and collections', async () => {
     fetchMock.post(searchEndpoint, returnEmptyResult, { overwriteRoutes: true });
     await renderLibraryPage();
 
     expect(await screen.findByText('Content library')).toBeInTheDocument();
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
 
+    fireEvent.click(screen.getByRole('tab', { name: 'Collections' }));
+    expect(screen.getByText('You have not added any collection to this library yet.')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Home' }));
     expect(screen.getByText('You have not added any content to this library yet.')).toBeInTheDocument();
   });
 
@@ -212,6 +223,14 @@ describe('<LibraryAuthoringPage />', () => {
     // Navigate to the components tab
     fireEvent.click(screen.getByRole('tab', { name: 'Components' }));
     expect(screen.getByText('No matching components found in this library.')).toBeInTheDocument();
+
+    // Navigate to the collections tab
+    fireEvent.click(screen.getByRole('tab', { name: 'Collections' }));
+    expect(screen.getByText('No matching collections found in this library.')).toBeInTheDocument();
+
+    // Go back to Home tab
+    // This step is necessary to avoid the url change leak to other tests
+    fireEvent.click(screen.getByRole('tab', { name: 'Home' }));
   });
 
   it('should open and close new content sidebar', async () => {
@@ -283,20 +302,29 @@ describe('<LibraryAuthoringPage />', () => {
 
     // "Recently Modified" header + sort shown
     await waitFor(() => { expect(screen.getAllByText('Recently Modified').length).toEqual(2); });
-    expect(screen.getByText('Collections (0)')).toBeInTheDocument();
+    expect(screen.getByText('Collections (6)')).toBeInTheDocument();
     expect(screen.getByText('Components (10)')).toBeInTheDocument();
     expect(screen.getAllByText('Introduction to Testing')[0]).toBeInTheDocument();
     expect(screen.queryByText('You have not added any content to this library yet.')).not.toBeInTheDocument();
 
-    // There should only be one "View All" button, since the Components count
+    // There should be two "View All" button, since the Components and Collections count
     // are above the preview limit (4)
-    expect(screen.getByText('View All')).toBeInTheDocument();
+    expect(screen.getAllByText('View All').length).toEqual(2);
 
-    // Clicking on "View All" button should navigate to the Components tab
-    fireEvent.click(screen.getByText('View All'));
+    // Clicking on first "View All" button should navigate to the Collections tab
+    fireEvent.click(screen.getAllByText('View All')[0]);
     // "Recently Modified" default sort shown
     expect(screen.getAllByText('Recently Modified').length).toEqual(1);
-    expect(screen.queryByText('Collections (0)')).not.toBeInTheDocument();
+    expect(screen.queryByText('Collections (6)')).not.toBeInTheDocument();
+    expect(screen.queryByText('Components (10)')).not.toBeInTheDocument();
+    expect(screen.getByText('Collection 1')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Home' }));
+    // Clicking on second "View All" button should navigate to the Components tab
+    fireEvent.click(screen.getAllByText('View All')[1]);
+    // "Recently Modified" default sort shown
+    expect(screen.getAllByText('Recently Modified').length).toEqual(1);
+    expect(screen.queryByText('Collections (6)')).not.toBeInTheDocument();
     expect(screen.queryByText('Components (10)')).not.toBeInTheDocument();
     expect(screen.getAllByText('Introduction to Testing')[0]).toBeInTheDocument();
 
@@ -305,7 +333,7 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.click(screen.getByRole('tab', { name: 'Home' }));
     // "Recently Modified" header + sort shown
     expect(screen.getAllByText('Recently Modified').length).toEqual(2);
-    expect(screen.getByText('Collections (0)')).toBeInTheDocument();
+    expect(screen.getByText('Collections (6)')).toBeInTheDocument();
     expect(screen.getByText('Components (10)')).toBeInTheDocument();
   });
 
@@ -318,7 +346,7 @@ describe('<LibraryAuthoringPage />', () => {
 
     // "Recently Modified" header + sort shown
     await waitFor(() => { expect(screen.getAllByText('Recently Modified').length).toEqual(2); });
-    expect(screen.getByText('Collections (0)')).toBeInTheDocument();
+    expect(screen.getByText('Collections (2)')).toBeInTheDocument();
     expect(screen.getByText('Components (2)')).toBeInTheDocument();
     expect(screen.getAllByText('Introduction to Testing')[0]).toBeInTheDocument();
     expect(screen.queryByText('You have not added any content to this library yet.')).not.toBeInTheDocument();
@@ -406,8 +434,8 @@ describe('<LibraryAuthoringPage />', () => {
     await renderLibraryPage();
 
     // Click on the first component
-    waitFor(() => expect(screen.queryByText(displayName)).toBeInTheDocument());
-    fireEvent.click(screen.getAllByText(displayName)[0]);
+    expect((await screen.findAllByText(displayName))[0]).toBeInTheDocument();
+    fireEvent.click((await screen.findAllByText(displayName))[0]);
 
     const sidebar = screen.getByTestId('library-sidebar');
 
@@ -542,7 +570,7 @@ describe('<LibraryAuthoringPage />', () => {
     expect(screen.getByText(/add content/i)).toBeInTheDocument();
 
     // Open New collection Modal
-    const newCollectionButton = screen.getByRole('button', { name: /collection/i });
+    const newCollectionButton = screen.getAllByRole('button', { name: /collection/i })[4];
     fireEvent.click(newCollectionButton);
     const collectionModalHeading = await screen.findByRole('heading', { name: /new collection/i });
     expect(collectionModalHeading).toBeInTheDocument();
@@ -586,7 +614,7 @@ describe('<LibraryAuthoringPage />', () => {
     expect(screen.getByText(/add content/i)).toBeInTheDocument();
 
     // Open New collection Modal
-    const newCollectionButton = screen.getByRole('button', { name: /collection/i });
+    const newCollectionButton = screen.getAllByRole('button', { name: /collection/i })[4];
     fireEvent.click(newCollectionButton);
     const collectionModalHeading = await screen.findByRole('heading', { name: /new collection/i });
     expect(collectionModalHeading).toBeInTheDocument();
@@ -619,7 +647,7 @@ describe('<LibraryAuthoringPage />', () => {
     expect(screen.getByText(/add content/i)).toBeInTheDocument();
 
     // Open New collection Modal
-    const newCollectionButton = screen.getByRole('button', { name: /collection/i });
+    const newCollectionButton = screen.getAllByRole('button', { name: /collection/i })[4];
     fireEvent.click(newCollectionButton);
     const collectionModalHeading = await screen.findByRole('heading', { name: /new collection/i });
     expect(collectionModalHeading).toBeInTheDocument();
@@ -632,5 +660,21 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.change(nameField, { target: { value: title } });
     fireEvent.change(descriptionField, { target: { value: description } });
     fireEvent.click(createButton);
+  });
+
+  it('shows both components and collections in recently modified section', async () => {
+    await renderLibraryPage();
+
+    expect(await screen.findByText('Content library')).toBeInTheDocument();
+    expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
+
+    // "Recently Modified" header + sort shown
+    expect(screen.getAllByText('Recently Modified').length).toEqual(2);
+    const recentModifiedContainer = (await screen.findAllByText('Recently Modified'))[1].parentElement?.parentElement?.parentElement;
+    expect(recentModifiedContainer).toBeTruthy();
+
+    const container = within(recentModifiedContainer!);
+    expect(container.queryAllByText('Text').length).toBeGreaterThan(0);
+    expect(container.queryAllByText('Collection').length).toBeGreaterThan(0);
   });
 });

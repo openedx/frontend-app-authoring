@@ -18,7 +18,7 @@ import { ToastContext } from '../../generic/toast-context';
 const CreateCollectionModal = () => {
   const intl = useIntl();
   const { libraryId } = useParams();
-  const create = useCreateLibraryCollection(libraryId);
+  const create = useCreateLibraryCollection(libraryId!);
   const {
     isCreateCollectionModalOpen,
     closeCreateCollectionModal,

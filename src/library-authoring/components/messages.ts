@@ -6,6 +6,16 @@ const messages = defineMessages({
     defaultMessage: 'Component actions menu',
     description: 'Alt/title text for the component card menu button.',
   },
+  collectionCardMenuAlt: {
+    id: 'course-authoring.library-authoring.collection.menu',
+    defaultMessage: 'Collection actions menu',
+    description: 'Alt/title text for the collection card menu button.',
+  },
+  collectionType: {
+    id: 'course-authoring.library-authoring.collection.type',
+    defaultMessage: 'Collection',
+    description: 'Collection type text',
+  },
   menuEdit: {
     id: 'course-authoring.library-authoring.component.menu.edit',
     defaultMessage: 'Edit',

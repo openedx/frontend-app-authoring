@@ -21,15 +21,30 @@ const messages = defineMessages({
     defaultMessage: 'No matching components found in this library.',
     description: 'Message displayed when no search results are found',
   },
+  noSearchResultsCollections: {
+    id: 'course-authoring.library-authoring.no-search-results-collections',
+    defaultMessage: 'No matching collections found in this library.',
+    description: 'Message displayed when no matching collections are found',
+  },
   noComponents: {
     id: 'course-authoring.library-authoring.no-components',
     defaultMessage: 'You have not added any content to this library yet.',
     description: 'Message displayed when the library is empty',
   },
+  noCollections: {
+    id: 'course-authoring.library-authoring.no-collections',
+    defaultMessage: 'You have not added any collection to this library yet.',
+    description: 'Message displayed when the library has no collections',
+  },
   addComponent: {
     id: 'course-authoring.library-authoring.add-component',
     defaultMessage: 'Add component',
     description: 'Button text to add a new component',
+  },
+  addCollection: {
+    id: 'course-authoring.library-authoring.add-collection',
+    defaultMessage: 'Add collection',
+    description: 'Button text to add a new collection',
   },
   homeTab: {
     id: 'course-authoring.library-authoring.home-tab',
