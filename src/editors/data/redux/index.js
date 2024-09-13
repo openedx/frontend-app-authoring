@@ -20,7 +20,7 @@ const modules = {
 
 const moduleProps = (propName) => Object.keys(modules).reduce(
   (obj, moduleKey) => ({ ...obj, [moduleKey]: modules[moduleKey][propName] }),
-  {},
+  /** @type {Record<string, any>} */({}),
 );
 
 const rootReducer = combineReducers(moduleProps('reducer'));

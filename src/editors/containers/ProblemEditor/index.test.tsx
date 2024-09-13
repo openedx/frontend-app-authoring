@@ -65,7 +65,6 @@ describe('ProblemEditor', () => {
       const wrapper = shallow(<ProblemEditor
         {...props}
         blockFinished
-        studioViewFinished
         advancedSettingsFinished
         blockFailed
       />);
@@ -75,7 +74,6 @@ describe('ProblemEditor', () => {
       const wrapper = shallow(<ProblemEditor
         {...props}
         blockFinished
-        studioViewFinished
         advancedSettingsFinished
       />);
       expect(wrapper.instance.findByType('SelectTypeModal')).toHaveLength(1);
@@ -85,7 +83,6 @@ describe('ProblemEditor', () => {
         {...props}
         problemType="multiplechoiceresponse"
         blockFinished
-        studioViewFinished
         advancedSettingsFinished
       />);
       expect(wrapper.instance.findByType('EditProblemView')).toHaveLength(1);

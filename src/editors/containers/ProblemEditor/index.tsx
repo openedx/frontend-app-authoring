@@ -1,17 +1,30 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import { Spinner } from '@openedx/paragon';
-import { injectIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import SelectTypeModal from './components/SelectTypeModal';
 import EditProblemView from './components/EditProblemView';
 import { selectors, thunkActions } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
 import messages from './messages';
+import { ProblemType } from '../../data/constants/problem';
 
-const ProblemEditor = ({
+interface Props {
+  onClose: () => void | null;
+  returnFunction?: () => (result: any) => void | null;
+  // redux
+  advancedSettingsFinished: boolean;
+  blockFinished: boolean;
+  blockFailed: boolean;
+  /** null if this is a new problem */
+  problemType: ProblemType | null;
+  initializeProblemEditor: (blockValue: any) => void;
+  blockValue: Record<string, any>;
+}
+
+const ProblemEditor: React.FC<Props> = ({
   onClose,
-  returnFunction,
+  returnFunction = null,
   // Redux
   problemType,
   blockFinished,
@@ -52,21 +65,6 @@ const ProblemEditor = ({
   return (<EditProblemView {...{ onClose, returnFunction }} />);
 };
 
-ProblemEditor.defaultProps = {
-  returnFunction: null,
-};
-ProblemEditor.propTypes = {
-  onClose: PropTypes.func.isRequired,
-  returnFunction: PropTypes.func,
-  // redux
-  advancedSettingsFinished: PropTypes.bool.isRequired,
-  blockFinished: PropTypes.bool.isRequired,
-  blockFailed: PropTypes.bool.isRequired,
-  problemType: PropTypes.string.isRequired,
-  initializeProblemEditor: PropTypes.func.isRequired,
-  blockValue: PropTypes.objectOf(PropTypes.shape({})).isRequired,
-};
-
 export const mapStateToProps = (state) => ({
   blockFinished: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchBlock }),
   blockFailed: selectors.requests.isFailed(state, { requestKey: RequestKeys.fetchBlock }),
@@ -80,4 +78,4 @@ export const mapDispatchToProps = {
 };
 
 export const ProblemEditorInternal = ProblemEditor; // For testing only
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(ProblemEditor));
+export default connect(mapStateToProps, mapDispatchToProps)(ProblemEditor);

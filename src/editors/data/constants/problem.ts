@@ -15,6 +15,7 @@ export const ProblemTypeKeys = StrictDict({
   TEXTINPUT: 'stringresponse',
   ADVANCED: 'advanced',
 } as const);
+export type ProblemType = typeof ProblemTypeKeys[keyof typeof ProblemTypeKeys];
 
 export const ProblemTypes = StrictDict({
   [ProblemTypeKeys.SINGLESELECT]: {
