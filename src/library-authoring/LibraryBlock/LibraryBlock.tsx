@@ -1,6 +1,8 @@
-/* eslint-disable react/require-default-props */
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
+
+import messages from './messages';
 
 interface LibraryBlockProps {
   onBlockNotification?: (event: { eventType: string; [key: string]: any }) => void;
@@ -20,6 +22,8 @@ const LibraryBlock = ({ onBlockNotification, usageKey }: LibraryBlockProps) => {
   const [iFrameHeight, setIFrameHeight] = useState(600);
   const lmsBaseUrl = getConfig().LMS_BASE_URL;
 
+  const intl = useIntl();
+
   /**
    * Handle any messages we receive from the XBlock Runtime code in the IFrame.
    * See wrap.ts to see the code that sends these messages.
@@ -31,10 +35,6 @@ const LibraryBlock = ({ onBlockNotification, usageKey }: LibraryBlockProps) => {
     }
 
     const { method, replyKey, ...args } = event.data;
-    // const frame = iframeRef.current.contentWindow;
-    // const sendReply = async (data) => {
-    //   frame?.postMessage({ ...data, replyKey }, '*');
-    // };
 
     if (method === 'update_frame_height') {
       setIFrameHeight(args.height);
@@ -74,7 +74,7 @@ const LibraryBlock = ({ onBlockNotification, usageKey }: LibraryBlockProps) => {
     >
       <iframe
         ref={iframeRef}
-        title="preview" // FIXME: i18n needed
+        title={intl.formatMessage(messages.iframeTitle)}
         src={`${lmsBaseUrl}/xblocks/v2/${usageKey}/embed/student_view/`}
         data-testid="block-preview"
         style={{
