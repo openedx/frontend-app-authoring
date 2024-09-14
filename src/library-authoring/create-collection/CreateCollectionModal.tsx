@@ -79,8 +79,6 @@ const CreateCollectionModal = () => {
                   )}
                   value={formikProps.values.title}
                   placeholder={intl.formatMessage(messages.createCollectionModalNamePlaceholder)}
-                  help={null}
-                  className=""
                   controlClasses="pb-2"
                 />
                 <FormikControl
@@ -98,7 +96,6 @@ const CreateCollectionModal = () => {
                       {intl.formatMessage(messages.createCollectionModalDescriptionDetails)}
                     </Form.Text>
                   )}
-                  className=""
                   controlClasses="pb-2"
                   rows="5"
                 />
