@@ -11,13 +11,14 @@ import { Link } from 'react-router-dom';
 import { getEditUrl } from '../components/utils';
 import { ComponentMenu } from '../components';
 import { ComponentDeveloperInfo } from './ComponentDeveloperInfo';
+import ComponentPreview from './ComponentPreview';
 import messages from './messages';
 
 interface ComponentInfoProps {
   usageKey: string;
 }
 
-const ComponentInfo = ({ usageKey } : ComponentInfoProps) => {
+const ComponentInfo = ({ usageKey }: ComponentInfoProps) => {
   const intl = useIntl();
   const editUrl = getEditUrl(usageKey);
 
@@ -42,7 +43,7 @@ const ComponentInfo = ({ usageKey } : ComponentInfoProps) => {
         defaultActiveKey="preview"
       >
         <Tab eventKey="preview" title={intl.formatMessage(messages.previewTabTitle)}>
-          Preview tab placeholder
+          <ComponentPreview usageKey={usageKey} />
         </Tab>
         <Tab eventKey="manage" title={intl.formatMessage(messages.manageTabTitle)}>
           Manage tab placeholder

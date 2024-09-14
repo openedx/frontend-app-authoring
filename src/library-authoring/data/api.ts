@@ -7,23 +7,29 @@ const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
  * Get the URL for the content library API.
  */
 export const getContentLibraryApiUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/`;
+
 /**
  * Get the URL for getting block types of a library (what types can be created).
  */
 export const getLibraryBlockTypesUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/block_types/`;
+
 /**
  * Get the URL for create content in library.
  */
 export const getCreateLibraryBlockUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/blocks/`;
+
 export const getContentLibraryV2ListApiUrl = () => `${getApiBaseUrl()}/api/libraries/v2/`;
+
 /**
  * Get the URL for commit/revert changes in library.
  */
 export const getCommitLibraryChangesUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/commit/`;
+
 /**
  * Get the URL for paste clipboard content into library.
  */
 export const getLibraryPasteClipboardUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/paste_clipboard/`;
+
 /**
   * Get the URL for the xblock fields/metadata API.
   */
