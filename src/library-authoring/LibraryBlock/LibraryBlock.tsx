@@ -50,10 +50,9 @@ const LibraryBlock = ({ onBlockNotification, usageKey }: LibraryBlockProps) => {
   };
 
   /**
-   * Load the XBlock data from the LMS and then inject it into our IFrame.
+   * Prepare to receive messages from the IFrame.
    */
   useEffect(() => {
-    // Prepare to receive messages from the IFrame.
     // Messages are the only way that the code in the IFrame can communicate
     // with the surrounding UI.
     window.addEventListener('message', receivedWindowMessage);
