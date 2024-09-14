@@ -1,16 +1,19 @@
 import _ from 'lodash';
 import { actions as problemActions } from '../problem';
+import { actions as requestActions } from '../requests';
+import { selectors as appSelectors } from '../app';
 import * as requests from './requests';
 import { OLXParser } from '../../../containers/ProblemEditor/data/OLXParser';
 import { parseSettings } from '../../../containers/ProblemEditor/data/SettingsParser';
 import { ProblemTypeKeys } from '../../constants/problem';
 import ReactStateOLXParser from '../../../containers/ProblemEditor/data/ReactStateOLXParser';
-import { blankProblemOLX } from '../../../containers/ProblemEditor/data/mockData/olxTestData';
 import { camelizeKeys } from '../../../utils';
 import { fetchEditorContent } from '../../../containers/ProblemEditor/components/EditProblemView/hooks';
+import { RequestKeys } from '../../constants/requests';
 
 // Similar to `import { actions, selectors } from '..';` but avoid circular imports:
-const actions = { problem: problemActions };
+const actions = { problem: problemActions, requests: requestActions };
+const selectors = { app: appSelectors };
 
 export const switchToAdvancedEditor = () => (dispatch, getState) => {
   const state = getState();
@@ -21,7 +24,7 @@ export const switchToAdvancedEditor = () => (dispatch, getState) => {
 };
 
 export const isBlankProblem = ({ rawOLX }) => {
-  if (rawOLX.replace(/\s/g, '') === blankProblemOLX.rawOLX) {
+  if (['<problem></problem>', '<problem/>'].includes(rawOLX.replace(/\s/g, ''))) {
     return true;
   }
   return false;
@@ -67,7 +70,7 @@ export const fetchAdvancedSettings = ({ rawOLX, rawSettings }) => (dispatch) => 
   dispatch(requests.fetchAdvancedSettings({
     onSuccess: (response) => {
       const defaultSettings = {};
-      Object.entries(response.data).forEach(([key, value]) => {
+      Object.entries(response.data as Record<string, any>).forEach(([key, value]) => {
         if (advancedProblemSettingKeys.includes(key)) {
           defaultSettings[key] = value.value;
         }
@@ -79,10 +82,20 @@ export const fetchAdvancedSettings = ({ rawOLX, rawSettings }) => (dispatch) => 
   }));
 };
 
-export const initializeProblem = (blockValue) => (dispatch) => {
+export const initializeProblem = (blockValue) => (dispatch, getState) => {
   const rawOLX = _.get(blockValue, 'data.data', {});
   const rawSettings = _.get(blockValue, 'data.metadata', {});
-  dispatch(fetchAdvancedSettings({ rawOLX, rawSettings }));
+  const learningContextId = selectors.app.learningContextId(getState());
+  if (learningContextId?.startsWith('lib:')) {
+    // Content libraries don't yet support defaults for fields like max_attempts, showanswer, etc.
+    // So proceed with loading the problem.
+    // Though first we need to fake the request or else the problem type selection UI won't display:
+    dispatch(actions.requests.completeRequest({ requestKey: RequestKeys.fetchAdvancedSettings, response: {} }));
+    dispatch(loadProblem({ rawOLX, rawSettings, defaultSettings: {} }));
+  } else {
+    // Load the defaults (for max_attempts, etc.) from the course's advanced settings, then proceed:
+    dispatch(fetchAdvancedSettings({ rawOLX, rawSettings }));
+  }
 };
 
 export default { initializeProblem, switchToAdvancedEditor, fetchAdvancedSettings };

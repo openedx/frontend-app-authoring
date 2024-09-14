@@ -45,6 +45,9 @@ describe('problem thunkActions', () => {
     getState = jest.fn(() => ({
       problem: {
       },
+      app: {
+        learningContextId: 'course-v1:org+course+run',
+      },
     }));
   });
 
@@ -52,7 +55,7 @@ describe('problem thunkActions', () => {
     jest.restoreAllMocks();
   });
   test('initializeProblem visual Problem :', () => {
-    initializeProblem(blockValue)(dispatch);
+    initializeProblem(blockValue)(dispatch, getState);
     expect(dispatch).toHaveBeenCalled();
   });
   test('switchToAdvancedEditor visual Problem', () => {
