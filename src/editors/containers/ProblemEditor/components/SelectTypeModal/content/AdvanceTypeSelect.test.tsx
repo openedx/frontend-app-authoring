@@ -1,16 +1,11 @@
 import 'CourseAuthoring/editors/setupEditorTest';
-import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 
-import { formatMessage } from '../../../../../testUtils';
-import * as module from './AdvanceTypeSelect';
-
-const AdvanceTypeSelect = module.AdvanceTypeSelectInternal;
+import AdvanceTypeSelect from './AdvanceTypeSelect';
 
 describe('AdvanceTypeSelect', () => {
   const props = {
-    intl: { formatMessage },
-    selected: 'blankadvanced',
+    selected: 'blankadvanced' as const,
     setSelected: jest.fn().mockName('setSelect'),
   };
   describe('snapshots', () => {
@@ -29,11 +24,6 @@ describe('AdvanceTypeSelect', () => {
         shallow(<AdvanceTypeSelect {...props} selected="customgrader" />).snapshot,
       ).toMatchSnapshot();
     });
-    test('snapshots: renders as expected with problemType is drag_and_drop', () => {
-      expect(
-        shallow(<AdvanceTypeSelect {...props} selected="drag_and_drop" />).snapshot,
-      ).toMatchSnapshot();
-    });
     test('snapshots: renders as expected with problemType is formularesponse', () => {
       expect(
         shallow(<AdvanceTypeSelect {...props} selected="formularesponse" />).snapshot,
@@ -44,14 +34,14 @@ describe('AdvanceTypeSelect', () => {
         shallow(<AdvanceTypeSelect {...props} selected="imageresponse" />).snapshot,
       ).toMatchSnapshot();
     });
-    test('snapshots: renders as expected with problemType is jsinput_response', () => {
+    test('snapshots: renders as expected with problemType is jsinputresponse', () => {
       expect(
-        shallow(<AdvanceTypeSelect {...props} selected="jsinput_response" />).snapshot,
+        shallow(<AdvanceTypeSelect {...props} selected="jsinputresponse" />).snapshot,
       ).toMatchSnapshot();
     });
-    test('snapshots: renders as expected with problemType is problem_with_hint', () => {
+    test('snapshots: renders as expected with problemType is problemwithhint', () => {
       expect(
-        shallow(<AdvanceTypeSelect {...props} selected="problem_with_hint" />).snapshot,
+        shallow(<AdvanceTypeSelect {...props} selected="problemwithhint" />).snapshot,
       ).toMatchSnapshot();
     });
   });

@@ -86,6 +86,7 @@ export const AdvanceProblemKeys = StrictDict({
   FORMULA: 'formularesponse',
   PROBLEMWITHHINT: 'problemwithhint',
 } as const);
+export type AdvancedProblemType = typeof AdvanceProblemKeys[keyof typeof AdvanceProblemKeys];
 
 export const AdvanceProblems = StrictDict({
   [AdvanceProblemKeys.BLANK]: {

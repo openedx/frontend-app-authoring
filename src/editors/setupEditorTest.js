@@ -1,5 +1,6 @@
 // These additional mocks and setup are required for some tests in src/editors/
 // and are imported on an as-needed basis.
+import { formatMessage as mockFormatMessage } from './testUtils';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'jest-canvas-mock';
 
@@ -8,7 +9,7 @@ jest.mock('@edx/frontend-platform/i18n', () => {
   const PropTypes = jest.requireActual('prop-types');
   return {
     ...i18n,
-    useIntl: () => ({ formatMessage: (m) => m.defaultMessage }),
+    useIntl: () => ({ formatMessage: mockFormatMessage }),
     intlShape: PropTypes.shape({
       formatMessage: PropTypes.func,
     }),
