@@ -1,3 +1,4 @@
+import { useToggle } from '@openedx/paragon';
 import React from 'react';
 
 export enum SidebarBodyComponentId {
@@ -13,6 +14,9 @@ export interface LibraryContextData {
   openInfoSidebar: () => void;
   openComponentInfoSidebar: (usageKey: string) => void;
   currentComponentUsageKey?: string;
+  isCreateCollectionModalOpen: boolean;
+  openCreateCollectionModal: () => void;
+  closeCreateCollectionModal: () => void;
 }
 
 export const LibraryContext = React.createContext({
@@ -21,6 +25,9 @@ export const LibraryContext = React.createContext({
   openAddContentSidebar: () => {},
   openInfoSidebar: () => {},
   openComponentInfoSidebar: (_usageKey: string) => {}, // eslint-disable-line @typescript-eslint/no-unused-vars
+  isCreateCollectionModalOpen: false,
+  openCreateCollectionModal: () => {},
+  closeCreateCollectionModal: () => {},
 } as LibraryContextData);
 
 /**
@@ -29,6 +36,7 @@ export const LibraryContext = React.createContext({
 export const LibraryProvider = (props: { children?: React.ReactNode }) => {
   const [sidebarBodyComponent, setSidebarBodyComponent] = React.useState<SidebarBodyComponentId | null>(null);
   const [currentComponentUsageKey, setCurrentComponentUsageKey] = React.useState<string>();
+  const [isCreateCollectionModalOpen, openCreateCollectionModal, closeCreateCollectionModal] = useToggle(false);
 
   const closeLibrarySidebar = React.useCallback(() => {
     setSidebarBodyComponent(null);
@@ -57,6 +65,9 @@ export const LibraryProvider = (props: { children?: React.ReactNode }) => {
     openInfoSidebar,
     openComponentInfoSidebar,
     currentComponentUsageKey,
+    isCreateCollectionModalOpen,
+    openCreateCollectionModal,
+    closeCreateCollectionModal,
   }), [
     sidebarBodyComponent,
     closeLibrarySidebar,
@@ -64,6 +75,9 @@ export const LibraryProvider = (props: { children?: React.ReactNode }) => {
     openInfoSidebar,
     openComponentInfoSidebar,
     currentComponentUsageKey,
+    isCreateCollectionModalOpen,
+    openCreateCollectionModal,
+    closeCreateCollectionModal,
   ]);
 
   return (

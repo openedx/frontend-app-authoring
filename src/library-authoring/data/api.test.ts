@@ -43,4 +43,19 @@ describe('library data API', () => {
       expect(axiosMock.history.delete[0].url).toEqual(url);
     });
   });
+
+  it('should create collection', async () => {
+    const { axiosMock } = initializeMocks();
+    const libraryId = 'lib:org:1';
+    const url = api.getLibraryCollectionsApiUrl(libraryId);
+
+    axiosMock.onPost(url).reply(200);
+
+    await api.createCollection(libraryId, {
+      title: 'This is a test',
+      description: 'This is only a test',
+    });
+
+    expect(axiosMock.history.post[0].url).toEqual(url);
+  });
 });

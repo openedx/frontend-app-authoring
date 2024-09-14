@@ -32,6 +32,10 @@ export const getXBlockFieldsApiUrl = (usageKey: string) => `${getApiBaseUrl()}/a
   * Get the URL for the xblock OLX API
   */
 export const getXBlockOLXApiUrl = (usageKey: string) => `${getApiBaseUrl()}/api/libraries/v2/blocks/${usageKey}/olx/`;
+/**
+ * Get the URL for the Library Collections API.
+ */
+export const getLibraryCollectionsApiUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/collections/`;
 
 export interface ContentLibrary {
   id: string;
@@ -129,6 +133,11 @@ export interface UpdateXBlockFieldsRequest {
   metadata?: {
     display_name?: string;
   };
+}
+
+export interface CreateLibraryCollectionDataRequest {
+  title: string;
+  description: string | null;
 }
 
 /**
@@ -236,9 +245,19 @@ export async function getXBlockFields(usageKey: string): Promise<XBlockFields> {
 /**
  * Update xblock fields.
  */
-export async function updateXBlockFields(usageKey:string, xblockData: UpdateXBlockFieldsRequest) {
+export async function updateXBlockFields(usageKey: string, xblockData: UpdateXBlockFieldsRequest) {
   const client = getAuthenticatedHttpClient();
   await client.post(getXBlockFieldsApiUrl(usageKey), xblockData);
+}
+
+/**
+ * Create a library collection
+ */
+export async function createCollection(libraryId: string, collectionData: CreateLibraryCollectionDataRequest) {
+  const client = getAuthenticatedHttpClient();
+  const { data } = await client.post(getLibraryCollectionsApiUrl(libraryId), collectionData);
+
+  return camelCaseObject(data);
 }
 
 /**

@@ -23,7 +23,9 @@ import {
   libraryPasteClipboard,
   getXBlockFields,
   updateXBlockFields,
+  createCollection,
   getXBlockOLX,
+  type CreateLibraryCollectionDataRequest,
 } from './api';
 
 const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
@@ -234,6 +236,19 @@ export const useUpdateXBlockFields = (usageKey: string) => {
     },
     onSettled: () => {
       invalidateComponentData(queryClient, contentLibraryId, usageKey);
+    },
+  });
+};
+
+/**
+ * Use this mutation to create a library collection
+ */
+export const useCreateLibraryCollection = (libraryId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: CreateLibraryCollectionDataRequest) => createCollection(libraryId, data),
+    onSettled: () => {
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
     },
   });
 };

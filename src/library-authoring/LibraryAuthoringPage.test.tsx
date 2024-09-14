@@ -13,6 +13,7 @@ import { mockContentLibrary, mockLibraryBlockTypes, mockXBlockFields } from './d
 import { mockContentSearchConfig } from '../search-manager/data/api.mock';
 import { mockBroadcastChannel } from '../generic/data/api.mock';
 import { LibraryLayout } from '.';
+import { getLibraryCollectionsApiUrl } from './data/api';
 
 mockContentSearchConfig.applyMock();
 mockContentLibrary.applyMock();
@@ -164,8 +165,23 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.click(screen.getByRole('tab', { name: 'Collections' }));
     expect(screen.getByText('You have not added any collection to this library yet.')).toBeInTheDocument();
 
+    // Open Create collection modal
+    const addCollectionButton = screen.getByRole('button', { name: /add collection/i });
+    fireEvent.click(addCollectionButton);
+    const collectionModalHeading = await screen.findByRole('heading', { name: /new collection/i });
+    expect(collectionModalHeading).toBeInTheDocument();
+
+    // Click on Cancel button
+    const cancelButton = screen.getByRole('button', { name: /cancel/i });
+    fireEvent.click(cancelButton);
+    expect(collectionModalHeading).not.toBeInTheDocument();
+
     fireEvent.click(screen.getByRole('tab', { name: 'Home' }));
     expect(screen.getByText('You have not added any content to this library yet.')).toBeInTheDocument();
+
+    const addComponentButton = screen.getByRole('button', { name: /add component/i });
+    fireEvent.click(addComponentButton);
+    expect(screen.getByText(/add content/i)).toBeInTheDocument();
   });
 
   it('shows the new content button', async () => {
@@ -533,6 +549,120 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.click(filterButton);
 
     expect(screen.getByText(/no matching components/i)).toBeInTheDocument();
+  });
+
+  it('should create a collection', async () => {
+    await renderLibraryPage();
+    const title = 'This is a Test';
+    const description = 'This is the description of the Test';
+    const url = getLibraryCollectionsApiUrl(mockContentLibrary.libraryId);
+    const { axiosMock } = initializeMocks();
+    axiosMock.onPost(url).reply(200, {
+      id: '1',
+      slug: 'this-is-a-test',
+      title,
+      description,
+    });
+
+    expect(await screen.findByRole('heading')).toBeInTheDocument();
+    expect(screen.queryByText(/add content/i)).not.toBeInTheDocument();
+
+    // Open Add content sidebar
+    const newButton = screen.getByRole('button', { name: /new/i });
+    fireEvent.click(newButton);
+    expect(screen.getByText(/add content/i)).toBeInTheDocument();
+
+    // Open New collection Modal
+    const newCollectionButton = screen.getAllByRole('button', { name: /collection/i })[4];
+    fireEvent.click(newCollectionButton);
+    const collectionModalHeading = await screen.findByRole('heading', { name: /new collection/i });
+    expect(collectionModalHeading).toBeInTheDocument();
+
+    // Click on Cancel button
+    const cancelButton = screen.getByRole('button', { name: /cancel/i });
+    fireEvent.click(cancelButton);
+    expect(collectionModalHeading).not.toBeInTheDocument();
+
+    // Open new collection modal again and create a collection
+    fireEvent.click(newCollectionButton);
+    const createButton = screen.getByRole('button', { name: /create/i });
+    const nameField = screen.getByRole('textbox', { name: /name your collection/i });
+    const descriptionField = screen.getByRole('textbox', { name: /add a description \(optional\)/i });
+
+    fireEvent.change(nameField, { target: { value: title } });
+    fireEvent.change(descriptionField, { target: { value: description } });
+    fireEvent.click(createButton);
+  });
+
+  it('should show validations in create collection', async () => {
+    await renderLibraryPage();
+
+    const title = 'This is a Test';
+    const description = 'This is the description of the Test';
+    const url = getLibraryCollectionsApiUrl(mockContentLibrary.libraryId);
+    const { axiosMock } = initializeMocks();
+    axiosMock.onPost(url).reply(200, {
+      id: '1',
+      slug: 'this-is-a-test',
+      title,
+      description,
+    });
+
+    expect(await screen.findByRole('heading')).toBeInTheDocument();
+    expect(screen.queryByText(/add content/i)).not.toBeInTheDocument();
+
+    // Open Add content sidebar
+    const newButton = screen.getByRole('button', { name: /new/i });
+    fireEvent.click(newButton);
+    expect(screen.getByText(/add content/i)).toBeInTheDocument();
+
+    // Open New collection Modal
+    const newCollectionButton = screen.getAllByRole('button', { name: /collection/i })[4];
+    fireEvent.click(newCollectionButton);
+    const collectionModalHeading = await screen.findByRole('heading', { name: /new collection/i });
+    expect(collectionModalHeading).toBeInTheDocument();
+
+    const nameField = screen.getByRole('textbox', { name: /name your collection/i });
+    fireEvent.focus(nameField);
+    fireEvent.blur(nameField);
+
+    // Click on create with an empty name
+    const createButton = screen.getByRole('button', { name: /create/i });
+    fireEvent.click(createButton);
+
+    expect(await screen.findByText(/collection name is required/i)).toBeInTheDocument();
+  });
+
+  it('should show error on create collection', async () => {
+    await renderLibraryPage();
+    const title = 'This is a Test';
+    const description = 'This is the description of the Test';
+    const url = getLibraryCollectionsApiUrl(mockContentLibrary.libraryId);
+    const { axiosMock } = initializeMocks();
+    axiosMock.onPost(url).reply(500);
+
+    expect(await screen.findByRole('heading')).toBeInTheDocument();
+    expect(screen.queryByText(/add content/i)).not.toBeInTheDocument();
+
+    // Open Add content sidebar
+    const newButton = screen.getByRole('button', { name: /new/i });
+    fireEvent.click(newButton);
+    expect(screen.getByText(/add content/i)).toBeInTheDocument();
+
+    // Open New collection Modal
+    const newCollectionButton = screen.getAllByRole('button', { name: /collection/i })[4];
+    fireEvent.click(newCollectionButton);
+    const collectionModalHeading = await screen.findByRole('heading', { name: /new collection/i });
+    expect(collectionModalHeading).toBeInTheDocument();
+
+    // Create a normal collection
+    const createButton = screen.getByRole('button', { name: /create/i });
+    const nameField = screen.getByRole('textbox', { name: /name your collection/i });
+    const descriptionField = screen.getByRole('textbox', { name: /add a description \(optional\)/i });
+
+    fireEvent.change(nameField, { target: { value: title } });
+    fireEvent.change(descriptionField, { target: { value: description } });
+    fireEvent.click(createButton);
   });
 
   it('shows both components and collections in recently modified section', async () => {
