@@ -51,11 +51,6 @@ const messages = defineMessages({
     defaultMessage: 'Component Preview',
     description: 'Title for preview modal',
   },
-  previewModalCloseButtonTitle: {
-    id: 'course-authoring.library-authoring.component.preview.modal.close.title',
-    defaultMessage: 'Close',
-    description: 'Title for close preview modal button',
-  },
 });
 
 export default messages;

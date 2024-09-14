@@ -25,11 +25,6 @@ const ModalComponentPreview = ({ isOpen, close, usageKey }: ModalComponentPrevie
       title={intl.formatMessage(messages.previewModalTitle)}
       isOpen={isOpen}
       onClose={close}
-      footerNode={(
-        <Button variant="tertiary" onClick={close}>
-          {intl.formatMessage(messages.previewModalCloseButtonTitle)}
-        </Button>
-      )}
       className="component-preview-modal"
     >
       <LibraryBlock usageKey={usageKey} />
