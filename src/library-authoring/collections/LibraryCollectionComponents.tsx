@@ -10,7 +10,10 @@ const LibraryCollectionComponents = ({ libraryId }: { libraryId: string }) => {
   if (componentCount === 0) {
     return isFiltered ?
       <NoSearchResults infoText={messages.noSearchResultsInCollection} />
-      : <NoComponents infoText={messages.noComponentsInCollection} addBtnText={messages.addComponentsInCollection} />;
+      : <NoComponents
+        infoText={messages.noComponentsInCollection}
+        addBtnText={messages.addComponentsInCollection}
+      />;
   }
 
   return (

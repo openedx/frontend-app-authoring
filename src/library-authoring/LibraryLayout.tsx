@@ -13,7 +13,6 @@ import LibraryAuthoringPage from './LibraryAuthoringPage';
 import { LibraryProvider } from './common/context';
 import { CreateCollectionModal } from './create-collection';
 import { invalidateComponentData } from './data/apiHooks';
-import LibraryCollectionPageWrapper from './LibraryCollectionPage';
 import LibraryCollectionPageWrapper from './collections/LibraryCollectionPage';
 
 const LibraryLayout = () => {

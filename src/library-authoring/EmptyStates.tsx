@@ -14,9 +14,11 @@ import { useContentLibrary } from './data/apiHooks';
 export const NoComponents = ({
   infoText = messages.noComponents,
   addBtnText = messages.addComponent,
+  searchType = "component",
 }: {
-  infoText: MessageDescriptor;
-  addBtnText: MessageDescriptor;
+  infoText?: MessageDescriptor;
+  addBtnText?: MessageDescriptor;
+  searchType?: "collection" | "component";
 }) => {
   const { openAddContentSidebar, openCreateCollectionModal } = useContext(LibraryContext);
   const { libraryId } = useParams();
@@ -46,7 +48,7 @@ export const NoComponents = ({
 export const NoSearchResults = ({
   infoText = messages.noSearchResults,
 }: {
-  infoText: MessageDescriptor;
+  infoText?: MessageDescriptor;
 }) => (
   <Stack direction="horizontal" gap={3} className="my-6 justify-content-center">
     <FormattedMessage {...infoText} />

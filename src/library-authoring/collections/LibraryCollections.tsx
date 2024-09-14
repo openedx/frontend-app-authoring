@@ -38,7 +38,11 @@ const LibraryCollections = ({ variant }: LibraryCollectionsProps) => {
   if (totalCollectionHits === 0) {
     return isFiltered ?
       <NoSearchResults infoText={messages.noSearchResultsCollections} />
-      : <NoComponents infoText={messages.noCollections} addBtnText={messages.addCollection} />;
+      : <NoComponents
+        infoText={messages.noCollections}
+        addBtnText={messages.addCollection}
+        searchType="collection"
+      />;
   }
 
   return (

@@ -137,8 +137,8 @@ const LibraryCollectionPage = ({
   ];
 
   return (
-    <div className="d-flex overflow-auto">
-      <div className="flex-grow-1 align-content-center">
+    <div className="d-flex">
+      <div className="flex-grow-1">
         <Header
           number={libraryData.slug}
           title={libraryData.title}
