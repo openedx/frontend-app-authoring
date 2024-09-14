@@ -165,8 +165,23 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.click(screen.getByRole('tab', { name: 'Collections' }));
     expect(screen.getByText('You have not added any collection to this library yet.')).toBeInTheDocument();
 
+    // Open Create collection modal
+    const addCollectionButton = screen.getByRole('button', { name: /add collection/i });
+    fireEvent.click(addCollectionButton);
+    const collectionModalHeading = await screen.findByRole('heading', { name: /new collection/i });
+    expect(collectionModalHeading).toBeInTheDocument();
+
+    // Click on Cancel button
+    const cancelButton = screen.getByRole('button', { name: /cancel/i });
+    fireEvent.click(cancelButton);
+    expect(collectionModalHeading).not.toBeInTheDocument();
+
     fireEvent.click(screen.getByRole('tab', { name: 'Home' }));
     expect(screen.getByText('You have not added any content to this library yet.')).toBeInTheDocument();
+
+    const addComponentButton = screen.getByRole('button', { name: /add component/i });
+    fireEvent.click(addComponentButton);
+    expect(screen.getByText(/add content/i)).toBeInTheDocument();
   });
 
   it('shows the new content button', async () => {
