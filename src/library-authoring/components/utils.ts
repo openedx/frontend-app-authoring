@@ -39,7 +39,8 @@ export function getEditUrl(usageKey: string): string | undefined {
     return undefined;
   }
 
-  const mfeEditorTypes = ['html'];
+  // Which XBlock/component types are supported by the 'editors' built in to this repo?
+  const mfeEditorTypes = ['html', 'problem'];
   if (mfeEditorTypes.includes(blockType)) {
     return `/library/${libraryId}/editor/${blockType}/${usageKey}`;
   }
