@@ -194,19 +194,34 @@ export async function mockLibraryBlockMetadata(usageKey: string): Promise<api.Li
   const thisMock = mockLibraryBlockMetadata;
   switch (usageKey) {
     case thisMock.usageKeyNeverPublished: return thisMock.dataNeverPublished;
+    case thisMock.usageKeyPublished: return thisMock.dataPublished;
     default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
   }
 }
-mockLibraryBlockMetadata.usageKeyNeverPublished = 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd';
+mockLibraryBlockMetadata.usageKeyNeverPublished = 'lb:Axim:TEST1:html:571fe018-f3ce-45c9-8f53-5dafcb422fd1';
 mockLibraryBlockMetadata.dataNeverPublished = {
-  id: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
+  id: 'lb:Axim:TEST1:html:571fe018-f3ce-45c9-8f53-5dafcb422fd1',
   defKey: null,
   blockType: 'html',
-  displayName: 'Introduction to Testing',
+  displayName: 'Introduction to Testing 1',
   lastPublished: null,
   publishedBy: null,
   lastDraftCreated: null,
   lastDraftCreatedBy: null,
+  hasUnpublishedChanges: false,
+  created: '2024-06-20T13:54:21Z',
+  tagsCount: 0,
+} satisfies api.LibraryBlockMetadata;
+mockLibraryBlockMetadata.usageKeyPublished = 'lb:Axim:TEST2:html:571fe018-f3ce-45c9-8f53-5dafcb422fd2';
+mockLibraryBlockMetadata.dataPublished = {
+  id: 'lb:Axim:TEST2:html:571fe018-f3ce-45c9-8f53-5dafcb422fd2',
+  defKey: null,
+  blockType: 'html',
+  displayName: 'Introduction to Testing 2',
+  lastPublished: '2024-06-21T00:00:00',
+  publishedBy: 'Luke',
+  lastDraftCreated: null,
+  lastDraftCreatedBy: '2024-06-20T20:00:00Z',
   hasUnpublishedChanges: false,
   created: '2024-06-20T13:54:21Z',
   tagsCount: 0,
