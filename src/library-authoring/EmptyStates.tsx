@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useCallback } from 'react';
 import { useParams } from 'react-router';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
@@ -15,10 +15,18 @@ type NoSearchResultsProps = {
 };
 
 export const NoComponents = ({ searchType = 'component' }: NoSearchResultsProps) => {
-  const { openAddContentSidebar } = useContext(LibraryContext);
+  const { openAddContentSidebar, openCreateCollectionModal } = useContext(LibraryContext);
   const { libraryId } = useParams();
   const { data: libraryData } = useContentLibrary(libraryId);
   const canEditLibrary = libraryData?.canEditLibrary ?? false;
+
+  const handleOnClickButton = useCallback(() => {
+    if (searchType === 'collection') {
+      openCreateCollectionModal();
+    } else {
+      openAddContentSidebar();
+    }
+  }, [searchType]);
 
   return (
     <Stack direction="horizontal" gap={3} className="mt-6 justify-content-center">
@@ -26,7 +34,7 @@ export const NoComponents = ({ searchType = 'component' }: NoSearchResultsProps)
         ? <FormattedMessage {...messages.noCollections} />
         : <FormattedMessage {...messages.noComponents} />}
       {canEditLibrary && (
-        <Button iconBefore={Add} onClick={() => openAddContentSidebar()}>
+        <Button iconBefore={Add} onClick={handleOnClickButton}>
           {searchType === 'collection'
             ? <FormattedMessage {...messages.addCollection} />
             : <FormattedMessage {...messages.addComponent} />}

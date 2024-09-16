@@ -1,16 +1,25 @@
-/* eslint-disable react/jsx-no-useless-fragment */
+import React from 'react';
 import { Form } from '@openedx/paragon';
 import { getIn, useFormikContext } from 'formik';
-import PropTypes from 'prop-types';
-import React from 'react';
 import FormikErrorFeedback from './FormikErrorFeedback';
 
-const FormikControl = ({
+interface Props {
+  name: string;
+  label?: React.ReactElement;
+  help?: React.ReactElement;
+  className?: string;
+  controlClasses?: string;
+  value: string | number;
+}
+
+const FormikControl: React.FC<Props & React.ComponentProps<typeof Form.Control>> = ({
   name,
-  label,
-  help,
-  className,
-  controlClasses,
+  // eslint-disable-next-line react/jsx-no-useless-fragment
+  label = <></>,
+  // eslint-disable-next-line react/jsx-no-useless-fragment
+  help = <></>,
+  className = '',
+  controlClasses = 'pb-2',
   ...params
 }) => {
   const {
@@ -37,25 +46,6 @@ const FormikControl = ({
       </FormikErrorFeedback>
     </Form.Group>
   );
-};
-
-FormikControl.propTypes = {
-  name: PropTypes.string.isRequired,
-  label: PropTypes.element,
-  help: PropTypes.element,
-  className: PropTypes.string,
-  controlClasses: PropTypes.string,
-  value: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number,
-  ]).isRequired,
-};
-
-FormikControl.defaultProps = {
-  help: <></>,
-  label: <></>,
-  className: '',
-  controlClasses: 'pb-2',
 };
 
 export default FormikControl;

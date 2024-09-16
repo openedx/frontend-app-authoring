@@ -51,6 +51,16 @@ const messages = defineMessages({
     defaultMessage: 'Details',
     description: 'Title for details tab',
   },
+  previewExpandButtonTitle: {
+    id: 'course-authoring.library-authoring.component.preview.expand.title',
+    defaultMessage: 'Expand',
+    description: 'Title for expand preview button',
+  },
+  previewModalTitle: {
+    id: 'course-authoring.library-authoring.component.preview.modal.title',
+    defaultMessage: 'Component Preview',
+    description: 'Title for preview modal',
+  },
 });
 
 export default messages;

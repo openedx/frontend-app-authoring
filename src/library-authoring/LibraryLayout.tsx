@@ -11,6 +11,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import EditorContainer from '../editors/EditorContainer';
 import LibraryAuthoringPage from './LibraryAuthoringPage';
 import { LibraryProvider } from './common/context';
+import { CreateCollectionModal } from './create-collection';
 import { invalidateComponentData } from './data/apiHooks';
 
 const LibraryLayout = () => {
@@ -49,6 +50,7 @@ const LibraryLayout = () => {
           element={<LibraryAuthoringPage />}
         />
       </Routes>
+      <CreateCollectionModal />
     </LibraryProvider>
   );
 };

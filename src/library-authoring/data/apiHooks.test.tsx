@@ -5,8 +5,13 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { renderHook } from '@testing-library/react-hooks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MockAdapter from 'axios-mock-adapter';
-import { getCommitLibraryChangesUrl, getCreateLibraryBlockUrl } from './api';
-import { useCommitLibraryChanges, useCreateLibraryBlock, useRevertLibraryChanges } from './apiHooks';
+import { getCommitLibraryChangesUrl, getCreateLibraryBlockUrl, getLibraryCollectionsApiUrl } from './api';
+import {
+  useCommitLibraryChanges,
+  useCreateLibraryBlock,
+  useCreateLibraryCollection,
+  useRevertLibraryChanges,
+} from './apiHooks';
 
 let axiosMock;
 
@@ -69,5 +74,19 @@ describe('library api hooks', () => {
     await result.current.mutateAsync(libraryId);
 
     expect(axiosMock.history.delete[0].url).toEqual(url);
+  });
+
+  it('should create collection', async () => {
+    const libraryId = 'lib:org:1';
+    const url = getLibraryCollectionsApiUrl(libraryId);
+    axiosMock.onPost(url).reply(200);
+
+    const { result } = renderHook(() => useCreateLibraryCollection(libraryId), { wrapper });
+    await result.current.mutateAsync({
+      title: 'This is a test',
+      description: 'This is only a test',
+    });
+
+    expect(axiosMock.history.post[0].url).toEqual(url);
   });
 });
