@@ -40,11 +40,35 @@ export const returnUrl = createSelector(
   ),
 );
 
+export const isLibrary = createSelector(
+  [
+    module.simpleSelectors.learningContextId,
+    module.simpleSelectors.blockId,
+  ],
+  (learningContextId, blockId) => {
+    if (learningContextId && learningContextId.startsWith('library-v1')) {
+      return true;
+    }
+    if (blockId && blockId.startsWith('lb:')) {
+      return true;
+    }
+    return false;
+  },
+);
+
 export const isInitialized = createSelector(
   [
+    module.simpleSelectors.unitUrl,
     module.simpleSelectors.blockValue,
+    module.isLibrary,
   ],
-  (blockValue) => !!(blockValue),
+  (unitUrl, blockValue, isLibraryBlock) => {
+    if (isLibraryBlock) {
+      return !!blockValue;
+    }
+
+    return !!blockValue && !!unitUrl;
+  },
 );
 
 export const displayTitle = createSelector(
@@ -74,22 +98,6 @@ export const analytics = createSelector(
   (blockId, blockType, learningContextId) => (
     { blockId, blockType, learningContextId }
   ),
-);
-
-export const isLibrary = createSelector(
-  [
-    module.simpleSelectors.learningContextId,
-    module.simpleSelectors.blockId,
-  ],
-  (learningContextId, blockId) => {
-    if (learningContextId && learningContextId.startsWith('library-v1')) {
-      return true;
-    }
-    if (blockId && blockId.startsWith('lb:')) {
-      return true;
-    }
-    return false;
-  },
 );
 
 export default {
