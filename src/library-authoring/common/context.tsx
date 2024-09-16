@@ -40,7 +40,6 @@ export const LibraryProvider = (props: { children?: React.ReactNode }) => {
   const [sidebarBodyComponent, setSidebarBodyComponent] = React.useState<SidebarBodyComponentId | null>(null);
   const [currentComponentUsageKey, setCurrentComponentUsageKey] = React.useState<string>();
   const [isCreateCollectionModalOpen, openCreateCollectionModal, closeCreateCollectionModal] = useToggle(false);
-  const [currentComponentKey, setCurrentComponentKey] = React.useState<string>();
 
   const closeLibrarySidebar = React.useCallback(() => {
     setSidebarBodyComponent(null);
@@ -62,7 +61,7 @@ export const LibraryProvider = (props: { children?: React.ReactNode }) => {
     [],
   );
   const openCollectionInfoSidebar = React.useCallback(() => {
-    setCurrentComponentKey(undefined);
+    setCurrentComponentUsageKey(undefined);
     setSidebarBodyComponent(SidebarBodyComponentId.CollectionInfo);
   }, []);
 

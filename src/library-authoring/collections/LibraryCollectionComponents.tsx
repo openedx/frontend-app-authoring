@@ -1,11 +1,14 @@
+import { useContext } from 'react';
 import { Stack } from '@openedx/paragon';
 import { NoComponents, NoSearchResults } from '../EmptyStates';
 import { useSearchContext } from '../../search-manager';
 import { LibraryComponents } from '../components';
 import messages from './messages';
+import { LibraryContext } from '../common/context';
 
 const LibraryCollectionComponents = ({ libraryId }: { libraryId: string }) => {
   const { totalHits: componentCount, isFiltered } = useSearchContext();
+  const { openAddContentSidebar } = useContext(LibraryContext);
 
   if (componentCount === 0) {
     return isFiltered ?
@@ -13,6 +16,7 @@ const LibraryCollectionComponents = ({ libraryId }: { libraryId: string }) => {
       : <NoComponents
         infoText={messages.noComponentsInCollection}
         addBtnText={messages.addComponentsInCollection}
+        handleBtnClick={openAddContentSidebar}
       />;
   }
 

@@ -1,9 +1,12 @@
+import { useContext } from 'react';
+
 import { useLoadOnScroll } from '../../hooks';
 import { useSearchContext } from '../../search-manager';
 import { NoComponents, NoSearchResults } from '../EmptyStates';
 import CollectionCard from '../components/CollectionCard';
 import { LIBRARY_SECTION_PREVIEW_LIMIT } from '../components/LibrarySection';
 import messages from '../messages';
+import { LibraryContext } from '../common/context';
 
 type LibraryCollectionsProps = {
   variant: 'full' | 'preview',
@@ -26,6 +29,8 @@ const LibraryCollections = ({ variant }: LibraryCollectionsProps) => {
     isFiltered,
   } = useSearchContext();
 
+  const { openCreateCollectionModal } = useContext(LibraryContext);
+
   const collectionList = variant === 'preview' ? collectionHits.slice(0, LIBRARY_SECTION_PREVIEW_LIMIT) : collectionHits;
 
   useLoadOnScroll(
@@ -35,13 +40,13 @@ const LibraryCollections = ({ variant }: LibraryCollectionsProps) => {
     variant === 'full',
   );
 
-  if (totalCollectionHits === 0) {
+  if (totalCollectionHits === 1) {
     return isFiltered ?
       <NoSearchResults infoText={messages.noSearchResultsCollections} />
       : <NoComponents
         infoText={messages.noCollections}
         addBtnText={messages.addCollection}
-        searchType="collection"
+        handleBtnClick={openCreateCollectionModal}
       />;
   }
 
