@@ -1,3 +1,4 @@
+import type { AxiosRequestConfig } from 'axios';
 import { camelizeKeys } from '../../../utils';
 import * as urls from './urls';
 import { get, post, deleteObject } from './utils';
@@ -9,7 +10,7 @@ import * as module from './api';
 import * as mockApi from './mockApi';
 import { durationStringFromValue } from '../../../containers/VideoEditor/components/VideoSettingsModal/components/DurationWidget/hooks';
 
-const fetchByUnitIdOptions = {};
+const fetchByUnitIdOptions: AxiosRequestConfig = {};
 
 // For some reason, the local webpack-dev-server of library-authoring does not accept the normal Accept header.
 // This is a workaround only for that specific case; the idea is to only do this locally and only for library-authoring.
@@ -17,6 +18,18 @@ if (process.env.NODE_ENV === 'development' && process.env.MFE_NAME === 'frontend
   fetchByUnitIdOptions.headers = {
     Accept: '*/*',
   };
+}
+
+interface Pagination {
+  start: number;
+  end: number;
+  page: number;
+  pageSize: number;
+  totalCount: number;
+}
+
+interface AssetResponse {
+  assets: Record<string, string>[]; // In the raw response here, these are NOT camel-cased yet.
 }
 
 export const apiMethods = {
@@ -30,7 +43,19 @@ export const apiMethods = {
   fetchStudioView: ({ blockId, studioEndpointUrl }) => get(
     urls.blockStudioView({ studioEndpointUrl, blockId }),
   ),
-  fetchImages: ({ learningContextId, studioEndpointUrl, pageNumber }) => {
+  fetchImages: ({
+    learningContextId,
+    studioEndpointUrl,
+    pageNumber,
+  }): Promise<{ data: AssetResponse & Pagination }> => {
+    if (learningContextId.startsWith('lib:')) {
+      // V2 content libraries don't support static assets yet:
+      return Promise.resolve({
+        data: {
+          assets: [], start: 0, end: 0, page: 0, pageSize: 50, totalCount: 0,
+        },
+      });
+    }
     const params = {
       asset_type: 'Images',
       page: pageNumber,
@@ -254,8 +279,8 @@ export const processVideoIds = ({
   videoUrl,
   fallbackVideos,
 }) => {
-  let youtubeId = '';
-  const html5Sources = [];
+  let youtubeId: string | null = '';
+  const html5Sources: string[] = [];
 
   if (videoUrl) {
     if (module.parseYoutubeId(videoUrl)) {
@@ -276,7 +301,7 @@ export const processVideoIds = ({
   };
 };
 
-export const isEdxVideo = (src) => {
+export const isEdxVideo = (src: string): boolean => {
   const uuid4Regex = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/;
   if (src && src.match(uuid4Regex)) {
     return true;
@@ -284,12 +309,13 @@ export const isEdxVideo = (src) => {
   return false;
 };
 
-export const parseYoutubeId = (src) => {
+export const parseYoutubeId = (src: string): string | null => {
   const youtubeRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/;
-  if (!src.match(youtubeRegex)) {
+  const match = src.match(youtubeRegex);
+  if (!match) {
     return null;
   }
-  return src.match(youtubeRegex)[5];
+  return match[5];
 };
 
 export const processLicense = (licenseType, licenseDetails) => {
@@ -317,4 +343,4 @@ export const checkMockApi = (key) => {
 export default Object.keys(apiMethods).reduce(
   (obj, key) => ({ ...obj, [key]: checkMockApi(key) }),
   {},
-);
+) as typeof apiMethods;

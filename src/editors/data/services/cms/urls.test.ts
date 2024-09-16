@@ -44,7 +44,9 @@ describe('cms url methods', () => {
       },
     };
     it('returns the library page when given the v1 library', () => {
-      expect(returnUrl({ studioEndpointUrl, unitUrl, learningContextId: libraryLearningContextId }))
+      expect(returnUrl({
+        studioEndpointUrl, unitUrl, learningContextId: libraryLearningContextId, blockId: libraryV1Id,
+      }))
         .toEqual(`${studioEndpointUrl}/library/${libraryLearningContextId}`);
     });
     // it('throws error when given the v2 library', () => {
@@ -52,8 +54,9 @@ describe('cms url methods', () => {
     //     .toThrow('Return url not available (or needed) for V2 libraries');
     // });
     it('returns empty url when given the v2 library', () => {
-      expect(returnUrl({ studioEndpointUrl, unitUrl, learningContextId: libraryV2Id }))
-        .toEqual('');
+      expect(returnUrl({
+        studioEndpointUrl, unitUrl, learningContextId: libraryV2Id, blockId: libraryV2Id,
+      })).toEqual('');
     });
     it('returnUrl function should return url with studioEndpointUrl, unitUrl, and blockId', () => {
       expect(returnUrl({
@@ -68,7 +71,9 @@ describe('cms url methods', () => {
         .toEqual('');
     });
     it('throws error if no unit url', () => {
-      expect(returnUrl({ studioEndpointUrl, unitUrl: null, learningContextId: courseId }))
+      expect(returnUrl({
+        studioEndpointUrl, unitUrl: null, learningContextId: courseId, blockId,
+      }))
         .toEqual('');
     });
     it('returns the library page when given the library', () => {
