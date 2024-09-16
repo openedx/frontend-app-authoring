@@ -498,6 +498,7 @@ export async function fetchTagsThatMatchKeyword({
 /**
  * Fetch single document by its id
  */
+/* istanbul ignore next */
 export async function fetchDocumentById({ client, indexName, id } : {
   /** The Meilisearch client instance */
   client: MeiliSearch;

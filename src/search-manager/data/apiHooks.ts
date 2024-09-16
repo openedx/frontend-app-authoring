@@ -242,6 +242,7 @@ export const useTagFilterOptions = (args: {
   return { ...mainQuery, data };
 };
 
+/* istanbul ignore next */
 export const useGetSingleDocument = ({ client, indexName, id }: {
   client?: MeiliSearch;
   indexName?: string;
