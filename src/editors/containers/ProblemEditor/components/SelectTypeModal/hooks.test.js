@@ -1,11 +1,6 @@
 /* eslint-disable prefer-destructuring */
 import React from 'react';
-import { MockUseState } from '../../../../testUtils';
-// This 'module' self-import hack enables mocking during tests.
-// See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
-// should be re-thought and cleaned up to avoid this pattern.
-// eslint-disable-next-line import/no-self-import
-import * as module from './hooks';
+import * as hooks from './hooks';
 import { AdvanceProblems, ProblemTypeKeys, ProblemTypes } from '../../../../data/constants/problem';
 import { getDataFromOlx } from '../../../../data/redux/thunkActions/problem';
 
@@ -15,7 +10,6 @@ jest.mock('react', () => ({
   useEffect: jest.fn(),
 }));
 
-const state = new MockUseState(module);
 const mockUpdateField = jest.fn().mockName('updateField');
 const mockSelected = 'multiplechoiceresponse';
 const mockAdvancedSelected = 'circuitschematic';
@@ -28,35 +22,14 @@ const mockDefaultSettings = {
   showanswer: 'always',
 };
 
-let hook;
-
 describe('SelectTypeModal hooks', () => {
-  beforeEach(() => {
-    state.mock();
-  });
   afterEach(() => {
-    state.restore();
     jest.clearAllMocks();
-  });
-
-  describe('selectHooks', () => {
-    beforeEach(() => {
-      hook = module.selectHooks();
-    });
-    test('selected defaults to SINGLESELECT', () => {
-      expect(hook.selected).toEqual(ProblemTypeKeys.SINGLESELECT);
-    });
-    test('setSelected sets state as expected', () => {
-      const expectedArg = 'neWvAl';
-      state.mockVal(state.keys.selected, 'mOcKvAl');
-      hook.setSelected(expectedArg);
-      expect(state.setState.selected).toHaveBeenCalledWith(expectedArg);
-    });
   });
 
   describe('onSelect', () => {
     test('updateField is called with selected templated if selected is an Advanced Problem', () => {
-      module.onSelect({
+      hooks.onSelect({
         selected: mockAdvancedSelected,
         updateField: mockUpdateField,
         setBlockTitle: mocksetBlockTitle,
@@ -68,7 +41,7 @@ describe('SelectTypeModal hooks', () => {
       expect(mocksetBlockTitle).toHaveBeenCalledWith(AdvanceProblems[mockAdvancedSelected].title);
     });
     test('updateField is called with selected on visual propblems', () => {
-      module.onSelect({
+      hooks.onSelect({
         selected: mockSelected,
         updateField: mockUpdateField,
         setBlockTitle: mocksetBlockTitle,
@@ -106,7 +79,7 @@ describe('SelectTypeModal hooks', () => {
 
     describe('SINGLESELECT', () => {
       beforeEach(() => {
-        module.useArrowNav(ProblemTypeKeys.SINGLESELECT, mockSetSelected);
+        hooks.useArrowNav(ProblemTypeKeys.SINGLESELECT, mockSetSelected);
         [cb, prereqs] = React.useEffect.mock.calls[0];
         cb();
       });
@@ -125,7 +98,7 @@ describe('SelectTypeModal hooks', () => {
     });
     describe('MULTISELECT', () => {
       beforeEach(() => {
-        module.useArrowNav(ProblemTypeKeys.MULTISELECT, mockSetSelected);
+        hooks.useArrowNav(ProblemTypeKeys.MULTISELECT, mockSetSelected);
         [cb, prereqs] = React.useEffect.mock.calls[0];
         cb();
       });
@@ -144,7 +117,7 @@ describe('SelectTypeModal hooks', () => {
     });
     describe('DROPDOWN', () => {
       beforeEach(() => {
-        module.useArrowNav(ProblemTypeKeys.DROPDOWN, mockSetSelected);
+        hooks.useArrowNav(ProblemTypeKeys.DROPDOWN, mockSetSelected);
         [cb, prereqs] = React.useEffect.mock.calls[0];
         cb();
       });
@@ -163,7 +136,7 @@ describe('SelectTypeModal hooks', () => {
     });
     describe('NUMERIC', () => {
       beforeEach(() => {
-        module.useArrowNav(ProblemTypeKeys.NUMERIC, mockSetSelected);
+        hooks.useArrowNav(ProblemTypeKeys.NUMERIC, mockSetSelected);
         [cb, prereqs] = React.useEffect.mock.calls[0];
         cb();
       });
@@ -182,7 +155,7 @@ describe('SelectTypeModal hooks', () => {
     });
     describe('TEXTINPUT', () => {
       beforeEach(() => {
-        module.useArrowNav(ProblemTypeKeys.TEXTINPUT, mockSetSelected);
+        hooks.useArrowNav(ProblemTypeKeys.TEXTINPUT, mockSetSelected);
         [cb, prereqs] = React.useEffect.mock.calls[0];
         cb();
       });

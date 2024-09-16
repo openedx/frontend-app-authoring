@@ -4,12 +4,18 @@ import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
 // SelectableBox in paragon has a bug where you can't change selection. So we override it
 import SelectableBox from '../../../../../sharedComponents/SelectableBox';
-import { ProblemTypes, ProblemTypeKeys, AdvanceProblemKeys } from '../../../../../data/constants/problem';
+import {
+  ProblemTypes,
+  ProblemTypeKeys,
+  AdvanceProblemKeys,
+  AdvancedProblemType,
+  ProblemType,
+} from '../../../../../data/constants/problem';
 import messages from './messages';
 
 interface Props {
   selected: string;
-  setSelected: (selected: string) => void;
+  setSelected: (selected: ProblemType | AdvancedProblemType) => void;
 }
 
 const ProblemTypeSelect: React.FC<Props> = ({
@@ -18,7 +24,7 @@ const ProblemTypeSelect: React.FC<Props> = ({
 }) => {
   const handleChange = e => setSelected(e.target.value);
   const handleClick = () => setSelected(AdvanceProblemKeys.BLANK);
-  const settings = { 'aria-label': 'checkbox', type: 'radio' };
+  const settings = { type: 'radio' };
 
   return (
     <Container style={{ width: '494px', height: '400px' }}>
