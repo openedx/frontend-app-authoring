@@ -62,7 +62,11 @@ export const libraryAuthoringQueryKeys = {
     'content',
     'libraryBlockTypes',
   ],
-  collection: (collectionId?: string) => [...libraryAuthoringQueryKeys.all, collectionId],
+  collection: (libraryId?: string, collectionId?: string) => [
+    ...libraryAuthoringQueryKeys.all,
+    libraryId,
+    collectionId,
+  ],
 };
 
 export const xblockQueryKeys = {
@@ -278,7 +282,7 @@ export const useXBlockOLX = (usageKey: string) => (
  */
 export const useCollection = (libraryId: string | undefined, collectionId: string | undefined) => (
   useQuery({
-    queryKey: libraryAuthoringQueryKeys.contentLibrary(collectionId),
+    queryKey: libraryAuthoringQueryKeys.collection(libraryId, collectionId),
     queryFn: () => getCollection(libraryId!, collectionId!),
     enabled: collectionId !== undefined && libraryId !== undefined,
   })
