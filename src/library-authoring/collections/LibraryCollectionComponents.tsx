@@ -11,13 +11,15 @@ const LibraryCollectionComponents = ({ libraryId }: { libraryId: string }) => {
   const { openAddContentSidebar } = useContext(LibraryContext);
 
   if (componentCount === 0) {
-    return isFiltered ?
-      <NoSearchResults infoText={messages.noSearchResultsInCollection} />
-      : <NoComponents
-        infoText={messages.noComponentsInCollection}
-        addBtnText={messages.addComponentsInCollection}
-        handleBtnClick={openAddContentSidebar}
-      />;
+    return isFiltered
+      ? <NoSearchResults infoText={messages.noSearchResultsInCollection} />
+      : (
+        <NoComponents
+          infoText={messages.noComponentsInCollection}
+          addBtnText={messages.addComponentsInCollection}
+          handleBtnClick={openAddContentSidebar}
+        />
+      );
   }
 
   return (

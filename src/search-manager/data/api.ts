@@ -269,14 +269,17 @@ export async function fetchSearchResults({
   }
 
   const { results } = await client.multiSearch(({ queries }));
+  const componentHitLength = results[0].hits.length;
+  const collectionHitLength = fetchCollections ? results[2].hits.length : 0;
   return {
     hits: results[0].hits.map(formatSearchHit) as ContentHit[],
-    totalHits: results[0].totalHits ?? results[0].estimatedTotalHits ?? results[0].hits.length,
+    totalHits: results[0].totalHits ?? results[0].estimatedTotalHits ?? componentHitLength,
     blockTypes: results[1].facetDistribution?.block_type ?? {},
     problemTypes: results[1].facetDistribution?.['content.problem_types'] ?? {},
-    nextOffset: results[0].hits.length === limit || (fetchCollections && results[2].hits.length === limit) ? offset + limit : undefined,
+    nextOffset: componentHitLength === limit || collectionHitLength === limit ? offset + limit : undefined,
     collectionHits: fetchCollections ? results[2].hits.map(formatSearchHit) as CollectionHit[] : [],
-    totalCollectionHits: fetchCollections ? results[2].totalHits ?? results[2].estimatedTotalHits ?? results[2].hits.length: 0,
+    totalCollectionHits: fetchCollections
+      ? results[2].totalHits ?? results[2].estimatedTotalHits ?? collectionHitLength : 0,
   };
 }
 

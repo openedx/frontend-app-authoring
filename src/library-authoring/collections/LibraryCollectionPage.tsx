@@ -131,7 +131,7 @@ const LibraryCollectionPage = () => {
     // Adding empty breadcrumb to add the last `>` spacer.
     {
       label: '',
-      to: ``,
+      to: '',
     },
   ];
 
@@ -151,11 +151,13 @@ const LibraryCollectionPage = () => {
             fetchCollections={false}
           >
             <SubHeader
-              title={<SubHeaderTitle
-                title={collectionData.title}
-                canEditLibrary={libraryData.canEditLibrary}
-                infoClickHandler={openCollectionInfoSidebar}
-              />}
+              title={(
+                <SubHeaderTitle
+                  title={collectionData.title}
+                  canEditLibrary={libraryData.canEditLibrary}
+                  infoClickHandler={openCollectionInfoSidebar}
+                />
+)}
               breadcrumbs={(
                 <Breadcrumb
                   ariaLabel={intl.formatMessage(messages.breadcrumbsAriaLabel)}

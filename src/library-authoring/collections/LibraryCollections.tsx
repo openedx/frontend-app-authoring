@@ -40,7 +40,7 @@ const LibraryCollections = ({ variant }: LibraryCollectionsProps) => {
     variant === 'full',
   );
 
-  if (totalCollectionHits === 1) {
+  if (totalCollectionHits === 0) {
     return isFiltered ?
       <NoSearchResults infoText={messages.noSearchResultsCollections} />
       : <NoComponents

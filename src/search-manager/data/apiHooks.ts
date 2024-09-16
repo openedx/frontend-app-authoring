@@ -262,4 +262,4 @@ export const useGetSingleDocument = ({ client, indexName, id }: {
       return fetchDocumentById({ client, indexName, id });
     },
   })
-)
+);

@@ -320,4 +320,3 @@ export async function getCollection(libraryId: string, collectionId: string): Pr
   const { data } = await getAuthenticatedHttpClient().get(getLibraryCollectionApiUrl(libraryId, collectionId));
   return camelCaseObject(data);
 }
-

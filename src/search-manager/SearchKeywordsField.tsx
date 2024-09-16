@@ -23,7 +23,7 @@ const SearchKeywordsField: React.FC<{ className?: string, placeholder?: string }
       <SearchField.Input
         autoFocus
         placeholder={props.placeholder ? props.placeholder : intl.formatMessage(
-          messages.inputPlaceholder
+          messages.inputPlaceholder,
         )}
       />
       <SearchField.ClearButton />
