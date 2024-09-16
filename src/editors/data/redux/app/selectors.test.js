@@ -78,21 +78,40 @@ describe('app selectors unit tests', () => {
     });
   });
   describe('isInitialized selector', () => {
-    it('is memoized based on editorInitialized and blockValue', () => {
+    it('is memoized based on editorInitialized, unitUrl, isLibrary and blockValue', () => {
       expect(selectors.isInitialized.preSelectors).toEqual([
+        simpleSelectors.unitUrl,
         simpleSelectors.blockValue,
+        selectors.isLibrary,
       ]);
     });
-    it('returns true iff blockValue and editorInitialized are truthy', () => {
-      const { cb } = selectors.isInitialized;
-      const truthy = {
-        blockValue: { block: 'value' },
-      };
+    describe('for library blocks', () => {
+      it('returns true if blockValue, and editorInitialized are truthy', () => {
+        const { cb } = selectors.isInitialized;
+        const truthy = {
+          blockValue: { block: 'value' },
+        };
 
-      [
-        [[truthy.blockValue], true],
-        [[null], false],
-      ].map(([args, expected]) => expect(cb(...args)).toEqual(expected));
+        [
+          [[null, truthy.blockValue, true], true],
+          [[null, null, true], false],
+        ].map(([args, expected]) => expect(cb(...args)).toEqual(expected));
+      });
+    });
+    describe('for course blocks', () => {
+      it('returns true if blockValue, unitUrl, and editorInitialized are truthy', () => {
+        const { cb } = selectors.isInitialized;
+        const truthy = {
+          blockValue: { block: 'value' },
+          unitUrl: { url: 'data' },
+        };
+
+        [
+          [[null, truthy.blockValue, false], false],
+          [[truthy.unitUrl, null, false], false],
+          [[truthy.unitUrl, truthy.blockValue, false], true],
+        ].map(([args, expected]) => expect(cb(...args)).toEqual(expected));
+      });
     });
   });
   describe('displayTitle', () => {
