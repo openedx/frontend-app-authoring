@@ -21,6 +21,7 @@ import {
   revertLibraryChanges,
   updateLibraryMetadata,
   libraryPasteClipboard,
+  getLibraryBlockMetadata,
   getXBlockFields,
   updateXBlockFields,
   createCollection,
@@ -72,6 +73,7 @@ export const xblockQueryKeys = {
   xblockFields: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'fields'],
   /** OLX (XML representation of the fields/content) */
   xblockOLX: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'OLX'],
+  componentMetadata: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'componentMetadata'],
 };
 
 /**
@@ -196,6 +198,13 @@ export const useLibraryPasteClipboard = () => {
     },
   });
 };
+
+export const useLibraryBlockMetadata = (usageId: string) => (
+  useQuery({
+    queryKey: xblockQueryKeys.componentMetadata(usageId),
+    queryFn: () => getLibraryBlockMetadata(usageId),
+  })
+);
 
 export const useXBlockFields = (usageKey: string) => (
   useQuery({

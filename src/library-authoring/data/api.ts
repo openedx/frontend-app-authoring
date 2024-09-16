@@ -18,6 +18,14 @@ export const getLibraryBlockTypesUrl = (libraryId: string) => `${getApiBaseUrl()
  */
 export const getCreateLibraryBlockUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/blocks/`;
 
+/**
+ * Get the URL for library block metadata.
+ */
+export const getLibraryBlockMetadataUrl = (usageKey: string) => `${getApiBaseUrl()}/api/libraries/v2/blocks/${usageKey}/`;
+
+/**
+ * Get the URL for content library list API.
+ */
 export const getContentLibraryV2ListApiUrl = () => `${getApiBaseUrl()}/api/libraries/v2/`;
 
 /**
@@ -110,12 +118,17 @@ export interface CreateBlockDataRequest {
   definitionId: string;
 }
 
-export interface CreateBlockDataResponse {
+export interface LibraryBlockMetadata {
   id: string;
   blockType: string;
   defKey: string | null;
   displayName: string;
+  lastPublished: string | null;
+  publishedBy: string | null,
+  lastDraftCreated: string | null,
+  lastDraftCreatedBy: string | null,
   hasUnpublishedChanges: boolean;
+  created: string | null,
   tagsCount: number;
 }
 
@@ -166,7 +179,7 @@ export async function createLibraryBlock({
   libraryId,
   blockType,
   definitionId,
-}: CreateBlockDataRequest): Promise<CreateBlockDataResponse> {
+}: CreateBlockDataRequest): Promise<LibraryBlockMetadata> {
   const client = getAuthenticatedHttpClient();
   const { data } = await client.post(
     getCreateLibraryBlockUrl(libraryId),
@@ -229,7 +242,7 @@ export async function revertLibraryChanges(libraryId: string) {
 export async function libraryPasteClipboard({
   libraryId,
   blockId,
-}: LibraryPasteClipboardRequest): Promise<CreateBlockDataResponse> {
+}: LibraryPasteClipboardRequest): Promise<LibraryBlockMetadata> {
   const client = getAuthenticatedHttpClient();
   const { data } = await client.post(
     getLibraryPasteClipboardUrl(libraryId),
@@ -238,6 +251,14 @@ export async function libraryPasteClipboard({
     },
   );
   return data;
+}
+
+/**
+ * Fetch library block metadata.
+ */
+export async function getLibraryBlockMetadata(usageKey: string): Promise<LibraryBlockMetadata> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockMetadataUrl(usageKey));
+  return camelCaseObject(data);
 }
 
 /**

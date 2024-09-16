@@ -1,4 +1,3 @@
-import React from 'react';
 import MockAdapter from 'axios-mock-adapter';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';

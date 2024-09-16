@@ -126,16 +126,26 @@ mockCreateLibraryBlock.newHtmlData = {
   blockType: 'html',
   displayName: 'New Text Component',
   hasUnpublishedChanges: true,
+  lastPublished: null, // or e.g. '2024-08-30T16:37:42Z',
+  publishedBy: null, // or e.g. 'test_author',
+  lastDraftCreated: '2024-07-22T21:37:49Z',
+  lastDraftCreatedBy: null,
+  created: '2024-07-22T21:37:49Z',
   tagsCount: 0,
-} satisfies api.CreateBlockDataResponse;
+} satisfies api.LibraryBlockMetadata;
 mockCreateLibraryBlock.newProblemData = {
   id: 'lb:Axim:TEST:problem:prob1',
   defKey: 'prob1',
   blockType: 'problem',
   displayName: 'New Problem',
   hasUnpublishedChanges: true,
+  lastPublished: null, // or e.g. '2024-08-30T16:37:42Z',
+  publishedBy: null, // or e.g. 'test_author',
+  lastDraftCreated: '2024-07-22T21:37:49Z',
+  lastDraftCreatedBy: null,
+  created: '2024-07-22T21:37:49Z',
   tagsCount: 0,
-} satisfies api.CreateBlockDataResponse;
+} satisfies api.LibraryBlockMetadata;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockCreateLibraryBlock.applyMock = () => (
   jest.spyOn(api, 'createLibraryBlock').mockImplementation(mockCreateLibraryBlock)
@@ -172,3 +182,49 @@ mockXBlockFields.dataNewHtml = {
 } satisfies api.XBlockFields;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockXBlockFields.applyMock = () => jest.spyOn(api, 'getXBlockFields').mockImplementation(mockXBlockFields);
+
+/**
+ * Mock for `getLibraryBlockMetadata()`
+ *
+ * This mock returns different data/responses depending on the ID of the block
+ * that you request. Use `mockLibraryBlockMetadata.applyMock()` to apply it to the whole
+ * test suite.
+ */
+export async function mockLibraryBlockMetadata(usageKey: string): Promise<api.LibraryBlockMetadata> {
+  const thisMock = mockLibraryBlockMetadata;
+  switch (usageKey) {
+    case thisMock.usageKeyNeverPublished: return thisMock.dataNeverPublished;
+    case thisMock.usageKeyPublished: return thisMock.dataPublished;
+    default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
+  }
+}
+mockLibraryBlockMetadata.usageKeyNeverPublished = 'lb:Axim:TEST1:html:571fe018-f3ce-45c9-8f53-5dafcb422fd1';
+mockLibraryBlockMetadata.dataNeverPublished = {
+  id: 'lb:Axim:TEST1:html:571fe018-f3ce-45c9-8f53-5dafcb422fd1',
+  defKey: null,
+  blockType: 'html',
+  displayName: 'Introduction to Testing 1',
+  lastPublished: null,
+  publishedBy: null,
+  lastDraftCreated: null,
+  lastDraftCreatedBy: null,
+  hasUnpublishedChanges: false,
+  created: '2024-06-20T13:54:21Z',
+  tagsCount: 0,
+} satisfies api.LibraryBlockMetadata;
+mockLibraryBlockMetadata.usageKeyPublished = 'lb:Axim:TEST2:html:571fe018-f3ce-45c9-8f53-5dafcb422fd2';
+mockLibraryBlockMetadata.dataPublished = {
+  id: 'lb:Axim:TEST2:html:571fe018-f3ce-45c9-8f53-5dafcb422fd2',
+  defKey: null,
+  blockType: 'html',
+  displayName: 'Introduction to Testing 2',
+  lastPublished: '2024-06-21T00:00:00',
+  publishedBy: 'Luke',
+  lastDraftCreated: null,
+  lastDraftCreatedBy: '2024-06-20T20:00:00Z',
+  hasUnpublishedChanges: false,
+  created: '2024-06-20T13:54:21Z',
+  tagsCount: 0,
+} satisfies api.LibraryBlockMetadata;
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockLibraryBlockMetadata.applyMock = () => jest.spyOn(api, 'getLibraryBlockMetadata').mockImplementation(mockLibraryBlockMetadata);

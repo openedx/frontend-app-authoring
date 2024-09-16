@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 import { getEditUrl } from '../components/utils';
 import { ComponentMenu } from '../components';
 import { ComponentDeveloperInfo } from './ComponentDeveloperInfo';
+import ComponentManagement from './ComponentManagement';
 import ComponentPreview from './ComponentPreview';
 import messages from './messages';
 
@@ -46,7 +47,7 @@ const ComponentInfo = ({ usageKey }: ComponentInfoProps) => {
           <ComponentPreview usageKey={usageKey} />
         </Tab>
         <Tab eventKey="manage" title={intl.formatMessage(messages.manageTabTitle)}>
-          Manage tab placeholder
+          <ComponentManagement usageKey={usageKey} />
         </Tab>
         <Tab eventKey="details" title={intl.formatMessage(messages.detailsTabTitle)}>
           Details tab placeholder
