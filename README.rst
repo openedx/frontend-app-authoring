@@ -1,5 +1,5 @@
-frontend-app-course-authoring
-#############################
+frontend-app-authoring
+######################
 
 |license-badge| |status-badge| |codecov-badge|
 
@@ -7,9 +7,9 @@ frontend-app-course-authoring
 Purpose
 *******
 
-This is the Course Authoring micro-frontend, currently under development by `2U <https://2u.com>`_.
+This implements most of the frontend for **Open edX Studio**, allowing authors to create and edit courses, libraries, and their learning components.
 
-Its purpose is to provide both a framework and UI for new or replacement React-based authoring features outside ``edx-platform``.  You can find the current set described below.
+A few parts of Studio still default to the `"legacy" pages defined in edx-platform <https://github.com/openedx/edx-platform/tree/master/cms>`_, but those are rapidly being deprecated and replaced with the React- and Paragon-based pages defined here.
 
 
 Getting Started
