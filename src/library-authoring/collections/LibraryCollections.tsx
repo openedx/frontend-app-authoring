@@ -5,7 +5,7 @@ import { useSearchContext } from '../../search-manager';
 import { NoComponents, NoSearchResults } from '../EmptyStates';
 import CollectionCard from '../components/CollectionCard';
 import { LIBRARY_SECTION_PREVIEW_LIMIT } from '../components/LibrarySection';
-import messages from '../messages';
+import messages from './messages';
 import { LibraryContext } from '../common/context';
 
 type LibraryCollectionsProps = {

@@ -8,7 +8,6 @@ import {
   Container,
   Icon,
   IconButton,
-  Row,
   Stack,
 } from '@openedx/paragon';
 import { Add, InfoOutline } from '@openedx/paragon/icons';
@@ -28,7 +27,7 @@ import {
 } from '../../search-manager';
 import { useCollection, useContentLibrary } from '../data/apiHooks';
 import { LibraryContext } from '../common/context';
-import messages from '../messages';
+import messages from './messages';
 import { LibrarySidebar } from '../library-sidebar';
 import LibraryCollectionComponents from './LibraryCollectionComponents';
 
@@ -91,13 +90,13 @@ const SubHeaderTitle = ({
   );
 };
 
-const LibraryCollectionPage = ({
-  libraryId,
-  collectionId,
-}: {
-  libraryId: string;
-  collectionId: string;
-}) => {
+const LibraryCollectionPage = () => {
+  const { libraryId, collectionId } = useParams();
+
+  if (!collectionId || !libraryId) {
+    throw new Error('Rendered without collectionId or libraryId URL parameter');
+  }
+
   const intl = useIntl();
 
   const {
@@ -147,30 +146,35 @@ const LibraryCollectionPage = ({
           isLibrary
         />
         <Container size="xl" className="px-4 mt-4 mb-5 library-authoring-page">
-          <SubHeader
-            title={<SubHeaderTitle
-              title={collectionData.title}
-              canEditLibrary={libraryData.canEditLibrary}
-              infoClickHandler={openCollectionInfoSidebar}
-            />}
-            breadcrumbs={(
-              <Breadcrumb
-                ariaLabel={intl.formatMessage(messages.allCollections)}
-                links={breadcrumbs}
-                linkAs={Link}
-              />
-            )}
-            headerActions={<HeaderActions canEditLibrary={libraryData.canEditLibrary} />}
-          />
-          <SearchKeywordsField className="w-50" />
-          <div className="d-flex mt-3 mb-4 align-items-center">
-            <FilterByTags />
-            <FilterByBlockType />
-            <ClearFiltersButton />
-            <div className="flex-grow-1" />
-            <SearchSortWidget />
-          </div>
-          <LibraryCollectionComponents libraryId={libraryId} />
+          <SearchContextProvider
+            extraFilter={[`context_key = "${libraryId}"`, `collections.key = "${collectionId}"`]}
+            fetchCollections={false}
+          >
+            <SubHeader
+              title={<SubHeaderTitle
+                title={collectionData.title}
+                canEditLibrary={libraryData.canEditLibrary}
+                infoClickHandler={openCollectionInfoSidebar}
+              />}
+              breadcrumbs={(
+                <Breadcrumb
+                  ariaLabel={intl.formatMessage(messages.breadcrumbsAriaLabel)}
+                  links={breadcrumbs}
+                  linkAs={Link}
+                />
+              )}
+              headerActions={<HeaderActions canEditLibrary={libraryData.canEditLibrary} />}
+            />
+            <SearchKeywordsField className="w-50" placeholder={intl.formatMessage(messages.searchPlaceholder)} />
+            <div className="d-flex mt-3 mb-4 align-items-center">
+              <FilterByTags />
+              <FilterByBlockType />
+              <ClearFiltersButton />
+              <div className="flex-grow-1" />
+              <SearchSortWidget />
+            </div>
+            <LibraryCollectionComponents libraryId={libraryId} />
+          </SearchContextProvider>
         </Container>
         <StudioFooter />
       </div>
@@ -183,20 +187,4 @@ const LibraryCollectionPage = ({
   );
 };
 
-const LibraryCollectionPageWrapper = () => {
-  const { libraryId, collectionId } = useParams();
-  if (!collectionId || !libraryId) {
-    throw new Error('Rendered without collectionId or libraryId URL parameter');
-  }
-
-  return (
-    <SearchContextProvider
-      extraFilter={[`context_key = "${libraryId}"`, `collections.key = "${collectionId}"`]}
-      fetchCollections={false}
-    >
-      <LibraryCollectionPage libraryId={libraryId} collectionId={collectionId} />
-    </SearchContextProvider>
-  );
-}
-
-export default LibraryCollectionPageWrapper;
+export default LibraryCollectionPage;

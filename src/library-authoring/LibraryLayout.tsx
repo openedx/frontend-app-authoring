@@ -13,7 +13,7 @@ import LibraryAuthoringPage from './LibraryAuthoringPage';
 import { LibraryProvider } from './common/context';
 import { CreateCollectionModal } from './create-collection';
 import { invalidateComponentData } from './data/apiHooks';
-import LibraryCollectionPageWrapper from './collections/LibraryCollectionPage';
+import LibraryCollectionPage from './collections/LibraryCollectionPage';
 
 const LibraryLayout = () => {
   const { libraryId } = useParams();
@@ -61,7 +61,7 @@ const LibraryLayout = () => {
         />
         <Route
           path="collections/:collectionId"
-          element={<LibraryCollectionPageWrapper />}
+          element={<LibraryCollectionPage />}
         />
         <Route
           path="*"
