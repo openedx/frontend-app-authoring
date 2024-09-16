@@ -85,6 +85,7 @@ export const useContentSearchResults = ({
       client?.config.host,
       indexName,
       extraFilter,
+      fetchCollections,
       searchKeywords,
       blockTypesFilter,
       problemTypesFilter,

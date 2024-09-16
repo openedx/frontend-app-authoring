@@ -7,6 +7,7 @@
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { MeiliSearch, type Filter } from 'meilisearch';
+import { union } from 'lodash';
 
 import {
   CollectionHit, ContentHit, SearchSortOption, forceArray,
@@ -97,7 +98,7 @@ export const SearchContextProvider: React.FC<{
   const [blockTypesFilter, setBlockTypesFilter] = React.useState<string[]>([]);
   const [problemTypesFilter, setProblemTypesFilter] = React.useState<string[]>([]);
   const [tagsFilter, setTagsFilter] = React.useState<string[]>([]);
-  const extraFilter: string[] = forceArray(props.extraFilter);
+  let extraFilter: string[] = forceArray(props.extraFilter);
 
   // The search sort order can be set via the query string
   // E.g. ?sort=display_name:desc maps to SearchSortOption.TITLE_ZA.
@@ -115,7 +116,8 @@ export const SearchContextProvider: React.FC<{
   const sort: SearchSortOption[] = (searchSortOrderToUse === SearchSortOption.RELEVANCE ? [] : [searchSortOrderToUse]);
   // Selecting SearchSortOption.RECENTLY_PUBLISHED also excludes unpublished components.
   if (searchSortOrderToUse === SearchSortOption.RECENTLY_PUBLISHED) {
-    extraFilter.push('last_published IS NOT NULL');
+    // pushing to array leads to duplicate values if props.extraFilter is already an array.
+    extraFilter = union(extraFilter, ['last_published IS NOT NULL']);
   }
 
   const canClearFilters = (
