@@ -9,7 +9,9 @@ import {
 } from '../../testUtils';
 import mockResult from '../__mocks__/collection-search.json';
 import mockEmptyResult from '../../search-modal/__mocks__/empty-search-result.json';
-import { mockCollection, mockContentLibrary, mockLibraryBlockTypes, mockXBlockFields } from '../data/api.mocks';
+import {
+  mockCollection, mockContentLibrary, mockLibraryBlockTypes, mockXBlockFields,
+} from '../data/api.mocks';
 import { mockContentSearchConfig } from '../../search-manager/data/api.mock';
 import { mockBroadcastChannel } from '../../generic/data/api.mock';
 import { LibraryLayout } from '..';
@@ -36,27 +38,6 @@ const returnEmptyResult = (_url, req) => {
   // eslint-disable-next-line no-underscore-dangle, no-param-reassign
   mockEmptyResult.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
   return mockEmptyResult;
-};
-
-/**
- * Returns 2 components from the search query.
- * This lets us test that the StudioHome "View All" button is hidden when a
- * low number of search results are shown (<=4 by default).
-*/
-const returnLowNumberResults = (_url, req) => {
-  const requestData = JSON.parse(req.body?.toString() ?? '');
-  const query = requestData?.queries[0]?.q ?? '';
-  const newMockResult = { ...mockResult };
-  // We have to replace the query (search keywords) in the mock results with the actual query,
-  // because otherwise we may have an inconsistent state that causes more queries and unexpected results.
-  newMockResult.results[0].query = query;
-  // Limit number of results to just 2
-  newMockResult.results[0].hits = mockResult.results[0]?.hits.slice(0, 2);
-  newMockResult.results[0].estimatedTotalHits = 2;
-  // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
-  // eslint-disable-next-line no-underscore-dangle, no-param-reassign
-  newMockResult.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
-  return newMockResult;
 };
 
 const path = '/library/:libraryId/*';
@@ -94,7 +75,7 @@ describe('<LibraryCollectionPage />', () => {
       path,
       routerProps: {
         initialEntries: [`/library/${libId}/collections/${colId}`],
-      }
+      },
     });
   };
 
