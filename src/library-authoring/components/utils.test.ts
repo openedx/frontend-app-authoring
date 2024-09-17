@@ -42,9 +42,9 @@ describe('component utils', () => {
       const usageKey = 'lb:org:ALPHA:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd';
       expect(getEditUrl(usageKey)).toStrictEqual(`/library/lib:org:ALPHA/editor/html/${usageKey}`);
     });
-    it('doesn\'t yet allow editing a problem block', () => {
+    it('returns the right URL for an HTML (Text) block', () => {
       const usageKey = 'lb:org:beta:problem:571fe018-f3ce-45c9-8f53-5dafcb422fdd';
-      expect(getEditUrl(usageKey)).toBeUndefined();
+      expect(getEditUrl(usageKey)).toStrictEqual(`/library/lib:org:beta/editor/problem/${usageKey}`);
     });
     it('doesn\'t yet allow editing a video block', () => {
       const usageKey = 'lb:org:beta:video:571fe018-f3ce-45c9-8f53-5dafcb422fdd';

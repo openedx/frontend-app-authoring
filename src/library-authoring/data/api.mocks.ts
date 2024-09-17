@@ -112,11 +112,14 @@ mockContentLibrary.applyMock = () => jest.spyOn(api, 'getContentLibrary').mockIm
 export async function mockCreateLibraryBlock(
   args: api.CreateBlockDataRequest,
 ): ReturnType<typeof api.createLibraryBlock> {
-  if (args.blockType === 'html' && args.libraryId === mockContentLibrary.libraryId) {
-    return mockCreateLibraryBlock.newHtmlData;
-  }
-  if (args.blockType === 'problem' && args.libraryId === mockContentLibrary.libraryId) {
-    return mockCreateLibraryBlock.newProblemData;
+  if (args.libraryId === mockContentLibrary.libraryId) {
+    switch (args.blockType) {
+      case 'html': return mockCreateLibraryBlock.newHtmlData;
+      case 'problem': return mockCreateLibraryBlock.newProblemData;
+      case 'video': return mockCreateLibraryBlock.newVideoData;
+      default:
+        // Continue to error handling below.
+    }
   }
   throw new Error(`mockCreateLibraryBlock doesn't know how to mock ${JSON.stringify(args)}`);
 }
@@ -146,6 +149,19 @@ mockCreateLibraryBlock.newProblemData = {
   created: '2024-07-22T21:37:49Z',
   tagsCount: 0,
 } satisfies api.LibraryBlockMetadata;
+mockCreateLibraryBlock.newVideoData = {
+  id: 'lb:Axim:TEST:video:prob1',
+  defKey: 'video1',
+  blockType: 'video',
+  displayName: 'New Video',
+  hasUnpublishedChanges: true,
+  lastPublished: null, // or e.g. '2024-08-30T16:37:42Z',
+  publishedBy: null, // or e.g. 'test_author',
+  lastDraftCreated: '2024-07-22T21:37:49Z',
+  lastDraftCreatedBy: null,
+  created: '2024-07-22T21:37:49Z',
+  tagsCount: 0,
+} satisfies api.LibraryBlockMetadata;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockCreateLibraryBlock.applyMock = () => (
   jest.spyOn(api, 'createLibraryBlock').mockImplementation(mockCreateLibraryBlock)
@@ -163,6 +179,7 @@ export async function mockXBlockFields(usageKey: string): Promise<api.XBlockFiel
   switch (usageKey) {
     case thisMock.usageKeyHtml: return thisMock.dataHtml;
     case thisMock.usageKeyNewHtml: return thisMock.dataNewHtml;
+    case thisMock.usageKeyNewProblem: return thisMock.dataNewProblem;
     default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
   }
 }
@@ -179,6 +196,13 @@ mockXBlockFields.dataNewHtml = {
   displayName: 'New Text Component',
   data: '',
   metadata: { displayName: 'New Text Component' },
+} satisfies api.XBlockFields;
+// Mock of a blank/new problem (CAPA) block:
+mockXBlockFields.usageKeyNewProblem = 'lb:Axim:TEST:problem:prob1';
+mockXBlockFields.dataNewProblem = {
+  displayName: 'New Problem Component',
+  data: '',
+  metadata: { displayName: 'New Problem Component' },
 } satisfies api.XBlockFields;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockXBlockFields.applyMock = () => jest.spyOn(api, 'getXBlockFields').mockImplementation(mockXBlockFields);
