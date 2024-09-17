@@ -1,5 +1,3 @@
-import { CardGrid } from '@openedx/paragon';
-
 import { useLoadOnScroll } from '../hooks';
 import { useSearchContext } from '../search-manager';
 import { NoComponents, NoSearchResults } from './EmptyStates';
@@ -41,22 +39,14 @@ const LibraryCollections = ({ variant }: LibraryCollectionsProps) => {
   }
 
   return (
-    <CardGrid
-      columnSizes={{
-        sm: 12,
-        md: 6,
-        lg: 4,
-        xl: 3,
-      }}
-      hasEqualColumnHeights
-    >
+    <div className="library-cards-grid">
       { collectionList.map((collectionHit) => (
         <CollectionCard
           key={collectionHit.id}
           collectionHit={collectionHit}
         />
       )) }
-    </CardGrid>
+    </div>
   );
 };
 

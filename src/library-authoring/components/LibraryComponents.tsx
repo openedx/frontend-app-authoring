@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { CardGrid } from '@openedx/paragon';
 
 import { useLoadOnScroll } from '../../hooks';
 import { useSearchContext } from '../../search-manager';
@@ -56,15 +55,7 @@ const LibraryComponents = ({ libraryId, variant }: LibraryComponentsProps) => {
   }
 
   return (
-    <CardGrid
-      columnSizes={{
-        sm: 12,
-        md: 6,
-        lg: 4,
-        xl: 3,
-      }}
-      hasEqualColumnHeights
-    >
+    <div className="library-cards-grid">
       { componentList.map((contentHit) => (
         <ComponentCard
           key={contentHit.id}
@@ -72,7 +63,7 @@ const LibraryComponents = ({ libraryId, variant }: LibraryComponentsProps) => {
           blockTypeDisplayName={blockTypes[contentHit.blockType]?.displayName ?? ''}
         />
       )) }
-    </CardGrid>
+    </div>
   );
 };
 

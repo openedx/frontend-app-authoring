@@ -11,9 +11,8 @@
 }
 
 .library-authoring-sidebar {
-  min-width: 300px;
-  max-width: map-get($grid-breakpoints, "sm");
   z-index: 1001; // to appear over header
+  flex: 450px 0 0;
   position: sticky;
   top: 0;
   right: 0;
