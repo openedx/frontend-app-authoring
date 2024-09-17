@@ -37,6 +37,11 @@ const LibraryLayout = () => {
   return (
     <LibraryProvider>
       <Routes>
+        {/*
+          TODO: we should be opening this editor as a modal, not making it a separate page/URL.
+          That will be a much nicer UX because users can just close the modal and be on the same page they were already
+          on, instead of always getting sent back to the library home.
+        */}
         <Route
           path="editor/:blockType/:blockId?"
           element={(
