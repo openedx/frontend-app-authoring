@@ -88,6 +88,10 @@ export const AdvanceProblemKeys = StrictDict({
 } as const);
 export type AdvancedProblemType = typeof AdvanceProblemKeys[keyof typeof AdvanceProblemKeys];
 
+export function isAdvancedProblemType(pt: ProblemType | AdvancedProblemType): pt is AdvancedProblemType {
+  return Object.values(AdvanceProblemKeys).includes(pt as any);
+}
+
 export const AdvanceProblems = StrictDict({
   [AdvanceProblemKeys.BLANK]: {
     title: 'Blank problem',

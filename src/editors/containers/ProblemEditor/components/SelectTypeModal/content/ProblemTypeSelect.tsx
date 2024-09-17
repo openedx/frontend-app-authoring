@@ -14,7 +14,7 @@ import {
 import messages from './messages';
 
 interface Props {
-  selected: string;
+  selected: ProblemType;
   setSelected: (selected: ProblemType | AdvancedProblemType) => void;
 }
 

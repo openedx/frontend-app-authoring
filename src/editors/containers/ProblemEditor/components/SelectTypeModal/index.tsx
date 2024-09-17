@@ -8,7 +8,7 @@ import SelectTypeWrapper from './SelectTypeWrapper';
 import * as hooks from './hooks';
 import {
   AdvancedProblemType,
-  AdvanceProblemKeys,
+  isAdvancedProblemType,
   ProblemType,
   ProblemTypeKeys,
 } from '../../../../data/constants/problem';
@@ -26,12 +26,12 @@ const SelectTypeModal: React.FC<Props> = ({
   return (
     <SelectTypeWrapper onClose={onClose} selected={selected}>
       <Row className="justify-content-center">
-        {(!Object.values(AdvanceProblemKeys).includes(selected as any)) ? (
+        {(!isAdvancedProblemType(selected)) ? (
           <Stack direction="horizontal" gap={4} className="flex-wrap mb-6">
             <ProblemTypeSelect selected={selected} setSelected={setSelected} />
             <Preview problemType={selected} />
           </Stack>
-        ) : <AdvanceTypeSelect selected={selected as AdvancedProblemType} setSelected={setSelected} />}
+        ) : <AdvanceTypeSelect selected={selected} setSelected={setSelected} />}
       </Row>
     </SelectTypeWrapper>
   );

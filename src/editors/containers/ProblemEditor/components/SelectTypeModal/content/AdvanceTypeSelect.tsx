@@ -21,12 +21,12 @@ import {
 import messages from './messages';
 
 interface Props {
-  selected: AdvancedProblemType | null;
+  selected: AdvancedProblemType;
   setSelected: React.Dispatch<ProblemType | AdvancedProblemType>;
 }
 
 const AdvanceTypeSelect: React.FC<Props> = ({
-  selected = null,
+  selected,
   setSelected,
 }) => {
   const intl = useIntl();

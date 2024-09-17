@@ -10,18 +10,18 @@ import type { EditorComponent } from './EditorComponent';
 
 export interface Props extends EditorComponent {
   blockType: string;
-  blockId?: string | null;
-  learningContextId?: string | null;
-  lmsEndpointUrl?: string | null;
-  studioEndpointUrl?: string | null;
+  blockId: string | null;
+  learningContextId: string | null;
+  lmsEndpointUrl: string | null;
+  studioEndpointUrl: string | null;
 }
 
 const Editor: React.FC<Props> = ({
-  learningContextId = null,
+  learningContextId,
   blockType,
-  blockId = null,
-  lmsEndpointUrl = null,
-  studioEndpointUrl = null,
+  blockId,
+  lmsEndpointUrl,
+  studioEndpointUrl,
   onClose = null,
   returnFunction = null,
 }) => {
