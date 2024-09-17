@@ -157,7 +157,7 @@ const LibraryCollectionPage = () => {
                   canEditLibrary={libraryData.canEditLibrary}
                   infoClickHandler={openCollectionInfoSidebar}
                 />
-)}
+              )}
               breadcrumbs={(
                 <Breadcrumb
                   ariaLabel={intl.formatMessage(messages.breadcrumbsAriaLabel)}

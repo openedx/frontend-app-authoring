@@ -116,7 +116,6 @@ export const SearchContextProvider: React.FC<{
   const sort: SearchSortOption[] = (searchSortOrderToUse === SearchSortOption.RELEVANCE ? [] : [searchSortOrderToUse]);
   // Selecting SearchSortOption.RECENTLY_PUBLISHED also excludes unpublished components.
   if (searchSortOrderToUse === SearchSortOption.RECENTLY_PUBLISHED) {
-    // pushing to array leads to duplicate values if props.extraFilter is already an array.
     extraFilter = union(extraFilter, ['last_published IS NOT NULL']);
   }
 
