@@ -32,6 +32,7 @@ const FileValidationModal = ({
       title={intl.formatMessage(messages.overwriteModalTitle)}
       isOpen={isOpen}
       onClose={close}
+      isOverflowVisible={false}
     >
       <ModalDialog.Header>
         <ModalDialog.Title>
