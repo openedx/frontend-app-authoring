@@ -134,6 +134,7 @@ export interface CreateBlockDataRequest {
   libraryId: string;
   blockType: string;
   definitionId: string;
+  collectionId?: string;
 }
 
 export interface LibraryBlockMetadata {
@@ -197,6 +198,7 @@ export async function createLibraryBlock({
   libraryId,
   blockType,
   definitionId,
+  collectionId,
 }: CreateBlockDataRequest): Promise<LibraryBlockMetadata> {
   const client = getAuthenticatedHttpClient();
   const { data } = await client.post(
@@ -204,6 +206,7 @@ export async function createLibraryBlock({
     {
       block_type: blockType,
       definition_id: definitionId,
+      collection_key: collectionId,
     },
   );
   return camelCaseObject(data);
