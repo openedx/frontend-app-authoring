@@ -2,12 +2,6 @@ import type { AxiosRequestConfig } from 'axios';
 import { camelizeKeys } from '../../../utils';
 import * as urls from './urls';
 import { get, post, deleteObject } from './utils';
-// This 'module' self-import hack enables mocking during tests.
-// See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
-// should be re-thought and cleaned up to avoid this pattern.
-// eslint-disable-next-line import/no-self-import
-import * as module from './api';
-import * as mockApi from './mockApi';
 import { durationStringFromValue } from '../../../containers/VideoEditor/components/VideoSettingsModal/components/DurationWidget/hooks';
 
 const fetchByUnitIdOptions: AxiosRequestConfig = {};
@@ -31,6 +25,75 @@ interface Pagination {
 interface AssetResponse {
   assets: Record<string, string>[]; // In the raw response here, these are NOT camel-cased yet.
 }
+
+export const loadImage = (imageData) => ({
+  ...imageData,
+  dateAdded: new Date(imageData.dateAdded.replace(' at', '')).getTime(),
+});
+
+export const loadImages = (rawImages) => camelizeKeys(rawImages).reduce(
+  (obj, image) => ({ ...obj, [image.id]: loadImage(image) }),
+  {},
+);
+
+export const parseYoutubeId = (src: string): string | null => {
+  const youtubeRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/;
+  const match = src.match(youtubeRegex);
+  if (!match) {
+    return null;
+  }
+  return match[5];
+};
+
+export const processVideoIds = ({
+  videoId,
+  videoUrl,
+  fallbackVideos,
+}: { videoId: string, videoUrl: string, fallbackVideos: string[] }) => {
+  let youtubeId: string | null = '';
+  const html5Sources: string[] = [];
+
+  if (videoUrl) {
+    if (parseYoutubeId(videoUrl)) {
+      youtubeId = parseYoutubeId(videoUrl);
+    } else {
+      html5Sources.push(videoUrl);
+    }
+  }
+
+  if (fallbackVideos) {
+    fallbackVideos.forEach((src) => (src ? html5Sources.push(src) : null));
+  }
+
+  return {
+    edxVideoId: videoId,
+    html5Sources,
+    youtubeId,
+  };
+};
+
+export const isEdxVideo = (src: string): boolean => {
+  const uuid4Regex = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/;
+  if (src && src.match(uuid4Regex)) {
+    return true;
+  }
+  return false;
+};
+
+export const processLicense = (licenseType, licenseDetails) => {
+  if (licenseType === 'creative-commons') {
+    return 'creative-commons: ver=4.0'.concat(
+      (licenseDetails.attribution ? ' BY' : ''),
+      (licenseDetails.noncommercial ? ' NC' : ''),
+      (licenseDetails.noDerivatives ? ' ND' : ''),
+      (licenseDetails.shareAlike ? ' SA' : ''),
+    );
+  }
+  if (licenseType === 'all-rights-reserved') {
+    return 'all-rights-reserved';
+  }
+  return '';
+};
 
 export const apiMethods = {
   fetchBlockById: ({ blockId, studioEndpointUrl }) => get(
@@ -175,6 +238,12 @@ export const apiMethods = {
     content,
     learningContextId,
     title,
+  }: {
+    blockId: string,
+    blockType: string,
+    content: any, // string for 'html' blocks, otherwise Record<string, any>
+    learningContextId: string,
+    title: string,
   }) => {
     let response = {};
     if (blockType === 'html') {
@@ -200,7 +269,7 @@ export const apiMethods = {
         html5Sources,
         edxVideoId,
         youtubeId,
-      } = module.processVideoIds({
+      } = processVideoIds({
         videoId: content.videoId,
         videoUrl: content.videoSource,
         fallbackVideos: content.fallbackVideos,
@@ -224,7 +293,7 @@ export const apiMethods = {
           handout: content.handout,
           start_time: durationStringFromValue(content.duration.startTime),
           end_time: durationStringFromValue(content.duration.stopTime),
-          license: module.processLicense(content.licenseType, content.licenseDetails),
+          license: processLicense(content.licenseType, content.licenseDetails),
         },
       };
     } else {
@@ -241,7 +310,7 @@ export const apiMethods = {
     title,
   }) => post(
     urls.block({ studioEndpointUrl, blockId }),
-    module.apiMethods.normalizeContent({
+    apiMethods.normalizeContent({
       blockType,
       content,
       blockId,
@@ -264,83 +333,4 @@ export const apiMethods = {
   ),
 };
 
-export const loadImage = (imageData) => ({
-  ...imageData,
-  dateAdded: new Date(imageData.dateAdded.replace(' at', '')).getTime(),
-});
-
-export const loadImages = (rawImages) => camelizeKeys(rawImages).reduce(
-  (obj, image) => ({ ...obj, [image.id]: module.loadImage(image) }),
-  {},
-);
-
-export const processVideoIds = ({
-  videoId,
-  videoUrl,
-  fallbackVideos,
-}) => {
-  let youtubeId: string | null = '';
-  const html5Sources: string[] = [];
-
-  if (videoUrl) {
-    if (module.parseYoutubeId(videoUrl)) {
-      youtubeId = module.parseYoutubeId(videoUrl);
-    } else {
-      html5Sources.push(videoUrl);
-    }
-  }
-
-  if (fallbackVideos) {
-    fallbackVideos.forEach((src) => (src ? html5Sources.push(src) : null));
-  }
-
-  return {
-    edxVideoId: videoId,
-    html5Sources,
-    youtubeId,
-  };
-};
-
-export const isEdxVideo = (src: string): boolean => {
-  const uuid4Regex = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/;
-  if (src && src.match(uuid4Regex)) {
-    return true;
-  }
-  return false;
-};
-
-export const parseYoutubeId = (src: string): string | null => {
-  const youtubeRegex = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/;
-  const match = src.match(youtubeRegex);
-  if (!match) {
-    return null;
-  }
-  return match[5];
-};
-
-export const processLicense = (licenseType, licenseDetails) => {
-  if (licenseType === 'creative-commons') {
-    return 'creative-commons: ver=4.0'.concat(
-      (licenseDetails.attribution ? ' BY' : ''),
-      (licenseDetails.noncommercial ? ' NC' : ''),
-      (licenseDetails.noDerivatives ? ' ND' : ''),
-      (licenseDetails.shareAlike ? ' SA' : ''),
-    );
-  }
-  if (licenseType === 'all-rights-reserved') {
-    return 'all-rights-reserved';
-  }
-  return '';
-};
-
-export const checkMockApi = (key) => {
-  if (process.env.REACT_APP_DEVGALLERY) {
-    return mockApi[key] ? mockApi[key] : mockApi.emptyMock;
-  }
-  return module.apiMethods[key];
-};
-
-export default Object.keys(apiMethods).reduce(
-  (obj, key) => ({ ...obj, [key]: checkMockApi(key) }),
-  {},
-) as typeof apiMethods;
+export default apiMethods;
