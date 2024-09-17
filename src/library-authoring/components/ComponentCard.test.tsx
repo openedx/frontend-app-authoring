@@ -34,7 +34,7 @@ const contentHit: ContentHit = {
   tags: {
     level0: ['1', '2', '3'],
   },
-  blockType: 'text',
+  blockType: 'html',
   created: 1722434322294,
   modified: 1722434322294,
   lastPublished: null,
