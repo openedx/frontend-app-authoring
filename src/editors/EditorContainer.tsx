@@ -40,8 +40,8 @@ const EditorContainer: React.FC<Props> = ({
         blockId={blockId}
         studioEndpointUrl={getConfig().STUDIO_BASE_URL}
         lmsEndpointUrl={getConfig().LMS_BASE_URL}
-        onClose={onClose ? () => onClose(location.state?.from) : undefined}
-        returnFunction={returnFunction ? () => returnFunction(location.state?.from) : undefined}
+        onClose={onClose ? () => onClose(location.state?.from) : null}
+        returnFunction={returnFunction ? () => returnFunction(location.state?.from) : null}
       />
     </div>
   );
