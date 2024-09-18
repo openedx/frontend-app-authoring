@@ -11,18 +11,19 @@ exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
 >
   <ForwardRef
     columns={1}
+    name="problem-type"
     onChange={[Function]}
     type="radio"
     value="optionresponse"
   >
     <ForwardRef
-      aria-label="checkbox"
       checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="multiplechoiceresponse"
       inputHidden={true}
       isIndeterminate={false}
       isInvalid={false}
+      key="multiplechoiceresponse"
       onClick={[Function]}
       onFocus={[Function]}
       type="radio"
@@ -31,13 +32,13 @@ exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
       Single select
     </ForwardRef>
     <ForwardRef
-      aria-label="checkbox"
       checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="choiceresponse"
       inputHidden={true}
       isIndeterminate={false}
       isInvalid={false}
+      key="choiceresponse"
       onClick={[Function]}
       onFocus={[Function]}
       type="radio"
@@ -46,13 +47,13 @@ exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
       Multi-select
     </ForwardRef>
     <ForwardRef
-      aria-label="checkbox"
       checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="optionresponse"
       inputHidden={true}
       isIndeterminate={false}
       isInvalid={false}
+      key="optionresponse"
       onClick={[Function]}
       onFocus={[Function]}
       type="radio"
@@ -61,13 +62,13 @@ exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
       Dropdown
     </ForwardRef>
     <ForwardRef
-      aria-label="checkbox"
       checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="numericalresponse"
       inputHidden={true}
       isIndeterminate={false}
       isInvalid={false}
+      key="numericalresponse"
       onClick={[Function]}
       onFocus={[Function]}
       type="radio"
@@ -76,13 +77,13 @@ exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
       Numerical input
     </ForwardRef>
     <ForwardRef
-      aria-label="checkbox"
       checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="stringresponse"
       inputHidden={true}
       isIndeterminate={false}
       isInvalid={false}
+      key="stringresponse"
       onClick={[Function]}
       onFocus={[Function]}
       type="radio"
@@ -116,18 +117,19 @@ exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
 >
   <ForwardRef
     columns={1}
+    name="problem-type"
     onChange={[Function]}
     type="radio"
     value="choiceresponse"
   >
     <ForwardRef
-      aria-label="checkbox"
       checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="multiplechoiceresponse"
       inputHidden={true}
       isIndeterminate={false}
       isInvalid={false}
+      key="multiplechoiceresponse"
       onClick={[Function]}
       onFocus={[Function]}
       type="radio"
@@ -136,13 +138,13 @@ exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
       Single select
     </ForwardRef>
     <ForwardRef
-      aria-label="checkbox"
       checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="choiceresponse"
       inputHidden={true}
       isIndeterminate={false}
       isInvalid={false}
+      key="choiceresponse"
       onClick={[Function]}
       onFocus={[Function]}
       type="radio"
@@ -151,13 +153,13 @@ exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
       Multi-select
     </ForwardRef>
     <ForwardRef
-      aria-label="checkbox"
       checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="optionresponse"
       inputHidden={true}
       isIndeterminate={false}
       isInvalid={false}
+      key="optionresponse"
       onClick={[Function]}
       onFocus={[Function]}
       type="radio"
@@ -166,13 +168,13 @@ exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
       Dropdown
     </ForwardRef>
     <ForwardRef
-      aria-label="checkbox"
       checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="numericalresponse"
       inputHidden={true}
       isIndeterminate={false}
       isInvalid={false}
+      key="numericalresponse"
       onClick={[Function]}
       onFocus={[Function]}
       type="radio"
@@ -181,13 +183,13 @@ exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
       Numerical input
     </ForwardRef>
     <ForwardRef
-      aria-label="checkbox"
       checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="stringresponse"
       inputHidden={true}
       isIndeterminate={false}
       isInvalid={false}
+      key="stringresponse"
       onClick={[Function]}
       onFocus={[Function]}
       type="radio"
@@ -221,18 +223,19 @@ exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
 >
   <ForwardRef
     columns={1}
+    name="problem-type"
     onChange={[Function]}
     type="radio"
     value="numericalresponse"
   >
     <ForwardRef
-      aria-label="checkbox"
       checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="multiplechoiceresponse"
       inputHidden={true}
       isIndeterminate={false}
       isInvalid={false}
+      key="multiplechoiceresponse"
       onClick={[Function]}
       onFocus={[Function]}
       type="radio"
@@ -241,13 +244,13 @@ exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
       Single select
     </ForwardRef>
     <ForwardRef
-      aria-label="checkbox"
       checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="choiceresponse"
       inputHidden={true}
       isIndeterminate={false}
       isInvalid={false}
+      key="choiceresponse"
       onClick={[Function]}
       onFocus={[Function]}
       type="radio"
@@ -256,13 +259,13 @@ exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
       Multi-select
     </ForwardRef>
     <ForwardRef
-      aria-label="checkbox"
       checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="optionresponse"
       inputHidden={true}
       isIndeterminate={false}
       isInvalid={false}
+      key="optionresponse"
       onClick={[Function]}
       onFocus={[Function]}
       type="radio"
@@ -271,13 +274,13 @@ exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
       Dropdown
     </ForwardRef>
     <ForwardRef
-      aria-label="checkbox"
       checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="numericalresponse"
       inputHidden={true}
       isIndeterminate={false}
       isInvalid={false}
+      key="numericalresponse"
       onClick={[Function]}
       onFocus={[Function]}
       type="radio"
@@ -286,13 +289,13 @@ exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
       Numerical input
     </ForwardRef>
     <ForwardRef
-      aria-label="checkbox"
       checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="stringresponse"
       inputHidden={true}
       isIndeterminate={false}
       isInvalid={false}
+      key="stringresponse"
       onClick={[Function]}
       onFocus={[Function]}
       type="radio"
@@ -326,18 +329,19 @@ exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
 >
   <ForwardRef
     columns={1}
+    name="problem-type"
     onChange={[Function]}
     type="radio"
     value="multiplechoiceresponse"
   >
     <ForwardRef
-      aria-label="checkbox"
       checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="multiplechoiceresponse"
       inputHidden={true}
       isIndeterminate={false}
       isInvalid={false}
+      key="multiplechoiceresponse"
       onClick={[Function]}
       onFocus={[Function]}
       type="radio"
@@ -346,13 +350,13 @@ exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
       Single select
     </ForwardRef>
     <ForwardRef
-      aria-label="checkbox"
       checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="choiceresponse"
       inputHidden={true}
       isIndeterminate={false}
       isInvalid={false}
+      key="choiceresponse"
       onClick={[Function]}
       onFocus={[Function]}
       type="radio"
@@ -361,13 +365,13 @@ exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
       Multi-select
     </ForwardRef>
     <ForwardRef
-      aria-label="checkbox"
       checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="optionresponse"
       inputHidden={true}
       isIndeterminate={false}
       isInvalid={false}
+      key="optionresponse"
       onClick={[Function]}
       onFocus={[Function]}
       type="radio"
@@ -376,13 +380,13 @@ exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
       Dropdown
     </ForwardRef>
     <ForwardRef
-      aria-label="checkbox"
       checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="numericalresponse"
       inputHidden={true}
       isIndeterminate={false}
       isInvalid={false}
+      key="numericalresponse"
       onClick={[Function]}
       onFocus={[Function]}
       type="radio"
@@ -391,13 +395,13 @@ exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
       Numerical input
     </ForwardRef>
     <ForwardRef
-      aria-label="checkbox"
       checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="stringresponse"
       inputHidden={true}
       isIndeterminate={false}
       isInvalid={false}
+      key="stringresponse"
       onClick={[Function]}
       onFocus={[Function]}
       type="radio"
@@ -431,18 +435,19 @@ exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
 >
   <ForwardRef
     columns={1}
+    name="problem-type"
     onChange={[Function]}
     type="radio"
     value="stringresponse"
   >
     <ForwardRef
-      aria-label="checkbox"
       checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="multiplechoiceresponse"
       inputHidden={true}
       isIndeterminate={false}
       isInvalid={false}
+      key="multiplechoiceresponse"
       onClick={[Function]}
       onFocus={[Function]}
       type="radio"
@@ -451,13 +456,13 @@ exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
       Single select
     </ForwardRef>
     <ForwardRef
-      aria-label="checkbox"
       checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="choiceresponse"
       inputHidden={true}
       isIndeterminate={false}
       isInvalid={false}
+      key="choiceresponse"
       onClick={[Function]}
       onFocus={[Function]}
       type="radio"
@@ -466,13 +471,13 @@ exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
       Multi-select
     </ForwardRef>
     <ForwardRef
-      aria-label="checkbox"
       checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="optionresponse"
       inputHidden={true}
       isIndeterminate={false}
       isInvalid={false}
+      key="optionresponse"
       onClick={[Function]}
       onFocus={[Function]}
       type="radio"
@@ -481,13 +486,13 @@ exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
       Dropdown
     </ForwardRef>
     <ForwardRef
-      aria-label="checkbox"
       checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="numericalresponse"
       inputHidden={true}
       isIndeterminate={false}
       isInvalid={false}
+      key="numericalresponse"
       onClick={[Function]}
       onFocus={[Function]}
       type="radio"
@@ -496,13 +501,13 @@ exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
       Numerical input
     </ForwardRef>
     <ForwardRef
-      aria-label="checkbox"
       checked={false}
       className="border border-light-400 text-primary-500 shadow-none"
       id="stringresponse"
       inputHidden={true}
       isIndeterminate={false}
       isInvalid={false}
+      key="stringresponse"
       onClick={[Function]}
       onFocus={[Function]}
       type="radio"

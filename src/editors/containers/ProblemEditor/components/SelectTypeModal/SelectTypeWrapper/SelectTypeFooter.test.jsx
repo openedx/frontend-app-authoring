@@ -1,14 +1,10 @@
 import 'CourseAuthoring/editors/setupEditorTest';
-import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 
 import { Button } from '@openedx/paragon';
 import { formatMessage } from '../../../../../testUtils';
-import * as module from './SelectTypeFooter';
+import SelectTypeFooter from './SelectTypeFooter';
 import * as hooks from '../hooks';
-import { actions } from '../../../../../data/redux';
-
-const SelectTypeFooter = module.SelectTypeFooterInternal;
 
 jest.mock('../hooks', () => ({
   onSelect: jest.fn().mockName('onSelect'),
@@ -44,17 +40,6 @@ describe('SelectTypeFooter', () => {
       const button = el.instance.findByType(Button);
       expect(button[button.length - 1].props.onClick)
         .toEqual(expected);
-    });
-  });
-
-  describe('mapStateToProps', () => {
-    test('is empty', () => {
-      expect(module.mapDispatchToProps.defaultSettings).toEqual(actions.problem.defaultSettings);
-    });
-  });
-  describe('mapDispatchToProps', () => {
-    test('loads updateField from problem.updateField actions', () => {
-      expect(module.mapDispatchToProps.updateField).toEqual(actions.problem.updateField);
     });
   });
 });

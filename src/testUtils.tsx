@@ -7,6 +7,7 @@
 import React from 'react';
 import { AxiosError } from 'axios';
 import { jest } from '@jest/globals';
+import type { Store } from 'redux';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
@@ -25,7 +26,7 @@ import { ToastContext, type ToastContextData } from './generic/toast-context';
 import initializeReduxStore from './store';
 
 /** @deprecated Use React Query and/or regular React Context instead of redux */
-let reduxStore;
+let reduxStore: Store;
 let queryClient;
 let axiosMock: MockAdapter;
 

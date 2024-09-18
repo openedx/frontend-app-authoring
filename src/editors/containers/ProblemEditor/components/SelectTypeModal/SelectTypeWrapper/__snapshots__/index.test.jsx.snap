@@ -17,6 +17,7 @@ exports[`SelectTypeWrapper snapshot 1`] = `
         className="pgn__modal-close-container"
       >
         <IconButton
+          alt="Exit the editor"
           iconAs="Icon"
           src={[MockFunction icons.Close]}
         />
@@ -30,7 +31,7 @@ exports[`SelectTypeWrapper snapshot 1`] = `
       test child
     </h1>
   </ModalDialog.Body>
-  <injectIntl(ShimmedIntlComponent)
+  <SelectTypeFooter
     selected="iMAsElecTedValUE"
   />
 </div>

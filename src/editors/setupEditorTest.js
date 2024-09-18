@@ -1,5 +1,15 @@
 // These additional mocks and setup are required for some tests in src/editors/
 // and are imported on an as-needed basis.
+
+// /////////////////////////////////////////////////////////////////////////////
+// TODO: tests using this 'setupEditorTest', shallow rendering, and snapshots
+// should be replaced with modern tests that use src/testUtils.ts and
+// @testing-library/react. See
+//   src/editors/containers/ProblemEditor/components/SelectTypeModal/index.test.tsx
+// for an example of an editor test in the new format.
+// /////////////////////////////////////////////////////////////////////////////
+
+import { formatMessage as mockFormatMessage } from './testUtils';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'jest-canvas-mock';
 
@@ -8,7 +18,7 @@ jest.mock('@edx/frontend-platform/i18n', () => {
   const PropTypes = jest.requireActual('prop-types');
   return {
     ...i18n,
-    useIntl: () => ({ formatMessage: (m) => m.defaultMessage }),
+    useIntl: () => ({ formatMessage: mockFormatMessage }),
     intlShape: PropTypes.shape({
       formatMessage: PropTypes.func,
     }),

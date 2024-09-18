@@ -1,24 +1,35 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Button, Container } from '@openedx/paragon';
-import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
 // SelectableBox in paragon has a bug where you can't change selection. So we override it
 import SelectableBox from '../../../../../sharedComponents/SelectableBox';
-import { ProblemTypes, ProblemTypeKeys, AdvanceProblemKeys } from '../../../../../data/constants/problem';
+import {
+  ProblemTypes,
+  ProblemTypeKeys,
+  AdvanceProblemKeys,
+  AdvancedProblemType,
+  ProblemType,
+} from '../../../../../data/constants/problem';
 import messages from './messages';
 
-const ProblemTypeSelect = ({
+interface Props {
+  selected: ProblemType;
+  setSelected: (selected: ProblemType | AdvancedProblemType) => void;
+}
+
+const ProblemTypeSelect: React.FC<Props> = ({
   selected,
   setSelected,
 }) => {
   const handleChange = e => setSelected(e.target.value);
   const handleClick = () => setSelected(AdvanceProblemKeys.BLANK);
-  const settings = { 'aria-label': 'checkbox', type: 'radio' };
+  const settings = { type: 'radio' };
 
   return (
     <Container style={{ width: '494px', height: '400px' }}>
       <SelectableBox.Set
+        name="problem-type"
         columns={1}
         onChange={handleChange}
         type={settings.type}
@@ -30,6 +41,7 @@ const ProblemTypeSelect = ({
               <SelectableBox
                 className="border border-light-400 text-primary-500 shadow-none"
                 id={key}
+                key={key}
                 value={key}
                 {...settings}
               >
@@ -45,10 +57,5 @@ const ProblemTypeSelect = ({
     </Container>
   );
 };
-ProblemTypeSelect.propTypes = {
-  selected: PropTypes.string.isRequired,
-  setSelected: PropTypes.func.isRequired,
-};
 
-export const ProblemTypeSelectInternal = ProblemTypeSelect; // For testing only
-export default injectIntl(ProblemTypeSelect);
+export default ProblemTypeSelect;

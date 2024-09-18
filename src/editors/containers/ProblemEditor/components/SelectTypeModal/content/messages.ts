@@ -12,6 +12,11 @@ const messages = defineMessages({
     defaultMessage: 'Advanced problems',
     description: 'Title for advanced problem menu',
   },
+  advanceMenuGoBack: {
+    id: 'authoring.problemEditor.advanceProblem.menu.goBack',
+    defaultMessage: 'Go back',
+    description: 'Return to the previous menu that shows basic problem types',
+  },
   advanceProblemTypeLabel: {
     id: 'authoring.problemEditor.advanceProblem.problemType.label',
     defaultMessage: '{problemType}',

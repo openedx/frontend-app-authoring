@@ -2,7 +2,7 @@ import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 import { IconButton } from '@openedx/paragon';
-import { SelectTypeWrapperInternal as SelectTypeWrapper } from '.';
+import SelectTypeWrapper from '.';
 import { handleCancel } from '../../../../EditorContainer/hooks';
 
 jest.mock('../../../../EditorContainer/hooks', () => ({

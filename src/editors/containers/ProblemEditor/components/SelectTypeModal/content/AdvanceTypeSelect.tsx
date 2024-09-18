@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import {
   Form,
@@ -12,22 +11,36 @@ import {
   Col,
 } from '@openedx/paragon';
 import { ArrowBack } from '@openedx/paragon/icons';
-import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { AdvanceProblems, ProblemTypeKeys } from '../../../../../data/constants/problem';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import {
+  AdvancedProblemType,
+  AdvanceProblems,
+  ProblemType,
+  ProblemTypeKeys,
+} from '../../../../../data/constants/problem';
 import messages from './messages';
 
-const AdvanceTypeSelect = ({
+interface Props {
+  selected: AdvancedProblemType;
+  setSelected: React.Dispatch<ProblemType | AdvancedProblemType>;
+}
+
+const AdvanceTypeSelect: React.FC<Props> = ({
   selected,
   setSelected,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const handleChange = e => { setSelected(e.target.value); };
   return (
     <Col xs={12} md={8} className="justify-content-center">
       <Form.Group className="border rounded text-primary-500 p-0">
         <ActionRow className="border-primary-100 border-bottom py-3 pl-2.5 pr-4">
-          <IconButton src={ArrowBack} iconAs={Icon} onClick={() => setSelected(ProblemTypeKeys.SINGLESELECT)} />
+          <IconButton
+            src={ArrowBack}
+            iconAs={Icon}
+            alt={intl.formatMessage(messages.advanceMenuGoBack)}
+            onClick={() => setSelected(ProblemTypeKeys.SINGLESELECT)}
+          />
           <ActionRow.Spacer />
           <Form.Label className="h4">
             <FormattedMessage {...messages.advanceMenuTitle} />
@@ -43,7 +56,7 @@ const AdvanceTypeSelect = ({
           {Object.entries(AdvanceProblems).map(([type, data]) => {
             if (data.status !== '') {
               return (
-                <ActionRow className="border-primary-100 border-bottom m-0 py-3 w-100">
+                <ActionRow className="border-primary-100 border-bottom m-0 py-3 w-100" key={type}>
                   <Form.Radio id={type} value={type}>
                     {intl.formatMessage(messages.advanceProblemTypeLabel, { problemType: data.title })}
                   </Form.Radio>
@@ -51,7 +64,7 @@ const AdvanceTypeSelect = ({
                   <OverlayTrigger
                     placement="right"
                     overlay={(
-                      <Tooltip>
+                      <Tooltip id={`tooltip-adv-${type}`}>
                         <div className="text-left">
                           {intl.formatMessage(messages.supportStatusTooltipMessage, { supportStatus: data.status.replace(' ', '_') })}
                         </div>
@@ -66,7 +79,7 @@ const AdvanceTypeSelect = ({
               );
             }
             return (
-              <ActionRow className="border-primary-100 border-bottom m-0 py-3 w-100">
+              <ActionRow className="border-primary-100 border-bottom m-0 py-3 w-100" key={type}>
                 <Form.Radio id={type} value={type}>
                   {intl.formatMessage(messages.advanceProblemTypeLabel, { problemType: data.title })}
                 </Form.Radio>
@@ -86,16 +99,4 @@ const AdvanceTypeSelect = ({
   );
 };
 
-AdvanceTypeSelect.defaultProps = {
-  selected: null,
-};
-
-AdvanceTypeSelect.propTypes = {
-  selected: PropTypes.string,
-  setSelected: PropTypes.func.isRequired,
-  // injected
-  intl: intlShape.isRequired,
-};
-
-export const AdvanceTypeSelectInternal = AdvanceTypeSelect; // For testing only
-export default injectIntl(AdvanceTypeSelect);
+export default AdvanceTypeSelect;

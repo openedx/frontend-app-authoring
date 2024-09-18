@@ -1,21 +1,29 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import PropTypes from 'prop-types';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
 import * as hooks from './hooks';
 
 import supportedEditors from './supportedEditors';
+import type { EditorComponent } from './EditorComponent';
 
-const Editor = ({
+export interface Props extends EditorComponent {
+  blockType: string;
+  blockId: string | null;
+  learningContextId: string | null;
+  lmsEndpointUrl: string | null;
+  studioEndpointUrl: string | null;
+}
+
+const Editor: React.FC<Props> = ({
   learningContextId,
   blockType,
   blockId,
   lmsEndpointUrl,
   studioEndpointUrl,
-  onClose,
-  returnFunction,
+  onClose = null,
+  returnFunction = null,
 }) => {
   const dispatch = useDispatch();
   hooks.initializeApp({
@@ -45,24 +53,6 @@ const Editor = ({
       </div>
     </div>
   );
-};
-Editor.defaultProps = {
-  blockId: null,
-  learningContextId: null,
-  lmsEndpointUrl: null,
-  onClose: null,
-  returnFunction: null,
-  studioEndpointUrl: null,
-};
-
-Editor.propTypes = {
-  blockId: PropTypes.string,
-  blockType: PropTypes.string.isRequired,
-  learningContextId: PropTypes.string,
-  lmsEndpointUrl: PropTypes.string,
-  onClose: PropTypes.func,
-  returnFunction: PropTypes.func,
-  studioEndpointUrl: PropTypes.string,
 };
 
 export default Editor;
