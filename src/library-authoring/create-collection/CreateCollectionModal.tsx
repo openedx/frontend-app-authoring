@@ -5,7 +5,7 @@ import {
   Form,
   ModalDialog,
 } from '@openedx/paragon';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -17,6 +17,7 @@ import { ToastContext } from '../../generic/toast-context';
 
 const CreateCollectionModal = () => {
   const intl = useIntl();
+  const navigate = useNavigate();
   const { libraryId } = useParams();
   if (!libraryId) {
     throw new Error('Rendered without libraryId URL parameter');
@@ -29,8 +30,9 @@ const CreateCollectionModal = () => {
   const { showToast } = React.useContext(ToastContext);
 
   const handleCreate = React.useCallback((values) => {
-    create.mutateAsync(values).then(() => {
+    create.mutateAsync(values).then((data) => {
       closeCreateCollectionModal();
+      navigate(`/library/${libraryId}/collections/${data.key}`);
       showToast(intl.formatMessage(messages.createCollectionSuccess));
     }).catch(() => {
       showToast(intl.formatMessage(messages.createCollectionError));
