@@ -1,5 +1,6 @@
 import type { AxiosRequestConfig } from 'axios';
 import { camelizeKeys } from '../../../utils';
+import { isLibraryKey } from '../../../../generic/key-utils';
 import * as urls from './urls';
 import { get, post, deleteObject } from './utils';
 import { durationStringFromValue } from '../../../containers/VideoEditor/components/VideoSettingsModal/components/DurationWidget/hooks';
@@ -111,7 +112,7 @@ export const apiMethods = {
     studioEndpointUrl,
     pageNumber,
   }): Promise<{ data: AssetResponse & Pagination }> => {
-    if (learningContextId.startsWith('lib:')) {
+    if (isLibraryKey(learningContextId)) {
       // V2 content libraries don't support static assets yet:
       return Promise.resolve({
         data: {

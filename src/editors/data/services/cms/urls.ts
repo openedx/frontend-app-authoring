@@ -1,3 +1,5 @@
+import { isLibraryKey, isLibraryV1Key } from '../../../../generic/key-utils';
+
 /**
  * A little helper so we can write the types of these functions more compactly
  * The main purpose of this is to indicate the params are all strings.
@@ -15,11 +17,13 @@ export const unit = ({ studioEndpointUrl, unitUrl, blockId }) => (
 export const returnUrl = ({
   studioEndpointUrl, unitUrl, learningContextId, blockId,
 }): string => {
-  if (learningContextId && learningContextId.startsWith('library-v1')) {
+  // Is this a v1 library?
+  if (isLibraryV1Key(learningContextId)) {
     // when the learning context is a v1 library, return to the library page
     return libraryV1({ studioEndpointUrl, learningContextId });
   }
-  if (learningContextId && learningContextId.startsWith('lib:')) {
+  // Is this a v2 library?
+  if (isLibraryKey(learningContextId)) {
     // when it's a v2 library, there will be no return url (instead a closed popup)
     // (temporary) don't throw error, just return empty url. it will fail it's network connection but otherwise
     // the app will run

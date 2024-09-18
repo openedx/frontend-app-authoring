@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { getItemIcon } from '../generic/block-type-utils';
+import { isLibraryKey } from '../generic/key-utils';
 import { useSearchContext, type ContentHit, Highlight } from '../search-manager';
 import { getStudioHomeData } from '../studio-home/data/selectors';
 import { constructLibraryAuthoringURL } from '../utils';
@@ -116,7 +117,7 @@ const SearchResult: React.FC<{ hit: ContentHit }> = ({ hit }) => {
       return `/${urlSuffix}`;
     }
 
-    if (contextKey.startsWith('lib:')) {
+    if (isLibraryKey(contextKey)) {
       const urlSuffix = getLibraryComponentUrlSuffix(hit);
       if (redirectToLibraryAuthoringMfe && libraryAuthoringMfeUrl) {
         return constructLibraryAuthoringURL(libraryAuthoringMfeUrl, urlSuffix);

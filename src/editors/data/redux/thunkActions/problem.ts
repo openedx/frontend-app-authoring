@@ -3,6 +3,7 @@ import { actions as problemActions } from '../problem';
 import { actions as requestActions } from '../requests';
 import { selectors as appSelectors } from '../app';
 import * as requests from './requests';
+import { isLibraryKey } from '../../../../generic/key-utils';
 import { OLXParser } from '../../../containers/ProblemEditor/data/OLXParser';
 import { parseSettings } from '../../../containers/ProblemEditor/data/SettingsParser';
 import { ProblemTypeKeys } from '../../constants/problem';
@@ -86,7 +87,7 @@ export const initializeProblem = (blockValue) => (dispatch, getState) => {
   const rawOLX = _.get(blockValue, 'data.data', {});
   const rawSettings = _.get(blockValue, 'data.metadata', {});
   const learningContextId = selectors.app.learningContextId(getState());
-  if (learningContextId?.startsWith('lib:')) {
+  if (isLibraryKey(learningContextId)) {
     // Content libraries don't yet support defaults for fields like max_attempts, showanswer, etc.
     // So proceed with loading the problem.
     // Though first we need to fake the request or else the problem type selection UI won't display:
