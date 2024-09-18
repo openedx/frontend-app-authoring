@@ -62,7 +62,7 @@ const ComponentInfoHeader = ({ library, usageKey }: ComponentInfoHeaderProps) =>
 
   return (
     <Stack direction="horizontal">
-      { inputIsActive
+      {inputIsActive
         ? (
           <Form.Control
             autoFocus
@@ -86,6 +86,7 @@ const ComponentInfoHeader = ({ library, usageKey }: ComponentInfoHeaderProps) =>
                 iconAs={Icon}
                 alt={intl.formatMessage(messages.editNameButtonAlt)}
                 onClick={handleClick}
+                size="inline"
               />
             )}
           </>
