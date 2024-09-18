@@ -53,6 +53,7 @@ const ProblemFilterItem = ({ count, handleCheckboxChange } : ProblemFilterItemPr
 
   const handleCheckBoxChangeOnProblem = React.useCallback((e) => {
     handleCheckboxChange(e);
+    setIsProblemIndeterminate(false);
     if (e.target.checked) {
       setProblemTypesFilter(Object.keys(problemTypes));
     } else {
