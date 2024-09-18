@@ -47,12 +47,12 @@ const messages = defineMessages({
     description: 'Label for lock file checkbox in info modal',
   },
   activeCheckboxLabel: {
-    id: 'course-authoring.files-and-videos.sort-and-filter.modal.filter.activeCheckbox.label',
+    id: 'course-authoring.files-and-videos.file-info.activeCheckbox.label',
     defaultMessage: 'Active',
     description: 'Label for active checkbox in filter section of sort and filter modal',
   },
   inactiveCheckboxLabel: {
-    id: 'course-authoring.files-and-videos.sort-and-filter.modal.filter.inactiveCheckbox.label',
+    id: 'course-authoring.files-and-videos.file-info.inactiveCheckbox.label',
     defaultMessage: 'Inactive',
     description: 'Label for inactive checkbox in filter section of sort and filter modal',
   },
@@ -110,6 +110,15 @@ const messages = defineMessages({
     id: 'course-authoring.files-and-videos.overwrite.modal.cancel-button.label',
     defaultMessage: 'Cancel',
     description: 'The message displayed in the button to confirm cancelling the upload',
+  },
+  lockFileTooltipContent: {
+    id: 'course-authoring.files-and-uploads.file-info.lockFile.tooltip.content',
+    defaultMessage: `By default, anyone can access a file you upload if
+      they know the web URL, even if they are not enrolled in your course.
+      You can prevent outside access to a file by locking the file. When
+      you lock a file, the web URL only allows learners who are enrolled
+      in your course and signed in to access the file.`,
+    description: 'Tooltip message for the lock icon in the table view of files',
   },
 });
 
