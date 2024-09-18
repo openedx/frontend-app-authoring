@@ -21,8 +21,13 @@ const CollectionCard = ({ collectionHit } : CollectionCardProps) => {
     type,
     formatted,
     tags,
+    numChildren,
   } = collectionHit;
   const { displayName = '', description = '' } = formatted;
+  const blockTypeDisplayName = numChildren ? intl.formatMessage(
+    messages.collectionTypeWithCount,
+    { numChildren },
+  ) : intl.formatMessage(messages.collectionType);
 
   return (
     <BaseComponentCard
@@ -40,7 +45,7 @@ const CollectionCard = ({ collectionHit } : CollectionCardProps) => {
           />
         </ActionRow>
       )}
-      blockTypeDisplayName={intl.formatMessage(messages.collectionType)}
+      blockTypeDisplayName={blockTypeDisplayName}
       openInfoSidebar={() => {}}
     />
   );
