@@ -85,6 +85,41 @@ describe('AddContentWorkflow test', () => {
   });
 
   it('can create a Problem component', async () => {
+    initializeMocks();
+    render(<LibraryLayout />, renderOpts);
+
+    // Click "New [Component]"
+    const newComponentButton = await screen.findByRole('button', { name: /New/ });
+    fireEvent.click(newComponentButton);
+
+    // Click "Problem" to create a capa problem component
+    fireEvent.click(await screen.findByRole('button', { name: /Problem/ }));
+
+    // Then the editor should open
+    expect(await screen.findByRole('heading', { name: /Select problem type/ })).toBeInTheDocument();
+
+    // Select the type: Numerical Input
+    fireEvent.click(await screen.findByRole('button', { name: 'Numerical input' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Select' }));
+
+    expect(await screen.findByRole('heading', { name: /Numerical input/ })).toBeInTheDocument();
+
+    // Enter an answer value:
+    const inputA = await screen.findByPlaceholderText('Enter an answer');
+    fireEvent.change(inputA, { target: { value: '123456' } });
+
+    // Mock the save() REST API method:
+    const saveSpy = jest.spyOn(editorCmsApi as any, 'saveBlock').mockImplementationOnce(async () => ({
+      status: 200, data: { id: mockXBlockFields.usageKeyNewProblem },
+    }));
+
+    // Click Save
+    const saveButton = screen.getByLabelText('Save changes and return to learning context');
+    fireEvent.click(saveButton);
+    expect(saveSpy).toHaveBeenCalledTimes(2); // TODO: why is this called twice?
+  });
+
+  it('can create a Video component', async () => {
     const { mockShowToast } = initializeMocks();
     render(<LibraryLayout />, renderOpts);
 
@@ -92,13 +127,13 @@ describe('AddContentWorkflow test', () => {
     const newComponentButton = await screen.findByRole('button', { name: /New/ });
     fireEvent.click(newComponentButton);
 
-    // Pre-condition - this is NOT shown yet:
-    expect(screen.queryByText('Content created successfully.')).not.toBeInTheDocument();
+    // Pre-condition - the success toast is NOT shown yet:
+    expect(mockShowToast).not.toHaveBeenCalled();
 
-    // Click "Problem" to create a capa problem component
-    fireEvent.click(await screen.findByRole('button', { name: /Problem/ }));
+    // Click "Video" to create a video component
+    fireEvent.click(await screen.findByRole('button', { name: /Video/ }));
 
-    // We haven't yet implemented the problem editor, so we expect only a toast to appear
+    // We haven't yet implemented the video editor, so we expect only a toast to appear
     await waitFor(() => expect(mockShowToast).toHaveBeenCalledWith('Content created successfully.'));
   });
 });

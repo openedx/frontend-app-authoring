@@ -1,4 +1,3 @@
-import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
@@ -7,6 +6,7 @@ import {
 
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import messages from './messages';
+import { isLibraryV1Key } from '../../../generic/key-utils';
 import { navigateTo } from '../../hooks';
 import { selectors } from '../../data/redux';
 
@@ -23,7 +23,7 @@ const ErrorPage = ({
   // injected
   intl,
 }) => {
-  const outlineType = learningContextId?.startsWith('library-v1') ? 'library' : 'course';
+  const outlineType = isLibraryV1Key(learningContextId) ? 'library' : 'course';
   const outlineUrl = `${studioEndpointUrl}/${outlineType}/${learningContextId}`;
   const unitUrl = unitData?.data ? `${studioEndpointUrl}/container/${unitData?.data.ancestors[0].id}` : null;
 

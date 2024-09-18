@@ -1,18 +1,6 @@
-/* eslint-disable no-import-assign */
-import * as utils from '../../../utils';
 import * as api from './api';
-import * as mockApi from './mockApi';
 import * as urls from './urls';
 import { get, post, deleteObject } from './utils';
-
-jest.mock('../../../utils', () => {
-  const camelizeMap = (obj) => ({ ...obj, camelized: true });
-  return {
-    ...jest.requireActual('../../../utils'),
-    camelize: camelizeMap,
-    camelizeKeys: (list) => list.map(camelizeMap),
-  };
-});
 
 jest.mock('./urls', () => ({
   block: jest.fn().mockReturnValue('urls.block'),
@@ -39,8 +27,6 @@ jest.mock('./utils', () => ({
   post: jest.fn().mockName('post'),
   deleteObject: jest.fn().mockName('deleteObject'),
 }));
-
-const { camelize } = utils;
 
 const { apiMethods } = api;
 
@@ -200,7 +186,7 @@ describe('cms api', () => {
           licenseType: 'LiCeNsETYpe',
           licenseDetails: 'liCENSeDetAIls',
         };
-        const html5Sources = 'hTML5souRCES';
+        const html5Sources = ['hTML5souRCES'];
         const edxVideoId = 'eDXviDEOid';
         const youtubeId = 'yOUtUBeid';
         const license = 'LiCEnsE';
@@ -241,6 +227,7 @@ describe('cms api', () => {
         jest.restoreAllMocks();
       });
       test('throw error for invalid blockType', () => {
+        // @ts-expect-error because we're not passing 'blockId' or other parameters
         expect(() => { apiMethods.normalizeContent({ blockType: 'somethingINVALID' }); })
           .toThrow(TypeError);
       });
@@ -271,7 +258,7 @@ describe('cms api', () => {
     });
 
     describe('uploadAsset', () => {
-      const asset = { photo: 'dAta' };
+      const asset = new Blob(['data'], { type: 'image/jpeg' });
       it('should call post with urls.courseAssets and imgdata', () => {
         const mockFormdata = new FormData();
         mockFormdata.append('file', asset);
@@ -318,18 +305,17 @@ describe('cms api', () => {
         { id: ids[0], some: 'data' },
         { id: ids[1], other: 'data' },
         { id: ids[2], some: 'DATA' },
-        { id: ids[3], other: 'DATA' },
+        { id: ids[3], other_data: 'DATA' },
       ];
-      const oldLoadImage = api.loadImage;
-      api.loadImage = (imageData) => ({ loadImage: imageData });
+      const spy = jest.spyOn(api, 'loadImage').mockImplementation((imageData) => ({ loadImage: imageData }));
       const out = api.loadImages(testData);
       expect(out).toEqual({
-        [ids[0]]: api.loadImage(camelize(testData[0])),
-        [ids[1]]: api.loadImage(camelize(testData[1])),
-        [ids[2]]: api.loadImage(camelize(testData[2])),
-        [ids[3]]: api.loadImage(camelize(testData[3])),
+        [ids[0]]: api.loadImage(testData[0]),
+        [ids[1]]: api.loadImage(testData[1]),
+        [ids[2]]: api.loadImage(testData[2]),
+        [ids[3]]: api.loadImage({ id: ids[3], otherData: 'DATA' }), // Verify its 'other_data' key was camelized
       });
-      api.loadImage = oldLoadImage;
+      spy.mockClear();
     });
   });
   describe('uploadThumbnail', () => {
@@ -382,7 +368,7 @@ describe('cms api', () => {
       });
     });
     describe('uploadTranscript', () => {
-      const transcript = { transcript: 'dAta' };
+      const transcript = new Blob(['dAta']);
       it('should call post with urls.videoTranscripts and transcript data', () => {
         const mockFormdata = new FormData();
         mockFormdata.append('file', transcript);
@@ -604,31 +590,6 @@ describe('cms api', () => {
       const licenseType = 'all-rights-reserved';
       const licenseDetails = {};
       expect(api.processLicense(licenseType, licenseDetails)).toEqual('all-rights-reserved');
-    });
-  });
-  describe('checkMockApi', () => {
-    const envTemp = process.env;
-    beforeEach(() => {
-      jest.resetModules();
-      process.env = { ...envTemp };
-    });
-    afterEach(() => {
-      process.env = envTemp;
-    });
-    describe('if REACT_APP_DEVGALLERY is true', () => {
-      it('should return the mockApi version of a call when it exists', () => {
-        process.env.REACT_APP_DEVGALLERY = true;
-        expect(api.checkMockApi('fetchBlockById')).toEqual(mockApi.fetchBlockById);
-      });
-      it('should return an empty mock when the call does not exist', () => {
-        process.env.REACT_APP_DEVGALLERY = true;
-        expect(api.checkMockApi('someRAnDomThINg')).toEqual(mockApi.emptyMock);
-      });
-    });
-    describe('if REACT_APP_DEVGALLERY is not true', () => {
-      it('should return the appropriate call', () => {
-        expect(api.checkMockApi('fetchBlockById')).toEqual(apiMethods.fetchBlockById);
-      });
     });
   });
   describe('fetchVideoFeatures', () => {

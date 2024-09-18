@@ -7,7 +7,7 @@ import {
   type QueryClient,
 } from '@tanstack/react-query';
 
-import { getLibraryId } from '../components/utils';
+import { getLibraryId } from '../../generic/key-utils';
 import {
   type GetLibrariesV2CustomParams,
   type ContentLibrary,

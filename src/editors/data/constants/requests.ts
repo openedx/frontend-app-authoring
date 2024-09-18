@@ -5,7 +5,7 @@ export const RequestStates = StrictDict({
   pending: 'pending',
   completed: 'completed',
   failed: 'failed',
-});
+} as const);
 
 export const RequestKeys = StrictDict({
   fetchVideos: 'fetchVideos',
@@ -27,4 +27,4 @@ export const RequestKeys = StrictDict({
   uploadAsset: 'uploadAsset',
   fetchAdvancedSettings: 'fetchAdvancedSettings',
   fetchVideoFeatures: 'fetchVideoFeatures',
-});
+} as const);

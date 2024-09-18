@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import { blockTypes } from '../../constants/app';
+import { isLibraryV1Key } from '../../../../generic/key-utils';
 import * as urls from '../../services/cms/urls';
 // This 'module' self-import hack enables mocking during tests.
 // See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
@@ -46,7 +47,7 @@ export const isLibrary = createSelector(
     module.simpleSelectors.blockId,
   ],
   (learningContextId, blockId) => {
-    if (learningContextId && learningContextId.startsWith('library-v1')) {
+    if (isLibraryV1Key(learningContextId)) {
       return true;
     }
     if (blockId && blockId.startsWith('lb:')) {

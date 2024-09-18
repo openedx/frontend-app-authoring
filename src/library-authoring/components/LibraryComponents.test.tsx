@@ -173,8 +173,8 @@ describe('<LibraryComponents />', () => {
 
     expect(await screen.findByText('This is a text: ID=1')).toBeInTheDocument();
     expect(screen.getByText('This is a text: ID=2')).toBeInTheDocument();
-    expect(screen.getByText('This is a video: ID=3')).toBeInTheDocument();
-    expect(screen.getByText('This is a video: ID=4')).toBeInTheDocument();
+    expect(screen.getByText('Video Component 3')).toBeInTheDocument();
+    expect(screen.getByText('Video Component 4')).toBeInTheDocument();
     expect(screen.getByText('This is a problem: ID=5')).toBeInTheDocument();
     expect(screen.getByText('This is a problem: ID=6')).toBeInTheDocument();
   });
@@ -189,8 +189,8 @@ describe('<LibraryComponents />', () => {
 
     expect(await screen.findByText('This is a text: ID=1')).toBeInTheDocument();
     expect(screen.getByText('This is a text: ID=2')).toBeInTheDocument();
-    expect(screen.getByText('This is a video: ID=3')).toBeInTheDocument();
-    expect(screen.getByText('This is a video: ID=4')).toBeInTheDocument();
+    expect(screen.getByText('Video Component 3')).toBeInTheDocument();
+    expect(screen.getByText('Video Component 4')).toBeInTheDocument();
     expect(screen.queryByText('This is a problem: ID=5')).not.toBeInTheDocument();
     expect(screen.queryByText('This is a problem: ID=6')).not.toBeInTheDocument();
   });

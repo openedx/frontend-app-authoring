@@ -74,7 +74,11 @@ const ComponentCard = ({ contentHit, blockTypeDisplayName } : ComponentCardProps
     tags,
     usageKey,
   } = contentHit;
-  const description = formatted?.content?.htmlContent ?? '';
+  const description: string = (/* eslint-disable */
+    blockType === 'html' ? formatted?.content?.htmlContent :
+    blockType === 'problem' ? formatted?.content?.capaContent :
+    undefined
+  ) ?? '';/* eslint-enable */
   const displayName = formatted?.displayName ?? '';
 
   return (

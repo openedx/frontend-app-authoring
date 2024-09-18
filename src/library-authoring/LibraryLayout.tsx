@@ -27,21 +27,34 @@ const LibraryLayout = () => {
   const goBack = React.useCallback(() => {
     // Go back to the library
     navigate(`/library/${libraryId}`);
-    // The following function is called only if changes are saved:
-    return ({ id: usageKey }) => {
+  }, []);
+  const returnFunction = React.useCallback(() => {
+    // When changes are cancelled, either onClose (goBack) or this returnFunction will be called.
+    // When changes are saved, this returnFunction is called.
+    goBack();
+    return (args) => {
+      if (args === undefined) {
+        return; // Do nothing - the user cancelled the changes
+      }
+      const { id: usageKey } = args;
       // invalidate any queries that involve this XBlock:
       invalidateComponentData(queryClient, libraryId, usageKey);
     };
-  }, []);
+  }, [goBack]);
 
   return (
     <LibraryProvider>
       <Routes>
+        {/*
+          TODO: we should be opening this editor as a modal, not making it a separate page/URL.
+          That will be a much nicer UX because users can just close the modal and be on the same page they were already
+          on, instead of always getting sent back to the library home.
+        */}
         <Route
           path="editor/:blockType/:blockId?"
           element={(
             <PageWrap>
-              <EditorContainer learningContextId={libraryId} onClose={goBack} afterSave={goBack} />
+              <EditorContainer learningContextId={libraryId} onClose={goBack} returnFunction={returnFunction} />
             </PageWrap>
           )}
         />
