@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from 'react';
+import { Helmet } from 'react-helmet';
 import classNames from 'classnames';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -156,6 +157,7 @@ const LibraryAuthoringPage = () => {
   return (
     <div className="d-flex">
       <div className="flex-grow-1">
+        <Helmet><title>{libraryData.title} | {process.env.SITE_NAME}</title></Helmet>
         <Header
           number={libraryData.slug}
           title={libraryData.title}
