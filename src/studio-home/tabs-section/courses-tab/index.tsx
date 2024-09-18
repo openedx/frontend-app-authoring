@@ -1,7 +1,6 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Icon,
@@ -26,18 +25,39 @@ import AlertMessage from '../../../generic/alert-message';
 import messages from '../messages';
 import './index.scss';
 
-const CoursesTab = ({
+interface Props {
+  coursesDataItems: {
+    courseKey: string;
+    displayName: string;
+    lmsLink: string | null;
+    number: string;
+    org: string;
+    rerunLink: string | null;
+    run: string;
+    url: string;
+  }[];
+  showNewCourseContainer: boolean;
+  onClickNewCourse: () => void;
+  isShowProcessing: boolean;
+  isLoading: boolean;
+  isFailed: boolean;
+  numPages: number;
+  coursesCount: number;
+  isEnabledPagination?: boolean;
+}
+
+const CoursesTab: React.FC<Props> = ({
   coursesDataItems,
   showNewCourseContainer,
   onClickNewCourse,
   isShowProcessing,
   isLoading,
   isFailed,
-  dispatch,
-  numPages,
-  coursesCount,
-  isEnabledPagination,
+  numPages = 0,
+  coursesCount = 0,
+  isEnabledPagination = false,
 }) => {
+  const dispatch = useDispatch();
   const intl = useIntl();
   const location = useLocation();
   const {
@@ -136,7 +156,6 @@ const CoursesTab = ({
                 number,
                 run,
                 url,
-                cmsLink,
               }) => (
                 <CardItem
                   key={courseKey}
@@ -148,7 +167,6 @@ const CoursesTab = ({
                   number={number}
                   run={run}
                   url={url}
-                  cmsLink={cmsLink}
                   isPaginated={isEnabledPagination}
                 />
               ),
@@ -195,36 +213,6 @@ const CoursesTab = ({
       </div>
     )
   );
-};
-
-CoursesTab.defaultProps = {
-  numPages: 0,
-  coursesCount: 0,
-  isEnabledPagination: false,
-};
-
-CoursesTab.propTypes = {
-  coursesDataItems: PropTypes.arrayOf(
-    PropTypes.shape({
-      courseKey: PropTypes.string.isRequired,
-      displayName: PropTypes.string.isRequired,
-      lmsLink: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-      org: PropTypes.string.isRequired,
-      rerunLink: PropTypes.string.isRequired,
-      run: PropTypes.string.isRequired,
-      url: PropTypes.string.isRequired,
-    }),
-  ).isRequired,
-  showNewCourseContainer: PropTypes.bool.isRequired,
-  onClickNewCourse: PropTypes.func.isRequired,
-  isShowProcessing: PropTypes.bool.isRequired,
-  isLoading: PropTypes.bool.isRequired,
-  isFailed: PropTypes.bool.isRequired,
-  dispatch: PropTypes.func.isRequired,
-  numPages: PropTypes.number,
-  coursesCount: PropTypes.number,
-  isEnabledPagination: PropTypes.bool,
 };
 
 export default CoursesTab;

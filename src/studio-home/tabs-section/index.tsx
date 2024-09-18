@@ -1,9 +1,9 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Tab, Tabs } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import { getLoadingStatuses, getStudioHomeData } from '../data/selectors';
@@ -17,13 +17,13 @@ import { fetchLibraryData } from '../data/thunks';
 import { isMixedOrV1LibrariesMode, isMixedOrV2LibrariesMode } from './utils';
 
 const TabsSection = ({
-  intl,
   showNewCourseContainer,
   onClickNewCourse,
   isShowProcessing,
-  dispatch,
   isPaginationCoursesEnabled,
 }) => {
+  const dispatch = useDispatch();
+  const intl = useIntl();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const libMode = getConfig().LIBRARY_MODE;
@@ -33,7 +33,7 @@ const TabsSection = ({
     legacyLibraries: 'legacyLibraries',
     archived: 'archived',
     taxonomies: 'taxonomies',
-  };
+  } as const;
 
   const initTabKeyState = (pname) => {
     if (pname.includes('/libraries-v1')) {
@@ -80,7 +80,7 @@ const TabsSection = ({
   // Controlling the visibility of tabs when using conditional rendering is necessary for
   // the correct operation of iterating over child elements inside the Paragon Tabs component.
   const visibleTabs = useMemo(() => {
-    const tabs = [];
+    const tabs: JSX.Element[] = [];
     tabs.push(
       <Tab
         key={TABS_LIST.courses}
@@ -94,7 +94,6 @@ const TabsSection = ({
           isShowProcessing={isShowProcessing}
           isLoading={isLoadingCourses}
           isFailed={isFailedCoursesPage}
-          dispatch={dispatch}
           numPages={numPages}
           coursesCount={coursesCount}
           isEnabledPagination={isPaginationCoursesEnabled}
@@ -199,12 +198,10 @@ TabsSection.defaultProps = {
 };
 
 TabsSection.propTypes = {
-  intl: intlShape.isRequired,
   showNewCourseContainer: PropTypes.bool.isRequired,
   onClickNewCourse: PropTypes.func.isRequired,
   isShowProcessing: PropTypes.bool.isRequired,
-  dispatch: PropTypes.func.isRequired,
   isPaginationCoursesEnabled: PropTypes.bool,
 };
 
-export default injectIntl(TabsSection);
+export default TabsSection;

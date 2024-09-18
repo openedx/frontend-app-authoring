@@ -1,53 +1,27 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { render, fireEvent } from '@testing-library/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { initializeMockApp, getConfig } from '@edx/frontend-platform';
+import * as reactRedux from 'react-redux';
+import { getConfig } from '@edx/frontend-platform';
 
 import { studioHomeMock } from '../__mocks__';
 import messages from '../messages';
-import initializeStore from '../../store';
 import { trimSlashes } from './utils';
+import { fireEvent, initializeMocks, render } from '../../testUtils';
 import CardItem from '.';
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useSelector: jest.fn(),
-}));
-
-let store;
-
-const RootWrapper = (props) => (
-  <AppProvider store={store}>
-    <IntlProvider locale="en" messages={{}}>
-      <CardItem intl={{ formatMessage: jest.fn() }} {...props} />
-    </IntlProvider>
-  </AppProvider>
-);
+jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => studioHomeMock);
 
 describe('<CardItem />', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-    store = initializeStore();
-    useSelector.mockReturnValue(studioHomeMock);
+    initializeMocks();
   });
   it('should render course details for non-library course', () => {
     const props = studioHomeMock.archivedCourses[0];
-    const { getByText } = render(<RootWrapper {...props} />);
+    const { getByText } = render(<CardItem {...props} />);
     expect(getByText(`${props.org} / ${props.number} / ${props.run}`)).toBeInTheDocument();
   });
 
   it('should render correct links for non-library course', () => {
     const props = studioHomeMock.archivedCourses[0];
-    const { getByText } = render(<RootWrapper {...props} />);
+    const { getByText } = render(<CardItem {...props} />);
     const courseTitleLink = getByText(props.displayName);
     expect(courseTitleLink).toHaveAttribute('href', `${getConfig().STUDIO_BASE_URL}${props.url}`);
     const btnReRunCourse = getByText(messages.btnReRunText.defaultMessage);
@@ -58,7 +32,7 @@ describe('<CardItem />', () => {
 
   it('should render correct links for non-library course pagination', () => {
     const props = studioHomeMock.archivedCourses[0];
-    const { getByText, getByTestId } = render(<RootWrapper {...props} isPaginated />);
+    const { getByText, getByTestId } = render(<CardItem {...props} isPaginated />);
     const courseTitleLink = getByText(props.displayName);
     expect(courseTitleLink).toHaveAttribute('href', `${getConfig().STUDIO_BASE_URL}${props.url}`);
     const dropDownMenu = getByTestId('toggle-dropdown');
@@ -70,20 +44,23 @@ describe('<CardItem />', () => {
   });
   it('should render course details for library course', () => {
     const props = { ...studioHomeMock.archivedCourses[0], isLibraries: true };
-    const { getByText } = render(<RootWrapper {...props} />);
+    const { getByText } = render(<CardItem {...props} />);
     const courseTitleLink = getByText(props.displayName);
     expect(courseTitleLink).toHaveAttribute('href', `${getConfig().STUDIO_BASE_URL}${props.url}`);
     expect(getByText(`${props.org} / ${props.number}`)).toBeInTheDocument();
   });
   it('should hide rerun button if disallowed', () => {
     const props = studioHomeMock.archivedCourses[0];
-    useSelector.mockReturnValue({ ...studioHomeMock, allowCourseReruns: false });
-    const { queryByText } = render(<RootWrapper {...props} />);
+    // Update our mocked redux data:
+    jest.spyOn(reactRedux, 'useSelector').mockImplementation(() => (
+      { ...studioHomeMock, allowCourseReruns: false }
+    ));
+    const { queryByText } = render(<CardItem {...props} />);
     expect(queryByText(messages.btnReRunText.defaultMessage)).not.toBeInTheDocument();
   });
   it('should be read only course if old mongo course', () => {
     const props = studioHomeMock.courses[1];
-    const { queryByText } = render(<RootWrapper {...props} />);
+    const { queryByText } = render(<CardItem {...props} />);
     expect(queryByText(props.displayName)).not.toHaveAttribute('href');
     expect(queryByText(messages.btnReRunText.defaultMessage)).not.toBeInTheDocument();
     expect(queryByText(messages.viewLiveBtnText.defaultMessage)).not.toBeInTheDocument();
@@ -93,7 +70,7 @@ describe('<CardItem />', () => {
     const props = studioHomeMock.courses[1];
     const courseKeyTest = 'course-key';
     const { getByText } = render(
-      <RootWrapper
+      <CardItem
         {...props}
         displayName=""
         courseKey={courseKeyTest}
