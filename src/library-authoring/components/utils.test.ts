@@ -42,7 +42,7 @@ describe('component utils', () => {
       const usageKey = 'lb:org:ALPHA:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd';
       expect(getEditUrl(usageKey)).toStrictEqual(`/library/lib:org:ALPHA/editor/html/${usageKey}`);
     });
-    it('returns the right URL for an HTML (Text) block', () => {
+    it('returns the right URL for editing a Problem block', () => {
       const usageKey = 'lb:org:beta:problem:571fe018-f3ce-45c9-8f53-5dafcb422fdd';
       expect(getEditUrl(usageKey)).toStrictEqual(`/library/lib:org:beta/editor/problem/${usageKey}`);
     });

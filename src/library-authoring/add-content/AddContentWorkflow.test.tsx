@@ -130,10 +130,10 @@ describe('AddContentWorkflow test', () => {
     // Pre-condition - the success toast is NOT shown yet:
     expect(mockShowToast).not.toHaveBeenCalled();
 
-    // Click "Problem" to create a capa problem component
+    // Click "Video" to create a video component
     fireEvent.click(await screen.findByRole('button', { name: /Video/ }));
 
-    // We haven't yet implemented the problem editor, so we expect only a toast to appear
+    // We haven't yet implemented the video editor, so we expect only a toast to appear
     await waitFor(() => expect(mockShowToast).toHaveBeenCalledWith('Content created successfully.'));
   });
 });
