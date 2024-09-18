@@ -30,7 +30,7 @@ export const LibraryContext = React.createContext({
   isCreateCollectionModalOpen: false,
   openCreateCollectionModal: () => {},
   closeCreateCollectionModal: () => {},
-  openCollectionInfoSidebar: () => {}, // eslint-disable-line @typescript-eslint/no-unused-vars
+  openCollectionInfoSidebar: () => {},
 } as LibraryContextData);
 
 /**

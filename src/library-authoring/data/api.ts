@@ -88,8 +88,6 @@ export interface Collection {
   createdBy: string | null;
   created: string;
   modified: string;
-  // TODO: Update the type below once entities are properly linked
-  entities: Array<any>;
   learningPackage: number;
 }
 

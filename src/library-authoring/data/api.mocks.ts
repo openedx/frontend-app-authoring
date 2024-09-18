@@ -283,7 +283,6 @@ mockCollection.collectionData = {
   key: mockCollection.collectionId,
   title: 'My first collection',
   description: 'A collection for testing',
-  entities: [],
   created: '2024-06-26T14:19:59Z',
   modified: '2024-07-20T17:36:51Z',
   enabled: true,
