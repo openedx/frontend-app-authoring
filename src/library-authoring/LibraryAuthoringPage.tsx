@@ -162,8 +162,11 @@ const LibraryAuthoringPage = () => {
           org={libraryData.org}
           contextId={libraryId}
           isLibrary
+          containerProps={{
+            size: undefined,
+          }}
         />
-        <Container size="xl" className="px-4 mt-4 mb-5 library-authoring-page">
+        <Container className="px-4 mt-4 mb-5 library-authoring-page">
           <SearchContextProvider
             extraFilter={`context_key = "${libraryId}"`}
           >
@@ -216,7 +219,7 @@ const LibraryAuthoringPage = () => {
             </Routes>
           </SearchContextProvider>
         </Container>
-        <StudioFooter />
+        <StudioFooter containerProps={{ size: undefined }} />
       </div>
       { !!sidebarBodyComponent && (
         <div className="library-authoring-sidebar box-shadow-left-1 bg-white" data-testid="library-sidebar">
