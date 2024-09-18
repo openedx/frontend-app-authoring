@@ -56,12 +56,6 @@ SelectTypeFooter.defaultProps = {
 };
 
 SelectTypeFooter.propTypes = {
-  // defaultSettings: PropTypes.shape({
-  //   maxAttempts: PropTypes.number,
-  //   rerandomize: PropTypes.string,
-  //   showResetButton: PropTypes.bool,
-  //   showanswer: PropTypes.string,
-  // }).isRequired,
   onCancel: PropTypes.func.isRequired,
   selected: PropTypes.string,
 };
