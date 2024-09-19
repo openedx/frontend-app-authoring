@@ -134,6 +134,7 @@ mockCreateLibraryBlock.newHtmlData = {
   lastDraftCreated: '2024-07-22T21:37:49Z',
   lastDraftCreatedBy: null,
   created: '2024-07-22T21:37:49Z',
+  modified: '2024-07-22T21:37:49Z',
   tagsCount: 0,
 } satisfies api.LibraryBlockMetadata;
 mockCreateLibraryBlock.newProblemData = {
@@ -147,6 +148,7 @@ mockCreateLibraryBlock.newProblemData = {
   lastDraftCreated: '2024-07-22T21:37:49Z',
   lastDraftCreatedBy: null,
   created: '2024-07-22T21:37:49Z',
+  modified: '2024-07-22T21:37:49Z',
   tagsCount: 0,
 } satisfies api.LibraryBlockMetadata;
 mockCreateLibraryBlock.newVideoData = {
@@ -160,6 +162,7 @@ mockCreateLibraryBlock.newVideoData = {
   lastDraftCreated: '2024-07-22T21:37:49Z',
   lastDraftCreatedBy: null,
   created: '2024-07-22T21:37:49Z',
+  modified: '2024-07-22T21:37:49Z',
   tagsCount: 0,
 } satisfies api.LibraryBlockMetadata;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
@@ -234,6 +237,7 @@ mockLibraryBlockMetadata.dataNeverPublished = {
   lastDraftCreatedBy: null,
   hasUnpublishedChanges: false,
   created: '2024-06-20T13:54:21Z',
+  modified: '2024-06-21T13:54:21Z',
   tagsCount: 0,
 } satisfies api.LibraryBlockMetadata;
 mockLibraryBlockMetadata.usageKeyPublished = 'lb:Axim:TEST2:html:571fe018-f3ce-45c9-8f53-5dafcb422fd2';
@@ -248,6 +252,7 @@ mockLibraryBlockMetadata.dataPublished = {
   lastDraftCreatedBy: '2024-06-20T20:00:00Z',
   hasUnpublishedChanges: false,
   created: '2024-06-20T13:54:21Z',
+  modified: '2024-06-21T13:54:21Z',
   tagsCount: 0,
 } satisfies api.LibraryBlockMetadata;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */

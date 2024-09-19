@@ -14,7 +14,7 @@ export const ComponentDeveloperInfo: React.FC<Props> = ({ usageKey }) => {
   const { data: olx, isLoading: isOLXLoading } = useXBlockOLX(usageKey);
   return (
     <>
-      <hr />
+      <hr className="w-100" />
       <h3 className="h5">Developer Component Details</h3>
       <p><small>(This panel is only visible in development builds.)</small></p>
       <dl>

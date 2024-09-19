@@ -51,6 +51,21 @@ const messages = defineMessages({
     defaultMessage: 'Details',
     description: 'Title for details tab',
   },
+  detailsTabDescriptionTitle: {
+    id: 'course-authoring.library-authoring.component.details-tab.description-title',
+    defaultMessage: 'Description / Card Preview Text',
+    description: 'Title for the Description container in the details tab',
+  },
+  detailsTabUsageTitle: {
+    id: 'course-authoring.library-authoring.component.details-tab.usage-title',
+    defaultMessage: 'Component Usage',
+    description: 'Title for the Component Usage container in the details tab',
+  },
+  detailsTabHistoryTitle: {
+    id: 'course-authoring.library-authoring.component.details-tab.history-title',
+    defaultMessage: 'Component History',
+    description: 'Title for the Component History container in the details tab',
+  },
   previewExpandButtonTitle: {
     id: 'course-authoring.library-authoring.component.preview.expand.title',
     defaultMessage: 'Expand',

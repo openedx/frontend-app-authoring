@@ -9,7 +9,7 @@ import { mockLibraryBlockMetadata } from '../data/api.mocks';
 import ComponentManagement from './ComponentManagement';
 
 /*
- * FIXME: Summarize the reason here
+ * This function is used to get the inner text of an element.
  * https://stackoverflow.com/questions/47902335/innertext-is-undefined-in-jest-test
  */
 const getInnerText = (element: Element) => element?.textContent
