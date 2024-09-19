@@ -38,7 +38,9 @@ const ComponentManagement = ({ usageKey }: ComponentManagementProps) => {
         >
           <ContentTagsDrawer
             id={usageKey}
+            variant="component"
             hideTitle
+            hideSubtitle
           />
         </Collapsible>
         )}

@@ -97,10 +97,121 @@ const ContentTagsDrawerTittle = () => {
   );
 };
 
+interface ContentTagsDrawerVariantFooterProps {
+  onClose: () => void,
+}
+
+const ContentTagsDrawerVariantFooter = ({ onClose }: ContentTagsDrawerVariantFooterProps) => {
+  const intl = useIntl();
+  const {
+    commitGlobalStagedTagsStatus,
+    commitGlobalStagedTags,
+    isEditMode,
+    toReadMode,
+    toEditMode,
+  } = useContext(ContentTagsDrawerContext);
+
+  return (
+    <Container
+      className="bg-white position-sticky p-3.5 box-shadow-up-2 tags-drawer-footer"
+    >
+      <div className="d-flex justify-content-end">
+        { commitGlobalStagedTagsStatus !== 'loading' ? (
+          <Stack direction="horizontal" gap={2}>
+            <Button
+              className="font-weight-bold tags-drawer-cancel-button"
+              variant="tertiary"
+              onClick={isEditMode
+                ? toReadMode
+                : onClose}
+            >
+              { intl.formatMessage(isEditMode
+                ? messages.tagsDrawerCancelButtonText
+                : messages.tagsDrawerCloseButtonText)}
+            </Button>
+            <Button
+              variant="dark"
+              className="rounded-0"
+              onClick={isEditMode
+                ? commitGlobalStagedTags
+                : toEditMode}
+            >
+              { intl.formatMessage(isEditMode
+                ? messages.tagsDrawerSaveButtonText
+                : messages.tagsDrawerEditTagsButtonText)}
+            </Button>
+          </Stack>
+        )
+          : (
+            <Spinner
+              animation="border"
+              size="xl"
+              screenReaderText={intl.formatMessage(messages.loadingMessage)}
+            />
+          )}
+      </div>
+    </Container>
+  );
+};
+
+const ContentTagsComponentVariantFooter = () => {
+  const intl = useIntl();
+  const {
+    commitGlobalStagedTagsStatus,
+    commitGlobalStagedTags,
+    isEditMode,
+    toReadMode,
+    toEditMode,
+  } = useContext(ContentTagsDrawerContext);
+
+  return (
+    <div>
+      {isEditMode ? (
+        <div>
+          { commitGlobalStagedTagsStatus !== 'loading' ? (
+            <Stack direction="horizontal" gap={2}>
+              <Button
+                className="font-weight-bold tags-drawer-cancel-button"
+                variant="tertiary"
+                onClick={toReadMode}
+              >
+                {intl.formatMessage(messages.tagsDrawerCancelButtonText)}
+              </Button>
+              <Button
+                variant="dark"
+                className="rounded-0"
+                onClick={commitGlobalStagedTags}
+              >
+                {intl.formatMessage(messages.tagsDrawerSaveButtonText)}
+              </Button>
+            </Stack>
+          )
+            : (
+              <Spinner
+                animation="border"
+                size="xl"
+                screenReaderText={intl.formatMessage(messages.loadingMessage)}
+              />
+            )}
+        </div>
+      ) : (
+        <Button
+          variant="outline-primary"
+          onClick={toEditMode}
+        >
+          {intl.formatMessage(messages.manageTagsButton)}
+        </Button>
+      )}
+    </div>
+  );
+};
+
 interface ContentTagsDrawerProps {
   id?: string;
   onClose?: () => void;
   hideTitle?: boolean;
+  hideSubtitle?: boolean;
+  variant?: 'drawer' | 'component';
 }
 
 /**
@@ -116,6 +227,8 @@ const ContentTagsDrawer = ({
   id,
   onClose,
   hideTitle,
+  hideSubtitle,
+  variant = 'drawer',
 }: ContentTagsDrawerProps) => {
   const intl = useIntl();
   // TODO: We can delete 'params' when the iframe is no longer used on edx-platform
@@ -137,21 +250,20 @@ const ContentTagsDrawer = ({
     isContentTaxonomyTagsLoaded,
     stagedContentTags,
     collapsibleStates,
-    isEditMode,
-    commitGlobalStagedTags,
-    toEditMode,
     toastMessage,
     closeToast,
     setCollapsibleToInitalState,
     otherTaxonomies,
   } = context;
 
-  let onCloseDrawer = onClose;
-  if (onCloseDrawer === undefined) {
+  let onCloseDrawer: () => void;
+  if (onClose === undefined) {
     onCloseDrawer = () => {
       // "*" allows communication with any origin
       window.parent.postMessage('closeManageTagsDrawer', '*');
     };
+  } else {
+    onCloseDrawer = onClose;
   }
 
   useEffect(() => {
@@ -159,9 +271,7 @@ const ContentTagsDrawer = ({
       /* Close drawer when ESC-key is pressed and selectable dropdown box not open */
       const selectableBoxOpen = document.querySelector('[data-selectable-box="taxonomy-tags"]');
       if (event.key === 'Escape' && !selectableBoxOpen && !blockingSheet) {
-        if (onCloseDrawer) {
-          onCloseDrawer();
-        }
+        onCloseDrawer();
       }
     };
     document.addEventListener('keydown', handleEsc);
@@ -184,6 +294,20 @@ const ContentTagsDrawer = ({
     setCollapsibleToInitalState();
   }, [isTaxonomyListLoaded, isContentTaxonomyTagsLoaded]);
 
+  const renderFooter = () => {
+    if (isTaxonomyListLoaded && isContentTaxonomyTagsLoaded) {
+      switch (variant) {
+        case 'drawer':
+          return <ContentTagsDrawerVariantFooter onClose={onCloseDrawer} />;
+        case 'component':
+          return <ContentTagsComponentVariantFooter />;
+        default:
+          return null;
+      }
+    }
+    return null;
+  };
+
   return (
     <ContentTagsDrawerContext.Provider value={context}>
       <div id="content-tags-drawer" className="mt-1 tags-drawer d-flex flex-column justify-content-between min-vh-100 pt-3">
@@ -192,9 +316,11 @@ const ContentTagsDrawer = ({
             <ContentTagsDrawerTittle />
           )}
           <Container>
-            <p className="h4 text-gray-500 font-weight-bold">
-              {intl.formatMessage(messages.headerSubtitle)}
-            </p>
+            {!hideSubtitle && (
+              <p className="h4 text-gray-500 font-weight-bold">
+                {intl.formatMessage(messages.headerSubtitle)}
+              </p>
+            )}
             <TaxonomyList contentId={contentId} />
             {otherTaxonomies.length !== 0 && (
               <div>
@@ -221,48 +347,7 @@ const ContentTagsDrawer = ({
             )}
           </Container>
         </Container>
-
-        { isTaxonomyListLoaded && isContentTaxonomyTagsLoaded && (
-          <Container
-            className="bg-white position-sticky p-3.5 box-shadow-up-2 tags-drawer-footer"
-          >
-            <div className="d-flex justify-content-end">
-              { commitGlobalStagedTagsStatus !== 'loading' ? (
-                <Stack direction="horizontal" gap={2}>
-                  <Button
-                    className="font-weight-bold tags-drawer-cancel-button"
-                    variant="tertiary"
-                    onClick={isEditMode
-                      ? toReadMode
-                      : onCloseDrawer}
-                  >
-                    { intl.formatMessage(isEditMode
-                      ? messages.tagsDrawerCancelButtonText
-                      : messages.tagsDrawerCloseButtonText)}
-                  </Button>
-                  <Button
-                    variant="dark"
-                    className="rounded-0"
-                    onClick={isEditMode
-                      ? commitGlobalStagedTags
-                      : toEditMode}
-                  >
-                    { intl.formatMessage(isEditMode
-                      ? messages.tagsDrawerSaveButtonText
-                      : messages.tagsDrawerEditTagsButtonText)}
-                  </Button>
-                </Stack>
-              )
-                : (
-                  <Spinner
-                    animation="border"
-                    size="xl"
-                    screenReaderText={intl.formatMessage(messages.loadingMessage)}
-                  />
-                )}
-            </div>
-          </Container>
-        )}
+        {renderFooter()}
         {/* istanbul ignore next */
           toastMessage && (
             <Toast
