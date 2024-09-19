@@ -17,6 +17,7 @@ const CollectionHitSample: CollectionHit = {
   },
   created: 1722434322294,
   modified: 1722434322294,
+  numChildren: 2,
   tags: {},
 };
 
@@ -32,7 +33,8 @@ describe('<CollectionCard />', () => {
   it('should render the card with title and description', () => {
     render(<CollectionCard collectionHit={CollectionHitSample} />);
 
-    expect(screen.getByText('Collection Display Formated Name')).toBeInTheDocument();
-    expect(screen.getByText('Collection description')).toBeInTheDocument();
+    expect(screen.queryByText('Collection Display Formated Name')).toBeInTheDocument();
+    expect(screen.queryByText('Collection description')).toBeInTheDocument();
+    expect(screen.queryByText('Collection (2)')).toBeInTheDocument();
   });
 });
