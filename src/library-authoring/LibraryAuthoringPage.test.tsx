@@ -1,4 +1,6 @@
+import { getConfig } from '@edx/frontend-platform';
 import fetchMock from 'fetch-mock-jest';
+import { Helmet } from 'react-helmet';
 import {
   fireEvent,
   initializeMocks,
@@ -121,6 +123,10 @@ describe('<LibraryAuthoringPage />', () => {
 
     expect(await screen.findByText('Content library')).toBeInTheDocument();
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
+
+    const browserTabTitle = Helmet.peek().title.join('');
+    const siteName = getConfig().SITE_NAME;
+    expect(browserTabTitle).toEqual(`${libraryTitle} | ${siteName}`);
 
     expect(screen.queryByText('You have not added any content to this library yet.')).not.toBeInTheDocument();
 
