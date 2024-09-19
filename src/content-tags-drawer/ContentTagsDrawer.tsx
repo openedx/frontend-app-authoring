@@ -1,6 +1,4 @@
-// @ts-check
 import React, { useContext, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import {
   Container,
   Spinner,
@@ -16,7 +14,11 @@ import Loading from '../generic/Loading';
 import useContentTagsDrawerContext from './ContentTagsDrawerHelper';
 import { ContentTagsDrawerContext, ContentTagsDrawerSheetContext } from './common/context';
 
-const TaxonomyList = ({ contentId }) => {
+interface TaxonomyListProps {
+  contentId: string;
+}
+
+const TaxonomyList = ({ contentId }: TaxonomyListProps) => {
   const navigate = useNavigate();
   const intl = useIntl();
 
@@ -70,9 +72,36 @@ const TaxonomyList = ({ contentId }) => {
   return <Loading />;
 };
 
-TaxonomyList.propTypes = {
-  contentId: PropTypes.string.isRequired,
+const ContentTagsDrawerTittle = () => {
+  const intl = useIntl();
+  const {
+    isContentDataLoaded,
+    contentName,
+  } = useContext(ContentTagsDrawerContext);
+
+  return (
+    <>
+      { isContentDataLoaded
+        ? <h2 className="h3 pl-2.5">{ contentName }</h2>
+        : (
+          <div className="d-flex justify-content-center align-items-center flex-column">
+            <Spinner
+              animation="border"
+              size="xl"
+              screenReaderText={intl.formatMessage(messages.loadingMessage)}
+            />
+          </div>
+        )}
+      <hr />
+    </>
+  );
 };
+
+interface ContentTagsDrawerProps {
+  id?: string;
+  onClose?: () => void;
+  hideTitle?: boolean;
+}
 
 /**
  * Drawer with the functionality to show and manage tags in a certain content.
@@ -83,11 +112,19 @@ TaxonomyList.propTypes = {
  * - If you want to use it as react component, you need to pass the content id and the close functions
  *   through the component parameters.
  */
-const ContentTagsDrawer = ({ id, onClose }) => {
+const ContentTagsDrawer = ({
+  id,
+  onClose,
+  hideTitle,
+}: ContentTagsDrawerProps) => {
   const intl = useIntl();
   // TODO: We can delete 'params' when the iframe is no longer used on edx-platform
   const params = useParams();
   const contentId = id ?? params.contentId;
+
+  if (contentId === undefined) {
+    throw new Error('Error: contentId cannot be null.');
+  }
 
   const context = useContentTagsDrawerContext(contentId);
   const { blockingSheet } = useContext(ContentTagsDrawerSheetContext);
@@ -96,8 +133,6 @@ const ContentTagsDrawer = ({ id, onClose }) => {
     showToastAfterSave,
     toReadMode,
     commitGlobalStagedTagsStatus,
-    isContentDataLoaded,
-    contentName,
     isTaxonomyListLoaded,
     isContentTaxonomyTagsLoaded,
     stagedContentTags,
@@ -124,7 +159,9 @@ const ContentTagsDrawer = ({ id, onClose }) => {
       /* Close drawer when ESC-key is pressed and selectable dropdown box not open */
       const selectableBoxOpen = document.querySelector('[data-selectable-box="taxonomy-tags"]');
       if (event.key === 'Escape' && !selectableBoxOpen && !blockingSheet) {
-        onCloseDrawer();
+        if (onCloseDrawer) {
+          onCloseDrawer();
+        }
       }
     };
     document.addEventListener('keydown', handleEsc);
@@ -151,18 +188,9 @@ const ContentTagsDrawer = ({ id, onClose }) => {
     <ContentTagsDrawerContext.Provider value={context}>
       <div id="content-tags-drawer" className="mt-1 tags-drawer d-flex flex-column justify-content-between min-vh-100 pt-3">
         <Container size="xl">
-          { isContentDataLoaded
-            ? <h2 className="h3 pl-2.5">{ contentName }</h2>
-            : (
-              <div className="d-flex justify-content-center align-items-center flex-column">
-                <Spinner
-                  animation="border"
-                  size="xl"
-                  screenReaderText={intl.formatMessage(messages.loadingMessage)}
-                />
-              </div>
-            )}
-          <hr />
+          {!hideTitle && (
+            <ContentTagsDrawerTittle />
+          )}
           <Container>
             <p className="h4 text-gray-500 font-weight-bold">
               {intl.formatMessage(messages.headerSubtitle)}
@@ -248,16 +276,6 @@ const ContentTagsDrawer = ({ id, onClose }) => {
       </div>
     </ContentTagsDrawerContext.Provider>
   );
-};
-
-ContentTagsDrawer.propTypes = {
-  id: PropTypes.string,
-  onClose: PropTypes.func,
-};
-
-ContentTagsDrawer.defaultProps = {
-  id: undefined,
-  onClose: undefined,
 };
 
 export default ContentTagsDrawer;

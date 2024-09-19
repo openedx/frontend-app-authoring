@@ -6,6 +6,7 @@ import { Tag } from '@openedx/paragon/icons';
 import { useLibraryBlockMetadata } from '../data/apiHooks';
 import StatusWidget from '../generic/status-widget';
 import messages from './messages';
+import { ContentTagsDrawer } from '../../content-tags-drawer';
 
 interface ComponentManagementProps {
   usageKey: string;
@@ -35,7 +36,10 @@ const ComponentManagement = ({ usageKey }: ComponentManagementProps) => {
           )}
           className="border-0"
         >
-          Tags placeholder
+          <ContentTagsDrawer
+            id={usageKey}
+            hideTitle
+          />
         </Collapsible>
         )}
       <Collapsible
