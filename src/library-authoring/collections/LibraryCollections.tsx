@@ -41,23 +41,25 @@ const LibraryCollections = ({ variant }: LibraryCollectionsProps) => {
   );
 
   if (totalCollectionHits === 0) {
-    return isFiltered ?
-      <NoSearchResults infoText={messages.noSearchResultsCollections} />
-      : <NoComponents
-        infoText={messages.noCollections}
-        addBtnText={messages.addCollection}
-        handleBtnClick={openCreateCollectionModal}
-      />;
+    return isFiltered
+      ? <NoSearchResults infoText={messages.noSearchResultsCollections} />
+      : (
+        <NoComponents
+          infoText={messages.noCollections}
+          addBtnText={messages.addCollection}
+          handleBtnClick={openCreateCollectionModal}
+        />
+      );
   }
 
   return (
     <div className="library-cards-grid">
-      { collectionList.map((collectionHit) => (
+      {collectionList.map((collectionHit) => (
         <CollectionCard
           key={collectionHit.id}
           collectionHit={collectionHit}
         />
-      )) }
+      ))}
     </div>
   );
 };
