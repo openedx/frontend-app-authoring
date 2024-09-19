@@ -26,6 +26,7 @@ const AppSettingsModalBase = ({
       variant={variant}
       hasCloseButton={isMobile}
       isFullscreenOnMobile
+      isOverflowVisible={false}
     >
       <ModalDialog.Header>
         <ModalDialog.Title data-testid="modal-title">{title}</ModalDialog.Title>
