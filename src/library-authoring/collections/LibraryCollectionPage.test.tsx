@@ -74,7 +74,7 @@ describe('<LibraryCollectionPage />', () => {
     render(<LibraryLayout />, {
       path,
       routerProps: {
-        initialEntries: [`/library/${libId}/collections/${colId}`],
+        initialEntries: [`/library/${libId}/collection/${colId}`],
       },
     });
   };

@@ -66,7 +66,7 @@ const LibraryLayout = () => {
           )}
         />
         <Route
-          path="collections/:collectionId"
+          path="collection/:collectionId"
           element={<LibraryCollectionPage />}
         />
         <Route

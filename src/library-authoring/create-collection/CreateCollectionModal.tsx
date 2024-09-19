@@ -32,7 +32,7 @@ const CreateCollectionModal = () => {
   const handleCreate = React.useCallback((values) => {
     create.mutateAsync(values).then((data) => {
       closeCreateCollectionModal();
-      navigate(`/library/${libraryId}/collections/${data.key}`);
+      navigate(`/library/${libraryId}/collection/${data.key}`);
       showToast(intl.formatMessage(messages.createCollectionSuccess));
     }).catch(() => {
       showToast(intl.formatMessage(messages.createCollectionError));
