@@ -148,9 +148,9 @@ const ProctoringSettings = ({ intl, onClose }) => {
         setSaveSuccess(true);
         setSaveError(false);
         setSubmissionInProgress(false);
-      }).catch(() => {
+      }).catch((error) => {
         setSaveSuccess(false);
-        setSaveError(true);
+        setSaveError(error);
         setSubmissionInProgress(false);
       });
   }
@@ -460,21 +460,32 @@ const ProctoringSettings = ({ intl, onClose }) => {
   }
 
   function renderSaveError() {
-    return (
-      <Alert
-        variant="danger"
-        data-testid="saveError"
-        tabIndex="-1"
-        ref={saveStatusAlertRef}
-        onClose={() => setSaveError(false)}
-        dismissible
-      >
+    let errorMessage = (
+      <FormattedMessage
+        id="authoring.proctoring.alert.error"
+        defaultMessage={`
+          We encountered a technical error while trying to save proctored exam settings.
+          This might be a temporary issue, so please try again in a few minutes.
+          If the problem persists, please go to the {support_link} for help.
+        `}
+        values={{
+          support_link: (
+            <Alert.Link href={getConfig().SUPPORT_URL}>
+              {intl.formatMessage(messages['authoring.proctoring.support.text'])}
+            </Alert.Link>
+          ),
+        }}
+      />
+    );
+
+    if (saveError?.response.status === 403) {
+      errorMessage = (
         <FormattedMessage
-          id="authoring.examsettings.alert.error"
+          id="authoring.proctoring.alert.error.forbidden"
           defaultMessage={`
-            We encountered a technical error while trying to save proctored exam settings.
-            This might be a temporary issue, so please try again in a few minutes.
-            If the problem persists, please go to the {support_link} for help.
+            You do not have permission to edit proctored exam settings for this course.
+            If you are a course team member and this problem persists,
+            please go to the {support_link} for help.
           `}
           values={{
             support_link: (
@@ -484,6 +495,19 @@ const ProctoringSettings = ({ intl, onClose }) => {
             ),
           }}
         />
+      );
+    }
+
+    return (
+      <Alert
+        variant="danger"
+        data-testid="saveError"
+        tabIndex="-1"
+        ref={saveStatusAlertRef}
+        onClose={() => setSaveError(false)}
+        dismissible
+      >
+        {errorMessage}
       </Alert>
     );
   }
