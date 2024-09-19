@@ -313,11 +313,3 @@ export async function getXBlockOLX(usageKey: string): Promise<string> {
   const { data } = await getAuthenticatedHttpClient().get(getXBlockOLXApiUrl(usageKey));
   return data.olx;
 }
-
-/**
- * Fetch a collection by its ID.
- */
-export async function getCollection(libraryId: string, collectionId: string): Promise<Collection> {
-  const { data } = await getAuthenticatedHttpClient().get(getLibraryCollectionApiUrl(libraryId, collectionId));
-  return camelCaseObject(data);
-}

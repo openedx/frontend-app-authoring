@@ -184,6 +184,35 @@
         "content.problem_types": {}
       },
       "facetStats": {}
+    },
+    {
+      "indexUid": "studio_content",
+      "hits": [
+        {
+          "display_name": "My first collection",
+          "block_id": "my-first-collection",
+          "description": "A collection for testing",
+          "id": 1,
+          "type": "collection",
+          "breadcrumbs": [
+            {
+              "display_name": "CS problems 2"
+            }
+          ],
+          "created": 1726740779.564664,
+          "modified": 1726740811.684142,
+          "usage_key": "lib-collection:OpenedX:CSPROB2:collection-from-meilisearch",
+          "context_key": "lib:OpenedX:CSPROB2",
+          "org": "OpenedX",
+          "access_id": 16,
+          "num_children": 5
+        }
+      ],
+      "query": "",
+      "processingTimeMs": 0,
+      "limit": 1,
+      "offset": 0,
+      "estimatedTotalHits": 1
     }
   ]
 }

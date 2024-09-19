@@ -81,7 +81,6 @@ const LibraryRecentlyModified: React.FC<{ libraryId: string }> = ({ libraryId })
   <SearchContextProvider
     extraFilter={`context_key = "${libraryId}"`}
     overrideSearchSortOrder={SearchSortOption.RECENTLY_MODIFIED}
-    fetchCollections
   >
     <RecentlyModified libraryId={libraryId} />
   </SearchContextProvider>

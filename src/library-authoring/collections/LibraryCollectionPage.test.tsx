@@ -1,4 +1,5 @@
 import fetchMock from 'fetch-mock-jest';
+import { cloneDeep } from 'lodash';
 import {
   fireEvent,
   initializeMocks,
@@ -8,9 +9,8 @@ import {
   within,
 } from '../../testUtils';
 import mockResult from '../__mocks__/collection-search.json';
-import mockEmptyResult from '../../search-modal/__mocks__/empty-search-result.json';
 import {
-  mockCollection, mockContentLibrary, mockLibraryBlockTypes, mockXBlockFields,
+  mockContentLibrary, mockLibraryBlockTypes, mockXBlockFields,
 } from '../data/api.mocks';
 import { mockContentSearchConfig } from '../../search-manager/data/api.mock';
 import { mockBroadcastChannel } from '../../generic/data/api.mock';
@@ -18,31 +18,20 @@ import { LibraryLayout } from '..';
 
 mockContentSearchConfig.applyMock();
 mockContentLibrary.applyMock();
-mockCollection.applyMock();
 mockLibraryBlockTypes.applyMock();
 mockXBlockFields.applyMock();
 mockBroadcastChannel();
 
 const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
-
-/**
- * Returns 0 components from the search query.
-*/
-const returnEmptyResult = (_url, req) => {
-  const requestData = JSON.parse(req.body?.toString() ?? '');
-  const query = requestData?.queries[0]?.q ?? '';
-  // We have to replace the query (search keywords) in the mock results with the actual query,
-  // because otherwise we may have an inconsistent state that causes more queries and unexpected results.
-  mockEmptyResult.results[0].query = query;
-  // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
-  // eslint-disable-next-line no-underscore-dangle, no-param-reassign
-  mockEmptyResult.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
-  return mockEmptyResult;
-};
-
 const path = '/library/:libraryId/*';
 const libraryTitle = mockContentLibrary.libraryData.title;
-const collectionTitle = mockCollection.collectionData.title;
+const mockCollection = {
+  collectionId: mockResult.results[2].hits[0].block_id,
+  collectionNeverLoads: 'collection-always-loading',
+  collectionEmpty: 'collection-no-data',
+  collectionNoComponents: 'collection-no-components',
+  title: mockResult.results[2].hits[0].display_name,
+};
 
 describe('<LibraryCollectionPage />', () => {
   beforeEach(() => {
@@ -52,14 +41,33 @@ describe('<LibraryCollectionPage />', () => {
     fetchMock.post(searchEndpoint, (_url, req) => {
       const requestData = JSON.parse(req.body?.toString() ?? '');
       const query = requestData?.queries[0]?.q ?? '';
+      const mockResultCopy = cloneDeep(mockResult);
       // We have to replace the query (search keywords) in the mock results with the actual query,
       // because otherwise Instantsearch will update the UI and change the query,
       // leading to unexpected results in the test cases.
-      mockResult.results[0].query = query;
+      mockResultCopy.results[0].query = query;
+      mockResultCopy.results[2].query = query;
       // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
       // eslint-disable-next-line no-underscore-dangle, no-param-reassign
-      mockResult.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
-      return mockResult;
+      mockResultCopy.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
+      const collectionQueryId = requestData?.queries[2]?.filter[2]?.split('block_id = "')[1].split('"')[0];
+      switch (collectionQueryId) {
+        case mockCollection.collectionNeverLoads:
+          return new Promise<any>(() => {});
+        case mockCollection.collectionEmpty:
+          mockResultCopy.results[2].hits = [];
+          mockResultCopy.results[2].estimatedTotalHits = 0;
+          break;
+        case mockCollection.collectionNoComponents:
+          mockResultCopy.results[0].hits = [];
+          mockResultCopy.results[0].estimatedTotalHits = 0;
+          mockResultCopy.results[1].facetDistribution.block_type = {};
+          mockResultCopy.results[2].hits[0].num_children = 0;
+          break;
+        default:
+          break;
+      }
+      return mockResultCopy;
     });
   });
 
@@ -69,7 +77,7 @@ describe('<LibraryCollectionPage />', () => {
   });
 
   const renderLibraryCollectionPage = async (collectionId?: string, libraryId?: string) => {
-    const libId = libraryId || mockCollection.libraryId;
+    const libId = libraryId || mockContentLibrary.libraryId;
     const colId = collectionId || mockCollection.collectionId;
     render(<LibraryLayout />, {
       path,
@@ -77,18 +85,23 @@ describe('<LibraryCollectionPage />', () => {
         initialEntries: [`/library/${libId}/collection/${colId}`],
       },
     });
+
+    if (colId !== mockCollection.collectionNeverLoads) {
+      await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+    }
   };
 
   it('shows the spinner before the query is complete', async () => {
     // This mock will never return data about the collection (it loads forever):
-    await renderLibraryCollectionPage(mockCollection.collectionIdThatNeverLoads);
+    await renderLibraryCollectionPage(mockCollection.collectionNeverLoads);
     const spinner = screen.getByRole('status');
     expect(spinner.textContent).toEqual('Loading...');
   });
 
   it('shows an error component if no collection returned', async () => {
-    // This mock will simulate a 404 error:
-    await renderLibraryCollectionPage(mockCollection.collection404);
+    // This mock will simulate incorrect collection id
+    await renderLibraryCollectionPage(mockCollection.collectionEmpty);
+    screen.debug();
     expect(await screen.findByTestId('notFoundAlert')).toBeInTheDocument();
   });
 
@@ -96,7 +109,7 @@ describe('<LibraryCollectionPage />', () => {
     await renderLibraryCollectionPage();
     expect(await screen.findByText('All Collections')).toBeInTheDocument();
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
-    expect((await screen.findAllByText(collectionTitle))[0]).toBeInTheDocument();
+    expect((await screen.findAllByText(mockCollection.title))[0]).toBeInTheDocument();
 
     expect(screen.queryByText('This collection is currently empty.')).not.toBeInTheDocument();
 
@@ -108,12 +121,11 @@ describe('<LibraryCollectionPage />', () => {
   });
 
   it('shows a collection without associated components', async () => {
-    fetchMock.post(searchEndpoint, returnEmptyResult, { overwriteRoutes: true });
-    await renderLibraryCollectionPage();
+    await renderLibraryCollectionPage(mockCollection.collectionNoComponents);
 
     expect(await screen.findByText('All Collections')).toBeInTheDocument();
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
-    expect((await screen.findAllByText(collectionTitle))[0]).toBeInTheDocument();
+    expect((await screen.findAllByText(mockCollection.title))[0]).toBeInTheDocument();
 
     expect(screen.getByText('This collection is currently empty.')).toBeInTheDocument();
 
@@ -125,7 +137,7 @@ describe('<LibraryCollectionPage />', () => {
   it('shows the new content button', async () => {
     await renderLibraryCollectionPage();
 
-    expect(await screen.findByRole('heading')).toBeInTheDocument();
+    expect(await screen.findByText('All Collections')).toBeInTheDocument();
     expect(await screen.findByText('Content (5)')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /new/i })).toBeInTheDocument();
     expect(screen.queryByText('Read Only')).not.toBeInTheDocument();
@@ -135,9 +147,7 @@ describe('<LibraryCollectionPage />', () => {
     // Use a library mock that is read-only:
     const libraryId = mockContentLibrary.libraryIdReadOnly;
     // Update search mock so it returns no results:
-    fetchMock.post(searchEndpoint, returnEmptyResult, { overwriteRoutes: true });
-    await renderLibraryCollectionPage(mockCollection.collectionId, libraryId);
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+    await renderLibraryCollectionPage(mockCollection.collectionNoComponents, libraryId);
 
     expect(await screen.findByText('All Collections')).toBeInTheDocument();
     expect(screen.getByText('This collection is currently empty.')).toBeInTheDocument();
@@ -147,14 +157,11 @@ describe('<LibraryCollectionPage />', () => {
 
   it('show a collection without search results', async () => {
     // Update search mock so it returns no results:
-    fetchMock.post(searchEndpoint, returnEmptyResult, { overwriteRoutes: true });
-    await renderLibraryCollectionPage();
+    await renderLibraryCollectionPage(mockCollection.collectionNoComponents);
 
     expect(await screen.findByText('All Collections')).toBeInTheDocument();
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
-    expect((await screen.findAllByText(collectionTitle))[0]).toBeInTheDocument();
-
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+    expect((await screen.findAllByText(mockCollection.title))[0]).toBeInTheDocument();
 
     fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'noresults' } });
 
@@ -162,12 +169,11 @@ describe('<LibraryCollectionPage />', () => {
     // should not be impacted by the search
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
 
-    expect(screen.getByText('No matching components found in this collections.')).toBeInTheDocument();
+    expect(screen.queryByText('No matching components found in this collections.')).toBeInTheDocument();
   });
 
   it('should open and close new content sidebar', async () => {
     await renderLibraryCollectionPage();
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
 
     expect(await screen.findByText('All Collections')).toBeInTheDocument();
     expect(screen.queryByText(/add content/i)).not.toBeInTheDocument();
@@ -188,8 +194,8 @@ describe('<LibraryCollectionPage />', () => {
 
     expect(await screen.findByText('All Collections')).toBeInTheDocument();
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
-    expect((await screen.findAllByText(collectionTitle))[0]).toBeInTheDocument();
-    expect((await screen.findAllByText(collectionTitle))[1]).toBeInTheDocument();
+    expect((await screen.findAllByText(mockCollection.title))[0]).toBeInTheDocument();
+    expect((await screen.findAllByText(mockCollection.title))[1]).toBeInTheDocument();
 
     expect(screen.getByText('Manage')).toBeInTheDocument();
     expect(screen.getByText('Details')).toBeInTheDocument();
@@ -200,8 +206,8 @@ describe('<LibraryCollectionPage />', () => {
 
     expect(await screen.findByText('All Collections')).toBeInTheDocument();
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
-    expect((await screen.findAllByText(collectionTitle))[0]).toBeInTheDocument();
-    expect((await screen.findAllByText(collectionTitle))[1]).toBeInTheDocument();
+    expect((await screen.findAllByText(mockCollection.title))[0]).toBeInTheDocument();
+    expect((await screen.findAllByText(mockCollection.title))[1]).toBeInTheDocument();
 
     // Open by default; close the library info sidebar
     const closeButton = screen.getByRole('button', { name: /close/i });
@@ -218,7 +224,6 @@ describe('<LibraryCollectionPage />', () => {
 
   it('sorts collection components', async () => {
     await renderLibraryCollectionPage();
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
 
     expect(await screen.findByTitle('Sort search results')).toBeInTheDocument();
 
@@ -310,9 +315,7 @@ describe('<LibraryCollectionPage />', () => {
   });
 
   it('has an empty type filter when there are no results', async () => {
-    fetchMock.post(searchEndpoint, returnEmptyResult, { overwriteRoutes: true });
-    await renderLibraryCollectionPage();
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+    await renderLibraryCollectionPage(mockCollection.collectionNoComponents);
 
     const filterButton = screen.getByRole('button', { name: /type/i });
     fireEvent.click(filterButton);

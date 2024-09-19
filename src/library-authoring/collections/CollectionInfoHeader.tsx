@@ -1,12 +1,12 @@
-import { Collection } from '../data/api';
+import { type CollectionHit } from '../../search-manager/data/api';
 
 interface CollectionInfoHeaderProps {
-  collection?: Collection;
+  collection?: CollectionHit;
 }
 
 const CollectionInfoHeader = ({ collection } : CollectionInfoHeaderProps) => (
   <div className="d-flex flex-wrap">
-    {collection?.title}
+    {collection?.displayName}
   </div>
 );
 

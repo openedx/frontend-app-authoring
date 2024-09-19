@@ -10,7 +10,7 @@ import { MeiliSearch, type Filter } from 'meilisearch';
 import { union } from 'lodash';
 
 import {
-  CollectionHit, ContentHit, SearchSortOption, forceArray,
+  CollectionHit, ContentHit, SearchSortOption, forceArray, OverrideQueries,
 } from './data/api';
 import { useContentSearchConnection, useContentSearchResults } from './data/apiHooks';
 
@@ -92,8 +92,8 @@ export const SearchContextProvider: React.FC<{
   overrideSearchSortOrder?: SearchSortOption
   children: React.ReactNode,
   closeSearchModal?: () => void,
-  fetchCollections?: boolean,
-}> = ({ overrideSearchSortOrder, fetchCollections, ...props }) => {
+  overrideQueries?: OverrideQueries,
+}> = ({ overrideSearchSortOrder, overrideQueries, ...props }) => {
   const [searchKeywords, setSearchKeywords] = React.useState('');
   const [blockTypesFilter, setBlockTypesFilter] = React.useState<string[]>([]);
   const [problemTypesFilter, setProblemTypesFilter] = React.useState<string[]>([]);
@@ -144,7 +144,7 @@ export const SearchContextProvider: React.FC<{
     problemTypesFilter,
     tagsFilter,
     sort,
-    fetchCollections,
+    overrideQueries,
   });
 
   return React.createElement(SearchContext.Provider, {

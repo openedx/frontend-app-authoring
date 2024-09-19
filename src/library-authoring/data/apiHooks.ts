@@ -27,7 +27,6 @@ import {
   createCollection,
   getXBlockOLX,
   type CreateLibraryCollectionDataRequest,
-  getCollection,
 } from './api';
 
 const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
@@ -274,16 +273,5 @@ export const useXBlockOLX = (usageKey: string) => (
     queryKey: xblockQueryKeys.xblockOLX(usageKey),
     queryFn: () => getXBlockOLX(usageKey),
     enabled: !!usageKey,
-  })
-);
-
-/**
- * Hook to fetch a collection by its ID.
- */
-export const useCollection = (libraryId: string | undefined, collectionId: string | undefined) => (
-  useQuery({
-    queryKey: libraryAuthoringQueryKeys.collection(libraryId, collectionId),
-    queryFn: () => getCollection(libraryId!, collectionId!),
-    enabled: collectionId !== undefined && libraryId !== undefined,
   })
 );

@@ -168,7 +168,6 @@ const LibraryAuthoringPage = () => {
         <Container size="xl" className="px-4 mt-4 mb-5 library-authoring-page">
           <SearchContextProvider
             extraFilter={`context_key = "${libraryId}"`}
-            fetchCollections
           >
             <SubHeader
               title={<SubHeaderTitle title={libraryData.title} canEditLibrary={libraryData.canEditLibrary} />}

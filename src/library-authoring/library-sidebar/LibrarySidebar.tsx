@@ -11,12 +11,13 @@ import { AddContentContainer, AddContentHeader } from '../add-content';
 import { LibraryContext, SidebarBodyComponentId } from '../common/context';
 import { LibraryInfo, LibraryInfoHeader } from '../library-info';
 import { ComponentInfo, ComponentInfoHeader } from '../component-info';
-import { ContentLibrary, Collection } from '../data/api';
+import { ContentLibrary } from '../data/api';
 import { CollectionInfo, CollectionInfoHeader } from '../collections';
+import { type CollectionHit } from '../../search-manager/data/api';
 
 type LibrarySidebarProps = {
   library: ContentLibrary,
-  collection?: Collection
+  collection?: CollectionHit,
 };
 
 /**
