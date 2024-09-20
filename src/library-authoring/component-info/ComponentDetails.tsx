@@ -23,12 +23,6 @@ const ComponentDetails = ({ usageKey }: ComponentDetailsProps) => {
     <Stack gap={3}>
       <div>
         <h3 className="h5">
-          {intl.formatMessage(messages.detailsTabDescriptionTitle)}
-        </h3>
-        <input type="text" className="form-control" placeholder="Description / Card Preview Text" />
-      </div>
-      <div>
-        <h3 className="h5">
           {intl.formatMessage(messages.detailsTabUsageTitle)}
         </h3>
         <small>This will show the courses that use this component.</small>
