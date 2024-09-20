@@ -2,9 +2,9 @@ import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 
-import * as module from './ErrorSummary';
+import * as mod from './ErrorSummary';
 
-const { ErrorSummary } = module;
+const { ErrorSummary } = mod;
 
 describe('ErrorSummary', () => {
   const errors = {
@@ -19,30 +19,30 @@ describe('ErrorSummary', () => {
       jest.spyOn(React, 'useContext').mockReturnValueOnce({});
     });
     test('snapshots: renders as expected when there are no errors', () => {
-      jest.spyOn(module, 'showAlert').mockReturnValue(false);
+      jest.spyOn(mod, 'showAlert').mockReturnValue(false);
       expect(shallow(<ErrorSummary />).snapshot).toMatchSnapshot();
     });
     test('snapshots: renders as expected when there are errors', () => {
-      jest.spyOn(module, 'showAlert').mockReturnValue(true);
+      jest.spyOn(mod, 'showAlert').mockReturnValue(true);
       expect(shallow(<ErrorSummary />).snapshot).toMatchSnapshot();
     });
   });
   describe('hasNoError', () => {
     it('returns true', () => {
-      expect(module.hasNoError(errors.widgetWithError)).toEqual(false);
+      expect(mod.hasNoError(errors.widgetWithError)).toEqual(false);
     });
     it('returns false', () => {
-      expect(module.hasNoError(errors.widgetWithNoError)).toEqual(true);
+      expect(mod.hasNoError(errors.widgetWithNoError)).toEqual(true);
     });
   });
   describe('showAlert', () => {
     it('returns true', () => {
-      jest.spyOn(module, 'hasNoError').mockReturnValue(false);
-      expect(module.showAlert(errors)).toEqual(true);
+      jest.spyOn(mod, 'hasNoError').mockReturnValue(false);
+      expect(mod.showAlert(errors)).toEqual(true);
     });
     it('returns false', () => {
-      jest.spyOn(module, 'hasNoError').mockReturnValue(true);
-      expect(module.showAlert(errors)).toEqual(false);
+      jest.spyOn(mod, 'hasNoError').mockReturnValue(true);
+      expect(mod.showAlert(errors)).toEqual(false);
     });
   });
 });
