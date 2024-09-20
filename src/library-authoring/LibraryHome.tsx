@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Stack } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { useSearchContext } from '../search-manager';
 import { NoComponents, NoSearchResults } from './EmptyStates';
-import LibraryCollections from './LibraryCollections';
+import LibraryCollections from './collections/LibraryCollections';
 import { LibraryComponents } from './components';
 import LibrarySection from './components/LibrarySection';
 import LibraryRecentlyModified from './LibraryRecentlyModified';
 import messages from './messages';
+import { LibraryContext } from './common/context';
 
 type LibraryHomeProps = {
   libraryId: string,
@@ -23,10 +24,11 @@ const LibraryHome = ({ libraryId, tabList, handleTabChange } : LibraryHomeProps)
     totalCollectionHits: collectionCount,
     isFiltered,
   } = useSearchContext();
+  const { openAddContentSidebar } = useContext(LibraryContext);
 
   const renderEmptyState = () => {
     if (componentCount === 0 && collectionCount === 0) {
-      return isFiltered ? <NoSearchResults /> : <NoComponents />;
+      return isFiltered ? <NoSearchResults /> : <NoComponents handleBtnClick={openAddContentSidebar} />;
     }
     return null;
   };

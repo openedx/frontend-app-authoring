@@ -50,6 +50,14 @@ export const getXBlockOLXApiUrl = (usageKey: string) => `${getApiBaseUrl()}/api/
  * Get the URL for the Library Collections API.
  */
 export const getLibraryCollectionsApiUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/collections/`;
+/**
+ * Get the URL for the collection API.
+ */
+export const getLibraryCollectionApiUrl = (libraryId: string, collectionId: string) => `${getLibraryCollectionsApiUrl(libraryId)}${collectionId}/`;
+/**
+ * Get the URL for the collection API.
+ */
+export const getLibraryCollectionComponentApiUrl = (libraryId: string, collectionId: string) => `${getLibraryCollectionApiUrl(libraryId, collectionId)}components/`;
 
 export interface ContentLibrary {
   id: string;
@@ -73,6 +81,18 @@ export interface ContentLibrary {
   license: string;
   created: string | null;
   updated: string | null;
+}
+
+export interface Collection {
+  id: number;
+  key: string;
+  title: string;
+  description: string;
+  enabled: boolean;
+  createdBy: string | null;
+  created: string;
+  modified: string;
+  learningPackage: number;
 }
 
 export interface LibraryBlockType {
@@ -293,4 +313,13 @@ export async function createCollection(libraryId: string, collectionData: Create
 export async function getXBlockOLX(usageKey: string): Promise<string> {
   const { data } = await getAuthenticatedHttpClient().get(getXBlockOLXApiUrl(usageKey));
   return data.olx;
+}
+
+/**
+ * Update collection components.
+ */
+export async function updateCollectionComponents(libraryId:string, collectionId: string, usageKeys: string[]) {
+  await getAuthenticatedHttpClient().patch(getLibraryCollectionComponentApiUrl(libraryId, collectionId), {
+    usage_keys: usageKeys,
+  });
 }

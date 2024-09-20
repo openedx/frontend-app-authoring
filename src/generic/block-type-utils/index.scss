@@ -4,6 +4,12 @@
   .pgn__icon {
     color: white;
   }
+
+  .btn-icon {
+    &:hover, &:active, &:focus {
+      background-color: darken(#005C9E, 15%);
+    }
+  }
 }
 
 .component-style-html {
@@ -11,6 +17,12 @@
 
   .pgn__icon {
     color: white;
+  }
+
+  .btn-icon {
+    &:hover, &:active, &:focus {
+      background-color: darken(#9747FF, 15%);
+    }
   }
 }
 
@@ -20,6 +32,12 @@
   .pgn__icon {
     color: black;
   }
+
+  .btn-icon {
+    &:hover, &:active, &:focus {
+      background-color: darken(#FFCD29, 15%);
+    }
+  }
 }
 
 .component-style-video {
@@ -27,6 +45,12 @@
 
   .pgn__icon {
     color: white;
+  }
+
+  .btn-icon {
+    &:hover, &:active, &:focus {
+      background-color: darken(#358F0A, 15%);
+    }
   }
 }
 
@@ -36,6 +60,12 @@
   .pgn__icon {
     color: white;
   }
+
+  .btn-icon {
+    &:hover, &:active, &:focus {
+      background-color: darken(#0B8E77, 15%);
+    }
+  }
 }
 
 .component-style-other {
@@ -43,5 +73,11 @@
 
   .pgn__icon {
     color: white;
+  }
+
+  .btn-icon {
+    &:hover, &:active, &:focus {
+      background-color: darken(#646464, 15%);
+    }
   }
 }

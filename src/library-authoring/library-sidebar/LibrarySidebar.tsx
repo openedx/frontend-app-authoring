@@ -12,9 +12,12 @@ import { LibraryContext, SidebarBodyComponentId } from '../common/context';
 import { LibraryInfo, LibraryInfoHeader } from '../library-info';
 import { ComponentInfo, ComponentInfoHeader } from '../component-info';
 import { ContentLibrary } from '../data/api';
+import { CollectionInfo, CollectionInfoHeader } from '../collections';
+import { type CollectionHit } from '../../search-manager/data/api';
 
 type LibrarySidebarProps = {
   library: ContentLibrary,
+  collection?: CollectionHit,
 };
 
 /**
@@ -26,7 +29,7 @@ type LibrarySidebarProps = {
  * You can add more components in `bodyComponentMap`.
  * Use the returned actions to open and close this sidebar.
  */
-const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
+const LibrarySidebar = ({ library, collection }: LibrarySidebarProps) => {
   const intl = useIntl();
   const {
     sidebarBodyComponent,
@@ -40,6 +43,7 @@ const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
     [SidebarBodyComponentId.ComponentInfo]: (
       currentComponentUsageKey && <ComponentInfo usageKey={currentComponentUsageKey} />
     ),
+    [SidebarBodyComponentId.CollectionInfo]: <CollectionInfo />,
     unknown: null,
   };
 
@@ -49,6 +53,7 @@ const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
     [SidebarBodyComponentId.ComponentInfo]: (
       currentComponentUsageKey && <ComponentInfoHeader library={library} usageKey={currentComponentUsageKey} />
     ),
+    [SidebarBodyComponentId.CollectionInfo]: <CollectionInfoHeader collection={collection} />,
     unknown: null,
   };
 

@@ -1,8 +1,12 @@
-import { useLoadOnScroll } from '../hooks';
-import { useSearchContext } from '../search-manager';
-import { NoComponents, NoSearchResults } from './EmptyStates';
-import CollectionCard from './components/CollectionCard';
-import { LIBRARY_SECTION_PREVIEW_LIMIT } from './components/LibrarySection';
+import { useContext } from 'react';
+
+import { useLoadOnScroll } from '../../hooks';
+import { useSearchContext } from '../../search-manager';
+import { NoComponents, NoSearchResults } from '../EmptyStates';
+import CollectionCard from '../components/CollectionCard';
+import { LIBRARY_SECTION_PREVIEW_LIMIT } from '../components/LibrarySection';
+import messages from './messages';
+import { LibraryContext } from '../common/context';
 
 type LibraryCollectionsProps = {
   variant: 'full' | 'preview',
@@ -25,6 +29,8 @@ const LibraryCollections = ({ variant }: LibraryCollectionsProps) => {
     isFiltered,
   } = useSearchContext();
 
+  const { openCreateCollectionModal } = useContext(LibraryContext);
+
   const collectionList = variant === 'preview' ? collectionHits.slice(0, LIBRARY_SECTION_PREVIEW_LIMIT) : collectionHits;
 
   useLoadOnScroll(
@@ -35,17 +41,25 @@ const LibraryCollections = ({ variant }: LibraryCollectionsProps) => {
   );
 
   if (totalCollectionHits === 0) {
-    return isFiltered ? <NoSearchResults searchType="collection" /> : <NoComponents searchType="collection" />;
+    return isFiltered
+      ? <NoSearchResults infoText={messages.noSearchResultsCollections} />
+      : (
+        <NoComponents
+          infoText={messages.noCollections}
+          addBtnText={messages.addCollection}
+          handleBtnClick={openCreateCollectionModal}
+        />
+      );
   }
 
   return (
     <div className="library-cards-grid">
-      { collectionList.map((collectionHit) => (
+      {collectionList.map((collectionHit) => (
         <CollectionCard
           key={collectionHit.id}
           collectionHit={collectionHit}
         />
-      )) }
+      ))}
     </div>
   );
 };

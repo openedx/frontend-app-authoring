@@ -7,9 +7,10 @@
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { MeiliSearch, type Filter } from 'meilisearch';
+import { union } from 'lodash';
 
 import {
-  CollectionHit, ContentHit, SearchSortOption, forceArray,
+  CollectionHit, ContentHit, SearchSortOption, forceArray, OverrideQueries,
 } from './data/api';
 import { useContentSearchConnection, useContentSearchResults } from './data/apiHooks';
 
@@ -91,12 +92,13 @@ export const SearchContextProvider: React.FC<{
   overrideSearchSortOrder?: SearchSortOption
   children: React.ReactNode,
   closeSearchModal?: () => void,
-}> = ({ overrideSearchSortOrder, ...props }) => {
+  overrideQueries?: OverrideQueries,
+}> = ({ overrideSearchSortOrder, overrideQueries, ...props }) => {
   const [searchKeywords, setSearchKeywords] = React.useState('');
   const [blockTypesFilter, setBlockTypesFilter] = React.useState<string[]>([]);
   const [problemTypesFilter, setProblemTypesFilter] = React.useState<string[]>([]);
   const [tagsFilter, setTagsFilter] = React.useState<string[]>([]);
-  const extraFilter: string[] = forceArray(props.extraFilter);
+  let extraFilter: string[] = forceArray(props.extraFilter);
 
   // The search sort order can be set via the query string
   // E.g. ?sort=display_name:desc maps to SearchSortOption.TITLE_ZA.
@@ -114,7 +116,7 @@ export const SearchContextProvider: React.FC<{
   const sort: SearchSortOption[] = (searchSortOrderToUse === SearchSortOption.RELEVANCE ? [] : [searchSortOrderToUse]);
   // Selecting SearchSortOption.RECENTLY_PUBLISHED also excludes unpublished components.
   if (searchSortOrderToUse === SearchSortOption.RECENTLY_PUBLISHED) {
-    extraFilter.push('last_published IS NOT NULL');
+    extraFilter = union(extraFilter, ['last_published IS NOT NULL']);
   }
 
   const canClearFilters = (
@@ -130,14 +132,7 @@ export const SearchContextProvider: React.FC<{
   }, []);
 
   // Initialize a connection to Meilisearch:
-  const { data: connectionDetails, isError: hasConnectionError } = useContentSearchConnection();
-  const indexName = connectionDetails?.indexName;
-  const client = React.useMemo(() => {
-    if (connectionDetails?.apiKey === undefined || connectionDetails?.url === undefined) {
-      return undefined;
-    }
-    return new MeiliSearch({ host: connectionDetails.url, apiKey: connectionDetails.apiKey });
-  }, [connectionDetails?.apiKey, connectionDetails?.url]);
+  const { client, indexName, hasConnectionError } = useContentSearchConnection();
 
   // Run the search
   const result = useContentSearchResults({
@@ -149,6 +144,7 @@ export const SearchContextProvider: React.FC<{
     problemTypesFilter,
     tagsFilter,
     sort,
+    overrideQueries,
   });
 
   return React.createElement(SearchContext.Provider, {

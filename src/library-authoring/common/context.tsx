@@ -5,6 +5,7 @@ export enum SidebarBodyComponentId {
   AddContent = 'add-content',
   Info = 'info',
   ComponentInfo = 'component-info',
+  CollectionInfo = 'collection-info',
 }
 
 export interface LibraryContextData {
@@ -17,6 +18,7 @@ export interface LibraryContextData {
   isCreateCollectionModalOpen: boolean;
   openCreateCollectionModal: () => void;
   closeCreateCollectionModal: () => void;
+  openCollectionInfoSidebar: () => void;
 }
 
 export const LibraryContext = React.createContext({
@@ -28,6 +30,7 @@ export const LibraryContext = React.createContext({
   isCreateCollectionModalOpen: false,
   openCreateCollectionModal: () => {},
   closeCreateCollectionModal: () => {},
+  openCollectionInfoSidebar: () => {},
 } as LibraryContextData);
 
 /**
@@ -57,6 +60,10 @@ export const LibraryProvider = (props: { children?: React.ReactNode }) => {
     },
     [],
   );
+  const openCollectionInfoSidebar = React.useCallback(() => {
+    setCurrentComponentUsageKey(undefined);
+    setSidebarBodyComponent(SidebarBodyComponentId.CollectionInfo);
+  }, []);
 
   const context = React.useMemo(() => ({
     sidebarBodyComponent,
@@ -68,6 +75,7 @@ export const LibraryProvider = (props: { children?: React.ReactNode }) => {
     isCreateCollectionModalOpen,
     openCreateCollectionModal,
     closeCreateCollectionModal,
+    openCollectionInfoSidebar,
   }), [
     sidebarBodyComponent,
     closeLibrarySidebar,
@@ -78,6 +86,7 @@ export const LibraryProvider = (props: { children?: React.ReactNode }) => {
     isCreateCollectionModalOpen,
     openCreateCollectionModal,
     closeCreateCollectionModal,
+    openCollectionInfoSidebar,
   ]);
 
   return (

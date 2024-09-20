@@ -16,12 +16,12 @@ import {
   ContentPaste,
 } from '@openedx/paragon/icons';
 import { v4 as uuid4 } from 'uuid';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { ToastContext } from '../../generic/toast-context';
 import { useCopyToClipboard } from '../../generic/clipboard';
 import { getCanEdit } from '../../course-unit/data/selectors';
-import { useCreateLibraryBlock, useLibraryPasteClipboard } from '../data/apiHooks';
+import { useCreateLibraryBlock, useLibraryPasteClipboard, useUpdateCollectionComponents } from '../data/apiHooks';
 import { getEditUrl } from '../components/utils';
 
 import messages from './messages';
@@ -62,8 +62,11 @@ const AddContentButton = ({ contentType, onCreateContent } : AddContentButtonPro
 const AddContentContainer = () => {
   const intl = useIntl();
   const navigate = useNavigate();
-  const { libraryId } = useParams();
+  const location = useLocation();
+  const currentPath = location.pathname;
+  const { libraryId, collectionId } = useParams();
   const createBlockMutation = useCreateLibraryBlock();
+  const updateComponentsMutation = useUpdateCollectionComponents(libraryId, collectionId);
   const pasteClipboardMutation = useLibraryPasteClipboard();
   const { showToast } = useContext(ToastContext);
   const canEdit = useSelector(getCanEdit);
@@ -149,8 +152,13 @@ const AddContentContainer = () => {
           definitionId: `${uuid4()}`,
         }).then((data) => {
           const editUrl = getEditUrl(data.id);
+          updateComponentsMutation.mutateAsync([data.id]).catch(() => {
+            showToast(intl.formatMessage(messages.errorAssociateComponentMessage));
+          });
           if (editUrl) {
-            navigate(editUrl);
+            // Pass currentPath in state so that we can come back to
+            // current page on save or cancel
+            navigate(editUrl, { state: { from: currentPath } });
           } else {
             // We can't start editing this right away so just show a toast message:
             showToast(intl.formatMessage(messages.successCreateMessage));
@@ -168,7 +176,7 @@ const AddContentContainer = () => {
 
   return (
     <Stack direction="vertical">
-      <AddContentButton contentType={collectionButtonData} onCreateContent={onCreateContent} />
+      {!collectionId && <AddContentButton contentType={collectionButtonData} onCreateContent={onCreateContent} />}
       <hr className="w-100 bg-gray-500" />
       {contentTypes.map((contentType) => (
         <AddContentButton

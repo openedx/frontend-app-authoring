@@ -26,6 +26,7 @@ import {
   updateXBlockFields,
   createCollection,
   getXBlockOLX,
+  updateCollectionComponents,
   type CreateLibraryCollectionDataRequest,
 } from './api';
 
@@ -60,6 +61,11 @@ export const libraryAuthoringQueryKeys = {
     ...libraryAuthoringQueryKeys.contentLibrary(contentLibraryId),
     'content',
     'libraryBlockTypes',
+  ],
+  collection: (libraryId?: string, collectionId?: string) => [
+    ...libraryAuthoringQueryKeys.all,
+    libraryId,
+    collectionId,
   ],
 };
 
@@ -122,7 +128,7 @@ export const useCreateLibraryBlock = () => {
     mutationFn: createLibraryBlock,
     onSettled: (_data, _error, variables) => {
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(variables.libraryId) });
-      queryClient.invalidateQueries({ queryKey: ['content_search'] });
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, variables.libraryId) });
     },
   });
 };
@@ -270,3 +276,24 @@ export const useXBlockOLX = (usageKey: string) => (
     enabled: !!usageKey,
   })
 );
+
+/**
+ * Use this mutation to add components to a collection in a library
+ */
+export const useUpdateCollectionComponents = (libraryId?: string, collectionId?: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (usage_keys: string[]) => {
+      if (libraryId !== undefined && collectionId !== undefined) {
+        return updateCollectionComponents(libraryId, collectionId, usage_keys);
+      }
+      return undefined;
+    },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    onSettled: (_data, _error, _variables) => {
+      if (libraryId !== undefined && collectionId !== undefined) {
+        queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+      }
+    },
+  });
+};
