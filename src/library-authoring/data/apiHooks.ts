@@ -29,7 +29,7 @@ import {
   type CreateLibraryCollectionDataRequest,
 } from './api';
 
-const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
+export const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
   // Invalidate all content queries related to this library.
   // If we allow searching "all courses and libraries" in the future,
   // then we'd have to invalidate all `["content_search", "results"]`
