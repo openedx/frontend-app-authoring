@@ -48,7 +48,9 @@ const VideoSettingsModal: React.FC<Props> = ({
       <SocialShareWidget />
     )}
     <ThumbnailWidget />
-    <TranscriptWidget />
+    {!isLibrary && ( // Since content libraries v2 don't support static assets yet, we can't include transcripts.
+      <TranscriptWidget />
+    )}
     <DurationWidget />
     <HandoutWidget />
     <LicenseWidget />
