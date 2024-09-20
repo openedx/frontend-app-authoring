@@ -29,7 +29,7 @@ describe('<ComponentManagement />', () => {
     render(<ComponentManagement usageKey={mockLibraryBlockMetadata.usageKeyNeverPublished} />);
     expect(await screen.findByText('Draft')).toBeInTheDocument();
     expect(await screen.findByText('(Never Published)')).toBeInTheDocument();
-    expect(screen.getByText(matchInnerText('SPAN', 'Draft saved on June 20, 2024 at 13:54 UTC.'))).toBeInTheDocument();
+    expect(screen.getByText(matchInnerText('SPAN', 'Draft saved on June 20, 2024 at 13:54.'))).toBeInTheDocument();
   });
 
   it('should render published status', async () => {
@@ -39,7 +39,7 @@ describe('<ComponentManagement />', () => {
     expect(await screen.findByText('Published')).toBeInTheDocument();
     expect(screen.getByText('Published')).toBeInTheDocument();
     expect(
-      screen.getByText(matchInnerText('SPAN', 'Last published on June 21, 2024 at 24:00 UTC by Luke.')),
+      screen.getByText(matchInnerText('SPAN', 'Last published on June 21, 2024 at 24:00 by Luke.')),
     ).toBeInTheDocument();
   });
 
