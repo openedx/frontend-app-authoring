@@ -26,6 +26,7 @@ import {
   updateXBlockFields,
   createCollection,
   getXBlockOLX,
+  updateCollectionComponents,
   type CreateLibraryCollectionDataRequest,
 } from './api';
 
@@ -275,3 +276,24 @@ export const useXBlockOLX = (usageKey: string) => (
     enabled: !!usageKey,
   })
 );
+
+/**
+ * Use this mutation to add components to a collection in a library
+ */
+export const useUpdateCollectionComponents = (libraryId?: string, collectionId?: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (usage_keys: string[]) => {
+      if (libraryId !== undefined && collectionId !== undefined) {
+        return updateCollectionComponents(libraryId, collectionId, usage_keys);
+      }
+      return undefined;
+    },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    onSettled: (_data, _error, _variables) => {
+      if (libraryId !== undefined && collectionId !== undefined) {
+        queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+      }
+    },
+  });
+};

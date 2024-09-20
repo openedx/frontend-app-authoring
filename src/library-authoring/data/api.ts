@@ -54,6 +54,10 @@ export const getLibraryCollectionsApiUrl = (libraryId: string) => `${getApiBaseU
  * Get the URL for the collection API.
  */
 export const getLibraryCollectionApiUrl = (libraryId: string, collectionId: string) => `${getLibraryCollectionsApiUrl(libraryId)}${collectionId}/`;
+/**
+ * Get the URL for the collection API.
+ */
+export const getLibraryCollectionComponentApiUrl = (libraryId: string, collectionId: string) => `${getLibraryCollectionApiUrl(libraryId, collectionId)}components/`;
 
 export interface ContentLibrary {
   id: string;
@@ -132,7 +136,6 @@ export interface CreateBlockDataRequest {
   libraryId: string;
   blockType: string;
   definitionId: string;
-  collectionId?: string;
 }
 
 export interface LibraryBlockMetadata {
@@ -196,7 +199,6 @@ export async function createLibraryBlock({
   libraryId,
   blockType,
   definitionId,
-  collectionId,
 }: CreateBlockDataRequest): Promise<LibraryBlockMetadata> {
   const client = getAuthenticatedHttpClient();
   const { data } = await client.post(
@@ -204,7 +206,6 @@ export async function createLibraryBlock({
     {
       block_type: blockType,
       definition_id: definitionId,
-      collection_key: collectionId,
     },
   );
   return camelCaseObject(data);
@@ -312,4 +313,13 @@ export async function createCollection(libraryId: string, collectionData: Create
 export async function getXBlockOLX(usageKey: string): Promise<string> {
   const { data } = await getAuthenticatedHttpClient().get(getXBlockOLXApiUrl(usageKey));
   return data.olx;
+}
+
+/**
+ * Update collection components.
+ */
+export async function updateCollectionComponents(libraryId:string, collectionId: string, usageKeys: string[]) {
+  await getAuthenticatedHttpClient().patch(getLibraryCollectionComponentApiUrl(libraryId, collectionId), {
+    usage_keys: usageKeys,
+  });
 }
