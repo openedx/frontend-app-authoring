@@ -181,6 +181,7 @@ const ContentTagsComponentVariantFooter = () => {
                 variant="dark"
                 className="rounded-0"
                 onClick={commitGlobalStagedTags}
+                block
               >
                 {intl.formatMessage(messages.tagsDrawerSaveButtonText)}
               </Button>
@@ -198,6 +199,7 @@ const ContentTagsComponentVariantFooter = () => {
         <Button
           variant="outline-primary"
           onClick={toEditMode}
+          block
         >
           {intl.formatMessage(messages.manageTagsButton)}
         </Button>
@@ -209,8 +211,6 @@ const ContentTagsComponentVariantFooter = () => {
 interface ContentTagsDrawerProps {
   id?: string;
   onClose?: () => void;
-  hideTitle?: boolean;
-  hideSubtitle?: boolean;
   variant?: 'drawer' | 'component';
 }
 
@@ -226,8 +226,6 @@ interface ContentTagsDrawerProps {
 const ContentTagsDrawer = ({
   id,
   onClose,
-  hideTitle,
-  hideSubtitle,
   variant = 'drawer',
 }: ContentTagsDrawerProps) => {
   const intl = useIntl();
@@ -312,11 +310,11 @@ const ContentTagsDrawer = ({
     <ContentTagsDrawerContext.Provider value={context}>
       <div id="content-tags-drawer" className="mt-1 tags-drawer d-flex flex-column justify-content-between min-vh-100 pt-3">
         <Container size="xl">
-          {!hideTitle && (
+          {variant === 'drawer' && (
             <ContentTagsDrawerTittle />
           )}
           <Container>
-            {!hideSubtitle && (
+            {variant === 'drawer' && (
               <p className="h4 text-gray-500 font-weight-bold">
                 {intl.formatMessage(messages.headerSubtitle)}
               </p>

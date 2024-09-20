@@ -14,7 +14,7 @@ import {
   updateContentTaxonomyTags,
   getContentTaxonomyTagsCount,
 } from './api';
-import { libraryQueryPredicate } from '../../library-authoring/data/apiHooks';
+import { libraryQueryPredicate, xblockQueryKeys } from '../../library-authoring/data/apiHooks';
 
 /** @typedef {import("../../taxonomy/tag-list/data/types.mjs").TagListData} TagListData */
 /** @typedef {import("../../taxonomy/tag-list/data/types.mjs").TagData} TagData */
@@ -150,7 +150,10 @@ export const useContentTaxonomyTagsUpdater = (contentId) => {
       if (contentId.includes('lb:')) {
         // Obtain library id from contentId
         const libraryId = ['lib', ...contentId.split(':').slice(1, 3)].join(':');
-        queryClient.invalidateQueries(['content_search'], { predicate: (query) => libraryQueryPredicate(query, libraryId) })
+        // Invalidate component metadata to update tags count
+        queryClient.invalidateQueries(xblockQueryKeys.componentMetadata(contentId));
+        // Invalidate content search to update tags count
+        queryClient.invalidateQueries(['content_search'], { predicate: (query) => libraryQueryPredicate(query, libraryId) });
       }
     },
     onSuccess: /* istanbul ignore next */ () => {
