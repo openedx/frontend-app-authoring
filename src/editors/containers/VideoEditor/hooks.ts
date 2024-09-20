@@ -3,7 +3,25 @@ import { thunkActions } from '../../data/redux';
 
 import { StrictDict } from '../../utils';
 
-export const ErrorContext = createContext(undefined);
+type ErrRecord = Record<string, string>;
+type ErrCategory = [errors: ErrRecord, setter: (newErrors: ErrRecord) => void];
+interface ErrorContextData {
+  duration: ErrCategory;
+  handout: ErrCategory;
+  license: ErrCategory;
+  thumbnail: ErrCategory;
+  transcripts: ErrCategory;
+  videoSource: ErrCategory;
+}
+
+export const ErrorContext = createContext<ErrorContextData>({
+  duration: [{}, () => {}],
+  handout: [{}, () => {}],
+  license: [{}, () => {}],
+  thumbnail: [{}, () => {}],
+  transcripts: [{}, () => {}],
+  videoSource: [{}, () => {}],
+});
 
 export const state = StrictDict({
   /* eslint-disable react-hooks/rules-of-hooks */
@@ -16,7 +34,7 @@ export const state = StrictDict({
   /* eslint-enable react-hooks/rules-of-hooks */
 });
 
-export const errorsHook = () => {
+export const errorsHook = (): { error: ErrorContextData, validateEntry: () => boolean } => {
   const [durationErrors, setDurationErrors] = state.durationErrors({});
   const [handoutErrors, setHandoutErrors] = state.handoutErrors({});
   const [licenseErrors, setLicenseErrors] = state.licenseErrors({});
@@ -44,6 +62,7 @@ export const errorsHook = () => {
     },
   };
 };
+
 export const fetchVideoContent = () => ({ dispatch }) => (
   dispatch(thunkActions.video.saveVideoData())
 );

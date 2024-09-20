@@ -1,29 +1,28 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-
+import { useSelector } from 'react-redux';
 import {
   Spinner,
 } from '@openedx/paragon';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { selectors } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
 
+import { EditorComponent } from '../../EditorComponent';
 import EditorContainer from '../EditorContainer';
 import VideoEditorModal from './components/VideoEditorModal';
 import { ErrorContext, errorsHook, fetchVideoContent } from './hooks';
 import messages from './messages';
 
-const VideoEditor = ({
+const VideoEditor: React.FC<EditorComponent> = ({
   onClose,
   returnFunction,
-  // injected
-  intl,
-  // redux
-  studioViewFinished,
-  isLibrary,
 }) => {
+  const intl = useIntl();
+  const studioViewFinished = useSelector(
+    (state) => selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchStudioView }),
+  );
+  const isLibrary = useSelector(selectors.app.isLibrary) as boolean;
   const {
     error,
     validateEntry,
@@ -60,26 +59,4 @@ const VideoEditor = ({
   );
 };
 
-VideoEditor.defaultProps = {
-  onClose: null,
-  returnFunction: null,
-};
-VideoEditor.propTypes = {
-  onClose: PropTypes.func,
-  returnFunction: PropTypes.func,
-  // injected
-  intl: intlShape.isRequired,
-  // redux
-  studioViewFinished: PropTypes.bool.isRequired,
-  isLibrary: PropTypes.bool.isRequired,
-};
-
-export const mapStateToProps = (state) => ({
-  studioViewFinished: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchStudioView }),
-  isLibrary: selectors.app.isLibrary(state),
-});
-
-export const mapDispatchToProps = {};
-
-export const VideoEditorInternal = VideoEditor; // For testing only
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(VideoEditor));
+export default VideoEditor;

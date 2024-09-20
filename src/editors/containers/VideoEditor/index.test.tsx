@@ -1,11 +1,8 @@
 import 'CourseAuthoring/editors/setupEditorTest';
-import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
 
 import { formatMessage } from '../../testUtils';
-import { selectors } from '../../data/redux';
-import { RequestKeys } from '../../data/constants/requests';
-import { VideoEditorInternal as VideoEditor, mapStateToProps, mapDispatchToProps } from '.';
+import VideoEditor from '.';
 
 jest.mock('../EditorContainer', () => 'EditorContainer');
 jest.mock('./components/VideoEditorModal', () => 'VideoEditorModal');
@@ -47,27 +44,6 @@ describe('VideoEditor', () => {
   describe('snapshots', () => {
     test('renders as expected with default behavior', () => {
       expect(shallow(<VideoEditor {...props} />).snapshot).toMatchSnapshot();
-    });
-    test('renders as expected with default behavior', () => {
-      expect(shallow(<VideoEditor {...props} studioViewFinished />).snapshot).toMatchSnapshot();
-    });
-  });
-  describe('mapStateToProps', () => {
-    const testState = { A: 'pple', B: 'anana', C: 'ucumber' };
-    test('studioViewFinished from requests.isFinished', () => {
-      expect(
-        mapStateToProps(testState).studioViewFinished,
-      ).toEqual(selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchStudioView }));
-    });
-    test('isLibrary from app.isLibrary', () => {
-      expect(
-        mapStateToProps(testState).isLibrary,
-      ).toEqual(selectors.app.isLibrary(testState));
-    });
-  });
-  describe('mapDispatchToProps', () => {
-    test('is empty', () => {
-      expect(mapDispatchToProps).toEqual({});
     });
   });
 });
