@@ -89,6 +89,7 @@ export const xblockQueryKeys = {
  */
 export function invalidateComponentData(queryClient: QueryClient, contentLibraryId: string, usageKey: string) {
   queryClient.invalidateQueries({ queryKey: xblockQueryKeys.xblockFields(usageKey) });
+  queryClient.invalidateQueries({ queryKey: xblockQueryKeys.componentMetadata(usageKey) });
   queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, contentLibraryId) });
 }
 
