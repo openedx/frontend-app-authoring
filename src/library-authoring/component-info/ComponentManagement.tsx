@@ -31,7 +31,7 @@ const ComponentManagement = ({ usageKey }: ComponentManagementProps) => {
           title={(
             <Stack gap={1} direction="horizontal">
               <Icon src={Tag} />
-              {intl.formatMessage(messages.manageTabTagsTitle, {count: componentMetadata.tagsCount})}
+              {intl.formatMessage(messages.manageTabTagsTitle, { count: componentMetadata.tagsCount })}
             </Stack>
           )}
           className="border-0"

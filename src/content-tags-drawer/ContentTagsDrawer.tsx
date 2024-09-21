@@ -187,16 +187,15 @@ const ContentTagsComponentVariantFooter = () => {
                 {intl.formatMessage(messages.tagsDrawerSaveButtonText)}
               </Button>
             </Stack>
-          )
-            : (
-              <div className='d-flex justify-content-center'>
-                <Spinner
-                  animation="border"
-                  size="xl"
-                  screenReaderText={intl.formatMessage(messages.loadingMessage)}
-                />
-              </div>
-            )}
+          ) : (
+            <div className="d-flex justify-content-center">
+              <Spinner
+                animation="border"
+                size="xl"
+                screenReaderText={intl.formatMessage(messages.loadingMessage)}
+              />
+            </div>
+          )}
         </div>
       ) : (
         <Button
@@ -311,20 +310,33 @@ const ContentTagsDrawer = ({
 
   return (
     <ContentTagsDrawerContext.Provider value={context}>
-      <div id="content-tags-drawer" className={classNames(
-        "mt-1 tags-drawer d-flex flex-column justify-content-between pt-3", {
-          "min-vh-100": variant === 'drawer',
-        }
-      )}>
-        <Container size="xl" className={classNames({
-          "p-0": variant === 'component',
-        })}>
+      <div
+        id="content-tags-drawer"
+        className={classNames(
+          'mt-1 tags-drawer d-flex flex-column justify-content-between pt-3',
+          {
+            'min-vh-100': variant === 'drawer',
+          },
+        )}
+      >
+        <Container
+          size="xl"
+          className={classNames(
+            {
+              'p-0': variant === 'component',
+            },
+          )}
+        >
           {variant === 'drawer' && (
             <ContentTagsDrawerTittle />
           )}
-          <Container className={classNames({
-            "p-0": variant === 'component',
-          })}>
+          <Container
+            className={classNames(
+              {
+                'p-0': variant === 'component',
+              },
+            )}
+          >
             {variant === 'drawer' && (
               <p className="h4 text-gray-500 font-weight-bold">
                 {intl.formatMessage(messages.headerSubtitle)}
