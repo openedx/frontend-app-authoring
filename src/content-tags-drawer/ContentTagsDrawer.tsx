@@ -8,6 +8,7 @@ import {
 } from '@openedx/paragon';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { useParams, useNavigate } from 'react-router-dom';
+import classNames from 'classnames';
 import messages from './messages';
 import ContentTagsCollapsible from './ContentTagsCollapsible';
 import Loading from '../generic/Loading';
@@ -188,11 +189,13 @@ const ContentTagsComponentVariantFooter = () => {
             </Stack>
           )
             : (
-              <Spinner
-                animation="border"
-                size="xl"
-                screenReaderText={intl.formatMessage(messages.loadingMessage)}
-              />
+              <div className='d-flex justify-content-center'>
+                <Spinner
+                  animation="border"
+                  size="xl"
+                  screenReaderText={intl.formatMessage(messages.loadingMessage)}
+                />
+              </div>
             )}
         </div>
       ) : (
@@ -308,12 +311,20 @@ const ContentTagsDrawer = ({
 
   return (
     <ContentTagsDrawerContext.Provider value={context}>
-      <div id="content-tags-drawer" className="mt-1 tags-drawer d-flex flex-column justify-content-between min-vh-100 pt-3">
-        <Container size="xl">
+      <div id="content-tags-drawer" className={classNames(
+        "mt-1 tags-drawer d-flex flex-column justify-content-between pt-3", {
+          "min-vh-100": variant === 'drawer',
+        }
+      )}>
+        <Container size="xl" className={classNames({
+          "p-0": variant === 'component',
+        })}>
           {variant === 'drawer' && (
             <ContentTagsDrawerTittle />
           )}
-          <Container>
+          <Container className={classNames({
+            "p-0": variant === 'component',
+          })}>
             {variant === 'drawer' && (
               <p className="h4 text-gray-500 font-weight-bold">
                 {intl.formatMessage(messages.headerSubtitle)}
