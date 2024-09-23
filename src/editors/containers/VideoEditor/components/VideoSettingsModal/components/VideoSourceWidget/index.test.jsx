@@ -100,10 +100,9 @@ describe('VideoSourceWidget', () => {
         .props.onBlur).toEqual(expected);
     });
     test('updateVideoURL is tied to url field onBlur', () => {
-      const { onBlur } = el
-        // eslint-disable-next-line
-        .shallowWrapper.props.children[1].props.children[0].props.children[2].props;
-      onBlur('onBlur event');
+      const control = el.shallowWrapper.props.children[1].props.children[1].props.children[0];
+      expect(control.props.floatingLabel).toEqual('Video URL');
+      control.props.onBlur('onBlur event');
       expect(hook.updateVideoURL).toHaveBeenCalledWith('onBlur event', '');
     });
   });
