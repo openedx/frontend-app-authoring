@@ -26,6 +26,8 @@ import {
   updateXBlockFields,
   createCollection,
   getXBlockOLX,
+  updateCollectionMetadata,
+  type UpdateCollectionComponentsRequest,
   updateCollectionComponents,
   type CreateLibraryCollectionDataRequest,
 } from './api';
@@ -277,6 +279,21 @@ export const useXBlockOLX = (usageKey: string) => (
     enabled: !!usageKey,
   })
 );
+
+/**
+ * Use this mutation to update the fields of a collection in a library
+ */
+export const useUpdateCollection = (libraryId: string, collectionId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: UpdateCollectionComponentsRequest) => updateCollectionMetadata(libraryId, collectionId, data),
+    onSettled: () => {
+      // NOTE: We invalidate the library query here because the collection metadata
+      // is retrieved as part of a library search query.
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+    },
+  });
+};
 
 /**
  * Use this mutation to add components to a collection in a library

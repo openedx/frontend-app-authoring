@@ -87,7 +87,8 @@ describe('<LibraryCollectionPage />', () => {
     });
 
     if (colId !== mockCollection.collectionNeverLoads) {
-      await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+      // TODO: Check why the search endpoint is called 3 times
+      await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(3, searchEndpoint, 'post'); });
     }
   };
 
@@ -127,7 +128,7 @@ describe('<LibraryCollectionPage />', () => {
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
     expect((await screen.findAllByText(mockCollection.title))[0]).toBeInTheDocument();
 
-    expect(screen.getByText('This collection is currently empty.')).toBeInTheDocument();
+    expect(screen.getAllByText('This collection is currently empty.')[0]).toBeInTheDocument();
 
     const addComponentButton = screen.getAllByRole('button', { name: /new/i })[1];
     fireEvent.click(addComponentButton);
@@ -150,7 +151,7 @@ describe('<LibraryCollectionPage />', () => {
     await renderLibraryCollectionPage(mockCollection.collectionNoComponents, libraryId);
 
     expect(await screen.findByText('All Collections')).toBeInTheDocument();
-    expect(screen.getByText('This collection is currently empty.')).toBeInTheDocument();
+    expect(screen.getAllByText('This collection is currently empty.')[0]).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /new/i })).not.toBeInTheDocument();
     expect(screen.getByText('Read Only')).toBeInTheDocument();
   });

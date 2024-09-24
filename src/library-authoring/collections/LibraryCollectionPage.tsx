@@ -102,8 +102,8 @@ const LibraryCollectionPageInner = ({ libraryId }: { libraryId: string }) => {
   const { collectionHits: [collectionData], isFetching } = useSearchContext();
 
   useEffect(() => {
-    openCollectionInfoSidebar();
-  }, []);
+    openCollectionInfoSidebar(collectionData);
+  }, [collectionData]);
 
   const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
 
@@ -149,7 +149,7 @@ const LibraryCollectionPageInner = ({ libraryId }: { libraryId: string }) => {
               <SubHeaderTitle
                 title={collectionData.displayName}
                 canEditLibrary={libraryData.canEditLibrary}
-                infoClickHandler={openCollectionInfoSidebar}
+                infoClickHandler={() => openCollectionInfoSidebar(collectionData)}
               />
             )}
             breadcrumbs={(
@@ -175,7 +175,7 @@ const LibraryCollectionPageInner = ({ libraryId }: { libraryId: string }) => {
       </div>
       { !!sidebarBodyComponent && (
         <div className="library-authoring-sidebar box-shadow-left-1 bg-white" data-testid="library-sidebar">
-          <LibrarySidebar library={libraryData} collection={collectionData} />
+          <LibrarySidebar library={libraryData} />
         </div>
       )}
     </div>

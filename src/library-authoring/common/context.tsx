@@ -1,5 +1,6 @@
 import { useToggle } from '@openedx/paragon';
 import React from 'react';
+import type { CollectionHit } from '../../search-manager';
 
 export enum SidebarBodyComponentId {
   AddContent = 'add-content',
@@ -18,7 +19,8 @@ export interface LibraryContextData {
   isCreateCollectionModalOpen: boolean;
   openCreateCollectionModal: () => void;
   closeCreateCollectionModal: () => void;
-  openCollectionInfoSidebar: () => void;
+  openCollectionInfoSidebar: (collectionHit: CollectionHit) => void
+  currentCollectionHit?: CollectionHit;
 }
 
 export const LibraryContext = React.createContext({
@@ -30,7 +32,8 @@ export const LibraryContext = React.createContext({
   isCreateCollectionModalOpen: false,
   openCreateCollectionModal: () => {},
   closeCreateCollectionModal: () => {},
-  openCollectionInfoSidebar: () => {},
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  openCollectionInfoSidebar: (_collectionHit: CollectionHit) => {},
 } as LibraryContextData);
 
 /**
@@ -39,29 +42,38 @@ export const LibraryContext = React.createContext({
 export const LibraryProvider = (props: { children?: React.ReactNode }) => {
   const [sidebarBodyComponent, setSidebarBodyComponent] = React.useState<SidebarBodyComponentId | null>(null);
   const [currentComponentUsageKey, setCurrentComponentUsageKey] = React.useState<string>();
+  const [currentCollectionHit, setcurrentCollectionHit] = React.useState<CollectionHit>();
   const [isCreateCollectionModalOpen, openCreateCollectionModal, closeCreateCollectionModal] = useToggle(false);
 
-  const closeLibrarySidebar = React.useCallback(() => {
+  const resetSidebar = React.useCallback(() => {
+    setCurrentComponentUsageKey(undefined);
+    setcurrentCollectionHit(undefined);
     setSidebarBodyComponent(null);
+  }, []);
+
+  const closeLibrarySidebar = React.useCallback(() => {
+    resetSidebar();
     setCurrentComponentUsageKey(undefined);
   }, []);
   const openAddContentSidebar = React.useCallback(() => {
-    setCurrentComponentUsageKey(undefined);
+    resetSidebar();
     setSidebarBodyComponent(SidebarBodyComponentId.AddContent);
   }, []);
   const openInfoSidebar = React.useCallback(() => {
-    setCurrentComponentUsageKey(undefined);
+    resetSidebar();
     setSidebarBodyComponent(SidebarBodyComponentId.Info);
   }, []);
   const openComponentInfoSidebar = React.useCallback(
     (usageKey: string) => {
+      resetSidebar();
       setCurrentComponentUsageKey(usageKey);
       setSidebarBodyComponent(SidebarBodyComponentId.ComponentInfo);
     },
     [],
   );
-  const openCollectionInfoSidebar = React.useCallback(() => {
-    setCurrentComponentUsageKey(undefined);
+  const openCollectionInfoSidebar = React.useCallback((collectionHit: CollectionHit) => {
+    resetSidebar();
+    setcurrentCollectionHit(collectionHit);
     setSidebarBodyComponent(SidebarBodyComponentId.CollectionInfo);
   }, []);
 
@@ -76,6 +88,7 @@ export const LibraryProvider = (props: { children?: React.ReactNode }) => {
     openCreateCollectionModal,
     closeCreateCollectionModal,
     openCollectionInfoSidebar,
+    currentCollectionHit,
   }), [
     sidebarBodyComponent,
     closeLibrarySidebar,
@@ -87,6 +100,7 @@ export const LibraryProvider = (props: { children?: React.ReactNode }) => {
     openCreateCollectionModal,
     closeCreateCollectionModal,
     openCollectionInfoSidebar,
+    currentCollectionHit,
   ]);
 
   return (

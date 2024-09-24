@@ -1,27 +1,54 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
+  Button,
+  Stack,
   Tab,
   Tabs,
 } from '@openedx/paragon';
+import { Link } from 'react-router-dom';
 
+import type { CollectionHit } from '../../search-manager';
+import type { ContentLibrary } from '../data/api';
+import CollectionDetails from './CollectionDetails';
 import messages from './messages';
 
-const CollectionInfo = () => {
+interface CollectionInfoProps {
+  library: ContentLibrary,
+  collection: CollectionHit,
+}
+
+const CollectionInfo = ({ library, collection }: CollectionInfoProps) => {
   const intl = useIntl();
 
   return (
-    <Tabs
-      variant="tabs"
-      className="my-3 d-flex justify-content-around"
-      defaultActiveKey="manage"
-    >
-      <Tab eventKey="manage" title={intl.formatMessage(messages.manageTabTitle)}>
-        Manage tab placeholder
-      </Tab>
-      <Tab eventKey="details" title={intl.formatMessage(messages.detailsTabTitle)}>
-        Details tab placeholder
-      </Tab>
-    </Tabs>
+    <Stack>
+      <div className="d-flex flex-wrap">
+        <Button
+          as={Link}
+          to={`/library/${library.id}/collection/${collection.blockId}/`}
+          variant="outline-primary"
+          className="m-1 text-nowrap flex-grow-1"
+        >
+          {intl.formatMessage(messages.openCollectionButton)}
+        </Button>
+      </div>
+      <Tabs
+        variant="tabs"
+        className="my-3 d-flex justify-content-around"
+        defaultActiveKey="manage"
+      >
+        <Tab eventKey="manage" title={intl.formatMessage(messages.manageTabTitle)}>
+          Manage tab placeholder
+        </Tab>
+        <Tab eventKey="details" title={intl.formatMessage(messages.detailsTabTitle)}>
+          <CollectionDetails
+            key={collection.id} // This is necessary to force a re-render when the collection changes
+            library={library}
+            collection={collection}
+          />
+        </Tab>
+      </Tabs>
+    </Stack>
   );
 };
 

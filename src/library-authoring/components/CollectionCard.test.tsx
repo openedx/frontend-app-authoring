@@ -7,6 +7,8 @@ const CollectionHitSample: CollectionHit = {
   id: '1',
   type: 'collection',
   contextKey: 'lb:org1:Demo_Course',
+  usageKey: 'lb:org1:Demo_Course:collection1',
+  blockId: 'collection1',
   org: 'org1',
   breadcrumbs: [{ displayName: 'Demo Lib' }],
   displayName: 'Collection Display Name',

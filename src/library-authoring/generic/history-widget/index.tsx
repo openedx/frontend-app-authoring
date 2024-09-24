@@ -3,7 +3,7 @@ import { Stack } from '@openedx/paragon';
 
 import messages from './messages';
 
-const CustomFormattedDate = ({ date }: { date: string }) => (
+const CustomFormattedDate = ({ date }: { date: string | Date }) => (
   <FormattedDate
     value={date}
     year="numeric"
@@ -13,8 +13,8 @@ const CustomFormattedDate = ({ date }: { date: string }) => (
 );
 
 type HistoryWidgedProps = {
-  modified: string | null;
-  created: string | null;
+  modified: string | Date | null;
+  created: string | Date | null;
 };
 
 /**

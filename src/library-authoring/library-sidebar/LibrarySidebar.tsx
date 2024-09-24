@@ -6,18 +6,21 @@ import {
 } from '@openedx/paragon';
 import { Close } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import messages from '../messages';
+import { SearchParams } from 'meilisearch';
+
+import {
+  SearchContextProvider,
+} from '../../search-manager';
 import { AddContentContainer, AddContentHeader } from '../add-content';
-import { LibraryContext, SidebarBodyComponentId } from '../common/context';
-import { LibraryInfo, LibraryInfoHeader } from '../library-info';
-import { ComponentInfo, ComponentInfoHeader } from '../component-info';
-import { ContentLibrary } from '../data/api';
 import { CollectionInfo, CollectionInfoHeader } from '../collections';
-import { type CollectionHit } from '../../search-manager/data/api';
+import { ContentLibrary } from '../data/api';
+import { LibraryContext, SidebarBodyComponentId } from '../common/context';
+import { ComponentInfo, ComponentInfoHeader } from '../component-info';
+import { LibraryInfo, LibraryInfoHeader } from '../library-info';
+import messages from '../messages';
 
 type LibrarySidebarProps = {
   library: ContentLibrary,
-  collection?: CollectionHit,
 };
 
 /**
@@ -29,12 +32,13 @@ type LibrarySidebarProps = {
  * You can add more components in `bodyComponentMap`.
  * Use the returned actions to open and close this sidebar.
  */
-const LibrarySidebar = ({ library, collection }: LibrarySidebarProps) => {
+const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
   const intl = useIntl();
   const {
     sidebarBodyComponent,
     closeLibrarySidebar,
     currentComponentUsageKey,
+    currentCollectionHit,
   } = useContext(LibraryContext);
 
   const bodyComponentMap = {
@@ -43,7 +47,9 @@ const LibrarySidebar = ({ library, collection }: LibrarySidebarProps) => {
     [SidebarBodyComponentId.ComponentInfo]: (
       currentComponentUsageKey && <ComponentInfo usageKey={currentComponentUsageKey} />
     ),
-    [SidebarBodyComponentId.CollectionInfo]: <CollectionInfo />,
+    [SidebarBodyComponentId.CollectionInfo]: (
+      currentCollectionHit && <CollectionInfo library={library} collection={currentCollectionHit} />
+    ),
     unknown: null,
   };
 
@@ -53,30 +59,45 @@ const LibrarySidebar = ({ library, collection }: LibrarySidebarProps) => {
     [SidebarBodyComponentId.ComponentInfo]: (
       currentComponentUsageKey && <ComponentInfoHeader library={library} usageKey={currentComponentUsageKey} />
     ),
-    [SidebarBodyComponentId.CollectionInfo]: <CollectionInfoHeader collection={collection} />,
+    [SidebarBodyComponentId.CollectionInfo]: (
+      currentCollectionHit && <CollectionInfoHeader library={library} collection={currentCollectionHit} />
+    ),
     unknown: null,
   };
 
   const buildBody = () : React.ReactNode => bodyComponentMap[sidebarBodyComponent || 'unknown'];
   const buildHeader = (): React.ReactNode => headerComponentMap[sidebarBodyComponent || 'unknown'];
 
+  const collectionQuery: SearchParams | undefined = currentCollectionHit ? {
+    filter: ['type = "collection"', `context_key = "${library.id}"`, `block_id = "${currentCollectionHit.blockId}"`],
+    limit: 1,
+  } : undefined;
+
   return (
-    <Stack gap={4} className="p-3 text-primary-700">
-      <Stack direction="horizontal" className="d-flex justify-content-between">
-        {buildHeader()}
-        <IconButton
-          className="mt-1"
-          src={Close}
-          iconAs={Icon}
-          alt={intl.formatMessage(messages.closeButtonAlt)}
-          onClick={closeLibrarySidebar}
-          size="inline"
-        />
+    <SearchContextProvider
+      extraFilter={[
+        `context_key = "${library.id}"`,
+        ...(currentCollectionHit ? [`collections.key = "${currentCollectionHit.blockId}"`] : []),
+      ]}
+      overrideQueries={{ ...(collectionQuery ? { collections: collectionQuery } : {}) }}
+    >
+      <Stack gap={4} className="p-3 text-primary-700">
+        <Stack direction="horizontal" className="d-flex justify-content-between">
+          {buildHeader()}
+          <IconButton
+            className="mt-1"
+            src={Close}
+            iconAs={Icon}
+            alt={intl.formatMessage(messages.closeButtonAlt)}
+            onClick={closeLibrarySidebar}
+            size="inline"
+          />
+        </Stack>
+        <div>
+          {buildBody()}
+        </div>
       </Stack>
-      <div>
-        {buildBody()}
-      </div>
-    </Stack>
+    </SearchContextProvider>
   );
 };
 
