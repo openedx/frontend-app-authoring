@@ -51,11 +51,6 @@ const messages = defineMessages({
     defaultMessage: 'Details',
     description: 'Title for details tab',
   },
-  detailsTabDescriptionTitle: {
-    id: 'course-authoring.library-authoring.component.details-tab.description-title',
-    defaultMessage: 'Description / Card Preview Text',
-    description: 'Title for the Description container in the details tab',
-  },
   detailsTabUsageTitle: {
     id: 'course-authoring.library-authoring.component.details-tab.usage-title',
     defaultMessage: 'Component Usage',
