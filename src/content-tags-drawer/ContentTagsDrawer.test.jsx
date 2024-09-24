@@ -9,6 +9,7 @@ import {
   screen,
   within,
 } from '@testing-library/react';
+import { useParams } from 'react-router-dom';
 
 import ContentTagsDrawer from './ContentTagsDrawer';
 import {
@@ -30,9 +31,9 @@ const mockNavigate = jest.fn();
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
-  useParams: () => ({
+  useParams: jest.fn(() => ({
     contentId,
-  }),
+  })),
   useNavigate: () => mockNavigate,
 }));
 
@@ -85,6 +86,9 @@ describe('<ContentTagsDrawer />', () => {
     useContentTaxonomyTagsUpdater.mockReturnValue({
       isError: false,
       mutate: mockMutate,
+    });
+    useParams.mockReturnValue({
+      contentId,
     });
   });
 
@@ -479,6 +483,15 @@ describe('<ContentTagsDrawer />', () => {
     expect(getByText('Manage tags')).toBeInTheDocument();
   });
 
+  it('should throw error when contentId is undefined', () => {
+    useParams.mockReturnValue({
+      contentId: undefined,
+    });
+    expect(() => {
+      render(<RootWrapper />);
+    }).toThrow('Error: contentId cannot be null.');
+  });
+
   it('shows spinner before the content data query is complete', async () => {
     await act(async () => {
       const { getAllByRole } = render(<RootWrapper />);
@@ -495,17 +508,29 @@ describe('<ContentTagsDrawer />', () => {
     });
   });
 
-  it('shows the content display name after the query is complete', async () => {
+  it('shows the content display name after the query is complete in drawer variant', async () => {
     useContentData.mockReturnValue({
       isSuccess: true,
       data: {
         displayName: 'Unit 1',
       },
     });
-    await act(async () => {
-      const { getByText } = render(<RootWrapper />);
-      expect(getByText('Unit 1')).toBeInTheDocument();
+    render(<RootWrapper />);
+    expect(await screen.findByText('Unit 1')).toBeInTheDocument();
+    expect(await screen.findByText('Manage tags')).toBeInTheDocument();
+  });
+
+  it('shows the content display name after the query is complete in component variant', async () => {
+    useContentData.mockReturnValue({
+      isSuccess: true,
+      data: {
+        displayName: 'Unit 1',
+      },
     });
+    render(<RootWrapper variant="component" />);
+    expect(await screen.findByText('Loading...')).toBeInTheDocument();
+    expect(screen.queryByText('Unit 1')).not.toBeInTheDocument();
+    expect(screen.queryByText('Manage tags')).not.toBeInTheDocument();
   });
 
   it('shows content using params', async () => {
@@ -580,10 +605,12 @@ describe('<ContentTagsDrawer />', () => {
     });
   });
 
-  it('should be read only on first render', async () => {
+  it('should be read only on first render on drawer variant', async () => {
     setupMockDataForStagedTagsTesting();
     render(<RootWrapper />);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /close/i }));
+    expect(screen.getByRole('button', { name: /edit tags/i }));
 
     // Not show delete tag buttons
     expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
@@ -598,7 +625,26 @@ describe('<ContentTagsDrawer />', () => {
     expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
   });
 
-  it('should change to edit mode when click on `Edit tags`', async () => {
+  it('should be read only on first render on component variant', async () => {
+    setupMockDataForStagedTagsTesting();
+    render(<RootWrapper variant="component" />);
+    expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /manage tags/i }));
+
+    // Not show delete tag buttons
+    expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
+
+    // Not show add a tag select
+    expect(screen.queryByText(/add a tag/i)).not.toBeInTheDocument();
+
+    // Not show cancel button
+    expect(screen.queryByRole('button', { name: /cancel/i })).not.toBeInTheDocument();
+
+    // Not show save button
+    expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
+  });
+
+  it('should change to edit mode when click on `Edit tags` on drawer variant', async () => {
     setupMockDataForStagedTagsTesting();
     render(<RootWrapper />);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
@@ -622,7 +668,31 @@ describe('<ContentTagsDrawer />', () => {
     expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument();
   });
 
-  it('should change to read mode when click on `Cancel`', async () => {
+  it('should change to edit mode when click on `Manage tags` on component variant', async () => {
+    setupMockDataForStagedTagsTesting();
+    render(<RootWrapper variant="component" />);
+    expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
+    const manageTagsButton = screen.getByRole('button', {
+      name: /manage tags/i,
+    });
+    fireEvent.click(manageTagsButton);
+
+    // Show delete tag buttons
+    expect(screen.getAllByRole('button', {
+      name: /delete/i,
+    }).length).toBe(2);
+
+    // Show add a tag select
+    expect(screen.getByText(/add a tag/i)).toBeInTheDocument();
+
+    // Show cancel button
+    expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
+
+    // Show save button
+    expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument();
+  });
+
+  it('should change to read mode when click on `Cancel` on drawer variant', async () => {
     setupMockDataForStagedTagsTesting();
     render(<RootWrapper />);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
@@ -630,6 +700,33 @@ describe('<ContentTagsDrawer />', () => {
       name: /edit tags/i,
     });
     fireEvent.click(editTagsButton);
+
+    const cancelButton = screen.getByRole('button', {
+      name: /cancel/i,
+    });
+    fireEvent.click(cancelButton);
+
+    // Not show delete tag buttons
+    expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
+
+    // Not show add a tag select
+    expect(screen.queryByText(/add a tag/i)).not.toBeInTheDocument();
+
+    // Not show cancel button
+    expect(screen.queryByRole('button', { name: /cancel/i })).not.toBeInTheDocument();
+
+    // Not show save button
+    expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
+  });
+
+  it('should change to read mode when click on `Cancel` on component variant', async () => {
+    setupMockDataForStagedTagsTesting();
+    render(<RootWrapper variant="component" />);
+    expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
+    const manageTagsButton = screen.getByRole('button', {
+      name: /manage tags/i,
+    });
+    fireEvent.click(manageTagsButton);
 
     const cancelButton = screen.getByRole('button', {
       name: /cancel/i,

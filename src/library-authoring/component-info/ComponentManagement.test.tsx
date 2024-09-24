@@ -8,6 +8,10 @@ import {
 import { mockLibraryBlockMetadata } from '../data/api.mocks';
 import ComponentManagement from './ComponentManagement';
 
+jest.mock('../../content-tags-drawer', () => ({
+  ContentTagsDrawer: () => <div>Mocked ContentTagsDrawer</div>,
+}));
+
 /*
  * FIXME: Summarize the reason here
  * https://stackoverflow.com/questions/47902335/innertext-is-undefined-in-jest-test
@@ -51,9 +55,8 @@ describe('<ComponentManagement />', () => {
     initializeMocks();
     mockLibraryBlockMetadata.applyMock();
     render(<ComponentManagement usageKey={mockLibraryBlockMetadata.usageKeyNeverPublished} />);
-    expect(await screen.findByText('Tags')).toBeInTheDocument();
-    // TODO: replace with actual data when implement tag list
-    expect(screen.queryByText('Tags placeholder')).toBeInTheDocument();
+    expect(await screen.findByText('Tags (0)')).toBeInTheDocument();
+    expect(screen.queryByText('Mocked ContentTagsDrawer')).toBeInTheDocument();
   });
 
   it('should not render draft status', async () => {
