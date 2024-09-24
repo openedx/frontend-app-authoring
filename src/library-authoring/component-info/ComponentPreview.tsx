@@ -6,11 +6,6 @@ import { OpenInFull } from '@openedx/paragon/icons';
 import { LibraryBlock } from '../LibraryBlock';
 import messages from './messages';
 
-// This is a simple overlay to prevent interaction with the preview
-const PreviewOverlay = () => (
-  <div className="position-absolute w-100 h-100 zindex-9" />
-);
-
 interface ModalComponentPreviewProps {
   isOpen: boolean;
   close: () => void;
@@ -44,7 +39,6 @@ const ComponentPreview = ({ usageKey }: ComponentPreviewProps) => {
   return (
     <>
       <div className="position-relative m-2">
-        <PreviewOverlay />
         <Button
           size="sm"
           variant="light"
