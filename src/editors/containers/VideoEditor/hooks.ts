@@ -14,6 +14,7 @@ interface ErrorContextData {
   videoSource: ErrCategory;
 }
 
+/* istanbul ignore next */
 export const ErrorContext = createContext<ErrorContextData>({
   duration: [{}, () => {}],
   handout: [{}, () => {}],
