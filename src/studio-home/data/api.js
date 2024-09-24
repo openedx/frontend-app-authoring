@@ -16,6 +16,7 @@ export async function getStudioHomeData() {
   return camelCaseObject(data);
 }
 
+/** Get list of courses from the deprecated non-paginated API */
 export async function getStudioHomeCourses(search) {
   const { data } = await getAuthenticatedHttpClient().get(`${getApiBaseUrl()}/api/contentstore/v1/home/courses${search}`);
   return camelCaseObject(data);

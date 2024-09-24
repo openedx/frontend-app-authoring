@@ -93,7 +93,6 @@ const useStudioHome = (isPaginated = false) => {
     isShowOrganizationDropdown,
     hasAbilityToCreateNewCourse,
     isFiltered,
-    dispatch,
     setShowNewCourseContainer,
   };
 };

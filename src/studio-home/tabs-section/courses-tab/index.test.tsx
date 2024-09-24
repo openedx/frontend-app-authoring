@@ -10,8 +10,6 @@ import { initialState } from '../../factories/mockApiResponses';
 
 import CoursesTab from '.';
 
-const mockDispatch = jest.fn();
-
 const onClickNewCourse = jest.fn();
 const isShowProcessing = false;
 const isLoading = false;
@@ -23,7 +21,7 @@ const showNewCourseContainer = true;
 
 const renderComponent = (overrideProps = {}, studioHomeState = {}) => {
   // Generate a custom initial state based on studioHomeCoursesRequestParams
-  const customInitialState = {
+  const customInitialState: any = { // TODO: remove 'any' once our redux state has proper types
     ...initialState,
     studioHome: {
       ...initialState.studioHome,
@@ -38,7 +36,6 @@ const renderComponent = (overrideProps = {}, studioHomeState = {}) => {
     <AppProvider store={store}>
       <IntlProvider locale="en" messages={{}}>
         <CoursesTab
-          dispatch={mockDispatch}
           coursesDataItems={studioHomeMock.courses}
           showNewCourseContainer={showNewCourseContainer}
           onClickNewCourse={onClickNewCourse}

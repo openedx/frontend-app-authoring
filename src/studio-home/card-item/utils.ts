@@ -4,4 +4,4 @@
  * @returns {string} The trimmed string.
  */
 // eslint-disable-next-line import/prefer-default-export
-export const trimSlashes = (str) => str.replace(/^\/|\/$/g, '');
+export const trimSlashes = (str: string): string => str.replace(/^\/|\/$/g, '');
