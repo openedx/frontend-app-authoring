@@ -106,8 +106,8 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     handleDuplicate: (XBlockId) => {
       dispatch(duplicateUnitItemQuery(blockId, XBlockId));
     },
-    handleSync: (XBlockId, syncUrl) => {
-      dispatch(syncUnitItemQuery(blockId, XBlockId, syncUrl));
+    handleSync: (XBlockId) => {
+      dispatch(syncUnitItemQuery(blockId, XBlockId));
     },
   };
 

@@ -251,12 +251,12 @@ export function duplicateUnitItemQuery(itemId, xblockId) {
   };
 }
 
-export function syncUnitItemQuery(itemId, xblockId, syncUrl) {
+export function syncUnitItemQuery(itemId, xblockId) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
 
     try {
-      await syncUnitItem(itemId, xblockId, syncUrl);
+      await syncUnitItem(itemId, xblockId);
       const newCourseVerticalChildren = await getCourseVerticalChildren(itemId);
       dispatch(syncXBlock({}));
       dispatch(fetchCourseItemSuccess(courseUnit));
