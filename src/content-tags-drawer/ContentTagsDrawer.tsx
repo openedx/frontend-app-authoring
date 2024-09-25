@@ -131,7 +131,6 @@ const ContentTagsDrawerVariantFooter = ({ onClose }: ContentTagsDrawerVariantFoo
                 : messages.tagsDrawerCloseButtonText)}
             </Button>
             <Button
-              variant="dark"
               className="rounded-0"
               onClick={isEditMode
                 ? commitGlobalStagedTags
@@ -179,7 +178,6 @@ const ContentTagsComponentVariantFooter = () => {
                 {intl.formatMessage(messages.tagsDrawerCancelButtonText)}
               </Button>
               <Button
-                variant="dark"
                 className="rounded-0"
                 onClick={commitGlobalStagedTags}
                 block
@@ -257,28 +255,33 @@ const ContentTagsDrawer = ({
   } = context;
 
   let onCloseDrawer: () => void;
-  if (onClose === undefined) {
-    onCloseDrawer = () => {
-      // "*" allows communication with any origin
-      window.parent.postMessage('closeManageTagsDrawer', '*');
-    };
-  } else {
-    onCloseDrawer = onClose;
+  if (variant === 'drawer') {
+    if (onClose === undefined) {
+      onCloseDrawer = () => {
+        // "*" allows communication with any origin
+        window.parent.postMessage('closeManageTagsDrawer', '*');
+      };
+    } else {
+      onCloseDrawer = onClose;
+    }
   }
 
   useEffect(() => {
-    const handleEsc = (event) => {
-      /* Close drawer when ESC-key is pressed and selectable dropdown box not open */
-      const selectableBoxOpen = document.querySelector('[data-selectable-box="taxonomy-tags"]');
-      if (event.key === 'Escape' && !selectableBoxOpen && !blockingSheet) {
-        onCloseDrawer();
-      }
-    };
-    document.addEventListener('keydown', handleEsc);
+    if (variant === 'drawer') {
+      const handleEsc = (event) => {
+        /* Close drawer when ESC-key is pressed and selectable dropdown box not open */
+        const selectableBoxOpen = document.querySelector('[data-selectable-box="taxonomy-tags"]');
+        if (event.key === 'Escape' && !selectableBoxOpen && !blockingSheet) {
+          onCloseDrawer();
+        }
+      };
+      document.addEventListener('keydown', handleEsc);
 
-    return () => {
-      document.removeEventListener('keydown', handleEsc);
-    };
+      return () => {
+        document.removeEventListener('keydown', handleEsc);
+      };
+    }
+    return () => {};
   }, [blockingSheet]);
 
   useEffect(() => {
