@@ -134,6 +134,7 @@ mockCreateLibraryBlock.newHtmlData = {
   lastDraftCreated: '2024-07-22T21:37:49Z',
   lastDraftCreatedBy: null,
   created: '2024-07-22T21:37:49Z',
+  modified: '2024-07-22T21:37:49Z',
   tagsCount: 0,
 } satisfies api.LibraryBlockMetadata;
 mockCreateLibraryBlock.newProblemData = {
@@ -147,6 +148,7 @@ mockCreateLibraryBlock.newProblemData = {
   lastDraftCreated: '2024-07-22T21:37:49Z',
   lastDraftCreatedBy: null,
   created: '2024-07-22T21:37:49Z',
+  modified: '2024-07-22T21:37:49Z',
   tagsCount: 0,
 } satisfies api.LibraryBlockMetadata;
 mockCreateLibraryBlock.newVideoData = {
@@ -160,6 +162,7 @@ mockCreateLibraryBlock.newVideoData = {
   lastDraftCreated: '2024-07-22T21:37:49Z',
   lastDraftCreatedBy: null,
   created: '2024-07-22T21:37:49Z',
+  modified: '2024-07-22T21:37:49Z',
   tagsCount: 0,
 } satisfies api.LibraryBlockMetadata;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
@@ -224,11 +227,18 @@ mockXBlockFields.applyMock = () => jest.spyOn(api, 'getXBlockFields').mockImplem
 export async function mockLibraryBlockMetadata(usageKey: string): Promise<api.LibraryBlockMetadata> {
   const thisMock = mockLibraryBlockMetadata;
   switch (usageKey) {
+    case thisMock.usageKeyThatNeverLoads:
+      // Return a promise that never resolves, to simulate never loading:
+      return new Promise<any>(() => {});
+    case thisMock.usageKeyError404:
+      throw createAxiosError({ code: 404, message: 'Not found.', path: api.getLibraryBlockMetadataUrl(usageKey) });
     case thisMock.usageKeyNeverPublished: return thisMock.dataNeverPublished;
     case thisMock.usageKeyPublished: return thisMock.dataPublished;
     default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
   }
 }
+mockLibraryBlockMetadata.usageKeyThatNeverLoads = 'lb:Axim:infiniteLoading:html:123';
+mockLibraryBlockMetadata.usageKeyError404 = 'lb:Axim:error404:html:123';
 mockLibraryBlockMetadata.usageKeyNeverPublished = 'lb:Axim:TEST1:html:571fe018-f3ce-45c9-8f53-5dafcb422fd1';
 mockLibraryBlockMetadata.dataNeverPublished = {
   id: 'lb:Axim:TEST1:html:571fe018-f3ce-45c9-8f53-5dafcb422fd1',
@@ -241,6 +251,7 @@ mockLibraryBlockMetadata.dataNeverPublished = {
   lastDraftCreatedBy: null,
   hasUnpublishedChanges: false,
   created: '2024-06-20T13:54:21Z',
+  modified: '2024-06-21T13:54:21Z',
   tagsCount: 0,
 } satisfies api.LibraryBlockMetadata;
 mockLibraryBlockMetadata.usageKeyPublished = 'lb:Axim:TEST2:html:571fe018-f3ce-45c9-8f53-5dafcb422fd2';
@@ -255,6 +266,7 @@ mockLibraryBlockMetadata.dataPublished = {
   lastDraftCreatedBy: '2024-06-20T20:00:00Z',
   hasUnpublishedChanges: false,
   created: '2024-06-20T13:54:21Z',
+  modified: '2024-06-21T13:54:21Z',
   tagsCount: 0,
 } satisfies api.LibraryBlockMetadata;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */

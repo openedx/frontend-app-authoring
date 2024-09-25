@@ -14,6 +14,7 @@ const ComponentManagement = ({ usageKey }: ComponentManagementProps) => {
   const intl = useIntl();
   const { data: componentMetadata } = useLibraryBlockMetadata(usageKey);
 
+  // istanbul ignore if: this should never happen
   if (!componentMetadata) {
     return null;
   }

@@ -149,6 +149,7 @@ export interface LibraryBlockMetadata {
   lastDraftCreatedBy: string | null,
   hasUnpublishedChanges: boolean;
   created: string | null,
+  modified: string | null,
   tagsCount: number;
 }
 
