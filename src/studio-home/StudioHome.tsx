@@ -13,7 +13,6 @@ import { StudioFooter } from '@edx/frontend-component-footer';
 import { getConfig } from '@edx/frontend-platform';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { constructLibraryAuthoringURL } from '../utils';
 import Loading from '../generic/Loading';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import Header from '../header';
@@ -58,8 +57,6 @@ const StudioHome = () => {
     userIsActive,
     studioShortName,
     studioRequestEmail,
-    libraryAuthoringMfeUrl,
-    redirectToLibraryAuthoringMfe,
     showNewLibraryButton,
   } = studioHomeData;
 
@@ -93,13 +90,7 @@ const StudioHome = () => {
     if (showNewLibraryButton || showV2LibraryURL) {
       const newLibraryClick = () => {
         if (showV2LibraryURL) {
-          if (libraryAuthoringMfeUrl && redirectToLibraryAuthoringMfe) {
-            // Library authoring MFE
-            window.open(constructLibraryAuthoringURL(libraryAuthoringMfeUrl, 'create'));
-          } else {
-            // Use course-authoring route
-            navigate('/library/create');
-          }
+          navigate('/library/create');
         } else {
           // Studio home library for legacy libraries
           window.open(`${getConfig().STUDIO_BASE_URL}/home_library`);

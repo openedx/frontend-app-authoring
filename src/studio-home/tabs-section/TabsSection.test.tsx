@@ -428,22 +428,6 @@ describe('<TabsSection />', () => {
       expect(screen.queryByText(tabMessages.legacyLibrariesTabTitle.defaultMessage)).toBeNull();
     });
 
-    it('should redirect to library authoring mfe', async () => {
-      const data = generateGetStudioHomeDataApiResponse();
-      data.redirectToLibraryAuthoringMfe = true;
-
-      render();
-      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, data);
-      await executeThunk(fetchStudioHomeData(), store.dispatch);
-
-      const librariesTab = screen.getByText(tabMessages.legacyLibrariesTabTitle.defaultMessage);
-      fireEvent.click(librariesTab);
-
-      waitFor(() => {
-        expect(window.location.href).toBe(data.libraryAuthoringMfeUrl);
-      });
-    });
-
     it('should render libraries fetch failure alert', async () => {
       render();
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());

@@ -7,24 +7,18 @@ import {
   Button,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { getConfig, getPath } from '@edx/frontend-platform';
 import { Error } from '@openedx/paragon/icons';
 
 import { useContentLibraryV2List } from '../../../library-authoring';
-import { constructLibraryAuthoringURL } from '../../../utils';
 import { LoadingSpinner } from '../../../generic/Loading';
 import AlertMessage from '../../../generic/alert-message';
 import CardItem from '../../card-item';
 import messages from '../messages';
 import LibrariesV2Filters from './libraries-v2-filters';
 
-const LibrariesV2Tab: React.FC<{
-  libraryAuthoringMfeUrl: string,
-  redirectToLibraryAuthoringMfe: boolean
-}> = ({
-  libraryAuthoringMfeUrl,
-  redirectToLibraryAuthoringMfe,
-}) => {
+type Props = Record<never, never>;
+
+const LibrariesV2Tab: React.FC<Props> = () => {
   const intl = useIntl();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -54,15 +48,6 @@ const LibrariesV2Tab: React.FC<{
       </Row>
     );
   }
-
-  const libURL = (id: string) => (
-    libraryAuthoringMfeUrl && redirectToLibraryAuthoringMfe
-      ? constructLibraryAuthoringURL(libraryAuthoringMfeUrl, `library/${id}`)
-      // Redirection to the placeholder is done in the MFE rather than
-      // through the backend i.e. redirection from cms, because this this will probably change,
-      // hence why we use the MFE's origin
-      : `${window.location.origin}${getPath(getConfig().PUBLIC_PATH)}library/${id}`
-  );
 
   const hasV2Libraries = !isLoading && ((data!.results.length || 0) > 0);
 
@@ -109,7 +94,7 @@ const LibrariesV2Tab: React.FC<{
               displayName={title}
               org={org}
               number={slug}
-              url={libURL(id)}
+              path={`/library/${id}`}
             />
           )) : isFiltered && !isLoading && (
             <Alert className="mt-4">

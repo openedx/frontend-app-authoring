@@ -7,14 +7,11 @@ import {
   Stack,
 } from '@openedx/paragon';
 import { OpenInNew } from '@openedx/paragon/icons';
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { getItemIcon } from '../generic/block-type-utils';
 import { isLibraryKey } from '../generic/key-utils';
 import { useSearchContext, type ContentHit, Highlight } from '../search-manager';
-import { getStudioHomeData } from '../studio-home/data/selectors';
-import { constructLibraryAuthoringURL } from '../utils';
 import messages from './messages';
 
 /**
@@ -100,7 +97,6 @@ const SearchResult: React.FC<{ hit: ContentHit }> = ({ hit }) => {
   const intl = useIntl();
   const navigate = useNavigate();
   const { closeSearchModal } = useSearchContext();
-  const { libraryAuthoringMfeUrl, redirectToLibraryAuthoringMfe } = useSelector(getStudioHomeData);
 
   /**
    * Returns the URL for the context of the hit
@@ -119,10 +115,6 @@ const SearchResult: React.FC<{ hit: ContentHit }> = ({ hit }) => {
 
     if (isLibraryKey(contextKey)) {
       const urlSuffix = getLibraryComponentUrlSuffix(hit);
-      if (redirectToLibraryAuthoringMfe && libraryAuthoringMfeUrl) {
-        return constructLibraryAuthoringURL(libraryAuthoringMfeUrl, urlSuffix);
-      }
-
       if (newWindow) {
         return `${getPath(getConfig().PUBLIC_PATH)}${urlSuffix}`;
       }
@@ -131,7 +123,7 @@ const SearchResult: React.FC<{ hit: ContentHit }> = ({ hit }) => {
 
     // istanbul ignore next - This case should never be reached
     return undefined;
-  }, [libraryAuthoringMfeUrl, redirectToLibraryAuthoringMfe, hit]);
+  }, [hit]);
 
   /**
    * Opens the context of the hit in a new window
