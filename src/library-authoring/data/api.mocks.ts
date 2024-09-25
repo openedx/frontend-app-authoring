@@ -220,11 +220,18 @@ mockXBlockFields.applyMock = () => jest.spyOn(api, 'getXBlockFields').mockImplem
 export async function mockLibraryBlockMetadata(usageKey: string): Promise<api.LibraryBlockMetadata> {
   const thisMock = mockLibraryBlockMetadata;
   switch (usageKey) {
+    case thisMock.usageKeyThatNeverLoads:
+      // Return a promise that never resolves, to simulate never loading:
+      return new Promise<any>(() => {});
+    case thisMock.usageKeyError404:
+      throw createAxiosError({ code: 404, message: 'Not found.', path: api.getLibraryBlockMetadataUrl(usageKey) });
     case thisMock.usageKeyNeverPublished: return thisMock.dataNeverPublished;
     case thisMock.usageKeyPublished: return thisMock.dataPublished;
     default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
   }
 }
+mockLibraryBlockMetadata.usageKeyThatNeverLoads = 'lb:Axim:infiniteLoading:html:123';
+mockLibraryBlockMetadata.usageKeyError404 = 'lb:Axim:error404:html:123';
 mockLibraryBlockMetadata.usageKeyNeverPublished = 'lb:Axim:TEST1:html:571fe018-f3ce-45c9-8f53-5dafcb422fd1';
 mockLibraryBlockMetadata.dataNeverPublished = {
   id: 'lb:Axim:TEST1:html:571fe018-f3ce-45c9-8f53-5dafcb422fd1',

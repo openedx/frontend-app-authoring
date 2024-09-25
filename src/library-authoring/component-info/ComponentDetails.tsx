@@ -1,6 +1,8 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Stack } from '@openedx/paragon';
 
+import AlertError from '../../generic/alert-error';
+import Loading from '../../generic/Loading';
 import { useLibraryBlockMetadata } from '../data/apiHooks';
 import HistoryWidget from '../generic/history-widget';
 import { ComponentDeveloperInfo } from './ComponentDeveloperInfo';
@@ -12,11 +14,19 @@ interface ComponentDetailsProps {
 
 const ComponentDetails = ({ usageKey }: ComponentDetailsProps) => {
   const intl = useIntl();
-  const { data: componentMetadata } = useLibraryBlockMetadata(usageKey);
+  const {
+    data: componentMetadata,
+    isError,
+    error,
+    isLoading,
+  } = useLibraryBlockMetadata(usageKey);
 
-  // istanbul ignore if: this should never happen
-  if (!componentMetadata) {
-    return null;
+  if (isError) {
+    return <AlertError error={error} />;
+  }
+
+  if (isLoading) {
+    return <Loading />;
   }
 
   return (
