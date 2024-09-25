@@ -1,12 +1,7 @@
-import { dispatch } from 'react-redux';
 import { thunkActions } from '../../data/redux';
 import { MockUseState } from '../../testUtils';
 
-// This 'module' self-import hack enables mocking during tests.
-// See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
-// should be re-thought and cleaned up to avoid this pattern.
-// eslint-disable-next-line import/no-self-import
-import * as module from './hooks';
+import * as hooks from './hooks';
 
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
@@ -15,14 +10,12 @@ jest.mock('react', () => ({
   useCallback: (cb, prereqs) => ({ cb, prereqs }),
 }));
 
-jest.mock('react-redux', () => {
-  const dispatchFn = jest.fn();
-  return {
-    ...jest.requireActual('react-redux'),
-    dispatch: dispatchFn,
-    useDispatch: jest.fn(() => dispatchFn),
-  };
-});
+const mockDispatchFn = jest.fn();
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  dispatch: mockDispatchFn,
+  useDispatch: jest.fn(() => mockDispatchFn),
+}));
 
 jest.mock('../../data/redux', () => ({
   thunkActions: {
@@ -32,7 +25,7 @@ jest.mock('../../data/redux', () => ({
   },
 }));
 
-const state = new MockUseState(module);
+const state = new MockUseState(hooks);
 
 let hook;
 
@@ -62,47 +55,47 @@ describe('VideoEditorHooks', () => {
       field2: 'field2msg',
     };
     test('error: state values', () => {
-      expect(module.errorsHook().error.duration).toEqual([
+      expect(hooks.errorsHook().error.duration).toEqual([
         state.stateVals[state.keys.durationErrors],
         state.setState[state.keys.durationErrors],
       ]);
-      expect(module.errorsHook().error.handout).toEqual([
+      expect(hooks.errorsHook().error.handout).toEqual([
         state.stateVals[state.keys.handoutErrors],
         state.setState[state.keys.handoutErrors],
       ]);
-      expect(module.errorsHook().error.license).toEqual([
+      expect(hooks.errorsHook().error.license).toEqual([
         state.stateVals[state.keys.licenseErrors],
         state.setState[state.keys.licenseErrors],
       ]);
-      expect(module.errorsHook().error.thumbnail).toEqual([
+      expect(hooks.errorsHook().error.thumbnail).toEqual([
         state.stateVals[state.keys.thumbnailErrors],
         state.setState[state.keys.thumbnailErrors],
       ]);
-      expect(module.errorsHook().error.transcripts).toEqual([
+      expect(hooks.errorsHook().error.transcripts).toEqual([
         state.stateVals[state.keys.transcriptsErrors],
         state.setState[state.keys.transcriptsErrors],
       ]);
-      expect(module.errorsHook().error.videoSource).toEqual([
+      expect(hooks.errorsHook().error.videoSource).toEqual([
         state.stateVals[state.keys.videoSourceErrors],
         state.setState[state.keys.videoSourceErrors],
       ]);
     });
     describe('validateEntry', () => {
       test('validateEntry: returns true if all validation calls are true', () => {
-        hook = module.errorsHook();
+        hook = hooks.errorsHook();
         expect(hook.validateEntry()).toEqual(true);
       });
       test('validateEntry: returns false if any validation calls are false', () => {
         state.mockVal(state.keys.durationErrors, fakeDurationError);
-        hook = module.errorsHook();
+        hook = hooks.errorsHook();
         expect(hook.validateEntry()).toEqual(false);
       });
     });
   });
   describe('fetchVideoContent', () => {
     it('equals dispatch(thunkActions.video.saveVideoData())', () => {
-      hook = module.fetchVideoContent()({ dispatch });
-      expect(hook).toEqual(dispatch(thunkActions.video.saveVideoData()));
+      hook = hooks.fetchVideoContent()({ dispatch: mockDispatchFn });
+      expect(hook).toEqual(mockDispatchFn(thunkActions.video.saveVideoData()));
     });
   });
 });

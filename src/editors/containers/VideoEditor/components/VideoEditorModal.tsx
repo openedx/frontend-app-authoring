@@ -1,10 +1,12 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
 import * as appHooks from '../../../hooks';
 import { thunkActions, selectors } from '../../../data/redux';
 import VideoSettingsModal from './VideoSettingsModal';
-// import SelectVideoModal from './SelectVideoModal';
+
+interface Props {
+  isLibrary: boolean;
+}
 
 export const {
   navigateTo,
@@ -21,9 +23,7 @@ export const hooks = {
   },
 };
 
-const VideoEditorModal = ({
-  close,
-  isOpen,
+const VideoEditorModal: React.FC<Props> = ({
   isLibrary,
 }) => {
   const dispatch = useDispatch();
@@ -34,8 +34,6 @@ const VideoEditorModal = ({
   hooks.initialize(dispatch, selectedVideoId, selectedVideoUrl);
   return (
     <VideoSettingsModal {...{
-      close,
-      isOpen,
       onReturn,
       isLibrary,
     }}
@@ -44,11 +42,4 @@ const VideoEditorModal = ({
   // TODO: add logic to show SelectVideoModal if no selection
 };
 
-VideoEditorModal.defaultProps = {
-};
-VideoEditorModal.propTypes = {
-  close: PropTypes.func.isRequired,
-  isOpen: PropTypes.bool.isRequired,
-  isLibrary: PropTypes.bool.isRequired,
-};
 export default VideoEditorModal;
