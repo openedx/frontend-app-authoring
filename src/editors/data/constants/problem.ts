@@ -227,7 +227,7 @@ export const RichTextProblems = [ProblemTypeKeys.SINGLESELECT, ProblemTypeKeys.M
 export const settingsOlxAttributes = [
   '@_display_name',
   '@_weight',
-  '@_max_atempts',
+  '@_max_attempts',
   '@_showanswer',
   '@_show_reset_button',
   '@_submission_wait_seconds',
