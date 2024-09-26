@@ -80,7 +80,7 @@ describe('<CollectionCard />', () => {
     // verify confirmation dialog and click on cancel button
     let dialog = await screen.findByRole('dialog', { name: 'Delete this collection?' });
     expect(dialog).toBeInTheDocument();
-    let cancelBtn = await screen.findByRole('button', { name: 'Cancel' });
+    const cancelBtn = await screen.findByRole('button', { name: 'Cancel' });
     userEvent.click(cancelBtn);
     expect(axiosMock.history.delete.length).toEqual(0);
     expect(cancelBtn).not.toBeInTheDocument();
@@ -94,9 +94,7 @@ describe('<CollectionCard />', () => {
     dialog = await screen.findByRole('dialog', { name: 'Delete this collection?' });
     const confirmBtn = await within(dialog).findByRole('button', { name: 'Delete' });
     userEvent.click(confirmBtn);
-    await waitForElementToBeRemoved(() => {
-      return screen.queryByRole('dialog', { name: 'Delete this collection?' })
-    });
+    await waitForElementToBeRemoved(() => screen.queryByRole('dialog', { name: 'Delete this collection?' }));
 
     await waitFor(() => {
       expect(axiosMock.history.delete.length).toEqual(1);
@@ -130,9 +128,7 @@ describe('<CollectionCard />', () => {
     const dialog = await screen.findByRole('dialog', { name: 'Delete this collection?' });
     const confirmBtn = await within(dialog).findByRole('button', { name: 'Delete' });
     userEvent.click(confirmBtn);
-    await waitForElementToBeRemoved(() => {
-      return screen.queryByRole('dialog', { name: 'Delete this collection?' })
-    });
+    await waitForElementToBeRemoved(() => screen.queryByRole('dialog', { name: 'Delete this collection?' }));
 
     await waitFor(() => {
       expect(axiosMock.history.delete.length).toEqual(1);

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   ActionRow,
@@ -45,7 +44,7 @@ const DeleteModal = ({
             }}
             labels={{
               default: intl.formatMessage(messages.deleteButton),
-              pending: intl.formatMessage(messages.pendingDeleteButton)
+              pending: intl.formatMessage(messages.pendingDeleteButton),
             }}
           />
         </ActionRow>
