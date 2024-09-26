@@ -44,7 +44,6 @@ type CollectionCardProps = {
 };
 
 const CollectionCard = ({ collectionHit }: CollectionCardProps) => {
-  const intl = useIntl();
   const {
     openCollectionInfoSidebar,
   } = useLibraryContext();
@@ -56,10 +55,6 @@ const CollectionCard = ({ collectionHit }: CollectionCardProps) => {
     numChildren,
   } = collectionHit;
   const { displayName = '', description = '' } = formatted;
-  const blockTypeDisplayName = numChildren ? intl.formatMessage(
-    messages.collectionTypeWithCount,
-    { numChildren },
-  ) : intl.formatMessage(messages.collectionType);
 
   return (
     <BaseComponentCard
@@ -67,12 +62,12 @@ const CollectionCard = ({ collectionHit }: CollectionCardProps) => {
       displayName={displayName}
       description={description}
       tags={tags}
+      numChildren={numChildren}
       actions={(
         <ActionRow>
           <CollectionMenu collectionHit={collectionHit} />
         </ActionRow>
       )}
-      blockTypeDisplayName={blockTypeDisplayName}
       openInfoSidebar={() => openCollectionInfoSidebar(collectionHit.blockId)}
     />
   );

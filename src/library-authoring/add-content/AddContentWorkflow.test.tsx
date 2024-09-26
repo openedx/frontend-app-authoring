@@ -15,7 +15,6 @@ import * as textEditorHooks from '../../editors/containers/TextEditor/hooks';
 import {
   mockContentLibrary,
   mockCreateLibraryBlock,
-  mockLibraryBlockTypes,
   mockXBlockFields,
 } from '../data/api.mocks';
 import { mockBroadcastChannel, mockClipboardEmpty } from '../../generic/data/api.mock';
@@ -23,7 +22,6 @@ import { mockContentSearchConfig, mockSearchResult } from '../../search-manager/
 import LibraryLayout from '../LibraryLayout';
 
 mockContentSearchConfig.applyMock();
-mockLibraryBlockTypes.applyMock();
 mockClipboardEmpty.applyMock();
 mockBroadcastChannel();
 mockContentLibrary.applyMock();

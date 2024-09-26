@@ -42,7 +42,7 @@ const clipboardBroadcastChannelMock = {
 (global as any).BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
 
 const libraryId = 'lib:org1:Demo_Course';
-const render = () => baseRender(<ComponentCard contentHit={contentHit} blockTypeDisplayName="text" />, {
+const render = () => baseRender(<ComponentCard contentHit={contentHit} />, {
   extraWrapper: ({ children }) => <LibraryProvider libraryId={libraryId}>{ children }</LibraryProvider>,
 });
 

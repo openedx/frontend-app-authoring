@@ -11,7 +11,6 @@ import {
 import mockResult from '../__mocks__/collection-search.json';
 import {
   mockContentLibrary,
-  mockLibraryBlockTypes,
   mockXBlockFields,
   mockGetCollectionMetadata,
 } from '../data/api.mocks';
@@ -24,7 +23,6 @@ mockGetCollectionMetadata.applyMock();
 mockContentSearchConfig.applyMock();
 mockGetBlockTypes.applyMock();
 mockContentLibrary.applyMock();
-mockLibraryBlockTypes.applyMock();
 mockXBlockFields.applyMock();
 mockBroadcastChannel();
 

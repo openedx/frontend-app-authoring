@@ -84,7 +84,7 @@ const CollectionStatsWidget = ({ libraryId, collectionId }: CollectionStatsWidge
       {blockTypesArray.map(({ blockType, count }) => (
         <BlockCount
           key={blockType}
-          label={<BlockTypeLabel type={blockType} />}
+          label={<BlockTypeLabel blockType={blockType} />}
           blockType={blockType}
           count={count}
         />

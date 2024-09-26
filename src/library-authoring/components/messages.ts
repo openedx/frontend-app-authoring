@@ -11,16 +11,6 @@ const messages = defineMessages({
     defaultMessage: 'Collection actions menu',
     description: 'Alt/title text for the collection card menu button.',
   },
-  collectionType: {
-    id: 'course-authoring.library-authoring.collection.type',
-    defaultMessage: 'Collection',
-    description: 'Collection type text',
-  },
-  collectionTypeWithCount: {
-    id: 'course-authoring.library-authoring.collection.type-with-count',
-    defaultMessage: 'Collection ({numChildren})',
-    description: 'Collection type text with children count',
-  },
   menuOpen: {
     id: 'course-authoring.library-authoring.collection.menu.open',
     defaultMessage: 'Open',

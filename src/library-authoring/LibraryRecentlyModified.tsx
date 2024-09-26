@@ -1,4 +1,3 @@
-import React, { useMemo } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { orderBy } from 'lodash';
 
@@ -7,7 +6,6 @@ import { type CollectionHit, type ContentHit, SearchSortOption } from '../search
 import LibrarySection, { LIBRARY_SECTION_PREVIEW_LIMIT } from './components/LibrarySection';
 import messages from './messages';
 import ComponentCard from './components/ComponentCard';
-import { useLibraryBlockTypes } from './data/apiHooks';
 import CollectionCard from './components/CollectionCard';
 import { useLibraryContext } from './common/context';
 
@@ -19,7 +17,6 @@ const RecentlyModified: React.FC<Record<never, never>> = () => {
     totalHits,
     totalCollectionHits,
   } = useSearchContext();
-  const { libraryId } = useLibraryContext();
 
   const componentCount = totalHits + totalCollectionHits;
   // Since we only display a fixed number of items in preview,
@@ -31,17 +28,6 @@ const RecentlyModified: React.FC<Record<never, never>> = () => {
     ...componentList,
     ...collectionList,
   ], ['modified'], ['desc']).slice(0, LIBRARY_SECTION_PREVIEW_LIMIT);
-
-  const { data: blockTypesData } = useLibraryBlockTypes(libraryId);
-  const blockTypes = useMemo(() => {
-    const result = {};
-    if (blockTypesData) {
-      blockTypesData.forEach(blockType => {
-        result[blockType.blockType] = blockType;
-      });
-    }
-    return result;
-  }, [blockTypesData]);
 
   return componentCount > 0
     ? (
@@ -60,7 +46,6 @@ const RecentlyModified: React.FC<Record<never, never>> = () => {
               <ComponentCard
                 key={contentHit.id}
                 contentHit={contentHit as ContentHit}
-                blockTypeDisplayName={blockTypes[(contentHit as ContentHit).blockType]?.displayName ?? ''}
               />
             )
           ))}

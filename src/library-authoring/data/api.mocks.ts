@@ -4,49 +4,6 @@ import { createAxiosError } from '../../testUtils';
 import * as api from './api';
 
 /**
- * Mock for `getLibraryBlockTypes()`
- */
-export async function mockLibraryBlockTypes(): Promise<api.LibraryBlockType[]> {
-  return [
-    { blockType: 'about', displayName: 'overview' },
-    { blockType: 'annotatable', displayName: 'Annotation' },
-    { blockType: 'chapter', displayName: 'Section' },
-    { blockType: 'conditional', displayName: 'Conditional' },
-    { blockType: 'course', displayName: 'Empty' },
-    { blockType: 'course_info', displayName: 'Text' },
-    { blockType: 'discussion', displayName: 'Discussion' },
-    { blockType: 'done', displayName: 'Completion' },
-    { blockType: 'drag-and-drop-v2', displayName: 'Drag and Drop' },
-    { blockType: 'edx_sga', displayName: 'Staff Graded Assignment' },
-    { blockType: 'google-calendar', displayName: 'Google Calendar' },
-    { blockType: 'google-document', displayName: 'Google Document' },
-    { blockType: 'html', displayName: 'Text' },
-    { blockType: 'library', displayName: 'Library' },
-    { blockType: 'library_content', displayName: 'Randomized Content Block' },
-    { blockType: 'lti', displayName: 'LTI' },
-    { blockType: 'lti_consumer', displayName: 'LTI Consumer' },
-    { blockType: 'openassessment', displayName: 'Open Response Assessment' },
-    { blockType: 'poll', displayName: 'Poll' },
-    { blockType: 'problem', displayName: 'Problem' },
-    { blockType: 'scorm', displayName: 'Scorm module' },
-    { blockType: 'sequential', displayName: 'Subsection' },
-    { blockType: 'split_test', displayName: 'Content Experiment' },
-    { blockType: 'staffgradedxblock', displayName: 'Staff Graded Points' },
-    { blockType: 'static_tab', displayName: 'Empty' },
-    { blockType: 'survey', displayName: 'Survey' },
-    { blockType: 'thumbs', displayName: 'Thumbs' },
-    { blockType: 'unit', displayName: 'Unit' },
-    { blockType: 'vertical', displayName: 'Unit' },
-    { blockType: 'video', displayName: 'Video' },
-    { blockType: 'videoalpha', displayName: 'Video' },
-    { blockType: 'word_cloud', displayName: 'Word cloud' },
-  ];
-}
-mockLibraryBlockTypes.applyMock = () => {
-  jest.spyOn(api, 'getLibraryBlockTypes').mockImplementation(mockLibraryBlockTypes);
-};
-
-/**
  * Mock for `getContentLibrary()`
  *
  * This mock returns different data/responses depending on the ID of the library
