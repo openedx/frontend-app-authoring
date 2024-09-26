@@ -55,7 +55,9 @@ const CollectionStatsWidget = ({ collection }: CollectionStatsWidgetProps) => {
     .sort((a, b) => b.count - a.count);
 
   const totalBlocksCount = blockTypesArray.reduce((acc, { count }) => acc + count, 0);
-  const otherBlocks = blockTypesArray.splice(3);
+  // Show the top 3 block type counts individually, and splice the remaining block types together under "Other".
+  const numBlockTypesShown = 3;
+  const otherBlocks = blockTypesArray.splice(numBlockTypesShown);
   const otherBlocksCount = otherBlocks.reduce((acc, { count }) => acc + count, 0);
 
   if (totalBlocksCount === 0) {
