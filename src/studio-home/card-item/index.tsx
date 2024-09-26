@@ -62,7 +62,7 @@ const CardItem: React.FC<Props> = ({
   } = useSelector(getStudioHomeData);
   const destinationUrl: string = path ?? new URL(url, getConfig().STUDIO_BASE_URL).toString();
   const subtitle = isLibraries ? `${org} / ${number}` : `${org} / ${number} / ${run}`;
-  const readOnlyItem = !(lmsLink || rerunLink || url);
+  const readOnlyItem = !(lmsLink || rerunLink || url || path);
   const showActions = !(readOnlyItem || isLibraries);
   const isShowRerunLink = allowCourseReruns
     && rerunCreatorStatus

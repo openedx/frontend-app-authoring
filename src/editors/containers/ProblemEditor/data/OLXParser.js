@@ -664,7 +664,7 @@ export class OLXParser {
     }
 
     if (Object.keys(this.problem).some((key) => key.indexOf('@_') !== -1 && !settingsOlxAttributes.includes(key))) {
-      throw new Error('Misc Attributes asscoiated with problem, opening in advanced editor');
+      throw new Error('Misc Attributes associated with problem, opening in advanced editor');
     }
 
     const problemType = this.getProblemType();

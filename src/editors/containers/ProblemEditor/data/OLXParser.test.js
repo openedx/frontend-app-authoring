@@ -58,7 +58,7 @@ describe('OLXParser', () => {
           labelDescriptionQuestionOlxParser.getParsedOLXData();
         } catch (e) {
           expect(e).toBeInstanceOf(Error);
-          expect(e.message).toBe('Misc Attributes asscoiated with problem, opening in advanced editor');
+          expect(e.message).toBe('Misc Attributes associated with problem, opening in advanced editor');
         }
       });
     });
