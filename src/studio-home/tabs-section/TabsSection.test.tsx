@@ -39,6 +39,8 @@ const tabSectionComponent = (overrideProps) => (
     showNewCourseContainer={false}
     onClickNewCourse={() => {}}
     isShowProcessing
+    librariesV1Enabled
+    librariesV2Enabled
     {...overrideProps}
   />
 );
@@ -66,10 +68,6 @@ describe('<TabsSection />', () => {
     const newMocks = initializeMocks({ initialState });
     store = newMocks.reduxStore;
     axiosMock = newMocks.axiosMock;
-    setConfig({
-      ...getConfig(),
-      LIBRARY_MODE: 'mixed',
-    });
     axiosMock.onGet(getContentLibraryV2ListApiUrl()).reply(200, contentLibrariesListV2);
   });
 
@@ -99,16 +97,9 @@ describe('<TabsSection />', () => {
     expect(screen.getByText(tabMessages.archivedTabTitle.defaultMessage)).toBeInTheDocument();
   });
 
-  it('should render only 1 library tab when "v1 only" lib mode', async () => {
-    setConfig({
-      ...getConfig(),
-      LIBRARY_MODE: 'v1 only',
-    });
-
-    const data = generateGetStudioHomeDataApiResponse();
-
-    render();
-    axiosMock.onGet(getStudioHomeApiUrl()).reply(200, data);
+  it('should render only 1 library tab when libraries-v2 disabled', async () => {
+    render({ librariesV2Enabled: false });
+    axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
     await executeThunk(fetchStudioHomeData(), store.dispatch);
 
     expect(screen.getByText(tabMessages.librariesTabTitle.defaultMessage)).toBeInTheDocument();
@@ -120,16 +111,9 @@ describe('<TabsSection />', () => {
     expect(screen.queryByText(tabMessages.legacyLibrariesTabTitle.defaultMessage)).not.toBeInTheDocument();
   });
 
-  it('should render only 1 library tab when "v2 only" lib mode', async () => {
-    setConfig({
-      ...getConfig(),
-      LIBRARY_MODE: 'v2 only',
-    });
-
-    const data = generateGetStudioHomeDataApiResponse();
-
-    render();
-    axiosMock.onGet(getStudioHomeApiUrl()).reply(200, data);
+  it('should render only 1 library tab when libraries-v1 disabled', async () => {
+    render({ librariesV1Enabled: false });
+    axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
     await executeThunk(fetchStudioHomeData(), store.dispatch);
 
     expect(screen.getByText(tabMessages.librariesTabTitle.defaultMessage)).toBeInTheDocument();
@@ -367,13 +351,13 @@ describe('<TabsSection />', () => {
     });
 
     it('should switch to Libraries tab and render specific v1 library details ("v1 only" mode)', async () => {
-      setConfig({
-        ...getConfig(),
-        LIBRARY_MODE: 'v1 only',
-      });
+      const data = {
+        ...generateGetStudioHomeDataApiResponse(),
+        librariesV2Enabled: false,
+      };
 
       render();
-      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, data);
       axiosMock.onGet(libraryApiLink).reply(200, generateGetStudioHomeLibrariesApiResponse());
       await executeThunk(fetchStudioHomeData(), store.dispatch);
       await executeThunk(fetchLibraryData(), store.dispatch);
@@ -389,13 +373,13 @@ describe('<TabsSection />', () => {
     });
 
     it('should switch to Libraries tab and render specific v2 library details ("v2 only" mode)', async () => {
-      setConfig({
-        ...getConfig(),
-        LIBRARY_MODE: 'v2 only',
-      });
+      const data = {
+        ...generateGetStudioHomeDataApiResponse(),
+        librariesV1Enabled: false,
+      };
 
       render();
-      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, data);
       await executeThunk(fetchStudioHomeData(), store.dispatch);
 
       const librariesTab = screen.getByText(tabMessages.librariesTabTitle.defaultMessage);

@@ -14,19 +14,19 @@ import ArchivedTab from './archived-tab';
 import CoursesTab from './courses-tab';
 import { RequestStatus } from '../../data/constants';
 import { fetchLibraryData } from '../data/thunks';
-import { isMixedOrV1LibrariesMode, isMixedOrV2LibrariesMode } from './utils';
 
 const TabsSection = ({
   showNewCourseContainer,
   onClickNewCourse,
   isShowProcessing,
   isPaginationCoursesEnabled,
+  librariesV1Enabled,
+  librariesV2Enabled,
 }) => {
   const dispatch = useDispatch();
   const intl = useIntl();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const libMode = getConfig().LIBRARY_MODE;
   const TABS_LIST = {
     courses: 'courses',
     libraries: 'libraries',
@@ -41,7 +41,7 @@ const TabsSection = ({
     }
 
     if (pname.includes('/libraries')) {
-      return isMixedOrV2LibrariesMode(libMode)
+      return librariesV2Enabled
         ? TABS_LIST.libraries
         : TABS_LIST.legacyLibraries;
     }
@@ -116,7 +116,7 @@ const TabsSection = ({
     }
 
     if (librariesEnabled) {
-      if (isMixedOrV2LibrariesMode(libMode)) {
+      if (librariesV2Enabled) {
         tabs.push(
           <Tab
             key={TABS_LIST.libraries}
@@ -128,15 +128,15 @@ const TabsSection = ({
         );
       }
 
-      if (isMixedOrV1LibrariesMode(libMode)) {
+      if (librariesV1Enabled) {
         tabs.push(
           <Tab
             key={TABS_LIST.legacyLibraries}
             eventKey={TABS_LIST.legacyLibraries}
             title={intl.formatMessage(
-              libMode === 'v1 only'
-                ? messages.librariesTabTitle
-                : messages.legacyLibrariesTabTitle,
+              librariesV2Enabled
+                ? messages.legacyLibrariesTabTitle
+                : messages.librariesTabTitle,
             )}
           >
             <LibrariesTab
@@ -197,6 +197,8 @@ TabsSection.propTypes = {
   onClickNewCourse: PropTypes.func.isRequired,
   isShowProcessing: PropTypes.bool.isRequired,
   isPaginationCoursesEnabled: PropTypes.bool,
+  librariesV1Enabled: PropTypes.bool,
+  librariesV2Enabled: PropTypes.bool,
 };
 
 export default TabsSection;

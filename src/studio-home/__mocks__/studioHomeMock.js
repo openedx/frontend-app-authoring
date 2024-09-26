@@ -62,6 +62,8 @@ module.exports = {
     },
   ],
   librariesEnabled: true,
+  librariesV1Enabled: true,
+  librariesV2Enabled: true,
   optimizationEnabled: false,
   requestCourseCreatorUrl: '/request_course_creator',
   rerunCreatorStatus: true,
