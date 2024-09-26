@@ -81,7 +81,7 @@ describe('<CollectionInfoHeader />', () => {
     expect(textBox).not.toBeInTheDocument();
   });
 
-  it('should show error on edit collection tittle', async () => {
+  it('should show error on edit collection title', async () => {
     const library = await mockContentLibrary(mockContentLibrary.libraryId);
     render(<CollectionInfoHeader library={library} collection={mockCollectionHit} />);
     const url = api.getLibraryCollectionApiUrl(library.id, mockCollectionHit.blockId);
