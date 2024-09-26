@@ -12,11 +12,12 @@ import mockResult from '../__mocks__/collection-search.json';
 import {
   mockContentLibrary, mockLibraryBlockTypes, mockXBlockFields,
 } from '../data/api.mocks';
-import { mockContentSearchConfig } from '../../search-manager/data/api.mock';
+import { mockContentSearchConfig, mockGetBlockTypes } from '../../search-manager/data/api.mock';
 import { mockBroadcastChannel } from '../../generic/data/api.mock';
 import { LibraryLayout } from '..';
 
 mockContentSearchConfig.applyMock();
+mockGetBlockTypes.applyMock();
 mockContentLibrary.applyMock();
 mockLibraryBlockTypes.applyMock();
 mockXBlockFields.applyMock();
@@ -87,8 +88,7 @@ describe('<LibraryCollectionPage />', () => {
     });
 
     if (colId !== mockCollection.collectionNeverLoads) {
-      // TODO: Check why the search endpoint is called 3 times
-      await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(3, searchEndpoint, 'post'); });
+      await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
     }
   };
 
@@ -112,8 +112,6 @@ describe('<LibraryCollectionPage />', () => {
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
     expect((await screen.findAllByText(mockCollection.title))[0]).toBeInTheDocument();
 
-    expect(screen.queryByText('This collection is currently empty.')).not.toBeInTheDocument();
-
     // "Recently Modified" sort shown
     expect(screen.getAllByText('Recently Modified').length).toEqual(1);
     expect((await screen.findAllByText('Introduction to Testing'))[0]).toBeInTheDocument();
@@ -128,7 +126,8 @@ describe('<LibraryCollectionPage />', () => {
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
     expect((await screen.findAllByText(mockCollection.title))[0]).toBeInTheDocument();
 
-    expect(screen.getAllByText('This collection is currently empty.')[0]).toBeInTheDocument();
+    // In the collection page and in the sidebar
+    expect(screen.getAllByText('This collection is currently empty.').length).toEqual(2);
 
     const addComponentButton = screen.getAllByRole('button', { name: /new/i })[1];
     fireEvent.click(addComponentButton);
@@ -151,7 +150,8 @@ describe('<LibraryCollectionPage />', () => {
     await renderLibraryCollectionPage(mockCollection.collectionNoComponents, libraryId);
 
     expect(await screen.findByText('All Collections')).toBeInTheDocument();
-    expect(screen.getAllByText('This collection is currently empty.')[0]).toBeInTheDocument();
+    // In the collection page and in the sidebar
+    expect(screen.getAllByText('This collection is currently empty.').length).toEqual(2);
     expect(screen.queryByRole('button', { name: /new/i })).not.toBeInTheDocument();
     expect(screen.getByText('Read Only')).toBeInTheDocument();
   });
