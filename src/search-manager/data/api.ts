@@ -317,7 +317,7 @@ export const fetchBlockTypes = async (
   const { results } = await client.multiSearch({
     queries: [{
       indexUid: indexName,
-      facets: ['block_type', 'content.problem_types'],
+      facets: ['block_type'],
       filter: extraFilterFormatted,
       limit: 0, // We don't need any "hits" for this - just the facetDistribution
     }],
