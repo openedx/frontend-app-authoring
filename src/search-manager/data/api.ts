@@ -103,6 +103,7 @@ interface BaseContentHit {
   displayName: string;
   usageKey: string;
   blockId: string;
+  usageKey: string;
   /** The course or library ID */
   contextKey: string;
   org: string;

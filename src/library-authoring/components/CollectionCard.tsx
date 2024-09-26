@@ -1,4 +1,4 @@
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -26,6 +26,7 @@ const CollectionMenu = ({ collectionHit } : CollectionCardProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
+  const [confirmBtnState, setConfirmBtnState] = useState('default');
 
   const restoreCollectionMutation = useRestoreCollection(collectionHit.contextKey, collectionHit.blockId);
   const restoreCollection = useCallback(() => {
@@ -39,6 +40,7 @@ const CollectionMenu = ({ collectionHit } : CollectionCardProps) => {
 
   const deleteCollectionMutation = useDeleteCollection(collectionHit.contextKey, collectionHit.blockId);
   const deleteCollection = useCallback(() => {
+    setConfirmBtnState('pending');
     deleteCollectionMutation.mutateAsync()
       .then(() => {
         showToast(
@@ -50,6 +52,9 @@ const CollectionMenu = ({ collectionHit } : CollectionCardProps) => {
         );
       }).catch(() => {
         showToast(intl.formatMessage(messages.deleteCollectionFailed));
+      }).finally(() => {
+        setConfirmBtnState('default');
+        closeDeleteModal();
       });
   }, []);
 
@@ -80,6 +85,7 @@ const CollectionMenu = ({ collectionHit } : CollectionCardProps) => {
           collectionTitle: collectionHit.displayName,
         })}
         onDeleteSubmit={deleteCollection}
+        btnState={confirmBtnState}
       />
     </>
   );

@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   ActionRow,
   Button,
   AlertModal,
+  StatefulButton,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
@@ -16,6 +18,7 @@ const DeleteModal = ({
   title,
   description,
   variant,
+  btnState,
 }) => {
   const intl = useIntl();
 
@@ -33,15 +36,18 @@ const DeleteModal = ({
           <Button variant="tertiary" onClick={close}>
             {intl.formatMessage(messages.cancelButton)}
           </Button>
-          <Button
+          <StatefulButton
             data-testid="delete-confirm-button"
+            state={btnState}
             onClick={(e) => {
               e.preventDefault();
               onDeleteSubmit();
             }}
-          >
-            {intl.formatMessage(messages.deleteButton, { category })}
-          </Button>
+            labels={{
+              default: intl.formatMessage(messages.deleteButton),
+              pending: intl.formatMessage(messages.pendingDeleteButton)
+            }}
+          />
         </ActionRow>
       )}
     >
@@ -55,6 +61,7 @@ DeleteModal.defaultProps = {
   title: '',
   description: '',
   variant: 'default',
+  btnState: 'default',
 };
 
 DeleteModal.propTypes = {
@@ -65,6 +72,7 @@ DeleteModal.propTypes = {
   title: PropTypes.string,
   description: PropTypes.string,
   variant: PropTypes.string,
+  btnState: PropTypes.string,
 };
 
 export default DeleteModal;

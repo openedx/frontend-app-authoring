@@ -49,6 +49,7 @@ export const ToastProvider = (props: ToastProviderProps) => {
     resetState();
   }, []);
 
+  // setTimeout inside useEffect to clear out previous timeout if any
   React.useEffect(() => {
     // Set timeout to 10 seconds if action is set else close in 5 seconds.
     const timeout = toastAction ? 10 * 1000 : 5 * 1000;
