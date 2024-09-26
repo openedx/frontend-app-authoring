@@ -46,7 +46,7 @@ const CollectionMenu = ({ collectionHit } : CollectionCardProps) => {
           {
             label: intl.formatMessage(messages.undoDeleteCollectionToastAction),
             onClick: restoreCollection,
-          }
+          },
         );
       }).catch(() => {
         showToast(intl.formatMessage(messages.deleteCollectionFailed));
@@ -74,7 +74,7 @@ const CollectionMenu = ({ collectionHit } : CollectionCardProps) => {
       <DeleteModal
         isOpen={isDeleteModalOpen}
         close={closeDeleteModal}
-        variant='warning'
+        variant="warning"
         category={collectionHit.type}
         description={intl.formatMessage(messages.deleteCollectionConfirm, {
           collectionTitle: collectionHit.displayName,

@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { Badge, Button, Icon, Stack } from '@openedx/paragon';
+import {
+  Badge, Button, Icon, Stack,
+} from '@openedx/paragon';
 import { Settings as IconSettings } from '@openedx/paragon/icons';
 import { capitalize } from 'lodash';
 
@@ -13,8 +15,8 @@ const ProcessingNotification = ({ isShow, title, action }) => (
     variant="secondary"
     aria-hidden={isShow}
   >
-    <Stack gap={2} direction='vertical'>
-      <Stack direction='horizontal'>
+    <Stack gap={2} direction="vertical">
+      <Stack direction="horizontal">
         <Icon className="processing-notification-icon" src={IconSettings} />
         <h2 className="processing-notification-title">
           {capitalize(title)}
@@ -22,9 +24,10 @@ const ProcessingNotification = ({ isShow, title, action }) => (
       </Stack>
       { action && (
         <Button
-          variant='primary'
+          variant="primary"
           onClick={action.onClick}
-        >{action.label}</Button>
+        >{action.label}
+        </Button>
       )}
     </Stack>
   </Badge>

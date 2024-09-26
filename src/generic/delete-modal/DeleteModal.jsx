@@ -54,7 +54,7 @@ DeleteModal.defaultProps = {
   category: '',
   title: '',
   description: '',
-  variant: 'default'
+  variant: 'default',
 };
 
 DeleteModal.propTypes = {
