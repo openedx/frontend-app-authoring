@@ -136,6 +136,7 @@ export const useContentSearchResults = ({
     blockTypes: pages?.[0]?.blockTypes ?? {},
     problemTypes: pages?.[0]?.problemTypes ?? {},
     status: query.status,
+    isLoading: query.isLoading,
     isFetching: query.isFetching,
     isError: query.isError,
     isFetchingNextPage: query.isFetchingNextPage,

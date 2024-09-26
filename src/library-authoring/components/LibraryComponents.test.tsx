@@ -31,6 +31,7 @@ const data = {
   fetchNextPage: mockFetchNextPage,
   searchKeywords: '',
   isFiltered: false,
+  isLoading: false,
 };
 
 let store: Store;
@@ -163,6 +164,17 @@ describe('<LibraryComponents />', () => {
     expect(screen.queryByRole('button', { name: /add component/i })).not.toBeInTheDocument();
   });
 
+  it('should render a spinner while loading', async () => {
+    mockUseSearchContext.mockReturnValue({
+      ...data,
+      isLoading: true,
+    });
+
+    render(<RootWrapper />);
+    const spinner = await screen.findByRole('status');
+    expect(spinner.textContent).toEqual('Loading...');
+  });
+
   it('should render components in full variant', async () => {
     mockUseSearchContext.mockReturnValue({
       ...data,
@@ -213,7 +225,7 @@ describe('<LibraryComponents />', () => {
     expect(mockFetchNextPage).toHaveBeenCalled();
   });
 
-  it('should not call `fetchNextPage` on croll to bottom in preview variant', async () => {
+  it('should not call `fetchNextPage` on scroll to bottom in preview variant', async () => {
     mockUseSearchContext.mockReturnValue({
       ...data,
       hits: libraryComponentsMock,

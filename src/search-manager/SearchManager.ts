@@ -36,6 +36,7 @@ export interface SearchContextData {
   defaultSearchSortOrder: SearchSortOption;
   hits: ContentHit[];
   totalHits: number;
+  isLoading: boolean;
   isFetching: boolean;
   hasNextPage: boolean | undefined;
   isFetchingNextPage: boolean;

@@ -1,5 +1,6 @@
 import React, { useContext, useMemo } from 'react';
 
+import { LoadingSpinner } from '../../generic/Loading';
 import { useLoadOnScroll } from '../../hooks';
 import { useSearchContext } from '../../search-manager';
 import { NoComponents, NoSearchResults } from '../EmptyStates';
@@ -27,6 +28,7 @@ const LibraryComponents = ({ libraryId, variant }: LibraryComponentsProps) => {
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
+    isLoading,
     isFiltered,
   } = useSearchContext();
   const { openAddContentSidebar } = useContext(LibraryContext);
@@ -51,6 +53,10 @@ const LibraryComponents = ({ libraryId, variant }: LibraryComponentsProps) => {
     fetchNextPage,
     variant === 'full',
   );
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
   if (componentCount === 0) {
     return isFiltered ? <NoSearchResults /> : <NoComponents handleBtnClick={openAddContentSidebar} />;
