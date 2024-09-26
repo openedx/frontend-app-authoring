@@ -5,7 +5,7 @@ import classNames from 'classnames';
 
 import { getItemIcon } from '../../generic/block-type-utils';
 import { ToastContext } from '../../generic/toast-context';
-import { BlockTypeLabel, type CollectionHit, useSearchContext } from '../../search-manager';
+import { BlockTypeLabel, type CollectionHit, useGetBlockTypes } from '../../search-manager';
 import type { ContentLibrary } from '../data/api';
 import { useUpdateCollection } from '../data/apiHooks';
 import HistoryWidget from '../generic/history-widget';
@@ -36,10 +36,19 @@ const BlockCount = ({
   );
 };
 
-const CollectionStatsWidget = () => {
-  const {
-    blockTypes,
-  } = useSearchContext();
+interface CollectionStatsWidgetProps {
+  collection: CollectionHit,
+}
+
+const CollectionStatsWidget = ({ collection }: CollectionStatsWidgetProps) => {
+  const { data: blockTypes } = useGetBlockTypes([
+    `context_key = "${collection.contextKey}"`,
+    `collections.key = "${collection.blockId}"`,
+  ]);
+
+  if (!blockTypes) {
+    return null;
+  }
 
   const blockTypesArray = Object.entries(blockTypes)
     .map(([blockType, count]) => ({ blockType, count }))
@@ -51,7 +60,12 @@ const CollectionStatsWidget = () => {
 
   if (totalBlocksCount === 0) {
     return (
-      <div className="text-center text-muted">
+      <div
+        className="text-center text-muted align-content-center"
+        style={{
+          height: '72px', // same height as the BlockCount component
+        }}
+      >
         <FormattedMessage {...messages.detailsTabStatsNoComponents} />
       </div>
     );
@@ -135,7 +149,7 @@ const CollectionDetails = ({ library, collection }: CollectionDetailsProps) => {
         <h3 className="h5">
           {intl.formatMessage(messages.detailsTabStatsTitle)}
         </h3>
-        <CollectionStatsWidget />
+        <CollectionStatsWidget collection={collection} />
       </div>
       <hr className="w-100" />
       <div>

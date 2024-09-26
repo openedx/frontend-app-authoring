@@ -10,6 +10,7 @@ import {
   fetchTagsThatMatchKeyword,
   getContentSearchConfig,
   fetchDocumentById,
+  fetchBlockTypes,
   OverrideQueries,
 } from './api';
 
@@ -241,6 +242,22 @@ export const useTagFilterOptions = (args: {
   }, [mainQuery.data, tagKeywordSearchData.data]);
 
   return { ...mainQuery, data };
+};
+
+export const useGetBlockTypes = (extraFilters: Filter) => {
+  const { client, indexName } = useContentSearchConnection();
+  return useQuery({
+    enabled: client !== undefined && indexName !== undefined,
+    queryKey: [
+      'content_search',
+      client?.config.apiKey,
+      client?.config.host,
+      indexName,
+      extraFilters,
+      'block_types',
+    ],
+    queryFn: () => fetchBlockTypes(client!, indexName!, extraFilters),
+  });
 };
 
 /* istanbul ignore next */

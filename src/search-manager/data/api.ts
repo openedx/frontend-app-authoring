@@ -303,6 +303,29 @@ export async function fetchSearchResults({
   };
 }
 
+/**
+ * Fetch the block types facet distribution for the search results.
+ */
+export const fetchBlockTypes = async (
+  client: MeiliSearch,
+  indexName: string,
+  extraFilter?: Filter,
+): Promise<Record<string, number>> => {
+  // Convert 'extraFilter' into an array
+  const extraFilterFormatted = forceArray(extraFilter);
+
+  const { results } = await client.multiSearch({
+    queries: [{
+      indexUid: indexName,
+      facets: ['block_type', 'content.problem_types'],
+      filter: extraFilterFormatted,
+      limit: 0, // We don't need any "hits" for this - just the facetDistribution
+    }],
+  });
+
+  return results[0].facetDistribution?.block_type ?? {};
+};
+
 /** Information about a single tag in the tag tree, as returned by fetchAvailableTagOptions() */
 export interface TagEntry {
   tagName: string;

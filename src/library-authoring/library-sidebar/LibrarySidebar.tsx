@@ -6,11 +6,7 @@ import {
 } from '@openedx/paragon';
 import { Close } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { SearchParams } from 'meilisearch';
 
-import {
-  SearchContextProvider,
-} from '../../search-manager';
 import { AddContentContainer, AddContentHeader } from '../add-content';
 import { CollectionInfo, CollectionInfoHeader } from '../collections';
 import { ContentLibrary } from '../data/api';
@@ -68,36 +64,23 @@ const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
   const buildBody = () : React.ReactNode => bodyComponentMap[sidebarBodyComponent || 'unknown'];
   const buildHeader = (): React.ReactNode => headerComponentMap[sidebarBodyComponent || 'unknown'];
 
-  const collectionQuery: SearchParams | undefined = currentCollectionHit ? {
-    filter: ['type = "collection"', `context_key = "${library.id}"`, `block_id = "${currentCollectionHit.blockId}"`],
-    limit: 1,
-  } : undefined;
-
   return (
-    <SearchContextProvider
-      extraFilter={[
-        `context_key = "${library.id}"`,
-        ...(currentCollectionHit ? [`collections.key = "${currentCollectionHit.blockId}"`] : []),
-      ]}
-      overrideQueries={{ ...(collectionQuery ? { collections: collectionQuery } : {}) }}
-    >
-      <Stack gap={4} className="p-3 text-primary-700">
-        <Stack direction="horizontal" className="d-flex justify-content-between">
-          {buildHeader()}
-          <IconButton
-            className="mt-1"
-            src={Close}
-            iconAs={Icon}
-            alt={intl.formatMessage(messages.closeButtonAlt)}
-            onClick={closeLibrarySidebar}
-            size="inline"
-          />
-        </Stack>
-        <div>
-          {buildBody()}
-        </div>
+    <Stack gap={4} className="p-3 text-primary-700">
+      <Stack direction="horizontal" className="d-flex justify-content-between">
+        {buildHeader()}
+        <IconButton
+          className="mt-1"
+          src={Close}
+          iconAs={Icon}
+          alt={intl.formatMessage(messages.closeButtonAlt)}
+          onClick={closeLibrarySidebar}
+          size="inline"
+        />
       </Stack>
-    </SearchContextProvider>
+      <div>
+        {buildBody()}
+      </div>
+    </Stack>
   );
 };
 
