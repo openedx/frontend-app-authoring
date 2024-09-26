@@ -458,6 +458,25 @@ describe('<LibraryAuthoringPage />', () => {
     await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
   });
 
+  it('should open and close the collection sidebar', async () => {
+    const displayName = 'Collection 1';
+    await renderLibraryPage();
+
+    // Click on the first component. It could appear twice, in both "Recently Modified" and "Collections"
+    fireEvent.click((await screen.findAllByText(displayName))[0]);
+
+    const sidebar = screen.getByTestId('library-sidebar');
+
+    const { getByRole, getByText } = within(sidebar);
+
+    await waitFor(() => expect(getByText(displayName)).toBeInTheDocument());
+
+    const closeButton = getByRole('button', { name: /close/i });
+    fireEvent.click(closeButton);
+
+    await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
+  });
+
   it('can filter by capa problem type', async () => {
     const problemTypes = {
       'Multiple Choice': 'choiceresponse',
