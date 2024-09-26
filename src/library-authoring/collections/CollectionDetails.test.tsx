@@ -2,7 +2,6 @@ import type MockAdapter from 'axios-mock-adapter';
 import fetchMock from 'fetch-mock-jest';
 
 import { mockContentSearchConfig, mockGetBlockTypes } from '../../search-manager/data/api.mock';
-import { type CollectionHit, formatSearchHit } from '../../search-manager/data/api';
 import {
   initializeMocks,
   fireEvent,
@@ -11,19 +10,21 @@ import {
   waitFor,
   within,
 } from '../../testUtils';
-import mockResult from '../__mocks__/collection-search.json';
 import * as api from '../data/api';
-import { mockContentLibrary } from '../data/api.mocks';
+import { mockContentLibrary, mockGetCollectionMetadata } from '../data/api.mocks';
 import CollectionDetails from './CollectionDetails';
 
 let axiosMock: MockAdapter;
 let mockShowToast: (message: string) => void;
 
+mockGetCollectionMetadata.applyMock();
 mockContentSearchConfig.applyMock();
 mockGetBlockTypes.applyMock();
 
+const { collectionId } = mockGetCollectionMetadata;
+const { description: originalDescription } = mockGetCollectionMetadata.collectionData;
+
 const library = mockContentLibrary.libraryData;
-const collectionHit = formatSearchHit(mockResult.results[2].hits[0]) as CollectionHit;
 
 describe('<CollectionDetails />', () => {
   beforeEach(() => {
@@ -39,12 +40,11 @@ describe('<CollectionDetails />', () => {
   });
 
   it('should render Collection Details', async () => {
-    render(<CollectionDetails library={library} collection={collectionHit} />);
+    render(<CollectionDetails library={library} collectionId={collectionId} />);
 
     // Collection Description
-    expect(screen.getByText('Description / Card Preview Text')).toBeInTheDocument();
-    const { description } = collectionHit;
-    expect(screen.getByText(description)).toBeInTheDocument();
+    expect(await screen.findByText('Description / Card Preview Text')).toBeInTheDocument();
+    expect(screen.getByText(originalDescription)).toBeInTheDocument();
 
     // Collection History
     expect(screen.getByText('Collection History')).toBeInTheDocument();
@@ -55,17 +55,12 @@ describe('<CollectionDetails />', () => {
   });
 
   it('should allow modifying the description', async () => {
-    render(<CollectionDetails library={library} collection={collectionHit} />);
-
-    const {
-      description: originalDescription,
-      blockId,
-      contextKey,
-    } = collectionHit;
+    render(<CollectionDetails library={library} collectionId={collectionId} />);
+    expect(await screen.findByText('Description / Card Preview Text')).toBeInTheDocument();
 
     expect(screen.getByText(originalDescription)).toBeInTheDocument();
 
-    const url = api.getLibraryCollectionApiUrl(contextKey, blockId);
+    const url = api.getLibraryCollectionApiUrl(library.id, collectionId);
     axiosMock.onPatch(url).reply(200);
 
     const textArea = screen.getByRole('textbox');
@@ -94,17 +89,12 @@ describe('<CollectionDetails />', () => {
   });
 
   it('should show error while modifing the description', async () => {
-    render(<CollectionDetails library={library} collection={collectionHit} />);
-
-    const {
-      description: originalDescription,
-      blockId,
-      contextKey,
-    } = collectionHit;
+    render(<CollectionDetails library={library} collectionId={collectionId} />);
+    expect(await screen.findByText('Description / Card Preview Text')).toBeInTheDocument();
 
     expect(screen.getByText(originalDescription)).toBeInTheDocument();
 
-    const url = api.getLibraryCollectionApiUrl(contextKey, blockId);
+    const url = api.getLibraryCollectionApiUrl(library.id, collectionId);
     axiosMock.onPatch(url).reply(500);
 
     const textArea = screen.getByRole('textbox');
@@ -124,7 +114,8 @@ describe('<CollectionDetails />', () => {
 
   it('should render Collection stats', async () => {
     mockGetBlockTypes('someBlocks');
-    render(<CollectionDetails library={library} collection={collectionHit} />);
+    render(<CollectionDetails library={library} collectionId={collectionId} />);
+    expect(await screen.findByText('Description / Card Preview Text')).toBeInTheDocument();
 
     expect(screen.getByText('Collection Stats')).toBeInTheDocument();
     expect(await screen.findByText('Total')).toBeInTheDocument();
@@ -141,7 +132,8 @@ describe('<CollectionDetails />', () => {
 
   it('should render Collection stats for empty collection', async () => {
     mockGetBlockTypes('noBlocks');
-    render(<CollectionDetails library={library} collection={collectionHit} />);
+    render(<CollectionDetails library={library} collectionId={collectionId} />);
+    expect(await screen.findByText('Description / Card Preview Text')).toBeInTheDocument();
 
     expect(screen.getByText('Collection Stats')).toBeInTheDocument();
     expect(await screen.findByText('This collection is currently empty.')).toBeInTheDocument();
@@ -149,7 +141,8 @@ describe('<CollectionDetails />', () => {
 
   it('should render Collection stats for big collection', async () => {
     mockGetBlockTypes('moreBlocks');
-    render(<CollectionDetails library={library} collection={collectionHit} />);
+    render(<CollectionDetails library={library} collectionId={collectionId} />);
+    expect(await screen.findByText('Description / Card Preview Text')).toBeInTheDocument();
 
     expect(screen.getByText('Collection Stats')).toBeInTheDocument();
     expect(await screen.findByText('36')).toBeInTheDocument();

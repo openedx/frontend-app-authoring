@@ -25,9 +25,8 @@ import {
   SearchContextProvider,
   SearchKeywordsField,
   SearchSortWidget,
-  useSearchContext,
 } from '../../search-manager';
-import { useContentLibrary } from '../data/apiHooks';
+import { useCollection, useContentLibrary } from '../data/apiHooks';
 import { LibraryContext } from '../common/context';
 import messages from './messages';
 import { LibrarySidebar } from '../library-sidebar';
@@ -92,24 +91,29 @@ const SubHeaderTitle = ({
   );
 };
 
-const LibraryCollectionPageInner = ({ libraryId }: { libraryId: string }) => {
+interface LibraryCollectionPageInnerProps {
+  libraryId: string;
+  collectionId: string;
+}
+
+const LibraryCollectionPageInner = ({ libraryId, collectionId }: LibraryCollectionPageInnerProps) => {
   const intl = useIntl();
 
   const {
     sidebarBodyComponent,
     openCollectionInfoSidebar,
   } = useContext(LibraryContext);
-  const { collectionHits: [collectionData], isFetching } = useSearchContext();
+  const { data: collectionData, isLoading } = useCollection(libraryId, collectionId);
 
   useEffect(() => {
-    openCollectionInfoSidebar(collectionData);
+    openCollectionInfoSidebar(collectionId);
   }, [collectionData]);
 
   const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
 
   // Only show loading if collection data is not fetched from index yet
   // Loading info for search results will be handled by LibraryCollectionComponents component.
-  if (isLibLoading || (!collectionData && isFetching)) {
+  if (isLibLoading || (!collectionData && isLoading)) {
     return <Loading />;
   }
 
@@ -147,9 +151,9 @@ const LibraryCollectionPageInner = ({ libraryId }: { libraryId: string }) => {
           <SubHeader
             title={(
               <SubHeaderTitle
-                title={collectionData.displayName}
+                title={collectionData.title}
                 canEditLibrary={libraryData.canEditLibrary}
-                infoClickHandler={() => openCollectionInfoSidebar(collectionData)}
+                infoClickHandler={() => openCollectionInfoSidebar(collectionId)}
               />
             )}
             breadcrumbs={(
@@ -200,7 +204,7 @@ const LibraryCollectionPage = () => {
       extraFilter={[`context_key = "${libraryId}"`, `collections.key = "${collectionId}"`]}
       overrideQueries={{ collections: collectionQuery }}
     >
-      <LibraryCollectionPageInner libraryId={libraryId} />
+      <LibraryCollectionPageInner libraryId={libraryId} collectionId={collectionId} />
     </SearchContextProvider>
   );
 };

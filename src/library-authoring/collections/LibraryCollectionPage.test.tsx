@@ -10,12 +10,17 @@ import {
 } from '../../testUtils';
 import mockResult from '../__mocks__/collection-search.json';
 import {
-  mockContentLibrary, mockLibraryBlockTypes, mockXBlockFields,
+  mockContentLibrary,
+  mockLibraryBlockTypes,
+  mockXBlockFields,
+  mockGetCollectionMetadata,
 } from '../data/api.mocks';
 import { mockContentSearchConfig, mockGetBlockTypes } from '../../search-manager/data/api.mock';
-import { mockBroadcastChannel } from '../../generic/data/api.mock';
+import { mockBroadcastChannel, mockClipboardEmpty } from '../../generic/data/api.mock';
 import { LibraryLayout } from '..';
 
+mockClipboardEmpty.applyMock();
+mockGetCollectionMetadata.applyMock();
 mockContentSearchConfig.applyMock();
 mockGetBlockTypes.applyMock();
 mockContentLibrary.applyMock();
@@ -29,10 +34,11 @@ const libraryTitle = mockContentLibrary.libraryData.title;
 const mockCollection = {
   collectionId: mockResult.results[2].hits[0].block_id,
   collectionNeverLoads: 'collection-always-loading',
-  collectionEmpty: 'collection-no-data',
   collectionNoComponents: 'collection-no-components',
-  title: mockResult.results[2].hits[0].display_name,
+  collectionEmpty: mockGetCollectionMetadata.collectionIdError,
 };
+
+const { title } = mockGetCollectionMetadata.collectionData;
 
 describe('<LibraryCollectionPage />', () => {
   beforeEach(() => {
@@ -102,7 +108,6 @@ describe('<LibraryCollectionPage />', () => {
   it('shows an error component if no collection returned', async () => {
     // This mock will simulate incorrect collection id
     await renderLibraryCollectionPage(mockCollection.collectionEmpty);
-    screen.debug();
     expect(await screen.findByTestId('notFoundAlert')).toBeInTheDocument();
   });
 
@@ -110,7 +115,7 @@ describe('<LibraryCollectionPage />', () => {
     await renderLibraryCollectionPage();
     expect(await screen.findByText('All Collections')).toBeInTheDocument();
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
-    expect((await screen.findAllByText(mockCollection.title))[0]).toBeInTheDocument();
+    expect((await screen.findAllByText(title))[0]).toBeInTheDocument();
 
     // "Recently Modified" sort shown
     expect(screen.getAllByText('Recently Modified').length).toEqual(1);
@@ -124,7 +129,7 @@ describe('<LibraryCollectionPage />', () => {
 
     expect(await screen.findByText('All Collections')).toBeInTheDocument();
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
-    expect((await screen.findAllByText(mockCollection.title))[0]).toBeInTheDocument();
+    expect((await screen.findAllByText(title))[0]).toBeInTheDocument();
 
     // In the collection page and in the sidebar
     expect(screen.getAllByText('This collection is currently empty.').length).toEqual(2);
@@ -162,7 +167,7 @@ describe('<LibraryCollectionPage />', () => {
 
     expect(await screen.findByText('All Collections')).toBeInTheDocument();
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
-    expect((await screen.findAllByText(mockCollection.title))[0]).toBeInTheDocument();
+    expect((await screen.findAllByText(title))[0]).toBeInTheDocument();
 
     fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'noresults' } });
 
@@ -195,8 +200,8 @@ describe('<LibraryCollectionPage />', () => {
 
     expect(await screen.findByText('All Collections')).toBeInTheDocument();
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
-    expect((await screen.findAllByText(mockCollection.title))[0]).toBeInTheDocument();
-    expect((await screen.findAllByText(mockCollection.title))[1]).toBeInTheDocument();
+    expect((await screen.findAllByText(title))[0]).toBeInTheDocument();
+    expect((await screen.findAllByText(title))[1]).toBeInTheDocument();
 
     expect(screen.getByText('Manage')).toBeInTheDocument();
     expect(screen.getByText('Details')).toBeInTheDocument();
@@ -207,8 +212,8 @@ describe('<LibraryCollectionPage />', () => {
 
     expect(await screen.findByText('All Collections')).toBeInTheDocument();
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
-    expect((await screen.findAllByText(mockCollection.title))[0]).toBeInTheDocument();
-    expect((await screen.findAllByText(mockCollection.title))[1]).toBeInTheDocument();
+    expect((await screen.findAllByText(title))[0]).toBeInTheDocument();
+    expect((await screen.findAllByText(title))[1]).toBeInTheDocument();
 
     // Open by default; close the library info sidebar
     const closeButton = screen.getByRole('button', { name: /close/i });

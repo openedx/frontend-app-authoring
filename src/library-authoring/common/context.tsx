@@ -1,6 +1,5 @@
 import { useToggle } from '@openedx/paragon';
 import React from 'react';
-import type { CollectionHit } from '../../search-manager';
 
 export enum SidebarBodyComponentId {
   AddContent = 'add-content',
@@ -19,8 +18,8 @@ export interface LibraryContextData {
   isCreateCollectionModalOpen: boolean;
   openCreateCollectionModal: () => void;
   closeCreateCollectionModal: () => void;
-  openCollectionInfoSidebar: (collectionHit: CollectionHit) => void
-  currentCollectionHit?: CollectionHit;
+  openCollectionInfoSidebar: (collectionId: string) => void
+  currentCollectionId?: string;
 }
 
 export const LibraryContext = React.createContext({
@@ -33,7 +32,7 @@ export const LibraryContext = React.createContext({
   openCreateCollectionModal: () => {},
   closeCreateCollectionModal: () => {},
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  openCollectionInfoSidebar: (_collectionHit: CollectionHit) => {},
+  openCollectionInfoSidebar: (_collectionId: string) => {},
 } as LibraryContextData);
 
 /**
@@ -42,12 +41,12 @@ export const LibraryContext = React.createContext({
 export const LibraryProvider = (props: { children?: React.ReactNode }) => {
   const [sidebarBodyComponent, setSidebarBodyComponent] = React.useState<SidebarBodyComponentId | null>(null);
   const [currentComponentUsageKey, setCurrentComponentUsageKey] = React.useState<string>();
-  const [currentCollectionHit, setcurrentCollectionHit] = React.useState<CollectionHit>();
+  const [currentCollectionId, setcurrentCollectionId] = React.useState<string>();
   const [isCreateCollectionModalOpen, openCreateCollectionModal, closeCreateCollectionModal] = useToggle(false);
 
   const resetSidebar = React.useCallback(() => {
     setCurrentComponentUsageKey(undefined);
-    setcurrentCollectionHit(undefined);
+    setcurrentCollectionId(undefined);
     setSidebarBodyComponent(null);
   }, []);
 
@@ -71,9 +70,9 @@ export const LibraryProvider = (props: { children?: React.ReactNode }) => {
     },
     [],
   );
-  const openCollectionInfoSidebar = React.useCallback((collectionHit: CollectionHit) => {
+  const openCollectionInfoSidebar = React.useCallback((collectionId: string) => {
     resetSidebar();
-    setcurrentCollectionHit(collectionHit);
+    setcurrentCollectionId(collectionId);
     setSidebarBodyComponent(SidebarBodyComponentId.CollectionInfo);
   }, []);
 
@@ -88,7 +87,7 @@ export const LibraryProvider = (props: { children?: React.ReactNode }) => {
     openCreateCollectionModal,
     closeCreateCollectionModal,
     openCollectionInfoSidebar,
-    currentCollectionHit,
+    currentCollectionId,
   }), [
     sidebarBodyComponent,
     closeLibrarySidebar,
@@ -100,7 +99,7 @@ export const LibraryProvider = (props: { children?: React.ReactNode }) => {
     openCreateCollectionModal,
     closeCreateCollectionModal,
     openCollectionInfoSidebar,
-    currentCollectionHit,
+    currentCollectionId,
   ]);
 
   return (

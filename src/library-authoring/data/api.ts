@@ -319,6 +319,14 @@ export async function getXBlockOLX(usageKey: string): Promise<string> {
 }
 
 /**
+ * Get the collection metadata.
+ */
+export async function getCollectionMetadata(libraryId: string, collectionId: string): Promise<Collection> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryCollectionApiUrl(libraryId, collectionId));
+  return camelCaseObject(data);
+}
+
+/**
  * Update collection metadata.
  */
 export async function updateCollectionMetadata(

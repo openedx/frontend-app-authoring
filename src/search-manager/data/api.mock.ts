@@ -61,26 +61,3 @@ export async function mockGetBlockTypes(
   jest.spyOn(api, 'fetchBlockTypes').mockResolvedValue(mockResponseMap[mockResponse]);
 }
 mockGetBlockTypes.applyMock = () => jest.spyOn(api, 'fetchBlockTypes').mockResolvedValue({});
-
-export const mockCollectionHit = {
-  displayName: 'Collection 1',
-  description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque et mi ac nisi accumsan imperdiet vitae at odio. Vivamus tempor nec lorem eget lacinia. Vivamus efficitur lacus non dapibus porta. Nulla venenatis luctus nisi id posuere. Sed sollicitudin magna a sem ultrices accumsan. Praesent volutpat tortor vitae luctus rutrum. Integer.',
-  id: '1',
-  type: 'collection',
-  usageKey: 'lib:OpenedX:CSPROB2:collection:coll1',
-  blockId: 'coll1',
-  tags: {},
-  breadcrumbs: [
-    {
-      displayName: 'CS problems 2',
-    },
-  ],
-  created: 1725534795.628254,
-  modified: 1725878053.420395,
-  contextKey: 'lib:OpenedX:CSPROB2',
-  org: 'OpenedX',
-  formatted: {
-    displayName: 'Collection 1',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque et mi ac nisi accumsan imperdiet…',
-  },
-} satisfies api.CollectionHit;

@@ -30,6 +30,7 @@ import {
   type UpdateCollectionComponentsRequest,
   updateCollectionComponents,
   type CreateLibraryCollectionDataRequest,
+  getCollectionMetadata,
 } from './api';
 
 const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
@@ -281,6 +282,17 @@ export const useXBlockOLX = (usageKey: string) => (
 );
 
 /**
+ * Get the metadata for a collection in a library
+ */
+export const useCollection = (libraryId: string, collectionId: string) => (
+  useQuery({
+    enabled: !!libraryId && !!collectionId,
+    queryKey: libraryAuthoringQueryKeys.collection(libraryId, collectionId),
+    queryFn: () => getCollectionMetadata(libraryId!, collectionId!),
+  })
+);
+
+/**
  * Use this mutation to update the fields of a collection in a library
  */
 export const useUpdateCollection = (libraryId: string, collectionId: string) => {
@@ -288,9 +300,10 @@ export const useUpdateCollection = (libraryId: string, collectionId: string) => 
   return useMutation({
     mutationFn: (data: UpdateCollectionComponentsRequest) => updateCollectionMetadata(libraryId, collectionId, data),
     onSettled: () => {
-      // NOTE: We invalidate the library query here because the collection metadata
-      // is retrieved as part of a library search query.
+      // NOTE: We invalidate the library query here because we need to update the library's
+      // collection list.
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.collection(libraryId, collectionId) });
     },
   });
 };

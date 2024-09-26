@@ -10,26 +10,27 @@ import { Edit } from '@openedx/paragon/icons';
 
 import { ToastContext } from '../../generic/toast-context';
 import type { ContentLibrary } from '../data/api';
-import type { CollectionHit } from '../../search-manager/data/api';
-import { useUpdateCollection } from '../data/apiHooks';
+import { useCollection, useUpdateCollection } from '../data/apiHooks';
 import messages from './messages';
 
 interface CollectionInfoHeaderProps {
   library: ContentLibrary;
-  collection: CollectionHit;
+  collectionId: string;
 }
 
-const CollectionInfoHeader = ({ library, collection }: CollectionInfoHeaderProps) => {
+const CollectionInfoHeader = ({ library, collectionId }: CollectionInfoHeaderProps) => {
   const intl = useIntl();
   const [inputIsActive, setIsActive] = useState(false);
 
-  const updateMutation = useUpdateCollection(library.id, collection.blockId);
+  const { data: collection } = useCollection(library.id, collectionId);
+
+  const updateMutation = useUpdateCollection(library.id, collectionId);
   const { showToast } = useContext(ToastContext);
 
   const handleSaveDisplayName = useCallback(
     (event) => {
       const newTitle = event.target.value;
-      if (newTitle && newTitle !== collection.displayName) {
+      if (newTitle && newTitle !== collection?.title) {
         updateMutation.mutateAsync({
           title: newTitle,
         }).then(() => {
@@ -45,6 +46,10 @@ const CollectionInfoHeader = ({ library, collection }: CollectionInfoHeaderProps
     },
     [collection, showToast, intl],
   );
+
+  if (!collection) {
+    return null;
+  }
 
   const handleClick = () => {
     setIsActive(true);
@@ -68,7 +73,7 @@ const CollectionInfoHeader = ({ library, collection }: CollectionInfoHeaderProps
             id="title"
             type="text"
             aria-label="Title input"
-            defaultValue={collection.displayName}
+            defaultValue={collection.title}
             onBlur={handleSaveDisplayName}
             onKeyDown={handleOnKeyDown}
           />
@@ -76,7 +81,7 @@ const CollectionInfoHeader = ({ library, collection }: CollectionInfoHeaderProps
         : (
           <>
             <span className="font-weight-bold m-1.5">
-              {collection.displayName}
+              {collection.title}
             </span>
             {library.canEditLibrary && (
               <IconButton

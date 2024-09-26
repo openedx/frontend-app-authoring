@@ -7,19 +7,18 @@ import {
 } from '@openedx/paragon';
 import { Link, useMatch } from 'react-router-dom';
 
-import type { CollectionHit } from '../../search-manager';
 import type { ContentLibrary } from '../data/api';
 import CollectionDetails from './CollectionDetails';
 import messages from './messages';
 
 interface CollectionInfoProps {
   library: ContentLibrary,
-  collection: CollectionHit,
+  collectionId: string,
 }
 
-const CollectionInfo = ({ library, collection }: CollectionInfoProps) => {
+const CollectionInfo = ({ library, collectionId }: CollectionInfoProps) => {
   const intl = useIntl();
-  const url = `/library/${library.id}/collection/${collection.blockId}/`;
+  const url = `/library/${library.id}/collection/${collectionId}/`;
   const urlMatch = useMatch(url);
 
   return (
@@ -28,7 +27,7 @@ const CollectionInfo = ({ library, collection }: CollectionInfoProps) => {
         <div className="d-flex flex-wrap">
           <Button
             as={Link}
-            to={`/library/${library.id}/collection/${collection.blockId}/`}
+            to={url}
             variant="outline-primary"
             className="m-1 text-nowrap flex-grow-1"
             disabled={!!urlMatch}
@@ -47,9 +46,8 @@ const CollectionInfo = ({ library, collection }: CollectionInfoProps) => {
         </Tab>
         <Tab eventKey="details" title={intl.formatMessage(messages.detailsTabTitle)}>
           <CollectionDetails
-            key={collection.id} // This is necessary to force a re-render when the collection changes
             library={library}
-            collection={collection}
+            collectionId={collectionId}
           />
         </Tab>
       </Tabs>

@@ -1,13 +1,13 @@
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Icon, Stack } from '@openedx/paragon';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import classNames from 'classnames';
 
 import { getItemIcon } from '../../generic/block-type-utils';
 import { ToastContext } from '../../generic/toast-context';
-import { BlockTypeLabel, type CollectionHit, useGetBlockTypes } from '../../search-manager';
+import { BlockTypeLabel, useGetBlockTypes } from '../../search-manager';
 import type { ContentLibrary } from '../data/api';
-import { useUpdateCollection } from '../data/apiHooks';
+import { useCollection, useUpdateCollection } from '../data/apiHooks';
 import HistoryWidget from '../generic/history-widget';
 import messages from './messages';
 
@@ -37,13 +37,14 @@ const BlockCount = ({
 };
 
 interface CollectionStatsWidgetProps {
-  collection: CollectionHit,
+  libraryId: string,
+  collectionId: string,
 }
 
-const CollectionStatsWidget = ({ collection }: CollectionStatsWidgetProps) => {
+const CollectionStatsWidget = ({ libraryId, collectionId }: CollectionStatsWidgetProps) => {
   const { data: blockTypes } = useGetBlockTypes([
-    `context_key = "${collection.contextKey}"`,
-    `collections.key = "${collection.blockId}"`,
+    `context_key = "${libraryId}"`,
+    `collections.key = "${collectionId}"`,
   ]);
 
   if (!blockTypes) {
@@ -100,20 +101,26 @@ const CollectionStatsWidget = ({ collection }: CollectionStatsWidgetProps) => {
 
 interface CollectionDetailsProps {
   library: ContentLibrary,
-  collection: CollectionHit,
+  collectionId: string,
 }
 
-const CollectionDetails = ({ library, collection }: CollectionDetailsProps) => {
+const CollectionDetails = ({ library, collectionId }: CollectionDetailsProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
 
-  const [description, setDescription] = useState(collection.description);
+  const updateMutation = useUpdateCollection(library.id, collectionId);
+  const { data: collection } = useCollection(library.id, collectionId);
 
-  const updateMutation = useUpdateCollection(collection.contextKey, collection.blockId);
+  const [description, setDescription] = useState(collection?.description || '');
 
-  // istanbul ignore if: this should never happen
+  useEffect(() => {
+    if (collection) {
+      setDescription(collection.description);
+    }
+  }, [collection]);
+
   if (!collection) {
-    throw new Error('A collection must be provided to CollectionDetails');
+    return null;
   }
 
   const onSubmit = (e: React.FocusEvent<HTMLTextAreaElement>) => {
@@ -151,7 +158,7 @@ const CollectionDetails = ({ library, collection }: CollectionDetailsProps) => {
         <h3 className="h5">
           {intl.formatMessage(messages.detailsTabStatsTitle)}
         </h3>
-        <CollectionStatsWidget collection={collection} />
+        <CollectionStatsWidget libraryId={library.id} collectionId={collectionId} />
       </div>
       <hr className="w-100" />
       <div>
@@ -159,8 +166,8 @@ const CollectionDetails = ({ library, collection }: CollectionDetailsProps) => {
           {intl.formatMessage(messages.detailsTabHistoryTitle)}
         </h3>
         <HistoryWidget
-          created={collection.created ? new Date(collection.created * 1000) : null}
-          modified={collection.modified ? new Date(collection.modified * 1000) : null}
+          created={collection.created ? new Date(collection.created) : null}
+          modified={collection.modified ? new Date(collection.modified) : null}
         />
       </div>
     </Stack>

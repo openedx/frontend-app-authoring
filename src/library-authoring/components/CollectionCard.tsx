@@ -74,7 +74,7 @@ const CollectionCard = ({ collectionHit }: CollectionCardProps) => {
         </ActionRow>
       )}
       blockTypeDisplayName={blockTypeDisplayName}
-      openInfoSidebar={() => openCollectionInfoSidebar(collectionHit)}
+      openInfoSidebar={() => openCollectionInfoSidebar(collectionHit.blockId)}
     />
   );
 };
