@@ -1,9 +1,7 @@
 import type MockAdapter from 'axios-mock-adapter';
 import fetchMock from 'fetch-mock-jest';
-import { cloneDeep } from 'lodash';
 
-import { SearchContextProvider } from '../../search-manager';
-import { mockContentSearchConfig, mockSearchResult } from '../../search-manager/data/api.mock';
+import { mockContentSearchConfig, mockGetBlockTypes } from '../../search-manager/data/api.mock';
 import { type CollectionHit, formatSearchHit } from '../../search-manager/data/api';
 import {
   initializeMocks,
@@ -18,13 +16,14 @@ import * as api from '../data/api';
 import { mockContentLibrary } from '../data/api.mocks';
 import CollectionDetails from './CollectionDetails';
 
-const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
-
 let axiosMock: MockAdapter;
 let mockShowToast: (message: string) => void;
 
 mockContentSearchConfig.applyMock();
+mockGetBlockTypes.applyMock();
+
 const library = mockContentLibrary.libraryData;
+const collectionHit = formatSearchHit(mockResult.results[2].hits[0]) as CollectionHit;
 
 describe('<CollectionDetails />', () => {
   beforeEach(() => {
@@ -39,25 +38,12 @@ describe('<CollectionDetails />', () => {
     fetchMock.mockReset();
   });
 
-  const renderCollectionDetails = async () => {
-    const collectionData: CollectionHit = formatSearchHit(mockResult.results[2].hits[0]) as CollectionHit;
-
-    render((
-      <SearchContextProvider>
-        <CollectionDetails library={library} collection={collectionData} />
-      </SearchContextProvider>
-    ));
-
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
-  };
-
   it('should render Collection Details', async () => {
-    mockSearchResult(mockResult);
-    await renderCollectionDetails();
+    render(<CollectionDetails library={library} collection={collectionHit} />);
 
     // Collection Description
     expect(screen.getByText('Description / Card Preview Text')).toBeInTheDocument();
-    const { description } = mockResult.results[2].hits[0];
+    const { description } = collectionHit;
     expect(screen.getByText(description)).toBeInTheDocument();
 
     // Collection History
@@ -69,14 +55,13 @@ describe('<CollectionDetails />', () => {
   });
 
   it('should allow modifying the description', async () => {
-    mockSearchResult(mockResult);
-    await renderCollectionDetails();
+    render(<CollectionDetails library={library} collection={collectionHit} />);
 
     const {
       description: originalDescription,
-      block_id: blockId,
-      context_key: contextKey,
-    } = mockResult.results[2].hits[0];
+      blockId,
+      contextKey,
+    } = collectionHit;
 
     expect(screen.getByText(originalDescription)).toBeInTheDocument();
 
@@ -109,14 +94,13 @@ describe('<CollectionDetails />', () => {
   });
 
   it('should show error while modifing the description', async () => {
-    mockSearchResult(mockResult);
-    await renderCollectionDetails();
+    render(<CollectionDetails library={library} collection={collectionHit} />);
 
     const {
       description: originalDescription,
-      block_id: blockId,
-      context_key: contextKey,
-    } = mockResult.results[2].hits[0];
+      blockId,
+      contextKey,
+    } = collectionHit;
 
     expect(screen.getByText(originalDescription)).toBeInTheDocument();
 
@@ -139,15 +123,15 @@ describe('<CollectionDetails />', () => {
   });
 
   it('should render Collection stats', async () => {
-    mockSearchResult(mockResult);
-    await renderCollectionDetails();
+    mockGetBlockTypes('someBlocks');
+    render(<CollectionDetails library={library} collection={collectionHit} />);
 
     expect(screen.getByText('Collection Stats')).toBeInTheDocument();
     expect(await screen.findByText('Total')).toBeInTheDocument();
 
     [
-      { blockType: 'Total', count: 5 },
-      { blockType: 'Text', count: 4 },
+      { blockType: 'Total', count: 3 },
+      { blockType: 'Text', count: 2 },
       { blockType: 'Problem', count: 1 },
     ].forEach(({ blockType, count }) => {
       const blockCount = screen.getByText(blockType).closest('div') as HTMLDivElement;
@@ -156,32 +140,19 @@ describe('<CollectionDetails />', () => {
   });
 
   it('should render Collection stats for empty collection', async () => {
-    const mockResultCopy = cloneDeep(mockResult);
-    mockResultCopy.results[1].facetDistribution.block_type = {};
-    mockSearchResult(mockResultCopy);
-    await renderCollectionDetails();
+    mockGetBlockTypes('noBlocks');
+    render(<CollectionDetails library={library} collection={collectionHit} />);
 
     expect(screen.getByText('Collection Stats')).toBeInTheDocument();
     expect(await screen.findByText('This collection is currently empty.')).toBeInTheDocument();
   });
 
   it('should render Collection stats for big collection', async () => {
-    const mockResultCopy = cloneDeep(mockResult);
-    mockResultCopy.results[1].facetDistribution.block_type = {
-      advanced: 1,
-      discussion: 2,
-      library: 3,
-      drag_and_drop_v2: 4,
-      openassessment: 5,
-      html: 6,
-      problem: 7,
-      video: 8,
-    };
-    mockSearchResult(mockResultCopy);
-    await renderCollectionDetails();
+    mockGetBlockTypes('moreBlocks');
+    render(<CollectionDetails library={library} collection={collectionHit} />);
 
     expect(screen.getByText('Collection Stats')).toBeInTheDocument();
-    expect(await screen.findByText('78')).toBeInTheDocument();
+    expect(await screen.findByText('36')).toBeInTheDocument();
 
     [
       { blockType: 'Total', count: 36 },

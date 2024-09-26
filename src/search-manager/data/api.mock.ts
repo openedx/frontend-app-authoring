@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 // eslint-disable-next-line import/no-extraneous-dependencies
 import fetchMock from 'fetch-mock-jest';
-import type { MultiSearchResponse } from 'meilisearch';
+import type { MultiSearchResponse, Meilisearch, Filter } from 'meilisearch';
 import * as api from './api';
 
 /**
@@ -40,6 +40,27 @@ export function mockSearchResult(mockResponse: MultiSearchResponse) {
     return newMockResponse;
   }, { overwriteRoutes: true });
 }
+
+export async function mockGetBlockTypes(
+  mockResponse: 'noBlocks' | 'someBlocks' | 'moreBlocks',
+) {
+  const mockResponseMap = {
+    noBlocks: {},
+    someBlocks: { problem: 1, html: 2 },
+    moreBlocks: {
+      advanced: 1,
+      discussion: 2,
+      library: 3,
+      drag_and_drop_v2: 4,
+      openassessment: 5,
+      html: 6,
+      problem: 7,
+      video: 8,
+    },
+  };
+  jest.spyOn(api, 'fetchBlockTypes').mockResolvedValue(mockResponseMap[mockResponse]);
+}
+mockGetBlockTypes.applyMock = () => jest.spyOn(api, 'fetchBlockTypes').mockResolvedValue({});
 
 export const mockCollectionHit = {
   displayName: 'Collection 1',
