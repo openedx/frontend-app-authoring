@@ -23,22 +23,22 @@ const messages = defineMessages({
   },
   lastPublishedMsg: {
     id: 'course-authoring.library-authoring.generic.status-widget.last-published',
-    defaultMessage: 'Last published on {date} at {time} UTC by {user}.',
+    defaultMessage: 'Last published on {date} at {time} by {user}.',
     description: 'Body message of the library authoring sidebar when the entity is published.',
   },
   lastPublishedMsgWithoutUser: {
     id: 'course-authoring.library-authoring.generic.status-widget.last-published-no-user',
-    defaultMessage: 'Last published on {date} at {time} UTC.',
+    defaultMessage: 'Last published on {date} at {time}.',
     description: 'Body message of the library authoring sidebar when the entity is published.',
   },
   lastDraftMsg: {
     id: 'course-authoring.library-authoring.generic.status-widget.last-draft',
-    defaultMessage: 'Draft saved on {date} at {time} UTC by {user}.',
+    defaultMessage: 'Draft saved on {date} at {time} by {user}.',
     description: 'Body message of the library authoring sidebar when the entity is on draft status.',
   },
   lastDraftMsgWithoutUser: {
     id: 'course-authoring.library-authoring.generic.status-widget.last-draft-no-user',
-    defaultMessage: 'Draft saved on {date} at {time} UTC.',
+    defaultMessage: 'Draft saved on {date} at {time}.',
     description: 'Body message of the library authoring sidebar when the entity is on draft status.',
   },
   publishButtonLabel: {
