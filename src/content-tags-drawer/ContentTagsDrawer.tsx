@@ -36,7 +36,7 @@ const TaxonomyList = ({ contentId }: TaxonomyListProps) => {
       return (
         <div>
           { tagsByTaxonomy.map((data) => (
-            <div key={`taxonomy-tags-collapsible-${data.id}`}>
+            <div key={data.id}>
               <ContentTagsCollapsible
                 contentId={contentId}
                 taxonomyAndTagsData={data}
@@ -356,7 +356,7 @@ const ContentTagsDrawer = ({
                 </p>
                 { isTaxonomyListLoaded && isContentTaxonomyTagsLoaded && (
                   otherTaxonomies.map((data) => (
-                    <div key={`taxonomy-tags-collapsible-${data.id}`}>
+                    <div key={data.id}>
                       <ContentTagsCollapsible
                         contentId={contentId}
                         taxonomyAndTagsData={data}
