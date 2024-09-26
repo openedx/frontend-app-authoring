@@ -11,7 +11,7 @@ import TagCount from '../../generic/tag-count';
 import { ContentHitTags, Highlight } from '../../search-manager';
 
 type BaseComponentCardProps = {
-  type: string,
+  componentType: string,
   displayName: string,
   description: string,
   tags: ContentHitTags,
@@ -21,7 +21,7 @@ type BaseComponentCardProps = {
 };
 
 const BaseComponentCard = ({
-  type,
+  componentType,
   displayName,
   description,
   tags,
@@ -37,7 +37,7 @@ const BaseComponentCard = ({
             + (tags.level2?.length || 0) + (tags.level3?.length || 0);
   }, [tags]);
 
-  const componentIcon = getItemIcon(type);
+  const componentIcon = getItemIcon(componentType);
 
   return (
     <Container className="library-component-card">
@@ -51,7 +51,7 @@ const BaseComponentCard = ({
         }}
       >
         <Card.Header
-          className={`library-component-header ${getComponentStyleColor(type)}`}
+          className={`library-component-header ${getComponentStyleColor(componentType)}`}
           title={
             <Icon src={componentIcon} className="library-component-header-icon" />
           }

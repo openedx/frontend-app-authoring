@@ -50,7 +50,7 @@ const CollectionCard = ({ collectionHit }: CollectionCardProps) => {
   } = useLibraryContext();
 
   const {
-    type,
+    type: componentType,
     formatted,
     tags,
     numChildren,
@@ -63,7 +63,7 @@ const CollectionCard = ({ collectionHit }: CollectionCardProps) => {
 
   return (
     <BaseComponentCard
-      type={type}
+      componentType={componentType}
       displayName={displayName}
       description={description}
       tags={tags}

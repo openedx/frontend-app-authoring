@@ -83,7 +83,7 @@ const ComponentCard = ({ contentHit, blockTypeDisplayName } : ComponentCardProps
 
   return (
     <BaseComponentCard
-      type={blockType}
+      componentType={blockType}
       displayName={displayName}
       description={description}
       tags={tags}
