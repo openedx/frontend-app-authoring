@@ -1,4 +1,5 @@
 import type MockAdapter from 'axios-mock-adapter';
+import userEvent from '@testing-library/user-event'
 
 import { mockCollectionHit } from '../../search-manager/data/api.mock';
 import {
@@ -51,8 +52,8 @@ describe('<CollectionInfoHeader />', () => {
 
     const textBox = screen.getByRole('textbox', { name: /title input/i });
 
-    fireEvent.change(textBox, { target: { value: 'New Collection Title' } });
-    fireEvent.keyDown(textBox, { key: 'Enter', code: 'Enter', charCode: 13 });
+    userEvent.clear(textBox);
+    userEvent.type(textBox, 'New Collection Title{enter}');
 
     await waitFor(() => {
       expect(axiosMock.history.patch[0].url).toEqual(url);
@@ -61,6 +62,25 @@ describe('<CollectionInfoHeader />', () => {
 
     expect(textBox).not.toBeInTheDocument();
     expect(mockShowToast).toHaveBeenCalledWith('Collection updated successfully.');
+  });
+
+  it('should not update collection title if title is the same', async () => {
+    const library = await mockContentLibrary(mockContentLibrary.libraryId);
+    render(<CollectionInfoHeader library={library} collection={mockCollectionHit} />);
+    const url = api.getLibraryCollectionApiUrl(library.id, mockCollectionHit.blockId);
+    axiosMock.onPatch(url).reply(200);
+
+    fireEvent.click(screen.getByRole('button', { name: /edit collection title/i }));
+
+    const textBox = screen.getByRole('textbox', { name: /title input/i });
+
+    userEvent.clear(textBox);
+    userEvent.type(textBox, mockCollectionHit.displayName);
+    userEvent.type(textBox, '{enter}');
+
+    await waitFor(() => expect(axiosMock.history.patch.length).toEqual(0));
+
+    expect(textBox).not.toBeInTheDocument();
   });
 
   it('should close edit collection title on press Escape', async () => {
@@ -73,8 +93,8 @@ describe('<CollectionInfoHeader />', () => {
 
     const textBox = screen.getByRole('textbox', { name: /title input/i });
 
-    fireEvent.change(textBox, { target: { value: 'New Collection Title' } });
-    fireEvent.keyDown(textBox, { key: 'Escape', code: 'Escape', charCode: 27 });
+    userEvent.clear(textBox);
+    userEvent.type(textBox, 'New Collection Title{esc}');
 
     await waitFor(() => expect(axiosMock.history.patch.length).toEqual(0));
 
@@ -91,8 +111,8 @@ describe('<CollectionInfoHeader />', () => {
 
     const textBox = screen.getByRole('textbox', { name: /title input/i });
 
-    fireEvent.change(textBox, { target: { value: 'New Collection Title' } });
-    fireEvent.keyDown(textBox, { key: 'Enter', code: 'Enter', charCode: 13 });
+    userEvent.clear(textBox);
+    userEvent.type(textBox, 'New Collection Title{enter}');
 
     await waitFor(() => {
       expect(axiosMock.history.patch[0].url).toEqual(url);

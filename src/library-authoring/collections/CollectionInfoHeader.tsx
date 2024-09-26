@@ -19,7 +19,7 @@ interface CollectionInfoHeaderProps {
   collection: CollectionHit;
 }
 
-const CollectionInfoHeader = ({ library, collection } : CollectionInfoHeaderProps) => {
+const CollectionInfoHeader = ({ library, collection }: CollectionInfoHeaderProps) => {
   const intl = useIntl();
   const [inputIsActive, setIsActive] = useState(false);
 
@@ -29,7 +29,7 @@ const CollectionInfoHeader = ({ library, collection } : CollectionInfoHeaderProp
   const handleSaveDisplayName = useCallback(
     (event) => {
       const newTitle = event.target.value;
-      if (newTitle && newTitle !== collection?.displayName) {
+      if (newTitle && newTitle !== collection.displayName) {
         updateMutation.mutateAsync({
           title: newTitle,
         }).then(() => {
@@ -68,7 +68,7 @@ const CollectionInfoHeader = ({ library, collection } : CollectionInfoHeaderProp
             id="title"
             type="text"
             aria-label="Title input"
-            defaultValue={collection?.displayName}
+            defaultValue={collection.displayName}
             onBlur={handleSaveDisplayName}
             onKeyDown={handleOnKeyDown}
           />
@@ -76,7 +76,7 @@ const CollectionInfoHeader = ({ library, collection } : CollectionInfoHeaderProp
         : (
           <>
             <span className="font-weight-bold m-1.5">
-              {collection?.displayName}
+              {collection.displayName}
             </span>
             {library.canEditLibrary && (
               <IconButton
