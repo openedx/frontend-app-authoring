@@ -1,4 +1,5 @@
 /* istanbul ignore file */
+import { mockContentTaxonomyTagsData } from '../../content-tags-drawer/data/api.mocks';
 import { createAxiosError } from '../../testUtils';
 import * as api from './api';
 
@@ -219,6 +220,7 @@ export async function mockLibraryBlockMetadata(usageKey: string): Promise<api.Li
   switch (usageKey) {
     case thisMock.usageKeyNeverPublished: return thisMock.dataNeverPublished;
     case thisMock.usageKeyPublished: return thisMock.dataPublished;
+    case thisMock.usageKeyForTags: return thisMock.dataPublished;
     default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
   }
 }
@@ -250,5 +252,6 @@ mockLibraryBlockMetadata.dataPublished = {
   created: '2024-06-20T13:54:21Z',
   tagsCount: 0,
 } satisfies api.LibraryBlockMetadata;
+mockLibraryBlockMetadata.usageKeyForTags = mockContentTaxonomyTagsData.largeTagsId;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockLibraryBlockMetadata.applyMock = () => jest.spyOn(api, 'getLibraryBlockMetadata').mockImplementation(mockLibraryBlockMetadata);
