@@ -5,7 +5,7 @@ import {
   Tab,
   Tabs,
 } from '@openedx/paragon';
-import { Link } from 'react-router-dom';
+import { Link, useMatch } from 'react-router-dom';
 
 import type { CollectionHit } from '../../search-manager';
 import type { ContentLibrary } from '../data/api';
@@ -19,19 +19,24 @@ interface CollectionInfoProps {
 
 const CollectionInfo = ({ library, collection }: CollectionInfoProps) => {
   const intl = useIntl();
+  const url = `/library/${library.id}/collection/${collection.blockId}/`;
+  const urlMatch = useMatch(url);
 
   return (
     <Stack>
-      <div className="d-flex flex-wrap">
-        <Button
-          as={Link}
-          to={`/library/${library.id}/collection/${collection.blockId}/`}
-          variant="outline-primary"
-          className="m-1 text-nowrap flex-grow-1"
-        >
-          {intl.formatMessage(messages.openCollectionButton)}
-        </Button>
-      </div>
+      {!urlMatch && (
+        <div className="d-flex flex-wrap">
+          <Button
+            as={Link}
+            to={`/library/${library.id}/collection/${collection.blockId}/`}
+            variant="outline-primary"
+            className="m-1 text-nowrap flex-grow-1"
+            disabled={!!urlMatch}
+          >
+            {intl.formatMessage(messages.openCollectionButton)}
+          </Button>
+        </div>
+      )}
       <Tabs
         variant="tabs"
         className="my-3 d-flex justify-content-around"
