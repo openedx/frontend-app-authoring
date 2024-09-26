@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 // eslint-disable-next-line import/no-extraneous-dependencies
 import fetchMock from 'fetch-mock-jest';
-import type { MultiSearchResponse, Meilisearch, Filter } from 'meilisearch';
+import type { MultiSearchResponse } from 'meilisearch';
 import * as api from './api';
 
 /**
