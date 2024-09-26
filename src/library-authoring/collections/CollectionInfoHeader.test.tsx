@@ -1,5 +1,5 @@
 import type MockAdapter from 'axios-mock-adapter';
-import userEvent from '@testing-library/user-event'
+import userEvent from '@testing-library/user-event';
 
 import { mockCollectionHit } from '../../search-manager/data/api.mock';
 import {
