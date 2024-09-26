@@ -168,18 +168,14 @@ describe('<CollectionDetails />', () => {
   it('should render Collection stats for big collection', async () => {
     const mockResultCopy = cloneDeep(mockResult);
     mockResultCopy.results[1].facetDistribution.block_type = {
-      annotatable: 1,
-      chapter: 2,
-      discussion: 3,
+      advanced: 1,
+      discussion: 2,
+      library: 3,
       drag_and_drop_v2: 4,
-      html: 5,
-      library_content: 6,
-      openassessment: 7,
-      problem: 8,
-      sequential: 9,
-      vertical: 10,
-      video: 11,
-      choiceresponse: 12,
+      openassessment: 5,
+      html: 6,
+      problem: 7,
+      video: 8,
     };
     mockSearchResult(mockResultCopy);
     await renderCollectionDetails();
@@ -188,11 +184,11 @@ describe('<CollectionDetails />', () => {
     expect(await screen.findByText('78')).toBeInTheDocument();
 
     [
-      { blockType: 'Total', count: 78 },
-      { blockType: 'Multiple Choice', count: 12 },
-      { blockType: 'Video', count: 11 },
-      { blockType: 'Unit', count: 10 },
-      { blockType: 'Other', count: 45 },
+      { blockType: 'Total', count: 36 },
+      { blockType: 'Video', count: 8 },
+      { blockType: 'Problem', count: 7 },
+      { blockType: 'Text', count: 6 },
+      { blockType: 'Other', count: 15 },
     ].forEach(({ blockType, count }) => {
       const blockCount = screen.getByText(blockType).closest('div') as HTMLDivElement;
       expect(within(blockCount).getByText(count.toString())).toBeInTheDocument();
