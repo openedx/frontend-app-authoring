@@ -15,6 +15,7 @@ const DeleteModal = ({
   onDeleteSubmit,
   title,
   description,
+  variant,
 }) => {
   const intl = useIntl();
 
@@ -26,6 +27,7 @@ const DeleteModal = ({
       title={modalTitle}
       isOpen={isOpen}
       onClose={close}
+      variant={variant}
       footerNode={(
         <ActionRow>
           <Button variant="tertiary" onClick={close}>
@@ -52,6 +54,7 @@ DeleteModal.defaultProps = {
   category: '',
   title: '',
   description: '',
+  variant: 'default'
 };
 
 DeleteModal.propTypes = {
@@ -61,6 +64,7 @@ DeleteModal.propTypes = {
   onDeleteSubmit: PropTypes.func.isRequired,
   title: PropTypes.string,
   description: PropTypes.string,
+  variant: PropTypes.string,
 };
 
 export default DeleteModal;

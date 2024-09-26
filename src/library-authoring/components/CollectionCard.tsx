@@ -74,6 +74,7 @@ const CollectionMenu = ({ collectionHit } : CollectionCardProps) => {
       <DeleteModal
         isOpen={isDeleteModalOpen}
         close={closeDeleteModal}
+        variant='warning'
         category={collectionHit.type}
         description={intl.formatMessage(messages.deleteCollectionConfirm, {
           collectionTitle: collectionHit.displayName,
