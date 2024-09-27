@@ -1,589 +1,123 @@
-import React from 'react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   act,
   fireEvent,
+  initializeMocks,
   render,
   waitFor,
   screen,
   within,
-} from '@testing-library/react';
-
+} from '../testUtils';
 import ContentTagsDrawer from './ContentTagsDrawer';
-import {
-  useContentTaxonomyTagsData,
-  useContentData,
-  useTaxonomyTagsData,
-  useContentTaxonomyTagsUpdater,
-} from './data/apiHooks';
-import { getTaxonomyListData } from '../taxonomy/data/api';
 import messages from './messages';
 import { ContentTagsDrawerSheetContext } from './common/context';
-import { languageExportId } from './utils';
+import {
+  mockContentData,
+  mockContentTaxonomyTagsData,
+  mockTaxonomyListData,
+  mockTaxonomyTagsData,
+} from './data/api.mocks';
+import { getContentTaxonomyTagsApiUrl } from './data/api';
 
-const contentId = 'block-v1:SampleTaxonomyOrg1+STC1+2023_1+type@vertical+block@7f47fe2dbcaf47c5a071671c741fe1ab';
+const path = '/content/:contentId/*';
 const mockOnClose = jest.fn();
-const mockMutate = jest.fn();
 const mockSetBlockingSheet = jest.fn();
 const mockNavigate = jest.fn();
+mockContentTaxonomyTagsData.applyMock();
+mockTaxonomyListData.applyMock();
+mockTaxonomyTagsData.applyMock();
+mockContentData.applyMock();
+
+const {
+  stagedTagsId,
+  otherTagsId,
+  languageWithTagsId,
+  languageWithoutTagsId,
+  largeTagsId,
+  emptyTagsId,
+} = mockContentTaxonomyTagsData;
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
-  useParams: () => ({
-    contentId,
-  }),
   useNavigate: () => mockNavigate,
 }));
 
-// FIXME: replace these mocks with API mocks
-jest.mock('./data/apiHooks', () => ({
-  useContentTaxonomyTagsData: jest.fn(() => {}),
-  useContentData: jest.fn(() => ({
-    isSuccess: false,
-    data: {},
-  })),
-  useContentTaxonomyTagsUpdater: jest.fn(() => ({
-    isError: false,
-    mutate: mockMutate,
-  })),
-  useTaxonomyTagsData: jest.fn(() => ({
-    hasMorePages: false,
-    tagPages: {
-      isLoading: true,
-      isError: false,
-      canAddTag: false,
-      data: [],
-    },
-  })),
-}));
-
-jest.mock('../taxonomy/data/api', () => ({
-  // By default, the mock taxonomy list will never load (promise never resolves):
-  getTaxonomyListData: jest.fn(),
-}));
-
-const queryClient = new QueryClient();
-
-const RootWrapper = (params) => (
-  <ContentTagsDrawerSheetContext.Provider value={params}>
-    <IntlProvider locale="en" messages={{}}>
-      <QueryClientProvider client={queryClient}>
-        <ContentTagsDrawer {...params} />
-      </QueryClientProvider>
-    </IntlProvider>
-  </ContentTagsDrawerSheetContext.Provider>
+const renderDrawer = (contentId, drawerParams = {}) => (
+  render(
+    <ContentTagsDrawerSheetContext.Provider value={drawerParams}>
+      <ContentTagsDrawer {...drawerParams} />
+    </ContentTagsDrawerSheetContext.Provider>,
+    { path, params: { contentId } },
+  )
 );
 
 describe('<ContentTagsDrawer />', () => {
   beforeEach(async () => {
-    jest.clearAllMocks();
-    await queryClient.resetQueries();
-    // By default, we mock the API call with a promise that never resolves.
-    // You can override this in specific test.
-    getTaxonomyListData.mockReturnValue(new Promise(() => {}));
-    useContentTaxonomyTagsUpdater.mockReturnValue({
-      isError: false,
-      mutate: mockMutate,
-    });
+    initializeMocks();
   });
 
-  const setupMockDataForStagedTagsTesting = () => {
-    useContentTaxonomyTagsData.mockReturnValue({
-      isSuccess: true,
-      data: {
-        taxonomies: [
-          {
-            name: 'Taxonomy 1',
-            taxonomyId: 123,
-            canTagObject: true,
-            tags: [
-              {
-                value: 'Tag 1',
-                lineage: ['Tag 1'],
-                canDeleteObjecttag: true,
-              },
-              {
-                value: 'Tag 2',
-                lineage: ['Tag 2'],
-                canDeleteObjecttag: true,
-              },
-            ],
-          },
-        ],
-      },
-    });
-    getTaxonomyListData.mockResolvedValue({
-      results: [
-        {
-          id: 123,
-          name: 'Taxonomy 1',
-          description: 'This is a description 1',
-          canTagObject: true,
-        },
-      ],
-    });
-
-    useTaxonomyTagsData.mockReturnValue({
-      hasMorePages: false,
-      canAddTag: false,
-      tagPages: {
-        isLoading: false,
-        isError: false,
-        data: [{
-          value: 'Tag 1',
-          externalId: null,
-          childCount: 0,
-          depth: 0,
-          parentValue: null,
-          id: 12345,
-          subTagsUrl: null,
-          canChangeTag: false,
-          canDeleteTag: false,
-        }, {
-          value: 'Tag 2',
-          externalId: null,
-          childCount: 0,
-          depth: 0,
-          parentValue: null,
-          id: 12346,
-          subTagsUrl: null,
-          canChangeTag: false,
-          canDeleteTag: false,
-        }, {
-          value: 'Tag 3',
-          externalId: null,
-          childCount: 0,
-          depth: 0,
-          parentValue: null,
-          id: 12347,
-          subTagsUrl: null,
-          canChangeTag: false,
-          canDeleteTag: false,
-        }],
-      },
-    });
-  };
-
-  const setupMockDataWithOtherTagsTestings = () => {
-    useContentTaxonomyTagsData.mockReturnValue({
-      isSuccess: true,
-      data: {
-        taxonomies: [
-          {
-            name: 'Taxonomy 1',
-            taxonomyId: 123,
-            canTagObject: true,
-            tags: [
-              {
-                value: 'Tag 1',
-                lineage: ['Tag 1'],
-                canDeleteObjecttag: true,
-              },
-              {
-                value: 'Tag 2',
-                lineage: ['Tag 2'],
-                canDeleteObjecttag: true,
-              },
-            ],
-          },
-          {
-            name: 'Taxonomy 2',
-            taxonomyId: 1234,
-            canTagObject: false,
-            tags: [
-              {
-                value: 'Tag 3',
-                lineage: ['Tag 3'],
-                canDeleteObjecttag: true,
-              },
-              {
-                value: 'Tag 4',
-                lineage: ['Tag 4'],
-                canDeleteObjecttag: true,
-              },
-            ],
-          },
-        ],
-      },
-    });
-    getTaxonomyListData.mockResolvedValue({
-      results: [
-        {
-          id: 123,
-          name: 'Taxonomy 1',
-          description: 'This is a description 1',
-          canTagObject: true,
-        },
-      ],
-    });
-
-    useTaxonomyTagsData.mockReturnValue({
-      hasMorePages: false,
-      canAddTag: false,
-      tagPages: {
-        isLoading: false,
-        isError: false,
-        data: [{
-          value: 'Tag 1',
-          externalId: null,
-          childCount: 0,
-          depth: 0,
-          parentValue: null,
-          id: 12345,
-          subTagsUrl: null,
-          canChangeTag: false,
-          canDeleteTag: false,
-        }, {
-          value: 'Tag 2',
-          externalId: null,
-          childCount: 0,
-          depth: 0,
-          parentValue: null,
-          id: 12346,
-          subTagsUrl: null,
-          canChangeTag: false,
-          canDeleteTag: false,
-        }, {
-          value: 'Tag 3',
-          externalId: null,
-          childCount: 0,
-          depth: 0,
-          parentValue: null,
-          id: 12347,
-          subTagsUrl: null,
-          canChangeTag: false,
-          canDeleteTag: false,
-        }],
-      },
-    });
-  };
-
-  const setupMockDataLanguageTaxonomyTestings = (hasTags) => {
-    useContentTaxonomyTagsData.mockReturnValue({
-      isSuccess: true,
-      data: {
-        taxonomies: [
-          {
-            name: 'Languages',
-            taxonomyId: 123,
-            exportId: languageExportId,
-            canTagObject: true,
-            tags: hasTags ? [
-              {
-                value: 'Tag 1',
-                lineage: ['Tag 1'],
-                canDeleteObjecttag: true,
-              },
-            ] : [],
-          },
-          {
-            name: 'Taxonomy 1',
-            taxonomyId: 1234,
-            canTagObject: true,
-            tags: [
-              {
-                value: 'Tag 1',
-                lineage: ['Tag 1'],
-                canDeleteObjecttag: true,
-              },
-              {
-                value: 'Tag 2',
-                lineage: ['Tag 2'],
-                canDeleteObjecttag: true,
-              },
-            ],
-          },
-        ],
-      },
-    });
-    getTaxonomyListData.mockResolvedValue({
-      results: [
-        {
-          id: 123,
-          name: 'Languages',
-          description: 'This is a description 1',
-          exportId: languageExportId,
-          canTagObject: true,
-        },
-        {
-          id: 1234,
-          name: 'Taxonomy 1',
-          description: 'This is a description 2',
-          canTagObject: true,
-        },
-      ],
-    });
-
-    useTaxonomyTagsData.mockReturnValue({
-      hasMorePages: false,
-      canAddTag: false,
-      tagPages: {
-        isLoading: false,
-        isError: false,
-        data: [{
-          value: 'Tag 1',
-          externalId: null,
-          childCount: 0,
-          depth: 0,
-          parentValue: null,
-          id: 12345,
-          subTagsUrl: null,
-          canChangeTag: false,
-          canDeleteTag: false,
-        }],
-      },
-    });
-  };
-
-  const setupLargeMockDataForStagedTagsTesting = () => {
-    useContentTaxonomyTagsData.mockReturnValue({
-      isSuccess: true,
-      data: {
-        taxonomies: [
-          {
-            name: 'Taxonomy 1',
-            taxonomyId: 123,
-            canTagObject: true,
-            tags: [
-              {
-                value: 'Tag 1',
-                lineage: ['Tag 1'],
-                canDeleteObjecttag: true,
-              },
-              {
-                value: 'Tag 2',
-                lineage: ['Tag 2'],
-                canDeleteObjecttag: true,
-              },
-            ],
-          },
-          {
-            name: 'Taxonomy 2',
-            taxonomyId: 124,
-            canTagObject: true,
-            tags: [
-              {
-                value: 'Tag 1',
-                lineage: ['Tag 1'],
-                canDeleteObjecttag: true,
-              },
-            ],
-          },
-          {
-            name: 'Taxonomy 3',
-            taxonomyId: 125,
-            canTagObject: true,
-            tags: [
-              {
-                value: 'Tag 1.1.1',
-                lineage: ['Tag 1', 'Tag 1.1', 'Tag 1.1.1'],
-                canDeleteObjecttag: true,
-              },
-            ],
-          },
-          {
-            name: '(B) Taxonomy 4',
-            taxonomyId: 126,
-            canTagObject: true,
-            tags: [],
-          },
-          {
-            name: '(A) Taxonomy 5',
-            taxonomyId: 127,
-            canTagObject: true,
-            tags: [],
-          },
-        ],
-      },
-    });
-    getTaxonomyListData.mockResolvedValue({
-      results: [
-        {
-          id: 123,
-          name: 'Taxonomy 1',
-          description: 'This is a description 1',
-          canTagObject: true,
-        },
-        {
-          id: 124,
-          name: 'Taxonomy 2',
-          description: 'This is a description 2',
-          canTagObject: true,
-        },
-        {
-          id: 125,
-          name: 'Taxonomy 3',
-          description: 'This is a description 3',
-          canTagObject: true,
-        },
-        {
-          id: 127,
-          name: '(A) Taxonomy 5',
-          description: 'This is a description 5',
-          canTagObject: true,
-        },
-        {
-          id: 126,
-          name: '(B) Taxonomy 4',
-          description: 'This is a description 4',
-          canTagObject: true,
-        },
-      ],
-    });
-
-    useTaxonomyTagsData.mockReturnValue({
-      hasMorePages: false,
-      canAddTag: false,
-      tagPages: {
-        isLoading: false,
-        isError: false,
-        data: [{
-          value: 'Tag 1',
-          externalId: null,
-          childCount: 0,
-          depth: 0,
-          parentValue: null,
-          id: 12345,
-          subTagsUrl: null,
-          canChangeTag: false,
-          canDeleteTag: false,
-        }, {
-          value: 'Tag 2',
-          externalId: null,
-          childCount: 0,
-          depth: 0,
-          parentValue: null,
-          id: 12346,
-          subTagsUrl: null,
-          canChangeTag: false,
-          canDeleteTag: false,
-        }, {
-          value: 'Tag 3',
-          externalId: null,
-          childCount: 0,
-          depth: 0,
-          parentValue: null,
-          id: 12347,
-          subTagsUrl: null,
-          canChangeTag: false,
-          canDeleteTag: false,
-        }],
-      },
-    });
-  };
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
   it('should render page and page title correctly', () => {
-    setupMockDataForStagedTagsTesting();
-    const { getByText } = render(<RootWrapper />);
-    expect(getByText('Manage tags')).toBeInTheDocument();
+    renderDrawer(stagedTagsId);
+    expect(screen.getByText('Manage tags')).toBeInTheDocument();
   });
 
   it('shows spinner before the content data query is complete', async () => {
     await act(async () => {
-      const { getAllByRole } = render(<RootWrapper />);
-      const spinner = getAllByRole('status')[0];
+      renderDrawer(stagedTagsId);
+      const spinner = screen.getAllByRole('status')[0];
       expect(spinner.textContent).toEqual('Loading'); // Uses <Spinner />
     });
   });
 
   it('shows spinner before the taxonomy tags query is complete', async () => {
     await act(async () => {
-      const { getAllByRole } = render(<RootWrapper />);
-      const spinner = getAllByRole('status')[1];
+      renderDrawer(stagedTagsId);
+      const spinner = screen.getAllByRole('status')[1];
       expect(spinner.textContent).toEqual('Loading...'); // Uses <Loading />
     });
   });
 
-  it('shows the content display name after the query is complete', async () => {
-    useContentData.mockReturnValue({
-      isSuccess: true,
-      data: {
-        displayName: 'Unit 1',
-      },
-    });
-    await act(async () => {
-      const { getByText } = render(<RootWrapper />);
-      expect(getByText('Unit 1')).toBeInTheDocument();
-    });
+  it('shows the content display name after the query is complete in drawer variant', async () => {
+    renderDrawer('test');
+    expect(await screen.findByText('Loading...')).toBeInTheDocument();
+    expect(await screen.findByText('Unit 1')).toBeInTheDocument();
+    expect(await screen.findByText('Manage tags')).toBeInTheDocument();
+  });
+
+  it('shows the content display name after the query is complete in component variant', async () => {
+    renderDrawer('test', { variant: 'component' });
+    expect(await screen.findByText('Loading...')).toBeInTheDocument();
+    expect(screen.queryByText('Unit 1')).not.toBeInTheDocument();
+    expect(screen.queryByText('Manage tags')).not.toBeInTheDocument();
   });
 
   it('shows content using params', async () => {
-    useContentData.mockReturnValue({
-      isSuccess: true,
-      data: {
-        displayName: 'Unit 1',
-      },
-    });
-    render(<RootWrapper id={contentId} />);
-    expect(screen.getByText('Unit 1')).toBeInTheDocument();
+    renderDrawer(undefined, { id: 'test' });
+    expect(await screen.findByText('Loading...')).toBeInTheDocument();
+    expect(await screen.findByText('Unit 1')).toBeInTheDocument();
+    expect(await screen.findByText('Manage tags')).toBeInTheDocument();
   });
 
   it('shows the taxonomies data including tag numbers after the query is complete', async () => {
-    useContentTaxonomyTagsData.mockReturnValue({
-      isSuccess: true,
-      data: {
-        taxonomies: [
-          {
-            name: 'Taxonomy 1',
-            taxonomyId: 123,
-            canTagObject: true,
-            tags: [
-              {
-                value: 'Tag 1',
-                lineage: ['Tag 1'],
-                canDeleteObjecttag: true,
-              },
-              {
-                value: 'Tag 2',
-                lineage: ['Tag 2'],
-                canDeleteObjecttag: true,
-              },
-            ],
-          },
-          {
-            name: 'Taxonomy 2',
-            taxonomyId: 124,
-            canTagObject: true,
-            tags: [
-              {
-                value: 'Tag 3',
-                lineage: ['Tag 3'],
-                canDeleteObjecttag: true,
-              },
-            ],
-          },
-        ],
-      },
-    });
-    getTaxonomyListData.mockResolvedValue({
-      results: [{
-        id: 123,
-        name: 'Taxonomy 1',
-        description: 'This is a description 1',
-        canTagObject: false,
-      }, {
-        id: 124,
-        name: 'Taxonomy 2',
-        description: 'This is a description 2',
-        canTagObject: false,
-      }],
-    });
     await act(async () => {
-      const { container, getByText } = render(<RootWrapper />);
-      await waitFor(() => { expect(getByText('Taxonomy 1')).toBeInTheDocument(); });
-      expect(getByText('Taxonomy 1')).toBeInTheDocument();
-      expect(getByText('Taxonomy 2')).toBeInTheDocument();
+      const { container } = renderDrawer(largeTagsId);
+      await waitFor(() => { expect(screen.getByText('Taxonomy 1')).toBeInTheDocument(); });
+      expect(screen.getByText('Taxonomy 1')).toBeInTheDocument();
+      expect(screen.getByText('Taxonomy 2')).toBeInTheDocument();
       const tagCountBadges = container.getElementsByClassName('taxonomy-tags-count-chip');
-      expect(tagCountBadges[0].textContent).toBe('2');
-      expect(tagCountBadges[1].textContent).toBe('1');
+      expect(tagCountBadges[0].textContent).toBe('3');
+      expect(tagCountBadges[1].textContent).toBe('2');
     });
   });
 
-  it('should be read only on first render', async () => {
-    setupMockDataForStagedTagsTesting();
-    render(<RootWrapper />);
+  it('should be read only on first render on drawer variant', async () => {
+    renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /close/i }));
+    expect(screen.getByRole('button', { name: /edit tags/i }));
 
     // Not show delete tag buttons
     expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
@@ -598,9 +132,26 @@ describe('<ContentTagsDrawer />', () => {
     expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
   });
 
-  it('should change to edit mode when click on `Edit tags`', async () => {
-    setupMockDataForStagedTagsTesting();
-    render(<RootWrapper />);
+  it('should be read only on first render on component variant', async () => {
+    renderDrawer(stagedTagsId, { variant: 'component' });
+    expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /manage tags/i }));
+
+    // Not show delete tag buttons
+    expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
+
+    // Not show add a tag select
+    expect(screen.queryByText(/add a tag/i)).not.toBeInTheDocument();
+
+    // Not show cancel button
+    expect(screen.queryByRole('button', { name: /cancel/i })).not.toBeInTheDocument();
+
+    // Not show save button
+    expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
+  });
+
+  it('should change to edit mode when click on `Edit tags` on drawer variant', async () => {
+    renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
     const editTagsButton = screen.getByRole('button', {
       name: /edit tags/i,
@@ -622,9 +173,31 @@ describe('<ContentTagsDrawer />', () => {
     expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument();
   });
 
-  it('should change to read mode when click on `Cancel`', async () => {
-    setupMockDataForStagedTagsTesting();
-    render(<RootWrapper />);
+  it('should change to edit mode when click on `Manage tags` on component variant', async () => {
+    renderDrawer(stagedTagsId, { variant: 'component' });
+    expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
+    const manageTagsButton = screen.getByRole('button', {
+      name: /manage tags/i,
+    });
+    fireEvent.click(manageTagsButton);
+
+    // Show delete tag buttons
+    expect(screen.getAllByRole('button', {
+      name: /delete/i,
+    }).length).toBe(2);
+
+    // Show add a tag select
+    expect(screen.getByText(/add a tag/i)).toBeInTheDocument();
+
+    // Show cancel button
+    expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
+
+    // Show save button
+    expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument();
+  });
+
+  it('should change to read mode when click on `Cancel` on drawer variant', async () => {
+    renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
     const editTagsButton = screen.getByRole('button', {
       name: /edit tags/i,
@@ -649,21 +222,34 @@ describe('<ContentTagsDrawer />', () => {
     expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
   });
 
-  it('shows spinner when loading commit tags', async () => {
-    setupMockDataForStagedTagsTesting();
-    useContentTaxonomyTagsUpdater.mockReturnValue({
-      status: 'loading',
-      isError: false,
-      mutate: mockMutate,
-    });
-    render(<RootWrapper />);
+  it('should change to read mode when click on `Cancel` on component variant', async () => {
+    renderDrawer(stagedTagsId, { variant: 'component' });
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
-    expect(screen.getByRole('status')).toBeInTheDocument();
+    const manageTagsButton = screen.getByRole('button', {
+      name: /manage tags/i,
+    });
+    fireEvent.click(manageTagsButton);
+
+    const cancelButton = screen.getByRole('button', {
+      name: /cancel/i,
+    });
+    fireEvent.click(cancelButton);
+
+    // Not show delete tag buttons
+    expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
+
+    // Not show add a tag select
+    expect(screen.queryByText(/add a tag/i)).not.toBeInTheDocument();
+
+    // Not show cancel button
+    expect(screen.queryByRole('button', { name: /cancel/i })).not.toBeInTheDocument();
+
+    // Not show save button
+    expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
   });
 
   it('should test adding a content tag to the staged tags for a taxonomy', async () => {
-    setupMockDataForStagedTagsTesting();
-    render(<RootWrapper />);
+    renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
     // To edit mode
@@ -678,7 +264,7 @@ describe('<ContentTagsDrawer />', () => {
     fireEvent.mouseDown(addTagsButton);
 
     // Tag 3 should only appear in dropdown selector, (i.e. the dropdown is open, since Tag 3 is not applied)
-    expect(screen.getAllByText('Tag 3').length).toBe(1);
+    expect((await screen.findAllByText('Tag 3')).length).toBe(1);
 
     // Click to check Tag 3
     const tag3 = screen.getByText('Tag 3');
@@ -689,8 +275,7 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('should test removing a staged content from a taxonomy', async () => {
-    setupMockDataForStagedTagsTesting();
-    render(<RootWrapper />);
+    renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
     // To edit mode
@@ -705,7 +290,7 @@ describe('<ContentTagsDrawer />', () => {
     fireEvent.mouseDown(addTagsButton);
 
     // Tag 3 should only appear in dropdown selector, (i.e. the dropdown is open, since Tag 3 is not applied)
-    expect(screen.getAllByText('Tag 3').length).toBe(1);
+    expect((await screen.findAllByText('Tag 3')).length).toBe(1);
 
     // Click to check Tag 3
     const tag3 = screen.getByText('Tag 3');
@@ -720,11 +305,9 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('should test clearing staged tags for a taxonomy', async () => {
-    setupMockDataForStagedTagsTesting();
-
     const {
       container,
-    } = render(<RootWrapper />);
+    } = renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
     // To edit mode
@@ -739,7 +322,7 @@ describe('<ContentTagsDrawer />', () => {
     fireEvent.mouseDown(addTagsButton);
 
     // Tag 3 should only appear in dropdown selector, (i.e. the dropdown is open, since Tag 3 is not applied)
-    expect(screen.getAllByText('Tag 3').length).toBe(1);
+    expect((await screen.findAllByText('Tag 3')).length).toBe(1);
 
     // Click to check Tag 3
     const tag3 = screen.getByText('Tag 3');
@@ -758,8 +341,7 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('should test adding global staged tags and cancel', async () => {
-    setupMockDataForStagedTagsTesting();
-    render(<RootWrapper />);
+    renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
     // To edit mode
@@ -774,7 +356,7 @@ describe('<ContentTagsDrawer />', () => {
     fireEvent.mouseDown(addTagsButton);
 
     // Click to check Tag 3
-    const tag3 = screen.getByText(/tag 3/i);
+    const tag3 = await screen.findByText(/tag 3/i);
     fireEvent.click(tag3);
 
     // Click "Add tags" to save to global staged tags
@@ -791,8 +373,7 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('should test delete feched tags and cancel', async () => {
-    setupMockDataForStagedTagsTesting();
-    render(<RootWrapper />);
+    renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
     // To edit mode
@@ -802,7 +383,7 @@ describe('<ContentTagsDrawer />', () => {
     fireEvent.click(editTagsButton);
 
     // Delete the tag
-    const tag = screen.getByText(/tag 2/i);
+    const tag = await screen.findByText(/tag 2/i);
     const deleteButton = within(tag).getByRole('button', {
       name: /delete/i,
     });
@@ -818,8 +399,7 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('should test delete global staged tags and cancel', async () => {
-    setupMockDataForStagedTagsTesting();
-    render(<RootWrapper />);
+    renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
     // To edit mode
@@ -834,7 +414,7 @@ describe('<ContentTagsDrawer />', () => {
     fireEvent.mouseDown(addTagsButton);
 
     // Click to check Tag 3
-    const tag3 = screen.getByText(/tag 3/i);
+    const tag3 = await screen.findByText(/tag 3/i);
     fireEvent.click(tag3);
 
     // Click "Add tags" to save to global staged tags
@@ -860,8 +440,7 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('should test add removed feched tags and cancel', async () => {
-    setupMockDataForStagedTagsTesting();
-    render(<RootWrapper />);
+    renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
     // To edit mode
@@ -871,7 +450,7 @@ describe('<ContentTagsDrawer />', () => {
     fireEvent.click(editTagsButton);
 
     // Delete the tag
-    const tag = screen.getByText(/tag 2/i);
+    const tag = await screen.findByText(/tag 2/i);
     const deleteButton = within(tag).getByRole('button', {
       name: /delete/i,
     });
@@ -885,7 +464,7 @@ describe('<ContentTagsDrawer />', () => {
     fireEvent.mouseDown(addTagsButton);
 
     // Click to check Tag 2
-    const tag2 = screen.getByText(/tag 2/i);
+    const tag2 = await screen.findByText(/tag 2/i);
     fireEvent.click(tag2);
 
     // Click "Add tags" to save to global staged tags
@@ -902,8 +481,7 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('should call onClose when cancel is clicked', async () => {
-    setupMockDataForStagedTagsTesting();
-    render(<RootWrapper onClose={mockOnClose} />);
+    renderDrawer(stagedTagsId, { onClose: mockOnClose });
 
     const cancelButton = await screen.findByRole('button', {
       name: /close/i,
@@ -917,7 +495,7 @@ describe('<ContentTagsDrawer />', () => {
   it('should call closeManageTagsDrawer when Escape key is pressed and no selectable box is active', () => {
     const postMessageSpy = jest.spyOn(window.parent, 'postMessage');
 
-    const { container } = render(<RootWrapper />);
+    const { container } = renderDrawer(stagedTagsId);
 
     fireEvent.keyDown(container, {
       key: 'Escape',
@@ -929,7 +507,7 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('should call `onClose` when Escape key is pressed and no selectable box is active', () => {
-    const { container } = render(<RootWrapper onClose={mockOnClose} />);
+    const { container } = renderDrawer(stagedTagsId, { onClose: mockOnClose });
 
     fireEvent.keyDown(container, {
       key: 'Escape',
@@ -941,7 +519,7 @@ describe('<ContentTagsDrawer />', () => {
   it('should not call closeManageTagsDrawer when Escape key is pressed and a selectable box is active', () => {
     const postMessageSpy = jest.spyOn(window.parent, 'postMessage');
 
-    const { container } = render(<RootWrapper />);
+    const { container } = renderDrawer(stagedTagsId);
 
     // Simulate that the selectable box is open by adding an element with the data attribute
     const selectableBox = document.createElement('div');
@@ -961,7 +539,7 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('should not call `onClose` when Escape key is pressed and a selectable box is active', () => {
-    const { container } = render(<RootWrapper onClose={mockOnClose} />);
+    const { container } = renderDrawer(stagedTagsId, { onClose: mockOnClose });
 
     // Simulate that the selectable box is open by adding an element with the data attribute
     const selectableBox = document.createElement('div');
@@ -980,8 +558,7 @@ describe('<ContentTagsDrawer />', () => {
 
   it('should not call closeManageTagsDrawer when Escape key is pressed and container is blocked', () => {
     const postMessageSpy = jest.spyOn(window.parent, 'postMessage');
-
-    const { container } = render(<RootWrapper blockingSheet />);
+    const { container } = renderDrawer(stagedTagsId, { blockingSheet: true });
     fireEvent.keyDown(container, {
       key: 'Escape',
     });
@@ -992,7 +569,10 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('should not call `onClose` when Escape key is pressed and container is blocked', () => {
-    const { container } = render(<RootWrapper blockingSheet onClose={mockOnClose} />);
+    const { container } = renderDrawer(stagedTagsId, {
+      blockingSheet: true,
+      onClose: mockOnClose,
+    });
     fireEvent.keyDown(container, {
       key: 'Escape',
     });
@@ -1001,8 +581,10 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('should call `setBlockingSheet` on add a tag', async () => {
-    setupMockDataForStagedTagsTesting();
-    render(<RootWrapper blockingSheet setBlockingSheet={mockSetBlockingSheet} />);
+    renderDrawer(stagedTagsId, {
+      blockingSheet: true,
+      setBlockingSheet: mockSetBlockingSheet,
+    });
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
     expect(mockSetBlockingSheet).toHaveBeenCalledWith(false);
@@ -1019,7 +601,7 @@ describe('<ContentTagsDrawer />', () => {
     fireEvent.mouseDown(addTagsButton);
 
     // Click to check Tag 3
-    const tag3 = screen.getByText(/tag 3/i);
+    const tag3 = await screen.findByText(/tag 3/i);
     fireEvent.click(tag3);
 
     // Click "Add tags" to save to global staged tags
@@ -1030,8 +612,10 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('should call `setBlockingSheet` on delete a tag', async () => {
-    setupMockDataForStagedTagsTesting();
-    render(<RootWrapper blockingSheet setBlockingSheet={mockSetBlockingSheet} />);
+    renderDrawer(stagedTagsId, {
+      blockingSheet: true,
+      setBlockingSheet: mockSetBlockingSheet,
+    });
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
     expect(mockSetBlockingSheet).toHaveBeenCalledWith(false);
@@ -1053,8 +637,10 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('should call `updateTags` mutation on save', async () => {
-    setupMockDataForStagedTagsTesting();
-    render(<RootWrapper />);
+    const { axiosMock } = initializeMocks();
+    const url = getContentTaxonomyTagsApiUrl(stagedTagsId);
+    axiosMock.onPut(url).reply(200);
+    renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
     const editTagsButton = screen.getByRole('button', {
       name: /edit tags/i,
@@ -1066,12 +652,11 @@ describe('<ContentTagsDrawer />', () => {
     });
     fireEvent.click(saveButton);
 
-    expect(mockMutate).toHaveBeenCalled();
+    await waitFor(() => expect(axiosMock.history.put[0].url).toEqual(url));
   });
 
   it('should taxonomies must be ordered', async () => {
-    setupLargeMockDataForStagedTagsTesting();
-    render(<RootWrapper />);
+    renderDrawer(largeTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
     // First, taxonomies with content sorted by count implicit
@@ -1091,18 +676,14 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('should not show "Other tags" section', async () => {
-    setupMockDataForStagedTagsTesting();
-
-    render(<RootWrapper />);
+    renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
     expect(screen.queryByText('Other tags')).not.toBeInTheDocument();
   });
 
   it('should show "Other tags" section', async () => {
-    setupMockDataWithOtherTagsTestings();
-
-    render(<RootWrapper />);
+    renderDrawer(otherTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
     expect(screen.getByText('Other tags')).toBeInTheDocument();
@@ -1112,8 +693,7 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('should test delete "Other tags" and cancel', async () => {
-    setupMockDataWithOtherTagsTestings();
-    render(<RootWrapper />);
+    renderDrawer(otherTagsId);
     expect(await screen.findByText('Taxonomy 2')).toBeInTheDocument();
 
     // To edit mode
@@ -1139,40 +719,18 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('should show Language Taxonomy', async () => {
-    setupMockDataLanguageTaxonomyTestings(true);
-    render(<RootWrapper />);
+    renderDrawer(languageWithTagsId);
     expect(await screen.findByText('Languages')).toBeInTheDocument();
   });
 
   it('should hide Language Taxonomy', async () => {
-    setupMockDataLanguageTaxonomyTestings(false);
-    render(<RootWrapper />);
+    renderDrawer(languageWithoutTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
-
     expect(screen.queryByText('Languages')).not.toBeInTheDocument();
   });
 
   it('should show empty drawer message', async () => {
-    useContentTaxonomyTagsData.mockReturnValue({
-      isSuccess: true,
-      data: {
-        taxonomies: [],
-      },
-    });
-    getTaxonomyListData.mockResolvedValue({
-      results: [],
-    });
-    useTaxonomyTagsData.mockReturnValue({
-      hasMorePages: false,
-      canAddTag: false,
-      tagPages: {
-        isLoading: false,
-        isError: false,
-        data: [],
-      },
-    });
-
-    render(<RootWrapper />);
+    renderDrawer(emptyTagsId);
     expect(await screen.findByText(/to use tags, please or contact your administrator\./i)).toBeInTheDocument();
     const enableButton = screen.getByRole('button', {
       name: /enable a taxonomy/i,
