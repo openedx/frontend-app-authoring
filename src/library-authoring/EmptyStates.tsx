@@ -1,4 +1,3 @@
-import { useParams } from 'react-router';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import type { MessageDescriptor } from 'react-intl';
 import {
@@ -8,6 +7,7 @@ import { Add } from '@openedx/paragon/icons';
 import { ClearFiltersButton } from '../search-manager';
 import messages from './messages';
 import { useContentLibrary } from './data/apiHooks';
+import { useLibraryContext } from './common/context';
 
 export const NoComponents = ({
   infoText = messages.noComponents,
@@ -18,7 +18,7 @@ export const NoComponents = ({
   addBtnText?: MessageDescriptor;
   handleBtnClick: () => void;
 }) => {
-  const { libraryId } = useParams();
+  const { libraryId } = useLibraryContext();
   const { data: libraryData } = useContentLibrary(libraryId);
   const canEditLibrary = libraryData?.canEditLibrary ?? false;
 

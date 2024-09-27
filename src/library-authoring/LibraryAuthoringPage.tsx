@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import classNames from 'classnames';
 import { StudioFooter } from '@edx/frontend-component-footer';
@@ -13,7 +13,7 @@ import {
 } from '@openedx/paragon';
 import { Add, InfoOutline } from '@openedx/paragon/icons';
 import {
-  Routes, Route, useLocation, useNavigate, useParams, useSearchParams,
+  Routes, Route, useLocation, useNavigate, useSearchParams,
 } from 'react-router-dom';
 
 import Loading from '../generic/Loading';
@@ -33,7 +33,7 @@ import LibraryCollections from './collections/LibraryCollections';
 import LibraryHome from './LibraryHome';
 import { useContentLibrary } from './data/apiHooks';
 import { LibrarySidebar } from './library-sidebar';
-import { LibraryContext, SidebarBodyComponentId } from './common/context';
+import { SidebarBodyComponentId, useLibraryContext } from './common/context';
 import messages from './messages';
 
 enum TabList {
@@ -53,7 +53,7 @@ const HeaderActions = ({ canEditLibrary }: HeaderActionsProps) => {
     openInfoSidebar,
     closeLibrarySidebar,
     sidebarBodyComponent,
-  } = useContext(LibraryContext);
+  } = useLibraryContext();
 
   if (!canEditLibrary) {
     return null;
@@ -119,11 +119,7 @@ const LibraryAuthoringPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { libraryId } = useParams();
-  if (!libraryId) {
-    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
-    throw new Error('Rendered without libraryId URL parameter');
-  }
+  const { libraryId } = useLibraryContext();
   const { data: libraryData, isLoading } = useContentLibrary(libraryId);
 
   const currentPath = location.pathname.split('/').pop();
@@ -131,7 +127,7 @@ const LibraryAuthoringPage = () => {
   const {
     sidebarBodyComponent,
     openInfoSidebar,
-  } = useContext(LibraryContext);
+  } = useLibraryContext();
 
   useEffect(() => {
     openInfoSidebar();
@@ -196,16 +192,12 @@ const LibraryAuthoringPage = () => {
               <Route
                 path={TabList.home}
                 element={(
-                  <LibraryHome
-                    libraryId={libraryId}
-                    tabList={TabList}
-                    handleTabChange={handleTabChange}
-                  />
+                  <LibraryHome tabList={TabList} handleTabChange={handleTabChange} />
                 )}
               />
               <Route
                 path={TabList.components}
-                element={<LibraryComponents libraryId={libraryId} variant="full" />}
+                element={<LibraryComponents variant="full" />}
               />
               <Route
                 path={TabList.collections}

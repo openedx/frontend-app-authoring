@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -27,7 +27,7 @@ import {
   SearchSortWidget,
 } from '../../search-manager';
 import { useCollection, useContentLibrary } from '../data/apiHooks';
-import { LibraryContext } from '../common/context';
+import { useLibraryContext } from '../common/context';
 import messages from './messages';
 import { LibrarySidebar } from '../library-sidebar';
 import LibraryCollectionComponents from './LibraryCollectionComponents';
@@ -36,7 +36,7 @@ const HeaderActions = ({ canEditLibrary }: { canEditLibrary: boolean; }) => {
   const intl = useIntl();
   const {
     openAddContentSidebar,
-  } = useContext(LibraryContext);
+  } = useLibraryContext();
 
   if (!canEditLibrary) {
     return null;
@@ -104,7 +104,7 @@ const LibraryCollectionPage = () => {
   const {
     sidebarBodyComponent,
     openCollectionInfoSidebar,
-  } = useContext(LibraryContext);
+  } = useLibraryContext();
 
   const {
     data: collectionData,
@@ -189,7 +189,7 @@ const LibraryCollectionPage = () => {
               <div className="flex-grow-1" />
               <SearchSortWidget />
             </div>
-            <LibraryCollectionComponents libraryId={libraryId} />
+            <LibraryCollectionComponents />
           </SearchContextProvider>
         </Container>
         <StudioFooter />

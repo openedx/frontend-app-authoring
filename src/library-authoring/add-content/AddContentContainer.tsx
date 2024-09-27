@@ -23,9 +23,9 @@ import { useCopyToClipboard } from '../../generic/clipboard';
 import { getCanEdit } from '../../course-unit/data/selectors';
 import { useCreateLibraryBlock, useLibraryPasteClipboard, useUpdateCollectionComponents } from '../data/apiHooks';
 import { getEditUrl } from '../components/utils';
+import { useLibraryContext } from '../common/context';
 
 import messages from './messages';
-import { LibraryContext } from '../common/context';
 
 type ContentType = {
   name: string,
@@ -73,7 +73,7 @@ const AddContentContainer = () => {
   const { showPasteXBlock } = useCopyToClipboard(canEdit);
   const {
     openCreateCollectionModal,
-  } = React.useContext(LibraryContext);
+  } = useLibraryContext();
 
   const collectionButtonData = {
     name: intl.formatMessage(messages.collectionButton),

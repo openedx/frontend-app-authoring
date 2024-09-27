@@ -1,12 +1,10 @@
-import { useContext } from 'react';
-
 import { useLoadOnScroll } from '../../hooks';
 import { useSearchContext } from '../../search-manager';
 import { NoComponents, NoSearchResults } from '../EmptyStates';
 import CollectionCard from '../components/CollectionCard';
 import { LIBRARY_SECTION_PREVIEW_LIMIT } from '../components/LibrarySection';
 import messages from './messages';
-import { LibraryContext } from '../common/context';
+import { useLibraryContext } from '../common/context';
 
 type LibraryCollectionsProps = {
   variant: 'full' | 'preview',
@@ -29,7 +27,7 @@ const LibraryCollections = ({ variant }: LibraryCollectionsProps) => {
     isFiltered,
   } = useSearchContext();
 
-  const { openCreateCollectionModal } = useContext(LibraryContext);
+  const { openCreateCollectionModal } = useLibraryContext();
 
   const collectionList = variant === 'preview' ? collectionHits.slice(0, LIBRARY_SECTION_PREVIEW_LIMIT) : collectionHits;
 
