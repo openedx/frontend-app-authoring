@@ -31,6 +31,7 @@ import {
   ClearFiltersButton,
   FilterByBlockType,
   FilterByTags,
+  FilterByPublished,
   SearchContextProvider,
   SearchKeywordsField,
   SearchSortWidget,
@@ -254,6 +255,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
             <div className="d-flex mt-3 align-items-center">
               <FilterByTags />
               <FilterByBlockType />
+              <FilterByPublished />
               <ClearFiltersButton />
               <div className="flex-grow-1" />
               <SearchSortWidget />

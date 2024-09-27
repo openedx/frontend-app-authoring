@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import {
+  Badge,
   Card,
   Container,
   Icon,
@@ -11,12 +12,14 @@ import TagCount from '../../generic/tag-count';
 import { BlockTypeLabel, type ContentHitTags, Highlight } from '../../search-manager';
 
 type BaseComponentCardProps = {
-  componentType: string,
-  displayName: string, description: string,
-  numChildren?: number,
-  tags: ContentHitTags,
-  actions: React.ReactNode,
-  openInfoSidebar: () => void
+  componentType: string;
+  displayName: string;
+  description: string;
+  numChildren?: number;
+  tags: ContentHitTags;
+  actions: React.ReactNode;
+  openInfoSidebar: () => void;
+  hasUnpublishedChanges?: boolean;
 };
 
 const BaseComponentCard = ({
@@ -27,6 +30,7 @@ const BaseComponentCard = ({
   tags,
   actions,
   openInfoSidebar,
+  ...props
 } : BaseComponentCardProps) => {
   const tagCount = useMemo(() => {
     if (!tags) {
@@ -75,7 +79,8 @@ const BaseComponentCard = ({
             <div className="text-truncate h3 mt-2">
               <Highlight text={displayName} />
             </div>
-            <Highlight text={description} />
+            <Highlight text={description} /><br />
+            {props.hasUnpublishedChanges ? <Badge variant="warning">Unpublished changes</Badge> : null}
           </Card.Section>
         </Card.Body>
       </Card>
