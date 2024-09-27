@@ -41,6 +41,9 @@ export function mockSearchResult(mockResponse: MultiSearchResponse) {
   }, { overwriteRoutes: true });
 }
 
+/**
+ * Mock the block types returned by the API.
+ */
 export async function mockGetBlockTypes(
   mockResponse: 'noBlocks' | 'someBlocks' | 'moreBlocks',
 ) {
