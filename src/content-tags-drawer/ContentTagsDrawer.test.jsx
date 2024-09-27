@@ -97,8 +97,8 @@ describe('<ContentTagsDrawer />', () => {
   it('shows content using params', async () => {
     renderDrawer(undefined, { id: 'test' });
     expect(await screen.findByText('Loading...')).toBeInTheDocument();
-    expect(screen.getByText('Unit 1')).toBeInTheDocument();
-    expect(screen.queryByText('Manage tags')).toBeInTheDocument();
+    expect(await screen.findByText('Unit 1')).toBeInTheDocument();
+    expect(await screen.findByText('Manage tags')).toBeInTheDocument();
   });
 
   it('shows the taxonomies data including tag numbers after the query is complete', async () => {
