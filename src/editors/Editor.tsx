@@ -14,6 +14,7 @@ export interface Props extends EditorComponent {
   learningContextId: string | null;
   lmsEndpointUrl: string | null;
   studioEndpointUrl: string | null;
+  fullScreen?: boolean;
 }
 
 const Editor: React.FC<Props> = ({
@@ -24,6 +25,7 @@ const Editor: React.FC<Props> = ({
   studioEndpointUrl,
   onClose = null,
   returnFunction = null,
+  fullScreen = true,
 }) => {
   const dispatch = useDispatch();
   hooks.initializeApp({
@@ -38,21 +40,26 @@ const Editor: React.FC<Props> = ({
   });
 
   const EditorComponent = supportedEditors[blockType];
-  return (
-    <div
-      className="d-flex flex-column"
-    >
+  const innerEditor = (EditorComponent !== undefined)
+    ? <EditorComponent {...{ onClose, returnFunction }} />
+    : <FormattedMessage {...messages.couldNotFindEditor} />;
+
+  if (fullScreen) {
+    return (
       <div
-        className="pgn__modal-fullscreen h-100"
-        role="dialog"
-        aria-label={blockType}
+        className="d-flex flex-column"
       >
-        {(EditorComponent !== undefined)
-          ? <EditorComponent {...{ onClose, returnFunction }} />
-          : <FormattedMessage {...messages.couldNotFindEditor} />}
+        <div
+          className="pgn__modal-fullscreen h-100"
+          role="dialog"
+          aria-label={blockType}
+        >
+          {innerEditor}
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+  return innerEditor;
 };
 
 export default Editor;

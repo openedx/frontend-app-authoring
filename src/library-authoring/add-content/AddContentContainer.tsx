@@ -16,14 +16,14 @@ import {
   ContentPaste,
 } from '@openedx/paragon/icons';
 import { v4 as uuid4 } from 'uuid';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { ToastContext } from '../../generic/toast-context';
 import { useCopyToClipboard } from '../../generic/clipboard';
 import { getCanEdit } from '../../course-unit/data/selectors';
 import { useCreateLibraryBlock, useLibraryPasteClipboard, useUpdateCollectionComponents } from '../data/apiHooks';
-import { getEditUrl } from '../components/utils';
 import { useLibraryContext } from '../common/context';
+import { canEditComponent } from '../components/ComponentEditorModal';
 
 import messages from './messages';
 
@@ -61,9 +61,6 @@ const AddContentButton = ({ contentType, onCreateContent } : AddContentButtonPro
 
 const AddContentContainer = () => {
   const intl = useIntl();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const currentPath = location.pathname;
   const { libraryId, collectionId } = useParams();
   const createBlockMutation = useCreateLibraryBlock();
   const updateComponentsMutation = useUpdateCollectionComponents(libraryId, collectionId);
@@ -73,6 +70,7 @@ const AddContentContainer = () => {
   const { showPasteXBlock } = useCopyToClipboard(canEdit);
   const {
     openCreateCollectionModal,
+    openComponentEditor,
   } = useLibraryContext();
 
   const collectionButtonData = {
@@ -151,14 +149,12 @@ const AddContentContainer = () => {
           blockType,
           definitionId: `${uuid4()}`,
         }).then((data) => {
-          const editUrl = getEditUrl(data.id);
+          const hasEditor = canEditComponent(data.id);
           updateComponentsMutation.mutateAsync([data.id]).catch(() => {
             showToast(intl.formatMessage(messages.errorAssociateComponentMessage));
           });
-          if (editUrl) {
-            // Pass currentPath in state so that we can come back to
-            // current page on save or cancel
-            navigate(editUrl, { state: { from: currentPath } });
+          if (hasEditor) {
+            openComponentEditor(data.id);
           } else {
             // We can't start editing this right away so just show a toast message:
             showToast(intl.formatMessage(messages.successCreateMessage));

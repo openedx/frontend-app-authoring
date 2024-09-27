@@ -1,19 +1,33 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 
 import store from './data/store';
 import Editor from './Editor';
 import ErrorBoundary from './sharedComponents/ErrorBoundary';
+import { EditorComponent } from './EditorComponent';
 
-const EditorPage = ({
-  courseId,
+interface Props extends EditorComponent {
+  blockId?: string;
+  blockType: string;
+  courseId?: string;
+  lmsEndpointUrl?: string;
+  studioEndpointUrl?: string;
+  fullScreen?: boolean;
+}
+
+/**
+ * Wraps the editors with the redux state provider.
+ * TODO: refactor some of this to be React Context and React Query
+ */
+const EditorPage: React.FC<Props> = ({
+  courseId = null,
   blockType,
-  blockId,
-  lmsEndpointUrl,
-  studioEndpointUrl,
-  onClose,
-  returnFunction,
+  blockId = null,
+  lmsEndpointUrl = null,
+  studioEndpointUrl = null,
+  onClose = null,
+  returnFunction = null,
+  fullScreen = true,
 }) => (
   <Provider store={store}>
     <ErrorBoundary
@@ -31,28 +45,11 @@ const EditorPage = ({
           lmsEndpointUrl,
           studioEndpointUrl,
           returnFunction,
+          fullScreen,
         }}
       />
     </ErrorBoundary>
   </Provider>
 );
-EditorPage.defaultProps = {
-  blockId: null,
-  courseId: null,
-  lmsEndpointUrl: null,
-  onClose: null,
-  returnFunction: null,
-  studioEndpointUrl: null,
-};
-
-EditorPage.propTypes = {
-  blockId: PropTypes.string,
-  blockType: PropTypes.string.isRequired,
-  courseId: PropTypes.string,
-  lmsEndpointUrl: PropTypes.string,
-  onClose: PropTypes.func,
-  returnFunction: PropTypes.func,
-  studioEndpointUrl: PropTypes.string,
-};
 
 export default EditorPage;
