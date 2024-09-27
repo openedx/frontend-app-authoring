@@ -84,7 +84,26 @@ describe('<CollectionInfoHeader />', () => {
     const textBox = screen.getByRole('textbox', { name: /title input/i });
 
     userEvent.clear(textBox);
-    userEvent.type(textBox, mockGetCollectionMetadata.collectionData.description);
+    userEvent.type(textBox, `${mockGetCollectionMetadata.collectionData.title}{enter}`);
+
+    await waitFor(() => expect(axiosMock.history.patch.length).toEqual(0));
+
+    expect(textBox).not.toBeInTheDocument();
+  });
+
+  it('should not update collection title if title is empty', async () => {
+    const library = await mockContentLibrary(mockContentLibrary.libraryId);
+    render(<CollectionInfoHeader library={library} collectionId={collectionId} />);
+    expect(await screen.findByText('Test Collection')).toBeInTheDocument();
+
+    const url = api.getLibraryCollectionApiUrl(library.id, collectionId);
+    axiosMock.onPatch(url).reply(200);
+
+    fireEvent.click(screen.getByRole('button', { name: /edit collection title/i }));
+
+    const textBox = screen.getByRole('textbox', { name: /title input/i });
+
+    userEvent.clear(textBox);
     userEvent.type(textBox, '{enter}');
 
     await waitFor(() => expect(axiosMock.history.patch.length).toEqual(0));

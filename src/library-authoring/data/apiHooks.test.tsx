@@ -2,6 +2,7 @@ import React from 'react';
 
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { waitFor } from '@testing-library/react';
 import { renderHook } from '@testing-library/react-hooks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MockAdapter from 'axios-mock-adapter';
@@ -10,6 +11,7 @@ import {
   getCreateLibraryBlockUrl,
   getLibraryCollectionComponentApiUrl,
   getLibraryCollectionsApiUrl,
+  getLibraryCollectionApiUrl,
 } from './api';
 import {
   useCommitLibraryChanges,
@@ -17,6 +19,7 @@ import {
   useCreateLibraryCollection,
   useRevertLibraryChanges,
   useUpdateCollectionComponents,
+  useCollection,
 } from './apiHooks';
 
 let axiosMock;
@@ -105,5 +108,19 @@ describe('library api hooks', () => {
     await result.current.mutateAsync(['some-usage-key']);
 
     expect(axiosMock.history.patch[0].url).toEqual(url);
+  });
+
+  it('should get collection metadata', async () => {
+    const libraryId = 'lib:org:1';
+    const collectionId = 'my-first-collection';
+    const url = getLibraryCollectionApiUrl(libraryId, collectionId);
+
+    axiosMock.onGet(url).reply(200, { 'test-data': 'test-value' });
+    const { result } = renderHook(() => useCollection(libraryId, collectionId), { wrapper });
+    await waitFor(() => {
+      expect(result.current.isLoading).toBeFalsy();
+    });
+    expect(result.current.data).toEqual({ testData: 'test-value' });
+    expect(axiosMock.history.get[0].url).toEqual(url);
   });
 });
