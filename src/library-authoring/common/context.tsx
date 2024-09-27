@@ -1,6 +1,5 @@
 import { useToggle } from '@openedx/paragon';
 import React from 'react';
-import { useParams } from 'react-router-dom';
 
 export enum SidebarBodyComponentId {
   AddContent = 'add-content',
@@ -41,13 +40,7 @@ const LibraryContext = React.createContext<LibraryContextData | undefined>(undef
 /**
  * React component to provide `LibraryContext`
  */
-export const LibraryProvider = (props: { children?: React.ReactNode }) => {
-  const { libraryId } = useParams();
-
-  if (libraryId === undefined) {
-    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
-    throw new Error('Error: route is missing libraryId.');
-  }
+export const LibraryProvider = (props: { children?: React.ReactNode, libraryId: string }) => {
   const [sidebarBodyComponent, setSidebarBodyComponent] = React.useState<SidebarBodyComponentId | null>(null);
   const [currentComponentUsageKey, setCurrentComponentUsageKey] = React.useState<string>();
   const [currentCollectionId, setcurrentCollectionId] = React.useState<string>();
@@ -86,7 +79,7 @@ export const LibraryProvider = (props: { children?: React.ReactNode }) => {
   }, []);
 
   const context = React.useMemo<LibraryContextData>(() => ({
-    libraryId,
+    libraryId: props.libraryId,
     sidebarBodyComponent,
     closeLibrarySidebar,
     openAddContentSidebar,
@@ -99,7 +92,7 @@ export const LibraryProvider = (props: { children?: React.ReactNode }) => {
     openCollectionInfoSidebar,
     currentCollectionId,
   }), [
-    libraryId,
+    props.libraryId,
     sidebarBodyComponent,
     closeLibrarySidebar,
     openAddContentSidebar,

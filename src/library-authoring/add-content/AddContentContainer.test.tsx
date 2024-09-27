@@ -1,6 +1,6 @@
 import {
   fireEvent,
-  render,
+  render as baseRender,
   screen,
   waitFor,
   initializeMocks,
@@ -8,18 +8,23 @@ import {
 import { mockContentLibrary } from '../data/api.mocks';
 import { getCreateLibraryBlockUrl, getLibraryPasteClipboardUrl } from '../data/api';
 import { mockBroadcastChannel, mockClipboardEmpty, mockClipboardHtml } from '../../generic/data/api.mock';
+import { LibraryProvider } from '../common/context';
 import AddContentContainer from './AddContentContainer';
 
 mockBroadcastChannel();
 
 const { libraryId } = mockContentLibrary;
-const renderOpts = { path: '/library/:libraryId/*', params: { libraryId } };
+const render = () => baseRender(<AddContentContainer />, {
+  path: '/library/:libraryId/*',
+  params: { libraryId },
+  extraWrapper: ({ children }) => <LibraryProvider libraryId={libraryId}>{ children }</LibraryProvider>,
+});
 
 describe('<AddContentContainer />', () => {
   it('should render content buttons', () => {
     initializeMocks();
     mockClipboardEmpty.applyMock();
-    render(<AddContentContainer />);
+    render();
     expect(screen.getByRole('button', { name: /collection/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /text/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /problem/i })).toBeInTheDocument();
@@ -36,7 +41,7 @@ describe('<AddContentContainer />', () => {
     const url = getCreateLibraryBlockUrl(libraryId);
     axiosMock.onPost(url).reply(200);
 
-    render(<AddContentContainer />, renderOpts);
+    render();
 
     const textButton = screen.getByRole('button', { name: /text/i });
     fireEvent.click(textButton);
@@ -48,9 +53,9 @@ describe('<AddContentContainer />', () => {
     initializeMocks();
     // Simulate having an HTML block in the clipboard:
     const getClipboardSpy = mockClipboardHtml.applyMock();
-    const doc = render(<AddContentContainer />, renderOpts);
+    render();
     expect(getClipboardSpy).toHaveBeenCalled(); // Hmm, this is getting called three times! Refactor to use react-query.
-    await waitFor(() => expect(doc.queryByRole('button', { name: /paste from clipboard/i })).toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByRole('button', { name: /paste from clipboard/i })).toBeInTheDocument());
   });
 
   it('should paste content', async () => {
@@ -61,7 +66,7 @@ describe('<AddContentContainer />', () => {
     const pasteUrl = getLibraryPasteClipboardUrl(libraryId);
     axiosMock.onPost(pasteUrl).reply(200);
 
-    render(<AddContentContainer />, renderOpts);
+    render();
 
     expect(getClipboardSpy).toHaveBeenCalled(); // Hmm, this is getting called four times! Refactor to use react-query.
 
@@ -79,7 +84,7 @@ describe('<AddContentContainer />', () => {
     const pasteUrl = getLibraryPasteClipboardUrl(libraryId);
     axiosMock.onPost(pasteUrl).reply(400);
 
-    render(<AddContentContainer />, renderOpts);
+    render();
 
     const pasteButton = await screen.findByRole('button', { name: /paste from clipboard/i });
     fireEvent.click(pasteButton);
