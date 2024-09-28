@@ -284,6 +284,7 @@
       "hits": [
         {
           "display_name": "Collection 1",
+          "block_id": "col1",
           "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque et mi ac nisi accumsan imperdiet vitae at odio. Vivamus tempor nec lorem eget lacinia. Vivamus efficitur lacus non dapibus porta. Nulla venenatis luctus nisi id posuere. Sed sollicitudin magna a sem ultrices accumsan. Praesent volutpat tortor vitae luctus rutrum. Integer.",
           "id": 1,
           "type": "collection",

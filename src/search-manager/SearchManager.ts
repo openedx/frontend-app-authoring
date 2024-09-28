@@ -166,7 +166,7 @@ export const SearchContextProvider: React.FC<{
       searchSortOrder,
       setSearchSortOrder,
       defaultSearchSortOrder,
-      closeSearchModal: props.closeSearchModal ?? (() => {}),
+      closeSearchModal: props.closeSearchModal ?? (() => { }),
       hasError: hasConnectionError || result.isError,
       ...result,
     },

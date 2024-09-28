@@ -6,18 +6,17 @@ import {
 } from '@openedx/paragon';
 import { Close } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import messages from '../messages';
+
 import { AddContentContainer, AddContentHeader } from '../add-content';
-import { LibraryContext, SidebarBodyComponentId } from '../common/context';
-import { LibraryInfo, LibraryInfoHeader } from '../library-info';
-import { ComponentInfo, ComponentInfoHeader } from '../component-info';
-import { ContentLibrary } from '../data/api';
 import { CollectionInfo, CollectionInfoHeader } from '../collections';
-import { type CollectionHit } from '../../search-manager/data/api';
+import { ContentLibrary } from '../data/api';
+import { LibraryContext, SidebarBodyComponentId } from '../common/context';
+import { ComponentInfo, ComponentInfoHeader } from '../component-info';
+import { LibraryInfo, LibraryInfoHeader } from '../library-info';
+import messages from '../messages';
 
 type LibrarySidebarProps = {
   library: ContentLibrary,
-  collection?: CollectionHit,
 };
 
 /**
@@ -29,12 +28,13 @@ type LibrarySidebarProps = {
  * You can add more components in `bodyComponentMap`.
  * Use the returned actions to open and close this sidebar.
  */
-const LibrarySidebar = ({ library, collection }: LibrarySidebarProps) => {
+const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
   const intl = useIntl();
   const {
     sidebarBodyComponent,
     closeLibrarySidebar,
     currentComponentUsageKey,
+    currentCollectionId,
   } = useContext(LibraryContext);
 
   const bodyComponentMap = {
@@ -43,7 +43,9 @@ const LibrarySidebar = ({ library, collection }: LibrarySidebarProps) => {
     [SidebarBodyComponentId.ComponentInfo]: (
       currentComponentUsageKey && <ComponentInfo usageKey={currentComponentUsageKey} />
     ),
-    [SidebarBodyComponentId.CollectionInfo]: <CollectionInfo />,
+    [SidebarBodyComponentId.CollectionInfo]: (
+      currentCollectionId && <CollectionInfo library={library} collectionId={currentCollectionId} />
+    ),
     unknown: null,
   };
 
@@ -53,7 +55,9 @@ const LibrarySidebar = ({ library, collection }: LibrarySidebarProps) => {
     [SidebarBodyComponentId.ComponentInfo]: (
       currentComponentUsageKey && <ComponentInfoHeader library={library} usageKey={currentComponentUsageKey} />
     ),
-    [SidebarBodyComponentId.CollectionInfo]: <CollectionInfoHeader collection={collection} />,
+    [SidebarBodyComponentId.CollectionInfo]: (
+      currentCollectionId && <CollectionInfoHeader library={library} collectionId={currentCollectionId} />
+    ),
     unknown: null,
   };
 

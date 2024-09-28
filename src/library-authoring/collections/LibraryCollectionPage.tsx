@@ -13,8 +13,8 @@ import {
 import { Add, InfoOutline } from '@openedx/paragon/icons';
 import { Link, useParams } from 'react-router-dom';
 
-import { SearchParams } from 'meilisearch';
 import Loading from '../../generic/Loading';
+import ErrorAlert from '../../generic/alert-error';
 import SubHeader from '../../generic/sub-header/SubHeader';
 import Header from '../../header';
 import NotFoundAlert from '../../generic/NotFoundAlert';
@@ -25,9 +25,8 @@ import {
   SearchContextProvider,
   SearchKeywordsField,
   SearchSortWidget,
-  useSearchContext,
 } from '../../search-manager';
-import { useContentLibrary } from '../data/apiHooks';
+import { useCollection, useContentLibrary } from '../data/apiHooks';
 import { LibraryContext } from '../common/context';
 import messages from './messages';
 import { LibrarySidebar } from '../library-sidebar';
@@ -92,29 +91,46 @@ const SubHeaderTitle = ({
   );
 };
 
-const LibraryCollectionPageInner = ({ libraryId }: { libraryId: string }) => {
+const LibraryCollectionPage = () => {
   const intl = useIntl();
+
+  const { libraryId, collectionId } = useParams();
+
+  if (!collectionId || !libraryId) {
+    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
+    throw new Error('Rendered without collectionId or libraryId URL parameter');
+  }
 
   const {
     sidebarBodyComponent,
     openCollectionInfoSidebar,
   } = useContext(LibraryContext);
-  const { collectionHits: [collectionData], isFetching } = useSearchContext();
+
+  const {
+    data: collectionData,
+    isLoading,
+    isError,
+    error,
+  } = useCollection(libraryId, collectionId);
 
   useEffect(() => {
-    openCollectionInfoSidebar();
-  }, []);
+    openCollectionInfoSidebar(collectionId);
+  }, [collectionData]);
 
   const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
 
   // Only show loading if collection data is not fetched from index yet
   // Loading info for search results will be handled by LibraryCollectionComponents component.
-  if (isLibLoading || (!collectionData && isFetching)) {
+  if (isLibLoading || isLoading) {
     return <Loading />;
   }
 
-  if (!libraryData || !collectionData) {
+  if (!libraryData) {
     return <NotFoundAlert />;
+  }
+
+  if (isError) {
+    return <ErrorAlert error={error} />;
   }
 
   const breadcrumbs = [
@@ -144,64 +160,46 @@ const LibraryCollectionPageInner = ({ libraryId }: { libraryId: string }) => {
           isLibrary
         />
         <Container size="xl" className="px-4 mt-4 mb-5 library-authoring-page">
-          <SubHeader
-            title={(
-              <SubHeaderTitle
-                title={collectionData.displayName}
-                canEditLibrary={libraryData.canEditLibrary}
-                infoClickHandler={openCollectionInfoSidebar}
-              />
-            )}
-            breadcrumbs={(
-              <Breadcrumb
-                ariaLabel={intl.formatMessage(messages.breadcrumbsAriaLabel)}
-                links={breadcrumbs}
-                linkAs={Link}
-              />
-            )}
-            headerActions={<HeaderActions canEditLibrary={libraryData.canEditLibrary} />}
-          />
-          <SearchKeywordsField className="w-50" placeholder={intl.formatMessage(messages.searchPlaceholder)} />
-          <div className="d-flex mt-3 mb-4 align-items-center">
-            <FilterByTags />
-            <FilterByBlockType />
-            <ClearFiltersButton />
-            <div className="flex-grow-1" />
-            <SearchSortWidget />
-          </div>
-          <LibraryCollectionComponents libraryId={libraryId} />
+          <SearchContextProvider
+            extraFilter={[`context_key = "${libraryId}"`, `collections.key = "${collectionId}"`]}
+            overrideQueries={{ collections: { limit: 0 } }}
+          >
+            <SubHeader
+              title={(
+                <SubHeaderTitle
+                  title={collectionData.title}
+                  canEditLibrary={libraryData.canEditLibrary}
+                  infoClickHandler={() => openCollectionInfoSidebar(collectionId)}
+                />
+              )}
+              breadcrumbs={(
+                <Breadcrumb
+                  ariaLabel={intl.formatMessage(messages.breadcrumbsAriaLabel)}
+                  links={breadcrumbs}
+                  linkAs={Link}
+                />
+              )}
+              headerActions={<HeaderActions canEditLibrary={libraryData.canEditLibrary} />}
+            />
+            <SearchKeywordsField className="w-50" placeholder={intl.formatMessage(messages.searchPlaceholder)} />
+            <div className="d-flex mt-3 mb-4 align-items-center">
+              <FilterByTags />
+              <FilterByBlockType />
+              <ClearFiltersButton />
+              <div className="flex-grow-1" />
+              <SearchSortWidget />
+            </div>
+            <LibraryCollectionComponents libraryId={libraryId} />
+          </SearchContextProvider>
         </Container>
         <StudioFooter />
       </div>
       { !!sidebarBodyComponent && (
         <div className="library-authoring-sidebar box-shadow-left-1 bg-white" data-testid="library-sidebar">
-          <LibrarySidebar library={libraryData} collection={collectionData} />
+          <LibrarySidebar library={libraryData} />
         </div>
       )}
     </div>
-  );
-};
-
-const LibraryCollectionPage = () => {
-  const { libraryId, collectionId } = useParams();
-
-  if (!collectionId || !libraryId) {
-    // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
-    throw new Error('Rendered without collectionId or libraryId URL parameter');
-  }
-
-  const collectionQuery: SearchParams = {
-    filter: ['type = "collection"', `context_key = "${libraryId}"`, `block_id = "${collectionId}"`],
-    limit: 1,
-  };
-
-  return (
-    <SearchContextProvider
-      extraFilter={[`context_key = "${libraryId}"`, `collections.key = "${collectionId}"`]}
-      overrideQueries={{ collections: collectionQuery }}
-    >
-      <LibraryCollectionPageInner libraryId={libraryId} />
-    </SearchContextProvider>
   );
 };
 

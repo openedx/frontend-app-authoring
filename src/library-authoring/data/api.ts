@@ -180,6 +180,8 @@ export interface CreateLibraryCollectionDataRequest {
   description: string | null;
 }
 
+export type UpdateCollectionComponentsRequest = Partial<CreateLibraryCollectionDataRequest>;
+
 /**
  * Fetch the list of XBlock types that can be added to this library
  */
@@ -317,9 +319,29 @@ export async function getXBlockOLX(usageKey: string): Promise<string> {
 }
 
 /**
+ * Get the collection metadata.
+ */
+export async function getCollectionMetadata(libraryId: string, collectionId: string): Promise<Collection> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryCollectionApiUrl(libraryId, collectionId));
+  return camelCaseObject(data);
+}
+
+/**
+ * Update collection metadata.
+ */
+export async function updateCollectionMetadata(
+  libraryId: string,
+  collectionId: string,
+  collectionData: UpdateCollectionComponentsRequest,
+) {
+  const client = getAuthenticatedHttpClient();
+  await client.patch(getLibraryCollectionApiUrl(libraryId, collectionId), collectionData);
+}
+
+/**
  * Update collection components.
  */
-export async function updateCollectionComponents(libraryId:string, collectionId: string, usageKeys: string[]) {
+export async function updateCollectionComponents(libraryId: string, collectionId: string, usageKeys: string[]) {
   await getAuthenticatedHttpClient().patch(getLibraryCollectionComponentApiUrl(libraryId, collectionId), {
     usage_keys: usageKeys,
   });
