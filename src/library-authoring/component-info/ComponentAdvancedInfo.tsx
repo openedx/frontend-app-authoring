@@ -1,26 +1,28 @@
-/* istanbul ignore file */
 /* eslint-disable import/prefer-default-export */
-// This file doesn't need test coverage nor i18n because it's only seen by devs
 import React from 'react';
+import { Collapsible } from '@openedx/paragon';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+
 import { LoadingSpinner } from '../../generic/Loading';
 import { useXBlockOLX } from '../data/apiHooks';
+import messages from './messages';
 
 interface Props {
   usageKey: string;
 }
 
-/* istanbul ignore next */
-export const ComponentDeveloperInfo: React.FC<Props> = ({ usageKey }) => {
+export const ComponentAdvancedInfo: React.FC<Props> = ({ usageKey }) => {
+  const intl = useIntl();
   const { data: olx, isLoading: isOLXLoading } = useXBlockOLX(usageKey);
   return (
-    <>
-      <hr className="w-100" />
-      <h3 className="h5">Developer Component Details</h3>
-      <p><small>(This panel is only visible in development builds.)</small></p>
+    <Collapsible
+      styling="basic"
+      title={intl.formatMessage(messages.advancedDetailsTitle)}
+    >
       <dl>
-        <dt>Usage key</dt>
-        <dd><code>{usageKey}</code></dd>
-        <dt>OLX</dt>
+        <dt><FormattedMessage {...messages.advancedDetailsUsageKey} /></dt>
+        <dd className="text-monospace small">{usageKey}</dd>
+        <dt>OLX Source</dt>
         <dd>
           {
             olx ? <code className="micro">{olx}</code> : // eslint-disable-line
@@ -29,6 +31,6 @@ export const ComponentDeveloperInfo: React.FC<Props> = ({ usageKey }) => {
           }
         </dd>
       </dl>
-    </>
+    </Collapsible>
   );
 };

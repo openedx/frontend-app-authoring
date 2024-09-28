@@ -1,6 +1,21 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
+  advancedDetailsTitle: {
+    id: 'course-authoring.library-authoring.component.advanced.title',
+    defaultMessage: 'Advanced details',
+    description: 'Heading for the advanced technical details of a component',
+  },
+  advancedDetailsOLX: {
+    id: 'course-authoring.library-authoring.component.advanced.olx',
+    defaultMessage: 'OLX Source',
+    description: 'Heading for the component\'s OLX source code',
+  },
+  advancedDetailsUsageKey: {
+    id: 'course-authoring.library-authoring.component.advanced.usage-key',
+    defaultMessage: 'ID (Usage key)',
+    description: 'Heading for the component\'s ID',
+  },
   editNameButtonAlt: {
     id: 'course-authoring.library-authoring.component.edit-name.alt',
     defaultMessage: 'Edit component name',
