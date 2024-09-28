@@ -18,7 +18,7 @@ export interface LibraryContextData {
   isCreateCollectionModalOpen: boolean;
   openCreateCollectionModal: () => void;
   closeCreateCollectionModal: () => void;
-  openCollectionInfoSidebar: (collectionId: string) => void
+  openCollectionInfoSidebar: (collectionId: string) => void;
   currentCollectionId?: string;
 }
 
