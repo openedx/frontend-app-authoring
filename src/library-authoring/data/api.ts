@@ -306,6 +306,15 @@ export async function getXBlockOLX(usageKey: string): Promise<string> {
 }
 
 /**
+ * Set the OLX for the given XBlock.
+ * Returns the OLX as it was actually saved.
+ */
+export async function setXBlockOLX(usageKey: string, newOLX: string): Promise<string> {
+  const { data } = await getAuthenticatedHttpClient().post(getXBlockOLXApiUrl(usageKey), { olx: newOLX });
+  return data.olx;
+}
+
+/**
  * Get the collection metadata.
  */
 export async function getCollectionMetadata(libraryId: string, collectionId: string): Promise<Collection> {

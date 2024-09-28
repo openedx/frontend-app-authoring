@@ -30,6 +30,7 @@ import {
   updateCollectionComponents,
   type CreateLibraryCollectionDataRequest,
   getCollectionMetadata,
+  setXBlockOLX,
 } from './api';
 
 export const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
@@ -255,7 +256,7 @@ export const useCreateLibraryCollection = (libraryId: string) => {
   });
 };
 
-/* istanbul ignore next */ // This is only used in developer builds, and the associated UI doesn't work in test or prod
+/** Get the OLX source of a library component */
 export const useXBlockOLX = (usageKey: string) => (
   useQuery({
     queryKey: xblockQueryKeys.xblockOLX(usageKey),
@@ -263,6 +264,25 @@ export const useXBlockOLX = (usageKey: string) => (
     enabled: !!usageKey,
   })
 );
+
+/**
+ * Update the OLX of a library component (advanced feature)
+ */
+export const useUpdateXBlockOLX = (usageKey: string) => {
+  const contentLibraryId = getLibraryId(usageKey);
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (newOLX: string) => setXBlockOLX(usageKey, newOLX),
+    onSuccess: (olxFromServer) => {
+      queryClient.setQueryData(xblockQueryKeys.xblockOLX(usageKey), olxFromServer);
+      // Reload the other data for this component:
+      invalidateComponentData(queryClient, contentLibraryId, usageKey);
+      // And the description and display name etc. may have changed, so refresh everything in the library too:
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(contentLibraryId) });
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, contentLibraryId) });
+    },
+  });
+};
 
 /**
  * Get the metadata for a collection in a library
