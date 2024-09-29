@@ -31,6 +31,7 @@ import {
   type CreateLibraryCollectionDataRequest,
   getCollectionMetadata,
   setXBlockOLX,
+  getXBlockAssets,
 } from './api';
 
 export const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
@@ -76,6 +77,8 @@ export const xblockQueryKeys = {
   xblockFields: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'fields'],
   /** OLX (XML representation of the fields/content) */
   xblockOLX: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'OLX'],
+  /** assets (static files) */
+  xblockAssets: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'assets'],
   componentMetadata: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'componentMetadata'],
 };
 
@@ -283,6 +286,15 @@ export const useUpdateXBlockOLX = (usageKey: string) => {
     },
   });
 };
+
+/** Get the list of assets (static files) attached to a library component */
+export const useXBlockAssets = (usageKey: string) => (
+  useQuery({
+    queryKey: xblockQueryKeys.xblockAssets(usageKey),
+    queryFn: () => getXBlockAssets(usageKey),
+    enabled: !!usageKey,
+  })
+);
 
 /**
  * Get the metadata for a collection in a library

@@ -7,11 +7,11 @@ import {
   OverlayTrigger,
   Tooltip,
 } from '@openedx/paragon';
-import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, FormattedNumber, useIntl } from '@edx/frontend-platform/i18n';
 
 import { LoadingSpinner } from '../../generic/Loading';
 import { CodeEditor, EditorAccessor } from '../../generic/CodeEditor';
-import { useUpdateXBlockOLX, useXBlockOLX } from '../data/apiHooks';
+import { useUpdateXBlockOLX, useXBlockAssets, useXBlockOLX } from '../data/apiHooks';
 import messages from './messages';
 
 interface Props {
@@ -22,6 +22,7 @@ export const ComponentAdvancedInfo: React.FC<Props> = ({ usageKey }) => {
   const intl = useIntl();
   // TODO: hide the "Edit" button if the library is read only
   const { data: olx, isLoading: isOLXLoading } = useXBlockOLX(usageKey);
+  const { data: assets, isLoading: areAssetsLoading } = useXBlockAssets(usageKey);
   const editorRef = React.useRef<EditorAccessor | undefined>(undefined);
   const [isEditingOLX, setEditingOLX] = React.useState(false);
   const olxUpdater = useUpdateXBlockOLX(usageKey);
@@ -87,6 +88,15 @@ export const ComponentAdvancedInfo: React.FC<Props> = ({ usageKey }) => {
             </>
           );
         })()}
+        </dd>
+        <dt><FormattedMessage {...messages.advancedDetailsAssets} /></dt>
+        <dd>
+          <ul>
+            { areAssetsLoading ? <li><LoadingSpinner /></li> : null }
+            { assets?.map(a => (
+              <li key={a.path}><a href={a.url}>{a.path}</a> (<FormattedNumber value={a.size} notation="compact" unit="byte" unitDisplay="narrow" />)</li>
+            )) }
+          </ul>
         </dd>
       </dl>
     </Collapsible>

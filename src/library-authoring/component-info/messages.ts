@@ -6,6 +6,11 @@ const messages = defineMessages({
     defaultMessage: 'Advanced details',
     description: 'Heading for the advanced technical details of a component',
   },
+  advancedDetailsAssets: {
+    id: 'course-authoring.library-authoring.component.advanced.assets',
+    defaultMessage: 'Assets (Files)',
+    description: 'Heading for files attached to the component',
+  },
   advancedDetailsOLX: {
     id: 'course-authoring.library-authoring.component.advanced.olx',
     defaultMessage: 'OLX Source',

@@ -42,6 +42,10 @@ export const getXBlockFieldsApiUrl = (usageKey: string) => `${getApiBaseUrl()}/a
   */
 export const getXBlockOLXApiUrl = (usageKey: string) => `${getApiBaseUrl()}/api/libraries/v2/blocks/${usageKey}/olx/`;
 /**
+  * Get the URL for the xblock Assets List API
+  */
+export const getXBlockAssetsApiUrl = (usageKey: string) => `${getApiBaseUrl()}/api/libraries/v2/blocks/${usageKey}/assets/`;
+/**
  * Get the URL for the Library Collections API.
  */
 export const getLibraryCollectionsApiUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/collections/`;
@@ -312,6 +316,14 @@ export async function getXBlockOLX(usageKey: string): Promise<string> {
 export async function setXBlockOLX(usageKey: string, newOLX: string): Promise<string> {
   const { data } = await getAuthenticatedHttpClient().post(getXBlockOLXApiUrl(usageKey), { olx: newOLX });
   return data.olx;
+}
+
+/**
+ * Fetch the asset (static file) list for the given XBlock.
+ */
+export async function getXBlockAssets(usageKey: string): Promise<{ path: string; url: string; size: number }[]> {
+  const { data } = await getAuthenticatedHttpClient().get(getXBlockAssetsApiUrl(usageKey));
+  return data.files;
 }
 
 /**
