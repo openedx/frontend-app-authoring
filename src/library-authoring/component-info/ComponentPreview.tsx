@@ -20,6 +20,7 @@ const ModalComponentPreview = ({ isOpen, close, usageKey }: ModalComponentPrevie
       title={intl.formatMessage(messages.previewModalTitle)}
       isOpen={isOpen}
       onClose={close}
+      isOverflowVisible={false}
       className="component-preview-modal"
     >
       <LibraryBlock usageKey={usageKey} />
