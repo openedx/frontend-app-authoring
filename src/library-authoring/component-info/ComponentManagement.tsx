@@ -2,17 +2,19 @@ import React from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Collapsible, Icon, Stack } from '@openedx/paragon';
-import { Tag } from '@openedx/paragon/icons';
+import { BookOpen, Tag } from '@openedx/paragon/icons';
 
 import { useLibraryBlockMetadata } from '../data/apiHooks';
 import StatusWidget from '../generic/status-widget';
 import messages from './messages';
 import { ContentTagsDrawer } from '../../content-tags-drawer';
 import { useContentTaxonomyTagsData } from '../../content-tags-drawer/data/apiHooks';
+import AddToCollectionsDrawer from './AddToCollectionsDrawer';
 
 interface ComponentManagementProps {
   usageKey: string;
 }
+
 const ComponentManagement = ({ usageKey }: ComponentManagementProps) => {
   const intl = useIntl();
   const { data: componentMetadata } = useLibraryBlockMetadata(usageKey);
@@ -69,13 +71,13 @@ const ComponentManagement = ({ usageKey }: ComponentManagementProps) => {
         defaultOpen
         title={(
           <Stack gap={1} direction="horizontal">
-            <Icon src={Tag} />
+            <Icon src={BookOpen} />
             {intl.formatMessage(messages.manageTabCollectionsTitle)}
           </Stack>
         )}
         className="border-0"
       >
-        Collections placeholder
+        <AddToCollectionsDrawer componentMetadata={componentMetadata} />
       </Collapsible>
     </Stack>
   );

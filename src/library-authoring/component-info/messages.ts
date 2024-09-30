@@ -121,6 +121,21 @@ const messages = defineMessages({
     defaultMessage: 'Component Preview',
     description: 'Title for preview modal',
   },
+  addToCollectionSubtitle: {
+    id: 'course-authoring.library-authoring.component.manage-tab.collections.subtitle',
+    defaultMessage: 'Add {displayName} to Collection',
+    description: 'Subtitle for collection section in manage tab',
+  },
+  addToCollectionSearchPlaceholder: {
+    id: 'course-authoring.library-authoring.component.manage-tab.collections.search-placeholder',
+    defaultMessage: 'Search',
+    description: 'Placeholder text for collection search in manage tab',
+  },
+  addToCollectionSelectionLabel: {
+    id: 'course-authoring.library-authoring.component.manage-tab.collections.selection-aria-label',
+    defaultMessage: 'Collection selection',
+    description: 'Aria label text for collection selection box',
+  },
 });
 
 export default messages;
