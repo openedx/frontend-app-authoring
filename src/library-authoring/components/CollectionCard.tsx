@@ -18,11 +18,11 @@ import { useDeleteCollection, useRestoreCollection } from '../data/apiHooks';
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import messages from './messages';
 
-type CollectionCardProps = {
+type CollectionMenuProps = {
   collectionHit: CollectionHit,
 };
 
-const CollectionMenu = ({ collectionHit } : CollectionCardProps) => {
+const CollectionMenu = ({ collectionHit } : CollectionMenuProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
@@ -67,10 +67,16 @@ const CollectionMenu = ({ collectionHit } : CollectionCardProps) => {
           src={MoreVert}
           iconAs={Icon}
           variant="primary"
-          alt={intl.formatMessage(messages.componentCardMenuAlt)}
+          alt={intl.formatMessage(messages.collectionCardMenuAlt)}
           data-testid="collection-card-menu-toggle"
         />
         <Dropdown.Menu>
+          <Dropdown.Item
+            as={Link}
+            to={`/library/${collectionHit.contextKey}/collection/${collectionHit.blockId}/`}
+          >
+            <FormattedMessage {...messages.menuOpen} />
+          </Dropdown.Item>
           <Dropdown.Item onClick={openDeleteModal}>
             <FormattedMessage {...messages.deleteCollection} />
           </Dropdown.Item>
@@ -89,6 +95,10 @@ const CollectionMenu = ({ collectionHit } : CollectionCardProps) => {
       />
     </>
   );
+};
+
+type CollectionCardProps = {
+  collectionHit: CollectionHit,
 };
 
 const CollectionCard = ({ collectionHit } : CollectionCardProps) => {

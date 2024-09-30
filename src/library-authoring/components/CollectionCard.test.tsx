@@ -61,7 +61,7 @@ describe('<CollectionCard />', () => {
     const openMenuItem = screen.getByRole('link', { name: 'Open' });
     expect(openMenuItem).toBeInTheDocument();
 
-    expect(openMenuItem).toHaveAttribute('href', '/library/lb:org1:Demo_Course/collection/collection1/');
+    expect(openMenuItem).toHaveAttribute('href', '/library/lb:org1:Demo_Course/collection/collection-display-name/');
   });
 
   it('should show confirmation box, delete collection and show toast to undo deletion', async () => {
@@ -71,7 +71,7 @@ describe('<CollectionCard />', () => {
 
     expect(screen.queryByText('Collection Display Formated Name')).toBeInTheDocument();
     // Open menu
-    let menuBtn = await screen.findByRole('button', { name: messages.componentCardMenuAlt.defaultMessage });
+    let menuBtn = await screen.findByRole('button', { name: messages.collectionCardMenuAlt.defaultMessage });
     userEvent.click(menuBtn);
     // find and click delete menu option.
     expect(screen.queryByText('Delete')).toBeInTheDocument();
@@ -86,7 +86,7 @@ describe('<CollectionCard />', () => {
     expect(cancelBtn).not.toBeInTheDocument();
 
     // Open menu
-    menuBtn = await screen.findByRole('button', { name: messages.componentCardMenuAlt.defaultMessage });
+    menuBtn = await screen.findByRole('button', { name: messages.collectionCardMenuAlt.defaultMessage });
     userEvent.click(menuBtn);
     // click on confirm button to delete
     deleteBtn = await screen.findByRole('button', { name: 'Delete' });
@@ -120,7 +120,7 @@ describe('<CollectionCard />', () => {
 
     expect(screen.queryByText('Collection Display Formated Name')).toBeInTheDocument();
     // Open menu
-    const menuBtn = await screen.findByRole('button', { name: messages.componentCardMenuAlt.defaultMessage });
+    const menuBtn = await screen.findByRole('button', { name: messages.collectionCardMenuAlt.defaultMessage });
     userEvent.click(menuBtn);
     // find and click delete menu option.
     const deleteBtn = await screen.findByRole('button', { name: 'Delete' });
