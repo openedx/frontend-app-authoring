@@ -100,6 +100,7 @@ export const replaceStaticWithAsset = ({
       const isCorrectAssetFormat = assetSrc.startsWith('/asset') && assetSrc.match(/\/asset-v1:\S+[+]\S+[@]\S+[+]\S+[@]/g)?.length >= 1;
       // assets in expandable text areas so not support relative urls so all assets must have the lms
       // endpoint prepended to the relative url
+      /*
       if (editorType === 'expandable') {
         if (isCorrectAssetFormat) {
           staticFullUrl = `${lmsEndpointUrl}${assetSrc}`;
@@ -114,6 +115,7 @@ export const replaceStaticWithAsset = ({
         content = currentContent.replace(currentSrc, staticFullUrl);
         hasChanges = true;
       }
+        */
     });
     if (hasChanges) { return content; }
   }
