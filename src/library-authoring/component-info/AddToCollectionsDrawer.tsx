@@ -1,32 +1,46 @@
+import { useEffect } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Icon, Scrollable, SelectableBox, Stack, useCheckboxSetValues } from '@openedx/paragon';
 import { Folder } from '@openedx/paragon/icons';
 
 import {
+  ContentHit,
   SearchContextProvider,
   SearchKeywordsField,
   SearchSortWidget,
   useSearchContext,
 } from '../../search-manager';
-import { LibraryBlockMetadata } from "../data/api";
 import messages from './messages';
 
 interface CollectionsDrawerProps {
-  componentMetadata: LibraryBlockMetadata;
+  contentHit: ContentHit;
 }
 
-const CollectionsSelectableBox = () => {
+const CollectionsSelectableBox = ({ contentHit }: CollectionsDrawerProps) => {
   const type = 'checkbox';
   const intl = useIntl();
-  const { collectionHits, isFiltered } = useSearchContext();
+  const { collectionHits } = useSearchContext();
+  const [selectedCollections, {
+    add,
+    remove,
+    set,
+    clear,
+  }] = useCheckboxSetValues(contentHit.collections?.key || []);
 
-  const [selectedCollections, { add, remove, clear }] = useCheckboxSetValues([]);
+  useEffect(() => {
+    set(contentHit.collections?.key || []);
+
+    return () => {
+      clear();
+    }
+  }, [contentHit])
+
   const handleChange = (e) => {
     e.target.checked ? add(e.target.value) : remove(e.target.value);
   };
 
   return (
-    <Scrollable className="mt-3" style={{'height': '25vh'}}>
+    <Scrollable className="mt-3 p-1" style={{'height': '25vh'}}>
       <SelectableBox.Set
         value={selectedCollections}
         type={type}
@@ -39,6 +53,7 @@ const CollectionsSelectableBox = () => {
           <SelectableBox
             className="d-inline-flex align-items-center shadow-none border border-gray-100"
             value={contentHit.blockId}
+            key={contentHit.blockId}
             inputHidden={false}
             type={type}
             aria-label={contentHit.displayName}
@@ -54,15 +69,16 @@ const CollectionsSelectableBox = () => {
   );
 }
 
-const AddToCollectionsDrawer = ({ componentMetadata }: CollectionsDrawerProps) => {
+const AddToCollectionsDrawer = ({ contentHit }: CollectionsDrawerProps) => {
   const intl = useIntl();
-  const { displayName } = componentMetadata;
+  const { displayName } = contentHit;
   return (
     <SearchContextProvider
       overrideQueries={{
         components: { limit: 0 },
         blockTypes: { limit: 0 },
       }}
+      skipUrlUpdate
     >
       <Stack className="mt-2" gap={3}>
         <FormattedMessage
@@ -76,7 +92,8 @@ const AddToCollectionsDrawer = ({ componentMetadata }: CollectionsDrawerProps) =
           />
           <SearchSortWidget iconOnly />
         </Stack>
-        <CollectionsSelectableBox />
+        {/* Set key to update selection when component usageKey changes */}
+        <CollectionsSelectableBox key={contentHit.usageKey} contentHit={contentHit} />
       </Stack>
     </SearchContextProvider>
   )

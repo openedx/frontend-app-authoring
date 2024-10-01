@@ -1,6 +1,8 @@
 import { useToggle } from '@openedx/paragon';
 import React from 'react';
 
+import { ContentHit } from '../../search-manager';
+
 export enum SidebarBodyComponentId {
   AddContent = 'add-content',
   Info = 'info',
@@ -16,9 +18,8 @@ export interface LibraryContextData {
   closeLibrarySidebar: () => void;
   openAddContentSidebar: () => void;
   openInfoSidebar: () => void;
-  openComponentInfoSidebar: (usageKey: string) => void;
-  currentComponentUsageKey?: string;
-  // "Create New Collection" modal
+  openComponentInfoSidebar: (componentHit: ContentHit) => void;
+  currentComponentData?: ContentHit;
   isCreateCollectionModalOpen: boolean;
   openCreateCollectionModal: () => void;
   closeCreateCollectionModal: () => void;
@@ -47,21 +48,20 @@ const LibraryContext = React.createContext<LibraryContextData | undefined>(undef
  */
 export const LibraryProvider = (props: { children?: React.ReactNode, libraryId: string }) => {
   const [sidebarBodyComponent, setSidebarBodyComponent] = React.useState<SidebarBodyComponentId | null>(null);
-  const [currentComponentUsageKey, setCurrentComponentUsageKey] = React.useState<string>();
+  const [currentComponentData, setCurrentComponentData] = React.useState<ContentHit>();
   const [currentCollectionId, setcurrentCollectionId] = React.useState<string>();
   const [isCreateCollectionModalOpen, openCreateCollectionModal, closeCreateCollectionModal] = useToggle(false);
   const [componentBeingEdited, openComponentEditor] = React.useState<string | undefined>();
   const closeComponentEditor = React.useCallback(() => openComponentEditor(undefined), []);
 
   const resetSidebar = React.useCallback(() => {
-    setCurrentComponentUsageKey(undefined);
+    setCurrentComponentData(undefined);
     setcurrentCollectionId(undefined);
     setSidebarBodyComponent(null);
   }, []);
 
   const closeLibrarySidebar = React.useCallback(() => {
     resetSidebar();
-    setCurrentComponentUsageKey(undefined);
   }, []);
   const openAddContentSidebar = React.useCallback(() => {
     resetSidebar();
@@ -72,9 +72,9 @@ export const LibraryProvider = (props: { children?: React.ReactNode, libraryId: 
     setSidebarBodyComponent(SidebarBodyComponentId.Info);
   }, []);
   const openComponentInfoSidebar = React.useCallback(
-    (usageKey: string) => {
+    (componentHit: ContentHit) => {
       resetSidebar();
-      setCurrentComponentUsageKey(usageKey);
+      setCurrentComponentData(componentHit);
       setSidebarBodyComponent(SidebarBodyComponentId.ComponentInfo);
     },
     [],
@@ -92,7 +92,7 @@ export const LibraryProvider = (props: { children?: React.ReactNode, libraryId: 
     openAddContentSidebar,
     openInfoSidebar,
     openComponentInfoSidebar,
-    currentComponentUsageKey,
+    currentComponentData,
     isCreateCollectionModalOpen,
     openCreateCollectionModal,
     closeCreateCollectionModal,
@@ -108,7 +108,7 @@ export const LibraryProvider = (props: { children?: React.ReactNode, libraryId: 
     openAddContentSidebar,
     openInfoSidebar,
     openComponentInfoSidebar,
-    currentComponentUsageKey,
+    currentComponentData,
     isCreateCollectionModalOpen,
     openCreateCollectionModal,
     closeCreateCollectionModal,

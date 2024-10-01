@@ -10,13 +10,15 @@ import messages from './messages';
 import { ContentTagsDrawer } from '../../content-tags-drawer';
 import { useContentTaxonomyTagsData } from '../../content-tags-drawer/data/apiHooks';
 import AddToCollectionsDrawer from './AddToCollectionsDrawer';
+import { ContentHit } from '../../search-manager';
 
 interface ComponentManagementProps {
-  usageKey: string;
+  contentHit: ContentHit;
 }
 
-const ComponentManagement = ({ usageKey }: ComponentManagementProps) => {
+const ComponentManagement = ({ contentHit }: ComponentManagementProps) => {
   const intl = useIntl();
+  const { usageKey } = contentHit;
   const { data: componentMetadata } = useLibraryBlockMetadata(usageKey);
   const { data: componentTags } = useContentTaxonomyTagsData(usageKey);
 
@@ -77,7 +79,7 @@ const ComponentManagement = ({ usageKey }: ComponentManagementProps) => {
         )}
         className="border-0"
       >
-        <AddToCollectionsDrawer componentMetadata={componentMetadata} />
+        <AddToCollectionsDrawer contentHit={contentHit} />
       </Collapsible>
     </Stack>
   );

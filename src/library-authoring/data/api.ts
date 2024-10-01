@@ -54,7 +54,7 @@ export const getLibraryCollectionsApiUrl = (libraryId: string) => `${getApiBaseU
  */
 export const getLibraryCollectionApiUrl = (libraryId: string, collectionId: string) => `${getLibraryCollectionsApiUrl(libraryId)}${collectionId}/`;
 /**
- * Get the URL for the collection API.
+ * Get the URL for the collection components API.
  */
 export const getLibraryCollectionComponentApiUrl = (libraryId: string, collectionId: string) => `${getLibraryCollectionApiUrl(libraryId, collectionId)}components/`;
 /**
