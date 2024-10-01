@@ -1,5 +1,4 @@
 import { getConfig } from '@edx/frontend-platform';
-import { useIntl } from '@edx/frontend-platform/i18n';
 import React from 'react';
 
 import { useLibraryContext } from '../common/context';
@@ -22,7 +21,6 @@ export function canEditComponent(usageKey: string): boolean {
 
 export const ComponentEditorModal: React.FC<Record<never, never>> = () => {
   const { componentBeingEdited, closeComponentEditor, libraryId } = useLibraryContext();
-  const intl = useIntl();
 
   if (componentBeingEdited === undefined) {
     return null;

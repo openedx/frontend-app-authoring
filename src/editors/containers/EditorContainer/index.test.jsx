@@ -2,17 +2,14 @@ import 'CourseAuthoring/editors/setupEditorTest';
 import { shallow } from '@edx/react-unit-test-utils';
 import { useDispatch } from 'react-redux';
 
-import { EditorContainerInternal as EditorContainer } from '.';
+import EditorContainer from '.';
 import * as hooks from './hooks';
-import { formatMessage } from '../../testUtils';
 
 const props = {
   getContent: jest.fn().mockName('props.getContent'),
   onClose: jest.fn().mockName('props.onClose'),
   validateEntry: jest.fn().mockName('props.validateEntry'),
   returnFunction: jest.fn().mockName('props.returnFunction'),
-  // inject
-  intl: { formatMessage },
 };
 
 jest.mock('./hooks', () => ({
