@@ -5,11 +5,12 @@ import store from './data/store';
 import Editor from './Editor';
 import ErrorBoundary from './sharedComponents/ErrorBoundary';
 import { EditorComponent } from './EditorComponent';
+import { EditorContextProvider } from './EditorContext';
 
 interface Props extends EditorComponent {
   blockId?: string;
   blockType: string;
-  courseId?: string;
+  courseId: string;
   lmsEndpointUrl?: string;
   studioEndpointUrl?: string;
   fullScreen?: boolean;
@@ -20,7 +21,7 @@ interface Props extends EditorComponent {
  * TODO: refactor some of this to be React Context and React Query
  */
 const EditorPage: React.FC<Props> = ({
-  courseId = null,
+  courseId,
   blockType,
   blockId = null,
   lmsEndpointUrl = null,
@@ -36,18 +37,19 @@ const EditorPage: React.FC<Props> = ({
         studioEndpointUrl,
       }}
     >
-      <Editor
-        {...{
-          onClose,
-          learningContextId: courseId,
-          blockType,
-          blockId,
-          lmsEndpointUrl,
-          studioEndpointUrl,
-          returnFunction,
-          fullScreen,
-        }}
-      />
+      <EditorContextProvider fullScreen={fullScreen} learningContextId={courseId}>
+        <Editor
+          {...{
+            onClose,
+            learningContextId: courseId,
+            blockType,
+            blockId,
+            lmsEndpointUrl,
+            studioEndpointUrl,
+            returnFunction,
+          }}
+        />
+      </EditorContextProvider>
     </ErrorBoundary>
   </Provider>
 );

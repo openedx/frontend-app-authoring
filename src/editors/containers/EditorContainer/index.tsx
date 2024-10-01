@@ -14,6 +14,7 @@ import { Close } from '@openedx/paragon/icons';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import { EditorComponent } from '../../EditorComponent';
+import { useEditorContext } from '../../EditorContext';
 import BaseModal from '../../sharedComponents/BaseModal';
 import TitleHeader from './components/TitleHeader';
 import * as hooks from './hooks';
@@ -53,7 +54,6 @@ interface Props extends EditorComponent {
   children: React.ReactNode;
   getContent: Function;
   validateEntry?: Function | null;
-  fullScreen: boolean;
 }
 
 const EditorContainer: React.FC<Props> = ({
@@ -62,10 +62,10 @@ const EditorContainer: React.FC<Props> = ({
   onClose = null,
   validateEntry = null,
   returnFunction = null,
-  fullScreen = true,
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
+  const { fullScreen } = useEditorContext();
   const isInitialized = hooks.isInitialized();
   const { isCancelConfirmOpen, openCancelConfirmModal, closeCancelConfirmModal } = hooks.cancelConfirmModalToggle();
   const handleCancel = hooks.handleCancel({ onClose, returnFunction });

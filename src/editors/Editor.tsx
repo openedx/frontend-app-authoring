@@ -7,6 +7,7 @@ import * as hooks from './hooks';
 
 import supportedEditors from './supportedEditors';
 import type { EditorComponent } from './EditorComponent';
+import { useEditorContext } from './EditorContext';
 
 export interface Props extends EditorComponent {
   blockType: string;
@@ -25,7 +26,6 @@ const Editor: React.FC<Props> = ({
   studioEndpointUrl,
   onClose = null,
   returnFunction = null,
-  fullScreen = true,
 }) => {
   const dispatch = useDispatch();
   hooks.initializeApp({
@@ -38,6 +38,7 @@ const Editor: React.FC<Props> = ({
       studioEndpointUrl,
     },
   });
+  const { fullScreen } = useEditorContext();
 
   const EditorComponent = supportedEditors[blockType];
   const innerEditor = (EditorComponent !== undefined)
