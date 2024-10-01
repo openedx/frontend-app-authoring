@@ -50,6 +50,14 @@ export const getXBlockOLXApiUrl = (usageKey: string) => `${getApiBaseUrl()}/api/
  * Get the URL for the Library Collections API.
  */
 export const getLibraryCollectionsApiUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/collections/`;
+/**
+ * Get the URL for the collection API.
+ */
+export const getLibraryCollectionApiUrl = (libraryId: string, collectionId: string) => `${getLibraryCollectionsApiUrl(libraryId)}${collectionId}/`;
+/**
+ * Get the URL for the collection API.
+ */
+export const getLibraryCollectionComponentApiUrl = (libraryId: string, collectionId: string) => `${getLibraryCollectionApiUrl(libraryId, collectionId)}components/`;
 
 export interface ContentLibrary {
   id: string;
@@ -73,6 +81,18 @@ export interface ContentLibrary {
   license: string;
   created: string | null;
   updated: string | null;
+}
+
+export interface Collection {
+  id: number;
+  key: string;
+  title: string;
+  description: string;
+  enabled: boolean;
+  createdBy: string | null;
+  created: string;
+  modified: string;
+  learningPackage: number;
 }
 
 export interface LibraryBlockType {
@@ -129,6 +149,7 @@ export interface LibraryBlockMetadata {
   lastDraftCreatedBy: string | null,
   hasUnpublishedChanges: boolean;
   created: string | null,
+  modified: string | null,
   tagsCount: number;
 }
 
@@ -158,6 +179,8 @@ export interface CreateLibraryCollectionDataRequest {
   title: string;
   description: string | null;
 }
+
+export type UpdateCollectionComponentsRequest = Partial<CreateLibraryCollectionDataRequest>;
 
 /**
  * Fetch the list of XBlock types that can be added to this library
@@ -293,4 +316,33 @@ export async function createCollection(libraryId: string, collectionData: Create
 export async function getXBlockOLX(usageKey: string): Promise<string> {
   const { data } = await getAuthenticatedHttpClient().get(getXBlockOLXApiUrl(usageKey));
   return data.olx;
+}
+
+/**
+ * Get the collection metadata.
+ */
+export async function getCollectionMetadata(libraryId: string, collectionId: string): Promise<Collection> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryCollectionApiUrl(libraryId, collectionId));
+  return camelCaseObject(data);
+}
+
+/**
+ * Update collection metadata.
+ */
+export async function updateCollectionMetadata(
+  libraryId: string,
+  collectionId: string,
+  collectionData: UpdateCollectionComponentsRequest,
+) {
+  const client = getAuthenticatedHttpClient();
+  await client.patch(getLibraryCollectionApiUrl(libraryId, collectionId), collectionData);
+}
+
+/**
+ * Update collection components.
+ */
+export async function updateCollectionComponents(libraryId: string, collectionId: string, usageKeys: string[]) {
+  await getAuthenticatedHttpClient().patch(getLibraryCollectionComponentApiUrl(libraryId, collectionId), {
+    usage_keys: usageKeys,
+  });
 }

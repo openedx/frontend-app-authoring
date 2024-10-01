@@ -16,10 +16,6 @@ import fetchMock from 'fetch-mock-jest';
 import type { Store } from 'redux';
 
 import initializeStore from '../store';
-import { executeThunk } from '../utils';
-import { getStudioHomeApiUrl } from '../studio-home/data/api';
-import { fetchStudioHomeData } from '../studio-home/data/thunks';
-import { generateGetStudioHomeDataApiResponse } from '../studio-home/factories/mockApiResponses';
 import mockResult from './__mocks__/search-result.json';
 import mockEmptyResult from './__mocks__/empty-search-result.json';
 import mockTagsFacetResult from './__mocks__/facet-search.json';
@@ -316,43 +312,7 @@ describe('<SearchUI />', () => {
       );
     });
 
-    test('click lib component result navigates to the context', async () => {
-      const data = generateGetStudioHomeDataApiResponse();
-      data.redirectToLibraryAuthoringMfe = true;
-      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, data);
-
-      await executeThunk(fetchStudioHomeData(), store.dispatch);
-
-      const { findByRole } = rendered;
-
-      const resultItem = await findByRole('button', { name: /Library Content/ });
-
-      // Clicking the "Open in new window" button should open the result in a new window:
-      const { open, location } = window;
-      window.open = jest.fn();
-      fireEvent.click(within(resultItem).getByRole('button', { name: 'Open in new window' }));
-      expect(window.open).toHaveBeenCalledWith(
-        'http://localhost:3001/library/lib:org1:libafter1',
-        '_blank',
-      );
-      window.open = open;
-
-      // @ts-ignore
-      window.location = { href: '' };
-      // Clicking in the result should navigate to the result's URL:
-      fireEvent.click(resultItem);
-      expect(window.location.href = 'http://localhost:3001/library/lib:org1:libafter1');
-      window.location = location;
-    });
-
-    test('click lib component result navigates to course-authoring/library without libraryAuthoringMfe', async () => {
-      const data = generateGetStudioHomeDataApiResponse();
-      data.redirectToLibraryAuthoringMfe = false;
-      data.libraryAuthoringMfeUrl = '';
-      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, data);
-
-      await executeThunk(fetchStudioHomeData(), store.dispatch);
-
+    test('click lib component result navigates to course-authoring/library', async () => {
       const { findByRole } = rendered;
 
       const resultItem = await findByRole('button', { name: /Library Content/ });

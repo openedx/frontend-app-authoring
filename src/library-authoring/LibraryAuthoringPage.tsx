@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from 'react';
+import { Helmet } from 'react-helmet';
 import classNames from 'classnames';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -28,7 +29,7 @@ import {
   SearchSortWidget,
 } from '../search-manager';
 import LibraryComponents from './components/LibraryComponents';
-import LibraryCollections from './LibraryCollections';
+import LibraryCollections from './collections/LibraryCollections';
 import LibraryHome from './LibraryHome';
 import { useContentLibrary } from './data/apiHooks';
 import { LibrarySidebar } from './library-sidebar';
@@ -156,6 +157,7 @@ const LibraryAuthoringPage = () => {
   return (
     <div className="d-flex">
       <div className="flex-grow-1">
+        <Helmet><title>{libraryData.title} | {process.env.SITE_NAME}</title></Helmet>
         <Header
           number={libraryData.slug}
           title={libraryData.title}

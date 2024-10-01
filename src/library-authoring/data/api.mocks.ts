@@ -1,4 +1,5 @@
 /* istanbul ignore file */
+import { mockContentTaxonomyTagsData } from '../../content-tags-drawer/data/api.mocks';
 import { createAxiosError } from '../../testUtils';
 import * as api from './api';
 
@@ -134,6 +135,7 @@ mockCreateLibraryBlock.newHtmlData = {
   lastDraftCreated: '2024-07-22T21:37:49Z',
   lastDraftCreatedBy: null,
   created: '2024-07-22T21:37:49Z',
+  modified: '2024-07-22T21:37:49Z',
   tagsCount: 0,
 } satisfies api.LibraryBlockMetadata;
 mockCreateLibraryBlock.newProblemData = {
@@ -147,11 +149,12 @@ mockCreateLibraryBlock.newProblemData = {
   lastDraftCreated: '2024-07-22T21:37:49Z',
   lastDraftCreatedBy: null,
   created: '2024-07-22T21:37:49Z',
+  modified: '2024-07-22T21:37:49Z',
   tagsCount: 0,
 } satisfies api.LibraryBlockMetadata;
 mockCreateLibraryBlock.newVideoData = {
-  id: 'lb:Axim:TEST:video:prob1',
-  defKey: 'video1',
+  id: 'lb:Axim:TEST:video:vid1',
+  defKey: 'vid1',
   blockType: 'video',
   displayName: 'New Video',
   hasUnpublishedChanges: true,
@@ -160,6 +163,7 @@ mockCreateLibraryBlock.newVideoData = {
   lastDraftCreated: '2024-07-22T21:37:49Z',
   lastDraftCreatedBy: null,
   created: '2024-07-22T21:37:49Z',
+  modified: '2024-07-22T21:37:49Z',
   tagsCount: 0,
 } satisfies api.LibraryBlockMetadata;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
@@ -180,6 +184,7 @@ export async function mockXBlockFields(usageKey: string): Promise<api.XBlockFiel
     case thisMock.usageKeyHtml: return thisMock.dataHtml;
     case thisMock.usageKeyNewHtml: return thisMock.dataNewHtml;
     case thisMock.usageKeyNewProblem: return thisMock.dataNewProblem;
+    case thisMock.usageKeyNewVideo: return thisMock.dataNewVideo;
     default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
   }
 }
@@ -204,6 +209,12 @@ mockXBlockFields.dataNewProblem = {
   data: '',
   metadata: { displayName: 'New Problem Component' },
 } satisfies api.XBlockFields;
+mockXBlockFields.usageKeyNewVideo = 'lb:Axim:TEST:video:vid1';
+mockXBlockFields.dataNewVideo = {
+  displayName: 'New Video',
+  data: '',
+  metadata: { displayName: 'New Video' },
+} satisfies api.XBlockFields;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockXBlockFields.applyMock = () => jest.spyOn(api, 'getXBlockFields').mockImplementation(mockXBlockFields);
 
@@ -217,11 +228,19 @@ mockXBlockFields.applyMock = () => jest.spyOn(api, 'getXBlockFields').mockImplem
 export async function mockLibraryBlockMetadata(usageKey: string): Promise<api.LibraryBlockMetadata> {
   const thisMock = mockLibraryBlockMetadata;
   switch (usageKey) {
+    case thisMock.usageKeyThatNeverLoads:
+      // Return a promise that never resolves, to simulate never loading:
+      return new Promise<any>(() => {});
+    case thisMock.usageKeyError404:
+      throw createAxiosError({ code: 404, message: 'Not found.', path: api.getLibraryBlockMetadataUrl(usageKey) });
     case thisMock.usageKeyNeverPublished: return thisMock.dataNeverPublished;
     case thisMock.usageKeyPublished: return thisMock.dataPublished;
+    case thisMock.usageKeyForTags: return thisMock.dataPublished;
     default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
   }
 }
+mockLibraryBlockMetadata.usageKeyThatNeverLoads = 'lb:Axim:infiniteLoading:html:123';
+mockLibraryBlockMetadata.usageKeyError404 = 'lb:Axim:error404:html:123';
 mockLibraryBlockMetadata.usageKeyNeverPublished = 'lb:Axim:TEST1:html:571fe018-f3ce-45c9-8f53-5dafcb422fd1';
 mockLibraryBlockMetadata.dataNeverPublished = {
   id: 'lb:Axim:TEST1:html:571fe018-f3ce-45c9-8f53-5dafcb422fd1',
@@ -234,6 +253,7 @@ mockLibraryBlockMetadata.dataNeverPublished = {
   lastDraftCreatedBy: null,
   hasUnpublishedChanges: false,
   created: '2024-06-20T13:54:21Z',
+  modified: '2024-06-21T13:54:21Z',
   tagsCount: 0,
 } satisfies api.LibraryBlockMetadata;
 mockLibraryBlockMetadata.usageKeyPublished = 'lb:Axim:TEST2:html:571fe018-f3ce-45c9-8f53-5dafcb422fd2';
@@ -248,7 +268,38 @@ mockLibraryBlockMetadata.dataPublished = {
   lastDraftCreatedBy: '2024-06-20T20:00:00Z',
   hasUnpublishedChanges: false,
   created: '2024-06-20T13:54:21Z',
+  modified: '2024-06-21T13:54:21Z',
   tagsCount: 0,
 } satisfies api.LibraryBlockMetadata;
+mockLibraryBlockMetadata.usageKeyForTags = mockContentTaxonomyTagsData.largeTagsId;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockLibraryBlockMetadata.applyMock = () => jest.spyOn(api, 'getLibraryBlockMetadata').mockImplementation(mockLibraryBlockMetadata);
+
+/**
+ * Mock for `getCollectionMetadata()`
+ *
+ * This mock returns a fixed response for the collection ID *collection_1*.
+ */
+export async function mockGetCollectionMetadata(libraryId: string, collectionId: string): Promise<api.Collection> {
+  if (collectionId === mockGetCollectionMetadata.collectionIdError) {
+    throw createAxiosError({ code: 400, message: 'Not found.', path: api.getLibraryCollectionApiUrl(libraryId, collectionId) });
+  }
+  return Promise.resolve(mockGetCollectionMetadata.collectionData);
+}
+mockGetCollectionMetadata.collectionId = 'collection_1';
+mockGetCollectionMetadata.collectionIdError = 'collection_error';
+mockGetCollectionMetadata.collectionData = {
+  id: 1,
+  key: 'collection_1',
+  title: 'Test Collection',
+  description: 'A collection for testing',
+  created: '2024-09-19T10:00:00Z',
+  createdBy: 'test_author',
+  modified: '2024-09-20T11:00:00Z',
+  learningPackage: 11,
+  enabled: true,
+} satisfies api.Collection;
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockGetCollectionMetadata.applyMock = () => {
+  jest.spyOn(api, 'getCollectionMetadata').mockImplementation(mockGetCollectionMetadata);
+};

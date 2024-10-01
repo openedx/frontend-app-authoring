@@ -6,12 +6,14 @@ import {
 } from '@openedx/paragon';
 import { Close } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import messages from '../messages';
+
 import { AddContentContainer, AddContentHeader } from '../add-content';
-import { LibraryContext, SidebarBodyComponentId } from '../common/context';
-import { LibraryInfo, LibraryInfoHeader } from '../library-info';
-import { ComponentInfo, ComponentInfoHeader } from '../component-info';
+import { CollectionInfo, CollectionInfoHeader } from '../collections';
 import { ContentLibrary } from '../data/api';
+import { LibraryContext, SidebarBodyComponentId } from '../common/context';
+import { ComponentInfo, ComponentInfoHeader } from '../component-info';
+import { LibraryInfo, LibraryInfoHeader } from '../library-info';
+import messages from '../messages';
 
 type LibrarySidebarProps = {
   library: ContentLibrary,
@@ -32,6 +34,7 @@ const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
     sidebarBodyComponent,
     closeLibrarySidebar,
     currentComponentUsageKey,
+    currentCollectionId,
   } = useContext(LibraryContext);
 
   const bodyComponentMap = {
@@ -39,6 +42,9 @@ const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
     [SidebarBodyComponentId.Info]: <LibraryInfo library={library} />,
     [SidebarBodyComponentId.ComponentInfo]: (
       currentComponentUsageKey && <ComponentInfo usageKey={currentComponentUsageKey} />
+    ),
+    [SidebarBodyComponentId.CollectionInfo]: (
+      currentCollectionId && <CollectionInfo library={library} collectionId={currentCollectionId} />
     ),
     unknown: null,
   };
@@ -48,6 +54,9 @@ const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
     [SidebarBodyComponentId.Info]: <LibraryInfoHeader library={library} />,
     [SidebarBodyComponentId.ComponentInfo]: (
       currentComponentUsageKey && <ComponentInfoHeader library={library} usageKey={currentComponentUsageKey} />
+    ),
+    [SidebarBodyComponentId.CollectionInfo]: (
+      currentCollectionId && <CollectionInfoHeader library={library} collectionId={currentCollectionId} />
     ),
     unknown: null,
   };

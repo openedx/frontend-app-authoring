@@ -10,9 +10,9 @@ describe('component utils', () => {
       const usageKey = 'lb:org:beta:problem:571fe018-f3ce-45c9-8f53-5dafcb422fdd';
       expect(getEditUrl(usageKey)).toStrictEqual(`/library/lib:org:beta/editor/problem/${usageKey}`);
     });
-    it('doesn\'t yet allow editing a video block', () => {
+    it('returns the right URL for editing a Video block', () => {
       const usageKey = 'lb:org:beta:video:571fe018-f3ce-45c9-8f53-5dafcb422fdd';
-      expect(getEditUrl(usageKey)).toBeUndefined();
+      expect(getEditUrl(usageKey)).toStrictEqual(`/library/lib:org:beta/editor/video/${usageKey}`);
     });
     it('doesn\'t yet allow editing a drag-and-drop-v2 block', () => {
       const usageKey = 'lb:org:beta:drag-and-drop-v2:571fe018-f3ce-45c9-8f53-5dafcb422fdd';

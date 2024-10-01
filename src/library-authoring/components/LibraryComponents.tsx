@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 
 import { useLoadOnScroll } from '../../hooks';
 import { useSearchContext } from '../../search-manager';
@@ -6,6 +6,7 @@ import { NoComponents, NoSearchResults } from '../EmptyStates';
 import { useLibraryBlockTypes } from '../data/apiHooks';
 import ComponentCard from './ComponentCard';
 import { LIBRARY_SECTION_PREVIEW_LIMIT } from './LibrarySection';
+import { LibraryContext } from '../common/context';
 
 type LibraryComponentsProps = {
   libraryId: string,
@@ -28,6 +29,7 @@ const LibraryComponents = ({ libraryId, variant }: LibraryComponentsProps) => {
     fetchNextPage,
     isFiltered,
   } = useSearchContext();
+  const { openAddContentSidebar } = useContext(LibraryContext);
 
   const componentList = variant === 'preview' ? hits.slice(0, LIBRARY_SECTION_PREVIEW_LIMIT) : hits;
 
@@ -51,7 +53,7 @@ const LibraryComponents = ({ libraryId, variant }: LibraryComponentsProps) => {
   );
 
   if (componentCount === 0) {
-    return isFiltered ? <NoSearchResults /> : <NoComponents />;
+    return isFiltered ? <NoSearchResults /> : <NoComponents handleBtnClick={openAddContentSidebar} />;
   }
 
   return (

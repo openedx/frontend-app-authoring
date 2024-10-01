@@ -1,11 +1,7 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Button, Icon } from '@openedx/paragon';
 import { ArrowBackIos } from '@openedx/paragon/icons';
-import {
-  FormattedMessage,
-  injectIntl,
-} from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
 // import VideoPreview from './components/VideoPreview';
 import { ErrorSummary } from './ErrorSummary';
@@ -20,7 +16,12 @@ import './index.scss';
 import SocialShareWidget from './components/SocialShareWidget';
 import messages from '../../messages';
 
-const VideoSettingsModal = ({
+interface Props {
+  onReturn: () => void;
+  isLibrary: boolean;
+}
+
+const VideoSettingsModal: React.FC<Props> = ({
   onReturn,
   isLibrary,
 }) => (
@@ -47,16 +48,13 @@ const VideoSettingsModal = ({
       <SocialShareWidget />
     )}
     <ThumbnailWidget />
-    <TranscriptWidget />
+    {!isLibrary && ( // Since content libraries v2 don't support static assets yet, we can't include transcripts.
+      <TranscriptWidget />
+    )}
     <DurationWidget />
     <HandoutWidget />
     <LicenseWidget />
   </>
 );
 
-VideoSettingsModal.propTypes = {
-  onReturn: PropTypes.func.isRequired,
-  isLibrary: PropTypes.func.isRequired,
-};
-
-export default injectIntl(VideoSettingsModal);
+export default VideoSettingsModal;

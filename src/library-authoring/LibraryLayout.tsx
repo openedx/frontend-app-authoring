@@ -13,6 +13,7 @@ import LibraryAuthoringPage from './LibraryAuthoringPage';
 import { LibraryProvider } from './common/context';
 import { CreateCollectionModal } from './create-collection';
 import { invalidateComponentData } from './data/apiHooks';
+import LibraryCollectionPage from './collections/LibraryCollectionPage';
 
 const LibraryLayout = () => {
   const { libraryId } = useParams();
@@ -24,14 +25,20 @@ const LibraryLayout = () => {
   }
 
   const navigate = useNavigate();
-  const goBack = React.useCallback(() => {
-    // Go back to the library
-    navigate(`/library/${libraryId}`);
+  const goBack = React.useCallback((prevPath?: string) => {
+    if (prevPath) {
+      // Redirects back to the previous route like collection page or library page
+      navigate(prevPath);
+    } else {
+      // Go back to the library
+      navigate(`/library/${libraryId}`);
+    }
   }, []);
-  const returnFunction = React.useCallback(() => {
+
+  const returnFunction = React.useCallback((prevPath?: string) => {
     // When changes are cancelled, either onClose (goBack) or this returnFunction will be called.
     // When changes are saved, this returnFunction is called.
-    goBack();
+    goBack(prevPath);
     return (args) => {
       if (args === undefined) {
         return; // Do nothing - the user cancelled the changes
@@ -57,6 +64,10 @@ const LibraryLayout = () => {
               <EditorContainer learningContextId={libraryId} onClose={goBack} returnFunction={returnFunction} />
             </PageWrap>
           )}
+        />
+        <Route
+          path="collection/:collectionId"
+          element={<LibraryCollectionPage />}
         />
         <Route
           path="*"

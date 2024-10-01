@@ -814,6 +814,24 @@ describe('ProctoredExamSettings', () => {
       });
     });
 
+    test('Exams API permission error', async () => {
+      axiosMock.onPatch(
+        `${ExamsApiService.getExamsBaseUrl()}/api/v1/configs/course_id/${defaultProps.courseId}`,
+      ).reply(403, 'error');
+
+      await act(async () => render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />)));
+      const submitButton = screen.getByTestId('submissionButton');
+      fireEvent.click(submitButton);
+      expect(axiosMock.history.post.length).toBe(1);
+      await waitFor(() => {
+        const errorAlert = screen.getByTestId('saveError');
+        expect(errorAlert.textContent).toEqual(
+          expect.stringContaining('You do not have permission to edit proctored exam settings for this course'),
+        );
+        expect(document.activeElement).toEqual(errorAlert);
+      });
+    });
+
     it('Manages focus correctly after different save statuses', async () => {
       // first make a call that will cause a save error
       axiosMock.onPost(

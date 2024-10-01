@@ -1,6 +1,5 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
 import {
   Card,
   Hyperlink,
@@ -9,16 +8,40 @@ import {
   ActionRow,
 } from '@openedx/paragon';
 import { MoreHoriz } from '@openedx/paragon/icons';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
+import { Link } from 'react-router-dom';
 
 import { COURSE_CREATOR_STATES } from '../../constants';
 import { getStudioHomeData } from '../data/selectors';
 import messages from '../messages';
 import { trimSlashes } from './utils';
 
-const CardItem = ({
-  intl,
+interface BaseProps {
+  displayName: string;
+  org: string;
+  number: string;
+  run?: string;
+  lmsLink?: string | null;
+  rerunLink?: string | null;
+  courseKey?: string;
+  isLibraries?: boolean;
+  isPaginated?: boolean;
+}
+type Props = BaseProps & (
+  /** If we should open this course/library in this MFE, this is the path to the edit page, e.g. '/course/foo' */
+  { path: string, url?: never } |
+  /**
+   * If we might be redirecting to the legacy Studio view, this is the URL to redirect to.
+   * URLs starting with '/' are assumed to be relative to the legacy Studio root.
+   */
+  { url: string, path?: never }
+);
+
+/**
+ * A card on the Studio home page that represents a Course or a Library
+ */
+const CardItem: React.FC<Props> = ({
   displayName,
   lmsLink = '',
   rerunLink = '',
@@ -28,16 +51,18 @@ const CardItem = ({
   isLibraries = false,
   courseKey = '',
   isPaginated = false,
+  path,
   url,
 }) => {
+  const intl = useIntl();
   const {
     allowCourseReruns,
     courseCreatorStatus,
     rerunCreatorStatus,
   } = useSelector(getStudioHomeData);
-  const destinationUrl = () => new URL(url, getConfig().STUDIO_BASE_URL);
+  const destinationUrl: string = path ?? new URL(url, getConfig().STUDIO_BASE_URL).toString();
   const subtitle = isLibraries ? `${org} / ${number}` : `${org} / ${number} / ${run}`;
-  const readOnlyItem = !(lmsLink || rerunLink || url);
+  const readOnlyItem = !(lmsLink || rerunLink || url || path);
   const showActions = !(readOnlyItem || isLibraries);
   const isShowRerunLink = allowCourseReruns
     && rerunCreatorStatus
@@ -49,12 +74,12 @@ const CardItem = ({
       <Card.Header
         size="sm"
         title={!readOnlyItem ? (
-          <Hyperlink
+          <Link
             className="card-item-title"
-            destination={destinationUrl().toString()}
+            to={destinationUrl}
           >
             {hasDisplayName}
-          </Hyperlink>
+          </Link>
         ) : (
           <span className="card-item-title">{displayName}</span>
         )}
@@ -70,7 +95,7 @@ const CardItem = ({
               />
               <Dropdown.Menu>
                 {isShowRerunLink && (
-                  <Dropdown.Item href={trimSlashes(rerunLink)}>
+                  <Dropdown.Item href={trimSlashes(rerunLink ?? '')}>
                     {messages.btnReRunText.defaultMessage}
                   </Dropdown.Item>
                 )}
@@ -84,7 +109,7 @@ const CardItem = ({
               {isShowRerunLink && (
                 <Hyperlink
                   className="small"
-                  destination={trimSlashes(rerunLink)}
+                  destination={trimSlashes(rerunLink ?? '')}
                   key={`action-row-rerunLink-${courseKey}`}
                 >
                   {intl.formatMessage(messages.btnReRunText)}
@@ -92,7 +117,7 @@ const CardItem = ({
               )}
               <Hyperlink
                 className="small ml-3"
-                destination={lmsLink}
+                destination={lmsLink ?? ''}
                 key={`action-row-lmsLink-${courseKey}`}
               >
                 {intl.formatMessage(messages.viewLiveBtnText)}
@@ -105,18 +130,4 @@ const CardItem = ({
   );
 };
 
-CardItem.propTypes = {
-  intl: intlShape.isRequired,
-  displayName: PropTypes.string.isRequired,
-  lmsLink: PropTypes.string,
-  rerunLink: PropTypes.string,
-  org: PropTypes.string.isRequired,
-  run: PropTypes.string,
-  number: PropTypes.string.isRequired,
-  url: PropTypes.string.isRequired,
-  isLibraries: PropTypes.bool,
-  courseKey: PropTypes.string,
-  isPaginated: PropTypes.bool,
-};
-
-export default injectIntl(CardItem);
+export default CardItem;

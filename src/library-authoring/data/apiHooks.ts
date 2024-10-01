@@ -26,10 +26,14 @@ import {
   updateXBlockFields,
   createCollection,
   getXBlockOLX,
+  updateCollectionMetadata,
+  type UpdateCollectionComponentsRequest,
+  updateCollectionComponents,
   type CreateLibraryCollectionDataRequest,
+  getCollectionMetadata,
 } from './api';
 
-const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
+export const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
   // Invalidate all content queries related to this library.
   // If we allow searching "all courses and libraries" in the future,
   // then we'd have to invalidate all `["content_search", "results"]`
@@ -61,6 +65,11 @@ export const libraryAuthoringQueryKeys = {
     'content',
     'libraryBlockTypes',
   ],
+  collection: (libraryId?: string, collectionId?: string) => [
+    ...libraryAuthoringQueryKeys.all,
+    libraryId,
+    collectionId,
+  ],
 };
 
 export const xblockQueryKeys = {
@@ -89,6 +98,7 @@ export const xblockQueryKeys = {
  */
 export function invalidateComponentData(queryClient: QueryClient, contentLibraryId: string, usageKey: string) {
   queryClient.invalidateQueries({ queryKey: xblockQueryKeys.xblockFields(usageKey) });
+  queryClient.invalidateQueries({ queryKey: xblockQueryKeys.componentMetadata(usageKey) });
   queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, contentLibraryId) });
 }
 
@@ -122,7 +132,7 @@ export const useCreateLibraryBlock = () => {
     mutationFn: createLibraryBlock,
     onSettled: (_data, _error, variables) => {
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(variables.libraryId) });
-      queryClient.invalidateQueries({ queryKey: ['content_search'] });
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, variables.libraryId) });
     },
   });
 };
@@ -270,3 +280,51 @@ export const useXBlockOLX = (usageKey: string) => (
     enabled: !!usageKey,
   })
 );
+
+/**
+ * Get the metadata for a collection in a library
+ */
+export const useCollection = (libraryId: string, collectionId: string) => (
+  useQuery({
+    enabled: !!libraryId && !!collectionId,
+    queryKey: libraryAuthoringQueryKeys.collection(libraryId, collectionId),
+    queryFn: () => getCollectionMetadata(libraryId!, collectionId!),
+  })
+);
+
+/**
+ * Use this mutation to update the fields of a collection in a library
+ */
+export const useUpdateCollection = (libraryId: string, collectionId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: UpdateCollectionComponentsRequest) => updateCollectionMetadata(libraryId, collectionId, data),
+    onSettled: () => {
+      // NOTE: We invalidate the library query here because we need to update the library's
+      // collection list.
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.collection(libraryId, collectionId) });
+    },
+  });
+};
+
+/**
+ * Use this mutation to add components to a collection in a library
+ */
+export const useUpdateCollectionComponents = (libraryId?: string, collectionId?: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (usage_keys: string[]) => {
+      if (libraryId !== undefined && collectionId !== undefined) {
+        return updateCollectionComponents(libraryId, collectionId, usage_keys);
+      }
+      return undefined;
+    },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    onSettled: (_data, _error, _variables) => {
+      if (libraryId !== undefined && collectionId !== undefined) {
+        queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+      }
+    },
+  });
+};

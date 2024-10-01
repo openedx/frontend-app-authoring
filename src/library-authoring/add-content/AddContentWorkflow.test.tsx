@@ -37,6 +37,7 @@ jest.spyOn(editorCmsApi as any, 'fetchBlockById').mockImplementation(
 );
 jest.spyOn(textEditorHooks, 'getContent').mockImplementation(() => () => '<p>Edited HTML content</p>');
 jest.mock('frontend-components-tinymce-advanced-plugins', () => ({ a11ycheckerCss: '' }));
+const saveSpy = jest.spyOn(editorCmsApi as any, 'saveBlock');
 
 const { libraryId } = mockContentLibrary;
 const renderOpts = {
@@ -74,7 +75,7 @@ describe('AddContentWorkflow test', () => {
     // using TinyMCE to enter some new HTML.
 
     // Mock the save() REST API method:
-    const saveSpy = jest.spyOn(editorCmsApi as any, 'saveBlock').mockImplementationOnce(async () => ({
+    saveSpy.mockReset().mockImplementationOnce(async () => ({
       status: 200, data: { id: mockXBlockFields.usageKeyNewHtml },
     }));
 
@@ -109,31 +110,43 @@ describe('AddContentWorkflow test', () => {
     fireEvent.change(inputA, { target: { value: '123456' } });
 
     // Mock the save() REST API method:
-    const saveSpy = jest.spyOn(editorCmsApi as any, 'saveBlock').mockImplementationOnce(async () => ({
+    saveSpy.mockReset().mockImplementationOnce(async () => ({
       status: 200, data: { id: mockXBlockFields.usageKeyNewProblem },
     }));
 
     // Click Save
     const saveButton = screen.getByLabelText('Save changes and return to learning context');
     fireEvent.click(saveButton);
-    expect(saveSpy).toHaveBeenCalledTimes(2); // TODO: why is this called twice?
+    expect(saveSpy).toHaveBeenCalledTimes(1);
   });
 
   it('can create a Video component', async () => {
-    const { mockShowToast } = initializeMocks();
+    initializeMocks();
     render(<LibraryLayout />, renderOpts);
 
     // Click "New [Component]"
     const newComponentButton = await screen.findByRole('button', { name: /New/ });
     fireEvent.click(newComponentButton);
 
-    // Pre-condition - the success toast is NOT shown yet:
-    expect(mockShowToast).not.toHaveBeenCalled();
-
     // Click "Video" to create a video component
     fireEvent.click(await screen.findByRole('button', { name: /Video/ }));
 
-    // We haven't yet implemented the video editor, so we expect only a toast to appear
-    await waitFor(() => expect(mockShowToast).toHaveBeenCalledWith('Content created successfully.'));
+    // Then the editor should open - this is the default title of a blank video in our mock
+    expect(await screen.findByRole('heading', { name: /New Video/ })).toBeInTheDocument();
+
+    // Enter the video URL
+    const urlInput = await screen.findByRole('textbox', { name: 'Video URL' });
+    fireEvent.click(urlInput);
+    fireEvent.change(urlInput, { target: { value: 'https://www.youtube.com/watch?v=9KIIlWS4mkg' } });
+
+    // Mock the save() REST API method:
+    saveSpy.mockReset().mockImplementationOnce(async () => ({
+      status: 200, data: { id: mockXBlockFields.usageKeyNewVideo },
+    }));
+
+    // Click Save
+    const saveButton = screen.getByLabelText('Save changes and return to learning context');
+    fireEvent.click(saveButton);
+    expect(saveSpy).toHaveBeenCalledTimes(1);
   });
 });

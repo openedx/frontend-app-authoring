@@ -2,13 +2,27 @@ import { useState, createContext } from 'react';
 import { thunkActions } from '../../data/redux';
 
 import { StrictDict } from '../../utils';
-// This 'module' self-import hack enables mocking during tests.
-// See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
-// should be re-thought and cleaned up to avoid this pattern.
-// eslint-disable-next-line import/no-self-import
-import * as module from './hooks';
 
-export const ErrorContext = createContext();
+type ErrRecord = Record<string, string>;
+type ErrCategory = [errors: ErrRecord, setter: (newErrors: ErrRecord) => void];
+interface ErrorContextData {
+  duration: ErrCategory;
+  handout: ErrCategory;
+  license: ErrCategory;
+  thumbnail: ErrCategory;
+  transcripts: ErrCategory;
+  videoSource: ErrCategory;
+}
+
+/* istanbul ignore next */
+export const ErrorContext = createContext<ErrorContextData>({
+  duration: [{}, () => {}],
+  handout: [{}, () => {}],
+  license: [{}, () => {}],
+  thumbnail: [{}, () => {}],
+  transcripts: [{}, () => {}],
+  videoSource: [{}, () => {}],
+});
 
 export const state = StrictDict({
   /* eslint-disable react-hooks/rules-of-hooks */
@@ -21,13 +35,13 @@ export const state = StrictDict({
   /* eslint-enable react-hooks/rules-of-hooks */
 });
 
-export const errorsHook = () => {
-  const [durationErrors, setDurationErrors] = module.state.durationErrors({});
-  const [handoutErrors, setHandoutErrors] = module.state.handoutErrors({});
-  const [licenseErrors, setLicenseErrors] = module.state.licenseErrors({});
-  const [thumbnailErrors, setThumbnailErrors] = module.state.thumbnailErrors({});
-  const [transcriptsErrors, setTranscriptsErrors] = module.state.transcriptsErrors({});
-  const [videoSourceErrors, setVideoSourceErrors] = module.state.videoSourceErrors({});
+export const errorsHook = (): { error: ErrorContextData, validateEntry: () => boolean } => {
+  const [durationErrors, setDurationErrors] = state.durationErrors({});
+  const [handoutErrors, setHandoutErrors] = state.handoutErrors({});
+  const [licenseErrors, setLicenseErrors] = state.licenseErrors({});
+  const [thumbnailErrors, setThumbnailErrors] = state.thumbnailErrors({});
+  const [transcriptsErrors, setTranscriptsErrors] = state.transcriptsErrors({});
+  const [videoSourceErrors, setVideoSourceErrors] = state.videoSourceErrors({});
 
   return {
     error: {
@@ -49,6 +63,7 @@ export const errorsHook = () => {
     },
   };
 };
+
 export const fetchVideoContent = () => ({ dispatch }) => (
   dispatch(thunkActions.video.saveVideoData())
 );

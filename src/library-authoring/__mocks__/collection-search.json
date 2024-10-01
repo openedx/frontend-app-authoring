@@ -1,0 +1,218 @@
+{
+  "comment": "This mock is captured from a real search result and roughly edited to match the mocks in src/library-authoring/data/api.mocks.ts",
+  "note": "The _formatted fields have been removed from this result and should be re-added programatically when mocking.",
+  "results": [
+    {
+      "indexUid": "studio_content",
+      "hits": [
+        {
+          "id": "lbaximtesthtml571fe018-f3ce-45c9-8f53-5dafcb422fdd-273ebd90",
+          "display_name": "Introduction to Testing",
+          "block_id": "571fe018-f3ce-45c9-8f53-5dafcb422fdd",
+          "content": {
+            "html_content": "This is a text component which uses HTML."
+          },
+          "tags": {},
+          "type": "library_block",
+          "breadcrumbs": [
+            {
+              "display_name": "Test Library"
+            }
+          ],
+          "created": 1721857069.042984,
+          "modified": 1725878053.420395,
+          "last_published": 1725035862.450613,
+          "usage_key": "lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd",
+          "block_type": "html",
+          "context_key": "lib:Axim:TEST",
+          "org": "Axim",
+          "access_id": 15,
+          "collections": {
+            "display_name": [
+              "My first collection"
+            ],
+            "key": [
+              "my-first-collection"
+            ]
+          }
+        },
+        {
+          "id": "lbaximtesthtml73a22298-bcd9-4f4c-ae34-0bc2b0612480-46b4a7f2",
+          "display_name": "Second Text Component",
+          "block_id": "73a22298-bcd9-4f4c-ae34-0bc2b0612480",
+          "content": {
+            "html_content": "Preview of the second text component here"
+          },
+          "type": "library_block",
+          "breadcrumbs": [
+            {
+              "display_name": "Test Library"
+            }
+          ],
+          "created": 1724879593.066427,
+          "modified": 1725034981.663482,
+          "last_published": 1725035862.450613,
+          "usage_key": "lb:Axim:TEST:html:73a22298-bcd9-4f4c-ae34-0bc2b0612480",
+          "block_type": "html",
+          "context_key": "lib:Axim:TEST",
+          "org": "Axim",
+          "access_id": 15,
+          "collections": {
+            "display_name": [
+              "My first collection"
+            ],
+            "key": [
+              "my-first-collection"
+            ]
+          }
+        },
+        {
+          "id": "lbaximtesthtmlbe5b5db9-26ba-4fac-86af-654538c70b5e-73dbaa95",
+          "display_name": "Third Text component",
+          "block_id": "be5b5db9-26ba-4fac-86af-654538c70b5e",
+          "content": {
+            "html_content": "This is a text component that I've edited within the library. "
+          },
+          "tags": {},
+          "type": "library_block",
+          "breadcrumbs": [
+            {
+              "display_name": "Test Library"
+            }
+          ],
+          "created": 1721857034.455737,
+          "modified": 1722551300.377488,
+          "last_published": 1724879092.002222,
+          "usage_key": "lb:Axim:TEST:html:be5b5db9-26ba-4fac-86af-654538c70b5e",
+          "block_type": "html",
+          "context_key": "lib:Axim:TEST",
+          "org": "Axim",
+          "access_id": 15,
+          "collections": {
+            "display_name": [
+              "My first collection",
+              "My second collection"
+            ],
+            "key": [
+              "my-first-collection",
+              "my-second-collection"
+            ]
+          }
+        },
+        {
+          "id": "lbaximtesthtmle59e8c73-4056-4894-bca4-062781fb3f68-46a404b2",
+          "display_name": "Text 4",
+          "block_id": "e59e8c73-4056-4894-bca4-062781fb3f68",
+          "content": {
+            "html_content": ""
+          },
+          "tags": {},
+          "type": "library_block",
+          "breadcrumbs": [
+            {
+              "display_name": "Test Library"
+            }
+          ],
+          "created": 1720774228.49832,
+          "modified": 1720774228.49832,
+          "last_published": 1724879092.002222,
+          "usage_key": "lb:Axim:TEST:html:e59e8c73-4056-4894-bca4-062781fb3f68",
+          "block_type": "html",
+          "context_key": "lib:Axim:TEST",
+          "org": "Axim",
+          "access_id": 15,
+          "collections": {
+            "display_name": [
+              "My first collection"
+            ],
+            "key": [
+              "my-first-collection"
+            ]
+          }
+        },
+        {
+          "id": "lbaximtestproblemf16116c9-516e-4bb9-b99e-103599f62417-f2798115",
+          "display_name": "Blank Problem",
+          "block_id": "f16116c9-516e-4bb9-b99e-103599f62417",
+          "content": {
+            "problem_types": [],
+            "capa_content": " "
+          },
+          "type": "library_block",
+          "breadcrumbs": [
+            {
+              "display_name": "Test Library"
+            }
+          ],
+          "created": 1724725821.973896,
+          "modified": 1724725821.973896,
+          "last_published": 1724879092.002222,
+          "usage_key": "lb:Axim:TEST:problem:f16116c9-516e-4bb9-b99e-103599f62417",
+          "block_type": "problem",
+          "context_key": "lib:Axim:TEST",
+          "org": "Axim",
+          "access_id": 15,
+          "collections": {
+            "display_name": [
+              "My first collection"
+            ],
+            "key": [
+              "my-first-collection"
+            ]
+          }
+        }
+      ],
+      "query": "",
+      "processingTimeMs": 1,
+      "limit": 20,
+      "offset": 0,
+      "estimatedTotalHits": 5
+    },
+    {
+      "indexUid": "studio_content",
+      "hits": [],
+      "query": "",
+      "processingTimeMs": 0,
+      "limit": 0,
+      "offset": 0,
+      "estimatedTotalHits": 5,
+      "facetDistribution": {
+        "block_type": {
+          "html": 4,
+          "problem": 1
+        },
+        "content.problem_types": {}
+      },
+      "facetStats": {}
+    },
+    {
+      "indexUid": "studio_content",
+      "hits": [
+        {
+          "display_name": "My first collection",
+          "block_id": "my-first-collection",
+          "description": "A collection for testing",
+          "id": 1,
+          "type": "collection",
+          "breadcrumbs": [
+            {
+              "display_name": "CS problems 2"
+            }
+          ],
+          "created": 1726740779.564664,
+          "modified": 1726840811.684142,
+          "usage_key": "lib-collection:OpenedX:CSPROB2:collection-from-meilisearch",
+          "context_key": "lib:OpenedX:CSPROB2",
+          "org": "OpenedX",
+          "access_id": 16,
+          "num_children": 5
+        }
+      ],
+      "query": "",
+      "processingTimeMs": 0,
+      "limit": 1,
+      "offset": 0,
+      "estimatedTotalHits": 1
+    }
+  ]
+}

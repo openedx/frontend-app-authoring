@@ -7,9 +7,14 @@ import {
 } from '../../testUtils';
 import { mockLibraryBlockMetadata } from '../data/api.mocks';
 import ComponentManagement from './ComponentManagement';
+import { mockContentTaxonomyTagsData } from '../../content-tags-drawer/data/api.mocks';
+
+jest.mock('../../content-tags-drawer', () => ({
+  ContentTagsDrawer: () => <div>Mocked ContentTagsDrawer</div>,
+}));
 
 /*
- * FIXME: Summarize the reason here
+ * This function is used to get the inner text of an element.
  * https://stackoverflow.com/questions/47902335/innertext-is-undefined-in-jest-test
  */
 const getInnerText = (element: Element) => element?.textContent
@@ -29,7 +34,7 @@ describe('<ComponentManagement />', () => {
     render(<ComponentManagement usageKey={mockLibraryBlockMetadata.usageKeyNeverPublished} />);
     expect(await screen.findByText('Draft')).toBeInTheDocument();
     expect(await screen.findByText('(Never Published)')).toBeInTheDocument();
-    expect(screen.getByText(matchInnerText('SPAN', 'Draft saved on June 20, 2024 at 13:54 UTC.'))).toBeInTheDocument();
+    expect(screen.getByText(matchInnerText('SPAN', 'Draft saved on June 20, 2024 at 13:54.'))).toBeInTheDocument();
   });
 
   it('should render published status', async () => {
@@ -39,7 +44,7 @@ describe('<ComponentManagement />', () => {
     expect(await screen.findByText('Published')).toBeInTheDocument();
     expect(screen.getByText('Published')).toBeInTheDocument();
     expect(
-      screen.getByText(matchInnerText('SPAN', 'Last published on June 21, 2024 at 24:00 UTC by Luke.')),
+      screen.getByText(matchInnerText('SPAN', 'Last published on June 21, 2024 at 24:00 by Luke.')),
     ).toBeInTheDocument();
   });
 
@@ -51,9 +56,8 @@ describe('<ComponentManagement />', () => {
     initializeMocks();
     mockLibraryBlockMetadata.applyMock();
     render(<ComponentManagement usageKey={mockLibraryBlockMetadata.usageKeyNeverPublished} />);
-    expect(await screen.findByText('Tags')).toBeInTheDocument();
-    // TODO: replace with actual data when implement tag list
-    expect(screen.queryByText('Tags placeholder')).toBeInTheDocument();
+    expect(await screen.findByText('Tags (0)')).toBeInTheDocument();
+    expect(screen.queryByText('Mocked ContentTagsDrawer')).toBeInTheDocument();
   });
 
   it('should not render draft status', async () => {
@@ -66,5 +70,17 @@ describe('<ComponentManagement />', () => {
     render(<ComponentManagement usageKey={mockLibraryBlockMetadata.usageKeyNeverPublished} />);
     expect(await screen.findByText('Draft')).toBeInTheDocument();
     expect(screen.queryByText('Tags')).not.toBeInTheDocument();
+  });
+
+  it('should render tag count in tagging info', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+    });
+    initializeMocks();
+    mockLibraryBlockMetadata.applyMock();
+    mockContentTaxonomyTagsData.applyMock();
+    render(<ComponentManagement usageKey={mockLibraryBlockMetadata.usageKeyForTags} />);
+    expect(await screen.findByText('Tags (6)')).toBeInTheDocument();
   });
 });

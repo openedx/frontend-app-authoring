@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 
 import { getEditUrl } from '../components/utils';
 import { ComponentMenu } from '../components';
-import { ComponentDeveloperInfo } from './ComponentDeveloperInfo';
+import ComponentDetails from './ComponentDetails';
 import ComponentManagement from './ComponentManagement';
 import ComponentPreview from './ComponentPreview';
 import messages from './messages';
@@ -50,11 +50,7 @@ const ComponentInfo = ({ usageKey }: ComponentInfoProps) => {
           <ComponentManagement usageKey={usageKey} />
         </Tab>
         <Tab eventKey="details" title={intl.formatMessage(messages.detailsTabTitle)}>
-          Details tab placeholder
-
-          {
-            (process.env.NODE_ENV === 'development' ? <ComponentDeveloperInfo usageKey={usageKey} /> : null)
-          }
+          <ComponentDetails usageKey={usageKey} />
         </Tab>
       </Tabs>
     </Stack>

@@ -14,7 +14,7 @@ import MockAdapter from 'axios-mock-adapter';
 import initializeStore from '../store';
 import { RequestStatus } from '../data/constants';
 import { COURSE_CREATOR_STATES } from '../constants';
-import { executeThunk, constructLibraryAuthoringURL } from '../utils';
+import { executeThunk } from '../utils';
 import { studioHomeMock } from './__mocks__';
 import { getStudioHomeApiUrl } from './data/api';
 import { fetchStudioHomeData } from './data/thunks';
@@ -190,27 +190,6 @@ describe('<StudioHome />', () => {
         window.open = jest.fn();
         fireEvent.click(createNewLibraryButton);
         expect(window.open).toHaveBeenCalledWith(`${studioBaseUrl}/home_library`);
-        window.open = open;
-      });
-
-      it('should navigate to the library authoring mfe', () => {
-        useSelector.mockReturnValue({
-          ...studioHomeMock,
-          courseCreatorStatus: COURSE_CREATOR_STATES.granted,
-          splitStudioHome: true,
-          redirectToLibraryAuthoringMfe: true,
-        });
-        const libraryAuthoringMfeUrl = 'http://localhost:3001';
-
-        const { getByTestId } = render(<RootWrapper />);
-        const createNewLibraryButton = getByTestId('new-library-button');
-
-        const { open } = window;
-        window.open = jest.fn();
-        fireEvent.click(createNewLibraryButton);
-        expect(window.open).toHaveBeenCalledWith(
-          `${constructLibraryAuthoringURL(libraryAuthoringMfeUrl, 'create')}`,
-        );
         window.open = open;
       });
 

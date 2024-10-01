@@ -7,14 +7,6 @@ import { durationStringFromValue } from '../../../containers/VideoEditor/compone
 
 const fetchByUnitIdOptions: AxiosRequestConfig = {};
 
-// For some reason, the local webpack-dev-server of library-authoring does not accept the normal Accept header.
-// This is a workaround only for that specific case; the idea is to only do this locally and only for library-authoring.
-if (process.env.NODE_ENV === 'development' && process.env.MFE_NAME === 'frontend-app-library-authoring') {
-  fetchByUnitIdOptions.headers = {
-    Accept: '*/*',
-  };
-}
-
 interface Pagination {
   start: number;
   end: number;

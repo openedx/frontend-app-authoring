@@ -1,6 +1,8 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import type { Filter, MeiliSearch, MultiSearchQuery } from 'meilisearch';
+import type {
+  Filter, MeiliSearch, MultiSearchQuery, SearchParams,
+} from 'meilisearch';
 
 export const getContentSearchConfigUrl = () => new URL(
   'api/content_search/v2/studio/',
@@ -99,6 +101,8 @@ interface BaseContentHit {
   id: string;
   type: 'course_block' | 'library_block' | 'collection';
   displayName: string;
+  usageKey: string;
+  blockId: string;
   /** The course or library ID */
   contextKey: string;
   org: string;
@@ -115,8 +119,6 @@ interface BaseContentHit {
  * Defined in edx-platform/openedx/core/djangoapps/content/search/documents.py
  */
 export interface ContentHit extends BaseContentHit {
-  usageKey: string;
-  blockId: string;
   /** The block_type part of the usage key. What type of XBlock this is. */
   blockType: string;
   /**
@@ -135,22 +137,41 @@ export interface ContentHit extends BaseContentHit {
  */
 export interface CollectionHit extends BaseContentHit {
   description: string;
-  componentCount?: number;
+  numChildren?: number;
 }
 
 /**
  * Convert search hits to camelCase
  * @param hit A search result directly from Meilisearch
  */
-function formatSearchHit(hit: Record<string, any>): ContentHit | CollectionHit {
+export function formatSearchHit(hit: Record<string, any>): ContentHit | CollectionHit {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const { _formatted, ...newHit } = hit;
   newHit.formatted = {
-    displayName: _formatted.display_name,
-    content: _formatted.content ?? {},
-    description: _formatted.description,
+    displayName: _formatted?.display_name,
+    content: _formatted?.content ?? {},
+    description: _formatted?.description,
   };
   return camelCaseObject(newHit);
+}
+
+export interface OverrideQueries {
+  components?: SearchParams,
+  collections?: SearchParams,
+}
+
+function applyOverrideQueries(
+  queries: MultiSearchQuery[],
+  overrideQueries?: OverrideQueries,
+): MultiSearchQuery[] {
+  const newQueries = [...queries];
+  if (overrideQueries?.components) {
+    newQueries[0] = { ...overrideQueries.components, indexUid: queries[0].indexUid };
+  }
+  if (overrideQueries?.collections) {
+    newQueries[2] = { ...overrideQueries.collections, indexUid: queries[2].indexUid };
+  }
+  return newQueries;
 }
 
 interface FetchSearchParams {
@@ -165,6 +186,7 @@ interface FetchSearchParams {
   sort?: SearchSortOption[],
   /** How many results to skip, e.g. if limit=20 then passing offset=20 gets the second page. */
   offset?: number,
+  overrideQueries?: OverrideQueries,
 }
 
 export async function fetchSearchResults({
@@ -176,6 +198,7 @@ export async function fetchSearchResults({
   tagsFilter,
   extraFilter,
   sort,
+  overrideQueries,
   offset = 0,
 }: FetchSearchParams): Promise<{
     hits: ContentHit[],
@@ -186,7 +209,7 @@ export async function fetchSearchResults({
     collectionHits: CollectionHit[],
     totalCollectionHits: number,
   }> {
-  const queries: MultiSearchQuery[] = [];
+  let queries: MultiSearchQuery[] = [];
 
   // Convert 'extraFilter' into an array
   const extraFilterFormatted = forceArray(extraFilter);
@@ -264,17 +287,44 @@ export async function fetchSearchResults({
     limit,
   });
 
+  queries = applyOverrideQueries(queries, overrideQueries);
+
   const { results } = await client.multiSearch(({ queries }));
+  const componentHitLength = results[0].hits.length;
+  const collectionHitLength = results[2].hits.length;
   return {
     hits: results[0].hits.map(formatSearchHit) as ContentHit[],
-    totalHits: results[0].totalHits ?? results[0].estimatedTotalHits ?? results[0].hits.length,
+    totalHits: results[0].totalHits ?? results[0].estimatedTotalHits ?? componentHitLength,
     blockTypes: results[1].facetDistribution?.block_type ?? {},
     problemTypes: results[1].facetDistribution?.['content.problem_types'] ?? {},
-    nextOffset: results[0].hits.length === limit || results[2].hits.length === limit ? offset + limit : undefined,
+    nextOffset: componentHitLength === limit || collectionHitLength === limit ? offset + limit : undefined,
     collectionHits: results[2].hits.map(formatSearchHit) as CollectionHit[],
-    totalCollectionHits: results[2].totalHits ?? results[2].estimatedTotalHits ?? results[2].hits.length,
+    totalCollectionHits: results[2].totalHits ?? results[2].estimatedTotalHits ?? collectionHitLength,
   };
 }
+
+/**
+ * Fetch the block types facet distribution for the search results.
+ */
+export const fetchBlockTypes = async (
+  client: MeiliSearch,
+  indexName: string,
+  extraFilter?: Filter,
+): Promise<Record<string, number>> => {
+  // Convert 'extraFilter' into an array
+  const extraFilterFormatted = forceArray(extraFilter);
+
+  const { results } = await client.multiSearch({
+    queries: [{
+      indexUid: indexName,
+      facets: ['block_type'],
+      filter: extraFilterFormatted,
+      limit: 0, // We don't need any "hits" for this - just the facetDistribution
+    }],
+  });
+
+  return results[0].facetDistribution?.block_type ?? {};
+};
 
 /** Information about a single tag in the tag tree, as returned by fetchAvailableTagOptions() */
 export interface TagEntry {
@@ -486,4 +536,20 @@ export async function fetchTagsThatMatchKeyword({
   });
 
   return { matches: Array.from(matches).map((tagPath) => ({ tagPath })), mayBeMissingResults: hits.length === limit };
+}
+
+/**
+ * Fetch single document by its id
+ */
+/* istanbul ignore next */
+export async function fetchDocumentById({ client, indexName, id } : {
+  /** The Meilisearch client instance */
+  client: MeiliSearch;
+  /** Which index to search */
+  indexName: string;
+  /** document id */
+  id: string | number;
+}): Promise<ContentHit | CollectionHit> {
+  const doc = await client.index(indexName).getDocument(id);
+  return formatSearchHit(doc);
 }

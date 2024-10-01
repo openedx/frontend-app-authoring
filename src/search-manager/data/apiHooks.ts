@@ -1,6 +1,6 @@
 import React from 'react';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import type { Filter, MeiliSearch } from 'meilisearch';
+import { type Filter, MeiliSearch } from 'meilisearch';
 
 import {
   SearchSortOption,
@@ -9,6 +9,9 @@ import {
   fetchSearchResults,
   fetchTagsThatMatchKeyword,
   getContentSearchConfig,
+  fetchDocumentById,
+  fetchBlockTypes,
+  OverrideQueries,
 } from './api';
 
 /**
@@ -16,8 +19,12 @@ import {
  * to the current user that allows it to search all content he have permission to view.
  *
  */
-export const useContentSearchConnection = () => (
-  useQuery({
+export const useContentSearchConnection = (): {
+  client?: MeiliSearch,
+  indexName?: string,
+  hasConnectionError: boolean;
+} => {
+  const { data: connectionDetails, isError: hasConnectionError } = useQuery({
     queryKey: ['content_search'],
     queryFn: getContentSearchConfig,
     cacheTime: 60 * 60_000, // Even if we're not actively using the search modal, keep it in memory up to an hour
@@ -25,8 +32,18 @@ export const useContentSearchConnection = () => (
     refetchInterval: 60 * 60_000,
     refetchOnWindowFocus: false, // This doesn't need to be refreshed when the user switches back to this tab.
     refetchOnMount: false,
-  })
-);
+  });
+
+  const indexName = connectionDetails?.indexName;
+  const client = React.useMemo(() => {
+    if (connectionDetails?.apiKey === undefined || connectionDetails?.url === undefined) {
+      return undefined;
+    }
+    return new MeiliSearch({ host: connectionDetails.url, apiKey: connectionDetails.apiKey });
+  }, [connectionDetails?.apiKey, connectionDetails?.url]);
+
+  return { client, indexName, hasConnectionError };
+};
 
 /**
  * Get the results of a search
@@ -40,6 +57,7 @@ export const useContentSearchResults = ({
   problemTypesFilter = [],
   tagsFilter = [],
   sort = [],
+  overrideQueries,
 }: {
   /** The Meilisearch API client */
   client?: MeiliSearch;
@@ -57,6 +75,8 @@ export const useContentSearchResults = ({
   tagsFilter?: string[];
   /** Sort search results using these options */
   sort?: SearchSortOption[];
+  /** Set true to fetch collections along with components */
+  overrideQueries?: OverrideQueries,
 }) => {
   const query = useInfiniteQuery({
     enabled: client !== undefined && indexName !== undefined,
@@ -72,6 +92,7 @@ export const useContentSearchResults = ({
       problemTypesFilter,
       tagsFilter,
       sort,
+      overrideQueries,
     ],
     queryFn: ({ pageParam = 0 }) => {
       if (client === undefined || indexName === undefined) {
@@ -89,6 +110,7 @@ export const useContentSearchResults = ({
         // For infinite pagination of results, we can retrieve additional pages if requested.
         // Note that if there are 20 results per page, the "second page" has offset=20, not 2.
         offset: pageParam,
+        overrideQueries,
       });
     },
     getNextPageParam: (lastPage) => lastPage.nextOffset,
@@ -221,3 +243,43 @@ export const useTagFilterOptions = (args: {
 
   return { ...mainQuery, data };
 };
+
+export const useGetBlockTypes = (extraFilters: Filter) => {
+  const { client, indexName } = useContentSearchConnection();
+  return useQuery({
+    enabled: client !== undefined && indexName !== undefined,
+    queryKey: [
+      'content_search',
+      client?.config.apiKey,
+      client?.config.host,
+      indexName,
+      extraFilters,
+      'block_types',
+    ],
+    queryFn: () => fetchBlockTypes(client!, indexName!, extraFilters),
+  });
+};
+
+/* istanbul ignore next */
+export const useGetSingleDocument = ({ client, indexName, id }: {
+  client?: MeiliSearch;
+  indexName?: string;
+  id: string | number;
+}) => (
+  useQuery({
+    enabled: client !== undefined && indexName !== undefined,
+    queryKey: [
+      'content_search',
+      client?.config.apiKey,
+      client?.config.host,
+      indexName,
+      id,
+    ],
+    queryFn: () => {
+      if (client === undefined || indexName === undefined) {
+        throw new Error('Required data unexpectedly undefined. Check "enable" condition of useQuery.');
+      }
+      return fetchDocumentById({ client, indexName, id });
+    },
+  })
+);

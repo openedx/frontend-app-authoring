@@ -8,12 +8,11 @@ import {
   Row,
 } from '@openedx/paragon';
 import { Add as AddIcon, Error } from '@openedx/paragon/icons';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { getConfig } from '@edx/frontend-platform';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { constructLibraryAuthoringURL } from '../utils';
 import Loading from '../generic/Loading';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import Header from '../header';
@@ -28,7 +27,8 @@ import messages from './messages';
 import { useStudioHome } from './hooks';
 import AlertMessage from '../generic/alert-message';
 
-const StudioHome = ({ intl }) => {
+const StudioHome = () => {
+  const intl = useIntl();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -46,7 +46,6 @@ const StudioHome = ({ intl }) => {
     hasAbilityToCreateNewCourse,
     isFiltered,
     setShowNewCourseContainer,
-    dispatch,
   } = useStudioHome(isPaginationCoursesEnabled);
 
   const libMode = getConfig().LIBRARY_MODE;
@@ -58,13 +57,11 @@ const StudioHome = ({ intl }) => {
     userIsActive,
     studioShortName,
     studioRequestEmail,
-    libraryAuthoringMfeUrl,
-    redirectToLibraryAuthoringMfe,
     showNewLibraryButton,
   } = studioHomeData;
 
   const getHeaderButtons = useCallback(() => {
-    const headerButtons = [];
+    const headerButtons: JSX.Element[] = [];
 
     if (isFailedLoadingPage || !userIsActive) {
       return headerButtons;
@@ -93,13 +90,7 @@ const StudioHome = ({ intl }) => {
     if (showNewLibraryButton || showV2LibraryURL) {
       const newLibraryClick = () => {
         if (showV2LibraryURL) {
-          if (libraryAuthoringMfeUrl && redirectToLibraryAuthoringMfe) {
-            // Library authoring MFE
-            window.open(constructLibraryAuthoringURL(libraryAuthoringMfeUrl, 'create'));
-          } else {
-            // Use course-authoring route
-            navigate('/library/create');
-          }
+          navigate('/library/create');
         } else {
           // Studio home library for legacy libraries
           window.open(`${getConfig().STUDIO_BASE_URL}/home_library`);
@@ -160,11 +151,9 @@ const StudioHome = ({ intl }) => {
             )}
             {isShowOrganizationDropdown && <OrganizationSection />}
             <TabsSection
-              tabsData={studioHomeData}
               showNewCourseContainer={showNewCourseContainer}
               onClickNewCourse={() => setShowNewCourseContainer(true)}
               isShowProcessing={isShowProcessing && !isFiltered}
-              dispatch={dispatch}
               isPaginationCoursesEnabled={isPaginationCoursesEnabled}
             />
           </section>
@@ -203,8 +192,4 @@ const StudioHome = ({ intl }) => {
   );
 };
 
-StudioHome.propTypes = {
-  intl: intlShape.isRequired,
-};
-
-export default injectIntl(StudioHome);
+export default StudioHome;

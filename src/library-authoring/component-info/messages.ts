@@ -38,7 +38,7 @@ const messages = defineMessages({
   },
   manageTabTagsTitle: {
     id: 'course-authoring.library-authoring.component.manage-tab.tags-title',
-    defaultMessage: 'Tags',
+    defaultMessage: 'Tags ({count})',
     description: 'Title for the Tags container in the management tab',
   },
   manageTabCollectionsTitle: {
@@ -50,6 +50,16 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.component.details-tab.title',
     defaultMessage: 'Details',
     description: 'Title for details tab',
+  },
+  detailsTabUsageTitle: {
+    id: 'course-authoring.library-authoring.component.details-tab.usage-title',
+    defaultMessage: 'Component Usage',
+    description: 'Title for the Component Usage container in the details tab',
+  },
+  detailsTabHistoryTitle: {
+    id: 'course-authoring.library-authoring.component.details-tab.history-title',
+    defaultMessage: 'Component History',
+    description: 'Title for the Component History container in the details tab',
   },
   previewExpandButtonTitle: {
     id: 'course-authoring.library-authoring.component.preview.expand.title',

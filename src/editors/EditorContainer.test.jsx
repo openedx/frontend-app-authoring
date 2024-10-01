@@ -8,6 +8,7 @@ jest.mock('react-router', () => ({
     blockId: 'company-id1',
     blockType: 'html',
   }),
+  useLocation: () => {},
 }));
 
 const props = { learningContextId: 'cOuRsEId' };
