@@ -78,7 +78,11 @@ export function fetchCourseAppSettings(courseId, settings) {
       dispatch(fetchCourseAppsSettingsSuccess(settingValues));
       dispatch(updateLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      dispatch(updateLoadingStatus({ status: RequestStatus.FAILED }));
+      if (error.response && error.response.status === 403) {
+        dispatch(updateLoadingStatus({ status: RequestStatus.DENIED }));
+      } else {
+        dispatch(updateLoadingStatus({ status: RequestStatus.FAILED }));
+      }
     }
   };
 }
