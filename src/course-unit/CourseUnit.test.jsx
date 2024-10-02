@@ -525,17 +525,19 @@ describe('<CourseUnit />', () => {
   });
 
   it('should display a warning alert for unpublished course unit version', async () => {
-    const { getByRole } = render(<RootWrapper />);
+    const { getAllByRole } = render(<RootWrapper />);
 
     await waitFor(() => {
-      const unpublishedAlert = getByRole('alert', { class: 'course-unit-unpublished-alert' });
+      const unpublishedAlert = getAllByRole('alert').find(
+        (el) => el.classList.contains('alert-content')
+      );
       expect(unpublishedAlert).toHaveTextContent(messages.alertUnpublishedVersion.defaultMessage);
       expect(unpublishedAlert).toHaveClass('alert-warning');
     });
   });
 
   it('should not display an unpublished alert for a course unit with explicit staff lock and unpublished status', async () => {
-    const { queryByRole } = render(<RootWrapper />);
+    const { queryAllByRole } = render(<RootWrapper />);
 
     axiosMock
       .onGet(getCourseUnitApiUrl(courseId))
@@ -547,8 +549,10 @@ describe('<CourseUnit />', () => {
     await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
 
     await waitFor(() => {
-      const unpublishedAlert = queryByRole('alert', { class: 'course-unit-unpublished-alert' });
-      expect(unpublishedAlert).toBeNull();
+      const alert = queryAllByRole('alert').find(
+        (el) => el.classList.contains('alert-content')
+      );
+      expect(alert).toBeUndefined();
     });
   });
 

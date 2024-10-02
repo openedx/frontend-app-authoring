@@ -226,7 +226,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check video sharing option shows error on failure', async () => {
-    const { findByLabelText, queryByRole } = render(<RootWrapper />);
+    const { findByLabelText, queryAllByRole } = render(<RootWrapper />);
 
     axiosMock
       .onPost(getCourseBlockApiUrl(courseId), {
@@ -247,8 +247,10 @@ describe('<CourseOutline />', () => {
       },
     }));
 
-    const alertElement = queryByRole('alert');
-    expect(alertElement).toHaveTextContent(
+    const alertElements = queryAllByRole('alert');
+    expect(alertElements.find(
+      (el) => el.classList.contains('alert-content')
+    )).toHaveTextContent(
       pageAlertMessages.alertFailedGeneric.defaultMessage,
     );
   });
@@ -511,8 +513,9 @@ describe('<CourseOutline />', () => {
         notificationDismissUrl: '/some/url',
       });
 
-    const { findByRole } = render(<RootWrapper />);
-    expect(await findByRole('alert')).toBeInTheDocument();
+    const { findByRole, findByText } = render(<RootWrapper />);
+    const alert = await findByText(pageAlertMessages.configurationErrorTitle.defaultMessage);
+    expect(alert).toBeInTheDocument();
     const dismissBtn = await findByRole('button', { name: 'Dismiss' });
     axiosMock
       .onDelete('/some/url')
@@ -2233,8 +2236,10 @@ describe('<CourseOutline />', () => {
       errorFiles: ['error.css'],
     });
 
+    let alerts = await findAllByRole('alert');
+    // Exclude processing notification toast
+    alerts = alerts.filter((el) => !el.classList.contains('toast-container'));
     // 3 alerts should be present
-    const alerts = await findAllByRole('alert');
     expect(alerts.length).toEqual(3);
 
     // check alerts for errorFiles
