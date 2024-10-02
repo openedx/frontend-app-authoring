@@ -529,7 +529,7 @@ describe('<CourseUnit />', () => {
 
     await waitFor(() => {
       const unpublishedAlert = getAllByRole('alert').find(
-        (el) => el.classList.contains('alert-content')
+        (el) => el.classList.contains('alert-content'),
       );
       expect(unpublishedAlert).toHaveTextContent(messages.alertUnpublishedVersion.defaultMessage);
       expect(unpublishedAlert).toHaveClass('alert-warning');
@@ -550,7 +550,7 @@ describe('<CourseUnit />', () => {
 
     await waitFor(() => {
       const alert = queryAllByRole('alert').find(
-        (el) => el.classList.contains('alert-content')
+        (el) => el.classList.contains('alert-content'),
       );
       expect(alert).toBeUndefined();
     });

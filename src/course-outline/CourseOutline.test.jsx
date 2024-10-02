@@ -249,7 +249,7 @@ describe('<CourseOutline />', () => {
 
     const alertElements = queryAllByRole('alert');
     expect(alertElements.find(
-      (el) => el.classList.contains('alert-content')
+      (el) => el.classList.contains('alert-content'),
     )).toHaveTextContent(
       pageAlertMessages.alertFailedGeneric.defaultMessage,
     );
