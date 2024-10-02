@@ -1,3 +1,5 @@
+// Note: there is no Editor.test.tsx. This component only works together with
+// <EditorPage> as its parent, so they are tested together in EditorPage.test.tsx
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';

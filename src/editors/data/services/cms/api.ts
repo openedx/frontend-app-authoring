@@ -19,6 +19,12 @@ interface AssetResponse {
   assets: Record<string, string>[]; // In the raw response here, these are NOT camel-cased yet.
 }
 
+type FieldsResponse = {
+  display_name: string; // In the raw response here, these are NOT camel-cased yet.
+  data: any;
+  metadata: Record<string, any>;
+} & Record<string, any>; // In courses (but not in libraries), there are many other fields returned here.
+
 interface AncestorsResponse {
   ancestors: {
     id: string;
@@ -98,7 +104,7 @@ export const processLicense = (licenseType, licenseDetails) => {
 };
 
 export const apiMethods = {
-  fetchBlockById: ({ blockId, studioEndpointUrl }) => get(
+  fetchBlockById: ({ blockId, studioEndpointUrl }): Promise<{ data: FieldsResponse }> => get(
     urls.block({ blockId, studioEndpointUrl }),
   ),
   /** A better name for this would be 'get ancestors of block' */
