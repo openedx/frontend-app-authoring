@@ -1,14 +1,3 @@
-.processing-notification {
-  display: flex;
-  .processing-notification-icon {
-    margin-right: .625rem;
-    animation: rotate 1s linear infinite;
-  }
-
-  .processing-notification-title {
-    font-size: 1rem;
-    line-height: 1.5rem;
-    color: $white;
-    margin-bottom: 0;
-  }
+.processing-notification-icon {
+  animation: rotate 1s linear infinite;
 }

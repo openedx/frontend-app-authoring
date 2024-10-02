@@ -7,15 +7,14 @@ import { capitalize } from 'lodash';
 
 const ProcessingNotification = ({ isShow, title, action, close }) => (
   <Toast
-    className='processing-notification'
     show={isShow}
     aria-hidden={isShow}
     action={action && {...action}}
     onClose={close}
   >
-    <span className="d-flex">
-      <Icon className="processing-notification-icon" src={IconSettings} />
-      <span className="processing-notification-title">{capitalize(title)}</span>
+    <span className="d-flex align-items-center">
+      <Icon className="processing-notification-icon mb-0 mr-2" src={IconSettings} />
+      <span className="font-weight-bold h4 mb-0 text-white">{capitalize(title)}</span>
     </span>
   </Toast>
 );
