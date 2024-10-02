@@ -32,11 +32,14 @@ const DeleteModal = ({
       variant={variant}
       footerNode={(
         <ActionRow>
-          <Button variant="tertiary" onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            close();
-          }}>
+          <Button
+            variant="tertiary"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              close();
+            }}
+          >
             {intl.formatMessage(messages.cancelButton)}
           </Button>
           <StatefulButton

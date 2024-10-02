@@ -5,11 +5,13 @@ import {
 import { Settings as IconSettings } from '@openedx/paragon/icons';
 import { capitalize } from 'lodash';
 
-const ProcessingNotification = ({ isShow, title, action, close }) => (
+const ProcessingNotification = ({
+  isShow, title, action, close,
+}) => (
   <Toast
     show={isShow}
     aria-hidden={isShow}
-    action={action && {...action}}
+    action={action && { ...action }}
     onClose={close}
   >
     <span className="d-flex align-items-center">
