@@ -26,6 +26,7 @@ ProcessingNotification.propTypes = {
     label: PropTypes.string.isRequired,
     onClick: PropTypes.func,
   }),
+  close: PropTypes.func.isRequired,
 };
 
 export default ProcessingNotification;

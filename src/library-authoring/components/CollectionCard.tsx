@@ -27,6 +27,7 @@ const CollectionMenu = ({ collectionHit } : CollectionMenuProps) => {
   const { showToast } = useContext(ToastContext);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
   const [confirmBtnState, setConfirmBtnState] = useState('default');
+  const { closeLibrarySidebar, currentCollectionId } = useContext(LibraryContext);
 
   const restoreCollectionMutation = useRestoreCollection(collectionHit.contextKey, collectionHit.blockId);
   const restoreCollection = useCallback(() => {
@@ -41,6 +42,11 @@ const CollectionMenu = ({ collectionHit } : CollectionMenuProps) => {
   const deleteCollectionMutation = useDeleteCollection(collectionHit.contextKey, collectionHit.blockId);
   const deleteCollection = useCallback(() => {
     setConfirmBtnState('pending');
+    if (currentCollectionId === collectionHit.blockId) {
+      // Close sidebar if current collection is open to avoid displaying
+      // deleted collection in sidebar
+      closeLibrarySidebar();
+    }
     deleteCollectionMutation.mutateAsync()
       .then(() => {
         showToast(
@@ -56,7 +62,7 @@ const CollectionMenu = ({ collectionHit } : CollectionMenuProps) => {
         setConfirmBtnState('default');
         closeDeleteModal();
       });
-  }, []);
+  }, [currentCollectionId]);
 
   return (
     <>
