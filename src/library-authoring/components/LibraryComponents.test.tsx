@@ -170,8 +170,7 @@ describe('<LibraryComponents />', () => {
     });
 
     render(<RootWrapper />);
-    const spinner = await screen.findByRole('status');
-    expect(spinner.textContent).toEqual('Loading...');
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 
   it('should render components in full variant', async () => {
