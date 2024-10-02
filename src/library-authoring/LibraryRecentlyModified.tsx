@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { orderBy } from 'lodash';
-import { CardGrid } from '@openedx/paragon';
 
 import { SearchContextProvider, useSearchContext } from '../search-manager';
 import { type CollectionHit, type ContentHit, SearchSortOption } from '../search-manager/data/api';
@@ -48,15 +47,7 @@ const RecentlyModified: React.FC<{ libraryId: string }> = ({ libraryId }) => {
         title={intl.formatMessage(messages.recentlyModifiedTitle)}
         contentCount={componentCount}
       >
-        <CardGrid
-          columnSizes={{
-            sm: 12,
-            md: 6,
-            lg: 4,
-            xl: 3,
-          }}
-          hasEqualColumnHeights
-        >
+        <div className="library-cards-grid">
           {recentItems.map((contentHit) => (
             contentHit.type === 'collection' ? (
               <CollectionCard
@@ -71,7 +62,7 @@ const RecentlyModified: React.FC<{ libraryId: string }> = ({ libraryId }) => {
               />
             )
           ))}
-        </CardGrid>
+        </div>
       </LibrarySection>
     )
     : null;
