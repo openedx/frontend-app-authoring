@@ -17,7 +17,7 @@ export const initializeApp = ({ dispatch, data }) => useEffect(
   [data],
 );
 
-export const navigateTo = (destination) => {
+export const navigateTo = (destination: string | URL) => {
   window.location.assign(destination);
 };
 

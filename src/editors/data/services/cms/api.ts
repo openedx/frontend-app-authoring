@@ -19,6 +19,15 @@ interface AssetResponse {
   assets: Record<string, string>[]; // In the raw response here, these are NOT camel-cased yet.
 }
 
+interface AncestorsResponse {
+  ancestors: {
+    id: string;
+    display_name: string; // In the raw response here, these are NOT camel-cased yet.
+    category: string;
+    has_children: boolean;
+  }[];
+}
+
 export const loadImage = (imageData) => ({
   ...imageData,
   dateAdded: new Date(imageData.dateAdded.replace(' at', '')).getTime(),
@@ -92,7 +101,8 @@ export const apiMethods = {
   fetchBlockById: ({ blockId, studioEndpointUrl }) => get(
     urls.block({ blockId, studioEndpointUrl }),
   ),
-  fetchByUnitId: ({ blockId, studioEndpointUrl }) => get(
+  /** A better name for this would be 'get ancestors of block' */
+  fetchByUnitId: ({ blockId, studioEndpointUrl }): Promise<{ data: AncestorsResponse }> => get(
     urls.blockAncestor({ studioEndpointUrl, blockId }),
     fetchByUnitIdOptions,
   ),
