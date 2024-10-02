@@ -137,7 +137,6 @@ export const useContentSearchResults = ({
     problemTypes: pages?.[0]?.problemTypes ?? {},
     status: query.status,
     isLoading: query.isLoading,
-    isFetching: query.isFetching,
     isError: query.isError,
     isFetchingNextPage: query.isFetchingNextPage,
     // Call this to load more pages. We include some "safety" features recommended by the docs: this should never be

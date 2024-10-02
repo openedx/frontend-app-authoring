@@ -37,7 +37,6 @@ export interface SearchContextData {
   hits: ContentHit[];
   totalHits: number;
   isLoading: boolean;
-  isFetching: boolean;
   hasNextPage: boolean | undefined;
   isFetchingNextPage: boolean;
   fetchNextPage: () => void;

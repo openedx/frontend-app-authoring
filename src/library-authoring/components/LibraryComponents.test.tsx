@@ -25,7 +25,6 @@ const mockUseContentLibrary = jest.fn();
 const data = {
   totalHits: 1,
   hits: [],
-  isFetching: true,
   isFetchingNextPage: false,
   hasNextPage: false,
   fetchNextPage: mockFetchNextPage,
@@ -179,7 +178,6 @@ describe('<LibraryComponents />', () => {
     mockUseSearchContext.mockReturnValue({
       ...data,
       hits: libraryComponentsMock,
-      isFetching: false,
     });
     render(<RootWrapper variant="full" />);
 
@@ -195,7 +193,6 @@ describe('<LibraryComponents />', () => {
     mockUseSearchContext.mockReturnValue({
       ...data,
       hits: libraryComponentsMock,
-      isFetching: false,
     });
     render(<RootWrapper variant="preview" />);
 
@@ -211,7 +208,6 @@ describe('<LibraryComponents />', () => {
     mockUseSearchContext.mockReturnValue({
       ...data,
       hits: libraryComponentsMock,
-      isFetching: false,
       hasNextPage: true,
     });
 
@@ -229,7 +225,6 @@ describe('<LibraryComponents />', () => {
     mockUseSearchContext.mockReturnValue({
       ...data,
       hits: libraryComponentsMock,
-      isFetching: false,
       hasNextPage: true,
     });
 

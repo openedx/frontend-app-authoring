@@ -99,7 +99,7 @@ const LibraryCollectionPageInner = ({ libraryId }: { libraryId: string }) => {
     sidebarBodyComponent,
     openCollectionInfoSidebar,
   } = useContext(LibraryContext);
-  const { collectionHits: [collectionData], isFetching } = useSearchContext();
+  const { collectionHits: [collectionData], isLoading } = useSearchContext();
 
   useEffect(() => {
     openCollectionInfoSidebar();
@@ -109,7 +109,7 @@ const LibraryCollectionPageInner = ({ libraryId }: { libraryId: string }) => {
 
   // Only show loading if collection data is not fetched from index yet
   // Loading info for search results will be handled by LibraryCollectionComponents component.
-  if (isLibLoading || (!collectionData && isFetching)) {
+  if (isLibLoading || (!collectionData && isLoading)) {
     return <Loading />;
   }
 
