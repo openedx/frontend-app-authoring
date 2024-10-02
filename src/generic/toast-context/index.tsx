@@ -49,16 +49,6 @@ export const ToastProvider = (props: ToastProviderProps) => {
     resetState();
   }, []);
 
-  // setTimeout inside useEffect to clear out previous timeout if any
-  React.useEffect(() => {
-    // Set timeout to 10 seconds if action is set else close in 5 seconds.
-    const timeout = toastAction ? 10 * 1000 : 5 * 1000;
-    const timeoutId = setTimeout(() => {
-      resetState();
-    }, timeout);
-    return () => clearTimeout(timeoutId);
-  }, [toastMessage, toastAction]);
-
   const showToast = React.useCallback((message, action?: ToastActionData) => {
     setToastMessage(message);
     setToastAction(action);
@@ -80,6 +70,7 @@ export const ToastProvider = (props: ToastProviderProps) => {
           isShow={toastMessage !== null}
           title={toastMessage}
           action={toastAction}
+          close={closeToast}
         />
       )}
     </ToastContext.Provider>

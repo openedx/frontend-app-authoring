@@ -1,36 +1,23 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import {
-  Badge, Button, Icon, Stack,
+  Icon, Toast,
 } from '@openedx/paragon';
 import { Settings as IconSettings } from '@openedx/paragon/icons';
 import { capitalize } from 'lodash';
 
-const ProcessingNotification = ({ isShow, title, action }) => (
-  <Badge
-    className={classNames('processing-notification', {
-      'is-show': isShow,
-    })}
-    variant="secondary"
+const ProcessingNotification = ({ isShow, title, action, close }) => (
+  <Toast
+    className='processing-notification'
+    show={isShow}
     aria-hidden={isShow}
+    action={action && {...action}}
+    onClose={close}
   >
-    <Stack gap={2} direction="vertical">
-      <Stack direction="horizontal">
-        <Icon className="processing-notification-icon" src={IconSettings} />
-        <h2 className="processing-notification-title">
-          {capitalize(title)}
-        </h2>
-      </Stack>
-      { action && (
-        <Button
-          variant="primary"
-          onClick={action.onClick}
-        >{action.label}
-        </Button>
-      )}
-    </Stack>
-  </Badge>
+    <span className="d-flex">
+      <Icon className="processing-notification-icon" src={IconSettings} />
+      <span className="processing-notification-title">{capitalize(title)}</span>
+    </span>
+  </Toast>
 );
 
 ProcessingNotification.propTypes = {
