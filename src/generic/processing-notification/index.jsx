@@ -4,15 +4,17 @@ import {
 } from '@openedx/paragon';
 import { Settings as IconSettings } from '@openedx/paragon/icons';
 import { capitalize } from 'lodash';
+import classNames from 'classnames';
 
 const ProcessingNotification = ({
   isShow, title, action, close,
 }) => (
   <Toast
+    className={classNames({ 'processing-notification-hide-close-button': !close })}
     show={isShow}
     aria-hidden={isShow}
     action={action && { ...action }}
-    onClose={close}
+    onClose={close || (() => {})}
   >
     <span className="d-flex align-items-center">
       <Icon className="processing-notification-icon mb-0 mr-2" src={IconSettings} />
@@ -21,6 +23,10 @@ const ProcessingNotification = ({
   </Toast>
 );
 
+ProcessingNotification.defaultProps = {
+  close: null,
+};
+
 ProcessingNotification.propTypes = {
   isShow: PropTypes.bool.isRequired,
   title: PropTypes.string.isRequired,
@@ -28,7 +34,7 @@ ProcessingNotification.propTypes = {
     label: PropTypes.string.isRequired,
     onClick: PropTypes.func,
   }),
-  close: PropTypes.func.isRequired,
+  close: PropTypes.func,
 };
 
 export default ProcessingNotification;
