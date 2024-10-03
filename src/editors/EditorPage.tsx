@@ -14,6 +14,7 @@ interface Props extends EditorComponent {
   lmsEndpointUrl?: string;
   studioEndpointUrl?: string;
   fullScreen?: boolean;
+  children?: never;
 }
 
 /**
