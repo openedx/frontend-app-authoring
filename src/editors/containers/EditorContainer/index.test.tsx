@@ -68,6 +68,12 @@ describe('EditorContainer', () => {
     fireEvent.click(closeButton);
     // Now we should see the confirmation message:
     expect(await screen.findByText(confirmMessage)).toBeInTheDocument();
+
+    expect(defaultPropsHtml.onClose).not.toHaveBeenCalled();
+    // And can confirm the cancelation:
+    const confirmButton = await screen.findByRole('button', { name: 'OK' });
+    fireEvent.click(confirmButton);
+    expect(defaultPropsHtml.onClose).toHaveBeenCalled();
   });
 
   test('it disables the save button until the fields have been loaded', async () => {
