@@ -38,7 +38,7 @@ export const searchAndSortHooks = () => {
 };
 
 export const filteredList = ({ searchString, imageList }) => (
-  imageList.filter(({ displayName }) => displayName?.toLowerCase().includes(searchString?.toLowerCase()))
+  imageList.filter(({ expandedPath }) => expandedPath?.toLowerCase().includes(searchString?.toLowerCase()))
 );
 
 export const displayList = ({ sortBy, searchString, images }) => (
