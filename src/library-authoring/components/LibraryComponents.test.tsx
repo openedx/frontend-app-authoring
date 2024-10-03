@@ -77,7 +77,6 @@ describe('<LibraryComponents />', () => {
 
   afterEach(() => {
     fetchMock.reset();
-    mockFetchNextPage.mockReset();
   });
 
   it('should render empty state', async () => {

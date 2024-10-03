@@ -178,6 +178,9 @@ export function initializeMocks({ user = defaultUser, initialState = undefined }
     toastMessage: null,
   };
 
+  // Clear the call counts etc. of all mocks. This doesn't remove the mock's effects; just clears their history.
+  jest.clearAllMocks();
+
   return {
     reduxStore,
     axiosMock,

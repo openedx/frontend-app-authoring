@@ -45,7 +45,6 @@ const fieldsHtml = {
 describe('EditorPage', () => {
   beforeEach(() => {
     initializeMocks();
-    jest.clearAllMocks();
   });
 
   test('it can display the Text (html) editor in a modal', async () => {

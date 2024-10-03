@@ -47,7 +47,6 @@ const fieldsHtml = {
 describe('EditorContainer', () => {
   beforeEach(() => {
     initializeMocks();
-    jest.clearAllMocks();
   });
 
   test('it displays a confirmation dialog when closing the editor modal', async () => {

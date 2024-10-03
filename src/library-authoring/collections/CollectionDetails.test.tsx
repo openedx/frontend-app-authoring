@@ -34,8 +34,6 @@ describe('<CollectionDetails />', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
-    axiosMock.restore();
     fetchMock.mockReset();
   });
 

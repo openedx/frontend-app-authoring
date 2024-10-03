@@ -55,10 +55,6 @@ describe('<ContentTagsDrawer />', () => {
     initializeMocks();
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   it('should render page and page title correctly', () => {
     renderDrawer(stagedTagsId);
     expect(screen.getByText('Manage tags')).toBeInTheDocument();
