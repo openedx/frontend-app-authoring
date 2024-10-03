@@ -11,12 +11,18 @@ import {
 } from '../testUtils';
 import mockResult from './__mocks__/library-search.json';
 import mockEmptyResult from '../search-modal/__mocks__/empty-search-result.json';
-import { mockContentLibrary, mockLibraryBlockTypes, mockXBlockFields } from './data/api.mocks';
+import {
+  mockContentLibrary,
+  mockGetCollectionMetadata,
+  mockLibraryBlockTypes,
+  mockXBlockFields,
+} from './data/api.mocks';
 import { mockContentSearchConfig } from '../search-manager/data/api.mock';
 import { mockBroadcastChannel } from '../generic/data/api.mock';
 import { LibraryLayout } from '.';
 import { getLibraryCollectionsApiUrl } from './data/api';
 
+mockGetCollectionMetadata.applyMock();
 mockContentSearchConfig.applyMock();
 mockContentLibrary.applyMock();
 mockLibraryBlockTypes.applyMock();
@@ -451,6 +457,25 @@ describe('<LibraryAuthoringPage />', () => {
     const { getByRole, getByText } = within(sidebar);
 
     await waitFor(() => expect(getByText(displayName)).toBeInTheDocument());
+
+    const closeButton = getByRole('button', { name: /close/i });
+    fireEvent.click(closeButton);
+
+    await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
+  });
+
+  it('should open and close the collection sidebar', async () => {
+    await renderLibraryPage();
+
+    // Click on the first component. It could appear twice, in both "Recently Modified" and "Collections"
+    fireEvent.click((await screen.findAllByText('Collection 1'))[0]);
+
+    const sidebar = screen.getByTestId('library-sidebar');
+
+    const { getByRole, getByText } = within(sidebar);
+
+    // The mock data for the sidebar has a title of "Test Collection"
+    await waitFor(() => expect(getByText('Test Collection')).toBeInTheDocument());
 
     const closeButton = getByRole('button', { name: /close/i });
     fireEvent.click(closeButton);

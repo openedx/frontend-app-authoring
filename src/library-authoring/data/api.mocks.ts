@@ -1,4 +1,5 @@
 /* istanbul ignore file */
+import { mockContentTaxonomyTagsData } from '../../content-tags-drawer/data/api.mocks';
 import { createAxiosError } from '../../testUtils';
 import * as api from './api';
 
@@ -234,6 +235,7 @@ export async function mockLibraryBlockMetadata(usageKey: string): Promise<api.Li
       throw createAxiosError({ code: 404, message: 'Not found.', path: api.getLibraryBlockMetadataUrl(usageKey) });
     case thisMock.usageKeyNeverPublished: return thisMock.dataNeverPublished;
     case thisMock.usageKeyPublished: return thisMock.dataPublished;
+    case thisMock.usageKeyForTags: return thisMock.dataPublished;
     default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
   }
 }
@@ -269,5 +271,35 @@ mockLibraryBlockMetadata.dataPublished = {
   modified: '2024-06-21T13:54:21Z',
   tagsCount: 0,
 } satisfies api.LibraryBlockMetadata;
+mockLibraryBlockMetadata.usageKeyForTags = mockContentTaxonomyTagsData.largeTagsId;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockLibraryBlockMetadata.applyMock = () => jest.spyOn(api, 'getLibraryBlockMetadata').mockImplementation(mockLibraryBlockMetadata);
+
+/**
+ * Mock for `getCollectionMetadata()`
+ *
+ * This mock returns a fixed response for the collection ID *collection_1*.
+ */
+export async function mockGetCollectionMetadata(libraryId: string, collectionId: string): Promise<api.Collection> {
+  if (collectionId === mockGetCollectionMetadata.collectionIdError) {
+    throw createAxiosError({ code: 400, message: 'Not found.', path: api.getLibraryCollectionApiUrl(libraryId, collectionId) });
+  }
+  return Promise.resolve(mockGetCollectionMetadata.collectionData);
+}
+mockGetCollectionMetadata.collectionId = 'collection_1';
+mockGetCollectionMetadata.collectionIdError = 'collection_error';
+mockGetCollectionMetadata.collectionData = {
+  id: 1,
+  key: 'collection_1',
+  title: 'Test Collection',
+  description: 'A collection for testing',
+  created: '2024-09-19T10:00:00Z',
+  createdBy: 'test_author',
+  modified: '2024-09-20T11:00:00Z',
+  learningPackage: 11,
+  enabled: true,
+} satisfies api.Collection;
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockGetCollectionMetadata.applyMock = () => {
+  jest.spyOn(api, 'getCollectionMetadata').mockImplementation(mockGetCollectionMetadata);
+};

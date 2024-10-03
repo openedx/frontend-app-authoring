@@ -1,6 +1,6 @@
 import { getConfig, getPath } from '@edx/frontend-platform';
 
-import { getFileSizeToClosestByte, createCorrectInternalRoute, constructLibraryAuthoringURL } from './utils';
+import { getFileSizeToClosestByte, createCorrectInternalRoute } from './utils';
 
 jest.mock('@edx/frontend-platform', () => ({
   getConfig: jest.fn(),
@@ -76,32 +76,5 @@ describe('FilesAndUploads utils', () => {
 
       expect(result).toBe('/course-authoring/some/path');
     });
-  });
-});
-
-describe('constructLibraryAuthoringURL', () => {
-  it('should construct URL given no trailing `/` in base and no starting `/` in path', () => {
-    const libraryAuthoringMfeUrl = 'http://localhost:3001';
-    const path = 'example';
-    const constructedURL = constructLibraryAuthoringURL(libraryAuthoringMfeUrl, path);
-    expect(constructedURL).toEqual('http://localhost:3001/example');
-  });
-  it('should construct URL given a trailing `/` in base and no starting `/` in path', () => {
-    const libraryAuthoringMfeUrl = 'http://localhost:3001/';
-    const path = 'example';
-    const constructedURL = constructLibraryAuthoringURL(libraryAuthoringMfeUrl, path);
-    expect(constructedURL).toEqual('http://localhost:3001/example');
-  });
-  it('should construct URL with no trailing `/` in base and a starting `/` in path', () => {
-    const libraryAuthoringMfeUrl = 'http://localhost:3001';
-    const path = '/example';
-    const constructedURL = constructLibraryAuthoringURL(libraryAuthoringMfeUrl, path);
-    expect(constructedURL).toEqual('http://localhost:3001/example');
-  });
-  it('should construct URL with a trailing `/` in base and a starting `/` in path', () => {
-    const libraryAuthoringMfeUrl = 'http://localhost:3001/';
-    const path = '/example';
-    const constructedURL = constructLibraryAuthoringURL(libraryAuthoringMfeUrl, path);
-    expect(constructedURL).toEqual('http://localhost:3001/example');
   });
 });

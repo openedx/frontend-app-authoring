@@ -69,7 +69,7 @@ describe('cms api', () => {
 
         it('should call get with normal accept header for prod', async () => {
           process.env.NODE_ENV = 'production';
-          process.env.MFE_NAME = 'frontend-app-library-authoring';
+          process.env.MFE_NAME = 'frontend-app-course-authoring';
           // eslint-disable-next-line no-shadow, @typescript-eslint/no-shadow
           const { apiMethods } = await import('./api');
           // eslint-disable-next-line no-shadow, @typescript-eslint/no-shadow
@@ -89,18 +89,6 @@ describe('cms api', () => {
           const getSpy = jest.spyOn(utils, 'get');
           apiMethods.fetchByUnitId({ blockId, studioEndpointUrl });
           expect(getSpy).toHaveBeenCalledWith(urls.blockAncestor({ studioEndpointUrl, blockId }), {});
-        });
-
-        it('should call get with special accept header "*/*" for course-authoring', async () => {
-          process.env.NODE_ENV = 'development';
-          process.env.MFE_NAME = 'frontend-app-library-authoring';
-          // eslint-disable-next-line no-shadow, @typescript-eslint/no-shadow
-          const { apiMethods } = await import('./api');
-          // eslint-disable-next-line no-shadow, @typescript-eslint/no-shadow
-          const utils = await import('./utils');
-          const getSpy = jest.spyOn(utils, 'get');
-          apiMethods.fetchByUnitId({ blockId, studioEndpointUrl });
-          expect(getSpy).toHaveBeenCalledWith(urls.blockAncestor({ studioEndpointUrl, blockId }), { headers: { Accept: '*/*' } });
         });
       });
     });

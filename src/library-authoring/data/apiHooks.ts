@@ -26,11 +26,14 @@ import {
   updateXBlockFields,
   createCollection,
   getXBlockOLX,
+  updateCollectionMetadata,
+  type UpdateCollectionComponentsRequest,
   updateCollectionComponents,
   type CreateLibraryCollectionDataRequest,
+  getCollectionMetadata,
 } from './api';
 
-const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
+export const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
   // Invalidate all content queries related to this library.
   // If we allow searching "all courses and libraries" in the future,
   // then we'd have to invalidate all `["content_search", "results"]`
@@ -277,6 +280,33 @@ export const useXBlockOLX = (usageKey: string) => (
     enabled: !!usageKey,
   })
 );
+
+/**
+ * Get the metadata for a collection in a library
+ */
+export const useCollection = (libraryId: string, collectionId: string) => (
+  useQuery({
+    enabled: !!libraryId && !!collectionId,
+    queryKey: libraryAuthoringQueryKeys.collection(libraryId, collectionId),
+    queryFn: () => getCollectionMetadata(libraryId!, collectionId!),
+  })
+);
+
+/**
+ * Use this mutation to update the fields of a collection in a library
+ */
+export const useUpdateCollection = (libraryId: string, collectionId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: UpdateCollectionComponentsRequest) => updateCollectionMetadata(libraryId, collectionId, data),
+    onSettled: () => {
+      // NOTE: We invalidate the library query here because we need to update the library's
+      // collection list.
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.collection(libraryId, collectionId) });
+    },
+  });
+};
 
 /**
  * Use this mutation to add components to a collection in a library

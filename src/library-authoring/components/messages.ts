@@ -21,6 +21,11 @@ const messages = defineMessages({
     defaultMessage: 'Collection ({numChildren})',
     description: 'Collection type text with children count',
   },
+  menuOpen: {
+    id: 'course-authoring.library-authoring.collection.menu.open',
+    defaultMessage: 'Open',
+    description: 'Menu item for open a collection.',
+  },
   menuEdit: {
     id: 'course-authoring.library-authoring.component.menu.edit',
     defaultMessage: 'Edit',

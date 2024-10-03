@@ -8,6 +8,7 @@
         "@openedx/paragon": "*",
         "prop-types": "*",
         "react": "*",
+        "react-redux": "*",
         "yup": "*"
     },
     "peerDependenciesMeta": {

@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import { snakeCase } from 'lodash/string';
 
 import { camelCaseObject, ensureConfig, getConfig } from '@edx/frontend-platform';
@@ -9,8 +8,8 @@ ensureConfig([
 ], 'Course Apps API service');
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
-const getCourseAppsApiUrl = () => `${getApiBaseUrl()}/api/course_apps/v1/apps`;
-const getCourseAdvancedSettingsApiUrl = () => `${getApiBaseUrl()}/api/contentstore/v0/advanced_settings`;
+export const getCourseAppsApiUrl = () => `${getApiBaseUrl()}/api/course_apps/v1/apps`;
+export const getCourseAdvancedSettingsApiUrl = () => `${getApiBaseUrl()}/api/contentstore/v0/advanced_settings`;
 
 /**
  * Fetches the course apps installed for provided course
