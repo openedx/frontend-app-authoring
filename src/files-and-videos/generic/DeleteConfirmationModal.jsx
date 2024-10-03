@@ -36,7 +36,7 @@ const DeleteConfirmationModal = ({
         title={(
           <h3 className="h5 m-n2">
             <Truncate lines={1}>
-              {original.displayName}
+              {original.expandedPath}
             </Truncate>
           </h3>
         )}
@@ -61,7 +61,7 @@ const DeleteConfirmationModal = ({
       title={intl.formatMessage(
         messages.deleteConfirmationTitle,
         {
-          fileName: firstSelectedRow?.displayName,
+          fileName: firstSelectedRow?.expandedPath,
           fileNumber: selectedRows.length,
           fileType,
         },
@@ -82,7 +82,7 @@ const DeleteConfirmationModal = ({
       {intl.formatMessage(
         messages.deleteConfirmationMessage,
         {
-          fileName: firstSelectedRow?.displayName,
+          fileName: firstSelectedRow?.expandedPath,
           fileNumber: selectedRows.length,
           fileType,
         },

@@ -37,7 +37,7 @@ const InfoModal = ({
 
   return (
     <ModalDialog
-      title={file?.displayName}
+      title={file?.expandedPath}
       isOpen={isOpen}
       onClose={onClose}
       size="lg"
@@ -49,7 +49,7 @@ const InfoModal = ({
         <ModalDialog.Title>
           <div style={{ wordBreak: 'break-word' }}>
             <Truncate lines={2} className="font-weight-bold small mt-3">
-              {file?.displayName}
+              {file?.expandedPath}
             </Truncate>
           </div>
         </ModalDialog.Title>

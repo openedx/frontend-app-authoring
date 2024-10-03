@@ -134,7 +134,7 @@ const FilesPage = ({
     { ...thumbnailColumn },
     {
       Header: 'File name',
-      accessor: 'displayName',
+      accessor: 'expandedPath',
     },
     { ...fileSizeColumn },
     {
