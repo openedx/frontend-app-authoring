@@ -8,7 +8,7 @@ const testingState = {
 
 describe('problem reducer', () => {
   it('has initial state', () => {
-    expect(reducer(undefined, {})).toEqual(initialState);
+    expect(reducer(undefined, {} as any)).toEqual(initialState);
   });
 
   const testValue = 'roll for initiative';
@@ -26,7 +26,7 @@ describe('problem reducer', () => {
       });
     };
     [
-      ['updateQuestion', 'question'],
+      ['updateQuestion', 'question'] as const,
     ].map(args => setterTest(...args));
     describe('setEnableTypeSelection', () => {
       it('sets given problemType to null', () => {
@@ -44,7 +44,7 @@ describe('problem reducer', () => {
               attempts: { number: 1, unlimited: false },
             },
             showAnswer: { ...testingState.settings.showAnswer, on: payload.showanswer },
-            ...payload.showResetButton,
+            showResetButton: payload.showResetButton,
           },
           problemType: null,
         });
@@ -52,7 +52,7 @@ describe('problem reducer', () => {
     });
     describe('load', () => {
       it('sets answers', () => {
-        const answer = {
+        const blankAnswer = {
           id: 'A',
           correct: false,
           selectedFeedback: '',
@@ -60,9 +60,9 @@ describe('problem reducer', () => {
           isAnswerRange: false,
           unselectedFeedback: '',
         };
-        expect(reducer(testingState, actions.addAnswer(answer))).toEqual({
+        expect(reducer(testingState, actions.addAnswer())).toEqual({
           ...testingState,
-          answers: [answer],
+          answers: [blankAnswer],
           isDirty: true,
         });
       });
@@ -354,10 +354,10 @@ describe('problem reducer', () => {
           },
           actions.deleteAnswer(payload),
         );
-        expect(window.tinymce.editors['answer-A'].setContent).toHaveBeenCalled();
-        expect(window.tinymce.editors['answer-A'].setContent).toHaveBeenCalledWith('editorAnsB');
-        expect(window.tinymce.editors['selectedFeedback-A'].setContent).toHaveBeenCalledWith('editSelFB');
-        expect(window.tinymce.editors['unselectedFeedback-A'].setContent).toHaveBeenCalledWith('editUnselFB');
+        expect((window as any).tinymce.editors['answer-A'].setContent).toHaveBeenCalled();
+        expect((window as any).tinymce.editors['answer-A'].setContent).toHaveBeenCalledWith('editorAnsB');
+        expect((window as any).tinymce.editors['selectedFeedback-A'].setContent).toHaveBeenCalledWith('editSelFB');
+        expect((window as any).tinymce.editors['unselectedFeedback-A'].setContent).toHaveBeenCalledWith('editUnselFB');
       });
       it('sets groupFeedbackList by removing the checked item in the groupFeedback', () => {
         windowSpy.mockImplementation(() => ({

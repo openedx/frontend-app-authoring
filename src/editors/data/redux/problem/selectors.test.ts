@@ -2,10 +2,6 @@
 import { keyStore } from '../../../utils';
 import * as selectors from './selectors';
 
-jest.mock('reselect', () => ({
-  createSelector: jest.fn((preSelectors, cb) => ({ preSelectors, cb })),
-}));
-
 const testState = { some: 'arbitraryValue' };
 const testValue = 'my VALUE';
 
@@ -16,14 +12,14 @@ describe('problem selectors unit tests', () => {
   } = selectors;
   describe('problemState', () => {
     it('returns the problem data', () => {
-      expect(problemState({ ...testState, problem: testValue })).toEqual(testValue);
+      expect(problemState({ ...testState, problem: testValue } as any)).toEqual(testValue);
     });
   });
   describe('simpleSelectors', () => {
     const testSimpleSelector = (key) => {
       test(`${key} simpleSelector returns its value from the problem store`, () => {
-        const { preSelectors, cb } = simpleSelectors[key];
-        expect(preSelectors).toEqual([problemState]);
+        const { dependencies, resultFunc: cb } = simpleSelectors[key];
+        expect(dependencies).toEqual([problemState]);
         expect(cb({ ...testState, [key]: testValue })).toEqual(testValue);
       });
     };
@@ -39,12 +35,12 @@ describe('problem selectors unit tests', () => {
       ].map(testSimpleSelector);
     });
     test('simple selector completeState equals the entire state', () => {
-      const { preSelectors, cb } = simpleSelectors[simpleKeys.completeState];
-      expect(preSelectors).toEqual([problemState]);
+      const { dependencies, resultFunc: cb } = simpleSelectors[simpleKeys.completeState];
+      expect(dependencies).toEqual([problemState]);
       expect(cb({
         ...testState,
         [simpleKeys.completeState]: testValue,
-      })).toEqual({
+      } as any)).toEqual({
         ...testState,
         [simpleKeys.completeState]: testValue,
       });

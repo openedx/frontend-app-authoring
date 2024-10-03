@@ -13,4 +13,4 @@ export const ToleranceTypes = {
     type: 'None',
     message: messages.typesNone,
   },
-};
+} as const;
