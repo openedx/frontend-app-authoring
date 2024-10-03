@@ -1,16 +1,12 @@
 import { createSelector } from 'reselect';
+import type { EditorState } from '..';
 import { blockTypes } from '../../constants/app';
 import { isLibraryV1Key } from '../../../../generic/key-utils';
 import * as urls from '../../services/cms/urls';
-// This 'module' self-import hack enables mocking during tests.
-// See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
-// should be re-thought and cleaned up to avoid this pattern.
-// eslint-disable-next-line import/no-self-import
-import * as module from './selectors';
 
-export const appSelector = (state) => state.app;
+export const appSelector = (state: EditorState) => state.app;
 
-const mkSimpleSelector = (cb) => createSelector([module.appSelector], cb);
+const mkSimpleSelector = <T>(cb: (appState: EditorState['app']) => T) => createSelector([appSelector], cb);
 
 // top-level app data selectors
 export const simpleSelectors = {
@@ -19,6 +15,7 @@ export const simpleSelectors = {
   blockType: mkSimpleSelector(app => app.blockType),
   blockValue: mkSimpleSelector(app => app.blockValue),
   studioView: mkSimpleSelector(app => app.studioView),
+  /** @deprecated Get as `const { learningContextid } = useEditorContext()` instead */
   learningContextId: mkSimpleSelector(app => app.learningContextId),
   editorInitialized: mkSimpleSelector(app => app.editorInitialized),
   saveResponse: mkSimpleSelector(app => app.saveResponse),
@@ -32,8 +29,8 @@ export const simpleSelectors = {
 };
 
 export const returnUrl = createSelector(
-  [module.simpleSelectors.unitUrl, module.simpleSelectors.studioEndpointUrl, module.simpleSelectors.learningContextId,
-    module.simpleSelectors.blockId],
+  [simpleSelectors.unitUrl, simpleSelectors.studioEndpointUrl, simpleSelectors.learningContextId,
+    simpleSelectors.blockId],
   (unitUrl, studioEndpointUrl, learningContextId, blockId) => (
     urls.returnUrl({
       studioEndpointUrl, unitUrl, learningContextId, blockId,
@@ -43,8 +40,8 @@ export const returnUrl = createSelector(
 
 export const isLibrary = createSelector(
   [
-    module.simpleSelectors.learningContextId,
-    module.simpleSelectors.blockId,
+    simpleSelectors.learningContextId,
+    simpleSelectors.blockId,
   ],
   (learningContextId, blockId) => {
     if (isLibraryV1Key(learningContextId)) {
@@ -59,9 +56,9 @@ export const isLibrary = createSelector(
 
 export const isInitialized = createSelector(
   [
-    module.simpleSelectors.unitUrl,
-    module.simpleSelectors.blockValue,
-    module.isLibrary,
+    simpleSelectors.unitUrl,
+    simpleSelectors.blockValue,
+    isLibrary,
   ],
   (unitUrl, blockValue, isLibraryBlock) => {
     if (isLibraryBlock) {
@@ -74,8 +71,8 @@ export const isInitialized = createSelector(
 
 export const displayTitle = createSelector(
   [
-    module.simpleSelectors.blockType,
-    module.simpleSelectors.blockTitle,
+    simpleSelectors.blockType,
+    simpleSelectors.blockTitle,
   ],
   (blockType, blockTitle) => {
     if (blockType === null) {
@@ -92,9 +89,9 @@ export const displayTitle = createSelector(
 
 export const analytics = createSelector(
   [
-    module.simpleSelectors.blockId,
-    module.simpleSelectors.blockType,
-    module.simpleSelectors.learningContextId,
+    simpleSelectors.blockId,
+    simpleSelectors.blockType,
+    simpleSelectors.learningContextId,
   ],
   (blockId, blockType, learningContextId) => (
     { blockId, blockType, learningContextId }

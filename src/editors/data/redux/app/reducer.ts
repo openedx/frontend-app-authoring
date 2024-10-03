@@ -1,8 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+import type { EditorState } from '..';
 import { StrictDict } from '../../../utils';
 
-const initialState = {
+const initialState: EditorState['app'] = {
   blockValue: null,
   unitUrl: null,
   blockContent: null,

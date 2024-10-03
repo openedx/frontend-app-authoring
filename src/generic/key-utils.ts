@@ -30,12 +30,12 @@ export function getLibraryId(usageKey: string): string {
 }
 
 /** Check if this is a V2 library key. */
-export function isLibraryKey(learningContextKey: string | undefined): learningContextKey is string {
+export function isLibraryKey(learningContextKey: string | undefined | null): learningContextKey is string {
   return typeof learningContextKey === 'string' && learningContextKey.startsWith('lib:');
 }
 
 /** Check if this is a V1 library key. */
-export function isLibraryV1Key(learningContextKey: string | undefined): learningContextKey is string {
+export function isLibraryV1Key(learningContextKey: string | undefined | null): learningContextKey is string {
   return typeof learningContextKey === 'string' && learningContextKey.startsWith('library-v1:');
 }
 

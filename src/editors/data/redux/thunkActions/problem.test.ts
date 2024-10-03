@@ -75,26 +75,26 @@ describe('problem thunkActions', () => {
       fetchAdvancedSettings({ rawOLX, rawSettings })(dispatch);
       [[dispatchedAction]] = dispatch.mock.calls;
       dispatchedAction.fetchAdvanceSettings.onSuccess({ data: { key: 'test', max_attempts: 1 } });
-      expect(dispatch).toHaveBeenCalledWith(actions.problem.load());
+      expect(dispatch).toHaveBeenCalledWith(actions.problem.load(undefined));
     });
     it('calls loadProblem on failure', () => {
       dispatch.mockClear();
       fetchAdvancedSettings({ rawOLX, rawSettings })(dispatch);
       [[dispatchedAction]] = dispatch.mock.calls;
       dispatchedAction.fetchAdvanceSettings.onFailure();
-      expect(dispatch).toHaveBeenCalledWith(actions.problem.load());
+      expect(dispatch).toHaveBeenCalledWith(actions.problem.load(undefined));
     });
   });
   describe('loadProblem', () => {
     test('initializeProblem advanced Problem', () => {
       rawOLX = advancedProblemOlX.rawOLX;
       loadProblem({ rawOLX, rawSettings, defaultSettings })(dispatch);
-      expect(dispatch).toHaveBeenCalledWith(actions.problem.load());
+      expect(dispatch).toHaveBeenCalledWith(actions.problem.load(undefined));
     });
     test('initializeProblem blank Problem', () => {
       rawOLX = blankProblemOLX.rawOLX;
       loadProblem({ rawOLX, rawSettings, defaultSettings })(dispatch);
-      expect(dispatch).toHaveBeenCalledWith(actions.problem.setEnableTypeSelection());
+      expect(dispatch).toHaveBeenCalledWith(actions.problem.setEnableTypeSelection(undefined));
     });
   });
 });

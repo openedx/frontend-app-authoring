@@ -43,7 +43,6 @@ const initialState: EditorState['problem'] = {
   },
 };
 
-// eslint-disable-next-line no-unused-vars
 const problem = createSlice({
   name: 'problem',
   initialState,

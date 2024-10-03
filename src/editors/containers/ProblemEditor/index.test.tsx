@@ -90,7 +90,7 @@ describe('ProblemEditor', () => {
   });
 
   describe('mapStateToProps', () => {
-    const testState = { A: 'pple', B: 'anana', C: 'ucumber' };
+    const testState = { A: 'pple', B: 'anana', C: 'ucumber' } as any;
     test('blockValue from app.blockValue', () => {
       expect(
         mapStateToProps(testState).blockValue,

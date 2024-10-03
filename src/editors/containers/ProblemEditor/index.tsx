@@ -18,7 +18,7 @@ export interface Props extends EditorComponent {
   /** null if this is a new problem */
   problemType: ProblemType | null;
   initializeProblemEditor: (blockValue: any) => void;
-  blockValue: Record<string, any>;
+  blockValue: Record<string, any> | null;
 }
 
 const ProblemEditor: React.FC<Props> = ({
