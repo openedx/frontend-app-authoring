@@ -118,6 +118,7 @@ describe('EditorContainer hooks', () => {
             destination: reactRedux.useSelector(selectors.app.returnUrl),
             analyticsEvent: analyticsEvt.editorCancelClick,
             analytics: reactRedux.useSelector(selectors.app.analytics),
+            returnFunction: null,
           }),
         );
       });

@@ -22,11 +22,11 @@ import messages from './messages';
 import './index.scss';
 
 interface WrapperProps {
-  fullScreen: boolean;
   children: React.ReactNode;
 }
 
-const OuterWrapper: React.FC<WrapperProps> = ({ fullScreen, children }) => {
+export const EditorModalWrapper: React.FC<WrapperProps> = ({ children }) => {
+  const { fullScreen } = useEditorContext();
   if (fullScreen) {
     return (
       <div
@@ -42,7 +42,13 @@ const OuterWrapper: React.FC<WrapperProps> = ({ fullScreen, children }) => {
   );
 };
 
-const FooterWrapper: React.FC<WrapperProps> = ({ fullScreen, children }) => {
+export const EditorModalBody: React.FC<WrapperProps> = ({ children }) => {
+  const { fullScreen } = useEditorContext();
+  return <ModalDialog.Body className={fullScreen ? 'pb-6' : 'pb-0'}>{ children }</ModalDialog.Body>;
+};
+
+export const FooterWrapper: React.FC<WrapperProps> = ({ children }) => {
+  const { fullScreen } = useEditorContext();
   if (fullScreen) {
     return <div className="editor-footer fixed-bottom">{children}</div>;
   }
@@ -65,7 +71,6 @@ const EditorContainer: React.FC<Props> = ({
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const { fullScreen } = useEditorContext();
   const isInitialized = hooks.isInitialized();
   const { isCancelConfirmOpen, openCancelConfirmModal, closeCancelConfirmModal } = hooks.cancelConfirmModalToggle();
   const handleCancel = hooks.handleCancel({ onClose, returnFunction });
@@ -79,7 +84,7 @@ const EditorContainer: React.FC<Props> = ({
     returnFunction,
   });
   return (
-    <OuterWrapper fullScreen={fullScreen}>
+    <EditorModalWrapper>
       {saveFailed && (
         <Toast show onClose={clearSaveFailed}>
           <FormattedMessage {...messages.contentSaveFailed} />
@@ -119,10 +124,10 @@ const EditorContainer: React.FC<Props> = ({
           />
         </div>
       </ModalDialog.Header>
-      <ModalDialog.Body className={`pb-0 ${fullScreen ? 'mb-6' : ''}`}>
+      <EditorModalBody>
         {isInitialized && children}
-      </ModalDialog.Body>
-      <FooterWrapper fullScreen={fullScreen}>
+      </EditorModalBody>
+      <FooterWrapper>
         <ModalDialog.Footer className="shadow-sm">
           <ActionRow>
             <Button
@@ -144,7 +149,7 @@ const EditorContainer: React.FC<Props> = ({
           </ActionRow>
         </ModalDialog.Footer>
       </FooterWrapper>
-    </OuterWrapper>
+    </EditorModalWrapper>
   );
 };
 

@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SelectTypeWrapper snapshot 1`] = `
+<EditorModalWrapper>
+  <ModalDialog.Header
+    className="shadow-sm zindex-10"
+  >
+    <ModalDialog.Title>
+      <FormattedMessage
+        defaultMessage="Select problem type"
+        description="Title for select problem type modal"
+        id="authoring.problemEditor.selectType.title"
+      />
+      <div
+        className="pgn__modal-close-container"
+      >
+        <IconButton
+          alt="Exit the editor"
+          iconAs="Icon"
+          src={[MockFunction icons.Close]}
+        />
+      </div>
+    </ModalDialog.Title>
+  </ModalDialog.Header>
+  <EditorModalBody>
+    <h1>
+      test child
+    </h1>
+  </EditorModalBody>
+  <FooterWrapper>
+    <ModalDialog.Footer
+      className="border-top-0"
+    >
+      <ActionRow>
+        <ActionRow.Spacer />
+        <Button
+          aria-label="Cancel"
+          variant="tertiary"
+        >
+          <FormattedMessage
+            defaultMessage="Cancel"
+            description="Label for cancel button."
+            id="authoring.problemeditor.selecttype.cancelButton.label"
+          />
+        </Button>
+        <Button
+          aria-label="Select"
+          disabled={false}
+          onClick={[Function]}
+        >
+          <FormattedMessage
+            defaultMessage="Select"
+            description="Label for select button."
+            id="authoring.problemeditor.selecttype.selectButton.label"
+          />
+        </Button>
+      </ActionRow>
+    </ModalDialog.Footer>
+  </FooterWrapper>
+</EditorModalWrapper>
+`;

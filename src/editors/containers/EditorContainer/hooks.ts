@@ -50,7 +50,13 @@ export const cancelConfirmModalToggle = () => {
   };
 };
 
-export const handleCancel = ({ onClose, returnFunction }) => {
+export const handleCancel = ({
+  onClose = null,
+  returnFunction = null,
+}: {
+  onClose?: (() => void) | null;
+  returnFunction?: (() => (result: any) => void) | null;
+}): ((result?: any) => void) => {
   if (onClose) {
     return onClose;
   }
