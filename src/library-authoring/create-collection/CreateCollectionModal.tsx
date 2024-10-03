@@ -23,7 +23,7 @@ const CreateCollectionModal = () => {
     isCreateCollectionModalOpen,
     closeCreateCollectionModal,
   } = useLibraryContext();
-  const create = useCreateLibraryCollection(libraryId!);
+  const create = useCreateLibraryCollection(libraryId);
   const { showToast } = React.useContext(ToastContext);
 
   const handleCreate = React.useCallback((values) => {
