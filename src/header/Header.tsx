@@ -2,12 +2,14 @@ import React from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { StudioHeader } from '@edx/frontend-component-header';
-import { useToggle } from '@openedx/paragon';
+import { type Container, useToggle } from '@openedx/paragon';
 import { generatePath, useHref } from 'react-router-dom';
 
 import { SearchModal } from '../search-modal';
 import { useContentMenuItems, useSettingMenuItems, useToolsMenuItems } from './hooks';
 import messages from './messages';
+
+type ContainerPropsType = React.ComponentProps<typeof Container>;
 
 interface HeaderProps {
   contextId?: string,
@@ -16,6 +18,7 @@ interface HeaderProps {
   title?: string,
   isHiddenMainMenu?: boolean,
   isLibrary?: boolean,
+  containerProps?: ContainerPropsType,
 }
 
 const Header = ({
@@ -25,6 +28,7 @@ const Header = ({
   title = '',
   isHiddenMainMenu = false,
   isLibrary = false,
+  containerProps = {},
 }: HeaderProps) => {
   const intl = useIntl();
   const libraryHref = useHref('/library/:libraryId');
@@ -69,8 +73,9 @@ const Header = ({
         mainMenuDropdowns={mainMenuDropdowns}
         outlineLink={outlineLink}
         searchButtonAction={meiliSearchEnabled ? openSearchModal : undefined}
+        containerProps={containerProps}
       />
-      { meiliSearchEnabled && (
+      {meiliSearchEnabled && (
         <SearchModal
           isOpen={isShowSearchModalOpen}
           courseId={isLibrary ? undefined : contextId}
