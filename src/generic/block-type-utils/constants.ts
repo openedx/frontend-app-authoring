@@ -67,4 +67,5 @@ export const COMPONENT_TYPE_STYLE_COLOR_MAP = {
   sequential: 'component-style-default',
   chapter: 'component-style-default',
   collection: 'component-style-collection',
+  other: 'component-style-other',
 };
