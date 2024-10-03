@@ -7,3 +7,9 @@
     display: none;
   }
 }
+
+.toast-container {
+  right: 1.25rem;
+  left: unset;
+  z-index: $zindex-popover;
+}
