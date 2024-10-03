@@ -1,7 +1,12 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Tab, Tabs } from '@openedx/paragon';
+import {
+  Badge,
+  Stack,
+  Tab,
+  Tabs,
+} from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -121,7 +126,12 @@ const TabsSection = ({
           <Tab
             key={TABS_LIST.libraries}
             eventKey={TABS_LIST.libraries}
-            title={intl.formatMessage(messages.librariesTabTitle)}
+            title={(
+              <Stack gap={2} direction="horizontal">
+                {intl.formatMessage(messages.librariesTabTitle)}
+                <Badge variant="info">{intl.formatMessage(messages.librariesV2TabBetaBadge)}</Badge>
+              </Stack>
+            )}
           >
             <LibrariesV2Tab />
           </Tab>,
