@@ -185,6 +185,7 @@ export async function mockXBlockFields(usageKey: string): Promise<api.XBlockFiel
     case thisMock.usageKeyNewHtml: return thisMock.dataNewHtml;
     case thisMock.usageKeyNewProblem: return thisMock.dataNewProblem;
     case thisMock.usageKeyNewVideo: return thisMock.dataNewVideo;
+    case thisMock.usageKeyThirdParty: return thisMock.dataThirdParty;
     default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
   }
 }
@@ -215,6 +216,12 @@ mockXBlockFields.dataNewVideo = {
   data: '',
   metadata: { displayName: 'New Video' },
 } satisfies api.XBlockFields;
+mockXBlockFields.usageKeyThirdParty = 'lb:Axim:TEST:third_party:12345';
+mockXBlockFields.dataThirdParty = {
+  displayName: 'Third party XBlock',
+  data: '',
+  metadata: { displayName: 'Third party XBlock' },
+} satisfies api.XBlockFields;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockXBlockFields.applyMock = () => jest.spyOn(api, 'getXBlockFields').mockImplementation(mockXBlockFields);
 
@@ -235,6 +242,7 @@ export async function mockLibraryBlockMetadata(usageKey: string): Promise<api.Li
       throw createAxiosError({ code: 404, message: 'Not found.', path: api.getLibraryBlockMetadataUrl(usageKey) });
     case thisMock.usageKeyNeverPublished: return thisMock.dataNeverPublished;
     case thisMock.usageKeyPublished: return thisMock.dataPublished;
+    case thisMock.usageKeyThirdPartyXBlock: return thisMock.dataThirdPartyXBlock;
     case thisMock.usageKeyForTags: return thisMock.dataPublished;
     default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
   }
@@ -270,6 +278,12 @@ mockLibraryBlockMetadata.dataPublished = {
   created: '2024-06-20T13:54:21Z',
   modified: '2024-06-21T13:54:21Z',
   tagsCount: 0,
+} satisfies api.LibraryBlockMetadata;
+mockLibraryBlockMetadata.usageKeyThirdPartyXBlock = mockXBlockFields.usageKeyThirdParty;
+mockLibraryBlockMetadata.dataThirdPartyXBlock = {
+  ...mockLibraryBlockMetadata.dataPublished,
+  id: mockLibraryBlockMetadata.usageKeyThirdPartyXBlock,
+  blockType: 'third_party',
 } satisfies api.LibraryBlockMetadata;
 mockLibraryBlockMetadata.usageKeyForTags = mockContentTaxonomyTagsData.largeTagsId;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */

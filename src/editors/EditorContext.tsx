@@ -23,6 +23,7 @@ const context = React.createContext<EditorContext | undefined>(undefined);
 export function useEditorContext() {
   const ctx = React.useContext(context);
   if (ctx === undefined) {
+    /* istanbul ignore next */
     throw new Error('This component needs to be wrapped in <EditorContextProvider>');
   }
   return ctx;
