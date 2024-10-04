@@ -23,12 +23,12 @@ const mockUseSearchContext = jest.fn();
 const data = {
   totalHits: 1,
   hits: [],
-  isFetching: true,
   isFetchingNextPage: false,
   hasNextPage: false,
   fetchNextPage: mockFetchNextPage,
   searchKeywords: '',
   isFiltered: false,
+  isLoading: false,
 };
 
 const returnEmptyResult = (_url: string, req) => {
@@ -102,11 +102,20 @@ describe('<LibraryComponents />', () => {
     expect(screen.queryByRole('button', { name: /add component/i })).not.toBeInTheDocument();
   });
 
+  it('should render a spinner while loading', async () => {
+    mockUseSearchContext.mockReturnValue({
+      ...data,
+      isLoading: true,
+    });
+
+    render(<LibraryComponents variant="full" />, withLibraryId(mockContentLibrary.libraryId));
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
+  });
+
   it('should render components in full variant', async () => {
     mockUseSearchContext.mockReturnValue({
       ...data,
       hits: libraryComponentsMock,
-      isFetching: false,
     });
     render(<LibraryComponents variant="full" />, withLibraryId(mockContentLibrary.libraryId));
 
@@ -122,7 +131,6 @@ describe('<LibraryComponents />', () => {
     mockUseSearchContext.mockReturnValue({
       ...data,
       hits: libraryComponentsMock,
-      isFetching: false,
     });
     render(<LibraryComponents variant="preview" />, withLibraryId(mockContentLibrary.libraryId));
 
@@ -138,7 +146,6 @@ describe('<LibraryComponents />', () => {
     mockUseSearchContext.mockReturnValue({
       ...data,
       hits: libraryComponentsMock,
-      isFetching: false,
       hasNextPage: true,
     });
 
@@ -152,11 +159,10 @@ describe('<LibraryComponents />', () => {
     expect(mockFetchNextPage).toHaveBeenCalled();
   });
 
-  it('should not call `fetchNextPage` on croll to bottom in preview variant', async () => {
+  it('should not call `fetchNextPage` on scroll to bottom in preview variant', async () => {
     mockUseSearchContext.mockReturnValue({
       ...data,
       hits: libraryComponentsMock,
-      isFetching: false,
       hasNextPage: true,
     });
 

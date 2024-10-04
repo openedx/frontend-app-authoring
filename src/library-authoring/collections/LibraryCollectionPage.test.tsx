@@ -33,7 +33,7 @@ const path = '/library/:libraryId/*';
 const libraryTitle = mockContentLibrary.libraryData.title;
 const mockCollection = {
   collectionId: mockResult.results[2].hits[0].block_id,
-  collectionNeverLoads: 'collection-always-loading',
+  collectionNeverLoads: mockGetCollectionMetadata.collectionIdLoading,
   collectionNoComponents: 'collection-no-components',
   collectionEmpty: mockGetCollectionMetadata.collectionIdError,
 };
@@ -108,7 +108,7 @@ describe('<LibraryCollectionPage />', () => {
   it('shows an error component if no collection returned', async () => {
     // This mock will simulate incorrect collection id
     await renderLibraryCollectionPage(mockCollection.collectionEmpty);
-    expect(await screen.findByText(/Mocked request failed with status code 400./)).toBeInTheDocument();
+    expect(await screen.findByText(/Mocked request failed with status code 404./)).toBeInTheDocument();
   });
 
   it('shows collection data', async () => {

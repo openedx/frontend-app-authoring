@@ -281,13 +281,22 @@ mockLibraryBlockMetadata.applyMock = () => jest.spyOn(api, 'getLibraryBlockMetad
  * This mock returns a fixed response for the collection ID *collection_1*.
  */
 export async function mockGetCollectionMetadata(libraryId: string, collectionId: string): Promise<api.Collection> {
-  if (collectionId === mockGetCollectionMetadata.collectionIdError) {
-    throw createAxiosError({ code: 400, message: 'Not found.', path: api.getLibraryCollectionApiUrl(libraryId, collectionId) });
+  switch (collectionId) {
+    case mockGetCollectionMetadata.collectionIdError:
+      throw createAxiosError({
+        code: 404,
+        message: 'Not found.',
+        path: api.getLibraryCollectionApiUrl(libraryId, collectionId),
+      });
+    case mockGetCollectionMetadata.collectionIdLoading:
+      return new Promise(() => {});
+    default:
+      return Promise.resolve(mockGetCollectionMetadata.collectionData);
   }
-  return Promise.resolve(mockGetCollectionMetadata.collectionData);
 }
 mockGetCollectionMetadata.collectionId = 'collection_1';
 mockGetCollectionMetadata.collectionIdError = 'collection_error';
+mockGetCollectionMetadata.collectionIdLoading = 'collection_loading';
 mockGetCollectionMetadata.collectionData = {
   id: 1,
   key: 'collection_1',

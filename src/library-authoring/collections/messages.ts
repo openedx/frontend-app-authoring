@@ -103,7 +103,7 @@ const messages = defineMessages({
   },
   noCollections: {
     id: 'course-authoring.library-authoring.no-collections',
-    defaultMessage: 'You have not added any collection to this library yet.',
+    defaultMessage: 'You have not added any collections to this library yet.',
     description: 'Message displayed when the library has no collections',
   },
   addCollection: {

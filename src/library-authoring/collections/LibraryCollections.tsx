@@ -1,3 +1,4 @@
+import { LoadingSpinner } from '../../generic/Loading';
 import { useLoadOnScroll } from '../../hooks';
 import { useSearchContext } from '../../search-manager';
 import { NoComponents, NoSearchResults } from '../EmptyStates';
@@ -24,6 +25,7 @@ const LibraryCollections = ({ variant }: LibraryCollectionsProps) => {
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
+    isLoading,
     isFiltered,
   } = useSearchContext();
 
@@ -37,6 +39,10 @@ const LibraryCollections = ({ variant }: LibraryCollectionsProps) => {
     fetchNextPage,
     variant === 'full',
   );
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
   if (totalCollectionHits === 0) {
     return isFiltered
