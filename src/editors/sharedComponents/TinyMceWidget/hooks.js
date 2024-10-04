@@ -282,7 +282,6 @@ export const editorConfig = ({
       min_height: minHeight,
       contextmenu: 'link table',
       directionality: isLocaleRtl ? 'rtl' : 'ltr',
-//      document_base_url: studioEndpointUrl + "/library_assets/f11742d8-f2fd-4633-9778-7dbbdc0c2461/", //  lmsEndpointUrl,
       document_base_url: lmsEndpointUrl,
       imagetools_cors_hosts: [removeProtocolFromUrl(lmsEndpointUrl), removeProtocolFromUrl(studioEndpointUrl)],
       imagetools_toolbar: imageToolbar,
