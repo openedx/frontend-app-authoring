@@ -22,6 +22,11 @@ const messages = defineMessages({
     defaultMessage: 'OK',
     description: 'Label for OK button',
   },
+  modalTitle: {
+    id: 'authoring.editorContainer.accessibleTitle',
+    defaultMessage: 'Editor Dialog',
+    description: 'Text that labels the the editor modal dialog for non-visual users',
+  },
   contentSaveFailed: {
     id: 'authoring.editorfooter.save.error',
     defaultMessage: 'Error: Content save failed. Please check recent changes and try again later.',

@@ -25,8 +25,9 @@ interface WrapperProps {
   children: React.ReactNode;
 }
 
-export const EditorModalWrapper: React.FC<WrapperProps> = ({ children }) => {
+export const EditorModalWrapper: React.FC<WrapperProps & { onClose: () => void }> = ({ children, onClose }) => {
   const { fullScreen } = useEditorContext();
+  const intl = useIntl();
   if (fullScreen) {
     return (
       <div
@@ -37,8 +38,9 @@ export const EditorModalWrapper: React.FC<WrapperProps> = ({ children }) => {
       </div>
     );
   }
+  const title = intl.formatMessage(messages.modalTitle);
   return (
-    <ModalDialog isOpen size="xl" isOverflowVisible={false}>{children}</ModalDialog>
+    <ModalDialog isOpen size="xl" isOverflowVisible={false} onClose={onClose} title={title}>{children}</ModalDialog>
   );
 };
 
@@ -84,7 +86,7 @@ const EditorContainer: React.FC<Props> = ({
     returnFunction,
   });
   return (
-    <EditorModalWrapper>
+    <EditorModalWrapper onClose={openCancelConfirmModal}>
       {saveFailed && (
         <Toast show onClose={clearSaveFailed}>
           <FormattedMessage {...messages.contentSaveFailed} />
