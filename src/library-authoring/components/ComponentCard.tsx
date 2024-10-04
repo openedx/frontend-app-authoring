@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom';
 import { updateClipboard } from '../../generic/data/api';
 import { ToastContext } from '../../generic/toast-context';
 import { type ContentHit } from '../../search-manager';
-import { LibraryContext } from '../common/context';
+import { useLibraryContext } from '../common/context';
 import messages from './messages';
 import { STUDIO_CLIPBOARD_CHANNEL } from '../../constants';
 import { getEditUrl } from './utils';
@@ -66,7 +66,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
 const ComponentCard = ({ contentHit, blockTypeDisplayName } : ComponentCardProps) => {
   const {
     openComponentInfoSidebar,
-  } = useContext(LibraryContext);
+  } = useLibraryContext();
 
   const {
     blockType,

@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import { useLoadOnScroll } from '../../hooks';
 import { useSearchContext } from '../../search-manager';
@@ -6,10 +6,9 @@ import { NoComponents, NoSearchResults } from '../EmptyStates';
 import { useLibraryBlockTypes } from '../data/apiHooks';
 import ComponentCard from './ComponentCard';
 import { LIBRARY_SECTION_PREVIEW_LIMIT } from './LibrarySection';
-import { LibraryContext } from '../common/context';
+import { useLibraryContext } from '../common/context';
 
 type LibraryComponentsProps = {
-  libraryId: string,
   variant: 'full' | 'preview',
 };
 
@@ -20,7 +19,7 @@ type LibraryComponentsProps = {
  *   - 'full': Show all components with Infinite scroll pagination.
  *   - 'preview': Show first 4 components without pagination.
  */
-const LibraryComponents = ({ libraryId, variant }: LibraryComponentsProps) => {
+const LibraryComponents = ({ variant }: LibraryComponentsProps) => {
   const {
     hits,
     totalHits: componentCount,
@@ -29,11 +28,11 @@ const LibraryComponents = ({ libraryId, variant }: LibraryComponentsProps) => {
     fetchNextPage,
     isFiltered,
   } = useSearchContext();
-  const { openAddContentSidebar } = useContext(LibraryContext);
+  const { libraryId, openAddContentSidebar } = useLibraryContext();
 
   const componentList = variant === 'preview' ? hits.slice(0, LIBRARY_SECTION_PREVIEW_LIMIT) : hits;
 
-  // TODO add this to LibraryContext
+  // TODO get rid of "useLibraryBlockTypes". Use <BlockTypeLabel> instead.
   const { data: blockTypesData } = useLibraryBlockTypes(libraryId);
   const blockTypes = useMemo(() => {
     const result = {};

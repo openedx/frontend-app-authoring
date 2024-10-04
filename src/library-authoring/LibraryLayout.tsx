@@ -50,7 +50,7 @@ const LibraryLayout = () => {
   }, [goBack]);
 
   return (
-    <LibraryProvider>
+    <LibraryProvider libraryId={libraryId}>
       <Routes>
         {/*
           TODO: we should be opening this editor as a modal, not making it a separate page/URL.
