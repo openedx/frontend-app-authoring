@@ -1,10 +1,12 @@
+import React from 'react';
 import {
   initializeMocks,
   fireEvent,
-  render,
+  render as baseRender,
   screen,
 } from '../../testUtils';
 
+import { LibraryProvider } from '../common/context';
 import { type CollectionHit } from '../../search-manager';
 import CollectionCard from './CollectionCard';
 
@@ -27,6 +29,10 @@ const CollectionHitSample: CollectionHit = {
   numChildren: 2,
   tags: {},
 };
+
+const render = (ui: React.ReactElement) => baseRender(ui, {
+  extraWrapper: ({ children }) => <LibraryProvider libraryId="lib:Axim:TEST">{ children }</LibraryProvider>,
+});
 
 describe('<CollectionCard />', () => {
   beforeEach(() => {

@@ -46,6 +46,10 @@ export interface RouteOptions {
   routerProps?: MemoryRouterProps;
 }
 
+export interface WrapperOptions {
+  extraWrapper?: React.FunctionComponent<{ children: React.ReactNode; }>;
+}
+
 /**
  * This component works together with the custom `render()` method we have in
  * this file to provide whatever react-router context you need for your
@@ -111,14 +115,14 @@ const RouterAndRoute: React.FC<RouteOptions> = ({
   );
 };
 
-function makeWrapper({ ...routeArgs }: RouteOptions) {
+function makeWrapper({ extraWrapper, ...routeArgs }: WrapperOptions & RouteOptions) {
   const AllTheProviders = ({ children }) => (
     <AppProvider store={reduxStore} wrapWithRouter={false}>
       <IntlProvider locale="en" messages={{}}>
         <QueryClientProvider client={queryClient}>
           <ToastContext.Provider value={mockToastContext}>
             <RouterAndRoute {...routeArgs}>
-              {children}
+              {extraWrapper ? React.createElement(extraWrapper, undefined, children) : children}
             </RouterAndRoute>
           </ToastContext.Provider>
         </QueryClientProvider>
@@ -132,7 +136,7 @@ function makeWrapper({ ...routeArgs }: RouteOptions) {
  * Same as render() from `@testing-library/react` but this one provides all the
  * wrappers our React components need to render properly.
  */
-function customRender(ui: React.ReactElement, options: RouteOptions = {}): RenderResult {
+function customRender(ui: React.ReactElement, options: WrapperOptions & RouteOptions = {}): RenderResult {
   return render(ui, { wrapper: makeWrapper(options) });
 }
 

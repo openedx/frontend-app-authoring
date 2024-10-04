@@ -9,36 +9,38 @@ export enum SidebarBodyComponentId {
 }
 
 export interface LibraryContextData {
+  /** The ID of the current library */
+  libraryId: string;
+  // Sidebar stuff - only one sidebar is active at any given time:
   sidebarBodyComponent: SidebarBodyComponentId | null;
   closeLibrarySidebar: () => void;
   openAddContentSidebar: () => void;
   openInfoSidebar: () => void;
   openComponentInfoSidebar: (usageKey: string) => void;
   currentComponentUsageKey?: string;
+  // "Create New Collection" modal
   isCreateCollectionModalOpen: boolean;
   openCreateCollectionModal: () => void;
   closeCreateCollectionModal: () => void;
+  // Current collection
   openCollectionInfoSidebar: (collectionId: string) => void;
   currentCollectionId?: string;
 }
 
-export const LibraryContext = React.createContext({
-  sidebarBodyComponent: null,
-  closeLibrarySidebar: () => {},
-  openAddContentSidebar: () => {},
-  openInfoSidebar: () => {},
-  openComponentInfoSidebar: (_usageKey: string) => {}, // eslint-disable-line @typescript-eslint/no-unused-vars
-  isCreateCollectionModalOpen: false,
-  openCreateCollectionModal: () => {},
-  closeCreateCollectionModal: () => {},
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  openCollectionInfoSidebar: (_collectionId: string) => {},
-} as LibraryContextData);
+/**
+ * Library Context.
+ * Always available when we're in the context of a single library.
+ *
+ * Get this using `useLibraryContext()`
+ *
+ * Not used on the "library list" on Studio home.
+ */
+const LibraryContext = React.createContext<LibraryContextData | undefined>(undefined);
 
 /**
  * React component to provide `LibraryContext`
  */
-export const LibraryProvider = (props: { children?: React.ReactNode }) => {
+export const LibraryProvider = (props: { children?: React.ReactNode, libraryId: string }) => {
   const [sidebarBodyComponent, setSidebarBodyComponent] = React.useState<SidebarBodyComponentId | null>(null);
   const [currentComponentUsageKey, setCurrentComponentUsageKey] = React.useState<string>();
   const [currentCollectionId, setcurrentCollectionId] = React.useState<string>();
@@ -76,7 +78,8 @@ export const LibraryProvider = (props: { children?: React.ReactNode }) => {
     setSidebarBodyComponent(SidebarBodyComponentId.CollectionInfo);
   }, []);
 
-  const context = React.useMemo(() => ({
+  const context = React.useMemo<LibraryContextData>(() => ({
+    libraryId: props.libraryId,
     sidebarBodyComponent,
     closeLibrarySidebar,
     openAddContentSidebar,
@@ -89,6 +92,7 @@ export const LibraryProvider = (props: { children?: React.ReactNode }) => {
     openCollectionInfoSidebar,
     currentCollectionId,
   }), [
+    props.libraryId,
     sidebarBodyComponent,
     closeLibrarySidebar,
     openAddContentSidebar,
@@ -108,3 +112,12 @@ export const LibraryProvider = (props: { children?: React.ReactNode }) => {
     </LibraryContext.Provider>
   );
 };
+
+export function useLibraryContext(): LibraryContextData {
+  const ctx = React.useContext(LibraryContext);
+  if (ctx === undefined) {
+    /* istanbul ignore next */
+    throw new Error('useLibraryContext() was used in a component without a <LibraryProvider> ancestor.');
+  }
+  return ctx;
+}

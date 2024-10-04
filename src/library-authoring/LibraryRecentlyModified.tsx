@@ -9,8 +9,9 @@ import messages from './messages';
 import ComponentCard from './components/ComponentCard';
 import { useLibraryBlockTypes } from './data/apiHooks';
 import CollectionCard from './components/CollectionCard';
+import { useLibraryContext } from './common/context';
 
-const RecentlyModified: React.FC<{ libraryId: string }> = ({ libraryId }) => {
+const RecentlyModified: React.FC<Record<never, never>> = () => {
   const intl = useIntl();
   const {
     hits,
@@ -18,6 +19,7 @@ const RecentlyModified: React.FC<{ libraryId: string }> = ({ libraryId }) => {
     totalHits,
     totalCollectionHits,
   } = useSearchContext();
+  const { libraryId } = useLibraryContext();
 
   const componentCount = totalHits + totalCollectionHits;
   // Since we only display a fixed number of items in preview,
@@ -68,13 +70,16 @@ const RecentlyModified: React.FC<{ libraryId: string }> = ({ libraryId }) => {
     : null;
 };
 
-const LibraryRecentlyModified: React.FC<{ libraryId: string }> = ({ libraryId }) => (
-  <SearchContextProvider
-    extraFilter={`context_key = "${libraryId}"`}
-    overrideSearchSortOrder={SearchSortOption.RECENTLY_MODIFIED}
-  >
-    <RecentlyModified libraryId={libraryId} />
-  </SearchContextProvider>
-);
+const LibraryRecentlyModified: React.FC<Record<never, never>> = () => {
+  const { libraryId } = useLibraryContext();
+  return (
+    <SearchContextProvider
+      extraFilter={`context_key = "${libraryId}"`}
+      overrideSearchSortOrder={SearchSortOption.RECENTLY_MODIFIED}
+    >
+      <RecentlyModified />
+    </SearchContextProvider>
+  );
+};
 
 export default LibraryRecentlyModified;

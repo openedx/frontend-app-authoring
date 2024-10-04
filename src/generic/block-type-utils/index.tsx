@@ -11,5 +11,5 @@ export function getItemIcon(blockType: string): React.ComponentType {
 }
 
 export function getComponentStyleColor(blockType: string): string {
-  return COMPONENT_TYPE_STYLE_COLOR_MAP[blockType] ?? 'bg-component';
+  return COMPONENT_TYPE_STYLE_COLOR_MAP[blockType] ?? COMPONENT_TYPE_STYLE_COLOR_MAP.other;
 }

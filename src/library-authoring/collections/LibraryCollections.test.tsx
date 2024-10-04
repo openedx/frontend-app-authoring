@@ -1,24 +1,21 @@
-import { AppProvider } from '@edx/frontend-platform/react';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
-import MockAdapter from 'axios-mock-adapter';
 import fetchMock from 'fetch-mock-jest';
-import type { Store } from 'redux';
 
+import {
+  render,
+  screen,
+  initializeMocks,
+} from '../../testUtils';
 import { getContentSearchConfigUrl } from '../../search-manager/data/api';
-import { SearchContextProvider } from '../../search-manager/SearchManager';
+import { mockContentLibrary } from '../data/api.mocks';
 import mockEmptyResult from '../../search-modal/__mocks__/empty-search-result.json';
-import initializeStore from '../../store';
+import { LibraryProvider } from '../common/context';
 import LibraryCollections from './LibraryCollections';
 
 const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
 
+mockContentLibrary.applyMock();
 const mockFetchNextPage = jest.fn();
 const mockUseSearchContext = jest.fn();
-const mockUseContentLibrary = jest.fn();
 
 const data = {
   totalHits: 1,
@@ -30,17 +27,6 @@ const data = {
   isFiltered: false,
   isLoading: false,
 };
-
-let store: Store;
-let axiosMock: MockAdapter;
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-    },
-  },
-});
 
 const returnEmptyResult = (_url: string, req) => {
   const requestData = JSON.parse(req.body?.toString() ?? '');
@@ -54,10 +40,6 @@ const returnEmptyResult = (_url: string, req) => {
   return mockEmptyResult;
 };
 
-jest.mock('../data/apiHooks', () => ({
-  useContentLibrary: () => mockUseContentLibrary(),
-}));
-
 jest.mock('../../search-manager', () => ({
   ...jest.requireActual('../../search-manager'),
   useSearchContext: () => mockUseSearchContext(),
@@ -70,35 +52,19 @@ const clipboardBroadcastChannelMock = {
 
 (global as any).BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
 
-const RootWrapper = (props) => (
-  <AppProvider store={store}>
-    <IntlProvider locale="en" messages={{}}>
-      <QueryClientProvider client={queryClient}>
-        <SearchContextProvider>
-          <LibraryCollections {...props} />
-        </SearchContextProvider>
-      </QueryClientProvider>
-    </IntlProvider>
-  </AppProvider>
-);
+const withLibraryId = (libraryId: string) => ({
+  extraWrapper: ({ children }: { children: React.ReactNode }) => (
+    <LibraryProvider libraryId={libraryId}>{children}</LibraryProvider>
+  ),
+});
 
 describe('<LibraryCollections />', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-    store = initializeStore();
-    mockUseSearchContext.mockReturnValue(data);
+    const { axiosMock } = initializeMocks();
 
     fetchMock.post(searchEndpoint, returnEmptyResult, { overwriteRoutes: true });
 
     // The API method to get the Meilisearch connection details uses Axios:
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock.onGet(getContentSearchConfigUrl()).reply(200, {
       url: 'http://mock.meilisearch.local',
       index_name: 'studio',
@@ -107,7 +73,8 @@ describe('<LibraryCollections />', () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    fetchMock.reset();
+    mockFetchNextPage.mockReset();
   });
 
   it('should render a spinner while loading', async () => {
@@ -116,7 +83,7 @@ describe('<LibraryCollections />', () => {
       isLoading: true,
     });
 
-    render(<RootWrapper />);
+    render(<LibraryCollections variant="full" />, withLibraryId(mockContentLibrary.libraryId));
     expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 });

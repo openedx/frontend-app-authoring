@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {
   Stack,
   Icon,
@@ -10,7 +10,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { AddContentContainer, AddContentHeader } from '../add-content';
 import { CollectionInfo, CollectionInfoHeader } from '../collections';
 import { ContentLibrary } from '../data/api';
-import { LibraryContext, SidebarBodyComponentId } from '../common/context';
+import { SidebarBodyComponentId, useLibraryContext } from '../common/context';
 import { ComponentInfo, ComponentInfoHeader } from '../component-info';
 import { LibraryInfo, LibraryInfoHeader } from '../library-info';
 import messages from '../messages';
@@ -35,7 +35,7 @@ const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
     closeLibrarySidebar,
     currentComponentUsageKey,
     currentCollectionId,
-  } = useContext(LibraryContext);
+  } = useLibraryContext();
 
   const bodyComponentMap = {
     [SidebarBodyComponentId.AddContent]: <AddContentContainer />,

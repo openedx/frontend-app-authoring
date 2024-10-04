@@ -1,4 +1,3 @@
-import React, { useContext } from 'react';
 import { Stack } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
@@ -10,15 +9,14 @@ import { LibraryComponents } from './components';
 import LibrarySection from './components/LibrarySection';
 import LibraryRecentlyModified from './LibraryRecentlyModified';
 import messages from './messages';
-import { LibraryContext } from './common/context';
+import { useLibraryContext } from './common/context';
 
 type LibraryHomeProps = {
-  libraryId: string,
   tabList: { home: string, components: string, collections: string },
   handleTabChange: (key: string) => void,
 };
 
-const LibraryHome = ({ libraryId, tabList, handleTabChange } : LibraryHomeProps) => {
+const LibraryHome = ({ tabList, handleTabChange } : LibraryHomeProps) => {
   const intl = useIntl();
   const {
     totalHits: componentCount,
@@ -26,7 +24,7 @@ const LibraryHome = ({ libraryId, tabList, handleTabChange } : LibraryHomeProps)
     isLoading,
     isFiltered,
   } = useSearchContext();
-  const { openAddContentSidebar } = useContext(LibraryContext);
+  const { openAddContentSidebar } = useLibraryContext();
 
   const renderEmptyState = () => {
     if (isLoading) {
@@ -40,7 +38,7 @@ const LibraryHome = ({ libraryId, tabList, handleTabChange } : LibraryHomeProps)
 
   return (
     <Stack gap={3}>
-      <LibraryRecentlyModified libraryId={libraryId} />
+      <LibraryRecentlyModified />
       {
         renderEmptyState()
         || (
@@ -57,7 +55,7 @@ const LibraryHome = ({ libraryId, tabList, handleTabChange } : LibraryHomeProps)
               contentCount={componentCount}
               viewAllAction={() => handleTabChange(tabList.components)}
             >
-              <LibraryComponents libraryId={libraryId} variant="preview" />
+              <LibraryComponents variant="preview" />
             </LibrarySection>
           </>
         )
