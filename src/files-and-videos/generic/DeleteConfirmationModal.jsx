@@ -35,9 +35,7 @@ const DeleteConfirmationModal = ({
         styling="basic"
         title={(
           <h3 className="h5 m-n2">
-            <Truncate lines={1}>
-              {original.expandedPath}
-            </Truncate>
+            {original.expandedPath}
           </h3>
         )}
         data-testid={`collapsible-${original.id}`}
