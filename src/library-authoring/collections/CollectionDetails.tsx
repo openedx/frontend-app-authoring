@@ -51,15 +51,9 @@ const CollectionStatsWidget = ({ libraryId, collectionId }: CollectionStatsWidge
     return null;
   }
 
-  const blockTypesArray = Object.entries(blockTypes)
-    .map(([blockType, count]) => ({ blockType, count }))
-    .sort((a, b) => b.count - a.count);
+  const blockSlots = ['problem', 'html', 'video'];
 
-  const totalBlocksCount = blockTypesArray.reduce((acc, { count }) => acc + count, 0);
-  // Show the top 3 block type counts individually, and splice the remaining block types together under "Other".
-  const numBlockTypesShown = 3;
-  const otherBlocks = blockTypesArray.splice(numBlockTypesShown);
-  const otherBlocksCount = otherBlocks.reduce((acc, { count }) => acc + count, 0);
+  const totalBlocksCount = Object.values(blockTypes).reduce((acc, count) => acc + count, 0);
 
   if (totalBlocksCount === 0) {
     return (
@@ -74,6 +68,9 @@ const CollectionStatsWidget = ({ libraryId, collectionId }: CollectionStatsWidge
     );
   }
 
+  const otherBlocksCount = Object.entries(blockTypes).filter(([blockType]) => !blockSlots.includes(blockType))
+    .reduce((acc, [, count]) => acc + count, 0);
+
   return (
     <Stack direction="horizontal" className="p-2 justify-content-between" gap={2}>
       <BlockCount
@@ -81,15 +78,15 @@ const CollectionStatsWidget = ({ libraryId, collectionId }: CollectionStatsWidge
         count={totalBlocksCount}
         className="border-right"
       />
-      {blockTypesArray.map(({ blockType, count }) => (
+      {blockSlots.map((blockType) => (
         <BlockCount
           key={blockType}
           label={<BlockTypeLabel type={blockType} />}
           blockType={blockType}
-          count={count}
+          count={blockTypes[blockType] || 0}
         />
       ))}
-      {otherBlocks.length > 0 && (
+      {!!otherBlocksCount && (
         <BlockCount
           label={<FormattedMessage {...messages.detailsTabStatsOtherComponents} />}
           count={otherBlocksCount}
