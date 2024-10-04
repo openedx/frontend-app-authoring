@@ -8,25 +8,25 @@ import {
 
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
 import TagCount from '../../generic/tag-count';
-import { ContentHitTags, Highlight } from '../../search-manager';
+import { BlockTypeLabel, ContentHitTags, Highlight } from '../../search-manager';
 
 type BaseComponentCardProps = {
-  type: string,
+  componentType: string,
   displayName: string,
   description: string,
+  numChildren?: number,
   tags: ContentHitTags,
   actions: React.ReactNode,
-  blockTypeDisplayName: string,
   openInfoSidebar: () => void
 };
 
 const BaseComponentCard = ({
-  type,
+  componentType,
   displayName,
   description,
+  numChildren,
   tags,
   actions,
-  blockTypeDisplayName,
   openInfoSidebar,
 } : BaseComponentCardProps) => {
   const tagCount = useMemo(() => {
@@ -37,7 +37,7 @@ const BaseComponentCard = ({
             + (tags.level2?.length || 0) + (tags.level3?.length || 0);
   }, [tags]);
 
-  const componentIcon = getItemIcon(type);
+  const componentIcon = getItemIcon(componentType);
 
   return (
     <Container className="library-component-card">
@@ -51,7 +51,7 @@ const BaseComponentCard = ({
         }}
       >
         <Card.Header
-          className={`library-component-header ${getComponentStyleColor(type)}`}
+          className={`library-component-header ${getComponentStyleColor(componentType)}`}
           title={
             <Icon src={componentIcon} className="library-component-header-icon" />
           }
@@ -62,7 +62,9 @@ const BaseComponentCard = ({
             <Stack direction="horizontal" className="d-flex justify-content-between">
               <Stack direction="horizontal" gap={1}>
                 <Icon src={componentIcon} size="sm" />
-                <span className="small">{blockTypeDisplayName}</span>
+                <span className="small">
+                  <BlockTypeLabel blockType={componentType} count={numChildren} />
+                </span>
               </Stack>
               <TagCount count={tagCount} />
             </Stack>

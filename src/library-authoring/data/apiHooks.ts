@@ -14,7 +14,6 @@ import {
   type XBlockFields,
   type UpdateXBlockFieldsRequest,
   getContentLibrary,
-  getLibraryBlockTypes,
   createLibraryBlock,
   getContentLibraryV2List,
   commitLibraryChanges,
@@ -58,12 +57,6 @@ export const libraryAuthoringQueryKeys = {
     ...libraryAuthoringQueryKeys.all,
     'list',
     ...(customParams ? [customParams] : []),
-  ],
-  contentLibraryBlockTypes: (contentLibraryId?: string) => [
-    ...libraryAuthoringQueryKeys.all,
-    ...libraryAuthoringQueryKeys.contentLibrary(contentLibraryId),
-    'content',
-    'libraryBlockTypes',
   ],
   collection: (libraryId?: string, collectionId?: string) => [
     ...libraryAuthoringQueryKeys.all,
@@ -110,16 +103,6 @@ export const useContentLibrary = (libraryId: string | undefined) => (
     queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId),
     queryFn: () => getContentLibrary(libraryId!),
     enabled: libraryId !== undefined,
-  })
-);
-
-/**
- *  Hook to fetch block types of a library.
- */
-export const useLibraryBlockTypes = (libraryId: string) => (
-  useQuery({
-    queryKey: libraryAuthoringQueryKeys.contentLibraryBlockTypes(libraryId),
-    queryFn: () => getLibraryBlockTypes(libraryId),
   })
 );
 

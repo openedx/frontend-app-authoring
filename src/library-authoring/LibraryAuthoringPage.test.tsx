@@ -14,7 +14,6 @@ import mockEmptyResult from '../search-modal/__mocks__/empty-search-result.json'
 import {
   mockContentLibrary,
   mockGetCollectionMetadata,
-  mockLibraryBlockTypes,
   mockXBlockFields,
 } from './data/api.mocks';
 import { mockContentSearchConfig } from '../search-manager/data/api.mock';
@@ -25,7 +24,6 @@ import { getLibraryCollectionsApiUrl } from './data/api';
 mockGetCollectionMetadata.applyMock();
 mockContentSearchConfig.applyMock();
 mockContentLibrary.applyMock();
-mockLibraryBlockTypes.applyMock();
 mockXBlockFields.applyMock();
 mockBroadcastChannel();
 

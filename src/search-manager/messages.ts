@@ -56,6 +56,16 @@ const messages = defineMessages({
     defaultMessage: 'Section',
     description: 'Name of the "Section" course outline level in Studio',
   },
+  'blockType.collection': {
+    id: 'course-authoring.course-search.blockType.collection',
+    defaultMessage: 'Collection',
+    description: 'Collection type text',
+  },
+  'blockType.collection.with_count': {
+    id: 'course-authoring.course-search.blockType.collectionWithCount',
+    defaultMessage: 'Collection ({count})',
+    description: 'Collection type text with children count',
+  },
   'blockType.discussion': {
     id: 'course-authoring.course-search.blockType.discussion',
     defaultMessage: 'Discussion',

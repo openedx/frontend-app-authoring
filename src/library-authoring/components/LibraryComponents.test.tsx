@@ -7,7 +7,7 @@ import {
   initializeMocks,
 } from '../../testUtils';
 import { getContentSearchConfigUrl } from '../../search-manager/data/api';
-import { mockLibraryBlockTypes, mockContentLibrary } from '../data/api.mocks';
+import { mockContentLibrary } from '../data/api.mocks';
 import mockEmptyResult from '../../search-modal/__mocks__/empty-search-result.json';
 import { LibraryProvider } from '../common/context';
 import { libraryComponentsMock } from '../__mocks__';
@@ -15,7 +15,6 @@ import LibraryComponents from './LibraryComponents';
 
 const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
 
-mockLibraryBlockTypes.applyMock();
 mockContentLibrary.applyMock();
 const mockFetchNextPage = jest.fn();
 const mockUseSearchContext = jest.fn();

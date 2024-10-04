@@ -20,7 +20,6 @@ import BaseComponentCard from './BaseComponentCard';
 
 type ComponentCardProps = {
   contentHit: ContentHit,
-  blockTypeDisplayName: string,
 };
 
 export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
@@ -63,7 +62,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   );
 };
 
-const ComponentCard = ({ contentHit, blockTypeDisplayName } : ComponentCardProps) => {
+const ComponentCard = ({ contentHit } : ComponentCardProps) => {
   const {
     openComponentInfoSidebar,
   } = useLibraryContext();
@@ -83,7 +82,7 @@ const ComponentCard = ({ contentHit, blockTypeDisplayName } : ComponentCardProps
 
   return (
     <BaseComponentCard
-      type={blockType}
+      componentType={blockType}
       displayName={displayName}
       description={description}
       tags={tags}
@@ -92,7 +91,6 @@ const ComponentCard = ({ contentHit, blockTypeDisplayName } : ComponentCardProps
           <ComponentMenu usageKey={usageKey} />
         </ActionRow>
       )}
-      blockTypeDisplayName={blockTypeDisplayName}
       openInfoSidebar={() => openComponentInfoSidebar(usageKey)}
     />
   );

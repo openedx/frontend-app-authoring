@@ -9,11 +9,6 @@ const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 export const getContentLibraryApiUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/`;
 
 /**
- * Get the URL for getting block types of a library (what types can be created).
- */
-export const getLibraryBlockTypesUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/block_types/`;
-
-/**
  * Get the URL for create content in library.
  */
 export const getCreateLibraryBlockUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/blocks/`;
@@ -181,14 +176,6 @@ export interface CreateLibraryCollectionDataRequest {
 }
 
 export type UpdateCollectionComponentsRequest = Partial<CreateLibraryCollectionDataRequest>;
-
-/**
- * Fetch the list of XBlock types that can be added to this library
- */
-export async function getLibraryBlockTypes(libraryId: string): Promise<LibraryBlockType[]> {
-  const { data } = await getAuthenticatedHttpClient().get(getLibraryBlockTypesUrl(libraryId));
-  return camelCaseObject(data);
-}
 
 /**
  * Fetch a content library by its ID.
