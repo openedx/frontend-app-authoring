@@ -62,12 +62,12 @@ describe('<BlockTypeLabel />', () => {
   test.each(testCases)(
     'render BlockTypeLabel for $blockType (count=$count)',
     ({ blockType, expectedLabel, count }) => {
-      const { getByText } = render(
+      render(
         <IntlProvider locale="en">
           <BlockTypeLabel blockType={blockType} count={count} />
         </IntlProvider>,
       );
-      expect(getByText(expectedLabel)).toBeInTheDocument();
+      expect(screen.getByText(expectedLabel)).toBeInTheDocument();
     },
   );
 });
