@@ -19,7 +19,17 @@ const messages = defineMessages({
   advancedDetailsOLXEditButton: {
     id: 'course-authoring.library-authoring.component.advanced.olx-edit',
     defaultMessage: 'Edit OLX',
-    description: 'Heading for the component\'s OLX source code',
+    description: 'Label for button to enable editing the OLX',
+  },
+  advancedDetailsOLXSaveButton: {
+    id: 'course-authoring.library-authoring.component.advanced.olx-save',
+    defaultMessage: 'Save',
+    description: 'Button to save changes to the OLX',
+  },
+  advancedDetailsOLXCancelButton: {
+    id: 'course-authoring.library-authoring.component.advanced.olx-save',
+    defaultMessage: 'Cancel',
+    description: 'Button to cancel changes to the OLX',
   },
   advancedDetailsOLXEditWarning: {
     id: 'course-authoring.library-authoring.component.advanced.olx-warning',

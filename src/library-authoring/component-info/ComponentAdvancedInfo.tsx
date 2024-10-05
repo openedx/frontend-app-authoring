@@ -68,8 +68,12 @@ export const ComponentAdvancedInfo: React.FC<Props> = ({ usageKey }) => {
                 isEditingOLX
                   ? (
                     <>
-                      <Button variant="primary" onClick={updateOlx} disabled={olxUpdater.isLoading}>Save</Button>
-                      <Button variant="link" onClick={() => setEditingOLX(false)} disabled={olxUpdater.isLoading}>Cancel</Button>
+                      <Button variant="primary" onClick={updateOlx} disabled={olxUpdater.isLoading}>
+                        <FormattedMessage {...messages.advancedDetailsOLXSaveButton} />
+                      </Button>
+                      <Button variant="link" onClick={() => setEditingOLX(false)} disabled={olxUpdater.isLoading}>
+                        <FormattedMessage {...messages.advancedDetailsOLXCancelButton} />
+                      </Button>
                     </>
                   )
                   : (
