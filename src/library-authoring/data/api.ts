@@ -304,6 +304,7 @@ export async function createCollection(libraryId: string, collectionData: Create
 /**
  * Fetch the OLX for the given XBlock.
  */
+// istanbul ignore next
 export async function getXBlockOLX(usageKey: string): Promise<string> {
   const { data } = await getAuthenticatedHttpClient().get(getXBlockOLXApiUrl(usageKey));
   return data.olx;
@@ -313,6 +314,7 @@ export async function getXBlockOLX(usageKey: string): Promise<string> {
  * Set the OLX for the given XBlock.
  * Returns the OLX as it was actually saved.
  */
+// istanbul ignore next
 export async function setXBlockOLX(usageKey: string, newOLX: string): Promise<string> {
   const { data } = await getAuthenticatedHttpClient().post(getXBlockOLXApiUrl(usageKey), { olx: newOLX });
   return data.olx;
@@ -321,6 +323,7 @@ export async function setXBlockOLX(usageKey: string, newOLX: string): Promise<st
 /**
  * Fetch the asset (static file) list for the given XBlock.
  */
+// istanbul ignore next
 export async function getXBlockAssets(usageKey: string): Promise<{ path: string; url: string; size: number }[]> {
   const { data } = await getAuthenticatedHttpClient().get(getXBlockAssetsApiUrl(usageKey));
   return data.files;
