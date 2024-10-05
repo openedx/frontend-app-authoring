@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable import/prefer-default-export */
 import React from 'react';
 import {
@@ -11,7 +12,13 @@ import { FormattedMessage, FormattedNumber, useIntl } from '@edx/frontend-platfo
 
 import { LoadingSpinner } from '../../generic/Loading';
 import { CodeEditor, EditorAccessor } from '../../generic/CodeEditor';
-import { useUpdateXBlockOLX, useXBlockAssets, useXBlockOLX } from '../data/apiHooks';
+import { useLibraryContext } from '../common/context';
+import {
+  useContentLibrary,
+  useUpdateXBlockOLX,
+  useXBlockAssets,
+  useXBlockOLX,
+} from '../data/apiHooks';
 import messages from './messages';
 
 interface Props {
@@ -20,7 +27,9 @@ interface Props {
 
 export const ComponentAdvancedInfo: React.FC<Props> = ({ usageKey }) => {
   const intl = useIntl();
-  // TODO: hide the "Edit" button if the library is read only
+  const { libraryId } = useLibraryContext();
+  const { data: library } = useContentLibrary(libraryId);
+  const canEditLibrary = library?.canEditLibrary ?? false;
   const { data: olx, isLoading: isOLXLoading } = useXBlockOLX(usageKey);
   const { data: assets, isLoading: areAssetsLoading } = useXBlockAssets(usageKey);
   const editorRef = React.useRef<EditorAccessor | undefined>(undefined);
@@ -65,30 +74,32 @@ export const ComponentAdvancedInfo: React.FC<Props> = ({ usageKey }) => {
               )}
               <CodeEditor readOnly={!isEditingOLX} editorRef={editorRef}>{olx}</CodeEditor>
               {
-                isEditingOLX
-                  ? (
-                    <>
-                      <Button variant="primary" onClick={updateOlx} disabled={olxUpdater.isLoading}>
-                        <FormattedMessage {...messages.advancedDetailsOLXSaveButton} />
-                      </Button>
-                      <Button variant="link" onClick={() => setEditingOLX(false)} disabled={olxUpdater.isLoading}>
-                        <FormattedMessage {...messages.advancedDetailsOLXCancelButton} />
-                      </Button>
-                    </>
-                  )
-                  : (
-                    <OverlayTrigger
-                      placement="bottom-start"
-                      overlay={(
-                        <Tooltip id="olx-edit-button">
-                          <FormattedMessage {...messages.advancedDetailsOLXEditWarning} />
-                        </Tooltip>
-                      )}
-                    >
-                      <Button variant="link" onClick={() => setEditingOLX(true)}><FormattedMessage {...messages.advancedDetailsOLXEditButton} /></Button>
-                    </OverlayTrigger>
-                  )
-                }
+                isEditingOLX ? (
+                  <>
+                    <Button variant="primary" onClick={updateOlx} disabled={olxUpdater.isLoading}>
+                      <FormattedMessage {...messages.advancedDetailsOLXSaveButton} />
+                    </Button>
+                    <Button variant="link" onClick={() => setEditingOLX(false)} disabled={olxUpdater.isLoading}>
+                      <FormattedMessage {...messages.advancedDetailsOLXCancelButton} />
+                    </Button>
+                  </>
+                ) : canEditLibrary ? (
+                  <OverlayTrigger
+                    placement="bottom-start"
+                    overlay={(
+                      <Tooltip id="olx-edit-button">
+                        <FormattedMessage {...messages.advancedDetailsOLXEditWarning} />
+                      </Tooltip>
+                    )}
+                  >
+                    <Button variant="link" onClick={() => setEditingOLX(true)}>
+                      <FormattedMessage {...messages.advancedDetailsOLXEditButton} />
+                    </Button>
+                  </OverlayTrigger>
+                ) : (
+                  null
+                )
+              }
             </>
           );
         })()}
@@ -98,7 +109,10 @@ export const ComponentAdvancedInfo: React.FC<Props> = ({ usageKey }) => {
           <ul>
             { areAssetsLoading ? <li><LoadingSpinner /></li> : null }
             { assets?.map(a => (
-              <li key={a.path}><a href={a.url}>{a.path}</a> (<FormattedNumber value={a.size} notation="compact" unit="byte" unitDisplay="narrow" />)</li>
+              <li key={a.path}>
+                <a href={a.url}>{a.path}</a>{' '}
+                (<FormattedNumber value={a.size} notation="compact" unit="byte" unitDisplay="narrow" />)
+              </li>
             )) }
           </ul>
         </dd>
