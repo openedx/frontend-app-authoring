@@ -79,3 +79,7 @@
     color: $black;
   }
 }
+
+.react-datepicker-popper {
+  z-index: 3;
+}
