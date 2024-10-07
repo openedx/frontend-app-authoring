@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import React from 'react';
 import { basicSetup, EditorView } from 'codemirror';
 import { EditorState, Compartment } from '@codemirror/state';

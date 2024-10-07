@@ -54,14 +54,14 @@ export const ComponentAdvancedInfo: React.FC<Props> = ({ usageKey }) => {
       title={intl.formatMessage(messages.advancedDetailsTitle)}
     >
       <dl>
-        <dt><FormattedMessage {...messages.advancedDetailsUsageKey} /></dt>
-        <dd className="text-monospace small">{usageKey}</dd>
-        <dt><FormattedMessage {...messages.advancedDetailsOLX} /></dt>
-        <dd>{(() => {
+        <h3 className="h5"><FormattedMessage {...messages.advancedDetailsUsageKey} /></h3>
+        <p className="text-monospace small">{usageKey}</p>
+        <h3 className="h5"><FormattedMessage {...messages.advancedDetailsOLX} /></h3>
+        {(() => {
           if (isOLXLoading) { return <LoadingSpinner />; }
           if (!olx) { return <FormattedMessage {...messages.advancedDetailsOLXError} />; }
           return (
-            <>
+            <div className="mb-4">
               {olxUpdater.error && (
                 <Alert variant="danger">
                   <p><strong><FormattedMessage {...messages.advancedDetailsOLXEditFailed} /></strong></p>
@@ -72,7 +72,7 @@ export const ComponentAdvancedInfo: React.FC<Props> = ({ usageKey }) => {
                   */}
                 </Alert>
               )}
-              <CodeEditor readOnly={!isEditingOLX} editorRef={editorRef}>{olx}</CodeEditor>
+              <CodeEditor key={usageKey} readOnly={!isEditingOLX} editorRef={editorRef}>{olx}</CodeEditor>
               {
                 isEditingOLX ? (
                   <>
@@ -100,22 +100,19 @@ export const ComponentAdvancedInfo: React.FC<Props> = ({ usageKey }) => {
                   null
                 )
               }
-            </>
+            </div>
           );
         })()}
-        </dd>
-        <dt><FormattedMessage {...messages.advancedDetailsAssets} /></dt>
-        <dd>
-          <ul>
-            { areAssetsLoading ? <li><LoadingSpinner /></li> : null }
-            { assets?.map(a => (
-              <li key={a.path}>
-                <a href={a.url}>{a.path}</a>{' '}
-                (<FormattedNumber value={a.size} notation="compact" unit="byte" unitDisplay="narrow" />)
-              </li>
-            )) }
-          </ul>
-        </dd>
+        <h3 className="h5"><FormattedMessage {...messages.advancedDetailsAssets} /></h3>
+        <ul>
+          { areAssetsLoading ? <li><LoadingSpinner /></li> : null }
+          { assets?.map(a => (
+            <li key={a.path}>
+              <a href={a.url}>{a.path}</a>{' '}
+              (<FormattedNumber value={a.size} notation="compact" unit="byte" unitDisplay="narrow" />)
+            </li>
+          )) }
+        </ul>
       </dl>
     </Collapsible>
   );
