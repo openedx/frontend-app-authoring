@@ -1,13 +1,13 @@
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { addModel } from '../generic/model-store';
-import { getCourseDetail } from './api';
+import { getCourseDetail, getWaffleFlags } from './api';
 import {
   updateStatus,
   updateCanChangeProviders,
+  fetchWaffleFlagsSuccess,
 } from './slice';
 import { RequestStatus } from './constants';
 
-/* eslint-disable import/prefer-default-export */
 export function fetchCourseDetail(courseId) {
   return async (dispatch) => {
     dispatch(updateStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
@@ -26,6 +26,23 @@ export function fetchCourseDetail(courseId) {
       } else {
         dispatch(updateStatus({ courseId, status: RequestStatus.FAILED }));
       }
+    }
+  };
+}
+
+export function fetchWaffleFlags(courseId) {
+  return async (dispatch) => {
+    dispatch(updateStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
+
+    try {
+      const waffleFlags = await getWaffleFlags(courseId);
+      dispatch(updateStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
+      dispatch(fetchWaffleFlagsSuccess({ waffleFlags }));
+    } catch (error) {
+      // If fetching the waffle flags is unsuccessful,
+      // the pages will still be accessible and display without any issues.
+      // eslint-disable-next-line no-console
+      console.error({ courseId, status: RequestStatus.NOT_FOUND });
     }
   };
 }

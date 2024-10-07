@@ -6,6 +6,7 @@ import { RequestStatus } from '../data/constants';
 import { COURSE_CREATOR_STATES } from '../constants';
 import { getCourseData, getSavingStatus } from '../generic/data/selectors';
 import { fetchStudioHomeData } from './data/thunks';
+import { fetchWaffleFlags } from '../data/thunks';
 import {
   getLoadingStatuses,
   getSavingStatuses,
@@ -36,6 +37,7 @@ const useStudioHome = (isPaginated = false) => {
       dispatch(fetchStudioHomeData(location.search ?? ''));
       setShowNewCourseContainer(false);
     }
+    dispatch(fetchWaffleFlags());
   }, [location.search]);
 
   useEffect(() => {

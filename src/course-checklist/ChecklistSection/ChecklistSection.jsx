@@ -10,11 +10,11 @@ import ChecklistItemComment from './ChecklistItemComment';
 import { checklistItems } from './utils/courseChecklistData';
 
 const ChecklistSection = ({
+  courseId,
   dataHeading,
   data,
   idPrefix,
   isLoading,
-  updateLinks,
 }) => {
   const dataList = checklistItems[idPrefix];
   const getCompletionCountID = () => (`${idPrefix}-completion-count`);
@@ -37,8 +37,6 @@ const ChecklistSection = ({
             {checks.map(check => {
               const checkId = check.id;
               const isCompleted = values[checkId];
-              const updateLink = updateLinks?.[checkId];
-              const outlineUrl = updateLinks.outline;
               return (
                 <div
                   className={`bg-white border py-3 px-4 ${isCompleted && 'checklist-item-complete'}`}
@@ -46,9 +44,9 @@ const ChecklistSection = ({
                   data-testid={`checklist-item-${checkId}`}
                   key={checkId}
                 >
-                  <ChecklistItemBody {...{ checkId, isCompleted, updateLink }} />
+                  <ChecklistItemBody courseId={courseId} {...{ checkId, isCompleted }} />
                   <div data-testid={`comment-section-${checkId}`}>
-                    <ChecklistItemComment {...{ checkId, outlineUrl, data }} />
+                    <ChecklistItemComment {...{ courseId, checkId, data }} />
                   </div>
                 </div>
               );
@@ -61,11 +59,11 @@ const ChecklistSection = ({
 };
 
 ChecklistSection.defaultProps = {
-  updateLinks: {},
   data: {},
 };
 
 ChecklistSection.propTypes = {
+  courseId: PropTypes.string.isRequired,
   dataHeading: PropTypes.string.isRequired,
   data: PropTypes.oneOfType([
     PropTypes.shape({
@@ -129,14 +127,6 @@ ChecklistSection.propTypes = {
   ]),
   idPrefix: PropTypes.string.isRequired,
   isLoading: PropTypes.bool.isRequired,
-  updateLinks: PropTypes.shape({
-    welcomeMessage: PropTypes.string,
-    gradingPolicy: PropTypes.string,
-    certificate: PropTypes.string,
-    courseDates: PropTypes.string,
-    proctoringEmail: PropTypes.string,
-    outline: PropTypes.string,
-  }),
 };
 
 export default injectIntl(ChecklistSection);

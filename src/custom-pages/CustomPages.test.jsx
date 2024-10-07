@@ -15,6 +15,8 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import initializeStore from '../store';
 import { executeThunk } from '../utils';
 import { RequestStatus } from '../data/constants';
+import { getApiWaffleFlagsUrl } from '../data/api';
+import { fetchWaffleFlags } from '../data/thunks';
 import CustomPages from './CustomPages';
 import {
   generateFetchPageApiResponse,
@@ -72,6 +74,15 @@ describe('CustomPages', () => {
     });
     store = initializeStore(initialState);
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    axiosMock
+      .onGet(getApiWaffleFlagsUrl(courseId))
+      .reply(200, {
+        useNewGradingPage: true,
+        useNewCertificatesPage: true,
+        useNewScheduleDetailsPage: true,
+        useNewCourseOutlinePage: true,
+      });
+    await executeThunk(fetchWaffleFlags(courseId), store.dispatch);
   });
   it('should ', async () => {
     renderComponent();

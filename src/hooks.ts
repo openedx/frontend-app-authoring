@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { history } from '@edx/frontend-platform';
+import { useLocation } from 'react-router-dom';
 
 export const useScrollToHashElement = ({ isLoading }: { isLoading: boolean }) => {
   const [elementWithHash, setElementWithHash] = useState<string | null>(null);
+  const { pathname } = useLocation();
 
   useEffect(() => {
     const currentHash = window.location.hash.substring(1);
@@ -10,8 +12,8 @@ export const useScrollToHashElement = ({ isLoading }: { isLoading: boolean }) =>
     if (currentHash) {
       const element = document.getElementById(currentHash);
       if (element) {
-        element.scrollIntoView();
-        history.replace({ hash: '' });
+        element.scrollIntoView({ behavior: 'smooth' });
+        history.replace({ pathname, hash: '' });
       }
       setElementWithHash(currentHash);
     }
