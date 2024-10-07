@@ -19,6 +19,11 @@ export const getCreateLibraryBlockUrl = (libraryId: string) => `${getApiBaseUrl(
 export const getLibraryBlockMetadataUrl = (usageKey: string) => `${getApiBaseUrl()}/api/libraries/v2/blocks/${usageKey}/`;
 
 /**
+ * Get the URL for library block metadata.
+ */
+export const getLibraryBlockCollectionsUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}collections/`;
+
+/**
  * Get the URL for content library list API.
  */
 export const getContentLibraryV2ListApiUrl = () => `${getApiBaseUrl()}/api/libraries/v2/`;
@@ -40,7 +45,7 @@ export const getXBlockFieldsApiUrl = (usageKey: string) => `${getApiBaseUrl()}/a
 /**
   * Get the URL for the xblock OLX API
   */
-export const getXBlockOLXApiUrl = (usageKey: string) => `${getApiBaseUrl()}/api/libraries/v2/blocks/${usageKey}/olx/`;
+export const getXBlockOLXApiUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}olx/`;
 /**
   * Get the URL for the xblock Assets List API
   */
@@ -376,4 +381,13 @@ export async function deleteCollection(libraryId: string, collectionId: string) 
 export async function restoreCollection(libraryId: string, collectionId: string) {
   const client = getAuthenticatedHttpClient();
   await client.post(getLibraryCollectionRestoreApiUrl(libraryId, collectionId));
+}
+
+/**
+ * Update component collections.
+ */
+export async function updateComponentCollections(usageKey: string, collectionKeys: string[]) {
+  await getAuthenticatedHttpClient().patch(getLibraryBlockCollectionsUrl(usageKey), {
+    collection_keys: collectionKeys,
+  });
 }

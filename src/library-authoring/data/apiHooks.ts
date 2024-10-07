@@ -34,6 +34,7 @@ import {
   restoreCollection,
   setXBlockOLX,
   getXBlockAssets,
+  updateComponentCollections,
 } from './api';
 
 export const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
@@ -331,9 +332,9 @@ export const useUpdateCollection = (libraryId: string, collectionId: string) => 
 export const useUpdateCollectionComponents = (libraryId?: string, collectionId?: string) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (usage_keys: string[]) => {
+    mutationFn: async (usageKeys: string[]) => {
       if (libraryId !== undefined && collectionId !== undefined) {
-        return updateCollectionComponents(libraryId, collectionId, usage_keys);
+        return updateCollectionComponents(libraryId, collectionId, usageKeys);
       }
       return undefined;
     },
@@ -369,6 +370,33 @@ export const useRestoreCollection = (libraryId: string, collectionId: string) =>
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+    },
+  });
+};
+
+/**
+ * Use this mutation to update collections related a component in a library
+ */
+export const useUpdateComponentCollections = (libraryId: string, usageKey: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (collectionKeys: string[]) => {
+      return updateComponentCollections(usageKey, collectionKeys);
+    },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    onSettled: (_data, _error, _variables) => {
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+      queryClient.invalidateQueries({
+        predicate: (query) => {
+          const queryLibId = query.queryKey[5];
+          if (
+            (query.queryKey[0] !== 'content_search' && query.queryKey[1] !== 'get_by_block_id')
+            || typeof queryLibId !== 'string') {
+            return false;
+          }
+          return queryLibId === libraryId;
+        }
+      });
     },
   });
 };

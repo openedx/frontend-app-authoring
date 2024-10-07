@@ -9,7 +9,7 @@ import StatusWidget from '../generic/status-widget';
 import messages from './messages';
 import { ContentTagsDrawer } from '../../content-tags-drawer';
 import { useContentTaxonomyTagsData } from '../../content-tags-drawer/data/apiHooks';
-import AddToCollectionsDrawer from './AddToCollectionsDrawer';
+import ManageCollections from './ManageCollections';
 import { ContentHit } from '../../search-manager';
 
 interface ComponentManagementProps {
@@ -79,7 +79,7 @@ const ComponentManagement = ({ contentHit }: ComponentManagementProps) => {
         )}
         className="border-0"
       >
-        <AddToCollectionsDrawer contentHit={contentHit} />
+        <ManageCollections contentHit={contentHit} />
       </Collapsible>
     </Stack>
   );
