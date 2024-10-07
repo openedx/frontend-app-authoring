@@ -380,9 +380,7 @@ export const useRestoreCollection = (libraryId: string, collectionId: string) =>
 export const useUpdateComponentCollections = (libraryId: string, usageKey: string) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (collectionKeys: string[]) => {
-      return updateComponentCollections(usageKey, collectionKeys);
-    },
+    mutationFn: async (collectionKeys: string[]) => updateComponentCollections(usageKey, collectionKeys),
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onSettled: (_data, _error, _variables) => {
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
@@ -395,7 +393,7 @@ export const useUpdateComponentCollections = (libraryId: string, usageKey: strin
             return false;
           }
           return queryLibId === libraryId;
-        }
+        },
       });
     },
   });

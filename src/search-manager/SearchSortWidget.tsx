@@ -3,10 +3,10 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon, Dropdown } from '@openedx/paragon';
 import { Check, SwapVert } from '@openedx/paragon/icons';
 
+import classNames from 'classnames';
 import messages from './messages';
 import { SearchSortOption } from './data/api';
 import { useSearchContext } from './SearchManager';
-import classNames from 'classnames';
 
 export const SearchSortWidget = ({ iconOnly = false }: { iconOnly?: boolean }) => {
   const intl = useIntl();
@@ -83,8 +83,8 @@ export const SearchSortWidget = ({ iconOnly = false }: { iconOnly?: boolean }) =
         title={intl.formatMessage(messages.searchSortWidgetAltTitle)}
         alt={intl.formatMessage(messages.searchSortWidgetAltTitle)}
         variant="outline-primary"
-        className={classNames("dropdown-toggle-menu-items d-flex", {
-          "border-0": iconOnly
+        className={classNames('dropdown-toggle-menu-items d-flex', {
+          'border-0': iconOnly,
         })}
         size="sm"
       >

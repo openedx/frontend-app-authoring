@@ -566,7 +566,6 @@ export const fetchContentByBlockId = async (
   libraryKey: string,
   blockId: string,
 ): Promise<CollectionHit | ContentHit> => {
-
   const { results } = await client.multiSearch({
     queries: [{
       indexUid: indexName,

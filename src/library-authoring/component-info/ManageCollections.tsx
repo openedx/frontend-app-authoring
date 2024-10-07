@@ -1,6 +1,8 @@
 import { useContext, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { Button, Icon, Scrollable, SelectableBox, Stack, useCheckboxSetValues } from '@openedx/paragon';
+import {
+  Button, Icon, Scrollable, SelectableBox, Stack, useCheckboxSetValues,
+} from '@openedx/paragon';
 import { Folder } from '@openedx/paragon/icons';
 
 import {
@@ -41,8 +43,8 @@ const CollectionsSelectableBox = ({ contentHit, onClose }: CollectionsDrawerProp
 
     return () => {
       clear();
-    }
-  }, [contentHit])
+    };
+  }, [contentHit]);
 
   const updateCollectionsMutation = useUpdateComponentCollections(contentHit.contextKey, contentHit.usageKey);
 
@@ -53,15 +55,13 @@ const CollectionsSelectableBox = ({ contentHit, onClose }: CollectionsDrawerProp
     }).catch(() => {
       showToast(intl.formatMessage(messages.manageCollectionsToComponentFailed));
     });
-  }
-
-  const handleChange = (e) => {
-    e.target.checked ? add(e.target.value) : remove(e.target.value);
   };
+
+  const handleChange = (e) => (e.target.checked ? add(e.target.value) : remove(e.target.value));
 
   return (
     <Stack gap={4}>
-      <Scrollable className="mt-3 p-1 border-bottom border-gray-100" style={{ 'height': '25vh' }}>
+      <Scrollable className="mt-3 p-1 border-bottom border-gray-100" style={{ height: '25vh' }}>
         <SelectableBox.Set
           value={selectedCollections}
           type={type}
@@ -70,24 +70,24 @@ const CollectionsSelectableBox = ({ contentHit, onClose }: CollectionsDrawerProp
           columns={1}
           ariaLabelledby={intl.formatMessage(messages.manageCollectionsSelectionLabel)}
         >
-          {collectionHits.map((contentHit) => (
+          {collectionHits.map((collectionHit) => (
             <SelectableBox
               className="d-inline-flex align-items-center shadow-none border border-gray-100"
-              value={contentHit.blockId}
-              key={contentHit.blockId}
+              value={collectionHit.blockId}
+              key={collectionHit.blockId}
               inputHidden={false}
               type={type}
-              aria-label={contentHit.displayName}
+              aria-label={collectionHit.displayName}
             >
               <Stack className="ml-2" direction="horizontal" gap={2}>
                 <Icon src={Folder} />
-                <span>{contentHit.displayName}</span>
+                <span>{collectionHit.displayName}</span>
               </Stack>
             </SelectableBox>
           ))}
         </SelectableBox.Set>
       </Scrollable>
-      <Stack direction='horizontal' gap={2}>
+      <Stack direction="horizontal" gap={2}>
         <Button
           onClick={onClose}
           variant="outline-primary"
@@ -104,7 +104,7 @@ const CollectionsSelectableBox = ({ contentHit, onClose }: CollectionsDrawerProp
       </Stack>
     </Stack>
   );
-}
+};
 
 const AddToCollectionsDrawer = ({ contentHit, onClose }: CollectionsDrawerProps) => {
   const intl = useIntl();
@@ -138,8 +138,8 @@ const AddToCollectionsDrawer = ({ contentHit, onClose }: CollectionsDrawerProps)
         />
       </Stack>
     </SearchContextProvider>
-  )
-}
+  );
+};
 
 const ComponentCollections = ({ collections, onManageClick }: {
   collections?: string[];
@@ -164,7 +164,7 @@ const ComponentCollections = ({ collections, onManageClick }: {
   }
 
   return (
-    <Stack gap={4} className='mt-2'>
+    <Stack gap={4} className="mt-2">
       {collections.map((collection) => (
         <Stack
           className="border-bottom pb-4 border-gray-100"
@@ -184,17 +184,17 @@ const ComponentCollections = ({ collections, onManageClick }: {
       </Button>
     </Stack>
   );
-}
+};
 
 const ManageCollections = ({ contentHit }: ManageCollectionsProps) => {
   const { data, isLoading } = useGetDocumentByBlockId(
     contentHit.contextKey,
-    contentHit.blockId
-  ) as { data: ContentHit, isLoading: boolean};
+    contentHit.blockId,
+  ) as { data: ContentHit, isLoading: boolean };
   const [editing, setEditing] = useState(false);
 
   if (isLoading) {
-    return <Loading />
+    return <Loading />;
   }
 
   if (editing) {
@@ -212,6 +212,6 @@ const ManageCollections = ({ contentHit }: ManageCollectionsProps) => {
       onManageClick={() => setEditing(true)}
     />
   );
-}
+};
 
 export default ManageCollections;
