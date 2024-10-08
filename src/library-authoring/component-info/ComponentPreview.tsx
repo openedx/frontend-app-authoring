@@ -5,6 +5,7 @@ import { OpenInFull } from '@openedx/paragon/icons';
 
 import { LibraryBlock } from '../LibraryBlock';
 import messages from './messages';
+import { useLibraryBlockMetadata } from '../data/apiHooks';
 
 interface ModalComponentPreviewProps {
   isOpen: boolean;
@@ -36,6 +37,7 @@ const ComponentPreview = ({ usageKey }: ComponentPreviewProps) => {
   const intl = useIntl();
 
   const [isModalOpen, openModal, closeModal] = useToggle();
+  const { data: componentMetadata } = useLibraryBlockMetadata(usageKey);
 
   return (
     <>
@@ -49,7 +51,12 @@ const ComponentPreview = ({ usageKey }: ComponentPreviewProps) => {
         >
           {intl.formatMessage(messages.previewExpandButtonTitle)}
         </Button>
-        <LibraryBlock usageKey={usageKey} />
+        {
+          // key=modified below is used to auto-refresh the preview when changes are made, e.g. via OLX editor
+          componentMetadata
+            ? <LibraryBlock usageKey={usageKey} key={componentMetadata.modified} />
+            : null
+        }
       </div>
       <ModalComponentPreview isOpen={isModalOpen} close={closeModal} usageKey={usageKey} />
     </>

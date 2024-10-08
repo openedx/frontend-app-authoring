@@ -42,6 +42,10 @@ export const getXBlockFieldsApiUrl = (usageKey: string) => `${getApiBaseUrl()}/a
   */
 export const getXBlockOLXApiUrl = (usageKey: string) => `${getApiBaseUrl()}/api/libraries/v2/blocks/${usageKey}/olx/`;
 /**
+  * Get the URL for the xblock Assets List API
+  */
+export const getXBlockAssetsApiUrl = (usageKey: string) => `${getApiBaseUrl()}/api/libraries/v2/blocks/${usageKey}/assets/`;
+/**
  * Get the URL for the Library Collections API.
  */
 export const getLibraryCollectionsApiUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/collections/`;
@@ -304,9 +308,29 @@ export async function createCollection(libraryId: string, collectionData: Create
 /**
  * Fetch the OLX for the given XBlock.
  */
+// istanbul ignore next
 export async function getXBlockOLX(usageKey: string): Promise<string> {
   const { data } = await getAuthenticatedHttpClient().get(getXBlockOLXApiUrl(usageKey));
   return data.olx;
+}
+
+/**
+ * Set the OLX for the given XBlock.
+ * Returns the OLX as it was actually saved.
+ */
+// istanbul ignore next
+export async function setXBlockOLX(usageKey: string, newOLX: string): Promise<string> {
+  const { data } = await getAuthenticatedHttpClient().post(getXBlockOLXApiUrl(usageKey), { olx: newOLX });
+  return data.olx;
+}
+
+/**
+ * Fetch the asset (static file) list for the given XBlock.
+ */
+// istanbul ignore next
+export async function getXBlockAssets(usageKey: string): Promise<{ path: string; url: string; size: number }[]> {
+  const { data } = await getAuthenticatedHttpClient().get(getXBlockAssetsApiUrl(usageKey));
+  return data.files;
 }
 
 /**

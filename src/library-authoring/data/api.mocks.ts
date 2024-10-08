@@ -1,5 +1,6 @@
 /* istanbul ignore file */
 import { mockContentTaxonomyTagsData } from '../../content-tags-drawer/data/api.mocks';
+import { getBlockType } from '../../generic/key-utils';
 import { createAxiosError } from '../../testUtils';
 import * as api from './api';
 
@@ -283,3 +284,53 @@ mockGetCollectionMetadata.collectionData = {
 mockGetCollectionMetadata.applyMock = () => {
   jest.spyOn(api, 'getCollectionMetadata').mockImplementation(mockGetCollectionMetadata);
 };
+
+/**
+ * Mock for `getXBlockOLX()`
+ *
+ * This mock returns different data/responses depending on the ID of the block
+ * that you request. Use `mockXBlockOLX.applyMock()` to apply it to the whole
+ * test suite.
+ */
+export async function mockXBlockOLX(usageKey: string): Promise<string> {
+  const thisMock = mockXBlockOLX;
+  switch (usageKey) {
+    case thisMock.usageKeyHtml: return thisMock.olxHtml;
+    default: {
+      const blockType = getBlockType(usageKey);
+      return `<${blockType}>This is mock OLX for usageKey "${usageKey}"</${blockType}>`;
+    }
+  }
+}
+// Mock of a "regular" HTML (Text) block:
+mockXBlockOLX.usageKeyHtml = mockXBlockFields.usageKeyHtml;
+mockXBlockOLX.olxHtml = `
+  <html display_name="${mockXBlockFields.dataHtml.displayName}">
+    ${mockXBlockFields.dataHtml.data}
+  </html>
+`;
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockXBlockOLX.applyMock = () => jest.spyOn(api, 'getXBlockOLX').mockImplementation(mockXBlockOLX);
+
+/**
+ * Mock for `setXBlockOLX()`
+ */
+export async function mockSetXBlockOLX(_usageKey: string, newOLX: string): Promise<string> {
+  return newOLX;
+}
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockSetXBlockOLX.applyMock = () => jest.spyOn(api, 'setXBlockOLX').mockImplementation(mockSetXBlockOLX);
+
+/**
+ * Mock for `getXBlockAssets()`
+ *
+ * Use `getXBlockAssets.applyMock()` to apply it to the whole test suite.
+ */
+export async function mockXBlockAssets(): ReturnType<typeof api['getXBlockAssets']> {
+  return [
+    { path: 'static/image1.png', url: 'https://cdn.test.none/image1.png', size: 12_345_000 },
+    { path: 'static/data.csv', url: 'https://cdn.test.none/data.csv', size: 8_000 },
+  ];
+}
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockXBlockAssets.applyMock = () => jest.spyOn(api, 'getXBlockAssets').mockImplementation(mockXBlockAssets);

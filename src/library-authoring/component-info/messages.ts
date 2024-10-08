@@ -1,6 +1,56 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
+  advancedDetailsTitle: {
+    id: 'course-authoring.library-authoring.component.advanced.title',
+    defaultMessage: 'Advanced details',
+    description: 'Heading for the advanced technical details of a component',
+  },
+  advancedDetailsAssets: {
+    id: 'course-authoring.library-authoring.component.advanced.assets',
+    defaultMessage: 'Assets (Files)',
+    description: 'Heading for files attached to the component',
+  },
+  advancedDetailsOLX: {
+    id: 'course-authoring.library-authoring.component.advanced.olx',
+    defaultMessage: 'OLX Source',
+    description: 'Heading for the component\'s OLX source code',
+  },
+  advancedDetailsOLXEditButton: {
+    id: 'course-authoring.library-authoring.component.advanced.olx-edit',
+    defaultMessage: 'Edit OLX',
+    description: 'Label for button to enable editing the OLX',
+  },
+  advancedDetailsOLXSaveButton: {
+    id: 'course-authoring.library-authoring.component.advanced.olx-save',
+    defaultMessage: 'Save',
+    description: 'Button to save changes to the OLX',
+  },
+  advancedDetailsOLXCancelButton: {
+    id: 'course-authoring.library-authoring.component.advanced.olx-save',
+    defaultMessage: 'Cancel',
+    description: 'Button to cancel changes to the OLX',
+  },
+  advancedDetailsOLXEditWarning: {
+    id: 'course-authoring.library-authoring.component.advanced.olx-warning',
+    defaultMessage: 'Be careful! This is an advanced feature and errors may break the component.',
+    description: 'Warning for users about editing OLX directly.',
+  },
+  advancedDetailsOLXEditFailed: {
+    id: 'course-authoring.library-authoring.component.advanced.olx-failed',
+    defaultMessage: 'An error occurred and the OLX could not be saved.',
+    description: 'Error message shown when saving the OLX fails.',
+  },
+  advancedDetailsOLXError: {
+    id: 'course-authoring.library-authoring.component.advanced.olx-error',
+    defaultMessage: 'Unable to load OLX',
+    description: 'Error message if OLX is unavailable',
+  },
+  advancedDetailsUsageKey: {
+    id: 'course-authoring.library-authoring.component.advanced.usage-key',
+    defaultMessage: 'ID (Usage key)',
+    description: 'Heading for the component\'s ID',
+  },
   editNameButtonAlt: {
     id: 'course-authoring.library-authoring.component.edit-name.alt',
     defaultMessage: 'Edit component name',
