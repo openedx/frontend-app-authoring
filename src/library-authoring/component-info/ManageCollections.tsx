@@ -11,12 +11,10 @@ import {
   SearchKeywordsField,
   SearchSortWidget,
   useSearchContext,
-  useGetDocumentByBlockId,
 } from '../../search-manager';
 import messages from './messages';
 import { useUpdateComponentCollections } from '../data/apiHooks';
 import { ToastContext } from '../../generic/toast-context';
-import Loading from '../../generic/Loading';
 
 interface ManageCollectionsProps {
   contentHit: ContentHit;
@@ -187,20 +185,12 @@ const ComponentCollections = ({ collections, onManageClick }: {
 };
 
 const ManageCollections = ({ contentHit }: ManageCollectionsProps) => {
-  const { data, isLoading } = useGetDocumentByBlockId(
-    contentHit.contextKey,
-    contentHit.blockId,
-  ) as { data: ContentHit, isLoading: boolean };
   const [editing, setEditing] = useState(false);
-
-  if (isLoading) {
-    return <Loading />;
-  }
 
   if (editing) {
     return (
       <AddToCollectionsDrawer
-        contentHit={data}
+        contentHit={contentHit}
         onClose={() => setEditing(false)}
         key={contentHit.usageKey}
       />
@@ -208,7 +198,7 @@ const ManageCollections = ({ contentHit }: ManageCollectionsProps) => {
   }
   return (
     <ComponentCollections
-      collections={data.collections?.displayName}
+      collections={contentHit.collections?.displayName}
       onManageClick={() => setEditing(true)}
     />
   );

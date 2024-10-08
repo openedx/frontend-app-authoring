@@ -386,13 +386,13 @@ export const useUpdateComponentCollections = (libraryId: string, usageKey: strin
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
       queryClient.invalidateQueries({
         predicate: (query) => {
-          const queryLibId = query.queryKey[5];
+          const queryUsageKey = query.queryKey[5];
           if (
-            (query.queryKey[0] !== 'content_search' && query.queryKey[1] !== 'get_by_block_id')
-            || typeof queryLibId !== 'string') {
+            (query.queryKey[0] !== 'content_search' && query.queryKey[1] !== 'get_by_usage_key')
+            || typeof queryUsageKey !== 'string') {
             return false;
           }
-          return queryLibId === libraryId;
+          return queryUsageKey === usageKey;
         },
       });
     },

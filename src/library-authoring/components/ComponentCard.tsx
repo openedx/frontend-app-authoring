@@ -91,7 +91,7 @@ const ComponentCard = ({ contentHit } : ComponentCardProps) => {
           <ComponentMenu usageKey={usageKey} />
         </ActionRow>
       )}
-      openInfoSidebar={() => openComponentInfoSidebar(contentHit)}
+      openInfoSidebar={() => openComponentInfoSidebar(usageKey)}
     />
   );
 };

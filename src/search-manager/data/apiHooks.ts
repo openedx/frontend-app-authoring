@@ -12,7 +12,7 @@ import {
   fetchDocumentById,
   fetchBlockTypes,
   OverrideQueries,
-  fetchContentByBlockId,
+  fetchContentByUsageKey,
 } from './api';
 
 /**
@@ -286,19 +286,18 @@ export const useGetSingleDocument = ({ client, indexName, id }: {
 );
 
 /* istanbul ignore next */
-export const useGetDocumentByBlockId = (libraryKey: string, blockId: string) => {
+export const useGetDocumentByUsageKey = (usageKey: string) => {
   const { client, indexName } = useContentSearchConnection();
   return useQuery({
     enabled: client !== undefined && indexName !== undefined,
     queryKey: [
       'content_search',
-      'get_by_block_id',
+      'get_by_usage_key',
       client?.config.apiKey,
       client?.config.host,
       indexName,
-      libraryKey,
-      blockId,
+      usageKey,
     ],
-    queryFn: () => fetchContentByBlockId(client!, indexName!, libraryKey, blockId),
+    queryFn: () => fetchContentByUsageKey(client!, indexName!, usageKey),
   });
 };

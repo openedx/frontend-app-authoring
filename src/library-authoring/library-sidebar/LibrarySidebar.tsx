@@ -33,7 +33,7 @@ const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
   const {
     sidebarBodyComponent,
     closeLibrarySidebar,
-    currentComponentData,
+    currentComponentUsageKey,
     currentCollectionId,
   } = useLibraryContext();
 
@@ -41,7 +41,7 @@ const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
     [SidebarBodyComponentId.AddContent]: <AddContentContainer />,
     [SidebarBodyComponentId.Info]: <LibraryInfo library={library} />,
     [SidebarBodyComponentId.ComponentInfo]: (
-      currentComponentData && <ComponentInfo contentHit={currentComponentData} />
+      currentComponentUsageKey && <ComponentInfo usageKey={currentComponentUsageKey} />
     ),
     [SidebarBodyComponentId.CollectionInfo]: (
       currentCollectionId && <CollectionInfo library={library} collectionId={currentCollectionId} />
@@ -53,7 +53,7 @@ const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
     [SidebarBodyComponentId.AddContent]: <AddContentHeader />,
     [SidebarBodyComponentId.Info]: <LibraryInfoHeader library={library} />,
     [SidebarBodyComponentId.ComponentInfo]: (
-      currentComponentData && <ComponentInfoHeader library={library} usageKey={currentComponentData.usageKey} />
+      currentComponentUsageKey && <ComponentInfoHeader library={library} usageKey={currentComponentUsageKey} />
     ),
     [SidebarBodyComponentId.CollectionInfo]: (
       currentCollectionId && <CollectionInfoHeader library={library} collectionId={currentCollectionId} />

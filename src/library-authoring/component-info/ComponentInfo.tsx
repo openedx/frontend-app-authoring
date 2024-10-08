@@ -14,18 +14,16 @@ import messages from './messages';
 import { canEditComponent } from '../components/ComponentEditorModal';
 import { useLibraryContext } from '../common/context';
 import { useContentLibrary } from '../data/apiHooks';
-import { ContentHit } from '../../search-manager';
 
 interface ComponentInfoProps {
-  contentHit: ContentHit;
+  usageKey: string;
 }
 
-const ComponentInfo = ({ contentHit }: ComponentInfoProps) => {
+const ComponentInfo = ({ usageKey }: ComponentInfoProps) => {
   const intl = useIntl();
   const { libraryId, openComponentEditor } = useLibraryContext();
   const { data: libraryData } = useContentLibrary(libraryId);
   const canEdit = libraryData?.canEditLibrary && canEditComponent(usageKey);
-  const { usageKey } = contentHit;
 
   return (
     <Stack>
@@ -51,7 +49,7 @@ const ComponentInfo = ({ contentHit }: ComponentInfoProps) => {
           <ComponentPreview usageKey={usageKey} />
         </Tab>
         <Tab eventKey="manage" title={intl.formatMessage(messages.manageTabTitle)}>
-          <ComponentManagement contentHit={contentHit} />
+          <ComponentManagement usageKey={usageKey} />
         </Tab>
         <Tab eventKey="details" title={intl.formatMessage(messages.detailsTabTitle)}>
           <ComponentDetails usageKey={usageKey} />

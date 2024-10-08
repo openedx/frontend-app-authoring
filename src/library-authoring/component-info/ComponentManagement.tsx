@@ -10,18 +10,22 @@ import messages from './messages';
 import { ContentTagsDrawer } from '../../content-tags-drawer';
 import { useContentTaxonomyTagsData } from '../../content-tags-drawer/data/apiHooks';
 import ManageCollections from './ManageCollections';
-import { ContentHit } from '../../search-manager';
+import { ContentHit, useGetDocumentByUsageKey } from '../../search-manager';
 
 interface ComponentManagementProps {
-  contentHit: ContentHit;
+  usageKey: string;
 }
 
-const ComponentManagement = ({ contentHit }: ComponentManagementProps) => {
+const ComponentManagement = ({ usageKey }: ComponentManagementProps) => {
   const intl = useIntl();
-  const { usageKey } = contentHit;
   const { data: componentMetadata } = useLibraryBlockMetadata(usageKey);
   const { data: componentTags } = useContentTaxonomyTagsData(usageKey);
+  const { data: contentHit } = useGetDocumentByUsageKey(usageKey) as { data: ContentHit };
 
+  const collectionsCount = React.useMemo(
+    () => contentHit?.collections?.displayName?.length || 0,
+    [contentHit]
+  );
   const tagsCount = React.useMemo(() => {
     if (!componentTags) {
       return 0;
@@ -74,7 +78,7 @@ const ComponentManagement = ({ contentHit }: ComponentManagementProps) => {
         title={(
           <Stack gap={1} direction="horizontal">
             <Icon src={BookOpen} />
-            {intl.formatMessage(messages.manageTabCollectionsTitle)}
+            {intl.formatMessage(messages.manageTabCollectionsTitle, { count: collectionsCount })}
           </Stack>
         )}
         className="border-0"

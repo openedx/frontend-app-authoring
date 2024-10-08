@@ -558,20 +558,18 @@ export async function fetchDocumentById({ client, indexName, id } : {
 }
 
 /**
- * Fetch a content hit by block Id and library key i.e. context_key
+ * Fetch a content hit by usage key
  */
-export const fetchContentByBlockId = async (
+export const fetchContentByUsageKey = async (
   client: MeiliSearch,
   indexName: string,
-  libraryKey: string,
-  blockId: string,
+  usageKey: string,
 ): Promise<CollectionHit | ContentHit> => {
   const { results } = await client.multiSearch({
     queries: [{
       indexUid: indexName,
       filter: [
-        `context_key = "${libraryKey}"`,
-        `block_id = "${blockId}"`,
+        `usage_key = "${usageKey}"`,
       ],
       limit: 1,
     }],
