@@ -51,14 +51,14 @@ export async function mockGetBlockTypes(
     noBlocks: {},
     someBlocks: { problem: 1, html: 2 },
     moreBlocks: {
-      advanced: 1,
-      discussion: 2,
-      library: 3,
-      drag_and_drop_v2: 4,
-      openassessment: 5,
-      html: 6,
-      problem: 7,
-      video: 8,
+      advanced: 8,
+      discussion: 7,
+      library: 6,
+      drag_and_drop_v2: 5,
+      openassessment: 4,
+      html: 3,
+      problem: 2,
+      video: 1,
     },
   };
   jest.spyOn(api, 'fetchBlockTypes').mockResolvedValue(mockResponseMap[mockResponse]);

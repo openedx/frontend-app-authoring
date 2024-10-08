@@ -122,6 +122,7 @@ describe('<CollectionDetails />', () => {
       { blockType: 'Total', count: 3 },
       { blockType: 'Text', count: 2 },
       { blockType: 'Problem', count: 1 },
+      { blockType: 'Video', count: 0 },
     ].forEach(({ blockType, count }) => {
       const blockCount = screen.getByText(blockType).closest('div') as HTMLDivElement;
       expect(within(blockCount).getByText(count.toString())).toBeInTheDocument();
@@ -147,10 +148,10 @@ describe('<CollectionDetails />', () => {
 
     [
       { blockType: 'Total', count: 36 },
-      { blockType: 'Video', count: 8 },
-      { blockType: 'Problem', count: 7 },
-      { blockType: 'Text', count: 6 },
-      { blockType: 'Other', count: 15 },
+      { blockType: 'Problem', count: 2 },
+      { blockType: 'Text', count: 3 },
+      { blockType: 'Video', count: 1 },
+      { blockType: 'Other', count: 30 },
     ].forEach(({ blockType, count }) => {
       const blockCount = screen.getByText(blockType).closest('div') as HTMLDivElement;
       expect(within(blockCount).getByText(count.toString())).toBeInTheDocument();
