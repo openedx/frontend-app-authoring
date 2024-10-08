@@ -2,9 +2,15 @@ import React from 'react';
 
 import ProcessingNotification from '../processing-notification';
 
+export interface ToastActionData {
+  label: string;
+  onClick: () => void;
+}
+
 export interface ToastContextData {
   toastMessage: string | null;
-  showToast: (message: string) => void;
+  toastAction?: ToastActionData;
+  showToast: (message: string, action?: ToastActionData) => void;
   closeToast: () => void;
 }
 
@@ -18,6 +24,7 @@ export interface ToastProviderProps {
  */
 export const ToastContext = React.createContext<ToastContextData>({
   toastMessage: null,
+  toastAction: undefined,
   showToast: () => {},
   closeToast: () => {},
 });
@@ -30,32 +37,41 @@ export const ToastProvider = (props: ToastProviderProps) => {
   // see: https://github.com/open-craft/frontend-app-course-authoring/pull/38#discussion_r1638990647
 
   const [toastMessage, setToastMessage] = React.useState<string | null>(null);
+  const [toastAction, setToastAction] = React.useState<ToastActionData | undefined>(undefined);
+
+  const resetState = React.useCallback(() => {
+    setToastMessage(null);
+    setToastAction(undefined);
+  }, []);
 
   React.useEffect(() => () => {
     // Cleanup function to avoid updating state on unmounted component
-    setToastMessage(null);
+    resetState();
   }, []);
 
-  const showToast = React.useCallback((message) => {
+  const showToast = React.useCallback((message, action?: ToastActionData) => {
     setToastMessage(message);
-    // Close the toast after 5 seconds
-    setTimeout(() => {
-      setToastMessage(null);
-    }, 5000);
-  }, [setToastMessage]);
-  const closeToast = React.useCallback(() => setToastMessage(null), [setToastMessage]);
+    setToastAction(action);
+  }, [setToastMessage, setToastAction]);
+  const closeToast = React.useCallback(() => resetState(), [setToastMessage, setToastAction]);
 
   const context = React.useMemo(() => ({
     toastMessage,
+    toastAction,
     showToast,
     closeToast,
-  }), [toastMessage, showToast, closeToast]);
+  }), [toastMessage, toastAction, showToast, closeToast]);
 
   return (
     <ToastContext.Provider value={context}>
       {props.children}
       { toastMessage && (
-        <ProcessingNotification isShow={toastMessage !== null} title={toastMessage} />
+        <ProcessingNotification
+          isShow={toastMessage !== null}
+          title={toastMessage}
+          action={toastAction}
+          close={closeToast}
+        />
       )}
     </ToastContext.Provider>
   );

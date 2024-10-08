@@ -1,28 +1,40 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import { Badge, Icon } from '@openedx/paragon';
+import {
+  Icon, Toast,
+} from '@openedx/paragon';
 import { Settings as IconSettings } from '@openedx/paragon/icons';
 import { capitalize } from 'lodash';
+import classNames from 'classnames';
 
-const ProcessingNotification = ({ isShow, title }) => (
-  <Badge
-    className={classNames('processing-notification', {
-      'is-show': isShow,
-    })}
-    variant="secondary"
+const ProcessingNotification = ({
+  isShow, title, action, close,
+}) => (
+  <Toast
+    className={classNames({ 'processing-notification-hide-close-button': !close })}
+    show={isShow}
     aria-hidden={isShow}
+    action={action && { ...action }}
+    onClose={close || (() => {})}
   >
-    <Icon className="processing-notification-icon" src={IconSettings} />
-    <h2 className="processing-notification-title">
-      {capitalize(title)}
-    </h2>
-  </Badge>
+    <span className="d-flex align-items-center">
+      <Icon className="processing-notification-icon mb-0 mr-2" src={IconSettings} />
+      <span className="font-weight-bold h4 mb-0 text-white">{capitalize(title)}</span>
+    </span>
+  </Toast>
 );
+
+ProcessingNotification.defaultProps = {
+  close: null,
+};
 
 ProcessingNotification.propTypes = {
   isShow: PropTypes.bool.isRequired,
   title: PropTypes.string.isRequired,
+  action: PropTypes.shape({
+    label: PropTypes.string.isRequired,
+    onClick: PropTypes.func,
+  }),
+  close: PropTypes.func,
 };
 
 export default ProcessingNotification;

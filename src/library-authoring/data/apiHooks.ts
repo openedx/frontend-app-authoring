@@ -30,6 +30,8 @@ import {
   updateCollectionComponents,
   type CreateLibraryCollectionDataRequest,
   getCollectionMetadata,
+  deleteCollection,
+  restoreCollection,
   setXBlockOLX,
   getXBlockAssets,
 } from './api';
@@ -335,11 +337,38 @@ export const useUpdateCollectionComponents = (libraryId?: string, collectionId?:
       }
       return undefined;
     },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onSettled: (_data, _error, _variables) => {
+    onSettled: () => {
       if (libraryId !== undefined && collectionId !== undefined) {
         queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
       }
+    },
+  });
+};
+
+/**
+ * Use this mutation to soft delete collections in a library
+ */
+export const useDeleteCollection = (libraryId: string, collectionId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => deleteCollection(libraryId, collectionId),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId) });
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+    },
+  });
+};
+
+/**
+ * Use this mutation to restore soft deleted collections in a library
+ */
+export const useRestoreCollection = (libraryId: string, collectionId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => restoreCollection(libraryId, collectionId),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId) });
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
     },
   });
 };

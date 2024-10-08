@@ -3,6 +3,7 @@ import {
   ActionRow,
   Button,
   AlertModal,
+  StatefulButton,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
@@ -15,6 +16,8 @@ const DeleteModal = ({
   onDeleteSubmit,
   title,
   description,
+  variant,
+  btnState,
 }) => {
   const intl = useIntl();
 
@@ -26,20 +29,32 @@ const DeleteModal = ({
       title={modalTitle}
       isOpen={isOpen}
       onClose={close}
+      variant={variant}
       footerNode={(
         <ActionRow>
-          <Button variant="tertiary" onClick={close}>
-            {intl.formatMessage(messages.cancelButton)}
-          </Button>
           <Button
-            data-testid="delete-confirm-button"
+            variant="tertiary"
             onClick={(e) => {
               e.preventDefault();
-              onDeleteSubmit();
+              e.stopPropagation();
+              close();
             }}
           >
-            {intl.formatMessage(messages.deleteButton, { category })}
+            {intl.formatMessage(messages.cancelButton)}
           </Button>
+          <StatefulButton
+            data-testid="delete-confirm-button"
+            state={btnState}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onDeleteSubmit();
+            }}
+            labels={{
+              default: intl.formatMessage(messages.deleteButton),
+              pending: intl.formatMessage(messages.pendingDeleteButton),
+            }}
+          />
         </ActionRow>
       )}
     >
@@ -52,6 +67,8 @@ DeleteModal.defaultProps = {
   category: '',
   title: '',
   description: '',
+  variant: 'default',
+  btnState: 'default',
 };
 
 DeleteModal.propTypes = {
@@ -61,6 +78,8 @@ DeleteModal.propTypes = {
   onDeleteSubmit: PropTypes.func.isRequired,
   title: PropTypes.string,
   description: PropTypes.string,
+  variant: PropTypes.string,
+  btnState: PropTypes.string,
 };
 
 export default DeleteModal;

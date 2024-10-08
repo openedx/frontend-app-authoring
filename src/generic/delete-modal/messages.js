@@ -13,6 +13,10 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.delete-modal.button.delete',
     defaultMessage: 'Delete',
   },
+  pendingDeleteButton: {
+    id: 'course-authoring.course-outline.delete-modal.button.pending-delete',
+    defaultMessage: 'Deleting',
+  },
   cancelButton: {
     id: 'course-authoring.course-outline.delete-modal.button.cancel',
     defaultMessage: 'Cancel',

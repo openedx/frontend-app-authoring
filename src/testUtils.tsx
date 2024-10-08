@@ -34,6 +34,7 @@ let axiosMock: MockAdapter;
 let mockToastContext: ToastContextData = {
   showToast: jest.fn(),
   closeToast: jest.fn(),
+  toastAction: undefined,
   toastMessage: null,
 };
 
@@ -176,6 +177,7 @@ export function initializeMocks({ user = defaultUser, initialState = undefined }
     showToast: jest.fn(),
     closeToast: jest.fn(),
     toastMessage: null,
+    toastAction: undefined,
   };
 
   // Clear the call counts etc. of all mocks. This doesn't remove the mock's effects; just clears their history.
@@ -185,6 +187,7 @@ export function initializeMocks({ user = defaultUser, initialState = undefined }
     reduxStore,
     axiosMock,
     mockShowToast: mockToastContext.showToast,
+    mockToastAction: mockToastContext.toastAction,
   };
 }
 

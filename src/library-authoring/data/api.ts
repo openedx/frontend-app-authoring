@@ -50,13 +50,17 @@ export const getXBlockAssetsApiUrl = (usageKey: string) => `${getApiBaseUrl()}/a
  */
 export const getLibraryCollectionsApiUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/collections/`;
 /**
- * Get the URL for the collection API.
+ * Get the URL for the collection detail API.
  */
 export const getLibraryCollectionApiUrl = (libraryId: string, collectionId: string) => `${getLibraryCollectionsApiUrl(libraryId)}${collectionId}/`;
 /**
  * Get the URL for the collection API.
  */
 export const getLibraryCollectionComponentApiUrl = (libraryId: string, collectionId: string) => `${getLibraryCollectionApiUrl(libraryId, collectionId)}components/`;
+/**
+ * Get the API URL for restoring deleted collection.
+ */
+export const getLibraryCollectionRestoreApiUrl = (libraryId: string, collectionId: string) => `${getLibraryCollectionApiUrl(libraryId, collectionId)}restore/`;
 
 export interface ContentLibrary {
   id: string;
@@ -356,4 +360,20 @@ export async function updateCollectionComponents(libraryId: string, collectionId
   await getAuthenticatedHttpClient().patch(getLibraryCollectionComponentApiUrl(libraryId, collectionId), {
     usage_keys: usageKeys,
   });
+}
+
+/**
+ * Soft-Delete collection.
+ */
+export async function deleteCollection(libraryId: string, collectionId: string) {
+  const client = getAuthenticatedHttpClient();
+  await client.delete(getLibraryCollectionApiUrl(libraryId, collectionId));
+}
+
+/**
+ * Restore soft-deleted collection
+ */
+export async function restoreCollection(libraryId: string, collectionId: string) {
+  const client = getAuthenticatedHttpClient();
+  await client.post(getLibraryCollectionRestoreApiUrl(libraryId, collectionId));
 }
