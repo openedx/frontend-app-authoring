@@ -39,10 +39,6 @@ describe('<CollectionCard />', () => {
     initializeMocks();
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   it('should render the card with title and description', () => {
     render(<CollectionCard collectionHit={CollectionHitSample} />);
 

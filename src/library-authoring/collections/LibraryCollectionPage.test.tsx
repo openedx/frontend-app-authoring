@@ -77,10 +77,6 @@ describe('<LibraryCollectionPage />', () => {
     });
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   const renderLibraryCollectionPage = async (collectionId?: string, libraryId?: string) => {
     const libId = libraryId || mockContentLibrary.libraryId;
     const colId = collectionId || mockCollection.collectionId;

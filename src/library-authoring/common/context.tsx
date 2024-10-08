@@ -25,6 +25,11 @@ export interface LibraryContextData {
   // Current collection
   openCollectionInfoSidebar: (collectionId: string) => void;
   currentCollectionId?: string;
+  // Editor modal - for editing some component
+  /** If the editor is open and the user is editing some component, this is its usageKey */
+  componentBeingEdited: string | undefined;
+  openComponentEditor: (usageKey: string) => void;
+  closeComponentEditor: () => void;
 }
 
 /**
@@ -45,6 +50,8 @@ export const LibraryProvider = (props: { children?: React.ReactNode, libraryId: 
   const [currentComponentUsageKey, setCurrentComponentUsageKey] = React.useState<string>();
   const [currentCollectionId, setcurrentCollectionId] = React.useState<string>();
   const [isCreateCollectionModalOpen, openCreateCollectionModal, closeCreateCollectionModal] = useToggle(false);
+  const [componentBeingEdited, openComponentEditor] = React.useState<string | undefined>();
+  const closeComponentEditor = React.useCallback(() => openComponentEditor(undefined), []);
 
   const resetSidebar = React.useCallback(() => {
     setCurrentComponentUsageKey(undefined);
@@ -91,6 +98,9 @@ export const LibraryProvider = (props: { children?: React.ReactNode, libraryId: 
     closeCreateCollectionModal,
     openCollectionInfoSidebar,
     currentCollectionId,
+    componentBeingEdited,
+    openComponentEditor,
+    closeComponentEditor,
   }), [
     props.libraryId,
     sidebarBodyComponent,
@@ -104,6 +114,9 @@ export const LibraryProvider = (props: { children?: React.ReactNode, libraryId: 
     closeCreateCollectionModal,
     openCollectionInfoSidebar,
     currentCollectionId,
+    componentBeingEdited,
+    openComponentEditor,
+    closeComponentEditor,
   ]);
 
   return (

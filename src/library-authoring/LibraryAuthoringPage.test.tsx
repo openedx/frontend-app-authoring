@@ -80,6 +80,7 @@ describe('<LibraryAuthoringPage />', () => {
     initializeMocks();
 
     // The Meilisearch client-side API uses fetch, not Axios.
+    fetchMock.mockReset();
     fetchMock.post(searchEndpoint, (_url, req) => {
       const requestData = JSON.parse(req.body?.toString() ?? '');
       const query = requestData?.queries[0]?.q ?? '';
@@ -92,11 +93,6 @@ describe('<LibraryAuthoringPage />', () => {
       mockResult.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
       return mockResult;
     });
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-    fetchMock.mockReset();
   });
 
   const renderLibraryPage = async () => {

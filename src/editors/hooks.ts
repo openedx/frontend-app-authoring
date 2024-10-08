@@ -4,11 +4,6 @@ import { sendTrackEvent } from '@edx/frontend-platform/analytics';
 import analyticsEvt from './data/constants/analyticsEvt';
 
 import { actions, thunkActions } from './data/redux';
-// This 'module' self-import hack enables mocking during tests.
-// See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
-// should be re-thought and cleaned up to avoid this pattern.
-// eslint-disable-next-line import/no-self-import
-import * as module from './hooks';
 import { RequestKeys } from './data/constants/requests';
 
 // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -17,7 +12,7 @@ export const initializeApp = ({ dispatch, data }) => useEffect(
   [data],
 );
 
-export const navigateTo = (destination) => {
+export const navigateTo = (destination: string | URL) => {
   window.location.assign(destination);
 };
 
@@ -34,7 +29,7 @@ export const navigateCallback = ({
     returnFunction()(response);
     return;
   }
-  module.navigateTo(destination);
+  navigateTo(destination);
 };
 
 export const nullMethod = () => ({});
@@ -61,7 +56,7 @@ export const saveBlock = ({
   if (attemptSave) {
     dispatch(thunkActions.app.saveBlock(
       content,
-      module.navigateCallback({
+      navigateCallback({
         destination,
         analyticsEvent: analyticsEvt.editorSaveClick,
         analytics,

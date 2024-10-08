@@ -1,3 +1,5 @@
+// Note: there is no Editor.test.tsx. This component only works together with
+// <EditorPage> as its parent, so they are tested together in EditorPage.test.tsx
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
@@ -7,6 +9,7 @@ import * as hooks from './hooks';
 
 import supportedEditors from './supportedEditors';
 import type { EditorComponent } from './EditorComponent';
+import { useEditorContext } from './EditorContext';
 
 export interface Props extends EditorComponent {
   blockType: string;
@@ -14,6 +17,7 @@ export interface Props extends EditorComponent {
   learningContextId: string | null;
   lmsEndpointUrl: string | null;
   studioEndpointUrl: string | null;
+  fullScreen?: boolean;
 }
 
 const Editor: React.FC<Props> = ({
@@ -36,23 +40,29 @@ const Editor: React.FC<Props> = ({
       studioEndpointUrl,
     },
   });
+  const { fullScreen } = useEditorContext();
 
   const EditorComponent = supportedEditors[blockType];
-  return (
-    <div
-      className="d-flex flex-column"
-    >
+  const innerEditor = (EditorComponent !== undefined)
+    ? <EditorComponent {...{ onClose, returnFunction }} />
+    : <FormattedMessage {...messages.couldNotFindEditor} />;
+
+  if (fullScreen) {
+    return (
       <div
-        className="pgn__modal-fullscreen h-100"
-        role="dialog"
-        aria-label={blockType}
+        className="d-flex flex-column"
       >
-        {(EditorComponent !== undefined)
-          ? <EditorComponent {...{ onClose, returnFunction }} />
-          : <FormattedMessage {...messages.couldNotFindEditor} />}
+        <div
+          className="pgn__modal-fullscreen h-100"
+          role="dialog"
+          aria-label={blockType}
+        >
+          {innerEditor}
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
+  return innerEditor;
 };
 
 export default Editor;
