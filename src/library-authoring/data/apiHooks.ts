@@ -305,8 +305,7 @@ export const useUpdateCollectionComponents = (libraryId?: string, collectionId?:
       }
       return undefined;
     },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onSettled: (_data, _error, _variables) => {
+    onSettled: () => {
       if (libraryId !== undefined && collectionId !== undefined) {
         queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
       }
@@ -321,8 +320,7 @@ export const useDeleteCollection = (libraryId: string, collectionId: string) => 
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async () => deleteCollection(libraryId, collectionId),
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onSettled: (_data, _error, _variables) => {
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
     },
@@ -336,8 +334,7 @@ export const useRestoreCollection = (libraryId: string, collectionId: string) =>
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async () => restoreCollection(libraryId, collectionId),
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onSettled: (_data, _error, _variables) => {
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
     },

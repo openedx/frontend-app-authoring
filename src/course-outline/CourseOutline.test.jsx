@@ -226,7 +226,7 @@ describe('<CourseOutline />', () => {
   });
 
   it('check video sharing option shows error on failure', async () => {
-    const { findByLabelText, queryAllByRole } = render(<RootWrapper />);
+    render(<RootWrapper />);
 
     axiosMock
       .onPost(getCourseBlockApiUrl(courseId), {
@@ -235,7 +235,7 @@ describe('<CourseOutline />', () => {
         },
       })
       .reply(500);
-    const optionDropdown = await findByLabelText(statusBarMessages.videoSharingTitle.defaultMessage);
+    const optionDropdown = await screen.findByLabelText(statusBarMessages.videoSharingTitle.defaultMessage);
     await act(
       async () => fireEvent.change(optionDropdown, { target: { value: VIDEO_SHARING_OPTIONS.allOff } }),
     );
@@ -247,7 +247,7 @@ describe('<CourseOutline />', () => {
       },
     }));
 
-    const alertElements = queryAllByRole('alert');
+    const alertElements = screen.queryAllByRole('alert');
     expect(alertElements.find(
       (el) => el.classList.contains('alert-content'),
     )).toHaveTextContent(
@@ -513,10 +513,10 @@ describe('<CourseOutline />', () => {
         notificationDismissUrl: '/some/url',
       });
 
-    const { findByRole, findByText } = render(<RootWrapper />);
-    const alert = await findByText(pageAlertMessages.configurationErrorTitle.defaultMessage);
+    render(<RootWrapper />);
+    const alert = await screen.findByText(pageAlertMessages.configurationErrorTitle.defaultMessage);
     expect(alert).toBeInTheDocument();
-    const dismissBtn = await findByRole('button', { name: 'Dismiss' });
+    const dismissBtn = await screen.findByRole('button', { name: 'Dismiss' });
     axiosMock
       .onDelete('/some/url')
       .reply(204);
@@ -2163,10 +2163,10 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether unit copy & paste option works correctly', async () => {
-    const { findAllByTestId, queryByTestId, findAllByRole } = render(<RootWrapper />);
+    render(<RootWrapper />);
     // get first section -> first subsection -> first unit element
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
-    const [sectionElement] = await findAllByTestId('section-card');
+    const [sectionElement] = await screen.findAllByTestId('section-card');
     const [subsection] = section.childInfo.children;
     axiosMock
       .onGet(getXBlockApiUrl(section.id))
@@ -2205,7 +2205,7 @@ describe('<CourseOutline />', () => {
     await act(async () => fireEvent.mouseOver(clipboardLabel));
 
     // find clipboard content popover link
-    const popoverContent = queryByTestId('popover-content');
+    const popoverContent = screen.queryByTestId('popover-content');
     expect(popoverContent.tagName).toBe('A');
     expect(popoverContent).toHaveAttribute('href', `${getConfig().STUDIO_BASE_URL}${unit.studioUrl}`);
 
@@ -2236,7 +2236,7 @@ describe('<CourseOutline />', () => {
       errorFiles: ['error.css'],
     });
 
-    let alerts = await findAllByRole('alert');
+    let alerts = await screen.findAllByRole('alert');
     // Exclude processing notification toast
     alerts = alerts.filter((el) => !el.classList.contains('toast-container'));
     // 3 alerts should be present
