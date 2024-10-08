@@ -192,7 +192,6 @@ const ManageCollections = ({ contentHit }: ManageCollectionsProps) => {
       <AddToCollectionsDrawer
         contentHit={contentHit}
         onClose={() => setEditing(false)}
-        key={contentHit.usageKey}
       />
     );
   }

@@ -18,6 +18,7 @@ export interface LibraryContextData {
   openInfoSidebar: () => void;
   openComponentInfoSidebar: (usageKey: string) => void;
   currentComponentUsageKey?: string;
+  // "Create New Collection" modal
   isCreateCollectionModalOpen: boolean;
   openCreateCollectionModal: () => void;
   closeCreateCollectionModal: () => void;
