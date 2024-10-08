@@ -27,7 +27,7 @@ const CollectionMenu = ({ collectionHit } : CollectionMenuProps) => {
   const { showToast } = useContext(ToastContext);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
   const [confirmBtnState, setConfirmBtnState] = useState('default');
-  const { closeLibrarySidebar, currentCollectionId } = useContext(LibraryContext);
+  const { closeLibrarySidebar, currentCollectionId } = useLibraryContext();
 
   const restoreCollectionMutation = useRestoreCollection(collectionHit.contextKey, collectionHit.blockId);
   const restoreCollection = useCallback(() => {
@@ -108,7 +108,6 @@ type CollectionCardProps = {
 };
 
 const CollectionCard = ({ collectionHit } : CollectionCardProps) => {
-  const intl = useIntl();
   const {
     openCollectionInfoSidebar,
   } = useLibraryContext();

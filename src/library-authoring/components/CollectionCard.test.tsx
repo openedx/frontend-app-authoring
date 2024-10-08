@@ -1,7 +1,9 @@
-import { initializeMocks, render as baseRender, screen, waitFor, waitForElementToBeRemoved, within } from '../../testUtils';
 import userEvent from '@testing-library/user-event';
 import type MockAdapter from 'axios-mock-adapter';
 
+import {
+  initializeMocks, render as baseRender, screen, waitFor, waitForElementToBeRemoved, within,
+} from '../../testUtils';
 import { LibraryProvider } from '../common/context';
 import { type CollectionHit } from '../../search-manager';
 import CollectionCard from './CollectionCard';
