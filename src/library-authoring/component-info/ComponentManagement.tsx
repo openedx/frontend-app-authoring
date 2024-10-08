@@ -22,10 +22,7 @@ const ComponentManagement = ({ usageKey }: ComponentManagementProps) => {
   const { data: componentTags } = useContentTaxonomyTagsData(usageKey);
   const { data: contentHit } = useGetDocumentByUsageKey(usageKey) as { data: ContentHit };
 
-  const collectionsCount = React.useMemo(
-    () => contentHit?.collections?.displayName?.length || 0,
-    [contentHit]
-  );
+  const collectionsCount = React.useMemo(() => contentHit?.collections?.displayName?.length || 0, [contentHit]);
   const tagsCount = React.useMemo(() => {
     if (!componentTags) {
       return 0;

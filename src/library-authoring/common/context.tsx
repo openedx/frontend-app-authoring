@@ -1,7 +1,6 @@
 import { useToggle } from '@openedx/paragon';
 import React from 'react';
 
-
 export enum SidebarBodyComponentId {
   AddContent = 'add-content',
   Info = 'info',
