@@ -98,6 +98,11 @@ describe('<PageAlerts />', () => {
     expect(learnMoreBtn).toBeInTheDocument();
     expect(learnMoreBtn).toHaveAttribute('href', 'some-learn-more-url');
 
+    const dismissBtn = queryByText('Dismiss');
+    await act(async () => fireEvent.click(dismissBtn));
+    const discussionAlertDismissKey = `discussionAlertDismissed-${pageAlertsData.courseId}`;
+    expect(localStorage.getItem(discussionAlertDismissKey)).toBe('true');
+
     const feedbackLink = queryByText(messages.discussionNotificationFeedback.defaultMessage);
     expect(feedbackLink).toBeInTheDocument();
     expect(feedbackLink).toHaveAttribute('href', 'some-feedback-url');
