@@ -129,7 +129,7 @@ export interface ContentHit extends BaseContentHit {
   breadcrumbs: [{ displayName: string }, ...Array<{ displayName: string, usageKey: string }>];
   content?: ContentDetails;
   lastPublished: number | null;
-  collections?: { displayName?: string[], key?: string[] },
+  collections: { displayName?: string[], key?: string[] },
 }
 
 /**

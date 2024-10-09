@@ -83,13 +83,14 @@ const CollectionsSelectableBox = ({ usageKey, collections, onClose }: Collection
       <Stack direction="horizontal" gap={2}>
         <Button
           onClick={onClose}
-          variant="outline-primary"
+          className="font-weight-bold"
+          variant="tertiary"
         >
           {intl.formatMessage(messages.manageCollectionsToComponentCancelBtn)}
         </Button>
         <Button
           onClick={handleConfirmation}
-          className="flex-grow-1"
+          className="flex-grow-1 rounded-0"
           variant="primary"
         >
           {intl.formatMessage(messages.manageCollectionsToComponentConfirmBtn)}
