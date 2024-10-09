@@ -10,8 +10,6 @@ import {
   fetchCourseSectionVerticalData,
   fetchCourseVerticalChildrenData,
   deleteUnitItemQuery,
-  duplicateUnitItemQuery,
-  setXBlockOrderListQuery,
   editCourseUnitVisibilityAndData,
 } from './data/thunk';
 import {
@@ -99,16 +97,10 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   );
 
   const unitXBlockActions = {
+    // TODO: use for xblock delete functionality
     handleDelete: (XBlockId) => {
       dispatch(deleteUnitItemQuery(blockId, XBlockId));
     },
-    handleDuplicate: (XBlockId) => {
-      dispatch(duplicateUnitItemQuery(blockId, XBlockId));
-    },
-  };
-
-  const handleXBlockDragAndDrop = (xblockListIds, restoreCallback) => {
-    dispatch(setXBlockOrderListQuery(blockId, xblockListIds, restoreCallback));
   };
 
   useEffect(() => {
@@ -145,8 +137,6 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     handleTitleEditSubmit,
     handleCreateNewCourseXBlock,
     handleConfigureSubmit,
-    courseVerticalChildren,
-    handleXBlockDragAndDrop,
     canPasteComponent,
   };
 };
