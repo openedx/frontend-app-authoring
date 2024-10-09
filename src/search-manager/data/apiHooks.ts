@@ -12,7 +12,6 @@ import {
   fetchDocumentById,
   fetchBlockTypes,
   OverrideQueries,
-  fetchContentByUsageKey,
 } from './api';
 
 /**
@@ -284,20 +283,3 @@ export const useGetSingleDocument = ({ client, indexName, id }: {
     },
   })
 );
-
-/* istanbul ignore next */
-export const useGetDocumentByUsageKey = (usageKey: string) => {
-  const { client, indexName } = useContentSearchConnection();
-  return useQuery({
-    enabled: client !== undefined && indexName !== undefined,
-    queryKey: [
-      'content_search',
-      'get_by_usage_key',
-      client?.config.apiKey,
-      client?.config.host,
-      indexName,
-      usageKey,
-    ],
-    queryFn: () => fetchContentByUsageKey(client!, indexName!, usageKey),
-  });
-};

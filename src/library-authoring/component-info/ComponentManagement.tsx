@@ -10,7 +10,6 @@ import messages from './messages';
 import { ContentTagsDrawer } from '../../content-tags-drawer';
 import { useContentTaxonomyTagsData } from '../../content-tags-drawer/data/apiHooks';
 import ManageCollections from './ManageCollections';
-import { ContentHit, useGetDocumentByUsageKey } from '../../search-manager';
 
 interface ComponentManagementProps {
   usageKey: string;
@@ -20,9 +19,8 @@ const ComponentManagement = ({ usageKey }: ComponentManagementProps) => {
   const intl = useIntl();
   const { data: componentMetadata } = useLibraryBlockMetadata(usageKey);
   const { data: componentTags } = useContentTaxonomyTagsData(usageKey);
-  const { data: contentHit } = useGetDocumentByUsageKey(usageKey) as { data: ContentHit };
 
-  const collectionsCount = React.useMemo(() => contentHit?.collections?.displayName?.length || 0, [contentHit]);
+  const collectionsCount = React.useMemo(() => componentMetadata?.collections?.length || 0, [componentMetadata]);
   const tagsCount = React.useMemo(() => {
     if (!componentTags) {
       return 0;
@@ -80,7 +78,7 @@ const ComponentManagement = ({ usageKey }: ComponentManagementProps) => {
         )}
         className="border-0"
       >
-        <ManageCollections contentHit={contentHit} />
+        <ManageCollections usageKey={usageKey} collections={componentMetadata.collections} />
       </Collapsible>
     </Stack>
   );

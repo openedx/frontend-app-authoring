@@ -383,18 +383,8 @@ export const useUpdateComponentCollections = (libraryId: string, usageKey: strin
     mutationFn: async (collectionKeys: string[]) => updateComponentCollections(usageKey, collectionKeys),
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onSettled: (_data, _error, _variables) => {
+      queryClient.invalidateQueries({ queryKey: xblockQueryKeys.componentMetadata(usageKey) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
-      queryClient.invalidateQueries({
-        predicate: (query) => {
-          const queryUsageKey = query.queryKey[5];
-          if (
-            (query.queryKey[0] !== 'content_search' && query.queryKey[1] !== 'get_by_usage_key')
-            || typeof queryUsageKey !== 'string') {
-            return false;
-          }
-          return queryUsageKey === usageKey;
-        },
-      });
     },
   });
 };

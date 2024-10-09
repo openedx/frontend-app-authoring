@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useMemo, useState, useEffect } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button, Icon, Scrollable, SelectableBox, Stack, useCheckboxSetValues,
@@ -6,7 +6,6 @@ import {
 import { Folder } from '@openedx/paragon/icons';
 
 import {
-  ContentHit,
   SearchContextProvider,
   SearchKeywordsField,
   SearchSortWidget,
@@ -15,36 +14,32 @@ import {
 import messages from './messages';
 import { useUpdateComponentCollections } from '../data/apiHooks';
 import { ToastContext } from '../../generic/toast-context';
+import { CollectionMetadata } from '../data/api';
+import { useLibraryContext } from '../common/context';
 
 interface ManageCollectionsProps {
-  contentHit: ContentHit;
+  usageKey: string;
+  collections: CollectionMetadata[],
 }
 
 interface CollectionsDrawerProps extends ManageCollectionsProps {
   onClose: () => void;
 }
 
-const CollectionsSelectableBox = ({ contentHit, onClose }: CollectionsDrawerProps) => {
+const CollectionsSelectableBox = ({ usageKey, collections, onClose }: CollectionsDrawerProps) => {
   const type = 'checkbox';
   const intl = useIntl();
   const { collectionHits } = useSearchContext();
   const { showToast } = useContext(ToastContext);
+  const collectionKeys = collections.map((collection) => collection.key);
   const [selectedCollections, {
     add,
     remove,
-    set,
-    clear,
-  }] = useCheckboxSetValues(contentHit.collections?.key || []);
+  }] = useCheckboxSetValues(collectionKeys);
 
-  useEffect(() => {
-    set(contentHit.collections?.key || []);
+  const { libraryId } = useLibraryContext();
 
-    return () => {
-      clear();
-    };
-  }, [contentHit]);
-
-  const updateCollectionsMutation = useUpdateComponentCollections(contentHit.contextKey, contentHit.usageKey);
+  const updateCollectionsMutation = useUpdateComponentCollections(libraryId, usageKey);
 
   const handleConfirmation = () => {
     updateCollectionsMutation.mutateAsync(selectedCollections).then(() => {
@@ -104,9 +99,9 @@ const CollectionsSelectableBox = ({ contentHit, onClose }: CollectionsDrawerProp
   );
 };
 
-const AddToCollectionsDrawer = ({ contentHit, onClose }: CollectionsDrawerProps) => {
+const AddToCollectionsDrawer = ({ usageKey, collections, onClose }: CollectionsDrawerProps) => {
   const intl = useIntl();
-  const { displayName } = contentHit;
+  const { libraryId } = useLibraryContext();
 
   return (
     <SearchContextProvider
@@ -114,13 +109,12 @@ const AddToCollectionsDrawer = ({ contentHit, onClose }: CollectionsDrawerProps)
         components: { limit: 0 },
         blockTypes: { limit: 0 },
       }}
-      extraFilter={`context_key = "${contentHit.contextKey}"`}
+      extraFilter={`context_key = "${libraryId}"`}
       skipUrlUpdate
     >
       <Stack className="mt-2" gap={3}>
         <FormattedMessage
           {...messages.manageCollectionsText}
-          values={{ displayName }}
         />
         <Stack gap={1} direction="horizontal">
           <SearchKeywordsField
@@ -131,8 +125,10 @@ const AddToCollectionsDrawer = ({ contentHit, onClose }: CollectionsDrawerProps)
         </Stack>
         {/* Set key to update selection when component usageKey changes */}
         <CollectionsSelectableBox
-          contentHit={contentHit}
+          usageKey={usageKey}
+          collections={collections}
           onClose={onClose}
+          key={usageKey}
         />
       </Stack>
     </SearchContextProvider>
@@ -184,20 +180,22 @@ const ComponentCollections = ({ collections, onManageClick }: {
   );
 };
 
-const ManageCollections = ({ contentHit }: ManageCollectionsProps) => {
+const ManageCollections = ({ usageKey, collections }: ManageCollectionsProps) => {
   const [editing, setEditing] = useState(false);
+  const collectionNames = collections.map((collection) => collection.title);
 
   if (editing) {
     return (
       <AddToCollectionsDrawer
-        contentHit={contentHit}
+        usageKey={usageKey}
+        collections={collections}
         onClose={() => setEditing(false)}
       />
     );
   }
   return (
     <ComponentCollections
-      collections={contentHit.collections?.displayName}
+      collections={collectionNames}
       onManageClick={() => setEditing(true)}
     />
   );

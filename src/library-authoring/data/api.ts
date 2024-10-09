@@ -146,6 +146,11 @@ export interface CreateBlockDataRequest {
   definitionId: string;
 }
 
+export interface CollectionMetadata {
+  key: string;
+  title: string;
+}
+
 export interface LibraryBlockMetadata {
   id: string;
   blockType: string;
@@ -159,6 +164,7 @@ export interface LibraryBlockMetadata {
   created: string | null,
   modified: string | null,
   tagsCount: number;
+  collections: CollectionMetadata[];
 }
 
 export interface UpdateLibraryDataRequest {
