@@ -12,6 +12,7 @@ import {
   waitFor,
 } from '@testing-library/react';
 import LibraryInfo from './LibraryInfo';
+import { LibraryProvider } from '../common/context';
 import { ToastProvider } from '../../generic/toast-context';
 import { ContentLibrary, getCommitLibraryChangesUrl } from '../data/api';
 import initializeStore from '../../store';
@@ -59,7 +60,9 @@ const RootWrapper = ({ data } : WrapperProps) => (
     <IntlProvider locale="en" messages={{}}>
       <QueryClientProvider client={queryClient}>
         <ToastProvider>
-          <LibraryInfo library={data} />
+          <LibraryProvider libraryId={data.id}>
+            <LibraryInfo library={data} />
+          </LibraryProvider>
         </ToastProvider>
       </QueryClientProvider>
     </IntlProvider>

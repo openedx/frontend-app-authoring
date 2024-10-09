@@ -18,6 +18,10 @@ export interface LibraryContextData {
   openInfoSidebar: () => void;
   openComponentInfoSidebar: (usageKey: string) => void;
   currentComponentUsageKey?: string;
+  // "Library Team" modal
+  isLibraryTeamModalOpen: boolean;
+  openLibraryTeamModal: () => void;
+  closeLibraryTeamModal: () => void;
   // "Create New Collection" modal
   isCreateCollectionModalOpen: boolean;
   openCreateCollectionModal: () => void;
@@ -48,6 +52,7 @@ const LibraryContext = React.createContext<LibraryContextData | undefined>(undef
 export const LibraryProvider = (props: { children?: React.ReactNode, libraryId: string }) => {
   const [sidebarBodyComponent, setSidebarBodyComponent] = React.useState<SidebarBodyComponentId | null>(null);
   const [currentComponentUsageKey, setCurrentComponentUsageKey] = React.useState<string>();
+  const [isLibraryTeamModalOpen, openLibraryTeamModal, closeLibraryTeamModal] = useToggle(false);
   const [currentCollectionId, setcurrentCollectionId] = React.useState<string>();
   const [isCreateCollectionModalOpen, openCreateCollectionModal, closeCreateCollectionModal] = useToggle(false);
   const [componentBeingEdited, openComponentEditor] = React.useState<string | undefined>();
@@ -93,6 +98,9 @@ export const LibraryProvider = (props: { children?: React.ReactNode, libraryId: 
     openInfoSidebar,
     openComponentInfoSidebar,
     currentComponentUsageKey,
+    isLibraryTeamModalOpen,
+    openLibraryTeamModal,
+    closeLibraryTeamModal,
     isCreateCollectionModalOpen,
     openCreateCollectionModal,
     closeCreateCollectionModal,
@@ -109,6 +117,9 @@ export const LibraryProvider = (props: { children?: React.ReactNode, libraryId: 
     openInfoSidebar,
     openComponentInfoSidebar,
     currentComponentUsageKey,
+    isLibraryTeamModalOpen,
+    openLibraryTeamModal,
+    closeLibraryTeamModal,
     isCreateCollectionModalOpen,
     openCreateCollectionModal,
     closeCreateCollectionModal,

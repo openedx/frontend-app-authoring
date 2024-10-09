@@ -19,6 +19,10 @@ import {
   commitLibraryChanges,
   revertLibraryChanges,
   updateLibraryMetadata,
+  getLibraryTeam,
+  addLibraryTeamMember,
+  deleteLibraryTeamMember,
+  updateLibraryTeamMember,
   libraryPasteClipboard,
   getLibraryBlockMetadata,
   getXBlockFields,
@@ -61,6 +65,11 @@ export const libraryAuthoringQueryKeys = {
     ...libraryAuthoringQueryKeys.all,
     'list',
     ...(customParams ? [customParams] : []),
+  ],
+  libraryTeam: (libraryId?: string) => [
+    ...libraryAuthoringQueryKeys.all,
+    'list',
+    libraryId,
   ],
   collection: (libraryId?: string, collectionId?: string) => [
     ...libraryAuthoringQueryKeys.all,
@@ -136,7 +145,7 @@ export const useUpdateLibraryMetadata = () => {
 
       const newLibraryData = {
         ...previousLibraryData,
-        title: data.title,
+        ...data,
       };
 
       queryClient.setQueryData(queryKey, newLibraryData);
@@ -183,6 +192,62 @@ export const useRevertLibraryChanges = () => {
     onSettled: (_data, _error, libraryId) => {
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+    },
+  });
+};
+
+/**
+ * Hook to fetch a content library's team members
+ */
+export const useLibraryTeam = (libraryId: string | undefined) => (
+  useQuery({
+    queryKey: libraryAuthoringQueryKeys.libraryTeam(libraryId),
+    queryFn: () => getLibraryTeam(libraryId!),
+    enabled: libraryId !== undefined,
+  })
+);
+
+/**
+ * Hook to add a new member to a content library's team
+ */
+export const useAddLibraryTeamMember = (libraryId: string | undefined) => {
+  const queryClient = useQueryClient();
+  const queryKey = libraryAuthoringQueryKeys.libraryTeam(libraryId);
+
+  return useMutation({
+    mutationFn: addLibraryTeamMember,
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey });
+    },
+  });
+};
+
+/**
+ * Hook to delete an existing member from a content library's team
+ */
+export const useDeleteLibraryTeamMember = (libraryId: string | undefined) => {
+  const queryClient = useQueryClient();
+  const queryKey = libraryAuthoringQueryKeys.libraryTeam(libraryId);
+
+  return useMutation({
+    mutationFn: deleteLibraryTeamMember,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey });
+    },
+  });
+};
+
+/**
+ * Hook to update an existing member's access in a content library's team
+ */
+export const useUpdateLibraryTeamMember = (libraryId: string | undefined) => {
+  const queryClient = useQueryClient();
+  const queryKey = libraryAuthoringQueryKeys.libraryTeam(libraryId);
+
+  return useMutation({
+    mutationFn: updateLibraryTeamMember,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey });
     },
   });
 };

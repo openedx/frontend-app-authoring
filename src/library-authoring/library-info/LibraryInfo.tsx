@@ -1,8 +1,9 @@
 import React from 'react';
-import { Stack } from '@openedx/paragon';
+import { Button, Stack } from '@openedx/paragon';
 import { FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import LibraryPublishStatus from './LibraryPublishStatus';
+import { useLibraryContext } from '../common/context';
 import { ContentLibrary } from '../data/api';
 
 type LibraryInfoProps = {
@@ -11,6 +12,7 @@ type LibraryInfoProps = {
 
 const LibraryInfo = ({ library } : LibraryInfoProps) => {
   const intl = useIntl();
+  const { openLibraryTeamModal } = useLibraryContext();
 
   return (
     <Stack direction="vertical" gap={2.5}>
@@ -22,6 +24,11 @@ const LibraryInfo = ({ library } : LibraryInfoProps) => {
         <span>
           {library.org}
         </span>
+        {library.canEditLibrary && (
+          <Button variant="outline-primary" onClick={openLibraryTeamModal}>
+            {intl.formatMessage(messages.libraryTeamButtonTitle)}
+          </Button>
+        )}
       </Stack>
       <Stack gap={3}>
         <span className="font-weight-bold">

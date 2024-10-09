@@ -7,6 +7,7 @@ import {
 import LibraryAuthoringPage from './LibraryAuthoringPage';
 import { LibraryProvider } from './common/context';
 import { CreateCollectionModal } from './create-collection';
+import { LibraryTeamModal } from './library-team';
 import LibraryCollectionPage from './collections/LibraryCollectionPage';
 import { ComponentEditorModal } from './components/ComponentEditorModal';
 
@@ -32,6 +33,7 @@ const LibraryLayout = () => {
       </Routes>
       <CreateCollectionModal />
       <ComponentEditorModal />
+      <LibraryTeamModal />
     </LibraryProvider>
   );
 };
