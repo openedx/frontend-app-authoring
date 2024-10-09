@@ -238,10 +238,27 @@ describe('<LibraryInfo />', () => {
     expect(discardButton).toBeDisabled();
   });
 
-  it('discard changes btn should be enabled for new libraries if components are added', async () => {
+  it('publish and discard changes btns should be enabled for new libraries if components are added', async () => {
     render(<RootWrapper data={{ ...libraryData, lastPublished: null, numBlocks: 2 }} />);
+    const publishButton = screen.getByRole('button', { name: /publish/i });
     const discardButton = screen.getByRole('button', { name: /discard changes/i });
 
+    expect(publishButton).not.toBeDisabled();
     expect(discardButton).not.toBeDisabled();
+  });
+
+  it('publish and discard changes btns should be absent for users who cannot edit the library', async () => {
+    const data = {
+      ...libraryData,
+      lastPublished: null,
+      numBlocks: 2,
+      canEditLibrary: false,
+    };
+    render(<RootWrapper data={data} />);
+    const publishButton = screen.queryByRole('button', { name: /publish/i });
+    const discardButton = screen.queryByRole('button', { name: /discard changes/i });
+
+    expect(publishButton).not.toBeInTheDocument();
+    expect(discardButton).not.toBeInTheDocument();
   });
 });

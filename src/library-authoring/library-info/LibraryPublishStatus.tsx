@@ -38,8 +38,8 @@ const LibraryPublishStatus = ({ library } : LibraryPublishStatusProps) => {
   return (
     <StatusWidget
       {...library}
-      onCommit={commit}
-      onRevert={revert}
+      onCommit={library.canEditLibrary ? commit : undefined}
+      onRevert={library.canEditLibrary ? revert : undefined}
     />
   );
 };
