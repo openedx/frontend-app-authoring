@@ -5,6 +5,7 @@ import {
   ActionRow,
 } from '@openedx/paragon';
 import { Formik } from 'formik';
+import * as Yup from 'yup';
 
 import messages from './messages';
 import FormikControl from '../../generic/FormikControl';
@@ -21,6 +22,11 @@ const AddLibraryTeamMember = ({ onSubmit, onCancel }: {
       <Formik
         initialValues={{ email: '' }}
         onSubmit={onSubmit}
+        validationSchema={
+          Yup.object().shape({
+            email: Yup.string().required('Email required').email('Invalid email'),
+          })
+        }
         validateOnBlur
       >
         {({ handleSubmit, values }) => (

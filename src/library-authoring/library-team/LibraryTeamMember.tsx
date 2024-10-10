@@ -82,7 +82,7 @@ const LibraryTeamMember = ({
           {availableRoles && availableRoles.length && availableRoles.map((newRole) => (
             <Button
               size="sm"
-              key={`change-role-${email}-${newRole}`}
+              key={newRole}
               variant={ROLE_BUTTON_VARIANT[newRole]}
               onClick={() => onChangeRole(username, newRole)}
             >
@@ -100,7 +100,9 @@ const LibraryTeamMember = ({
           />
         </div>
       ) : (
-        // Explain why this user cannot change the single Admin member
+        // We prevent the user from removing the last remaining Admin
+        // user so that someone can still administrate this Library,
+        // so show a message explaining why.
         canChangeRoles && (
           <div className="member-hint text-right">
             <FormattedMessage {...messages.cannotChangeRoleSingleAdmin} />

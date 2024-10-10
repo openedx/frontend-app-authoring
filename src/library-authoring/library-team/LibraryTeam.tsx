@@ -69,7 +69,7 @@ const LibraryTeam: React.FC<Record<never, never>> = () => {
       });
       closeAddLibraryTeamMember();
     },
-    [libraryId, libraryTeamMembers, showToast, intl],
+    [libraryId, libraryTeamMembers],
   );
 
   const updateMember = useUpdateLibraryTeamMember(libraryId);
@@ -85,7 +85,7 @@ const LibraryTeam: React.FC<Record<never, never>> = () => {
         showToast(intl.formatMessage(messages.updateMemberError));
       });
     },
-    [libraryId, libraryTeamMembers, showToast, intl],
+    [libraryId, libraryTeamMembers],
   );
 
   const deleteMember = useDeleteLibraryTeamMember(libraryId);
@@ -100,7 +100,7 @@ const LibraryTeam: React.FC<Record<never, never>> = () => {
         showToast(intl.formatMessage(messages.deleteMemberError));
       });
     },
-    [libraryId, libraryTeamMembers, showToast, intl],
+    [libraryId, libraryTeamMembers],
   );
 
   const updateLibrary = useUpdateLibraryMetadata();
@@ -118,7 +118,7 @@ const LibraryTeam: React.FC<Record<never, never>> = () => {
         });
       }
     },
-    [libraryData, showToast, intl],
+    [libraryData],
   );
 
   if (isLibraryLoading || isTeamLoading) {
@@ -135,6 +135,7 @@ const LibraryTeam: React.FC<Record<never, never>> = () => {
   ) : false;
   const canChangeRoles = libraryData ? libraryData.canEditLibrary && (isLibraryAdmin || isGlobalStaff) : false;
 
+  // Is there only one Admin member in the Team? We'll prevent that user from being demoted/deleted.
   const singleAdmin = libraryTeamMembers ? (
     libraryTeamMembers.filter(
       ({ accessLevel }) => accessLevel === LibraryRole.Admin.toString(),

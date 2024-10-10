@@ -145,7 +145,7 @@ export const useUpdateLibraryMetadata = () => {
 
       const newLibraryData = {
         ...previousLibraryData,
-        ...data,
+        ...camelCaseObject(data),
       };
 
       queryClient.setQueryData(queryKey, newLibraryData);
