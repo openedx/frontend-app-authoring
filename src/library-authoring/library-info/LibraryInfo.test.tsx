@@ -1,109 +1,67 @@
-import React from 'react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { initializeMockApp } from '@edx/frontend-platform';
-import MockAdapter from 'axios-mock-adapter';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-} from '@testing-library/react';
-import LibraryInfo from './LibraryInfo';
-import { ToastProvider } from '../../generic/toast-context';
-import { ContentLibrary, getCommitLibraryChangesUrl } from '../data/api';
-import initializeStore from '../../store';
+import type MockAdapter from 'axios-mock-adapter';
 
-let store;
-let axiosMock;
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-    },
-  },
+import {
+  fireEvent,
+  render as baseRender,
+  screen,
+  waitFor,
+  initializeMocks,
+} from '../../testUtils';
+import { mockContentLibrary } from '../data/api.mocks';
+import { getCommitLibraryChangesUrl } from '../data/api';
+import { LibraryProvider } from '../common/context';
+import LibraryInfo from './LibraryInfo';
+
+const {
+  libraryId: mockLibraryId,
+  libraryIdReadOnly,
+  libraryDraftWithoutUser,
+  libraryNoDraftDate,
+  libraryNoDraftNoCrateDate,
+  libraryUnpublishedChanges,
+  libraryPublished,
+  libraryPublishedWithoutUser,
+  libraryDraftWithoutChanges,
+  libraryData,
+} = mockContentLibrary;
+
+const render = (libraryId: string = mockLibraryId) => baseRender(<LibraryInfo />, {
+  extraWrapper: ({ children }) => <LibraryProvider libraryId={libraryId}>{ children }</LibraryProvider>,
 });
 
-const libraryData: ContentLibrary = {
-  id: 'lib:org1:lib1',
-  type: 'complex',
-  org: 'org1',
-  slug: 'lib1',
-  title: 'lib1',
-  description: 'lib1',
-  numBlocks: 2,
-  version: 0,
-  lastPublished: null,
-  lastDraftCreated: '2024-07-22',
-  publishedBy: 'staff',
-  lastDraftCreatedBy: 'staff',
-  allowLti: false,
-  allowPublicLearning: false,
-  allowPublicRead: false,
-  hasUnpublishedChanges: true,
-  hasUnpublishedDeletes: false,
-  canEditLibrary: true,
-  license: '',
-  created: '2024-06-26',
-  updated: '2024-07-20',
-};
+let axiosMock: MockAdapter;
+let mockShowToast: (message: string) => void;
 
-interface WrapperProps {
-  data: ContentLibrary,
-}
-
-const RootWrapper = ({ data } : WrapperProps) => (
-  <AppProvider store={store}>
-    <IntlProvider locale="en" messages={{}}>
-      <QueryClientProvider client={queryClient}>
-        <ToastProvider>
-          <LibraryInfo library={data} />
-        </ToastProvider>
-      </QueryClientProvider>
-    </IntlProvider>
-  </AppProvider>
-);
+mockContentLibrary.applyMock();
 
 describe('<LibraryInfo />', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-    store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    const mocks = initializeMocks();
+    axiosMock = mocks.axiosMock;
+    mockShowToast = mocks.mockShowToast;
   });
 
   afterEach(() => {
     jest.clearAllMocks();
-    axiosMock.restore();
   });
 
-  it('should render Library info sidebar', () => {
-    render(<RootWrapper data={libraryData} />);
+  it('should render Library info sidebar', async () => {
+    render();
+
+    expect(await screen.findByText(libraryData.org)).toBeInTheDocument();
 
     expect(screen.getByText('Draft')).toBeInTheDocument();
     expect(screen.getByText('(Never Published)')).toBeInTheDocument();
     expect(screen.getByText('July 22, 2024')).toBeInTheDocument();
     expect(screen.getByText('staff')).toBeInTheDocument();
-    expect(screen.getByText(libraryData.org)).toBeInTheDocument();
     expect(screen.getByText('July 20, 2024')).toBeInTheDocument();
     expect(screen.getByText('June 26, 2024')).toBeInTheDocument();
   });
 
-  it('should render Library info in draft state without user', () => {
-    const data = {
-      ...libraryData,
-      lastDraftCreatedBy: null,
-    };
+  it('should render Library info in draft state without user', async () => {
+    render(libraryDraftWithoutUser);
 
-    render(<RootWrapper data={data} />);
+    expect(await screen.findByText(libraryData.org)).toBeInTheDocument();
 
     expect(screen.getByText('Draft')).toBeInTheDocument();
     expect(screen.getByText('(Never Published)')).toBeInTheDocument();
@@ -111,13 +69,10 @@ describe('<LibraryInfo />', () => {
     expect(screen.queryByText('staff')).not.toBeInTheDocument();
   });
 
-  it('should render Library creation date if last draft created date is null', () => {
-    const data = {
-      ...libraryData,
-      lastDraftCreated: null,
-    };
+  it('should render Library creation date if last draft created date is null', async () => {
+    render(libraryNoDraftDate);
 
-    render(<RootWrapper data={data} />);
+    expect(await screen.findByText(libraryData.org)).toBeInTheDocument();
 
     expect(screen.getByText('Draft')).toBeInTheDocument();
     expect(screen.getByText('(Never Published)')).toBeInTheDocument();
@@ -125,26 +80,19 @@ describe('<LibraryInfo />', () => {
     expect(screen.getAllByText('June 26, 2024')[1]).toBeInTheDocument();
   });
 
-  it('should render library info in draft state without date', () => {
-    const data = {
-      ...libraryData,
-      lastDraftCreated: null,
-      created: null,
-    };
+  it('should render library info in draft state without date', async () => {
+    render(libraryNoDraftNoCrateDate);
 
-    render(<RootWrapper data={data} />);
+    expect(await screen.findByText(libraryData.org)).toBeInTheDocument();
 
     expect(screen.getByText('Draft')).toBeInTheDocument();
     expect(screen.getByText('(Never Published)')).toBeInTheDocument();
   });
 
-  it('should render draft library info sidebar', () => {
-    const data = {
-      ...libraryData,
-      lastPublished: '2024-07-26',
-    };
+  it('should render library info with unpublished changes', async () => {
+    render(libraryUnpublishedChanges);
 
-    render(<RootWrapper data={data} />);
+    expect(await screen.findByText(libraryData.org)).toBeInTheDocument();
 
     expect(screen.getByText('Draft')).toBeInTheDocument();
     expect(screen.queryByText('(Never Published)')).not.toBeInTheDocument();
@@ -152,28 +100,21 @@ describe('<LibraryInfo />', () => {
     expect(screen.getByText('staff')).toBeInTheDocument();
   });
 
-  it('should render published library info sidebar', () => {
-    const data = {
-      ...libraryData,
-      lastPublished: '2024-07-26',
-      hasUnpublishedChanges: false,
-    };
+  it('should render published library info sidebar', async () => {
+    render(libraryPublished);
 
-    render(<RootWrapper data={data} />);
+    expect(await screen.findByText(libraryData.org)).toBeInTheDocument();
+
     expect(screen.getByText('Published')).toBeInTheDocument();
     expect(screen.getByText('July 26, 2024')).toBeInTheDocument();
     expect(screen.getByText('staff')).toBeInTheDocument();
   });
 
-  it('should render published library info without user', () => {
-    const data = {
-      ...libraryData,
-      lastPublished: '2024-07-26',
-      hasUnpublishedChanges: false,
-      publishedBy: null,
-    };
+  it('should render published library info without user', async () => {
+    render(libraryPublishedWithoutUser);
 
-    render(<RootWrapper data={data} />);
+    expect(await screen.findByText(libraryData.org)).toBeInTheDocument();
+
     expect(screen.getByText('Published')).toBeInTheDocument();
     expect(screen.getByText('July 26, 2024')).toBeInTheDocument();
     expect(screen.queryByText('staff')).not.toBeInTheDocument();
@@ -182,66 +123,91 @@ describe('<LibraryInfo />', () => {
   it('should publish library', async () => {
     const url = getCommitLibraryChangesUrl(libraryData.id);
     axiosMock.onPost(url).reply(200);
-    render(<RootWrapper data={libraryData} />);
+    render();
+
+    expect(await screen.findByText(libraryData.org)).toBeInTheDocument();
 
     const publishButton = screen.getByRole('button', { name: /publish/i });
     fireEvent.click(publishButton);
 
-    expect(await screen.findByText('Library published successfully')).toBeInTheDocument();
-
-    await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(url));
+    await waitFor(() => {
+      expect(axiosMock.history.post[0].url).toEqual(url);
+      expect(mockShowToast).toHaveBeenCalledWith('Library published successfully');
+    });
   });
 
   it('should show error on publish library', async () => {
     const url = getCommitLibraryChangesUrl(libraryData.id);
     axiosMock.onPost(url).reply(500);
-    render(<RootWrapper data={libraryData} />);
+    render();
+
+    expect(await screen.findByText(libraryData.org)).toBeInTheDocument();
 
     const publishButton = screen.getByRole('button', { name: /publish/i });
     fireEvent.click(publishButton);
 
-    expect(await screen.findByText('There was an error publishing the library.')).toBeInTheDocument();
-
-    await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(url));
+    await waitFor(() => {
+      expect(axiosMock.history.post[0].url).toEqual(url);
+      expect(mockShowToast).toHaveBeenCalledWith('There was an error publishing the library.');
+    });
   });
 
   it('should discard changes', async () => {
     const url = getCommitLibraryChangesUrl(libraryData.id);
     axiosMock.onDelete(url).reply(200);
+    render();
 
-    render(<RootWrapper data={libraryData} />);
+    expect(await screen.findByText(libraryData.org)).toBeInTheDocument();
+
     const discardButton = screen.getByRole('button', { name: /discard changes/i });
     fireEvent.click(discardButton);
 
-    expect(await screen.findByText('Library changes reverted successfully')).toBeInTheDocument();
-
-    await waitFor(() => expect(axiosMock.history.delete[0].url).toEqual(url));
+    await waitFor(() => {
+      expect(axiosMock.history.delete[0].url).toEqual(url);
+      expect(mockShowToast).toHaveBeenCalledWith('Library changes reverted successfully');
+    });
   });
 
   it('should show error on discard changes', async () => {
     const url = getCommitLibraryChangesUrl(libraryData.id);
     axiosMock.onDelete(url).reply(500);
+    render();
 
-    render(<RootWrapper data={libraryData} />);
+    expect(await screen.findByText(libraryData.org)).toBeInTheDocument();
+
     const discardButton = screen.getByRole('button', { name: /discard changes/i });
     fireEvent.click(discardButton);
 
-    expect(await screen.findByText('There was an error reverting changes in the library.')).toBeInTheDocument();
-
-    await waitFor(() => expect(axiosMock.history.delete[0].url).toEqual(url));
+    await waitFor(() => {
+      expect(axiosMock.history.delete[0].url).toEqual(url);
+      expect(mockShowToast).toHaveBeenCalledWith('There was an error reverting changes in the library.');
+    });
   });
 
   it('discard changes btn should be disabled for new libraries', async () => {
-    render(<RootWrapper data={{ ...libraryData, lastPublished: null, numBlocks: 0 }} />);
-    const discardButton = screen.getByRole('button', { name: /discard changes/i });
+    render(libraryDraftWithoutChanges);
 
+    expect(await screen.findByText(libraryData.org)).toBeInTheDocument();
+
+    const discardButton = screen.getByRole('button', { name: /discard changes/i });
     expect(discardButton).toBeDisabled();
   });
 
   it('discard changes btn should be enabled for new libraries if components are added', async () => {
-    render(<RootWrapper data={{ ...libraryData, lastPublished: null, numBlocks: 2 }} />);
-    const discardButton = screen.getByRole('button', { name: /discard changes/i });
+    render();
 
+    expect(await screen.findByText(libraryData.org)).toBeInTheDocument();
+
+    const discardButton = screen.getByRole('button', { name: /discard changes/i });
     expect(discardButton).not.toBeDisabled();
+  });
+
+  it('should render library info in read-only mode', async () => {
+    render(libraryIdReadOnly);
+
+    expect(await screen.findByText(libraryData.org)).toBeInTheDocument();
+
+    expect(screen.queryByRole('button', { name: /publish/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /discard changes/i })).not.toBeInTheDocument();
   });
 });

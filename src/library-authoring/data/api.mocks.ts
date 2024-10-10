@@ -15,7 +15,7 @@ export async function mockContentLibrary(libraryId: string): Promise<api.Content
   switch (libraryId) {
     case mockContentLibrary.libraryIdThatNeverLoads:
       // Return a promise that never resolves, to simulate never loading:
-      return new Promise<any>(() => {});
+      return new Promise<any>(() => { });
     case mockContentLibrary.library404:
       throw createAxiosError({ code: 400, message: 'Not found.', path: api.getContentLibraryApiUrl(libraryId) });
     case mockContentLibrary.library500:
@@ -29,6 +29,61 @@ export async function mockContentLibrary(libraryId: string): Promise<api.Content
         slug: 'readOnly',
         allowPublicRead: true,
         canEditLibrary: false,
+      };
+    case mockContentLibrary.libraryDraftWithoutUser:
+      return {
+        ...mockContentLibrary.libraryData,
+        id: mockContentLibrary.libraryDraftWithoutUser,
+        slug: 'draftNoUser',
+        lastDraftCreatedBy: null,
+      };
+    case mockContentLibrary.libraryNoDraftDate:
+      return {
+        ...mockContentLibrary.libraryData,
+        id: mockContentLibrary.libraryNoDraftDate,
+        slug: 'noDraftDate',
+        lastDraftCreated: null,
+      };
+    case mockContentLibrary.libraryNoDraftNoCrateDate:
+      return {
+        ...mockContentLibrary.libraryData,
+        id: mockContentLibrary.libraryNoDraftNoCrateDate,
+        slug: 'noDraftNoCreateDate',
+        lastDraftCreated: null,
+        created: null,
+      };
+    case mockContentLibrary.libraryUnpublishedChanges:
+      return {
+        ...mockContentLibrary.libraryData,
+        id: mockContentLibrary.libraryUnpublishedChanges,
+        slug: 'unpublishedChanges',
+        lastPublished: '2024-07-26T16:37:42Z',
+        hasUnpublishedChanges: true,
+      };
+    case mockContentLibrary.libraryPublished:
+      return {
+        ...mockContentLibrary.libraryData,
+        id: mockContentLibrary.libraryPublished,
+        slug: 'published',
+        lastPublished: '2024-07-26T16:37:42Z',
+        hasUnpublishedChanges: false,
+        publishedBy: 'staff',
+      };
+    case mockContentLibrary.libraryPublishedWithoutUser:
+      return {
+        ...mockContentLibrary.libraryData,
+        id: mockContentLibrary.libraryPublishedWithoutUser,
+        slug: 'publishedWithUser',
+        lastPublished: '2024-07-26T16:37:42Z',
+        hasUnpublishedChanges: false,
+        publishedBy: null,
+      };
+    case mockContentLibrary.libraryDraftWithoutChanges:
+      return {
+        ...mockContentLibrary.libraryData,
+        id: mockContentLibrary.libraryDraftWithoutChanges,
+        slug: 'draftNoChanges',
+        numBlocks: 0,
       };
     default:
       throw new Error(`mockContentLibrary: unknown library ID "${libraryId}"`);
@@ -48,7 +103,7 @@ mockContentLibrary.libraryData = {
   lastPublished: null, // or e.g. '2024-08-30T16:37:42Z',
   publishedBy: null, // or e.g. 'test_author',
   lastDraftCreated: '2024-07-22T21:37:49Z',
-  lastDraftCreatedBy: null,
+  lastDraftCreatedBy: 'staff',
   allowLti: false,
   allowPublicLearning: false,
   allowPublicRead: false,
@@ -63,6 +118,13 @@ mockContentLibrary.libraryIdReadOnly = 'lib:Axim:readOnly';
 mockContentLibrary.libraryIdThatNeverLoads = 'lib:Axim:infiniteLoading';
 mockContentLibrary.library404 = 'lib:Axim:error404';
 mockContentLibrary.library500 = 'lib:Axim:error500';
+mockContentLibrary.libraryDraftWithoutUser = 'lib:Axim:draftNoUser';
+mockContentLibrary.libraryNoDraftDate = 'lib:Axim:noDraftDate';
+mockContentLibrary.libraryNoDraftNoCrateDate = 'lib:Axim:noDraftNoCreateDate';
+mockContentLibrary.libraryUnpublishedChanges = 'lib:Axim:unpublishedChanges';
+mockContentLibrary.libraryPublished = 'lib:Axim:published';
+mockContentLibrary.libraryPublishedWithoutUser = 'lib:Axim:publishedWithoutUser';
+mockContentLibrary.libraryDraftWithoutChanges = 'lib:Axim:draftNoChanges';
 mockContentLibrary.applyMock = () => jest.spyOn(api, 'getContentLibrary').mockImplementation(mockContentLibrary);
 
 /**
@@ -77,7 +139,7 @@ export async function mockCreateLibraryBlock(
       case 'problem': return mockCreateLibraryBlock.newProblemData;
       case 'video': return mockCreateLibraryBlock.newVideoData;
       default:
-        // Continue to error handling below.
+      // Continue to error handling below.
     }
   }
   throw new Error(`mockCreateLibraryBlock doesn't know how to mock ${JSON.stringify(args)}`);
@@ -195,7 +257,7 @@ export async function mockLibraryBlockMetadata(usageKey: string): Promise<api.Li
   switch (usageKey) {
     case thisMock.usageKeyThatNeverLoads:
       // Return a promise that never resolves, to simulate never loading:
-      return new Promise<any>(() => {});
+      return new Promise<any>(() => { });
     case thisMock.usageKeyError404:
       throw createAxiosError({ code: 404, message: 'Not found.', path: api.getLibraryBlockMetadataUrl(usageKey) });
     case thisMock.usageKeyNeverPublished: return thisMock.dataNeverPublished;

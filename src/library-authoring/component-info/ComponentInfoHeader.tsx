@@ -9,19 +9,23 @@ import {
 import { Edit } from '@openedx/paragon/icons';
 
 import { ToastContext } from '../../generic/toast-context';
-import type { ContentLibrary } from '../data/api';
+import { useLibraryContext } from '../common/context';
 import { useUpdateXBlockFields, useXBlockFields } from '../data/apiHooks';
 import messages from './messages';
 
-interface ComponentInfoHeaderProps {
-  library: ContentLibrary;
-  usageKey: string;
-}
-
-const ComponentInfoHeader = ({ library, usageKey }: ComponentInfoHeaderProps) => {
+const ComponentInfoHeader = () => {
   const intl = useIntl();
   const [inputIsActive, setIsActive] = useState(false);
 
+  const {
+    sidebarComponentUsageKey: usageKey,
+    readOnly,
+  } = useLibraryContext();
+
+  // istanbul ignore next
+  if (!usageKey) {
+    throw new Error('usageKey is required');
+  }
   const {
     data: xblockFields,
   } = useXBlockFields(usageKey);
@@ -80,7 +84,7 @@ const ComponentInfoHeader = ({ library, usageKey }: ComponentInfoHeaderProps) =>
             <span className="font-weight-bold m-1.5">
               {xblockFields?.displayName}
             </span>
-            {library.canEditLibrary && (
+            {!readOnly && (
               <IconButton
                 src={Edit}
                 iconAs={Icon}

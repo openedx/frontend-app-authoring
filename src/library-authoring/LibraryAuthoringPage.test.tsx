@@ -499,7 +499,7 @@ describe('<LibraryAuthoringPage />', () => {
     expect(showProbTypesSubmenuBtn).not.toBeNull();
     fireEvent.click(showProbTypesSubmenuBtn!);
 
-    const validateSubmenu = async (submenuText : string) => {
+    const validateSubmenu = async (submenuText: string) => {
       const submenu = screen.getByText(submenuText);
       expect(submenu).toBeInTheDocument();
       fireEvent.click(submenu);

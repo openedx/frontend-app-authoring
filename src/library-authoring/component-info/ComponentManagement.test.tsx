@@ -1,17 +1,24 @@
 import { setConfig, getConfig } from '@edx/frontend-platform';
 
+import { mockContentTaxonomyTagsData } from '../../content-tags-drawer/data/api.mocks';
 import {
   initializeMocks,
-  render,
+  render as baseRender,
   screen,
 } from '../../testUtils';
-import { mockLibraryBlockMetadata } from '../data/api.mocks';
+import { LibraryProvider } from '../common/context';
+import { mockContentLibrary, mockLibraryBlockMetadata } from '../data/api.mocks';
 import ComponentManagement from './ComponentManagement';
-import { mockContentTaxonomyTagsData } from '../../content-tags-drawer/data/api.mocks';
 
 jest.mock('../../content-tags-drawer', () => ({
   ContentTagsDrawer: () => <div>Mocked ContentTagsDrawer</div>,
 }));
+
+mockContentLibrary.applyMock();
+mockLibraryBlockMetadata.applyMock();
+mockContentTaxonomyTagsData.applyMock();
+
+const { libraryId: mockLibraryId } = mockContentLibrary;
 
 /*
  * This function is used to get the inner text of an element.
@@ -27,20 +34,28 @@ const matchInnerText = (nodeName: string, textToMatch: string) => (_: string, el
   element.nodeName === nodeName && getInnerText(element) === textToMatch
 );
 
+const render = (usageKey: string) => baseRender(<ComponentManagement />, {
+  extraWrapper: ({ children }) => (
+    <LibraryProvider libraryId={mockLibraryId} sidebarComponentUsageKey={usageKey}>
+      {children}
+    </LibraryProvider>
+  ),
+});
+
 describe('<ComponentManagement />', () => {
-  it('should render draft status', async () => {
+  beforeEach(() => {
     initializeMocks();
-    mockLibraryBlockMetadata.applyMock();
-    render(<ComponentManagement usageKey={mockLibraryBlockMetadata.usageKeyNeverPublished} />);
+  });
+
+  it('should render draft status', async () => {
+    render(mockLibraryBlockMetadata.usageKeyNeverPublished);
     expect(await screen.findByText('Draft')).toBeInTheDocument();
     expect(await screen.findByText('(Never Published)')).toBeInTheDocument();
     expect(screen.getByText(matchInnerText('SPAN', 'Draft saved on June 20, 2024 at 13:54.'))).toBeInTheDocument();
   });
 
   it('should render published status', async () => {
-    initializeMocks();
-    mockLibraryBlockMetadata.applyMock();
-    render(<ComponentManagement usageKey={mockLibraryBlockMetadata.usageKeyPublished} />);
+    render(mockLibraryBlockMetadata.usageKeyPublished);
     expect(await screen.findByText('Published')).toBeInTheDocument();
     expect(screen.getByText('Published')).toBeInTheDocument();
     expect(
@@ -53,9 +68,7 @@ describe('<ComponentManagement />', () => {
       ...getConfig(),
       ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
     });
-    initializeMocks();
-    mockLibraryBlockMetadata.applyMock();
-    render(<ComponentManagement usageKey={mockLibraryBlockMetadata.usageKeyNeverPublished} />);
+    render(mockLibraryBlockMetadata.usageKeyNeverPublished);
     expect(await screen.findByText('Tags (0)')).toBeInTheDocument();
     expect(screen.queryByText('Mocked ContentTagsDrawer')).toBeInTheDocument();
   });
@@ -65,9 +78,7 @@ describe('<ComponentManagement />', () => {
       ...getConfig(),
       ENABLE_TAGGING_TAXONOMY_PAGES: 'false',
     });
-    initializeMocks();
-    mockLibraryBlockMetadata.applyMock();
-    render(<ComponentManagement usageKey={mockLibraryBlockMetadata.usageKeyNeverPublished} />);
+    render(mockLibraryBlockMetadata.usageKeyNeverPublished);
     expect(await screen.findByText('Draft')).toBeInTheDocument();
     expect(screen.queryByText('Tags')).not.toBeInTheDocument();
   });
@@ -77,10 +88,7 @@ describe('<ComponentManagement />', () => {
       ...getConfig(),
       ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
     });
-    initializeMocks();
-    mockLibraryBlockMetadata.applyMock();
-    mockContentTaxonomyTagsData.applyMock();
-    render(<ComponentManagement usageKey={mockLibraryBlockMetadata.usageKeyForTags} />);
+    render(mockLibraryBlockMetadata.usageKeyForTags);
     expect(await screen.findByText('Tags (6)')).toBeInTheDocument();
   });
 });

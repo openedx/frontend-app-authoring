@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import { getItemIcon } from '../../generic/block-type-utils';
 import { ToastContext } from '../../generic/toast-context';
 import { BlockTypeLabel, useGetBlockTypes } from '../../search-manager';
-import type { ContentLibrary } from '../data/api';
+import { useLibraryContext } from '../common/context';
 import { useCollection, useUpdateCollection } from '../data/apiHooks';
 import HistoryWidget from '../generic/history-widget';
 import messages from './messages';
@@ -36,12 +36,9 @@ const BlockCount = ({
   );
 };
 
-interface CollectionStatsWidgetProps {
-  libraryId: string,
-  collectionId: string,
-}
+const CollectionStatsWidget = () => {
+  const { libraryId, sidebarCollectionId: collectionId } = useLibraryContext();
 
-const CollectionStatsWidget = ({ libraryId, collectionId }: CollectionStatsWidgetProps) => {
   const { data: blockTypes } = useGetBlockTypes([
     `context_key = "${libraryId}"`,
     `collections.key = "${collectionId}"`,
@@ -96,17 +93,22 @@ const CollectionStatsWidget = ({ libraryId, collectionId }: CollectionStatsWidge
   );
 };
 
-interface CollectionDetailsProps {
-  library: ContentLibrary,
-  collectionId: string,
-}
-
-const CollectionDetails = ({ library, collectionId }: CollectionDetailsProps) => {
+const CollectionDetails = () => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
+  const {
+    libraryId,
+    sidebarCollectionId: collectionId,
+    readOnly,
+  } = useLibraryContext();
 
-  const updateMutation = useUpdateCollection(library.id, collectionId);
-  const { data: collection } = useCollection(library.id, collectionId);
+  // istanbul ignore next: This should never happen
+  if (!collectionId) {
+    throw new Error('collectionId is required');
+  }
+
+  const updateMutation = useUpdateCollection(libraryId, collectionId);
+  const { data: collection } = useCollection(libraryId, collectionId);
 
   const [description, setDescription] = useState(collection?.description || '');
 
@@ -142,7 +144,7 @@ const CollectionDetails = ({ library, collectionId }: CollectionDetailsProps) =>
         <h3 className="h5">
           {intl.formatMessage(messages.detailsTabDescriptionTitle)}
         </h3>
-        {library.canEditLibrary ? (
+        {!readOnly ? (
           <textarea
             className="form-control"
             value={description}
@@ -155,7 +157,7 @@ const CollectionDetails = ({ library, collectionId }: CollectionDetailsProps) =>
         <h3 className="h5">
           {intl.formatMessage(messages.detailsTabStatsTitle)}
         </h3>
-        <CollectionStatsWidget libraryId={library.id} collectionId={collectionId} />
+        <CollectionStatsWidget />
       </div>
       <hr className="w-100" />
       <div>

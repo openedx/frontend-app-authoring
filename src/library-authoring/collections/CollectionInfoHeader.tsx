@@ -9,22 +9,28 @@ import {
 import { Edit } from '@openedx/paragon/icons';
 
 import { ToastContext } from '../../generic/toast-context';
-import type { ContentLibrary } from '../data/api';
+import { useLibraryContext } from '../common/context';
 import { useCollection, useUpdateCollection } from '../data/apiHooks';
 import messages from './messages';
 
-interface CollectionInfoHeaderProps {
-  library: ContentLibrary;
-  collectionId: string;
-}
-
-const CollectionInfoHeader = ({ library, collectionId }: CollectionInfoHeaderProps) => {
+const CollectionInfoHeader = () => {
   const intl = useIntl();
   const [inputIsActive, setIsActive] = useState(false);
 
-  const { data: collection } = useCollection(library.id, collectionId);
+  const {
+    libraryId,
+    sidebarCollectionId: collectionId,
+    readOnly,
+  } = useLibraryContext();
 
-  const updateMutation = useUpdateCollection(library.id, collectionId);
+  // istanbul ignore if: this should never happen
+  if (!collectionId) {
+    throw new Error('collectionId is required');
+  }
+
+  const { data: collection } = useCollection(libraryId, collectionId);
+
+  const updateMutation = useUpdateCollection(libraryId, collectionId);
   const { showToast } = useContext(ToastContext);
 
   const handleSaveDisplayName = useCallback(
@@ -83,7 +89,7 @@ const CollectionInfoHeader = ({ library, collectionId }: CollectionInfoHeaderPro
             <span className="font-weight-bold m-1.5">
               {collection.title}
             </span>
-            {library.canEditLibrary && (
+            {!readOnly && (
               <IconButton
                 src={Edit}
                 iconAs={Icon}

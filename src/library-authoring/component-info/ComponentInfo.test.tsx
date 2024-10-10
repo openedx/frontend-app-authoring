@@ -21,9 +21,14 @@ jest.mock('./ComponentManagement', () => ({
   default: () => <div>Mocked management tab</div>,
 }));
 
-const withLibraryId = (libraryId: string) => ({
+const withLibraryId = (libraryId: string, sidebarComponentUsageKey: string) => ({
   extraWrapper: ({ children }: { children: React.ReactNode }) => (
-    <LibraryProvider libraryId={libraryId}>{children}</LibraryProvider>
+    <LibraryProvider
+      libraryId={libraryId}
+      sidebarComponentUsageKey={sidebarComponentUsageKey}
+    >
+      {children}
+    </LibraryProvider>
   ),
 });
 
@@ -31,30 +36,29 @@ describe('<ComponentInfo> Sidebar', () => {
   it('should show a disabled "Edit" button when the component type is not editable', async () => {
     initializeMocks();
     render(
-      <ComponentInfo usageKey={mockLibraryBlockMetadata.usageKeyThirdPartyXBlock} />,
-      withLibraryId(mockContentLibrary.libraryId),
+      <ComponentInfo />,
+      withLibraryId(mockContentLibrary.libraryId, mockLibraryBlockMetadata.usageKeyThirdPartyXBlock),
     );
 
     const editButton = await screen.findByRole('button', { name: /Edit component/ });
     expect(editButton).toBeDisabled();
   });
 
-  it('should show a disabled "Edit" button when the library is read-only', async () => {
+  it('should not show a "Edit" button when the library is read-only', async () => {
     initializeMocks();
     render(
-      <ComponentInfo usageKey={mockLibraryBlockMetadata.usageKeyPublished} />,
-      withLibraryId(mockContentLibrary.libraryIdReadOnly),
+      <ComponentInfo />,
+      withLibraryId(mockContentLibrary.libraryIdReadOnly, mockLibraryBlockMetadata.usageKeyPublished),
     );
 
-    const editButton = await screen.findByRole('button', { name: /Edit component/ });
-    expect(editButton).toBeDisabled();
+    expect(screen.queryByRole('button', { name: /Edit component/ })).not.toBeInTheDocument();
   });
 
   it('should show a working "Edit" button for a normal component', async () => {
     initializeMocks();
     render(
-      <ComponentInfo usageKey={mockLibraryBlockMetadata.usageKeyPublished} />,
-      withLibraryId(mockContentLibrary.libraryId),
+      <ComponentInfo />,
+      withLibraryId(mockContentLibrary.libraryId, mockLibraryBlockMetadata.usageKeyPublished),
     );
 
     const editButton = await screen.findByRole('button', { name: /Edit component/ });

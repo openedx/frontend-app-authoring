@@ -214,7 +214,8 @@ export async function createLibraryBlock({
  */
 export async function updateLibraryMetadata(libraryData: UpdateLibraryDataRequest): Promise<ContentLibrary> {
   const client = getAuthenticatedHttpClient();
-  const { data } = await client.patch(getContentLibraryApiUrl(libraryData.id), libraryData);
+  const { id: libraryId, ...updateData } = libraryData;
+  const { data } = await client.patch(getContentLibraryApiUrl(libraryId), updateData);
 
   return camelCaseObject(data);
 }
@@ -376,4 +377,13 @@ export async function deleteCollection(libraryId: string, collectionId: string) 
 export async function restoreCollection(libraryId: string, collectionId: string) {
   const client = getAuthenticatedHttpClient();
   await client.post(getLibraryCollectionRestoreApiUrl(libraryId, collectionId));
+}
+
+/**
+ * Add a component to a course.
+ */
+// istanbul ignore next
+export async function addComponentToCourse() {
+  // TODO: Call endpoint to add component to course
+  return Promise.resolve();
 }

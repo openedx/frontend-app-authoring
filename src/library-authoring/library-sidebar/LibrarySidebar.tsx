@@ -9,15 +9,10 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { AddContentContainer, AddContentHeader } from '../add-content';
 import { CollectionInfo, CollectionInfoHeader } from '../collections';
-import { ContentLibrary } from '../data/api';
 import { SidebarBodyComponentId, useLibraryContext } from '../common/context';
 import { ComponentInfo, ComponentInfoHeader } from '../component-info';
 import { LibraryInfo, LibraryInfoHeader } from '../library-info';
 import messages from '../messages';
-
-type LibrarySidebarProps = {
-  library: ContentLibrary,
-};
 
 /**
  * Sidebar container for library pages.
@@ -28,36 +23,26 @@ type LibrarySidebarProps = {
  * You can add more components in `bodyComponentMap`.
  * Use the returned actions to open and close this sidebar.
  */
-const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
+const LibrarySidebar = () => {
   const intl = useIntl();
   const {
     sidebarBodyComponent,
     closeLibrarySidebar,
-    currentComponentUsageKey,
-    currentCollectionId,
   } = useLibraryContext();
 
   const bodyComponentMap = {
     [SidebarBodyComponentId.AddContent]: <AddContentContainer />,
-    [SidebarBodyComponentId.Info]: <LibraryInfo library={library} />,
-    [SidebarBodyComponentId.ComponentInfo]: (
-      currentComponentUsageKey && <ComponentInfo usageKey={currentComponentUsageKey} />
-    ),
-    [SidebarBodyComponentId.CollectionInfo]: (
-      currentCollectionId && <CollectionInfo library={library} collectionId={currentCollectionId} />
-    ),
+    [SidebarBodyComponentId.Info]: <LibraryInfo />,
+    [SidebarBodyComponentId.ComponentInfo]: <ComponentInfo />,
+    [SidebarBodyComponentId.CollectionInfo]: <CollectionInfo />,
     unknown: null,
   };
 
   const headerComponentMap = {
     [SidebarBodyComponentId.AddContent]: <AddContentHeader />,
-    [SidebarBodyComponentId.Info]: <LibraryInfoHeader library={library} />,
-    [SidebarBodyComponentId.ComponentInfo]: (
-      currentComponentUsageKey && <ComponentInfoHeader library={library} usageKey={currentComponentUsageKey} />
-    ),
-    [SidebarBodyComponentId.CollectionInfo]: (
-      currentCollectionId && <CollectionInfoHeader library={library} collectionId={currentCollectionId} />
-    ),
+    [SidebarBodyComponentId.Info]: <LibraryInfoHeader />,
+    [SidebarBodyComponentId.ComponentInfo]: <ComponentInfoHeader />,
+    [SidebarBodyComponentId.CollectionInfo]: <CollectionInfoHeader />,
     unknown: null,
   };
 

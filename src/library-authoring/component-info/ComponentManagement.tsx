@@ -4,17 +4,22 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Collapsible, Icon, Stack } from '@openedx/paragon';
 import { Tag } from '@openedx/paragon/icons';
 
+import { useLibraryContext } from '../common/context';
 import { useLibraryBlockMetadata } from '../data/apiHooks';
 import StatusWidget from '../generic/status-widget';
 import messages from './messages';
 import { ContentTagsDrawer } from '../../content-tags-drawer';
 import { useContentTaxonomyTagsData } from '../../content-tags-drawer/data/apiHooks';
 
-interface ComponentManagementProps {
-  usageKey: string;
-}
-const ComponentManagement = ({ usageKey }: ComponentManagementProps) => {
+const ComponentManagement = () => {
   const intl = useIntl();
+  const { sidebarComponentUsageKey: usageKey, readOnly } = useLibraryContext();
+
+  // istanbul ignore if: this should never happen
+  if (!usageKey) {
+    throw new Error('usageKey is required');
+  }
+
   const { data: componentMetadata } = useLibraryBlockMetadata(usageKey);
   const { data: componentTags } = useContentTaxonomyTagsData(usageKey);
 
@@ -62,6 +67,7 @@ const ComponentManagement = ({ usageKey }: ComponentManagementProps) => {
           <ContentTagsDrawer
             id={usageKey}
             variant="component"
+            readOnly={readOnly}
           />
         </Collapsible>
         )}

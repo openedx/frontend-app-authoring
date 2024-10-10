@@ -121,6 +121,16 @@ const messages = defineMessages({
     defaultMessage: 'Component Preview',
     description: 'Title for preview modal',
   },
+  addComponentToCourse: {
+    id: 'course-authoring.library-authoring.component.add-to-course',
+    defaultMessage: 'Add to Course',
+    description: 'Button to add component to course',
+  },
+  addComponentToCourseError: {
+    id: 'course-authoring.library-authoring.component.add-to-course-error',
+    defaultMessage: 'Failed to add component to course',
+    description: 'Error message when adding component to course fails',
+  },
 });
 
 export default messages;
