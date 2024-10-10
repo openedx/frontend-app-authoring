@@ -1,7 +1,7 @@
 import { useContext, useMemo, useState, useEffect } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Button, Icon, Scrollable, SelectableBox, Stack, useCheckboxSetValues,
+  Button, Icon, Scrollable, SelectableBox, Stack, StatefulButton, useCheckboxSetValues,
 } from '@openedx/paragon';
 import { Folder } from '@openedx/paragon/icons';
 
@@ -36,17 +36,21 @@ const CollectionsSelectableBox = ({ usageKey, collections, onClose }: Collection
     add,
     remove,
   }] = useCheckboxSetValues(collectionKeys);
+  const [btnState, setBtnState] = useState('default');
 
   const { libraryId } = useLibraryContext();
 
   const updateCollectionsMutation = useUpdateComponentCollections(libraryId, usageKey);
 
   const handleConfirmation = () => {
+    setBtnState('pending');
     updateCollectionsMutation.mutateAsync(selectedCollections).then(() => {
       showToast(intl.formatMessage(messages.manageCollectionsToComponentSuccess));
-      onClose();
     }).catch(() => {
       showToast(intl.formatMessage(messages.manageCollectionsToComponentFailed));
+    }).finally(() => {
+      setBtnState('default')
+      onClose();
     });
   };
 
@@ -88,13 +92,15 @@ const CollectionsSelectableBox = ({ usageKey, collections, onClose }: Collection
         >
           {intl.formatMessage(messages.manageCollectionsToComponentCancelBtn)}
         </Button>
-        <Button
+        <StatefulButton
           onClick={handleConfirmation}
           className="flex-grow-1 rounded-0"
           variant="primary"
-        >
-          {intl.formatMessage(messages.manageCollectionsToComponentConfirmBtn)}
-        </Button>
+          state={btnState}
+          labels={{
+            default: intl.formatMessage(messages.manageCollectionsToComponentConfirmBtn),
+          }}
+        />
       </Stack>
     </Stack>
   );
@@ -142,7 +148,7 @@ const ComponentCollections = ({ collections, onManageClick }: {
 }) => {
   const intl = useIntl();
 
-  if (!collections) {
+  if (!collections?.length) {
     return (
       <Stack gap={3}>
         <span className="border-bottom pb-3 border-gray-100">
