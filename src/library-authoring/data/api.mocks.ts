@@ -264,7 +264,7 @@ mockLibraryBlockMetadata.dataWithCollections = {
   created: '2024-06-20T13:54:21Z',
   modified: '2024-06-21T13:54:21Z',
   tagsCount: 0,
-  collections: [{ title: 'My first collection', key: 'my-first-collection'}],
+  collections: [{ title: 'My first collection', key: 'my-first-collection' }],
 } satisfies api.LibraryBlockMetadata;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockLibraryBlockMetadata.applyMock = () => jest.spyOn(api, 'getLibraryBlockMetadata').mockImplementation(mockLibraryBlockMetadata);

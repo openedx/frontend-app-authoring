@@ -32,6 +32,7 @@ const contentHit: ContentHit = {
   created: 1722434322294,
   modified: 1722434322294,
   lastPublished: null,
+  collections: {},
 };
 
 const clipboardBroadcastChannelMock = {

@@ -1,5 +1,7 @@
 import fetchMock from 'fetch-mock-jest';
 
+import userEvent from '@testing-library/user-event';
+import MockAdapter from 'axios-mock-adapter/types';
 import {
   initializeMocks,
   render as baseRender,
@@ -10,15 +12,12 @@ import mockCollectionsResults from '../__mocks__/collection-search.json';
 import { mockContentSearchConfig } from '../../search-manager/data/api.mock';
 import { mockLibraryBlockMetadata } from '../data/api.mocks';
 import ManageCollections from './ManageCollections';
-import userEvent from '@testing-library/user-event';
 import { LibraryProvider } from '../common/context';
-import MockAdapter from 'axios-mock-adapter/types';
 import { getLibraryBlockCollectionsUrl } from '../data/api';
 
 const render = (ui: React.ReactElement) => baseRender(ui, {
   extraWrapper: ({ children }) => <LibraryProvider libraryId="lib:OpenedX:CSPROB2">{ children }</LibraryProvider>,
 });
-
 
 let axiosMock: MockAdapter;
 let mockShowToast;
@@ -26,7 +25,6 @@ let mockShowToast;
 mockLibraryBlockMetadata.applyMock();
 mockContentSearchConfig.applyMock();
 const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
-
 
 describe('<ManageCollections />', () => {
   beforeEach(() => {
@@ -54,7 +52,7 @@ describe('<ManageCollections />', () => {
     axiosMock.onPatch(url).reply(200);
     render(<ManageCollections
       usageKey={mockLibraryBlockMetadata.usageKeyWithCollections}
-      collections={[{ title: 'My first collection', key: 'my-first-collection'}]}
+      collections={[{ title: 'My first collection', key: 'my-first-collection' }]}
     />);
     const manageBtn = await screen.findByRole('button', { name: 'Manage Collections' });
     userEvent.click(manageBtn);
@@ -68,7 +66,7 @@ describe('<ManageCollections />', () => {
       expect(axiosMock.history.patch.length).toEqual(1);
       expect(mockShowToast).toHaveBeenCalledWith('Component collections updated');
       expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({
-        collection_keys: [ "my-first-collection", "my-second-collection" ],
+        collection_keys: ['my-first-collection', 'my-second-collection'],
       });
     });
     expect(screen.queryByRole('search')).not.toBeInTheDocument();
@@ -92,7 +90,7 @@ describe('<ManageCollections />', () => {
     await waitFor(() => {
       expect(axiosMock.history.patch.length).toEqual(1);
       expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({
-        collection_keys: [ "my-second-collection" ],
+        collection_keys: ['my-second-collection'],
       });
       expect(mockShowToast).toHaveBeenCalledWith('Failed to update Component collections');
     });

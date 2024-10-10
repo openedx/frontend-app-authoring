@@ -32,11 +32,8 @@ const render = (ui: React.ReactElement) => baseRender(ui, {
   extraWrapper: ({ children }) => <LibraryProvider libraryId="lib:OpenedX:CSPROB2">{ children }</LibraryProvider>,
 });
 
-
-
 mockLibraryBlockMetadata.applyMock();
 mockContentTaxonomyTagsData.applyMock();
-
 
 describe('<ComponentManagement />', () => {
   beforeEach(() => {

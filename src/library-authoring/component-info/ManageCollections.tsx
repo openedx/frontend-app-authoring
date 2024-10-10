@@ -1,4 +1,4 @@
-import { useContext, useMemo, useState, useEffect } from 'react';
+import { useContext, useState } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button, Icon, Scrollable, SelectableBox, Stack, StatefulButton, useCheckboxSetValues,
@@ -49,7 +49,7 @@ const CollectionsSelectableBox = ({ usageKey, collections, onClose }: Collection
     }).catch(() => {
       showToast(intl.formatMessage(messages.manageCollectionsToComponentFailed));
     }).finally(() => {
-      setBtnState('default')
+      setBtnState('default');
       onClose();
     });
   };
