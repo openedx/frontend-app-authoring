@@ -8,6 +8,7 @@ import {
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 
+import { useParams } from 'react-router';
 import { updateClipboard } from '../../generic/data/api';
 import { ToastContext } from '../../generic/toast-context';
 import { type ContentHit } from '../../search-manager';
@@ -16,7 +17,6 @@ import messages from './messages';
 import { STUDIO_CLIPBOARD_CHANNEL } from '../../constants';
 import BaseComponentCard from './BaseComponentCard';
 import { canEditComponent } from './ComponentEditorModal';
-import { useParams } from 'react-router';
 import { useRemoveComponentsFromCollection } from '../data/apiHooks';
 
 type ComponentCardProps = {
@@ -55,7 +55,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
     }).catch(() => {
       showToast(intl.formatMessage(messages.removeComponentFailure));
     });
-  }
+  };
 
   return (
     <Dropdown id="component-card-dropdown" onClick={(e) => e.stopPropagation()}>
@@ -75,9 +75,11 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
         <Dropdown.Item onClick={updateClipboardClick}>
           <FormattedMessage {...messages.menuCopyToClipboard} />
         </Dropdown.Item>
-        {collectionId && <Dropdown.Item onClick={removeFromCollection}>
+        {collectionId && (
+        <Dropdown.Item onClick={removeFromCollection}>
           <FormattedMessage {...messages.menuRemoveFromCollection} />
-        </Dropdown.Item>}
+        </Dropdown.Item>
+        )}
         <Dropdown.Item disabled>
           <FormattedMessage {...messages.menuAddToCollection} />
         </Dropdown.Item>
