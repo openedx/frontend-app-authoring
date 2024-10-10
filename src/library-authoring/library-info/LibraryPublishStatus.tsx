@@ -1,45 +1,51 @@
-import React, { useCallback, useContext } from 'react';
+import { useCallback, useContext } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { ToastContext } from '../../generic/toast-context';
-import StatusWidget from '../generic/status-widget';
+import { useLibraryContext } from '../common/context';
 import { useCommitLibraryChanges, useRevertLibraryChanges } from '../data/apiHooks';
-import { ContentLibrary } from '../data/api';
+import StatusWidget from '../generic/status-widget';
 import messages from './messages';
 
-type LibraryPublishStatusProps = {
-  library: ContentLibrary,
-};
-
-const LibraryPublishStatus = ({ library } : LibraryPublishStatusProps) => {
+const LibraryPublishStatus = () => {
   const intl = useIntl();
+  const { libraryData, readOnly } = useLibraryContext();
+
   const commitLibraryChanges = useCommitLibraryChanges();
   const revertLibraryChanges = useRevertLibraryChanges();
   const { showToast } = useContext(ToastContext);
 
   const commit = useCallback(() => {
-    commitLibraryChanges.mutateAsync(library.id)
-      .then(() => {
-        showToast(intl.formatMessage(messages.publishSuccessMsg));
-      }).catch(() => {
-        showToast(intl.formatMessage(messages.publishErrorMsg));
-      });
-  }, []);
+    if (libraryData) {
+      commitLibraryChanges.mutateAsync(libraryData.id)
+        .then(() => {
+          showToast(intl.formatMessage(messages.publishSuccessMsg));
+        }).catch(() => {
+          showToast(intl.formatMessage(messages.publishErrorMsg));
+        });
+    }
+  }, [libraryData]);
 
   const revert = useCallback(() => {
-    revertLibraryChanges.mutateAsync(library.id)
-      .then(() => {
-        showToast(intl.formatMessage(messages.revertSuccessMsg));
-      }).catch(() => {
-        showToast(intl.formatMessage(messages.revertErrorMsg));
-      });
-  }, []);
+    if (libraryData) {
+      revertLibraryChanges.mutateAsync(libraryData.id)
+        .then(() => {
+          showToast(intl.formatMessage(messages.revertSuccessMsg));
+        }).catch(() => {
+          showToast(intl.formatMessage(messages.revertErrorMsg));
+        });
+    }
+  }, [libraryData]);
+
+  if (!libraryData) {
+    return null;
+  }
 
   return (
     <StatusWidget
-      {...library}
-      onCommit={commit}
-      onRevert={revert}
+      {...libraryData}
+      onCommit={!readOnly ? commit : undefined}
+      onRevert={!readOnly ? revert : undefined}
     />
   );
 };

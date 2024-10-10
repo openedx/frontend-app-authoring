@@ -154,7 +154,11 @@ const ContentTagsDrawerVariantFooter = ({ onClose }: ContentTagsDrawerVariantFoo
   );
 };
 
-const ContentTagsComponentVariantFooter = () => {
+interface ContentTagsComponentVariantFooterProps {
+  readOnly?: boolean;
+}
+
+const ContentTagsComponentVariantFooter = ({ readOnly = false }: ContentTagsComponentVariantFooterProps) => {
   const intl = useIntl();
   const {
     commitGlobalStagedTagsStatus,
@@ -195,7 +199,7 @@ const ContentTagsComponentVariantFooter = () => {
             </div>
           )}
         </div>
-      ) : (
+      ) : !readOnly && (
         <Button
           variant="outline-primary"
           onClick={toEditMode}
@@ -212,6 +216,7 @@ interface ContentTagsDrawerProps {
   id?: string;
   onClose?: () => void;
   variant?: 'drawer' | 'component';
+  readOnly?: boolean;
 }
 
 /**
@@ -227,6 +232,7 @@ const ContentTagsDrawer = ({
   id,
   onClose,
   variant = 'drawer',
+  readOnly = false,
 }: ContentTagsDrawerProps) => {
   const intl = useIntl();
   // TODO: We can delete 'params' when the iframe is no longer used on edx-platform
@@ -303,7 +309,7 @@ const ContentTagsDrawer = ({
         case 'drawer':
           return <ContentTagsDrawerVariantFooter onClose={onCloseDrawer} />;
         case 'component':
-          return <ContentTagsComponentVariantFooter />;
+          return <ContentTagsComponentVariantFooter readOnly={readOnly} />;
         default:
           return null;
       }

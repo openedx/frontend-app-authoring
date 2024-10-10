@@ -1,6 +1,6 @@
 import {
   initializeMocks,
-  render,
+  render as baseRender,
   screen,
 } from '../../testUtils';
 import {
@@ -17,9 +17,13 @@ mockLibraryBlockMetadata.applyMock();
 mockXBlockAssets.applyMock();
 mockXBlockOLX.applyMock();
 
-const withLibraryId = (libraryId: string = mockContentLibrary.libraryId) => ({
-  extraWrapper: ({ children }: { children: React.ReactNode }) => (
-    <LibraryProvider libraryId={libraryId}>{children}</LibraryProvider>
+const { libraryId: mockLibraryId } = mockContentLibrary;
+
+const render = (usageKey: string) => baseRender(<ComponentDetails />, {
+  extraWrapper: ({ children }) => (
+    <LibraryProvider libraryId={mockLibraryId} sidebarComponentUsageKey={usageKey}>
+      {children}
+    </LibraryProvider>
   ),
 });
 
@@ -29,24 +33,24 @@ describe('<ComponentDetails />', () => {
   });
 
   it('should render the component details loading', async () => {
-    render(<ComponentDetails usageKey={mockLibraryBlockMetadata.usageKeyThatNeverLoads} />, withLibraryId());
+    render(mockLibraryBlockMetadata.usageKeyThatNeverLoads);
     expect(await screen.findByText('Loading...')).toBeInTheDocument();
   });
 
   it('should render the component details error', async () => {
-    render(<ComponentDetails usageKey={mockLibraryBlockMetadata.usageKeyError404} />, withLibraryId());
+    render(mockLibraryBlockMetadata.usageKeyError404);
     expect(await screen.findByText(/Mocked request failed with status code 404/)).toBeInTheDocument();
   });
 
   it('should render the component usage', async () => {
-    render(<ComponentDetails usageKey={mockLibraryBlockMetadata.usageKeyNeverPublished} />, withLibraryId());
+    render(mockLibraryBlockMetadata.usageKeyNeverPublished);
     expect(await screen.findByText('Component Usage')).toBeInTheDocument();
     // TODO: replace with actual data when implement tag list
     expect(screen.queryByText('This will show the courses that use this component.')).toBeInTheDocument();
   });
 
   it('should render the component history', async () => {
-    render(<ComponentDetails usageKey={mockLibraryBlockMetadata.usageKeyNeverPublished} />, withLibraryId());
+    render(mockLibraryBlockMetadata.usageKeyNeverPublished);
     // Show created date
     expect(await screen.findByText('June 20, 2024')).toBeInTheDocument();
     // Show modified date

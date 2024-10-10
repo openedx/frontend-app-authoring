@@ -1,27 +1,44 @@
 import {
   fireEvent,
   initializeMocks,
-  render,
+  render as baseRender,
   screen,
 } from '../../testUtils';
-import { mockLibraryBlockMetadata } from '../data/api.mocks';
+import { LibraryProvider } from '../common/context';
+import { mockContentLibrary, mockLibraryBlockMetadata } from '../data/api.mocks';
 import ComponentPreview from './ComponentPreview';
 
 mockLibraryBlockMetadata.applyMock();
+mockContentLibrary.applyMock();
+
+const {
+  libraryId,
+} = mockContentLibrary;
+
+const usageKey = mockLibraryBlockMetadata.usageKeyPublished;
+
+const render = () => baseRender(<ComponentPreview />, {
+  extraWrapper: ({ children }) => (
+    <LibraryProvider
+      libraryId={libraryId}
+      sidebarComponentUsageKey={usageKey}
+    >
+      { children }
+    </LibraryProvider>
+  ),
+});
 
 describe('<ComponentPreview />', () => {
   it('renders a preview of the component', async () => {
     initializeMocks();
-    const usageKey = mockLibraryBlockMetadata.usageKeyPublished;
-    render(<ComponentPreview usageKey={usageKey} />);
+    render();
     const iframe = (await screen.findByTitle('Preview')) as HTMLIFrameElement;
     expect(iframe.src).toEqual(`http://localhost:18000/xblocks/v2/${usageKey}/embed/student_view/`);
   });
 
   it('shows an expanded preview of the component', async () => {
     initializeMocks();
-    const usageKey = mockLibraryBlockMetadata.usageKeyPublished;
-    render(<ComponentPreview usageKey={usageKey} />);
+    render();
     await screen.findByTitle('Preview'); // Wait for the preview to appear
     const expandButton = screen.getByRole('button', { name: /Expand/ });
     fireEvent.click(expandButton);

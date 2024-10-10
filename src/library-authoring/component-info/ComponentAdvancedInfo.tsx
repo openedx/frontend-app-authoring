@@ -14,22 +14,21 @@ import { LoadingSpinner } from '../../generic/Loading';
 import { CodeEditor, EditorAccessor } from '../../generic/CodeEditor';
 import { useLibraryContext } from '../common/context';
 import {
-  useContentLibrary,
   useUpdateXBlockOLX,
   useXBlockAssets,
   useXBlockOLX,
 } from '../data/apiHooks';
 import messages from './messages';
 
-interface Props {
-  usageKey: string;
-}
-
-export const ComponentAdvancedInfo: React.FC<Props> = ({ usageKey }) => {
+export const ComponentAdvancedInfo: React.FC<Record<never, never>> = () => {
   const intl = useIntl();
-  const { libraryId } = useLibraryContext();
-  const { data: library } = useContentLibrary(libraryId);
-  const canEditLibrary = library?.canEditLibrary ?? false;
+  const { readOnly, sidebarComponentUsageKey: usageKey } = useLibraryContext();
+
+  // istanbul ignore if: this should never happen in production
+  if (!usageKey) {
+    throw new Error('sidebarComponentUsageKey is required to render ComponentAdvancedInfo');
+  }
+
   const { data: olx, isLoading: isOLXLoading } = useXBlockOLX(usageKey);
   const { data: assets, isLoading: areAssetsLoading } = useXBlockAssets(usageKey);
   const editorRef = React.useRef<EditorAccessor | undefined>(undefined);
@@ -48,6 +47,7 @@ export const ComponentAdvancedInfo: React.FC<Props> = ({ usageKey }) => {
       // On error, an <Alert> is shown below. We catch here to avoid the error propagating up.
     });
   }, [editorRef, olxUpdater, intl]);
+
   return (
     <Collapsible
       styling="basic"
@@ -83,7 +83,7 @@ export const ComponentAdvancedInfo: React.FC<Props> = ({ usageKey }) => {
                       <FormattedMessage {...messages.advancedDetailsOLXCancelButton} />
                     </Button>
                   </>
-                ) : canEditLibrary ? (
+                ) : !readOnly ? (
                   <OverlayTrigger
                     placement="bottom-start"
                     overlay={(

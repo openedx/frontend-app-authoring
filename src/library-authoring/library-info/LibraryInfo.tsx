@@ -1,26 +1,23 @@
-import React from 'react';
 import { Stack } from '@openedx/paragon';
 import { FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
+
+import { useLibraryContext } from '../common/context';
 import messages from './messages';
 import LibraryPublishStatus from './LibraryPublishStatus';
-import { ContentLibrary } from '../data/api';
 
-type LibraryInfoProps = {
-  library: ContentLibrary,
-};
-
-const LibraryInfo = ({ library } : LibraryInfoProps) => {
+const LibraryInfo = () => {
   const intl = useIntl();
+  const { libraryData } = useLibraryContext();
 
   return (
     <Stack direction="vertical" gap={2.5}>
-      <LibraryPublishStatus library={library} />
+      <LibraryPublishStatus />
       <Stack gap={3} direction="vertical">
         <span className="font-weight-bold">
           {intl.formatMessage(messages.organizationSectionTitle)}
         </span>
         <span>
-          {library.org}
+          {libraryData?.org}
         </span>
       </Stack>
       <Stack gap={3}>
@@ -33,7 +30,7 @@ const LibraryInfo = ({ library } : LibraryInfoProps) => {
           </span>
           <span className="small">
             <FormattedDate
-              value={library.updated ?? undefined}
+              value={libraryData?.updated ?? undefined}
               year="numeric"
               month="long"
               day="2-digit"
@@ -46,7 +43,7 @@ const LibraryInfo = ({ library } : LibraryInfoProps) => {
           </span>
           <span className="small">
             <FormattedDate
-              value={library.created ?? undefined}
+              value={libraryData?.created ?? undefined}
               year="numeric"
               month="long"
               day="2-digit"

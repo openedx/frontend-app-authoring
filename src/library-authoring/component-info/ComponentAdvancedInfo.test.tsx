@@ -1,7 +1,7 @@
 import {
   fireEvent,
   initializeMocks,
-  render,
+  render as baseRender,
   screen,
   waitFor,
 } from '../../testUtils';
@@ -21,32 +21,39 @@ mockXBlockAssets.applyMock();
 mockXBlockOLX.applyMock();
 const setOLXspy = mockSetXBlockOLX.applyMock();
 
-const withLibraryId = (libraryId: string = mockContentLibrary.libraryId) => ({
-  extraWrapper: ({ children }: { children: React.ReactNode }) => (
-    <LibraryProvider libraryId={libraryId}>{children}</LibraryProvider>
-  ),
-});
+const render = (
+  usageKey: string = mockLibraryBlockMetadata.usageKeyPublished,
+  libraryId: string = mockContentLibrary.libraryId,
+) => baseRender(
+  <ComponentAdvancedInfo />,
+  {
+    extraWrapper: ({ children }: { children: React.ReactNode }) => (
+      <LibraryProvider libraryId={libraryId} sidebarComponentUsageKey={usageKey}>{children}</LibraryProvider>
+    ),
+  },
+);
 
 describe('<ComponentAdvancedInfo />', () => {
-  it('should display nothing when collapsed', async () => {
+  beforeEach(() => {
     initializeMocks();
-    render(<ComponentAdvancedInfo usageKey={mockLibraryBlockMetadata.usageKeyPublished} />, withLibraryId());
+  });
+
+  it('should display nothing when collapsed', async () => {
+    render();
     const expandButton = await screen.findByRole('button', { name: /Advanced details/ });
     expect(expandButton).toBeInTheDocument();
     expect(screen.queryByText(mockLibraryBlockMetadata.usageKeyPublished)).not.toBeInTheDocument();
   });
 
   it('should display the usage key of the block (when expanded)', async () => {
-    initializeMocks();
-    render(<ComponentAdvancedInfo usageKey={mockLibraryBlockMetadata.usageKeyPublished} />, withLibraryId());
+    render();
     const expandButton = await screen.findByRole('button', { name: /Advanced details/ });
     fireEvent.click(expandButton);
     expect(await screen.findByText(mockLibraryBlockMetadata.usageKeyPublished)).toBeInTheDocument();
   });
 
   it('should display the static assets of the block (when expanded)', async () => {
-    initializeMocks();
-    render(<ComponentAdvancedInfo usageKey={mockLibraryBlockMetadata.usageKeyPublished} />, withLibraryId());
+    render();
     const expandButton = await screen.findByRole('button', { name: /Advanced details/ });
     fireEvent.click(expandButton);
     expect(await screen.findByText(/static\/image1\.png/)).toBeInTheDocument();
@@ -56,30 +63,24 @@ describe('<ComponentAdvancedInfo />', () => {
   });
 
   it('should display the OLX source of the block (when expanded)', async () => {
-    initializeMocks();
-    render(<ComponentAdvancedInfo usageKey={mockXBlockOLX.usageKeyHtml} />, withLibraryId());
+    render(mockXBlockOLX.usageKeyHtml);
     const expandButton = await screen.findByRole('button', { name: /Advanced details/ });
     fireEvent.click(expandButton);
     // Because of syntax highlighting, the OLX will be borken up by many different tags so we need to search for
     // just a substring:
     const olxPart = /This is a text component which uses/;
-    expect(await screen.findByText(olxPart)).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText(olxPart)).toBeInTheDocument());
   });
 
   it('does not display "Edit OLX" button when the library is read-only', async () => {
-    initializeMocks();
-    render(
-      <ComponentAdvancedInfo usageKey={mockXBlockOLX.usageKeyHtml} />,
-      withLibraryId(mockContentLibrary.libraryIdReadOnly),
-    );
+    render(mockXBlockOLX.usageKeyHtml, mockContentLibrary.libraryIdReadOnly);
     const expandButton = await screen.findByRole('button', { name: /Advanced details/ });
     fireEvent.click(expandButton);
     expect(screen.queryByRole('button', { name: /Edit OLX/ })).not.toBeInTheDocument();
   });
 
   it('can edit the OLX', async () => {
-    initializeMocks();
-    render(<ComponentAdvancedInfo usageKey={mockLibraryBlockMetadata.usageKeyPublished} />, withLibraryId());
+    render();
     const expandButton = await screen.findByRole('button', { name: /Advanced details/ });
     fireEvent.click(expandButton);
     const editButton = await screen.findByRole('button', { name: /Edit OLX/ });
@@ -94,13 +95,11 @@ describe('<ComponentAdvancedInfo />', () => {
   });
 
   it('displays an error if editing the OLX failed', async () => {
-    initializeMocks();
-
     setOLXspy.mockImplementation(async () => {
       throw new Error('Example error - setting OLX failed');
     });
 
-    render(<ComponentAdvancedInfo usageKey={mockLibraryBlockMetadata.usageKeyPublished} />, withLibraryId());
+    render(mockLibraryBlockMetadata.usageKeyPublished);
     const expandButton = await screen.findByRole('button', { name: /Advanced details/ });
     fireEvent.click(expandButton);
     const editButton = await screen.findByRole('button', { name: /Edit OLX/ });

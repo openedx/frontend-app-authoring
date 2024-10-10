@@ -5,54 +5,89 @@ import {
   Tabs,
   Stack,
 } from '@openedx/paragon';
+import { useContext } from 'react';
 
+import { ToastContext } from '../../generic/toast-context';
+import { useLibraryContext } from '../common/context';
 import { ComponentMenu } from '../components';
+import { canEditComponent } from '../components/ComponentEditorModal';
+import { useAddComponentToCourse } from '../data/apiHooks';
 import ComponentDetails from './ComponentDetails';
 import ComponentManagement from './ComponentManagement';
 import ComponentPreview from './ComponentPreview';
 import messages from './messages';
-import { canEditComponent } from '../components/ComponentEditorModal';
-import { useLibraryContext } from '../common/context';
-import { useContentLibrary } from '../data/apiHooks';
 
-interface ComponentInfoProps {
-  usageKey: string;
-}
-
-const ComponentInfo = ({ usageKey }: ComponentInfoProps) => {
+const ComponentInfo = () => {
   const intl = useIntl();
-  const { libraryId, openComponentEditor } = useLibraryContext();
-  const { data: libraryData } = useContentLibrary(libraryId);
-  const canEdit = libraryData?.canEditLibrary && canEditComponent(usageKey);
+  const { showToast } = useContext(ToastContext);
+
+  const {
+    sidebarComponentUsageKey: usageKey,
+    readOnly,
+    openComponentEditor,
+    componentPickerMode,
+  } = useLibraryContext();
+
+  // istanbul ignore if: this should never happen
+  if (!usageKey) {
+    throw new Error('usageKey is required');
+  }
+
+  const {
+    mutate: addComponentToCourse,
+    isSuccess: addComponentToCourseSuccess,
+    isError: addComponentToCourseError,
+  } = useAddComponentToCourse();
+
+  if (addComponentToCourseSuccess) {
+    window.parent.postMessage('closeComponentPicker', '*');
+  }
+
+  if (addComponentToCourseError) {
+    showToast(intl.formatMessage(messages.addComponentToCourseError));
+  }
+
+  const canEdit = canEditComponent(usageKey);
+
+  const handleAddComponentToCourse = () => {
+    addComponentToCourse();
+  };
 
   return (
     <Stack>
-      <div className="d-flex flex-wrap">
-        <Button
-          {...(canEdit ? { onClick: () => openComponentEditor(usageKey) } : { disabled: true })}
-          variant="outline-primary"
-          className="m-1 text-nowrap flex-grow-1"
-        >
-          {intl.formatMessage(messages.editComponentButtonTitle)}
+      {!readOnly && (
+        <div className="d-flex flex-wrap">
+          <Button
+            {...(canEdit ? { onClick: () => openComponentEditor(usageKey) } : { disabled: true })}
+            variant="outline-primary"
+            className="m-1 text-nowrap flex-grow-1"
+          >
+            {intl.formatMessage(messages.editComponentButtonTitle)}
+          </Button>
+          <Button disabled variant="outline-primary" className="m-1 text-nowrap flex-grow-1">
+            {intl.formatMessage(messages.publishComponentButtonTitle)}
+          </Button>
+          <ComponentMenu usageKey={usageKey} />
+        </div>
+      )}
+      {componentPickerMode && (
+        <Button variant="outline-primary" className="m-1 text-nowrap flex-grow-1" onClick={handleAddComponentToCourse}>
+          {intl.formatMessage(messages.addComponentToCourse)}
         </Button>
-        <Button disabled variant="outline-primary" className="m-1 text-nowrap flex-grow-1">
-          {intl.formatMessage(messages.publishComponentButtonTitle)}
-        </Button>
-        <ComponentMenu usageKey={usageKey} />
-      </div>
+      )}
       <Tabs
         variant="tabs"
         className="my-3 d-flex justify-content-around"
         defaultActiveKey="preview"
       >
         <Tab eventKey="preview" title={intl.formatMessage(messages.previewTabTitle)}>
-          <ComponentPreview usageKey={usageKey} />
+          <ComponentPreview />
         </Tab>
         <Tab eventKey="manage" title={intl.formatMessage(messages.manageTabTitle)}>
-          <ComponentManagement usageKey={usageKey} />
+          <ComponentManagement />
         </Tab>
         <Tab eventKey="details" title={intl.formatMessage(messages.detailsTabTitle)}>
-          <ComponentDetails usageKey={usageKey} />
+          <ComponentDetails />
         </Tab>
       </Tabs>
     </Stack>

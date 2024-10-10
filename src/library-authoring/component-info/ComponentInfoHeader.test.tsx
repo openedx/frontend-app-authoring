@@ -1,57 +1,18 @@
-import MockAdapter from 'axios-mock-adapter';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import type MockAdapter from 'axios-mock-adapter';
+
 import {
-  render,
   fireEvent,
+  render as baseRender,
   screen,
   waitFor,
-} from '@testing-library/react';
-import { ContentLibrary, getXBlockFieldsApiUrl } from '../data/api';
-import initializeStore from '../../store';
-import { ToastProvider } from '../../generic/toast-context';
+  initializeMocks,
+} from '../../testUtils';
+import { mockContentLibrary } from '../data/api.mocks';
+import { getXBlockFieldsApiUrl } from '../data/api';
+import { LibraryProvider } from '../common/context';
 import ComponentInfoHeader from './ComponentInfoHeader';
 
-let store;
-let axiosMock;
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-    },
-  },
-});
-
-const libraryData: ContentLibrary = {
-  id: 'lib:org1:lib1',
-  type: 'complex',
-  org: 'org1',
-  slug: 'lib1',
-  title: 'lib1',
-  description: 'lib1',
-  numBlocks: 2,
-  version: 0,
-  lastPublished: null,
-  lastDraftCreated: '2024-07-22',
-  publishedBy: 'staff',
-  lastDraftCreatedBy: 'staff',
-  allowLti: false,
-  allowPublicLearning: false,
-  allowPublicRead: false,
-  hasUnpublishedChanges: true,
-  hasUnpublishedDeletes: false,
-  canEditLibrary: true,
-  license: '',
-  created: '2024-06-26',
-  updated: '2024-07-20',
-};
-
-interface WrapperProps {
-  library?: ContentLibrary,
-}
+const { libraryId: mockLibraryId, libraryIdReadOnly } = mockContentLibrary;
 
 const usageKey = 'lb:org1:library:html:a1fa8bdd-dc67-4976-9bf5-0ea75a9bca3d';
 const xBlockFields = {
@@ -61,31 +22,25 @@ const xBlockFields = {
   },
 };
 
-const RootWrapper = ({ library } : WrapperProps) => (
-  <AppProvider store={store}>
-    <IntlProvider locale="en" messages={{}}>
-      <QueryClientProvider client={queryClient}>
-        <ToastProvider>
-          <ComponentInfoHeader library={library || libraryData} usageKey={usageKey} />
-        </ToastProvider>
-      </QueryClientProvider>
-    </IntlProvider>
-  </AppProvider>
-);
+const render = (libraryId: string = mockLibraryId) => baseRender(<ComponentInfoHeader />, {
+  extraWrapper: ({ children }) => (
+    <LibraryProvider libraryId={libraryId} sidebarComponentUsageKey={usageKey}>
+      {children}
+    </LibraryProvider>
+  ),
+});
+
+let axiosMock: MockAdapter;
+let mockShowToast: (message: string) => void;
+
+mockContentLibrary.applyMock();
 
 describe('<ComponentInfoHeader />', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-    store = initializeStore();
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    const mocks = initializeMocks();
+    axiosMock = mocks.axiosMock;
     axiosMock.onGet(getXBlockFieldsApiUrl(usageKey)).reply(200, xBlockFields);
+    mockShowToast = mocks.mockShowToast;
   });
 
   afterEach(() => {
@@ -94,19 +49,17 @@ describe('<ComponentInfoHeader />', () => {
   });
 
   it('should render component info Header', async () => {
-    render(<RootWrapper />);
+    render();
 
     expect(await screen.findByText('Test HTML Block')).toBeInTheDocument();
+
     expect(screen.getByRole('button', { name: /edit component name/i })).toBeInTheDocument();
   });
 
-  it('should not render edit title button without permission', () => {
-    const library = {
-      ...libraryData,
-      canEditLibrary: false,
-    };
+  it('should not render edit title button without permission', async () => {
+    render(libraryIdReadOnly);
 
-    render(<RootWrapper library={library} />);
+    expect(await screen.findByText('Test HTML Block')).toBeInTheDocument();
 
     expect(screen.queryByRole('button', { name: /edit component name/i })).not.toBeInTheDocument();
   });
@@ -114,7 +67,9 @@ describe('<ComponentInfoHeader />', () => {
   it('should edit component title', async () => {
     const url = getXBlockFieldsApiUrl(usageKey);
     axiosMock.onPost(url).reply(200);
-    render(<RootWrapper />);
+    render();
+
+    expect(await screen.findByText('Test HTML Block')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /edit component name/i }));
 
@@ -131,14 +86,16 @@ describe('<ComponentInfoHeader />', () => {
       expect(axiosMock.history.post[0].data).toStrictEqual(JSON.stringify({
         metadata: { display_name: 'New component name' },
       }));
-      expect(screen.getByText('Component updated successfully.')).toBeInTheDocument();
+      expect(mockShowToast).toHaveBeenCalledWith('Component updated successfully.');
     });
   });
 
   it('should close edit library title on press Escape', async () => {
     const url = getXBlockFieldsApiUrl(usageKey);
     axiosMock.onPost(url).reply(200);
-    render(<RootWrapper />);
+    render();
+
+    expect(await screen.findByText('Test HTML Block')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /edit component name/i }));
 
@@ -155,8 +112,9 @@ describe('<ComponentInfoHeader />', () => {
   it('should show error on edit library tittle', async () => {
     const url = getXBlockFieldsApiUrl(usageKey);
     axiosMock.onPatch(url).reply(500);
+    render();
 
-    render(<RootWrapper />);
+    expect(await screen.findByText('Test HTML Block')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /edit component name/i }));
 
@@ -172,7 +130,7 @@ describe('<ComponentInfoHeader />', () => {
         metadata: { display_name: 'New component name' },
       }));
 
-      expect(screen.getByText('There was an error updating the component.')).toBeInTheDocument();
+      expect(mockShowToast).toHaveBeenCalledWith('There was an error updating the component.');
     });
   });
 });

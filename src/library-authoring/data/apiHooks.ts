@@ -34,6 +34,7 @@ import {
   restoreCollection,
   setXBlockOLX,
   getXBlockAssets,
+  addComponentToCourse,
 } from './api';
 
 export const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
@@ -372,3 +373,12 @@ export const useRestoreCollection = (libraryId: string, collectionId: string) =>
     },
   });
 };
+
+/**
+ * Use this mutation to add a component to a course
+ */
+export const useAddComponentToCourse = () => (
+  useMutation({
+    mutationFn: addComponentToCourse,
+  })
+);

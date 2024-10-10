@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import {
   Icon,
   IconButton,
@@ -7,20 +7,22 @@ import {
 } from '@openedx/paragon';
 import { Edit } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import messages from './messages';
-import type { ContentLibrary } from '../data/api';
-import { useUpdateLibraryMetadata } from '../data/apiHooks';
+
 import { ToastContext } from '../../generic/toast-context';
+import { useLibraryContext } from '../common/context';
+import { useUpdateLibraryMetadata } from '../data/apiHooks';
+import messages from './messages';
 
-type LibraryInfoHeaderProps = {
-  library: ContentLibrary,
-};
-
-const LibraryInfoHeader = ({ library } : LibraryInfoHeaderProps) => {
+const LibraryInfoHeader = () => {
   const intl = useIntl();
   const [inputIsActive, setIsActive] = useState(false);
   const updateMutation = useUpdateLibraryMetadata();
   const { showToast } = useContext(ToastContext);
+  const { libraryData: library, readOnly } = useLibraryContext();
+
+  if (!library) {
+    return null;
+  }
 
   const handleSaveTitle = (event) => {
     const newTitle = event.target.value;
@@ -69,7 +71,7 @@ const LibraryInfoHeader = ({ library } : LibraryInfoHeaderProps) => {
             <span className="font-weight-bold mt-1.5 ml-1.5">
               {library.title}
             </span>
-            {library.canEditLibrary && (
+            {!readOnly && (
               <IconButton
                 src={Edit}
                 iconAs={Icon}

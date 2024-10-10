@@ -76,6 +76,16 @@ const messages = defineMessages({
     defaultMessage: 'Failed to undo delete collection operation',
     description: 'Message to display on failure to undo delete collection',
   },
+  addComponentToCourseButtonTitle: {
+    id: 'course-authoring.library-authoring.component-picker.button.title',
+    defaultMessage: 'Add',
+    description: 'Button title for picking a component',
+  },
+  addComponentToCourseError: {
+    id: 'course-authoring.library-authoring.component-picker.error',
+    defaultMessage: 'Failed to add component to course',
+    description: 'Error message for failed to add component to course',
+  },
 });
 
 export default messages;

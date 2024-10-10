@@ -1,8 +1,8 @@
-import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, StandardModal, useToggle } from '@openedx/paragon';
 import { OpenInFull } from '@openedx/paragon/icons';
 
+import { useLibraryContext } from '../common/context';
 import { LibraryBlock } from '../LibraryBlock';
 import messages from './messages';
 import { useLibraryBlockMetadata } from '../data/apiHooks';
@@ -29,14 +29,17 @@ const ModalComponentPreview = ({ isOpen, close, usageKey }: ModalComponentPrevie
   );
 };
 
-interface ComponentPreviewProps {
-  usageKey: string;
-}
-
-const ComponentPreview = ({ usageKey }: ComponentPreviewProps) => {
+const ComponentPreview = () => {
   const intl = useIntl();
 
   const [isModalOpen, openModal, closeModal] = useToggle();
+  const { sidebarComponentUsageKey: usageKey } = useLibraryContext();
+
+  // istanbul ignore if: this should never happen
+  if (!usageKey) {
+    throw new Error('usageKey is required');
+  }
+
   const { data: componentMetadata } = useLibraryBlockMetadata(usageKey);
 
   return (

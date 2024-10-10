@@ -1,7 +1,7 @@
 .component-style-default {
   background-color: #005C9E;
 
-  .pgn__icon {
+  .pgn__icon:not(.btn-icon-before) {
     color: white;
   }
 
@@ -10,12 +10,23 @@
       background-color: darken(#005C9E, 15%);
     }
   }
+
+  .btn {
+    background-color: lighten(#005C9E, 10%);
+    border: 0;
+
+    &:hover, &:active, &:focus {
+      background-color: lighten(#005C9E, 20%);
+      border: 1px solid $primary;
+      margin: -1px;
+    }
+  }
 }
 
 .component-style-html {
   background-color: #9747FF;
 
-  .pgn__icon {
+  .pgn__icon:not(.btn-icon-before) {
     color: white;
   }
 
@@ -24,12 +35,23 @@
       background-color: darken(#9747FF, 15%);
     }
   }
+
+  .btn {
+    background-color: lighten(#9747FF, 10%);
+    border: 0;
+
+    &:hover, &:active, &:focus {
+      background-color: lighten(#9747FF, 20%);
+      border: 1px solid $primary;
+      margin: -1px;
+    }
+  }
 }
 
 .component-style-collection {
   background-color: #FFCD29;
 
-  .pgn__icon {
+  .pgn__icon:not(.btn-icon-before) {
     color: black;
   }
 
@@ -38,12 +60,23 @@
       background-color: darken(#FFCD29, 15%);
     }
   }
+
+  .btn {
+    background-color: lighten(#FFCD29, 10%);
+    border: 0;
+
+    &:hover, &:active, &:focus {
+      background-color: lighten(#FFCD29, 20%);
+      border: 1px solid $primary;
+      margin: -1px;
+    }
+  }
 }
 
 .component-style-video {
   background-color: #358F0A;
 
-  .pgn__icon {
+  .pgn__icon:not(.btn-icon-before) {
     color: white;
   }
 
@@ -52,12 +85,23 @@
       background-color: darken(#358F0A, 15%);
     }
   }
+
+  .btn {
+    background-color: lighten(#358F0A, 10%);
+    border: 0;
+
+    &:hover, &:active, &:focus {
+      background-color: lighten(#358F0A, 20%);
+      border: 1px solid $primary;
+      margin: -1px;
+    }
+  }
 }
 
 .component-style-vertical {
   background-color: #0B8E77;
 
-  .pgn__icon {
+  .pgn__icon:not(.btn-icon-before) {
     color: white;
   }
 
@@ -66,18 +110,40 @@
       background-color: darken(#0B8E77, 15%);
     }
   }
+
+  .btn {
+    background-color: lighten(#0B8E77, 10%);
+    border: 0;
+
+    &:hover, &:active, &:focus {
+      background-color: lighten(#0B8E77, 20%);
+      border: 1px solid $primary;
+      margin: -1px;
+    }
+  }
 }
 
 .component-style-other {
   background-color: #646464;
 
-  .pgn__icon {
+  .pgn__icon:not(.btn-icon-before) {
     color: white;
   }
 
   .btn-icon {
     &:hover, &:active, &:focus {
       background-color: darken(#646464, 15%);
+    }
+  }
+
+  .btn {
+    background-color: lighten(#646464, 10%);
+    border: 0;
+
+    &:hover, &:active, &:focus {
+      background-color: lighten(#646464, 20%);
+      border: 1px solid $primary;
+      margin: -1px;
     }
   }
 }
