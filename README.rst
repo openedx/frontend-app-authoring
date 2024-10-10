@@ -18,51 +18,82 @@ Getting Started
 Prerequisites
 =============
 
-The `devstack`_ is currently recommended as a development environment for your
-new MFE.  If you start it with ``make dev.up.lms`` that should give you
-everything you need as a companion to this frontend.
-
-Note that it is also possible to use `Tutor`_ to develop an MFE.  You can refer
-to the `relevant tutor-mfe documentation`_ to get started using it.
-
-.. _Devstack: https://github.com/openedx/devstack
+`Tutor`_ is currently recommended as a development environment for the Authoring
+MFE. Most likely, it already has this MFE configured; however, you'll need to
+make some changes in order to run it in development mode. You can refer
+to the `relevant tutor-mfe documentation`_ for details, or follow the quick
+guide below.
 
 .. _Tutor: https://github.com/overhangio/tutor
 
 .. _relevant tutor-mfe documentation: https://github.com/overhangio/tutor-mfe#mfe-development
 
-Configuration
-=============
 
-All features that integrate into the edx-platform CMS require that the ``COURSE_AUTHORING_MICROFRONTEND_URL`` Django setting is set in the CMS environment and points to this MFE's deployment URL. This should be done automatically if you are using devstack or tutor-mfe.
+Cloning and Setup
+=================
 
-Cloning and Startup
-===================
+1. Clone your new repo:
 
+.. code-block:: bash
 
-1. Clone the repo:
+    git clone https://github.com/openedx/frontend-app-authoring.git
 
-  ``git clone https://github.com/openedx/frontend-app-course-authoring.git``
+2. Use node v20.x.
 
-2. Use node v18.x.
+  The current version of the micro-frontend build scripts supports node 20.
+  Using other major versions of node *may* work, but this is unsupported.  For
+  convenience, this repository includes an ``.nvmrc`` file to help in setting the
+  correct node version via `nvm <https://github.com/nvm-sh/nvm>`_.
 
-   The current version of the micro-frontend build scripts support node 18.
-   Using other major versions of node *may* work, but this is unsupported.  For
-   convenience, this repository includes an .nvmrc file to help in setting the
-   correct node version via `nvm use`_.
+3. Stop the Tutor devstack, if it's running: ``tutor dev stop``
 
-3. Install npm dependencies:
+4. Next, we need to tell Tutor that we're going to be running this repo in
+   development mode, and it should be excluded from the ``mfe`` container that
+   otherwise runs every MFE. Run this:
 
-  ``cd frontend-app-course-authoring && npm install``
+.. code-block:: bash
 
+    tutor mounts add /path/to/frontend-app-authoring
 
-4. Start the dev server:
+5. Start Tutor in development mode. This command will start the LMS and Studio,
+   and other required MFEs like ``authn`` and ``account``, but will not start
+   the Authoring MFE, which we're going to run on the host instead of in a
+   container managed by Tutor. Run:
 
-  ``npm start``
+.. code-block:: bash
 
+    tutor dev start lms cms mfe
 
-The dev server is running at `http://localhost:2001 <http://localhost:2001>`_.
-or whatever port you setup.
+Startup
+=======
+
+1. Install npm dependencies:
+
+.. code-block:: bash
+
+  cd frontend-app-authoring && npm ci
+
+2. Start the dev server:
+
+.. code-block:: bash
+
+  npm run dev
+
+Then you can access the app at http://apps.local.openedx.io:2001/course-authoring/home
+
+Troubleshooting
+---------------
+
+If you see an "Invalid Host header" error, then you're probably using a different domain name for your devstack such as
+``local.edly.io`` or ``local.overhang.io`` (not the new recommended default, ``local.openedx.io``). In that case, run
+these commands to update your devstack's domain names:
+
+.. code-block:: bash
+
+  tutor dev stop
+  tutor config save --set LMS_HOST=local.openedx.io --set CMS_HOST=studio.local.openedx.io
+  tutor dev launch -I --skip-build
+  tutor dev stop authoring  # We will run this MFE on the host
 
 
 Features
