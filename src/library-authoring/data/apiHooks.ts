@@ -27,7 +27,7 @@ import {
   getXBlockOLX,
   updateCollectionMetadata,
   type UpdateCollectionComponentsRequest,
-  updateCollectionComponents,
+  addComponentsToCollection,
   type CreateLibraryCollectionDataRequest,
   getCollectionMetadata,
   deleteCollection,
@@ -35,6 +35,7 @@ import {
   setXBlockOLX,
   getXBlockAssets,
   updateComponentCollections,
+  removeComponentsFromCollection,
 } from './api';
 
 export const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
@@ -329,12 +330,32 @@ export const useUpdateCollection = (libraryId: string, collectionId: string) => 
 /**
  * Use this mutation to add components to a collection in a library
  */
-export const useUpdateCollectionComponents = (libraryId?: string, collectionId?: string) => {
+export const useAddComponentsToCollection = (libraryId?: string, collectionId?: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (usageKeys: string[]) => {
       if (libraryId !== undefined && collectionId !== undefined) {
-        return updateCollectionComponents(libraryId, collectionId, usageKeys);
+        return addComponentsToCollection(libraryId, collectionId, usageKeys);
+      }
+      return undefined;
+    },
+    onSettled: () => {
+      if (libraryId !== undefined && collectionId !== undefined) {
+        queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+      }
+    },
+  });
+};
+
+/**
+ * Use this mutation to remove components from a collection in a library
+ */
+export const useRemoveComponentsFromCollection = (libraryId?: string, collectionId?: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (usageKeys: string[]) => {
+      if (libraryId !== undefined && collectionId !== undefined) {
+        return removeComponentsFromCollection(libraryId, collectionId, usageKeys);
       }
       return undefined;
     },

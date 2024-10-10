@@ -365,11 +365,20 @@ export async function updateCollectionMetadata(
 }
 
 /**
- * Update collection components.
+ * Add components to collection.
  */
-export async function updateCollectionComponents(libraryId: string, collectionId: string, usageKeys: string[]) {
+export async function addComponentsToCollection(libraryId: string, collectionId: string, usageKeys: string[]) {
   await getAuthenticatedHttpClient().patch(getLibraryCollectionComponentApiUrl(libraryId, collectionId), {
     usage_keys: usageKeys,
+  });
+}
+
+/**
+ * Update collection components.
+ */
+export async function removeComponentsFromCollection(libraryId: string, collectionId: string, usageKeys: string[]) {
+  await getAuthenticatedHttpClient().delete(getLibraryCollectionComponentApiUrl(libraryId, collectionId), {
+    data: { usage_keys: usageKeys },
   });
 }
 

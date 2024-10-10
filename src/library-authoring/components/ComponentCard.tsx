@@ -16,6 +16,8 @@ import messages from './messages';
 import { STUDIO_CLIPBOARD_CHANNEL } from '../../constants';
 import BaseComponentCard from './BaseComponentCard';
 import { canEditComponent } from './ComponentEditorModal';
+import { useParams } from 'react-router';
+import { useRemoveComponentsFromCollection } from '../data/apiHooks';
 
 type ComponentCardProps = {
   contentHit: ContentHit,
@@ -23,10 +25,17 @@ type ComponentCardProps = {
 
 export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   const intl = useIntl();
-  const { openComponentEditor } = useLibraryContext();
+  const {
+    libraryId,
+    openComponentEditor,
+    closeLibrarySidebar,
+    currentComponentUsageKey,
+  } = useLibraryContext();
+  const { collectionId } = useParams();
   const canEdit = usageKey && canEditComponent(usageKey);
   const { showToast } = useContext(ToastContext);
   const [clipboardBroadcastChannel] = useState(() => new BroadcastChannel(STUDIO_CLIPBOARD_CHANNEL));
+  const removeComponentsMutation = useRemoveComponentsFromCollection(libraryId, collectionId);
   const updateClipboardClick = () => {
     updateClipboard(usageKey)
       .then((clipboardData) => {
@@ -35,6 +44,18 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
       })
       .catch(() => showToast(intl.formatMessage(messages.copyToClipboardError)));
   };
+
+  const removeFromCollection = () => {
+    removeComponentsMutation.mutateAsync([usageKey]).then(() => {
+      if (currentComponentUsageKey === usageKey) {
+        // Close sidebar if current component is open
+        closeLibrarySidebar();
+      }
+      showToast(intl.formatMessage(messages.removeComponentSucess));
+    }).catch(() => {
+      showToast(intl.formatMessage(messages.removeComponentFailure));
+    });
+  }
 
   return (
     <Dropdown id="component-card-dropdown" onClick={(e) => e.stopPropagation()}>
@@ -54,6 +75,9 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
         <Dropdown.Item onClick={updateClipboardClick}>
           <FormattedMessage {...messages.menuCopyToClipboard} />
         </Dropdown.Item>
+        {collectionId && <Dropdown.Item onClick={removeFromCollection}>
+          <FormattedMessage {...messages.menuRemoveFromCollection} />
+        </Dropdown.Item>}
         <Dropdown.Item disabled>
           <FormattedMessage {...messages.menuAddToCollection} />
         </Dropdown.Item>
