@@ -280,6 +280,30 @@ describe('<ContentTagsCollapsible />', () => {
     expect(data.toEditMode).toHaveBeenCalledTimes(1);
   });
 
+  it('should not render "add tags" button when expanded and not allowed to tag objects', async () => {
+    await getComponent({
+      ...data,
+      isEditMode: false,
+      taxonomyAndTagsData: {
+        id: 123,
+        name: 'Taxonomy 1',
+        canTagObject: false,
+        contentTags: [],
+      },
+    });
+
+    const expandToggle = screen.getByRole('button', {
+      name: /taxonomy 1/i,
+    });
+    fireEvent.click(expandToggle);
+    expect(screen.queryByText(/no tags added yet/i)).toBeInTheDocument();
+
+    const addTags = screen.queryByRole('button', {
+      name: /add tags/i,
+    });
+    expect(addTags).not.toBeInTheDocument();
+  });
+
   it('should call `openCollapsible` when click in the collapsible', async () => {
     await getComponent({
       ...data,

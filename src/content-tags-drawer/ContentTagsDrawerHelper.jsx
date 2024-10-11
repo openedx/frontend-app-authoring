@@ -15,6 +15,7 @@ import { ContentTagsDrawerSheetContext } from './common/context';
 /**
  * Handles the context and all the underlying logic for the ContentTagsDrawer component
  * @param {string} contentId
+ * @param {boolean} canTagObject
  * @returns {{
  *     stagedContentTags: Record<number, StagedTagData[]>,
  *     addStagedContentTag: (taxonomyId: number, addedTag: StagedTagData) => void,
@@ -46,7 +47,7 @@ import { ContentTagsDrawerSheetContext } from './common/context';
  *     otherTaxonomies: TagsInTaxonomy[],
  * }}
  */
-const useContentTagsDrawerContext = (contentId) => {
+const useContentTagsDrawerContext = (contentId, canTagObject) => {
   const intl = useIntl();
   const org = extractOrgFromContentId(contentId);
 
@@ -115,6 +116,7 @@ const useContentTagsDrawerContext = (contentId) => {
       // Initialize list of content tags in taxonomies to populate
       const taxonomiesList = taxonomyListData.results.map((taxonomy) => ({
         ...taxonomy,
+        canTagObject: taxonomy.canTagObject && canTagObject,
         contentTags: /** @type {ContentTagData[]} */([]),
       }));
 

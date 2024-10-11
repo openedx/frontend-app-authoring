@@ -44,7 +44,7 @@ jest.mock('react-router-dom', () => ({
 const renderDrawer = (contentId, drawerParams = {}) => (
   render(
     <ContentTagsDrawerSheetContext.Provider value={drawerParams}>
-      <ContentTagsDrawer {...drawerParams} />
+      <ContentTagsDrawer canTagObject {...drawerParams} />
     </ContentTagsDrawerSheetContext.Provider>,
     { path, params: { contentId } },
   )
@@ -243,6 +243,29 @@ describe('<ContentTagsDrawer />', () => {
     // Not show save button
     expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
   });
+
+  test.each([
+    {
+      variant: 'drawer',
+      editButton: /edit tags/i,
+    },
+    {
+      variant: 'component',
+      editButton: /manage tags/i,
+    },
+  ])(
+    'should hide "$editButton" button on $variant variant if not allowed to tag object',
+    async ({ variant, editButton }) => {
+      renderDrawer(stagedTagsId, { variant, canTagObject: false });
+      expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
+
+      expect(screen.queryByRole('button', { name: editButton })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
+      expect(screen.queryByText(/add a tag/i)).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /cancel/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
+    },
+  );
 
   it('should test adding a content tag to the staged tags for a taxonomy', async () => {
     renderDrawer(stagedTagsId);
