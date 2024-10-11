@@ -10,13 +10,15 @@ import { Link, useMatch } from 'react-router-dom';
 import type { ContentLibrary } from '../data/api';
 import CollectionDetails from './CollectionDetails';
 import messages from './messages';
+import { ContentTagsDrawer } from '../../content-tags-drawer';
 
 interface CollectionInfoProps {
   library: ContentLibrary,
   collectionId: string,
+  collectionUsageKey: string,
 }
 
-const CollectionInfo = ({ library, collectionId }: CollectionInfoProps) => {
+const CollectionInfo = ({ library, collectionId, collectionUsageKey }: CollectionInfoProps) => {
   const intl = useIntl();
   const url = `/library/${library.id}/collection/${collectionId}/`;
   const urlMatch = useMatch(url);
@@ -42,7 +44,10 @@ const CollectionInfo = ({ library, collectionId }: CollectionInfoProps) => {
         defaultActiveKey="manage"
       >
         <Tab eventKey="manage" title={intl.formatMessage(messages.manageTabTitle)}>
-          Manage tab placeholder
+          <ContentTagsDrawer
+            id={collectionUsageKey}
+            variant="component"
+          />
         </Tab>
         <Tab eventKey="details" title={intl.formatMessage(messages.detailsTabTitle)}>
           <CollectionDetails

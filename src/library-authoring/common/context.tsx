@@ -23,8 +23,9 @@ export interface LibraryContextData {
   openCreateCollectionModal: () => void;
   closeCreateCollectionModal: () => void;
   // Current collection
-  openCollectionInfoSidebar: (collectionId: string) => void;
+  openCollectionInfoSidebar: (collectionId: string, collectionUsageKey: string) => void;
   currentCollectionId?: string;
+  currentCollectionUsageKey?: string;
   // Editor modal - for editing some component
   /** If the editor is open and the user is editing some component, this is its usageKey */
   componentBeingEdited: string | undefined;
@@ -48,14 +49,16 @@ const LibraryContext = React.createContext<LibraryContextData | undefined>(undef
 export const LibraryProvider = (props: { children?: React.ReactNode, libraryId: string }) => {
   const [sidebarBodyComponent, setSidebarBodyComponent] = React.useState<SidebarBodyComponentId | null>(null);
   const [currentComponentUsageKey, setCurrentComponentUsageKey] = React.useState<string>();
-  const [currentCollectionId, setcurrentCollectionId] = React.useState<string>();
+  const [currentCollectionId, setCurrentCollectionId] = React.useState<string>();
+  const [currentCollectionUsageKey, setCurrentCollectionUsageKey] = React.useState<string>();
   const [isCreateCollectionModalOpen, openCreateCollectionModal, closeCreateCollectionModal] = useToggle(false);
   const [componentBeingEdited, openComponentEditor] = React.useState<string | undefined>();
   const closeComponentEditor = React.useCallback(() => openComponentEditor(undefined), []);
 
   const resetSidebar = React.useCallback(() => {
     setCurrentComponentUsageKey(undefined);
-    setcurrentCollectionId(undefined);
+    setCurrentCollectionId(undefined);
+    setCurrentCollectionUsageKey(undefined);
     setSidebarBodyComponent(null);
   }, []);
 
@@ -79,9 +82,10 @@ export const LibraryProvider = (props: { children?: React.ReactNode, libraryId: 
     },
     [],
   );
-  const openCollectionInfoSidebar = React.useCallback((collectionId: string) => {
+  const openCollectionInfoSidebar = React.useCallback((collectionId: string, collectionUsageKey: string) => {
     resetSidebar();
-    setcurrentCollectionId(collectionId);
+    setCurrentCollectionId(collectionId);
+    setCurrentCollectionUsageKey(collectionUsageKey);
     setSidebarBodyComponent(SidebarBodyComponentId.CollectionInfo);
   }, []);
 
@@ -98,6 +102,7 @@ export const LibraryProvider = (props: { children?: React.ReactNode, libraryId: 
     closeCreateCollectionModal,
     openCollectionInfoSidebar,
     currentCollectionId,
+    currentCollectionUsageKey,
     componentBeingEdited,
     openComponentEditor,
     closeComponentEditor,

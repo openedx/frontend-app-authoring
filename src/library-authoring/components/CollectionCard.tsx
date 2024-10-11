@@ -132,7 +132,7 @@ const CollectionCard = ({ collectionHit } : CollectionCardProps) => {
           <CollectionMenu collectionHit={collectionHit} />
         </ActionRow>
       )}
-      openInfoSidebar={() => openCollectionInfoSidebar(collectionHit.blockId)}
+      openInfoSidebar={() => openCollectionInfoSidebar(collectionHit.blockId, collectionHit.usageKey)}
     />
   );
 };
