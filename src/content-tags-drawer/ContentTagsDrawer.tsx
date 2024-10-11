@@ -73,7 +73,7 @@ const TaxonomyList = ({ contentId }: TaxonomyListProps) => {
   return <Loading />;
 };
 
-const ContentTagsDrawerTittle = () => {
+const ContentTagsDrawerTitle = () => {
   const intl = useIntl();
   const {
     isContentDataLoaded,
@@ -338,7 +338,7 @@ const ContentTagsDrawer = ({
           )}
         >
           {variant === 'drawer' && (
-            <ContentTagsDrawerTittle />
+            <ContentTagsDrawerTitle />
           )}
           <Container
             className={classNames(

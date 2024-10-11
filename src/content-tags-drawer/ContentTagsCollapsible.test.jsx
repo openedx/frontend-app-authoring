@@ -420,7 +420,7 @@ describe('<ContentTagsCollapsible />', () => {
     expect(data.removeGlobalStagedContentTag).toHaveBeenCalledWith(taxonomyId, 'Tag 3');
   });
 
-  it('should call `addRemovedContentTag` when a feched tag is deleted', async () => {
+  it('should call `addRemovedContentTag` when a fetched tag is deleted', async () => {
     await getComponent();
 
     const tag = screen.getByText(/tag 2/i);

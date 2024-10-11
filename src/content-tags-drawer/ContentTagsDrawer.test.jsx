@@ -391,7 +391,7 @@ describe('<ContentTagsDrawer />', () => {
     expect(screen.queryByText(/tag 3/i)).not.toBeInTheDocument();
   });
 
-  it('should test delete feched tags and cancel', async () => {
+  it('should test delete fetched tags and cancel', async () => {
     renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
@@ -458,7 +458,7 @@ describe('<ContentTagsDrawer />', () => {
     expect(screen.queryByText(/tag 3/i)).not.toBeInTheDocument();
   });
 
-  it('should test add removed feched tags and cancel', async () => {
+  it('should test add removed fetched tags and cancel', async () => {
     renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
