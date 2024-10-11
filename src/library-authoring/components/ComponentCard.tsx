@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -71,6 +71,7 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
   const {
     openComponentInfoSidebar,
     componentPickerMode,
+    parentLocator,
   } = useLibraryContext();
   const { showToast } = useContext(ToastContext);
 
@@ -91,15 +92,19 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
     mutate: addComponentToCourse,
     isSuccess: addComponentToCourseSuccess,
     isError: addComponentToCourseError,
-  } = useAddComponentToCourse();
+    reset,
+  } = useAddComponentToCourse(parentLocator, contentHit.usageKey);
 
   if (addComponentToCourseSuccess) {
     window.parent.postMessage('closeComponentPicker', '*');
   }
 
-  if (addComponentToCourseError) {
-    showToast(intl.formatMessage(messages.addComponentToCourseError));
-  }
+  useEffect(() => {
+    if (addComponentToCourseError) {
+      showToast(intl.formatMessage(messages.addComponentToCourseError));
+      reset();
+    }
+  }, [addComponentToCourseError, showToast, intl]);
 
   const handleAddComponentToCourse = () => {
     addComponentToCourse();

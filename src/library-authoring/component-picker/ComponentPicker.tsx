@@ -1,6 +1,7 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, Stepper } from '@openedx/paragon';
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import { LibraryProvider, useLibraryContext } from '../common/context';
 import LibraryAuthoringPage from '../LibraryAuthoringPage';
@@ -9,9 +10,7 @@ import SelectLibrary from './SelectLibrary';
 import messages from './messages';
 
 const InnerComponentPicker = () => {
-  const {
-    collectionId,
-  } = useLibraryContext();
+  const { collectionId } = useLibraryContext();
 
   if (collectionId) {
     return <LibraryCollectionPage />;
@@ -22,6 +21,15 @@ const InnerComponentPicker = () => {
 // eslint-disable-next-line import/prefer-default-export
 export const ComponentPicker = () => {
   const intl = useIntl();
+  const [searchParams] = useSearchParams();
+  let parentLocator = searchParams.get('parentLocator');
+
+  // istanbul ignore if: this should never happen
+  if (!parentLocator) {
+    throw new Error('parentLocator is required');
+  }
+
+  parentLocator = parentLocator.replaceAll(' ', '+');
 
   const [currentStep, setCurrentStep] = useState('select-library');
   const [selectedLibrary, setSelectedLibrary] = useState('');
@@ -35,7 +43,7 @@ export const ComponentPicker = () => {
       </Stepper.Step>
 
       <Stepper.Step eventKey="pick-components" title="Pick some components">
-        <LibraryProvider libraryId={selectedLibrary} componentPickerMode>
+        <LibraryProvider libraryId={selectedLibrary} parentLocator={parentLocator} componentPickerMode>
           <InnerComponentPicker />
         </LibraryProvider>
       </Stepper.Step>

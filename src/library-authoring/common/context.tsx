@@ -26,6 +26,7 @@ export interface LibraryContextData {
   setCollectionId: (collectionId?: string) => void;
   // Whether we're in "component picker" mode
   componentPickerMode: boolean;
+  parentLocator?: string;
   // Sidebar stuff - only one sidebar is active at any given time:
   sidebarBodyComponent: SidebarBodyComponentId | null;
   closeLibrarySidebar: () => void;
@@ -62,6 +63,7 @@ interface LibraryProviderProps {
   libraryId: string;
   collectionId?: string;
   componentPickerMode?: boolean;
+  parentLocator?: string;
   sidebarCollectionId?: string;
   sidebarComponentUsageKey?: string;
 }
@@ -74,6 +76,7 @@ export const LibraryProvider = ({
   libraryId,
   collectionId: collectionIdProp,
   componentPickerMode = false,
+  parentLocator,
   sidebarCollectionId: sideBarCollectionIdProp,
   sidebarComponentUsageKey: sidebarComponentUsageKeyProp,
 }: LibraryProviderProps) => {
@@ -131,6 +134,7 @@ export const LibraryProvider = ({
     readOnly,
     isLoadingLibraryData,
     componentPickerMode,
+    parentLocator,
     sidebarBodyComponent,
     closeLibrarySidebar,
     openAddContentSidebar,

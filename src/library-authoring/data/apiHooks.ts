@@ -377,8 +377,14 @@ export const useRestoreCollection = (libraryId: string, collectionId: string) =>
 /**
  * Use this mutation to add a component to a course
  */
-export const useAddComponentToCourse = () => (
+export const useAddComponentToCourse = (parentLocator: string | undefined, componentUsageKey: string) => (
   useMutation({
-    mutationFn: addComponentToCourse,
+    mutationFn: () => {
+      // istanbul ignore if: this should never happen
+      if (!parentLocator) {
+        throw new Error('parentLocator is required');
+      }
+      return addComponentToCourse(parentLocator, componentUsageKey);
+    },
   })
 );

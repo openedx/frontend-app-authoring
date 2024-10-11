@@ -61,6 +61,10 @@ export const getLibraryCollectionComponentApiUrl = (libraryId: string, collectio
  * Get the API URL for restoring deleted collection.
  */
 export const getLibraryCollectionRestoreApiUrl = (libraryId: string, collectionId: string) => `${getLibraryCollectionApiUrl(libraryId, collectionId)}restore/`;
+/**
+ * Get the URL for the xblock api.
+ */
+export const getXBlockBaseApiUrl = () => `${getApiBaseUrl()}/xblock/`;
 
 export interface ContentLibrary {
   id: string;
@@ -383,7 +387,10 @@ export async function restoreCollection(libraryId: string, collectionId: string)
  * Add a component to a course.
  */
 // istanbul ignore next
-export async function addComponentToCourse() {
-  // TODO: Call endpoint to add component to course
-  return Promise.resolve();
+export async function addComponentToCourse(parentLocator: string, componentUsageKey: string) {
+  const client = getAuthenticatedHttpClient();
+  await client.post(getXBlockBaseApiUrl(), {
+    parent_locator: parentLocator,
+    library_content_key: componentUsageKey,
+  });
 }
