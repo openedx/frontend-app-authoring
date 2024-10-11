@@ -250,4 +250,19 @@ describe('<ComponentPicker />', () => {
       }));
     });
   });
+
+  it('should return to library selection', async () => {
+    render(<ComponentPicker />);
+
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
+
+    fireEvent.click(screen.getByText('Next'));
+
+    // Wait for the content library to load
+    await screen.findByText(/← Change Library/i);
+    fireEvent.click(screen.getByText(/← Change Library/i));
+
+    await screen.findByText('Select which Library would you like to reference components from.');
+  });
 });
