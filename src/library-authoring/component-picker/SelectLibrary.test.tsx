@@ -40,6 +40,13 @@ describe('<ComponentPicker />', () => {
     expect(await screen.findByText('Loading...')).toBeInTheDocument();
   });
 
+  it('should render the empty status', async () => {
+    mockGetContentLibraryV2List.applyMockEmpty();
+    render(<ComponentPicker />);
+
+    expect(await screen.findByText(/there are no libraries with the current filters/i)).toBeInTheDocument();
+  });
+
   it('should render the error status', async () => {
     mockGetContentLibraryV2List.applyMockError();
     render(<ComponentPicker />);

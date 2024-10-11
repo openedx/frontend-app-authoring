@@ -77,7 +77,7 @@ describe('<ComponentPicker />', () => {
     });
   });
 
-  it('should show toast if error on api call', async () => {
+  it('should show toast if error on api call from the component card button', async () => {
     axiosMock.onPost(getXBlockBaseApiUrl()).reply(500, {});
     render(<ComponentPicker />);
 
@@ -131,6 +131,38 @@ describe('<ComponentPicker />', () => {
         parent_locator: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@vertical1',
         library_content_key: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
       }));
+    });
+  });
+
+  it('should show toast if error on api call from the component sidebar button', async () => {
+    axiosMock.onPost(getXBlockBaseApiUrl()).reply(500, {});
+    render(<ComponentPicker />);
+
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
+
+    fireEvent.click(screen.getByText('Next'));
+
+    // Wait for the content library to load
+    expect(await screen.findByText('Content library')).toBeInTheDocument();
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+
+    // Click on the component card to open the sidebar
+    fireEvent.click(screen.queryAllByText('Introduction to Testing')[0]);
+
+    const sidebar = await screen.findByTestId('library-sidebar');
+
+    // Click the add component from the component sidebar
+    fireEvent.click(within(sidebar).getByRole('button', { name: 'Add to Course' }));
+
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toBe(1);
+      expect(axiosMock.history.post[0].url).toBe(getXBlockBaseApiUrl());
+      expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
+        parent_locator: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@vertical1',
+        library_content_key: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
+      }));
+      expect(mockShowToast).toHaveBeenCalledWith('Failed to add component to course');
     });
   });
 

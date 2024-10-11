@@ -19,6 +19,15 @@ export const mockGetContentLibraryV2List = {
   applyMockLoading: () => jest.spyOn(api, 'getContentLibraryV2List').mockResolvedValue(
     new Promise(() => {}),
   ),
+  applyMockEmpty: () => jest.spyOn(api, 'getContentLibraryV2List').mockResolvedValue({
+    next: null,
+    previous: null,
+    count: 0,
+    numPages: 1,
+    currentPage: 1,
+    start: 0,
+    results: [],
+  }),
 };
 
 /**

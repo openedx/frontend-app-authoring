@@ -39,7 +39,7 @@ export const ComponentPicker = () => {
     <Stepper
       activeKey={currentStep}
     >
-      <Stepper.Step eventKey="select-library" title="Select a library">
+      <Stepper.Step eventKey="select-library" title="Select a library" error={!selectedLibrary}>
         <SelectLibrary setSelectLibrary={setSelectedLibrary} />
       </Stepper.Step>
 

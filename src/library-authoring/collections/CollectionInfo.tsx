@@ -29,6 +29,7 @@ const CollectionInfo = () => {
 
   const showOpenCollectionButton = !urlMatch && collectionId !== sidebarCollectionId;
 
+  // istanbul ignore if: this should never happen
   if (!sidebarCollectionId) {
     throw new Error('sidebarCollectionId is required');
   }
