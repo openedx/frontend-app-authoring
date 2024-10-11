@@ -33,12 +33,10 @@ const AddLibraryTeamMember = ({ onSubmit, onCancel }: {
           <Form onSubmit={handleSubmit}>
             <Form.Group size="sm" className="form-field">
               <h3 className="form-title">{intl.formatMessage(messages.addMemberFormTitle)}</h3>
-              <Form.Label size="sm" className="form-label font-weight-bold">
-                {intl.formatMessage(messages.addMemberFormEmailLabel)}
-              </Form.Label>
               <FormikControl
                 name="email"
                 value={values.email}
+                label={<Form.Label>{intl.formatMessage(messages.addMemberFormEmailLabel)}</Form.Label>}
                 placeholder={intl.formatMessage(messages.addMemberFormEmailPlaceholder, { email: EXAMPLE_USER_EMAIL })}
               />
               <Form.Control.Feedback className="form-helper-text">

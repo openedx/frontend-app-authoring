@@ -96,14 +96,16 @@ export interface ContentLibrary {
   updated: string | null;
 }
 
-export interface AddLibraryTeamMember {
-  libraryId: string,
+export interface LibraryTeamMember {
+  username: string;
   email: string;
   accessLevel: string;
 }
 
-export interface LibraryTeamMember extends AddLibraryTeamMember {
-  username: string;
+export interface AddLibraryTeamMember {
+  libraryId: string,
+  email: string;
+  accessLevel: string;
 }
 
 export interface DeleteLibraryTeamMember {
