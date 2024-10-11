@@ -374,7 +374,7 @@ export async function addComponentsToCollection(libraryId: string, collectionId:
 }
 
 /**
- * Update collection components.
+ * Remove components from collection.
  */
 export async function removeComponentsFromCollection(libraryId: string, collectionId: string, usageKeys: string[]) {
   await getAuthenticatedHttpClient().delete(getLibraryCollectionComponentApiUrl(libraryId, collectionId), {

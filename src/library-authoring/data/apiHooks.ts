@@ -402,8 +402,7 @@ export const useUpdateComponentCollections = (libraryId: string, usageKey: strin
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (collectionKeys: string[]) => updateComponentCollections(usageKey, collectionKeys),
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onSettled: (_data, _error, _variables) => {
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: xblockQueryKeys.componentMetadata(usageKey) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
     },
