@@ -29,6 +29,7 @@ export const ComponentPicker = () => {
     throw new Error('parentLocator is required');
   }
 
+  // URLSearchParams decodes '+' to ' ', so we need to convert it back
   parentLocator = parentLocator.replaceAll(' ', '+');
 
   const [currentStep, setCurrentStep] = useState('select-library');

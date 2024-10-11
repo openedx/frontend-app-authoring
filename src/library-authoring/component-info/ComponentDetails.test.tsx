@@ -45,7 +45,7 @@ describe('<ComponentDetails />', () => {
   it('should render the component usage', async () => {
     render(mockLibraryBlockMetadata.usageKeyNeverPublished);
     expect(await screen.findByText('Component Usage')).toBeInTheDocument();
-    // TODO: replace with actual data when implement tag list
+    // TODO: replace with actual data when implement course list
     expect(screen.queryByText('This will show the courses that use this component.')).toBeInTheDocument();
   });
 

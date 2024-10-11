@@ -1,8 +1,25 @@
 /* istanbul ignore file */
+import { camelCaseObject } from '@edx/frontend-platform';
 import { mockContentTaxonomyTagsData } from '../../content-tags-drawer/data/api.mocks';
 import { getBlockType } from '../../generic/key-utils';
 import { createAxiosError } from '../../testUtils';
+import contentLibrariesListV2 from '../__mocks__/contentLibrariesListV2';
 import * as api from './api';
+
+/**
+ * Mock for `getContentLibraryV2List()`
+ */
+export const mockGetContentLibraryV2List = {
+  applyMock: () => jest.spyOn(api, 'getContentLibraryV2List').mockResolvedValue(
+    camelCaseObject(contentLibrariesListV2),
+  ),
+  applyMockError: () => jest.spyOn(api, 'getContentLibraryV2List').mockRejectedValue(
+    createAxiosError({ code: 500, message: 'Internal Error.', path: api.getContentLibraryV2ListApiUrl() }),
+  ),
+  applyMockLoading: () => jest.spyOn(api, 'getContentLibraryV2List').mockResolvedValue(
+    new Promise(() => {}),
+  ),
+};
 
 /**
  * Mock for `getContentLibrary()`
@@ -15,7 +32,7 @@ export async function mockContentLibrary(libraryId: string): Promise<api.Content
   switch (libraryId) {
     case mockContentLibrary.libraryIdThatNeverLoads:
       // Return a promise that never resolves, to simulate never loading:
-      return new Promise<any>(() => { });
+      return new Promise<any>(() => {});
     case mockContentLibrary.library404:
       throw createAxiosError({ code: 400, message: 'Not found.', path: api.getContentLibraryApiUrl(libraryId) });
     case mockContentLibrary.library500:
@@ -85,6 +102,14 @@ export async function mockContentLibrary(libraryId: string): Promise<api.Content
         slug: 'draftNoChanges',
         numBlocks: 0,
       };
+    case mockContentLibrary.libraryFromList:
+      return {
+        ...mockContentLibrary.libraryData,
+        id: mockContentLibrary.libraryFromList,
+        slug: 'TL1',
+        org: 'SampleTaxonomyOrg1',
+        title: 'Test Library 1',
+      };
     default:
       throw new Error(`mockContentLibrary: unknown library ID "${libraryId}"`);
   }
@@ -125,6 +150,7 @@ mockContentLibrary.libraryUnpublishedChanges = 'lib:Axim:unpublishedChanges';
 mockContentLibrary.libraryPublished = 'lib:Axim:published';
 mockContentLibrary.libraryPublishedWithoutUser = 'lib:Axim:publishedWithoutUser';
 mockContentLibrary.libraryDraftWithoutChanges = 'lib:Axim:draftNoChanges';
+mockContentLibrary.libraryFromList = 'lib:SampleTaxonomyOrg1:TL1';
 mockContentLibrary.applyMock = () => jest.spyOn(api, 'getContentLibrary').mockImplementation(mockContentLibrary);
 
 /**
@@ -139,7 +165,7 @@ export async function mockCreateLibraryBlock(
       case 'problem': return mockCreateLibraryBlock.newProblemData;
       case 'video': return mockCreateLibraryBlock.newVideoData;
       default:
-      // Continue to error handling below.
+        // Continue to error handling below.
     }
   }
   throw new Error(`mockCreateLibraryBlock doesn't know how to mock ${JSON.stringify(args)}`);
@@ -257,7 +283,7 @@ export async function mockLibraryBlockMetadata(usageKey: string): Promise<api.Li
   switch (usageKey) {
     case thisMock.usageKeyThatNeverLoads:
       // Return a promise that never resolves, to simulate never loading:
-      return new Promise<any>(() => { });
+      return new Promise<any>(() => {});
     case thisMock.usageKeyError404:
       throw createAxiosError({ code: 404, message: 'Not found.', path: api.getLibraryBlockMetadataUrl(usageKey) });
     case thisMock.usageKeyNeverPublished: return thisMock.dataNeverPublished;
