@@ -61,7 +61,7 @@ describe('<ComponentPicker />', () => {
     fireEvent.click(screen.getByText('Next'));
 
     // Wait for the content library to load
-    expect(await screen.findByText('Content library')).toBeInTheDocument();
+    await screen.findByText(/← Change Library/i);
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
 
     // Click the add component from the component card
@@ -87,7 +87,7 @@ describe('<ComponentPicker />', () => {
     fireEvent.click(screen.getByText('Next'));
 
     // Wait for the content library to load
-    expect(await screen.findByText('Content library')).toBeInTheDocument();
+    await screen.findByText(/← Change Library/i);
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
 
     // Click the add component from the component card
@@ -113,7 +113,7 @@ describe('<ComponentPicker />', () => {
     fireEvent.click(screen.getByText('Next'));
 
     // Wait for the content library to load
-    expect(await screen.findByText('Content library')).toBeInTheDocument();
+    await screen.findByText(/← Change Library/i);
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
 
     // Click on the component card to open the sidebar
@@ -144,7 +144,7 @@ describe('<ComponentPicker />', () => {
     fireEvent.click(screen.getByText('Next'));
 
     // Wait for the content library to load
-    expect(await screen.findByText('Content library')).toBeInTheDocument();
+    await screen.findByText(/← Change Library/i);
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
 
     // Click on the component card to open the sidebar
@@ -175,7 +175,7 @@ describe('<ComponentPicker />', () => {
     fireEvent.click(screen.getByText('Next'));
 
     // Wait for the content library to load
-    expect(await screen.findByText('Content library')).toBeInTheDocument();
+    await screen.findByText(/← Change Library/i);
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
 
     // Click on the collection card to open the sidebar
@@ -190,7 +190,7 @@ describe('<ComponentPicker />', () => {
     fireEvent.click(within(sidebar).getByRole('button', { name: 'Open' }));
 
     // Wait for the collection  to load
-    await screen.findByText(/← Change Library/i);
+    await screen.findByText(/← Back to Library/i);
     await screen.findByText('Introduction to Testing');
 
     // Click the add component from the component card
@@ -215,7 +215,7 @@ describe('<ComponentPicker />', () => {
     fireEvent.click(screen.getByText('Next'));
 
     // Wait for the content library to load
-    expect(await screen.findByText('Content library')).toBeInTheDocument();
+    await screen.findByText(/← Change Library/i);
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
 
     // Click on the collection card to open the sidebar
@@ -230,7 +230,7 @@ describe('<ComponentPicker />', () => {
     fireEvent.click(within(sidebar).getByRole('button', { name: 'Open' }));
 
     // Wait for the collection  to load
-    await screen.findByText(/← Change Library/i);
+    await screen.findByText(/← Back to Library/i);
     await screen.findByText('Introduction to Testing');
 
     // Click on the collection card to open the sidebar

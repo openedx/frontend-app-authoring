@@ -162,7 +162,7 @@ const LibraryCollectionPage = () => {
       ariaLabel={intl.formatMessage(messages.breadcrumbsAriaLabel)}
       links={[
         {
-          label: intl.formatMessage(messages.returnToLibrarySelection),
+          label: intl.formatMessage(messages.returnToLibrary),
           onClick: () => { setCollectionId(undefined); },
         },
       ]}

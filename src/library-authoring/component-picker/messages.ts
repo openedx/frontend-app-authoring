@@ -31,11 +31,6 @@ const messages = defineMessages({
     defaultMessage: 'Next',
     description: 'The text for the next button in the select library component',
   },
-  pickComponentPreviousButton: {
-    id: 'course-authoring.library-authoring.pick-components.previous-button',
-    defaultMessage: 'Previous',
-    description: 'The text for the previous button in the pick component component',
-  },
 });
 
 export default messages;

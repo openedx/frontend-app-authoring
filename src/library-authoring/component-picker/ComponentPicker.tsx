@@ -56,12 +56,6 @@ export const ComponentPicker = () => {
             {intl.formatMessage(messages.selectLibraryNextButton)}
           </Button>
         </Stepper.ActionRow>
-
-        <Stepper.ActionRow eventKey="pick-components">
-          <Button variant="outline-primary" onClick={() => setCurrentStep('select-library')}>
-            {intl.formatMessage(messages.pickComponentPreviousButton)}
-          </Button>
-        </Stepper.ActionRow>
       </div>
     </Stepper>
   );

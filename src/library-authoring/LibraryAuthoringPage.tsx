@@ -5,6 +5,7 @@ import { StudioFooter } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Badge,
+  Breadcrumb,
   Button,
   Container,
   Stack,
@@ -13,6 +14,7 @@ import {
 } from '@openedx/paragon';
 import { Add, InfoOutline } from '@openedx/paragon/icons';
 import {
+  Link,
   useLocation,
   useNavigate,
   useSearchParams,
@@ -186,6 +188,23 @@ const LibraryAuthoringPage = () => {
     }
   };
 
+  const breadcumbs = componentPickerMode ? (
+    <Breadcrumb
+      links={[
+        {
+          label: intl.formatMessage(messages.returnToLibrarySelection),
+          onClick: () => {
+            navigate({
+              pathname: '/component-picker',
+              search: searchParams.toString(),
+            });
+          },
+        },
+      ]}
+      linkAs={Link}
+    />
+  ) : undefined;
+
   return (
     <div className="d-flex">
       <div className="flex-grow-1">
@@ -208,7 +227,8 @@ const LibraryAuthoringPage = () => {
           >
             <SubHeader
               title={<SubHeaderTitle title={libraryData.title} />}
-              subtitle={intl.formatMessage(messages.headingSubtitle)}
+              subtitle={!componentPickerMode ? intl.formatMessage(messages.headingSubtitle) : undefined}
+              breadcrumbs={breadcumbs}
               headerActions={<HeaderActions />}
             />
             <SearchKeywordsField className="w-50" />
