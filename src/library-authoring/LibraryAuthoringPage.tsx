@@ -133,7 +133,11 @@ const SubHeaderTitle = ({ title }: { title: string }) => {
   );
 };
 
-const LibraryAuthoringPage = () => {
+interface LibraryAuthoringPageProps {
+  returnToLibrarySelection?: () => void,
+}
+
+const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPageProps) => {
   const intl = useIntl();
   const location = useLocation();
   const navigate = useNavigate();
@@ -193,12 +197,7 @@ const LibraryAuthoringPage = () => {
       links={[
         {
           label: intl.formatMessage(messages.returnToLibrarySelection),
-          onClick: () => {
-            navigate({
-              pathname: '/component-picker',
-              search: searchParams.toString(),
-            });
-          },
+          onClick: returnToLibrarySelection,
         },
       ]}
       linkAs={Link}
