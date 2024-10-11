@@ -73,6 +73,17 @@ const AddContentContainer = () => {
     openComponentEditor,
   } = useLibraryContext();
 
+  const parsePasteErrorMsg = (error) => {
+    let errMsg: string;
+    try {
+      const { customAttributes: { httpErrorResponseData } } = error;
+      errMsg = JSON.parse(httpErrorResponseData).block_type;
+    } catch (_err) {
+      errMsg = intl.formatMessage(messages.errorPasteClipboardMessage);
+    }
+    return errMsg;
+  };
+
   const collectionButtonData = {
     name: intl.formatMessage(messages.collectionButton),
     disabled: false,
@@ -138,8 +149,8 @@ const AddContentContainer = () => {
           blockId: `${uuid4()}`,
         }).then(() => {
           showToast(intl.formatMessage(messages.successPasteClipboardMessage));
-        }).catch(() => {
-          showToast(intl.formatMessage(messages.errorPasteClipboardMessage));
+        }).catch((error) => {
+          showToast(parsePasteErrorMsg(error));
         });
       } else if (blockType === 'collection') {
         openCreateCollectionModal();
