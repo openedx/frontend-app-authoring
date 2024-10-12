@@ -5,6 +5,7 @@ import {
   Button,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { getConfig } from '@edx/frontend-platform';
 import {
   Article,
   AutoAwesome,
@@ -61,19 +62,20 @@ const AddContentButton = ({ contentType, onCreateContent } : AddContentButtonPro
 
 const AddContentContainer = () => {
   const intl = useIntl();
-  const { libraryId, collectionId } = useParams();
+  const { collectionId } = useParams();
+  const {
+    libraryId,
+    openCreateCollectionModal,
+    openComponentEditor,
+  } = useLibraryContext();
   const createBlockMutation = useCreateLibraryBlock();
   const updateComponentsMutation = useUpdateCollectionComponents(libraryId, collectionId);
   const pasteClipboardMutation = useLibraryPasteClipboard();
   const { showToast } = useContext(ToastContext);
   const canEdit = useSelector(getCanEdit);
-  const { showPasteXBlock } = useCopyToClipboard(canEdit);
-  const {
-    openCreateCollectionModal,
-    openComponentEditor,
-  } = useLibraryContext();
+  const { showPasteXBlock, sharedClipboardData } = useCopyToClipboard(canEdit);
 
-  const parsePasteErrorMsg = (error) => {
+  const parsePasteErrorMsg = (error: any) => {
     let errMsg: string;
     try {
       const { customAttributes: { httpErrorResponseData } } = error;
@@ -141,39 +143,49 @@ const AddContentContainer = () => {
     contentTypes.push(pasteButton);
   }
 
-  const onCreateContent = (blockType: string) => {
-    if (libraryId) {
-      if (blockType === 'paste') {
-        pasteClipboardMutation.mutateAsync({
-          libraryId,
-          blockId: `${uuid4()}`,
-        }).then(() => {
-          showToast(intl.formatMessage(messages.successPasteClipboardMessage));
-        }).catch((error) => {
-          showToast(parsePasteErrorMsg(error));
-        });
-      } else if (blockType === 'collection') {
-        openCreateCollectionModal();
+  const onPaste = () => {
+    if (!getConfig().LIBRARY_SUPPORTED_BLOCKS.includes(sharedClipboardData.content?.blockType)) {
+      showToast(intl.formatMessage(messages.unsupportedBlockPasteClipboardMessage));
+      return;
+    }
+    pasteClipboardMutation.mutateAsync({
+      libraryId,
+      blockId: `${uuid4()}`,
+    }).then(() => {
+      showToast(intl.formatMessage(messages.successPasteClipboardMessage));
+    }).catch((error) => {
+      showToast(parsePasteErrorMsg(error));
+    });
+  };
+
+  const onCreateBlock = (blockType: string) => {
+    createBlockMutation.mutateAsync({
+      libraryId,
+      blockType,
+      definitionId: `${uuid4()}`,
+    }).then((data) => {
+      const hasEditor = canEditComponent(data.id);
+      updateComponentsMutation.mutateAsync([data.id]).catch(() => {
+        showToast(intl.formatMessage(messages.errorAssociateComponentMessage));
+      });
+      if (hasEditor) {
+        openComponentEditor(data.id);
       } else {
-        createBlockMutation.mutateAsync({
-          libraryId,
-          blockType,
-          definitionId: `${uuid4()}`,
-        }).then((data) => {
-          const hasEditor = canEditComponent(data.id);
-          updateComponentsMutation.mutateAsync([data.id]).catch(() => {
-            showToast(intl.formatMessage(messages.errorAssociateComponentMessage));
-          });
-          if (hasEditor) {
-            openComponentEditor(data.id);
-          } else {
-            // We can't start editing this right away so just show a toast message:
-            showToast(intl.formatMessage(messages.successCreateMessage));
-          }
-        }).catch(() => {
-          showToast(intl.formatMessage(messages.errorCreateMessage));
-        });
+        // We can't start editing this right away so just show a toast message:
+        showToast(intl.formatMessage(messages.successCreateMessage));
       }
+    }).catch(() => {
+      showToast(intl.formatMessage(messages.errorCreateMessage));
+    });
+  };
+
+  const onCreateContent = (blockType: string) => {
+    if (blockType === 'paste') {
+      onPaste();
+    } else if (blockType === 'collection') {
+      openCreateCollectionModal();
+    } else {
+      onCreateBlock(blockType);
     }
   };
 

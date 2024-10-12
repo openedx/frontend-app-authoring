@@ -121,4 +121,22 @@ describe('<AddContentContainer />', () => {
       expect(mockShowToast).toHaveBeenCalledWith(errMsg);
     });
   });
+
+  it('should stop user from pasting unsupported blocks and show toast', async () => {
+    const { axiosMock, mockShowToast } = initializeMocks();
+    // Simulate having an HTML block in the clipboard:
+    mockClipboardHtml.applyMock('openassessment');
+
+    const errMsg = 'Libraries do not support this type of content yet.';
+
+    render();
+
+    const pasteButton = await screen.findByRole('button', { name: /paste from clipboard/i });
+    fireEvent.click(pasteButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toEqual(0);
+      expect(mockShowToast).toHaveBeenCalledWith(errMsg);
+    });
+  });
 });
