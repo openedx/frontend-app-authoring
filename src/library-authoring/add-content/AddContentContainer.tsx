@@ -86,6 +86,8 @@ const AddContentContainer = () => {
     return errMsg;
   };
 
+  const isBlockTypeEnabled = (blockType: string) => getConfig().LIBRARY_SUPPORTED_BLOCKS.includes(blockType);
+
   const collectionButtonData = {
     name: intl.formatMessage(messages.collectionButton),
     disabled: false,
@@ -95,37 +97,37 @@ const AddContentContainer = () => {
   const contentTypes = [
     {
       name: intl.formatMessage(messages.textTypeButton),
-      disabled: false,
+      disabled: !isBlockTypeEnabled('html'),
       icon: Article,
       blockType: 'html',
     },
     {
       name: intl.formatMessage(messages.problemTypeButton),
-      disabled: false,
+      disabled: !isBlockTypeEnabled('problem'),
       icon: Question,
       blockType: 'problem',
     },
     {
       name: intl.formatMessage(messages.openResponseTypeButton),
-      disabled: false,
+      disabled: !isBlockTypeEnabled('openassessment'),
       icon: Create,
       blockType: 'openassessment',
     },
     {
       name: intl.formatMessage(messages.dragDropTypeButton),
-      disabled: false,
+      disabled: !isBlockTypeEnabled('drag-and-drop-v2'),
       icon: ThumbUpOutline,
       blockType: 'drag-and-drop-v2',
     },
     {
       name: intl.formatMessage(messages.videoTypeButton),
-      disabled: false,
+      disabled: !isBlockTypeEnabled('video'),
       icon: VideoCamera,
       blockType: 'video',
     },
     {
       name: intl.formatMessage(messages.otherTypeButton),
-      disabled: true,
+      disabled: !isBlockTypeEnabled('other'),
       icon: AutoAwesome,
       blockType: 'other', // This block doesn't exist yet.
     },
@@ -144,7 +146,7 @@ const AddContentContainer = () => {
   }
 
   const onPaste = () => {
-    if (!getConfig().LIBRARY_SUPPORTED_BLOCKS.includes(sharedClipboardData.content?.blockType)) {
+    if (!isBlockTypeEnabled(sharedClipboardData.content?.blockType)) {
       showToast(intl.formatMessage(messages.unsupportedBlockPasteClipboardMessage));
       return;
     }
