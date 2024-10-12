@@ -37,6 +37,7 @@ const mockCollection = {
 };
 
 const { title } = mockGetCollectionMetadata.collectionData;
+jest.mock('../../content-tags-drawer/ContentTagsDrawer', () => jest.fn(() => <div>Mocked ContentTagsDrawer</div>));
 
 describe('<LibraryCollectionPage />', () => {
   beforeEach(() => {
@@ -201,6 +202,7 @@ describe('<LibraryCollectionPage />', () => {
 
     expect(screen.getByText('Manage')).toBeInTheDocument();
     expect(screen.getByText('Details')).toBeInTheDocument();
+    expect(screen.getByText('Mocked ContentTagsDrawer')).toBeInTheDocument();
   });
 
   it('should close and open Collection Info', async () => {
@@ -222,6 +224,7 @@ describe('<LibraryCollectionPage />', () => {
     fireEvent.click(collectionInfoBtn);
     expect(screen.getByText('Manage')).toBeInTheDocument();
     expect(screen.getByText('Details')).toBeInTheDocument();
+    expect(screen.getByText('Mocked ContentTagsDrawer')).toBeInTheDocument();
   });
 
   it('sorts collection components', async () => {
