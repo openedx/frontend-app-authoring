@@ -2,9 +2,9 @@ import { render } from '@testing-library/react';
 import { getConfig } from '@edx/frontend-platform';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
-import XBlockContainerIframe from '..';
-import { useIFrameBehavior } from '../hooks';
 import { IFRAME_FEATURE_POLICY } from '../../constants';
+import { useIFrameBehavior } from '../hooks';
+import XBlockContainerIframe from '..';
 
 jest.mock('@edx/frontend-platform', () => ({
   getConfig: jest.fn(),
@@ -20,8 +20,8 @@ describe('<XBlockContainerIframe />', () => {
   const iframeHeight = '500px';
 
   beforeEach(() => {
-    getConfig.mockReturnValue({ STUDIO_BASE_URL: 'http://example.com' });
-    useIFrameBehavior.mockReturnValue({ iframeHeight });
+    (getConfig as jest.Mock).mockReturnValue({ STUDIO_BASE_URL: 'http://example.com' });
+    (useIFrameBehavior as jest.Mock).mockReturnValue({ iframeHeight });
   });
 
   it('renders correctly with the given blockId', () => {

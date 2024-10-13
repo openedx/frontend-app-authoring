@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, FC } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
@@ -13,14 +13,18 @@ import messages from './messages';
  */
 const IFRAME_BOTTOM_OFFSET = 160;
 
-const XBlockContainerIframe = ({ blockId }) => {
+interface XBlockContainerIframeProps {
+  blockId: string;
+}
+
+const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({ blockId }) => {
   const intl = useIntl();
-  const iframeRef = useRef(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const iframeUrl = `${getConfig().STUDIO_BASE_URL}/container_embed/${blockId}`;
 
   const { iframeHeight } = useIFrameBehavior({
-    blockId,
+    id: blockId,
     iframeUrl,
   });
 
