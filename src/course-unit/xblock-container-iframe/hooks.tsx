@@ -8,6 +8,19 @@ import { useKeyedState } from '@edx/react-unit-test-utils';
 import { useEventListener } from '../../generic/hooks';
 import { stateKeys, messageTypes } from '../constants';
 
+interface UseIFrameBehaviorParams {
+  id: string;
+  iframeUrl: string;
+  onLoaded?: boolean;
+}
+
+interface UseIFrameBehaviorReturn {
+  iframeHeight: number;
+  handleIFrameLoad: () => void;
+  showError: boolean;
+  hasLoaded: boolean;
+}
+
 /**
  * We discovered an error in Firefox where - upon iframe load - React would cease to call any
  * useEffect hooks until the user interacts with the page again.  This is particularly confusing
@@ -33,7 +46,7 @@ import { stateKeys, messageTypes } from '../constants';
  * we change whether or not the Unit component is re-mounted when the unit ID changes, this may
  * become important, as this hook will otherwise only evaluate the useLayoutEffect once.
  */
-export const useLoadBearingHook = (id) => {
+export const useLoadBearingHook = (id: string): void => {
   const setValue = useState(0)[1];
   useLayoutEffect(() => {
     setValue(currentValue => currentValue + 1);
@@ -57,16 +70,16 @@ export const useIFrameBehavior = ({
   id,
   iframeUrl,
   onLoaded = true,
-}) => {
+}: UseIFrameBehaviorParams): UseIFrameBehaviorReturn => {
   // Do not remove this hook.  See function description.
   useLoadBearingHook(id);
 
-  const [iframeHeight, setIframeHeight] = useKeyedState(stateKeys.iframeHeight, 0);
-  const [hasLoaded, setHasLoaded] = useKeyedState(stateKeys.hasLoaded, false);
-  const [showError, setShowError] = useKeyedState(stateKeys.showError, false);
-  const [windowTopOffset, setWindowTopOffset] = useKeyedState(stateKeys.windowTopOffset, null);
+  const [iframeHeight, setIframeHeight] = useKeyedState<number>(stateKeys.iframeHeight, 0);
+  const [hasLoaded, setHasLoaded] = useKeyedState<boolean>(stateKeys.hasLoaded, false);
+  const [showError, setShowError] = useKeyedState<boolean>(stateKeys.showError, false);
+  const [windowTopOffset, setWindowTopOffset] = useKeyedState<number | null>(stateKeys.windowTopOffset, null);
 
-  const receiveMessage = useCallback(({ data }) => {
+  const receiveMessage = useCallback(({ data }: MessageEvent) => {
     const { payload, type } = data;
 
     if (type === messageTypes.resize) {
@@ -88,7 +101,7 @@ export const useIFrameBehavior = ({
     } else if (data.offset) {
       // We listen for this message from LMS to know when the page needs to
       // be scrolled to another location on the page.
-      window.scrollTo(0, data.offset + document.getElementById('unit-iframe').offsetTop);
+      window.scrollTo(0, data.offset + document.getElementById('unit-iframe')!.offsetTop);
     }
   }, [
     id,

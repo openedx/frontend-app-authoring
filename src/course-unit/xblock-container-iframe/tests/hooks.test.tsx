@@ -2,8 +2,8 @@ import { renderHook, act } from '@testing-library/react-hooks';
 import { useKeyedState } from '@edx/react-unit-test-utils';
 import { logError } from '@edx/frontend-platform/logging';
 
-import { useIFrameBehavior } from '../hooks';
 import { stateKeys, messageTypes } from '../../constants';
+import { useIFrameBehavior } from '../hooks';
 
 jest.mock('@edx/react-unit-test-utils', () => ({
   useKeyedState: jest.fn(),
@@ -22,7 +22,7 @@ describe('useIFrameBehavior', () => {
   const setWindowTopOffset = jest.fn();
 
   beforeEach(() => {
-    useKeyedState.mockImplementation((key, initialValue) => {
+    (useKeyedState as jest.Mock).mockImplementation((key, initialValue) => {
       switch (key) {
         case stateKeys.iframeHeight:
           return [0, setIframeHeight];
@@ -37,9 +37,10 @@ describe('useIFrameBehavior', () => {
       }
     });
 
-    window.scrollTo = jest.fn((x, y) => {
-      Object.defineProperty(window, 'scrollY', { value: y, writable: true });
-    });
+    window.scrollTo = jest.fn((x: number | ScrollToOptions, y?: number): void => {
+      const scrollY = typeof x === 'number' ? y : (x as ScrollToOptions).top || 0;
+      Object.defineProperty(window, 'scrollY', { value: scrollY, writable: true });
+    }) as typeof window.scrollTo;
   });
 
   it('initializes state correctly', () => {
@@ -60,7 +61,9 @@ describe('useIFrameBehavior', () => {
       },
     };
 
-    act(() => window.dispatchEvent(new MessageEvent('message', message)));
+    act(() => {
+      window.dispatchEvent(new MessageEvent('message', message));
+    });
 
     expect(setIframeHeight).toHaveBeenCalledWith(500);
     expect(setHasLoaded).toHaveBeenCalledWith(true);
@@ -76,7 +79,9 @@ describe('useIFrameBehavior', () => {
       },
     };
 
-    act(() => window.dispatchEvent(new MessageEvent('message', message)));
+    act(() => {
+      window.dispatchEvent(new MessageEvent('message', message));
+    });
 
     expect(setWindowTopOffset).toHaveBeenCalledWith(window.scrollY);
   });
@@ -93,13 +98,15 @@ describe('useIFrameBehavior', () => {
       window.dispatchEvent(new MessageEvent('message', message));
     });
 
-    expect(window.scrollY).toBe(100 + document.getElementById('unit-iframe').offsetTop);
+    expect(window.scrollY).toBe(100 + (document.getElementById('unit-iframe') as HTMLElement).offsetTop);
   });
 
   it('handles iframe load error correctly', () => {
     const { result } = renderHook(() => useIFrameBehavior({ id, iframeUrl }));
 
-    act(() => result.current.handleIFrameLoad());
+    act(() => {
+      result.current.handleIFrameLoad();
+    });
 
     expect(setShowError).toHaveBeenCalledWith(true);
     expect(logError).toHaveBeenCalledWith('Unit iframe failed to load. Server possibly returned 4xx or 5xx response.', {
