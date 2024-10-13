@@ -9,7 +9,6 @@ import { useNavigate, Link } from 'react-router-dom';
 
 import messages from '../messages';
 import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
-import { getStudioHomeData } from '../../studio-home/data/selectors';
 
 const PageSettingButton = ({
   id,
@@ -20,25 +19,25 @@ const PageSettingButton = ({
   const { formatMessage } = useIntl();
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
   const navigate = useNavigate();
-  const studioHomeData = useSelector(getStudioHomeData);
+  const waffleFlags = useSelector(state => state.courseDetail.waffleFlags);
 
   const determineLinkDestination = useMemo(() => {
     if (!legacyLink) { return null; }
 
     if (legacyLink.includes('textbooks')) {
-      return studioHomeData?.waffleFlags?.ENABLE_NEW_TEXTBOOKS_PAGE
+      return waffleFlags?.useNewTextbooksPage
         ? `/course/${courseId}/${id.replace('_', '-')}`
         : legacyLink;
     }
 
     if (legacyLink.includes('tabs')) {
-      return studioHomeData?.waffleFlags?.ENABLE_NEW_CUSTOM_PAGES
+      return waffleFlags?.useNewCustomPages
         ? `/course/${courseId}/${id.replace('_', '-')}`
         : legacyLink;
     }
 
     return null;
-  }, [legacyLink, studioHomeData?.waffleFlags, id]);
+  }, [legacyLink, waffleFlags, id]);
 
   const canConfigureOrEnable = allowedOperations?.configure || allowedOperations?.enable;
 

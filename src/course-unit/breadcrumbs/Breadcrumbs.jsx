@@ -10,7 +10,6 @@ import { getConfig } from '@edx/frontend-platform';
 
 import { createCorrectInternalRoute } from '../../utils';
 import { getCourseSectionVertical } from '../data/selectors';
-import { getStudioHomeData } from '../../studio-home/data/selectors';
 import messages from './messages';
 
 const Breadcrumbs = () => {
@@ -18,11 +17,11 @@ const Breadcrumbs = () => {
   const { ancestorXblocks } = useSelector(getCourseSectionVertical);
   const [section, subsection] = ancestorXblocks ?? [];
   const navigate = useNavigate();
-  const { waffleFlags } = useSelector(getStudioHomeData);
+  const waffleFlags = useSelector(state => state.courseDetail.waffleFlags);
 
   const handleClick = (e, url) => {
     e.preventDefault();
-    if (waffleFlags?.ENABLE_NEW_COURSE_OUTLINE_PAGE) {
+    if (waffleFlags?.useNewCourseOutlinePage) {
       navigate(url);
     } else {
       window.location.href = `${getConfig().STUDIO_BASE_URL}/${url}`;

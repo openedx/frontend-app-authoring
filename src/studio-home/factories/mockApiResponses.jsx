@@ -44,25 +44,6 @@ export const generateGetStudioHomeDataApiResponse = () => ({
   platformName: 'Your Platform Name Here',
   userIsActive: true,
   allowToCreateNewOrg: false,
-  waffleFlags: {
-    ENABLE_NEW_ADVANCED_SETTINGS_PAGE: false,
-    ENABLE_NEW_CERTIFICATES_PAGE: false,
-    ENABLE_NEW_COURSE_OUTLINE_PAGE: false,
-    ENABLE_NEW_COURSE_TEAM_PAGE: false,
-    ENABLE_NEW_COURSE_UPDATES_PAGE: false,
-    ENABLE_NEW_CUSTOM_PAGES: false,
-    ENABLE_NEW_EXPORT_PAGE: false,
-    ENABLE_NEW_FILE_UPLOAD_PAGE: false,
-    ENABLE_NEW_GRADING_PAGE: false,
-    ENABLE_NEW_GROUP_CONFIGURATIONS_PAGE: false,
-    ENABLE_NEW_HOME_PAGE: false,
-    ENABLE_NEW_IMPORT_PAGE: false,
-    ENABLE_NEW_PAGES_AND_RESOURCES_PAGE: false,
-    ENABLE_NEW_SCHEDULE_AND_DETAILS_PAGE: false,
-    ENABLE_NEW_TEXTBOOKS_PAGE: false,
-    ENABLE_NEW_UNIT_PAGE: false,
-    ENABLE_NEW_VIDEO_UPLOAD_PAGE: false,
-  },
 });
 
 /** Mock for the deprecated /api/contentstore/v1/home/courses endpoint. Note this endpoint is NOT paginated. */

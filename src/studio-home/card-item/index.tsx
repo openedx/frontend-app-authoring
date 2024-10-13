@@ -59,9 +59,10 @@ const CardItem: React.FC<Props> = ({
     allowCourseReruns,
     courseCreatorStatus,
     rerunCreatorStatus,
-    waffleFlags,
   } = useSelector(getStudioHomeData);
-  const destinationUrl: string = waffleFlags?.ENABLE_NEW_COURSE_OUTLINE_PAGE
+  const waffleFlags = useSelector(state => state.courseDetail.waffleFlags);
+
+  const destinationUrl: string = waffleFlags?.useNewCourseOutlinePage
     ? path ?? url
     : path ?? new URL(url, getConfig().STUDIO_BASE_URL).toString();
   const subtitle = isLibraries ? `${org} / ${number}` : `${org} / ${number} / ${run}`;

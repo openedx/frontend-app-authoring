@@ -8,15 +8,15 @@ import messages from './messages';
 export const useContentMenuItems = courseId => {
   const intl = useIntl();
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
-  const { waffleFlags } = useSelector(getStudioHomeData);
+  const waffleFlags = useSelector(state => state.courseDetail.waffleFlags);
 
   const items = [
     {
-      href: waffleFlags?.ENABLE_NEW_COURSE_OUTLINE_PAGE ? `/course/${courseId}` : `${studioBaseUrl}/course/${courseId}`,
+      href: waffleFlags?.useNewCourseOutlinePage ? `/course/${courseId}` : `${studioBaseUrl}/course/${courseId}`,
       title: intl.formatMessage(messages['header.links.outline']),
     },
     {
-      href: waffleFlags?.ENABLE_NEW_COURSE_UPDATES_PAGE ? `/course/${courseId}/course_info` : `${studioBaseUrl}/course_info/${courseId}`,
+      href: waffleFlags?.useNewUpdatesPage ? `/course/${courseId}/course_info` : `${studioBaseUrl}/course_info/${courseId}`,
       title: intl.formatMessage(messages['header.links.updates']),
     },
     {
@@ -24,11 +24,11 @@ export const useContentMenuItems = courseId => {
       title: intl.formatMessage(messages['header.links.pages']),
     },
     {
-      href: waffleFlags?.ENABLE_NEW_FILE_UPLOAD_PAGE ? `/course/${courseId}/assets` : `${studioBaseUrl}/assets/${courseId}`,
+      href: waffleFlags?.useNewFilesUploadsPage ? `/course/${courseId}/assets` : `${studioBaseUrl}/assets/${courseId}`,
       title: intl.formatMessage(messages['header.links.filesAndUploads']),
     },
   ];
-  if (getConfig().ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true' || waffleFlags?.ENABLE_NEW_VIDEO_UPLOAD_PAGE) {
+  if (getConfig().ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN === 'true' || waffleFlags?.useNewVideoUploadsPage) {
     items.push({
       href: `/course/${courseId}/videos`,
       title: intl.formatMessage(messages['header.links.videoUploads']),
@@ -41,33 +41,34 @@ export const useContentMenuItems = courseId => {
 export const useSettingMenuItems = courseId => {
   const intl = useIntl();
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
-  const { canAccessAdvancedSettings, waffleFlags } = useSelector(getStudioHomeData);
+  const { canAccessAdvancedSettings } = useSelector(getStudioHomeData);
+  const waffleFlags = useSelector(state => state.courseDetail.waffleFlags);
 
   const items = [
     {
-      href: waffleFlags?.ENABLE_NEW_SCHEDULE_AND_DETAILS_PAGE ? `/course/${courseId}/settings/details` : `${studioBaseUrl}/settings/details/${courseId}`,
+      href: waffleFlags?.useNewScheduleDetailsPage ? `/course/${courseId}/settings/details` : `${studioBaseUrl}/settings/details/${courseId}`,
       title: intl.formatMessage(messages['header.links.scheduleAndDetails']),
     },
     {
-      href: waffleFlags?.ENABLE_NEW_GRADING_PAGE ? `/course/${courseId}/settings/grading` : `${studioBaseUrl}/settings/grading/${courseId}`,
+      href: waffleFlags?.useNewGradingPage ? `/course/${courseId}/settings/grading` : `${studioBaseUrl}/settings/grading/${courseId}`,
       title: intl.formatMessage(messages['header.links.grading']),
     },
     {
-      href: waffleFlags?.ENABLE_NEW_COURSE_TEAM_PAGE ? `/course/${courseId}/course_team` : `${studioBaseUrl}/course_team/${courseId}`,
+      href: waffleFlags?.useNewCourseTeamPage ? `/course/${courseId}/course_team` : `${studioBaseUrl}/course_team/${courseId}`,
       title: intl.formatMessage(messages['header.links.courseTeam']),
     },
     {
-      href: waffleFlags?.ENABLE_NEW_GROUP_CONFIGURATIONS_PAGE ? `/course/${courseId}/group_configurations` : `${studioBaseUrl}/group_configurations/${courseId}`,
+      href: waffleFlags?.useNewGroupConfigurationsPage ? `/course/${courseId}/group_configurations` : `${studioBaseUrl}/group_configurations/${courseId}`,
       title: intl.formatMessage(messages['header.links.groupConfigurations']),
     },
     ...(canAccessAdvancedSettings === true
       ? [{
-        href: waffleFlags?.ENABLE_NEW_ADVANCED_SETTINGS_PAGE ? `/course/${courseId}/settings/advanced` : `${studioBaseUrl}/settings/advanced/${courseId}`,
+        href: waffleFlags?.useNewAdvancedSettingsPage ? `/course/${courseId}/settings/advanced` : `${studioBaseUrl}/settings/advanced/${courseId}`,
         title: intl.formatMessage(messages['header.links.advancedSettings']),
       }] : []
     ),
   ];
-  if (getConfig().ENABLE_CERTIFICATE_PAGE === 'true' || waffleFlags?.ENABLE_NEW_CERTIFICATES_PAGE) {
+  if (getConfig().ENABLE_CERTIFICATE_PAGE === 'true' || waffleFlags?.useNewCertificatesPage) {
     items.push({
       href: `/course/${courseId}/certificates`,
       title: intl.formatMessage(messages['header.links.certificates']),
@@ -79,15 +80,15 @@ export const useSettingMenuItems = courseId => {
 export const useToolsMenuItems = courseId => {
   const intl = useIntl();
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
-  const { waffleFlags } = useSelector(getStudioHomeData);
+  const waffleFlags = useSelector(state => state.courseDetail.waffleFlags);
 
   const items = [
     {
-      href: waffleFlags?.ENABLE_NEW_IMPORT_PAGE ? `/course/${courseId}/import` : `${studioBaseUrl}/import/${courseId}`,
+      href: waffleFlags?.useNewImportPage ? `/course/${courseId}/import` : `${studioBaseUrl}/import/${courseId}`,
       title: intl.formatMessage(messages['header.links.import']),
     },
     {
-      href: waffleFlags?.ENABLE_NEW_EXPORT_PAGE ? `/course/${courseId}/export` : `${studioBaseUrl}/export/${courseId}`,
+      href: waffleFlags?.useNewExportPage ? `/course/${courseId}/export` : `${studioBaseUrl}/export/${courseId}`,
       title: intl.formatMessage(messages['header.links.exportCourse']),
     },
     ...(getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true'

@@ -10,7 +10,6 @@ import {
 import { useSelector } from 'react-redux';
 import { CheckCircle, RadioButtonUnchecked } from '@openedx/paragon/icons';
 
-import { getStudioHomeData } from '../../studio-home/data/selectors';
 import messages from './messages';
 
 const ChecklistItemBody = ({
@@ -21,13 +20,13 @@ const ChecklistItemBody = ({
   // injected
   intl,
 }) => {
-  const studioHomeData = useSelector(getStudioHomeData);
+  const waffleFlags = useSelector(state => state.courseDetail.waffleFlags);
   const navigate = useNavigate();
 
   const handleClick = (e, url) => {
     e.preventDefault();
 
-    if (studioHomeData?.waffleFlags?.ENABLE_NEW_COURSE_UPDATES_PAGE) {
+    if (waffleFlags?.useNewUpdatesPage) {
       navigate(`/course/${courseId}/course_info`);
     } else {
       window.location.href = url;

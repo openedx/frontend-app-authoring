@@ -15,7 +15,6 @@ import TagCount from '../../generic/tag-count';
 import { useHelpUrls } from '../../help-urls/hooks';
 import { VIDEO_SHARING_OPTIONS } from '../constants';
 import { useContentTagsCount } from '../../generic/data/apiHooks';
-import { getStudioHomeData } from '../../studio-home/data/selectors';
 import messages from './messages';
 import { getVideoSharingOptionText } from '../utils';
 
@@ -46,7 +45,7 @@ const StatusBar = ({
 }) => {
   const intl = useIntl();
   const { config } = useContext(AppContext);
-  const { waffleFlags } = useSelector(getStudioHomeData);
+  const waffleFlags = useSelector(state => state.courseDetail.waffleFlags);
 
   const {
     courseReleaseDate,
@@ -87,7 +86,7 @@ const StatusBar = ({
         <StatusBarItem title={intl.formatMessage(messages.startDateTitle)}>
           <Link
             className="small"
-            to={waffleFlags?.ENABLE_NEW_SCHEDULE_AND_DETAILS_PAGE ? `/course/${courseId}/settings/details/#schedule` : scheduleDestination()}
+            to={waffleFlags?.useNewScheduleDetailsPage ? `/course/${courseId}/settings/details/#schedule` : scheduleDestination()}
           >
             {courseReleaseDateObj.isValid() ? (
               <FormattedDate

@@ -18,12 +18,16 @@ const slice = createSlice({
     updateCanChangeProviders: (state, { payload }) => {
       state.canChangeProviders = payload.canChangeProviders;
     },
+    fetchWaffleFlagsSuccess: (state, { payload }) => {
+      state.waffleFlags = payload.waffleFlags;
+    },
   },
 });
 
 export const {
   updateStatus,
   updateCanChangeProviders,
+  fetchWaffleFlagsSuccess,
 } = slice.actions;
 
 export const {

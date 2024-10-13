@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import Header from './header';
-import { fetchCourseDetail } from './data/thunks';
+import { fetchCourseDetail, fetchWaffleFlags } from './data/thunks';
 import { useModel } from './generic/model-store';
 import NotFoundAlert from './generic/NotFoundAlert';
 import PermissionDeniedAlert from './generic/PermissionDeniedAlert';
@@ -18,9 +18,12 @@ import Loading from './generic/Loading';
 
 const CourseAuthoringPage = ({ courseId, children }) => {
   const dispatch = useDispatch();
+  const STORE = useSelector(state => state);
+  console.log('STORE', STORE);
 
   useEffect(() => {
     dispatch(fetchCourseDetail(courseId));
+    dispatch(fetchWaffleFlags(courseId));
   }, [courseId]);
 
   useEffect(() => {

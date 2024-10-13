@@ -2,8 +2,6 @@
 import { camelCaseObject, snakeCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
-import { getWaffleFlagsConfig } from './utils';
-
 export const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 export const getStudioHomeApiUrl = () => new URL('api/contentstore/v1/home', getApiBaseUrl()).href;
 export const getRequestCourseCreatorUrl = () => new URL('request_course_creator', getApiBaseUrl()).href;
@@ -16,12 +14,7 @@ export const getCourseNotificationUrl = (url) => new URL(url, getApiBaseUrl()).h
 export async function getStudioHomeData() {
   const { data } = await getAuthenticatedHttpClient().get(getStudioHomeApiUrl());
 
-  const result = {
-    ...camelCaseObject(data),
-    waffleFlags: getWaffleFlagsConfig(camelCaseObject(data)),
-  };
-
-  return result;
+  return camelCaseObject(data);
 }
 
 /** Get list of courses from the deprecated non-paginated API */

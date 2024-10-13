@@ -34,7 +34,7 @@ const Header = ({
   const intl = useIntl();
   const libraryHref = useHref('/library/:libraryId');
   const navigate = useNavigate();
-  const { waffleFlags } = useSelector(getStudioHomeData);
+  const waffleFlags = useSelector(state => state.courseDetail.waffleFlags);
 
   const [isShowSearchModalOpen, openSearchModal, closeSearchModal] = useToggle(false);
 
@@ -66,7 +66,7 @@ const Header = ({
     if (isLibrary) {
       return generatePath(libraryHref, { libraryId: contextId });
     }
-    return waffleFlags?.ENABLE_NEW_COURSE_OUTLINE_PAGE ? `/course/${contextId}` : `${studioBaseUrl}/course/${contextId}`;
+    return waffleFlags?.useNewCourseOutlinePage ? `/course/${contextId}` : `${studioBaseUrl}/course/${contextId}`;
   };
 
   return (
@@ -81,7 +81,7 @@ const Header = ({
         searchButtonAction={meiliSearchEnabled ? openSearchModal : undefined}
         containerProps={containerProps}
         onNavigate={(url) => navigate(url)}
-        isNewHomePage={waffleFlags?.ENABLE_NEW_HOME_PAGE}
+        isNewHomePage={waffleFlags?.useNewHomePage}
       />
       {meiliSearchEnabled && (
         <SearchModal
