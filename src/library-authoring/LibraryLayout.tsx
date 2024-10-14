@@ -1,4 +1,6 @@
 import {
+  Route,
+  Routes,
   useParams,
   useMatch,
 } from 'react-router-dom';
@@ -23,11 +25,16 @@ const LibraryLayout = () => {
 
   return (
     <LibraryProvider key={collectionId} libraryId={libraryId} collectionId={collectionId}>
-      {collectionId ? (
-        <LibraryCollectionPage />
-      ) : (
-        <LibraryAuthoringPage />
-      )}
+      <Routes>
+        <Route
+          path="collection/:collectionId"
+          element={<LibraryCollectionPage />}
+        />
+        <Route
+          path="*"
+          element={<LibraryAuthoringPage />}
+        />
+      </Routes>
       <CreateCollectionModal />
       <ComponentEditorModal />
     </LibraryProvider>
