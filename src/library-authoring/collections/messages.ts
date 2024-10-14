@@ -128,7 +128,7 @@ const messages = defineMessages({
   },
   returnToLibrary: {
     id: 'course-authoring.library-authoring.collection.component-picker.return-to-library',
-    defaultMessage: '← Back to Library',
+    defaultMessage: 'Back to Library',
     description: 'Breadcrumbs link to return to library',
   },
 });

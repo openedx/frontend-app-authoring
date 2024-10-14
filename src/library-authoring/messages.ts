@@ -108,7 +108,7 @@ const messages = defineMessages({
   },
   returnToLibrarySelection: {
     id: 'course-authoring.library-authoring.pick-components.return-to-library-selection',
-    defaultMessage: '← Change Library',
+    defaultMessage: 'Change Library',
     description: 'Breadcrumbs link to return to library selection',
   },
 });

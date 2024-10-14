@@ -8,11 +8,12 @@ import {
   Breadcrumb,
   Button,
   Container,
+  Icon,
   Stack,
   Tab,
   Tabs,
 } from '@openedx/paragon';
-import { Add, InfoOutline } from '@openedx/paragon/icons';
+import { Add, ArrowBack, InfoOutline } from '@openedx/paragon/icons';
 import {
   Link,
   useLocation,
@@ -196,10 +197,15 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     <Breadcrumb
       links={[
         {
+          label: '',
+          to: '',
+        },
+        {
           label: intl.formatMessage(messages.returnToLibrarySelection),
           onClick: returnToLibrarySelection,
         },
       ]}
+      spacer={<Icon src={ArrowBack} size="sm" />}
       linkAs={Link}
     />
   ) : undefined;

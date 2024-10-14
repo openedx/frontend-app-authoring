@@ -10,7 +10,7 @@ import {
   IconButton,
   Stack,
 } from '@openedx/paragon';
-import { Add, InfoOutline } from '@openedx/paragon/icons';
+import { Add, ArrowBack, InfoOutline } from '@openedx/paragon/icons';
 import { Link } from 'react-router-dom';
 
 import Loading from '../../generic/Loading';
@@ -162,10 +162,15 @@ const LibraryCollectionPage = () => {
       ariaLabel={intl.formatMessage(messages.breadcrumbsAriaLabel)}
       links={[
         {
+          label: '',
+          to: '',
+        },
+        {
           label: intl.formatMessage(messages.returnToLibrary),
           onClick: () => { setCollectionId(undefined); },
         },
       ]}
+      spacer={<Icon src={ArrowBack} size="sm" />}
       linkAs={Link}
     />
   );
