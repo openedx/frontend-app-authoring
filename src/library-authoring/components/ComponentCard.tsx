@@ -89,25 +89,19 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
   const displayName = formatted?.displayName ?? '';
 
   const {
-    mutate: addComponentToCourse,
-    isSuccess: addComponentToCourseSuccess,
-    isError: addComponentToCourseError,
+    mutateAsync: addComponentToCourse,
     reset,
   } = useAddComponentToCourse(parentLocator, contentHit.usageKey);
 
-  if (addComponentToCourseSuccess) {
-    window.parent.postMessage('closeComponentPicker', '*');
-  }
-
-  useEffect(() => {
-    if (addComponentToCourseError) {
-      showToast(intl.formatMessage(messages.addComponentToCourseError));
-      reset();
-    }
-  }, [addComponentToCourseError, showToast, intl]);
-
   const handleAddComponentToCourse = () => {
-    addComponentToCourse();
+    addComponentToCourse()
+      .then(() => {
+        window.parent.postMessage('closeComponentPicker', '*');
+      })
+      .catch(() => {
+        showToast(intl.formatMessage(messages.addComponentToCourseError));
+        reset();
+      });
   };
 
   return (
