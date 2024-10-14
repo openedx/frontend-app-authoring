@@ -356,17 +356,17 @@ export async function mockGetLibraryTeam(libraryId: string): Promise<api.Library
 mockGetLibraryTeam.adminMember = {
   username: 'admin-user',
   email: 'admin@domain.tld',
-  accessLevel: 'admin',
+  accessLevel: 'admin' as api.LibraryAccessLevel,
 };
 mockGetLibraryTeam.authorMember = {
   username: 'author-user',
   email: 'author@domain.tld',
-  accessLevel: 'author',
+  accessLevel: 'author' as api.LibraryAccessLevel,
 };
 mockGetLibraryTeam.readerMember = {
   username: 'reader-user',
   email: 'reader@domain.tld',
-  accessLevel: 'read',
+  accessLevel: 'read' as api.LibraryAccessLevel,
 };
 mockGetLibraryTeam.notMember = {
   username: 'not-user',

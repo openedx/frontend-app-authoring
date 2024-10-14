@@ -13,6 +13,7 @@ import AlertError from '../../generic/alert-error';
 import Loading from '../../generic/Loading';
 import { ToastContext } from '../../generic/toast-context';
 import { useLibraryContext } from '../common/context';
+import { LibraryAccessLevel } from '../data/api';
 import {
   useContentLibrary,
   useLibraryTeam,
@@ -61,7 +62,7 @@ const LibraryTeam: React.FC<Record<never, never>> = () => {
         libraryId,
         email,
         // New members are created as Readers
-        accessLevel: LibraryRole.Reader.toString(),
+        accessLevel: LibraryRole.Reader.toString() as LibraryAccessLevel,
       }).then(() => {
         showToast(intl.formatMessage(messages.addMemberSuccess));
       }).catch(() => {
@@ -78,7 +79,7 @@ const LibraryTeam: React.FC<Record<never, never>> = () => {
       updateMember.mutateAsync({
         libraryId,
         username,
-        accessLevel: role.toString(),
+        accessLevel: role.toString() as LibraryAccessLevel,
       }).then(() => {
         showToast(intl.formatMessage(messages.updateMemberSuccess));
       }).catch(() => {

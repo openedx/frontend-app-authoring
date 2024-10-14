@@ -96,16 +96,18 @@ export interface ContentLibrary {
   updated: string | null;
 }
 
+export type LibraryAccessLevel = 'read' | 'author' | 'admin';
+
 export interface LibraryTeamMember {
   username: string;
   email: string;
-  accessLevel: string;
+  accessLevel: LibraryAccessLevel,
 }
 
 export interface AddLibraryTeamMember {
   libraryId: string,
   email: string;
-  accessLevel: string;
+  accessLevel: LibraryAccessLevel,
 }
 
 export interface DeleteLibraryTeamMember {
@@ -114,7 +116,7 @@ export interface DeleteLibraryTeamMember {
 }
 
 export interface UpdateLibraryTeamMember extends DeleteLibraryTeamMember {
-  accessLevel: string;
+  accessLevel: LibraryAccessLevel,
 }
 
 export interface Collection {
