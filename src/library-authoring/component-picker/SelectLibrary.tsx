@@ -65,7 +65,7 @@ const SelectLibrary = ({ selectedLibrary, setSelectedLibrary }: SelectLibraryPro
   }
 
   return (
-    <Stack gap={5}>
+    <Stack gap={2} className="p-5">
       <small className="text-primary-700">
         {intl.formatMessage(messages.selectLibraryInfo)}
       </small>
