@@ -7,7 +7,7 @@ import {
   SearchField,
   Stack,
 } from '@openedx/paragon';
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import Loading from '../../generic/Loading';
 import AlertError from '../../generic/alert-error';
@@ -40,10 +40,10 @@ const SelectLibrary = ({ selectedLibrary, setSelectedLibrary }: SelectLibraryPro
     setSelectedLibrary('');
   }, [currentPage, searchQuery]);
 
-  const handleSearch = (search: string) => {
+  const handleSearch = useCallback((search: string) => {
     setSearchQuery(search);
     setCurrentPage(1);
-  };
+  }, []);
 
   const {
     data,
