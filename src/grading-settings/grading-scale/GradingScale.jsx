@@ -1,19 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon, IconButtonWithTooltip } from '@openedx/paragon';
 import { Add as IconAdd } from '@openedx/paragon/icons';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
+import { GradingScaleHandle, GradingScaleSegment, GradingScaleTicks } from './components';
+import messages from './messages';
 
 import { useRanger } from './react-ranger';
-import messages from './messages';
 import { convertGradeData, MAXIMUM_SCALE_LENGTH } from './utils';
-import { GradingScaleTicks, GradingScaleHandle, GradingScaleSegment } from './components';
 
-const DEFAULT_LETTERS = ['A', 'B', 'C', 'D'];
+const DEFAULT_GRADE_LETTERS = ['A', 'B', 'C', 'D'];
 const getDefaultPassText = intl => intl.formatMessage(messages.defaultPassText);
 
 const GradingScale = ({
-  intl,
   showSavePrompt,
   gradeCutoffs,
   setShowSuccessAlert,
@@ -23,7 +22,9 @@ const GradingScale = ({
   sortedGrades,
   setOverrideInternetConnectionAlert,
   setEligibleGrade,
+  defaultGradeDesignations,
 }) => {
+  const intl = useIntl();
   const [gradingSegments, setGradingSegments] = useState(sortedGrades);
   const [letters, setLetters] = useState(gradeLetters);
   const [convertedResult, setConvertedResult] = useState({});
@@ -55,6 +56,15 @@ const GradingScale = ({
 
   const addNewGradingSegment = () => {
     setGradingSegments(prevSegments => {
+      if (prevSegments.length >= 5) {
+        const segSize = MAXIMUM_SCALE_LENGTH / (prevSegments.length + 1);
+        return Array.from({ length: prevSegments.length + 1 }).map((_, i) => (
+          {
+            current: 100 - i * segSize,
+            previous: 100 - (i + 1) * segSize,
+          }
+        ));
+      }
       const firstSegment = prevSegments[prevSegments.length - 1];
       const secondSegment = prevSegments[prevSegments.length - 2];
       const newCurrentValue = Math.ceil((secondSegment.current - secondSegment.previous) / 2);
@@ -81,12 +91,12 @@ const GradingScale = ({
       ];
     });
 
-    const nextIndex = (letters.length % DEFAULT_LETTERS.length);
+    const nextIndex = (letters.length % defaultGradeDesignations.length);
 
     if (gradingSegments.length === 2) {
-      setLetters([DEFAULT_LETTERS[0], DEFAULT_LETTERS[nextIndex]]);
+      setLetters([defaultGradeDesignations[0], defaultGradeDesignations[nextIndex]]);
     } else {
-      setLetters(prevLetters => [...prevLetters, DEFAULT_LETTERS[nextIndex]]);
+      setLetters(prevLetters => [...prevLetters, defaultGradeDesignations[nextIndex]]);
     }
   };
 
@@ -191,7 +201,7 @@ const GradingScale = ({
       <IconButtonWithTooltip
         tooltipPlacement="top"
         tooltipContent={intl.formatMessage(messages.addNewSegmentButtonAltText)}
-        disabled={gradingSegments.length >= 5}
+        disabled={gradingSegments.length >= (defaultGradeDesignations.length + 1)}
         data-testid="grading-scale-btn-add-segment"
         className="mr-3"
         src={IconAdd}
@@ -230,7 +240,6 @@ const GradingScale = ({
 };
 
 GradingScale.propTypes = {
-  intl: intlShape.isRequired,
   showSavePrompt: PropTypes.func.isRequired,
   gradeCutoffs: PropTypes.objectOf(PropTypes.number).isRequired,
   gradeLetters: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -245,6 +254,11 @@ GradingScale.propTypes = {
     }),
   ).isRequired,
   setEligibleGrade: PropTypes.func.isRequired,
+  defaultGradeDesignations: PropTypes.arrayOf(PropTypes.string),
 };
 
-export default injectIntl(GradingScale);
+GradingScale.defaultProps = {
+  defaultGradeDesignations: DEFAULT_GRADE_LETTERS,
+};
+
+export default GradingScale;
