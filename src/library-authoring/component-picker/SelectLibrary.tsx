@@ -65,7 +65,7 @@ const SelectLibrary = ({ selectedLibrary, setSelectedLibrary }: SelectLibraryPro
   }
 
   return (
-    <Stack gap={2}>
+    <Stack gap={5}>
       <small className="text-primary-700">
         {intl.formatMessage(messages.selectLibraryInfo)}
       </small>
@@ -83,7 +83,12 @@ const SelectLibrary = ({ selectedLibrary, setSelectedLibrary }: SelectLibraryPro
           value={selectedLibrary}
         >
           {data.results.map((library) => (
-            <Card key={library.id} className="card-item">
+            <Card
+              key={library.id}
+              isClickable
+              onClick={() => setSelectedLibrary(library.id)}
+              className="card-item"
+            >
               <Card.Header
                 size="sm"
                 title={<span className="card-item-title">{library.title}</span>}
