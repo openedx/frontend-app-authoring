@@ -5,7 +5,7 @@ import {
   Tabs,
   Stack,
 } from '@openedx/paragon';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 
 import { ToastContext } from '../../generic/toast-context';
 import { useLibraryContext } from '../common/context';
@@ -35,27 +35,21 @@ const ComponentInfo = () => {
   }
 
   const {
-    mutate: addComponentToCourse,
-    isSuccess: addComponentToCourseSuccess,
-    isError: addComponentToCourseError,
+    mutateAsync: addComponentToCourse,
     reset,
   } = useAddComponentToCourse(parentLocator, usageKey);
-
-  if (addComponentToCourseSuccess) {
-    window.parent.postMessage('closeComponentPicker', '*');
-  }
-
-  useEffect(() => {
-    if (addComponentToCourseError) {
-      showToast(intl.formatMessage(messages.addComponentToCourseError));
-      reset();
-    }
-  }, [addComponentToCourseError, showToast, intl]);
 
   const canEdit = canEditComponent(usageKey);
 
   const handleAddComponentToCourse = () => {
-    addComponentToCourse();
+    addComponentToCourse()
+      .then(() => {
+        window.parent.postMessage('closeComponentPicker', '*');
+      })
+      .catch(() => {
+        showToast(intl.formatMessage(messages.addComponentToCourseError));
+        reset();
+      });
   };
 
   return (
