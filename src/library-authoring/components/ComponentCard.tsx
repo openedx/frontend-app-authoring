@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
