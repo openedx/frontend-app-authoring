@@ -5,6 +5,7 @@ import {
   Button,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { getConfig } from '@edx/frontend-platform';
 import {
   Article,
   AutoAwesome,
@@ -21,7 +22,7 @@ import { useParams } from 'react-router-dom';
 import { ToastContext } from '../../generic/toast-context';
 import { useCopyToClipboard } from '../../generic/clipboard';
 import { getCanEdit } from '../../course-unit/data/selectors';
-import { useCreateLibraryBlock, useLibraryPasteClipboard, useUpdateCollectionComponents } from '../data/apiHooks';
+import { useCreateLibraryBlock, useLibraryPasteClipboard, useAddComponentsToCollection } from '../data/apiHooks';
 import { useLibraryContext } from '../common/context';
 import { canEditComponent } from '../components/ComponentEditorModal';
 
@@ -61,17 +62,31 @@ const AddContentButton = ({ contentType, onCreateContent } : AddContentButtonPro
 
 const AddContentContainer = () => {
   const intl = useIntl();
-  const { libraryId, collectionId } = useParams();
-  const createBlockMutation = useCreateLibraryBlock();
-  const updateComponentsMutation = useUpdateCollectionComponents(libraryId, collectionId);
-  const pasteClipboardMutation = useLibraryPasteClipboard();
-  const { showToast } = useContext(ToastContext);
-  const canEdit = useSelector(getCanEdit);
-  const { showPasteXBlock } = useCopyToClipboard(canEdit);
+  const { collectionId } = useParams();
   const {
+    libraryId,
     openCreateCollectionModal,
     openComponentEditor,
   } = useLibraryContext();
+  const createBlockMutation = useCreateLibraryBlock();
+  const updateComponentsMutation = useAddComponentsToCollection(libraryId, collectionId);
+  const pasteClipboardMutation = useLibraryPasteClipboard();
+  const { showToast } = useContext(ToastContext);
+  const canEdit = useSelector(getCanEdit);
+  const { showPasteXBlock, sharedClipboardData } = useCopyToClipboard(canEdit);
+
+  const parsePasteErrorMsg = (error: any) => {
+    let errMsg: string;
+    try {
+      const { customAttributes: { httpErrorResponseData } } = error;
+      errMsg = JSON.parse(httpErrorResponseData).block_type;
+    } catch (_err) {
+      errMsg = intl.formatMessage(messages.errorPasteClipboardMessage);
+    }
+    return errMsg;
+  };
+
+  const isBlockTypeEnabled = (blockType: string) => getConfig().LIBRARY_SUPPORTED_BLOCKS.includes(blockType);
 
   const collectionButtonData = {
     name: intl.formatMessage(messages.collectionButton),
@@ -82,37 +97,37 @@ const AddContentContainer = () => {
   const contentTypes = [
     {
       name: intl.formatMessage(messages.textTypeButton),
-      disabled: false,
+      disabled: !isBlockTypeEnabled('html'),
       icon: Article,
       blockType: 'html',
     },
     {
       name: intl.formatMessage(messages.problemTypeButton),
-      disabled: false,
+      disabled: !isBlockTypeEnabled('problem'),
       icon: Question,
       blockType: 'problem',
     },
     {
       name: intl.formatMessage(messages.openResponseTypeButton),
-      disabled: false,
+      disabled: !isBlockTypeEnabled('openassessment'),
       icon: Create,
       blockType: 'openassessment',
     },
     {
       name: intl.formatMessage(messages.dragDropTypeButton),
-      disabled: false,
+      disabled: !isBlockTypeEnabled('drag-and-drop-v2'),
       icon: ThumbUpOutline,
       blockType: 'drag-and-drop-v2',
     },
     {
       name: intl.formatMessage(messages.videoTypeButton),
-      disabled: false,
+      disabled: !isBlockTypeEnabled('video'),
       icon: VideoCamera,
       blockType: 'video',
     },
     {
       name: intl.formatMessage(messages.otherTypeButton),
-      disabled: true,
+      disabled: !isBlockTypeEnabled('other'),
       icon: AutoAwesome,
       blockType: 'other', // This block doesn't exist yet.
     },
@@ -130,39 +145,49 @@ const AddContentContainer = () => {
     contentTypes.push(pasteButton);
   }
 
-  const onCreateContent = (blockType: string) => {
-    if (libraryId) {
-      if (blockType === 'paste') {
-        pasteClipboardMutation.mutateAsync({
-          libraryId,
-          blockId: `${uuid4()}`,
-        }).then(() => {
-          showToast(intl.formatMessage(messages.successPasteClipboardMessage));
-        }).catch(() => {
-          showToast(intl.formatMessage(messages.errorPasteClipboardMessage));
-        });
-      } else if (blockType === 'collection') {
-        openCreateCollectionModal();
+  const onPaste = () => {
+    if (!isBlockTypeEnabled(sharedClipboardData.content?.blockType)) {
+      showToast(intl.formatMessage(messages.unsupportedBlockPasteClipboardMessage));
+      return;
+    }
+    pasteClipboardMutation.mutateAsync({
+      libraryId,
+      blockId: `${uuid4()}`,
+    }).then(() => {
+      showToast(intl.formatMessage(messages.successPasteClipboardMessage));
+    }).catch((error) => {
+      showToast(parsePasteErrorMsg(error));
+    });
+  };
+
+  const onCreateBlock = (blockType: string) => {
+    createBlockMutation.mutateAsync({
+      libraryId,
+      blockType,
+      definitionId: `${uuid4()}`,
+    }).then((data) => {
+      const hasEditor = canEditComponent(data.id);
+      updateComponentsMutation.mutateAsync([data.id]).catch(() => {
+        showToast(intl.formatMessage(messages.errorAssociateComponentMessage));
+      });
+      if (hasEditor) {
+        openComponentEditor(data.id);
       } else {
-        createBlockMutation.mutateAsync({
-          libraryId,
-          blockType,
-          definitionId: `${uuid4()}`,
-        }).then((data) => {
-          const hasEditor = canEditComponent(data.id);
-          updateComponentsMutation.mutateAsync([data.id]).catch(() => {
-            showToast(intl.formatMessage(messages.errorAssociateComponentMessage));
-          });
-          if (hasEditor) {
-            openComponentEditor(data.id);
-          } else {
-            // We can't start editing this right away so just show a toast message:
-            showToast(intl.formatMessage(messages.successCreateMessage));
-          }
-        }).catch(() => {
-          showToast(intl.formatMessage(messages.errorCreateMessage));
-        });
+        // We can't start editing this right away so just show a toast message:
+        showToast(intl.formatMessage(messages.successCreateMessage));
       }
+    }).catch(() => {
+      showToast(intl.formatMessage(messages.errorCreateMessage));
+    });
+  };
+
+  const onCreateContent = (blockType: string) => {
+    if (blockType === 'paste') {
+      onPaste();
+    } else if (blockType === 'collection') {
+      openCreateCollectionModal();
+    } else {
+      onCreateBlock(blockType);
     }
   };
 

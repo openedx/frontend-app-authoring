@@ -29,6 +29,11 @@ export const getLibraryTeamMemberApiUrl = (libraryId: string, username: string) 
 export const getLibraryBlockMetadataUrl = (usageKey: string) => `${getApiBaseUrl()}/api/libraries/v2/blocks/${usageKey}/`;
 
 /**
+ * Get the URL for library block metadata.
+ */
+export const getLibraryBlockCollectionsUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}collections/`;
+
+/**
  * Get the URL for content library list API.
  */
 export const getContentLibraryV2ListApiUrl = () => `${getApiBaseUrl()}/api/libraries/v2/`;
@@ -50,7 +55,7 @@ export const getXBlockFieldsApiUrl = (usageKey: string) => `${getApiBaseUrl()}/a
 /**
   * Get the URL for the xblock OLX API
   */
-export const getXBlockOLXApiUrl = (usageKey: string) => `${getApiBaseUrl()}/api/libraries/v2/blocks/${usageKey}/olx/`;
+export const getXBlockOLXApiUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}olx/`;
 /**
   * Get the URL for the xblock Assets List API
   */
@@ -64,7 +69,7 @@ export const getLibraryCollectionsApiUrl = (libraryId: string) => `${getApiBaseU
  */
 export const getLibraryCollectionApiUrl = (libraryId: string, collectionId: string) => `${getLibraryCollectionsApiUrl(libraryId)}${collectionId}/`;
 /**
- * Get the URL for the collection API.
+ * Get the URL for the collection components API.
  */
 export const getLibraryCollectionComponentApiUrl = (libraryId: string, collectionId: string) => `${getLibraryCollectionApiUrl(libraryId, collectionId)}components/`;
 /**
@@ -174,6 +179,11 @@ export interface CreateBlockDataRequest {
   definitionId: string;
 }
 
+export interface CollectionMetadata {
+  key: string;
+  title: string;
+}
+
 export interface LibraryBlockMetadata {
   id: string;
   blockType: string;
@@ -187,6 +197,7 @@ export interface LibraryBlockMetadata {
   created: string | null,
   modified: string | null,
   tagsCount: number;
+  collections: CollectionMetadata[];
 }
 
 export interface UpdateLibraryDataRequest {
@@ -426,11 +437,20 @@ export async function updateCollectionMetadata(
 }
 
 /**
- * Update collection components.
+ * Add components to collection.
  */
-export async function updateCollectionComponents(libraryId: string, collectionId: string, usageKeys: string[]) {
+export async function addComponentsToCollection(libraryId: string, collectionId: string, usageKeys: string[]) {
   await getAuthenticatedHttpClient().patch(getLibraryCollectionComponentApiUrl(libraryId, collectionId), {
     usage_keys: usageKeys,
+  });
+}
+
+/**
+ * Remove components from collection.
+ */
+export async function removeComponentsFromCollection(libraryId: string, collectionId: string, usageKeys: string[]) {
+  await getAuthenticatedHttpClient().delete(getLibraryCollectionComponentApiUrl(libraryId, collectionId), {
+    data: { usage_keys: usageKeys },
   });
 }
 
@@ -448,4 +468,13 @@ export async function deleteCollection(libraryId: string, collectionId: string) 
 export async function restoreCollection(libraryId: string, collectionId: string) {
   const client = getAuthenticatedHttpClient();
   await client.post(getLibraryCollectionRestoreApiUrl(libraryId, collectionId));
+}
+
+/**
+ * Update component collections.
+ */
+export async function updateComponentCollections(usageKey: string, collectionKeys: string[]) {
+  await getAuthenticatedHttpClient().patch(getLibraryBlockCollectionsUrl(usageKey), {
+    collection_keys: collectionKeys,
+  });
 }
