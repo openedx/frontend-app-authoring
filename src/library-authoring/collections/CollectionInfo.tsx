@@ -11,17 +11,19 @@ import type { ContentLibrary } from '../data/api';
 import CollectionDetails from './CollectionDetails';
 import messages from './messages';
 import { ContentTagsDrawer } from '../../content-tags-drawer';
+import { buildCollectionUsageKey } from '../utils';
 
 interface CollectionInfoProps {
   library: ContentLibrary,
   collectionId: string,
-  collectionUsageKey: string,
 }
 
-const CollectionInfo = ({ library, collectionId, collectionUsageKey }: CollectionInfoProps) => {
+const CollectionInfo = ({ library, collectionId }: CollectionInfoProps) => {
   const intl = useIntl();
   const url = `/library/${library.id}/collection/${collectionId}/`;
   const urlMatch = useMatch(url);
+
+  const collectionUsageKey = buildCollectionUsageKey(library.id, collectionId);
 
   return (
     <Stack>

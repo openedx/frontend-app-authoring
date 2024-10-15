@@ -35,7 +35,6 @@ const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
     closeLibrarySidebar,
     currentComponentUsageKey,
     currentCollectionId,
-    currentCollectionUsageKey,
   } = useLibraryContext();
 
   const bodyComponentMap = {
@@ -45,11 +44,10 @@ const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
       currentComponentUsageKey && <ComponentInfo usageKey={currentComponentUsageKey} />
     ),
     [SidebarBodyComponentId.CollectionInfo]: (
-      currentCollectionId && currentCollectionUsageKey && (
+      currentCollectionId && (
         <CollectionInfo
           library={library}
           collectionId={currentCollectionId}
-          collectionUsageKey={currentCollectionUsageKey}
         />
       )
     ),

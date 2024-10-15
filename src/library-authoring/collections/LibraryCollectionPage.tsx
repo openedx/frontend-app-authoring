@@ -31,7 +31,6 @@ import { useLibraryContext } from '../common/context';
 import messages from './messages';
 import { LibrarySidebar } from '../library-sidebar';
 import LibraryCollectionComponents from './LibraryCollectionComponents';
-import { buildCollectionUsageKey } from '../utils';
 
 const HeaderActions = ({ canEditLibrary }: { canEditLibrary: boolean; }) => {
   const intl = useIntl();
@@ -114,10 +113,8 @@ const LibraryCollectionPage = () => {
     error,
   } = useCollection(libraryId, collectionId);
 
-  const collectionUsageKey = buildCollectionUsageKey(libraryId, collectionId);
-
   useEffect(() => {
-    openCollectionInfoSidebar(collectionId, collectionUsageKey);
+    openCollectionInfoSidebar(collectionId);
   }, [collectionData]);
 
   const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
@@ -172,7 +169,7 @@ const LibraryCollectionPage = () => {
                 <SubHeaderTitle
                   title={collectionData.title}
                   canEditLibrary={libraryData.canEditLibrary}
-                  infoClickHandler={() => openCollectionInfoSidebar(collectionId, collectionUsageKey)}
+                  infoClickHandler={() => openCollectionInfoSidebar(collectionId)}
                 />
               )}
               breadcrumbs={(

@@ -147,7 +147,7 @@ export const useContentTaxonomyTagsUpdater = (contentId) => {
         contentPattern = contentId.replace(/\+type@.*$/, '*');
       }
       queryClient.invalidateQueries({ queryKey: ['contentTagsCount', contentPattern] });
-      if (contentId.includes('lb:') || contentId.includes('lib-collection:')) {
+      if (contentId.startsWith('lb:') || contentId.startsWith('lib-collection:')) {
         // Obtain library id from contentId
         const libraryId = ['lib', ...contentId.split(':').slice(1, 3)].join(':');
         // Invalidate component metadata to update tags count
