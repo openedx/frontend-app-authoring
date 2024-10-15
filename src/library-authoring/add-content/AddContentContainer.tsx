@@ -22,7 +22,7 @@ import { useParams } from 'react-router-dom';
 import { ToastContext } from '../../generic/toast-context';
 import { useCopyToClipboard } from '../../generic/clipboard';
 import { getCanEdit } from '../../course-unit/data/selectors';
-import { useCreateLibraryBlock, useLibraryPasteClipboard, useUpdateCollectionComponents } from '../data/apiHooks';
+import { useCreateLibraryBlock, useLibraryPasteClipboard, useAddComponentsToCollection } from '../data/apiHooks';
 import { useLibraryContext } from '../common/context';
 import { canEditComponent } from '../components/ComponentEditorModal';
 
@@ -69,7 +69,7 @@ const AddContentContainer = () => {
     openComponentEditor,
   } = useLibraryContext();
   const createBlockMutation = useCreateLibraryBlock();
-  const updateComponentsMutation = useUpdateCollectionComponents(libraryId, collectionId);
+  const updateComponentsMutation = useAddComponentsToCollection(libraryId, collectionId);
   const pasteClipboardMutation = useLibraryPasteClipboard();
   const { showToast } = useContext(ToastContext);
   const canEdit = useSelector(getCanEdit);

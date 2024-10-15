@@ -61,7 +61,6 @@ export const LibraryProvider = (props: { children?: React.ReactNode, libraryId: 
 
   const closeLibrarySidebar = React.useCallback(() => {
     resetSidebar();
-    setCurrentComponentUsageKey(undefined);
   }, []);
   const openAddContentSidebar = React.useCallback(() => {
     resetSidebar();

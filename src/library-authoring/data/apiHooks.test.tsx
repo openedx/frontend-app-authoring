@@ -18,7 +18,7 @@ import {
   useCreateLibraryBlock,
   useCreateLibraryCollection,
   useRevertLibraryChanges,
-  useUpdateCollectionComponents,
+  useAddComponentsToCollection,
   useCollection,
 } from './apiHooks';
 
@@ -104,7 +104,7 @@ describe('library api hooks', () => {
     const collectionId = 'my-first-collection';
     const url = getLibraryCollectionComponentApiUrl(libraryId, collectionId);
     axiosMock.onPatch(url).reply(200);
-    const { result } = renderHook(() => useUpdateCollectionComponents(libraryId, collectionId), { wrapper });
+    const { result } = renderHook(() => useAddComponentsToCollection(libraryId, collectionId), { wrapper });
     await result.current.mutateAsync(['some-usage-key']);
 
     expect(axiosMock.history.patch[0].url).toEqual(url);

@@ -93,7 +93,7 @@ const messages = defineMessages({
   },
   manageTabCollectionsTitle: {
     id: 'course-authoring.library-authoring.component.manage-tab.collections-title',
-    defaultMessage: 'Collections',
+    defaultMessage: 'Collections ({count})',
     description: 'Title for the Collections container in the management tab',
   },
   detailsTabTitle: {
@@ -120,6 +120,51 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.component.preview.modal.title',
     defaultMessage: 'Component Preview',
     description: 'Title for preview modal',
+  },
+  manageCollectionsText: {
+    id: 'course-authoring.library-authoring.component.manage-tab.collections.text',
+    defaultMessage: 'Manage Collections',
+    description: 'Header and button text for collection section in manage tab',
+  },
+  manageCollectionsAddBtnText: {
+    id: 'course-authoring.library-authoring.component.manage-tab.collections.btn-text',
+    defaultMessage: 'Add to Collection',
+    description: 'Button text for collection section in manage tab',
+  },
+  manageCollectionsSearchPlaceholder: {
+    id: 'course-authoring.library-authoring.component.manage-tab.collections.search-placeholder',
+    defaultMessage: 'Search',
+    description: 'Placeholder text for collection search in manage tab',
+  },
+  manageCollectionsSelectionLabel: {
+    id: 'course-authoring.library-authoring.component.manage-tab.collections.selection-aria-label',
+    defaultMessage: 'Collection selection',
+    description: 'Aria label text for collection selection box',
+  },
+  manageCollectionsToComponentSuccess: {
+    id: 'course-authoring.library-authoring.component.manage-tab.collections.add-success',
+    defaultMessage: 'Component collections updated',
+    description: 'Message to display on updating component collections',
+  },
+  manageCollectionsToComponentFailed: {
+    id: 'course-authoring.library-authoring.component.manage-tab.collections.add-failed',
+    defaultMessage: 'Failed to update Component collections',
+    description: 'Message to display on failure of updating component collections',
+  },
+  manageCollectionsToComponentConfirmBtn: {
+    id: 'course-authoring.library-authoring.component.manage-tab.collections.add-confirm-btn',
+    defaultMessage: 'Confirm',
+    description: 'Button text to confirm collections for a component',
+  },
+  manageCollectionsToComponentCancelBtn: {
+    id: 'course-authoring.library-authoring.component.manage-tab.collections.add-cancel-btn',
+    defaultMessage: 'Cancel',
+    description: 'Button text to cancel collections selection for a component',
+  },
+  componentNotOrganizedIntoCollection: {
+    id: 'course-authoring.library-authoring.component.manage-tab.collections.no-collections',
+    defaultMessage: 'This component is not organized into any collection.',
+    description: 'Message to display in manage collections section when component is not part of any collection.',
   },
 });
 

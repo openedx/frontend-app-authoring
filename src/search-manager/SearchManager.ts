@@ -93,7 +93,10 @@ export const SearchContextProvider: React.FC<{
   children: React.ReactNode,
   closeSearchModal?: () => void,
   overrideQueries?: OverrideQueries,
-}> = ({ overrideSearchSortOrder, overrideQueries, ...props }) => {
+  skipUrlUpdate?: boolean,
+}> = ({
+  overrideSearchSortOrder, overrideQueries, skipUrlUpdate, ...props
+}) => {
   const [searchKeywords, setSearchKeywords] = React.useState('');
   const [blockTypesFilter, setBlockTypesFilter] = React.useState<string[]>([]);
   const [problemTypesFilter, setProblemTypesFilter] = React.useState<string[]>([]);
@@ -104,12 +107,17 @@ export const SearchContextProvider: React.FC<{
   // E.g. ?sort=display_name:desc maps to SearchSortOption.TITLE_ZA.
   // Default sort by Most Relevant if there's search keyword(s), else by Recently Modified.
   const defaultSearchSortOrder = searchKeywords ? SearchSortOption.RELEVANCE : SearchSortOption.RECENTLY_MODIFIED;
-  const [searchSortOrder, setSearchSortOrder] = useStateWithUrlSearchParam<SearchSortOption>(
+  let sortStateManager = React.useState<SearchSortOption>(defaultSearchSortOrder);
+  const sortUrlStateManager = useStateWithUrlSearchParam<SearchSortOption>(
     defaultSearchSortOrder,
     'sort',
     (value: string) => Object.values(SearchSortOption).find((enumValue) => value === enumValue),
     (value: SearchSortOption) => value.toString(),
   );
+  if (!skipUrlUpdate) {
+    sortStateManager = sortUrlStateManager;
+  }
+  const [searchSortOrder, setSearchSortOrder] = sortStateManager;
   // SearchSortOption.RELEVANCE is special, it means "no custom sorting", so we
   // send it to useContentSearchResults as an empty array.
   const searchSortOrderToUse = overrideSearchSortOrder ?? searchSortOrder;
