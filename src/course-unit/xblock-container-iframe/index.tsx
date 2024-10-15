@@ -11,7 +11,7 @@ import messages from './messages';
  * This offset is necessary to fully display the dropdown actions of the XBlock
  * in case the XBlock does not have content inside.
  */
-const IFRAME_BOTTOM_OFFSET = 160;
+const IFRAME_BOTTOM_OFFSET = 220;
 
 interface XBlockContainerIframeProps {
   blockId: string;
