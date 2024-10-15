@@ -76,6 +76,11 @@ const messages = defineMessages({
     defaultMessage: 'Pasting content from clipboard...',
     description: 'Message when in process of pasting content in library',
   },
+  unsupportedBlockPasteClipboardMessage: {
+    id: 'course-authoring.library-authoring.paste-clipboard.unsupportedblock-error.text',
+    defaultMessage: 'Libraries do not support this type of content yet.',
+    description: 'Message when unsupported block is pasted in library',
+  },
 });
 
 export default messages;

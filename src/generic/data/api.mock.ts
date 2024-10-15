@@ -18,7 +18,7 @@ mockClipboardEmpty.applyMockOnce = () => jest.spyOn(api, 'getClipboard').mockImp
 /**
  * Mock for `getClipboard()` that simulates a copied HTML component
  */
-export async function mockClipboardHtml(): Promise<api.ClipboardStatus> {
+export async function mockClipboardHtml(blockType?: string): Promise<api.ClipboardStatus> {
   return {
     content: {
       id: 69,
@@ -26,7 +26,7 @@ export async function mockClipboardHtml(): Promise<api.ClipboardStatus> {
       created: '2024-01-16T13:33:21.314439Z',
       purpose: 'clipboard',
       status: 'ready',
-      blockType: 'html',
+      blockType: blockType || 'html',
       blockTypeDisplay: 'Text',
       olxUrl: 'http://localhost:18010/api/content-staging/v1/staged-content/69/olx',
       displayName: 'Blank HTML Page',
@@ -36,7 +36,7 @@ export async function mockClipboardHtml(): Promise<api.ClipboardStatus> {
     sourceEditUrl: 'http://localhost:18010/container/block-v1:edX+DemoX+Demo_Course+type@vertical+block@vertical1',
   };
 }
-mockClipboardHtml.applyMock = () => jest.spyOn(api, 'getClipboard').mockImplementation(mockClipboardHtml);
+mockClipboardHtml.applyMock = (blockType?: string) => jest.spyOn(api, 'getClipboard').mockImplementation(() => mockClipboardHtml(blockType));
 mockClipboardHtml.applyMockOnce = () => jest.spyOn(api, 'getClipboard').mockImplementationOnce(mockClipboardHtml);
 
 /** Mock the DOM `BroadcastChannel` API which the clipboard code uses */
