@@ -2,7 +2,7 @@ import React from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Collapsible, Icon, Stack } from '@openedx/paragon';
-import { Tag } from '@openedx/paragon/icons';
+import { BookOpen, Tag } from '@openedx/paragon/icons';
 
 import { useLibraryContext } from '../common/context';
 import { useLibraryBlockMetadata } from '../data/apiHooks';
@@ -10,6 +10,7 @@ import StatusWidget from '../generic/status-widget';
 import messages from './messages';
 import { ContentTagsDrawer } from '../../content-tags-drawer';
 import { useContentTaxonomyTagsData } from '../../content-tags-drawer/data/apiHooks';
+import ManageCollections from './ManageCollections';
 
 const ComponentManagement = () => {
   const intl = useIntl();
@@ -23,6 +24,7 @@ const ComponentManagement = () => {
   const { data: componentMetadata } = useLibraryBlockMetadata(usageKey);
   const { data: componentTags } = useContentTaxonomyTagsData(usageKey);
 
+  const collectionsCount = React.useMemo(() => componentMetadata?.collections?.length || 0, [componentMetadata]);
   const tagsCount = React.useMemo(() => {
     if (!componentTags) {
       return 0;
@@ -75,13 +77,13 @@ const ComponentManagement = () => {
         defaultOpen
         title={(
           <Stack gap={1} direction="horizontal">
-            <Icon src={Tag} />
-            {intl.formatMessage(messages.manageTabCollectionsTitle)}
+            <Icon src={BookOpen} />
+            {intl.formatMessage(messages.manageTabCollectionsTitle, { count: collectionsCount })}
           </Stack>
         )}
         className="border-0"
       >
-        Collections placeholder
+        <ManageCollections usageKey={usageKey} collections={componentMetadata.collections} />
       </Collapsible>
     </Stack>
   );

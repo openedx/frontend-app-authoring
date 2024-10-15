@@ -73,7 +73,7 @@ const TaxonomyList = ({ contentId }: TaxonomyListProps) => {
   return <Loading />;
 };
 
-const ContentTagsDrawerTittle = () => {
+const ContentTagsDrawerTitle = () => {
   const intl = useIntl();
   const {
     isContentDataLoaded,
@@ -100,9 +100,10 @@ const ContentTagsDrawerTittle = () => {
 
 interface ContentTagsDrawerVariantFooterProps {
   onClose: () => void,
+  canTagObject: boolean,
 }
 
-const ContentTagsDrawerVariantFooter = ({ onClose }: ContentTagsDrawerVariantFooterProps) => {
+const ContentTagsDrawerVariantFooter = ({ onClose, canTagObject }: ContentTagsDrawerVariantFooterProps) => {
   const intl = useIntl();
   const {
     commitGlobalStagedTagsStatus,
@@ -130,16 +131,18 @@ const ContentTagsDrawerVariantFooter = ({ onClose }: ContentTagsDrawerVariantFoo
                 ? messages.tagsDrawerCancelButtonText
                 : messages.tagsDrawerCloseButtonText)}
             </Button>
-            <Button
-              className="rounded-0"
-              onClick={isEditMode
-                ? commitGlobalStagedTags
-                : toEditMode}
-            >
-              { intl.formatMessage(isEditMode
-                ? messages.tagsDrawerSaveButtonText
-                : messages.tagsDrawerEditTagsButtonText)}
-            </Button>
+            {canTagObject && (
+              <Button
+                className="rounded-0"
+                onClick={isEditMode
+                  ? commitGlobalStagedTags
+                  : toEditMode}
+              >
+                { intl.formatMessage(isEditMode
+                  ? messages.tagsDrawerSaveButtonText
+                  : messages.tagsDrawerEditTagsButtonText)}
+              </Button>
+            )}
           </Stack>
         )
           : (
@@ -215,6 +218,7 @@ const ContentTagsComponentVariantFooter = ({ readOnly = false }: ContentTagsComp
 interface ContentTagsDrawerProps {
   id?: string;
   onClose?: () => void;
+  canTagObject?: boolean;
   variant?: 'drawer' | 'component';
   readOnly?: boolean;
 }
@@ -231,6 +235,7 @@ interface ContentTagsDrawerProps {
 const ContentTagsDrawer = ({
   id,
   onClose,
+  canTagObject = false,
   variant = 'drawer',
   readOnly = false,
 }: ContentTagsDrawerProps) => {
@@ -243,7 +248,7 @@ const ContentTagsDrawer = ({
     throw new Error('Error: contentId cannot be null.');
   }
 
-  const context = useContentTagsDrawerContext(contentId);
+  const context = useContentTagsDrawerContext(contentId, canTagObject);
   const { blockingSheet } = useContext(ContentTagsDrawerSheetContext);
 
   const {
@@ -307,7 +312,7 @@ const ContentTagsDrawer = ({
     if (isTaxonomyListLoaded && isContentTaxonomyTagsLoaded) {
       switch (variant) {
         case 'drawer':
-          return <ContentTagsDrawerVariantFooter onClose={onCloseDrawer} />;
+          return <ContentTagsDrawerVariantFooter onClose={onCloseDrawer} canTagObject={canTagObject} />;
         case 'component':
           return <ContentTagsComponentVariantFooter readOnly={readOnly} />;
         default:
@@ -337,7 +342,7 @@ const ContentTagsDrawer = ({
           )}
         >
           {variant === 'drawer' && (
-            <ContentTagsDrawerTittle />
+            <ContentTagsDrawerTitle />
           )}
           <Container
             className={classNames(

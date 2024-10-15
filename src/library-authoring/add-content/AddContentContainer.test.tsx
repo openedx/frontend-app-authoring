@@ -77,7 +77,7 @@ describe('<AddContentContainer />', () => {
   });
 
   it('should handle failure to paste content', async () => {
-    const { axiosMock } = initializeMocks();
+    const { axiosMock, mockShowToast } = initializeMocks();
     // Simulate having an HTML block in the clipboard:
     mockClipboardHtml.applyMock();
 
@@ -89,8 +89,54 @@ describe('<AddContentContainer />', () => {
     const pasteButton = await screen.findByRole('button', { name: /paste from clipboard/i });
     fireEvent.click(pasteButton);
 
-    await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(pasteUrl));
+    await waitFor(() => {
+      expect(axiosMock.history.post[0].url).toEqual(pasteUrl);
+      expect(mockShowToast).toHaveBeenCalledWith('There was an error pasting the content.');
+    });
+  });
 
-    // TODO: check that an actual error message is shown?!
+  it('should handle failure to paste content and show server error if available', async () => {
+    const { axiosMock, mockShowToast } = initializeMocks();
+    // Simulate having an HTML block in the clipboard:
+    mockClipboardHtml.applyMock();
+
+    const errMsg = 'Libraries do not support this type of content yet.';
+    const pasteUrl = getLibraryPasteClipboardUrl(libraryId);
+
+    // eslint-disable-next-line prefer-promise-reject-errors
+    axiosMock.onPost(pasteUrl).reply(() => Promise.reject({
+      customAttributes: {
+        httpErrorStatus: 400,
+        httpErrorResponseData: JSON.stringify({ block_type: errMsg }),
+      },
+    }));
+
+    render();
+
+    const pasteButton = await screen.findByRole('button', { name: /paste from clipboard/i });
+    fireEvent.click(pasteButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.post[0].url).toEqual(pasteUrl);
+      expect(mockShowToast).toHaveBeenCalledWith(errMsg);
+    });
+  });
+
+  it('should stop user from pasting unsupported blocks and show toast', async () => {
+    const { axiosMock, mockShowToast } = initializeMocks();
+    // Simulate having an HTML block in the clipboard:
+    mockClipboardHtml.applyMock('openassessment');
+
+    const errMsg = 'Libraries do not support this type of content yet.';
+
+    render();
+
+    const pasteButton = await screen.findByRole('button', { name: /paste from clipboard/i });
+    fireEvent.click(pasteButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toEqual(0);
+      expect(mockShowToast).toHaveBeenCalledWith(errMsg);
+    });
   });
 });

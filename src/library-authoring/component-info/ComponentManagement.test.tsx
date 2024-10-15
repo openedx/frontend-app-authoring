@@ -11,7 +11,9 @@ import { mockContentLibrary, mockLibraryBlockMetadata } from '../data/api.mocks'
 import ComponentManagement from './ComponentManagement';
 
 jest.mock('../../content-tags-drawer', () => ({
-  ContentTagsDrawer: () => <div>Mocked ContentTagsDrawer</div>,
+  ContentTagsDrawer: ({ canTagObject }: { canTagObject: boolean }) => (
+    <div>Mocked {canTagObject ? 'editable' : 'read-only'} ContentTagsDrawer</div>
+  ),
 }));
 
 mockContentLibrary.applyMock();
@@ -41,7 +43,8 @@ const render = (usageKey: string) => baseRender(<ComponentManagement />, {
     </LibraryProvider>
   ),
 });
-
+// lib:OpenedX:CSPROB2
+//
 describe('<ComponentManagement />', () => {
   beforeEach(() => {
     initializeMocks();
@@ -63,15 +66,27 @@ describe('<ComponentManagement />', () => {
     ).toBeInTheDocument();
   });
 
-  it('should render the tagging info', async () => {
-    setConfig({
-      ...getConfig(),
-      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
-    });
-    render(mockLibraryBlockMetadata.usageKeyNeverPublished);
-    expect(await screen.findByText('Tags (0)')).toBeInTheDocument();
-    expect(screen.queryByText('Mocked ContentTagsDrawer')).toBeInTheDocument();
-  });
+  test.each([
+    {
+      libraryId: mockContentLibrary.libraryId,
+      expected: 'editable',
+    },
+    {
+      libraryId: mockContentLibrary.libraryIdReadOnly,
+      expected: 'read-only',
+    },
+  ])(
+    'should render the tagging info as $expected',
+    async ({ libraryId, expected }) => {
+      setConfig({
+        ...getConfig(),
+        ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+      });
+      render(libraryId);
+      expect(await screen.findByText('Tags (0)')).toBeInTheDocument();
+      expect(screen.queryByText(`Mocked ${expected} ContentTagsDrawer`)).toBeInTheDocument();
+    },
+  );
 
   it('should not render draft status', async () => {
     setConfig({
@@ -90,5 +105,10 @@ describe('<ComponentManagement />', () => {
     });
     render(mockLibraryBlockMetadata.usageKeyForTags);
     expect(await screen.findByText('Tags (6)')).toBeInTheDocument();
+  });
+
+  it('should render collection count in collection info section', async () => {
+    render(mockLibraryBlockMetadata.usageKeyWithCollections);
+    expect(await screen.findByText('Collections (1)')).toBeInTheDocument();
   });
 });

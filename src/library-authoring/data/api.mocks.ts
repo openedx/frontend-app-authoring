@@ -192,6 +192,7 @@ mockCreateLibraryBlock.newHtmlData = {
   created: '2024-07-22T21:37:49Z',
   modified: '2024-07-22T21:37:49Z',
   tagsCount: 0,
+  collections: [],
 } satisfies api.LibraryBlockMetadata;
 mockCreateLibraryBlock.newProblemData = {
   id: 'lb:Axim:TEST:problem:prob1',
@@ -206,6 +207,7 @@ mockCreateLibraryBlock.newProblemData = {
   created: '2024-07-22T21:37:49Z',
   modified: '2024-07-22T21:37:49Z',
   tagsCount: 0,
+  collections: [],
 } satisfies api.LibraryBlockMetadata;
 mockCreateLibraryBlock.newVideoData = {
   id: 'lb:Axim:TEST:video:vid1',
@@ -220,6 +222,7 @@ mockCreateLibraryBlock.newVideoData = {
   created: '2024-07-22T21:37:49Z',
   modified: '2024-07-22T21:37:49Z',
   tagsCount: 0,
+  collections: [],
 } satisfies api.LibraryBlockMetadata;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockCreateLibraryBlock.applyMock = () => (
@@ -297,6 +300,7 @@ export async function mockLibraryBlockMetadata(usageKey: string): Promise<api.Li
       throw createAxiosError({ code: 404, message: 'Not found.', path: api.getLibraryBlockMetadataUrl(usageKey) });
     case thisMock.usageKeyNeverPublished: return thisMock.dataNeverPublished;
     case thisMock.usageKeyPublished: return thisMock.dataPublished;
+    case thisMock.usageKeyWithCollections: return thisMock.dataWithCollections;
     case thisMock.usageKeyThirdPartyXBlock: return thisMock.dataThirdPartyXBlock;
     case thisMock.usageKeyForTags: return thisMock.dataPublished;
     default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
@@ -318,6 +322,7 @@ mockLibraryBlockMetadata.dataNeverPublished = {
   created: '2024-06-20T13:54:21Z',
   modified: '2024-06-21T13:54:21Z',
   tagsCount: 0,
+  collections: [],
 } satisfies api.LibraryBlockMetadata;
 mockLibraryBlockMetadata.usageKeyPublished = 'lb:Axim:TEST2:html:571fe018-f3ce-45c9-8f53-5dafcb422fd2';
 mockLibraryBlockMetadata.dataPublished = {
@@ -333,6 +338,7 @@ mockLibraryBlockMetadata.dataPublished = {
   created: '2024-06-20T13:54:21Z',
   modified: '2024-06-21T13:54:21Z',
   tagsCount: 0,
+  collections: [],
 } satisfies api.LibraryBlockMetadata;
 mockLibraryBlockMetadata.usageKeyThirdPartyXBlock = mockXBlockFields.usageKeyThirdParty;
 mockLibraryBlockMetadata.dataThirdPartyXBlock = {
@@ -341,6 +347,22 @@ mockLibraryBlockMetadata.dataThirdPartyXBlock = {
   blockType: 'third_party',
 } satisfies api.LibraryBlockMetadata;
 mockLibraryBlockMetadata.usageKeyForTags = mockContentTaxonomyTagsData.largeTagsId;
+mockLibraryBlockMetadata.usageKeyWithCollections = 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd';
+mockLibraryBlockMetadata.dataWithCollections = {
+  id: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
+  defKey: null,
+  blockType: 'html',
+  displayName: 'Introduction to Testing 2',
+  lastPublished: '2024-06-21T00:00:00',
+  publishedBy: 'Luke',
+  lastDraftCreated: null,
+  lastDraftCreatedBy: '2024-06-20T20:00:00Z',
+  hasUnpublishedChanges: false,
+  created: '2024-06-20T13:54:21Z',
+  modified: '2024-06-21T13:54:21Z',
+  tagsCount: 0,
+  collections: [{ title: 'My first collection', key: 'my-first-collection' }],
+} satisfies api.LibraryBlockMetadata;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockLibraryBlockMetadata.applyMock = () => jest.spyOn(api, 'getLibraryBlockMetadata').mockImplementation(mockLibraryBlockMetadata);
 
@@ -431,3 +453,44 @@ export async function mockXBlockAssets(): ReturnType<typeof api['getXBlockAssets
 }
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockXBlockAssets.applyMock = () => jest.spyOn(api, 'getXBlockAssets').mockImplementation(mockXBlockAssets);
+
+/**
+ * Mock for `getLibraryTeam()`
+ *
+ * Use `mockGetLibraryTeam.applyMock()` to apply it to the whole test suite.
+ */
+export async function mockGetLibraryTeam(libraryId: string): Promise<api.LibraryTeamMember[]> {
+  switch (libraryId) {
+    case mockContentLibrary.libraryIdThatNeverLoads:
+      // Return a promise that never resolves, to simulate never loading:
+      return new Promise<any>(() => {});
+    default:
+      return [
+        mockGetLibraryTeam.adminMember,
+        mockGetLibraryTeam.authorMember,
+        mockGetLibraryTeam.readerMember,
+      ];
+  }
+}
+mockGetLibraryTeam.adminMember = {
+  username: 'admin-user',
+  email: 'admin@domain.tld',
+  accessLevel: 'admin' as api.LibraryAccessLevel,
+};
+mockGetLibraryTeam.authorMember = {
+  username: 'author-user',
+  email: 'author@domain.tld',
+  accessLevel: 'author' as api.LibraryAccessLevel,
+};
+mockGetLibraryTeam.readerMember = {
+  username: 'reader-user',
+  email: 'reader@domain.tld',
+  accessLevel: 'read' as api.LibraryAccessLevel,
+};
+mockGetLibraryTeam.notMember = {
+  username: 'not-user',
+  email: 'not@domain.tld',
+};
+
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockGetLibraryTeam.applyMock = () => jest.spyOn(api, 'getLibraryTeam').mockImplementation(mockGetLibraryTeam);

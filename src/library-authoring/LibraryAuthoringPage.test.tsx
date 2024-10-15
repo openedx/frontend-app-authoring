@@ -14,6 +14,7 @@ import mockEmptyResult from '../search-modal/__mocks__/empty-search-result.json'
 import {
   mockContentLibrary,
   mockGetCollectionMetadata,
+  mockGetLibraryTeam,
   mockXBlockFields,
 } from './data/api.mocks';
 import { mockContentSearchConfig } from '../search-manager/data/api.mock';
@@ -24,6 +25,7 @@ import { getLibraryCollectionsApiUrl } from './data/api';
 mockGetCollectionMetadata.applyMock();
 mockContentSearchConfig.applyMock();
 mockContentLibrary.applyMock();
+mockGetLibraryTeam.applyMock();
 mockXBlockFields.applyMock();
 mockBroadcastChannel();
 
@@ -302,6 +304,24 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.click(libraryInfoButton);
     expect(screen.queryByText('Draft')).not.toBeInTheDocument();
     expect(screen.queryByText('(Never Published)')).not.toBeInTheDocument();
+  });
+
+  it('should show "Manage Access" button in Library Info that opens the Library Team modal', async () => {
+    await renderLibraryPage();
+    const manageAccess = screen.getByRole('button', { name: /manage access/i });
+
+    expect(manageAccess).not.toBeDisabled();
+    fireEvent.click(manageAccess);
+
+    expect(await screen.findByText('Library Team')).toBeInTheDocument();
+  });
+
+  it('should not show "Manage Access" button in Library Info to users who cannot edit the library', async () => {
+    const libraryId = mockContentLibrary.libraryIdReadOnly;
+    render(<LibraryLayout />, { path, params: { libraryId } });
+
+    const manageAccess = screen.queryByRole('button', { name: /manage access/i });
+    expect(manageAccess).not.toBeInTheDocument();
   });
 
   it('show the "View All" button when viewing library with many components', async () => {

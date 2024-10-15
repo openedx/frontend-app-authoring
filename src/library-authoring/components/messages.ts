@@ -31,6 +31,21 @@ const messages = defineMessages({
     defaultMessage: 'Add to collection',
     description: 'Menu item for add a component to collection.',
   },
+  menuRemoveFromCollection: {
+    id: 'course-authoring.library-authoring.component.menu.remove',
+    defaultMessage: 'Remove from collection',
+    description: 'Menu item for remove a component from collection.',
+  },
+  removeComponentSucess: {
+    id: 'course-authoring.library-authoring.component.remove-from-collection-success',
+    defaultMessage: 'Component successfully removed',
+    description: 'Message for successful removal of component from collection.',
+  },
+  removeComponentFailure: {
+    id: 'course-authoring.library-authoring.component.remove-from-collection-failure',
+    defaultMessage: 'Failed to remove Component',
+    description: 'Message for failure of removal of component from collection.',
+  },
   copyToClipboardSuccess: {
     id: 'course-authoring.library-authoring.component.copyToClipboardSuccess',
     defaultMessage: 'Component copied to clipboard',

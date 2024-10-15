@@ -129,6 +129,7 @@ export interface ContentHit extends BaseContentHit {
   breadcrumbs: [{ displayName: string }, ...Array<{ displayName: string, usageKey: string }>];
   content?: ContentDetails;
   lastPublished: number | null;
+  collections: { displayName?: string[], key?: string[] },
 }
 
 /**
@@ -157,6 +158,7 @@ export function formatSearchHit(hit: Record<string, any>): ContentHit | Collecti
 
 export interface OverrideQueries {
   components?: SearchParams,
+  blockTypes?: SearchParams,
   collections?: SearchParams,
 }
 
@@ -167,6 +169,9 @@ function applyOverrideQueries(
   const newQueries = [...queries];
   if (overrideQueries?.components) {
     newQueries[0] = { ...overrideQueries.components, indexUid: queries[0].indexUid };
+  }
+  if (overrideQueries?.blockTypes) {
+    newQueries[1] = { ...overrideQueries.blockTypes, indexUid: queries[1].indexUid };
   }
   if (overrideQueries?.collections) {
     newQueries[2] = { ...overrideQueries.collections, indexUid: queries[2].indexUid };
