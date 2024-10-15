@@ -73,7 +73,7 @@ const TaxonomyList = ({ contentId }: TaxonomyListProps) => {
   return <Loading />;
 };
 
-const ContentTagsDrawerTittle = () => {
+const ContentTagsDrawerTitle = () => {
   const intl = useIntl();
   const {
     isContentDataLoaded,
@@ -100,9 +100,10 @@ const ContentTagsDrawerTittle = () => {
 
 interface ContentTagsDrawerVariantFooterProps {
   onClose: () => void,
+  canTagObject: boolean,
 }
 
-const ContentTagsDrawerVariantFooter = ({ onClose }: ContentTagsDrawerVariantFooterProps) => {
+const ContentTagsDrawerVariantFooter = ({ onClose, canTagObject }: ContentTagsDrawerVariantFooterProps) => {
   const intl = useIntl();
   const {
     commitGlobalStagedTagsStatus,
@@ -130,16 +131,18 @@ const ContentTagsDrawerVariantFooter = ({ onClose }: ContentTagsDrawerVariantFoo
                 ? messages.tagsDrawerCancelButtonText
                 : messages.tagsDrawerCloseButtonText)}
             </Button>
-            <Button
-              className="rounded-0"
-              onClick={isEditMode
-                ? commitGlobalStagedTags
-                : toEditMode}
-            >
-              { intl.formatMessage(isEditMode
-                ? messages.tagsDrawerSaveButtonText
-                : messages.tagsDrawerEditTagsButtonText)}
-            </Button>
+            {canTagObject && (
+              <Button
+                className="rounded-0"
+                onClick={isEditMode
+                  ? commitGlobalStagedTags
+                  : toEditMode}
+              >
+                { intl.formatMessage(isEditMode
+                  ? messages.tagsDrawerSaveButtonText
+                  : messages.tagsDrawerEditTagsButtonText)}
+              </Button>
+            )}
           </Stack>
         )
           : (
@@ -154,7 +157,7 @@ const ContentTagsDrawerVariantFooter = ({ onClose }: ContentTagsDrawerVariantFoo
   );
 };
 
-const ContentTagsComponentVariantFooter = () => {
+const ContentTagsComponentVariantFooter = ({ canTagObject }: { canTagObject: boolean }) => {
   const intl = useIntl();
   const {
     commitGlobalStagedTagsStatus,
@@ -196,13 +199,15 @@ const ContentTagsComponentVariantFooter = () => {
           )}
         </div>
       ) : (
-        <Button
-          variant="outline-primary"
-          onClick={toEditMode}
-          block
-        >
-          {intl.formatMessage(messages.manageTagsButton)}
-        </Button>
+        canTagObject && (
+          <Button
+            variant="outline-primary"
+            onClick={toEditMode}
+            block
+          >
+            {intl.formatMessage(messages.manageTagsButton)}
+          </Button>
+        )
       )}
     </div>
   );
@@ -211,6 +216,7 @@ const ContentTagsComponentVariantFooter = () => {
 interface ContentTagsDrawerProps {
   id?: string;
   onClose?: () => void;
+  canTagObject?: boolean;
   variant?: 'drawer' | 'component';
 }
 
@@ -226,6 +232,7 @@ interface ContentTagsDrawerProps {
 const ContentTagsDrawer = ({
   id,
   onClose,
+  canTagObject = false,
   variant = 'drawer',
 }: ContentTagsDrawerProps) => {
   const intl = useIntl();
@@ -237,7 +244,7 @@ const ContentTagsDrawer = ({
     throw new Error('Error: contentId cannot be null.');
   }
 
-  const context = useContentTagsDrawerContext(contentId);
+  const context = useContentTagsDrawerContext(contentId, canTagObject);
   const { blockingSheet } = useContext(ContentTagsDrawerSheetContext);
 
   const {
@@ -301,9 +308,9 @@ const ContentTagsDrawer = ({
     if (isTaxonomyListLoaded && isContentTaxonomyTagsLoaded) {
       switch (variant) {
         case 'drawer':
-          return <ContentTagsDrawerVariantFooter onClose={onCloseDrawer} />;
+          return <ContentTagsDrawerVariantFooter onClose={onCloseDrawer} canTagObject={canTagObject} />;
         case 'component':
-          return <ContentTagsComponentVariantFooter />;
+          return <ContentTagsComponentVariantFooter canTagObject={canTagObject} />;
         default:
           return null;
       }
@@ -331,7 +338,7 @@ const ContentTagsDrawer = ({
           )}
         >
           {variant === 'drawer' && (
-            <ContentTagsDrawerTittle />
+            <ContentTagsDrawerTitle />
           )}
           <Container
             className={classNames(

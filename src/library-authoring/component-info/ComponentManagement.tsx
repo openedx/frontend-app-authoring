@@ -13,9 +13,10 @@ import ManageCollections from './ManageCollections';
 
 interface ComponentManagementProps {
   usageKey: string;
+  canEdit?: boolean;
 }
 
-const ComponentManagement = ({ usageKey }: ComponentManagementProps) => {
+const ComponentManagement = ({ usageKey, canEdit = false }: ComponentManagementProps) => {
   const intl = useIntl();
   const { data: componentMetadata } = useLibraryBlockMetadata(usageKey);
   const { data: componentTags } = useContentTaxonomyTagsData(usageKey);
@@ -65,6 +66,7 @@ const ComponentManagement = ({ usageKey }: ComponentManagementProps) => {
           <ContentTagsDrawer
             id={usageKey}
             variant="component"
+            canTagObject={canEdit}
           />
         </Collapsible>
         )}

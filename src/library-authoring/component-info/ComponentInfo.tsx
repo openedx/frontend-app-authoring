@@ -49,7 +49,7 @@ const ComponentInfo = ({ usageKey }: ComponentInfoProps) => {
           <ComponentPreview usageKey={usageKey} />
         </Tab>
         <Tab eventKey="manage" title={intl.formatMessage(messages.manageTabTitle)}>
-          <ComponentManagement usageKey={usageKey} />
+          <ComponentManagement usageKey={usageKey} canEdit={canEdit} />
         </Tab>
         <Tab eventKey="details" title={intl.formatMessage(messages.detailsTabTitle)}>
           <ComponentDetails usageKey={usageKey} />

@@ -356,3 +356,44 @@ export async function mockXBlockAssets(): ReturnType<typeof api['getXBlockAssets
 }
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockXBlockAssets.applyMock = () => jest.spyOn(api, 'getXBlockAssets').mockImplementation(mockXBlockAssets);
+
+/**
+ * Mock for `getLibraryTeam()`
+ *
+ * Use `mockGetLibraryTeam.applyMock()` to apply it to the whole test suite.
+ */
+export async function mockGetLibraryTeam(libraryId: string): Promise<api.LibraryTeamMember[]> {
+  switch (libraryId) {
+    case mockContentLibrary.libraryIdThatNeverLoads:
+      // Return a promise that never resolves, to simulate never loading:
+      return new Promise<any>(() => {});
+    default:
+      return [
+        mockGetLibraryTeam.adminMember,
+        mockGetLibraryTeam.authorMember,
+        mockGetLibraryTeam.readerMember,
+      ];
+  }
+}
+mockGetLibraryTeam.adminMember = {
+  username: 'admin-user',
+  email: 'admin@domain.tld',
+  accessLevel: 'admin' as api.LibraryAccessLevel,
+};
+mockGetLibraryTeam.authorMember = {
+  username: 'author-user',
+  email: 'author@domain.tld',
+  accessLevel: 'author' as api.LibraryAccessLevel,
+};
+mockGetLibraryTeam.readerMember = {
+  username: 'reader-user',
+  email: 'reader@domain.tld',
+  accessLevel: 'read' as api.LibraryAccessLevel,
+};
+mockGetLibraryTeam.notMember = {
+  username: 'not-user',
+  email: 'not@domain.tld',
+};
+
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockGetLibraryTeam.applyMock = () => jest.spyOn(api, 'getLibraryTeam').mockImplementation(mockGetLibraryTeam);

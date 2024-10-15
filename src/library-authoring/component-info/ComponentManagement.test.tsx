@@ -11,7 +11,9 @@ import { mockContentTaxonomyTagsData } from '../../content-tags-drawer/data/api.
 import { LibraryProvider } from '../common/context';
 
 jest.mock('../../content-tags-drawer', () => ({
-  ContentTagsDrawer: () => <div>Mocked ContentTagsDrawer</div>,
+  ContentTagsDrawer: ({ canTagObject }: { canTagObject: boolean }) => (
+    <div>Mocked {canTagObject ? 'editable' : 'read-only'} ContentTagsDrawer</div>
+  ),
 }));
 
 /*
@@ -56,15 +58,27 @@ describe('<ComponentManagement />', () => {
     ).toBeInTheDocument();
   });
 
-  it('should render the tagging info', async () => {
-    setConfig({
-      ...getConfig(),
-      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
-    });
-    render(<ComponentManagement usageKey={mockLibraryBlockMetadata.usageKeyNeverPublished} />);
-    expect(await screen.findByText('Tags (0)')).toBeInTheDocument();
-    expect(screen.queryByText('Mocked ContentTagsDrawer')).toBeInTheDocument();
-  });
+  test.each([
+    {
+      canEdit: true,
+      expected: 'editable',
+    },
+    {
+      canEdit: false,
+      expected: 'read-only',
+    },
+  ])(
+    'should render the tagging info as $expected',
+    async ({ canEdit, expected }) => {
+      setConfig({
+        ...getConfig(),
+        ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+      });
+      render(<ComponentManagement usageKey={mockLibraryBlockMetadata.usageKeyNeverPublished} canEdit={canEdit} />);
+      expect(await screen.findByText('Tags (0)')).toBeInTheDocument();
+      expect(screen.queryByText(`Mocked ${expected} ContentTagsDrawer`)).toBeInTheDocument();
+    },
+  );
 
   it('should not render draft status', async () => {
     setConfig({
