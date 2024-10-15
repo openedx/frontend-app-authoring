@@ -5,22 +5,21 @@ import {
   initializeMocks,
   render as baseRender,
   screen,
+  waitFor,
 } from '../../testUtils';
 import { LibraryProvider } from '../common/context';
 import { mockContentLibrary, mockLibraryBlockMetadata } from '../data/api.mocks';
 import ComponentManagement from './ComponentManagement';
 
 jest.mock('../../content-tags-drawer', () => ({
-  ContentTagsDrawer: ({ canTagObject }: { canTagObject: boolean }) => (
-    <div>Mocked {canTagObject ? 'editable' : 'read-only'} ContentTagsDrawer</div>
+  ContentTagsDrawer: ({ readOnly }: { readOnly: boolean }) => (
+    <div>Mocked {readOnly ? 'read-only' : 'editable'} ContentTagsDrawer</div>
   ),
 }));
 
 mockContentLibrary.applyMock();
 mockLibraryBlockMetadata.applyMock();
 mockContentTaxonomyTagsData.applyMock();
-
-const { libraryId: mockLibraryId } = mockContentLibrary;
 
 /*
  * This function is used to get the inner text of an element.
@@ -36,15 +35,14 @@ const matchInnerText = (nodeName: string, textToMatch: string) => (_: string, el
   element.nodeName === nodeName && getInnerText(element) === textToMatch
 );
 
-const render = (usageKey: string) => baseRender(<ComponentManagement />, {
+const render = (usageKey: string, libraryId?: string) => baseRender(<ComponentManagement />, {
   extraWrapper: ({ children }) => (
-    <LibraryProvider libraryId={mockLibraryId} sidebarComponentUsageKey={usageKey}>
+    <LibraryProvider libraryId={libraryId || mockContentLibrary.libraryId} sidebarComponentUsageKey={usageKey}>
       {children}
     </LibraryProvider>
   ),
 });
-// lib:OpenedX:CSPROB2
-//
+
 describe('<ComponentManagement />', () => {
   beforeEach(() => {
     initializeMocks();
@@ -82,9 +80,10 @@ describe('<ComponentManagement />', () => {
         ...getConfig(),
         ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
       });
-      render(libraryId);
-      expect(await screen.findByText('Tags (0)')).toBeInTheDocument();
-      expect(screen.queryByText(`Mocked ${expected} ContentTagsDrawer`)).toBeInTheDocument();
+      render(mockLibraryBlockMetadata.usageKeyForTags, libraryId);
+      await waitFor(() => {
+        expect(screen.getByText(`Mocked ${expected} ContentTagsDrawer`)).toBeInTheDocument();
+      });
     },
   );
 

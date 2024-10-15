@@ -14,7 +14,7 @@ import ManageCollections from './ManageCollections';
 
 const ComponentManagement = () => {
   const intl = useIntl();
-  const { sidebarComponentUsageKey: usageKey, readOnly } = useLibraryContext();
+  const { sidebarComponentUsageKey: usageKey, readOnly, isLoadingLibraryData } = useLibraryContext();
 
   // istanbul ignore if: this should never happen
   if (!usageKey) {
@@ -43,6 +43,11 @@ const ComponentManagement = () => {
     });
     return result;
   }, [componentTags]);
+
+  // istanbul ignore if: this should never happen
+  if (isLoadingLibraryData) {
+    return null;
+  }
 
   // istanbul ignore if: this should never happen
   if (!componentMetadata) {

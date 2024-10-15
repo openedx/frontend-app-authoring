@@ -100,10 +100,10 @@ const ContentTagsDrawerTitle = () => {
 
 interface ContentTagsDrawerVariantFooterProps {
   onClose: () => void,
-  canTagObject: boolean,
+  readOnly: boolean,
 }
 
-const ContentTagsDrawerVariantFooter = ({ onClose, canTagObject }: ContentTagsDrawerVariantFooterProps) => {
+const ContentTagsDrawerVariantFooter = ({ onClose, readOnly }: ContentTagsDrawerVariantFooterProps) => {
   const intl = useIntl();
   const {
     commitGlobalStagedTagsStatus,
@@ -131,7 +131,7 @@ const ContentTagsDrawerVariantFooter = ({ onClose, canTagObject }: ContentTagsDr
                 ? messages.tagsDrawerCancelButtonText
                 : messages.tagsDrawerCloseButtonText)}
             </Button>
-            {canTagObject && (
+            {!readOnly && (
               <Button
                 className="rounded-0"
                 onClick={isEditMode
@@ -218,7 +218,6 @@ const ContentTagsComponentVariantFooter = ({ readOnly = false }: ContentTagsComp
 interface ContentTagsDrawerProps {
   id?: string;
   onClose?: () => void;
-  canTagObject?: boolean;
   variant?: 'drawer' | 'component';
   readOnly?: boolean;
 }
@@ -235,7 +234,6 @@ interface ContentTagsDrawerProps {
 const ContentTagsDrawer = ({
   id,
   onClose,
-  canTagObject = false,
   variant = 'drawer',
   readOnly = false,
 }: ContentTagsDrawerProps) => {
@@ -248,7 +246,7 @@ const ContentTagsDrawer = ({
     throw new Error('Error: contentId cannot be null.');
   }
 
-  const context = useContentTagsDrawerContext(contentId, canTagObject);
+  const context = useContentTagsDrawerContext(contentId, !readOnly);
   const { blockingSheet } = useContext(ContentTagsDrawerSheetContext);
 
   const {
@@ -312,7 +310,7 @@ const ContentTagsDrawer = ({
     if (isTaxonomyListLoaded && isContentTaxonomyTagsLoaded) {
       switch (variant) {
         case 'drawer':
-          return <ContentTagsDrawerVariantFooter onClose={onCloseDrawer} canTagObject={canTagObject} />;
+          return <ContentTagsDrawerVariantFooter onClose={onCloseDrawer} readOnly={readOnly} />;
         case 'component':
           return <ContentTagsComponentVariantFooter readOnly={readOnly} />;
         default:

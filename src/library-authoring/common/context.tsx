@@ -102,6 +102,7 @@ export const LibraryProvider = ({
   }, []);
 
   const closeLibrarySidebar = useCallback(() => {
+    resetSidebar();
   }, []);
   const openAddContentSidebar = useCallback(() => {
     resetSidebar();

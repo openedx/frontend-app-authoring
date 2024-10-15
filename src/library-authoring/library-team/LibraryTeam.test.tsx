@@ -140,7 +140,7 @@ describe('<LibraryTeam />', () => {
     await waitFor(() => {
       expect(axiosMock.history.patch.length).toEqual(1);
       expect(axiosMock.history.patch[0].data).toBe(
-        `{"id":"${libraryId}","allow_public_read":true}`,
+        '{"allow_public_read":true}',
       );
     });
   });

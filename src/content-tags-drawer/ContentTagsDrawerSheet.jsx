@@ -14,7 +14,7 @@ const ContentTagsDrawerSheet = ({ id, onClose, showSheet }) => {
 
   // ContentTagsDrawerSheet is only used when editing Courses/Course Units,
   // so we assume it's ok to edit the object tags too.
-  const canTagObject = true;
+  const readOnly = false;
 
   return (
     <ContentTagsDrawerSheetContext.Provider value={context}>
@@ -27,7 +27,7 @@ const ContentTagsDrawerSheet = ({ id, onClose, showSheet }) => {
         <ContentTagsDrawer
           id={id}
           onClose={onClose}
-          canTagObject={canTagObject}
+          readOnly={readOnly}
         />
       </Sheet>
     </ContentTagsDrawerSheetContext.Provider>

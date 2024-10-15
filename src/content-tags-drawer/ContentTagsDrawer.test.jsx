@@ -44,7 +44,7 @@ jest.mock('react-router-dom', () => ({
 const renderDrawer = (contentId, drawerParams = {}) => (
   render(
     <ContentTagsDrawerSheetContext.Provider value={drawerParams}>
-      <ContentTagsDrawer canTagObject {...drawerParams} />
+      <ContentTagsDrawer {...drawerParams} />
     </ContentTagsDrawerSheetContext.Provider>,
     { path, params: { contentId } },
   )
@@ -256,7 +256,7 @@ describe('<ContentTagsDrawer />', () => {
   ])(
     'should hide "$editButton" button on $variant variant if not allowed to tag object',
     async ({ variant, editButton }) => {
-      renderDrawer(stagedTagsId, { variant, canTagObject: false });
+      renderDrawer(stagedTagsId, { variant, readOnly: true });
       expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
       expect(screen.queryByRole('button', { name: editButton })).not.toBeInTheDocument();

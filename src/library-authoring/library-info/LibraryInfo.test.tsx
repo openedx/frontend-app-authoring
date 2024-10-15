@@ -213,6 +213,9 @@ describe('<LibraryInfo />', () => {
 
   it('publish and discard changes btns should be enabled for new libraries if components are added', async () => {
     render(libraryUnpublishedChanges);
+
+    expect(await screen.findByText(libraryData.org)).toBeInTheDocument();
+
     const publishButton = screen.getByRole('button', { name: /publish/i });
     const discardButton = screen.getByRole('button', { name: /discard changes/i });
 
@@ -222,6 +225,9 @@ describe('<LibraryInfo />', () => {
 
   it('publish and discard changes btns should be absent for users who cannot edit the library', async () => {
     render(libraryIdReadOnly);
+
+    expect(await screen.findByText(libraryData.org)).toBeInTheDocument();
+
     const publishButton = screen.queryByRole('button', { name: /publish/i });
     const discardButton = screen.queryByRole('button', { name: /discard changes/i });
 
