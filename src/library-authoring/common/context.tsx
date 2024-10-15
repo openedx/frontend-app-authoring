@@ -102,7 +102,7 @@ export const LibraryProvider = ({
   }, []);
 
   const closeLibrarySidebar = useCallback(() => {
-    }, []);
+  }, []);
   const openAddContentSidebar = useCallback(() => {
     resetSidebar();
     setSidebarBodyComponent(SidebarBodyComponentId.AddContent);
