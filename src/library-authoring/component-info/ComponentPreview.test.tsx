@@ -15,7 +15,7 @@ describe('<ComponentPreview />', () => {
     const usageKey = mockLibraryBlockMetadata.usageKeyPublished;
     render(<ComponentPreview usageKey={usageKey} />);
     const iframe = (await screen.findByTitle('Preview')) as HTMLIFrameElement;
-    expect(iframe.src).toEqual(`http://localhost:18000/xblocks/v2/${usageKey}/embed/student_view/`);
+    expect(iframe.src).toEqual(`http://localhost:18010/xblocks/v2/${usageKey}/embed/student_view/`);
   });
 
   it('shows an expanded preview of the component', async () => {
@@ -30,6 +30,6 @@ describe('<ComponentPreview />', () => {
     const dialogIframe = dialog.querySelector('iframe')!;
     expect(dialogIframe).not.toBeNull();
     expect(dialogIframe).toHaveAttribute('title', 'Preview');
-    expect(dialogIframe.src).toEqual(`http://localhost:18000/xblocks/v2/${usageKey}/embed/student_view/`);
+    expect(dialogIframe.src).toEqual(`http://localhost:18010/xblocks/v2/${usageKey}/embed/student_view/`);
   });
 });
