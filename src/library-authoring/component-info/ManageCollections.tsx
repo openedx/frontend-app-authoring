@@ -147,6 +147,7 @@ const ComponentCollections = ({ collections, onManageClick }: {
   onManageClick: () => void;
 }) => {
   const intl = useIntl();
+  const { readOnly } = useLibraryContext();
 
   if (!collections?.length) {
     return (
@@ -154,12 +155,14 @@ const ComponentCollections = ({ collections, onManageClick }: {
         <span className="border-bottom pb-3 border-gray-100">
           <FormattedMessage {...messages.componentNotOrganizedIntoCollection} />
         </span>
-        <Button
-          onClick={onManageClick}
-          variant="primary"
-        >
-          {intl.formatMessage(messages.manageCollectionsAddBtnText)}
-        </Button>
+        {!readOnly && (
+          <Button
+            onClick={onManageClick}
+            variant="primary"
+          >
+            {intl.formatMessage(messages.manageCollectionsAddBtnText)}
+          </Button>
+        )}
       </Stack>
     );
   }
@@ -177,12 +180,14 @@ const ComponentCollections = ({ collections, onManageClick }: {
           <span>{collection}</span>
         </Stack>
       ))}
-      <Button
-        onClick={onManageClick}
-        variant="outline-primary"
-      >
-        {intl.formatMessage(messages.manageCollectionsText)}
-      </Button>
+      {!readOnly && (
+        <Button
+          onClick={onManageClick}
+          variant="outline-primary"
+        >
+          {intl.formatMessage(messages.manageCollectionsText)}
+        </Button>
+      )}
     </Stack>
   );
 };
