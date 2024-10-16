@@ -20,6 +20,15 @@ const slice = createSlice({
     courseSectionVertical: {},
     courseVerticalChildren: { children: [], isPublished: true },
     staticFileNotices: {},
+    courseOutlineInfo: {},
+    courseOutlineInfoLoadingStatus: RequestStatus.IN_PROGRESS,
+    movedXBlockParams: {
+      isSuccess: false,
+      isUndo: false,
+      title: '',
+      sourceLocator: '',
+      targetParentLocator: '',
+    }
   },
   reducers: {
     fetchCourseItemSuccess: (state, { payload }) => {
@@ -87,6 +96,15 @@ const slice = createSlice({
     fetchStaticFileNoticesSuccess: (state, { payload }) => {
       state.staticFileNotices = payload;
     },
+    updateCourseOutlineInfo: (state, { payload }) => {
+      state.courseOutlineInfo = payload;
+    },
+    updateCourseOutlineInfoLoadingStatus: (state, { payload }) => {
+      state.courseOutlineInfoLoadingStatus = payload.status;
+    },
+    updateMovedXBlockParams: (state, { payload }) => {
+      state.movedXBlockParams = { ...state.movedXBlockParams, ...payload };
+    },
   },
 });
 
@@ -106,6 +124,9 @@ export const {
   updateCourseVerticalChildren,
   updateCourseVerticalChildrenLoadingStatus,
   fetchStaticFileNoticesSuccess,
+  updateCourseOutlineInfo,
+  updateCourseOutlineInfoLoadingStatus,
+  updateMovedXBlockParams,
 } = slice.actions;
 
 export const {

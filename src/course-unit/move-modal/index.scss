@@ -1,0 +1,68 @@
+.move-xblock-modal {
+    max-width: 920px;
+
+    .pgn__modal-header,
+    .pgn__modal-footer {
+        z-index: 2;
+    }
+
+    .pgn__modal-header {
+        @include pgn-box-shadow(2, "centered");
+    }
+
+    .pgn__modal-footer {
+        @include pgn-box-shadow(2, "down");
+    }
+
+    .pgn__modal-body {
+        background: $white;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .pgn__breadcrumb {
+        border-bottom: 1px solid $light-300;
+        padding: map-get($spacers, 1) map-get($spacers, 4) $spacer;
+
+        .list-inline {
+            flex-wrap: wrap;
+        }
+
+        .list-inline-item {
+            &.active,
+            a.link-muted {
+                color: $dark-500;
+            }
+
+            a.link-muted {
+                cursor: pointer;
+            }
+        }
+    }
+
+    .xblock-items-category {
+        padding: $spacer map-get($spacers, 4) map-get($spacers, 2\.5);
+    }
+
+    .xblock-items-container {
+        list-style: none;
+    }
+
+    .xblock-item {
+        .btn,
+        .component {
+            display: flex;
+            border-radius: 0;
+            width: 100%;
+            gap: map-get($spacers, 2);
+            padding: 0.5625rem $spacer 0.5625rem map-get($spacers, 4);
+        }
+
+        .btn {
+            &:hover {
+                background: $light-300;
+                text-decoration: none;
+            }
+        }
+    }
+}

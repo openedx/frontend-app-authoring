@@ -11,6 +11,7 @@ export const getCourseUnitApiUrl = (itemId) => `${getStudioBaseUrl()}/xblock/con
 export const getXBlockBaseApiUrl = (itemId) => `${getStudioBaseUrl()}/xblock/${itemId}`;
 export const getCourseSectionVerticalApiUrl = (itemId) => `${getStudioBaseUrl()}/api/contentstore/v1/container_handler/${itemId}`;
 export const getCourseVerticalChildrenApiUrl = (itemId) => `${getStudioBaseUrl()}/api/contentstore/v1/container/vertical/${itemId}/children`;
+export const getOutlineInfo = (courseId) => `${getStudioBaseUrl()}/course/${courseId}?format=concise`;
 export const postXBlockBaseApiUrl = () => `${getStudioBaseUrl()}/xblock/`;
 
 /**
@@ -129,6 +130,34 @@ export async function getCourseVerticalChildren(itemId) {
 export async function deleteUnitItem(itemId) {
   const { data } = await getAuthenticatedHttpClient()
     .delete(getXBlockBaseApiUrl(itemId));
+
+  return data;
+}
+
+/**
+ * Get an object containing course outline data.
+ * @param {string} courseId - The identifier of the course.
+ * @returns {Promise<Object>}
+ */
+export async function getCourseOutlineInfo(courseId) {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(getOutlineInfo(courseId));
+
+  return data;
+}
+
+/**
+ * Move a unit item to new unit.
+ * @param {string} sourceLocator - The ID of the item to be moved.
+ * @param {string} targetParentLocator - The ID of the XBlock associated with the item.
+ * @returns {Promise<Object>} - A promise that resolves to the response data from the server.
+ */
+export async function patchUnitItem(sourceLocator, targetParentLocator) {
+  const { data } = await getAuthenticatedHttpClient()
+    .patch(postXBlockBaseApiUrl(), {
+      parent_locator: targetParentLocator,
+      move_source_locator: sourceLocator,
+    });
 
   return data;
 }
