@@ -89,7 +89,7 @@ describe('<PageAlerts />', () => {
   });
 
   it('renders discussion alerts', async () => {
-    const { getByText, queryByText } = renderComponent({
+    const { findByText, queryByText } = renderComponent({
       ...pageAlertsData,
       discussionsSettings: {
         providerType: 'openedx',
@@ -104,15 +104,13 @@ describe('<PageAlerts />', () => {
     expect(learnMoreBtn).toHaveAttribute('href', 'some-learn-more-url');
 
     const dismissBtn = queryByText('Dismiss');
-    await act(async () => fireEvent.click(dismissBtn));
+    fireEvent.click(dismissBtn);
     const discussionAlertDismissKey = `discussionAlertDismissed-${pageAlertsData.courseId}`;
     expect(localStorage.getItem(discussionAlertDismissKey)).toBe('true');
 
-    await waitFor(() => {
-      const feedbackLink = getByText(messages.discussionNotificationFeedback.defaultMessage);
-      expect(feedbackLink);
-      expect(feedbackLink).toHaveAttribute('href', 'some-feedback-url');
-    });
+    const feedbackLink = await findByText(messages.discussionNotificationFeedback.defaultMessage);
+    expect(feedbackLink).toBeInTheDocument();
+    expect(feedbackLink).toHaveAttribute('href', 'some-feedback-url');
   });
 
   it('renders deprecation warning alerts', async () => {
