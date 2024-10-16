@@ -27,6 +27,8 @@ export const NOTIFICATION_MESSAGES = {
   copying: 'Copying',
   pasting: 'Pasting',
   discardChanges: 'Discarding changes',
+  moving: 'Moving',
+  undoMoving: 'Undo moving',
   publishing: 'Publishing',
   hidingFromStudents: 'Hiding from students',
   makingVisibleToStudents: 'Making visible to students',

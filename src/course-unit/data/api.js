@@ -11,6 +11,7 @@ export const getCourseUnitApiUrl = (itemId) => `${getStudioBaseUrl()}/xblock/con
 export const getXBlockBaseApiUrl = (itemId) => `${getStudioBaseUrl()}/xblock/${itemId}`;
 export const getCourseSectionVerticalApiUrl = (itemId) => `${getStudioBaseUrl()}/api/contentstore/v1/container_handler/${itemId}`;
 export const getCourseVerticalChildrenApiUrl = (itemId) => `${getStudioBaseUrl()}/api/contentstore/v1/container/vertical/${itemId}/children`;
+export const getCourseOutlineInfoUrl = (courseId) => `${getStudioBaseUrl()}/course/${courseId}?format=concise`;
 export const postXBlockBaseApiUrl = () => `${getStudioBaseUrl()}/xblock/`;
 
 /**
@@ -156,4 +157,52 @@ export async function duplicateUnitItem(itemId, XBlockId) {
     });
 
   return data;
+}
+
+/**
+ * @typedef {Object} courseOutline
+ * @property {string} id - The unique identifier of the course.
+ * @property {string} displayName - The display name of the course.
+ * @property {string} category - The category of the course (e.g., "course").
+ * @property {boolean} hasChildren - Whether the course has child items.
+ * @property {boolean} unitLevelDiscussions - Indicates if unit-level discussions are available.
+ * @property {Object} childInfo - Information about the child elements of the course.
+ * @property {string} childInfo.category - The category of the child (e.g., "chapter").
+ * @property {string} childInfo.display_name - The display name of the child element.
+ * @property {Array<Object>} childInfo.children - List of children within the child_info (could be empty).
+ */
+
+/**
+ * Get an object containing course outline data.
+ * @param {string} courseId - The identifier of the course.
+ * @returns {Promise<courseOutline>} - The course outline data.
+ */
+export async function getCourseOutlineInfo(courseId) {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(getCourseOutlineInfoUrl(courseId));
+
+  return camelCaseObject(data);
+}
+
+/**
+ * @typedef {Object} moveInfo
+ * @property {string} moveSourceLocator - The locator of the source block being moved.
+ * @property {string} parentLocator - The locator of the parent block where the source is being moved to.
+ * @property {number} sourceIndex - The index position of the source block.
+ */
+
+/**
+ * Move a unit item to new unit.
+ * @param {string} sourceLocator - The ID of the item to be moved.
+ * @param {string} targetParentLocator - The ID of the XBlock associated with the item.
+ * @returns {Promise<moveInfo>} - The move information.
+ */
+export async function patchUnitItem(sourceLocator, targetParentLocator) {
+  const { data } = await getAuthenticatedHttpClient()
+    .patch(postXBlockBaseApiUrl(), {
+      parent_locator: targetParentLocator,
+      move_source_locator: sourceLocator,
+    });
+
+  return camelCaseObject(data);
 }
