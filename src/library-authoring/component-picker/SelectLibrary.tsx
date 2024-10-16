@@ -75,7 +75,7 @@ const SelectLibrary = ({ selectedLibrary, setSelectedLibrary }: SelectLibraryPro
         value={searchQuery}
         placeholder={intl.formatMessage(messages.selectLibrarySearchPlaceholder)}
       />
-      <div className="library-list">
+      <div>
         {data.results.length === 0 && (<EmptyState />)}
         <Form.RadioSet
           name="selected-library"
