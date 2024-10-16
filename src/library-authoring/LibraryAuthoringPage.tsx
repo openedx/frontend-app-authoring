@@ -152,15 +152,17 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     openInfoSidebar,
   } = useLibraryContext();
 
-  const currentPath = location.pathname.split('/').pop();
-  let initialActiveKey: string | undefined;
-  if (componentPickerMode || currentPath === libraryId || currentPath === '') {
-    initialActiveKey = TabList.home;
-  } else if (currentPath && currentPath in TabList) {
-    initialActiveKey = TabList[currentPath];
-  }
+  const [activeKey, setActiveKey] = useState<string | undefined>('');
 
-  const [activeKey, setActiveKey] = useState<string | undefined>(initialActiveKey);
+  useEffect(() => {
+    const currentPath = location.pathname.split('/').pop();
+
+    if (componentPickerMode || currentPath === libraryId || currentPath === '') {
+      setActiveKey(TabList.home);
+    } else if (currentPath && currentPath in TabList) {
+      setActiveKey(TabList[currentPath]);
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     if (!componentPickerMode) {
