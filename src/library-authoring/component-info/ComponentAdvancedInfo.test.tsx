@@ -28,7 +28,9 @@ const render = (
   <ComponentAdvancedInfo />,
   {
     extraWrapper: ({ children }: { children: React.ReactNode }) => (
-      <LibraryProvider libraryId={libraryId} sidebarComponentUsageKey={usageKey}>{children}</LibraryProvider>
+      <LibraryProvider libraryId={libraryId} initialSidebarComponentUsageKey={usageKey}>
+        {children}
+      </LibraryProvider>
     ),
   },
 );

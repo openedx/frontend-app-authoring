@@ -37,7 +37,7 @@ const matchInnerText = (nodeName: string, textToMatch: string) => (_: string, el
 
 const render = (usageKey: string, libraryId?: string) => baseRender(<ComponentManagement />, {
   extraWrapper: ({ children }) => (
-    <LibraryProvider libraryId={libraryId || mockContentLibrary.libraryId} sidebarComponentUsageKey={usageKey}>
+    <LibraryProvider libraryId={libraryId || mockContentLibrary.libraryId} initialSidebarComponentUsageKey={usageKey}>
       {children}
     </LibraryProvider>
   ),

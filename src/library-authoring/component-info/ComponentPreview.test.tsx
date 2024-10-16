@@ -21,7 +21,7 @@ const render = () => baseRender(<ComponentPreview />, {
   extraWrapper: ({ children }) => (
     <LibraryProvider
       libraryId={libraryId}
-      sidebarComponentUsageKey={usageKey}
+      initialSidebarComponentUsageKey={usageKey}
     >
       { children }
     </LibraryProvider>

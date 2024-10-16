@@ -30,7 +30,7 @@ const library = mockContentLibrary.libraryData;
 
 const render = () => baseRender(<CollectionDetails />, {
   extraWrapper: ({ children }) => (
-    <LibraryProvider libraryId={library.id} sidebarCollectionId={collectionId}>
+    <LibraryProvider libraryId={library.id} initialSidebarCollectionId={collectionId}>
       { children }
     </LibraryProvider>
   ),

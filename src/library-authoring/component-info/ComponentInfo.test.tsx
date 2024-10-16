@@ -25,7 +25,7 @@ const withLibraryId = (libraryId: string, sidebarComponentUsageKey: string) => (
   extraWrapper: ({ children }: { children: React.ReactNode }) => (
     <LibraryProvider
       libraryId={libraryId}
-      sidebarComponentUsageKey={sidebarComponentUsageKey}
+      initialSidebarComponentUsageKey={sidebarComponentUsageKey}
     >
       {children}
     </LibraryProvider>
