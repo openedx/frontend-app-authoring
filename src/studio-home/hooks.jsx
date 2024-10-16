@@ -41,7 +41,7 @@ const useStudioHome = (isPaginated = false) => {
   useEffect(() => {
     if (isPaginated) {
       const firstPage = 1;
-      dispatch(fetchStudioHomeData(location.search ?? '', false, { page: firstPage }, true));
+      dispatch(fetchStudioHomeData(location.search ?? '', false, { page: firstPage, order: 'display_name' }, true));
     }
   }, []);
 
