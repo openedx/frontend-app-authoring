@@ -40,6 +40,7 @@ import {
   getXBlockAssets,
   updateComponentCollections,
   removeComponentsFromCollection,
+  addComponentToCourse,
 } from './api';
 
 export const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
@@ -473,3 +474,18 @@ export const useUpdateComponentCollections = (libraryId: string, usageKey: strin
     },
   });
 };
+
+/**
+ * Use this mutation to add a component to a course
+ */
+export const useAddComponentToCourse = (parentLocator: string | undefined, componentUsageKey: string) => (
+  useMutation({
+    mutationFn: () => {
+      // istanbul ignore if: this should never happen
+      if (!parentLocator) {
+        throw new Error('parentLocator is required');
+      }
+      return addComponentToCourse(parentLocator, componentUsageKey);
+    },
+  })
+);

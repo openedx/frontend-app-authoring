@@ -1,8 +1,34 @@
 /* istanbul ignore file */
+import { camelCaseObject } from '@edx/frontend-platform';
 import { mockContentTaxonomyTagsData } from '../../content-tags-drawer/data/api.mocks';
 import { getBlockType } from '../../generic/key-utils';
 import { createAxiosError } from '../../testUtils';
+import contentLibrariesListV2 from '../__mocks__/contentLibrariesListV2';
 import * as api from './api';
+
+/**
+ * Mock for `getContentLibraryV2List()`
+ */
+export const mockGetContentLibraryV2List = {
+  applyMock: () => jest.spyOn(api, 'getContentLibraryV2List').mockResolvedValue(
+    camelCaseObject(contentLibrariesListV2),
+  ),
+  applyMockError: () => jest.spyOn(api, 'getContentLibraryV2List').mockRejectedValue(
+    createAxiosError({ code: 500, message: 'Internal Error.', path: api.getContentLibraryV2ListApiUrl() }),
+  ),
+  applyMockLoading: () => jest.spyOn(api, 'getContentLibraryV2List').mockResolvedValue(
+    new Promise(() => {}),
+  ),
+  applyMockEmpty: () => jest.spyOn(api, 'getContentLibraryV2List').mockResolvedValue({
+    next: null,
+    previous: null,
+    count: 0,
+    numPages: 1,
+    currentPage: 1,
+    start: 0,
+    results: [],
+  }),
+};
 
 /**
  * Mock for `getContentLibrary()`
@@ -30,6 +56,69 @@ export async function mockContentLibrary(libraryId: string): Promise<api.Content
         allowPublicRead: true,
         canEditLibrary: false,
       };
+    case mockContentLibrary.libraryDraftWithoutUser:
+      return {
+        ...mockContentLibrary.libraryData,
+        id: mockContentLibrary.libraryDraftWithoutUser,
+        slug: 'draftNoUser',
+        lastDraftCreatedBy: null,
+      };
+    case mockContentLibrary.libraryNoDraftDate:
+      return {
+        ...mockContentLibrary.libraryData,
+        id: mockContentLibrary.libraryNoDraftDate,
+        slug: 'noDraftDate',
+        lastDraftCreated: null,
+      };
+    case mockContentLibrary.libraryNoDraftNoCrateDate:
+      return {
+        ...mockContentLibrary.libraryData,
+        id: mockContentLibrary.libraryNoDraftNoCrateDate,
+        slug: 'noDraftNoCreateDate',
+        lastDraftCreated: null,
+        created: null,
+      };
+    case mockContentLibrary.libraryUnpublishedChanges:
+      return {
+        ...mockContentLibrary.libraryData,
+        id: mockContentLibrary.libraryUnpublishedChanges,
+        slug: 'unpublishedChanges',
+        lastPublished: '2024-07-26T16:37:42Z',
+        hasUnpublishedChanges: true,
+      };
+    case mockContentLibrary.libraryPublished:
+      return {
+        ...mockContentLibrary.libraryData,
+        id: mockContentLibrary.libraryPublished,
+        slug: 'published',
+        lastPublished: '2024-07-26T16:37:42Z',
+        hasUnpublishedChanges: false,
+        publishedBy: 'staff',
+      };
+    case mockContentLibrary.libraryPublishedWithoutUser:
+      return {
+        ...mockContentLibrary.libraryData,
+        id: mockContentLibrary.libraryPublishedWithoutUser,
+        slug: 'publishedWithUser',
+        lastPublished: '2024-07-26T16:37:42Z',
+        hasUnpublishedChanges: false,
+        publishedBy: null,
+      };
+    case mockContentLibrary.libraryDraftWithoutChanges:
+      return {
+        ...mockContentLibrary.libraryData,
+        id: mockContentLibrary.libraryDraftWithoutChanges,
+        slug: 'draftNoChanges',
+        numBlocks: 0,
+      };
+    case mockContentLibrary.libraryFromList:
+      return {
+        ...mockContentLibrary.libraryData,
+        id: mockContentLibrary.libraryFromList,
+        slug: 'TL1',
+        org: 'SampleTaxonomyOrg1',
+        title: 'Test Library 1',
+      };
     default:
       throw new Error(`mockContentLibrary: unknown library ID "${libraryId}"`);
   }
@@ -48,7 +137,7 @@ mockContentLibrary.libraryData = {
   lastPublished: null, // or e.g. '2024-08-30T16:37:42Z',
   publishedBy: null, // or e.g. 'test_author',
   lastDraftCreated: '2024-07-22T21:37:49Z',
-  lastDraftCreatedBy: null,
+  lastDraftCreatedBy: 'staff',
   allowLti: false,
   allowPublicLearning: false,
   allowPublicRead: false,
@@ -63,6 +152,14 @@ mockContentLibrary.libraryIdReadOnly = 'lib:Axim:readOnly';
 mockContentLibrary.libraryIdThatNeverLoads = 'lib:Axim:infiniteLoading';
 mockContentLibrary.library404 = 'lib:Axim:error404';
 mockContentLibrary.library500 = 'lib:Axim:error500';
+mockContentLibrary.libraryDraftWithoutUser = 'lib:Axim:draftNoUser';
+mockContentLibrary.libraryNoDraftDate = 'lib:Axim:noDraftDate';
+mockContentLibrary.libraryNoDraftNoCrateDate = 'lib:Axim:noDraftNoCreateDate';
+mockContentLibrary.libraryUnpublishedChanges = 'lib:Axim:unpublishedChanges';
+mockContentLibrary.libraryPublished = 'lib:Axim:published';
+mockContentLibrary.libraryPublishedWithoutUser = 'lib:Axim:publishedWithoutUser';
+mockContentLibrary.libraryDraftWithoutChanges = 'lib:Axim:draftNoChanges';
+mockContentLibrary.libraryFromList = 'lib:SampleTaxonomyOrg1:TL1';
 mockContentLibrary.applyMock = () => jest.spyOn(api, 'getContentLibrary').mockImplementation(mockContentLibrary);
 
 /**

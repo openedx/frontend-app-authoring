@@ -100,10 +100,10 @@ const ContentTagsDrawerTitle = () => {
 
 interface ContentTagsDrawerVariantFooterProps {
   onClose: () => void,
-  canTagObject: boolean,
+  readOnly: boolean,
 }
 
-const ContentTagsDrawerVariantFooter = ({ onClose, canTagObject }: ContentTagsDrawerVariantFooterProps) => {
+const ContentTagsDrawerVariantFooter = ({ onClose, readOnly }: ContentTagsDrawerVariantFooterProps) => {
   const intl = useIntl();
   const {
     commitGlobalStagedTagsStatus,
@@ -131,7 +131,7 @@ const ContentTagsDrawerVariantFooter = ({ onClose, canTagObject }: ContentTagsDr
                 ? messages.tagsDrawerCancelButtonText
                 : messages.tagsDrawerCloseButtonText)}
             </Button>
-            {canTagObject && (
+            {!readOnly && (
               <Button
                 className="rounded-0"
                 onClick={isEditMode
@@ -157,7 +157,11 @@ const ContentTagsDrawerVariantFooter = ({ onClose, canTagObject }: ContentTagsDr
   );
 };
 
-const ContentTagsComponentVariantFooter = ({ canTagObject }: { canTagObject: boolean }) => {
+interface ContentTagsComponentVariantFooterProps {
+  readOnly?: boolean;
+}
+
+const ContentTagsComponentVariantFooter = ({ readOnly = false }: ContentTagsComponentVariantFooterProps) => {
   const intl = useIntl();
   const {
     commitGlobalStagedTagsStatus,
@@ -198,16 +202,14 @@ const ContentTagsComponentVariantFooter = ({ canTagObject }: { canTagObject: boo
             </div>
           )}
         </div>
-      ) : (
-        canTagObject && (
-          <Button
-            variant="outline-primary"
-            onClick={toEditMode}
-            block
-          >
-            {intl.formatMessage(messages.manageTagsButton)}
-          </Button>
-        )
+      ) : !readOnly && (
+        <Button
+          variant="outline-primary"
+          onClick={toEditMode}
+          block
+        >
+          {intl.formatMessage(messages.manageTagsButton)}
+        </Button>
       )}
     </div>
   );
@@ -216,8 +218,8 @@ const ContentTagsComponentVariantFooter = ({ canTagObject }: { canTagObject: boo
 interface ContentTagsDrawerProps {
   id?: string;
   onClose?: () => void;
-  canTagObject?: boolean;
   variant?: 'drawer' | 'component';
+  readOnly?: boolean;
 }
 
 /**
@@ -232,8 +234,8 @@ interface ContentTagsDrawerProps {
 const ContentTagsDrawer = ({
   id,
   onClose,
-  canTagObject = false,
   variant = 'drawer',
+  readOnly = false,
 }: ContentTagsDrawerProps) => {
   const intl = useIntl();
   // TODO: We can delete 'params' when the iframe is no longer used on edx-platform
@@ -244,7 +246,7 @@ const ContentTagsDrawer = ({
     throw new Error('Error: contentId cannot be null.');
   }
 
-  const context = useContentTagsDrawerContext(contentId, canTagObject);
+  const context = useContentTagsDrawerContext(contentId, !readOnly);
   const { blockingSheet } = useContext(ContentTagsDrawerSheetContext);
 
   const {
@@ -308,9 +310,9 @@ const ContentTagsDrawer = ({
     if (isTaxonomyListLoaded && isContentTaxonomyTagsLoaded) {
       switch (variant) {
         case 'drawer':
-          return <ContentTagsDrawerVariantFooter onClose={onCloseDrawer} canTagObject={canTagObject} />;
+          return <ContentTagsDrawerVariantFooter onClose={onCloseDrawer} readOnly={readOnly} />;
         case 'component':
-          return <ContentTagsComponentVariantFooter canTagObject={canTagObject} />;
+          return <ContentTagsComponentVariantFooter readOnly={readOnly} />;
         default:
           return null;
       }

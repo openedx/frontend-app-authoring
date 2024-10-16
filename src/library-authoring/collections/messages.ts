@@ -126,6 +126,11 @@ const messages = defineMessages({
     defaultMessage: 'Edit collection title',
     description: 'Alt text for edit collection title icon button',
   },
+  returnToLibrary: {
+    id: 'course-authoring.library-authoring.collection.component-picker.return-to-library',
+    defaultMessage: 'Back to Library',
+    description: 'Breadcrumbs link to return to library',
+  },
 });
 
 export default messages;

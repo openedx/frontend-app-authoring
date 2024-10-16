@@ -1,23 +1,23 @@
-import React, { useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
+  Button,
+  Dropdown,
   Icon,
   IconButton,
-  Dropdown,
 } from '@openedx/paragon';
-import { MoreVert } from '@openedx/paragon/icons';
+import { AddCircleOutline, MoreVert } from '@openedx/paragon/icons';
 
-import { useParams } from 'react-router';
+import { STUDIO_CLIPBOARD_CHANNEL } from '../../constants';
 import { updateClipboard } from '../../generic/data/api';
 import { ToastContext } from '../../generic/toast-context';
 import { type ContentHit } from '../../search-manager';
 import { useLibraryContext } from '../common/context';
-import messages from './messages';
-import { STUDIO_CLIPBOARD_CHANNEL } from '../../constants';
+import { useAddComponentToCourse, useRemoveComponentsFromCollection } from '../data/apiHooks';
 import BaseComponentCard from './BaseComponentCard';
 import { canEditComponent } from './ComponentEditorModal';
-import { useRemoveComponentsFromCollection } from '../data/apiHooks';
+import messages from './messages';
 
 type ComponentCardProps = {
   contentHit: ContentHit,
@@ -27,11 +27,12 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   const intl = useIntl();
   const {
     libraryId,
+    collectionId,
+    sidebarComponentUsageKey,
     openComponentEditor,
     closeLibrarySidebar,
-    currentComponentUsageKey,
   } = useLibraryContext();
-  const { collectionId } = useParams();
+
   const canEdit = usageKey && canEditComponent(usageKey);
   const { showToast } = useContext(ToastContext);
   const [clipboardBroadcastChannel] = useState(() => new BroadcastChannel(STUDIO_CLIPBOARD_CHANNEL));
@@ -47,7 +48,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
 
   const removeFromCollection = () => {
     removeComponentsMutation.mutateAsync([usageKey]).then(() => {
-      if (currentComponentUsageKey === usageKey) {
+      if (sidebarComponentUsageKey === usageKey) {
         // Close sidebar if current component is open
         closeLibrarySidebar();
       }
@@ -58,7 +59,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   };
 
   return (
-    <Dropdown id="component-card-dropdown" onClick={(e) => e.stopPropagation()}>
+    <Dropdown id="component-card-dropdown">
       <Dropdown.Toggle
         id="component-card-menu-toggle"
         as={IconButton}
@@ -88,10 +89,15 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   );
 };
 
-const ComponentCard = ({ contentHit } : ComponentCardProps) => {
+const ComponentCard = ({ contentHit }: ComponentCardProps) => {
+  const intl = useIntl();
+
   const {
     openComponentInfoSidebar,
+    componentPickerMode,
+    parentLocator,
   } = useLibraryContext();
+  const { showToast } = useContext(ToastContext);
 
   const {
     blockType,
@@ -101,10 +107,26 @@ const ComponentCard = ({ contentHit } : ComponentCardProps) => {
   } = contentHit;
   const description: string = (/* eslint-disable */
     blockType === 'html' ? formatted?.content?.htmlContent :
-    blockType === 'problem' ? formatted?.content?.capaContent :
-    undefined
+      blockType === 'problem' ? formatted?.content?.capaContent :
+        undefined
   ) ?? '';/* eslint-enable */
   const displayName = formatted?.displayName ?? '';
+
+  const {
+    mutateAsync: addComponentToCourse,
+    reset,
+  } = useAddComponentToCourse(parentLocator, contentHit.usageKey);
+
+  const handleAddComponentToCourse = () => {
+    addComponentToCourse()
+      .then(() => {
+        window.parent.postMessage('closeComponentPicker', '*');
+      })
+      .catch(() => {
+        showToast(intl.formatMessage(messages.addComponentToCourseError));
+        reset();
+      });
+  };
 
   return (
     <BaseComponentCard
@@ -114,7 +136,17 @@ const ComponentCard = ({ contentHit } : ComponentCardProps) => {
       tags={tags}
       actions={(
         <ActionRow>
-          <ComponentMenu usageKey={usageKey} />
+          {componentPickerMode ? (
+            <Button
+              variant="outline-primary"
+              iconBefore={AddCircleOutline}
+              onClick={handleAddComponentToCourse}
+            >
+              <FormattedMessage {...messages.addComponentToCourseButtonTitle} />
+            </Button>
+          ) : (
+            <ComponentMenu usageKey={usageKey} />
+          )}
         </ActionRow>
       )}
       openInfoSidebar={() => openComponentInfoSidebar(usageKey)}

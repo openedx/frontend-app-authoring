@@ -10,8 +10,8 @@ import {
   IconButton,
   Stack,
 } from '@openedx/paragon';
-import { Add, InfoOutline } from '@openedx/paragon/icons';
-import { Link, useParams } from 'react-router-dom';
+import { Add, ArrowBack, InfoOutline } from '@openedx/paragon/icons';
+import { Link } from 'react-router-dom';
 
 import Loading from '../../generic/Loading';
 import ErrorAlert from '../../generic/alert-error';
@@ -32,13 +32,14 @@ import messages from './messages';
 import { LibrarySidebar } from '../library-sidebar';
 import LibraryCollectionComponents from './LibraryCollectionComponents';
 
-const HeaderActions = ({ canEditLibrary }: { canEditLibrary: boolean; }) => {
+const HeaderActions = () => {
   const intl = useIntl();
   const {
     openAddContentSidebar,
+    readOnly,
   } = useLibraryContext();
 
-  if (!canEditLibrary) {
+  if (readOnly) {
     return null;
   }
 
@@ -49,7 +50,6 @@ const HeaderActions = ({ canEditLibrary }: { canEditLibrary: boolean; }) => {
         iconBefore={Add}
         variant="primary rounded-0"
         onClick={openAddContentSidebar}
-        disabled={!canEditLibrary}
       >
         {intl.formatMessage(messages.newContentButton)}
       </Button>
@@ -59,14 +59,16 @@ const HeaderActions = ({ canEditLibrary }: { canEditLibrary: boolean; }) => {
 
 const SubHeaderTitle = ({
   title,
-  canEditLibrary,
   infoClickHandler,
 }: {
   title: string;
-  canEditLibrary: boolean;
   infoClickHandler: () => void;
 }) => {
   const intl = useIntl();
+
+  const { readOnly, componentPickerMode } = useLibraryContext();
+
+  const showReadOnlyBadge = readOnly && !componentPickerMode;
 
   return (
     <Stack direction="vertical">
@@ -80,7 +82,7 @@ const SubHeaderTitle = ({
           variant="primary"
         />
       </Stack>
-      { !canEditLibrary && (
+      {showReadOnlyBadge && (
         <div>
           <Badge variant="primary" style={{ fontSize: '50%' }}>
             {intl.formatMessage(messages.readOnlyBadge)}
@@ -94,7 +96,7 @@ const SubHeaderTitle = ({
 const LibraryCollectionPage = () => {
   const intl = useIntl();
 
-  const { libraryId, collectionId } = useParams();
+  const { libraryId, collectionId } = useLibraryContext();
 
   if (!collectionId || !libraryId) {
     // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
@@ -104,6 +106,8 @@ const LibraryCollectionPage = () => {
   const {
     sidebarBodyComponent,
     openCollectionInfoSidebar,
+    componentPickerMode,
+    setCollectionId,
   } = useLibraryContext();
 
   const {
@@ -133,32 +137,56 @@ const LibraryCollectionPage = () => {
     return <ErrorAlert error={error} />;
   }
 
-  const breadcrumbs = [
-    {
-      label: libraryData.title,
-      to: `/library/${libraryId}`,
-    },
-    {
-      label: intl.formatMessage(messages.allCollections),
-      to: `/library/${libraryId}/collections`,
-    },
-    // Adding empty breadcrumb to add the last `>` spacer.
-    {
-      label: '',
-      to: '',
-    },
-  ];
+  const breadcumbs = !componentPickerMode ? (
+    <Breadcrumb
+      ariaLabel={intl.formatMessage(messages.breadcrumbsAriaLabel)}
+      links={[
+        {
+          label: libraryData.title,
+          to: `/library/${libraryId}`,
+        },
+        {
+          label: intl.formatMessage(messages.allCollections),
+          to: `/library/${libraryId}/collections`,
+        },
+        // Adding empty breadcrumb to add the last `>` spacer.
+        {
+          label: '',
+          to: '',
+        },
+      ]}
+      linkAs={Link}
+    />
+  ) : (
+    <Breadcrumb
+      ariaLabel={intl.formatMessage(messages.breadcrumbsAriaLabel)}
+      links={[
+        {
+          label: '',
+          to: '',
+        },
+        {
+          label: intl.formatMessage(messages.returnToLibrary),
+          onClick: () => { setCollectionId(undefined); },
+        },
+      ]}
+      spacer={<Icon src={ArrowBack} size="sm" />}
+      linkAs={Link}
+    />
+  );
 
   return (
     <div className="d-flex">
       <div className="flex-grow-1">
-        <Header
-          number={libraryData.slug}
-          title={libraryData.title}
-          org={libraryData.org}
-          contextId={libraryId}
-          isLibrary
-        />
+        {!componentPickerMode && (
+          <Header
+            number={libraryData.slug}
+            title={libraryData.title}
+            org={libraryData.org}
+            contextId={libraryId}
+            isLibrary
+          />
+        )}
         <Container size="xl" className="px-4 mt-4 mb-5 library-authoring-page">
           <SearchContextProvider
             extraFilter={[`context_key = "${libraryId}"`, `collections.key = "${collectionId}"`]}
@@ -168,18 +196,11 @@ const LibraryCollectionPage = () => {
               title={(
                 <SubHeaderTitle
                   title={collectionData.title}
-                  canEditLibrary={libraryData.canEditLibrary}
                   infoClickHandler={() => openCollectionInfoSidebar(collectionId)}
                 />
               )}
-              breadcrumbs={(
-                <Breadcrumb
-                  ariaLabel={intl.formatMessage(messages.breadcrumbsAriaLabel)}
-                  links={breadcrumbs}
-                  linkAs={Link}
-                />
-              )}
-              headerActions={<HeaderActions canEditLibrary={libraryData.canEditLibrary} />}
+              breadcrumbs={breadcumbs}
+              headerActions={<HeaderActions />}
             />
             <SearchKeywordsField className="w-50" placeholder={intl.formatMessage(messages.searchPlaceholder)} />
             <div className="d-flex mt-3 mb-4 align-items-center">
@@ -194,9 +215,9 @@ const LibraryCollectionPage = () => {
         </Container>
         <StudioFooter />
       </div>
-      { !!sidebarBodyComponent && (
+      {!!sidebarBodyComponent && (
         <div className="library-authoring-sidebar box-shadow-left-1 bg-white" data-testid="library-sidebar">
-          <LibrarySidebar library={libraryData} />
+          <LibrarySidebar />
         </div>
       )}
     </div>

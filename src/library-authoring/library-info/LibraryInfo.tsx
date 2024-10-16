@@ -1,30 +1,25 @@
-import React from 'react';
 import { Button, Stack } from '@openedx/paragon';
 import { FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
+
 import messages from './messages';
 import LibraryPublishStatus from './LibraryPublishStatus';
 import { useLibraryContext } from '../common/context';
-import { ContentLibrary } from '../data/api';
 
-type LibraryInfoProps = {
-  library: ContentLibrary,
-};
-
-const LibraryInfo = ({ library } : LibraryInfoProps) => {
+const LibraryInfo = () => {
   const intl = useIntl();
-  const { openLibraryTeamModal } = useLibraryContext();
+  const { libraryData, readOnly, openLibraryTeamModal } = useLibraryContext();
 
   return (
     <Stack direction="vertical" gap={2.5}>
-      <LibraryPublishStatus library={library} />
+      <LibraryPublishStatus />
       <Stack gap={3} direction="vertical">
         <span className="font-weight-bold">
           {intl.formatMessage(messages.organizationSectionTitle)}
         </span>
         <span>
-          {library.org}
+          {libraryData?.org}
         </span>
-        {library.canEditLibrary && (
+        {!readOnly && (
           <Button variant="outline-primary" onClick={openLibraryTeamModal}>
             {intl.formatMessage(messages.libraryTeamButtonTitle)}
           </Button>
@@ -40,7 +35,7 @@ const LibraryInfo = ({ library } : LibraryInfoProps) => {
           </span>
           <span className="small">
             <FormattedDate
-              value={library.updated ?? undefined}
+              value={libraryData?.updated ?? undefined}
               year="numeric"
               month="long"
               day="2-digit"
@@ -53,7 +48,7 @@ const LibraryInfo = ({ library } : LibraryInfoProps) => {
           </span>
           <span className="small">
             <FormattedDate
-              value={library.created ?? undefined}
+              value={libraryData?.created ?? undefined}
               year="numeric"
               month="long"
               day="2-digit"

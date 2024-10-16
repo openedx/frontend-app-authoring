@@ -76,6 +76,10 @@ export const getLibraryCollectionComponentApiUrl = (libraryId: string, collectio
  * Get the API URL for restoring deleted collection.
  */
 export const getLibraryCollectionRestoreApiUrl = (libraryId: string, collectionId: string) => `${getLibraryCollectionApiUrl(libraryId, collectionId)}restore/`;
+/**
+ * Get the URL for the xblock api.
+ */
+export const getXBlockBaseApiUrl = () => `${getApiBaseUrl()}/xblock/`;
 
 export interface ContentLibrary {
   id: string;
@@ -258,7 +262,8 @@ export async function createLibraryBlock({
  */
 export async function updateLibraryMetadata(libraryData: UpdateLibraryDataRequest): Promise<ContentLibrary> {
   const client = getAuthenticatedHttpClient();
-  const { data } = await client.patch(getContentLibraryApiUrl(libraryData.id), libraryData);
+  const { id: libraryId, ...updateData } = libraryData;
+  const { data } = await client.patch(getContentLibraryApiUrl(libraryId), updateData);
 
   return camelCaseObject(data);
 }
@@ -476,5 +481,17 @@ export async function restoreCollection(libraryId: string, collectionId: string)
 export async function updateComponentCollections(usageKey: string, collectionKeys: string[]) {
   await getAuthenticatedHttpClient().patch(getLibraryBlockCollectionsUrl(usageKey), {
     collection_keys: collectionKeys,
+  });
+}
+
+/**
+ * Add a component to a course.
+ */
+// istanbul ignore next
+export async function addComponentToCourse(parentLocator: string, componentUsageKey: string) {
+  const client = getAuthenticatedHttpClient();
+  await client.post(getXBlockBaseApiUrl(), {
+    parent_locator: parentLocator,
+    library_content_key: componentUsageKey,
   });
 }
