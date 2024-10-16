@@ -65,11 +65,17 @@ const LibraryContext = React.createContext<LibraryContextData | undefined>(undef
 interface LibraryProviderProps {
   children?: React.ReactNode;
   libraryId: string;
+  /** The initial collection ID to show */
   collectionId?: string;
+  /** The component picker mode is a special mode where the user is selecting a component to add to a Unit (or another
+   *  XBlock) */
   componentPickerMode?: boolean;
+  /** The parent component locator, if we're in component picker mode */
   parentLocator?: string;
-  sidebarCollectionId?: string;
-  sidebarComponentUsageKey?: string;
+  /** Only used for testing */
+  initialSidebarComponentUsageKey?: string;
+  /** Only used for testing */
+  initialSidebarCollectionId?: string;
 }
 
 /**
@@ -81,15 +87,15 @@ export const LibraryProvider = ({
   collectionId: collectionIdProp,
   componentPickerMode = false,
   parentLocator,
-  sidebarCollectionId: sideBarCollectionIdProp,
-  sidebarComponentUsageKey: sidebarComponentUsageKeyProp,
+  initialSidebarComponentUsageKey,
+  initialSidebarCollectionId,
 }: LibraryProviderProps) => {
   const [collectionId, setCollectionId] = useState(collectionIdProp);
   const [sidebarBodyComponent, setSidebarBodyComponent] = useState<SidebarBodyComponentId | null>(null);
   const [sidebarComponentUsageKey, setSidebarComponentUsageKey] = useState<string | undefined>(
-    sidebarComponentUsageKeyProp,
+    initialSidebarComponentUsageKey,
   );
-  const [sidebarCollectionId, setSidebarCollectionId] = useState<string | undefined>(sideBarCollectionIdProp);
+  const [sidebarCollectionId, setSidebarCollectionId] = useState<string | undefined>(initialSidebarCollectionId);
   const [isLibraryTeamModalOpen, openLibraryTeamModal, closeLibraryTeamModal] = useToggle(false);
   const [isCreateCollectionModalOpen, openCreateCollectionModal, closeCreateCollectionModal] = useToggle(false);
   const [componentBeingEdited, openComponentEditor] = useState<string | undefined>();
