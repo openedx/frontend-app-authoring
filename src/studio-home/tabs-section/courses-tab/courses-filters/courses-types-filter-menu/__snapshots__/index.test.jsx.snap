@@ -16,7 +16,7 @@ exports[`CoursesTypesFilterMenu snapshot 1`] = `
       id="dropdown-toggle-course-type-menu"
       type="button"
     >
-      All courses
+      Active
     </button>
   </div>
 </div>

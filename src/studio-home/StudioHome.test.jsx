@@ -42,6 +42,11 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 
+jest.mock('@edx/frontend-platform', () => ({
+  ...jest.requireActual('@edx/frontend-platform'),
+  getConfig: jest.fn(),
+}));
+
 const queryClient = new QueryClient();
 
 const RootWrapper = () => (
@@ -72,6 +77,9 @@ const RootWrapper = () => (
 describe('<StudioHome />', () => {
   describe('api fetch fails', () => {
     beforeEach(async () => {
+      getConfig.mockImplementation(() => ({
+        ...jest.requireActual('@edx/frontend-platform').getConfig(),
+      }));
       initializeMockApp({
         authenticatedUser: {
           userId: 3,
@@ -100,6 +108,9 @@ describe('<StudioHome />', () => {
 
   describe('api fetch succeeds', () => {
     beforeEach(async () => {
+      getConfig.mockImplementation(() => ({
+        ...jest.requireActual('@edx/frontend-platform').getConfig(),
+      }));
       initializeMockApp({
         authenticatedUser: {
           userId: 3,
@@ -310,6 +321,41 @@ describe('<StudioHome />', () => {
       const { getByText } = render(<RootWrapper />);
       expect(getByText('Looking for help with Studio?')).toBeInTheDocument();
       expect(getByText('LMS')).toHaveAttribute('href', process.env.LMS_BASE_URL);
+    });
+
+    describe('Enable pagination', () => {
+      beforeEach(async () => {
+        getConfig.mockImplementation(() => ({
+          ...jest.requireActual('@edx/frontend-platform').getConfig(),
+          ENABLE_HOME_PAGE_COURSE_API_V2: true,
+        }));
+        initializeMockApp({
+          authenticatedUser: {
+            userId: 3,
+            username: 'abc123',
+            administrator: true,
+            roles: [],
+          },
+        });
+        store = initializeStore();
+        axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+        global.window = Object.create(window);
+        Object.defineProperty(window, 'location', {
+          value: {
+            search: '?search=test',
+          },
+        });
+      });
+
+      afterEach(() => {
+        jest.restoreAllMocks();
+      });
+
+      it('should dispatch fetchStudioHomeData with paginated parameters on component mount', async () => {
+        axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+        const { getByText } = render(<RootWrapper />);
+        expect(getByText(`${studioShortName} home`)).toBeInTheDocument();
+      });
     });
   });
 });

@@ -39,7 +39,7 @@ const CoursesTypesFilterMenu = ({ onItemMenuSelected }) => {
       id="dropdown-toggle-course-type-menu"
       menuItems={courseTypes}
       onItemMenuSelected={handleCourseTypeSelected}
-      defaultItemSelectedText={intl.formatMessage(messages.coursesTypesFilterMenuAllCurses)}
+      defaultItemSelectedText={intl.formatMessage(messages.coursesTypesFilterMenuActiveCurses)}
     />
   );
 };

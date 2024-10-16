@@ -60,11 +60,11 @@ describe('CoursesTypesFilterMenu', () => {
     const { defaultMessage: activeCoursesMenuText } = message.coursesTypesFilterMenuActiveCurses;
     const { defaultMessage: allCoursesMenuText } = message.coursesTypesFilterMenuAllCurses;
     const { defaultMessage: archiveCoursesMenuText } = message.coursesTypesFilterMenuArchivedCurses;
-    const activeCoursesMenuItem = screen.getByText(activeCoursesMenuText);
-    const allCoursesMenuItem = screen.getByTestId('item-menu-all-courses');
+    const activeCoursesMenuItem = screen.getByTestId('item-menu-active-courses');
+    const allCoursesMenuItem = screen.getByText(allCoursesMenuText);
     const archiveCoursesMenuItem = screen.getByText(archiveCoursesMenuText);
-    expect(activeCoursesMenuItem).toBeInTheDocument();
-    expect(allCoursesMenuItem.textContent).toContain(allCoursesMenuText);
+    expect(activeCoursesMenuItem.textContent).toContain(activeCoursesMenuText);
+    expect(allCoursesMenuItem).toBeInTheDocument();
     expect(archiveCoursesMenuItem).toBeInTheDocument();
   });
 
