@@ -4,7 +4,6 @@ import {
   act,
   render,
   fireEvent,
-  waitFor,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
