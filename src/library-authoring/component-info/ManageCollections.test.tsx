@@ -10,20 +10,24 @@ import {
 } from '../../testUtils';
 import mockCollectionsResults from '../__mocks__/collection-search.json';
 import { mockContentSearchConfig } from '../../search-manager/data/api.mock';
-import { mockLibraryBlockMetadata } from '../data/api.mocks';
+import { mockContentLibrary, mockLibraryBlockMetadata } from '../data/api.mocks';
 import ManageCollections from './ManageCollections';
 import { LibraryProvider } from '../common/context';
 import { getLibraryBlockCollectionsUrl } from '../data/api';
 
-const render = (ui: React.ReactElement) => baseRender(ui, {
-  extraWrapper: ({ children }) => <LibraryProvider libraryId="lib:OpenedX:CSPROB2">{ children }</LibraryProvider>,
-});
-
 let axiosMock: MockAdapter;
 let mockShowToast;
 
+mockContentLibrary.applyMock();
 mockLibraryBlockMetadata.applyMock();
 mockContentSearchConfig.applyMock();
+
+const render = (ui: React.ReactElement) => baseRender(ui, {
+  extraWrapper: ({ children }) => (
+    <LibraryProvider libraryId={mockContentLibrary.libraryId}>{children}</LibraryProvider>
+  ),
+});
+
 const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
 
 describe('<ManageCollections />', () => {
@@ -79,6 +83,7 @@ describe('<ManageCollections />', () => {
       usageKey={mockLibraryBlockMetadata.usageKeyWithCollections}
       collections={[]}
     />);
+    screen.logTestingPlaygroundURL();
     const manageBtn = await screen.findByRole('button', { name: 'Add to Collection' });
     userEvent.click(manageBtn);
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
