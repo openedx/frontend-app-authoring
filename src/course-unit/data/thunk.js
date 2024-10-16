@@ -18,6 +18,7 @@ import {
   handleCourseUnitVisibilityAndData,
   deleteUnitItem,
   duplicateUnitItem,
+  syncUnitItem,
   setXBlockOrderList,
 } from './api';
 import {
@@ -240,6 +241,24 @@ export function duplicateUnitItemQuery(itemId, xblockId) {
         newCourseVerticalChildren,
       }));
       const courseUnit = await getCourseUnitData(itemId);
+      dispatch(fetchCourseItemSuccess(courseUnit));
+      dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
+      dispatch(hideProcessingNotification());
+      handleResponseErrors(error, dispatch, updateSavingStatus);
+    }
+  };
+}
+
+export function syncUnitItemQuery(itemId, xblockId) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+
+    try {
+      await syncUnitItem(itemId, xblockId);
+      const newCourseVerticalChildren = await getCourseVerticalChildren(itemId);
+      dispatch(syncXBlock({}));
       dispatch(fetchCourseItemSuccess(courseUnit));
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));

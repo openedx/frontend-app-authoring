@@ -11,6 +11,7 @@ import {
   fetchCourseVerticalChildrenData,
   deleteUnitItemQuery,
   duplicateUnitItemQuery,
+  syncUnitItemQuery,
   setXBlockOrderListQuery,
   editCourseUnitVisibilityAndData,
 } from './data/thunk';
@@ -104,6 +105,9 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     },
     handleDuplicate: (XBlockId) => {
       dispatch(duplicateUnitItemQuery(blockId, XBlockId));
+    },
+    handleSync: (XBlockId) => {
+      dispatch(syncUnitItemQuery(blockId, XBlockId));
     },
   };
 
