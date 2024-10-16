@@ -58,7 +58,7 @@ export const ComponentPicker = () => {
         </LibraryProvider>
       </Stepper.Step>
 
-      <div className="py-3">
+      <div className="p-5">
         <Stepper.ActionRow eventKey="select-library">
           <Stepper.ActionRow.Spacer />
           <Button onClick={() => setCurrentStep('pick-components')} disabled={!selectedLibrary}>
