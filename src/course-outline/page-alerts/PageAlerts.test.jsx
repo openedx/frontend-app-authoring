@@ -4,6 +4,8 @@ import {
   act,
   render,
   fireEvent,
+  screen,
+  waitFor,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -88,7 +90,7 @@ describe('<PageAlerts />', () => {
   });
 
   it('renders discussion alerts', async () => {
-    const { findByText, queryByText } = renderComponent({
+    renderComponent({
       ...pageAlertsData,
       discussionsSettings: {
         providerType: 'openedx',
@@ -97,19 +99,21 @@ describe('<PageAlerts />', () => {
       discussionsIncontextLearnmoreUrl: 'some-learn-more-url',
     });
 
-    expect(queryByText(messages.discussionNotificationText.defaultMessage)).toBeInTheDocument();
-    const learnMoreBtn = queryByText(messages.discussionNotificationLearnMore.defaultMessage);
+    expect(screen.queryByText(messages.discussionNotificationText.defaultMessage)).toBeInTheDocument();
+    const learnMoreBtn = screen.queryByText(messages.discussionNotificationLearnMore.defaultMessage);
     expect(learnMoreBtn).toBeInTheDocument();
     expect(learnMoreBtn).toHaveAttribute('href', 'some-learn-more-url');
 
-    const dismissBtn = queryByText('Dismiss');
+    const dismissBtn = screen.queryByText('Dismiss');
     fireEvent.click(dismissBtn);
     const discussionAlertDismissKey = `discussionAlertDismissed-${pageAlertsData.courseId}`;
     expect(localStorage.getItem(discussionAlertDismissKey)).toBe('true');
 
-    const feedbackLink = await findByText(messages.discussionNotificationFeedback.defaultMessage);
-    expect(feedbackLink).toBeInTheDocument();
-    expect(feedbackLink).toHaveAttribute('href', 'some-feedback-url');
+    await waitFor(() => {
+      const feedbackLink = screen.queryByText(messages.discussionNotificationFeedback.defaultMessage);
+      expect(feedbackLink).toBeInTheDocument();
+      expect(feedbackLink).toHaveAttribute('href', 'some-feedback-url');
+    });
   });
 
   it('renders deprecation warning alerts', async () => {
