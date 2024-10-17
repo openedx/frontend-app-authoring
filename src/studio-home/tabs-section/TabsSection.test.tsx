@@ -405,9 +405,8 @@ describe('<TabsSection />', () => {
 
     it('should hide Libraries tab when libraries are disabled', async () => {
       const data = generateGetStudioHomeDataApiResponse();
-      data.librariesEnabled = false;
 
-      render();
+      render({ librariesV1Enabled: false });
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, data);
       await executeThunk(fetchStudioHomeData(), store.dispatch);
 

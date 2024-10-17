@@ -31,7 +31,6 @@ export const generateGetStudioHomeDataApiResponse = () => ({
   courses: [],
   inProcessCourseActions: [],
   libraries: [],
-  librariesEnabled: true,
   librariesV1Enabled: true,
   librariesV2Enabled: true,
   optimizationEnabled: false,

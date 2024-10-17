@@ -68,7 +68,7 @@ const TabsSection = ({
   }, [pathname]);
 
   const {
-    courses, librariesEnabled, libraries, archivedCourses,
+    courses, libraries, archivedCourses,
     numPages, coursesCount,
   } = useSelector(getStudioHomeData);
   const {
@@ -120,43 +120,41 @@ const TabsSection = ({
       );
     }
 
-    if (librariesEnabled) {
-      if (librariesV2Enabled) {
-        tabs.push(
-          <Tab
-            key={TABS_LIST.libraries}
-            eventKey={TABS_LIST.libraries}
-            title={(
-              <Stack gap={2} direction="horizontal">
-                {intl.formatMessage(messages.librariesTabTitle)}
-                <Badge variant="info">{intl.formatMessage(messages.librariesV2TabBetaBadge)}</Badge>
-              </Stack>
-            )}
-          >
-            <LibrariesV2Tab />
-          </Tab>,
-        );
-      }
+    if (librariesV2Enabled) {
+      tabs.push(
+        <Tab
+          key={TABS_LIST.libraries}
+          eventKey={TABS_LIST.libraries}
+          title={(
+            <Stack gap={2} direction="horizontal">
+              {intl.formatMessage(messages.librariesTabTitle)}
+              <Badge variant="info">{intl.formatMessage(messages.librariesV2TabBetaBadge)}</Badge>
+            </Stack>
+          )}
+        >
+          <LibrariesV2Tab />
+        </Tab>,
+      );
+    }
 
-      if (librariesV1Enabled) {
-        tabs.push(
-          <Tab
-            key={TABS_LIST.legacyLibraries}
-            eventKey={TABS_LIST.legacyLibraries}
-            title={intl.formatMessage(
-              librariesV2Enabled
-                ? messages.legacyLibrariesTabTitle
-                : messages.librariesTabTitle,
-            )}
-          >
-            <LibrariesTab
-              libraries={libraries}
-              isLoading={isLoadingLibraries}
-              isFailed={isFailedLibrariesPage}
-            />
-          </Tab>,
-        );
-      }
+    if (librariesV1Enabled) {
+      tabs.push(
+        <Tab
+          key={TABS_LIST.legacyLibraries}
+          eventKey={TABS_LIST.legacyLibraries}
+          title={intl.formatMessage(
+            librariesV2Enabled
+              ? messages.legacyLibrariesTabTitle
+              : messages.librariesTabTitle,
+          )}
+        >
+          <LibrariesTab
+            libraries={libraries}
+            isLoading={isLoadingLibraries}
+            isFailed={isFailedLibrariesPage}
+          />
+        </Tab>,
+      );
     }
 
     if (getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true') {
@@ -170,7 +168,7 @@ const TabsSection = ({
     }
 
     return tabs;
-  }, [archivedCourses, librariesEnabled, showNewCourseContainer, isLoadingCourses, isLoadingLibraries]);
+  }, [archivedCourses, showNewCourseContainer, isLoadingCourses, isLoadingLibraries]);
 
   const handleSelectTab = (tab) => {
     if (tab === TABS_LIST.courses) {
