@@ -77,6 +77,7 @@ const useTextbooks = (courseId) => {
 
   return {
     isLoading: loadingStatus === RequestStatus.IN_PROGRESS,
+    isLoadingFailed: loadingStatus === RequestStatus.FAILED,
     savingStatus,
     errorMessage,
     textbooks,

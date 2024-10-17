@@ -20,6 +20,7 @@ import CourseTeamMember from './course-team-member/CourseTeamMember';
 import InfoModal from './info-modal/InfoModal';
 import { useCourseTeam } from './hooks';
 import getPageHeadTitle from '../generic/utils';
+import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 
 const CourseTeam = ({ courseId }) => {
   const intl = useIntl();
@@ -35,6 +36,7 @@ const CourseTeam = ({ courseId }) => {
     courseTeamUsers,
     currentUserEmail,
     isLoading,
+    isLoadingDenied,
     isSingleAdmin,
     isFormVisible,
     isQueryPending,
@@ -54,6 +56,14 @@ const CourseTeam = ({ courseId }) => {
     handleChangeRoleUserSubmit,
     handleInternetConnectionFailed,
   } = useCourseTeam({ intl, courseId });
+
+  if (isLoadingDenied) {
+    return (
+      <Container size="xl" className="course-unit px-4 mt-4">
+        <ConnectionErrorAlert />
+      </Container>
+    );
+  }
 
   if (isLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment

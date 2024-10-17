@@ -24,7 +24,11 @@ export function fetchCourseLaunchQuery({
       dispatch(fetchLaunchChecklistSuccess({ data }));
       dispatch(updateLaunchChecklistStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
-      dispatch(updateLaunchChecklistStatus({ status: RequestStatus.FAILED }));
+      if (error.response && error.response.status === 403) {
+        dispatch(updateLaunchChecklistStatus({ status: RequestStatus.DENIED }));
+      } else {
+        dispatch(updateLaunchChecklistStatus({ status: RequestStatus.FAILED }));
+      }
     }
   };
 }
