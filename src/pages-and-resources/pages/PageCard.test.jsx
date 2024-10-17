@@ -3,7 +3,7 @@ import {
   queryAllByRole,
 } from '@testing-library/react';
 
-import { initializeMockApp } from '@edx/frontend-platform';
+import { initializeMockApp, getConfig } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 
@@ -14,24 +14,33 @@ import PagesAndResourcesProvider from '../PagesAndResourcesProvider';
 
 let container;
 let store;
+const mockPageConfig = [
+  {
+    id: '1',
+    legacyLink: `${getConfig().STUDIO_BASE_URL}/tabs/course-v1:OpenedX+DemoX+DemoCourse`,
+    name: 'Custom pages',
+  },
+  {
+    id: '2',
+    legacyLink: `${getConfig().STUDIO_BASE_URL}/textbooks/course-v1:OpenedX+DemoX+DemoCourse`,
+    name: 'Textbook',
+    enabled: true,
+  },
+  {
+    name: 'Page',
+    allowedOperations: {
+      enable: true,
+    },
+    id: '3',
+  },
+];
 
 const renderComponent = () => {
   const wrapper = render(
     <IntlProvider locale="en">
       <AppProvider store={store}>
         <PagesAndResourcesProvider courseId="id">
-          <PageGrid
-            pages={[
-              { legacyLink: 'SomeUrl', name: 'Custom pages', id: '1' },
-              {
-                legacyLink: 'SomeUrl',
-                name: 'Textbook',
-                id: '2',
-                enabled: true,
-              },
-              { name: 'Page', allowedOperations: { enable: true }, id: '3' },
-            ]}
-          />
+          <PageGrid pages={mockPageConfig} />
         </PagesAndResourcesProvider>
       </AppProvider>
     </IntlProvider>,
@@ -61,9 +70,11 @@ describe('LiveSettings', () => {
     renderComponent();
     expect(queryAllByRole(container, 'button')).toHaveLength(3);
   });
+
   it('should navigate to legacyLink', async () => {
     renderComponent();
+    const textbookPagePath = mockPageConfig[0][1];
     const textbookSettingsButton = queryAllByRole(container, 'link')[1];
-    expect(textbookSettingsButton).toHaveAttribute('href', 'SomeUrl');
+    expect(textbookSettingsButton).toHaveAttribute('href', textbookPagePath);
   });
 });

@@ -10,6 +10,7 @@ import ChecklistItemComment from './ChecklistItemComment';
 import { checklistItems } from './utils/courseChecklistData';
 
 const ChecklistSection = ({
+  courseId,
   dataHeading,
   data,
   idPrefix,
@@ -46,7 +47,7 @@ const ChecklistSection = ({
                   data-testid={`checklist-item-${checkId}`}
                   key={checkId}
                 >
-                  <ChecklistItemBody {...{ checkId, isCompleted, updateLink }} />
+                  <ChecklistItemBody courseId={courseId} {...{ checkId, isCompleted, updateLink }} />
                   <div data-testid={`comment-section-${checkId}`}>
                     <ChecklistItemComment {...{ checkId, outlineUrl, data }} />
                   </div>
@@ -66,6 +67,7 @@ ChecklistSection.defaultProps = {
 };
 
 ChecklistSection.propTypes = {
+  courseId: PropTypes.string.isRequired,
   dataHeading: PropTypes.string.isRequired,
   data: PropTypes.oneOfType([
     PropTypes.shape({

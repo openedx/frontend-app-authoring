@@ -11,6 +11,7 @@ import { initialExperimentConfiguration } from './constants';
 import messages from './messages';
 
 const ExperimentConfigurationsSection = ({
+  courseId,
   availableGroups,
   experimentConfigurationActions,
 }) => {
@@ -25,7 +26,7 @@ const ExperimentConfigurationsSection = ({
     experimentConfigurationActions.handleCreate(configuration, hideNewConfiguration);
   };
 
-  const { elementWithHash } = useScrollToHashElement({ isLoading: true });
+  const { elementWithHash } = useScrollToHashElement({ courseId, isLoading: true });
 
   return (
     <div className="mt-2.5">
@@ -110,6 +111,7 @@ ExperimentConfigurationsSection.propTypes = {
     handleCreate: PropTypes.func,
     handleDelete: PropTypes.func,
   }).isRequired,
+  courseId: PropTypes.string.isRequired,
 };
 
 export default ExperimentConfigurationsSection;

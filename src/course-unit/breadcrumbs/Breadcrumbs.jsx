@@ -1,10 +1,12 @@
 import { useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Dropdown, Icon } from '@openedx/paragon';
+import { useNavigate } from 'react-router-dom';
 import {
   ArrowDropDown as ArrowDropDownIcon,
   ChevronRight as ChevronRightIcon,
 } from '@openedx/paragon/icons';
+import { getConfig } from '@edx/frontend-platform';
 
 import { createCorrectInternalRoute } from '../../utils';
 import { getCourseSectionVertical } from '../data/selectors';
@@ -14,6 +16,17 @@ const Breadcrumbs = () => {
   const intl = useIntl();
   const { ancestorXblocks } = useSelector(getCourseSectionVertical);
   const [section, subsection] = ancestorXblocks ?? [];
+  const navigate = useNavigate();
+  const waffleFlags = useSelector(state => state.courseDetail.waffleFlags);
+
+  const handleClick = (e, url) => {
+    e.preventDefault();
+    if (waffleFlags?.useNewCourseOutlinePage) {
+      navigate(url);
+    } else {
+      window.location.href = `${getConfig().STUDIO_BASE_URL}/${url}`;
+    }
+  };
 
   return (
     <nav className="d-flex align-center mb-2.5">
@@ -31,7 +44,7 @@ const Breadcrumbs = () => {
               {section.children.map(({ url, displayName }) => (
                 <Dropdown.Item
                   key={url}
-                  href={createCorrectInternalRoute(url)}
+                  onClick={(e) => handleClick(e, createCorrectInternalRoute(`${url}`))}
                   className="small"
                   data-testid="breadcrumbs-section-dropdown-item"
                 >
@@ -60,7 +73,7 @@ const Breadcrumbs = () => {
               {subsection.children.map(({ url, displayName }) => (
                 <Dropdown.Item
                   key={url}
-                  href={createCorrectInternalRoute(url)}
+                  onClick={(e) => handleClick(e, createCorrectInternalRoute(`${url}`))}
                   className="small"
                   data-testid="breadcrumbs-subsection-dropdown-item"
                 >

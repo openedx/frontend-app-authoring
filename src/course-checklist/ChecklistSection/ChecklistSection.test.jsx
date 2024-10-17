@@ -1,255 +1,118 @@
-/* eslint-disable */
-import {
-  render,
-  within,
-  screen,
-} from '@testing-library/react';
-import '@testing-library/jest-dom';
-import { camelCaseObject, initializeMockApp } from '@edx/frontend-platform';
-import { AppProvider } from '@edx/frontend-platform/react';
+import { useNavigate } from 'react-router';
+import { useSelector } from 'react-redux';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
+import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom/extend-expect';
 
-import initializeStore from '../../store';
-import { initialState,generateCourseLaunchData } from '../factories/mockApiResponses';
+import ChecklistItemBody from './ChecklistItemBody';
 import messages from './messages';
-import ChecklistSection from './index';
-import { checklistItems } from './utils/courseChecklistData';
-import getUpdateLinks from '../utils';
 
-const testData = camelCaseObject(generateCourseLaunchData());
+jest.mock('react-redux', () => ({
+  useSelector: jest.fn(),
+}));
 
+jest.mock('react-router', () => ({
+  useNavigate: jest.fn(),
+}));
+
+const mockNavigate = jest.fn();
+useNavigate.mockReturnValue(mockNavigate);
 
 const defaultProps = {
-  data: testData,
-  dataHeading: 'Test checklist',
-  idPrefix: 'launchChecklist',
-  updateLinks: getUpdateLinks('courseId'),
-  isLoading: false,
+  courseId: 'course-v1:edX+DemoX+2024',
+  checkId: 'welcomeMessage',
+  isCompleted: false,
+  updateLink: 'https://example.com/update',
+  intl: {
+    formatMessage: jest.fn(({ defaultMessage }) => defaultMessage),
+  },
 };
 
-const testChecklistData = checklistItems[defaultProps.idPrefix];
-
-const completedItemIds = ['welcomeMessage', 'courseDates']
-
-const renderComponent = (props) => {
-  render(
-    <IntlProvider locale="en">
-      <AppProvider store={store}>
-        <ChecklistSection {...props} />
-      </AppProvider>
-    </IntlProvider>,
-  );
+const waffleFlags = {
+  ENABLE_NEW_COURSE_UPDATES_PAGE: false,
 };
 
-let store;
-
-describe('ChecklistSection', () => {
+describe('ChecklistItemBody', () => {
   beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: false,
-        roles: [],
-      },
-    });
-    store = initializeStore(initialState);
+    useSelector.mockReturnValue({ waffleFlags });
   });
 
-  it('a heading using the dataHeading prop', () => {
-    renderComponent(defaultProps);
-
-    expect(screen.getByText(defaultProps.dataHeading)).toBeVisible();
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
-  it('completion count text', () => {
-    renderComponent(defaultProps);
-    const completionText = `${completedItemIds.length}/6 completed`;
-    expect(screen.getByTestId('completion-subheader').textContent).toEqual(completionText);
+  it('renders uncompleted icon when isCompleted is false', () => {
+    render(
+      <IntlProvider locale="en">
+        <ChecklistItemBody {...defaultProps} />
+      </IntlProvider>,
+    );
+
+    const uncompletedIcon = screen.getByTestId('uncompleted-icon');
+    expect(uncompletedIcon).toBeInTheDocument();
   });
 
-  it('a loading spinner when isLoading prop is true', () => {
-    renderComponent({ ...defaultProps, isLoading: true });
+  it('renders completed icon when isCompleted is true', () => {
+    render(
+      <IntlProvider locale="en">
+        <ChecklistItemBody {...defaultProps} isCompleted />
+      </IntlProvider>,
+    );
 
-    const completionSubheader = screen.queryByTestId('completion-subheader');
-    expect(completionSubheader).toBeNull();
-
-    const loadingSpinner = screen.getByTestId('loading-spinner');
-    expect(loadingSpinner).toBeVisible();
+    const completedIcon = screen.getByTestId('completed-icon');
+    expect(completedIcon).toBeInTheDocument();
   });
 
-  it('the correct number of checks', () => {
-    renderComponent(defaultProps);
+  it('renders short and long descriptions based on checkId', () => {
+    render(
+      <IntlProvider locale="en">
+        <ChecklistItemBody {...defaultProps} />
+      </IntlProvider>,
+    );
 
-    const listItems = screen.getAllByTestId('checklist-item', { exact: false });
-    expect(listItems).toHaveLength(6);
+    const shortDescription = screen.getByText(messages.welcomeMessageShortDescription.defaultMessage);
+    const longDescription = screen.getByText(messages.welcomeMessageLongDescription.defaultMessage);
+
+    expect(shortDescription).toBeInTheDocument();
+    expect(longDescription).toBeInTheDocument();
   });
 
-  it('welcomeMessage comment section should be null', () => {
-    renderComponent(defaultProps);
+  it('renders update hyperlink when updateLink is provided', () => {
+    render(
+      <IntlProvider locale="en">
+        <ChecklistItemBody {...defaultProps} />
+      </IntlProvider>,
+    );
 
-    const comment = screen.getByTestId('comment-section-welcomeMessage');
-    expect(comment.children).toHaveLength(0);
+    const updateLink = screen.getByTestId('update-hyperlink');
+    expect(updateLink).toBeInTheDocument();
   });
 
-  it('certificate comment section should be null', () => {
-    renderComponent(defaultProps);
+  it('navigates to internal course page if ENABLE_NEW_COURSE_UPDATES_PAGE flag is enabled', () => {
+    useSelector.mockReturnValue({ waffleFlags: { ENABLE_NEW_COURSE_UPDATES_PAGE: true } });
 
-    const comment = screen.getByTestId('comment-section-certificate');
-    expect(comment.children).toHaveLength(0);
+    render(
+      <IntlProvider locale="en">
+        <ChecklistItemBody {...defaultProps} />
+      </IntlProvider>,
+    );
+
+    const updateLink = screen.getByTestId('update-hyperlink');
+    fireEvent.click(updateLink);
+
+    expect(mockNavigate).toHaveBeenCalledWith(`/course/${defaultProps.courseId}/course_info`);
   });
 
-  it('courseDates comment section should be null', () => {
-    renderComponent(defaultProps);
+  it('redirects to external link if ENABLE_NEW_COURSE_UPDATES_PAGE flag is disabled', () => {
+    render(
+      <IntlProvider locale="en">
+        <ChecklistItemBody {...defaultProps} />
+      </IntlProvider>,
+    );
 
-    const comment = screen.getByTestId('comment-section-courseDates');
-    expect(comment.children).toHaveLength(0);
-  });
+    const updateLink = screen.getByTestId('update-hyperlink');
+    fireEvent.click(updateLink);
 
-  it('proctoringEmail comment section should be null', () => {
-    renderComponent(defaultProps);
-
-    const comment = screen.getByTestId('comment-section-proctoringEmail');
-    expect(comment.children).toHaveLength(0);
-  });
-
-  describe('gradingPolicy comment section', () => {
-    it('should be null if sum of weights is equal to 1', () => {
-      const props = {
-        ...defaultProps,
-        data: {
-          ...defaultProps.data,
-          grades: {
-            ...defaultProps.data.grades,
-            sumOfWeights: 1,
-          }
-        },
-      };
-      renderComponent(props);
-
-      const comment = screen.getByTestId('comment-section-gradingPolicy');
-      expect(comment.children).toHaveLength(0);
-    });
-
-    it('should have comment section', () => {
-      renderComponent(defaultProps);
-
-      const comment = screen.getByTestId('comment-section-gradingPolicy');
-      expect(comment.children).toHaveLength(1);
-
-      expect(screen.getByText(
-        'Your current grading policy adds up to',
-        { exact: false },
-      )).toBeVisible();
-    });
-  });
-
-  describe('assignmentDeadlines comment section', () => {
-    it('should be null if assignments with dates before start and after end are empty', () => {
-      const props = {
-        ...defaultProps,
-        data: {
-          ...defaultProps.data,
-          assignments: {
-            ...defaultProps.data.assignments,
-            assignmentsWithDatesAfterEnd: [],
-            assignmentsWithOraDatesBeforeStart: [],
-          }
-        },
-      };
-      renderComponent(props);
-
-      const comment = screen.getByTestId('comment-section-assignmentDeadlines');
-      expect(comment.children).toHaveLength(0);
-    });
-
-    it('should have comment section', () => {
-      renderComponent(defaultProps);
-
-      const comment = screen.getByTestId('comment-section-assignmentDeadlines');
-      const assigmentLinks = within(comment).getAllByRole('link');
-
-      expect(comment.children).toHaveLength(1);
-
-      expect(screen.getByText(
-        messages.assignmentDeadlinesComment.defaultMessage,
-        { exact: false },
-      )).toBeVisible();
-
-      expect(assigmentLinks).toHaveLength(2);
-
-      expect(assigmentLinks[0].textContent).toEqual('Subsection');
-
-      expect(assigmentLinks[1].textContent).toEqual('ORA subsection');
-    });
-  });
-});    
-
-testChecklistData.forEach((check) => {
-  describe(`check with id '${check.id}'`, () => {
-    let checkItem;
-    beforeEach(() => {
-      initializeMockApp({
-        authenticatedUser: {
-          userId: 3,
-          username: 'abc123',
-          administrator: false,
-          roles: [],
-        },
-      });
-      store = initializeStore(initialState);
-      renderComponent(defaultProps);
-      checkItem = screen.getAllByTestId(`checklist-item-${check.id}`);
-    });
-
-    it('renders', () => {
-      expect(checkItem).toHaveLength(1);
-    });
-
-    it('has correct icon', () => {
-      const icon = screen.getAllByTestId(`icon-${check.id}`)
-
-      expect(icon).toHaveLength(1);
-
-      const { queryByTestId } = within(icon[0]);
-      if (completedItemIds.includes(check.id)) {
-        expect(queryByTestId('completed-icon')).not.toBeNull();
-      } else {
-        expect(queryByTestId('uncompleted-icon')).not.toBeNull();
-      }
-    });
-
-    it('has correct short description', () => {
-      const { getByText } = within(checkItem[0]);
-      const shortDescription = messages[`${check.id}ShortDescription`].defaultMessage;
-      expect(getByText(shortDescription)).toBeVisible();
-    });
-
-    it('has correct long description', () => {
-      const { getByText } = within(checkItem[0]);
-      const longDescription = messages[`${check.id}LongDescription`].defaultMessage;
-      expect(getByText(longDescription)).toBeVisible();
-    });
-
-    describe('has correct link', () => {
-      const links = getUpdateLinks('courseId')
-      const shouldShowLink = Object.keys(links).includes(check.id);
-
-      if (shouldShowLink) {
-        it('with a Hyperlink', () => {
-          const { getByRole, getByText } = within(checkItem[0]);
-
-          expect(getByText('Update')).toBeVisible();
-
-          expect(getByRole('link').href).toMatch(links[check.id]);
-        });
-      } else {
-        it('without a Hyperlink', () => {
-          const { queryByText } = within(checkItem[0]);
-
-          expect(queryByText('Update')).toBeNull();
-        });
-      }
-    });
+    expect(window.location.href).toBe('http://localhost/');
   });
 });

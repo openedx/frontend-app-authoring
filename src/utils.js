@@ -108,7 +108,7 @@ export const createCorrectInternalRoute = (checkPath) => {
   }
 
   if (!checkPath.startsWith(basePath)) {
-    return `${basePath}${checkPath}`;
+    return `${checkPath}`;
   }
 
   return checkPath;

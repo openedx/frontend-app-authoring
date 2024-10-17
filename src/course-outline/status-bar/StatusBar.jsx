@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import moment from 'moment/moment';
 import PropTypes from 'prop-types';
 import { FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
@@ -6,7 +6,9 @@ import { getConfig } from '@edx/frontend-platform/config';
 import {
   Button, Hyperlink, Form, Stack, useToggle,
 } from '@openedx/paragon';
+import { Link } from 'react-router-dom';
 import { AppContext } from '@edx/frontend-platform/react';
+import { useSelector } from 'react-redux';
 
 import { ContentTagsDrawerSheet } from '../../content-tags-drawer';
 import TagCount from '../../generic/tag-count';
@@ -43,6 +45,7 @@ const StatusBar = ({
 }) => {
   const intl = useIntl();
   const { config } = useContext(AppContext);
+  const waffleFlags = useSelector(state => state.courseDetail.waffleFlags);
 
   const {
     courseReleaseDate,
@@ -62,7 +65,6 @@ const StatusBar = ({
 
   const courseReleaseDateObj = moment.utc(courseReleaseDate, 'MMM DD, YYYY at HH:mm UTC', true);
   const checkListTitle = `${completedCourseLaunchChecks + completedCourseBestPracticesChecks}/${totalCourseLaunchChecks + totalCourseBestPracticesChecks}`;
-  const checklistDestination = () => new URL(`checklists/${courseId}`, config.STUDIO_BASE_URL).href;
   const scheduleDestination = () => new URL(`settings/details/${courseId}#schedule`, config.STUDIO_BASE_URL).href;
 
   const {
@@ -82,10 +84,9 @@ const StatusBar = ({
     <>
       <Stack direction="horizontal" gap={3.5} className="d-flex align-items-stretch outline-status-bar" data-testid="outline-status-bar">
         <StatusBarItem title={intl.formatMessage(messages.startDateTitle)}>
-          <Hyperlink
+          <Link
             className="small"
-            destination={scheduleDestination()}
-            showLaunchIcon={false}
+            to={waffleFlags?.useNewScheduleDetailsPage ? `/course/${courseId}/settings/details/#schedule` : scheduleDestination()}
           >
             {courseReleaseDateObj.isValid() ? (
               <FormattedDate
@@ -97,7 +98,7 @@ const StatusBar = ({
                 minute="numeric"
               />
             ) : courseReleaseDate}
-          </Hyperlink>
+          </Link>
         </StatusBarItem>
         <StatusBarItem title={intl.formatMessage(messages.pacingTypeTitle)}>
           <span className="small">
@@ -107,13 +108,12 @@ const StatusBar = ({
           </span>
         </StatusBarItem>
         <StatusBarItem title={intl.formatMessage(messages.checklistTitle)}>
-          <Hyperlink
+          <Link
             className="small"
-            destination={checklistDestination()}
-            showLaunchIcon={false}
+            to={`/course/${courseId}/checklists`}
           >
             {checkListTitle} {intl.formatMessage(messages.checklistCompleted)}
-          </Hyperlink>
+          </Link>
         </StatusBarItem>
         <StatusBarItem title={intl.formatMessage(messages.highlightEmailsTitle)}>
           <div className="d-flex align-items-center">
