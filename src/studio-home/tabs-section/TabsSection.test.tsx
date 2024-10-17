@@ -15,7 +15,7 @@ import {
 import { getApiBaseUrl, getStudioHomeApiUrl } from '../data/api';
 import { executeThunk } from '../../utils';
 import { fetchLibraryData, fetchStudioHomeData } from '../data/thunks';
-import { getContentLibraryV2ListApiUrl } from '../../library-authoring/data/api';
+import { mockGetContentLibraryV2List } from '../../library-authoring/data/api.mocks';
 import contentLibrariesListV2 from '../../library-authoring/__mocks__/contentLibrariesListV2';
 import {
   initializeMocks,
@@ -71,7 +71,7 @@ describe('<TabsSection />', () => {
     const newMocks = initializeMocks({ initialState });
     store = newMocks.reduxStore;
     axiosMock = newMocks.axiosMock;
-    axiosMock.onGet(getContentLibraryV2ListApiUrl()).reply(200, contentLibrariesListV2);
+    mockGetContentLibraryV2List.applyMock();
   });
 
   it('should render all tabs correctly', async () => {
@@ -391,6 +391,7 @@ describe('<TabsSection />', () => {
       expect(librariesTab).toHaveClass('active');
 
       expect(screen.getByText('Showing 2 of 2')).toBeVisible();
+      expect(screen.getByText('Page 1, Current Page, of 2')).toBeVisible();
 
       expect(screen.getByText(contentLibrariesListV2.results[0].title)).toBeVisible();
       expect(screen.getByText(
@@ -400,6 +401,22 @@ describe('<TabsSection />', () => {
       expect(screen.getByText(contentLibrariesListV2.results[1].title)).toBeVisible();
       expect(screen.getByText(
         `${contentLibrariesListV2.results[1].org} / ${contentLibrariesListV2.results[1].slug}`,
+      )).toBeVisible();
+    });
+
+    it('should show a "not found" message if no v2 libraries were loaded', async () => {
+      mockGetContentLibraryV2List.applyMockEmpty();
+      render();
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
+      await executeThunk(fetchStudioHomeData(), store.dispatch);
+
+      const librariesTab = screen.getByRole('tab', { name: librariesBetaTabTitle });
+      fireEvent.click(librariesTab);
+
+      expect(librariesTab).toHaveClass('active');
+
+      expect(await screen.findByText(
+        tabMessages.librariesV2TabLibraryNotFoundAlertMessage.defaultMessage,
       )).toBeVisible();
     });
 
@@ -414,7 +431,7 @@ describe('<TabsSection />', () => {
       expect(screen.queryByText(tabMessages.legacyLibrariesTabTitle.defaultMessage)).toBeNull();
     });
 
-    it('should render libraries fetch failure alert', async () => {
+    it('should render legacy libraries fetch failure alert', async () => {
       render();
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
       axiosMock.onGet(libraryApiLink).reply(404);
@@ -427,6 +444,22 @@ describe('<TabsSection />', () => {
       expect(librariesTab).toHaveClass('active');
 
       expect(await screen.findByText(tabMessages.librariesTabErrorMessage.defaultMessage)).toBeVisible();
+    });
+
+    it('should render v2 libraries fetch failure alert', async () => {
+      mockGetContentLibraryV2List.applyMockError();
+      render();
+      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
+      await executeThunk(fetchStudioHomeData(), store.dispatch);
+
+      const librariesTab = screen.getByRole('tab', { name: librariesBetaTabTitle });
+      fireEvent.click(librariesTab);
+
+      expect(librariesTab).toHaveClass('active');
+
+      expect(await screen.findByText(
+        tabMessages.librariesTabErrorMessage.defaultMessage,
+      )).toBeVisible();
     });
   });
 });

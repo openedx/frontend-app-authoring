@@ -49,7 +49,7 @@ const LibrariesV2Tab: React.FC<Props> = () => {
     );
   }
 
-  const hasV2Libraries = !isLoading && ((data!.results.length || 0) > 0);
+  const hasV2Libraries = !isLoading && !isError && ((data!.results.length || 0) > 0);
 
   // TODO: update this link when tutorial is ready.
   const librariesTutorialLink = (
@@ -69,7 +69,6 @@ const LibrariesV2Tab: React.FC<Props> = () => {
 
       {isError ? (
         <AlertMessage
-          title={intl.formatMessage(messages.librariesTabErrorMessage)}
           variant="danger"
           description={(
             <Row className="m-0 align-items-center">
@@ -88,7 +87,7 @@ const LibrariesV2Tab: React.FC<Props> = () => {
               setFilterParams={setFilterParams}
               setCurrentPage={setCurrentPage}
             />
-            { !isLoading
+            {!isLoading && !isError
             && (
               <p>
                 {intl.formatMessage(messages.coursesPaginationInfo, {
