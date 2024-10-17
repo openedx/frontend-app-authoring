@@ -333,7 +333,7 @@ const useContentTagsDrawerContext = (contentId, canTagObject) => {
   const closeToast = React.useCallback(() => setToastMessage(undefined), [setToastMessage]);
 
   let contentName = '';
-  if (isContentDataLoaded) {
+  if (isContentDataLoaded && contentData) {
     if ('displayName' in contentData) {
       contentName = contentData.displayName;
     } else {

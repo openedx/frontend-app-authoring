@@ -19,7 +19,7 @@ export function getBlockType(usageKey: string): string {
  * @returns The library key, e.g. `lib:org:lib`
  */
 export function getLibraryId(usageKey: string): string {
-  if (usageKey && usageKey.startsWith('lb:')) {
+  if (usageKey && (usageKey.startsWith('lb:') || usageKey.startsWith('lib-collection:'))) {
     const org = usageKey.split(':')[1];
     const lib = usageKey.split(':')[2];
     if (org && lib) {
@@ -38,3 +38,16 @@ export function isLibraryKey(learningContextKey: string | undefined): learningCo
 export function isLibraryV1Key(learningContextKey: string | undefined): learningContextKey is string {
   return typeof learningContextKey === 'string' && learningContextKey.startsWith('library-v1:');
 }
+
+/**
+ * Build a collection usage key from library V2 context key and collection Id.
+ * This Collection Usage Key is only used on tagging.
+*/
+export const buildCollectionUsageKey = (learningContextKey: string, collectionId: string) => {
+  if (!isLibraryKey(learningContextKey)) {
+    return '';
+  }
+
+  const orgLib = learningContextKey.replace('lib:', '');
+  return `lib-collection:${orgLib}:${collectionId}`;
+};

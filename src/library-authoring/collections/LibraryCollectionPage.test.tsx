@@ -19,6 +19,7 @@ import {
 import { mockContentSearchConfig, mockGetBlockTypes } from '../../search-manager/data/api.mock';
 import { mockBroadcastChannel, mockClipboardEmpty } from '../../generic/data/api.mock';
 import { LibraryLayout } from '..';
+import { ContentTagsDrawer } from '../../content-tags-drawer';
 import { getLibraryCollectionComponentApiUrl } from '../data/api';
 
 let axiosMock: MockAdapter;
@@ -43,6 +44,7 @@ const mockCollection = {
 };
 
 const { title } = mockGetCollectionMetadata.collectionData;
+jest.mock('../../content-tags-drawer/ContentTagsDrawer', () => jest.fn(() => <div>Mocked ContentTagsDrawer</div>));
 
 describe('<LibraryCollectionPage />', () => {
   beforeEach(() => {
@@ -200,6 +202,8 @@ describe('<LibraryCollectionPage />', () => {
   });
 
   it('should open collection Info by default', async () => {
+    const expectedCollectionUsageKey = 'lib-collection:Axim:TEST:my-first-collection';
+
     await renderLibraryCollectionPage();
 
     expect(await screen.findByText('All Collections')).toBeInTheDocument();
@@ -209,9 +213,18 @@ describe('<LibraryCollectionPage />', () => {
 
     expect(screen.getByText('Manage')).toBeInTheDocument();
     expect(screen.getByText('Details')).toBeInTheDocument();
+    expect(screen.getByText('Mocked ContentTagsDrawer')).toBeInTheDocument();
+    expect(ContentTagsDrawer).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: expectedCollectionUsageKey,
+      }),
+      {},
+    );
   });
 
   it('should close and open Collection Info', async () => {
+    const expectedCollectionUsageKey = 'lib-collection:Axim:TEST:my-first-collection';
+
     await renderLibraryCollectionPage();
 
     expect(await screen.findByText('All Collections')).toBeInTheDocument();
@@ -230,6 +243,13 @@ describe('<LibraryCollectionPage />', () => {
     fireEvent.click(collectionInfoBtn);
     expect(screen.getByText('Manage')).toBeInTheDocument();
     expect(screen.getByText('Details')).toBeInTheDocument();
+    expect(screen.getByText('Mocked ContentTagsDrawer')).toBeInTheDocument();
+    expect(ContentTagsDrawer).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: expectedCollectionUsageKey,
+      }),
+      {},
+    );
   });
 
   it('sorts collection components', async () => {

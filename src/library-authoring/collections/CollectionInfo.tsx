@@ -11,6 +11,8 @@ import { useNavigate, useMatch } from 'react-router-dom';
 import { useLibraryContext } from '../common/context';
 import CollectionDetails from './CollectionDetails';
 import messages from './messages';
+import { ContentTagsDrawer } from '../../content-tags-drawer';
+import { buildCollectionUsageKey } from '../../generic/key-utils';
 
 const CollectionInfo = () => {
   const intl = useIntl();
@@ -33,6 +35,8 @@ const CollectionInfo = () => {
   if (!sidebarCollectionId) {
     throw new Error('sidebarCollectionId is required');
   }
+
+  const collectionUsageKey = buildCollectionUsageKey(libraryId, sidebarCollectionId);
 
   const handleOpenCollection = useCallback(() => {
     if (!componentPickerMode) {
@@ -61,7 +65,10 @@ const CollectionInfo = () => {
         defaultActiveKey="manage"
       >
         <Tab eventKey="manage" title={intl.formatMessage(messages.manageTabTitle)}>
-          Manage tab placeholder
+          <ContentTagsDrawer
+            id={collectionUsageKey}
+            variant="component"
+          />
         </Tab>
         <Tab eventKey="details" title={intl.formatMessage(messages.detailsTabTitle)}>
           <CollectionDetails />

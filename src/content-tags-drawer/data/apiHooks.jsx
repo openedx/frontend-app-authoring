@@ -15,6 +15,7 @@ import {
   getContentTaxonomyTagsCount,
 } from './api';
 import { libraryQueryPredicate, xblockQueryKeys } from '../../library-authoring/data/apiHooks';
+import { getLibraryId } from '../../generic/key-utils';
 
 /** @typedef {import("../../taxonomy/tag-list/data/types.mjs").TagListData} TagListData */
 /** @typedef {import("../../taxonomy/tag-list/data/types.mjs").TagData} TagData */
@@ -147,9 +148,9 @@ export const useContentTaxonomyTagsUpdater = (contentId) => {
         contentPattern = contentId.replace(/\+type@.*$/, '*');
       }
       queryClient.invalidateQueries({ queryKey: ['contentTagsCount', contentPattern] });
-      if (contentId.includes('lb:')) {
+      if (contentId.startsWith('lb:') || contentId.startsWith('lib-collection:')) {
         // Obtain library id from contentId
-        const libraryId = ['lib', ...contentId.split(':').slice(1, 3)].join(':');
+        const libraryId = getLibraryId(contentId);
         // Invalidate component metadata to update tags count
         queryClient.invalidateQueries(xblockQueryKeys.componentMetadata(contentId));
         // Invalidate content search to update tags count
