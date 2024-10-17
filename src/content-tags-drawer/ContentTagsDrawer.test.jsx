@@ -244,6 +244,29 @@ describe('<ContentTagsDrawer />', () => {
     expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
   });
 
+  test.each([
+    {
+      variant: 'drawer',
+      editButton: /edit tags/i,
+    },
+    {
+      variant: 'component',
+      editButton: /manage tags/i,
+    },
+  ])(
+    'should hide "$editButton" button on $variant variant if not allowed to tag object',
+    async ({ variant, editButton }) => {
+      renderDrawer(stagedTagsId, { variant, readOnly: true });
+      expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
+
+      expect(screen.queryByRole('button', { name: editButton })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument();
+      expect(screen.queryByText(/add a tag/i)).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /cancel/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /save/i })).not.toBeInTheDocument();
+    },
+  );
+
   it('should test adding a content tag to the staged tags for a taxonomy', async () => {
     renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
@@ -368,7 +391,7 @@ describe('<ContentTagsDrawer />', () => {
     expect(screen.queryByText(/tag 3/i)).not.toBeInTheDocument();
   });
 
-  it('should test delete feched tags and cancel', async () => {
+  it('should test delete fetched tags and cancel', async () => {
     renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
@@ -435,7 +458,7 @@ describe('<ContentTagsDrawer />', () => {
     expect(screen.queryByText(/tag 3/i)).not.toBeInTheDocument();
   });
 
-  it('should test add removed feched tags and cancel', async () => {
+  it('should test add removed fetched tags and cancel', async () => {
     renderDrawer(stagedTagsId);
     expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 

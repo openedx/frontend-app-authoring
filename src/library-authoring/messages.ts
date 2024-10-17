@@ -106,6 +106,11 @@ const messages = defineMessages({
     defaultMessage: 'Read Only',
     description: 'Text in badge when the user has read only access',
   },
+  returnToLibrarySelection: {
+    id: 'course-authoring.library-authoring.pick-components.return-to-library-selection',
+    defaultMessage: 'Change Library',
+    description: 'Breadcrumbs link to return to library selection',
+  },
 });
 
 export default messages;

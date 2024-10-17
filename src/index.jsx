@@ -16,7 +16,7 @@ import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
 import messages from './i18n';
 
-import { CreateLibrary, LibraryLayout } from './library-authoring';
+import { ComponentPicker, CreateLibrary, LibraryLayout } from './library-authoring';
 import initializeStore from './store';
 import CourseAuthoringRoutes from './CourseAuthoringRoutes';
 import Head from './head/Head';
@@ -55,6 +55,7 @@ const App = () => {
         <Route path="/libraries-v1" element={<StudioHome />} />
         <Route path="/library/create" element={<CreateLibrary />} />
         <Route path="/library/:libraryId/*" element={<LibraryLayout />} />
+        <Route path="/component-picker" element={<ComponentPicker />} />
         <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
         <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
         {getConfig().ENABLE_ACCESSIBILITY_PAGE === 'true' && (
@@ -133,6 +134,7 @@ initialize({
         ENABLE_CHECKLIST_QUALITY: process.env.ENABLE_CHECKLIST_QUALITY || 'true',
         ENABLE_GRADING_METHOD_IN_PROBLEMS: process.env.ENABLE_GRADING_METHOD_IN_PROBLEMS === 'true',
         LIBRARY_MODE: process.env.LIBRARY_MODE || 'v1 only',
+        LIBRARY_SUPPORTED_BLOCKS: (process.env.LIBRARY_SUPPORTED_BLOCKS || 'problem,video,html').split(','),
       }, 'CourseAuthoringConfig');
     },
   },

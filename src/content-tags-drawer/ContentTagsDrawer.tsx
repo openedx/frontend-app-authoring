@@ -73,7 +73,7 @@ const TaxonomyList = ({ contentId }: TaxonomyListProps) => {
   return <Loading />;
 };
 
-const ContentTagsDrawerTittle = () => {
+const ContentTagsDrawerTitle = () => {
   const intl = useIntl();
   const {
     isContentDataLoaded,
@@ -100,9 +100,10 @@ const ContentTagsDrawerTittle = () => {
 
 interface ContentTagsDrawerVariantFooterProps {
   onClose: () => void,
+  readOnly: boolean,
 }
 
-const ContentTagsDrawerVariantFooter = ({ onClose }: ContentTagsDrawerVariantFooterProps) => {
+const ContentTagsDrawerVariantFooter = ({ onClose, readOnly }: ContentTagsDrawerVariantFooterProps) => {
   const intl = useIntl();
   const {
     commitGlobalStagedTagsStatus,
@@ -130,16 +131,18 @@ const ContentTagsDrawerVariantFooter = ({ onClose }: ContentTagsDrawerVariantFoo
                 ? messages.tagsDrawerCancelButtonText
                 : messages.tagsDrawerCloseButtonText)}
             </Button>
-            <Button
-              className="rounded-0"
-              onClick={isEditMode
-                ? commitGlobalStagedTags
-                : toEditMode}
-            >
-              { intl.formatMessage(isEditMode
-                ? messages.tagsDrawerSaveButtonText
-                : messages.tagsDrawerEditTagsButtonText)}
-            </Button>
+            {!readOnly && (
+              <Button
+                className="rounded-0"
+                onClick={isEditMode
+                  ? commitGlobalStagedTags
+                  : toEditMode}
+              >
+                { intl.formatMessage(isEditMode
+                  ? messages.tagsDrawerSaveButtonText
+                  : messages.tagsDrawerEditTagsButtonText)}
+              </Button>
+            )}
           </Stack>
         )
           : (
@@ -154,7 +157,11 @@ const ContentTagsDrawerVariantFooter = ({ onClose }: ContentTagsDrawerVariantFoo
   );
 };
 
-const ContentTagsComponentVariantFooter = () => {
+interface ContentTagsComponentVariantFooterProps {
+  readOnly?: boolean;
+}
+
+const ContentTagsComponentVariantFooter = ({ readOnly = false }: ContentTagsComponentVariantFooterProps) => {
   const intl = useIntl();
   const {
     commitGlobalStagedTagsStatus,
@@ -195,7 +202,7 @@ const ContentTagsComponentVariantFooter = () => {
             </div>
           )}
         </div>
-      ) : (
+      ) : !readOnly && (
         <Button
           variant="outline-primary"
           onClick={toEditMode}
@@ -212,6 +219,7 @@ interface ContentTagsDrawerProps {
   id?: string;
   onClose?: () => void;
   variant?: 'drawer' | 'component';
+  readOnly?: boolean;
 }
 
 /**
@@ -227,6 +235,7 @@ const ContentTagsDrawer = ({
   id,
   onClose,
   variant = 'drawer',
+  readOnly = false,
 }: ContentTagsDrawerProps) => {
   const intl = useIntl();
   // TODO: We can delete 'params' when the iframe is no longer used on edx-platform
@@ -237,7 +246,7 @@ const ContentTagsDrawer = ({
     throw new Error('Error: contentId cannot be null.');
   }
 
-  const context = useContentTagsDrawerContext(contentId);
+  const context = useContentTagsDrawerContext(contentId, !readOnly);
   const { blockingSheet } = useContext(ContentTagsDrawerSheetContext);
 
   const {
@@ -301,9 +310,9 @@ const ContentTagsDrawer = ({
     if (isTaxonomyListLoaded && isContentTaxonomyTagsLoaded) {
       switch (variant) {
         case 'drawer':
-          return <ContentTagsDrawerVariantFooter onClose={onCloseDrawer} />;
+          return <ContentTagsDrawerVariantFooter onClose={onCloseDrawer} readOnly={readOnly} />;
         case 'component':
-          return <ContentTagsComponentVariantFooter />;
+          return <ContentTagsComponentVariantFooter readOnly={readOnly} />;
         default:
           return null;
       }
@@ -331,7 +340,7 @@ const ContentTagsDrawer = ({
           )}
         >
           {variant === 'drawer' && (
-            <ContentTagsDrawerTittle />
+            <ContentTagsDrawerTitle />
           )}
           <Container
             className={classNames(

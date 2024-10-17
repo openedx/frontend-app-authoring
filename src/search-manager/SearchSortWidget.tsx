@@ -3,11 +3,12 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon, Dropdown } from '@openedx/paragon';
 import { Check, SwapVert } from '@openedx/paragon/icons';
 
+import classNames from 'classnames';
 import messages from './messages';
 import { SearchSortOption } from './data/api';
 import { useSearchContext } from './SearchManager';
 
-export const SearchSortWidget: React.FC<Record<never, never>> = () => {
+export const SearchSortWidget = ({ iconOnly = false }: { iconOnly?: boolean }) => {
   const intl = useIntl();
   const {
     searchSortOrder,
@@ -82,11 +83,13 @@ export const SearchSortWidget: React.FC<Record<never, never>> = () => {
         title={intl.formatMessage(messages.searchSortWidgetAltTitle)}
         alt={intl.formatMessage(messages.searchSortWidgetAltTitle)}
         variant="outline-primary"
-        className="dropdown-toggle-menu-items d-flex"
+        className={classNames('dropdown-toggle-menu-items d-flex', {
+          'border-0': iconOnly,
+        })}
         size="sm"
       >
         <Icon src={SwapVert} className="d-inline" />
-        <div className="py-0 px-1">{toggleLabel}</div>
+        { !iconOnly && <div className="py-0 px-1">{toggleLabel}</div>}
       </Dropdown.Toggle>
       <Dropdown.Menu>
         <Dropdown.Header>{menuHeader}</Dropdown.Header>

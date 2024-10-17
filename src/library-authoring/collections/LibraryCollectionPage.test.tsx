@@ -1,5 +1,7 @@
 import fetchMock from 'fetch-mock-jest';
 import { cloneDeep } from 'lodash';
+import MockAdapter from 'axios-mock-adapter/types';
+
 import {
   fireEvent,
   initializeMocks,
@@ -18,6 +20,10 @@ import { mockContentSearchConfig, mockGetBlockTypes } from '../../search-manager
 import { mockBroadcastChannel, mockClipboardEmpty } from '../../generic/data/api.mock';
 import { LibraryLayout } from '..';
 import { ContentTagsDrawer } from '../../content-tags-drawer';
+import { getLibraryCollectionComponentApiUrl } from '../data/api';
+
+let axiosMock: MockAdapter;
+let mockShowToast;
 
 mockClipboardEmpty.applyMock();
 mockGetCollectionMetadata.applyMock();
@@ -42,7 +48,9 @@ jest.mock('../../content-tags-drawer/ContentTagsDrawer', () => jest.fn(() => <di
 
 describe('<LibraryCollectionPage />', () => {
   beforeEach(() => {
-    initializeMocks();
+    const mocks = initializeMocks();
+    axiosMock = mocks.axiosMock;
+    mockShowToast = mocks.mockShowToast;
     fetchMock.mockReset();
 
     // The Meilisearch client-side API uses fetch, not Axios.
@@ -321,7 +329,6 @@ describe('<LibraryCollectionPage />', () => {
     expect(mockResult0.display_name).toStrictEqual(displayName);
     await renderLibraryCollectionPage();
 
-    // Click on the first component. It should appear twice, in both "Recently Modified" and "Components"
     fireEvent.click((await screen.findAllByText(displayName))[0]);
 
     const sidebar = screen.getByTestId('library-sidebar');
@@ -343,5 +350,31 @@ describe('<LibraryCollectionPage />', () => {
     fireEvent.click(filterButton);
 
     expect(screen.getByText(/no matching components/i)).toBeInTheDocument();
+  });
+
+  it('should remove component from collection and hides sidebar', async () => {
+    const url = getLibraryCollectionComponentApiUrl(
+      mockContentLibrary.libraryId,
+      mockCollection.collectionId,
+    );
+    axiosMock.onDelete(url).reply(204);
+    const displayName = 'Introduction to Testing';
+    await renderLibraryCollectionPage();
+
+    // open sidebar
+    fireEvent.click(await screen.findByText(displayName));
+    await waitFor(() => expect(screen.queryByTestId('library-sidebar')).toBeInTheDocument());
+
+    const menuBtns = await screen.findAllByRole('button', { name: 'Component actions menu' });
+    // open menu
+    fireEvent.click(menuBtns[0]);
+
+    fireEvent.click(await screen.findByText('Remove from collection'));
+    await waitFor(() => {
+      expect(axiosMock.history.delete.length).toEqual(1);
+      expect(mockShowToast).toHaveBeenCalledWith('Component successfully removed');
+    });
+    // Should close sidebar as component was removed
+    await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
   });
 });

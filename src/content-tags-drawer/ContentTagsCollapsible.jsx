@@ -393,16 +393,18 @@ const ContentTagsCollapsible = ({
             && (
               <div className="mb-3" key={taxonomyId}>
                 <p className="text-gray-500">{intl.formatMessage(messages.collapsibleNoTagsAddedText)}
-                  <Button
-                    tabIndex={0}
-                    size="inline"
-                    ref={selectInlineEditModeRef}
-                    variant="link"
-                    className="text-info-500 add-tags-button"
-                    onClick={toEditMode}
-                  >
-                    { intl.formatMessage(messages.collapsibleAddStagedTagsButtonText) }
-                  </Button>
+                  {canTagObject && (
+                    <Button
+                      tabIndex={0}
+                      size="inline"
+                      ref={selectInlineEditModeRef}
+                      variant="link"
+                      className="text-info-500 add-tags-button"
+                      onClick={toEditMode}
+                    >
+                      { intl.formatMessage(messages.collapsibleAddStagedTagsButtonText) }
+                    </Button>
+                  )}
                 </p>
               </div>
             )}
@@ -418,7 +420,7 @@ const ContentTagsCollapsible = ({
             )}
 
           <div className="d-flex taxonomy-tags-selector-menu">
-            {isEditMode && canTagObject && (
+            {isEditMode && (
               <Select
                 onBlur={handleOnBlur}
                 styles={{

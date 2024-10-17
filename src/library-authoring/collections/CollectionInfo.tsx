@@ -5,36 +5,55 @@ import {
   Tab,
   Tabs,
 } from '@openedx/paragon';
-import { Link, useMatch } from 'react-router-dom';
+import { useCallback } from 'react';
+import { useNavigate, useMatch } from 'react-router-dom';
 
-import type { ContentLibrary } from '../data/api';
+import { useLibraryContext } from '../common/context';
 import CollectionDetails from './CollectionDetails';
 import messages from './messages';
 import { ContentTagsDrawer } from '../../content-tags-drawer';
 import { buildCollectionUsageKey } from '../../generic/key-utils';
 
-interface CollectionInfoProps {
-  library: ContentLibrary,
-  collectionId: string,
-}
-
-const CollectionInfo = ({ library, collectionId }: CollectionInfoProps) => {
+const CollectionInfo = () => {
   const intl = useIntl();
-  const url = `/library/${library.id}/collection/${collectionId}/`;
+  const navigate = useNavigate();
+
+  const {
+    libraryId,
+    collectionId,
+    setCollectionId,
+    sidebarCollectionId,
+    componentPickerMode,
+  } = useLibraryContext();
+
+  const url = `/library/${libraryId}/collection/${sidebarCollectionId}/`;
   const urlMatch = useMatch(url);
 
-  const collectionUsageKey = buildCollectionUsageKey(library.id, collectionId);
+  const showOpenCollectionButton = !urlMatch && collectionId !== sidebarCollectionId;
+
+  // istanbul ignore if: this should never happen
+  if (!sidebarCollectionId) {
+    throw new Error('sidebarCollectionId is required');
+  }
+
+  const collectionUsageKey = buildCollectionUsageKey(libraryId, sidebarCollectionId);
+
+  const handleOpenCollection = useCallback(() => {
+    if (!componentPickerMode) {
+      navigate(url);
+    } else {
+      setCollectionId(sidebarCollectionId);
+    }
+  }, [componentPickerMode, url]);
 
   return (
     <Stack>
-      {!urlMatch && (
+      {showOpenCollectionButton && (
         <div className="d-flex flex-wrap">
           <Button
-            as={Link}
-            to={url}
+            onClick={handleOpenCollection}
             variant="outline-primary"
             className="m-1 text-nowrap flex-grow-1"
-            disabled={!!urlMatch}
           >
             {intl.formatMessage(messages.openCollectionButton)}
           </Button>
@@ -52,10 +71,7 @@ const CollectionInfo = ({ library, collectionId }: CollectionInfoProps) => {
           />
         </Tab>
         <Tab eventKey="details" title={intl.formatMessage(messages.detailsTabTitle)}>
-          <CollectionDetails
-            library={library}
-            collectionId={collectionId}
-          />
+          <CollectionDetails />
         </Tab>
       </Tabs>
     </Stack>

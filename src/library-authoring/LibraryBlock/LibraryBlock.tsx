@@ -20,7 +20,7 @@ interface LibraryBlockProps {
 const LibraryBlock = ({ onBlockNotification, usageKey }: LibraryBlockProps) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [iFrameHeight, setIFrameHeight] = useState(600);
-  const lmsBaseUrl = getConfig().LMS_BASE_URL;
+  const studioBaseUrl = getConfig().STUDIO_BASE_URL;
 
   const intl = useIntl();
 
@@ -74,7 +74,7 @@ const LibraryBlock = ({ onBlockNotification, usageKey }: LibraryBlockProps) => {
       <iframe
         ref={iframeRef}
         title={intl.formatMessage(messages.iframeTitle)}
-        src={`${lmsBaseUrl}/xblocks/v2/${usageKey}/embed/student_view/`}
+        src={`${studioBaseUrl}/xblocks/v2/${usageKey}/embed/student_view/`}
         data-testid="block-preview"
         style={{
           width: '100%',

@@ -45,6 +45,7 @@ mergeConfig({
   STUDIO_BASE_URL: process.env.STUDIO_BASE_URL || null,
   LMS_BASE_URL: process.env.LMS_BASE_URL || null,
   LIBRARY_MODE: process.env.LIBRARY_MODE || 'v1 only',
+  LIBRARY_SUPPORTED_BLOCKS: (process.env.LIBRARY_SUPPORTED_BLOCKS || 'problem,video,html').split(','),
 }, 'CourseAuthoringConfig');
 
 class ResizeObserver {

@@ -18,6 +18,7 @@ import pluginConfig from './pluginConfig';
 import * as module from './hooks';
 import * as tinyMCE from '../../data/constants/tinyMCE';
 import { getRelativeUrl, getStaticUrl, parseAssetName } from './utils';
+import { isLibraryKey } from '../../../generic/key-utils';
 
 export const state = StrictDict({
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -83,6 +84,20 @@ export const replaceStaticWithAsset = ({
   editorType,
   lmsEndpointUrl,
 }) => {
+  if (isLibraryKey(learningContextId)) {
+    // This function doesn't currently know how to deal with Library assets.
+    // Libraries don't mangle the path into an asset key–it might be sufficient
+    // to remove the initial "/" in a "/static/images/foo.png" link, and then
+    // set the base URL to the correct ComponentVersion base. If we let this
+    // function try to deal with Library assets, it would convert them in such a
+    // way that it wouldn't convert back later on, and we'd end up storing the
+    // incorrect OLX and breaking the display from that point forward.
+    //
+    // So until we handle it better, just disable static asset URL substitutions
+    // when dealing with Library content.
+    return false;
+  }
+
   let content = initialContent;
   let hasChanges = false;
   const srcs = content.split(/(src="|src=&quot;|href="|href=&quot)/g).filter(
@@ -98,7 +113,8 @@ export const replaceStaticWithAsset = ({
       const assetName = parseAssetName(src);
       const displayName = isStatic ? staticName : assetName;
       const isCorrectAssetFormat = assetSrc.startsWith('/asset') && assetSrc.match(/\/asset-v1:\S+[+]\S+[@]\S+[+]\S+[@]/g)?.length >= 1;
-      // assets in expandable text areas so not support relative urls so all assets must have the lms
+
+      // assets in expandable text areas do not support relative urls so all assets must have the lms
       // endpoint prepended to the relative url
       if (editorType === 'expandable') {
         if (isCorrectAssetFormat) {
