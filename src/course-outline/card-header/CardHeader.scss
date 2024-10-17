@@ -5,7 +5,7 @@
   .item-card-header__title-btn {
     justify-content: flex-start;
     padding: 0;
-    width: fit-content;
+    flex: 1 1 0%;
     height: 1.5rem;
     margin-right: .25rem;
     background: transparent;
@@ -15,6 +15,7 @@
   .item-card-edit-icon {
     opacity: 0;
     transition: opacity .3s linear;
+    margin-right: .5rem;
 
     &:focus {
       opacity: 1;
