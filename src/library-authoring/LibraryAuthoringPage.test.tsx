@@ -745,4 +745,40 @@ describe('<LibraryAuthoringPage />', () => {
     expect(container.queryAllByText('Text').length).toBeGreaterThan(0);
     expect(container.queryAllByText('Collection').length).toBeGreaterThan(0);
   });
+
+  it('shows a single block when usageKey query param is set', async () => {
+    render(<LibraryLayout />, {
+      path,
+      routerProps: {
+        initialEntries: [
+          `/library/${mockContentLibrary.libraryId}/components?usageKey=${mockXBlockFields.usageKeyHtml}`,
+        ],
+      },
+    });
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+        body: expect.stringContaining(mockXBlockFields.usageKeyHtml),
+        headers: expect.anything(),
+        method: 'POST',
+      });
+    });
+    expect(screen.queryByPlaceholderText('Displaying single block, clear filters to search')).toBeInTheDocument();
+    const { displayName } = mockXBlockFields.dataHtml;
+    const sidebar = screen.getByTestId('library-sidebar');
+
+    const { getByText } = within(sidebar);
+
+    // should display the component with passed param: usageKey in the sidebar
+    await waitFor(() => expect(getByText(displayName)).toBeInTheDocument());
+    // clear usageKey filter
+    const clearFitlersButton = screen.getByRole('button', { name: /clear filters/i });
+    fireEvent.click(clearFitlersButton);
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+        body: expect.not.stringContaining(mockXBlockFields.usageKeyHtml),
+        method: 'POST',
+        headers: expect.anything(),
+      });
+    });
+  });
 });
