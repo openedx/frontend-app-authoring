@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { LoadingSpinner } from '../../generic/Loading';
 import { useLoadOnScroll } from '../../hooks';
 import { useSearchContext } from '../../search-manager';
@@ -30,9 +32,11 @@ const LibraryComponents = ({ variant }: LibraryComponentsProps) => {
   } = useSearchContext();
   const { openAddContentSidebar, openComponentInfoSidebar } = useLibraryContext();
 
-  if (usageKey) {
-    openComponentInfoSidebar(usageKey);
-  }
+  useEffect(() => {
+    if (usageKey) {
+      openComponentInfoSidebar(usageKey);
+    }
+  }, [usageKey]);
 
   const componentList = variant === 'preview' ? hits.slice(0, LIBRARY_SECTION_PREVIEW_LIMIT) : hits;
 
