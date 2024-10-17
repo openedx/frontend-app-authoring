@@ -38,3 +38,16 @@ export function isLibraryKey(learningContextKey: string | undefined): learningCo
 export function isLibraryV1Key(learningContextKey: string | undefined): learningContextKey is string {
   return typeof learningContextKey === 'string' && learningContextKey.startsWith('library-v1:');
 }
+
+/**
+ * Build a collection usage key from library V2 context key and collection Id.
+ * This Collection Usage Key is only used on tagging.
+*/
+export const buildCollectionUsageKey = (learningContextKey: string, collectionId: string) => {
+  if (!isLibraryKey(learningContextKey)) {
+    return '';
+  }
+
+  const orgLib = learningContextKey.replace('lib:', '');
+  return `lib-collection:${orgLib}:${collectionId}`;
+};

@@ -1,4 +1,5 @@
 import {
+  buildCollectionUsageKey,
   getBlockType,
   getLibraryId,
   isLibraryKey,
@@ -72,6 +73,23 @@ describe('component utils', () => {
     ] as const) {
       it(`returns '${expected}' for learning context key '${input}'`, () => {
         expect(isLibraryV1Key(input)).toStrictEqual(expected);
+      });
+    }
+  });
+
+  describe('buildCollectionUsageKey', () => {
+    for (const [libraryKey, collectionId, expected] of [
+      ['lib:org:lib', 'coll', 'lib-collection:org:lib:coll'],
+      ['lib:OpenCraftX:ALPHA', 'coll', 'lib-collection:OpenCraftX:ALPHA:coll'],
+      ['lb:org:lib:html:id', 'coll', ''],
+      ['lb:OpenCraftX:ALPHA:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd', 'coll', ''],
+      ['library-v1:AximX+L1', 'coll', ''],
+      ['course-v1:AximX+TS100+23', 'coll', ''],
+      ['', 'coll', ''],
+      ['', 'coll', ''],
+    ] as const) {
+      it(`returns '${expected}' for learning context key '${libraryKey}' and collection Id '${collectionId}'`, () => {
+        expect(buildCollectionUsageKey(libraryKey, collectionId)).toStrictEqual(expected);
       });
     }
   });

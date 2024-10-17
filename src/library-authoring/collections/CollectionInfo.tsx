@@ -11,7 +11,7 @@ import type { ContentLibrary } from '../data/api';
 import CollectionDetails from './CollectionDetails';
 import messages from './messages';
 import { ContentTagsDrawer } from '../../content-tags-drawer';
-import { buildCollectionUsageKey } from '../utils';
+import { buildCollectionUsageKey } from '../../generic/key-utils';
 
 interface CollectionInfoProps {
   library: ContentLibrary,
