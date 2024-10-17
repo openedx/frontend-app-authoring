@@ -44,6 +44,7 @@ export interface SearchContextData {
   hasError: boolean;
   collectionHits: CollectionHit[];
   totalCollectionHits: number;
+  usageKey: string;
 }
 
 const SearchContext = React.createContext<SearchContextData | undefined>(undefined);
@@ -101,7 +102,17 @@ export const SearchContextProvider: React.FC<{
   const [blockTypesFilter, setBlockTypesFilter] = React.useState<string[]>([]);
   const [problemTypesFilter, setProblemTypesFilter] = React.useState<string[]>([]);
   const [tagsFilter, setTagsFilter] = React.useState<string[]>([]);
+  const [usageKey, setUsageKey] = useStateWithUrlSearchParam(
+    '',
+    'usageKey',
+    (value: string) => value,
+    (value: string) => value,
+  );
+
   let extraFilter: string[] = forceArray(props.extraFilter);
+  if (usageKey) {
+    extraFilter.push(`usage_key = "${usageKey}"`);
+  }
 
   // The search sort order can be set via the query string
   // E.g. ?sort=display_name:desc maps to SearchSortOption.TITLE_ZA.
@@ -131,12 +142,14 @@ export const SearchContextProvider: React.FC<{
     blockTypesFilter.length > 0
     || problemTypesFilter.length > 0
     || tagsFilter.length > 0
+    || !!usageKey
   );
   const isFiltered = canClearFilters || (searchKeywords !== '');
   const clearFilters = React.useCallback(() => {
     setBlockTypesFilter([]);
     setTagsFilter([]);
     setProblemTypesFilter([]);
+    setUsageKey('');
   }, []);
 
   // Initialize a connection to Meilisearch:
@@ -176,6 +189,7 @@ export const SearchContextProvider: React.FC<{
       defaultSearchSortOrder,
       closeSearchModal: props.closeSearchModal ?? (() => { }),
       hasError: hasConnectionError || result.isError,
+      usageKey,
       ...result,
     },
   }, props.children);

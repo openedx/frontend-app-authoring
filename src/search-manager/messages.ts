@@ -11,6 +11,11 @@ const messages = defineMessages({
     defaultMessage: 'Search',
     description: 'Placeholder text shown in the keyword input field when the user has not yet entered a keyword',
   },
+  clearUsageKeyToSearch: {
+    id: 'course-authoring.search-manager.clearUsageKeyToSearch',
+    defaultMessage: 'Displaying single block, clear filters to search',
+    description: 'Placeholder text shown in the keyword input field when a single block filtered by usage key is shown',
+  },
   blockTypeFilter: {
     id: 'course-authoring.search-manager.blockTypeFilter',
     defaultMessage: 'Type',

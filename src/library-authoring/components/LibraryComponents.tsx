@@ -26,8 +26,13 @@ const LibraryComponents = ({ variant }: LibraryComponentsProps) => {
     fetchNextPage,
     isLoading,
     isFiltered,
+    usageKey,
   } = useSearchContext();
-  const { openAddContentSidebar } = useLibraryContext();
+  const { openAddContentSidebar, openComponentInfoSidebar } = useLibraryContext();
+
+  if (usageKey) {
+    openComponentInfoSidebar(usageKey);
+  }
 
   const componentList = variant === 'preview' ? hits.slice(0, LIBRARY_SECTION_PREVIEW_LIMIT) : hits;
 
