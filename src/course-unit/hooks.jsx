@@ -97,7 +97,6 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   );
 
   const unitXBlockActions = {
-    // TODO: use for xblock delete functionality
     handleDelete: (XBlockId) => {
       dispatch(deleteUnitItemQuery(blockId, XBlockId));
     },

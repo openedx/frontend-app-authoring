@@ -201,7 +201,6 @@ export function fetchCourseVerticalChildrenData(itemId) {
   };
 }
 
-// TODO: use for xblock delete functionality
 export function deleteUnitItemQuery(itemId, xblockId) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
