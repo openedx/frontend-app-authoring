@@ -30,10 +30,6 @@ describe('<LibraryInfoHeader />', () => {
     mockShowToast = mocks.mockShowToast;
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   it('should render Library info Header', async () => {
     render();
 

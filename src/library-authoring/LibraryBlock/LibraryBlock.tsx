@@ -4,9 +4,12 @@ import { getConfig } from '@edx/frontend-platform';
 
 import messages from './messages';
 
+export type VersionSpec = 'published' | 'draft' | number;
+
 interface LibraryBlockProps {
   onBlockNotification?: (event: { eventType: string; [key: string]: any }) => void;
   usageKey: string;
+  version?: VersionSpec;
 }
 /**
  * React component that displays an XBlock in a sandboxed IFrame.
@@ -17,7 +20,7 @@ interface LibraryBlockProps {
  * cannot access things like the user's cookies, nor can it make GET/POST
  * requests as the user. However, it is allowed to call any XBlock handlers.
  */
-const LibraryBlock = ({ onBlockNotification, usageKey }: LibraryBlockProps) => {
+export const LibraryBlock = ({ onBlockNotification, usageKey, version }: LibraryBlockProps) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [iFrameHeight, setIFrameHeight] = useState(600);
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
@@ -62,6 +65,8 @@ const LibraryBlock = ({ onBlockNotification, usageKey }: LibraryBlockProps) => {
     };
   }, []);
 
+  const queryStr = version ? `?version=${version}` : '';
+
   return (
     <div style={{
       height: `${iFrameHeight}px`,
@@ -74,7 +79,7 @@ const LibraryBlock = ({ onBlockNotification, usageKey }: LibraryBlockProps) => {
       <iframe
         ref={iframeRef}
         title={intl.formatMessage(messages.iframeTitle)}
-        src={`${studioBaseUrl}/xblocks/v2/${usageKey}/embed/student_view/`}
+        src={`${studioBaseUrl}/xblocks/v2/${usageKey}/embed/student_view/${queryStr}`}
         data-testid="block-preview"
         style={{
           width: '100%',
@@ -89,5 +94,3 @@ const LibraryBlock = ({ onBlockNotification, usageKey }: LibraryBlockProps) => {
     </div>
   );
 };
-
-export default LibraryBlock;
