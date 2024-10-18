@@ -40,6 +40,11 @@ const TextEditor = ({
     learningContextId,
   });
   const editorContent = newContent || initialContent;
+  let documentURL;
+  if (isLibrary) {
+    // TODO Get the library base URL in the format http://{STUDIO_HOST}/library_assets/{component_uuid}/
+    documentURL = 'http://studio.local.openedx.io:8001/library_assets/9b40a992-9d5f-4f22-9d8c-5ff18c3600dc/';
+  }
 
   if (!refReady) { return null; }
 
@@ -65,6 +70,7 @@ const TextEditor = ({
           images,
           isLibrary,
           learningContextId,
+          documentURL,
         }}
       />
     );
