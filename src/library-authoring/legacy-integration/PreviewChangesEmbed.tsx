@@ -1,8 +1,12 @@
-import { useParams } from 'react-router-dom';
+import { useIntl } from '@edx/frontend-platform/i18n';
+import { useParams, useSearchParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 
 import { LibraryProvider } from '../common/context';
 import { getLibraryId } from '../../generic/key-utils';
 import CompareChangesWidget from '../component-comparison/CompareChangesWidget';
+import { useLibraryBlockMetadata } from '../data/apiHooks';
+import messages from '../component-comparison/messages';
 
 /**
  * This view is only used to support the legacy UI.
@@ -16,16 +20,23 @@ import CompareChangesWidget from '../component-comparison/CompareChangesWidget';
  * new MFE unit page.
  */
 const PreviewChangesEmbed = () => {
+  const intl = useIntl();
   const { usageKey } = useParams();
   if (usageKey === undefined) {
     // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
     throw new Error('Error: route is missing usageKey.');
   }
+  const [queryString] = useSearchParams();
+  const oldVersion = parseInt(queryString.get('old') ?? '', 10) || 'published';
   const libraryId = getLibraryId(usageKey);
+  const { data: metadata } = useLibraryBlockMetadata(usageKey);
 
   return (
     <LibraryProvider libraryId={libraryId}>
-      <CompareChangesWidget usageKey={usageKey} />
+      {/* It's not necessary since this will usually be in an <iframe>,
+          but it's good practice to set a title for any top level page */}
+      <Helmet><title>{intl.formatMessage(messages.iframeTitlePrefix)} | {metadata?.displayName ?? ''} | {process.env.SITE_NAME}</title></Helmet>
+      <CompareChangesWidget usageKey={usageKey} oldVersion={oldVersion} newVersion="published" />
     </LibraryProvider>
   );
 };
