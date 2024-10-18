@@ -6,6 +6,7 @@ import {
   Dropdown,
   Icon,
   IconButton,
+  useToggle,
 } from '@openedx/paragon';
 import { AddCircleOutline, MoreVert } from '@openedx/paragon/icons';
 
@@ -18,6 +19,7 @@ import { useAddComponentToCourse, useRemoveComponentsFromCollection } from '../d
 import BaseComponentCard from './BaseComponentCard';
 import { canEditComponent } from './ComponentEditorModal';
 import messages from './messages';
+import ComponentDeleter from './ComponentDeleter';
 
 type ComponentCardProps = {
   contentHit: ContentHit,
@@ -37,6 +39,8 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   const { showToast } = useContext(ToastContext);
   const [clipboardBroadcastChannel] = useState(() => new BroadcastChannel(STUDIO_CLIPBOARD_CHANNEL));
   const removeComponentsMutation = useRemoveComponentsFromCollection(libraryId, collectionId);
+  const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
+
   const updateClipboardClick = () => {
     updateClipboard(usageKey)
       .then((clipboardData) => {
@@ -76,6 +80,9 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
         <Dropdown.Item onClick={updateClipboardClick}>
           <FormattedMessage {...messages.menuCopyToClipboard} />
         </Dropdown.Item>
+        <Dropdown.Item onClick={confirmDelete}>
+          <FormattedMessage {...messages.menuDelete} />
+        </Dropdown.Item>
         {collectionId && (
         <Dropdown.Item onClick={removeFromCollection}>
           <FormattedMessage {...messages.menuRemoveFromCollection} />
@@ -85,6 +92,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
           <FormattedMessage {...messages.menuAddToCollection} />
         </Dropdown.Item>
       </Dropdown.Menu>
+      <ComponentDeleter usageKey={usageKey} isConfirmingDelete={isConfirmingDelete} cancelDelete={cancelDelete} />
     </Dropdown>
   );
 };

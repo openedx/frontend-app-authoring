@@ -183,6 +183,10 @@ export interface CreateBlockDataRequest {
   definitionId: string;
 }
 
+export interface DeleteBlockDataRequest {
+  usageKey: string;
+}
+
 export interface CollectionMetadata {
   key: string;
   title: string;
@@ -255,6 +259,11 @@ export async function createLibraryBlock({
     },
   );
   return camelCaseObject(data);
+}
+
+export async function deleteLibraryBlock({ usageKey }: DeleteBlockDataRequest): Promise<void> {
+  const client = getAuthenticatedHttpClient();
+  await client.delete(getLibraryBlockMetadataUrl(usageKey));
 }
 
 /**
