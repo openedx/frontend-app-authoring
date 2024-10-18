@@ -44,6 +44,7 @@ exports[`TinyMceWidget snapshots ImageUploadModal is not rendered 1`] = `
         "selection": "hooks.selectedImage.selection",
         "setEditorRef": undefined,
         "setSelection": [MockFunction hooks.selectedImage.setSelection],
+        "staticRootUrl": undefined,
         "studioEndpointUrl": "sOmEoThERvaLue.cOm",
         "updateContent": [Function],
       }
@@ -112,6 +113,7 @@ exports[`TinyMceWidget snapshots SourcecodeModal is not rendered 1`] = `
         "selection": "hooks.selectedImage.selection",
         "setEditorRef": undefined,
         "setSelection": [MockFunction hooks.selectedImage.setSelection],
+        "staticRootUrl": undefined,
         "studioEndpointUrl": "sOmEoThERvaLue.cOm",
         "updateContent": [Function],
       }
@@ -191,6 +193,7 @@ exports[`TinyMceWidget snapshots renders as expected with default behavior 1`] =
         "selection": "hooks.selectedImage.selection",
         "setEditorRef": undefined,
         "setSelection": [MockFunction hooks.selectedImage.setSelection],
+        "staticRootUrl": undefined,
         "studioEndpointUrl": "sOmEoThERvaLue.cOm",
         "updateContent": [Function],
       }
