@@ -4,10 +4,12 @@ import { getConfig } from '@edx/frontend-platform';
 
 import messages from './messages';
 
+export type VersionSpec = 'published' | 'draft' | number;
+
 interface LibraryBlockProps {
   onBlockNotification?: (event: { eventType: string; [key: string]: any }) => void;
   usageKey: string;
-  version?: 'published' | 'draft' | number;
+  version?: VersionSpec;
 }
 /**
  * React component that displays an XBlock in a sandboxed IFrame.
@@ -18,7 +20,7 @@ interface LibraryBlockProps {
  * cannot access things like the user's cookies, nor can it make GET/POST
  * requests as the user. However, it is allowed to call any XBlock handlers.
  */
-const LibraryBlock = ({ onBlockNotification, usageKey, version }: LibraryBlockProps) => {
+export const LibraryBlock = ({ onBlockNotification, usageKey, version }: LibraryBlockProps) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [iFrameHeight, setIFrameHeight] = useState(600);
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
@@ -92,5 +94,3 @@ const LibraryBlock = ({ onBlockNotification, usageKey, version }: LibraryBlockPr
     </div>
   );
 };
-
-export default LibraryBlock;

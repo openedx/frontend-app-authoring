@@ -1,14 +1,14 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Tab, Tabs } from '@openedx/paragon';
 
-import { LibraryBlock } from '../LibraryBlock';
+import { LibraryBlock, type VersionSpec } from '../LibraryBlock';
 
 import messages from './messages';
 
 interface Props {
   usageKey: string;
-  oldVersion?: number | 'draft' | 'published';
-  newVersion?: number | 'draft' | 'published';
+  oldVersion?: VersionSpec;
+  newVersion?: VersionSpec;
 }
 
 /**
