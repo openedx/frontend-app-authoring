@@ -14,7 +14,7 @@ import { updateClipboard } from '../../generic/data/api';
 import { ToastContext } from '../../generic/toast-context';
 import { type ContentHit } from '../../search-manager';
 import { useLibraryContext } from '../common/context';
-import { useAddComponentToCourse, useRemoveComponentsFromCollection } from '../data/apiHooks';
+import { useRemoveComponentsFromCollection } from '../data/apiHooks';
 import BaseComponentCard from './BaseComponentCard';
 import { canEditComponent } from './ComponentEditorModal';
 import messages from './messages';
@@ -90,14 +90,11 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
 };
 
 const ComponentCard = ({ contentHit }: ComponentCardProps) => {
-  const intl = useIntl();
-
   const {
     openComponentInfoSidebar,
     componentPickerMode,
     parentLocator,
   } = useLibraryContext();
-  const { showToast } = useContext(ToastContext);
 
   const {
     blockType,
@@ -112,20 +109,13 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
   ) ?? '';/* eslint-enable */
   const displayName = formatted?.displayName ?? '';
 
-  const {
-    mutateAsync: addComponentToCourse,
-    reset,
-  } = useAddComponentToCourse(parentLocator, contentHit.usageKey);
-
   const handleAddComponentToCourse = () => {
-    addComponentToCourse()
-      .then(() => {
-        window.parent.postMessage('closeComponentPicker', '*');
-      })
-      .catch(() => {
-        showToast(intl.formatMessage(messages.addComponentToCourseError));
-        reset();
-      });
+    window.parent.postMessage({
+      parentLocator,
+      usageKey,
+      type: 'pickerComponentSelected',
+      category: blockType,
+    }, '*');
   };
 
   return (
