@@ -2,7 +2,7 @@ module.exports = {
   next: null,
   previous: null,
   count: 2,
-  num_pages: 1,
+  num_pages: 2,
   current_page: 1,
   start: 0,
   results: [

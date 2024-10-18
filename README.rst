@@ -299,11 +299,13 @@ Configuration
 
 In additional to the standard settings, the following local configurations can be set to switch between different library modes:
 
-* ``LIBRARY_MODE``: can be set to ``mixed`` (default for development), ``v1 only`` (default for production) and ``v2 only``.
+* ``MEILISEARCH_ENABLED``: Studio setting which is enabled when the `meilisearch plugin`_ is installed.
+* ``edx-platform`` Waffle flags:
 
-  * ``mixed``: Shows 2 tabs, "Libraries" that lists the v2 libraries and "Legacy Libraries" that lists the v1 libraries. When creating a new library in this mode it will create a new v2 library.
-  * ``v1 only``: Shows only 1 tab, "Libraries" that lists v1 libraries only. When creating a new library in this mode it will create a new v1 library.
-  * ``v2 only``: Shows only 1 tab, "Libraries" that lists v2 libraries only. When creating a new library in this mode it will create a new v2 library.
+  * ``contentstore.new_studio_mfe.disable_legacy_libraries``: this feature flag must be OFF to show legacy Libraries V1
+  * ``contentstore.new_studio_mfe.disable_new_libraries``: this feature flag must be OFF to show Content Libraries V2
+
+.. _meilisearch plugin: https://github.com/open-craft/tutor-contrib-meilisearch
 
 Developing
 **********

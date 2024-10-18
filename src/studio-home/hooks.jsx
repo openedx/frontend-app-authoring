@@ -68,6 +68,8 @@ const useStudioHome = (isPaginated = false) => {
     studioRequestEmail,
     inProcessCourseActions,
     courseCreatorStatus,
+    librariesV1Enabled,
+    librariesV2Enabled,
   } = studioHomeData;
 
   const isShowOrganizationDropdown = optimizationEnabled && courseCreatorStatus === COURSE_CREATOR_STATES.granted;
@@ -94,6 +96,8 @@ const useStudioHome = (isPaginated = false) => {
     hasAbilityToCreateNewCourse,
     isFiltered,
     setShowNewCourseContainer,
+    librariesV1Enabled,
+    librariesV2Enabled,
   };
 };
 
