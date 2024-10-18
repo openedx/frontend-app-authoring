@@ -17,6 +17,8 @@ import * as hooks from './hooks';
 import messages from './messages';
 import TinyMceWidget from '../../sharedComponents/TinyMceWidget';
 import { prepareEditorRef, replaceStaticWithAsset } from '../../sharedComponents/TinyMceWidget/hooks';
+import { useXBlockAssets } from '../../../library-authoring/data/apiHooks';
+import { useLibraryContext } from '../../../library-authoring/common/context';
 
 const TextEditor = ({
   onClose,
@@ -40,6 +42,16 @@ const TextEditor = ({
     learningContextId,
   });
   const editorContent = newContent || initialContent;
+  let documentURL;
+  if (isLibrary) {
+    // TODO Surely this is not the best way to do it.
+    const { sidebarComponentUsageKey: usageKey } = useLibraryContext();
+    const { data: assets } = useXBlockAssets(usageKey);
+    if (assets.length > 0) {
+      const [firstAsset] = assets;
+      [documentURL] = firstAsset.url.split('static/');
+    }
+  }
 
   if (!refReady) { return null; }
 
@@ -65,6 +77,7 @@ const TextEditor = ({
           images,
           isLibrary,
           learningContextId,
+          documentURL,
         }}
       />
     );
