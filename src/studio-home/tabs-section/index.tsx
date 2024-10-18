@@ -1,7 +1,12 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Tab, Tabs } from '@openedx/paragon';
+import {
+  Badge,
+  Stack,
+  Tab,
+  Tabs,
+} from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -14,19 +19,19 @@ import ArchivedTab from './archived-tab';
 import CoursesTab from './courses-tab';
 import { RequestStatus } from '../../data/constants';
 import { fetchLibraryData } from '../data/thunks';
-import { isMixedOrV1LibrariesMode, isMixedOrV2LibrariesMode } from './utils';
 
 const TabsSection = ({
   showNewCourseContainer,
   onClickNewCourse,
   isShowProcessing,
   isPaginationCoursesEnabled,
+  librariesV1Enabled,
+  librariesV2Enabled,
 }) => {
   const dispatch = useDispatch();
   const intl = useIntl();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const libMode = getConfig().LIBRARY_MODE;
   const TABS_LIST = {
     courses: 'courses',
     libraries: 'libraries',
@@ -41,7 +46,7 @@ const TabsSection = ({
     }
 
     if (pname.includes('/libraries')) {
-      return isMixedOrV2LibrariesMode(libMode)
+      return librariesV2Enabled
         ? TABS_LIST.libraries
         : TABS_LIST.legacyLibraries;
     }
@@ -63,7 +68,7 @@ const TabsSection = ({
   }, [pathname]);
 
   const {
-    courses, librariesEnabled, libraries, archivedCourses,
+    courses, libraries, archivedCourses,
     numPages, coursesCount,
   } = useSelector(getStudioHomeData);
   const {
@@ -115,38 +120,41 @@ const TabsSection = ({
       );
     }
 
-    if (librariesEnabled) {
-      if (isMixedOrV2LibrariesMode(libMode)) {
-        tabs.push(
-          <Tab
-            key={TABS_LIST.libraries}
-            eventKey={TABS_LIST.libraries}
-            title={intl.formatMessage(messages.librariesTabTitle)}
-          >
-            <LibrariesV2Tab />
-          </Tab>,
-        );
-      }
+    if (librariesV2Enabled) {
+      tabs.push(
+        <Tab
+          key={TABS_LIST.libraries}
+          eventKey={TABS_LIST.libraries}
+          title={(
+            <Stack gap={2} direction="horizontal">
+              {intl.formatMessage(messages.librariesTabTitle)}
+              <Badge variant="info">{intl.formatMessage(messages.librariesV2TabBetaBadge)}</Badge>
+            </Stack>
+          )}
+        >
+          <LibrariesV2Tab />
+        </Tab>,
+      );
+    }
 
-      if (isMixedOrV1LibrariesMode(libMode)) {
-        tabs.push(
-          <Tab
-            key={TABS_LIST.legacyLibraries}
-            eventKey={TABS_LIST.legacyLibraries}
-            title={intl.formatMessage(
-              libMode === 'v1 only'
-                ? messages.librariesTabTitle
-                : messages.legacyLibrariesTabTitle,
-            )}
-          >
-            <LibrariesTab
-              libraries={libraries}
-              isLoading={isLoadingLibraries}
-              isFailed={isFailedLibrariesPage}
-            />
-          </Tab>,
-        );
-      }
+    if (librariesV1Enabled) {
+      tabs.push(
+        <Tab
+          key={TABS_LIST.legacyLibraries}
+          eventKey={TABS_LIST.legacyLibraries}
+          title={intl.formatMessage(
+            librariesV2Enabled
+              ? messages.legacyLibrariesTabTitle
+              : messages.librariesTabTitle,
+          )}
+        >
+          <LibrariesTab
+            libraries={libraries}
+            isLoading={isLoadingLibraries}
+            isFailed={isFailedLibrariesPage}
+          />
+        </Tab>,
+      );
     }
 
     if (getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true') {
@@ -160,7 +168,7 @@ const TabsSection = ({
     }
 
     return tabs;
-  }, [archivedCourses, librariesEnabled, showNewCourseContainer, isLoadingCourses, isLoadingLibraries]);
+  }, [archivedCourses, showNewCourseContainer, isLoadingCourses, isLoadingLibraries]);
 
   const handleSelectTab = (tab) => {
     if (tab === TABS_LIST.courses) {
@@ -197,6 +205,8 @@ TabsSection.propTypes = {
   onClickNewCourse: PropTypes.func.isRequired,
   isShowProcessing: PropTypes.bool.isRequired,
   isPaginationCoursesEnabled: PropTypes.bool,
+  librariesV1Enabled: PropTypes.bool,
+  librariesV2Enabled: PropTypes.bool,
 };
 
 export default TabsSection;
