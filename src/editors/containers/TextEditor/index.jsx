@@ -50,7 +50,7 @@ const TextEditor = ({
     if (assets.length > 0) {
       const [firstAsset] = assets;
       [documentURL] = firstAsset.url.split('static/');
-  }
+    }
   }
 
   if (!refReady) { return null; }
