@@ -43,14 +43,12 @@ const TextEditor = ({
   });
   const editorContent = newContent || initialContent;
   let documentURL;
-  if (isLibrary) {
+  const { sidebarComponentUsageKey: usageKey } = useLibraryContext();
+  const { data: assets } = useXBlockAssets(usageKey);
+  if (isLibrary && assets.length > 0) {
     // TODO Surely this is not the best way to do it.
-    const { sidebarComponentUsageKey: usageKey } = useLibraryContext();
-    const { data: assets } = useXBlockAssets(usageKey);
-    if (assets.length > 0){
-      documentURL = assets[0].url.split("static/")[0];
-      console.log(documentURL)
-    }
+    const [firstAsset] = assets;
+    [documentURL] = firstAsset.url.split('static/');
   }
 
   if (!refReady) { return null; }
