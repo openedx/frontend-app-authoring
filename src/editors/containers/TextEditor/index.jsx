@@ -17,6 +17,8 @@ import * as hooks from './hooks';
 import messages from './messages';
 import TinyMceWidget from '../../sharedComponents/TinyMceWidget';
 import { prepareEditorRef, replaceStaticWithAsset } from '../../sharedComponents/TinyMceWidget/hooks';
+import { useXBlockAssets } from '../../../library-authoring/data/apiHooks';
+import { useLibraryContext } from '../../../library-authoring/common/context';
 
 const TextEditor = ({
   onClose,
@@ -42,8 +44,13 @@ const TextEditor = ({
   const editorContent = newContent || initialContent;
   let documentURL;
   if (isLibrary) {
-    // TODO Get the library base URL in the format http://{STUDIO_HOST}/library_assets/{component_uuid}/
-    documentURL = 'http://studio.local.openedx.io:8001/library_assets/9b40a992-9d5f-4f22-9d8c-5ff18c3600dc/';
+    // TODO Surely this is not the best way to do it.
+    const { sidebarComponentUsageKey: usageKey } = useLibraryContext();
+    const { data: assets } = useXBlockAssets(usageKey);
+    if (assets.length > 0){
+      documentURL = assets[0].url.split("static/")[0];
+      console.log(documentURL)
+    }
   }
 
   if (!refReady) { return null; }
