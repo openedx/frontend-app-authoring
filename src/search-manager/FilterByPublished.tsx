@@ -9,19 +9,29 @@ import {
 import { FilterList } from '@openedx/paragon/icons';
 import SearchFilterWidget from './SearchFilterWidget';
 import messages from './messages';
-// import { useSearchContext } from './SearchManager';
+import { useSearchContext } from './SearchManager';
+import { PublishStatus } from './data/api';
 
 /**
  * A button with a dropdown that allows filtering the current search by publish status
  */
 const FilterByPublished: React.FC<Record<never, never>> = () => {
-  // const {
-  //   publishedFilter,
-  //   setPublishedFilter,
-  // } = useSearchContext();
+  const {
+    publishedFilter,
+    setPublishedFilter,
+  } = useSearchContext();
 
   const clearFilters = React.useCallback(() => {
-    // setPublishedFilter(undefined);
+    setPublishedFilter([]);
+  }, []);
+
+  const toggleFilterMode = React.useCallback((mode: PublishStatus) => {
+    setPublishedFilter(oldList => {
+      if (oldList.includes(mode)) {
+        return oldList.filter(m => m !== mode);
+      }
+      return [...oldList, mode];
+    });
   }, []);
 
   return (
@@ -34,37 +44,37 @@ const FilterByPublished: React.FC<Record<never, never>> = () => {
       <Form.Group className="mb-0">
         <Form.CheckboxSet
           name="block-type-filter"
-          value={[]}
+          value={publishedFilter}
         >
           <Menu className="block-type-refinement-menu" style={{ boxShadow: 'none' }}>
             <MenuItem
               as={Form.Checkbox}
-              value={1}
-              onChange={() => {}}
+              value={PublishStatus.Published}
+              onChange={() => { toggleFilterMode(PublishStatus.Published); }}
             >
               <div>
                 Published
-                <Badge variant="light" pill>15</Badge>
+                {' '}<Badge variant="light" pill>15</Badge>
               </div>
             </MenuItem>
             <MenuItem
               as={Form.Checkbox}
-              value={2}
-              onChange={() => {}}
+              value={PublishStatus.Modified}
+              onChange={() => { toggleFilterMode(PublishStatus.Modified); }}
             >
               <div>
                 Modified since publish
-                <Badge variant="light" pill>5</Badge>
+                {' '}<Badge variant="light" pill>5</Badge>
               </div>
             </MenuItem>
             <MenuItem
               as={Form.Checkbox}
-              value={3}
-              onChange={() => {}}
+              value={PublishStatus.NeverPublished}
+              onChange={() => { toggleFilterMode(PublishStatus.NeverPublished); }}
             >
               <div>
                 Never published
-                <Badge variant="light" pill>2</Badge>
+                {' '}<Badge variant="light" pill>2</Badge>
               </div>
             </MenuItem>
           </Menu>
