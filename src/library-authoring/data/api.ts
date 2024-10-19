@@ -483,15 +483,3 @@ export async function updateComponentCollections(usageKey: string, collectionKey
     collection_keys: collectionKeys,
   });
 }
-
-/**
- * Add a component to a course.
- */
-// istanbul ignore next
-export async function addComponentToCourse(parentLocator: string, componentUsageKey: string) {
-  const client = getAuthenticatedHttpClient();
-  await client.post(getXBlockBaseApiUrl(), {
-    parent_locator: parentLocator,
-    library_content_key: componentUsageKey,
-  });
-}

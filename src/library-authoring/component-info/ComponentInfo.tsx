@@ -5,21 +5,18 @@ import {
   Tabs,
   Stack,
 } from '@openedx/paragon';
-import { useContext } from 'react';
 
-import { ToastContext } from '../../generic/toast-context';
 import { useLibraryContext } from '../common/context';
 import { ComponentMenu } from '../components';
 import { canEditComponent } from '../components/ComponentEditorModal';
-import { useAddComponentToCourse } from '../data/apiHooks';
 import ComponentDetails from './ComponentDetails';
 import ComponentManagement from './ComponentManagement';
 import ComponentPreview from './ComponentPreview';
 import messages from './messages';
+import { getBlockType } from '../../generic/key-utils';
 
 const ComponentInfo = () => {
   const intl = useIntl();
-  const { showToast } = useContext(ToastContext);
 
   const {
     sidebarComponentUsageKey: usageKey,
@@ -34,22 +31,15 @@ const ComponentInfo = () => {
     throw new Error('usageKey is required');
   }
 
-  const {
-    mutateAsync: addComponentToCourse,
-    reset,
-  } = useAddComponentToCourse(parentLocator, usageKey);
-
   const canEdit = canEditComponent(usageKey);
 
   const handleAddComponentToCourse = () => {
-    addComponentToCourse()
-      .then(() => {
-        window.parent.postMessage('closeComponentPicker', '*');
-      })
-      .catch(() => {
-        showToast(intl.formatMessage(messages.addComponentToCourseError));
-        reset();
-      });
+    window.parent.postMessage({
+      parentLocator,
+      usageKey,
+      type: 'pickerComponentSelected',
+      category: getBlockType(usageKey),
+    }, '*');
   };
 
   return (
