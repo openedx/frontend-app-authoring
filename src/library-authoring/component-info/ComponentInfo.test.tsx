@@ -67,4 +67,24 @@ describe('<ComponentInfo> Sidebar', () => {
     const editButton = await screen.findByRole('button', { name: /Edit component/ });
     await waitFor(() => expect(editButton).not.toBeDisabled());
   });
+
+  it('should show a disabled "Publish" button when the component is already published', async () => {
+    initializeMocks();
+    render(
+      <ComponentInfo />,
+      withLibraryId(mockContentLibrary.libraryId, mockLibraryBlockMetadata.usageKeyPublishDisabled),
+    );
+    const publishButton = await screen.findByRole('button', { name: /Publish component/ });
+    expect(publishButton).toBeDisabled();
+  });
+
+  it('should show a working "Publish" button when the component is not published', async () => {
+    initializeMocks();
+    render(
+      <ComponentInfo />,
+      withLibraryId(mockContentLibrary.libraryId, mockLibraryBlockMetadata.usageKeyNeverPublished),
+    );
+    const publishButton = await screen.findByRole('button', { name: /Publish component/ });
+    await waitFor(() => expect(publishButton).not.toBeDisabled());
+  });
 });

@@ -57,6 +57,10 @@ export const getXBlockFieldsApiUrl = (usageKey: string) => `${getApiBaseUrl()}/a
   */
 export const getXBlockOLXApiUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}olx/`;
 /**
+* Get the URL for the xblock Publish API
+*/
+export const getXBlockPublishApiUrl = (usageKey: string) => `${getApiBaseUrl()}/api/libraries/v2/blocks/${usageKey}/publish/`;
+/**
   * Get the URL for the xblock Assets List API
   */
 export const getXBlockAssetsApiUrl = (usageKey: string) => `${getApiBaseUrl()}/api/libraries/v2/blocks/${usageKey}/assets/`;
@@ -419,6 +423,14 @@ export async function getXBlockOLX(usageKey: string): Promise<string> {
 export async function setXBlockOLX(usageKey: string, newOLX: string): Promise<string> {
   const { data } = await getAuthenticatedHttpClient().post(getXBlockOLXApiUrl(usageKey), { olx: newOLX });
   return data.olx;
+}
+
+/**
+* Publish the given XBlock.
+*/
+export async function publishXBlock(usageKey: string) {
+  const client = getAuthenticatedHttpClient();
+  await client.post(getXBlockPublishApiUrl(usageKey));
 }
 
 /**

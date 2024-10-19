@@ -6,6 +6,7 @@ import {
   Tabs,
   Stack,
 } from '@openedx/paragon';
+import { useCallback, useContext } from 'react';
 
 import { SidebarAdditionalActions, useLibraryContext } from '../common/context';
 import { ComponentMenu } from '../components';
@@ -15,6 +16,8 @@ import ComponentManagement from './ComponentManagement';
 import ComponentPreview from './ComponentPreview';
 import messages from './messages';
 import { getBlockType } from '../../generic/key-utils';
+import { useLibraryBlockMetadata, usePublishComponent } from '../data/apiHooks';
+import { ToastContext } from '../../generic/toast-context';
 
 const ComponentInfo = () => {
   const intl = useIntl();
@@ -58,6 +61,20 @@ const ComponentInfo = () => {
       category: getBlockType(usageKey),
     }, '*');
   };
+  const publishComponent = usePublishComponent(usageKey);
+  const { data: componentMetadata } = useLibraryBlockMetadata(usageKey);
+  // Only can be published when the component has been modified after the last published date.
+  const canPublish = (new Date(componentMetadata?.modified ?? 0)) > (new Date(componentMetadata?.lastPublished ?? 0));
+  const { showToast } = useContext(ToastContext);
+
+  const publish = useCallback(() => {
+    publishComponent.mutateAsync()
+      .then(() => {
+        showToast(intl.formatMessage(messages.publishSuccessMsg));
+      }).catch(() => {
+        showToast(intl.formatMessage(messages.publishErrorMsg));
+      });
+  }, [publishComponent, showToast, intl]);
 
   return (
     <Stack>
@@ -70,7 +87,7 @@ const ComponentInfo = () => {
           >
             {intl.formatMessage(messages.editComponentButtonTitle)}
           </Button>
-          <Button disabled variant="outline-primary" className="m-1 text-nowrap flex-grow-1">
+          <Button disabled={publishComponent.isLoading || !canPublish} onClick={publish} variant="outline-primary" className="m-1 text-nowrap flex-grow-1">
             {intl.formatMessage(messages.publishComponentButtonTitle)}
           </Button>
           <ComponentMenu usageKey={usageKey} />
