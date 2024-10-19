@@ -159,7 +159,7 @@ const CourseUnit = ({ courseId }) => {
                     strategy={verticalListSortingStrategy}
                   >
                     {unitXBlocks.map(({
-                      name, id, blockType: type, shouldScroll, userPartitionInfo, validationMessages,
+                      name, id, blockType: type, shouldScroll, userPartitionInfo, upstreamLink, validationMessages,
                     }) => (
                       <CourseXBlock
                         id={id}
@@ -173,6 +173,7 @@ const CourseUnit = ({ courseId }) => {
                         unitXBlockActions={unitXBlockActions}
                         data-testid="course-xblock"
                         userPartitionInfo={userPartitionInfo}
+                        upstreamLink={upstreamLink}
                       />
                     ))}
                   </SortableContext>
