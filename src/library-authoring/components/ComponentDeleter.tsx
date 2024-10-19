@@ -7,6 +7,7 @@ import {
 } from '@openedx/paragon';
 import { Warning } from '@openedx/paragon/icons';
 
+import { useLibraryContext } from '../common/context';
 import { useDeleteLibraryBlock, useLibraryBlockMetadata } from '../data/apiHooks';
 import messages from './messages';
 
@@ -33,14 +34,20 @@ interface Props {
 
 const ComponentDeleter = ({ usageKey, ...props }: Props) => {
   const intl = useIntl();
+  const {
+    sidebarComponentUsageKey,
+    closeLibrarySidebar,
+  } = useLibraryContext();
 
   const deleteComponentMutation = useDeleteLibraryBlock();
   const doDelete = React.useCallback(() => {
     deleteComponentMutation.mutateAsync({ usageKey });
     props.cancelDelete();
-  }, [usageKey]);
-
-  // TODO: close the sidebar on successful delete.
+    // Close the sidebar if it's still open showing the deleted component:
+    if (usageKey === sidebarComponentUsageKey) {
+      closeLibrarySidebar();
+    }
+  }, [usageKey, sidebarComponentUsageKey, closeLibrarySidebar]);
 
   if (!props.isConfirmingDelete) {
     return null;
