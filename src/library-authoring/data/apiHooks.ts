@@ -40,6 +40,7 @@ import {
   getXBlockAssets,
   updateComponentCollections,
   removeComponentsFromCollection,
+  publishXBlock,
 } from './api';
 
 export const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
@@ -355,6 +356,20 @@ export const useUpdateXBlockOLX = (usageKey: string) => {
     },
   });
 };
+
+/**
+* Publish changes to a library component
+*/
+export const usePublishComponent = (usageKey: string) => {
+  const queryClient = useQueryClient();
+  const contentLibraryId = getLibraryId(usageKey);
+  return useMutation({
+    mutationFn: () => publishXBlock( usageKey),
+    onSettled: () => {
+      invalidateComponentData(queryClient, contentLibraryId, usageKey);
+    },
+  });
+  }
 
 /** Get the list of assets (static files) attached to a library component */
 export const useXBlockAssets = (usageKey: string) => (
