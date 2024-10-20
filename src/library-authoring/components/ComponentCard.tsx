@@ -101,6 +101,8 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
     formatted,
     tags,
     usageKey,
+    modified,
+    lastPublished,
   } = contentHit;
   const description: string = (/* eslint-disable */
     blockType === 'html' ? formatted?.content?.htmlContent :
@@ -140,6 +142,7 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
         </ActionRow>
       )}
       openInfoSidebar={() => openComponentInfoSidebar(usageKey)}
+      hasUnpublishedChanges={modified >= (lastPublished ?? 0)}
     />
   );
 };

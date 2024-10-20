@@ -25,6 +25,12 @@ export enum SearchSortOption {
   RECENTLY_MODIFIED = 'modified:desc',
 }
 
+export enum PublishStatus {
+  Published = 'published',
+  Modified = 'modified',
+  NeverPublished = 'never',
+}
+
 /**
  * Get the content search configuration from the CMS.
  */
@@ -185,6 +191,7 @@ interface FetchSearchParams {
   searchKeywords: string,
   blockTypesFilter?: string[],
   problemTypesFilter?: string[],
+  publishedFilter?: PublishStatus[],
   /** The full path of tags that each result MUST have, e.g. ["Difficulty > Hard", "Subject > Math"] */
   tagsFilter?: string[],
   extraFilter?: Filter,
@@ -200,6 +207,7 @@ export async function fetchSearchResults({
   searchKeywords,
   blockTypesFilter,
   problemTypesFilter,
+  publishedFilter,
   tagsFilter,
   extraFilter,
   sort,
@@ -222,6 +230,16 @@ export async function fetchSearchResults({
   const blockTypesFilterFormatted = blockTypesFilter?.length ? [blockTypesFilter.map(bt => `block_type = ${bt}`)] : [];
 
   const problemTypesFilterFormatted = problemTypesFilter?.length ? [problemTypesFilter.map(pt => `content.problem_types = ${pt}`)] : [];
+
+  /* eslint-disable */
+  const publishStatusFilterFormatted = publishedFilter?.length ? publishedFilter.map(pt => (
+    pt === PublishStatus.Published ? 'modified = last_published' :
+    pt === PublishStatus.Modified ? 'modified > last_published' :
+    pt === PublishStatus.NeverPublished ? 'last_published IS NULL' :
+    'false'
+  )) : [];
+  console.log(publishStatusFilterFormatted)
+  /* eslint-enable */
 
   const tagsFilterFormatted = formatTagsFilter(tagsFilter);
 
@@ -246,6 +264,7 @@ export async function fetchSearchResults({
       ...typeFilters,
       ...extraFilterFormatted,
       ...tagsFilterFormatted,
+      ...publishStatusFilterFormatted,
     ],
     attributesToHighlight: ['display_name', 'content'],
     highlightPreTag: HIGHLIGHT_PRE_TAG,
