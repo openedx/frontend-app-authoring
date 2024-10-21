@@ -478,6 +478,25 @@ describe('<LibraryAuthoringPage />', () => {
     await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
   });
 
+  it('should open component sidebar, showing manage tab on clicking add to collection menu item', async () => {
+    const mockResult0 = mockResult.results[0].hits[0];
+    const displayName = 'Introduction to Testing';
+    expect(mockResult0.display_name).toStrictEqual(displayName);
+    await renderLibraryPage();
+
+    // Open menu
+    fireEvent.click(screen.getAllByTestId('component-card-menu-toggle')[0]);
+    // Click add to collection
+    fireEvent.click(screen.getByRole('button', { name: 'Add to collection' }));
+
+    const sidebar = screen.getByTestId('library-sidebar');
+
+    const { getByRole, queryByText } = within(sidebar);
+
+    await waitFor(() => expect(queryByText(displayName)).toBeInTheDocument());
+    expect(getByRole('tab', { selected: true })).toHaveTextContent('Manage');
+  });
+
   it('should open and close the collection sidebar', async () => {
     await renderLibraryPage();
 

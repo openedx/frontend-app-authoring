@@ -46,7 +46,7 @@ const LibrarySidebar = () => {
     unknown: null,
   };
 
-  const buildBody = () : React.ReactNode => bodyComponentMap[sidebarComponentInfo?.type|| 'unknown'];
+  const buildBody = () : React.ReactNode => bodyComponentMap[sidebarComponentInfo?.type || 'unknown'];
   const buildHeader = (): React.ReactNode => headerComponentMap[sidebarComponentInfo?.type || 'unknown'];
 
   return (
