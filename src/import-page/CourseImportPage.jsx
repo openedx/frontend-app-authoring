@@ -13,6 +13,7 @@ import SubHeader from '../generic/sub-header/SubHeader';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import { RequestStatus } from '../data/constants';
 import { useModel } from '../generic/model-store';
+import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 import {
   updateFileName, updateImportTriggered, updateSavingStatus, updateSuccessDate,
 } from './data/slice';
@@ -31,6 +32,7 @@ const CourseImportPage = ({ intl, courseId }) => {
   const savingStatus = useSelector(getSavingStatus);
   const loadingStatus = useSelector(getLoadingStatus);
   const anyRequestFailed = savingStatus === RequestStatus.FAILED || loadingStatus === RequestStatus.FAILED;
+  const isLoadingDenied = loadingStatus === RequestStatus.DENIED;
   const anyRequestInProgress = savingStatus === RequestStatus.PENDING || loadingStatus === RequestStatus.IN_PROGRESS;
 
   useEffect(() => {
@@ -42,6 +44,14 @@ const CourseImportPage = ({ intl, courseId }) => {
       dispatch(updateSuccessDate(cookieData.date));
     }
   }, []);
+
+  if (isLoadingDenied) {
+    return (
+      <Container size="xl" className="course-unit px-4 mt-4">
+        <ConnectionErrorAlert />
+      </Container>
+    );
+  }
 
   return (
     <>
