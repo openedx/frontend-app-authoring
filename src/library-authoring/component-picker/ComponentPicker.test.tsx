@@ -25,18 +25,6 @@ mockLibraryBlockMetadata.applyMock();
 
 let postMessageSpy: jest.SpyInstance;
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useSearchParams: () => {
-    const [params] = [new URLSearchParams({
-      parentLocator: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@vertical1',
-    })];
-    return [
-      params,
-    ];
-  },
-}));
-
 describe('<ComponentPicker />', () => {
   beforeEach(() => {
     initializeMocks();
@@ -51,8 +39,6 @@ describe('<ComponentPicker />', () => {
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
     fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
 
-    fireEvent.click(screen.getByText('Next'));
-
     // Wait for the content library to load
     await screen.findByText(/Change Library/i);
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
@@ -61,7 +47,6 @@ describe('<ComponentPicker />', () => {
     fireEvent.click(screen.queryAllByRole('button', { name: 'Add' })[0]);
 
     expect(postMessageSpy).toHaveBeenCalledWith({
-      parentLocator: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@vertical1',
       usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
       type: 'pickerComponentSelected',
       category: 'html',
@@ -73,8 +58,6 @@ describe('<ComponentPicker />', () => {
 
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
     fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
-
-    fireEvent.click(screen.getByText('Next'));
 
     // Wait for the content library to load
     await screen.findByText(/Change Library/i);
@@ -89,7 +72,6 @@ describe('<ComponentPicker />', () => {
     fireEvent.click(within(sidebar).getByRole('button', { name: 'Add to Course' }));
 
     expect(postMessageSpy).toHaveBeenCalledWith({
-      parentLocator: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@vertical1',
       usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
       type: 'pickerComponentSelected',
       category: 'html',
@@ -101,8 +83,6 @@ describe('<ComponentPicker />', () => {
 
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
     fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
-
-    fireEvent.click(screen.getByText('Next'));
 
     // Wait for the content library to load
     await screen.findByText(/Change Library/i);
@@ -127,7 +107,6 @@ describe('<ComponentPicker />', () => {
     fireEvent.click(screen.queryAllByRole('button', { name: 'Add' })[0]);
 
     expect(postMessageSpy).toHaveBeenCalledWith({
-      parentLocator: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@vertical1',
       usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
       type: 'pickerComponentSelected',
       category: 'html',
@@ -139,8 +118,6 @@ describe('<ComponentPicker />', () => {
 
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
     fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
-
-    fireEvent.click(screen.getByText('Next'));
 
     // Wait for the content library to load
     await screen.findByText(/Change Library/i);
@@ -170,7 +147,6 @@ describe('<ComponentPicker />', () => {
     fireEvent.click(within(collectionSidebar).getByRole('button', { name: 'Add to Course' }));
 
     expect(postMessageSpy).toHaveBeenCalledWith({
-      parentLocator: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@vertical1',
       usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
       type: 'pickerComponentSelected',
       category: 'html',
@@ -182,8 +158,6 @@ describe('<ComponentPicker />', () => {
 
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
     fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
-
-    fireEvent.click(screen.getByText('Next'));
 
     // Wait for the content library to load
     await screen.findByText(/Change Library/i);

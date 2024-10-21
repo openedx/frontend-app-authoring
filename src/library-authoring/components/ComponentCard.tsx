@@ -93,7 +93,6 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
   const {
     openComponentInfoSidebar,
     componentPickerMode,
-    parentLocator,
   } = useLibraryContext();
 
   const {
@@ -111,7 +110,6 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
 
   const handleAddComponentToCourse = () => {
     window.parent.postMessage({
-      parentLocator,
       usageKey,
       type: 'pickerComponentSelected',
       category: blockType,

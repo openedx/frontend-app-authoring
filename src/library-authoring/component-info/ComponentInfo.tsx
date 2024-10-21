@@ -23,7 +23,6 @@ const ComponentInfo = () => {
     readOnly,
     openComponentEditor,
     componentPickerMode,
-    parentLocator,
   } = useLibraryContext();
 
   // istanbul ignore if: this should never happen
@@ -35,7 +34,6 @@ const ComponentInfo = () => {
 
   const handleAddComponentToCourse = () => {
     window.parent.postMessage({
-      parentLocator,
       usageKey,
       type: 'pickerComponentSelected',
       category: getBlockType(usageKey),
