@@ -20,6 +20,8 @@ export interface SidebarComponentInfo {
   type: SidebarBodyComponentId;
   id: string;
   currentTab?: string;
+  /** Name of collapsible section to collapse */
+  collapse?: string;
 }
 
 export interface LibraryContextData {
@@ -36,7 +38,7 @@ export interface LibraryContextData {
   closeLibrarySidebar: () => void;
   openAddContentSidebar: () => void;
   openInfoSidebar: () => void;
-  openComponentInfoSidebar: (usageKey: string) => void;
+  openComponentInfoSidebar: (usageKey: string, currentTab?: string, collapse?: string) => void;
   sidebarComponentInfo?: SidebarComponentInfo;
   // "Library Team" modal
   isLibraryTeamModalOpen: boolean;
@@ -47,7 +49,7 @@ export interface LibraryContextData {
   openCreateCollectionModal: () => void;
   closeCreateCollectionModal: () => void;
   // Current collection
-  openCollectionInfoSidebar: (collectionId: string) => void;
+  openCollectionInfoSidebar: (collectionId: string, currentTab?: string) => void;
   // Editor modal - for editing some component
   /** If the editor is open and the user is editing some component, this is its usageKey */
   componentBeingEdited: string | undefined;
@@ -105,27 +107,28 @@ export const LibraryProvider = ({
   }, []);
   const openAddContentSidebar = useCallback(() => {
     resetSidebar();
-    setSidebarComponentInfo({ id: '',  type: SidebarBodyComponentId.AddContent });
+    setSidebarComponentInfo({ id: '', type: SidebarBodyComponentId.AddContent });
   }, []);
   const openInfoSidebar = useCallback(() => {
     resetSidebar();
-    setSidebarComponentInfo({ id: '',  type: SidebarBodyComponentId.Info });
+    setSidebarComponentInfo({ id: '', type: SidebarBodyComponentId.Info });
   }, []);
   const openComponentInfoSidebar = useCallback(
-    (usageKey: string, currentTab?: string) => {
+    (usageKey: string, currentTab?: string, collapse?: string) => {
       resetSidebar();
       setSidebarComponentInfo({
         id: usageKey,
         type: SidebarBodyComponentId.ComponentInfo,
         currentTab,
+        collapse,
       });
     },
     [],
   );
-  const openCollectionInfoSidebar = useCallback((collectionId: string, currentTab?: string) => {
+  const openCollectionInfoSidebar = useCallback((newCollectionId: string, currentTab?: string) => {
     resetSidebar();
     setSidebarComponentInfo({
-      id: collectionId,
+      id: newCollectionId,
       type: SidebarBodyComponentId.CollectionInfo,
       currentTab,
     });
