@@ -19,6 +19,7 @@ exports[`TinyMceWidget snapshots ImageUploadModal is not rendered 1`] = `
       {
         "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
         "content": undefined,
+        "documentURL": undefined,
         "editorContentHtml": undefined,
         "editorRef": {
           "current": {
@@ -87,6 +88,7 @@ exports[`TinyMceWidget snapshots SourcecodeModal is not rendered 1`] = `
       {
         "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
         "content": undefined,
+        "documentURL": undefined,
         "editorContentHtml": undefined,
         "editorRef": {
           "current": {
@@ -166,6 +168,7 @@ exports[`TinyMceWidget snapshots renders as expected with default behavior 1`] =
       {
         "clearSelection": [MockFunction hooks.selectedImage.clearSelection],
         "content": undefined,
+        "documentURL": undefined,
         "editorContentHtml": undefined,
         "editorRef": {
           "current": {

@@ -18,7 +18,7 @@ import * as hooks from './hooks';
 import messages from './messages';
 import TinyMceWidget from '../../sharedComponents/TinyMceWidget';
 import { prepareEditorRef, replaceStaticWithAsset } from '../../sharedComponents/TinyMceWidget/hooks';
-import { useLibraryContext } from '../../../library-authoring/common/context';
+import { useOptionalLibraryContext } from '../../../library-authoring/common/context';
 
 const TextEditor = ({
   onClose,
@@ -43,9 +43,9 @@ const TextEditor = ({
   });
   const editorContent = newContent || initialContent;
   let documentURL;
-  const { sidebarComponentUsageKey: usageKey } = useLibraryContext();
-  if (isLibrary) {
-    documentURL = `${getConfig().STUDIO_BASE_URL }/library_assets/blocks/${ usageKey }/`;
+  const ctx = useOptionalLibraryContext();
+  if (isLibrary && ctx !== undefined) {
+    documentURL = `${getConfig().STUDIO_BASE_URL }/library_assets/blocks/${ ctx.sidebarComponentUsageKey }/`;
   }
 
   if (!refReady) { return null; }
