@@ -39,8 +39,6 @@ describe('<ComponentPicker />', () => {
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
     fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
 
-    fireEvent.click(screen.getByText('Next'));
-
     // Wait for the content library to load
     await screen.findByText(/Change Library/i);
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
@@ -60,8 +58,6 @@ describe('<ComponentPicker />', () => {
 
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
     fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
-
-    fireEvent.click(screen.getByText('Next'));
 
     // Wait for the content library to load
     await screen.findByText(/Change Library/i);
@@ -87,8 +83,6 @@ describe('<ComponentPicker />', () => {
 
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
     fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
-
-    fireEvent.click(screen.getByText('Next'));
 
     // Wait for the content library to load
     await screen.findByText(/Change Library/i);
@@ -124,8 +118,6 @@ describe('<ComponentPicker />', () => {
 
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
     fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
-
-    fireEvent.click(screen.getByText('Next'));
 
     // Wait for the content library to load
     await screen.findByText(/Change Library/i);
@@ -166,8 +158,6 @@ describe('<ComponentPicker />', () => {
 
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
     fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
-
-    fireEvent.click(screen.getByText('Next'));
 
     // Wait for the content library to load
     await screen.findByText(/Change Library/i);
