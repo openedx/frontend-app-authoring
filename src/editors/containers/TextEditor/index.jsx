@@ -8,6 +8,7 @@ import {
 } from '@openedx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
+import { getConfig } from '@edx/frontend-platform';
 import { actions, selectors } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
 
@@ -17,6 +18,7 @@ import * as hooks from './hooks';
 import messages from './messages';
 import TinyMceWidget from '../../sharedComponents/TinyMceWidget';
 import { prepareEditorRef, replaceStaticWithAsset } from '../../sharedComponents/TinyMceWidget/hooks';
+import { useOptionalLibraryContext } from '../../../library-authoring/common/context';
 
 const TextEditor = ({
   onClose,
@@ -40,6 +42,11 @@ const TextEditor = ({
     learningContextId,
   });
   const editorContent = newContent || initialContent;
+  let documentURL;
+  const ctx = useOptionalLibraryContext();
+  if (isLibrary && ctx !== undefined) {
+    documentURL = `${getConfig().STUDIO_BASE_URL }/library_assets/blocks/${ ctx.sidebarComponentUsageKey }/`;
+  }
 
   if (!refReady) { return null; }
 
@@ -65,6 +72,7 @@ const TextEditor = ({
           images,
           isLibrary,
           learningContextId,
+          documentURL,
         }}
       />
     );
