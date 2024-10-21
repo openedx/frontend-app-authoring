@@ -89,11 +89,12 @@ describe('<LibraryAuthoringPage />', () => {
       // We have to replace the query (search keywords) in the mock results with the actual query,
       // because otherwise Instantsearch will update the UI and change the query,
       // leading to unexpected results in the test cases.
-      mockResult.results[0].query = query;
+      const newMockResult = { ...mockResult };
+      newMockResult.results[0].query = query;
       // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
       // eslint-disable-next-line no-underscore-dangle, no-param-reassign
-      mockResult.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
-      return mockResult;
+      newMockResult.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
+      return newMockResult;
     });
   });
 
@@ -458,7 +459,7 @@ describe('<LibraryAuthoringPage />', () => {
   });
 
   it('should open and close the component sidebar', async () => {
-    const mockResult0 = mockResult.results[0].hits[0];
+    const mockResult0 = { ...mockResult }.results[0].hits[0];
     const displayName = 'Introduction to Testing';
     expect(mockResult0.display_name).toStrictEqual(displayName);
     await renderLibraryPage();
@@ -479,7 +480,7 @@ describe('<LibraryAuthoringPage />', () => {
   });
 
   it('should open component sidebar, showing manage tab on clicking add to collection menu item', async () => {
-    const mockResult0 = mockResult.results[0].hits[0];
+    const mockResult0 = { ...mockResult }.results[0].hits[0];
     const displayName = 'Introduction to Testing';
     expect(mockResult0.display_name).toStrictEqual(displayName);
     await renderLibraryPage();
