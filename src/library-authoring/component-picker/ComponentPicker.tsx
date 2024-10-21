@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Stepper } from '@openedx/paragon';
 
-import { LibraryProvider, useLibraryContext } from '../common/context';
+import { type ComponentPickerMode, LibraryProvider, useLibraryContext } from '../common/context';
 import LibraryAuthoringPage from '../LibraryAuthoringPage';
 import LibraryCollectionPage from '../collections/LibraryCollectionPage';
 import SelectLibrary from './SelectLibrary';
@@ -29,10 +29,15 @@ const defaultComponentSelectedCallback = (usageKey: string, category: string) =>
 
 interface ComponentPickerProps {
   onComponentSelected?: (usageKey: string, category: string) => void;
+  componentPickerMode?: ComponentPickerMode;
 }
 
 // eslint-disable-next-line import/prefer-default-export
 export const ComponentPicker: React.FC<ComponentPickerProps> = ({
+  componentPickerMode = 'single',
+  /** This default callback is used to send the selected component back to the parent window,
+   * when the component picker is used in an iframe.
+   */
   onComponentSelected = defaultComponentSelectedCallback,
 }) => {
   const [currentStep, setCurrentStep] = useState('select-library');
@@ -57,7 +62,11 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
       </Stepper.Step>
 
       <Stepper.Step eventKey="pick-components" title="Pick some components">
-        <LibraryProvider libraryId={selectedLibrary} componentPickerMode onComponentSelected={onComponentSelected}>
+        <LibraryProvider
+          libraryId={selectedLibrary}
+          componentPickerMode={componentPickerMode}
+          onComponentSelected={onComponentSelected}
+        >
           <InnerComponentPicker returnToLibrarySelection={returnToLibrarySelection} />
         </LibraryProvider>
       </Stepper.Step>
