@@ -25,18 +25,6 @@ mockLibraryBlockMetadata.applyMock();
 
 let postMessageSpy: jest.SpyInstance;
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useSearchParams: () => {
-    const [params] = [new URLSearchParams({
-      parentLocator: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@vertical1',
-    })];
-    return [
-      params,
-    ];
-  },
-}));
-
 describe('<ComponentPicker />', () => {
   beforeEach(() => {
     initializeMocks();
@@ -61,7 +49,6 @@ describe('<ComponentPicker />', () => {
     fireEvent.click(screen.queryAllByRole('button', { name: 'Add' })[0]);
 
     expect(postMessageSpy).toHaveBeenCalledWith({
-      parentLocator: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@vertical1',
       usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
       type: 'pickerComponentSelected',
       category: 'html',
@@ -89,7 +76,6 @@ describe('<ComponentPicker />', () => {
     fireEvent.click(within(sidebar).getByRole('button', { name: 'Add to Course' }));
 
     expect(postMessageSpy).toHaveBeenCalledWith({
-      parentLocator: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@vertical1',
       usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
       type: 'pickerComponentSelected',
       category: 'html',
@@ -127,7 +113,6 @@ describe('<ComponentPicker />', () => {
     fireEvent.click(screen.queryAllByRole('button', { name: 'Add' })[0]);
 
     expect(postMessageSpy).toHaveBeenCalledWith({
-      parentLocator: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@vertical1',
       usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
       type: 'pickerComponentSelected',
       category: 'html',
@@ -170,7 +155,6 @@ describe('<ComponentPicker />', () => {
     fireEvent.click(within(collectionSidebar).getByRole('button', { name: 'Add to Course' }));
 
     expect(postMessageSpy).toHaveBeenCalledWith({
-      parentLocator: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@vertical1',
       usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
       type: 'pickerComponentSelected',
       category: 'html',

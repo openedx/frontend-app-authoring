@@ -8,18 +8,6 @@ import {
 } from '../data/api.mocks';
 import { ComponentPicker } from './ComponentPicker';
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useSearchParams: () => {
-    const [params] = [new URLSearchParams({
-      parentLocator: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@vertical1',
-    })];
-    return [
-      params,
-    ];
-  },
-}));
-
 describe('<ComponentPicker />', () => {
   beforeEach(() => {
     initializeMocks();

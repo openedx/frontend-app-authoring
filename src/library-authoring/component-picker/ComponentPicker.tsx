@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, Stepper } from '@openedx/paragon';
-import { useSearchParams } from 'react-router-dom';
 
 import { LibraryProvider, useLibraryContext } from '../common/context';
 import LibraryAuthoringPage from '../LibraryAuthoringPage';
@@ -25,16 +24,6 @@ const InnerComponentPicker: React.FC<LibraryComponentPickerProps> = ({ returnToL
 // eslint-disable-next-line import/prefer-default-export
 export const ComponentPicker = () => {
   const intl = useIntl();
-  const [searchParams] = useSearchParams();
-  let parentLocator = searchParams.get('parentLocator');
-
-  // istanbul ignore if: this should never happen
-  if (!parentLocator) {
-    throw new Error('parentLocator is required');
-  }
-
-  // URLSearchParams decodes '+' to ' ', so we need to convert it back
-  parentLocator = parentLocator.replaceAll(' ', '+');
 
   const [currentStep, setCurrentStep] = useState('select-library');
   const [selectedLibrary, setSelectedLibrary] = useState('');
@@ -53,7 +42,7 @@ export const ComponentPicker = () => {
       </Stepper.Step>
 
       <Stepper.Step eventKey="pick-components" title="Pick some components">
-        <LibraryProvider libraryId={selectedLibrary} parentLocator={parentLocator} componentPickerMode>
+        <LibraryProvider libraryId={selectedLibrary} componentPickerMode>
           <InnerComponentPicker returnToLibrarySelection={returnToLibrarySelection} />
         </LibraryProvider>
       </Stepper.Step>
