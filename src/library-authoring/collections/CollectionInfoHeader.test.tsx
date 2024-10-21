@@ -8,7 +8,7 @@ import {
   screen,
   waitFor,
 } from '../../testUtils';
-import { LibraryProvider } from '../common/context';
+import { LibraryProvider, SidebarBodyComponentId } from '../common/context';
 import { mockContentLibrary, mockGetCollectionMetadata } from '../data/api.mocks';
 import * as api from '../data/api';
 import CollectionInfoHeader from './CollectionInfoHeader';
@@ -28,7 +28,13 @@ const { collectionId } = mockGetCollectionMetadata;
 
 const render = (libraryId: string = mockLibraryId) => baseRender(<CollectionInfoHeader />, {
   extraWrapper: ({ children }) => (
-    <LibraryProvider libraryId={libraryId} initialSidebarCollectionId={collectionId}>
+    <LibraryProvider
+      libraryId={libraryId}
+      initialSidebarComponentInfo={{
+        id: collectionId,
+        type: SidebarBodyComponentId.CollectionInfo,
+      }}
+    >
       { children }
     </LibraryProvider>
   ),
