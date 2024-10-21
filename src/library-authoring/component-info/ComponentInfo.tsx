@@ -5,6 +5,7 @@ import {
   Tabs,
   Stack,
 } from '@openedx/paragon';
+import { useCallback } from 'react';
 
 import { useLibraryContext } from '../common/context';
 import { ComponentMenu } from '../components';
@@ -23,6 +24,7 @@ const ComponentInfo = () => {
     readOnly,
     openComponentEditor,
     componentPickerMode,
+    onComponentSelected,
   } = useLibraryContext();
 
   // istanbul ignore if: this should never happen
@@ -32,13 +34,9 @@ const ComponentInfo = () => {
 
   const canEdit = canEditComponent(usageKey);
 
-  const handleAddComponentToCourse = () => {
-    window.parent.postMessage({
-      usageKey,
-      type: 'pickerComponentSelected',
-      category: getBlockType(usageKey),
-    }, '*');
-  };
+  const handleAddComponentToCourse = useCallback(() => {
+    onComponentSelected?.(usageKey, getBlockType(usageKey));
+  }, [usageKey]);
 
   return (
     <Stack>
