@@ -9,6 +9,8 @@ import React, {
 import type { ContentLibrary } from '../data/api';
 import { useContentLibrary } from '../data/apiHooks';
 
+export type ComponentPickerMode = 'single' | 'multiple';
+
 export enum SidebarBodyComponentId {
   AddContent = 'add-content',
   Info = 'info',
@@ -25,7 +27,7 @@ export interface LibraryContextData {
   collectionId: string | undefined;
   setCollectionId: (collectionId?: string) => void;
   // Whether we're in "component picker" mode
-  componentPickerMode: boolean;
+  componentPickerMode?: ComponentPickerMode;
   onComponentSelected?: (usageKey: string, category: string) => void;
   // Sidebar stuff - only one sidebar is active at any given time:
   sidebarBodyComponent: SidebarBodyComponentId | null;
@@ -69,7 +71,7 @@ interface LibraryProviderProps {
   collectionId?: string;
   /** The component picker mode is a special mode where the user is selecting a component to add to a Unit (or another
    *  XBlock) */
-  componentPickerMode?: boolean;
+  componentPickerMode?: ComponentPickerMode;
   /** Function to call when a component is selected */
   onComponentSelected?: (usageKey: string, category: string) => void;
   /** Only used for testing */
@@ -85,7 +87,7 @@ export const LibraryProvider = ({
   children,
   libraryId,
   collectionId: collectionIdProp,
-  componentPickerMode = false,
+  componentPickerMode,
   onComponentSelected,
   initialSidebarComponentUsageKey,
   initialSidebarCollectionId,
@@ -134,7 +136,7 @@ export const LibraryProvider = ({
 
   const { data: libraryData, isLoading: isLoadingLibraryData } = useContentLibrary(libraryId);
 
-  const readOnly = componentPickerMode || !libraryData?.canEditLibrary;
+  const readOnly = !!componentPickerMode || !libraryData?.canEditLibrary;
 
   const context = useMemo<LibraryContextData>(() => ({
     libraryId,
