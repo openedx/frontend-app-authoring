@@ -51,10 +51,11 @@ export const validationAssignmentFields = (
   assignmentDropCount,
 ) => {
   const courseGradingTypes = courseGraders?.map(grade => grade.type);
+  const minCountValue = courseGraders?.find(grade => grade.id === assignmentId).minCount;
 
   switch (assignmentName) {
   case assignmentType:
-    if (assignmentValue === '') {
+    if (assignmentValue.trim() === '') {
       updateAssignmentErrorList(assignmentName, assignmentId, setErrorList, setShowSavePrompt);
       return;
     }
@@ -77,7 +78,7 @@ export const validationAssignmentFields = (
     );
     break;
   case weightOfTotalGrade:
-    if (assignmentValue < 0 || assignmentValue > 100 || assignmentValue === '-0') {
+    if (assignmentValue === '' || assignmentValue < 0 || assignmentValue > 100 || assignmentValue === '-0') {
       updateAssignmentErrorList(
         assignmentName,
         assignmentId,
@@ -113,7 +114,12 @@ export const validationAssignmentFields = (
     );
     break;
   case assignmentDropCount:
-    if (assignmentValue < 0 || assignmentValue === '' || assignmentValue === '-0') {
+    if (
+      assignmentValue >= minCountValue
+      || assignmentValue < 0
+      || assignmentValue === ''
+      || assignmentValue === '-0'
+    ) {
       updateAssignmentErrorList(
         assignmentName,
         assignmentId,
