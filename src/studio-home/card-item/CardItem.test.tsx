@@ -43,7 +43,7 @@ describe('<CardItem />', () => {
     const dropDownMenu = screen.getByTestId('toggle-dropdown');
     fireEvent.click(dropDownMenu);
     const btnReRunCourse = screen.getByText(messages.btnReRunText.defaultMessage);
-    expect(btnReRunCourse).toHaveAttribute('href', trimSlashes(props.rerunLink));
+    expect(btnReRunCourse).toHaveAttribute('href', `/${trimSlashes(props.rerunLink)}`);
     const viewLiveLink = screen.getByText(messages.viewLiveBtnText.defaultMessage);
     expect(viewLiveLink).toHaveAttribute('href', props.lmsLink);
   });

@@ -89,7 +89,7 @@ const PagesAndResources = ({ courseId, intl }) => {
           <Route path=":appId/settings" element={<PageWrap><Suspense fallback="..."><SettingsComponent url={redirectUrl} /></Suspense></PageWrap>} />
         </Routes>
 
-        <PageGrid pages={pages} pluginSlotId="additional_course_plugin" />
+        <PageGrid pages={pages} pluginSlotId="additional_course_plugin" courseId={courseId} />
         {
           (contentPermissionsPages.length > 0 || hasAdditionalCoursePlugin)
             && (

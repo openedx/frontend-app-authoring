@@ -10,6 +10,7 @@ import {
 import { Add as AddIcon } from '@openedx/paragon/icons';
 import { useSelector } from 'react-redux';
 import { Helmet } from 'react-helmet';
+import { Link } from 'react-router-dom';
 
 import { SavingErrorAlert } from '../generic/saving-error-alert';
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
@@ -24,9 +25,11 @@ import TextbookForm from './textbook-form/TextbookForm';
 import { useTextbooks } from './hooks';
 import { getTextbookFormInitialValues } from './utils';
 import messages from './messages';
+import { getWaffleFlags } from '../data/selectors';
 
 const Textbooks = ({ courseId }) => {
   const intl = useIntl();
+  const waffleFlags = useSelector(getWaffleFlags);
 
   const courseDetails = useModel('courseDetails', courseId);
 
@@ -43,7 +46,7 @@ const Textbooks = ({ courseId }) => {
     handleSavingStatusDispatch,
     handleTextbookEditFormSubmit,
     handleTextbookDeleteSubmit,
-  } = useTextbooks(courseId);
+  } = useTextbooks(courseId, waffleFlags);
 
   const {
     isShow: showProcessingNotification,
@@ -70,7 +73,11 @@ const Textbooks = ({ courseId }) => {
           <SubHeader
             title={intl.formatMessage(messages.headingTitle)}
             breadcrumbs={(
-              <Breadcrumb ariaLabel={intl.formatMessage(messages.breadcrumbAriaLabel)} links={breadcrumbs} />
+              <Breadcrumb
+                linkAs={Link}
+                ariaLabel={intl.formatMessage(messages.breadcrumbAriaLabel)}
+                links={breadcrumbs}
+              />
             )}
             headerActions={(
               <Button

@@ -1,6 +1,8 @@
-import React, { useEffect, useContext, useState } from 'react';
+import { useEffect, useContext, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import {
+  Routes, Route, useNavigate, Link,
+} from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppContext, PageWrap } from '@edx/frontend-platform/react';
 import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
@@ -37,6 +39,7 @@ import CustomPageCard from './CustomPageCard';
 import messages from './messages';
 import CustomPagesProvider from './CustomPagesProvider';
 import EditModal from './EditModal';
+import { getWaffleFlags } from '../data/selectors';
 import getPageHeadTitle from '../generic/utils';
 import { getPagePath } from '../utils';
 
@@ -66,6 +69,7 @@ const CustomPages = ({
   const deletePageStatus = useSelector(state => state.customPages.deletingStatus);
   const savingStatus = useSelector(getSavingStatus);
   const loadingStatus = useSelector(getLoadingStatus);
+  const waffleFlags = useSelector(getWaffleFlags);
 
   const pages = useModels('customPages', customPagesIds);
 
@@ -115,9 +119,13 @@ const CustomPages = ({
         <div className="small gray-700">
           <Breadcrumb
             ariaLabel="Custom Page breadcrumbs"
+            linkAs={Link}
             links={[
-              { label: 'Content', href: `${config.STUDIO_BASE_URL}/course/${courseId}` },
-              { label: 'Pages and Resources', href: getPagePath(courseId, 'true', 'tabs') },
+              {
+                label: 'Content',
+                to: waffleFlags?.useNewCourseOutlinePage ? `/course/${courseId}` : `${config.STUDIO_BASE_URL}/course/${courseId}`,
+              },
+              { label: 'Pages and Resources', to: getPagePath(courseId, 'true', 'tabs') },
             ]}
           />
         </div>
