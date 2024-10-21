@@ -5,6 +5,7 @@ import {
   Tabs,
   Stack,
 } from '@openedx/paragon';
+import { useCallback, useContext } from 'react';
 
 import { useLibraryContext } from '../common/context';
 import { ComponentMenu } from '../components';
@@ -14,10 +15,7 @@ import ComponentManagement from './ComponentManagement';
 import ComponentPreview from './ComponentPreview';
 import messages from './messages';
 import { getBlockType } from '../../generic/key-utils';
-import { canEditComponent } from '../components/ComponentEditorModal';
-import { useLibraryContext } from '../common/context';
-import { useContentLibrary, useLibraryBlockMetadata, usePublishComponent } from '../data/apiHooks';
-import { useCallback, useContext, useState } from 'react';
+import { useLibraryBlockMetadata, usePublishComponent } from '../data/apiHooks';
 import { ToastContext } from '../../generic/toast-context';
 
 const ComponentInfo = () => {
@@ -46,10 +44,7 @@ const ComponentInfo = () => {
       category: getBlockType(usageKey),
     }, '*');
   };
-  const { libraryId, openComponentEditor } = useLibraryContext();
   const publishComponent = usePublishComponent(usageKey);
-  const { data: libraryData } = useContentLibrary(libraryId);
-  const canEdit = libraryData?.canEditLibrary && canEditComponent(usageKey);
   const { data: componentMetadata } = useLibraryBlockMetadata(usageKey);
   // Only can be published when the component has been modified after the last published date.
   const canPublish = (new Date(componentMetadata?.modified ?? 0)) > (new Date(componentMetadata?.lastPublished ?? 0 ))
@@ -75,7 +70,7 @@ const ComponentInfo = () => {
           >
             {intl.formatMessage(messages.editComponentButtonTitle)}
           </Button>
-          <Button disabled variant="outline-primary" className="m-1 text-nowrap flex-grow-1">
+          <Button disabled={publishComponent.isLoading || !canPublish} onClick={publish} variant="outline-primary" className="m-1 text-nowrap flex-grow-1">
             {intl.formatMessage(messages.publishComponentButtonTitle)}
           </Button>
           <ComponentMenu usageKey={usageKey} />
@@ -86,11 +81,6 @@ const ComponentInfo = () => {
           {intl.formatMessage(messages.addComponentToCourse)}
         </Button>
       )}
-        <Button disabled={publishComponent.isLoading || !canPublish} onClick={publish} variant="outline-primary" className="m-1 text-nowrap flex-grow-1">
-          {intl.formatMessage(messages.publishComponentButtonTitle)}
-        </Button>
-        <ComponentMenu usageKey={usageKey} />
-      </div>
       <Tabs
         variant="tabs"
         className="my-3 d-flex justify-content-around"

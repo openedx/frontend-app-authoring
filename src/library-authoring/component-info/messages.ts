@@ -175,6 +175,7 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.component.add-to-course-error',
     defaultMessage: 'Failed to add component to course',
     description: 'Error message when adding component to course fails',
+  },
   publishSuccessMsg: {
     id: 'course-authoring.component-authoring.component.publish.success',
     defaultMessage: 'Component published successfully',
