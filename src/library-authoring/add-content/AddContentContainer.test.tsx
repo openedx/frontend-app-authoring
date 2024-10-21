@@ -25,13 +25,13 @@ describe('<AddContentContainer />', () => {
     initializeMocks();
     mockClipboardEmpty.applyMock();
     render();
-    expect(screen.getByRole('button', { name: /collection/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /text/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /problem/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /open reponse/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /drag drop/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /video/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /advanced \/ other/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /collection/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /text/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /problem/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /open reponse/i })).not.toBeInTheDocument(); // Excluded from MVP
+    expect(screen.queryByRole('button', { name: /drag drop/i })).not.toBeInTheDocument(); // Excluded from MVP
+    expect(screen.queryByRole('button', { name: /video/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /advanced \/ other/i })).not.toBeInTheDocument(); // Excluded from MVP
     expect(screen.queryByRole('button', { name: /copy from clipboard/i })).not.toBeInTheDocument();
   });
 

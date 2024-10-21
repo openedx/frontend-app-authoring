@@ -26,6 +26,11 @@ const messages = defineMessages({
     defaultMessage: 'Copy to clipboard',
     description: 'Menu item for copy a component.',
   },
+  menuDelete: {
+    id: 'course-authoring.library-authoring.component.menu.delete',
+    defaultMessage: 'Delete',
+    description: 'Menu item for deleting a component.',
+  },
   menuAddToCollection: {
     id: 'course-authoring.library-authoring.component.menu.add',
     defaultMessage: 'Add to collection',
@@ -55,6 +60,31 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.component.copyToClipboardError',
     defaultMessage: 'Failed to copy component to clipboard',
     description: 'Message for failed to copy component to clipboard.',
+  },
+  deleteComponentWarningTitle: {
+    id: 'course-authoring.library-authoring.component.delete-confirmation-title',
+    defaultMessage: 'Delete Component',
+    description: 'Title text for the warning displayed before deleting a component',
+  },
+  deleteComponentNamePlaceholder: {
+    id: 'course-authoring.library-authoring.component.delete-confirmation-placeholder',
+    defaultMessage: 'this component',
+    description: 'Text shown in place of the component\'s title while we\'re loading the title',
+  },
+  deleteComponentConfirm: {
+    id: 'course-authoring.library-authoring.component.delete-confirmation-text',
+    defaultMessage: 'Delete {componentName} permanently? If this component has been used in a course, those copies won\'t be deleted, but they will no longer receive updates from the library.',
+    description: 'Confirmation text to display before deleting a component',
+  },
+  deleteComponentCancelButton: {
+    id: 'course-authoring.library-authoring.component.cancel-delete-button',
+    defaultMessage: 'Cancel',
+    description: 'Button to cancel deletion of a component',
+  },
+  deleteComponentButton: {
+    id: 'course-authoring.library-authoring.component.confirm-delete-button',
+    defaultMessage: 'Delete',
+    description: 'Button to confirm deletion of a component',
   },
   deleteCollection: {
     id: 'course-authoring.library-authoring.collection.delete-menu-text',

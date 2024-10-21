@@ -199,7 +199,8 @@ const AddContentContainer = () => {
     <Stack direction="vertical">
       {!collectionId && <AddContentButton contentType={collectionButtonData} onCreateContent={onCreateContent} />}
       <hr className="w-100 bg-gray-500" />
-      {contentTypes.map((contentType) => (
+      {/* Note: for MVP we are hiding the unuspported types, not just disabling them. */}
+      {contentTypes.filter(ct => !ct.disabled).map((contentType) => (
         <AddContentButton
           key={`add-content-${contentType.blockType}`}
           contentType={contentType}
