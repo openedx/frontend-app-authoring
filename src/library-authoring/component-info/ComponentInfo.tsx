@@ -19,12 +19,13 @@ const ComponentInfo = () => {
   const intl = useIntl();
 
   const {
-    sidebarComponentUsageKey: usageKey,
+    sidebarComponentInfo,
     readOnly,
     openComponentEditor,
     componentPickerMode,
   } = useLibraryContext();
 
+  const usageKey = sidebarComponentInfo?.id;
   // istanbul ignore if: this should never happen
   if (!usageKey) {
     throw new Error('usageKey is required');

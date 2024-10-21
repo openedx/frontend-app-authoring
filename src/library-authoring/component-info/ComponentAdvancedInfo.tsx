@@ -22,8 +22,9 @@ import messages from './messages';
 
 const ComponentAdvancedInfoInner: React.FC<Record<never, never>> = () => {
   const intl = useIntl();
-  const { readOnly, sidebarComponentUsageKey: usageKey } = useLibraryContext();
+  const { readOnly, sidebarComponentInfo } = useLibraryContext();
 
+  const usageKey = sidebarComponentInfo?.id;
   // istanbul ignore if: this should never happen in production
   if (!usageKey) {
     throw new Error('sidebarComponentUsageKey is required to render ComponentAdvancedInfo');

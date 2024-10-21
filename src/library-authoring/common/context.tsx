@@ -16,6 +16,12 @@ export enum SidebarBodyComponentId {
   CollectionInfo = 'collection-info',
 }
 
+export interface SidebarComponentInfo {
+  type: SidebarBodyComponentId;
+  id: string;
+  currentTab?: string;
+}
+
 export interface LibraryContextData {
   /** The ID of the current library */
   libraryId: string;
@@ -27,12 +33,11 @@ export interface LibraryContextData {
   // Whether we're in "component picker" mode
   componentPickerMode: boolean;
   // Sidebar stuff - only one sidebar is active at any given time:
-  sidebarBodyComponent: SidebarBodyComponentId | null;
   closeLibrarySidebar: () => void;
   openAddContentSidebar: () => void;
   openInfoSidebar: () => void;
   openComponentInfoSidebar: (usageKey: string) => void;
-  sidebarComponentUsageKey?: string;
+  sidebarComponentInfo?: SidebarComponentInfo;
   // "Library Team" modal
   isLibraryTeamModalOpen: boolean;
   openLibraryTeamModal: () => void;
@@ -43,7 +48,6 @@ export interface LibraryContextData {
   closeCreateCollectionModal: () => void;
   // Current collection
   openCollectionInfoSidebar: (collectionId: string) => void;
-  sidebarCollectionId?: string;
   // Editor modal - for editing some component
   /** If the editor is open and the user is editing some component, this is its usageKey */
   componentBeingEdited: string | undefined;
@@ -70,9 +74,7 @@ interface LibraryProviderProps {
    *  XBlock) */
   componentPickerMode?: boolean;
   /** Only used for testing */
-  initialSidebarComponentUsageKey?: string;
-  /** Only used for testing */
-  initialSidebarCollectionId?: string;
+  initialSidebarComponentInfo?: SidebarComponentInfo;
 }
 
 /**
@@ -83,24 +85,19 @@ export const LibraryProvider = ({
   libraryId,
   collectionId: collectionIdProp,
   componentPickerMode = false,
-  initialSidebarComponentUsageKey,
-  initialSidebarCollectionId,
+  initialSidebarComponentInfo,
 }: LibraryProviderProps) => {
   const [collectionId, setCollectionId] = useState(collectionIdProp);
-  const [sidebarBodyComponent, setSidebarBodyComponent] = useState<SidebarBodyComponentId | null>(null);
-  const [sidebarComponentUsageKey, setSidebarComponentUsageKey] = useState<string | undefined>(
-    initialSidebarComponentUsageKey,
+  const [sidebarComponentInfo, setSidebarComponentInfo] = useState<SidebarComponentInfo | undefined>(
+    initialSidebarComponentInfo,
   );
-  const [sidebarCollectionId, setSidebarCollectionId] = useState<string | undefined>(initialSidebarCollectionId);
   const [isLibraryTeamModalOpen, openLibraryTeamModal, closeLibraryTeamModal] = useToggle(false);
   const [isCreateCollectionModalOpen, openCreateCollectionModal, closeCreateCollectionModal] = useToggle(false);
   const [componentBeingEdited, openComponentEditor] = useState<string | undefined>();
   const closeComponentEditor = useCallback(() => openComponentEditor(undefined), []);
 
   const resetSidebar = useCallback(() => {
-    setSidebarComponentUsageKey(undefined);
-    setSidebarCollectionId(undefined);
-    setSidebarBodyComponent(null);
+    setSidebarComponentInfo(undefined);
   }, []);
 
   const closeLibrarySidebar = useCallback(() => {
@@ -108,24 +105,30 @@ export const LibraryProvider = ({
   }, []);
   const openAddContentSidebar = useCallback(() => {
     resetSidebar();
-    setSidebarBodyComponent(SidebarBodyComponentId.AddContent);
+    setSidebarComponentInfo({ id: '',  type: SidebarBodyComponentId.AddContent });
   }, []);
   const openInfoSidebar = useCallback(() => {
     resetSidebar();
-    setSidebarBodyComponent(SidebarBodyComponentId.Info);
+    setSidebarComponentInfo({ id: '',  type: SidebarBodyComponentId.Info });
   }, []);
   const openComponentInfoSidebar = useCallback(
-    (usageKey: string) => {
+    (usageKey: string, currentTab?: string) => {
       resetSidebar();
-      setSidebarComponentUsageKey(usageKey);
-      setSidebarBodyComponent(SidebarBodyComponentId.ComponentInfo);
+      setSidebarComponentInfo({
+        id: usageKey,
+        type: SidebarBodyComponentId.ComponentInfo,
+        currentTab,
+      });
     },
     [],
   );
-  const openCollectionInfoSidebar = useCallback((newCollectionId: string) => {
+  const openCollectionInfoSidebar = useCallback((collectionId: string, currentTab?: string) => {
     resetSidebar();
-    setSidebarCollectionId(newCollectionId);
-    setSidebarBodyComponent(SidebarBodyComponentId.CollectionInfo);
+    setSidebarComponentInfo({
+      id: collectionId,
+      type: SidebarBodyComponentId.CollectionInfo,
+      currentTab,
+    });
   }, []);
 
   const { data: libraryData, isLoading: isLoadingLibraryData } = useContentLibrary(libraryId);
@@ -140,12 +143,11 @@ export const LibraryProvider = ({
     readOnly,
     isLoadingLibraryData,
     componentPickerMode,
-    sidebarBodyComponent,
     closeLibrarySidebar,
     openAddContentSidebar,
     openInfoSidebar,
     openComponentInfoSidebar,
-    sidebarComponentUsageKey,
+    sidebarComponentInfo,
     isLibraryTeamModalOpen,
     openLibraryTeamModal,
     closeLibraryTeamModal,
@@ -153,7 +155,6 @@ export const LibraryProvider = ({
     openCreateCollectionModal,
     closeCreateCollectionModal,
     openCollectionInfoSidebar,
-    sidebarCollectionId,
     componentBeingEdited,
     openComponentEditor,
     closeComponentEditor,
@@ -165,12 +166,11 @@ export const LibraryProvider = ({
     readOnly,
     isLoadingLibraryData,
     componentPickerMode,
-    sidebarBodyComponent,
     closeLibrarySidebar,
     openAddContentSidebar,
     openInfoSidebar,
     openComponentInfoSidebar,
-    sidebarComponentUsageKey,
+    sidebarComponentInfo,
     isLibraryTeamModalOpen,
     openLibraryTeamModal,
     closeLibraryTeamModal,
@@ -178,7 +178,6 @@ export const LibraryProvider = ({
     openCreateCollectionModal,
     closeCreateCollectionModal,
     openCollectionInfoSidebar,
-    sidebarCollectionId,
     componentBeingEdited,
     openComponentEditor,
     closeComponentEditor,
