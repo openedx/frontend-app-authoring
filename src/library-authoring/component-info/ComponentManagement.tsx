@@ -14,8 +14,9 @@ import ManageCollections from './ManageCollections';
 
 const ComponentManagement = () => {
   const intl = useIntl();
-  const { sidebarComponentUsageKey: usageKey, readOnly, isLoadingLibraryData } = useLibraryContext();
+  const { sidebarComponentInfo, readOnly, isLoadingLibraryData } = useLibraryContext();
 
+  const usageKey = sidebarComponentInfo?.id;
   // istanbul ignore if: this should never happen
   if (!usageKey) {
     throw new Error('usageKey is required');

@@ -6,7 +6,7 @@ import {
 } from '../../testUtils';
 import { mockContentLibrary, mockLibraryBlockMetadata } from '../data/api.mocks';
 import { mockBroadcastChannel } from '../../generic/data/api.mock';
-import { LibraryProvider } from '../common/context';
+import { LibraryProvider, SidebarBodyComponentId } from '../common/context';
 import ComponentInfo from './ComponentInfo';
 
 mockBroadcastChannel();
@@ -25,7 +25,10 @@ const withLibraryId = (libraryId: string, sidebarComponentUsageKey: string) => (
   extraWrapper: ({ children }: { children: React.ReactNode }) => (
     <LibraryProvider
       libraryId={libraryId}
-      initialSidebarComponentUsageKey={sidebarComponentUsageKey}
+      initialSidebarComponentInfo={{
+        id: sidebarComponentUsageKey,
+        type: SidebarBodyComponentId.ComponentInfo,
+      }}
     >
       {children}
     </LibraryProvider>
