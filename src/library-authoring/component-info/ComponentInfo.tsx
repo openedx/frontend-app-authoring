@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
@@ -19,13 +20,20 @@ const ComponentInfo = () => {
   const intl = useIntl();
 
   const {
-    sidebarComponentUsageKey: usageKey,
+    sidebarComponentInfo,
     readOnly,
     openComponentEditor,
     componentPickerMode,
     parentLocator,
   } = useLibraryContext();
 
+  // control management tabs via library context state: sidebarComponentInfo
+  const [tab, setTab] = useState(sidebarComponentInfo?.currentTab || 'preview');
+  useEffect(() => {
+    setTab((prev) => sidebarComponentInfo?.currentTab || prev);
+  }, [sidebarComponentInfo?.currentTab]);
+
+  const usageKey = sidebarComponentInfo?.id;
   // istanbul ignore if: this should never happen
   if (!usageKey) {
     throw new Error('usageKey is required');
@@ -67,7 +75,8 @@ const ComponentInfo = () => {
       <Tabs
         variant="tabs"
         className="my-3 d-flex justify-content-around"
-        defaultActiveKey="preview"
+        activeKey={tab}
+        onSelect={(k: string) => setTab(k)}
       >
         <Tab eventKey="preview" title={intl.formatMessage(messages.previewTabTitle)}>
           <ComponentPreview />

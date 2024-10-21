@@ -28,7 +28,8 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   const {
     libraryId,
     collectionId,
-    sidebarComponentUsageKey,
+    sidebarComponentInfo,
+    openComponentInfoSidebar,
     openComponentEditor,
     closeLibrarySidebar,
   } = useLibraryContext();
@@ -48,7 +49,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
 
   const removeFromCollection = () => {
     removeComponentsMutation.mutateAsync([usageKey]).then(() => {
-      if (sidebarComponentUsageKey === usageKey) {
+      if (sidebarComponentInfo?.id === usageKey) {
         // Close sidebar if current component is open
         closeLibrarySidebar();
       }
@@ -56,6 +57,10 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
     }).catch(() => {
       showToast(intl.formatMessage(messages.removeComponentFailure));
     });
+  };
+
+  const showManageCollections = () => {
+    openComponentInfoSidebar(usageKey, 'manage', 'tags');
   };
 
   return (
@@ -81,7 +86,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
           <FormattedMessage {...messages.menuRemoveFromCollection} />
         </Dropdown.Item>
         )}
-        <Dropdown.Item disabled>
+        <Dropdown.Item onClick={showManageCollections}>
           <FormattedMessage {...messages.menuAddToCollection} />
         </Dropdown.Item>
       </Dropdown.Menu>

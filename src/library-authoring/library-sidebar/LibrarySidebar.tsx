@@ -18,7 +18,7 @@ import messages from '../messages';
  * Sidebar container for library pages.
  *
  * It's designed to "squash" the page when open.
- * Uses `sidebarBodyComponent` of the `context` to
+ * Uses `sidebarComponentInfo.type` of the `context` to
  * choose which component is rendered.
  * You can add more components in `bodyComponentMap`.
  * Use the returned actions to open and close this sidebar.
@@ -26,7 +26,7 @@ import messages from '../messages';
 const LibrarySidebar = () => {
   const intl = useIntl();
   const {
-    sidebarBodyComponent,
+    sidebarComponentInfo,
     closeLibrarySidebar,
   } = useLibraryContext();
 
@@ -46,8 +46,8 @@ const LibrarySidebar = () => {
     unknown: null,
   };
 
-  const buildBody = () : React.ReactNode => bodyComponentMap[sidebarBodyComponent || 'unknown'];
-  const buildHeader = (): React.ReactNode => headerComponentMap[sidebarBodyComponent || 'unknown'];
+  const buildBody = () : React.ReactNode => bodyComponentMap[sidebarComponentInfo?.type || 'unknown'];
+  const buildHeader = (): React.ReactNode => headerComponentMap[sidebarComponentInfo?.type || 'unknown'];
 
   return (
     <Stack gap={4} className="p-3 text-primary-700">

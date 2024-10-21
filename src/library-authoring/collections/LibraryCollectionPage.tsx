@@ -104,7 +104,7 @@ const LibraryCollectionPage = () => {
   }
 
   const {
-    sidebarBodyComponent,
+    sidebarComponentInfo,
     openCollectionInfoSidebar,
     componentPickerMode,
     setCollectionId,
@@ -215,7 +215,7 @@ const LibraryCollectionPage = () => {
         </Container>
         <StudioFooter />
       </div>
-      {!!sidebarBodyComponent && (
+      {!!sidebarComponentInfo?.type && (
         <div className="library-authoring-sidebar box-shadow-left-1 bg-white" data-testid="library-sidebar">
           <LibrarySidebar />
         </div>

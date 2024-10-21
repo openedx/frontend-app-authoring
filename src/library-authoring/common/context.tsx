@@ -16,6 +16,14 @@ export enum SidebarBodyComponentId {
   CollectionInfo = 'collection-info',
 }
 
+export interface SidebarComponentInfo {
+  type: SidebarBodyComponentId;
+  id: string;
+  currentTab?: string;
+  /** Name of collapsible section to collapse */
+  collapse?: string;
+}
+
 export interface LibraryContextData {
   /** The ID of the current library */
   libraryId: string;
@@ -28,12 +36,11 @@ export interface LibraryContextData {
   componentPickerMode: boolean;
   parentLocator?: string;
   // Sidebar stuff - only one sidebar is active at any given time:
-  sidebarBodyComponent: SidebarBodyComponentId | null;
   closeLibrarySidebar: () => void;
   openAddContentSidebar: () => void;
   openInfoSidebar: () => void;
-  openComponentInfoSidebar: (usageKey: string) => void;
-  sidebarComponentUsageKey?: string;
+  openComponentInfoSidebar: (usageKey: string, currentTab?: string, collapse?: string) => void;
+  sidebarComponentInfo?: SidebarComponentInfo;
   // "Library Team" modal
   isLibraryTeamModalOpen: boolean;
   openLibraryTeamModal: () => void;
@@ -43,8 +50,7 @@ export interface LibraryContextData {
   openCreateCollectionModal: () => void;
   closeCreateCollectionModal: () => void;
   // Current collection
-  openCollectionInfoSidebar: (collectionId: string) => void;
-  sidebarCollectionId?: string;
+  openCollectionInfoSidebar: (collectionId: string, currentTab?: string) => void;
   // Editor modal - for editing some component
   /** If the editor is open and the user is editing some component, this is its usageKey */
   componentBeingEdited: string | undefined;
@@ -73,9 +79,7 @@ interface LibraryProviderProps {
   /** The parent component locator, if we're in component picker mode */
   parentLocator?: string;
   /** Only used for testing */
-  initialSidebarComponentUsageKey?: string;
-  /** Only used for testing */
-  initialSidebarCollectionId?: string;
+  initialSidebarComponentInfo?: SidebarComponentInfo;
 }
 
 /**
@@ -87,24 +91,19 @@ export const LibraryProvider = ({
   collectionId: collectionIdProp,
   componentPickerMode = false,
   parentLocator,
-  initialSidebarComponentUsageKey,
-  initialSidebarCollectionId,
+  initialSidebarComponentInfo,
 }: LibraryProviderProps) => {
   const [collectionId, setCollectionId] = useState(collectionIdProp);
-  const [sidebarBodyComponent, setSidebarBodyComponent] = useState<SidebarBodyComponentId | null>(null);
-  const [sidebarComponentUsageKey, setSidebarComponentUsageKey] = useState<string | undefined>(
-    initialSidebarComponentUsageKey,
+  const [sidebarComponentInfo, setSidebarComponentInfo] = useState<SidebarComponentInfo | undefined>(
+    initialSidebarComponentInfo,
   );
-  const [sidebarCollectionId, setSidebarCollectionId] = useState<string | undefined>(initialSidebarCollectionId);
   const [isLibraryTeamModalOpen, openLibraryTeamModal, closeLibraryTeamModal] = useToggle(false);
   const [isCreateCollectionModalOpen, openCreateCollectionModal, closeCreateCollectionModal] = useToggle(false);
   const [componentBeingEdited, openComponentEditor] = useState<string | undefined>();
   const closeComponentEditor = useCallback(() => openComponentEditor(undefined), []);
 
   const resetSidebar = useCallback(() => {
-    setSidebarComponentUsageKey(undefined);
-    setSidebarCollectionId(undefined);
-    setSidebarBodyComponent(null);
+    setSidebarComponentInfo(undefined);
   }, []);
 
   const closeLibrarySidebar = useCallback(() => {
@@ -112,24 +111,31 @@ export const LibraryProvider = ({
   }, []);
   const openAddContentSidebar = useCallback(() => {
     resetSidebar();
-    setSidebarBodyComponent(SidebarBodyComponentId.AddContent);
+    setSidebarComponentInfo({ id: '', type: SidebarBodyComponentId.AddContent });
   }, []);
   const openInfoSidebar = useCallback(() => {
     resetSidebar();
-    setSidebarBodyComponent(SidebarBodyComponentId.Info);
+    setSidebarComponentInfo({ id: '', type: SidebarBodyComponentId.Info });
   }, []);
   const openComponentInfoSidebar = useCallback(
-    (usageKey: string) => {
+    (usageKey: string, currentTab?: string, collapse?: string) => {
       resetSidebar();
-      setSidebarComponentUsageKey(usageKey);
-      setSidebarBodyComponent(SidebarBodyComponentId.ComponentInfo);
+      setSidebarComponentInfo({
+        id: usageKey,
+        type: SidebarBodyComponentId.ComponentInfo,
+        currentTab,
+        collapse,
+      });
     },
     [],
   );
-  const openCollectionInfoSidebar = useCallback((newCollectionId: string) => {
+  const openCollectionInfoSidebar = useCallback((newCollectionId: string, currentTab?: string) => {
     resetSidebar();
-    setSidebarCollectionId(newCollectionId);
-    setSidebarBodyComponent(SidebarBodyComponentId.CollectionInfo);
+    setSidebarComponentInfo({
+      id: newCollectionId,
+      type: SidebarBodyComponentId.CollectionInfo,
+      currentTab,
+    });
   }, []);
 
   const { data: libraryData, isLoading: isLoadingLibraryData } = useContentLibrary(libraryId);
@@ -145,12 +151,11 @@ export const LibraryProvider = ({
     isLoadingLibraryData,
     componentPickerMode,
     parentLocator,
-    sidebarBodyComponent,
     closeLibrarySidebar,
     openAddContentSidebar,
     openInfoSidebar,
     openComponentInfoSidebar,
-    sidebarComponentUsageKey,
+    sidebarComponentInfo,
     isLibraryTeamModalOpen,
     openLibraryTeamModal,
     closeLibraryTeamModal,
@@ -158,7 +163,6 @@ export const LibraryProvider = ({
     openCreateCollectionModal,
     closeCreateCollectionModal,
     openCollectionInfoSidebar,
-    sidebarCollectionId,
     componentBeingEdited,
     openComponentEditor,
     closeComponentEditor,
@@ -170,12 +174,11 @@ export const LibraryProvider = ({
     readOnly,
     isLoadingLibraryData,
     componentPickerMode,
-    sidebarBodyComponent,
     closeLibrarySidebar,
     openAddContentSidebar,
     openInfoSidebar,
     openComponentInfoSidebar,
-    sidebarComponentUsageKey,
+    sidebarComponentInfo,
     isLibraryTeamModalOpen,
     openLibraryTeamModal,
     closeLibraryTeamModal,
@@ -183,7 +186,6 @@ export const LibraryProvider = ({
     openCreateCollectionModal,
     closeCreateCollectionModal,
     openCollectionInfoSidebar,
-    sidebarCollectionId,
     componentBeingEdited,
     openComponentEditor,
     closeComponentEditor,
