@@ -47,7 +47,7 @@ const ComponentInfo = () => {
   const publishComponent = usePublishComponent(usageKey);
   const { data: componentMetadata } = useLibraryBlockMetadata(usageKey);
   // Only can be published when the component has been modified after the last published date.
-  const canPublish = (new Date(componentMetadata?.modified ?? 0)) > (new Date(componentMetadata?.lastPublished ?? 0 ))
+  const canPublish = (new Date(componentMetadata?.modified ?? 0)) > (new Date(componentMetadata?.lastPublished ?? 0));
   const { showToast } = useContext(ToastContext);
 
   const publish = useCallback(() => {

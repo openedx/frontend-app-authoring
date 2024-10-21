@@ -364,12 +364,12 @@ export const usePublishComponent = (usageKey: string) => {
   const queryClient = useQueryClient();
   const contentLibraryId = getLibraryId(usageKey);
   return useMutation({
-    mutationFn: () => publishXBlock( usageKey),
+    mutationFn: () => publishXBlock(usageKey),
     onSettled: () => {
       invalidateComponentData(queryClient, contentLibraryId, usageKey);
     },
   });
-  }
+};
 
 /** Get the list of assets (static files) attached to a library component */
 export const useXBlockAssets = (usageKey: string) => (
