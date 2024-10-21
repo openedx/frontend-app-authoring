@@ -93,6 +93,7 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
   const {
     openComponentInfoSidebar,
     componentPickerMode,
+    onComponentSelected,
   } = useLibraryContext();
 
   const {
@@ -109,11 +110,7 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
   const displayName = formatted?.displayName ?? '';
 
   const handleAddComponentToCourse = () => {
-    window.parent.postMessage({
-      usageKey,
-      type: 'pickerComponentSelected',
-      category: blockType,
-    }, '*');
+    onComponentSelected?.(usageKey, blockType);
   };
 
   return (
