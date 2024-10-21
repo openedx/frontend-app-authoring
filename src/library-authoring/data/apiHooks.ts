@@ -15,6 +15,7 @@ import {
   type UpdateXBlockFieldsRequest,
   getContentLibrary,
   createLibraryBlock,
+  deleteLibraryBlock,
   getContentLibraryV2List,
   commitLibraryChanges,
   revertLibraryChanges,
@@ -133,6 +134,22 @@ export const useCreateLibraryBlock = () => {
     onSettled: (_data, _error, variables) => {
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(variables.libraryId) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, variables.libraryId) });
+    },
+  });
+};
+
+/**
+ * Use this mutation to delete a block in a library
+ */
+export const useDeleteLibraryBlock = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteLibraryBlock,
+    onSettled: (_data, _error, variables) => {
+      const libraryId = getLibraryId(variables.usageKey);
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId) });
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+      invalidateComponentData(queryClient, libraryId, variables.usageKey);
     },
   });
 };
