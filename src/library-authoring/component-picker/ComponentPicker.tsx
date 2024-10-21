@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { Stepper } from '@openedx/paragon';
 
-import { type ComponentPickerMode, LibraryProvider, useLibraryContext } from '../common/context';
+import {
+  type ComponentSelectedEvent,
+  LibraryProvider,
+  useLibraryContext,
+} from '../common/context';
 import LibraryAuthoringPage from '../LibraryAuthoringPage';
 import LibraryCollectionPage from '../collections/LibraryCollectionPage';
 import SelectLibrary from './SelectLibrary';
@@ -19,18 +23,21 @@ const InnerComponentPicker: React.FC<LibraryComponentPickerProps> = ({ returnToL
   return <LibraryAuthoringPage returnToLibrarySelection={returnToLibrarySelection} />;
 };
 
-const defaultComponentSelectedCallback = (usageKey: string, category: string) => {
+const defaultComponentSelectedCallback: ComponentSelectedEvent = ({ usageKey, blockType }) => {
   window.parent.postMessage({
     usageKey,
     type: 'pickerComponentSelected',
-    category,
+    category: blockType,
   }, '*');
 };
 
-interface ComponentPickerProps {
-  onComponentSelected?: (usageKey: string, category: string) => void;
-  componentPickerMode?: ComponentPickerMode;
-}
+type ComponentPickerProps = {
+  componentPickerMode?: 'single',
+  onComponentSelected?: ComponentSelectedEvent,
+} | {
+  componentPickerMode: 'multiple'
+  onComponentSelected: never,
+};
 
 // eslint-disable-next-line import/prefer-default-export
 export const ComponentPicker: React.FC<ComponentPickerProps> = ({
@@ -53,6 +60,13 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
     setSelectedLibrary('');
   };
 
+  const libraryProviderProps = componentPickerMode === 'single' ? {
+    componentPickerMode,
+    onComponentSelected,
+  } : {
+    componentPickerMode,
+  };
+
   return (
     <Stepper
       activeKey={currentStep}
@@ -64,8 +78,7 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
       <Stepper.Step eventKey="pick-components" title="Pick some components">
         <LibraryProvider
           libraryId={selectedLibrary}
-          componentPickerMode={componentPickerMode}
-          onComponentSelected={onComponentSelected}
+          {...libraryProviderProps}
         >
           <InnerComponentPicker returnToLibrarySelection={returnToLibrarySelection} />
         </LibraryProvider>

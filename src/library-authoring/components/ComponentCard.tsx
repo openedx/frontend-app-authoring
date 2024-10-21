@@ -77,9 +77,9 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
           <FormattedMessage {...messages.menuCopyToClipboard} />
         </Dropdown.Item>
         {collectionId && (
-        <Dropdown.Item onClick={removeFromCollection}>
-          <FormattedMessage {...messages.menuRemoveFromCollection} />
-        </Dropdown.Item>
+          <Dropdown.Item onClick={removeFromCollection}>
+            <FormattedMessage {...messages.menuRemoveFromCollection} />
+          </Dropdown.Item>
         )}
         <Dropdown.Item disabled>
           <FormattedMessage {...messages.menuAddToCollection} />
@@ -110,7 +110,7 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
   const displayName = formatted?.displayName ?? '';
 
   const handleAddComponentToCourse = () => {
-    onComponentSelected?.(usageKey, blockType);
+    onComponentSelected?.({ usageKey, blockType });
   };
 
   return (
