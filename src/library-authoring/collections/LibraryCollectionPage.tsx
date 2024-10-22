@@ -175,6 +175,11 @@ const LibraryCollectionPage = () => {
     />
   );
 
+  const extraFilter = [`context_key = "${libraryId}"`, `collections.key = "${collectionId}"`];
+  if (componentPickerMode) {
+    extraFilter.push('last_published IS NOT NULL');
+  }
+
   return (
     <div className="d-flex">
       <div className="flex-grow-1">
@@ -189,7 +194,7 @@ const LibraryCollectionPage = () => {
         )}
         <Container size="xl" className="px-4 mt-4 mb-5 library-authoring-page">
           <SearchContextProvider
-            extraFilter={[`context_key = "${libraryId}"`, `collections.key = "${collectionId}"`]}
+            extraFilter={extraFilter}
             overrideQueries={{ collections: { limit: 0 } }}
           >
             <SubHeader

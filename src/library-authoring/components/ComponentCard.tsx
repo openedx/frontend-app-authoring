@@ -108,13 +108,15 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
     formatted,
     tags,
     usageKey,
+    description,
+    published,
   } = contentHit;
-  const description: string = (/* eslint-disable */
-    blockType === 'html' ? formatted?.content?.htmlContent :
-      blockType === 'problem' ? formatted?.content?.capaContent :
-        undefined
-  ) ?? '';/* eslint-enable */
-  const displayName = formatted?.displayName ?? '';
+  const componentDescription: string = (
+    componentPickerMode ? published?.description : description
+  ) ?? '';
+  const displayName: string = (
+    componentPickerMode ? published?.displayName : formatted?.displayName
+  ) ?? '';
 
   const handleAddComponentToCourse = () => {
     window.parent.postMessage({
@@ -128,7 +130,7 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
     <BaseComponentCard
       componentType={blockType}
       displayName={displayName}
-      description={description}
+      description={componentDescription}
       tags={tags}
       actions={(
         <ActionRow>

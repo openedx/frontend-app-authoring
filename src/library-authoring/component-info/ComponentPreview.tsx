@@ -15,6 +15,7 @@ interface ModalComponentPreviewProps {
 
 const ModalComponentPreview = ({ isOpen, close, usageKey }: ModalComponentPreviewProps) => {
   const intl = useIntl();
+  const { componentPickerMode } = useLibraryContext();
 
   return (
     <StandardModal
@@ -24,7 +25,10 @@ const ModalComponentPreview = ({ isOpen, close, usageKey }: ModalComponentPrevie
       isOverflowVisible={false}
       className="component-preview-modal"
     >
-      <LibraryBlock usageKey={usageKey} />
+      <LibraryBlock
+        usageKey={usageKey}
+        version={componentPickerMode ? 'published' : undefined}
+      />
     </StandardModal>
   );
 };
@@ -33,7 +37,7 @@ const ComponentPreview = () => {
   const intl = useIntl();
 
   const [isModalOpen, openModal, closeModal] = useToggle();
-  const { sidebarComponentUsageKey: usageKey } = useLibraryContext();
+  const { sidebarComponentUsageKey: usageKey, componentPickerMode } = useLibraryContext();
 
   // istanbul ignore if: this should never happen
   if (!usageKey) {
@@ -57,7 +61,13 @@ const ComponentPreview = () => {
         {
           // key=modified below is used to auto-refresh the preview when changes are made, e.g. via OLX editor
           componentMetadata
-            ? <LibraryBlock usageKey={usageKey} key={componentMetadata.modified} />
+            ? (
+              <LibraryBlock
+                usageKey={usageKey}
+                key={componentMetadata.modified}
+                version={componentPickerMode ? 'published' : undefined}
+              />
+            )
             : null
         }
       </div>

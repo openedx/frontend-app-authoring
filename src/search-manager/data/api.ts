@@ -127,9 +127,20 @@ export interface ContentHit extends BaseContentHit {
    * - After that is the name and usage key of any parent Section/Subsection/Unit/etc.
    */
   breadcrumbs: [{ displayName: string }, ...Array<{ displayName: string, usageKey: string }>];
+  description?: string;
   content?: ContentDetails;
   lastPublished: number | null;
   collections: { displayName?: string[], key?: string[] },
+  published?: ContentPublishedData,
+}
+
+/**
+ * Information about the published data of single Xblock returned in search results
+ * Defined in edx-platform/openedx/core/djangoapps/content/search/documents.py
+ */
+export interface ContentPublishedData {
+  description?: string,
+  displayName?: string,
 }
 
 /**

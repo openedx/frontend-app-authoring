@@ -19,6 +19,7 @@ const contentHit: ContentHit = {
   org: 'org1',
   breadcrumbs: [{ displayName: 'Demo Lib' }],
   displayName: 'Text Display Name',
+  description: 'This is a text: ID=1',
   formatted: {
     displayName: 'Text Display Formated Name',
     content: {
