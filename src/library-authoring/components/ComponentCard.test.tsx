@@ -19,11 +19,13 @@ const contentHit: ContentHit = {
   org: 'org1',
   breadcrumbs: [{ displayName: 'Demo Lib' }],
   displayName: 'Text Display Name',
+  description: 'This is a text: ID=1',
   formatted: {
     displayName: 'Text Display Formated Name',
     content: {
       htmlContent: 'This is a text: ID=1',
     },
+    description: 'This is a text: ID=1',
   },
   tags: {
     level0: ['1', '2', '3'],

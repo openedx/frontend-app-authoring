@@ -181,6 +181,7 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
   const {
     openComponentInfoSidebar,
     componentPickerMode,
+    showOnlyPublished,
   } = useLibraryContext();
 
   const {
@@ -189,18 +190,18 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
     tags,
     usageKey,
   } = contentHit;
-  const description: string = (/* eslint-disable */
-    blockType === 'html' ? formatted?.content?.htmlContent :
-      blockType === 'problem' ? formatted?.content?.capaContent :
-        undefined
-  ) ?? '';/* eslint-enable */
-  const displayName = formatted?.displayName ?? '';
+  const componentDescription: string = (
+    showOnlyPublished ? formatted.published?.description : formatted.description
+  ) ?? '';
+  const displayName: string = (
+    showOnlyPublished ? formatted.published?.displayName : formatted.displayName
+  ) ?? '';
 
   return (
     <BaseComponentCard
       componentType={blockType}
       displayName={displayName}
-      description={description}
+      description={componentDescription}
       tags={tags}
       actions={(
         <ActionRow>

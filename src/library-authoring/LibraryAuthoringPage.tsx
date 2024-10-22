@@ -148,6 +148,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     libraryData,
     isLoadingLibraryData,
     componentPickerMode,
+    showOnlyPublished,
     sidebarComponentInfo,
     openInfoSidebar,
   } = useLibraryContext();
@@ -212,6 +213,11 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     />
   ) : undefined;
 
+  const extraFilter = [`context_key = "${libraryId}"`];
+  if (showOnlyPublished) {
+    extraFilter.push('last_published IS NOT NULL');
+  }
+
   return (
     <div className="d-flex">
       <div className="flex-grow-1">
@@ -230,7 +236,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
         )}
         <Container className="px-4 mt-4 mb-5 library-authoring-page">
           <SearchContextProvider
-            extraFilter={`context_key = "${libraryId}"`}
+            extraFilter={extraFilter}
           >
             <SubHeader
               title={<SubHeaderTitle title={libraryData.title} />}

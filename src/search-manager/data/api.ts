@@ -127,9 +127,21 @@ export interface ContentHit extends BaseContentHit {
    * - After that is the name and usage key of any parent Section/Subsection/Unit/etc.
    */
   breadcrumbs: [{ displayName: string }, ...Array<{ displayName: string, usageKey: string }>];
+  description?: string;
   content?: ContentDetails;
   lastPublished: number | null;
-  collections: { displayName?: string[], key?: string[] },
+  collections: { displayName?: string[], key?: string[] };
+  published?: ContentPublishedData;
+  formatted: BaseContentHit['formatted'] & { published?: ContentPublishedData, };
+}
+
+/**
+ * Information about the published data of single Xblock returned in search results
+ * Defined in edx-platform/openedx/core/djangoapps/content/search/documents.py
+ */
+export interface ContentPublishedData {
+  description?: string,
+  displayName?: string,
 }
 
 /**
@@ -152,6 +164,7 @@ export function formatSearchHit(hit: Record<string, any>): ContentHit | Collecti
     displayName: _formatted?.display_name,
     content: _formatted?.content ?? {},
     description: _formatted?.description,
+    published: _formatted?.published,
   };
   return camelCaseObject(newHit);
 }
@@ -247,10 +260,10 @@ export async function fetchSearchResults({
       ...extraFilterFormatted,
       ...tagsFilterFormatted,
     ],
-    attributesToHighlight: ['display_name', 'content'],
+    attributesToHighlight: ['display_name', 'description', 'published'],
     highlightPreTag: HIGHLIGHT_PRE_TAG,
     highlightPostTag: HIGHLIGHT_POST_TAG,
-    attributesToCrop: ['content'],
+    attributesToCrop: ['description', 'published'],
     sort,
     offset,
     limit,

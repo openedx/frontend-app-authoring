@@ -34,6 +34,10 @@
             "key": [
               "my-first-collection"
             ]
+          },
+          "published": {
+            "display_name": "Introduction to Testing",
+            "description": "Testing"
           }
         },
         {
@@ -64,6 +68,10 @@
             "key": [
               "my-first-collection"
             ]
+          },
+          "published": {
+            "display_name": "Second Text Component",
+            "description": "Second Testing"
           }
         },
         {
@@ -97,6 +105,10 @@
               "my-first-collection",
               "my-second-collection"
             ]
+          },
+          "published": {
+            "display_name": "Third Text component",
+            "description": "Third Testing"
           }
         },
         {
@@ -128,6 +140,10 @@
             "key": [
               "my-first-collection"
             ]
+          },
+          "published": {
+            "display_name": "Text 4",
+            "description": "Testing 4"
           }
         },
         {
@@ -159,6 +175,10 @@
             "key": [
               "my-first-collection"
             ]
+          },
+          "published": {
+            "display_name": "Blank Problem",
+            "description": "Problem"
           }
         }
       ],

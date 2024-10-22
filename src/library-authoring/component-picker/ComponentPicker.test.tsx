@@ -18,6 +18,15 @@ import {
 
 import { ComponentPicker } from './ComponentPicker';
 
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useLocation: () => ({
+    pathname: '/evilguy',
+    search: {
+      variant: 'published',
+    },
+  }),
+}));
 mockContentLibrary.applyMock();
 mockContentSearchConfig.applyMock();
 mockGetCollectionMetadata.applyMock();

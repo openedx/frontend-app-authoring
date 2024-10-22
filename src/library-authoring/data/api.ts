@@ -52,6 +52,8 @@ export const getLibraryPasteClipboardUrl = (libraryId: string) => `${getApiBaseU
   * Get the URL for the xblock fields/metadata API.
   */
 export const getXBlockFieldsApiUrl = (usageKey: string) => `${getApiBaseUrl()}/api/xblock/v2/xblocks/${usageKey}/fields/`;
+export const getXBlockFieldsVersionApiUrl = (usageKey: string, version: string) => `${getApiBaseUrl()}/api/xblock/v2/xblocks/${usageKey}@${version}/fields/`;
+
 /**
   * Get the URL for the xblock OLX API
   */
@@ -383,8 +385,8 @@ export async function getLibraryBlockMetadata(usageKey: string): Promise<Library
 /**
  * Fetch xblock fields.
  */
-export async function getXBlockFields(usageKey: string): Promise<XBlockFields> {
-  const { data } = await getAuthenticatedHttpClient().get(getXBlockFieldsApiUrl(usageKey));
+export async function getXBlockFields(usageKey: string, version: string = 'draft'): Promise<XBlockFields> {
+  const { data } = await getAuthenticatedHttpClient().get(getXBlockFieldsVersionApiUrl(usageKey, version));
   return camelCaseObject(data);
 }
 

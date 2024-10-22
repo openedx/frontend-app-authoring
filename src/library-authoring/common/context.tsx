@@ -69,6 +69,8 @@ export type LibraryContextData = {
   isLoadingLibraryData: boolean;
   collectionId: string | undefined;
   setCollectionId: (collectionId?: string) => void;
+  // Only show published components
+  showOnlyPublished: boolean;
   // Sidebar stuff - only one sidebar is active at any given time:
   closeLibrarySidebar: () => void;
   openAddContentSidebar: () => void;
@@ -128,6 +130,7 @@ type LibraryProviderProps = {
   libraryId: string;
   /** The initial collection ID to show */
   collectionId?: string;
+  showOnlyPublished?: boolean;
   /** Only used for testing */
   initialSidebarComponentInfo?: SidebarComponentInfo;
 } & ComponentPickerProps;
@@ -142,6 +145,7 @@ export const LibraryProvider = ({
   componentPickerMode,
   onComponentSelected,
   onChangeComponentSelection,
+  showOnlyPublished = false,
   initialSidebarComponentInfo,
 }: LibraryProviderProps) => {
   const [collectionId, setCollectionId] = useState(collectionIdProp);
@@ -231,6 +235,7 @@ export const LibraryProvider = ({
       setCollectionId,
       readOnly,
       isLoadingLibraryData,
+      showOnlyPublished,
       closeLibrarySidebar,
       openAddContentSidebar,
       openInfoSidebar,
@@ -272,6 +277,7 @@ export const LibraryProvider = ({
     libraryData,
     readOnly,
     isLoadingLibraryData,
+    showOnlyPublished,
     componentPickerMode,
     onComponentSelected,
     addComponentToSelectedComponents,
