@@ -8,7 +8,7 @@ import {
   initializeMocks,
 } from '../../testUtils';
 import { mockContentLibrary } from '../data/api.mocks';
-import { getXBlockFieldsApiUrl } from '../data/api';
+import { getXBlockFieldsVersionApiUrl, getXBlockFieldsApiUrl } from '../data/api';
 import { LibraryProvider } from '../common/context';
 import ComponentInfoHeader from './ComponentInfoHeader';
 
@@ -39,7 +39,7 @@ describe('<ComponentInfoHeader />', () => {
   beforeEach(() => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
-    axiosMock.onGet(getXBlockFieldsApiUrl(usageKey)).reply(200, xBlockFields);
+    axiosMock.onGet(getXBlockFieldsVersionApiUrl(usageKey, 'draft')).reply(200, xBlockFields);
     mockShowToast = mocks.mockShowToast;
   });
 
@@ -91,7 +91,7 @@ describe('<ComponentInfoHeader />', () => {
   });
 
   it('should close edit library title on press Escape', async () => {
-    const url = getXBlockFieldsApiUrl(usageKey);
+    const url = getXBlockFieldsVersionApiUrl(usageKey, 'draft');
     axiosMock.onPost(url).reply(200);
     render();
 

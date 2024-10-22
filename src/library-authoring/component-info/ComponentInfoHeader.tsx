@@ -20,6 +20,7 @@ const ComponentInfoHeader = () => {
   const {
     sidebarComponentUsageKey: usageKey,
     readOnly,
+    showOnlyPublished,
   } = useLibraryContext();
 
   // istanbul ignore next
@@ -28,7 +29,7 @@ const ComponentInfoHeader = () => {
   }
   const {
     data: xblockFields,
-  } = useXBlockFields(usageKey);
+  } = useXBlockFields(usageKey, showOnlyPublished ? 'published' : 'draft');
 
   const updateMutation = useUpdateXBlockFields(usageKey);
   const { showToast } = useContext(ToastContext);

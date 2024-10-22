@@ -289,10 +289,10 @@ export const useLibraryBlockMetadata = (usageId: string) => (
   })
 );
 
-export const useXBlockFields = (usageKey: string) => (
+export const useXBlockFields = (usageKey: string, version: string = 'draft') => (
   useQuery({
     queryKey: xblockQueryKeys.xblockFields(usageKey),
-    queryFn: () => getXBlockFields(usageKey),
+    queryFn: () => getXBlockFields(usageKey, version),
     enabled: !!usageKey,
   })
 );
