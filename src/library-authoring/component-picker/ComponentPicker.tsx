@@ -25,12 +25,14 @@ const InnerComponentPicker: React.FC<LibraryComponentPickerProps> = ({ returnToL
   return <LibraryAuthoringPage returnToLibrarySelection={returnToLibrarySelection} />;
 };
 
+/** Default handler in single-select mode. Used by the legacy UI for adding a single selected component to a course. */
 const defaultComponentSelectedCallback: ComponentSelectedEvent = ({ usageKey, blockType }) => {
-  window.parent.postMessage({
-    usageKey,
-    type: 'pickerComponentSelected',
-    category: blockType,
-  }, '*');
+  window.parent.postMessage({ usageKey, type: 'pickerComponentSelected', category: blockType }, '*');
+};
+
+/** Default handler in multi-select mode. Used by the legacy UI for adding components to a problem bank. */
+const defaultSelectionChangedCallback: ComponentSelectionChangedEvent = (selections) => {
+  window.parent.postMessage({ type: 'pickerSelectionChanged', selections }, '*');
 };
 
 type ComponentPickerProps = {
@@ -50,7 +52,7 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
    * when the component picker is used in an iframe.
    */
   onComponentSelected = defaultComponentSelectedCallback,
-  onChangeComponentSelection,
+  onChangeComponentSelection = defaultSelectionChangedCallback,
 }) => {
   const [currentStep, setCurrentStep] = useState('select-library');
   const [selectedLibrary, setSelectedLibrary] = useState('');

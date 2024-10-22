@@ -61,6 +61,7 @@ const App = () => {
         <Route path="/library/create" element={<CreateLibrary />} />
         <Route path="/library/:libraryId/*" element={<LibraryLayout />} />
         <Route path="/component-picker" element={<ComponentPicker />} />
+        <Route path="/component-picker/multiple" element={<ComponentPicker componentPickerMode="multiple" />} />
         <Route path="/legacy/preview-changes/:usageKey" element={<PreviewChangesEmbed />} />
         <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
         <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
