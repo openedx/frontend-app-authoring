@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
@@ -6,7 +6,6 @@ import {
   Tabs,
   Stack,
 } from '@openedx/paragon';
-import { useCallback, useContext } from 'react';
 
 import { SidebarAdditionalActions, useLibraryContext } from '../common/context';
 import { ComponentMenu } from '../components';
@@ -32,7 +31,7 @@ const ComponentInfo = () => {
 
   const jumpToCollections = sidebarComponentInfo?.additionalAction === SidebarAdditionalActions.JumpToAddCollections;
   // Show Manage tab if JumpToAddCollections action is set in sidebarComponentInfo
-  const [tab, setTab] = useState(jumpToCollections ? 'manage' : 'preview');
+  const [tab, setTab] = React.useState(jumpToCollections ? 'manage' : 'preview');
   useEffect(() => {
     if (jumpToCollections) {
       setTab('manage');
@@ -65,9 +64,9 @@ const ComponentInfo = () => {
   const { data: componentMetadata } = useLibraryBlockMetadata(usageKey);
   // Only can be published when the component has been modified after the last published date.
   const canPublish = (new Date(componentMetadata?.modified ?? 0)) > (new Date(componentMetadata?.lastPublished ?? 0));
-  const { showToast } = useContext(ToastContext);
+  const { showToast } = React.useContext(ToastContext);
 
-  const publish = useCallback(() => {
+  const publish = React.useCallback(() => {
     publishComponent.mutateAsync()
       .then(() => {
         showToast(intl.formatMessage(messages.publishSuccessMsg));
