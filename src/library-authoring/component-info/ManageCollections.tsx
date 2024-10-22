@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button, Icon, Scrollable, SelectableBox, Stack, StatefulButton, useCheckboxSetValues,
@@ -15,7 +15,7 @@ import messages from './messages';
 import { useUpdateComponentCollections } from '../data/apiHooks';
 import { ToastContext } from '../../generic/toast-context';
 import { CollectionMetadata } from '../data/api';
-import { useLibraryContext } from '../common/context';
+import { SidebarAdditionalActions, useLibraryContext } from '../common/context';
 
 interface ManageCollectionsProps {
   usageKey: string;
@@ -193,8 +193,18 @@ const ComponentCollections = ({ collections, onManageClick }: {
 };
 
 const ManageCollections = ({ usageKey, collections }: ManageCollectionsProps) => {
-  const [editing, setEditing] = useState(false);
+  const { sidebarComponentInfo, resetSidebarAdditionalActions } = useLibraryContext();
+  const [editing, setEditing] = useState(sidebarComponentInfo?.additionalAction === SidebarAdditionalActions.JumpToAddCollections);
+  // __AUTO_GENERATED_PRINT_VAR_START__
+  console.log("ManageCollections editing: %s", editing); // __AUTO_GENERATED_PRINT_VAR_END__
   const collectionNames = collections.map((collection) => collection.title);
+
+  useEffect(() => {
+    if (sidebarComponentInfo?.additionalAction === SidebarAdditionalActions.JumpToAddCollections) {
+      setEditing(true);
+    }
+    return resetSidebarAdditionalActions;
+  }, [sidebarComponentInfo, editing]);
 
   if (editing) {
     return (

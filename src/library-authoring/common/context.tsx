@@ -16,12 +16,15 @@ export enum SidebarBodyComponentId {
   CollectionInfo = 'collection-info',
 }
 
+export enum SidebarAdditionalActions {
+  JumpToAddCollections = 'jump-to-add-collections',
+}
+
 export interface SidebarComponentInfo {
   type: SidebarBodyComponentId;
   id: string;
-  currentTab?: string;
-  /** Name of collapsible section to collapse */
-  collapse?: string;
+  /** Additional action on Sidebar display */
+  additionalAction?: SidebarAdditionalActions;
 }
 
 export interface LibraryContextData {
@@ -38,7 +41,7 @@ export interface LibraryContextData {
   closeLibrarySidebar: () => void;
   openAddContentSidebar: () => void;
   openInfoSidebar: () => void;
-  openComponentInfoSidebar: (usageKey: string, currentTab?: string, collapse?: string) => void;
+  openComponentInfoSidebar: (usageKey: string, additionalAction?: SidebarAdditionalActions) => void;
   sidebarComponentInfo?: SidebarComponentInfo;
   // "Library Team" modal
   isLibraryTeamModalOpen: boolean;
@@ -49,12 +52,13 @@ export interface LibraryContextData {
   openCreateCollectionModal: () => void;
   closeCreateCollectionModal: () => void;
   // Current collection
-  openCollectionInfoSidebar: (collectionId: string, currentTab?: string) => void;
+  openCollectionInfoSidebar: (collectionId: string, additionalAction?: SidebarAdditionalActions) => void;
   // Editor modal - for editing some component
   /** If the editor is open and the user is editing some component, this is its usageKey */
   componentBeingEdited: string | undefined;
   openComponentEditor: (usageKey: string) => void;
   closeComponentEditor: () => void;
+  resetSidebarAdditionalActions: () => void;
 }
 
 /**
@@ -98,39 +102,34 @@ export const LibraryProvider = ({
   const [componentBeingEdited, openComponentEditor] = useState<string | undefined>();
   const closeComponentEditor = useCallback(() => openComponentEditor(undefined), []);
 
-  const resetSidebar = useCallback(() => {
-    setSidebarComponentInfo(undefined);
+  /** Helper function to consume addtional action once performed.
+    Required to redo the action.
+  */
+  const resetSidebarAdditionalActions = useCallback(() => {
+    setSidebarComponentInfo((prev) => (prev && { ...prev, additionalAction: undefined }));
   }, []);
 
   const closeLibrarySidebar = useCallback(() => {
-    resetSidebar();
+    setSidebarComponentInfo(undefined);
   }, []);
   const openAddContentSidebar = useCallback(() => {
-    resetSidebar();
     setSidebarComponentInfo({ id: '', type: SidebarBodyComponentId.AddContent });
   }, []);
   const openInfoSidebar = useCallback(() => {
-    resetSidebar();
     setSidebarComponentInfo({ id: '', type: SidebarBodyComponentId.Info });
   }, []);
-  const openComponentInfoSidebar = useCallback(
-    (usageKey: string, currentTab?: string, collapse?: string) => {
-      resetSidebar();
-      setSidebarComponentInfo({
-        id: usageKey,
-        type: SidebarBodyComponentId.ComponentInfo,
-        currentTab,
-        collapse,
-      });
-    },
-    [],
-  );
-  const openCollectionInfoSidebar = useCallback((newCollectionId: string, currentTab?: string) => {
-    resetSidebar();
+  const openComponentInfoSidebar = useCallback((usageKey: string, additionalAction?: SidebarAdditionalActions) => {
+    setSidebarComponentInfo({
+      id: usageKey,
+      type: SidebarBodyComponentId.ComponentInfo,
+      additionalAction,
+    });
+  }, []);
+  const openCollectionInfoSidebar = useCallback((newCollectionId: string, additionalAction?: SidebarAdditionalActions) => {
     setSidebarComponentInfo({
       id: newCollectionId,
       type: SidebarBodyComponentId.CollectionInfo,
-      currentTab,
+      additionalAction,
     });
   }, []);
 
@@ -161,6 +160,7 @@ export const LibraryProvider = ({
     componentBeingEdited,
     openComponentEditor,
     closeComponentEditor,
+    resetSidebarAdditionalActions,
   }), [
     libraryId,
     collectionId,
@@ -184,6 +184,7 @@ export const LibraryProvider = ({
     componentBeingEdited,
     openComponentEditor,
     closeComponentEditor,
+    resetSidebarAdditionalActions,
   ]);
 
   return (

@@ -7,7 +7,7 @@ import {
   Stack,
 } from '@openedx/paragon';
 
-import { useLibraryContext } from '../common/context';
+import { SidebarAdditionalActions, useLibraryContext } from '../common/context';
 import { ComponentMenu } from '../components';
 import { canEditComponent } from '../components/ComponentEditorModal';
 import ComponentDetails from './ComponentDetails';
@@ -24,13 +24,21 @@ const ComponentInfo = () => {
     readOnly,
     openComponentEditor,
     componentPickerMode,
+    resetSidebarAdditionalActions,
   } = useLibraryContext();
 
-  // control management tabs via library context state: sidebarComponentInfo
-  const [tab, setTab] = useState(sidebarComponentInfo?.currentTab || 'preview');
+  // Show Manage tab if JumpToAddCollections action is set in sidebarComponentInfo
+  const [tab, setTab] = useState(
+    sidebarComponentInfo?.additionalAction === SidebarAdditionalActions.JumpToAddCollections
+      ? 'manage'
+      : 'preview'
+  );
   useEffect(() => {
-    setTab((prev) => sidebarComponentInfo?.currentTab || prev);
-  }, [sidebarComponentInfo?.currentTab]);
+    if (sidebarComponentInfo?.additionalAction === SidebarAdditionalActions.JumpToAddCollections) {
+      setTab('manage');
+    }
+    return resetSidebarAdditionalActions;
+  }, [sidebarComponentInfo?.additionalAction]);
 
   const usageKey = sidebarComponentInfo?.id;
   // istanbul ignore if: this should never happen

@@ -6,7 +6,7 @@ import {
   BookOpen, ExpandLess, ExpandMore, Tag,
 } from '@openedx/paragon/icons';
 
-import { useLibraryContext } from '../common/context';
+import { SidebarAdditionalActions, useLibraryContext } from '../common/context';
 import { useLibraryBlockMetadata } from '../data/apiHooks';
 import StatusWidget from '../generic/status-widget';
 import messages from './messages';
@@ -16,17 +16,18 @@ import ManageCollections from './ManageCollections';
 
 const ComponentManagement = () => {
   const intl = useIntl();
-  const { sidebarComponentInfo, readOnly, isLoadingLibraryData } = useLibraryContext();
-  const [tagsCollapseIsOpen, setTagsCollapseOpen] = React.useState(sidebarComponentInfo?.collapse !== 'tags');
-  const [
-    collectionsCollapseIsOpen,
-    setCollectionsCollapseOpen,
-  ] = React.useState(sidebarComponentInfo?.collapse !== 'collections');
+  const { sidebarComponentInfo, readOnly, resetSidebarAdditionalActions, isLoadingLibraryData } = useLibraryContext();
+  const jumpToCollections = sidebarComponentInfo?.additionalAction === SidebarAdditionalActions.JumpToAddCollections;
+  const [tagsCollapseIsOpen, setTagsCollapseOpen] = React.useState(!jumpToCollections);
+  const [collectionsCollapseIsOpen, setCollectionsCollapseOpen] = React.useState(true);
 
   useEffect(() => {
-    setTagsCollapseOpen(sidebarComponentInfo?.collapse !== 'tags');
-    setCollectionsCollapseOpen(sidebarComponentInfo?.collapse !== 'collections');
-  }, [sidebarComponentInfo?.collapse]);
+    if (jumpToCollections) {
+      setTagsCollapseOpen(false);
+      setCollectionsCollapseOpen(true);
+    }
+    return resetSidebarAdditionalActions;
+  }, [jumpToCollections]);
 
   const usageKey = sidebarComponentInfo?.id;
   // istanbul ignore if: this should never happen

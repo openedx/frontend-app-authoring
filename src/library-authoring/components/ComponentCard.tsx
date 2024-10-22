@@ -14,7 +14,7 @@ import { STUDIO_CLIPBOARD_CHANNEL } from '../../constants';
 import { updateClipboard } from '../../generic/data/api';
 import { ToastContext } from '../../generic/toast-context';
 import { type ContentHit } from '../../search-manager';
-import { useLibraryContext } from '../common/context';
+import { SidebarAdditionalActions, useLibraryContext } from '../common/context';
 import { useRemoveComponentsFromCollection } from '../data/apiHooks';
 import BaseComponentCard from './BaseComponentCard';
 import { canEditComponent } from './ComponentEditorModal';
@@ -64,7 +64,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   };
 
   const showManageCollections = () => {
-    openComponentInfoSidebar(usageKey, 'manage', 'tags');
+    openComponentInfoSidebar(usageKey, SidebarAdditionalActions.JumpToAddCollections);
   };
 
   return (
