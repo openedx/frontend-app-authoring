@@ -25,6 +25,7 @@ const contentHit: ContentHit = {
     content: {
       htmlContent: 'This is a text: ID=1',
     },
+    description: 'This is a text: ID=1',
   },
   tags: {
     level0: ['1', '2', '3'],

@@ -9,6 +9,7 @@ export default [
       content: {
         htmlContent: 'This is a text: ID=1',
       },
+      description: 'This is a text: ID=1',
     },
     tags: {
       level0: ['1', '2', '3'],
@@ -25,6 +26,7 @@ export default [
       content: {
         htmlContent: 'This is a text: ID=2',
       },
+      description: 'This is a text: ID=2',
     },
     tags: {
       level0: ['1', '2', '3'],
@@ -68,6 +70,7 @@ export default [
       content: {
         capaContent: 'This is a problem: ID=5',
       },
+      description: 'This is a problem: ID=5',
     },
     blockType: 'problem',
   },
@@ -81,6 +84,7 @@ export default [
       content: {
         capaContent: 'This is a problem: ID=6',
       },
+      description: 'This is a problem: ID=6',
     },
     blockType: 'problem',
   },
