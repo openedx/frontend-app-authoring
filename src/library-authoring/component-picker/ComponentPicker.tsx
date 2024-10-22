@@ -8,6 +8,7 @@ import {
   LibraryProvider,
   useLibraryContext,
 } from '../common/context';
+// eslint-disable-next-line import/no-cycle
 import LibraryAuthoringPage from '../LibraryAuthoringPage';
 import LibraryCollectionPage from '../collections/LibraryCollectionPage';
 import SelectLibrary from './SelectLibrary';
@@ -35,18 +36,22 @@ const defaultSelectionChangedCallback: ComponentSelectionChangedEvent = (selecti
   window.parent.postMessage({ type: 'pickerSelectionChanged', selections }, '*');
 };
 
-type ComponentPickerProps = {
-  componentPickerMode?: 'single',
-  onComponentSelected?: ComponentSelectedEvent,
-  onChangeComponentSelection?: never,
-} | {
-  componentPickerMode: 'multiple'
-  onComponentSelected?: never,
-  onChangeComponentSelection?: ComponentSelectionChangedEvent,
-};
+type ComponentPickerProps = { libraryId?: string } & (
+  {
+    componentPickerMode?: 'single',
+    onComponentSelected?: ComponentSelectedEvent,
+    onChangeComponentSelection?: never,
+  } | {
+    componentPickerMode: 'multiple'
+    onComponentSelected?: never,
+    onChangeComponentSelection?: ComponentSelectionChangedEvent,
+  }
+);
 
 // eslint-disable-next-line import/prefer-default-export
 export const ComponentPicker: React.FC<ComponentPickerProps> = ({
+  /** Restrict the component picker to a specific library */
+  libraryId,
   componentPickerMode = 'single',
   /** This default callback is used to send the selected component back to the parent window,
    * when the component picker is used in an iframe.
@@ -54,8 +59,8 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
   onComponentSelected = defaultComponentSelectedCallback,
   onChangeComponentSelection = defaultSelectionChangedCallback,
 }) => {
-  const [currentStep, setCurrentStep] = useState('select-library');
-  const [selectedLibrary, setSelectedLibrary] = useState('');
+  const [currentStep, setCurrentStep] = useState(!libraryId ? 'select-library' : 'pick-components');
+  const [selectedLibrary, setSelectedLibrary] = useState(libraryId || '');
 
   const location = useLocation();
 
@@ -72,12 +77,16 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
     setSelectedLibrary('');
   };
 
+  const restrictToLibrary = !!libraryId;
+
   const libraryProviderProps = componentPickerMode === 'single' ? {
     componentPickerMode,
     onComponentSelected,
+    restrictToLibrary,
   } : {
     componentPickerMode,
     onChangeComponentSelection,
+    restrictToLibrary,
   };
 
   return (

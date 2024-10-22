@@ -6,6 +6,21 @@ const messages = defineMessages({
     defaultMessage: 'Collection',
     description: 'Content of button to create a Collection.',
   },
+  libraryContentButton: {
+    id: 'course-authoring.library-authoring.add-content.buttons.library-content',
+    defaultMessage: 'Existing Library Content',
+    description: 'Content of button to add existing library content to a collection.',
+  },
+  addToCollectionButton: {
+    id: 'course-authoring.library-authoring.add-content.buttons.library-content.add-to-collection',
+    defaultMessage: 'Add to Collection',
+    description: 'Button to add library content to a collection.',
+  },
+  selectedComponents: {
+    id: 'course-authoring.library-authoring.add-content.selected-components',
+    defaultMessage: '{count} Selected Component(s)',
+    description: 'Title for selected components in library.',
+  },
   textTypeButton: {
     id: 'course-authoring.library-authoring.add-content.buttons.types.text',
     defaultMessage: 'Text',
@@ -50,6 +65,11 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.add-content.error.text',
     defaultMessage: 'There was an error creating the content.',
     description: 'Message when creation of content in library is on error',
+  },
+  successAssociateComponentMessage: {
+    id: 'course-authoring.library-authoring.associate-collection-content.success.text',
+    defaultMessage: 'Content linked successfully.',
+    description: 'Message when linking of content to a collection in library is success',
   },
   errorAssociateComponentMessage: {
     id: 'course-authoring.library-authoring.associate-collection-content.error.text',

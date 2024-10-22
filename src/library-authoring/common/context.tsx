@@ -9,7 +9,7 @@ import React, {
 import type { ContentLibrary } from '../data/api';
 import { useContentLibrary } from '../data/apiHooks';
 
-interface SelectedComponent {
+export interface SelectedComponent {
   usageKey: string;
   blockType: string;
 }
@@ -23,6 +23,7 @@ type NoComponentPickerType = {
   selectedComponents?: never;
   addComponentToSelectedComponents?: never;
   removeComponentFromSelectedComponents?: never;
+  restrictToLibrary?: never;
 };
 
 type ComponentPickerSingleType = {
@@ -31,6 +32,7 @@ type ComponentPickerSingleType = {
   selectedComponents?: never;
   addComponentToSelectedComponents?: never;
   removeComponentFromSelectedComponents?: never;
+  restrictToLibrary: boolean;
 };
 
 type ComponentPickerMultipleType = {
@@ -39,6 +41,7 @@ type ComponentPickerMultipleType = {
   selectedComponents: SelectedComponent[];
   addComponentToSelectedComponents: ComponentSelectedEvent;
   removeComponentFromSelectedComponents: ComponentSelectedEvent;
+  restrictToLibrary: boolean;
 };
 
 type ComponentPickerType = NoComponentPickerType | ComponentPickerSingleType | ComponentPickerMultipleType;
@@ -109,18 +112,21 @@ type NoComponentPickerProps = {
   componentPickerMode?: undefined;
   onComponentSelected?: never;
   onChangeComponentSelection?: never;
+  restrictToLibrary?: never;
 };
 
 export type ComponentPickerSingleProps = {
   componentPickerMode: 'single';
   onComponentSelected: ComponentSelectedEvent;
   onChangeComponentSelection?: never;
+  restrictToLibrary?: boolean;
 };
 
 export type ComponentPickerMultipleProps = {
   componentPickerMode: 'multiple';
   onComponentSelected?: never;
   onChangeComponentSelection?: ComponentSelectionChangedEvent;
+  restrictToLibrary?: boolean;
 };
 
 type ComponentPickerProps = NoComponentPickerProps | ComponentPickerSingleProps | ComponentPickerMultipleProps;
@@ -143,6 +149,7 @@ export const LibraryProvider = ({
   libraryId,
   collectionId: collectionIdProp,
   componentPickerMode,
+  restrictToLibrary = false,
   onComponentSelected,
   onChangeComponentSelection,
   showOnlyPublished = false,
@@ -257,6 +264,7 @@ export const LibraryProvider = ({
       return {
         ...contextValue,
         componentPickerMode,
+        restrictToLibrary,
         onComponentSelected,
       };
     }
@@ -264,6 +272,7 @@ export const LibraryProvider = ({
       return {
         ...contextValue,
         componentPickerMode,
+        restrictToLibrary,
         selectedComponents,
         addComponentToSelectedComponents,
         removeComponentFromSelectedComponents,
@@ -279,6 +288,7 @@ export const LibraryProvider = ({
     isLoadingLibraryData,
     showOnlyPublished,
     componentPickerMode,
+    restrictToLibrary,
     onComponentSelected,
     addComponentToSelectedComponents,
     removeComponentFromSelectedComponents,

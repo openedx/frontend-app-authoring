@@ -7,6 +7,7 @@ import {
 import { Close } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
+// eslint-disable-next-line import/no-cycle
 import { AddContentContainer, AddContentHeader } from '../add-content';
 import { CollectionInfo, CollectionInfoHeader } from '../collections';
 import { SidebarBodyComponentId, useLibraryContext } from '../common/context';
