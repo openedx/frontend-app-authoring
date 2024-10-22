@@ -88,7 +88,7 @@ export const xblockQueryKeys = {
    */
   xblock: (usageKey?: string) => [...xblockQueryKeys.all, usageKey],
   /** Fields (i.e. the content, display name, etc.) of an XBlock */
-  xblockFields: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'fields'],
+  xblockFields: (usageKey: string, version: string = 'draft') => [...xblockQueryKeys.xblock(usageKey), 'fields', version],
   /** OLX (XML representation of the fields/content) */
   xblockOLX: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'OLX'],
   /** assets (static files) */
@@ -291,7 +291,7 @@ export const useLibraryBlockMetadata = (usageId: string) => (
 
 export const useXBlockFields = (usageKey: string, version: string = 'draft') => (
   useQuery({
-    queryKey: xblockQueryKeys.xblockFields(usageKey),
+    queryKey: xblockQueryKeys.xblockFields(usageKey, version),
     queryFn: () => getXBlockFields(usageKey, version),
     enabled: !!usageKey,
   })
