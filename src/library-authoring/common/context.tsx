@@ -125,7 +125,10 @@ export const LibraryProvider = ({
       additionalAction,
     });
   }, []);
-  const openCollectionInfoSidebar = useCallback((newCollectionId: string, additionalAction?: SidebarAdditionalActions) => {
+  const openCollectionInfoSidebar = useCallback((
+    newCollectionId: string,
+    additionalAction?: SidebarAdditionalActions,
+  ) => {
     setSidebarComponentInfo({
       id: newCollectionId,
       type: SidebarBodyComponentId.CollectionInfo,

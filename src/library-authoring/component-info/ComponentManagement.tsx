@@ -16,7 +16,9 @@ import ManageCollections from './ManageCollections';
 
 const ComponentManagement = () => {
   const intl = useIntl();
-  const { sidebarComponentInfo, readOnly, resetSidebarAdditionalActions, isLoadingLibraryData } = useLibraryContext();
+  const {
+    sidebarComponentInfo, readOnly, resetSidebarAdditionalActions, isLoadingLibraryData,
+  } = useLibraryContext();
   const jumpToCollections = sidebarComponentInfo?.additionalAction === SidebarAdditionalActions.JumpToAddCollections;
   const [tagsCollapseIsOpen, setTagsCollapseOpen] = React.useState(!jumpToCollections);
   const [collectionsCollapseIsOpen, setCollectionsCollapseOpen] = React.useState(true);
