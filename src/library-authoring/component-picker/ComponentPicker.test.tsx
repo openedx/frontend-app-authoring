@@ -231,7 +231,7 @@ describe('<ComponentPicker />', () => {
 
     const sidebar = await screen.findByTestId('library-sidebar');
 
-    // Click the add component from the component sidebar
+    // Click the select component from the component sidebar
     fireEvent.click(within(sidebar).getByRole('button', { name: 'Select' }));
 
     await waitFor(() => expect(onChange).toHaveBeenCalledWith([
@@ -240,5 +240,12 @@ describe('<ComponentPicker />', () => {
         blockType: 'html',
       },
     ]));
+
+    onChange.mockClear();
+
+    // Click to deselect component from the component sidebar
+    fireEvent.click(within(sidebar).getByRole('button', { name: 'Select' }));
+
+    await waitFor(() => expect(onChange).toHaveBeenCalledWith([]));
   });
 });

@@ -193,6 +193,7 @@ export const LibraryProvider = ({
     selectedComponent: SelectedComponent,
   ) => {
     setSelectedComponents((prevSelectedComponents) => {
+      // istanbul ignore if: this should never happen
       if (prevSelectedComponents.some((component) => component.usageKey === selectedComponent.usageKey)) {
         return prevSelectedComponents;
       }
@@ -206,6 +207,7 @@ export const LibraryProvider = ({
     selectedComponent: SelectedComponent,
   ) => {
     setSelectedComponents((prevSelectedComponents) => {
+      // istanbul ignore if: this should never happen
       if (!prevSelectedComponents.some((component) => component.usageKey === selectedComponent.usageKey)) {
         return prevSelectedComponents;
       }
