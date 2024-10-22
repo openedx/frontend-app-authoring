@@ -670,7 +670,8 @@ export class OLXParser {
 
     Object.keys(this.problem).forEach((key) => {
       if (key.indexOf('@_') !== -1 && !settingsOlxAttributes.includes(key) && !ignoredOlxAttributes.includes(key)) {
-        throw new Error(`Unrecognized attribute "${key}" associated with problem, opening in advanced editor`);
+        const plainKey = key.replace(/^@_/, '');
+        throw new Error(`Unrecognized attribute "${plainKey}" associated with problem, opening in advanced editor`);
       }
     });
 

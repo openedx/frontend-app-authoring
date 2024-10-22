@@ -2,7 +2,7 @@
 // lint is disabled for this file due to strict spacing
 
 export const checkboxesOLXWithFeedbackAndHintsOLX = {
-  rawOLX: `<problem>
+  rawOLX: `<problem url_name="this_should_be_ignored">
   <choiceresponse>
     <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for checkboxes with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
   <label>Add the question text, or prompt, here. This text is required.</label>

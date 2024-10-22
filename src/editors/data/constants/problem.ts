@@ -235,7 +235,7 @@ export const settingsOlxAttributes = [
 ] as const;
 
 export const ignoredOlxAttributes = [
-  '@_markdown',
+  // '@_markdown',  // Not sure if this is safe to ignore; some tests seem to indicate it's not.
   '@_url_name',
   '@_x-is-pointer-node',
 ] as const;
