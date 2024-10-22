@@ -3,7 +3,12 @@
 
 import { XMLParser, XMLBuilder } from 'fast-xml-parser';
 import _ from 'lodash';
-import { ProblemTypeKeys, RichTextProblems, settingsOlxAttributes } from '../../../data/constants/problem';
+import {
+  ProblemTypeKeys,
+  RichTextProblems,
+  settingsOlxAttributes,
+  ignoredOlxAttributes,
+} from '../../../data/constants/problem';
 
 export const indexToLetterMap = [...Array(26)].map((val, i) => String.fromCharCode(i + 65));
 
@@ -663,9 +668,12 @@ export class OLXParser {
       return {};
     }
 
-    if (Object.keys(this.problem).some((key) => key.indexOf('@_') !== -1 && !settingsOlxAttributes.includes(key))) {
-      throw new Error('Misc Attributes associated with problem, opening in advanced editor');
-    }
+    Object.keys(this.problem).forEach((key) => {
+      if (key.indexOf('@_') !== -1 && !settingsOlxAttributes.includes(key) && !ignoredOlxAttributes.includes(key)) {
+        const plainKey = key.replace(/^@_/, '');
+        throw new Error(`Unrecognized attribute "${plainKey}" associated with problem, opening in advanced editor`);
+      }
+    });
 
     const problemType = this.getProblemType();
 

@@ -233,3 +233,9 @@ export const settingsOlxAttributes = [
   '@_submission_wait_seconds',
   '@_attempts_before_showanswer_button',
 ] as const;
+
+export const ignoredOlxAttributes = [
+  // '@_markdown',  // Not sure if this is safe to ignore; some tests seem to indicate it's not.
+  '@_url_name',
+  '@_x-is-pointer-node',
+] as const;
