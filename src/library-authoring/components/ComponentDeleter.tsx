@@ -35,9 +35,10 @@ interface Props {
 const ComponentDeleter = ({ usageKey, ...props }: Props) => {
   const intl = useIntl();
   const {
-    sidebarComponentUsageKey,
+    sidebarComponentInfo,
     closeLibrarySidebar,
   } = useLibraryContext();
+  const sidebarComponentUsageKey = sidebarComponentInfo?.id;
 
   const deleteComponentMutation = useDeleteLibraryBlock();
   const doDelete = React.useCallback(() => {

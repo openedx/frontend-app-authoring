@@ -10,7 +10,9 @@ import { ComponentAdvancedInfo } from './ComponentAdvancedInfo';
 import messages from './messages';
 
 const ComponentDetails = () => {
-  const { sidebarComponentUsageKey: usageKey } = useLibraryContext();
+  const { sidebarComponentInfo } = useLibraryContext();
+
+  const usageKey = sidebarComponentInfo?.id;
 
   // istanbul ignore if: this should never happen
   if (!usageKey) {

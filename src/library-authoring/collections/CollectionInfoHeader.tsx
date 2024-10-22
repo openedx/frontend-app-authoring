@@ -19,10 +19,11 @@ const CollectionInfoHeader = () => {
 
   const {
     libraryId,
-    sidebarCollectionId: collectionId,
+    sidebarComponentInfo,
     readOnly,
   } = useLibraryContext();
 
+  const collectionId = sidebarComponentInfo?.id;
   // istanbul ignore if: this should never happen
   if (!collectionId) {
     throw new Error('collectionId is required');

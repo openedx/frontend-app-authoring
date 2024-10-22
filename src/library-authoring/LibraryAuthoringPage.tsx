@@ -69,12 +69,12 @@ const HeaderActions = () => {
     openAddContentSidebar,
     openInfoSidebar,
     closeLibrarySidebar,
-    sidebarBodyComponent,
+    sidebarComponentInfo,
     readOnly,
   } = useLibraryContext();
 
   const infoSidebarIsOpen = () => (
-    sidebarBodyComponent === SidebarBodyComponentId.Info
+    sidebarComponentInfo?.type === SidebarBodyComponentId.Info
   );
 
   const handleOnClickInfoSidebar = () => {
@@ -148,7 +148,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     libraryData,
     isLoadingLibraryData,
     componentPickerMode,
-    sidebarBodyComponent,
+    sidebarComponentInfo,
     openInfoSidebar,
   } = useLibraryContext();
 
@@ -261,7 +261,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
         </Container>
         {!componentPickerMode && <StudioFooter containerProps={{ size: undefined }} />}
       </div>
-      {!!sidebarBodyComponent && (
+      {!!sidebarComponentInfo?.type && (
         <div className="library-authoring-sidebar box-shadow-left-1 bg-white" data-testid="library-sidebar">
           <LibrarySidebar />
         </div>
