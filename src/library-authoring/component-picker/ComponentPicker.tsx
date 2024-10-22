@@ -2,7 +2,12 @@ import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Stepper } from '@openedx/paragon';
 
-import { LibraryProvider, useLibraryContext } from '../common/context';
+import {
+  type ComponentSelectedEvent,
+  type ComponentSelectionChangedEvent,
+  LibraryProvider,
+  useLibraryContext,
+} from '../common/context';
 import LibraryAuthoringPage from '../LibraryAuthoringPage';
 import LibraryCollectionPage from '../collections/LibraryCollectionPage';
 import SelectLibrary from './SelectLibrary';
@@ -20,8 +25,35 @@ const InnerComponentPicker: React.FC<LibraryComponentPickerProps> = ({ returnToL
   return <LibraryAuthoringPage returnToLibrarySelection={returnToLibrarySelection} />;
 };
 
+/** Default handler in single-select mode. Used by the legacy UI for adding a single selected component to a course. */
+const defaultComponentSelectedCallback: ComponentSelectedEvent = ({ usageKey, blockType }) => {
+  window.parent.postMessage({ usageKey, type: 'pickerComponentSelected', category: blockType }, '*');
+};
+
+/** Default handler in multi-select mode. Used by the legacy UI for adding components to a problem bank. */
+const defaultSelectionChangedCallback: ComponentSelectionChangedEvent = (selections) => {
+  window.parent.postMessage({ type: 'pickerSelectionChanged', selections }, '*');
+};
+
+type ComponentPickerProps = {
+  componentPickerMode?: 'single',
+  onComponentSelected?: ComponentSelectedEvent,
+  onChangeComponentSelection?: never,
+} | {
+  componentPickerMode: 'multiple'
+  onComponentSelected?: never,
+  onChangeComponentSelection?: ComponentSelectionChangedEvent,
+};
+
 // eslint-disable-next-line import/prefer-default-export
-export const ComponentPicker = () => {
+export const ComponentPicker: React.FC<ComponentPickerProps> = ({
+  componentPickerMode = 'single',
+  /** This default callback is used to send the selected component back to the parent window,
+   * when the component picker is used in an iframe.
+   */
+  onComponentSelected = defaultComponentSelectedCallback,
+  onChangeComponentSelection = defaultSelectionChangedCallback,
+}) => {
   const [currentStep, setCurrentStep] = useState('select-library');
   const [selectedLibrary, setSelectedLibrary] = useState('');
 
@@ -40,6 +72,14 @@ export const ComponentPicker = () => {
     setSelectedLibrary('');
   };
 
+  const libraryProviderProps = componentPickerMode === 'single' ? {
+    componentPickerMode,
+    onComponentSelected,
+  } : {
+    componentPickerMode,
+    onChangeComponentSelection,
+  };
+
   return (
     <Stepper
       activeKey={currentStep}
@@ -49,7 +89,11 @@ export const ComponentPicker = () => {
       </Stepper.Step>
 
       <Stepper.Step eventKey="pick-components" title="Pick some components">
-        <LibraryProvider libraryId={selectedLibrary} componentPickerMode showOnlyPublished={variant === 'published'}>
+        <LibraryProvider
+          libraryId={selectedLibrary}
+          showOnlyPublished={variant === 'published'}
+          {...libraryProviderProps}
+        >
           <InnerComponentPicker returnToLibrarySelection={returnToLibrarySelection} />
         </LibraryProvider>
       </Stepper.Step>

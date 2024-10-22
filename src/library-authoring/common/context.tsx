@@ -9,15 +9,45 @@ import React, {
 import type { ContentLibrary } from '../data/api';
 import { useContentLibrary } from '../data/apiHooks';
 
+interface SelectedComponent {
+  usageKey: string;
+  blockType: string;
+}
+
+export type ComponentSelectedEvent = (selectedComponent: SelectedComponent) => void;
+export type ComponentSelectionChangedEvent = (selectedComponents: SelectedComponent[]) => void;
+
+type NoComponentPickerType = {
+  componentPickerMode?: undefined;
+  onComponentSelected?: never;
+  selectedComponents?: never;
+  addComponentToSelectedComponents?: never;
+  removeComponentFromSelectedComponents?: never;
+};
+
+type ComponentPickerSingleType = {
+  componentPickerMode: 'single';
+  onComponentSelected: ComponentSelectedEvent;
+  selectedComponents?: never;
+  addComponentToSelectedComponents?: never;
+  removeComponentFromSelectedComponents?: never;
+};
+
+type ComponentPickerMultipleType = {
+  componentPickerMode: 'multiple';
+  onComponentSelected?: never;
+  selectedComponents: SelectedComponent[];
+  addComponentToSelectedComponents: ComponentSelectedEvent;
+  removeComponentFromSelectedComponents: ComponentSelectedEvent;
+};
+
+type ComponentPickerType = NoComponentPickerType | ComponentPickerSingleType | ComponentPickerMultipleType;
+
 export enum SidebarBodyComponentId {
   AddContent = 'add-content',
   Info = 'info',
   ComponentInfo = 'component-info',
   CollectionInfo = 'collection-info',
-}
-
-export enum SidebarAdditionalActions {
-  JumpToAddCollections = 'jump-to-add-collections',
 }
 
 export interface SidebarComponentInfo {
@@ -27,7 +57,11 @@ export interface SidebarComponentInfo {
   additionalAction?: SidebarAdditionalActions;
 }
 
-export interface LibraryContextData {
+export enum SidebarAdditionalActions {
+  JumpToAddCollections = 'jump-to-add-collections',
+}
+
+export type LibraryContextData = {
   /** The ID of the current library */
   libraryId: string;
   libraryData?: ContentLibrary;
@@ -35,8 +69,6 @@ export interface LibraryContextData {
   isLoadingLibraryData: boolean;
   collectionId: string | undefined;
   setCollectionId: (collectionId?: string) => void;
-  // Whether we're in "component picker" mode
-  componentPickerMode: boolean;
   // Only show published components
   showOnlyPublished: boolean;
   // Sidebar stuff - only one sidebar is active at any given time:
@@ -61,7 +93,7 @@ export interface LibraryContextData {
   openComponentEditor: (usageKey: string) => void;
   closeComponentEditor: () => void;
   resetSidebarAdditionalActions: () => void;
-}
+} & ComponentPickerType;
 
 /**
  * Library Context.
@@ -73,18 +105,35 @@ export interface LibraryContextData {
  */
 const LibraryContext = React.createContext<LibraryContextData | undefined>(undefined);
 
-interface LibraryProviderProps {
+type NoComponentPickerProps = {
+  componentPickerMode?: undefined;
+  onComponentSelected?: never;
+  onChangeComponentSelection?: never;
+};
+
+export type ComponentPickerSingleProps = {
+  componentPickerMode: 'single';
+  onComponentSelected: ComponentSelectedEvent;
+  onChangeComponentSelection?: never;
+};
+
+export type ComponentPickerMultipleProps = {
+  componentPickerMode: 'multiple';
+  onComponentSelected?: never;
+  onChangeComponentSelection?: ComponentSelectionChangedEvent;
+};
+
+type ComponentPickerProps = NoComponentPickerProps | ComponentPickerSingleProps | ComponentPickerMultipleProps;
+
+type LibraryProviderProps = {
   children?: React.ReactNode;
   libraryId: string;
   /** The initial collection ID to show */
   collectionId?: string;
-  /** The component picker mode is a special mode where the user is selecting a component to add to a Unit (or another
-   *  XBlock) */
-  componentPickerMode?: boolean;
   showOnlyPublished?: boolean;
   /** Only used for testing */
   initialSidebarComponentInfo?: SidebarComponentInfo;
-}
+} & ComponentPickerProps;
 
 /**
  * React component to provide `LibraryContext`
@@ -93,7 +142,9 @@ export const LibraryProvider = ({
   children,
   libraryId,
   collectionId: collectionIdProp,
-  componentPickerMode = false,
+  componentPickerMode,
+  onComponentSelected,
+  onChangeComponentSelection,
   showOnlyPublished = false,
   initialSidebarComponentInfo,
 }: LibraryProviderProps) => {
@@ -105,6 +156,8 @@ export const LibraryProvider = ({
   const [isCreateCollectionModalOpen, openCreateCollectionModal, closeCreateCollectionModal] = useToggle(false);
   const [componentBeingEdited, openComponentEditor] = useState<string | undefined>();
   const closeComponentEditor = useCallback(() => openComponentEditor(undefined), []);
+
+  const [selectedComponents, setSelectedComponents] = useState<SelectedComponent[]>([]);
 
   /** Helper function to consume addtional action once performed.
     Required to redo the action.
@@ -140,44 +193,97 @@ export const LibraryProvider = ({
     });
   }, []);
 
+  const addComponentToSelectedComponents = useCallback<ComponentSelectedEvent>((
+    selectedComponent: SelectedComponent,
+  ) => {
+    setSelectedComponents((prevSelectedComponents) => {
+      // istanbul ignore if: this should never happen
+      if (prevSelectedComponents.some((component) => component.usageKey === selectedComponent.usageKey)) {
+        return prevSelectedComponents;
+      }
+      const newSelectedComponents = [...prevSelectedComponents, selectedComponent];
+      onChangeComponentSelection?.(newSelectedComponents);
+      return newSelectedComponents;
+    });
+  }, []);
+
+  const removeComponentFromSelectedComponents = useCallback<ComponentSelectedEvent>((
+    selectedComponent: SelectedComponent,
+  ) => {
+    setSelectedComponents((prevSelectedComponents) => {
+      // istanbul ignore if: this should never happen
+      if (!prevSelectedComponents.some((component) => component.usageKey === selectedComponent.usageKey)) {
+        return prevSelectedComponents;
+      }
+      const newSelectedComponents = prevSelectedComponents.filter(
+        (component) => component.usageKey !== selectedComponent.usageKey,
+      );
+      onChangeComponentSelection?.(newSelectedComponents);
+      return newSelectedComponents;
+    });
+  }, []);
+
   const { data: libraryData, isLoading: isLoadingLibraryData } = useContentLibrary(libraryId);
 
-  const readOnly = componentPickerMode || !libraryData?.canEditLibrary;
+  const readOnly = !!componentPickerMode || !libraryData?.canEditLibrary;
 
-  const context = useMemo<LibraryContextData>(() => ({
+  const context = useMemo<LibraryContextData>(() => {
+    const contextValue = {
+      libraryId,
+      libraryData,
+      collectionId,
+      setCollectionId,
+      readOnly,
+      isLoadingLibraryData,
+      showOnlyPublished,
+      closeLibrarySidebar,
+      openAddContentSidebar,
+      openInfoSidebar,
+      openComponentInfoSidebar,
+      sidebarComponentInfo,
+      isLibraryTeamModalOpen,
+      openLibraryTeamModal,
+      closeLibraryTeamModal,
+      isCreateCollectionModalOpen,
+      openCreateCollectionModal,
+      closeCreateCollectionModal,
+      openCollectionInfoSidebar,
+      componentBeingEdited,
+      openComponentEditor,
+      closeComponentEditor,
+      resetSidebarAdditionalActions,
+    };
+    if (componentPickerMode === 'single') {
+      return {
+        ...contextValue,
+        componentPickerMode,
+        onComponentSelected,
+      };
+    }
+    if (componentPickerMode === 'multiple') {
+      return {
+        ...contextValue,
+        componentPickerMode,
+        selectedComponents,
+        addComponentToSelectedComponents,
+        removeComponentFromSelectedComponents,
+      };
+    }
+    return contextValue;
+  }, [
     libraryId,
-    libraryData,
     collectionId,
     setCollectionId,
-    readOnly,
-    isLoadingLibraryData,
-    componentPickerMode,
-    showOnlyPublished,
-    closeLibrarySidebar,
-    openAddContentSidebar,
-    openInfoSidebar,
-    openComponentInfoSidebar,
-    sidebarComponentInfo,
-    isLibraryTeamModalOpen,
-    openLibraryTeamModal,
-    closeLibraryTeamModal,
-    isCreateCollectionModalOpen,
-    openCreateCollectionModal,
-    closeCreateCollectionModal,
-    openCollectionInfoSidebar,
-    componentBeingEdited,
-    openComponentEditor,
-    closeComponentEditor,
-    resetSidebarAdditionalActions,
-  }), [
-    libraryId,
-    collectionId,
-    setCollectionId,
     libraryData,
     readOnly,
     isLoadingLibraryData,
-    componentPickerMode,
     showOnlyPublished,
+    componentPickerMode,
+    onComponentSelected,
+    addComponentToSelectedComponents,
+    removeComponentFromSelectedComponents,
+    selectedComponents,
+    onChangeComponentSelection,
     closeLibrarySidebar,
     openAddContentSidebar,
     openInfoSidebar,

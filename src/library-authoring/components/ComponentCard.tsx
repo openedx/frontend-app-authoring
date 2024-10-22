@@ -8,7 +8,12 @@ import {
   IconButton,
   useToggle,
 } from '@openedx/paragon';
-import { AddCircleOutline, MoreVert } from '@openedx/paragon/icons';
+import {
+  AddCircleOutline,
+  CheckBoxIcon,
+  CheckBoxOutlineBlank,
+  MoreVert,
+} from '@openedx/paragon/icons';
 
 import { STUDIO_CLIPBOARD_CHANNEL } from '../../constants';
 import { updateClipboard } from '../../generic/data/api';
@@ -89,9 +94,9 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
           <FormattedMessage {...messages.menuDelete} />
         </Dropdown.Item>
         {collectionId && (
-        <Dropdown.Item onClick={removeFromCollection}>
-          <FormattedMessage {...messages.menuRemoveFromCollection} />
-        </Dropdown.Item>
+          <Dropdown.Item onClick={removeFromCollection}>
+            <FormattedMessage {...messages.menuRemoveFromCollection} />
+          </Dropdown.Item>
         )}
         <Dropdown.Item onClick={showManageCollections}>
           <FormattedMessage {...messages.menuAddToCollection} />
@@ -100,6 +105,76 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
       <ComponentDeleter usageKey={usageKey} isConfirmingDelete={isConfirmingDelete} cancelDelete={cancelDelete} />
     </Dropdown>
   );
+};
+
+interface AddComponentWidgetProps {
+  usageKey: string;
+  blockType: string;
+}
+
+const AddComponentWidget = ({ usageKey, blockType }: AddComponentWidgetProps) => {
+  const intl = useIntl();
+
+  const {
+    componentPickerMode,
+    onComponentSelected,
+    addComponentToSelectedComponents,
+    removeComponentFromSelectedComponents,
+    selectedComponents,
+  } = useLibraryContext();
+
+  // istanbul ignore if: this should never happen
+  if (!usageKey) {
+    throw new Error('usageKey is required');
+  }
+
+  // istanbul ignore if: this should never happen
+  if (!componentPickerMode) {
+    return null;
+  }
+
+  if (componentPickerMode === 'single') {
+    return (
+      <Button
+        variant="outline-primary"
+        iconBefore={AddCircleOutline}
+        onClick={() => {
+          onComponentSelected({ usageKey, blockType });
+        }}
+      >
+        <FormattedMessage {...messages.componentPickerSingleSelectTitle} />
+      </Button>
+    );
+  }
+
+  if (componentPickerMode === 'multiple') {
+    const isChecked = selectedComponents.some((component) => component.usageKey === usageKey);
+
+    const handleChange = () => {
+      const selectedComponent = {
+        usageKey,
+        blockType,
+      };
+      if (!isChecked) {
+        addComponentToSelectedComponents(selectedComponent);
+      } else {
+        removeComponentFromSelectedComponents(selectedComponent);
+      }
+    };
+
+    return (
+      <Button
+        variant="outline-primary"
+        iconBefore={isChecked ? CheckBoxIcon : CheckBoxOutlineBlank}
+        onClick={handleChange}
+      >
+        {intl.formatMessage(messages.componentPickerMultipleSelectTitle)}
+      </Button>
+    );
+  }
+
+  // istanbul ignore next: this should never happen
+  return null;
 };
 
 const ComponentCard = ({ contentHit }: ComponentCardProps) => {
@@ -122,14 +197,6 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
     showOnlyPublished ? formatted.published?.displayName : formatted.displayName
   ) ?? '';
 
-  const handleAddComponentToCourse = () => {
-    window.parent.postMessage({
-      usageKey,
-      type: 'pickerComponentSelected',
-      category: blockType,
-    }, '*');
-  };
-
   return (
     <BaseComponentCard
       componentType={blockType}
@@ -139,13 +206,7 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
       actions={(
         <ActionRow>
           {componentPickerMode ? (
-            <Button
-              variant="outline-primary"
-              iconBefore={AddCircleOutline}
-              onClick={handleAddComponentToCourse}
-            >
-              <FormattedMessage {...messages.addComponentToCourseButtonTitle} />
-            </Button>
+            <AddComponentWidget usageKey={usageKey} blockType={blockType} />
           ) : (
             <ComponentMenu usageKey={usageKey} />
           )}

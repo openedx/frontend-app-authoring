@@ -6,6 +6,10 @@ import {
   Tabs,
   Stack,
 } from '@openedx/paragon';
+import {
+  CheckBoxIcon,
+  CheckBoxOutlineBlank,
+} from '@openedx/paragon/icons';
 
 import { SidebarAdditionalActions, useLibraryContext } from '../common/context';
 import { ComponentMenu } from '../components';
@@ -18,6 +22,72 @@ import { getBlockType } from '../../generic/key-utils';
 import { useLibraryBlockMetadata, usePublishComponent } from '../data/apiHooks';
 import { ToastContext } from '../../generic/toast-context';
 
+const AddComponentWidget = () => {
+  const intl = useIntl();
+
+  const {
+    sidebarComponentInfo,
+    componentPickerMode,
+    onComponentSelected,
+    addComponentToSelectedComponents,
+    removeComponentFromSelectedComponents,
+    selectedComponents,
+  } = useLibraryContext();
+
+  const usageKey = sidebarComponentInfo?.id;
+
+  // istanbul ignore if: this should never happen
+  if (!usageKey) {
+    throw new Error('usageKey is required');
+  }
+
+  if (!componentPickerMode) {
+    return null;
+  }
+
+  if (componentPickerMode === 'single') {
+    return (
+      <Button
+        variant="outline-primary"
+        className="m-1 text-nowrap flex-grow-1"
+        onClick={() => {
+          onComponentSelected({ usageKey, blockType: getBlockType(usageKey) });
+        }}
+      >
+        {intl.formatMessage(messages.componentPickerSingleSelect)}
+      </Button>
+    );
+  }
+
+  if (componentPickerMode === 'multiple') {
+    const isChecked = selectedComponents.some((component) => component.usageKey === usageKey);
+    const handleChange = () => {
+      const selectedComponent = {
+        usageKey,
+        blockType: getBlockType(usageKey),
+      };
+      if (!isChecked) {
+        addComponentToSelectedComponents(selectedComponent);
+      } else {
+        removeComponentFromSelectedComponents(selectedComponent);
+      }
+    };
+
+    return (
+      <Button
+        variant="outline-primary"
+        iconBefore={isChecked ? CheckBoxIcon : CheckBoxOutlineBlank}
+        onClick={handleChange}
+      >
+        {intl.formatMessage(messages.componentPickerMultipleSelect)}
+      </Button>
+    );
+  }
+
+  // istanbul ignore next: this should never happen
+  return null;
+};
+
 const ComponentInfo = () => {
   const intl = useIntl();
 
@@ -25,7 +95,6 @@ const ComponentInfo = () => {
     sidebarComponentInfo,
     readOnly,
     openComponentEditor,
-    componentPickerMode,
     resetSidebarAdditionalActions,
   } = useLibraryContext();
 
@@ -53,13 +122,6 @@ const ComponentInfo = () => {
 
   const canEdit = canEditComponent(usageKey);
 
-  const handleAddComponentToCourse = () => {
-    window.parent.postMessage({
-      usageKey,
-      type: 'pickerComponentSelected',
-      category: getBlockType(usageKey),
-    }, '*');
-  };
   const publishComponent = usePublishComponent(usageKey);
   const { data: componentMetadata } = useLibraryBlockMetadata(usageKey);
   // Only can be published when the component has been modified after the last published date.
@@ -92,11 +154,7 @@ const ComponentInfo = () => {
           <ComponentMenu usageKey={usageKey} />
         </div>
       )}
-      {componentPickerMode && (
-        <Button variant="outline-primary" className="m-1 text-nowrap flex-grow-1" onClick={handleAddComponentToCourse}>
-          {intl.formatMessage(messages.addComponentToCourse)}
-        </Button>
-      )}
+      <AddComponentWidget />
       <Tabs
         variant="tabs"
         className="my-3 d-flex justify-content-around"
