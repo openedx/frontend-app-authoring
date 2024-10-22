@@ -101,6 +101,7 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
   const {
     openComponentInfoSidebar,
     componentPickerMode,
+    showOnlyPublished,
   } = useLibraryContext();
 
   const {
@@ -112,10 +113,10 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
     published,
   } = contentHit;
   const componentDescription: string = (
-    componentPickerMode ? published?.description : description
+    showOnlyPublished ? published?.description : description
   ) ?? '';
   const displayName: string = (
-    componentPickerMode ? published?.displayName : formatted?.displayName
+    showOnlyPublished ? published?.displayName : formatted?.displayName
   ) ?? '';
 
   const handleAddComponentToCourse = () => {

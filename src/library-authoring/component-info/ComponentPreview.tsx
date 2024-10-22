@@ -15,7 +15,7 @@ interface ModalComponentPreviewProps {
 
 const ModalComponentPreview = ({ isOpen, close, usageKey }: ModalComponentPreviewProps) => {
   const intl = useIntl();
-  const { componentPickerMode } = useLibraryContext();
+  const { showOnlyPublished } = useLibraryContext();
 
   return (
     <StandardModal
@@ -27,7 +27,7 @@ const ModalComponentPreview = ({ isOpen, close, usageKey }: ModalComponentPrevie
     >
       <LibraryBlock
         usageKey={usageKey}
-        version={componentPickerMode ? 'published' : undefined}
+        version={showOnlyPublished ? 'published' : undefined}
       />
     </StandardModal>
   );

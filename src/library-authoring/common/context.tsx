@@ -26,6 +26,8 @@ export interface LibraryContextData {
   setCollectionId: (collectionId?: string) => void;
   // Whether we're in "component picker" mode
   componentPickerMode: boolean;
+  // Only show published components
+  showOnlyPublished: boolean;
   // Sidebar stuff - only one sidebar is active at any given time:
   sidebarBodyComponent: SidebarBodyComponentId | null;
   closeLibrarySidebar: () => void;
@@ -69,6 +71,7 @@ interface LibraryProviderProps {
   /** The component picker mode is a special mode where the user is selecting a component to add to a Unit (or another
    *  XBlock) */
   componentPickerMode?: boolean;
+  showOnlyPublished?: boolean;
   /** Only used for testing */
   initialSidebarComponentUsageKey?: string;
   /** Only used for testing */
@@ -83,6 +86,7 @@ export const LibraryProvider = ({
   libraryId,
   collectionId: collectionIdProp,
   componentPickerMode = false,
+  showOnlyPublished = false,
   initialSidebarComponentUsageKey,
   initialSidebarCollectionId,
 }: LibraryProviderProps) => {
@@ -140,6 +144,7 @@ export const LibraryProvider = ({
     readOnly,
     isLoadingLibraryData,
     componentPickerMode,
+    showOnlyPublished,
     sidebarBodyComponent,
     closeLibrarySidebar,
     openAddContentSidebar,
@@ -165,6 +170,7 @@ export const LibraryProvider = ({
     readOnly,
     isLoadingLibraryData,
     componentPickerMode,
+    showOnlyPublished,
     sidebarBodyComponent,
     closeLibrarySidebar,
     openAddContentSidebar,

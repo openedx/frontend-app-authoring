@@ -56,10 +56,10 @@ const RecentlyModified: React.FC<Record<never, never>> = () => {
 };
 
 const LibraryRecentlyModified: React.FC<Record<never, never>> = () => {
-  const { libraryId, componentPickerMode } = useLibraryContext();
+  const { libraryId, showOnlyPublished } = useLibraryContext();
 
   const extraFilter = [`context_key = "${libraryId}"`];
-  if (componentPickerMode) {
+  if (showOnlyPublished) {
     extraFilter.push('last_published IS NOT NULL');
   }
 
@@ -67,7 +67,7 @@ const LibraryRecentlyModified: React.FC<Record<never, never>> = () => {
     <SearchContextProvider
       extraFilter={extraFilter}
       overrideSearchSortOrder={
-        componentPickerMode
+        showOnlyPublished
           ? SearchSortOption.RECENTLY_PUBLISHED
           : SearchSortOption.RECENTLY_MODIFIED
       }

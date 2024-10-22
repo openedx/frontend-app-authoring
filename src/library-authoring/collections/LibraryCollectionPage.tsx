@@ -107,6 +107,7 @@ const LibraryCollectionPage = () => {
     sidebarBodyComponent,
     openCollectionInfoSidebar,
     componentPickerMode,
+    showOnlyPublished,
     setCollectionId,
   } = useLibraryContext();
 
@@ -176,7 +177,7 @@ const LibraryCollectionPage = () => {
   );
 
   const extraFilter = [`context_key = "${libraryId}"`, `collections.key = "${collectionId}"`];
-  if (componentPickerMode) {
+  if (showOnlyPublished) {
     extraFilter.push('last_published IS NOT NULL');
   }
 

@@ -148,6 +148,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     libraryData,
     isLoadingLibraryData,
     componentPickerMode,
+    showOnlyPublished,
     sidebarBodyComponent,
     openInfoSidebar,
   } = useLibraryContext();
@@ -213,7 +214,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
   ) : undefined;
 
   const extraFilter = [`context_key = "${libraryId}"`];
-  if (componentPickerMode) {
+  if (showOnlyPublished) {
     extraFilter.push('last_published IS NOT NULL');
   }
 
