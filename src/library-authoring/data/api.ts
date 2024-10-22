@@ -57,8 +57,8 @@ export const getXBlockFieldsApiUrl = (usageKey: string) => `${getApiBaseUrl()}/a
   */
 export const getXBlockOLXApiUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}olx/`;
 /**
-* Get the URL for the xblock Publish API
-*/
+ * Get the URL for the xblock Publish API
+ */
 export const getXBlockPublishApiUrl = (usageKey: string) => `${getApiBaseUrl()}/api/libraries/v2/blocks/${usageKey}/publish/`;
 /**
   * Get the URL for the xblock Assets List API
@@ -202,12 +202,12 @@ export interface LibraryBlockMetadata {
   defKey: string | null;
   displayName: string;
   lastPublished: string | null;
-  publishedBy: string | null,
-  lastDraftCreated: string | null,
+  publishedBy: string | null;
+  lastDraftCreated: string | null;
   lastDraftCreatedBy: string | null,
   hasUnpublishedChanges: boolean;
-  created: string | null,
-  modified: string | null,
+  created: string | null;
+  modified: string | null;
   tagsCount: number;
   collections: CollectionMetadata[];
 }
@@ -426,8 +426,8 @@ export async function setXBlockOLX(usageKey: string, newOLX: string): Promise<st
 }
 
 /**
-* Publish the given XBlock.
-*/
+ * Publish the given XBlock.
+ */
 export async function publishXBlock(usageKey: string) {
   const client = getAuthenticatedHttpClient();
   await client.post(getXBlockPublishApiUrl(usageKey));

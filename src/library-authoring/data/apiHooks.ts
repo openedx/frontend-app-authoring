@@ -375,8 +375,8 @@ export const useUpdateXBlockOLX = (usageKey: string) => {
 };
 
 /**
-* Publish changes to a library component
-*/
+ * Publish changes to a library component
+ */
 export const usePublishComponent = (usageKey: string) => {
   const queryClient = useQueryClient();
   const contentLibraryId = getLibraryId(usageKey);
