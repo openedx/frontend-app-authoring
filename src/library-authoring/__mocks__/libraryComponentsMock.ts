@@ -3,11 +3,13 @@ export default [
     id: '1',
     usageKey: 'lb:org:lib:html:1',
     displayName: 'Text Component 1',
+    description: 'This is a text: ID=1',
     formatted: {
       displayName: 'Text Component 1',
       content: {
         htmlContent: 'This is a text: ID=1',
       },
+      description: 'This is a text: ID=1',
     },
     tags: {
       level0: ['1', '2', '3'],
@@ -18,11 +20,13 @@ export default [
     id: '2',
     usageKey: 'lb:org:lib:html:2',
     displayName: 'Text Component 2',
+    description: 'This is a text: ID=2',
     formatted: {
       displayName: 'Text Component 2',
       content: {
         htmlContent: 'This is a text: ID=2',
       },
+      description: 'This is a text: ID=2',
     },
     tags: {
       level0: ['1', '2', '3'],
@@ -60,11 +64,13 @@ export default [
     id: '5',
     usageKey: 'lb:org:lib:problem:5',
     displayName: 'Problem',
+    description: 'This is a problem: ID=5',
     formatted: {
       displayName: 'Problem',
       content: {
         capaContent: 'This is a problem: ID=5',
       },
+      description: 'This is a problem: ID=5',
     },
     blockType: 'problem',
   },
@@ -72,11 +78,13 @@ export default [
     id: '6',
     usageKey: 'lb:org:lib:problem:6',
     displayName: 'Problem',
+    description: 'This is a problem: ID=6',
     formatted: {
       displayName: 'Problem',
       content: {
         capaContent: 'This is a problem: ID=6',
       },
+      description: 'This is a problem: ID=6',
     },
     blockType: 'problem',
   },

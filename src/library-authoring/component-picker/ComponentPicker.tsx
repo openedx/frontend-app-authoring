@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Stepper } from '@openedx/paragon';
 
 import { LibraryProvider, useLibraryContext } from '../common/context';
@@ -24,6 +25,11 @@ export const ComponentPicker = () => {
   const [currentStep, setCurrentStep] = useState('select-library');
   const [selectedLibrary, setSelectedLibrary] = useState('');
 
+  const location = useLocation();
+
+  const queryParams = new URLSearchParams(location.search);
+  const variant = queryParams.get('variant') || 'draft';
+
   const handleLibrarySelection = (library: string) => {
     setCurrentStep('pick-components');
     setSelectedLibrary(library);
@@ -43,7 +49,7 @@ export const ComponentPicker = () => {
       </Stepper.Step>
 
       <Stepper.Step eventKey="pick-components" title="Pick some components">
-        <LibraryProvider libraryId={selectedLibrary} componentPickerMode>
+        <LibraryProvider libraryId={selectedLibrary} componentPickerMode showOnlyPublished={variant === 'published'}>
           <InnerComponentPicker returnToLibrarySelection={returnToLibrarySelection} />
         </LibraryProvider>
       </Stepper.Step>

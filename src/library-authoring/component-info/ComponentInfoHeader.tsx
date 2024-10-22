@@ -20,6 +20,7 @@ const ComponentInfoHeader = () => {
   const {
     sidebarComponentInfo,
     readOnly,
+    showOnlyPublished,
   } = useLibraryContext();
 
   const usageKey = sidebarComponentInfo?.id;
@@ -29,7 +30,7 @@ const ComponentInfoHeader = () => {
   }
   const {
     data: xblockFields,
-  } = useXBlockFields(usageKey);
+  } = useXBlockFields(usageKey, showOnlyPublished ? 'published' : 'draft');
 
   const updateMutation = useUpdateXBlockFields(usageKey);
   const { showToast } = useContext(ToastContext);
