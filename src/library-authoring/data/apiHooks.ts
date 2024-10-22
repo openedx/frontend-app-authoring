@@ -41,6 +41,7 @@ import {
   getXBlockAssets,
   updateComponentCollections,
   removeComponentsFromCollection,
+  publishXBlock,
 } from './api';
 
 export const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
@@ -369,6 +370,20 @@ export const useUpdateXBlockOLX = (usageKey: string) => {
       // And the description and display name etc. may have changed, so refresh everything in the library too:
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(contentLibraryId) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, contentLibraryId) });
+    },
+  });
+};
+
+/**
+ * Publish changes to a library component
+ */
+export const usePublishComponent = (usageKey: string) => {
+  const queryClient = useQueryClient();
+  const contentLibraryId = getLibraryId(usageKey);
+  return useMutation({
+    mutationFn: () => publishXBlock(usageKey),
+    onSettled: () => {
+      invalidateComponentData(queryClient, contentLibraryId, usageKey);
     },
   });
 };
