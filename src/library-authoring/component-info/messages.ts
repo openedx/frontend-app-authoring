@@ -183,7 +183,7 @@ const messages = defineMessages({
   },
   publishSuccessMsg: {
     id: 'course-authoring.component-authoring.component.publish.success',
-    defaultMessage: 'Component published successfully',
+    defaultMessage: 'Component published successfully.',
     description: 'Message when the component is published successfully.',
   },
   publishErrorMsg: {
