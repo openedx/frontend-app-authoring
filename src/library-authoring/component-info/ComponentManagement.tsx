@@ -26,8 +26,14 @@ const ComponentManagement = () => {
       setTagsCollapseOpen(false);
       setCollectionsCollapseOpen(true);
     }
-    return resetSidebarAdditionalActions;
-  }, [jumpToCollections]);
+  }, [jumpToCollections, tagsCollapseIsOpen, collectionsCollapseIsOpen]);
+
+  useEffect(() => {
+    // This is required to redo actions.
+    if (tagsCollapseIsOpen || !collectionsCollapseIsOpen) {
+      resetSidebarAdditionalActions();
+    }
+  }, [tagsCollapseIsOpen, collectionsCollapseIsOpen]);
 
   const usageKey = sidebarComponentInfo?.id;
   // istanbul ignore if: this should never happen

@@ -194,17 +194,22 @@ const ComponentCollections = ({ collections, onManageClick }: {
 
 const ManageCollections = ({ usageKey, collections }: ManageCollectionsProps) => {
   const { sidebarComponentInfo, resetSidebarAdditionalActions } = useLibraryContext();
-  const [editing, setEditing] = useState(sidebarComponentInfo?.additionalAction === SidebarAdditionalActions.JumpToAddCollections);
-  // __AUTO_GENERATED_PRINT_VAR_START__
-  console.log("ManageCollections editing: %s", editing); // __AUTO_GENERATED_PRINT_VAR_END__
+  const jumpToCollections = sidebarComponentInfo?.additionalAction === SidebarAdditionalActions.JumpToAddCollections;
+  const [editing, setEditing] = useState(jumpToCollections);
   const collectionNames = collections.map((collection) => collection.title);
 
   useEffect(() => {
-    if (sidebarComponentInfo?.additionalAction === SidebarAdditionalActions.JumpToAddCollections) {
+    if (jumpToCollections) {
       setEditing(true);
     }
-    return resetSidebarAdditionalActions;
-  }, [sidebarComponentInfo, editing]);
+  }, [sidebarComponentInfo]);
+
+  useEffect(() => {
+    // This is required to redo actions.
+    if (!editing) {
+      resetSidebarAdditionalActions();
+    }
+  }, [editing]);
 
   if (editing) {
     return (

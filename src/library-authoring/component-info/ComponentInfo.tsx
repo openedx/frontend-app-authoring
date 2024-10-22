@@ -27,18 +27,21 @@ const ComponentInfo = () => {
     resetSidebarAdditionalActions,
   } = useLibraryContext();
 
+  const jumpToCollections = sidebarComponentInfo?.additionalAction === SidebarAdditionalActions.JumpToAddCollections;
   // Show Manage tab if JumpToAddCollections action is set in sidebarComponentInfo
-  const [tab, setTab] = useState(
-    sidebarComponentInfo?.additionalAction === SidebarAdditionalActions.JumpToAddCollections
-      ? 'manage'
-      : 'preview'
-  );
+  const [tab, setTab] = useState(jumpToCollections ? 'manage' : 'preview');
   useEffect(() => {
-    if (sidebarComponentInfo?.additionalAction === SidebarAdditionalActions.JumpToAddCollections) {
+    if (jumpToCollections) {
       setTab('manage');
     }
-    return resetSidebarAdditionalActions;
-  }, [sidebarComponentInfo?.additionalAction]);
+  }, [jumpToCollections]);
+
+  useEffect(() => {
+    // This is required to redo actions.
+    if (tab !== 'manage') {
+      resetSidebarAdditionalActions();
+    }
+  }, [tab]);
 
   const usageKey = sidebarComponentInfo?.id;
   // istanbul ignore if: this should never happen
