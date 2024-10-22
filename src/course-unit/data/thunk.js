@@ -120,7 +120,7 @@ export function editCourseUnitVisibilityAndData(itemId, type, isVisible, groupAc
     dispatch(updateQueryPendingStatus(true));
     const notification = getNotificationMessage(type, isVisible, isModalView);
     dispatch(showProcessingNotification(notification));
-
+    console.log('======================= PENDING =======================');
     try {
       await handleCourseUnitVisibilityAndData(itemId, type, isVisible, groupAccess).then(async (result) => {
         if (result) {

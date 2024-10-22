@@ -53,6 +53,8 @@ const CourseUnit = ({ courseId }) => {
     handleCreateNewCourseXBlock,
     handleConfigureSubmit,
     canPasteComponent,
+    unitXBlockActions,
+    courseVerticalChildren,
   } = useCourseUnit({ courseId, blockId });
 
   useEffect(() => {
@@ -129,7 +131,12 @@ const CourseUnit = ({ courseId }) => {
                   courseId={courseId}
                 />
               )}
-              <XBlockContainerIframe blockId={blockId} />
+              <XBlockContainerIframe
+                blockId={blockId}
+                unitXBlockActions={unitXBlockActions}
+                xblocks={courseVerticalChildren.children}
+                handleConfigureSubmit={handleConfigureSubmit}
+              />
               <AddComponent
                 blockId={blockId}
                 handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}

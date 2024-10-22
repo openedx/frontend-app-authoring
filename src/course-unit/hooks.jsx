@@ -137,5 +137,6 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     handleCreateNewCourseXBlock,
     handleConfigureSubmit,
     canPasteComponent,
+    courseVerticalChildren,
   };
 };
