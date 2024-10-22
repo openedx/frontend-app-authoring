@@ -6,6 +6,7 @@ import {
   Dropdown,
   Icon,
   IconButton,
+  useToggle,
 } from '@openedx/paragon';
 import {
   AddCircleOutline,
@@ -18,11 +19,12 @@ import { STUDIO_CLIPBOARD_CHANNEL } from '../../constants';
 import { updateClipboard } from '../../generic/data/api';
 import { ToastContext } from '../../generic/toast-context';
 import { type ContentHit } from '../../search-manager';
-import { useLibraryContext } from '../common/context';
+import { SidebarAdditionalActions, useLibraryContext } from '../common/context';
 import { useRemoveComponentsFromCollection } from '../data/apiHooks';
 import BaseComponentCard from './BaseComponentCard';
 import { canEditComponent } from './ComponentEditorModal';
 import messages from './messages';
+import ComponentDeleter from './ComponentDeleter';
 
 type ComponentCardProps = {
   contentHit: ContentHit,
@@ -33,7 +35,8 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   const {
     libraryId,
     collectionId,
-    sidebarComponentUsageKey,
+    sidebarComponentInfo,
+    openComponentInfoSidebar,
     openComponentEditor,
     closeLibrarySidebar,
   } = useLibraryContext();
@@ -42,6 +45,8 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   const { showToast } = useContext(ToastContext);
   const [clipboardBroadcastChannel] = useState(() => new BroadcastChannel(STUDIO_CLIPBOARD_CHANNEL));
   const removeComponentsMutation = useRemoveComponentsFromCollection(libraryId, collectionId);
+  const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
+
   const updateClipboardClick = () => {
     updateClipboard(usageKey)
       .then((clipboardData) => {
@@ -53,7 +58,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
 
   const removeFromCollection = () => {
     removeComponentsMutation.mutateAsync([usageKey]).then(() => {
-      if (sidebarComponentUsageKey === usageKey) {
+      if (sidebarComponentInfo?.id === usageKey) {
         // Close sidebar if current component is open
         closeLibrarySidebar();
       }
@@ -61,6 +66,10 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
     }).catch(() => {
       showToast(intl.formatMessage(messages.removeComponentFailure));
     });
+  };
+
+  const showManageCollections = () => {
+    openComponentInfoSidebar(usageKey, SidebarAdditionalActions.JumpToAddCollections);
   };
 
   return (
@@ -81,15 +90,19 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
         <Dropdown.Item onClick={updateClipboardClick}>
           <FormattedMessage {...messages.menuCopyToClipboard} />
         </Dropdown.Item>
+        <Dropdown.Item onClick={confirmDelete}>
+          <FormattedMessage {...messages.menuDelete} />
+        </Dropdown.Item>
         {collectionId && (
           <Dropdown.Item onClick={removeFromCollection}>
             <FormattedMessage {...messages.menuRemoveFromCollection} />
           </Dropdown.Item>
         )}
-        <Dropdown.Item disabled>
+        <Dropdown.Item onClick={showManageCollections}>
           <FormattedMessage {...messages.menuAddToCollection} />
         </Dropdown.Item>
       </Dropdown.Menu>
+      <ComponentDeleter usageKey={usageKey} isConfirmingDelete={isConfirmingDelete} cancelDelete={cancelDelete} />
     </Dropdown>
   );
 };

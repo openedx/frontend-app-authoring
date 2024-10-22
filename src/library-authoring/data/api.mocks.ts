@@ -48,6 +48,8 @@ export async function mockContentLibrary(libraryId: string): Promise<api.Content
       throw createAxiosError({ code: 500, message: 'Internal Error.', path: api.getContentLibraryApiUrl(libraryId) });
     case mockContentLibrary.libraryId:
       return mockContentLibrary.libraryData;
+    case mockContentLibrary.libraryId2:
+      return { ...mockContentLibrary.libraryData, id: mockContentLibrary.libraryId2, slug: 'TEST2' };
     case mockContentLibrary.libraryIdReadOnly:
       return {
         ...mockContentLibrary.libraryData,
@@ -148,6 +150,7 @@ mockContentLibrary.libraryData = {
   created: '2024-06-26T14:19:59Z',
   updated: '2024-07-20T17:36:51Z',
 } satisfies api.ContentLibrary;
+mockContentLibrary.libraryId2 = 'lib:Axim:TEST2';
 mockContentLibrary.libraryIdReadOnly = 'lib:Axim:readOnly';
 mockContentLibrary.libraryIdThatNeverLoads = 'lib:Axim:infiniteLoading';
 mockContentLibrary.library404 = 'lib:Axim:error404';
@@ -227,6 +230,17 @@ mockCreateLibraryBlock.newVideoData = {
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockCreateLibraryBlock.applyMock = () => (
   jest.spyOn(api, 'createLibraryBlock').mockImplementation(mockCreateLibraryBlock)
+);
+
+/**
+ * Mock for `deleteLibraryBlock()`
+ */
+export async function mockDeleteLibraryBlock(): ReturnType<typeof api.deleteLibraryBlock> {
+  // no-op
+}
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockDeleteLibraryBlock.applyMock = () => (
+  jest.spyOn(api, 'deleteLibraryBlock').mockImplementation(mockDeleteLibraryBlock)
 );
 
 /**

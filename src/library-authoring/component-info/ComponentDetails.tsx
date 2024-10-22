@@ -1,4 +1,4 @@
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Stack } from '@openedx/paragon';
 
 import AlertError from '../../generic/alert-error';
@@ -10,9 +10,9 @@ import { ComponentAdvancedInfo } from './ComponentAdvancedInfo';
 import messages from './messages';
 
 const ComponentDetails = () => {
-  const intl = useIntl();
+  const { sidebarComponentInfo } = useLibraryContext();
 
-  const { sidebarComponentUsageKey: usageKey } = useLibraryContext();
+  const usageKey = sidebarComponentInfo?.id;
 
   // istanbul ignore if: this should never happen
   if (!usageKey) {
@@ -38,18 +38,16 @@ const ComponentDetails = () => {
     <Stack gap={3}>
       <div>
         <h3 className="h5">
-          {intl.formatMessage(messages.detailsTabUsageTitle)}
+          <FormattedMessage {...messages.detailsTabUsageTitle} />
         </h3>
-        <small>This will show the courses that use this component.</small>
+        <small><FormattedMessage {...messages.detailsTabUsagePlaceholder} /></small>
       </div>
       <hr className="w-100" />
       <div>
         <h3 className="h5">
-          {intl.formatMessage(messages.detailsTabHistoryTitle)}
+          <FormattedMessage {...messages.detailsTabHistoryTitle} />
         </h3>
-        <HistoryWidget
-          {...componentMetadata}
-        />
+        <HistoryWidget {...componentMetadata} />
       </div>
       <ComponentAdvancedInfo />
     </Stack>

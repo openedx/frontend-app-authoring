@@ -339,8 +339,8 @@ The production build is created with ``npm run build``.
    :target: https://travis-ci.com/edx/frontend-app-course-authoring
 .. |Codecov| image:: https://codecov.io/gh/edx/frontend-app-course-authoring/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/edx/frontend-app-course-authoring
-.. |license| image:: https://img.shields.io/npm/l/@edx/frontend-app-course-authoring.svg
-   :target: @edx/frontend-app-course-authoring
+.. |license| image:: https://img.shields.io/npm/l/@edx/frontend-app-authoring.svg
+   :target: @edx/frontend-app-authoring
 
 Internationalization
 ====================

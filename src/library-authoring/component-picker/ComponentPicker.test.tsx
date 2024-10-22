@@ -31,7 +31,7 @@ describe('<ComponentPicker />', () => {
     initializeMocks();
     postMessageSpy = jest.spyOn(window.parent, 'postMessage');
 
-    mockSearchResult(mockResult);
+    mockSearchResult({ ...mockResult });
   });
 
   it('should pick component using the component card button', async () => {

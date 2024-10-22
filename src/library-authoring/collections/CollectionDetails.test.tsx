@@ -10,7 +10,7 @@ import {
   waitFor,
   within,
 } from '../../testUtils';
-import { LibraryProvider } from '../common/context';
+import { LibraryProvider, SidebarBodyComponentId } from '../common/context';
 import * as api from '../data/api';
 import { mockContentLibrary, mockGetCollectionMetadata } from '../data/api.mocks';
 import CollectionDetails from './CollectionDetails';
@@ -30,7 +30,13 @@ const library = mockContentLibrary.libraryData;
 
 const render = () => baseRender(<CollectionDetails />, {
   extraWrapper: ({ children }) => (
-    <LibraryProvider libraryId={library.id} initialSidebarCollectionId={collectionId}>
+    <LibraryProvider
+      libraryId={library.id}
+      initialSidebarComponentInfo={{
+        id: collectionId,
+        type: SidebarBodyComponentId.CollectionInfo,
+      }}
+    >
       { children }
     </LibraryProvider>
   ),

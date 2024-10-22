@@ -20,10 +20,11 @@ import {
 } from '../data/apiHooks';
 import messages from './messages';
 
-export const ComponentAdvancedInfo: React.FC<Record<never, never>> = () => {
+const ComponentAdvancedInfoInner: React.FC<Record<never, never>> = () => {
   const intl = useIntl();
-  const { readOnly, sidebarComponentUsageKey: usageKey } = useLibraryContext();
+  const { readOnly, sidebarComponentInfo } = useLibraryContext();
 
+  const usageKey = sidebarComponentInfo?.id;
   // istanbul ignore if: this should never happen in production
   if (!usageKey) {
     throw new Error('sidebarComponentUsageKey is required to render ComponentAdvancedInfo');
@@ -49,71 +50,78 @@ export const ComponentAdvancedInfo: React.FC<Record<never, never>> = () => {
   }, [editorRef, olxUpdater, intl]);
 
   return (
+    <>
+      <h3 className="h5"><FormattedMessage {...messages.advancedDetailsUsageKey} /></h3>
+      <p className="text-monospace small">{usageKey}</p>
+      <h3 className="h5"><FormattedMessage {...messages.advancedDetailsOLX} /></h3>
+      {(() => {
+        if (isOLXLoading) { return <LoadingSpinner />; }
+        if (!olx) { return <FormattedMessage {...messages.advancedDetailsOLXError} />; }
+        return (
+          <div className="mb-4">
+            {olxUpdater.error && (
+              <Alert variant="danger">
+                <p><strong><FormattedMessage {...messages.advancedDetailsOLXEditFailed} /></strong></p>
+                {/*
+                  TODO: fix the API so it returns 400 errors in a JSON object, not HTML 500 errors. Then display
+                  a useful error message here like "parsing the XML failed on line 3".
+                  (olxUpdater.error as Record<string, any>)?.customAttributes?.httpErrorResponseData.errorMessage
+                */}
+              </Alert>
+            )}
+            <CodeEditor key={usageKey} readOnly={!isEditingOLX} editorRef={editorRef}>{olx}</CodeEditor>
+            {
+              isEditingOLX ? (
+                <>
+                  <Button variant="primary" onClick={updateOlx} disabled={olxUpdater.isLoading}>
+                    <FormattedMessage {...messages.advancedDetailsOLXSaveButton} />
+                  </Button>
+                  <Button variant="link" onClick={() => setEditingOLX(false)} disabled={olxUpdater.isLoading}>
+                    <FormattedMessage {...messages.advancedDetailsOLXCancelButton} />
+                  </Button>
+                </>
+              ) : !readOnly ? (
+                <OverlayTrigger
+                  placement="bottom-start"
+                  overlay={(
+                    <Tooltip id="olx-edit-button">
+                      <FormattedMessage {...messages.advancedDetailsOLXEditWarning} />
+                    </Tooltip>
+                  )}
+                >
+                  <Button variant="link" onClick={() => setEditingOLX(true)}>
+                    <FormattedMessage {...messages.advancedDetailsOLXEditButton} />
+                  </Button>
+                </OverlayTrigger>
+              ) : (
+                null
+              )
+            }
+          </div>
+        );
+      })()}
+      <h3 className="h5"><FormattedMessage {...messages.advancedDetailsAssets} /></h3>
+      <ul>
+        { areAssetsLoading ? <li><LoadingSpinner /></li> : null }
+        { assets?.map(a => (
+          <li key={a.path}>
+            <a href={a.url}>{a.path}</a>{' '}
+            (<FormattedNumber value={a.size} notation="compact" unit="byte" unitDisplay="narrow" />)
+          </li>
+        )) }
+      </ul>
+    </>
+  );
+};
+
+export const ComponentAdvancedInfo: React.FC<Record<never, never>> = () => {
+  const intl = useIntl();
+  return (
     <Collapsible
       styling="basic"
       title={intl.formatMessage(messages.advancedDetailsTitle)}
     >
-      <dl>
-        <h3 className="h5"><FormattedMessage {...messages.advancedDetailsUsageKey} /></h3>
-        <p className="text-monospace small">{usageKey}</p>
-        <h3 className="h5"><FormattedMessage {...messages.advancedDetailsOLX} /></h3>
-        {(() => {
-          if (isOLXLoading) { return <LoadingSpinner />; }
-          if (!olx) { return <FormattedMessage {...messages.advancedDetailsOLXError} />; }
-          return (
-            <div className="mb-4">
-              {olxUpdater.error && (
-                <Alert variant="danger">
-                  <p><strong><FormattedMessage {...messages.advancedDetailsOLXEditFailed} /></strong></p>
-                  {/*
-                    TODO: fix the API so it returns 400 errors in a JSON object, not HTML 500 errors. Then display
-                    a useful error message here like "parsing the XML failed on line 3".
-                    (olxUpdater.error as Record<string, any>)?.customAttributes?.httpErrorResponseData.errorMessage
-                  */}
-                </Alert>
-              )}
-              <CodeEditor key={usageKey} readOnly={!isEditingOLX} editorRef={editorRef}>{olx}</CodeEditor>
-              {
-                isEditingOLX ? (
-                  <>
-                    <Button variant="primary" onClick={updateOlx} disabled={olxUpdater.isLoading}>
-                      <FormattedMessage {...messages.advancedDetailsOLXSaveButton} />
-                    </Button>
-                    <Button variant="link" onClick={() => setEditingOLX(false)} disabled={olxUpdater.isLoading}>
-                      <FormattedMessage {...messages.advancedDetailsOLXCancelButton} />
-                    </Button>
-                  </>
-                ) : !readOnly ? (
-                  <OverlayTrigger
-                    placement="bottom-start"
-                    overlay={(
-                      <Tooltip id="olx-edit-button">
-                        <FormattedMessage {...messages.advancedDetailsOLXEditWarning} />
-                      </Tooltip>
-                    )}
-                  >
-                    <Button variant="link" onClick={() => setEditingOLX(true)}>
-                      <FormattedMessage {...messages.advancedDetailsOLXEditButton} />
-                    </Button>
-                  </OverlayTrigger>
-                ) : (
-                  null
-                )
-              }
-            </div>
-          );
-        })()}
-        <h3 className="h5"><FormattedMessage {...messages.advancedDetailsAssets} /></h3>
-        <ul>
-          { areAssetsLoading ? <li><LoadingSpinner /></li> : null }
-          { assets?.map(a => (
-            <li key={a.path}>
-              <a href={a.url}>{a.path}</a>{' '}
-              (<FormattedNumber value={a.size} notation="compact" unit="byte" unitDisplay="narrow" />)
-            </li>
-          )) }
-        </ul>
-      </dl>
+      <ComponentAdvancedInfoInner />
     </Collapsible>
   );
 };

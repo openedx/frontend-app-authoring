@@ -9,7 +9,7 @@ import {
   mockXBlockAssets,
   mockXBlockOLX,
 } from '../data/api.mocks';
-import { LibraryProvider } from '../common/context';
+import { LibraryProvider, SidebarBodyComponentId } from '../common/context';
 import ComponentDetails from './ComponentDetails';
 
 mockContentLibrary.applyMock();
@@ -21,7 +21,13 @@ const { libraryId: mockLibraryId } = mockContentLibrary;
 
 const render = (usageKey: string) => baseRender(<ComponentDetails />, {
   extraWrapper: ({ children }) => (
-    <LibraryProvider libraryId={mockLibraryId} initialSidebarComponentUsageKey={usageKey}>
+    <LibraryProvider
+      libraryId={mockLibraryId}
+      initialSidebarComponentInfo={{
+        id: usageKey,
+        type: SidebarBodyComponentId.ComponentInfo,
+      }}
+    >
       {children}
     </LibraryProvider>
   ),
@@ -46,7 +52,7 @@ describe('<ComponentDetails />', () => {
     render(mockLibraryBlockMetadata.usageKeyNeverPublished);
     expect(await screen.findByText('Component Usage')).toBeInTheDocument();
     // TODO: replace with actual data when implement course list
-    expect(screen.queryByText('This will show the courses that use this component.')).toBeInTheDocument();
+    expect(screen.queryByText(/This will show the courses that use this component./)).toBeInTheDocument();
   });
 
   it('should render the component history', async () => {
