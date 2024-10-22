@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useToggle } from '@openedx/paragon';
@@ -35,13 +35,15 @@ import {
   updateQueryPendingStatus,
   updateMovedXBlockParams,
 } from './data/slice';
-import { PUBLISH_TYPES } from './constants';
+import { useIframe } from './context/hooks';
+import { messageTypes, PUBLISH_TYPES } from './constants';
 
 
 // eslint-disable-next-line import/prefer-default-export
 export const useCourseUnit = ({ courseId, blockId }) => {
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
+  const { sendMessageToIframe } = useIframe();
   const [isMoveModalOpen, openMoveModal, closeMoveModal] = useToggle(false);
 
   const courseUnit = useSelector(getCourseUnitData);
@@ -124,7 +126,10 @@ export const useCourseUnit = ({ courseId, blockId }) => {
       title,
       currentParentLocator,
       isMoving: false,
-      callbackFn: () => {},
+      callbackFn: () => {
+        sendMessageToIframe(messageTypes.refreshXBlock, null);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
     }));
   };
 

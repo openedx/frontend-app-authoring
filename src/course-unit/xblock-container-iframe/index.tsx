@@ -1,9 +1,10 @@
-import { useRef, FC } from 'react';
+import { useRef, useEffect, FC } from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 
 import { IFRAME_FEATURE_POLICY } from '../constants';
+import {useIframe} from '../context/hooks';
 import { useIFrameBehavior } from './hooks';
 import messages from './messages';
 
@@ -20,6 +21,7 @@ interface XBlockContainerIframeProps {
 const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({ blockId }) => {
   const intl = useIntl();
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const { setIframeRef } = useIframe();
 
   const iframeUrl = `${getConfig().STUDIO_BASE_URL}/container_embed/${blockId}`;
 
@@ -27,6 +29,10 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({ blockId }) => {
     id: blockId,
     iframeUrl,
   });
+
+  useEffect(() => {
+    setIframeRef(iframeRef);
+  }, [setIframeRef]);
 
   return (
     <iframe

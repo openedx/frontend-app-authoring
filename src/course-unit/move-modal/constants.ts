@@ -32,3 +32,10 @@ export const MOVE_DIRECTIONS = {
   forward: 'forward',
   backward: 'backward',
 };
+
+export const BASIC_BLOCK_TYPES = [
+  CATEGORIES_KEYS.course,
+  CATEGORIES_KEYS.chapter,
+  CATEGORIES_KEYS.sequential,
+  CATEGORIES_KEYS.vertical,
+];

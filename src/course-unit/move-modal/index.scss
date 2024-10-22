@@ -1,5 +1,12 @@
 .move-xblock-modal {
-    max-width: 920px;
+    max-width: 57.5rem;
+
+    .move-xblock-modal-loading {
+        min-height: 10rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
     .pgn__modal-header,
     .pgn__modal-footer {

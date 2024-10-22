@@ -53,6 +53,7 @@ import addComponentMessages from './add-component/messages';
 import { PUBLISH_TYPES, UNIT_VISIBILITY_STATES } from './constants';
 import messages from './messages';
 import { getContentTaxonomyTagsApiUrl, getContentTaxonomyTagsCountApiUrl } from '../content-tags-drawer/data/api';
+import { IframeProvider } from './context/iFrameContext';
 
 let axiosMock;
 let store;
@@ -108,7 +109,9 @@ global.BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
 const RootWrapper = () => (
   <AppProvider store={store}>
     <IntlProvider locale="en">
-      <CourseUnit courseId={courseId} />
+      <IframeProvider>
+        <CourseUnit courseId={courseId} />
+      </IframeProvider>
     </IntlProvider>
   </AppProvider>
 );

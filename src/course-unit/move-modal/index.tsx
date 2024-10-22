@@ -1,12 +1,10 @@
 // TODO: List
 // - Create tests for the move modal
-// - Fix optimization (too many re-renders)
-// - After move operation is completed, the event (post message) is send to children iframe to refresh the unit content.
-// - If user clicks undo the Move request to revert action is send, and refresh content message is sent to children iframe.
+// - Check case: when we move xBlock to the empty unit
 
-import { useCallback } from 'react';
+import React, { FC, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { useIntl, injectIntl } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
   Breadcrumb,
@@ -17,14 +15,15 @@ import {
   ArrowForwardIos as ArrowForwardIosIcon,
 } from '@openedx/paragon/icons';
 
-import Loading from '../../generic/Loading';
-import { useMoveModal } from './hooks';
+import { LoadingSpinner } from '../../generic/Loading';
 import { CATEGORIES_KEYS } from './constants';
+import { IMoveModalProps, IXBlock, IXBlockInfo } from './interfaces';
+import { useMoveModal } from './hooks';
 import messages from './messages';
 
-const MoveModal = ({ isOpen, close }) => {
-  if (!isOpen) return null;
-
+const MoveModal: FC<IMoveModalProps> = ({
+  isOpenModal, closeModal, openModal, courseId,
+}) => {
   const intl = useIntl();
 
   const {
@@ -42,11 +41,20 @@ const MoveModal = ({ isOpen, close }) => {
     handleBreadcrumbsClick,
     handleCLoseModal,
     handleMoveXBlock,
-  } = useMoveModal({ isOpen, closeModal: close });
+  } = useMoveModal({
+    isOpenModal, closeModal, openModal, courseId,
+  });
+
+  const getLoader = useCallback(() => (
+    <div className="move-xblock-modal-loading">
+      <LoadingSpinner />
+    </div>
+  ), []);
 
   const getBreadcrumbs = useCallback(() => (
     <Breadcrumb
       ariaLabel="Course Outline breadcrumb"
+      data-testid="move-xblock-modal-breadcrumbs"
       isMobile={isExtraSmall}
       links={breadcrumbs.slice(0, -1).map((breadcrumb, index) => (
         { label: breadcrumb, 'data-parent-index': index }
@@ -65,11 +73,17 @@ const MoveModal = ({ isOpen, close }) => {
   const getCategoryIndicator = useCallback(() => (
     <div className="xblock-items-category small text-gray-500">
       <span className="sr-only">{categoryText} in {displayName}</span>
-      <span className="category-text" aria-hidden="true">{categoryText}</span>
+      <span
+        className="category-text"
+        aria-hidden="true"
+        data-testId="move-xblock-modal-category"
+      >
+        {categoryText}
+      </span>
     </div>
   ), [categoryText, displayName]);
 
-  const getCourseStructureItemButton = useCallback((xblock, index) => (
+  const getCourseStructureItemButton = useCallback((xblock: IXBlock, index: number) => (
     <Button
       variant="link"
       className="button-forward text-left justify-content-start text-gray-700"
@@ -89,12 +103,12 @@ const MoveModal = ({ isOpen, close }) => {
     </Button>
   ), [currentXBlockParentIds, handleXBlockClick]);
 
-  const getCourseStructureItemSpan = useCallback((xblock) => (
+  const getCourseStructureItemSpan = useCallback((xBlock: IXBlock) => (
     <span className="component text-left justify-content-start text-gray-700">
       <span className="xblock-displayname text-truncate">
-        {xblock?.display_name}
+        {xBlock?.display_name}
       </span>
-      {currentXBlockParentIds.includes(xblock.id) && (
+      {currentXBlockParentIds.includes(xBlock.id) && (
         <span className="current-location text-nowrap mr-3">
           (Currently selected)
         </span>
@@ -102,17 +116,17 @@ const MoveModal = ({ isOpen, close }) => {
     </span>
   ), [currentXBlockParentIds]);
 
-  const getCourseStructureListItem = useCallback((xblock, index) => (
-    <li key={xblock.id} className="xblock-item">
-      {sourceXBlockId !== xblock.id && (xblock?.child_info || childrenInfo.category !== CATEGORIES_KEYS.component)
-        ? getCourseStructureItemButton(xblock, index)
-        : getCourseStructureItemSpan(xblock)}
+  const getCourseStructureListItem = useCallback((xBlock: IXBlock, index: number) => (
+    <li key={xBlock.id} className="xblock-item">
+      {sourceXBlockId !== xBlock.id && (xBlock?.child_info || childrenInfo.category !== CATEGORIES_KEYS.component)
+        ? getCourseStructureItemButton(xBlock, index)
+        : getCourseStructureItemSpan(xBlock)}
     </li>
   ), [sourceXBlockId, childrenInfo.category, getCourseStructureItemButton, getCourseStructureItemSpan]);
 
   return (
     <ModalDialog
-      isOpen={isOpen}
+      isOpen={isOpenModal}
       onClose={handleCLoseModal}
       size="xl"
       className="move-xblock-modal"
@@ -125,15 +139,20 @@ const MoveModal = ({ isOpen, close }) => {
         </ModalDialog.Title>
       </ModalDialog.Header>
       <ModalDialog.Body>
-        {isLoading ? <Loading /> : (
+        {isLoading ? getLoader() : (
           <>
             {getBreadcrumbs()}
             <div className="xblock-list-container">
               {getCategoryIndicator()}
               <ul className="xblock-items-container p-0 m-0">
                 {!childrenInfo.children?.length
-                  ? getEmptyMessage() :
-                  childrenInfo.children.map((xblock, index) => getCourseStructureListItem(xblock, index))}
+                  ? getEmptyMessage()
+                  : childrenInfo.children.map((xblock: IXBlock | IXBlockInfo, index: number) => {
+                    if ('display_name' in xblock) {
+                      return getCourseStructureListItem(xblock as IXBlock, index);
+                    }
+                    return null;
+                  })}
               </ul>
             </div>
           </>
@@ -153,12 +172,14 @@ const MoveModal = ({ isOpen, close }) => {
         </ActionRow>
       </ModalDialog.Footer>
     </ModalDialog>
-  )
+  );
 };
 
 MoveModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  close: PropTypes.func.isRequired
+  isOpenModal: PropTypes.bool.isRequired,
+  closeModal: PropTypes.func.isRequired,
+  openModal: PropTypes.func.isRequired,
+  courseId: PropTypes.string.isRequired,
 };
 
-export default injectIntl(MoveModal);
+export default MoveModal;

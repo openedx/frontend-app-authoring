@@ -110,10 +110,16 @@ const CourseUnit = ({ courseId }) => {
                 aria-hidden={movedXBlockParams.isSuccess}
                 dismissible
                 actions={movedXBlockParams.isUndo ? null : [
-                  <Button onClick={handleRollbackMovedXBlock}>
+                  <Button
+                    onClick={handleRollbackMovedXBlock}
+                    key="xblock-moved-alert-undo-move-button"
+                  >
                     {intl.formatMessage(messages.undoMoveButton)}
                   </Button>,
-                  <Button onClick={handleNavigateToTargetUnit}>
+                  <Button
+                    onClick={handleNavigateToTargetUnit}
+                    key="xblock-moved-alert-new-location-button"
+                  >
                     {intl.formatMessage(messages.newLocationButton)}
                   </Button>,
                 ]}
@@ -141,18 +147,6 @@ const CourseUnit = ({ courseId }) => {
               />
             )}
           />
-
-          <hr />
-          <hr />
-          <Button onClick={openMoveModal}>MOVE MODAL TRIGGER</Button>
-          <MoveModal
-            isOpen={isMoveModalOpen}
-            close={closeMoveModal}
-            displayName="Choosing a Compute Option"
-          />
-          <hr />
-          <hr />
-
           <Sequence
             courseId={courseId}
             sequenceId={sequenceId}
@@ -194,6 +188,12 @@ const CourseUnit = ({ courseId }) => {
                   text={intl.formatMessage(messages.pasteButtonText)}
                 />
               )}
+              <MoveModal
+                isOpenModal={isMoveModalOpen}
+                openModal={openMoveModal}
+                closeModal={closeMoveModal}
+                courseId={courseId}
+              />
             </Layout.Element>
             <Layout.Element>
               <Stack gap={3}>

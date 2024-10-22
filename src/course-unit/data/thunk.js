@@ -237,12 +237,12 @@ export function getCourseOutlineInfoQuery(courseId) {
           dispatch(updateCourseOutlineInfo(result));
           dispatch(updateCourseOutlineInfoLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
         }
-      })
+      });
     } catch (error) {
       handleResponseErrors(error, dispatch, updateSavingStatus);
       dispatch(updateCourseOutlineInfoLoadingStatus({ status: RequestStatus.FAILED }));
     }
-  }
+  };
 }
 
 export function patchUnitItemQuery({
@@ -269,10 +269,12 @@ export function patchUnitItemQuery({
       };
       dispatch(updateMovedXBlockParams(xBlockParams));
       dispatch(hideProcessingNotification());
+      dispatch(updateCourseOutlineInfo({}));
+      dispatch(updateCourseOutlineInfoLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
       callbackFn();
     } catch (error) {
       handleResponseErrors(error, dispatch, updateSavingStatus);
       dispatch(hideProcessingNotification());
     }
-  }
+  };
 }
