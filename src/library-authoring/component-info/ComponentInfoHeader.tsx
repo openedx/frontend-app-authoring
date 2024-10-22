@@ -18,11 +18,12 @@ const ComponentInfoHeader = () => {
   const [inputIsActive, setIsActive] = useState(false);
 
   const {
-    sidebarComponentUsageKey: usageKey,
+    sidebarComponentInfo,
     readOnly,
     showOnlyPublished,
   } = useLibraryContext();
 
+  const usageKey = sidebarComponentInfo?.id;
   // istanbul ignore next
   if (!usageKey) {
     throw new Error('usageKey is required');

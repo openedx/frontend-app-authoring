@@ -37,8 +37,9 @@ const ComponentPreview = () => {
   const intl = useIntl();
 
   const [isModalOpen, openModal, closeModal] = useToggle();
-  const { sidebarComponentUsageKey: usageKey, componentPickerMode } = useLibraryContext();
+  const { sidebarComponentInfo, showOnlyPublished } = useLibraryContext();
 
+  const usageKey = sidebarComponentInfo?.id;
   // istanbul ignore if: this should never happen
   if (!usageKey) {
     throw new Error('usageKey is required');
@@ -65,7 +66,7 @@ const ComponentPreview = () => {
               <LibraryBlock
                 usageKey={usageKey}
                 key={componentMetadata.modified}
-                version={componentPickerMode ? 'published' : undefined}
+                version={showOnlyPublished ? 'published' : undefined}
               />
             )
             : null

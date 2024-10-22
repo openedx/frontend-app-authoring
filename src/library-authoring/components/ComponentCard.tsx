@@ -14,7 +14,7 @@ import { STUDIO_CLIPBOARD_CHANNEL } from '../../constants';
 import { updateClipboard } from '../../generic/data/api';
 import { ToastContext } from '../../generic/toast-context';
 import { type ContentHit } from '../../search-manager';
-import { useLibraryContext } from '../common/context';
+import { SidebarAdditionalActions, useLibraryContext } from '../common/context';
 import { useRemoveComponentsFromCollection } from '../data/apiHooks';
 import BaseComponentCard from './BaseComponentCard';
 import { canEditComponent } from './ComponentEditorModal';
@@ -30,7 +30,8 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   const {
     libraryId,
     collectionId,
-    sidebarComponentUsageKey,
+    sidebarComponentInfo,
+    openComponentInfoSidebar,
     openComponentEditor,
     closeLibrarySidebar,
   } = useLibraryContext();
@@ -52,7 +53,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
 
   const removeFromCollection = () => {
     removeComponentsMutation.mutateAsync([usageKey]).then(() => {
-      if (sidebarComponentUsageKey === usageKey) {
+      if (sidebarComponentInfo?.id === usageKey) {
         // Close sidebar if current component is open
         closeLibrarySidebar();
       }
@@ -60,6 +61,10 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
     }).catch(() => {
       showToast(intl.formatMessage(messages.removeComponentFailure));
     });
+  };
+
+  const showManageCollections = () => {
+    openComponentInfoSidebar(usageKey, SidebarAdditionalActions.JumpToAddCollections);
   };
 
   return (
@@ -88,7 +93,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
           <FormattedMessage {...messages.menuRemoveFromCollection} />
         </Dropdown.Item>
         )}
-        <Dropdown.Item disabled>
+        <Dropdown.Item onClick={showManageCollections}>
           <FormattedMessage {...messages.menuAddToCollection} />
         </Dropdown.Item>
       </Dropdown.Menu>

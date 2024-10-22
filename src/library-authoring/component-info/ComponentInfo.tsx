@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
@@ -6,7 +7,7 @@ import {
   Stack,
 } from '@openedx/paragon';
 
-import { useLibraryContext } from '../common/context';
+import { SidebarAdditionalActions, useLibraryContext } from '../common/context';
 import { ComponentMenu } from '../components';
 import { canEditComponent } from '../components/ComponentEditorModal';
 import ComponentDetails from './ComponentDetails';
@@ -19,12 +20,30 @@ const ComponentInfo = () => {
   const intl = useIntl();
 
   const {
-    sidebarComponentUsageKey: usageKey,
+    sidebarComponentInfo,
     readOnly,
     openComponentEditor,
     componentPickerMode,
+    resetSidebarAdditionalActions,
   } = useLibraryContext();
 
+  const jumpToCollections = sidebarComponentInfo?.additionalAction === SidebarAdditionalActions.JumpToAddCollections;
+  // Show Manage tab if JumpToAddCollections action is set in sidebarComponentInfo
+  const [tab, setTab] = useState(jumpToCollections ? 'manage' : 'preview');
+  useEffect(() => {
+    if (jumpToCollections) {
+      setTab('manage');
+    }
+  }, [jumpToCollections]);
+
+  useEffect(() => {
+    // This is required to redo actions.
+    if (tab !== 'manage') {
+      resetSidebarAdditionalActions();
+    }
+  }, [tab]);
+
+  const usageKey = sidebarComponentInfo?.id;
   // istanbul ignore if: this should never happen
   if (!usageKey) {
     throw new Error('usageKey is required');
@@ -65,7 +84,8 @@ const ComponentInfo = () => {
       <Tabs
         variant="tabs"
         className="my-3 d-flex justify-content-around"
-        defaultActiveKey="preview"
+        activeKey={tab}
+        onSelect={(k: string) => setTab(k)}
       >
         <Tab eventKey="preview" title={intl.formatMessage(messages.previewTabTitle)}>
           <ComponentPreview />

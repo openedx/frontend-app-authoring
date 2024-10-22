@@ -22,19 +22,20 @@ const CollectionInfo = () => {
     libraryId,
     collectionId,
     setCollectionId,
-    sidebarCollectionId,
+    sidebarComponentInfo,
     componentPickerMode,
   } = useLibraryContext();
+
+  const sidebarCollectionId = sidebarComponentInfo?.id;
+  // istanbul ignore if: this should never happen
+  if (!sidebarCollectionId) {
+    throw new Error('sidebarCollectionId is required');
+  }
 
   const url = `/library/${libraryId}/collection/${sidebarCollectionId}/`;
   const urlMatch = useMatch(url);
 
   const showOpenCollectionButton = !urlMatch && collectionId !== sidebarCollectionId;
-
-  // istanbul ignore if: this should never happen
-  if (!sidebarCollectionId) {
-    throw new Error('sidebarCollectionId is required');
-  }
 
   const collectionUsageKey = buildCollectionUsageKey(libraryId, sidebarCollectionId);
 
