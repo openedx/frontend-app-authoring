@@ -3,6 +3,7 @@ import { Stepper } from '@openedx/paragon';
 
 import {
   type ComponentSelectedEvent,
+  type ComponentSelectionChangedEvent,
   LibraryProvider,
   useLibraryContext,
 } from '../common/context';
@@ -34,9 +35,11 @@ const defaultComponentSelectedCallback: ComponentSelectedEvent = ({ usageKey, bl
 type ComponentPickerProps = {
   componentPickerMode?: 'single',
   onComponentSelected?: ComponentSelectedEvent,
+  onChangeComponentSelection?: never,
 } | {
   componentPickerMode: 'multiple'
-  onComponentSelected: never,
+  onComponentSelected?: never,
+  onChangeComponentSelection?: ComponentSelectionChangedEvent,
 };
 
 // eslint-disable-next-line import/prefer-default-export
@@ -46,6 +49,7 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
    * when the component picker is used in an iframe.
    */
   onComponentSelected = defaultComponentSelectedCallback,
+  onChangeComponentSelection,
 }) => {
   const [currentStep, setCurrentStep] = useState('select-library');
   const [selectedLibrary, setSelectedLibrary] = useState('');
@@ -65,6 +69,7 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
     onComponentSelected,
   } : {
     componentPickerMode,
+    onChangeComponentSelection,
   };
 
   return (

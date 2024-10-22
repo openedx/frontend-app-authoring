@@ -4,6 +4,7 @@ import {
   fireEvent,
   render,
   screen,
+  waitFor,
   within,
 } from '../../testUtils';
 import mockResult from '../__mocks__/library-search.json';
@@ -164,5 +165,80 @@ describe('<ComponentPicker />', () => {
     fireEvent.click(screen.getByText(/Change Library/i));
 
     await screen.findByText('Select which Library would you like to reference components from.');
+  });
+
+  it('should pick multiple components using the component card button', async () => {
+    const onChange = jest.fn();
+    render(<ComponentPicker componentPickerMode="multiple" onChangeComponentSelection={onChange} />);
+
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
+
+    // Wait for the content library to load
+    await screen.findByText(/Change Library/i);
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+
+    // Select the first component
+    fireEvent.click(screen.queryAllByRole('button', { name: 'Select' })[0]);
+    await waitFor(() => expect(onChange).toHaveBeenCalledWith([
+      {
+        usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
+        blockType: 'html',
+      },
+    ]));
+
+    onChange.mockClear();
+
+    // Select another component (the second "Select" button is the same component as the first,
+    // but in the "Components" section instead of the "Recently Changed" section)
+    fireEvent.click(screen.queryAllByRole('button', { name: 'Select' })[2]);
+    await waitFor(() => expect(onChange).toHaveBeenCalledWith([
+      {
+        usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
+        blockType: 'html',
+      },
+      {
+        blockType: 'html',
+        usageKey: 'lb:Axim:TEST:html:73a22298-bcd9-4f4c-ae34-0bc2b0612480',
+      },
+    ]));
+
+    onChange.mockClear();
+
+    // Deselect the first component
+    fireEvent.click(screen.queryAllByRole('button', { name: 'Select' })[0]);
+    await waitFor(() => expect(onChange).toHaveBeenCalledWith([
+      {
+        blockType: 'html',
+        usageKey: 'lb:Axim:TEST:html:73a22298-bcd9-4f4c-ae34-0bc2b0612480',
+      },
+    ]));
+  });
+
+  it('should pick multilpe components using the component sidebar', async () => {
+    const onChange = jest.fn();
+    render(<ComponentPicker componentPickerMode="multiple" onChangeComponentSelection={onChange} />);
+
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
+
+    // Wait for the content library to load
+    await screen.findByText(/Change Library/i);
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+
+    // Click on the component card to open the sidebar
+    fireEvent.click(screen.queryAllByText('Introduction to Testing')[0]);
+
+    const sidebar = await screen.findByTestId('library-sidebar');
+
+    // Click the add component from the component sidebar
+    fireEvent.click(within(sidebar).getByRole('button', { name: 'Select' }));
+
+    await waitFor(() => expect(onChange).toHaveBeenCalledWith([
+      {
+        usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
+        blockType: 'html',
+      },
+    ]));
   });
 });

@@ -15,6 +15,7 @@ interface SelectedComponent {
 }
 
 export type ComponentSelectedEvent = (selectedComponent: SelectedComponent) => void;
+export type ComponentSelectionChangedEvent = (selectedComponents: SelectedComponent[]) => void;
 
 type NoComponentPickerType = {
   componentPickerMode?: undefined;
@@ -95,16 +96,19 @@ const LibraryContext = React.createContext<LibraryContextData | undefined>(undef
 type NoComponentPickerProps = {
   componentPickerMode?: undefined;
   onComponentSelected?: never;
+  onChangeComponentSelection?: never;
 };
 
 export type ComponentPickerSingleProps = {
   componentPickerMode: 'single';
   onComponentSelected: ComponentSelectedEvent;
+  onChangeComponentSelection?: never;
 };
 
 export type ComponentPickerMultipleProps = {
   componentPickerMode: 'multiple';
   onComponentSelected?: never;
+  onChangeComponentSelection?: ComponentSelectionChangedEvent;
 };
 
 type ComponentPickerProps = NoComponentPickerProps | ComponentPickerSingleProps | ComponentPickerMultipleProps;
@@ -129,6 +133,7 @@ export const LibraryProvider = ({
   collectionId: collectionIdProp,
   componentPickerMode,
   onComponentSelected,
+  onChangeComponentSelection,
   initialSidebarComponentUsageKey,
   initialSidebarCollectionId,
 }: LibraryProviderProps) => {
@@ -183,7 +188,9 @@ export const LibraryProvider = ({
       if (prevSelectedComponents.some((component) => component.usageKey === selectedComponent.usageKey)) {
         return prevSelectedComponents;
       }
-      return [...prevSelectedComponents, selectedComponent];
+      const newSelectedComponents = [...prevSelectedComponents, selectedComponent];
+      onChangeComponentSelection?.(newSelectedComponents);
+      return newSelectedComponents;
     });
   }, []);
 
@@ -194,7 +201,11 @@ export const LibraryProvider = ({
       if (!prevSelectedComponents.some((component) => component.usageKey === selectedComponent.usageKey)) {
         return prevSelectedComponents;
       }
-      return prevSelectedComponents.filter((component) => component.usageKey !== selectedComponent.usageKey);
+      const newSelectedComponents = prevSelectedComponents.filter(
+        (component) => component.usageKey !== selectedComponent.usageKey,
+      );
+      onChangeComponentSelection?.(newSelectedComponents);
+      return newSelectedComponents;
     });
   }, []);
 
@@ -257,6 +268,7 @@ export const LibraryProvider = ({
     addComponentToSelectedComponents,
     removeComponentFromSelectedComponents,
     selectedComponents,
+    onChangeComponentSelection,
     sidebarBodyComponent,
     closeLibrarySidebar,
     openAddContentSidebar,
