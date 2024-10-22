@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
@@ -19,6 +19,8 @@ import ComponentManagement from './ComponentManagement';
 import ComponentPreview from './ComponentPreview';
 import messages from './messages';
 import { getBlockType } from '../../generic/key-utils';
+import { useLibraryBlockMetadata, usePublishComponent } from '../data/apiHooks';
+import { ToastContext } from '../../generic/toast-context';
 
 const AddComponentWidget = () => {
   const intl = useIntl();
@@ -98,7 +100,7 @@ const ComponentInfo = () => {
 
   const jumpToCollections = sidebarComponentInfo?.additionalAction === SidebarAdditionalActions.JumpToAddCollections;
   // Show Manage tab if JumpToAddCollections action is set in sidebarComponentInfo
-  const [tab, setTab] = useState(jumpToCollections ? 'manage' : 'preview');
+  const [tab, setTab] = React.useState(jumpToCollections ? 'manage' : 'preview');
   useEffect(() => {
     if (jumpToCollections) {
       setTab('manage');
@@ -120,6 +122,21 @@ const ComponentInfo = () => {
 
   const canEdit = canEditComponent(usageKey);
 
+  const publishComponent = usePublishComponent(usageKey);
+  const { data: componentMetadata } = useLibraryBlockMetadata(usageKey);
+  // Only can be published when the component has been modified after the last published date.
+  const canPublish = (new Date(componentMetadata?.modified ?? 0)) > (new Date(componentMetadata?.lastPublished ?? 0));
+  const { showToast } = React.useContext(ToastContext);
+
+  const publish = React.useCallback(() => {
+    publishComponent.mutateAsync()
+      .then(() => {
+        showToast(intl.formatMessage(messages.publishSuccessMsg));
+      }).catch(() => {
+        showToast(intl.formatMessage(messages.publishErrorMsg));
+      });
+  }, [publishComponent, showToast, intl]);
+
   return (
     <Stack>
       {!readOnly && (
@@ -131,7 +148,7 @@ const ComponentInfo = () => {
           >
             {intl.formatMessage(messages.editComponentButtonTitle)}
           </Button>
-          <Button disabled variant="outline-primary" className="m-1 text-nowrap flex-grow-1">
+          <Button disabled={publishComponent.isLoading || !canPublish} onClick={publish} variant="outline-primary" className="m-1 text-nowrap flex-grow-1">
             {intl.formatMessage(messages.publishComponentButtonTitle)}
           </Button>
           <ComponentMenu usageKey={usageKey} />

@@ -8,6 +8,7 @@ import { mockContentLibrary, mockLibraryBlockMetadata } from '../data/api.mocks'
 import { mockBroadcastChannel } from '../../generic/data/api.mock';
 import { LibraryProvider, SidebarBodyComponentId } from '../common/context';
 import ComponentInfo from './ComponentInfo';
+import { getXBlockPublishApiUrl } from '../data/api';
 
 mockBroadcastChannel();
 mockContentLibrary.applyMock();
@@ -66,5 +67,59 @@ describe('<ComponentInfo> Sidebar', () => {
 
     const editButton = await screen.findByRole('button', { name: /Edit component/ });
     await waitFor(() => expect(editButton).not.toBeDisabled());
+  });
+
+  it('should show a disabled "Publish" button when the component is already published', async () => {
+    initializeMocks();
+    render(
+      <ComponentInfo />,
+      withLibraryId(mockContentLibrary.libraryId, mockLibraryBlockMetadata.usageKeyPublishDisabled),
+    );
+    const publishButton = await screen.findByRole('button', { name: /Publish component/ });
+    expect(publishButton).toBeDisabled();
+  });
+
+  it('should show a working "Publish" button when the component is not published', async () => {
+    initializeMocks();
+    render(
+      <ComponentInfo />,
+      withLibraryId(mockContentLibrary.libraryId, mockLibraryBlockMetadata.usageKeyNeverPublished),
+    );
+    const publishButton = await screen.findByRole('button', { name: /Publish component/ });
+    await waitFor(() => expect(publishButton).not.toBeDisabled());
+  });
+
+  it('should show toast message when the component is published successfully', async () => {
+    const { axiosMock, mockShowToast } = initializeMocks();
+    const url = getXBlockPublishApiUrl(mockLibraryBlockMetadata.usageKeyNeverPublished);
+    axiosMock.onPost(url).reply(200);
+    render(
+      <ComponentInfo />,
+      withLibraryId(mockContentLibrary.libraryId, mockLibraryBlockMetadata.usageKeyNeverPublished),
+    );
+
+    const publishButton = await screen.findByRole('button', { name: /Publish component/i });
+    publishButton.click();
+
+    await waitFor(() => {
+      expect(mockShowToast).toHaveBeenCalledWith('Component published successfully.');
+    });
+  });
+
+  it('should show toast message when the component fails to be published', async () => {
+    const { axiosMock, mockShowToast } = initializeMocks();
+    const url = getXBlockPublishApiUrl(mockLibraryBlockMetadata.usageKeyNeverPublished);
+    axiosMock.onPost(url).reply(500);
+    render(
+      <ComponentInfo />,
+      withLibraryId(mockContentLibrary.libraryId, mockLibraryBlockMetadata.usageKeyNeverPublished),
+    );
+
+    const publishButton = await screen.findByRole('button', { name: /Publish component/i });
+    publishButton.click();
+
+    await waitFor(() => {
+      expect(mockShowToast).toHaveBeenCalledWith('There was an error publishing the component.');
+    });
   });
 });

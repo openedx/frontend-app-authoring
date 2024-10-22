@@ -315,6 +315,7 @@ export async function mockLibraryBlockMetadata(usageKey: string): Promise<api.Li
     case thisMock.usageKeyNeverPublished: return thisMock.dataNeverPublished;
     case thisMock.usageKeyPublished: return thisMock.dataPublished;
     case thisMock.usageKeyWithCollections: return thisMock.dataWithCollections;
+    case thisMock.usageKeyPublishDisabled: return thisMock.dataPublishDisabled;
     case thisMock.usageKeyThirdPartyXBlock: return thisMock.dataThirdPartyXBlock;
     case thisMock.usageKeyForTags: return thisMock.dataPublished;
     default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
@@ -353,6 +354,12 @@ mockLibraryBlockMetadata.dataPublished = {
   modified: '2024-06-21T13:54:21Z',
   tagsCount: 0,
   collections: [],
+} satisfies api.LibraryBlockMetadata;
+mockLibraryBlockMetadata.usageKeyPublishDisabled = 'lb:Axim:TEST2-disabled:html:571fe018-f3ce-45c9-8f53-5dafcb422fd2';
+mockLibraryBlockMetadata.dataPublishDisabled = {
+  ...mockLibraryBlockMetadata.dataPublished,
+  id: mockLibraryBlockMetadata.usageKeyPublishDisabled,
+  modified: '2024-06-11T13:54:21Z',
 } satisfies api.LibraryBlockMetadata;
 mockLibraryBlockMetadata.usageKeyThirdPartyXBlock = mockXBlockFields.usageKeyThirdParty;
 mockLibraryBlockMetadata.dataThirdPartyXBlock = {
