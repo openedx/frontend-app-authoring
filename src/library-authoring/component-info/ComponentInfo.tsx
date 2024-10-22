@@ -1,11 +1,14 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
-  Form,
   Tab,
   Tabs,
   Stack,
 } from '@openedx/paragon';
+import {
+  CheckBoxIcon,
+  CheckBoxOutlineBlank,
+} from '@openedx/paragon/icons';
 
 import { useLibraryContext } from '../common/context';
 import { ComponentMenu } from '../components';
@@ -46,32 +49,37 @@ const AddComponentWidget = () => {
           onComponentSelected({ usageKey, blockType: getBlockType(usageKey) });
         }}
       >
-        {intl.formatMessage(messages.addComponentToCourse)}
+        {intl.formatMessage(messages.componentPickerSingleSelect)}
       </Button>
     );
   }
 
   if (componentPickerMode === 'multiple') {
-    const handleChange = (event) => {
+    const isChecked = selectedComponents.some((component) => component.usageKey === usageKey);
+    const handleChange = () => {
       const selectedComponent = {
         usageKey,
         blockType: getBlockType(usageKey),
       };
-      if (event.target.checked) {
+      if (!isChecked) {
         addComponentToSelectedComponents(selectedComponent);
       } else {
         removeComponentFromSelectedComponents(selectedComponent);
       }
     };
 
-    const isChecked = selectedComponents.some((component) => component.usageKey === usageKey);
     return (
-      <Form.Checkbox checked={isChecked} onChange={handleChange}>
-        {intl.formatMessage(messages.addComponentToCourse)}
-      </Form.Checkbox>
+      <Button
+        variant="outline-primary"
+        iconBefore={isChecked ? CheckBoxIcon : CheckBoxOutlineBlank}
+        onClick={handleChange}
+      >
+        {intl.formatMessage(messages.componentPickerMultipleSelect)}
+      </Button>
     );
   }
 
+  // istanbul ignore next: this should never happen
   return null;
 };
 

@@ -7,7 +7,12 @@ import {
   Icon,
   IconButton,
 } from '@openedx/paragon';
-import { AddCircleOutline, MoreVert } from '@openedx/paragon/icons';
+import {
+  AddCircleOutline,
+  CheckBoxIcon,
+  CheckBoxOutlineBlank,
+  MoreVert,
+} from '@openedx/paragon/icons';
 
 import { STUDIO_CLIPBOARD_CHANNEL } from '../../constants';
 import { updateClipboard } from '../../generic/data/api';
@@ -89,11 +94,80 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   );
 };
 
+interface AddComponentWidgetProps {
+  usageKey: string;
+  blockType: string;
+}
+
+const AddComponentWidget = ({ usageKey, blockType }: AddComponentWidgetProps) => {
+  const intl = useIntl();
+
+  const {
+    componentPickerMode,
+    onComponentSelected,
+    addComponentToSelectedComponents,
+    removeComponentFromSelectedComponents,
+    selectedComponents,
+  } = useLibraryContext();
+
+  // istanbul ignore if: this should never happen
+  if (!usageKey) {
+    throw new Error('usageKey is required');
+  }
+
+  // istanbul ignore if: this should never happen
+  if (!componentPickerMode) {
+    return null;
+  }
+
+  if (componentPickerMode === 'single') {
+    return (
+      <Button
+        variant="outline-primary"
+        iconBefore={AddCircleOutline}
+        onClick={() => {
+          onComponentSelected({ usageKey, blockType });
+        }}
+      >
+        <FormattedMessage {...messages.componentPickerSingleSelectTitle} />
+      </Button>
+    );
+  }
+
+  if (componentPickerMode === 'multiple') {
+    const isChecked = selectedComponents.some((component) => component.usageKey === usageKey);
+
+    const handleChange = () => {
+      const selectedComponent = {
+        usageKey,
+        blockType,
+      };
+      if (!isChecked) {
+        addComponentToSelectedComponents(selectedComponent);
+      } else {
+        removeComponentFromSelectedComponents(selectedComponent);
+      }
+    };
+
+    return (
+      <Button
+        variant="outline-primary"
+        iconBefore={isChecked ? CheckBoxIcon : CheckBoxOutlineBlank}
+        onClick={handleChange}
+      >
+        {intl.formatMessage(messages.componentPickerMultipleSelectTitle)}
+      </Button>
+    );
+  }
+
+  // istanbul ignore next: this should never happen
+  return null;
+};
+
 const ComponentCard = ({ contentHit }: ComponentCardProps) => {
   const {
     openComponentInfoSidebar,
     componentPickerMode,
-    onComponentSelected,
   } = useLibraryContext();
 
   const {
@@ -109,10 +183,6 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
   ) ?? '';/* eslint-enable */
   const displayName = formatted?.displayName ?? '';
 
-  const handleAddComponentToCourse = () => {
-    onComponentSelected?.({ usageKey, blockType });
-  };
-
   return (
     <BaseComponentCard
       componentType={blockType}
@@ -122,13 +192,7 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
       actions={(
         <ActionRow>
           {componentPickerMode ? (
-            <Button
-              variant="outline-primary"
-              iconBefore={AddCircleOutline}
-              onClick={handleAddComponentToCourse}
-            >
-              <FormattedMessage {...messages.addComponentToCourseButtonTitle} />
-            </Button>
+            <AddComponentWidget usageKey={usageKey} blockType={blockType} />
           ) : (
             <ComponentMenu usageKey={usageKey} />
           )}

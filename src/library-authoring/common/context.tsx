@@ -256,6 +256,7 @@ export const LibraryProvider = ({
     onComponentSelected,
     addComponentToSelectedComponents,
     removeComponentFromSelectedComponents,
+    selectedComponents,
     sidebarBodyComponent,
     closeLibrarySidebar,
     openAddContentSidebar,

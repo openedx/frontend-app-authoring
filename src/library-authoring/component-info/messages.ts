@@ -166,15 +166,15 @@ const messages = defineMessages({
     defaultMessage: 'This component is not organized into any collection.',
     description: 'Message to display in manage collections section when component is not part of any collection.',
   },
-  addComponentToCourse: {
-    id: 'course-authoring.library-authoring.component.add-to-course',
-    defaultMessage: 'Add to Course',
+  componentPickerSingleSelect: {
+    id: 'course-authoring.library-authoring.component-picker.single-select',
+    defaultMessage: 'Add to Course', // TODO: Change this message to a generic one?
     description: 'Button to add component to course',
   },
-  addComponentToCourseError: {
-    id: 'course-authoring.library-authoring.component.add-to-course-error',
-    defaultMessage: 'Failed to add component to course',
-    description: 'Error message when adding component to course fails',
+  componentPickerMultipleSelect: {
+    id: 'course-authoring.library-authoring.component-picker.multiple-select',
+    defaultMessage: 'Select',
+    description: 'Button to select component',
   },
 });
 
