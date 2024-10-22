@@ -130,8 +130,9 @@ export interface ContentHit extends BaseContentHit {
   description?: string;
   content?: ContentDetails;
   lastPublished: number | null;
-  collections: { displayName?: string[], key?: string[] },
-  published?: ContentPublishedData,
+  collections: { displayName?: string[], key?: string[] };
+  published?: ContentPublishedData;
+  formatted: BaseContentHit['formatted'] & { published?: ContentPublishedData, };
 }
 
 /**
@@ -163,6 +164,7 @@ export function formatSearchHit(hit: Record<string, any>): ContentHit | Collecti
     displayName: _formatted?.display_name,
     content: _formatted?.content ?? {},
     description: _formatted?.description,
+    published: _formatted?.published,
   };
   return camelCaseObject(newHit);
 }
@@ -258,10 +260,10 @@ export async function fetchSearchResults({
       ...extraFilterFormatted,
       ...tagsFilterFormatted,
     ],
-    attributesToHighlight: ['display_name', 'content'],
+    attributesToHighlight: ['display_name', 'description', 'published'],
     highlightPreTag: HIGHLIGHT_PRE_TAG,
     highlightPostTag: HIGHLIGHT_POST_TAG,
-    attributesToCrop: ['content'],
+    attributesToCrop: ['description', 'published'],
     sort,
     offset,
     limit,

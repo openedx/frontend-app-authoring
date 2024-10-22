@@ -109,14 +109,12 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
     formatted,
     tags,
     usageKey,
-    description,
-    published,
   } = contentHit;
   const componentDescription: string = (
-    showOnlyPublished ? published?.description : description
+    showOnlyPublished ? formatted.published?.description : formatted.description
   ) ?? '';
   const displayName: string = (
-    showOnlyPublished ? published?.displayName : formatted?.displayName
+    showOnlyPublished ? formatted.published?.displayName : formatted.displayName
   ) ?? '';
 
   const handleAddComponentToCourse = () => {
