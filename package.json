@@ -1,10 +1,10 @@
 {
-  "name": "@edx/frontend-app-course-authoring",
+  "name": "@edx/frontend-app-authoring",
   "version": "0.1.0",
   "description": "Frontend application template",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/openedx/frontend-app-course-authoring.git"
+    "url": "git+https://github.com/openedx/frontend-app-authoring.git"
   },
   "browserslist": [
     "extends @edx/browserslist-config"
@@ -18,7 +18,7 @@
     "snapshot": "TZ=UTC fedx-scripts jest --updateSnapshot",
     "start": "fedx-scripts webpack-dev-server --progress",
     "start:with-theme": "paragon install-theme && npm start && npm install",
-    "dev": "PUBLIC_PATH=/course-authoring/ MFE_CONFIG_API_URL='http://localhost:8000/api/mfe_config/v1' fedx-scripts webpack-dev-server --progress --host apps.local.openedx.io",
+    "dev": "PUBLIC_PATH=/authoring/ MFE_CONFIG_API_URL='http://localhost:8000/api/mfe_config/v1' fedx-scripts webpack-dev-server --progress --host apps.local.openedx.io",
     "test": "TZ=UTC fedx-scripts jest --coverage --passWithNoTests",
     "test:ci": "TZ=UTC fedx-scripts jest --silent --coverage --passWithNoTests",
     "types": "tsc --noEmit"
@@ -30,12 +30,12 @@
   },
   "author": "edX",
   "license": "AGPL-3.0",
-  "homepage": "https://github.com/openedx/frontend-app-course-authoring#readme",
+  "homepage": "https://github.com/openedx/frontend-app-authoring#readme",
   "publishConfig": {
     "access": "public"
   },
   "bugs": {
-    "url": "https://github.com/openedx/frontend-app-course-authoring/issues"
+    "url": "https://github.com/openedx/frontend-app-authoring/issues"
   },
   "dependencies": {
     "@codemirror/lang-html": "^6.0.0",
