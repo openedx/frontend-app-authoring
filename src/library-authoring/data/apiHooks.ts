@@ -6,6 +6,7 @@ import {
   type Query,
   type QueryClient,
 } from '@tanstack/react-query';
+import { useCallback } from 'react';
 
 import { getLibraryId } from '../../generic/key-utils';
 import {
@@ -396,6 +397,14 @@ export const useXBlockAssets = (usageKey: string) => (
     enabled: !!usageKey,
   })
 );
+
+/** Refresh the list of assets (static files) attached to a library component */
+export const useInvalidateXBlockAssets = (usageKey: string) => {
+  const client = useQueryClient();
+  return useCallback(() => {
+    client.invalidateQueries({ queryKey: xblockQueryKeys.xblockAssets(usageKey) });
+  }, [usageKey]);
+};
 
 /**
  * Get the metadata for a collection in a library
