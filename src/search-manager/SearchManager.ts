@@ -111,7 +111,7 @@ export const SearchContextProvider: React.FC<{
 
   let extraFilter: string[] = forceArray(props.extraFilter);
   if (usageKey) {
-    extraFilter.push(`usage_key = "${usageKey}"`);
+    extraFilter = union(extraFilter, [`usage_key = "${usageKey}"`]);
   }
 
   // The search sort order can be set via the query string

@@ -769,7 +769,7 @@ describe('<LibraryAuthoringPage />', () => {
     const { getByText } = within(sidebar);
 
     // should display the component with passed param: usageKey in the sidebar
-    await waitFor(() => expect(getByText(displayName)).toBeInTheDocument());
+    expect(getByText(displayName)).toBeInTheDocument();
     // clear usageKey filter
     const clearFitlersButton = screen.getByRole('button', { name: /clear filters/i });
     fireEvent.click(clearFitlersButton);
