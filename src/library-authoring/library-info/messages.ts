@@ -61,6 +61,21 @@ const messages = defineMessages({
     defaultMessage: 'There was an error updating the library',
     description: 'Message when there is an error when updating the library',
   },
+  discardChangesTitle: {
+    id: 'course-authoring.library-authoring.library.discardChangesTitle',
+    defaultMessage: 'Discard changes',
+    description: 'Title text for confirmation modal shown before discard library changes',
+  },
+  discardChangesDescription: {
+    id: 'course-authoring.library-authoring.library.discardChangesDescription',
+    defaultMessage: 'Are you sure you want to discard all unpublished changes in this library? This will include changes made by other users',
+    description: 'Description text for confirmation modal shown before discard library changes',
+  },
+  discardChangesDefaultBtnLabel: {
+    id: 'course-authoring.library-authoring.library.discardChangesDefaultBtnLabel',
+    defaultMessage: 'Discard',
+    description: 'Button text for confirmation modal shown before discard library changes',
+  },
 });
 
 export default messages;
