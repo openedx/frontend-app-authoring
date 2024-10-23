@@ -46,6 +46,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
     componentPickerModal: ComponentPickerModal,
   } = useLibraryContext();
 
+  // istanbul ignore if: this should never happen
   if (!collectionId || !ComponentPickerModal) {
     throw new Error('libraryId and componentPickerModal are required');
   }
