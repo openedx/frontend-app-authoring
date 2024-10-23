@@ -43,6 +43,7 @@ import {
   updateComponentCollections,
   removeComponentsFromCollection,
   publishXBlock,
+  deleteXBlockAsset,
 } from './api';
 
 export const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
@@ -404,6 +405,19 @@ export const useInvalidateXBlockAssets = (usageKey: string) => {
   return useCallback(() => {
     client.invalidateQueries({ queryKey: xblockQueryKeys.xblockAssets(usageKey) });
   }, [usageKey]);
+};
+
+/**
+ * Use this mutation to delete an asset file from a library
+ */
+export const useDeleteXBlockAsset = (usageKey: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (path: string) => deleteXBlockAsset(usageKey, path),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: xblockQueryKeys.xblockAssets(usageKey) });
+    },
+  });
 };
 
 /**

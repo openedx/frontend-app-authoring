@@ -11,6 +11,16 @@ const messages = defineMessages({
     defaultMessage: 'Assets (Files)',
     description: 'Heading for files attached to the component',
   },
+  advancedDetailsAssetsDeleteFileTitle: {
+    id: 'course-authoring.library-authoring.component.advanced.assets.delete-file-title',
+    defaultMessage: 'Delete File',
+    description: 'Title for confirmation dialog when deleting a file',
+  },
+  advancedDetailsAssetsDeleteButton: {
+    id: 'course-authoring.library-authoring.component.advanced.assets.delete-btn',
+    defaultMessage: 'Delete this file',
+    description: 'screen reader description of the delete button for each static asset file',
+  },
   advancedDetailsOLX: {
     id: 'course-authoring.library-authoring.component.advanced.olx',
     defaultMessage: 'OLX Source',
