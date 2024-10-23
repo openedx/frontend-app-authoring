@@ -1,8 +1,15 @@
 import React from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { getConfig } from '@edx/frontend-platform';
+import { useIntl } from '@edx/frontend-platform/i18n';
+import { Button, Hyperlink } from '@openedx/paragon';
+import { Warning as WarningIcon } from '@openedx/paragon/icons';
 
 import EditorPage from './EditorPage';
+import AlertMessage from '../generic/alert-message';
+import messages from './messages';
+import { getLibraryId } from '../generic/key-utils';
+import { createCorrectInternalRoute } from '../utils';
 
 interface Props {
   /** Course ID or Library ID */
@@ -25,15 +32,46 @@ const EditorContainer: React.FC<Props> = ({
   onClose,
   returnFunction,
 }) => {
+  const intl = useIntl();
   const { blockType, blockId } = useParams();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const upstreamLibRef = searchParams.get('upstreamLibRef');
 
   if (blockType === undefined || blockId === undefined) {
     // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
     return <div>Error: missing URL parameters</div>;
   }
+
+  const getLibraryBlockUrl = () => {
+    if (!upstreamLibRef) {
+      return '';
+    }
+    const libId = getLibraryId(upstreamLibRef);
+    return createCorrectInternalRoute(`/library/${libId}/components?usageKey=${upstreamLibRef}`);
+  };
+
   return (
     <div className="editor-page">
+      <AlertMessage
+        className="m-3"
+        show={upstreamLibRef}
+        variant="warning"
+        icon={WarningIcon}
+        title={intl.formatMessage(messages.libraryBlockEditWarningTitle)}
+        description={intl.formatMessage(messages.libraryBlockEditWarningDescription)}
+        actions={[
+          <Button
+            destination={getLibraryBlockUrl()}
+            target="_blank"
+            rel="noopener noreferrer"
+            showLaunchIcon
+            as={Hyperlink}
+          >
+            {intl.formatMessage(messages.libraryBlockEditWarningLink)}
+          </Button>,
+        ]}
+      />
       <EditorPage
         courseId={learningContextId}
         blockType={blockType}
