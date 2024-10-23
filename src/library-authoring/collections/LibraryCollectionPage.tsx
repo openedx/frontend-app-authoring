@@ -29,7 +29,6 @@ import {
 import { useCollection, useContentLibrary } from '../data/apiHooks';
 import { useLibraryContext } from '../common/context';
 import messages from './messages';
-// eslint-disable-next-line import/no-cycle
 import { LibrarySidebar } from '../library-sidebar';
 import LibraryCollectionComponents from './LibraryCollectionComponents';
 

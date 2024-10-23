@@ -2,7 +2,6 @@ import React from 'react';
 import { StandardModal } from '@openedx/paragon';
 
 import type { ComponentSelectionChangedEvent } from '../common/context';
-// eslint-disable-next-line import/no-cycle
 import { ComponentPicker } from './ComponentPicker';
 
 interface ComponentPickerModalProps {

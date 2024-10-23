@@ -6,6 +6,7 @@ import React, {
   useState,
 } from 'react';
 
+import type { ComponentPickerModal } from '../component-picker';
 import type { ContentLibrary } from '../data/api';
 import { useContentLibrary } from '../data/apiHooks';
 
@@ -24,6 +25,11 @@ type NoComponentPickerType = {
   addComponentToSelectedComponents?: never;
   removeComponentFromSelectedComponents?: never;
   restrictToLibrary?: never;
+  /** The component picker modal to use. We need to pass it as a reference instead of
+   * directly importing it to avoid the import cycle:
+   * ComponentPickerModal > ComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
+   * Sidebar > AddContentContainer > ComponentPickerModal */
+  componentPickerModal?: typeof ComponentPickerModal;
 };
 
 type ComponentPickerSingleType = {
@@ -33,6 +39,7 @@ type ComponentPickerSingleType = {
   addComponentToSelectedComponents?: never;
   removeComponentFromSelectedComponents?: never;
   restrictToLibrary: boolean;
+  componentPickerModal?: never;
 };
 
 type ComponentPickerMultipleType = {
@@ -42,6 +49,7 @@ type ComponentPickerMultipleType = {
   addComponentToSelectedComponents: ComponentSelectedEvent;
   removeComponentFromSelectedComponents: ComponentSelectedEvent;
   restrictToLibrary: boolean;
+  componentPickerModal?: never;
 };
 
 type ComponentPickerType = NoComponentPickerType | ComponentPickerSingleType | ComponentPickerMultipleType;
@@ -113,6 +121,7 @@ type NoComponentPickerProps = {
   onComponentSelected?: never;
   onChangeComponentSelection?: never;
   restrictToLibrary?: never;
+  componentPickerModal?: typeof ComponentPickerModal;
 };
 
 export type ComponentPickerSingleProps = {
@@ -120,6 +129,7 @@ export type ComponentPickerSingleProps = {
   onComponentSelected: ComponentSelectedEvent;
   onChangeComponentSelection?: never;
   restrictToLibrary?: boolean;
+  componentPickerModal?: never;
 };
 
 export type ComponentPickerMultipleProps = {
@@ -127,6 +137,7 @@ export type ComponentPickerMultipleProps = {
   onComponentSelected?: never;
   onChangeComponentSelection?: ComponentSelectionChangedEvent;
   restrictToLibrary?: boolean;
+  componentPickerModal?: never;
 };
 
 type ComponentPickerProps = NoComponentPickerProps | ComponentPickerSingleProps | ComponentPickerMultipleProps;
@@ -139,6 +150,7 @@ type LibraryProviderProps = {
   showOnlyPublished?: boolean;
   /** Only used for testing */
   initialSidebarComponentInfo?: SidebarComponentInfo;
+  componentPickerModal?: typeof ComponentPickerModal;
 } & ComponentPickerProps;
 
 /**
@@ -154,6 +166,7 @@ export const LibraryProvider = ({
   onChangeComponentSelection,
   showOnlyPublished = false,
   initialSidebarComponentInfo,
+  componentPickerModal,
 }: LibraryProviderProps) => {
   const [collectionId, setCollectionId] = useState(collectionIdProp);
   const [sidebarComponentInfo, setSidebarComponentInfo] = useState<SidebarComponentInfo | undefined>(
@@ -260,6 +273,12 @@ export const LibraryProvider = ({
       closeComponentEditor,
       resetSidebarAdditionalActions,
     };
+    if (!componentPickerMode) {
+      return {
+        ...contextValue,
+        componentPickerModal,
+      };
+    }
     if (componentPickerMode === 'single') {
       return {
         ...contextValue,
@@ -310,6 +329,7 @@ export const LibraryProvider = ({
     openComponentEditor,
     closeComponentEditor,
     resetSidebarAdditionalActions,
+    componentPickerModal,
   ]);
 
   return (

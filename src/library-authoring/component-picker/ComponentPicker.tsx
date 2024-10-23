@@ -1,19 +1,16 @@
-import React, { Suspense, useState } from 'react';
+import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Stepper } from '@openedx/paragon';
 
-import Loading from '../../generic/Loading';
 import {
   type ComponentSelectedEvent,
   type ComponentSelectionChangedEvent,
   LibraryProvider,
   useLibraryContext,
 } from '../common/context';
+import LibraryAuthoringPage from '../LibraryAuthoringPage';
+import LibraryCollectionPage from '../collections/LibraryCollectionPage';
 import SelectLibrary from './SelectLibrary';
-
-// eslint-disable-next-line import/no-cycle
-const LibraryAuthoringPage = React.lazy(() => import('../LibraryAuthoringPage'));
-const LibraryCollectionPage = React.lazy(() => import('../collections/LibraryCollectionPage'));
 
 interface LibraryComponentPickerProps {
   returnToLibrarySelection: () => void;
@@ -23,17 +20,9 @@ const InnerComponentPicker: React.FC<LibraryComponentPickerProps> = ({ returnToL
   const { collectionId } = useLibraryContext();
 
   if (collectionId) {
-    return (
-      <Suspense fallback={<Loading />}>
-        <LibraryCollectionPage />;
-      </Suspense>
-    );
+    <LibraryCollectionPage />;
   }
-  return (
-    <Suspense fallback={<Loading />}>
-      <LibraryAuthoringPage returnToLibrarySelection={returnToLibrarySelection} />;
-    </Suspense>
-  );
+  return <LibraryAuthoringPage returnToLibrarySelection={returnToLibrarySelection} />;
 };
 
 /** Default handler in single-select mode. Used by the legacy UI for adding a single selected component to a course. */

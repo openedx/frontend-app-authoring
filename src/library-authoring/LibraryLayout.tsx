@@ -10,6 +10,7 @@ import { LibraryProvider } from './common/context';
 import { CreateCollectionModal } from './create-collection';
 import { LibraryTeamModal } from './library-team';
 import LibraryCollectionPage from './collections/LibraryCollectionPage';
+import { ComponentPickerModal } from './component-picker';
 import { ComponentEditorModal } from './components/ComponentEditorModal';
 
 const LibraryLayout = () => {
@@ -25,7 +26,16 @@ const LibraryLayout = () => {
   }
 
   return (
-    <LibraryProvider key={collectionId} libraryId={libraryId} collectionId={collectionId}>
+    <LibraryProvider
+      key={collectionId}
+      libraryId={libraryId}
+      collectionId={collectionId}
+      /** The component picker modal to use. We need to pass it as a reference instead of
+       * directly importing it to avoid the import cycle:
+       * ComponentPickerModal > ComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
+       * Sidebar > AddContentContainer > ComponentPickerModal */
+      componentPickerModal={ComponentPickerModal}
+    >
       <Routes>
         <Route
           path="collection/:collectionId"

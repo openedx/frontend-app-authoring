@@ -1,12 +1,9 @@
 import React, { useCallback, useContext, useState } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { ActionRow, Button } from '@openedx/paragon';
-import { useParams } from 'react-router-dom';
 
 import { ToastContext } from '../../generic/toast-context';
 import { type SelectedComponent, useLibraryContext } from '../common/context';
-// eslint-disable-next-line import/no-cycle
-import { ComponentPickerModal } from '../component-picker';
 import { useAddComponentsToCollection } from '../data/apiHooks';
 import messages from './messages';
 
@@ -40,10 +37,18 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
 }) => {
   const intl = useIntl();
 
-  const { collectionId } = useParams();
   const {
     libraryId,
+    collectionId,
+    /** We need to get it as a reference instead of directly importing it to avoid the import cycle:
+     * ComponentPickerModal > ComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
+     * Sidebar > AddContentContainer > ComponentPickerModal */
+    componentPickerModal: ComponentPickerModal,
   } = useLibraryContext();
+
+  if (!collectionId || !ComponentPickerModal) {
+    throw new Error('libraryId and componentPickerModal are required');
+  }
 
   const updateComponentsMutation = useAddComponentsToCollection(libraryId, collectionId);
 

@@ -19,7 +19,6 @@ import {
   ContentPaste,
 } from '@openedx/paragon/icons';
 import { v4 as uuid4 } from 'uuid';
-import { useParams } from 'react-router-dom';
 
 import { ToastContext } from '../../generic/toast-context';
 import { useCopyToClipboard } from '../../generic/clipboard';
@@ -27,7 +26,6 @@ import { getCanEdit } from '../../course-unit/data/selectors';
 import { useCreateLibraryBlock, useLibraryPasteClipboard, useAddComponentsToCollection } from '../data/apiHooks';
 import { useLibraryContext } from '../common/context';
 import { canEditComponent } from '../components/ComponentEditorModal';
-// eslint-disable-next-line import/no-cycle
 import { PickLibraryContentModal } from './PickLibraryContentModal';
 
 import messages from './messages';
@@ -66,11 +64,12 @@ const AddContentButton = ({ contentType, onCreateContent } : AddContentButtonPro
 
 const AddContentContainer = () => {
   const intl = useIntl();
-  const { collectionId } = useParams();
   const {
     libraryId,
+    collectionId,
     openCreateCollectionModal,
     openComponentEditor,
+    componentPickerModal,
   } = useLibraryContext();
   const createBlockMutation = useCreateLibraryBlock();
   const updateComponentsMutation = useAddComponentsToCollection(libraryId, collectionId);
@@ -214,13 +213,15 @@ const AddContentContainer = () => {
   return (
     <Stack direction="vertical">
       {collectionId ? (
-        <>
-          <AddContentButton contentType={libraryContentButtonData} onCreateContent={onCreateContent} />
-          <PickLibraryContentModal
-            isOpen={isAddLibraryContentModalOpen}
-            onClose={closeAddLibraryContentModal}
-          />
-        </>
+        componentPickerModal && (
+          <>
+            <AddContentButton contentType={libraryContentButtonData} onCreateContent={onCreateContent} />
+            <PickLibraryContentModal
+              isOpen={isAddLibraryContentModalOpen}
+              onClose={closeAddLibraryContentModal}
+            />
+          </>
+        )
       ) : (
         <AddContentButton contentType={collectionButtonData} onCreateContent={onCreateContent} />
       )}

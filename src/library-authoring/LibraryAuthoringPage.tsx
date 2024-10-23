@@ -36,7 +36,6 @@ import {
 import LibraryComponents from './components/LibraryComponents';
 import LibraryCollections from './collections/LibraryCollections';
 import LibraryHome from './LibraryHome';
-// eslint-disable-next-line import/no-cycle
 import { LibrarySidebar } from './library-sidebar';
 import { SidebarBodyComponentId, useLibraryContext } from './common/context';
 import messages from './messages';
