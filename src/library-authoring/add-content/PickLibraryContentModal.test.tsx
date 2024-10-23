@@ -8,6 +8,7 @@ import {
 } from '../../testUtils';
 import mockResult from '../__mocks__/library-search.json';
 import { LibraryProvider } from '../common/context';
+import * as api from '../data/api';
 import {
   mockContentLibrary,
   mockGetCollectionMetadata,
@@ -25,10 +26,7 @@ const { libraryId } = mockContentLibrary;
 const onClose = jest.fn();
 const mockAddComponentsToCollection = jest.fn();
 
-jest.mock('../data/api', () => ({
-  ...jest.requireActual('../data/api'),
-  addComponentsToCollection: mockAddComponentsToCollection,
-}));
+jest.spyOn(api, 'addComponentsToCollection').mockImplementation(mockAddComponentsToCollection);
 
 const render = () => baseRender(<PickLibraryContentModal isOpen onClose={onClose} />, {
   path: '/library/:libraryId/collection/:collectionId/*',
