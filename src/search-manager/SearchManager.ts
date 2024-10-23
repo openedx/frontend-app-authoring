@@ -10,7 +10,12 @@ import { MeiliSearch, type Filter } from 'meilisearch';
 import { union } from 'lodash';
 
 import {
-  CollectionHit, ContentHit, SearchSortOption, forceArray, OverrideQueries,
+  CollectionHit,
+  ContentHit,
+  SearchSortOption,
+  forceArray,
+  OverrideQueries,
+  type PublishStatus,
 } from './data/api';
 import { useContentSearchConnection, useContentSearchResults } from './data/apiHooks';
 
@@ -23,6 +28,8 @@ export interface SearchContextData {
   setBlockTypesFilter: React.Dispatch<React.SetStateAction<string[]>>;
   problemTypesFilter: string[];
   setProblemTypesFilter: React.Dispatch<React.SetStateAction<string[]>>;
+  publishedFilter: PublishStatus[];
+  setPublishedFilter: React.Dispatch<React.SetStateAction<PublishStatus[]>>;
   tagsFilter: string[];
   setTagsFilter: React.Dispatch<React.SetStateAction<string[]>>;
   blockTypes: Record<string, number>;
@@ -100,6 +107,7 @@ export const SearchContextProvider: React.FC<{
   const [searchKeywords, setSearchKeywords] = React.useState('');
   const [blockTypesFilter, setBlockTypesFilter] = React.useState<string[]>([]);
   const [problemTypesFilter, setProblemTypesFilter] = React.useState<string[]>([]);
+  const [publishedFilter, setPublishedFilter] = React.useState<PublishStatus[]>([]);
   const [tagsFilter, setTagsFilter] = React.useState<string[]>([]);
   let extraFilter: string[] = forceArray(props.extraFilter);
 
@@ -150,6 +158,7 @@ export const SearchContextProvider: React.FC<{
     searchKeywords,
     blockTypesFilter,
     problemTypesFilter,
+    publishedFilter,
     tagsFilter,
     sort,
     overrideQueries,
@@ -165,6 +174,8 @@ export const SearchContextProvider: React.FC<{
       setBlockTypesFilter,
       problemTypesFilter,
       setProblemTypesFilter,
+      publishedFilter,
+      setPublishedFilter,
       tagsFilter,
       setTagsFilter,
       extraFilter,

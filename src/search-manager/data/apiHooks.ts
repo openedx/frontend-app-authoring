@@ -12,6 +12,7 @@ import {
   fetchDocumentById,
   fetchBlockTypes,
   OverrideQueries,
+  type PublishStatus,
 } from './api';
 
 /**
@@ -55,6 +56,7 @@ export const useContentSearchResults = ({
   searchKeywords,
   blockTypesFilter = [],
   problemTypesFilter = [],
+  publishedFilter = [],
   tagsFilter = [],
   sort = [],
   overrideQueries,
@@ -71,6 +73,7 @@ export const useContentSearchResults = ({
   blockTypesFilter?: string[];
   /** Only search for these problem types (e.g. `["choiceresponse", "multiplechoiceresponse"]`) */
   problemTypesFilter?: string[];
+  publishedFilter?: PublishStatus[];
   /** Required tags (all must match), e.g. `["Difficulty > Hard", "Subject > Math"]` */
   tagsFilter?: string[];
   /** Sort search results using these options */
@@ -90,6 +93,7 @@ export const useContentSearchResults = ({
       searchKeywords,
       blockTypesFilter,
       problemTypesFilter,
+      publishedFilter,
       tagsFilter,
       sort,
       overrideQueries,
@@ -105,6 +109,7 @@ export const useContentSearchResults = ({
         searchKeywords,
         blockTypesFilter,
         problemTypesFilter,
+        publishedFilter,
         tagsFilter,
         sort,
         // For infinite pagination of results, we can retrieve additional pages if requested.

@@ -189,6 +189,8 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
     formatted,
     tags,
     usageKey,
+    modified,
+    lastPublished,
   } = contentHit;
   const componentDescription: string = (
     showOnlyPublished ? formatted.published?.description : formatted.description
@@ -213,6 +215,7 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
         </ActionRow>
       )}
       openInfoSidebar={() => openComponentInfoSidebar(usageKey)}
+      hasUnpublishedChanges={modified >= (lastPublished ?? 0)}
     />
   );
 };
