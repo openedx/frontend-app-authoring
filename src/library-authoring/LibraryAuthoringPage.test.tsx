@@ -486,7 +486,7 @@ describe('<LibraryAuthoringPage />', () => {
     await renderLibraryPage();
 
     // Open menu
-    fireEvent.click(screen.getAllByTestId('component-card-menu-toggle')[0]);
+    fireEvent.click((await screen.findAllByTestId('component-card-menu-toggle'))[0]);
     // Click add to collection
     fireEvent.click(screen.getByRole('button', { name: 'Add to collection' }));
 
