@@ -485,6 +485,8 @@ describe('<LibraryAuthoringPage />', () => {
     expect(mockResult0.display_name).toStrictEqual(displayName);
     await renderLibraryPage();
 
+    waitFor(() => expect(screen.queryAllByText(displayName).length).toBeGreaterThan(0));
+
     // Open menu
     fireEvent.click(screen.getAllByTestId('component-card-menu-toggle')[0]);
     // Click add to collection
