@@ -41,6 +41,8 @@ export const ComponentAdvancedAssets: React.FC<Record<never, never>> = () => {
     // about to overwite an existing file by uploading a file with the same
     // name as an existing file. That is a workflow we want to support, but only
     // if it's intentional.
+    // Note: we follow the convention that files meant to be seen/downloaded by
+    // learners should be prefixed with 'static/'
     const uploadUrl = `${getXBlockAssetsApiUrl(usageKey)}static/${encodeURI(file.name)}`;
     const client = getAuthenticatedHttpClient();
     try {
