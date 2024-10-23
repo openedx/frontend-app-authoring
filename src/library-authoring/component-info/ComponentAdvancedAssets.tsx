@@ -37,7 +37,10 @@ export const ComponentAdvancedAssets: React.FC<Record<never, never>> = () => {
     const uploadData = new FormData();
     const file = fileData.get('file') as File;
     uploadData.set('content', file); // Paragon calls this 'file' but our API needs it called 'content'
-    // TODO: make the filename unique if is already exists in assets list, to avoid overwriting.
+    // TODO: We may wish to warn the user (and prompt to confirm?) if they are
+    // about to overwite an existing file by uploading a file with the same
+    // name as an existing file. That is a workflow we want to support, but only
+    // if it's intentional.
     const uploadUrl = `${getXBlockAssetsApiUrl(usageKey)}static/${encodeURI(file.name)}`;
     const client = getAuthenticatedHttpClient();
     try {
