@@ -8,10 +8,11 @@ import {
   LibraryProvider,
   useLibraryContext,
 } from '../common/context';
-// eslint-disable-next-line import/no-cycle
-import LibraryAuthoringPage from '../LibraryAuthoringPage';
-import LibraryCollectionPage from '../collections/LibraryCollectionPage';
 import SelectLibrary from './SelectLibrary';
+
+// eslint-disable-next-line import/no-cycle
+const LibraryAuthoringPage = React.lazy(() => import('../LibraryAuthoringPage'));
+const LibraryCollectionPage = React.lazy(() => import('../collections/LibraryCollectionPage'));
 
 interface LibraryComponentPickerProps {
   returnToLibrarySelection: () => void;
