@@ -20,7 +20,7 @@ const InnerComponentPicker: React.FC<LibraryComponentPickerProps> = ({ returnToL
   const { collectionId } = useLibraryContext();
 
   if (collectionId) {
-    <LibraryCollectionPage />;
+    return <LibraryCollectionPage />;
   }
   return <LibraryAuthoringPage returnToLibrarySelection={returnToLibrarySelection} />;
 };
