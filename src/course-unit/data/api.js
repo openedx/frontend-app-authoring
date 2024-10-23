@@ -135,6 +135,35 @@ export async function deleteUnitItem(itemId) {
 }
 
 /**
+ * Duplicate a unit item.
+ * @param {string} itemId
+ * @param {string} XBlockId
+ * @returns {Promise<Object>}
+ */
+export async function duplicateUnitItem(itemId, XBlockId) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(postXBlockBaseApiUrl(), {
+      parent_locator: itemId,
+      duplicate_source_locator: XBlockId,
+    });
+
+  return data;
+}
+
+/**
+ * Sets the order list of XBlocks.
+ * @param {string} blockId - The identifier of the course unit.
+ * @param {Object[]} children - The array of child elements representing the updated order of XBlocks.
+ * @returns {Promise<Object>} - A promise that resolves to the updated data after setting the XBlock order.
+ */
+export async function setXBlockOrderList(blockId, children) {
+  const { data } = await getAuthenticatedHttpClient()
+    .put(getXBlockBaseApiUrl(blockId), { children });
+
+  return data;
+}
+
+/**
  * Get an object containing course outline data.
  * @param {string} courseId - The identifier of the course.
  * @returns {Promise<Object>}

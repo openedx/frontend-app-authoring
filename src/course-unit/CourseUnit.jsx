@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -50,6 +50,7 @@ const CourseUnit = ({ courseId }) => {
     isTitleEditFormOpen,
     staticFileNotices,
     currentlyVisibleToStudents,
+    unitXBlockActions,
     sharedClipboardData,
     showPasteXBlock,
     showPasteUnit,
@@ -58,6 +59,8 @@ const CourseUnit = ({ courseId }) => {
     handleTitleEdit,
     handleCreateNewCourseXBlock,
     handleConfigureSubmit,
+    courseVerticalChildren,
+    handleXBlockDragAndDrop,
     canPasteComponent,
     isMoveModalOpen,
     openMoveModal,
@@ -67,10 +70,17 @@ const CourseUnit = ({ courseId }) => {
     handleCloseXBlockMovedAlert,
     handleNavigateToTargetUnit,
   } = useCourseUnit({ courseId, blockId });
+  const initialXBlocksData = useMemo(() => courseVerticalChildren.children ?? [], [courseVerticalChildren.children]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [unitXBlocks, setUnitXBlocks] = useState(initialXBlocksData);
 
   useEffect(() => {
     document.title = getPageHeadTitle('', unitTitle);
   }, [unitTitle]);
+
+  useEffect(() => {
+    setUnitXBlocks(courseVerticalChildren.children);
+  }, [courseVerticalChildren.children]);
 
   const {
     isShow: isShowProcessingNotification,
@@ -88,6 +98,12 @@ const CourseUnit = ({ courseId }) => {
       </Container>
     );
   }
+
+  const finalizeXBlockOrder = () => (newXBlocks) => {
+    handleXBlockDragAndDrop(newXBlocks.map(xBlock => xBlock.id), () => {
+      setUnitXBlocks(initialXBlocksData);
+    });
+  };
 
   return (
     <>
@@ -176,7 +192,13 @@ const CourseUnit = ({ courseId }) => {
                   courseId={courseId}
                 />
               )}
-              <XBlockContainerIframe blockId={blockId} />
+              <XBlockContainerIframe
+                blockId={blockId}
+                unitXBlockActions={unitXBlockActions}
+                xblocks={courseVerticalChildren.children}
+                handleConfigureSubmit={handleConfigureSubmit}
+                finalizeXBlockOrder={finalizeXBlockOrder}
+              />
               <AddComponent
                 blockId={blockId}
                 handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}

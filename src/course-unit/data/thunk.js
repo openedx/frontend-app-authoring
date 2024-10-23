@@ -17,6 +17,8 @@ import {
   getCourseVerticalChildren,
   handleCourseUnitVisibilityAndData,
   deleteUnitItem,
+  duplicateUnitItem,
+  setXBlockOrderList,
   getCourseOutlineInfo,
   patchUnitItem,
 } from './api';
@@ -46,6 +48,7 @@ export function fetchCourseUnitQuery(courseId) {
 
     try {
       const courseUnit = await getCourseUnitData(courseId);
+      console.log('courseUnit =========>', courseUnit);
       dispatch(fetchCourseItemSuccess(courseUnit));
       dispatch(updateLoadingCourseUnitStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
@@ -206,7 +209,6 @@ export function fetchCourseVerticalChildrenData(itemId) {
   };
 }
 
-// TODO: use for xblock delete functionality
 export function deleteUnitItemQuery(itemId, xblockId) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
@@ -223,6 +225,47 @@ export function deleteUnitItemQuery(itemId, xblockId) {
     } catch (error) {
       dispatch(hideProcessingNotification());
       handleResponseErrors(error, dispatch, updateSavingStatus);
+    }
+  };
+}
+
+export function duplicateUnitItemQuery(itemId, xblockId) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.duplicating));
+
+    try {
+      await duplicateUnitItem(itemId, xblockId);
+      const courseUnit = await getCourseUnitData(itemId);
+      dispatch(fetchCourseItemSuccess(courseUnit));
+      dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
+      dispatch(hideProcessingNotification());
+      handleResponseErrors(error, dispatch, updateSavingStatus);
+    }
+  };
+}
+
+export function setXBlockOrderListQuery(blockId, xblockListIds, restoreCallback) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+
+    try {
+      await setXBlockOrderList(blockId, xblockListIds).then(async (result) => {
+        if (result) {
+          // dispatch(reorderXBlockList(xblockListIds));
+          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+          const courseUnit = await getCourseUnitData(blockId);
+          dispatch(fetchCourseItemSuccess(courseUnit));
+        }
+      });
+    } catch (error) {
+      restoreCallback();
+      handleResponseErrors(error, dispatch, updateSavingStatus);
+    } finally {
+      dispatch(hideProcessingNotification());
     }
   };
 }
