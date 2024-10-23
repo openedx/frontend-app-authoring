@@ -161,6 +161,8 @@ describe('<LibraryInfo />', () => {
 
     const discardButton = screen.getByRole('button', { name: /discard changes/i });
     fireEvent.click(discardButton);
+    const confirmBtn = screen.getByRole('button', { name: /discard/i });
+    fireEvent.click(confirmBtn);
 
     await waitFor(() => {
       expect(axiosMock.history.delete[0].url).toEqual(url);
@@ -177,6 +179,8 @@ describe('<LibraryInfo />', () => {
 
     const discardButton = screen.getByRole('button', { name: /discard changes/i });
     fireEvent.click(discardButton);
+    const confirmBtn = screen.getByRole('button', { name: /discard/i });
+    fireEvent.click(confirmBtn);
 
     await waitFor(() => {
       expect(axiosMock.history.delete[0].url).toEqual(url);

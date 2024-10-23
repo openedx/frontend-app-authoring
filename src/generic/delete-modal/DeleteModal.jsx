@@ -18,11 +18,15 @@ const DeleteModal = ({
   description,
   variant,
   btnState,
+  btnDefaultLabel,
+  btnPendingLabel,
 }) => {
   const intl = useIntl();
 
   const modalTitle = title || intl.formatMessage(messages.title, { category });
   const modalDescription = description || intl.formatMessage(messages.description, { category });
+  const defaultBtnLabel = btnDefaultLabel || intl.formatMessage(messages.deleteButton);
+  const pendingBtnLabel = btnPendingLabel || intl.formatMessage(messages.pendingDeleteButton);
 
   return (
     <AlertModal
@@ -51,8 +55,8 @@ const DeleteModal = ({
               onDeleteSubmit();
             }}
             labels={{
-              default: intl.formatMessage(messages.deleteButton),
-              pending: intl.formatMessage(messages.pendingDeleteButton),
+              default: defaultBtnLabel,
+              pending: pendingBtnLabel,
             }}
           />
         </ActionRow>
@@ -69,6 +73,8 @@ DeleteModal.defaultProps = {
   description: '',
   variant: 'default',
   btnState: 'default',
+  btnDefaultLabel: '',
+  btnPendingLabel: '',
 };
 
 DeleteModal.propTypes = {
@@ -80,6 +86,8 @@ DeleteModal.propTypes = {
   description: PropTypes.string,
   variant: PropTypes.string,
   btnState: PropTypes.string,
+  btnDefaultLabel: PropTypes.string,
+  btnPendingLabel: PropTypes.string,
 };
 
 export default DeleteModal;
