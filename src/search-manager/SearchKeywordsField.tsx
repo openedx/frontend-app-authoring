@@ -9,7 +9,9 @@ import { useSearchContext } from './SearchManager';
  */
 const SearchKeywordsField: React.FC<{ className?: string, placeholder?: string }> = (props) => {
   const intl = useIntl();
-  const { searchKeywords, setSearchKeywords } = useSearchContext();
+  const { searchKeywords, setSearchKeywords, usageKey } = useSearchContext();
+  const defaultPlaceholder = usageKey ? messages.clearUsageKeyToSearch : messages.inputPlaceholder;
+  const { placeholder = intl.formatMessage(defaultPlaceholder) } = props;
 
   return (
     <SearchField.Advanced
@@ -18,13 +20,12 @@ const SearchKeywordsField: React.FC<{ className?: string, placeholder?: string }
       onClear={() => setSearchKeywords('')}
       value={searchKeywords}
       className={props.className}
+      disabled={!!usageKey}
     >
       <SearchField.Label />
       <SearchField.Input
         autoFocus
-        placeholder={props.placeholder ? props.placeholder : intl.formatMessage(
-          messages.inputPlaceholder,
-        )}
+        placeholder={placeholder}
       />
       <SearchField.ClearButton />
       <SearchField.SubmitButton />
