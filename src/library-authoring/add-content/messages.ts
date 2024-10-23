@@ -18,7 +18,7 @@ const messages = defineMessages({
   },
   selectedComponents: {
     id: 'course-authoring.library-authoring.add-content.selected-components',
-    defaultMessage: '{count} Selected Component(s)',
+    defaultMessage: '{count, plural, one {# Selected Component} other {# Selected Components}}',
     description: 'Title for selected components in library.',
   },
   textTypeButton: {
