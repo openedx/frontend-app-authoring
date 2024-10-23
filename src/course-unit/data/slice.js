@@ -28,7 +28,7 @@ const slice = createSlice({
       title: '',
       sourceLocator: '',
       targetParentLocator: '',
-    }
+    },
   },
   reducers: {
     fetchCourseItemSuccess: (state, { payload }) => {

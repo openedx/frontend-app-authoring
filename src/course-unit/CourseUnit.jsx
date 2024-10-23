@@ -50,6 +50,7 @@ const CourseUnit = ({ courseId }) => {
     isTitleEditFormOpen,
     staticFileNotices,
     currentlyVisibleToStudents,
+    unitXBlockActions,
     sharedClipboardData,
     showPasteXBlock,
     showPasteUnit,
@@ -58,6 +59,7 @@ const CourseUnit = ({ courseId }) => {
     handleTitleEdit,
     handleCreateNewCourseXBlock,
     handleConfigureSubmit,
+    courseVerticalChildren,
     canPasteComponent,
     isMoveModalOpen,
     openMoveModal,
@@ -176,7 +178,13 @@ const CourseUnit = ({ courseId }) => {
                   courseId={courseId}
                 />
               )}
-              <XBlockContainerIframe blockId={blockId} />
+              <XBlockContainerIframe
+                courseId={courseId}
+                blockId={blockId}
+                unitXBlockActions={unitXBlockActions}
+                xblocks={courseVerticalChildren.children}
+                handleConfigureSubmit={handleConfigureSubmit}
+              />
               <AddComponent
                 blockId={blockId}
                 handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}

@@ -135,6 +135,22 @@ export async function deleteUnitItem(itemId) {
 }
 
 /**
+ * Duplicate a unit item.
+ * @param {string} itemId
+ * @param {string} XBlockId
+ * @returns {Promise<Object>}
+ */
+export async function duplicateUnitItem(itemId, XBlockId) {
+  const { data } = await getAuthenticatedHttpClient()
+    .post(postXBlockBaseApiUrl(), {
+      parent_locator: itemId,
+      duplicate_source_locator: XBlockId,
+    });
+
+  return data;
+}
+
+/**
  * Get an object containing course outline data.
  * @param {string} courseId - The identifier of the course.
  * @returns {Promise<Object>}

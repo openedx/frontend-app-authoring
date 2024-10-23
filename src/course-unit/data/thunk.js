@@ -17,6 +17,7 @@ import {
   getCourseVerticalChildren,
   handleCourseUnitVisibilityAndData,
   deleteUnitItem,
+  duplicateUnitItem,
   getCourseOutlineInfo,
   patchUnitItem,
 } from './api';
@@ -206,7 +207,6 @@ export function fetchCourseVerticalChildrenData(itemId) {
   };
 }
 
-// TODO: use for xblock delete functionality
 export function deleteUnitItemQuery(itemId, xblockId) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
@@ -216,6 +216,24 @@ export function deleteUnitItemQuery(itemId, xblockId) {
       await deleteUnitItem(xblockId);
       const { userClipboard } = await getCourseSectionVerticalData(itemId);
       dispatch(updateClipboardData(userClipboard));
+      const courseUnit = await getCourseUnitData(itemId);
+      dispatch(fetchCourseItemSuccess(courseUnit));
+      dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
+      dispatch(hideProcessingNotification());
+      handleResponseErrors(error, dispatch, updateSavingStatus);
+    }
+  };
+}
+
+export function duplicateUnitItemQuery(itemId, xblockId) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.duplicating));
+
+    try {
+      await duplicateUnitItem(itemId, xblockId);
       const courseUnit = await getCourseUnitData(itemId);
       dispatch(fetchCourseItemSuccess(courseUnit));
       dispatch(hideProcessingNotification());

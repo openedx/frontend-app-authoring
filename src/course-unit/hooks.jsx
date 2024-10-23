@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useToggle } from '@openedx/paragon';
@@ -13,6 +13,7 @@ import {
   fetchCourseSectionVerticalData,
   fetchCourseVerticalChildrenData,
   deleteUnitItemQuery,
+  duplicateUnitItemQuery,
   editCourseUnitVisibilityAndData,
   getCourseOutlineInfoQuery,
   patchUnitItemQuery,
@@ -37,7 +38,6 @@ import {
 } from './data/slice';
 import { useIframe } from './context/hooks';
 import { messageTypes, PUBLISH_TYPES } from './constants';
-
 
 // eslint-disable-next-line import/prefer-default-export
 export const useCourseUnit = ({ courseId, blockId }) => {
@@ -112,14 +112,18 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   );
 
   const unitXBlockActions = {
-    // TODO: use for xblock delete functionality
     handleDelete: (XBlockId) => {
       dispatch(deleteUnitItemQuery(blockId, XBlockId));
+    },
+    handleDuplicate: (XBlockId) => {
+      dispatch(duplicateUnitItemQuery(blockId, XBlockId));
     },
   };
 
   const handleRollbackMovedXBlock = () => {
-    const { sourceLocator, targetParentLocator, title, currentParentLocator } = movedXBlockParams;
+    const {
+      sourceLocator, targetParentLocator, title, currentParentLocator,
+    } = movedXBlockParams;
     dispatch(patchUnitItemQuery({
       sourceLocator,
       targetParentLocator,
@@ -183,6 +187,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     handleTitleEditSubmit,
     handleCreateNewCourseXBlock,
     handleConfigureSubmit,
+    courseVerticalChildren,
     canPasteComponent,
     isMoveModalOpen,
     openMoveModal,
