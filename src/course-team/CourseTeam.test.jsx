@@ -189,7 +189,7 @@ describe('<CourseTeam />', () => {
   });
 
   it('should delete user', async () => {
-    cleanup();
+    `cleanup();`
     axiosMock
       .onGet(getCourseTeamApiUrl(courseId))
       .reply(200, courseTeamMock);

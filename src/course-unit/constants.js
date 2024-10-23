@@ -38,3 +38,22 @@ export const getXBlockSupportMessages = (intl) => ({
     tooltip: intl.formatMessage(addComponentMessages.modalComponentSupportTooltipNotSupported),
   },
 });
+
+export const stateKeys = {
+  iframeHeight: 'iframeHeight',
+  hasLoaded: 'hasLoaded',
+  showError: 'showError',
+  windowTopOffset: 'windowTopOffset',
+};
+
+export const messageTypes = {
+  modal: 'plugin.modal',
+  resize: 'plugin.resize',
+  videoFullScreen: 'plugin.videoFullScreen',
+  refreshXBlock: 'refreshXBlock',
+  showMoveXBlockModal: 'showMoveXBlockModal',
+};
+
+export const IFRAME_FEATURE_POLICY = (
+  'microphone *; camera *; midi *; geolocation *; encrypted-media *, clipboard-write *'
+);

@@ -11,6 +11,7 @@ export const getCourseUnitApiUrl = (itemId) => `${getStudioBaseUrl()}/xblock/con
 export const getXBlockBaseApiUrl = (itemId) => `${getStudioBaseUrl()}/xblock/${itemId}`;
 export const getCourseSectionVerticalApiUrl = (itemId) => `${getStudioBaseUrl()}/api/contentstore/v1/container_handler/${itemId}`;
 export const getCourseVerticalChildrenApiUrl = (itemId) => `${getStudioBaseUrl()}/api/contentstore/v1/container/vertical/${itemId}/children`;
+export const getOutlineInfo = (courseId) => `${getStudioBaseUrl()}/course/${courseId}?format=concise`;
 export const postXBlockBaseApiUrl = () => `${getStudioBaseUrl()}/xblock/`;
 
 /**
@@ -134,30 +135,29 @@ export async function deleteUnitItem(itemId) {
 }
 
 /**
- * Duplicate a unit item.
- * @param {string} itemId
- * @param {string} XBlockId
+ * Get an object containing course outline data.
+ * @param {string} courseId - The identifier of the course.
  * @returns {Promise<Object>}
  */
-export async function duplicateUnitItem(itemId, XBlockId) {
+export async function getCourseOutlineInfo(courseId) {
   const { data } = await getAuthenticatedHttpClient()
-    .post(postXBlockBaseApiUrl(), {
-      parent_locator: itemId,
-      duplicate_source_locator: XBlockId,
-    });
+    .get(getOutlineInfo(courseId));
 
   return data;
 }
 
 /**
- * Sets the order list of XBlocks.
- * @param {string} blockId - The identifier of the course unit.
- * @param {Object[]} children - The array of child elements representing the updated order of XBlocks.
- * @returns {Promise<Object>} - A promise that resolves to the updated data after setting the XBlock order.
+ * Move a unit item to new unit.
+ * @param {string} sourceLocator - The ID of the item to be moved.
+ * @param {string} targetParentLocator - The ID of the XBlock associated with the item.
+ * @returns {Promise<Object>} - A promise that resolves to the response data from the server.
  */
-export async function setXBlockOrderList(blockId, children) {
+export async function patchUnitItem(sourceLocator, targetParentLocator) {
   const { data } = await getAuthenticatedHttpClient()
-    .put(getXBlockBaseApiUrl(blockId), { children });
+    .patch(postXBlockBaseApiUrl(), {
+      parent_locator: targetParentLocator,
+      move_source_locator: sourceLocator,
+    });
 
   return data;
 }
