@@ -55,7 +55,7 @@ describe('<PickLibraryContentModal />', () => {
 
     // Select the first component
     fireEvent.click(screen.queryAllByRole('button', { name: 'Select' })[0]);
-    expect(await screen.findByText('1 Selected Component(s)')).toBeInTheDocument();
+    expect(await screen.findByText('1 Selected Component')).toBeInTheDocument();
 
     fireEvent.click(screen.queryAllByRole('button', { name: 'Add to Collection' })[0]);
 
