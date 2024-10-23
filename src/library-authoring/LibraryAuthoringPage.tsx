@@ -148,6 +148,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     libraryData,
     isLoadingLibraryData,
     componentPickerMode,
+    restrictToLibrary,
     showOnlyPublished,
     sidebarComponentInfo,
     openInfoSidebar,
@@ -196,7 +197,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     }
   };
 
-  const breadcumbs = componentPickerMode ? (
+  const breadcumbs = componentPickerMode && !restrictToLibrary ? (
     <Breadcrumb
       links={[
         {

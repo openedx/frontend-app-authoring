@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import {
   Stack,
   Button,
+  useToggle,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
@@ -11,13 +12,13 @@ import {
   AutoAwesome,
   BookOpen,
   Create,
+  Folder,
   ThumbUpOutline,
   Question,
   VideoCamera,
   ContentPaste,
 } from '@openedx/paragon/icons';
 import { v4 as uuid4 } from 'uuid';
-import { useParams } from 'react-router-dom';
 
 import { ToastContext } from '../../generic/toast-context';
 import { useCopyToClipboard } from '../../generic/clipboard';
@@ -25,6 +26,7 @@ import { getCanEdit } from '../../course-unit/data/selectors';
 import { useCreateLibraryBlock, useLibraryPasteClipboard, useAddComponentsToCollection } from '../data/apiHooks';
 import { useLibraryContext } from '../common/context';
 import { canEditComponent } from '../components/ComponentEditorModal';
+import { PickLibraryContentModal } from './PickLibraryContentModal';
 
 import messages from './messages';
 
@@ -62,11 +64,12 @@ const AddContentButton = ({ contentType, onCreateContent } : AddContentButtonPro
 
 const AddContentContainer = () => {
   const intl = useIntl();
-  const { collectionId } = useParams();
   const {
     libraryId,
+    collectionId,
     openCreateCollectionModal,
     openComponentEditor,
+    componentPickerModal,
   } = useLibraryContext();
   const createBlockMutation = useCreateLibraryBlock();
   const updateComponentsMutation = useAddComponentsToCollection(libraryId, collectionId);
@@ -74,6 +77,8 @@ const AddContentContainer = () => {
   const { showToast } = useContext(ToastContext);
   const canEdit = useSelector(getCanEdit);
   const { showPasteXBlock, sharedClipboardData } = useCopyToClipboard(canEdit);
+
+  const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
 
   const parsePasteErrorMsg = (error: any) => {
     let errMsg: string;
@@ -94,6 +99,14 @@ const AddContentContainer = () => {
     icon: BookOpen,
     blockType: 'collection',
   };
+
+  const libraryContentButtonData = {
+    name: intl.formatMessage(messages.libraryContentButton),
+    disabled: false,
+    icon: Folder,
+    blockType: 'libraryContent',
+  };
+
   const contentTypes = [
     {
       name: intl.formatMessage(messages.textTypeButton),
@@ -186,6 +199,8 @@ const AddContentContainer = () => {
       onPaste();
     } else if (blockType === 'collection') {
       openCreateCollectionModal();
+    } else if (blockType === 'libraryContent') {
+      showAddLibraryContentModal();
     } else {
       onCreateBlock(blockType);
     }
@@ -197,7 +212,19 @@ const AddContentContainer = () => {
 
   return (
     <Stack direction="vertical">
-      {!collectionId && <AddContentButton contentType={collectionButtonData} onCreateContent={onCreateContent} />}
+      {collectionId ? (
+        componentPickerModal && (
+          <>
+            <AddContentButton contentType={libraryContentButtonData} onCreateContent={onCreateContent} />
+            <PickLibraryContentModal
+              isOpen={isAddLibraryContentModalOpen}
+              onClose={closeAddLibraryContentModal}
+            />
+          </>
+        )
+      ) : (
+        <AddContentButton contentType={collectionButtonData} onCreateContent={onCreateContent} />
+      )}
       <hr className="w-100 bg-gray-500" />
       {/* Note: for MVP we are hiding the unuspported types, not just disabling them. */}
       {contentTypes.filter(ct => !ct.disabled).map((contentType) => (

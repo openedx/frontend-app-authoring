@@ -6,10 +6,11 @@ import React, {
   useState,
 } from 'react';
 
+import type { ComponentPickerModal } from '../component-picker';
 import type { ContentLibrary } from '../data/api';
 import { useContentLibrary } from '../data/apiHooks';
 
-interface SelectedComponent {
+export interface SelectedComponent {
   usageKey: string;
   blockType: string;
 }
@@ -23,6 +24,12 @@ type NoComponentPickerType = {
   selectedComponents?: never;
   addComponentToSelectedComponents?: never;
   removeComponentFromSelectedComponents?: never;
+  restrictToLibrary?: never;
+  /** The component picker modal to use. We need to pass it as a reference instead of
+   * directly importing it to avoid the import cycle:
+   * ComponentPickerModal > ComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
+   * Sidebar > AddContentContainer > ComponentPickerModal */
+  componentPickerModal?: typeof ComponentPickerModal;
 };
 
 type ComponentPickerSingleType = {
@@ -31,6 +38,8 @@ type ComponentPickerSingleType = {
   selectedComponents?: never;
   addComponentToSelectedComponents?: never;
   removeComponentFromSelectedComponents?: never;
+  restrictToLibrary: boolean;
+  componentPickerModal?: never;
 };
 
 type ComponentPickerMultipleType = {
@@ -39,6 +48,8 @@ type ComponentPickerMultipleType = {
   selectedComponents: SelectedComponent[];
   addComponentToSelectedComponents: ComponentSelectedEvent;
   removeComponentFromSelectedComponents: ComponentSelectedEvent;
+  restrictToLibrary: boolean;
+  componentPickerModal?: never;
 };
 
 type ComponentPickerType = NoComponentPickerType | ComponentPickerSingleType | ComponentPickerMultipleType;
@@ -109,18 +120,24 @@ type NoComponentPickerProps = {
   componentPickerMode?: undefined;
   onComponentSelected?: never;
   onChangeComponentSelection?: never;
+  restrictToLibrary?: never;
+  componentPickerModal?: typeof ComponentPickerModal;
 };
 
 export type ComponentPickerSingleProps = {
   componentPickerMode: 'single';
   onComponentSelected: ComponentSelectedEvent;
   onChangeComponentSelection?: never;
+  restrictToLibrary?: boolean;
+  componentPickerModal?: never;
 };
 
 export type ComponentPickerMultipleProps = {
   componentPickerMode: 'multiple';
   onComponentSelected?: never;
   onChangeComponentSelection?: ComponentSelectionChangedEvent;
+  restrictToLibrary?: boolean;
+  componentPickerModal?: never;
 };
 
 type ComponentPickerProps = NoComponentPickerProps | ComponentPickerSingleProps | ComponentPickerMultipleProps;
@@ -133,6 +150,7 @@ type LibraryProviderProps = {
   showOnlyPublished?: boolean;
   /** Only used for testing */
   initialSidebarComponentInfo?: SidebarComponentInfo;
+  componentPickerModal?: typeof ComponentPickerModal;
 } & ComponentPickerProps;
 
 /**
@@ -143,10 +161,12 @@ export const LibraryProvider = ({
   libraryId,
   collectionId: collectionIdProp,
   componentPickerMode,
+  restrictToLibrary = false,
   onComponentSelected,
   onChangeComponentSelection,
   showOnlyPublished = false,
   initialSidebarComponentInfo,
+  componentPickerModal,
 }: LibraryProviderProps) => {
   const [collectionId, setCollectionId] = useState(collectionIdProp);
   const [sidebarComponentInfo, setSidebarComponentInfo] = useState<SidebarComponentInfo | undefined>(
@@ -253,10 +273,17 @@ export const LibraryProvider = ({
       closeComponentEditor,
       resetSidebarAdditionalActions,
     };
+    if (!componentPickerMode) {
+      return {
+        ...contextValue,
+        componentPickerModal,
+      };
+    }
     if (componentPickerMode === 'single') {
       return {
         ...contextValue,
         componentPickerMode,
+        restrictToLibrary,
         onComponentSelected,
       };
     }
@@ -264,6 +291,7 @@ export const LibraryProvider = ({
       return {
         ...contextValue,
         componentPickerMode,
+        restrictToLibrary,
         selectedComponents,
         addComponentToSelectedComponents,
         removeComponentFromSelectedComponents,
@@ -279,6 +307,7 @@ export const LibraryProvider = ({
     isLoadingLibraryData,
     showOnlyPublished,
     componentPickerMode,
+    restrictToLibrary,
     onComponentSelected,
     addComponentToSelectedComponents,
     removeComponentFromSelectedComponents,
@@ -300,6 +329,7 @@ export const LibraryProvider = ({
     openComponentEditor,
     closeComponentEditor,
     resetSidebarAdditionalActions,
+    componentPickerModal,
   ]);
 
   return (

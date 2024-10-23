@@ -51,7 +51,10 @@ describe('<ComponentPicker />', () => {
 
     // Wait for the content library to load
     await screen.findByText(/Change Library/i);
-    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Test Library 1')).toBeInTheDocument();
+      expect(screen.queryAllByText('Introduction to Testing')[0]).toBeInTheDocument();
+    });
 
     // Click the add component from the component card
     fireEvent.click(screen.queryAllByRole('button', { name: 'Add' })[0]);
