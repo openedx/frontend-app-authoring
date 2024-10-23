@@ -42,7 +42,7 @@ const app = createSlice({
       blockValue: payload,
       blockTitle: payload.data.display_name,
     }),
-    setBlockId: (state, { payload }) => ({...state, blockId: payload,}),
+    setBlockId: (state, { payload }) => ({ ...state, blockId: payload }),
     setStudioView: (state, { payload }) => ({ ...state, studioView: payload }),
     setBlockContent: (state, { payload }) => ({ ...state, blockContent: payload }),
     setBlockTitle: (state, { payload }) => ({ ...state, blockTitle: payload }),

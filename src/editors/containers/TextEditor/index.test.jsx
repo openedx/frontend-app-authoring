@@ -59,6 +59,7 @@ jest.mock('../../data/redux', () => ({
       showRawEditor: jest.fn(state => ({ showRawEditor: state })),
       images: jest.fn(state => ({ images: state })),
       isLibrary: jest.fn(state => ({ isLibrary: state })),
+      blockId: jest.fn(state => ({ blockId: state })),
       learningContextId: jest.fn(state => ({ learningContextId: state })),
     },
     requests: {
