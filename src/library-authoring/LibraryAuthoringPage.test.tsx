@@ -496,6 +496,10 @@ describe('<LibraryAuthoringPage />', () => {
 
     await waitFor(() => expect(queryByText(displayName)).toBeInTheDocument());
     expect(getByRole('tab', { selected: true })).toHaveTextContent('Manage');
+    const closeButton = getByRole('button', { name: /close/i });
+    fireEvent.click(closeButton);
+
+    await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
   });
 
   it('should open and close the collection sidebar', async () => {
