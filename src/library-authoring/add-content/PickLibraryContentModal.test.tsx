@@ -46,9 +46,10 @@ describe('<PickLibraryContentModal />', () => {
     render();
 
     // Wait for the content library to load
-    await screen.findByText('Test Library');
-
-    await waitFor(() => expect(screen.queryAllByText('Introduction to Testing')[0]).toBeInTheDocument());
+    await waitFor(() => {
+      expect(screen.getByText('Test Library')).toBeInTheDocument();
+      expect(screen.queryAllByText('Introduction to Testing')[0]).toBeInTheDocument();
+    });
 
     // Select the first component
     fireEvent.click(screen.queryAllByRole('button', { name: 'Select' })[0]);
