@@ -66,6 +66,7 @@ const CourseChecklist = ({
         />
         <Stack gap={4}>
           <ChecklistSection
+            courseId={courseId}
             dataHeading={intl.formatMessage(messages.launchChecklistLabel)}
             data={launchData}
             idPrefix="launchChecklist"

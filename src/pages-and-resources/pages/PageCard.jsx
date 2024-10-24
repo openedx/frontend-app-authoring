@@ -25,11 +25,12 @@ export { CoursePageShape };
 const PageCard = ({
   page,
   settingButton,
+  courseId,
 }) => {
   const { formatMessage } = useIntl();
   const isDesktop = useIsDesktop();
 
-  const SettingButton = settingButton || <PageSettingButton {...page} />;
+  const SettingButton = settingButton || <PageSettingButton courseId={courseId} {...page} />;
 
   return (
     <Card
@@ -59,11 +60,13 @@ const PageCard = ({
 
 PageCard.defaultProps = {
   settingButton: null,
+  courseId: null,
 };
 
 PageCard.propTypes = {
   page: CoursePageShape.isRequired,
   settingButton: PropTypes.node,
+  courseId: PropTypes.string,
 };
 
 export default PageCard;

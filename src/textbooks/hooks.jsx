@@ -20,7 +20,7 @@ import {
 } from './data/thunk';
 import messages from './messages';
 
-const useTextbooks = (courseId) => {
+const useTextbooks = (courseId, waffleFlags) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const { config } = useContext(AppContext);
@@ -35,15 +35,15 @@ const useTextbooks = (courseId) => {
   const breadcrumbs = [
     {
       label: intl.formatMessage(messages.breadcrumbContent),
-      href: `${config.STUDIO_BASE_URL}/course/${courseId}`,
+      to: waffleFlags?.useNewCourseOutlinePage ? `/course/${courseId}` : `${config.STUDIO_BASE_URL}/course/${courseId}`,
     },
     {
       label: intl.formatMessage(messages.breadcrumbPagesAndResources),
-      href: `/course/${courseId}/pages-and-resources`,
+      to: `/course/${courseId}/pages-and-resources`,
     },
     {
       label: '',
-      href: `/course/${courseId}/textbooks`,
+      to: `/course/${courseId}/textbooks`,
     },
   ];
 

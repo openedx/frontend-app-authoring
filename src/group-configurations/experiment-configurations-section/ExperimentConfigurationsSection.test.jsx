@@ -8,11 +8,19 @@ import ExperimentConfigurationsSection from '.';
 const handleCreateMock = jest.fn();
 const handleDeleteMock = jest.fn();
 const handleEditMock = jest.fn();
+const mockPathname = '/foo-bar';
 const experimentConfigurationActions = {
   handleCreate: handleCreateMock,
   handleDelete: handleDeleteMock,
   handleEdit: handleEditMock,
 };
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useLocation: () => ({
+    pathname: mockPathname,
+  }),
+}));
 
 const renderComponent = (props) => render(
   <IntlProvider locale="en">
