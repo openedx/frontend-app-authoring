@@ -19,6 +19,8 @@ import {
   deleteUnitItem,
   duplicateUnitItem,
   setXBlockOrderList,
+  getCourseOutlineInfo,
+  patchUnitItem,
 } from './api';
 import {
   updateLoadingCourseUnitStatus,
@@ -33,10 +35,10 @@ import {
   updateCourseVerticalChildren,
   updateCourseVerticalChildrenLoadingStatus,
   updateQueryPendingStatus,
-  deleteXBlock,
-  duplicateXBlock,
   fetchStaticFileNoticesSuccess,
-  reorderXBlockList,
+  updateCourseOutlineInfo,
+  updateCourseOutlineInfoLoadingStatus,
+  updateMovedXBlockParams,
 } from './slice';
 import { getNotificationMessage } from './utils';
 
@@ -46,6 +48,7 @@ export function fetchCourseUnitQuery(courseId) {
 
     try {
       const courseUnit = await getCourseUnitData(courseId);
+      console.log('courseUnit =========>', courseUnit);
       dispatch(fetchCourseItemSuccess(courseUnit));
       dispatch(updateLoadingCourseUnitStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
@@ -213,7 +216,6 @@ export function deleteUnitItemQuery(itemId, xblockId) {
 
     try {
       await deleteUnitItem(xblockId);
-      dispatch(deleteXBlock(xblockId));
       const { userClipboard } = await getCourseSectionVerticalData(itemId);
       dispatch(updateClipboardData(userClipboard));
       const courseUnit = await getCourseUnitData(itemId);
@@ -233,12 +235,7 @@ export function duplicateUnitItemQuery(itemId, xblockId) {
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.duplicating));
 
     try {
-      const { locator } = await duplicateUnitItem(itemId, xblockId);
-      const newCourseVerticalChildren = await getCourseVerticalChildren(itemId);
-      dispatch(duplicateXBlock({
-        newId: locator,
-        newCourseVerticalChildren,
-      }));
+      await duplicateUnitItem(itemId, xblockId);
       const courseUnit = await getCourseUnitData(itemId);
       dispatch(fetchCourseItemSuccess(courseUnit));
       dispatch(hideProcessingNotification());
@@ -258,7 +255,7 @@ export function setXBlockOrderListQuery(blockId, xblockListIds, restoreCallback)
     try {
       await setXBlockOrderList(blockId, xblockListIds).then(async (result) => {
         if (result) {
-          dispatch(reorderXBlockList(xblockListIds));
+          // dispatch(reorderXBlockList(xblockListIds));
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
           const courseUnit = await getCourseUnitData(blockId);
           dispatch(fetchCourseItemSuccess(courseUnit));
@@ -268,6 +265,58 @@ export function setXBlockOrderListQuery(blockId, xblockListIds, restoreCallback)
       restoreCallback();
       handleResponseErrors(error, dispatch, updateSavingStatus);
     } finally {
+      dispatch(hideProcessingNotification());
+    }
+  };
+}
+
+export function getCourseOutlineInfoQuery(courseId) {
+  return async (dispatch) => {
+    dispatch(updateCourseOutlineInfoLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
+
+    try {
+      await getCourseOutlineInfo(courseId).then(async (result) => {
+        if (result) {
+          dispatch(updateCourseOutlineInfo(result));
+          dispatch(updateCourseOutlineInfoLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
+        }
+      });
+    } catch (error) {
+      handleResponseErrors(error, dispatch, updateSavingStatus);
+      dispatch(updateCourseOutlineInfoLoadingStatus({ status: RequestStatus.FAILED }));
+    }
+  };
+}
+
+export function patchUnitItemQuery({
+  sourceLocator,
+  targetParentLocator,
+  title,
+  currentParentLocator,
+  isMoving,
+  callbackFn,
+}) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES[isMoving ? 'moving' : 'undoMoving']));
+
+    try {
+      await patchUnitItem(sourceLocator, isMoving ? targetParentLocator : currentParentLocator);
+      const xBlockParams = {
+        title,
+        isSuccess: true,
+        isUndo: !isMoving,
+        sourceLocator: sourceLocator || '',
+        targetParentLocator: targetParentLocator || '',
+        currentParentLocator: currentParentLocator || '',
+      };
+      dispatch(updateMovedXBlockParams(xBlockParams));
+      dispatch(hideProcessingNotification());
+      dispatch(updateCourseOutlineInfo({}));
+      dispatch(updateCourseOutlineInfoLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
+      callbackFn();
+    } catch (error) {
+      handleResponseErrors(error, dispatch, updateSavingStatus);
       dispatch(hideProcessingNotification());
     }
   };

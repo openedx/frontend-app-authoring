@@ -1,8 +1,11 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useToggle } from '@openedx/paragon';
 
 import { RequestStatus } from '../data/constants';
+import { useCopyToClipboard } from '../generic/clipboard';
+import { createCorrectInternalRoute } from '../utils';
 import {
   createNewCourseXBlock,
   fetchCourseUnitQuery,
@@ -13,6 +16,8 @@ import {
   duplicateUnitItemQuery,
   setXBlockOrderListQuery,
   editCourseUnitVisibilityAndData,
+  getCourseOutlineInfoQuery,
+  patchUnitItemQuery,
 } from './data/thunk';
 import {
   getCourseSectionVertical,
@@ -24,16 +29,23 @@ import {
   getSequenceStatus,
   getStaticFileNotices,
   getCanEdit,
+  getCourseOutlineInfo,
+  getMovedXBlockParams,
 } from './data/selectors';
-import { changeEditTitleFormOpen, updateQueryPendingStatus } from './data/slice';
-import { PUBLISH_TYPES } from './constants';
-
-import { useCopyToClipboard } from '../generic/clipboard';
+import {
+  changeEditTitleFormOpen,
+  updateQueryPendingStatus,
+  updateMovedXBlockParams,
+} from './data/slice';
+import { useIframe } from './context/hooks';
+import { messageTypes, PUBLISH_TYPES } from './constants';
 
 // eslint-disable-next-line import/prefer-default-export
 export const useCourseUnit = ({ courseId, blockId }) => {
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
+  const { sendMessageToIframe } = useIframe();
+  const [isMoveModalOpen, openMoveModal, closeMoveModal] = useToggle(false);
 
   const courseUnit = useSelector(getCourseUnitData);
   const savingStatus = useSelector(getSavingStatus);
@@ -46,6 +58,8 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const navigate = useNavigate();
   const isTitleEditFormOpen = useSelector(state => state.courseUnit.isTitleEditFormOpen);
   const canEdit = useSelector(getCanEdit);
+  const courseOutlineInfo = useSelector(getCourseOutlineInfo);
+  const movedXBlockParams = useSelector(getMovedXBlockParams);
   const { currentlyVisibleToStudents } = courseUnit;
   const { sharedClipboardData, showPasteXBlock, showPasteUnit } = useCopyToClipboard(canEdit);
   const { canPasteComponent } = courseVerticalChildren;
@@ -111,6 +125,32 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     dispatch(setXBlockOrderListQuery(blockId, xblockListIds, restoreCallback));
   };
 
+  const handleRollbackMovedXBlock = () => {
+    const {
+      sourceLocator, targetParentLocator, title, currentParentLocator,
+    } = movedXBlockParams;
+    dispatch(patchUnitItemQuery({
+      sourceLocator,
+      targetParentLocator,
+      title,
+      currentParentLocator,
+      isMoving: false,
+      callbackFn: () => {
+        sendMessageToIframe(messageTypes.refreshXBlock, null);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
+    }));
+  };
+
+  const handleCloseXBlockMovedAlert = () => {
+    dispatch(updateMovedXBlockParams({ isSuccess: false }));
+  };
+
+  const handleNavigateToTargetUnit = () => {
+    const correctInternalRoute = createCorrectInternalRoute(`/course/${courseId}/container/${movedXBlockParams.targetParentLocator}`);
+    navigate(correctInternalRoute);
+  };
+
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
       dispatch(updateQueryPendingStatus(true));
@@ -123,7 +163,14 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     dispatch(fetchCourseVerticalChildrenData(blockId));
 
     handleNavigate(sequenceId);
+    dispatch(updateMovedXBlockParams({ isSuccess: false }));
   }, [courseId, blockId, sequenceId]);
+
+  useEffect(() => {
+    if (isMoveModalOpen && !Object.keys(courseOutlineInfo).length) {
+      dispatch(getCourseOutlineInfoQuery(courseId));
+    }
+  }, [isMoveModalOpen]);
 
   return {
     sequenceId,
@@ -148,5 +195,12 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     courseVerticalChildren,
     handleXBlockDragAndDrop,
     canPasteComponent,
+    isMoveModalOpen,
+    openMoveModal,
+    closeMoveModal,
+    handleRollbackMovedXBlock,
+    handleCloseXBlockMovedAlert,
+    movedXBlockParams,
+    handleNavigateToTargetUnit,
   };
 };
