@@ -11,7 +11,6 @@ import {
   fetchCourseVerticalChildrenData,
   deleteUnitItemQuery,
   duplicateUnitItemQuery,
-  setXBlockOrderListQuery,
   editCourseUnitVisibilityAndData,
 } from './data/thunk';
 import {
@@ -107,10 +106,6 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     },
   };
 
-  const handleXBlockDragAndDrop = (xblockListIds, restoreCallback) => {
-    dispatch(setXBlockOrderListQuery(blockId, xblockListIds, restoreCallback));
-  };
-
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
       dispatch(updateQueryPendingStatus(true));
@@ -146,7 +141,6 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     handleCreateNewCourseXBlock,
     handleConfigureSubmit,
     courseVerticalChildren,
-    handleXBlockDragAndDrop,
     canPasteComponent,
   };
 };
