@@ -44,6 +44,7 @@ const TinyMceWidget = ({
   images,
   isLibrary,
   onChange,
+  staticRootUrl,
   ...editorConfig
 }) => {
   const { isImgOpen, openImgModal, closeImgModal } = hooks.imgModalToggle();
@@ -85,6 +86,7 @@ const TinyMceWidget = ({
             learningContextId,
             images: imagesRef,
             editorContentHtml,
+            staticRootUrl,
             ...imageSelection,
             ...editorConfig,
           })

@@ -84,20 +84,6 @@ export const replaceStaticWithAsset = ({
   editorType,
   lmsEndpointUrl,
 }) => {
-  if (isLibraryKey(learningContextId)) {
-    // This function doesn't currently know how to deal with Library assets.
-    // Libraries don't mangle the path into an asset key–it might be sufficient
-    // to remove the initial "/" in a "/static/images/foo.png" link, and then
-    // set the base URL to the correct ComponentVersion base. If we let this
-    // function try to deal with Library assets, it would convert them in such a
-    // way that it wouldn't convert back later on, and we'd end up storing the
-    // incorrect OLX and breaking the display from that point forward.
-    //
-    // So until we handle it better, just disable static asset URL substitutions
-    // when dealing with Library content.
-    return false;
-  }
-
   let content = initialContent;
   let hasChanges = false;
   const srcs = content.split(/(src="|src=&quot;|href="|href=&quot)/g).filter(
@@ -116,7 +102,15 @@ export const replaceStaticWithAsset = ({
 
       // assets in expandable text areas do not support relative urls so all assets must have the lms
       // endpoint prepended to the relative url
-      if (editorType === 'expandable') {
+      if (isLibraryKey(learningContextId)) {
+        // We are removing the initial "/" in a "/static/foo.png" link, and then
+        // set the base URL to an endpoint serving the draft version of an asset by
+        // its path.
+        /* istanbul ignore next */
+        if (isStatic) {
+          staticFullUrl = assetSrc.substring(1);
+        }
+      } else if (editorType === 'expandable') {
         if (isCorrectAssetFormat) {
           staticFullUrl = `${lmsEndpointUrl}${assetSrc}`;
         } else {
@@ -261,9 +255,12 @@ export const editorConfig = ({
   content,
   minHeight,
   learningContextId,
+  staticRootUrl,
 }) => {
   const lmsEndpointUrl = getConfig().LMS_BASE_URL;
   const studioEndpointUrl = getConfig().STUDIO_BASE_URL;
+
+  const baseURL = staticRootUrl || lmsEndpointUrl;
   const {
     toolbar,
     config,
@@ -290,7 +287,7 @@ export const editorConfig = ({
       min_height: minHeight,
       contextmenu: 'link table',
       directionality: isLocaleRtl ? 'rtl' : 'ltr',
-      document_base_url: lmsEndpointUrl,
+      document_base_url: baseURL,
       imagetools_cors_hosts: [removeProtocolFromUrl(lmsEndpointUrl), removeProtocolFromUrl(studioEndpointUrl)],
       imagetools_toolbar: imageToolbar,
       formats: { label: { inline: 'label' } },
@@ -432,6 +429,17 @@ export const setAssetToStaticUrl = ({ editorValue, lmsEndpointUrl }) => {
   assetSrcs.filter(src => src.startsWith('/asset')).forEach(src => {
     const nameFromEditorSrc = parseAssetName(src);
     const portableUrl = getStaticUrl({ displayName: nameFromEditorSrc });
+    const currentSrc = src.substring(0, src.search(/("|&quot;)/));
+    const updatedContent = content.replace(currentSrc, portableUrl);
+    content = updatedContent;
+  });
+
+  /* istanbul ignore next */
+  assetSrcs.filter(src => src.startsWith('static/')).forEach(src => {
+    // Before storing assets we make sure that library static assets points again to
+    // `/static/dummy.jpg` instead of using the relative url `static/dummy.jpg`
+    const nameFromEditorSrc = parseAssetName(src);
+    const portableUrl = `/${ nameFromEditorSrc}`;
     const currentSrc = src.substring(0, src.search(/("|&quot;)/));
     const updatedContent = content.replace(currentSrc, portableUrl);
     content = updatedContent;

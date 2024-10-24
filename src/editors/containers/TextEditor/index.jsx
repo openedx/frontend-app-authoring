@@ -8,6 +8,7 @@ import {
 } from '@openedx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 
+import { getConfig } from '@edx/frontend-platform';
 import { actions, selectors } from '../../data/redux';
 import { RequestKeys } from '../../data/constants/requests';
 
@@ -24,6 +25,7 @@ const TextEditor = ({
   // redux
   showRawEditor,
   blockValue,
+  blockId,
   blockFailed,
   initializeEditor,
   blockFinished,
@@ -40,6 +42,10 @@ const TextEditor = ({
     learningContextId,
   });
   const editorContent = newContent || initialContent;
+  let staticRootUrl;
+  if (isLibrary) {
+    staticRootUrl = `${getConfig().STUDIO_BASE_URL }/library_assets/blocks/${ blockId }/`;
+  }
 
   if (!refReady) { return null; }
 
@@ -65,6 +71,7 @@ const TextEditor = ({
           images,
           isLibrary,
           learningContextId,
+          staticRootUrl,
         }}
       />
     );
@@ -107,6 +114,7 @@ TextEditor.propTypes = {
   blockValue: PropTypes.shape({
     data: PropTypes.shape({ data: PropTypes.string }),
   }),
+  blockId: PropTypes.string,
   blockFailed: PropTypes.bool.isRequired,
   initializeEditor: PropTypes.func.isRequired,
   showRawEditor: PropTypes.bool.isRequired,
@@ -121,6 +129,7 @@ TextEditor.propTypes = {
 export const mapStateToProps = (state) => ({
   blockValue: selectors.app.blockValue(state),
   blockFailed: selectors.requests.isFailed(state, { requestKey: RequestKeys.fetchBlock }),
+  blockId: selectors.app.blockId(state),
   showRawEditor: selectors.app.showRawEditor(state),
   blockFinished: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchBlock }),
   learningContextId: selectors.app.learningContextId(state),
