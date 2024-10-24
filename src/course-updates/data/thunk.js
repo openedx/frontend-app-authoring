@@ -31,10 +31,17 @@ export function fetchCourseUpdatesQuery(courseId) {
         error: { loadingUpdates: false },
       }));
     } catch (error) {
-      dispatch(updateLoadingStatuses({
-        status: { fetchCourseUpdatesQuery: RequestStatus.FAILED },
-        error: { loadingUpdates: true },
-      }));
+      if (error.response && error.response.status === 403) {
+        dispatch(updateLoadingStatuses({
+          status: { fetchCourseUpdatesQuery: RequestStatus.DENIED },
+          error: { loadingUpdates: true },
+        }));
+      } else {
+        dispatch(updateLoadingStatuses({
+          status: { fetchCourseUpdatesQuery: RequestStatus.FAILED },
+          error: { loadingUpdates: true },
+        }));
+      }
     }
   };
 }
@@ -116,10 +123,17 @@ export function fetchCourseHandoutsQuery(courseId) {
         error: { loadingHandouts: false },
       }));
     } catch (error) {
-      dispatch(updateLoadingStatuses({
-        status: { fetchCourseHandoutsQuery: RequestStatus.FAILED },
-        error: { loadingHandouts: true },
-      }));
+      if (error.response && error.response.status === 403) {
+        dispatch(updateLoadingStatuses({
+          status: { fetchCourseHandoutsQuery: RequestStatus.DENIED },
+          error: { loadingHandouts: true },
+        }));
+      } else {
+        dispatch(updateLoadingStatuses({
+          status: { fetchCourseHandoutsQuery: RequestStatus.FAILED },
+          error: { loadingHandouts: true },
+        }));
+      }
     }
   };
 }

@@ -68,6 +68,7 @@ const CourseOutline = ({ courseId }) => {
     sectionsList,
     isCustomRelativeDatesActive,
     isLoading,
+    isLoadingDenied,
     isReIndexShow,
     showSuccessAlert,
     isSectionsExpanded,
@@ -229,6 +230,27 @@ const CourseOutline = ({ courseId }) => {
       <Row className="m-0 mt-4 justify-content-center">
         <LoadingSpinner />
       </Row>
+    );
+  }
+
+  if (isLoadingDenied) {
+    return (
+      <Container size="xl" className="px-4 mt-4">
+        <PageAlerts
+          courseId={courseId}
+          notificationDismissUrl={notificationDismissUrl}
+          handleDismissNotification={handleDismissNotification}
+          discussionsSettings={discussionsSettings}
+          discussionsIncontextFeedbackUrl={discussionsIncontextFeedbackUrl}
+          discussionsIncontextLearnmoreUrl={discussionsIncontextLearnmoreUrl}
+          deprecatedBlocksInfo={deprecatedBlocksInfo}
+          proctoringErrors={proctoringErrors}
+          mfeProctoredExamSettingsUrl={mfeProctoredExamSettingsUrl}
+          advanceSettingsUrl={advanceSettingsUrl}
+          savingStatus={savingStatus}
+          errors={errors}
+        />
+      </Container>
     );
   }
 
