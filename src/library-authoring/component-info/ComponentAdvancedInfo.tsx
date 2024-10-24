@@ -8,17 +8,17 @@ import {
   OverlayTrigger,
   Tooltip,
 } from '@openedx/paragon';
-import { FormattedMessage, FormattedNumber, useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 import { LoadingSpinner } from '../../generic/Loading';
 import { CodeEditor, EditorAccessor } from '../../generic/CodeEditor';
 import { useLibraryContext } from '../common/context';
 import {
   useUpdateXBlockOLX,
-  useXBlockAssets,
   useXBlockOLX,
 } from '../data/apiHooks';
 import messages from './messages';
+import { ComponentAdvancedAssets } from './ComponentAdvancedAssets';
 
 const ComponentAdvancedInfoInner: React.FC<Record<never, never>> = () => {
   const intl = useIntl();
@@ -31,7 +31,6 @@ const ComponentAdvancedInfoInner: React.FC<Record<never, never>> = () => {
   }
 
   const { data: olx, isLoading: isOLXLoading } = useXBlockOLX(usageKey);
-  const { data: assets, isLoading: areAssetsLoading } = useXBlockAssets(usageKey);
   const editorRef = React.useRef<EditorAccessor | undefined>(undefined);
   const [isEditingOLX, setEditingOLX] = React.useState(false);
   const olxUpdater = useUpdateXBlockOLX(usageKey);
@@ -101,15 +100,7 @@ const ComponentAdvancedInfoInner: React.FC<Record<never, never>> = () => {
         );
       })()}
       <h3 className="h5"><FormattedMessage {...messages.advancedDetailsAssets} /></h3>
-      <ul>
-        { areAssetsLoading ? <li><LoadingSpinner /></li> : null }
-        { assets?.map(a => (
-          <li key={a.path}>
-            <a href={a.url}>{a.path}</a>{' '}
-            (<FormattedNumber value={a.size} notation="compact" unit="byte" unitDisplay="narrow" />)
-          </li>
-        )) }
-      </ul>
+      <ComponentAdvancedAssets />
     </>
   );
 };

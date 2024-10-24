@@ -445,6 +445,14 @@ export async function getXBlockAssets(usageKey: string): Promise<{ path: string;
 }
 
 /**
+ * Delete a single asset file
+ */
+// istanbul ignore next
+export async function deleteXBlockAsset(usageKey: string, path: string): Promise<void> {
+  await getAuthenticatedHttpClient().delete(getXBlockAssetsApiUrl(usageKey) + encodeURIComponent(path));
+}
+
+/**
  * Get the collection metadata.
  */
 export async function getCollectionMetadata(libraryId: string, collectionId: string): Promise<Collection> {

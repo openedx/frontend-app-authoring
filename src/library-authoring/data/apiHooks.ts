@@ -6,6 +6,7 @@ import {
   type Query,
   type QueryClient,
 } from '@tanstack/react-query';
+import { useCallback } from 'react';
 
 import { getLibraryId } from '../../generic/key-utils';
 import {
@@ -42,6 +43,7 @@ import {
   updateComponentCollections,
   removeComponentsFromCollection,
   publishXBlock,
+  deleteXBlockAsset,
 } from './api';
 
 export const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
@@ -396,6 +398,27 @@ export const useXBlockAssets = (usageKey: string) => (
     enabled: !!usageKey,
   })
 );
+
+/** Refresh the list of assets (static files) attached to a library component */
+export const useInvalidateXBlockAssets = (usageKey: string) => {
+  const client = useQueryClient();
+  return useCallback(() => {
+    client.invalidateQueries({ queryKey: xblockQueryKeys.xblockAssets(usageKey) });
+  }, [usageKey]);
+};
+
+/**
+ * Use this mutation to delete an asset file from a library
+ */
+export const useDeleteXBlockAsset = (usageKey: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (path: string) => deleteXBlockAsset(usageKey, path),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: xblockQueryKeys.xblockAssets(usageKey) });
+    },
+  });
+};
 
 /**
  * Get the metadata for a collection in a library
