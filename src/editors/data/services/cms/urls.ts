@@ -57,6 +57,10 @@ export const blockStudioView = (({ studioEndpointUrl, blockId }) => (
     : `${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/view/studio_view/`
 )) satisfies UrlFunction;
 
+export const libraryBlockAssets = (({ studioEndpointUrl, blockId }) => (
+  `${studioEndpointUrl}/libraries/v2/blocks/${blockId}/assets`
+)) satisfies UrlFunction;
+
 export const courseAssets = (({ studioEndpointUrl, learningContextId }) => (
   `${studioEndpointUrl}/assets/${learningContextId}/`
 )) satisfies UrlFunction;

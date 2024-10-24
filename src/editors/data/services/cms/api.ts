@@ -115,6 +115,14 @@ export const apiMethods = {
   fetchStudioView: ({ blockId, studioEndpointUrl }) => get(
     urls.blockStudioView({ studioEndpointUrl, blockId }),
   ),
+  fetchLibraryBlockAssets: ({
+    blockId,
+    studioEndpointUrl,
+    pageNumber,
+  }): Promise<{ data: AssetResponse & Pagination }> => get(
+    urls.libraryBlockAssets({ studioEndpointUrl, blockId }),
+    { page: pageNumber },
+  ),
   fetchImages: ({
     learningContextId,
     studioEndpointUrl,

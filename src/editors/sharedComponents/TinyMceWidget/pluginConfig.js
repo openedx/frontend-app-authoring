@@ -4,10 +4,10 @@ import { buttons, plugins } from '../../data/constants/tinyMCE';
 const mapToolbars = toolbars => toolbars.map(toolbar => toolbar.join(' ')).join(' | ');
 
 const pluginConfig = ({ isLibrary, placeholder, editorType }) => {
-  const image = isLibrary ? '' : plugins.image;
-  const imageTools = isLibrary ? '' : plugins.imagetools;
-  const imageUploadButton = isLibrary ? '' : buttons.imageUploadButton;
-  const editImageSettings = isLibrary ? '' : buttons.editImageSettings;
+  const { image } = plugins;
+  const imageTools = plugins.imagetools;
+  const { imageUploadButton } = buttons;
+  const { editImageSettings } = buttons;
   const codePlugin = editorType === 'text' ? plugins.code : '';
   const codeButton = editorType === 'text' ? buttons.code : '';
   const labelButton = editorType === 'question' ? buttons.customLabelButton : '';

@@ -4,6 +4,7 @@ import { RequestKeys } from '../../constants/requests';
 import api, { loadImages } from '../../services/cms/api';
 import { actions as requestsActions } from '../requests';
 import { selectors as appSelectors } from '../app';
+import { isLibraryKey } from '../../../../generic/key-utils';
 
 // This 'module' self-import hack enables mocking during tests.
 // See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
@@ -133,15 +134,51 @@ export const uploadAsset = ({ asset, ...rest }) => (dispatch, getState) => {
 };
 
 export const fetchImages = ({ pageNumber, ...rest }) => (dispatch, getState) => {
+  const learningContextId = selectors.app.learningContextId(getState());
+  const studioEndpointUrl = selectors.app.studioEndpointUrl(getState());
   dispatch(module.networkRequest({
     requestKey: RequestKeys.fetchImages,
-    promise: api
-      .fetchImages({
-        pageNumber,
-        studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
-        learningContextId: selectors.app.learningContextId(getState()),
-      })
-      .then(({ data }) => ({ images: loadImages(data.assets), imageCount: data.totalCount })),
+    promise: isLibraryKey(learingContextId) ? (
+      api
+        .fetchImages({ pageNumber, studioEndpointUrl, learningContextId })
+        .then(({ data }) => ({ images: loadImages(data.assets), imageCount: data.totalCount }))
+    ) : (
+      api
+        .fetchLibraryBlockAssets({
+          pageNumber,
+          studioEndpointUrl,
+          blockId: selectors.app.blockId(getState()),
+        })
+        .then(({ data }) => {
+          const imageTypes = {
+            png: 'image/png',
+            jpeg: 'image/jpeg',
+            jpg: 'image/jpeg',
+          };
+          const images = data.files.reduce(
+            (obj, file) => {
+              const fileName = file.path.replace(/^.*[\\/]/, '');
+              const fileExt = file.path.split('.').pop().toLowerCase();
+              return imageTypes.hasOwnProperty(fileExt) ? {
+                ...obj,
+                [fileName]: {
+                  displayName: fileName,
+                  contentType: imageTypesByExtension[fileExt],
+                  dateAdded: '',
+                  url: file.url,
+                  externalUrl: file.url,
+                  portableUrl: file.path,
+                  thumbnail: file.url,
+                  id: file.path,
+                  locked: false,
+                },
+              } : obj;
+            },
+            {},
+          );
+          return { images, imageCount: images.keys().length };
+        })
+    ),
     ...rest,
   }));
 };
