@@ -125,7 +125,8 @@ const CourseOutline = ({ courseId }) => {
   const [toastMessage, setToastMessage] = useState(/** @type{null|string} */ (null));
 
   useEffect(() => {
-    if (location.hash === '#export-tags') {
+    // Wait for the course data to load before exporting tags.
+    if (courseId && courseName && location.hash === '#export-tags') {
       setToastMessage(intl.formatMessage(messages.exportTagsCreatingToastMessage));
       getTagsExportFile(courseId, courseName).then(() => {
         setToastMessage(intl.formatMessage(messages.exportTagsSuccessToastMessage));
@@ -136,7 +137,7 @@ const CourseOutline = ({ courseId }) => {
       // Delete `#export-tags` from location
       window.location.href = '#';
     }
-  }, [location]);
+  }, [location, courseId, courseName]);
 
   const [sections, setSections] = useState(sectionsList);
 
