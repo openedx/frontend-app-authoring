@@ -55,7 +55,7 @@ const ComponentPreview = () => {
           variant="light"
           iconBefore={OpenInFull}
           onClick={openModal}
-          className="position-absolute right-0 zindex-10 m-1"
+          className="position-absolute right-0 zindex-1 m-1"
         >
           {intl.formatMessage(messages.previewExpandButtonTitle)}
         </Button>
