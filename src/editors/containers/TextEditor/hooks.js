@@ -9,3 +9,10 @@ export const getContent = ({ editorRef, showRawEditor }) => () => {
     : editorRef.current?.getContent());
   return setAssetToStaticUrl({ editorValue: content });
 };
+
+export const isDirty = ({ editorRef, showRawEditor }) => () => {
+  const isDirty = (showRawEditor && editorRef && editorRef.current
+    ? editorRef.current.observer?.lastChange !== 0
+    : !editorRef.current?.isNotDirty);
+  return isDirty;
+};

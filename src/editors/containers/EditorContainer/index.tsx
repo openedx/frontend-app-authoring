@@ -61,12 +61,14 @@ export const FooterWrapper: React.FC<WrapperProps> = ({ children }) => {
 interface Props extends EditorComponent {
   children: React.ReactNode;
   getContent: Function;
+  isDirty: Function;
   validateEntry?: Function | null;
 }
 
 const EditorContainer: React.FC<Props> = ({
   children,
   getContent,
+  isDirty,
   onClose = null,
   validateEntry = null,
   returnFunction = null,
@@ -85,8 +87,15 @@ const EditorContainer: React.FC<Props> = ({
     validateEntry,
     returnFunction,
   });
+  const confirmCancelIfDirty = () => {
+    if (isDirty()) {
+      openCancelConfirmModal();
+    } else {
+      handleCancel();
+    }
+  }
   return (
-    <EditorModalWrapper onClose={openCancelConfirmModal}>
+    <EditorModalWrapper onClose={confirmCancelIfDirty}>
       {saveFailed && (
         <Toast show onClose={clearSaveFailed}>
           <FormattedMessage {...messages.contentSaveFailed} />
@@ -121,7 +130,7 @@ const EditorContainer: React.FC<Props> = ({
           <IconButton
             src={Close}
             iconAs={Icon}
-            onClick={openCancelConfirmModal}
+            onClick={confirmCancelIfDirty}
             alt={intl.formatMessage(messages.exitButtonAlt)}
           />
         </div>
@@ -135,7 +144,7 @@ const EditorContainer: React.FC<Props> = ({
             <Button
               aria-label={intl.formatMessage(messages.cancelButtonAriaLabel)}
               variant="tertiary"
-              onClick={openCancelConfirmModal}
+              onClick={confirmCancelIfDirty}
             >
               <FormattedMessage {...messages.cancelButtonLabel} />
             </Button>
