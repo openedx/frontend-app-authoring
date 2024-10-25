@@ -2,6 +2,7 @@ import {
   useCallback, useEffect, useState, useMemo,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { IntlShape } from 'react-intl';
 import { useParams } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
@@ -215,26 +216,6 @@ export const useMoveModal = ({
     state.parentInfo, isOpenModal, loadingStatus, updateChildrenItemsData,
     setDisplayedXBlocksCategories, enableMoveOperation,
   ]);
-
-  console.log(
-      state.sourceXBlockInfo,
-      {
-        isLoading: loadingStatus === RequestStatus.IN_PROGRESS,
-        isValidMove: state.isValidMove,
-        isExtraSmall,
-        parentInfo: state.parentInfo,
-        childrenInfo: state.childrenInfo,
-        displayName: state.sourceXBlockInfo.current.displayName,
-        sourceXBlockId: state.sourceXBlockInfo.current.id,
-        categoryText: getCategoryText(),
-        breadcrumbs,
-        currentXBlockParentIds,
-        handleXBlockClick,
-        handleBreadcrumbsClick,
-        handleCLoseModal,
-        handleMoveXBlock,
-      }
-  );
 
   return {
     isLoading: loadingStatus === RequestStatus.IN_PROGRESS,

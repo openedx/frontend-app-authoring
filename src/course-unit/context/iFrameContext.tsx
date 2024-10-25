@@ -16,14 +16,17 @@ export const IframeProvider: React.FC = ({ children }) => {
       try {
         iframeWindow.postMessage({ type: messageType, payload }, '*');
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Failed to send message to iframe:', error);
       }
     } else {
+      // eslint-disable-next-line no-console
       console.warn('Iframe is not accessible or loaded yet.');
     }
   };
 
   return (
+    // eslint-disable-next-line react/jsx-no-constructed-context-values
     <IframeContext.Provider value={{ setIframeRef, sendMessageToIframe }}>
       {children}
     </IframeContext.Provider>

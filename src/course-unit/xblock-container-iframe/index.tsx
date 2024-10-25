@@ -24,6 +24,7 @@ interface XBlockContainerIframeProps {
   blockId: string;
   unitXBlockActions: {
     handleDelete: (XBlockId: string) => void;
+    handleDuplicate: (XBlockId: string) => void;
   };
   xblocks: Array<{
     name: string;
@@ -74,7 +75,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
   const { setIframeRef, sendMessageToIframe } = useIframe();
   const [editXblockId, setEditXblockId] = useState<string | null>(null);
-  const [currentXblockData, setCurrentXblockData] = useState<Record<string, any>>({});
+  const [currentXblockData, setCurrentXblockData] = useState<any>({});
 
   const iframeUrl = `${getConfig().STUDIO_BASE_URL}/container_embed/${blockId}`;
 
@@ -144,7 +145,6 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
 
     const handleMessage = (event: MessageEvent) => {
       const { type, payload } = event.data || {};
-      console.log('MESSAGE FROM IFRAME =================>', { type, payload });
       if (type && messageHandlers[type]) {
         messageHandlers[type](payload);
       }
@@ -199,6 +199,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
         onClose={closeConfigureModal}
         onConfigureSubmit={onConfigureSubmit}
         currentItemData={currentXblockData}
+        isSelfPaced={false}
       />
       <iframe
         ref={iframeRef}

@@ -1,4 +1,4 @@
-import {render, screen, within} from '@testing-library/react';
+import { render, within } from '@testing-library/react';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';

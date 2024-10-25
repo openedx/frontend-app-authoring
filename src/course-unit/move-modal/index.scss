@@ -62,7 +62,7 @@
             border-radius: 0;
             width: 100%;
             gap: map-get($spacers, 2);
-            padding: 0.5625rem $spacer 0.5625rem map-get($spacers, 4);
+            padding: .5625rem $spacer .5625rem map-get($spacers, 4);
         }
 
         .btn {

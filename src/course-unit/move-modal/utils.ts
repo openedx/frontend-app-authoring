@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { IntlShape } from 'react-intl';
 
 import { BASIC_BLOCK_TYPES, CATEGORIES_KEYS } from './constants';
@@ -37,6 +38,7 @@ export const findParentIds = (
 ): string[] => {
   let path: string[] = [];
 
+  // eslint-disable-next-line @typescript-eslint/no-shadow
   function traverse(node: ITreeNode | undefined, targetId: string, currentPath: string[]): boolean {
     if (!node) {
       return false;
@@ -73,7 +75,9 @@ export const isValidCategory = (
   sourceParentInfo: IXBlockInfo,
   targetParentInfo: IXBlockInfo,
 ): boolean => {
+  // eslint-disable-next-line prefer-const
   let { category: sourceParentCategory, hasChildren: sourceParentHasChildren } = sourceParentInfo;
+  // eslint-disable-next-line prefer-const
   let { category: targetParentCategory, has_children: targetParentHasChildren } = targetParentInfo;
 
   if (
