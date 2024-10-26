@@ -90,7 +90,7 @@ export const useToolsMenuItems = courseId => {
     },
     ...(getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true'
       ? [{
-        href: '#export-tags',
+        href: `${studioBaseUrl}/course/${courseId}#export-tags`,
         title: intl.formatMessage(messages['header.links.exportTags']),
       }] : []
     ),
