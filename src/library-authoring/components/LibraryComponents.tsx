@@ -5,8 +5,7 @@ import { useLoadOnScroll } from '../../hooks';
 import { useSearchContext } from '../../search-manager';
 import { NoComponents, NoSearchResults } from '../EmptyStates';
 import ComponentCard from './ComponentCard';
-import { LIBRARY_SECTION_PREVIEW_LIMIT } from './LibrarySection';
-import { useLibraryContext } from '../common/context';
+import { useLibraryContext, LIBRARY_SECTION_PREVIEW_LIMIT } from '../common/context';
 
 type LibraryComponentsProps = {
   variant: 'full' | 'preview',

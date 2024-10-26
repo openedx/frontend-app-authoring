@@ -48,17 +48,16 @@ enum TabList {
 
 interface TabContentProps {
   eventKey: string;
-  handleTabChange: (key: string) => void;
 }
 
-const TabContent = ({ eventKey, handleTabChange }: TabContentProps) => {
+const TabContent = ({ eventKey }: TabContentProps) => {
   switch (eventKey) {
     case TabList.components:
       return <LibraryComponents variant="full" />;
     case TabList.collections:
       return <LibraryCollections variant="full" />;
     default:
-      return <LibraryHome tabList={TabList} handleTabChange={handleTabChange} />;
+      return <LibraryHome />;
   }
 };
 
@@ -263,7 +262,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
               <Tab eventKey={TabList.components} title={intl.formatMessage(messages.componentsTab)} />
               <Tab eventKey={TabList.collections} title={intl.formatMessage(messages.collectionsTab)} />
             </Tabs>
-            <TabContent eventKey={activeKey} handleTabChange={handleTabChange} />
+            <TabContent eventKey={activeKey} />
           </SearchContextProvider>
         </Container>
         {!componentPickerMode && <StudioFooter containerProps={{ size: undefined }} />}

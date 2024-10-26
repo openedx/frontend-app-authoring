@@ -33,7 +33,7 @@ const messages = defineMessages({
   },
   homeTab: {
     id: 'course-authoring.library-authoring.home-tab',
-    defaultMessage: 'Home',
+    defaultMessage: 'All Content',
     description: 'Tab label for the home tab',
   },
   componentsTab: {
@@ -110,6 +110,16 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.pick-components.return-to-library-selection',
     defaultMessage: 'Change Library',
     description: 'Breadcrumbs link to return to library selection',
+  },
+  showMoreContent: {
+    id: 'course-authoring.library-authoring.showMoreResults',
+    defaultMessage: 'Show more results',
+    description: 'Show more results - a button to add to the list of results by loading more from the server',
+  },
+  loadingMoreContent: {
+    id: 'course-authoring.library-authoring.loadingMoreResults',
+    defaultMessage: 'Loading more results',
+    description: 'Loading more results - the button displays this message while more results are loading',
   },
 });
 

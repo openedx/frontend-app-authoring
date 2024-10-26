@@ -44,6 +44,8 @@ export interface SearchContextData {
   hasError: boolean;
   collectionHits: CollectionHit[];
   totalCollectionHits: number;
+  contentAndCollectionHits: (ContentHit | CollectionHit)[];
+  totalContentAndCollectionHits: number;
   usageKey: string;
 }
 

@@ -3,9 +3,8 @@ import { useLoadOnScroll } from '../../hooks';
 import { useSearchContext } from '../../search-manager';
 import { NoComponents, NoSearchResults } from '../EmptyStates';
 import CollectionCard from '../components/CollectionCard';
-import { LIBRARY_SECTION_PREVIEW_LIMIT } from '../components/LibrarySection';
 import messages from './messages';
-import { useLibraryContext } from '../common/context';
+import { useLibraryContext, LIBRARY_SECTION_PREVIEW_LIMIT } from '../common/context';
 
 type LibraryCollectionsProps = {
   variant: 'full' | 'preview',

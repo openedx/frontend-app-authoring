@@ -226,6 +226,8 @@ export async function fetchSearchResults({
     problemTypes: Record<string, number>,
     collectionHits: CollectionHit[],
     totalCollectionHits: number,
+    contentAndCollectionHits: (ContentHit | CollectionHit)[],
+    totalContentAndCollectionHits: number,
   }> {
   let queries: MultiSearchQuery[] = [];
 
@@ -303,6 +305,26 @@ export async function fetchSearchResults({
     limit,
   });
 
+  // Fourth query is to et a mix of hits and collections, with all the filters applied.
+  queries.push({
+    indexUid: indexName,
+    q: searchKeywords,
+    filter: [
+      // top-level entries in the array are AND conditions and must all match
+      // Inner arrays are OR conditions, where only one needs to match.
+      ...typeFilters,
+      ...extraFilterFormatted,
+      ...tagsFilterFormatted,
+    ],
+    attributesToHighlight: ['display_name', 'description', 'published'],
+    highlightPreTag: HIGHLIGHT_PRE_TAG,
+    highlightPostTag: HIGHLIGHT_POST_TAG,
+    attributesToCrop: ['description', 'published'],
+    sort,
+    offset,
+    limit,
+  });
+
   queries = applyOverrideQueries(queries, overrideQueries);
 
   const { results } = await client.multiSearch(({ queries }));
@@ -316,6 +338,10 @@ export async function fetchSearchResults({
     nextOffset: componentHitLength === limit || collectionHitLength === limit ? offset + limit : undefined,
     collectionHits: results[2].hits.map(formatSearchHit) as CollectionHit[],
     totalCollectionHits: results[2].totalHits ?? results[2].estimatedTotalHits ?? collectionHitLength,
+    contentAndCollectionHits: results[3].hits.map(formatSearchHit) as (ContentHit | CollectionHit)[],
+    totalContentAndCollectionHits: (
+      results[3].totalHits ?? results[3].estimatedTotalHits ?? componentHitLength + collectionHitLength
+    ),
   };
 }
 
@@ -558,7 +584,7 @@ export async function fetchTagsThatMatchKeyword({
  * Fetch single document by its id
  */
 /* istanbul ignore next */
-export async function fetchDocumentById({ client, indexName, id } : {
+export async function fetchDocumentById({ client, indexName, id }: {
   /** The Meilisearch client instance */
   client: MeiliSearch;
   /** Which index to search */
