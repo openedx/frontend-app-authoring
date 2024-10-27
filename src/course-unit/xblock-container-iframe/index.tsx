@@ -212,6 +212,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
         style={{ width: '100%', height: iframeHeight + IFRAME_BOTTOM_OFFSET }}
         scrolling="no"
         referrerPolicy="origin"
+        aria-label={intl.formatMessage(messages.xblockIframeLabel, { xblockCount: xblocks.length })}
       />
     </>
   );
