@@ -112,14 +112,16 @@ const SelectLibrary = ({ selectedLibrary, setSelectedLibrary }: SelectLibraryPro
           ))}
         </Form.RadioSet>
       </div>
-      <Pagination
-        paginationLabel={intl.formatMessage(messages.selectLibraryPaginationLabel)}
-        pageCount={data!.numPages}
-        currentPage={data!.currentPage}
-        onPageSelect={(page: number) => setCurrentPage(page)}
-        variant="secondary"
-        className="align-self-center"
-      />
+      {data.results.length !== 0 && (
+        <Pagination
+          paginationLabel={intl.formatMessage(messages.selectLibraryPaginationLabel)}
+          pageCount={data!.numPages}
+          currentPage={data!.currentPage}
+          onPageSelect={(page: number) => setCurrentPage(page)}
+          variant="secondary"
+          className="align-self-center"
+        />
+      )}
     </Stack>
   );
 };
