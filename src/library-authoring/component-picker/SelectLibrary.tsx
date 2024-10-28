@@ -14,13 +14,25 @@ import AlertError from '../../generic/alert-error';
 import { useContentLibraryV2List } from '../data/apiHooks';
 import messages from './messages';
 
-const EmptyState = () => (
+interface EmptyStateProps {
+  hasSearchQuery: boolean;
+}
+
+const EmptyState = ({ hasSearchQuery }: EmptyStateProps) => (
   <Alert className="mt-4 align-self-center">
     <Alert.Heading>
-      <FormattedMessage {...messages.selectLibraryEmptyStateTitle} />
+      {hasSearchQuery ? (
+        <FormattedMessage {...messages.selectLibraryNoSearchResultsTitle} />
+      ) : (
+        <FormattedMessage {...messages.selectLibraryNoLibrariesTitle} />
+      )}
     </Alert.Heading>
     <p>
-      <FormattedMessage {...messages.selectLibraryEmptyStateMessage} />
+      {hasSearchQuery ? (
+        <FormattedMessage {...messages.selectLibraryNoSearchResultsMessage} />
+      ) : (
+        <FormattedMessage {...messages.selectLibraryNoLibrariesMessage} />
+      )}
     </p>
   </Alert>
 );
@@ -72,7 +84,7 @@ const SelectLibrary = ({ selectedLibrary, setSelectedLibrary }: SelectLibraryPro
         placeholder={intl.formatMessage(messages.selectLibrarySearchPlaceholder)}
       />
       <div>
-        {data.results.length === 0 && (<EmptyState />)}
+        {data.results.length === 0 && (<EmptyState hasSearchQuery={!!searchQuery} />)}
         <Form.RadioSet
           name="selected-library"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSelectedLibrary(e.target.value)}
@@ -100,14 +112,16 @@ const SelectLibrary = ({ selectedLibrary, setSelectedLibrary }: SelectLibraryPro
           ))}
         </Form.RadioSet>
       </div>
-      <Pagination
-        paginationLabel={intl.formatMessage(messages.selectLibraryPaginationLabel)}
-        pageCount={data!.numPages}
-        currentPage={data!.currentPage}
-        onPageSelect={(page: number) => setCurrentPage(page)}
-        variant="secondary"
-        className="align-self-center"
-      />
+      {data.results.length !== 0 && (
+        <Pagination
+          paginationLabel={intl.formatMessage(messages.selectLibraryPaginationLabel)}
+          pageCount={data!.numPages}
+          currentPage={data!.currentPage}
+          onPageSelect={(page: number) => setCurrentPage(page)}
+          variant="secondary"
+          className="align-self-center"
+        />
+      )}
     </Stack>
   );
 };

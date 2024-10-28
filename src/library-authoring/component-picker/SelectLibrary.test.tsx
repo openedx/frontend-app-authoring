@@ -1,5 +1,6 @@
 import {
   initializeMocks,
+  fireEvent,
   render,
   screen,
 } from '../../testUtils';
@@ -28,9 +29,20 @@ describe('<ComponentPicker />', () => {
     expect(await screen.findByText('Loading...')).toBeInTheDocument();
   });
 
-  it('should render the empty status', async () => {
+  it('should render the no library status', async () => {
     mockGetContentLibraryV2List.applyMockEmpty();
     render(<ComponentPicker />);
+
+    expect(await screen.findByText(/you don't have any libraries created yet,/i)).toBeInTheDocument();
+  });
+
+  it('should render the no search result status', async () => {
+    mockGetContentLibraryV2List.applyMockEmpty();
+    render(<ComponentPicker />);
+
+    const searchField = await screen.findByPlaceholderText('Search for a library');
+    fireEvent.change(searchField, { target: { value: 'test' } });
+    fireEvent.submit(searchField);
 
     expect(await screen.findByText(/there are no libraries with the current filters/i)).toBeInTheDocument();
   });

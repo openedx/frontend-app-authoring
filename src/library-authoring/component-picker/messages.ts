@@ -16,15 +16,26 @@ const messages = defineMessages({
     defaultMessage: 'Library pagination',
     description: 'The pagination label for the select library component',
   },
-  selectLibraryEmptyStateTitle: {
-    id: 'course-authoring.library-authoring.pick-components.select-library.empty-state.title',
+  selectLibraryNoSearchResultsTitle: {
+    id: 'course-authoring.library-authoring.pick-components.select-library.no-search.results.title',
     defaultMessage: 'We could not find any result',
-    description: 'The title for the empty state in the select library component',
+    description: 'The title for the no search results state in the select library component',
   },
-  selectLibraryEmptyStateMessage: {
-    id: 'course-authoring.library-authoring.pick-components.select-library.empty-state.message',
+  selectLibraryNoSearchResultsMessage: {
+    id: 'course-authoring.library-authoring.pick-components.select-library.no-search.message',
     defaultMessage: 'There are no libraries with the current filters.',
-    description: 'The message for the empty state in the select library component',
+    description: 'The message for the no search results state in the select library component',
+  },
+  selectLibraryNoLibrariesTitle: {
+    id: 'course-authoring.library-authoring.pick-components.select-library.no-libraries.title',
+    defaultMessage: 'No libraries found',
+    description: 'The title for the no libraries state in the select library component',
+  },
+  selectLibraryNoLibrariesMessage: {
+    id: 'course-authoring.library-authoring.pick-components.select-library.no-libraries.message',
+    defaultMessage: 'You don\'t have any libraries created yet, or you don\'t have access to any libraries. To '
+      + 'create a new library, go to Studio Home or contact your system administrator.',
+    description: 'The message for the no libraries state in the select library component',
   },
   selectLibraryNextButton: {
     id: 'course-authoring.library-authoring.pick-components.select-library.next-button',
