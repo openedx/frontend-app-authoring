@@ -17,7 +17,9 @@ import { selectors } from '../../../../data/redux';
 import RawEditor from '../../../../sharedComponents/RawEditor';
 import { ProblemTypeKeys } from '../../../../data/constants/problem';
 
-import { checkIfEditorsDirty, parseState, saveWarningModalToggle, getContent } from './hooks';
+import {
+  checkIfEditorsDirty, parseState, saveWarningModalToggle, getContent,
+} from './hooks';
 import './index.scss';
 import messages from './messages';
 
@@ -46,7 +48,7 @@ const EditProblemView = ({
       return editorRef.current.observer?.lastChange !== 0;
     }
     return isDirty || checkIfEditorsDirty();
-  }
+  };
 
   return (
     <EditorContainer

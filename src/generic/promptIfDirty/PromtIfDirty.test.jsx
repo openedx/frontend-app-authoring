@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 import { act } from 'react-dom/test-utils';
-import PromptIfDirty from './PromptIfDirty';
+import PromptIfDirty from './usePromptIfDirty';
 
 describe('PromptIfDirty', () => {
   let container = null;

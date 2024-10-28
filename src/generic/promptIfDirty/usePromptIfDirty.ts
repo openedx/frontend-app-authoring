@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
-import PropTypes from 'prop-types';
 
-const PromptIfDirty = ({ dirty }) => {
+const usePromptIfDirty = (checkIfDirty : Function) => {
   useEffect(() => {
     // eslint-disable-next-line consistent-return
     const handleBeforeUnload = (event) => {
-      if (dirty) {
+      if (checkIfDirty()) {
         event.preventDefault();
+        // Included for legacy support, e.g. Chrome/Edge < 119
+        event.returnValue = true; // eslint-disable-line no-param-reassign
       }
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
@@ -14,11 +15,9 @@ const PromptIfDirty = ({ dirty }) => {
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [dirty]);
+  }, [checkIfDirty]);
 
   return null;
 };
-PromptIfDirty.propTypes = {
-  dirty: PropTypes.bool.isRequired,
-};
-export default PromptIfDirty;
+
+export default usePromptIfDirty;

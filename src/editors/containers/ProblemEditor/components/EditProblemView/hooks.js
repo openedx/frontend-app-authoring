@@ -31,7 +31,7 @@ export const checkIfEditorsDirty = () => {
     }
     return false;
   });
-}
+};
 
 export const fetchEditorContent = ({ format }) => {
   const editorObject = { hints: [] };
