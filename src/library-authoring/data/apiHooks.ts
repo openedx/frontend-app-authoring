@@ -113,6 +113,8 @@ export const xblockQueryKeys = {
 export function invalidateComponentData(queryClient: QueryClient, contentLibraryId: string, usageKey: string) {
   queryClient.invalidateQueries({ queryKey: xblockQueryKeys.xblockFields(usageKey) });
   queryClient.invalidateQueries({ queryKey: xblockQueryKeys.componentMetadata(usageKey) });
+  // The description and display name etc. may have changed, so refresh everything in the library too:
+  queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(contentLibraryId) });
   queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, contentLibraryId) });
 }
 
@@ -135,7 +137,6 @@ export const useCreateLibraryBlock = () => {
   return useMutation({
     mutationFn: createLibraryBlock,
     onSettled: (_data, _error, variables) => {
-      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(variables.libraryId) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, variables.libraryId) });
     },
   });
@@ -150,8 +151,6 @@ export const useDeleteLibraryBlock = () => {
     mutationFn: deleteLibraryBlock,
     onSettled: (_data, _error, variables) => {
       const libraryId = getLibraryId(variables.usageKey);
-      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId) });
-      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
       invalidateComponentData(queryClient, libraryId, variables.usageKey);
     },
   });
@@ -367,11 +366,7 @@ export const useUpdateXBlockOLX = (usageKey: string) => {
     mutationFn: (newOLX: string) => setXBlockOLX(usageKey, newOLX),
     onSuccess: (olxFromServer) => {
       queryClient.setQueryData(xblockQueryKeys.xblockOLX(usageKey), olxFromServer);
-      // Reload the other data for this component:
       invalidateComponentData(queryClient, contentLibraryId, usageKey);
-      // And the description and display name etc. may have changed, so refresh everything in the library too:
-      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(contentLibraryId) });
-      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, contentLibraryId) });
     },
   });
 };
