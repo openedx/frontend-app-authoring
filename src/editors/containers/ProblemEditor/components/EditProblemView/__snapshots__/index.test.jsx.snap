@@ -3,6 +3,7 @@
 exports[`EditorProblemView component renders raw editor 1`] = `
 <EditorContainer
   getContent={[Function]}
+  isDirty={[Function]}
   returnFunction={null}
 >
   <AlertModal
@@ -72,6 +73,7 @@ exports[`EditorProblemView component renders raw editor 1`] = `
 exports[`EditorProblemView component renders simple view 1`] = `
 <EditorContainer
   getContent={[Function]}
+  isDirty={[Function]}
   returnFunction={null}
 >
   <AlertModal
