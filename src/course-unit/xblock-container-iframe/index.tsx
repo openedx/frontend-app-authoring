@@ -76,12 +76,20 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const { setIframeRef, sendMessageToIframe } = useIframe();
   const [editXblockId, setEditXblockId] = useState<string | null>(null);
   const [currentXblockData, setCurrentXblockData] = useState<any>({});
+  const [showOverlay, setShowOverlay] = useState(false);
+  const [scrollPosition, setScrollPosition] = useState(0);
 
   const iframeUrl = `${getConfig().STUDIO_BASE_URL}/container_embed/${blockId}`;
 
   useEffect(() => {
     setIframeRef(iframeRef);
   }, [setIframeRef]);
+
+  useEffect(() => {
+    sendMessageToIframe('controlEditModalPosition', {
+      height: scrollPosition,
+    });
+  }, [scrollPosition]);
 
   const handleDelete = (id: string) => {
     openDeleteModal();
@@ -105,6 +113,10 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
       });
     }
   };
+
+  document.addEventListener('scroll', () => {
+    setScrollPosition(window.scrollY - 200);
+  });
 
   const handleCopy = (id: string) => {
     dispatch(copyToClipboard(id));
@@ -145,6 +157,17 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
 
     const handleMessage = (event: MessageEvent) => {
       const { type, payload } = event.data || {};
+
+      if (type === messageTypes.showXBlockEditorModal) {
+        setShowOverlay(true);
+        // document.body.style.overflow = 'hidden';
+      }
+
+      if (type === messageTypes.hideXBlockEditorModal) {
+        setShowOverlay(false);
+        // document.body.style.overflow = 'auto';
+      }
+
       if (type && messageHandlers[type]) {
         messageHandlers[type](payload);
       }
@@ -187,6 +210,9 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
 
   return (
     <>
+      {showOverlay && (
+        <div className="modal-window-overlay" />
+      )}
       <DeleteModal
         category="component"
         isOpen={isDeleteModalOpen}
