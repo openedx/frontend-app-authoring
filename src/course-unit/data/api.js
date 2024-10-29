@@ -12,6 +12,7 @@ export const getXBlockBaseApiUrl = (itemId) => `${getStudioBaseUrl()}/xblock/${i
 export const getCourseSectionVerticalApiUrl = (itemId) => `${getStudioBaseUrl()}/api/contentstore/v1/container_handler/${itemId}`;
 export const getCourseVerticalChildrenApiUrl = (itemId) => `${getStudioBaseUrl()}/api/contentstore/v1/container/vertical/${itemId}/children`;
 export const postXBlockBaseApiUrl = () => `${getStudioBaseUrl()}/xblock/`;
+export const getXBlockSyncUrl = (itemId) => `${getStudioBaseUrl()}/api/contentstore/v2/upstream_sync/${itemId}`;
 
 /**
  * Get course unit.
@@ -74,6 +75,7 @@ export async function createCourseXblock({
     parent_locator: parentLocator,
     display_name: displayName,
     staged_content: stagedContent,
+    link_to_upstream: true,
   };
 
   const { data } = await getAuthenticatedHttpClient()
@@ -146,6 +148,16 @@ export async function duplicateUnitItem(itemId, XBlockId) {
       duplicate_source_locator: XBlockId,
     });
 
+  return data;
+}
+
+/**
+ * Sync a unit item to its upstream library item.
+ * @param {string} itemId
+ * @returns {Promise<Object>}
+ */
+export async function syncUnitItem(itemId, XBlockId) {
+  const { data } = await getAuthenticatedHttpClient().post(`${getXBlockSyncUrl(XBlockId)}`);
   return data;
 }
 

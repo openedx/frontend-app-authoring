@@ -21,7 +21,7 @@ import XBlockMessages from './xblock-messages/XBlockMessages';
 import messages from './messages';
 
 const CourseXBlock = ({
-  id, title, type, unitXBlockActions, shouldScroll, userPartitionInfo,
+  id, title, type, unitXBlockActions, shouldScroll, userPartitionInfo, upstreamLink,
   handleConfigureSubmit, validationMessages, ...props
 }) => {
   const courseXBlockElementRef = useRef(null);
@@ -126,6 +126,14 @@ const CourseXBlock = ({
                   <Dropdown.Item onClick={openDeleteModal}>
                     {intl.formatMessage(messages.blockLabelButtonDelete)}
                   </Dropdown.Item>
+                  {upstreamLink &&
+                    <>
+                      <Dropdown.Divider />
+                      <Dropdown.Item disabled={!upstreamLink.promptSync} onClick={() => unitXBlockActions.handleSync(id)}>
+                        Update from library
+                      </Dropdown.Item>
+                    </>
+                  }
                 </Dropdown.Menu>
               </Dropdown>
               <DeleteModal
@@ -170,6 +178,7 @@ CourseXBlock.propTypes = {
   unitXBlockActions: PropTypes.shape({
     handleDelete: PropTypes.func,
     handleDuplicate: PropTypes.func,
+    handleSync: PropTypes.func,
   }).isRequired,
   userPartitionInfo: PropTypes.shape({
     selectablePartitions: PropTypes.arrayOf(PropTypes.shape({

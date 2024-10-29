@@ -30,10 +30,10 @@ const PasteComponent = ({
       </Popover>
     </div>
   );
-
+  const textt = (clipboardData.sourceContextTitle || "").startsWith("lib:") ? "Link library component from clipboard" : text;
   return (
     <>
-      <PasteButton className={className} onClick={onClick} text={text} />
+      <PasteButton className={className} onClick={onClick} text={textt} />
       <OverlayTrigger
         show={showPopover}
         overlay={renderPopover}
