@@ -1,4 +1,5 @@
 import { StrictDict, camelizeKeys } from '../../../utils';
+import { isLibraryKey } from '../../../../generic/key-utils';
 import * as requests from './requests';
 // This 'module' self-import hack enables mocking during tests.
 // See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
@@ -89,7 +90,9 @@ export const initialize = (data) => (dispatch) => {
   const editorType = data.blockType;
   dispatch(actions.app.initialize(data));
   dispatch(module.fetchBlock());
-  dispatch(module.fetchUnit());
+  if (data.blockId?.startsWith('block-v1:')) {
+    dispatch(module.fetchUnit());
+  }
   switch (editorType) {
     case 'problem':
       dispatch(module.fetchImages({ pageNumber: 0 }));
@@ -100,7 +103,12 @@ export const initialize = (data) => (dispatch) => {
       dispatch(module.fetchCourseDetails());
       break;
     case 'html':
-      dispatch(module.fetchImages({ pageNumber: 0 }));
+      if (isLibraryKey(data.learningContextId)) {
+        // eslint-disable-next-line no-console
+        console.log('Not fetching image assets - not implemented yet for content libraries.');
+      } else {
+        dispatch(module.fetchImages({ pageNumber: 0 }));
+      }
       break;
     default:
       break;

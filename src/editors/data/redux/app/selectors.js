@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import { blockTypes } from '../../constants/app';
+import { isLibraryV1Key } from '../../../../generic/key-utils';
 import * as urls from '../../services/cms/urls';
 // This 'module' self-import hack enables mocking during tests.
 // See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
@@ -40,12 +41,35 @@ export const returnUrl = createSelector(
   ),
 );
 
+export const isLibrary = createSelector(
+  [
+    module.simpleSelectors.learningContextId,
+    module.simpleSelectors.blockId,
+  ],
+  (learningContextId, blockId) => {
+    if (isLibraryV1Key(learningContextId)) {
+      return true;
+    }
+    if (blockId && blockId.startsWith('lb:')) {
+      return true;
+    }
+    return false;
+  },
+);
+
 export const isInitialized = createSelector(
   [
     module.simpleSelectors.unitUrl,
     module.simpleSelectors.blockValue,
+    module.isLibrary,
   ],
-  (unitUrl, blockValue) => !!(unitUrl && blockValue),
+  (unitUrl, blockValue, isLibraryBlock) => {
+    if (isLibraryBlock) {
+      return !!blockValue;
+    }
+
+    return !!blockValue && !!unitUrl;
+  },
 );
 
 export const displayTitle = createSelector(
@@ -75,22 +99,6 @@ export const analytics = createSelector(
   (blockId, blockType, learningContextId) => (
     { blockId, blockType, learningContextId }
   ),
-);
-
-export const isLibrary = createSelector(
-  [
-    module.simpleSelectors.learningContextId,
-    module.simpleSelectors.blockId,
-  ],
-  (learningContextId, blockId) => {
-    if (learningContextId && learningContextId.startsWith('library-v1')) {
-      return true;
-    }
-    if (blockId && blockId.startsWith('lb:')) {
-      return true;
-    }
-    return false;
-  },
 );
 
 export default {

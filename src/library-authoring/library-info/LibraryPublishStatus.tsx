@@ -1,167 +1,73 @@
-import React, { useCallback, useContext, useMemo } from 'react';
-import classNames from 'classnames';
-import { Button, Container, Stack } from '@openedx/paragon';
-import { FormattedDate, FormattedTime, useIntl } from '@edx/frontend-platform/i18n';
-import { useCommitLibraryChanges, useRevertLibraryChanges } from '../data/apiHooks';
-import { ContentLibrary } from '../data/api';
+import { useCallback, useContext, useState } from 'react';
+import { useIntl } from '@edx/frontend-platform/i18n';
+
+import { useToggle } from '@openedx/paragon';
 import { ToastContext } from '../../generic/toast-context';
+import { useLibraryContext } from '../common/context';
+import { useCommitLibraryChanges, useRevertLibraryChanges } from '../data/apiHooks';
+import StatusWidget from '../generic/status-widget';
 import messages from './messages';
+import DeleteModal from '../../generic/delete-modal/DeleteModal';
 
-type LibraryPublishStatusProps = {
-  library: ContentLibrary,
-};
-
-const LibraryPublishStatus = ({ library } : LibraryPublishStatusProps) => {
+const LibraryPublishStatus = () => {
   const intl = useIntl();
+  const { libraryData, readOnly } = useLibraryContext();
+  const [isConfirmModalOpen, openConfirmModal, closeConfirmModal] = useToggle(false);
+  const [confirmBtnState, setConfirmBtnState] = useState('default');
+
   const commitLibraryChanges = useCommitLibraryChanges();
   const revertLibraryChanges = useRevertLibraryChanges();
   const { showToast } = useContext(ToastContext);
 
   const commit = useCallback(() => {
-    commitLibraryChanges.mutateAsync(library.id)
-      .then(() => {
-        showToast(intl.formatMessage(messages.publishSuccessMsg));
-      }).catch(() => {
-        showToast(intl.formatMessage(messages.publishErrorMsg));
-      });
-  }, []);
+    if (libraryData) {
+      commitLibraryChanges.mutateAsync(libraryData.id)
+        .then(() => {
+          showToast(intl.formatMessage(messages.publishSuccessMsg));
+        }).catch(() => {
+          showToast(intl.formatMessage(messages.publishErrorMsg));
+        });
+    }
+  }, [libraryData]);
 
   const revert = useCallback(() => {
-    revertLibraryChanges.mutateAsync(library.id)
-      .then(() => {
-        showToast(intl.formatMessage(messages.revertSuccessMsg));
-      }).catch(() => {
-        showToast(intl.formatMessage(messages.revertErrorMsg));
-      });
-  }, []);
-
-  const {
-    isPublished,
-    isNew,
-    statusMessage,
-    extraStatusMessage,
-    bodyMessage,
-  } = useMemo(() => {
-    let isPublishedResult: boolean;
-    let isNewResult = false;
-    let statusMessageResult : string;
-    let extraStatusMessageResult : string | undefined;
-    let bodyMessageResult : string | undefined;
-
-    const buildDate = ((date : string) => (
-      <b>
-        <FormattedDate
-          value={date}
-          year="numeric"
-          month="long"
-          day="2-digit"
-        />
-      </b>
-    ));
-
-    const buildTime = ((date: string) => (
-      <b>
-        <FormattedTime
-          value={date}
-          hour12={false}
-        />
-      </b>
-    ));
-
-    const buildDraftBodyMessage = (() => {
-      if (library.lastDraftCreatedBy && library.lastDraftCreated) {
-        return intl.formatMessage(messages.lastDraftMsg, {
-          date: buildDate(library.lastDraftCreated),
-          time: buildTime(library.lastDraftCreated),
-          user: <b>{library.lastDraftCreatedBy}</b>,
+    if (libraryData) {
+      setConfirmBtnState('pending');
+      revertLibraryChanges.mutateAsync(libraryData.id)
+        .then(() => {
+          showToast(intl.formatMessage(messages.revertSuccessMsg));
+        }).catch(() => {
+          showToast(intl.formatMessage(messages.revertErrorMsg));
+        }).finally(() => {
+          setConfirmBtnState('default');
+          closeConfirmModal();
         });
-      }
-      if (library.lastDraftCreated) {
-        return intl.formatMessage(messages.lastDraftMsgWithoutUser, {
-          date: buildDate(library.lastDraftCreated),
-          time: buildTime(library.lastDraftCreated),
-        });
-      }
-      if (library.created) {
-        return intl.formatMessage(messages.lastDraftMsgWithoutUser, {
-          date: buildDate(library.created),
-          time: buildTime(library.created),
-        });
-      }
-      return '';
-    });
-
-    if (!library.lastPublished) {
-      // Library is never published (new)
-      isNewResult = library.numBlocks === 0; // allow discarding if components are added
-      isPublishedResult = false;
-      statusMessageResult = intl.formatMessage(messages.draftStatusLabel);
-      extraStatusMessageResult = intl.formatMessage(messages.neverPublishedLabel);
-      bodyMessageResult = buildDraftBodyMessage();
-    } else if (library.hasUnpublishedChanges || library.hasUnpublishedDeletes) {
-      // Library is on Draft state
-      isPublishedResult = false;
-      statusMessageResult = intl.formatMessage(messages.draftStatusLabel);
-      extraStatusMessageResult = intl.formatMessage(messages.unpublishedStatusLabel);
-      bodyMessageResult = buildDraftBodyMessage();
-    } else {
-      // Library is published
-      isPublishedResult = true;
-      statusMessageResult = intl.formatMessage(messages.publishedStatusLabel);
-      if (library.publishedBy) {
-        bodyMessageResult = intl.formatMessage(messages.lastPublishedMsg, {
-          date: buildDate(library.lastPublished),
-          time: buildTime(library.lastPublished),
-          user: <b>{library.publishedBy}</b>,
-        });
-      } else {
-        bodyMessageResult = intl.formatMessage(messages.lastPublishedMsgWithoutUser, {
-          date: buildDate(library.lastPublished),
-          time: buildTime(library.lastPublished),
-        });
-      }
     }
-    return {
-      isPublished: isPublishedResult,
-      isNew: isNewResult,
-      statusMessage: statusMessageResult,
-      extraStatusMessage: extraStatusMessageResult,
-      bodyMessage: bodyMessageResult,
-    };
-  }, [library]);
+  }, [libraryData]);
+
+  if (!libraryData) {
+    return null;
+  }
 
   return (
-    <Stack>
-      <Container className={classNames('library-publish-status', {
-        'draft-status': !isPublished,
-        'published-status': isPublished,
-      })}
-      >
-        <span className="font-weight-bold">
-          {statusMessage}
-        </span>
-        { extraStatusMessage && (
-          <span className="ml-1">
-            {extraStatusMessage}
-          </span>
-        )}
-      </Container>
-      <Container className="mt-3">
-        <Stack gap={3}>
-          <span>
-            {bodyMessage}
-          </span>
-          <Button disabled={isPublished} onClick={commit}>
-            {intl.formatMessage(messages.publishButtonLabel)}
-          </Button>
-          <div className="d-flex justify-content-end">
-            <Button disabled={isPublished || isNew} variant="link" onClick={revert}>
-              {intl.formatMessage(messages.discardChangesButtonLabel)}
-            </Button>
-          </div>
-        </Stack>
-      </Container>
-    </Stack>
+    <>
+      <StatusWidget
+        {...libraryData}
+        onCommit={!readOnly ? commit : undefined}
+        onRevert={!readOnly ? openConfirmModal : undefined}
+      />
+      <DeleteModal
+        isOpen={isConfirmModalOpen}
+        close={closeConfirmModal}
+        variant="warning"
+        title={intl.formatMessage(messages.discardChangesTitle)}
+        description={intl.formatMessage(messages.discardChangesDescription)}
+        onDeleteSubmit={revert}
+        btnState={confirmBtnState}
+        btnDefaultLabel={intl.formatMessage(messages.discardChangesDefaultBtnLabel)}
+        btnPendingLabel={intl.formatMessage(messages.discardChangesDefaultBtnLabel)}
+      />
+    </>
   );
 };
 

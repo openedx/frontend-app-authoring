@@ -187,7 +187,6 @@ describe('app thunkActions', () => {
       expect(dispatch.mock.calls).toEqual([
         [actions.app.initialize(testValue)],
         [thunkActions.fetchBlock()],
-        [thunkActions.fetchUnit()],
       ]);
       thunkActions.fetchBlock = fetchBlock;
       thunkActions.fetchUnit = fetchUnit;
@@ -216,6 +215,8 @@ describe('app thunkActions', () => {
       const data = {
         ...testValue,
         blockType: 'html',
+        blockId: 'block-v1:UniversityX+PHYS+1+type@problem+block@123',
+        learningContextId: 'course-v1:UniversityX+PHYS+1',
       };
       thunkActions.initialize(data)(dispatch);
       expect(dispatch.mock.calls).toEqual([
@@ -251,6 +252,8 @@ describe('app thunkActions', () => {
       const data = {
         ...testValue,
         blockType: 'problem',
+        blockId: 'block-v1:UniversityX+PHYS+1+type@problem+block@123',
+        learningContextId: 'course-v1:UniversityX+PHYS+1',
       };
       thunkActions.initialize(data)(dispatch);
       expect(dispatch.mock.calls).toEqual([
@@ -286,6 +289,8 @@ describe('app thunkActions', () => {
       const data = {
         ...testValue,
         blockType: 'video',
+        blockId: 'block-v1:UniversityX+PHYS+1+type@problem+block@123',
+        learningContextId: 'course-v1:UniversityX+PHYS+1',
       };
       thunkActions.initialize(data)(dispatch);
       expect(dispatch.mock.calls).toEqual([

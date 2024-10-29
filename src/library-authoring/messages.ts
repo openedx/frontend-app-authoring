@@ -1,8 +1,4 @@
-import { defineMessages as _defineMessages } from '@edx/frontend-platform/i18n';
-import type { defineMessages as defineMessagesType } from 'react-intl';
-
-// frontend-platform currently doesn't provide types... do it ourselves.
-const defineMessages = _defineMessages as typeof defineMessagesType;
+import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
   headingSubtitle: {
@@ -109,6 +105,11 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.badge.read-only',
     defaultMessage: 'Read Only',
     description: 'Text in badge when the user has read only access',
+  },
+  returnToLibrarySelection: {
+    id: 'course-authoring.library-authoring.pick-components.return-to-library-selection',
+    defaultMessage: 'Change Library',
+    description: 'Breadcrumbs link to return to library selection',
   },
 });
 

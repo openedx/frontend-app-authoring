@@ -4,6 +4,7 @@ import {
   useCallback,
   useEffect,
 } from 'react';
+import { getConfig } from '@edx/frontend-platform';
 import { getLocale, isRtl } from '@edx/frontend-platform/i18n';
 import { a11ycheckerCss } from 'frontend-components-tinymce-advanced-plugins';
 import { isEmpty } from 'lodash';
@@ -17,6 +18,7 @@ import pluginConfig from './pluginConfig';
 import * as module from './hooks';
 import * as tinyMCE from '../../data/constants/tinyMCE';
 import { getRelativeUrl, getStaticUrl, parseAssetName } from './utils';
+import { isLibraryKey } from '../../../generic/key-utils';
 
 export const state = StrictDict({
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -97,9 +99,18 @@ export const replaceStaticWithAsset = ({
       const assetName = parseAssetName(src);
       const displayName = isStatic ? staticName : assetName;
       const isCorrectAssetFormat = assetSrc.startsWith('/asset') && assetSrc.match(/\/asset-v1:\S+[+]\S+[@]\S+[+]\S+[@]/g)?.length >= 1;
-      // assets in expandable text areas so not support relative urls so all assets must have the lms
+
+      // assets in expandable text areas do not support relative urls so all assets must have the lms
       // endpoint prepended to the relative url
-      if (editorType === 'expandable') {
+      if (isLibraryKey(learningContextId)) {
+        // We are removing the initial "/" in a "/static/foo.png" link, and then
+        // set the base URL to an endpoint serving the draft version of an asset by
+        // its path.
+        /* istanbul ignore next */
+        if (isStatic) {
+          staticFullUrl = assetSrc.substring(1);
+        }
+      } else if (editorType === 'expandable') {
         if (isCorrectAssetFormat) {
           staticFullUrl = `${lmsEndpointUrl}${assetSrc}`;
         } else {
@@ -234,8 +245,6 @@ export const editorConfig = ({
   setEditorRef,
   editorContentHtml,
   images,
-  lmsEndpointUrl,
-  studioEndpointUrl,
   isLibrary,
   placeholder,
   initializeEditor,
@@ -246,7 +255,12 @@ export const editorConfig = ({
   content,
   minHeight,
   learningContextId,
+  staticRootUrl,
 }) => {
+  const lmsEndpointUrl = getConfig().LMS_BASE_URL;
+  const studioEndpointUrl = getConfig().STUDIO_BASE_URL;
+
+  const baseURL = staticRootUrl || lmsEndpointUrl;
   const {
     toolbar,
     config,
@@ -273,7 +287,7 @@ export const editorConfig = ({
       min_height: minHeight,
       contextmenu: 'link table',
       directionality: isLocaleRtl ? 'rtl' : 'ltr',
-      document_base_url: lmsEndpointUrl,
+      document_base_url: baseURL,
       imagetools_cors_hosts: [removeProtocolFromUrl(lmsEndpointUrl), removeProtocolFromUrl(studioEndpointUrl)],
       imagetools_toolbar: imageToolbar,
       formats: { label: { inline: 'label' } },
@@ -415,6 +429,17 @@ export const setAssetToStaticUrl = ({ editorValue, lmsEndpointUrl }) => {
   assetSrcs.filter(src => src.startsWith('/asset')).forEach(src => {
     const nameFromEditorSrc = parseAssetName(src);
     const portableUrl = getStaticUrl({ displayName: nameFromEditorSrc });
+    const currentSrc = src.substring(0, src.search(/("|&quot;)/));
+    const updatedContent = content.replace(currentSrc, portableUrl);
+    content = updatedContent;
+  });
+
+  /* istanbul ignore next */
+  assetSrcs.filter(src => src.startsWith('static/')).forEach(src => {
+    // Before storing assets we make sure that library static assets points again to
+    // `/static/dummy.jpg` instead of using the relative url `static/dummy.jpg`
+    const nameFromEditorSrc = parseAssetName(src);
+    const portableUrl = `/${ nameFromEditorSrc}`;
     const currentSrc = src.substring(0, src.search(/("|&quot;)/));
     const updatedContent = content.replace(currentSrc, portableUrl);
     content = updatedContent;

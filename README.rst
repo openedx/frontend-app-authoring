@@ -1,5 +1,5 @@
-frontend-app-course-authoring
-#############################
+frontend-app-authoring
+######################
 
 |license-badge| |status-badge| |codecov-badge|
 
@@ -7,9 +7,9 @@ frontend-app-course-authoring
 Purpose
 *******
 
-This is the Course Authoring micro-frontend, currently under development by `2U <https://2u.com>`_.
+This implements most of the frontend for **Open edX Studio**, allowing authors to create and edit courses, libraries, and their learning components.
 
-Its purpose is to provide both a framework and UI for new or replacement React-based authoring features outside ``edx-platform``.  You can find the current set described below.
+A few parts of Studio still default to the `"legacy" pages defined in edx-platform <https://github.com/openedx/edx-platform/tree/master/cms>`_, but those are rapidly being deprecated and replaced with the React- and Paragon-based pages defined here.
 
 
 Getting Started
@@ -18,51 +18,87 @@ Getting Started
 Prerequisites
 =============
 
-The `devstack`_ is currently recommended as a development environment for your
-new MFE.  If you start it with ``make dev.up.lms`` that should give you
-everything you need as a companion to this frontend.
-
-Note that it is also possible to use `Tutor`_ to develop an MFE.  You can refer
-to the `relevant tutor-mfe documentation`_ to get started using it.
-
-.. _Devstack: https://github.com/openedx/devstack
+`Tutor`_ is currently recommended as a development environment for the Authoring
+MFE. Most likely, it already has this MFE configured; however, you'll need to
+make some changes in order to run it in development mode. You can refer
+to the `relevant tutor-mfe documentation`_ for details, or follow the quick
+guide below.
 
 .. _Tutor: https://github.com/overhangio/tutor
 
 .. _relevant tutor-mfe documentation: https://github.com/overhangio/tutor-mfe#mfe-development
 
-Configuration
-=============
 
-All features that integrate into the edx-platform CMS require that the ``COURSE_AUTHORING_MICROFRONTEND_URL`` Django setting is set in the CMS environment and points to this MFE's deployment URL. This should be done automatically if you are using devstack or tutor-mfe.
+Cloning and Setup
+=================
 
-Cloning and Startup
-===================
+1. Clone your new repo:
 
+.. code-block:: bash
 
-1. Clone the repo:
+    git clone https://github.com/openedx/frontend-app-authoring.git
 
-  ``git clone https://github.com/openedx/frontend-app-course-authoring.git``
+2. Use node v20.x.
 
-2. Use node v18.x.
+  The current version of the micro-frontend build scripts supports node 20.
+  Using other major versions of node *may* work, but this is unsupported.  For
+  convenience, this repository includes an ``.nvmrc`` file to help in setting the
+  correct node version via `nvm <https://github.com/nvm-sh/nvm>`_.
 
-   The current version of the micro-frontend build scripts support node 18.
-   Using other major versions of node *may* work, but this is unsupported.  For
-   convenience, this repository includes an .nvmrc file to help in setting the
-   correct node version via `nvm use`_.
+3. Stop the Tutor devstack, if it's running: ``tutor dev stop``
 
-3. Install npm dependencies:
+4. Next, we need to tell Tutor that we're going to be running this repo in
+   development mode, and it should be excluded from the ``mfe`` container that
+   otherwise runs every MFE. Run this:
 
-  ``cd frontend-app-course-authoring && npm install``
+.. code-block:: bash
 
+    tutor mounts add /path/to/frontend-app-authoring
 
-4. Start the dev server:
+5. Start Tutor in development mode. This command will start the LMS and Studio,
+   and other required MFEs like ``authn`` and ``account``, but will not start
+   the Authoring MFE, which we're going to run on the host instead of in a
+   container managed by Tutor. Run:
 
-  ``npm start``
+.. code-block:: bash
 
+    tutor dev start lms cms mfe
 
-The dev server is running at `http://localhost:2001 <http://localhost:2001>`_.
-or whatever port you setup.
+Startup
+=======
+
+1. Install npm dependencies:
+
+.. code-block:: bash
+
+  cd frontend-app-authoring && npm ci
+
+2. Start the dev server:
+
+.. code-block:: bash
+
+  npm run dev
+
+Then you can access the app at http://apps.local.openedx.io:2001/course-authoring/home
+
+Troubleshooting
+---------------
+
+* If you see an "Invalid Host header" error, then you're probably using a different domain name for your devstack such as
+``local.edly.io`` or ``local.overhang.io`` (not the new recommended default, ``local.openedx.io``). In that case, run
+these commands to update your devstack's domain names:
+
+.. code-block:: bash
+
+  tutor dev stop
+  tutor config save --set LMS_HOST=local.openedx.io --set CMS_HOST=studio.local.openedx.io
+  tutor dev launch -I --skip-build
+  tutor dev stop authoring  # We will run this MFE on the host
+
+* If tutor-mfe is not starting the authoring MFE in development mode (eg. `tutor dev start authoring` fails), it may be due to
+  using a tutor version that expects the MFE name to be frontend-app-course-authoring (the previous name of this repo). To fix
+  this, you can rename the cloned repo directory to frontend-app-course-authoring. More information can be found in 
+  [this forum post](https://discuss.openedx.org/t/repo-rename-frontend-app-course-authoring-frontend-app-authoring/13930/2)
 
 
 Features
@@ -268,11 +304,13 @@ Configuration
 
 In additional to the standard settings, the following local configurations can be set to switch between different library modes:
 
-* ``LIBRARY_MODE``: can be set to ``mixed`` (default for development), ``v1 only`` (default for production) and ``v2 only``.
+* ``MEILISEARCH_ENABLED``: Studio setting which is enabled when the `meilisearch plugin`_ is installed.
+* ``edx-platform`` Waffle flags:
 
-  * ``mixed``: Shows 2 tabs, "Libraries" that lists the v2 libraries and "Legacy Libraries" that lists the v1 libraries. When creating a new library in this mode it will create a new v2 library.
-  * ``v1 only``: Shows only 1 tab, "Libraries" that lists v1 libraries only. When creating a new library in this mode it will create a new v1 library.
-  * ``v2 only``: Shows only 1 tab, "Libraries" that lists v2 libraries only. When creating a new library in this mode it will create a new v2 library.
+  * ``contentstore.new_studio_mfe.disable_legacy_libraries``: this feature flag must be OFF to show legacy Libraries V1
+  * ``contentstore.new_studio_mfe.disable_new_libraries``: this feature flag must be OFF to show Content Libraries V2
+
+.. _meilisearch plugin: https://github.com/open-craft/tutor-contrib-meilisearch
 
 Developing
 **********
@@ -306,8 +344,8 @@ The production build is created with ``npm run build``.
    :target: https://travis-ci.com/edx/frontend-app-course-authoring
 .. |Codecov| image:: https://codecov.io/gh/edx/frontend-app-course-authoring/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/edx/frontend-app-course-authoring
-.. |license| image:: https://img.shields.io/npm/l/@edx/frontend-app-course-authoring.svg
-   :target: @edx/frontend-app-course-authoring
+.. |license| image:: https://img.shields.io/npm/l/@edx/frontend-app-authoring.svg
+   :target: @edx/frontend-app-authoring
 
 Internationalization
 ====================

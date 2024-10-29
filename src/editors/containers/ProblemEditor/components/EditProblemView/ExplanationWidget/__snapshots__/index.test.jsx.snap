@@ -19,16 +19,24 @@ exports[`SolutionWidget render snapshot: renders correct default 1`] = `
     <FormattedMessage
       defaultMessage="Provide an explanation for the correct answer"
       description="Description of the solution widget"
-      id="authoring.problemEditor.solutionwidget.solutionDescriptionText"
+      id="authoring.problemEditor.explanationwidget.solutionDescriptionText"
     />
   </div>
-  <[object Object]
+  <TinyMceWidget
+    disabled={false}
     editorContentHtml="This is my solution"
+    editorRef={null}
     editorType="solution"
     id="solution"
+    images={{}}
+    isLibrary={false}
+    learningContextId="course+org+run"
+    lmsEndpointUrl=""
     minHeight={150}
+    onChange={[Function]}
     placeholder="Enter your explanation"
     setEditorRef={[MockFunction prepareEditorRef.setEditorRef]}
+    studioEndpointUrl=""
   />
 </div>
 `;

@@ -41,7 +41,7 @@ const useStudioHome = (isPaginated = false) => {
   useEffect(() => {
     if (isPaginated) {
       const firstPage = 1;
-      dispatch(fetchStudioHomeData(location.search ?? '', false, { page: firstPage }, true));
+      dispatch(fetchStudioHomeData(location.search ?? '', false, { page: firstPage, order: 'display_name' }, true));
     }
   }, []);
 
@@ -68,6 +68,8 @@ const useStudioHome = (isPaginated = false) => {
     studioRequestEmail,
     inProcessCourseActions,
     courseCreatorStatus,
+    librariesV1Enabled,
+    librariesV2Enabled,
   } = studioHomeData;
 
   const isShowOrganizationDropdown = optimizationEnabled && courseCreatorStatus === COURSE_CREATOR_STATES.granted;
@@ -93,8 +95,9 @@ const useStudioHome = (isPaginated = false) => {
     isShowOrganizationDropdown,
     hasAbilityToCreateNewCourse,
     isFiltered,
-    dispatch,
     setShowNewCourseContainer,
+    librariesV1Enabled,
+    librariesV2Enabled,
   };
 };
 

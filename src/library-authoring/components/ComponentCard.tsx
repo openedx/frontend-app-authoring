@@ -1,34 +1,52 @@
-import React, { useContext, useMemo, useState } from 'react';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { useContext, useState } from 'react';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
-  Card,
-  Container,
+  Button,
+  Dropdown,
   Icon,
   IconButton,
-  Dropdown,
-  Stack,
+  useToggle,
 } from '@openedx/paragon';
-import { MoreVert } from '@openedx/paragon/icons';
+import {
+  AddCircleOutline,
+  CheckBoxIcon,
+  CheckBoxOutlineBlank,
+  MoreVert,
+} from '@openedx/paragon/icons';
 
-import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
-import { updateClipboard } from '../../generic/data/api';
-import TagCount from '../../generic/tag-count';
-import { ToastContext } from '../../generic/toast-context';
-import { type ContentHit, Highlight } from '../../search-manager';
-import { LibraryContext } from '../common/context';
-import messages from './messages';
 import { STUDIO_CLIPBOARD_CHANNEL } from '../../constants';
+import { updateClipboard } from '../../generic/data/api';
+import { ToastContext } from '../../generic/toast-context';
+import { type ContentHit } from '../../search-manager';
+import { SidebarAdditionalActions, useLibraryContext } from '../common/context';
+import { useRemoveComponentsFromCollection } from '../data/apiHooks';
+import BaseComponentCard from './BaseComponentCard';
+import { canEditComponent } from './ComponentEditorModal';
+import messages from './messages';
+import ComponentDeleter from './ComponentDeleter';
 
 type ComponentCardProps = {
   contentHit: ContentHit,
-  blockTypeDisplayName: string,
 };
 
 export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   const intl = useIntl();
+  const {
+    libraryId,
+    collectionId,
+    sidebarComponentInfo,
+    openComponentInfoSidebar,
+    openComponentEditor,
+    closeLibrarySidebar,
+  } = useLibraryContext();
+
+  const canEdit = usageKey && canEditComponent(usageKey);
   const { showToast } = useContext(ToastContext);
   const [clipboardBroadcastChannel] = useState(() => new BroadcastChannel(STUDIO_CLIPBOARD_CHANNEL));
+  const removeComponentsMutation = useRemoveComponentsFromCollection(libraryId, collectionId);
+  const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
+
   const updateClipboardClick = () => {
     updateClipboard(usageKey)
       .then((clipboardData) => {
@@ -38,8 +56,24 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
       .catch(() => showToast(intl.formatMessage(messages.copyToClipboardError)));
   };
 
+  const removeFromCollection = () => {
+    removeComponentsMutation.mutateAsync([usageKey]).then(() => {
+      if (sidebarComponentInfo?.id === usageKey) {
+        // Close sidebar if current component is open
+        closeLibrarySidebar();
+      }
+      showToast(intl.formatMessage(messages.removeComponentSucess));
+    }).catch(() => {
+      showToast(intl.formatMessage(messages.removeComponentFailure));
+    });
+  };
+
+  const showManageCollections = () => {
+    openComponentInfoSidebar(usageKey, SidebarAdditionalActions.JumpToAddCollections);
+  };
+
   return (
-    <Dropdown id="component-card-dropdown" onClick={(e) => e.stopPropagation()}>
+    <Dropdown id="component-card-dropdown">
       <Dropdown.Toggle
         id="component-card-menu-toggle"
         as={IconButton}
@@ -50,24 +84,105 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
         data-testid="component-card-menu-toggle"
       />
       <Dropdown.Menu>
-        <Dropdown.Item disabled>
-          {intl.formatMessage(messages.menuEdit)}
+        <Dropdown.Item {...(canEdit ? { onClick: () => openComponentEditor(usageKey) } : { disabled: true })}>
+          <FormattedMessage {...messages.menuEdit} />
         </Dropdown.Item>
         <Dropdown.Item onClick={updateClipboardClick}>
-          {intl.formatMessage(messages.menuCopyToClipboard)}
+          <FormattedMessage {...messages.menuCopyToClipboard} />
         </Dropdown.Item>
-        <Dropdown.Item disabled>
-          {intl.formatMessage(messages.menuAddToCollection)}
+        <Dropdown.Item onClick={confirmDelete}>
+          <FormattedMessage {...messages.menuDelete} />
+        </Dropdown.Item>
+        {collectionId && (
+          <Dropdown.Item onClick={removeFromCollection}>
+            <FormattedMessage {...messages.menuRemoveFromCollection} />
+          </Dropdown.Item>
+        )}
+        <Dropdown.Item onClick={showManageCollections}>
+          <FormattedMessage {...messages.menuAddToCollection} />
         </Dropdown.Item>
       </Dropdown.Menu>
+      <ComponentDeleter usageKey={usageKey} isConfirmingDelete={isConfirmingDelete} cancelDelete={cancelDelete} />
     </Dropdown>
   );
 };
 
-const ComponentCard = ({ contentHit, blockTypeDisplayName } : ComponentCardProps) => {
+interface AddComponentWidgetProps {
+  usageKey: string;
+  blockType: string;
+}
+
+const AddComponentWidget = ({ usageKey, blockType }: AddComponentWidgetProps) => {
+  const intl = useIntl();
+
+  const {
+    componentPickerMode,
+    onComponentSelected,
+    addComponentToSelectedComponents,
+    removeComponentFromSelectedComponents,
+    selectedComponents,
+  } = useLibraryContext();
+
+  // istanbul ignore if: this should never happen
+  if (!usageKey) {
+    throw new Error('usageKey is required');
+  }
+
+  // istanbul ignore if: this should never happen
+  if (!componentPickerMode) {
+    return null;
+  }
+
+  if (componentPickerMode === 'single') {
+    return (
+      <Button
+        variant="outline-primary"
+        iconBefore={AddCircleOutline}
+        onClick={() => {
+          onComponentSelected({ usageKey, blockType });
+        }}
+      >
+        <FormattedMessage {...messages.componentPickerSingleSelectTitle} />
+      </Button>
+    );
+  }
+
+  if (componentPickerMode === 'multiple') {
+    const isChecked = selectedComponents.some((component) => component.usageKey === usageKey);
+
+    const handleChange = () => {
+      const selectedComponent = {
+        usageKey,
+        blockType,
+      };
+      if (!isChecked) {
+        addComponentToSelectedComponents(selectedComponent);
+      } else {
+        removeComponentFromSelectedComponents(selectedComponent);
+      }
+    };
+
+    return (
+      <Button
+        variant="outline-primary"
+        iconBefore={isChecked ? CheckBoxIcon : CheckBoxOutlineBlank}
+        onClick={handleChange}
+      >
+        {intl.formatMessage(messages.componentPickerMultipleSelectTitle)}
+      </Button>
+    );
+  }
+
+  // istanbul ignore next: this should never happen
+  return null;
+};
+
+const ComponentCard = ({ contentHit }: ComponentCardProps) => {
   const {
     openComponentInfoSidebar,
-  } = useContext(LibraryContext);
+    componentPickerMode,
+    showOnlyPublished,
+  } = useLibraryContext();
 
   const {
     blockType,
@@ -75,57 +190,30 @@ const ComponentCard = ({ contentHit, blockTypeDisplayName } : ComponentCardProps
     tags,
     usageKey,
   } = contentHit;
-  const description = formatted?.content?.htmlContent ?? '';
-  const displayName = formatted?.displayName ?? '';
-  const tagCount = useMemo(() => {
-    if (!tags) {
-      return 0;
-    }
-    return (tags.level0?.length || 0) + (tags.level1?.length || 0)
-            + (tags.level2?.length || 0) + (tags.level3?.length || 0);
-  }, [tags]);
-
-  const componentIcon = getItemIcon(blockType);
+  const componentDescription: string = (
+    showOnlyPublished ? formatted.published?.description : formatted.description
+  ) ?? '';
+  const displayName: string = (
+    showOnlyPublished ? formatted.published?.displayName : formatted.displayName
+  ) ?? '';
 
   return (
-    <Container className="library-component-card">
-      <Card
-        isClickable
-        onClick={() => openComponentInfoSidebar(usageKey)}
-        onKeyDown={(e: React.KeyboardEvent) => {
-          if (['Enter', ' '].includes(e.key)) {
-            openComponentInfoSidebar(usageKey);
-          }
-        }}
-      >
-        <Card.Header
-          className={`library-component-header ${getComponentStyleColor(blockType)}`}
-          title={
-            <Icon src={componentIcon} className="library-component-header-icon" />
-          }
-          actions={(
-            <ActionRow>
-              <ComponentMenu usageKey={usageKey} />
-            </ActionRow>
+    <BaseComponentCard
+      componentType={blockType}
+      displayName={displayName}
+      description={componentDescription}
+      tags={tags}
+      actions={(
+        <ActionRow>
+          {componentPickerMode ? (
+            <AddComponentWidget usageKey={usageKey} blockType={blockType} />
+          ) : (
+            <ComponentMenu usageKey={usageKey} />
           )}
-        />
-        <Card.Body>
-          <Card.Section>
-            <Stack direction="horizontal" className="d-flex justify-content-between">
-              <Stack direction="horizontal" gap={1}>
-                <Icon src={componentIcon} size="sm" />
-                <span className="small">{blockTypeDisplayName}</span>
-              </Stack>
-              <TagCount count={tagCount} />
-            </Stack>
-            <div className="text-truncate h3 mt-2">
-              <Highlight text={displayName} />
-            </div>
-            <Highlight text={description} />
-          </Card.Section>
-        </Card.Body>
-      </Card>
-    </Container>
+        </ActionRow>
+      )}
+      openInfoSidebar={() => openComponentInfoSidebar(usageKey)}
+    />
   );
 };
 

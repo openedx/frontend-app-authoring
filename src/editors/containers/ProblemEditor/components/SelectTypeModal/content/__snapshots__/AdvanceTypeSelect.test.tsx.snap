@@ -1,0 +1,1919 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with default props 1`] = `
+<Col
+  className="justify-content-center"
+  md={8}
+  xs={12}
+>
+  <Form.Group
+    className="border rounded text-primary-500 p-0"
+  >
+    <ActionRow
+      className="border-primary-100 border-bottom py-3 pl-2.5 pr-4"
+    >
+      <IconButton
+        alt="Go back"
+        iconAs="Icon"
+        onClick={[Function]}
+      />
+      <ActionRow.Spacer />
+      <Form.Label
+        className="h4"
+      >
+        <FormattedMessage
+          defaultMessage="Advanced problems"
+          description="Title for advanced problem menu"
+          id="authoring.problemEditor.advanceProblem.menu.title"
+        />
+      </Form.Label>
+      <ActionRow.Spacer />
+    </ActionRow>
+    <RadioSet
+      className="px-4"
+      name="advanceTypes"
+      onChange={[Function]}
+      value="blankadvanced"
+    >
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="blankadvanced"
+      >
+        <Radio
+          id="blankadvanced"
+          value="blankadvanced"
+        >
+          Blank problem
+        </Radio>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="circuitschematic"
+      >
+        <Radio
+          id="circuitschematic"
+          value="circuitschematic"
+        >
+          Circuit schematic builder
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-circuitschematic"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Not supported
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="jsinputresponse"
+      >
+        <Radio
+          id="jsinputresponse"
+          value="jsinputresponse"
+        >
+          Custom JavaScript display and grading
+        </Radio>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="customgrader"
+      >
+        <Radio
+          id="customgrader"
+          value="customgrader"
+        >
+          Custom Python-evaluated input
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-customgrader"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Provisional
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="imageresponse"
+      >
+        <Radio
+          id="imageresponse"
+          value="imageresponse"
+        >
+          Image mapped input
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-imageresponse"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Not supported
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="formularesponse"
+      >
+        <Radio
+          id="formularesponse"
+          value="formularesponse"
+        >
+          Math expression input
+        </Radio>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="problemwithhint"
+      >
+        <Radio
+          id="problemwithhint"
+          value="problemwithhint"
+        >
+          Problem with adaptive hint
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-problemwithhint"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Not supported
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+    </RadioSet>
+  </Form.Group>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/create_exercises_and_tools.html#advanced"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more about advanced problem types"
+      description="Label for Learn more about advanced problem types button"
+      id="authoring.problemEditor.advanceProblem.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Col>
+`;
+
+exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problemType is circuitschematic 1`] = `
+<Col
+  className="justify-content-center"
+  md={8}
+  xs={12}
+>
+  <Form.Group
+    className="border rounded text-primary-500 p-0"
+  >
+    <ActionRow
+      className="border-primary-100 border-bottom py-3 pl-2.5 pr-4"
+    >
+      <IconButton
+        alt="Go back"
+        iconAs="Icon"
+        onClick={[Function]}
+      />
+      <ActionRow.Spacer />
+      <Form.Label
+        className="h4"
+      >
+        <FormattedMessage
+          defaultMessage="Advanced problems"
+          description="Title for advanced problem menu"
+          id="authoring.problemEditor.advanceProblem.menu.title"
+        />
+      </Form.Label>
+      <ActionRow.Spacer />
+    </ActionRow>
+    <RadioSet
+      className="px-4"
+      name="advanceTypes"
+      onChange={[Function]}
+      value="circuitschematic"
+    >
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="blankadvanced"
+      >
+        <Radio
+          id="blankadvanced"
+          value="blankadvanced"
+        >
+          Blank problem
+        </Radio>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="circuitschematic"
+      >
+        <Radio
+          id="circuitschematic"
+          value="circuitschematic"
+        >
+          Circuit schematic builder
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-circuitschematic"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Not supported
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="jsinputresponse"
+      >
+        <Radio
+          id="jsinputresponse"
+          value="jsinputresponse"
+        >
+          Custom JavaScript display and grading
+        </Radio>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="customgrader"
+      >
+        <Radio
+          id="customgrader"
+          value="customgrader"
+        >
+          Custom Python-evaluated input
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-customgrader"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Provisional
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="imageresponse"
+      >
+        <Radio
+          id="imageresponse"
+          value="imageresponse"
+        >
+          Image mapped input
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-imageresponse"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Not supported
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="formularesponse"
+      >
+        <Radio
+          id="formularesponse"
+          value="formularesponse"
+        >
+          Math expression input
+        </Radio>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="problemwithhint"
+      >
+        <Radio
+          id="problemwithhint"
+          value="problemwithhint"
+        >
+          Problem with adaptive hint
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-problemwithhint"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Not supported
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+    </RadioSet>
+  </Form.Group>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/create_exercises_and_tools.html#advanced"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more about advanced problem types"
+      description="Label for Learn more about advanced problem types button"
+      id="authoring.problemEditor.advanceProblem.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Col>
+`;
+
+exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problemType is customgrader 1`] = `
+<Col
+  className="justify-content-center"
+  md={8}
+  xs={12}
+>
+  <Form.Group
+    className="border rounded text-primary-500 p-0"
+  >
+    <ActionRow
+      className="border-primary-100 border-bottom py-3 pl-2.5 pr-4"
+    >
+      <IconButton
+        alt="Go back"
+        iconAs="Icon"
+        onClick={[Function]}
+      />
+      <ActionRow.Spacer />
+      <Form.Label
+        className="h4"
+      >
+        <FormattedMessage
+          defaultMessage="Advanced problems"
+          description="Title for advanced problem menu"
+          id="authoring.problemEditor.advanceProblem.menu.title"
+        />
+      </Form.Label>
+      <ActionRow.Spacer />
+    </ActionRow>
+    <RadioSet
+      className="px-4"
+      name="advanceTypes"
+      onChange={[Function]}
+      value="customgrader"
+    >
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="blankadvanced"
+      >
+        <Radio
+          id="blankadvanced"
+          value="blankadvanced"
+        >
+          Blank problem
+        </Radio>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="circuitschematic"
+      >
+        <Radio
+          id="circuitschematic"
+          value="circuitschematic"
+        >
+          Circuit schematic builder
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-circuitschematic"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Not supported
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="jsinputresponse"
+      >
+        <Radio
+          id="jsinputresponse"
+          value="jsinputresponse"
+        >
+          Custom JavaScript display and grading
+        </Radio>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="customgrader"
+      >
+        <Radio
+          id="customgrader"
+          value="customgrader"
+        >
+          Custom Python-evaluated input
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-customgrader"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Provisional
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="imageresponse"
+      >
+        <Radio
+          id="imageresponse"
+          value="imageresponse"
+        >
+          Image mapped input
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-imageresponse"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Not supported
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="formularesponse"
+      >
+        <Radio
+          id="formularesponse"
+          value="formularesponse"
+        >
+          Math expression input
+        </Radio>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="problemwithhint"
+      >
+        <Radio
+          id="problemwithhint"
+          value="problemwithhint"
+        >
+          Problem with adaptive hint
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-problemwithhint"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Not supported
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+    </RadioSet>
+  </Form.Group>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/create_exercises_and_tools.html#advanced"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more about advanced problem types"
+      description="Label for Learn more about advanced problem types button"
+      id="authoring.problemEditor.advanceProblem.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Col>
+`;
+
+exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problemType is formularesponse 1`] = `
+<Col
+  className="justify-content-center"
+  md={8}
+  xs={12}
+>
+  <Form.Group
+    className="border rounded text-primary-500 p-0"
+  >
+    <ActionRow
+      className="border-primary-100 border-bottom py-3 pl-2.5 pr-4"
+    >
+      <IconButton
+        alt="Go back"
+        iconAs="Icon"
+        onClick={[Function]}
+      />
+      <ActionRow.Spacer />
+      <Form.Label
+        className="h4"
+      >
+        <FormattedMessage
+          defaultMessage="Advanced problems"
+          description="Title for advanced problem menu"
+          id="authoring.problemEditor.advanceProblem.menu.title"
+        />
+      </Form.Label>
+      <ActionRow.Spacer />
+    </ActionRow>
+    <RadioSet
+      className="px-4"
+      name="advanceTypes"
+      onChange={[Function]}
+      value="formularesponse"
+    >
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="blankadvanced"
+      >
+        <Radio
+          id="blankadvanced"
+          value="blankadvanced"
+        >
+          Blank problem
+        </Radio>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="circuitschematic"
+      >
+        <Radio
+          id="circuitschematic"
+          value="circuitschematic"
+        >
+          Circuit schematic builder
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-circuitschematic"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Not supported
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="jsinputresponse"
+      >
+        <Radio
+          id="jsinputresponse"
+          value="jsinputresponse"
+        >
+          Custom JavaScript display and grading
+        </Radio>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="customgrader"
+      >
+        <Radio
+          id="customgrader"
+          value="customgrader"
+        >
+          Custom Python-evaluated input
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-customgrader"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Provisional
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="imageresponse"
+      >
+        <Radio
+          id="imageresponse"
+          value="imageresponse"
+        >
+          Image mapped input
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-imageresponse"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Not supported
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="formularesponse"
+      >
+        <Radio
+          id="formularesponse"
+          value="formularesponse"
+        >
+          Math expression input
+        </Radio>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="problemwithhint"
+      >
+        <Radio
+          id="problemwithhint"
+          value="problemwithhint"
+        >
+          Problem with adaptive hint
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-problemwithhint"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Not supported
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+    </RadioSet>
+  </Form.Group>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/create_exercises_and_tools.html#advanced"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more about advanced problem types"
+      description="Label for Learn more about advanced problem types button"
+      id="authoring.problemEditor.advanceProblem.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Col>
+`;
+
+exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problemType is imageresponse 1`] = `
+<Col
+  className="justify-content-center"
+  md={8}
+  xs={12}
+>
+  <Form.Group
+    className="border rounded text-primary-500 p-0"
+  >
+    <ActionRow
+      className="border-primary-100 border-bottom py-3 pl-2.5 pr-4"
+    >
+      <IconButton
+        alt="Go back"
+        iconAs="Icon"
+        onClick={[Function]}
+      />
+      <ActionRow.Spacer />
+      <Form.Label
+        className="h4"
+      >
+        <FormattedMessage
+          defaultMessage="Advanced problems"
+          description="Title for advanced problem menu"
+          id="authoring.problemEditor.advanceProblem.menu.title"
+        />
+      </Form.Label>
+      <ActionRow.Spacer />
+    </ActionRow>
+    <RadioSet
+      className="px-4"
+      name="advanceTypes"
+      onChange={[Function]}
+      value="imageresponse"
+    >
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="blankadvanced"
+      >
+        <Radio
+          id="blankadvanced"
+          value="blankadvanced"
+        >
+          Blank problem
+        </Radio>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="circuitschematic"
+      >
+        <Radio
+          id="circuitschematic"
+          value="circuitschematic"
+        >
+          Circuit schematic builder
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-circuitschematic"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Not supported
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="jsinputresponse"
+      >
+        <Radio
+          id="jsinputresponse"
+          value="jsinputresponse"
+        >
+          Custom JavaScript display and grading
+        </Radio>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="customgrader"
+      >
+        <Radio
+          id="customgrader"
+          value="customgrader"
+        >
+          Custom Python-evaluated input
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-customgrader"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Provisional
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="imageresponse"
+      >
+        <Radio
+          id="imageresponse"
+          value="imageresponse"
+        >
+          Image mapped input
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-imageresponse"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Not supported
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="formularesponse"
+      >
+        <Radio
+          id="formularesponse"
+          value="formularesponse"
+        >
+          Math expression input
+        </Radio>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="problemwithhint"
+      >
+        <Radio
+          id="problemwithhint"
+          value="problemwithhint"
+        >
+          Problem with adaptive hint
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-problemwithhint"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Not supported
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+    </RadioSet>
+  </Form.Group>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/create_exercises_and_tools.html#advanced"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more about advanced problem types"
+      description="Label for Learn more about advanced problem types button"
+      id="authoring.problemEditor.advanceProblem.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Col>
+`;
+
+exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problemType is jsinputresponse 1`] = `
+<Col
+  className="justify-content-center"
+  md={8}
+  xs={12}
+>
+  <Form.Group
+    className="border rounded text-primary-500 p-0"
+  >
+    <ActionRow
+      className="border-primary-100 border-bottom py-3 pl-2.5 pr-4"
+    >
+      <IconButton
+        alt="Go back"
+        iconAs="Icon"
+        onClick={[Function]}
+      />
+      <ActionRow.Spacer />
+      <Form.Label
+        className="h4"
+      >
+        <FormattedMessage
+          defaultMessage="Advanced problems"
+          description="Title for advanced problem menu"
+          id="authoring.problemEditor.advanceProblem.menu.title"
+        />
+      </Form.Label>
+      <ActionRow.Spacer />
+    </ActionRow>
+    <RadioSet
+      className="px-4"
+      name="advanceTypes"
+      onChange={[Function]}
+      value="jsinputresponse"
+    >
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="blankadvanced"
+      >
+        <Radio
+          id="blankadvanced"
+          value="blankadvanced"
+        >
+          Blank problem
+        </Radio>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="circuitschematic"
+      >
+        <Radio
+          id="circuitschematic"
+          value="circuitschematic"
+        >
+          Circuit schematic builder
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-circuitschematic"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Not supported
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="jsinputresponse"
+      >
+        <Radio
+          id="jsinputresponse"
+          value="jsinputresponse"
+        >
+          Custom JavaScript display and grading
+        </Radio>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="customgrader"
+      >
+        <Radio
+          id="customgrader"
+          value="customgrader"
+        >
+          Custom Python-evaluated input
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-customgrader"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Provisional
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="imageresponse"
+      >
+        <Radio
+          id="imageresponse"
+          value="imageresponse"
+        >
+          Image mapped input
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-imageresponse"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Not supported
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="formularesponse"
+      >
+        <Radio
+          id="formularesponse"
+          value="formularesponse"
+        >
+          Math expression input
+        </Radio>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="problemwithhint"
+      >
+        <Radio
+          id="problemwithhint"
+          value="problemwithhint"
+        >
+          Problem with adaptive hint
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-problemwithhint"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Not supported
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+    </RadioSet>
+  </Form.Group>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/create_exercises_and_tools.html#advanced"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more about advanced problem types"
+      description="Label for Learn more about advanced problem types button"
+      id="authoring.problemEditor.advanceProblem.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Col>
+`;
+
+exports[`AdvanceTypeSelect snapshots snapshots: renders as expected with problemType is problemwithhint 1`] = `
+<Col
+  className="justify-content-center"
+  md={8}
+  xs={12}
+>
+  <Form.Group
+    className="border rounded text-primary-500 p-0"
+  >
+    <ActionRow
+      className="border-primary-100 border-bottom py-3 pl-2.5 pr-4"
+    >
+      <IconButton
+        alt="Go back"
+        iconAs="Icon"
+        onClick={[Function]}
+      />
+      <ActionRow.Spacer />
+      <Form.Label
+        className="h4"
+      >
+        <FormattedMessage
+          defaultMessage="Advanced problems"
+          description="Title for advanced problem menu"
+          id="authoring.problemEditor.advanceProblem.menu.title"
+        />
+      </Form.Label>
+      <ActionRow.Spacer />
+    </ActionRow>
+    <RadioSet
+      className="px-4"
+      name="advanceTypes"
+      onChange={[Function]}
+      value="problemwithhint"
+    >
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="blankadvanced"
+      >
+        <Radio
+          id="blankadvanced"
+          value="blankadvanced"
+        >
+          Blank problem
+        </Radio>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="circuitschematic"
+      >
+        <Radio
+          id="circuitschematic"
+          value="circuitschematic"
+        >
+          Circuit schematic builder
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-circuitschematic"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Not supported
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="jsinputresponse"
+      >
+        <Radio
+          id="jsinputresponse"
+          value="jsinputresponse"
+        >
+          Custom JavaScript display and grading
+        </Radio>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="customgrader"
+      >
+        <Radio
+          id="customgrader"
+          value="customgrader"
+        >
+          Custom Python-evaluated input
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-customgrader"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Provisional
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="imageresponse"
+      >
+        <Radio
+          id="imageresponse"
+          value="imageresponse"
+        >
+          Image mapped input
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-imageresponse"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Not supported
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="formularesponse"
+      >
+        <Radio
+          id="formularesponse"
+          value="formularesponse"
+        >
+          Math expression input
+        </Radio>
+        <ActionRow.Spacer />
+      </ActionRow>
+      <ActionRow
+        className="border-primary-100 border-bottom m-0 py-3 w-100"
+        key="problemwithhint"
+      >
+        <Radio
+          id="problemwithhint"
+          value="problemwithhint"
+        >
+          Problem with adaptive hint
+        </Radio>
+        <ActionRow.Spacer />
+        <OverlayTrigger
+          overlay={
+            <Tooltip
+              id="tooltip-adv-problemwithhint"
+            >
+              <div
+                className="text-left"
+              >
+                {supportStatus,  select,
+      Provisional {Provisionally supported tools might lack the robustness of functionality
+        that your courses require. edX does not have control over the quality of the software,
+        or of the content that can be provided using these tools.
+        
+ 
+
+        Test these tools thoroughly before using them in your course, especially in graded
+        sections. Complete documentstion might not be available for provisionally supported
+        tools, or documentation might be available from sources other than edX.}
+      Not_supported {Tools with no support are not maintained by edX, and might be deprecated
+        in the future. They are not recommened for use in courses due to non-compliance with one
+        or more of the base requirements, such as testing, accessibility, internationalization,
+        and documentation.}
+      other { } 
+    }
+              </div>
+            </Tooltip>
+          }
+          placement="right"
+        >
+          <div
+            className="text-gray-500"
+          >
+            Not supported
+          </div>
+        </OverlayTrigger>
+      </ActionRow>
+    </RadioSet>
+  </Form.Group>
+  <Hyperlink
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/create_exercises_and_tools.html#advanced"
+    target="_blank"
+  >
+    <FormattedMessage
+      defaultMessage="Learn more about advanced problem types"
+      description="Label for Learn more about advanced problem types button"
+      id="authoring.problemEditor.advanceProblem.learnMoreButtonLabel.label"
+    />
+  </Hyperlink>
+</Col>
+`;

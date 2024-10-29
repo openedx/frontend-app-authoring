@@ -53,6 +53,7 @@ const ProblemFilterItem = ({ count, handleCheckboxChange } : ProblemFilterItemPr
 
   const handleCheckBoxChangeOnProblem = React.useCallback((e) => {
     handleCheckboxChange(e);
+    setIsProblemIndeterminate(false);
     if (e.target.checked) {
       setProblemTypesFilter(Object.keys(problemTypes));
     } else {
@@ -100,7 +101,6 @@ const ProblemFilterItem = ({ count, handleCheckboxChange } : ProblemFilterItemPr
   return (
     <div className="problem-menu-item">
       <MenuItem
-        key={blockType}
         as={Form.Checkbox}
         value={blockType}
         onChange={handleCheckBoxChangeOnProblem}
@@ -108,7 +108,7 @@ const ProblemFilterItem = ({ count, handleCheckboxChange } : ProblemFilterItemPr
       >
         <div className="d-flex justify-content-between align-items-center">
           <div>
-            <BlockTypeLabel type={blockType} />{' '}
+            <BlockTypeLabel blockType={blockType} />{' '}
             <Badge variant="light" pill>{count}</Badge>
           </div>
           { Object.keys(problemTypes).length !== 0 && (
@@ -146,7 +146,7 @@ const ProblemFilterItem = ({ count, handleCheckboxChange } : ProblemFilterItemPr
                     onChange={handleProblemCheckboxChange}
                   >
                     <div style={{ textAlign: 'start' }}>
-                      <BlockTypeLabel type={problemType} />{' '}
+                      <BlockTypeLabel blockType={problemType} />{' '}
                       <Badge variant="light" pill>{problemTypeCount}</Badge>
                     </div>
                   </MenuItem>
@@ -194,13 +194,12 @@ const FilterItem = ({ blockType, count } : FilterItemProps) => {
 
   return (
     <MenuItem
-      key={blockType}
       as={Form.Checkbox}
       value={blockType}
       onChange={handleCheckboxChange}
     >
       <div>
-        <BlockTypeLabel type={blockType} />{' '}
+        <BlockTypeLabel blockType={blockType} />{' '}
         <Badge variant="light" pill>{count}</Badge>
       </div>
     </MenuItem>
@@ -260,7 +259,7 @@ const FilterByBlockType: React.FC<Record<never, never>> = () => {
   });
 
   const appliedFilters = [...blockTypesFilter, ...problemTypesFilter].map(
-    blockType => ({ label: <BlockTypeLabel type={blockType} /> }),
+    blockType => ({ label: <BlockTypeLabel blockType={blockType} /> }),
   );
 
   return (
@@ -278,7 +277,7 @@ const FilterByBlockType: React.FC<Record<never, never>> = () => {
           <Menu className="block-type-refinement-menu" style={{ boxShadow: 'none' }}>
             {
               Object.entries(sortedBlockTypes).map(([blockType, count]) => (
-                <FilterItem blockType={blockType} count={count} />
+                <FilterItem key={blockType} blockType={blockType} count={count} />
               ))
             }
             {

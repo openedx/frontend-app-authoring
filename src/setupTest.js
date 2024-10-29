@@ -43,7 +43,8 @@ mergeConfig({
   ENABLE_TEAM_TYPE_SETTING: process.env.ENABLE_TEAM_TYPE_SETTING === 'true',
   ENABLE_CHECKLIST_QUALITY: process.env.ENABLE_CHECKLIST_QUALITY || 'true',
   STUDIO_BASE_URL: process.env.STUDIO_BASE_URL || null,
-  LIBRARY_MODE: process.env.LIBRARY_MODE || 'v1 only',
+  LMS_BASE_URL: process.env.LMS_BASE_URL || null,
+  LIBRARY_SUPPORTED_BLOCKS: (process.env.LIBRARY_SUPPORTED_BLOCKS || 'problem,video,html').split(','),
 }, 'CourseAuthoringConfig');
 
 class ResizeObserver {

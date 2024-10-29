@@ -10,12 +10,18 @@ jest.mock('../../../../../data/redux', () => ({
   default: jest.fn(),
   selectors: {
     problem: {
-      answers: jest.fn(state => ({ answers: state })),
       problemType: jest.fn(state => ({ problemType: state })),
+    },
+    app: {
+      images: jest.fn(state => ({ images: state })),
+      isLibrary: jest.fn(state => ({ isLibrary: state })),
+      learningContextId: jest.fn(state => ({ learningContextId: state })),
     },
   },
   thunkActions: {
-    video: jest.fn(),
+    video: {
+      importTranscripts: jest.fn(),
+    },
   },
 }));
 
@@ -49,6 +55,9 @@ describe('AnswerOption', () => {
     intl: { formatMessage },
     // redux
     problemType: 'multiplechoiceresponse',
+    images: {},
+    isLibrary: false,
+    learningContextId: 'course+org+run',
   };
   describe('render', () => {
     test('snapshot: renders correct option with feedback', () => {
@@ -71,6 +80,21 @@ describe('AnswerOption', () => {
       expect(
         mapStateToProps(testState).problemType,
       ).toEqual(selectors.problem.problemType(testState));
+    });
+    test('images from app.images', () => {
+      expect(
+        mapStateToProps(testState).images,
+      ).toEqual(selectors.app.images(testState));
+    });
+    test('learningContextId from app.learningContextId', () => {
+      expect(
+        mapStateToProps(testState).learningContextId,
+      ).toEqual(selectors.app.learningContextId(testState));
+    });
+    test('isLibrary from app.isLibrary', () => {
+      expect(
+        mapStateToProps(testState).isLibrary,
+      ).toEqual(selectors.app.isLibrary(testState));
     });
   });
 });

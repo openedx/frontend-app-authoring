@@ -31,10 +31,9 @@ export const generateGetStudioHomeDataApiResponse = () => ({
   courses: [],
   inProcessCourseActions: [],
   libraries: [],
-  librariesEnabled: true,
-  libraryAuthoringMfeUrl: 'http://localhost:3001/',
+  librariesV1Enabled: true,
+  librariesV2Enabled: true,
   optimizationEnabled: false,
-  redirectToLibraryAuthoringMfe: false,
   requestCourseCreatorUrl: '/request_course_creator',
   rerunCreatorStatus: true,
   showNewLibraryButton: true,
@@ -48,36 +47,32 @@ export const generateGetStudioHomeDataApiResponse = () => ({
   allowToCreateNewOrg: false,
 });
 
+/** Mock for the deprecated /api/contentstore/v1/home/courses endpoint. Note this endpoint is NOT paginated. */
 export const generateGetStudioCoursesApiResponse = () => ({
-  count: 5,
-  next: null,
-  previous: null,
-  numPages: 2,
-  results: {
-    courses: [
-      {
-        courseKey: 'course-v1:HarvardX+123+2023',
-        displayName: 'Managing Risk in the Information Age',
-        lmsLink: '//localhost:18000/courses/course-v1:HarvardX+123+2023/jump_to/block-v1:HarvardX+123+2023+type@course+block@course',
-        number: '123',
-        org: 'HarvardX',
-        rerunLink: '/course_rerun/course-v1:HarvardX+123+2023',
-        run: '2023',
-        url: '/course/course-v1:HarvardX+123+2023',
-      },
-      {
-        courseKey: 'org.0/course_0/Run_0',
-        displayName: 'Run 0',
-        lmsLink: null,
-        number: 'course_0',
-        org: 'org.0',
-        rerunLink: null,
-        run: 'Run_0',
-        url: null,
-      },
-    ],
-    inProcessCourseActions: [],
-  },
+  archivedCourses: /** @type {any[]} */([]),
+  courses: [
+    {
+      courseKey: 'course-v1:HarvardX+123+2023',
+      displayName: 'Managing Risk in the Information Age',
+      lmsLink: '//localhost:18000/courses/course-v1:HarvardX+123+2023/jump_to/block-v1:HarvardX+123+2023+type@course+block@course',
+      number: '123',
+      org: 'HarvardX',
+      rerunLink: '/course_rerun/course-v1:HarvardX+123+2023',
+      run: '2023',
+      url: '/course/course-v1:HarvardX+123+2023',
+    },
+    {
+      courseKey: 'org.0/course_0/Run_0',
+      displayName: 'Run 0',
+      lmsLink: null,
+      number: 'course_0',
+      org: 'org.0',
+      rerunLink: null,
+      run: 'Run_0',
+      url: null,
+    },
+  ],
+  inProcessCourseActions: [],
 });
 
 export const generateGetStudioCoursesApiResponseV2 = () => ({

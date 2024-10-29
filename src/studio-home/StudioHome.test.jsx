@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { initializeMockApp, getConfig, setConfig } from '@edx/frontend-platform';
+import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -14,7 +14,7 @@ import MockAdapter from 'axios-mock-adapter';
 import initializeStore from '../store';
 import { RequestStatus } from '../data/constants';
 import { COURSE_CREATOR_STATES } from '../constants';
-import { executeThunk, constructLibraryAuthoringURL } from '../utils';
+import { executeThunk } from '../utils';
 import { studioHomeMock } from './__mocks__';
 import { getStudioHomeApiUrl } from './data/api';
 import { fetchStudioHomeData } from './data/thunks';
@@ -165,21 +165,11 @@ describe('<StudioHome />', () => {
     });
 
     describe('render new library button', () => {
-      beforeEach(() => {
-        setConfig({
-          ...getConfig(),
-          LIBRARY_MODE: 'mixed',
-        });
-      });
-
-      it('should navigate to home_library when in "v1 only" lib mode', () => {
-        setConfig({
-          ...getConfig(),
-          LIBRARY_MODE: 'v1 only',
-        });
+      it('should navigate to home_library when libraries-v2 disabled', () => {
         useSelector.mockReturnValue({
           ...studioHomeMock,
           courseCreatorStatus: COURSE_CREATOR_STATES.granted,
+          librariesV2Enabled: false,
         });
         const studioBaseUrl = 'http://localhost:18010';
 
@@ -193,31 +183,10 @@ describe('<StudioHome />', () => {
         window.open = open;
       });
 
-      it('should navigate to the library authoring mfe', () => {
-        useSelector.mockReturnValue({
-          ...studioHomeMock,
-          courseCreatorStatus: COURSE_CREATOR_STATES.granted,
-          splitStudioHome: true,
-          redirectToLibraryAuthoringMfe: true,
-        });
-        const libraryAuthoringMfeUrl = 'http://localhost:3001';
-
-        const { getByTestId } = render(<RootWrapper />);
-        const createNewLibraryButton = getByTestId('new-library-button');
-
-        const { open } = window;
-        window.open = jest.fn();
-        fireEvent.click(createNewLibraryButton);
-        expect(window.open).toHaveBeenCalledWith(
-          `${constructLibraryAuthoringURL(libraryAuthoringMfeUrl, 'create')}`,
-        );
-        window.open = open;
-      });
-
       it('should navigate to the library authoring page in course authoring', () => {
         useSelector.mockReturnValue({
           ...studioHomeMock,
-          LIBRARY_MODE: 'v2 only',
+          librariesV1Enabled: false,
         });
         const { getByTestId } = render(<RootWrapper />);
         const createNewLibraryButton = getByTestId('new-library-button');
@@ -226,6 +195,26 @@ describe('<StudioHome />', () => {
 
         expect(mockNavigate).toHaveBeenCalledWith('/library/create');
       });
+    });
+
+    it('do not render new library button for "v1 only" mode if showNewLibraryButton is False', () => {
+      useSelector.mockReturnValue({
+        ...studioHomeMock,
+        showNewLibraryButton: false,
+        librariesV2Enabled: false,
+      });
+      const { queryByTestId } = render(<RootWrapper />);
+      expect(queryByTestId('new-library-button')).not.toBeInTheDocument();
+    });
+
+    it('render new library button for "v2 only" mode even if showNewLibraryButton is False', () => {
+      useSelector.mockReturnValue({
+        ...studioHomeMock,
+        showNewLibraryButton: false,
+        librariesV1Enabled: false,
+      });
+      const { queryByTestId } = render(<RootWrapper />);
+      expect(queryByTestId('new-library-button')).toBeInTheDocument();
     });
 
     it('should render create new course container', async () => {

@@ -1,0 +1,12 @@
+.status-widget {
+  &.draft-status {
+    background-color: #FDF3E9;
+    border-top: 4px solid #F4B57B;
+  }
+
+  &.published-status {
+    background-color: $info-100;
+    border-top: 4px solid $info-400;
+  }
+}
+

@@ -12,12 +12,18 @@ export const FeedbackBox = ({
   problemType,
   setSelectedFeedback,
   setUnselectedFeedback,
+  images,
+  isLibrary,
+  learningContextId,
   // injected
   intl,
 }) => {
   const props = {
     answer,
     intl,
+    images,
+    isLibrary,
+    learningContextId,
   };
 
   return ((problemType === ProblemTypeKeys.MULTISELECT) ? (
@@ -61,6 +67,9 @@ FeedbackBox.propTypes = {
   setAnswer: PropTypes.func.isRequired,
   setSelectedFeedback: PropTypes.func.isRequired,
   setUnselectedFeedback: PropTypes.func.isRequired,
+  images: PropTypes.shape({}).isRequired,
+  learningContextId: PropTypes.string.isRequired,
+  isLibrary: PropTypes.bool.isRequired,
   intl: intlShape.isRequired,
 };
 

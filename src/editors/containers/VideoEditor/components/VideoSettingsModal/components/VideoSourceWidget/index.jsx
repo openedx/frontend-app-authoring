@@ -69,8 +69,9 @@ const VideoSourceWidget = ({
       >
         <FormattedMessage {...messages.videoIdChangeAlert} />
       </ErrorAlert>
-      <Form.Group>
-        <div className="border-primary-100 border-bottom pb-4">
+
+      <div className="border-primary-100 border-bottom pb-4">
+        <Form.Group>
           <Form.Control
             floatingLabel={intl.formatMessage(messages.videoIdLabel)}
             onChange={videoId.onChange}
@@ -80,6 +81,8 @@ const VideoSourceWidget = ({
           <Form.Control.Feedback className="text-primary-300 mb-4">
             <FormattedMessage {...messages.videoIdFeedback} />
           </Form.Control.Feedback>
+        </Form.Group>
+        <Form.Group>
           <Form.Control
             floatingLabel={intl.formatMessage(messages.videoUrlLabel)}
             onChange={source.onChange}
@@ -89,15 +92,17 @@ const VideoSourceWidget = ({
           <Form.Control.Feedback className="text-primary-300">
             <FormattedMessage {...messages.videoUrlFeedback} />
           </Form.Control.Feedback>
-        </div>
-        <div className="mt-4">
-          <FormattedMessage {...messages.fallbackVideoTitle} />
-        </div>
-        <div className="mt-3">
-          <FormattedMessage {...messages.fallbackVideoMessage} />
-        </div>
-        {fallbackVideos.formValue.length > 0 ? fallbackVideos.formValue.map((videoUrl, index) => (
-          <Form.Row className="mt-3.5 mx-0 flex-nowrap">
+        </Form.Group>
+      </div>
+      <div className="mt-4">
+        <FormattedMessage {...messages.fallbackVideoTitle} />
+      </div>
+      <div className="mt-3">
+        <FormattedMessage {...messages.fallbackVideoMessage} />
+      </div>
+      {fallbackVideos.formValue.length > 0 ? fallbackVideos.formValue.map((videoUrl, index) => (
+        <Form.Row className="mt-3.5 mx-0 flex-nowrap">
+          <Form.Group>
             <Form.Control
               floatingLabel={intl.formatMessage(messages.fallbackVideoLabel)}
               onChange={fallbackVideos.onChange(index)}
@@ -113,9 +118,11 @@ const VideoSourceWidget = ({
               alt={intl.formatMessage(messages.deleteFallbackVideo)}
               onClick={() => deleteFallbackVideo(videoUrl)}
             />
-          </Form.Row>
-        )) : null}
-        <ActionRow className="mt-4.5">
+          </Form.Group>
+        </Form.Row>
+      )) : null}
+      <ActionRow className="mt-4.5">
+        <Form.Group>
           <Form.Checkbox
             checked={allowDownload.local}
             className="decorative-control-label"
@@ -136,9 +143,10 @@ const VideoSourceWidget = ({
           >
             <Icon src={InfoOutline} style={{ height: '16px', width: '16px' }} />
           </OverlayTrigger>
-          <ActionRow.Spacer />
-        </ActionRow>
-      </Form.Group>
+        </Form.Group>
+        <ActionRow.Spacer />
+      </ActionRow>
+
       <div className="my-4 border-primary-100 border-bottom" />
       <Button
         className="text-primary-500 font-weight-bold pl-0"

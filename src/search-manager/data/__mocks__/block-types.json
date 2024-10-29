@@ -1,0 +1,24 @@
+{
+  "comment": "This is a mock of the response from Meilisearch, based on an actual search in Studio.",
+  "results": [
+    {
+      "indexUid": "studio",
+      "hits": [],
+      "query": "",
+      "processingTimeMs": 1,
+      "limit": 0,
+      "offset": 0,
+      "estimatedTotalHits": 0,
+      "facetDistribution": {
+        "block_type": {
+          "chapter": 1,
+          "html": 2,
+          "problem": 16,
+          "vertical": 2,
+          "video": 1
+        }
+      },
+      "facetStats": {}
+    }
+  ]
+}

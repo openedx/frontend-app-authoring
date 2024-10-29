@@ -4,6 +4,55 @@ exports[`Editor Container snapshots rendering correctly with expected Input 1`] 
 <div
   className="editor-page"
 >
+  <AlertMessage
+    actions={
+      [
+        <ForwardRef
+          as={
+            {
+              "$$typeof": Symbol(react.forward_ref),
+              "defaultProps": {
+                "className": undefined,
+                "externalLinkAlternativeText": "in a new tab",
+                "externalLinkTitle": "Opens in a new tab",
+                "isInline": false,
+                "onClick": [Function],
+                "showLaunchIcon": true,
+                "target": "_self",
+                "variant": "default",
+              },
+              "propTypes": {
+                "children": [Function],
+                "className": [Function],
+                "destination": [Function],
+                "externalLinkAlternativeText": [Function],
+                "externalLinkTitle": [Function],
+                "isInline": [Function],
+                "onClick": [Function],
+                "showLaunchIcon": [Function],
+                "target": [Function],
+                "variant": [Function],
+              },
+              "render": [Function],
+            }
+          }
+          destination="/library/lib:Axim:TEST/components?usageKey=lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd"
+          disabled={false}
+          rel="noopener noreferrer"
+          showLaunchIcon={true}
+          target="_blank"
+        >
+          View in Library
+        </ForwardRef>,
+      ]
+    }
+    className="m-3"
+    description="Edits made here will only be reflected in this course. These edits may be overridden later if updates are accepted."
+    icon={[Function]}
+    show="lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd"
+    title="Editing Content from a Library"
+    variant="warning"
+  />
   <EditorPage
     blockId="company-id1"
     blockType="html"

@@ -1,0 +1,531 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ProblemTypeSelect snapshot DROPDOWN 1`] = `
+<Container
+  style={
+    {
+      "height": "400px",
+      "width": "494px",
+    }
+  }
+>
+  <ForwardRef
+    columns={1}
+    name="problem-type"
+    onChange={[Function]}
+    type="radio"
+    value="optionresponse"
+  >
+    <ForwardRef
+      checked={false}
+      className="border border-light-400 text-primary-500 shadow-none"
+      id="multiplechoiceresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      key="multiplechoiceresponse"
+      onClick={[Function]}
+      onFocus={[Function]}
+      type="radio"
+      value="multiplechoiceresponse"
+    >
+      Single select
+    </ForwardRef>
+    <ForwardRef
+      checked={false}
+      className="border border-light-400 text-primary-500 shadow-none"
+      id="choiceresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      key="choiceresponse"
+      onClick={[Function]}
+      onFocus={[Function]}
+      type="radio"
+      value="choiceresponse"
+    >
+      Multi-select
+    </ForwardRef>
+    <ForwardRef
+      checked={false}
+      className="border border-light-400 text-primary-500 shadow-none"
+      id="optionresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      key="optionresponse"
+      onClick={[Function]}
+      onFocus={[Function]}
+      type="radio"
+      value="optionresponse"
+    >
+      Dropdown
+    </ForwardRef>
+    <ForwardRef
+      checked={false}
+      className="border border-light-400 text-primary-500 shadow-none"
+      id="numericalresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      key="numericalresponse"
+      onClick={[Function]}
+      onFocus={[Function]}
+      type="radio"
+      value="numericalresponse"
+    >
+      Numerical input
+    </ForwardRef>
+    <ForwardRef
+      checked={false}
+      className="border border-light-400 text-primary-500 shadow-none"
+      id="stringresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      key="stringresponse"
+      onClick={[Function]}
+      onFocus={[Function]}
+      type="radio"
+      value="stringresponse"
+    >
+      Text input
+    </ForwardRef>
+  </ForwardRef>
+  <Button
+    className="pl-0 mt-2"
+    onClick={[Function]}
+    variant="link"
+  >
+    <FormattedMessage
+      defaultMessage="Advanced problem types"
+      description="Button label for advance problem types option"
+      id="authoring.problemEditor.problemSelect.advanceButton.label"
+    />
+  </Button>
+</Container>
+`;
+
+exports[`ProblemTypeSelect snapshot MULTISELECT 1`] = `
+<Container
+  style={
+    {
+      "height": "400px",
+      "width": "494px",
+    }
+  }
+>
+  <ForwardRef
+    columns={1}
+    name="problem-type"
+    onChange={[Function]}
+    type="radio"
+    value="choiceresponse"
+  >
+    <ForwardRef
+      checked={false}
+      className="border border-light-400 text-primary-500 shadow-none"
+      id="multiplechoiceresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      key="multiplechoiceresponse"
+      onClick={[Function]}
+      onFocus={[Function]}
+      type="radio"
+      value="multiplechoiceresponse"
+    >
+      Single select
+    </ForwardRef>
+    <ForwardRef
+      checked={false}
+      className="border border-light-400 text-primary-500 shadow-none"
+      id="choiceresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      key="choiceresponse"
+      onClick={[Function]}
+      onFocus={[Function]}
+      type="radio"
+      value="choiceresponse"
+    >
+      Multi-select
+    </ForwardRef>
+    <ForwardRef
+      checked={false}
+      className="border border-light-400 text-primary-500 shadow-none"
+      id="optionresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      key="optionresponse"
+      onClick={[Function]}
+      onFocus={[Function]}
+      type="radio"
+      value="optionresponse"
+    >
+      Dropdown
+    </ForwardRef>
+    <ForwardRef
+      checked={false}
+      className="border border-light-400 text-primary-500 shadow-none"
+      id="numericalresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      key="numericalresponse"
+      onClick={[Function]}
+      onFocus={[Function]}
+      type="radio"
+      value="numericalresponse"
+    >
+      Numerical input
+    </ForwardRef>
+    <ForwardRef
+      checked={false}
+      className="border border-light-400 text-primary-500 shadow-none"
+      id="stringresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      key="stringresponse"
+      onClick={[Function]}
+      onFocus={[Function]}
+      type="radio"
+      value="stringresponse"
+    >
+      Text input
+    </ForwardRef>
+  </ForwardRef>
+  <Button
+    className="pl-0 mt-2"
+    onClick={[Function]}
+    variant="link"
+  >
+    <FormattedMessage
+      defaultMessage="Advanced problem types"
+      description="Button label for advance problem types option"
+      id="authoring.problemEditor.problemSelect.advanceButton.label"
+    />
+  </Button>
+</Container>
+`;
+
+exports[`ProblemTypeSelect snapshot NUMERIC 1`] = `
+<Container
+  style={
+    {
+      "height": "400px",
+      "width": "494px",
+    }
+  }
+>
+  <ForwardRef
+    columns={1}
+    name="problem-type"
+    onChange={[Function]}
+    type="radio"
+    value="numericalresponse"
+  >
+    <ForwardRef
+      checked={false}
+      className="border border-light-400 text-primary-500 shadow-none"
+      id="multiplechoiceresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      key="multiplechoiceresponse"
+      onClick={[Function]}
+      onFocus={[Function]}
+      type="radio"
+      value="multiplechoiceresponse"
+    >
+      Single select
+    </ForwardRef>
+    <ForwardRef
+      checked={false}
+      className="border border-light-400 text-primary-500 shadow-none"
+      id="choiceresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      key="choiceresponse"
+      onClick={[Function]}
+      onFocus={[Function]}
+      type="radio"
+      value="choiceresponse"
+    >
+      Multi-select
+    </ForwardRef>
+    <ForwardRef
+      checked={false}
+      className="border border-light-400 text-primary-500 shadow-none"
+      id="optionresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      key="optionresponse"
+      onClick={[Function]}
+      onFocus={[Function]}
+      type="radio"
+      value="optionresponse"
+    >
+      Dropdown
+    </ForwardRef>
+    <ForwardRef
+      checked={false}
+      className="border border-light-400 text-primary-500 shadow-none"
+      id="numericalresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      key="numericalresponse"
+      onClick={[Function]}
+      onFocus={[Function]}
+      type="radio"
+      value="numericalresponse"
+    >
+      Numerical input
+    </ForwardRef>
+    <ForwardRef
+      checked={false}
+      className="border border-light-400 text-primary-500 shadow-none"
+      id="stringresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      key="stringresponse"
+      onClick={[Function]}
+      onFocus={[Function]}
+      type="radio"
+      value="stringresponse"
+    >
+      Text input
+    </ForwardRef>
+  </ForwardRef>
+  <Button
+    className="pl-0 mt-2"
+    onClick={[Function]}
+    variant="link"
+  >
+    <FormattedMessage
+      defaultMessage="Advanced problem types"
+      description="Button label for advance problem types option"
+      id="authoring.problemEditor.problemSelect.advanceButton.label"
+    />
+  </Button>
+</Container>
+`;
+
+exports[`ProblemTypeSelect snapshot SINGLESELECT 1`] = `
+<Container
+  style={
+    {
+      "height": "400px",
+      "width": "494px",
+    }
+  }
+>
+  <ForwardRef
+    columns={1}
+    name="problem-type"
+    onChange={[Function]}
+    type="radio"
+    value="multiplechoiceresponse"
+  >
+    <ForwardRef
+      checked={false}
+      className="border border-light-400 text-primary-500 shadow-none"
+      id="multiplechoiceresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      key="multiplechoiceresponse"
+      onClick={[Function]}
+      onFocus={[Function]}
+      type="radio"
+      value="multiplechoiceresponse"
+    >
+      Single select
+    </ForwardRef>
+    <ForwardRef
+      checked={false}
+      className="border border-light-400 text-primary-500 shadow-none"
+      id="choiceresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      key="choiceresponse"
+      onClick={[Function]}
+      onFocus={[Function]}
+      type="radio"
+      value="choiceresponse"
+    >
+      Multi-select
+    </ForwardRef>
+    <ForwardRef
+      checked={false}
+      className="border border-light-400 text-primary-500 shadow-none"
+      id="optionresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      key="optionresponse"
+      onClick={[Function]}
+      onFocus={[Function]}
+      type="radio"
+      value="optionresponse"
+    >
+      Dropdown
+    </ForwardRef>
+    <ForwardRef
+      checked={false}
+      className="border border-light-400 text-primary-500 shadow-none"
+      id="numericalresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      key="numericalresponse"
+      onClick={[Function]}
+      onFocus={[Function]}
+      type="radio"
+      value="numericalresponse"
+    >
+      Numerical input
+    </ForwardRef>
+    <ForwardRef
+      checked={false}
+      className="border border-light-400 text-primary-500 shadow-none"
+      id="stringresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      key="stringresponse"
+      onClick={[Function]}
+      onFocus={[Function]}
+      type="radio"
+      value="stringresponse"
+    >
+      Text input
+    </ForwardRef>
+  </ForwardRef>
+  <Button
+    className="pl-0 mt-2"
+    onClick={[Function]}
+    variant="link"
+  >
+    <FormattedMessage
+      defaultMessage="Advanced problem types"
+      description="Button label for advance problem types option"
+      id="authoring.problemEditor.problemSelect.advanceButton.label"
+    />
+  </Button>
+</Container>
+`;
+
+exports[`ProblemTypeSelect snapshot TEXTINPUT 1`] = `
+<Container
+  style={
+    {
+      "height": "400px",
+      "width": "494px",
+    }
+  }
+>
+  <ForwardRef
+    columns={1}
+    name="problem-type"
+    onChange={[Function]}
+    type="radio"
+    value="stringresponse"
+  >
+    <ForwardRef
+      checked={false}
+      className="border border-light-400 text-primary-500 shadow-none"
+      id="multiplechoiceresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      key="multiplechoiceresponse"
+      onClick={[Function]}
+      onFocus={[Function]}
+      type="radio"
+      value="multiplechoiceresponse"
+    >
+      Single select
+    </ForwardRef>
+    <ForwardRef
+      checked={false}
+      className="border border-light-400 text-primary-500 shadow-none"
+      id="choiceresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      key="choiceresponse"
+      onClick={[Function]}
+      onFocus={[Function]}
+      type="radio"
+      value="choiceresponse"
+    >
+      Multi-select
+    </ForwardRef>
+    <ForwardRef
+      checked={false}
+      className="border border-light-400 text-primary-500 shadow-none"
+      id="optionresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      key="optionresponse"
+      onClick={[Function]}
+      onFocus={[Function]}
+      type="radio"
+      value="optionresponse"
+    >
+      Dropdown
+    </ForwardRef>
+    <ForwardRef
+      checked={false}
+      className="border border-light-400 text-primary-500 shadow-none"
+      id="numericalresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      key="numericalresponse"
+      onClick={[Function]}
+      onFocus={[Function]}
+      type="radio"
+      value="numericalresponse"
+    >
+      Numerical input
+    </ForwardRef>
+    <ForwardRef
+      checked={false}
+      className="border border-light-400 text-primary-500 shadow-none"
+      id="stringresponse"
+      inputHidden={true}
+      isIndeterminate={false}
+      isInvalid={false}
+      key="stringresponse"
+      onClick={[Function]}
+      onFocus={[Function]}
+      type="radio"
+      value="stringresponse"
+    >
+      Text input
+    </ForwardRef>
+  </ForwardRef>
+  <Button
+    className="pl-0 mt-2"
+    onClick={[Function]}
+    variant="link"
+  >
+    <FormattedMessage
+      defaultMessage="Advanced problem types"
+      description="Button label for advance problem types option"
+      id="authoring.problemEditor.problemSelect.advanceButton.label"
+    />
+  </Button>
+</Container>
+`;

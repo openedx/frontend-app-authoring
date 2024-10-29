@@ -1,27 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import {
   AdvanceProblemKeys, AdvanceProblems, ProblemTypeKeys, ProblemTypes,
 } from '../../../../data/constants/problem';
-import { StrictDict, snakeCaseKeys } from '../../../../utils';
-// This 'module' self-import hack enables mocking during tests.
-// See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
-// should be re-thought and cleaned up to avoid this pattern.
-// eslint-disable-next-line import/no-self-import
-import * as module from './hooks';
+import { snakeCaseKeys } from '../../../../utils';
 import { getDataFromOlx } from '../../../../data/redux/thunkActions/problem';
-
-export const state = StrictDict({
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  selected: (val) => useState(val),
-});
-
-export const selectHooks = () => {
-  const [selected, setSelected] = module.state.selected(ProblemTypeKeys.SINGLESELECT);
-  return {
-    selected,
-    setSelected,
-  };
-};
 
 export const onSelect = ({
   selected,

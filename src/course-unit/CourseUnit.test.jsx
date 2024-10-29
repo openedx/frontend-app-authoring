@@ -1,6 +1,6 @@
 import MockAdapter from 'axios-mock-adapter';
 import {
-  act, render, waitFor, fireEvent, within,
+  act, render, waitFor, fireEvent, within, screen,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
@@ -525,17 +525,19 @@ describe('<CourseUnit />', () => {
   });
 
   it('should display a warning alert for unpublished course unit version', async () => {
-    const { getByRole } = render(<RootWrapper />);
+    render(<RootWrapper />);
 
     await waitFor(() => {
-      const unpublishedAlert = getByRole('alert', { class: 'course-unit-unpublished-alert' });
+      const unpublishedAlert = screen.getAllByRole('alert').find(
+        (el) => el.classList.contains('alert-content'),
+      );
       expect(unpublishedAlert).toHaveTextContent(messages.alertUnpublishedVersion.defaultMessage);
       expect(unpublishedAlert).toHaveClass('alert-warning');
     });
   });
 
   it('should not display an unpublished alert for a course unit with explicit staff lock and unpublished status', async () => {
-    const { queryByRole } = render(<RootWrapper />);
+    render(<RootWrapper />);
 
     axiosMock
       .onGet(getCourseUnitApiUrl(courseId))
@@ -547,8 +549,10 @@ describe('<CourseUnit />', () => {
     await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
 
     await waitFor(() => {
-      const unpublishedAlert = queryByRole('alert', { class: 'course-unit-unpublished-alert' });
-      expect(unpublishedAlert).toBeNull();
+      const alert = screen.queryAllByRole('alert').find(
+        (el) => el.classList.contains('alert-content'),
+      );
+      expect(alert).toBeUndefined();
     });
   });
 

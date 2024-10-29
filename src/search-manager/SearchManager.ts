@@ -1,4 +1,3 @@
-/* eslint-disable react/require-default-props */
 /**
  * This is a search manager that provides search functionality similar to the
  * Instantsearch library. We use it because Instantsearch doesn't support
@@ -8,8 +7,11 @@
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { MeiliSearch, type Filter } from 'meilisearch';
+import { union } from 'lodash';
 
-import { ContentHit, SearchSortOption, forceArray } from './data/api';
+import {
+  CollectionHit, ContentHit, SearchSortOption, forceArray, OverrideQueries,
+} from './data/api';
 import { useContentSearchConnection, useContentSearchResults } from './data/apiHooks';
 
 export interface SearchContextData {
@@ -34,12 +36,15 @@ export interface SearchContextData {
   defaultSearchSortOrder: SearchSortOption;
   hits: ContentHit[];
   totalHits: number;
-  isFetching: boolean;
+  isLoading: boolean;
   hasNextPage: boolean | undefined;
   isFetchingNextPage: boolean;
   fetchNextPage: () => void;
   closeSearchModal: () => void;
   hasError: boolean;
+  collectionHits: CollectionHit[];
+  totalCollectionHits: number;
+  usageKey: string;
 }
 
 const SearchContext = React.createContext<SearchContextData | undefined>(undefined);
@@ -88,53 +93,67 @@ export const SearchContextProvider: React.FC<{
   overrideSearchSortOrder?: SearchSortOption
   children: React.ReactNode,
   closeSearchModal?: () => void,
-}> = ({ overrideSearchSortOrder, ...props }) => {
+  overrideQueries?: OverrideQueries,
+  skipUrlUpdate?: boolean,
+}> = ({
+  overrideSearchSortOrder, overrideQueries, skipUrlUpdate, ...props
+}) => {
   const [searchKeywords, setSearchKeywords] = React.useState('');
   const [blockTypesFilter, setBlockTypesFilter] = React.useState<string[]>([]);
   const [problemTypesFilter, setProblemTypesFilter] = React.useState<string[]>([]);
   const [tagsFilter, setTagsFilter] = React.useState<string[]>([]);
-  const extraFilter: string[] = forceArray(props.extraFilter);
+  const [usageKey, setUsageKey] = useStateWithUrlSearchParam(
+    '',
+    'usageKey',
+    (value: string) => value,
+    (value: string) => value,
+  );
+
+  let extraFilter: string[] = forceArray(props.extraFilter);
+  if (usageKey) {
+    extraFilter = union(extraFilter, [`usage_key = "${usageKey}"`]);
+  }
 
   // The search sort order can be set via the query string
   // E.g. ?sort=display_name:desc maps to SearchSortOption.TITLE_ZA.
   // Default sort by Most Relevant if there's search keyword(s), else by Recently Modified.
   const defaultSearchSortOrder = searchKeywords ? SearchSortOption.RELEVANCE : SearchSortOption.RECENTLY_MODIFIED;
-  const [searchSortOrder, setSearchSortOrder] = useStateWithUrlSearchParam<SearchSortOption>(
+  let sortStateManager = React.useState<SearchSortOption>(defaultSearchSortOrder);
+  const sortUrlStateManager = useStateWithUrlSearchParam<SearchSortOption>(
     defaultSearchSortOrder,
     'sort',
     (value: string) => Object.values(SearchSortOption).find((enumValue) => value === enumValue),
     (value: SearchSortOption) => value.toString(),
   );
+  if (!skipUrlUpdate) {
+    sortStateManager = sortUrlStateManager;
+  }
+  const [searchSortOrder, setSearchSortOrder] = sortStateManager;
   // SearchSortOption.RELEVANCE is special, it means "no custom sorting", so we
   // send it to useContentSearchResults as an empty array.
   const searchSortOrderToUse = overrideSearchSortOrder ?? searchSortOrder;
   const sort: SearchSortOption[] = (searchSortOrderToUse === SearchSortOption.RELEVANCE ? [] : [searchSortOrderToUse]);
   // Selecting SearchSortOption.RECENTLY_PUBLISHED also excludes unpublished components.
   if (searchSortOrderToUse === SearchSortOption.RECENTLY_PUBLISHED) {
-    extraFilter.push('last_published IS NOT NULL');
+    extraFilter = union(extraFilter, ['last_published IS NOT NULL']);
   }
 
   const canClearFilters = (
     blockTypesFilter.length > 0
     || problemTypesFilter.length > 0
     || tagsFilter.length > 0
+    || !!usageKey
   );
   const isFiltered = canClearFilters || (searchKeywords !== '');
   const clearFilters = React.useCallback(() => {
     setBlockTypesFilter([]);
     setTagsFilter([]);
     setProblemTypesFilter([]);
+    setUsageKey('');
   }, []);
 
   // Initialize a connection to Meilisearch:
-  const { data: connectionDetails, isError: hasConnectionError } = useContentSearchConnection();
-  const indexName = connectionDetails?.indexName;
-  const client = React.useMemo(() => {
-    if (connectionDetails?.apiKey === undefined || connectionDetails?.url === undefined) {
-      return undefined;
-    }
-    return new MeiliSearch({ host: connectionDetails.url, apiKey: connectionDetails.apiKey });
-  }, [connectionDetails?.apiKey, connectionDetails?.url]);
+  const { client, indexName, hasConnectionError } = useContentSearchConnection();
 
   // Run the search
   const result = useContentSearchResults({
@@ -146,6 +165,7 @@ export const SearchContextProvider: React.FC<{
     problemTypesFilter,
     tagsFilter,
     sort,
+    overrideQueries,
   });
 
   return React.createElement(SearchContext.Provider, {
@@ -167,8 +187,9 @@ export const SearchContextProvider: React.FC<{
       searchSortOrder,
       setSearchSortOrder,
       defaultSearchSortOrder,
-      closeSearchModal: props.closeSearchModal ?? (() => {}),
+      closeSearchModal: props.closeSearchModal ?? (() => { }),
       hasError: hasConnectionError || result.isError,
+      usageKey,
       ...result,
     },
   }, props.children);

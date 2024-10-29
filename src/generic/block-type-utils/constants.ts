@@ -51,6 +51,7 @@ export const STRUCTURAL_TYPE_ICONS: Record<string, React.ComponentType> = {
   vertical: UNIT_TYPE_ICONS_MAP.vertical,
   sequential: Folder,
   chapter: Folder,
+  collection: Folder,
 };
 
 export const COMPONENT_TYPE_STYLE_COLOR_MAP = {
@@ -66,4 +67,5 @@ export const COMPONENT_TYPE_STYLE_COLOR_MAP = {
   sequential: 'component-style-default',
   chapter: 'component-style-default',
   collection: 'component-style-collection',
+  other: 'component-style-other',
 };

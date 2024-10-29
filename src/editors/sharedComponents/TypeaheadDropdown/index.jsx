@@ -90,7 +90,7 @@ class TypeaheadDropdown extends React.Component {
       this.setValue(opt);
       this.setState({ displayValue: opt });
     } else {
-      this.setValue('');
+      this.setValue(value);
       this.setState({ displayValue: value });
     }
   }

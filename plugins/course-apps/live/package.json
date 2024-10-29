@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "description": "Live course configuration for courses using it",
     "peerDependencies": {
-        "@edx/frontend-app-course-authoring": "*",
+        "@edx/frontend-app-authoring": "*",
         "@edx/frontend-platform": "*",
         "@openedx/paragon": "*",
         "@reduxjs/toolkit": "*",
@@ -15,7 +15,7 @@
         "yup": "*"
     },
     "peerDependenciesMeta": {
-        "@edx/frontend-app-course-authoring": {
+        "@edx/frontend-app-authoring": {
             "optional": true
         }
     }

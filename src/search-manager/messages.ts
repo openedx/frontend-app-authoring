@@ -1,8 +1,4 @@
-import { defineMessages as _defineMessages } from '@edx/frontend-platform/i18n';
-import type { defineMessages as defineMessagesType } from 'react-intl';
-
-// frontend-platform currently doesn't provide types... do it ourselves.
-const defineMessages = _defineMessages as typeof defineMessagesType;
+import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
   clearFilters: {
@@ -14,6 +10,11 @@ const messages = defineMessages({
     id: 'course-authoring.search-manager.inputPlaceholder',
     defaultMessage: 'Search',
     description: 'Placeholder text shown in the keyword input field when the user has not yet entered a keyword',
+  },
+  clearUsageKeyToSearch: {
+    id: 'course-authoring.search-manager.clearUsageKeyToSearch',
+    defaultMessage: 'Displaying single block, clear filters to search',
+    description: 'Placeholder text shown in the keyword input field when a single block filtered by usage key is shown',
   },
   blockTypeFilter: {
     id: 'course-authoring.search-manager.blockTypeFilter',
@@ -59,6 +60,16 @@ const messages = defineMessages({
     id: 'course-authoring.course-search.blockType.chapter',
     defaultMessage: 'Section',
     description: 'Name of the "Section" course outline level in Studio',
+  },
+  'blockType.collection': {
+    id: 'course-authoring.course-search.blockType.collection',
+    defaultMessage: 'Collection',
+    description: 'Collection type text',
+  },
+  'blockType.collection.with_count': {
+    id: 'course-authoring.course-search.blockType.collectionWithCount',
+    defaultMessage: 'Collection ({count})',
+    description: 'Collection type text with children count',
   },
   'blockType.discussion': {
     id: 'course-authoring.course-search.blockType.discussion',

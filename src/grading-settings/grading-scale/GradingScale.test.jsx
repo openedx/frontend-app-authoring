@@ -123,4 +123,33 @@ describe('<GradingScale />', () => {
       expect(segmentInputs[1]).toHaveValue('Test');
     });
   });
+
+  it('should render GradingScale component with more than 5 grades', async () => {
+    const { getAllByTestId } = render(
+      <IntlProvider locale="en" messages={{}}>
+        <GradingScale
+          intl={injectIntl}
+          gradeCutoffs={gradeCutoffs}
+          gradeLetters={gradeLetters}
+          sortedGrades={sortedGrades}
+          resetDataRef={{ current: false }}
+          showSavePrompt={jest.fn()}
+          setShowSuccessAlert={jest.fn()}
+          setGradingData={jest.fn()}
+          setOverrideInternetConnectionAlert={jest.fn()}
+          setEligibleGrade={jest.fn()}
+          defaultGradeDesignations={['A', 'B', 'C', 'D', 'E']}
+        />
+      </IntlProvider>,
+    );
+    await waitFor(() => {
+      const addNewSegmentBtn = getAllByTestId('grading-scale-btn-add-segment');
+      expect(addNewSegmentBtn[0]).toBeInTheDocument();
+      fireEvent.click(addNewSegmentBtn[0]);
+      const segments = getAllByTestId('grading-scale-segment-number');
+      // Calculation is based on 100/6 i.e A, B, C, D, E, F which comes to 16.666666666666657
+      expect(segments[0].textContent).toEqual('83.33333333333333 - 100');
+      expect(segments[6].textContent).toEqual('0 - 15.666666666666657');
+    });
+  });
 });

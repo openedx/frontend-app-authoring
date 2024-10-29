@@ -61,7 +61,7 @@ const ThumbnailWidget = ({
     }
     return intl.formatMessage(messages.unavailableSubtitle);
   };
-  return (!isLibrary ? (
+  return (!isLibrary && edxVideo ? (
     <CollapsibleFormWidget
       fontSize="x-small"
       isError={Object.keys(error).length !== 0}
@@ -75,7 +75,7 @@ const ThumbnailWidget = ({
       >
         <FormattedMessage {...messages.fileSizeError} />
       </ErrorAlert>
-      {(allowThumbnailUpload && edxVideo) ? null : (
+      {!allowThumbnailUpload && (
         <Alert variant="light">
           <FormattedMessage {...messages.unavailableMessage} />
         </Alert>
@@ -90,7 +90,7 @@ const ThumbnailWidget = ({
             src={thumbnailSrc || thumbnail}
             alt={intl.formatMessage(messages.thumbnailAltText)}
           />
-          {(allowThumbnailUpload && edxVideo) ? (
+          {allowThumbnailUpload && (
             <IconButtonWithTooltip
               tooltipPlacement="top"
               tooltipContent={intl.formatMessage(messages.deleteThumbnail)}
@@ -98,7 +98,7 @@ const ThumbnailWidget = ({
               src={DeleteOutline}
               onClick={deleteThumbnail}
             />
-          ) : null }
+          )}
         </Stack>
       ) : (
         <Stack gap={4}>
@@ -115,7 +115,7 @@ const ThumbnailWidget = ({
             iconBefore={FileUpload}
             onClick={fileInput.click}
             variant="link"
-            disabled={!(allowThumbnailUpload && edxVideo)}
+            disabled={!allowThumbnailUpload}
           >
             <FormattedMessage {...messages.uploadButtonLabel} />
           </Button>

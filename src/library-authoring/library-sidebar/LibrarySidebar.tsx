@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {
   Stack,
   Icon,
@@ -6,57 +6,51 @@ import {
 } from '@openedx/paragon';
 import { Close } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import messages from '../messages';
-import { AddContentContainer, AddContentHeader } from '../add-content';
-import { LibraryContext, SidebarBodyComponentId } from '../common/context';
-import { LibraryInfo, LibraryInfoHeader } from '../library-info';
-import { ComponentInfo, ComponentInfoHeader } from '../component-info';
-import { ContentLibrary } from '../data/api';
 
-type LibrarySidebarProps = {
-  library: ContentLibrary,
-};
+import { AddContentContainer, AddContentHeader } from '../add-content';
+import { CollectionInfo, CollectionInfoHeader } from '../collections';
+import { SidebarBodyComponentId, useLibraryContext } from '../common/context';
+import { ComponentInfo, ComponentInfoHeader } from '../component-info';
+import { LibraryInfo, LibraryInfoHeader } from '../library-info';
+import messages from '../messages';
 
 /**
  * Sidebar container for library pages.
  *
  * It's designed to "squash" the page when open.
- * Uses `sidebarBodyComponent` of the `store` to
+ * Uses `sidebarComponentInfo.type` of the `context` to
  * choose which component is rendered.
  * You can add more components in `bodyComponentMap`.
- * Use the slice actions to open and close this sidebar.
+ * Use the returned actions to open and close this sidebar.
  */
-const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
+const LibrarySidebar = () => {
   const intl = useIntl();
   const {
-    sidebarBodyComponent,
+    sidebarComponentInfo,
     closeLibrarySidebar,
-    currentComponentUsageKey,
-  } = useContext(LibraryContext);
+  } = useLibraryContext();
 
   const bodyComponentMap = {
     [SidebarBodyComponentId.AddContent]: <AddContentContainer />,
-    [SidebarBodyComponentId.Info]: <LibraryInfo library={library} />,
-    [SidebarBodyComponentId.ComponentInfo]: (
-      currentComponentUsageKey && <ComponentInfo usageKey={currentComponentUsageKey} />
-    ),
+    [SidebarBodyComponentId.Info]: <LibraryInfo />,
+    [SidebarBodyComponentId.ComponentInfo]: <ComponentInfo />,
+    [SidebarBodyComponentId.CollectionInfo]: <CollectionInfo />,
     unknown: null,
   };
 
   const headerComponentMap = {
     [SidebarBodyComponentId.AddContent]: <AddContentHeader />,
-    [SidebarBodyComponentId.Info]: <LibraryInfoHeader library={library} />,
-    [SidebarBodyComponentId.ComponentInfo]: (
-      currentComponentUsageKey && <ComponentInfoHeader library={library} usageKey={currentComponentUsageKey} />
-    ),
+    [SidebarBodyComponentId.Info]: <LibraryInfoHeader />,
+    [SidebarBodyComponentId.ComponentInfo]: <ComponentInfoHeader />,
+    [SidebarBodyComponentId.CollectionInfo]: <CollectionInfoHeader />,
     unknown: null,
   };
 
-  const buildBody = () : React.ReactNode => bodyComponentMap[sidebarBodyComponent || 'unknown'];
-  const buildHeader = (): React.ReactNode => headerComponentMap[sidebarBodyComponent || 'unknown'];
+  const buildBody = () : React.ReactNode => bodyComponentMap[sidebarComponentInfo?.type || 'unknown'];
+  const buildHeader = (): React.ReactNode => headerComponentMap[sidebarComponentInfo?.type || 'unknown'];
 
   return (
-    <Stack gap={4} className="p-2 text-primary-700">
+    <Stack gap={4} className="p-3 text-primary-700">
       <Stack direction="horizontal" className="d-flex justify-content-between">
         {buildHeader()}
         <IconButton
@@ -65,7 +59,6 @@ const LibrarySidebar = ({ library }: LibrarySidebarProps) => {
           iconAs={Icon}
           alt={intl.formatMessage(messages.closeButtonAlt)}
           onClick={closeLibrarySidebar}
-          variant="black"
           size="inline"
         />
       </Stack>

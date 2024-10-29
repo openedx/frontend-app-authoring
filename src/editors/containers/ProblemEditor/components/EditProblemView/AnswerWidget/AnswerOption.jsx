@@ -25,6 +25,9 @@ const AnswerOption = ({
   intl,
   // redux
   problemType,
+  images,
+  isLibrary,
+  learningContextId,
 }) => {
   const dispatch = useDispatch();
   const removeAnswer = hooks.removeAnswer({ answer, dispatch });
@@ -47,6 +50,11 @@ const AnswerOption = ({
           setContent={setAnswerTitle}
           placeholder={intl.formatMessage(messages.answerTextboxPlaceholder)}
           id={`answer-${answer.id}`}
+          {...{
+            images,
+            isLibrary,
+            learningContextId,
+          }}
         />
       );
     }
@@ -106,6 +114,11 @@ const AnswerOption = ({
             setSelectedFeedback={setSelectedFeedback}
             setUnselectedFeedback={setUnselectedFeedback}
             intl={intl}
+            {...{
+              images,
+              isLibrary,
+              learningContextId,
+            }}
           />
         </Collapsible.Body>
       </div>
@@ -135,10 +148,16 @@ AnswerOption.propTypes = {
   intl: intlShape.isRequired,
   // redux
   problemType: PropTypes.string.isRequired,
+  images: PropTypes.shape({}).isRequired,
+  learningContextId: PropTypes.string.isRequired,
+  isLibrary: PropTypes.bool.isRequired,
 };
 
 export const mapStateToProps = (state) => ({
   problemType: selectors.problem.problemType(state),
+  images: selectors.app.images(state),
+  isLibrary: selectors.app.isLibrary(state),
+  learningContextId: selectors.app.learningContextId(state),
 });
 
 export const mapDispatchToProps = {};

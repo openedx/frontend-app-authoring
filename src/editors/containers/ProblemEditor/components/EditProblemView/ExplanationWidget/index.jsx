@@ -12,6 +12,8 @@ const ExplanationWidget = ({
   // redux
   settings,
   learningContextId,
+  images,
+  isLibrary,
   // injected
   intl,
 }) => {
@@ -39,6 +41,11 @@ const ExplanationWidget = ({
         setEditorRef={setEditorRef}
         minHeight={150}
         placeholder={intl.formatMessage(messages.placeholder)}
+        {...{
+          images,
+          isLibrary,
+          learningContextId,
+        }}
       />
     </div>
   );
@@ -49,12 +56,16 @@ ExplanationWidget.propTypes = {
   // eslint-disable-next-line
   settings: PropTypes.any.isRequired,
   learningContextId: PropTypes.string.isRequired,
+  images: PropTypes.shape({}).isRequired,
+  isLibrary: PropTypes.bool.isRequired,
   // injected
   intl: intlShape.isRequired,
 };
 export const mapStateToProps = (state) => ({
   settings: selectors.problem.settings(state),
   learningContextId: selectors.app.learningContextId(state),
+  images: selectors.app.images(state),
+  isLibrary: selectors.app.isLibrary(state),
 });
 
 export const ExplanationWidgetInternal = ExplanationWidget; // For testing only

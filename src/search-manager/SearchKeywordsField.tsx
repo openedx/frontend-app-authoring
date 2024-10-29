@@ -1,4 +1,3 @@
-/* eslint-disable react/require-default-props */
 import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { SearchField } from '@openedx/paragon';
@@ -8,9 +7,11 @@ import { useSearchContext } from './SearchManager';
 /**
  * The "main" input field where users type in search keywords. The search happens as they type (no need to press enter).
  */
-const SearchKeywordsField: React.FC<{ className?: string }> = (props) => {
+const SearchKeywordsField: React.FC<{ className?: string, placeholder?: string }> = (props) => {
   const intl = useIntl();
-  const { searchKeywords, setSearchKeywords } = useSearchContext();
+  const { searchKeywords, setSearchKeywords, usageKey } = useSearchContext();
+  const defaultPlaceholder = usageKey ? messages.clearUsageKeyToSearch : messages.inputPlaceholder;
+  const { placeholder = intl.formatMessage(defaultPlaceholder) } = props;
 
   return (
     <SearchField.Advanced
@@ -19,11 +20,12 @@ const SearchKeywordsField: React.FC<{ className?: string }> = (props) => {
       onClear={() => setSearchKeywords('')}
       value={searchKeywords}
       className={props.className}
+      disabled={!!usageKey}
     >
       <SearchField.Label />
       <SearchField.Input
         autoFocus
-        placeholder={intl.formatMessage(messages.inputPlaceholder)}
+        placeholder={placeholder}
       />
       <SearchField.ClearButton />
       <SearchField.SubmitButton />
