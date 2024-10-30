@@ -137,6 +137,33 @@ describe('<AddContentContainer />', () => {
     await waitFor(() => expect(axiosMock.history.patch[0].url).toEqual(collectionComponentUrl));
   });
 
+  it('should show error toast on linking failure', async () => {
+    const { axiosMock, mockShowToast } = initializeMocks();
+    // Simulate having an HTML block in the clipboard:
+    const getClipboardSpy = mockClipboardHtml.applyMock();
+
+    const pasteUrl = getLibraryPasteClipboardUrl(libraryId);
+    const collectionId = 'some-collection-id';
+    const collectionComponentUrl = getLibraryCollectionComponentApiUrl(
+      libraryId,
+      collectionId,
+    );
+    axiosMock.onPatch(collectionComponentUrl).reply(500);
+    axiosMock.onPost(pasteUrl).reply(200, { id: 'some-component-id' });
+
+    render(collectionId);
+
+    expect(getClipboardSpy).toHaveBeenCalled(); // Hmm, this is getting called four times! Refactor to use react-query.
+
+    const pasteButton = await screen.findByRole('button', { name: /paste from clipboard/i });
+    fireEvent.click(pasteButton);
+
+    await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(pasteUrl));
+    await waitFor(() => expect(axiosMock.history.patch.length).toEqual(1));
+    await waitFor(() => expect(axiosMock.history.patch[0].url).toEqual(collectionComponentUrl));
+    expect(mockShowToast).toHaveBeenCalledWith('There was an error linking the content to this collection.');
+  });
+
   it('should handle failure to paste content', async () => {
     const { axiosMock, mockShowToast } = initializeMocks();
     // Simulate having an HTML block in the clipboard:
