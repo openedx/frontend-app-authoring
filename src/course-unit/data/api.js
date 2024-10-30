@@ -91,13 +91,14 @@ export async function createCourseXblock({
  * @param {boolean} groupAccess - Access group key set.
  * @returns {Promise<any>} A promise that resolves with the response data.
  */
-export async function handleCourseUnitVisibilityAndData(unitId, type, isVisible, groupAccess) {
+export async function handleCourseUnitVisibilityAndData(unitId, type, isVisible, groupAccess, isDiscussionEnabled) {
   const body = {
     publish: groupAccess ? null : type,
     ...(type === PUBLISH_TYPES.republish ? {
       metadata: {
         visible_to_staff_only: isVisible ? true : null,
         group_access: groupAccess || null,
+        discussion_enabled: isDiscussionEnabled,
       },
     } : {}),
   };

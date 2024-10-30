@@ -130,12 +130,16 @@ const UnitTab = ({
           )}
         </Form.Group>
       )}
-      <h4 className="mt-4"><FormattedMessage {...messages.discussionEnabledSectionTitle} /></h4>
-      <hr />
-      <Form.Checkbox checked={discussionEnabled} onChange={handleDiscussionChange}>
-        <FormattedMessage {...messages.discussionEnabledCheckbox} />
-      </Form.Checkbox>
-      <p className="x-small font-weight-bold"><FormattedMessage {...messages.discussionEnabledDescription} /></p>
+      {!isXBlockComponent && (
+        <>
+          <h4 className="mt-4"><FormattedMessage {...messages.discussionEnabledSectionTitle} /></h4>
+          <hr />
+          <Form.Checkbox checked={discussionEnabled} onChange={handleDiscussionChange}>
+            <FormattedMessage {...messages.discussionEnabledCheckbox} />
+          </Form.Checkbox>
+          <p className="x-small font-weight-bold"><FormattedMessage {...messages.discussionEnabledDescription} /></p>
+        </>
+      )}
     </>
   );
 };

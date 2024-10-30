@@ -66,8 +66,15 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     dispatch(changeEditTitleFormOpen(!isTitleEditFormOpen));
   };
 
-  const handleConfigureSubmit = (id, isVisible, groupAccess, closeModalFn) => {
-    dispatch(editCourseUnitVisibilityAndData(id, PUBLISH_TYPES.republish, isVisible, groupAccess, true, blockId));
+  const handleConfigureSubmit = (id, isVisible, groupAccess, isDiscussionEnabled, closeModalFn) => {
+    dispatch(editCourseUnitVisibilityAndData(
+      id,
+      PUBLISH_TYPES.republish,
+      isVisible,
+      groupAccess,
+      isDiscussionEnabled,
+      blockId,
+    ));
     closeModalFn();
   };
 
