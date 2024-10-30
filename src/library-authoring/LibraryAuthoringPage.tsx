@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
+  Alert,
   Badge,
   Breadcrumb,
   Button,
@@ -25,6 +26,7 @@ import Loading from '../generic/Loading';
 import SubHeader from '../generic/sub-header/SubHeader';
 import Header from '../header';
 import NotFoundAlert from '../generic/NotFoundAlert';
+import { useStudioHome } from '../studio-home/hooks';
 import {
   ClearFiltersButton,
   FilterByBlockType,
@@ -144,6 +146,12 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
   const navigate = useNavigate();
 
   const {
+    isLoadingPage: isLoadingStudioHome,
+    isFailedLoadingPage: isFailedLoadingStudioHome,
+    librariesV2Enabled,
+  } = useStudioHome();
+
+  const {
     libraryId,
     libraryData,
     isLoadingLibraryData,
@@ -174,8 +182,16 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
 
   const [searchParams] = useSearchParams();
 
-  if (isLoadingLibraryData) {
+  if (isLoadingLibraryData || isLoadingStudioHome) {
     return <Loading />;
+  }
+
+  if (!librariesV2Enabled || isFailedLoadingStudioHome) {
+    return (
+      <Alert variant="danger">
+        {intl.formatMessage(messages.librariesV2DisabledError)}
+      </Alert>
+    );
   }
 
   // istanbul ignore if: this should never happen
