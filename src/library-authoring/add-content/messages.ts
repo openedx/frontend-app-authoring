@@ -66,6 +66,11 @@ const messages = defineMessages({
     defaultMessage: 'There was an error creating the content.',
     description: 'Message when creation of content in library is on error',
   },
+  linkingComponentMessage: {
+    id: 'course-authoring.library-authoring.linking-collection-content.progress.text',
+    defaultMessage: 'Adding component to collection...',
+    description: 'Message when component is being linked to collection in library',
+  },
   successAssociateComponentMessage: {
     id: 'course-authoring.library-authoring.associate-collection-content.success.text',
     defaultMessage: 'Content linked successfully.',
