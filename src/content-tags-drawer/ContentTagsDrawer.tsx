@@ -14,6 +14,7 @@ import ContentTagsCollapsible from './ContentTagsCollapsible';
 import Loading from '../generic/Loading';
 import useContentTagsDrawerContext from './ContentTagsDrawerHelper';
 import { ContentTagsDrawerContext, ContentTagsDrawerSheetContext } from './common/context';
+import { useIframe } from '../course-unit/context/hooks';
 
 interface TaxonomyListProps {
   contentId: string;
@@ -112,6 +113,19 @@ const ContentTagsDrawerVariantFooter = ({ onClose, readOnly }: ContentTagsDrawer
     toReadMode,
     toEditMode,
   } = useContext(ContentTagsDrawerContext);
+  const { sendMessageToIframe } = useIframe();
+
+  const handleClick = () => {
+    if (isEditMode) {
+      // TODO: this artificial delay is a temporary solution
+      // to ensure the iframe content is properly refreshed.
+      setTimeout(() => {
+        sendMessageToIframe('refreshXBlock', null);
+      }, 1000);
+      return commitGlobalStagedTags();
+    }
+    return toEditMode();
+  };
 
   return (
     <Container
@@ -134,9 +148,7 @@ const ContentTagsDrawerVariantFooter = ({ onClose, readOnly }: ContentTagsDrawer
             {!readOnly && (
               <Button
                 className="rounded-0"
-                onClick={isEditMode
-                  ? commitGlobalStagedTags
-                  : toEditMode}
+                onClick={handleClick}
               >
                 { intl.formatMessage(isEditMode
                   ? messages.tagsDrawerSaveButtonText

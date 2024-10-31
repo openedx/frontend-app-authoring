@@ -58,6 +58,7 @@ export const messageTypes = {
   duplicateXBlock: 'duplicateXBlock',
   refreshPositions: 'refreshPositions',
   newXBlockEditor: 'newXBlockEditor',
+  openManageTags: 'openManageTags',
 };
 
 export const IFRAME_FEATURE_POLICY = (

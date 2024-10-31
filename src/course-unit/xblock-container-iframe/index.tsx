@@ -3,12 +3,13 @@ import {
 } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
-import { useToggle } from '@openedx/paragon';
+import { useToggle, Sheet } from '@openedx/paragon';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import ConfigureModal from '../../generic/configure-modal/ConfigureModal';
+import ContentTagsDrawer from '../../content-tags-drawer/ContentTagsDrawer';
 import { copyToClipboard } from '../../generic/data/thunks';
 import { COURSE_BLOCK_NAMES } from '../../constants';
 import { IFRAME_FEATURE_POLICY, messageTypes } from '../constants';
@@ -76,6 +77,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const { setIframeRef, sendMessageToIframe } = useIframe();
   const [editXblockId, setEditXblockId] = useState<string | null>(null);
   const [currentXblockData, setCurrentXblockData] = useState<any>({});
+  const [isManageTagsOpen, openManageTagsModal, closeManageTagsModal] = useToggle(false);
 
   const iframeUrl = `${getConfig().STUDIO_BASE_URL}/container_embed/${blockId}`;
 
@@ -129,6 +131,11 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     }, 1000);
   };
 
+  const handleOpenManageTagsModal = (id) => {
+    setEditXblockId(id);
+    openManageTagsModal();
+  };
+
   const navigateToNewXBlockEditor = (url: string) => {
     navigate(`/course/${courseId}/editor${url}`);
   };
@@ -141,10 +148,12 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
       [messageTypes.duplicateXBlock]: (payload) => handleDuplicateXBlock(payload.id),
       [messageTypes.refreshPositions]: handleRefreshXBlocks,
       [messageTypes.newXBlockEditor]: (payload) => navigateToNewXBlockEditor(payload.url),
+      [messageTypes.openManageTags]: (payload) => handleOpenManageTagsModal(payload.contentId),
     };
 
     const handleMessage = (event: MessageEvent) => {
       const { type, payload } = event.data || {};
+
       if (type && messageHandlers[type]) {
         messageHandlers[type](payload);
       }
@@ -214,6 +223,15 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
         referrerPolicy="origin"
         aria-label={intl.formatMessage(messages.xblockIframeLabel, { xblockCount: xblocks.length })}
       />
+      <Sheet
+        position="right"
+        show={isManageTagsOpen}
+        blocking={false}
+        variant="light"
+        onClose={closeManageTagsModal}
+      >
+        <ContentTagsDrawer id={editXblockId} onClose={closeManageTagsModal} />
+      </Sheet>
     </>
   );
 };
