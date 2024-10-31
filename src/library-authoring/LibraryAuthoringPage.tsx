@@ -182,11 +182,11 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
 
   const [searchParams] = useSearchParams();
 
-  if (isLoadingLibraryData || isLoadingStudioHome) {
+  if (isLoadingLibraryData) {
     return <Loading />;
   }
 
-  if (!librariesV2Enabled || isFailedLoadingStudioHome) {
+  if (!isLoadingStudioHome && (!librariesV2Enabled || isFailedLoadingStudioHome)) {
     return (
       <Alert variant="danger">
         {intl.formatMessage(messages.librariesV2DisabledError)}
