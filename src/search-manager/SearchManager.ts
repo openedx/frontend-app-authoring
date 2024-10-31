@@ -34,7 +34,7 @@ export interface SearchContextData {
   searchSortOrder: SearchSortOption;
   setSearchSortOrder: React.Dispatch<React.SetStateAction<SearchSortOption>>;
   defaultSearchSortOrder: SearchSortOption;
-  hits: ContentHit[];
+  hits: (ContentHit | CollectionHit)[];
   totalHits: number;
   isLoading: boolean;
   hasNextPage: boolean | undefined;
@@ -42,10 +42,6 @@ export interface SearchContextData {
   fetchNextPage: () => void;
   closeSearchModal: () => void;
   hasError: boolean;
-  collectionHits: CollectionHit[];
-  totalCollectionHits: number;
-  contentAndCollectionHits: (ContentHit | CollectionHit)[];
-  totalContentAndCollectionHits: number;
   usageKey: string;
 }
 

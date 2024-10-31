@@ -2,14 +2,11 @@ import { useEffect } from 'react';
 
 import { LoadingSpinner } from '../../generic/Loading';
 import { useLoadOnScroll } from '../../hooks';
-import { useSearchContext } from '../../search-manager';
+import { ContentHit, useSearchContext } from '../../search-manager';
 import { NoComponents, NoSearchResults } from '../EmptyStates';
 import ComponentCard from './ComponentCard';
-import { useLibraryContext, LIBRARY_SECTION_PREVIEW_LIMIT } from '../common/context';
+import { useLibraryContext } from '../common/context';
 
-type LibraryComponentsProps = {
-  variant: 'full' | 'preview',
-};
 
 /**
  * Library Components to show components grid
@@ -18,7 +15,7 @@ type LibraryComponentsProps = {
  *   - 'full': Show all components with Infinite scroll pagination.
  *   - 'preview': Show first 4 components without pagination.
  */
-const LibraryComponents = ({ variant }: LibraryComponentsProps) => {
+const LibraryComponents = () => {
   const {
     hits,
     totalHits: componentCount,
@@ -37,13 +34,11 @@ const LibraryComponents = ({ variant }: LibraryComponentsProps) => {
     }
   }, [usageKey]);
 
-  const componentList = variant === 'preview' ? hits.slice(0, LIBRARY_SECTION_PREVIEW_LIMIT) : hits;
-
   useLoadOnScroll(
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-    variant === 'full',
+    true,
   );
 
   if (isLoading) {
@@ -56,10 +51,10 @@ const LibraryComponents = ({ variant }: LibraryComponentsProps) => {
 
   return (
     <div className="library-cards-grid">
-      { componentList.map((contentHit) => (
+      { hits.map((contentHit) => (
         <ComponentCard
           key={contentHit.id}
-          contentHit={contentHit}
+          contentHit={contentHit as ContentHit}
         />
       )) }
     </div>

@@ -84,7 +84,7 @@ describe('<LibraryComponents />', () => {
       totalHits: 0,
     });
 
-    render(<LibraryComponents variant="full" />, withLibraryId(mockContentLibrary.libraryId));
+    render(<LibraryComponents />, withLibraryId(mockContentLibrary.libraryId));
     expect(await screen.findByText(/you have not added any content to this library yet\./i));
     expect(await screen.findByRole('button', { name: /add component/i })).toBeInTheDocument();
   });
@@ -95,7 +95,7 @@ describe('<LibraryComponents />', () => {
       totalHits: 0,
     });
 
-    render(<LibraryComponents variant="full" />, withLibraryId(mockContentLibrary.libraryIdReadOnly));
+    render(<LibraryComponents />, withLibraryId(mockContentLibrary.libraryIdReadOnly));
     expect(await screen.findByText(/you have not added any content to this library yet\./i));
     expect(screen.queryByRole('button', { name: /add component/i })).not.toBeInTheDocument();
   });
@@ -106,7 +106,7 @@ describe('<LibraryComponents />', () => {
       isLoading: true,
     });
 
-    render(<LibraryComponents variant="full" />, withLibraryId(mockContentLibrary.libraryId));
+    render(<LibraryComponents />, withLibraryId(mockContentLibrary.libraryId));
     expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 
@@ -115,7 +115,7 @@ describe('<LibraryComponents />', () => {
       ...data,
       hits: libraryComponentsMock,
     });
-    render(<LibraryComponents variant="full" />, withLibraryId(mockContentLibrary.libraryId));
+    render(<LibraryComponents />, withLibraryId(mockContentLibrary.libraryId));
 
     expect(await screen.findByText('This is a text: ID=1')).toBeInTheDocument();
     expect(screen.getByText('This is a text: ID=2')).toBeInTheDocument();
@@ -125,21 +125,6 @@ describe('<LibraryComponents />', () => {
     expect(screen.getByText('This is a problem: ID=6')).toBeInTheDocument();
   });
 
-  it('should render components in preview variant', async () => {
-    mockUseSearchContext.mockReturnValue({
-      ...data,
-      hits: libraryComponentsMock,
-    });
-    render(<LibraryComponents variant="preview" />, withLibraryId(mockContentLibrary.libraryId));
-
-    expect(await screen.findByText('This is a text: ID=1')).toBeInTheDocument();
-    expect(screen.getByText('This is a text: ID=2')).toBeInTheDocument();
-    expect(screen.getByText('Video Component 3')).toBeInTheDocument();
-    expect(screen.getByText('Video Component 4')).toBeInTheDocument();
-    expect(screen.queryByText('This is a problem: ID=5')).not.toBeInTheDocument();
-    expect(screen.queryByText('This is a problem: ID=6')).not.toBeInTheDocument();
-  });
-
   it('should call `fetchNextPage` on scroll to bottom in full variant', async () => {
     mockUseSearchContext.mockReturnValue({
       ...data,
@@ -147,7 +132,7 @@ describe('<LibraryComponents />', () => {
       hasNextPage: true,
     });
 
-    render(<LibraryComponents variant="full" />, withLibraryId(mockContentLibrary.libraryId));
+    render(<LibraryComponents />, withLibraryId(mockContentLibrary.libraryId));
 
     Object.defineProperty(window, 'innerHeight', { value: 800 });
     Object.defineProperty(document.body, 'scrollHeight', { value: 1600 });
@@ -164,7 +149,7 @@ describe('<LibraryComponents />', () => {
       hasNextPage: true,
     });
 
-    render(<LibraryComponents variant="preview" />, withLibraryId(mockContentLibrary.libraryId));
+    render(<LibraryComponents />, withLibraryId(mockContentLibrary.libraryId));
 
     Object.defineProperty(window, 'innerHeight', { value: 800 });
     Object.defineProperty(document.body, 'scrollHeight', { value: 1600 });

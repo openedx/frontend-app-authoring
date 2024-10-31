@@ -24,7 +24,7 @@ const LibraryCollectionComponents = () => {
   return (
     <Stack direction="vertical" gap={3}>
       <h3 className="text-gray">Content ({componentCount})</h3>
-      <LibraryComponents variant="full" />
+      <LibraryComponents />
     </Stack>
   );
 };

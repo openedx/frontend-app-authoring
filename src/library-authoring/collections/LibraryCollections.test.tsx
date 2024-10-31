@@ -83,7 +83,7 @@ describe('<LibraryCollections />', () => {
       isLoading: true,
     });
 
-    render(<LibraryCollections variant="full" />, withLibraryId(mockContentLibrary.libraryId));
+    render(<LibraryCollections />, withLibraryId(mockContentLibrary.libraryId));
     expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 });

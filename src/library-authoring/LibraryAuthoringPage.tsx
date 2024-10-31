@@ -53,9 +53,9 @@ interface TabContentProps {
 const TabContent = ({ eventKey }: TabContentProps) => {
   switch (eventKey) {
     case TabList.components:
-      return <LibraryComponents variant="full" />;
+      return <LibraryComponents />;
     case TabList.collections:
-      return <LibraryCollections variant="full" />;
+      return <LibraryCollections />;
     default:
       return <LibraryHome />;
   }
@@ -216,6 +216,11 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
   const extraFilter = [`context_key = "${libraryId}"`];
   if (showOnlyPublished) {
     extraFilter.push('last_published IS NOT NULL');
+  }
+
+  if (activeKey !== TabList.home) {
+    const activeType = activeKey === 'components' ? 'component' : 'collection';
+    extraFilter.push(`type = "${activeType}"`);
   }
 
   return (

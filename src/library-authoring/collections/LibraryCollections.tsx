@@ -1,14 +1,10 @@
 import { LoadingSpinner } from '../../generic/Loading';
 import { useLoadOnScroll } from '../../hooks';
-import { useSearchContext } from '../../search-manager';
+import { CollectionHit, useSearchContext } from '../../search-manager';
 import { NoComponents, NoSearchResults } from '../EmptyStates';
 import CollectionCard from '../components/CollectionCard';
 import messages from './messages';
-import { useLibraryContext, LIBRARY_SECTION_PREVIEW_LIMIT } from '../common/context';
-
-type LibraryCollectionsProps = {
-  variant: 'full' | 'preview',
-};
+import { useLibraryContext } from '../common/context';
 
 /**
  * Library Collections to show collections grid
@@ -17,10 +13,10 @@ type LibraryCollectionsProps = {
  *   - 'full': Show all collections with Infinite scroll pagination.
  *   - 'preview': Show first 4 collections without pagination.
  */
-const LibraryCollections = ({ variant }: LibraryCollectionsProps) => {
+const LibraryCollections = () => {
   const {
-    collectionHits,
-    totalCollectionHits,
+    hits,
+    totalHits: totalCollectionHits,
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
@@ -30,13 +26,11 @@ const LibraryCollections = ({ variant }: LibraryCollectionsProps) => {
 
   const { openCreateCollectionModal } = useLibraryContext();
 
-  const collectionList = variant === 'preview' ? collectionHits.slice(0, LIBRARY_SECTION_PREVIEW_LIMIT) : collectionHits;
-
   useLoadOnScroll(
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-    variant === 'full',
+    true,
   );
 
   if (isLoading) {
@@ -57,10 +51,10 @@ const LibraryCollections = ({ variant }: LibraryCollectionsProps) => {
 
   return (
     <div className="library-cards-grid">
-      {collectionList.map((collectionHit) => (
+      {hits.map((collectionHit) => (
         <CollectionCard
           key={collectionHit.id}
-          collectionHit={collectionHit}
+          collectionHit={collectionHit as CollectionHit}
         />
       ))}
     </div>

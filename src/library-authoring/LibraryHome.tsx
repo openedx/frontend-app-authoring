@@ -1,73 +1,53 @@
-import { useIntl } from '@edx/frontend-platform/i18n';
-
-import { Stack, StatefulButton } from '@openedx/paragon';
 import { LoadingSpinner } from '../generic/Loading';
 import { CollectionHit, ContentHit, useSearchContext } from '../search-manager';
 import { NoComponents, NoSearchResults } from './EmptyStates';
 import { useLibraryContext } from './common/context';
 import CollectionCard from './components/CollectionCard';
 import ComponentCard from './components/ComponentCard';
-import messages from './messages';
+import { useLoadOnScroll } from '../hooks';
 
 const LibraryHome = () => {
-  const intl = useIntl();
   const {
-    totalContentAndCollectionHits: totalHits,
-    isLoading,
-    isFiltered,
-    contentAndCollectionHits,
+    hits,
+    totalHits,
+    isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
-    isFetchingNextPage,
+    isLoading,
+    isFiltered,
   } = useSearchContext();
   const { openAddContentSidebar } = useLibraryContext();
 
-  const labels = {
-    default: intl.formatMessage(messages.showMoreContent),
-    pending: intl.formatMessage(messages.loadingMoreContent),
-  };
+  useLoadOnScroll(
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    true,
+  );
 
-  const renderEmptyState = () => {
-    if (isLoading) {
-      return <LoadingSpinner />;
-    }
-    if (totalHits === 0) {
-      return isFiltered ? <NoSearchResults /> : <NoComponents handleBtnClick={openAddContentSidebar} />;
-    }
-    return null;
-  };
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+  if (totalHits === 0) {
+    return isFiltered ? <NoSearchResults /> : <NoComponents handleBtnClick={openAddContentSidebar} />;
+  }
 
   return (
-    renderEmptyState()
-    || (
-      <Stack>
-        <div className="library-cards-grid">
-          {contentAndCollectionHits.map((contentHit) => (
-            contentHit.type === 'collection' ? (
-              <CollectionCard
-                key={contentHit.id}
-                collectionHit={contentHit as CollectionHit}
-              />
-            ) : (
-              <ComponentCard
-                key={contentHit.id}
-                contentHit={contentHit as ContentHit}
-              />
-            )
-          ))}
-        </div>
-        {hasNextPage
-          ? (
-            <StatefulButton
-              className="mt-4 align-self-center"
-              variant="primary"
-              state={isFetchingNextPage ? 'pending' : 'default'}
-              labels={labels}
-              onClick={fetchNextPage}
-            />
-          ) : null}
-      </Stack>
-    )
+    <div className="library-cards-grid">
+      {hits.map((contentHit) => (
+        contentHit.type === 'collection' ? (
+          <CollectionCard
+            key={contentHit.id}
+            collectionHit={contentHit as CollectionHit}
+          />
+        ) : (
+          <ComponentCard
+            key={contentHit.id}
+            contentHit={contentHit as ContentHit}
+          />
+        )
+      ))}
+    </div>
   );
 };
 

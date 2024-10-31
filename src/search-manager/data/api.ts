@@ -219,15 +219,11 @@ export async function fetchSearchResults({
   overrideQueries,
   offset = 0,
 }: FetchSearchParams): Promise<{
-    hits: ContentHit[],
+    hits: (ContentHit | CollectionHit)[],
     nextOffset: number | undefined,
     totalHits: number,
     blockTypes: Record<string, number>,
     problemTypes: Record<string, number>,
-    collectionHits: CollectionHit[],
-    totalCollectionHits: number,
-    contentAndCollectionHits: (ContentHit | CollectionHit)[],
-    totalContentAndCollectionHits: number,
   }> {
   let queries: MultiSearchQuery[] = [];
 
@@ -248,8 +244,6 @@ export async function fetchSearchResults({
     ...problemTypesFilterFormatted,
   ].flat()];
 
-  const collectionsFilter = 'type = "collection"';
-
   // First query is always to get the hits, with all the filters applied.
   queries.push({
     indexUid: indexName,
@@ -257,7 +251,6 @@ export async function fetchSearchResults({
     filter: [
       // top-level entries in the array are AND conditions and must all match
       // Inner arrays are OR conditions, where only one needs to match.
-      `NOT ${collectionsFilter}`, // exclude collections
       ...typeFilters,
       ...extraFilterFormatted,
       ...tagsFilterFormatted,
@@ -284,64 +277,16 @@ export async function fetchSearchResults({
     limit: 0, // We don't need any "hits" for this - just the facetDistribution
   });
 
-  // Third query is to get the hits for collections, with all the filters applied.
-  queries.push({
-    indexUid: indexName,
-    q: searchKeywords,
-    filter: [
-      // top-level entries in the array are AND conditions and must all match
-      // Inner arrays are OR conditions, where only one needs to match.
-      collectionsFilter, // include only collections
-      ...extraFilterFormatted,
-      // We exclude the block type filter as collections are only of 1 type i.e. collection.
-      ...tagsFilterFormatted,
-    ],
-    attributesToHighlight: ['display_name', 'description'],
-    highlightPreTag: HIGHLIGHT_PRE_TAG,
-    highlightPostTag: HIGHLIGHT_POST_TAG,
-    attributesToCrop: ['description'],
-    sort,
-    offset,
-    limit,
-  });
-
-  // Fourth query is to et a mix of hits and collections, with all the filters applied.
-  queries.push({
-    indexUid: indexName,
-    q: searchKeywords,
-    filter: [
-      // top-level entries in the array are AND conditions and must all match
-      // Inner arrays are OR conditions, where only one needs to match.
-      ...typeFilters,
-      ...extraFilterFormatted,
-      ...tagsFilterFormatted,
-    ],
-    attributesToHighlight: ['display_name', 'description', 'published'],
-    highlightPreTag: HIGHLIGHT_PRE_TAG,
-    highlightPostTag: HIGHLIGHT_POST_TAG,
-    attributesToCrop: ['description', 'published'],
-    sort,
-    offset,
-    limit,
-  });
-
   queries = applyOverrideQueries(queries, overrideQueries);
 
   const { results } = await client.multiSearch(({ queries }));
-  const componentHitLength = results[0].hits.length;
-  const collectionHitLength = results[2].hits.length;
+  const hitLength = results[0].hits.length;
   return {
     hits: results[0].hits.map(formatSearchHit) as ContentHit[],
-    totalHits: results[0].totalHits ?? results[0].estimatedTotalHits ?? componentHitLength,
+    totalHits: results[0].totalHits ?? results[0].estimatedTotalHits ?? hitLength,
     blockTypes: results[1].facetDistribution?.block_type ?? {},
     problemTypes: results[1].facetDistribution?.['content.problem_types'] ?? {},
-    nextOffset: componentHitLength === limit || collectionHitLength === limit ? offset + limit : undefined,
-    collectionHits: results[2].hits.map(formatSearchHit) as CollectionHit[],
-    totalCollectionHits: results[2].totalHits ?? results[2].estimatedTotalHits ?? collectionHitLength,
-    contentAndCollectionHits: results[3].hits.map(formatSearchHit) as (ContentHit | CollectionHit)[],
-    totalContentAndCollectionHits: (
-      results[3].totalHits ?? results[3].estimatedTotalHits ?? componentHitLength + collectionHitLength
-    ),
+    nextOffset: hitLength === limit ? offset + limit : undefined,
   };
 }
 
