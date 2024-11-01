@@ -362,3 +362,43 @@ describe('EditProblemView hooks parseState', () => {
     });
   });
 });
+
+describe('checkIfEditorsDirty', () => {
+  let windowSpy;
+  beforeEach(() => {
+    windowSpy = jest.spyOn(window, 'window', 'get');
+  });
+  afterEach(() => {
+    windowSpy.mockRestore();
+  });
+  describe('state hook', () => {
+    test('should return false if none of editors are dirty', () => {
+      windowSpy.mockImplementation(() => ({
+        tinymce: {
+          editors: {
+            some_id: { isNotDirty: true },
+            some_id2: { isNotDirty: true },
+            some_id3: { isNotDirty: true },
+            some_id4: { isNotDirty: true },
+            some_id5: { isNotDirty: true },
+          },
+        },
+      }));
+      expect(hooks.checkIfEditorsDirty()).toEqual(false);
+    });
+    test('should return true if any editor is dirty', () => {
+      windowSpy.mockImplementation(() => ({
+        tinymce: {
+          editors: {
+            some_id: { isNotDirty: true },
+            some_id2: { isNotDirty: true },
+            some_id3: { isNotDirty: false },
+            some_id4: { isNotDirty: true },
+            some_id5: { isNotDirty: false },
+          },
+        },
+      }));
+      expect(hooks.checkIfEditorsDirty()).toEqual(true);
+    });
+  });
+});

@@ -11,8 +11,11 @@ export const getContent = ({ editorRef, showRawEditor }) => () => {
 };
 
 export const isDirty = ({ editorRef, showRawEditor }) => () => {
+  if (!editorRef?.current) {
+    return false;
+  }
   const dirty = (showRawEditor && editorRef && editorRef.current
     ? editorRef.current.observer?.lastChange !== 0
-    : !editorRef.current?.isNotDirty);
+    : !editorRef.current.isNotDirty);
   return dirty;
 };
