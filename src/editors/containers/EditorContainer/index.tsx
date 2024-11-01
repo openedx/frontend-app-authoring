@@ -62,7 +62,7 @@ export const FooterWrapper: React.FC<WrapperProps> = ({ children }) => {
 interface Props extends EditorComponent {
   children: React.ReactNode;
   getContent: Function;
-  isDirty: Function;
+  isDirty: () => boolean;
   validateEntry?: Function | null;
 }
 

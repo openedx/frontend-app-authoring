@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-const usePromptIfDirty = (checkIfDirty : Function) => {
+const usePromptIfDirty = (checkIfDirty : () => boolean) => {
   useEffect(() => {
     // eslint-disable-next-line consistent-return
     const handleBeforeUnload = (event) => {
