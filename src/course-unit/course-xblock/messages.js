@@ -50,6 +50,10 @@ const messages = defineMessages({
     defaultMessage: 'This component has validation issues.',
     description: 'The alert text of the visibility validation issues',
   },
+  blockLabelButtonManageTags: {
+    id: 'course-authoring.course-unit.xblock.button.manageTags.label',
+    defaultMessage: 'Manage tags',
+  },
 });
 
 export default messages;

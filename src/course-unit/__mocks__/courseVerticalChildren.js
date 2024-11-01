@@ -9,6 +9,7 @@ module.exports = {
         can_duplicate: true,
         can_move: true,
         can_manage_access: true,
+        can_manage_tags: true,
         can_delete: true,
       },
       user_partition_info: {
@@ -80,6 +81,7 @@ module.exports = {
         can_duplicate: true,
         can_move: true,
         can_manage_access: true,
+        can_manage_tags: true,
         can_delete: true,
       },
       user_partition_info: {
