@@ -137,6 +137,7 @@ export const useCreateLibraryBlock = () => {
   return useMutation({
     mutationFn: createLibraryBlock,
     onSettled: (_data, _error, variables) => {
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(variables.libraryId) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, variables.libraryId) });
     },
   });
