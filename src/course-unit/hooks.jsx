@@ -138,8 +138,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   };
 
   const handleNavigateToTargetUnit = () => {
-    const correctInternalRoute = createCorrectInternalRoute(`/course/${courseId}/container/${movedXBlockParams.targetParentLocator}`);
-    navigate(correctInternalRoute);
+    navigate(`/course/${courseId}/container/${movedXBlockParams.targetParentLocator}`);
   };
 
   useEffect(() => {
