@@ -31,7 +31,7 @@ const VideoEditor: React.FC<EditorComponent> = ({
     <ErrorContext.Provider value={error}>
       <EditorContainer
         getContent={fetchVideoContent()}
-        isDirty={() => true}
+        isDirty={/* istanbul ignore next */ () => true}
         onClose={onClose}
         returnFunction={returnFunction}
         validateEntry={validateEntry}

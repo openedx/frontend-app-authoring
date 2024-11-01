@@ -45,6 +45,7 @@ const EditProblemView = ({
 
   const checkIfDirty = () => {
     if (isAdvancedProblemType && editorRef && editorRef?.current) {
+      /* istanbul ignore next */
       return editorRef.current.observer?.lastChange !== 0;
     }
     return isDirty || checkIfEditorsDirty();

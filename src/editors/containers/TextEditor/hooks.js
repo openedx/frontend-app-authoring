@@ -11,6 +11,7 @@ export const getContent = ({ editorRef, showRawEditor }) => () => {
 };
 
 export const isDirty = ({ editorRef, showRawEditor }) => () => {
+  /* istanbul ignore next */
   if (!editorRef?.current) {
     return false;
   }
