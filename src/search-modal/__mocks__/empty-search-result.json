@@ -22,15 +22,6 @@
           "block_type": {}
       },
       "facetStats": {}
-    },
-    {
-      "indexUid": "studio",
-      "hits": [],
-      "query": "noresult",
-      "processingTimeMs": 0,
-      "limit": 20,
-      "offset": 0,
-      "estimatedTotalHits": 0
     }
   ]
 }

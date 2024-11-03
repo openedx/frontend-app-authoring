@@ -33,9 +33,7 @@ import {
   SearchKeywordsField,
   SearchSortWidget,
 } from '../search-manager';
-import LibraryComponents from './components/LibraryComponents';
-import LibraryCollections from './collections/LibraryCollections';
-import LibraryHome from './LibraryHome';
+import LibraryContent from './LibraryContent';
 import { LibrarySidebar } from './library-sidebar';
 import { SidebarBodyComponentId, useLibraryContext } from './common/context';
 import messages from './messages';
@@ -45,21 +43,6 @@ enum TabList {
   components = 'components',
   collections = 'collections',
 }
-
-interface TabContentProps {
-  eventKey: string;
-}
-
-const TabContent = ({ eventKey }: TabContentProps) => {
-  switch (eventKey) {
-    case TabList.components:
-      return <LibraryComponents />;
-    case TabList.collections:
-      return <LibraryCollections />;
-    default:
-      return <LibraryHome />;
-  }
-};
 
 const HeaderActions = () => {
   const intl = useIntl();
@@ -218,9 +201,12 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     extraFilter.push('last_published IS NOT NULL');
   }
 
+  const activeTypeFilters = {
+    components: 'NOT type = "collection"',
+    collections: 'type = "collection"',
+  };
   if (activeKey !== TabList.home) {
-    const activeType = activeKey === 'components' ? 'component' : 'collection';
-    extraFilter.push(`type = "${activeType}"`);
+    extraFilter.push(activeTypeFilters[activeKey]);
   }
 
   return (
@@ -267,7 +253,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
               <Tab eventKey={TabList.components} title={intl.formatMessage(messages.componentsTab)} />
               <Tab eventKey={TabList.collections} title={intl.formatMessage(messages.collectionsTab)} />
             </Tabs>
-            <TabContent eventKey={activeKey} />
+            <LibraryContent content={activeKey} />
           </SearchContextProvider>
         </Container>
         {!componentPickerMode && <StudioFooter containerProps={{ size: undefined }} />}

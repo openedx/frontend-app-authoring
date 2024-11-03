@@ -180,34 +180,7 @@
             "display_name": "Blank Problem",
             "description": "Problem"
           }
-        }
-      ],
-      "query": "",
-      "processingTimeMs": 1,
-      "limit": 20,
-      "offset": 0,
-      "estimatedTotalHits": 5
-    },
-    {
-      "indexUid": "studio_content",
-      "hits": [],
-      "query": "",
-      "processingTimeMs": 0,
-      "limit": 0,
-      "offset": 0,
-      "estimatedTotalHits": 5,
-      "facetDistribution": {
-        "block_type": {
-          "html": 4,
-          "problem": 1
         },
-        "content.problem_types": {}
-      },
-      "facetStats": {}
-    },
-    {
-      "indexUid": "studio_content",
-      "hits": [
         {
           "display_name": "My first collection",
           "block_id": "my-first-collection",
@@ -246,12 +219,30 @@
           "access_id": 16,
           "num_children": 1
         }
+      
       ],
       "query": "",
-      "processingTimeMs": 0,
-      "limit": 1,
+      "processingTimeMs": 1,
+      "limit": 20,
       "offset": 0,
-      "estimatedTotalHits": 1
+      "estimatedTotalHits": 5
+    },
+    {
+      "indexUid": "studio_content",
+      "hits": [],
+      "query": "",
+      "processingTimeMs": 0,
+      "limit": 0,
+      "offset": 0,
+      "estimatedTotalHits": 5,
+      "facetDistribution": {
+        "block_type": {
+          "html": 4,
+          "problem": 1
+        },
+        "content.problem_types": {}
+      },
+      "facetStats": {}
     }
   ]
 }

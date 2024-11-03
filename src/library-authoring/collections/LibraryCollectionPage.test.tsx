@@ -37,7 +37,7 @@ const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
 const path = '/library/:libraryId/*';
 const libraryTitle = mockContentLibrary.libraryData.title;
 const mockCollection = {
-  collectionId: mockResult.results[2].hits[0].block_id,
+  collectionId: mockResult.results[0].hits[5].block_id,
   collectionNeverLoads: mockGetCollectionMetadata.collectionIdLoading,
   collectionNoComponents: 'collection-no-components',
   collectionEmpty: mockGetCollectionMetadata.collectionIdError,
@@ -62,23 +62,21 @@ describe('<LibraryCollectionPage />', () => {
       // because otherwise Instantsearch will update the UI and change the query,
       // leading to unexpected results in the test cases.
       mockResultCopy.results[0].query = query;
-      mockResultCopy.results[2].query = query;
       // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
       // eslint-disable-next-line no-underscore-dangle, no-param-reassign
       mockResultCopy.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
-      const collectionQueryId = requestData?.queries[0]?.filter?.[3]?.split('collections.key = "')[1].split('"')[0];
+      const collectionQueryId = requestData?.queries[0]?.filter?.[2]?.split('collections.key = "')[1].split('"')[0];
       switch (collectionQueryId) {
         case mockCollection.collectionNeverLoads:
           return new Promise<any>(() => {});
         case mockCollection.collectionEmpty:
-          mockResultCopy.results[2].hits = [];
-          mockResultCopy.results[2].estimatedTotalHits = 0;
+          mockResultCopy.results[0].hits = [];
+          mockResultCopy.results[0].totalHits = 0;
           break;
         case mockCollection.collectionNoComponents:
           mockResultCopy.results[0].hits = [];
-          mockResultCopy.results[0].estimatedTotalHits = 0;
+          mockResultCopy.results[0].totalHits = 0;
           mockResultCopy.results[1].facetDistribution.block_type = {};
-          mockResultCopy.results[2].hits[0].num_children = 0;
           break;
         default:
           break;
@@ -181,7 +179,7 @@ describe('<LibraryCollectionPage />', () => {
     // should not be impacted by the search
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
 
-    expect(screen.queryByText('No matching components found in this collections.')).toBeInTheDocument();
+    expect(screen.queryByText('No matching components found in this collection.')).toBeInTheDocument();
   });
 
   it('should open and close new content sidebar', async () => {

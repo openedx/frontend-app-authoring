@@ -111,16 +111,6 @@ const messages = defineMessages({
     defaultMessage: 'Change Library',
     description: 'Breadcrumbs link to return to library selection',
   },
-  showMoreContent: {
-    id: 'course-authoring.library-authoring.showMoreResults',
-    defaultMessage: 'Show more results',
-    description: 'Show more results - a button to add to the list of results by loading more from the server',
-  },
-  loadingMoreContent: {
-    id: 'course-authoring.library-authoring.loadingMoreResults',
-    defaultMessage: 'Loading more results',
-    description: 'Loading more results - the button displays this message while more results are loading',
-  },
 });
 
 export default messages;

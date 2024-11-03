@@ -186,9 +186,6 @@ function applyOverrideQueries(
   if (overrideQueries?.blockTypes) {
     newQueries[1] = { ...overrideQueries.blockTypes, indexUid: queries[1].indexUid };
   }
-  if (overrideQueries?.collections) {
-    newQueries[2] = { ...overrideQueries.collections, indexUid: queries[2].indexUid };
-  }
   return newQueries;
 }
 

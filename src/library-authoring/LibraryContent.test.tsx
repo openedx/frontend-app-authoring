@@ -1,6 +1,7 @@
 import fetchMock from 'fetch-mock-jest';
 
 import {
+  fireEvent,
   render,
   screen,
   initializeMocks,
@@ -9,7 +10,8 @@ import { getContentSearchConfigUrl } from '../search-manager/data/api';
 import { mockContentLibrary } from './data/api.mocks';
 import mockEmptyResult from '../search-modal/__mocks__/empty-search-result.json';
 import { LibraryProvider } from './common/context';
-import LibraryHome from './LibraryHome';
+import LibraryContent from './LibraryContent';
+import { libraryComponentsMock } from './__mocks__';
 
 const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
 
@@ -83,19 +85,8 @@ describe('<LibraryHome />', () => {
       isLoading: true,
     });
 
-    render(<LibraryHome />, withLibraryId(mockContentLibrary.libraryId));
+    render(<LibraryContent content="" />, withLibraryId(mockContentLibrary.libraryId));
     expect(screen.getByText('Loading...')).toBeInTheDocument();
-  });
-
-  it('should render a load more button when there are more pages', async () => {
-    mockUseSearchContext.mockReturnValue({
-      ...data,
-      totalContentAndCollectionHits: 1,
-      hasNextPage: true,
-    });
-
-    render(<LibraryHome />, withLibraryId(mockContentLibrary.libraryId));
-    expect(screen.getByText('Show more results')).toBeInTheDocument();
   });
 
   it('should render an empty state when there are no results', async () => {
@@ -103,7 +94,22 @@ describe('<LibraryHome />', () => {
       ...data,
       totalHits: 0,
     });
-    render(<LibraryHome />, withLibraryId(mockContentLibrary.libraryId));
+    render(<LibraryContent content="" />, withLibraryId(mockContentLibrary.libraryId));
     expect(screen.getByText('You have not added any content to this library yet.')).toBeInTheDocument();
+  });
+
+  it('should load more results when the user scrolls to the bottom', async () => {
+    mockUseSearchContext.mockReturnValue({
+      ...data,
+      hits: libraryComponentsMock,
+      hasNextPage: true,
+    });
+    render(<LibraryContent content="" />, withLibraryId(mockContentLibrary.libraryId));
+
+    Object.defineProperty(window, 'innerHeight', { value: 800 });
+    Object.defineProperty(document.body, 'scrollHeight', { value: 1600 });
+
+    fireEvent.scroll(window, { target: { scrollY: 1000 } });
+    expect(mockFetchNextPage).toHaveBeenCalled();
   });
 });

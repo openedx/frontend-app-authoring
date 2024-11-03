@@ -201,9 +201,8 @@ describe('<ComponentPicker />', () => {
 
     onChange.mockClear();
 
-    // Select another component (the second "Select" button is the same component as the first,
-    // but in the "Components" section instead of the "Recently Changed" section)
-    fireEvent.click(screen.queryAllByRole('button', { name: 'Select' })[2]);
+    // Select another component
+    fireEvent.click(screen.queryAllByRole('button', { name: 'Select' })[1]);
     await waitFor(() => expect(onChange).toHaveBeenCalledWith([
       {
         usageKey: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',

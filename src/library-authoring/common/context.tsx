@@ -17,7 +17,6 @@ export interface SelectedComponent {
 
 export type ComponentSelectedEvent = (selectedComponent: SelectedComponent) => void;
 export type ComponentSelectionChangedEvent = (selectedComponents: SelectedComponent[]) => void;
-export const LIBRARY_SECTION_PREVIEW_LIMIT = 4;
 
 type NoComponentPickerType = {
   componentPickerMode?: undefined;
