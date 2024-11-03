@@ -107,15 +107,19 @@ export const createCorrectInternalRoute = (checkPath) => {
     basePath = basePath.slice(0, -1);
   }
 
+  if (!checkPath.startsWith(basePath)) {
+    return `${basePath}${checkPath}`;
+  }
+
   return checkPath;
 };
 
 export function getPagePath(courseId, isMfePageEnabled, urlParameter) {
   if (isMfePageEnabled === 'true') {
     if (urlParameter === 'tabs') {
-      return createCorrectInternalRoute(`/course/${courseId}/pages-and-resources`);
+      return `/course/${courseId}/pages-and-resources`;
     }
-    return createCorrectInternalRoute(`/course/${courseId}/${urlParameter}`);
+    return `/course/${courseId}/${urlParameter}`;
   }
   return `${getConfig().STUDIO_BASE_URL}/${urlParameter}/${courseId}`;
 }

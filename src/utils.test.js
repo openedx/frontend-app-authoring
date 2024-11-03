@@ -1,8 +1,5 @@
-import { getConfig, getPath } from '@edx/frontend-platform';
-
 import {
   getFileSizeToClosestByte,
-  createCorrectInternalRoute,
   convertObjectToSnakeCase,
   deepConvertingKeysToCamelCase,
   deepConvertingKeysToSnakeCase,
@@ -11,6 +8,7 @@ import {
   convertToDateFromString,
   convertToStringFromDate,
   isValidDate,
+  getPagePath,
 } from './utils';
 
 jest.mock('@edx/frontend-platform', () => ({
@@ -50,53 +48,6 @@ describe('FilesAndUploads utils', () => {
       const expectedSize = '1234.56 TB';
       const actualSize = getFileSizeToClosestByte(1234560000000000);
       expect(expectedSize).toEqual(actualSize);
-    });
-  });
-
-  describe('createCorrectInternalRoute', () => {
-    beforeEach(() => {
-      getConfig.mockReset();
-      getPath.mockReset();
-    });
-
-    it('returns the correct internal route when checkPath is not prefixed with basePath', () => {
-      getConfig.mockReturnValue({ PUBLIC_PATH: 'example.com' });
-      getPath.mockReturnValue('/');
-
-      const checkPath = '/some/path';
-      const result = createCorrectInternalRoute(checkPath);
-
-      expect(result).toBe('/some/path');
-    });
-
-    it('returns the input checkPath when it is already prefixed with basePath', () => {
-      getConfig.mockReturnValue({ PUBLIC_PATH: 'example.com' });
-      getPath.mockReturnValue('/course-authoring');
-
-      const checkPath = '/course-authoring/some/path';
-      const result = createCorrectInternalRoute(checkPath);
-
-      expect(result).toBe('/course-authoring/some/path');
-    });
-
-    it('handles basePath ending with a slash correctly', () => {
-      getConfig.mockReturnValue({ PUBLIC_PATH: 'example.com/' });
-      getPath.mockReturnValue('/course-authoring/');
-
-      const checkPath = '/course-authoring/some/path';
-      const result = createCorrectInternalRoute(checkPath);
-
-      expect(result).toBe('/course-authoring/some/path');
-    });
-
-    it('returns checkPath as is when basePath is part of checkPath', () => {
-      getConfig.mockReturnValue({ PUBLIC_PATH: 'example.com' });
-      getPath.mockReturnValue('/example-base/');
-
-      const checkPath = '/example-base/some/path';
-      const result = createCorrectInternalRoute(checkPath);
-
-      expect(result).toBe(checkPath);
     });
   });
 
@@ -203,5 +154,25 @@ describe('FilesAndUploads utils', () => {
       const date = new Date('invalid-date');
       expect(isValidDate(date)).toBe(false);
     });
+  });
+});
+
+describe('getPagePath', () => {
+  it('returns MFE path when isMfePageEnabled is true and urlParameter is "tabs"', () => {
+    const courseId = '12345';
+    const isMfePageEnabled = 'true';
+    const urlParameter = 'tabs';
+
+    const result = getPagePath(courseId, isMfePageEnabled, urlParameter);
+    expect(result).toBe(`/course/${courseId}/pages-and-resources`);
+  });
+
+  it('returns MFE path when isMfePageEnabled is true and urlParameter is not "tabs"', () => {
+    const courseId = '12345';
+    const isMfePageEnabled = 'true';
+    const urlParameter = 'other-page';
+
+    const result = getPagePath(courseId, isMfePageEnabled, urlParameter);
+    expect(result).toBe(`/course/${courseId}/${urlParameter}`);
   });
 });

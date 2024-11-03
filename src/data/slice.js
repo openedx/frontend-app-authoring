@@ -20,7 +20,7 @@ const slice = createSlice({
       useNewExportPage: true,
       useNewFilesUploadsPage: true,
       useNewVideoUploadsPage: true,
-      useNewCourseOutlinePage: false,
+      useNewCourseOutlinePage: true,
       useNewUnitPage: false,
       useNewCourseTeamPage: true,
       useNewCertificatesPage: true,

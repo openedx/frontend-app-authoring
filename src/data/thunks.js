@@ -34,15 +34,8 @@ export function fetchWaffleFlags(courseId) {
   return async (dispatch) => {
     dispatch(updateStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
 
-    try {
-      const waffleFlags = await getWaffleFlags(courseId);
-      dispatch(updateStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
-      dispatch(fetchWaffleFlagsSuccess({ waffleFlags }));
-    } catch (error) {
-      // If fetching the waffle flags is unsuccessful,
-      // the pages will still be accessible and display without any issues.
-      // eslint-disable-next-line no-console
-      console.error({ courseId, status: RequestStatus.NOT_FOUND });
-    }
+    const waffleFlags = await getWaffleFlags(courseId);
+    dispatch(updateStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
+    dispatch(fetchWaffleFlagsSuccess({ waffleFlags }));
   };
 }

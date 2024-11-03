@@ -114,7 +114,7 @@ const useCourseOutline = ({ courseId }) => {
   };
 
   const getUnitUrl = (locator) => {
-    if (getConfig().ENABLE_UNIT_PAGE === 'true' || waffleFlags.useNewUnitPage) {
+    if (getConfig().ENABLE_UNIT_PAGE === 'true' && waffleFlags.useNewUnitPage) {
       return `/course/${courseId}/container/${locator}`;
     }
     return `${getConfig().STUDIO_BASE_URL}/container/${locator}`;
@@ -122,7 +122,7 @@ const useCourseOutline = ({ courseId }) => {
 
   const openUnitPage = (locator) => {
     const url = getUnitUrl(locator);
-    if (getConfig().ENABLE_UNIT_PAGE === 'true' || waffleFlags.useNewUnitPage) {
+    if (getConfig().ENABLE_UNIT_PAGE === 'true' && waffleFlags.useNewUnitPage) {
       navigate(url);
     } else {
       window.location.assign(url);

@@ -63,9 +63,11 @@ const CardItem: React.FC<Props> = ({
   } = useSelector(getStudioHomeData);
   const waffleFlags = useSelector(getWaffleFlags);
 
-  const destinationUrl: string = waffleFlags.useNewCourseOutlinePage
-    ? path ?? url
-    : path ?? new URL(url, getConfig().STUDIO_BASE_URL).toString();
+  const destinationUrl: string = path ?? (
+    waffleFlags.useNewCourseOutlinePage
+      ? url
+      : new URL(url, getConfig().STUDIO_BASE_URL).toString()
+  );
   const subtitle = isLibraries ? `${org} / ${number}` : `${org} / ${number} / ${run}`;
   const readOnlyItem = !(lmsLink || rerunLink || url || path);
   const showActions = !(readOnlyItem || isLibraries);

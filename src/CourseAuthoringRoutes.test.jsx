@@ -3,8 +3,13 @@ import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import MockAdapter from 'axios-mock-adapter';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import CourseAuthoringRoutes from './CourseAuthoringRoutes';
 import initializeStore from './store';
+import { executeThunk } from './utils';
+import { getApiWaffleFlagsUrl } from './data/api';
+import { fetchWaffleFlags } from './data/thunks';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 const pagesAndResourcesMockText = 'Pages And Resources';
@@ -12,6 +17,7 @@ const editorContainerMockText = 'Editor Container';
 const videoSelectorContainerMockText = 'Video Selector Container';
 const customPagesMockText = 'Custom Pages';
 let store;
+let axiosMock;
 const mockComponentFn = jest.fn();
 
 jest.mock('react-router-dom', () => ({
@@ -50,7 +56,7 @@ jest.mock('./custom-pages/CustomPages', () => (props) => {
 });
 
 describe('<CourseAuthoringRoutes>', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     initializeMockApp({
       authenticatedUser: {
         userId: 3,
@@ -60,6 +66,11 @@ describe('<CourseAuthoringRoutes>', () => {
       },
     });
     store = initializeStore();
+    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    axiosMock
+      .onGet(getApiWaffleFlagsUrl(courseId))
+      .reply(200, {});
+    await executeThunk(fetchWaffleFlags(courseId), store.dispatch);
   });
 
   fit('renders the PagesAndResources component when the pages and resources route is active', () => {

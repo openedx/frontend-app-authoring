@@ -3,7 +3,7 @@ import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { StudioHeader } from '@edx/frontend-component-header';
 import { type Container, useToggle } from '@openedx/paragon';
-import { generatePath, useHref, useNavigate } from 'react-router-dom';
+import { generatePath, useHref } from 'react-router-dom';
 
 import { getWaffleFlags } from '../data/selectors';
 import { SearchModal } from '../search-modal';
@@ -33,7 +33,6 @@ const Header = ({
 }: HeaderProps) => {
   const intl = useIntl();
   const libraryHref = useHref('/library/:libraryId');
-  const navigate = useNavigate();
   const waffleFlags = useSelector(getWaffleFlags);
 
   const [isShowSearchModalOpen, openSearchModal, closeSearchModal] = useToggle(false);
@@ -80,7 +79,6 @@ const Header = ({
         outlineLink={getOutlineLink()}
         searchButtonAction={meiliSearchEnabled ? openSearchModal : undefined}
         containerProps={containerProps}
-        onNavigate={(url) => navigate(url)}
         isNewHomePage={waffleFlags.useNewHomePage}
       />
       {meiliSearchEnabled && (
