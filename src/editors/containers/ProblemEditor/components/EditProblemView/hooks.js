@@ -20,6 +20,19 @@ export const saveWarningModalToggle = () => {
   };
 };
 
+/** Checks if any tinymce editor in window is dirty */
+export const checkIfEditorsDirty = () => {
+  const EditorsArray = window.tinymce.editors;
+  return Object.entries(EditorsArray).some(([id, editor]) => {
+    if (Number.isNaN(parseInt(id, 10))) {
+      if (!editor.isNotDirty) {
+        return true;
+      }
+    }
+    return false;
+  });
+};
+
 export const fetchEditorContent = ({ format }) => {
   const editorObject = { hints: [] };
   const EditorsArray = window.tinymce.editors;

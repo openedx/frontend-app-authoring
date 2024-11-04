@@ -61,5 +61,26 @@ describe('TextEditor hooks', () => {
         expect(getContent).toEqual(rawContent);
       });
     });
+
+    describe('isDirty', () => {
+      test('checks isNotDirty flag when showRawEditor is false', () => {
+        const editorRef = {
+          current: {
+            isNotDirty: false,
+          },
+        };
+        const isDirty = module.isDirty({ editorRef, showRawEditor: false })();
+        expect(isDirty).toEqual(true);
+      });
+      test('checks observer.lastChange flag when showRawEditor is true', () => {
+        const editorRef = {
+          current: {
+            observer: { lastChange: 123 },
+          },
+        };
+        const isDirty = module.isDirty({ editorRef, showRawEditor: true })();
+        expect(isDirty).toEqual(true);
+      });
+    });
   });
 });

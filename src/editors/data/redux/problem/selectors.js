@@ -17,6 +17,7 @@ export const simpleSelectors = {
   question: mkSimpleSelector(problemData => problemData.question),
   defaultSettings: mkSimpleSelector(problemData => problemData.defaultSettings),
   completeState: mkSimpleSelector(problemData => problemData),
+  isDirty: mkSimpleSelector(problemData => problemData.isDirty),
 };
 
 export default {

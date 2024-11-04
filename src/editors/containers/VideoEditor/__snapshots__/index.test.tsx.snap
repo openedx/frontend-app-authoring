@@ -5,6 +5,7 @@ exports[`VideoEditor snapshots renders as expected with default behavior 1`] = `
   value="hooks.errorsHook.error"
 >
   <EditorContainer
+    isDirty={[Function]}
     onClose={[MockFunction props.onClose]}
     validateEntry={[MockFunction validateEntry]}
   >

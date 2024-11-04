@@ -22,6 +22,7 @@ jest.mock('../EditorContainer', () => 'EditorContainer');
 
 jest.mock('./hooks', () => ({
   getContent: jest.fn(args => ({ getContent: args })),
+  isDirty: jest.fn(args => ({ isDirty: args })),
   nullMethod: jest.fn().mockName('hooks.nullMethod'),
 }));
 

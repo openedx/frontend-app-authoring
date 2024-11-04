@@ -18,7 +18,7 @@ import {
 } from '@openedx/paragon';
 
 import FormikControl from '../../generic/FormikControl';
-import PromptIfDirty from '../../generic/promptIfDirty/PromptIfDirty';
+import PromptIfDirty from '../../generic/prompt-if-dirty/PromptIfDirty';
 import ModalDropzone from '../../generic/modal-dropzone/ModalDropzone';
 import { useModel } from '../../generic/model-store';
 import { UPLOAD_FILE_MAX_SIZE } from '../../constants';
