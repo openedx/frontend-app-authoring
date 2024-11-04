@@ -75,7 +75,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
   const { setIframeRef, sendMessageToIframe } = useIframe();
-  const [editXblockId, setEditXblockId] = useState<string | null>(null);
+  const [currentXblockId, setCurrentXblockId] = useState<string | null>(null);
   const [currentXblockData, setCurrentXblockData] = useState<any>({});
   const [isManageTagsOpen, openManageTagsModal, closeManageTagsModal] = useToggle(false);
 
@@ -92,7 +92,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
 
   const handleConfigure = (id: string) => {
     openConfigureModal();
-    setEditXblockId(id);
+    setCurrentXblockId(id);
 
     const foundXBlockInfo = xblocks?.find(block => block.blockId === id);
 
@@ -112,7 +112,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     dispatch(copyToClipboard(id));
   };
 
-  const handleDuplicateXBlock = (id) => {
+  const handleDuplicateXBlock = (id: string) => {
     if (id) {
       unitXBlockActions.handleDuplicate(id);
       // TODO: this artificial delay is a temporary solution
@@ -131,8 +131,8 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     }, 1000);
   };
 
-  const handleOpenManageTagsModal = (id) => {
-    setEditXblockId(id);
+  const handleOpenManageTagsModal = (id: string) => {
+    setCurrentXblockId(id);
     openManageTagsModal();
   };
 
@@ -148,7 +148,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
       [messageTypes.duplicateXBlock]: (payload) => handleDuplicateXBlock(payload.id),
       [messageTypes.refreshPositions]: handleRefreshXBlocks,
       [messageTypes.newXBlockEditor]: (payload) => navigateToNewXBlockEditor(payload.url),
-      [messageTypes.openManageTags]: (payload) => handleOpenManageTagsModal(payload.contentId),
+      [messageTypes.openManageTags]: (payload) => handleOpenManageTagsModal(payload.id),
     };
 
     const handleMessage = (event: MessageEvent) => {
@@ -184,8 +184,8 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   };
 
   const onConfigureSubmit = (...args: any[]) => {
-    if (editXblockId) {
-      handleConfigureSubmit(editXblockId, ...args, closeConfigureModal);
+    if (currentXblockId) {
+      handleConfigureSubmit(currentXblockId, ...args, closeConfigureModal);
       // TODO: this artificial delay is a temporary solution
       // to ensure the iframe content is properly refreshed.
       setTimeout(() => {
@@ -230,7 +230,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
         variant="light"
         onClose={closeManageTagsModal}
       >
-        <ContentTagsDrawer id={editXblockId} onClose={closeManageTagsModal} />
+        <ContentTagsDrawer id={currentXblockId} onClose={closeManageTagsModal} />
       </Sheet>
     </>
   );

@@ -9,12 +9,15 @@ import {
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { useParams, useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
+import { getConfig } from '@edx/frontend-platform';
+
+import { messageTypes } from '../course-unit/constants';
+import { useIframe } from '../course-unit/context/hooks';
 import messages from './messages';
 import ContentTagsCollapsible from './ContentTagsCollapsible';
 import Loading from '../generic/Loading';
 import useContentTagsDrawerContext from './ContentTagsDrawerHelper';
 import { ContentTagsDrawerContext, ContentTagsDrawerSheetContext } from './common/context';
-import { useIframe } from '../course-unit/context/hooks';
 
 interface TaxonomyListProps {
   contentId: string;
@@ -113,15 +116,29 @@ const ContentTagsDrawerVariantFooter = ({ onClose, readOnly }: ContentTagsDrawer
     toReadMode,
     toEditMode,
   } = useContext(ContentTagsDrawerContext);
-  const { sendMessageToIframe } = useIframe();
+
+  // TODO: Replace with functionality for waffle flag tracking to switch between new React pages.
+  // Conditional usage of the useIframe hook will also be based on waffle flag tracking.
+  // https://github.com/openedx/frontend-app-authoring/pull/1372
+  const isNewUnitPage = getConfig().ENABLE_UNIT_PAGE === 'true';
+
+  // Define a type with sendMessageToIframe as an optional function
+  type IframeFunctionType = { sendMessageToIframe?: (message: string, data: any) => void };
+
+  // The useIframe hook is called here due to embedding tagging functionality
+  // into a legacy page that does not have a context provider for iframe messaging.
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const iframeFunction: IframeFunctionType = isNewUnitPage ? useIframe() : {};
 
   const handleClick = () => {
     if (isEditMode) {
-      // TODO: this artificial delay is a temporary solution
-      // to ensure the iframe content is properly refreshed.
-      setTimeout(() => {
-        sendMessageToIframe('refreshXBlock', null);
-      }, 1000);
+      if (isNewUnitPage) {
+        // TODO: this artificial delay is a temporary solution
+        // to ensure the iframe content is properly refreshed.
+        setTimeout(() => {
+          iframeFunction.sendMessageToIframe?.(messageTypes.refreshXBlock, null);
+        }, 1000);
+      }
       return commitGlobalStagedTags();
     }
     return toEditMode();
@@ -228,7 +245,7 @@ const ContentTagsComponentVariantFooter = ({ readOnly = false }: ContentTagsComp
 };
 
 interface ContentTagsDrawerProps {
-  id?: string;
+  id?: string | null;
   onClose?: () => void;
   variant?: 'drawer' | 'component';
   readOnly?: boolean;
