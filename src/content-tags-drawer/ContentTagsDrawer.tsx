@@ -9,6 +9,10 @@ import {
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { useParams, useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
+import { getConfig } from '@edx/frontend-platform';
+
+import { messageTypes } from '../course-unit/constants';
+import { useIframe } from '../course-unit/context/hooks';
 import messages from './messages';
 import ContentTagsCollapsible from './ContentTagsCollapsible';
 import Loading from '../generic/Loading';
@@ -113,6 +117,33 @@ const ContentTagsDrawerVariantFooter = ({ onClose, readOnly }: ContentTagsDrawer
     toEditMode,
   } = useContext(ContentTagsDrawerContext);
 
+  // TODO: Replace with functionality for waffle flag tracking to switch between new React pages.
+  // Conditional usage of the useIframe hook will also be based on waffle flag tracking.
+  // https://github.com/openedx/frontend-app-authoring/pull/1372
+  const isNewUnitPage = getConfig().ENABLE_UNIT_PAGE === 'true';
+
+  // Define a type with sendMessageToIframe as an optional function
+  type IframeFunctionType = { sendMessageToIframe?: (message: string, data: any) => void };
+
+  // The useIframe hook is called here due to embedding tagging functionality
+  // into a legacy page that does not have a context provider for iframe messaging.
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const iframeFunction: IframeFunctionType = isNewUnitPage ? useIframe() : {};
+
+  const handleClick = () => {
+    if (isEditMode) {
+      if (isNewUnitPage) {
+        // TODO: this artificial delay is a temporary solution
+        // to ensure the iframe content is properly refreshed.
+        setTimeout(() => {
+          iframeFunction.sendMessageToIframe?.(messageTypes.refreshXBlock, null);
+        }, 1000);
+      }
+      return commitGlobalStagedTags();
+    }
+    return toEditMode();
+  };
+
   return (
     <Container
       className="bg-white position-sticky p-3.5 box-shadow-up-2 tags-drawer-footer"
@@ -134,9 +165,7 @@ const ContentTagsDrawerVariantFooter = ({ onClose, readOnly }: ContentTagsDrawer
             {!readOnly && (
               <Button
                 className="rounded-0"
-                onClick={isEditMode
-                  ? commitGlobalStagedTags
-                  : toEditMode}
+                onClick={handleClick}
               >
                 { intl.formatMessage(isEditMode
                   ? messages.tagsDrawerSaveButtonText
@@ -216,7 +245,7 @@ const ContentTagsComponentVariantFooter = ({ readOnly = false }: ContentTagsComp
 };
 
 interface ContentTagsDrawerProps {
-  id?: string;
+  id?: string | null;
   onClose?: () => void;
   variant?: 'drawer' | 'component';
   readOnly?: boolean;

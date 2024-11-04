@@ -20,6 +20,15 @@ const slice = createSlice({
     courseSectionVertical: {},
     courseVerticalChildren: { children: [], isPublished: true },
     staticFileNotices: {},
+    courseOutlineInfo: {},
+    courseOutlineInfoLoadingStatus: RequestStatus.IN_PROGRESS,
+    movedXBlockParams: {
+      isSuccess: false,
+      isUndo: false,
+      title: '',
+      sourceLocator: '',
+      targetParentLocator: '',
+    },
   },
   reducers: {
     fetchCourseItemSuccess: (state, { payload }) => {
@@ -84,32 +93,17 @@ const slice = createSlice({
     updateCourseVerticalChildrenLoadingStatus: (state, { payload }) => {
       state.loadingStatus.courseVerticalChildrenLoadingStatus = payload.status;
     },
-    deleteXBlock: (state, { payload }) => {
-      state.courseVerticalChildren.children = state.courseVerticalChildren.children.filter(
-        (component) => component.id !== payload,
-      );
-    },
-    duplicateXBlock: (state, { payload }) => {
-      state.courseVerticalChildren = {
-        ...payload.newCourseVerticalChildren,
-        children: payload.newCourseVerticalChildren.children.map((component) => {
-          if (component.blockId === payload.newId) {
-            component.shouldScroll = true;
-          }
-          return component;
-        }),
-      };
-    },
     fetchStaticFileNoticesSuccess: (state, { payload }) => {
       state.staticFileNotices = payload;
     },
-    reorderXBlockList: (state, { payload }) => {
-      // Create a map for payload IDs to their index for O(1) lookups
-      const indexMap = new Map(payload.map((id, index) => [id, index]));
-
-      // Directly sort the children based on the order defined in payload
-      // This avoids the need to copy the array beforehand
-      state.courseVerticalChildren.children.sort((a, b) => (indexMap.get(a.id) || 0) - (indexMap.get(b.id) || 0));
+    updateCourseOutlineInfo: (state, { payload }) => {
+      state.courseOutlineInfo = payload;
+    },
+    updateCourseOutlineInfoLoadingStatus: (state, { payload }) => {
+      state.courseOutlineInfoLoadingStatus = payload.status;
+    },
+    updateMovedXBlockParams: (state, { payload }) => {
+      state.movedXBlockParams = { ...state.movedXBlockParams, ...payload };
     },
   },
 });
@@ -129,10 +123,10 @@ export const {
   updateLoadingCourseXblockStatus,
   updateCourseVerticalChildren,
   updateCourseVerticalChildrenLoadingStatus,
-  deleteXBlock,
-  duplicateXBlock,
   fetchStaticFileNoticesSuccess,
-  reorderXBlockList,
+  updateCourseOutlineInfo,
+  updateCourseOutlineInfoLoadingStatus,
+  updateMovedXBlockParams,
 } = slice.actions;
 
 export const {
