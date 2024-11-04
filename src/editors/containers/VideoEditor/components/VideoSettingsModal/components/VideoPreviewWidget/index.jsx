@@ -16,6 +16,7 @@ const VideoPreviewWidget = ({
   videoSource,
   transcripts,
   blockTitle,
+  isLibrary,
   intl,
 }) => {
   const imgRef = React.useRef();
@@ -45,7 +46,9 @@ const VideoPreviewWidget = ({
           />
           <Stack gap={1} className="justify-content-center">
             <h4 className="text-primary mb-0">{blockTitle}</h4>
-            <LanguageNamesWidget transcripts={transcripts} />
+            {!isLibrary && (
+              <LanguageNamesWidget transcripts={transcripts} />
+            )}
             {videoType && (
               <Hyperlink
                 className="text-primary x-small"
@@ -69,6 +72,7 @@ VideoPreviewWidget.propTypes = {
   thumbnail: PropTypes.string.isRequired,
   transcripts: PropTypes.arrayOf(PropTypes.string).isRequired,
   blockTitle: PropTypes.string.isRequired,
+  isLibrary: PropTypes.bool.isRequired,
 };
 
 export const mapStateToProps = (state) => ({
@@ -76,6 +80,7 @@ export const mapStateToProps = (state) => ({
   videoSource: selectors.video.videoSource(state),
   thumbnail: selectors.video.thumbnail(state),
   blockTitle: selectors.app.blockTitle(state),
+  isLibrary: selectors.app.isLibrary(state),
 });
 
 export default injectIntl(connect(mapStateToProps)(VideoPreviewWidget));
