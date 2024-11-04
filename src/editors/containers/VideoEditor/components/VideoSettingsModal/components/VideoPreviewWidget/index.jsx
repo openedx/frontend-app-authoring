@@ -11,7 +11,8 @@ import hooks from './hooks';
 import LanguageNamesWidget from './LanguageNamesWidget';
 import videoThumbnail from '../../../../../../data/images/videoThumbnail.svg';
 
-const VideoPreviewWidget = ({
+// Exporting to test this component separately
+export const VideoPreviewWidget = ({
   thumbnail,
   videoSource,
   transcripts,
@@ -47,6 +48,7 @@ const VideoPreviewWidget = ({
           <Stack gap={1} className="justify-content-center">
             <h4 className="text-primary mb-0">{blockTitle}</h4>
             {!isLibrary && (
+              // Since content libraries v2 don't support static assets yet, we can't include transcripts.
               <LanguageNamesWidget transcripts={transcripts} />
             )}
             {videoType && (
