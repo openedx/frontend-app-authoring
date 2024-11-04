@@ -80,6 +80,7 @@ const TextEditor = ({
   return (
     <EditorContainer
       getContent={hooks.getContent({ editorRef, showRawEditor })}
+      isDirty={hooks.isDirty({ editorRef, showRawEditor })}
       onClose={onClose}
       returnFunction={returnFunction}
     >

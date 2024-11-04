@@ -16,6 +16,7 @@ const initialState = {
   generalFeedback: '',
   additionalAttributes: {},
   defaultSettings: {},
+  isDirty: false,
   settings: {
     randomization: null,
     scoring: {
@@ -52,6 +53,7 @@ const problem = createSlice({
     updateQuestion: (state, { payload }) => ({
       ...state,
       question: payload,
+      isDirty: true,
     }),
     updateAnswer: (state, { payload }) => {
       const { id, hasSingleAnswer, ...answer } = payload;
@@ -77,6 +79,7 @@ const problem = createSlice({
         ...state,
         correctAnswerCount,
         answers,
+        isDirty: true,
       };
     },
     deleteAnswer: (state, { payload }) => {
@@ -86,6 +89,7 @@ const problem = createSlice({
         return {
           ...state,
           correctAnswerCount: state.problemType === ProblemTypeKeys.NUMERIC ? 1 : 0,
+          isDirty: true,
           answers: [{
             id: 'A',
             title: '',
@@ -140,6 +144,7 @@ const problem = createSlice({
         answers,
         correctAnswerCount: correct ? state.correctAnswerCount - 1 : state.correctAnswerCount,
         groupFeedbackList,
+        isDirty: true,
       };
     },
     addAnswer: (state) => {
@@ -167,6 +172,7 @@ const problem = createSlice({
       return {
         ...state,
         correctAnswerCount,
+        isDirty: true,
         answers,
       };
     },
@@ -185,6 +191,7 @@ const problem = createSlice({
         ...state,
         correctAnswerCount,
         answers: [newOption],
+        isDirty: true,
       };
     },
 
@@ -194,6 +201,7 @@ const problem = createSlice({
         ...state.settings,
         ...payload,
       },
+      isDirty: true,
     }),
     load: (state, { payload: { settings: { scoring, showAnswer, ...settings }, ...payload } }) => ({
       ...state,

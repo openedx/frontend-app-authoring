@@ -7,7 +7,7 @@ import {
 } from '@openedx/paragon';
 import { EditOutline as EditIcon, MoreVert as MoveVertIcon } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 
 import { getCanEdit, getCourseId } from 'CourseAuthoring/course-unit/data/selectors';
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
@@ -19,6 +19,7 @@ import { copyToClipboard } from '../../generic/data/thunks';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import XBlockMessages from './xblock-messages/XBlockMessages';
 import messages from './messages';
+import { createCorrectInternalRoute } from '../../utils';
 
 const CourseXBlock = ({
   id, title, type, unitXBlockActions, shouldScroll, userPartitionInfo,
@@ -28,7 +29,6 @@ const CourseXBlock = ({
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const canEdit = useSelector(getCanEdit);
   const courseId = useSelector(getCourseId);
   const intl = useIntl();
@@ -58,7 +58,11 @@ const CourseXBlock = ({
       case COMPONENT_TYPES.html:
       case COMPONENT_TYPES.problem:
       case COMPONENT_TYPES.video:
-        navigate(`/course/${courseId}/editor/${type}/${id}`);
+        // Not using useNavigate from react router to use browser navigation
+        // which allows us to block back button if unsaved changes in editor are present.
+        window.location.assign(
+          createCorrectInternalRoute(`/course/${courseId}/editor/${type}/${id}`),
+        );
         break;
       default:
     }
