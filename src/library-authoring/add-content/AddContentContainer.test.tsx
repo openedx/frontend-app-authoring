@@ -227,4 +227,21 @@ describe('<AddContentContainer />', () => {
       expect(mockShowToast).toHaveBeenCalledWith(errMsg);
     });
   });
+
+  it('should show validation errors in the toast', async () => {
+    const { axiosMock, mockShowToast } = initializeMocks();
+    const url = getCreateLibraryBlockUrl(libraryId);
+    const errMsg = 'Library cannot have more than 100000 Components';
+    axiosMock.onPost(url).reply(400, [errMsg]);
+
+    render();
+
+    const textButton = screen.getByRole('button', { name: /text/i });
+    fireEvent.click(textButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toEqual(0);
+      expect(mockShowToast).toHaveBeenCalledWith(errMsg);
+    });
+  });
 });
