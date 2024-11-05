@@ -85,7 +85,7 @@ describe('<LibraryHome />', () => {
       isLoading: true,
     });
 
-    render(<LibraryContent content="" />, withLibraryId(mockContentLibrary.libraryId));
+    render(<LibraryContent />, withLibraryId(mockContentLibrary.libraryId));
     expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 
@@ -94,7 +94,7 @@ describe('<LibraryHome />', () => {
       ...data,
       totalHits: 0,
     });
-    render(<LibraryContent content="" />, withLibraryId(mockContentLibrary.libraryId));
+    render(<LibraryContent />, withLibraryId(mockContentLibrary.libraryId));
     expect(screen.getByText('You have not added any content to this library yet.')).toBeInTheDocument();
   });
 
@@ -104,7 +104,7 @@ describe('<LibraryHome />', () => {
       hits: libraryComponentsMock,
       hasNextPage: true,
     });
-    render(<LibraryContent content="" />, withLibraryId(mockContentLibrary.libraryId));
+    render(<LibraryContent />, withLibraryId(mockContentLibrary.libraryId));
 
     Object.defineProperty(window, 'innerHeight', { value: 800 });
     Object.defineProperty(document.body, 'scrollHeight', { value: 1600 });

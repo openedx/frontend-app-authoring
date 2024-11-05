@@ -8,6 +8,12 @@ import ComponentCard from './components/ComponentCard';
 import { useLoadOnScroll } from '../hooks';
 import messages from './collections/messages';
 
+export enum ContentType {
+  home = '',
+  components = 'components',
+  collections = 'collections',
+}
+
 /**
  * Library Content to show content grid
  *
@@ -17,10 +23,10 @@ import messages from './collections/messages';
  */
 
 type LibraryContentProps = {
-  content: string;
+  contentType?: ContentType;
 };
 
-const LibraryContent = ({ content }: LibraryContentProps) => {
+const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps) => {
   const {
     hits,
     totalHits,
@@ -50,7 +56,7 @@ const LibraryContent = ({ content }: LibraryContentProps) => {
     return <LoadingSpinner />;
   }
   if (totalHits === 0) {
-    if (content === 'collections') {
+    if (contentType === 'collections') {
       return isFiltered
         ? <NoSearchResults infoText={messages.noSearchResultsCollections} />
         : (

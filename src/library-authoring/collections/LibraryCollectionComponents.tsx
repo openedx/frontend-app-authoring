@@ -3,7 +3,7 @@ import { NoComponents, NoSearchResults } from '../EmptyStates';
 import { useSearchContext } from '../../search-manager';
 import messages from './messages';
 import { useLibraryContext } from '../common/context';
-import LibraryContent from '../LibraryContent';
+import LibraryContent, { ContentType } from '../LibraryContent';
 
 const LibraryCollectionComponents = () => {
   const { totalHits: componentCount, isFiltered } = useSearchContext();
@@ -24,7 +24,7 @@ const LibraryCollectionComponents = () => {
   return (
     <Stack direction="vertical" gap={3}>
       <h3 className="text-gray">Content ({componentCount})</h3>
-      <LibraryContent content="collections" />
+      <LibraryContent contentType={ContentType.collections} />
     </Stack>
   );
 };

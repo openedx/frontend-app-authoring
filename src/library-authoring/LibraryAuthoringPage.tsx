@@ -33,16 +33,10 @@ import {
   SearchKeywordsField,
   SearchSortWidget,
 } from '../search-manager';
-import LibraryContent from './LibraryContent';
+import LibraryContent, { ContentType } from './LibraryContent';
 import { LibrarySidebar } from './library-sidebar';
 import { SidebarBodyComponentId, useLibraryContext } from './common/context';
 import messages from './messages';
-
-enum TabList {
-  home = '',
-  components = 'components',
-  collections = 'collections',
-}
 
 const HeaderActions = () => {
   const intl = useIntl();
@@ -136,15 +130,15 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     openInfoSidebar,
   } = useLibraryContext();
 
-  const [activeKey, setActiveKey] = useState<string | undefined>('');
+  const [activeKey, setActiveKey] = useState<ContentType | undefined>(ContentType.home);
 
   useEffect(() => {
     const currentPath = location.pathname.split('/').pop();
 
     if (componentPickerMode || currentPath === libraryId || currentPath === '') {
-      setActiveKey(TabList.home);
-    } else if (currentPath && currentPath in TabList) {
-      setActiveKey(TabList[currentPath]);
+      setActiveKey(ContentType.home);
+    } else if (currentPath && currentPath in ContentType) {
+      setActiveKey(ContentType[currentPath]);
     }
   }, [location.pathname]);
 
@@ -169,7 +163,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     return <NotFoundAlert />;
   }
 
-  const handleTabChange = (key: string) => {
+  const handleTabChange = (key: ContentType) => {
     setActiveKey(key);
     if (!componentPickerMode) {
       navigate({
@@ -205,7 +199,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     components: 'NOT type = "collection"',
     collections: 'type = "collection"',
   };
-  if (activeKey !== TabList.home) {
+  if (activeKey !== ContentType.home) {
     extraFilter.push(activeTypeFilters[activeKey]);
   }
 
@@ -249,11 +243,11 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
               onSelect={handleTabChange}
               className="my-3"
             >
-              <Tab eventKey={TabList.home} title={intl.formatMessage(messages.homeTab)} />
-              <Tab eventKey={TabList.components} title={intl.formatMessage(messages.componentsTab)} />
-              <Tab eventKey={TabList.collections} title={intl.formatMessage(messages.collectionsTab)} />
+              <Tab eventKey={ContentType.home} title={intl.formatMessage(messages.homeTab)} />
+              <Tab eventKey={ContentType.components} title={intl.formatMessage(messages.componentsTab)} />
+              <Tab eventKey={ContentType.collections} title={intl.formatMessage(messages.collectionsTab)} />
             </Tabs>
-            <LibraryContent content={activeKey} />
+            <LibraryContent contentType={activeKey} />
           </SearchContextProvider>
         </Container>
         {!componentPickerMode && <StudioFooter containerProps={{ size: undefined }} />}
