@@ -61,6 +61,10 @@ export const courseAssets = (({ studioEndpointUrl, learningContextId }) => (
   `${studioEndpointUrl}/assets/${learningContextId}/`
 )) satisfies UrlFunction;
 
+export const libraryAssets = (({ blockId, studioEndpointUrl }) => (
+  `${studioEndpointUrl}/api/libraries/v2/blocks/${blockId}/assets/`
+)) satisfies UrlFunction;
+
 export const thumbnailUpload = (({ studioEndpointUrl, learningContextId, videoId }) => (
   `${studioEndpointUrl}/video_images/${learningContextId}/${videoId}`
 )) satisfies UrlFunction;

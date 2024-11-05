@@ -2,7 +2,9 @@ import type { AxiosRequestConfig } from 'axios';
 import { camelizeKeys } from '../../../utils';
 import { isLibraryKey } from '../../../../generic/key-utils';
 import * as urls from './urls';
-import { get, post, deleteObject } from './utils';
+import {
+  get, post, put, deleteObject,
+} from './utils';
 import { durationStringFromValue } from '../../../containers/VideoEditor/components/VideoSettingsModal/components/DurationWidget/hooks';
 
 const fetchByUnitIdOptions: AxiosRequestConfig = {};
@@ -116,17 +118,15 @@ export const apiMethods = {
     urls.blockStudioView({ studioEndpointUrl, blockId }),
   ),
   fetchImages: ({
+    blockId,
     learningContextId,
     studioEndpointUrl,
     pageNumber,
   }): Promise<{ data: AssetResponse & Pagination }> => {
     if (isLibraryKey(learningContextId)) {
-      // V2 content libraries don't support static assets yet:
-      return Promise.resolve({
-        data: {
-          assets: [], start: 0, end: 0, page: 0, pageSize: 50, totalCount: 0,
-        },
-      });
+      return get(
+        `${urls.libraryAssets({ studioEndpointUrl, blockId })}`,
+      );
     }
     const params = {
       asset_type: 'Images',
@@ -147,12 +147,20 @@ export const apiMethods = {
     urls.courseAdvanceSettings({ studioEndpointUrl, learningContextId }),
   ),
   uploadAsset: ({
+    blockId,
     learningContextId,
     studioEndpointUrl,
     asset,
   }) => {
     const data = new FormData();
     data.append('file', asset);
+    if (isLibraryKey(learningContextId)) {
+      data.set('content', asset);
+      return put(
+        `${urls.libraryAssets({ blockId, studioEndpointUrl })}static/${encodeURI(asset.name)}`,
+        data,
+      );
+    }
     return post(
       urls.courseAssets({ studioEndpointUrl, learningContextId }),
       data,
