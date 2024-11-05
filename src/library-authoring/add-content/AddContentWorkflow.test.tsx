@@ -19,6 +19,8 @@ import {
 } from '../data/api.mocks';
 import { mockBroadcastChannel, mockClipboardEmpty } from '../../generic/data/api.mock';
 import { mockContentSearchConfig, mockSearchResult } from '../../search-manager/data/api.mock';
+import { studioHomeMock } from '../../studio-home/__mocks__';
+import { getStudioHomeApiUrl } from '../../studio-home/data/api';
 import LibraryLayout from '../LibraryLayout';
 
 mockContentSearchConfig.applyMock();
@@ -46,8 +48,12 @@ const renderOpts = {
 };
 
 describe('AddContentWorkflow test', () => {
+  beforeEach(() => {
+    const { axiosMock } = initializeMocks();
+    axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+  });
+
   it('can create an HTML component', async () => {
-    initializeMocks();
     render(<LibraryLayout />, renderOpts);
 
     // Click "New [Component]"
@@ -84,7 +90,6 @@ describe('AddContentWorkflow test', () => {
   });
 
   it('can create a Problem component', async () => {
-    initializeMocks();
     render(<LibraryLayout />, renderOpts);
 
     // Click "New [Component]"
@@ -119,7 +124,6 @@ describe('AddContentWorkflow test', () => {
   });
 
   it('can create a Video component', async () => {
-    initializeMocks();
     render(<LibraryLayout />, renderOpts);
 
     // Click "New [Component]"
