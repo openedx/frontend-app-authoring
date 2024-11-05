@@ -7,15 +7,20 @@ import { useToggle } from '@openedx/paragon';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
+import {
+  hideProcessingNotification,
+  showProcessingNotification,
+} from '../../generic/processing-notification/data/slice';
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import ConfigureModal from '../../generic/configure-modal/ConfigureModal';
+import ModalIframe from '../../generic/modal-iframe/ModalIframe';
 import { copyToClipboard } from '../../generic/data/thunks';
 import { COURSE_BLOCK_NAMES } from '../../constants';
 import { IFRAME_FEATURE_POLICY, messageTypes } from '../constants';
-import { fetchCourseUnitQuery } from '../data/thunk';
 import { useIframe } from '../context/hooks';
 import { useIFrameBehavior } from './hooks';
 import messages from './messages';
+import { getNotificationMessage } from '../data/utils';
 
 const IFRAME_BOTTOM_OFFSET = 220;
 
@@ -76,20 +81,14 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const { setIframeRef, sendMessageToIframe } = useIframe();
   const [editXblockId, setEditXblockId] = useState<string | null>(null);
   const [currentXblockData, setCurrentXblockData] = useState<any>({});
-  const [showOverlay, setShowOverlay] = useState(false);
-  const [scrollPosition, setScrollPosition] = useState(0);
+  const [showLegacyEditModal, setShowLegacyEditModal] = useState(false);
 
   const iframeUrl = `${getConfig().STUDIO_BASE_URL}/container_embed/${blockId}`;
+  const editXblockModalUrl = `${getConfig().STUDIO_BASE_URL}/xblock/${editXblockId}/action/edit`;
 
   useEffect(() => {
     setIframeRef(iframeRef);
   }, [setIframeRef]);
-
-  useEffect(() => {
-    sendMessageToIframe('controlEditModalPosition', {
-      height: scrollPosition,
-    });
-  }, [scrollPosition]);
 
   const handleDelete = (id: string) => {
     openDeleteModal();
@@ -100,10 +99,10 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     openConfigureModal();
     setEditXblockId(id);
 
-    const foundXBlockInfo = xblocks?.find(block => block.blockId === id);
+    const foundXblockInfo = xblocks?.find(block => block.blockId === id);
 
-    if (foundXBlockInfo) {
-      const { name, userPartitionInfo } = foundXBlockInfo;
+    if (foundXblockInfo) {
+      const { name, userPartitionInfo } = foundXblockInfo;
 
       setCurrentXblockData({
         category: COURSE_BLOCK_NAMES.component.id,
@@ -114,35 +113,40 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     }
   };
 
-  document.addEventListener('scroll', () => {
-    setScrollPosition(window.scrollY - 200);
-  });
-
   const handleCopy = (id: string) => {
     dispatch(copyToClipboard(id));
+  };
+
+  const handleRefreshXblocks = () => {
+    const notification = getNotificationMessage('republish', false, true);
+    dispatch(showProcessingNotification(notification));
+    // TODO: this artificial delay is a temporary solution
+    // to ensure the iframe content is properly refreshed.
+    setTimeout(() => {
+      sendMessageToIframe(messageTypes.refreshXBlock, null);
+      dispatch(hideProcessingNotification());
+    }, 1000);
   };
 
   const handleDuplicateXBlock = (id) => {
     if (id) {
       unitXBlockActions.handleDuplicate(id);
-      // TODO: this artificial delay is a temporary solution
-      // to ensure the iframe content is properly refreshed.
-      setTimeout(() => {
-        sendMessageToIframe(messageTypes.refreshXBlock, null);
-      }, 1000);
+      handleRefreshXblocks();
     }
-  };
-
-  const handleRefreshXBlocks = () => {
-    // TODO: this artificial delay is a temporary solution
-    // to ensure the iframe content is properly refreshed.
-    setTimeout(() => {
-      dispatch(fetchCourseUnitQuery(blockId));
-    }, 1000);
   };
 
   const navigateToNewXBlockEditor = (url: string) => {
     navigate(`/course/${courseId}/editor${url}`);
+  };
+
+  const handleShowEditXBlockModal = (id: string) => {
+    setEditXblockId(id);
+    setShowLegacyEditModal(true);
+  };
+
+  const handleCloseEditorXBlockModal = () => {
+    setEditXblockId(null);
+    setShowLegacyEditModal(false);
   };
 
   useEffect(() => {
@@ -151,22 +155,14 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
       [messageTypes.manageXBlockAccess]: (payload) => handleConfigure(payload.id),
       [messageTypes.copyXBlock]: (payload) => handleCopy(payload.id),
       [messageTypes.duplicateXBlock]: (payload) => handleDuplicateXBlock(payload.id),
-      [messageTypes.refreshPositions]: handleRefreshXBlocks,
       [messageTypes.newXBlockEditor]: (payload) => navigateToNewXBlockEditor(payload.url),
+      [messageTypes.editXBlock]: (payload) => handleShowEditXBlockModal(payload.id),
+      [messageTypes.closeXBlockEditorModal]: () => handleCloseEditorXBlockModal(),
+      [messageTypes.saveEditedXBlockData]: handleRefreshXblocks,
     };
 
     const handleMessage = (event: MessageEvent) => {
       const { type, payload } = event.data || {};
-
-      if (type === messageTypes.showXBlockEditorModal) {
-        setShowOverlay(true);
-        // document.body.style.overflow = 'hidden';
-      }
-
-      if (type === messageTypes.hideXBlockEditorModal) {
-        setShowOverlay(false);
-        // document.body.style.overflow = 'auto';
-      }
 
       if (type && messageHandlers[type]) {
         messageHandlers[type](payload);
@@ -189,29 +185,24 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     if (deleteXblockId) {
       unitXBlockActions.handleDelete(deleteXblockId);
       closeDeleteModal();
-      // TODO: this artificial delay is a temporary solution
-      // to ensure the iframe content is properly refreshed.
-      setTimeout(() => {
-        sendMessageToIframe(messageTypes.refreshXBlock, null);
-      }, 1000);
+      handleRefreshXblocks();
     }
   };
 
   const onConfigureSubmit = (...args: any[]) => {
     if (editXblockId) {
       handleConfigureSubmit(editXblockId, ...args, closeConfigureModal);
-      // TODO: this artificial delay is a temporary solution
-      // to ensure the iframe content is properly refreshed.
-      setTimeout(() => {
-        sendMessageToIframe(messageTypes.refreshXBlock, null);
-      }, 1000);
+      handleRefreshXblocks();
     }
   };
 
   return (
     <>
-      {showOverlay && (
-        <div className="modal-window-overlay" />
+      {showLegacyEditModal && (
+        <ModalIframe
+          title="Xblock Edit Modal"
+          src={editXblockModalUrl}
+        />
       )}
       <DeleteModal
         category="component"

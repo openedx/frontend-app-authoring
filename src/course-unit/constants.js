@@ -56,10 +56,12 @@ export const messageTypes = {
   manageXBlockAccess: 'manageXBlockAccess',
   deleteXBlock: 'deleteXBlock',
   duplicateXBlock: 'duplicateXBlock',
-  refreshPositions: 'refreshPositions',
   newXBlockEditor: 'newXBlockEditor',
   showXBlockEditorModal: 'showXBlockEditorModal',
   hideXBlockEditorModal: 'hideXBlockEditorModal',
+  editXBlock: 'editXBlock',
+  closeXBlockEditorModal: 'closeXBlockEditorModal',
+  saveEditedXBlockData: 'saveEditedXBlockData',
 };
 
 export const IFRAME_FEATURE_POLICY = (
