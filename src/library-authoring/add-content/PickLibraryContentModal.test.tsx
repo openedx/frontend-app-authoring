@@ -6,6 +6,8 @@ import {
   screen,
   initializeMocks,
 } from '../../testUtils';
+import { studioHomeMock } from '../../studio-home/__mocks__';
+import { getStudioHomeApiUrl } from '../../studio-home/data/api';
 import mockResult from '../__mocks__/library-search.json';
 import { LibraryProvider } from '../common/context';
 import { ComponentPickerModal } from '../component-picker';
@@ -16,7 +18,6 @@ import {
 } from '../data/api.mocks';
 import { PickLibraryContentModal } from './PickLibraryContentModal';
 
-initializeMocks();
 mockContentSearchConfig.applyMock();
 mockContentLibrary.applyMock();
 mockGetCollectionMetadata.applyMock();
@@ -45,6 +46,7 @@ describe('<PickLibraryContentModal />', () => {
   beforeEach(() => {
     const mocks = initializeMocks();
     mockShowToast = mocks.mockShowToast;
+    mocks.axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
   });
 
   it('can pick components from the modal', async () => {
