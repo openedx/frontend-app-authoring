@@ -11,7 +11,8 @@ import LicenseWidget from './components/LicenseWidget';
 import ThumbnailWidget from './components/ThumbnailWidget';
 import TranscriptWidget from './components/TranscriptWidget';
 import VideoSourceWidget from './components/VideoSourceWidget';
-import VideoPreviewWidget from './components/VideoPreviewWidget';
+// Using default import to get selectors connected VideoSourceWidget
+import ConnectedVideoPreviewWidget from './components/VideoPreviewWidget';
 import './index.scss';
 import SocialShareWidget from './components/SocialShareWidget';
 import messages from '../../messages';
@@ -42,7 +43,7 @@ const VideoSettingsModal: React.FC<Props> = ({
       </Button>
     )}
     <ErrorSummary />
-    <VideoPreviewWidget />
+    <ConnectedVideoPreviewWidget />
     <VideoSourceWidget />
     {!isLibrary && (
       <SocialShareWidget />
