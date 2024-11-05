@@ -196,8 +196,14 @@ const AddContentContainer = () => {
         // We can't start editing this right away so just show a toast message:
         showToast(intl.formatMessage(messages.successCreateMessage));
       }
-    }).catch(() => {
-      showToast(intl.formatMessage(messages.errorCreateMessage));
+    }).catch((error) => {
+      // 400 Bad Request error usually means we've reached the library's component count limit
+      if (error.response.status === 400) {
+        const detail = error.response.data.length ? error.response.data.join(', ') : error.response.data;
+        showToast(intl.formatMessage(messages.errorCreateMessageWithDetail, { detail }));
+      } else {
+        showToast(intl.formatMessage(messages.errorCreateMessage));
+      }
     });
   };
 

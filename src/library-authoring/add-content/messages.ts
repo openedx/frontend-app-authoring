@@ -63,8 +63,16 @@ const messages = defineMessages({
   },
   errorCreateMessage: {
     id: 'course-authoring.library-authoring.add-content.error.text',
-    defaultMessage: 'There was an error creating the content.',
-    description: 'Message when creation of content in library is on error',
+    defaultMessage: 'There was an error creating the content. {detail}',
+    description: 'Message when creation of content in library is on error.',
+  },
+  errorCreateMessageWithDetail: {
+    id: 'course-authoring.library-authoring.add-content.error.text-detail',
+    defaultMessage: 'There was an error creating the content: {detail}',
+    description: (
+      'Message when creation of content in library is on error.'
+      + ' The {detail} text provides more information about the error.'
+    ),
   },
   linkingComponentMessage: {
     id: 'course-authoring.library-authoring.linking-collection-content.progress.text',
