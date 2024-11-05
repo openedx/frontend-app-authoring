@@ -34,6 +34,7 @@ const SelectionModal = ({
   isLoaded,
   isFetchError,
   isUploadError,
+  isLibrary,
 }) => {
   const intl = useIntl();
   const {
@@ -54,6 +55,7 @@ const SelectionModal = ({
 
   const galleryPropsValues = {
     isLoaded,
+    isLibrary,
     ...galleryProps,
   };
 
@@ -83,7 +85,7 @@ const SelectionModal = ({
       )}
       title={intl.formatMessage(titleMsg)}
       bodyStyle={{ background }}
-      headerComponent={(
+      headerComponent={!isLibrary && (
         <div style={{ margin: '18px 0' }}>
           <SearchSort {...searchSortProps} />
         </div>
@@ -160,6 +162,7 @@ SelectionModal.propTypes = {
   isLoaded: PropTypes.bool.isRequired,
   isFetchError: PropTypes.bool.isRequired,
   isUploadError: PropTypes.bool.isRequired,
+  isLibrary: PropTypes.bool,
 };
 
 export default SelectionModal;

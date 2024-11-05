@@ -17,6 +17,7 @@ const SelectImageModal = ({
   isLoaded,
   isFetchError,
   isUploadError,
+  isLibrary,
   imageCount,
 }) => {
   const {
@@ -57,6 +58,7 @@ const SelectImageModal = ({
         isLoaded,
         isFetchError,
         isUploadError,
+        isLibrary,
       }}
     />
   );
@@ -73,12 +75,14 @@ SelectImageModal.propTypes = {
   isFetchError: PropTypes.bool.isRequired,
   isUploadError: PropTypes.bool.isRequired,
   imageCount: PropTypes.number.isRequired,
+  isLibrary: PropTypes.bool,
 };
 
 export const mapStateToProps = (state) => ({
   isLoaded: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchImages }),
   isFetchError: selectors.requests.isFailed(state, { requestKey: RequestKeys.fetchImages }),
   isUploadError: selectors.requests.isFailed(state, { requestKey: RequestKeys.uploadAsset }),
+  isLibrary: selectors.app.isLibrary(state),
   imageCount: state.app.imageCount,
 });
 

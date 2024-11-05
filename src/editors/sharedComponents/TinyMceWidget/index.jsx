@@ -13,6 +13,7 @@ import ImageUploadModal from '../ImageUploadModal';
 import SourceCodeModal from '../SourceCodeModal';
 import * as hooks from './hooks';
 import './customTinyMcePlugins/embedIframePlugin';
+import { isLibraryV1Key } from '../../../generic/key-utils';
 
 export { prepareEditorRef } from './hooks';
 
@@ -54,7 +55,7 @@ const TinyMceWidget = ({
 
   return (
     <>
-      {!isLibrary && (
+      {!isLibraryV1Key(learningContextId) && (
         <ImageUploadModal
           isOpen={isImgOpen}
           close={closeImgModal}

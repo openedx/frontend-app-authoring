@@ -75,6 +75,7 @@ const GalleryCard = ({
               />
             </div>
           )}
+          {asset.dateAdded && (
           <p className="text-gray-500" style={{ fontSize: '11px' }}>
             <FormattedMessage
               {...messages.addedDate}
@@ -84,6 +85,7 @@ const GalleryCard = ({
               }}
             />
           </p>
+          )}
         </div>
       </div>
     </SelectableBox>

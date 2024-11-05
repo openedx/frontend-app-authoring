@@ -23,6 +23,7 @@ const Gallery = ({
   showIdsOnCards,
   height,
   isLoaded,
+  isLibrary,
   thumbnailFallback,
   allowLazyLoad,
   fetchNextPage,
@@ -79,7 +80,7 @@ const Gallery = ({
           />
         )) }
       </SelectableBox.Set>
-      {allowLazyLoad && (
+      {(allowLazyLoad && !isLibrary) && (
         <GalleryLoadMoreButton
           {...{
             fetchNextPage,
@@ -112,6 +113,7 @@ Gallery.propTypes = {
   highlighted: PropTypes.string,
   onHighlightChange: PropTypes.func.isRequired,
   emptyGalleryLabel: PropTypes.shape({}).isRequired,
+  isLibrary: PropTypes.bool,
   showIdsOnCards: PropTypes.bool,
   height: PropTypes.string,
   thumbnailFallback: PropTypes.element,

@@ -56,7 +56,7 @@ const messages = defineMessages({
   },
   fetchImagesError: {
     id: 'authoring.texteditor.selectimagemodal.error.fetchImagesError',
-    defaultMessage: 'Failed to obtain course images. Please try again.',
+    defaultMessage: 'Failed to obtain images. Please try again.',
     description: 'Message presented to user when images are not found',
   },
   fileSizeError: {
