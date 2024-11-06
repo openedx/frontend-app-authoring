@@ -113,7 +113,6 @@ const AddToCollectionsDrawer = ({ usageKey, collections, onClose }: CollectionsD
   return (
     <SearchContextProvider
       overrideQueries={{
-        components: { limit: 0 },
         blockTypes: { limit: 0 },
       }}
       extraFilter={[`context_key = "${libraryId}"`, 'type = "collection"']}

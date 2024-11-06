@@ -56,7 +56,7 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
     return <LoadingSpinner />;
   }
   if (totalHits === 0) {
-    if (contentType === 'collections') {
+    if (contentType === ContentType.collections) {
       return isFiltered
         ? <NoSearchResults infoText={messages.noSearchResultsCollections} />
         : (
@@ -76,12 +76,12 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
         contentHit.type === 'collection' ? (
           <CollectionCard
             key={contentHit.id}
-            collectionHit={contentHit as CollectionHit}
+            collectionHit={contentHit}
           />
         ) : (
           <ComponentCard
             key={contentHit.id}
-            contentHit={contentHit as ContentHit}
+            contentHit={contentHit}
           />
         )
       ))}

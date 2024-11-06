@@ -28,7 +28,9 @@ const SearchResults: React.FC<Record<never, never>> = () => {
 
   return (
     <>
-      {hits.filter(hit => hit.type !== 'collection').map((hit) => <SearchResult key={hit.id} hit={hit as ContentHit} />)}
+      {hits.filter((hit): hit is ContentHit => hit.type !== 'collection').map(
+        (hit) => <SearchResult key={hit.id} hit={hit} />,
+      )}
       {hasNextPage
         ? (
           <StatefulButton

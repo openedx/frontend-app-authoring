@@ -126,6 +126,7 @@ export interface ContentHit extends BaseContentHit {
    * - First one is the name of the course/library itself.
    * - After that is the name and usage key of any parent Section/Subsection/Unit/etc.
    */
+  type: 'course_block' | 'library_block';
   breadcrumbs: [{ displayName: string }, ...Array<{ displayName: string, usageKey: string }>];
   description?: string;
   content?: ContentDetails;
@@ -149,6 +150,7 @@ export interface ContentPublishedData {
  * Defined in edx-platform/openedx/core/djangoapps/content/search/documents.py
  */
 export interface CollectionHit extends BaseContentHit {
+  type: 'collection';
   description: string;
   numChildren?: number;
 }
@@ -170,9 +172,8 @@ export function formatSearchHit(hit: Record<string, any>): ContentHit | Collecti
 }
 
 export interface OverrideQueries {
-  components?: SearchParams,
+  content?: SearchParams,
   blockTypes?: SearchParams,
-  collections?: SearchParams,
 }
 
 function applyOverrideQueries(
@@ -180,8 +181,8 @@ function applyOverrideQueries(
   overrideQueries?: OverrideQueries,
 ): MultiSearchQuery[] {
   const newQueries = [...queries];
-  if (overrideQueries?.components) {
-    newQueries[0] = { ...overrideQueries.components, indexUid: queries[0].indexUid };
+  if (overrideQueries?.content) {
+    newQueries[0] = { ...overrideQueries.content, indexUid: queries[0].indexUid };
   }
   if (overrideQueries?.blockTypes) {
     newQueries[1] = { ...overrideQueries.blockTypes, indexUid: queries[1].indexUid };
