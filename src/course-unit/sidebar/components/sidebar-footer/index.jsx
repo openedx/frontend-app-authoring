@@ -43,9 +43,9 @@ const SidebarFooter = ({
 SidebarFooter.propTypes = {
   locationId: PropTypes.string,
   displayUnitLocation: PropTypes.bool,
-  openDiscardModal: PropTypes.func.isRequired,
-  openVisibleModal: PropTypes.func.isRequired,
-  handlePublishing: PropTypes.func.isRequired,
+  openDiscardModal: PropTypes.func,
+  openVisibleModal: PropTypes.func,
+  handlePublishing: PropTypes.func,
   visibleToStaffOnly: PropTypes.bool.isRequired,
 };
 

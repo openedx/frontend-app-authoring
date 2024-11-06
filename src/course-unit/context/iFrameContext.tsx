@@ -1,4 +1,4 @@
-import {
+import React, {
   createContext, MutableRefObject, useRef, useCallback, useMemo, ReactNode,
 } from 'react';
 import { logError } from '@edx/frontend-platform/logging';

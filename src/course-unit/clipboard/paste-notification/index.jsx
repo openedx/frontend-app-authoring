@@ -101,7 +101,7 @@ const PastNotificationAlert = ({ staticFileNotices, courseId }) => {
 PastNotificationAlert.propTypes = {
   courseId: PropTypes.string.isRequired,
   staticFileNotices:
-    PropTypes.objectOf({
+    PropTypes.shape({
       conflictingFiles: PropTypes.arrayOf(PropTypes.string),
       errorFiles: PropTypes.arrayOf(PropTypes.string),
       newFiles: PropTypes.arrayOf(PropTypes.string),

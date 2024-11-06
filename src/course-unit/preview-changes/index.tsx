@@ -108,6 +108,7 @@ const PreviewLibraryXBlockChanges = () => {
       isOpen={isModalOpen}
       onClose={closeModal}
       size="xl"
+      title={getTitle()}
       className="lib-preview-xblock-changes-modal"
       hasCloseButton
       isFullscreenOnMobile
