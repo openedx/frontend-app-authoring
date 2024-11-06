@@ -116,7 +116,7 @@ describe('<HeaderTitle />', () => {
         ...courseUnitIndexMock,
         user_partition_info: {
           ...courseUnitIndexMock.user_partition_info,
-          selected_partition_index: '1',
+          selected_partition_index: 1,
           selected_groups_label: 'Visibility group 1',
         },
       });

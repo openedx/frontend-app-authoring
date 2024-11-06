@@ -54,6 +54,7 @@ import sidebarMessages from './sidebar/messages';
 import { extractCourseUnitId } from './sidebar/utils';
 import CourseUnit from './CourseUnit';
 
+import { getClipboardUrl } from '../generic/data/api';
 import configureModalMessages from '../generic/configure-modal/messages';
 import { getContentTaxonomyTagsApiUrl, getContentTaxonomyTagsCountApiUrl } from '../content-tags-drawer/data/api';
 import addComponentMessages from './add-component/messages';
@@ -164,6 +165,9 @@ describe('<CourseUnit />', () => {
     global.localStorage.clear();
     store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    axiosMock
+      .onGet(getClipboardUrl())
+      .reply(200, clipboardUnit);
     axiosMock
       .onGet(getCourseUnitApiUrl(courseId))
       .reply(200, courseUnitIndexMock);
@@ -502,6 +506,19 @@ describe('<CourseUnit />', () => {
         ...courseUnitIndexMock,
         metadata: {
           ...courseUnitIndexMock.metadata,
+          display_name: newDisplayName,
+        },
+      });
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        xblock_info: {
+          ...courseSectionVerticalMock.xblock_info,
+          display_name: newDisplayName,
+        },
+        xblock: {
+          ...courseSectionVerticalMock.xblock,
           display_name: newDisplayName,
         },
       });
@@ -1264,9 +1281,7 @@ describe('<CourseUnit />', () => {
         .reply(200, clipboardMockResponse);
       axiosMock
         .onGet(getCourseSectionVerticalApiUrl(blockId))
-        .reply(200, {
-          ...updatedCourseSectionVerticalData,
-        });
+        .reply(200, updatedCourseSectionVerticalData);
 
       global.localStorage.setItem('staticFileNotices', JSON.stringify(clipboardMockResponse.staticFileNotices));
       await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
@@ -1540,7 +1555,7 @@ describe('<CourseUnit />', () => {
 
       axiosMock
         .onGet(getCourseUnitApiUrl(blockId))
-        .reply(200, {});
+        .reply(200, courseUnitIndexMock);
 
       await act(async () => {
         await waitFor(() => {
@@ -1815,6 +1830,63 @@ describe('<CourseUnit />', () => {
       simulatePostMessageEvent(messageTypes.newXBlockEditor, {});
       expect(mockedUsedNavigate)
         .toHaveBeenCalledWith(`/course/${courseId}/editor/html/${targetBlockId}`, { replace: true });
+    });
+  });
+
+  describe('Library Content page', () => {
+    const newUnitId = '12345';
+    const sequenceId = courseSectionVerticalMock.subsection_location;
+
+    beforeEach(async () => {
+      axiosMock
+        .onGet(getCourseSectionVerticalApiUrl(blockId))
+        .reply(200, {
+          ...courseSectionVerticalMock,
+          xblock: {
+            ...courseSectionVerticalMock.xblock,
+            category: 'library_content',
+          },
+          xblock_info: {
+            ...courseSectionVerticalMock.xblock_info,
+            category: 'library_content',
+          },
+        });
+      await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+    });
+
+    it('navigates to library content page on receive window event', () => {
+      render(<RootWrapper />);
+
+      simulatePostMessageEvent(messageTypes.handleViewXBlockContent, { usageId: newUnitId });
+      expect(mockedUsedNavigate).toHaveBeenCalledWith(`/course/${courseId}/container/${newUnitId}/${sequenceId}`);
+    });
+
+    it('should render library content page correctly', async () => {
+      const {
+        getByText,
+        getByRole,
+        queryByRole,
+        getByTestId,
+      } = render(<RootWrapper />);
+
+      const currentSectionName = courseUnitIndexMock.ancestor_info.ancestors[1].display_name;
+      const currentSubSectionName = courseUnitIndexMock.ancestor_info.ancestors[1].display_name;
+
+      await waitFor(() => {
+        const unitHeaderTitle = getByTestId('unit-header-title');
+        expect(getByText(unitDisplayName)).toBeInTheDocument();
+        expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage })).toBeInTheDocument();
+        expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonSettings.defaultMessage })).toBeInTheDocument();
+        expect(getByRole('button', { name: currentSectionName })).toBeInTheDocument();
+        expect(getByRole('button', { name: currentSubSectionName })).toBeInTheDocument();
+
+        expect(queryByRole('heading', { name: addComponentMessages.title.defaultMessage })).not.toBeInTheDocument();
+        expect(queryByRole('button', { name: headerNavigationsMessages.viewLiveButton.defaultMessage })).not.toBeInTheDocument();
+        expect(queryByRole('button', { name: headerNavigationsMessages.previewButton.defaultMessage })).not.toBeInTheDocument();
+
+        expect(queryByRole('heading', { name: /unit tags/i })).not.toBeInTheDocument();
+        expect(queryByRole('heading', { name: /unit location/i })).not.toBeInTheDocument();
+      });
     });
   });
 });

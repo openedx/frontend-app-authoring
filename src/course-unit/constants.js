@@ -62,4 +62,5 @@ export const messageTypes = {
   refreshXBlockPositions: 'refreshPositions',
   newXBlockEditor: 'newXBlockEditor',
   toggleCourseXBlockDropdown: 'toggleCourseXBlockDropdown',
+  handleViewXBlockContent: 'handleViewXBlockContent',
 };

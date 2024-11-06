@@ -72,7 +72,7 @@ const ComponentModalView = ({
                     <OverlayTrigger
                       placement="right"
                       overlay={(
-                        <Tooltip>
+                        <Tooltip id={`${componentTemplate.displayName}-support-tooltip`}>
                           {supportLabels[componentTemplate.supportLevel].tooltip}
                         </Tooltip>
                       )}

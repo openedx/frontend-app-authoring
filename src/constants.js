@@ -58,6 +58,7 @@ export const COURSE_BLOCK_NAMES = ({
   chapter: { id: 'chapter', name: 'Section' },
   sequential: { id: 'sequential', name: 'Subsection' },
   vertical: { id: 'vertical', name: 'Unit' },
+  libraryContent: { id: 'library_content', name: 'Library content' },
   component: { id: 'component', name: 'Component' },
 });
 
