@@ -47,7 +47,7 @@ const StudioHome = () => {
     setShowNewCourseContainer,
     librariesV1Enabled,
     librariesV2Enabled,
-  } = useStudioHome(isPaginationCoursesEnabled);
+  } = useStudioHome();
 
   const v1LibraryTab = librariesV1Enabled && location?.pathname.split('/').pop() === 'libraries-v1';
   const showV2LibraryURL = librariesV2Enabled && !v1LibraryTab;

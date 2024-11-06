@@ -18,6 +18,8 @@ import {
   mockXBlockFields,
 } from './data/api.mocks';
 import { mockContentSearchConfig } from '../search-manager/data/api.mock';
+import { studioHomeMock } from '../studio-home/__mocks__';
+import { getStudioHomeApiUrl } from '../studio-home/data/api';
 import { mockBroadcastChannel } from '../generic/data/api.mock';
 import { LibraryLayout } from '.';
 import { getLibraryCollectionsApiUrl } from './data/api';
@@ -79,7 +81,8 @@ const libraryTitle = mockContentLibrary.libraryData.title;
 
 describe('<LibraryAuthoringPage />', () => {
   beforeEach(() => {
-    initializeMocks();
+    const { axiosMock } = initializeMocks();
+    axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
 
     // The Meilisearch client-side API uses fetch, not Axios.
     fetchMock.mockReset();
@@ -786,5 +789,17 @@ describe('<LibraryAuthoringPage />', () => {
         headers: expect.anything(),
       });
     });
+  });
+
+  it('Shows an error if libraries V2 is disabled', async () => {
+    const { axiosMock } = initializeMocks();
+    axiosMock.onGet(getStudioHomeApiUrl()).reply(200, {
+      ...studioHomeMock,
+      libraries_v2_enabled: false,
+    });
+
+    render(<LibraryLayout />, { path, params: { libraryId: mockContentLibrary.libraryId } });
+    await waitFor(() => { expect(axiosMock.history.get.length).toBe(1); });
+    expect(screen.getByRole('alert')).toHaveTextContent('This page cannot be shown: Libraries v2 are disabled.');
   });
 });

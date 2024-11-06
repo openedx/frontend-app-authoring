@@ -27,6 +27,13 @@ jest.mock('react-router-dom', () => ({
     },
   }),
 }));
+jest.mock('../../studio-home/hooks', () => ({
+  useStudioHome: () => ({
+    isLoadingPage: false,
+    isFailedLoadingPage: false,
+    librariesV2Enabled: true,
+  }),
+}));
 mockContentLibrary.applyMock();
 mockContentSearchConfig.applyMock();
 mockGetCollectionMetadata.applyMock();
