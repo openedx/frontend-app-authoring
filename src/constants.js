@@ -76,3 +76,18 @@ export const REGEX_RULES = {
   specialCharsRule: /^[a-zA-Z0-9_\-.'*~\s]+$/,
   noSpaceRule: /^\S*$/,
 };
+
+export const SANDBOX_OPTIONS = [
+  'allow-forms',
+  'allow-modals',
+  'allow-popups',
+  'allow-popups-to-escape-sandbox',
+  'allow-presentation',
+  'allow-same-origin',
+  'allow-scripts',
+  'allow-top-navigation-by-user-activation',
+].join(' ');
+
+export const IFRAME_FEATURE_POLICY = (
+  'microphone *; camera *; midi *; geolocation *; encrypted-media *, clipboard-write *'
+);

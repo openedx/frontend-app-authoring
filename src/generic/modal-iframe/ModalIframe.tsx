@@ -1,37 +1,33 @@
 import { forwardRef, ForwardedRef, IframeHTMLAttributes } from 'react';
 import classNames from 'classnames';
 
+import { IFRAME_FEATURE_POLICY, SANDBOX_OPTIONS } from '../../constants';
+
 interface ModalIframeProps extends IframeHTMLAttributes<HTMLIFrameElement> {
   title: string;
   className?: string;
+  labelledBy?: string;
+  describedBy?: string;
 }
 
-const SANDBOX_OPTIONS = [
-  'allow-forms',
-  'allow-modals',
-  'allow-popups',
-  'allow-popups-to-escape-sandbox',
-  'allow-presentation',
-  'allow-same-origin',
-  'allow-scripts',
-  'allow-top-navigation-by-user-activation',
-].join(' ');
-
-export const IFRAME_FEATURE_POLICY = (
-  'microphone *; camera *; midi *; geolocation *; encrypted-media *, clipboard-write *'
-);
-
 const ModalIframe = forwardRef<HTMLIFrameElement, ModalIframeProps>(
-  ({ title, className, ...props }, ref: ForwardedRef<HTMLIFrameElement>) => (
+  ({
+    title, className, labelledBy, describedBy, ...props
+  }, ref: ForwardedRef<HTMLIFrameElement>) => (
     <iframe
       title={title}
       className={classNames('modal-iframe', className)}
+      data-testid="modal-iframe"
       allow={IFRAME_FEATURE_POLICY}
       referrerPolicy="origin"
       frameBorder="0"
       scrolling="no"
       ref={ref}
       sandbox={SANDBOX_OPTIONS}
+      aria-modal="true"
+      role="dialog"
+      aria-labelledby={labelledBy}
+      aria-describedby={describedBy}
       {...props}
     />
   ),
@@ -39,6 +35,8 @@ const ModalIframe = forwardRef<HTMLIFrameElement, ModalIframeProps>(
 
 ModalIframe.defaultProps = {
   className: 'modal-iframe',
+  labelledBy: 'modal-title',
+  describedBy: 'modal-description',
 };
 
 export default ModalIframe;

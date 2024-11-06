@@ -15,8 +15,8 @@ import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import ConfigureModal from '../../generic/configure-modal/ConfigureModal';
 import ModalIframe from '../../generic/modal-iframe/ModalIframe';
 import { copyToClipboard } from '../../generic/data/thunks';
-import { COURSE_BLOCK_NAMES } from '../../constants';
-import { IFRAME_FEATURE_POLICY, messageTypes } from '../constants';
+import { COURSE_BLOCK_NAMES, IFRAME_FEATURE_POLICY } from '../../constants';
+import { messageTypes } from '../constants';
 import { useIframe } from '../context/hooks';
 import { useIFrameBehavior } from './hooks';
 import messages from './messages';
@@ -164,6 +164,8 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     const handleMessage = (event: MessageEvent) => {
       const { type, payload } = event.data || {};
 
+      console.log('========================= IFRAME MSGS =========================', { type, payload });
+
       if (type && messageHandlers[type]) {
         messageHandlers[type](payload);
       }
@@ -200,7 +202,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     <>
       {showLegacyEditModal && (
         <ModalIframe
-          title="Xblock Edit Modal"
+          title={intl.formatMessage(messages.editModalIframeTitle)}
           src={editXblockModalUrl}
         />
       )}

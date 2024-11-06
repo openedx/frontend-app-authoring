@@ -57,13 +57,8 @@ export const messageTypes = {
   deleteXBlock: 'deleteXBlock',
   duplicateXBlock: 'duplicateXBlock',
   newXBlockEditor: 'newXBlockEditor',
-  showXBlockEditorModal: 'showXBlockEditorModal',
   hideXBlockEditorModal: 'hideXBlockEditorModal',
   editXBlock: 'editXBlock',
   closeXBlockEditorModal: 'closeXBlockEditorModal',
   saveEditedXBlockData: 'saveEditedXBlockData',
 };
-
-export const IFRAME_FEATURE_POLICY = (
-  'microphone *; camera *; midi *; geolocation *; encrypted-media *, clipboard-write *'
-);

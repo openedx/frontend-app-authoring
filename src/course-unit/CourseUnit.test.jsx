@@ -428,6 +428,30 @@ describe('<CourseUnit />', () => {
     });
   });
 
+  it('renders the edit modal when edit message is received and closes it upon receiving the close message', async () => {
+    const { getByTitle, queryByTitle } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+
+      simulatePostMessageEvent(messageTypes.editXBlock, {
+        id: courseVerticalChildrenMock.children[0].block_id,
+      });
+
+      expect(
+        getByTitle(xblockContainerIframeMessages.editModalIframeTitle.defaultMessage),
+      ).toBeInTheDocument();
+    });
+
+    simulatePostMessageEvent(messageTypes.closeXBlockEditorModal, {});
+
+    await waitFor(() => {
+      expect(
+        queryByTitle(xblockContainerIframeMessages.editModalIframeTitle.defaultMessage),
+      ).not.toBeInTheDocument();
+    });
+  });
+
   it('handles CourseUnit header action buttons', async () => {
     const { open } = window;
     window.open = jest.fn();
