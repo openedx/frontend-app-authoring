@@ -17,7 +17,9 @@ import { selectors } from '../../../../data/redux';
 import RawEditor from '../../../../sharedComponents/RawEditor';
 import { ProblemTypeKeys } from '../../../../data/constants/problem';
 
-import { parseState, saveWarningModalToggle, getContent } from './hooks';
+import {
+  checkIfEditorsDirty, parseState, saveWarningModalToggle, getContent,
+} from './hooks';
 import './index.scss';
 import messages from './messages';
 
@@ -32,6 +34,7 @@ const EditProblemView = ({
   lmsEndpointUrl,
   returnUrl,
   analytics,
+  isDirty,
   // injected
   intl,
 }) => {
@@ -39,6 +42,14 @@ const EditProblemView = ({
   const editorRef = useRef(null);
   const isAdvancedProblemType = problemType === ProblemTypeKeys.ADVANCED;
   const { isSaveWarningModalOpen, openSaveWarningModal, closeSaveWarningModal } = saveWarningModalToggle();
+
+  const checkIfDirty = () => {
+    if (isAdvancedProblemType && editorRef && editorRef?.current) {
+      /* istanbul ignore next */
+      return editorRef.current.observer?.lastChange !== 0;
+    }
+    return isDirty || checkIfEditorsDirty();
+  };
 
   return (
     <EditorContainer
@@ -49,6 +60,7 @@ const EditProblemView = ({
         editorRef,
         lmsEndpointUrl,
       })}
+      isDirty={checkIfDirty}
       returnFunction={returnFunction}
     >
       <AlertModal
@@ -117,6 +129,7 @@ const EditProblemView = ({
 EditProblemView.defaultProps = {
   lmsEndpointUrl: null,
   returnFunction: null,
+  isDirty: false,
 };
 
 EditProblemView.propTypes = {
@@ -127,6 +140,7 @@ EditProblemView.propTypes = {
   analytics: PropTypes.shape({}).isRequired,
   lmsEndpointUrl: PropTypes.string,
   returnUrl: PropTypes.string.isRequired,
+  isDirty: PropTypes.bool,
   // injected
   intl: intlShape.isRequired,
 };
@@ -137,6 +151,7 @@ export const mapStateToProps = (state) => ({
   returnUrl: selectors.app.returnUrl(state),
   problemType: selectors.problem.problemType(state),
   problemState: selectors.problem.completeState(state),
+  isDirty: selectors.problem.isDirty(state),
 });
 
 export const EditProblemViewInternal = EditProblemView; // For testing only

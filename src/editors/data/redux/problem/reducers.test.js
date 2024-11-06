@@ -19,6 +19,7 @@ describe('problem reducer', () => {
         it(`load ${target} from payload`, () => {
           expect(reducer(testingState, actions[action](testValue))).toEqual({
             ...testingState,
+            isDirty: true,
             [target]: testValue,
           });
         });
@@ -62,6 +63,7 @@ describe('problem reducer', () => {
         expect(reducer(testingState, actions.addAnswer(answer))).toEqual({
           ...testingState,
           answers: [answer],
+          isDirty: true,
         });
       });
     });
@@ -79,6 +81,7 @@ describe('problem reducer', () => {
         const payload = { hints: ['soMehInt'] };
         expect(reducer(testingState, actions.updateSettings(payload))).toEqual({
           ...testingState,
+          isDirty: true,
           settings: {
             ...testingState.settings,
             ...payload,
@@ -99,6 +102,7 @@ describe('problem reducer', () => {
         expect(reducer({ ...testingState, problemType: 'choiceresponse' }, actions.addAnswer())).toEqual({
           ...testingState,
           problemType: 'choiceresponse',
+          isDirty: true,
           answers: [answer],
         });
       });
@@ -111,6 +115,7 @@ describe('problem reducer', () => {
         expect(reducer(numericTestState, actions.addAnswer())).toEqual({
           ...numericTestState,
           correctAnswerCount: 1,
+          isDirty: true,
           answers: [{
             ...answer,
             correct: true,
@@ -131,6 +136,7 @@ describe('problem reducer', () => {
         expect(reducer({ ...testingState, problemType: ProblemTypeKeys.NUMERIC }, actions.addAnswerRange())).toEqual({
           ...testingState,
           correctAnswerCount: 1,
+          isDirty: true,
           problemType: ProblemTypeKeys.NUMERIC,
           answers: [answerRange],
         });
@@ -151,6 +157,7 @@ describe('problem reducer', () => {
         )).toEqual({
           ...testingState,
           correctAnswerCount: 1,
+          isDirty: true,
           answers: [{ id: 'A', correct: true }],
         });
       });
@@ -183,6 +190,7 @@ describe('problem reducer', () => {
           actions.deleteAnswer(payload),
         )).toEqual({
           ...testingState,
+          isDirty: true,
           correctAnswerCount: 0,
           answers: [{
             id: 'A',
@@ -220,6 +228,7 @@ describe('problem reducer', () => {
         )).toEqual({
           ...testingState,
           correctAnswerCount: 1,
+          isDirty: true,
           answers: [{
             id: 'A',
             correct: true,
@@ -259,6 +268,7 @@ describe('problem reducer', () => {
         )).toEqual({
           ...testingState,
           problemType: ProblemTypeKeys.SINGLESELECT,
+          isDirty: true,
           correctAnswerCount: 1,
           answers: [{
             id: 'A',
@@ -300,6 +310,7 @@ describe('problem reducer', () => {
         )).toEqual({
           ...testingState,
           correctAnswerCount: 1,
+          isDirty: true,
           answers: [{
             id: 'A',
             correct: true,
@@ -380,6 +391,7 @@ describe('problem reducer', () => {
         )).toEqual({
           ...testingState,
           correctAnswerCount: 1,
+          isDirty: true,
           answers: [{
             id: 'A',
             correct: true,
@@ -429,6 +441,7 @@ describe('problem reducer', () => {
           ...testingState,
           problemType: ProblemTypeKeys.NUMERIC,
           correctAnswerCount: 1,
+          isDirty: true,
           answers: [{
             id: 'A',
             title: '',

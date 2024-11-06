@@ -20,6 +20,7 @@ import TitleHeader from './components/TitleHeader';
 import * as hooks from './hooks';
 import messages from './messages';
 import './index.scss';
+import usePromptIfDirty from '../../../generic/promptIfDirty/usePromptIfDirty';
 
 interface WrapperProps {
   children: React.ReactNode;
@@ -61,32 +62,57 @@ export const FooterWrapper: React.FC<WrapperProps> = ({ children }) => {
 interface Props extends EditorComponent {
   children: React.ReactNode;
   getContent: Function;
+  isDirty: () => boolean;
   validateEntry?: Function | null;
 }
 
 const EditorContainer: React.FC<Props> = ({
   children,
   getContent,
+  isDirty,
   onClose = null,
   validateEntry = null,
   returnFunction = null,
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
+  // Required to mark data as not dirty on save
+  const [saved, setSaved] = React.useState(false);
   const isInitialized = hooks.isInitialized();
   const { isCancelConfirmOpen, openCancelConfirmModal, closeCancelConfirmModal } = hooks.cancelConfirmModalToggle();
   const handleCancel = hooks.handleCancel({ onClose, returnFunction });
   const disableSave = !isInitialized;
   const saveFailed = hooks.saveFailed();
   const clearSaveFailed = hooks.clearSaveError({ dispatch });
-  const onSave = hooks.handleSaveClicked({
+  const handleSave = hooks.handleSaveClicked({
     dispatch,
     getContent,
     validateEntry,
     returnFunction,
   });
+
+  const onSave = () => {
+    setSaved(true);
+    handleSave();
+  };
+  // Stops user from navigating away if they have unsaved changes.
+  usePromptIfDirty(() => {
+    // Do not block if cancel modal is used or data is saved.
+    if (isCancelConfirmOpen || saved) {
+      return false;
+    }
+    return isDirty();
+  });
+
+  const confirmCancelIfDirty = () => {
+    if (isDirty()) {
+      openCancelConfirmModal();
+    } else {
+      handleCancel();
+    }
+  };
   return (
-    <EditorModalWrapper onClose={openCancelConfirmModal}>
+    <EditorModalWrapper onClose={confirmCancelIfDirty}>
       {saveFailed && (
         <Toast show onClose={clearSaveFailed}>
           <FormattedMessage {...messages.contentSaveFailed} />
@@ -108,7 +134,9 @@ const EditorContainer: React.FC<Props> = ({
           </Button>
         )}
         isOpen={isCancelConfirmOpen}
-        close={closeCancelConfirmModal}
+        close={() => {
+          closeCancelConfirmModal();
+        }}
         title={intl.formatMessage(messages.cancelConfirmTitle)}
       >
         <FormattedMessage {...messages.cancelConfirmDescription} />
@@ -121,7 +149,7 @@ const EditorContainer: React.FC<Props> = ({
           <IconButton
             src={Close}
             iconAs={Icon}
-            onClick={openCancelConfirmModal}
+            onClick={confirmCancelIfDirty}
             alt={intl.formatMessage(messages.exitButtonAlt)}
           />
         </div>
@@ -135,7 +163,7 @@ const EditorContainer: React.FC<Props> = ({
             <Button
               aria-label={intl.formatMessage(messages.cancelButtonAriaLabel)}
               variant="tertiary"
-              onClick={openCancelConfirmModal}
+              onClick={confirmCancelIfDirty}
             >
               <FormattedMessage {...messages.cancelButtonLabel} />
             </Button>

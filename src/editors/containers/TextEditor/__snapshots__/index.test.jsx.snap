@@ -14,6 +14,18 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
       },
     }
   }
+  isDirty={
+    {
+      "isDirty": {
+        "editorRef": {
+          "current": {
+            "value": "something",
+          },
+        },
+        "showRawEditor": false,
+      },
+    }
+  }
   onClose={[MockFunction props.onClose]}
   returnFunction={null}
 >
@@ -58,6 +70,18 @@ exports[`TextEditor snapshots loaded, raw editor 1`] = `
   getContent={
     {
       "getContent": {
+        "editorRef": {
+          "current": {
+            "value": "something",
+          },
+        },
+        "showRawEditor": true,
+      },
+    }
+  }
+  isDirty={
+    {
+      "isDirty": {
         "editorRef": {
           "current": {
             "value": "something",
@@ -114,6 +138,18 @@ exports[`TextEditor snapshots not yet loaded, Spinner appears 1`] = `
       },
     }
   }
+  isDirty={
+    {
+      "isDirty": {
+        "editorRef": {
+          "current": {
+            "value": "something",
+          },
+        },
+        "showRawEditor": false,
+      },
+    }
+  }
   onClose={[MockFunction props.onClose]}
   returnFunction={null}
 >
@@ -144,6 +180,18 @@ exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
   getContent={
     {
       "getContent": {
+        "editorRef": {
+          "current": {
+            "value": "something",
+          },
+        },
+        "showRawEditor": false,
+      },
+    }
+  }
+  isDirty={
+    {
+      "isDirty": {
         "editorRef": {
           "current": {
             "value": "something",
@@ -197,6 +245,18 @@ exports[`TextEditor snapshots renders static images with relative paths 1`] = `
   getContent={
     {
       "getContent": {
+        "editorRef": {
+          "current": {
+            "value": "something",
+          },
+        },
+        "showRawEditor": false,
+      },
+    }
+  }
+  isDirty={
+    {
+      "isDirty": {
         "editorRef": {
           "current": {
             "value": "something",

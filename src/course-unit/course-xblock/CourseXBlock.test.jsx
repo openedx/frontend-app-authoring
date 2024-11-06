@@ -29,7 +29,6 @@ const blockId = '567890';
 const handleDeleteMock = jest.fn();
 const handleDuplicateMock = jest.fn();
 const handleConfigureSubmitMock = jest.fn();
-const mockedUsedNavigate = jest.fn();
 const {
   name,
   block_id: id,
@@ -41,11 +40,6 @@ const unitXBlockActionsMock = {
   handleDelete: handleDeleteMock,
   handleDuplicate: handleDuplicateMock,
 };
-
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: () => mockedUsedNavigate,
-}));
 
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
@@ -78,6 +72,16 @@ useSelector.mockImplementation((selector) => {
 });
 
 describe('<CourseXBlock />', () => {
+  const locationTemp = window.location;
+  beforeAll(() => {
+    delete window.location;
+    window.location = {
+      assign: jest.fn(),
+    };
+  });
+  afterAll(() => {
+    window.location = locationTemp;
+  });
   beforeEach(async () => {
     initializeMockApp({
       authenticatedUser: {
@@ -168,8 +172,8 @@ describe('<CourseXBlock />', () => {
       expect(editButton).toBeInTheDocument();
 
       userEvent.click(editButton);
-      expect(mockedUsedNavigate).toHaveBeenCalled();
-      expect(mockedUsedNavigate).toHaveBeenCalledWith(`/course/${courseId}/editor/html/${id}`);
+      expect(window.location.assign).toHaveBeenCalled();
+      expect(window.location.assign).toHaveBeenCalledWith(`/course/${courseId}/editor/html/${id}`);
     });
 
     it('navigates to editor page on edit Video xblock', () => {
@@ -182,8 +186,8 @@ describe('<CourseXBlock />', () => {
       expect(editButton).toBeInTheDocument();
 
       userEvent.click(editButton);
-      expect(mockedUsedNavigate).toHaveBeenCalled();
-      expect(mockedUsedNavigate).toHaveBeenCalledWith(`/course/${courseId}/editor/video/${id}`);
+      expect(window.location.assign).toHaveBeenCalled();
+      expect(window.location.assign).toHaveBeenCalledWith(`/course/${courseId}/editor/video/${id}`);
     });
 
     it('navigates to editor page on edit Problem xblock', () => {
@@ -196,8 +200,8 @@ describe('<CourseXBlock />', () => {
       expect(editButton).toBeInTheDocument();
 
       userEvent.click(editButton);
-      expect(mockedUsedNavigate).toHaveBeenCalled();
-      expect(mockedUsedNavigate).toHaveBeenCalledWith(`/course/${courseId}/editor/problem/${id}`);
+      expect(window.location.assign).toHaveBeenCalled();
+      expect(window.location.assign).toHaveBeenCalledWith(`/course/${courseId}/editor/problem/${id}`);
       expect(handleDeleteMock).toHaveBeenCalledWith(id);
     });
   });
