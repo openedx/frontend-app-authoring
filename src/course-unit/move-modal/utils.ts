@@ -37,20 +37,20 @@ export const findParentIds = (
 ): string[] => {
   let path: string[] = [];
 
-  function traverse(node: ITreeNode | undefined, targetId: string, currentPath: string[]): boolean {
+  function traverse(node: ITreeNode | undefined, id: string, currentPath: string[]): boolean {
     if (!node) {
       return false;
     }
 
     currentPath.push(node.id);
 
-    if (node.id === targetId) {
+    if (node.id === id) {
       path = currentPath.slice();
       return true;
     }
 
     for (const child of node.child_info?.children ?? []) {
-      if (traverse(child, targetId, currentPath)) {
+      if (traverse(child, id, currentPath)) {
         return true;
       }
     }
@@ -73,8 +73,10 @@ export const isValidCategory = (
   sourceParentInfo: IXBlockInfo,
   targetParentInfo: IXBlockInfo,
 ): boolean => {
-  let { category: sourceParentCategory, hasChildren: sourceParentHasChildren } = sourceParentInfo;
-  let { category: targetParentCategory, has_children: targetParentHasChildren } = targetParentInfo;
+  let { category: sourceParentCategory } = sourceParentInfo;
+  let { category: targetParentCategory } = targetParentInfo;
+  const { hasChildren: sourceParentHasChildren } = sourceParentInfo;
+  const { has_children: targetParentHasChildren } = targetParentInfo;
 
   if (
     sourceParentHasChildren

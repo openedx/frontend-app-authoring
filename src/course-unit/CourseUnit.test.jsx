@@ -1,6 +1,6 @@
 import MockAdapter from 'axios-mock-adapter';
 import {
-  act, render, waitFor, fireEvent, within, screen,
+  act, render, waitFor, fireEvent, within,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
@@ -803,7 +803,7 @@ describe('<CourseUnit />', () => {
     axiosMock
       .onPost(getXBlockBaseApiUrl(courseUnitIndexMock.id), {
         publish: null,
-        metadata: { visible_to_staff_only: true, group_access: { 50: [2] } },
+        metadata: { visible_to_staff_only: true, group_access: { 50: [2] }, discussion_enabled: true },
       })
       .reply(200, { dummy: 'value' });
     axiosMock
@@ -1145,8 +1145,8 @@ describe('<CourseUnit />', () => {
             id: requestData.currentParentLocator,
             category: 'vertical',
             hasChildren: true,
-          }
-        }
+          },
+        },
       },
       origin: '*',
     });
@@ -1169,7 +1169,7 @@ describe('<CourseUnit />', () => {
       window.dispatchEvent(messageEvent);
 
       expect(getByText(
-        moveModalMessages.moveModalTitle.defaultMessage.replace('{displayName}', requestData.title)
+        moveModalMessages.moveModalTitle.defaultMessage.replace('{displayName}', requestData.title),
       )).toBeInTheDocument();
       expect(getByRole('button', { name: moveModalMessages.moveModalSubmitButton.defaultMessage })).toBeInTheDocument();
       expect(getByRole('button', { name: moveModalMessages.moveModalCancelButton.defaultMessage })).toBeInTheDocument();
@@ -1193,7 +1193,7 @@ describe('<CourseUnit />', () => {
       window.dispatchEvent(messageEvent);
 
       expect(getByText(
-        moveModalMessages.moveModalTitle.defaultMessage.replace('{displayName}', requestData.title)
+        moveModalMessages.moveModalTitle.defaultMessage.replace('{displayName}', requestData.title),
       )).toBeInTheDocument();
 
       const currentSection = courseOutlineInfoMock.child_info.children[1];
@@ -1211,7 +1211,7 @@ describe('<CourseUnit />', () => {
       fireEvent.click(currentSubsectionText);
 
       const currentComponentLocationText = getByText(
-        moveModalMessages.moveModalOutlineItemCurrentComponentLocationText.defaultMessage
+        moveModalMessages.moveModalOutlineItemCurrentComponentLocationText.defaultMessage,
       );
       expect(currentComponentLocationText).toBeInTheDocument();
     });

@@ -71,7 +71,7 @@ export function fetchCourseSectionVerticalData(courseId, sequenceId) {
       }));
       dispatch(updateModels({
         modelType: 'units',
-        models: courseSectionVerticalData.units,
+        models: courseSectionVerticalData.units || [],
       }));
       dispatch(fetchStaticFileNoticesSuccess(JSON.parse(localStorage.getItem('staticFileNotices'))));
       localStorage.removeItem('staticFileNotices');
@@ -104,7 +104,7 @@ export function editCourseItemQuery(itemId, displayName, sequenceId) {
           }));
           dispatch(updateModels({
             modelType: 'units',
-            models: courseSectionVerticalData.units,
+            models: courseSectionVerticalData.units || [],
           }));
           dispatch(fetchSequenceSuccess({ sequenceId }));
           dispatch(fetchCourseItemSuccess(courseUnit));
@@ -119,15 +119,28 @@ export function editCourseItemQuery(itemId, displayName, sequenceId) {
   };
 }
 
-export function editCourseUnitVisibilityAndData(itemId, type, isVisible, groupAccess, isModalView, blockId = itemId) {
+export function editCourseUnitVisibilityAndData(
+  itemId,
+  type,
+  isVisible,
+  groupAccess,
+  isDiscussionEnabled,
+  blockId = itemId,
+) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(updateQueryPendingStatus(true));
-    const notification = getNotificationMessage(type, isVisible, isModalView);
+    const notification = getNotificationMessage(type, isVisible, true);
     dispatch(showProcessingNotification(notification));
 
     try {
-      await handleCourseUnitVisibilityAndData(itemId, type, isVisible, groupAccess).then(async (result) => {
+      await handleCourseUnitVisibilityAndData(
+        itemId,
+        type,
+        isVisible,
+        groupAccess,
+        isDiscussionEnabled,
+      ).then(async (result) => {
         if (result) {
           const courseUnit = await getCourseUnitData(blockId);
           dispatch(fetchCourseItemSuccess(courseUnit));

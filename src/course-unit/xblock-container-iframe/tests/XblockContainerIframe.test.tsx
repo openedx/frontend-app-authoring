@@ -5,7 +5,7 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { IFRAME_FEATURE_POLICY } from '../../constants';
 import { useIFrameBehavior } from '../hooks';
 import XBlockContainerIframe from '..';
-import {IframeProvider} from '../../context/iFrameContext';
+import { IframeProvider } from '../../context/iFrameContext';
 
 jest.mock('@edx/frontend-platform', () => ({
   getConfig: jest.fn(),

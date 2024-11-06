@@ -22,6 +22,7 @@ import ProcessingNotification from '../generic/processing-notification';
 import { SavingErrorAlert } from '../generic/saving-error-alert';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 import Loading from '../generic/Loading';
+import { COURSE_BLOCK_NAMES } from '../constants';
 import AddComponent from './add-component/AddComponent';
 import HeaderTitle from './header-title/HeaderTitle';
 import Breadcrumbs from './breadcrumbs/Breadcrumbs';
@@ -44,6 +45,7 @@ const CourseUnit = ({ courseId }) => {
     isLoading,
     sequenceId,
     unitTitle,
+    unitCategory,
     errorMessage,
     sequenceStatus,
     savingStatus,
@@ -67,6 +69,19 @@ const CourseUnit = ({ courseId }) => {
     handleCloseXBlockMovedAlert,
     handleNavigateToTargetUnit,
   } = useCourseUnit({ courseId, blockId });
+
+  const isUnitVerticalType = unitCategory === COURSE_BLOCK_NAMES.vertical.id;
+  const isUnitLibraryType = unitCategory === COURSE_BLOCK_NAMES.libraryContent.id;
+
+  const unitLayout = [{ span: 12 }, { span: 0 }];
+  const defaultLayout = {
+    lg: [{ span: 8 }, { span: 4 }],
+    md: [{ span: 8 }, { span: 4 }],
+    sm: [{ span: 8 }, { span: 3 }],
+    xs: [{ span: 9 }, { span: 3 }],
+    xl: [{ span: 9 }, { span: 3 }],
+  };
+  const layoutGrid = isUnitLibraryType ? { lg: unitLayout } : defaultLayout;
 
   useEffect(() => {
     document.title = getPageHeadTitle('', unitTitle);
@@ -139,30 +154,30 @@ const CourseUnit = ({ courseId }) => {
               />
             )}
             breadcrumbs={(
-              <Breadcrumbs />
+              <Breadcrumbs
+                courseId={courseId}
+                sequenceId={sequenceId}
+              />
             )}
             headerActions={(
               <HeaderNavigations
+                unitCategory={unitCategory}
                 headerNavigationsActions={headerNavigationsActions}
               />
             )}
           />
-          <Sequence
-            courseId={courseId}
-            sequenceId={sequenceId}
-            unitId={blockId}
-            handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
-            showPasteUnit={showPasteUnit}
-          />
-          <Layout
-            lg={[{ span: 8 }, { span: 4 }]}
-            md={[{ span: 8 }, { span: 4 }]}
-            sm={[{ span: 8 }, { span: 3 }]}
-            xs={[{ span: 9 }, { span: 3 }]}
-            xl={[{ span: 9 }, { span: 3 }]}
-          >
+          {isUnitVerticalType && (
+            <Sequence
+              courseId={courseId}
+              sequenceId={sequenceId}
+              unitId={blockId}
+              handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
+              showPasteUnit={showPasteUnit}
+            />
+          )}
+          <Layout {...layoutGrid}>
             <Layout.Element>
-              {currentlyVisibleToStudents && (
+              {!currentlyVisibleToStudents && (
                 <AlertMessage
                   className="course-unit__alert"
                   title={intl.formatMessage(messages.alertUnpublishedVersion)}
@@ -177,11 +192,13 @@ const CourseUnit = ({ courseId }) => {
                 />
               )}
               <XBlockContainerIframe blockId={blockId} />
-              <AddComponent
-                blockId={blockId}
-                handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
-              />
-              {showPasteXBlock && canPasteComponent && (
+              {isUnitVerticalType && (
+                <AddComponent
+                  blockId={blockId}
+                  handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
+                />
+              )}
+              {showPasteXBlock && canPasteComponent && isUnitVerticalType && (
                 <PasteComponent
                   clipboardData={sharedClipboardData}
                   onClick={handleCreateNewCourseXBlock}
@@ -197,18 +214,21 @@ const CourseUnit = ({ courseId }) => {
             </Layout.Element>
             <Layout.Element>
               <Stack gap={3}>
-                <Sidebar data-testid="course-unit-sidebar">
-                  <PublishControls blockId={blockId} />
-                </Sidebar>
-                {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true'
-                && (
-                  <Sidebar className="tags-sidebar">
-                    <TagsSidebarControls />
-                  </Sidebar>
+                {isUnitVerticalType && (
+                  <>
+                    <Sidebar data-testid="course-unit-sidebar">
+                      <PublishControls blockId={blockId} />
+                    </Sidebar>
+                    {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
+                      <Sidebar className="tags-sidebar">
+                        <TagsSidebarControls />
+                      </Sidebar>
+                    )}
+                    <Sidebar data-testid="course-unit-location-sidebar">
+                      <LocationInfo />
+                    </Sidebar>
+                  </>
                 )}
-                <Sidebar data-testid="course-unit-location-sidebar">
-                  <LocationInfo />
-                </Sidebar>
               </Stack>
             </Layout.Element>
           </Layout>

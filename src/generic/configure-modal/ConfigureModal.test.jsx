@@ -221,6 +221,10 @@ describe('<ConfigureModal /> for Unit', () => {
 
     expect(getByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
     expect(getByRole('button', { name: messages.saveButton.defaultMessage })).toBeInTheDocument();
+
+    expect(queryByText(messages.discussionEnabledSectionTitle.defaultMessage)).toBeInTheDocument();
+    expect(queryByText(messages.discussionEnabledCheckbox.defaultMessage)).toBeInTheDocument();
+    expect(queryByText(messages.discussionEnabledDescription.defaultMessage)).toBeInTheDocument();
   });
 });
 
@@ -278,5 +282,9 @@ describe('<ConfigureModal /> for XBlock', () => {
 
     expect(getByRole('button', { name: messages.cancelButton.defaultMessage })).toBeInTheDocument();
     expect(getByRole('button', { name: messages.saveButton.defaultMessage })).toBeInTheDocument();
+
+    expect(queryByText(messages.discussionEnabledSectionTitle.defaultMessage)).not.toBeInTheDocument();
+    expect(queryByText(messages.discussionEnabledCheckbox.defaultMessage)).not.toBeInTheDocument();
+    expect(queryByText(messages.discussionEnabledDescription.defaultMessage)).not.toBeInTheDocument();
   });
 });

@@ -61,16 +61,16 @@ const MoveModal: FC<IUseMoveModalParams> = ({
   ), [isExtraSmall, breadcrumbs, handleBreadcrumbsClick]);
 
   const getEmptyMessage = useCallback(() => (
-      <li className="xblock-no-child-message">
-        {intl.formatMessage(messages.moveModalEmptyCategoryText, {
-          category: parentInfo.category,
-          categoryText: categoryText.toLowerCase(),
-        })}
-      </li>
+    <li className="xblock-no-child-message">
+      {intl.formatMessage(messages.moveModalEmptyCategoryText, {
+        category: parentInfo.category,
+        categoryText: categoryText.toLowerCase(),
+      })}
+    </li>
   ), [parentInfo.category, categoryText]);
 
   const getCategoryIndicator = useCallback(() => (
-      <div className="xblock-items-category small text-gray-500">
+    <div className="xblock-items-category small text-gray-500">
       <span className="sr-only">
         {intl.formatMessage(messages.moveModalCategoryIndicatorAccessibilityText, { categoryText, displayName })}
       </span>
@@ -150,9 +150,11 @@ const MoveModal: FC<IUseMoveModalParams> = ({
               <ul className="xblock-items-container p-0 m-0">
                 {!childrenInfo.children?.length
                   ? getEmptyMessage()
-                  : childrenInfo.children.map((xBlock: IXBlock | IXBlockInfo, index: number) => {
-                    return getCourseStructureListItem(xBlock as IXBlock, index);
-                  })}
+                  : childrenInfo.children.map(
+                    (xBlock: IXBlock | IXBlockInfo, index: number) => (
+                      getCourseStructureListItem(xBlock as IXBlock, index)
+                    ),
+                  )}
               </ul>
             </div>
           </>

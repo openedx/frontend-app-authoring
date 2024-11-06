@@ -1,11 +1,11 @@
-import { useContext, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useToggle } from '@openedx/paragon';
 
 import { RequestStatus } from '../data/constants';
 import { useCopyToClipboard } from '../generic/clipboard';
-import { createCorrectInternalRoute } from '../utils';
+import { useEventListener } from '../generic/hooks';
 import {
   createNewCourseXBlock,
   fetchCourseUnitQuery,
@@ -38,7 +38,6 @@ import {
 import { useIframe } from './context/hooks';
 import { messageTypes, PUBLISH_TYPES } from './constants';
 
-
 // eslint-disable-next-line import/prefer-default-export
 export const useCourseUnit = ({ courseId, blockId }) => {
   const dispatch = useDispatch();
@@ -51,7 +50,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const isLoading = useSelector(getIsLoading);
   const errorMessage = useSelector(getErrorMessage);
   const sequenceStatus = useSelector(getSequenceStatus);
-  const { draftPreviewLink, publishedPreviewLink } = useSelector(getCourseSectionVertical);
+  const { draftPreviewLink, publishedPreviewLink, xblockInfo = {} } = useSelector(getCourseSectionVertical);
   const courseVerticalChildren = useSelector(getCourseVerticalChildren);
   const staticFileNotices = useSelector(getStaticFileNotices);
   const navigate = useNavigate();
@@ -62,8 +61,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const { currentlyVisibleToStudents } = courseUnit;
   const { sharedClipboardData, showPasteXBlock, showPasteUnit } = useCopyToClipboard(canEdit);
   const { canPasteComponent } = courseVerticalChildren;
-
-  const unitTitle = courseUnit.metadata?.displayName || '';
+  const { displayName: unitTitle, category: unitCategory } = xblockInfo;
   const sequenceId = courseUnit.ancestorInfo?.ancestors[0].id;
 
   const headerNavigationsActions = {
@@ -73,14 +71,22 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     handlePreview: () => {
       window.open(draftPreviewLink, '_blank');
     },
+    handleEdit: () => {},
   };
 
   const handleTitleEdit = () => {
     dispatch(changeEditTitleFormOpen(!isTitleEditFormOpen));
   };
 
-  const handleConfigureSubmit = (id, isVisible, groupAccess, closeModalFn) => {
-    dispatch(editCourseUnitVisibilityAndData(id, PUBLISH_TYPES.republish, isVisible, groupAccess, true, blockId));
+  const handleConfigureSubmit = (id, isVisible, groupAccess, isDiscussionEnabled, closeModalFn) => {
+    dispatch(editCourseUnitVisibilityAndData(
+      id,
+      PUBLISH_TYPES.republish,
+      isVisible,
+      groupAccess,
+      isDiscussionEnabled,
+      blockId,
+    ));
     closeModalFn();
   };
 
@@ -119,7 +125,9 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   };
 
   const handleRollbackMovedXBlock = () => {
-    const { sourceLocator, targetParentLocator, title, currentParentLocator } = movedXBlockParams;
+    const {
+      sourceLocator, targetParentLocator, title, currentParentLocator,
+    } = movedXBlockParams;
     dispatch(patchUnitItemQuery({
       sourceLocator,
       targetParentLocator,
@@ -140,6 +148,17 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const handleNavigateToTargetUnit = () => {
     navigate(`/course/${courseId}/container/${movedXBlockParams.targetParentLocator}`);
   };
+
+  const receiveMessage = useCallback(({ data }) => {
+    const { payload, type } = data;
+
+    if (type === messageTypes.handleViewXBlockContent) {
+      const newUnitId = payload.destination.split('/').pop();
+      navigate(`/course/${courseId}/container/${newUnitId}/${sequenceId}`);
+    }
+  }, []);
+
+  useEventListener('message', receiveMessage);
 
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
@@ -166,6 +185,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     sequenceId,
     courseUnit,
     unitTitle,
+    unitCategory,
     errorMessage,
     sequenceStatus,
     savingStatus,

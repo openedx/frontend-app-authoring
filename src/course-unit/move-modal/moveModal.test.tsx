@@ -6,6 +6,7 @@ import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { Store } from 'redux';
 
+import userEvent from '@testing-library/user-event';
 import initializeStore from '../../store';
 import { getOutlineInfo } from '../data/api';
 import { courseOutlineInfoMock } from '../__mocks__';
@@ -14,7 +15,6 @@ import { getCourseOutlineInfoQuery } from '../data/thunk';
 import { IframeProvider } from '../context/iFrameContext';
 import MoveModal from './index';
 import messages from './messages';
-import userEvent from '@testing-library/user-event';
 
 interface CourseOutlineChildInfo {
   category: string;
@@ -96,8 +96,12 @@ describe('<MoveModal />', () => {
     const categoryIndicator: HTMLElement = getByTestId('move-xblock-modal-category');
 
     expect(getByText(messages.moveModalTitle.defaultMessage.replace(' {displayName}', ''))).toBeInTheDocument();
-    expect(within(breadcrumbs).getByText(messages.moveModalBreadcrumbsBaseCategory.defaultMessage)).toBeInTheDocument();
-    expect(within(categoryIndicator).getByText(messages.moveModalBreadcrumbsSections.defaultMessage)).toBeInTheDocument();
+    expect(
+      within(breadcrumbs).getByText(messages.moveModalBreadcrumbsBaseCategory.defaultMessage),
+    ).toBeInTheDocument();
+    expect(
+      within(categoryIndicator).getByText(messages.moveModalBreadcrumbsSections.defaultMessage),
+    ).toBeInTheDocument();
     expect(getByRole('button', { name: messages.moveModalSubmitButton.defaultMessage })).toBeInTheDocument();
     expect(getByRole('button', { name: messages.moveModalCancelButton.defaultMessage })).toBeInTheDocument();
   });
@@ -107,35 +111,45 @@ describe('<MoveModal />', () => {
     const breadcrumbs: HTMLElement = getByTestId('move-xblock-modal-breadcrumbs');
     const categoryIndicator: HTMLElement = getByTestId('move-xblock-modal-category');
 
-    expect(within(breadcrumbs).getByText(messages.moveModalBreadcrumbsBaseCategory.defaultMessage)).toBeInTheDocument();
-    expect(within(categoryIndicator).getByText(messages.moveModalBreadcrumbsSections.defaultMessage)).toBeInTheDocument();
+    expect(
+      within(breadcrumbs).getByText(messages.moveModalBreadcrumbsBaseCategory.defaultMessage),
+    ).toBeInTheDocument();
+    expect(
+      within(categoryIndicator).getByText(messages.moveModalBreadcrumbsSections.defaultMessage),
+    ).toBeInTheDocument();
     sections.map((section) => (
       expect(getByText(section.display_name)).toBeInTheDocument()
     ));
 
     await waitFor(() => userEvent.click(getByRole('button', { name: new RegExp(sections[1].display_name, 'i') })));
     await waitFor(() => {
-      expect(within(categoryIndicator).getByText(messages.moveModalBreadcrumbsSubsections.defaultMessage)).toBeInTheDocument();
+      expect(
+        within(categoryIndicator).getByText(messages.moveModalBreadcrumbsSubsections.defaultMessage),
+      ).toBeInTheDocument();
       expect(within(breadcrumbs).getByText(sections[1].display_name)).toBeInTheDocument();
       subsections.map((subsection) => (
-          expect(getByRole('button', { name: new RegExp(subsection.display_name, 'i') })).toBeInTheDocument()
+        expect(getByRole('button', { name: new RegExp(subsection.display_name, 'i') })).toBeInTheDocument()
       ));
     });
 
     await waitFor(() => userEvent.click(getByRole('button', { name: new RegExp(subsections[1].display_name, 'i') })));
     await waitFor(() => {
-      expect(within(categoryIndicator).getByText(messages.moveModalBreadcrumbsUnits.defaultMessage)).toBeInTheDocument();
+      expect(
+        within(categoryIndicator).getByText(messages.moveModalBreadcrumbsUnits.defaultMessage),
+      ).toBeInTheDocument();
       expect(within(breadcrumbs).getByText(subsections[1].display_name)).toBeInTheDocument();
       units.map((unit) => (
-          expect(getByRole('button', { name: new RegExp(unit.display_name, 'i') })).toBeInTheDocument()
+        expect(getByRole('button', { name: new RegExp(unit.display_name, 'i') })).toBeInTheDocument()
       ));
     });
 
     await waitFor(() => userEvent.click(getByRole('button', { name: new RegExp(units[0].display_name, 'i') })));
     await waitFor(() => {
-      expect(within(categoryIndicator).getByText(messages.moveModalBreadcrumbsComponents.defaultMessage)).toBeInTheDocument();
+      expect(
+        within(categoryIndicator).getByText(messages.moveModalBreadcrumbsComponents.defaultMessage),
+      ).toBeInTheDocument();
       expect(within(breadcrumbs).getByText(units[0].display_name)).toBeInTheDocument();
-      components.map((component) => {
+      components.forEach((component) => {
         if (component.display_name) {
           expect(getByText(component.display_name)).toBeInTheDocument();
         }
@@ -148,15 +162,17 @@ describe('<MoveModal />', () => {
     const breadcrumbs: HTMLElement = getByTestId('move-xblock-modal-breadcrumbs');
     const categoryIndicator: HTMLElement = getByTestId('move-xblock-modal-category');
 
-    await waitFor(() =>  userEvent.click(getByRole('button', { name: new RegExp(sections[1].display_name, 'i') })));
-    await waitFor(() =>  userEvent.click(getByRole('button', { name: new RegExp(subsections[1].display_name, 'i') })));
-    await waitFor(() =>  userEvent.click(within(breadcrumbs).getByText(sections[1].display_name)));
+    await waitFor(() => userEvent.click(getByRole('button', { name: new RegExp(sections[1].display_name, 'i') })));
+    await waitFor(() => userEvent.click(getByRole('button', { name: new RegExp(subsections[1].display_name, 'i') })));
+    await waitFor(() => userEvent.click(within(breadcrumbs).getByText(sections[1].display_name)));
 
     await waitFor(() => {
-      expect(within(categoryIndicator).getByText(messages.moveModalBreadcrumbsSubsections.defaultMessage)).toBeInTheDocument();
+      expect(
+        within(categoryIndicator).getByText(messages.moveModalBreadcrumbsSubsections.defaultMessage),
+      ).toBeInTheDocument();
       expect(within(breadcrumbs).getByText(sections[1].display_name)).toBeInTheDocument();
       subsections.map((subsection) => (
-          expect(getByRole('button', { name: new RegExp(subsection.display_name, 'i') })).toBeInTheDocument()
+        expect(getByRole('button', { name: new RegExp(subsection.display_name, 'i') })).toBeInTheDocument()
       ));
     });
   });
@@ -164,15 +180,15 @@ describe('<MoveModal />', () => {
   it('renders empty message when no components are provided', async () => {
     const { getByText, getByRole } = renderComponent();
 
-     await waitFor(() => userEvent.click(getByRole('button', { name: new RegExp(sections[1].display_name, 'i') } )));
-     await waitFor(() => userEvent.click(getByRole('button', { name: new RegExp(subsections[1].display_name, 'i') } )));
-     await waitFor(() => userEvent.click(getByRole('button', { name: new RegExp(units[7].display_name, 'i') } )));
+    await waitFor(() => userEvent.click(getByRole('button', { name: new RegExp(sections[1].display_name, 'i') })));
+    await waitFor(() => userEvent.click(getByRole('button', { name: new RegExp(subsections[1].display_name, 'i') })));
+    await waitFor(() => userEvent.click(getByRole('button', { name: new RegExp(units[7].display_name, 'i') })));
 
     await waitFor(() => {
       expect(getByText(
-          messages.moveModalEmptyCategoryText.defaultMessage
-              .replace('{category}', 'unit')
-              .replace('{categoryText}', 'components')
+        messages.moveModalEmptyCategoryText.defaultMessage
+          .replace('{category}', 'unit')
+          .replace('{categoryText}', 'components'),
       )).toBeInTheDocument();
     });
   });

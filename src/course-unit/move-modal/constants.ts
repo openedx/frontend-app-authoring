@@ -19,7 +19,7 @@ export const CATEGORIES_KEYS = {
   component: 'component',
   split_test: 'split_test',
   group: 'group',
-}
+};
 
 export const CATEGORY_RELATION_MAP = {
   course: 'section',

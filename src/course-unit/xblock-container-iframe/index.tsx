@@ -4,7 +4,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 
 import { IFRAME_FEATURE_POLICY } from '../constants';
-import {useIframe} from '../context/hooks';
+import { useIframe } from '../context/hooks';
 import { useIFrameBehavior } from './hooks';
 import messages from './messages';
 
