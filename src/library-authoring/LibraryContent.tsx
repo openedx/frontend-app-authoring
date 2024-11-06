@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { LoadingSpinner } from '../generic/Loading';
-import { CollectionHit, ContentHit, useSearchContext } from '../search-manager';
+import { useSearchContext } from '../search-manager';
 import { NoComponents, NoSearchResults } from './EmptyStates';
 import { useLibraryContext } from './common/context';
 import CollectionCard from './components/CollectionCard';
