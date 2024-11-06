@@ -164,52 +164,6 @@ describe('<AddContentContainer />', () => {
     expect(mockShowToast).toHaveBeenCalledWith('There was an error linking the content to this collection.');
   });
 
-  it('should handle failure to paste content', async () => {
-    const { axiosMock, mockShowToast } = initializeMocks();
-    // Simulate having an HTML block in the clipboard:
-    mockClipboardHtml.applyMock();
-
-    const pasteUrl = getLibraryPasteClipboardUrl(libraryId);
-    axiosMock.onPost(pasteUrl).reply(400);
-
-    render();
-
-    const pasteButton = await screen.findByRole('button', { name: /paste from clipboard/i });
-    fireEvent.click(pasteButton);
-
-    await waitFor(() => {
-      expect(axiosMock.history.post[0].url).toEqual(pasteUrl);
-      expect(mockShowToast).toHaveBeenCalledWith('There was an error pasting the content.');
-    });
-  });
-
-  it('should handle failure to paste content and show server error if available', async () => {
-    const { axiosMock, mockShowToast } = initializeMocks();
-    // Simulate having an HTML block in the clipboard:
-    mockClipboardHtml.applyMock();
-
-    const errMsg = 'Libraries do not support this type of content yet.';
-    const pasteUrl = getLibraryPasteClipboardUrl(libraryId);
-
-    // eslint-disable-next-line prefer-promise-reject-errors
-    axiosMock.onPost(pasteUrl).reply(() => Promise.reject({
-      customAttributes: {
-        httpErrorStatus: 400,
-        httpErrorResponseData: JSON.stringify({ block_type: errMsg }),
-      },
-    }));
-
-    render();
-
-    const pasteButton = await screen.findByRole('button', { name: /paste from clipboard/i });
-    fireEvent.click(pasteButton);
-
-    await waitFor(() => {
-      expect(axiosMock.history.post[0].url).toEqual(pasteUrl);
-      expect(mockShowToast).toHaveBeenCalledWith(errMsg);
-    });
-  });
-
   it('should stop user from pasting unsupported blocks and show toast', async () => {
     const { axiosMock, mockShowToast } = initializeMocks();
     // Simulate having an HTML block in the clipboard:
@@ -228,20 +182,52 @@ describe('<AddContentContainer />', () => {
     });
   });
 
-  it('should show validation errors in the toast', async () => {
+  test.each([
+    {
+      label: 'should handle failure to paste content',
+      mockUrl: getLibraryPasteClipboardUrl(libraryId),
+      mockResponse: undefined,
+      expectedError: 'There was an error pasting the content.',
+      buttonName: /paste from clipboard/i,
+    },
+    {
+      label: 'should show detailed error in toast on paste failure',
+      mockUrl: getLibraryPasteClipboardUrl(libraryId),
+      mockResponse: ['library cannot have more than 100000 components'],
+      expectedError: 'There was an error pasting the content: library cannot have more than 100000 components',
+      buttonName: /paste from clipboard/i,
+    },
+    {
+      label: 'should handle failure to create content',
+      mockUrl: getCreateLibraryBlockUrl(libraryId),
+      mockResponse: undefined,
+      expectedError: 'There was an error creating the content.',
+      buttonName: /text/i,
+    },
+    {
+      label: 'should show detailed error in toast on create failure',
+      mockUrl: getCreateLibraryBlockUrl(libraryId),
+      mockResponse: 'library cannot have more than 100000 components',
+      expectedError: 'There was an error creating the content: library cannot have more than 100000 components',
+      buttonName: /text/i,
+    },
+  ])('$label', async ({
+    mockUrl, mockResponse, buttonName, expectedError,
+  }) => {
     const { axiosMock, mockShowToast } = initializeMocks();
-    const url = getCreateLibraryBlockUrl(libraryId);
-    const errMsg = 'Library cannot have more than 100000 Components';
-    axiosMock.onPost(url).reply(400, [errMsg]);
+    axiosMock.onPost(mockUrl).reply(400, mockResponse);
+
+    // Simulate having an HTML block in the clipboard:
+    mockClipboardHtml.applyMock();
 
     render();
-
-    const textButton = screen.getByRole('button', { name: /text/i });
-    fireEvent.click(textButton);
+    const button = await screen.findByRole('button', { name: buttonName });
+    fireEvent.click(button);
 
     await waitFor(() => {
-      expect(axiosMock.history.post.length).toEqual(0);
-      expect(mockShowToast).toHaveBeenCalledWith(errMsg);
+      expect(axiosMock.history.post.length).toEqual(1);
+      expect(axiosMock.history.post[0].url).toEqual(mockUrl);
+      expect(mockShowToast).toHaveBeenCalledWith(expectedError);
     });
   });
 });

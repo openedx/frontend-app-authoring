@@ -63,7 +63,7 @@ const messages = defineMessages({
   },
   errorCreateMessage: {
     id: 'course-authoring.library-authoring.add-content.error.text',
-    defaultMessage: 'There was an error creating the content. {detail}',
+    defaultMessage: 'There was an error creating the content.',
     description: 'Message when creation of content in library is on error.',
   },
   errorCreateMessageWithDetail: {
@@ -103,6 +103,14 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.paste-clipboard.error.text',
     defaultMessage: 'There was an error pasting the content.',
     description: 'Message when pasting clipboard in library errors',
+  },
+  errorPasteClipboardMessageWithDetail: {
+    id: 'course-authoring.library-authoring.paste-clipboard.error.text-detail',
+    defaultMessage: 'There was an error pasting the content: {detail}',
+    description: (
+      'Message when pasting clipboard in library errors.'
+      + ' The {detail} text provides more information about the error.'
+    ),
   },
   pastingClipboardMessage: {
     id: 'course-authoring.library-authoring.paste-clipboard.loading.text',

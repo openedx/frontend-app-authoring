@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import type { MessageDescriptor } from 'react-intl';
 import { useSelector } from 'react-redux';
 import {
   Stack,
@@ -80,15 +81,21 @@ const AddContentContainer = () => {
 
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
 
-  const parsePasteErrorMsg = (error: any) => {
-    let errMsg: string;
+  const parseErrorMsg = (
+    error: any,
+    detailedMessage: MessageDescriptor,
+    defaultMessage: MessageDescriptor,
+  ) => {
     try {
-      const { customAttributes: { httpErrorResponseData } } = error;
-      errMsg = JSON.parse(httpErrorResponseData).block_type;
+      const { response: { data } } = error;
+      const detail = data && (Array.isArray(data) ? data.join() : String(data));
+      if (detail) {
+        return intl.formatMessage(detailedMessage, { detail });
+      }
     } catch (_err) {
-      errMsg = intl.formatMessage(messages.errorPasteClipboardMessage);
+      // ignore
     }
-    return errMsg;
+    return intl.formatMessage(defaultMessage);
   };
 
   const isBlockTypeEnabled = (blockType: string) => getConfig().LIBRARY_SUPPORTED_BLOCKS.includes(blockType);
@@ -178,7 +185,11 @@ const AddContentContainer = () => {
       linkComponent(data.id);
       showToast(intl.formatMessage(messages.successPasteClipboardMessage));
     }).catch((error) => {
-      showToast(parsePasteErrorMsg(error));
+      showToast(parseErrorMsg(
+        error,
+        messages.errorPasteClipboardMessageWithDetail,
+        messages.errorPasteClipboardMessage,
+      ));
     });
   };
 
@@ -197,16 +208,11 @@ const AddContentContainer = () => {
         showToast(intl.formatMessage(messages.successCreateMessage));
       }
     }).catch((error) => {
-      // 400 usually means we've reached the library's max block limit
-      if (
-        error && error.response && error.response.status === 400
-        && error.response.data && error.response.data.length
-      ) {
-        const detail: string = [].concat(error.response.data).join();
-        showToast(intl.formatMessage(messages.errorCreateMessageWithDetail, { detail }));
-      } else {
-        showToast(intl.formatMessage(messages.errorCreateMessage));
-      }
+      showToast(parseErrorMsg(
+        error,
+        messages.errorCreateMessageWithDetail,
+        messages.errorCreateMessage,
+      ));
     });
   };
 
