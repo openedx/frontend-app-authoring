@@ -6,6 +6,7 @@ import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import userEvent from '@testing-library/user-event';
 
+import { RequestStatus } from '../data/constants';
 import initializeStore from '../store';
 import { executeThunk } from '../utils';
 import { getTextbooksApiUrl } from './data/api';
@@ -82,6 +83,21 @@ describe('<Textbooks />', () => {
     await waitFor(() => {
       expect(getByTestId('textbooks-empty-placeholder')).toBeInTheDocument();
       expect(queryAllByTestId('textbook-card')).toHaveLength(0);
+    });
+  });
+
+  it('displays an alert and sets status to FAILED when API responds with 403', async () => {
+    axiosMock
+      .onGet(getTextbooksApiUrl(courseId))
+      .reply(403);
+    await executeThunk(fetchTextbooksQuery(courseId), store.dispatch);
+    const { getByTestId } = renderComponent();
+
+    await waitFor(() => {
+      expect(getByTestId('connectionErrorAlert')).toBeInTheDocument();
+      expect(store.getState().textbooks.loadingStatus).toBe(
+        RequestStatus.FAILED,
+      );
     });
   });
 });

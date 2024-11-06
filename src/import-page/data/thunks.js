@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import Cookies from 'universal-cookie';
 import moment from 'moment';
 
@@ -32,7 +31,11 @@ export function fetchImportStatus(courseId, fileName) {
       dispatch(updateLoadingStatus(RequestStatus.SUCCESSFUL));
       return true;
     } catch (error) {
-      dispatch(updateLoadingStatus(RequestStatus.FAILED));
+      if (error.response && error.response.status === 403) {
+        dispatch(updateLoadingStatus(RequestStatus.DENIED));
+      } else {
+        dispatch(updateLoadingStatus(RequestStatus.FAILED));
+      }
       return false;
     }
   };

@@ -2291,4 +2291,18 @@ describe('<CourseOutline />', () => {
     expect(await screen.findByText('Please wait. Creating export file for course tags...')).toBeInTheDocument();
     expect(await screen.findByText('An error has occurred creating the file')).toBeInTheDocument();
   });
+
+  it('displays an alert and sets status to DENIED when API responds with 403', async () => {
+    axiosMock
+      .onGet(getCourseOutlineIndexApiUrl(courseId))
+      .reply(403);
+
+    const { getByRole } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      expect(getByRole('alert')).toBeInTheDocument();
+      const { outlineIndexLoadingStatus } = store.getState().courseOutline.loadingStatus;
+      expect(outlineIndexLoadingStatus).toEqual(RequestStatus.DENIED);
+    });
+  });
 });

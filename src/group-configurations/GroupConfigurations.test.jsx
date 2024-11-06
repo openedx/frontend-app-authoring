@@ -103,4 +103,21 @@ describe('<GroupConfigurations />', () => {
       RequestStatus.FAILED,
     );
   });
+
+  it('displays an alert and sets status to DENIED when API responds with 403', async () => {
+    axiosMock
+      .onGet(getContentStoreApiUrl(courseId))
+      .reply(403);
+
+    await executeThunk(fetchGroupConfigurationsQuery(courseId), store.dispatch);
+
+    const { getByTestId } = renderComponent();
+
+    await waitFor(() => {
+      expect(getByTestId('connectionErrorAlert')).toBeInTheDocument();
+      expect(store.getState().groupConfigurations.loadingStatus).toBe(
+        RequestStatus.DENIED,
+      );
+    });
+  });
 });
