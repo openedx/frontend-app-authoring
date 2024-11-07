@@ -112,11 +112,9 @@ const AddToCollectionsDrawer = ({ usageKey, collections, onClose }: CollectionsD
 
   return (
     <SearchContextProvider
-      overrideQueries={{
-        blockTypes: { limit: 0 },
-      }}
       extraFilter={[`context_key = "${libraryId}"`, 'type = "collection"']}
       skipUrlUpdate
+      skipBlockTypeFetch
     >
       <Stack className="mt-2" gap={3}>
         <FormattedMessage

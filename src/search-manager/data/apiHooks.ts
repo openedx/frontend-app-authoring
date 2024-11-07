@@ -10,7 +10,6 @@ import {
   fetchTagsThatMatchKeyword,
   getContentSearchConfig,
   fetchBlockTypes,
-  OverrideQueries,
 } from './api';
 
 /**
@@ -56,7 +55,7 @@ export const useContentSearchResults = ({
   problemTypesFilter = [],
   tagsFilter = [],
   sort = [],
-  overrideQueries,
+  skipBlockTypeFetch = false,
 }: {
   /** The Meilisearch API client */
   client?: MeiliSearch;
@@ -74,8 +73,8 @@ export const useContentSearchResults = ({
   tagsFilter?: string[];
   /** Sort search results using these options */
   sort?: SearchSortOption[];
-  /** Set true to fetch collections along with components */
-  overrideQueries?: OverrideQueries,
+  /** If true, don't fetch the block types from the server */
+  skipBlockTypeFetch?: boolean;
 }) => {
   const query = useInfiniteQuery({
     enabled: client !== undefined && indexName !== undefined,
@@ -91,7 +90,6 @@ export const useContentSearchResults = ({
       problemTypesFilter,
       tagsFilter,
       sort,
-      overrideQueries,
     ],
     queryFn: ({ pageParam = 0 }) => {
       if (client === undefined || indexName === undefined) {
@@ -109,7 +107,7 @@ export const useContentSearchResults = ({
         // For infinite pagination of results, we can retrieve additional pages if requested.
         // Note that if there are 20 results per page, the "second page" has offset=20, not 2.
         offset: pageParam,
-        overrideQueries,
+        skipBlockTypeFetch,
       });
     },
     getNextPageParam: (lastPage) => lastPage.nextOffset,

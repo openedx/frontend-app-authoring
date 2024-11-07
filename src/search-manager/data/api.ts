@@ -1,7 +1,7 @@
 import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import type {
-  Filter, MeiliSearch, MultiSearchQuery, SearchParams,
+  Filter, MeiliSearch, MultiSearchQuery,
 } from 'meilisearch';
 
 export const getContentSearchConfigUrl = () => new URL(
@@ -171,25 +171,6 @@ export function formatSearchHit(hit: Record<string, any>): ContentHit | Collecti
   return camelCaseObject(newHit);
 }
 
-export interface OverrideQueries {
-  content?: SearchParams,
-  blockTypes?: SearchParams,
-}
-
-function applyOverrideQueries(
-  queries: MultiSearchQuery[],
-  overrideQueries?: OverrideQueries,
-): MultiSearchQuery[] {
-  const newQueries = [...queries];
-  if (overrideQueries?.content) {
-    newQueries[0] = { ...overrideQueries.content, indexUid: queries[0].indexUid };
-  }
-  if (overrideQueries?.blockTypes) {
-    newQueries[1] = { ...overrideQueries.blockTypes, indexUid: queries[1].indexUid };
-  }
-  return newQueries;
-}
-
 interface FetchSearchParams {
   client: MeiliSearch,
   indexName: string,
@@ -202,7 +183,7 @@ interface FetchSearchParams {
   sort?: SearchSortOption[],
   /** How many results to skip, e.g. if limit=20 then passing offset=20 gets the second page. */
   offset?: number,
-  overrideQueries?: OverrideQueries,
+  skipBlockTypeFetch?: boolean,
 }
 
 export async function fetchSearchResults({
@@ -214,8 +195,8 @@ export async function fetchSearchResults({
   tagsFilter,
   extraFilter,
   sort,
-  overrideQueries,
   offset = 0,
+  skipBlockTypeFetch = false,
 }: FetchSearchParams): Promise<{
     hits: (ContentHit | CollectionHit)[],
     nextOffset: number | undefined,
@@ -223,7 +204,7 @@ export async function fetchSearchResults({
     blockTypes: Record<string, number>,
     problemTypes: Record<string, number>,
   }> {
-  let queries: MultiSearchQuery[] = [];
+  const queries: MultiSearchQuery[] = [];
 
   // Convert 'extraFilter' into an array
   const extraFilterFormatted = forceArray(extraFilter);
@@ -263,27 +244,26 @@ export async function fetchSearchResults({
   });
 
   // The second query is to get the possible values for the "block types" filter
-  queries.push({
-    indexUid: indexName,
-    q: searchKeywords,
-    facets: ['block_type', 'content.problem_types'],
-    filter: [
-      ...extraFilterFormatted,
-      // We exclude the block type filter here so we get all the other available options for it.
-      ...tagsFilterFormatted,
-    ],
-    limit: 0, // We don't need any "hits" for this - just the facetDistribution
-  });
-
-  queries = applyOverrideQueries(queries, overrideQueries);
+  if (!skipBlockTypeFetch) {
+    queries.push({
+      indexUid: indexName,
+      facets: ['block_type', 'content.problem_types'],
+      filter: [
+        ...extraFilterFormatted,
+        // We exclude the block type filter here so we get all the other available options for it.
+        ...tagsFilterFormatted,
+      ],
+      limit: 0, // We don't need any "hits" for this - just the facetDistribution
+    });
+  }
 
   const { results } = await client.multiSearch(({ queries }));
   const hitLength = results[0].hits.length;
   return {
     hits: results[0].hits.map(formatSearchHit) as ContentHit[],
     totalHits: results[0].totalHits ?? results[0].estimatedTotalHits ?? hitLength,
-    blockTypes: results[1].facetDistribution?.block_type ?? {},
-    problemTypes: results[1].facetDistribution?.['content.problem_types'] ?? {},
+    blockTypes: results[1]?.facetDistribution?.block_type ?? {},
+    problemTypes: results[1]?.facetDistribution?.['content.problem_types'] ?? {},
     nextOffset: hitLength === limit ? offset + limit : undefined,
   };
 }
