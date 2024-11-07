@@ -59,11 +59,15 @@ describe('<AddComponent />', () => {
     const componentTemplates = courseSectionVerticalMock.component_templates;
 
     expect(getByRole('heading', { name: messages.title.defaultMessage })).toBeInTheDocument();
-    Object.keys(componentTemplates).map((component) => (
-      expect(getByRole('button', {
+    Object.keys(componentTemplates).forEach((component) => {
+      const btn = getByRole('button', {
         name: new RegExp(`${messages.buttonText.defaultMessage} ${componentTemplates[component].display_name}`, 'i'),
-      })).toBeInTheDocument()
-    ));
+      });
+      expect(btn).toBeInTheDocument();
+      if (component.beta) {
+        expect(within(btn).queryByText('Beta')).toBeInTheDocument();
+      }
+    });
   });
 
   it('AddComponent component doesn\'t render when there aren\'t componentTemplates', async () => {
@@ -206,7 +210,7 @@ describe('<AddComponent />', () => {
     const { getByRole } = renderComponent();
 
     const libraryButton = getByRole('button', {
-      name: new RegExp(`${messages.buttonText.defaultMessage} Library Content`, 'i'),
+      name: new RegExp(`${messages.buttonText.defaultMessage} Legacy Library Content`, 'i'),
     });
 
     userEvent.click(libraryButton);
