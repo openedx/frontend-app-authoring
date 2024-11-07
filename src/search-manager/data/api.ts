@@ -142,6 +142,7 @@ export interface ContentHit extends BaseContentHit {
 export interface ContentPublishedData {
   description?: string,
   displayName?: string,
+  numChildren?: number,
 }
 
 /**
@@ -151,6 +152,7 @@ export interface ContentPublishedData {
 export interface CollectionHit extends BaseContentHit {
   description: string;
   numChildren?: number;
+  published?: ContentPublishedData;
 }
 
 /**

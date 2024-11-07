@@ -111,6 +111,7 @@ const CollectionCard = ({ collectionHit } : CollectionCardProps) => {
   const {
     openCollectionInfoSidebar,
     componentPickerMode,
+    showOnlyPublished,
   } = useLibraryContext();
 
   const {
@@ -118,7 +119,13 @@ const CollectionCard = ({ collectionHit } : CollectionCardProps) => {
     formatted,
     tags,
     numChildren,
+    published,
   } = collectionHit;
+
+  const numChildrenCount = showOnlyPublished ? (
+    published?.numChildren || 0
+  ) : numChildren;
+
   const { displayName = '', description = '' } = formatted;
 
   return (
@@ -127,7 +134,7 @@ const CollectionCard = ({ collectionHit } : CollectionCardProps) => {
       displayName={displayName}
       description={description}
       tags={tags}
-      numChildren={numChildren}
+      numChildren={numChildrenCount}
       actions={!componentPickerMode && (
         <ActionRow>
           <CollectionMenu collectionHit={collectionHit} />
