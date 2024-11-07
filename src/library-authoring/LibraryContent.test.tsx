@@ -1,15 +1,17 @@
 import fetchMock from 'fetch-mock-jest';
 
 import {
+  fireEvent,
   render,
   screen,
   initializeMocks,
-} from '../../testUtils';
-import { getContentSearchConfigUrl } from '../../search-manager/data/api';
-import { mockContentLibrary } from '../data/api.mocks';
-import mockEmptyResult from '../../search-modal/__mocks__/empty-search-result.json';
-import { LibraryProvider } from '../common/context';
-import LibraryCollections from './LibraryCollections';
+} from '../testUtils';
+import { getContentSearchConfigUrl } from '../search-manager/data/api';
+import { mockContentLibrary } from './data/api.mocks';
+import mockEmptyResult from '../search-modal/__mocks__/empty-search-result.json';
+import { LibraryProvider } from './common/context';
+import LibraryContent from './LibraryContent';
+import { libraryComponentsMock } from './__mocks__';
 
 const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
 
@@ -18,8 +20,8 @@ const mockFetchNextPage = jest.fn();
 const mockUseSearchContext = jest.fn();
 
 const data = {
-  totalHits: 1,
-  hits: [],
+  totalContentAndCollectionHits: 0,
+  contentAndCollectionHits: [],
   isFetchingNextPage: false,
   hasNextPage: false,
   fetchNextPage: mockFetchNextPage,
@@ -40,8 +42,8 @@ const returnEmptyResult = (_url: string, req) => {
   return mockEmptyResult;
 };
 
-jest.mock('../../search-manager', () => ({
-  ...jest.requireActual('../../search-manager'),
+jest.mock('../search-manager', () => ({
+  ...jest.requireActual('../search-manager'),
   useSearchContext: () => mockUseSearchContext(),
 }));
 
@@ -58,7 +60,7 @@ const withLibraryId = (libraryId: string) => ({
   ),
 });
 
-describe('<LibraryCollections />', () => {
+describe('<LibraryHome />', () => {
   beforeEach(() => {
     const { axiosMock } = initializeMocks();
 
@@ -83,7 +85,31 @@ describe('<LibraryCollections />', () => {
       isLoading: true,
     });
 
-    render(<LibraryCollections variant="full" />, withLibraryId(mockContentLibrary.libraryId));
+    render(<LibraryContent />, withLibraryId(mockContentLibrary.libraryId));
     expect(screen.getByText('Loading...')).toBeInTheDocument();
+  });
+
+  it('should render an empty state when there are no results', async () => {
+    mockUseSearchContext.mockReturnValue({
+      ...data,
+      totalHits: 0,
+    });
+    render(<LibraryContent />, withLibraryId(mockContentLibrary.libraryId));
+    expect(screen.getByText('You have not added any content to this library yet.')).toBeInTheDocument();
+  });
+
+  it('should load more results when the user scrolls to the bottom', async () => {
+    mockUseSearchContext.mockReturnValue({
+      ...data,
+      hits: libraryComponentsMock,
+      hasNextPage: true,
+    });
+    render(<LibraryContent />, withLibraryId(mockContentLibrary.libraryId));
+
+    Object.defineProperty(window, 'innerHeight', { value: 800 });
+    Object.defineProperty(document.body, 'scrollHeight', { value: 1600 });
+
+    fireEvent.scroll(window, { target: { scrollY: 1000 } });
+    expect(mockFetchNextPage).toHaveBeenCalled();
   });
 });

@@ -12,7 +12,7 @@ import {
 } from '@openedx/paragon/icons';
 
 import { SidebarAdditionalActions, useLibraryContext } from '../common/context';
-import { ComponentMenu } from '../components';
+import ComponentMenu from '../components';
 import { canEditComponent } from '../components/ComponentEditorModal';
 import ComponentDetails from './ComponentDetails';
 import ComponentManagement from './ComponentManagement';

@@ -10,7 +10,7 @@ import { MeiliSearch, type Filter } from 'meilisearch';
 import { union } from 'lodash';
 
 import {
-  CollectionHit, ContentHit, SearchSortOption, forceArray, OverrideQueries,
+  CollectionHit, ContentHit, SearchSortOption, forceArray,
 } from './data/api';
 import { useContentSearchConnection, useContentSearchResults } from './data/apiHooks';
 
@@ -34,7 +34,7 @@ export interface SearchContextData {
   searchSortOrder: SearchSortOption;
   setSearchSortOrder: React.Dispatch<React.SetStateAction<SearchSortOption>>;
   defaultSearchSortOrder: SearchSortOption;
-  hits: ContentHit[];
+  hits: (ContentHit | CollectionHit)[];
   totalHits: number;
   isLoading: boolean;
   hasNextPage: boolean | undefined;
@@ -42,8 +42,6 @@ export interface SearchContextData {
   fetchNextPage: () => void;
   closeSearchModal: () => void;
   hasError: boolean;
-  collectionHits: CollectionHit[];
-  totalCollectionHits: number;
   usageKey: string;
 }
 
@@ -93,10 +91,10 @@ export const SearchContextProvider: React.FC<{
   overrideSearchSortOrder?: SearchSortOption
   children: React.ReactNode,
   closeSearchModal?: () => void,
-  overrideQueries?: OverrideQueries,
+  skipBlockTypeFetch?: boolean,
   skipUrlUpdate?: boolean,
 }> = ({
-  overrideSearchSortOrder, overrideQueries, skipUrlUpdate, ...props
+  overrideSearchSortOrder, skipBlockTypeFetch, skipUrlUpdate, ...props
 }) => {
   const [searchKeywords, setSearchKeywords] = React.useState('');
   const [blockTypesFilter, setBlockTypesFilter] = React.useState<string[]>([]);
@@ -165,7 +163,7 @@ export const SearchContextProvider: React.FC<{
     problemTypesFilter,
     tagsFilter,
     sort,
-    overrideQueries,
+    skipBlockTypeFetch,
   });
 
   return React.createElement(SearchContext.Provider, {
