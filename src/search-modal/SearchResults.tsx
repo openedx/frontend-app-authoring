@@ -2,7 +2,7 @@ import React from 'react';
 import { StatefulButton } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-import { useSearchContext } from '../search-manager';
+import { ContentHit, useSearchContext } from '../search-manager';
 import SearchResult from './SearchResult';
 import messages from './messages';
 
@@ -28,7 +28,9 @@ const SearchResults: React.FC<Record<never, never>> = () => {
 
   return (
     <>
-      {hits.map((hit) => <SearchResult key={hit.id} hit={hit} />)}
+      {hits.filter((hit): hit is ContentHit => hit.type !== 'collection').map(
+        (hit) => <SearchResult key={hit.id} hit={hit} />,
+      )}
       {hasNextPage
         ? (
           <StatefulButton

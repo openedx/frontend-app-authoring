@@ -196,7 +196,6 @@ const LibraryCollectionPage = () => {
         <Container size="xl" className="px-4 mt-4 mb-5 library-authoring-page">
           <SearchContextProvider
             extraFilter={extraFilter}
-            overrideQueries={{ collections: { limit: 0 } }}
           >
             <SubHeader
               title={(

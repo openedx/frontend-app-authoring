@@ -9,9 +9,7 @@ import {
   fetchSearchResults,
   fetchTagsThatMatchKeyword,
   getContentSearchConfig,
-  fetchDocumentById,
   fetchBlockTypes,
-  OverrideQueries,
 } from './api';
 
 /**
@@ -57,7 +55,7 @@ export const useContentSearchResults = ({
   problemTypesFilter = [],
   tagsFilter = [],
   sort = [],
-  overrideQueries,
+  skipBlockTypeFetch = false,
 }: {
   /** The Meilisearch API client */
   client?: MeiliSearch;
@@ -75,8 +73,8 @@ export const useContentSearchResults = ({
   tagsFilter?: string[];
   /** Sort search results using these options */
   sort?: SearchSortOption[];
-  /** Set true to fetch collections along with components */
-  overrideQueries?: OverrideQueries,
+  /** If true, don't fetch the block types from the server */
+  skipBlockTypeFetch?: boolean;
 }) => {
   const query = useInfiniteQuery({
     enabled: client !== undefined && indexName !== undefined,
@@ -92,9 +90,9 @@ export const useContentSearchResults = ({
       problemTypesFilter,
       tagsFilter,
       sort,
-      overrideQueries,
     ],
     queryFn: ({ pageParam = 0 }) => {
+      // istanbul ignore if: this should never happen
       if (client === undefined || indexName === undefined) {
         throw new Error('Required data unexpectedly undefined. Check "enable" condition of useQuery.');
       }
@@ -110,7 +108,7 @@ export const useContentSearchResults = ({
         // For infinite pagination of results, we can retrieve additional pages if requested.
         // Note that if there are 20 results per page, the "second page" has offset=20, not 2.
         offset: pageParam,
-        overrideQueries,
+        skipBlockTypeFetch,
       });
     },
     getNextPageParam: (lastPage) => lastPage.nextOffset,
@@ -125,14 +123,8 @@ export const useContentSearchResults = ({
     [pages],
   );
 
-  const collectionHits = React.useMemo(
-    () => pages?.reduce((allHits, page) => [...allHits, ...page.collectionHits], []) ?? [],
-    [pages],
-  );
-
   return {
     hits,
-    collectionHits,
     // The distribution of block type filter options
     blockTypes: pages?.[0]?.blockTypes ?? {},
     problemTypes: pages?.[0]?.problemTypes ?? {},
@@ -147,7 +139,6 @@ export const useContentSearchResults = ({
     hasNextPage: query.hasNextPage,
     // The last page has the most accurate count of total hits
     totalHits: pages?.[pages.length - 1]?.totalHits ?? 0,
-    totalCollectionHits: pages?.[pages.length - 1]?.totalCollectionHits ?? 0,
   };
 };
 
@@ -186,6 +177,7 @@ export const useTagFilterOptions = (args: {
     ],
     queryFn: () => {
       const { client, indexName } = args;
+      // istanbul ignore if: this should never happen
       if (client === undefined || indexName === undefined) {
         throw new Error('Required data unexpectedly undefined. Check "enable" condition of useQuery.');
       }
@@ -210,6 +202,7 @@ export const useTagFilterOptions = (args: {
     ],
     queryFn: () => {
       const { client, indexName } = args;
+      // istanbul ignore if: this should never happen
       if (client === undefined || indexName === undefined) {
         throw new Error('Required data unexpectedly undefined. Check "enable" condition of useQuery.');
       }
@@ -259,27 +252,3 @@ export const useGetBlockTypes = (extraFilters: Filter) => {
     queryFn: () => fetchBlockTypes(client!, indexName!, extraFilters),
   });
 };
-
-/* istanbul ignore next */
-export const useGetSingleDocument = ({ client, indexName, id }: {
-  client?: MeiliSearch;
-  indexName?: string;
-  id: string | number;
-}) => (
-  useQuery({
-    enabled: client !== undefined && indexName !== undefined,
-    queryKey: [
-      'content_search',
-      client?.config.apiKey,
-      client?.config.host,
-      indexName,
-      id,
-    ],
-    queryFn: () => {
-      if (client === undefined || indexName === undefined) {
-        throw new Error('Required data unexpectedly undefined. Check "enable" condition of useQuery.');
-      }
-      return fetchDocumentById({ client, indexName, id });
-    },
-  })
-);

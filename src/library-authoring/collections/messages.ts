@@ -63,7 +63,7 @@ const messages = defineMessages({
   },
   noSearchResultsInCollection: {
     id: 'course-authoring.library-authoring.collections-pag.no-search-results.text',
-    defaultMessage: 'No matching components found in this collections.',
+    defaultMessage: 'No matching components found in this collection.',
     description: 'Message displayed when no matching components are found in collection',
   },
   newContentButton: {

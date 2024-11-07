@@ -35,34 +35,10 @@ import {
   SearchKeywordsField,
   SearchSortWidget,
 } from '../search-manager';
-import LibraryComponents from './components/LibraryComponents';
-import LibraryCollections from './collections/LibraryCollections';
-import LibraryHome from './LibraryHome';
+import LibraryContent, { ContentType } from './LibraryContent';
 import { LibrarySidebar } from './library-sidebar';
 import { SidebarBodyComponentId, useLibraryContext } from './common/context';
 import messages from './messages';
-
-enum TabList {
-  home = '',
-  components = 'components',
-  collections = 'collections',
-}
-
-interface TabContentProps {
-  eventKey: string;
-  handleTabChange: (key: string) => void;
-}
-
-const TabContent = ({ eventKey, handleTabChange }: TabContentProps) => {
-  switch (eventKey) {
-    case TabList.components:
-      return <LibraryComponents variant="full" />;
-    case TabList.collections:
-      return <LibraryCollections variant="full" />;
-    default:
-      return <LibraryHome tabList={TabList} handleTabChange={handleTabChange} />;
-  }
-};
 
 const HeaderActions = () => {
   const intl = useIntl();
@@ -162,15 +138,15 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     openInfoSidebar,
   } = useLibraryContext();
 
-  const [activeKey, setActiveKey] = useState<string | undefined>('');
+  const [activeKey, setActiveKey] = useState<ContentType | undefined>(ContentType.home);
 
   useEffect(() => {
     const currentPath = location.pathname.split('/').pop();
 
     if (componentPickerMode || currentPath === libraryId || currentPath === '') {
-      setActiveKey(TabList.home);
-    } else if (currentPath && currentPath in TabList) {
-      setActiveKey(TabList[currentPath]);
+      setActiveKey(ContentType.home);
+    } else if (currentPath && currentPath in ContentType) {
+      setActiveKey(ContentType[currentPath]);
     }
   }, [location.pathname]);
 
@@ -203,7 +179,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     return <NotFoundAlert />;
   }
 
-  const handleTabChange = (key: string) => {
+  const handleTabChange = (key: ContentType) => {
     setActiveKey(key);
     if (!componentPickerMode) {
       navigate({
@@ -233,6 +209,14 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
   const extraFilter = [`context_key = "${libraryId}"`];
   if (showOnlyPublished) {
     extraFilter.push('last_published IS NOT NULL');
+  }
+
+  const activeTypeFilters = {
+    components: 'NOT type = "collection"',
+    collections: 'type = "collection"',
+  };
+  if (activeKey !== ContentType.home) {
+    extraFilter.push(activeTypeFilters[activeKey]);
   }
 
   return (
@@ -275,11 +259,11 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
               onSelect={handleTabChange}
               className="my-3"
             >
-              <Tab eventKey={TabList.home} title={intl.formatMessage(messages.homeTab)} />
-              <Tab eventKey={TabList.components} title={intl.formatMessage(messages.componentsTab)} />
-              <Tab eventKey={TabList.collections} title={intl.formatMessage(messages.collectionsTab)} />
+              <Tab eventKey={ContentType.home} title={intl.formatMessage(messages.homeTab)} />
+              <Tab eventKey={ContentType.components} title={intl.formatMessage(messages.componentsTab)} />
+              <Tab eventKey={ContentType.collections} title={intl.formatMessage(messages.collectionsTab)} />
             </Tabs>
-            <TabContent eventKey={activeKey} handleTabChange={handleTabChange} />
+            <LibraryContent contentType={activeKey} />
           </SearchContextProvider>
         </Container>
         {!componentPickerMode && <StudioFooter containerProps={{ size: undefined }} />}

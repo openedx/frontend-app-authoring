@@ -33,7 +33,7 @@ const messages = defineMessages({
   },
   homeTab: {
     id: 'course-authoring.library-authoring.home-tab',
-    defaultMessage: 'Home',
+    defaultMessage: 'All Content',
     description: 'Tab label for the home tab',
   },
   componentsTab: {
