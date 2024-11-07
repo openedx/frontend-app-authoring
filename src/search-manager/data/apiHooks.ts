@@ -92,6 +92,7 @@ export const useContentSearchResults = ({
       sort,
     ],
     queryFn: ({ pageParam = 0 }) => {
+      // istanbul ignore if: this should never happen
       if (client === undefined || indexName === undefined) {
         throw new Error('Required data unexpectedly undefined. Check "enable" condition of useQuery.');
       }
@@ -176,6 +177,7 @@ export const useTagFilterOptions = (args: {
     ],
     queryFn: () => {
       const { client, indexName } = args;
+      // istanbul ignore if: this should never happen
       if (client === undefined || indexName === undefined) {
         throw new Error('Required data unexpectedly undefined. Check "enable" condition of useQuery.');
       }
@@ -200,6 +202,7 @@ export const useTagFilterOptions = (args: {
     ],
     queryFn: () => {
       const { client, indexName } = args;
+      // istanbul ignore if: this should never happen
       if (client === undefined || indexName === undefined) {
         throw new Error('Required data unexpectedly undefined. Check "enable" condition of useQuery.');
       }
