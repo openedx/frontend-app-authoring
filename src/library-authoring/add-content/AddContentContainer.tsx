@@ -158,6 +158,14 @@ const AddContentContainer = () => {
     contentTypes.push(pasteButton);
   }
 
+  const linkComponent = (usageKey: string) => {
+    updateComponentsMutation.mutateAsync([usageKey]).then(() => {
+      showToast(intl.formatMessage(messages.successAssociateComponentMessage));
+    }).catch(() => {
+      showToast(intl.formatMessage(messages.errorAssociateComponentMessage));
+    });
+  };
+
   const onPaste = () => {
     if (!isBlockTypeEnabled(sharedClipboardData.content?.blockType)) {
       showToast(intl.formatMessage(messages.unsupportedBlockPasteClipboardMessage));
@@ -166,7 +174,8 @@ const AddContentContainer = () => {
     pasteClipboardMutation.mutateAsync({
       libraryId,
       blockId: `${uuid4()}`,
-    }).then(() => {
+    }).then((data) => {
+      linkComponent(data.id);
       showToast(intl.formatMessage(messages.successPasteClipboardMessage));
     }).catch((error) => {
       showToast(parsePasteErrorMsg(error));
@@ -179,10 +188,8 @@ const AddContentContainer = () => {
       blockType,
       definitionId: `${uuid4()}`,
     }).then((data) => {
+      linkComponent(data.id);
       const hasEditor = canEditComponent(data.id);
-      updateComponentsMutation.mutateAsync([data.id]).catch(() => {
-        showToast(intl.formatMessage(messages.errorAssociateComponentMessage));
-      });
       if (hasEditor) {
         openComponentEditor(data.id);
       } else {
@@ -208,6 +215,10 @@ const AddContentContainer = () => {
 
   if (pasteClipboardMutation.isLoading) {
     showToast(intl.formatMessage(messages.pastingClipboardMessage));
+  }
+
+  if (updateComponentsMutation.isLoading) {
+    showToast(intl.formatMessage(messages.linkingComponentMessage));
   }
 
   return (
