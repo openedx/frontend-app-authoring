@@ -1,11 +1,13 @@
 import PropTypes from 'prop-types';
-import { Button } from '@openedx/paragon';
+import { Badge, Button } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from '../messages';
 import AddComponentIcon from './AddComponentIcon';
 
-const AddComponentButton = ({ type, displayName, onClick }) => {
+const AddComponentButton = ({
+  type, displayName, onClick, beta,
+}) => {
   const intl = useIntl();
 
   return (
@@ -17,6 +19,7 @@ const AddComponentButton = ({ type, displayName, onClick }) => {
       <AddComponentIcon type={type} />
       <span className="sr-only">{intl.formatMessage(messages.buttonText)}</span>
       <span className="small mt-2">{displayName}</span>
+      {beta && <Badge className="pb-1 mt-1" variant="primary">Beta</Badge>}
     </Button>
   );
 };
@@ -25,6 +28,7 @@ AddComponentButton.propTypes = {
   type: PropTypes.string.isRequired,
   displayName: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
+  beta: PropTypes.bool.isRequired,
 };
 
 export default AddComponentButton;

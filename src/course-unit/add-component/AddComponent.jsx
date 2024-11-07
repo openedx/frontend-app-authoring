@@ -35,6 +35,9 @@ const AddComponent = ({ blockId, handleCreateNewCourseXBlock }) => {
       case COMPONENT_TYPES.library:
         handleCreateNewCourseXBlock({ type, category: 'library_content', parentLocator: blockId });
         break;
+      case COMPONENT_TYPES.itembank:
+        handleCreateNewCourseXBlock({ type, category: 'itembank', parentLocator: blockId });
+        break;
       case COMPONENT_TYPES.advanced:
         handleCreateNewCourseXBlock({
           type: moduleName, category: moduleName, parentLocator: blockId,
@@ -67,7 +70,7 @@ const AddComponent = ({ blockId, handleCreateNewCourseXBlock }) => {
       <h5 className="h3 mb-4 text-center">{intl.formatMessage(messages.title)}</h5>
       <ul className="new-component-type list-unstyled m-0 d-flex flex-wrap justify-content-center">
         {componentTemplates.map((component) => {
-          const { type, displayName } = component;
+          const { type, displayName, beta } = component;
           let modalParams;
 
           if (!component.templates.length) {
@@ -103,6 +106,7 @@ const AddComponent = ({ blockId, handleCreateNewCourseXBlock }) => {
                     onClick={() => handleCreateNewXBlock(type)}
                     displayName={displayName}
                     type={type}
+                    beta={beta}
                   />
                 </li>
               );
