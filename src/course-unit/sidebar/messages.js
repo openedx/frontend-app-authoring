@@ -137,6 +137,61 @@ const messages = defineMessages({
     id: 'course-authoring.course-unit.modal.make-visibility.description',
     defaultMessage: 'If the unit was previously published and released to students, any changes you made to the unit when it was hidden will now be visible to students. Do you want to proceed?',
   },
+  sidebarSplitTestAddComponentTitle: {
+    id: 'course-authoring.course-unit.split-test.sidebar.add-component.title',
+    defaultMessage: 'Adding components',
+    description: 'Title for the section that explains how to add components to a split test',
+  },
+  sidebarSplitTestSelectComponentType: {
+    id: 'course-authoring.course-unit.split-test.sidebar.add-component.select-type',
+    defaultMessage: 'Select a component type under {bold_tag}Add New Component{bold_tag}. Then select a template.',
+    description: 'Instruction text for selecting a component type and template when adding new components',
+  },
+  sidebarSplitTestComponentAdded: {
+    id: 'course-authoring.course-unit.split-test.sidebar.add-component.component-added',
+    defaultMessage: 'The new component is added at the bottom of the page or group. You can then edit and move the component.',
+    description: 'Instruction text indicating that the component has been added and can be moved or edited',
+  },
+  sidebarSplitTestEditComponentTitle: {
+    id: 'course-authoring.course-unit.split-test.sidebar.edit-component.title',
+    defaultMessage: 'Editing components',
+    description: 'Title for the section that explains how to edit components in a split test',
+  },
+  sidebarSplitTestEditComponentInstruction: {
+    id: 'course-authoring.course-unit.split-test.sidebar.edit-component.instruction',
+    defaultMessage: 'Click the {bold_tag}Edit{bold_tag} icon in a component to edit its content.',
+    description: 'Instruction text for editing a component by clicking the edit icon',
+  },
+  sidebarSplitTestReorganizeComponentTitle: {
+    id: 'course-authoring.course-unit.split-test.sidebar.reorganize-component.title',
+    defaultMessage: 'Reorganizing components',
+    description: 'Title for the section that explains how to reorganize components within a split test',
+  },
+  sidebarSplitTestReorganizeComponentInstruction: {
+    id: 'course-authoring.course-unit.split-test.sidebar.reorganize-component.instruction',
+    defaultMessage: 'Drag components to new locations within this component.',
+    description: 'Instruction text for reorganizing components by dragging them to new locations within a split test',
+  },
+  sidebarSplitTestReorganizeGroupsInstruction: {
+    id: 'course-authoring.course-unit.split-test.sidebar.reorganize-component.drag-to-groups',
+    defaultMessage: 'For content experiments, you can drag components to other groups.',
+    description: 'Instruction text for dragging components to other groups for content experiments',
+  },
+  sidebarSplitTestExperimentComponentTitle: {
+    id: 'course-authoring.course-unit.split-test.sidebar.experiment-component.title',
+    defaultMessage: 'Working with content experiments',
+    description: 'Title for the section that explains how to work with content experiments',
+  },
+  sidebarSplitTestExperimentComponentInstruction: {
+    id: 'course-authoring.course-unit.split-test.sidebar.experiment-component.confirm-config',
+    defaultMessage: 'Confirm that you have properly configured content in each of your experiment groups.',
+    description: 'Instruction text reminding users to check content configuration in each experiment group',
+  },
+  sidebarSplitTestLearnMoreLinkLabel: {
+    id: 'course-authoring.course-unit.split-test.sidebar.learn-more-link.label',
+    defaultMessage: 'Learn more about component containers',
+    description: 'Text for a link that directs users to more information about component containers in the split test setup.',
+  },
 });
 
 export default messages;

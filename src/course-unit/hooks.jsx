@@ -4,6 +4,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useToggle } from '@openedx/paragon';
+import { camelCaseObject } from '@edx/frontend-platform/utils';
 
 import { RequestStatus } from '../data/constants';
 import { useClipboard } from '../generic/clipboard';
@@ -46,6 +47,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
   const { sendMessageToIframe } = useIframe();
+  const [addComponentTemplateData, setAddComponentTemplateData] = useState({});
   const [isMoveModalOpen, openMoveModal, closeMoveModal] = useToggle(false);
 
   const courseUnit = useSelector(getCourseUnitData);
@@ -68,6 +70,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const sequenceId = courseUnit.ancestorInfo?.ancestors[0].id;
   const isUnitVerticalType = unitCategory === COURSE_BLOCK_NAMES.vertical.id;
   const isUnitLibraryType = unitCategory === COURSE_BLOCK_NAMES.libraryContent.id;
+  const isSplitTestType = unitCategory === COURSE_BLOCK_NAMES.splitTest.id;
 
   const headerNavigationsActions = {
     handleViewLive: () => {
@@ -76,7 +79,13 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     handlePreview: () => {
       window.open(draftPreviewLink, '_blank');
     },
-    handleEdit: () => {},
+    handleEdit: () => {
+      window.postMessage({
+        type: messageTypes.editXBlock,
+        message: 'Sends a message for display the legacy modal window',
+        payload: { id: courseUnit.id },
+      }, window.location.origin);
+    },
   };
 
   const handleTitleEdit = () => {
@@ -170,6 +179,10 @@ export const useCourseUnit = ({ courseId, blockId }) => {
       const { usageId } = payload;
       navigate(`/course/${courseId}/container/${usageId}/${sequenceId}`);
     }
+
+    if (type === messageTypes.showComponentTemplates) {
+      setAddComponentTemplateData(camelCaseObject(payload));
+    }
   }, [courseId, sequenceId]);
 
   useEventListener('message', receiveMessage);
@@ -183,11 +196,16 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   useEffect(() => {
     dispatch(fetchCourseUnitQuery(blockId));
     dispatch(fetchCourseSectionVerticalData(blockId, sequenceId));
-    dispatch(fetchCourseVerticalChildrenData(blockId));
-
+    dispatch(fetchCourseVerticalChildrenData(blockId, isSplitTestType));
     handleNavigate(sequenceId);
     dispatch(updateMovedXBlockParams({ isSuccess: false }));
   }, [courseId, blockId, sequenceId]);
+
+  useEffect(() => {
+    if (isSplitTestType) {
+      dispatch(fetchCourseVerticalChildrenData(blockId, isSplitTestType));
+    }
+  }, [isSplitTestType, blockId]);
 
   useEffect(() => {
     if (isMoveModalOpen && !Object.keys(courseOutlineInfo).length) {
@@ -209,6 +227,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     isTitleEditFormOpen,
     isUnitVerticalType,
     isUnitLibraryType,
+    isSplitTestType,
     sharedClipboardData,
     showPasteXBlock,
     showPasteUnit,
@@ -227,6 +246,8 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     handleCloseXBlockMovedAlert,
     movedXBlockParams,
     handleNavigateToTargetUnit,
+    addComponentTemplateData,
+    setAddComponentTemplateData,
   };
 };
 

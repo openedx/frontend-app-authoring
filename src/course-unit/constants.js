@@ -76,4 +76,8 @@ export const messageTypes = {
   studioAjaxError: 'studioAjaxError',
   refreshPositions: 'refreshPositions',
   openManageTags: 'openManageTags',
+  showComponentTemplates: 'showComponentTemplates',
+  addNewComponent: 'addNewComponent',
+  pasteNewComponent: 'pasteComponent',
+  hideProcessingNotification: 'hideProcessingNotification',
 };

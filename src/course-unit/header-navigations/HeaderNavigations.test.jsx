@@ -18,6 +18,7 @@ const headerNavigationsActions = {
 const renderComponent = (props) => render(
   <IntlProvider locale="en">
     <HeaderNavigations
+      category={COURSE_BLOCK_NAMES.vertical.id}
       headerNavigationsActions={headerNavigationsActions}
       {...props}
     />
@@ -47,17 +48,17 @@ describe('<HeaderNavigations />', () => {
     expect(editButton).not.toBeInTheDocument();
   });
 
-  it('calls the correct handlers when clicking buttons for library page', () => {
-    const { getByRole, queryByRole } = renderComponent({ unitCategory: COURSE_BLOCK_NAMES.libraryContent.id });
+  ['libraryContent', 'splitTest'].forEach((category) => {
+    it(`calls the correct handlers when clicking buttons for ${category} page`, () => {
+      const { getByRole, queryByRole } = renderComponent({ category: COURSE_BLOCK_NAMES[category].id });
 
-    const editButton = getByRole('button', { name: messages.editButton.defaultMessage });
-    fireEvent.click(editButton);
-    expect(handleViewLiveFn).toHaveBeenCalledTimes(1);
+      const editButton = getByRole('button', { name: messages.editButton.defaultMessage });
+      fireEvent.click(editButton);
+      expect(handleViewLiveFn).toHaveBeenCalledTimes(1);
 
-    const viewLiveButton = queryByRole('button', { name: messages.viewLiveButton.defaultMessage });
-    expect(viewLiveButton).not.toBeInTheDocument();
-
-    const previewButton = queryByRole('button', { name: messages.previewButton.defaultMessage });
-    expect(previewButton).not.toBeInTheDocument();
+      [messages.viewLiveButton.defaultMessage, messages.previewButton.defaultMessage].forEach((btnName) => {
+        expect(queryByRole('button', { name: btnName })).not.toBeInTheDocument();
+      });
+    });
   });
 });

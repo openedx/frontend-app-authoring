@@ -14,13 +14,14 @@ const ComponentModalView = ({
   component,
   modalParams,
   handleCreateNewXBlock,
+  isRequestedModalView,
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
   const [moduleTitle, setModuleTitle] = useState('');
   const { open, close, isOpen } = modalParams;
   const {
-    type, displayName, templates, supportLegend,
+    type, displayName, templates = [], supportLegend,
   } = component;
   const supportLabels = getXBlockSupportMessages(intl);
 
@@ -30,15 +31,19 @@ const ComponentModalView = ({
     setModuleTitle('');
   };
 
+  const renderAddComponentButton = () => (
+    <li>
+      <AddComponentButton
+        onClick={open}
+        type={type}
+        displayName={displayName}
+      />
+    </li>
+  );
+
   return (
     <>
-      <li>
-        <AddComponentButton
-          onClick={open}
-          type={type}
-          displayName={displayName}
-        />
-      </li>
+      {!isRequestedModalView && renderAddComponentButton()}
       <ModalContainer
         isOpen={isOpen}
         close={close}
@@ -92,6 +97,10 @@ const ComponentModalView = ({
   );
 };
 
+ComponentModalView.defaultProps = {
+  isRequestedModalView: false,
+};
+
 ComponentModalView.propTypes = {
   modalParams: PropTypes.shape({
     open: PropTypes.func,
@@ -117,6 +126,7 @@ ComponentModalView.propTypes = {
       showLegend: PropTypes.bool,
     }),
   }).isRequired,
+  isRequestedModalView: PropTypes.bool,
 };
 
 export default ComponentModalView;

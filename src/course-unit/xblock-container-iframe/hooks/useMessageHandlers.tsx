@@ -27,6 +27,8 @@ export const useMessageHandlers = ({
   handleSaveEditedXBlockData,
   handleFinishXBlockDragging,
   handleOpenManageTagsModal,
+  handleAddNewComponent,
+  handleHideProcessingNotification,
 }: UseMessageHandlersTypes): MessageHandlersTypes => {
   const { copyToClipboard } = useClipboard();
 
@@ -46,6 +48,9 @@ export const useMessageHandlers = ({
     [messageTypes.studioAjaxError]: ({ error }) => handleResponseErrors(error, dispatch, updateSavingStatus),
     [messageTypes.refreshPositions]: handleFinishXBlockDragging,
     [messageTypes.openManageTags]: (payload) => handleOpenManageTagsModal(payload.contentId),
+  [messageTypes.addNewComponent]: () => handleAddNewComponent(messageTypes.addNewComponent),
+  [messageTypes.pasteNewComponent]: () => handleAddNewComponent(messageTypes.pasteNewComponent),
+  [messageTypes.hideProcessingNotification]: handleHideProcessingNotification,
   }), [
     courseId,
     handleDeleteXBlock,
