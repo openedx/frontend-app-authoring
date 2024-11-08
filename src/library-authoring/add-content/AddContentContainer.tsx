@@ -166,9 +166,7 @@ const AddContentContainer = () => {
   }
 
   const linkComponent = (usageKey: string) => {
-    updateComponentsMutation.mutateAsync([usageKey]).then(() => {
-      showToast(intl.formatMessage(messages.successAssociateComponentMessage));
-    }).catch(() => {
+    updateComponentsMutation.mutateAsync([usageKey]).catch(() => {
       showToast(intl.formatMessage(messages.errorAssociateComponentMessage));
     });
   };
@@ -230,10 +228,6 @@ const AddContentContainer = () => {
 
   if (pasteClipboardMutation.isLoading) {
     showToast(intl.formatMessage(messages.pastingClipboardMessage));
-  }
-
-  if (updateComponentsMutation.isLoading) {
-    showToast(intl.formatMessage(messages.linkingComponentMessage));
   }
 
   return (
