@@ -1,7 +1,8 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useToggle } from '@openedx/paragon';
+import { camelCaseObject } from '@edx/frontend-platform/utils';
 
 import { RequestStatus } from '../data/constants';
 import { useCopyToClipboard } from '../generic/clipboard';
@@ -43,6 +44,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
   const { sendMessageToIframe } = useIframe();
+  const [addComponentTemplateData, setAddComponentTemplateData] = useState({});
   const [isMoveModalOpen, openMoveModal, closeMoveModal] = useToggle(false);
 
   const courseUnit = useSelector(getCourseUnitData);
@@ -113,8 +115,8 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     }
   };
 
-  const handleCreateNewCourseXBlock = (body, callback) => (
-    dispatch(createNewCourseXBlock(body, callback, blockId))
+  const handleCreateNewCourseXBlock = (body, callback, preventDisplayLoading) => (
+    dispatch(createNewCourseXBlock(body, callback, blockId, preventDisplayLoading))
   );
 
   const unitXBlockActions = {
@@ -149,12 +151,25 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     navigate(`/course/${courseId}/container/${movedXBlockParams.targetParentLocator}`);
   };
 
+  const handleSubmitAddComponentModal = () => {
+    // TODO: this artificial delay is a temporary solution
+    // to ensure the iframe content is properly refreshed.
+    setTimeout(() => {
+      setAddComponentTemplateData({});
+      sendMessageToIframe(messageTypes.refreshXBlock, null);
+    }, 1000);
+  };
+
   const receiveMessage = useCallback(({ data }) => {
     const { payload, type } = data;
 
     if (type === messageTypes.handleViewXBlockContent) {
       const newUnitId = payload.destination.split('/').pop();
       navigate(`/course/${courseId}/container/${newUnitId}/${sequenceId}`);
+    }
+
+    if (type === messageTypes.showComponentTemplates) {
+      setAddComponentTemplateData(camelCaseObject(payload));
     }
   }, []);
 
@@ -210,5 +225,8 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     handleCloseXBlockMovedAlert,
     movedXBlockParams,
     handleNavigateToTargetUnit,
+    addComponentTemplateData,
+    setAddComponentTemplateData,
+    handleSubmitAddComponentModal,
   };
 };

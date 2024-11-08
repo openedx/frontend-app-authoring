@@ -43,9 +43,10 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({ blockId }) => {
       allow={IFRAME_FEATURE_POLICY}
       allowFullScreen
       loading="lazy"
-      style={{ width: '100%', height: iframeHeight + IFRAME_BOTTOM_OFFSET }}
+      style={{ height: iframeHeight + IFRAME_BOTTOM_OFFSET }}
       scrolling="no"
       referrerPolicy="origin"
+      className="xblock-container-iframe"
     />
   );
 };

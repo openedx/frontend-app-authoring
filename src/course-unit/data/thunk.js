@@ -157,11 +157,12 @@ export function editCourseUnitVisibilityAndData(
   };
 }
 
-export function createNewCourseXBlock(body, callback, blockId) {
+export function createNewCourseXBlock(body, callback, blockId, preventDisplayLoading) {
   return async (dispatch) => {
-    dispatch(updateLoadingCourseXblockStatus({ status: RequestStatus.IN_PROGRESS }));
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-
+    if (!preventDisplayLoading) {
+      dispatch(updateLoadingCourseXblockStatus({ status: RequestStatus.IN_PROGRESS }));
+    }
     if (body.stagedContent) {
       dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.pasting));
     } else {
@@ -187,8 +188,10 @@ export function createNewCourseXBlock(body, callback, blockId) {
           const courseVerticalChildrenData = await getCourseVerticalChildren(blockId);
           dispatch(updateCourseVerticalChildren(courseVerticalChildrenData));
           dispatch(hideProcessingNotification());
-          dispatch(updateLoadingCourseXblockStatus({ status: RequestStatus.SUCCESSFUL }));
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+          if (!preventDisplayLoading) {
+            dispatch(updateLoadingCourseXblockStatus({ status: RequestStatus.SUCCESSFUL }));
+          }
           if (callback) {
             callback(result);
           }
@@ -199,7 +202,9 @@ export function createNewCourseXBlock(body, callback, blockId) {
       });
     } catch (error) {
       dispatch(hideProcessingNotification());
-      dispatch(updateLoadingCourseXblockStatus({ status: RequestStatus.FAILED }));
+      if (!preventDisplayLoading) {
+        dispatch(updateLoadingCourseXblockStatus({ status: RequestStatus.FAILED }));
+      }
       handleResponseErrors(error, dispatch, updateSavingStatus);
     }
   };
@@ -284,6 +289,8 @@ export function patchUnitItemQuery({
       dispatch(hideProcessingNotification());
       dispatch(updateCourseOutlineInfo({}));
       dispatch(updateCourseOutlineInfoLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
+      const courseUnit = await getCourseUnitData(currentParentLocator);
+      dispatch(fetchCourseItemSuccess(courseUnit));
       callbackFn();
     } catch (error) {
       handleResponseErrors(error, dispatch, updateSavingStatus);

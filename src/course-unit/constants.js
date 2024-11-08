@@ -53,6 +53,7 @@ export const messageTypes = {
   refreshXBlock: 'refreshXBlock',
   showMoveXBlockModal: 'showMoveXBlockModal',
   handleViewXBlockContent: 'handleViewXBlockContent',
+  showComponentTemplates: 'showComponentTemplates',
 };
 
 export const IFRAME_FEATURE_POLICY = (

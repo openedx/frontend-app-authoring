@@ -29,6 +29,7 @@ import Breadcrumbs from './breadcrumbs/Breadcrumbs';
 import HeaderNavigations from './header-navigations/HeaderNavigations';
 import Sequence from './course-sequence';
 import Sidebar from './sidebar';
+import SplitTestSidebarInfo from './sidebar/SplitTestSidebarInfo';
 import { useCourseUnit } from './hooks';
 import messages from './messages';
 import PublishControls from './sidebar/PublishControls';
@@ -68,10 +69,14 @@ const CourseUnit = ({ courseId }) => {
     handleRollbackMovedXBlock,
     handleCloseXBlockMovedAlert,
     handleNavigateToTargetUnit,
+    addComponentTemplateData,
+    setAddComponentTemplateData,
+    handleSubmitAddComponentModal,
   } = useCourseUnit({ courseId, blockId });
 
   const isUnitVerticalType = unitCategory === COURSE_BLOCK_NAMES.vertical.id;
   const isUnitLibraryType = unitCategory === COURSE_BLOCK_NAMES.libraryContent.id;
+  const isSplitTestType = unitCategory === COURSE_BLOCK_NAMES.splitTest.id;
 
   const unitLayout = [{ span: 12 }, { span: 0 }];
   const defaultLayout = {
@@ -161,7 +166,7 @@ const CourseUnit = ({ courseId }) => {
             )}
             headerActions={(
               <HeaderNavigations
-                unitCategory={unitCategory}
+                category={unitCategory}
                 headerNavigationsActions={headerNavigationsActions}
               />
             )}
@@ -192,12 +197,14 @@ const CourseUnit = ({ courseId }) => {
                 />
               )}
               <XBlockContainerIframe blockId={blockId} />
-              {isUnitVerticalType && (
-                <AddComponent
-                  blockId={blockId}
-                  handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
-                />
-              )}
+              <AddComponent
+                isUnitVerticalType={isUnitVerticalType}
+                parentLocator={blockId}
+                handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
+                handleSubmitAddComponentModal={handleSubmitAddComponentModal}
+                addComponentTemplateData={addComponentTemplateData}
+                setAddComponentTemplateData={setAddComponentTemplateData}
+              />
               {showPasteXBlock && canPasteComponent && isUnitVerticalType && (
                 <PasteComponent
                   clipboardData={sharedClipboardData}
@@ -228,6 +235,11 @@ const CourseUnit = ({ courseId }) => {
                       <LocationInfo />
                     </Sidebar>
                   </>
+                )}
+                {isSplitTestType && (
+                  <Sidebar data-testid="course-split-test-sidebar">
+                    <SplitTestSidebarInfo />
+                  </Sidebar>
                 )}
               </Stack>
             </Layout.Element>
