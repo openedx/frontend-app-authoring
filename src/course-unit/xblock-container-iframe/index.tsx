@@ -6,31 +6,38 @@ import { useToggle, Sheet } from '@openedx/paragon';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
+import {
+  hideProcessingNotification,
+  showProcessingNotification,
+} from '../../generic/processing-notification/data/slice';
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import ConfigureModal from '../../generic/configure-modal/ConfigureModal';
 import ModalIframe from '../../generic/modal-iframe';
-import { IFRAME_FEATURE_POLICY } from '../../constants';
+import { IFRAME_FEATURE_POLICY, NOTIFICATION_MESSAGES } from '../../constants';
 import ContentTagsDrawer from '../../content-tags-drawer/ContentTagsDrawer';
 import supportedEditors from '../../editors/supportedEditors';
 import { useIframe } from '../context/hooks';
-import { updateCourseUnitSidebar } from '../data/thunk';
+import {
+  fetchCourseSectionVerticalData,
+  fetchCourseVerticalChildrenData,
+  updateCourseUnitSidebar,
+} from '../data/thunk';
+import { messageTypes } from '../constants';
 import {
   useMessageHandlers,
   useIframeContent,
   useIframeMessages,
   useIFrameBehavior,
 } from './hooks';
-import { formatAccessManagedXBlockData, getIframeUrl, getLegacyEditModalUrl } from './utils';
-import messages from './messages';
-import { messageTypes } from '../constants';
-
 import {
   XBlockContainerIframeProps,
   AccessManagedXBlockDataTypes,
 } from './types';
+import { formatAccessManagedXBlockData, getIframeUrl, getLegacyEditModalUrl } from './utils';
+import messages from './messages';
 
 const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
-  courseId, blockId, unitXBlockActions, courseVerticalChildren, handleConfigureSubmit,
+  courseId, blockId, unitXBlockActions, courseVerticalChildren, handleConfigureSubmit, isUnitVerticalType,
 }) => {
   const intl = useIntl();
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -116,6 +123,9 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const handleSaveEditedXBlockData = () => {
     sendMessageToIframe(messageTypes.completeXBlockEditing, { locator: configureXBlockId });
     dispatch(updateCourseUnitSidebar(blockId));
+    if (!isUnitVerticalType) {
+      dispatch(fetchCourseSectionVerticalData(blockId));
+    }
   };
 
   const handleFinishXBlockDragging = () => {
@@ -125,6 +135,19 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const handleOpenManageTagsModal = (id: string) => {
     setConfigureXBlockId(id);
     openManageTagsModal();
+  };
+
+  const handleAddNewComponent = (variant: string) => {
+    if (variant === messageTypes.pasteNewComponent) {
+      dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.pasting));
+    } else {
+      dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.adding));
+    }
+  };
+
+  const handleHideProcessingNotification = () => {
+    dispatch(fetchCourseVerticalChildrenData(blockId, true, true));
+    dispatch(hideProcessingNotification());
   };
 
   const messageHandlers = useMessageHandlers({
@@ -141,6 +164,8 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     handleSaveEditedXBlockData,
     handleFinishXBlockDragging,
     handleOpenManageTagsModal,
+    handleAddNewComponent,
+    handleHideProcessingNotification,
   });
 
   useIframeMessages(messageHandlers);
@@ -181,9 +206,10 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
         allow={IFRAME_FEATURE_POLICY}
         allowFullScreen
         loading="lazy"
-        style={{ width: '100%', height: iframeHeight + iframeOffset }}
+        style={{ height: iframeHeight + iframeOffset }}
         scrolling="no"
         referrerPolicy="origin"
+        className="xblock-container-iframe"
         aria-label={intl.formatMessage(messages.xblockIframeLabel, { xblockCount: courseVerticalChildren.length })}
       />
       {configureXBlockId && (

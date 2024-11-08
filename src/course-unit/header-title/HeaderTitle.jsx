@@ -26,7 +26,13 @@ const HeaderTitle = ({
   const [titleValue, setTitleValue] = useState(unitTitle);
   const currentItemData = useSelector(getCourseUnitData);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
-  const { selectedPartitionIndex, selectedGroupsLabel } = currentItemData.userPartitionInfo;
+  const { selectedPartitionIndex, selectedGroupsLabel } = currentItemData.userPartitionInfo ?? {};
+
+  const isXBlockComponent = [
+    COURSE_BLOCK_NAMES.libraryContent.id,
+    COURSE_BLOCK_NAMES.splitTest.id,
+    COURSE_BLOCK_NAMES.component.id,
+  ].includes(currentItemData.category);
 
   const onConfigureSubmit = (...arg) => {
     handleConfigureSubmit(currentItemData.id, ...arg, closeConfigureModal);
@@ -87,9 +93,8 @@ const HeaderTitle = ({
           onConfigureSubmit={onConfigureSubmit}
           currentItemData={currentItemData}
           isSelfPaced={false}
-          isXBlockComponent={
-            [COURSE_BLOCK_NAMES.libraryContent.id, COURSE_BLOCK_NAMES.component.id].includes(currentItemData.category)
-          }
+          isXBlockComponent={isXBlockComponent}
+          userPartitionInfo={currentItemData?.userPartitionInfo || {}}
         />
       </div>
       {getVisibilityMessage()}
