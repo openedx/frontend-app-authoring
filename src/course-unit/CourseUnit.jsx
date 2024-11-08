@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -6,9 +6,7 @@ import { Container, Layout, Stack } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl, injectIntl } from '@edx/frontend-platform/i18n';
 import { Warning as WarningIcon } from '@openedx/paragon/icons';
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 
-import DraggableList from '../editors/sharedComponents/DraggableList';
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
 import SubHeader from '../generic/sub-header/SubHeader';
 import { RequestStatus } from '../data/constants';
@@ -20,7 +18,6 @@ import { SavingErrorAlert } from '../generic/saving-error-alert';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 import Loading from '../generic/Loading';
 import AddComponent from './add-component/AddComponent';
-import CourseXBlock from './course-xblock/CourseXBlock';
 import HeaderTitle from './header-title/HeaderTitle';
 import Breadcrumbs from './breadcrumbs/Breadcrumbs';
 import HeaderNavigations from './header-navigations/HeaderNavigations';
@@ -32,6 +29,7 @@ import PublishControls from './sidebar/PublishControls';
 import LocationInfo from './sidebar/LocationInfo';
 import TagsSidebarControls from '../content-tags-drawer/tags-sidebar-controls';
 import { PasteNotificationAlert } from './clipboard';
+import XBlockContainerIframe from './xblock-container-iframe';
 
 const CourseUnit = ({ courseId }) => {
   const { blockId } = useParams();
@@ -56,20 +54,12 @@ const CourseUnit = ({ courseId }) => {
     handleCreateNewCourseXBlock,
     handleConfigureSubmit,
     courseVerticalChildren,
-    handleXBlockDragAndDrop,
     canPasteComponent,
   } = useCourseUnit({ courseId, blockId });
-
-  const initialXBlocksData = useMemo(() => courseVerticalChildren.children ?? [], [courseVerticalChildren.children]);
-  const [unitXBlocks, setUnitXBlocks] = useState(initialXBlocksData);
 
   useEffect(() => {
     document.title = getPageHeadTitle('', unitTitle);
   }, [unitTitle]);
-
-  useEffect(() => {
-    setUnitXBlocks(courseVerticalChildren.children);
-  }, [courseVerticalChildren.children]);
 
   const {
     isShow: isShowProcessingNotification,
@@ -87,12 +77,6 @@ const CourseUnit = ({ courseId }) => {
       </Container>
     );
   }
-
-  const finalizeXBlockOrder = () => (newXBlocks) => {
-    handleXBlockDragAndDrop(newXBlocks.map(xBlock => xBlock.id), () => {
-      setUnitXBlocks(initialXBlocksData);
-    });
-  };
 
   return (
     <>
@@ -147,37 +131,11 @@ const CourseUnit = ({ courseId }) => {
                   courseId={courseId}
                 />
               )}
-              <Stack className="mb-4 course-unit__xblocks">
-                <DraggableList
-                  itemList={unitXBlocks}
-                  setState={setUnitXBlocks}
-                  updateOrder={finalizeXBlockOrder}
-                >
-                  <SortableContext
-                    id="root"
-                    items={unitXBlocks}
-                    strategy={verticalListSortingStrategy}
-                  >
-                    {unitXBlocks.map(({
-                      name, id, blockType: type, shouldScroll, userPartitionInfo, validationMessages,
-                    }) => (
-                      <CourseXBlock
-                        id={id}
-                        key={id}
-                        title={name}
-                        type={type}
-                        blockId={blockId}
-                        validationMessages={validationMessages}
-                        shouldScroll={shouldScroll}
-                        handleConfigureSubmit={handleConfigureSubmit}
-                        unitXBlockActions={unitXBlockActions}
-                        data-testid="course-xblock"
-                        userPartitionInfo={userPartitionInfo}
-                      />
-                    ))}
-                  </SortableContext>
-                </DraggableList>
-              </Stack>
+              <XBlockContainerIframe
+                blockId={blockId}
+                unitXBlockActions={unitXBlockActions}
+                courseVerticalChildren={courseVerticalChildren.children}
+              />
               <AddComponent
                 blockId={blockId}
                 handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
