@@ -18,6 +18,8 @@ import { executeThunk } from '../utils';
 import { studioHomeMock } from './__mocks__';
 import { getStudioHomeApiUrl } from './data/api';
 import { fetchStudioHomeData } from './data/thunks';
+import { getApiWaffleFlagsUrl } from '../data/api';
+import { fetchWaffleFlags } from '../data/thunks';
 import messages from './messages';
 import createNewCourseMessages from './create-new-course-form/messages';
 import createOrRerunCourseMessages from '../generic/create-or-rerun-course/messages';
@@ -84,6 +86,10 @@ describe('<StudioHome />', () => {
       axiosMock = new MockAdapter(getAuthenticatedHttpClient());
       axiosMock.onGet(getStudioHomeApiUrl()).reply(404);
       await executeThunk(fetchStudioHomeData(), store.dispatch);
+      axiosMock
+        .onGet(getApiWaffleFlagsUrl())
+        .reply(200, {});
+      await executeThunk(fetchWaffleFlags(), store.dispatch);
       useSelector.mockReturnValue({ studioHomeLoadingStatus: RequestStatus.FAILED });
     });
 
@@ -113,6 +119,10 @@ describe('<StudioHome />', () => {
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
       await executeThunk(fetchStudioHomeData(), store.dispatch);
       useSelector.mockReturnValue(studioHomeMock);
+      axiosMock
+        .onGet(getApiWaffleFlagsUrl())
+        .reply(200, {});
+      await executeThunk(fetchWaffleFlags(), store.dispatch);
     });
 
     it('should render page and page title correctly', () => {

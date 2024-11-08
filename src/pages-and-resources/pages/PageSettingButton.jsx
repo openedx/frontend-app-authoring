@@ -1,36 +1,64 @@
-import React, { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Icon, IconButton, Hyperlink } from '@openedx/paragon';
+import { Icon, IconButton } from '@openedx/paragon';
 import { ArrowForward, Settings } from '@openedx/paragon/icons';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+
+import { getWaffleFlags } from '../../data/selectors';
 import messages from '../messages';
 import { PagesAndResourcesContext } from '../PagesAndResourcesProvider';
 
 const PageSettingButton = ({
   id,
+  courseId,
   legacyLink,
   allowedOperations,
 }) => {
   const { formatMessage } = useIntl();
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
   const navigate = useNavigate();
+  const waffleFlags = useSelector(getWaffleFlags);
 
-  if (legacyLink) {
+  const determineLinkDestination = useMemo(() => {
+    if (!legacyLink) { return null; }
+
+    if (legacyLink.includes('textbooks')) {
+      return waffleFlags.useNewTextbooksPage
+        ? `/course/${courseId}/${id.replace('_', '-')}`
+        : legacyLink;
+    }
+
+    if (legacyLink.includes('tabs')) {
+      return waffleFlags.useNewCustomPages
+        ? `/course/${courseId}/${id.replace('_', '-')}`
+        : legacyLink;
+    }
+
+    return null;
+  }, [legacyLink, waffleFlags, id]);
+
+  const canConfigureOrEnable = allowedOperations?.configure || allowedOperations?.enable;
+
+  if (determineLinkDestination) {
     return (
-      <Hyperlink destination={legacyLink}>
+      <Link to={determineLinkDestination}>
         <IconButton
           src={ArrowForward}
           iconAs={Icon}
           size="inline"
           alt={formatMessage(messages.settings)}
         />
-      </Hyperlink>
+      </Link>
     );
-  } if (!(allowedOperations?.configure || allowedOperations?.enable)) {
+  }
+
+  if (!canConfigureOrEnable) {
     return null;
   }
+
   return (
     <IconButton
       src={Settings}
@@ -45,10 +73,12 @@ const PageSettingButton = ({
 PageSettingButton.defaultProps = {
   legacyLink: null,
   allowedOperations: null,
+  courseId: null,
 };
 
 PageSettingButton.propTypes = {
   id: PropTypes.string.isRequired,
+  courseId: PropTypes.string,
   legacyLink: PropTypes.string,
   allowedOperations: PropTypes.shape({
     configure: PropTypes.bool,

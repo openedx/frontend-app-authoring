@@ -1,13 +1,13 @@
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { addModel } from '../generic/model-store';
-import { getCourseDetail } from './api';
+import { getCourseDetail, getWaffleFlags } from './api';
 import {
   updateStatus,
   updateCanChangeProviders,
+  fetchWaffleFlagsSuccess,
 } from './slice';
 import { RequestStatus } from './constants';
 
-/* eslint-disable import/prefer-default-export */
 export function fetchCourseDetail(courseId) {
   return async (dispatch) => {
     dispatch(updateStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
@@ -27,5 +27,15 @@ export function fetchCourseDetail(courseId) {
         dispatch(updateStatus({ courseId, status: RequestStatus.FAILED }));
       }
     }
+  };
+}
+
+export function fetchWaffleFlags(courseId) {
+  return async (dispatch) => {
+    dispatch(updateStatus({ courseId, status: RequestStatus.IN_PROGRESS }));
+
+    const waffleFlags = await getWaffleFlags(courseId);
+    dispatch(updateStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
+    dispatch(fetchWaffleFlagsSuccess({ waffleFlags }));
   };
 }

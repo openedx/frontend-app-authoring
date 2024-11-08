@@ -1,15 +1,23 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import { injectIntl, FormattedMessage, FormattedNumber } from '@edx/frontend-platform/i18n';
-import { Hyperlink, Icon } from '@openedx/paragon';
+import { Icon } from '@openedx/paragon';
+import { Link } from 'react-router-dom';
 import { ModeComment } from '@openedx/paragon/icons';
+import { getConfig } from '@edx/frontend-platform';
+import { getWaffleFlags } from '../../data/selectors';
 import messages from './messages';
 
 const ChecklistItemComment = ({
+  courseId,
   checkId,
-  outlineUrl,
   data,
 }) => {
+  const waffleFlags = useSelector(getWaffleFlags);
+
+  const getPathToCourseOutlinePage = (assignmentId) => (waffleFlags.useNewCourseOutlinePage
+    ? `/course/${courseId}#${assignmentId}` : `${getConfig().STUDIO_BASE_URL}/course/${courseId}#${assignmentId}`);
+
   const commentWrapper = (comment) => (
     <div className="row m-0 mt-3 pt-3 border-top align-items-center" data-identifier="comment">
       <div className="mr-4">
@@ -79,9 +87,9 @@ const ChecklistItemComment = ({
         <ul className="assignment-list">
           {gradedAssignmentsOutsideDateRange.map(assignment => (
             <li className="assignment-list-item" key={assignment.id}>
-              <Hyperlink destination={`${outlineUrl}#${assignment.id}`}>
+              <Link to={getPathToCourseOutlinePage(assignment.id)}>
                 {assignment.displayName}
-              </Hyperlink>
+              </Link>
             </li>
           ))}
         </ul>
@@ -96,6 +104,7 @@ const ChecklistItemComment = ({
 };
 
 ChecklistItemComment.propTypes = {
+  courseId: PropTypes.string.isRequired,
   checkId: PropTypes.string.isRequired,
   outlineUrl: PropTypes.string.isRequired,
   data: PropTypes.oneOfType([

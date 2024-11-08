@@ -12,6 +12,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 import { Link } from 'react-router-dom';
 
+import { getWaffleFlags } from '../../data/selectors';
 import { COURSE_CREATOR_STATES } from '../../constants';
 import { getStudioHomeData } from '../data/selectors';
 import messages from '../messages';
@@ -60,7 +61,13 @@ const CardItem: React.FC<Props> = ({
     courseCreatorStatus,
     rerunCreatorStatus,
   } = useSelector(getStudioHomeData);
-  const destinationUrl: string = path ?? new URL(url, getConfig().STUDIO_BASE_URL).toString();
+  const waffleFlags = useSelector(getWaffleFlags);
+
+  const destinationUrl: string = path ?? (
+    waffleFlags.useNewCourseOutlinePage
+      ? url
+      : new URL(url, getConfig().STUDIO_BASE_URL).toString()
+  );
   const subtitle = isLibraries ? `${org} / ${number}` : `${org} / ${number} / ${run}`;
   const readOnlyItem = !(lmsLink || rerunLink || url || path);
   const showActions = !(readOnlyItem || isLibraries);
@@ -95,7 +102,10 @@ const CardItem: React.FC<Props> = ({
               />
               <Dropdown.Menu>
                 {isShowRerunLink && (
-                  <Dropdown.Item href={trimSlashes(rerunLink ?? '')}>
+                  <Dropdown.Item
+                    as={Link}
+                    to={rerunLink ?? ''}
+                  >
                     {messages.btnReRunText.defaultMessage}
                   </Dropdown.Item>
                 )}

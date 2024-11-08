@@ -13,7 +13,6 @@ import AriaLiveRegion from './AriaLiveRegion';
 import { RequestStatus } from '../data/constants';
 import ChecklistSection from './ChecklistSection';
 import { fetchCourseLaunchQuery, fetchCourseBestPracticesQuery } from './data/thunks';
-import getUpdateLinks from './utils';
 
 const CourseChecklist = ({
   courseId,
@@ -23,7 +22,6 @@ const CourseChecklist = ({
   const dispatch = useDispatch();
   const courseDetails = useModel('courseDetails', courseId);
   const enableQuality = getConfig().ENABLE_CHECKLIST_QUALITY === 'true';
-  const updateLinks = getUpdateLinks(courseId);
 
   useEffect(() => {
     dispatch(fetchCourseLaunchQuery({ courseId }));
@@ -66,19 +64,19 @@ const CourseChecklist = ({
         />
         <Stack gap={4}>
           <ChecklistSection
+            courseId={courseId}
             dataHeading={intl.formatMessage(messages.launchChecklistLabel)}
             data={launchData}
             idPrefix="launchChecklist"
             isLoading={isCourseLaunchChecklistLoading}
-            updateLinks={updateLinks}
           />
           {enableQuality && (
             <ChecklistSection
+              courseId={courseId}
               dataHeading={intl.formatMessage(messages.bestPracticesChecklistLabel)}
               data={bestPracticeData}
               idPrefix="bestPracticesChecklist"
               isLoading={isCourseBestPracticeChecklistLoading}
-              updateLinks={updateLinks}
             />
           )}
         </Stack>

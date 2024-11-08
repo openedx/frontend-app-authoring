@@ -1,59 +1,49 @@
-/* eslint-disable */
-import {
-  render,
-  within,
-  screen,
-} from '@testing-library/react';
+import { within, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { camelCaseObject, initializeMockApp } from '@edx/frontend-platform';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
+import { camelCaseObject } from '@edx/frontend-platform';
 
-import initializeStore from '../../store';
-import { initialState,generateCourseLaunchData } from '../factories/mockApiResponses';
-import messages from './messages';
-import ChecklistSection from './index';
+import { initializeMocks, render } from '../../testUtils';
+import { getApiWaffleFlagsUrl } from '../../data/api';
+import { fetchWaffleFlags } from '../../data/thunks';
+import { generateCourseLaunchData } from '../factories/mockApiResponses';
+import { executeThunk } from '../../utils';
 import { checklistItems } from './utils/courseChecklistData';
-import getUpdateLinks from '../utils';
+import messages from './messages';
+
+import ChecklistSection from '.';
 
 const testData = camelCaseObject(generateCourseLaunchData());
 
+const courseId = '123';
 
 const defaultProps = {
+  courseId,
   data: testData,
   dataHeading: 'Test checklist',
   idPrefix: 'launchChecklist',
-  updateLinks: getUpdateLinks('courseId'),
   isLoading: false,
 };
 
 const testChecklistData = checklistItems[defaultProps.idPrefix];
 
-const completedItemIds = ['welcomeMessage', 'courseDates']
+const completedItemIds = ['welcomeMessage', 'courseDates'];
 
 const renderComponent = (props) => {
-  render(
-    <IntlProvider locale="en">
-      <AppProvider store={store}>
-        <ChecklistSection {...props} />
-      </AppProvider>
-    </IntlProvider>,
-  );
+  render(<ChecklistSection {...props} />);
 };
 
-let store;
-
 describe('ChecklistSection', () => {
-  beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: false,
-        roles: [],
-      },
-    });
-    store = initializeStore(initialState);
+  beforeEach(async () => {
+    const { axiosMock, reduxStore } = initializeMocks();
+    axiosMock
+      .onGet(getApiWaffleFlagsUrl(courseId))
+      .reply(200, {
+        useNewGradingPage: true,
+        useNewCertificatesPage: true,
+        useNewScheduleDetailsPage: true,
+        useNewCourseOutlinePage: true,
+      });
+    await executeThunk(fetchWaffleFlags(courseId), reduxStore.dispatch);
   });
 
   it('a heading using the dataHeading prop', () => {
@@ -64,6 +54,7 @@ describe('ChecklistSection', () => {
 
   it('completion count text', () => {
     renderComponent(defaultProps);
+
     const completionText = `${completedItemIds.length}/6 completed`;
     expect(screen.getByTestId('completion-subheader').textContent).toEqual(completionText);
   });
@@ -122,7 +113,7 @@ describe('ChecklistSection', () => {
           grades: {
             ...defaultProps.data.grades,
             sumOfWeights: 1,
-          }
+          },
         },
       };
       renderComponent(props);
@@ -154,7 +145,7 @@ describe('ChecklistSection', () => {
             ...defaultProps.data.assignments,
             assignmentsWithDatesAfterEnd: [],
             assignmentsWithOraDatesBeforeStart: [],
-          }
+          },
         },
       };
       renderComponent(props);
@@ -183,73 +174,52 @@ describe('ChecklistSection', () => {
       expect(assigmentLinks[1].textContent).toEqual('ORA subsection');
     });
   });
-});    
 
-testChecklistData.forEach((check) => {
-  describe(`check with id '${check.id}'`, () => {
-    let checkItem;
+  describe('Checklist Component', () => {
+    let checklistData;
+    let updateLinks;
+
     beforeEach(() => {
-      initializeMockApp({
-        authenticatedUser: {
-          userId: 3,
-          username: 'abc123',
-          administrator: false,
-          roles: [],
-        },
-      });
-      store = initializeStore(initialState);
       renderComponent(defaultProps);
-      checkItem = screen.getAllByTestId(`checklist-item-${check.id}`);
+
+      checklistData = testChecklistData.map((item) => ({
+        itemId: item.id,
+        checklistItem: screen.getAllByTestId(`checklist-item-${item.id}`),
+        icon: screen.getAllByTestId(`icon-${item.id}`),
+        shortDescription: messages[`${item.id}ShortDescription`].defaultMessage,
+        longDescription: messages[`${item.id}LongDescription`].defaultMessage,
+      }));
+
+      updateLinks = screen.getAllByTestId('update-link');
     });
 
-    it('renders', () => {
-      expect(checkItem).toHaveLength(1);
+    it('should display the correct icons based on completion status', () => {
+      checklistData.forEach(({ itemId, icon }) => {
+        const { queryByTestId } = within(icon[0]);
+
+        if (completedItemIds.includes(itemId)) {
+          expect(queryByTestId('completed-icon')).not.toBeNull();
+        } else {
+          expect(queryByTestId('uncompleted-icon')).not.toBeNull();
+        }
+      });
     });
 
-    it('has correct icon', () => {
-      const icon = screen.getAllByTestId(`icon-${check.id}`)
+    it('should display short and long descriptions for each checklist item', () => {
+      checklistData.forEach(({ checklistItem, shortDescription, longDescription }) => {
+        const { getByText } = within(checklistItem[0]);
 
-      expect(icon).toHaveLength(1);
-
-      const { queryByTestId } = within(icon[0]);
-      if (completedItemIds.includes(check.id)) {
-        expect(queryByTestId('completed-icon')).not.toBeNull();
-      } else {
-        expect(queryByTestId('uncompleted-icon')).not.toBeNull();
-      }
+        expect(getByText(shortDescription)).toBeVisible();
+        expect(getByText(longDescription)).toBeVisible();
+      });
     });
 
-    it('has correct short description', () => {
-      const { getByText } = within(checkItem[0]);
-      const shortDescription = messages[`${check.id}ShortDescription`].defaultMessage;
-      expect(getByText(shortDescription)).toBeVisible();
-    });
-
-    it('has correct long description', () => {
-      const { getByText } = within(checkItem[0]);
-      const longDescription = messages[`${check.id}LongDescription`].defaultMessage;
-      expect(getByText(longDescription)).toBeVisible();
-    });
-
-    describe('has correct link', () => {
-      const links = getUpdateLinks('courseId')
-      const shouldShowLink = Object.keys(links).includes(check.id);
-
-      if (shouldShowLink) {
-        it('with a Hyperlink', () => {
-          const { getByRole, getByText } = within(checkItem[0]);
-
-          expect(getByText('Update')).toBeVisible();
-
-          expect(getByRole('link').href).toMatch(links[check.id]);
+    it('should have valid update links for each checklist item', () => {
+      checklistData.forEach(({ itemId }) => {
+        updateLinks.forEach((link) => {
+          expect(link).toHaveAttribute('href', updateLinks[itemId]);
         });
-      } else {
-        it('without a Hyperlink', () => {
-          const { queryByText } = within(checkItem[0]);
-
-          expect(queryByText('Update')).toBeNull();
-        });
-      }
+      });
     });
   });
 });

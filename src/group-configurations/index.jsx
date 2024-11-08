@@ -87,6 +87,7 @@ const GroupConfigurations = ({ courseId }) => {
               )}
               {shouldShowExperimentGroups && (
                 <ExperimentConfigurationsSection
+                  courseId={courseId}
                   availableGroups={experimentGroupConfigurations}
                   experimentConfigurationActions={experimentConfigurationActions}
                 />

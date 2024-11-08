@@ -12,7 +12,8 @@ import CourseAuthoringPage from './CourseAuthoringPage';
 import PagesAndResources from './pages-and-resources/PagesAndResources';
 import { executeThunk } from './utils';
 import { fetchCourseApps } from './pages-and-resources/data/thunks';
-import { fetchCourseDetail } from './data/thunks';
+import { fetchCourseDetail, fetchWaffleFlags } from './data/thunks';
+import { getApiWaffleFlagsUrl } from './data/api';
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 let mockPathname = '/evilguy/';
@@ -25,7 +26,7 @@ jest.mock('react-router-dom', () => ({
 let axiosMock;
 let store;
 
-beforeEach(() => {
+beforeEach(async () => {
   initializeMockApp({
     authenticatedUser: {
       userId: 3,
@@ -36,6 +37,10 @@ beforeEach(() => {
   });
   store = initializeStore();
   axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+  axiosMock
+    .onGet(getApiWaffleFlagsUrl(courseId))
+    .reply(200, {});
+  await executeThunk(fetchWaffleFlags(courseId), store.dispatch);
 });
 
 describe('Editor Pages Load no header', () => {

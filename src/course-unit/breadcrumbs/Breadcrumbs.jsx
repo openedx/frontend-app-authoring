@@ -1,12 +1,14 @@
 import { useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Dropdown, Icon } from '@openedx/paragon';
+import { Link } from 'react-router-dom';
 import {
   ArrowDropDown as ArrowDropDownIcon,
   ChevronRight as ChevronRightIcon,
 } from '@openedx/paragon/icons';
+import { getConfig } from '@edx/frontend-platform';
 
-import { createCorrectInternalRoute } from '../../utils';
+import { getWaffleFlags } from '../../data/selectors';
 import { getCourseSectionVertical } from '../data/selectors';
 import messages from './messages';
 
@@ -14,6 +16,10 @@ const Breadcrumbs = () => {
   const intl = useIntl();
   const { ancestorXblocks } = useSelector(getCourseSectionVertical);
   const [section, subsection] = ancestorXblocks ?? [];
+  const waffleFlags = useSelector(getWaffleFlags);
+
+  const getPathToCourseOutlinePage = (url) => (waffleFlags.useNewCourseOutlinePage
+    ? url : `${getConfig().STUDIO_BASE_URL}${url}`);
 
   return (
     <nav className="d-flex align-center mb-2.5">
@@ -30,8 +36,9 @@ const Breadcrumbs = () => {
             <Dropdown.Menu>
               {section.children.map(({ url, displayName }) => (
                 <Dropdown.Item
+                  as={Link}
                   key={url}
-                  href={createCorrectInternalRoute(url)}
+                  to={getPathToCourseOutlinePage(url)}
                   className="small"
                   data-testid="breadcrumbs-section-dropdown-item"
                 >
@@ -59,8 +66,9 @@ const Breadcrumbs = () => {
             <Dropdown.Menu>
               {subsection.children.map(({ url, displayName }) => (
                 <Dropdown.Item
+                  as={Link}
                   key={url}
-                  href={createCorrectInternalRoute(url)}
+                  to={getPathToCourseOutlinePage(url)}
                   className="small"
                   data-testid="breadcrumbs-subsection-dropdown-item"
                 >
