@@ -68,6 +68,11 @@ export interface SidebarComponentInfo {
   additionalAction?: SidebarAdditionalActions;
 }
 
+export interface ComponentEditorInfo {
+  usageKey: string;
+  onClose?: () => void;
+}
+
 export enum SidebarAdditionalActions {
   JumpToAddCollections = 'jump-to-add-collections',
 }
@@ -100,8 +105,8 @@ export type LibraryContextData = {
   openCollectionInfoSidebar: (collectionId: string, additionalAction?: SidebarAdditionalActions) => void;
   // Editor modal - for editing some component
   /** If the editor is open and the user is editing some component, this is its usageKey */
-  componentBeingEdited: string | undefined;
-  openComponentEditor: (usageKey: string) => void;
+  componentBeingEdited: ComponentEditorInfo | undefined;
+  openComponentEditor: (usageKey: string, onClose?: () => void) => void;
   closeComponentEditor: () => void;
   resetSidebarAdditionalActions: () => void;
 } & ComponentPickerType;
@@ -174,8 +179,16 @@ export const LibraryProvider = ({
   );
   const [isLibraryTeamModalOpen, openLibraryTeamModal, closeLibraryTeamModal] = useToggle(false);
   const [isCreateCollectionModalOpen, openCreateCollectionModal, closeCreateCollectionModal] = useToggle(false);
-  const [componentBeingEdited, openComponentEditor] = useState<string | undefined>();
-  const closeComponentEditor = useCallback(() => openComponentEditor(undefined), []);
+  const [componentBeingEdited, setComponentBeingEdited] = useState<ComponentEditorInfo | undefined>();
+  const closeComponentEditor = useCallback(() => {
+    setComponentBeingEdited((prev) => {
+      prev?.onClose?.();
+      return undefined;
+    });
+  }, []);
+  const openComponentEditor = useCallback((usageKey: string, onClose?: () => void) => {
+    setComponentBeingEdited({ usageKey, onClose });
+  }, []);
 
   const [selectedComponents, setSelectedComponents] = useState<SelectedComponent[]>([]);
 

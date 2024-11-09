@@ -197,13 +197,14 @@ const AddContentContainer = () => {
       blockType,
       definitionId: `${uuid4()}`,
     }).then((data) => {
-      linkComponent(data.id);
       const hasEditor = canEditComponent(data.id);
       if (hasEditor) {
-        openComponentEditor(data.id);
+        // linkComponent on editor close.
+        openComponentEditor(data.id, () => linkComponent(data.id));
       } else {
         // We can't start editing this right away so just show a toast message:
         showToast(intl.formatMessage(messages.successCreateMessage));
+        linkComponent(data.id);
       }
     }).catch((error) => {
       showToast(parseErrorMsg(

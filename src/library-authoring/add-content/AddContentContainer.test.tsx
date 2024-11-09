@@ -1,3 +1,4 @@
+import { snakeCaseObject } from '@edx/frontend-platform';
 import {
   fireEvent,
   render as baseRender,
@@ -10,8 +11,13 @@ import { getCreateLibraryBlockUrl, getLibraryCollectionComponentApiUrl, getLibra
 import { mockBroadcastChannel, mockClipboardEmpty, mockClipboardHtml } from '../../generic/data/api.mock';
 import { LibraryProvider } from '../common/context';
 import AddContentContainer from './AddContentContainer';
+import { ComponentEditorModal } from '../components/ComponentEditorModal';
+import editorCmsApi from '../../editors/data/services/cms/api';
 
 mockBroadcastChannel();
+
+// Mocks for ComponentEditorModal to work in tests.
+jest.mock('frontend-components-tinymce-advanced-plugins', () => ({ a11ycheckerCss: '' }));
 
 const { libraryId } = mockContentLibrary;
 const render = (collectionId?: string) => {
@@ -26,13 +32,18 @@ const render = (collectionId?: string) => {
       <LibraryProvider
         libraryId={libraryId}
         collectionId={collectionId}
-      >{ children }
+      >
+        { children }
+        <ComponentEditorModal />
       </LibraryProvider>
     ),
   });
 };
 
 describe('<AddContentContainer />', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
   it('should render content buttons', () => {
     initializeMocks();
     mockClipboardEmpty.applyMock();
@@ -62,7 +73,7 @@ describe('<AddContentContainer />', () => {
     await waitFor(() => expect(axiosMock.history.patch.length).toEqual(0));
   });
 
-  it('should create a content in a collection', async () => {
+  it('should create a content in a collection for non-editable blocks', async () => {
     const { axiosMock } = initializeMocks();
     mockClipboardEmpty.applyMock();
     const collectionId = 'some-collection-id';
@@ -71,6 +82,7 @@ describe('<AddContentContainer />', () => {
       libraryId,
       collectionId,
     );
+    // having id of block which is not video, html or problem will not trigger editor.
     axiosMock.onPost(url).reply(200, { id: 'some-component-id' });
     axiosMock.onPatch(collectionComponentUrl).reply(200);
 
@@ -79,6 +91,57 @@ describe('<AddContentContainer />', () => {
     const textButton = screen.getByRole('button', { name: /text/i });
     fireEvent.click(textButton);
 
+    await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(url));
+    await waitFor(() => expect(axiosMock.history.patch.length).toEqual(1));
+    await waitFor(() => expect(axiosMock.history.patch[0].url).toEqual(collectionComponentUrl));
+  });
+
+  it('should create a content in a collection for editable blocks', async () => {
+    const { axiosMock } = initializeMocks();
+    mockClipboardEmpty.applyMock();
+    const collectionId = 'some-collection-id';
+    const url = getCreateLibraryBlockUrl(libraryId);
+    const collectionComponentUrl = getLibraryCollectionComponentApiUrl(
+      libraryId,
+      collectionId,
+    );
+    // Mocks for ComponentEditorModal to work in tests.
+    jest.spyOn(editorCmsApi, 'fetchImages').mockImplementation(async () => ( // eslint-disable-next-line
+      { data: { assets: [], start: 0, end: 0, page: 0, pageSize: 50, totalCount: 0 } }
+    ));
+    jest.spyOn(editorCmsApi, 'fetchByUnitId').mockImplementation(async () => ({
+      status: 200,
+      data: {
+        ancestors: [{
+          id: 'block-v1:Org+TS100+24+type@vertical+block@parent',
+          display_name: 'You-Knit? The Test Unit',
+          category: 'vertical',
+          has_children: true,
+        }],
+      },
+    }));
+
+    axiosMock.onPost(url).reply(200, {
+      id: 'lb:OpenedX:CSPROB2:html:1a5efd56-4ee5-4df0-b466-44f08fbbf567',
+    });
+    const fieldsHtml = {
+      displayName: 'Introduction to Testing',
+      data: '<p>This is a text component which uses <strong>HTML</strong>.</p>',
+      metadata: { displayName: 'Introduction to Testing' },
+    };
+    jest.spyOn(editorCmsApi, 'fetchBlockById').mockImplementationOnce(async () => (
+      { status: 200, data: snakeCaseObject(fieldsHtml) }
+    ));
+    axiosMock.onPatch(collectionComponentUrl).reply(200);
+
+    render(collectionId);
+
+    const textButton = screen.getByRole('button', { name: /text/i });
+    fireEvent.click(textButton);
+
+    // Component should be linked to Collection on closing editor.
+    const closeButton = await screen.findByRole('button', { name: 'Exit the editor' });
+    fireEvent.click(closeButton);
     await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(url));
     await waitFor(() => expect(axiosMock.history.patch.length).toEqual(1));
     await waitFor(() => expect(axiosMock.history.patch[0].url).toEqual(collectionComponentUrl));
