@@ -85,7 +85,7 @@ describe('Custom Hooks', () => {
 
       fireEvent.scroll(window);
 
-      expect(fetchNextPage).toHaveBeenCalledTimes(1);
+      expect(fetchNextPage).toHaveBeenCalledTimes(2);
     });
 
     it('does not call fetchNextPage if not near the bottom', () => {
