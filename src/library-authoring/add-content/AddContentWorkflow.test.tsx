@@ -17,10 +17,14 @@ import {
   mockCreateLibraryBlock,
   mockXBlockFields,
 } from '../data/api.mocks';
+import initializeStore from '../../store';
+import { executeThunk } from '../../utils';
 import { mockBroadcastChannel, mockClipboardEmpty } from '../../generic/data/api.mock';
 import { mockContentSearchConfig, mockSearchResult } from '../../search-manager/data/api.mock';
 import { studioHomeMock } from '../../studio-home/__mocks__';
 import { getStudioHomeApiUrl } from '../../studio-home/data/api';
+import { getApiWaffleFlagsUrl } from '../../data/api';
+import { fetchWaffleFlags } from '../../data/thunks';
 import LibraryLayout from '../LibraryLayout';
 
 mockContentSearchConfig.applyMock();
@@ -47,10 +51,17 @@ const renderOpts = {
   routerProps: { initialEntries: [`/library/${libraryId}/components`] },
 };
 
+let store;
+
 describe('AddContentWorkflow test', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     const { axiosMock } = initializeMocks();
+    store = initializeStore();
     axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+    axiosMock
+      .onGet(getApiWaffleFlagsUrl())
+      .reply(200, {});
+    await executeThunk(fetchWaffleFlags(), store.dispatch);
   });
 
   it('can create an HTML component', async () => {

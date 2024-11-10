@@ -6,6 +6,8 @@ import {
   screen,
   initializeMocks,
 } from '../../testUtils';
+import initializeStore from '../../store';
+import { executeThunk } from '../../utils';
 import { studioHomeMock } from '../../studio-home/__mocks__';
 import { getStudioHomeApiUrl } from '../../studio-home/data/api';
 import mockResult from '../__mocks__/library-search.json';
@@ -17,6 +19,8 @@ import {
   mockGetCollectionMetadata,
 } from '../data/api.mocks';
 import { PickLibraryContentModal } from './PickLibraryContentModal';
+import { getApiWaffleFlagsUrl } from '../../data/api';
+import { fetchWaffleFlags } from '../../data/thunks';
 
 mockContentSearchConfig.applyMock();
 mockContentLibrary.applyMock();
@@ -27,6 +31,7 @@ const { libraryId } = mockContentLibrary;
 
 const onClose = jest.fn();
 let mockShowToast: (message: string) => void;
+let store;
 
 const render = () => baseRender(<PickLibraryContentModal isOpen onClose={onClose} />, {
   path: '/library/:libraryId/collection/:collectionId/*',
@@ -43,10 +48,15 @@ const render = () => baseRender(<PickLibraryContentModal isOpen onClose={onClose
 });
 
 describe('<PickLibraryContentModal />', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     const mocks = initializeMocks();
+    store = initializeStore();
     mockShowToast = mocks.mockShowToast;
     mocks.axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+    mocks.axiosMock
+      .onGet(getApiWaffleFlagsUrl())
+      .reply(200, {});
+    await executeThunk(fetchWaffleFlags(), store.dispatch);
   });
 
   it('can pick components from the modal', async () => {

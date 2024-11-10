@@ -9,6 +9,10 @@ import {
   waitFor,
   within,
 } from '../testUtils';
+import { executeThunk } from '../utils';
+import initializeStore from '../store';
+import { getApiWaffleFlagsUrl } from '../data/api';
+import { fetchWaffleFlags } from '../data/thunks';
 import mockResult from './__mocks__/library-search.json';
 import mockEmptyResult from '../search-modal/__mocks__/empty-search-result.json';
 import {
@@ -50,11 +54,17 @@ const returnEmptyResult = (_url, req) => {
 
 const path = '/library/:libraryId/*';
 const libraryTitle = mockContentLibrary.libraryData.title;
+let store;
 
 describe('<LibraryAuthoringPage />', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     const { axiosMock } = initializeMocks();
+    store = initializeStore();
     axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
+    axiosMock
+      .onGet(getApiWaffleFlagsUrl())
+      .reply(200, {});
+    await executeThunk(fetchWaffleFlags(), store.dispatch);
 
     // The Meilisearch client-side API uses fetch, not Axios.
     fetchMock.mockReset();
@@ -683,9 +693,13 @@ describe('<LibraryAuthoringPage />', () => {
       ...studioHomeMock,
       libraries_v2_enabled: false,
     });
+    axiosMock
+      .onGet(getApiWaffleFlagsUrl())
+      .reply(200, {});
+    await executeThunk(fetchWaffleFlags(), store.dispatch);
 
     render(<LibraryLayout />, { path, params: { libraryId: mockContentLibrary.libraryId } });
-    await waitFor(() => { expect(axiosMock.history.get.length).toBe(1); });
+    await waitFor(() => { expect(axiosMock.history.get.length).toBe(4); });
     expect(screen.getByRole('alert')).toHaveTextContent('This page cannot be shown: Libraries v2 are disabled.');
   });
 });
