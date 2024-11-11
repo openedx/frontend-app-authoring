@@ -63,6 +63,7 @@ const TinyMceWidget = ({
           images={imagesRef}
           editorType={editorType}
           lmsEndpointUrl={getConfig().LMS_BASE_URL}
+          isLibrary
           {...imageSelection}
         />
       )}
