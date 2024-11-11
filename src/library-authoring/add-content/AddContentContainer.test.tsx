@@ -1,3 +1,4 @@
+import MockAdapter from 'axios-mock-adapter/types';
 import { snakeCaseObject } from '@edx/frontend-platform';
 import {
   fireEvent,
@@ -7,12 +8,15 @@ import {
   initializeMocks,
 } from '../../testUtils';
 import { mockContentLibrary } from '../data/api.mocks';
-import { getCreateLibraryBlockUrl, getLibraryCollectionComponentApiUrl, getLibraryPasteClipboardUrl } from '../data/api';
+import {
+  getContentLibraryApiUrl, getCreateLibraryBlockUrl, getLibraryCollectionComponentApiUrl, getLibraryPasteClipboardUrl,
+} from '../data/api';
 import { mockBroadcastChannel, mockClipboardEmpty, mockClipboardHtml } from '../../generic/data/api.mock';
 import { LibraryProvider } from '../common/context';
 import AddContentContainer from './AddContentContainer';
 import { ComponentEditorModal } from '../components/ComponentEditorModal';
 import editorCmsApi from '../../editors/data/services/cms/api';
+import { ToastActionData } from '../../generic/toast-context';
 
 mockBroadcastChannel();
 
@@ -39,13 +43,20 @@ const render = (collectionId?: string) => {
     ),
   });
 };
+let axiosMock: MockAdapter;
+let mockShowToast: (message: string, action?: ToastActionData | undefined) => void;
 
 describe('<AddContentContainer />', () => {
+  beforeEach(() => {
+    const mocks = initializeMocks();
+    axiosMock = mocks.axiosMock;
+    mockShowToast = mocks.mockShowToast;
+    axiosMock.onGet(getContentLibraryApiUrl(libraryId)).reply(200, {});
+  });
   afterEach(() => {
     jest.restoreAllMocks();
   });
   it('should render content buttons', () => {
-    initializeMocks();
     mockClipboardEmpty.applyMock();
     render();
     expect(screen.queryByRole('button', { name: /collection/i })).toBeInTheDocument();
@@ -59,7 +70,6 @@ describe('<AddContentContainer />', () => {
   });
 
   it('should create a content', async () => {
-    const { axiosMock } = initializeMocks();
     mockClipboardEmpty.applyMock();
     const url = getCreateLibraryBlockUrl(libraryId);
     axiosMock.onPost(url).reply(200);
@@ -74,7 +84,6 @@ describe('<AddContentContainer />', () => {
   });
 
   it('should create a content in a collection for non-editable blocks', async () => {
-    const { axiosMock } = initializeMocks();
     mockClipboardEmpty.applyMock();
     const collectionId = 'some-collection-id';
     const url = getCreateLibraryBlockUrl(libraryId);
@@ -97,7 +106,6 @@ describe('<AddContentContainer />', () => {
   });
 
   it('should create a content in a collection for editable blocks', async () => {
-    const { axiosMock } = initializeMocks();
     mockClipboardEmpty.applyMock();
     const collectionId = 'some-collection-id';
     const url = getCreateLibraryBlockUrl(libraryId);
@@ -148,7 +156,6 @@ describe('<AddContentContainer />', () => {
   });
 
   it('should render paste button if clipboard contains pastable xblock', async () => {
-    initializeMocks();
     // Simulate having an HTML block in the clipboard:
     const getClipboardSpy = mockClipboardHtml.applyMock();
     render();
@@ -157,7 +164,6 @@ describe('<AddContentContainer />', () => {
   });
 
   it('should paste content', async () => {
-    const { axiosMock } = initializeMocks();
     // Simulate having an HTML block in the clipboard:
     const getClipboardSpy = mockClipboardHtml.applyMock();
 
@@ -175,7 +181,6 @@ describe('<AddContentContainer />', () => {
   });
 
   it('should paste content inside a collection', async () => {
-    const { axiosMock } = initializeMocks();
     // Simulate having an HTML block in the clipboard:
     const getClipboardSpy = mockClipboardHtml.applyMock();
 
@@ -201,7 +206,6 @@ describe('<AddContentContainer />', () => {
   });
 
   it('should show error toast on linking failure', async () => {
-    const { axiosMock, mockShowToast } = initializeMocks();
     // Simulate having an HTML block in the clipboard:
     const getClipboardSpy = mockClipboardHtml.applyMock();
 
@@ -228,7 +232,6 @@ describe('<AddContentContainer />', () => {
   });
 
   it('should stop user from pasting unsupported blocks and show toast', async () => {
-    const { axiosMock, mockShowToast } = initializeMocks();
     // Simulate having an HTML block in the clipboard:
     mockClipboardHtml.applyMock('openassessment');
 
@@ -277,7 +280,6 @@ describe('<AddContentContainer />', () => {
   ])('$label', async ({
     mockUrl, mockResponse, buttonName, expectedError,
   }) => {
-    const { axiosMock, mockShowToast } = initializeMocks();
     axiosMock.onPost(mockUrl).reply(400, mockResponse);
 
     // Simulate having an HTML block in the clipboard:

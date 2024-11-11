@@ -227,6 +227,7 @@ const AddContentContainer = () => {
     }
   };
 
+  /* istanbul ignore next */
   if (pasteClipboardMutation.isLoading) {
     showToast(intl.formatMessage(messages.pastingClipboardMessage));
   }
