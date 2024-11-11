@@ -9,10 +9,6 @@ import {
   waitFor,
   within,
 } from '../testUtils';
-import { executeThunk } from '../utils';
-import initializeStore from '../store';
-import { getApiWaffleFlagsUrl } from '../data/api';
-import { fetchWaffleFlags } from '../data/thunks';
 import mockResult from './__mocks__/library-search.json';
 import mockEmptyResult from '../search-modal/__mocks__/empty-search-result.json';
 import {
@@ -27,6 +23,7 @@ import { getStudioHomeApiUrl } from '../studio-home/data/api';
 import { mockBroadcastChannel } from '../generic/data/api.mock';
 import { LibraryLayout } from '.';
 import { getLibraryCollectionsApiUrl } from './data/api';
+import { getApiWaffleFlagsUrl } from '../data/api';
 
 mockGetCollectionMetadata.applyMock();
 mockContentSearchConfig.applyMock();
@@ -54,17 +51,12 @@ const returnEmptyResult = (_url, req) => {
 
 const path = '/library/:libraryId/*';
 const libraryTitle = mockContentLibrary.libraryData.title;
-let store;
 
 describe('<LibraryAuthoringPage />', () => {
   beforeEach(async () => {
     const { axiosMock } = initializeMocks();
-    store = initializeStore();
     axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
-    axiosMock
-      .onGet(getApiWaffleFlagsUrl())
-      .reply(200, {});
-    await executeThunk(fetchWaffleFlags(), store.dispatch);
+    axiosMock.onGet(getApiWaffleFlagsUrl()).reply(200, {});
 
     // The Meilisearch client-side API uses fetch, not Axios.
     fetchMock.mockReset();
@@ -689,17 +681,15 @@ describe('<LibraryAuthoringPage />', () => {
 
   it('Shows an error if libraries V2 is disabled', async () => {
     const { axiosMock } = initializeMocks();
+    axiosMock.onGet(getApiWaffleFlagsUrl()).reply(200, {});
     axiosMock.onGet(getStudioHomeApiUrl()).reply(200, {
       ...studioHomeMock,
       libraries_v2_enabled: false,
     });
-    axiosMock
-      .onGet(getApiWaffleFlagsUrl())
-      .reply(200, {});
-    await executeThunk(fetchWaffleFlags(), store.dispatch);
 
     render(<LibraryLayout />, { path, params: { libraryId: mockContentLibrary.libraryId } });
-    await waitFor(() => { expect(axiosMock.history.get.length).toBe(4); });
-    expect(screen.getByRole('alert')).toHaveTextContent('This page cannot be shown: Libraries v2 are disabled.');
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'This page cannot be shown: Libraries v2 are disabled.',
+    );
   });
 });

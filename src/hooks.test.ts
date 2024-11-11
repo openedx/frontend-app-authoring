@@ -85,6 +85,8 @@ describe('Custom Hooks', () => {
 
       fireEvent.scroll(window);
 
+      // Called on scroll once and then due to content being less than screen height
+      // and hasNextPage being true.
       expect(fetchNextPage).toHaveBeenCalledTimes(2);
     });
 
