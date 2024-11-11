@@ -125,7 +125,7 @@ export const apiMethods = {
   }): Promise<{ data: AssetResponse & Pagination }> => {
     if (isLibraryKey(learningContextId)) {
       return get(
-        `${urls.libraryAssets({ studioEndpointUrl, blockId })}`,
+        `${urls.libraryAssets({ blockId })}`,
       );
     }
     const params = {
@@ -157,7 +157,7 @@ export const apiMethods = {
     if (isLibraryKey(learningContextId)) {
       data.set('content', asset);
       return put(
-        `${urls.libraryAssets({ blockId, studioEndpointUrl })}static/${encodeURI(asset.name)}`,
+        `${urls.libraryAssets({ blockId, assetName: asset.name })}`,
         data,
       );
     }

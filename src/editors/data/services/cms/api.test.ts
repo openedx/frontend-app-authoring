@@ -125,7 +125,7 @@ describe('cms api', () => {
           blockId, learningContextId, studioEndpointUrl, pageNumber: 0,
         });
         expect(get).toHaveBeenCalledWith(
-          urls.libraryAssets({ studioEndpointUrl, blockId }),
+          urls.libraryAssets({ blockId }),
         );
       });
     });
@@ -289,7 +289,7 @@ describe('cms api', () => {
           asset,
         });
         expect(put).toHaveBeenCalledWith(
-          `${urls.libraryAssets({ blockId, studioEndpointUrl })}static/${encodeURI(filename)}`,
+          `${urls.libraryAssets({ blockId, assetName: asset.name })}`,
           mockFormdata,
         );
       });
