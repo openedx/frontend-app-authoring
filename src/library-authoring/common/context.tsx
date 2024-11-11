@@ -104,7 +104,9 @@ export type LibraryContextData = {
   // Current collection
   openCollectionInfoSidebar: (collectionId: string, additionalAction?: SidebarAdditionalActions) => void;
   // Editor modal - for editing some component
-  /** If the editor is open and the user is editing some component, this is its usageKey */
+  /** If the editor is open and the user is editing some component, this is its usageKey
+  and the callback function that should be called on closing the editor.
+  */
   componentBeingEdited: ComponentEditorInfo | undefined;
   openComponentEditor: (usageKey: string, onClose?: () => void) => void;
   closeComponentEditor: () => void;
