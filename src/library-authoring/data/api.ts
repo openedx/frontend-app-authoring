@@ -183,6 +183,12 @@ export interface GetLibrariesV2CustomParams {
   search?: string,
 }
 
+export type LibraryAssetResponse = {
+  path: string,
+  size: number,
+  url: string,
+};
+
 export interface CreateBlockDataRequest {
   libraryId: string;
   blockType: string;

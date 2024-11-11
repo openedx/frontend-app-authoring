@@ -26,7 +26,8 @@ jest.mock('../../services/cms/api', () => ({
   fetchByUnitId: ({ id, url }) => ({ id, url }),
   fetchCourseDetails: (args) => args,
   saveBlock: (args) => args,
-  fetchImages: ({ id, url }) => ({ id, url }),
+  fetchCourseImages: ({ id, url }) => ({ id, url }),
+  fetchLibraryImages: ({ id, url }) => ({ id, url }),
   fetchVideos: ({ id, url }) => ({ id, url }),
   uploadAsset: (args) => args,
   loadImages: jest.fn(),
@@ -247,16 +248,16 @@ describe('requests thunkActions module', () => {
       let fetchImages;
       let loadImages;
       let dispatchedAction;
-      beforeEach(() => {
-        fetchImages = jest.fn((args) => new Promise((resolve) => {
-          resolve({ data: { assets: { fetchImages: args } } });
-        }));
-        jest.spyOn(api, apiKeys.fetchImages).mockImplementationOnce(fetchImages);
-        loadImages = jest.spyOn(api, apiKeys.loadImages).mockImplementationOnce(() => ({}));
-        requests.fetchImages({ ...fetchParams, onSuccess, onFailure })(dispatch, () => testState);
-        [[dispatchedAction]] = dispatch.mock.calls;
-      });
       describe('courses', () => {
+        beforeEach(() => {
+          fetchImages = jest.fn((args) => new Promise((resolve) => {
+            resolve({ data: { assets: { fetchImages: args } } });
+          }));
+          jest.spyOn(api, apiKeys.fetchCourseImages).mockImplementationOnce(fetchImages);
+          loadImages = jest.spyOn(api, apiKeys.loadImages).mockImplementationOnce(() => ({}));
+          requests.fetchImages({ ...fetchParams, onSuccess, onFailure })(dispatch, () => testState);
+          [[dispatchedAction]] = dispatch.mock.calls;
+        });
         const expectedArgs = {
           blockId: selectors.app.blockId(testState),
           studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
@@ -288,9 +289,9 @@ describe('requests thunkActions module', () => {
         beforeEach(() => {
           jest.spyOn(selectors.app, 'learningContextId').mockImplementationOnce(() => ('lib:demo'));
           fetchImages = jest.fn((args) => new Promise((resolve) => {
-            resolve({ data: { assets: { fetchImages: args } } });
+            resolve({ data: { files: { fetchImages: args } } });
           }));
-          jest.spyOn(api, apiKeys.fetchImages).mockImplementationOnce(fetchImages);
+          jest.spyOn(api, apiKeys.fetchLibraryImages).mockImplementationOnce(fetchImages);
           requests.fetchImages({
             ...fetchParams, onSuccess, onFailure,
           })(dispatch, () => testState);

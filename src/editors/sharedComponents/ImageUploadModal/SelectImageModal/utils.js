@@ -44,4 +44,6 @@ export const acceptedImgKeys = StrictDict({
   tif: '.tif',
   tiff: '.tiff',
   ico: '.ico',
+  svg: '.svg',
+  webp: '.webp',
 });

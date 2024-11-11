@@ -117,17 +117,11 @@ export const apiMethods = {
   fetchStudioView: ({ blockId, studioEndpointUrl }) => get(
     urls.blockStudioView({ studioEndpointUrl, blockId }),
   ),
-  fetchImages: ({
-    blockId,
+  fetchCourseImages: ({
     learningContextId,
     studioEndpointUrl,
     pageNumber,
   }): Promise<{ data: AssetResponse & Pagination }> => {
-    if (isLibraryKey(learningContextId)) {
-      return get(
-        `${urls.libraryAssets({ blockId })}`,
-      );
-    }
     const params = {
       asset_type: 'Images',
       page: pageNumber,
@@ -137,6 +131,9 @@ export const apiMethods = {
       { params },
     );
   },
+  fetchLibraryImages: ({ blockId }) => get(
+    `${urls.libraryAssets({ blockId })}`,
+  ),
   fetchVideos: ({ studioEndpointUrl, learningContextId }) => get(
     urls.courseVideos({ studioEndpointUrl, learningContextId }),
   ),

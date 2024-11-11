@@ -1,37 +1,13 @@
-import StrictDict from './StrictDict';
+import { LibraryAssetResponse } from '../../library-authoring/data/api';
 
-/**
- * A dictionary that maps file extensions to their corresponding MIME types for images.
- *
- * @example
- * acceptedImgMimeTypes.gif // "image/gif"
- */
-
-const acceptedImgMimeTypes = StrictDict({
-  gif: 'image/gif',
-  jpg: 'image/jpg',
-  jpeg: 'image/jpeg',
-  png: 'image/png',
-  tif: 'image/tiff',
-  tiff: 'image/tiff',
-  ico: 'image/x-icon',
-});
-
-type TinyMCEImageData = {
+type GalleryImageData = {
   displayName: string,
-  contentType: string,
   url: string,
   externalUrl: string,
   portableUrl: string,
   thumbnail: string,
   id: string,
   locked: boolean,
-};
-
-export type LibraryAssetResponse = {
-  path: string,
-  size: number,
-  url: string,
 };
 
 /**
@@ -49,33 +25,33 @@ export type LibraryAssetResponse = {
 export const getFileName = (data: LibraryAssetResponse): string => data.path.replace(/^.*[\\/]/, '');
 
 /**
- * Determines the MIME type of a file based on its extension.
+ * Checks if the provided asset data corresponds to an accepted image file type based on its extension.
  *
  * @param data - The asset data containing the file path.
- * @returns The MIME type of the file, or 'unknown' if the MIME type is not recognized.
+ * @param acceptedImgExt - The array of accepted image extensions.
+ * @returns `true` if the file has an accepted image extension, otherwise `false`.
  *
  * @example
  * const data = { path: '/static/example.jpg', size: 12345, url: 'http://example.com/static/example.jpg' };
- * const mimeType = getFileMimeType(data); // "image/jpg"
+ * const isImg = isImage(data); // Returns true
  */
 
-export const getFileMimeType = (data: LibraryAssetResponse): string => {
-  const ext = data.path.split('.').pop()?.toLowerCase(); // Extract and lowercase the file extension
-  return ext && acceptedImgMimeTypes[ext] ? acceptedImgMimeTypes[ext] : 'unknown';
+export const isImage = (data: LibraryAssetResponse, acceptedImgExt:string[]): boolean => {
+  const ext = data.path.split('.').pop()?.toLowerCase() ?? ''; // Extract and lowercase the file extension
+  return ext !== '' && acceptedImgExt.includes(ext);
 };
 /**
- * Parses a `LibraryAssetResponse` into a `TinyMCEImageData` object.
- * This includes extracting the file name, MIME type, and constructing other image-related metadata.
+ * Parses a `LibraryAssetResponse` into a `GalleryImageData` object.
+ * This includes extracting the file name and constructing other image-related metadata.
  *
  * @param data - The asset data to parse.
- * @returns The parsed image data with properties like `displayName`, `contentType`, etc.
+ * @returns The parsed image data with properties like `displayName`, `externalUrl`, etc.
  *
  * @example
  * const data = { path: '/static/example.jpg', size: 12345, url: 'http://example.com/static/example.jpg' };
  * const imageData = parseLibraryImageData(data);
  * // {
  * //   displayName: 'example.jpg',
- * //   contentType: 'image/jpg',
  * //   url: 'http://example.com/static/example.jpg',
  * //   externalUrl: 'http://example.com/static/example.jpg',
  * //   portableUrl: '/static/example.jpg',
@@ -85,9 +61,8 @@ export const getFileMimeType = (data: LibraryAssetResponse): string => {
  * // }
  */
 
-export const parseLibraryImageData = (data: LibraryAssetResponse): TinyMCEImageData => ({
+export const parseLibraryImageData = (data: LibraryAssetResponse): GalleryImageData => ({
   displayName: getFileName(data),
-  contentType: getFileMimeType(data),
   url: data.url,
   externalUrl: data.url,
   portableUrl: data.path,
@@ -97,11 +72,12 @@ export const parseLibraryImageData = (data: LibraryAssetResponse): TinyMCEImageD
 });
 
 /**
- * Filters and transforms an array of `LibrariesAssetResponse` objects into a dictionary of `TinyMCEImageData`.
- * Only assets with recognized MIME types (i.e., valid image files) are included in the result.
+ * Filters and transforms an array of `LibrariesAssetResponse` objects into a dictionary of `GalleryImageData`.
+ * Only assets with recognized extension (i.e., valid image files) are included in the result.
  *
  * @param librariesAssets - The array of asset data to process.
- * @returns A dictionary where each key is the file name and the value is the corresponding `TinyMCEImageData`.
+ * @param acceptedImgExt - The array of accepted image extensions.
+ * @returns A dictionary where each key is the file name and the value is the corresponding `GalleryImageData`.
  *
  * @example
  * const assets = [
@@ -112,7 +88,6 @@ export const parseLibraryImageData = (data: LibraryAssetResponse): TinyMCEImageD
  * // {
  * //   'example.jpg': {
  * //     displayName: 'example.jpg',
- * //     contentType: 'image/jpg',
  * //     url: 'http://example.com/static/example.jpg',
  * //     externalUrl: 'http://example.com/static/example.jpg',
  * //     portableUrl: '/static/example.jpg',
@@ -125,10 +100,11 @@ export const parseLibraryImageData = (data: LibraryAssetResponse): TinyMCEImageD
 
 export const getLibraryImageAssets = (
   librariesAssets: Array<LibraryAssetResponse>,
-): Record<string, TinyMCEImageData> => librariesAssets.reduce((obj, file) => {
-  if (getFileMimeType(file) !== 'unknown') {
+  acceptedImgExt:string[],
+): Record<string, GalleryImageData> => librariesAssets.reduce((obj, file) => {
+  if (isImage(file, acceptedImgExt)) {
     const imageData = parseLibraryImageData(file);
     return { ...obj, [imageData.displayName]: imageData };
   }
   return obj;
-}, {} as Record<string, TinyMCEImageData>);
+}, {} as Record<string, GalleryImageData>);

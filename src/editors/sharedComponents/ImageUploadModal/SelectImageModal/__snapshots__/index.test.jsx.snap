@@ -9,8 +9,10 @@ exports[`SelectImageModal component snapshot 1`] = `
       "jpeg": ".jpeg",
       "jpg": ".jpg",
       "png": ".png",
+      "svg": ".svg",
       "tif": ".tif",
       "tiff": ".tiff",
+      "webp": ".webp",
     }
   }
   close={[MockFunction props.close]}

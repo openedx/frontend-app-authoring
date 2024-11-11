@@ -105,10 +105,10 @@ describe('cms api', () => {
       });
     });
 
-    describe('fetchImages', () => {
+    describe('fetchCourseImages', () => {
       it('should call get with url.courseAssets', () => {
-        apiMethods.fetchImages({
-          blockId, learningContextId, studioEndpointUrl, pageNumber: 0,
+        apiMethods.fetchCourseImages({
+          learningContextId, studioEndpointUrl, pageNumber: 0,
         });
         const params = {
           asset_type: 'Images',
@@ -119,10 +119,11 @@ describe('cms api', () => {
           { params },
         );
       });
+    });
+    describe('fetchLibraryImages', () => {
       it('should call get with urls.libraryAssets for library V2', () => {
-        learningContextId = 'lib:demo2uX';
-        apiMethods.fetchImages({
-          blockId, learningContextId, studioEndpointUrl, pageNumber: 0,
+        apiMethods.fetchLibraryImages({
+          blockId,
         });
         expect(get).toHaveBeenCalledWith(
           urls.libraryAssets({ blockId }),

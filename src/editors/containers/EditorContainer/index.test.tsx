@@ -13,7 +13,7 @@ import EditorPage from '../../EditorPage';
 // Mock this plugins component:
 jest.mock('frontend-components-tinymce-advanced-plugins', () => ({ a11ycheckerCss: '' }));
 // Always mock out the "fetch course images" endpoint:
-jest.spyOn(editorCmsApi, 'fetchImages').mockImplementation(async () => ( // eslint-disable-next-line
+jest.spyOn(editorCmsApi, 'fetchCourseImages').mockImplementation(async () => ( // eslint-disable-next-line
   { data: { assets: [], start: 0, end: 0, page: 0, pageSize: 50, totalCount: 0 } }
 ));
 // Mock out the 'get ancestors' API:
