@@ -191,6 +191,22 @@ describe('<AddComponent />', () => {
     }, expect.any(Function));
   });
 
+  it('calls handleCreateNewCourseXBlock with correct parameters when Problem bank xblock create button is clicked', () => {
+    const { getByRole } = renderComponent();
+
+    const problemBankBtn = getByRole('button', {
+      name: new RegExp(`${messages.buttonText.defaultMessage} Problem Bank`, 'i'),
+    });
+
+    userEvent.click(problemBankBtn);
+    expect(handleCreateNewCourseXBlockMock).toHaveBeenCalled();
+    expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith({
+      parentLocator: '123',
+      type: COMPONENT_TYPES.itembank,
+      category: 'itembank',
+    });
+  });
+
   it('calls handleCreateNewCourseXBlock with correct parameters when Video xblock create button is clicked', () => {
     const { getByRole } = renderComponent();
 

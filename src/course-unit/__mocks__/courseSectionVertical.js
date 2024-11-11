@@ -316,6 +316,26 @@ module.exports = {
       },
       beta: true,
     },
+    {
+      type: 'itembank',
+      templates: [
+        {
+          display_name: 'Problem Bank',
+          category: 'itembank',
+          boilerplate_name: null,
+          hinted: false,
+          tab: 'advanced',
+          support_level: true,
+        },
+      ],
+      display_name: 'Problem Bank',
+      support_legend: {
+        show_legend: false,
+        allow_unsupported_xblocks: false,
+        documentation_label: 'Your Platform Name Here Support Levels:',
+      },
+      beta: true,
+    },
   ],
   course_sequence_ids: [
     'block-v1:edx+876+2030+type@sequential+block@297321078a0f4c26a50d671ed87642a6',

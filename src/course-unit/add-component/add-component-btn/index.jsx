@@ -24,11 +24,15 @@ const AddComponentButton = ({
   );
 };
 
+AddComponentButton.defaultProps = {
+  beta: false,
+};
+
 AddComponentButton.propTypes = {
   type: PropTypes.string.isRequired,
   displayName: PropTypes.string.isRequired,
   onClick: PropTypes.func.isRequired,
-  beta: PropTypes.bool.isRequired,
+  beta: PropTypes.bool,
 };
 
 export default AddComponentButton;
