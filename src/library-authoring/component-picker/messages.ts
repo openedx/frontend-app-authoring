@@ -42,6 +42,11 @@ const messages = defineMessages({
     defaultMessage: 'Next',
     description: 'The text for the next button in the select library component',
   },
+  pickerInfoBanner: {
+    id: 'course-authoring.library-authoring.pick-components.component-picker.information-alert',
+    defaultMessage: 'Only published content is visible and available for reuse.',
+    description: 'The alert text on top of component-picker if only published content is visible.',
+  },
 });
 
 export default messages;
