@@ -222,14 +222,31 @@ export const setupCustomBehavior = ({
       if (newContent) { updateContent(newContent); }
     });
   }
+
+  editor.on('init', () => {
+    // Moving TinyMce aux modal inside the Editor modal
+    // if the editor is on modal mode.
+    // This is to avoid issues using the aux modal:
+    // * Avoid close aux modal when clicking the content.
+    // * When the user opens the `Edit Source Code`, this modal adds `data-focus-on-hidden`
+    //   to the TinyMce aux modal, making it unusable.
+    const modalLayer = document.querySelector('.pgn__modal-layer');
+    const tinymceAux = document.querySelector('.tox.tox-tinymce-aux');
+  
+    if (modalLayer && tinymceAux) {
+        modalLayer.appendChild(tinymceAux);
+    }
+  });
+
   editor.on('ExecCommand', (e) => {
 
-    // Remove `data-focus-on-hidden` on TinyMce aux modal used on emoticons, formulas, etc.
-    // Use case: When the user opens the `Edit Source Code`, this modal adds `data-focus-on-hidden`
-    // to the TinyMce aux modal, making it unusable.
-    var modalElement = document.querySelector('.tox-tinymce-aux');
+    // Remove `data-focus-on-hidden` and `area-hidden` on TinyMce aux modal used on emoticons, formulas, etc.
+    // When using the editor in modal mode, it may happen that the modal is rendered before the TinyMce aux modal,
+    // which adds these attributes, making the modal unusable.
+    const modalElement = document.querySelector('.tox.tox-silver-sink.tox-tinymce-aux');
     if (modalElement) {
       modalElement.removeAttribute('data-focus-on-hidden');
+      modalElement.removeAttribute('aria-hidden');
     }
 
     if (editorType === 'text' && e.command === 'mceFocus') {

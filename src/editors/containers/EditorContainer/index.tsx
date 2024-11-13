@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 import {
@@ -41,7 +41,7 @@ export const EditorModalWrapper: React.FC<WrapperProps & { onClose: () => void }
   }
   const title = intl.formatMessage(messages.modalTitle);
   return (
-    <ModalDialog isBlocking isOpen size="xl" isOverflowVisible={false} onClose={onClose} title={title}>{children}</ModalDialog>
+    <ModalDialog isOpen size="xl" isOverflowVisible={false} onClose={onClose} title={title}>{children}</ModalDialog>
   );
 };
 
