@@ -178,6 +178,8 @@ export const setupCustomBehavior = ({
     tooltip: 'Source code',
     onAction: openSourceCodeModal,
   });
+  
+
   // add a custom simple inline code block formatter.
   const setupCodeFormatting = (api) => {
     editor.formatter.formatChanged(
@@ -185,6 +187,7 @@ export const setupCustomBehavior = ({
       (active) => api.setActive(active),
     );
   };
+
   const toggleCodeFormatting = () => {
     editor.formatter.toggle('code');
     editor.undoManager.add();
@@ -220,6 +223,15 @@ export const setupCustomBehavior = ({
     });
   }
   editor.on('ExecCommand', (e) => {
+
+    // Remove `data-focus-on-hidden` on TinyMce aux modal used on emoticons, formulas, etc.
+    // Use case: When the user opens the `Edit Source Code`, this modal adds `data-focus-on-hidden`
+    // to the TinyMce aux modal, making it unusable.
+    var modalElement = document.querySelector('.tox-tinymce-aux');
+    if (modalElement) {
+      modalElement.removeAttribute('data-focus-on-hidden');
+    }
+
     if (editorType === 'text' && e.command === 'mceFocus') {
       const initialContent = editor.getContent();
       const newContent = module.replaceStaticWithAsset({
