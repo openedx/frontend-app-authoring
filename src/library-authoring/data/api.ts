@@ -445,7 +445,7 @@ export async function publishXBlock(usageKey: string) {
  * Fetch the asset (static file) list for the given XBlock.
  */
 // istanbul ignore next
-export async function getXBlockAssets(usageKey: string): Promise<{ path: string; url: string; size: number }[]> {
+export async function getXBlockAssets(usageKey: string): Promise<LibraryAssetResponse[]> {
   const { data } = await getAuthenticatedHttpClient().get(getXBlockAssetsApiUrl(usageKey));
   return data.files;
 }
