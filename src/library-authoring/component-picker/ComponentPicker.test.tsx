@@ -266,4 +266,14 @@ describe('<ComponentPicker />', () => {
 
     await waitFor(() => expect(onChange).toHaveBeenCalledWith([]));
   });
+
+  it('should display an alert banner when showOnlyPublished is true', async () => {
+    render(<ComponentPicker />);
+
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
+
+    // Wait for the content library to load
+    await screen.findByText(/Only published content is visible and available for reuse./i);
+  });
 });

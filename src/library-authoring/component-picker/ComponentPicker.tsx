@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Stepper } from '@openedx/paragon';
+import { Alert, Stepper } from '@openedx/paragon';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import {
   type ComponentSelectedEvent,
@@ -11,6 +12,7 @@ import {
 import LibraryAuthoringPage from '../LibraryAuthoringPage';
 import LibraryCollectionPage from '../collections/LibraryCollectionPage';
 import SelectLibrary from './SelectLibrary';
+import messages from './messages';
 
 interface LibraryComponentPickerProps {
   returnToLibrarySelection: () => void;
@@ -65,6 +67,7 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
 
   const queryParams = new URLSearchParams(location.search);
   const variant = queryParams.get('variant') || 'draft';
+  const showOnlyPublished = variant === 'published';
 
   const handleLibrarySelection = (library: string) => {
     setCurrentStep('pick-components');
@@ -99,9 +102,15 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
       <Stepper.Step eventKey="pick-components" title="Pick some components">
         <LibraryProvider
           libraryId={selectedLibrary}
-          showOnlyPublished={variant === 'published'}
+          showOnlyPublished={showOnlyPublished}
           {...libraryProviderProps}
         >
+          { showOnlyPublished
+            && (
+            <Alert variant="info" className="m-2">
+              <FormattedMessage {...messages.pickerInfoBanner} />
+            </Alert>
+            )}
           <InnerComponentPicker returnToLibrarySelection={returnToLibrarySelection} />
         </LibraryProvider>
       </Stepper.Step>
