@@ -178,8 +178,6 @@ export const setupCustomBehavior = ({
     tooltip: 'Source code',
     onAction: openSourceCodeModal,
   });
-  
-
   // add a custom simple inline code block formatter.
   const setupCodeFormatting = (api) => {
     editor.formatter.formatChanged(
@@ -187,7 +185,6 @@ export const setupCustomBehavior = ({
       (active) => api.setActive(active),
     );
   };
-
   const toggleCodeFormatting = () => {
     editor.formatter.toggle('code');
     editor.undoManager.add();
@@ -232,14 +229,13 @@ export const setupCustomBehavior = ({
     //   to the TinyMce aux modal, making it unusable.
     const modalLayer = document.querySelector('.pgn__modal-layer');
     const tinymceAux = document.querySelector('.tox.tox-tinymce-aux');
-  
+
     if (modalLayer && tinymceAux) {
-        modalLayer.appendChild(tinymceAux);
+      modalLayer.appendChild(tinymceAux);
     }
   });
 
   editor.on('ExecCommand', (e) => {
-
     // Remove `data-focus-on-hidden` and `area-hidden` on TinyMce aux modal used on emoticons, formulas, etc.
     // When using the editor in modal mode, it may happen that the modal is rendered before the TinyMce aux modal,
     // which adds these attributes, making the modal unusable.
