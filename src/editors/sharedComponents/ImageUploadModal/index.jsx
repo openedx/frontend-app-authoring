@@ -109,12 +109,14 @@ export const hooks = {
     selection,
     lmsEndpointUrl,
     editorType,
+    isLibrary,
   }) => {
     const props = module.imgProps({
       settings,
       selection,
       lmsEndpointUrl,
       editorType,
+      isLibrary,
     });
     return `<img ${propsString(props)} />`;
   },
