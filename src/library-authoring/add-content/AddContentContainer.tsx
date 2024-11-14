@@ -166,9 +166,7 @@ const AddContentContainer = () => {
   }
 
   const linkComponent = (usageKey: string) => {
-    updateComponentsMutation.mutateAsync([usageKey]).then(() => {
-      showToast(intl.formatMessage(messages.successAssociateComponentMessage));
-    }).catch(() => {
+    updateComponentsMutation.mutateAsync([usageKey]).catch(() => {
       showToast(intl.formatMessage(messages.errorAssociateComponentMessage));
     });
   };
@@ -199,13 +197,14 @@ const AddContentContainer = () => {
       blockType,
       definitionId: `${uuid4()}`,
     }).then((data) => {
-      linkComponent(data.id);
       const hasEditor = canEditComponent(data.id);
       if (hasEditor) {
-        openComponentEditor(data.id);
+        // linkComponent on editor close.
+        openComponentEditor(data.id, () => linkComponent(data.id));
       } else {
         // We can't start editing this right away so just show a toast message:
         showToast(intl.formatMessage(messages.successCreateMessage));
+        linkComponent(data.id);
       }
     }).catch((error) => {
       showToast(parseErrorMsg(
@@ -228,12 +227,9 @@ const AddContentContainer = () => {
     }
   };
 
+  /* istanbul ignore next */
   if (pasteClipboardMutation.isLoading) {
     showToast(intl.formatMessage(messages.pastingClipboardMessage));
-  }
-
-  if (updateComponentsMutation.isLoading) {
-    showToast(intl.formatMessage(messages.linkingComponentMessage));
   }
 
   return (

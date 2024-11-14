@@ -27,7 +27,7 @@ import initializeReduxStore from './store';
 
 /** @deprecated Use React Query and/or regular React Context instead of redux */
 let reduxStore: Store;
-let queryClient;
+let queryClient: QueryClient;
 let axiosMock: MockAdapter;
 
 /** To use this: `const { mockShowToast } = initializeMocks()` and `expect(mockShowToast).toHaveBeenCalled()` */
