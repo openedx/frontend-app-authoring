@@ -74,29 +74,19 @@ const PreviewLibraryXBlockChanges = () => {
     );
   }, [blockData]);
 
-  const handleAcceptChanges = useCallback(async () => {
+  const updateAndRefresh = useCallback(async (accept: boolean) => {
     if (!blockData) {
       return;
     }
-    try {
-      await acceptChangesMutation.mutateAsync(blockData.downstreamBlockId);
-      sendMessageToIframe(messageTypes.refreshXBlock, null);
-    } catch (e) {
-      showToast(intl.formatMessage(messages.acceptChangesFailure));
-    } finally {
-      closeModal();
-    }
-  }, [blockData]);
 
-  const handleIgnoreChanges = useCallback(async () => {
-    if (!blockData) {
-      return;
-    }
+    const mutation = accept ? acceptChangesMutation: ignoreChangesMutation;
+    let failureMsg = accept ? messages.acceptChangesFailure: messages.ignoreChangesFailure;
+
     try {
-      await ignoreChangesMutation.mutateAsync(blockData.downstreamBlockId);
+      await mutation.mutateAsync(blockData.downstreamBlockId);
       sendMessageToIframe(messageTypes.refreshXBlock, null);
     } catch (e) {
-      showToast(intl.formatMessage(messages.ignoreChangesFailure));
+      showToast(intl.formatMessage(failureMsg));
     } finally {
       closeModal();
     }
@@ -125,7 +115,7 @@ const PreviewLibraryXBlockChanges = () => {
       <ModalDialog.Footer>
         <ActionRow>
           <LoadingButton
-            onClick={handleAcceptChanges}
+            onClick={() => updateAndRefresh(true)}
             label={intl.formatMessage(messages.acceptChangesBtn)}
           />
           <Button
@@ -145,7 +135,7 @@ const PreviewLibraryXBlockChanges = () => {
         variant="warning"
         title={intl.formatMessage(messages.confirmationTitle)}
         description={intl.formatMessage(messages.confirmationDescription)}
-        onDeleteSubmit={handleIgnoreChanges}
+        onDeleteSubmit={() => updateAndRefresh(false)}
         btnLabel={intl.formatMessage(messages.confirmationConfirmBtn)}
       />
     </ModalDialog>
