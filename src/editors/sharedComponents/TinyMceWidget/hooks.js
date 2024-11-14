@@ -237,8 +237,8 @@ export const setupCustomBehavior = ({
 
   editor.on('ExecCommand', /* istanbul ignore next */ (e) => {
     // Remove `data-focus-on-hidden` and `area-hidden` on TinyMce aux modal used on emoticons, formulas, etc.
-    // When using the Editor in modal mode, it may happen that the editor modal is rendered before the TinyMce aux modal,
-    // which adds these attributes, making the TinyMce aux modal unusable.
+    // When using the Editor in modal mode, it may happen that the editor modal is rendered
+    // before the TinyMce aux modal, which adds these attributes, making the TinyMce aux modal unusable.
     const modalElement = document.querySelector('.tox.tox-silver-sink.tox-tinymce-aux');
     if (modalElement) {
       modalElement.removeAttribute('data-focus-on-hidden');
