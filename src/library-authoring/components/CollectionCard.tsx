@@ -97,7 +97,6 @@ const CollectionMenu = ({ collectionHit } : CollectionMenuProps) => {
           collectionTitle: collectionHit.displayName,
         })}
         onDeleteSubmit={deleteCollection}
-        btnState={confirmBtnState}
       />
     </>
   );

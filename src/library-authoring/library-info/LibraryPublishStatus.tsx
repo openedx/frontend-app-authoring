@@ -13,7 +13,6 @@ const LibraryPublishStatus = () => {
   const intl = useIntl();
   const { libraryData, readOnly } = useLibraryContext();
   const [isConfirmModalOpen, openConfirmModal, closeConfirmModal] = useToggle(false);
-  const [confirmBtnState, setConfirmBtnState] = useState('default');
 
   const commitLibraryChanges = useCommitLibraryChanges();
   const revertLibraryChanges = useRevertLibraryChanges();
@@ -30,18 +29,16 @@ const LibraryPublishStatus = () => {
     }
   }, [libraryData]);
 
-  const revert = useCallback(() => {
+  const revert = useCallback(async () => {
     if (libraryData) {
-      setConfirmBtnState('pending');
-      revertLibraryChanges.mutateAsync(libraryData.id)
-        .then(() => {
-          showToast(intl.formatMessage(messages.revertSuccessMsg));
-        }).catch(() => {
-          showToast(intl.formatMessage(messages.revertErrorMsg));
-        }).finally(() => {
-          setConfirmBtnState('default');
-          closeConfirmModal();
-        });
+      try {
+        await revertLibraryChanges.mutateAsync(libraryData.id);
+        showToast(intl.formatMessage(messages.revertSuccessMsg));
+      } catch (e) {
+        showToast(intl.formatMessage(messages.revertErrorMsg));
+      } finally {
+        closeConfirmModal();
+      }
     }
   }, [libraryData]);
 
@@ -63,9 +60,7 @@ const LibraryPublishStatus = () => {
         title={intl.formatMessage(messages.discardChangesTitle)}
         description={intl.formatMessage(messages.discardChangesDescription)}
         onDeleteSubmit={revert}
-        btnState={confirmBtnState}
-        btnDefaultLabel={intl.formatMessage(messages.discardChangesDefaultBtnLabel)}
-        btnPendingLabel={intl.formatMessage(messages.discardChangesDefaultBtnLabel)}
+        btnLabel={intl.formatMessage(messages.discardChangesDefaultBtnLabel)}
       />
     </>
   );
