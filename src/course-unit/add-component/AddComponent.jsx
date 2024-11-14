@@ -2,13 +2,14 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { useToggle } from '@openedx/paragon';
+import { StandardModal, useToggle } from '@openedx/paragon';
 
 import { getCourseSectionVertical } from '../data/selectors';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import ComponentModalView from './add-component-modals/ComponentModalView';
 import AddComponentButton from './add-component-btn';
 import messages from './messages';
+import { ComponentPicker } from '../../library-authoring/component-picker';
 
 const AddComponent = ({ blockId, handleCreateNewCourseXBlock }) => {
   const navigate = useNavigate();
@@ -17,6 +18,17 @@ const AddComponent = ({ blockId, handleCreateNewCourseXBlock }) => {
   const [isOpenHtml, openHtml, closeHtml] = useToggle(false);
   const [isOpenOpenAssessment, openOpenAssessment, closeOpenAssessment] = useToggle(false);
   const { componentTemplates } = useSelector(getCourseSectionVertical);
+  const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
+
+  const handleLibraryV2Selection = (selection) => {
+    handleCreateNewCourseXBlock({
+      type: COMPONENT_TYPES.libraryV2,
+      category: selection.blockType,
+      parentLocator: blockId,
+      libraryContentKey: selection.usageKey,
+    });
+    closeAddLibraryContentModal();
+  };
 
   const handleCreateNewXBlock = (type, moduleName) => {
     switch (type) {
@@ -34,6 +46,12 @@ const AddComponent = ({ blockId, handleCreateNewCourseXBlock }) => {
         //  behaviour and this ticket is on hold (blocked by other development team).
       case COMPONENT_TYPES.library:
         handleCreateNewCourseXBlock({ type, category: 'library_content', parentLocator: blockId });
+        break;
+      case COMPONENT_TYPES.itembank:
+        handleCreateNewCourseXBlock({ type, category: 'itembank', parentLocator: blockId });
+        break;
+      case COMPONENT_TYPES.libraryV2:
+        showAddLibraryContentModal();
         break;
       case COMPONENT_TYPES.advanced:
         handleCreateNewCourseXBlock({
@@ -67,7 +85,7 @@ const AddComponent = ({ blockId, handleCreateNewCourseXBlock }) => {
       <h5 className="h3 mb-4 text-center">{intl.formatMessage(messages.title)}</h5>
       <ul className="new-component-type list-unstyled m-0 d-flex flex-wrap justify-content-center">
         {componentTemplates.map((component) => {
-          const { type, displayName } = component;
+          const { type, displayName, beta } = component;
           let modalParams;
 
           if (!component.templates.length) {
@@ -103,6 +121,7 @@ const AddComponent = ({ blockId, handleCreateNewCourseXBlock }) => {
                     onClick={() => handleCreateNewXBlock(type)}
                     displayName={displayName}
                     type={type}
+                    beta={beta}
                   />
                 </li>
               );
@@ -118,6 +137,18 @@ const AddComponent = ({ blockId, handleCreateNewCourseXBlock }) => {
           );
         })}
       </ul>
+      <StandardModal
+        title="Select component"
+        isOpen={isAddLibraryContentModalOpen}
+        onClose={closeAddLibraryContentModal}
+        isOverflowVisible={false}
+        size="xl"
+      >
+        <ComponentPicker
+          showOnlyPublished
+          onComponentSelected={handleLibraryV2Selection}
+        />
+      </StandardModal>
     </div>
   );
 };

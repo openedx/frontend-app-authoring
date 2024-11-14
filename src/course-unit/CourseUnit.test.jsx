@@ -282,7 +282,7 @@ describe('<CourseUnit />', () => {
 
     await waitFor(() => {
       const problemButton = getByRole('button', {
-        name: new RegExp(`${addComponentMessages.buttonText.defaultMessage} Problem`, 'i'),
+        name: new RegExp(`problem ${addComponentMessages.buttonText.defaultMessage} Problem`, 'i'),
       });
 
       userEvent.click(problemButton);

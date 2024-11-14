@@ -82,6 +82,7 @@ module.exports = {
         allow_unsupported_xblocks: false,
         documentation_label: 'Your Platform Name Here Support Levels:',
       },
+      beta: false,
     },
     {
       type: 'discussion',
@@ -101,6 +102,7 @@ module.exports = {
         allow_unsupported_xblocks: false,
         documentation_label: 'Your Platform Name Here Support Levels:',
       },
+      beta: false,
     },
     {
       type: 'library',
@@ -114,12 +116,13 @@ module.exports = {
           support_level: true,
         },
       ],
-      display_name: 'Library Content',
+      display_name: 'Legacy Library Content',
       support_legend: {
         show_legend: false,
         allow_unsupported_xblocks: false,
         documentation_label: 'Your Platform Name Here Support Levels:',
       },
+      beta: false,
     },
     {
       type: 'html',
@@ -179,6 +182,7 @@ module.exports = {
         allow_unsupported_xblocks: false,
         documentation_label: 'Your Platform Name Here Support Levels:',
       },
+      beta: false,
     },
     {
       type: 'openassessment',
@@ -230,6 +234,7 @@ module.exports = {
         allow_unsupported_xblocks: false,
         documentation_label: 'Your Platform Name Here Support Levels:',
       },
+      beta: false,
     },
     {
       type: 'problem',
@@ -249,6 +254,7 @@ module.exports = {
         allow_unsupported_xblocks: false,
         documentation_label: 'Your Platform Name Here Support Levels:',
       },
+      beta: false,
     },
     {
       type: 'video',
@@ -268,6 +274,7 @@ module.exports = {
         allow_unsupported_xblocks: false,
         documentation_label: 'Your Platform Name Here Support Levels:',
       },
+      beta: false,
     },
     {
       type: 'drag-and-drop-v2',
@@ -287,6 +294,47 @@ module.exports = {
         allow_unsupported_xblocks: false,
         documentation_label: 'Your Platform Name Here Support Levels:',
       },
+      beta: false,
+    },
+    {
+      type: 'library_v2',
+      templates: [
+        {
+          display_name: 'Library Content',
+          category: 'library_v2',
+          boilerplate_name: null,
+          hinted: false,
+          tab: 'advanced',
+          support_level: true,
+        },
+      ],
+      display_name: 'Library Content',
+      support_legend: {
+        show_legend: false,
+        allow_unsupported_xblocks: false,
+        documentation_label: 'Your Platform Name Here Support Levels:',
+      },
+      beta: true,
+    },
+    {
+      type: 'itembank',
+      templates: [
+        {
+          display_name: 'Problem Bank',
+          category: 'itembank',
+          boilerplate_name: null,
+          hinted: false,
+          tab: 'advanced',
+          support_level: true,
+        },
+      ],
+      display_name: 'Problem Bank',
+      support_legend: {
+        show_legend: false,
+        allow_unsupported_xblocks: false,
+        documentation_label: 'Your Platform Name Here Support Levels:',
+      },
+      beta: true,
     },
   ],
   course_sequence_ids: [
