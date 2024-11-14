@@ -52,6 +52,7 @@ export const messageTypes = {
   videoFullScreen: 'plugin.videoFullScreen',
   refreshXBlock: 'refreshXBlock',
   showMoveXBlockModal: 'showMoveXBlockModal',
+  showXBlockLibraryChangesPreview: 'showXBlockLibraryChangesPreview',
 };
 
 export const IFRAME_FEATURE_POLICY = (
