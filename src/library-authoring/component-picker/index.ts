@@ -1,2 +1,2 @@
+/* eslint-disable import/prefer-default-export */
 export { ComponentPicker } from './ComponentPicker';
-export { ComponentPickerModal } from './ComponentPickerModal';

@@ -70,7 +70,7 @@ const AddContentContainer = () => {
     collectionId,
     openCreateCollectionModal,
     openComponentEditor,
-    componentPickerModal,
+    componentPicker,
   } = useLibraryContext();
   const createBlockMutation = useCreateLibraryBlock();
   const updateComponentsMutation = useAddComponentsToCollection(libraryId, collectionId);
@@ -239,7 +239,7 @@ const AddContentContainer = () => {
   return (
     <Stack direction="vertical">
       {collectionId ? (
-        componentPickerModal && (
+        componentPicker && (
           <>
             <AddContentButton contentType={libraryContentButtonData} onCreateContent={onCreateContent} />
             <PickLibraryContentModal

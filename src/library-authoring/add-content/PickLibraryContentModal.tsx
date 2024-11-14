@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useState } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { ActionRow, Button } from '@openedx/paragon';
+import { ActionRow, Button, StandardModal } from '@openedx/paragon';
 
 import { ToastContext } from '../../generic/toast-context';
 import { type SelectedComponent, useLibraryContext } from '../common/context';
@@ -41,14 +41,14 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
     libraryId,
     collectionId,
     /** We need to get it as a reference instead of directly importing it to avoid the import cycle:
-     * ComponentPickerModal > ComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
-     * Sidebar > AddContentContainer > ComponentPickerModal */
-    componentPickerModal: ComponentPickerModal,
+     * ComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
+     * Sidebar > AddContentContainer > ComponentPicker */
+    componentPicker: ComponentPicker,
   } = useLibraryContext();
 
   // istanbul ignore if: this should never happen
-  if (!collectionId || !ComponentPickerModal) {
-    throw new Error('libraryId and componentPickerModal are required');
+  if (!collectionId || !ComponentPicker) {
+    throw new Error('libraryId and componentPicker are required');
   }
 
   const updateComponentsMutation = useAddComponentsToCollection(libraryId, collectionId);
@@ -70,12 +70,19 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
   }, [selectedComponents]);
 
   return (
-    <ComponentPickerModal
-      libraryId={libraryId}
+    <StandardModal
+      title="Select components"
+      isOverflowVisible={false}
+      size="xl"
       isOpen={isOpen}
       onClose={onClose}
-      onChangeComponentSelection={setSelectedComponents}
       footerNode={<PickLibraryContentModalFooter onSubmit={onSubmit} selectedComponents={selectedComponents} />}
-    />
+    >
+      <ComponentPicker
+        libraryId={libraryId}
+        componentPickerMode="multiple"
+        onChangeComponentSelection={setSelectedComponents}
+      />
+    </StandardModal>
   );
 };

@@ -23,6 +23,11 @@ let axiosMock;
 const blockId = '123';
 const handleCreateNewCourseXBlockMock = jest.fn();
 
+// Mock ComponentPicker to call onComponentSelected on load
+jest.mock('../../library-authoring/component-picker', () => ({
+  ComponentPicker: (props) => props.onComponentSelected({ usageKey: 'test-usage-key', blockType: 'html' }),
+}));
+
 const renderComponent = (props) => render(
   <AppProvider store={store}>
     <IntlProvider locale="en">
@@ -61,7 +66,11 @@ describe('<AddComponent />', () => {
     expect(getByRole('heading', { name: messages.title.defaultMessage })).toBeInTheDocument();
     Object.keys(componentTemplates).forEach((component) => {
       const btn = getByRole('button', {
-        name: new RegExp(`${messages.buttonText.defaultMessage} ${componentTemplates[component].display_name}`, 'i'),
+        name: new RegExp(
+          `${componentTemplates[component].type
+          } ${messages.buttonText.defaultMessage} ${componentTemplates[component].display_name}`,
+          'i',
+        ),
       });
       expect(btn).toBeInTheDocument();
       if (component.beta) {
@@ -115,7 +124,11 @@ describe('<AddComponent />', () => {
       }
 
       return expect(getByRole('button', {
-        name: new RegExp(`${messages.buttonText.defaultMessage} ${componentTemplates[component].display_name}`, 'i'),
+        name: new RegExp(
+          `${componentTemplates[component].type
+          } ${messages.buttonText.defaultMessage} ${componentTemplates[component].display_name}`,
+          'i',
+        ),
       })).toBeInTheDocument();
     });
   });
@@ -180,7 +193,7 @@ describe('<AddComponent />', () => {
     const { getByRole } = renderComponent();
 
     const discussionButton = getByRole('button', {
-      name: new RegExp(`${messages.buttonText.defaultMessage} Problem`, 'i'),
+      name: new RegExp(`problem ${messages.buttonText.defaultMessage} Problem`, 'i'),
     });
 
     userEvent.click(discussionButton);
@@ -396,6 +409,22 @@ describe('<AddComponent />', () => {
       parentLocator: '123',
       category: COMPONENT_TYPES.openassessment,
       boilerplate: 'peer-assessment',
+    });
+  });
+
+  it('shows library picker on clicking v2 library content btn', async () => {
+    const { findByRole } = renderComponent();
+    const libBtn = await findByRole('button', {
+      name: new RegExp(`${messages.buttonText.defaultMessage} Library content`, 'i'),
+    });
+
+    userEvent.click(libBtn);
+    expect(handleCreateNewCourseXBlockMock).toHaveBeenCalled();
+    expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith({
+      type: COMPONENT_TYPES.libraryV2,
+      parentLocator: '123',
+      category: 'html',
+      libraryContentKey: 'test-usage-key',
     });
   });
 

@@ -12,7 +12,7 @@ import { studioHomeMock } from '../../studio-home/__mocks__';
 import { getStudioHomeApiUrl } from '../../studio-home/data/api';
 import mockResult from '../__mocks__/library-search.json';
 import { LibraryProvider } from '../common/context';
-import { ComponentPickerModal } from '../component-picker';
+import { ComponentPicker } from '../component-picker';
 import * as api from '../data/api';
 import {
   mockContentLibrary,
@@ -40,7 +40,7 @@ const render = () => baseRender(<PickLibraryContentModal isOpen onClose={onClose
     <LibraryProvider
       libraryId={libraryId}
       collectionId="collectionId"
-      componentPickerModal={ComponentPickerModal}
+      componentPicker={ComponentPicker}
     >
       {children}
     </LibraryProvider>

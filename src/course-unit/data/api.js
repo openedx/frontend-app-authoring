@@ -63,9 +63,16 @@ export async function getCourseSectionVerticalData(unitId) {
  * @param {string} [options.displayName] - The display name.
  * @param {string} [options.boilerplate] - The boilerplate.
  * @param {string} [options.stagedContent] - The staged content.
+ * @param {string} [options.libraryContentKey] - component key from library if being imported.
  */
 export async function createCourseXblock({
-  type, category, parentLocator, displayName, boilerplate, stagedContent,
+  type,
+  category,
+  parentLocator,
+  displayName,
+  boilerplate,
+  stagedContent,
+  libraryContentKey,
 }) {
   const body = {
     type,
@@ -74,6 +81,7 @@ export async function createCourseXblock({
     parent_locator: parentLocator,
     display_name: displayName,
     staged_content: stagedContent,
+    library_content_key: libraryContentKey,
   };
 
   const { data } = await getAuthenticatedHttpClient()
