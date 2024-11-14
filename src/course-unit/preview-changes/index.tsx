@@ -1,21 +1,22 @@
-import { useCallback, useContext, useState } from "react";
-import { ActionRow, Button, ModalDialog, useToggle } from "@openedx/paragon";
+import { useCallback, useContext, useState } from 'react';
+import {
+  ActionRow, Button, ModalDialog, useToggle,
+} from '@openedx/paragon';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 
-import { useEventListener } from "../../generic/hooks";
-import { messageTypes } from "../constants";
-import CompareChangesWidget from "../../library-authoring/component-comparison/CompareChangesWidget";
-import { useAcceptLibraryBlockChanges, useIgnoreLibraryBlockChanges } from "../data/apiHooks";
-import { useIframe } from "../context/hooks";
+import { useEventListener } from '../../generic/hooks';
+import { messageTypes } from '../constants';
+import CompareChangesWidget from '../../library-authoring/component-comparison/CompareChangesWidget';
+import { useAcceptLibraryBlockChanges, useIgnoreLibraryBlockChanges } from '../data/apiHooks';
+import { useIframe } from '../context/hooks';
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import messages from './messages';
-import { ToastContext } from "../../generic/toast-context";
-import LoadingButton from "../../generic/loading-button";
+import { ToastContext } from '../../generic/toast-context';
+import LoadingButton from '../../generic/loading-button';
 
 interface LibraryChangesMessageData {
   displayName: string,
   downstreamBlockId: string,
-  courseAuthoringMfeUrl: string,
   upstreamBlockId: string,
   upstreamBlockVersionSynced: number,
   isVertical: boolean,
@@ -56,9 +57,9 @@ const PreviewLibraryXBlockChanges = () => {
       return blockData?.displayName;
     }
     if (blockData?.isVertical) {
-      return "Unit";
+      return 'Unit';
     }
-    return "Component";
+    return 'Component';
   }, [blockData]);
 
   const getBody = useCallback(() => {
@@ -69,7 +70,7 @@ const PreviewLibraryXBlockChanges = () => {
       <CompareChangesWidget
         usageKey={blockData.upstreamBlockId}
         oldVersion={blockData.upstreamBlockVersionSynced || 'published'}
-        newVersion='published'
+        newVersion="published"
       />
     );
   }, [blockData]);
@@ -79,8 +80,8 @@ const PreviewLibraryXBlockChanges = () => {
       return;
     }
 
-    const mutation = accept ? acceptChangesMutation: ignoreChangesMutation;
-    let failureMsg = accept ? messages.acceptChangesFailure: messages.ignoreChangesFailure;
+    const mutation = accept ? acceptChangesMutation : ignoreChangesMutation;
+    const failureMsg = accept ? messages.acceptChangesFailure : messages.ignoreChangesFailure;
 
     try {
       await mutation.mutateAsync(blockData.downstreamBlockId);
@@ -105,7 +106,7 @@ const PreviewLibraryXBlockChanges = () => {
         <ModalDialog.Title>
           <FormattedMessage
             {...messages.title}
-            values={{blockTitle: getTitle()}}
+            values={{ blockTitle: getTitle() }}
           />
         </ModalDialog.Title>
       </ModalDialog.Header>
@@ -139,7 +140,7 @@ const PreviewLibraryXBlockChanges = () => {
         btnLabel={intl.formatMessage(messages.confirmationConfirmBtn)}
       />
     </ModalDialog>
-  )
-}
+  );
+};
 
 export default PreviewLibraryXBlockChanges;
