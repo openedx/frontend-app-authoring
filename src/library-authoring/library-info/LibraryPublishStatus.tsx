@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useContext } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { useToggle } from '@openedx/paragon';

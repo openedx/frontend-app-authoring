@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useContext } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -26,7 +26,6 @@ const CollectionMenu = ({ collectionHit } : CollectionMenuProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
-  const [confirmBtnState, setConfirmBtnState] = useState('default');
   const { closeLibrarySidebar, sidebarComponentInfo } = useLibraryContext();
 
   const restoreCollectionMutation = useRestoreCollection(collectionHit.contextKey, collectionHit.blockId);
@@ -40,28 +39,26 @@ const CollectionMenu = ({ collectionHit } : CollectionMenuProps) => {
   }, []);
 
   const deleteCollectionMutation = useDeleteCollection(collectionHit.contextKey, collectionHit.blockId);
-  const deleteCollection = useCallback(() => {
-    setConfirmBtnState('pending');
+  const deleteCollection = useCallback(async () => {
     if (sidebarComponentInfo?.id === collectionHit.blockId) {
       // Close sidebar if current collection is open to avoid displaying
       // deleted collection in sidebar
       closeLibrarySidebar();
     }
-    deleteCollectionMutation.mutateAsync()
-      .then(() => {
-        showToast(
-          intl.formatMessage(messages.deleteCollectionSuccess),
-          {
-            label: intl.formatMessage(messages.undoDeleteCollectionToastAction),
-            onClick: restoreCollection,
-          },
-        );
-      }).catch(() => {
-        showToast(intl.formatMessage(messages.deleteCollectionFailed));
-      }).finally(() => {
-        setConfirmBtnState('default');
-        closeDeleteModal();
-      });
+    try {
+      await deleteCollectionMutation.mutateAsync();
+      showToast(
+        intl.formatMessage(messages.deleteCollectionSuccess),
+        {
+          label: intl.formatMessage(messages.undoDeleteCollectionToastAction),
+          onClick: restoreCollection,
+        },
+      );
+    } catch (e) {
+      showToast(intl.formatMessage(messages.deleteCollectionFailed));
+    } finally {
+      closeDeleteModal();
+    }
   }, [sidebarComponentInfo?.id]);
 
   return (
