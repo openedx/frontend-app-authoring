@@ -111,11 +111,6 @@ const messages = defineMessages({
     defaultMessage: 'Studio Home',
     description: 'Link to Studio Home',
   },
-  'header.user.menu.maintenance': {
-    id: 'header.user.menu.maintenance',
-    defaultMessage: 'Maintenance',
-    description: 'Link to the Studio maintenance page',
-  },
   'header.user.menu.logout': {
     id: 'header.user.menu.logout',
     defaultMessage: 'Logout',
