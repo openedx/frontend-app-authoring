@@ -85,8 +85,8 @@ Troubleshooting
 ---------------
 
 * If you see an "Invalid Host header" error, then you're probably using a different domain name for your devstack such as
-``local.edly.io`` or ``local.overhang.io`` (not the new recommended default, ``local.openedx.io``). In that case, run
-these commands to update your devstack's domain names:
+  ``local.edly.io`` or ``local.overhang.io`` (not the new recommended default, ``local.openedx.io``). In that case, run
+  these commands to update your devstack's domain names:
 
 .. code-block:: bash
 
@@ -98,7 +98,7 @@ these commands to update your devstack's domain names:
 * If tutor-mfe is not starting the authoring MFE in development mode (eg. `tutor dev start authoring` fails), it may be due to
   using a tutor version that expects the MFE name to be frontend-app-course-authoring (the previous name of this repo). To fix
   this, you can rename the cloned repo directory to frontend-app-course-authoring. More information can be found in 
-  [this forum post](https://discuss.openedx.org/t/repo-rename-frontend-app-course-authoring-frontend-app-authoring/13930/2)
+  `this forum post <https://discuss.openedx.org/t/repo-rename-frontend-app-course-authoring-frontend-app-authoring/13930/2>`__.
 
 
 Features
