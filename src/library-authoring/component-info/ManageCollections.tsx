@@ -29,7 +29,7 @@ interface CollectionsDrawerProps extends ManageCollectionsProps {
 const CollectionsSelectableBox = ({ usageKey, collections, onClose }: CollectionsDrawerProps) => {
   const type = 'checkbox';
   const intl = useIntl();
-  const { collectionHits } = useSearchContext();
+  const { hits } = useSearchContext();
   const { showToast } = useContext(ToastContext);
   const collectionKeys = collections.map((collection) => collection.key);
   const [selectedCollections, {
@@ -67,7 +67,7 @@ const CollectionsSelectableBox = ({ usageKey, collections, onClose }: Collection
           columns={1}
           ariaLabelledby={intl.formatMessage(messages.manageCollectionsSelectionLabel)}
         >
-          {collectionHits.map((collectionHit) => (
+          {hits.map((collectionHit) => (
             <SelectableBox
               className="d-inline-flex align-items-center shadow-none border border-gray-100"
               value={collectionHit.blockId}
@@ -112,12 +112,9 @@ const AddToCollectionsDrawer = ({ usageKey, collections, onClose }: CollectionsD
 
   return (
     <SearchContextProvider
-      overrideQueries={{
-        components: { limit: 0 },
-        blockTypes: { limit: 0 },
-      }}
-      extraFilter={`context_key = "${libraryId}"`}
+      extraFilter={[`context_key = "${libraryId}"`, 'type = "collection"']}
       skipUrlUpdate
+      skipBlockTypeFetch
     >
       <Stack className="mt-2" gap={3}>
         <FormattedMessage

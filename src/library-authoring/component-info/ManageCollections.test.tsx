@@ -39,14 +39,14 @@ describe('<ManageCollections />', () => {
     fetchMock.mockReset();
     fetchMock.post(searchEndpoint, (_url, req) => {
       const requestData = JSON.parse(req.body?.toString() ?? '');
-      const query = requestData?.queries[2]?.q ?? '';
+      const query = requestData?.queries[0]?.q ?? '';
       // We have to replace the query (search keywords) in the mock results with the actual query,
       // because otherwise Instantsearch will update the UI and change the query,
       // leading to unexpected results in the test cases.
-      mockCollectionsResults.results[2].query = query;
+      mockCollectionsResults.results[0].query = query;
       // And fake the required '_formatted' fields; it contains the highlighting <mark>...</mark> around matched words
       // eslint-disable-next-line no-underscore-dangle, no-param-reassign
-      mockCollectionsResults.results[2]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
+      mockCollectionsResults.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
       return mockCollectionsResults;
     });
   });
