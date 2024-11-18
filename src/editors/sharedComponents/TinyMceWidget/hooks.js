@@ -245,7 +245,6 @@ export const editorConfig = ({
   setEditorRef,
   editorContentHtml,
   images,
-  isLibrary,
   placeholder,
   initializeEditor,
   openImgModal,
@@ -268,9 +267,8 @@ export const editorConfig = ({
     imageToolbar,
     quickbarsInsertToolbar,
     quickbarsSelectionToolbar,
-  } = pluginConfig({ isLibrary, placeholder, editorType });
+  } = pluginConfig({ learningContextId, placeholder, editorType });
   const isLocaleRtl = isRtl(getLocale());
-
   return {
     onInit: (evt, editor) => {
       setEditorRef(editor);

@@ -16,6 +16,13 @@ export const get: Axios['get'] = (...args) => client().get(...args);
  * @param {object|string} data - post payload
  */
 export const post: Axios['post'] = (...args) => client().post(...args);
+
+/**
+ * put(url, data)
+ * simple wrapper providing an authenticated Http client put action
+ */
+export const put: Axios['put'] = (...args) => client().put(...args);
+
 /**
  * delete(url, data)
  * simple wrapper providing an authenticated Http client delete action

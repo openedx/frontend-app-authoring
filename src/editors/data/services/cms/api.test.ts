@@ -1,12 +1,15 @@
 import * as api from './api';
 import * as urls from './urls';
-import { get, post, deleteObject } from './utils';
+import {
+  get, post, put, deleteObject,
+} from './utils';
 
 jest.mock('./urls', () => ({
   block: jest.fn().mockReturnValue('urls.block'),
   blockAncestor: jest.fn().mockReturnValue('urls.blockAncestor'),
   blockStudioView: jest.fn().mockReturnValue('urls.StudioView'),
   courseAssets: jest.fn().mockReturnValue('urls.courseAssets'),
+  libraryAssets: jest.fn().mockReturnValue('urls.libraryAssets'),
   videoTranscripts: jest.fn().mockReturnValue('urls.videoTranscripts'),
   allowThumbnailUpload: jest.fn().mockReturnValue('urls.allowThumbnailUpload'),
   thumbnailUpload: jest.fn().mockReturnValue('urls.thumbnailUpload'),
@@ -25,19 +28,21 @@ jest.mock('./urls', () => ({
 jest.mock('./utils', () => ({
   get: jest.fn().mockName('get'),
   post: jest.fn().mockName('post'),
+  put: jest.fn().mockName('put'),
   deleteObject: jest.fn().mockName('deleteObject'),
 }));
 
 const { apiMethods } = api;
 
 const blockId = 'block-v1-coursev1:2uX@4345432';
-const learningContextId = 'demo2uX';
+let learningContextId;
 const studioEndpointUrl = 'hortus.coa';
 const title = 'remember this needs to go into metadata to save';
 
 describe('cms api', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    learningContextId = 'demo2uX';
   });
   describe('apiMethods', () => {
     describe('fetchBlockId', () => {
@@ -100,9 +105,11 @@ describe('cms api', () => {
       });
     });
 
-    describe('fetchImages', () => {
+    describe('fetchCourseImages', () => {
       it('should call get with url.courseAssets', () => {
-        apiMethods.fetchImages({ learningContextId, studioEndpointUrl, pageNumber: 0 });
+        apiMethods.fetchCourseImages({
+          learningContextId, studioEndpointUrl, pageNumber: 0,
+        });
         const params = {
           asset_type: 'Images',
           page: 0,
@@ -110,6 +117,16 @@ describe('cms api', () => {
         expect(get).toHaveBeenCalledWith(
           urls.courseAssets({ studioEndpointUrl, learningContextId }),
           { params },
+        );
+      });
+    });
+    describe('fetchLibraryImages', () => {
+      it('should call get with urls.libraryAssets for library V2', () => {
+        apiMethods.fetchLibraryImages({
+          blockId,
+        });
+        expect(get).toHaveBeenCalledWith(
+          urls.libraryAssets({ blockId }),
         );
       });
     });
@@ -246,17 +263,34 @@ describe('cms api', () => {
     });
 
     describe('uploadAsset', () => {
-      const asset = new Blob(['data'], { type: 'image/jpeg' });
+      const img = new Blob(['data'], { type: 'image/jpeg' });
+      const filename = 'image.jpg';
+      const asset = new File([img], filename, { type: 'image/jpeg' });
+      const mockFormdata = new FormData();
+      mockFormdata.append('file', asset);
       it('should call post with urls.courseAssets and imgdata', () => {
-        const mockFormdata = new FormData();
-        mockFormdata.append('file', asset);
         apiMethods.uploadAsset({
+          blockId,
           learningContextId,
           studioEndpointUrl,
           asset,
         });
         expect(post).toHaveBeenCalledWith(
           urls.courseAssets({ studioEndpointUrl, learningContextId }),
+          mockFormdata,
+        );
+      });
+      it('should call post with urls.libraryAssets and imgdata', () => {
+        learningContextId = 'lib:demo2uX';
+        mockFormdata.append('content', asset);
+        apiMethods.uploadAsset({
+          blockId,
+          learningContextId,
+          studioEndpointUrl,
+          asset,
+        });
+        expect(put).toHaveBeenCalledWith(
+          `${urls.libraryAssets({ blockId, assetName: asset.name })}`,
           mockFormdata,
         );
       });

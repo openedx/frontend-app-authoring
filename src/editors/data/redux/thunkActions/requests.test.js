@@ -1,4 +1,4 @@
-import { keyStore } from '../../../utils';
+import { keyStore, parseLibraryImageData, getLibraryImageAssets } from '../../../utils';
 import { RequestKeys } from '../../constants/requests';
 import api from '../../services/cms/api';
 import * as requests from './requests';
@@ -26,7 +26,8 @@ jest.mock('../../services/cms/api', () => ({
   fetchByUnitId: ({ id, url }) => ({ id, url }),
   fetchCourseDetails: (args) => args,
   saveBlock: (args) => args,
-  fetchImages: ({ id, url }) => ({ id, url }),
+  fetchCourseImages: ({ id, url }) => ({ id, url }),
+  fetchLibraryImages: ({ id, url }) => ({ id, url }),
   fetchVideos: ({ id, url }) => ({ id, url }),
   uploadAsset: (args) => args,
   loadImages: jest.fn(),
@@ -38,6 +39,12 @@ jest.mock('../../services/cms/api', () => ({
   importTranscript: (args) => args,
   fetchVideoFeatures: (args) => args,
   uploadVideo: (args) => args,
+}));
+
+jest.mock('../../../utils', () => ({
+  ...jest.requireActual('../../../utils'),
+  parseLibraryImageData: jest.fn(),
+  getLibraryImageAssets: jest.fn(() => ({})),
 }));
 
 const apiKeys = keyStore(api);
@@ -241,31 +248,59 @@ describe('requests thunkActions module', () => {
       let fetchImages;
       let loadImages;
       let dispatchedAction;
-      const expectedArgs = {
-        studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
-        learningContextId: selectors.app.learningContextId(testState),
-      };
-      beforeEach(() => {
-        fetchImages = jest.fn((args) => new Promise((resolve) => {
-          resolve({ data: { assets: { fetchImages: args } } });
-        }));
-        jest.spyOn(api, apiKeys.fetchImages).mockImplementationOnce(fetchImages);
-        loadImages = jest.spyOn(api, apiKeys.loadImages).mockImplementationOnce(() => ({}));
-        requests.fetchImages({ ...fetchParams, onSuccess, onFailure })(dispatch, () => testState);
-        [[dispatchedAction]] = dispatch.mock.calls;
+      describe('courses', () => {
+        beforeEach(() => {
+          fetchImages = jest.fn((args) => new Promise((resolve) => {
+            resolve({ data: { assets: { fetchImages: args } } });
+          }));
+          jest.spyOn(api, apiKeys.fetchCourseImages).mockImplementationOnce(fetchImages);
+          loadImages = jest.spyOn(api, apiKeys.loadImages).mockImplementationOnce(() => ({}));
+          requests.fetchImages({ ...fetchParams, onSuccess, onFailure })(dispatch, () => testState);
+          [[dispatchedAction]] = dispatch.mock.calls;
+        });
+        const expectedArgs = {
+          blockId: selectors.app.blockId(testState),
+          studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+          learningContextId: selectors.app.learningContextId(testState),
+        };
+        it('dispatches networkRequest', () => {
+          expect(dispatchedAction.networkRequest).not.toEqual(undefined);
+        });
+        test('forwards onSuccess and onFailure', () => {
+          expect(dispatchedAction.networkRequest.onSuccess).toEqual(onSuccess);
+          expect(dispatchedAction.networkRequest.onFailure).toEqual(onFailure);
+        });
+        test('api.fetchImages promise called with studioEndpointUrl and learningContextId', () => {
+          expect(fetchImages).toHaveBeenCalledWith(expectedArgs);
+        });
+        test('promise is chained with api.loadImages', () => {
+          expect(loadImages).toHaveBeenCalledWith({ fetchImages: expectedArgs });
+        });
+        test('promise is chained with api.loadImages', () => {
+          expect(loadImages).toHaveBeenCalledWith({ fetchImages: expectedArgs });
+        });
       });
-      it('dispatches networkRequest', () => {
-        expect(dispatchedAction.networkRequest).not.toEqual(undefined);
-      });
-      test('forwards onSuccess and onFailure', () => {
-        expect(dispatchedAction.networkRequest.onSuccess).toEqual(onSuccess);
-        expect(dispatchedAction.networkRequest.onFailure).toEqual(onFailure);
-      });
-      test('api.fetchImages promise called with studioEndpointUrl and learningContextId', () => {
-        expect(fetchImages).toHaveBeenCalledWith(expectedArgs);
-      });
-      test('promise is chained with api.loadImages', () => {
-        expect(loadImages).toHaveBeenCalledWith({ fetchImages: expectedArgs });
+      describe('libraries', () => {
+        const expectedArgs = {
+          learningContextId: 'lib:demo',
+          studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+          blockId: selectors.app.blockId(testState),
+        };
+        beforeEach(() => {
+          jest.spyOn(selectors.app, 'learningContextId').mockImplementationOnce(() => ('lib:demo'));
+          fetchImages = jest.fn((args) => new Promise((resolve) => {
+            resolve({ data: { files: { fetchImages: args } } });
+          }));
+          jest.spyOn(api, apiKeys.fetchLibraryImages).mockImplementationOnce(fetchImages);
+          requests.fetchImages({
+            ...fetchParams, onSuccess, onFailure,
+          })(dispatch, () => testState);
+          [[dispatchedAction]] = dispatch.mock.calls;
+        });
+        test('api.fetchImages promise called with studioEndpointUrl and blockId', () => {
+          expect(fetchImages).toHaveBeenCalledWith(expectedArgs);
+          expect(getLibraryImageAssets).toHaveBeenCalled();
+        });
       });
     });
     describe('fetchVideos', () => {
@@ -316,21 +351,62 @@ describe('requests thunkActions module', () => {
     });
     describe('uploadAsset', () => {
       const asset = 'SoME iMage CoNtent As String';
-      testNetworkRequestAction({
-        action: requests.uploadAsset,
-        args: { asset, ...fetchParams },
-        expectedString: 'with uploadAsset promise',
-        expectedData: {
-          ...fetchParams,
-          requestKey: RequestKeys.uploadAsset,
-          promise: api.uploadAsset({
-            learningContextId: selectors.app.learningContextId(testState),
-            asset,
-            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
-          }),
-        },
+      let uploadAsset;
+      let dispatchedAction;
+
+      describe('courses', () => {
+        const expectedArgs = {
+          learningContextId: selectors.app.learningContextId(testState),
+          studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+          blockId: selectors.app.blockId(testState),
+          asset,
+        };
+        beforeEach(() => {
+          uploadAsset = jest.fn((args) => new Promise((resolve) => {
+            resolve({ data: { asset: args } });
+          }));
+          jest.spyOn(api, apiKeys.uploadAsset).mockImplementationOnce(uploadAsset);
+          requests.uploadAsset({
+            asset, ...fetchParams, onSuccess, onFailure,
+          })(dispatch, () => testState);
+          [[dispatchedAction]] = dispatch.mock.calls;
+        });
+        it('dispatches networkRequest', () => {
+          expect(dispatchedAction.networkRequest).not.toEqual(undefined);
+        });
+        test('forwards onSuccess and onFailure', () => {
+          expect(dispatchedAction.networkRequest.onSuccess).toEqual(onSuccess);
+          expect(dispatchedAction.networkRequest.onFailure).toEqual(onFailure);
+        });
+        test('api.uploadAsset promise called with studioEndpointUrl, blockId and learningContextId', () => {
+          expect(uploadAsset).toHaveBeenCalledWith(expectedArgs);
+        });
+      });
+      describe('libraries', () => {
+        const expectedArgs = {
+          learningContextId: 'lib:demo',
+          studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+          blockId: selectors.app.blockId(testState),
+          asset,
+        };
+        beforeEach(() => {
+          jest.spyOn(selectors.app, 'learningContextId').mockImplementationOnce(() => ('lib:demo'));
+          uploadAsset = jest.fn((args) => new Promise((resolve) => {
+            resolve({ data: { asset: args } });
+          }));
+          jest.spyOn(api, apiKeys.uploadAsset).mockImplementationOnce(uploadAsset);
+          requests.uploadAsset({
+            asset, ...fetchParams, onSuccess, onFailure,
+          })(dispatch, () => testState);
+          [[dispatchedAction]] = dispatch.mock.calls;
+        });
+        test('api.uploadAsset promise called with studioEndpointUrl and blockId', () => {
+          expect(uploadAsset).toHaveBeenCalledWith(expectedArgs);
+          expect(parseLibraryImageData).toHaveBeenCalled();
+        });
       });
     });
+
     describe('uploadThumbnail', () => {
       const thumbnail = 'SoME tHumbNAil CoNtent As String';
       const videoId = 'SoME VidEOid CoNtent As String';

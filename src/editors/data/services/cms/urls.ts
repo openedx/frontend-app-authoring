@@ -1,4 +1,5 @@
 import { isLibraryKey, isLibraryV1Key } from '../../../../generic/key-utils';
+import { getXBlockAssetsApiUrl } from '../../../../library-authoring/data/api';
 
 /**
  * A little helper so we can write the types of these functions more compactly
@@ -59,6 +60,12 @@ export const blockStudioView = (({ studioEndpointUrl, blockId }) => (
 
 export const courseAssets = (({ studioEndpointUrl, learningContextId }) => (
   `${studioEndpointUrl}/assets/${learningContextId}/`
+)) satisfies UrlFunction;
+
+export const libraryAssets = (({ blockId, assetName }) => (
+  assetName
+    ? `${getXBlockAssetsApiUrl(blockId)}static/${encodeURI(assetName)}`
+    : `${getXBlockAssetsApiUrl(blockId)}`
 )) satisfies UrlFunction;
 
 export const thumbnailUpload = (({ studioEndpointUrl, learningContextId, videoId }) => (

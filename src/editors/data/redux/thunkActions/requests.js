@@ -1,4 +1,4 @@
-import { StrictDict } from '../../../utils';
+import { StrictDict, parseLibraryImageData, getLibraryImageAssets } from '../../../utils';
 
 import { RequestKeys } from '../../constants/requests';
 import api, { loadImages } from '../../services/cms/api';
@@ -10,6 +10,8 @@ import { selectors as appSelectors } from '../app';
 // should be re-thought and cleaned up to avoid this pattern.
 // eslint-disable-next-line import/no-self-import
 import * as module from './requests';
+import { isLibraryKey } from '../../../../generic/key-utils';
+import { acceptedImgKeys } from '../../../sharedComponents/ImageUploadModal/SelectImageModal/utils';
 
 // Similar to `import { actions, selectors } from '..';` but avoid circular imports:
 const actions = { requests: requestsActions };
@@ -121,25 +123,55 @@ export const saveBlock = ({ content, ...rest }) => (dispatch, getState) => {
   }));
 };
 export const uploadAsset = ({ asset, ...rest }) => (dispatch, getState) => {
+  const learningContextId = selectors.app.learningContextId(getState());
   dispatch(module.networkRequest({
     requestKey: RequestKeys.uploadAsset,
     promise: api.uploadAsset({
-      learningContextId: selectors.app.learningContextId(getState()),
+      learningContextId,
       asset,
       studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+      blockId: selectors.app.blockId(getState()),
+    }).then((resp) => {
+      if (isLibraryKey(learningContextId)) {
+        return ({
+          ...resp,
+          data: { asset: parseLibraryImageData(resp.data) },
+        });
+      }
+      return resp;
     }),
     ...rest,
   }));
 };
 
 export const fetchImages = ({ pageNumber, ...rest }) => (dispatch, getState) => {
+  const learningContextId = selectors.app.learningContextId(getState());
+  if (isLibraryKey(learningContextId)) {
+    dispatch(module.networkRequest({
+      requestKey: RequestKeys.fetchImages,
+      promise: api
+        .fetchLibraryImages({
+          pageNumber,
+          blockId: selectors.app.blockId(getState()),
+          studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+          learningContextId,
+        })
+        .then(({ data }) => {
+          const images = getLibraryImageAssets(data.files, Object.keys(acceptedImgKeys));
+          return { images, imageCount: Object.keys(images).length };
+        }),
+      ...rest,
+    }));
+    return;
+  }
   dispatch(module.networkRequest({
     requestKey: RequestKeys.fetchImages,
     promise: api
-      .fetchImages({
+      .fetchCourseImages({
         pageNumber,
+        blockId: selectors.app.blockId(getState()),
         studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
-        learningContextId: selectors.app.learningContextId(getState()),
+        learningContextId,
       })
       .then(({ data }) => ({ images: loadImages(data.assets), imageCount: data.totalCount })),
     ...rest,

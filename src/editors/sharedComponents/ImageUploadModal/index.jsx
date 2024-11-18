@@ -21,11 +21,16 @@ export const imgProps = ({
   selection,
   lmsEndpointUrl,
   editorType,
+  isLibrary,
 }) => {
   let url = selection?.externalUrl;
   if (url?.startsWith(lmsEndpointUrl) && editorType !== 'expandable') {
     const sourceEndIndex = lmsEndpointUrl.length;
     url = url.substring(sourceEndIndex);
+  }
+  if (isLibrary) {
+    const index = url.indexOf('static/');
+    url = url.substring(index);
   }
   return {
     src: url,
@@ -36,13 +41,14 @@ export const imgProps = ({
 };
 
 export const saveToEditor = ({
-  settings, selection, lmsEndpointUrl, editorType, editorRef,
+  settings, selection, lmsEndpointUrl, editorType, editorRef, isLibrary,
 }) => {
   const newImgTag = module.hooks.imgTag({
     settings,
     selection,
     lmsEndpointUrl,
     editorType,
+    isLibrary,
   });
 
   editorRef.current.execCommand(
@@ -103,12 +109,14 @@ export const hooks = {
     selection,
     lmsEndpointUrl,
     editorType,
+    isLibrary,
   }) => {
     const props = module.imgProps({
       settings,
       selection,
       lmsEndpointUrl,
       editorType,
+      isLibrary,
     });
     return `<img ${propsString(props)} />`;
   },
@@ -130,6 +138,7 @@ const ImageUploadModal = ({
   images,
   editorType,
   lmsEndpointUrl,
+  isLibrary,
 }) => {
   if (selection && selection.externalUrl) {
     return (
@@ -148,6 +157,7 @@ const ImageUploadModal = ({
             setSelection,
             lmsEndpointUrl,
             clearSelection,
+            isLibrary,
           }),
           returnToSelection: clearSelection,
         }}
@@ -190,6 +200,7 @@ ImageUploadModal.propTypes = {
   images: PropTypes.shape({}).isRequired,
   lmsEndpointUrl: PropTypes.string.isRequired,
   editorType: PropTypes.string,
+  isLibrary: PropTypes.string,
 };
 
 export const ImageUploadModalInternal = ImageUploadModal; // For testing only

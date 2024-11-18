@@ -103,12 +103,8 @@ export const initialize = (data) => (dispatch) => {
       dispatch(module.fetchCourseDetails());
       break;
     case 'html':
-      if (isLibraryKey(data.learningContextId)) {
-        // eslint-disable-next-line no-console
-        console.log('Not fetching image assets - not implemented yet for content libraries.');
-      } else {
-        dispatch(module.fetchImages({ pageNumber: 0 }));
-      }
+      if (isLibraryKey(data.learningContextId)) { dispatch(actions.app.resetImages()); }
+      dispatch(module.fetchImages({ pageNumber: 0 }));
       break;
     default:
       break;

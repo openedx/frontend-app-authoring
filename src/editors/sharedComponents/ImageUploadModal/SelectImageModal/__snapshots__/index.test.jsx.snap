@@ -9,8 +9,10 @@ exports[`SelectImageModal component snapshot 1`] = `
       "jpeg": ".jpeg",
       "jpg": ".jpg",
       "png": ".png",
+      "svg": ".svg",
       "tif": ".tif",
       "tiff": ".tiff",
+      "webp": ".webp",
     }
   }
   close={[MockFunction props.close]}
@@ -59,7 +61,7 @@ exports[`SelectImageModal component snapshot 1`] = `
         "id": "authoring.texteditor.selectimagemodal.next.label",
       },
       "fetchError": {
-        "defaultMessage": "Failed to obtain course images. Please try again.",
+        "defaultMessage": "Failed to obtain images. Please try again.",
         "description": "Message presented to user when images are not found",
         "id": "authoring.texteditor.selectimagemodal.error.fetchImagesError",
       },
