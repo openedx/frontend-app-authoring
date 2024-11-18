@@ -44,7 +44,6 @@ const DeleteModal = ({
             {intl.formatMessage(messages.cancelButton)}
           </Button>
           <LoadingButton
-            data-testid="delete-confirm-button"
             onClick={async (e) => {
               e.preventDefault();
               e.stopPropagation();

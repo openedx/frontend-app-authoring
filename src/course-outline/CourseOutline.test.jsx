@@ -597,10 +597,10 @@ describe('<CourseOutline />', () => {
   });
 
   it('check whether section, subsection and unit is deleted when corresponding delete button is clicked', async () => {
-    const { findAllByTestId, findByTestId, queryByText } = render(<RootWrapper />);
+    render(<RootWrapper />);
     // get section, subsection and unit
     const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
-    const [sectionElement] = await findAllByTestId('section-card');
+    const [sectionElement] = await screen.findAllByTestId('section-card');
     const [subsection] = section.childInfo.children;
     const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
     const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
@@ -610,7 +610,7 @@ describe('<CourseOutline />', () => {
 
     const checkDeleteBtn = async (item, element, elementName) => {
       await waitFor(() => {
-        expect(queryByText(item.displayName), `Failed for ${elementName}!`).toBeInTheDocument();
+        expect(screen.queryByText(item.displayName), `Failed for ${elementName}!`).toBeInTheDocument();
       });
 
       axiosMock.onDelete(getCourseItemApiUrl(item.id)).reply(200);
@@ -619,11 +619,11 @@ describe('<CourseOutline />', () => {
       fireEvent.click(menu);
       const deleteButton = await within(element).findByTestId(`${elementName}-card-header__menu-delete-button`);
       fireEvent.click(deleteButton);
-      const confirmButton = await findByTestId('delete-confirm-button');
-      await act(async () => fireEvent.click(confirmButton));
+      const confirmButton = await screen.findByRole('button', { name: 'Delete' });
+      fireEvent.click(confirmButton);
 
       await waitFor(() => {
-        expect(queryByText(item.displayName), `Failed for ${elementName}!`).not.toBeInTheDocument();
+        expect(screen.queryByText(item.displayName), `Failed for ${elementName}!`).not.toBeInTheDocument();
       });
     };
 
