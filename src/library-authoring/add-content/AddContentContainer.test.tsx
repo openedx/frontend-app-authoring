@@ -114,7 +114,7 @@ describe('<AddContentContainer />', () => {
       collectionId,
     );
     // Mocks for ComponentEditorModal to work in tests.
-    jest.spyOn(editorCmsApi, 'fetchImages').mockImplementation(async () => ( // eslint-disable-next-line
+    jest.spyOn(editorCmsApi, 'fetchCourseImages').mockImplementation(async () => ( // eslint-disable-next-line
       { data: { assets: [], start: 0, end: 0, page: 0, pageSize: 50, totalCount: 0 } }
     ));
     jest.spyOn(editorCmsApi, 'fetchByUnitId').mockImplementation(async () => ({
