@@ -1,4 +1,3 @@
-import React from 'react';
 import { getConfig, initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
@@ -6,9 +5,10 @@ import { AppProvider } from '@edx/frontend-platform/react';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import { Helmet } from 'react-helmet';
-
 import Cookies from 'universal-cookie';
+
 import initializeStore from '../store';
+import { RequestStatus } from '../data/constants';
 import stepperMessages from './export-stepper/messages';
 import modalErrorMessages from './export-modal-error/messages';
 import { getExportStatusApiUrl, postExportCourseApiUrl } from './data/api';
@@ -136,5 +136,31 @@ describe('<CourseExportPage />', () => {
     const downloadButton = getByText(stepperMessages.downloadCourseButtonTitle.defaultMessage);
     expect(downloadButton).toBeInTheDocument();
     expect(downloadButton.getAttribute('href')).toEqual('http://test-download-path.test');
+  });
+  it('displays an alert and sets status to DENIED when API responds with 403', async () => {
+    axiosMock
+      .onGet(getExportStatusApiUrl(courseId))
+      .reply(403);
+    const { getByRole, container } = render(<RootWrapper />);
+    const startExportButton = container.querySelector('.btn-primary');
+    fireEvent.click(startExportButton);
+    // eslint-disable-next-line no-promise-executor-return
+    await new Promise((r) => setTimeout(r, 3500));
+    expect(getByRole('alert')).toBeInTheDocument();
+    const { loadingStatus } = store.getState().courseExport;
+    expect(loadingStatus).toEqual(RequestStatus.DENIED);
+  });
+
+  it('sets loading status to FAILED upon receiving a 404 response from the API', async () => {
+    axiosMock
+      .onGet(getExportStatusApiUrl(courseId))
+      .reply(404);
+    const { container } = render(<RootWrapper />);
+    const startExportButton = container.querySelector('.btn-primary');
+    fireEvent.click(startExportButton);
+    // eslint-disable-next-line no-promise-executor-return
+    await new Promise((r) => setTimeout(r, 3500));
+    const { loadingStatus } = store.getState().courseExport;
+    expect(loadingStatus).toEqual(RequestStatus.FAILED);
   });
 });

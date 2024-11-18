@@ -1,14 +1,14 @@
-import React from 'react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { render, waitFor } from '@testing-library/react';
 import { Helmet } from 'react-helmet';
-
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+
 import Cookies from 'universal-cookie';
 import initializeStore from '../store';
+import { RequestStatus } from '../data/constants';
 import messages from './messages';
 import CourseImportPage from './CourseImportPage';
 import { getImportStatusApiUrl } from './data/api';
@@ -107,5 +107,30 @@ describe('<CourseImportPage />', () => {
     // eslint-disable-next-line no-promise-executor-return
     await new Promise((r) => setTimeout(r, 3500));
     expect(getByText(stepperMessages.viewOutlineButton.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('displays an alert and sets status to DENIED when API responds with 403', async () => {
+    axiosMock
+      .onGet(getImportStatusApiUrl(courseId, 'testFileName.tar.gz'))
+      .reply(403);
+    cookies.get.mockReturnValue({ date: 1679787000, completed: false, fileName: 'testFileName.tar.gz' });
+    const { getByRole } = render(<RootWrapper />);
+    // eslint-disable-next-line no-promise-executor-return
+    await new Promise((r) => setTimeout(r, 3500));
+    expect(getByRole('alert')).toBeInTheDocument();
+    const { loadingStatus } = store.getState().courseImport;
+    expect(loadingStatus).toEqual(RequestStatus.DENIED);
+  });
+
+  it('sets loading status to FAILED upon receiving a 404 response from the API', async () => {
+    axiosMock
+      .onGet(getImportStatusApiUrl(courseId, 'testFileName.tar.gz'))
+      .reply(404);
+    cookies.get.mockReturnValue({ date: 1679787000, completed: false, fileName: 'testFileName.tar.gz' });
+    render(<RootWrapper />);
+    // eslint-disable-next-line no-promise-executor-return
+    await new Promise((r) => setTimeout(r, 3500));
+    const { loadingStatus } = store.getState().courseImport;
+    expect(loadingStatus).toEqual(RequestStatus.FAILED);
   });
 });

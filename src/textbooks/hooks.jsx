@@ -77,6 +77,7 @@ const useTextbooks = (courseId, waffleFlags) => {
 
   return {
     isLoading: loadingStatus === RequestStatus.IN_PROGRESS,
+    isLoadingFailed: loadingStatus === RequestStatus.FAILED,
     savingStatus,
     errorMessage,
     textbooks,

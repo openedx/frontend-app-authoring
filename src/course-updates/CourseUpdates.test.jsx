@@ -1,5 +1,6 @@
-import React from 'react';
-import { render, waitFor, fireEvent } from '@testing-library/react';
+import {
+  render, waitFor, fireEvent,
+} from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -19,6 +20,7 @@ import {
 } from './data/thunk';
 import initializeStore from '../store';
 import { executeThunk } from '../utils';
+import { RequestStatus } from '../data/constants';
 import { courseUpdatesMock, courseHandoutsMock } from './__mocks__';
 import CourseUpdates from './CourseUpdates';
 import messages from './messages';
@@ -276,6 +278,24 @@ describe('<CourseUpdates />', () => {
       await waitFor(() => {
         expect(getByText(messages.loadingHandoutsErrorTitle.defaultMessage));
         expect(getByTestId('course-handouts-edit-button')).toBeDisabled();
+      });
+    });
+
+    it('displays an alert and sets status to DENIED when API responds with 403', async () => {
+      axiosMock
+        .onGet(getCourseUpdatesApiUrl(courseId))
+        .reply(403, courseUpdatesMock);
+      axiosMock
+        .onGet(getCourseHandoutApiUrl(courseId))
+        .reply(403);
+
+      const { getByTestId } = render(<RootWrapper />);
+
+      await waitFor(() => {
+        expect(getByTestId('connectionErrorAlert')).toBeInTheDocument();
+        const { loadingStatuses } = store.getState().courseUpdates;
+        Object.values(loadingStatuses)
+          .some(status => expect(status).toEqual(RequestStatus.DENIED));
       });
     });
   });

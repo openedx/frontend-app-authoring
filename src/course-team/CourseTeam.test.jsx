@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   render,
   fireEvent,
@@ -18,6 +17,7 @@ import CourseTeam from './CourseTeam';
 import messages from './messages';
 import { USER_ROLES } from '../constants';
 import { executeThunk } from '../utils';
+import { RequestStatus } from '../data/constants';
 import { changeRoleTeamUserQuery, deleteCourseTeamQuery } from './data/thunk';
 
 let axiosMock;
@@ -218,5 +218,32 @@ describe('<CourseTeam />', () => {
 
     await executeThunk(changeRoleTeamUserQuery(courseId, 'staff@example.com', { role: USER_ROLES.admin }), store.dispatch);
     expect(getAllByText('Admin')).toHaveLength(1);
+  });
+
+  it('displays an alert and sets status to DENIED when API responds with 403', async () => {
+    axiosMock
+      .onGet(getCourseTeamApiUrl(courseId))
+      .reply(403);
+
+    const { getByRole } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      expect(getByRole('alert')).toBeInTheDocument();
+      const { loadingCourseTeamStatus } = store.getState().courseTeam;
+      expect(loadingCourseTeamStatus).toEqual(RequestStatus.DENIED);
+    });
+  });
+
+  it('sets loading status to FAILED upon receiving a 404 response from the API', async () => {
+    axiosMock
+      .onGet(getCourseTeamApiUrl(courseId))
+      .reply(404);
+
+    render(<RootWrapper />);
+
+    await waitFor(() => {
+      const { loadingCourseTeamStatus } = store.getState().courseTeam;
+      expect(loadingCourseTeamStatus).toEqual(RequestStatus.FAILED);
+    });
   });
 });

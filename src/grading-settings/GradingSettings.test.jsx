@@ -7,11 +7,11 @@ import {
   act, fireEvent, render, screen,
 } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
-import React from 'react';
 
 import initializeStore from '../store';
 import gradingSettings from './__mocks__/gradingSettings';
 import { getCourseSettingsApiUrl, getGradingSettingsApiUrl } from './data/api';
+import * as apiHooks from './data/apiHooks';
 import GradingSettings from './GradingSettings';
 import messages from './messages';
 
@@ -111,5 +111,11 @@ describe('<GradingSettings />', () => {
     expect(screen.queryByText(messages.buttonSavingText.defaultMessage)).not.toBeInTheDocument();
     setOnlineStatus(true);
     testSaving();
+  });
+
+  it('should display connection error alert when loading is denied', async () => {
+    jest.spyOn(apiHooks, 'useGradingSettings').mockReturnValue({ isError: true });
+    render(<RootWrapper />);
+    expect(screen.getByTestId('connectionErrorAlert')).toBeInTheDocument();
   });
 });
