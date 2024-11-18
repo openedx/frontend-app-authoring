@@ -117,15 +117,28 @@ export function editCourseItemQuery(itemId, displayName, sequenceId) {
   };
 }
 
-export function editCourseUnitVisibilityAndData(itemId, type, isVisible, groupAccess, isModalView, blockId = itemId) {
+export function editCourseUnitVisibilityAndData(
+  itemId,
+  type,
+  isVisible,
+  groupAccess,
+  isDiscussionEnabled,
+  blockId = itemId,
+) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(updateQueryPendingStatus(true));
-    const notification = getNotificationMessage(type, isVisible, isModalView);
+    const notification = getNotificationMessage(type, isVisible, true);
     dispatch(showProcessingNotification(notification));
 
     try {
-      await handleCourseUnitVisibilityAndData(itemId, type, isVisible, groupAccess).then(async (result) => {
+      await handleCourseUnitVisibilityAndData(
+        itemId,
+        type,
+        isVisible,
+        groupAccess,
+        isDiscussionEnabled,
+      ).then(async (result) => {
         if (result) {
           const courseUnit = await getCourseUnitData(blockId);
           dispatch(fetchCourseItemSuccess(courseUnit));
