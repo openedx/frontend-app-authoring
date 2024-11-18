@@ -13,8 +13,9 @@ import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import messages from './messages';
 import { ToastContext } from '../../generic/toast-context';
 import LoadingButton from '../../generic/loading-button';
+import Loading from '../../generic/Loading';
 
-interface LibraryChangesMessageData {
+export interface LibraryChangesMessageData {
   displayName: string,
   downstreamBlockId: string,
   upstreamBlockId: string,
@@ -23,15 +24,15 @@ interface LibraryChangesMessageData {
 }
 
 const PreviewLibraryXBlockChanges = () => {
-  const intl = useIntl();
   const { showToast } = useContext(ToastContext);
+  const intl = useIntl();
+
+  const [blockData, setBlockData] = useState<LibraryChangesMessageData | undefined>(undefined);
 
   // Main preview library modal toggle.
   const [isModalOpen, openModal, closeModal] = useToggle(false);
   // ignore changes confirmation modal toggle.
   const [isConfirmModalOpen, openConfirmModal, closeConfirmModal] = useToggle(false);
-
-  const [blockData, setBlockData] = useState<LibraryChangesMessageData | undefined>(undefined);
 
   const acceptChangesMutation = useAcceptLibraryBlockChanges();
   const ignoreChangesMutation = useIgnoreLibraryBlockChanges();
@@ -54,17 +55,19 @@ const PreviewLibraryXBlockChanges = () => {
 
   const getTitle = useCallback(() => {
     if (blockData?.displayName) {
-      return blockData?.displayName;
+      return intl.formatMessage(messages.title, {
+        blockTitle: blockData?.displayName,
+      });
     }
     if (blockData?.isVertical) {
-      return 'Unit';
+      return intl.formatMessage(messages.defaultUnitTitle);
     }
-    return 'Component';
+    return intl.formatMessage(messages.defaultComponentTitle);
   }, [blockData]);
 
   const getBody = useCallback(() => {
     if (!blockData) {
-      return null;
+      return <Loading />;
     }
     return (
       <CompareChangesWidget
@@ -76,6 +79,7 @@ const PreviewLibraryXBlockChanges = () => {
   }, [blockData]);
 
   const updateAndRefresh = useCallback(async (accept: boolean) => {
+    // istanbul ignore if: this should never happen
     if (!blockData) {
       return;
     }
@@ -104,10 +108,7 @@ const PreviewLibraryXBlockChanges = () => {
     >
       <ModalDialog.Header>
         <ModalDialog.Title>
-          <FormattedMessage
-            {...messages.title}
-            values={{ blockTitle: getTitle() }}
-          />
+          {getTitle()}
         </ModalDialog.Title>
       </ModalDialog.Header>
       <ModalDialog.Body>

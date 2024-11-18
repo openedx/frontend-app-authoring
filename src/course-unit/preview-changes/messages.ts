@@ -6,6 +6,16 @@ const messages = defineMessages({
     defaultMessage: 'Preview changes: {blockTitle}',
     description: 'Preview changes modal title text',
   },
+  defaultUnitTitle: {
+    id: 'authoring.course-unit.preview-changes.modal-default-unit-title',
+    defaultMessage: 'Preview changes: Unit',
+    description: 'Preview changes modal default title text for units',
+  },
+  defaultComponentTitle: {
+    id: 'authoring.course-unit.preview-changes.modal-default-component-title',
+    defaultMessage: 'Preview changes: Component',
+    description: 'Preview changes modal default title text for components',
+  },
   acceptChangesBtn: {
     id: 'authoring.course-unit.preview-changes.accept-changes-btn',
     defaultMessage: 'Accept changes',

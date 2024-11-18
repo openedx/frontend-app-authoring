@@ -13,7 +13,7 @@ export const getCourseSectionVerticalApiUrl = (itemId) => `${getStudioBaseUrl()}
 export const getCourseVerticalChildrenApiUrl = (itemId) => `${getStudioBaseUrl()}/api/contentstore/v1/container/vertical/${itemId}/children`;
 export const getCourseOutlineInfoUrl = (courseId) => `${getStudioBaseUrl()}/course/${courseId}?format=concise`;
 export const postXBlockBaseApiUrl = () => `${getStudioBaseUrl()}/xblock/`;
-export const acceptLibraryBlockChangesUrl = (blockId) => `${getStudioBaseUrl()}/api/contentstore/v2/downstreams/${blockId}/sync`;
+export const libraryBlockChangesUrl = (blockId) => `${getStudioBaseUrl()}/api/contentstore/v2/downstreams/${blockId}/sync`;
 
 /**
  * Get course unit.
@@ -214,7 +214,7 @@ export async function patchUnitItem(sourceLocator, targetParentLocator) {
  */
 export async function acceptLibraryBlockChanges(blockId) {
   await getAuthenticatedHttpClient()
-    .post(acceptLibraryBlockChangesUrl(blockId));
+    .post(libraryBlockChangesUrl(blockId));
 }
 
 /**
@@ -223,5 +223,5 @@ export async function acceptLibraryBlockChanges(blockId) {
  */
 export async function ignoreLibraryBlockChanges(blockId) {
   await getAuthenticatedHttpClient()
-    .delete(acceptLibraryBlockChangesUrl(blockId));
+    .delete(libraryBlockChangesUrl(blockId));
 }
