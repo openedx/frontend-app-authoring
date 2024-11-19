@@ -21,7 +21,7 @@ import { ImportTagsWizard } from '../import-tags';
 import { ManageOrgsModal } from '../manage-orgs';
 import messages from './messages';
 
-/** @typedef {import('../data/types.mjs').TaxonomyData} TaxonomyData */
+/** @typedef {import('../data/types.js').TaxonomyData} TaxonomyData */
 // Note: to make mocking easier for tests, the types below only specify the subset of TaxonomyData that we actually use.
 
 /**

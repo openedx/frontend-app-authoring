@@ -17,8 +17,8 @@ import {
 import { libraryQueryPredicate, xblockQueryKeys } from '../../library-authoring/data/apiHooks';
 import { getLibraryId } from '../../generic/key-utils';
 
-/** @typedef {import("../../taxonomy/tag-list/data/types.mjs").TagListData} TagListData */
-/** @typedef {import("../../taxonomy/tag-list/data/types.mjs").TagData} TagData */
+/** @typedef {import("../../taxonomy/data/types.js").TagListData} TagListData */
+/** @typedef {import("../../taxonomy/data/types.js").TagData} TagData */
 
 /**
  * Builds the query to get the taxonomy tags
@@ -133,7 +133,7 @@ export const useContentTaxonomyTagsUpdater = (contentId) => {
      *   any,
      *   any,
      *   {
-     *     tagsData: Promise<import("./types.mjs").UpdateTagsData[]>
+     *     tagsData: Promise<import("./types.js").UpdateTagsData[]>
      *   }
      * >}
      */

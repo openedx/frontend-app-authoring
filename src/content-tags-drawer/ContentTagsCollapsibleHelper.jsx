@@ -6,11 +6,11 @@ import { cloneDeep } from 'lodash';
 import { useContentTaxonomyTagsUpdater } from './data/apiHooks';
 import { ContentTagsDrawerContext } from './common/context';
 
-/** @typedef {import("../taxonomy/data/types.mjs").TaxonomyData} TaxonomyData */
-/** @typedef {import("./data/types.mjs").Tag} ContentTagData */
+/** @typedef {import("../taxonomy/data/types.js").TaxonomyData} TaxonomyData */
+/** @typedef {import("./data/types.js").Tag} ContentTagData */
 /** @typedef {import("./ContentTagsCollapsible").TagTreeEntry} TagTreeEntry */
-/** @typedef {import("./data/types.mjs").StagedTagData} StagedTagData */
-/** @typedef {import("./data/types.mjs").UpdateTagsData} UpdateTagsData */
+/** @typedef {import("./data/types.js").StagedTagData} StagedTagData */
+/** @typedef {import("./data/types.js").UpdateTagsData} UpdateTagsData */
 
 /**
  * Util function that sorts the keys of a tree in alphabetical order.
