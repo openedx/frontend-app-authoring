@@ -27,14 +27,24 @@ const CollectionHitSample: CollectionHit = {
   created: 1722434322294,
   modified: 1722434322294,
   numChildren: 2,
+  published: {
+    numChildren: 1,
+  },
   tags: {},
 };
 
 let axiosMock: MockAdapter;
 let mockShowToast;
 
-const render = (ui: React.ReactElement) => baseRender(ui, {
-  extraWrapper: ({ children }) => <LibraryProvider libraryId="lib:Axim:TEST">{ children }</LibraryProvider>,
+const render = (ui: React.ReactElement, showOnlyPublished: boolean = false) => baseRender(ui, {
+  extraWrapper: ({ children }) => (
+    <LibraryProvider
+      libraryId="lib:Axim:TEST"
+      showOnlyPublished={showOnlyPublished}
+    >
+      { children }
+    </LibraryProvider>
+  ),
 });
 
 describe('<CollectionCard />', () => {
@@ -50,6 +60,14 @@ describe('<CollectionCard />', () => {
     expect(screen.queryByText('Collection Display Formated Name')).toBeInTheDocument();
     expect(screen.queryByText('Collection description')).toBeInTheDocument();
     expect(screen.queryByText('Collection (2)')).toBeInTheDocument();
+  });
+
+  it('should render published content', () => {
+    render(<CollectionCard collectionHit={CollectionHitSample} />, true);
+
+    expect(screen.queryByText('Collection Display Formated Name')).toBeInTheDocument();
+    expect(screen.queryByText('Collection description')).toBeInTheDocument();
+    expect(screen.queryByText('Collection (1)')).toBeInTheDocument();
   });
 
   it('should navigate to the collection if the open menu clicked', async () => {
