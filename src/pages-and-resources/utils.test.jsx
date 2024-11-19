@@ -45,4 +45,4 @@ function renderWithProviders(
 }
 
 // We may add additional exports to this file over time, so we will not export render as the default.
-export { renderWithProviders as render }; // eslint-disable-line import/prefer-default-export
+export { renderWithProviders as render };

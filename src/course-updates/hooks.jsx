@@ -112,5 +112,4 @@ const useCourseUpdates = ({ courseId }) => {
   };
 };
 
-// eslint-disable-next-line import/prefer-default-export
 export { useCourseUpdates };

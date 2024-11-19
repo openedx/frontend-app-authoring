@@ -1,5 +1,4 @@
 /* eslint-disable no-nested-ternary */
-/* eslint-disable import/prefer-default-export */
 import React from 'react';
 import {
   Button,

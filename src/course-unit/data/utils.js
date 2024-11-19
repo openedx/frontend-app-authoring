@@ -3,7 +3,6 @@ import { camelCaseObject } from '@edx/frontend-platform';
 import { NOTIFICATION_MESSAGES } from '../../constants';
 import { PUBLISH_TYPES } from '../constants';
 
-// eslint-disable-next-line import/prefer-default-export
 export function normalizeCourseSectionVerticalData(metadata) {
   const data = camelCaseObject(metadata);
   return {

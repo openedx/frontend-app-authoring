@@ -97,5 +97,4 @@ const useGroupConfigurations = (courseId) => {
   };
 };
 
-// eslint-disable-next-line import/prefer-default-export
 export { useGroupConfigurations };

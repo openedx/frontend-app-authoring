@@ -7,6 +7,5 @@
  * @returns {boolean|null} - The status of the alert. Returns `true` if the fileList has length,
  *                          `false` if it does not, and `null` if fileList is not defined.
  */
-// eslint-disable-next-line import/prefer-default-export
 export const getAlertStatus = (fileList, alertKey, alertState) => (
   fileList?.length ? fileList && alertState[alertKey] : null);

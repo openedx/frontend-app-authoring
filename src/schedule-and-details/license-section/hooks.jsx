@@ -109,5 +109,4 @@ const useLicenseDetails = (license, onChange) => {
   };
 };
 
-/* eslint-disable-next-line import/prefer-default-export */
 export { useLicenseDetails };

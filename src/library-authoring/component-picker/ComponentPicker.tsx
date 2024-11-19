@@ -49,7 +49,6 @@ type ComponentPickerProps = { libraryId?: string, showOnlyPublished?: boolean } 
   }
 );
 
-// eslint-disable-next-line import/prefer-default-export
 export const ComponentPicker: React.FC<ComponentPickerProps> = ({
   /** Restrict the component picker to a specific library */
   libraryId,

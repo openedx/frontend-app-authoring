@@ -3,7 +3,6 @@ import * as Yup from 'yup';
 import messages from './messages';
 import { allGroupNamesAreUnique } from './utils';
 
-// eslint-disable-next-line import/prefer-default-export
 export const experimentFormValidationSchema = (formatMessage) => Yup.object().shape({
   id: Yup.number(),
   name: Yup.string()

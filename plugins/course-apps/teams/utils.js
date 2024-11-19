@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import { getConfig } from '@edx/frontend-platform';
 
 import { GroupTypes } from 'CourseAuthoring/data/constants';

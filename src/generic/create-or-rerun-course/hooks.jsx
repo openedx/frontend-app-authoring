@@ -136,5 +136,4 @@ const useCreateOrRerunCourse = (initialValues) => {
   };
 };
 
-// eslint-disable-next-line import/prefer-default-export
 export { useCreateOrRerunCourse };

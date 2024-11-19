@@ -29,7 +29,6 @@ import { PUBLISH_TYPES } from './constants';
 
 import { useCopyToClipboard } from '../generic/clipboard';
 
-// eslint-disable-next-line import/prefer-default-export
 export const useCourseUnit = ({ courseId, blockId }) => {
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
