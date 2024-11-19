@@ -23,7 +23,6 @@ import { getStudioHomeApiUrl } from '../studio-home/data/api';
 import { mockBroadcastChannel } from '../generic/data/api.mock';
 import { LibraryLayout } from '.';
 import { getLibraryCollectionsApiUrl } from './data/api';
-import { getApiWaffleFlagsUrl } from '../data/api';
 
 mockGetCollectionMetadata.applyMock();
 mockContentSearchConfig.applyMock();
@@ -56,7 +55,6 @@ describe('<LibraryAuthoringPage />', () => {
   beforeEach(async () => {
     const { axiosMock } = initializeMocks();
     axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
-    axiosMock.onGet(getApiWaffleFlagsUrl()).reply(200, {});
 
     // The Meilisearch client-side API uses fetch, not Axios.
     fetchMock.mockReset();
@@ -681,7 +679,6 @@ describe('<LibraryAuthoringPage />', () => {
 
   it('Shows an error if libraries V2 is disabled', async () => {
     const { axiosMock } = initializeMocks();
-    axiosMock.onGet(getApiWaffleFlagsUrl()).reply(200, {});
     axiosMock.onGet(getStudioHomeApiUrl()).reply(200, {
       ...studioHomeMock,
       libraries_v2_enabled: false,

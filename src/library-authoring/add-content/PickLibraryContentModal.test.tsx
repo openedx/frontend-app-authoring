@@ -17,7 +17,6 @@ import {
   mockGetCollectionMetadata,
 } from '../data/api.mocks';
 import { PickLibraryContentModal } from './PickLibraryContentModal';
-import { getApiWaffleFlagsUrl } from '../../data/api';
 
 mockContentSearchConfig.applyMock();
 mockContentLibrary.applyMock();
@@ -48,7 +47,6 @@ describe('<PickLibraryContentModal />', () => {
     const mocks = initializeMocks();
     mockShowToast = mocks.mockShowToast;
     mocks.axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
-    mocks.axiosMock.onGet(getApiWaffleFlagsUrl()).reply(200, {});
   });
 
   it('can pick components from the modal', async () => {

@@ -1,13 +1,11 @@
+import { getConfig } from '@edx/frontend-platform';
+
 import {
+  initializeMocks,
+  screen,
   render,
-  queryAllByRole,
-} from '@testing-library/react';
-import MockAdapter from 'axios-mock-adapter';
-import { initializeMockApp, getConfig } from '@edx/frontend-platform';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import initializeStore from '../../store';
+  waitFor,
+} from '../../testUtils';
 import PageGrid from './PageGrid';
 import { executeThunk } from '../../utils';
 import { getApiWaffleFlagsUrl } from '../../data/api';
@@ -42,34 +40,18 @@ const mockPageConfig = [
 
 const renderComponent = () => {
   const wrapper = render(
-    <IntlProvider locale="en">
-      <AppProvider store={store}>
-        <PagesAndResourcesProvider courseId={courseId}>
-          <PageGrid pages={mockPageConfig} />
-        </PagesAndResourcesProvider>
-      </AppProvider>
-    </IntlProvider>,
+    <PagesAndResourcesProvider courseId={courseId}>
+      <PageGrid pages={mockPageConfig} />
+    </PagesAndResourcesProvider>,
   );
   container = wrapper.container;
 };
 
 describe('LiveSettings', () => {
   beforeEach(async () => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: false,
-        roles: [],
-      },
-    });
-    store = initializeStore({
-      courseDetail: {
-        courseId: 'id',
-        status: 'sucessful',
-      },
-    });
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    const mocks = initializeMocks();
+    store = mocks.reduxStore;
+    axiosMock = mocks.axiosMock;
     axiosMock
       .onGet(getApiWaffleFlagsUrl(courseId))
       .reply(200, {
@@ -83,13 +65,17 @@ describe('LiveSettings', () => {
 
   it('should render three cards', async () => {
     renderComponent();
-    expect(queryAllByRole(container, 'button')).toHaveLength(3);
+    waitFor(() => {
+      expect(screen.queryAllByRole(container, 'button')).toHaveLength(3);
+    });
   });
 
   it('should navigate to legacyLink', async () => {
     renderComponent();
     const textbookPagePath = mockPageConfig[0][1];
-    const textbookSettingsButton = queryAllByRole(container, 'link')[1];
-    expect(textbookSettingsButton).toHaveAttribute('href', textbookPagePath);
+    waitFor(() => {
+      const textbookSettingsButton = screen.queryAllByRole(container, 'link')[1];
+      expect(textbookSettingsButton).toHaveAttribute('href', textbookPagePath);
+    });
   });
 });

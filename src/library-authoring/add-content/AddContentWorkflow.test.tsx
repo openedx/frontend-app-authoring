@@ -21,7 +21,6 @@ import { mockBroadcastChannel, mockClipboardEmpty } from '../../generic/data/api
 import { mockContentSearchConfig, mockSearchResult } from '../../search-manager/data/api.mock';
 import { studioHomeMock } from '../../studio-home/__mocks__';
 import { getStudioHomeApiUrl } from '../../studio-home/data/api';
-import { getApiWaffleFlagsUrl } from '../../data/api';
 import LibraryLayout from '../LibraryLayout';
 
 mockContentSearchConfig.applyMock();
@@ -52,7 +51,6 @@ describe('AddContentWorkflow test', () => {
   beforeEach(async () => {
     const { axiosMock } = initializeMocks();
     axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
-    axiosMock.onGet(getApiWaffleFlagsUrl()).reply(200, {});
   });
 
   it('can create an HTML component', async () => {

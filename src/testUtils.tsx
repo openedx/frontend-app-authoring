@@ -24,6 +24,7 @@ import {
 
 import { ToastContext, type ToastContextData } from './generic/toast-context';
 import initializeReduxStore from './store';
+import { getApiWaffleFlagsUrl } from './data/api';
 
 /** @deprecated Use React Query and/or regular React Context instead of redux */
 let reduxStore: Store;
@@ -171,6 +172,10 @@ export function initializeMocks({ user = defaultUser, initialState = undefined }
     },
   });
   axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+
+  axiosMock
+    .onGet(getApiWaffleFlagsUrl())
+    .reply(200, {});
 
   // Reset `mockToastContext` for this current test
   mockToastContext = {
