@@ -14,6 +14,7 @@ import messages from './messages';
 import { ToastContext } from '../../generic/toast-context';
 import LoadingButton from '../../generic/loading-button';
 import Loading from '../../generic/Loading';
+import { useLibraryBlockMetadata } from '../../library-authoring/data/apiHooks';
 
 export interface LibraryChangesMessageData {
   displayName: string,
@@ -36,6 +37,7 @@ const PreviewLibraryXBlockChanges = () => {
 
   const acceptChangesMutation = useAcceptLibraryBlockChanges();
   const ignoreChangesMutation = useIgnoreLibraryBlockChanges();
+  const { data: componentMetadata } = useLibraryBlockMetadata(blockData?.upstreamBlockId);
 
   const { sendMessageToIframe } = useIframe();
 
@@ -54,16 +56,20 @@ const PreviewLibraryXBlockChanges = () => {
   useEventListener('message', receiveMessage);
 
   const getTitle = useCallback(() => {
-    if (blockData?.displayName) {
-      return intl.formatMessage(messages.title, {
-        blockTitle: blockData?.displayName,
-      });
+    const oldName = blockData?.displayName;
+    const newName = componentMetadata?.displayName;
+
+    if (!oldName) {
+      if (blockData?.isVertical) {
+        return intl.formatMessage(messages.defaultUnitTitle);
+      }
+      return intl.formatMessage(messages.defaultComponentTitle);
     }
-    if (blockData?.isVertical) {
-      return intl.formatMessage(messages.defaultUnitTitle);
+    if (oldName === newName || !newName) {
+      return intl.formatMessage(messages.title, { blockTitle: oldName });
     }
-    return intl.formatMessage(messages.defaultComponentTitle);
-  }, [blockData]);
+    return intl.formatMessage(messages.diffTitle, { oldName, newName });
+  }, [blockData, componentMetadata]);
 
   const getBody = useCallback(() => {
     if (!blockData) {

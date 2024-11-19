@@ -13,6 +13,7 @@ import { messageTypes } from '../constants';
 import { IframeProvider } from '../context/iFrameContext';
 import { libraryBlockChangesUrl } from '../data/api';
 import { ToastActionData } from '../../generic/toast-context';
+import { getLibraryBlockMetadataUrl } from '../../library-authoring/data/api';
 
 const usageKey = 'some-id';
 const defaultEventData: LibraryChangesMessageData = {
@@ -76,6 +77,15 @@ describe('<PreviewLibraryXBlockChanges />', () => {
     render({ ...defaultEventData, displayName: '' });
 
     expect(await screen.findByText('Preview changes: Component')).toBeInTheDocument();
+  });
+
+  it('renders both new and old title if they are different', async () => {
+    axiosMock.onGet(getLibraryBlockMetadataUrl(defaultEventData.upstreamBlockId)).reply(200, {
+      displayName: 'New test block',
+    });
+    render();
+
+    expect(await screen.findByText('Preview changes: Test block -> New test block')).toBeInTheDocument();
   });
 
   it('accept changes works', async () => {

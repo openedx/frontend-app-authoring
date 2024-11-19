@@ -6,6 +6,11 @@ const messages = defineMessages({
     defaultMessage: 'Preview changes: {blockTitle}',
     description: 'Preview changes modal title text',
   },
+  diffTitle: {
+    id: 'authoring.course-unit.preview-changes.modal-diff-title',
+    defaultMessage: 'Preview changes: {oldName} -> {newName}',
+    description: 'Preview changes modal title text',
+  },
   defaultUnitTitle: {
     id: 'authoring.course-unit.preview-changes.modal-default-unit-title',
     defaultMessage: 'Preview changes: Unit',
