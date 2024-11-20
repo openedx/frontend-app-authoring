@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import MockAdapter from 'axios-mock-adapter';
 import {
   act, render, screen, waitFor, within,
@@ -24,7 +25,7 @@ let store;
 let axiosMock;
 const blockId = '123';
 const handleCreateNewCourseXBlockMock = jest.fn();
-const usageKey = 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fddest-usage-key'
+const usageKey = 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fddest-usage-key';
 
 // Mock ComponentPicker to call onComponentSelected on click
 jest.mock('../../library-authoring/component-picker', () => ({
@@ -41,10 +42,12 @@ jest.mock('../../library-authoring/component-picker', () => ({
           blockType: 'html',
         }]);
       }
-    }
-    return <button onClick={onClick}>
-      Dummy button
-    </button>;
+    };
+    return (
+      <button type="submit" onClick={onClick}>
+        Dummy button
+      </button>
+    );
   },
 }));
 
@@ -61,7 +64,8 @@ const renderComponent = (props) => render(
       <IframeProvider>
         <AddComponent
           blockId={blockId}
-          handleCreateNewCourseXBlock={handleCreateNewCourseXBlockMock} {...props}
+          handleCreateNewCourseXBlock={handleCreateNewCourseXBlockMock}
+          {...props}
         />
       </IframeProvider>
     </IntlProvider>
@@ -494,14 +498,12 @@ describe('<AddComponent />', () => {
     const submitBtn = await screen.findByRole('button', { name: 'Add selected components' });
     userEvent.click(submitBtn);
 
-    expect(mockSendMessageToIframe).toHaveBeenCalledWith(
-      messageTypes.addSelectedComponentsToBank, {
-        selectedComponents: [{
-          blockType: "html",
-          usageKey,
-        }],
-      }
-    );
+    expect(mockSendMessageToIframe).toHaveBeenCalledWith(messageTypes.addSelectedComponentsToBank, {
+      selectedComponents: [{
+        blockType: 'html',
+        usageKey,
+      }],
+    });
   });
 
   describe('component support label', () => {
