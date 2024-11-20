@@ -1,8 +1,9 @@
+import { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useIntl } from '@edx/frontend-platform/i18n';
-import { StandardModal, useToggle } from '@openedx/paragon';
+import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
+import { ActionRow, Button, StandardModal, useToggle } from '@openedx/paragon';
 
 import { getCourseSectionVertical } from '../data/selectors';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
@@ -10,6 +11,9 @@ import ComponentModalView from './add-component-modals/ComponentModalView';
 import AddComponentButton from './add-component-btn';
 import messages from './messages';
 import { ComponentPicker } from '../../library-authoring/component-picker';
+import { messageTypes } from '../constants';
+import { useIframe } from '../context/hooks';
+import { useEventListener } from '../../generic/hooks';
 
 const AddComponent = ({ blockId, handleCreateNewCourseXBlock }) => {
   const navigate = useNavigate();
@@ -19,6 +23,22 @@ const AddComponent = ({ blockId, handleCreateNewCourseXBlock }) => {
   const [isOpenOpenAssessment, openOpenAssessment, closeOpenAssessment] = useToggle(false);
   const { componentTemplates } = useSelector(getCourseSectionVertical);
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
+  const [isSelectLibraryContentModalOpen, showSelectLibraryContentModal, closeSelectLibraryContentModal] = useToggle();
+  const [selectedComponents, setSelectedComponents] = useState([]);
+  const { sendMessageToIframe } = useIframe();
+
+  const receiveMessage = useCallback(({ data: { type } }) => {
+    if (type === messageTypes.showMultipleComponentPicker) {
+      showSelectLibraryContentModal();
+    }
+  }, [showSelectLibraryContentModal]);
+
+  useEventListener('message', receiveMessage);
+
+  const onComponentSelectionSubmit = () => {
+    sendMessageToIframe(messageTypes.addSelectedComponentsToBank, { selectedComponents });
+    closeSelectLibraryContentModal();
+  }
 
   const handleLibraryV2Selection = (selection) => {
     handleCreateNewCourseXBlock({
@@ -138,7 +158,7 @@ const AddComponent = ({ blockId, handleCreateNewCourseXBlock }) => {
         })}
       </ul>
       <StandardModal
-        title="Select component"
+        title={intl.formatMessage(messages.singleComponentPickerModalTitle)}
         isOpen={isAddLibraryContentModalOpen}
         onClose={closeAddLibraryContentModal}
         isOverflowVisible={false}
@@ -147,6 +167,26 @@ const AddComponent = ({ blockId, handleCreateNewCourseXBlock }) => {
         <ComponentPicker
           showOnlyPublished
           onComponentSelected={handleLibraryV2Selection}
+        />
+      </StandardModal>
+      <StandardModal
+        title={intl.formatMessage(messages.multipleComponentPickerModalTitle)}
+        isOverflowVisible={false}
+        size="xl"
+        isOpen={isSelectLibraryContentModalOpen}
+        onClose={closeSelectLibraryContentModal}
+        footerNode={
+          <ActionRow>
+            <Button variant="primary" onClick={onComponentSelectionSubmit}>
+              <FormattedMessage {...messages.multipleComponentPickerModalBtn} />
+            </Button>
+          </ActionRow>
+        }
+      >
+        <ComponentPicker
+          showOnlyPublished
+          componentPickerMode="multiple"
+          onChangeComponentSelection={setSelectedComponents}
         />
       </StandardModal>
     </div>

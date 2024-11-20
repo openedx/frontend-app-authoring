@@ -13,6 +13,18 @@ const messages = defineMessages({
     id: 'course-authoring.course-unit.modal.button.text',
     defaultMessage: 'Select',
   },
+  singleComponentPickerModalTitle: {
+    id: 'course-authoring.course-unit.modal.single-title.text',
+    defaultMessage: 'Select component',
+  },
+  multipleComponentPickerModalTitle: {
+    id: 'course-authoring.course-unit.modal.multiple-title.text',
+    defaultMessage: 'Select components',
+  },
+  multipleComponentPickerModalBtn: {
+    id: 'course-authoring.course-unit.modal.multiple-btn.text',
+    defaultMessage: 'Add selected components',
+  },
   modalContainerTitle: {
     id: 'course-authoring.course-unit.modal.container.title',
     defaultMessage: 'Add {componentTitle} component',
