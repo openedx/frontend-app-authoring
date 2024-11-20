@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   CardView,
   DataTable,
@@ -41,9 +41,8 @@ const FileTable = ({
   maxFileSize,
   thumbnailPreview,
   infoModalSidebar,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const defaultVal = 'card';
   const pageCount = Math.ceil(files.length / 50);
   const columnSizes = {
@@ -314,8 +313,6 @@ FileTable.propTypes = {
   maxFileSize: PropTypes.number.isRequired,
   thumbnailPreview: PropTypes.func.isRequired,
   infoModalSidebar: PropTypes.func.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
 FileTable.defaultProps = {
@@ -323,4 +320,4 @@ FileTable.defaultProps = {
   handleLockFile: () => {},
 };
 
-export default injectIntl(FileTable);
+export default FileTable;
