@@ -37,12 +37,12 @@ const AddComponent = ({ blockId, handleCreateNewCourseXBlock }) => {
 
   useEventListener('message', receiveMessage);
 
-  const onComponentSelectionSubmit = () => {
+  const onComponentSelectionSubmit = useCallback(() => {
     sendMessageToIframe(messageTypes.addSelectedComponentsToBank, { selectedComponents });
     closeSelectLibraryContentModal();
-  };
+  }, [selectedComponents]);
 
-  const handleLibraryV2Selection = (selection) => {
+  const handleLibraryV2Selection = useCallback((selection) => {
     handleCreateNewCourseXBlock({
       type: COMPONENT_TYPES.libraryV2,
       category: selection.blockType,
@@ -50,7 +50,7 @@ const AddComponent = ({ blockId, handleCreateNewCourseXBlock }) => {
       libraryContentKey: selection.usageKey,
     });
     closeAddLibraryContentModal();
-  };
+  }, []);
 
   const handleCreateNewXBlock = (type, moduleName) => {
     switch (type) {
