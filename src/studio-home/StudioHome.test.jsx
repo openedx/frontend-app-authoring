@@ -1,6 +1,5 @@
 import { useSelector } from 'react-redux';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
-import { injectIntl } from '@edx/frontend-platform/i18n';
 
 import { RequestStatus } from '../data/constants';
 import { COURSE_CREATOR_STATES } from '../constants';
@@ -40,17 +39,17 @@ const RootWrapper = () => (
     <Routes>
       <Route
         path="/home"
-        element={<StudioHome intl={injectIntl} />}
+        element={<StudioHome />}
       />
       <Route
         path="/libraries"
-        element={<StudioHome intl={injectIntl} />}
+        element={<StudioHome />}
       />
       <Route
         path="/libraries-v1"
-        element={<StudioHome intl={injectIntl} />}
+        element={<StudioHome />}
       />
-    </Routes>
+    </Routes>,
   </MemoryRouter>
 );
 

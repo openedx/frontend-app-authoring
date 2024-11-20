@@ -1,5 +1,3 @@
-import { MemoryRouter } from 'react-router-dom';
-
 import CourseAuthoringRoutes from './CourseAuthoringRoutes';
 import { executeThunk } from './utils';
 import { getApiWaffleFlagsUrl } from './data/api';
@@ -61,13 +59,12 @@ describe('<CourseAuthoringRoutes>', () => {
     await executeThunk(fetchWaffleFlags(courseId), store.dispatch);
   });
 
-  fit('renders the PagesAndResources component when the pages and resources route is active', () => {
+  it('renders the PagesAndResources component when the pages and resources route is active', async () => {
     render(
-      <MemoryRouter initialEntries={['/pages-and-resources']}>
-        <CourseAuthoringRoutes />
-      </MemoryRouter>,
+      <CourseAuthoringRoutes />,
+      { routerProps: { initialEntries: ['/pages-and-resources'] } },
     );
-    waitFor(() => {
+    await waitFor(() => {
       expect(screen.getByText(pagesAndResourcesMockText)).toBeVisible();
       expect(mockComponentFn).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -77,30 +74,28 @@ describe('<CourseAuthoringRoutes>', () => {
     });
   });
 
-  it('renders the EditorContainer component when the course editor route is active', () => {
+  it('renders the EditorContainer component when the course editor route is active', async () => {
     render(
-      <MemoryRouter initialEntries={['/editor/video/block-id']}>
-        <CourseAuthoringRoutes />
-      </MemoryRouter>,
+      <CourseAuthoringRoutes />,
+      { routerProps: { initialEntries: ['/editor/video/block-id'] } },
     );
-    waitFor(() => {
+    await waitFor(() => {
       expect(screen.queryByText(editorContainerMockText)).toBeInTheDocument();
       expect(screen.queryByText(pagesAndResourcesMockText)).not.toBeInTheDocument();
       expect(mockComponentFn).toHaveBeenCalledWith(
         expect.objectContaining({
-          courseId,
+          learningContextId: courseId,
         }),
       );
     });
   });
 
-  it('renders the VideoSelectorContainer component when the course videos route is active', () => {
+  it('renders the VideoSelectorContainer component when the course videos route is active', async () => {
     render(
-      <MemoryRouter initialEntries={['/editor/course-videos/block-id']}>
-        <CourseAuthoringRoutes />
-      </MemoryRouter>,
+      <CourseAuthoringRoutes />,
+      { routerProps: { initialEntries: ['/editor/course-videos/block-id'] } },
     );
-    waitFor(() => {
+    await waitFor(() => {
       expect(screen.queryByText(videoSelectorContainerMockText)).toBeInTheDocument();
       expect(screen.queryByText(pagesAndResourcesMockText)).not.toBeInTheDocument();
       expect(mockComponentFn).toHaveBeenCalledWith(
