@@ -1,6 +1,5 @@
 import { convertObjectToSnakeCase } from '../utils';
 
-// eslint-disable-next-line import/prefer-default-export
 export const prepareCertificatePayload = (data) => convertObjectToSnakeCase(({
   ...data,
   courseTitle: data.courseTitle,

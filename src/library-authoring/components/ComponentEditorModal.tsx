@@ -7,7 +7,6 @@ import { getBlockType } from '../../generic/key-utils';
 import { useLibraryContext } from '../common/context';
 import { invalidateComponentData } from '../data/apiHooks';
 
-/* eslint-disable import/prefer-default-export */
 export function canEditComponent(usageKey: string): boolean {
   let blockType: string;
   try {

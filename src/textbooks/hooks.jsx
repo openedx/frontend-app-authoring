@@ -92,5 +92,4 @@ const useTextbooks = (courseId, waffleFlags) => {
   };
 };
 
-// eslint-disable-next-line import/prefer-default-export
 export { useTextbooks };

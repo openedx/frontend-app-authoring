@@ -13,5 +13,4 @@ const isDateForUpdateValid = (date) => {
   return parsedDate.isValid() && parsedDate.format(COMMA_SEPARATED_DATE_FORMAT) === date;
 };
 
-// eslint-disable-next-line import/prefer-default-export
 export { isDateForUpdateValid };

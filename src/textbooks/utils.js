@@ -17,6 +17,5 @@ const getTextbookFormInitialValues = (isEditForm = false, textbook = {}) => (isE
   });
 
 export {
-  // eslint-disable-next-line import/prefer-default-export
   getTextbookFormInitialValues,
 };

@@ -22,5 +22,4 @@ const handleResponseErrors = (error, dispatch, savingStatusFunction) => {
   return false;
 };
 
-// eslint-disable-next-line import/prefer-default-export
 export { handleResponseErrors };

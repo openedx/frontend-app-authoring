@@ -11,5 +11,4 @@ const sortAlphabeticallyArray = (arr) => [...arr]
     return firstDisplayName.localeCompare(secondDisplayName);
   });
 
-// eslint-disable-next-line import/prefer-default-export
 export { sortAlphabeticallyArray };

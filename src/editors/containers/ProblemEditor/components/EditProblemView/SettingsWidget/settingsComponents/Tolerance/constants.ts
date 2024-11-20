@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import messages from './messages';
 
 export const ToleranceTypes = {
@@ -9,7 +8,6 @@ export const ToleranceTypes = {
   number: {
     type: 'Number',
     message: messages.typesNumber,
-
   },
   none: {
     type: 'None',

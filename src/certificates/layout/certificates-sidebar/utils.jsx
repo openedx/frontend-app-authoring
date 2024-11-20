@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/prefer-default-export
 export const getSidebarData = ({ messages, intl }) => [
   {
     title: intl.formatMessage(messages.workingWithCertificatesTitle),

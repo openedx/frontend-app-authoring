@@ -49,5 +49,4 @@ const getInfoModalSettings = (modalType, currentEmail, errorMessage, courseName,
   }
 };
 
-// eslint-disable-next-line import/prefer-default-export
 export { getInfoModalSettings };

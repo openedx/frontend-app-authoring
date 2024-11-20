@@ -56,5 +56,4 @@ const useCourseRerun = (courseId) => {
   };
 };
 
-// eslint-disable-next-line import/prefer-default-export
 export { useCourseRerun };

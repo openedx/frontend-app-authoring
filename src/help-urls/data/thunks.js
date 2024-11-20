@@ -3,7 +3,6 @@ import { RequestStatus } from '../../data/constants';
 import { getHelpUrls } from './api';
 import { updateLoadingHelpUrlsStatus, updatePages } from './slice';
 
-/* eslint-disable import/prefer-default-export */
 export function fetchHelpUrls() {
   return async (dispatch) => {
     dispatch(updateLoadingHelpUrlsStatus({ status: RequestStatus.IN_PROGRESS }));

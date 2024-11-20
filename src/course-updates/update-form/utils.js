@@ -52,5 +52,4 @@ const geUpdateFormSettings = (requestType, courseUpdatesInitialValues, intl) => 
   }
 };
 
-// eslint-disable-next-line import/prefer-default-export
 export { geUpdateFormSettings };

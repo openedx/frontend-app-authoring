@@ -18,5 +18,5 @@ const useHelpUrls = (tokenNames) => {
 
   return helpTokens;
 };
-/* eslint-disable-next-line import/prefer-default-export */
+
 export { useHelpUrls };

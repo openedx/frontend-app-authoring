@@ -27,7 +27,6 @@ const COURSE_APPS_ORDER = [
   'ora_settings',
 ];
 
-/* eslint-disable import/prefer-default-export */
 export function fetchCourseApps(courseId) {
   return async (dispatch) => {
     dispatch(updateLoadingStatus({ courseId, status: RequestStatus.IN_PROGRESS }));

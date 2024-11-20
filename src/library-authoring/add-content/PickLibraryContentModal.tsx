@@ -30,7 +30,6 @@ interface PickLibraryContentModalProps {
   onClose: () => void;
 }
 
-// eslint-disable-next-line import/prefer-default-export
 export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = ({
   isOpen,
   onClose,

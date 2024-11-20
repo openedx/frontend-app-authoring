@@ -13,5 +13,4 @@ const generateLicenseURL = (details) => {
   return `${creativeCommonsLicensesURL}/${detailsString}/${creativeCommonsVersion}`;
 };
 
-// eslint-disable-next-line import/prefer-default-export
 export { generateLicenseURL };

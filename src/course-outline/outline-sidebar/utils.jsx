@@ -65,5 +65,4 @@ const getFormattedSidebarMessages = (docsLinks, intl) => {
   ];
 };
 
-// eslint-disable-next-line import/prefer-default-export
 export { getFormattedSidebarMessages };

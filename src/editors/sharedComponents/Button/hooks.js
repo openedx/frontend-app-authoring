@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 export const isVariantAdd = (variant) => variant === 'add';
 
 export const getButtonProps = ({ variant, className, Add }) => {

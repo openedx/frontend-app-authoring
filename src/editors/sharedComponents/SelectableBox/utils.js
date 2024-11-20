@@ -3,7 +3,7 @@ import { RadioControl } from './FormRadio';
 import FormRadioSet from './FormRadioSet';
 import FormCheckboxSet from './FormCheckboxSet';
 
-// eslint-disable-next-line import/prefer-default-export,consistent-return
+// eslint-disable-next-line consistent-return
 export const getInputType = (component, type) => {
   if (component === 'SelectableBox') {
     switch (type) {

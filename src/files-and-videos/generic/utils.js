@@ -1,4 +1,4 @@
-export const sortFiles = (files, sortType) => { // eslint-disable-line import/prefer-default-export
+export const sortFiles = (files, sortType) => {
   const [sort, direction] = sortType.split(',');
   let sortedFiles;
   if (sort === 'displayName') {

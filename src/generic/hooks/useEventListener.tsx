@@ -1,6 +1,5 @@
 import { useEffect, useRef, MutableRefObject } from 'react';
 
-// eslint-disable-next-line import/prefer-default-export
 export function useEventListener<K extends keyof WindowEventMap>(
   type: K,
   handler: (event: WindowEventMap[K]) => void,
