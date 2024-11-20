@@ -96,6 +96,11 @@ const messages = defineMessages({
     defaultMessage: 'Export Course',
     description: 'Link to Studio Export page',
   },
+  'header.links.optimizer': {
+    id: 'header.links.optimizer',
+    defaultMessage: 'Optimize Course',
+    description: 'Fix broken links and other issues in your course',
+  },
   'header.links.exportTags': {
     id: 'header.links.exportTags',
     defaultMessage: 'Export Tags',
