@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
-import { ActionRow, Button, StandardModal, useToggle } from '@openedx/paragon';
+import {
+  ActionRow, Button, StandardModal, useToggle,
+} from '@openedx/paragon';
 
 import { getCourseSectionVertical } from '../data/selectors';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
@@ -38,7 +40,7 @@ const AddComponent = ({ blockId, handleCreateNewCourseXBlock }) => {
   const onComponentSelectionSubmit = () => {
     sendMessageToIframe(messageTypes.addSelectedComponentsToBank, { selectedComponents });
     closeSelectLibraryContentModal();
-  }
+  };
 
   const handleLibraryV2Selection = (selection) => {
     handleCreateNewCourseXBlock({
@@ -158,34 +160,32 @@ const AddComponent = ({ blockId, handleCreateNewCourseXBlock }) => {
         })}
       </ul>
       <StandardModal
-        title={intl.formatMessage(messages.singleComponentPickerModalTitle)}
-        isOpen={isAddLibraryContentModalOpen}
-        onClose={closeAddLibraryContentModal}
+        title={
+          isAddLibraryContentModalOpen
+            ? intl.formatMessage(messages.singleComponentPickerModalTitle)
+            : intl.formatMessage(messages.multipleComponentPickerModalTitle)
+        }
+        isOpen={isAddLibraryContentModalOpen || isSelectLibraryContentModalOpen}
+        onClose={() => {
+          closeAddLibraryContentModal();
+          closeSelectLibraryContentModal();
+        }}
         isOverflowVisible={false}
         size="xl"
-      >
-        <ComponentPicker
-          showOnlyPublished
-          onComponentSelected={handleLibraryV2Selection}
-        />
-      </StandardModal>
-      <StandardModal
-        title={intl.formatMessage(messages.multipleComponentPickerModalTitle)}
-        isOverflowVisible={false}
-        size="xl"
-        isOpen={isSelectLibraryContentModalOpen}
-        onClose={closeSelectLibraryContentModal}
         footerNode={
+          isSelectLibraryContentModalOpen && (
           <ActionRow>
             <Button variant="primary" onClick={onComponentSelectionSubmit}>
               <FormattedMessage {...messages.multipleComponentPickerModalBtn} />
             </Button>
           </ActionRow>
+          )
         }
       >
         <ComponentPicker
           showOnlyPublished
-          componentPickerMode="multiple"
+          componentPickerMode={isAddLibraryContentModalOpen ? 'single' : 'multiple'}
+          onComponentSelected={handleLibraryV2Selection}
           onChangeComponentSelection={setSelectedComponents}
         />
       </StandardModal>
