@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 
+import { COURSE_CREATOR_STATES } from '../../../constants';
 import initializeStore from '../../../store';
 import { studioHomeMock } from '../../__mocks__';
 import { initialState } from '../../factories/mockApiResponses';
@@ -126,5 +127,18 @@ describe('<CoursesTab />', () => {
     renderComponent(props, customStoreData);
     const alertCoursesNotFound = screen.queryByTestId('processing-courses-title');
     expect(alertCoursesNotFound).toBeInTheDocument();
+  });
+
+  it('should render CollapsibleStateWithAction when courseCreatorStatus is true', () => {
+    const props = { isShowProcessing: true, isEnabledPagination: false };
+    const customStoreData = {
+      studioHomeData: {
+        inProcessCourseActions: [],
+        courseCreatorStatus: COURSE_CREATOR_STATES.denied,
+      },
+    };
+    renderComponent(props, customStoreData);
+    const collapsibleStateWithAction = screen.queryByTestId('collapsible-state-with-action');
+    expect(collapsibleStateWithAction).toBeInTheDocument();
   });
 });
