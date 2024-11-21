@@ -85,6 +85,7 @@ const HeaderTitle = ({
           onClose={closeConfigureModal}
           onConfigureSubmit={onConfigureSubmit}
           currentItemData={currentItemData}
+          isSelfPaced={false}
         />
       </div>
       {getVisibilityMessage()}
