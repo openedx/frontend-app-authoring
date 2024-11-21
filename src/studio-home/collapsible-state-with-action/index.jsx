@@ -98,6 +98,7 @@ const CollapsibleStateWithAction = ({ state, className }) => {
     <Collapsible.Advanced
       className={classNames('collapsible-card rounded-sm', className)}
       defaultOpen={[COURSE_CREATOR_STATES.denied, COURSE_CREATOR_STATES.pending].includes(state)}
+      data-testid="collapsible-state-with-action"
     >
       <Collapsible.Trigger className="collapsible-trigger d-flex py-2.5 px-3.5 bg-gray-700">
         <span className="flex-grow-1 text-white small">{title}</span>

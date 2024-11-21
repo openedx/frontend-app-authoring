@@ -1,8 +1,8 @@
-import { within, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import { camelCaseObject } from '@edx/frontend-platform';
 
-import { initializeMocks, render } from '../../testUtils';
+import {
+  initializeMocks, render, screen, within,
+} from '../../testUtils';
 import { getApiWaffleFlagsUrl } from '../../data/api';
 import { fetchWaffleFlags } from '../../data/thunks';
 import { generateCourseLaunchData } from '../factories/mockApiResponses';

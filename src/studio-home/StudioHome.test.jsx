@@ -1,32 +1,22 @@
-import React from 'react';
 import { useSelector } from 'react-redux';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
-import { AppProvider } from '@edx/frontend-platform/react';
-import {
-  act, fireEvent, render, waitFor,
-} from '@testing-library/react';
-import MockAdapter from 'axios-mock-adapter';
 
-import initializeStore from '../store';
 import { RequestStatus } from '../data/constants';
 import { COURSE_CREATOR_STATES } from '../constants';
-import { executeThunk } from '../utils';
 import { studioHomeMock } from './__mocks__';
 import { getStudioHomeApiUrl } from './data/api';
-import { fetchStudioHomeData } from './data/thunks';
-import { getApiWaffleFlagsUrl } from '../data/api';
-import { fetchWaffleFlags } from '../data/thunks';
+import {
+  act,
+  fireEvent,
+  render,
+  waitFor,
+  initializeMocks,
+} from '../testUtils';
 import messages from './messages';
 import createNewCourseMessages from './create-new-course-form/messages';
 import createOrRerunCourseMessages from '../generic/create-or-rerun-course/messages';
 import { StudioHome } from '.';
 
-let axiosMock;
-let store;
 const {
   studioShortName,
   studioRequestEmail,
@@ -44,90 +34,60 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 
-const queryClient = new QueryClient();
-
 const RootWrapper = () => (
-  <AppProvider store={store} wrapWithRouter={false}>
-    <IntlProvider locale="en" messages={{}}>
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter initialEntries={['/home']}>
-          <Routes>
-            <Route
-              path="/home"
-              element={<StudioHome intl={injectIntl} />}
-            />
-            <Route
-              path="/libraries"
-              element={<StudioHome intl={injectIntl} />}
-            />
-            <Route
-              path="/libraries-v1"
-              element={<StudioHome intl={injectIntl} />}
-            />
-          </Routes>
-        </MemoryRouter>
-      </QueryClientProvider>
-    </IntlProvider>
-  </AppProvider>
+  <MemoryRouter initialEntries={['/home']}>
+    <Routes>
+      <Route
+        path="/home"
+        element={<StudioHome />}
+      />
+      <Route
+        path="/libraries"
+        element={<StudioHome />}
+      />
+      <Route
+        path="/libraries-v1"
+        element={<StudioHome />}
+      />
+    </Routes>,
+  </MemoryRouter>
 );
 
 describe('<StudioHome />', () => {
   describe('api fetch fails', () => {
     beforeEach(async () => {
-      initializeMockApp({
-        authenticatedUser: {
-          userId: 3,
-          username: 'abc123',
-          administrator: true,
-          roles: [],
-        },
-      });
-      store = initializeStore();
-      axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-      axiosMock.onGet(getStudioHomeApiUrl()).reply(404);
-      await executeThunk(fetchStudioHomeData(), store.dispatch);
-      axiosMock
-        .onGet(getApiWaffleFlagsUrl())
-        .reply(200, {});
-      await executeThunk(fetchWaffleFlags(), store.dispatch);
+      const mocks = initializeMocks();
+      mocks.axiosMock.onGet(getStudioHomeApiUrl()).reply(404);
       useSelector.mockReturnValue({ studioHomeLoadingStatus: RequestStatus.FAILED });
     });
 
     it('should render fetch error', () => {
       const { getByText } = render(<RootWrapper />);
-      expect(getByText(messages.homePageLoadFailedMessage.defaultMessage)).toBeInTheDocument();
+      waitFor(() => {
+        expect(getByText(messages.homePageLoadFailedMessage.defaultMessage)).toBeInTheDocument();
+      });
     });
 
     it('should render Studio home title', () => {
       const { getByText } = render(<RootWrapper />);
-      expect(getByText('Studio home')).toBeInTheDocument();
+      waitFor(() => {
+        expect(getByText('Studio home')).toBeInTheDocument();
+      });
     });
   });
 
   describe('api fetch succeeds', () => {
     beforeEach(async () => {
-      initializeMockApp({
-        authenticatedUser: {
-          userId: 3,
-          username: 'abc123',
-          administrator: true,
-          roles: [],
-        },
-      });
-      store = initializeStore();
-      axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-      axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
-      await executeThunk(fetchStudioHomeData(), store.dispatch);
+      const mocks = initializeMocks();
+      mocks.axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
       useSelector.mockReturnValue(studioHomeMock);
-      axiosMock
-        .onGet(getApiWaffleFlagsUrl())
-        .reply(200, {});
-      await executeThunk(fetchWaffleFlags(), store.dispatch);
     });
 
     it('should render page and page title correctly', () => {
       const { getByText } = render(<RootWrapper />);
-      expect(getByText(`${studioShortName} home`)).toBeInTheDocument();
+      waitFor(() => {
+        expect(getByText(`${studioShortName} home`)).toBeInTheDocument();
+      });
     });
 
     it('should render email staff header button', async () => {
@@ -137,8 +97,10 @@ describe('<StudioHome />', () => {
       });
 
       const { getByRole } = render(<RootWrapper />);
-      expect(getByRole('link', { name: messages.emailStaffBtnText.defaultMessage }))
-        .toHaveAttribute('href', `mailto:${studioRequestEmail}`);
+      waitFor(() => {
+        expect(getByRole('link', { name: messages.emailStaffBtnText.defaultMessage }))
+          .toHaveAttribute('href', `mailto:${studioRequestEmail}`);
+      });
     });
 
     it('should render create new course button', async () => {
@@ -148,7 +110,9 @@ describe('<StudioHome />', () => {
       });
 
       const { getByRole } = render(<RootWrapper />);
-      expect(getByRole('button', { name: messages.addNewCourseBtnText.defaultMessage })).toBeInTheDocument();
+      waitFor(() => {
+        expect(getByRole('button', { name: messages.addNewCourseBtnText.defaultMessage })).toBeInTheDocument();
+      });
     });
 
     it('should show verify email layout if user inactive', () => {
@@ -158,7 +122,9 @@ describe('<StudioHome />', () => {
       });
 
       const { getByText } = render(<RootWrapper />);
-      expect(getByText('Thanks for signing up, abc123!', { exact: false })).toBeInTheDocument();
+      waitFor(() => {
+        expect(getByText('Thanks for signing up, abc123!', { exact: false })).toBeInTheDocument();
+      });
     });
 
     it('shows the spinner before the query is complete', async () => {
@@ -169,8 +135,10 @@ describe('<StudioHome />', () => {
 
       await act(async () => {
         const { getByRole } = render(<RootWrapper />);
-        const spinner = getByRole('status');
-        expect(spinner.textContent).toEqual('Loading...');
+        waitFor(() => {
+          const spinner = getByRole('status');
+          expect(spinner.textContent).toEqual('Loading...');
+        });
       });
     });
 
@@ -184,13 +152,15 @@ describe('<StudioHome />', () => {
         const studioBaseUrl = 'http://localhost:18010';
 
         const { getByTestId } = render(<RootWrapper />);
-        const createNewLibraryButton = getByTestId('new-library-button');
+        waitFor(() => {
+          const createNewLibraryButton = getByTestId('new-library-button');
 
-        const { open } = window;
-        window.open = jest.fn();
-        fireEvent.click(createNewLibraryButton);
-        expect(window.open).toHaveBeenCalledWith(`${studioBaseUrl}/home_library`);
-        window.open = open;
+          const { open } = window;
+          window.open = jest.fn();
+          fireEvent.click(createNewLibraryButton);
+          expect(window.open).toHaveBeenCalledWith(`${studioBaseUrl}/home_library`);
+          window.open = open;
+        });
       });
 
       it('should navigate to the library authoring page in course authoring', () => {
@@ -199,11 +169,11 @@ describe('<StudioHome />', () => {
           librariesV1Enabled: false,
         });
         const { getByTestId } = render(<RootWrapper />);
-        const createNewLibraryButton = getByTestId('new-library-button');
-
-        fireEvent.click(createNewLibraryButton);
-
-        expect(mockNavigate).toHaveBeenCalledWith('/library/create');
+        waitFor(() => {
+          const createNewLibraryButton = getByTestId('new-library-button');
+          fireEvent.click(createNewLibraryButton);
+          expect(mockNavigate).toHaveBeenCalledWith('/library/create');
+        });
       });
     });
 
@@ -224,7 +194,9 @@ describe('<StudioHome />', () => {
         librariesV1Enabled: false,
       });
       const { queryByTestId } = render(<RootWrapper />);
-      expect(queryByTestId('new-library-button')).toBeInTheDocument();
+      waitFor(() => {
+        expect(queryByTestId('new-library-button')).toBeInTheDocument();
+      });
     });
 
     it('should render create new course container', async () => {
@@ -234,10 +206,12 @@ describe('<StudioHome />', () => {
       });
 
       const { getByRole, getByText } = render(<RootWrapper />);
-      const createNewCourseButton = getByRole('button', { name: messages.addNewCourseBtnText.defaultMessage });
+      waitFor(() => {
+        const createNewCourseButton = getByRole('button', { name: messages.addNewCourseBtnText.defaultMessage });
 
-      await act(() => fireEvent.click(createNewCourseButton));
-      expect(getByText(createNewCourseMessages.createNewCourse.defaultMessage)).toBeInTheDocument();
+        act(() => fireEvent.click(createNewCourseButton));
+        expect(getByText(createNewCourseMessages.createNewCourse.defaultMessage)).toBeInTheDocument();
+      });
     });
 
     it('should hide create new course container', async () => {
@@ -247,16 +221,16 @@ describe('<StudioHome />', () => {
       });
 
       const { getByRole, queryByText, getByText } = render(<RootWrapper />);
-      const createNewCourseButton = getByRole('button', { name: messages.addNewCourseBtnText.defaultMessage });
 
-      fireEvent.click(createNewCourseButton);
       waitFor(() => {
+        const createNewCourseButton = getByRole('button', { name: messages.addNewCourseBtnText.defaultMessage });
+        fireEvent.click(createNewCourseButton);
         expect(getByText(createNewCourseMessages.createNewCourse.defaultMessage)).toBeInTheDocument();
       });
 
-      const cancelButton = getByRole('button', { name: createOrRerunCourseMessages.cancelButton.defaultMessage });
-      fireEvent.click(cancelButton);
       waitFor(() => {
+        const cancelButton = getByRole('button', { name: createOrRerunCourseMessages.cancelButton.defaultMessage });
+        fireEvent.click(cancelButton);
         expect(queryByText(createNewCourseMessages.createNewCourse.defaultMessage)).not.toBeInTheDocument();
       });
     });
@@ -270,13 +244,15 @@ describe('<StudioHome />', () => {
         });
         const { getByText, queryByText } = render(<RootWrapper />);
         const defaultTitleMessage = messages.defaultSection_1_Title.defaultMessage;
-        const titleWithStudioName = defaultTitleMessage.replace('{studioShortName}', 'Studio');
-        const administratorCardTitle = getByText(titleWithStudioName);
+        waitFor(() => {
+          const titleWithStudioName = defaultTitleMessage.replace('{studioShortName}', 'Studio');
+          const administratorCardTitle = getByText(titleWithStudioName);
 
-        expect(administratorCardTitle).toBeVisible();
+          expect(administratorCardTitle).toBeVisible();
 
-        const addCourseButton = queryByText(messages.btnAddNewCourseText.defaultMessage);
-        expect(addCourseButton).toBeNull();
+          const addCourseButton = queryByText(messages.btnAddNewCourseText.defaultMessage);
+          expect(addCourseButton).toBeNull();
+        });
       });
 
       it('should show contact administrator card with add course buttons', () => {
@@ -287,23 +263,27 @@ describe('<StudioHome />', () => {
         });
         const { getByText, getByTestId } = render(<RootWrapper />);
         const defaultTitleMessage = messages.defaultSection_1_Title.defaultMessage;
-        const titleWithStudioName = defaultTitleMessage.replace('{studioShortName}', 'Studio');
-        const administratorCardTitle = getByText(titleWithStudioName);
+        waitFor(() => {
+          const titleWithStudioName = defaultTitleMessage.replace('{studioShortName}', 'Studio');
+          const administratorCardTitle = getByText(titleWithStudioName);
 
-        expect(administratorCardTitle).toBeVisible();
+          expect(administratorCardTitle).toBeVisible();
 
-        const addCourseButton = getByTestId('contact-admin-create-course');
-        expect(addCourseButton).toBeVisible();
+          const addCourseButton = getByTestId('contact-admin-create-course');
+          expect(addCourseButton).toBeVisible();
 
-        fireEvent.click(addCourseButton);
-        expect(getByTestId('create-course-form')).toBeVisible();
+          fireEvent.click(addCourseButton);
+          expect(getByTestId('create-course-form')).toBeVisible();
+        });
       });
     });
 
     it('should show footer', () => {
       const { getByText } = render(<RootWrapper />);
-      expect(getByText('Looking for help with Studio?')).toBeInTheDocument();
-      expect(getByText('LMS')).toHaveAttribute('href', process.env.LMS_BASE_URL);
+      waitFor(() => {
+        expect(getByText('Looking for help with Studio?')).toBeInTheDocument();
+        expect(getByText('LMS')).toHaveAttribute('href', process.env.LMS_BASE_URL);
+      });
     });
   });
 });
