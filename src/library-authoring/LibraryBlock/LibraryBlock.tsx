@@ -22,7 +22,7 @@ interface LibraryBlockProps {
  */
 export const LibraryBlock = ({ onBlockNotification, usageKey, version }: LibraryBlockProps) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [iFrameHeight, setIFrameHeight] = useState(600);
+  const [iFrameHeight, setIFrameHeight] = useState(50);
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
 
   const intl = useIntl();
@@ -59,6 +59,10 @@ export const LibraryBlock = ({ onBlockNotification, usageKey, version }: Library
     // Messages are the only way that the code in the IFrame can communicate
     // with the surrounding UI.
     window.addEventListener('message', receivedWindowMessage);
+    if (window.self !== window.top) {
+      // This component is loaded inside an iframe.
+      setIFrameHeight(86);
+    }
 
     return () => {
       window.removeEventListener('message', receivedWindowMessage);
@@ -69,7 +73,7 @@ export const LibraryBlock = ({ onBlockNotification, usageKey, version }: Library
 
   return (
     <div style={{
-      height: `${iFrameHeight}px`,
+      height: `${iFrameHeight}vh`,
       boxSizing: 'content-box',
       position: 'relative',
       overflow: 'hidden',
