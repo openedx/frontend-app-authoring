@@ -103,10 +103,10 @@ export const useToolsMenuItems = courseId => {
       href: `/course/${courseId}/checklists`,
       title: intl.formatMessage(messages['header.links.checklists']),
     },
-    {
+    ...(waffleFlags.enableCourseOptimizer ? [{
       href: `/course/${courseId}/optimizer`,
       title: intl.formatMessage(messages['header.links.optimizer']),
-    },
+    }] : []),
   ];
   return items;
 };
