@@ -59,7 +59,7 @@ export const WysiwygEditor = ({
       initializeEditor={() => ({})}
       learningContextId={courseId}
       images={{}}
-      isLibrary
+      enableImageUpload={false}
       onEditorChange={() => ({})}
     />
   );

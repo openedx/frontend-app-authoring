@@ -27,6 +27,7 @@ exports[`SolutionWidget render snapshot: renders correct default 1`] = `
     editorContentHtml="This is my solution"
     editorRef={null}
     editorType="solution"
+    enableImageUpload={true}
     id="solution"
     images={{}}
     isLibrary={false}

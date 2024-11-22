@@ -26,6 +26,7 @@ exports[`TinyMceWidget snapshots ImageUploadModal is not rendered 1`] = `
           },
         },
         "editorType": "text",
+        "enableImageUpload": false,
         "images": {
           "current": [
             {
@@ -34,8 +35,7 @@ exports[`TinyMceWidget snapshots ImageUploadModal is not rendered 1`] = `
           ],
         },
         "initializeEditor": undefined,
-        "isLibrary": false,
-        "learningContextId": "library-v1:org+t01",
+        "learningContextId": "course+org+run",
         "lmsEndpointUrl": "sOmEvaLue.cOm",
         "minHeight": undefined,
         "openImgModal": [MockFunction modal.openModal],
@@ -96,6 +96,7 @@ exports[`TinyMceWidget snapshots SourcecodeModal is not rendered 1`] = `
           },
         },
         "editorType": "problem",
+        "enableImageUpload": true,
         "images": {
           "current": [
             {
@@ -104,7 +105,6 @@ exports[`TinyMceWidget snapshots SourcecodeModal is not rendered 1`] = `
           ],
         },
         "initializeEditor": undefined,
-        "isLibrary": false,
         "learningContextId": "course+org+run",
         "lmsEndpointUrl": "sOmEvaLue.cOm",
         "minHeight": undefined,
@@ -177,6 +177,7 @@ exports[`TinyMceWidget snapshots renders as expected with default behavior 1`] =
           },
         },
         "editorType": "text",
+        "enableImageUpload": true,
         "images": {
           "current": [
             {
@@ -185,7 +186,6 @@ exports[`TinyMceWidget snapshots renders as expected with default behavior 1`] =
           ],
         },
         "initializeEditor": undefined,
-        "isLibrary": false,
         "learningContextId": "course+org+run",
         "lmsEndpointUrl": "sOmEvaLue.cOm",
         "minHeight": undefined,
