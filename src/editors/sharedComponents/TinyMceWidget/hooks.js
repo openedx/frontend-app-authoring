@@ -280,6 +280,7 @@ export const editorConfig = ({
   minHeight,
   learningContextId,
   staticRootUrl,
+  enableImageUpload,
 }) => {
   const lmsEndpointUrl = getConfig().LMS_BASE_URL;
   const studioEndpointUrl = getConfig().STUDIO_BASE_URL;
@@ -292,7 +293,7 @@ export const editorConfig = ({
     imageToolbar,
     quickbarsInsertToolbar,
     quickbarsSelectionToolbar,
-  } = pluginConfig({ learningContextId, placeholder, editorType });
+  } = pluginConfig({ placeholder, editorType, enableImageUpload });
   const isLocaleRtl = isRtl(getLocale());
   return {
     onInit: (evt, editor) => {

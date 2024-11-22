@@ -18,6 +18,7 @@ exports[`QuestionWidget render snapshot: renders correct default 1`] = `
     editorContentHtml="This is my question"
     editorRef={null}
     editorType="question"
+    enableImageUpload={true}
     id="question"
     images={{}}
     isLibrary={false}

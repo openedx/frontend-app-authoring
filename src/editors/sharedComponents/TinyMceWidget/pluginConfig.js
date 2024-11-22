@@ -1,14 +1,13 @@
-import { isLibraryV1Key } from '../../../generic/key-utils';
 import { StrictDict } from '../../utils';
 import { buttons, plugins } from '../../data/constants/tinyMCE';
 
 const mapToolbars = toolbars => toolbars.map(toolbar => toolbar.join(' ')).join(' | ');
 
-const pluginConfig = ({ learningContextId, placeholder, editorType }) => {
-  const image = isLibraryV1Key(learningContextId) ? '' : plugins.image;
-  const imageTools = isLibraryV1Key(learningContextId) ? '' : plugins.imagetools;
-  const imageUploadButton = isLibraryV1Key(learningContextId) ? '' : buttons.imageUploadButton;
-  const editImageSettings = isLibraryV1Key(learningContextId) ? '' : buttons.editImageSettings;
+const pluginConfig = ({ placeholder, editorType, enableImageUpload }) => {
+  const image = enableImageUpload ? plugins.image : '';
+  const imageTools = enableImageUpload ? plugins.imagetools : '';
+  const imageUploadButton = enableImageUpload ? buttons.imageUploadButton : '';
+  const editImageSettings = enableImageUpload ? buttons.editImageSettings : '';
   const codePlugin = editorType === 'text' ? plugins.code : '';
   const codeButton = editorType === 'text' ? buttons.code : '';
   const labelButton = editorType === 'question' ? buttons.customLabelButton : '';

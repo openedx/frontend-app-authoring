@@ -43,6 +43,7 @@ const TinyMceWidget = ({
   editorContentHtml, // editorContent in html form
   learningContextId,
   images,
+  enableImageUpload,
   isLibrary,
   onChange,
   staticRootUrl,
@@ -55,7 +56,7 @@ const TinyMceWidget = ({
 
   return (
     <>
-      {!isLibraryV1Key(learningContextId) && (
+      {enableImageUpload && (
         <ImageUploadModal
           isOpen={isImgOpen}
           close={closeImgModal}
@@ -84,7 +85,7 @@ const TinyMceWidget = ({
             openSourceCodeModal,
             editorType,
             editorRef,
-            isLibrary,
+            enableImageUpload: isLibraryV1Key(learningContextId) ? false : enableImageUpload,
             learningContextId,
             images: imagesRef,
             editorContentHtml,
@@ -108,6 +109,7 @@ TinyMceWidget.defaultProps = {
   disabled: false,
   editorContentHtml: undefined,
   updateContent: undefined,
+  enableImageUpload: true,
   onChange: () => ({}),
   ...editorConfigDefaultProps,
 };
@@ -123,6 +125,7 @@ TinyMceWidget.propTypes = {
   disabled: PropTypes.bool,
   editorContentHtml: PropTypes.string,
   updateContent: PropTypes.func,
+  enableImageUpload: PropTypes.bool,
   onChange: PropTypes.func,
   ...editorConfigPropTypes,
 };
