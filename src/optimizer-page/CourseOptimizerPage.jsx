@@ -17,26 +17,26 @@ import { RequestStatus } from '../data/constants';
 import { useModel } from '../generic/model-store';
 // import messages from './messages';
 // import ExportSidebar from './export-sidebar/ExportSidebar';
-// import {
-//   getCurrentStage, getError, getExportTriggered, getLoadingStatus, getSavingStatus,
-// } from './data/selectors';
-// import { startExportingCourse } from './data/thunks';
-// import { EXPORT_STAGES, LAST_EXPORT_COOKIE_NAME } from './data/constants';
-// import { updateExportTriggered, updateSavingStatus, updateSuccessDate } from './data/slice';
+import {
+  getCurrentStage, getError, getLinkCheckTriggered, getLoadingStatus, getSavingStatus,
+} from './data/selectors';
+import { startLinkCheck } from './data/thunks';
+import { EXPORT_STAGES, LAST_EXPORT_COOKIE_NAME } from './data/constants';
+import { updateLinkCheckTriggered, updateSavingStatus, updateSuccessDate } from './data/slice';
 // import ExportModalError from './export-modal-error/ExportModalError';
 // import ExportFooter from './export-footer/ExportFooter';
 // import ExportStepper from './export-stepper/ExportStepper';
 
 const CourseOptimizerPage = ({ intl, courseId }) => {
   const dispatch = useDispatch();
-  // const exportTriggered = useSelector(getExportTriggered);
+  const exportTriggered = useSelector(getLinkCheckTriggered);
   const courseDetails = useModel('courseDetails', courseId);
-  // const currentStage = useSelector(getCurrentStage);
-  // const { msg: errorMessage } = useSelector(getError);
+  const currentStage = useSelector(getCurrentStage);
+  const { msg: errorMessage } = useSelector(getError);
   // const loadingStatus = useSelector(getLoadingStatus);
   // const savingStatus = useSelector(getSavingStatus);
   // const cookies = new Cookies();
-  // const isShowExportButton = !exportTriggered || errorMessage || currentStage === EXPORT_STAGES.SUCCESS;
+  const isShowExportButton = !exportTriggered || errorMessage || currentStage === EXPORT_STAGES.SUCCESS;
   // const anyRequestFailed = savingStatus === RequestStatus.FAILED || loadingStatus === RequestStatus.FAILED;
   // const isLoadingDenied = loadingStatus === RequestStatus.DENIED;
   // const anyRequestInProgress = savingStatus === RequestStatus.PENDING || loadingStatus === RequestStatus.IN_PROGRESS;
@@ -87,6 +87,20 @@ const CourseOptimizerPage = ({ intl, courseId }) => {
                     className="h3 px-3 text-black mb-4"
                     title="title"
                   />
+                  {isShowExportButton && (
+                  <Card.Section className="px-3 py-1">
+                    <Button
+                      size="lg"
+                      block
+                      className="mb-4"
+                      onClick={() => dispatch(startLinkCheck(courseId))}
+                      iconBefore={ArrowCircleDownIcon}
+                    >
+                      Scan for broken links
+                    </Button>
+                  </Card.Section>
+                  )}
+                  <h3>Current stage: {currentStage}</h3>
                 </Card>
               </article>
             </Layout.Element>
