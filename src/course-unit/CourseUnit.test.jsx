@@ -70,6 +70,13 @@ const blockId = '567890';
 const unitDisplayName = courseUnitIndexMock.metadata.display_name;
 const mockedUsedNavigate = jest.fn();
 const userName = 'openedx';
+const handleConfigureSubmitMock = jest.fn();
+
+const {
+  block_id: id,
+  user_partition_info: userPartitionInfo,
+} = courseVerticalChildrenMock.children[0];
+const userPartitionInfoFormatted = camelCaseObject(userPartitionInfo);
 
 const postXBlockBody = {
   parent_locator: blockId,
@@ -209,6 +216,19 @@ describe('<CourseUnit />', () => {
     });
   });
 
+  it('adjusts iframe height dynamically based on courseXBlockDropdownHeight postMessage event', async () => {
+    const { getByTitle } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      const iframe = getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+      expect(iframe).toHaveAttribute('style', 'width: 100%; height: 0px;');
+      simulatePostMessageEvent(messageTypes.toggleCourseXBlockDropdown, {
+        courseXBlockDropdownHeight: 200,
+      });
+      expect(iframe).toHaveAttribute('style', 'width: 100%; height: 200px;');
+    });
+  });
+
   it('checks whether xblock is removed when the corresponding delete button is clicked and the sidebar is the updated', async () => {
     const {
       getByTitle, getByText, queryByRole, getAllByRole, getByRole,
@@ -238,7 +258,6 @@ describe('<CourseUnit />', () => {
         .find(({ classList }) => classList.contains('btn-primary'));
 
       userEvent.click(cancelButton);
-      // waitFor(() => expect(getByRole('dialog')).not.toBeInTheDocument());
 
       simulatePostMessageEvent(messageTypes.deleteXBlock, {
         id: courseVerticalChildrenMock.children[0].block_id,
@@ -246,7 +265,6 @@ describe('<CourseUnit />', () => {
 
       expect(getByRole('dialog')).toBeInTheDocument();
       userEvent.click(deleteButton);
-      // waitFor(() => expect(getByRole('dialog')).not.toBeInTheDocument());
     });
 
     axiosMock
@@ -1654,6 +1672,121 @@ describe('<CourseUnit />', () => {
         `/course/${courseId}/container/${blockId}/${requestData.currentParentLocator}`,
         { replace: true },
       );
+    });
+  });
+
+  describe('XBlock restrict access', () => {
+    it('opens xblock restrict access modal successfully', () => {
+      const {
+        getByTitle, getByTestId,
+      } = render(<RootWrapper />);
+
+      const modalSubtitleText = configureModalMessages.restrictAccessTo.defaultMessage;
+      const modalCancelBtnText = configureModalMessages.cancelButton.defaultMessage;
+      const modalSaveBtnText = configureModalMessages.saveButton.defaultMessage;
+
+      waitFor(() => {
+        const iframe = getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+        const currentXBlockId = courseVerticalChildrenMock.children[0].block_id;
+        expect(iframe).toBeInTheDocument();
+
+        simulatePostMessageEvent(messageTypes.currentXBlockId, {
+          id: currentXBlockId,
+        });
+
+        simulatePostMessageEvent(messageTypes.manageXBlockAccess, {
+          id: currentXBlockId,
+        });
+      });
+
+      waitFor(() => {
+        const configureModal = getByTestId('configure-modal');
+
+        expect(within(configureModal).getByText(modalSubtitleText)).toBeInTheDocument();
+        expect(within(configureModal).getByRole('button', { name: modalCancelBtnText })).toBeInTheDocument();
+        expect(within(configureModal).getByRole('button', { name: modalSaveBtnText })).toBeInTheDocument();
+      });
+    });
+
+    it('closes xblock restrict access modal when cancel button is clicked', async () => {
+      const {
+        getByTitle, queryByTestId, getByTestId,
+      } = render(<RootWrapper />);
+
+      waitFor(() => {
+        const iframe = getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+        expect(iframe).toBeInTheDocument();
+        simulatePostMessageEvent(messageTypes.manageXBlockAccess, {
+          id: courseVerticalChildrenMock.children[0].block_id,
+        });
+      });
+
+      waitFor(() => {
+        const configureModal = getByTestId('configure-modal');
+        expect(configureModal).toBeInTheDocument();
+        userEvent.click(within(configureModal).getByRole('button', {
+          name: configureModalMessages.cancelButton.defaultMessage,
+        }));
+        expect(handleConfigureSubmitMock).not.toHaveBeenCalled();
+      });
+
+      expect(queryByTestId('configure-modal')).not.toBeInTheDocument();
+    });
+
+    it('handles submit xblock restrict access data when save button is clicked', async () => {
+      axiosMock
+        .onPost(getXBlockBaseApiUrl(id), {
+          publish: PUBLISH_TYPES.republish,
+          metadata: { visible_to_staff_only: false, group_access: { 970807507: [1959537066] } },
+        })
+        .reply(200, { dummy: 'value' });
+
+      const {
+        getByTitle, getByRole, getByTestId,
+      } = render(<RootWrapper />);
+
+      const accessGroupName1 = userPartitionInfoFormatted.selectablePartitions[0].groups[0].name;
+      const accessGroupName2 = userPartitionInfoFormatted.selectablePartitions[0].groups[1].name;
+
+      waitFor(() => {
+        const iframe = getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+        expect(iframe).toBeInTheDocument();
+        simulatePostMessageEvent(messageTypes.manageXBlockAccess, {
+          id: courseVerticalChildrenMock.children[0].block_id,
+        });
+      });
+
+      waitFor(() => {
+        const configureModal = getByTestId('configure-modal');
+        expect(configureModal).toBeInTheDocument();
+
+        expect(within(configureModal).queryByText(accessGroupName1)).not.toBeInTheDocument();
+        expect(within(configureModal).queryByText(accessGroupName2)).not.toBeInTheDocument();
+
+        const restrictAccessSelect = getByRole('combobox', {
+          name: configureModalMessages.restrictAccessTo.defaultMessage,
+        });
+
+        userEvent.selectOptions(restrictAccessSelect, '0');
+
+        // eslint-disable-next-line array-callback-return
+        userPartitionInfoFormatted.selectablePartitions[0].groups.map((group) => {
+          expect(within(configureModal).getByRole('checkbox', { name: group.name })).not.toBeChecked();
+          expect(within(configureModal).queryByText(group.name)).toBeInTheDocument();
+        });
+
+        const group1Checkbox = within(configureModal).getByRole('checkbox', { name: accessGroupName1 });
+        userEvent.click(group1Checkbox);
+        expect(group1Checkbox).toBeChecked();
+
+        const saveModalBtnText = within(configureModal).getByRole('button', {
+          name: configureModalMessages.saveButton.defaultMessage,
+        });
+        expect(saveModalBtnText).toBeInTheDocument();
+
+        userEvent.click(saveModalBtnText);
+        expect(handleConfigureSubmitMock).toHaveBeenCalledTimes(1);
+      });
     });
   });
 });

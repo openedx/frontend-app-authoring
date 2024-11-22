@@ -99,7 +99,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
       [messageTypes.manageXBlockAccess]: () => openConfigureModal(),
       [messageTypes.copyXBlock]: () => dispatch(copyToClipboard(currentXBlockId)),
       [messageTypes.duplicateXBlock]: () => handleDuplicateXBlock(currentXBlockData),
-      [messageTypes.refreshPositions]: handleRefetchXBlocks,
+      [messageTypes.refreshXBlockPositions]: handleRefetchXBlocks,
       [messageTypes.newXBlockEditor]: ({ url }) => navigate(`/course/${courseId}/editor${url}`),
       [messageTypes.currentXBlockId]: ({ id }) => setCurrentXBlockId(id),
       [messageTypes.toggleCourseXBlockDropdown]: ({

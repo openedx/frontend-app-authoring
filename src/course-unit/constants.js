@@ -59,7 +59,7 @@ export const messageTypes = {
   manageXBlockAccess: 'manageXBlockAccess',
   deleteXBlock: 'deleteXBlock',
   duplicateXBlock: 'duplicateXBlock',
-  refreshPositions: 'refreshPositions',
+  refreshXBlockPositions: 'refreshPositions',
   newXBlockEditor: 'newXBlockEditor',
   currentXBlockId: 'currentXBlockId',
   toggleCourseXBlockDropdown: 'toggleCourseXBlockDropdown',
