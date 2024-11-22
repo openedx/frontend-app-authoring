@@ -1,6 +1,7 @@
+/* eslint-disable react/prop-types */
 import MockAdapter from 'axios-mock-adapter';
 import {
-  render, waitFor, within,
+  act, render, screen, waitFor, within,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -17,25 +18,56 @@ import { courseSectionVerticalMock } from '../__mocks__';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import AddComponent from './AddComponent';
 import messages from './messages';
+import { IframeProvider } from '../context/iFrameContext';
+import { messageTypes } from '../constants';
 
 let store;
 let axiosMock;
 const blockId = '123';
 const handleCreateNewCourseXBlockMock = jest.fn();
+const usageKey = 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fddest-usage-key';
 
-// Mock ComponentPicker to call onComponentSelected on load
+// Mock ComponentPicker to call onComponentSelected on click
 jest.mock('../../library-authoring/component-picker', () => ({
-  ComponentPicker: (props) => props.onComponentSelected({ usageKey: 'test-usage-key', blockType: 'html' }),
+  ComponentPicker: (props) => {
+    const onClick = () => {
+      if (props.componentPickerMode === 'single') {
+        props.onComponentSelected({
+          usageKey,
+          blockType: 'html',
+        });
+      } else {
+        props.onChangeComponentSelection([{
+          usageKey,
+          blockType: 'html',
+        }]);
+      }
+    };
+    return (
+      <button type="submit" onClick={onClick}>
+        Dummy button
+      </button>
+    );
+  },
+}));
+
+const mockSendMessageToIframe = jest.fn();
+jest.mock('../context/hooks', () => ({
+  useIframe: () => ({
+    sendMessageToIframe: mockSendMessageToIframe,
+  }),
 }));
 
 const renderComponent = (props) => render(
   <AppProvider store={store}>
     <IntlProvider locale="en">
-      <AddComponent
-        blockId={blockId}
-        handleCreateNewCourseXBlock={handleCreateNewCourseXBlockMock}
-        {...props}
-      />
+      <IframeProvider>
+        <AddComponent
+          blockId={blockId}
+          handleCreateNewCourseXBlock={handleCreateNewCourseXBlockMock}
+          {...props}
+        />
+      </IframeProvider>
     </IntlProvider>
   </AppProvider>,
 );
@@ -413,18 +445,64 @@ describe('<AddComponent />', () => {
   });
 
   it('shows library picker on clicking v2 library content btn', async () => {
-    const { findByRole } = renderComponent();
-    const libBtn = await findByRole('button', {
+    renderComponent();
+    const libBtn = await screen.findByRole('button', {
       name: new RegExp(`${messages.buttonText.defaultMessage} Library content`, 'i'),
     });
-
     userEvent.click(libBtn);
+
+    // click dummy button to execute onComponentSelected prop.
+    const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
+    userEvent.click(dummyBtn);
+
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalled();
     expect(handleCreateNewCourseXBlockMock).toHaveBeenCalledWith({
       type: COMPONENT_TYPES.libraryV2,
       parentLocator: '123',
       category: 'html',
-      libraryContentKey: 'test-usage-key',
+      libraryContentKey: usageKey,
+    });
+  });
+
+  it('closes library component picker on close', async () => {
+    renderComponent();
+    const libBtn = await screen.findByRole('button', {
+      name: new RegExp(`${messages.buttonText.defaultMessage} Library content`, 'i'),
+    });
+    userEvent.click(libBtn);
+
+    expect(screen.queryByRole('button', { name: 'Dummy button' })).toBeInTheDocument();
+    // click dummy button to execute onComponentSelected prop.
+    const closeBtn = await screen.findByRole('button', { name: 'Close' });
+    userEvent.click(closeBtn);
+
+    expect(screen.queryByRole('button', { name: 'Dummy button' })).not.toBeInTheDocument();
+  });
+
+  it('shows component picker on window message', async () => {
+    renderComponent();
+    const message = {
+      data: {
+        type: messageTypes.showMultipleComponentPicker,
+      },
+    };
+    // Dispatch showMultipleComponentPicker message event to open the picker modal.
+    act(() => {
+      window.dispatchEvent(new MessageEvent('message', message));
+    });
+
+    // click dummy button to execute onChangeComponentSelection prop.
+    const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
+    userEvent.click(dummyBtn);
+
+    const submitBtn = await screen.findByRole('button', { name: 'Add selected components' });
+    userEvent.click(submitBtn);
+
+    expect(mockSendMessageToIframe).toHaveBeenCalledWith(messageTypes.addSelectedComponentsToBank, {
+      selectedComponents: [{
+        blockType: 'html',
+        usageKey,
+      }],
     });
   });
 

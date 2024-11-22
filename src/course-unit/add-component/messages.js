@@ -4,22 +4,42 @@ const messages = defineMessages({
   title: {
     id: 'course-authoring.course-unit.add.component.title',
     defaultMessage: 'Add a new component',
+    description: 'Title text for add component section in course unit.',
   },
   buttonText: {
     id: 'course-authoring.course-unit.add.component.button.text',
     defaultMessage: 'Add Component:',
+    description: 'Information text for screen-readers about each add component button',
   },
   modalBtnText: {
     id: 'course-authoring.course-unit.modal.button.text',
     defaultMessage: 'Select',
+    description: 'Information text for screen-readers about each add component button',
+  },
+  singleComponentPickerModalTitle: {
+    id: 'course-authoring.course-unit.modal.single-title.text',
+    defaultMessage: 'Select component',
+    description: 'Library content picker modal title.',
+  },
+  multipleComponentPickerModalTitle: {
+    id: 'course-authoring.course-unit.modal.multiple-title.text',
+    defaultMessage: 'Select components',
+    description: 'Problem bank component picker modal title.',
+  },
+  multipleComponentPickerModalBtn: {
+    id: 'course-authoring.course-unit.modal.multiple-btn.text',
+    defaultMessage: 'Add selected components',
+    description: 'Problem bank component add button text.',
   },
   modalContainerTitle: {
     id: 'course-authoring.course-unit.modal.container.title',
     defaultMessage: 'Add {componentTitle} component',
+    description: 'Modal title for adding components',
   },
   modalContainerCancelBtnText: {
     id: 'course-authoring.course-unit.modal.container.cancel.button.text',
     defaultMessage: 'Cancel',
+    description: 'Modal cancel button text.',
   },
   modalComponentSupportLabelFullySupported: {
     id: 'course-authoring.course-unit.modal.component.support.label.fully-supported',
