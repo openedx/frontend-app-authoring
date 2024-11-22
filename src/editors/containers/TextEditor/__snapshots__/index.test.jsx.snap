@@ -49,6 +49,7 @@ exports[`TextEditor snapshots block failed to load, Toast is shown 1`] = `
         }
       }
       editorType="text"
+      enableImageUpload={true}
       height="100%"
       id={null}
       images={{}}
@@ -224,6 +225,7 @@ exports[`TextEditor snapshots renders as expected with default behavior 1`] = `
         }
       }
       editorType="text"
+      enableImageUpload={true}
       height="100%"
       id={null}
       images={{}}
@@ -289,6 +291,7 @@ exports[`TextEditor snapshots renders static images with relative paths 1`] = `
         }
       }
       editorType="text"
+      enableImageUpload={true}
       height="100%"
       id={null}
       images={{}}

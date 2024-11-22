@@ -74,7 +74,7 @@ describe('TinyMceWidget', () => {
       expect(wrapper.instance.findByType(SourceCodeModal).length).toBe(0);
     });
     test('ImageUploadModal is not rendered', () => {
-      const wrapper = shallow(<TinyMceWidget {...props} learningContextId="library-v1:org+t01" />);
+      const wrapper = shallow(<TinyMceWidget {...props} enableImageUpload={false} />);
       expect(wrapper.snapshot).toMatchSnapshot();
       expect(wrapper.instance.findByType(ImageUploadModal).length).toBe(0);
     });

@@ -13,6 +13,7 @@ export const getCourseSectionVerticalApiUrl = (itemId) => `${getStudioBaseUrl()}
 export const getCourseVerticalChildrenApiUrl = (itemId) => `${getStudioBaseUrl()}/api/contentstore/v1/container/vertical/${itemId}/children`;
 export const getCourseOutlineInfoUrl = (courseId) => `${getStudioBaseUrl()}/course/${courseId}?format=concise`;
 export const postXBlockBaseApiUrl = () => `${getStudioBaseUrl()}/xblock/`;
+export const libraryBlockChangesUrl = (blockId) => `${getStudioBaseUrl()}/api/contentstore/v2/downstreams/${blockId}/sync`;
 
 /**
  * Get course unit.
@@ -205,4 +206,22 @@ export async function patchUnitItem(sourceLocator, targetParentLocator) {
     });
 
   return camelCaseObject(data);
+}
+
+/**
+ * Accept the changes from upstream library block in course
+ * @param {string} blockId - The ID of the item to be updated from library.
+ */
+export async function acceptLibraryBlockChanges(blockId) {
+  await getAuthenticatedHttpClient()
+    .post(libraryBlockChangesUrl(blockId));
+}
+
+/**
+ * Ignore the changes from upstream library block in course
+ * @param {string} blockId - The ID of the item to be updated from library.
+ */
+export async function ignoreLibraryBlockChanges(blockId) {
+  await getAuthenticatedHttpClient()
+    .delete(libraryBlockChangesUrl(blockId));
 }

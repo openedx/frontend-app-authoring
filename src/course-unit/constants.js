@@ -54,6 +54,7 @@ export const messageTypes = {
   showMoveXBlockModal: 'showMoveXBlockModal',
   showMultipleComponentPicker: 'showMultipleComponentPicker',
   addSelectedComponentsToBank: 'addSelectedComponentsToBank',
+  showXBlockLibraryChangesPreview: 'showXBlockLibraryChangesPreview',
 };
 
 export const IFRAME_FEATURE_POLICY = (
