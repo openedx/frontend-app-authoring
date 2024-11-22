@@ -1,3 +1,5 @@
+import MockAdapter from 'axios-mock-adapter/types';
+import { snakeCaseObject } from '@edx/frontend-platform';
 import {
   fireEvent,
   render as baseRender,
@@ -6,12 +8,20 @@ import {
   initializeMocks,
 } from '../../testUtils';
 import { mockContentLibrary } from '../data/api.mocks';
-import { getCreateLibraryBlockUrl, getLibraryCollectionComponentApiUrl, getLibraryPasteClipboardUrl } from '../data/api';
+import {
+  getContentLibraryApiUrl, getCreateLibraryBlockUrl, getLibraryCollectionComponentApiUrl, getLibraryPasteClipboardUrl,
+} from '../data/api';
 import { mockBroadcastChannel, mockClipboardEmpty, mockClipboardHtml } from '../../generic/data/api.mock';
 import { LibraryProvider } from '../common/context';
 import AddContentContainer from './AddContentContainer';
+import { ComponentEditorModal } from '../components/ComponentEditorModal';
+import editorCmsApi from '../../editors/data/services/cms/api';
+import { ToastActionData } from '../../generic/toast-context';
 
 mockBroadcastChannel();
+
+// Mocks for ComponentEditorModal to work in tests.
+jest.mock('frontend-components-tinymce-advanced-plugins', () => ({ a11ycheckerCss: '' }));
 
 const { libraryId } = mockContentLibrary;
 const render = (collectionId?: string) => {
@@ -26,15 +36,27 @@ const render = (collectionId?: string) => {
       <LibraryProvider
         libraryId={libraryId}
         collectionId={collectionId}
-      >{ children }
+      >
+        { children }
+        <ComponentEditorModal />
       </LibraryProvider>
     ),
   });
 };
+let axiosMock: MockAdapter;
+let mockShowToast: (message: string, action?: ToastActionData | undefined) => void;
 
 describe('<AddContentContainer />', () => {
+  beforeEach(() => {
+    const mocks = initializeMocks();
+    axiosMock = mocks.axiosMock;
+    mockShowToast = mocks.mockShowToast;
+    axiosMock.onGet(getContentLibraryApiUrl(libraryId)).reply(200, {});
+  });
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
   it('should render content buttons', () => {
-    initializeMocks();
     mockClipboardEmpty.applyMock();
     render();
     expect(screen.queryByRole('button', { name: /collection/i })).toBeInTheDocument();
@@ -48,7 +70,6 @@ describe('<AddContentContainer />', () => {
   });
 
   it('should create a content', async () => {
-    const { axiosMock } = initializeMocks();
     mockClipboardEmpty.applyMock();
     const url = getCreateLibraryBlockUrl(libraryId);
     axiosMock.onPost(url).reply(200);
@@ -62,8 +83,7 @@ describe('<AddContentContainer />', () => {
     await waitFor(() => expect(axiosMock.history.patch.length).toEqual(0));
   });
 
-  it('should create a content in a collection', async () => {
-    const { axiosMock } = initializeMocks();
+  it('should create a content in a collection for non-editable blocks', async () => {
     mockClipboardEmpty.applyMock();
     const collectionId = 'some-collection-id';
     const url = getCreateLibraryBlockUrl(libraryId);
@@ -71,6 +91,7 @@ describe('<AddContentContainer />', () => {
       libraryId,
       collectionId,
     );
+    // having id of block which is not video, html or problem will not trigger editor.
     axiosMock.onPost(url).reply(200, { id: 'some-component-id' });
     axiosMock.onPatch(collectionComponentUrl).reply(200);
 
@@ -84,8 +105,57 @@ describe('<AddContentContainer />', () => {
     await waitFor(() => expect(axiosMock.history.patch[0].url).toEqual(collectionComponentUrl));
   });
 
+  it('should create a content in a collection for editable blocks', async () => {
+    mockClipboardEmpty.applyMock();
+    const collectionId = 'some-collection-id';
+    const url = getCreateLibraryBlockUrl(libraryId);
+    const collectionComponentUrl = getLibraryCollectionComponentApiUrl(
+      libraryId,
+      collectionId,
+    );
+    // Mocks for ComponentEditorModal to work in tests.
+    jest.spyOn(editorCmsApi, 'fetchImages').mockImplementation(async () => ( // eslint-disable-next-line
+      { data: { assets: [], start: 0, end: 0, page: 0, pageSize: 50, totalCount: 0 } }
+    ));
+    jest.spyOn(editorCmsApi, 'fetchByUnitId').mockImplementation(async () => ({
+      status: 200,
+      data: {
+        ancestors: [{
+          id: 'block-v1:Org+TS100+24+type@vertical+block@parent',
+          display_name: 'You-Knit? The Test Unit',
+          category: 'vertical',
+          has_children: true,
+        }],
+      },
+    }));
+
+    axiosMock.onPost(url).reply(200, {
+      id: 'lb:OpenedX:CSPROB2:html:1a5efd56-4ee5-4df0-b466-44f08fbbf567',
+    });
+    const fieldsHtml = {
+      displayName: 'Introduction to Testing',
+      data: '<p>This is a text component which uses <strong>HTML</strong>.</p>',
+      metadata: { displayName: 'Introduction to Testing' },
+    };
+    jest.spyOn(editorCmsApi, 'fetchBlockById').mockImplementationOnce(async () => (
+      { status: 200, data: snakeCaseObject(fieldsHtml) }
+    ));
+    axiosMock.onPatch(collectionComponentUrl).reply(200);
+
+    render(collectionId);
+
+    const textButton = screen.getByRole('button', { name: /text/i });
+    fireEvent.click(textButton);
+
+    // Component should be linked to Collection on closing editor.
+    const closeButton = await screen.findByRole('button', { name: 'Exit the editor' });
+    fireEvent.click(closeButton);
+    await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(url));
+    await waitFor(() => expect(axiosMock.history.patch.length).toEqual(1));
+    await waitFor(() => expect(axiosMock.history.patch[0].url).toEqual(collectionComponentUrl));
+  });
+
   it('should render paste button if clipboard contains pastable xblock', async () => {
-    initializeMocks();
     // Simulate having an HTML block in the clipboard:
     const getClipboardSpy = mockClipboardHtml.applyMock();
     render();
@@ -94,7 +164,6 @@ describe('<AddContentContainer />', () => {
   });
 
   it('should paste content', async () => {
-    const { axiosMock } = initializeMocks();
     // Simulate having an HTML block in the clipboard:
     const getClipboardSpy = mockClipboardHtml.applyMock();
 
@@ -112,7 +181,6 @@ describe('<AddContentContainer />', () => {
   });
 
   it('should paste content inside a collection', async () => {
-    const { axiosMock } = initializeMocks();
     // Simulate having an HTML block in the clipboard:
     const getClipboardSpy = mockClipboardHtml.applyMock();
 
@@ -138,7 +206,6 @@ describe('<AddContentContainer />', () => {
   });
 
   it('should show error toast on linking failure', async () => {
-    const { axiosMock, mockShowToast } = initializeMocks();
     // Simulate having an HTML block in the clipboard:
     const getClipboardSpy = mockClipboardHtml.applyMock();
 
@@ -165,7 +232,6 @@ describe('<AddContentContainer />', () => {
   });
 
   it('should stop user from pasting unsupported blocks and show toast', async () => {
-    const { axiosMock, mockShowToast } = initializeMocks();
     // Simulate having an HTML block in the clipboard:
     mockClipboardHtml.applyMock('openassessment');
 
@@ -214,7 +280,6 @@ describe('<AddContentContainer />', () => {
   ])('$label', async ({
     mockUrl, mockResponse, buttonName, expectedError,
   }) => {
-    const { axiosMock, mockShowToast } = initializeMocks();
     axiosMock.onPost(mockUrl).reply(400, mockResponse);
 
     // Simulate having an HTML block in the clipboard:

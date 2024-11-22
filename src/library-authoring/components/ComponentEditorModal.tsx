@@ -28,18 +28,18 @@ export const ComponentEditorModal: React.FC<Record<never, never>> = () => {
   if (componentBeingEdited === undefined) {
     return null;
   }
-  const blockType = getBlockType(componentBeingEdited);
+  const blockType = getBlockType(componentBeingEdited.usageKey);
 
   const onClose = () => {
     closeComponentEditor();
-    invalidateComponentData(queryClient, libraryId, componentBeingEdited);
+    invalidateComponentData(queryClient, libraryId, componentBeingEdited.usageKey);
   };
 
   return (
     <EditorPage
       courseId={libraryId}
       blockType={blockType}
-      blockId={componentBeingEdited}
+      blockId={componentBeingEdited.usageKey}
       studioEndpointUrl={getConfig().STUDIO_BASE_URL}
       lmsEndpointUrl={getConfig().LMS_BASE_URL}
       onClose={onClose}
