@@ -102,6 +102,9 @@ jest.mock('@tanstack/react-query', () => ({
   useQueryClient: jest.fn(() => ({
     setQueryData: jest.fn(),
   })),
+  useMutation: jest.fn(() => ({
+    mutateAsync: jest.fn(),
+  })),
 }));
 
 const clipboardBroadcastChannelMock = {

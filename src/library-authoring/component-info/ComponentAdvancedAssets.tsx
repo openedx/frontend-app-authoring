@@ -92,7 +92,6 @@ export const ComponentAdvancedAssets: React.FC<Record<never, never>> = () => {
         title={intl.formatMessage(messages.advancedDetailsAssetsDeleteFileTitle)}
         description={`Are you sure you want to delete ${filePathToDelete}?`}
         onDeleteSubmit={deleteFile}
-        btnState="default"
       />
     </>
   );
