@@ -34,8 +34,6 @@ import {
   updateCourseVerticalChildren,
   updateCourseVerticalChildrenLoadingStatus,
   updateQueryPendingStatus,
-  deleteXBlock,
-  duplicateXBlock,
   fetchStaticFileNoticesSuccess,
   updateCourseOutlineInfo,
   updateCourseOutlineInfoLoadingStatus,
@@ -229,7 +227,6 @@ export function deleteUnitItemQuery(itemId, xblockId) {
 
     try {
       await deleteUnitItem(xblockId);
-      dispatch(deleteXBlock(xblockId));
       const { userClipboard } = await getCourseSectionVerticalData(itemId);
       dispatch(updateClipboardData(userClipboard));
       const courseUnit = await getCourseUnitData(itemId);
@@ -249,12 +246,7 @@ export function duplicateUnitItemQuery(itemId, xblockId) {
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.duplicating));
 
     try {
-      const { locator } = await duplicateUnitItem(itemId, xblockId);
-      const newCourseVerticalChildren = await getCourseVerticalChildren(itemId);
-      dispatch(duplicateXBlock({
-        newId: locator,
-        newCourseVerticalChildren,
-      }));
+      await duplicateUnitItem(itemId, xblockId);
       const courseUnit = await getCourseUnitData(itemId);
       dispatch(fetchCourseItemSuccess(courseUnit));
       dispatch(hideProcessingNotification());

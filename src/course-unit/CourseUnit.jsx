@@ -180,9 +180,11 @@ const CourseUnit = ({ courseId }) => {
                 />
               )}
               <XBlockContainerIframe
+                courseId={courseId}
                 blockId={blockId}
                 unitXBlockActions={unitXBlockActions}
                 courseVerticalChildren={courseVerticalChildren.children}
+                handleConfigureSubmit={handleConfigureSubmit}
               />
               <AddComponent
                 blockId={blockId}

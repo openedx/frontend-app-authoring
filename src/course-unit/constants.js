@@ -55,8 +55,23 @@ export const messageTypes = {
   showMultipleComponentPicker: 'showMultipleComponentPicker',
   addSelectedComponentsToBank: 'addSelectedComponentsToBank',
   showXBlockLibraryChangesPreview: 'showXBlockLibraryChangesPreview',
+  copyXBlock: 'copyXBlock',
+  manageXBlockAccess: 'manageXBlockAccess',
+  deleteXBlock: 'deleteXBlock',
+  duplicateXBlock: 'duplicateXBlock',
+  refreshPositions: 'refreshPositions',
+  newXBlockEditor: 'newXBlockEditor',
+  currentXBlockId: 'currentXBlockId',
+  toggleCourseXBlockDropdown: 'toggleCourseXBlockDropdown',
 };
 
-export const IFRAME_FEATURE_POLICY = (
-  'microphone *; camera *; midi *; geolocation *; encrypted-media *, clipboard-write *'
-);
+export const COMPONENT_TYPES = {
+  advanced: 'advanced',
+  discussion: 'discussion',
+  library: 'library',
+  html: 'html',
+  openassessment: 'openassessment',
+  problem: 'problem',
+  video: 'video',
+  dragAndDrop: 'drag-and-drop-v2',
+};
