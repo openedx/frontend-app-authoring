@@ -50,11 +50,19 @@ describe('hooks', () => {
   describe('initializeApp', () => {
     test('calls provided function with provided data as args when useEffect is called', () => {
       const dispatch = jest.fn();
-      const fakeData = { some: 'data' };
+      const fakeData = {
+        blockId: 'blockId',
+        studioEndpointUrl: 'studioEndpointUrl',
+        learningContextId: 'learningContextId',
+      };
       hooks.initializeApp({ dispatch, data: fakeData });
       expect(dispatch).not.toHaveBeenCalledWith(fakeData);
       const [cb, prereqs] = useEffect.mock.calls[0];
-      expect(prereqs).toStrictEqual([fakeData]);
+      expect(prereqs).toStrictEqual([
+        fakeData.blockId,
+        fakeData.studioEndpointUrl,
+        fakeData.learningContextId,
+      ]);
       cb();
       expect(dispatch).toHaveBeenCalledWith(thunkActions.app.initialize(fakeData));
     });
