@@ -1789,4 +1789,35 @@ describe('<CourseUnit />', () => {
       });
     });
   });
+
+  it('renders and navigates to the new HTML XBlock editor after xblock duplicating', async () => {
+    const { getByTitle } = render(<RootWrapper />);
+    const updatedCourseVerticalChildrenMock = JSON.parse(JSON.stringify(courseVerticalChildrenMock));
+    const targetBlockId = updatedCourseVerticalChildrenMock.children[1].block_id;
+
+    updatedCourseVerticalChildrenMock.children = updatedCourseVerticalChildrenMock.children
+      .map((child) => (child.block_id === targetBlockId
+        ? { ...child, block_type: 'html' }
+        : child));
+
+    axiosMock
+      .onGet(getCourseVerticalChildrenApiUrl(blockId))
+      .reply(200, updatedCourseVerticalChildrenMock);
+
+    await executeThunk(fetchCourseVerticalChildrenData(blockId), store.dispatch);
+
+    await waitFor(() => {
+      const iframe = getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+      expect(iframe).toBeInTheDocument();
+      simulatePostMessageEvent(messageTypes.currentXBlockId, {
+        id: targetBlockId,
+      });
+    });
+
+    waitFor(() => {
+      simulatePostMessageEvent(messageTypes.duplicateXBlock, {});
+      expect(mockedUsedNavigate)
+        .toHaveBeenCalledWith(`/course/${courseId}/editor/html/${targetBlockId}`, { replace: true });
+    });
+  });
 });
