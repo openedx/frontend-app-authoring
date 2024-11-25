@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   linkCheckTriggered: false,
+  linkCheckResult: {},
   currentStage: 0,
   error: { msg: null, unitUrl: null },
   downloadPath: null,
@@ -19,10 +20,11 @@ const slice = createSlice({
     updateLinkCheckTriggered: (state, { payload }) => {
       state.linkCheckTriggered = payload;
     },
+    updateLinkCheckResult: (state, { payload }) => {
+      state.linkCheckResult = payload;
+    },
     updateCurrentStage: (state, { payload }) => {
-      if (payload >= state.currentStage) {
-        state.currentStage = payload;
-      }
+      state.currentStage = payload;
     },
     updateDownloadPath: (state, { payload }) => {
       state.downloadPath = payload;
@@ -48,6 +50,7 @@ const slice = createSlice({
 
 export const {
   updateLinkCheckTriggered,
+  updateLinkCheckResult,
   updateCurrentStage,
   updateDownloadPath,
   updateSuccessDate,

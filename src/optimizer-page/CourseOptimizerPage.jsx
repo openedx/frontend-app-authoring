@@ -20,43 +20,52 @@ import { useModel } from '../generic/model-store';
 import {
   getCurrentStage, getError, getLinkCheckTriggered, getLoadingStatus, getSavingStatus,
 } from './data/selectors';
-import { startLinkCheck } from './data/thunks';
-import { EXPORT_STAGES, LAST_EXPORT_COOKIE_NAME } from './data/constants';
+import { startLinkCheck, fetchLinkCheckStatus } from './data/thunks';
+import { LINK_CHECK_STATUSES, LAST_EXPORT_COOKIE_NAME } from './data/constants';
 import { updateLinkCheckTriggered, updateSavingStatus, updateSuccessDate } from './data/slice';
 // import ExportModalError from './export-modal-error/ExportModalError';
 // import ExportFooter from './export-footer/ExportFooter';
 // import ExportStepper from './export-stepper/ExportStepper';
 
+const pollLinkCheckStatus = (dispatch, courseId, delay) => {
+  const interval = setInterval(() => {
+    dispatch(fetchLinkCheckStatus(courseId));
+  }, delay);
+  return interval;
+};
+
 const CourseOptimizerPage = ({ intl, courseId }) => {
   const dispatch = useDispatch();
-  const exportTriggered = useSelector(getLinkCheckTriggered);
+  const linkCheckTriggered = useSelector(getLinkCheckTriggered);
   const courseDetails = useModel('courseDetails', courseId);
   const currentStage = useSelector(getCurrentStage);
   const { msg: errorMessage } = useSelector(getError);
-  // const loadingStatus = useSelector(getLoadingStatus);
-  // const savingStatus = useSelector(getSavingStatus);
-  // const cookies = new Cookies();
-  const isShowExportButton = !exportTriggered || errorMessage || currentStage === EXPORT_STAGES.SUCCESS;
-  // const anyRequestFailed = savingStatus === RequestStatus.FAILED || loadingStatus === RequestStatus.FAILED;
-  // const isLoadingDenied = loadingStatus === RequestStatus.DENIED;
-  // const anyRequestInProgress = savingStatus === RequestStatus.PENDING || loadingStatus === RequestStatus.IN_PROGRESS;
+  const loadingStatus = useSelector(getLoadingStatus);
+  const savingStatus = useSelector(getSavingStatus);
+  const isShowExportButton = !linkCheckTriggered || errorMessage || currentStage === LINK_CHECK_STATUSES.SUCCESS;
+  const anyRequestFailed = savingStatus === RequestStatus.FAILED || loadingStatus === RequestStatus.FAILED;
+  const isLoadingDenied = loadingStatus === RequestStatus.DENIED;
+  const anyRequestInProgress = savingStatus === RequestStatus.PENDING || loadingStatus === RequestStatus.IN_PROGRESS;
 
-  // useEffect(() => {
-  //   const cookieData = cookies.get(LAST_EXPORT_COOKIE_NAME);
-  //   if (cookieData) {
-  //     dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
-  //     dispatch(updateExportTriggered(true));
-  //     dispatch(updateSuccessDate(cookieData.date));
-  //   }
-  // }, []);
+  useEffect(() => {
+    // load link check status immediately after the page is loaded
+    dispatch(fetchLinkCheckStatus(courseId));
 
-  // if (isLoadingDenied) {
-  //   return (
-  //     <Container size="xl" className="course-unit px-4 mt-4">
-  //       <ConnectionErrorAlert />
-  //     </Container>
-  //   );
-  // }
+    // start polling link check status every two seconds
+    const intervalId = pollLinkCheckStatus(dispatch, courseId, 2000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
+
+  if (isLoadingDenied) {
+    return (
+      <Container size="xl" className="course-unit px-4 mt-4">
+        <ConnectionErrorAlert />
+      </Container>
+    );
+  }
 
   return (
     <>

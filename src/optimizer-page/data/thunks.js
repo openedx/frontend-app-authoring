@@ -12,9 +12,8 @@ import {
 } from './api';
 import {
   updateLinkCheckTriggered,
+  updateLinkCheckResult,
   updateCurrentStage,
-  updateDownloadPath,
-  updateSuccessDate,
   updateError,
   updateIsErrorModalOpen,
   reset,
@@ -56,34 +55,26 @@ export function startLinkCheck(courseId) {
   };
 }
 
-export function fetchExportStatus(courseId) {
+export function fetchLinkCheckStatus(courseId) {
   return async (dispatch) => {
     dispatch(updateLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
+    console.log('fetchLinkCheckStatus');
+
     try {
       const {
-        exportStatus, exportOutput, exportError,
+        linkCheckStatus,
+        linkCheckOutput,
       } = await getLinkCheckStatus(courseId);
-      dispatch(updateCurrentStage(Math.abs(exportStatus)));
+      console.log('linkCheckStatus', linkCheckStatus);
+      dispatch(updateCurrentStage(linkCheckStatus));
 
-      // const date = moment().valueOf();
-
-      // setExportDate({
-      //   date, exportStatus, exportOutput, dispatch,
-      // });
-
-      if (exportError) {
-        const errorMessage = exportError.rawErrorMsg || exportError;
-        const errorUnitUrl = exportError.editUnitUrl || null;
-        dispatch(updateError({ msg: errorMessage, unitUrl: errorUnitUrl }));
+      if (!linkCheckStatus || linkCheckStatus < 0) {
+        dispatch(updateError({ msg: 'Link Check Failed' }));
         dispatch(updateIsErrorModalOpen(true));
       }
 
-      if (exportOutput) {
-        if (exportOutput.startsWith('/')) {
-          dispatch(updateDownloadPath(`${getConfig().STUDIO_BASE_URL}${exportOutput}`));
-        } else {
-          dispatch(updateDownloadPath(exportOutput));
-        }
+      if (linkCheckOutput) {
+        dispatch(updateLinkCheckResult(linkCheckOutput));
       }
 
       dispatch(updateLoadingStatus({ status: RequestStatus.SUCCESSFUL }));

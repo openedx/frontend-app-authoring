@@ -1,5 +1,5 @@
 export const LAST_EXPORT_COOKIE_NAME = 'lastexport';
-export const EXPORT_STAGES = {
+export const LINK_CHECK_STATUSES = {
   PREPARING: 0,
   EXPORTING: 1,
   COMPRESSING: 2,
