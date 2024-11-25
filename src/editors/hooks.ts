@@ -13,9 +13,6 @@ export const initializeApp = ({ dispatch, data }) => useEffect(
 );
 
 export const navigateTo = (destination: string | URL) => {
-  // TODO: once the "Remove backend redirects (use SPA functionality)" PR (#1372) is merged,
-  // the editor will utilize SPA functionality, allowing navigation back
-  // to the course unit page without a full page reload.
   window.location.assign(destination);
 };
 

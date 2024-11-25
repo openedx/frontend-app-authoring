@@ -1,9 +1,10 @@
+import React from 'react';
 import { renderHook, act } from '@testing-library/react-hooks';
 import { useKeyedState } from '@edx/react-unit-test-utils';
 import { logError } from '@edx/frontend-platform/logging';
 
 import { stateKeys, messageTypes } from '../../constants';
-import { useIFrameBehavior } from '../hooks';
+import { useIFrameBehavior, useLoadBearingHook } from '../hooks';
 
 jest.mock('@edx/react-unit-test-utils', () => ({
   useKeyedState: jest.fn(),
@@ -49,6 +50,32 @@ describe('useIFrameBehavior', () => {
     expect(result.current.iframeHeight).toBe(0);
     expect(result.current.showError).toBe(false);
     expect(result.current.hasLoaded).toBe(false);
+  });
+
+  it('scrolls to previous position on video fullscreen exit', () => {
+    const mockWindowTopOffset = 100;
+
+    (useKeyedState as jest.Mock).mockImplementation((key) => {
+      if (key === stateKeys.windowTopOffset) {
+        return [mockWindowTopOffset, setWindowTopOffset];
+      }
+      return [null, jest.fn()];
+    });
+
+    renderHook(() => useIFrameBehavior({ id, iframeUrl }));
+
+    const message = {
+      data: {
+        type: messageTypes.videoFullScreen,
+        payload: { open: false },
+      },
+    };
+
+    act(() => {
+      window.dispatchEvent(new MessageEvent('message', message));
+    });
+
+    expect(window.scrollTo).toHaveBeenCalledWith(0, mockWindowTopOffset);
   });
 
   it('handles resize message correctly', () => {
@@ -124,5 +151,23 @@ describe('useIFrameBehavior', () => {
 
     expect(setIframeHeight).toHaveBeenCalledWith(0);
     expect(setHasLoaded).toHaveBeenCalledWith(false);
+  });
+});
+
+describe('useLoadBearingHook', () => {
+  it('updates state when id changes', () => {
+    const setValue = jest.fn();
+    jest.spyOn(React, 'useState').mockReturnValue([0, setValue]);
+
+    const { rerender } = renderHook(({ id }) => useLoadBearingHook(id), {
+      initialProps: { id: 'initial-id' },
+    });
+
+    setValue.mockClear();
+
+    rerender({ id: 'new-id' });
+
+    expect(setValue).toHaveBeenCalledWith(expect.any(Function));
+    expect(setValue.mock.calls);
   });
 });
