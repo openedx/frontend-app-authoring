@@ -14,12 +14,15 @@ import { ContentTagsDrawerSheetContext } from './common/context';
 /** @typedef {import("./common/context").ContentTagsDrawerContextData} ContentTagsDrawerContextData */
 
 /**
- * Handles the context and all the underlying logic for the ContentTagsDrawer component
+ * Helper hook for *creating* a `ContentTagsDrawerContext`.
+ * Handles the context and all the underlying logic for the ContentTagsDrawer component.
+ *
+ * To *use* the context, just use `useContext(ContentTagsDrawerContext)`
  * @param {string} contentId
  * @param {boolean} canTagObject
  * @returns {ContentTagsDrawerContextData}
  */
-const createContentTagsDrawerContext = (contentId, canTagObject) => {
+export const useCreateContentTagsDrawerContext = (contentId, canTagObject) => {
   const intl = useIntl();
   const org = extractOrgFromContentId(contentId);
 
@@ -437,5 +440,3 @@ const createContentTagsDrawerContext = (contentId, canTagObject) => {
     otherTaxonomies,
   };
 };
-
-export default createContentTagsDrawerContext;

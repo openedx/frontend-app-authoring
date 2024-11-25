@@ -12,7 +12,7 @@ import classNames from 'classnames';
 import messages from './messages';
 import ContentTagsCollapsible from './ContentTagsCollapsible';
 import Loading from '../generic/Loading';
-import createContentTagsDrawerContext from './ContentTagsDrawerHelper';
+import { useCreateContentTagsDrawerContext } from './ContentTagsDrawerHelper';
 import { ContentTagsDrawerContext, ContentTagsDrawerSheetContext } from './common/context';
 
 interface TaxonomyListProps {
@@ -246,7 +246,7 @@ const ContentTagsDrawer = ({
     throw new Error('Error: contentId cannot be null.');
   }
 
-  const context = createContentTagsDrawerContext(contentId, !readOnly);
+  const context = useCreateContentTagsDrawerContext(contentId, !readOnly);
   const { blockingSheet } = useContext(ContentTagsDrawerSheetContext);
 
   const {
