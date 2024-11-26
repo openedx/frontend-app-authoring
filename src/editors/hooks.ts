@@ -9,7 +9,7 @@ import { RequestKeys } from './data/constants/requests';
 // eslint-disable-next-line react-hooks/rules-of-hooks
 export const initializeApp = ({ dispatch, data }) => useEffect(
   () => dispatch(thunkActions.app.initialize(data)),
-  [data],
+  [data?.blockId, data?.studioEndpointUrl, data?.learningContextId],
 );
 
 export const navigateTo = (destination: string | URL) => {
