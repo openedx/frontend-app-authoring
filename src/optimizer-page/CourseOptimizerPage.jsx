@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -18,11 +18,11 @@ import { useModel } from '../generic/model-store';
 // import messages from './messages';
 // import ExportSidebar from './export-sidebar/ExportSidebar';
 import {
-  getCurrentStage, getError, getLinkCheckTriggered, getLoadingStatus, getSavingStatus,
+  getCurrentStage, getError, getLinkCheckInProgress, getLoadingStatus, getSavingStatus,
 } from './data/selectors';
 import { startLinkCheck, fetchLinkCheckStatus } from './data/thunks';
-import { LINK_CHECK_STATUSES, LAST_EXPORT_COOKIE_NAME } from './data/constants';
-import { updateLinkCheckTriggered, updateSavingStatus, updateSuccessDate } from './data/slice';
+import { LINK_CHECK_STATUSES, LINK_CHECK_IN_PROGRESS_STATUSES } from './data/constants';
+import { updateSavingStatus, updateSuccessDate } from './data/slice';
 // import ExportModalError from './export-modal-error/ExportModalError';
 // import ExportFooter from './export-footer/ExportFooter';
 // import ExportStepper from './export-stepper/ExportStepper';
@@ -36,28 +36,37 @@ const pollLinkCheckStatus = (dispatch, courseId, delay) => {
 
 const CourseOptimizerPage = ({ intl, courseId }) => {
   const dispatch = useDispatch();
-  const linkCheckTriggered = useSelector(getLinkCheckTriggered);
+  const linkCheckInProgress = useSelector(getLinkCheckInProgress);
+  const savingStatus = useSelector(getSavingStatus);
+  const loadingStatus = useSelector(getLoadingStatus);
   const courseDetails = useModel('courseDetails', courseId);
   const currentStage = useSelector(getCurrentStage);
   const { msg: errorMessage } = useSelector(getError);
-  const loadingStatus = useSelector(getLoadingStatus);
-  const savingStatus = useSelector(getSavingStatus);
-  const isShowExportButton = !linkCheckTriggered || errorMessage || currentStage === LINK_CHECK_STATUSES.SUCCESS;
+  const isShowExportButton = !linkCheckInProgress || errorMessage;
   const anyRequestFailed = savingStatus === RequestStatus.FAILED || loadingStatus === RequestStatus.FAILED;
   const isLoadingDenied = loadingStatus === RequestStatus.DENIED;
   const anyRequestInProgress = savingStatus === RequestStatus.PENDING || loadingStatus === RequestStatus.IN_PROGRESS;
+  const interval = useRef(null);
+
+  console.log('linkCheckInProgress', linkCheckInProgress);
 
   useEffect(() => {
-    // load link check status immediately after the page is loaded
     dispatch(fetchLinkCheckStatus(courseId));
+  }, []);
 
-    // start polling link check status every two seconds
-    const intervalId = pollLinkCheckStatus(dispatch, courseId, 2000);
+  useEffect(() => {
+    if (linkCheckInProgress === null || linkCheckInProgress) {
+      clearInterval(interval.current);
+      interval.current = pollLinkCheckStatus(dispatch, courseId, 2000);
+    } else if (interval.current) {
+      clearInterval(interval.current);
+      interval.current = null;
+    }
 
     return () => {
-      clearInterval(intervalId);
+      if (interval.current) { clearInterval(interval.current); }
     };
-  }, []);
+  }, [linkCheckInProgress]);
 
   if (isLoadingDenied) {
     return (

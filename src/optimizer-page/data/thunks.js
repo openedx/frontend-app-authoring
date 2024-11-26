@@ -11,7 +11,7 @@ import {
   getLinkCheckStatus,
 } from './api';
 import {
-  updateLinkCheckTriggered,
+  updateLinkCheckInProgress,
   updateLinkCheckResult,
   updateCurrentStage,
   updateError,
@@ -39,9 +39,10 @@ import {
 export function startLinkCheck(courseId) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(updateLinkCheckInProgress(true));
+    dispatch(updateCurrentStage(1));
     try {
-      dispatch(reset());
-      dispatch(updateLinkCheckTriggered(true));
+      // dispatch(reset());
       const data = await postLinkCheck(courseId);
       dispatch(updateCurrentStage(data.linkCheckStatus));
       // setExportCookie(moment().valueOf(), exportData.exportStatus === EXPORT_STAGES.SUCCESS);
@@ -50,11 +51,13 @@ export function startLinkCheck(courseId) {
       return true;
     } catch (error) {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+      dispatch(updateLinkCheckInProgress(false));
       return false;
     }
   };
 }
 
+// TODO: use new statuses
 export function fetchLinkCheckStatus(courseId) {
   return async (dispatch) => {
     dispatch(updateLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
@@ -65,7 +68,12 @@ export function fetchLinkCheckStatus(courseId) {
         linkCheckStatus,
         linkCheckOutput,
       } = await getLinkCheckStatus(courseId);
-      console.log('linkCheckStatus', linkCheckStatus);
+      if (linkCheckStatus === 1 || linkCheckStatus === 2) {
+        dispatch(updateLinkCheckInProgress(true));
+      } else {
+        dispatch(updateLinkCheckInProgress(false));
+      }
+
       dispatch(updateCurrentStage(linkCheckStatus));
 
       if (!linkCheckStatus || linkCheckStatus < 0) {

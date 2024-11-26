@@ -2,9 +2,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  linkCheckTriggered: false,
+  linkCheckInProgress: null,
   linkCheckResult: {},
-  currentStage: 0,
+  currentStage: null,
   error: { msg: null, unitUrl: null },
   downloadPath: null,
   successDate: null,
@@ -17,8 +17,8 @@ const slice = createSlice({
   name: 'courseOptimizer',
   initialState,
   reducers: {
-    updateLinkCheckTriggered: (state, { payload }) => {
-      state.linkCheckTriggered = payload;
+    updateLinkCheckInProgress: (state, { payload }) => {
+      state.linkCheckInProgress = payload;
     },
     updateLinkCheckResult: (state, { payload }) => {
       state.linkCheckResult = payload;
@@ -49,7 +49,7 @@ const slice = createSlice({
 });
 
 export const {
-  updateLinkCheckTriggered,
+  updateLinkCheckInProgress,
   updateLinkCheckResult,
   updateCurrentStage,
   updateDownloadPath,

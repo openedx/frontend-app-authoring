@@ -1,4 +1,4 @@
-export const getLinkCheckTriggered = (state) => state.courseOptimizer.linkCheckTriggered;
+export const getLinkCheckInProgress = (state) => state.courseOptimizer.linkCheckInProgress;
 export const getCurrentStage = (state) => state.courseOptimizer.currentStage;
 export const getDownloadPath = (state) => state.courseOptimizer.downloadPath;
 export const getSuccessDate = (state) => state.courseOptimizer.successDate;
