@@ -61,7 +61,11 @@ export function startLinkCheck(courseId) {
 export function fetchLinkCheckStatus(courseId) {
   return async (dispatch) => {
     dispatch(updateLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
-    console.log('fetchLinkCheckStatus');
+
+    /* ****** Debugging ******** */
+    // dispatch(updateLinkCheckInProgress(true));
+    // dispatch(updateCurrentStage(3));
+    // return true;
 
     try {
       const {
@@ -76,7 +80,7 @@ export function fetchLinkCheckStatus(courseId) {
 
       dispatch(updateCurrentStage(linkCheckStatus));
 
-      if (!linkCheckStatus || linkCheckStatus < 0) {
+      if (linkCheckStatus === undefined || linkCheckStatus === null || linkCheckStatus < 0) {
         dispatch(updateError({ msg: 'Link Check Failed' }));
         dispatch(updateIsErrorModalOpen(true));
       }
