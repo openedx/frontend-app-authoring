@@ -1,13 +1,15 @@
 import {
-  Container, Layout, Button, Card, Collapsible,
+  Container, Layout, Button, Card, Collapsible, Icon,
 } from '@openedx/paragon';
+import { ArrowRight, ArrowDropDown } from '@openedx/paragon/icons';
 import { useState, useCallback } from 'react';
 
 const SectionCollapsible = ({ title, children, redItalics }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const styling = 'card-lg';
   const collapsibleTitle = (
     <div>
-      <p><strong>{title}</strong><i className="red-italics">{redItalics}</i></p>
+      <Icon src={isOpen ? ArrowDropDown : ArrowRight} className="open-arrow" /><strong>{title}</strong><span className="red-italics">{redItalics}</span>
     </div>
   );
 
@@ -15,8 +17,14 @@ const SectionCollapsible = ({ title, children, redItalics }) => {
     <Collapsible
       styling={styling}
       title={<p><strong>{collapsibleTitle}</strong></p>}
+      iconWhenClosed=""
+      iconWhenOpen=""
+      open={isOpen}
+      onClick={() => setIsOpen(!isOpen)}
     >
-      {children}
+      <Collapsible.Body>
+        {children}
+      </Collapsible.Body>
     </Collapsible>
   );
 };
@@ -61,7 +69,12 @@ const ScanResults = ({ data }) => {
       </div>
 
       {sections?.map((section, index) => (
-        <SectionCollapsible className="mt-4" key={section.id} title={section.displayName} redItalics={`${brokenLinkCounts[index]} broken links`}>
+        <SectionCollapsible
+          className="mt-4"
+          key={section.id}
+          title={section.displayName}
+          redItalics={`${brokenLinkCounts[index]} broken links`}
+        >
           {section.subsections.map((subsection) => (
             <p key={subsection.id}>
               <h3>{subsection.displayName}</h3>

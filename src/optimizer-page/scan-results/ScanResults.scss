@@ -1,5 +1,12 @@
 .red-italics {
-  color: $brand-400;
-  margin-left: 3rem;
+  color: $brand-500;
+  margin-left: 2rem;
   font-weight: 400;
+  font-size: 80%;
+  font-style: italic;
+}
+
+.open-arrow {
+  transform: translate(-10px, 5px);
+  display: inline-block;
 }
