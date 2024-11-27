@@ -72,6 +72,7 @@ export function fetchLinkCheckStatus(courseId) {
         linkCheckStatus,
         linkCheckOutput,
       } = await getLinkCheckStatus(courseId);
+      console.log('linkCheckOutput: ', linkCheckOutput);
       if (linkCheckStatus === 1 || linkCheckStatus === 2) {
         dispatch(updateLinkCheckInProgress(true));
       } else {
@@ -92,7 +93,7 @@ export function fetchLinkCheckStatus(courseId) {
       dispatch(updateLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
     } catch (error) {
-      if (error.response && error.response.status === 403) {
+      if (error?.response && error?.response.status === 403) {
         dispatch(updateLoadingStatus({ status: RequestStatus.DENIED }));
       } else {
         dispatch(updateLoadingStatus({ courseId, status: RequestStatus.FAILED }));

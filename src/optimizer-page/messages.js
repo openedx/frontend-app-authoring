@@ -22,7 +22,11 @@ const messages = defineMessages({
     defaultMessage: 'Broken links are links pointing to external websites, images, or videos that do not exist or are no longer available. These links can cause issues for learners when they try to access the content.',
   },
   card1Title: {
-    id: 'course-authoring.course-optimizer.title-under-button',
+    id: 'course-authoring.course-optimizer.card1.title',
+    defaultMessage: 'Scan my course for broken links',
+  },
+  card2Title: {
+    id: 'course-authoring.course-optimizer.card2.title',
     defaultMessage: 'Scan my course for broken links',
   },
   buttonTitle: {

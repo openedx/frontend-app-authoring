@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   linkCheckInProgress: null,
-  linkCheckResult: {},
+  linkCheckResult: null,
   currentStage: null,
   error: { msg: null, unitUrl: null },
   downloadPath: null,

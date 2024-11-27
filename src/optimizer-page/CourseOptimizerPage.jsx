@@ -14,10 +14,11 @@ import SubHeader from '../generic/sub-header/SubHeader';
 import { RequestStatus } from '../data/constants';
 import messages from './messages';
 import {
-  getCurrentStage, getError, getLinkCheckInProgress, getLoadingStatus,
+  getCurrentStage, getError, getLinkCheckInProgress, getLoadingStatus, getLinkCheckResult,
 } from './data/selectors';
 import { startLinkCheck, fetchLinkCheckStatus } from './data/thunks';
 import { useModel } from '../generic/model-store';
+import { ScanResults } from './scan-results';
 // import ExportModalError from './export-modal-error/ExportModalError';
 // import ExportFooter from './export-footer/ExportFooter';
 
@@ -33,6 +34,7 @@ const CourseOptimizerPage = ({ intl, courseId }) => {
   const linkCheckInProgress = useSelector(getLinkCheckInProgress);
   const loadingStatus = useSelector(getLoadingStatus);
   const currentStage = useSelector(getCurrentStage);
+  const linkCheckResult = useSelector(getLinkCheckResult);
   const { msg: errorMessage } = useSelector(getError);
   const isShowExportButton = !linkCheckInProgress || errorMessage;
   const isLoadingDenied = loadingStatus === RequestStatus.DENIED;
@@ -63,7 +65,7 @@ const CourseOptimizerPage = ({ intl, courseId }) => {
   }, []);
 
   useEffect(() => {
-    if (linkCheckInProgress === null || linkCheckInProgress) {
+    if (linkCheckInProgress === null || linkCheckInProgress || !linkCheckResult) {
       clearInterval(interval.current);
       interval.current = pollLinkCheckStatus(dispatch, courseId, 2000);
     } else if (interval.current) {
@@ -74,7 +76,7 @@ const CourseOptimizerPage = ({ intl, courseId }) => {
     return () => {
       if (interval.current) { clearInterval(interval.current); }
     };
-  }, [linkCheckInProgress]);
+  }, [linkCheckInProgress, linkCheckResult]);
 
   if (isLoadingDenied) {
     if (interval.current) { clearInterval(interval.current); }
@@ -133,14 +135,17 @@ const CourseOptimizerPage = ({ intl, courseId }) => {
                   </Card.Section>
                   )}
                   {linkCheckPresent && (
-                  <CourseStepper
-                    steps={courseStepperSteps}
-                    activeKey={currentStage - 1}
-                    hasError={currentStage < 0 || !!errorMessage}
-                    errorMessage={errorMessage}
-                  />
+                  <Card.Section className="px-3 py-1">
+                    <CourseStepper
+                      steps={courseStepperSteps}
+                      activeKey={currentStage - 1}
+                      hasError={currentStage < 0 || !!errorMessage}
+                      errorMessage={errorMessage}
+                    />
+                  </Card.Section>
                   )}
                 </Card>
+                <ScanResults data={linkCheckResult} />
               </article>
             </Layout.Element>
           </Layout>
