@@ -61,7 +61,6 @@ export const messageTypes = {
   duplicateXBlock: 'duplicateXBlock',
   refreshXBlockPositions: 'refreshPositions',
   newXBlockEditor: 'newXBlockEditor',
-  currentXBlockId: 'currentXBlockId',
   toggleCourseXBlockDropdown: 'toggleCourseXBlockDropdown',
 };
 
@@ -74,4 +73,10 @@ export const COMPONENT_TYPES = {
   problem: 'problem',
   video: 'video',
   dragAndDrop: 'drag-and-drop-v2',
+};
+
+export const COMPONENT_TYPES_WITH_NEW_EDITOR = {
+  html: 'html',
+  problem: 'problem',
+  video: 'video',
 };

@@ -1687,15 +1687,11 @@ describe('<CourseUnit />', () => {
 
       waitFor(() => {
         const iframe = getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
-        const currentXBlockId = courseVerticalChildrenMock.children[0].block_id;
+        const usageId = courseVerticalChildrenMock.children[0].block_id;
         expect(iframe).toBeInTheDocument();
 
-        simulatePostMessageEvent(messageTypes.currentXBlockId, {
-          id: currentXBlockId,
-        });
-
         simulatePostMessageEvent(messageTypes.manageXBlockAccess, {
-          id: currentXBlockId,
+          usageId,
         });
       });
 
@@ -1717,7 +1713,7 @@ describe('<CourseUnit />', () => {
         const iframe = getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
         expect(iframe).toBeInTheDocument();
         simulatePostMessageEvent(messageTypes.manageXBlockAccess, {
-          id: courseVerticalChildrenMock.children[0].block_id,
+          usageId: courseVerticalChildrenMock.children[0].block_id,
         });
       });
 
@@ -1752,7 +1748,7 @@ describe('<CourseUnit />', () => {
         const iframe = getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
         expect(iframe).toBeInTheDocument();
         simulatePostMessageEvent(messageTypes.manageXBlockAccess, {
-          id: courseVerticalChildrenMock.children[0].block_id,
+          usageId: courseVerticalChildrenMock.children[0].block_id,
         });
       });
 
@@ -1816,6 +1812,7 @@ describe('<CourseUnit />', () => {
 
     waitFor(() => {
       simulatePostMessageEvent(messageTypes.duplicateXBlock, {});
+      simulatePostMessageEvent(messageTypes.newXBlockEditor, {});
       expect(mockedUsedNavigate)
         .toHaveBeenCalledWith(`/course/${courseId}/editor/html/${targetBlockId}`, { replace: true });
     });
