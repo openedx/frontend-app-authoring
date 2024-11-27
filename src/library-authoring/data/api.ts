@@ -418,8 +418,8 @@ export async function createCollection(libraryId: string, collectionData: Create
  * Fetch the OLX for the given XBlock.
  */
 // istanbul ignore next
-export async function getXBlockOLX(usageKey: string): Promise<string> {
-  const { data } = await getAuthenticatedHttpClient().get(getXBlockOLXApiUrl(usageKey));
+export async function getXBlockOLX(usageKey: string, version?: string): Promise<string> {
+  const { data } = await getAuthenticatedHttpClient().get(getXBlockOLXApiUrl(usageKey), { params: { version } });
   return data.olx;
 }
 

@@ -12,6 +12,7 @@ import {
   mockXBlockAssets,
   mockXBlockOLX,
 } from '../data/api.mocks';
+import * as apiHooks from '../data/apiHooks';
 import { LibraryProvider, SidebarBodyComponentId } from '../common/context';
 import { ComponentAdvancedInfo } from './ComponentAdvancedInfo';
 import { getXBlockAssetsApiUrl } from '../data/api';
@@ -25,6 +26,7 @@ const setOLXspy = mockSetXBlockOLX.applyMock();
 const render = (
   usageKey: string = mockLibraryBlockMetadata.usageKeyPublished,
   libraryId: string = mockContentLibrary.libraryId,
+  showOnlyPublished: boolean = false,
 ) => baseRender(
   <ComponentAdvancedInfo />,
   {
@@ -35,6 +37,7 @@ const render = (
           id: usageKey,
           type: SidebarBodyComponentId.ComponentInfo,
         }}
+        showOnlyPublished={showOnlyPublished}
       >
         {children}
       </LibraryProvider>
@@ -124,6 +127,9 @@ describe('<ComponentAdvancedInfo />', () => {
   });
 
   it('should display the OLX source of the block (when expanded)', async () => {
+    const usageKey = mockXBlockOLX.usageKeyHtml;
+    const spy = jest.spyOn(apiHooks, 'useXBlockOLX');
+
     render(mockXBlockOLX.usageKeyHtml);
     const expandButton = await screen.findByRole('button', { name: /Advanced details/ });
     fireEvent.click(expandButton);
@@ -131,6 +137,21 @@ describe('<ComponentAdvancedInfo />', () => {
     // just a substring:
     const olxPart = /This is a text component which uses/;
     await waitFor(() => expect(screen.getByText(olxPart)).toBeInTheDocument());
+    expect(spy).toHaveBeenCalledWith(usageKey, undefined);
+  });
+
+  it('should display the published OLX source of the block (when expanded)', async () => {
+    const usageKey = mockXBlockOLX.usageKeyHtml;
+    const spy = jest.spyOn(apiHooks, 'useXBlockOLX');
+
+    render(usageKey, undefined, true);
+    const expandButton = await screen.findByRole('button', { name: /Advanced details/ });
+    fireEvent.click(expandButton);
+    // Because of syntax highlighting, the OLX will be borken up by many different tags so we need to search for
+    // just a substring:
+    const olxPart = /This is a text component which uses/;
+    await waitFor(() => expect(screen.getByText(olxPart)).toBeInTheDocument());
+    expect(spy).toHaveBeenCalledWith(usageKey, 'published');
   });
 
   it('does not display "Edit OLX" button and assets dropzone when the library is read-only', async () => {

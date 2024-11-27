@@ -350,10 +350,10 @@ export const useCreateLibraryCollection = (libraryId: string) => {
 };
 
 /** Get the OLX source of a library component */
-export const useXBlockOLX = (usageKey: string) => (
+export const useXBlockOLX = (usageKey: string, version?: string) => (
   useQuery({
     queryKey: xblockQueryKeys.xblockOLX(usageKey),
-    queryFn: () => getXBlockOLX(usageKey),
+    queryFn: () => getXBlockOLX(usageKey, version),
     enabled: !!usageKey,
   })
 );
