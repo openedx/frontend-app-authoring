@@ -88,7 +88,7 @@ export const apiUrls = {
 /**
  * Get list of taxonomies.
  * @param {string} [org] Filter the list to only show taxonomies assigned to this org
- * @returns {Promise<import("./types.mjs").TaxonomyListData>}
+ * @returns {Promise<import("./types.js").TaxonomyListData>}
  */
 export async function getTaxonomyListData(org) {
   const { data } = await getAuthenticatedHttpClient().get(apiUrls.taxonomyList(org));
@@ -107,7 +107,7 @@ export async function deleteTaxonomy(taxonomyId) {
 /**
  * Get metadata about a Taxonomy
  * @param {number} taxonomyId The ID of the taxonomy to get
- * @returns {Promise<import("./types.mjs").TaxonomyData>}
+ * @returns {Promise<import("./types.js").TaxonomyData>}
  */
 export async function getTaxonomy(taxonomyId) {
   const { data } = await getAuthenticatedHttpClient().get(apiUrls.taxonomy(taxonomyId));

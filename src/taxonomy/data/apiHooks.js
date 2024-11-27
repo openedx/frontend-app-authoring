@@ -109,7 +109,7 @@ export const useImportNewTaxonomy = () => {
   return useMutation({
     /**
     * @type {import("@tanstack/react-query").MutateFunction<
-    *   import("./types.mjs").TaxonomyData,
+    *   import("./types.js").TaxonomyData,
     *   any,
     *   {
     *     name: string,
@@ -147,7 +147,7 @@ export const useImportTags = () => {
   return useMutation({
     /**
     * @type {import("@tanstack/react-query").MutateFunction<
-    *   import("./types.mjs").TaxonomyData,
+    *   import("./types.js").TaxonomyData,
     *   any,
     *   {
     *     taxonomyId: number,
@@ -201,4 +201,36 @@ export const useImportPlan = (taxonomyId, file) => useQuery({
     }
   },
   retry: false, // If there's an error, it's probably a real problem with the file. Don't try again several times!
+});
+
+/**
+ * @param {number} taxonomyId
+ * @param {import('./types.js').QueryOptions} options
+ * @returns {import('@tanstack/react-query').UseQueryResult<import('./types.js').TagListData>}
+ */
+export const useTagListData = (taxonomyId, options) => {
+  const { pageIndex, pageSize } = options;
+  return useQuery({
+    queryKey: taxonomyQueryKeys.taxonomyTagListPage(taxonomyId, pageIndex, pageSize),
+    queryFn: async () => {
+      const { data } = await getAuthenticatedHttpClient().get(apiUrls.tagList(taxonomyId, pageIndex, pageSize));
+      return camelCaseObject(data);
+    },
+  });
+};
+
+/**
+ * Temporary hook to load *all* the subtags of a given tag in a taxonomy.
+ * Doesn't handle pagination or anything. This is meant to be replaced by
+ * something more sophisticated later, as we improve the "taxonomy details" page.
+ * @param {number} taxonomyId
+ * @param {string} parentTagValue
+ * @returns {import('@tanstack/react-query').UseQueryResult<import('./types.js').TagListData>}
+ */
+export const useSubTags = (taxonomyId, parentTagValue) => useQuery({
+  queryKey: taxonomyQueryKeys.taxonomyTagSubtagsList(taxonomyId, parentTagValue),
+  queryFn: async () => {
+    const response = await getAuthenticatedHttpClient().get(apiUrls.allSubtagsOf(taxonomyId, parentTagValue));
+    return camelCaseObject(response.data);
+  },
 });

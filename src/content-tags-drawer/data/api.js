@@ -38,7 +38,7 @@ export const getContentTaxonomyTagsCountApiUrl = (contentId) => new URL(`api/con
  * Get all tags that belong to taxonomy.
  * @param {number} taxonomyId The id of the taxonomy to fetch tags for
  * @param {{page?: number, searchTerm?: string, parentTag?: string}} options
- * @returns {Promise<import("../../taxonomy/tag-list/data/types.mjs").TagListData>}
+ * @returns {Promise<import("../../taxonomy/data/types.js").TagListData>}
  */
 export async function getTaxonomyTagsData(taxonomyId, options = {}) {
   const url = getTaxonomyTagsApiUrl(taxonomyId, options);
@@ -49,7 +49,7 @@ export async function getTaxonomyTagsData(taxonomyId, options = {}) {
 /**
  * Get the tags that are applied to the content object
  * @param {string} contentId The id of the content object to fetch the applied tags for
- * @returns {Promise<import("./types.mjs").ContentTaxonomyTagsData>}
+ * @returns {Promise<import("./types.js").ContentTaxonomyTagsData>}
  */
 export async function getContentTaxonomyTagsData(contentId) {
   const { data } = await getAuthenticatedHttpClient().get(getContentTaxonomyTagsApiUrl(contentId));
@@ -72,7 +72,7 @@ export async function getContentTaxonomyTagsCount(contentId) {
 /**
  * Fetch meta data (eg: display_name) about the content object (unit/compoenent)
  * @param {string} contentId The id of the content object (unit/component)
- * @returns {Promise<import("./types.mjs").ContentData | null>}
+ * @returns {Promise<import("./types.js").ContentData | null>}
  */
 export async function getContentData(contentId) {
   let url;
@@ -96,8 +96,8 @@ export async function getContentData(contentId) {
 /**
  * Update content object's applied tags
  * @param {string} contentId The id of the content object (unit/component)
- * @param {Promise<import("./types.mjs").UpdateTagsData[]>} tagsData The list of tags (values) to set on content object
- * @returns {Promise<import("./types.mjs").ContentTaxonomyTagsData>}
+ * @param {Promise<import("./types.js").UpdateTagsData[]>} tagsData The list of tags (values) to set on content object
+ * @returns {Promise<import("./types.js").ContentTaxonomyTagsData>}
  */
 export async function updateContentTaxonomyTags(contentId, tagsData) {
   const url = getContentTaxonomyTagsApiUrl(contentId);

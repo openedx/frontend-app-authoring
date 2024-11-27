@@ -8,46 +8,21 @@ import { extractOrgFromContentId, languageExportId } from './utils';
 import messages from './messages';
 import { ContentTagsDrawerSheetContext } from './common/context';
 
-/** @typedef {import("./data/types.mjs").Tag} ContentTagData */
-/** @typedef {import("./data/types.mjs").StagedTagData} StagedTagData */
-/** @typedef {import("./data/types.mjs").TagsInTaxonomy} TagsInTaxonomy */
+/** @typedef {import("./data/types.js").Tag} ContentTagData */
+/** @typedef {import("./data/types.js").StagedTagData} StagedTagData */
+/** @typedef {import("./data/types.js").TagsInTaxonomy} TagsInTaxonomy */
+/** @typedef {import("./common/context").ContentTagsDrawerContextData} ContentTagsDrawerContextData */
 
 /**
- * Handles the context and all the underlying logic for the ContentTagsDrawer component
+ * Helper hook for *creating* a `ContentTagsDrawerContext`.
+ * Handles the context and all the underlying logic for the ContentTagsDrawer component.
+ *
+ * To *use* the context, just use `useContext(ContentTagsDrawerContext)`
  * @param {string} contentId
  * @param {boolean} canTagObject
- * @returns {{
- *     stagedContentTags: Record<number, StagedTagData[]>,
- *     addStagedContentTag: (taxonomyId: number, addedTag: StagedTagData) => void,
- *     removeStagedContentTag: (taxonomyId: number, tagValue: string) => void,
- *     removeGlobalStagedContentTag: (taxonomyId: number, tagValue: string) => void,
- *     addRemovedContentTag: (taxonomyId: number, tagValue: string) => void,
- *     deleteRemovedContentTag: (taxonomyId: number, tagValue: string) => void,
- *     setStagedTags: (taxonomyId: number, tagsList: StagedTagData[]) => void,
- *     globalStagedContentTags: Record<number, StagedTagData[]>,
- *     globalStagedRemovedContentTags: Record<number, string>,
- *     setGlobalStagedContentTags: Function,
- *     commitGlobalStagedTags: () => void,
- *     commitGlobalStagedTagsStatus: string,
- *     isContentDataLoaded: boolean,
- *     isContentTaxonomyTagsLoaded: boolean,
- *     isTaxonomyListLoaded: boolean,
- *     contentName: string,
- *     tagsByTaxonomy: TagsInTaxonomy[],
- *     isEditMode: boolean,
- *     toEditMode: () => void,
- *     toReadMode: () => void,
- *     collapsibleStates: Record<number, boolean>,
- *     openCollapsible: (taxonomyId: number) => void,
- *     closeCollapsible: (taxonomyId: number) => void,
- *     toastMessage: string | undefined,
- *     showToastAfterSave: () => void,
- *     closeToast: () => void,
- *     setCollapsibleToInitalState: () => void,
- *     otherTaxonomies: TagsInTaxonomy[],
- * }}
+ * @returns {ContentTagsDrawerContextData}
  */
-const useContentTagsDrawerContext = (contentId, canTagObject) => {
+export const useCreateContentTagsDrawerContext = (contentId, canTagObject) => {
   const intl = useIntl();
   const org = extractOrgFromContentId(contentId);
 
@@ -465,5 +440,3 @@ const useContentTagsDrawerContext = (contentId, canTagObject) => {
     otherTaxonomies,
   };
 };
-
-export default useContentTagsDrawerContext;

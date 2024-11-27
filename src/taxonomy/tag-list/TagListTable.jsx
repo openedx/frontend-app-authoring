@@ -7,7 +7,7 @@ import Proptypes from 'prop-types';
 
 import { LoadingSpinner } from '../../generic/Loading';
 import messages from './messages';
-import { useTagListData, useSubTags } from './data/apiHooks';
+import { useTagListData, useSubTags } from '../data/apiHooks';
 
 const SubTagsExpanded = ({ taxonomyId, parentTagValue }) => {
   const subTagsData = useSubTags(taxonomyId, parentTagValue);

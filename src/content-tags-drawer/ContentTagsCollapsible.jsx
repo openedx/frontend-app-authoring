@@ -25,9 +25,9 @@ import TagsTree from './TagsTree';
 import { ContentTagsDrawerContext } from './common/context';
 
 /** @typedef {import("./ContentTagsCollapsible").TaxonomySelectProps} TaxonomySelectProps */
-/** @typedef {import("../taxonomy/data/types.mjs").TaxonomyData} TaxonomyData */
-/** @typedef {import("./data/types.mjs").Tag} ContentTagData */
-/** @typedef {import("./data/types.mjs").StagedTagData} StagedTagData */
+/** @typedef {import("../taxonomy/data/types.js").TaxonomyData} TaxonomyData */
+/** @typedef {import("./data/types.js").Tag} ContentTagData */
+/** @typedef {import("./data/types.js").StagedTagData} StagedTagData */
 
 /**
  * Custom Menu component for our Select box
