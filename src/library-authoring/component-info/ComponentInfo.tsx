@@ -11,7 +11,13 @@ import {
   CheckBoxOutlineBlank,
 } from '@openedx/paragon/icons';
 
-import { SidebarAdditionalActions, useLibraryContext } from '../common/context';
+import {
+  SidebarAdditionalActions,
+  useLibraryContext,
+  COMPONENT_INFO_TABS,
+  ComponentInfoTab,
+  isComponentInfoTab,
+} from '../common/context';
 import ComponentMenu from '../components';
 import { canEditComponent } from '../components/ComponentEditorModal';
 import ComponentDetails from './ComponentDetails';
@@ -96,20 +102,25 @@ const ComponentInfo = () => {
     readOnly,
     openComponentEditor,
     resetSidebarAdditionalActions,
+    setSidebarCurrentTab,
   } = useLibraryContext();
 
   const jumpToCollections = sidebarComponentInfo?.additionalAction === SidebarAdditionalActions.JumpToAddCollections;
-  // Show Manage tab if JumpToAddCollections action is set in sidebarComponentInfo
-  const [tab, setTab] = React.useState(jumpToCollections ? 'manage' : 'preview');
+
+  const tab: ComponentInfoTab = (
+    sidebarComponentInfo?.currentTab && isComponentInfoTab(sidebarComponentInfo.currentTab)
+  ) ? sidebarComponentInfo?.currentTab : COMPONENT_INFO_TABS.Preview;
+
   useEffect(() => {
+    // Show Manage tab if JumpToAddCollections action is set in sidebarComponentInfo
     if (jumpToCollections) {
-      setTab('manage');
+      setSidebarCurrentTab(COMPONENT_INFO_TABS.Manage);
     }
   }, [jumpToCollections]);
 
   useEffect(() => {
     // This is required to redo actions.
-    if (tab !== 'manage') {
+    if (tab !== COMPONENT_INFO_TABS.Manage) {
       resetSidebarAdditionalActions();
     }
   }, [tab]);
@@ -158,16 +169,17 @@ const ComponentInfo = () => {
       <Tabs
         variant="tabs"
         className="my-3 d-flex justify-content-around"
+        defaultActiveKey={COMPONENT_INFO_TABS.Preview}
         activeKey={tab}
-        onSelect={(k: string) => setTab(k)}
+        onSelect={setSidebarCurrentTab}
       >
-        <Tab eventKey="preview" title={intl.formatMessage(messages.previewTabTitle)}>
+        <Tab eventKey={COMPONENT_INFO_TABS.Preview} title={intl.formatMessage(messages.previewTabTitle)}>
           <ComponentPreview />
         </Tab>
-        <Tab eventKey="manage" title={intl.formatMessage(messages.manageTabTitle)}>
+        <Tab eventKey={COMPONENT_INFO_TABS.Manage} title={intl.formatMessage(messages.manageTabTitle)}>
           <ComponentManagement />
         </Tab>
-        <Tab eventKey="details" title={intl.formatMessage(messages.detailsTabTitle)}>
+        <Tab eventKey={COMPONENT_INFO_TABS.Details} title={intl.formatMessage(messages.detailsTabTitle)}>
           <ComponentDetails />
         </Tab>
       </Tabs>
