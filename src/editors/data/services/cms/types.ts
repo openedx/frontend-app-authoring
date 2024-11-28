@@ -27,6 +27,7 @@ export const videoDataProps = {
 };
 */
 
+/** @deprecated Use `AnswerData` TypeScript type instead (src/editors/data/constants/problem.ts) */
 export const answerOptionProps = PropTypes.shape({
   id: PropTypes.string,
   title: PropTypes.string,

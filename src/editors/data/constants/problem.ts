@@ -239,3 +239,13 @@ export const ignoredOlxAttributes = [
   '@_url_name',
   '@_x-is-pointer-node',
 ] as const;
+
+export interface AnswerData {
+  id: string;
+  title?: string;
+  correct?: boolean;
+  isAnswerRange?: boolean;
+  feedback?: string;
+  selectedFeedback?: string;
+  unselectedFeedback?: string;
+}

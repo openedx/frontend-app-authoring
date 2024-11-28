@@ -9,7 +9,7 @@ import {
   AlertModal,
   ActionRow,
 } from '@openedx/paragon';
-import AnswerWidget from './AnswerWidget';
+import { AnswerWidget } from './AnswerWidget';
 import SettingsWidget from './SettingsWidget';
 import QuestionWidget from './QuestionWidget';
 import EditorContainer from '../../../EditorContainer';

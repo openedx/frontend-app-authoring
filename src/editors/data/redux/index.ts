@@ -8,7 +8,7 @@ import * as video from './video';
 import * as problem from './problem';
 import * as game from './game';
 import type { RequestKeys, RequestStates } from '../constants/requests';
-import { AdvancedProblemType, ProblemType } from '../constants/problem';
+import { AdvancedProblemType, AnswerData, ProblemType } from '../constants/problem';
 
 export { default as thunkActions } from './thunkActions';
 
@@ -148,7 +148,7 @@ export interface EditorState {
     rawOLX: string;
     problemType: null | ProblemType | AdvancedProblemType;
     question: string;
-    answers: any[];
+    answers: AnswerData[];
     correctAnswerCount: number;
     groupFeedbackList: any[];
     generalFeedback: string;
