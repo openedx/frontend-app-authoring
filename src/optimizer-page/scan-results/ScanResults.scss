@@ -1,12 +1,64 @@
-.red-italics {
-  color: $brand-500;
-  margin-left: 2rem;
-  font-weight: 400;
-  font-size: 80%;
-  font-style: italic;
-}
+.scan-results {
+  thead {
+    display: none;
+  }
 
-.open-arrow {
-  transform: translate(-10px, 5px);
-  display: inline-block;
+  .red-italics {
+    color: $brand-500;
+    margin-left: 2rem;
+    font-weight: 400;
+    font-size: 80%;
+    font-style: italic;
+  }
+
+  .open-arrow {
+    transform: translate(-10px, 5px);
+    display: inline-block;
+  }
+
+  /* Section Header */
+  .subsection-header {
+    font-size: 16px; /* Slightly smaller */
+    font-weight: 600; /* Reduced boldness */
+    background-color: rgb(248, 247, 246); /* Subtle gray background */
+    padding: 10px;
+    margin-bottom: 10px;
+    border-left: 5px solid $brand-400;
+  }
+
+  /* Subsection Header */
+  .unit-header {
+    font-size: 16px; /* Slightly smaller than Section */
+    font-weight: 500;
+    margin-left: .5rem;
+    margin-top: 10px;
+    color: #555;
+  }
+
+  /* Unit Header */
+  .block-header {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+
+  /* Block Links */
+  .broken-link-list li {
+    margin-bottom: 8px; /* Add breathing room */
+  }
+
+  .broken-link-list a {
+    text-decoration: none;
+    margin-left: 2rem;
+  }
+
+  /* Broken Links Highlight */
+  .broken-links-count {
+    color: red;
+    font-weight: bold;
+  }
+
+  .block {
+    padding: 0 3rem;
+  }
 }
