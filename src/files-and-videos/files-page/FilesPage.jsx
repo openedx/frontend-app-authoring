@@ -28,10 +28,13 @@ const FilesPage = ({
     updatingStatus: updateAssetStatus,
     errors: errorMessages,
   } = useSelector(state => state.assets);
+
   useEffect(() => {
     dispatch(fetchAssets(courseId));
   }, [courseId]);
+
   const handleErrorReset = (error) => dispatch(resetErrors(error));
+
   if (loadingStatus === RequestStatus.DENIED) {
     return (
       <div data-testid="under-construction-placeholder" className="row justify-contnt-center m-6">
