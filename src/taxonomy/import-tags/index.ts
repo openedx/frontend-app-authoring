@@ -1,2 +1,1 @@
-// @ts-check
-export { default as ImportTagsWizard } from './ImportTagsWizard';
+export { ImportTagsWizard } from './ImportTagsWizard';

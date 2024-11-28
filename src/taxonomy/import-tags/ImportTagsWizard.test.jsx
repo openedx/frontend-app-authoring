@@ -17,7 +17,7 @@ import PropTypes from 'prop-types';
 import initializeStore from '../../store';
 import { getTaxonomyExportFile } from '../data/api';
 import { TaxonomyContext } from '../common/context';
-import ImportTagsWizard from './ImportTagsWizard';
+import { ImportTagsWizard } from './ImportTagsWizard';
 
 let store;
 

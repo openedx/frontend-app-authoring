@@ -1,14 +1,9 @@
 import React, { useContext } from 'react';
-import { IntlProvider } from '@edx/frontend-platform/i18n';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { AppProvider } from '@edx/frontend-platform/react';
-import { render } from '@testing-library/react';
 
-import initializeStore from '../store';
+import { initializeMocks, render } from '../testUtils';
 import { TaxonomyContext } from './common/context';
-import TaxonomyLayout from './TaxonomyLayout';
+import { TaxonomyLayout } from './TaxonomyLayout';
 
-let store;
 const toastMessage = 'Hello, this is a toast!';
 const alertErrorTitle = 'Error title';
 const alertErrorDescription = 'Error description';
@@ -20,14 +15,14 @@ const MockChildComponent = () => {
     <div data-testid="mock-content">
       <button
         type="button"
-        onClick={() => setToastMessage(toastMessage)}
+        onClick={() => setToastMessage!(toastMessage)}
         data-testid="taxonomy-show-toast"
       >
         Show Toast
       </button>
       <button
         type="button"
-        onClick={() => setAlertProps({ title: alertErrorTitle, description: alertErrorDescription })}
+        onClick={() => setAlertProps!({ title: alertErrorTitle, description: alertErrorDescription })}
         data-testid="taxonomy-show-alert"
       >
         Show Alert
@@ -46,36 +41,20 @@ jest.mock('react-router-dom', () => ({
   ScrollRestoration: jest.fn(() => <div />),
 }));
 
-const RootWrapper = () => (
-  <AppProvider store={store}>
-    <IntlProvider locale="en" messages={{}}>
-      <TaxonomyLayout />
-    </IntlProvider>
-  </AppProvider>
-);
-
 describe('<TaxonomyLayout />', () => {
   beforeEach(async () => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-    store = initializeStore();
+    initializeMocks();
   });
 
   it('should render page correctly', () => {
-    const { getByTestId } = render(<RootWrapper />);
+    const { getByTestId } = render(<TaxonomyLayout />);
     expect(getByTestId('mock-header')).toBeInTheDocument();
     expect(getByTestId('mock-content')).toBeInTheDocument();
     expect(getByTestId('mock-footer')).toBeInTheDocument();
   });
 
   it('should show toast', () => {
-    const { getByTestId, getByText } = render(<RootWrapper />);
+    const { getByTestId, getByText } = render(<TaxonomyLayout />);
     const button = getByTestId('taxonomy-show-toast');
     button.click();
     expect(getByTestId('taxonomy-toast')).toBeInTheDocument();
@@ -88,7 +67,7 @@ describe('<TaxonomyLayout />', () => {
       getByText,
       getByRole,
       queryByTestId,
-    } = render(<RootWrapper />);
+    } = render(<TaxonomyLayout />);
 
     const button = getByTestId('taxonomy-show-alert');
     button.click();

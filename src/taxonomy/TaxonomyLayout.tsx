@@ -1,4 +1,3 @@
-// @ts-check
 import React, { useMemo, useState } from 'react';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -7,15 +6,15 @@ import { Toast } from '@openedx/paragon';
 
 import AlertMessage from '../generic/alert-message';
 import Header from '../header';
-import { TaxonomyContext } from './common/context';
+import { type AlertProps, TaxonomyContext } from './common/context';
 import messages from './messages';
 
-const TaxonomyLayout = () => {
+export const TaxonomyLayout = () => {
   const intl = useIntl();
   // Use `setToastMessage` to show the toast.
-  const [toastMessage, setToastMessage] = useState(/** @type{null|string} */ (null));
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
   // Use `setToastMessage` to show the alert.
-  const [alertProps, setAlertProps] = useState(/** @type {null|import('./common/context').AlertProps} */ (null));
+  const [alertProps, setAlertProps] = useState<AlertProps | null>(null);
 
   const context = useMemo(() => ({
     toastMessage, setToastMessage, alertProps, setAlertProps,
@@ -51,5 +50,3 @@ const TaxonomyLayout = () => {
     </TaxonomyContext.Provider>
   );
 };
-
-export default TaxonomyLayout;

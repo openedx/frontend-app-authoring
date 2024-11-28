@@ -1,4 +1,3 @@
-// @ts-check
 /**
  * This is a file used especially in this `taxonomy` module.
  *
@@ -16,6 +15,7 @@ import { camelCaseObject } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { apiUrls, ALL_TAXONOMIES } from './api';
 import * as api from './api';
+import type { QueryOptions, TagListData } from './types';
 
 // Query key patterns. Allows an easy way to clear all data related to a given taxonomy.
 // https://github.com/openedx/frontend-app-admin-portal/blob/2ba315d/docs/decisions/0006-tanstack-react-query.rst
@@ -24,46 +24,46 @@ export const taxonomyQueryKeys = {
   all: ['taxonomies'],
   /**
    * Key for the list of taxonomies, optionally filtered by org.
-   * @param {string} [org] Which org we fetched the taxonomy list for (optional)
+   * @param org Which org we fetched the taxonomy list for (optional)
    */
-  taxonomyList: (org) => [
+  taxonomyList: (org?: string) => [
     ...taxonomyQueryKeys.all, 'taxonomyList', ...(org && org !== ALL_TAXONOMIES ? [org] : []),
   ],
   /**
    * Base key for data specific to a single taxonomy. No data is stored directly in this key.
-   * @param {number} taxonomyId ID of the taxonomy
+   * @param taxonomyId ID of the taxonomy
    */
-  taxonomy: (taxonomyId) => [...taxonomyQueryKeys.all, 'taxonomy', taxonomyId],
+  taxonomy: (taxonomyId: number) => [...taxonomyQueryKeys.all, 'taxonomy', taxonomyId],
   /**
-   * @param {number} taxonomyId ID of the taxonomy
+   * @param taxonomyId ID of the taxonomy
    */
-  taxonomyMetadata: (taxonomyId) => [...taxonomyQueryKeys.taxonomy(taxonomyId), 'metadata'],
+  taxonomyMetadata: (taxonomyId: number) => [...taxonomyQueryKeys.taxonomy(taxonomyId), 'metadata'],
   /**
-   * @param {number} taxonomyId ID of the taxonomy
+   * @param taxonomyId ID of the taxonomy
    */
-  taxonomyTagList: (taxonomyId) => [...taxonomyQueryKeys.taxonomy(taxonomyId), 'tags'],
+  taxonomyTagList: (taxonomyId: number) => [...taxonomyQueryKeys.taxonomy(taxonomyId), 'tags'],
   /**
-   * @param {number} taxonomyId ID of the taxonomy
-   * @param {number} pageIndex Which page of tags to load (zero-based)
-   * @param {number} pageSize
+   * @param taxonomyId ID of the taxonomy
+   * @param pageIndex Which page of tags to load (zero-based)
+   * @param pageSize
    */
-  taxonomyTagListPage: (taxonomyId, pageIndex, pageSize) => [
+  taxonomyTagListPage: (taxonomyId: number, pageIndex: number, pageSize: number) => [
     ...taxonomyQueryKeys.taxonomyTagList(taxonomyId), 'page', pageIndex, pageSize,
   ],
   /**
    * Query for loading _all_ the subtags of a particular parent tag
-   * @param {number} taxonomyId ID of the taxonomy
-   * @param {string} parentTagValue
+   * @param taxonomyId ID of the taxonomy
+   * @param parentTagValue
    */
-  taxonomyTagSubtagsList: (taxonomyId, parentTagValue) => [
+  taxonomyTagSubtagsList: (taxonomyId: number, parentTagValue: string) => [
     ...taxonomyQueryKeys.taxonomyTagList(taxonomyId), 'subtags', parentTagValue,
   ],
   /**
-   * @param {number} taxonomyId ID of the taxonomy
-   * @param {string} fileId Some string to uniquely identify the file we want to upload
+   * @param taxonomyId ID of the taxonomy
+   * @param fileId Some string to uniquely identify the file we want to upload
    */
-  importPlan: (taxonomyId, fileId) => [...taxonomyQueryKeys.all, 'importPlan', taxonomyId, fileId],
-};
+  importPlan: (taxonomyId: number, fileId: string) => [...taxonomyQueryKeys.all, 'importPlan', taxonomyId, fileId],
+} satisfies Record<string, (string | number)[] | ((...args: any[]) => (string | number)[])>;
 
 /**
  * Builds the query to get the taxonomy list
@@ -83,8 +83,7 @@ export const useTaxonomyList = (org) => (
 export const useDeleteTaxonomy = () => {
   const queryClient = useQueryClient();
   const { mutateAsync } = useMutation({
-    /** @type {import("@tanstack/react-query").MutateFunction<any, any, {pk: number}>} */
-    mutationFn: async ({ pk }) => api.deleteTaxonomy(pk),
+    mutationFn: async ({ pk }: { pk: number }) => api.deleteTaxonomy(pk),
     onSettled: (_d, _e, args) => {
       queryClient.invalidateQueries({ queryKey: taxonomyQueryKeys.taxonomyList() });
       queryClient.removeQueries({ queryKey: taxonomyQueryKeys.taxonomy(args.pk) });
@@ -93,10 +92,8 @@ export const useDeleteTaxonomy = () => {
   return mutateAsync;
 };
 
-/** Builds the query to get the taxonomy detail
-  * @param {number} taxonomyId
-  */
-export const useTaxonomyDetails = (taxonomyId) => useQuery({
+/** Builds the query to get the taxonomy detail */
+export const useTaxonomyDetails = (taxonomyId: number) => useQuery({
   queryKey: taxonomyQueryKeys.taxonomyMetadata(taxonomyId),
   queryFn: () => api.getTaxonomy(taxonomyId),
 });
@@ -107,20 +104,9 @@ export const useTaxonomyDetails = (taxonomyId) => useQuery({
 export const useImportNewTaxonomy = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    /**
-    * @type {import("@tanstack/react-query").MutateFunction<
-    *   import("./types.js").TaxonomyData,
-    *   any,
-    *   {
-    *     name: string,
-    *     description: string,
-    *     file: File,
-    *   }
-    * >}
-    */
     mutationFn: async ({
       name, description, file,
-    }) => {
+    }: { name: string, description: string, file: File }) => {
       const formData = new FormData();
       formData.append('taxonomy_name', name);
       formData.append('taxonomy_description', description);
@@ -145,25 +131,15 @@ export const useImportNewTaxonomy = () => {
 export const useImportTags = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    /**
-    * @type {import("@tanstack/react-query").MutateFunction<
-    *   import("./types.js").TaxonomyData,
-    *   any,
-    *   {
-    *     taxonomyId: number,
-    *     file: File,
-    *   }
-    * >}
-    */
-    mutationFn: async ({ taxonomyId, file }) => {
+    mutationFn: async ({ taxonomyId, file }: { taxonomyId: number, file: File }) => {
       const formData = new FormData();
       formData.append('file', file);
 
       try {
         const { data } = await getAuthenticatedHttpClient().put(apiUrls.tagsImport(taxonomyId), formData);
         return camelCaseObject(data);
-      } catch (/** @type {any} */ err) {
-        throw new Error(err.response?.data?.error || err.message);
+      } catch (err) {
+        throw new Error((err as any).response?.data?.error || (err as any).message);
       }
     },
     onSuccess: (data) => {
@@ -178,15 +154,12 @@ export const useImportTags = () => {
 
 /**
  * Preview the results of importing the given file into an existing taxonomy.
- * @param {number} taxonomyId The ID of the taxonomy whose tags we're updating.
- * @param {File|null} file The file that we want to import
+ * @param taxonomyId The ID of the taxonomy whose tags we're updating.
+ * @param file The file that we want to import
  */
-export const useImportPlan = (taxonomyId, file) => useQuery({
+export const useImportPlan = (taxonomyId: number, file: File | null) => useQuery({
   queryKey: taxonomyQueryKeys.importPlan(taxonomyId, file ? `${file.name}${file.lastModified}${file.size}` : ''),
-  /**
-  * @type {import("@tanstack/react-query").QueryFunction<string|null>}
-  */
-  queryFn: async () => {
+  queryFn: async (): Promise<string | null> => {
     if (!taxonomyId || file === null) {
       return null;
     }
@@ -195,26 +168,24 @@ export const useImportPlan = (taxonomyId, file) => useQuery({
 
     try {
       const { data } = await getAuthenticatedHttpClient().put(apiUrls.tagsPlanImport(taxonomyId), formData);
-      return /** @type {string} */(data.plan);
-    } catch (/** @type {any} */ err) {
-      throw new Error(err.response?.data?.error || err.message);
+      return data.plan as string;
+    } catch (err) {
+      throw new Error((err as any).response?.data?.error || (err as any).message);
     }
   },
   retry: false, // If there's an error, it's probably a real problem with the file. Don't try again several times!
 });
 
 /**
- * @param {number} taxonomyId
- * @param {import('./types.js').QueryOptions} options
- * @returns {import('@tanstack/react-query').UseQueryResult<import('./types.js').TagListData>}
+ * Use the list of tags in a taxonomy.
  */
-export const useTagListData = (taxonomyId, options) => {
+export const useTagListData = (taxonomyId: number, options: QueryOptions) => {
   const { pageIndex, pageSize } = options;
   return useQuery({
     queryKey: taxonomyQueryKeys.taxonomyTagListPage(taxonomyId, pageIndex, pageSize),
     queryFn: async () => {
       const { data } = await getAuthenticatedHttpClient().get(apiUrls.tagList(taxonomyId, pageIndex, pageSize));
-      return camelCaseObject(data);
+      return camelCaseObject(data) as TagListData;
     },
   });
 };
@@ -223,14 +194,11 @@ export const useTagListData = (taxonomyId, options) => {
  * Temporary hook to load *all* the subtags of a given tag in a taxonomy.
  * Doesn't handle pagination or anything. This is meant to be replaced by
  * something more sophisticated later, as we improve the "taxonomy details" page.
- * @param {number} taxonomyId
- * @param {string} parentTagValue
- * @returns {import('@tanstack/react-query').UseQueryResult<import('./types.js').TagListData>}
  */
-export const useSubTags = (taxonomyId, parentTagValue) => useQuery({
+export const useSubTags = (taxonomyId: number, parentTagValue: string) => useQuery({
   queryKey: taxonomyQueryKeys.taxonomyTagSubtagsList(taxonomyId, parentTagValue),
   queryFn: async () => {
     const response = await getAuthenticatedHttpClient().get(apiUrls.allSubtagsOf(taxonomyId, parentTagValue));
-    return camelCaseObject(response.data);
+    return camelCaseObject(response.data) as TagListData;
   },
 });

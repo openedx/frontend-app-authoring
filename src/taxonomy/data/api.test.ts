@@ -1,8 +1,4 @@
-// @ts-check
-import MockAdapter from 'axios-mock-adapter';
-import { initializeMockApp } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-
+import { initializeMocks } from '../../testUtils';
 import { taxonomyListMock } from '../__mocks__';
 
 import {
@@ -13,32 +9,14 @@ import {
   deleteTaxonomy,
 } from './api';
 
-let axiosMock;
-
 describe('taxonomy api calls', () => {
-  beforeEach(() => {
-    initializeMockApp({
-      authenticatedUser: {
-        userId: 3,
-        username: 'abc123',
-        administrator: true,
-        roles: [],
-      },
-    });
-
-    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   it.each([
     undefined,
     'All taxonomies',
     'Unassigned',
     'testOrg',
   ])('should get taxonomy list data for \'%s\' org filter', async (org) => {
+    const { axiosMock } = initializeMocks();
     axiosMock.onGet(apiUrls.taxonomyList(org)).reply(200, taxonomyListMock);
     const result = await getTaxonomyListData(org);
 
@@ -47,6 +25,7 @@ describe('taxonomy api calls', () => {
   });
 
   it('should delete a taxonomy', async () => {
+    const { axiosMock } = initializeMocks();
     const taxonomyId = 123;
     axiosMock.onDelete(apiUrls.taxonomy(taxonomyId)).reply(200);
     await deleteTaxonomy(taxonomyId);
@@ -55,6 +34,7 @@ describe('taxonomy api calls', () => {
   });
 
   it('should call get taxonomy', async () => {
+    const { axiosMock } = initializeMocks();
     axiosMock.onGet(apiUrls.taxonomy(1)).reply(200);
     await getTaxonomy(1);
 
@@ -62,6 +42,7 @@ describe('taxonomy api calls', () => {
   });
 
   it('Export should set window.location.href correctly', () => {
+    initializeMocks();
     const origLocation = window.location;
     // @ts-ignore
     delete window.location;
