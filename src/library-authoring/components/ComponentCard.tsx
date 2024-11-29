@@ -19,7 +19,7 @@ import { STUDIO_CLIPBOARD_CHANNEL } from '../../constants';
 import { updateClipboard } from '../../generic/data/api';
 import { ToastContext } from '../../generic/toast-context';
 import { type ContentHit } from '../../search-manager';
-import { SidebarAdditionalActions, useLibraryContext } from '../common/context';
+import { SidebarAdditionalActions, useComponentPickerContext, useLibraryContext } from '../common/context';
 import { useRemoveComponentsFromCollection } from '../data/apiHooks';
 import BaseComponentCard from './BaseComponentCard';
 import { canEditComponent } from './ComponentEditorModal';
@@ -121,7 +121,7 @@ const AddComponentWidget = ({ usageKey, blockType }: AddComponentWidgetProps) =>
     addComponentToSelectedComponents,
     removeComponentFromSelectedComponents,
     selectedComponents,
-  } = useLibraryContext();
+  } = useComponentPickerContext();
 
   // istanbul ignore if: this should never happen
   if (!usageKey) {
@@ -180,9 +180,12 @@ const AddComponentWidget = ({ usageKey, blockType }: AddComponentWidgetProps) =>
 const ComponentCard = ({ contentHit }: ComponentCardProps) => {
   const {
     openComponentInfoSidebar,
-    componentPickerMode,
     showOnlyPublished,
   } = useLibraryContext();
+
+  const {
+    componentPickerMode,
+  } = useComponentPickerContext();
 
   const {
     blockType,

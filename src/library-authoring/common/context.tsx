@@ -10,50 +10,6 @@ import type { ComponentPicker } from '../component-picker';
 import type { ContentLibrary } from '../data/api';
 import { useContentLibrary } from '../data/apiHooks';
 
-export interface SelectedComponent {
-  usageKey: string;
-  blockType: string;
-}
-
-export type ComponentSelectedEvent = (selectedComponent: SelectedComponent) => void;
-export type ComponentSelectionChangedEvent = (selectedComponents: SelectedComponent[]) => void;
-
-type NoComponentPickerType = {
-  componentPickerMode?: undefined;
-  onComponentSelected?: never;
-  selectedComponents?: never;
-  addComponentToSelectedComponents?: never;
-  removeComponentFromSelectedComponents?: never;
-  restrictToLibrary?: never;
-  /** The component picker modal to use. We need to pass it as a reference instead of
-   * directly importing it to avoid the import cycle:
-   * ComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
-   * Sidebar > AddContentContainer > ComponentPicker */
-  componentPicker?: typeof ComponentPicker;
-};
-
-type ComponentPickerSingleType = {
-  componentPickerMode: 'single';
-  onComponentSelected: ComponentSelectedEvent;
-  selectedComponents?: never;
-  addComponentToSelectedComponents?: never;
-  removeComponentFromSelectedComponents?: never;
-  restrictToLibrary: boolean;
-  componentPicker?: never;
-};
-
-type ComponentPickerMultipleType = {
-  componentPickerMode: 'multiple';
-  onComponentSelected?: never;
-  selectedComponents: SelectedComponent[];
-  addComponentToSelectedComponents: ComponentSelectedEvent;
-  removeComponentFromSelectedComponents: ComponentSelectedEvent;
-  restrictToLibrary: boolean;
-  componentPicker?: never;
-};
-
-type ComponentPickerType = NoComponentPickerType | ComponentPickerSingleType | ComponentPickerMultipleType;
-
 export enum SidebarBodyComponentId {
   AddContent = 'add-content',
   Info = 'info',
@@ -132,7 +88,8 @@ export type LibraryContextData = {
   closeComponentEditor: () => void;
   resetSidebarAdditionalActions: () => void;
   setSidebarCurrentTab: (tab: CollectionInfoTab | ComponentInfoTab) => void;
-} & ComponentPickerType;
+  componentPicker?: typeof ComponentPicker;
+};
 
 /**
  * Library Context.
@@ -144,32 +101,6 @@ export type LibraryContextData = {
  */
 const LibraryContext = React.createContext<LibraryContextData | undefined>(undefined);
 
-type NoComponentPickerProps = {
-  componentPickerMode?: undefined;
-  onComponentSelected?: never;
-  onChangeComponentSelection?: never;
-  restrictToLibrary?: never;
-  componentPicker?: typeof ComponentPicker;
-};
-
-export type ComponentPickerSingleProps = {
-  componentPickerMode: 'single';
-  onComponentSelected: ComponentSelectedEvent;
-  onChangeComponentSelection?: never;
-  restrictToLibrary?: boolean;
-  componentPicker?: never;
-};
-
-export type ComponentPickerMultipleProps = {
-  componentPickerMode: 'multiple';
-  onComponentSelected?: never;
-  onChangeComponentSelection?: ComponentSelectionChangedEvent;
-  restrictToLibrary?: boolean;
-  componentPicker?: never;
-};
-
-type ComponentPickerProps = NoComponentPickerProps | ComponentPickerSingleProps | ComponentPickerMultipleProps;
-
 type LibraryProviderProps = {
   children?: React.ReactNode;
   libraryId: string;
@@ -178,8 +109,12 @@ type LibraryProviderProps = {
   showOnlyPublished?: boolean;
   /** Only used for testing */
   initialSidebarComponentInfo?: SidebarComponentInfo;
+  /** The component picker modal to use. We need to pass it as a reference instead of
+   * directly importing it to avoid the import cycle:
+   * ComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
+   * Sidebar > AddContentContainer > ComponentPicker */
   componentPicker?: typeof ComponentPicker;
-} & ComponentPickerProps;
+};
 
 /**
  * React component to provide `LibraryContext`
@@ -188,10 +123,6 @@ export const LibraryProvider = ({
   children,
   libraryId,
   collectionId: collectionIdProp,
-  componentPickerMode,
-  restrictToLibrary = false,
-  onComponentSelected,
-  onChangeComponentSelection,
   showOnlyPublished = false,
   initialSidebarComponentInfo,
   componentPicker,
@@ -212,8 +143,6 @@ export const LibraryProvider = ({
   const openComponentEditor = useCallback((usageKey: string, onClose?: () => void) => {
     setComponentBeingEdited({ usageKey, onClose });
   }, []);
-
-  const [selectedComponents, setSelectedComponents] = useState<SelectedComponent[]>([]);
 
   /** Helper function to consume addtional action once performed.
     Required to redo the action.
@@ -253,43 +182,14 @@ export const LibraryProvider = ({
     }));
   }, []);
 
-  const addComponentToSelectedComponents = useCallback<ComponentSelectedEvent>((
-    selectedComponent: SelectedComponent,
-  ) => {
-    setSelectedComponents((prevSelectedComponents) => {
-      // istanbul ignore if: this should never happen
-      if (prevSelectedComponents.some((component) => component.usageKey === selectedComponent.usageKey)) {
-        return prevSelectedComponents;
-      }
-      const newSelectedComponents = [...prevSelectedComponents, selectedComponent];
-      onChangeComponentSelection?.(newSelectedComponents);
-      return newSelectedComponents;
-    });
-  }, []);
-
-  const removeComponentFromSelectedComponents = useCallback<ComponentSelectedEvent>((
-    selectedComponent: SelectedComponent,
-  ) => {
-    setSelectedComponents((prevSelectedComponents) => {
-      // istanbul ignore if: this should never happen
-      if (!prevSelectedComponents.some((component) => component.usageKey === selectedComponent.usageKey)) {
-        return prevSelectedComponents;
-      }
-      const newSelectedComponents = prevSelectedComponents.filter(
-        (component) => component.usageKey !== selectedComponent.usageKey,
-      );
-      onChangeComponentSelection?.(newSelectedComponents);
-      return newSelectedComponents;
-    });
-  }, []);
-
   const setSidebarCurrentTab = useCallback((tab: CollectionInfoTab | ComponentInfoTab) => {
     setSidebarComponentInfo((prev) => (prev && { ...prev, currentTab: tab }));
   }, []);
 
   const { data: libraryData, isLoading: isLoadingLibraryData } = useContentLibrary(libraryId);
 
-  const readOnly = !!componentPickerMode || !libraryData?.canEditLibrary;
+  // const readOnly = !!componentPickerMode || !libraryData?.canEditLibrary;
+  const readOnly = !libraryData?.canEditLibrary; // FIXME: Check componentPickerMode
 
   const context = useMemo<LibraryContextData>(() => {
     const contextValue = {
@@ -317,31 +217,9 @@ export const LibraryProvider = ({
       closeComponentEditor,
       resetSidebarAdditionalActions,
       setSidebarCurrentTab,
+      componentPicker,
     };
-    if (!componentPickerMode) {
-      return {
-        ...contextValue,
-        componentPicker,
-      };
-    }
-    if (componentPickerMode === 'single') {
-      return {
-        ...contextValue,
-        componentPickerMode,
-        restrictToLibrary,
-        onComponentSelected,
-      };
-    }
-    if (componentPickerMode === 'multiple') {
-      return {
-        ...contextValue,
-        componentPickerMode,
-        restrictToLibrary,
-        selectedComponents,
-        addComponentToSelectedComponents,
-        removeComponentFromSelectedComponents,
-      };
-    }
+
     return contextValue;
   }, [
     libraryId,
@@ -351,13 +229,6 @@ export const LibraryProvider = ({
     readOnly,
     isLoadingLibraryData,
     showOnlyPublished,
-    componentPickerMode,
-    restrictToLibrary,
-    onComponentSelected,
-    addComponentToSelectedComponents,
-    removeComponentFromSelectedComponents,
-    selectedComponents,
-    onChangeComponentSelection,
     closeLibrarySidebar,
     openAddContentSidebar,
     openInfoSidebar,
@@ -389,6 +260,164 @@ export function useLibraryContext(): LibraryContextData {
   if (ctx === undefined) {
     /* istanbul ignore next */
     throw new Error('useLibraryContext() was used in a component without a <LibraryProvider> ancestor.');
+  }
+  return ctx;
+}
+
+// FIXME: Move this to another file ############################################################
+
+export interface SelectedComponent {
+  usageKey: string;
+  blockType: string;
+}
+
+export type ComponentSelectedEvent = (selectedComponent: SelectedComponent) => void;
+export type ComponentSelectionChangedEvent = (selectedComponents: SelectedComponent[]) => void;
+
+type NoComponentPickerType = {
+  componentPickerMode: false;
+  /** We add the `never` type to ensure that the other properties are not used,
+   * but allow it to be desconstructed from the return value of `useComponentPickerContext()`
+   */
+  onComponentSelected?: never;
+  selectedComponents?: never;
+  addComponentToSelectedComponents?: never;
+  removeComponentFromSelectedComponents?: never;
+  restrictToLibrary?: never;
+};
+
+type ComponentPickerSingleType = {
+  componentPickerMode: 'single';
+  onComponentSelected: ComponentSelectedEvent;
+  selectedComponents?: never;
+  addComponentToSelectedComponents?: never;
+  removeComponentFromSelectedComponents?: never;
+  restrictToLibrary: boolean;
+};
+
+type ComponentPickerMultipleType = {
+  componentPickerMode: 'multiple';
+  onComponentSelected?: never;
+  selectedComponents: SelectedComponent[];
+  addComponentToSelectedComponents: ComponentSelectedEvent;
+  removeComponentFromSelectedComponents: ComponentSelectedEvent;
+  restrictToLibrary: boolean;
+};
+
+type ComponentPickerContextData = ComponentPickerSingleType | ComponentPickerMultipleType;
+
+/**
+ * Component Picker Context.
+ * This context is used to provide the component picker mode and the selected components.
+ *
+ * Get this using `useComponentPickerContext()`
+ */
+const ComponentPickerContext = React.createContext<ComponentPickerContextData | undefined>(undefined);
+
+export type ComponentPickerSingleProps = {
+  componentPickerMode: 'single';
+  onComponentSelected: ComponentSelectedEvent;
+  onChangeComponentSelection?: never;
+  restrictToLibrary?: boolean;
+};
+
+export type ComponentPickerMultipleProps = {
+  componentPickerMode: 'multiple';
+  onComponentSelected?: never;
+  onChangeComponentSelection?: ComponentSelectionChangedEvent;
+  restrictToLibrary?: boolean;
+};
+
+type ComponentPickerProps = ComponentPickerSingleProps | ComponentPickerMultipleProps;
+
+type ComponentPickerProviderProps = {
+  children?: React.ReactNode;
+} & ComponentPickerProps;
+
+/**
+ * React component to provide `ComponentPickerContext`
+ */
+export const ComponentPickerProvider = ({
+  children,
+  componentPickerMode,
+  restrictToLibrary = false,
+  onComponentSelected,
+  onChangeComponentSelection,
+}: ComponentPickerProviderProps) => {
+  const [selectedComponents, setSelectedComponents] = useState<SelectedComponent[]>([]);
+
+  const addComponentToSelectedComponents = useCallback<ComponentSelectedEvent>((
+    selectedComponent: SelectedComponent,
+  ) => {
+    setSelectedComponents((prevSelectedComponents) => {
+      // istanbul ignore if: this should never happen
+      if (prevSelectedComponents.some((component) => component.usageKey === selectedComponent.usageKey)) {
+        return prevSelectedComponents;
+      }
+      const newSelectedComponents = [...prevSelectedComponents, selectedComponent];
+      onChangeComponentSelection?.(newSelectedComponents);
+      return newSelectedComponents;
+    });
+  }, []);
+
+  const removeComponentFromSelectedComponents = useCallback<ComponentSelectedEvent>((
+    selectedComponent: SelectedComponent,
+  ) => {
+    setSelectedComponents((prevSelectedComponents) => {
+      // istanbul ignore if: this should never happen
+      if (!prevSelectedComponents.some((component) => component.usageKey === selectedComponent.usageKey)) {
+        return prevSelectedComponents;
+      }
+      const newSelectedComponents = prevSelectedComponents.filter(
+        (component) => component.usageKey !== selectedComponent.usageKey,
+      );
+      onChangeComponentSelection?.(newSelectedComponents);
+      return newSelectedComponents;
+    });
+  }, []);
+
+  const context = useMemo<ComponentPickerContextData>(() => {
+    switch (componentPickerMode) {
+      case 'single':
+        return {
+          componentPickerMode,
+          restrictToLibrary,
+          onComponentSelected,
+        };
+      case 'multiple':
+        return {
+          componentPickerMode,
+          restrictToLibrary,
+          selectedComponents,
+          addComponentToSelectedComponents,
+          removeComponentFromSelectedComponents,
+        };
+      default:
+        throw new Error('Invalid component picker mode');
+    }
+  }, [
+    componentPickerMode,
+    restrictToLibrary,
+    onComponentSelected,
+    addComponentToSelectedComponents,
+    removeComponentFromSelectedComponents,
+    selectedComponents,
+    onChangeComponentSelection,
+  ]);
+
+  return (
+    <ComponentPickerContext.Provider value={context}>
+      {children}
+    </ComponentPickerContext.Provider>
+  );
+};
+
+export function useComponentPickerContext(): ComponentPickerContextData | NoComponentPickerType {
+  const ctx = useContext(ComponentPickerContext);
+  if (ctx === undefined) {
+    return {
+      componentPickerMode: false,
+    };
   }
   return ctx;
 }

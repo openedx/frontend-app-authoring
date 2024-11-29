@@ -7,6 +7,7 @@ import {
   type ComponentSelectedEvent,
   type ComponentSelectionChangedEvent,
   LibraryProvider,
+  ComponentPickerProvider,
   useLibraryContext,
 } from '../common/context';
 import LibraryAuthoringPage from '../LibraryAuthoringPage';
@@ -81,7 +82,7 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
 
   const restrictToLibrary = !!libraryId;
 
-  const libraryProviderProps = componentPickerMode === 'single' ? {
+  const componentPickerProviderProps = componentPickerMode === 'single' ? {
     componentPickerMode,
     onComponentSelected,
     restrictToLibrary,
@@ -100,19 +101,20 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
       </Stepper.Step>
 
       <Stepper.Step eventKey="pick-components" title="Pick some components">
-        <LibraryProvider
-          libraryId={selectedLibrary}
-          showOnlyPublished={calcShowOnlyPublished}
-          {...libraryProviderProps}
-        >
-          { calcShowOnlyPublished
-            && (
-            <Alert variant="info" className="m-2">
-              <FormattedMessage {...messages.pickerInfoBanner} />
-            </Alert>
-            )}
-          <InnerComponentPicker returnToLibrarySelection={returnToLibrarySelection} />
-        </LibraryProvider>
+        <ComponentPickerProvider {...componentPickerProviderProps}>
+          <LibraryProvider
+            libraryId={selectedLibrary}
+            showOnlyPublished={calcShowOnlyPublished}
+          >
+            { calcShowOnlyPublished
+              && (
+              <Alert variant="info" className="m-2">
+                <FormattedMessage {...messages.pickerInfoBanner} />
+              </Alert>
+              )}
+            <InnerComponentPicker returnToLibrarySelection={returnToLibrarySelection} />
+          </LibraryProvider>
+        </ComponentPickerProvider>
       </Stepper.Step>
     </Stepper>
   );

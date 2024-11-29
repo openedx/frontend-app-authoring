@@ -17,6 +17,7 @@ import {
   COMPONENT_INFO_TABS,
   ComponentInfoTab,
   isComponentInfoTab,
+  useComponentPickerContext,
 } from '../common/context';
 import ComponentMenu from '../components';
 import { canEditComponent } from '../components/ComponentEditorModal';
@@ -33,12 +34,15 @@ const AddComponentWidget = () => {
 
   const {
     sidebarComponentInfo,
+  } = useLibraryContext();
+
+  const {
     componentPickerMode,
     onComponentSelected,
     addComponentToSelectedComponents,
     removeComponentFromSelectedComponents,
     selectedComponents,
-  } = useLibraryContext();
+  } = useComponentPickerContext();
 
   const usageKey = sidebarComponentInfo?.id;
 

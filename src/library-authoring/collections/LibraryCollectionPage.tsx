@@ -27,7 +27,7 @@ import {
   SearchSortWidget,
 } from '../../search-manager';
 import { useCollection, useContentLibrary } from '../data/apiHooks';
-import { useLibraryContext } from '../common/context';
+import { useComponentPickerContext, useLibraryContext } from '../common/context';
 import messages from './messages';
 import { LibrarySidebar } from '../library-sidebar';
 import LibraryCollectionComponents from './LibraryCollectionComponents';
@@ -66,7 +66,8 @@ const SubHeaderTitle = ({
 }) => {
   const intl = useIntl();
 
-  const { readOnly, componentPickerMode } = useLibraryContext();
+  const { readOnly } = useLibraryContext();
+  const { componentPickerMode } = useComponentPickerContext();
 
   const showReadOnlyBadge = readOnly && !componentPickerMode;
 
@@ -106,10 +107,10 @@ const LibraryCollectionPage = () => {
   const {
     sidebarComponentInfo,
     openCollectionInfoSidebar,
-    componentPickerMode,
     showOnlyPublished,
     setCollectionId,
   } = useLibraryContext();
+  const { componentPickerMode } = useComponentPickerContext();
 
   const {
     data: collectionData,

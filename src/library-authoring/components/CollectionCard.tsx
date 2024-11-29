@@ -11,7 +11,7 @@ import { MoreVert } from '@openedx/paragon/icons';
 import { Link } from 'react-router-dom';
 
 import { type CollectionHit } from '../../search-manager';
-import { useLibraryContext } from '../common/context';
+import { useComponentPickerContext, useLibraryContext } from '../common/context';
 import BaseComponentCard from './BaseComponentCard';
 import { ToastContext } from '../../generic/toast-context';
 import { useDeleteCollection, useRestoreCollection } from '../data/apiHooks';
@@ -106,9 +106,9 @@ type CollectionCardProps = {
 const CollectionCard = ({ collectionHit } : CollectionCardProps) => {
   const {
     openCollectionInfoSidebar,
-    componentPickerMode,
     showOnlyPublished,
   } = useLibraryContext();
+  const { componentPickerMode } = useComponentPickerContext();
 
   const {
     type: componentType,
