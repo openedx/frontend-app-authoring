@@ -282,6 +282,7 @@ describe('EditProblemView hooks parseState', () => {
     const expectedSettings = {
       max_attempts: '',
       weight: 1,
+      rerandomize: null,
       showanswer: ShowAnswerTypesKeys.AFTER_SOME_NUMBER_OF_ATTEMPTS,
       show_reset_button: false,
       submission_wait_seconds: 0,
@@ -327,6 +328,9 @@ describe('EditProblemView hooks parseState', () => {
       });
       expect(settings).toEqual({
         max_attempts: '',
+        rerandomize: null,
+        show_reset_button: false,
+        showanswer: 'after_attempts',
         attempts_before_showanswer_button: 0,
         submission_wait_seconds: 0,
         weight: 1,
