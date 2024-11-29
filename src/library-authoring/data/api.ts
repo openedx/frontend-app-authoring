@@ -53,12 +53,14 @@ export const getLibraryPasteClipboardUrl = (libraryId: string) => `${getApiBaseU
   * Get the URL for the xblock fields/metadata API.
   */
 export const getXBlockFieldsApiUrl = (usageKey: string) => `${getApiBaseUrl()}/api/xblock/v2/xblocks/${usageKey}/fields/`;
-export const getXBlockFieldsVersionApiUrl = (usageKey: string, version: string) => `${getApiBaseUrl()}/api/xblock/v2/xblocks/${usageKey}@${version}/fields/`;
+export const getXBlockFieldsVersionApiUrl = (usageKey: string, version: VersionSpec) => `${getApiBaseUrl()}/api/xblock/v2/xblocks/${usageKey}@${version}/fields/`;
 
 /**
   * Get the URL for the xblock OLX API
   */
 export const getXBlockOLXApiUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}olx/`;
+export const getXBlockOLXVersionApiUrl = (usageKey: string, version: VersionSpec) => `${getXBlockFieldsVersionApiUrl(usageKey, version)}olx/`;
+
 /**
  * Get the URL for the xblock Publish API
  */
@@ -392,7 +394,7 @@ export async function getLibraryBlockMetadata(usageKey: string): Promise<Library
 /**
  * Fetch xblock fields.
  */
-export async function getXBlockFields(usageKey: string, version: string = 'draft'): Promise<XBlockFields> {
+export async function getXBlockFields(usageKey: string, version: VersionSpec = 'draft'): Promise<XBlockFields> {
   const { data } = await getAuthenticatedHttpClient().get(getXBlockFieldsVersionApiUrl(usageKey, version));
   return camelCaseObject(data);
 }
@@ -419,8 +421,8 @@ export async function createCollection(libraryId: string, collectionData: Create
  * Fetch the OLX for the given XBlock.
  */
 // istanbul ignore next
-export async function getXBlockOLX(usageKey: string, version?: VersionSpec): Promise<string> {
-  const { data } = await getAuthenticatedHttpClient().get(getXBlockOLXApiUrl(usageKey), { params: { version } });
+export async function getXBlockOLX(usageKey: string, version: VersionSpec = 'draft'): Promise<string> {
+  const { data } = await getAuthenticatedHttpClient().get(getXBlockOLXVersionApiUrl(usageKey, version));
   return data.olx;
 }
 

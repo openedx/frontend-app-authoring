@@ -92,7 +92,7 @@ export const xblockQueryKeys = {
    */
   xblock: (usageKey?: string) => [...xblockQueryKeys.all, usageKey],
   /** Fields (i.e. the content, display name, etc.) of an XBlock */
-  xblockFields: (usageKey: string, version: string = 'draft') => [...xblockQueryKeys.xblock(usageKey), 'fields', version],
+  xblockFields: (usageKey: string, version: VersionSpec = 'draft') => [...xblockQueryKeys.xblock(usageKey), 'fields', version],
   /** OLX (XML representation of the fields/content) */
   xblockOLX: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'OLX'],
   /** assets (static files) */
@@ -294,7 +294,7 @@ export const useLibraryBlockMetadata = (usageId: string | undefined) => (
   })
 );
 
-export const useXBlockFields = (usageKey: string, version: string = 'draft') => (
+export const useXBlockFields = (usageKey: string, version: VersionSpec = 'draft') => (
   useQuery({
     queryKey: xblockQueryKeys.xblockFields(usageKey, version),
     queryFn: () => getXBlockFields(usageKey, version),
@@ -351,7 +351,7 @@ export const useCreateLibraryCollection = (libraryId: string) => {
 };
 
 /** Get the OLX source of a library component */
-export const useXBlockOLX = (usageKey: string, version?: VersionSpec) => (
+export const useXBlockOLX = (usageKey: string, version: VersionSpec) => (
   useQuery({
     queryKey: xblockQueryKeys.xblockOLX(usageKey),
     queryFn: () => getXBlockOLX(usageKey, version),

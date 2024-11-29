@@ -35,7 +35,7 @@ const ComponentAdvancedInfoInner: React.FC<Record<never, never>> = () => {
 
   const { data: olx, isLoading: isOLXLoading } = useXBlockOLX(
     usageKey,
-    showOnlyPublished ? 'published' : undefined,
+    showOnlyPublished ? 'published' : 'draft',
   );
   const editorRef = React.useRef<EditorAccessor | undefined>(undefined);
   const [isEditingOLX, setEditingOLX] = React.useState(false);

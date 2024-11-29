@@ -137,7 +137,7 @@ describe('<ComponentAdvancedInfo />', () => {
     // just a substring:
     const olxPart = /This is a text component which uses/;
     await waitFor(() => expect(screen.getByText(olxPart)).toBeInTheDocument());
-    expect(spy).toHaveBeenCalledWith(usageKey, undefined);
+    expect(spy).toHaveBeenCalledWith(usageKey, 'draft');
   });
 
   it('should display the published OLX source of the block (when expanded)', async () => {
