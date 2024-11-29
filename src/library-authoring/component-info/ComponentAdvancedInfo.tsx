@@ -11,7 +11,7 @@ import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 
 import { LoadingSpinner } from '../../generic/Loading';
 import { CodeEditor, EditorAccessor } from '../../generic/CodeEditor';
-import { useLibraryContext } from '../common/context';
+import { useLibraryContext } from '../common/context/LibraryContext';
 import {
   useUpdateXBlockOLX,
   useXBlockOLX,

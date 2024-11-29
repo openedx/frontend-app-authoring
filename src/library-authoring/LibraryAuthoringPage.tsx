@@ -37,7 +37,8 @@ import {
 } from '../search-manager';
 import LibraryContent, { ContentType } from './LibraryContent';
 import { LibrarySidebar } from './library-sidebar';
-import { SidebarBodyComponentId, useLibraryContext, useComponentPickerContext } from './common/context';
+import { SidebarBodyComponentId, useLibraryContext } from './common/context/LibraryContext';
+import { useComponentPickerContext } from './common/context/ComponentPickerContext';
 import messages from './messages';
 
 const HeaderActions = () => {

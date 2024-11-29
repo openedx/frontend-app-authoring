@@ -6,7 +6,7 @@ import {
 } from 'react-router-dom';
 
 import LibraryAuthoringPage from './LibraryAuthoringPage';
-import { LibraryProvider } from './common/context';
+import { LibraryProvider } from './common/context/LibraryContext';
 import { CreateCollectionModal } from './create-collection';
 import { LibraryTeamModal } from './library-team';
 import LibraryCollectionPage from './collections/LibraryCollectionPage';

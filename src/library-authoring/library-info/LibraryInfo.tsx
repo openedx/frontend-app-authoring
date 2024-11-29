@@ -3,7 +3,7 @@ import { FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
 import LibraryPublishStatus from './LibraryPublishStatus';
-import { useLibraryContext } from '../common/context';
+import { useLibraryContext } from '../common/context/LibraryContext';
 
 const LibraryInfo = () => {
   const intl = useIntl();

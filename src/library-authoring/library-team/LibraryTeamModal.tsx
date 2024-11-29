@@ -3,7 +3,7 @@ import React from 'react';
 import { StandardModal } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-import { useLibraryContext } from '../common/context';
+import { useLibraryContext } from '../common/context/LibraryContext';
 import LibraryTeam from './LibraryTeam';
 import messages from './messages';
 

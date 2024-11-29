@@ -9,7 +9,7 @@ import {
   mockXBlockAssets,
   mockXBlockOLX,
 } from '../data/api.mocks';
-import { LibraryProvider, SidebarBodyComponentId } from '../common/context';
+import { LibraryProvider, SidebarBodyComponentId } from '../common/context/LibraryContext';
 import ComponentDetails from './ComponentDetails';
 
 mockContentLibrary.applyMock();

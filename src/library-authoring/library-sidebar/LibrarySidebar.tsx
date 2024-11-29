@@ -9,7 +9,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { AddContentContainer, AddContentHeader } from '../add-content';
 import { CollectionInfo, CollectionInfoHeader } from '../collections';
-import { SidebarBodyComponentId, useLibraryContext } from '../common/context';
+import { SidebarBodyComponentId, useLibraryContext } from '../common/context/LibraryContext';
 import { ComponentInfo, ComponentInfoHeader } from '../component-info';
 import { LibraryInfo, LibraryInfoHeader } from '../library-info';
 import messages from '../messages';

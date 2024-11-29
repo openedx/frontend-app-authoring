@@ -7,15 +7,14 @@ import {
 } from '@openedx/paragon';
 import { useCallback } from 'react';
 import { useNavigate, useMatch } from 'react-router-dom';
-
+import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import {
-  useComponentPickerContext,
   useLibraryContext,
   type CollectionInfoTab,
   COLLECTION_INFO_TABS,
   isCollectionInfoTab,
   COMPONENT_INFO_TABS,
-} from '../common/context';
+} from '../common/context/LibraryContext';
 import CollectionDetails from './CollectionDetails';
 import messages from './messages';
 import { ContentTagsDrawer } from '../../content-tags-drawer';

@@ -15,7 +15,7 @@ import messages from './messages';
 import { useUpdateComponentCollections } from '../data/apiHooks';
 import { ToastContext } from '../../generic/toast-context';
 import { CollectionMetadata } from '../data/api';
-import { SidebarAdditionalActions, useLibraryContext } from '../common/context';
+import { SidebarAdditionalActions, useLibraryContext } from '../common/context/LibraryContext';
 
 interface ManageCollectionsProps {
   usageKey: string;

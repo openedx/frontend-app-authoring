@@ -8,7 +8,7 @@ import {
   screen,
   waitFor,
 } from '../../testUtils';
-import { LibraryProvider, SidebarBodyComponentId } from '../common/context';
+import { LibraryProvider, SidebarBodyComponentId } from '../common/context/LibraryContext';
 import { mockContentLibrary, mockGetCollectionMetadata } from '../data/api.mocks';
 import * as api from '../data/api';
 import CollectionInfoHeader from './CollectionInfoHeader';

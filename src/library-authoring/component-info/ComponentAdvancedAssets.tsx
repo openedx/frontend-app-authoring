@@ -10,7 +10,7 @@ import { FormattedMessage, FormattedNumber, useIntl } from '@edx/frontend-platfo
 
 import { LoadingSpinner } from '../../generic/Loading';
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
-import { useLibraryContext } from '../common/context';
+import { useLibraryContext } from '../common/context/LibraryContext';
 import { getXBlockAssetsApiUrl } from '../data/api';
 import { useDeleteXBlockAsset, useInvalidateXBlockAssets, useXBlockAssets } from '../data/apiHooks';
 import messages from './messages';

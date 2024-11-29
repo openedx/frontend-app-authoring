@@ -9,7 +9,7 @@ import {
 } from '../../testUtils';
 import { mockContentLibrary } from '../data/api.mocks';
 import { getXBlockFieldsVersionApiUrl, getXBlockFieldsApiUrl } from '../data/api';
-import { LibraryProvider, SidebarBodyComponentId } from '../common/context';
+import { LibraryProvider, SidebarBodyComponentId } from '../common/context/LibraryContext';
 import ComponentInfoHeader from './ComponentInfoHeader';
 
 const { libraryId: mockLibraryId, libraryIdReadOnly } = mockContentLibrary;

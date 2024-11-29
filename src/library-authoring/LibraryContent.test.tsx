@@ -9,7 +9,7 @@ import {
 import { getContentSearchConfigUrl } from '../search-manager/data/api';
 import { mockContentLibrary } from './data/api.mocks';
 import mockEmptyResult from '../search-modal/__mocks__/empty-search-result.json';
-import { LibraryProvider } from './common/context';
+import { LibraryProvider } from './common/context/LibraryContext';
 import LibraryContent from './LibraryContent';
 import { libraryComponentsMock } from './__mocks__';
 

@@ -7,7 +7,7 @@ import {
   screen,
   waitFor,
 } from '../../testUtils';
-import { LibraryProvider, SidebarBodyComponentId } from '../common/context';
+import { LibraryProvider, SidebarBodyComponentId } from '../common/context/LibraryContext';
 import { mockContentLibrary, mockLibraryBlockMetadata } from '../data/api.mocks';
 import ComponentManagement from './ComponentManagement';
 

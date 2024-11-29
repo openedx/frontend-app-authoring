@@ -11,7 +11,8 @@ import { MoreVert } from '@openedx/paragon/icons';
 import { Link } from 'react-router-dom';
 
 import { type CollectionHit } from '../../search-manager';
-import { useComponentPickerContext, useLibraryContext } from '../common/context';
+import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
+import { useLibraryContext } from '../common/context/LibraryContext';
 import BaseComponentCard from './BaseComponentCard';
 import { ToastContext } from '../../generic/toast-context';
 import { useDeleteCollection, useRestoreCollection } from '../data/apiHooks';

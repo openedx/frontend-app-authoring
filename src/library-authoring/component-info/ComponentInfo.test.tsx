@@ -6,7 +6,7 @@ import {
 } from '../../testUtils';
 import { mockContentLibrary, mockLibraryBlockMetadata } from '../data/api.mocks';
 import { mockBroadcastChannel } from '../../generic/data/api.mock';
-import { LibraryProvider, SidebarBodyComponentId } from '../common/context';
+import { LibraryProvider, SidebarBodyComponentId } from '../common/context/LibraryContext';
 import ComponentInfo from './ComponentInfo';
 import { getXBlockPublishApiUrl } from '../data/api';
 

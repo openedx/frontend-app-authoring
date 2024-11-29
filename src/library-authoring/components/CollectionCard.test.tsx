@@ -4,7 +4,7 @@ import type MockAdapter from 'axios-mock-adapter';
 import {
   initializeMocks, render as baseRender, screen, waitFor, waitForElementToBeRemoved, within,
 } from '../../testUtils';
-import { LibraryProvider } from '../common/context';
+import { LibraryProvider } from '../common/context/LibraryContext';
 import { type CollectionHit } from '../../search-manager';
 import CollectionCard from './CollectionCard';
 import messages from './messages';

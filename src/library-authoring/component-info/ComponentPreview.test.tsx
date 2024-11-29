@@ -4,7 +4,7 @@ import {
   render as baseRender,
   screen,
 } from '../../testUtils';
-import { LibraryProvider, SidebarBodyComponentId } from '../common/context';
+import { LibraryProvider, SidebarBodyComponentId } from '../common/context/LibraryContext';
 import { mockContentLibrary, mockLibraryBlockMetadata } from '../data/api.mocks';
 import ComponentPreview from './ComponentPreview';
 
@@ -26,7 +26,7 @@ const render = () => baseRender(<ComponentPreview />, {
         type: SidebarBodyComponentId.ComponentInfo,
       }}
     >
-      { children }
+      {children}
     </LibraryProvider>
   ),
 });

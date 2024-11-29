@@ -3,7 +3,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { useToggle } from '@openedx/paragon';
 import { ToastContext } from '../../generic/toast-context';
-import { useLibraryContext } from '../common/context';
+import { useLibraryContext } from '../common/context/LibraryContext';
 import { useCommitLibraryChanges, useRevertLibraryChanges } from '../data/apiHooks';
 import StatusWidget from '../generic/status-widget';
 import messages from './messages';

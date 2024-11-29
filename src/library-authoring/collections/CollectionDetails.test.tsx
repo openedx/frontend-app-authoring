@@ -10,7 +10,7 @@ import {
   waitFor,
   within,
 } from '../../testUtils';
-import { LibraryProvider, SidebarBodyComponentId } from '../common/context';
+import { LibraryProvider, SidebarBodyComponentId } from '../common/context/LibraryContext';
 import * as api from '../data/api';
 import { mockContentLibrary, mockGetCollectionMetadata } from '../data/api.mocks';
 import CollectionDetails from './CollectionDetails';

@@ -6,10 +6,12 @@ import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   type ComponentSelectedEvent,
   type ComponentSelectionChangedEvent,
-  LibraryProvider,
   ComponentPickerProvider,
+} from '../common/context/ComponentPickerContext';
+import {
+  LibraryProvider,
   useLibraryContext,
-} from '../common/context';
+} from '../common/context/LibraryContext';
 import LibraryAuthoringPage from '../LibraryAuthoringPage';
 import LibraryCollectionPage from '../collections/LibraryCollectionPage';
 import SelectLibrary from './SelectLibrary';

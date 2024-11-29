@@ -27,7 +27,8 @@ import {
   SearchSortWidget,
 } from '../../search-manager';
 import { useCollection, useContentLibrary } from '../data/apiHooks';
-import { useComponentPickerContext, useLibraryContext } from '../common/context';
+import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
+import { useLibraryContext } from '../common/context/LibraryContext';
 import messages from './messages';
 import { LibrarySidebar } from '../library-sidebar';
 import LibraryCollectionComponents from './LibraryCollectionComponents';

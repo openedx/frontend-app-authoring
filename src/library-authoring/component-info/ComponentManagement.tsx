@@ -6,7 +6,7 @@ import {
   BookOpen, ExpandLess, ExpandMore, Tag,
 } from '@openedx/paragon/icons';
 
-import { SidebarAdditionalActions, useLibraryContext } from '../common/context';
+import { SidebarAdditionalActions, useLibraryContext } from '../common/context/LibraryContext';
 import { useLibraryBlockMetadata } from '../data/apiHooks';
 import StatusWidget from '../generic/status-widget';
 import messages from './messages';

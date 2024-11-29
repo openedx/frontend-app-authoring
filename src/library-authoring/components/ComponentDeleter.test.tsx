@@ -6,7 +6,7 @@ import {
   initializeMocks,
   waitFor,
 } from '../../testUtils';
-import { LibraryProvider } from '../common/context';
+import { LibraryProvider } from '../common/context/LibraryContext';
 import { mockContentLibrary, mockDeleteLibraryBlock, mockLibraryBlockMetadata } from '../data/api.mocks';
 import ComponentDeleter from './ComponentDeleter';
 

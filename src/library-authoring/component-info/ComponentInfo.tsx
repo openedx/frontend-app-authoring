@@ -12,13 +12,15 @@ import {
 } from '@openedx/paragon/icons';
 
 import {
+  useComponentPickerContext,
+} from '../common/context/ComponentPickerContext';
+import {
   SidebarAdditionalActions,
   useLibraryContext,
   COMPONENT_INFO_TABS,
   ComponentInfoTab,
   isComponentInfoTab,
-  useComponentPickerContext,
-} from '../common/context';
+} from '../common/context/LibraryContext';
 import ComponentMenu from '../components';
 import { canEditComponent } from '../components/ComponentEditorModal';
 import ComponentDetails from './ComponentDetails';

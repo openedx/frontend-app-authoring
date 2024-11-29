@@ -2,7 +2,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 
-import { LibraryProvider } from '../common/context';
+import { LibraryProvider } from '../common/context/LibraryContext';
 import { getLibraryId } from '../../generic/key-utils';
 import CompareChangesWidget from '../component-comparison/CompareChangesWidget';
 import { useLibraryBlockMetadata } from '../data/apiHooks';

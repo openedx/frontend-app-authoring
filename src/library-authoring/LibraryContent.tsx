@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { LoadingSpinner } from '../generic/Loading';
 import { useSearchContext } from '../search-manager';
 import { NoComponents, NoSearchResults } from './EmptyStates';
-import { useLibraryContext } from './common/context';
+import { useLibraryContext } from './common/context/LibraryContext';
 import CollectionCard from './components/CollectionCard';
 import ComponentCard from './components/ComponentCard';
 import { useLoadOnScroll } from '../hooks';

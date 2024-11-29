@@ -7,7 +7,7 @@ import {
 } from '@openedx/paragon';
 import { Warning } from '@openedx/paragon/icons';
 
-import { useLibraryContext } from '../common/context';
+import { useLibraryContext } from '../common/context/LibraryContext';
 import { useDeleteLibraryBlock, useLibraryBlockMetadata } from '../data/apiHooks';
 import messages from './messages';
 
