@@ -1,5 +1,6 @@
 import { camelCaseObject, getConfig, snakeCaseObject } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import { VersionSpec } from '../LibraryBlock';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
@@ -418,7 +419,7 @@ export async function createCollection(libraryId: string, collectionData: Create
  * Fetch the OLX for the given XBlock.
  */
 // istanbul ignore next
-export async function getXBlockOLX(usageKey: string, version?: string): Promise<string> {
+export async function getXBlockOLX(usageKey: string, version?: VersionSpec): Promise<string> {
   const { data } = await getAuthenticatedHttpClient().get(getXBlockOLXApiUrl(usageKey), { params: { version } });
   return data.olx;
 }

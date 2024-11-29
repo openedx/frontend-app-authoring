@@ -133,7 +133,7 @@ describe('<ComponentAdvancedInfo />', () => {
     render(mockXBlockOLX.usageKeyHtml);
     const expandButton = await screen.findByRole('button', { name: /Advanced details/ });
     fireEvent.click(expandButton);
-    // Because of syntax highlighting, the OLX will be borken up by many different tags so we need to search for
+    // Because of syntax highlighting, the OLX will be broken up by many different tags so we need to search for
     // just a substring:
     const olxPart = /This is a text component which uses/;
     await waitFor(() => expect(screen.getByText(olxPart)).toBeInTheDocument());
@@ -147,7 +147,7 @@ describe('<ComponentAdvancedInfo />', () => {
     render(usageKey, undefined, true);
     const expandButton = await screen.findByRole('button', { name: /Advanced details/ });
     fireEvent.click(expandButton);
-    // Because of syntax highlighting, the OLX will be borken up by many different tags so we need to search for
+    // Because of syntax highlighting, the OLX will be broken up by many different tags so we need to search for
     // just a substring:
     const olxPart = /This is a text component which uses/;
     await waitFor(() => expect(screen.getByText(olxPart)).toBeInTheDocument());

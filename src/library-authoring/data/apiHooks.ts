@@ -45,6 +45,7 @@ import {
   publishXBlock,
   deleteXBlockAsset,
 } from './api';
+import { VersionSpec } from '../LibraryBlock';
 
 export const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
   // Invalidate all content queries related to this library.
@@ -350,7 +351,7 @@ export const useCreateLibraryCollection = (libraryId: string) => {
 };
 
 /** Get the OLX source of a library component */
-export const useXBlockOLX = (usageKey: string, version?: string) => (
+export const useXBlockOLX = (usageKey: string, version?: VersionSpec) => (
   useQuery({
     queryKey: xblockQueryKeys.xblockOLX(usageKey),
     queryFn: () => getXBlockOLX(usageKey, version),
