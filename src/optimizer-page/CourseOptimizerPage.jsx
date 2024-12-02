@@ -88,6 +88,8 @@ const CourseOptimizerPage = ({ intl, courseId }) => {
     );
   }
 
+  console.log('courseOptimizerPage: linkCheckResult: ', linkCheckResult);
+
   return (
     <>
       <Helmet>
@@ -145,7 +147,7 @@ const CourseOptimizerPage = ({ intl, courseId }) => {
                   </Card.Section>
                   )}
                 </Card>
-                <ScanResults data={linkCheckResult} />
+                {linkCheckPresent && <ScanResults data={linkCheckResult} />}
               </article>
             </Layout.Element>
           </Layout>

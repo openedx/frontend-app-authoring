@@ -1,7 +1,7 @@
 import {
   Container, Layout, Button, Card, Collapsible, Icon, Table,
 } from '@openedx/paragon';
-import { ArrowRight, ArrowDropDown } from '@openedx/paragon/icons';
+import { ArrowRight, ArrowDropDown, OpenInNew } from '@openedx/paragon/icons';
 import { useState, useCallback } from 'react';
 
 const SectionCollapsible = ({ title, children, redItalics }) => {
@@ -30,12 +30,23 @@ const SectionCollapsible = ({ title, children, redItalics }) => {
 };
 
 const ScanResults = ({ data }) => {
-  if (!data || !data.sections) {
+  if (!data) {
     return (
       <Card className="mt-4">
         <h1>Scan Results</h1>
         <Container>
           <p>No data available</p>
+        </Container>
+      </Card>
+    );
+  }
+
+  if (!data.sections) {
+    return (
+      <Card className="mt-4">
+        <h1>Scan Results</h1>
+        <Container>
+          <div><pre>{JSON.stringify(data, null, 2) }</pre></div>
         </Container>
       </Card>
     );
@@ -62,6 +73,9 @@ const ScanResults = ({ data }) => {
 
   const brokenLinkCounts = countBrokenLinksPerSection();
 
+  const blockLink = <span style={{ display: 'flex', gap: '.5rem' }}><Icon src={OpenInNew} /><a href="https://example.com" target="_blank" rel="noreferrer">Go to Block</a></span>;
+  const brokenLink = <a href="https://broken.example.com" target="_blank" className="broken-link" rel="noreferrer">https://broken.example.com</a>;
+
   return (
     <div className="scan-results">
       <div className="border-bottom border-light-400 mb-3">
@@ -79,16 +93,16 @@ const ScanResults = ({ data }) => {
           <div className="unit">
             <h3 className="unit-header">Unit 1</h3>
             <div className="block">
-              <p className="block-header">Block with broken Links</p>
+              <p className="block-header">Broken links found in Block &quot;My_Block_Name&quot;:</p>
               <Table
                 data={[
                   {
-                    blockLink: 'Go to Block',
-                    brokenLink: 'https://broken.example.com',
+                    blockLink,
+                    brokenLink,
                   },
                   {
-                    blockLink: 'Go to Block',
-                    brokenLink: 'https://broken.example.com',
+                    blockLink,
+                    brokenLink,
                   },
 
                 ]}
@@ -112,20 +126,19 @@ const ScanResults = ({ data }) => {
               />
             </div>
           </div>
-          <h2 className="subsection-header">Subsection B</h2>
           <div className="unit">
-            <h3 className="unit-header">Unit 1</h3>
+            <h3 className="unit-header">Unit 2</h3>
             <div className="block">
-              <p className="block-header">Block with broken Links</p>
+              <p className="block-header">Broken links found in Block &quot;My_Block_Name&quot;:</p>
               <Table
                 data={[
                   {
-                    blockLink: 'Go to Block',
-                    brokenLink: 'https://broken.example.com',
+                    blockLink,
+                    brokenLink,
                   },
                   {
-                    blockLink: 'Go to Block',
-                    brokenLink: 'https://broken.example.com',
+                    blockLink,
+                    brokenLink,
                   },
 
                 ]}
@@ -149,30 +162,77 @@ const ScanResults = ({ data }) => {
               />
             </div>
           </div>
-          {/* {section.subsections.map((subsection) => (
-            <p key={subsection.id}>
-              <h3>{subsection.displayName}</h3>
-              {subsection.units.map((unit) => (
-                <p key={unit.id}>
-                  <h4>{unit.displayName}</h4>
-                  {unit.blocks.map((block) => (
-                    <p key={block.id}>
-                      <p>
-                        <strong>URL:</strong>
-                        {' '}
-                        {block.url}
-                      </p>
-                      <p>
-                        <strong>Broken Links:</strong>
-                        {' '}
-                        {block.brokenLinks.join(', ')}
-                      </p>
-                    </p>
-                  ))}
-                </p>
-              ))}
-            </p>
-          ))} */}
+          <h2 className="subsection-header" style={{ marginBottom: '2rem' }}>Subsection B</h2>
+          <div className="unit">
+            <div className="block">
+              <p className="block-header">Unit 1</p>
+              <Table
+                data={[
+                  {
+                    blockLink,
+                    brokenLink,
+                  },
+                  {
+                    blockLink,
+                    brokenLink,
+                  },
+
+                ]}
+                columns={[
+                  {
+                    key: 'blockLink',
+                    columnSortable: true,
+                    onSort: () => {},
+                    width: 'col-3',
+                    hideHeader: true,
+                  },
+                  {
+                    key: 'brokenLink',
+                    columnSortable: false,
+                    onSort: () => {},
+                    width: 'col-6',
+                    hideHeader: true,
+                  },
+                ]}
+                // className="table-striped"
+              />
+            </div>
+          </div>
+          <div className="unit">
+            <div className="block">
+              <p className="block-header">Unit 2</p>
+              <Table
+                data={[
+                  {
+                    blockLink,
+                    brokenLink,
+                  },
+                  {
+                    blockLink,
+                    brokenLink,
+                  },
+
+                ]}
+                columns={[
+                  {
+                    key: 'blockLink',
+                    columnSortable: true,
+                    onSort: () => {},
+                    width: 'col-3',
+                    hideHeader: true,
+                  },
+                  {
+                    key: 'brokenLink',
+                    columnSortable: false,
+                    onSort: () => {},
+                    width: 'col-6',
+                    hideHeader: true,
+                  },
+                ]}
+                // className="table-striped"
+              />
+            </div>
+          </div>
         </SectionCollapsible>
       ))}
     </div>

@@ -61,4 +61,9 @@
   .block {
     padding: 0 3rem;
   }
+
+  .broken-link {
+    color: $brand-500;
+    text-decoration: none;
+  }
 }
