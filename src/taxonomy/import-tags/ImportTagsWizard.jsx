@@ -566,4 +566,4 @@ ImportTagsWizard.propTypes = {
   reimport: PropTypes.bool,
 };
 
-export default ImportTagsWizard;
+export { ImportTagsWizard };

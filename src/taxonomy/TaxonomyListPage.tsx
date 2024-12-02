@@ -1,6 +1,4 @@
-// @ts-check
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import {
   Button,
   CardView,
@@ -31,7 +29,7 @@ import { ImportTagsWizard } from './import-tags';
 import messages from './messages';
 import TaxonomyCard from './taxonomy-card';
 
-const TaxonomyListHeaderButtons = ({ canAddTaxonomy }) => {
+const TaxonomyListHeaderButtons = (props: { canAddTaxonomy: boolean }) => {
   const intl = useIntl();
 
   const [isImportModalOpen, importModalOpen, importModalClose] = useToggle(false);
@@ -80,7 +78,7 @@ const TaxonomyListHeaderButtons = ({ canAddTaxonomy }) => {
         iconBefore={Add}
         onClick={importModalOpen}
         data-testid="taxonomy-import-button"
-        disabled={!canAddTaxonomy}
+        disabled={!props.canAddTaxonomy}
       >
         {intl.formatMessage(messages.importButtonLabel)}
       </Button>
@@ -93,6 +91,11 @@ const OrganizationFilterSelector = ({
   organizationListData,
   selectedOrgFilter,
   setSelectedOrgFilter,
+}: {
+  isOrganizationListLoaded: boolean;
+  organizationListData?: string[];
+  selectedOrgFilter: string;
+  setSelectedOrgFilter: (org: string) => void,
 }) => {
   const intl = useIntl();
   const isOrgSelected = (value) => (value === selectedOrgFilter ? <Check /> : null);
@@ -152,9 +155,9 @@ const OrganizationFilterSelector = ({
   );
 };
 
-const TaxonomyListPage = () => {
+export const TaxonomyListPage = () => {
   const intl = useIntl();
-  const [selectedOrgFilter, setSelectedOrgFilter] = useState(ALL_TAXONOMIES);
+  const [selectedOrgFilter, setSelectedOrgFilter] = useState<string>(ALL_TAXONOMIES);
 
   const {
     data: organizationListData,
@@ -242,22 +245,3 @@ const TaxonomyListPage = () => {
     </>
   );
 };
-
-TaxonomyListHeaderButtons.propTypes = {
-  canAddTaxonomy: PropTypes.bool.isRequired,
-};
-
-OrganizationFilterSelector.propTypes = {
-  isOrganizationListLoaded: PropTypes.bool.isRequired,
-  organizationListData: PropTypes.arrayOf(PropTypes.string),
-  selectedOrgFilter: PropTypes.string.isRequired,
-  setSelectedOrgFilter: PropTypes.func.isRequired,
-};
-
-OrganizationFilterSelector.defaultProps = {
-  organizationListData: null,
-};
-
-TaxonomyListPage.propTypes = {};
-
-export default TaxonomyListPage;
