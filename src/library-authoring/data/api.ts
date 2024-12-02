@@ -59,7 +59,7 @@ export const getXBlockFieldsVersionApiUrl = (usageKey: string, version: VersionS
   * Get the URL for the xblock OLX API
   */
 export const getXBlockOLXApiUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}olx/`;
-export const getXBlockOLXVersionApiUrl = (usageKey: string, version: VersionSpec) => `${getXBlockFieldsVersionApiUrl(usageKey, version)}olx/`;
+export const getXBlockOLXVersionApiUrl = (usageKey: string, version: VersionSpec) => `${getApiBaseUrl()}/api/xblock/v2/xblocks/${usageKey}@${version}/olx/`;
 
 /**
  * Get the URL for the xblock Publish API
