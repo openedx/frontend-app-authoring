@@ -61,11 +61,32 @@ export enum SidebarBodyComponentId {
   CollectionInfo = 'collection-info',
 }
 
+export const COLLECTION_INFO_TABS = {
+  Manage: 'manage',
+  Details: 'details',
+} as const;
+export type CollectionInfoTab = typeof COLLECTION_INFO_TABS[keyof typeof COLLECTION_INFO_TABS];
+export const isCollectionInfoTab = (tab: string): tab is CollectionInfoTab => (
+  Object.values<string>(COLLECTION_INFO_TABS).includes(tab)
+);
+
+export const COMPONENT_INFO_TABS = {
+  Preview: 'preview',
+  Manage: 'manage',
+  Details: 'details',
+} as const;
+export type ComponentInfoTab = typeof COMPONENT_INFO_TABS[keyof typeof COMPONENT_INFO_TABS];
+export const isComponentInfoTab = (tab: string): tab is ComponentInfoTab => (
+  Object.values<string>(COMPONENT_INFO_TABS).includes(tab)
+);
+
 export interface SidebarComponentInfo {
   type: SidebarBodyComponentId;
   id: string;
   /** Additional action on Sidebar display */
   additionalAction?: SidebarAdditionalActions;
+  /** Current tab in the sidebar */
+  currentTab?: CollectionInfoTab | ComponentInfoTab;
 }
 
 export interface ComponentEditorInfo {
@@ -110,6 +131,7 @@ export type LibraryContextData = {
   openComponentEditor: (usageKey: string, onClose?: () => void) => void;
   closeComponentEditor: () => void;
   resetSidebarAdditionalActions: () => void;
+  setSidebarCurrentTab: (tab: CollectionInfoTab | ComponentInfoTab) => void;
 } & ComponentPickerType;
 
 /**
@@ -209,22 +231,26 @@ export const LibraryProvider = ({
   const openInfoSidebar = useCallback(() => {
     setSidebarComponentInfo({ id: '', type: SidebarBodyComponentId.Info });
   }, []);
+
   const openComponentInfoSidebar = useCallback((usageKey: string, additionalAction?: SidebarAdditionalActions) => {
-    setSidebarComponentInfo({
+    setSidebarComponentInfo((prev) => ({
+      ...prev,
       id: usageKey,
       type: SidebarBodyComponentId.ComponentInfo,
       additionalAction,
-    });
+    }));
   }, []);
+
   const openCollectionInfoSidebar = useCallback((
     newCollectionId: string,
     additionalAction?: SidebarAdditionalActions,
   ) => {
-    setSidebarComponentInfo({
+    setSidebarComponentInfo((prev) => ({
+      ...prev,
       id: newCollectionId,
       type: SidebarBodyComponentId.CollectionInfo,
       additionalAction,
-    });
+    }));
   }, []);
 
   const addComponentToSelectedComponents = useCallback<ComponentSelectedEvent>((
@@ -257,6 +283,10 @@ export const LibraryProvider = ({
     });
   }, []);
 
+  const setSidebarCurrentTab = useCallback((tab: CollectionInfoTab | ComponentInfoTab) => {
+    setSidebarComponentInfo((prev) => (prev && { ...prev, currentTab: tab }));
+  }, []);
+
   const { data: libraryData, isLoading: isLoadingLibraryData } = useContentLibrary(libraryId);
 
   const readOnly = !!componentPickerMode || !libraryData?.canEditLibrary;
@@ -286,6 +316,7 @@ export const LibraryProvider = ({
       openComponentEditor,
       closeComponentEditor,
       resetSidebarAdditionalActions,
+      setSidebarCurrentTab,
     };
     if (!componentPickerMode) {
       return {

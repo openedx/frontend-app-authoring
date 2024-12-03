@@ -8,7 +8,13 @@ import {
 import { useCallback } from 'react';
 import { useNavigate, useMatch } from 'react-router-dom';
 
-import { useLibraryContext } from '../common/context';
+import {
+  useLibraryContext,
+  type CollectionInfoTab,
+  COLLECTION_INFO_TABS,
+  isCollectionInfoTab,
+  COMPONENT_INFO_TABS,
+} from '../common/context';
 import CollectionDetails from './CollectionDetails';
 import messages from './messages';
 import { ContentTagsDrawer } from '../../content-tags-drawer';
@@ -24,7 +30,12 @@ const CollectionInfo = () => {
     setCollectionId,
     sidebarComponentInfo,
     componentPickerMode,
+    setSidebarCurrentTab,
   } = useLibraryContext();
+
+  const tab: CollectionInfoTab = (
+    sidebarComponentInfo?.currentTab && isCollectionInfoTab(sidebarComponentInfo.currentTab)
+  ) ? sidebarComponentInfo?.currentTab : COLLECTION_INFO_TABS.Manage;
 
   const sidebarCollectionId = sidebarComponentInfo?.id;
   // istanbul ignore if: this should never happen
@@ -63,15 +74,17 @@ const CollectionInfo = () => {
       <Tabs
         variant="tabs"
         className="my-3 d-flex justify-content-around"
-        defaultActiveKey="manage"
+        defaultActiveKey={COMPONENT_INFO_TABS.Manage}
+        activeKey={tab}
+        onSelect={setSidebarCurrentTab}
       >
-        <Tab eventKey="manage" title={intl.formatMessage(messages.manageTabTitle)}>
+        <Tab eventKey={COMPONENT_INFO_TABS.Manage} title={intl.formatMessage(messages.manageTabTitle)}>
           <ContentTagsDrawer
             id={collectionUsageKey}
             variant="component"
           />
         </Tab>
-        <Tab eventKey="details" title={intl.formatMessage(messages.detailsTabTitle)}>
+        <Tab eventKey={COMPONENT_INFO_TABS.Details} title={intl.formatMessage(messages.detailsTabTitle)}>
           <CollectionDetails />
         </Tab>
       </Tabs>
