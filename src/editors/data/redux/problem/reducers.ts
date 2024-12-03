@@ -4,9 +4,11 @@ import { indexToLetterMap } from '../../../containers/ProblemEditor/data/OLXPars
 import { StrictDict } from '../../../utils';
 import { ProblemTypeKeys, RichTextProblems } from '../../constants/problem';
 import { ToleranceTypes } from '../../../containers/ProblemEditor/components/EditProblemView/SettingsWidget/settingsComponents/Tolerance/constants';
+import type { EditorState } from '..';
 
-const nextAlphaId = (lastId) => String.fromCharCode(lastId.charCodeAt(0) + 1);
-const initialState = {
+const nextAlphaId = (lastId: string) => String.fromCharCode(lastId.charCodeAt(0) + 1);
+
+const initialState: EditorState['problem'] = {
   rawOLX: '',
   problemType: null,
   question: '',
@@ -41,7 +43,6 @@ const initialState = {
   },
 };
 
-// eslint-disable-next-line no-unused-vars
 const problem = createSlice({
   name: 'problem',
   initialState,
@@ -84,7 +85,7 @@ const problem = createSlice({
     },
     deleteAnswer: (state, { payload }) => {
       const { id, correct, editorState } = payload;
-      const EditorsArray = window.tinymce.editors;
+      const EditorsArray = (window as any).tinymce.editors;
       if (state.answers.length === 1) {
         return {
           ...state,
@@ -111,7 +112,7 @@ const problem = createSlice({
           selectedFeedback: editorState.selectedFeedback ? editorState.selectedFeedback[answer.id] : '',
           unselectedFeedback: editorState.unselectedFeedback ? editorState.unselectedFeedback[answer.id] : '',
         };
-        if (RichTextProblems.includes(state.problemType)) {
+        if (RichTextProblems.includes(state.problemType as any)) {
           newAnswer = {
             ...newAnswer,
             title: editorState.answers[answer.id],
@@ -222,7 +223,7 @@ const problem = createSlice({
           ...state.settings,
           scoring: { ...state.settings.scoring, attempts },
           showAnswer: { ...state.settings.showAnswer, on: showanswer },
-          ...showResetButton,
+          showResetButton,
         },
         problemType: null,
       };
