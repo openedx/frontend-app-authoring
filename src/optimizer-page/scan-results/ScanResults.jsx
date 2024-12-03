@@ -89,80 +89,7 @@ const ScanResults = ({ data }) => {
           title={section.displayName}
           redItalics={`${brokenLinkCounts[index]} broken links`}
         >
-          <h2 className="subsection-header">Subsection A</h2>
-          <div className="unit">
-            <h3 className="unit-header">Unit 1</h3>
-            <div className="block">
-              <p className="block-header">Broken links found in Block &quot;My_Block_Name&quot;:</p>
-              <Table
-                data={[
-                  {
-                    blockLink,
-                    brokenLink,
-                  },
-                  {
-                    blockLink,
-                    brokenLink,
-                  },
-
-                ]}
-                columns={[
-                  {
-                    key: 'blockLink',
-                    columnSortable: true,
-                    onSort: () => {},
-                    width: 'col-3',
-                    hideHeader: true,
-                  },
-                  {
-                    key: 'brokenLink',
-                    columnSortable: false,
-                    onSort: () => {},
-                    width: 'col-6',
-                    hideHeader: true,
-                  },
-                ]}
-                // className="table-striped"
-              />
-            </div>
-          </div>
-          <div className="unit">
-            <h3 className="unit-header">Unit 2</h3>
-            <div className="block">
-              <p className="block-header">Broken links found in Block &quot;My_Block_Name&quot;:</p>
-              <Table
-                data={[
-                  {
-                    blockLink,
-                    brokenLink,
-                  },
-                  {
-                    blockLink,
-                    brokenLink,
-                  },
-
-                ]}
-                columns={[
-                  {
-                    key: 'blockLink',
-                    columnSortable: true,
-                    onSort: () => {},
-                    width: 'col-3',
-                    hideHeader: true,
-                  },
-                  {
-                    key: 'brokenLink',
-                    columnSortable: false,
-                    onSort: () => {},
-                    width: 'col-6',
-                    hideHeader: true,
-                  },
-                ]}
-                // className="table-striped"
-              />
-            </div>
-          </div>
-          <h2 className="subsection-header" style={{ marginBottom: '2rem' }}>Subsection B</h2>
+          <h2 className="subsection-header" style={{ marginBottom: '2rem' }}>Subsection A</h2>
           <div className="unit">
             <div className="block">
               <p className="block-header">Unit 1</p>
@@ -229,7 +156,6 @@ const ScanResults = ({ data }) => {
                     hideHeader: true,
                   },
                 ]}
-                // className="table-striped"
               />
             </div>
           </div>
