@@ -57,11 +57,15 @@ export const messageTypes = {
   showXBlockLibraryChangesPreview: 'showXBlockLibraryChangesPreview',
   copyXBlock: 'copyXBlock',
   manageXBlockAccess: 'manageXBlockAccess',
+  completeManageXBlockAccess: 'completeManageXBlockAccess',
   deleteXBlock: 'deleteXBlock',
+  completeXBlockDeleting: 'completeXBlockDeleting',
   duplicateXBlock: 'duplicateXBlock',
-  refreshXBlockPositions: 'refreshPositions',
+  completeXBlockDuplicating: 'completeXBlockDuplicating',
   newXBlockEditor: 'newXBlockEditor',
   toggleCourseXBlockDropdown: 'toggleCourseXBlockDropdown',
+  addXBlock: 'addXBlock',
+  scrollToXBlock: 'scrollToXBlock',
 };
 
 export const COMPONENT_TYPES = {

@@ -4,7 +4,7 @@ export type UseMessageHandlersTypes = {
   dispatch: (action: any) => void;
   setIframeOffset: (height: number) => void;
   handleDeleteXBlock: (usageId: string) => void;
-  handleRefetchXBlocks: () => void;
+  handleScrollToXBlock: (scrollOffset: number) => void;
   handleDuplicateXBlock: (blockType: string, usageId: string) => void;
   handleManageXBlockAccess: (usageId: string) => void;
 };

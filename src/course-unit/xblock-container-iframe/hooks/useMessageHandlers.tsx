@@ -16,8 +16,8 @@ export const useMessageHandlers = ({
   dispatch,
   setIframeOffset,
   handleDeleteXBlock,
-  handleRefetchXBlocks,
   handleDuplicateXBlock,
+  handleScrollToXBlock,
   handleManageXBlockAccess,
 }: UseMessageHandlersTypes): MessageHandlersTypes => useMemo(() => ({
   [messageTypes.copyXBlock]: ({ usageId }) => dispatch(copyToClipboard(usageId)),
@@ -25,14 +25,14 @@ export const useMessageHandlers = ({
   [messageTypes.newXBlockEditor]: ({ blockType, usageId }) => navigate(`/course/${courseId}/editor/${blockType}/${usageId}`),
   [messageTypes.duplicateXBlock]: ({ blockType, usageId }) => handleDuplicateXBlock(blockType, usageId),
   [messageTypes.manageXBlockAccess]: ({ usageId }) => handleManageXBlockAccess(usageId),
-  [messageTypes.refreshXBlockPositions]: handleRefetchXBlocks,
+  [messageTypes.scrollToXBlock]: ({ scrollOffset }) => handleScrollToXBlock(scrollOffset),
   [messageTypes.toggleCourseXBlockDropdown]: ({
     courseXBlockDropdownHeight,
   }: { courseXBlockDropdownHeight: number }) => setIframeOffset(courseXBlockDropdownHeight),
 }), [
   courseId,
   handleDeleteXBlock,
-  handleRefetchXBlocks,
   handleDuplicateXBlock,
   handleManageXBlockAccess,
+  handleScrollToXBlock,
 ]);

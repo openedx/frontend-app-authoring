@@ -35,12 +35,14 @@ const PublishControls = ({ blockId }) => {
 
   const handleCourseUnitDiscardChanges = () => {
     closeDiscardModal();
-    dispatch(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.discardChanges));
-    // TODO: this artificial delay is a temporary solution
-    // to ensure the iframe content is properly refreshed.
-    setTimeout(() => {
-      sendMessageToIframe(messageTypes.refreshXBlock, null);
-    }, 1000);
+    dispatch(editCourseUnitVisibilityAndData(
+      blockId,
+      PUBLISH_TYPES.discardChanges,
+      null,
+      null,
+      null,
+      () => sendMessageToIframe(messageTypes.refreshXBlock, null),
+    ));
   };
 
   const handleCourseUnitPublish = () => {
