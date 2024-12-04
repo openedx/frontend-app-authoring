@@ -9,6 +9,7 @@ import messages from './messages';
 interface LibraryTeamModalProps {
   onClose: () => void;
 }
+
 export const LibraryTeamModal: React.FC<LibraryTeamModalProps> = ({
   onClose,
 }) => {

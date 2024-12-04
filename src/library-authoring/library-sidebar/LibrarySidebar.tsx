@@ -25,10 +25,7 @@ import messages from '../messages';
  */
 const LibrarySidebar = () => {
   const intl = useIntl();
-  const {
-    sidebarComponentInfo,
-    closeLibrarySidebar,
-  } = useSidebarContext();
+  const { sidebarComponentInfo, closeLibrarySidebar } = useSidebarContext();
 
   const bodyComponentMap = {
     [SidebarBodyComponentId.AddContent]: <AddContentContainer />,

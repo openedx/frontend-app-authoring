@@ -18,7 +18,7 @@ import {
   COMPONENT_INFO_TABS,
   SidebarAdditionalActions,
   isComponentInfoTab,
-  useSidebarContext
+  useSidebarContext,
 } from '../common/context/SidebarContext';
 import ComponentMenu from '../components';
 import { canEditComponent } from '../components/ComponentEditorModal';

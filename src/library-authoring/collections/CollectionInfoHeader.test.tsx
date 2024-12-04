@@ -29,9 +29,7 @@ const { collectionId } = mockGetCollectionMetadata;
 
 const render = (libraryId: string = mockLibraryId) => baseRender(<CollectionInfoHeader />, {
   extraWrapper: ({ children }) => (
-    <LibraryProvider
-      libraryId={libraryId}
-    >
+    <LibraryProvider libraryId={libraryId}>
       <SidebarProvider
         initialSidebarComponentInfo={{
           id: collectionId,

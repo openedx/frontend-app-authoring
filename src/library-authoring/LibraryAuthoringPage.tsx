@@ -46,9 +46,7 @@ import messages from './messages';
 const HeaderActions = () => {
   const intl = useIntl();
 
-  const {
-    readOnly,
-  } = useLibraryContext();
+  const { readOnly } = useLibraryContext();
 
   const {
     openAddContentSidebar,
@@ -136,22 +134,14 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     librariesV2Enabled,
   } = useStudioHome();
 
+  const { componentPickerMode, restrictToLibrary } = useComponentPickerContext();
   const {
     libraryId,
     libraryData,
     isLoadingLibraryData,
     showOnlyPublished,
   } = useLibraryContext();
-
-  const {
-    openInfoSidebar,
-    sidebarComponentInfo,
-  } = useSidebarContext();
-
-  const {
-    componentPickerMode,
-    restrictToLibrary,
-  } = useComponentPickerContext();
+  const { openInfoSidebar, sidebarComponentInfo } = useSidebarContext();
 
   const [activeKey, setActiveKey] = useState<ContentType | undefined>(ContentType.home);
 

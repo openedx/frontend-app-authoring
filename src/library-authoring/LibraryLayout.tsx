@@ -32,10 +32,10 @@ const LibraryLayout = () => {
       key={collectionId}
       libraryId={libraryId}
       collectionId={collectionId}
-        /** The component picker modal to use. We need to pass it as a reference instead of
-         * directly importing it to avoid the import cycle:
-         * ComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
-         * Sidebar > AddContentContainer > ComponentPicker */
+      /** The component picker modal to use. We need to pass it as a reference instead of
+       * directly importing it to avoid the import cycle:
+       * ComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
+       * Sidebar > AddContentContainer > ComponentPicker */
       componentPicker={ComponentPicker}
     >
       <SidebarProvider>
