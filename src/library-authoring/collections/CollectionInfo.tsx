@@ -40,7 +40,7 @@ const CollectionInfo = () => {
     throw new Error('sidebarCollectionId is required');
   }
 
-  const url = `/library/${libraryId}/collection/${sidebarCollectionId}/`;
+  const url = `/library/${libraryId}/collection/${sidebarCollectionId}`;
   const urlMatch = useMatch(url);
 
   const showOpenCollectionButton = !urlMatch && collectionId !== sidebarCollectionId;

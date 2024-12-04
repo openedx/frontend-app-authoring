@@ -78,7 +78,7 @@ const CollectionMenu = ({ collectionHit } : CollectionMenuProps) => {
         <Dropdown.Menu>
           <Dropdown.Item
             as={Link}
-            to={`/library/${collectionHit.contextKey}/collection/${collectionHit.blockId}/`}
+            to={`/library/${collectionHit.contextKey}/collection/${collectionHit.blockId}`}
           >
             <FormattedMessage {...messages.menuOpen} />
           </Dropdown.Item>

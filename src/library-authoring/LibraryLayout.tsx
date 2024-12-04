@@ -28,7 +28,9 @@ const LibraryLayout = () => {
 
   return (
     <LibraryProvider
-      key={collectionId} // TODO: Check why this is needed
+      /** We need to pass the collectionId as key to the LibraryProvider to force a re-render
+      * when we navigate to a collection page. */
+      key={collectionId}
       libraryId={libraryId}
       collectionId={collectionId}
         /** The component picker modal to use. We need to pass it as a reference instead of
