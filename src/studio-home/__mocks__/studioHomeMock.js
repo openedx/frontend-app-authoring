@@ -67,6 +67,7 @@ module.exports = {
   requestCourseCreatorUrl: '/request_course_creator',
   rerunCreatorStatus: true,
   showNewLibraryButton: true,
+  showNewLibraryV2Button: true,
   splitStudioHome: false,
   studioName: 'Studio',
   studioShortName: 'Studio',
