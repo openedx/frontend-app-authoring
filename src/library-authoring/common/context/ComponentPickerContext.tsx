@@ -133,6 +133,7 @@ export const ComponentPickerProvider = ({
           removeComponentFromSelectedComponents,
         };
       default:
+        // istanbul ignore next: this should never happen
         throw new Error('Invalid component picker mode');
     }
   }, [
