@@ -63,20 +63,3 @@ export const messageTypes = {
   newXBlockEditor: 'newXBlockEditor',
   toggleCourseXBlockDropdown: 'toggleCourseXBlockDropdown',
 };
-
-export const COMPONENT_TYPES = {
-  advanced: 'advanced',
-  discussion: 'discussion',
-  library: 'library',
-  html: 'html',
-  openassessment: 'openassessment',
-  problem: 'problem',
-  video: 'video',
-  dragAndDrop: 'drag-and-drop-v2',
-};
-
-export const COMPONENT_TYPES_WITH_NEW_EDITOR = {
-  html: 'html',
-  problem: 'problem',
-  video: 'video',
-};

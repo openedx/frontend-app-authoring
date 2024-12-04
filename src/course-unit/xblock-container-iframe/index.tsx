@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import ConfigureModal from '../../generic/configure-modal/ConfigureModal';
 import { IFRAME_FEATURE_POLICY } from '../../constants';
-import { COMPONENT_TYPES_WITH_NEW_EDITOR } from '../constants';
+import supportedEditors from '../../editors/supportedEditors';
 import { fetchCourseUnitQuery } from '../data/thunk';
 import { useIframe } from '../context/hooks';
 import {
@@ -54,7 +54,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const handleDuplicateXBlock = useCallback(
     (blockType: string, usageId: string) => {
       unitXBlockActions.handleDuplicate(usageId);
-      if (COMPONENT_TYPES_WITH_NEW_EDITOR[blockType]) {
+      if (supportedEditors[blockType]) {
         navigate(`/course/${courseId}/editor/${blockType}/${usageId}`);
       }
       refreshIframeContent();
