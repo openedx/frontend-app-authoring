@@ -65,8 +65,13 @@ const LibraryTeam: React.FC<Record<never, never>> = () => {
         accessLevel: LibraryRole.Reader.toString() as LibraryAccessLevel,
       }).then(() => {
         showToast(intl.formatMessage(messages.addMemberSuccess));
-      }).catch(() => {
-        showToast(intl.formatMessage(messages.addMemberError));
+      }).catch((addMemberError) => {
+        const errorData = addMemberError.response.data;
+        if ('email' in errorData) {
+          showToast(intl.formatMessage(messages.addMemberEmailError));
+        } else {
+          showToast(intl.formatMessage(messages.addMemberError));
+        }
       });
       closeAddLibraryTeamMember();
     },
