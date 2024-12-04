@@ -2,12 +2,12 @@ import { Stack } from '@openedx/paragon';
 import { NoComponents, NoSearchResults } from '../EmptyStates';
 import { useSearchContext } from '../../search-manager';
 import messages from './messages';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useSidebarContext } from '../common/context/SidebarContext';
 import LibraryContent, { ContentType } from '../LibraryContent';
 
 const LibraryCollectionComponents = () => {
   const { totalHits: componentCount, isFiltered } = useSearchContext();
-  const { openAddContentSidebar } = useLibraryContext();
+  const { openAddContentSidebar } = useSidebarContext();
 
   if (componentCount === 0) {
     return isFiltered

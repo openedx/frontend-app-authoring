@@ -7,31 +7,28 @@ import {
 } from '@openedx/paragon';
 import { useCallback } from 'react';
 import { useNavigate, useMatch } from 'react-router-dom';
+
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
+import { useLibraryContext } from '../common/context/LibraryContext';
 import {
-  useLibraryContext,
   type CollectionInfoTab,
   COLLECTION_INFO_TABS,
-  isCollectionInfoTab,
   COMPONENT_INFO_TABS,
-} from '../common/context/LibraryContext';
-import CollectionDetails from './CollectionDetails';
-import messages from './messages';
+  isCollectionInfoTab,
+  useSidebarContext,
+} from '../common/context/SidebarContext';
 import { ContentTagsDrawer } from '../../content-tags-drawer';
 import { buildCollectionUsageKey } from '../../generic/key-utils';
+import CollectionDetails from './CollectionDetails';
+import messages from './messages';
 
 const CollectionInfo = () => {
   const intl = useIntl();
   const navigate = useNavigate();
 
-  const {
-    libraryId,
-    collectionId,
-    setCollectionId,
-    sidebarComponentInfo,
-    setSidebarCurrentTab,
-  } = useLibraryContext();
   const { componentPickerMode } = useComponentPickerContext();
+  const { libraryId, collectionId, setCollectionId } = useLibraryContext();
+  const { sidebarComponentInfo, setSidebarCurrentTab } = useSidebarContext();
 
   const tab: CollectionInfoTab = (
     sidebarComponentInfo?.currentTab && isCollectionInfoTab(sidebarComponentInfo.currentTab)

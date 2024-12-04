@@ -7,6 +7,7 @@ import {
 
 import LibraryAuthoringPage from './LibraryAuthoringPage';
 import { LibraryProvider } from './common/context/LibraryContext';
+import { SidebarProvider } from './common/context/SidebarContext';
 import { CreateCollectionModal } from './create-collection';
 import { LibraryTeamModal } from './library-team';
 import LibraryCollectionPage from './collections/LibraryCollectionPage';
@@ -27,28 +28,30 @@ const LibraryLayout = () => {
 
   return (
     <LibraryProvider
-      key={collectionId}
+      key={collectionId} // TODO: Check why this is needed
       libraryId={libraryId}
       collectionId={collectionId}
-      /** The component picker modal to use. We need to pass it as a reference instead of
-       * directly importing it to avoid the import cycle:
-       * ComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
-       * Sidebar > AddContentContainer > ComponentPicker */
+        /** The component picker modal to use. We need to pass it as a reference instead of
+         * directly importing it to avoid the import cycle:
+         * ComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
+         * Sidebar > AddContentContainer > ComponentPicker */
       componentPicker={ComponentPicker}
     >
-      <Routes>
-        <Route
-          path="collection/:collectionId"
-          element={<LibraryCollectionPage />}
-        />
-        <Route
-          path="*"
-          element={<LibraryAuthoringPage />}
-        />
-      </Routes>
-      <CreateCollectionModal />
-      <ComponentEditorModal />
-      <LibraryTeamModal />
+      <SidebarProvider>
+        <Routes>
+          <Route
+            path="collection/:collectionId"
+            element={<LibraryCollectionPage />}
+          />
+          <Route
+            path="*"
+            element={<LibraryAuthoringPage />}
+          />
+        </Routes>
+        <CreateCollectionModal />
+        <ComponentEditorModal />
+        <LibraryTeamModal />
+      </SidebarProvider>
     </LibraryProvider>
   );
 };

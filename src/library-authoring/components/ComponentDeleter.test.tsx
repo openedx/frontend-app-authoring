@@ -6,7 +6,7 @@ import {
   initializeMocks,
   waitFor,
 } from '../../testUtils';
-import { LibraryProvider } from '../common/context/LibraryContext';
+import { SidebarProvider } from '../common/context/SidebarContext';
 import { mockContentLibrary, mockDeleteLibraryBlock, mockLibraryBlockMetadata } from '../data/api.mocks';
 import ComponentDeleter from './ComponentDeleter';
 
@@ -17,9 +17,7 @@ const mockDelete = mockDeleteLibraryBlock.applyMock();
 const usageKey = mockLibraryBlockMetadata.usageKeyPublished;
 
 const renderArgs = {
-  extraWrapper: ({ children }: { children: React.ReactNode }) => (
-    <LibraryProvider libraryId={getLibraryId(usageKey)}>{children}</LibraryProvider>
-  ),
+  extraWrapper: SidebarProvider,
 };
 
 describe('<ComponentDeleter />', () => {

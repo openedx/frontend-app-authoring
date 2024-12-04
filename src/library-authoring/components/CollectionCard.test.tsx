@@ -5,6 +5,7 @@ import {
   initializeMocks, render as baseRender, screen, waitFor, waitForElementToBeRemoved, within,
 } from '../../testUtils';
 import { LibraryProvider } from '../common/context/LibraryContext';
+import { SidebarProvider } from '../common/context/SidebarContext';
 import { type CollectionHit } from '../../search-manager';
 import CollectionCard from './CollectionCard';
 import messages from './messages';
@@ -42,7 +43,9 @@ const render = (ui: React.ReactElement, showOnlyPublished: boolean = false) => b
       libraryId="lib:Axim:TEST"
       showOnlyPublished={showOnlyPublished}
     >
-      { children }
+      <SidebarProvider>
+        {children}
+      </SidebarProvider>
     </LibraryProvider>
   ),
 });

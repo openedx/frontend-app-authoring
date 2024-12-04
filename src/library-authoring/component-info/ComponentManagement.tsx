@@ -6,7 +6,8 @@ import {
   BookOpen, ExpandLess, ExpandMore, Tag,
 } from '@openedx/paragon/icons';
 
-import { SidebarAdditionalActions, useLibraryContext } from '../common/context/LibraryContext';
+import { useLibraryContext } from '../common/context/LibraryContext';
+import { SidebarAdditionalActions, useSidebarContext } from '../common/context/SidebarContext';
 import { useLibraryBlockMetadata } from '../data/apiHooks';
 import StatusWidget from '../generic/status-widget';
 import messages from './messages';
@@ -16,9 +17,8 @@ import ManageCollections from './ManageCollections';
 
 const ComponentManagement = () => {
   const intl = useIntl();
-  const {
-    sidebarComponentInfo, readOnly, resetSidebarAdditionalActions, isLoadingLibraryData,
-  } = useLibraryContext();
+  const { readOnly, isLoadingLibraryData } = useLibraryContext();
+  const { sidebarComponentInfo, resetSidebarAdditionalActions } = useSidebarContext();
   const jumpToCollections = sidebarComponentInfo?.additionalAction === SidebarAdditionalActions.JumpToAddCollections;
   const [tagsCollapseIsOpen, setTagsCollapseOpen] = React.useState(!jumpToCollections);
   const [collectionsCollapseIsOpen, setCollectionsCollapseOpen] = React.useState(true);

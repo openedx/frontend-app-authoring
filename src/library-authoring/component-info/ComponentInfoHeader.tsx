@@ -10,6 +10,7 @@ import { Edit } from '@openedx/paragon/icons';
 
 import { ToastContext } from '../../generic/toast-context';
 import { useLibraryContext } from '../common/context/LibraryContext';
+import { useSidebarContext } from '../common/context/SidebarContext';
 import { useUpdateXBlockFields, useXBlockFields } from '../data/apiHooks';
 import messages from './messages';
 
@@ -17,11 +18,8 @@ const ComponentInfoHeader = () => {
   const intl = useIntl();
   const [inputIsActive, setIsActive] = useState(false);
 
-  const {
-    sidebarComponentInfo,
-    readOnly,
-    showOnlyPublished,
-  } = useLibraryContext();
+  const { readOnly, showOnlyPublished } = useLibraryContext();
+  const { sidebarComponentInfo } = useSidebarContext();
 
   const usageKey = sidebarComponentInfo?.id;
   // istanbul ignore next

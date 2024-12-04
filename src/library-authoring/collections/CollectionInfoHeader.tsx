@@ -10,6 +10,7 @@ import { Edit } from '@openedx/paragon/icons';
 
 import { ToastContext } from '../../generic/toast-context';
 import { useLibraryContext } from '../common/context/LibraryContext';
+import { useSidebarContext } from '../common/context/SidebarContext';
 import { useCollection, useUpdateCollection } from '../data/apiHooks';
 import messages from './messages';
 
@@ -17,11 +18,8 @@ const CollectionInfoHeader = () => {
   const intl = useIntl();
   const [inputIsActive, setIsActive] = useState(false);
 
-  const {
-    libraryId,
-    sidebarComponentInfo,
-    readOnly,
-  } = useLibraryContext();
+  const { libraryId, readOnly } = useLibraryContext();
+  const { sidebarComponentInfo } = useSidebarContext();
 
   const collectionId = sidebarComponentInfo?.id;
   // istanbul ignore if: this should never happen

@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom';
 import { type CollectionHit } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
+import { useSidebarContext } from '../common/context/SidebarContext';
 import BaseComponentCard from './BaseComponentCard';
 import { ToastContext } from '../../generic/toast-context';
 import { useDeleteCollection, useRestoreCollection } from '../data/apiHooks';
@@ -27,7 +28,7 @@ const CollectionMenu = ({ collectionHit } : CollectionMenuProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
-  const { closeLibrarySidebar, sidebarComponentInfo } = useLibraryContext();
+  const { closeLibrarySidebar, sidebarComponentInfo } = useSidebarContext();
 
   const restoreCollectionMutation = useRestoreCollection(collectionHit.contextKey, collectionHit.blockId);
   const restoreCollection = useCallback(() => {
@@ -105,11 +106,9 @@ type CollectionCardProps = {
 };
 
 const CollectionCard = ({ collectionHit } : CollectionCardProps) => {
-  const {
-    openCollectionInfoSidebar,
-    showOnlyPublished,
-  } = useLibraryContext();
   const { componentPickerMode } = useComponentPickerContext();
+  const { showOnlyPublished } = useLibraryContext();
+  const { openCollectionInfoSidebar } = useSidebarContext();
 
   const {
     type: componentType,

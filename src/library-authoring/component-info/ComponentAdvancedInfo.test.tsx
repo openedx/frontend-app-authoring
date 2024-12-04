@@ -12,7 +12,8 @@ import {
   mockXBlockAssets,
   mockXBlockOLX,
 } from '../data/api.mocks';
-import { LibraryProvider, SidebarBodyComponentId } from '../common/context/LibraryContext';
+import { LibraryProvider } from '../common/context/LibraryContext';
+import { SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
 import { ComponentAdvancedInfo } from './ComponentAdvancedInfo';
 import { getXBlockAssetsApiUrl } from '../data/api';
 
@@ -29,14 +30,15 @@ const render = (
   <ComponentAdvancedInfo />,
   {
     extraWrapper: ({ children }: { children: React.ReactNode }) => (
-      <LibraryProvider
-        libraryId={libraryId}
-        initialSidebarComponentInfo={{
-          id: usageKey,
-          type: SidebarBodyComponentId.ComponentInfo,
-        }}
-      >
-        {children}
+      <LibraryProvider libraryId={libraryId}>
+        <SidebarProvider
+          initialSidebarComponentInfo={{
+            id: usageKey,
+            type: SidebarBodyComponentId.ComponentInfo,
+          }}
+        >
+          {children}
+        </SidebarProvider>
       </LibraryProvider>
     ),
   },

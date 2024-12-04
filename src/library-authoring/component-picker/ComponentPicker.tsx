@@ -8,10 +8,8 @@ import {
   type ComponentSelectionChangedEvent,
   ComponentPickerProvider,
 } from '../common/context/ComponentPickerContext';
-import {
-  LibraryProvider,
-  useLibraryContext,
-} from '../common/context/LibraryContext';
+import { LibraryProvider, useLibraryContext } from '../common/context/LibraryContext';
+import { SidebarProvider } from '../common/context/SidebarContext';
 import LibraryAuthoringPage from '../LibraryAuthoringPage';
 import LibraryCollectionPage from '../collections/LibraryCollectionPage';
 import SelectLibrary from './SelectLibrary';
@@ -108,13 +106,15 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
             libraryId={selectedLibrary}
             showOnlyPublished={calcShowOnlyPublished}
           >
-            { calcShowOnlyPublished
-              && (
-              <Alert variant="info" className="m-2">
-                <FormattedMessage {...messages.pickerInfoBanner} />
-              </Alert>
-              )}
-            <InnerComponentPicker returnToLibrarySelection={returnToLibrarySelection} />
+            <SidebarProvider>
+              { calcShowOnlyPublished
+                && (
+                <Alert variant="info" className="m-2">
+                  <FormattedMessage {...messages.pickerInfoBanner} />
+                </Alert>
+                )}
+              <InnerComponentPicker returnToLibrarySelection={returnToLibrarySelection} />
+            </SidebarProvider>
           </LibraryProvider>
         </ComponentPickerProvider>
       </Stepper.Step>

@@ -3,6 +3,7 @@ import { LoadingSpinner } from '../generic/Loading';
 import { useSearchContext } from '../search-manager';
 import { NoComponents, NoSearchResults } from './EmptyStates';
 import { useLibraryContext } from './common/context/LibraryContext';
+import { useSidebarContext } from './common/context/SidebarContext';
 import CollectionCard from './components/CollectionCard';
 import ComponentCard from './components/ComponentCard';
 import { useLoadOnScroll } from '../hooks';
@@ -37,7 +38,8 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
     isFiltered,
     usageKey,
   } = useSearchContext();
-  const { openAddContentSidebar, openComponentInfoSidebar, openCreateCollectionModal } = useLibraryContext();
+  const { openCreateCollectionModal } = useLibraryContext();
+  const { openAddContentSidebar, openComponentInfoSidebar } = useSidebarContext();
 
   useEffect(() => {
     if (usageKey) {

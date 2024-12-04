@@ -37,19 +37,26 @@ import {
 } from '../search-manager';
 import LibraryContent, { ContentType } from './LibraryContent';
 import { LibrarySidebar } from './library-sidebar';
-import { SidebarBodyComponentId, useLibraryContext } from './common/context/LibraryContext';
 import { useComponentPickerContext } from './common/context/ComponentPickerContext';
+import { useLibraryContext } from './common/context/LibraryContext';
+import { SidebarBodyComponentId, useSidebarContext } from './common/context/SidebarContext';
+
 import messages from './messages';
 
 const HeaderActions = () => {
   const intl = useIntl();
+
+  const {
+    readOnly,
+  } = useLibraryContext();
+
   const {
     openAddContentSidebar,
     openInfoSidebar,
     closeLibrarySidebar,
     sidebarComponentInfo,
-    readOnly,
-  } = useLibraryContext();
+  } = useSidebarContext();
+
   const { componentPickerMode } = useComponentPickerContext();
 
   const infoSidebarIsOpen = () => (
@@ -134,9 +141,12 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     libraryData,
     isLoadingLibraryData,
     showOnlyPublished,
-    sidebarComponentInfo,
-    openInfoSidebar,
   } = useLibraryContext();
+
+  const {
+    openInfoSidebar,
+    sidebarComponentInfo,
+  } = useSidebarContext();
 
   const {
     componentPickerMode,

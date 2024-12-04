@@ -29,16 +29,15 @@ import {
 import { useCollection, useContentLibrary } from '../data/apiHooks';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
+import { useSidebarContext } from '../common/context/SidebarContext';
 import messages from './messages';
 import { LibrarySidebar } from '../library-sidebar';
 import LibraryCollectionComponents from './LibraryCollectionComponents';
 
 const HeaderActions = () => {
   const intl = useIntl();
-  const {
-    openAddContentSidebar,
-    readOnly,
-  } = useLibraryContext();
+  const { readOnly } = useLibraryContext();
+  const { openAddContentSidebar } = useSidebarContext();
 
   if (readOnly) {
     return null;
@@ -67,8 +66,8 @@ const SubHeaderTitle = ({
 }) => {
   const intl = useIntl();
 
-  const { readOnly } = useLibraryContext();
   const { componentPickerMode } = useComponentPickerContext();
+  const { readOnly } = useLibraryContext();
 
   const showReadOnlyBadge = readOnly && !componentPickerMode;
 
@@ -105,13 +104,9 @@ const LibraryCollectionPage = () => {
     throw new Error('Rendered without collectionId or libraryId URL parameter');
   }
 
-  const {
-    sidebarComponentInfo,
-    openCollectionInfoSidebar,
-    showOnlyPublished,
-    setCollectionId,
-  } = useLibraryContext();
   const { componentPickerMode } = useComponentPickerContext();
+  const { showOnlyPublished, setCollectionId } = useLibraryContext();
+  const { sidebarComponentInfo, openCollectionInfoSidebar } = useSidebarContext();
 
   const {
     data: collectionData,

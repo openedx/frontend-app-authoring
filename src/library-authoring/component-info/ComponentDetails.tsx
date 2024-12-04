@@ -3,14 +3,14 @@ import { Stack } from '@openedx/paragon';
 
 import AlertError from '../../generic/alert-error';
 import Loading from '../../generic/Loading';
-import { useLibraryContext } from '../common/context/LibraryContext';
+import { useSidebarContext } from '../common/context/SidebarContext';
 import { useLibraryBlockMetadata } from '../data/apiHooks';
 import HistoryWidget from '../generic/history-widget';
 import { ComponentAdvancedInfo } from './ComponentAdvancedInfo';
 import messages from './messages';
 
 const ComponentDetails = () => {
-  const { sidebarComponentInfo } = useLibraryContext();
+  const { sidebarComponentInfo } = useSidebarContext();
 
   const usageKey = sidebarComponentInfo?.id;
 

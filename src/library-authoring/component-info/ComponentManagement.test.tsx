@@ -7,7 +7,8 @@ import {
   screen,
   waitFor,
 } from '../../testUtils';
-import { LibraryProvider, SidebarBodyComponentId } from '../common/context/LibraryContext';
+import { LibraryProvider } from '../common/context/LibraryContext';
+import { SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
 import { mockContentLibrary, mockLibraryBlockMetadata } from '../data/api.mocks';
 import ComponentManagement from './ComponentManagement';
 
@@ -37,14 +38,15 @@ const matchInnerText = (nodeName: string, textToMatch: string) => (_: string, el
 
 const render = (usageKey: string, libraryId?: string) => baseRender(<ComponentManagement />, {
   extraWrapper: ({ children }) => (
-    <LibraryProvider
-      libraryId={libraryId || mockContentLibrary.libraryId}
-      initialSidebarComponentInfo={{
-        id: usageKey,
-        type: SidebarBodyComponentId.ComponentInfo,
-      }}
-    >
-      {children}
+    <LibraryProvider libraryId={libraryId || mockContentLibrary.libraryId}>
+      <SidebarProvider
+        initialSidebarComponentInfo={{
+          id: usageKey,
+          type: SidebarBodyComponentId.ComponentInfo,
+        }}
+      >
+        {children}
+      </SidebarProvider>
     </LibraryProvider>
   ),
 });

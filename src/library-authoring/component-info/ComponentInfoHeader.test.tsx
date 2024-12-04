@@ -9,7 +9,8 @@ import {
 } from '../../testUtils';
 import { mockContentLibrary } from '../data/api.mocks';
 import { getXBlockFieldsVersionApiUrl, getXBlockFieldsApiUrl } from '../data/api';
-import { LibraryProvider, SidebarBodyComponentId } from '../common/context/LibraryContext';
+import { LibraryProvider } from '../common/context/LibraryContext';
+import { SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
 import ComponentInfoHeader from './ComponentInfoHeader';
 
 const { libraryId: mockLibraryId, libraryIdReadOnly } = mockContentLibrary;
@@ -24,14 +25,15 @@ const xBlockFields = {
 
 const render = (libraryId: string = mockLibraryId) => baseRender(<ComponentInfoHeader />, {
   extraWrapper: ({ children }) => (
-    <LibraryProvider
-      libraryId={libraryId}
-      initialSidebarComponentInfo={{
-        id: usageKey,
-        type: SidebarBodyComponentId.ComponentInfo,
-      }}
-    >
-      {children}
+    <LibraryProvider libraryId={libraryId}>
+      <SidebarProvider
+        initialSidebarComponentInfo={{
+          id: usageKey,
+          type: SidebarBodyComponentId.ComponentInfo,
+        }}
+      >
+        {children}
+      </SidebarProvider>
     </LibraryProvider>
   ),
 });

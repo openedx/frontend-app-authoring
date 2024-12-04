@@ -20,7 +20,8 @@ import { updateClipboard } from '../../generic/data/api';
 import { ToastContext } from '../../generic/toast-context';
 import { type ContentHit } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
-import { SidebarAdditionalActions, useLibraryContext } from '../common/context/LibraryContext';
+import { useLibraryContext } from '../common/context/LibraryContext';
+import { SidebarAdditionalActions, useSidebarContext } from '../common/context/SidebarContext';
 import { useRemoveComponentsFromCollection } from '../data/apiHooks';
 import BaseComponentCard from './BaseComponentCard';
 import { canEditComponent } from './ComponentEditorModal';
@@ -36,11 +37,14 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   const {
     libraryId,
     collectionId,
+    openComponentEditor,
+  } = useLibraryContext();
+
+  const {
     sidebarComponentInfo,
     openComponentInfoSidebar,
-    openComponentEditor,
     closeLibrarySidebar,
-  } = useLibraryContext();
+  } = useSidebarContext();
 
   const canEdit = usageKey && canEditComponent(usageKey);
   const { showToast } = useContext(ToastContext);
@@ -179,14 +183,9 @@ const AddComponentWidget = ({ usageKey, blockType }: AddComponentWidgetProps) =>
 };
 
 const ComponentCard = ({ contentHit }: ComponentCardProps) => {
-  const {
-    openComponentInfoSidebar,
-    showOnlyPublished,
-  } = useLibraryContext();
-
-  const {
-    componentPickerMode,
-  } = useComponentPickerContext();
+  const { showOnlyPublished } = useLibraryContext();
+  const { openComponentInfoSidebar } = useSidebarContext();
+  const { componentPickerMode } = useComponentPickerContext();
 
   const {
     blockType,
