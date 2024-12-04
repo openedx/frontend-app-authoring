@@ -10,6 +10,7 @@ import { getContentSearchConfigUrl } from '../search-manager/data/api';
 import { mockContentLibrary } from './data/api.mocks';
 import mockEmptyResult from '../search-modal/__mocks__/empty-search-result.json';
 import { LibraryProvider } from './common/context/LibraryContext';
+import { SidebarProvider } from './common/context/SidebarContext';
 import LibraryContent from './LibraryContent';
 import { libraryComponentsMock } from './__mocks__';
 
@@ -56,7 +57,11 @@ const clipboardBroadcastChannelMock = {
 
 const withLibraryId = (libraryId: string) => ({
   extraWrapper: ({ children }: { children: React.ReactNode }) => (
-    <LibraryProvider libraryId={libraryId}>{children}</LibraryProvider>
+    <LibraryProvider libraryId={libraryId}>
+      <SidebarProvider>
+        {children}
+      </SidebarProvider>
+    </LibraryProvider>
   ),
 });
 

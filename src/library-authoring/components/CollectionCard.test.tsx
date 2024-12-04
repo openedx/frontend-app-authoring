@@ -84,7 +84,7 @@ describe('<CollectionCard />', () => {
     const openMenuItem = screen.getByRole('link', { name: 'Open' });
     expect(openMenuItem).toBeInTheDocument();
 
-    expect(openMenuItem).toHaveAttribute('href', '/library/lb:org1:Demo_Course/collection/collection-display-name/');
+    expect(openMenuItem).toHaveAttribute('href', '/library/lb:org1:Demo_Course/collection/collection-display-name');
   });
 
   it('should show confirmation box, delete collection and show toast to undo deletion', async () => {
