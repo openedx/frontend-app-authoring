@@ -365,7 +365,7 @@ ConfigureModal.propTypes = {
     supportsOnboarding: PropTypes.bool,
     showReviewRules: PropTypes.bool,
     onlineProctoringRules: PropTypes.string,
-    discussionEnabled: PropTypes.bool.isRequired,
+    discussionEnabled: PropTypes.bool,
   }).isRequired,
   isXBlockComponent: PropTypes.bool,
   isSelfPaced: PropTypes.bool.isRequired,

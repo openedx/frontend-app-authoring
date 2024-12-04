@@ -184,8 +184,8 @@ export const useMoveModal = ({
       title: state.sourceXBlockInfo.current.displayName,
       currentParentLocator: blockId,
       isMoving: true,
-      callbackFn: () => {
-        sendMessageToIframe(messageTypes.refreshXBlock, null);
+      callbackFn: (sourceLocator: string) => {
+        sendMessageToIframe(messageTypes.completeXBlockMoving, { locator: sourceLocator });
         closeModal();
         window.scrollTo({ top: 0, behavior: 'smooth' });
       },

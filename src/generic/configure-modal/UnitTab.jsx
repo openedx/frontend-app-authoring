@@ -152,13 +152,14 @@ UnitTab.propTypes = {
   isXBlockComponent: PropTypes.bool,
   values: PropTypes.shape({
     isVisibleToStaffOnly: PropTypes.bool.isRequired,
-    discussionEnabled: PropTypes.bool.isRequired,
+    discussionEnabled: PropTypes.bool,
     selectedPartitionIndex: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.number,
     ]).isRequired,
     selectedGroups: PropTypes.oneOfType([
-      PropTypes.string,
+      PropTypes.arrayOf(PropTypes.string),
+      PropTypes.array,
     ]),
   }).isRequired,
   setFieldValue: PropTypes.func.isRequired,

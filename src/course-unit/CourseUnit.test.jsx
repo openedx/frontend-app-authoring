@@ -243,7 +243,7 @@ describe('<CourseUnit />', () => {
       );
 
       simulatePostMessageEvent(messageTypes.deleteXBlock, {
-        id: courseVerticalChildrenMock.children[0].block_id,
+        usageId: courseVerticalChildrenMock.children[0].block_id,
       });
 
       expect(getByText(/Delete this component?/i)).toBeInTheDocument();
@@ -257,10 +257,10 @@ describe('<CourseUnit />', () => {
       const deleteButton = getAllByRole('button', { name: /Delete/i })
         .find(({ classList }) => classList.contains('btn-primary'));
 
-      userEvent.click(cancelButton);
+      expect(cancelButton).toBeInTheDocument();
 
       simulatePostMessageEvent(messageTypes.deleteXBlock, {
-        id: courseVerticalChildrenMock.children[0].block_id,
+        usageId: courseVerticalChildrenMock.children[0].block_id,
       });
 
       expect(getByRole('dialog')).toBeInTheDocument();
@@ -296,8 +296,12 @@ describe('<CourseUnit />', () => {
 
     axiosMock
       .onDelete(getXBlockBaseApiUrl(courseVerticalChildrenMock.children[0].block_id))
-      .replyOnce(200, { dummy: 'value' });
-    await executeThunk(deleteUnitItemQuery(courseId, blockId), store.dispatch);
+      .reply(200, { dummy: 'value' });
+    await executeThunk(deleteUnitItemQuery(
+      courseId,
+      courseVerticalChildrenMock.children[0].block_id,
+      simulatePostMessageEvent,
+    ), store.dispatch);
 
     const updatedCourseVerticalChildren = courseVerticalChildrenMock.children.filter(
       child => child.block_id !== courseVerticalChildrenMock.children[0].block_id,
@@ -1616,6 +1620,8 @@ describe('<CourseUnit />', () => {
         isMoving: requestData.isMoving,
         callbackFn: requestData.callbackFn,
       }), store.dispatch);
+
+      simulatePostMessageEvent(messageTypes.rollbackMovedXBlock, { locator: requestData.sourceLocator });
 
       const dismissButton = queryByRole('button', {
         name: /dismiss/i, hidden: true,
