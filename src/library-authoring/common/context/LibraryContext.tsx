@@ -27,10 +27,6 @@ export type LibraryContextData = {
   setCollectionId: (collectionId?: string) => void;
   // Only show published components
   showOnlyPublished: boolean;
-  // "Library Team" modal
-  isLibraryTeamModalOpen: boolean;
-  openLibraryTeamModal: () => void;
-  closeLibraryTeamModal: () => void;
   // "Create New Collection" modal
   isCreateCollectionModalOpen: boolean;
   openCreateCollectionModal: () => void;
@@ -78,7 +74,6 @@ export const LibraryProvider = ({
   componentPicker,
 }: LibraryProviderProps) => {
   const [collectionId, setCollectionId] = useState(collectionIdProp);
-  const [isLibraryTeamModalOpen, openLibraryTeamModal, closeLibraryTeamModal] = useToggle(false);
   const [isCreateCollectionModalOpen, openCreateCollectionModal, closeCreateCollectionModal] = useToggle(false);
   const [componentBeingEdited, setComponentBeingEdited] = useState<ComponentEditorInfo | undefined>();
   const closeComponentEditor = useCallback(() => {
@@ -108,9 +103,6 @@ export const LibraryProvider = ({
       readOnly,
       isLoadingLibraryData,
       showOnlyPublished,
-      isLibraryTeamModalOpen,
-      openLibraryTeamModal,
-      closeLibraryTeamModal,
       isCreateCollectionModalOpen,
       openCreateCollectionModal,
       closeCreateCollectionModal,
@@ -129,9 +121,6 @@ export const LibraryProvider = ({
     readOnly,
     isLoadingLibraryData,
     showOnlyPublished,
-    isLibraryTeamModalOpen,
-    openLibraryTeamModal,
-    closeLibraryTeamModal,
     isCreateCollectionModalOpen,
     openCreateCollectionModal,
     closeCreateCollectionModal,

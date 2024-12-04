@@ -1,13 +1,15 @@
-import { Button, Stack } from '@openedx/paragon';
+import { Button, Stack, useToggle } from '@openedx/paragon';
 import { FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
 import LibraryPublishStatus from './LibraryPublishStatus';
+import { LibraryTeamModal } from '../library-team';
 import { useLibraryContext } from '../common/context/LibraryContext';
 
 const LibraryInfo = () => {
   const intl = useIntl();
-  const { libraryData, readOnly, openLibraryTeamModal } = useLibraryContext();
+  const { libraryData, readOnly } = useLibraryContext();
+  const [isLibraryTeamModalOpen, openLibraryTeamModal, closeLibraryTeamModal] = useToggle();
 
   return (
     <Stack direction="vertical" gap={2.5}>
@@ -56,6 +58,7 @@ const LibraryInfo = () => {
           </span>
         </Stack>
       </Stack>
+      {isLibraryTeamModalOpen && <LibraryTeamModal onClose={closeLibraryTeamModal} />}
     </Stack>
   );
 };
