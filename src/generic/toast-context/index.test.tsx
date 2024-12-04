@@ -10,11 +10,11 @@ export interface WraperProps {
 }
 
 // eslint-disable-next-line react/prop-types
-const TestComponentToShow = ({ capitilize = false }) => {
+const TestComponentToShow = () => {
   const { showToast } = React.useContext(ToastContext);
 
   React.useEffect(() => {
-    showToast('This is the Toast!', undefined, capitilize);
+    showToast('This is the Toast!');
   }, [showToast]);
 
   return <div>Content</div>;
@@ -61,11 +61,6 @@ describe('<ToastProvider />', () => {
   it('should show toast', async () => {
     render(<RootWrapper><TestComponentToShow /></RootWrapper>);
     expect(await screen.findByText('This is the Toast!')).toBeInTheDocument();
-  });
-
-  it('should capitilize toast', async () => {
-    render(<RootWrapper><TestComponentToShow capitilize /></RootWrapper>);
-    expect(await screen.findByText('This is the toast!')).toBeInTheDocument();
   });
 
   it('should close toast after 5000ms', async () => {
