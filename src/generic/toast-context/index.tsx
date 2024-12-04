@@ -10,7 +10,8 @@ export interface ToastActionData {
 export interface ToastContextData {
   toastMessage: string | null;
   toastAction?: ToastActionData;
-  showToast: (message: string, action?: ToastActionData) => void;
+  capitilize?: boolean;
+  showToast: (message: string, action?: ToastActionData, capitilize?: boolean) => void;
   closeToast: () => void;
 }
 
@@ -25,6 +26,7 @@ export interface ToastProviderProps {
 export const ToastContext = React.createContext<ToastContextData>({
   toastMessage: null,
   toastAction: undefined,
+  capitilize: false,
   showToast: () => {},
   closeToast: () => {},
 });
@@ -38,10 +40,12 @@ export const ToastProvider = (props: ToastProviderProps) => {
 
   const [toastMessage, setToastMessage] = React.useState<string | null>(null);
   const [toastAction, setToastAction] = React.useState<ToastActionData | undefined>(undefined);
+  const [capitilize, setCapitilize] = React.useState<boolean>(false);
 
   const resetState = React.useCallback(() => {
     setToastMessage(null);
     setToastAction(undefined);
+    setCapitilize(false);
   }, []);
 
   React.useEffect(() => () => {
@@ -49,18 +53,20 @@ export const ToastProvider = (props: ToastProviderProps) => {
     resetState();
   }, []);
 
-  const showToast = React.useCallback((message, action?: ToastActionData) => {
+  const showToast = React.useCallback((message, action?: ToastActionData, isCapitilize?: boolean) => {
     setToastMessage(message);
     setToastAction(action);
+    setCapitilize(isCapitilize ?? false);
   }, [setToastMessage, setToastAction]);
-  const closeToast = React.useCallback(() => resetState(), [setToastMessage, setToastAction]);
+  const closeToast = React.useCallback(() => resetState(), [setToastMessage, setToastAction, setCapitilize]);
 
   const context = React.useMemo(() => ({
     toastMessage,
     toastAction,
+    capitilize,
     showToast,
     closeToast,
-  }), [toastMessage, toastAction, showToast, closeToast]);
+  }), [toastMessage, toastAction, capitilize, showToast, closeToast]);
 
   return (
     <ToastContext.Provider value={context}>
@@ -71,6 +77,7 @@ export const ToastProvider = (props: ToastProviderProps) => {
           title={toastMessage}
           action={toastAction}
           close={closeToast}
+          disableCapitalize={!capitilize}
         />
       )}
     </ToastContext.Provider>

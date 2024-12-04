@@ -26,7 +26,15 @@ describe('<ProcessingNotification />', () => {
     expect(screen.getByText('Undo')).toBeInTheDocument();
     expect(screen.getByRole('alert').querySelector('.processing-notification-hide-close-button')).not.toBeInTheDocument();
     userEvent.click(screen.getByText('Undo'));
-    expect(mockUndo).toBeCalled();
+    expect(mockUndo).toHaveBeenCalled();
+  });
+
+  it('renders with `disableCapitalize`', () => {
+    const title = 'ThIs IS a Test. OK?';
+    render(<ProcessingNotification {...props} close={() => {}} title={title} disableCapitalize />);
+    expect(screen.getByText(title)).toBeInTheDocument();
+    expect(screen.getByText('Undo')).toBeInTheDocument();
+    expect(screen.getByRole('alert').querySelector('.processing-notification-hide-close-button')).not.toBeInTheDocument();
   });
 
   it('add hide-close-button class if no close action is passed', () => {

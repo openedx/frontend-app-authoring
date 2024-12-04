@@ -179,6 +179,8 @@ describe('<LibraryTeam />', () => {
         `{"library_id":"${libraryId}","email":"another@user.tld","access_level":"read"}`,
       );
     });
+
+    expect(await screen.findByText('Team Member added')).toBeInTheDocument();
   });
 
   it('shows error when user do not exist', async () => {
@@ -202,7 +204,7 @@ describe('<LibraryTeam />', () => {
     });
 
     expect(await screen.findByText(
-      'Error adding team member. please verify that the email is correct and belongs to a registered user.',
+      'Error adding Team Member. Please verify that the email is correct and belongs to a registered user.',
     )).toBeInTheDocument();
   });
 
@@ -226,7 +228,7 @@ describe('<LibraryTeam />', () => {
       expect(axiosMock.history.post.length).toEqual(1);
     });
 
-    expect(await screen.findByText('Error adding team member')).toBeInTheDocument();
+    expect(await screen.findByText('Error adding Team Member')).toBeInTheDocument();
   });
 
   it('allows library team member roles to be changed', async () => {

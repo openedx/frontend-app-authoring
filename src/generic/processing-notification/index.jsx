@@ -7,7 +7,7 @@ import { capitalize } from 'lodash';
 import classNames from 'classnames';
 
 const ProcessingNotification = ({
-  isShow, title, action, close,
+  isShow, title, action, close, disableCapitalize,
 }) => (
   <Toast
     className={classNames({ 'processing-notification-hide-close-button': !close })}
@@ -18,13 +18,16 @@ const ProcessingNotification = ({
   >
     <span className="d-flex align-items-center">
       <Icon className="processing-notification-icon mb-0 mr-2" src={IconSettings} />
-      <span className="font-weight-bold h4 mb-0 text-white">{capitalize(title)}</span>
+      <span className="font-weight-bold h4 mb-0 text-white">
+        {!disableCapitalize ? capitalize(title) : title}
+      </span>
     </span>
   </Toast>
 );
 
 ProcessingNotification.defaultProps = {
   close: null,
+  disableCapitalize: false,
 };
 
 ProcessingNotification.propTypes = {
@@ -35,6 +38,7 @@ ProcessingNotification.propTypes = {
     onClick: PropTypes.func,
   }),
   close: PropTypes.func,
+  disableCapitalize: PropTypes.bool,
 };
 
 export default ProcessingNotification;
