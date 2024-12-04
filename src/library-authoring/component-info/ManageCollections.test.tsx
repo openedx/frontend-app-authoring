@@ -12,7 +12,8 @@ import mockCollectionsResults from '../__mocks__/collection-search.json';
 import { mockContentSearchConfig } from '../../search-manager/data/api.mock';
 import { mockContentLibrary, mockLibraryBlockMetadata } from '../data/api.mocks';
 import ManageCollections from './ManageCollections';
-import { LibraryProvider } from '../common/context';
+import { LibraryProvider } from '../common/context/LibraryContext';
+import { SidebarProvider } from '../common/context/SidebarContext';
 import { getLibraryBlockCollectionsUrl } from '../data/api';
 
 let axiosMock: MockAdapter;
@@ -24,7 +25,11 @@ mockContentSearchConfig.applyMock();
 
 const render = (ui: React.ReactElement) => baseRender(ui, {
   extraWrapper: ({ children }) => (
-    <LibraryProvider libraryId={mockContentLibrary.libraryId}>{children}</LibraryProvider>
+    <LibraryProvider libraryId={mockContentLibrary.libraryId}>
+      <SidebarProvider>
+        {children}
+      </SidebarProvider>
+    </LibraryProvider>
   ),
 });
 

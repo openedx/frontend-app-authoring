@@ -12,7 +12,7 @@ import {
   getContentLibraryApiUrl, getCreateLibraryBlockUrl, getLibraryCollectionComponentApiUrl, getLibraryPasteClipboardUrl,
 } from '../data/api';
 import { mockBroadcastChannel, mockClipboardEmpty, mockClipboardHtml } from '../../generic/data/api.mock';
-import { LibraryProvider } from '../common/context';
+import { LibraryProvider } from '../common/context/LibraryContext';
 import AddContentContainer from './AddContentContainer';
 import { ComponentEditorModal } from '../components/ComponentEditorModal';
 import editorCmsApi from '../../editors/data/services/cms/api';

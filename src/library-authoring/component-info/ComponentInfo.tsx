@@ -11,13 +11,15 @@ import {
   CheckBoxOutlineBlank,
 } from '@openedx/paragon/icons';
 
+import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
+import { useLibraryContext } from '../common/context/LibraryContext';
 import {
-  SidebarAdditionalActions,
-  useLibraryContext,
+  type ComponentInfoTab,
   COMPONENT_INFO_TABS,
-  ComponentInfoTab,
+  SidebarAdditionalActions,
   isComponentInfoTab,
-} from '../common/context';
+  useSidebarContext,
+} from '../common/context/SidebarContext';
 import ComponentMenu from '../components';
 import { canEditComponent } from '../components/ComponentEditorModal';
 import ComponentDetails from './ComponentDetails';
@@ -31,14 +33,15 @@ import { ToastContext } from '../../generic/toast-context';
 const AddComponentWidget = () => {
   const intl = useIntl();
 
+  const { sidebarComponentInfo } = useSidebarContext();
+
   const {
-    sidebarComponentInfo,
     componentPickerMode,
     onComponentSelected,
     addComponentToSelectedComponents,
     removeComponentFromSelectedComponents,
     selectedComponents,
-  } = useLibraryContext();
+  } = useComponentPickerContext();
 
   const usageKey = sidebarComponentInfo?.id;
 
@@ -97,13 +100,8 @@ const AddComponentWidget = () => {
 const ComponentInfo = () => {
   const intl = useIntl();
 
-  const {
-    sidebarComponentInfo,
-    readOnly,
-    openComponentEditor,
-    resetSidebarAdditionalActions,
-    setSidebarCurrentTab,
-  } = useLibraryContext();
+  const { readOnly, openComponentEditor } = useLibraryContext();
+  const { setSidebarCurrentTab, sidebarComponentInfo, resetSidebarAdditionalActions } = useSidebarContext();
 
   const jumpToCollections = sidebarComponentInfo?.additionalAction === SidebarAdditionalActions.JumpToAddCollections;
 

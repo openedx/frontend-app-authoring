@@ -2,7 +2,8 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, StandardModal, useToggle } from '@openedx/paragon';
 import { OpenInFull } from '@openedx/paragon/icons';
 
-import { useLibraryContext } from '../common/context';
+import { useLibraryContext } from '../common/context/LibraryContext';
+import { useSidebarContext } from '../common/context/SidebarContext';
 import { LibraryBlock } from '../LibraryBlock';
 import messages from './messages';
 import { useLibraryBlockMetadata } from '../data/apiHooks';
@@ -37,7 +38,8 @@ const ComponentPreview = () => {
   const intl = useIntl();
 
   const [isModalOpen, openModal, closeModal] = useToggle();
-  const { sidebarComponentInfo, showOnlyPublished } = useLibraryContext();
+  const { showOnlyPublished } = useLibraryContext();
+  const { sidebarComponentInfo } = useSidebarContext();
 
   const usageKey = sidebarComponentInfo?.id;
   // istanbul ignore if: this should never happen

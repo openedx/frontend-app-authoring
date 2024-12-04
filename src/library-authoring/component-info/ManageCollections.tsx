@@ -15,7 +15,8 @@ import messages from './messages';
 import { useUpdateComponentCollections } from '../data/apiHooks';
 import { ToastContext } from '../../generic/toast-context';
 import { CollectionMetadata } from '../data/api';
-import { SidebarAdditionalActions, useLibraryContext } from '../common/context';
+import { useLibraryContext } from '../common/context/LibraryContext';
+import { SidebarAdditionalActions, useSidebarContext } from '../common/context/SidebarContext';
 
 interface ManageCollectionsProps {
   usageKey: string;
@@ -190,7 +191,7 @@ const ComponentCollections = ({ collections, onManageClick }: {
 };
 
 const ManageCollections = ({ usageKey, collections }: ManageCollectionsProps) => {
-  const { sidebarComponentInfo, resetSidebarAdditionalActions } = useLibraryContext();
+  const { sidebarComponentInfo, resetSidebarAdditionalActions } = useSidebarContext();
   const jumpToCollections = sidebarComponentInfo?.additionalAction === SidebarAdditionalActions.JumpToAddCollections;
   const [editing, setEditing] = useState(jumpToCollections);
   const collectionNames = collections.map((collection) => collection.title);

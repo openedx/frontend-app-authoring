@@ -37,19 +37,25 @@ import {
 } from '../search-manager';
 import LibraryContent, { ContentType } from './LibraryContent';
 import { LibrarySidebar } from './library-sidebar';
-import { SidebarBodyComponentId, useLibraryContext } from './common/context';
+import { useComponentPickerContext } from './common/context/ComponentPickerContext';
+import { useLibraryContext } from './common/context/LibraryContext';
+import { SidebarBodyComponentId, useSidebarContext } from './common/context/SidebarContext';
+
 import messages from './messages';
 
 const HeaderActions = () => {
   const intl = useIntl();
+
+  const { readOnly } = useLibraryContext();
+
   const {
-    componentPickerMode,
     openAddContentSidebar,
     openInfoSidebar,
     closeLibrarySidebar,
     sidebarComponentInfo,
-    readOnly,
-  } = useLibraryContext();
+  } = useSidebarContext();
+
+  const { componentPickerMode } = useComponentPickerContext();
 
   const infoSidebarIsOpen = () => (
     sidebarComponentInfo?.type === SidebarBodyComponentId.Info
@@ -94,7 +100,8 @@ const HeaderActions = () => {
 const SubHeaderTitle = ({ title }: { title: string }) => {
   const intl = useIntl();
 
-  const { readOnly, componentPickerMode } = useLibraryContext();
+  const { readOnly } = useLibraryContext();
+  const { componentPickerMode } = useComponentPickerContext();
 
   const showReadOnlyBadge = readOnly && !componentPickerMode;
 
@@ -127,16 +134,14 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     librariesV2Enabled,
   } = useStudioHome();
 
+  const { componentPickerMode, restrictToLibrary } = useComponentPickerContext();
   const {
     libraryId,
     libraryData,
     isLoadingLibraryData,
-    componentPickerMode,
-    restrictToLibrary,
     showOnlyPublished,
-    sidebarComponentInfo,
-    openInfoSidebar,
   } = useLibraryContext();
+  const { openInfoSidebar, sidebarComponentInfo } = useSidebarContext();
 
   const [activeKey, setActiveKey] = useState<ContentType | undefined>(ContentType.home);
 

@@ -8,30 +8,27 @@ import {
 import { useCallback } from 'react';
 import { useNavigate, useMatch } from 'react-router-dom';
 
+import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
+import { useLibraryContext } from '../common/context/LibraryContext';
 import {
-  useLibraryContext,
   type CollectionInfoTab,
   COLLECTION_INFO_TABS,
-  isCollectionInfoTab,
   COMPONENT_INFO_TABS,
-} from '../common/context';
-import CollectionDetails from './CollectionDetails';
-import messages from './messages';
+  isCollectionInfoTab,
+  useSidebarContext,
+} from '../common/context/SidebarContext';
 import { ContentTagsDrawer } from '../../content-tags-drawer';
 import { buildCollectionUsageKey } from '../../generic/key-utils';
+import CollectionDetails from './CollectionDetails';
+import messages from './messages';
 
 const CollectionInfo = () => {
   const intl = useIntl();
   const navigate = useNavigate();
 
-  const {
-    libraryId,
-    collectionId,
-    setCollectionId,
-    sidebarComponentInfo,
-    componentPickerMode,
-    setSidebarCurrentTab,
-  } = useLibraryContext();
+  const { componentPickerMode } = useComponentPickerContext();
+  const { libraryId, collectionId, setCollectionId } = useLibraryContext();
+  const { sidebarComponentInfo, setSidebarCurrentTab } = useSidebarContext();
 
   const tab: CollectionInfoTab = (
     sidebarComponentInfo?.currentTab && isCollectionInfoTab(sidebarComponentInfo.currentTab)
@@ -43,7 +40,7 @@ const CollectionInfo = () => {
     throw new Error('sidebarCollectionId is required');
   }
 
-  const url = `/library/${libraryId}/collection/${sidebarCollectionId}/`;
+  const url = `/library/${libraryId}/collection/${sidebarCollectionId}`;
   const urlMatch = useMatch(url);
 
   const showOpenCollectionButton = !urlMatch && collectionId !== sidebarCollectionId;

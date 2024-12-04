@@ -3,7 +3,8 @@ import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { ActionRow, Button, StandardModal } from '@openedx/paragon';
 
 import { ToastContext } from '../../generic/toast-context';
-import { type SelectedComponent, useLibraryContext } from '../common/context';
+import { useLibraryContext } from '../common/context/LibraryContext';
+import type { SelectedComponent } from '../common/context/ComponentPickerContext';
 import { useAddComponentsToCollection } from '../data/apiHooks';
 import messages from './messages';
 
