@@ -206,6 +206,29 @@ describe('<LibraryTeam />', () => {
     )).toBeInTheDocument();
   });
 
+  it('shows error', async () => {
+    const url = getLibraryTeamApiUrl(libraryId);
+    const axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    axiosMock.onPost(url).reply(400, { error: 'Error' });
+
+    await renderLibraryTeam();
+
+    const addButton = screen.getByRole('button', { name: 'New team member' });
+    userEvent.click(addButton);
+    const emailInput = screen.getByRole('textbox', { name: 'User\'s email address' });
+    userEvent.click(emailInput);
+    userEvent.type(emailInput, 'another@user.tld');
+
+    const saveButton = screen.getByRole('button', { name: /add member/i });
+    userEvent.click(saveButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toEqual(1);
+    });
+
+    expect(await screen.findByText('Error adding team member')).toBeInTheDocument();
+  });
+
   it('allows library team member roles to be changed', async () => {
     const { username } = mockGetLibraryTeam.readerMember;
     const url = getLibraryTeamMemberApiUrl(libraryId, username);
