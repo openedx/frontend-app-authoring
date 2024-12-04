@@ -211,7 +211,7 @@ describe('<LibraryTeam />', () => {
   it('shows error', async () => {
     const url = getLibraryTeamApiUrl(libraryId);
     const axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-    axiosMock.onPost(url).reply(400, { error: 'Error' });
+    axiosMock.onPost(url).reply(400, {});
 
     await renderLibraryTeam();
 

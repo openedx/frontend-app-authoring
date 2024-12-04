@@ -9,7 +9,6 @@ export interface WraperProps {
   children: React.ReactNode;
 }
 
-// eslint-disable-next-line react/prop-types
 const TestComponentToShow = () => {
   const { showToast } = React.useContext(ToastContext);
 
