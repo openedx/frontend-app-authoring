@@ -21,7 +21,11 @@ import { ComponentAdvancedAssets } from './ComponentAdvancedAssets';
 
 const ComponentAdvancedInfoInner: React.FC<Record<never, never>> = () => {
   const intl = useIntl();
-  const { readOnly, sidebarComponentInfo } = useLibraryContext();
+  const {
+    readOnly,
+    sidebarComponentInfo,
+    showOnlyPublished,
+  } = useLibraryContext();
 
   const usageKey = sidebarComponentInfo?.id;
   // istanbul ignore if: this should never happen in production
@@ -29,7 +33,10 @@ const ComponentAdvancedInfoInner: React.FC<Record<never, never>> = () => {
     throw new Error('sidebarComponentUsageKey is required to render ComponentAdvancedInfo');
   }
 
-  const { data: olx, isLoading: isOLXLoading } = useXBlockOLX(usageKey);
+  const { data: olx, isLoading: isOLXLoading } = useXBlockOLX(
+    usageKey,
+    showOnlyPublished ? 'published' : 'draft',
+  );
   const editorRef = React.useRef<EditorAccessor | undefined>(undefined);
   const [isEditingOLX, setEditingOLX] = React.useState(false);
   const olxUpdater = useUpdateXBlockOLX(usageKey);
