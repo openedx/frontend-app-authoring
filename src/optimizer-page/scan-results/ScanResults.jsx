@@ -4,57 +4,54 @@ import {
 import { ArrowRight, ArrowDropDown, OpenInNew } from '@openedx/paragon/icons';
 import { useState, useCallback } from 'react';
 
-const SectionCollapsible = ({ title, children, redItalics }) => {
+const SectionCollapsible = ({
+  title, children, redItalics, className,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const styling = 'card-lg';
   const collapsibleTitle = (
-    <div>
+    <div className={className}>
       <Icon src={isOpen ? ArrowDropDown : ArrowRight} className="open-arrow" /><strong>{title}</strong><span className="red-italics">{redItalics}</span>
     </div>
   );
 
   return (
-    <Collapsible
-      styling={styling}
-      title={<p><strong>{collapsibleTitle}</strong></p>}
-      iconWhenClosed=""
-      iconWhenOpen=""
-      open={isOpen}
-      onToggle={() => setIsOpen(!isOpen)}
-    >
-      <Collapsible.Body>
-        {children}
-      </Collapsible.Body>
-    </Collapsible>
+
+    <div className={`section ${isOpen ? 'is-open' : ''}`}>
+      <Collapsible
+        styling={styling}
+        title={<p><strong>{collapsibleTitle}</strong></p>}
+        iconWhenClosed=""
+        iconWhenOpen=""
+        open={isOpen}
+        onToggle={() => setIsOpen(!isOpen)}
+      >
+        <Collapsible.Body>
+          {children}
+        </Collapsible.Body>
+      </Collapsible>
+    </div>
   );
 };
 
+function getBaseUrl(url) {
+  try {
+    const parsedUrl = new URL(url);
+    return `${parsedUrl.origin}`;
+  } catch (error) {
+    return null;
+  }
+}
+
+const BrokenLinkHref = ({ href }) => (
+  <div className="broken-link-container">
+    <a href={href} target="_blank" className="broken-link" rel="noreferrer">{href}</a>
+  </div>
+);
+
+const GoToBlock = ({ block }) => <span style={{ display: 'flex', gap: '.5rem' }}><Icon src={OpenInNew} /><a href={block.url} target="_blank" rel="noreferrer">Go to Block</a></span>;
+
 const ScanResults = ({ data }) => {
-  if (!data) {
-    return (
-      <Card className="mt-4">
-        <h1>Scan Results</h1>
-        <Container>
-          <p>No data available</p>
-        </Container>
-      </Card>
-    );
-  }
-
-  if (!data.sections) {
-    return (
-      <Card className="mt-4">
-        <h1>Scan Results</h1>
-        <Container>
-          <div><pre>{JSON.stringify(data, null, 2) }</pre></div>
-        </Container>
-      </Card>
-    );
-  }
-  const { sections } = data;
-  console.log('data: ', data);
-  console.log('sections: ', sections);
-
   const countBrokenLinksPerSection = useCallback(() => {
     const counts = [];
     sections.forEach((section) => {
@@ -71,10 +68,22 @@ const ScanResults = ({ data }) => {
     return counts;
   }, [data?.sections]);
 
-  const brokenLinkCounts = countBrokenLinksPerSection();
+  if (!data) {
+    return (
+      <Card className="mt-4">
+        <h1>Scan Results</h1>
+        <Container>
+          <p>No data available</p>
+        </Container>
+      </Card>
+    );
+  }
 
-  const blockLink = <span style={{ display: 'flex', gap: '.5rem' }}><Icon src={OpenInNew} /><a href="https://example.com" target="_blank" rel="noreferrer">Go to Block</a></span>;
-  const brokenLink = <a href="https://broken.example.com" target="_blank" className="broken-link" rel="noreferrer">https://broken.example.com</a>;
+  const { sections } = data;
+  console.log('data: ', data);
+  console.log('sections: ', sections);
+
+  const brokenLinkCounts = countBrokenLinksPerSection();
 
   return (
     <div className="scan-results">
@@ -84,81 +93,60 @@ const ScanResults = ({ data }) => {
 
       {sections?.map((section, index) => (
         <SectionCollapsible
-          className="mt-4"
           key={section.id}
           title={section.displayName}
           redItalics={`${brokenLinkCounts[index]} broken links`}
         >
-          <h2 className="subsection-header" style={{ marginBottom: '2rem' }}>Subsection A</h2>
-          <div className="unit">
-            <div className="block">
-              <p className="block-header">Unit 1</p>
-              <Table
-                data={[
-                  {
-                    blockLink,
-                    brokenLink,
-                  },
-                  {
-                    blockLink,
-                    brokenLink,
-                  },
-
-                ]}
-                columns={[
-                  {
-                    key: 'blockLink',
-                    columnSortable: true,
-                    onSort: () => {},
-                    width: 'col-3',
-                    hideHeader: true,
-                  },
-                  {
-                    key: 'brokenLink',
-                    columnSortable: false,
-                    onSort: () => {},
-                    width: 'col-6',
-                    hideHeader: true,
-                  },
-                ]}
-                // className="table-striped"
-              />
-            </div>
-          </div>
-          <div className="unit">
-            <div className="block">
-              <p className="block-header">Unit 2</p>
-              <Table
-                data={[
-                  {
-                    blockLink,
-                    brokenLink,
-                  },
-                  {
-                    blockLink,
-                    brokenLink,
-                  },
-
-                ]}
-                columns={[
-                  {
-                    key: 'blockLink',
-                    columnSortable: true,
-                    onSort: () => {},
-                    width: 'col-3',
-                    hideHeader: true,
-                  },
-                  {
-                    key: 'brokenLink',
-                    columnSortable: false,
-                    onSort: () => {},
-                    width: 'col-6',
-                    hideHeader: true,
-                  },
-                ]}
-              />
-            </div>
-          </div>
+          {section.subsections.map((subsection) => (
+            <>
+              <h2 className="subsection-header" style={{ marginBottom: '2rem' }}>{subsection.displayName}</h2>
+              {subsection.units.map((unit) => (
+                <div className="unit">
+                  <p className="block-header">{unit.displayName}</p>
+                  <Table
+                    data={unit.blocks.reduce((acc, block) => {
+                      const blockBrokenLinks = block.brokenLinks.map((link) => ({
+                        blockLink: <GoToBlock block={block} />,
+                        brokenLink: <BrokenLinkHref href={link} />,
+                        status: 'Status: BROKEN ?',
+                      }));
+                      acc.push(...blockBrokenLinks);
+                      const blockLockedLinks = block.lockedLinks.map((link) => ({
+                        blockLink: <GoToBlock block={block} />,
+                        brokenLink: <BrokenLinkHref href={link} />,
+                        status: 'Status: LOCKED ?',
+                      }));
+                      acc.push(...blockLockedLinks);
+                      return acc;
+                    }, [])}
+                    columns={[
+                      {
+                        key: 'blockLink',
+                        columnSortable: true,
+                        onSort: () => {},
+                        width: 'col-3',
+                        hideHeader: true,
+                      },
+                      {
+                        key: 'brokenLink',
+                        columnSortable: false,
+                        onSort: () => {},
+                        width: 'col-6',
+                        hideHeader: true,
+                      },
+                      {
+                        key: 'status',
+                        columnSortable: false,
+                        onSort: () => {},
+                        width: 'col-6',
+                        hideHeader: true,
+                      },
+                    ]}
+                  />
+                </div>
+              ))}
+            </>
+          ))}
         </SectionCollapsible>
       ))}
     </div>

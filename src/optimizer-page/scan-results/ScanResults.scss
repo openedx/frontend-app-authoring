@@ -11,6 +11,15 @@
     font-style: italic;
   }
 
+  .section {
+    &.is-open {
+      &:not(:first-child) {
+        margin-top: 1rem;
+      }
+      margin-bottom: 1rem;
+    }
+  }
+
   .open-arrow {
     transform: translate(-10px, 5px);
     display: inline-block;
@@ -57,12 +66,19 @@
     font-weight: bold;
   }
 
-  .block {
+  .unit {
     padding: 0 3rem;
   }
 
   .broken-link {
     color: $brand-500;
     text-decoration: none;
+  }
+
+  .broken-link-container {
+    max-width: 18rem;
+    text-wrap: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
