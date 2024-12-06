@@ -1,57 +1,150 @@
-import { useRef, useEffect, FC } from 'react';
-import PropTypes from 'prop-types';
+import {
+  useRef, FC, useEffect, useState, useMemo, useCallback,
+} from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { getConfig } from '@edx/frontend-platform';
+import { useToggle } from '@openedx/paragon';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
-import { IFRAME_FEATURE_POLICY } from '../constants';
+import DeleteModal from '../../generic/delete-modal/DeleteModal';
+import ConfigureModal from '../../generic/configure-modal/ConfigureModal';
+import { IFRAME_FEATURE_POLICY } from '../../constants';
+import supportedEditors from '../../editors/supportedEditors';
+import { fetchCourseUnitQuery } from '../data/thunk';
 import { useIframe } from '../context/hooks';
-import { useIFrameBehavior } from './hooks';
+import {
+  useMessageHandlers,
+  useIframeContent,
+  useIframeMessages,
+  useIFrameBehavior,
+} from './hooks';
+import { formatAccessManagedXBlockData, getIframeUrl } from './utils';
 import messages from './messages';
 
-/**
- * This offset is necessary to fully display the dropdown actions of the XBlock
- * in case the XBlock does not have content inside.
- */
-const IFRAME_BOTTOM_OFFSET = 220;
+import {
+  XBlockContainerIframeProps,
+  AccessManagedXBlockDataTypes,
+} from './types';
 
-interface XBlockContainerIframeProps {
-  blockId: string;
-}
-
-const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({ blockId }) => {
+const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
+  courseId, blockId, unitXBlockActions, courseVerticalChildren, handleConfigureSubmit,
+}) => {
   const intl = useIntl();
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const { setIframeRef } = useIframe();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const iframeUrl = `${getConfig().STUDIO_BASE_URL}/container_embed/${blockId}`;
+  const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
+  const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
+  const [accessManagedXBlockData, setAccessManagedXBlockData] = useState<AccessManagedXBlockDataTypes | {}>({});
+  const [iframeOffset, setIframeOffset] = useState(0);
+  const [deleteXBlockId, setDeleteXBlockId] = useState<string | null>(null);
+  const [configureXBlockId, setConfigureXBlockId] = useState<string | null>(null);
 
-  const { iframeHeight } = useIFrameBehavior({
-    id: blockId,
-    iframeUrl,
-  });
+  const iframeUrl = useMemo(() => getIframeUrl(blockId), [blockId]);
+
+  const { setIframeRef, sendMessageToIframe } = useIframe();
+  const { iframeHeight } = useIFrameBehavior({ id: blockId, iframeUrl });
+  const { refreshIframeContent } = useIframeContent(iframeRef, setIframeRef, sendMessageToIframe);
 
   useEffect(() => {
     setIframeRef(iframeRef);
   }, [setIframeRef]);
 
-  return (
-    <iframe
-      ref={iframeRef}
-      title={intl.formatMessage(messages.xblockIframeTitle)}
-      src={iframeUrl}
-      frameBorder="0"
-      allow={IFRAME_FEATURE_POLICY}
-      allowFullScreen
-      loading="lazy"
-      style={{ width: '100%', height: iframeHeight + IFRAME_BOTTOM_OFFSET }}
-      scrolling="no"
-      referrerPolicy="origin"
-    />
+  const handleDuplicateXBlock = useCallback(
+    (blockType: string, usageId: string) => {
+      unitXBlockActions.handleDuplicate(usageId);
+      if (supportedEditors[blockType]) {
+        navigate(`/course/${courseId}/editor/${blockType}/${usageId}`);
+      }
+      refreshIframeContent();
+    },
+    [unitXBlockActions, courseId, navigate, refreshIframeContent],
   );
-};
 
-XBlockContainerIframe.propTypes = {
-  blockId: PropTypes.string.isRequired,
+  const handleDeleteXBlock = (usageId: string) => {
+    setDeleteXBlockId(usageId);
+    openDeleteModal();
+  };
+
+  const handleManageXBlockAccess = (usageId: string) => {
+    openConfigureModal();
+    setConfigureXBlockId(usageId);
+    const foundXBlock = courseVerticalChildren?.find(xblock => xblock.blockId === usageId);
+    if (foundXBlock) {
+      setAccessManagedXBlockData(formatAccessManagedXBlockData(foundXBlock, usageId));
+    }
+  };
+
+  const handleRefetchXBlocks = useCallback(() => {
+    setTimeout(() => dispatch(fetchCourseUnitQuery(blockId)), 1000);
+  }, [dispatch, blockId]);
+
+  const onDeleteSubmit = () => {
+    if (deleteXBlockId) {
+      unitXBlockActions.handleDelete(deleteXBlockId);
+      closeDeleteModal();
+      refreshIframeContent();
+    }
+  };
+
+  const onManageXBlockAccessSubmit = (...args: any[]) => {
+    if (configureXBlockId) {
+      handleConfigureSubmit(configureXBlockId, ...args, closeConfigureModal);
+      setAccessManagedXBlockData({});
+      refreshIframeContent();
+    }
+  };
+
+  const messageHandlers = useMessageHandlers({
+    courseId,
+    navigate,
+    dispatch,
+    setIframeOffset,
+    handleDeleteXBlock,
+    handleRefetchXBlocks,
+    handleDuplicateXBlock,
+    handleManageXBlockAccess,
+  });
+
+  useIframeMessages(messageHandlers);
+
+  return (
+    <>
+      <DeleteModal
+        category="component"
+        isOpen={isDeleteModalOpen}
+        close={closeDeleteModal}
+        onDeleteSubmit={onDeleteSubmit}
+      />
+      {Object.keys(accessManagedXBlockData).length ? (
+        <ConfigureModal
+          isXBlockComponent
+          isOpen={isConfigureModalOpen}
+          onClose={() => {
+            closeConfigureModal();
+            setAccessManagedXBlockData({});
+          }}
+          onConfigureSubmit={onManageXBlockAccessSubmit}
+          currentItemData={accessManagedXBlockData as AccessManagedXBlockDataTypes}
+          isSelfPaced={false}
+        />
+      ) : null}
+      <iframe
+        ref={iframeRef}
+        title={intl.formatMessage(messages.xblockIframeTitle)}
+        src={iframeUrl}
+        frameBorder="0"
+        allow={IFRAME_FEATURE_POLICY}
+        allowFullScreen
+        loading="lazy"
+        style={{ width: '100%', height: iframeHeight + iframeOffset }}
+        scrolling="no"
+        referrerPolicy="origin"
+        aria-label={intl.formatMessage(messages.xblockIframeLabel, { xblockCount: courseVerticalChildren.length })}
+      />
+    </>
+  );
 };
 
 export default XBlockContainerIframe;
