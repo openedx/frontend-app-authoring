@@ -118,7 +118,7 @@
     "@testing-library/react-hooks": "^8.0.1",
     "@testing-library/user-event": "^13.2.1",
     "@types/lodash": "^4.17.7",
-    "axios-mock-adapter": "1.22.0",
+    "axios-mock-adapter": "2.1.0",
     "eslint-import-resolver-webpack": "^0.13.8",
     "fetch-mock-jest": "^1.5.1",
     "husky": "7.0.4",
