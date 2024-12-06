@@ -64,7 +64,7 @@ const CardItem: React.FC<Props> = ({
   const waffleFlags = useSelector(getWaffleFlags);
 
   const destinationUrl: string = path ?? (
-    waffleFlags.useNewCourseOutlinePage
+    waffleFlags.useNewCourseOutlinePage && !isLibraries
       ? url
       : new URL(url, getConfig().STUDIO_BASE_URL).toString()
   );
