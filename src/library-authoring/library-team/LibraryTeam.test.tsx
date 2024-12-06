@@ -15,6 +15,7 @@ import {
   getLibraryTeamMemberApiUrl,
 } from '../data/api';
 import { LibraryProvider } from '../common/context';
+import { ToastProvider } from '../../generic/toast-context';
 import LibraryTeam from './LibraryTeam';
 
 mockContentLibrary.applyMock();
@@ -28,9 +29,11 @@ describe('<LibraryTeam />', () => {
   const { libraryId } = mockContentLibrary;
   const renderLibraryTeam = async () => {
     render(
-      <LibraryProvider libraryId={libraryId}>
-        <LibraryTeam />
-      </LibraryProvider>,
+      <ToastProvider>
+        <LibraryProvider libraryId={libraryId}>
+          <LibraryTeam />
+        </LibraryProvider>
+      </ToastProvider>,
     );
 
     await waitFor(() => {
@@ -176,6 +179,56 @@ describe('<LibraryTeam />', () => {
         `{"library_id":"${libraryId}","email":"another@user.tld","access_level":"read"}`,
       );
     });
+
+    expect(await screen.findByText('Team Member added')).toBeInTheDocument();
+  });
+
+  it('shows error when user do not exist', async () => {
+    const url = getLibraryTeamApiUrl(libraryId);
+    const axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    axiosMock.onPost(url).reply(400, { email: 'Error' });
+
+    await renderLibraryTeam();
+
+    const addButton = screen.getByRole('button', { name: 'New team member' });
+    userEvent.click(addButton);
+    const emailInput = screen.getByRole('textbox', { name: 'User\'s email address' });
+    userEvent.click(emailInput);
+    userEvent.type(emailInput, 'another@user.tld');
+
+    const saveButton = screen.getByRole('button', { name: /add member/i });
+    userEvent.click(saveButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toEqual(1);
+    });
+
+    expect(await screen.findByText(
+      'Error adding Team Member. Please verify that the email is correct and belongs to a registered user.',
+    )).toBeInTheDocument();
+  });
+
+  it('shows error', async () => {
+    const url = getLibraryTeamApiUrl(libraryId);
+    const axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    axiosMock.onPost(url).reply(400, {});
+
+    await renderLibraryTeam();
+
+    const addButton = screen.getByRole('button', { name: 'New team member' });
+    userEvent.click(addButton);
+    const emailInput = screen.getByRole('textbox', { name: 'User\'s email address' });
+    userEvent.click(emailInput);
+    userEvent.type(emailInput, 'another@user.tld');
+
+    const saveButton = screen.getByRole('button', { name: /add member/i });
+    userEvent.click(saveButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toEqual(1);
+    });
+
+    expect(await screen.findByText('Error adding Team Member')).toBeInTheDocument();
   });
 
   it('allows library team member roles to be changed', async () => {

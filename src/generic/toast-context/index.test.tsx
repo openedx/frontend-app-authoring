@@ -13,7 +13,7 @@ const TestComponentToShow = () => {
   const { showToast } = React.useContext(ToastContext);
 
   React.useEffect(() => {
-    showToast('This is the toast!');
+    showToast('This is the Toast!');
   }, [showToast]);
 
   return <div>Content</div>;
@@ -23,7 +23,7 @@ const TestComponentToClose = () => {
   const { showToast, closeToast } = React.useContext(ToastContext);
 
   React.useEffect(() => {
-    showToast('This is the toast!');
+    showToast('This is the Toast!');
     closeToast();
   }, [showToast]);
 
@@ -59,19 +59,19 @@ describe('<ToastProvider />', () => {
 
   it('should show toast', async () => {
     render(<RootWrapper><TestComponentToShow /></RootWrapper>);
-    expect(await screen.findByText('This is the toast!')).toBeInTheDocument();
+    expect(await screen.findByText('This is the Toast!')).toBeInTheDocument();
   });
 
   it('should close toast after 5000ms', async () => {
     render(<RootWrapper><TestComponentToShow /></RootWrapper>);
-    expect(await screen.findByText('This is the toast!')).toBeInTheDocument();
+    expect(await screen.findByText('This is the Toast!')).toBeInTheDocument();
     jest.advanceTimersByTime(6000);
-    expect(screen.queryByText('This is the toast!')).not.toBeInTheDocument();
+    expect(screen.queryByText('This is the Toast!')).not.toBeInTheDocument();
   });
 
   it('should close toast', async () => {
     render(<RootWrapper><TestComponentToClose /></RootWrapper>);
     expect(await screen.findByText('Content')).toBeInTheDocument();
-    expect(screen.queryByText('This is the toast!')).not.toBeInTheDocument();
+    expect(screen.queryByText('This is the Toast!')).not.toBeInTheDocument();
   });
 });
