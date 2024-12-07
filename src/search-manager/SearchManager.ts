@@ -147,7 +147,9 @@ export const SearchContextProvider: React.FC<{
     setBlockTypesFilter([]);
     setTagsFilter([]);
     setProblemTypesFilter([]);
-    setUsageKey('');
+    if (usageKey !== '') {
+      setUsageKey('');
+    }
   }, []);
 
   // Initialize a connection to Meilisearch:
