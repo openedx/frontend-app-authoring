@@ -84,6 +84,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
       isVisible,
       groupAccess,
       isDiscussionEnabled,
+      () => sendMessageToIframe(messageTypes.completeManageXBlockAccess, null),
       blockId,
     ));
     closeModalFn();
@@ -112,16 +113,29 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     }
   };
 
-  const handleCreateNewCourseXBlock = (body, callback) => (
+  const handleCreateNewCourseXBlock = (
+    body,
+    callback = (result) => {
+      sendMessageToIframe(messageTypes.addXBlock, { data: result });
+    },
+  ) => (
     dispatch(createNewCourseXBlock(body, callback, blockId))
   );
 
   const unitXBlockActions = {
     handleDelete: (XBlockId) => {
-      dispatch(deleteUnitItemQuery(blockId, XBlockId));
+      dispatch(deleteUnitItemQuery(
+        blockId,
+        XBlockId,
+        () => sendMessageToIframe(messageTypes.completeXBlockDeleting, null),
+      ));
     },
     handleDuplicate: (XBlockId) => {
-      dispatch(duplicateUnitItemQuery(blockId, XBlockId));
+      dispatch(duplicateUnitItemQuery(
+        blockId,
+        XBlockId,
+        (courseKey, locator) => sendMessageToIframe(messageTypes.completeXBlockDuplicating, { courseKey, locator }),
+      ));
     },
   };
 
