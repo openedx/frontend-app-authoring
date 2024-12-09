@@ -134,6 +134,10 @@ const ScanResults = ({ data }) => {
                         status: <span className="link-status-text"><Icon src={LinkOff} className="broken-link-icon" />Status: Broken</span>,
                       }));
                       acc.push(...blockBrokenLinks);
+                      if (!showLockedLinks) {
+                        return acc;
+                      }
+
                       const blockLockedLinks = block.lockedLinks.map((link) => ({
                         blockLink: <GoToBlock block={block} />,
                         brokenLink: <BrokenLinkHref href={link} />,
