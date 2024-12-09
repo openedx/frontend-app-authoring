@@ -81,4 +81,27 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
+  .locked-links-checkbox {
+    margin-top: 0.45rem;
+  }
+
+  .locked-links-checkbox-wrapper {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .link-status-text {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .broken-link-icon {
+    color: $brand-500;
+  }
+
+  .lock-icon {
+    color: $warning-300;
+  }
 }

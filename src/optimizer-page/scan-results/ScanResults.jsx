@@ -1,7 +1,9 @@
 import {
-  Container, Layout, Button, Card, Collapsible, Icon, Table,
+  Container, Layout, Button, Card, Collapsible, Icon, Table, CheckBox, OverlayTrigger, Tooltip,
 } from '@openedx/paragon';
-import { ArrowRight, ArrowDropDown, OpenInNew } from '@openedx/paragon/icons';
+import {
+  ArrowRight, ArrowDropDown, OpenInNew, Question, Lock, LinkOff,
+} from '@openedx/paragon/icons';
 import { useState, useCallback } from 'react';
 
 const SectionCollapsible = ({
@@ -51,7 +53,22 @@ const BrokenLinkHref = ({ href }) => (
 
 const GoToBlock = ({ block }) => <span style={{ display: 'flex', gap: '.5rem' }}><Icon src={OpenInNew} /><a href={block.url} target="_blank" rel="noreferrer">Go to Block</a></span>;
 
+const lockedInfoIcon = (
+  <OverlayTrigger
+    key="top"
+    placement="top"
+    overlay={(
+      <Tooltip variant="light" id="tooltip-top">
+        These course files are &quot;locked&quot; so we cannot test whether they work or not.
+      </Tooltip>
+              )}
+  >
+    <Icon src={Question} />
+  </OverlayTrigger>
+);
 const ScanResults = ({ data }) => {
+  const [showLockedLinks, setShowLockedLinks] = useState(true);
+
   const countBrokenLinksPerSection = useCallback(() => {
     const counts = [];
     sections.forEach((section) => {
@@ -88,7 +105,13 @@ const ScanResults = ({ data }) => {
   return (
     <div className="scan-results">
       <div className="border-bottom border-light-400 mb-3">
-        <header className="sub-header-content"><h2 className="sub-header-content-title">Broken Links Scan</h2></header>
+        <header className="sub-header-content">
+          <h2 className="sub-header-content-title">Broken Links Scan</h2>
+          <span className="locked-links-checkbox-wrapper">
+            <CheckBox className="locked-links-checkbox" type="checkbox" checked={showLockedLinks} onClick={() => { setShowLockedLinks(!showLockedLinks); }} label="Show Locked Course Files" />
+            {lockedInfoIcon}
+          </span>
+        </header>
       </div>
 
       {sections?.map((section, index) => (
@@ -108,13 +131,13 @@ const ScanResults = ({ data }) => {
                       const blockBrokenLinks = block.brokenLinks.map((link) => ({
                         blockLink: <GoToBlock block={block} />,
                         brokenLink: <BrokenLinkHref href={link} />,
-                        status: 'Status: BROKEN ?',
+                        status: <span className="link-status-text"><Icon src={LinkOff} className="broken-link-icon" />Status: Broken</span>,
                       }));
                       acc.push(...blockBrokenLinks);
                       const blockLockedLinks = block.lockedLinks.map((link) => ({
                         blockLink: <GoToBlock block={block} />,
                         brokenLink: <BrokenLinkHref href={link} />,
-                        status: 'Status: LOCKED ?',
+                        status: <span className="link-status-text"><Icon src={Lock} className="lock-icon" />Status: LOCKED {lockedInfoIcon}</span>,
                       }));
                       acc.push(...blockLockedLinks);
                       return acc;
