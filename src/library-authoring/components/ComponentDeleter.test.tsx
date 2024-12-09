@@ -1,4 +1,5 @@
 import { getLibraryId } from '../../generic/key-utils';
+import { ToastActionData } from '../../generic/toast-context';
 import {
   fireEvent,
   render,
@@ -7,12 +8,15 @@ import {
   waitFor,
 } from '../../testUtils';
 import { LibraryProvider } from '../common/context';
-import { mockContentLibrary, mockDeleteLibraryBlock, mockLibraryBlockMetadata } from '../data/api.mocks';
+import {
+  mockContentLibrary, mockDeleteLibraryBlock, mockLibraryBlockMetadata, mockRestoreLibraryBlock,
+} from '../data/api.mocks';
 import ComponentDeleter from './ComponentDeleter';
 
 mockContentLibrary.applyMock(); // Not required, but avoids 404 errors in the logs when <LibraryProvider> loads data
 mockLibraryBlockMetadata.applyMock();
 const mockDelete = mockDeleteLibraryBlock.applyMock();
+const mockRestore = mockRestoreLibraryBlock.applyMock();
 
 const usageKey = mockLibraryBlockMetadata.usageKeyPublished;
 
@@ -22,9 +26,12 @@ const renderArgs = {
   ),
 };
 
+let mockShowToast: { (message: string, action?: ToastActionData | undefined): void; mock?: any; };
+
 describe('<ComponentDeleter />', () => {
   beforeEach(() => {
-    initializeMocks();
+    const mocks = initializeMocks();
+    mockShowToast = mocks.mockShowToast;
   });
 
   it('is invisible when isConfirmingDelete is false', async () => {
@@ -51,7 +58,7 @@ describe('<ComponentDeleter />', () => {
     expect(mockCancel).toHaveBeenCalled();
   });
 
-  it('deletes the block when confirmed', async () => {
+  it('deletes the block when confirmed, shows a toast with undo option and restores block on undo', async () => {
     const mockCancel = jest.fn();
     render(<ComponentDeleter usageKey={usageKey} isConfirmingDelete cancelDelete={mockCancel} />, renderArgs);
 
@@ -64,5 +71,13 @@ describe('<ComponentDeleter />', () => {
       expect(mockDelete).toHaveBeenCalled();
     });
     expect(mockCancel).toHaveBeenCalled(); // In order to close the modal, this also gets called.
+    expect(mockShowToast).toHaveBeenCalled();
+    // Get restore / undo func from the toast
+    const restoreFn = mockShowToast.mock.calls[0][1].onClick;
+    restoreFn();
+    await waitFor(() => {
+      expect(mockRestore).toHaveBeenCalled();
+      expect(mockShowToast).toHaveBeenCalledWith('Undo successful');
+    });
   });
 });

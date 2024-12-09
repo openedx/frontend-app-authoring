@@ -244,6 +244,17 @@ mockDeleteLibraryBlock.applyMock = () => (
 );
 
 /**
+ * Mock for `restoreLibraryBlock()`
+ */
+export async function mockRestoreLibraryBlock(): ReturnType<typeof api.restoreLibraryBlock> {
+  // no-op
+}
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockRestoreLibraryBlock.applyMock = () => (
+  jest.spyOn(api, 'restoreLibraryBlock').mockImplementation(mockRestoreLibraryBlock)
+);
+
+/**
  * Mock for `getXBlockFields()`
  *
  * This mock returns different data/responses depending on the ID of the block
