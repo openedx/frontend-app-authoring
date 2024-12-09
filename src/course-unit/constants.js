@@ -55,8 +55,11 @@ export const messageTypes = {
   showMultipleComponentPicker: 'showMultipleComponentPicker',
   addSelectedComponentsToBank: 'addSelectedComponentsToBank',
   showXBlockLibraryChangesPreview: 'showXBlockLibraryChangesPreview',
+  copyXBlock: 'copyXBlock',
+  manageXBlockAccess: 'manageXBlockAccess',
+  deleteXBlock: 'deleteXBlock',
+  duplicateXBlock: 'duplicateXBlock',
+  refreshXBlockPositions: 'refreshPositions',
+  newXBlockEditor: 'newXBlockEditor',
+  toggleCourseXBlockDropdown: 'toggleCourseXBlockDropdown',
 };
-
-export const IFRAME_FEATURE_POLICY = (
-  'microphone *; camera *; midi *; geolocation *; encrypted-media *, clipboard-write *'
-);
