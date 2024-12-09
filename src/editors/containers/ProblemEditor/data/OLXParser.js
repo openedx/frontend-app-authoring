@@ -57,6 +57,8 @@ export const responseKeys = [
   'choicetextresponse',
 ];
 
+export const answerRangeFormatRegex = /^[([]\s*\d+(\.\d+)?\s*,\s*\d+(\.\d+)?\s*[)\]]$/m;
+
 export const stripNonTextTags = ({ input, tag }) => {
   const stripedTags = {};
   Object.entries(input).forEach(([key, value]) => {
@@ -432,7 +434,7 @@ export class OLXParser {
         [type]: defaultValue,
       };
     }
-    const isAnswerRange = /[([]\s*\d*,\s*\d*\s*[)\]]/gm.test(numericalresponse['@_answer']);
+    const isAnswerRange = answerRangeFormatRegex.test(numericalresponse['@_answer']);
     answers.push({
       id: indexToLetterMap[answers.length],
       title: numericalresponse['@_answer'],

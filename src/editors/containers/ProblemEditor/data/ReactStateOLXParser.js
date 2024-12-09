@@ -413,16 +413,18 @@ class ReactStateOLXParser {
             const lowerBoundFloat = Number(numerator) / Number(denominator);
             lowerBoundInt = lowerBoundFloat;
           } else {
-            // these regex replaces remove everything that is not a decimal or positive/negative numer
+            // these regex replaces remove everything that is not a decimal or positive/negative number
             lowerBoundInt = Number(rawLowerBound.replace(/[^0-9-.]/gm, ''));
           }
-          if (rawUpperBound.includes('/')) {
+          if (!rawUpperBound) {
+            upperBoundInt = lowerBoundInt;
+          } else if (rawUpperBound.includes('/')) {
             upperBoundFraction = rawUpperBound.replace(/[^0-9-/]/gm, '');
             const [numerator, denominator] = upperBoundFraction.split('/');
             const upperBoundFloat = Number(numerator) / Number(denominator);
             upperBoundInt = upperBoundFloat;
           } else {
-            // these regex replaces remove everything that is not a decimal or positive/negative numer
+            // these regex replaces remove everything that is not a decimal or positive/negative number
             upperBoundInt = Number(rawUpperBound.replace(/[^0-9-.]/gm, ''));
           }
           if (lowerBoundInt > upperBoundInt) {
