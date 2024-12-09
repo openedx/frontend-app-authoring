@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useContext } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -8,8 +8,10 @@ import {
 import { Warning } from '@openedx/paragon/icons';
 
 import { useLibraryContext } from '../common/context';
-import { useDeleteLibraryBlock, useLibraryBlockMetadata } from '../data/apiHooks';
+import { useDeleteLibraryBlock, useLibraryBlockMetadata, useRestoreLibraryBlock } from '../data/apiHooks';
 import messages from './messages';
+import { ToastContext } from '../../generic/toast-context';
+import DeleteModal from '../../generic/delete-modal/DeleteModal';
 
 /**
  * Helper component to load and display the name of the block.
@@ -38,11 +40,29 @@ const ComponentDeleter = ({ usageKey, ...props }: Props) => {
     sidebarComponentInfo,
     closeLibrarySidebar,
   } = useLibraryContext();
+  const { showToast } = useContext(ToastContext);
   const sidebarComponentUsageKey = sidebarComponentInfo?.id;
 
+  const restoreComponentMutation = useRestoreLibraryBlock();
+  const restoreComponent = useCallback(async () => {
+    try {
+      await restoreComponentMutation.mutateAsync({ usageKey })
+      showToast(intl.formatMessage(messages.undoDeleteComponentToastSuccess));
+    } catch (e) {
+      showToast(intl.formatMessage(messages.undoDeleteComponentToastFailed));
+    }
+  }, []);
+
   const deleteComponentMutation = useDeleteLibraryBlock();
-  const doDelete = React.useCallback(() => {
-    deleteComponentMutation.mutateAsync({ usageKey });
+  const doDelete = React.useCallback(async () => {
+    await deleteComponentMutation.mutateAsync({ usageKey });
+    showToast(
+      intl.formatMessage(messages.deleteComponentSuccess),
+      {
+        label: intl.formatMessage(messages.undoDeleteCollectionToastAction),
+        onClick: restoreComponent,
+      },
+    );
     props.cancelDelete();
     // Close the sidebar if it's still open showing the deleted component:
     if (usageKey === sidebarComponentUsageKey) {
@@ -55,30 +75,22 @@ const ComponentDeleter = ({ usageKey, ...props }: Props) => {
   }
 
   return (
-    <AlertModal
-      title={intl.formatMessage(messages.deleteComponentWarningTitle)}
+    <DeleteModal
       isOpen
-      onClose={props.cancelDelete}
+      close={props.cancelDelete}
       variant="warning"
+      title={intl.formatMessage(messages.deleteComponentWarningTitle)}
       icon={Warning}
-      footerNode={(
-        <ActionRow>
-          <Button variant="tertiary" onClick={props.cancelDelete}><FormattedMessage {...messages.deleteComponentCancelButton} /></Button>
-          <Button variant="danger" onClick={doDelete}><FormattedMessage {...messages.deleteComponentButton} /></Button>
-        </ActionRow>
-      )}
-    >
-      <p>
-        <FormattedMessage
-          {...messages.deleteComponentConfirm}
-          values={{
-            componentName: (
-              <strong><BlockName usageKey={usageKey} /></strong>
-            ),
-          }}
-        />
-      </p>
-    </AlertModal>
+      description={<FormattedMessage
+        {...messages.deleteComponentConfirm}
+        values={{
+          componentName: (
+            <strong><BlockName usageKey={usageKey} /></strong>
+          ),
+        }}
+      />}
+      onDeleteSubmit={doDelete}
+    />
   );
 };
 
