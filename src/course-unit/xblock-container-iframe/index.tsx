@@ -91,7 +91,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
 
   const handleScrollToXBlock = (scrollOffset: number) => {
     window.scrollBy({
-      top: scrollOffset + 1000,
+      top: scrollOffset,
       behavior: 'smooth',
     });
   };

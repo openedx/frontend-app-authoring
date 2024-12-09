@@ -52,6 +52,8 @@ export const messageTypes = {
   videoFullScreen: 'plugin.videoFullScreen',
   refreshXBlock: 'refreshXBlock',
   showMoveXBlockModal: 'showMoveXBlockModal',
+  completeXBlockMoving: 'completeXBlockMoving',
+  rollbackMovedXBlock: 'rollbackMovedXBlock',
   showMultipleComponentPicker: 'showMultipleComponentPicker',
   addSelectedComponentsToBank: 'addSelectedComponentsToBank',
   showXBlockLibraryChangesPreview: 'showXBlockLibraryChangesPreview',

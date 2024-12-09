@@ -308,7 +308,7 @@ export function patchUnitItemQuery({
       dispatch(updateCourseOutlineInfoLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
       const courseUnit = await getCourseUnitData(currentParentLocator);
       dispatch(fetchCourseItemSuccess(courseUnit));
-      callbackFn();
+      callbackFn(sourceLocator);
     } catch (error) {
       handleResponseErrors(error, dispatch, updateSavingStatus);
     } finally {

@@ -150,7 +150,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
       currentParentLocator,
       isMoving: false,
       callbackFn: () => {
-        sendMessageToIframe(messageTypes.refreshXBlock, null);
+        sendMessageToIframe(messageTypes.rollbackMovedXBlock, { locator: sourceLocator });
         window.scrollTo({ top: 0, behavior: 'smooth' });
       },
     }));
