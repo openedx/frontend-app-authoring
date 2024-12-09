@@ -18,6 +18,7 @@ const DeleteModal = ({
   description,
   variant,
   btnLabel,
+  icon,
 }) => {
   const intl = useIntl();
 
@@ -31,6 +32,7 @@ const DeleteModal = ({
       isOpen={isOpen}
       onClose={close}
       variant={variant}
+      icon={icon}
       footerNode={(
         <ActionRow>
           <Button
@@ -65,6 +67,7 @@ DeleteModal.defaultProps = {
   description: '',
   variant: 'default',
   btnLabel: '',
+  icon: null,
 };
 
 DeleteModal.propTypes = {
@@ -73,9 +76,13 @@ DeleteModal.propTypes = {
   category: PropTypes.string,
   onDeleteSubmit: PropTypes.func.isRequired,
   title: PropTypes.string,
-  description: PropTypes.string,
+  description: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.string,
+  ]),
   variant: PropTypes.string,
   btnLabel: PropTypes.string,
+  icon: PropTypes.elementType,
 };
 
 export default DeleteModal;

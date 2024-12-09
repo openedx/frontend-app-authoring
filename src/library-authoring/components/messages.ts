@@ -86,6 +86,26 @@ const messages = defineMessages({
     defaultMessage: 'Delete',
     description: 'Button to confirm deletion of a component',
   },
+  deleteComponentSuccess: {
+    id: 'course-authoring.library-authoring.component.delete-error-success',
+    defaultMessage: 'Component deleted',
+    description: 'Message to display on delete component success',
+  },
+  undoDeleteComponentToastAction: {
+    id: 'course-authoring.library-authoring.component.undo-delete-component-toast-button',
+    defaultMessage: 'Undo',
+    description: 'Toast message to undo deletion of component',
+  },
+  undoDeleteComponentToastSuccess: {
+    id: 'course-authoring.library-authoring.component.undo-delete-component-toast-text',
+    defaultMessage: 'Undo successful',
+    description: 'Message to display on undo delete component success',
+  },
+  undoDeleteComponentToastFailed: {
+    id: 'course-authoring.library-authoring.component.undo-delete-component-failed',
+    defaultMessage: 'Failed to undo delete component operation',
+    description: 'Message to display on failure to undo delete component',
+  },
   deleteCollection: {
     id: 'course-authoring.library-authoring.collection.delete-menu-text',
     defaultMessage: 'Delete',
