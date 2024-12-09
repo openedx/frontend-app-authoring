@@ -1,10 +1,5 @@
 import React, { useCallback, useContext } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import {
-  ActionRow,
-  AlertModal,
-  Button,
-} from '@openedx/paragon';
 import { Warning } from '@openedx/paragon/icons';
 
 import { useSidebarContext } from '../common/context/SidebarContext';
@@ -43,7 +38,7 @@ const ComponentDeleter = ({ usageKey, ...props }: Props) => {
   const restoreComponentMutation = useRestoreLibraryBlock();
   const restoreComponent = useCallback(async () => {
     try {
-      await restoreComponentMutation.mutateAsync({ usageKey })
+      await restoreComponentMutation.mutateAsync({ usageKey });
       showToast(intl.formatMessage(messages.undoDeleteComponentToastSuccess));
     } catch (e) {
       showToast(intl.formatMessage(messages.undoDeleteComponentToastFailed));
@@ -78,14 +73,16 @@ const ComponentDeleter = ({ usageKey, ...props }: Props) => {
       variant="warning"
       title={intl.formatMessage(messages.deleteComponentWarningTitle)}
       icon={Warning}
-      description={<FormattedMessage
-        {...messages.deleteComponentConfirm}
-        values={{
-          componentName: (
-            <strong><BlockName usageKey={usageKey} /></strong>
-          ),
-        }}
-      />}
+      description={(
+        <FormattedMessage
+          {...messages.deleteComponentConfirm}
+          values={{
+            componentName: (
+              <strong><BlockName usageKey={usageKey} /></strong>
+            ),
+          }}
+        />
+)}
       onDeleteSubmit={doDelete}
     />
   );
