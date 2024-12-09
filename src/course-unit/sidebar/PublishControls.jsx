@@ -4,9 +4,10 @@ import { useToggle } from '@openedx/paragon';
 import { InfoOutline as InfoOutlineIcon } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import useCourseUnitData from './hooks';
+import { useIframe } from '../context/hooks';
 import { editCourseUnitVisibilityAndData } from '../data/thunk';
 import { SidebarBody, SidebarFooter, SidebarHeader } from './components';
-import { PUBLISH_TYPES } from '../constants';
+import { PUBLISH_TYPES, messageTypes } from '../constants';
 import { getCourseUnitData } from '../data/selectors';
 import messages from './messages';
 import ModalNotification from '../../generic/modal-notification';
@@ -20,6 +21,7 @@ const PublishControls = ({ blockId }) => {
     visibleToStaffOnly,
   } = useCourseUnitData(useSelector(getCourseUnitData));
   const intl = useIntl();
+  const { sendMessageToIframe } = useIframe();
 
   const [isDiscardModalOpen, openDiscardModal, closeDiscardModal] = useToggle(false);
   const [isVisibleModalOpen, openVisibleModal, closeVisibleModal] = useToggle(false);
@@ -33,7 +35,14 @@ const PublishControls = ({ blockId }) => {
 
   const handleCourseUnitDiscardChanges = () => {
     closeDiscardModal();
-    dispatch(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.discardChanges));
+    dispatch(editCourseUnitVisibilityAndData(
+      blockId,
+      PUBLISH_TYPES.discardChanges,
+      null,
+      null,
+      null,
+      () => sendMessageToIframe(messageTypes.refreshXBlock, null),
+    ));
   };
 
   const handleCourseUnitPublish = () => {
