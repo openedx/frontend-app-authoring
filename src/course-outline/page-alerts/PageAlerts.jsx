@@ -1,3 +1,4 @@
+import CourseOutlinePageAlertsSlot from 'CourseAuthoring/plugin-slots/CourseOutlinePageAlertsSlot';
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { uniqBy } from 'lodash';
@@ -407,6 +408,7 @@ const PageAlerts = ({
       {errorFilesPasteAlert()}
       {conflictingFilesPasteAlert()}
       {newFilesPasteAlert()}
+      <CourseOutlinePageAlertsSlot />
     </>
   );
 };
