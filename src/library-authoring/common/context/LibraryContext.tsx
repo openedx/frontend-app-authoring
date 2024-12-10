@@ -19,7 +19,7 @@ export interface ComponentEditorInfo {
 
 export type LibraryContextData = {
   /** The ID of the current library */
-  libraryId?: undefined | string;
+  libraryId: string;
   libraryData?: ContentLibrary;
   readOnly: boolean;
   isLoadingLibraryData: boolean;
@@ -141,20 +141,7 @@ export function useLibraryContext(): LibraryContextData {
   const ctx = useContext(LibraryContext);
   if (ctx === undefined) {
     /* istanbul ignore next */
-    return {
-      libraryId: undefined,
-      readOnly: true,
-      isLoadingLibraryData: false,
-      collectionId: undefined,
-      setCollectionId: () => {},
-      showOnlyPublished: false,
-      isCreateCollectionModalOpen: false,
-      openCreateCollectionModal: () => {},
-      closeCreateCollectionModal: () => {},
-      componentBeingEdited: undefined,
-      openComponentEditor: () => {},
-      closeComponentEditor: () => {},
-    };
+    throw new Error('useLibraryContext() was used in a component without a <LibraryProvider> ancestor.');
   }
   return ctx;
 }
