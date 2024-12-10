@@ -57,6 +57,7 @@ const StudioHome = () => {
     studioShortName,
     studioRequestEmail,
     showNewLibraryButton,
+    showNewLibraryV2Button,
   } = studioHomeData;
 
   const getHeaderButtons = useCallback(() => {
@@ -86,7 +87,7 @@ const StudioHome = () => {
       );
     }
 
-    if (showNewLibraryButton || showV2LibraryURL) {
+    if ((showNewLibraryButton && !showV2LibraryURL) || (showV2LibraryURL && showNewLibraryV2Button)) {
       const newLibraryClick = () => {
         if (showV2LibraryURL) {
           navigate('/library/create');
@@ -101,7 +102,6 @@ const StudioHome = () => {
           variant="outline-primary"
           iconBefore={AddIcon}
           size="sm"
-          disabled={showNewCourseContainer}
           onClick={newLibraryClick}
           data-testid="new-library-button"
         >

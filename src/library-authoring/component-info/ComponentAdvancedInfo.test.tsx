@@ -14,6 +14,7 @@ import {
 } from '../data/api.mocks';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
+import * as apiHooks from '../data/apiHooks';
 import { ComponentAdvancedInfo } from './ComponentAdvancedInfo';
 import { getXBlockAssetsApiUrl } from '../data/api';
 
@@ -26,11 +27,12 @@ const setOLXspy = mockSetXBlockOLX.applyMock();
 const render = (
   usageKey: string = mockLibraryBlockMetadata.usageKeyPublished,
   libraryId: string = mockContentLibrary.libraryId,
+  showOnlyPublished: boolean = false,
 ) => baseRender(
   <ComponentAdvancedInfo />,
   {
     extraWrapper: ({ children }: { children: React.ReactNode }) => (
-      <LibraryProvider libraryId={libraryId}>
+      <LibraryProvider libraryId={libraryId}> showOnlyPublished={showOnlyPublished}
         <SidebarProvider
           initialSidebarComponentInfo={{
             id: usageKey,
@@ -126,13 +128,31 @@ describe('<ComponentAdvancedInfo />', () => {
   });
 
   it('should display the OLX source of the block (when expanded)', async () => {
+    const usageKey = mockXBlockOLX.usageKeyHtml;
+    const spy = jest.spyOn(apiHooks, 'useXBlockOLX');
+
     render(mockXBlockOLX.usageKeyHtml);
     const expandButton = await screen.findByRole('button', { name: /Advanced details/ });
     fireEvent.click(expandButton);
-    // Because of syntax highlighting, the OLX will be borken up by many different tags so we need to search for
+    // Because of syntax highlighting, the OLX will be broken up by many different tags so we need to search for
     // just a substring:
     const olxPart = /This is a text component which uses/;
     await waitFor(() => expect(screen.getByText(olxPart)).toBeInTheDocument());
+    expect(spy).toHaveBeenCalledWith(usageKey, 'draft');
+  });
+
+  it('should display the published OLX source of the block (when expanded)', async () => {
+    const usageKey = mockXBlockOLX.usageKeyHtml;
+    const spy = jest.spyOn(apiHooks, 'useXBlockOLX');
+
+    render(usageKey, undefined, true);
+    const expandButton = await screen.findByRole('button', { name: /Advanced details/ });
+    fireEvent.click(expandButton);
+    // Because of syntax highlighting, the OLX will be broken up by many different tags so we need to search for
+    // just a substring:
+    const olxPart = /This is a text component which uses/;
+    await waitFor(() => expect(screen.getByText(olxPart)).toBeInTheDocument());
+    expect(spy).toHaveBeenCalledWith(usageKey, 'published');
   });
 
   it('does not display "Edit OLX" button and assets dropzone when the library is read-only', async () => {

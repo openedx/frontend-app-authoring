@@ -153,7 +153,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     } else if (currentPath && currentPath in ContentType) {
       setActiveKey(ContentType[currentPath]);
     }
-  }, [location.pathname]);
+  }, []);
 
   useEffect(() => {
     if (!componentPickerMode) {
