@@ -158,7 +158,16 @@ export function useSidebarContext(): SidebarContextData {
   const ctx = useContext(SidebarContext);
   if (ctx === undefined) {
     /* istanbul ignore next */
-    throw new Error('useSidebarContext() was used in a component without a <SidebarProvider> ancestor.');
+    return {
+      closeLibrarySidebar: () => {},
+      openAddContentSidebar: () => {},
+      openInfoSidebar: () => {},
+      openComponentInfoSidebar: () => {},
+      openCollectionInfoSidebar: () => {},
+      resetSidebarAdditionalActions: () => {},
+      setSidebarCurrentTab: () => {},
+      sidebarComponentInfo: undefined,
+    };
   }
   return ctx;
 }
