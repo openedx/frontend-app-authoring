@@ -44,6 +44,7 @@ import {
   removeComponentsFromCollection,
   publishXBlock,
   deleteXBlockAsset,
+  restoreLibraryBlock,
 } from './api';
 import { VersionSpec } from '../LibraryBlock';
 
@@ -115,6 +116,7 @@ export function invalidateComponentData(queryClient: QueryClient, contentLibrary
   queryClient.invalidateQueries({ queryKey: xblockQueryKeys.xblockFields(usageKey) });
   queryClient.invalidateQueries({ queryKey: xblockQueryKeys.componentMetadata(usageKey) });
   // The description and display name etc. may have changed, so refresh everything in the library too:
+  // This might fail in case this helper is called after deleting the block.
   queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(contentLibraryId) });
   queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, contentLibraryId) });
 }
@@ -151,6 +153,20 @@ export const useDeleteLibraryBlock = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: deleteLibraryBlock,
+    onSettled: (_data, _error, variables) => {
+      const libraryId = getLibraryId(variables.usageKey);
+      invalidateComponentData(queryClient, libraryId, variables.usageKey);
+    },
+  });
+};
+
+/**
+ * Use this mutation to restore a deleted block in a library
+ */
+export const useRestoreLibraryBlock = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: restoreLibraryBlock,
     onSettled: (_data, _error, variables) => {
       const libraryId = getLibraryId(variables.usageKey);
       invalidateComponentData(queryClient, libraryId, variables.usageKey);
