@@ -14,7 +14,7 @@ import {
   getLibraryTeamApiUrl,
   getLibraryTeamMemberApiUrl,
 } from '../data/api';
-import { LibraryProvider } from '../common/context';
+import { LibraryProvider } from '../common/context/LibraryContext';
 import { ToastProvider } from '../../generic/toast-context';
 import LibraryTeam from './LibraryTeam';
 

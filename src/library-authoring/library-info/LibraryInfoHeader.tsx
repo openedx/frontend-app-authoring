@@ -9,7 +9,7 @@ import { Edit } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { ToastContext } from '../../generic/toast-context';
-import { useLibraryContext } from '../common/context';
+import { useLibraryContext } from '../common/context/LibraryContext';
 import { useUpdateLibraryMetadata } from '../data/apiHooks';
 import messages from './messages';
 

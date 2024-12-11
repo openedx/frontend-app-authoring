@@ -4,7 +4,7 @@ import React from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import EditorPage from '../../editors/EditorPage';
 import { getBlockType } from '../../generic/key-utils';
-import { useLibraryContext } from '../common/context';
+import { useLibraryContext } from '../common/context/LibraryContext';
 import { invalidateComponentData } from '../data/apiHooks';
 
 export function canEditComponent(usageKey: string): boolean {

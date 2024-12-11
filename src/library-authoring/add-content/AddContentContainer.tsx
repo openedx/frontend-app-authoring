@@ -25,7 +25,7 @@ import { ToastContext } from '../../generic/toast-context';
 import { useCopyToClipboard } from '../../generic/clipboard';
 import { getCanEdit } from '../../course-unit/data/selectors';
 import { useCreateLibraryBlock, useLibraryPasteClipboard, useAddComponentsToCollection } from '../data/apiHooks';
-import { useLibraryContext } from '../common/context';
+import { useLibraryContext } from '../common/context/LibraryContext';
 import { canEditComponent } from '../components/ComponentEditorModal';
 import { PickLibraryContentModal } from './PickLibraryContentModal';
 
