@@ -32,7 +32,7 @@ const render = (
   <ComponentAdvancedInfo />,
   {
     extraWrapper: ({ children }: { children: React.ReactNode }) => (
-      <LibraryProvider libraryId={libraryId}> showOnlyPublished={showOnlyPublished}
+      <LibraryProvider libraryId={libraryId} showOnlyPublished={showOnlyPublished}>
         <SidebarProvider
           initialSidebarComponentInfo={{
             id: usageKey,
