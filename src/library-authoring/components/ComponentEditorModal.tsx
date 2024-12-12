@@ -15,9 +15,7 @@ export function canEditComponent(usageKey: string): boolean {
     return false;
   }
 
-  // Which XBlock/component types are supported by the 'editors' built in to this repo?
-  const mfeEditorTypes = ['html', 'problem', 'video'];
-  return mfeEditorTypes.includes(blockType);
+  return getConfig().LIBRARY_SUPPORTED_BLOCKS.includes(blockType);
 }
 
 export const ComponentEditorModal: React.FC<Record<never, never>> = () => {
