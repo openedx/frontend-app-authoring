@@ -3,8 +3,8 @@ import { renderHook, act } from '@testing-library/react-hooks';
 import { useKeyedState } from '@edx/react-unit-test-utils';
 import { logError } from '@edx/frontend-platform/logging';
 
-import { stateKeys, messageTypes } from '../../constants';
-import { useIFrameBehavior, useLoadBearingHook } from '../hooks';
+import { stateKeys, messageTypes } from '../../../constants';
+import { useLoadBearingHook, useIFrameBehavior } from '..';
 
 jest.mock('@edx/react-unit-test-utils', () => ({
   useKeyedState: jest.fn(),
