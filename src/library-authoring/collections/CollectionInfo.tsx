@@ -6,7 +6,6 @@ import {
   Tabs,
 } from '@openedx/paragon';
 import { useCallback } from 'react';
-import { useNavigate, useMatch } from 'react-router-dom';
 
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
@@ -17,6 +16,7 @@ import {
   isCollectionInfoTab,
   useSidebarContext,
 } from '../common/context/SidebarContext';
+import { useLibraryRoutes } from '../routes';
 import { ContentTagsDrawer } from '../../content-tags-drawer';
 import { buildCollectionUsageKey } from '../../generic/key-utils';
 import CollectionDetails from './CollectionDetails';
@@ -24,36 +24,33 @@ import messages from './messages';
 
 const CollectionInfo = () => {
   const intl = useIntl();
-  const navigate = useNavigate();
 
   const { componentPickerMode } = useComponentPickerContext();
-  const { libraryId, collectionId, setCollectionId } = useLibraryContext();
+  const { libraryId, setCollectionId } = useLibraryContext();
   const { sidebarComponentInfo, setSidebarCurrentTab } = useSidebarContext();
 
   const tab: CollectionInfoTab = (
     sidebarComponentInfo?.currentTab && isCollectionInfoTab(sidebarComponentInfo.currentTab)
   ) ? sidebarComponentInfo?.currentTab : COLLECTION_INFO_TABS.Manage;
 
-  const sidebarCollectionId = sidebarComponentInfo?.id;
+  const collectionId = sidebarComponentInfo?.id;
   // istanbul ignore if: this should never happen
-  if (!sidebarCollectionId) {
-    throw new Error('sidebarCollectionId is required');
+  if (!collectionId) {
+    throw new Error('collectionId is required');
   }
 
-  const url = `/library/${libraryId}/collection/${sidebarCollectionId}`;
-  const urlMatch = useMatch(url);
+  const collectionUsageKey = buildCollectionUsageKey(libraryId, collectionId);
 
-  const showOpenCollectionButton = !urlMatch && collectionId !== sidebarCollectionId;
-
-  const collectionUsageKey = buildCollectionUsageKey(libraryId, sidebarCollectionId);
+  const { insideCollection, navigateTo } = useLibraryRoutes();
+  const showOpenCollectionButton = !insideCollection || componentPickerMode;
 
   const handleOpenCollection = useCallback(() => {
-    if (!componentPickerMode) {
-      navigate(url);
+    if (componentPickerMode) {
+      setCollectionId(collectionId);
     } else {
-      setCollectionId(sidebarCollectionId);
+      navigateTo({ collectionId });
     }
-  }, [componentPickerMode, url]);
+  }, [componentPickerMode, navigateTo]);
 
   return (
     <Stack>

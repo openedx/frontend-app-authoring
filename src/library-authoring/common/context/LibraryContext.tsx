@@ -6,6 +6,7 @@ import {
   useMemo,
   useState,
 } from 'react';
+import { useParams } from 'react-router-dom';
 
 import type { ComponentPicker } from '../../component-picker';
 import type { ContentLibrary } from '../../data/api';
@@ -25,6 +26,8 @@ export type LibraryContextData = {
   isLoadingLibraryData: boolean;
   collectionId: string | undefined;
   setCollectionId: (collectionId?: string) => void;
+  componentId: string | undefined;
+  setComponentId: (componentId?: string) => void;
   // Only show published components
   showOnlyPublished: boolean;
   // "Create New Collection" modal
@@ -53,9 +56,10 @@ const LibraryContext = createContext<LibraryContextData | undefined>(undefined);
 type LibraryProviderProps = {
   children?: React.ReactNode;
   libraryId: string;
-  /** The initial collection ID to show */
-  collectionId?: string;
   showOnlyPublished?: boolean;
+  // If set, will initialize the current collection and/or component from the current URL
+  skipUrlUpdate?: boolean;
+
   /** The component picker modal to use. We need to pass it as a reference instead of
    * directly importing it to avoid the import cycle:
    * ComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
@@ -69,11 +73,10 @@ type LibraryProviderProps = {
 export const LibraryProvider = ({
   children,
   libraryId,
-  collectionId: collectionIdProp,
   showOnlyPublished = false,
+  skipUrlUpdate = false,
   componentPicker,
 }: LibraryProviderProps) => {
-  const [collectionId, setCollectionId] = useState(collectionIdProp);
   const [isCreateCollectionModalOpen, openCreateCollectionModal, closeCreateCollectionModal] = useToggle(false);
   const [componentBeingEdited, setComponentBeingEdited] = useState<ComponentEditorInfo | undefined>();
   const closeComponentEditor = useCallback(() => {
@@ -94,12 +97,23 @@ export const LibraryProvider = ({
 
   const readOnly = !!componentPickerMode || !libraryData?.canEditLibrary;
 
+  // Parse the initial collectionId and/or componentId from the current URL params
+  const params = useParams();
+  const [componentId, setComponentId] = useState(
+    skipUrlUpdate ? undefined : params.componentId,
+  );
+  const [collectionId, setCollectionId] = useState(
+    skipUrlUpdate ? undefined : params.collectionId,
+  );
+
   const context = useMemo<LibraryContextData>(() => {
     const contextValue = {
       libraryId,
       libraryData,
       collectionId,
       setCollectionId,
+      componentId,
+      setComponentId,
       readOnly,
       isLoadingLibraryData,
       showOnlyPublished,
@@ -115,9 +129,11 @@ export const LibraryProvider = ({
     return contextValue;
   }, [
     libraryId,
+    libraryData,
     collectionId,
     setCollectionId,
-    libraryData,
+    componentId,
+    setComponentId,
     readOnly,
     isLoadingLibraryData,
     showOnlyPublished,

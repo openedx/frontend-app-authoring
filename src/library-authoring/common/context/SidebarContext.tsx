@@ -48,7 +48,8 @@ export enum SidebarAdditionalActions {
 export type SidebarContextData = {
   closeLibrarySidebar: () => void;
   openAddContentSidebar: () => void;
-  openInfoSidebar: () => void;
+  openInfoSidebar: (componentId?: string, collectionId?: string) => void;
+  openLibrarySidebar: () => void;
   openCollectionInfoSidebar: (collectionId: string, additionalAction?: SidebarAdditionalActions) => void;
   openComponentInfoSidebar: (usageKey: string, additionalAction?: SidebarAdditionalActions) => void;
   sidebarComponentInfo?: SidebarComponentInfo;
@@ -71,7 +72,7 @@ type SidebarProviderProps = {
 };
 
 /**
- * React component to provide `LibraryContext`
+ * React component to provide `SidebarContext`
  */
 export const SidebarProvider = ({
   children,
@@ -81,7 +82,7 @@ export const SidebarProvider = ({
     initialSidebarComponentInfo,
   );
 
-  /** Helper function to consume addtional action once performed.
+  /** Helper function to consume additional action once performed.
     Required to redo the action.
   */
   const resetSidebarAdditionalActions = useCallback(() => {
@@ -94,7 +95,7 @@ export const SidebarProvider = ({
   const openAddContentSidebar = useCallback(() => {
     setSidebarComponentInfo({ id: '', type: SidebarBodyComponentId.AddContent });
   }, []);
-  const openInfoSidebar = useCallback(() => {
+  const openLibrarySidebar = useCallback(() => {
     setSidebarComponentInfo({ id: '', type: SidebarBodyComponentId.Info });
   }, []);
 
@@ -119,6 +120,16 @@ export const SidebarProvider = ({
     }));
   }, []);
 
+  const openInfoSidebar = useCallback((componentId?: string, collectionId?: string) => {
+    if (componentId) {
+      openComponentInfoSidebar(componentId);
+    } else if (collectionId) {
+      openCollectionInfoSidebar(collectionId);
+    } else {
+      openLibrarySidebar();
+    }
+  }, []);
+
   const setSidebarCurrentTab = useCallback((tab: CollectionInfoTab | ComponentInfoTab) => {
     setSidebarComponentInfo((prev) => (prev && { ...prev, currentTab: tab }));
   }, []);
@@ -128,6 +139,7 @@ export const SidebarProvider = ({
       closeLibrarySidebar,
       openAddContentSidebar,
       openInfoSidebar,
+      openLibrarySidebar,
       openComponentInfoSidebar,
       sidebarComponentInfo,
       openCollectionInfoSidebar,
@@ -140,6 +152,7 @@ export const SidebarProvider = ({
     closeLibrarySidebar,
     openAddContentSidebar,
     openInfoSidebar,
+    openLibrarySidebar,
     openComponentInfoSidebar,
     sidebarComponentInfo,
     openCollectionInfoSidebar,
@@ -162,6 +175,7 @@ export function useSidebarContext(): SidebarContextData {
       closeLibrarySidebar: () => {},
       openAddContentSidebar: () => {},
       openInfoSidebar: () => {},
+      openLibrarySidebar: () => {},
       openComponentInfoSidebar: () => {},
       openCollectionInfoSidebar: () => {},
       resetSidebarAdditionalActions: () => {},

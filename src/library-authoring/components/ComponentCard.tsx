@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -23,6 +23,8 @@ import { useComponentPickerContext } from '../common/context/ComponentPickerCont
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { SidebarAdditionalActions, useSidebarContext } from '../common/context/SidebarContext';
 import { useRemoveComponentsFromCollection } from '../data/apiHooks';
+import { useLibraryRoutes } from '../routes';
+
 import BaseComponentCard from './BaseComponentCard';
 import { canEditComponent } from './ComponentEditorModal';
 import messages from './messages';
@@ -200,6 +202,15 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
     showOnlyPublished ? formatted.published?.displayName : formatted.displayName
   ) ?? '';
 
+  const { navigateTo } = useLibraryRoutes();
+  const openComponent = useCallback(() => {
+    openComponentInfoSidebar(usageKey);
+
+    if (!componentPickerMode) {
+      navigateTo({ componentId: usageKey });
+    }
+  }, [usageKey, navigateTo, openComponentInfoSidebar]);
+
   return (
     <BaseComponentCard
       componentType={blockType}
@@ -215,7 +226,7 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
           )}
         </ActionRow>
       )}
-      openInfoSidebar={() => openComponentInfoSidebar(usageKey)}
+      onSelect={openComponent}
     />
   );
 };

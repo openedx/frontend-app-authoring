@@ -105,6 +105,7 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
           <LibraryProvider
             libraryId={selectedLibrary}
             showOnlyPublished={calcShowOnlyPublished}
+            skipUrlUpdate
           >
             <SidebarProvider>
               { calcShowOnlyPublished
