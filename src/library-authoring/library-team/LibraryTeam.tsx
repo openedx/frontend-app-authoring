@@ -12,7 +12,7 @@ import { Add as IconAdd } from '@openedx/paragon/icons';
 import AlertError from '../../generic/alert-error';
 import Loading from '../../generic/Loading';
 import { ToastContext } from '../../generic/toast-context';
-import { useLibraryContext } from '../common/context';
+import { useLibraryContext } from '../common/context/LibraryContext';
 import { LibraryAccessLevel } from '../data/api';
 import {
   useContentLibrary,

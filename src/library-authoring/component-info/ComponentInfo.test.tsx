@@ -6,7 +6,8 @@ import {
 } from '../../testUtils';
 import { mockContentLibrary, mockLibraryBlockMetadata } from '../data/api.mocks';
 import { mockBroadcastChannel } from '../../generic/data/api.mock';
-import { LibraryProvider, SidebarBodyComponentId } from '../common/context';
+import { LibraryProvider } from '../common/context/LibraryContext';
+import { SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
 import ComponentInfo from './ComponentInfo';
 import { getXBlockPublishApiUrl } from '../data/api';
 
@@ -24,14 +25,15 @@ jest.mock('./ComponentManagement', () => ({
 
 const withLibraryId = (libraryId: string, sidebarComponentUsageKey: string) => ({
   extraWrapper: ({ children }: { children: React.ReactNode }) => (
-    <LibraryProvider
-      libraryId={libraryId}
-      initialSidebarComponentInfo={{
-        id: sidebarComponentUsageKey,
-        type: SidebarBodyComponentId.ComponentInfo,
-      }}
-    >
-      {children}
+    <LibraryProvider libraryId={libraryId}>
+      <SidebarProvider
+        initialSidebarComponentInfo={{
+          id: sidebarComponentUsageKey,
+          type: SidebarBodyComponentId.ComponentInfo,
+        }}
+      >
+        {children}
+      </SidebarProvider>
     </LibraryProvider>
   ),
 });

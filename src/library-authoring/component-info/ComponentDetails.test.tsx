@@ -9,7 +9,7 @@ import {
   mockXBlockAssets,
   mockXBlockOLX,
 } from '../data/api.mocks';
-import { LibraryProvider, SidebarBodyComponentId } from '../common/context';
+import { SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
 import ComponentDetails from './ComponentDetails';
 
 mockContentLibrary.applyMock();
@@ -17,19 +17,16 @@ mockLibraryBlockMetadata.applyMock();
 mockXBlockAssets.applyMock();
 mockXBlockOLX.applyMock();
 
-const { libraryId: mockLibraryId } = mockContentLibrary;
-
 const render = (usageKey: string) => baseRender(<ComponentDetails />, {
   extraWrapper: ({ children }) => (
-    <LibraryProvider
-      libraryId={mockLibraryId}
+    <SidebarProvider
       initialSidebarComponentInfo={{
         id: usageKey,
         type: SidebarBodyComponentId.ComponentInfo,
       }}
     >
       {children}
-    </LibraryProvider>
+    </SidebarProvider>
   ),
 });
 

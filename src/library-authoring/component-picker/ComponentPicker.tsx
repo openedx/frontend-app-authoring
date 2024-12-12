@@ -6,9 +6,10 @@ import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   type ComponentSelectedEvent,
   type ComponentSelectionChangedEvent,
-  LibraryProvider,
-  useLibraryContext,
-} from '../common/context';
+  ComponentPickerProvider,
+} from '../common/context/ComponentPickerContext';
+import { LibraryProvider, useLibraryContext } from '../common/context/LibraryContext';
+import { SidebarProvider } from '../common/context/SidebarContext';
 import LibraryAuthoringPage from '../LibraryAuthoringPage';
 import LibraryCollectionPage from '../collections/LibraryCollectionPage';
 import SelectLibrary from './SelectLibrary';
@@ -81,7 +82,7 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
 
   const restrictToLibrary = !!libraryId;
 
-  const libraryProviderProps = componentPickerMode === 'single' ? {
+  const componentPickerProviderProps = componentPickerMode === 'single' ? {
     componentPickerMode,
     onComponentSelected,
     restrictToLibrary,
@@ -100,19 +101,22 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
       </Stepper.Step>
 
       <Stepper.Step eventKey="pick-components" title="Pick some components">
-        <LibraryProvider
-          libraryId={selectedLibrary}
-          showOnlyPublished={calcShowOnlyPublished}
-          {...libraryProviderProps}
-        >
-          { calcShowOnlyPublished
-            && (
-            <Alert variant="info" className="m-2">
-              <FormattedMessage {...messages.pickerInfoBanner} />
-            </Alert>
-            )}
-          <InnerComponentPicker returnToLibrarySelection={returnToLibrarySelection} />
-        </LibraryProvider>
+        <ComponentPickerProvider {...componentPickerProviderProps}>
+          <LibraryProvider
+            libraryId={selectedLibrary}
+            showOnlyPublished={calcShowOnlyPublished}
+          >
+            <SidebarProvider>
+              { calcShowOnlyPublished
+                && (
+                <Alert variant="info" className="m-2">
+                  <FormattedMessage {...messages.pickerInfoBanner} />
+                </Alert>
+                )}
+              <InnerComponentPicker returnToLibrarySelection={returnToLibrarySelection} />
+            </SidebarProvider>
+          </LibraryProvider>
+        </ComponentPickerProvider>
       </Stepper.Step>
     </Stepper>
   );

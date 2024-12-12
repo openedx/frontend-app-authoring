@@ -6,7 +6,7 @@ import {
 import { Add } from '@openedx/paragon/icons';
 import { ClearFiltersButton } from '../search-manager';
 import messages from './messages';
-import { useLibraryContext } from './common/context';
+import { useLibraryContext } from './common/context/LibraryContext';
 
 export const NoComponents = ({
   infoText = messages.noComponents,

@@ -10,7 +10,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import FormikControl from '../../generic/FormikControl';
-import { useLibraryContext } from '../common/context';
+import { useLibraryContext } from '../common/context/LibraryContext';
 import messages from './messages';
 import { useCreateLibraryCollection } from '../data/apiHooks';
 import { ToastContext } from '../../generic/toast-context';

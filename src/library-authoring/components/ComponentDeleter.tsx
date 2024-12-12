@@ -7,7 +7,7 @@ import {
 } from '@openedx/paragon';
 import { Warning } from '@openedx/paragon/icons';
 
-import { useLibraryContext } from '../common/context';
+import { useSidebarContext } from '../common/context/SidebarContext';
 import { useDeleteLibraryBlock, useLibraryBlockMetadata } from '../data/apiHooks';
 import messages from './messages';
 
@@ -34,10 +34,7 @@ interface Props {
 
 const ComponentDeleter = ({ usageKey, ...props }: Props) => {
   const intl = useIntl();
-  const {
-    sidebarComponentInfo,
-    closeLibrarySidebar,
-  } = useLibraryContext();
+  const { sidebarComponentInfo, closeLibrarySidebar } = useSidebarContext();
   const sidebarComponentUsageKey = sidebarComponentInfo?.id;
 
   const deleteComponentMutation = useDeleteLibraryBlock();

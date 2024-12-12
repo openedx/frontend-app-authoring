@@ -6,9 +6,9 @@ import {
 } from 'react-router-dom';
 
 import LibraryAuthoringPage from './LibraryAuthoringPage';
-import { LibraryProvider } from './common/context';
+import { LibraryProvider } from './common/context/LibraryContext';
+import { SidebarProvider } from './common/context/SidebarContext';
 import { CreateCollectionModal } from './create-collection';
-import { LibraryTeamModal } from './library-team';
 import LibraryCollectionPage from './collections/LibraryCollectionPage';
 import { ComponentPicker } from './component-picker';
 import { ComponentEditorModal } from './components/ComponentEditorModal';
@@ -27,6 +27,8 @@ const LibraryLayout = () => {
 
   return (
     <LibraryProvider
+      /** We need to pass the collectionId as key to the LibraryProvider to force a re-render
+      * when we navigate to a collection page. */
       key={collectionId}
       libraryId={libraryId}
       collectionId={collectionId}
@@ -36,19 +38,20 @@ const LibraryLayout = () => {
        * Sidebar > AddContentContainer > ComponentPicker */
       componentPicker={ComponentPicker}
     >
-      <Routes>
-        <Route
-          path="collection/:collectionId"
-          element={<LibraryCollectionPage />}
-        />
-        <Route
-          path="*"
-          element={<LibraryAuthoringPage />}
-        />
-      </Routes>
-      <CreateCollectionModal />
-      <ComponentEditorModal />
-      <LibraryTeamModal />
+      <SidebarProvider>
+        <Routes>
+          <Route
+            path="collection/:collectionId"
+            element={<LibraryCollectionPage />}
+          />
+          <Route
+            path="*"
+            element={<LibraryAuthoringPage />}
+          />
+        </Routes>
+        <CreateCollectionModal />
+        <ComponentEditorModal />
+      </SidebarProvider>
     </LibraryProvider>
   );
 };

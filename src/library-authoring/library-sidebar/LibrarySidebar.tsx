@@ -9,7 +9,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { AddContentContainer, AddContentHeader } from '../add-content';
 import { CollectionInfo, CollectionInfoHeader } from '../collections';
-import { SidebarBodyComponentId, useLibraryContext } from '../common/context';
+import { SidebarBodyComponentId, useSidebarContext } from '../common/context/SidebarContext';
 import { ComponentInfo, ComponentInfoHeader } from '../component-info';
 import { LibraryInfo, LibraryInfoHeader } from '../library-info';
 import messages from '../messages';
@@ -25,10 +25,7 @@ import messages from '../messages';
  */
 const LibrarySidebar = () => {
   const intl = useIntl();
-  const {
-    sidebarComponentInfo,
-    closeLibrarySidebar,
-  } = useLibraryContext();
+  const { sidebarComponentInfo, closeLibrarySidebar } = useSidebarContext();
 
   const bodyComponentMap = {
     [SidebarBodyComponentId.AddContent]: <AddContentContainer />,

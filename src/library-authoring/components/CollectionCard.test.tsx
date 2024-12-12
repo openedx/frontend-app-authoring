@@ -4,7 +4,7 @@ import type MockAdapter from 'axios-mock-adapter';
 import {
   initializeMocks, render as baseRender, screen, waitFor, waitForElementToBeRemoved, within,
 } from '../../testUtils';
-import { LibraryProvider } from '../common/context';
+import { LibraryProvider } from '../common/context/LibraryContext';
 import { type CollectionHit } from '../../search-manager';
 import CollectionCard from './CollectionCard';
 import messages from './messages';
@@ -42,7 +42,7 @@ const render = (ui: React.ReactElement, showOnlyPublished: boolean = false) => b
       libraryId="lib:Axim:TEST"
       showOnlyPublished={showOnlyPublished}
     >
-      { children }
+      {children}
     </LibraryProvider>
   ),
 });
@@ -81,7 +81,7 @@ describe('<CollectionCard />', () => {
     const openMenuItem = screen.getByRole('link', { name: 'Open' });
     expect(openMenuItem).toBeInTheDocument();
 
-    expect(openMenuItem).toHaveAttribute('href', '/library/lb:org1:Demo_Course/collection/collection-display-name/');
+    expect(openMenuItem).toHaveAttribute('href', '/library/lb:org1:Demo_Course/collection/collection-display-name');
   });
 
   it('should show confirmation box, delete collection and show toast to undo deletion', async () => {

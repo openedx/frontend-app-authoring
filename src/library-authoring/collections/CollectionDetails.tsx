@@ -6,7 +6,8 @@ import classNames from 'classnames';
 import { getItemIcon } from '../../generic/block-type-utils';
 import { ToastContext } from '../../generic/toast-context';
 import { BlockTypeLabel, useGetBlockTypes } from '../../search-manager';
-import { useLibraryContext } from '../common/context';
+import { useLibraryContext } from '../common/context/LibraryContext';
+import { useSidebarContext } from '../common/context/SidebarContext';
 import { useCollection, useUpdateCollection } from '../data/apiHooks';
 import HistoryWidget from '../generic/history-widget';
 import messages from './messages';
@@ -37,7 +38,8 @@ const BlockCount = ({
 };
 
 const CollectionStatsWidget = () => {
-  const { libraryId, sidebarComponentInfo } = useLibraryContext();
+  const { libraryId } = useLibraryContext();
+  const { sidebarComponentInfo } = useSidebarContext();
   const collectionId = sidebarComponentInfo?.id;
 
   const { data: blockTypes } = useGetBlockTypes([
@@ -97,11 +99,8 @@ const CollectionStatsWidget = () => {
 const CollectionDetails = () => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
-  const {
-    libraryId,
-    sidebarComponentInfo,
-    readOnly,
-  } = useLibraryContext();
+  const { libraryId, readOnly } = useLibraryContext();
+  const { sidebarComponentInfo } = useSidebarContext();
 
   const collectionId = sidebarComponentInfo?.id;
   // istanbul ignore next: This should never happen

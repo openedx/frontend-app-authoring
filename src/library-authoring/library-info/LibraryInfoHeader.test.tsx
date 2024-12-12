@@ -9,7 +9,7 @@ import {
 } from '../../testUtils';
 import { mockContentLibrary } from '../data/api.mocks';
 import { getContentLibraryApiUrl } from '../data/api';
-import { LibraryProvider } from '../common/context';
+import { LibraryProvider } from '../common/context/LibraryContext';
 import LibraryInfoHeader from './LibraryInfoHeader';
 
 const { libraryId: mockLibraryId, libraryIdReadOnly, libraryData } = mockContentLibrary;
