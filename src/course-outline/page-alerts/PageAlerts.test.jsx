@@ -71,19 +71,19 @@ describe('<PageAlerts />', () => {
   });
 
   it('renders null when no alerts are present', () => {
-    const { queryByTestId } = renderComponent();
-    expect(queryByTestId('browser-router')).toBeEmptyDOMElement();
+    renderComponent();
+    expect(screen.queryByTestId('browser-router')).toBeEmptyDOMElement();
   });
 
   it('renders configuration alerts', async () => {
-    const { queryByText } = renderComponent({
+    renderComponent({
       ...pageAlertsData,
       notificationDismissUrl: 'some-url',
       handleDismissNotification,
     });
 
-    expect(queryByText(messages.configurationErrorTitle.defaultMessage)).toBeInTheDocument();
-    const dismissBtn = queryByText('Dismiss');
+    expect(screen.queryByText(messages.configurationErrorTitle.defaultMessage)).toBeInTheDocument();
+    const dismissBtn = screen.queryByText('Dismiss');
     await act(async () => fireEvent.click(dismissBtn));
 
     expect(handleDismissNotification).toBeCalled();
@@ -117,7 +117,7 @@ describe('<PageAlerts />', () => {
   });
 
   it('renders deprecation warning alerts', async () => {
-    const { queryByText } = renderComponent({
+    renderComponent({
       ...pageAlertsData,
       deprecatedBlocksInfo: {
         blocks: [['url1', 'block1'], ['url2']],
@@ -126,20 +126,20 @@ describe('<PageAlerts />', () => {
       },
     });
 
-    expect(queryByText(messages.deprecationWarningTitle.defaultMessage)).toBeInTheDocument();
-    expect(queryByText(messages.deprecationWarningBlocksText.defaultMessage)).toBeInTheDocument();
-    expect(queryByText('block1')).toHaveAttribute('href', 'url1');
-    expect(queryByText(messages.deprecatedComponentName.defaultMessage)).toHaveAttribute('href', 'url2');
+    expect(screen.queryByText(messages.deprecationWarningTitle.defaultMessage)).toBeInTheDocument();
+    expect(screen.queryByText(messages.deprecationWarningBlocksText.defaultMessage)).toBeInTheDocument();
+    expect(screen.queryByText('block1')).toHaveAttribute('href', 'url1');
+    expect(screen.queryByText(messages.deprecatedComponentName.defaultMessage)).toHaveAttribute('href', 'url2');
 
-    const feedbackLink = queryByText(messages.advancedSettingLinkText.defaultMessage);
+    const feedbackLink = screen.queryByText(messages.advancedSettingLinkText.defaultMessage);
     expect(feedbackLink).toBeInTheDocument();
     expect(feedbackLink).toHaveAttribute('href', `${getConfig().STUDIO_BASE_URL}/some-url`);
-    expect(queryByText('lti')).toBeInTheDocument();
-    expect(queryByText('video')).toBeInTheDocument();
+    expect(screen.queryByText('lti')).toBeInTheDocument();
+    expect(screen.queryByText('video')).toBeInTheDocument();
   });
 
   it('renders proctoring alerts with mfe settings link', async () => {
-    const { queryByText } = renderComponent({
+    renderComponent({
       ...pageAlertsData,
       mfeProctoredExamSettingsUrl: 'mfe-url',
       proctoringErrors: [
@@ -148,15 +148,15 @@ describe('<PageAlerts />', () => {
       ],
     });
 
-    expect(queryByText('error 1')).toBeInTheDocument();
-    expect(queryByText('error 2')).toBeInTheDocument();
-    expect(queryByText('message 1')).toBeInTheDocument();
-    expect(queryByText('message 2')).toBeInTheDocument();
-    expect(queryByText(messages.proctoredSettingsLinkText.defaultMessage)).toHaveAttribute('href', 'mfe-url');
+    expect(screen.queryByText('error 1')).toBeInTheDocument();
+    expect(screen.queryByText('error 2')).toBeInTheDocument();
+    expect(screen.queryByText('message 1')).toBeInTheDocument();
+    expect(screen.queryByText('message 2')).toBeInTheDocument();
+    expect(screen.queryByText(messages.proctoredSettingsLinkText.defaultMessage)).toHaveAttribute('href', 'mfe-url');
   });
 
   it('renders proctoring alerts without mfe settings link', async () => {
-    const { queryByText } = renderComponent({
+    renderComponent({
       ...pageAlertsData,
       advanceSettingsUrl: '/some-url',
       proctoringErrors: [
@@ -165,11 +165,11 @@ describe('<PageAlerts />', () => {
       ],
     });
 
-    expect(queryByText('error 1')).toBeInTheDocument();
-    expect(queryByText('error 2')).toBeInTheDocument();
-    expect(queryByText('message 1')).toBeInTheDocument();
-    expect(queryByText('message 2')).toBeInTheDocument();
-    expect(queryByText(messages.advancedSettingLinkText.defaultMessage)).toHaveAttribute(
+    expect(screen.queryByText('error 1')).toBeInTheDocument();
+    expect(screen.queryByText('error 2')).toBeInTheDocument();
+    expect(screen.queryByText('message 1')).toBeInTheDocument();
+    expect(screen.queryByText('message 2')).toBeInTheDocument();
+    expect(screen.queryByText(messages.advancedSettingLinkText.defaultMessage)).toHaveAttribute(
       'href',
       `${getConfig().STUDIO_BASE_URL}/some-url`,
     );
@@ -181,10 +181,10 @@ describe('<PageAlerts />', () => {
       conflictingFiles: [],
       errorFiles: ['error.css'],
     });
-    const { queryByText } = renderComponent();
-    expect(queryByText(messages.newFileAlertTitle.defaultMessage)).toBeInTheDocument();
-    expect(queryByText(messages.errorFileAlertTitle.defaultMessage)).toBeInTheDocument();
-    expect(queryByText(messages.newFileAlertAction.defaultMessage)).toHaveAttribute(
+    renderComponent();
+    expect(screen.queryByText(messages.newFileAlertTitle.defaultMessage)).toBeInTheDocument();
+    expect(screen.queryByText(messages.errorFileAlertTitle.defaultMessage)).toBeInTheDocument();
+    expect(screen.queryByText(messages.newFileAlertAction.defaultMessage)).toHaveAttribute(
       'href',
       `${getConfig().STUDIO_BASE_URL}/assets/course-id`,
     );
@@ -196,16 +196,16 @@ describe('<PageAlerts />', () => {
       conflictingFiles: ['some.css', 'some.js'],
       errorFiles: [],
     });
-    const { queryByText } = renderComponent();
-    expect(queryByText(messages.conflictingFileAlertTitle.defaultMessage)).toBeInTheDocument();
-    expect(queryByText(messages.newFileAlertAction.defaultMessage)).toHaveAttribute(
+    renderComponent();
+    expect(screen.queryByText(messages.conflictingFileAlertTitle.defaultMessage)).toBeInTheDocument();
+    expect(screen.queryByText(messages.newFileAlertAction.defaultMessage)).toHaveAttribute(
       'href',
       `${getConfig().STUDIO_BASE_URL}/assets/course-id`,
     );
   });
 
   it('renders api error alerts', async () => {
-    const { queryByText } = renderComponent({
+    renderComponent({
       ...pageAlertsData,
       errors: {
         outlineIndexApi: { data: 'some error', status: 400, type: API_ERROR_TYPES.serverError },
@@ -213,9 +213,34 @@ describe('<PageAlerts />', () => {
         reindexApi: { type: API_ERROR_TYPES.unknown, data: 'some unknown error' },
       },
     });
-    expect(queryByText(messages.networkErrorAlert.defaultMessage)).toBeInTheDocument();
-    expect(queryByText(messages.serverErrorAlert.defaultMessage)).toBeInTheDocument();
-    expect(queryByText('some error')).toBeInTheDocument();
-    expect(queryByText('some unknown error')).toBeInTheDocument();
+    expect(screen.queryByText(messages.networkErrorAlert.defaultMessage)).toBeInTheDocument();
+    expect(screen.queryByText(messages.serverErrorAlert.defaultMessage)).toBeInTheDocument();
+    expect(screen.queryByText('some error')).toBeInTheDocument();
+    expect(screen.queryByText('some unknown error')).toBeInTheDocument();
+  });
+
+  it('renders forbidden api error alerts', async () => {
+    renderComponent({
+      ...pageAlertsData,
+      errors: {
+        outlineIndexApi: {
+          data: 'some error', status: 403, type: API_ERROR_TYPES.forbidden, dismissable: false,
+        },
+      },
+    });
+    expect(screen.queryByText(messages.forbiddenAlert.defaultMessage)).toBeInTheDocument();
+    expect(screen.queryByText(messages.forbiddenAlertBody.defaultMessage)).toBeInTheDocument();
+  });
+
+  it('renders api error alerts when status is not 403', async () => {
+    renderComponent({
+      ...pageAlertsData,
+      errors: {
+        outlineIndexApi: {
+          data: 'some error', status: 500, type: API_ERROR_TYPES.serverError, dismissable: true,
+        },
+      },
+    });
+    expect(screen.queryByText('some error')).toBeInTheDocument();
   });
 });

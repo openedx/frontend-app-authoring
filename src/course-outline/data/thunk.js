@@ -1,7 +1,7 @@
 import { RequestStatus } from '../../data/constants';
 import { updateClipboardData } from '../../generic/data/slice';
 import { NOTIFICATION_MESSAGES } from '../../constants';
-import { API_ERROR_TYPES, COURSE_BLOCK_NAMES } from '../constants';
+import { COURSE_BLOCK_NAMES } from '../constants';
 import {
   hideProcessingNotification,
   showProcessingNotification,
@@ -10,6 +10,7 @@ import {
   getCourseBestPracticesChecklist,
   getCourseLaunchChecklist,
 } from '../utils/getChecklistForStatusBar';
+import { getErrorDetails } from '../utils/getErrorDetails';
 import {
   addNewCourseItem,
   deleteCourseItem,
@@ -53,24 +54,6 @@ import {
   setPasteFileNotices,
   updateCourseLaunchQueryStatus,
 } from './slice';
-
-const getErrorDetails = (error, dismissible = true) => {
-  const errorInfo = { dismissible };
-  if (error.response?.data) {
-    const { data } = error.response;
-    if ((typeof data === 'string' && !data.includes('</html>')) || typeof data === 'object') {
-      errorInfo.data = JSON.stringify(data);
-    }
-    errorInfo.status = error.response.status;
-    errorInfo.type = API_ERROR_TYPES.serverError;
-  } else if (error.request) {
-    errorInfo.type = API_ERROR_TYPES.networkError;
-  } else {
-    errorInfo.type = API_ERROR_TYPES.unknown;
-    errorInfo.data = error.message;
-  }
-  return errorInfo;
-};
 
 export function fetchCourseOutlineIndexQuery(courseId) {
   return async (dispatch) => {
