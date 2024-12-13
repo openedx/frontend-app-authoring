@@ -1,5 +1,4 @@
 import React from 'react';
-import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   Badge,
   Form,
@@ -8,7 +7,6 @@ import {
 } from '@openedx/paragon';
 import { FilterList } from '@openedx/paragon/icons';
 import SearchFilterWidget from './SearchFilterWidget';
-import messages from './messages';
 import { useSearchContext } from './SearchManager';
 import { PublishStatus } from './data/api';
 
@@ -17,16 +15,17 @@ import { PublishStatus } from './data/api';
  */
 const FilterByPublished: React.FC<Record<never, never>> = () => {
   const {
-    publishedFilter,
-    setPublishedFilter,
+    publishStatus,
+    publishStatusFilter,
+    setPublishStatusFilter,
   } = useSearchContext();
 
   const clearFilters = React.useCallback(() => {
-    setPublishedFilter([]);
+    setPublishStatusFilter([]);
   }, []);
 
   const toggleFilterMode = React.useCallback((mode: PublishStatus) => {
-    setPublishedFilter(oldList => {
+    setPublishStatusFilter(oldList => {
       if (oldList.includes(mode)) {
         return oldList.filter(m => m !== mode);
       }
@@ -44,7 +43,7 @@ const FilterByPublished: React.FC<Record<never, never>> = () => {
       <Form.Group className="mb-0">
         <Form.CheckboxSet
           name="block-type-filter"
-          value={publishedFilter}
+          value={publishStatusFilter}
         >
           <Menu className="block-type-refinement-menu" style={{ boxShadow: 'none' }}>
             <MenuItem
@@ -54,7 +53,7 @@ const FilterByPublished: React.FC<Record<never, never>> = () => {
             >
               <div>
                 Published
-                {' '}<Badge variant="light" pill>15</Badge>
+                {' '}<Badge variant="light" pill>{publishStatus[PublishStatus.Published] ?? 0}</Badge>
               </div>
             </MenuItem>
             <MenuItem
@@ -64,7 +63,7 @@ const FilterByPublished: React.FC<Record<never, never>> = () => {
             >
               <div>
                 Modified since publish
-                {' '}<Badge variant="light" pill>5</Badge>
+                {' '}<Badge variant="light" pill>{publishStatus[PublishStatus.Modified] ?? 0}</Badge>
               </div>
             </MenuItem>
             <MenuItem
@@ -74,7 +73,7 @@ const FilterByPublished: React.FC<Record<never, never>> = () => {
             >
               <div>
                 Never published
-                {' '}<Badge variant="light" pill>2</Badge>
+                {' '}<Badge variant="light" pill>{publishStatus[PublishStatus.NeverPublished] ?? 0}</Badge>
               </div>
             </MenuItem>
           </Menu>

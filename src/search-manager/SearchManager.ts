@@ -27,12 +27,13 @@ export interface SearchContextData {
   setBlockTypesFilter: React.Dispatch<React.SetStateAction<string[]>>;
   problemTypesFilter: string[];
   setProblemTypesFilter: React.Dispatch<React.SetStateAction<string[]>>;
-  publishedFilter: PublishStatus[];
-  setPublishedFilter: React.Dispatch<React.SetStateAction<PublishStatus[]>>;
+  publishStatusFilter: PublishStatus[];
+  setPublishStatusFilter: React.Dispatch<React.SetStateAction<PublishStatus[]>>;
   tagsFilter: string[];
   setTagsFilter: React.Dispatch<React.SetStateAction<string[]>>;
   blockTypes: Record<string, number>;
   problemTypes: Record<string, number>;
+  publishStatus: Record<string, number>;
   extraFilter?: Filter;
   canClearFilters: boolean;
   clearFilters: () => void;
@@ -105,7 +106,7 @@ export const SearchContextProvider: React.FC<{
   const [searchKeywords, setSearchKeywords] = React.useState('');
   const [blockTypesFilter, setBlockTypesFilter] = React.useState<string[]>([]);
   const [problemTypesFilter, setProblemTypesFilter] = React.useState<string[]>([]);
-  const [publishedFilter, setPublishedFilter] = React.useState<PublishStatus[]>([]);
+  const [publishStatusFilter, setPublishStatusFilter] = React.useState<PublishStatus[]>([]);
   const [tagsFilter, setTagsFilter] = React.useState<string[]>([]);
   const [usageKey, setUsageKey] = useStateWithUrlSearchParam(
     '',
@@ -170,7 +171,7 @@ export const SearchContextProvider: React.FC<{
     searchKeywords,
     blockTypesFilter,
     problemTypesFilter,
-    publishedFilter,
+    publishStatusFilter,
     tagsFilter,
     sort,
     skipBlockTypeFetch,
@@ -186,8 +187,8 @@ export const SearchContextProvider: React.FC<{
       setBlockTypesFilter,
       problemTypesFilter,
       setProblemTypesFilter,
-      publishedFilter,
-      setPublishedFilter,
+      publishStatusFilter,
+      setPublishStatusFilter,
       tagsFilter,
       setTagsFilter,
       extraFilter,
