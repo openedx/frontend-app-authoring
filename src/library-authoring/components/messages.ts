@@ -73,7 +73,7 @@ const messages = defineMessages({
   },
   deleteComponentConfirm: {
     id: 'course-authoring.library-authoring.component.delete-confirmation-text',
-    defaultMessage: 'Delete {componentName} permanently? If this component has been used in a course, those copies won\'t be deleted, but they will no longer receive updates from the library.',
+    defaultMessage: 'Delete {componentName}? If this component has been used in a course, those copies won\'t be deleted, but they will no longer receive updates from the library.',
     description: 'Confirmation text to display before deleting a component',
   },
   deleteComponentCancelButton: {
@@ -85,6 +85,26 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.component.confirm-delete-button',
     defaultMessage: 'Delete',
     description: 'Button to confirm deletion of a component',
+  },
+  deleteComponentSuccess: {
+    id: 'course-authoring.library-authoring.component.delete-error-success',
+    defaultMessage: 'Component deleted',
+    description: 'Message to display on delete component success',
+  },
+  undoDeleteComponentToastAction: {
+    id: 'course-authoring.library-authoring.component.undo-delete-component-toast-button',
+    defaultMessage: 'Undo',
+    description: 'Toast message to undo deletion of component',
+  },
+  undoDeleteComponentToastSuccess: {
+    id: 'course-authoring.library-authoring.component.undo-delete-component-toast-text',
+    defaultMessage: 'Undo successful',
+    description: 'Message to display on undo delete component success',
+  },
+  undoDeleteComponentToastFailed: {
+    id: 'course-authoring.library-authoring.component.undo-delete-component-failed',
+    defaultMessage: 'Failed to undo delete component operation',
+    description: 'Message to display on failure to undo delete component',
   },
   deleteCollection: {
     id: 'course-authoring.library-authoring.collection.delete-menu-text',

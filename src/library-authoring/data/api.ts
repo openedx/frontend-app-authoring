@@ -30,6 +30,11 @@ export const getLibraryTeamMemberApiUrl = (libraryId: string, username: string) 
 export const getLibraryBlockMetadataUrl = (usageKey: string) => `${getApiBaseUrl()}/api/libraries/v2/blocks/${usageKey}/`;
 
 /**
+ * Get the URL for restoring deleted library block.
+ */
+export const getLibraryBlockRestoreUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}restore/`;
+
+/**
  * Get the URL for library block metadata.
  */
 export const getLibraryBlockCollectionsUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}collections/`;
@@ -279,6 +284,11 @@ export async function createLibraryBlock({
 export async function deleteLibraryBlock({ usageKey }: DeleteBlockDataRequest): Promise<void> {
   const client = getAuthenticatedHttpClient();
   await client.delete(getLibraryBlockMetadataUrl(usageKey));
+}
+
+export async function restoreLibraryBlock({ usageKey }: DeleteBlockDataRequest): Promise<void> {
+  const client = getAuthenticatedHttpClient();
+  await client.post(getLibraryBlockRestoreUrl(usageKey));
 }
 
 /**
