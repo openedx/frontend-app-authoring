@@ -4,12 +4,15 @@ import { getConfig } from '@edx/frontend-platform';
 
 import { RequestStatus } from '../../data/constants';
 // import { setExportCookie } from '../utils';
-import { EXPORT_STAGES, LAST_EXPORT_COOKIE_NAME } from './constants';
-
 import {
-  postLinkCheck,
-  getLinkCheckStatus,
-} from './api';
+  EXPORT_STAGES,
+  LAST_EXPORT_COOKIE_NAME,
+  LINK_CHECK_FAILURE_STATUSES,
+  LINK_CHECK_IN_PROGRESS_STATUSES,
+  SCAN_STAGES,
+} from './constants';
+
+import { postLinkCheck, getLinkCheckStatus } from './api';
 import {
   updateLinkCheckInProgress,
   updateLinkCheckResult,
@@ -68,20 +71,23 @@ export function fetchLinkCheckStatus(courseId) {
     // return true;
 
     try {
-      const {
-        linkCheckStatus,
-        linkCheckOutput,
-      } = await getLinkCheckStatus(courseId);
+      const { linkCheckStatus, linkCheckOutput } = await getLinkCheckStatus(
+        courseId,
+      );
       console.log('linkCheckOutput: ', linkCheckOutput);
-      if (linkCheckStatus === 1 || linkCheckStatus === 2) {
+      if (LINK_CHECK_IN_PROGRESS_STATUSES.includes(linkCheckStatus)) {
         dispatch(updateLinkCheckInProgress(true));
       } else {
         dispatch(updateLinkCheckInProgress(false));
       }
 
-      dispatch(updateCurrentStage(linkCheckStatus));
+      dispatch(updateCurrentStage(SCAN_STAGES[linkCheckStatus]));
 
-      if (linkCheckStatus === undefined || linkCheckStatus === null || linkCheckStatus < 0) {
+      if (
+        linkCheckStatus === undefined
+        || linkCheckStatus === null
+        || LINK_CHECK_FAILURE_STATUSES.includes(linkCheckStatus)
+      ) {
         dispatch(updateError({ msg: 'Link Check Failed' }));
         dispatch(updateIsErrorModalOpen(true));
       }
@@ -96,7 +102,9 @@ export function fetchLinkCheckStatus(courseId) {
       if (error?.response && error?.response.status === 403) {
         dispatch(updateLoadingStatus({ status: RequestStatus.DENIED }));
       } else {
-        dispatch(updateLoadingStatus({ courseId, status: RequestStatus.FAILED }));
+        dispatch(
+          updateLoadingStatus({ courseId, status: RequestStatus.FAILED }),
+        );
       }
       return false;
     }

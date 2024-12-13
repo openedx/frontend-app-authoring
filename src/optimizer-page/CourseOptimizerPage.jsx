@@ -86,7 +86,7 @@ const CourseOptimizerPage = ({ intl, courseId }) => {
     );
   }
 
-  console.log('courseOptimizerPage: linkCheckResult: ', linkCheckResult);
+  console.log('currentStage: ', currentStage);
 
   return (
     <>
@@ -138,7 +138,7 @@ const CourseOptimizerPage = ({ intl, courseId }) => {
                   <Card.Section className="px-3 py-1">
                     <CourseStepper
                       steps={courseStepperSteps}
-                      activeKey={currentStage - 1}
+                      activeKey={currentStage}
                       hasError={currentStage < 0 || !!errorMessage}
                       errorMessage={errorMessage}
                     />
