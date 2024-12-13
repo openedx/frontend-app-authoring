@@ -73,7 +73,7 @@ const messages = defineMessages({
   },
   deleteComponentConfirm: {
     id: 'course-authoring.library-authoring.component.delete-confirmation-text',
-    defaultMessage: 'Delete {componentName} permanently? If this component has been used in a course, those copies won\'t be deleted, but they will no longer receive updates from the library.',
+    defaultMessage: 'Delete {componentName}? If this component has been used in a course, those copies won\'t be deleted, but they will no longer receive updates from the library.',
     description: 'Confirmation text to display before deleting a component',
   },
   deleteComponentCancelButton: {

@@ -1,4 +1,4 @@
-import { ToastActionData } from '../../generic/toast-context';
+import type { ToastActionData } from '../../generic/toast-context';
 import {
   fireEvent,
   render,
