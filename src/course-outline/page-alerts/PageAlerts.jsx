@@ -343,12 +343,20 @@ const PageAlerts = ({
   const renderApiErrors = () => {
     let errorList = Object.entries(errors).filter(obj => obj[1] !== null).map(([k, v]) => {
       switch (v.type) {
-        case API_ERROR_TYPES.serverError:
+        case API_ERROR_TYPES.serverError: {
           let description = v.data || intl.formatMessage(messages.serverErrorAlertBody);
           let alertTitle = intl.formatMessage(messages.serverErrorAlert);
           if (v.status === 403) {
             description = intl.formatMessage(messages.forbiddenAlertBody, {
-              LMS: <Hyperlink destination={`${getConfig().LMS_BASE_URL}`} target="_blank" showLaunchIcon={false}>{intl.formatMessage(messages.forbiddenAlertLmsUrl)}</Hyperlink>
+              LMS: (
+                <Hyperlink
+                  destinationdestination={`${getConfig().LMS_BASE_URL}`}
+                  target="_blank"
+                  showLaunchIcon={false}
+                >
+                  {intl.formatMessage(messages.forbiddenAlertLmsUrl)}
+                </Hyperlink>
+              ),
             });
             alertTitle = intl.formatMessage(messages.forbiddenAlert);
           }
@@ -358,6 +366,7 @@ const PageAlerts = ({
             title: alertTitle,
             dismissible: v.dismissible,
           };
+        }
         case API_ERROR_TYPES.networkError:
           return {
             key: k,
@@ -386,7 +395,8 @@ const PageAlerts = ({
             dismissError={() => dispatch(dismissError(msgObj.key))}
           >
             <Alert.Heading>{msgObj.title}</Alert.Heading>
-            {msgObj.desc}
+            {(typeof msgObj.desc === 'object')
+              ? msgObj.desc : <Truncate lines={2}>{msgObj.desc}</Truncate>}
           </ErrorAlert>
         ) : (
           <Alert
