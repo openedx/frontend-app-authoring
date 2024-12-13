@@ -185,7 +185,7 @@ interface FetchSearchParams {
   searchKeywords: string,
   blockTypesFilter?: string[],
   problemTypesFilter?: string[],
-  publishedFilter?: PublishStatus[],
+  publishStatusFilter?: PublishStatus[],
   /** The full path of tags that each result MUST have, e.g. ["Difficulty > Hard", "Subject > Math"] */
   tagsFilter?: string[],
   extraFilter?: Filter,
@@ -201,7 +201,7 @@ export async function fetchSearchResults({
   searchKeywords,
   blockTypesFilter,
   problemTypesFilter,
-  publishedFilter,
+  publishStatusFilter,
   tagsFilter,
   extraFilter,
   sort,
@@ -213,6 +213,7 @@ export async function fetchSearchResults({
     totalHits: number,
     blockTypes: Record<string, number>,
     problemTypes: Record<string, number>,
+    publishStatus: Record<string, number>,
   }> {
   const queries: MultiSearchQuery[] = [];
 
@@ -223,15 +224,7 @@ export async function fetchSearchResults({
 
   const problemTypesFilterFormatted = problemTypesFilter?.length ? [problemTypesFilter.map(pt => `content.problem_types = ${pt}`)] : [];
 
-  /* eslint-disable */
-  const publishStatusFilterFormatted = publishedFilter?.length ? publishedFilter.map(pt => (
-    pt === PublishStatus.Published ? 'modified = last_published' :
-    pt === PublishStatus.Modified ? 'modified > last_published' :
-    pt === PublishStatus.NeverPublished ? 'last_published IS NULL' :
-    'false'
-  )) : [];
-  console.log(publishStatusFilterFormatted)
-  /* eslint-enable */
+  const publishStatusFilterFormatted = publishStatusFilter?.length ? [publishStatusFilter.map(ps => `publish_status = ${ps}`)] : [];
 
   const tagsFilterFormatted = formatTagsFilter(tagsFilter);
 
@@ -268,7 +261,7 @@ export async function fetchSearchResults({
   if (!skipBlockTypeFetch) {
     queries.push({
       indexUid: indexName,
-      facets: ['block_type', 'content.problem_types'],
+      facets: ['block_type', 'content.problem_types', 'publish_status'],
       filter: [
         ...extraFilterFormatted,
         // We exclude the block type filter here so we get all the other available options for it.
@@ -285,6 +278,7 @@ export async function fetchSearchResults({
     totalHits: results[0].totalHits ?? results[0].estimatedTotalHits ?? hitLength,
     blockTypes: results[1]?.facetDistribution?.block_type ?? {},
     problemTypes: results[1]?.facetDistribution?.['content.problem_types'] ?? {},
+    publishStatus: results[1]?.facetDistribution?.publish_status ?? {},
     nextOffset: hitLength === limit ? offset + limit : undefined,
   };
 }
