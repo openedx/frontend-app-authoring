@@ -63,72 +63,75 @@ const InfoCard = ({ text }) => (
   </Card>
 );
 
-const BrokenLinkTable = ({ unit }) => (
-  <>
-    <p className="block-header">{unit.displayName}</p>
-    <Table
-      data={unit.blocks.reduce((acc, block) => {
-        const blockBrokenLinks = block.brokenLinks.map(
-          (link) => ({
-            blockLink: <GoToBlock block={block} />,
-            brokenLink: <BrokenLinkHref href={link} />,
-            status: (
-              <span className="link-status-text">
-                <Icon
-                  src={LinkOff}
-                  className="broken-link-icon"
-                />
-                {intl.formatMessage(messages.brokenLinkStatus)}
-              </span>
-            ),
-          }),
-        );
-        acc.push(...blockBrokenLinks);
-        if (!showLockedLinks) {
-          return acc;
-        }
+const BrokenLinkTable = ({ unit, showLockedLinks }) => {
+  const intl = useIntl();
+  return (
+    <>
+      <p className="block-header">{unit.displayName}</p>
+      <Table
+        data={unit.blocks.reduce((acc, block) => {
+          const blockBrokenLinks = block.brokenLinks.map(
+            (link) => ({
+              blockLink: <GoToBlock block={block} />,
+              brokenLink: <BrokenLinkHref href={link} />,
+              status: (
+                <span className="link-status-text">
+                  <Icon
+                    src={LinkOff}
+                    className="broken-link-icon"
+                  />
+                  {intl.formatMessage(messages.brokenLinkStatus)}
+                </span>
+              ),
+            }),
+          );
+          acc.push(...blockBrokenLinks);
+          if (!showLockedLinks) {
+            return acc;
+          }
 
-        const blockLockedLinks = block.lockedLinks.map(
-          (link) => ({
-            blockLink: <GoToBlock block={block} />,
-            brokenLink: <BrokenLinkHref href={link} />,
-            status: (
-              <span className="link-status-text">
-                <Icon src={Lock} className="lock-icon" />
-                {intl.formatMessage(messages.lockedLinkStatus)} <LockedInfoIcon />
-              </span>
-            ),
-          }),
-        );
-        acc.push(...blockLockedLinks);
-        return acc;
-      }, [])}
-      columns={[
-        {
-          key: 'blockLink',
-          columnSortable: true,
-          onSort: () => {},
-          width: 'col-3',
-          hideHeader: true,
-        },
-        {
-          key: 'brokenLink',
-          columnSortable: false,
-          onSort: () => {},
-          width: 'col-6',
-          hideHeader: true,
-        },
-        {
-          key: 'status',
-          columnSortable: false,
-          onSort: () => {},
-          width: 'col-6',
-          hideHeader: true,
-        },
-      ]}
-    />
-  </>
-);
+          const blockLockedLinks = block.lockedLinks.map(
+            (link) => ({
+              blockLink: <GoToBlock block={block} />,
+              brokenLink: <BrokenLinkHref href={link} />,
+              status: (
+                <span className="link-status-text">
+                  <Icon src={Lock} className="lock-icon" />
+                  {intl.formatMessage(messages.lockedLinkStatus)} <LockedInfoIcon />
+                </span>
+              ),
+            }),
+          );
+          acc.push(...blockLockedLinks);
+          return acc;
+        }, [])}
+        columns={[
+          {
+            key: 'blockLink',
+            columnSortable: true,
+            onSort: () => {},
+            width: 'col-3',
+            hideHeader: true,
+          },
+          {
+            key: 'brokenLink',
+            columnSortable: false,
+            onSort: () => {},
+            width: 'col-6',
+            hideHeader: true,
+          },
+          {
+            key: 'status',
+            columnSortable: false,
+            onSort: () => {},
+            width: 'col-6',
+            hideHeader: true,
+          },
+        ]}
+      />
+    </>
+  );
+};
 
 const ScanResults = ({ data }) => {
   const intl = useIntl();
@@ -199,68 +202,7 @@ const ScanResults = ({ data }) => {
               </h2>
               {subsection.units.map((unit) => (
                 <div className="unit">
-                  <p className="unit-header">{unit.displayName}</p>
-                  <Table
-                    data={unit.blocks.reduce((acc, block) => {
-                      const blockBrokenLinks = block.brokenLinks.map(
-                        (link) => ({
-                          blockLink: <GoToBlock block={block} />,
-                          brokenLink: <BrokenLinkHref href={link} />,
-                          status: (
-                            <span className="link-status-text">
-                              <Icon
-                                src={LinkOff}
-                                className="broken-link-icon"
-                              />
-                              {intl.formatMessage(messages.brokenLinkStatus)}
-                            </span>
-                          ),
-                        }),
-                      );
-                      acc.push(...blockBrokenLinks);
-                      if (!showLockedLinks) {
-                        return acc;
-                      }
-
-                      const blockLockedLinks = block.lockedLinks.map(
-                        (link) => ({
-                          blockLink: <GoToBlock block={block} />,
-                          brokenLink: <BrokenLinkHref href={link} />,
-                          status: (
-                            <span className="link-status-text">
-                              <Icon src={Lock} className="lock-icon" />
-                              {intl.formatMessage(messages.lockedLinkStatus)} <LockedInfoIcon />
-                            </span>
-                          ),
-                        }),
-                      );
-                      acc.push(...blockLockedLinks);
-                      return acc;
-                    }, [])}
-                    columns={[
-                      {
-                        key: 'blockLink',
-                        columnSortable: true,
-                        onSort: () => {},
-                        width: 'col-3',
-                        hideHeader: true,
-                      },
-                      {
-                        key: 'brokenLink',
-                        columnSortable: false,
-                        onSort: () => {},
-                        width: 'col-6',
-                        hideHeader: true,
-                      },
-                      {
-                        key: 'status',
-                        columnSortable: false,
-                        onSort: () => {},
-                        width: 'col-6',
-                        hideHeader: true,
-                      },
-                    ]}
-                  />
+                  <BrokenLinkTable unit={unit} showLockedLinks={showLockedLinks} />
                 </div>
               ))}
             </>
