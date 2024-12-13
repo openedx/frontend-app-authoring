@@ -19,8 +19,6 @@ import {
 import { startLinkCheck, fetchLinkCheckStatus } from './data/thunks';
 import { useModel } from '../generic/model-store';
 import { ScanResults } from './scan-results';
-// import ExportModalError from './export-modal-error/ExportModalError';
-// import ExportFooter from './export-footer/ExportFooter';
 
 const pollLinkCheckStatus = (dispatch, courseId, delay) => {
   const interval = setInterval(() => {

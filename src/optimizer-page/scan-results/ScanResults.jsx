@@ -1,10 +1,26 @@
+import { useState, useCallback } from 'react';
 import {
-  Container, Layout, Button, Card, Collapsible, Icon, Table, CheckBox, OverlayTrigger, Tooltip,
+  Container,
+  Layout,
+  Button,
+  Card,
+  Collapsible,
+  Icon,
+  Table,
+  CheckBox,
+  OverlayTrigger,
+  Tooltip,
 } from '@openedx/paragon';
 import {
-  ArrowRight, ArrowDropDown, OpenInNew, Question, Lock, LinkOff,
+  ArrowRight,
+  ArrowDropDown,
+  OpenInNew,
+  Question,
+  Lock,
+  LinkOff,
 } from '@openedx/paragon/icons';
-import { useState, useCallback } from 'react';
+import { useIntl } from '@edx/frontend-platform/i18n';
+import messages from './messages';
 
 const SectionCollapsible = ({
   title, children, redItalics, className,
@@ -13,24 +29,27 @@ const SectionCollapsible = ({
   const styling = 'card-lg';
   const collapsibleTitle = (
     <div className={className}>
-      <Icon src={isOpen ? ArrowDropDown : ArrowRight} className="open-arrow" /><strong>{title}</strong><span className="red-italics">{redItalics}</span>
+      <Icon src={isOpen ? ArrowDropDown : ArrowRight} className="open-arrow" />
+      <strong>{title}</strong>
+      <span className="red-italics">{redItalics}</span>
     </div>
   );
 
   return (
-
     <div className={`section ${isOpen ? 'is-open' : ''}`}>
       <Collapsible
         styling={styling}
-        title={<p><strong>{collapsibleTitle}</strong></p>}
+        title={(
+          <p>
+            <strong>{collapsibleTitle}</strong>
+          </p>
+        )}
         iconWhenClosed=""
         iconWhenOpen=""
         open={isOpen}
         onToggle={() => setIsOpen(!isOpen)}
       >
-        <Collapsible.Body>
-          {children}
-        </Collapsible.Body>
+        <Collapsible.Body>{children}</Collapsible.Body>
       </Collapsible>
     </div>
   );
@@ -47,26 +66,52 @@ function getBaseUrl(url) {
 
 const BrokenLinkHref = ({ href }) => (
   <div className="broken-link-container">
-    <a href={href} target="_blank" className="broken-link" rel="noreferrer">{href}</a>
+    <a href={href} target="_blank" className="broken-link" rel="noreferrer">
+      {href}
+    </a>
   </div>
 );
 
-const GoToBlock = ({ block }) => <span style={{ display: 'flex', gap: '.5rem' }}><Icon src={OpenInNew} /><a href={block.url} target="_blank" rel="noreferrer">Go to Block</a></span>;
-
-const lockedInfoIcon = (
-  <OverlayTrigger
-    key="top"
-    placement="top"
-    overlay={(
-      <Tooltip variant="light" id="tooltip-top">
-        These course files are &quot;locked&quot; so we cannot test whether they work or not.
-      </Tooltip>
-              )}
-  >
-    <Icon src={Question} />
-  </OverlayTrigger>
+const GoToBlock = ({ block }) => (
+  <span style={{ display: 'flex', gap: '.5rem' }}>
+    <Icon src={OpenInNew} />
+    <a href={block.url} target="_blank" rel="noreferrer">
+      Go to Block
+    </a>
+  </span>
 );
+
+const LockedInfoIcon = () => {
+  const intl = useIntl();
+
+  return (
+    <OverlayTrigger
+      key="top"
+      placement="top"
+      overlay={(
+        <Tooltip variant="light" id="tooltip-top">
+          {intl.formatMessage(messages.lockedInfoTooltip)}
+        </Tooltip>
+    )}
+    >
+      <Icon src={Question} />
+    </OverlayTrigger>
+  );
+};
+
+const InfoCard = ({ text }) => (
+  <Card className="mt-4">
+    <h3
+      className="subsection-header"
+      style={{ margin: '1rem', textAlign: 'center' }}
+    >
+      {text}
+    </h3>
+  </Card>
+);
+
 const ScanResults = ({ data }) => {
+  const intl = useIntl();
   const [showLockedLinks, setShowLockedLinks] = useState(true);
 
   const countBrokenLinksPerSection = useCallback(() => {
@@ -86,14 +131,10 @@ const ScanResults = ({ data }) => {
   }, [data?.sections]);
 
   if (!data) {
-    return (
-      <Card className="mt-4">
-        <h1>Scan Results</h1>
-        <Container>
-          <p>No data available</p>
-        </Container>
-      </Card>
-    );
+    return <InfoCard text={intl.formatMessage(messages.noDataCard)} />;
+  }
+  if (!data.sections) {
+    return <InfoCard text={intl.formatMessage(messages.noBrokenLinksCard)} />;
   }
 
   const { sections } = data;
@@ -106,10 +147,18 @@ const ScanResults = ({ data }) => {
     <div className="scan-results">
       <div className="border-bottom border-light-400 mb-3">
         <header className="sub-header-content">
-          <h2 className="sub-header-content-title">Broken Links Scan</h2>
+          <h2 className="sub-header-content-title">{intl.formatMessage(messages.scanHeader)}</h2>
           <span className="locked-links-checkbox-wrapper">
-            <CheckBox className="locked-links-checkbox" type="checkbox" checked={showLockedLinks} onClick={() => { setShowLockedLinks(!showLockedLinks); }} label="Show Locked Course Files" />
-            {lockedInfoIcon}
+            <CheckBox
+              className="locked-links-checkbox"
+              type="checkbox"
+              checked={showLockedLinks}
+              onClick={() => {
+                setShowLockedLinks(!showLockedLinks);
+              }}
+              label={intl.formatMessage(messages.lockedCheckboxLabel)}
+            />
+            <LockedInfoIcon />
           </span>
         </header>
       </div>
@@ -118,31 +167,53 @@ const ScanResults = ({ data }) => {
         <SectionCollapsible
           key={section.id}
           title={section.displayName}
-          redItalics={`${brokenLinkCounts[index]} broken links`}
+          redItalics={intl.formatMessage(messages.brokenLinksNumber, { count: brokenLinkCounts[index] })}
         >
           {section.subsections.map((subsection) => (
             <>
-              <h2 className="subsection-header" style={{ marginBottom: '2rem' }}>{subsection.displayName}</h2>
+              <h2
+                className="subsection-header"
+                style={{ marginBottom: '2rem' }}
+              >
+                {subsection.displayName}
+              </h2>
               {subsection.units.map((unit) => (
                 <div className="unit">
                   <p className="block-header">{unit.displayName}</p>
                   <Table
                     data={unit.blocks.reduce((acc, block) => {
-                      const blockBrokenLinks = block.brokenLinks.map((link) => ({
-                        blockLink: <GoToBlock block={block} />,
-                        brokenLink: <BrokenLinkHref href={link} />,
-                        status: <span className="link-status-text"><Icon src={LinkOff} className="broken-link-icon" />Status: Broken</span>,
-                      }));
+                      const blockBrokenLinks = block.brokenLinks.map(
+                        (link) => ({
+                          blockLink: <GoToBlock block={block} />,
+                          brokenLink: <BrokenLinkHref href={link} />,
+                          status: (
+                            <span className="link-status-text">
+                              <Icon
+                                src={LinkOff}
+                                className="broken-link-icon"
+                              />
+                              {intl.formatMessage(messages.brokenLinkStatus)}
+                            </span>
+                          ),
+                        }),
+                      );
                       acc.push(...blockBrokenLinks);
                       if (!showLockedLinks) {
                         return acc;
                       }
 
-                      const blockLockedLinks = block.lockedLinks.map((link) => ({
-                        blockLink: <GoToBlock block={block} />,
-                        brokenLink: <BrokenLinkHref href={link} />,
-                        status: <span className="link-status-text"><Icon src={Lock} className="lock-icon" />Status: LOCKED {lockedInfoIcon}</span>,
-                      }));
+                      const blockLockedLinks = block.lockedLinks.map(
+                        (link) => ({
+                          blockLink: <GoToBlock block={block} />,
+                          brokenLink: <BrokenLinkHref href={link} />,
+                          status: (
+                            <span className="link-status-text">
+                              <Icon src={Lock} className="lock-icon" />
+                              {intl.formatMessage(messages.lockedLinkStatus)} <LockedInfoIcon />
+                            </span>
+                          ),
+                        }),
+                      );
                       acc.push(...blockLockedLinks);
                       return acc;
                     }, [])}
