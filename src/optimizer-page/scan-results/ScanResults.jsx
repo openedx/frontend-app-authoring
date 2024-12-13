@@ -1,10 +1,6 @@
 import { useState, useCallback } from 'react';
 import {
-  Container,
-  Layout,
-  Button,
   Card,
-  Collapsible,
   Icon,
   Table,
   CheckBox,
@@ -12,8 +8,6 @@ import {
   Tooltip,
 } from '@openedx/paragon';
 import {
-  ArrowRight,
-  ArrowDropDown,
   OpenInNew,
   Question,
   Lock,
@@ -21,48 +15,7 @@ import {
 } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
-
-const SectionCollapsible = ({
-  title, children, redItalics, className,
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const styling = 'card-lg';
-  const collapsibleTitle = (
-    <div className={className}>
-      <Icon src={isOpen ? ArrowDropDown : ArrowRight} className="open-arrow" />
-      <strong>{title}</strong>
-      <span className="red-italics">{redItalics}</span>
-    </div>
-  );
-
-  return (
-    <div className={`section ${isOpen ? 'is-open' : ''}`}>
-      <Collapsible
-        styling={styling}
-        title={(
-          <p>
-            <strong>{collapsibleTitle}</strong>
-          </p>
-        )}
-        iconWhenClosed=""
-        iconWhenOpen=""
-        open={isOpen}
-        onToggle={() => setIsOpen(!isOpen)}
-      >
-        <Collapsible.Body>{children}</Collapsible.Body>
-      </Collapsible>
-    </div>
-  );
-};
-
-function getBaseUrl(url) {
-  try {
-    const parsedUrl = new URL(url);
-    return `${parsedUrl.origin}`;
-  } catch (error) {
-    return null;
-  }
-}
+import SectionCollapsible from '../SectionCollapsible';
 
 const BrokenLinkHref = ({ href }) => (
   <div className="broken-link-container">
@@ -108,6 +61,73 @@ const InfoCard = ({ text }) => (
       {text}
     </h3>
   </Card>
+);
+
+const BrokenLinkTable = ({ unit }) => (
+  <>
+    <p className="block-header">{unit.displayName}</p>
+    <Table
+      data={unit.blocks.reduce((acc, block) => {
+        const blockBrokenLinks = block.brokenLinks.map(
+          (link) => ({
+            blockLink: <GoToBlock block={block} />,
+            brokenLink: <BrokenLinkHref href={link} />,
+            status: (
+              <span className="link-status-text">
+                <Icon
+                  src={LinkOff}
+                  className="broken-link-icon"
+                />
+                {intl.formatMessage(messages.brokenLinkStatus)}
+              </span>
+            ),
+          }),
+        );
+        acc.push(...blockBrokenLinks);
+        if (!showLockedLinks) {
+          return acc;
+        }
+
+        const blockLockedLinks = block.lockedLinks.map(
+          (link) => ({
+            blockLink: <GoToBlock block={block} />,
+            brokenLink: <BrokenLinkHref href={link} />,
+            status: (
+              <span className="link-status-text">
+                <Icon src={Lock} className="lock-icon" />
+                {intl.formatMessage(messages.lockedLinkStatus)} <LockedInfoIcon />
+              </span>
+            ),
+          }),
+        );
+        acc.push(...blockLockedLinks);
+        return acc;
+      }, [])}
+      columns={[
+        {
+          key: 'blockLink',
+          columnSortable: true,
+          onSort: () => {},
+          width: 'col-3',
+          hideHeader: true,
+        },
+        {
+          key: 'brokenLink',
+          columnSortable: false,
+          onSort: () => {},
+          width: 'col-6',
+          hideHeader: true,
+        },
+        {
+          key: 'status',
+          columnSortable: false,
+          onSort: () => {},
+          width: 'col-6',
+          hideHeader: true,
+        },
+      ]}
+    />
+  </>
 );
 
 const ScanResults = ({ data }) => {
@@ -179,7 +199,7 @@ const ScanResults = ({ data }) => {
               </h2>
               {subsection.units.map((unit) => (
                 <div className="unit">
-                  <p className="block-header">{unit.displayName}</p>
+                  <p className="unit-header">{unit.displayName}</p>
                   <Table
                     data={unit.blocks.reduce((acc, block) => {
                       const blockBrokenLinks = block.brokenLinks.map(
