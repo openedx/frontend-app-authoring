@@ -706,6 +706,49 @@ describe('<LibraryAuthoringPage />', () => {
     });
   });
 
+  it('filters by publish status', async () => {
+    await renderLibraryPage();
+
+    // Open the publish status filter dropdown
+    const filterButton = screen.getByRole('button', { name: /publish status/i });
+    fireEvent.click(filterButton);
+
+    // Test each publish status filter option
+    const publishedCheckbox = screen.getByRole('checkbox', { name: /^published \d+$/i });
+    const modifiedCheckbox = screen.getByRole('checkbox', { name: /^modified since publish \d+$/i });
+    const neverPublishedCheckbox = screen.getByRole('checkbox', { name: /^never published \d+$/i });
+
+    // Test Published filter
+    fireEvent.click(publishedCheckbox);
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+        body: expect.stringContaining('"publish_status = published"'),
+        method: 'POST',
+        headers: expect.anything(),
+      });
+    });
+
+    // Test Modified filter
+    fireEvent.click(modifiedCheckbox);
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+        body: expect.stringContaining('"publish_status = modified"'),
+        method: 'POST',
+        headers: expect.anything(),
+      });
+    });
+
+    // Test Never Published filter
+    fireEvent.click(neverPublishedCheckbox);
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+        body: expect.stringContaining('"publish_status = never"'),
+        method: 'POST',
+        headers: expect.anything(),
+      });
+    });
+  });
+
   it('Shows an error if libraries V2 is disabled', async () => {
     const { axiosMock } = initializeMocks();
     axiosMock.onGet(getStudioHomeApiUrl()).reply(200, {

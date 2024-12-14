@@ -25,6 +25,12 @@ export enum SearchSortOption {
   RECENTLY_MODIFIED = 'modified:desc',
 }
 
+export enum PublishStatus {
+  Published = 'published',
+  Modified = 'modified',
+  NeverPublished = 'never',
+}
+
 /**
  * Get the content search configuration from the CMS.
  */
@@ -179,6 +185,7 @@ interface FetchSearchParams {
   searchKeywords: string,
   blockTypesFilter?: string[],
   problemTypesFilter?: string[],
+  publishStatusFilter?: PublishStatus[],
   /** The full path of tags that each result MUST have, e.g. ["Difficulty > Hard", "Subject > Math"] */
   tagsFilter?: string[],
   extraFilter?: Filter,
@@ -194,6 +201,7 @@ export async function fetchSearchResults({
   searchKeywords,
   blockTypesFilter,
   problemTypesFilter,
+  publishStatusFilter,
   tagsFilter,
   extraFilter,
   sort,
@@ -205,6 +213,7 @@ export async function fetchSearchResults({
     totalHits: number,
     blockTypes: Record<string, number>,
     problemTypes: Record<string, number>,
+    publishStatus: Record<string, number>,
   }> {
   const queries: MultiSearchQuery[] = [];
 
@@ -214,6 +223,8 @@ export async function fetchSearchResults({
   const blockTypesFilterFormatted = blockTypesFilter?.length ? [blockTypesFilter.map(bt => `block_type = ${bt}`)] : [];
 
   const problemTypesFilterFormatted = problemTypesFilter?.length ? [problemTypesFilter.map(pt => `content.problem_types = ${pt}`)] : [];
+
+  const publishStatusFilterFormatted = publishStatusFilter?.length ? [publishStatusFilter.map(ps => `publish_status = ${ps}`)] : [];
 
   const tagsFilterFormatted = formatTagsFilter(tagsFilter);
 
@@ -235,6 +246,7 @@ export async function fetchSearchResults({
       ...typeFilters,
       ...extraFilterFormatted,
       ...tagsFilterFormatted,
+      ...publishStatusFilterFormatted,
     ],
     attributesToHighlight: ['display_name', 'description', 'published'],
     highlightPreTag: HIGHLIGHT_PRE_TAG,
@@ -249,7 +261,7 @@ export async function fetchSearchResults({
   if (!skipBlockTypeFetch) {
     queries.push({
       indexUid: indexName,
-      facets: ['block_type', 'content.problem_types'],
+      facets: ['block_type', 'content.problem_types', 'publish_status'],
       filter: [
         ...extraFilterFormatted,
         // We exclude the block type filter here so we get all the other available options for it.
@@ -266,6 +278,7 @@ export async function fetchSearchResults({
     totalHits: results[0].totalHits ?? results[0].estimatedTotalHits ?? hitLength,
     blockTypes: results[1]?.facetDistribution?.block_type ?? {},
     problemTypes: results[1]?.facetDistribution?.['content.problem_types'] ?? {},
+    publishStatus: results[1]?.facetDistribution?.publish_status ?? {},
     nextOffset: hitLength === limit ? offset + limit : undefined,
   };
 }

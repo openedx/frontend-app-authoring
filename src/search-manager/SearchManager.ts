@@ -10,7 +10,11 @@ import { MeiliSearch, type Filter } from 'meilisearch';
 import { union } from 'lodash';
 
 import {
-  CollectionHit, ContentHit, SearchSortOption, forceArray,
+  CollectionHit,
+  ContentHit,
+  SearchSortOption,
+  forceArray,
+  type PublishStatus,
 } from './data/api';
 import { useContentSearchConnection, useContentSearchResults } from './data/apiHooks';
 
@@ -23,10 +27,13 @@ export interface SearchContextData {
   setBlockTypesFilter: React.Dispatch<React.SetStateAction<string[]>>;
   problemTypesFilter: string[];
   setProblemTypesFilter: React.Dispatch<React.SetStateAction<string[]>>;
+  publishStatusFilter: PublishStatus[];
+  setPublishStatusFilter: React.Dispatch<React.SetStateAction<PublishStatus[]>>;
   tagsFilter: string[];
   setTagsFilter: React.Dispatch<React.SetStateAction<string[]>>;
   blockTypes: Record<string, number>;
   problemTypes: Record<string, number>;
+  publishStatus: Record<string, number>;
   extraFilter?: Filter;
   canClearFilters: boolean;
   clearFilters: () => void;
@@ -99,6 +106,7 @@ export const SearchContextProvider: React.FC<{
   const [searchKeywords, setSearchKeywords] = React.useState('');
   const [blockTypesFilter, setBlockTypesFilter] = React.useState<string[]>([]);
   const [problemTypesFilter, setProblemTypesFilter] = React.useState<string[]>([]);
+  const [publishStatusFilter, setPublishStatusFilter] = React.useState<PublishStatus[]>([]);
   const [tagsFilter, setTagsFilter] = React.useState<string[]>([]);
   const [usageKey, setUsageKey] = useStateWithUrlSearchParam(
     '',
@@ -163,6 +171,7 @@ export const SearchContextProvider: React.FC<{
     searchKeywords,
     blockTypesFilter,
     problemTypesFilter,
+    publishStatusFilter,
     tagsFilter,
     sort,
     skipBlockTypeFetch,
@@ -178,6 +187,8 @@ export const SearchContextProvider: React.FC<{
       setBlockTypesFilter,
       problemTypesFilter,
       setProblemTypesFilter,
+      publishStatusFilter,
+      setPublishStatusFilter,
       tagsFilter,
       setTagsFilter,
       extraFilter,
