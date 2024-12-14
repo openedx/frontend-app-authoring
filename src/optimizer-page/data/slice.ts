@@ -1,7 +1,26 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
+import { LinkCheckResult } from '../types';
 
-const initialState = {
+export interface CourseOptimizerState {
+  linkCheckInProgress: boolean | null;
+  linkCheckResult: LinkCheckResult | null;
+  currentStage: number | null;
+  error: { msg: string | null; unitUrl: string | null };
+  downloadPath: string | null;
+  successDate: string | null;
+  isErrorModalOpen: boolean;
+  loadingStatus: string;
+  savingStatus: string;
+}
+
+export type RootState = {
+  [key: string]: any;
+} & {
+  courseOptimizer: CourseOptimizerState;
+};
+
+const initialState: CourseOptimizerState = {
   linkCheckInProgress: null,
   linkCheckResult: null,
   currentStage: null,

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Container, Layout, Button, Card,
 } from '@openedx/paragon';
@@ -27,7 +27,7 @@ const pollLinkCheckStatus = (dispatch, courseId, delay) => {
   return interval;
 };
 
-const CourseOptimizerPage = ({ intl, courseId }) => {
+const CourseOptimizerPage = ({ courseId }) => {
   const dispatch = useDispatch();
   const linkCheckInProgress = useSelector(getLinkCheckInProgress);
   const loadingStatus = useSelector(getLoadingStatus);
@@ -39,6 +39,7 @@ const CourseOptimizerPage = ({ intl, courseId }) => {
   const interval = useRef(null);
   const courseDetails = useModel('courseDetails', courseId);
   const linkCheckPresent = !!currentStage;
+  const intl = useIntl();
 
   const courseStepperSteps = [
     {
@@ -58,11 +59,7 @@ const CourseOptimizerPage = ({ intl, courseId }) => {
     },
   ];
 
-  useEffect(() => {
-    dispatch(fetchLinkCheckStatus(courseId));
-  }, []);
-
-  useEffect(() => {
+  const pollLinkCheckStatusDuringScan = () => {
     if (linkCheckInProgress === null || linkCheckInProgress || !linkCheckResult) {
       clearInterval(interval.current);
       interval.current = pollLinkCheckStatus(dispatch, courseId, 2000);
@@ -70,6 +67,14 @@ const CourseOptimizerPage = ({ intl, courseId }) => {
       clearInterval(interval.current);
       interval.current = null;
     }
+  };
+
+  useEffect(() => {
+    dispatch(fetchLinkCheckStatus(courseId));
+  }, []);
+
+  useEffect(() => {
+    pollLinkCheckStatusDuringScan();
 
     return () => {
       if (interval.current) { clearInterval(interval.current); }
@@ -85,8 +90,6 @@ const CourseOptimizerPage = ({ intl, courseId }) => {
       </Container>
     );
   }
-
-  console.log('currentStage: ', currentStage);
 
   return (
     <>
@@ -155,10 +158,4 @@ const CourseOptimizerPage = ({ intl, courseId }) => {
   );
 };
 
-CourseOptimizerPage.propTypes = {
-  intl: intlShape.isRequired,
-  courseId: PropTypes.string.isRequired,
-};
-
-CourseOptimizerPage.defaultProps = {};
-export default injectIntl(CourseOptimizerPage);
+export default CourseOptimizerPage;

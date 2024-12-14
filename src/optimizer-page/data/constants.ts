@@ -8,6 +8,15 @@ export const LINK_CHECK_STATUSES = {
   CANCELED: 'Canceled',
   RETRYING: 'Retrying',
 };
+export enum LinkCheckStatusTypes {
+  UNINITIATED = 'Uninitiated',
+  PENDING = 'Pending',
+  IN_PROGRESS = 'In-Progress',
+  SUCCEEDED = 'Succeeded',
+  FAILED = 'Failed',
+  CANCELED = 'Canceled',
+  RETRYING = 'Retrying',
+}
 export const SCAN_STAGES = {
   [LINK_CHECK_STATUSES.UNINITIATED]: 0,
   [LINK_CHECK_STATUSES.PENDING]: 1,

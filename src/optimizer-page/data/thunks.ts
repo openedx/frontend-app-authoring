@@ -1,12 +1,5 @@
-import Cookies from 'universal-cookie';
-import moment from 'moment';
-import { getConfig } from '@edx/frontend-platform';
-
 import { RequestStatus } from '../../data/constants';
-// import { setExportCookie } from '../utils';
 import {
-  EXPORT_STAGES,
-  LAST_EXPORT_COOKIE_NAME,
   LINK_CHECK_FAILURE_STATUSES,
   LINK_CHECK_IN_PROGRESS_STATUSES,
   SCAN_STAGES,
@@ -19,27 +12,11 @@ import {
   updateCurrentStage,
   updateError,
   updateIsErrorModalOpen,
-  reset,
   updateLoadingStatus,
   updateSavingStatus,
 } from './slice';
 
-// function setExportDate({
-//   date, exportStatus, exportOutput, dispatch,
-// }) {
-//   // If there is no cookie for the last export date, set it now.
-//   const cookies = new Cookies();
-//   const cookieData = cookies.get(LAST_EXPORT_COOKIE_NAME);
-//   if (!cookieData?.completed) {
-//     // setExportCookie(date, exportStatus === EXPORT_STAGES.SUCCESS);
-//   }
-//   // If we don't have export date set yet via cookie, set success date to current date.
-//   if (exportOutput && !cookieData?.completed) {
-//     dispatch(updateSuccessDate(date));
-//   }
-// }
-
-export function startLinkCheck(courseId) {
+export function startLinkCheck(courseId: string) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(updateLinkCheckInProgress(true));
@@ -98,7 +75,7 @@ export function fetchLinkCheckStatus(courseId) {
 
       dispatch(updateLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
-    } catch (error) {
+    } catch (error: any) {
       if (error?.response && error?.response.status === 403) {
         dispatch(updateLoadingStatus({ status: RequestStatus.DENIED }));
       } else {
