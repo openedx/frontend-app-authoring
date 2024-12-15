@@ -231,12 +231,12 @@ describe('<PageAlerts />', () => {
   });
 
   it('renders api error alerts when status is not 403', async () => {
-      const { queryByText } = renderComponent({
-        ...pageAlertsData,
-        errors: {
-          outlineIndexApi: { data: 'some error', status: 500, type: API_ERROR_TYPES.serverError },
-        },
-      });
-      expect(queryByText('some error')).toBeInTheDocument();
+    const { queryByText } = renderComponent({
+      ...pageAlertsData,
+      errors: {
+        outlineIndexApi: { data: 'some error', status: 500, type: API_ERROR_TYPES.serverError },
+      },
     });
+    expect(queryByText('some error')).toBeInTheDocument();
+  });
 });
