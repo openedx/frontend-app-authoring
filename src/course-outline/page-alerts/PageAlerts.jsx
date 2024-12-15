@@ -395,8 +395,8 @@ const PageAlerts = ({
             dismissError={() => dispatch(dismissError(msgObj.key))}
           >
             <Alert.Heading>{msgObj.title}</Alert.Heading>
-            {(typeof msgObj.desc === 'object')
-              ? msgObj.desc : <Truncate lines={2}>{msgObj.desc}</Truncate>}
+            {(typeof msgObj.desc === 'string')
+              ? <Truncate lines={2}>{msgObj.desc}</Truncate> : msgObj.desc}
           </ErrorAlert>
         ) : (
           <Alert
