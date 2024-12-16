@@ -39,7 +39,7 @@ const BrokenLinkTable = ({ unit, showLockedLinks }) => {
   const intl = useIntl();
   return (
     <>
-      <p className="block-header">{unit.displayName}</p>
+      <p className="unit-header">{unit.displayName}</p>
       <Table
         data={unit.blocks.reduce((acc, block) => {
           const blockBrokenLinks = block.brokenLinks.map(

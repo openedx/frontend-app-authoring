@@ -16,6 +16,7 @@
       &:not(:first-child) {
         margin-top: 1rem;
       }
+
       margin-bottom: 1rem;
     }
   }
@@ -29,25 +30,19 @@
   .subsection-header {
     font-size: 16px; /* Slightly smaller */
     font-weight: 600; /* Reduced boldness */
-    background-color: rgb(248, 247, 246); /* Subtle gray background */
+    background-color: $dark-100;
     padding: 10px;
     margin-bottom: 10px;
   }
 
   /* Subsection Header */
   .unit-header {
-    font-size: 16px; /* Slightly smaller than Section */
-    font-weight: 500;
     margin-left: .5rem;
     margin-top: 10px;
-    color: #555;
-  }
-
-  /* Unit Header */
-  .unit-header {
     font-size: 14px;
     font-weight: 700;
     margin-bottom: 5px;
+    color: $primary-500;
   }
 
   /* Block Links */
@@ -83,7 +78,7 @@
   }
 
   .locked-links-checkbox {
-    margin-top: 0.45rem;
+    margin-top: .45rem;
   }
 
   .locked-links-checkbox-wrapper {
@@ -94,7 +89,7 @@
   .link-status-text {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: .5rem;
   }
 
   .broken-link-icon {
