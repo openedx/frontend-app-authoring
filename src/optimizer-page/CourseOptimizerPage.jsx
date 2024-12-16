@@ -18,7 +18,7 @@ import {
 } from './data/selectors';
 import { startLinkCheck, fetchLinkCheckStatus } from './data/thunks';
 import { useModel } from '../generic/model-store';
-import { ScanResults } from './scan-results';
+import ScanResults from './scan-results';
 
 const pollLinkCheckStatus = (dispatch, courseId, delay) => {
   const interval = setInterval(() => {
@@ -156,6 +156,9 @@ const CourseOptimizerPage = ({ courseId }) => {
       </Container>
     </>
   );
+};
+CourseOptimizerPage.propTypes = {
+  courseId: PropTypes.string.isRequired,
 };
 
 export default CourseOptimizerPage;

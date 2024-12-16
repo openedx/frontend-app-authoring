@@ -1,4 +1,4 @@
-import { RootState } from "./slice";
+import { RootState } from './slice';
 
 export const getLinkCheckInProgress = (state: RootState) => state.courseOptimizer.linkCheckInProgress;
 export const getCurrentStage = (state: RootState) => state.courseOptimizer.currentStage;

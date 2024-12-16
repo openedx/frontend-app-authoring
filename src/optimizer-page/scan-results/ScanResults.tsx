@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, FC } from 'react';
 import {
   Card,
   CheckBox,
@@ -8,8 +8,9 @@ import messages from './messages';
 import SectionCollapsible from '../SectionCollapsible';
 import BrokenLinkTable from './BrokenLinkTable';
 import LockedInfoIcon from './LockedInfoIcon';
+import { LinkCheckResult } from 'optimizer-page/types';
 
-const InfoCard = ({ text }) => (
+const InfoCard: FC<{ text: string}> = ({ text }) => (
   <Card className="mt-4">
     <h3
       className="subsection-header"
@@ -20,7 +21,11 @@ const InfoCard = ({ text }) => (
   </Card>
 );
 
-export const ScanResults = ({ data }) => {
+interface Props {
+  data: LinkCheckResult | null;
+};
+
+export const ScanResults: FC<Props> = ({ data }) => {
   const intl = useIntl();
   const [showLockedLinks, setShowLockedLinks] = useState(true);
 
@@ -28,7 +33,7 @@ export const ScanResults = ({ data }) => {
     if (!data?.sections) {
       return [];
     }
-    const counts = [];
+    const counts: number[] = [];
     data.sections.forEach((section) => {
       let count = 0;
       section.subsections.forEach((subsection) => {
@@ -51,8 +56,6 @@ export const ScanResults = ({ data }) => {
   }
 
   const { sections } = data;
-  console.log('data: ', data);
-  console.log('sections: ', sections);
 
   return (
     <div className="scan-results">

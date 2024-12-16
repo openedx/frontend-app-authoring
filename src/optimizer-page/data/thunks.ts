@@ -51,7 +51,6 @@ export function fetchLinkCheckStatus(courseId) {
       const { linkCheckStatus, linkCheckOutput } = await getLinkCheckStatus(
         courseId,
       );
-      console.log('linkCheckOutput: ', linkCheckOutput);
       if (LINK_CHECK_IN_PROGRESS_STATUSES.includes(linkCheckStatus)) {
         dispatch(updateLinkCheckInProgress(true));
       } else {

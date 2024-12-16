@@ -1,4 +1,4 @@
-interface Unit {
+export interface Unit {
   id: string;
   displayName: string;
   blocks: {
@@ -9,13 +9,13 @@ interface Unit {
   }[];
 }
 
-interface SubSection {
+export interface SubSection {
   id: string;
   displayName: string;
   units: Unit[];
 }
 
-interface Section {
+export interface Section {
   id: string;
   displayName: string;
   subsections: SubSection[];

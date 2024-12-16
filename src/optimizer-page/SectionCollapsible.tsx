@@ -12,11 +12,11 @@ interface Props {
   title: string;
   children: React.ReactNode;
   redItalics: string;
-  className: string;
+  className?: string;
 }
 
 const SectionCollapsible: FC<Props> = ({
-  title, children, redItalics, className,
+  title, children, redItalics, className = '',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const styling = 'card-lg';
