@@ -3,12 +3,11 @@ import { getConfig } from '@edx/frontend-platform';
 import {
   render,
   initializeMocks,
-  waitFor,
 } from '../testUtils';
 import AdvancedEditor from './AdvancedEditor';
 
-jest.mock('../library-authoring/LibraryBlock', () => ({
-  LibraryBlock: jest.fn(() => (<div>Advanced Editor Iframe</div>)),
+jest.mock('./containers/EditorContainer', () => ({
+  EditorModalWrapper: jest.fn(() => (<div>Advanced Editor Iframe</div>)),
 }));
 
 describe('AdvancedEditor', () => {
@@ -28,9 +27,7 @@ describe('AdvancedEditor', () => {
 
     window.dispatchEvent(messageEvent);
 
-    waitFor(() => {
-      expect(onCloseMock).toHaveBeenCalled();
-    });
+    expect(onCloseMock).toHaveBeenCalled();
   });
 
   it('should not call onClose if the message is from an invalid origin', () => {
