@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
+  ActionRow,
   Alert,
   Badge,
   Breadcrumb,
@@ -57,12 +58,10 @@ const HeaderActions = () => {
 
   const { componentPickerMode } = useComponentPickerContext();
 
-  const infoSidebarIsOpen = () => (
-    sidebarComponentInfo?.type === SidebarBodyComponentId.Info
-  );
+  const infoSidebarIsOpen = sidebarComponentInfo?.type === SidebarBodyComponentId.Info;
 
   const handleOnClickInfoSidebar = () => {
-    if (infoSidebarIsOpen()) {
+    if (infoSidebarIsOpen) {
       closeLibrarySidebar();
     } else {
       openInfoSidebar();
@@ -73,8 +72,8 @@ const HeaderActions = () => {
     <div className="header-actions">
       <Button
         className={classNames('mr-1', {
-          'normal-border': !infoSidebarIsOpen(),
-          'open-border': infoSidebarIsOpen(),
+          'normal-border': !infoSidebarIsOpen,
+          'open-border': infoSidebarIsOpen,
         })}
         iconBefore={InfoOutline}
         variant="outline-primary rounded-0"
@@ -97,7 +96,7 @@ const HeaderActions = () => {
   );
 };
 
-const SubHeaderTitle = ({ title }: { title: string }) => {
+export const SubHeaderTitle = ({ title }: { title: string }) => {
   const intl = useIntl();
 
   const { readOnly } = useLibraryContext();
@@ -143,7 +142,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
   } = useLibraryContext();
   const { openInfoSidebar, sidebarComponentInfo } = useSidebarContext();
 
-  const [activeKey, setActiveKey] = useState<ContentType | undefined>(ContentType.home);
+  const [activeKey, setActiveKey] = useState<ContentType>(ContentType.home);
 
   useEffect(() => {
     const currentPath = location.pathname.split('/').pop();
@@ -151,7 +150,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     if (componentPickerMode || currentPath === libraryId || currentPath === '') {
       setActiveKey(ContentType.home);
     } else if (currentPath && currentPath in ContentType) {
-      setActiveKey(ContentType[currentPath]);
+      setActiveKey(ContentType[currentPath] || ContentType.home);
     }
   }, []);
 
@@ -173,11 +172,6 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
         {intl.formatMessage(messages.librariesV2DisabledError)}
       </Alert>
     );
-  }
-
-  // istanbul ignore if: this should never happen
-  if (activeKey === undefined) {
-    return <NotFoundAlert />;
   }
 
   if (!libraryData) {
@@ -249,15 +243,8 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
               subtitle={!componentPickerMode ? intl.formatMessage(messages.headingSubtitle) : undefined}
               breadcrumbs={breadcumbs}
               headerActions={<HeaderActions />}
+              hideBorder
             />
-            <SearchKeywordsField className="w-50" />
-            <div className="d-flex mt-3 align-items-center">
-              <FilterByTags />
-              <FilterByBlockType />
-              <ClearFiltersButton />
-              <div className="flex-grow-1" />
-              <SearchSortWidget />
-            </div>
             <Tabs
               variant="tabs"
               activeKey={activeKey}
@@ -268,6 +255,14 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
               <Tab eventKey={ContentType.components} title={intl.formatMessage(messages.componentsTab)} />
               <Tab eventKey={ContentType.collections} title={intl.formatMessage(messages.collectionsTab)} />
             </Tabs>
+            <ActionRow className="my-3">
+              <SearchKeywordsField />
+              <FilterByTags />
+              <FilterByBlockType />
+              <ClearFiltersButton />
+              <ActionRow.Spacer />
+              <SearchSortWidget />
+            </ActionRow>
             <LibraryContent contentType={activeKey} />
           </SearchContextProvider>
         </Container>

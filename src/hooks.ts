@@ -50,11 +50,11 @@ export const useLoadOnScroll = (
   useEffect(() => {
     if (enabled) {
       const canFetchNextPage = hasNextPage && !isFetchingNextPage;
+      // Used `loadLimit` to fetch next page before reach the end of the screen.
+      const loadLimit = 300;
 
       const onscroll = () => {
         // Verify the position of the scroll to implement an infinite scroll.
-        // Used `loadLimit` to fetch next page before reach the end of the screen.
-        const loadLimit = 300;
         const scrolledTo = window.scrollY + window.innerHeight;
         const scrollDiff = document.body.scrollHeight - scrolledTo;
         const isNearToBottom = scrollDiff <= loadLimit;
@@ -65,7 +65,7 @@ export const useLoadOnScroll = (
       window.addEventListener('scroll', onscroll);
 
       // If the content is less than the screen height, fetch the next page.
-      const hasNoScroll = document.body.scrollHeight <= window.innerHeight;
+      const hasNoScroll = (document.body.scrollHeight - loadLimit) <= window.innerHeight;
       if (hasNoScroll && canFetchNextPage) {
         fetchNextPage();
       }
