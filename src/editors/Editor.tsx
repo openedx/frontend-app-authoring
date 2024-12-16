@@ -2,14 +2,13 @@
 // <EditorPage> as its parent, so they are tested together in EditorPage.test.tsx
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
-import messages from './messages';
 import * as hooks from './hooks';
 
 import supportedEditors from './supportedEditors';
 import type { EditorComponent } from './EditorComponent';
 import { useEditorContext } from './EditorContext';
+import AdvancedEditor from './AdvancedEditor';
 
 export interface Props extends EditorComponent {
   blockType: string;
@@ -43,9 +42,17 @@ const Editor: React.FC<Props> = ({
   const { fullScreen } = useEditorContext();
 
   const EditorComponent = supportedEditors[blockType];
-  const innerEditor = (EditorComponent !== undefined)
-    ? <EditorComponent {...{ onClose, returnFunction }} />
-    : <FormattedMessage {...messages.couldNotFindEditor} />;
+
+  if (EditorComponent === undefined && blockId) {
+    return (
+      <AdvancedEditor
+        usageKey={blockId}
+        onClose={onClose}
+      />
+    );
+  }
+
+  const innerEditor = <EditorComponent {...{ onClose, returnFunction }} />;
 
   if (fullScreen) {
     return (
