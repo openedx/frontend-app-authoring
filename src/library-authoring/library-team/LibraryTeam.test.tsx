@@ -183,10 +183,10 @@ describe('<LibraryTeam />', () => {
     expect(await screen.findByText('Team Member added')).toBeInTheDocument();
   });
 
-  it('shows error when user do not exist', async () => {
+  it('shows error when specific error', async () => {
     const url = getLibraryTeamApiUrl(libraryId);
     const axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-    axiosMock.onPost(url).reply(400, { email: 'Error' });
+    axiosMock.onPost(url).reply(400, { email: 'This is an specific error.' });
 
     await renderLibraryTeam();
 
@@ -204,7 +204,7 @@ describe('<LibraryTeam />', () => {
     });
 
     expect(await screen.findByText(
-      'Error adding Team Member. Please verify that the email is correct and belongs to a registered user.',
+      'Error adding Team Member. This is an specific error.',
     )).toBeInTheDocument();
   });
 
