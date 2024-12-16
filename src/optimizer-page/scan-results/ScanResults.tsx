@@ -8,9 +8,9 @@ import messages from './messages';
 import SectionCollapsible from '../SectionCollapsible';
 import BrokenLinkTable from './BrokenLinkTable';
 import LockedInfoIcon from './LockedInfoIcon';
-import { LinkCheckResult } from 'optimizer-page/types';
+import { LinkCheckResult } from '../types';
 
-const InfoCard: FC<{ text: string}> = ({ text }) => (
+const InfoCard: FC<{ text: string }> = ({ text }) => (
   <Card className="mt-4">
     <h3
       className="subsection-header"
@@ -23,9 +23,9 @@ const InfoCard: FC<{ text: string}> = ({ text }) => (
 
 interface Props {
   data: LinkCheckResult | null;
-};
+}
 
-export const ScanResults: FC<Props> = ({ data }) => {
+const ScanResults: FC<Props> = ({ data }) => {
   const intl = useIntl();
   const [showLockedLinks, setShowLockedLinks] = useState(true);
 
