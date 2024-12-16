@@ -1,6 +1,7 @@
 const mockApiResponse = {
-  linkCheckStatus: 200,
-  linkCheckOutput: {
+  LinkCheckStatus: 200,
+  LinkCheckCreatedAt: '2024-12-14T00:26:50.838350Z',
+  LinkCheckOutput: {
     sections: [
       {
         id: 'section-1',
