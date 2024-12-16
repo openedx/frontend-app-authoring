@@ -30,6 +30,21 @@ describe('AdvancedEditor', () => {
     expect(onCloseMock).toHaveBeenCalled();
   });
 
+  it('should call onClose when receiving "save-clicked" message', () => {
+    const onCloseMock = jest.fn();
+
+    render(<AdvancedEditor usageKey="test" onClose={onCloseMock} />);
+
+    const messageEvent = new MessageEvent('message', {
+      data: 'save-clicked',
+      origin: getConfig().STUDIO_BASE_URL,
+    });
+
+    window.dispatchEvent(messageEvent);
+
+    expect(onCloseMock).toHaveBeenCalled();
+  });
+
   it('should not call onClose if the message is from an invalid origin', () => {
     const onCloseMock = jest.fn();
 

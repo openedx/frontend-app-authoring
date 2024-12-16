@@ -16,7 +16,7 @@ const AdvancedEditor = ({ usageKey, onClose }: AdvancedEditorProps) => {
         return;
       }
 
-      if (event.data === 'cancel-clicked' && onClose) {
+      if (onClose && (event.data === 'cancel-clicked' || event.data === 'save-clicked')) {
         onClose();
       }
     };
