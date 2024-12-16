@@ -223,7 +223,7 @@ describe('<PageAlerts />', () => {
     const { queryByText } = renderComponent({
       ...pageAlertsData,
       errors: {
-        outlineIndexApi: { data: 'some error', status: 403, type: API_ERROR_TYPES.serverError },
+        outlineIndexApi: { data: 'some error', status: 403, type: API_ERROR_TYPES.serverError, dismissable: true },
       },
     });
     expect(queryByText(messages.forbiddenAlert.defaultMessage)).toBeInTheDocument();
@@ -234,7 +234,7 @@ describe('<PageAlerts />', () => {
     const { queryByText } = renderComponent({
       ...pageAlertsData,
       errors: {
-        outlineIndexApi: { data: 'some error', status: 500, type: API_ERROR_TYPES.serverError },
+        outlineIndexApi: { data: 'some error', status: 500, type: API_ERROR_TYPES.serverError, dismissable: true },
       },
     });
     expect(queryByText('some error')).toBeInTheDocument();
