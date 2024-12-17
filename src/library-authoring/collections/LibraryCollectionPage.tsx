@@ -202,7 +202,7 @@ const LibraryCollectionPage = () => {
               hideBorder
             />
             <ActionRow className="my-3">
-              <SearchKeywordsField className='mr-3' />
+              <SearchKeywordsField className="mr-3" />
               <FilterByTags />
               <FilterByBlockType />
               <ClearFiltersButton />

@@ -256,7 +256,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
               <Tab eventKey={ContentType.collections} title={intl.formatMessage(messages.collectionsTab)} />
             </Tabs>
             <ActionRow className="my-3">
-              <SearchKeywordsField className='mr-3' />
+              <SearchKeywordsField className="mr-3" />
               <FilterByTags />
               <FilterByBlockType />
               <ClearFiltersButton />
