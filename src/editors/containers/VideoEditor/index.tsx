@@ -20,7 +20,8 @@ const VideoEditor: React.FC<EditorComponent> = ({
 }) => {
   const intl = useIntl();
   const studioViewFinished = useSelector(
-    (state) => selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchStudioView }),
+    (state) => selectors.app.isCreateBlock(state)
+    || selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchStudioView }),
   );
   const isLibrary = useSelector(selectors.app.isLibrary) as boolean;
   const {
