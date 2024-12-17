@@ -1,6 +1,5 @@
-import React, { memo } from 'react';
-import { connect, useDispatch } from 'react-redux';
-import PropTypes from 'prop-types';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Collapsible,
   Icon,
@@ -8,28 +7,31 @@ import {
   Form,
 } from '@openedx/paragon';
 import { FeedbackOutline, DeleteOutline } from '@openedx/paragon/icons';
-import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import { selectors } from '../../../../../data/redux';
-import { answerOptionProps } from '../../../../../data/services/cms/types';
 import Checker from './components/Checker';
 import { FeedbackBox } from './components/Feedback';
 import * as hooks from './hooks';
-import { ProblemTypeKeys } from '../../../../../data/constants/problem';
+import { AnswerData, ProblemTypeKeys } from '../../../../../data/constants/problem';
 import ExpandableTextArea from '../../../../../sharedComponents/ExpandableTextArea';
+import { useEditorContext } from '../../../../../EditorContext';
 
-const AnswerOption = ({
+interface Props {
+  answer: AnswerData;
+  hasSingleAnswer: boolean;
+}
+
+export const AnswerOption = ({
   answer,
   hasSingleAnswer,
-  // injected
-  intl,
-  // redux
-  problemType,
-  images,
-  isLibrary,
-  learningContextId,
-}) => {
+}: Props) => {
+  const intl = useIntl();
   const dispatch = useDispatch();
+  const { learningContextId } = useEditorContext();
+  const problemType = useSelector(selectors.problem.problemType);
+  const images = useSelector(selectors.app.images);
+  const isLibrary = useSelector(selectors.app.isLibrary);
   const removeAnswer = hooks.removeAnswer({ answer, dispatch });
   const setAnswer = hooks.setAnswer({ answer, hasSingleAnswer, dispatch });
   const setAnswerTitle = hooks.setAnswerTitle({
@@ -43,7 +45,7 @@ const AnswerOption = ({
   const { isFeedbackVisible, toggleFeedback } = hooks.useFeedback(answer);
 
   const getInputArea = () => {
-    if ([ProblemTypeKeys.SINGLESELECT, ProblemTypeKeys.MULTISELECT].includes(problemType)) {
+    if ([ProblemTypeKeys.SINGLESELECT, ProblemTypeKeys.MULTISELECT].includes(problemType as any)) {
       return (
         <ExpandableTextArea
           value={answer.title}
@@ -113,7 +115,6 @@ const AnswerOption = ({
             answer={answer}
             setSelectedFeedback={setSelectedFeedback}
             setUnselectedFeedback={setUnselectedFeedback}
-            intl={intl}
             {...{
               images,
               isLibrary,
@@ -126,7 +127,7 @@ const AnswerOption = ({
         <Collapsible.Trigger aria-label="Toggle feedback" className="btn-icon btn-icon-primary btn-icon-md align-items-center">
           <Icon
             src={FeedbackOutline}
-            alt={intl.formatMessage(messages.feedbackToggleIconAltText)}
+            screenReaderText={intl.formatMessage(messages.feedbackToggleIconAltText)}
           />
         </Collapsible.Trigger>
         <IconButton
@@ -140,26 +141,3 @@ const AnswerOption = ({
     </Collapsible.Advanced>
   );
 };
-
-AnswerOption.propTypes = {
-  answer: answerOptionProps.isRequired,
-  hasSingleAnswer: PropTypes.bool.isRequired,
-  // injected
-  intl: intlShape.isRequired,
-  // redux
-  problemType: PropTypes.string.isRequired,
-  images: PropTypes.shape({}).isRequired,
-  learningContextId: PropTypes.string.isRequired,
-  isLibrary: PropTypes.bool.isRequired,
-};
-
-export const mapStateToProps = (state) => ({
-  problemType: selectors.problem.problemType(state),
-  images: selectors.app.images(state),
-  isLibrary: selectors.app.isLibrary(state),
-  learningContextId: selectors.app.learningContextId(state),
-});
-
-export const mapDispatchToProps = {};
-export const AnswerOptionInternal = AnswerOption; // For testing only
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(memo(AnswerOption)));
