@@ -2,6 +2,7 @@ import { RequestStatus } from '../../data/constants';
 import {
   LINK_CHECK_FAILURE_STATUSES,
   LINK_CHECK_IN_PROGRESS_STATUSES,
+  LINK_CHECK_STATUSES,
   SCAN_STAGES,
 } from './constants';
 
@@ -20,18 +21,16 @@ export function startLinkCheck(courseId: string) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(updateLinkCheckInProgress(true));
-    dispatch(updateCurrentStage(1));
+    dispatch(updateCurrentStage(SCAN_STAGES[LINK_CHECK_STATUSES.PENDING]));
     try {
-      // dispatch(reset());
       const data = await postLinkCheck(courseId);
-      dispatch(updateCurrentStage(data.linkCheckStatus));
-      // setExportCookie(moment().valueOf(), exportData.exportStatus === EXPORT_STAGES.SUCCESS);
-
-      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+      await dispatch(updateCurrentStage(SCAN_STAGES[data.linkCheckStatus]));
+      await dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
     } catch (error) {
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
       dispatch(updateLinkCheckInProgress(false));
+      dispatch(updateCurrentStage(SCAN_STAGES[LINK_CHECK_STATUSES.CANCELED]));
       return false;
     }
   };

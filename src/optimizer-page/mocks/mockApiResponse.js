@@ -1,5 +1,5 @@
 const mockApiResponse = {
-  LinkCheckStatus: 200,
+  LinkCheckStatus: 'In-Progress',
   LinkCheckCreatedAt: '2024-12-14T00:26:50.838350Z',
   LinkCheckOutput: {
     sections: [
