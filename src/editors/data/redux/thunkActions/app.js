@@ -89,6 +89,12 @@ export const fetchCourseDetails = () => (dispatch) => {
 export const initialize = (data) => (dispatch) => {
   const editorType = data.blockType;
   dispatch(actions.app.initialize(data));
+
+  if (data.blockId === '' && data.blockType) {
+    dispatch(actions.app.initializeEditor());
+    return;
+  }
+
   dispatch(module.fetchBlock());
   if (data.blockId?.startsWith('block-v1:')) {
     dispatch(module.fetchUnit());
@@ -125,6 +131,18 @@ export const saveBlock = (content, returnToUnit) => (dispatch) => {
   }));
 };
 
+/**
+ * @param {func} onSuccess
+ */
+export const createBlock = (content, returnToUnit) => (dispatch) => {
+  dispatch(requests.createBlock({
+    onSuccess: (response) => {
+      dispatch(actions.app.setBlockId(response.id));
+      dispatch(saveBlock(content, returnToUnit));
+    },
+  }));
+};
+
 export const uploadAsset = ({ file, setSelection }) => (dispatch) => {
   dispatch(requests.uploadAsset({
     asset: file,
@@ -142,4 +160,5 @@ export default StrictDict({
   saveBlock,
   fetchImages,
   uploadAsset,
+  createBlock,
 });
