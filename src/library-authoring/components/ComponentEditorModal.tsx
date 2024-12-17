@@ -25,7 +25,7 @@ export const ComponentEditorModal: React.FC<Record<never, never>> = () => {
   if (componentBeingEdited === undefined) {
     return null;
   }
-  const blockType = getBlockType(componentBeingEdited.usageKey);
+  const blockType = componentBeingEdited.blockType || getBlockType(componentBeingEdited.usageKey);
 
   const onClose = () => {
     closeComponentEditor();
