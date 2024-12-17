@@ -4,6 +4,8 @@ import { RequestKeys } from '../../constants/requests';
 import api, { loadImages } from '../../services/cms/api';
 import { actions as requestsActions } from '../requests';
 import { selectors as appSelectors } from '../app';
+import { v4 as uuid4 } from 'uuid';
+
 
 // This 'module' self-import hack enables mocking during tests.
 // See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
@@ -11,6 +13,7 @@ import { selectors as appSelectors } from '../app';
 // eslint-disable-next-line import/no-self-import
 import * as module from './requests';
 import { isLibraryKey } from '../../../../generic/key-utils';
+import { createLibraryBlock } from '../../../../library-authoring/data/api';
 import { acceptedImgKeys } from '../../../sharedComponents/ImageUploadModal/SelectImageModal/utils';
 
 // Similar to `import { actions, selectors } from '..';` but avoid circular imports:
@@ -122,6 +125,29 @@ export const saveBlock = ({ content, ...rest }) => (dispatch, getState) => {
     ...rest,
   }));
 };
+
+/**
+ * Tracked saveBlock api method.  Tracked to the `saveBlock` request key.
+ * @param {string} content
+ * @param {[func]} onSuccess - onSuccess method ((response) => { ... })
+ * @param {[func]} onFailure - onFailure method ((error) => { ... })
+ */
+export const createBlock = ({ ...rest }) => (dispatch, getState) => {
+  const definitionId = selectors.app.blockTitle(getState())
+    ? selectors.app.blockTitle(getState()).toLowerCase().replaceAll(' ', '-')
+    : `${uuid4()}`;
+
+  dispatch(module.networkRequest({
+    requestKey: RequestKeys.creaateBlock,
+    promise: createLibraryBlock({
+      libraryId: selectors.app.learningContextId(getState()),
+      blockType: selectors.app.blockType(getState()),
+      definitionId,
+    }),
+    ...rest,
+  }));
+};
+
 export const uploadAsset = ({ asset, ...rest }) => (dispatch, getState) => {
   const learningContextId = selectors.app.learningContextId(getState());
   dispatch(module.networkRequest({
