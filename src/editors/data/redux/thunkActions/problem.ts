@@ -59,6 +59,7 @@ export const getDataFromOlx = ({ rawOLX, rawSettings, defaultSettings }) => {
 };
 
 export const loadProblem = ({ rawOLX, rawSettings, defaultSettings }) => (dispatch) => {
+  console.debug(rawOLX);
   if (isBlankProblem({ rawOLX })) {
     dispatch(actions.problem.setEnableTypeSelection(camelizeKeys(defaultSettings)));
   } else {
@@ -84,7 +85,7 @@ export const fetchAdvancedSettings = ({ rawOLX, rawSettings }) => (dispatch) => 
 };
 
 export const initializeProblem = (blockValue) => (dispatch, getState) => {
-  const rawOLX = _.get(blockValue, 'data.data', {});
+  const rawOLX = _.get(blockValue, 'data.data', '');
   const rawSettings = _.get(blockValue, 'data.metadata', {});
   const learningContextId = selectors.app.learningContextId(getState());
   if (isLibraryKey(learningContextId)) {
