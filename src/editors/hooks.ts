@@ -65,7 +65,27 @@ export const saveBlock = ({
     ));
   }
 };
-
+export const createBlock = ({
+  analytics,
+  content,
+  destination,
+  dispatch,
+  returnFunction,
+  validateEntry,
+}) => {
+  if (!content) {
+    return;
+  }
+  dispatch(thunkActions.app.createBlock(
+    content,
+    navigateCallback({
+      destination,
+      analyticsEvent: analyticsEvt.editorSaveClick,
+      analytics,
+      returnFunction,
+    }),
+  ));
+};
 export const clearSaveError = ({
   dispatch,
 }) => () => dispatch(actions.requests.clearRequest({ requestKey: RequestKeys.saveBlock }));

@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import type { EditorState } from '..';
 import { blockTypes } from '../../constants/app';
-import { isLibraryV1Key } from '../../../../generic/key-utils';
+import { isLibraryKey, isLibraryV1Key } from '../../../../generic/key-utils';
 import * as urls from '../../services/cms/urls';
 
 export const appSelector = (state: EditorState) => state.app;
@@ -47,7 +47,19 @@ export const isLibrary = createSelector(
     if (isLibraryV1Key(learningContextId)) {
       return true;
     }
-    if (blockId && blockId.startsWith('lb:')) {
+    if ((blockId && blockId.startsWith('lb:')) || isLibraryKey(learningContextId)) {
+      return true;
+    }
+    return false;
+  },
+);
+
+export const isCreateBlock = createSelector(
+  [simpleSelectors.blockId,
+    simpleSelectors.blockType,
+  ],
+  (blockId, blockType) => {
+    if (blockId === '' && blockType) {
       return true;
     }
     return false;
@@ -59,8 +71,13 @@ export const isInitialized = createSelector(
     simpleSelectors.unitUrl,
     simpleSelectors.blockValue,
     isLibrary,
+    isCreateBlock,
   ],
-  (unitUrl, blockValue, isLibraryBlock) => {
+  (unitUrl, blockValue, isLibraryBlock, isCreateEditor) => {
+    if (isCreateEditor) {
+      return true;
+    }
+
     if (isLibraryBlock) {
       return !!blockValue;
     }
@@ -105,4 +122,5 @@ export default {
   displayTitle,
   analytics,
   isLibrary,
+  isCreateBlock,
 };

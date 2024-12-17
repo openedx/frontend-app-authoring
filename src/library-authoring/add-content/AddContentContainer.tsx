@@ -24,9 +24,8 @@ import { v4 as uuid4 } from 'uuid';
 import { ToastContext } from '../../generic/toast-context';
 import { useCopyToClipboard } from '../../generic/clipboard';
 import { getCanEdit } from '../../course-unit/data/selectors';
-import { useCreateLibraryBlock, useLibraryPasteClipboard, useAddComponentsToCollection } from '../data/apiHooks';
+import { useLibraryPasteClipboard, useAddComponentsToCollection } from '../data/apiHooks';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { canEditComponent } from '../components/ComponentEditorModal';
 import { PickLibraryContentModal } from './PickLibraryContentModal';
 
 import messages from './messages';
@@ -72,7 +71,6 @@ const AddContentContainer = () => {
     openComponentEditor,
     componentPicker,
   } = useLibraryContext();
-  const createBlockMutation = useCreateLibraryBlock();
   const updateComponentsMutation = useAddComponentsToCollection(libraryId, collectionId);
   const pasteClipboardMutation = useLibraryPasteClipboard();
   const { showToast } = useContext(ToastContext);
@@ -192,27 +190,15 @@ const AddContentContainer = () => {
   };
 
   const onCreateBlock = (blockType: string) => {
-    createBlockMutation.mutateAsync({
-      libraryId,
-      blockType,
-      definitionId: `${uuid4()}`,
-    }).then((data) => {
-      const hasEditor = canEditComponent(data.id);
-      if (hasEditor) {
-        // linkComponent on editor close.
-        openComponentEditor(data.id, () => linkComponent(data.id));
-      } else {
-        // We can't start editing this right away so just show a toast message:
-        showToast(intl.formatMessage(messages.successCreateMessage));
-        linkComponent(data.id);
-      }
-    }).catch((error) => {
-      showToast(parseErrorMsg(
-        error,
-        messages.errorCreateMessageWithDetail,
-        messages.errorCreateMessage,
-      ));
-    });
+    const mfeEditorTypes = ['html', 'problem', 'video'];
+    if (mfeEditorTypes.includes(blockType)) {
+      // linkComponent on editor close.
+      openComponentEditor('', () => {}, blockType);
+    } else {
+      // We can't start editing this right away so just show a toast message:
+      showToast(intl.formatMessage(messages.successCreateMessage));
+      // linkComponent(data.id);
+    }
   };
 
   const onCreateContent = (blockType: string) => {
@@ -237,7 +223,10 @@ const AddContentContainer = () => {
       {collectionId ? (
         componentPicker && (
           <>
-            <AddContentButton contentType={libraryContentButtonData} onCreateContent={onCreateContent} />
+            <AddContentButton
+              contentType={libraryContentButtonData}
+              onCreateContent={onCreateContent}
+            />
             <PickLibraryContentModal
               isOpen={isAddLibraryContentModalOpen}
               onClose={closeAddLibraryContentModal}
@@ -245,17 +234,22 @@ const AddContentContainer = () => {
           </>
         )
       ) : (
-        <AddContentButton contentType={collectionButtonData} onCreateContent={onCreateContent} />
+        <AddContentButton
+          contentType={collectionButtonData}
+          onCreateContent={onCreateContent}
+        />
       )}
       <hr className="w-100 bg-gray-500" />
       {/* Note: for MVP we are hiding the unuspported types, not just disabling them. */}
-      {contentTypes.filter(ct => !ct.disabled).map((contentType) => (
-        <AddContentButton
-          key={`add-content-${contentType.blockType}`}
-          contentType={contentType}
-          onCreateContent={onCreateContent}
-        />
-      ))}
+      {contentTypes
+        .filter((ct) => !ct.disabled)
+        .map((contentType) => (
+          <AddContentButton
+            key={`add-content-${contentType.blockType}`}
+            contentType={contentType}
+            onCreateContent={onCreateContent}
+          />
+        ))}
     </Stack>
   );
 };
