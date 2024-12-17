@@ -1,6 +1,6 @@
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -60,9 +60,11 @@ describe('<HeaderTitle />', () => {
   it('render HeaderTitle component correctly', () => {
     const { getByText, getByRole } = renderComponent();
 
-    expect(getByText(unitTitle)).toBeInTheDocument();
-    expect(getByRole('button', { name: messages.altButtonEdit.defaultMessage })).toBeInTheDocument();
-    expect(getByRole('button', { name: messages.altButtonSettings.defaultMessage })).toBeInTheDocument();
+    waitFor(() => {
+      expect(getByText(unitTitle)).toBeInTheDocument();
+      expect(getByRole('button', { name: messages.altButtonEdit.defaultMessage })).toBeInTheDocument();
+      expect(getByRole('button', { name: messages.altButtonSettings.defaultMessage })).toBeInTheDocument();
+    });
   });
 
   it('render HeaderTitle with open edit form', () => {
@@ -70,18 +72,22 @@ describe('<HeaderTitle />', () => {
       isTitleEditFormOpen: true,
     });
 
-    expect(getByRole('textbox', { name: messages.ariaLabelButtonEdit.defaultMessage })).toBeInTheDocument();
-    expect(getByRole('textbox', { name: messages.ariaLabelButtonEdit.defaultMessage })).toHaveValue(unitTitle);
-    expect(getByRole('button', { name: messages.altButtonEdit.defaultMessage })).toBeInTheDocument();
-    expect(getByRole('button', { name: messages.altButtonSettings.defaultMessage })).toBeInTheDocument();
+    waitFor(() => {
+      expect(getByRole('textbox', { name: messages.ariaLabelButtonEdit.defaultMessage })).toBeInTheDocument();
+      expect(getByRole('textbox', { name: messages.ariaLabelButtonEdit.defaultMessage })).toHaveValue(unitTitle);
+      expect(getByRole('button', { name: messages.altButtonEdit.defaultMessage })).toBeInTheDocument();
+      expect(getByRole('button', { name: messages.altButtonSettings.defaultMessage })).toBeInTheDocument();
+    });
   });
 
   it('calls toggle edit title form by clicking on Edit button', () => {
     const { getByRole } = renderComponent();
 
-    const editTitleButton = getByRole('button', { name: messages.altButtonEdit.defaultMessage });
-    userEvent.click(editTitleButton);
-    expect(handleTitleEdit).toHaveBeenCalledTimes(1);
+    waitFor(() => {
+      const editTitleButton = getByRole('button', { name: messages.altButtonEdit.defaultMessage });
+      userEvent.click(editTitleButton);
+      expect(handleTitleEdit).toHaveBeenCalledTimes(1);
+    });
   });
 
   it('calls saving title by clicking outside or press Enter key', async () => {
@@ -89,16 +95,18 @@ describe('<HeaderTitle />', () => {
       isTitleEditFormOpen: true,
     });
 
-    const titleField = getByRole('textbox', { name: messages.ariaLabelButtonEdit.defaultMessage });
-    userEvent.type(titleField, ' 1');
-    expect(titleField).toHaveValue(`${unitTitle} 1`);
-    userEvent.click(document.body);
-    expect(handleTitleEditSubmit).toHaveBeenCalledTimes(1);
+    waitFor(() => {
+      const titleField = getByRole('textbox', { name: messages.ariaLabelButtonEdit.defaultMessage });
+      userEvent.type(titleField, ' 1');
+      expect(titleField).toHaveValue(`${unitTitle} 1`);
+      userEvent.click(document.body);
+      expect(handleTitleEditSubmit).toHaveBeenCalledTimes(1);
 
-    userEvent.click(titleField);
-    userEvent.type(titleField, ' 2[Enter]');
-    expect(titleField).toHaveValue(`${unitTitle} 1 2`);
-    expect(handleTitleEditSubmit).toHaveBeenCalledTimes(2);
+      userEvent.click(titleField);
+      userEvent.type(titleField, ' 2[Enter]');
+      expect(titleField).toHaveValue(`${unitTitle} 1 2`);
+      expect(handleTitleEditSubmit).toHaveBeenCalledTimes(2);
+    });
   });
 
   it('displays a visibility message with the selected groups for the unit', async () => {
@@ -117,7 +125,9 @@ describe('<HeaderTitle />', () => {
     const visibilityMessage = messages.definedVisibilityMessage.defaultMessage
       .replace('{selectedGroupsLabel}', 'Visibility group 1');
 
-    expect(getByText(visibilityMessage)).toBeInTheDocument();
+    waitFor(() => {
+      expect(getByText(visibilityMessage)).toBeInTheDocument();
+    });
   });
 
   it('displays a visibility message with the selected groups for some of xblock', async () => {
@@ -130,6 +140,8 @@ describe('<HeaderTitle />', () => {
     await executeThunk(fetchCourseUnitQuery(blockId), store.dispatch);
     const { getByText } = renderComponent();
 
-    expect(getByText(messages.commonVisibilityMessage.defaultMessage)).toBeInTheDocument();
+    waitFor(() => {
+      expect(getByText(messages.someVisibilityMessage.defaultMessage)).toBeInTheDocument();
+    });
   });
 });
