@@ -262,6 +262,8 @@ const FilterByBlockType: React.FC<Record<never, never>> = () => {
     blockType => ({ label: <BlockTypeLabel blockType={blockType} /> }),
   );
 
+  const hiddenBlockTypes = blockTypesFilter.filter(blockType => !Object.keys(blockTypes).includes(blockType));
+
   return (
     <SearchFilterWidget
       appliedFilters={appliedFilters}
@@ -276,13 +278,17 @@ const FilterByBlockType: React.FC<Record<never, never>> = () => {
         >
           <Menu className="block-type-refinement-menu" style={{ boxShadow: 'none' }}>
             {
+              // Show applied filter items for block types that are not in the current search results
+              hiddenBlockTypes.map(blockType => <FilterItem key={blockType} blockType={blockType} count={0} />)
+            }
+            {
               Object.entries(sortedBlockTypes).map(([blockType, count]) => (
                 <FilterItem key={blockType} blockType={blockType} count={count} />
               ))
             }
             {
               // Show a message if there are no options at all to avoid the impression that the dropdown isn't working
-              Object.keys(sortedBlockTypes).length === 0 ? (
+              Object.keys(sortedBlockTypes).length === 0 && hiddenBlockTypes.length === 0 ? (
                 <MenuItem disabled><FormattedMessage {...messages['blockTypeFilter.empty']} /></MenuItem>
               ) : null
             }
