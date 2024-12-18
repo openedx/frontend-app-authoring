@@ -59,7 +59,6 @@ export const getDataFromOlx = ({ rawOLX, rawSettings, defaultSettings }) => {
 };
 
 export const loadProblem = ({ rawOLX, rawSettings, defaultSettings }) => (dispatch) => {
-  console.debug(rawOLX);
   if (isBlankProblem({ rawOLX })) {
     dispatch(actions.problem.setEnableTypeSelection(camelizeKeys(defaultSettings)));
   } else {

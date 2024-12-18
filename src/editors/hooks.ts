@@ -71,7 +71,6 @@ export const createBlock = ({
   destination,
   dispatch,
   returnFunction,
-  validateEntry,
 }) => {
   if (!content) {
     return;

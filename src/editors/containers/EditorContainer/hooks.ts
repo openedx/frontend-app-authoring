@@ -40,7 +40,6 @@ export const handleSaveClicked = ({
       destination,
       dispatch,
       returnFunction,
-      validateEntry,
     });
   }
 
