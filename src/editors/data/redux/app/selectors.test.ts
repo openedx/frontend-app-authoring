@@ -98,8 +98,8 @@ describe('app selectors unit tests', () => {
         };
 
         [
-          [[null, truthy.blockValue, true] as [any, any, any], true] as const,
-          [[null, null, true] as [any, any, any], false] as const,
+          [[null, truthy.blockValue, true, false] as [any, any, any, any], true] as const,
+          [[null, null, true, false] as [any, any, any, any], false] as const,
         ].map(([args, expected]) => expect(cb(...args)).toEqual(expected));
       });
     });
@@ -112,9 +112,9 @@ describe('app selectors unit tests', () => {
         };
 
         [
-          [[null, truthy.blockValue, false] as [any, any, any], false] as const,
-          [[truthy.unitUrl, null, false] as [any, any, any], false] as const,
-          [[truthy.unitUrl, truthy.blockValue, false] as [any, any, any], true] as const,
+          [[null, truthy.blockValue, false, false] as [any, any, any, any], false] as const,
+          [[truthy.unitUrl, null, false, false] as [any, any, any, any], false] as const,
+          [[truthy.unitUrl, truthy.blockValue, false, false] as [any, any, any, any], true] as const,
         ].map(([args, expected]) => expect(cb(...args)).toEqual(expected));
       });
     });

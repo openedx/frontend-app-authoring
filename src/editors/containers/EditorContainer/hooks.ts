@@ -12,6 +12,7 @@ export const {
   navigateCallback,
   nullMethod,
   saveBlock,
+  createBlock,
 } = appHooks;
 
 export const state = StrictDict({
@@ -27,9 +28,20 @@ export const handleSaveClicked = ({
 }) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const returnUrl = useSelector(selectors.app.returnUrl);
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const isCreateBlock = useSelector(selectors.app.isCreateBlock);
   const destination = returnFunction ? '' : returnUrl;
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const analytics = useSelector(selectors.app.analytics);
+  if (isCreateBlock) {
+    return () => createBlock({
+      analytics,
+      content: getContent({ dispatch }),
+      destination,
+      dispatch,
+      returnFunction,
+    });
+  }
 
   return () => saveBlock({
     analytics,
