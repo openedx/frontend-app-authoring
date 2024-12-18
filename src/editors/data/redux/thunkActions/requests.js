@@ -1,11 +1,10 @@
+import { v4 as uuid4 } from 'uuid';
 import { StrictDict, parseLibraryImageData, getLibraryImageAssets } from '../../../utils';
 
 import { RequestKeys } from '../../constants/requests';
 import api, { loadImages } from '../../services/cms/api';
 import { actions as requestsActions } from '../requests';
 import { selectors as appSelectors } from '../app';
-import { v4 as uuid4 } from 'uuid';
-
 
 // This 'module' self-import hack enables mocking during tests.
 // See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
