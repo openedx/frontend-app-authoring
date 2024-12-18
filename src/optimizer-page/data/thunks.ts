@@ -55,6 +55,7 @@ export function fetchLinkCheckStatus(courseId) {
       } else {
         dispatch(updateLinkCheckInProgress(false));
       }
+      console.log('linkCheckStatus:', linkCheckStatus);
 
       dispatch(updateCurrentStage(SCAN_STAGES[linkCheckStatus]));
 
@@ -65,9 +66,7 @@ export function fetchLinkCheckStatus(courseId) {
       ) {
         dispatch(updateError({ msg: 'Link Check Failed' }));
         dispatch(updateIsErrorModalOpen(true));
-      }
-
-      if (linkCheckOutput) {
+      } else if (linkCheckOutput) {
         dispatch(updateLinkCheckResult(linkCheckOutput));
       }
 
@@ -78,7 +77,7 @@ export function fetchLinkCheckStatus(courseId) {
         dispatch(updateLoadingStatus({ status: RequestStatus.DENIED }));
       } else {
         dispatch(
-          updateLoadingStatus({ courseId, status: RequestStatus.FAILED }),
+          updateLoadingStatus({ status: RequestStatus.FAILED }),
         );
       }
       return false;
