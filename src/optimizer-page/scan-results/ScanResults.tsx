@@ -9,6 +9,7 @@ import SectionCollapsible from '../SectionCollapsible';
 import BrokenLinkTable from './BrokenLinkTable';
 import LockedInfoIcon from './LockedInfoIcon';
 import { LinkCheckResult } from '../types';
+import countBrokenLinks from '../utils';
 
 const InfoCard: FC<{ text: string }> = ({ text }) => (
   <Card className="mt-4">
@@ -25,27 +26,14 @@ interface Props {
   data: LinkCheckResult | null;
 }
 
+
+
 const ScanResults: FC<Props> = ({ data }) => {
   const intl = useIntl();
   const [showLockedLinks, setShowLockedLinks] = useState(true);
 
   const brokenLinkCounts = useMemo(() => {
-    if (!data?.sections) {
-      return [];
-    }
-    const counts: number[] = [];
-    data.sections.forEach((section) => {
-      let count = 0;
-      section.subsections.forEach((subsection) => {
-        subsection.units.forEach((unit) => {
-          unit.blocks.forEach((block) => {
-            count += block.brokenLinks.length;
-          });
-        });
-      });
-      counts.push(count);
-    });
-    return counts;
+    return countBrokenLinks(data);
   }, [data?.sections]);
 
   if (!data) {
