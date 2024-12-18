@@ -127,7 +127,7 @@ const messages = defineMessages({
   addMemberSpecificError: {
     id: 'course-authoring.library-authoring.library-team.add-member-specific-error',
     defaultMessage: 'Error adding Team Member. {message}',
-    description: 'Message shown when an error occurs with an specific error while adding a Library Team member.',
+    description: 'Message shown when an error occurs while adding a Library Team member, including a specific error message.',
   },
   deleteMemberSuccess: {
     id: 'course-authoring.library-authoring.library-team.delete-member-success',
