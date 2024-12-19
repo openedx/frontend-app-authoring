@@ -96,7 +96,22 @@ export const SearchContextProvider: React.FC<{
 }> = ({
   overrideSearchSortOrder, skipBlockTypeFetch, skipUrlUpdate, ...props
 }) => {
-  const [searchKeywords, setSearchKeywords] = React.useState('');
+  // Search parameters can be set via the query string
+  // E.g. q=draft+text
+  // TODO -- how to scrub search terms?
+  const keywordStateManager = React.useState('');
+  const keywordUrlStateManager = useStateWithUrlSearchParam<string>(
+    '',
+    'q',
+    (value: string) => value || '',
+    (value: string) => value || '',
+  );
+  const [searchKeywords, setSearchKeywords] = (
+    skipUrlUpdate
+      ? keywordStateManager
+      : keywordUrlStateManager
+  );
+
   const [blockTypesFilter, setBlockTypesFilter] = React.useState<string[]>([]);
   const [problemTypesFilter, setProblemTypesFilter] = React.useState<string[]>([]);
   const [tagsFilter, setTagsFilter] = React.useState<string[]>([]);
