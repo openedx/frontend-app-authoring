@@ -21,7 +21,7 @@ import { ToastContext } from '../../generic/toast-context';
 import { type ContentHit } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { SidebarAdditionalActions, useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
 import { useRemoveComponentsFromCollection } from '../data/apiHooks';
 import { useLibraryRoutes } from '../routes';
 
@@ -46,6 +46,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
     sidebarComponentInfo,
     openComponentInfoSidebar,
     closeLibrarySidebar,
+    setSidebarAction,
   } = useSidebarContext();
 
   const canEdit = usageKey && canEditComponent(usageKey);
@@ -75,9 +76,10 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
     });
   };
 
-  const showManageCollections = () => {
-    openComponentInfoSidebar(usageKey, SidebarAdditionalActions.JumpToAddCollections);
-  };
+  const showManageCollections = useCallback(() => {
+    setSidebarAction(SidebarActions.JumpToAddCollections);
+    openComponentInfoSidebar(usageKey);
+  }, [setSidebarAction, openComponentInfoSidebar, usageKey]);
 
   return (
     <Dropdown id="component-card-dropdown">

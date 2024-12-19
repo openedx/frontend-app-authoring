@@ -16,7 +16,7 @@ import { useUpdateComponentCollections } from '../data/apiHooks';
 import { ToastContext } from '../../generic/toast-context';
 import { CollectionMetadata } from '../data/api';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { SidebarAdditionalActions, useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
 
 interface ManageCollectionsProps {
   usageKey: string;
@@ -191,8 +191,8 @@ const ComponentCollections = ({ collections, onManageClick }: {
 };
 
 const ManageCollections = ({ usageKey, collections }: ManageCollectionsProps) => {
-  const { sidebarComponentInfo, resetSidebarAdditionalActions } = useSidebarContext();
-  const jumpToCollections = sidebarComponentInfo?.additionalAction === SidebarAdditionalActions.JumpToAddCollections;
+  const { sidebarAction, resetSidebarAction } = useSidebarContext();
+  const jumpToCollections = sidebarAction === SidebarActions.JumpToAddCollections;
   const [editing, setEditing] = useState(jumpToCollections);
   const collectionNames = collections.map((collection) => collection.title);
 
@@ -200,12 +200,12 @@ const ManageCollections = ({ usageKey, collections }: ManageCollectionsProps) =>
     if (jumpToCollections) {
       setEditing(true);
     }
-  }, [sidebarComponentInfo]);
+  }, [jumpToCollections]);
 
   useEffect(() => {
     // This is required to redo actions.
     if (!editing) {
-      resetSidebarAdditionalActions();
+      resetSidebarAction();
     }
   }, [editing]);
 

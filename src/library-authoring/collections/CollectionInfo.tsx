@@ -27,11 +27,11 @@ const CollectionInfo = () => {
 
   const { componentPickerMode } = useComponentPickerContext();
   const { libraryId, setCollectionId } = useLibraryContext();
-  const { sidebarComponentInfo, setSidebarCurrentTab } = useSidebarContext();
+  const { sidebarComponentInfo, sidebarTab, setSidebarTab } = useSidebarContext();
 
   const tab: CollectionInfoTab = (
-    sidebarComponentInfo?.currentTab && isCollectionInfoTab(sidebarComponentInfo.currentTab)
-  ) ? sidebarComponentInfo?.currentTab : COLLECTION_INFO_TABS.Manage;
+    sidebarTab && isCollectionInfoTab(sidebarTab)
+  ) ? sidebarTab : COLLECTION_INFO_TABS.Manage;
 
   const collectionId = sidebarComponentInfo?.id;
   // istanbul ignore if: this should never happen
@@ -70,7 +70,7 @@ const CollectionInfo = () => {
         className="my-3 d-flex justify-content-around"
         defaultActiveKey={COMPONENT_INFO_TABS.Manage}
         activeKey={tab}
-        onSelect={setSidebarCurrentTab}
+        onSelect={setSidebarTab}
       >
         <Tab eventKey={COMPONENT_INFO_TABS.Manage} title={intl.formatMessage(messages.manageTabTitle)}>
           <ContentTagsDrawer

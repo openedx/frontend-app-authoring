@@ -431,27 +431,23 @@ describe('<LibraryAuthoringPage />', () => {
     // Click on the first collection
     fireEvent.click((await screen.findByText('Collection 1')));
 
-    const sidebar = screen.getByTestId('library-sidebar');
-
-    const { getByRole } = within(sidebar);
-
     // Click on the Details tab
-    fireEvent.click(getByRole('tab', { name: 'Details' }));
+    fireEvent.click(screen.getByRole('tab', { name: 'Details' }));
 
     // Change to a component
     fireEvent.click((await screen.findAllByText('Introduction to Testing'))[0]);
 
     // Check that the Details tab is still selected
-    expect(getByRole('tab', { name: 'Details' })).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByRole('tab', { name: 'Details' })).toHaveAttribute('aria-selected', 'true');
 
     // Click on the Previews tab
-    fireEvent.click(getByRole('tab', { name: 'Preview' }));
+    fireEvent.click(screen.getByRole('tab', { name: 'Preview' }));
 
     // Switch back to the collection
     fireEvent.click((await screen.findByText('Collection 1')));
 
     // The Manage (default) tab should be selected because the collection does not have a Preview tab
-    expect(getByRole('tab', { name: 'Manage' })).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByRole('tab', { name: 'Manage' })).toHaveAttribute('aria-selected', 'true');
   });
 
   it('can filter by capa problem type', async () => {

@@ -5,7 +5,6 @@
  * https://github.com/algolia/instantsearch/issues/1658
  */
 import React from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { MeiliSearch, type Filter } from 'meilisearch';
 import { union } from 'lodash';
 
@@ -13,6 +12,7 @@ import {
   CollectionHit, ContentHit, SearchSortOption, forceArray,
 } from './data/api';
 import { useContentSearchConnection, useContentSearchResults } from './data/apiHooks';
+import { useStateWithUrlSearchParam } from '../hooks';
 
 export interface SearchContextData {
   client?: MeiliSearch;
@@ -46,45 +46,6 @@ export interface SearchContextData {
 }
 
 const SearchContext = React.createContext<SearchContextData | undefined>(undefined);
-
-/**
- * Hook which lets you store state variables in the URL search parameters.
- *
- * It wraps useState with functions that get/set a query string
- * search parameter when returning/setting the state variable.
- *
- */
-function useStateWithUrlSearchParam<Type>(
-  defaultValue: Type,
-  paramName: string,
-  // Returns the Type equivalent of the given string value, or
-  // undefined if value is invalid.
-  fromString: (value: string | null) => Type | undefined,
-  // Returns the string equivalent of the given Type value.
-  // Returning empty string/undefined will clear the url search paramName.
-  toString: (value: Type) => string | undefined,
-): [value: Type, setter: React.Dispatch<React.SetStateAction<Type>>] {
-  const [searchParams, setSearchParams] = useSearchParams();
-  // The converted search parameter value takes precedence over the state value.
-  const returnValue: Type = fromString(searchParams.get(paramName)) ?? defaultValue;
-  // Function to update the url search parameter
-  const returnSetter: React.Dispatch<React.SetStateAction<Type>> = React.useCallback((value: Type) => {
-    setSearchParams((prevParams) => {
-      const paramValue: string = toString(value) ?? '';
-      const newSearchParams = new URLSearchParams(prevParams);
-      // If using the default paramValue, remove it from the search params.
-      if (paramValue === defaultValue) {
-        newSearchParams.delete(paramName);
-      } else {
-        newSearchParams.set(paramName, paramValue);
-      }
-      return newSearchParams;
-    }, { replace: true });
-  }, [setSearchParams]);
-
-  // Return the computed value and wrapped set state function
-  return [returnValue, returnSetter];
-}
 
 export const SearchContextProvider: React.FC<{
   extraFilter?: Filter;
