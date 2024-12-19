@@ -206,12 +206,16 @@ const FilterItem = ({ blockType, count } : FilterItemProps) => {
   );
 };
 
+interface FilterByBlockTypeProps {
+  disabled?: boolean,
+}
 /**
  * A button with a dropdown that allows filtering the current search by component type (XBlock type)
  * e.g. Limit results to "Text" (html) and "Problem" (problem) components.
  * The button displays the first type selected, and a count of how many other types are selected, if more than one.
+ * @param disabled - If true, the filter is disabled and hidden.
  */
-const FilterByBlockType: React.FC<Record<never, never>> = () => {
+const FilterByBlockType: React.FC<FilterByBlockTypeProps> = ({ disabled = false }) => {
   const {
     blockTypes,
     blockTypesFilter,
@@ -219,6 +223,23 @@ const FilterByBlockType: React.FC<Record<never, never>> = () => {
     setBlockTypesFilter,
     setProblemTypesFilter,
   } = useSearchContext();
+
+  useEffect(() => {
+    if (disabled) {
+      // Clear filters when disabled
+      const selectedBlockTypesFilter = blockTypesFilter;
+      const selectedProblemTypesFilter = problemTypesFilter;
+      setBlockTypesFilter([]);
+      setProblemTypesFilter([]);
+
+      return () => {
+        // Restore filters when re-enabled
+        setBlockTypesFilter(selectedBlockTypesFilter);
+        setProblemTypesFilter(selectedProblemTypesFilter);
+      };
+    }
+    return () => {};
+  }, [disabled]);
 
   const clearFilters = useCallback(/* istanbul ignore next */ () => {
     setBlockTypesFilter([]);
@@ -262,7 +283,9 @@ const FilterByBlockType: React.FC<Record<never, never>> = () => {
     blockType => ({ label: <BlockTypeLabel blockType={blockType} /> }),
   );
 
-  const hiddenBlockTypes = blockTypesFilter.filter(blockType => !Object.keys(blockTypes).includes(blockType));
+  if (disabled) {
+    return null;
+  }
 
   return (
     <SearchFilterWidget
@@ -278,19 +301,15 @@ const FilterByBlockType: React.FC<Record<never, never>> = () => {
         >
           <Menu className="block-type-refinement-menu" style={{ boxShadow: 'none' }}>
             {
-              // Show applied filter items for block types that are not in the current search results
-              hiddenBlockTypes.map(blockType => <FilterItem key={blockType} blockType={blockType} count={0} />)
-            }
-            {
               Object.entries(sortedBlockTypes).map(([blockType, count]) => (
                 <FilterItem key={blockType} blockType={blockType} count={count} />
               ))
             }
             {
               // Show a message if there are no options at all to avoid the impression that the dropdown isn't working
-              Object.keys(sortedBlockTypes).length === 0 && hiddenBlockTypes.length === 0 ? (
+              Object.keys(sortedBlockTypes).length === 0 && (
                 <MenuItem disabled><FormattedMessage {...messages['blockTypeFilter.empty']} /></MenuItem>
-              ) : null
+              )
             }
           </Menu>
         </Form.CheckboxSet>
