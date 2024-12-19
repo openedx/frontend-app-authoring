@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,6 +27,16 @@ const pollLinkCheckStatus = (dispatch, courseId, delay) => {
   }, delay);
   return interval;
 };
+
+export function pollLinkCheckDuringScan(linkCheckInProgress, linkCheckResult, interval, dispatch, courseId) {
+  if (linkCheckInProgress === null || linkCheckInProgress || !linkCheckResult) {
+    clearInterval(interval.current);
+    interval.current = pollLinkCheckStatus(dispatch, courseId, 2000);
+  } else if (interval.current) {
+    clearInterval(interval.current);
+    interval.current = null;
+  }
+}
 
 const CourseOptimizerPage = ({ courseId }) => {
   const dispatch = useDispatch();
@@ -59,22 +70,12 @@ const CourseOptimizerPage = ({ courseId }) => {
     },
   ];
 
-  const pollLinkCheckStatusDuringScan = () => {
-    if (linkCheckInProgress === null || linkCheckInProgress || !linkCheckResult) {
-      clearInterval(interval.current);
-      interval.current = pollLinkCheckStatus(dispatch, courseId, 2000);
-    } else if (interval.current) {
-      clearInterval(interval.current);
-      interval.current = null;
-    }
-  };
-
   useEffect(() => {
     dispatch(fetchLinkCheckStatus(courseId));
   }, []);
 
   useEffect(() => {
-    pollLinkCheckStatusDuringScan();
+    pollLinkCheckDuringScan(linkCheckInProgress, linkCheckResult, interval, dispatch, courseId);
 
     return () => {
       if (interval.current) { clearInterval(interval.current); }
