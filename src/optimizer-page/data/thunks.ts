@@ -23,8 +23,7 @@ export function startLinkCheck(courseId: string) {
     dispatch(updateLinkCheckInProgress(true));
     dispatch(updateCurrentStage(SCAN_STAGES[LINK_CHECK_STATUSES.PENDING]));
     try {
-      const data = await postLinkCheck(courseId);
-      await dispatch(updateCurrentStage(SCAN_STAGES[data.linkCheckStatus]));
+      await postLinkCheck(courseId);
       await dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
     } catch (error) {
@@ -58,6 +57,7 @@ export function fetchLinkCheckStatus(courseId) {
       console.log('linkCheckStatus:', linkCheckStatus);
 
       dispatch(updateCurrentStage(SCAN_STAGES[linkCheckStatus]));
+      console.log('updated current stage to:', SCAN_STAGES[linkCheckStatus]);
 
       if (
         linkCheckStatus === undefined
@@ -73,6 +73,7 @@ export function fetchLinkCheckStatus(courseId) {
       dispatch(updateLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
     } catch (error: any) {
+      console.log('found some error');
       if (error?.response && error?.response.status === 403) {
         dispatch(updateLoadingStatus({ status: RequestStatus.DENIED }));
       } else {

@@ -1,5 +1,5 @@
 import mockApiResponse from './mocks/mockApiResponse';
-import countBrokenLinks from './utils';
+import { countBrokenLinks } from './utils';
 
 describe('countBrokenLinks', () => {
   it('should return the count of broken links', () => {
@@ -28,5 +28,17 @@ describe('countBrokenLinks', () => {
       ],
     };
     expect(countBrokenLinks(data)).toStrictEqual([0]);
+  });
+
+  it('should return [] if there is no data', () => {
+    const data = {};
+    expect(countBrokenLinks(data)).toStrictEqual([]);
+  });
+
+  it('should return [] if there are no sections', () => {
+    const data = {
+      sections: [],
+    };
+    expect(countBrokenLinks(data)).toStrictEqual([]);
   });
 });

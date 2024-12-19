@@ -9,7 +9,7 @@ import SectionCollapsible from '../SectionCollapsible';
 import BrokenLinkTable from './BrokenLinkTable';
 import LockedInfoIcon from './LockedInfoIcon';
 import { LinkCheckResult } from '../types';
-import countBrokenLinks from '../utils';
+import { countBrokenLinks } from '../utils';
 
 const InfoCard: FC<{ text: string }> = ({ text }) => (
   <Card className="mt-4">

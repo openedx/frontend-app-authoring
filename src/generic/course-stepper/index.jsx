@@ -25,6 +25,10 @@ const CourseStepper = ({
     const isLastStepDone = isLastStep && isActiveStep;
     const completedStep = index < activeKey && !hasError;
 
+    console.log('current step', index);
+    console.log('activeKey', activeKey);
+    console.log('lastStepIndex', lastStepIndex);
+
     const getStepIcon = () => {
       if (completedStep) {
         return CheckCircle;

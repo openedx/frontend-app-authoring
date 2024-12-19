@@ -1,6 +1,7 @@
+/* eslint-disable import/prefer-default-export */
 import { LinkCheckResult } from './types';
 
-const countBrokenLinks = (data: LinkCheckResult | null): number[] => {
+export const countBrokenLinks = (data: LinkCheckResult | null): number[] => {
   if (!data?.sections) {
     return [];
   }
@@ -18,5 +19,3 @@ const countBrokenLinks = (data: LinkCheckResult | null): number[] => {
   });
   return counts;
 };
-
-export default countBrokenLinks;
