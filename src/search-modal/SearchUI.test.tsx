@@ -165,7 +165,7 @@ describe('<SearchUI />', () => {
     // Enter a keyword - search for 'giraffe':
     fireEvent.change(getByRole('searchbox'), { target: { value: 'giraffe' } });
     // Wait for the new search request to load all the results:
-    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
     // And make sure the request was limited to this course:
     expect(fetchMock).toHaveLastFetched((_url, req) => {
       const requestData = JSON.parse(req.body?.toString() ?? '');
@@ -353,7 +353,7 @@ describe('<SearchUI />', () => {
       // Enter a keyword - search for 'giraffe':
       fireEvent.change(getByRole('searchbox'), { target: { value: 'giraffe' } });
       // Wait for the new search request to load all the results and the filter options, based on the search so far:
-      await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
+      await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
       // And make sure the request was limited to this course:
       expect(fetchMock).toHaveLastFetched((_url, req) => {
         const requestData = JSON.parse(req.body?.toString() ?? '');
@@ -379,7 +379,7 @@ describe('<SearchUI />', () => {
         expect(rendered.getByRole('button', { name: /type: problem/i, hidden: true })).toBeInTheDocument();
       });
       // Now wait for the filter to be applied and the new results to be fetched.
-      await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(3, searchEndpoint, 'post'); });
+      await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
       // Because we're mocking the results, there's no actual changes to the mock results,
       // but we can verify that the filter was sent in the request
       expect(fetchMock).toHaveLastFetched((_url, req) => {
@@ -412,7 +412,7 @@ describe('<SearchUI />', () => {
       const competentciesCheckbox = getByLabelText(checkboxLabel);
       fireEvent.click(competentciesCheckbox, {});
       // Now wait for the filter to be applied and the new results to be fetched.
-      await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(3, searchEndpoint, 'post'); });
+      await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
       // Because we're mocking the results, there's no actual changes to the mock results,
       // but we can verify that the filter was sent in the request
       expect(fetchMock).toBeDone((_url, req) => {
@@ -447,7 +447,7 @@ describe('<SearchUI />', () => {
       const abilitiesTagFilterCheckbox = getByLabelText(childTagLabel);
       fireEvent.click(abilitiesTagFilterCheckbox);
       // Now wait for the filter to be applied and the new results to be fetched.
-      await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(3, searchEndpoint, 'post'); });
+      await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
       // Because we're mocking the results, there's no actual changes to the mock results,
       // but we can verify that the filter was sent in the request
       expect(fetchMock).toBeDone((_url, req) => {

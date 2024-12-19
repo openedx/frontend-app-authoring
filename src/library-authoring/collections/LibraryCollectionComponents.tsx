@@ -3,7 +3,8 @@ import { NoComponents, NoSearchResults } from '../EmptyStates';
 import { useSearchContext } from '../../search-manager';
 import messages from './messages';
 import { useSidebarContext } from '../common/context/SidebarContext';
-import LibraryContent, { ContentType } from '../LibraryContent';
+import LibraryContent from '../LibraryContent';
+import { ContentType } from '../routes';
 
 const LibraryCollectionComponents = () => {
   const { totalHits: componentCount, isFiltered } = useSearchContext();
