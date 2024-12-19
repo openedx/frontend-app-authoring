@@ -10,9 +10,9 @@ export function normalizeCourseSectionVerticalData(metadata) {
     sequence: {
       id: data.subsectionLocation,
       title: data.xblock.displayName,
-      unitIds: data.xblockInfo.ancestorInfo.ancestors[0].childInfo.children.map((item) => item.id),
+      unitIds: data.xblockInfo.ancestorInfo?.ancestors[0].childInfo.children.map((item) => item.id),
     },
-    units: data.xblockInfo.ancestorInfo.ancestors[0].childInfo.children.map((unit) => ({
+    units: data.xblockInfo.ancestorInfo?.ancestors[0].childInfo.children.map((unit) => ({
       id: unit.id,
       sequenceId: data.subsectionLocation,
       bookmarked: unit.bookmarked,

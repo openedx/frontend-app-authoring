@@ -6,6 +6,10 @@
 @import "./move-modal";
 @import "./preview-changes";
 
+.course-unit {
+  min-width: 900px;
+}
+
 .course-unit__alert {
   margin-bottom: 1.75rem;
 }

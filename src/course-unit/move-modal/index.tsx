@@ -102,6 +102,7 @@ const MoveModal: FC<IUseMoveModalParams> = ({
       onClose={handleCLoseModal}
       size="xl"
       className="move-xblock-modal"
+      title={intl.formatMessage(messages.moveModalTitle, { displayName })}
       hasCloseButton
       isFullscreenOnMobile
     >

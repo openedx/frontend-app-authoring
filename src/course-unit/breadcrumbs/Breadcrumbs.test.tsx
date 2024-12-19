@@ -15,6 +15,7 @@ import Breadcrumbs from './Breadcrumbs';
 let axiosMock;
 let reduxStore;
 const courseId = '123';
+const parentUnitId = '456';
 const mockNavigate = jest.fn();
 const breadcrumbsExpected = {
   section: {
@@ -32,7 +33,7 @@ jest.mock('react-router-dom', () => ({
 }));
 
 const renderComponent = () => render(
-  <Breadcrumbs courseId={courseId} />,
+  <Breadcrumbs courseId={courseId} parentUnitId={parentUnitId} />,
 );
 
 describe('<Breadcrumbs />', () => {
@@ -69,6 +70,39 @@ describe('<Breadcrumbs />', () => {
     });
   });
 
+  it('render Breadcrumbs with many ancestors items correctly', async () => {
+    axiosMock
+      .onGet(getCourseSectionVerticalApiUrl(courseId))
+      .reply(200, {
+        ...courseSectionVerticalMock,
+        ancestor_xblocks: [
+          {
+            children: [
+              {
+                ...courseSectionVerticalMock.ancestor_xblocks[0],
+                display_name: 'Some module unit 1',
+              },
+              {
+                ...courseSectionVerticalMock.ancestor_xblocks[1],
+                display_name: 'Some module unit 2',
+              },
+            ],
+            title: 'Some module',
+            is_last: false,
+          },
+          ...courseSectionVerticalMock.ancestor_xblocks,
+        ],
+      });
+    await executeThunk(fetchCourseSectionVerticalData(courseId), reduxStore.dispatch);
+    const { getByText } = renderComponent();
+
+    await waitFor(() => {
+      expect(getByText('Some module')).toBeInTheDocument();
+      expect(getByText(breadcrumbsExpected.section.displayName)).toBeInTheDocument();
+      expect(getByText(breadcrumbsExpected.subsection.displayName)).toBeInTheDocument();
+    });
+  });
+
   it('render Breadcrumbs\'s dropdown menus correctly', async () => {
     const { getByText, queryAllByTestId } = renderComponent();
 
@@ -80,11 +114,13 @@ describe('<Breadcrumbs />', () => {
     const button = getByText(breadcrumbsExpected.section.displayName);
     userEvent.click(button);
     await waitFor(() => {
-      expect(queryAllByTestId('breadcrumbs-section-dropdown-item')).toHaveLength(5);
+      expect(queryAllByTestId('breadcrumbs-dropdown-item-level-0')).toHaveLength(5);
     });
 
     userEvent.click(getByText(breadcrumbsExpected.subsection.displayName));
-    expect(queryAllByTestId('breadcrumbs-subsection-dropdown-item')).toHaveLength(2);
+    await waitFor(() => {
+      expect(queryAllByTestId('breadcrumbs-dropdown-item-level-1')).toHaveLength(2);
+    });
   });
 
   it('navigates using the new course outline page when the waffle flag is enabled', async () => {
@@ -118,6 +154,6 @@ describe('<Breadcrumbs />', () => {
     userEvent.click(dropdownBtn);
 
     const dropdownItem = getByRole('link', { name: display_name });
-    expect(dropdownItem.href).toBe(`${getConfig().STUDIO_BASE_URL}${url}`);
+    expect(dropdownItem).toHaveAttribute('href', `${getConfig().STUDIO_BASE_URL}${url}`);
   });
 });
