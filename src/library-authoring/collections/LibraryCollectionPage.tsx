@@ -2,15 +2,15 @@ import { useEffect } from 'react';
 import { StudioFooter } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Badge,
+  ActionRow,
   Button,
   Breadcrumb,
   Container,
   Icon,
-  IconButton,
-  Stack,
 } from '@openedx/paragon';
 import { Add, ArrowBack, InfoOutline } from '@openedx/paragon/icons';
+import classNames from 'classnames';
+import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 import Loading from '../../generic/Loading';
@@ -26,71 +26,68 @@ import {
   SearchKeywordsField,
   SearchSortWidget,
 } from '../../search-manager';
+import { SubHeaderTitle } from '../LibraryAuthoringPage';
 import { useCollection, useContentLibrary } from '../data/apiHooks';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarBodyComponentId, useSidebarContext } from '../common/context/SidebarContext';
 import messages from './messages';
 import { LibrarySidebar } from '../library-sidebar';
 import LibraryCollectionComponents from './LibraryCollectionComponents';
 
 const HeaderActions = () => {
   const intl = useIntl();
-  const { readOnly } = useLibraryContext();
-  const { openAddContentSidebar } = useSidebarContext();
 
-  if (readOnly) {
-    return null;
+  const { componentPickerMode } = useComponentPickerContext();
+  const { collectionId, readOnly } = useLibraryContext();
+  const {
+    closeLibrarySidebar,
+    openAddContentSidebar,
+    openCollectionInfoSidebar,
+    sidebarComponentInfo,
+  } = useSidebarContext();
+
+  // istanbul ignore if: this should never happen
+  if (!collectionId) {
+    throw new Error('it should not be possible to render HeaderActions without a collectionId');
   }
+
+  const infoSidebarIsOpen = sidebarComponentInfo?.type === SidebarBodyComponentId.CollectionInfo
+    && sidebarComponentInfo?.id === collectionId;
+
+  const handleOnClickInfoSidebar = () => {
+    if (infoSidebarIsOpen) {
+      closeLibrarySidebar();
+    } else {
+      openCollectionInfoSidebar(collectionId);
+    }
+  };
 
   return (
     <div className="header-actions">
       <Button
-        className="ml-1"
-        iconBefore={Add}
-        variant="primary rounded-0"
-        onClick={openAddContentSidebar}
+        className={classNames('mr-1', {
+          'normal-border': !infoSidebarIsOpen,
+          'open-border': infoSidebarIsOpen,
+        })}
+        iconBefore={InfoOutline}
+        variant="outline-primary rounded-0"
+        onClick={handleOnClickInfoSidebar}
       >
-        {intl.formatMessage(messages.newContentButton)}
+        {intl.formatMessage(messages.collectionInfoButton)}
       </Button>
-    </div>
-  );
-};
-
-const SubHeaderTitle = ({
-  title,
-  infoClickHandler,
-}: {
-  title: string;
-  infoClickHandler: () => void;
-}) => {
-  const intl = useIntl();
-
-  const { componentPickerMode } = useComponentPickerContext();
-  const { readOnly } = useLibraryContext();
-
-  const showReadOnlyBadge = readOnly && !componentPickerMode;
-
-  return (
-    <Stack direction="vertical">
-      <Stack direction="horizontal" gap={2}>
-        {title}
-        <IconButton
-          src={InfoOutline}
-          iconAs={Icon}
-          alt={intl.formatMessage(messages.collectionInfoButton)}
-          onClick={infoClickHandler}
-          variant="primary"
-        />
-      </Stack>
-      {showReadOnlyBadge && (
-        <div>
-          <Badge variant="primary" style={{ fontSize: '50%' }}>
-            {intl.formatMessage(messages.readOnlyBadge)}
-          </Badge>
-        </div>
+      {!componentPickerMode && (
+        <Button
+          className="ml-1"
+          iconBefore={Add}
+          variant="primary rounded-0"
+          onClick={openAddContentSidebar}
+          disabled={readOnly}
+        >
+          {intl.formatMessage(messages.newContentButton)}
+        </Button>
       )}
-    </Stack>
+    </div>
   );
 };
 
@@ -181,6 +178,7 @@ const LibraryCollectionPage = () => {
   return (
     <div className="d-flex">
       <div className="flex-grow-1">
+        <Helmet><title>{libraryData.title} | {process.env.SITE_NAME}</title></Helmet>
         {!componentPickerMode && (
           <Header
             number={libraryData.slug}
@@ -188,34 +186,33 @@ const LibraryCollectionPage = () => {
             org={libraryData.org}
             contextId={libraryId}
             isLibrary
+            containerProps={{
+              size: undefined,
+            }}
           />
         )}
-        <Container size="xl" className="px-4 mt-4 mb-5 library-authoring-page">
+        <Container className="px-4 mt-4 mb-5 library-authoring-page">
           <SearchContextProvider
             extraFilter={extraFilter}
           >
             <SubHeader
-              title={(
-                <SubHeaderTitle
-                  title={collectionData.title}
-                  infoClickHandler={() => openCollectionInfoSidebar(collectionId)}
-                />
-              )}
+              title={<SubHeaderTitle title={collectionData.title} />}
               breadcrumbs={breadcumbs}
               headerActions={<HeaderActions />}
+              hideBorder
             />
-            <SearchKeywordsField className="w-50" placeholder={intl.formatMessage(messages.searchPlaceholder)} />
-            <div className="d-flex mt-3 mb-4 align-items-center">
+            <ActionRow className="my-3">
+              <SearchKeywordsField className="mr-3" />
               <FilterByTags />
               <FilterByBlockType />
               <ClearFiltersButton />
-              <div className="flex-grow-1" />
+              <ActionRow.Spacer />
               <SearchSortWidget />
-            </div>
+            </ActionRow>
             <LibraryCollectionComponents />
           </SearchContextProvider>
         </Container>
-        <StudioFooter />
+        {!componentPickerMode && <StudioFooter containerProps={{ size: undefined }} />}
       </div>
       {!!sidebarComponentInfo?.type && (
         <div className="library-authoring-sidebar box-shadow-left-1 bg-white" data-testid="library-sidebar">

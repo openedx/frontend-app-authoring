@@ -76,11 +76,6 @@ const messages = defineMessages({
     defaultMessage: 'Collection Info',
     description: 'Alt text for collection info button besides the collection title',
   },
-  readOnlyBadge: {
-    id: 'course-authoring.library-authoring.collections.badge.read-only',
-    defaultMessage: 'Read Only',
-    description: 'Text in badge when the user has read only access in collections page',
-  },
   allCollections: {
     id: 'course-authoring.library-authoring.all-collections.text',
     defaultMessage: 'All Collections',
@@ -90,11 +85,6 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.breadcrumbs.label.text',
     defaultMessage: 'Navigation breadcrumbs',
     description: 'Aria label for navigation breadcrumbs',
-  },
-  searchPlaceholder: {
-    id: 'course-authoring.library-authoring.search.placeholder.text',
-    defaultMessage: 'Search Collection',
-    description: 'Search placeholder text in collections page.',
   },
   noSearchResultsCollections: {
     id: 'course-authoring.library-authoring.no-search-results-collections',

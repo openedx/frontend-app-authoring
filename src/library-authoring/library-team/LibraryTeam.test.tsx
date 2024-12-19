@@ -183,10 +183,10 @@ describe('<LibraryTeam />', () => {
     expect(await screen.findByText('Team Member added')).toBeInTheDocument();
   });
 
-  it('shows error when user do not exist', async () => {
+  it('shows error when specific error (string)', async () => {
     const url = getLibraryTeamApiUrl(libraryId);
     const axiosMock = new MockAdapter(getAuthenticatedHttpClient());
-    axiosMock.onPost(url).reply(400, { email: 'Error' });
+    axiosMock.onPost(url).reply(400, { email: 'This is a specific error.' });
 
     await renderLibraryTeam();
 
@@ -204,7 +204,32 @@ describe('<LibraryTeam />', () => {
     });
 
     expect(await screen.findByText(
-      'Error adding Team Member. Please verify that the email is correct and belongs to a registered user.',
+      'Error adding Team Member. This is a specific error.',
+    )).toBeInTheDocument();
+  });
+
+  it('shows error when specific error (Array)', async () => {
+    const url = getLibraryTeamApiUrl(libraryId);
+    const axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    axiosMock.onPost(url).reply(400, { email: ['This is a specific error.'] });
+
+    await renderLibraryTeam();
+
+    const addButton = screen.getByRole('button', { name: 'New team member' });
+    userEvent.click(addButton);
+    const emailInput = screen.getByRole('textbox', { name: 'User\'s email address' });
+    userEvent.click(emailInput);
+    userEvent.type(emailInput, 'another@user.tld');
+
+    const saveButton = screen.getByRole('button', { name: /add member/i });
+    userEvent.click(saveButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toEqual(1);
+    });
+
+    expect(await screen.findByText(
+      'Error adding Team Member. This is a specific error.',
     )).toBeInTheDocument();
   });
 
