@@ -12,7 +12,7 @@ import {
   CollectionHit, ContentHit, SearchSortOption, forceArray,
 } from './data/api';
 import { useContentSearchConnection, useContentSearchResults } from './data/apiHooks';
-import { useStateWithUrlSearchParam } from '../hooks';
+import { useListHelpers, useStateWithUrlSearchParam } from '../hooks';
 
 export interface SearchContextData {
   client?: MeiliSearch;
@@ -59,7 +59,7 @@ export const SearchContextProvider: React.FC<{
 }) => {
   // Search parameters can be set via the query string
   // E.g. q=draft+text
-  // TODO -- how to scrub search terms?
+  // TODO -- how to sanitize search terms?
   const keywordStateManager = React.useState('');
   const keywordUrlStateManager = useStateWithUrlSearchParam<string>(
     '',
@@ -73,12 +73,53 @@ export const SearchContextProvider: React.FC<{
       : keywordUrlStateManager
   );
 
-  const [blockTypesFilter, setBlockTypesFilter] = React.useState<string[]>([]);
-  const [problemTypesFilter, setProblemTypesFilter] = React.useState<string[]>([]);
-  const [tagsFilter, setTagsFilter] = React.useState<string[]>([]);
+  // Block/problem types can be alphanumeric with underscores or dashes
+  const sanitizeType = (value: string | null | undefined): string | undefined => (
+    (value && /^[a-z0-9_-]+$/.test(value))
+      ? value
+      : undefined
+  );
+  const [typeToList, listToType] = useListHelpers<string>({
+    toString: sanitizeType,
+    fromString: sanitizeType,
+    separator: '|',
+  });
+  const [blockTypesFilter, setBlockTypesFilter] = useStateWithUrlSearchParam<string[]>(
+    [],
+    'bt',
+    typeToList,
+    listToType,
+  );
+  const [problemTypesFilter, setProblemTypesFilter] = useStateWithUrlSearchParam<string[]>(
+    [],
+    'pt',
+    typeToList,
+    listToType,
+  );
+
+  // Tags can be almost any string value, except our separator (|)
+  // TODO how to sanitize tags?
+  const sanitizeTag = (value: string | null | undefined): string | undefined => (
+    (value && /^[^|]+$/.test(value))
+      ? value
+      : undefined
+  );
+  const [tagToList, listToTag] = useListHelpers<string>({
+    toString: sanitizeTag,
+    fromString: sanitizeTag,
+    separator: '|',
+  });
+  const [tagsFilter, setTagsFilter] = useStateWithUrlSearchParam<string[]>(
+    [],
+    'tg',
+    tagToList,
+    listToTag,
+  );
+
   const [usageKey, setUsageKey] = useStateWithUrlSearchParam(
     '',
     'usageKey',
+    // TODO should sanitize usageKeys too.
     (value: string) => value,
     (value: string) => value,
   );
