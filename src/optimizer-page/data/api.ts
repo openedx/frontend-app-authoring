@@ -6,6 +6,7 @@ import { LinkCheckStatusTypes } from './constants';
 export interface LinkCheckStatusApiResponseBody {
   linkCheckStatus: LinkCheckStatusTypes;
   linkCheckOutput: LinkCheckResult;
+  linkCheckCreatedAt: string;
 }
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;

@@ -9,3 +9,4 @@ export const getIsErrorModalOpen = (state: RootState) => state.courseOptimizer.i
 export const getLoadingStatus = (state: RootState) => state.courseOptimizer.loadingStatus;
 export const getSavingStatus = (state: RootState) => state.courseOptimizer.savingStatus;
 export const getLinkCheckResult = (state: RootState) => state.courseOptimizer.linkCheckResult;
+export const getLastScannedAt = (state: RootState) => state.courseOptimizer.lastScannedAt;

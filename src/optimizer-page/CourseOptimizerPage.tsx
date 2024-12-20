@@ -17,6 +17,7 @@ import { RequestStatus } from '../data/constants';
 import messages from './messages';
 import {
   getCurrentStage, getError, getLinkCheckInProgress, getLoadingStatus, getLinkCheckResult,
+  getLastScannedAt,
 } from './data/selectors';
 import { startLinkCheck, fetchLinkCheckStatus } from './data/thunks';
 import { useModel } from '../generic/model-store';
@@ -50,6 +51,7 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
   const loadingStatus = useSelector(getLoadingStatus);
   const currentStage = useSelector(getCurrentStage);
   const linkCheckResult = useSelector(getLinkCheckResult);
+  const lastScannedAt = useSelector(getLastScannedAt);
   const { msg: errorMessage } = useSelector(getError);
   const isShowExportButton = !linkCheckInProgress || errorMessage;
   const isLoadingDenied = loadingStatus === RequestStatus.DENIED;
@@ -143,7 +145,7 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
                       onClick={() => dispatch(startLinkCheck(courseId))}
                       iconBefore={SearchIcon}
                     >
-                      {intl.formatMessage(messages.buttonTitle)}
+                      {intl.formatMessage(messages.buttonTitle)} {lastScannedAt && `(${intl.formatMessage(messages.lastScannedOn)} ${intl.formatDate(lastScannedAt, { year: 'numeric', month: 'long', day: 'numeric' })})`}
                     </Button>
                   </Card.Section>
                   )}

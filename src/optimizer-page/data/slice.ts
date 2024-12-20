@@ -5,6 +5,7 @@ import { LinkCheckResult } from '../types';
 export interface CourseOptimizerState {
   linkCheckInProgress: boolean | null;
   linkCheckResult: LinkCheckResult | null;
+  lastScannedAt: string | null;
   currentStage: number | null;
   error: { msg: string | null; unitUrl: string | null };
   downloadPath: string | null;
@@ -23,6 +24,7 @@ export type RootState = {
 const initialState: CourseOptimizerState = {
   linkCheckInProgress: null,
   linkCheckResult: null,
+  lastScannedAt: null,
   currentStage: null,
   error: { msg: null, unitUrl: null },
   downloadPath: null,
@@ -41,6 +43,9 @@ const slice = createSlice({
     },
     updateLinkCheckResult: (state, { payload }) => {
       state.linkCheckResult = payload;
+    },
+    updateLastScannedAt: (state, { payload }) => {
+      state.lastScannedAt = payload;
     },
     updateCurrentStage: (state, { payload }) => {
       state.currentStage = payload;
@@ -70,6 +75,7 @@ const slice = createSlice({
 export const {
   updateLinkCheckInProgress,
   updateLinkCheckResult,
+  updateLastScannedAt,
   updateCurrentStage,
   updateDownloadPath,
   updateSuccessDate,

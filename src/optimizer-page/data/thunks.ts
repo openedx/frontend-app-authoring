@@ -15,6 +15,7 @@ import {
   updateIsErrorModalOpen,
   updateLoadingStatus,
   updateSavingStatus,
+  updateLastScannedAt,
 } from './slice';
 
 export function startLinkCheck(courseId: string) {
@@ -40,24 +41,18 @@ export function fetchLinkCheckStatus(courseId) {
   return async (dispatch) => {
     dispatch(updateLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
 
-    /* ****** Debugging ******** */
-    // dispatch(updateLinkCheckInProgress(true));
-    // dispatch(updateCurrentStage(3));
-    // return true;
-
     try {
-      const { linkCheckStatus, linkCheckOutput } = await getLinkCheckStatus(
+      const { linkCheckStatus, linkCheckOutput, linkCheckCreatedAt } = await getLinkCheckStatus(
         courseId,
       );
+      console.log('linkCheckCreatedAt', linkCheckCreatedAt);
       if (LINK_CHECK_IN_PROGRESS_STATUSES.includes(linkCheckStatus)) {
         dispatch(updateLinkCheckInProgress(true));
       } else {
         dispatch(updateLinkCheckInProgress(false));
       }
-      console.log('linkCheckStatus:', linkCheckStatus);
 
       dispatch(updateCurrentStage(SCAN_STAGES[linkCheckStatus]));
-      console.log('updated current stage to:', SCAN_STAGES[linkCheckStatus]);
 
       if (
         linkCheckStatus === undefined
@@ -68,12 +63,12 @@ export function fetchLinkCheckStatus(courseId) {
         dispatch(updateIsErrorModalOpen(true));
       } else if (linkCheckOutput) {
         dispatch(updateLinkCheckResult(linkCheckOutput));
+        dispatch(updateLastScannedAt(linkCheckCreatedAt));
       }
 
       dispatch(updateLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;
     } catch (error: any) {
-      console.log('found some error');
       if (error?.response && error?.response.status === 403) {
         dispatch(updateLoadingStatus({ status: RequestStatus.DENIED }));
       } else {

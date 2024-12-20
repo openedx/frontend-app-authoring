@@ -15,7 +15,12 @@ const messages = defineMessages({
   },
   description1: {
     id: 'course-authoring.course-optimizer.description1',
-    defaultMessage: 'This tool will scan your course for broken links. Note that this process will take more time for larger courses.',
+    defaultMessage: `This tool will scan your the published version of your course for broken links.
+    Unpublished changes will not be included in the scan.
+    Note that this process will take more time for larger courses.
+    To update the scan after you have published new changes to your course,
+    click the "Start Scanning" button again.
+    `,
   },
   description2: {
     id: 'course-authoring.course-optimizer.description2',
@@ -56,6 +61,10 @@ const messages = defineMessages({
   successStepDescription: {
     id: 'course-authoring.course-optimizer.success-step.description',
     defaultMessage: 'Your Scan is complete. You can view the list of results below.',
+  },
+  lastScannedOn: {
+    id: 'course-authoring.course-optimizer.last-scanned-on',
+    defaultMessage: 'Last scanned on',
   },
 });
 
