@@ -17,14 +17,16 @@ const ClearFiltersButton = ({
   size = 'sm',
 }: ClearFiltersButtonProps) => {
   const { canClearFilters, clearFilters } = useSearchContext();
-  if (canClearFilters) {
-    return (
-      <Button variant={variant} size={size} onClick={clearFilters}>
-        <FormattedMessage {...messages.clearFilters} />
-      </Button>
-    );
-  }
-  return null;
+  return (
+    <Button
+      variant={variant}
+      size={size}
+      onClick={clearFilters}
+      className={canClearFilters ? '' : 'd-none'}
+    >
+      <FormattedMessage {...messages.clearFilters} />
+    </Button>
+  );
 };
 
 export default ClearFiltersButton;

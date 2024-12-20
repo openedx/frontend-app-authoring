@@ -148,6 +148,7 @@ export const SearchContextProvider: React.FC<{
     blockTypesFilter.length > 0
     || problemTypesFilter.length > 0
     || tagsFilter.length > 0
+    || publishStatusFilter.length > 0
     || !!usageKey
   );
   const isFiltered = canClearFilters || (searchKeywords !== '');
@@ -155,6 +156,7 @@ export const SearchContextProvider: React.FC<{
     setBlockTypesFilter([]);
     setTagsFilter([]);
     setProblemTypesFilter([]);
+    setPublishStatusFilter([]);
     if (usageKey !== '') {
       setUsageKey('');
     }

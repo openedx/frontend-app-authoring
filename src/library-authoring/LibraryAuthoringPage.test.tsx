@@ -532,7 +532,7 @@ describe('<LibraryAuthoringPage />', () => {
     expect(submenu).toBeInTheDocument();
     fireEvent.click(submenu);
 
-    const clearFitlersButton = screen.getByRole('button', { name: /clear filters/i });
+    const clearFitlersButton = screen.getByText('Clear Filters');
     fireEvent.click(clearFitlersButton);
     await waitFor(() => {
       expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
@@ -718,14 +718,26 @@ describe('<LibraryAuthoringPage />', () => {
     const modifiedCheckbox = screen.getByRole('checkbox', { name: /^modified since publish \d+$/i });
     const neverPublishedCheckbox = screen.getByRole('checkbox', { name: /^never published \d+$/i });
 
+    // Verify initial state - no clear filters button
+    expect(screen.queryByRole('button', { name: /clear filters/i })).not.toBeInTheDocument();
+
     // Test Published filter
     fireEvent.click(publishedCheckbox);
+
+    // Wait for both the API call and the UI update
     await waitFor(() => {
+      // Check that the API was called with the correct filter
       expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
         body: expect.stringContaining('"publish_status = published"'),
         method: 'POST',
         headers: expect.anything(),
       });
+    });
+
+    // Wait for the clear filters button to appear
+    await waitFor(() => {
+      const clearFiltersButton = screen.getByText('Clear Filters');
+      expect(clearFiltersButton).toBeInTheDocument();
     });
 
     // Test Modified filter
@@ -743,6 +755,17 @@ describe('<LibraryAuthoringPage />', () => {
     await waitFor(() => {
       expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
         body: expect.stringContaining('"publish_status = never"'),
+        method: 'POST',
+        headers: expect.anything(),
+      });
+    });
+
+    // Test clearing filters
+    const clearFiltersButton = screen.getByText('Clear Filters');
+    fireEvent.click(clearFiltersButton);
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+        body: expect.stringContaining('"filter":[[],'), // Empty filter array
         method: 'POST',
         headers: expect.anything(),
       });

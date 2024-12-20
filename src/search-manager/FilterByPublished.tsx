@@ -6,6 +6,8 @@ import {
   MenuItem,
 } from '@openedx/paragon';
 import { FilterList } from '@openedx/paragon/icons';
+import { useIntl } from '@edx/frontend-platform/i18n';
+import messages from './messages';
 import SearchFilterWidget from './SearchFilterWidget';
 import { useSearchContext } from './SearchManager';
 import { PublishStatus } from './data/api';
@@ -14,6 +16,7 @@ import { PublishStatus } from './data/api';
  * A button with a dropdown that allows filtering the current search by publish status
  */
 const FilterByPublished: React.FC<Record<never, never>> = () => {
+  const intl = useIntl();
   const {
     publishStatus,
     publishStatusFilter,
@@ -42,7 +45,7 @@ const FilterByPublished: React.FC<Record<never, never>> = () => {
     >
       <Form.Group className="mb-0">
         <Form.CheckboxSet
-          name="block-type-filter"
+          name="publish-status-filter"
           value={publishStatusFilter}
         >
           <Menu className="block-type-refinement-menu" style={{ boxShadow: 'none' }}>
@@ -52,8 +55,8 @@ const FilterByPublished: React.FC<Record<never, never>> = () => {
               onChange={() => { toggleFilterMode(PublishStatus.Published); }}
             >
               <div>
-                Published
-                {' '}<Badge variant="light" pill>{publishStatus[PublishStatus.Published] ?? 0}</Badge>
+                {intl.formatMessage(messages.publishStatusPublished)}
+                <Badge variant="light" pill>{publishStatus[PublishStatus.Published] ?? 0}</Badge>
               </div>
             </MenuItem>
             <MenuItem
@@ -62,8 +65,8 @@ const FilterByPublished: React.FC<Record<never, never>> = () => {
               onChange={() => { toggleFilterMode(PublishStatus.Modified); }}
             >
               <div>
-                Modified since publish
-                {' '}<Badge variant="light" pill>{publishStatus[PublishStatus.Modified] ?? 0}</Badge>
+                {intl.formatMessage(messages.publishStatusModified)}
+                <Badge variant="light" pill>{publishStatus[PublishStatus.Modified] ?? 0}</Badge>
               </div>
             </MenuItem>
             <MenuItem
@@ -72,8 +75,8 @@ const FilterByPublished: React.FC<Record<never, never>> = () => {
               onChange={() => { toggleFilterMode(PublishStatus.NeverPublished); }}
             >
               <div>
-                Never published
-                {' '}<Badge variant="light" pill>{publishStatus[PublishStatus.NeverPublished] ?? 0}</Badge>
+                {intl.formatMessage(messages.publishStatusNeverPublished)}
+                <Badge variant="light" pill>{publishStatus[PublishStatus.NeverPublished] ?? 0}</Badge>
               </div>
             </MenuItem>
           </Menu>

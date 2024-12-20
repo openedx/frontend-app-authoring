@@ -6,7 +6,8 @@ import {
   Icon,
   Stack,
 } from '@openedx/paragon';
-
+import { useIntl } from '@edx/frontend-platform/i18n';
+import messages from './messages';
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
 import TagCount from '../../generic/tag-count';
 import { BlockTypeLabel, type ContentHitTags, Highlight } from '../../search-manager';
@@ -41,6 +42,7 @@ const BaseComponentCard = ({
   }, [tags]);
 
   const componentIcon = getItemIcon(componentType);
+  const intl = useIntl();
 
   return (
     <Container className="library-component-card">
@@ -80,7 +82,7 @@ const BaseComponentCard = ({
               <Highlight text={displayName} />
             </div>
             <Highlight text={description} /><br />
-            {props.hasUnpublishedChanges ? <Badge variant="warning">Unpublished changes</Badge> : null}
+            {props.hasUnpublishedChanges ? <Badge variant="warning">{intl.formatMessage(messages.unpublishedChanges)}</Badge> : null}
           </Card.Section>
         </Card.Body>
       </Card>
