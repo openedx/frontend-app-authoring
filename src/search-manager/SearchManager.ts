@@ -12,7 +12,35 @@ import {
   CollectionHit, ContentHit, SearchSortOption, forceArray,
 } from './data/api';
 import { useContentSearchConnection, useContentSearchResults } from './data/apiHooks';
-import { useStateWithUrlSearchParam } from '../hooks';
+import {
+  type FromStringFn,
+  type ToStringFn,
+  useListHelpers,
+  useStateWithUrlSearchParam,
+} from '../hooks';
+
+/**
+ * Typed hook that returns useState if skipUrlUpdate,
+ * or useStateWithUrlSearchParam if it's not.
+ *
+ * Provided here to reduce some code overhead in SearchManager.
+ */
+function useStateOrUrlSearchParam<Type>(
+  defaultValue: Type,
+  paramName: string,
+  fromString: FromStringFn<Type>,
+  toString: ToStringFn<Type>,
+  skipUrlUpdate?: boolean,
+): [value: Type, setter: React.Dispatch<React.SetStateAction<Type>>] {
+  const useStateManager = React.useState<Type>(defaultValue);
+  const urlStateManager = useStateWithUrlSearchParam<Type>(
+    defaultValue,
+    paramName,
+    fromString,
+    toString,
+  );
+  return skipUrlUpdate ? useStateManager : urlStateManager;
+}
 
 export interface SearchContextData {
   client?: MeiliSearch;
@@ -58,29 +86,47 @@ export const SearchContextProvider: React.FC<{
   overrideSearchSortOrder, skipBlockTypeFetch, skipUrlUpdate, ...props
 }) => {
   // Search parameters can be set via the query string
-  // E.g. q=draft+text
-  // TODO -- how to scrub search terms?
-  const keywordStateManager = React.useState('');
-  const keywordUrlStateManager = useStateWithUrlSearchParam<string>(
+  // E.g. ?q=draft+text
+  // TODO -- how to sanitize search terms?
+  const [searchKeywords, setSearchKeywords] = useStateOrUrlSearchParam<string>(
     '',
     'q',
     (value: string) => value || '',
     (value: string) => value || '',
-  );
-  const [searchKeywords, setSearchKeywords] = (
-    skipUrlUpdate
-      ? keywordStateManager
-      : keywordUrlStateManager
+    skipUrlUpdate,
   );
 
   const [blockTypesFilter, setBlockTypesFilter] = React.useState<string[]>([]);
   const [problemTypesFilter, setProblemTypesFilter] = React.useState<string[]>([]);
-  const [tagsFilter, setTagsFilter] = React.useState<string[]>([]);
-  const [usageKey, setUsageKey] = useStateWithUrlSearchParam(
+  // Tags can be almost any string value, except our separator (|)
+  // TODO how to sanitize tags?
+  // E.g ?tags=Skills+>+Abilities|Skills+>+Knowledge
+  const sanitizeTag = (value: string | null | undefined): string | undefined => (
+    (value && /^[^|]+$/.test(value))
+      ? value
+      : undefined
+  );
+  const [tagToList, listToTag] = useListHelpers<string>({
+    toString: sanitizeTag,
+    fromString: sanitizeTag,
+    separator: '|',
+  });
+  const [tagsFilter, setTagsFilter] = useStateOrUrlSearchParam<string[]>(
+    [],
+    'tags',
+    tagToList,
+    listToTag,
+    skipUrlUpdate,
+  );
+
+  // E.g ?usageKey=lb:OpenCraft:libA:problem:5714eb65-7c36-4eee-8ab9-a54ed5a95849
+  const [usageKey, setUsageKey] = useStateOrUrlSearchParam<string>(
     '',
     'usageKey',
+    // TODO should sanitize usageKeys too.
     (value: string) => value,
     (value: string) => value,
+    skipUrlUpdate,
   );
 
   let extraFilter: string[] = forceArray(props.extraFilter);
@@ -88,21 +134,15 @@ export const SearchContextProvider: React.FC<{
     extraFilter = union(extraFilter, [`usage_key = "${usageKey}"`]);
   }
 
-  // The search sort order can be set via the query string
-  // E.g. ?sort=display_name:desc maps to SearchSortOption.TITLE_ZA.
   // Default sort by Most Relevant if there's search keyword(s), else by Recently Modified.
   const defaultSearchSortOrder = searchKeywords ? SearchSortOption.RELEVANCE : SearchSortOption.RECENTLY_MODIFIED;
-  let sortStateManager = React.useState<SearchSortOption>(defaultSearchSortOrder);
-  const sortUrlStateManager = useStateWithUrlSearchParam<SearchSortOption>(
+  const [searchSortOrder, setSearchSortOrder] = useStateOrUrlSearchParam<SearchSortOption>(
     defaultSearchSortOrder,
     'sort',
     (value: string) => Object.values(SearchSortOption).find((enumValue) => value === enumValue),
     (value: SearchSortOption) => value.toString(),
+    skipUrlUpdate,
   );
-  if (!skipUrlUpdate) {
-    sortStateManager = sortUrlStateManager;
-  }
-  const [searchSortOrder, setSearchSortOrder] = sortStateManager;
   // SearchSortOption.RELEVANCE is special, it means "no custom sorting", so we
   // send it to useContentSearchResults as an empty array.
   const searchSortOrderToUse = overrideSearchSortOrder ?? searchSortOrder;
