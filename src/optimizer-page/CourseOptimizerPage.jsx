@@ -29,7 +29,7 @@ const pollLinkCheckStatus = (dispatch, courseId, delay) => {
 };
 
 export function pollLinkCheckDuringScan(linkCheckInProgress, linkCheckResult, interval, dispatch, courseId) {
-  if (linkCheckInProgress === null || linkCheckInProgress || !linkCheckResult) {
+  if (linkCheckInProgress === null || linkCheckInProgress) {
     clearInterval(interval.current);
     interval.current = pollLinkCheckStatus(dispatch, courseId, 2000);
   } else if (interval.current) {
@@ -71,10 +71,13 @@ const CourseOptimizerPage = ({ courseId }) => {
   ];
 
   useEffect(() => {
+    // when first entering the page, fetch any existing scan results
     dispatch(fetchLinkCheckStatus(courseId));
   }, []);
 
   useEffect(() => {
+    // when a scan starts, start polling for the results as long as the scan status fetched
+    // signals it is still in progress
     pollLinkCheckDuringScan(linkCheckInProgress, linkCheckResult, interval, dispatch, courseId);
 
     return () => {

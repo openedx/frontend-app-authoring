@@ -54,7 +54,9 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
               status: (
                 <span className="link-status-text">
                   <Icon src={LinkOff} className="broken-link-icon" />
-                  {intl.formatMessage(messages.brokenLinkStatus)}
+                  <span>
+                    {intl.formatMessage(messages.brokenLinkStatus)}
+                  </span>
                 </span>
               ),
             }));

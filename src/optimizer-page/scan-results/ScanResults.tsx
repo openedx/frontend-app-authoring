@@ -26,20 +26,13 @@ interface Props {
   data: LinkCheckResult | null;
 }
 
-
-
 const ScanResults: FC<Props> = ({ data }) => {
   const intl = useIntl();
   const [showLockedLinks, setShowLockedLinks] = useState(true);
 
-  const brokenLinkCounts = useMemo(() => {
-    return countBrokenLinks(data);
-  }, [data?.sections]);
+  const brokenLinkCounts = useMemo(() => countBrokenLinks(data), [data?.sections]);
 
-  if (!data) {
-    return <InfoCard text={intl.formatMessage(messages.noDataCard)} />;
-  }
-  if (!data.sections) {
+  if (!data?.sections) {
     return <InfoCard text={intl.formatMessage(messages.noBrokenLinksCard)} />;
   }
 
