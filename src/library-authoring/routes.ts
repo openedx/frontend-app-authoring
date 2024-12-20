@@ -15,11 +15,18 @@ import {
 export const BASE_ROUTE = '/library/:libraryId';
 
 export const ROUTES = {
+  // LibraryAuthoringPage routes:
+  // * Components tab, with an optionally selected componentId in the sidebar.
   COMPONENTS: '/components/:componentId?',
+  // * Collections tab, with an optionally selected collectionId in the sidebar.
   COLLECTIONS: '/collections/:collectionId?',
+  // * All Content tab, with an optionally selected componentId in the sidebar.
   COMPONENT: '/component/:componentId',
-  COLLECTION: '/collection/:collectionId/:componentId?',
+  // * All Content tab, with an optionally selected collectionId in the sidebar.
   HOME: '/:collectionId?',
+  // LibraryCollectionPage route:
+  // * with a selected collectionId and/or an optionally selected componentId.
+  COLLECTION: '/collection/:collectionId/:componentId?',
 };
 
 export enum ContentType {
@@ -66,7 +73,7 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     };
     let route;
 
-    // contentType overrides the current route
+    // Providing contentType overrides the current route so we can change tabs.
     if (contentType === ContentType.components) {
       route = ROUTES.COMPONENTS;
     } else if (contentType === ContentType.collections) {
@@ -74,25 +81,33 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     } else if (contentType === ContentType.home) {
       route = ROUTES.HOME;
     } else if (insideCollections) {
+      // We're inside the Collections tab,
       route = (
         (collectionId && collectionId === params.collectionId)
-          // Open the previously-selected collection
+          // now open the previously-selected collection,
           ? ROUTES.COLLECTION
-          // Otherwise just preview the collection, if specified
+          // or stay there to list all collections, or a selected collection.
           : ROUTES.COLLECTIONS
       );
     } else if (insideCollection) {
+      // We're viewing a Collection, so stay there,
+      // and optionally select a component in that collection.
       route = ROUTES.COLLECTION;
     } else if (insideComponents) {
+      // We're inside the Components tab, so stay there,
+      // optionally selecting a component.
       route = ROUTES.COMPONENTS;
     } else if (componentId) {
+      // We're inside the All Content tab, so stay there,
+      // and select a component.
       route = ROUTES.COMPONENT;
     } else {
+      // We're inside the All Content tab,
       route = (
         (collectionId && collectionId === params.collectionId)
-          // Open the previously-selected collection
+          // now open the previously-selected collection
           ? ROUTES.COLLECTION
-          // Otherwise just preview the collection, if specified
+          // or stay there to list all content, or optionally select a collection.
           : ROUTES.HOME
       );
     }
