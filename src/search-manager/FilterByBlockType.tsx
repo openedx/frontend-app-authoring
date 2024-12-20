@@ -229,8 +229,7 @@ const FilterByBlockType: React.FC<FilterByBlockTypeProps> = ({ disabled = false 
       // Clear filters when disabled
       const selectedBlockTypesFilter = blockTypesFilter;
       const selectedProblemTypesFilter = problemTypesFilter;
-      setBlockTypesFilter([]);
-      setProblemTypesFilter([]);
+      clearFilters();
 
       return () => {
         // Restore filters when re-enabled
