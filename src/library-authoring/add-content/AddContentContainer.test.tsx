@@ -25,17 +25,13 @@ jest.mock('frontend-components-tinymce-advanced-plugins', () => ({ a11ycheckerCs
 
 const { libraryId } = mockContentLibrary;
 const render = (collectionId?: string) => {
-  const params: { libraryId: string, collectionId?: string } = { libraryId };
-  if (collectionId) {
-    params.collectionId = collectionId;
-  }
+  const params: { libraryId: string, collectionId?: string } = { libraryId, collectionId };
   return baseRender(<AddContentContainer />, {
-    path: '/library/:libraryId/*',
+    path: '/library/:libraryId/:collectionId?',
     params,
     extraWrapper: ({ children }) => (
       <LibraryProvider
         libraryId={libraryId}
-        collectionId={collectionId}
       >
         { children }
         <ComponentEditorModal />

@@ -18,7 +18,7 @@ import {
 } from './data/api.mocks';
 import { getContentTaxonomyTagsApiUrl } from './data/api';
 
-const path = '/content/:contentId/*';
+const path = '/content/:contentId?/*';
 const mockOnClose = jest.fn();
 const mockSetBlockingSheet = jest.fn();
 const mockNavigate = jest.fn();

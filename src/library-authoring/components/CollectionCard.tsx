@@ -14,6 +14,7 @@ import { type CollectionHit } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { useSidebarContext } from '../common/context/SidebarContext';
+import { useLibraryRoutes } from '../routes';
 import BaseComponentCard from './BaseComponentCard';
 import { ToastContext } from '../../generic/toast-context';
 import { useDeleteCollection, useRestoreCollection } from '../data/apiHooks';
@@ -112,6 +113,7 @@ const CollectionCard = ({ collectionHit } : CollectionCardProps) => {
 
   const {
     type: componentType,
+    blockId: collectionId,
     formatted,
     tags,
     numChildren,
@@ -123,6 +125,15 @@ const CollectionCard = ({ collectionHit } : CollectionCardProps) => {
   ) : numChildren;
 
   const { displayName = '', description = '' } = formatted;
+
+  const { navigateTo } = useLibraryRoutes();
+  const openCollection = useCallback(() => {
+    openCollectionInfoSidebar(collectionId);
+
+    if (!componentPickerMode) {
+      navigateTo({ collectionId });
+    }
+  }, [collectionId, navigateTo, openCollectionInfoSidebar]);
 
   return (
     <BaseComponentCard
@@ -136,7 +147,7 @@ const CollectionCard = ({ collectionHit } : CollectionCardProps) => {
           <CollectionMenu collectionHit={collectionHit} />
         </ActionRow>
       )}
-      openInfoSidebar={() => openCollectionInfoSidebar(collectionHit.blockId)}
+      onSelect={openCollection}
     />
   );
 };

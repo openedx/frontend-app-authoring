@@ -5,7 +5,6 @@
  * https://github.com/algolia/instantsearch/issues/1658
  */
 import React from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { MeiliSearch, type Filter } from 'meilisearch';
 import { union } from 'lodash';
 
@@ -13,16 +12,122 @@ import {
   CollectionHit, ContentHit, SearchSortOption, forceArray,
 } from './data/api';
 import { useContentSearchConnection, useContentSearchResults } from './data/apiHooks';
+import {
+  type FromStringFn,
+  type ToStringFn,
+  useListHelpers,
+  useStateWithUrlSearchParam,
+} from '../hooks';
+
+/**
+ * Typed hook that returns useState if skipUrlUpdate,
+ * or useStateWithUrlSearchParam if it's not.
+ *
+ * Provided here to reduce some code overhead in SearchManager.
+ */
+function useStateOrUrlSearchParam<Type>(
+  defaultValue: Type,
+  paramName: string,
+  fromString: FromStringFn<Type>,
+  toString: ToStringFn<Type>,
+  skipUrlUpdate?: boolean,
+): [value: Type, setter: React.Dispatch<React.SetStateAction<Type>>] {
+  const useStateManager = React.useState<Type>(defaultValue);
+  const urlStateManager = useStateWithUrlSearchParam<Type>(
+    defaultValue,
+    paramName,
+    fromString,
+    toString,
+  );
+  return skipUrlUpdate ? useStateManager : urlStateManager;
+}
+
+// Block / Problem type helper class
+export class TypesFilterData {
+  #blocks = new Set<string>();
+
+  #problems = new Set<string>();
+
+  #typeToList: FromStringFn<string[]>;
+
+  #listToType: ToStringFn<string[]>;
+
+  // Constructs a TypesFilterData from a string as generated from toString().
+  constructor(
+    value: string | null,
+    typeToList: FromStringFn<string[]>,
+    listToType: ToStringFn<string[]>,
+  ) {
+    this.#typeToList = typeToList;
+    this.#listToType = listToType;
+
+    const [blocks, problems] = (value || '').split('|');
+    this.union({ blocks, problems });
+  }
+
+  // Serialize the TypesFilterData to a string, or undefined if isEmpty().
+  toString(): string | undefined {
+    if (this.isEmpty()) {
+      return undefined;
+    }
+    return [
+      this.#listToType([...this.blocks]),
+      this.#listToType([...this.problems]),
+    ].join('|');
+  }
+
+  // Returns true if there are no block or problem types.
+  isEmpty(): boolean {
+    return !(this.#blocks.size || this.#problems.size);
+  }
+
+  get blocks() : Set<string> {
+    return this.#blocks;
+  }
+
+  get problems(): Set<string> {
+    return this.#problems;
+  }
+
+  clear(): TypesFilterData {
+    this.#blocks.clear();
+    this.#problems.clear();
+    return this;
+  }
+
+  union({ blocks, problems }: {
+    blocks?: string[] | Set<string> | string | undefined,
+    problems?: string[] | Set<string> | string | undefined,
+  }): void {
+    let newBlocks: string[];
+    if (!blocks) {
+      newBlocks = [];
+    } else if (typeof blocks === 'string') {
+      newBlocks = this.#typeToList(blocks) || [];
+    } else {
+      newBlocks = [...blocks];
+    }
+    this.#blocks = new Set<string>([...this.#blocks, ...newBlocks]);
+
+    let newProblems: string[];
+    if (!problems) {
+      newProblems = [];
+    } else if (typeof problems === 'string') {
+      newProblems = this.#typeToList(problems) || [];
+    } else {
+      newProblems = [...problems];
+    }
+    this.#problems = new Set<string>([...this.#problems, ...newProblems]);
+  }
+}
 
 export interface SearchContextData {
   client?: MeiliSearch;
   indexName?: string;
   searchKeywords: string;
   setSearchKeywords: React.Dispatch<React.SetStateAction<string>>;
-  blockTypesFilter: string[];
-  setBlockTypesFilter: React.Dispatch<React.SetStateAction<string[]>>;
-  problemTypesFilter: string[];
-  setProblemTypesFilter: React.Dispatch<React.SetStateAction<string[]>>;
+  typesFilter: TypesFilterData;
+  setTypesFilter: React.Dispatch<React.SetStateAction<TypesFilterData>>;
   tagsFilter: string[];
   setTagsFilter: React.Dispatch<React.SetStateAction<string[]>>;
   blockTypes: Record<string, number>;
@@ -47,45 +152,6 @@ export interface SearchContextData {
 
 const SearchContext = React.createContext<SearchContextData | undefined>(undefined);
 
-/**
- * Hook which lets you store state variables in the URL search parameters.
- *
- * It wraps useState with functions that get/set a query string
- * search parameter when returning/setting the state variable.
- *
- */
-function useStateWithUrlSearchParam<Type>(
-  defaultValue: Type,
-  paramName: string,
-  // Returns the Type equivalent of the given string value, or
-  // undefined if value is invalid.
-  fromString: (value: string | null) => Type | undefined,
-  // Returns the string equivalent of the given Type value.
-  // Returning empty string/undefined will clear the url search paramName.
-  toString: (value: Type) => string | undefined,
-): [value: Type, setter: React.Dispatch<React.SetStateAction<Type>>] {
-  const [searchParams, setSearchParams] = useSearchParams();
-  // The converted search parameter value takes precedence over the state value.
-  const returnValue: Type = fromString(searchParams.get(paramName)) ?? defaultValue;
-  // Function to update the url search parameter
-  const returnSetter: React.Dispatch<React.SetStateAction<Type>> = React.useCallback((value: Type) => {
-    setSearchParams((prevParams) => {
-      const paramValue: string = toString(value) ?? '';
-      const newSearchParams = new URLSearchParams(prevParams);
-      // If using the default paramValue, remove it from the search params.
-      if (paramValue === defaultValue) {
-        newSearchParams.delete(paramName);
-      } else {
-        newSearchParams.set(paramName, paramValue);
-      }
-      return newSearchParams;
-    }, { replace: true });
-  }, [setSearchParams]);
-
-  // Return the computed value and wrapped set state function
-  return [returnValue, returnSetter];
-}
-
 export const SearchContextProvider: React.FC<{
   extraFilter?: Filter;
   overrideSearchSortOrder?: SearchSortOption
@@ -96,15 +162,73 @@ export const SearchContextProvider: React.FC<{
 }> = ({
   overrideSearchSortOrder, skipBlockTypeFetch, skipUrlUpdate, ...props
 }) => {
-  const [searchKeywords, setSearchKeywords] = React.useState('');
-  const [blockTypesFilter, setBlockTypesFilter] = React.useState<string[]>([]);
-  const [problemTypesFilter, setProblemTypesFilter] = React.useState<string[]>([]);
-  const [tagsFilter, setTagsFilter] = React.useState<string[]>([]);
-  const [usageKey, setUsageKey] = useStateWithUrlSearchParam(
+  // Search parameters can be set via the query string
+  // E.g. ?q=draft+text
+  // TODO -- how to sanitize search terms?
+  const [searchKeywords, setSearchKeywords] = useStateOrUrlSearchParam<string>(
+    '',
+    'q',
+    (value: string) => value || '',
+    (value: string) => value || '',
+    skipUrlUpdate,
+  );
+
+  // Block + problem types use alphanumeric plus a few other characters.
+  // E.g ?type=html,video|multiplechoiceresponse,choiceresponse
+  const sanitizeType = (value: string | null | undefined): string | undefined => (
+    (value && /^[a-z0-9._-]+$/.test(value))
+      ? value
+      : undefined
+  );
+  const [typeToList, listToType] = useListHelpers<string>({
+    toString: sanitizeType,
+    fromString: sanitizeType,
+    separator: ',',
+  });
+  const stringToTypesFilter = (value: string | null): TypesFilterData | undefined => (
+    new TypesFilterData(value, typeToList, listToType)
+  );
+  const typesFilterToString = (value: TypesFilterData | undefined): string | undefined => (
+    value ? value.toString() : undefined
+  );
+  const [typesFilter, setTypesFilter] = useStateOrUrlSearchParam<TypesFilterData>(
+    new TypesFilterData('', typeToList, listToType),
+    'types',
+    stringToTypesFilter,
+    typesFilterToString,
+    // Returns e.g 'problem,text|multiplechoice,checkbox'
+    skipUrlUpdate,
+  );
+
+  // Tags can be almost any string value, except our separator (|)
+  // TODO how to sanitize tags?
+  // E.g ?tags=Skills+>+Abilities|Skills+>+Knowledge
+  const sanitizeTag = (value: string | null | undefined): string | undefined => (
+    (value && /^[^|]+$/.test(value))
+      ? value
+      : undefined
+  );
+  const [tagToList, listToTag] = useListHelpers<string>({
+    toString: sanitizeTag,
+    fromString: sanitizeTag,
+    separator: '|',
+  });
+  const [tagsFilter, setTagsFilter] = useStateOrUrlSearchParam<string[]>(
+    [],
+    'tags',
+    tagToList,
+    listToTag,
+    skipUrlUpdate,
+  );
+
+  // E.g ?usageKey=lb:OpenCraft:libA:problem:5714eb65-7c36-4eee-8ab9-a54ed5a95849
+  const [usageKey, setUsageKey] = useStateOrUrlSearchParam<string>(
     '',
     'usageKey',
+    // TODO should sanitize usageKeys too.
     (value: string) => value,
     (value: string) => value,
+    skipUrlUpdate,
   );
 
   let extraFilter: string[] = forceArray(props.extraFilter);
@@ -112,21 +236,15 @@ export const SearchContextProvider: React.FC<{
     extraFilter = union(extraFilter, [`usage_key = "${usageKey}"`]);
   }
 
-  // The search sort order can be set via the query string
-  // E.g. ?sort=display_name:desc maps to SearchSortOption.TITLE_ZA.
   // Default sort by Most Relevant if there's search keyword(s), else by Recently Modified.
   const defaultSearchSortOrder = searchKeywords ? SearchSortOption.RELEVANCE : SearchSortOption.RECENTLY_MODIFIED;
-  let sortStateManager = React.useState<SearchSortOption>(defaultSearchSortOrder);
-  const sortUrlStateManager = useStateWithUrlSearchParam<SearchSortOption>(
+  const [searchSortOrder, setSearchSortOrder] = useStateOrUrlSearchParam<SearchSortOption>(
     defaultSearchSortOrder,
     'sort',
     (value: string) => Object.values(SearchSortOption).find((enumValue) => value === enumValue),
     (value: SearchSortOption) => value.toString(),
+    skipUrlUpdate,
   );
-  if (!skipUrlUpdate) {
-    sortStateManager = sortUrlStateManager;
-  }
-  const [searchSortOrder, setSearchSortOrder] = sortStateManager;
   // SearchSortOption.RELEVANCE is special, it means "no custom sorting", so we
   // send it to useContentSearchResults as an empty array.
   const searchSortOrderToUse = overrideSearchSortOrder ?? searchSortOrder;
@@ -137,16 +255,14 @@ export const SearchContextProvider: React.FC<{
   }
 
   const canClearFilters = (
-    blockTypesFilter.length > 0
-    || problemTypesFilter.length > 0
+    !typesFilter.isEmpty()
     || tagsFilter.length > 0
     || !!usageKey
   );
   const isFiltered = canClearFilters || (searchKeywords !== '');
   const clearFilters = React.useCallback(() => {
-    setBlockTypesFilter([]);
+    setTypesFilter((types) => types.clear());
     setTagsFilter([]);
-    setProblemTypesFilter([]);
     if (usageKey !== '') {
       setUsageKey('');
     }
@@ -161,8 +277,8 @@ export const SearchContextProvider: React.FC<{
     indexName,
     extraFilter,
     searchKeywords,
-    blockTypesFilter,
-    problemTypesFilter,
+    blockTypesFilter: [...typesFilter.blocks],
+    problemTypesFilter: [...typesFilter.problems],
     tagsFilter,
     sort,
     skipBlockTypeFetch,
@@ -174,10 +290,8 @@ export const SearchContextProvider: React.FC<{
       indexName,
       searchKeywords,
       setSearchKeywords,
-      blockTypesFilter,
-      setBlockTypesFilter,
-      problemTypesFilter,
-      setProblemTypesFilter,
+      typesFilter,
+      setTypesFilter,
       tagsFilter,
       setTagsFilter,
       extraFilter,

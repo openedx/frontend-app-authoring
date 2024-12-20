@@ -13,6 +13,7 @@ import classNames from 'classnames';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
+import { useLibraryRoutes } from '../routes';
 import Loading from '../../generic/Loading';
 import ErrorAlert from '../../generic/alert-error';
 import SubHeader from '../../generic/sub-header/SubHeader';
@@ -46,6 +47,7 @@ const HeaderActions = () => {
     openCollectionInfoSidebar,
     sidebarComponentInfo,
   } = useSidebarContext();
+  const { navigateTo } = useLibraryRoutes();
 
   // istanbul ignore if: this should never happen
   if (!collectionId) {
@@ -60,6 +62,10 @@ const HeaderActions = () => {
       closeLibrarySidebar();
     } else {
       openCollectionInfoSidebar(collectionId);
+    }
+
+    if (!componentPickerMode) {
+      navigateTo({ collectionId });
     }
   };
 
@@ -102,8 +108,8 @@ const LibraryCollectionPage = () => {
   }
 
   const { componentPickerMode } = useComponentPickerContext();
-  const { showOnlyPublished, setCollectionId } = useLibraryContext();
-  const { sidebarComponentInfo, openCollectionInfoSidebar } = useSidebarContext();
+  const { showOnlyPublished, setCollectionId, componentId } = useLibraryContext();
+  const { sidebarComponentInfo, openInfoSidebar } = useSidebarContext();
 
   const {
     data: collectionData,
@@ -113,8 +119,8 @@ const LibraryCollectionPage = () => {
   } = useCollection(libraryId, collectionId);
 
   useEffect(() => {
-    openCollectionInfoSidebar(collectionId);
-  }, [collectionData]);
+    openInfoSidebar(componentId, collectionId);
+  }, []);
 
   const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);
 

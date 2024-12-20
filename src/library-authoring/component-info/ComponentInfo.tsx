@@ -16,7 +16,7 @@ import { useLibraryContext } from '../common/context/LibraryContext';
 import {
   type ComponentInfoTab,
   COMPONENT_INFO_TABS,
-  SidebarAdditionalActions,
+  SidebarActions,
   isComponentInfoTab,
   useSidebarContext,
 } from '../common/context/SidebarContext';
@@ -101,27 +101,27 @@ const ComponentInfo = () => {
   const intl = useIntl();
 
   const { readOnly, openComponentEditor } = useLibraryContext();
-  const { setSidebarCurrentTab, sidebarComponentInfo, resetSidebarAdditionalActions } = useSidebarContext();
+  const {
+    sidebarTab,
+    setSidebarTab,
+    sidebarComponentInfo,
+    sidebarAction,
+  } = useSidebarContext();
 
-  const jumpToCollections = sidebarComponentInfo?.additionalAction === SidebarAdditionalActions.JumpToAddCollections;
+  const jumpToCollections = sidebarAction === SidebarActions.JumpToAddCollections;
 
   const tab: ComponentInfoTab = (
-    sidebarComponentInfo?.currentTab && isComponentInfoTab(sidebarComponentInfo.currentTab)
-  ) ? sidebarComponentInfo?.currentTab : COMPONENT_INFO_TABS.Preview;
+    isComponentInfoTab(sidebarTab)
+      ? sidebarTab
+      : COMPONENT_INFO_TABS.Preview
+  );
 
   useEffect(() => {
     // Show Manage tab if JumpToAddCollections action is set in sidebarComponentInfo
     if (jumpToCollections) {
-      setSidebarCurrentTab(COMPONENT_INFO_TABS.Manage);
+      setSidebarTab(COMPONENT_INFO_TABS.Manage);
     }
-  }, [jumpToCollections]);
-
-  useEffect(() => {
-    // This is required to redo actions.
-    if (tab !== COMPONENT_INFO_TABS.Manage) {
-      resetSidebarAdditionalActions();
-    }
-  }, [tab]);
+  }, [jumpToCollections, setSidebarTab]);
 
   const usageKey = sidebarComponentInfo?.id;
   // istanbul ignore if: this should never happen
@@ -169,7 +169,7 @@ const ComponentInfo = () => {
         className="my-3 d-flex justify-content-around"
         defaultActiveKey={COMPONENT_INFO_TABS.Preview}
         activeKey={tab}
-        onSelect={setSidebarCurrentTab}
+        onSelect={setSidebarTab}
       >
         <Tab eventKey={COMPONENT_INFO_TABS.Preview} title={intl.formatMessage(messages.previewTabTitle)}>
           <ComponentPreview />

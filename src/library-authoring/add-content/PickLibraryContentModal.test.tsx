@@ -34,7 +34,6 @@ const render = () => baseRender(<PickLibraryContentModal isOpen onClose={onClose
   extraWrapper: ({ children }) => (
     <LibraryProvider
       libraryId={libraryId}
-      collectionId="collectionId"
       componentPicker={ComponentPicker}
     >
       {children}

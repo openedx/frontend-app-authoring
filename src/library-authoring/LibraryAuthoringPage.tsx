@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import classNames from 'classnames';
 import { StudioFooter } from '@edx/frontend-component-footer';
@@ -16,12 +16,7 @@ import {
   Tabs,
 } from '@openedx/paragon';
 import { Add, ArrowBack, InfoOutline } from '@openedx/paragon/icons';
-import {
-  Link,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import Loading from '../generic/Loading';
 import SubHeader from '../generic/sub-header/SubHeader';
@@ -36,11 +31,12 @@ import {
   SearchKeywordsField,
   SearchSortWidget,
 } from '../search-manager';
-import LibraryContent, { ContentType } from './LibraryContent';
+import LibraryContent from './LibraryContent';
 import { LibrarySidebar } from './library-sidebar';
 import { useComponentPickerContext } from './common/context/ComponentPickerContext';
 import { useLibraryContext } from './common/context/LibraryContext';
 import { SidebarBodyComponentId, useSidebarContext } from './common/context/SidebarContext';
+import { ContentType, useLibraryRoutes } from './routes';
 
 import messages from './messages';
 
@@ -51,7 +47,7 @@ const HeaderActions = () => {
 
   const {
     openAddContentSidebar,
-    openInfoSidebar,
+    openLibrarySidebar,
     closeLibrarySidebar,
     sidebarComponentInfo,
   } = useSidebarContext();
@@ -60,13 +56,19 @@ const HeaderActions = () => {
 
   const infoSidebarIsOpen = sidebarComponentInfo?.type === SidebarBodyComponentId.Info;
 
-  const handleOnClickInfoSidebar = () => {
+  const { navigateTo } = useLibraryRoutes();
+  const handleOnClickInfoSidebar = useCallback(() => {
     if (infoSidebarIsOpen) {
       closeLibrarySidebar();
     } else {
-      openInfoSidebar();
+      openLibrarySidebar();
     }
-  };
+
+    if (!componentPickerMode) {
+      // Reset URL to library home
+      navigateTo();
+    }
+  }, [navigateTo, sidebarComponentInfo, closeLibrarySidebar, openLibrarySidebar]);
 
   return (
     <div className="header-actions">
@@ -124,8 +126,6 @@ interface LibraryAuthoringPageProps {
 
 const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPageProps) => {
   const intl = useIntl();
-  const location = useLocation();
-  const navigate = useNavigate();
 
   const {
     isLoadingPage: isLoadingStudioHome,
@@ -139,28 +139,40 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     libraryData,
     isLoadingLibraryData,
     showOnlyPublished,
+    componentId,
+    collectionId,
   } = useLibraryContext();
   const { openInfoSidebar, sidebarComponentInfo } = useSidebarContext();
 
+  const { insideCollections, insideComponents, navigateTo } = useLibraryRoutes();
+
+  // The activeKey determines the currently selected tab.
   const [activeKey, setActiveKey] = useState<ContentType>(ContentType.home);
+  const getActiveKey = () => {
+    if (insideCollections) {
+      return ContentType.collections;
+    }
+    if (insideComponents) {
+      return ContentType.components;
+    }
+    return ContentType.home;
+  };
 
   useEffect(() => {
-    const currentPath = location.pathname.split('/').pop();
+    const contentType = getActiveKey();
 
-    if (componentPickerMode || currentPath === libraryId || currentPath === '') {
+    if (componentPickerMode) {
       setActiveKey(ContentType.home);
-    } else if (currentPath && currentPath in ContentType) {
-      setActiveKey(ContentType[currentPath] || ContentType.home);
+    } else {
+      setActiveKey(contentType);
     }
   }, []);
 
   useEffect(() => {
     if (!componentPickerMode) {
-      openInfoSidebar();
+      openInfoSidebar(componentId, collectionId);
     }
   }, []);
-
-  const [searchParams] = useSearchParams();
 
   if (isLoadingLibraryData) {
     return <Loading />;
@@ -181,10 +193,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
   const handleTabChange = (key: ContentType) => {
     setActiveKey(key);
     if (!componentPickerMode) {
-      navigate({
-        pathname: key,
-        search: searchParams.toString(),
-      });
+      navigateTo({ contentType: key });
     }
   };
 
