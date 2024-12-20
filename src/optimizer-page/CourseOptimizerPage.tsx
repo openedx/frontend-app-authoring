@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
-import { useEffect, useRef } from 'react';
-import PropTypes from 'prop-types';
+import {
+  useEffect, useRef, FC, MutableRefObject,
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -21,24 +22,29 @@ import { startLinkCheck, fetchLinkCheckStatus } from './data/thunks';
 import { useModel } from '../generic/model-store';
 import ScanResults from './scan-results';
 
-const pollLinkCheckStatus = (dispatch, courseId, delay) => {
+const pollLinkCheckStatus = (dispatch: any, courseId: string, delay: number): number => {
   const interval = setInterval(() => {
     dispatch(fetchLinkCheckStatus(courseId));
   }, delay);
-  return interval;
+  return interval as unknown as number;
 };
 
-export function pollLinkCheckDuringScan(linkCheckInProgress, linkCheckResult, interval, dispatch, courseId) {
+export function pollLinkCheckDuringScan(
+  linkCheckInProgress: boolean | null,
+  interval: MutableRefObject<number | undefined>,
+  dispatch: any,
+  courseId: string,
+) {
   if (linkCheckInProgress === null || linkCheckInProgress) {
-    clearInterval(interval.current);
+    clearInterval(interval.current as number | undefined);
     interval.current = pollLinkCheckStatus(dispatch, courseId, 2000);
   } else if (interval.current) {
     clearInterval(interval.current);
-    interval.current = null;
+    interval.current = undefined;
   }
 }
 
-const CourseOptimizerPage = ({ courseId }) => {
+const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
   const dispatch = useDispatch();
   const linkCheckInProgress = useSelector(getLinkCheckInProgress);
   const loadingStatus = useSelector(getLoadingStatus);
@@ -47,7 +53,7 @@ const CourseOptimizerPage = ({ courseId }) => {
   const { msg: errorMessage } = useSelector(getError);
   const isShowExportButton = !linkCheckInProgress || errorMessage;
   const isLoadingDenied = loadingStatus === RequestStatus.DENIED;
-  const interval = useRef(null);
+  const interval = useRef<number | undefined>(undefined);
   const courseDetails = useModel('courseDetails', courseId);
   const linkCheckPresent = !!currentStage;
   const intl = useIntl();
@@ -78,7 +84,7 @@ const CourseOptimizerPage = ({ courseId }) => {
   useEffect(() => {
     // when a scan starts, start polling for the results as long as the scan status fetched
     // signals it is still in progress
-    pollLinkCheckDuringScan(linkCheckInProgress, linkCheckResult, interval, dispatch, courseId);
+    pollLinkCheckDuringScan(linkCheckInProgress, interval, dispatch, courseId);
 
     return () => {
       if (interval.current) { clearInterval(interval.current); }
@@ -144,6 +150,7 @@ const CourseOptimizerPage = ({ courseId }) => {
                   {linkCheckPresent && (
                   <Card.Section className="px-3 py-1">
                     <CourseStepper
+                      // @ts-ignore
                       steps={courseStepperSteps}
                       activeKey={currentStage}
                       hasError={currentStage < 0 || !!errorMessage}
@@ -160,9 +167,6 @@ const CourseOptimizerPage = ({ courseId }) => {
       </Container>
     </>
   );
-};
-CourseOptimizerPage.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default CourseOptimizerPage;
