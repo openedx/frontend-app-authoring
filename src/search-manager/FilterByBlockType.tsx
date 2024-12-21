@@ -224,6 +224,11 @@ const FilterByBlockType: React.FC<FilterByBlockTypeProps> = ({ disabled = false 
     setProblemTypesFilter,
   } = useSearchContext();
 
+  const clearFilters = useCallback(/* istanbul ignore next */ () => {
+    setBlockTypesFilter([]);
+    setProblemTypesFilter([]);
+  }, []);
+
   useEffect(() => {
     if (disabled) {
       // Clear filters when disabled
@@ -239,11 +244,6 @@ const FilterByBlockType: React.FC<FilterByBlockTypeProps> = ({ disabled = false 
     }
     return () => {};
   }, [disabled]);
-
-  const clearFilters = useCallback(/* istanbul ignore next */ () => {
-    setBlockTypesFilter([]);
-    setProblemTypesFilter([]);
-  }, []);
 
   // Sort blocktypes in order of hierarchy followed by alphabetically for components
   const sortedBlockTypeKeys = Object.keys(blockTypes).sort((a, b) => {
