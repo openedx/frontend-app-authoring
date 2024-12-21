@@ -48,7 +48,7 @@
     "@dnd-kit/sortable": "^8.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@edx/brand": "npm:@openedx/brand-openedx@^1.2.3",
-    "@edx/browserslist-config": "1.2.0",
+    "@edx/browserslist-config": "1.4.0",
     "@edx/frontend-component-footer": "^14.1.0",
     "@edx/frontend-component-header": "^5.8.0",
     "@edx/frontend-enterprise-hotjar": "^2.0.0",
