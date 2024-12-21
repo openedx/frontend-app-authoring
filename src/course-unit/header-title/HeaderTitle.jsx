@@ -11,6 +11,8 @@ import {
 import ConfigureModal from '../../generic/configure-modal/ConfigureModal';
 import { getCourseUnitData } from '../data/selectors';
 import { updateQueryPendingStatus } from '../data/slice';
+import { messageTypes } from '../constants';
+import { useIframe } from '../context/hooks';
 import messages from './messages';
 
 const HeaderTitle = ({
@@ -26,9 +28,15 @@ const HeaderTitle = ({
   const currentItemData = useSelector(getCourseUnitData);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
   const { selectedPartitionIndex, selectedGroupsLabel } = currentItemData.userPartitionInfo;
+  const { sendMessageToIframe } = useIframe();
 
   const onConfigureSubmit = (...arg) => {
     handleConfigureSubmit(currentItemData.id, ...arg, closeConfigureModal);
+    // TODO: this artificial delay is a temporary solution
+    // to ensure the iframe content is properly refreshed.
+    setTimeout(() => {
+      sendMessageToIframe(messageTypes.refreshXBlock, null);
+    }, 1000);
   };
 
   const getVisibilityMessage = () => {
