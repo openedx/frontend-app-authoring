@@ -4,8 +4,8 @@ import { AppProvider } from '@edx/frontend-platform/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { camelCaseObject, initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import userEvent from '@testing-library/user-event';
 
+import userEvent from '@testing-library/user-event';
 import initializeStore from '../../store';
 import { getCourseOutlineInfoUrl } from '../data/api';
 import { courseOutlineInfoMock } from '../__mocks__';
@@ -79,7 +79,9 @@ describe('<MoveModal />', () => {
     const categoryIndicator: HTMLElement = getByTestId('move-xblock-modal-category');
 
     expect(getByText(messages.moveModalTitle.defaultMessage.replace(' {displayName}', ''))).toBeInTheDocument();
-    expect(within(breadcrumbs).getByText(messages.moveModalBreadcrumbsBaseCategory.defaultMessage)).toBeInTheDocument();
+    expect(
+      within(breadcrumbs).getByText(messages.moveModalBreadcrumbsBaseCategory.defaultMessage),
+    ).toBeInTheDocument();
     expect(
       within(categoryIndicator).getByText(messages.moveModalBreadcrumbsSections.defaultMessage),
     ).toBeInTheDocument();
@@ -95,7 +97,9 @@ describe('<MoveModal />', () => {
     const breadcrumbs: HTMLElement = getByTestId('move-xblock-modal-breadcrumbs');
     const categoryIndicator: HTMLElement = getByTestId('move-xblock-modal-category');
 
-    expect(within(breadcrumbs).getByText(messages.moveModalBreadcrumbsBaseCategory.defaultMessage)).toBeInTheDocument();
+    expect(
+      within(breadcrumbs).getByText(messages.moveModalBreadcrumbsBaseCategory.defaultMessage),
+    ).toBeInTheDocument();
     expect(
       within(categoryIndicator).getByText(messages.moveModalBreadcrumbsSections.defaultMessage),
     ).toBeInTheDocument();

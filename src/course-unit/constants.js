@@ -55,6 +55,7 @@ export const messageTypes = {
   showMultipleComponentPicker: 'showMultipleComponentPicker',
   addSelectedComponentsToBank: 'addSelectedComponentsToBank',
   showXBlockLibraryChangesPreview: 'showXBlockLibraryChangesPreview',
+  handleViewXBlockContent: 'handleViewXBlockContent',
 };
 
 export const IFRAME_FEATURE_POLICY = (

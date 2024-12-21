@@ -9,6 +9,7 @@ import {
 } from '@openedx/paragon/icons';
 
 import ConfigureModal from '../../generic/configure-modal/ConfigureModal';
+import { COURSE_BLOCK_NAMES } from '../../constants';
 import { getCourseUnitData } from '../data/selectors';
 import { updateQueryPendingStatus } from '../data/slice';
 import messages from './messages';
@@ -86,6 +87,9 @@ const HeaderTitle = ({
           onConfigureSubmit={onConfigureSubmit}
           currentItemData={currentItemData}
           isSelfPaced={false}
+          isXBlockComponent={
+            [COURSE_BLOCK_NAMES.libraryContent.id, COURSE_BLOCK_NAMES.component.id].includes(currentItemData.category)
+          }
         />
       </div>
       {getVisibilityMessage()}
