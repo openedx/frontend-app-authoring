@@ -27,6 +27,7 @@ jest.mock('../../data/redux', () => ({
   selectors: {
     app: {
       blockValue: jest.fn(state => ({ blockValue: state })),
+      isCreateBlock: jest.fn(state => ({ isCreateBlock: state })),
     },
     problem: {
       problemType: jest.fn(state => ({ problemType: state })),
@@ -104,12 +105,18 @@ describe('ProblemEditor', () => {
     test('blockFinished from requests.isFinished', () => {
       expect(
         mapStateToProps(testState).blockFinished,
-      ).toEqual(selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchBlock }));
+      ).toEqual(
+        selectors.app.isCreateBlock(testState)
+        || selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchBlock }),
+      );
     });
     test('advancedSettingsFinished from requests.isFinished', () => {
       expect(
         mapStateToProps(testState).advancedSettingsFinished,
-      ).toEqual(selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchAdvancedSettings }));
+      ).toEqual(
+        selectors.app.isCreateBlock(testState)
+        || selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchAdvancedSettings }),
+      );
     });
   });
   describe('mapDispatchToProps', () => {
