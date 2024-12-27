@@ -7,6 +7,7 @@ import * as thunkActions from './app';
 jest.mock('./requests', () => ({
   fetchBlock: (args) => ({ fetchBlock: args }),
   fetchUnit: (args) => ({ fetchUnit: args }),
+  createBlock: (args) => ({ createBlock: args }),
   saveBlock: (args) => ({ saveBlock: args }),
   uploadAsset: (args) => ({ uploadAsset: args }),
   fetchStudioView: (args) => ({ fetchStudioView: args }),
@@ -196,6 +197,21 @@ describe('app thunkActions', () => {
       thunkActions.fetchCourseDetails = fetchCourseDetails;
     });
   });
+  describe('initialize without block id but block type defined', () => {
+    it('dispatches actions.app.initialize, and then fetches both block and unit', () => {
+      const data = {
+        ...testValue,
+        blockType: 'html',
+        blockId: '',
+        learningContextId: 'course-v1:UniversityX+PHYS+1',
+      };
+      thunkActions.initialize(data)(dispatch);
+      expect(dispatch.mock.calls).toEqual([
+        [actions.app.initialize(data)],
+        [actions.app.initializeEditor()],
+      ]);
+    });
+  });
   describe('initialize with block type html', () => {
     it('dispatches actions.app.initialize, and then fetches both block and unit', () => {
       const {
@@ -331,6 +347,26 @@ describe('app thunkActions', () => {
       calls[1][0].saveBlock.onSuccess(response);
       expect(dispatch).toHaveBeenCalledWith(actions.app.setSaveResponse(response));
       expect(returnToUnit).toHaveBeenCalled();
+    });
+  });
+  describe('createBlock', () => {
+    let returnToUnit;
+    beforeEach(() => {
+      returnToUnit = jest.fn();
+      thunkActions.createBlock(testValue, returnToUnit)(dispatch);
+      [[dispatchedAction]] = dispatch.mock.calls;
+    });
+    it('dispatches createBlock', () => {
+      expect(dispatchedAction.createBlock).not.toBe(undefined);
+    });
+    test('onSuccess: calls setBlockId and dispatches saveBlock', () => {
+      const {
+        saveBlock,
+      } = thunkActions;
+      thunkActions.saveBlock = saveBlock;
+
+      dispatchedAction.createBlock.onSuccess({ id: 'library' });
+      expect(dispatch).toHaveBeenCalledWith(actions.app.setBlockId('library'));
     });
   });
   describe('uploadAsset', () => {
