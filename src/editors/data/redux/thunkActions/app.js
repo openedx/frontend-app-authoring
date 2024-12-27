@@ -89,8 +89,7 @@ export const fetchCourseDetails = () => (dispatch) => {
 export const initialize = (data) => (dispatch) => {
   const editorType = data.blockType;
   dispatch(actions.app.initialize(data));
-
-  if (data.blockId === '' && data.blockType) {
+  if (data.blockId === '' && editorType) {
     dispatch(actions.app.initializeEditor());
     return;
   }

@@ -128,8 +128,7 @@ export const saveBlock = ({ content, ...rest }) => (dispatch, getState) => {
 };
 
 /**
- * Tracked saveBlock api method.  Tracked to the `saveBlock` request key.
- * @param {string} content
+ * Tracked createBlock api method.  Tracked to the `createBlock` request key.
  * @param {[func]} onSuccess - onSuccess method ((response) => { ... })
  * @param {[func]} onFailure - onFailure method ((error) => { ... })
  */
@@ -139,7 +138,7 @@ export const createBlock = ({ ...rest }) => (dispatch, getState) => {
     : `${uuid4()}`;
 
   dispatch(module.networkRequest({
-    requestKey: RequestKeys.creaateBlock,
+    requestKey: RequestKeys.createBlock,
     promise: createLibraryBlock({
       libraryId: selectors.app.learningContextId(getState()),
       blockType: selectors.app.blockType(getState()),

@@ -3,6 +3,7 @@ import { RequestKeys } from '../../constants/requests';
 import api from '../../services/cms/api';
 import * as requests from './requests';
 import { actions, selectors } from '../index';
+import { createLibraryBlock } from '../../../../library-authoring/data/api';
 
 const testState = {
   some: 'data',
@@ -24,6 +25,7 @@ jest.mock('../app/selectors', () => ({
 
 jest.mock('../video/selectors', () => ({
   transcriptHandlerUrl: () => ('transcriptHandlerUrl'),
+  blockTitle: (state) => state.data,
 }));
 
 jest.mock('../../services/cms/api', () => ({
@@ -49,6 +51,10 @@ jest.mock('../../services/cms/api', () => ({
   importTranscript: (args) => args,
   fetchVideoFeatures: (args) => args,
   uploadVideo: (args) => args,
+}));
+
+jest.mock('../../../../library-authoring/data/api', () => ({
+  createLibraryBlock: ({ id, url }) => ({ id, url }),
 }));
 
 jest.mock('../../../utils', () => ({
@@ -356,6 +362,21 @@ describe('requests thunkActions module', () => {
             content,
             studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
             title: selectors.app.blockTitle(testState),
+          }),
+        },
+      });
+    });
+    describe('createBlock', () => {
+      testNetworkRequestAction({
+        action: requests.createBlock,
+        args: { ...fetchParams },
+        expectedString: 'with create promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.createBlock,
+          promise: createLibraryBlock({
+            libraryId: selectors.app.learningContextId(testState),
+            blockType: selectors.app.blockType(testState),
           }),
         },
       });

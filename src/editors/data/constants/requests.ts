@@ -13,7 +13,7 @@ export const RequestKeys = StrictDict({
   fetchImages: 'fetchImages',
   fetchUnit: 'fetchUnit',
   fetchStudioView: 'fetchStudioView',
-  creaateBlock: 'createBlock',
+  createBlock: 'createBlock',
   saveBlock: 'saveBlock',
   uploadVideo: 'uploadVideo',
   allowThumbnailUpload: 'allowThumbnailUpload',
