@@ -147,8 +147,10 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
   const { insideCollections, insideComponents, navigateTo } = useLibraryRoutes();
 
   // The activeKey determines the currently selected tab.
-  const [activeKey, setActiveKey] = useState<ContentType>(ContentType.home);
   const getActiveKey = () => {
+    if (componentPickerMode) {
+      return ContentType.home;
+    }
     if (insideCollections) {
       return ContentType.collections;
     }
@@ -157,16 +159,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     }
     return ContentType.home;
   };
-
-  useEffect(() => {
-    const contentType = getActiveKey();
-
-    if (componentPickerMode) {
-      setActiveKey(ContentType.home);
-    } else {
-      setActiveKey(contentType);
-    }
-  }, []);
+  const [activeKey, setActiveKey] = useState<ContentType>(getActiveKey);
 
   useEffect(() => {
     if (!componentPickerMode) {

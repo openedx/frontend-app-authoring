@@ -137,7 +137,7 @@ describe('<LibraryAuthoringPage />', () => {
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('tab', { name: 'Collections' }));
-    expect(screen.getByText('You have not added any collections to this library yet.')).toBeInTheDocument();
+    expect(await screen.findByText('You have not added any collections to this library yet.')).toBeInTheDocument();
 
     // Open Create collection modal
     const addCollectionButton = screen.getByRole('button', { name: /add collection/i });
@@ -151,7 +151,7 @@ describe('<LibraryAuthoringPage />', () => {
     expect(collectionModalHeading).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('tab', { name: 'All Content' }));
-    expect(screen.getByText('You have not added any content to this library yet.')).toBeInTheDocument();
+    expect(await screen.findByText('You have not added any content to this library yet.')).toBeInTheDocument();
 
     const addComponentButton = screen.getByRole('button', { name: /add component/i });
     fireEvent.click(addComponentButton);
@@ -196,15 +196,15 @@ describe('<LibraryAuthoringPage />', () => {
     // should not be impacted by the search
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
 
-    expect(screen.getByText('No matching components found in this library.')).toBeInTheDocument();
+    expect(await screen.findByText('No matching components found in this library.')).toBeInTheDocument();
 
     // Navigate to the components tab
     fireEvent.click(screen.getByRole('tab', { name: 'Components' }));
-    expect(screen.getByText('No matching components found in this library.')).toBeInTheDocument();
+    expect(await screen.findByText('No matching components found in this library.')).toBeInTheDocument();
 
     // Navigate to the collections tab
     fireEvent.click(screen.getByRole('tab', { name: 'Collections' }));
-    expect(screen.getByText('No matching collections found in this library.')).toBeInTheDocument();
+    expect(await screen.findByText('No matching collections found in this library.')).toBeInTheDocument();
 
     // Go back to Home tab
     // This step is necessary to avoid the url change leak to other tests
