@@ -66,7 +66,7 @@ const HeaderActions = () => {
 
     if (!componentPickerMode) {
       // Reset URL to library home
-      navigateTo();
+      navigateTo({ componentId: '', collectionId: '' });
     }
   }, [navigateTo, sidebarComponentInfo, closeLibrarySidebar, openLibrarySidebar]);
 

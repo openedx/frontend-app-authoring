@@ -67,9 +67,9 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
   }: NavigateToData = {}) => {
     const routeParams = {
       ...params,
-      componentId,
-      // Overwrite the current collectionId param only if one is specified
-      ...(collectionId && { collectionId }),
+      // Overwrite the current componentId/collectionId params if provided
+      ...((componentId !== undefined) && { componentId }),
+      ...((collectionId !== undefined) && { collectionId }),
     };
     let route;
 
