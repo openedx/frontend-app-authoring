@@ -11,115 +11,9 @@ import { union } from 'lodash';
 import {
   CollectionHit, ContentHit, SearchSortOption, forceArray,
 } from './data/api';
+import { TypesFilterData, useStateOrUrlSearchParam } from './hooks';
 import { useContentSearchConnection, useContentSearchResults } from './data/apiHooks';
-import {
-  type FromStringFn,
-  type ToStringFn,
-  useListHelpers,
-  useStateWithUrlSearchParam,
-} from '../hooks';
-
-/**
- * Typed hook that returns useState if skipUrlUpdate,
- * or useStateWithUrlSearchParam if it's not.
- *
- * Provided here to reduce some code overhead in SearchManager.
- */
-function useStateOrUrlSearchParam<Type>(
-  defaultValue: Type,
-  paramName: string,
-  fromString: FromStringFn<Type>,
-  toString: ToStringFn<Type>,
-  skipUrlUpdate?: boolean,
-): [value: Type, setter: React.Dispatch<React.SetStateAction<Type>>] {
-  const useStateManager = React.useState<Type>(defaultValue);
-  const urlStateManager = useStateWithUrlSearchParam<Type>(
-    defaultValue,
-    paramName,
-    fromString,
-    toString,
-  );
-  return skipUrlUpdate ? useStateManager : urlStateManager;
-}
-
-// Block / Problem type helper class
-export class TypesFilterData {
-  #blocks = new Set<string>();
-
-  #problems = new Set<string>();
-
-  #typeToList: FromStringFn<string[]>;
-
-  #listToType: ToStringFn<string[]>;
-
-  // Constructs a TypesFilterData from a string as generated from toString().
-  constructor(
-    value: string | null,
-    typeToList: FromStringFn<string[]>,
-    listToType: ToStringFn<string[]>,
-  ) {
-    this.#typeToList = typeToList;
-    this.#listToType = listToType;
-
-    const [blocks, problems] = (value || '').split('|');
-    this.union({ blocks, problems });
-  }
-
-  // Serialize the TypesFilterData to a string, or undefined if isEmpty().
-  toString(): string | undefined {
-    if (this.isEmpty()) {
-      return undefined;
-    }
-    return [
-      this.#listToType([...this.blocks]),
-      this.#listToType([...this.problems]),
-    ].join('|');
-  }
-
-  // Returns true if there are no block or problem types.
-  isEmpty(): boolean {
-    return !(this.#blocks.size || this.#problems.size);
-  }
-
-  get blocks() : Set<string> {
-    return this.#blocks;
-  }
-
-  get problems(): Set<string> {
-    return this.#problems;
-  }
-
-  clear(): TypesFilterData {
-    this.#blocks.clear();
-    this.#problems.clear();
-    return this;
-  }
-
-  union({ blocks, problems }: {
-    blocks?: string[] | Set<string> | string | undefined,
-    problems?: string[] | Set<string> | string | undefined,
-  }): void {
-    let newBlocks: string[];
-    if (!blocks) {
-      newBlocks = [];
-    } else if (typeof blocks === 'string') {
-      newBlocks = this.#typeToList(blocks) || [];
-    } else {
-      newBlocks = [...blocks];
-    }
-    this.#blocks = new Set<string>([...this.#blocks, ...newBlocks]);
-
-    let newProblems: string[];
-    if (!problems) {
-      newProblems = [];
-    } else if (typeof problems === 'string') {
-      newProblems = this.#typeToList(problems) || [];
-    } else {
-      newProblems = [...problems];
-    }
-    this.#problems = new Set<string>([...this.#problems, ...newProblems]);
-  }
-}
+import { getBlockType } from '../generic/key-utils';
 
 export interface SearchContextData {
   client?: MeiliSearch;
@@ -174,60 +68,46 @@ export const SearchContextProvider: React.FC<{
   );
 
   // Block + problem types use alphanumeric plus a few other characters.
-  // E.g ?type=html,video|multiplechoiceresponse,choiceresponse
-  const sanitizeType = (value: string | null | undefined): string | undefined => (
-    (value && /^[a-z0-9._-]+$/.test(value))
-      ? value
-      : undefined
-  );
-  const [typeToList, listToType] = useListHelpers<string>({
-    toString: sanitizeType,
-    fromString: sanitizeType,
-    separator: ',',
-  });
-  const stringToTypesFilter = (value: string | null): TypesFilterData | undefined => (
-    new TypesFilterData(value, typeToList, listToType)
-  );
-  const typesFilterToString = (value: TypesFilterData | undefined): string | undefined => (
-    value ? value.toString() : undefined
-  );
+  // E.g ?type=html&type=video&type=p.multiplechoiceresponse
   const [typesFilter, setTypesFilter] = useStateOrUrlSearchParam<TypesFilterData>(
-    new TypesFilterData('', typeToList, listToType),
-    'types',
-    stringToTypesFilter,
-    typesFilterToString,
-    // Returns e.g 'problem,text|multiplechoice,checkbox'
+    new TypesFilterData(),
+    'type',
+    (value: string | null) => new TypesFilterData(value),
+    (value: TypesFilterData | undefined) => (value ? value.toString() : undefined),
     skipUrlUpdate,
   );
 
-  // Tags can be almost any string value, except our separator (|)
-  // TODO how to sanitize tags?
-  // E.g ?tags=Skills+>+Abilities|Skills+>+Knowledge
+  // Tags can be almost any string value (see openedx-learning's RESERVED_TAG_CHARS)
+  // and multiple tags may be selected together.
+  // E.g ?tag=Skills+>+Abilities&tag=Skills+>+Knowledge
   const sanitizeTag = (value: string | null | undefined): string | undefined => (
-    (value && /^[^|]+$/.test(value))
-      ? value
-      : undefined
+    (value && /^[^\t;]+$/.test(value)) ? value : undefined
   );
-  const [tagToList, listToTag] = useListHelpers<string>({
-    toString: sanitizeTag,
-    fromString: sanitizeTag,
-    separator: '|',
-  });
-  const [tagsFilter, setTagsFilter] = useStateOrUrlSearchParam<string[]>(
+  const [tagsFilter, setTagsFilter] = useStateOrUrlSearchParam<string>(
     [],
-    'tags',
-    tagToList,
-    listToTag,
+    'tag',
+    sanitizeTag,
+    sanitizeTag,
     skipUrlUpdate,
   );
 
   // E.g ?usageKey=lb:OpenCraft:libA:problem:5714eb65-7c36-4eee-8ab9-a54ed5a95849
+  const sanitizeUsageKey = (value: string): string | undefined => {
+    try {
+      if (getBlockType(value)) {
+        return value;
+      }
+    } catch (error) {
+      // Error thrown if value cannot be parsed into a library usage key.
+      // Pass through to return below.
+    }
+    return undefined;
+  };
   const [usageKey, setUsageKey] = useStateOrUrlSearchParam<string>(
     '',
     'usageKey',
-    // TODO should sanitize usageKeys too.
-    (value: string) => value,
-    (value: string) => value,
+    sanitizeUsageKey,
+    sanitizeUsageKey,
     skipUrlUpdate,
   );
 
