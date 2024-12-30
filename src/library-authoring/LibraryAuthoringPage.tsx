@@ -267,7 +267,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
             <ActionRow className="my-3">
               <SearchKeywordsField className="mr-3" />
               <FilterByTags />
-              <FilterByBlockType />
+              <FilterByBlockType disabled={activeKey === ContentType.collections} />
               <ClearFiltersButton />
               <ActionRow.Spacer />
               <SearchSortWidget />
