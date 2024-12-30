@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button, Icon, Scrollable, SelectableBox, Stack, StatefulButton, useCheckboxSetValues,
@@ -191,38 +191,23 @@ const ComponentCollections = ({ collections, onManageClick }: {
 };
 
 const ManageCollections = ({ usageKey, collections }: ManageCollectionsProps) => {
-  const { sidebarAction, resetSidebarAction } = useSidebarContext();
-  const jumpToCollections = sidebarAction === SidebarActions.JumpToAddCollections;
-  const [editing, setEditing] = useState(jumpToCollections);
+  const { sidebarAction, resetSidebarAction, setSidebarAction } = useSidebarContext();
   const collectionNames = collections.map((collection) => collection.title);
 
-  useEffect(() => {
-    if (jumpToCollections) {
-      setEditing(true);
-    }
-  }, [jumpToCollections]);
-
-  useEffect(() => {
-    // This is required to redo actions.
-    if (!editing) {
-      resetSidebarAction();
-    }
-  }, [editing]);
-
-  if (editing) {
-    return (
-      <AddToCollectionsDrawer
-        usageKey={usageKey}
-        collections={collections}
-        onClose={() => setEditing(false)}
-      />
-    );
-  }
   return (
-    <ComponentCollections
-      collections={collectionNames}
-      onManageClick={() => setEditing(true)}
-    />
+    sidebarAction === SidebarActions.JumpToAddCollections
+      ? (
+        <AddToCollectionsDrawer
+          usageKey={usageKey}
+          collections={collections}
+          onClose={() => resetSidebarAction()}
+        />
+      ) : (
+        <ComponentCollections
+          collections={collectionNames}
+          onManageClick={() => setSidebarAction(SidebarActions.JumpToAddCollections)}
+        />
+      )
   );
 };
 
