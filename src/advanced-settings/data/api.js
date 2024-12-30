@@ -1,4 +1,5 @@
-import { camelCaseObject, getConfig } from '@edx/frontend-platform';
+/* eslint-disable import/prefer-default-export */
+import { camelCaseObject, getConfig, modifyObjectKeys, snakeCaseObject } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { convertObjectToSnakeCase } from '../../utils';
 
@@ -14,7 +15,13 @@ const getProctoringErrorsApiUrl = () => `${getApiBaseUrl()}/api/contentstore/v1/
 export async function getCourseAdvancedSettings(courseId) {
   const { data } = await getAuthenticatedHttpClient()
     .get(`${getCourseAdvancedSettingsApiUrl(courseId)}?fetch_all=0`);
-  return camelCaseObject(data);
+  const objectFormatted = camelCaseObject(data);
+  return modifyObjectKeys(objectFormatted, (key) => {
+    if (objectFormatted[key]) {
+      objectFormatted[key]['value'] = snakeCaseObject(objectFormatted[key]['value'])
+    }
+    return key;
+  });
 }
 
 /**
@@ -26,7 +33,13 @@ export async function getCourseAdvancedSettings(courseId) {
 export async function updateCourseAdvancedSettings(courseId, settings) {
   const { data } = await getAuthenticatedHttpClient()
     .patch(`${getCourseAdvancedSettingsApiUrl(courseId)}`, convertObjectToSnakeCase(settings));
-  return camelCaseObject(data);
+  const objectFormatted = camelCaseObject(data);
+  return modifyObjectKeys(objectFormatted, (key) => {
+    if (objectFormatted[key]) {
+      objectFormatted[key]['value'] = snakeCaseObject(objectFormatted[key]['value'])
+    }
+    return key;
+  });
 }
 
 /**
