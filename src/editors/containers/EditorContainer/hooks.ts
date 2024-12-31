@@ -42,7 +42,6 @@ export const handleSaveClicked = ({
       returnFunction,
     });
   }
-
   return () => saveBlock({
     analytics,
     content: getContent({ dispatch }),
