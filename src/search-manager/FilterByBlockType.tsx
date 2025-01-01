@@ -191,16 +191,12 @@ const FilterItem = ({ blockType, count } : FilterItemProps) => {
   );
 };
 
-interface FilterByBlockTypeProps {
-  disabled?: boolean,
-}
 /**
  * A button with a dropdown that allows filtering the current search by component type (XBlock type)
  * e.g. Limit results to "Text" (html) and "Problem" (problem) components.
  * The button displays the first type selected, and a count of how many other types are selected, if more than one.
- * @param disabled - If true, the filter is disabled and hidden.
  */
-const FilterByBlockType: React.FC<FilterByBlockTypeProps> = ({ disabled = false }) => {
+const FilterByBlockType: React.FC<Record<never, never>> = () => {
   const {
     blockTypes,
     typesFilter,
@@ -247,10 +243,6 @@ const FilterByBlockType: React.FC<FilterByBlockTypeProps> = ({ disabled = false 
   const appliedFilters = [...typesFilter.blocks, ...typesFilter.problems].map(
     blockType => ({ label: <BlockTypeLabel blockType={blockType} /> }),
   );
-
-  if (disabled) {
-    return null;
-  }
 
   return (
     <SearchFilterWidget

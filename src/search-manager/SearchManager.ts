@@ -47,14 +47,19 @@ export interface SearchContextData {
 const SearchContext = React.createContext<SearchContextData | undefined>(undefined);
 
 export const SearchContextProvider: React.FC<{
-  extraFilter?: Filter;
+  extraFilter?: Filter,
+  overrideTypesFilter?: TypesFilterData,
   overrideSearchSortOrder?: SearchSortOption
   children: React.ReactNode,
   closeSearchModal?: () => void,
   skipBlockTypeFetch?: boolean,
   skipUrlUpdate?: boolean,
 }> = ({
-  overrideSearchSortOrder, skipBlockTypeFetch, skipUrlUpdate, ...props
+  overrideTypesFilter,
+  overrideSearchSortOrder,
+  skipBlockTypeFetch,
+  skipUrlUpdate,
+  ...props
 }) => {
   // Search parameters can be set via the query string
   // E.g. ?q=draft+text
@@ -69,13 +74,15 @@ export const SearchContextProvider: React.FC<{
 
   // Block + problem types use alphanumeric plus a few other characters.
   // E.g ?type=html&type=video&type=p.multiplechoiceresponse
-  const [typesFilter, setTypesFilter] = useStateOrUrlSearchParam<TypesFilterData>(
+  const [internalTypesFilter, setTypesFilter] = useStateOrUrlSearchParam<TypesFilterData>(
     new TypesFilterData(),
     'type',
     (value: string | null) => new TypesFilterData(value),
     (value: TypesFilterData | undefined) => (value ? value.toString() : undefined),
     skipUrlUpdate,
   );
+  // Callers can override the types filter when searching, but we still preserve the user's selected state.
+  const typesFilter = overrideTypesFilter ?? internalTypesFilter;
 
   // Tags can be almost any string value (see openedx-learning's RESERVED_TAG_CHARS)
   // and multiple tags may be selected together.

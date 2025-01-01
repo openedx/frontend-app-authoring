@@ -30,6 +30,7 @@ import {
   SearchContextProvider,
   SearchKeywordsField,
   SearchSortWidget,
+  TypesFilterData,
 } from '../search-manager';
 import LibraryContent from './LibraryContent';
 import { LibrarySidebar } from './library-sidebar';
@@ -220,6 +221,9 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     extraFilter.push(activeTypeFilters[activeKey]);
   }
 
+  // Disable filtering by block/problem type when viewing the Collections tab.
+  const overrideTypesFilter = insideCollections ? new TypesFilterData() : undefined;
+
   return (
     <div className="d-flex">
       <div className="flex-grow-1">
@@ -239,6 +243,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
         <Container className="px-4 mt-4 mb-5 library-authoring-page">
           <SearchContextProvider
             extraFilter={extraFilter}
+            overrideTypesFilter={overrideTypesFilter}
           >
             <SubHeader
               title={<SubHeaderTitle title={libraryData.title} />}
@@ -260,7 +265,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
             <ActionRow className="my-3">
               <SearchKeywordsField className="mr-3" />
               <FilterByTags />
-              <FilterByBlockType disabled={activeKey === ContentType.collections} />
+              {!insideCollections && <FilterByBlockType />}
               <ClearFiltersButton />
               <ActionRow.Spacer />
               <SearchSortWidget />

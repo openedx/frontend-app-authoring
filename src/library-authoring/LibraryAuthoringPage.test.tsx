@@ -702,6 +702,34 @@ describe('<LibraryAuthoringPage />', () => {
     });
   });
 
+  it('Disables Type filter on Collections tab', async () => {
+    await renderLibraryPage();
+
+    expect(await screen.findByText('Content library')).toBeInTheDocument();
+    expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
+    expect((await screen.findAllByText('Introduction to Testing'))[0]).toBeInTheDocument();
+    expect((await screen.findAllByText('Collection 1'))[0]).toBeInTheDocument();
+
+    // Filter by Text block type
+    fireEvent.click(screen.getByRole('button', { name: /type/i }));
+    fireEvent.click(screen.getByRole('checkbox', { name: /text/i }));
+    // Escape to close the Types filter drop-down and re-enable the tabs
+    fireEvent.keyDown(screen.getByRole('button', { name: /type/i }), { key: 'Escape' });
+
+    // Navigate to the collections tab
+    fireEvent.click(await screen.findByRole('tab', { name: 'Collections' }));
+    expect((await screen.findAllByText('Collection 1'))[0]).toBeInTheDocument();
+    // No Types filter shown
+    expect(screen.queryByRole('button', { name: /type/i })).not.toBeInTheDocument();
+
+    // Navigate to the components tab
+    fireEvent.click(screen.getByRole('tab', { name: 'Components' }));
+    // Text components should be shown
+    expect((await screen.findAllByText('Introduction to Testing'))[0]).toBeInTheDocument();
+    // Types filter is shown
+    expect(screen.getByRole('button', { name: /type/i })).toBeInTheDocument();
+  });
+
   it('Shows an error if libraries V2 is disabled', async () => {
     const { axiosMock } = initializeMocks();
     axiosMock.onGet(getStudioHomeApiUrl()).reply(200, {
