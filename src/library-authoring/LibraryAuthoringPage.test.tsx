@@ -501,6 +501,15 @@ describe('<LibraryAuthoringPage />', () => {
       // eslint-disable-next-line no-await-in-loop
       await validateSubmenu(key);
     }
+  });
+
+  it('can filter by block type', async () => {
+    await renderLibraryPage();
+
+    // Ensure the search endpoint is called
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+    const filterButton = screen.getByRole('button', { name: /type/i });
+    fireEvent.click(filterButton);
 
     // Validate click on Problem type
     const problemMenu = screen.getAllByText('Problem')[0];
@@ -524,15 +533,13 @@ describe('<LibraryAuthoringPage />', () => {
     });
 
     // Validate clear filters
-    const submenu = screen.getByText('Checkboxes');
-    expect(submenu).toBeInTheDocument();
-    fireEvent.click(submenu);
+    fireEvent.click(problemMenu);
 
     const clearFitlersButton = screen.getByRole('button', { name: /clear filters/i });
     fireEvent.click(clearFitlersButton);
     await waitFor(() => {
       expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
-        body: expect.not.stringContaining(`content.problem_types = ${problemTypes.Checkboxes}`),
+        body: expect.not.stringContaining('block_type = problem'),
         method: 'POST',
         headers: expect.anything(),
       });
