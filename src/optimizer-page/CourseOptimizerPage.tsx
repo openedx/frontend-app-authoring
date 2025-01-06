@@ -13,7 +13,7 @@ import { Helmet } from 'react-helmet';
 import CourseStepper from '../generic/course-stepper';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 import SubHeader from '../generic/sub-header/SubHeader';
-import { RequestFailureStatuses, RequestStatus } from '../data/constants';
+import { RequestFailureStatuses } from '../data/constants';
 import messages from './messages';
 import {
   getCurrentStage, getError, getLinkCheckInProgress, getLoadingStatus, getSavingStatus, getLinkCheckResult,
