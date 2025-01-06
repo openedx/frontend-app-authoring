@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable react/jsx-filename-extension */
 import {
-  fireEvent, queryByText, render, waitFor,
+  fireEvent, render, waitFor,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -9,7 +9,6 @@ import { initializeMockApp } from '@edx/frontend-platform';
 
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import MockAdapter from 'axios-mock-adapter';
-import { get } from 'lodash';
 import initializeStore from '../store';
 import messages from './messages';
 import scanResultsMessages from './scan-results/messages';

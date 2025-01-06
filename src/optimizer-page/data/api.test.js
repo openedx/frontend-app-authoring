@@ -11,7 +11,7 @@ describe('Course Optimizer API', () => {
       const url = api.postLinkCheckCourseApiUrl(courseId);
       axiosMock.onPost(url).reply(200, { LinkCheckStatus: LINK_CHECK_STATUSES.IN_PROGRESS });
       const data = await api.postLinkCheck(courseId);
-      
+
       expect(data.linkCheckStatus).toEqual(LINK_CHECK_STATUSES.IN_PROGRESS);
       expect(axiosMock.history.post[0].url).toEqual(url);
     });
@@ -24,7 +24,7 @@ describe('Course Optimizer API', () => {
       const url = api.getLinkCheckStatusApiUrl(courseId);
       axiosMock.onGet(url).reply(200, mockApiResponse);
       const data = await api.getLinkCheckStatus(courseId);
-      
+
       expect(data.linkCheckOutput).toEqual(mockApiResponse.LinkCheckOutput);
       expect(data.linkCheckStatus).toEqual(mockApiResponse.LinkCheckStatus);
       expect(data.linkCheckCreatedAt).toEqual(mockApiResponse.LinkCheckCreatedAt);

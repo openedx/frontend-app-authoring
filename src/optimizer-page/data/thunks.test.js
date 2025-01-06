@@ -47,7 +47,6 @@ describe('startLinkCheck thunk', () => {
 
   describe('failed request should set stage and request ', () => {
     it('should set request status to failed', async () => {
-      const failureStageId = -1;
       mockGetStartLinkCheck.mockRejectedValue(new Error('error'));
 
       await startLinkCheck(courseId)(dispatch, getState);
@@ -74,7 +73,7 @@ describe('fetchLinkCheckStatus thunk', () => {
       const dispatch = jest.fn();
       const getState = jest.fn();
       const courseId = 'course-123';
-      const mockGetLinkCheckStatus = jest
+      jest
         .spyOn(api, 'getLinkCheckStatus')
         .mockResolvedValue({
           linkCheckStatus: mockApiResponse.LinkCheckStatus,
@@ -111,7 +110,7 @@ describe('fetchLinkCheckStatus thunk', () => {
       const dispatch = jest.fn();
       const getState = jest.fn();
       const courseId = 'course-123';
-      const mockGetLinkCheckStatus = jest
+      jest
         .spyOn(api, 'getLinkCheckStatus')
         .mockRejectedValue(new Error('error'));
 
@@ -126,7 +125,7 @@ describe('fetchLinkCheckStatus thunk', () => {
 
   describe('failed scan', () => {
     it('should set error message', async () => {
-      const mockGetLinkCheckStatus = jest
+      jest
         .spyOn(api, 'getLinkCheckStatus')
         .mockResolvedValue({
           linkCheckStatus: LINK_CHECK_STATUSES.FAILED,

@@ -36,7 +36,6 @@ export function startLinkCheck(courseId: string) {
   };
 }
 
-// TODO: use new statuses
 export function fetchLinkCheckStatus(courseId) {
   return async (dispatch) => {
     dispatch(updateLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
@@ -45,7 +44,7 @@ export function fetchLinkCheckStatus(courseId) {
       const { linkCheckStatus, linkCheckOutput, linkCheckCreatedAt } = await getLinkCheckStatus(
         courseId,
       );
-      console.log('linkCheckCreatedAt', linkCheckCreatedAt);
+
       if (LINK_CHECK_IN_PROGRESS_STATUSES.includes(linkCheckStatus)) {
         dispatch(updateLinkCheckInProgress(true));
       } else {
