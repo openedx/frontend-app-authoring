@@ -13,10 +13,10 @@ import { Helmet } from 'react-helmet';
 import CourseStepper from '../generic/course-stepper';
 import ConnectionErrorAlert from '../generic/ConnectionErrorAlert';
 import SubHeader from '../generic/sub-header/SubHeader';
-import { RequestStatus } from '../data/constants';
+import { RequestFailureStatuses, RequestStatus } from '../data/constants';
 import messages from './messages';
 import {
-  getCurrentStage, getError, getLinkCheckInProgress, getLoadingStatus, getLinkCheckResult,
+  getCurrentStage, getError, getLinkCheckInProgress, getLoadingStatus, getSavingStatus, getLinkCheckResult,
   getLastScannedAt,
 } from './data/selectors';
 import { startLinkCheck, fetchLinkCheckStatus } from './data/thunks';
@@ -49,12 +49,14 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
   const dispatch = useDispatch();
   const linkCheckInProgress = useSelector(getLinkCheckInProgress);
   const loadingStatus = useSelector(getLoadingStatus);
+  const savingStatus = useSelector(getSavingStatus);
   const currentStage = useSelector(getCurrentStage);
   const linkCheckResult = useSelector(getLinkCheckResult);
   const lastScannedAt = useSelector(getLastScannedAt);
   const { msg: errorMessage } = useSelector(getError);
   const isShowExportButton = !linkCheckInProgress || errorMessage;
-  const isLoadingDenied = loadingStatus === RequestStatus.DENIED;
+  const isLoadingDenied = (RequestFailureStatuses as string[]).includes(loadingStatus);
+  const isSavingDenied = (RequestFailureStatuses as string[]).includes(savingStatus);
   const interval = useRef<number | undefined>(undefined);
   const courseDetails = useModel('courseDetails', courseId);
   const linkCheckPresent = !!currentStage;
@@ -93,13 +95,13 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
     };
   }, [linkCheckInProgress, linkCheckResult]);
 
-  if (isLoadingDenied) {
+  if (isLoadingDenied || isSavingDenied) {
     if (interval.current) { clearInterval(interval.current); }
 
     return (
-      <Container size="xl" className="course-unit px-4 mt-4">
-        <ConnectionErrorAlert />
-      </Container>
+    // <Container size="xl" className="course-unit px-4 mt-4">
+      <ConnectionErrorAlert />
+    // </Container>
     );
   }
 

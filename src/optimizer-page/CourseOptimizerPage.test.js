@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable react/jsx-filename-extension */
 import {
-  fireEvent, render, waitFor,
+  fireEvent, render, waitFor, screen,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -11,10 +11,12 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import MockAdapter from 'axios-mock-adapter';
 import initializeStore from '../store';
 import messages from './messages';
+import generalMessages from '../messages';
 import scanResultsMessages from './scan-results/messages';
 import CourseOptimizerPage, { pollLinkCheckDuringScan } from './CourseOptimizerPage';
 import { postLinkCheckCourseApiUrl, getLinkCheckStatusApiUrl } from './data/api';
 import mockApiResponse from './mocks/mockApiResponse';
+import * as thunks from './data/thunks';
 
 let store;
 let axiosMock;
@@ -37,13 +39,28 @@ const OptimizerPage = () => (
 
 describe('CourseOptimizerPage', () => {
   describe('pollLinkCheckDuringScan', () => {
+    let mockFetchLinkCheckStatus;
+    beforeEach(() => {
+      mockFetchLinkCheckStatus = jest.fn();
+      jest.spyOn(thunks, 'fetchLinkCheckStatus').mockImplementation(mockFetchLinkCheckStatus);
+      jest.useFakeTimers();
+      jest.spyOn(global, 'setInterval').mockImplementation((cb) => { cb(); return true; });
+    });
+
+    afterEach(() => {
+      jest.clearAllTimers();
+      jest.useRealTimers();
+      jest.restoreAllMocks();
+    });
+
     it('should start polling if linkCheckInProgress has never been started (is null)', () => {
       const linkCheckInProgress = null;
       const interval = { current: null };
       const dispatch = jest.fn();
       const courseId = 'course-123';
       pollLinkCheckDuringScan(linkCheckInProgress, interval, dispatch, courseId);
-      expect(interval.current).not.toBeNull();
+      expect(interval.current).toBeTruthy();
+      expect(mockFetchLinkCheckStatus).toHaveBeenCalled();
     });
 
     it('should start polling if link check is in progress', () => {
@@ -52,7 +69,7 @@ describe('CourseOptimizerPage', () => {
       const dispatch = jest.fn();
       const courseId = 'course-123';
       pollLinkCheckDuringScan(linkCheckInProgress, interval, dispatch, courseId);
-      expect(interval.current).not.toBeNull();
+      expect(interval.current).toBeTruthy();
     });
     it('should not start polling if link check is not in progress', () => {
       const linkCheckInProgress = false;
@@ -60,7 +77,7 @@ describe('CourseOptimizerPage', () => {
       const dispatch = jest.fn();
       const courseId = 'course-123';
       pollLinkCheckDuringScan(linkCheckInProgress, interval, dispatch, courseId);
-      expect(interval.current).toBeNull();
+      expect(interval.current).toBeFalsy();
     });
     it('should clear the interval if link check is finished', () => {
       const linkCheckInProgress = false;
@@ -74,6 +91,8 @@ describe('CourseOptimizerPage', () => {
 
   describe('CourseOptimizerPage component', () => {
     beforeEach(() => {
+      jest.useRealTimers();
+      jest.clearAllMocks();
       initializeMockApp({
         authenticatedUser: {
           userId: 3,
@@ -91,9 +110,6 @@ describe('CourseOptimizerPage', () => {
         .onGet(getLinkCheckStatusApiUrl(courseId))
         .reply(200, mockApiResponse);
     });
-
-    // postLinkCheckCourseApiUrl
-    // getLinkCheckStatusApiUrl
 
     it('should render the component', () => {
       const { getByText, queryByText } = render(<OptimizerPage />);
@@ -136,6 +152,18 @@ describe('CourseOptimizerPage', () => {
       fireEvent.click(getByText(messages.buttonTitle.defaultMessage));
       await waitFor(() => {
         expect(getByText(scanResultsMessages.noBrokenLinksCard.defaultMessage)).toBeInTheDocument();
+      });
+    });
+
+    it('should show error message if request does not go through', async () => {
+      axiosMock
+        .onPost(postLinkCheckCourseApiUrl(courseId))
+        .reply(500);
+      render(<OptimizerPage />);
+      expect(screen.getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
+      fireEvent.click(screen.getByText(messages.buttonTitle.defaultMessage));
+      await waitFor(() => {
+        expect(screen.getByText(generalMessages.supportText.defaultMessage)).toBeInTheDocument();
       });
     });
   });
