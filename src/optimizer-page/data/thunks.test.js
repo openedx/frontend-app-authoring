@@ -68,11 +68,16 @@ describe('startLinkCheck thunk', () => {
 });
 
 describe('fetchLinkCheckStatus thunk', () => {
+  const dispatch = jest.fn();
+  const getState = jest.fn();
+  const courseId = 'course-123';
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('successful request', () => {
     it('should return scan result', async () => {
-      const dispatch = jest.fn();
-      const getState = jest.fn();
-      const courseId = 'course-123';
       jest
         .spyOn(api, 'getLinkCheckStatus')
         .mockResolvedValue({
@@ -103,13 +108,25 @@ describe('fetchLinkCheckStatus thunk', () => {
         type: 'courseOptimizer/updateLoadingStatus',
       });
     });
+
+    it('with link check in progress should set current stage to 1', async () => {
+      jest
+        .spyOn(api, 'getLinkCheckStatus')
+        .mockResolvedValue({
+          linkCheckStatus: LINK_CHECK_STATUSES.IN_PROGRESS,
+        });
+
+      await fetchLinkCheckStatus(courseId)(dispatch, getState);
+
+      expect(dispatch).toHaveBeenCalledWith({
+        payload: 1,
+        type: 'courseOptimizer/updateCurrentStage',
+      });
+    });
   });
 
   describe('failed request', () => {
     it('should set request status to failed', async () => {
-      const dispatch = jest.fn();
-      const getState = jest.fn();
-      const courseId = 'course-123';
       jest
         .spyOn(api, 'getLinkCheckStatus')
         .mockRejectedValue(new Error('error'));
@@ -118,6 +135,18 @@ describe('fetchLinkCheckStatus thunk', () => {
 
       expect(dispatch).toHaveBeenCalledWith({
         payload: { status: RequestStatus.FAILED },
+        type: 'courseOptimizer/updateLoadingStatus',
+      });
+    });
+  });
+
+  describe('unauthorized request', () => {
+    it('should set request status to denied', async () => {
+      jest.spyOn(api, 'getLinkCheckStatus').mockRejectedValue({ response: { status: 403 } });
+      await fetchLinkCheckStatus(courseId)(dispatch, getState);
+
+      expect(dispatch).toHaveBeenCalledWith({
+        payload: { status: RequestStatus.DENIED },
         type: 'courseOptimizer/updateLoadingStatus',
       });
     });
@@ -132,10 +161,6 @@ describe('fetchLinkCheckStatus thunk', () => {
           linkCheckOutput: mockApiResponse.LinkCheckOutput,
           linkCheckCreatedAt: mockApiResponse.LinkCheckCreatedAt,
         });
-
-      const dispatch = jest.fn();
-      const getState = jest.fn();
-      const courseId = 'course-123';
 
       await fetchLinkCheckStatus(courseId)(dispatch, getState);
 
