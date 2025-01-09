@@ -11,12 +11,13 @@ import {
 interface Props {
   title: string;
   children: React.ReactNode;
-  redItalics: string;
+  redItalics?: string;
+  yellowItalics?: string;
   className?: string;
 }
 
 const SectionCollapsible: FC<Props> = ({
-  title, children, redItalics, className = '',
+  title, children, redItalics = '', yellowItalics = '', className = '',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const styling = 'card-lg';
@@ -25,6 +26,7 @@ const SectionCollapsible: FC<Props> = ({
       <Icon src={isOpen ? ArrowDropDown : ArrowRight} className="open-arrow" />
       <strong>{title}</strong>
       <span className="red-italics">{redItalics}</span>
+      <span className="yellow-italics">{yellowItalics}</span>
     </div>
   );
 

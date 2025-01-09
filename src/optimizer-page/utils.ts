@@ -1,21 +1,26 @@
 /* eslint-disable import/prefer-default-export */
 import { LinkCheckResult } from './types';
 
-export const countBrokenLinks = (data: LinkCheckResult | null): number[] => {
+export const countBrokenLinks = (data: LinkCheckResult | null):
+{ brokenLinksCounts: number[], lockedLinksCounts: number[] } => {
   if (!data?.sections) {
-    return [];
+    return { brokenLinksCounts: [], lockedLinksCounts: [] };
   }
-  const counts: number[] = [];
+  const brokenLinksCounts: number[] = [];
+  const lockedLinksCounts: number[] = [];
   data.sections.forEach((section) => {
-    let count = 0;
+    let brokenLinks = 0;
+    let lockedLinks = 0;
     section.subsections.forEach((subsection) => {
       subsection.units.forEach((unit) => {
         unit.blocks.forEach((block) => {
-          count += block.brokenLinks.length;
+          brokenLinks += block.brokenLinks.length;
+          lockedLinks += block.lockedLinks.length;
         });
       });
     });
-    counts.push(count);
+    brokenLinksCounts.push(brokenLinks);
+    lockedLinksCounts.push(lockedLinks);
   });
-  return counts;
+  return { brokenLinksCounts, lockedLinksCounts };
 };

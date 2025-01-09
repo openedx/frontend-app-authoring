@@ -25,9 +25,13 @@ const messages = defineMessages({
     id: 'course-authoring.course-optimizer.brokenLinksNumber',
     defaultMessage: '{count} broken links',
   },
+  lockedLinksNumber: {
+    id: 'course-authoring.course-optimizer.lockedLinksNumber',
+    defaultMessage: '{count} locked links',
+  },
   lockedInfoTooltip: {
     id: 'course-authoring.course-optimizer.lockedInfoTooltip',
-    defaultMessage: 'These course files are &quot;locked&quot, so we cannot test whether they work or not.',
+    defaultMessage: 'These course files are "locked", so we cannot verify if the link can access the file.',
   },
   brokenLinkStatus: {
     id: 'course-authoring.course-optimizer.brokenLinkStatus',

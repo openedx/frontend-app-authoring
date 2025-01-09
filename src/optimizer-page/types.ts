@@ -3,6 +3,7 @@ export interface Unit {
   displayName: string;
   blocks: {
     id: string;
+    displayName?: string;
     url: string;
     brokenLinks: string[];
     lockedLinks: string[];

@@ -5,7 +5,7 @@ import {
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
-import SectionCollapsible from '../SectionCollapsible';
+import SectionCollapsible from './SectionCollapsible';
 import BrokenLinkTable from './BrokenLinkTable';
 import LockedInfoIcon from './LockedInfoIcon';
 import { LinkCheckResult } from '../types';
@@ -30,7 +30,7 @@ const ScanResults: FC<Props> = ({ data }) => {
   const intl = useIntl();
   const [showLockedLinks, setShowLockedLinks] = useState(true);
 
-  const brokenLinkCounts = useMemo(() => countBrokenLinks(data), [data?.sections]);
+  const { brokenLinksCounts, lockedLinksCounts } = useMemo(() => countBrokenLinks(data), [data?.sections]);
 
   if (!data?.sections) {
     return <InfoCard text={intl.formatMessage(messages.noBrokenLinksCard)} />;
@@ -62,7 +62,8 @@ const ScanResults: FC<Props> = ({ data }) => {
         <SectionCollapsible
           key={section.id}
           title={section.displayName}
-          redItalics={intl.formatMessage(messages.brokenLinksNumber, { count: brokenLinkCounts[index] })}
+          redItalics={intl.formatMessage(messages.brokenLinksNumber, { count: brokenLinksCounts[index] })}
+          yellowItalics={!showLockedLinks ? '' : intl.formatMessage(messages.lockedLinksNumber, { count: lockedLinksCounts[index] })}
         >
           {section.subsections.map((subsection) => (
             <>

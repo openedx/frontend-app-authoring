@@ -11,6 +11,14 @@
     font-style: italic;
   }
 
+  .yellow-italics {
+    color: $warning-800;;
+    margin-left: 2rem;
+    font-weight: 400;
+    font-size: 80%;
+    font-style: italic;
+  }
+
   .section {
     &.is-open {
       &:not(:first-child) {

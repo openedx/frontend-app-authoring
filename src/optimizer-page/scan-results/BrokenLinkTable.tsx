@@ -50,6 +50,7 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
           ) => {
             const blockBrokenLinks = block.brokenLinks.map((link) => ({
               blockLink: <GoToBlock block={block} />,
+              blockDisplayName: block.displayName || '',
               brokenLink: <BrokenLinkHref href={link} />,
               status: (
                 <span className="link-status-text">
@@ -67,6 +68,7 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
 
             const blockLockedLinks = block.lockedLinks.map((link) => ({
               blockLink: <GoToBlock block={block} />,
+              blockDisplayName: block.displayName || '',
               brokenLink: <BrokenLinkHref href={link} />,
               status: (
                 <span className="link-status-text">
@@ -82,6 +84,14 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
           [],
         )}
         columns={[
+
+          {
+            key: 'blockDisplayName',
+            columnSortable: true,
+            onSort: () => {},
+            width: 'col-3',
+            hideHeader: true,
+          },
           {
             key: 'blockLink',
             columnSortable: true,
