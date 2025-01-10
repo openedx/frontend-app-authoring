@@ -14,8 +14,8 @@ export const countBrokenLinks = (data: LinkCheckResult | null):
     section.subsections.forEach((subsection) => {
       subsection.units.forEach((unit) => {
         unit.blocks.forEach((block) => {
-          brokenLinks += block.brokenLinks.length;
-          lockedLinks += block.lockedLinks.length;
+          brokenLinks += block.brokenLinks?.length || 0;
+          lockedLinks += block.lockedLinks?.length || 0;
         });
       });
     });
