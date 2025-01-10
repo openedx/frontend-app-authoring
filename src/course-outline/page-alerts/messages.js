@@ -121,6 +121,21 @@ const messages = defineMessages({
     defaultMessage: 'Network error',
     description: 'Generic network error alert.',
   },
+  forbiddenAlert: {
+    id: 'course-authoring.course-outline.page-alert.forbidden.title',
+    defaultMessage: 'Access Restricted',
+    description: 'Forbidden(403) alert title',
+  },
+  forbiddenAlertBody: {
+    id: 'course-authoring.course-outline.page-alert.forbidden.body',
+    defaultMessage: 'It looks like you’re trying to access a page you don’t have permission to view. Contact your admin if you think this is a mistake, or head back to the {LMS}.',
+    description: 'Forbidden(403) alert body',
+  },
+  forbiddenAlertLmsUrl: {
+    id: 'course-authoring.course-outline.page-alert.lms',
+    defaultMessage: 'LMS',
+    description: 'LMS base redirection url',
+  },
 });
 
 export default messages;

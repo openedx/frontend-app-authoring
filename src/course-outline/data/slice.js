@@ -104,7 +104,7 @@ const slice = createSlice({
         ...payload,
       };
     },
-    fetchStatusBarSelPacedSuccess: (state, { payload }) => {
+    fetchStatusBarSelfPacedSuccess: (state, { payload }) => {
       state.statusBarData.isSelfPaced = payload.isSelfPaced;
     },
     updateSavingStatus: (state, { payload }) => {
@@ -206,7 +206,7 @@ export const {
   updateStatusBar,
   updateCourseActions,
   fetchStatusBarChecklistSuccess,
-  fetchStatusBarSelPacedSuccess,
+  fetchStatusBarSelfPacedSuccess,
   updateFetchSectionLoadingStatus,
   updateCourseLaunchQueryStatus,
   updateSavingStatus,

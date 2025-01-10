@@ -87,4 +87,5 @@ export const API_ERROR_TYPES = /** @type {const} */ ({
   networkError: 'networkError',
   serverError: 'serverError',
   unknown: 'unknown',
+  forbidden: 'forbidden',
 });

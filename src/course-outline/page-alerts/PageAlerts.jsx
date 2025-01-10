@@ -343,13 +343,38 @@ const PageAlerts = ({
   const renderApiErrors = () => {
     let errorList = Object.entries(errors).filter(obj => obj[1] !== null).map(([k, v]) => {
       switch (v.type) {
-        case API_ERROR_TYPES.serverError:
+        case API_ERROR_TYPES.forbidden: {
+          const description = intl.formatMessage(messages.forbiddenAlertBody, {
+            LMS: (
+              <Hyperlink
+                destination={`${getConfig().LMS_BASE_URL}`}
+                target="_blank"
+                showLaunchIcon={false}
+              >
+                {intl.formatMessage(messages.forbiddenAlertLmsUrl)}
+              </Hyperlink>
+            ),
+          });
           return {
             key: k,
-            desc: v.data || intl.formatMessage(messages.serverErrorAlertBody),
+            desc: description,
+            title: intl.formatMessage(messages.forbiddenAlert),
+            dismissible: v.dismissible,
+          };
+        }
+        case API_ERROR_TYPES.serverError: {
+          const description = (
+            <Truncate lines={2}>
+              {v.data || intl.formatMessage(messages.serverErrorAlertBody)}
+            </Truncate>
+          );
+          return {
+            key: k,
+            desc: description,
             title: intl.formatMessage(messages.serverErrorAlert),
             dismissible: v.dismissible,
           };
+        }
         case API_ERROR_TYPES.networkError:
           return {
             key: k,
@@ -378,7 +403,7 @@ const PageAlerts = ({
             dismissError={() => dispatch(dismissError(msgObj.key))}
           >
             <Alert.Heading>{msgObj.title}</Alert.Heading>
-            {msgObj.desc && <Truncate lines={2}>{msgObj.desc}</Truncate>}
+            {msgObj.desc}
           </ErrorAlert>
         ) : (
           <Alert
@@ -387,7 +412,7 @@ const PageAlerts = ({
             key={msgObj.key}
           >
             <Alert.Heading>{msgObj.title}</Alert.Heading>
-            {msgObj.desc && <Truncate lines={2}>{msgObj.desc}</Truncate>}
+            {msgObj.desc}
           </Alert>
         )
       ))
