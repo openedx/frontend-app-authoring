@@ -128,18 +128,41 @@ describe('CourseOptimizerPage', () => {
     });
 
     it('should list broken links results', async () => {
-      const { getByText, getAllByText, container } = render(<OptimizerPage />);
+      const {
+        getByText, queryAllByText, getAllByText, container,
+      } = render(<OptimizerPage />);
       expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
       fireEvent.click(getByText(messages.buttonTitle.defaultMessage));
       await waitFor(() => {
         expect(getByText('5 broken links')).toBeInTheDocument();
+        expect(getByText('5 locked links')).toBeInTheDocument();
       });
       const collapsibleTrigger = container.querySelector('.collapsible-trigger');
       expect(collapsibleTrigger).toBeInTheDocument();
       fireEvent.click(collapsibleTrigger);
       await waitFor(() => {
         expect(getAllByText(scanResultsMessages.brokenLinkStatus.defaultMessage)[0]).toBeInTheDocument();
-        expect(getAllByText(scanResultsMessages.lockedLinkStatus.defaultMessage)[0]).toBeInTheDocument();
+        expect(queryAllByText(scanResultsMessages.lockedLinkStatus.defaultMessage)[0]).toBeInTheDocument();
+      });
+    });
+
+    it('should not list locked links results when show locked links is unchecked', async () => {
+      const {
+        getByText, getAllByText, getByLabelText, queryAllByText, queryByText, container,
+      } = render(<OptimizerPage />);
+      expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
+      fireEvent.click(getByText(messages.buttonTitle.defaultMessage));
+      await waitFor(() => {
+        expect(getByText('5 broken links')).toBeInTheDocument();
+      });
+      fireEvent.click(getByLabelText(scanResultsMessages.lockedCheckboxLabel.defaultMessage));
+      const collapsibleTrigger = container.querySelector('.collapsible-trigger');
+      expect(collapsibleTrigger).toBeInTheDocument();
+      fireEvent.click(collapsibleTrigger);
+      await waitFor(() => {
+        expect(queryByText('5 locked links')).not.toBeInTheDocument();
+        expect(getAllByText(scanResultsMessages.brokenLinkStatus.defaultMessage)[0]).toBeInTheDocument();
+        expect(queryAllByText(scanResultsMessages.lockedLinkStatus.defaultMessage)?.[0]).toBeUndefined();
       });
     });
 
