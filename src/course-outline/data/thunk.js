@@ -42,7 +42,7 @@ import {
   updateStatusBar,
   updateCourseActions,
   fetchStatusBarChecklistSuccess,
-  fetchStatusBarSelPacedSuccess,
+  fetchStatusBarSelfPacedSuccess,
   updateSavingStatus,
   updateSectionList,
   updateFetchSectionLoadingStatus,
@@ -108,7 +108,7 @@ export function fetchCourseLaunchQuery({
       const data = await getCourseLaunch({
         courseId, gradedOnly, validateOras, all,
       });
-      dispatch(fetchStatusBarSelPacedSuccess({ isSelfPaced: data.isSelfPaced }));
+      dispatch(fetchStatusBarSelfPacedSuccess({ isSelfPaced: data.isSelfPaced }));
       dispatch(fetchStatusBarChecklistSuccess(getCourseLaunchChecklist(data)));
 
       dispatch(updateCourseLaunchQueryStatus({ status: RequestStatus.SUCCESSFUL }));
