@@ -84,32 +84,27 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
           [],
         )}
         columns={[
-
           {
             key: 'blockDisplayName',
-            columnSortable: true,
-            onSort: () => {},
+            columnSortable: false,
             width: 'col-3',
             hideHeader: true,
           },
           {
             key: 'blockLink',
-            columnSortable: true,
-            onSort: () => {},
+            columnSortable: false,
             width: 'col-3',
             hideHeader: true,
           },
           {
             key: 'brokenLink',
             columnSortable: false,
-            onSort: () => {},
             width: 'col-6',
             hideHeader: true,
           },
           {
             key: 'status',
             columnSortable: false,
-            onSort: () => {},
             width: 'col-6',
             hideHeader: true,
           },
