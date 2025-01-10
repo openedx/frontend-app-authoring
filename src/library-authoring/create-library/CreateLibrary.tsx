@@ -19,6 +19,7 @@ import FormikErrorFeedback from '../../generic/FormikErrorFeedback';
 import AlertError from '../../generic/alert-error';
 import { useOrganizationListData } from '../../generic/data/apiHooks';
 import SubHeader from '../../generic/sub-header/SubHeader';
+import { useStudioHome } from '../../studio-home/hooks';
 import { useCreateLibraryV2 } from './data/apiHooks';
 import messages from './messages';
 
@@ -41,6 +42,8 @@ const CreateLibrary = () => {
     data: organizationListData,
     isLoading: isOrganizationListLoading,
   } = useOrganizationListData();
+
+  const { studioHomeData: { allowToCreateNewOrg } } = useStudioHome();
 
   const handleOnClickCancel = () => {
     navigate('/libraries');
@@ -100,7 +103,12 @@ const CreateLibrary = () => {
                 <Form.Autosuggest
                   name="org"
                   isLoading={isOrganizationListLoading}
-                  onChange={(event) => formikProps.setFieldValue('org', event.selectionId)}
+                  onChange={(event) => formikProps.setFieldValue(
+                    'org',
+                    allowToCreateNewOrg
+                      ? (event.selectionId || event.userProvidedText)
+                      : event.selectionId,
+                  )}
                   placeholder={intl.formatMessage(messages.orgPlaceholder)}
                 >
                   {organizationListData ? organizationListData.map((org) => (
