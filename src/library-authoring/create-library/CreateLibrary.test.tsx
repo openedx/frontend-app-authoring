@@ -133,6 +133,40 @@ describe('<CreateLibrary />', () => {
     expect(getByText('Required field.')).toBeInTheDocument();
   });
 
+  test('can create new org if allowed', async () => {
+    axiosMock.onGet(getStudioHomeApiUrl()).reply(200, {
+      ...studioHomeMock,
+      allow_to_create_new_org: true,
+    });
+    axiosMock.onPost(getContentLibraryV2CreateApiUrl()).reply(200, {
+      id: 'library-id',
+    });
+
+    const { getByRole } = render(<RootWrapper />);
+
+    const titleInput = getByRole('textbox', { name: /library name/i });
+    userEvent.click(titleInput);
+    userEvent.type(titleInput, 'Test Library Name');
+
+    const orgInput = getByRole('combobox', { name: /organization/i });
+    userEvent.click(orgInput);
+    userEvent.type(orgInput, 'NewOrg');
+    userEvent.tab();
+
+    const slugInput = getByRole('textbox', { name: /library id/i });
+    userEvent.click(slugInput);
+    userEvent.type(slugInput, 'test_library_slug');
+
+    fireEvent.click(getByRole('button', { name: /create/i }));
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toBe(1);
+      expect(axiosMock.history.post[0].data).toBe(
+        '{"description":"","title":"Test Library Name","org":"NewOrg","slug":"test_library_slug"}',
+      );
+      expect(mockNavigate).toHaveBeenCalledWith('/library/library-id');
+    });
+  });
+
   test('show api error', async () => {
     axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
     axiosMock.onPost(getContentLibraryV2CreateApiUrl()).reply(400, {
