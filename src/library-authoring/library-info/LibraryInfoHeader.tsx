@@ -43,7 +43,7 @@ const LibraryInfoHeader = () => {
     setIsActive(true);
   };
 
-  const hanldeOnKeyDown = (event) => {
+  const handleOnKeyDown = (event) => {
     if (event.key === 'Enter') {
       handleSaveTitle(event);
     } else if (event.key === 'Escape') {
@@ -63,7 +63,7 @@ const LibraryInfoHeader = () => {
             aria-label="Title input"
             defaultValue={library.title}
             onBlur={handleSaveTitle}
-            onKeyDown={hanldeOnKeyDown}
+            onKeyDown={handleOnKeyDown}
           />
         )
         : (

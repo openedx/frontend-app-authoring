@@ -5,24 +5,23 @@
  * https://github.com/algolia/instantsearch/issues/1658
  */
 import React from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { MeiliSearch, type Filter } from 'meilisearch';
 import { union } from 'lodash';
 
 import {
   CollectionHit, ContentHit, SearchSortOption, forceArray,
 } from './data/api';
+import { TypesFilterData, useStateOrUrlSearchParam } from './hooks';
 import { useContentSearchConnection, useContentSearchResults } from './data/apiHooks';
+import { getBlockType } from '../generic/key-utils';
 
 export interface SearchContextData {
   client?: MeiliSearch;
   indexName?: string;
   searchKeywords: string;
   setSearchKeywords: React.Dispatch<React.SetStateAction<string>>;
-  blockTypesFilter: string[];
-  setBlockTypesFilter: React.Dispatch<React.SetStateAction<string[]>>;
-  problemTypesFilter: string[];
-  setProblemTypesFilter: React.Dispatch<React.SetStateAction<string[]>>;
+  typesFilter: TypesFilterData;
+  setTypesFilter: React.Dispatch<React.SetStateAction<TypesFilterData>>;
   tagsFilter: string[];
   setTagsFilter: React.Dispatch<React.SetStateAction<string[]>>;
   blockTypes: Record<string, number>;
@@ -47,64 +46,76 @@ export interface SearchContextData {
 
 const SearchContext = React.createContext<SearchContextData | undefined>(undefined);
 
-/**
- * Hook which lets you store state variables in the URL search parameters.
- *
- * It wraps useState with functions that get/set a query string
- * search parameter when returning/setting the state variable.
- *
- */
-function useStateWithUrlSearchParam<Type>(
-  defaultValue: Type,
-  paramName: string,
-  // Returns the Type equivalent of the given string value, or
-  // undefined if value is invalid.
-  fromString: (value: string | null) => Type | undefined,
-  // Returns the string equivalent of the given Type value.
-  // Returning empty string/undefined will clear the url search paramName.
-  toString: (value: Type) => string | undefined,
-): [value: Type, setter: React.Dispatch<React.SetStateAction<Type>>] {
-  const [searchParams, setSearchParams] = useSearchParams();
-  // The converted search parameter value takes precedence over the state value.
-  const returnValue: Type = fromString(searchParams.get(paramName)) ?? defaultValue;
-  // Function to update the url search parameter
-  const returnSetter: React.Dispatch<React.SetStateAction<Type>> = React.useCallback((value: Type) => {
-    setSearchParams((prevParams) => {
-      const paramValue: string = toString(value) ?? '';
-      const newSearchParams = new URLSearchParams(prevParams);
-      // If using the default paramValue, remove it from the search params.
-      if (paramValue === defaultValue) {
-        newSearchParams.delete(paramName);
-      } else {
-        newSearchParams.set(paramName, paramValue);
-      }
-      return newSearchParams;
-    }, { replace: true });
-  }, [setSearchParams]);
-
-  // Return the computed value and wrapped set state function
-  return [returnValue, returnSetter];
-}
-
 export const SearchContextProvider: React.FC<{
-  extraFilter?: Filter;
+  extraFilter?: Filter,
+  overrideTypesFilter?: TypesFilterData,
   overrideSearchSortOrder?: SearchSortOption
   children: React.ReactNode,
   closeSearchModal?: () => void,
   skipBlockTypeFetch?: boolean,
   skipUrlUpdate?: boolean,
 }> = ({
-  overrideSearchSortOrder, skipBlockTypeFetch, skipUrlUpdate, ...props
+  overrideTypesFilter,
+  overrideSearchSortOrder,
+  skipBlockTypeFetch,
+  skipUrlUpdate,
+  ...props
 }) => {
-  const [searchKeywords, setSearchKeywords] = React.useState('');
-  const [blockTypesFilter, setBlockTypesFilter] = React.useState<string[]>([]);
-  const [problemTypesFilter, setProblemTypesFilter] = React.useState<string[]>([]);
-  const [tagsFilter, setTagsFilter] = React.useState<string[]>([]);
-  const [usageKey, setUsageKey] = useStateWithUrlSearchParam(
+  // Search parameters can be set via the query string
+  // E.g. ?q=draft+text
+  // TODO -- how to sanitize search terms?
+  const [searchKeywords, setSearchKeywords] = useStateOrUrlSearchParam<string>(
+    '',
+    'q',
+    (value: string) => value || '',
+    (value: string) => value || '',
+    skipUrlUpdate,
+  );
+
+  // Block + problem types use alphanumeric plus a few other characters.
+  // E.g ?type=html&type=video&type=p.multiplechoiceresponse
+  const [internalTypesFilter, setTypesFilter] = useStateOrUrlSearchParam<TypesFilterData>(
+    new TypesFilterData(),
+    'type',
+    (value: string | null) => new TypesFilterData(value),
+    (value: TypesFilterData | undefined) => (value ? value.toString() : undefined),
+    skipUrlUpdate,
+  );
+  // Callers can override the types filter when searching, but we still preserve the user's selected state.
+  const typesFilter = overrideTypesFilter ?? internalTypesFilter;
+
+  // Tags can be almost any string value (see openedx-learning's RESERVED_TAG_CHARS)
+  // and multiple tags may be selected together.
+  // E.g ?tag=Skills+>+Abilities&tag=Skills+>+Knowledge
+  const sanitizeTag = (value: string | null | undefined): string | undefined => (
+    (value && /^[^\t;]+$/.test(value)) ? value : undefined
+  );
+  const [tagsFilter, setTagsFilter] = useStateOrUrlSearchParam<string>(
+    [],
+    'tag',
+    sanitizeTag,
+    sanitizeTag,
+    skipUrlUpdate,
+  );
+
+  // E.g ?usageKey=lb:OpenCraft:libA:problem:5714eb65-7c36-4eee-8ab9-a54ed5a95849
+  const sanitizeUsageKey = (value: string): string | undefined => {
+    try {
+      if (getBlockType(value)) {
+        return value;
+      }
+    } catch (error) {
+      // Error thrown if value cannot be parsed into a library usage key.
+      // Pass through to return below.
+    }
+    return undefined;
+  };
+  const [usageKey, setUsageKey] = useStateOrUrlSearchParam<string>(
     '',
     'usageKey',
-    (value: string) => value,
-    (value: string) => value,
+    sanitizeUsageKey,
+    sanitizeUsageKey,
+    skipUrlUpdate,
   );
 
   let extraFilter: string[] = forceArray(props.extraFilter);
@@ -112,21 +123,15 @@ export const SearchContextProvider: React.FC<{
     extraFilter = union(extraFilter, [`usage_key = "${usageKey}"`]);
   }
 
-  // The search sort order can be set via the query string
-  // E.g. ?sort=display_name:desc maps to SearchSortOption.TITLE_ZA.
   // Default sort by Most Relevant if there's search keyword(s), else by Recently Modified.
   const defaultSearchSortOrder = searchKeywords ? SearchSortOption.RELEVANCE : SearchSortOption.RECENTLY_MODIFIED;
-  let sortStateManager = React.useState<SearchSortOption>(defaultSearchSortOrder);
-  const sortUrlStateManager = useStateWithUrlSearchParam<SearchSortOption>(
+  const [searchSortOrder, setSearchSortOrder] = useStateOrUrlSearchParam<SearchSortOption>(
     defaultSearchSortOrder,
     'sort',
     (value: string) => Object.values(SearchSortOption).find((enumValue) => value === enumValue),
     (value: SearchSortOption) => value.toString(),
+    skipUrlUpdate,
   );
-  if (!skipUrlUpdate) {
-    sortStateManager = sortUrlStateManager;
-  }
-  const [searchSortOrder, setSearchSortOrder] = sortStateManager;
   // SearchSortOption.RELEVANCE is special, it means "no custom sorting", so we
   // send it to useContentSearchResults as an empty array.
   const searchSortOrderToUse = overrideSearchSortOrder ?? searchSortOrder;
@@ -137,16 +142,14 @@ export const SearchContextProvider: React.FC<{
   }
 
   const canClearFilters = (
-    blockTypesFilter.length > 0
-    || problemTypesFilter.length > 0
+    !typesFilter.isEmpty()
     || tagsFilter.length > 0
     || !!usageKey
   );
   const isFiltered = canClearFilters || (searchKeywords !== '');
   const clearFilters = React.useCallback(() => {
-    setBlockTypesFilter([]);
+    setTypesFilter((types) => types.clear());
     setTagsFilter([]);
-    setProblemTypesFilter([]);
     if (usageKey !== '') {
       setUsageKey('');
     }
@@ -161,8 +164,8 @@ export const SearchContextProvider: React.FC<{
     indexName,
     extraFilter,
     searchKeywords,
-    blockTypesFilter,
-    problemTypesFilter,
+    blockTypesFilter: [...typesFilter.blocks],
+    problemTypesFilter: [...typesFilter.problems],
     tagsFilter,
     sort,
     skipBlockTypeFetch,
@@ -174,10 +177,8 @@ export const SearchContextProvider: React.FC<{
       indexName,
       searchKeywords,
       setSearchKeywords,
-      blockTypesFilter,
-      setBlockTypesFilter,
-      problemTypesFilter,
-      setProblemTypesFilter,
+      typesFilter,
+      setTypesFilter,
       tagsFilter,
       setTagsFilter,
       extraFilter,

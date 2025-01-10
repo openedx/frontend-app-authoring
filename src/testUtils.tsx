@@ -16,6 +16,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, type RenderResult } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import {
+  generatePath,
   MemoryRouter,
   MemoryRouterProps,
   Route,
@@ -94,10 +95,7 @@ const RouterAndRoute: React.FC<RouteOptions> = ({
     const newRouterProps = { ...routerProps };
     if (!routerProps.initialEntries) {
       // Substitute the params into the URL so '/library/:libraryId' becomes '/library/lib:org:123'
-      let pathWithParams = path;
-      for (const [key, value] of Object.entries(params)) {
-        pathWithParams = pathWithParams.replaceAll(`:${key}`, value);
-      }
+      let pathWithParams = generatePath(path, params);
       if (pathWithParams.endsWith('/*')) {
         // Some routes (that contain child routes) need to end with /* in the <Route> but not in the router
         pathWithParams = pathWithParams.substring(0, pathWithParams.length - 1);

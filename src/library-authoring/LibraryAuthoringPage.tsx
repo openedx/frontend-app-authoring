@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import classNames from 'classnames';
 import { StudioFooter } from '@edx/frontend-component-footer';
@@ -16,12 +16,7 @@ import {
   Tabs,
 } from '@openedx/paragon';
 import { Add, ArrowBack, InfoOutline } from '@openedx/paragon/icons';
-import {
-  Link,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import Loading from '../generic/Loading';
 import SubHeader from '../generic/sub-header/SubHeader';
@@ -35,12 +30,14 @@ import {
   SearchContextProvider,
   SearchKeywordsField,
   SearchSortWidget,
+  TypesFilterData,
 } from '../search-manager';
-import LibraryContent, { ContentType } from './LibraryContent';
+import LibraryContent from './LibraryContent';
 import { LibrarySidebar } from './library-sidebar';
 import { useComponentPickerContext } from './common/context/ComponentPickerContext';
 import { useLibraryContext } from './common/context/LibraryContext';
 import { SidebarBodyComponentId, useSidebarContext } from './common/context/SidebarContext';
+import { ContentType, useLibraryRoutes } from './routes';
 
 import messages from './messages';
 
@@ -51,7 +48,7 @@ const HeaderActions = () => {
 
   const {
     openAddContentSidebar,
-    openInfoSidebar,
+    openLibrarySidebar,
     closeLibrarySidebar,
     sidebarComponentInfo,
   } = useSidebarContext();
@@ -60,13 +57,19 @@ const HeaderActions = () => {
 
   const infoSidebarIsOpen = sidebarComponentInfo?.type === SidebarBodyComponentId.Info;
 
-  const handleOnClickInfoSidebar = () => {
+  const { navigateTo } = useLibraryRoutes();
+  const handleOnClickInfoSidebar = useCallback(() => {
     if (infoSidebarIsOpen) {
       closeLibrarySidebar();
     } else {
-      openInfoSidebar();
+      openLibrarySidebar();
     }
-  };
+
+    if (!componentPickerMode) {
+      // Reset URL to library home
+      navigateTo({ componentId: '', collectionId: '' });
+    }
+  }, [navigateTo, sidebarComponentInfo, closeLibrarySidebar, openLibrarySidebar]);
 
   return (
     <div className="header-actions">
@@ -124,8 +127,6 @@ interface LibraryAuthoringPageProps {
 
 const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPageProps) => {
   const intl = useIntl();
-  const location = useLocation();
-  const navigate = useNavigate();
 
   const {
     isLoadingPage: isLoadingStudioHome,
@@ -139,28 +140,33 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     libraryData,
     isLoadingLibraryData,
     showOnlyPublished,
+    componentId,
+    collectionId,
   } = useLibraryContext();
   const { openInfoSidebar, sidebarComponentInfo } = useSidebarContext();
 
-  const [activeKey, setActiveKey] = useState<ContentType>(ContentType.home);
+  const { insideCollections, insideComponents, navigateTo } = useLibraryRoutes();
 
-  useEffect(() => {
-    const currentPath = location.pathname.split('/').pop();
-
-    if (componentPickerMode || currentPath === libraryId || currentPath === '') {
-      setActiveKey(ContentType.home);
-    } else if (currentPath && currentPath in ContentType) {
-      setActiveKey(ContentType[currentPath] || ContentType.home);
+  // The activeKey determines the currently selected tab.
+  const getActiveKey = () => {
+    if (componentPickerMode) {
+      return ContentType.home;
     }
-  }, []);
+    if (insideCollections) {
+      return ContentType.collections;
+    }
+    if (insideComponents) {
+      return ContentType.components;
+    }
+    return ContentType.home;
+  };
+  const [activeKey, setActiveKey] = useState<ContentType>(getActiveKey);
 
   useEffect(() => {
     if (!componentPickerMode) {
-      openInfoSidebar();
+      openInfoSidebar(componentId, collectionId);
     }
   }, []);
-
-  const [searchParams] = useSearchParams();
 
   if (isLoadingLibraryData) {
     return <Loading />;
@@ -181,10 +187,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
   const handleTabChange = (key: ContentType) => {
     setActiveKey(key);
     if (!componentPickerMode) {
-      navigate({
-        pathname: key,
-        search: searchParams.toString(),
-      });
+      navigateTo({ contentType: key });
     }
   };
 
@@ -218,6 +221,9 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     extraFilter.push(activeTypeFilters[activeKey]);
   }
 
+  // Disable filtering by block/problem type when viewing the Collections tab.
+  const overrideTypesFilter = insideCollections ? new TypesFilterData() : undefined;
+
   return (
     <div className="d-flex">
       <div className="flex-grow-1">
@@ -237,6 +243,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
         <Container className="px-4 mt-4 mb-5 library-authoring-page">
           <SearchContextProvider
             extraFilter={extraFilter}
+            overrideTypesFilter={overrideTypesFilter}
           >
             <SubHeader
               title={<SubHeaderTitle title={libraryData.title} />}
@@ -258,7 +265,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
             <ActionRow className="my-3">
               <SearchKeywordsField className="mr-3" />
               <FilterByTags />
-              <FilterByBlockType disabled={activeKey === ContentType.collections} />
+              {!insideCollections && <FilterByBlockType />}
               <ClearFiltersButton />
               <ActionRow.Spacer />
               <SearchSortWidget />

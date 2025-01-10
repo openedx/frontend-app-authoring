@@ -16,7 +16,7 @@ type BaseComponentCardProps = {
   numChildren?: number,
   tags: ContentHitTags,
   actions: React.ReactNode,
-  openInfoSidebar: () => void
+  onSelect: () => void
 };
 
 const BaseComponentCard = ({
@@ -26,7 +26,7 @@ const BaseComponentCard = ({
   numChildren,
   tags,
   actions,
-  openInfoSidebar,
+  onSelect,
 } : BaseComponentCardProps) => {
   const tagCount = useMemo(() => {
     if (!tags) {
@@ -42,10 +42,10 @@ const BaseComponentCard = ({
     <Container className="library-component-card">
       <Card
         isClickable
-        onClick={openInfoSidebar}
+        onClick={onSelect}
         onKeyDown={(e: React.KeyboardEvent) => {
           if (['Enter', ' '].includes(e.key)) {
-            openInfoSidebar();
+            onSelect();
           }
         }}
       >
