@@ -15,6 +15,7 @@ const CustomFormattedDate = ({ date }: { date: string | Date }) => (
 type HistoryWidgedProps = {
   modified: string | Date | null;
   created: string | Date | null;
+  lastPublished?: string | Date | null;
 };
 
 /**
@@ -32,8 +33,15 @@ type HistoryWidgedProps = {
 const HistoryWidget = ({
   modified,
   created,
+  lastPublished,
 }: HistoryWidgedProps) => (
   <Stack className="history-widget-bar small" gap={3}>
+    {lastPublished && (
+      <div>
+        <div className="text-muted"><FormattedMessage {...messages.lastPublishedTitle} /> </div>
+        <CustomFormattedDate date={lastPublished} />
+      </div>
+    )}
     {modified && (
       <div>
         <div className="text-muted"><FormattedMessage {...messages.lastModifiedTitle} /> </div>

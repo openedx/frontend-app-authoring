@@ -166,8 +166,7 @@ const CollectionDetails = () => {
           {intl.formatMessage(messages.detailsTabHistoryTitle)}
         </h3>
         <HistoryWidget
-          created={collection.created ? new Date(collection.created) : null}
-          modified={collection.modified ? new Date(collection.modified) : null}
+          {...collection}
         />
       </div>
     </Stack>
