@@ -20,6 +20,7 @@ import { CourseUpdates } from './course-updates';
 import { CourseUnit, IframeProvider } from './course-unit';
 import { Certificates } from './certificates';
 import CourseExportPage from './export-page/CourseExportPage';
+import CourseOptimizerPage from './optimizer-page/CourseOptimizerPage';
 import CourseImportPage from './import-page/CourseImportPage';
 import { DECODED_ROUTES } from './constants';
 import CourseChecklist from './course-checklist';
@@ -117,6 +118,10 @@ const CourseAuthoringRoutes = () => {
         <Route
           path="export"
           element={<PageWrap><CourseExportPage courseId={courseId} /></PageWrap>}
+        />
+        <Route
+          path="optimizer"
+          element={<PageWrap><CourseOptimizerPage courseId={courseId} /></PageWrap>}
         />
         <Route
           path="checklists"
