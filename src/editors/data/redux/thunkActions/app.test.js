@@ -186,6 +186,7 @@ describe('app thunkActions', () => {
       thunkActions.fetchCourseDetails = () => 'fetchCourseDetails';
       thunkActions.initialize(testValue)(dispatch);
       expect(dispatch.mock.calls).toEqual([
+        [{ type: 'resetEditor' }],
         [actions.app.initialize(testValue)],
         [thunkActions.fetchBlock()],
       ]);
@@ -207,6 +208,7 @@ describe('app thunkActions', () => {
       };
       thunkActions.initialize(data)(dispatch);
       expect(dispatch.mock.calls).toEqual([
+        [{ type: 'resetEditor' }],
         [actions.app.initialize(data)],
         [actions.app.initializeEditor()],
       ]);
@@ -236,6 +238,7 @@ describe('app thunkActions', () => {
       };
       thunkActions.initialize(data)(dispatch);
       expect(dispatch.mock.calls).toEqual([
+        [{ type: 'resetEditor' }],
         [actions.app.initialize(data)],
         [thunkActions.fetchBlock()],
         [thunkActions.fetchUnit()],
@@ -273,6 +276,7 @@ describe('app thunkActions', () => {
       };
       thunkActions.initialize(data)(dispatch);
       expect(dispatch.mock.calls).toEqual([
+        [{ type: 'resetEditor' }],
         [actions.app.initialize(data)],
         [thunkActions.fetchBlock()],
         [thunkActions.fetchUnit()],
@@ -310,6 +314,7 @@ describe('app thunkActions', () => {
       };
       thunkActions.initialize(data)(dispatch);
       expect(dispatch.mock.calls).toEqual([
+        [{ type: 'resetEditor' }],
         [actions.app.initialize(data)],
         [thunkActions.fetchBlock()],
         [thunkActions.fetchUnit()],
