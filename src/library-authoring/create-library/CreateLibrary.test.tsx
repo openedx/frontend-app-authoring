@@ -88,6 +88,12 @@ describe('<CreateLibrary />', () => {
     userEvent.click(titleInput);
     userEvent.type(titleInput, 'Test Library Name');
 
+    // We cannot create a new org, and so we're restricted to the allowed list
+    const orgOptions = screen.getByTestId('autosuggest-iconbutton');
+    userEvent.click(orgOptions);
+    expect(screen.getByText('org1')).toBeInTheDocument();
+    ['org2', 'org3', 'org4', 'org5'].forEach((org) => expect(screen.queryByText(org)).not.toBeInTheDocument());
+
     const orgInput = await screen.findByRole('combobox', { name: /organization/i });
     userEvent.click(orgInput);
     userEvent.type(orgInput, 'NewOrg');
@@ -108,7 +114,6 @@ describe('<CreateLibrary />', () => {
     axiosMock.onGet(getStudioHomeApiUrl()).reply(200, {
       ...studioHomeMock,
       allow_to_create_new_org: true,
-      allowToCreateNewOrg: true,
     });
     axiosMock.onPost(getContentLibraryV2CreateApiUrl()).reply(200, {
       id: 'library-id',
@@ -119,6 +124,11 @@ describe('<CreateLibrary />', () => {
     const titleInput = await screen.findByRole('textbox', { name: /library name/i });
     userEvent.click(titleInput);
     userEvent.type(titleInput, 'Test Library Name');
+
+    // We can create a new org, so we're also allowed to use any existing org
+    const orgOptions = screen.getByTestId('autosuggest-iconbutton');
+    userEvent.click(orgOptions);
+    ['org1', 'org2', 'org3', 'org4', 'org5'].forEach((org) => expect(screen.queryByText(org)).toBeInTheDocument());
 
     const orgInput = await screen.findByRole('combobox', { name: /organization/i });
     userEvent.click(orgInput);

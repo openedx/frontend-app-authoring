@@ -39,11 +39,22 @@ const CreateLibrary = () => {
   } = useCreateLibraryV2();
 
   const {
-    data: organizationListData,
+    data: allOrganizations,
     isLoading: isOrganizationListLoading,
   } = useOrganizationListData();
 
-  const { studioHomeData: { allowToCreateNewOrg } } = useStudioHome();
+  const {
+    studioHomeData: {
+      allowedOrganizationsForLibraries,
+      allowToCreateNewOrg,
+    },
+  } = useStudioHome();
+
+  const organizations = (
+    allowToCreateNewOrg
+      ? allOrganizations
+      : allowedOrganizationsForLibraries
+  ) || [];
 
   const handleOnClickCancel = () => {
     navigate('/libraries');
@@ -111,9 +122,9 @@ const CreateLibrary = () => {
                   )}
                   placeholder={intl.formatMessage(messages.orgPlaceholder)}
                 >
-                  {organizationListData ? organizationListData.map((org) => (
+                  {organizations.map((org) => (
                     <Form.AutosuggestOption key={org} id={org}>{org}</Form.AutosuggestOption>
-                  )) : []}
+                  ))}
                 </Form.Autosuggest>
                 <FormikErrorFeedback name="org">
                   <Form.Text>{intl.formatMessage(messages.orgHelp)}</Form.Text>
