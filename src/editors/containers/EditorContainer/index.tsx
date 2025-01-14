@@ -94,7 +94,6 @@ const EditorContainer: React.FC<Props> = ({
   const onSave = () => {
     setSaved(true);
     handleSave();
-    dispatch({ type: 'resetEditor' });
   };
   // Stops user from navigating away if they have unsaved changes.
   usePromptIfDirty(() => {
@@ -110,7 +109,6 @@ const EditorContainer: React.FC<Props> = ({
       openCancelConfirmModal();
     } else {
       handleCancel();
-      dispatch({ type: 'resetEditor' });
     }
   };
   return (

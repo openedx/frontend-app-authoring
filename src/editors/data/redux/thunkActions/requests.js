@@ -449,6 +449,7 @@ export default StrictDict({
   fetchBlock,
   fetchStudioView,
   fetchUnit,
+  createBlock,
   saveBlock,
   fetchImages,
   fetchVideos,

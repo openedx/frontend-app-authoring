@@ -17,17 +17,6 @@ jest.spyOn(editorCmsApi, 'fetchCourseImages').mockImplementation(async () => ( /
   { data: { assets: [], start: 0, end: 0, page: 0, pageSize: 50, totalCount: 0 } }
 ));
 // Mock out the 'get ancestors' API:
-jest.spyOn(editorCmsApi, 'fetchByUnitId').mockImplementation(async () => ({
-  status: 200,
-  data: {
-    ancestors: [{
-      id: 'block-v1:Org+TS100+24+type@vertical+block@parent',
-      display_name: 'You-Knit? The Test Unit',
-      category: 'vertical',
-      has_children: true,
-    }],
-  },
-}));
 
 const isDirtyMock = jest.fn();
 jest.mock('../TextEditor/hooks', () => ({
@@ -60,6 +49,17 @@ describe('EditorContainer', () => {
     jest.spyOn(window, 'removeEventListener');
     jest.spyOn(mockEvent, 'preventDefault');
     Object.defineProperty(mockEvent, 'returnValue', { writable: true });
+    jest.spyOn(editorCmsApi, 'fetchByUnitId').mockImplementation(async () => ({
+      status: 200,
+      data: {
+        ancestors: [{
+          id: 'block-v1:Org+TS100+24+type@vertical+block@parent',
+          display_name: 'You-Knit? The Test Unit',
+          category: 'vertical',
+          has_children: true,
+        }],
+      },
+    }));
   });
 
   afterEach(() => {

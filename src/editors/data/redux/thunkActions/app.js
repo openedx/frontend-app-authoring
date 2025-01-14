@@ -88,6 +88,7 @@ export const fetchCourseDetails = () => (dispatch) => {
  */
 export const initialize = (data) => (dispatch) => {
   const editorType = data.blockType;
+  dispatch({ type: 'resetEditor' });
   dispatch(actions.app.initialize(data));
   if (data.blockId === '' && editorType) {
     dispatch(actions.app.initializeEditor());
@@ -139,6 +140,10 @@ export const createBlock = (content, returnToUnit) => (dispatch) => {
       dispatch(actions.app.setBlockId(response.id));
       dispatch(saveBlock(content, returnToUnit));
     },
+    onFailure: (error) => dispatch(actions.requests.failRequest({
+      requestKey: RequestKeys.createBlock,
+      error,
+    })),
   }));
 };
 
