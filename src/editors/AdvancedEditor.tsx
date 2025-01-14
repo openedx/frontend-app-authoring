@@ -22,10 +22,16 @@ const AdvancedEditor = ({ usageKey, onClose }: AdvancedEditorProps) => {
         return;
       }
 
-      if (onClose && (event.data === 'cancel-clicked' || event.data === 'save-end')) {
-        onClose();
-      } else if (event.data === 'error') {
-        showToast(intl.formatMessage(messages.advancedEditorGenericError));
+      if (event.data.type === 'xblock-event') {
+        const { eventName, data } = event.data;
+
+        if (onClose && (eventName === 'cancel-clicked'
+          || (eventName === 'save' && data.state === 'end'))
+        ) {
+          onClose();
+        } else if (eventName === 'error') {
+          showToast(intl.formatMessage(messages.advancedEditorGenericError));
+        }
       }
     };
 

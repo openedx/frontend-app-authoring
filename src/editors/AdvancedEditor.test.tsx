@@ -21,7 +21,10 @@ describe('AdvancedEditor', () => {
     render(<AdvancedEditor usageKey="test" onClose={onCloseMock} />);
 
     const messageEvent = new MessageEvent('message', {
-      data: 'cancel-clicked',
+      data: {
+        type: 'xblock-event',
+        eventName: 'cancel-clicked',
+      },
       origin: getConfig().STUDIO_BASE_URL,
     });
 
@@ -34,7 +37,13 @@ describe('AdvancedEditor', () => {
     render(<AdvancedEditor usageKey="test" onClose={onCloseMock} />);
 
     const messageEvent = new MessageEvent('message', {
-      data: 'save-end',
+      data: {
+        type: 'xblock-event',
+        eventName: 'save',
+        data: {
+          state: 'end',
+        },
+      },
       origin: getConfig().STUDIO_BASE_URL,
     });
 
@@ -49,7 +58,10 @@ describe('AdvancedEditor', () => {
     render(<AdvancedEditor usageKey="test" onClose={onCloseMock} />);
 
     const messageEvent = new MessageEvent('message', {
-      data: 'error',
+      data: {
+        type: 'xblock-event',
+        eventName: 'error',
+      },
       origin: getConfig().STUDIO_BASE_URL,
     });
 
@@ -64,7 +76,10 @@ describe('AdvancedEditor', () => {
     render(<AdvancedEditor usageKey="test" onClose={onCloseMock} />);
 
     const messageEvent = new MessageEvent('message', {
-      data: 'cancel-clicked',
+      data: {
+        type: 'xblock-event',
+        eventName: 'cancel-clicked',
+      },
       origin: 'https://invalid-origin.com',
     });
 
