@@ -25,7 +25,7 @@ const AdvancedEditor = ({ usageKey, onClose }: AdvancedEditorProps) => {
       if (event.data.type === 'xblock-event') {
         const { eventName, data } = event.data;
 
-        if (onClose && (eventName === 'cancel-clicked'
+        if (onClose && (eventName === 'cancel'
           || (eventName === 'save' && data.state === 'end'))
         ) {
           onClose();

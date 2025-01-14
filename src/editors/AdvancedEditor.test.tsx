@@ -23,7 +23,7 @@ describe('AdvancedEditor', () => {
     const messageEvent = new MessageEvent('message', {
       data: {
         type: 'xblock-event',
-        eventName: 'cancel-clicked',
+        eventName: 'cancel',
       },
       origin: getConfig().STUDIO_BASE_URL,
     });
@@ -78,7 +78,7 @@ describe('AdvancedEditor', () => {
     const messageEvent = new MessageEvent('message', {
       data: {
         type: 'xblock-event',
-        eventName: 'cancel-clicked',
+        eventName: 'cancel',
       },
       origin: 'https://invalid-origin.com',
     });
