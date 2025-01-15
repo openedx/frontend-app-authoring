@@ -76,4 +76,5 @@ module.exports = {
   platformName: 'Your Platform Name Here',
   userIsActive: true,
   allowToCreateNewOrg: false,
+  allowedOrganizationsForLibraries: ['org1'],
 };
