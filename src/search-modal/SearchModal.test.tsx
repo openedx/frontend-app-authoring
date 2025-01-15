@@ -73,4 +73,14 @@ describe('<SearchModal />', () => {
     const { findByText } = render(<RootWrapper />);
     expect(await findByText('An error occurred. Unable to load search results.')).toBeInTheDocument();
   });
+
+  it('should set focus on the search input box when loaded in the modal', async () => {
+    axiosMock.onGet(getContentSearchConfigUrl()).replyOnce(200, {
+      url: 'https://meilisearch.example.com',
+      index: 'test-index',
+      apiKey: 'test-api-key',
+    });
+    const { getByRole } = render(<RootWrapper />);
+    expect(getByRole('searchbox')).toHaveFocus();
+  });
 });

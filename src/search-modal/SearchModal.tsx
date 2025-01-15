@@ -21,7 +21,11 @@ const SearchModal: React.FC<{ courseId?: string, isOpen: boolean, onClose: () =>
       isFullscreenOnMobile
       className="courseware-search-modal"
     >
-      <SearchUI courseId={courseId} closeSearchModal={props.onClose} />
+      <SearchUI
+        courseId={courseId}
+        closeSearchModal={props.onClose}
+        autoFocus
+      />
     </ModalDialog>
   );
 };
