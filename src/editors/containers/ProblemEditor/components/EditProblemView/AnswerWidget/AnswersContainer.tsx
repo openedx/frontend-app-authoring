@@ -1,6 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import { Dropdown, Icon } from '@openedx/paragon';
@@ -8,22 +7,23 @@ import { Add } from '@openedx/paragon/icons';
 import messages from './messages';
 import { useAnswerContainer, isSingleAnswerProblem } from './hooks';
 import { actions, selectors } from '../../../../../data/redux';
-import { answerOptionProps } from '../../../../../data/services/cms/types';
-import AnswerOption from './AnswerOption';
+import { AnswerOption } from './AnswerOption';
 import Button from '../../../../../sharedComponents/Button';
-import { ProblemTypeKeys } from '../../../../../data/constants/problem';
+import { ProblemType, ProblemTypeKeys } from '../../../../../data/constants/problem';
 
-const AnswersContainer = ({
-  problemType,
-  // Redux
-  answers,
-  addAnswer,
-  addAnswerRange,
-  updateField,
-}) => {
+interface Props {
+  problemType: ProblemType;
+}
+
+export const AnswersContainer = ({ problemType }: Props) => {
   const hasSingleAnswer = isSingleAnswerProblem(problemType);
+  const answers = useSelector(selectors.problem.answers);
+  const dispatch = useDispatch();
+  const addAnswer = React.useCallback(() => dispatch(actions.problem.addAnswer), [dispatch]);
+  const addAnswerRange = React.useCallback(() => dispatch(actions.problem.addAnswerRange), [dispatch]);
+  const updateField = React.useCallback(() => dispatch(actions.problem.updateField), [dispatch]);
 
-  useAnswerContainer({ answers, problemType, updateField });
+  useAnswerContainer({ answers, updateField });
 
   return (
     <div className="answers-container border border-light-700 rounded py-4 pl-4 pr-3">
@@ -76,24 +76,3 @@ const AnswersContainer = ({
     </div>
   );
 };
-
-AnswersContainer.propTypes = {
-  problemType: PropTypes.string.isRequired,
-  answers: PropTypes.arrayOf(answerOptionProps).isRequired,
-  addAnswer: PropTypes.func.isRequired,
-  addAnswerRange: PropTypes.func.isRequired,
-  updateField: PropTypes.func.isRequired,
-};
-
-export const mapStateToProps = (state) => ({
-  answers: selectors.problem.answers(state),
-});
-
-export const mapDispatchToProps = {
-  addAnswer: actions.problem.addAnswer,
-  addAnswerRange: actions.problem.addAnswerRange,
-  updateField: actions.problem.updateField,
-};
-
-export const AnswersContainerInternal = AnswersContainer; // For testing only
-export default connect(mapStateToProps, mapDispatchToProps)(AnswersContainer);
