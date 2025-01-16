@@ -26,6 +26,9 @@ jest.spyOn(editorCmsApi, 'fetchByUnitId').mockImplementation(async () => ({
     }],
   },
 }));
+jest.mock('../library-authoring/LibraryBlock', () => ({
+  LibraryBlock: jest.fn(() => (<div>Advanced Editor Iframe</div>)),
+}));
 
 const defaultPropsHtml = {
   blockId: 'block-v1:Org+TS100+24+type@html+block@123456html',
@@ -79,9 +82,7 @@ describe('EditorPage', () => {
     expect(modalElement.classList).not.toContain('pgn__modal-xl');
   });
 
-  test('it shows an error message if there is no corresponding editor', async () => {
-    // We can edit 'html', 'problem', and 'video' blocks.
-    // But if we try to edit some other type, say 'fake', we should get an error:
+  test('it shows the Advanced Editor if there is no corresponding editor', async () => {
     jest.spyOn(editorCmsApi, 'fetchBlockById').mockImplementationOnce(async () => ( // eslint-disable-next-line
       { status: 200, data: { display_name: 'Fake Un-editable Block', category: 'fake', metadata: {}, data: '' } }
     ));
@@ -93,6 +94,6 @@ describe('EditorPage', () => {
     };
     render(<EditorPage {...defaultPropsFake} />);
 
-    expect(await screen.findByText('Error: Could Not find Editor')).toBeInTheDocument();
+    expect(await screen.findByText('Advanced Editor Iframe')).toBeInTheDocument();
   });
 });

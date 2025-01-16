@@ -1,12 +1,6 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
-
-  couldNotFindEditor: {
-    id: 'authoring.editorpage.selecteditor.error',
-    defaultMessage: 'Error: Could Not find Editor',
-    description: 'Error Message Dispayed When An unsopported Editor is desired in V2',
-  },
   dropVideoFileHere: {
     defaultMessage: 'Drag and drop video here or click to upload',
     id: 'VideoUploadEditor.dropVideoFileHere',
@@ -36,6 +30,11 @@ const messages = defineMessages({
     id: 'authoring.editorpage.libraryBlockEditWarningLink',
     defaultMessage: 'View in Library',
     description: 'Link text for opening library block in another tab.',
+  },
+  advancedEditorGenericError: {
+    id: 'authoring.advancedEditor.error.generic',
+    defaultMessage: 'An unexpected error occurred in the editor',
+    description: 'Generic error message shown when an error occurs in the Advanced Editor.',
   },
 });
 
