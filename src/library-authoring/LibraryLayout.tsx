@@ -3,7 +3,6 @@ import {
   Route,
   Routes,
   useParams,
-  useLocation,
 } from 'react-router-dom';
 
 import { ROUTES } from './routes';
@@ -23,12 +22,8 @@ const LibraryLayout = () => {
     throw new Error('Error: route is missing libraryId.');
   }
 
-  const location = useLocation();
   const context = useCallback((childPage) => (
     <LibraryProvider
-      /** We need to pass the pathname as key to the LibraryProvider to force a
-       * re-render when we navigate to a new path or page. */
-      key={location.pathname}
       libraryId={libraryId}
       /** The component picker modal to use. We need to pass it as a reference instead of
        * directly importing it to avoid the import cycle:
@@ -44,7 +39,7 @@ const LibraryLayout = () => {
         </>
       </SidebarProvider>
     </LibraryProvider>
-  ), [location.pathname]);
+  ), []);
 
   return (
     <Routes>
