@@ -6,7 +6,7 @@ import * as requests from './requests';
 // should be re-thought and cleaned up to avoid this pattern.
 // eslint-disable-next-line import/no-self-import
 import * as module from './app';
-import { actions as appActions } from '../app';
+import { actions as appActions, selectors } from '../app';
 import { actions as requestsActions } from '../requests';
 import { RequestKeys } from '../../constants/requests';
 
@@ -90,6 +90,7 @@ export const initialize = (data) => (dispatch) => {
   const editorType = data.blockType;
   dispatch({ type: 'resetEditor' });
   dispatch(actions.app.initialize(data));
+
   if (data.blockId === '' && editorType) {
     dispatch(actions.app.initializeEditor());
     return;
@@ -109,7 +110,6 @@ export const initialize = (data) => (dispatch) => {
       dispatch(module.fetchCourseDetails());
       break;
     case 'html':
-      if (isLibraryKey(data.learningContextId)) { dispatch(actions.app.resetImages()); }
       dispatch(module.fetchImages({ pageNumber: 0 }));
       break;
     default:
@@ -131,6 +131,8 @@ export const saveBlock = (content, returnToUnit) => (dispatch) => {
   }));
 };
 
+const imagesNewBlock = [];
+
 /**
  * @param {func} onSuccess
  */
@@ -138,7 +140,21 @@ export const createBlock = (content, returnToUnit) => (dispatch) => {
   dispatch(requests.createBlock({
     onSuccess: (response) => {
       dispatch(actions.app.setBlockId(response.id));
-      dispatch(saveBlock(content, returnToUnit));
+      imagesNewBlock.forEach(({ file, url }) => {
+        dispatch(requests.uploadAsset({
+          asset: file,
+          onSuccess: async (resp) => {
+            const imagePath = `/${resp.data.asset.portableUrl}`;
+            const reader = new FileReader();
+            reader.addEventListener('load', () => {
+              const imageBS64 = reader.result.toString();
+              content = content.replace(imageBS64, imagePath);
+              dispatch(saveBlock(content, returnToUnit));
+            });
+            reader.readAsDataURL(file);
+          },
+        }));
+      });
     },
     onFailure: (error) => dispatch(actions.requests.failRequest({
       requestKey: RequestKeys.createBlock,
@@ -147,7 +163,25 @@ export const createBlock = (content, returnToUnit) => (dispatch) => {
   }));
 };
 
-export const uploadAsset = ({ file, setSelection }) => (dispatch) => {
+export const uploadAsset = ({ file, setSelection }) => (dispatch, getState) => {
+  if (selectors.isCreateBlock(getState())) {
+    console.debug(file);
+    const tempFileURL = URL.createObjectURL(file);
+    const tempImage = {
+      displayName: file.name,
+      url: tempFileURL,
+      externalUrl: tempFileURL,
+      portableUrl: tempFileURL,
+      thumbnail: tempFileURL,
+      id: file.name,
+      locked: false,
+    };
+
+    imagesNewBlock.push({ url: tempFileURL, file });
+    setSelection(tempImage);
+    return;
+  }
+
   dispatch(requests.uploadAsset({
     asset: file,
     onSuccess: (response) => setSelection(camelizeKeys(response.data.asset)),
