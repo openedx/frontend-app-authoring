@@ -8,6 +8,7 @@ const initialState = {
   [RequestKeys.fetchUnit]: { status: RequestStates.inactive },
   [RequestKeys.fetchBlock]: { status: RequestStates.inactive },
   [RequestKeys.fetchStudioView]: { status: RequestStates.inactive },
+  [RequestKeys.createBlock]: { status: RequestStates.inactive },
   [RequestKeys.saveBlock]: { status: RequestStates.inactive },
   [RequestKeys.uploadAsset]: { status: RequestStates.inactive },
   [RequestKeys.allowThumbnailUpload]: { status: RequestStates.inactive },
