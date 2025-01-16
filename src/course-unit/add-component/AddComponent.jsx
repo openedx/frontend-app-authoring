@@ -23,7 +23,7 @@ const AddComponent = ({ blockId, handleCreateNewCourseXBlock }) => {
   const [isOpenAdvanced, openAdvanced, closeAdvanced] = useToggle(false);
   const [isOpenHtml, openHtml, closeHtml] = useToggle(false);
   const [isOpenOpenAssessment, openOpenAssessment, closeOpenAssessment] = useToggle(false);
-  const { componentTemplates } = useSelector(getCourseSectionVertical);
+  const { componentTemplates = {} } = useSelector(getCourseSectionVertical);
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
   const [isSelectLibraryContentModalOpen, showSelectLibraryContentModal, closeSelectLibraryContentModal] = useToggle();
   const [selectedComponents, setSelectedComponents] = useState([]);
