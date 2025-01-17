@@ -35,7 +35,13 @@ import { ToastProvider } from './generic/toast-context';
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 60_000, // If cache is up to one hour old, no need to re-fetch
+    },
+  },
+});
 
 const App = () => {
   useEffect(() => {
