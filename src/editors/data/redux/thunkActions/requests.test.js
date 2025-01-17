@@ -439,6 +439,24 @@ describe('requests thunkActions module', () => {
       });
     });
 
+    describe('batchUploadAssets', () => {
+      const assets = [new Blob(['file1']), new Blob(['file2'])];
+      testNetworkRequestAction({
+        action: requests.batchUploadAssets,
+        args: { ...fetchParams, assets },
+        expectedString: 'with upload batch assets promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.batchUploadAssets,
+          promise: assets.reduce((acc, asset) => acc.then(() => api.uploadAsset({
+            asset,
+            learningContextId: selectors.app.learningContextId(testState),
+            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+          })), Promise.resolve()),
+        },
+      });
+    });
+
     describe('uploadThumbnail', () => {
       const thumbnail = 'SoME tHumbNAil CoNtent As String';
       const videoId = 'SoME VidEOid CoNtent As String';

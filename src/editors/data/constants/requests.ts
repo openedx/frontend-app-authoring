@@ -26,6 +26,7 @@ export const RequestKeys = StrictDict({
   checkTranscriptsForImport: 'checkTranscriptsForImport',
   importTranscript: 'importTranscript',
   uploadAsset: 'uploadAsset',
+  batchUploadAssets: 'batchUploadAssets',
   fetchAdvancedSettings: 'fetchAdvancedSettings',
   fetchVideoFeatures: 'fetchVideoFeatures',
   getHandlerUrl: 'getHandlerUrl',

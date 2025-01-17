@@ -148,9 +148,36 @@ export const createBlock = ({ ...rest }) => (dispatch, getState) => {
   }));
 };
 
+export const batchUploadAssets = ({ assets, content, ...rest }) => (dispatch) => {
+  let newContent = content;
+  const promises = assets.reduce((promiseChain, asset) => promiseChain
+    .then(() => new Promise((resolve) => {
+      dispatch(module.uploadAsset({
+        asset,
+        onSuccess: (response) => {
+          const imagePath = `/${response.data.asset.portableUrl}`;
+          const reader = new FileReader();
+          reader.addEventListener('load', () => {
+            const imageBS64 = reader.result.toString();
+            newContent = newContent.replace(imageBS64, imagePath);
+            URL.revokeObjectURL(asset);
+            resolve(newContent);
+          });
+          reader.readAsDataURL(asset);
+        },
+      }));
+    })), Promise.resolve());
+
+  dispatch(module.networkRequest({
+    requestKey: RequestKeys.batchUploadAssets,
+    promise: promises,
+    ...rest,
+  }));
+};
+
 export const uploadAsset = ({ asset, ...rest }) => (dispatch, getState) => {
   const learningContextId = selectors.app.learningContextId(getState());
-  dispatch(module.networkRequest({
+  return dispatch(module.networkRequest({
     requestKey: RequestKeys.uploadAsset,
     promise: api.uploadAsset({
       learningContextId,
