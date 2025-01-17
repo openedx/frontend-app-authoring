@@ -246,6 +246,23 @@ export const apiMethods = {
       data,
     );
   },
+  uploadTranscriptV2: ({
+    handlerUrl,
+    transcript,
+    videoId,
+    language,
+    newLanguage = null,
+  }) => {
+    const data = new FormData();
+    data.append('file', transcript);
+    data.append('edx_video_id', videoId);
+    data.append('language_code', language);
+    data.append('new_language_code', newLanguage || language);
+    return post(
+      urls.uploadTrascriptXblockV2({ handlerUrl }),
+      data,
+    );
+  },
   normalizeContent: ({
     blockId,
     blockType,
@@ -344,6 +361,13 @@ export const apiMethods = {
   }) => post(
     urls.courseVideos({ studioEndpointUrl, learningContextId }),
     data,
+  ),
+  getHandlerUrl: ({
+    studioEndpointUrl,
+    blockId,
+    handlerName,
+  }) => get(
+    urls.handlerUrl({ studioEndpointUrl, blockId, handlerName }),
   ),
 };
 

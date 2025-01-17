@@ -4,6 +4,7 @@ import { RequestKeys } from '../../constants/requests';
 import api, { loadImages } from '../../services/cms/api';
 import { actions as requestsActions } from '../requests';
 import { selectors as appSelectors } from '../app';
+import { selectors as videoSelectors } from '../video';
 
 // This 'module' self-import hack enables mocking during tests.
 // See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
@@ -15,7 +16,7 @@ import { acceptedImgKeys } from '../../../sharedComponents/ImageUploadModal/Sele
 
 // Similar to `import { actions, selectors } from '..';` but avoid circular imports:
 const actions = { requests: requestsActions };
-const selectors = { app: appSelectors };
+const selectors = { app: appSelectors, video: videoSelectors };
 
 /**
  * Wrapper around a network request promise, that sends actions to the redux store to
@@ -257,17 +258,31 @@ export const uploadTranscript = ({
   language,
   ...rest
 }) => (dispatch, getState) => {
-  dispatch(module.networkRequest({
-    requestKey: RequestKeys.uploadTranscript,
-    promise: api.uploadTranscript({
-      blockId: selectors.app.blockId(getState()),
-      transcript,
-      videoId,
-      language,
-      studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
-    }),
-    ...rest,
-  }));
+  const isLibrary = selectors.app.isLibrary(getState());
+  if (isLibrary) {
+    dispatch(module.networkRequest({
+      requestKey: RequestKeys.uploadTranscript,
+      promise: api.uploadTranscriptV2({
+        handlerUrl: selectors.video.transcriptHandlerUrl(getState()),
+        transcript,
+        videoId,
+        language,
+      }),
+      ...rest,
+    }));
+  } else {
+    dispatch(module.networkRequest({
+      requestKey: RequestKeys.uploadTranscript,
+      promise: api.uploadTranscript({
+        blockId: selectors.app.blockId(getState()),
+        transcript,
+        videoId,
+        language,
+        studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+      }),
+      ...rest,
+    }));
+  }
 };
 
 export const updateTranscriptLanguage = ({
@@ -299,6 +314,18 @@ export const getTranscriptFile = ({ language, videoId, ...rest }) => (dispatch, 
       blockId: selectors.app.blockId(getState()),
       videoId,
       language,
+    }),
+    ...rest,
+  }));
+};
+
+export const getHandlerlUrl = ({ handlerName, ...rest }) => (dispatch, getState) => {
+  dispatch(module.networkRequest({
+    requestKey: RequestKeys.getHandlerlUrl,
+    promise: api.getHandlerUrl({
+      studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+      blockId: selectors.app.blockId(getState()),
+      handlerName,
     }),
     ...rest,
   }));
@@ -368,4 +395,5 @@ export default StrictDict({
   fetchAdvancedSettings,
   fetchVideoFeatures,
   uploadVideo,
+  getHandlerlUrl,
 });

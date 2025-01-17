@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
   FormattedMessage,
@@ -17,7 +17,7 @@ import {
 } from '@openedx/paragon';
 import { Add, InfoOutline } from '@openedx/paragon/icons';
 
-import { actions, selectors } from '../../../../../../data/redux';
+import { thunkActions, actions, selectors } from '../../../../../../data/redux';
 import messages from './messages';
 
 import { RequestKeys } from '../../../../../../data/constants/requests';
@@ -90,6 +90,7 @@ const TranscriptWidget = ({
   updateField,
   isUploadError,
   isDeleteError,
+  isLibrary,
   // injected
   intl,
 }) => {
@@ -97,6 +98,10 @@ const TranscriptWidget = ({
   const [showImportCard, setShowImportCard] = React.useState(true);
   const fullTextLanguages = module.hooks.transcriptLanguages(transcripts, intl);
   const hasTranscripts = module.hooks.hasTranscripts(transcripts);
+  const dispatch = useDispatch();
+  if (isLibrary) {
+    dispatch(thunkActions.video.updateTranscriptHandlerUrl());
+  }
 
   return (
     <CollapsibleFormWidget
@@ -197,6 +202,7 @@ TranscriptWidget.propTypes = {
   updateField: PropTypes.func.isRequired,
   isUploadError: PropTypes.bool.isRequired,
   isDeleteError: PropTypes.bool.isRequired,
+  isLibrary: PropTypes.bool.isRequired,
   intl: PropTypes.shape(intlShape).isRequired,
 };
 export const mapStateToProps = (state) => ({
@@ -207,6 +213,7 @@ export const mapStateToProps = (state) => ({
   allowTranscriptImport: selectors.video.allowTranscriptImport(state),
   isUploadError: selectors.requests.isFailed(state, { requestKey: RequestKeys.uploadTranscript }),
   isDeleteError: selectors.requests.isFailed(state, { requestKey: RequestKeys.deleteTranscript }),
+  isLibrary: selectors.app.isLibrary(state),
 });
 
 export const mapDispatchToProps = (dispatch) => ({
