@@ -1,5 +1,4 @@
 import { StrictDict, camelizeKeys } from '../../../utils';
-import { isLibraryKey } from '../../../../generic/key-utils';
 import * as requests from './requests';
 // This 'module' self-import hack enables mocking during tests.
 // See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
@@ -131,30 +130,28 @@ export const saveBlock = (content, returnToUnit) => (dispatch) => {
   }));
 };
 
-const imagesNewBlock = [];
-
 /**
  * @param {func} onSuccess
  */
-export const createBlock = (content, returnToUnit) => (dispatch) => {
+export const createBlock = (content, returnToUnit) => (dispatch, getState) => {
   dispatch(requests.createBlock({
     onSuccess: (response) => {
       dispatch(actions.app.setBlockId(response.id));
-      imagesNewBlock.forEach(({ file, url }) => {
-        dispatch(requests.uploadAsset({
-          asset: file,
-          onSuccess: async (resp) => {
-            const imagePath = `/${resp.data.asset.portableUrl}`;
-            const reader = new FileReader();
-            reader.addEventListener('load', () => {
-              const imageBS64 = reader.result.toString();
-              content = content.replace(imageBS64, imagePath);
-              dispatch(saveBlock(content, returnToUnit));
-            });
-            reader.readAsDataURL(file);
-          },
-        }));
-      });
+      const newImgages = Object.values(selectors.images(getState())).map((image) => image.file);
+
+      if (newImgages.length === 0) {
+        dispatch(saveBlock(content, returnToUnit));
+        return;
+      }
+      dispatch(requests.batchUploadAssets({
+        assets: newImgages,
+        content,
+        onSuccess: (updatedContent) => dispatch(saveBlock(updatedContent, returnToUnit)),
+        onFailure: (error) => dispatch(actions.requests.failRequest({
+          requestKey: RequestKeys.batchUploadAssets,
+          error,
+        })),
+      }));
     },
     onFailure: (error) => dispatch(actions.requests.failRequest({
       requestKey: RequestKeys.createBlock,
@@ -165,7 +162,6 @@ export const createBlock = (content, returnToUnit) => (dispatch) => {
 
 export const uploadAsset = ({ file, setSelection }) => (dispatch, getState) => {
   if (selectors.isCreateBlock(getState())) {
-    console.debug(file);
     const tempFileURL = URL.createObjectURL(file);
     const tempImage = {
       displayName: file.name,
@@ -175,10 +171,10 @@ export const uploadAsset = ({ file, setSelection }) => (dispatch, getState) => {
       thumbnail: tempFileURL,
       id: file.name,
       locked: false,
+      file,
     };
-
-    imagesNewBlock.push({ url: tempFileURL, file });
     setSelection(tempImage);
+    dispatch(appActions.setImages({ images: { [file.name]: tempImage }, imageCount: 1 }));
     return;
   }
 
