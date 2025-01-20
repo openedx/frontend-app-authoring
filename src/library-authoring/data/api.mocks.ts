@@ -356,7 +356,7 @@ mockLibraryBlockMetadata.dataPublished = {
   defKey: null,
   blockType: 'html',
   displayName: 'Introduction to Testing 2',
-  lastPublished: '2024-06-21T00:00:00',
+  lastPublished: '2024-06-22T00:00:00',
   publishedBy: 'Luke',
   lastDraftCreated: null,
   lastDraftCreatedBy: '2024-06-20T20:00:00Z',
