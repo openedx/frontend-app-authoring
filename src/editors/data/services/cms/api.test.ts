@@ -23,6 +23,8 @@ jest.mock('./urls', () => ({
     .mockImplementation(
       ({ studioEndpointUrl, learningContextId }) => `${studioEndpointUrl}/some_video_upload_url/${learningContextId}`,
     ),
+  handlerUrl: jest.fn().mockReturnValue('urls.handlerUrl'),
+  uploadTrascriptXblockV2: jest.fn().mockReturnValue('url.uploadTranscriptV2'),
 }));
 
 jest.mock('./utils', () => ({
@@ -149,6 +151,14 @@ describe('cms api', () => {
       it('should call get with url.courseAdvanceSettings', () => {
         apiMethods.fetchAdvancedSettings({ learningContextId, studioEndpointUrl });
         expect(get).toHaveBeenCalledWith(urls.courseAdvanceSettings({ studioEndpointUrl, learningContextId }));
+      });
+    });
+
+    describe('getHandlerUrl', () => {
+      it('should call get with url.handlerUrl', () => {
+        const handlerName = 'transcript';
+        apiMethods.getHandlerUrl({ studioEndpointUrl, blockId, handlerName });
+        expect(get).toHaveBeenCalledWith(urls.handlerUrl({ studioEndpointUrl, blockId, handlerName }));
       });
     });
 
@@ -406,6 +416,27 @@ describe('cms api', () => {
         });
         expect(post).toHaveBeenCalledWith(
           urls.videoTranscripts({ studioEndpointUrl, blockId }),
+          mockFormdata,
+        );
+      });
+    });
+    describe('uploadTranscriptV2', () => {
+      const transcript = new Blob(['dAta']);
+      it('should call post with urls.uploadTranscriptV2 and transcript data', () => {
+        const mockFormdata = new FormData();
+        const transcriptHandlerUrl = 'handlerUrl';
+        mockFormdata.append('file', transcript);
+        mockFormdata.append('edx_video_id', videoId);
+        mockFormdata.append('language_code', language);
+        mockFormdata.append('new_language_code', language);
+        apiMethods.uploadTranscriptV2({
+          handlerUrl: transcriptHandlerUrl,
+          transcript,
+          videoId,
+          language,
+        });
+        expect(post).toHaveBeenCalledWith(
+          urls.uploadTrascriptXblockV2({ transcriptHandlerUrl }),
           mockFormdata,
         );
       });

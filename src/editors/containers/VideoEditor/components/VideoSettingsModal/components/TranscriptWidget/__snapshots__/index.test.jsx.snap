@@ -242,6 +242,8 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
 </CollapsibleFormWidget>
 `;
 
+exports[`TranscriptWidget component snapshots snapshot: renders when isLibrary is true 1`] = `undefined`;
+
 exports[`TranscriptWidget component snapshots snapshots: renders as expected with allowTranscriptDownloads true 1`] = `
 <CollapsibleFormWidget
   fontSize="x-small"

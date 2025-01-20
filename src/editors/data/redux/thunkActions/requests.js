@@ -321,7 +321,7 @@ export const getTranscriptFile = ({ language, videoId, ...rest }) => (dispatch, 
 
 export const getHandlerlUrl = ({ handlerName, ...rest }) => (dispatch, getState) => {
   dispatch(module.networkRequest({
-    requestKey: RequestKeys.getHandlerlUrl,
+    requestKey: RequestKeys.getHandlerUrl,
     promise: api.getHandlerUrl({
       studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
       blockId: selectors.app.blockId(getState()),

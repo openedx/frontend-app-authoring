@@ -17,6 +17,8 @@ import {
   mediaTranscriptURL,
   videoFeatures,
   courseVideos,
+  handlerUrl,
+  uploadTrascriptXblockV2,
 } from './urls';
 
 describe('cms url methods', () => {
@@ -187,6 +189,21 @@ describe('cms url methods', () => {
       const transcriptUrl = 'this-is-a-transcript';
       expect(mediaTranscriptURL({ studioEndpointUrl, transcriptUrl }))
         .toEqual(`${studioEndpointUrl}${transcriptUrl}`);
+    });
+  });
+  describe('handlerUrl', () => {
+    it('returns url with studioEndpointUrl, blockId and handlerName', () => {
+      const handlerName = 'transcript';
+      expect(handlerUrl({ studioEndpointUrl, blockId, handlerName }))
+        .toEqual(`${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/handler_url/transcript/`);
+    });
+  });
+  describe('uploadTrascriptXblockV2', () => {
+    it('returns url with transcriptHandlerUrl', () => {
+      const handlerName = 'transcript';
+      const transcriptHandlerUrl = handlerUrl({ studioEndpointUrl, blockId, handlerName });
+      expect(uploadTrascriptXblockV2({ transcriptHandlerUrl }))
+        .toEqual(`${transcriptHandlerUrl}translation`);
     });
   });
 });

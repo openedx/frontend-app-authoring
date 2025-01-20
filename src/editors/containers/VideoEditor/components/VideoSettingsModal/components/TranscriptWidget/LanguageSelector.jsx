@@ -54,7 +54,6 @@ const LanguageSelector = ({
   language,
   // Redux
   openLanguages, // Only allow those languages not already associated with a transcript to be selected
-  transcriptHandlerUrl,
   // intl
   intl,
 
@@ -123,7 +122,6 @@ LanguageSelector.defaultProps = {
 
 LanguageSelector.propTypes = {
   openLanguages: PropTypes.arrayOf(PropTypes.string),
-  transcriptHandlerUrl: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
   language: PropTypes.string.isRequired,
   intl: intlShape.isRequired,
@@ -131,7 +129,6 @@ LanguageSelector.propTypes = {
 
 export const mapStateToProps = (state) => ({
   openLanguages: selectors.video.openLanguages(state),
-  transcriptHandlerUrl: selectors.video.transcriptHandlerUrl(state),
 });
 
 export const mapDispatchToProps = {};

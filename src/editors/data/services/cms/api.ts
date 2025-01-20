@@ -259,7 +259,7 @@ export const apiMethods = {
     data.append('language_code', language);
     data.append('new_language_code', newLanguage || language);
     return post(
-      urls.uploadTrascriptXblockV2({ handlerUrl }),
+      urls.uploadTrascriptXblockV2({ transcriptHandlerUrl: handlerUrl }),
       data,
     );
   },

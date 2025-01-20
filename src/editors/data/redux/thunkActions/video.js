@@ -383,7 +383,7 @@ export const updateTranscriptLanguage = ({ newLanguageCode, languageBeforeChange
   }));
 };
 
-export const updateTranscriptHandlerUrl = () => (dispatch, getState) => {
+export const updateTranscriptHandlerUrl = () => (dispatch) => {
   dispatch(requests.getHandlerlUrl({
     handlerName: 'studio_transcript',
     onSuccess: (response) => {

@@ -6,6 +6,7 @@ import { actions, selectors } from '../index';
 
 const testState = {
   some: 'data',
+  isLibrary: false,
 };
 
 jest.mock('../app/selectors', () => ({
@@ -18,6 +19,11 @@ jest.mock('../app/selectors', () => ({
   blockType: (state) => ({ blockType: state }),
   learningContextId: (state) => ({ learningContextId: state }),
   blockTitle: (state) => ({ title: state }),
+  isLibrary: (state) => (state.isLibrary),
+}));
+
+jest.mock('../video/selectors', () => ({
+  transcriptHandlerUrl: () => ('transcriptHandlerUrl'),
 }));
 
 jest.mock('../../services/cms/api', () => ({
@@ -35,6 +41,8 @@ jest.mock('../../services/cms/api', () => ({
   uploadTranscript: (args) => args,
   deleteTranscript: (args) => args,
   getTranscript: (args) => args,
+  getHandlerUrl: (args) => args,
+  uploadTranscriptV2: (args) => args,
   checkTranscriptsForImport: (args) => args,
   importTranscript: (args) => args,
   fetchVideoFeatures: (args) => args,
@@ -158,10 +166,11 @@ describe('requests thunkActions module', () => {
     args,
     expectedData,
     expectedString,
+    state,
   }) => {
     let dispatchedAction;
     beforeEach(() => {
-      action({ ...args, onSuccess, onFailure })(dispatch, () => testState);
+      action({ ...args, onSuccess, onFailure })(dispatch, () => state || testState);
       [[dispatchedAction]] = dispatch.mock.calls;
     });
     it('dispatches networkRequest', () => {
@@ -500,6 +509,23 @@ describe('requests thunkActions module', () => {
         },
       });
     });
+    describe('getHandlerUrl', () => {
+      const handlerName = 'transcript';
+      testNetworkRequestAction({
+        action: requests.getHandlerlUrl,
+        args: { handlerName, ...fetchParams },
+        expectedString: 'with getHandlerUrl promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.getHandlerUrl,
+          promise: api.getHandlerUrl({
+            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+            blockId: selectors.app.blockId(testState),
+            handlerName,
+          }),
+        },
+      });
+    });
     describe('updateTranscriptLanguage', () => {
       const languageBeforeChange = 'SoME laNGUage CoNtent As String';
       const newLanguageCode = 'SoME NEW laNGUage CoNtent As String';
@@ -550,6 +576,34 @@ describe('requests thunkActions module', () => {
             language,
             studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
           }),
+        },
+      });
+    });
+    describe('uploadTranscript V2', () => {
+      const language = 'SoME laNGUage CoNtent As String';
+      const videoId = 'SoME VidEOid CoNtent As String';
+      const transcript = 'SoME tRANscRIPt CoNtent As String';
+      testNetworkRequestAction({
+        action: requests.uploadTranscript,
+        args: {
+          transcript,
+          language,
+          videoId,
+          ...fetchParams,
+        },
+        expectedString: 'with uploadTranscript promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.uploadTranscript,
+          promise: api.uploadTranscriptV2({
+            handlerUrl: 'transcriptHandlerUrl',
+            transcript,
+            videoId,
+            language,
+          }),
+        },
+        state: {
+          isLibrary: true,
         },
       });
     });

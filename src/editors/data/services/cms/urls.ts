@@ -112,10 +112,10 @@ export const courseVideos = (({ studioEndpointUrl, learningContextId }) => (
   `${studioEndpointUrl}/videos/${learningContextId}`
 )) satisfies UrlFunction;
 
-export const handlerUrl = (({studioEndpointUrl, blockId, handlerName}) => (
+export const handlerUrl = (({ studioEndpointUrl, blockId, handlerName }) => (
   `${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/handler_url/${handlerName}/`
 )) satisfies UrlFunction;
 
-export const uploadTrascriptXblockV2 = (({ handlerUrl }) => (
-  `${handlerUrl}translation`
+export const uploadTrascriptXblockV2 = (({ transcriptHandlerUrl }) => (
+  `${transcriptHandlerUrl}translation`
 )) satisfies UrlFunction;
