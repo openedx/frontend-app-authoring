@@ -16,6 +16,8 @@ import * as module from './requests';
 import { isLibraryKey } from '../../../../generic/key-utils';
 import { createLibraryBlock } from '../../../../library-authoring/data/api';
 import { acceptedImgKeys } from '../../../sharedComponents/ImageUploadModal/SelectImageModal/utils';
+import { blockTypes } from '../../constants/app';
+import { AdvanceProblems, ProblemTypes } from '../../constants/problem';
 
 // Similar to `import { actions, selectors } from '..';` but avoid circular imports:
 const actions = { requests: requestsActions };
@@ -133,9 +135,18 @@ export const saveBlock = ({ content, ...rest }) => (dispatch, getState) => {
  * @param {[func]} onFailure - onFailure method ((error) => { ... })
  */
 export const createBlock = ({ ...rest }) => (dispatch, getState) => {
-  const definitionId = selectors.app.blockTitle(getState())
-    ? selectors.app.blockTitle(getState()).toLowerCase().replaceAll(' ', '-')
+  const blockType = selectors.app.blockType(getState());
+  const blockTitle = selectors.app.blockTitle(getState());
+  let definitionId = blockTitle
+    ? blockTitle.toLowerCase().replaceAll(' ', '-')
     : `${uuid4()}`;
+
+  if (blockType === blockTypes.problem) {
+    const problemTitles = new Set([...Object.values(ProblemTypes).map((problem) => problem.title),
+      ...Object.values(AdvanceProblems).map((problem) => problem.title)]);
+
+    definitionId = problemTitles.has(blockTitle) ? `${uuid4()}` : definitionId;
+  }
 
   dispatch(module.networkRequest({
     requestKey: RequestKeys.createBlock,
@@ -159,7 +170,7 @@ export const batchUploadAssets = ({ assets, content, ...rest }) => (dispatch) =>
           const reader = new FileReader();
           reader.addEventListener('load', () => {
             const imageBS64 = reader.result.toString();
-            newContent = newContent.replace(imageBS64, imagePath);
+            newContent = typeof content === 'string' ? newContent?.replace(imageBS64, imagePath) : { ...newContent, olx: newContent.olx.replace(imageBS64, imagePath) };
             URL.revokeObjectURL(asset);
             resolve(newContent);
           });
