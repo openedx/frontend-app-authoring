@@ -5,7 +5,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import type { Store } from 'redux';
 import MockAdapter from 'axios-mock-adapter';
 
@@ -80,7 +80,7 @@ describe('<SearchModal />', () => {
       index: 'test-index',
       apiKey: 'test-api-key',
     });
-    const { getByRole } = render(<RootWrapper />);
-    expect(getByRole('searchbox')).toHaveFocus();
+    render(<RootWrapper />);
+    expect(screen.getByRole('searchbox')).toHaveFocus();
   });
 });
