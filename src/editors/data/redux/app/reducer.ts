@@ -54,7 +54,6 @@ const app = createSlice({
       images: { ...state.images, ...payload.images },
       imageCount: payload.imageCount,
     }),
-    resetImages: (state) => ({ ...state, images: {}, imageCount: 0 }),
     setVideos: (state, { payload }) => ({ ...state, videos: payload }),
     setCourseDetails: (state, { payload }) => ({ ...state, courseDetails: payload }),
     setShowRawEditor: (state, { payload }) => ({
