@@ -6,7 +6,7 @@
 
   .grading-scale-segments-and-ticks {
     display: inline-block;
-    height: 3.125rem;
+    height: 3.5rem;
     width: 100%;
     border: 1px solid $black;
     overflow: hidden;
@@ -70,13 +70,9 @@
       }
 
       .grading-scale-segment-btn-remove {
-        font: normal $font-weight-normal .6875rem/1 $font-family-base;
+        font-size: x-small;
         display: none;
-        position: absolute;
-        top: -1.5625rem;
-        right: -.375rem;
-        padding: .375rem;
-        text-decoration: none;
+        margin: -2px -4px 0px 0px;
       }
 
       .grading-scale-segment-content {
