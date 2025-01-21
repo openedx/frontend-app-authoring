@@ -24,9 +24,10 @@ import { v4 as uuid4 } from 'uuid';
 import { ToastContext } from '../../generic/toast-context';
 import { useCopyToClipboard } from '../../generic/clipboard';
 import { getCanEdit } from '../../course-unit/data/selectors';
-import { useLibraryPasteClipboard, useAddComponentsToCollection } from '../data/apiHooks';
+import { useCreateLibraryBlock, useLibraryPasteClipboard, useAddComponentsToCollection } from '../data/apiHooks';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { PickLibraryContentModal } from './PickLibraryContentModal';
+import { blockTypes } from '../../editors/data/constants/app';
 
 import messages from './messages';
 
@@ -72,6 +73,7 @@ const AddContentContainer = () => {
     componentPicker,
   } = useLibraryContext();
   const updateComponentsMutation = useAddComponentsToCollection(libraryId, collectionId);
+  const createBlockMutation = useCreateLibraryBlock();
   const pasteClipboardMutation = useLibraryPasteClipboard();
   const { showToast } = useContext(ToastContext);
   const canEdit = useSelector(getCanEdit);
@@ -190,14 +192,26 @@ const AddContentContainer = () => {
   };
 
   const onCreateBlock = (blockType: string) => {
-    const mfeEditorTypes = ['html', 'problem', 'video'];
-    if (mfeEditorTypes.includes(blockType)) {
+    const suportedEditorTypes = Object.values(blockTypes);
+    if (suportedEditorTypes.includes(blockType)) {
       // linkComponent on editor close.
       openComponentEditor('', () => {}, blockType);
     } else {
-      // We can't start editing this right away so just show a toast message:
-      showToast(intl.formatMessage(messages.successCreateMessage));
-      // linkComponent(data.id);
+      createBlockMutation.mutateAsync({
+        libraryId,
+        blockType,
+        definitionId: `${uuid4()}`,
+      }).then((data) => {
+        // We can't start editing this right away so just show a toast message:
+        showToast(intl.formatMessage(messages.successCreateMessage));
+        linkComponent(data.id);
+      }).catch((error) => {
+        showToast(parseErrorMsg(
+          error,
+          messages.errorCreateMessageWithDetail,
+          messages.errorCreateMessage,
+        ));
+      });
     }
   };
 

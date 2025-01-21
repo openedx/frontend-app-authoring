@@ -60,20 +60,17 @@ describe('AddContentWorkflow test', () => {
     const newComponentButton = await screen.findByRole('button', { name: /New/ });
     fireEvent.click(newComponentButton);
 
-    // Click "Text" to create a text component
+    // Click "Text" to open the editor in creation mode
     fireEvent.click(await screen.findByRole('button', { name: /Text/ }));
-
-    // Then the editor should open
-    expect(await screen.findByRole('heading', { name: /New Text Component/ })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /Text/ })).toBeInTheDocument();
 
     // Edit the title
     fireEvent.click(screen.getByRole('button', { name: /Edit Title/ }));
     const titleInput = screen.getByPlaceholderText('Title');
     fireEvent.change(titleInput, { target: { value: 'A customized title' } });
     fireEvent.blur(titleInput);
-    await waitFor(() => expect(screen.queryByRole('heading', { name: /New Text Component/ })).not.toBeInTheDocument());
-    expect(screen.getByRole('heading', { name: /A customized title/ }));
-
+    await waitFor(() => expect(screen.queryByRole('heading', { name: /Text/ })).not.toBeInTheDocument());
+    expect(screen.getByRole('heading', { name: /A customized title/ })).toBeInTheDocument();
     // Note that TinyMCE doesn't really load properly in our test environment
     // so we can't really edit the text, but we have getContent() mocked to simulate
     // using TinyMCE to enter some new HTML.
@@ -83,10 +80,12 @@ describe('AddContentWorkflow test', () => {
       status: 200, data: { id: mockXBlockFields.usageKeyNewHtml },
     }));
 
-    // Click Save
+    // Click Save should create the component and then save the content
     const saveButton = screen.getByLabelText('Save changes and return to learning context');
     fireEvent.click(saveButton);
-    expect(saveSpy).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(saveSpy).toHaveBeenCalledTimes(1);
+    });
   });
 
   it('can create a Problem component', async () => {
@@ -96,10 +95,8 @@ describe('AddContentWorkflow test', () => {
     const newComponentButton = await screen.findByRole('button', { name: /New/ });
     fireEvent.click(newComponentButton);
 
-    // Click "Problem" to create a capa problem component
+    // Click "Problem" to create a capa problem component in the editor
     fireEvent.click(await screen.findByRole('button', { name: /Problem/ }));
-
-    // Then the editor should open
     expect(await screen.findByRole('heading', { name: /Select problem type/ })).toBeInTheDocument();
 
     // Select the type: Numerical Input
@@ -117,10 +114,12 @@ describe('AddContentWorkflow test', () => {
       status: 200, data: { id: mockXBlockFields.usageKeyNewProblem },
     }));
 
-    // Click Save
+    // Click Save should create the component and then save the content
     const saveButton = screen.getByLabelText('Save changes and return to learning context');
     fireEvent.click(saveButton);
-    expect(saveSpy).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(saveSpy).toHaveBeenCalledTimes(1);
+    });
   });
 
   it('can create a Video component', async () => {
@@ -133,8 +132,8 @@ describe('AddContentWorkflow test', () => {
     // Click "Video" to create a video component
     fireEvent.click(await screen.findByRole('button', { name: /Video/ }));
 
-    // Then the editor should open - this is the default title of a blank video in our mock
-    expect(await screen.findByRole('heading', { name: /New Video/ })).toBeInTheDocument();
+    // Then the editor should open
+    expect(await screen.findByRole('heading', { name: /Video/ })).toBeInTheDocument();
 
     // Enter the video URL
     const urlInput = await screen.findByRole('textbox', { name: 'Video URL' });
@@ -146,9 +145,11 @@ describe('AddContentWorkflow test', () => {
       status: 200, data: { id: mockXBlockFields.usageKeyNewVideo },
     }));
 
-    // Click Save
+    // Click Save should create the component and then save the content
     const saveButton = screen.getByLabelText('Save changes and return to learning context');
     fireEvent.click(saveButton);
-    expect(saveSpy).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(saveSpy).toHaveBeenCalledTimes(1);
+    });
   });
 });
