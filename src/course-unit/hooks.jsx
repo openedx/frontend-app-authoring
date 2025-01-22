@@ -1,42 +1,44 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useToggle } from '@openedx/paragon';
 
 import { RequestStatus } from '../data/constants';
 import { useCopyToClipboard } from '../generic/clipboard';
+import { useEventListener } from '../generic/hooks';
+import { COURSE_BLOCK_NAMES } from '../constants';
+import { messageTypes, PUBLISH_TYPES } from './constants';
 import {
   createNewCourseXBlock,
-  fetchCourseUnitQuery,
-  editCourseItemQuery,
-  fetchCourseSectionVerticalData,
-  fetchCourseVerticalChildrenData,
   deleteUnitItemQuery,
   duplicateUnitItemQuery,
+  editCourseItemQuery,
   editCourseUnitVisibilityAndData,
+  fetchCourseSectionVerticalData,
+  fetchCourseUnitQuery,
+  fetchCourseVerticalChildrenData,
   getCourseOutlineInfoQuery,
   patchUnitItemQuery,
 } from './data/thunk';
 import {
-  getCourseSectionVertical,
-  getCourseVerticalChildren,
-  getCourseUnitData,
-  getIsLoading,
-  getSavingStatus,
-  getErrorMessage,
-  getSequenceStatus,
-  getStaticFileNotices,
   getCanEdit,
   getCourseOutlineInfo,
+  getCourseSectionVertical,
+  getCourseUnitData,
+  getCourseVerticalChildren,
+  getErrorMessage,
+  getIsLoading,
   getMovedXBlockParams,
+  getSavingStatus,
+  getSequenceStatus,
+  getStaticFileNotices,
 } from './data/selectors';
 import {
   changeEditTitleFormOpen,
-  updateQueryPendingStatus,
   updateMovedXBlockParams,
+  updateQueryPendingStatus,
 } from './data/slice';
 import { useIframe } from './context/hooks';
-import { messageTypes, PUBLISH_TYPES } from './constants';
 
 export const useCourseUnit = ({ courseId, blockId }) => {
   const dispatch = useDispatch();
@@ -49,7 +51,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const isLoading = useSelector(getIsLoading);
   const errorMessage = useSelector(getErrorMessage);
   const sequenceStatus = useSelector(getSequenceStatus);
-  const { draftPreviewLink, publishedPreviewLink } = useSelector(getCourseSectionVertical);
+  const { draftPreviewLink, publishedPreviewLink, xblockInfo = {} } = useSelector(getCourseSectionVertical);
   const courseVerticalChildren = useSelector(getCourseVerticalChildren);
   const staticFileNotices = useSelector(getStaticFileNotices);
   const navigate = useNavigate();
@@ -60,9 +62,10 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const { currentlyVisibleToStudents } = courseUnit;
   const { sharedClipboardData, showPasteXBlock, showPasteUnit } = useCopyToClipboard(canEdit);
   const { canPasteComponent } = courseVerticalChildren;
-
-  const unitTitle = courseUnit.metadata?.displayName || '';
+  const { displayName: unitTitle, category: unitCategory } = xblockInfo;
   const sequenceId = courseUnit.ancestorInfo?.ancestors[0].id;
+  const isUnitVerticalType = unitCategory === COURSE_BLOCK_NAMES.vertical.id;
+  const isUnitLibraryType = unitCategory === COURSE_BLOCK_NAMES.libraryContent.id;
 
   const headerNavigationsActions = {
     handleViewLive: () => {
@@ -71,6 +74,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     handlePreview: () => {
       window.open(draftPreviewLink, '_blank');
     },
+    handleEdit: () => {},
   };
 
   const handleTitleEdit = () => {
@@ -87,7 +91,9 @@ export const useCourseUnit = ({ courseId, blockId }) => {
       () => sendMessageToIframe(messageTypes.completeManageXBlockAccess, { locator: id }),
       blockId,
     ));
-    closeModalFn();
+    if (typeof closeModalFn === 'function') {
+      closeModalFn();
+    }
   };
 
   const handleTitleEditSubmit = (displayName) => {
@@ -155,6 +161,17 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     navigate(`/course/${courseId}/container/${movedXBlockParams.targetParentLocator}`);
   };
 
+  const receiveMessage = useCallback(({ data }) => {
+    const { payload, type } = data;
+
+    if (type === messageTypes.handleViewXBlockContent) {
+      const { usageId } = payload;
+      navigate(`/course/${courseId}/container/${usageId}/${sequenceId}`);
+    }
+  }, [courseId, sequenceId]);
+
+  useEventListener('message', receiveMessage);
+
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
       dispatch(updateQueryPendingStatus(true));
@@ -180,6 +197,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     sequenceId,
     courseUnit,
     unitTitle,
+    unitCategory,
     errorMessage,
     sequenceStatus,
     savingStatus,
@@ -187,6 +205,8 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     currentlyVisibleToStudents,
     isLoading,
     isTitleEditFormOpen,
+    isUnitVerticalType,
+    isUnitLibraryType,
     sharedClipboardData,
     showPasteXBlock,
     showPasteUnit,
@@ -207,3 +227,35 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     handleNavigateToTargetUnit,
   };
 };
+
+/**
+ * Custom hook to determine the layout grid configuration based on unit category and type.
+ *
+ * @param {string} unitCategory - The category of the unit. This may influence future layout logic.
+ * @param {boolean} isUnitLibraryType - A flag indicating whether the unit is of library content type.
+ * @returns {Object} - An object representing the layout configuration for different screen sizes.
+ *                     The configuration includes keys like 'lg', 'md', 'sm', 'xs', and 'xl',
+ *                     each specifying an array of layout spans.
+ */
+export const useLayoutGrid = (unitCategory, isUnitLibraryType) => (
+  useMemo(() => {
+    const layouts = {
+      fullWidth: {
+        lg: [{ span: 12 }, { span: 0 }],
+        md: [{ span: 12 }, { span: 0 }],
+        sm: [{ span: 12 }, { span: 0 }],
+        xs: [{ span: 12 }, { span: 0 }],
+        xl: [{ span: 12 }, { span: 0 }],
+      },
+      default: {
+        lg: [{ span: 8 }, { span: 4 }],
+        md: [{ span: 8 }, { span: 4 }],
+        sm: [{ span: 8 }, { span: 3 }],
+        xs: [{ span: 9 }, { span: 3 }],
+        xl: [{ span: 9 }, { span: 3 }],
+      },
+    };
+
+    return isUnitLibraryType ? layouts.fullWidth : layouts.default;
+  }, [unitCategory])
+);

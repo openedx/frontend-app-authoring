@@ -69,11 +69,11 @@ export function fetchCourseSectionVerticalData(courseId, sequenceId) {
       dispatch(updateLoadingCourseSectionVerticalDataStatus({ status: RequestStatus.SUCCESSFUL }));
       dispatch(updateModel({
         modelType: 'sequences',
-        model: courseSectionVerticalData.sequence,
+        model: courseSectionVerticalData.sequence || [],
       }));
       dispatch(updateModels({
         modelType: 'units',
-        models: courseSectionVerticalData.units,
+        models: courseSectionVerticalData.units || [],
       }));
       dispatch(fetchStaticFileNoticesSuccess(JSON.parse(localStorage.getItem('staticFileNotices'))));
       localStorage.removeItem('staticFileNotices');
@@ -102,11 +102,11 @@ export function editCourseItemQuery(itemId, displayName, sequenceId) {
           dispatch(updateLoadingCourseSectionVerticalDataStatus({ status: RequestStatus.SUCCESSFUL }));
           dispatch(updateModel({
             modelType: 'sequences',
-            model: courseSectionVerticalData.sequence,
+            model: courseSectionVerticalData.sequence || [],
           }));
           dispatch(updateModels({
             modelType: 'units',
-            models: courseSectionVerticalData.units,
+            models: courseSectionVerticalData.units || [],
           }));
           dispatch(fetchSequenceSuccess({ sequenceId }));
           dispatch(fetchCourseItemSuccess(courseUnit));

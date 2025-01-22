@@ -53,10 +53,12 @@ describe('<ComponentDetails />', () => {
   });
 
   it('should render the component history', async () => {
-    render(mockLibraryBlockMetadata.usageKeyNeverPublished);
+    render(mockLibraryBlockMetadata.usageKeyPublished);
     // Show created date
     expect(await screen.findByText('June 20, 2024')).toBeInTheDocument();
     // Show modified date
     expect(await screen.findByText('June 21, 2024')).toBeInTheDocument();
+    // Show last published date
+    expect(await screen.findByText('June 22, 2024')).toBeInTheDocument();
   });
 });

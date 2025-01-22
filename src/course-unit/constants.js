@@ -68,4 +68,5 @@ export const messageTypes = {
   toggleCourseXBlockDropdown: 'toggleCourseXBlockDropdown',
   addXBlock: 'addXBlock',
   scrollToXBlock: 'scrollToXBlock',
+  handleViewXBlockContent: 'handleViewXBlockContent',
 };

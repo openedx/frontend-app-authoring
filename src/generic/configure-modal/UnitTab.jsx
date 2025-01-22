@@ -11,6 +11,7 @@ import messages from './messages';
 
 const UnitTab = ({
   isXBlockComponent,
+  isLibraryContent,
   values,
   setFieldValue,
   showWarning,
@@ -61,7 +62,9 @@ const UnitTab = ({
       )}
       {userPartitionInfo.selectablePartitions.length > 0 && (
         <Form.Group controlId="groupSelect">
-          <h4 className="mt-3"><FormattedMessage {...messages.unitAccess} /></h4>
+          <h4 className="mt-3">
+            <FormattedMessage {...messages[isLibraryContent ? 'libraryContentAccess' : 'unitAccess']} />
+          </h4>
           <hr />
           <Form.Label as="legend" className="font-weight-bold">
             <FormattedMessage {...messages.restrictAccessTo} />
@@ -146,10 +149,12 @@ const UnitTab = ({
 
 UnitTab.defaultProps = {
   isXBlockComponent: false,
+  isLibraryContent: false,
 };
 
 UnitTab.propTypes = {
   isXBlockComponent: PropTypes.bool,
+  isLibraryContent: PropTypes.bool,
   values: PropTypes.shape({
     isVisibleToStaffOnly: PropTypes.bool.isRequired,
     discussionEnabled: PropTypes.bool,
