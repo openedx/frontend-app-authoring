@@ -111,6 +111,10 @@ describe('<LibraryAuthoringPage />', () => {
     expect(screen.getAllByText('Recently Modified').length).toEqual(1);
     expect((await screen.findAllByText('Introduction to Testing'))[0]).toBeInTheDocument();
 
+    // Search box should not have focus on page load
+    const searchBox = screen.getByRole('searchbox');
+    expect(searchBox).not.toHaveFocus();
+
     // Navigate to the components tab
     fireEvent.click(screen.getByRole('tab', { name: 'Components' }));
     // "Recently Modified" default sort shown

@@ -19,7 +19,11 @@ import EmptyStates from './EmptyStates';
 import SearchResults from './SearchResults';
 import messages from './messages';
 
-const SearchUI: React.FC<{ courseId?: string, closeSearchModal?: () => void }> = (props) => {
+const SearchUI: React.FC<{
+  courseId?: string,
+  autoFocus?: boolean,
+  closeSearchModal?: () => void,
+}> = (props) => {
   const hasCourseId = Boolean(props.courseId);
   const [searchThisCourseEnabled, setSearchThisCourse] = React.useState(hasCourseId);
   const switchToThisCourse = React.useCallback(() => setSearchThisCourse(true), []);
@@ -39,7 +43,10 @@ const SearchUI: React.FC<{ courseId?: string, closeSearchModal?: () => void }> =
       <ModalDialog.Header style={{ zIndex: 9 }} className="border-bottom">
         <ModalDialog.Title><FormattedMessage {...messages.title} /></ModalDialog.Title>
         <div className="d-flex mt-3">
-          <SearchKeywordsField className="flex-grow-1 mr-2" />
+          <SearchKeywordsField
+            className="flex-grow-1 mr-2"
+            autoFocus={props.autoFocus}
+          />
           <SelectMenu variant="primary">
             <MenuItem
               onClick={switchToThisCourse}
