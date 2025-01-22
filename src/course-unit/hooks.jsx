@@ -84,7 +84,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
       isVisible,
       groupAccess,
       isDiscussionEnabled,
-      () => sendMessageToIframe(messageTypes.completeManageXBlockAccess, null),
+      () => sendMessageToIframe(messageTypes.completeManageXBlockAccess, { locator: id }),
       blockId,
     ));
     closeModalFn();

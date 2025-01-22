@@ -229,7 +229,7 @@ export function deleteUnitItemQuery(itemId, xblockId, sendMessageToIframe) {
 
     try {
       await deleteUnitItem(xblockId);
-      sendMessageToIframe(messageTypes.completeXBlockDeleting, null);
+      sendMessageToIframe(messageTypes.completeXBlockDeleting, { locator: xblockId });
       const { userClipboard } = await getCourseSectionVerticalData(itemId);
       dispatch(updateClipboardData(userClipboard));
       const courseUnit = await getCourseUnitData(itemId);
