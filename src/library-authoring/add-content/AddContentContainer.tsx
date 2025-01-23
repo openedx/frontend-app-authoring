@@ -62,7 +62,23 @@ const AddContentButton = ({ contentType, onCreateContent } : AddContentButtonPro
     </Button>
   );
 };
-
+export const parseErrorMsg = (
+  intl,
+  error: any,
+  detailedMessage: MessageDescriptor,
+  defaultMessage: MessageDescriptor,
+) => {
+  try {
+    const { response: { data } } = error;
+    const detail = data && (Array.isArray(data) ? data.join() : String(data));
+    if (detail) {
+      return intl.formatMessage(detailedMessage, { detail });
+    }
+  } catch (_err) {
+    // ignore
+  }
+  return intl.formatMessage(defaultMessage);
+};
 const AddContentContainer = () => {
   const intl = useIntl();
   const {
@@ -80,23 +96,6 @@ const AddContentContainer = () => {
   const { showPasteXBlock, sharedClipboardData } = useCopyToClipboard(canEdit);
 
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
-
-  const parseErrorMsg = (
-    error: any,
-    detailedMessage: MessageDescriptor,
-    defaultMessage: MessageDescriptor,
-  ) => {
-    try {
-      const { response: { data } } = error;
-      const detail = data && (Array.isArray(data) ? data.join() : String(data));
-      if (detail) {
-        return intl.formatMessage(detailedMessage, { detail });
-      }
-    } catch (_err) {
-      // ignore
-    }
-    return intl.formatMessage(defaultMessage);
-  };
 
   const isBlockTypeEnabled = (blockType: string) => getConfig().LIBRARY_SUPPORTED_BLOCKS.includes(blockType);
 
@@ -184,13 +183,13 @@ const AddContentContainer = () => {
       showToast(intl.formatMessage(messages.successPasteClipboardMessage));
     }).catch((error) => {
       showToast(parseErrorMsg(
+        intl,
         error,
         messages.errorPasteClipboardMessageWithDetail,
         messages.errorPasteClipboardMessage,
       ));
     });
   };
-
   const onCreateBlock = (blockType: string) => {
     const suportedEditorTypes = Object.values(blockTypes);
     if (suportedEditorTypes.includes(blockType)) {
@@ -207,6 +206,7 @@ const AddContentContainer = () => {
         linkComponent(data.id);
       }).catch((error) => {
         showToast(parseErrorMsg(
+          intl,
           error,
           messages.errorCreateMessageWithDetail,
           messages.errorCreateMessage,

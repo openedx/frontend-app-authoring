@@ -18,6 +18,9 @@ import { useEditorContext } from '../../EditorContext';
 import TitleHeader from './components/TitleHeader';
 import * as hooks from './hooks';
 import messages from './messages';
+import { parseErrorMsg } from '../../../library-authoring/add-content/AddContentContainer';
+import libraryMessages from '../../../library-authoring/add-content/messages';
+
 import './index.scss';
 import usePromptIfDirty from '../../../generic/promptIfDirty/usePromptIfDirty';
 import CancelConfirmModal from './components/CancelConfirmModal';
@@ -81,9 +84,12 @@ const EditorContainer: React.FC<Props> = ({
   const isInitialized = hooks.isInitialized();
   const { isCancelConfirmOpen, openCancelConfirmModal, closeCancelConfirmModal } = hooks.cancelConfirmModalToggle();
   const handleCancel = hooks.handleCancel({ onClose, returnFunction });
+  const { createFailed, createFailedError } = hooks.createFailed();
   const disableSave = !isInitialized;
   const saveFailed = hooks.saveFailed();
   const clearSaveFailed = hooks.clearSaveError({ dispatch });
+  const clearCreateFailed = hooks.clearCreateError({ dispatch });
+
   const handleSave = hooks.handleSaveClicked({
     dispatch,
     getContent,
@@ -113,6 +119,16 @@ const EditorContainer: React.FC<Props> = ({
   };
   return (
     <EditorModalWrapper onClose={confirmCancelIfDirty}>
+      {createFailed && (
+        <Toast show onClose={clearCreateFailed}>
+          {parseErrorMsg(
+            intl,
+            createFailedError,
+            libraryMessages.errorCreateMessageWithDetail,
+            libraryMessages.errorCreateMessage,
+          )}
+        </Toast>
+      )}
       {saveFailed && (
         <Toast show onClose={clearSaveFailed}>
           <FormattedMessage {...messages.contentSaveFailed} />
