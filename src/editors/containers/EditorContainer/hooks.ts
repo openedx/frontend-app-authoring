@@ -9,6 +9,7 @@ import * as appHooks from '../../hooks';
 
 export const {
   clearSaveError,
+  clearCreateError,
   navigateCallback,
   nullMethod,
   saveBlock,
@@ -90,3 +91,14 @@ export const isInitialized = () => useSelector(selectors.app.isInitialized);
 export const saveFailed = () => useSelector((rootState) => (
   selectors.requests.isFailed(rootState, { requestKey: RequestKeys.saveBlock })
 ));
+
+export const createFailed = () => ({
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  createFailed: useSelector((rootState) => (
+    selectors.requests.isFailed(rootState, { requestKey: RequestKeys.createBlock })
+  )),
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  createFailedError: useSelector((rootState) => (
+    selectors.requests.error(rootState, { requestKey: RequestKeys.createBlock })
+  )),
+});
