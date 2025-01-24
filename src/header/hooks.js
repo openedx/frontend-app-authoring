@@ -18,6 +18,10 @@ export const useContentMenuItems = courseId => {
       title: intl.formatMessage(messages['header.links.outline']),
     },
     {
+      href: `/course/${courseId}/libraries`,
+      title: intl.formatMessage(messages['header.links.libraries']),
+    },
+    {
       href: waffleFlags.useNewUpdatesPage ? `/course/${courseId}/course_info` : `${studioBaseUrl}/course_info/${courseId}`,
       title: intl.formatMessage(messages['header.links.updates']),
     },
