@@ -23,8 +23,6 @@ import { fetchLibraryData } from '../data/thunks';
 const TabsSection = ({
   showNewCourseContainer,
   onClickNewCourse,
-  isShowProcessing,
-  isPaginationCoursesEnabled,
   librariesV1Enabled,
   librariesV2Enabled,
 }) => {
@@ -94,12 +92,10 @@ const TabsSection = ({
           coursesDataItems={courses}
           showNewCourseContainer={showNewCourseContainer}
           onClickNewCourse={onClickNewCourse}
-          isShowProcessing={isShowProcessing}
           isLoading={isLoadingCourses}
           isFailed={isFailedCoursesPage}
           numPages={numPages}
           coursesCount={coursesCount}
-          isEnabledPagination={isPaginationCoursesEnabled}
         />
       </Tab>,
     );
@@ -196,15 +192,9 @@ const TabsSection = ({
   );
 };
 
-TabsSection.defaultProps = {
-  isPaginationCoursesEnabled: false,
-};
-
 TabsSection.propTypes = {
   showNewCourseContainer: PropTypes.bool.isRequired,
   onClickNewCourse: PropTypes.func.isRequired,
-  isShowProcessing: PropTypes.bool.isRequired,
-  isPaginationCoursesEnabled: PropTypes.bool,
   librariesV1Enabled: PropTypes.bool,
   librariesV2Enabled: PropTypes.bool,
 };
