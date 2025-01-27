@@ -178,7 +178,7 @@ describe('<TabsSection />', () => {
       render({ isPaginationCoursesEnabled: true });
       axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
       axiosMock.onGet(courseApiLinkV2).reply(200, generateGetStudioCoursesApiResponseV2());
-      await executeThunk(fetchStudioHomeData('', true, {}, true), store.dispatch);
+      await executeThunk(fetchStudioHomeData('', true, {}), store.dispatch);
       const data = generateGetStudioCoursesApiResponseV2();
       const coursesLength = data.results.courses.length;
       const totalItems = data.count;
