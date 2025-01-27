@@ -88,6 +88,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
       isVisible,
       groupAccess,
       isDiscussionEnabled,
+      () => sendMessageToIframe(messageTypes.completeManageXBlockAccess, { locator: id }),
       blockId,
     ));
     if (typeof closeModalFn === 'function') {
@@ -119,15 +120,19 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   };
 
   const handleCreateNewCourseXBlock = (body, callback) => (
-    dispatch(createNewCourseXBlock(body, callback, blockId))
+    dispatch(createNewCourseXBlock(body, callback, blockId, sendMessageToIframe))
   );
 
   const unitXBlockActions = {
     handleDelete: (XBlockId) => {
-      dispatch(deleteUnitItemQuery(blockId, XBlockId));
+      dispatch(deleteUnitItemQuery(blockId, XBlockId, sendMessageToIframe));
     },
     handleDuplicate: (XBlockId) => {
-      dispatch(duplicateUnitItemQuery(blockId, XBlockId));
+      dispatch(duplicateUnitItemQuery(
+        blockId,
+        XBlockId,
+        (courseKey, locator) => sendMessageToIframe(messageTypes.completeXBlockDuplicating, { courseKey, locator }),
+      ));
     },
   };
 
@@ -142,7 +147,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
       currentParentLocator,
       isMoving: false,
       callbackFn: () => {
-        sendMessageToIframe(messageTypes.refreshXBlock, null);
+        sendMessageToIframe(messageTypes.rollbackMovedXBlock, { locator: sourceLocator });
         window.scrollTo({ top: 0, behavior: 'smooth' });
       },
     }));
