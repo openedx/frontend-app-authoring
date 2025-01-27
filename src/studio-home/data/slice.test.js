@@ -17,7 +17,7 @@ describe('updateStudioHomeCoursesCustomParams action', () => {
     studioHomeData: {},
     studioHomeCoursesRequestParams: {
       currentPage: 1,
-      search: undefined,
+      search: '',
       order: 'display_name',
       archivedOnly: undefined,
       activeOnly: undefined,

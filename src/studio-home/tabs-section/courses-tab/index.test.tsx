@@ -12,7 +12,6 @@ import { initialState } from '../../factories/mockApiResponses';
 import CoursesTab from '.';
 
 const onClickNewCourse = jest.fn();
-const isShowProcessing = false;
 const isLoading = false;
 const isFailed = false;
 const numPages = 1;
@@ -40,12 +39,10 @@ const renderComponent = (overrideProps = {}, studioHomeState = {}) => {
           coursesDataItems={studioHomeMock.courses}
           showNewCourseContainer={showNewCourseContainer}
           onClickNewCourse={onClickNewCourse}
-          isShowProcessing={isShowProcessing}
           isLoading={isLoading}
           isFailed={isFailed}
           numPages={numPages}
           coursesCount={coursesCount}
-          isEnabledPagination={isEnabledPagination}
           {...overrideProps}
         />
       </IntlProvider>
