@@ -27,6 +27,7 @@ export const simpleSelectors = [
   stateKeys.allowVideoSharing,
   stateKeys.thumbnail,
   stateKeys.transcripts,
+  stateKeys.transcriptHandlerUrl,
   stateKeys.selectedVideoTranscriptUrls,
   stateKeys.allowTranscriptDownloads,
   stateKeys.duration,

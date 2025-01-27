@@ -30,7 +30,7 @@ describe('VideoPreviewWidget', () => {
       expect(screen.queryByText('No transcripts added')).toBeInTheDocument();
     });
 
-    test('hides transcripts section in preview for libraries', () => {
+    test('renders transcripts section in preview for libraries', () => {
       render(
         <VideoPreviewWidget
           videoSource="some-source"
@@ -41,7 +41,7 @@ describe('VideoPreviewWidget', () => {
           thumbnail=""
         />,
       );
-      expect(screen.queryByText('No transcripts added')).not.toBeInTheDocument();
+      expect(screen.queryByText('No transcripts added')).toBeInTheDocument();
     });
   });
 });
