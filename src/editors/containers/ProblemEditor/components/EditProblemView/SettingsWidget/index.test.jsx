@@ -74,6 +74,39 @@ describe('SettingsWidget', () => {
     });
   });
 
+  describe('isLibrary', () => {
+    const libraryProps = {
+      ...props,
+      isLibrary: true,
+    };
+    test('snapshot: renders Settings widget page', () => {
+      const showAdvancedSettingsCardsProps = {
+        isAdvancedCardsVisible: false,
+        setResetTrue: jest.fn().mockName('showAdvancedSettingsCards.setResetTrue'),
+      };
+      showAdvancedSettingsCards.mockReturnValue(showAdvancedSettingsCardsProps);
+      expect(shallow(<SettingsWidget {...libraryProps} />).snapshot).toMatchSnapshot();
+    });
+    test('snapshot: renders Settings widget page advanced settings visible', () => {
+      const showAdvancedSettingsCardsProps = {
+        isAdvancedCardsVisible: true,
+        setResetTrue: jest.fn().mockName('showAdvancedSettingsCards.setResetTrue'),
+      };
+      showAdvancedSettingsCards.mockReturnValue(showAdvancedSettingsCardsProps);
+      expect(shallow(<SettingsWidget {...libraryProps} />).snapshot).toMatchSnapshot();
+    });
+    test('snapshot: renders Settings widget for Advanced Problem with correct widgets', () => {
+      const showAdvancedSettingsCardsProps = {
+        isAdvancedCardsVisible: true,
+        setResetTrue: jest.fn().mockName('showAdvancedSettingsCards.setResetTrue'),
+      };
+      showAdvancedSettingsCards.mockReturnValue(showAdvancedSettingsCardsProps);
+      expect(shallow(
+        <SettingsWidget problemType={ProblemTypeKeys.ADVANCED} {...libraryProps} />,
+      ).snapshot).toMatchSnapshot();
+    });
+  });
+
   describe('mapDispatchToProps', () => {
     test('setBlockTitle from actions.app.setBlockTitle', () => {
       expect(mapDispatchToProps.setBlockTitle).toEqual(actions.app.setBlockTitle);
