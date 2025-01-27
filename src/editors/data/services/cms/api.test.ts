@@ -24,7 +24,7 @@ jest.mock('./urls', () => ({
       ({ studioEndpointUrl, learningContextId }) => `${studioEndpointUrl}/some_video_upload_url/${learningContextId}`,
     ),
   handlerUrl: jest.fn().mockReturnValue('urls.handlerUrl'),
-  uploadTrascriptXblockV2: jest.fn().mockReturnValue('url.uploadTranscriptV2'),
+  trascriptXblockV2: jest.fn().mockReturnValue('url.transcriptXblockV2'),
 }));
 
 jest.mock('./utils', () => ({
@@ -436,7 +436,7 @@ describe('cms api', () => {
           language,
         });
         expect(post).toHaveBeenCalledWith(
-          urls.uploadTrascriptXblockV2({ transcriptHandlerUrl }),
+          urls.trascriptXblockV2({ transcriptHandlerUrl }),
           mockFormdata,
         );
       });
@@ -452,6 +452,19 @@ describe('cms api', () => {
         });
         expect(deleteObject).toHaveBeenCalledWith(
           urls.videoTranscripts({ studioEndpointUrl, blockId }),
+          mockDeleteJSON,
+        );
+      });
+      it('should call deleteObject with urls.trascriptXblockV2 and transcript data', () => {
+        const mockDeleteJSON = { data: { lang: language, edx_video_id: videoId } };
+        const transcriptHandlerUrl = 'handlerUrl';
+        apiMethods.deleteTranscriptV2({
+          handlerUrl: transcriptHandlerUrl,
+          videoId,
+          language,
+        });
+        expect(deleteObject).toHaveBeenCalledWith(
+          urls.trascriptXblockV2({ transcriptHandlerUrl }),
           mockDeleteJSON,
         );
       });

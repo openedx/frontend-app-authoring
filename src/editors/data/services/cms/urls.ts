@@ -116,6 +116,6 @@ export const handlerUrl = (({ studioEndpointUrl, blockId, handlerName }) => (
   `${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/handler_url/${handlerName}/`
 )) satisfies UrlFunction;
 
-export const uploadTrascriptXblockV2 = (({ transcriptHandlerUrl }) => (
+export const trascriptXblockV2 = (({ transcriptHandlerUrl }) => (
   `${transcriptHandlerUrl}translation`
 )) satisfies UrlFunction;

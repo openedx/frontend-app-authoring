@@ -228,6 +228,17 @@ export const apiMethods = {
       deleteJSON,
     );
   },
+  deleteTranscriptV2: ({
+    handlerUrl,
+    language,
+    videoId,
+  }) => {
+    const deleteJSON = { data: { lang: language, edx_video_id: videoId } };
+    return deleteObject(
+      urls.trascriptXblockV2({ transcriptHandlerUrl: handlerUrl }),
+      deleteJSON,
+    );
+  },
   uploadTranscript: ({
     blockId,
     studioEndpointUrl,
@@ -259,7 +270,7 @@ export const apiMethods = {
     data.append('language_code', language);
     data.append('new_language_code', newLanguage || language);
     return post(
-      urls.uploadTrascriptXblockV2({ transcriptHandlerUrl: handlerUrl }),
+      urls.trascriptXblockV2({ transcriptHandlerUrl: handlerUrl }),
       data,
     );
   },

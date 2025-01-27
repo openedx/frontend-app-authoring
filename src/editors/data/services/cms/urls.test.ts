@@ -18,7 +18,7 @@ import {
   videoFeatures,
   courseVideos,
   handlerUrl,
-  uploadTrascriptXblockV2,
+  trascriptXblockV2,
 } from './urls';
 
 describe('cms url methods', () => {
@@ -198,11 +198,11 @@ describe('cms url methods', () => {
         .toEqual(`${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/handler_url/transcript/`);
     });
   });
-  describe('uploadTrascriptXblockV2', () => {
+  describe('trascriptXblockV2', () => {
     it('returns url with transcriptHandlerUrl', () => {
       const handlerName = 'transcript';
       const transcriptHandlerUrl = handlerUrl({ studioEndpointUrl, blockId, handlerName });
-      expect(uploadTrascriptXblockV2({ transcriptHandlerUrl }))
+      expect(trascriptXblockV2({ transcriptHandlerUrl }))
         .toEqual(`${transcriptHandlerUrl}translation`);
     });
   });

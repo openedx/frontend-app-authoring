@@ -240,16 +240,29 @@ export const importTranscript = ({ youTubeId, ...rest }) => (dispatch, getState)
 };
 
 export const deleteTranscript = ({ language, videoId, ...rest }) => (dispatch, getState) => {
-  dispatch(module.networkRequest({
-    requestKey: RequestKeys.deleteTranscript,
-    promise: api.deleteTranscript({
-      blockId: selectors.app.blockId(getState()),
-      language,
-      videoId,
-      studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
-    }),
-    ...rest,
-  }));
+  const isLibrary = selectors.app.isLibrary(getState());
+  if (isLibrary) {
+    dispatch(module.networkRequest({
+      requestKey: RequestKeys.deleteTranscript,
+      promise: api.deleteTranscriptV2({
+        language,
+        videoId,
+        handlerUrl: selectors.video.transcriptHandlerUrl(getState()),
+      }),
+      ...rest,
+    }));
+  } else {
+    dispatch(module.networkRequest({
+      requestKey: RequestKeys.deleteTranscript,
+      promise: api.deleteTranscript({
+        blockId: selectors.app.blockId(getState()),
+        language,
+        videoId,
+        studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+      }),
+      ...rest,
+    }));
+  }
 };
 
 export const uploadTranscript = ({

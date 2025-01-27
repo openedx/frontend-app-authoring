@@ -40,6 +40,7 @@ jest.mock('../../services/cms/api', () => ({
   uploadThumbnail: (args) => args,
   uploadTranscript: (args) => args,
   deleteTranscript: (args) => args,
+  deleteTranscriptV2: (args) => args,
   getTranscript: (args) => args,
   getHandlerUrl: (args) => args,
   uploadTranscriptV2: (args) => args,
@@ -451,6 +452,31 @@ describe('requests thunkActions module', () => {
             videoId,
             studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
           }),
+        },
+      });
+    });
+    describe('deleteTranscript V2', () => {
+      const language = 'SoME laNGUage CoNtent As String';
+      const videoId = 'SoME VidEOid CoNtent As String';
+      testNetworkRequestAction({
+        action: requests.deleteTranscript,
+        args: {
+          language,
+          videoId,
+          ...fetchParams,
+        },
+        expectedString: 'with deleteTranscript promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.deleteTranscript,
+          promise: api.deleteTranscriptV2({
+            handlerUrl: 'transcriptHandlerUrl',
+            videoId,
+            language,
+          }),
+        },
+        state: {
+          isLibrary: true,
         },
       });
     });
