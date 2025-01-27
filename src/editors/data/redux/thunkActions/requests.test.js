@@ -3,6 +3,7 @@ import { RequestKeys } from '../../constants/requests';
 import api from '../../services/cms/api';
 import * as requests from './requests';
 import { actions, selectors } from '../index';
+import { createLibraryBlock } from '../../../../library-authoring/data/api';
 
 const testState = {
   some: 'data',
@@ -17,7 +18,7 @@ jest.mock('../app/selectors', () => ({
   blockId: (state) => ({ blockId: state }),
   blockType: (state) => ({ blockType: state }),
   learningContextId: (state) => ({ learningContextId: state }),
-  blockTitle: (state) => ({ title: state }),
+  blockTitle: (state) => state.data,
 }));
 
 jest.mock('../../services/cms/api', () => ({
@@ -39,6 +40,10 @@ jest.mock('../../services/cms/api', () => ({
   importTranscript: (args) => args,
   fetchVideoFeatures: (args) => args,
   uploadVideo: (args) => args,
+}));
+
+jest.mock('../../../../library-authoring/data/api', () => ({
+  createLibraryBlock: ({ id, url }) => ({ id, url }),
 }));
 
 jest.mock('../../../utils', () => ({
@@ -349,6 +354,21 @@ describe('requests thunkActions module', () => {
         },
       });
     });
+    describe('createBlock', () => {
+      testNetworkRequestAction({
+        action: requests.createBlock,
+        args: { ...fetchParams },
+        expectedString: 'with create promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.createBlock,
+          promise: createLibraryBlock({
+            libraryId: selectors.app.learningContextId(testState),
+            blockType: selectors.app.blockType(testState),
+          }),
+        },
+      });
+    });
     describe('uploadAsset', () => {
       const asset = 'SoME iMage CoNtent As String';
       let uploadAsset;
@@ -404,6 +424,24 @@ describe('requests thunkActions module', () => {
           expect(uploadAsset).toHaveBeenCalledWith(expectedArgs);
           expect(parseLibraryImageData).toHaveBeenCalled();
         });
+      });
+    });
+
+    describe('batchUploadAssets', () => {
+      const assets = [new Blob(['file1']), new Blob(['file2'])];
+      testNetworkRequestAction({
+        action: requests.batchUploadAssets,
+        args: { ...fetchParams, assets },
+        expectedString: 'with upload batch assets promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.batchUploadAssets,
+          promise: assets.reduce((acc, asset) => acc.then(() => api.uploadAsset({
+            asset,
+            learningContextId: selectors.app.learningContextId(testState),
+            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+          })), Promise.resolve()),
+        },
       });
     });
 
