@@ -3,6 +3,16 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import { RequestStatus } from '../../data/constants';
 
+const studioHomeCoursesRequestParamsDefault = {
+  currentPage: 1,
+  search: '',
+  order: 'display_name',
+  archivedOnly: undefined,
+  activeOnly: undefined,
+  isFiltered: false,
+  cleanFilters: false,
+};
+
 const slice = createSlice({
   name: 'studioHome',
   initialState: {
@@ -17,15 +27,7 @@ const slice = createSlice({
       deleteNotificationSavingStatus: '',
     },
     studioHomeData: {},
-    studioHomeCoursesRequestParams: {
-      currentPage: 1,
-      search: undefined,
-      order: 'display_name',
-      archivedOnly: undefined,
-      activeOnly: undefined,
-      isFiltered: false,
-      cleanFilters: false,
-    },
+    studioHomeCoursesRequestParams: studioHomeCoursesRequestParamsDefault,
   },
   reducers: {
     updateLoadingStatuses: (state, { payload }) => {
@@ -59,6 +61,9 @@ const slice = createSlice({
     updateStudioHomeCoursesCustomParams: (state, { payload }) => {
       Object.assign(state.studioHomeCoursesRequestParams, payload);
     },
+    resetStudioHomeCoursesCustomParams: (state) => {
+      state.studioHomeCoursesRequestParams = studioHomeCoursesRequestParamsDefault;
+    },
   },
 });
 
@@ -70,6 +75,7 @@ export const {
   fetchCourseDataSuccessV2,
   fetchLibraryDataSuccess,
   updateStudioHomeCoursesCustomParams,
+  resetStudioHomeCoursesCustomParams,
 } = slice.actions;
 
 export const {

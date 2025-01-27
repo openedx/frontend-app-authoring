@@ -27,7 +27,6 @@ interface BaseProps {
   rerunLink?: string | null;
   courseKey?: string;
   isLibraries?: boolean;
-  isPaginated?: boolean;
 }
 type Props = BaseProps & (
   /** If we should open this course/library in this MFE, this is the path to the edit page, e.g. '/course/foo' */
@@ -51,7 +50,6 @@ const CardItem: React.FC<Props> = ({
   run = '',
   isLibraries = false,
   courseKey = '',
-  isPaginated = false,
   path,
   url,
 }) => {
@@ -92,48 +90,27 @@ const CardItem: React.FC<Props> = ({
         )}
         subtitle={subtitle}
         actions={showActions && (
-          isPaginated ? (
-            <Dropdown>
-              <Dropdown.Toggle
-                as={IconButton}
-                iconAs={MoreHoriz}
-                variant="primary"
-                data-testid="toggle-dropdown"
-              />
-              <Dropdown.Menu>
-                {isShowRerunLink && (
-                  <Dropdown.Item
-                    as={Link}
-                    to={rerunLink ?? ''}
-                  >
-                    {messages.btnReRunText.defaultMessage}
-                  </Dropdown.Item>
-                )}
-                <Dropdown.Item href={lmsLink}>
-                  {intl.formatMessage(messages.viewLiveBtnText)}
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          ) : (
-            <ActionRow>
-              {isShowRerunLink && (
-                <Hyperlink
-                  className="small"
-                  destination={trimSlashes(rerunLink ?? '')}
-                  key={`action-row-rerunLink-${courseKey}`}
-                >
-                  {intl.formatMessage(messages.btnReRunText)}
-                </Hyperlink>
-              )}
-              <Hyperlink
-                className="small ml-3"
-                destination={lmsLink ?? ''}
-                key={`action-row-lmsLink-${courseKey}`}
+        <Dropdown>
+          <Dropdown.Toggle
+            as={IconButton}
+            iconAs={MoreHoriz}
+            variant="primary"
+            data-testid="toggle-dropdown"
+          />
+          <Dropdown.Menu>
+            {isShowRerunLink && (
+              <Dropdown.Item
+                as={Link}
+                to={rerunLink ?? ''}
               >
-                {intl.formatMessage(messages.viewLiveBtnText)}
-              </Hyperlink>
-            </ActionRow>
-          )
+                {messages.btnReRunText.defaultMessage}
+              </Dropdown.Item>
+            )}
+            <Dropdown.Item href={lmsLink}>
+              {intl.formatMessage(messages.viewLiveBtnText)}
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
         )}
       />
     </Card>
