@@ -18,6 +18,7 @@ export interface PublishableEntityLink {
   versionDeclined: string;
   created: string;
   updated: string;
+  readyToSync: boolean;
 }
 
 export const getEntityLinksByDownstreamContext = async (downstreamContextKey: string): Promise<PublishableEntityLink[]> => {

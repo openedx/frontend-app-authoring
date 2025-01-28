@@ -1,16 +1,20 @@
 import React, { useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { Breadcrumb, Card, Collapsible, Container, Icon, Layout, Stack, Tab, Tabs } from '@openedx/paragon';
+import { KeyboardArrowDown, KeyboardArrowUp, Loop, } from '@openedx/paragon/icons';
 
 import getPageHeadTitle from '../generic/utils';
 import { useModel } from '../generic/model-store';
 import messages from './messages';
-import { Breadcrumb, Card, Collapsible, Container, Layout, Tab, Tabs } from '@openedx/paragon';
 import SubHeader from '../generic/sub-header/SubHeader';
 import { useEntityLinksByDownstreamContext } from './data/apiHooks';
-import { groupBy, keyBy, merge, tail, uniq } from 'lodash';
+import { countBy, groupBy, keyBy, merge, tail, uniq } from 'lodash';
 import { PublishableEntityLink } from './data/api';
 import { useFetchIndexDocuments } from '../search-manager/data/apiHooks';
+import classNames from 'classnames';
+import { getItemIcon } from '../generic/block-type-utils';
+import { BlockTypeLabel } from '../search-manager';
 
 interface Props {
   courseId: string;
@@ -25,6 +29,7 @@ interface LibraryCardProps {
 interface ComponentInfo {
   display_name: string;
   description: string;
+  block_type: string;
   _formatted: {
     display_name: string;
     description: string;
@@ -34,46 +39,96 @@ interface ComponentInfo {
   }[]
 }
 
+interface BlockCardProps {
+  info: ComponentInfo & PublishableEntityLink;
+}
+
 export enum CourseLibraryTabs {
   home = '',
   review = 'review',
 }
 
+const BlockCard: React.FC<BlockCardProps> = ({ info }) => {
+  const intl = useIntl();
+  const componentIcon = getItemIcon(info.block_type);
+  return (
+    <Card
+      className={classNames(
+        "my-3 shadow-none border-light-600 border",
+        {"bg-primary-100": info.readyToSync}
+      )}
+      orientation="horizontal"
+      key={info.downstreamUsageKey}
+    >
+      <Card.Section className="py-2">
+        <Stack direction="vertical" gap={2}>
+          <Stack direction="horizontal" gap={1} className="micro text-gray-500">
+            <Icon src={componentIcon} size="inline" />
+            <BlockTypeLabel blockType={info.block_type} />
+          </Stack>
+          <Stack className="small" direction="horizontal" gap={1}>
+            {info.readyToSync && <Icon src={Loop} size="xs" />}
+            {info._formatted?.display_name}
+          </Stack>
+          <div className="micro">{info._formatted?.description}</div>
+          <Breadcrumb
+            className="micro text-gray-500"
+            ariaLabel={intl.formatMessage(messages.breadcrumbAriaLabel)}
+            links={tail(info.breadcrumbs).map((breadcrumb) => ({ label: breadcrumb.display_name }))}
+            spacer={<span className="custom-spacer">/</span>}
+            linkAs='span'
+          />
+        </Stack>
+      </Card.Section>
+    </Card>
+  );
+}
+
 const LibraryCard: React.FC<LibraryCardProps> = ({ courseId, title, links }) => {
   const intl = useIntl();
-  const linksInfo = keyBy(links, 'downstreamUsageKey');
+  const linksInfo = useMemo(() => keyBy(links, 'downstreamUsageKey'), [links]);
+  const totalComponents = links.length;
+  const outOfSyncCount = useMemo(() => countBy(links, "readyToSync").true, []);;
   const downstreamKeys = useMemo(() => uniq(Object.keys(linksInfo)), [links]);
   const { data: downstreamInfo } = useFetchIndexDocuments(
-      [`context_key = "${courseId}"`, `usage_key IN ["${downstreamKeys.join('","')}"]`],
-      downstreamKeys.length,
-      ["usage_key", "display_name", "breadcrumbs", "description", "block_type"],
-      ["description:30"]
-  ) as unknown as { data: ComponentInfo[]};
-  const downstreamInfoMap = keyBy(downstreamInfo, 'usage_key');
-  const mergedData = merge(linksInfo, downstreamInfoMap);
+    [`context_key = "${courseId}"`, `usage_key IN ["${downstreamKeys.join('","')}"]`],
+    downstreamKeys.length,
+    ["usage_key", "display_name", "breadcrumbs", "description", "block_type"],
+    ["description:30"]
+  ) as unknown as { data: ComponentInfo[] };
+  const downstreamInfoMap = useMemo(() => keyBy(downstreamInfo, 'usage_key'), [downstreamInfo]);
+  const mergedData = useMemo(() => merge(linksInfo, downstreamInfoMap), [linksInfo, downstreamInfoMap]);
   return (
-    <Collapsible.Advanced className="collapsible-card">
-      <Collapsible.Trigger className="collapsible-trigger d-flex">
-        <span className="flex-grow-1">{title}</span>
-        <Collapsible.Visible whenClosed> + </Collapsible.Visible>
-        <Collapsible.Visible whenOpen> - </Collapsible.Visible>
+    <Collapsible.Advanced>
+      <Collapsible.Trigger className="bg-white shadow px-2 py-2 my-3 collapsible-trigger d-flex font-weight-normal text-dark">
+        <Collapsible.Visible whenClosed>
+          <Icon src={KeyboardArrowUp} />
+        </Collapsible.Visible>
+        <Collapsible.Visible whenOpen>
+          <Icon src={KeyboardArrowDown} />
+        </Collapsible.Visible>
+        <Stack direction="vertical" className="flex-grow-1 pl-2 x-small" gap={1}>
+          <h4>{title}</h4>
+          <Stack direction="horizontal" gap={2}>
+            <span>
+              {intl.formatMessage(messages.totalComponentLabel, { totalComponents })}
+            </span>
+            {outOfSyncCount && (
+              <>
+                <span>/</span>
+                <Icon src={Loop} size="xs" />
+                <span>
+                  {intl.formatMessage(messages.outOfSyncCountLabel, { outOfSyncCount })}
+                </span>
+              </>
+            )}
+          </Stack>
+        </Stack>
       </Collapsible.Trigger>
 
-      <Collapsible.Body className="collapsible-body">
+      <Collapsible.Body className="collapsible-body border-left border-left-purple px-2">
         {Object.values(mergedData).map(info => (
-          <Card orientation="horizontal" key={info.downstreamUsageKey}>
-            <Card.Section>
-              <div>{info._formatted?.display_name}</div>
-              <small>{info._formatted?.description}</small>
-              <Breadcrumb
-                className="x-small text-gray-500"
-                ariaLabel={intl.formatMessage(messages.breadcrumbAriaLabel)}
-                links={tail(info.breadcrumbs).map((breadcrumb) => ({label: breadcrumb.display_name}))}
-                spacer={<span className="custom-spacer">/</span>}
-                linkAs='span'
-              />
-            </Card.Section>
-          </Card>
+          <BlockCard info={info} />
         ))}
       </Collapsible.Body>
     </Collapsible.Advanced>

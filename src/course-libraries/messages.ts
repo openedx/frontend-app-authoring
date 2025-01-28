@@ -26,6 +26,16 @@ const messages = defineMessages({
     defaultMessage: 'Component breadcrumb',
     description: 'Aria label for breadcrum in component cards in course libraries page.',
   },
+  totalComponentLabel: {
+    id: 'course-authoring.course-libraries.libcard.total-component.label',
+    defaultMessage: '{totalComponents} components applied',
+    description: 'Prints total components applied from library',
+  },
+  outOfSyncCountLabel: {
+    id: 'course-authoring.course-libraries.libcard.out-of-sync.label',
+    defaultMessage: '{outOfSyncCount} components out of sync',
+    description: 'Prints number of components out of sync from library',
+  },
 });
 
 export default messages;
