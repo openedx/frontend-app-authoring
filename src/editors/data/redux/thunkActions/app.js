@@ -8,7 +8,6 @@ import * as module from './app';
 import { actions as appActions, selectors } from '../app';
 import { actions as requestsActions } from '../requests';
 import { RequestKeys } from '../../constants/requests';
-import { addComponentsToCollection } from '../../../../library-authoring/data/api';
 
 // Similar to `import { actions } from '..';` but avoid circular imports:
 const actions = {
@@ -140,13 +139,6 @@ export const createBlock = (content, returnToUnit) => (dispatch, getState) => {
       dispatch(actions.app.setBlockId(response.id));
       const newImages = Object.values(selectors.images(getState())).map((image) => image.file);
 
-      if (selectors.isLibrary(getState())) {
-        const collectionIndex = window.location.pathname.indexOf('collection');
-        const collectionId = collectionIndex !== -1 ? window.location.pathname.substring(collectionIndex).split('/')[1] : null;
-        if (collectionId) {
-          addComponentsToCollection(selectors.learningContextId(getState()), collectionId, [response.id]);
-        }
-      }
       if (newImages.length === 0) {
         dispatch(saveBlock(content, returnToUnit));
         return;

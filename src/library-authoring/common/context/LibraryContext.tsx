@@ -16,7 +16,7 @@ import { useComponentPickerContext } from './ComponentPickerContext';
 export interface ComponentEditorInfo {
   usageKey: string;
   blockType?:string
-  onClose?: () => void;
+  onClose?: (data?:any) => void;
 }
 
 export type LibraryContextData = {
@@ -39,8 +39,8 @@ export type LibraryContextData = {
   /** If the editor is open and the user is editing some component, this is the component being edited. */
   componentBeingEdited: ComponentEditorInfo | undefined;
   /** If an onClose callback is provided, it will be called when the editor is closed. */
-  openComponentEditor: (usageKey: string, onClose?: () => void, blockType?:string) => void;
-  closeComponentEditor: () => void;
+  openComponentEditor: (usageKey: string, onClose?: (data?:any) => void, blockType?:string) => void;
+  closeComponentEditor: (data?:any) => void;
   componentPicker?: typeof ComponentPicker;
 };
 
@@ -80,9 +80,9 @@ export const LibraryProvider = ({
 }: LibraryProviderProps) => {
   const [isCreateCollectionModalOpen, openCreateCollectionModal, closeCreateCollectionModal] = useToggle(false);
   const [componentBeingEdited, setComponentBeingEdited] = useState<ComponentEditorInfo | undefined>();
-  const closeComponentEditor = useCallback(() => {
+  const closeComponentEditor = useCallback((data) => {
     setComponentBeingEdited((prev) => {
-      prev?.onClose?.();
+      prev?.onClose?.(data);
       return undefined;
     });
   }, []);

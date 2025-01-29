@@ -27,8 +27,8 @@ export const ComponentEditorModal: React.FC<Record<never, never>> = () => {
   }
   const blockType = componentBeingEdited.blockType || getBlockType(componentBeingEdited.usageKey);
 
-  const onClose = () => {
-    closeComponentEditor();
+  const onClose = (data?:any) => {
+    closeComponentEditor(data);
     invalidateComponentData(queryClient, libraryId, componentBeingEdited.usageKey);
   };
 
@@ -40,7 +40,7 @@ export const ComponentEditorModal: React.FC<Record<never, never>> = () => {
       studioEndpointUrl={getConfig().STUDIO_BASE_URL}
       lmsEndpointUrl={getConfig().LMS_BASE_URL}
       onClose={onClose}
-      returnFunction={() => { onClose(); return () => {}; }}
+      returnFunction={() => onClose}
       fullScreen={false}
     />
   );
