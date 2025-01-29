@@ -473,9 +473,9 @@ export async function fetchTagsThatMatchKeyword({
     attributesToSearchOn: ['tags.taxonomy', 'tags.level0', 'tags.level1', 'tags.level2', 'tags.level3'],
     attributesToRetrieve: ['tags'],
     limit,
-    // We'd like to use 'showMatchesPosition: true' to know exactly which tags match, but it doesn't provide the
-    // detail we need; it's impossible to tell which tag at a given level matched based on the returned _matchesPosition
-    // data - https://github.com/orgs/meilisearch/discussions/550
+    // TODO: improve this - use 'showMatchesPosition: true' to know exactly which tags match. Previously it didn't
+    // provide the detail we need (https://github.com/orgs/meilisearch/discussions/550) but it has now been implemented
+    // in newer versions of Meilisearch. See https://github.com/meilisearch/meilisearch/pull/5005 which fixes it.
   });
 
   const tagSearchKeywordsLower = tagSearchKeywords.toLocaleLowerCase();
