@@ -10,7 +10,12 @@ import { initialState } from './reducer';
 // eslint-disable-next-line import/no-self-import
 import * as module from './selectors';
 import * as AppSelectors from '../app/selectors';
-import { downloadVideoTranscriptURL, downloadVideoHandoutUrl, mediaTranscriptURL } from '../../services/cms/urls';
+import {
+  downloadVideoTranscriptURL,
+  downloadVideoHandoutUrl,
+  mediaTranscriptURL,
+  downloadVideoTranscriptURLV2,
+} from '../../services/cms/urls';
 
 const stateKeys = keyStore(initialState);
 
@@ -59,6 +64,14 @@ export const getTranscriptDownloadUrl = createSelector(
   (studioEndpointUrl, blockId) => ({ language }) => downloadVideoTranscriptURL({
     studioEndpointUrl,
     blockId,
+    language,
+  }),
+);
+
+export const getTranscriptDownloadUrlV2 = createSelector(
+  [simpleSelectors.transcriptHandlerUrl],
+  (transcriptHandlerUrl) => ({ language }) => downloadVideoTranscriptURLV2({
+    transcriptHandlerUrl,
     language,
   }),
 );
@@ -135,6 +148,7 @@ export default {
   ...simpleSelectors,
   openLanguages,
   getTranscriptDownloadUrl,
+  getTranscriptDownloadUrlV2,
   buildTranscriptUrl,
   getHandoutDownloadUrl,
   videoSettings,

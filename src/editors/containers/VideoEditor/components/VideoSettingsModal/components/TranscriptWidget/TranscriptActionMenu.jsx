@@ -33,10 +33,17 @@ const TranscriptActionMenu = ({
   launchDeleteConfirmation,
   // redux
   getTranscriptDownloadUrl,
+  getTranscriptDownloadUrlV2,
   buildTranscriptUrl,
+  isLibrary,
 }) => {
   const input = fileInput({ onAddFile: module.hooks.replaceFileCallback({ language, dispatch: useDispatch() }) });
-  const downloadLink = transcriptUrl ? buildTranscriptUrl({ transcriptUrl }) : getTranscriptDownloadUrl({ language });
+  let downloadLink;
+  if (isLibrary) {
+    downloadLink = getTranscriptDownloadUrlV2({ language });
+  } else {
+    downloadLink = transcriptUrl ? buildTranscriptUrl({ transcriptUrl }) : getTranscriptDownloadUrl({ language });
+  }
   return (
     <Dropdown>
       <Dropdown.Toggle
@@ -77,12 +84,16 @@ TranscriptActionMenu.propTypes = {
   launchDeleteConfirmation: PropTypes.func.isRequired,
   // redux
   getTranscriptDownloadUrl: PropTypes.func.isRequired,
+  getTranscriptDownloadUrlV2: PropTypes.func.isRequired,
   buildTranscriptUrl: PropTypes.func.isRequired,
+  isLibrary: PropTypes.bool.isRequired,
 };
 
 export const mapStateToProps = (state) => ({
   getTranscriptDownloadUrl: selectors.video.getTranscriptDownloadUrl(state),
+  getTranscriptDownloadUrlV2: selectors.video.getTranscriptDownloadUrlV2(state),
   buildTranscriptUrl: selectors.video.buildTranscriptUrl(state),
+  isLibrary: selectors.app.isLibrary(state),
 });
 
 export const mapDispatchToProps = {

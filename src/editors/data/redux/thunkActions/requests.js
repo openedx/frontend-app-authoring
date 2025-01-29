@@ -305,31 +305,59 @@ export const updateTranscriptLanguage = ({
   videoId,
   ...rest
 }) => (dispatch, getState) => {
-  dispatch(module.networkRequest({
-    requestKey: RequestKeys.updateTranscriptLanguage,
-    promise: api.uploadTranscript({
-      blockId: selectors.app.blockId(getState()),
-      transcript: file,
-      videoId,
-      language: languageBeforeChange,
-      newLanguage: newLanguageCode,
-      studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
-    }),
-    ...rest,
-  }));
+  const isLibrary = selectors.app.isLibrary(getState());
+  if (isLibrary) {
+    dispatch(module.networkRequest({
+      requestKey: RequestKeys.updateTranscriptLanguage,
+      promise: api.uploadTranscriptV2({
+        handlerUrl: selectors.video.transcriptHandlerUrl(getState()),
+        transcript: file,
+        videoId,
+        language: languageBeforeChange,
+        newLanguage: newLanguageCode,
+      }),
+      ...rest,
+    }));
+  } else {
+    dispatch(module.networkRequest({
+      requestKey: RequestKeys.updateTranscriptLanguage,
+      promise: api.uploadTranscript({
+        blockId: selectors.app.blockId(getState()),
+        transcript: file,
+        videoId,
+        language: languageBeforeChange,
+        newLanguage: newLanguageCode,
+        studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+      }),
+      ...rest,
+    }));
+  }
 };
 
 export const getTranscriptFile = ({ language, videoId, ...rest }) => (dispatch, getState) => {
-  dispatch(module.networkRequest({
-    requestKey: RequestKeys.getTranscriptFile,
-    promise: api.getTranscript({
-      studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
-      blockId: selectors.app.blockId(getState()),
-      videoId,
-      language,
-    }),
-    ...rest,
-  }));
+  const isLibrary = selectors.app.isLibrary(getState());
+  if (isLibrary) {
+    dispatch(module.networkRequest({
+      requestKey: RequestKeys.getTranscriptFile,
+      promise: api.getTranscriptV2({
+        handlerUrl: selectors.video.transcriptHandlerUrl(getState()),
+        videoId,
+        language,
+      }),
+      ...rest,
+    }));
+  } else {
+    dispatch(module.networkRequest({
+      requestKey: RequestKeys.getTranscriptFile,
+      promise: api.getTranscript({
+        studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
+        blockId: selectors.app.blockId(getState()),
+        videoId,
+        language,
+      }),
+      ...rest,
+    }));
+  }
 };
 
 export const getHandlerlUrl = ({ handlerName, ...rest }) => (dispatch, getState) => {

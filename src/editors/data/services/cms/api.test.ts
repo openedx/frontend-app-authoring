@@ -483,6 +483,19 @@ describe('cms api', () => {
           mockJSON,
         );
       });
+      it('should call get with urls.trascriptXblockV2 and transcript data', () => {
+        const mockJSON = { data: { lang: language, edx_video_id: videoId } };
+        const transcriptHandlerUrl = 'handlerUrl';
+        apiMethods.getTranscriptV2({
+          handlerUrl: transcriptHandlerUrl,
+          videoId,
+          language,
+        });
+        expect(get).toHaveBeenCalledWith(
+          `${urls.trascriptXblockV2({ transcriptHandlerUrl })}?language_code=${language}`,
+          mockJSON,
+        );
+      });
     });
   });
   describe('processVideoIds', () => {

@@ -215,7 +215,17 @@ export const apiMethods = {
       getJSON,
     );
   },
-
+  getTranscriptV2: ({
+    handlerUrl,
+    language,
+    videoId,
+  }) => {
+    const getJSON = { data: { lang: language, edx_video_id: videoId } };
+    return get(
+      `${urls.trascriptXblockV2({ transcriptHandlerUrl: handlerUrl })}?language_code=${language}`,
+      getJSON,
+    );
+  },
   deleteTranscript: ({
     studioEndpointUrl,
     language,

@@ -42,6 +42,7 @@ jest.mock('../../services/cms/api', () => ({
   deleteTranscript: (args) => args,
   deleteTranscriptV2: (args) => args,
   getTranscript: (args) => args,
+  getTranscriptV2: (args) => args,
   getHandlerUrl: (args) => args,
   uploadTranscriptV2: (args) => args,
   checkTranscriptsForImport: (args) => args,
@@ -470,7 +471,7 @@ describe('requests thunkActions module', () => {
           ...fetchParams,
           requestKey: RequestKeys.deleteTranscript,
           promise: api.deleteTranscriptV2({
-            handlerUrl: 'transcriptHandlerUrl',
+            handlerUrl: selectors.video.transcriptHandlerUrl(testState),
             videoId,
             language,
           }),
@@ -535,6 +536,27 @@ describe('requests thunkActions module', () => {
         },
       });
     });
+    describe('getTranscriptFile V2', () => {
+      const language = 'SoME laNGUage CoNtent As String';
+      const videoId = 'SoME VidEOid CoNtent As String';
+      testNetworkRequestAction({
+        action: requests.getTranscriptFile,
+        args: { language, videoId, ...fetchParams },
+        expectedString: 'with getTranscriptFile promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.getTranscriptFile,
+          promise: api.getTranscriptV2({
+            handlerUrl: selectors.video.transcriptHandlerUrl(testState),
+            language,
+            videoId,
+          }),
+        },
+        state: {
+          isLibrary: true,
+        },
+      });
+    });
     describe('getHandlerUrl', () => {
       const handlerName = 'transcript';
       testNetworkRequestAction({
@@ -578,7 +600,34 @@ describe('requests thunkActions module', () => {
         },
       });
     });
-
+    describe('updateTranscriptLanguage V2', () => {
+      const languageBeforeChange = 'SoME laNGUage CoNtent As String';
+      const newLanguageCode = 'SoME NEW laNGUage CoNtent As String';
+      const videoId = 'SoME VidEOid CoNtent As String';
+      testNetworkRequestAction({
+        action: requests.updateTranscriptLanguage,
+        args: {
+          languageBeforeChange,
+          newLanguageCode,
+          videoId,
+          ...fetchParams,
+        },
+        expectedString: 'with uploadTranscript promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.updateTranscriptLanguage,
+          promise: api.uploadTranscriptV2({
+            videoId,
+            language: languageBeforeChange,
+            newLanguage: newLanguageCode,
+            handlerUrl: selectors.video.transcriptHandlerUrl(testState),
+          }),
+        },
+        state: {
+          isLibrary: true,
+        },
+      });
+    });
     describe('uploadTranscript', () => {
       const language = 'SoME laNGUage CoNtent As String';
       const videoId = 'SoME VidEOid CoNtent As String';
@@ -622,7 +671,7 @@ describe('requests thunkActions module', () => {
           ...fetchParams,
           requestKey: RequestKeys.uploadTranscript,
           promise: api.uploadTranscriptV2({
-            handlerUrl: 'transcriptHandlerUrl',
+            handlerUrl: selectors.video.transcriptHandlerUrl(testState),
             transcript,
             videoId,
             language,
