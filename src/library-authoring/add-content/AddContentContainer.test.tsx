@@ -80,7 +80,7 @@ describe('<AddContentContainer />', () => {
     expect(await screen.findByRole('heading', { name: /Text/ })).toBeInTheDocument();
   });
 
-  it('should create a content when the block is not supported by the editor', async () => {
+  it('should create a component when the block is not supported by the editor', async () => {
     mockClipboardEmpty.applyMock();
     const url = getCreateLibraryBlockUrl(libraryId);
     axiosMock.onPost(url).reply(200);
@@ -128,18 +128,12 @@ describe('<AddContentContainer />', () => {
     jest.spyOn(editorCmsApi, 'fetchCourseImages').mockImplementation(async () => ( // eslint-disable-next-line
       { data: { assets: [], start: 0, end: 0, page: 0, pageSize: 50, totalCount: 0 } }
     ));
-
-    Object.defineProperty(window, 'location', {
-      value: { pathname: `/library/${libraryId}/collection/${collectionId}` },
-      writable: true,
-    });
     axiosMock.onPost(url).reply(200, {
       id: usageKey,
     });
 
-    axiosMock.onPatch(collectionComponentUrl).reply(200);
-
     axiosMock.onPost(updateBlockUrl).reply(200, mockXBlockFields.dataHtml);
+    axiosMock.onPatch(collectionComponentUrl).reply(200);
     render(collectionId);
 
     const textButton = screen.getByRole('button', { name: /text/i });
