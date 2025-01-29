@@ -66,19 +66,19 @@ const GradingScaleSegment = ({
         <span data-testid="grading-scale-segment-number" className="grading-scale-segment-content-number m-0">
           {gradingSegments[idx === 0 ? 0 : idx - 1]?.previous} - {value === 100 ? value : value - 1}
         </span>
+        {idx !== gradingSegments.length && idx - 1 !== 0 && (
+          <Button
+            variant="link"
+            size="inline"
+            className="grading-scale-segment-btn-remove"
+            data-testid="grading-scale-btn-remove"
+            type="button"
+            onClick={() => removeGradingSegment(idx)}
+          >
+            {intl.formatMessage(messages.removeSegmentButtonText)}
+          </Button>
+        )}
       </div>
-      {idx !== gradingSegments.length && idx - 1 !== 0 && (
-        <Button
-          variant="link"
-          size="inline"
-          className="grading-scale-segment-btn-remove"
-          data-testid="grading-scale-btn-remove"
-          type="button"
-          onClick={() => removeGradingSegment(idx)}
-        >
-          {intl.formatMessage(messages.removeSegmentButtonText)}
-        </Button>
-      )}
     </div>
   );
 };

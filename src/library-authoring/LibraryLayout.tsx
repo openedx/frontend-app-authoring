@@ -2,11 +2,12 @@ import { useCallback } from 'react';
 import {
   Route,
   Routes,
+  useMatch,
   useParams,
-  useLocation,
+  type PathMatch,
 } from 'react-router-dom';
 
-import { ROUTES } from './routes';
+import { BASE_ROUTE, ROUTES } from './routes';
 import LibraryAuthoringPage from './LibraryAuthoringPage';
 import { LibraryProvider } from './common/context/LibraryContext';
 import { SidebarProvider } from './common/context/SidebarContext';
@@ -23,12 +24,15 @@ const LibraryLayout = () => {
     throw new Error('Error: route is missing libraryId.');
   }
 
-  const location = useLocation();
+  // The top-level route is `${BASE_ROUTE}/*`, so match will always be non-null.
+  const match = useMatch(`${BASE_ROUTE}${ROUTES.COLLECTION}`) as PathMatch<'libraryId' | 'collectionId'> | null;
+  const collectionId = match?.params.collectionId;
+
   const context = useCallback((childPage) => (
     <LibraryProvider
-      /** We need to pass the pathname as key to the LibraryProvider to force a
-       * re-render when we navigate to a new path or page. */
-      key={location.pathname}
+      /** We need to pass the collectionId as key to the LibraryProvider to force a re-render
+        * when we navigate to a collection page. */
+      key={collectionId}
       libraryId={libraryId}
       /** The component picker modal to use. We need to pass it as a reference instead of
        * directly importing it to avoid the import cycle:
@@ -44,7 +48,7 @@ const LibraryLayout = () => {
         </>
       </SidebarProvider>
     </LibraryProvider>
-  ), [location.pathname]);
+  ), [collectionId]);
 
   return (
     <Routes>
