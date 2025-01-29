@@ -1,8 +1,9 @@
 import React, { useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
+import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Breadcrumb, Card, Collapsible, Container, Icon, Layout, Stack, Tab, Tabs } from '@openedx/paragon';
-import { KeyboardArrowDown, KeyboardArrowUp, Loop, } from '@openedx/paragon/icons';
+import { Breadcrumb, Button, Card, Collapsible, Container, Dropdown, Hyperlink, Icon, IconButton, Layout, Stack, Tab, Tabs } from '@openedx/paragon';
+import { Cached, CheckCircle, KeyboardArrowDown, KeyboardArrowUp, Loop, MoreVert, } from '@openedx/paragon/icons';
 
 import getPageHeadTitle from '../generic/utils';
 import { useModel } from '../generic/model-store';
@@ -15,6 +16,7 @@ import { useFetchIndexDocuments } from '../search-manager/data/apiHooks';
 import classNames from 'classnames';
 import { getItemIcon } from '../generic/block-type-utils';
 import { BlockTypeLabel } from '../search-manager';
+import AlertMessage from '../generic/alert-message';
 
 interface Props {
   courseId: string;
@@ -36,6 +38,7 @@ interface ComponentInfo {
   },
   breadcrumbs: {
     display_name: string;
+    usage_key: string;
   }[]
 }
 
@@ -51,22 +54,28 @@ export enum CourseLibraryTabs {
 const BlockCard: React.FC<BlockCardProps> = ({ info }) => {
   const intl = useIntl();
   const componentIcon = getItemIcon(info.block_type);
+  const unitUsageKey = info.breadcrumbs[info.breadcrumbs?.length - 1]?.usage_key;
+  const blockLink = `${getConfig().STUDIO_BASE_URL}/container/${unitUsageKey}`;
   return (
     <Card
       className={classNames(
         "my-3 shadow-none border-light-600 border",
-        {"bg-primary-100": info.readyToSync}
+        { "bg-primary-100": info.readyToSync }
       )}
       orientation="horizontal"
       key={info.downstreamUsageKey}
     >
-      <Card.Section className="py-2">
-        <Stack direction="vertical" gap={2}>
+      <Card.Section
+        className="py-2"
+      >
+        <Stack direction="vertical" gap={1}>
           <Stack direction="horizontal" gap={1} className="micro text-gray-500">
-            <Icon src={componentIcon} size="inline" />
+            <Icon src={componentIcon} size="xs" />
             <BlockTypeLabel blockType={info.block_type} />
+            <Hyperlink className="lead ml-auto text-black" destination={blockLink} target="_blank">
+            </Hyperlink>
           </Stack>
-          <Stack className="small" direction="horizontal" gap={1}>
+          <Stack direction="horizontal" className="small" gap={1}>
             {info.readyToSync && <Icon src={Loop} size="xs" />}
             {info._formatted?.display_name}
           </Stack>
@@ -88,7 +97,7 @@ const LibraryCard: React.FC<LibraryCardProps> = ({ courseId, title, links }) => 
   const intl = useIntl();
   const linksInfo = useMemo(() => keyBy(links, 'downstreamUsageKey'), [links]);
   const totalComponents = links.length;
-  const outOfSyncCount = useMemo(() => countBy(links, "readyToSync").true, []);;
+  const outOfSyncCount = useMemo(() => countBy(links, "readyToSync").true, [links]);;
   const downstreamKeys = useMemo(() => uniq(Object.keys(linksInfo)), [links]);
   const { data: downstreamInfo } = useFetchIndexDocuments(
     [`context_key = "${courseId}"`, `usage_key IN ["${downstreamKeys.join('","')}"]`],
@@ -113,34 +122,93 @@ const LibraryCard: React.FC<LibraryCardProps> = ({ courseId, title, links }) => 
             <span>
               {intl.formatMessage(messages.totalComponentLabel, { totalComponents })}
             </span>
-            {outOfSyncCount && (
+            <span>/</span>
+            {outOfSyncCount ? (
               <>
-                <span>/</span>
                 <Icon src={Loop} size="xs" />
                 <span>
                   {intl.formatMessage(messages.outOfSyncCountLabel, { outOfSyncCount })}
                 </span>
               </>
+            ) : (
+              <>
+                <Icon src={CheckCircle} size="xs" />
+                <span>
+                  {intl.formatMessage(messages.allUptodateLabel)}
+                </span>
+              </>
             )}
           </Stack>
         </Stack>
+        <Dropdown onClick={(e: { stopPropagation: () => void; }) => e.stopPropagation()}>
+          <Dropdown.Toggle
+            id={`dropdown-toggle-${title}`}
+            alt="dropdown-toggle-menu-items"
+            as={IconButton}
+            src={MoreVert}
+            iconAs={Icon}
+            variant="primary"
+          />
+          <Dropdown.Menu>
+            <Dropdown.Item>TODO 1</Dropdown.Item>
+            <Dropdown.Item>TODO 2</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
       </Collapsible.Trigger>
 
       <Collapsible.Body className="collapsible-body border-left border-left-purple px-2">
         {Object.values(mergedData).map(info => (
-          <BlockCard info={info} />
+          <BlockCard info={info} key={info.downstreamUsageKey} />
         ))}
       </Collapsible.Body>
     </Collapsible.Advanced>
   )
 }
 
+interface ReviewAlertProps {
+  show: boolean;
+  outOfSyncCount: number;
+  onDismiss: () => void;
+  onReview: () => void;
+}
+
+const ReviewAlert: React.FC<ReviewAlertProps> = ({ show, outOfSyncCount, onDismiss, onReview }) => {
+  const intl = useIntl();
+  return (
+    <AlertMessage
+      title={intl.formatMessage(messages.outOfSyncCountAlertTitle, { outOfSyncCount })}
+      dismissible
+      show={show}
+      icon={Loop}
+      variant="info"
+      onClose={onDismiss}
+      actions={[
+        <Button
+          onClick={onReview}
+        >
+          {intl.formatMessage(messages.outOfSyncCountAlertReviewBtn)}
+        </Button>,
+      ]}
+    />
+  );
+}
+
 const CourseLibraries: React.FC<Props> = ({ courseId }) => {
   const intl = useIntl();
   const courseDetails = useModel('courseDetails', courseId);
   const [tabKey, setTabKey] = useState<CourseLibraryTabs>(CourseLibraryTabs.home);
+  const [showReviewAlert, setShowReviewAlert] = useState(true);
   const { data: links } = useEntityLinksByDownstreamContext(courseId);
   const linksByLib = useMemo(() => groupBy(links, 'upstreamContextKey'), [links]);
+  const outOfSyncCount = useMemo(() => countBy(links, "readyToSync").true, [links]);;
+
+  const onAlertReview = () => {
+    setTabKey(CourseLibraryTabs.review);
+    setShowReviewAlert(false);
+  }
+  const onAlertDismiss = () => {
+    setShowReviewAlert(false);
+  }
 
   return (
     <>
@@ -150,9 +218,24 @@ const CourseLibraries: React.FC<Props> = ({ courseId }) => {
         </title>
       </Helmet>
       <Container size="xl" className="px-4 pt-4 mt-3">
+        <ReviewAlert
+          show={outOfSyncCount > 0 && tabKey === CourseLibraryTabs.home && showReviewAlert}
+          outOfSyncCount={outOfSyncCount}
+          onDismiss={onAlertDismiss}
+          onReview={onAlertReview}
+        />
         <SubHeader
           title={intl.formatMessage(messages.headingTitle)}
           subtitle={intl.formatMessage(messages.headingSubtitle)}
+          headerActions={!showReviewAlert && tabKey === CourseLibraryTabs.home && (
+            <Button
+              variant="primary"
+              onClick={onAlertReview}
+              iconBefore={Cached}
+            >
+              {intl.formatMessage(messages.reviewUpdatesBtn)}
+            </Button>
+          )}
           hideBorder
         />
         <section className="mb-4">
@@ -170,10 +253,11 @@ const CourseLibraries: React.FC<Props> = ({ courseId }) => {
                 xl={[{ span: 9 }, { span: 3 }]}
               >
                 <Layout.Element>
-                  {Object.values(linksByLib).map((libLinks) => <LibraryCard
+                  {Object.entries(linksByLib).map(([libKey, libLinks]) => <LibraryCard
                     courseId={courseId}
                     title={libLinks[0].upstreamContextTitle}
                     links={libLinks}
+                    key={libKey}
                   />)}
                 </Layout.Element>
                 <Layout.Element>
@@ -183,7 +267,7 @@ const CourseLibraries: React.FC<Props> = ({ courseId }) => {
             </Tab>
             <Tab
               eventKey={CourseLibraryTabs.review}
-              title={intl.formatMessage(messages.reviewTabTitle, { count: 2 })}
+              title={intl.formatMessage(messages.reviewTabTitle, { count: outOfSyncCount })}
             >
               <Layout
                 lg={[{ span: 9 }, { span: 3 }]}

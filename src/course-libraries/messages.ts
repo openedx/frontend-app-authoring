@@ -31,10 +31,30 @@ const messages = defineMessages({
     defaultMessage: '{totalComponents} components applied',
     description: 'Prints total components applied from library',
   },
+  allUptodateLabel: {
+    id: 'course-authoring.course-libraries.libcard.up-to-date.label',
+    defaultMessage: 'All components up to date',
+    description: 'Shown if all components under a library are up to date',
+  },
   outOfSyncCountLabel: {
     id: 'course-authoring.course-libraries.libcard.out-of-sync.label',
     defaultMessage: '{outOfSyncCount} components out of sync',
     description: 'Prints number of components out of sync from library',
+  },
+  outOfSyncCountAlertTitle: {
+    id: 'course-authoring.course-libraries.libcard.out-of-sync.alert.title',
+    defaultMessage: '{outOfSyncCount} library components are out of sync. Review updates to accept or ignore changes',
+    description: 'Alert message shown when library components are out of sync',
+  },
+  reviewUpdatesBtn: {
+    id: 'course-authoring.course-libraries.libcard.review-updates.btn.text',
+    defaultMessage: 'Review Updates',
+    description: 'Action button to review updates',
+  },
+  outOfSyncCountAlertReviewBtn: {
+    id: 'course-authoring.course-libraries.libcard.out-of-sync.alert.review-btn-text',
+    defaultMessage: 'Review',
+    description: 'Alert review button text',
   },
 });
 
