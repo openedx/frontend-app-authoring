@@ -18,7 +18,7 @@ import {
   videoFeatures,
   courseVideos,
   handlerUrl,
-  trascriptXblockV2,
+  transcriptXblockV2,
   downloadVideoTranscriptURLV2,
 } from './urls';
 
@@ -200,9 +200,9 @@ describe('cms url methods', () => {
         .toEqual(`${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/handler_url/transcript/`);
     });
   });
-  describe('trascriptXblockV2', () => {
+  describe('transcriptXblockV2', () => {
     it('returns url with transcriptHandlerUrl', () => {
-      expect(trascriptXblockV2({ transcriptHandlerUrl }))
+      expect(transcriptXblockV2({ transcriptHandlerUrl }))
         .toEqual(`${transcriptHandlerUrl}translation`);
     });
   });

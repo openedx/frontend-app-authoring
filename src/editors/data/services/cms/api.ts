@@ -222,7 +222,7 @@ export const apiMethods = {
   }) => {
     const getJSON = { data: { lang: language, edx_video_id: videoId } };
     return get(
-      `${urls.trascriptXblockV2({ transcriptHandlerUrl: handlerUrl })}?language_code=${language}`,
+      `${urls.transcriptXblockV2({ transcriptHandlerUrl: handlerUrl })}?language_code=${language}`,
       getJSON,
     );
   },
@@ -245,7 +245,7 @@ export const apiMethods = {
   }) => {
     const deleteJSON = { data: { lang: language, edx_video_id: videoId } };
     return deleteObject(
-      urls.trascriptXblockV2({ transcriptHandlerUrl: handlerUrl }),
+      urls.transcriptXblockV2({ transcriptHandlerUrl: handlerUrl }),
       deleteJSON,
     );
   },
@@ -280,7 +280,7 @@ export const apiMethods = {
     data.append('language_code', language);
     data.append('new_language_code', newLanguage || language);
     return post(
-      urls.trascriptXblockV2({ transcriptHandlerUrl: handlerUrl }),
+      urls.transcriptXblockV2({ transcriptHandlerUrl: handlerUrl }),
       data,
     );
   },

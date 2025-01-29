@@ -24,7 +24,7 @@ jest.mock('./urls', () => ({
       ({ studioEndpointUrl, learningContextId }) => `${studioEndpointUrl}/some_video_upload_url/${learningContextId}`,
     ),
   handlerUrl: jest.fn().mockReturnValue('urls.handlerUrl'),
-  trascriptXblockV2: jest.fn().mockReturnValue('url.transcriptXblockV2'),
+  transcriptXblockV2: jest.fn().mockReturnValue('url.transcriptXblockV2'),
 }));
 
 jest.mock('./utils', () => ({
@@ -436,7 +436,7 @@ describe('cms api', () => {
           language,
         });
         expect(post).toHaveBeenCalledWith(
-          urls.trascriptXblockV2({ transcriptHandlerUrl }),
+          urls.transcriptXblockV2({ transcriptHandlerUrl }),
           mockFormdata,
         );
       });
@@ -455,7 +455,7 @@ describe('cms api', () => {
           mockDeleteJSON,
         );
       });
-      it('should call deleteObject with urls.trascriptXblockV2 and transcript data', () => {
+      it('should call deleteObject with urls.transcriptXblockV2 and transcript data', () => {
         const mockDeleteJSON = { data: { lang: language, edx_video_id: videoId } };
         const transcriptHandlerUrl = 'handlerUrl';
         apiMethods.deleteTranscriptV2({
@@ -464,7 +464,7 @@ describe('cms api', () => {
           language,
         });
         expect(deleteObject).toHaveBeenCalledWith(
-          urls.trascriptXblockV2({ transcriptHandlerUrl }),
+          urls.transcriptXblockV2({ transcriptHandlerUrl }),
           mockDeleteJSON,
         );
       });
@@ -483,7 +483,7 @@ describe('cms api', () => {
           mockJSON,
         );
       });
-      it('should call get with urls.trascriptXblockV2 and transcript data', () => {
+      it('should call get with urls.transcriptXblockV2 and transcript data', () => {
         const mockJSON = { data: { lang: language, edx_video_id: videoId } };
         const transcriptHandlerUrl = 'handlerUrl';
         apiMethods.getTranscriptV2({
@@ -492,7 +492,7 @@ describe('cms api', () => {
           language,
         });
         expect(get).toHaveBeenCalledWith(
-          `${urls.trascriptXblockV2({ transcriptHandlerUrl })}?language_code=${language}`,
+          `${urls.transcriptXblockV2({ transcriptHandlerUrl })}?language_code=${language}`,
           mockJSON,
         );
       });

@@ -80,12 +80,12 @@ export const downloadVideoTranscriptURL = (({ studioEndpointUrl, blockId, langua
   `${videoTranscripts({ studioEndpointUrl, blockId })}?language_code=${language}`
 )) satisfies UrlFunction;
 
-export const trascriptXblockV2 = (({ transcriptHandlerUrl }) => (
+export const transcriptXblockV2 = (({ transcriptHandlerUrl }) => (
   `${transcriptHandlerUrl}translation`
 )) satisfies UrlFunction;
 
 export const downloadVideoTranscriptURLV2 = (({ transcriptHandlerUrl, language }) => (
-  `${trascriptXblockV2({ transcriptHandlerUrl })}?language_code=${language}`
+  `${transcriptXblockV2({ transcriptHandlerUrl })}?language_code=${language}`
 )) satisfies UrlFunction;
 
 export const mediaTranscriptURL = (({ studioEndpointUrl, transcriptUrl }) => (
