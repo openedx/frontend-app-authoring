@@ -31,7 +31,6 @@ jest.mock('../../../../../../data/redux', () => ({
     },
     video: {
       getTranscriptDownloadUrl: jest.fn(args => ({ getTranscriptDownloadUrl: args })).mockName('selectors.video.getTranscriptDownloadUrl'),
-      getTranscriptDownloadUrlV2: jest.fn(args => ({ getTranscriptDownloadUrlV2: args })).mockName('selectors.video.getTranscriptDownloadUrlV2'),
       buildTranscriptUrl: jest.fn(args => ({ buildTranscriptUrl: args })).mockName('selectors.video.buildTranscriptUrl'),
     },
   },
@@ -70,9 +69,7 @@ describe('TranscriptActionMenu', () => {
       launchDeleteConfirmation: jest.fn().mockName('launchDeleteConfirmation'),
       // redux
       getTranscriptDownloadUrl: jest.fn().mockName('selectors.video.getTranscriptDownloadUrl'),
-      getTranscriptDownloadUrlV2: jest.fn().mockName('selectors.video.getTranscriptDownloadUrlV2'),
       buildTranscriptUrl: jest.fn().mockName('selectors.video.buildTranscriptUrl'),
-      isLibrary: false,
     };
     afterAll(() => {
       jest.clearAllMocks();
@@ -87,12 +84,6 @@ describe('TranscriptActionMenu', () => {
       jest.spyOn(module.hooks, 'replaceFileCallback').mockImplementationOnce(() => jest.fn().mockName('module.hooks.replaceFileCallback'));
       expect(
         shallow(<TranscriptActionMenu {...props} transcriptUrl="url" />).snapshot,
-      ).toMatchSnapshot();
-    });
-    test('snapshots: renders as expected with isLibrary props: dont show confirm delete', () => {
-      jest.spyOn(module.hooks, 'replaceFileCallback').mockImplementationOnce(() => jest.fn().mockName('module.hooks.replaceFileCallback'));
-      expect(
-        shallow(<TranscriptActionMenu {...props} isLibrary />).snapshot,
       ).toMatchSnapshot();
     });
   });

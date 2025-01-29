@@ -60,20 +60,25 @@ export const openLanguages = createSelector(
 );
 
 export const getTranscriptDownloadUrl = createSelector(
-  [AppSelectors.simpleSelectors.studioEndpointUrl, AppSelectors.simpleSelectors.blockId],
-  (studioEndpointUrl, blockId) => ({ language }) => downloadVideoTranscriptURL({
-    studioEndpointUrl,
-    blockId,
-    language,
-  }),
-);
-
-export const getTranscriptDownloadUrlV2 = createSelector(
-  [simpleSelectors.transcriptHandlerUrl],
-  (transcriptHandlerUrl) => ({ language }) => downloadVideoTranscriptURLV2({
-    transcriptHandlerUrl,
-    language,
-  }),
+  [
+    AppSelectors.simpleSelectors.studioEndpointUrl,
+    AppSelectors.simpleSelectors.blockId,
+    AppSelectors.isLibrary,
+    simpleSelectors.transcriptHandlerUrl,
+  ],
+  (studioEndpointUrl, blockId, isLibrary, transcriptHandlerUrl) => ({ language }) => {
+    if (isLibrary) {
+      return downloadVideoTranscriptURLV2({
+        transcriptHandlerUrl,
+        language,
+      });
+    }
+    return downloadVideoTranscriptURL({
+      studioEndpointUrl,
+      blockId,
+      language,
+    });
+  },
 );
 
 export const buildTranscriptUrl = createSelector(
@@ -148,7 +153,6 @@ export default {
   ...simpleSelectors,
   openLanguages,
   getTranscriptDownloadUrl,
-  getTranscriptDownloadUrlV2,
   buildTranscriptUrl,
   getHandoutDownloadUrl,
   videoSettings,
