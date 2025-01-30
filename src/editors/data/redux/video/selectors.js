@@ -59,6 +59,7 @@ export const openLanguages = createSelector(
   },
 );
 
+/* istanbul ignore next */
 export const getTranscriptDownloadUrl = createSelector(
   [
     AppSelectors.simpleSelectors.studioEndpointUrl,

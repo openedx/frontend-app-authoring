@@ -26,9 +26,6 @@ jest.mock('../../../../../../data/redux', () => ({
     },
   },
   selectors: {
-    app: {
-      isLibrary: jest.fn(args => ({ isLibrary: args })).mockName('selectors.app.isLibrary'),
-    },
     video: {
       getTranscriptDownloadUrl: jest.fn(args => ({ getTranscriptDownloadUrl: args })).mockName('selectors.video.getTranscriptDownloadUrl'),
       buildTranscriptUrl: jest.fn(args => ({ buildTranscriptUrl: args })).mockName('selectors.video.buildTranscriptUrl'),
