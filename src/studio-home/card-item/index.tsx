@@ -2,10 +2,8 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import {
   Card,
-  Hyperlink,
   Dropdown,
   IconButton,
-  ActionRow,
 } from '@openedx/paragon';
 import { MoreHoriz } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -16,7 +14,6 @@ import { getWaffleFlags } from '../../data/selectors';
 import { COURSE_CREATOR_STATES } from '../../constants';
 import { getStudioHomeData } from '../data/selectors';
 import messages from '../messages';
-import { trimSlashes } from './utils';
 
 interface BaseProps {
   displayName: string;
