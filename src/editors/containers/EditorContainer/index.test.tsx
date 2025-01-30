@@ -9,6 +9,7 @@ import {
 import editorCmsApi from '../../data/services/cms/api';
 
 import EditorPage from '../../EditorPage';
+import * as hooks from './hooks';
 
 // Mock this plugins component:
 jest.mock('frontend-components-tinymce-advanced-plugins', () => ({ a11ycheckerCss: '' }));
@@ -164,5 +165,15 @@ describe('EditorContainer', () => {
     expect(window.removeEventListener).toHaveBeenCalledWith('beforeunload', expect.any(Function));
     expect(mockEvent.preventDefault).toHaveBeenCalled();
     expect(mockEvent.returnValue).toBe(true);
+  });
+  test('should display an alert when is an error creating a new block', async () => {
+    jest.spyOn(hooks, 'createFailed').mockImplementation(() => ({ createFailed: true, createFailedError: 'error' }));
+    render(<EditorPage {...{ ...defaultPropsHtml, blockId: '' }} />);
+    expect(await screen.findByText(/There was an error creating the content/i)).toBeInTheDocument();
+  });
+  test('should display an alert when is an error saving the changes', async () => {
+    jest.spyOn(hooks, 'saveFailed').mockImplementation(() => true);
+    render(<EditorPage {...defaultPropsHtml} />);
+    expect(await screen.findByText(/Error: Content save failed. Please check recent changes and try again later./i)).toBeInTheDocument();
   });
 });
