@@ -12,12 +12,10 @@ import { initialState } from '../../factories/mockApiResponses';
 import CoursesTab from '.';
 
 const onClickNewCourse = jest.fn();
-const isShowProcessing = false;
 const isLoading = false;
 const isFailed = false;
 const numPages = 1;
 const coursesCount = studioHomeMock.courses.length;
-const isEnabledPagination = true;
 const showNewCourseContainer = true;
 
 const renderComponent = (overrideProps = {}, studioHomeState = {}) => {
@@ -40,12 +38,10 @@ const renderComponent = (overrideProps = {}, studioHomeState = {}) => {
           coursesDataItems={studioHomeMock.courses}
           showNewCourseContainer={showNewCourseContainer}
           onClickNewCourse={onClickNewCourse}
-          isShowProcessing={isShowProcessing}
           isLoading={isLoading}
           isFailed={isFailed}
           numPages={numPages}
           coursesCount={coursesCount}
-          isEnabledPagination={isEnabledPagination}
           {...overrideProps}
         />
       </IntlProvider>
@@ -77,18 +73,6 @@ describe('<CoursesTab />', () => {
     expect(coursesFilterSearchInput).toBeInTheDocument();
   });
 
-  it('should not render pagination and filter elements when isEnabledPagination is false', () => {
-    renderComponent({ isEnabledPagination: false });
-    const coursesPaginationInfo = screen.queryByTestId('pagination-info');
-    const coursesTypesMenu = screen.queryByTestId('dropdown-toggle-course-type-menu');
-    const coursesOrderMenu = screen.queryByTestId('dropdown-toggle-courses-order-menu');
-    const coursesFilterSearchInput = screen.queryByTestId('input-filter-courses-search');
-    expect(coursesPaginationInfo).not.toBeInTheDocument();
-    expect(coursesTypesMenu).not.toBeInTheDocument();
-    expect(coursesOrderMenu).not.toBeInTheDocument();
-    expect(coursesFilterSearchInput).not.toBeInTheDocument();
-  });
-
   it('should render loading spinner when isLoading is true and isFiltered is false', () => {
     const props = { isLoading: true, coursesDataItems: [] };
     const customStoreData = { studioHomeCoursesRequestParams: { currentPage: 1, isFiltered: true } };
@@ -110,22 +94,6 @@ describe('<CoursesTab />', () => {
     const customStoreData = { studioHomeCoursesRequestParams: { currentPage: 1, isFiltered: true } };
     renderComponent(props, customStoreData);
     const alertCoursesNotFound = screen.queryByTestId('courses-not-found-alert');
-    expect(alertCoursesNotFound).toBeInTheDocument();
-  });
-
-  it('should render processing courses component when isEnabledPagination is false and isShowProcessing is true', () => {
-    const props = { isShowProcessing: true, isEnabledPagination: false };
-    const customStoreData = {
-      studioHomeData: {
-        inProcessCourseActions: [],
-      },
-      studioHomeCoursesRequestParams: {
-        currentPage: 1,
-        isFiltered: true,
-      },
-    };
-    renderComponent(props, customStoreData);
-    const alertCoursesNotFound = screen.queryByTestId('processing-courses-title');
     expect(alertCoursesNotFound).toBeInTheDocument();
   });
 

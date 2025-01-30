@@ -8,7 +8,6 @@ import TabsSection from '.';
 import {
   initialState,
   generateGetStudioHomeDataApiResponse,
-  generateGetStudioCoursesApiResponse,
   generateGetStudioCoursesApiResponseV2,
   generateGetStudioHomeLibrariesApiResponse,
 } from '../factories/mockApiResponses';
@@ -28,7 +27,6 @@ const { studioShortName } = studioHomeMock;
 
 let axiosMock;
 let store;
-const courseApiLink = `${getApiBaseUrl()}/api/contentstore/v1/home/courses`;
 const courseApiLinkV2 = `${getApiBaseUrl()}/api/contentstore/v2/home/courses`;
 const libraryApiLink = `${getApiBaseUrl()}/api/contentstore/v1/home/libraries`;
 
@@ -37,7 +35,6 @@ const librariesBetaTabTitle = /Libraries Beta/;
 
 const tabSectionComponent = (overrideProps) => (
   <TabsSection
-    isPaginationCoursesEnabled={false}
     showNewCourseContainer={false}
     onClickNewCourse={() => {}}
     isShowProcessing
@@ -84,16 +81,6 @@ describe('<TabsSection />', () => {
 
   it('should render all tabs correctly', async () => {
     const data: any = generateGetStudioHomeDataApiResponse();
-    data.archivedCourses = [{
-      courseKey: 'course-v1:MachineLearning+123+2023',
-      displayName: 'Machine Learning',
-      lmsLink: '//localhost:18000/courses/course-v1:MachineLearning+123+2023/jump_to/block-v1:MachineLearning+123+2023+type@course+block@course',
-      number: '123',
-      org: 'LSE',
-      rerunLink: '/course_rerun/course-v1:MachineLearning+123+2023',
-      run: '2023',
-      url: '/course/course-v1:MachineLearning+123+2023',
-    }];
 
     render();
     axiosMock.onGet(getStudioHomeApiUrl()).reply(200, data);
@@ -104,8 +91,6 @@ describe('<TabsSection />', () => {
     expect(screen.getByRole('tab', { name: librariesBetaTabTitle })).toBeInTheDocument();
 
     expect(screen.getByRole('tab', { name: tabMessages.legacyLibrariesTabTitle.defaultMessage })).toBeInTheDocument();
-
-    expect(screen.getByRole('tab', { name: tabMessages.archivedTabTitle.defaultMessage })).toBeInTheDocument();
   });
 
   it('should render only 1 library tab when libraries-v2 disabled', async () => {
@@ -143,9 +128,9 @@ describe('<TabsSection />', () => {
   describe('course tab', () => {
     it('should render specific course details', async () => {
       render();
-      const data = generateGetStudioCoursesApiResponse();
+      const data = generateGetStudioCoursesApiResponseV2();
       await axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
-      await axiosMock.onGet(courseApiLink).reply(200, data);
+      await axiosMock.onGet(courseApiLinkV2).reply(200, data);
       await executeThunk(fetchStudioHomeData(), store.dispatch);
 
       expect(screen.getByText(studioHomeMock.courses[0].displayName)).toBeVisible();
@@ -156,12 +141,12 @@ describe('<TabsSection />', () => {
     });
 
     it('should render default sections when courses are empty', async () => {
-      const data = generateGetStudioCoursesApiResponse();
-      data.courses = [];
+      const data = generateGetStudioCoursesApiResponseV2();
+      data.results.courses = [];
 
       render();
       await axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
-      await axiosMock.onGet(courseApiLink).reply(200, data);
+      await axiosMock.onGet(courseApiLinkV2).reply(200, data);
       await executeThunk(fetchStudioHomeData(), store.dispatch);
 
       expect(screen.getByText(`Are you staff on an existing ${studioShortName} course?`)).toBeInTheDocument();
@@ -176,7 +161,7 @@ describe('<TabsSection />', () => {
     it('should render course fetch failure alert', async () => {
       render();
       await axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
-      await axiosMock.onGet(courseApiLink).reply(404);
+      await axiosMock.onGet(courseApiLinkV2).reply(404);
       await executeThunk(fetchStudioHomeData(), store.dispatch);
 
       expect(screen.getByText(tabMessages.courseTabErrorMessage.defaultMessage)).toBeVisible();
@@ -186,7 +171,7 @@ describe('<TabsSection />', () => {
       render({ isPaginationCoursesEnabled: true });
       await axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
       await axiosMock.onGet(courseApiLinkV2).reply(200, generateGetStudioCoursesApiResponseV2());
-      await executeThunk(fetchStudioHomeData('', true, {}, true), store.dispatch);
+      await executeThunk(fetchStudioHomeData('', true, {}), store.dispatch);
       const data = generateGetStudioCoursesApiResponseV2();
       const coursesLength = data.results.courses.length;
       const totalItems = data.count;
@@ -279,47 +264,9 @@ describe('<TabsSection />', () => {
     });
   });
 
-  describe('archived tab', () => {
-    it('should switch to Archived tab and render specific archived course details', async () => {
-      render();
-      const data = generateGetStudioCoursesApiResponse();
-      data.archivedCourses = studioHomeMock.archivedCourses;
-      await axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
-      await axiosMock.onGet(courseApiLink).reply(200, data);
-      await executeThunk(fetchStudioHomeData(), store.dispatch);
-
-      const archivedTab = await screen.findByText(tabMessages.archivedTabTitle.defaultMessage);
-      fireEvent.click(archivedTab);
-
-      expect(screen.getByText(studioHomeMock.archivedCourses[0].displayName)).toBeVisible();
-
-      expect(screen.getByText(
-        `${studioHomeMock.archivedCourses[0].org} / ${studioHomeMock.archivedCourses[0].number} / ${studioHomeMock.archivedCourses[0].run}`,
-      )).toBeVisible();
-    });
-
-    it('should hide Archived tab when archived courses are empty', async () => {
-      const data = generateGetStudioCoursesApiResponse();
-      data.archivedCourses = [];
-
-      render();
-      await axiosMock.onGet(getStudioHomeApiUrl()).reply(200, generateGetStudioHomeDataApiResponse());
-      await axiosMock.onGet(courseApiLink).reply(200, data);
-      await executeThunk(fetchStudioHomeData(), store.dispatch);
-
-      await screen.findByRole('tab', { name: tabMessages.coursesTabTitle.defaultMessage });
-
-      await screen.findByRole('tab', { name: librariesBetaTabTitle });
-
-      await screen.findByRole('tab', { name: tabMessages.legacyLibrariesTabTitle.defaultMessage });
-
-      expect(screen.queryByRole('tab', { name: tabMessages.archivedTabTitle.defaultMessage })).toBeNull();
-    });
-  });
-
   describe('library tab', () => {
     beforeEach(async () => {
-      await axiosMock.onGet(courseApiLink).reply(200, generateGetStudioCoursesApiResponse());
+      await axiosMock.onGet(courseApiLinkV2).reply(200, generateGetStudioCoursesApiResponseV2());
     });
     it('should switch to Legacy Libraries tab and render specific v1 library details', async () => {
       render();

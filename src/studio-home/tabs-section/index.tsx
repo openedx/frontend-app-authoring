@@ -15,7 +15,6 @@ import { getLoadingStatuses, getStudioHomeData } from '../data/selectors';
 import messages from './messages';
 import LibrariesTab from './libraries-tab';
 import LibrariesV2Tab from './libraries-v2-tab/index';
-import ArchivedTab from './archived-tab';
 import CoursesTab from './courses-tab';
 import { RequestStatus } from '../../data/constants';
 import { fetchLibraryData } from '../data/thunks';
@@ -66,7 +65,7 @@ const TabsSection = ({
   }, [pathname]);
 
   const {
-    courses, libraries, archivedCourses,
+    courses, libraries,
     numPages, coursesCount,
   } = useSelector(getStudioHomeData);
   const {
@@ -99,22 +98,6 @@ const TabsSection = ({
         />
       </Tab>,
     );
-
-    if (archivedCourses?.length) {
-      tabs.push(
-        <Tab
-          key={TABS_LIST.archived}
-          eventKey={TABS_LIST.archived}
-          title={intl.formatMessage(messages.archivedTabTitle)}
-        >
-          <ArchivedTab
-            archivedCoursesData={archivedCourses}
-            isLoading={isLoadingCourses}
-            isFailed={isFailedCoursesPage}
-          />
-        </Tab>,
-      );
-    }
 
     if (librariesV2Enabled) {
       tabs.push(
@@ -164,7 +147,7 @@ const TabsSection = ({
     }
 
     return tabs;
-  }, [archivedCourses, showNewCourseContainer, isLoadingCourses, isLoadingLibraries]);
+  }, [showNewCourseContainer, isLoadingCourses, isLoadingLibraries]);
 
   const handleSelectTab = (tab) => {
     if (tab === TABS_LIST.courses) {
