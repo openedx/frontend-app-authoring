@@ -148,6 +148,40 @@ export const getImageResizeHandler = ({ editor, imagesRef, setImage }) => () => 
   });
 };
 
+/**
+ * Fix TinyMCE editors used in Paragon modals, by re-parenting their modal <div>
+ * from the body to the Paragon modal container.
+ *
+ * This fixes a problem where clicking on any modal/popup within TinyMCE (e.g.
+ * the emoji inserter, the link inserter, the floating format toolbar -
+ * quickbars, etc.) would cause the parent Paragon modal to close, because
+ * Paragon sees it as a "click outside" event. Also fixes some hover effects by
+ * ensuring the layering of the divs is correct.
+ *
+ * This could potentially cause problems if there are TinyMCE editors being used
+ * both on the parent page and inside a Paragon modal popup, but I don't think
+ * we have that situation.
+ *
+ * Note: we can't just do this on init, because the quickbars plugin used by
+ * ExpandableTextEditors creates its modal DIVs later. Ideally we could listen
+ * for some kind of "modal open" event, but I haven't been able to find anything
+ * like that so for now we do this quite frequently, every time there is a
+ * "selectionchange" event (which is pretty often).
+ */
+export const reparentTinyMceModals = () => {
+  const modalLayer = document.querySelector('.pgn__modal-layer');
+  if (!modalLayer) {
+    return;
+  }
+  const tinymceAuxDivs = document.querySelectorAll('.tox.tox-tinymce-aux');
+  for (const tinymceAux of tinymceAuxDivs) {
+    if (tinymceAux.parentElement !== modalLayer) {
+      // Move this tinyMCE modal div into the paragon modal layer.
+      modalLayer.appendChild(tinymceAux);
+    }
+  }
+};
+
 export const setupCustomBehavior = ({
   updateContent,
   openImgModal,
@@ -221,30 +255,14 @@ export const setupCustomBehavior = ({
   }
 
   editor.on('init', /* istanbul ignore next */ () => {
-    // Moving TinyMce aux modal inside the Editor modal
-    // if the editor is on modal mode.
-    // This is to avoid issues using the aux modal:
-    // * Avoid close aux modal when clicking the content inside.
-    // * When the user opens the `Edit Source Code` modal, this adds `data-focus-on-hidden`
-    //   to the TinyMce aux modal, making it unusable.
-    const modalLayer = document.querySelector('.pgn__modal-layer');
-    const tinymceAux = document.querySelector('.tox.tox-tinymce-aux');
-
-    if (modalLayer && tinymceAux) {
-      modalLayer.appendChild(tinymceAux);
+    if (editor.bodyElement?.closest('.pgn__modal')) {
+      // This editor is inside a Paragon modal. Use this hack to avoid interference with TinyMCE's own modal popups:
+      reparentTinyMceModals();
+      editor.on('selectionchange', reparentTinyMceModals);
     }
   });
 
   editor.on('ExecCommand', /* istanbul ignore next */ (e) => {
-    // Remove `data-focus-on-hidden` and `aria-hidden` on TinyMce aux modal used on emoticons, formulas, etc.
-    // When using the Editor in modal mode, it may happen that the editor modal is rendered
-    // before the TinyMce aux modal, which adds these attributes, making the TinyMce aux modal unusable.
-    const modalElement = document.querySelector('.tox.tox-silver-sink.tox-tinymce-aux');
-    if (modalElement) {
-      modalElement.removeAttribute('data-focus-on-hidden');
-      modalElement.removeAttribute('aria-hidden');
-    }
-
     if (editorType === 'text' && e.command === 'mceFocus') {
       const initialContent = editor.getContent();
       const newContent = module.replaceStaticWithAsset({
