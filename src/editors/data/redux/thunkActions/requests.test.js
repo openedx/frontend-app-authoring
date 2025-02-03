@@ -18,7 +18,7 @@ jest.mock('../app/selectors', () => ({
   blockId: (state) => ({ blockId: state }),
   blockType: (state) => ({ blockType: state }),
   learningContextId: (state) => ({ learningContextId: state }),
-  blockTitle: (state) => state.data,
+  blockTitle: (state) => state.some,
 }));
 
 jest.mock('../../services/cms/api', () => ({
