@@ -17,7 +17,7 @@ import { isLibraryKey } from '../../../../generic/key-utils';
 import { createLibraryBlock } from '../../../../library-authoring/data/api';
 import { acceptedImgKeys } from '../../../sharedComponents/ImageUploadModal/SelectImageModal/utils';
 import { blockTypes } from '../../constants/app';
-import { AdvanceProblems, ProblemTypes } from '../../constants/problem';
+import { problemTitles } from '../../constants/problem';
 
 // Similar to `import { actions, selectors } from '..';` but avoid circular imports:
 const actions = { requests: requestsActions };
@@ -135,24 +135,24 @@ export const saveBlock = ({ content, ...rest }) => (dispatch, getState) => {
  * @param {[func]} onFailure - onFailure method ((error) => { ... })
  */
 export const createBlock = ({ ...rest }) => (dispatch, getState) => {
-  const blockType = selectors.app.blockType(getState());
   const blockTitle = selectors.app.blockTitle(getState());
-  let definitionId = blockTitle
-    ? blockTitle.toLowerCase().replaceAll(' ', '-')
-    : `${uuid4()}`;
-
-  if (blockType === blockTypes.problem) {
-    const problemTitles = new Set([...Object.values(ProblemTypes).map((problem) => problem.title),
-      ...Object.values(AdvanceProblems).map((problem) => problem.title)]);
-
-    definitionId = problemTitles.has(blockTitle) ? `${uuid4()}` : definitionId;
+  const blockType = selectors.app.blockType(getState());
+  // Remove any special character, a slug should be created with unicode letters, numbers, underscores or hyphens.
+  const cleanTitle = blockTitle?.toLowerCase().replace(/[^a-zA-Z0-9_\s-]/g, '').trim();
+  let definitionId;
+  // Validates if the title has been assigned by the user, if not a UUID is returned as the key.
+  if (!cleanTitle || (blockType === blockTypes.problem && problemTitles.has(blockTitle))) {
+    definitionId = `${uuid4()}`;
+  } else {
+    // add a hash to prevent duplication.
+    const hash = uuid4().split('-')[4];
+    definitionId = `${cleanTitle.replaceAll(/\s+/g, '-')}-${hash}`;
   }
-
   dispatch(module.networkRequest({
     requestKey: RequestKeys.createBlock,
     promise: createLibraryBlock({
       libraryId: selectors.app.learningContextId(getState()),
-      blockType: selectors.app.blockType(getState()),
+      blockType,
       definitionId,
     }),
     ...rest,

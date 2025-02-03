@@ -239,3 +239,7 @@ export const ignoredOlxAttributes = [
   '@_url_name',
   '@_x-is-pointer-node',
 ] as const;
+
+// Useful for the block creation workflow.
+export const problemTitles = new Set([...Object.values(ProblemTypes).map((problem) => problem.title),
+  ...Object.values(AdvanceProblems).map((problem) => problem.title)]);

@@ -26,6 +26,7 @@ jest.mock('../app/selectors', () => ({
 jest.mock('../video/selectors', () => ({
   transcriptHandlerUrl: () => ('transcriptHandlerUrl'),
   blockTitle: (state) => state.data,
+  blockTitle: (state) => state.some,
 }));
 
 jest.mock('../../services/cms/api', () => ({
