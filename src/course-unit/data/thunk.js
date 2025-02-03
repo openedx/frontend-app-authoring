@@ -34,8 +34,6 @@ import {
   updateCourseVerticalChildren,
   updateCourseVerticalChildrenLoadingStatus,
   updateQueryPendingStatus,
-  deleteXBlock,
-  duplicateXBlock,
   fetchStaticFileNoticesSuccess,
   updateCourseOutlineInfo,
   updateCourseOutlineInfoLoadingStatus,
@@ -70,11 +68,11 @@ export function fetchCourseSectionVerticalData(courseId, sequenceId) {
       dispatch(updateLoadingCourseSectionVerticalDataStatus({ status: RequestStatus.SUCCESSFUL }));
       dispatch(updateModel({
         modelType: 'sequences',
-        model: courseSectionVerticalData.sequence,
+        model: courseSectionVerticalData.sequence || [],
       }));
       dispatch(updateModels({
         modelType: 'units',
-        models: courseSectionVerticalData.units,
+        models: courseSectionVerticalData.units || [],
       }));
       dispatch(fetchStaticFileNoticesSuccess(JSON.parse(localStorage.getItem('staticFileNotices'))));
       localStorage.removeItem('staticFileNotices');
@@ -103,11 +101,11 @@ export function editCourseItemQuery(itemId, displayName, sequenceId) {
           dispatch(updateLoadingCourseSectionVerticalDataStatus({ status: RequestStatus.SUCCESSFUL }));
           dispatch(updateModel({
             modelType: 'sequences',
-            model: courseSectionVerticalData.sequence,
+            model: courseSectionVerticalData.sequence || [],
           }));
           dispatch(updateModels({
             modelType: 'units',
-            models: courseSectionVerticalData.units,
+            models: courseSectionVerticalData.units || [],
           }));
           dispatch(fetchSequenceSuccess({ sequenceId }));
           dispatch(fetchCourseItemSuccess(courseUnit));
@@ -229,7 +227,6 @@ export function deleteUnitItemQuery(itemId, xblockId) {
 
     try {
       await deleteUnitItem(xblockId);
-      dispatch(deleteXBlock(xblockId));
       const { userClipboard } = await getCourseSectionVerticalData(itemId);
       dispatch(updateClipboardData(userClipboard));
       const courseUnit = await getCourseUnitData(itemId);
@@ -249,12 +246,7 @@ export function duplicateUnitItemQuery(itemId, xblockId) {
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.duplicating));
 
     try {
-      const { locator } = await duplicateUnitItem(itemId, xblockId);
-      const newCourseVerticalChildren = await getCourseVerticalChildren(itemId);
-      dispatch(duplicateXBlock({
-        newId: locator,
-        newCourseVerticalChildren,
-      }));
+      await duplicateUnitItem(itemId, xblockId);
       const courseUnit = await getCourseUnitData(itemId);
       dispatch(fetchCourseItemSuccess(courseUnit));
       dispatch(hideProcessingNotification());

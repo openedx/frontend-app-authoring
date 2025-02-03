@@ -150,7 +150,7 @@ describe('<LibraryCollectionPage />', () => {
     expect(screen.queryByText('Read Only')).not.toBeInTheDocument();
   });
 
-  it('shows an empty read-only library collection, without a new button', async () => {
+  it('shows an empty read-only library collection, with the new button disabled', async () => {
     // Use a library mock that is read-only:
     const libraryId = mockContentLibrary.libraryIdReadOnly;
     // Update search mock so it returns no results:
@@ -161,7 +161,8 @@ describe('<LibraryCollectionPage />', () => {
     // Show in the collection page and in the sidebar
     expect(screen.getAllByText('This collection is currently empty.').length).toEqual(2);
 
-    expect(screen.queryByRole('button', { name: /new/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /new/i })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /new/i })).toBeDisabled();
     expect(screen.getByText('Read Only')).toBeInTheDocument();
   });
 
@@ -230,14 +231,14 @@ describe('<LibraryCollectionPage />', () => {
     expect((await screen.findAllByText(title))[0]).toBeInTheDocument();
     expect((await screen.findAllByText(title))[1]).toBeInTheDocument();
 
-    // Open by default; close the library info sidebar
-    const closeButton = screen.getByRole('button', { name: /close/i });
-    fireEvent.click(closeButton);
+    const collectionInfoBtn = screen.getByRole('button', { name: /collection info/i });
+
+    // Open by default; click 'Collection info' button to close
+    fireEvent.click(collectionInfoBtn);
     expect(screen.queryByText('Draft')).not.toBeInTheDocument();
     expect(screen.queryByText('(Never Published)')).not.toBeInTheDocument();
 
-    // Open library info sidebar with 'Library info' button
-    const collectionInfoBtn = screen.getByRole('button', { name: /collection info/i });
+    // Open library info sidebar with 'Collection info' button
     fireEvent.click(collectionInfoBtn);
     expect(screen.getByText('Manage')).toBeInTheDocument();
     expect(screen.getByText('Details')).toBeInTheDocument();

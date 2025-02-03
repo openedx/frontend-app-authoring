@@ -18,7 +18,7 @@ import { useSearchContext } from './SearchManager';
 
 interface ProblemFilterItemProps {
   count: number,
-  handleCheckboxChange: Function,
+  handleCheckboxChange: (e: any) => void;
 }
 interface FilterItemProps {
   blockType: string,
@@ -29,11 +29,9 @@ const ProblemFilterItem = ({ count, handleCheckboxChange } : ProblemFilterItemPr
   const blockType = 'problem';
 
   const {
-    setBlockTypesFilter,
     problemTypes,
-    problemTypesFilter,
-    blockTypesFilter,
-    setProblemTypesFilter,
+    typesFilter,
+    setTypesFilter,
   } = useSearchContext();
   const intl = useIntl();
 
@@ -45,65 +43,41 @@ const ProblemFilterItem = ({ count, handleCheckboxChange } : ProblemFilterItemPr
 
   useEffect(() => {
     /* istanbul ignore next */
-    if (problemTypesFilter.length !== 0
-        && !blockTypesFilter.includes(blockType)) {
+    const selectedProblemTypes = typesFilter.problems.size;
+    if (!selectedProblemTypes || selectedProblemTypes === problemTypesLength) {
+      setIsProblemIndeterminate(false);
+    } else if (selectedProblemTypes) {
       setIsProblemIndeterminate(true);
     }
-  }, []);
-
-  const handleCheckBoxChangeOnProblem = React.useCallback((e) => {
-    handleCheckboxChange(e);
-    setIsProblemIndeterminate(false);
-    if (e.target.checked) {
-      setProblemTypesFilter(Object.keys(problemTypes));
-    } else {
-      setProblemTypesFilter([]);
-    }
-  }, [handleCheckboxChange, setProblemTypesFilter]);
+  }, [typesFilter, problemTypesLength, setIsProblemIndeterminate]);
 
   const handleProblemCheckboxChange = React.useCallback((e) => {
-    setProblemTypesFilter(currentFiltersProblem => {
-      let result;
-      if (currentFiltersProblem.includes(e.target.value)) {
-        result = currentFiltersProblem.filter(x => x !== e.target.value);
-      } else {
-        result = [...currentFiltersProblem, e.target.value];
-      }
+    setTypesFilter((types) => {
       if (e.target.checked) {
-        /* istanbul ignore next */
-        if (result.length === problemTypesLength) {
-          // Add 'problem' to type filter if all problem types are selected.
-          setIsProblemIndeterminate(false);
-          setBlockTypesFilter(currentFilters => [...currentFilters, 'problem']);
-        } else {
-          setIsProblemIndeterminate(true);
-        }
-      } /* istanbul ignore next */ else {
-        // Delete 'problem' filter if a problem is deselected.
-        setBlockTypesFilter(currentFilters => {
-          /* istanbul ignore next */
-          if (currentFilters.includes('problem')) {
-            return currentFilters.filter(x => x !== 'problem');
-          }
-          return [...currentFilters];
-        });
-        setIsProblemIndeterminate(result.length !== 0);
+        types.problems.add(e.target.value);
+      } else {
+        types.problems.delete(e.target.value);
       }
-      return result;
+
+      if (types.problems.size === problemTypesLength) {
+        // Add 'problem' to block type filter if all problem types are selected.
+        types.blocks.add(blockType);
+      } else {
+        // Delete 'problem' filter if its selected.
+        types.blocks.delete(blockType);
+      }
+
+      return types;
     });
-  }, [
-    setProblemTypesFilter,
-    problemTypesFilter,
-    setBlockTypesFilter,
-    problemTypesLength,
-  ]);
+  }, [setTypesFilter, problemTypesLength]);
 
   return (
     <div className="problem-menu-item">
       <MenuItem
+        key={blockType}
         as={Form.Checkbox}
         value={blockType}
-        onChange={handleCheckBoxChangeOnProblem}
+        onChange={handleCheckboxChange}
         isIndeterminate={isProblemIndeterminate}
       >
         <div className="d-flex justify-content-between align-items-center">
@@ -135,7 +109,7 @@ const ProblemFilterItem = ({ count, handleCheckboxChange } : ProblemFilterItemPr
           <Form.Group className="mb-0">
             <Form.CheckboxSet
               name="block-type-filter"
-              value={problemTypesFilter}
+              value={[...typesFilter.problems]}
             >
               <Menu>
                 { Object.entries(problemTypes).map(([problemType, problemTypeCount]) => (
@@ -170,17 +144,28 @@ const ProblemFilterItem = ({ count, handleCheckboxChange } : ProblemFilterItemPr
 
 const FilterItem = ({ blockType, count } : FilterItemProps) => {
   const {
-    setBlockTypesFilter,
+    problemTypes,
+    setTypesFilter,
   } = useSearchContext();
 
   const handleCheckboxChange = React.useCallback((e) => {
-    setBlockTypesFilter(currentFilters => {
-      if (currentFilters.includes(e.target.value)) {
-        return currentFilters.filter(x => x !== e.target.value);
+    setTypesFilter((types) => {
+      if (e.target.checked) {
+        types.blocks.add(e.target.value);
+      } else {
+        types.blocks.delete(e.target.value);
       }
-      return [...currentFilters, e.target.value];
+      // The "problem" block type also selects/clears all the problem types
+      if (blockType === 'problem') {
+        if (e.target.checked) {
+          types.union({ problems: Object.keys(problemTypes) });
+        } else {
+          types.problems.clear();
+        }
+      }
+      return types;
     });
-  }, [setBlockTypesFilter]);
+  }, [setTypesFilter]);
 
   if (blockType === 'problem') {
     // Build Capa Problem types filter submenu
@@ -214,16 +199,13 @@ const FilterItem = ({ blockType, count } : FilterItemProps) => {
 const FilterByBlockType: React.FC<Record<never, never>> = () => {
   const {
     blockTypes,
-    blockTypesFilter,
-    problemTypesFilter,
-    setBlockTypesFilter,
-    setProblemTypesFilter,
+    typesFilter,
+    setTypesFilter,
   } = useSearchContext();
 
   const clearFilters = useCallback(/* istanbul ignore next */ () => {
-    setBlockTypesFilter([]);
-    setProblemTypesFilter([]);
-  }, []);
+    setTypesFilter((types) => types.clear());
+  }, [setTypesFilter]);
 
   // Sort blocktypes in order of hierarchy followed by alphabetically for components
   const sortedBlockTypeKeys = Object.keys(blockTypes).sort((a, b) => {
@@ -258,7 +240,7 @@ const FilterByBlockType: React.FC<Record<never, never>> = () => {
     sortedBlockTypes[key] = blockTypes[key];
   });
 
-  const appliedFilters = [...blockTypesFilter, ...problemTypesFilter].map(
+  const appliedFilters = [...typesFilter.blocks, ...typesFilter.problems].map(
     blockType => ({ label: <BlockTypeLabel blockType={blockType} /> }),
   );
 
@@ -272,7 +254,7 @@ const FilterByBlockType: React.FC<Record<never, never>> = () => {
       <Form.Group className="mb-0">
         <Form.CheckboxSet
           name="block-type-filter"
-          value={blockTypesFilter}
+          value={[...typesFilter.blocks]}
         >
           <Menu className="block-type-refinement-menu" style={{ boxShadow: 'none' }}>
             {
@@ -282,9 +264,9 @@ const FilterByBlockType: React.FC<Record<never, never>> = () => {
             }
             {
               // Show a message if there are no options at all to avoid the impression that the dropdown isn't working
-              Object.keys(sortedBlockTypes).length === 0 ? (
+              Object.keys(sortedBlockTypes).length === 0 && (
                 <MenuItem disabled><FormattedMessage {...messages['blockTypeFilter.empty']} /></MenuItem>
-              ) : null
+              )
             }
           </Menu>
         </Form.CheckboxSet>

@@ -68,7 +68,16 @@ const LibraryTeam: React.FC<Record<never, never>> = () => {
       }).catch((addMemberError) => {
         const errorData = typeof addMemberError === 'object' ? addMemberError.response?.data : undefined;
         if (errorData && 'email' in errorData) {
-          showToast(intl.formatMessage(messages.addMemberEmailError));
+          const errorEmail = errorData.email;
+          if (typeof errorEmail === 'string') {
+            showToast(intl.formatMessage(messages.addMemberSpecificError, {
+              message: errorEmail,
+            }));
+          } else {
+            showToast(intl.formatMessage(messages.addMemberSpecificError, {
+              message: errorEmail[0],
+            }));
+          }
         } else {
           showToast(intl.formatMessage(messages.addMemberError));
         }

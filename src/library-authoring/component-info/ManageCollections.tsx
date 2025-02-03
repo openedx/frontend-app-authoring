@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button, Icon, Scrollable, SelectableBox, Stack, StatefulButton, useCheckboxSetValues,
@@ -16,7 +16,7 @@ import { useUpdateComponentCollections } from '../data/apiHooks';
 import { ToastContext } from '../../generic/toast-context';
 import { CollectionMetadata } from '../data/api';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { SidebarAdditionalActions, useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
 
 interface ManageCollectionsProps {
   usageKey: string;
@@ -191,38 +191,23 @@ const ComponentCollections = ({ collections, onManageClick }: {
 };
 
 const ManageCollections = ({ usageKey, collections }: ManageCollectionsProps) => {
-  const { sidebarComponentInfo, resetSidebarAdditionalActions } = useSidebarContext();
-  const jumpToCollections = sidebarComponentInfo?.additionalAction === SidebarAdditionalActions.JumpToAddCollections;
-  const [editing, setEditing] = useState(jumpToCollections);
+  const { sidebarAction, resetSidebarAction, setSidebarAction } = useSidebarContext();
   const collectionNames = collections.map((collection) => collection.title);
 
-  useEffect(() => {
-    if (jumpToCollections) {
-      setEditing(true);
-    }
-  }, [sidebarComponentInfo]);
-
-  useEffect(() => {
-    // This is required to redo actions.
-    if (!editing) {
-      resetSidebarAdditionalActions();
-    }
-  }, [editing]);
-
-  if (editing) {
-    return (
-      <AddToCollectionsDrawer
-        usageKey={usageKey}
-        collections={collections}
-        onClose={() => setEditing(false)}
-      />
-    );
-  }
   return (
-    <ComponentCollections
-      collections={collectionNames}
-      onManageClick={() => setEditing(true)}
-    />
+    sidebarAction === SidebarActions.JumpToAddCollections
+      ? (
+        <AddToCollectionsDrawer
+          usageKey={usageKey}
+          collections={collections}
+          onClose={() => resetSidebarAction()}
+        />
+      ) : (
+        <ComponentCollections
+          collections={collectionNames}
+          onManageClick={() => setSidebarAction(SidebarActions.JumpToAddCollections)}
+        />
+      )
   );
 };
 

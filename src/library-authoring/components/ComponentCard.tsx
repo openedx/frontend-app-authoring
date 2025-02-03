@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -21,8 +21,10 @@ import { ToastContext } from '../../generic/toast-context';
 import { type ContentHit } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { SidebarAdditionalActions, useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
 import { useRemoveComponentsFromCollection } from '../data/apiHooks';
+import { useLibraryRoutes } from '../routes';
+
 import BaseComponentCard from './BaseComponentCard';
 import { canEditComponent } from './ComponentEditorModal';
 import messages from './messages';
@@ -44,6 +46,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
     sidebarComponentInfo,
     openComponentInfoSidebar,
     closeLibrarySidebar,
+    setSidebarAction,
   } = useSidebarContext();
 
   const canEdit = usageKey && canEditComponent(usageKey);
@@ -73,9 +76,10 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
     });
   };
 
-  const showManageCollections = () => {
-    openComponentInfoSidebar(usageKey, SidebarAdditionalActions.JumpToAddCollections);
-  };
+  const showManageCollections = useCallback(() => {
+    setSidebarAction(SidebarActions.JumpToAddCollections);
+    openComponentInfoSidebar(usageKey);
+  }, [setSidebarAction, openComponentInfoSidebar, usageKey]);
 
   return (
     <Dropdown id="component-card-dropdown">
@@ -202,6 +206,15 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
     showOnlyPublished ? formatted.published?.displayName : formatted.displayName
   ) ?? '';
 
+  const { navigateTo } = useLibraryRoutes();
+  const openComponent = useCallback(() => {
+    openComponentInfoSidebar(usageKey);
+
+    if (!componentPickerMode) {
+      navigateTo({ componentId: usageKey });
+    }
+  }, [usageKey, navigateTo, openComponentInfoSidebar]);
+
   return (
     <BaseComponentCard
       componentType={blockType}
@@ -219,6 +232,7 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
       )}
       openInfoSidebar={() => openComponentInfoSidebar(usageKey)}
       hasUnpublishedChanges={modified >= (lastPublished ?? 0)}
+      onSelect={openComponent}
     />
   );
 };

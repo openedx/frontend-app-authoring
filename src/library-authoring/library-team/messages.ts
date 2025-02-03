@@ -124,10 +124,10 @@ const messages = defineMessages({
     defaultMessage: 'Error adding Team Member',
     description: 'Message shown when an error occurs while adding a Library Team member',
   },
-  addMemberEmailError: {
-    id: 'course-authoring.library-authoring.library-team.add-member-email-error',
-    defaultMessage: 'Error adding Team Member. Please verify that the email is correct and belongs to a registered user.',
-    description: 'Message shown when an error occurs with email while adding a Library Team member.',
+  addMemberSpecificError: {
+    id: 'course-authoring.library-authoring.library-team.add-member-specific-error',
+    defaultMessage: 'Error adding Team Member. {message}',
+    description: 'Message shown when an error occurs while adding a Library Team member, including a specific error message.',
   },
   deleteMemberSuccess: {
     id: 'course-authoring.library-authoring.library-team.delete-member-success',

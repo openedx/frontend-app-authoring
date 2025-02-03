@@ -1,15 +1,24 @@
-import { Button, Stack, useToggle } from '@openedx/paragon';
+import { useCallback } from 'react';
+import { Button, Stack } from '@openedx/paragon';
 import { FormattedDate, useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
 import LibraryPublishStatus from './LibraryPublishStatus';
 import { LibraryTeamModal } from '../library-team';
 import { useLibraryContext } from '../common/context/LibraryContext';
+import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
 
 const LibraryInfo = () => {
   const intl = useIntl();
   const { libraryData, readOnly } = useLibraryContext();
-  const [isLibraryTeamModalOpen, openLibraryTeamModal, closeLibraryTeamModal] = useToggle();
+  const { sidebarAction, setSidebarAction, resetSidebarAction } = useSidebarContext();
+  const isLibraryTeamModalOpen = (sidebarAction === SidebarActions.ManageTeam);
+  const openLibraryTeamModal = useCallback(() => {
+    setSidebarAction(SidebarActions.ManageTeam);
+  }, [setSidebarAction]);
+  const closeLibraryTeamModal = useCallback(() => {
+    resetSidebarAction();
+  }, [resetSidebarAction]);
 
   return (
     <Stack direction="vertical" gap={2.5}>

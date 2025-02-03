@@ -5,6 +5,7 @@ import {
   useMemo,
   useState,
 } from 'react';
+import { useStateWithUrlSearchParam } from '../../../hooks';
 
 export enum SidebarBodyComponentId {
   AddContent = 'add-content',
@@ -32,28 +33,36 @@ export const isComponentInfoTab = (tab: string): tab is ComponentInfoTab => (
   Object.values<string>(COMPONENT_INFO_TABS).includes(tab)
 );
 
+type SidebarInfoTab = ComponentInfoTab | CollectionInfoTab;
+const toSidebarInfoTab = (tab: string): SidebarInfoTab | undefined => (
+  isComponentInfoTab(tab) || isCollectionInfoTab(tab)
+    ? tab : undefined
+);
+
 export interface SidebarComponentInfo {
   type: SidebarBodyComponentId;
   id: string;
-  /** Additional action on Sidebar display */
-  additionalAction?: SidebarAdditionalActions;
-  /** Current tab in the sidebar */
-  currentTab?: CollectionInfoTab | ComponentInfoTab;
 }
 
-export enum SidebarAdditionalActions {
+export enum SidebarActions {
   JumpToAddCollections = 'jump-to-add-collections',
+  ManageTeam = 'manage-team',
+  None = '',
 }
 
 export type SidebarContextData = {
   closeLibrarySidebar: () => void;
   openAddContentSidebar: () => void;
-  openInfoSidebar: () => void;
-  openCollectionInfoSidebar: (collectionId: string, additionalAction?: SidebarAdditionalActions) => void;
-  openComponentInfoSidebar: (usageKey: string, additionalAction?: SidebarAdditionalActions) => void;
+  openInfoSidebar: (componentId?: string, collectionId?: string) => void;
+  openLibrarySidebar: () => void;
+  openCollectionInfoSidebar: (collectionId: string) => void;
+  openComponentInfoSidebar: (usageKey: string) => void;
   sidebarComponentInfo?: SidebarComponentInfo;
-  resetSidebarAdditionalActions: () => void;
-  setSidebarCurrentTab: (tab: CollectionInfoTab | ComponentInfoTab) => void;
+  sidebarAction: SidebarActions;
+  setSidebarAction: (action: SidebarActions) => void;
+  resetSidebarAction: () => void;
+  sidebarTab: SidebarInfoTab;
+  setSidebarTab: (tab: SidebarInfoTab) => void;
 };
 
 /**
@@ -71,7 +80,7 @@ type SidebarProviderProps = {
 };
 
 /**
- * React component to provide `LibraryContext`
+ * React component to provide `SidebarContext`
  */
 export const SidebarProvider = ({
   children,
@@ -81,12 +90,22 @@ export const SidebarProvider = ({
     initialSidebarComponentInfo,
   );
 
-  /** Helper function to consume addtional action once performed.
-    Required to redo the action.
-  */
-  const resetSidebarAdditionalActions = useCallback(() => {
-    setSidebarComponentInfo((prev) => (prev && { ...prev, additionalAction: undefined }));
-  }, []);
+  const [sidebarTab, setSidebarTab] = useStateWithUrlSearchParam<SidebarInfoTab>(
+    COMPONENT_INFO_TABS.Preview,
+    'st',
+    (value: string) => toSidebarInfoTab(value),
+    (value: SidebarInfoTab) => value.toString(),
+  );
+
+  const [sidebarAction, setSidebarAction] = useStateWithUrlSearchParam<SidebarActions>(
+    SidebarActions.None,
+    'sa',
+    (value: string) => Object.values(SidebarActions).find((enumValue) => value === enumValue),
+    (value: SidebarActions) => value.toString(),
+  );
+  const resetSidebarAction = useCallback(() => {
+    setSidebarAction(SidebarActions.None);
+  }, [setSidebarAction]);
 
   const closeLibrarySidebar = useCallback(() => {
     setSidebarComponentInfo(undefined);
@@ -94,33 +113,32 @@ export const SidebarProvider = ({
   const openAddContentSidebar = useCallback(() => {
     setSidebarComponentInfo({ id: '', type: SidebarBodyComponentId.AddContent });
   }, []);
-  const openInfoSidebar = useCallback(() => {
+  const openLibrarySidebar = useCallback(() => {
     setSidebarComponentInfo({ id: '', type: SidebarBodyComponentId.Info });
   }, []);
 
-  const openComponentInfoSidebar = useCallback((usageKey: string, additionalAction?: SidebarAdditionalActions) => {
-    setSidebarComponentInfo((prev) => ({
-      ...prev,
+  const openComponentInfoSidebar = useCallback((usageKey: string) => {
+    setSidebarComponentInfo({
       id: usageKey,
       type: SidebarBodyComponentId.ComponentInfo,
-      additionalAction,
-    }));
+    });
   }, []);
 
-  const openCollectionInfoSidebar = useCallback((
-    newCollectionId: string,
-    additionalAction?: SidebarAdditionalActions,
-  ) => {
-    setSidebarComponentInfo((prev) => ({
-      ...prev,
+  const openCollectionInfoSidebar = useCallback((newCollectionId: string) => {
+    setSidebarComponentInfo({
       id: newCollectionId,
       type: SidebarBodyComponentId.CollectionInfo,
-      additionalAction,
-    }));
+    });
   }, []);
 
-  const setSidebarCurrentTab = useCallback((tab: CollectionInfoTab | ComponentInfoTab) => {
-    setSidebarComponentInfo((prev) => (prev && { ...prev, currentTab: tab }));
+  const openInfoSidebar = useCallback((componentId?: string, collectionId?: string) => {
+    if (componentId) {
+      openComponentInfoSidebar(componentId);
+    } else if (collectionId) {
+      openCollectionInfoSidebar(collectionId);
+    } else {
+      openLibrarySidebar();
+    }
   }, []);
 
   const context = useMemo<SidebarContextData>(() => {
@@ -128,11 +146,15 @@ export const SidebarProvider = ({
       closeLibrarySidebar,
       openAddContentSidebar,
       openInfoSidebar,
+      openLibrarySidebar,
       openComponentInfoSidebar,
       sidebarComponentInfo,
       openCollectionInfoSidebar,
-      resetSidebarAdditionalActions,
-      setSidebarCurrentTab,
+      sidebarAction,
+      setSidebarAction,
+      resetSidebarAction,
+      sidebarTab,
+      setSidebarTab,
     };
 
     return contextValue;
@@ -140,11 +162,15 @@ export const SidebarProvider = ({
     closeLibrarySidebar,
     openAddContentSidebar,
     openInfoSidebar,
+    openLibrarySidebar,
     openComponentInfoSidebar,
     sidebarComponentInfo,
     openCollectionInfoSidebar,
-    resetSidebarAdditionalActions,
-    setSidebarCurrentTab,
+    sidebarAction,
+    setSidebarAction,
+    resetSidebarAction,
+    sidebarTab,
+    setSidebarTab,
   ]);
 
   return (
@@ -162,10 +188,14 @@ export function useSidebarContext(): SidebarContextData {
       closeLibrarySidebar: () => {},
       openAddContentSidebar: () => {},
       openInfoSidebar: () => {},
+      openLibrarySidebar: () => {},
       openComponentInfoSidebar: () => {},
       openCollectionInfoSidebar: () => {},
-      resetSidebarAdditionalActions: () => {},
-      setSidebarCurrentTab: () => {},
+      sidebarAction: SidebarActions.None,
+      setSidebarAction: () => {},
+      resetSidebarAction: () => {},
+      sidebarTab: COMPONENT_INFO_TABS.Preview,
+      setSidebarTab: () => {},
       sidebarComponentInfo: undefined,
     };
   }

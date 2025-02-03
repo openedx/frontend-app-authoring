@@ -18,6 +18,7 @@ import { reducer as CourseUpdatesReducer } from './course-updates/data/slice';
 import { reducer as processingNotificationReducer } from './generic/processing-notification/data/slice';
 import { reducer as helpUrlsReducer } from './help-urls/data/slice';
 import { reducer as courseExportReducer } from './export-page/data/slice';
+import { reducer as courseOptimizerReducer } from './optimizer-page/data/slice';
 import { reducer as genericReducer } from './generic/data/slice';
 import { reducer as courseImportReducer } from './import-page/data/slice';
 import { reducer as videosReducer } from './files-and-videos/videos-page/data/slice';
@@ -47,6 +48,7 @@ export default function initializeStore(preloadedState = undefined) {
       processingNotification: processingNotificationReducer,
       helpUrls: helpUrlsReducer,
       courseExport: courseExportReducer,
+      courseOptimizer: courseOptimizerReducer,
       generic: genericReducer,
       courseImport: courseImportReducer,
       videos: videosReducer,

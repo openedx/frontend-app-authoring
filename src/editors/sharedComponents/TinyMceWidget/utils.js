@@ -18,7 +18,7 @@ export const parseAssetName = (relativeUrl) => {
   let assetName = '';
   if (relativeUrl.match(/\/asset-v1:\S+[+]\S+[@]\S+[+]\S+\/\w/)?.length >= 1) {
     const assetBlockName = relativeUrl.substring(0, relativeUrl.search(/("|&quot;)/));
-    const dividedSrc = assetBlockName.split(/\/asset-v1:\S+[+]\S+[@]\S+[+]\S+\//);
+    const dividedSrc = assetBlockName.split(/\/asset-v1:\S+[+]\S+[@]\S+[+]\S+[/@]/);
     [, assetName] = dividedSrc;
   } else {
     const assetBlockName = relativeUrl.substring(relativeUrl.indexOf('@') + 1, relativeUrl.search(/("|&quot;)/));

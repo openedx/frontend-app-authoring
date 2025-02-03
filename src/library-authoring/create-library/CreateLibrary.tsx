@@ -19,6 +19,7 @@ import FormikErrorFeedback from '../../generic/FormikErrorFeedback';
 import AlertError from '../../generic/alert-error';
 import { useOrganizationListData } from '../../generic/data/apiHooks';
 import SubHeader from '../../generic/sub-header/SubHeader';
+import { useStudioHome } from '../../studio-home/hooks';
 import { useCreateLibraryV2 } from './data/apiHooks';
 import messages from './messages';
 
@@ -38,9 +39,22 @@ const CreateLibrary = () => {
   } = useCreateLibraryV2();
 
   const {
-    data: organizationListData,
+    data: allOrganizations,
     isLoading: isOrganizationListLoading,
   } = useOrganizationListData();
+
+  const {
+    studioHomeData: {
+      allowedOrganizationsForLibraries,
+      allowToCreateNewOrg,
+    },
+  } = useStudioHome();
+
+  const organizations = (
+    allowToCreateNewOrg
+      ? allOrganizations
+      : allowedOrganizationsForLibraries
+  ) || [];
 
   const handleOnClickCancel = () => {
     navigate('/libraries');
@@ -100,12 +114,17 @@ const CreateLibrary = () => {
                 <Form.Autosuggest
                   name="org"
                   isLoading={isOrganizationListLoading}
-                  onChange={(event) => formikProps.setFieldValue('org', event.selectionId)}
+                  onChange={(event) => formikProps.setFieldValue(
+                    'org',
+                    allowToCreateNewOrg
+                      ? (event.selectionId || event.userProvidedText)
+                      : event.selectionId,
+                  )}
                   placeholder={intl.formatMessage(messages.orgPlaceholder)}
                 >
-                  {organizationListData ? organizationListData.map((org) => (
+                  {organizations.map((org) => (
                     <Form.AutosuggestOption key={org} id={org}>{org}</Form.AutosuggestOption>
-                  )) : []}
+                  ))}
                 </Form.Autosuggest>
                 <FormikErrorFeedback name="org">
                   <Form.Text>{intl.formatMessage(messages.orgHelp)}</Form.Text>

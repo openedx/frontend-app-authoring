@@ -21,6 +21,7 @@ type BaseComponentCardProps = {
   actions: React.ReactNode;
   openInfoSidebar: () => void;
   hasUnpublishedChanges?: boolean;
+  onSelect: () => void
 };
 
 const BaseComponentCard = ({
@@ -31,6 +32,7 @@ const BaseComponentCard = ({
   tags,
   actions,
   openInfoSidebar,
+  onSelect,
   ...props
 } : BaseComponentCardProps) => {
   const tagCount = useMemo(() => {
@@ -48,10 +50,10 @@ const BaseComponentCard = ({
     <Container className="library-component-card">
       <Card
         isClickable
-        onClick={openInfoSidebar}
+        onClick={onSelect}
         onKeyDown={(e: React.KeyboardEvent) => {
           if (['Enter', ' '].includes(e.key)) {
-            openInfoSidebar();
+            onSelect();
           }
         }}
       >

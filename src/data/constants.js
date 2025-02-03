@@ -15,6 +15,13 @@ export const RequestStatus = /** @type {const} */ ({
   NOT_FOUND: 'not-found',
 });
 
+export const RequestFailureStatuses = [
+  RequestStatus.FAILED,
+  RequestStatus.DENIED,
+  RequestStatus.PARTIAL_FAILURE,
+  RequestStatus.NOT_FOUND,
+];
+
 /**
  * Team sizes enum
  * @enum

@@ -7,7 +7,7 @@ import {
 } from '@openedx/paragon/icons';
 
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { SidebarAdditionalActions, useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
 import { useLibraryBlockMetadata } from '../data/apiHooks';
 import StatusWidget from '../generic/status-widget';
 import messages from './messages';
@@ -18,8 +18,8 @@ import ManageCollections from './ManageCollections';
 const ComponentManagement = () => {
   const intl = useIntl();
   const { readOnly, isLoadingLibraryData } = useLibraryContext();
-  const { sidebarComponentInfo, resetSidebarAdditionalActions } = useSidebarContext();
-  const jumpToCollections = sidebarComponentInfo?.additionalAction === SidebarAdditionalActions.JumpToAddCollections;
+  const { sidebarComponentInfo, sidebarAction, resetSidebarAction } = useSidebarContext();
+  const jumpToCollections = sidebarAction === SidebarActions.JumpToAddCollections;
   const [tagsCollapseIsOpen, setTagsCollapseOpen] = React.useState(!jumpToCollections);
   const [collectionsCollapseIsOpen, setCollectionsCollapseOpen] = React.useState(true);
 
@@ -33,7 +33,7 @@ const ComponentManagement = () => {
   useEffect(() => {
     // This is required to redo actions.
     if (tagsCollapseIsOpen || !collectionsCollapseIsOpen) {
-      resetSidebarAdditionalActions();
+      resetSidebarAction();
     }
   }, [tagsCollapseIsOpen, collectionsCollapseIsOpen]);
 

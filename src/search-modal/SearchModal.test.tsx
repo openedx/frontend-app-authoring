@@ -5,7 +5,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import type { Store } from 'redux';
 import MockAdapter from 'axios-mock-adapter';
 
@@ -72,5 +72,15 @@ describe('<SearchModal />', () => {
     axiosMock.onGet(getContentSearchConfigUrl()).networkError();
     const { findByText } = render(<RootWrapper />);
     expect(await findByText('An error occurred. Unable to load search results.')).toBeInTheDocument();
+  });
+
+  it('should set focus on the search input box when loaded in the modal', async () => {
+    axiosMock.onGet(getContentSearchConfigUrl()).replyOnce(200, {
+      url: 'https://meilisearch.example.com',
+      index: 'test-index',
+      apiKey: 'test-api-key',
+    });
+    render(<RootWrapper />);
+    expect(screen.getByRole('searchbox')).toHaveFocus();
   });
 });

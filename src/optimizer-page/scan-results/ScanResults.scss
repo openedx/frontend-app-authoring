@@ -1,0 +1,110 @@
+.scan-results {
+  thead {
+    display: none;
+  }
+
+  .red-italics {
+    color: $brand-500;
+    margin-left: 2rem;
+    font-weight: 400;
+    font-size: 80%;
+    font-style: italic;
+  }
+
+  .yellow-italics {
+    color: $warning-800;;
+    margin-left: 2rem;
+    font-weight: 400;
+    font-size: 80%;
+    font-style: italic;
+  }
+
+  .section {
+    &.is-open {
+      &:not(:first-child) {
+        margin-top: 1rem;
+      }
+
+      margin-bottom: 1rem;
+    }
+  }
+
+  .open-arrow {
+    transform: translate(-10px, 5px);
+    display: inline-block;
+  }
+
+  /* Section Header */
+  .subsection-header {
+    font-size: 16px; /* Slightly smaller */
+    font-weight: 600; /* Reduced boldness */
+    background-color: $dark-100;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  /* Subsection Header */
+  .unit-header {
+    margin-left: .5rem;
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: $primary-500;
+  }
+
+  /* Block Links */
+  .broken-link-list li {
+    margin-bottom: 8px; /* Add breathing room */
+  }
+
+  .broken-link-list a {
+    text-decoration: none;
+    margin-left: 2rem;
+  }
+
+  /* Broken Links Highlight */
+  .broken-links-count {
+    color: red;
+    font-weight: bold;
+  }
+
+  .unit {
+    padding: 0 3rem;
+  }
+
+  .broken-link {
+    color: $brand-500;
+    text-decoration: none;
+  }
+
+  .broken-link-container {
+    max-width: 18rem;
+    text-wrap: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .locked-links-checkbox {
+    margin-top: .45rem;
+  }
+
+  .locked-links-checkbox-wrapper {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .link-status-text {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+
+  .broken-link-icon {
+    color: $brand-500;
+  }
+
+  .lock-icon {
+    color: $warning-300;
+  }
+}

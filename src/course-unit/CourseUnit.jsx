@@ -28,7 +28,7 @@ import Breadcrumbs from './breadcrumbs/Breadcrumbs';
 import HeaderNavigations from './header-navigations/HeaderNavigations';
 import Sequence from './course-sequence';
 import Sidebar from './sidebar';
-import { useCourseUnit } from './hooks';
+import { useCourseUnit, useLayoutGrid } from './hooks';
 import messages from './messages';
 import PublishControls from './sidebar/PublishControls';
 import LocationInfo from './sidebar/LocationInfo';
@@ -45,10 +45,13 @@ const CourseUnit = ({ courseId }) => {
     isLoading,
     sequenceId,
     unitTitle,
+    unitCategory,
     errorMessage,
     sequenceStatus,
     savingStatus,
     isTitleEditFormOpen,
+    isUnitVerticalType,
+    isUnitLibraryType,
     staticFileNotices,
     currentlyVisibleToStudents,
     unitXBlockActions,
@@ -70,6 +73,7 @@ const CourseUnit = ({ courseId }) => {
     handleCloseXBlockMovedAlert,
     handleNavigateToTargetUnit,
   } = useCourseUnit({ courseId, blockId });
+  const layoutGrid = useLayoutGrid(unitCategory, isUnitLibraryType);
 
   useEffect(() => {
     document.title = getPageHeadTitle('', unitTitle);
@@ -142,28 +146,28 @@ const CourseUnit = ({ courseId }) => {
               />
             )}
             breadcrumbs={(
-              <Breadcrumbs />
+              <Breadcrumbs
+                courseId={courseId}
+                parentUnitId={sequenceId}
+              />
             )}
             headerActions={(
               <HeaderNavigations
+                unitCategory={unitCategory}
                 headerNavigationsActions={headerNavigationsActions}
               />
             )}
           />
-          <Sequence
-            courseId={courseId}
-            sequenceId={sequenceId}
-            unitId={blockId}
-            handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
-            showPasteUnit={showPasteUnit}
-          />
-          <Layout
-            lg={[{ span: 8 }, { span: 4 }]}
-            md={[{ span: 8 }, { span: 4 }]}
-            sm={[{ span: 8 }, { span: 3 }]}
-            xs={[{ span: 9 }, { span: 3 }]}
-            xl={[{ span: 9 }, { span: 3 }]}
-          >
+          {isUnitVerticalType && (
+            <Sequence
+              courseId={courseId}
+              sequenceId={sequenceId}
+              unitId={blockId}
+              handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
+              showPasteUnit={showPasteUnit}
+            />
+          )}
+          <Layout {...layoutGrid}>
             <Layout.Element>
               {currentlyVisibleToStudents && (
                 <AlertMessage
@@ -180,15 +184,19 @@ const CourseUnit = ({ courseId }) => {
                 />
               )}
               <XBlockContainerIframe
+                courseId={courseId}
                 blockId={blockId}
                 unitXBlockActions={unitXBlockActions}
                 courseVerticalChildren={courseVerticalChildren.children}
+                handleConfigureSubmit={handleConfigureSubmit}
               />
-              <AddComponent
-                blockId={blockId}
-                handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
-              />
-              {showPasteXBlock && canPasteComponent && (
+              {isUnitVerticalType && (
+                <AddComponent
+                  blockId={blockId}
+                  handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
+                />
+              )}
+              {showPasteXBlock && canPasteComponent && isUnitVerticalType && (
                 <PasteComponent
                   clipboardData={sharedClipboardData}
                   onClick={handleCreateNewCourseXBlock}
@@ -205,18 +213,21 @@ const CourseUnit = ({ courseId }) => {
             </Layout.Element>
             <Layout.Element>
               <Stack gap={3}>
-                <Sidebar data-testid="course-unit-sidebar">
-                  <PublishControls blockId={blockId} />
-                </Sidebar>
-                {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true'
-                && (
-                  <Sidebar className="tags-sidebar">
-                    <TagsSidebarControls />
-                  </Sidebar>
+                {isUnitVerticalType && (
+                  <>
+                    <Sidebar data-testid="course-unit-sidebar">
+                      <PublishControls blockId={blockId} />
+                    </Sidebar>
+                    {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
+                      <Sidebar className="tags-sidebar">
+                        <TagsSidebarControls />
+                      </Sidebar>
+                    )}
+                    <Sidebar data-testid="course-unit-location-sidebar">
+                      <LocationInfo />
+                    </Sidebar>
+                  </>
                 )}
-                <Sidebar data-testid="course-unit-location-sidebar">
-                  <LocationInfo />
-                </Sidebar>
               </Stack>
             </Layout.Element>
           </Layout>

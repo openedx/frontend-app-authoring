@@ -93,22 +93,6 @@ const slice = createSlice({
     updateCourseVerticalChildrenLoadingStatus: (state, { payload }) => {
       state.loadingStatus.courseVerticalChildrenLoadingStatus = payload.status;
     },
-    deleteXBlock: (state, { payload }) => {
-      state.courseVerticalChildren.children = state.courseVerticalChildren.children.filter(
-        (component) => component.id !== payload,
-      );
-    },
-    duplicateXBlock: (state, { payload }) => {
-      state.courseVerticalChildren = {
-        ...payload.newCourseVerticalChildren,
-        children: payload.newCourseVerticalChildren.children.map((component) => {
-          if (component.blockId === payload.newId) {
-            component.shouldScroll = true;
-          }
-          return component;
-        }),
-      };
-    },
     fetchStaticFileNoticesSuccess: (state, { payload }) => {
       state.staticFileNotices = payload;
     },
@@ -139,8 +123,6 @@ export const {
   updateLoadingCourseXblockStatus,
   updateCourseVerticalChildren,
   updateCourseVerticalChildrenLoadingStatus,
-  deleteXBlock,
-  duplicateXBlock,
   fetchStaticFileNoticesSuccess,
   updateCourseOutlineInfo,
   updateCourseOutlineInfoLoadingStatus,

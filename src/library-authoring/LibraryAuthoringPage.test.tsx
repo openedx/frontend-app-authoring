@@ -111,6 +111,10 @@ describe('<LibraryAuthoringPage />', () => {
     expect(screen.getAllByText('Recently Modified').length).toEqual(1);
     expect((await screen.findAllByText('Introduction to Testing'))[0]).toBeInTheDocument();
 
+    // Search box should not have focus on page load
+    const searchBox = screen.getByRole('searchbox');
+    expect(searchBox).not.toHaveFocus();
+
     // Navigate to the components tab
     fireEvent.click(screen.getByRole('tab', { name: 'Components' }));
     // "Recently Modified" default sort shown
@@ -137,7 +141,7 @@ describe('<LibraryAuthoringPage />', () => {
     expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('tab', { name: 'Collections' }));
-    expect(screen.getByText('You have not added any collections to this library yet.')).toBeInTheDocument();
+    expect(await screen.findByText('You have not added any collections to this library yet.')).toBeInTheDocument();
 
     // Open Create collection modal
     const addCollectionButton = screen.getByRole('button', { name: /add collection/i });
@@ -151,7 +155,7 @@ describe('<LibraryAuthoringPage />', () => {
     expect(collectionModalHeading).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('tab', { name: 'All Content' }));
-    expect(screen.getByText('You have not added any content to this library yet.')).toBeInTheDocument();
+    expect(await screen.findByText('You have not added any content to this library yet.')).toBeInTheDocument();
 
     const addComponentButton = screen.getByRole('button', { name: /add component/i });
     fireEvent.click(addComponentButton);
@@ -196,15 +200,15 @@ describe('<LibraryAuthoringPage />', () => {
     // should not be impacted by the search
     await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
 
-    expect(screen.getByText('No matching components found in this library.')).toBeInTheDocument();
+    expect(await screen.findByText('No matching components found in this library.')).toBeInTheDocument();
 
     // Navigate to the components tab
     fireEvent.click(screen.getByRole('tab', { name: 'Components' }));
-    expect(screen.getByText('No matching components found in this library.')).toBeInTheDocument();
+    expect(await screen.findByText('No matching components found in this library.')).toBeInTheDocument();
 
     // Navigate to the collections tab
     fireEvent.click(screen.getByRole('tab', { name: 'Collections' }));
-    expect(screen.getByText('No matching collections found in this library.')).toBeInTheDocument();
+    expect(await screen.findByText('No matching collections found in this library.')).toBeInTheDocument();
 
     // Go back to Home tab
     // This step is necessary to avoid the url change leak to other tests
@@ -431,27 +435,23 @@ describe('<LibraryAuthoringPage />', () => {
     // Click on the first collection
     fireEvent.click((await screen.findByText('Collection 1')));
 
-    const sidebar = screen.getByTestId('library-sidebar');
-
-    const { getByRole } = within(sidebar);
-
     // Click on the Details tab
-    fireEvent.click(getByRole('tab', { name: 'Details' }));
+    fireEvent.click(screen.getByRole('tab', { name: 'Details' }));
 
     // Change to a component
     fireEvent.click((await screen.findAllByText('Introduction to Testing'))[0]);
 
     // Check that the Details tab is still selected
-    expect(getByRole('tab', { name: 'Details' })).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByRole('tab', { name: 'Details' })).toHaveAttribute('aria-selected', 'true');
 
     // Click on the Previews tab
-    fireEvent.click(getByRole('tab', { name: 'Preview' }));
+    fireEvent.click(screen.getByRole('tab', { name: 'Preview' }));
 
     // Switch back to the collection
     fireEvent.click((await screen.findByText('Collection 1')));
 
     // The Manage (default) tab should be selected because the collection does not have a Preview tab
-    expect(getByRole('tab', { name: 'Manage' })).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByRole('tab', { name: 'Manage' })).toHaveAttribute('aria-selected', 'true');
   });
 
   it('can filter by capa problem type', async () => {
@@ -505,6 +505,15 @@ describe('<LibraryAuthoringPage />', () => {
       // eslint-disable-next-line no-await-in-loop
       await validateSubmenu(key);
     }
+  });
+
+  it('can filter by block type', async () => {
+    await renderLibraryPage();
+
+    // Ensure the search endpoint is called
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+    const filterButton = screen.getByRole('button', { name: /type/i });
+    fireEvent.click(filterButton);
 
     // Validate click on Problem type
     const problemMenu = screen.getAllByText('Problem')[0];
@@ -528,15 +537,13 @@ describe('<LibraryAuthoringPage />', () => {
     });
 
     // Validate clear filters
-    const submenu = screen.getByText('Checkboxes');
-    expect(submenu).toBeInTheDocument();
-    fireEvent.click(submenu);
+    fireEvent.click(problemMenu);
 
     const clearFitlersButton = screen.getByText('Clear Filters');
     fireEvent.click(clearFitlersButton);
     await waitFor(() => {
       expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
-        body: expect.not.stringContaining(`content.problem_types = ${problemTypes.Checkboxes}`),
+        body: expect.not.stringContaining('block_type = problem'),
         method: 'POST',
         headers: expect.anything(),
       });
@@ -770,6 +777,34 @@ describe('<LibraryAuthoringPage />', () => {
         headers: expect.anything(),
       });
     });
+  });
+
+  it('Disables Type filter on Collections tab', async () => {
+    await renderLibraryPage();
+
+    expect(await screen.findByText('Content library')).toBeInTheDocument();
+    expect((await screen.findAllByText(libraryTitle))[0]).toBeInTheDocument();
+    expect((await screen.findAllByText('Introduction to Testing'))[0]).toBeInTheDocument();
+    expect((await screen.findAllByText('Collection 1'))[0]).toBeInTheDocument();
+
+    // Filter by Text block type
+    fireEvent.click(screen.getByRole('button', { name: /type/i }));
+    fireEvent.click(screen.getByRole('checkbox', { name: /text/i }));
+    // Escape to close the Types filter drop-down and re-enable the tabs
+    fireEvent.keyDown(screen.getByRole('button', { name: /type/i }), { key: 'Escape' });
+
+    // Navigate to the collections tab
+    fireEvent.click(await screen.findByRole('tab', { name: 'Collections' }));
+    expect((await screen.findAllByText('Collection 1'))[0]).toBeInTheDocument();
+    // No Types filter shown
+    expect(screen.queryByRole('button', { name: /type/i })).not.toBeInTheDocument();
+
+    // Navigate to the components tab
+    fireEvent.click(screen.getByRole('tab', { name: 'Components' }));
+    // Text components should be shown
+    expect((await screen.findAllByText('Introduction to Testing'))[0]).toBeInTheDocument();
+    // Types filter is shown
+    expect(screen.getByRole('button', { name: /type/i })).toBeInTheDocument();
   });
 
   it('Shows an error if libraries V2 is disabled', async () => {
