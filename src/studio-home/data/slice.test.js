@@ -1,4 +1,4 @@
-import { reducer, updateStudioHomeCoursesCustomParams } from './slice';
+import { reducer, resetStudioHomeCoursesCustomParams, updateStudioHomeCoursesCustomParams } from './slice';
 
 import { RequestStatus } from '../../data/constants';
 
@@ -26,26 +26,9 @@ describe('updateStudioHomeCoursesCustomParams action', () => {
     },
   };
 
-  it('should return the initial state', () => {
-    const result = reducer(undefined, { type: undefined });
-    expect(result).toEqual(initialState);
-  });
-
-  it('should update the payload passed in studioHomeCoursesRequestParams', () => {
-    const newState = {
-      ...initialState,
-      studioHomeCoursesRequestParams: {
-        currentPage: 2,
-        search: 'test',
-        order: 'display_name',
-        archivedOnly: true,
-        activeOnly: true,
-        isFiltered: true,
-        cleanFilters: true,
-      },
-    };
-
-    const payload = {
+  const modifiedRequestParamsState = {
+    ...initialState,
+    studioHomeCoursesRequestParams: {
       currentPage: 2,
       search: 'test',
       order: 'display_name',
@@ -53,9 +36,34 @@ describe('updateStudioHomeCoursesCustomParams action', () => {
       activeOnly: true,
       isFiltered: true,
       cleanFilters: true,
-    };
+    },
+  };
 
+  const payload = {
+    currentPage: 2,
+    search: 'test',
+    order: 'display_name',
+    archivedOnly: true,
+    activeOnly: true,
+    isFiltered: true,
+    cleanFilters: true,
+  };
+
+  it('should return the initial state', () => {
+    const result = reducer(undefined, { type: undefined });
+    expect(result).toEqual(initialState);
+  });
+
+  it('should update the payload passed in studioHomeCoursesRequestParams', () => {
     const result = reducer(initialState, updateStudioHomeCoursesCustomParams(payload));
-    expect(result).toEqual(newState);
+    expect(result).toEqual(modifiedRequestParamsState);
+  });
+
+  it('should reset the studioHomeCoursesRequestParams state to the initial value', () => {
+    const stateChanged = reducer(initialState, updateStudioHomeCoursesCustomParams(payload));
+    expect(stateChanged).toEqual(modifiedRequestParamsState);
+
+    const stateReset = reducer(stateChanged, resetStudioHomeCoursesCustomParams());
+    expect(stateReset.studioHomeCoursesRequestParams).toEqual(initialState.studioHomeCoursesRequestParams);
   });
 });
