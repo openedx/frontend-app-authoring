@@ -12,8 +12,7 @@ import {
   CollectionHit,
   ContentHit,
   SearchSortOption,
-  forceArray,
-  type PublishStatus,
+  forceArray, PublishStatus,
 } from './data/api';
 import { TypesFilterData, useStateOrUrlSearchParam } from './hooks';
 import { useContentSearchConnection, useContentSearchResults } from './data/apiHooks';
@@ -24,10 +23,6 @@ export interface SearchContextData {
   indexName?: string;
   searchKeywords: string;
   setSearchKeywords: React.Dispatch<React.SetStateAction<string>>;
-  blockTypesFilter: string[];
-  setBlockTypesFilter: React.Dispatch<React.SetStateAction<string[]>>;
-  problemTypesFilter: string[];
-  setProblemTypesFilter: React.Dispatch<React.SetStateAction<string[]>>;
   publishStatusFilter: PublishStatus[];
   setPublishStatusFilter: React.Dispatch<React.SetStateAction<PublishStatus[]>>;
   typesFilter: TypesFilterData;
@@ -72,9 +67,6 @@ export const SearchContextProvider: React.FC<{
   skipUrlUpdate,
   ...props
 }) => {
-  const [blockTypesFilter, setBlockTypesFilter] = React.useState<string[]>([]);
-  const [problemTypesFilter, setProblemTypesFilter] = React.useState<string[]>([]);
-  const [publishStatusFilter, setPublishStatusFilter] = React.useState<PublishStatus[]>([]);
   // Search parameters can be set via the query string
   // E.g. ?q=draft+text
   // TODO -- how to sanitize search terms?
@@ -109,6 +101,14 @@ export const SearchContextProvider: React.FC<{
     'tag',
     sanitizeTag,
     sanitizeTag,
+    skipUrlUpdate,
+  );
+
+  const [publishStatusFilter, setPublishStatusFilter] = useStateOrUrlSearchParam<PublishStatus>(
+    [],
+    'published',
+    (value: string) => Object.values(PublishStatus).find((enumValue) => value === enumValue),
+    (value: PublishStatus) => value.toString(),
     skipUrlUpdate,
   );
 
@@ -195,10 +195,6 @@ export const SearchContextProvider: React.FC<{
       indexName,
       searchKeywords,
       setSearchKeywords,
-      blockTypesFilter,
-      setBlockTypesFilter,
-      problemTypesFilter,
-      setProblemTypesFilter,
       publishStatusFilter,
       setPublishStatusFilter,
       typesFilter,
