@@ -28,7 +28,9 @@ export const LibraryBlock = ({
   view,
 }: LibraryBlockProps) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [iFrameHeight, setIFrameHeight] = useState(50);
+  const defaultiFrameHeight = view === 'studio_view' ? 80 : 50;
+
+  const [iFrameHeight, setIFrameHeight] = useState(defaultiFrameHeight);
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
 
   const intl = useIntl();
