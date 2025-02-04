@@ -253,15 +253,6 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
               headerActions={<HeaderActions />}
               hideBorder
             />
-            <SearchKeywordsField className="w-50" />
-            <div className="d-flex mt-3 align-items-center">
-              <FilterByTags />
-              <FilterByBlockType />
-              <FilterByPublished />
-              <ClearFiltersButton />
-              <div className="flex-grow-1" />
-              <SearchSortWidget />
-            </div>
             <Tabs
               variant="tabs"
               activeKey={activeKey}
@@ -276,6 +267,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
               <SearchKeywordsField className="mr-3" />
               <FilterByTags />
               {!insideCollections && <FilterByBlockType />}
+              <FilterByPublished />
               <ClearFiltersButton />
               <ActionRow.Spacer />
               <SearchSortWidget />
