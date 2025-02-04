@@ -230,7 +230,6 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
           )}
         </ActionRow>
       )}
-      openInfoSidebar={() => openComponentInfoSidebar(usageKey)}
       hasUnpublishedChanges={modified >= (lastPublished ?? 0)}
       onSelect={openComponent}
     />
