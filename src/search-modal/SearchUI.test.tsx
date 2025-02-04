@@ -371,7 +371,7 @@ describe('<SearchUI />', () => {
       // Clear any search filters applied by the previous test.
       // We need to do this because search filters are stored in the URL, and so they can leak between tests.
       const { queryByRole } = rendered;
-      const clearFilters = await queryByRole('button', { name: /clear filters/i });
+      const clearFilters = queryByRole('button', { name: /clear filters/i });
       if (clearFilters) {
         fireEvent.click(clearFilters);
       }
@@ -425,7 +425,7 @@ describe('<SearchUI />', () => {
       await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
       // Because we're mocking the results, there's no actual changes to the mock results,
       // but we can verify that the filter was sent in the request
-      expect(fetchMock).toBeDone((_url, req) => {
+      expect(fetchMock).toHaveLastFetched((_url, req) => {
         const requestData = JSON.parse(req.body?.toString() ?? '');
         const requestedFilter = requestData?.queries?.[0]?.filter;
         return JSON.stringify(requestedFilter) === JSON.stringify([
@@ -460,7 +460,7 @@ describe('<SearchUI />', () => {
       await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(2, searchEndpoint, 'post'); });
       // Because we're mocking the results, there's no actual changes to the mock results,
       // but we can verify that the filter was sent in the request
-      expect(fetchMock).toBeDone((_url, req) => {
+      expect(fetchMock).toHaveLastFetched((_url, req) => {
         const requestData = JSON.parse(req.body?.toString() ?? '');
         const requestedFilter = requestData?.queries?.[0]?.filter;
         return JSON.stringify(requestedFilter) === JSON.stringify([

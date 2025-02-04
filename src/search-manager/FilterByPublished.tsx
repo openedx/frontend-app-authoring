@@ -45,7 +45,7 @@ const FilterByPublished: React.FC<Record<never, never>> = () => {
       }
       return [...oldList, mode];
     });
-  }, []);
+  }, [setPublishStatusFilter]);
   const modeToLabel = {
     published: intl.formatMessage(messages.publishStatusPublished),
     modified: intl.formatMessage(messages.publishStatusModified),
