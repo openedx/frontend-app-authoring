@@ -56,7 +56,7 @@ const FilterByPublished: React.FC<Record<never, never>> = () => {
   return (
     <SearchFilterWidget
       appliedFilters={appliedFilters}
-      label="Publish Status"
+      label={<FormattedMessage {...messages.publishStatusFilter} />}
       clearFilter={clearFilters}
       icon={FilterList}
     >

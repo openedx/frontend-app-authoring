@@ -236,6 +236,11 @@ const messages = defineMessages({
     defaultMessage: 'Never published',
     description: 'Label for content that has never been published in the publish status filter',
   },
+  publishStatusFilter: {
+    id: 'course-authoring.search-manager.publishStatus.filter',
+    defaultMessage: 'Publish Status',
+    description: 'Label for the filter that allows filtering content by publish status',
+  },
 });
 
 export default messages;
