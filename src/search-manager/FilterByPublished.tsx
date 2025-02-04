@@ -6,7 +6,7 @@ import {
   MenuItem,
 } from '@openedx/paragon';
 import { FilterList } from '@openedx/paragon/icons';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import SearchFilterWidget from './SearchFilterWidget';
 import { useSearchContext } from './SearchManager';
