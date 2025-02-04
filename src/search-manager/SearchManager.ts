@@ -165,7 +165,6 @@ export const SearchContextProvider: React.FC<{
   const clearFilters = React.useCallback(() => {
     setTypesFilter((types) => types.clear());
     setTagsFilter([]);
-    setProblemTypesFilter([]);
     setPublishStatusFilter([]);
     if (usageKey !== '') {
       setUsageKey('');
