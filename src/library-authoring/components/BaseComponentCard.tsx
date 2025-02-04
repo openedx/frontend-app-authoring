@@ -19,7 +19,6 @@ type BaseComponentCardProps = {
   numChildren?: number;
   tags: ContentHitTags;
   actions: React.ReactNode;
-  openInfoSidebar: () => void;
   hasUnpublishedChanges?: boolean;
   onSelect: () => void
 };
@@ -31,7 +30,6 @@ const BaseComponentCard = ({
   numChildren,
   tags,
   actions,
-  openInfoSidebar,
   onSelect,
   ...props
 } : BaseComponentCardProps) => {
