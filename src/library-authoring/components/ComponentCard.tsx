@@ -29,6 +29,7 @@ import BaseComponentCard from './BaseComponentCard';
 import { canEditComponent } from './ComponentEditorModal';
 import messages from './messages';
 import ComponentDeleter from './ComponentDeleter';
+import { PublishStatus } from '../../search-manager/data/api';
 
 type ComponentCardProps = {
   contentHit: ContentHit,
@@ -196,6 +197,7 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
     formatted,
     tags,
     usageKey,
+    publishStatus,
   } = contentHit;
   const componentDescription: string = (
     showOnlyPublished ? formatted.published?.description : formatted.description
@@ -228,6 +230,7 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
           )}
         </ActionRow>
       )}
+      hasUnpublishedChanges={publishStatus !== PublishStatus.Published}
       onSelect={openComponent}
     />
   );

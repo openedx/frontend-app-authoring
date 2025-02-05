@@ -151,6 +151,10 @@ const messages = defineMessages({
     defaultMessage: 'Select',
     description: 'Button title for selecting multiple components',
   },
+  unpublishedChanges: {
+    id: 'course-authoring.library-authoring.component.unpublished-changes',
+    defaultMessage: 'Unpublished changes',
+    description: 'Badge text shown when a component has unpublished changes',
+  },
 });
-
 export default messages;

@@ -22,6 +22,7 @@ import NotFoundAlert from '../../generic/NotFoundAlert';
 import {
   ClearFiltersButton,
   FilterByBlockType,
+  FilterByPublished,
   FilterByTags,
   SearchContextProvider,
   SearchKeywordsField,
@@ -211,6 +212,7 @@ const LibraryCollectionPage = () => {
               <SearchKeywordsField className="mr-3" />
               <FilterByTags />
               <FilterByBlockType />
+              <FilterByPublished />
               <ClearFiltersButton />
               <ActionRow.Spacer />
               <SearchSortWidget />

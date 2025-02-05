@@ -9,6 +9,7 @@ import { LibraryProvider } from '../common/context/LibraryContext';
 import { getClipboardUrl } from '../../generic/data/api';
 import { ContentHit } from '../../search-manager';
 import ComponentCard from './ComponentCard';
+import { PublishStatus } from '../../search-manager/data/api';
 
 const contentHit: ContentHit = {
   id: '1',
@@ -35,6 +36,7 @@ const contentHit: ContentHit = {
   modified: 1722434322294,
   lastPublished: null,
   collections: {},
+  publishStatus: PublishStatus.Published,
 };
 
 const clipboardBroadcastChannelMock = {
