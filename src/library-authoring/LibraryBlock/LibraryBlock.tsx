@@ -28,7 +28,8 @@ export const LibraryBlock = ({
   view,
 }: LibraryBlockProps) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const defaultiFrameHeight = view === 'studio_view' ? 80 : 50;
+  const xblockView = view ?? 'student_view';
+  const defaultiFrameHeight = xblockView === 'studio_view' ? 80 : 50;
 
   const [iFrameHeight, setIFrameHeight] = useState(defaultiFrameHeight);
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
@@ -78,8 +79,6 @@ export const LibraryBlock = ({
   }, []);
 
   const queryStr = version ? `?version=${version}` : '';
-
-  const xblockView = view ?? 'student_view';
 
   return (
     <div style={{
