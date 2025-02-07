@@ -30,6 +30,7 @@ import { canEditComponent } from '../components/ComponentEditorModal';
 import { PickLibraryContentModal } from './PickLibraryContentModal';
 
 import messages from './messages';
+import { MULTI_LEVEL_XBLOCKS } from '../../constants';
 
 type ContentType = {
   name: string,
@@ -78,7 +79,6 @@ const AddContentContainer = () => {
   const { showToast } = useContext(ToastContext);
   const canEdit = useSelector(getCanEdit);
   const { showPasteXBlock, sharedClipboardData } = useCopyToClipboard(canEdit);
-
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
 
   const parseErrorMsg = (
@@ -98,7 +98,13 @@ const AddContentContainer = () => {
     return intl.formatMessage(defaultMessage);
   };
 
-  const isBlockTypeEnabled = (blockType: string) => getConfig().LIBRARY_SUPPORTED_BLOCKS.includes(blockType);
+  const isBlockTypeEnabled = (blockType: string) => {
+    // For now multilevel blocks are not supported in libraries
+    if (MULTI_LEVEL_XBLOCKS.includes(blockType)) {
+      return false;
+    }
+    return getConfig().LIBRARY_SUPPORTED_BLOCKS.includes(blockType);
+  };
 
   const collectionButtonData = {
     name: intl.formatMessage(messages.collectionButton),

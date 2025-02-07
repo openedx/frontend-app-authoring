@@ -269,6 +269,7 @@ export async function mockXBlockFields(usageKey: string): Promise<api.XBlockFiel
     case thisMock.usageKeyNewProblem: return thisMock.dataNewProblem;
     case thisMock.usageKeyNewVideo: return thisMock.dataNewVideo;
     case thisMock.usageKeyThirdParty: return thisMock.dataThirdParty;
+    case thisMock.usageKeyMultiLevel: return thisMock.dataMultiLevel;
     default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
   }
 }
@@ -304,6 +305,12 @@ mockXBlockFields.dataThirdParty = {
   displayName: 'Third party XBlock',
   data: '',
   metadata: { displayName: 'Third party XBlock' },
+} satisfies api.XBlockFields;
+mockXBlockFields.usageKeyMultiLevel = 'lb:Axim:TEST:conditional:12345';
+mockXBlockFields.dataMultiLevel = {
+  displayName: 'Conditional (Multilevel) Block',
+  data: '',
+  metadata: { displayName: 'Conditional (Multilevel) Block' },
 } satisfies api.XBlockFields;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockXBlockFields.applyMock = () => jest.spyOn(api, 'getXBlockFields').mockImplementation(mockXBlockFields);
@@ -377,6 +384,12 @@ mockLibraryBlockMetadata.dataThirdPartyXBlock = {
   ...mockLibraryBlockMetadata.dataPublished,
   id: mockLibraryBlockMetadata.usageKeyThirdPartyXBlock,
   blockType: 'third_party',
+} satisfies api.LibraryBlockMetadata;
+mockLibraryBlockMetadata.usageKeyMultiLevelXBlock = mockXBlockFields.usageKeyMultiLevel;
+mockLibraryBlockMetadata.dataMultiLevelXBlock = {
+  ...mockLibraryBlockMetadata.dataPublished,
+  id: mockLibraryBlockMetadata.usageKeyMultiLevelXBlock,
+  blockType: 'conditional',
 } satisfies api.LibraryBlockMetadata;
 mockLibraryBlockMetadata.usageKeyForTags = mockContentTaxonomyTagsData.largeTagsId;
 mockLibraryBlockMetadata.usageKeyWithCollections = 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd';

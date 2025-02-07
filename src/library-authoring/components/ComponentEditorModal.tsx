@@ -6,12 +6,18 @@ import EditorPage from '../../editors/EditorPage';
 import { getBlockType } from '../../generic/key-utils';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { invalidateComponentData } from '../data/apiHooks';
+import { MULTI_LEVEL_XBLOCKS } from '../../constants';
 
 export function canEditComponent(usageKey: string): boolean {
   let blockType: string;
   try {
     blockType = getBlockType(usageKey);
   } catch {
+    return false;
+  }
+
+  // For now multilevel blocks are not supported in libraries
+  if (MULTI_LEVEL_XBLOCKS.includes(blockType)) {
     return false;
   }
 

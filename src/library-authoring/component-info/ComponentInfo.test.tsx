@@ -60,6 +60,17 @@ describe('<ComponentInfo> Sidebar', () => {
     expect(screen.queryByRole('button', { name: /Edit component/ })).not.toBeInTheDocument();
   });
 
+  it('should show a disabled "Edit" button when the component type is multilevel', async () => {
+    initializeMocks();
+    render(
+      <ComponentInfo />,
+      withLibraryId(mockContentLibrary.libraryId, mockLibraryBlockMetadata.usageKeyMultiLevelXBlock),
+    );
+
+    const editButton = await screen.findByRole('button', { name: /Edit component/ });
+    expect(editButton).toBeDisabled();
+  });
+
   it('should show a working "Edit" button for a normal component', async () => {
     initializeMocks();
     render(
