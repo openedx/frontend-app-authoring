@@ -16,7 +16,7 @@ jest.mock('../../data/redux', () => ({
     app: {
       isInitialized: (state) => ({ isInitialized: state }),
       images: (state) => ({ images: state }),
-      isCreateBlock: (state) => ({ isCreateBlock: state }),
+      shouldCreateBlock: (state) => ({ shouldCreateBlock: state }),
     },
     requests: {
       isFailed: (...args) => ({ requestFailed: args }),
@@ -77,7 +77,7 @@ describe('EditorContainer hooks', () => {
           validateEntry,
         });
       });
-      it('returns callback to createBlock with dispatch and content if isCreateBlock is true', () => {
+      it('returns callback to createBlock with dispatch and content if shouldCreateBlock is true', () => {
         const getContent = () => 'myTestContentValue';
         const setAssetToStaticUrl = () => 'myTestContentValue';
         const validateEntry = () => 'vaLIdAteENTry';

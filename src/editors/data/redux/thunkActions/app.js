@@ -169,7 +169,7 @@ export const createBlock = (content, returnToUnit) => (dispatch, getState) => {
 };
 
 export const uploadAsset = ({ file, setSelection }) => (dispatch, getState) => {
-  if (selectors.isCreateBlock(getState())) {
+  if (selectors.shouldCreateBlock(getState())) {
     const tempFileURL = URL.createObjectURL(file);
     const tempImage = {
       displayName: file.name,
