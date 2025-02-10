@@ -16,10 +16,25 @@ const messages = defineMessages({
     defaultMessage: 'Libraries',
     description: 'Tab title for home tab',
   },
+  homeTabDescription: {
+    id: 'course-authoring.course-libraries.tab.home.description',
+    defaultMessage: 'This course contains content from these libraries.',
+    description: 'Description text for home tab',
+  },
+  homeTabDescriptionEmpty: {
+    id: 'course-authoring.course-libraries.tab.home.description-no-links',
+    defaultMessage: 'This course does not use any content from libraries.',
+    description: 'Description text for home tab',
+  },
   reviewTabTitle: {
     id: 'course-authoring.course-libraries.tab.review.title',
     defaultMessage: 'Review Content Updates ({count})',
     description: 'Tab title for review tab',
+  },
+  reviewTabTitleEmpty: {
+    id: 'course-authoring.course-libraries.tab.review.title-no-updates',
+    defaultMessage: 'Review Content Updates',
+    description: 'Tab title for review tab when no updates are available',
   },
   breadcrumbAriaLabel: {
     id: 'course-authoring.course-libraries.downstream-block.breadcrum.aria-label',

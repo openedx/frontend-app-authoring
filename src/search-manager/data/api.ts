@@ -529,7 +529,8 @@ export const fetchIndexDocuments = async (
   limit?: number,
   attributesToRetrieve?: string[],
   attributesToCrop?: string[],
-): Promise<Record<string, any>[]> => {
+  sort?: SearchSortOption[],
+): Promise<ContentHit[]> => {
   // Convert 'extraFilter' into an array
   const filterFormatted = forceArray(filter);
 
@@ -538,7 +539,8 @@ export const fetchIndexDocuments = async (
     limit,
     attributesToRetrieve,
     attributesToCrop,
+    sort,
   });
 
-  return hits;
+  return hits.map(formatSearchHit) as ContentHit[];
 };

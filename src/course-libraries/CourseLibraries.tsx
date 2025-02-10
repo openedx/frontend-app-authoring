@@ -1,22 +1,24 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { getConfig } from '@edx/frontend-platform';
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Breadcrumb, Button, Card, Collapsible, Container, Dropdown, Hyperlink, Icon, IconButton, Layout, Stack, Tab, Tabs } from '@openedx/paragon';
-import { Cached, CheckCircle, KeyboardArrowDown, KeyboardArrowUp, Loop, MoreVert, } from '@openedx/paragon/icons';
+import { Cached, CheckCircle, KeyboardArrowDown, KeyboardArrowRight, Loop, MoreVert, } from '@openedx/paragon/icons';
 
 import getPageHeadTitle from '../generic/utils';
 import { useModel } from '../generic/model-store';
 import messages from './messages';
 import SubHeader from '../generic/sub-header/SubHeader';
 import { useEntityLinksByDownstreamContext } from './data/apiHooks';
-import { countBy, groupBy, keyBy, merge, tail, uniq } from 'lodash';
+import { countBy, groupBy, keyBy, tail, uniq } from 'lodash';
 import { PublishableEntityLink } from './data/api';
 import { useFetchIndexDocuments } from '../search-manager/data/apiHooks';
 import classNames from 'classnames';
 import { getItemIcon } from '../generic/block-type-utils';
 import { BlockTypeLabel } from '../search-manager';
 import AlertMessage from '../generic/alert-message';
+import { ContentHit, SearchSortOption } from '../search-manager/data/api';
+import Loading from '../generic/Loading';
 
 interface Props {
   courseId: string;
@@ -28,22 +30,12 @@ interface LibraryCardProps {
   links: PublishableEntityLink[];
 }
 
-interface ComponentInfo {
-  display_name: string;
-  description: string;
-  block_type: string;
-  _formatted: {
-    display_name: string;
-    description: string;
-  },
-  breadcrumbs: {
-    display_name: string;
-    usage_key: string;
-  }[]
+interface ComponentInfo extends ContentHit {
+  readyToSync: boolean;
 }
 
 interface BlockCardProps {
-  info: ComponentInfo & PublishableEntityLink;
+  info: ComponentInfo;
 }
 
 export enum CourseLibraryTabs {
@@ -53,8 +45,9 @@ export enum CourseLibraryTabs {
 
 const BlockCard: React.FC<BlockCardProps> = ({ info }) => {
   const intl = useIntl();
-  const componentIcon = getItemIcon(info.block_type);
-  const unitUsageKey = info.breadcrumbs[info.breadcrumbs?.length - 1]?.usage_key;
+  const componentIcon = getItemIcon(info.blockType);
+  const breadcrumbs = tail(info.breadcrumbs) as Array<{ displayName: string, usageKey: string }>;
+  const unitUsageKey = breadcrumbs[breadcrumbs?.length - 1]?.usageKey;
   const blockLink = `${getConfig().STUDIO_BASE_URL}/container/${unitUsageKey}`;
   return (
     <Card
@@ -63,7 +56,7 @@ const BlockCard: React.FC<BlockCardProps> = ({ info }) => {
         { "bg-primary-100": info.readyToSync }
       )}
       orientation="horizontal"
-      key={info.downstreamUsageKey}
+      key={info.usageKey}
     >
       <Card.Section
         className="py-2"
@@ -71,19 +64,19 @@ const BlockCard: React.FC<BlockCardProps> = ({ info }) => {
         <Stack direction="vertical" gap={1}>
           <Stack direction="horizontal" gap={1} className="micro text-gray-500">
             <Icon src={componentIcon} size="xs" />
-            <BlockTypeLabel blockType={info.block_type} />
+            <BlockTypeLabel blockType={info.blockType} />
             <Hyperlink className="lead ml-auto text-black" destination={blockLink} target="_blank">
             </Hyperlink>
           </Stack>
           <Stack direction="horizontal" className="small" gap={1}>
             {info.readyToSync && <Icon src={Loop} size="xs" />}
-            {info._formatted?.display_name}
+            {info.formatted?.displayName}
           </Stack>
-          <div className="micro">{info._formatted?.description}</div>
+          <div className="micro">{info.formatted?.description}</div>
           <Breadcrumb
             className="micro text-gray-500"
             ariaLabel={intl.formatMessage(messages.breadcrumbAriaLabel)}
-            links={tail(info.breadcrumbs).map((breadcrumb) => ({ label: breadcrumb.display_name }))}
+            links={breadcrumbs.map((breadcrumb) => ({ label: breadcrumb.displayName }))}
             spacer={<span className="custom-spacer">/</span>}
             linkAs='span'
           />
@@ -103,15 +96,20 @@ const LibraryCard: React.FC<LibraryCardProps> = ({ courseId, title, links }) => 
     [`context_key = "${courseId}"`, `usage_key IN ["${downstreamKeys.join('","')}"]`],
     downstreamKeys.length,
     ["usage_key", "display_name", "breadcrumbs", "description", "block_type"],
-    ["description:30"]
+    ["description:30"],
+    [SearchSortOption.TITLE_AZ],
   ) as unknown as { data: ComponentInfo[] };
-  const downstreamInfoMap = useMemo(() => keyBy(downstreamInfo, 'usage_key'), [downstreamInfo]);
-  const mergedData = useMemo(() => merge(linksInfo, downstreamInfoMap), [linksInfo, downstreamInfoMap]);
+
+  const renderBlockCards = (info: ComponentInfo) => {
+    info.readyToSync = linksInfo[info.usageKey].readyToSync;
+    return <BlockCard info={info} key={info.usageKey} />
+  }
+
   return (
     <Collapsible.Advanced>
       <Collapsible.Trigger className="bg-white shadow px-2 py-2 my-3 collapsible-trigger d-flex font-weight-normal text-dark">
         <Collapsible.Visible whenClosed>
-          <Icon src={KeyboardArrowUp} />
+          <Icon src={KeyboardArrowRight} />
         </Collapsible.Visible>
         <Collapsible.Visible whenOpen>
           <Icon src={KeyboardArrowDown} />
@@ -157,9 +155,7 @@ const LibraryCard: React.FC<LibraryCardProps> = ({ courseId, title, links }) => 
       </Collapsible.Trigger>
 
       <Collapsible.Body className="collapsible-body border-left border-left-purple px-2">
-        {Object.values(mergedData).map(info => (
-          <BlockCard info={info} key={info.downstreamUsageKey} />
-        ))}
+        {downstreamInfo?.map(info => renderBlockCards(info))}
       </Collapsible.Body>
     </Collapsible.Advanced>
   )
@@ -193,12 +189,32 @@ const ReviewAlert: React.FC<ReviewAlertProps> = ({ show, outOfSyncCount, onDismi
   );
 }
 
+const TabContent = ({ children }) => {
+  return (
+    <Layout
+      lg={[{ span: 9 }, { span: 3 }]}
+      md={[{ span: 9 }, { span: 3 }]}
+      sm={[{ span: 12 }, { span: 12 }]}
+      xs={[{ span: 12 }, { span: 12 }]}
+      xl={[{ span: 9 }, { span: 3 }]}
+    >
+      <Layout.Element>
+        {children}
+      </Layout.Element>
+      <Layout.Element>
+        Help panel
+      </Layout.Element>
+    </Layout>
+  )
+}
+
+
 const CourseLibraries: React.FC<Props> = ({ courseId }) => {
   const intl = useIntl();
   const courseDetails = useModel('courseDetails', courseId);
   const [tabKey, setTabKey] = useState<CourseLibraryTabs>(CourseLibraryTabs.home);
   const [showReviewAlert, setShowReviewAlert] = useState(true);
-  const { data: links } = useEntityLinksByDownstreamContext(courseId);
+  const { data: links, isLoading } = useEntityLinksByDownstreamContext(courseId);
   const linksByLib = useMemo(() => groupBy(links, 'upstreamContextKey'), [links]);
   const outOfSyncCount = useMemo(() => countBy(links, "readyToSync").true, [links]);;
 
@@ -209,6 +225,26 @@ const CourseLibraries: React.FC<Props> = ({ courseId }) => {
   const onAlertDismiss = () => {
     setShowReviewAlert(false);
   }
+
+  const renderLibrariesTabContent = useCallback(() => {
+    if (isLoading) {
+      return <Loading />
+    }
+    if (links?.length === 0) {
+      return <small><FormattedMessage {...messages.homeTabDescriptionEmpty} /></small>
+    }
+    return (
+      <>
+        <small><FormattedMessage {...messages.homeTabDescription} /></small>
+        {Object.entries(linksByLib).map(([libKey, libLinks]) => <LibraryCard
+          courseId={courseId}
+          title={libLinks[0].upstreamContextTitle}
+          links={libLinks}
+          key={libKey}
+        />)}
+      </>
+    );
+  }, [links, isLoading, linksByLib]);
 
   return (
     <>
@@ -244,45 +280,23 @@ const CourseLibraries: React.FC<Props> = ({ courseId }) => {
             activeKey={tabKey}
             onSelect={(k: CourseLibraryTabs) => setTabKey(k)}
           >
-            <Tab eventKey={CourseLibraryTabs.home} title={intl.formatMessage(messages.homeTabTitle)}>
-              <Layout
-                lg={[{ span: 9 }, { span: 3 }]}
-                md={[{ span: 9 }, { span: 3 }]}
-                sm={[{ span: 12 }, { span: 12 }]}
-                xs={[{ span: 12 }, { span: 12 }]}
-                xl={[{ span: 9 }, { span: 3 }]}
-              >
-                <Layout.Element>
-                  {Object.entries(linksByLib).map(([libKey, libLinks]) => <LibraryCard
-                    courseId={courseId}
-                    title={libLinks[0].upstreamContextTitle}
-                    links={libLinks}
-                    key={libKey}
-                  />)}
-                </Layout.Element>
-                <Layout.Element>
-                  Help panel
-                </Layout.Element>
-              </Layout>
+            <Tab
+              eventKey={CourseLibraryTabs.home}
+              title={intl.formatMessage(messages.homeTabTitle)}
+              className="px-2 mt-3"
+            >
+              <TabContent>
+                {renderLibrariesTabContent()}
+              </TabContent>
             </Tab>
             <Tab
               eventKey={CourseLibraryTabs.review}
-              title={intl.formatMessage(messages.reviewTabTitle, { count: outOfSyncCount })}
+              title={intl.formatMessage(
+                outOfSyncCount > 0 ? messages.reviewTabTitle : messages.reviewTabTitleEmpty,
+                { count: outOfSyncCount }
+              )}
             >
-              <Layout
-                lg={[{ span: 9 }, { span: 3 }]}
-                md={[{ span: 9 }, { span: 3 }]}
-                sm={[{ span: 12 }, { span: 12 }]}
-                xs={[{ span: 12 }, { span: 12 }]}
-                xl={[{ span: 9 }, { span: 3 }]}
-              >
-                <Layout.Element>
-                  Hello I am the first panel.
-                </Layout.Element>
-                <Layout.Element>
-                  Help panel
-                </Layout.Element>
-              </Layout>
+              <TabContent>Help</TabContent>
             </Tab>
           </Tabs>
         </section>

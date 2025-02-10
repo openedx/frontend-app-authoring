@@ -265,6 +265,7 @@ export const useFetchIndexDocuments = (
   limit: number,
   attributesToRetrieve?: string[],
   attributesToCrop?: string[],
+  sort?: SearchSortOption[],
 ) => {
   const { client, indexName } = useContentSearchConnection();
   return useQuery({
@@ -284,6 +285,7 @@ export const useFetchIndexDocuments = (
       limit,
       attributesToRetrieve,
       attributesToCrop,
+      sort,
     ),
   });
 };
