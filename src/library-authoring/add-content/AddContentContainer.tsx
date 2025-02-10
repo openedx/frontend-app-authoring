@@ -194,7 +194,7 @@ const AddContentContainer = () => {
     const suportedEditorTypes = Object.values(blockTypes);
     if (suportedEditorTypes.includes(blockType)) {
       // linkComponent on editor close.
-      openComponentEditor('', (data) => linkComponent(data.id), blockType);
+      openComponentEditor('', (data) => data && linkComponent(data.id), blockType);
     } else {
       createBlockMutation.mutateAsync({
         libraryId,
