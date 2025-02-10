@@ -178,7 +178,7 @@ exports[`AnswerOption render snapshot: renders correct option with numeric input
           "id": "A",
           "isAnswerRange": true,
           "selectedFeedback": "selected feedback",
-          "title": "Answer 1",
+          "title": "[2,5]",
           "unselectedFeedback": "unselected feedback",
         }
       }
@@ -190,7 +190,9 @@ exports[`AnswerOption render snapshot: renders correct option with numeric input
   <div
     className="ml-1 flex-grow-1"
   >
-    <div>
+    <Form.Group
+      isInvalid={false}
+    >
       <Form.Control
         as="textarea"
         autoResize={true}
@@ -198,7 +200,7 @@ exports[`AnswerOption render snapshot: renders correct option with numeric input
         onChange={[Function]}
         placeholder="Enter an answer range"
         rows={1}
-        value="Answer 1"
+        value="[2,5]"
       />
       <div
         className="pgn__form-switch-helper-text"
@@ -209,7 +211,7 @@ exports[`AnswerOption render snapshot: renders correct option with numeric input
           id="authoring.answerwidget.answer.answerRangeHelperText"
         />
       </div>
-    </div>
+    </Form.Group>
     <Body>
       <injectIntl(ShimmedIntlComponent)
         answer={
@@ -218,7 +220,7 @@ exports[`AnswerOption render snapshot: renders correct option with numeric input
             "id": "A",
             "isAnswerRange": true,
             "selectedFeedback": "selected feedback",
-            "title": "Answer 1",
+            "title": "[2,5]",
             "unselectedFeedback": "unselected feedback",
           }
         }
@@ -315,6 +317,112 @@ exports[`AnswerOption render snapshot: renders correct option with selected unse
         isLibrary={false}
         learningContextId="course+org+run"
         problemType="choiceresponse"
+        setSelectedFeedback={[Function]}
+        setUnselectedFeedback={[Function]}
+      />
+    </Body>
+  </div>
+  <div
+    className="d-flex flex-row flex-nowrap"
+  >
+    <Trigger
+      aria-label="Toggle feedback"
+      className="btn-icon btn-icon-primary btn-icon-md align-items-center"
+    >
+      <Icon
+        alt="Toggle feedback"
+      />
+    </Trigger>
+    <IconButton
+      alt="Delete answer"
+      iconAs="Icon"
+      onClick={[Function]}
+      variant="primary"
+    />
+  </div>
+</Advanced>
+`;
+
+exports[`AnswerOption render snapshot: renders incorrect option with numeric input problem and answer range 1`] = `
+<Advanced
+  className="answer-option d-flex flex-row justify-content-between flex-nowrap pb-2 pt-2"
+  onToggle={[Function]}
+  open={false}
+>
+  <div
+    className="mr-1 d-flex"
+  >
+    <Checker
+      answer={
+        {
+          "correct": true,
+          "id": "A",
+          "isAnswerRange": true,
+          "selectedFeedback": "selected feedback",
+          "title": "[2.5]",
+          "unselectedFeedback": "unselected feedback",
+        }
+      }
+      disabled={true}
+      hasSingleAnswer={false}
+      setAnswer={[Function]}
+    />
+  </div>
+  <div
+    className="ml-1 flex-grow-1"
+  >
+    <Form.Group
+      isInvalid={true}
+    >
+      <Form.Control
+        as="textarea"
+        autoResize={true}
+        className="answer-option-textarea text-gray-500 small"
+        onChange={[Function]}
+        placeholder="Enter an answer range"
+        rows={1}
+        value="[2.5]"
+      />
+      <Form.Control.Feedback
+        type="invalid"
+      >
+        <FormattedMessage
+          defaultMessage="Error: Invalid range format. Use brackets or parentheses with values separated by a comma."
+          description="Error text describing wrong format of answer ranges"
+          id="authoring.answerwidget.answer.answerRangeErrorText"
+        />
+      </Form.Control.Feedback>
+      <div
+        className="pgn__form-switch-helper-text"
+      >
+        <FormattedMessage
+          defaultMessage="Enter min and max values separated by a comma. Use a bracket to include the number next to it in the range, or a parenthesis to exclude the number. For example, to identify the correct answers as 5, 6, or 7, but not 8, specify [5,8)."
+          description="Helper text describing usage of answer ranges"
+          id="authoring.answerwidget.answer.answerRangeHelperText"
+        />
+      </div>
+    </Form.Group>
+    <Body>
+      <injectIntl(ShimmedIntlComponent)
+        answer={
+          {
+            "correct": true,
+            "id": "A",
+            "isAnswerRange": true,
+            "selectedFeedback": "selected feedback",
+            "title": "[2.5]",
+            "unselectedFeedback": "unselected feedback",
+          }
+        }
+        images={{}}
+        intl={
+          {
+            "formatMessage": [Function],
+          }
+        }
+        isLibrary={false}
+        learningContextId="course+org+run"
+        problemType="numericalresponse"
         setSelectedFeedback={[Function]}
         setUnselectedFeedback={[Function]}
       />
