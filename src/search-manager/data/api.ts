@@ -534,7 +534,7 @@ export const fetchIndexDocuments = async (
   // Convert 'extraFilter' into an array
   const filterFormatted = forceArray(filter);
 
-  const { hits } = await client.index(indexName).search("", {
+  const { hits } = await client.index(indexName).search('', {
     filter: filterFormatted,
     limit,
     attributesToRetrieve,

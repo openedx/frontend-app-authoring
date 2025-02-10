@@ -3,11 +3,10 @@ import {
 } from '@tanstack/react-query';
 import { getEntityLinksByDownstreamContext } from './api';
 
-
 export const courseLibrariesQueryKeys = {
   all: ['courseLibraries'],
   courseLibraries: (courseKey?: string) => [...courseLibrariesQueryKeys.all, courseKey],
-}
+};
 
 /**
  * Hook to fetch a content library by its ID.
