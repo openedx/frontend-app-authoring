@@ -88,7 +88,7 @@ describe('app selectors unit tests', () => {
         simpleSelectors.unitUrl,
         simpleSelectors.blockValue,
         selectors.isLibrary,
-        selectors.isCreateBlock,
+        selectors.shouldCreateBlock,
       ]);
     });
     describe('for library blocks', () => {
@@ -120,7 +120,7 @@ describe('app selectors unit tests', () => {
       });
     });
     describe('component creation workflow', () => {
-      it('returns true if is isCreateBlock is truthy', () => {
+      it('returns true if is shouldCreateBlock is truthy', () => {
         const { resultFunc: cb } = selectors.isInitialized;
 
         [
@@ -195,9 +195,9 @@ describe('app selectors unit tests', () => {
       });
     });
   });
-  describe('isCreateBlock', () => {
+  describe('shouldCreateBlock', () => {
     it('should return false if the editor is initialized with a blockId', () => {
-      expect(selectors.isCreateBlock.resultFunc('block-v1:', 'text')).toEqual(false);
+      expect(selectors.shouldCreateBlock.resultFunc('block-v1:', 'text')).toEqual(false);
     });
   });
 });

@@ -65,12 +65,12 @@ const ProblemEditor: React.FC<Props> = ({
 };
 
 export const mapStateToProps = (state) => ({
-  blockFinished: selectors.app.isCreateBlock(state)
+  blockFinished: selectors.app.shouldCreateBlock(state)
   || selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchBlock }),
   blockFailed: selectors.requests.isFailed(state, { requestKey: RequestKeys.fetchBlock }),
   problemType: selectors.problem.problemType(state),
   blockValue: selectors.app.blockValue(state),
-  advancedSettingsFinished: selectors.app.isCreateBlock(state)
+  advancedSettingsFinished: selectors.app.shouldCreateBlock(state)
   || selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchAdvancedSettings }),
 });
 

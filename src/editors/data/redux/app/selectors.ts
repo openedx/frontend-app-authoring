@@ -54,7 +54,7 @@ export const isLibrary = createSelector(
   },
 );
 
-export const isCreateBlock = createSelector(
+export const shouldCreateBlock = createSelector(
   [simpleSelectors.blockId,
     simpleSelectors.blockType,
   ],
@@ -71,10 +71,10 @@ export const isInitialized = createSelector(
     simpleSelectors.unitUrl,
     simpleSelectors.blockValue,
     isLibrary,
-    isCreateBlock,
+    shouldCreateBlock,
   ],
-  (unitUrl, blockValue, isLibraryBlock, isCreateEditor) => {
-    if (isCreateEditor) {
+  (unitUrl, blockValue, isLibraryBlock, initCreateWorkflow) => {
+    if (initCreateWorkflow) {
       return true;
     }
 
@@ -122,5 +122,5 @@ export default {
   displayTitle,
   analytics,
   isLibrary,
-  isCreateBlock,
+  shouldCreateBlock,
 };

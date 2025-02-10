@@ -382,7 +382,7 @@ describe('app thunkActions', () => {
         error,
       }));
     });
-    test.only('should call batchUploadAssets if the block has images', () => {
+    test('should call batchUploadAssets if the block has images', () => {
       mockImageData.map(image => ({ ...image, file: 'file' }));
       getState.mockReturnValueOnce({ app: { blockId: '', images: mockImageData } });
       const data = { id: 'block-id' };

@@ -30,11 +30,11 @@ export const handleSaveClicked = ({
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const returnUrl = useSelector(selectors.app.returnUrl);
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const isCreateBlock = useSelector(selectors.app.isCreateBlock);
+  const createBlockOnSave = useSelector(selectors.app.shouldCreateBlock);
   const destination = returnFunction ? '' : returnUrl;
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const analytics = useSelector(selectors.app.analytics);
-  if (isCreateBlock) {
+  if (createBlockOnSave) {
     return () => createBlock({
       analytics,
       content: getContent({ dispatch }),
