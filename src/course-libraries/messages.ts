@@ -28,13 +28,8 @@ const messages = defineMessages({
   },
   reviewTabTitle: {
     id: 'course-authoring.course-libraries.tab.review.title',
-    defaultMessage: 'Review Content Updates ({count})',
-    description: 'Tab title for review tab',
-  },
-  reviewTabTitleEmpty: {
-    id: 'course-authoring.course-libraries.tab.review.title-no-updates',
     defaultMessage: 'Review Content Updates',
-    description: 'Tab title for review tab when no updates are available',
+    description: 'Tab title for review tab',
   },
   breadcrumbAriaLabel: {
     id: 'course-authoring.course-libraries.downstream-block.breadcrumb.aria-label',
