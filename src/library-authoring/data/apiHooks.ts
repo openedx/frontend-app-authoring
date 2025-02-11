@@ -45,6 +45,7 @@ import {
   publishXBlock,
   deleteXBlockAsset,
   restoreLibraryBlock,
+  getBlockTypesMetaData,
 } from './api';
 import { VersionSpec } from '../LibraryBlock';
 
@@ -83,6 +84,11 @@ export const libraryAuthoringQueryKeys = {
     ...libraryAuthoringQueryKeys.all,
     libraryId,
     collectionId,
+  ],
+  blockTypes: (libraryId?: string) => [
+    ...libraryAuthoringQueryKeys.all,
+    'blockTypes',
+    libraryId,
   ],
 };
 
@@ -242,6 +248,17 @@ export const useLibraryTeam = (libraryId: string | undefined) => (
   useQuery({
     queryKey: libraryAuthoringQueryKeys.libraryTeam(libraryId),
     queryFn: () => getLibraryTeam(libraryId!),
+    enabled: libraryId !== undefined,
+  })
+);
+
+/**
+ * Hook to fetch the block types metadata
+ */
+export const useBlockTypesMetadata = (libraryId: string | undefined) => (
+  useQuery({
+    queryKey: libraryAuthoringQueryKeys.blockTypes(libraryId),
+    queryFn: () => getBlockTypesMetaData(libraryId!),
     enabled: libraryId !== undefined,
   })
 );
