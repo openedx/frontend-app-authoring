@@ -236,6 +236,7 @@ const CourseLibraries: React.FC<Props> = ({ courseId }) => {
   const { data: links, isLoading } = useEntityLinksByDownstreamContext(courseId);
   const linksByLib = useMemo(() => groupBy(links, 'upstreamContextKey'), [links]);
   const outOfSyncCount = useMemo(() => countBy(links, 'readyToSync').true, [links]);
+  const outOfSyncComponents = useMemo(() => links?.filter((link) => link.readyToSync), [links])
   const {
     isLoadingPage: isLoadingStudioHome,
     isFailedLoadingPage: isFailedLoadingStudioHome,
@@ -271,6 +272,16 @@ const CourseLibraries: React.FC<Props> = ({ courseId }) => {
       </>
     );
   }, [links, isLoading, linksByLib]);
+
+  const renderReviewTabContent = useCallback(() => {
+    return (
+      <>
+        {outOfSyncComponents?.map((link) => (
+          <p>{link.downstreamUsageKey}</p>
+        ))}
+      </>
+    );
+  }, []);
 
   if (!isLoadingStudioHome && (!librariesV2Enabled || isFailedLoadingStudioHome)) {
     return (
@@ -325,12 +336,18 @@ const CourseLibraries: React.FC<Props> = ({ courseId }) => {
             </Tab>
             <Tab
               eventKey={CourseLibraryTabs.review}
-              title={intl.formatMessage(
-                outOfSyncCount > 0 ? messages.reviewTabTitle : messages.reviewTabTitleEmpty,
-                { count: outOfSyncCount },
+              title={(
+                <Stack direction="horizontal" gap={1}>
+                  <Icon src={Loop} />
+                  {intl.formatMessage(messages.reviewTabTitle)}
+                </Stack>
               )}
+              notification={outOfSyncCount}
+              className="px-2 mt-3"
             >
-              <TabContent>Help</TabContent>
+              <TabContent>
+                {renderReviewTabContent()}
+              </TabContent>
             </Tab>
           </Tabs>
         </section>
