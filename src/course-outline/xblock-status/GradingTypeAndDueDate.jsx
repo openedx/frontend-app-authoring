@@ -2,10 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon } from '@openedx/paragon';
-import {
-  Check as CheckIcon,
-  CalendarMonth as CalendarIcon,
-} from '@openedx/paragon/icons';
+import { Check as CheckIcon, CalendarMonth as CalendarIcon } from '@openedx/paragon/icons';
+import { convertToLocalTime } from '../../utils';
+
 
 import messages from './messages';
 
@@ -23,6 +22,10 @@ const GradingTypeAndDueDate = ({
   relativeWeeksDue,
 }) => {
   const intl = useIntl();
+
+  // Convert dueDate to local time, if valid
+  const localDueDate = dueDate ? convertToLocalTime(dueDate) : 'No scheduled due date';
+
   const showRelativeWeeks = isSelfPaced && isCustomRelativeDatesActive && relativeWeeksDue;
 
   let examValue = '';
@@ -51,10 +54,11 @@ const GradingTypeAndDueDate = ({
   );
 
   const dueDateDiv = () => {
-    if (dueDate && isInstructorPaced) {
+    // If it's instructor-paced and dueDate is valid, display the formatted date
+    if (localDueDate && isInstructorPaced && localDueDate !== 'No scheduled due date') {
       return (
         <div className="status-grading-date" data-testid="due-date-div">
-          {intl.formatMessage(messages.dueLabel)} {dueDate}
+          {intl.formatMessage(messages.dueLabel)} {localDueDate}
         </div>
       );
     }
@@ -84,12 +88,12 @@ const GradingTypeAndDueDate = ({
         {showRelativeWeeks && (selfPacedRelativeDueWeeksDiv())}
       </>
     );
-  } if ((dueDate && !isSelfPaced) || graded) {
+  } if ((localDueDate !== 'No scheduled due date' && !isSelfPaced) || graded) {  // Check if there's a valid due date
     return (
       <>
         <div className="d-flex align-items-center">
           {gradingTypeDiv()}
-          {dueDateDiv()}
+          {dueDateDiv()}  {/* Display the local due date */}
         </div>
         {showRelativeWeeks && (selfPacedRelativeDueWeeksDiv())}
       </>
@@ -102,6 +106,7 @@ const GradingTypeAndDueDate = ({
       </>
     );
   }
+
   return null;
 };
 
