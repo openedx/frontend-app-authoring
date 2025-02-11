@@ -53,8 +53,15 @@ const BlockCard: React.FC<BlockCardProps> = ({ info }) => {
   const intl = useIntl();
   const componentIcon = getItemIcon(info.blockType);
   const breadcrumbs = tail(info.breadcrumbs) as Array<{ displayName: string, usageKey: string }>;
-  const unitUsageKey = breadcrumbs[breadcrumbs.length - 1].usageKey;
-  const blockLink = `${getConfig().STUDIO_BASE_URL}/container/${unitUsageKey}`;
+
+  const getBlockLink = useCallback(() => {
+    let key = info.usageKey;
+    if (breadcrumbs?.length > 1) {
+      key = breadcrumbs[breadcrumbs.length - 1].usageKey || key;
+    }
+    return `${getConfig().STUDIO_BASE_URL}/container/${key}`;
+  }, [info]);
+
   return (
     <Card
       className={classNames(
@@ -71,7 +78,7 @@ const BlockCard: React.FC<BlockCardProps> = ({ info }) => {
           <Stack direction="horizontal" gap={1} className="micro text-gray-500">
             <Icon src={componentIcon} size="xs" />
             <BlockTypeLabel blockType={info.blockType} />
-            <Hyperlink className="lead ml-auto text-black" destination={blockLink} target="_blank">
+            <Hyperlink className="lead ml-auto text-black" destination={getBlockLink()} target="_blank">
               {' '}
             </Hyperlink>
           </Stack>
