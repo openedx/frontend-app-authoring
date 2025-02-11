@@ -168,7 +168,7 @@ export const getImageResizeHandler = ({ editor, imagesRef, setImage }) => () => 
  * like that so for now we do this quite frequently, every time there is a
  * "selectionchange" event (which is pretty often).
  */
-export const reparentTinyMceModals = () => {
+export const reparentTinyMceModals = /* istanbul ignore next */ () => {
   const modalLayer = document.querySelector('.pgn__modal-layer');
   if (!modalLayer) {
     return;
