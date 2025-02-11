@@ -12,6 +12,7 @@ import {
   getLibraryCollectionComponentApiUrl,
   getLibraryCollectionsApiUrl,
   getLibraryCollectionApiUrl,
+  getBlockTypesMetaDataUrl,
 } from './api';
 import {
   useCommitLibraryChanges,
@@ -20,6 +21,7 @@ import {
   useRevertLibraryChanges,
   useAddComponentsToCollection,
   useCollection,
+  useBlockTypesMetadata,
 } from './apiHooks';
 
 let axiosMock;
@@ -117,6 +119,19 @@ describe('library api hooks', () => {
 
     axiosMock.onGet(url).reply(200, { 'test-data': 'test-value' });
     const { result } = renderHook(() => useCollection(libraryId, collectionId), { wrapper });
+    await waitFor(() => {
+      expect(result.current.isLoading).toBeFalsy();
+    });
+    expect(result.current.data).toEqual({ testData: 'test-value' });
+    expect(axiosMock.history.get[0].url).toEqual(url);
+  });
+
+  it('should get block types metadata', async () => {
+    const libraryId = 'lib:org:1';
+    const url = getBlockTypesMetaDataUrl(libraryId);
+
+    axiosMock.onGet(url).reply(200, { 'test-data': 'test-value' });
+    const { result } = renderHook(() => useBlockTypesMetadata(libraryId), { wrapper });
     await waitFor(() => {
       expect(result.current.isLoading).toBeFalsy();
     });
