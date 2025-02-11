@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { debounce } from 'lodash';
 
 import { copyToClipboard } from '../../../generic/data/thunks';
 import { messageTypes } from '../../constants';
@@ -16,8 +17,8 @@ export const useMessageHandlers = ({
   dispatch,
   setIframeOffset,
   handleDeleteXBlock,
-  handleRefetchXBlocks,
   handleDuplicateXBlock,
+  handleScrollToXBlock,
   handleManageXBlockAccess,
 }: UseMessageHandlersTypes): MessageHandlersTypes => useMemo(() => ({
   [messageTypes.copyXBlock]: ({ usageId }) => dispatch(copyToClipboard(usageId)),
@@ -25,14 +26,14 @@ export const useMessageHandlers = ({
   [messageTypes.newXBlockEditor]: ({ blockType, usageId }) => navigate(`/course/${courseId}/editor/${blockType}/${usageId}`),
   [messageTypes.duplicateXBlock]: ({ blockType, usageId }) => handleDuplicateXBlock(blockType, usageId),
   [messageTypes.manageXBlockAccess]: ({ usageId }) => handleManageXBlockAccess(usageId),
-  [messageTypes.refreshXBlockPositions]: handleRefetchXBlocks,
+  [messageTypes.scrollToXBlock]: debounce(({ scrollOffset }) => handleScrollToXBlock(scrollOffset), 3000),
   [messageTypes.toggleCourseXBlockDropdown]: ({
     courseXBlockDropdownHeight,
   }: { courseXBlockDropdownHeight: number }) => setIframeOffset(courseXBlockDropdownHeight),
 }), [
   courseId,
   handleDeleteXBlock,
-  handleRefetchXBlocks,
   handleDuplicateXBlock,
   handleManageXBlockAccess,
+  handleScrollToXBlock,
 ]);

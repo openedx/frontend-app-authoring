@@ -4,7 +4,9 @@ import { useKeyedState } from '@edx/react-unit-test-utils';
 import { logError } from '@edx/frontend-platform/logging';
 
 import { stateKeys, messageTypes } from '../../../constants';
-import { useLoadBearingHook, useIFrameBehavior } from '..';
+import { useLoadBearingHook, useIFrameBehavior, useMessageHandlers } from '..';
+
+jest.useFakeTimers();
 
 jest.mock('@edx/react-unit-test-utils', () => ({
   useKeyedState: jest.fn(),
@@ -169,5 +171,38 @@ describe('useLoadBearingHook', () => {
 
     expect(setValue).toHaveBeenCalledWith(expect.any(Function));
     expect(setValue.mock.calls);
+  });
+});
+
+describe('useMessageHandlers', () => {
+  it('calls handleScrollToXBlock after debounce delay', () => {
+    const mockHandleScrollToXBlock = jest.fn();
+    const courseId = 'course-v1:Test+101+2025';
+    const navigate = jest.fn();
+    const dispatch = jest.fn();
+    const setIframeOffset = jest.fn();
+    const handleDeleteXBlock = jest.fn();
+    const handleDuplicateXBlock = jest.fn();
+    const handleManageXBlockAccess = jest.fn();
+
+    const { result } = renderHook(() => useMessageHandlers({
+      courseId,
+      navigate,
+      dispatch,
+      setIframeOffset,
+      handleDeleteXBlock,
+      handleDuplicateXBlock,
+      handleScrollToXBlock: mockHandleScrollToXBlock,
+      handleManageXBlockAccess,
+    }));
+
+    act(() => {
+      result.current[messageTypes.scrollToXBlock]({ scrollOffset: 200 });
+    });
+
+    jest.advanceTimersByTime(3000);
+
+    expect(mockHandleScrollToXBlock).toHaveBeenCalledTimes(1);
+    expect(mockHandleScrollToXBlock).toHaveBeenCalledWith(200);
   });
 });

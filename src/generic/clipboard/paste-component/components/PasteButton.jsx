@@ -7,7 +7,7 @@ const PasteButton = ({ onClick, text, className }) => {
   const { blockId } = useParams();
 
   const handlePasteXBlockComponent = () => {
-    onClick({ stagedContent: 'clipboard', parentLocator: blockId }, null, blockId);
+    onClick({ stagedContent: 'clipboard', parentLocator: blockId });
   };
 
   return (
