@@ -255,7 +255,10 @@ export const setupCustomBehavior = ({
   }
 
   editor.on('init', /* istanbul ignore next */ () => {
-    if (editor.bodyElement?.closest('.pgn__modal')) {
+    // Check if this editor is inside a (Paragon) modal.
+    // The way we get the editor's root <div> depends on whether or not this particular editor is using an iframe:
+    const editorDiv = editor.bodyElement ?? editor.container;
+    if (editorDiv?.closest('.pgn__modal')) {
       // This editor is inside a Paragon modal. Use this hack to avoid interference with TinyMCE's own modal popups:
       reparentTinyMceModals();
       editor.on('selectionchange', reparentTinyMceModals);
