@@ -15,6 +15,7 @@ import { ToastContext } from '../../generic/toast-context';
 import LoadingButton from '../../generic/loading-button';
 import Loading from '../../generic/Loading';
 import { useLibraryBlockMetadata } from '../../library-authoring/data/apiHooks';
+import { UseMutationResult } from '@tanstack/react-query';
 
 export interface LibraryChangesMessageData {
   displayName: string,
@@ -24,36 +25,29 @@ export interface LibraryChangesMessageData {
   isVertical: boolean,
 }
 
-const PreviewLibraryXBlockChanges = () => {
+export interface BasePreviewLibraryXBlockChangesProps {
+  blockData?: LibraryChangesMessageData,
+  isModalOpen: boolean,
+  closeModal: () => void,
+  acceptChangesMutation: UseMutationResult,
+  ignoreChangesMutation: UseMutationResult,
+  postChange: () => void,
+}
+
+export const BasePreviewLibraryXBlockChanges = ({
+  blockData,
+  isModalOpen,
+  closeModal,
+  acceptChangesMutation,
+  ignoreChangesMutation,
+  postChange,
+}: BasePreviewLibraryXBlockChangesProps) => {
   const { showToast } = useContext(ToastContext);
   const intl = useIntl();
 
-  const [blockData, setBlockData] = useState<LibraryChangesMessageData | undefined>(undefined);
-
-  // Main preview library modal toggle.
-  const [isModalOpen, openModal, closeModal] = useToggle(false);
   // ignore changes confirmation modal toggle.
   const [isConfirmModalOpen, openConfirmModal, closeConfirmModal] = useToggle(false);
-
-  const acceptChangesMutation = useAcceptLibraryBlockChanges();
-  const ignoreChangesMutation = useIgnoreLibraryBlockChanges();
   const { data: componentMetadata } = useLibraryBlockMetadata(blockData?.upstreamBlockId);
-
-  const { sendMessageToIframe } = useIframe();
-
-  const receiveMessage = useCallback(({ data }: { data: {
-    payload: LibraryChangesMessageData;
-    type: string;
-  } }) => {
-    const { payload, type } = data;
-
-    if (type === messageTypes.showXBlockLibraryChangesPreview) {
-      setBlockData(payload);
-      openModal();
-    }
-  }, [openModal]);
-
-  useEventListener('message', receiveMessage);
 
   const getTitle = useCallback(() => {
     const oldName = blockData?.displayName;
@@ -95,7 +89,7 @@ const PreviewLibraryXBlockChanges = () => {
 
     try {
       await mutation.mutateAsync(blockData.downstreamBlockId);
-      sendMessageToIframe(messageTypes.refreshXBlock, null);
+      postChange();
     } catch (e) {
       showToast(intl.formatMessage(failureMsg));
     } finally {
@@ -148,6 +142,42 @@ const PreviewLibraryXBlockChanges = () => {
         btnLabel={intl.formatMessage(messages.confirmationConfirmBtn)}
       />
     </ModalDialog>
+  );
+}
+
+const PreviewLibraryXBlockChanges = () => {
+  const [blockData, setBlockData] = useState<LibraryChangesMessageData | undefined>(undefined);
+
+  // Main preview library modal toggle.
+  const [isModalOpen, openModal, closeModal] = useToggle(false);
+  const acceptChangesMutation = useAcceptLibraryBlockChanges();
+  const ignoreChangesMutation = useIgnoreLibraryBlockChanges();
+
+  const { sendMessageToIframe } = useIframe();
+
+  const receiveMessage = useCallback(({ data }: { data: {
+    payload: LibraryChangesMessageData;
+    type: string;
+  } }) => {
+    const { payload, type } = data;
+
+    if (type === messageTypes.showXBlockLibraryChangesPreview) {
+      setBlockData(payload);
+      openModal();
+    }
+  }, [openModal]);
+
+  useEventListener('message', receiveMessage);
+
+  return (
+    <BasePreviewLibraryXBlockChanges
+      blockData={blockData}
+      isModalOpen={isModalOpen}
+      closeModal={closeModal}
+      acceptChangesMutation={acceptChangesMutation}
+      ignoreChangesMutation={ignoreChangesMutation}
+      postChange={() => sendMessageToIframe(messageTypes.refreshXBlock, null)}
+    />
   );
 };
 

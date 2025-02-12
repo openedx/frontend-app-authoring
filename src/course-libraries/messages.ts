@@ -31,6 +31,11 @@ const messages = defineMessages({
     defaultMessage: 'Review Content Updates',
     description: 'Tab title for review tab',
   },
+  reviewTabDescriptionEmpty: {
+    id: 'course-authoring.course-libraries.tab.home.description-no-links',
+    defaultMessage: 'All components are up to date',
+    description: 'Description text for home tab',
+  },
   breadcrumbAriaLabel: {
     id: 'course-authoring.course-libraries.downstream-block.breadcrumb.aria-label',
     defaultMessage: 'Component breadcrumb',
