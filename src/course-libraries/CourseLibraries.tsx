@@ -6,21 +6,33 @@ import { getConfig } from '@edx/frontend-platform';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Alert,
-  Breadcrumb, Button, Card, Collapsible, Container, Dropdown, Hyperlink, Icon, IconButton, Layout, Stack, Tab, Tabs,
+  ActionRow,
+  Breadcrumb,
+  Button,
+  Card,
+  Collapsible,
+  Container,
+  Dropdown,
+  Hyperlink,
+  Icon,
+  IconButton,
+  Layout,
+  Stack,
+  Tab,
+  Tabs,
+  useToggle,
 } from '@openedx/paragon';
 import {
   Cached, CheckCircle, KeyboardArrowDown, KeyboardArrowRight, Loop, MoreVert,
 } from '@openedx/paragon/icons';
 
-import {
-  countBy, groupBy, keyBy, tail, uniq,
-} from 'lodash';
+import _ from 'lodash';
 import classNames from 'classnames';
 import getPageHeadTitle from '../generic/utils';
 import { useModel } from '../generic/model-store';
 import messages from './messages';
 import SubHeader from '../generic/sub-header/SubHeader';
-import { useEntityLinksByDownstreamContext } from './data/apiHooks';
+import { courseLibrariesQueryKeys, useEntityLinksByDownstreamContext } from './data/apiHooks';
 import type { PublishableEntityLink } from './data/api';
 import { useFetchIndexDocuments } from '../search-manager/data/apiHooks';
 import { getItemIcon } from '../generic/block-type-utils';
@@ -30,6 +42,9 @@ import type { ContentHit } from '../search-manager/data/api';
 import { SearchSortOption } from '../search-manager/data/api';
 import Loading from '../generic/Loading';
 import { useStudioHome } from '../studio-home/hooks';
+import { useAcceptLibraryBlockChanges, useIgnoreLibraryBlockChanges } from '../course-unit/data/apiHooks';
+import { BasePreviewLibraryXBlockChanges, LibraryChangesMessageData } from '../course-unit/preview-changes';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface Props {
   courseId: string;
@@ -47,6 +62,7 @@ interface ComponentInfo extends ContentHit {
 
 interface BlockCardProps {
   info: ComponentInfo;
+  actions?: React.ReactNode;
 }
 
 export enum CourseLibraryTabs {
@@ -54,10 +70,10 @@ export enum CourseLibraryTabs {
   review = 'review',
 }
 
-const BlockCard: React.FC<BlockCardProps> = ({ info }) => {
+const BlockCard: React.FC<BlockCardProps> = ({ info, actions }) => {
   const intl = useIntl();
   const componentIcon = getItemIcon(info.blockType);
-  const breadcrumbs = tail(info.breadcrumbs) as Array<{ displayName: string, usageKey: string }>;
+  const breadcrumbs = _.tail(info.breadcrumbs) as Array<{ displayName: string, usageKey: string }>;
 
   const getBlockLink = useCallback(() => {
     let key = info.usageKey;
@@ -77,28 +93,31 @@ const BlockCard: React.FC<BlockCardProps> = ({ info }) => {
       key={info.usageKey}
     >
       <Card.Section
-        className="py-2"
+        className="py-3"
       >
-        <Stack direction="vertical" gap={1}>
-          <Stack direction="horizontal" gap={1} className="micro text-gray-500">
-            <Icon src={componentIcon} size="xs" />
-            <BlockTypeLabel blockType={info.blockType} />
-            <Hyperlink className="lead ml-auto text-black" destination={getBlockLink()} target="_blank">
-              {' '}
-            </Hyperlink>
+        <Stack direction="horizontal" gap={2}>
+          <Stack direction="vertical" gap={1}>
+            <Stack direction="horizontal" gap={1} className="micro text-gray-500">
+              <Icon src={componentIcon} size="xs" />
+              <BlockTypeLabel blockType={info.blockType} />
+            </Stack>
+            <Stack direction="horizontal" className="small" gap={1}>
+              {info.readyToSync && <Icon src={Loop} size="xs" />}
+              {info.formatted?.displayName}
+            </Stack>
+            <div className="micro">{info.formatted?.description}</div>
+            <Breadcrumb
+              className="micro text-gray-500"
+              ariaLabel={intl.formatMessage(messages.breadcrumbAriaLabel)}
+              links={breadcrumbs.map((breadcrumb) => ({ label: breadcrumb.displayName }))}
+              spacer={<span className="custom-spacer">/</span>}
+              linkAs="span"
+            />
           </Stack>
-          <Stack direction="horizontal" className="small" gap={1}>
-            {info.readyToSync && <Icon src={Loop} size="xs" />}
-            {info.formatted?.displayName}
-          </Stack>
-          <div className="micro">{info.formatted?.description}</div>
-          <Breadcrumb
-            className="micro text-gray-500"
-            ariaLabel={intl.formatMessage(messages.breadcrumbAriaLabel)}
-            links={breadcrumbs.map((breadcrumb) => ({ label: breadcrumb.displayName }))}
-            spacer={<span className="custom-spacer">/</span>}
-            linkAs="span"
-          />
+          {actions}
+          <Hyperlink className="lead ml-auto mb-auto text-black" destination={getBlockLink()} target="_blank">
+            {' '}
+          </Hyperlink>
         </Stack>
       </Card.Section>
     </Card>
@@ -107,17 +126,17 @@ const BlockCard: React.FC<BlockCardProps> = ({ info }) => {
 
 const LibraryCard: React.FC<LibraryCardProps> = ({ courseId, title, links }) => {
   const intl = useIntl();
-  const linksInfo = useMemo(() => keyBy(links, 'downstreamUsageKey'), [links]);
+  const linksInfo = useMemo(() => _.keyBy(links, 'downstreamUsageKey'), [links]);
   const totalComponents = links.length;
-  const outOfSyncCount = useMemo(() => countBy(links, 'readyToSync').true, [links]);
-  const downstreamKeys = useMemo(() => uniq(Object.keys(linksInfo)), [links]);
-  const { data: downstreamInfo } = useFetchIndexDocuments({
+  const outOfSyncCount = useMemo(() => _.countBy(links, 'readyToSync').true, [links]);
+  const downstreamKeys = useMemo(() => _.uniq(Object.keys(linksInfo)), [links]);
+  const { data: downstreamInfo } = useFetchIndexDocuments(
     filter: [`context_key = "${courseId}"`, `usage_key IN ["${downstreamKeys.join('","')}"]`],
     limit: downstreamKeys.length,
     attributesToRetrieve: ['usage_key', 'display_name', 'breadcrumbs', 'description', 'block_type'],
     attributesToCrop: ['description:30'],
     sort: [SearchSortOption.TITLE_AZ],
-  }) as unknown as { data: ComponentInfo[] };
+  ) as unknown as { data: ComponentInfo[] };
 
   const renderBlockCards = (info: ComponentInfo) => {
     // eslint-disable-next-line no-param-reassign
@@ -228,15 +247,85 @@ const TabContent = ({ children }: { children: React.ReactNode }) => (
   </Layout>
 );
 
+const ReviewTabContent = ({ courseId, outOfSyncComponents }: {
+  courseId: string,
+  outOfSyncComponents: PublishableEntityLink[];
+}) => {
+  const [blockData, setBlockData] = useState<LibraryChangesMessageData | undefined>(undefined);
+  const downstreamKeys = outOfSyncComponents?.map(link => link.downstreamUsageKey);
+  const { data: downstreamInfo } = useFetchIndexDocuments(
+    [`context_key = "${courseId}"`, `usage_key IN ["${downstreamKeys?.join('","')}"]`],
+    downstreamKeys?.length || 0,
+    ['usage_key', 'display_name', 'breadcrumbs', 'description', 'block_type'],
+    ['description:30'],
+    [SearchSortOption.TITLE_AZ],
+  ) as unknown as { data: ComponentInfo[] };
+  const outOfSyncComponentsByKey = useMemo(
+    () => _.keyBy(outOfSyncComponents, 'downstreamUsageKey'),
+    [outOfSyncComponents]
+  );
+  const queryClient = useQueryClient();
+
+  // Toggle preview changes modal
+  const [isModalOpen, openModal, closeModal] = useToggle(false);
+  const acceptChangesMutation = useAcceptLibraryBlockChanges();
+  const ignoreChangesMutation = useIgnoreLibraryBlockChanges();
+
+  // Show preview changes on review
+  const onReview = (info: ComponentInfo) => {
+    setBlockData({
+      displayName: info.displayName,
+      downstreamBlockId: info.usageKey,
+      upstreamBlockId: outOfSyncComponentsByKey[info.usageKey].upstreamUsageKey,
+      upstreamBlockVersionSynced: outOfSyncComponentsByKey[info.usageKey].upstreamVersion,
+      isVertical: info.blockType === 'vertical',
+    });
+    openModal();
+  }
+
+  const postChange = () => {
+    if (!blockData) {
+      return
+    }
+    const courseKey = outOfSyncComponentsByKey[blockData.downstreamBlockId].downstreamContextKey;
+    queryClient.invalidateQueries(courseLibrariesQueryKeys.courseLibraries(courseKey));
+  }
+
+  return (
+    <>
+      {downstreamInfo?.map((info) => (
+        <BlockCard key={info.id} info={info} actions={
+          <div className="d-flex align-items-center mr-3">
+            <ActionRow>
+              <Button size="sm" className="mr-4" onClick={() => onReview(info)}>Review</Button>
+              <div className="py-3 mx-2 border border-dark" />
+              <Button variant="tertiary" size="sm">Ignore</Button>
+              <Button variant="outline-primary" size="sm">Update</Button>
+            </ActionRow>
+          </div>
+        } />
+      ))}
+      <BasePreviewLibraryXBlockChanges
+        blockData={blockData}
+        isModalOpen={isModalOpen}
+        closeModal={closeModal}
+        acceptChangesMutation={acceptChangesMutation}
+        ignoreChangesMutation={ignoreChangesMutation}
+        postChange={postChange}
+      />
+    </>
+  );
+}
+
 const CourseLibraries: React.FC<Props> = ({ courseId }) => {
   const intl = useIntl();
   const courseDetails = useModel('courseDetails', courseId);
   const [tabKey, setTabKey] = useState<CourseLibraryTabs>(CourseLibraryTabs.home);
   const [showReviewAlert, setShowReviewAlert] = useState(true);
   const { data: links, isLoading } = useEntityLinksByDownstreamContext(courseId);
-  const linksByLib = useMemo(() => groupBy(links, 'upstreamContextKey'), [links]);
-  const outOfSyncCount = useMemo(() => countBy(links, 'readyToSync').true, [links]);
-  const outOfSyncComponents = useMemo(() => links?.filter((link) => link.readyToSync), [links])
+  const linksByLib = useMemo(() => _.groupBy(links, 'upstreamContextKey'), [links]);
+  const outOfSyncCount = useMemo(() => _.countBy(links, 'readyToSync').true, [links]);
+  const outOfSyncComponents = useMemo(() => _.filter(links, (link) => link.readyToSync), [links])
   const {
     isLoadingPage: isLoadingStudioHome,
     isFailedLoadingPage: isFailedLoadingStudioHome,
@@ -274,14 +363,21 @@ const CourseLibraries: React.FC<Props> = ({ courseId }) => {
   }, [links, isLoading, linksByLib]);
 
   const renderReviewTabContent = useCallback(() => {
-    return (
-      <>
-        {outOfSyncComponents?.map((link) => (
-          <p>{link.downstreamUsageKey}</p>
-        ))}
-      </>
-    );
-  }, []);
+    if (isLoading) {
+      return <Loading />;
+    }
+    if (!outOfSyncComponents || outOfSyncComponents?.length === 0) {
+      return (
+        <Stack direction="horizontal" gap={2}>
+          <Icon src={CheckCircle} size="xs" />
+          <small>
+            <FormattedMessage {...messages.reviewTabDescriptionEmpty} />
+          </small>
+        </Stack>
+      );
+    }
+    return <ReviewTabContent courseId={courseId} outOfSyncComponents={outOfSyncComponents} />;
+  }, [outOfSyncComponents]);
 
   if (!isLoadingStudioHome && (!librariesV2Enabled || isFailedLoadingStudioHome)) {
     return (
