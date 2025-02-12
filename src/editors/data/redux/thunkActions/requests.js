@@ -144,9 +144,9 @@ export const createBlock = ({ ...rest }) => (dispatch, getState) => {
   if (!cleanTitle || (blockType === blockTypes.problem && problemTitles.has(blockTitle))) {
     definitionId = `${uuid4()}`;
   } else {
-    // add a hash to prevent duplication.
-    const hash = uuid4().split('-')[4];
-    definitionId = `${cleanTitle.replaceAll(/\s+/g, '-')}-${hash}`;
+    // add a short random suffix to prevent conflicting IDs.
+    const suffix = uuid4().split('-')[4];
+    definitionId = `${cleanTitle.replaceAll(/\s+/g, '-')}-${suffix}`;
   }
   dispatch(module.networkRequest({
     requestKey: RequestKeys.createBlock,
