@@ -9,8 +9,8 @@ import {
 import { useParams } from 'react-router-dom';
 
 import type { ComponentPicker } from '../../component-picker';
-import type { ContentLibrary } from '../../data/api';
-import { useContentLibrary } from '../../data/apiHooks';
+import type { ContentLibrary, BlockTypeMetadata } from '../../data/api';
+import { useContentLibrary, useBlockTypesMetadata } from '../../data/apiHooks';
 import { useComponentPickerContext } from './ComponentPickerContext';
 
 export interface ComponentEditorInfo {
@@ -41,6 +41,7 @@ export type LibraryContextData = {
   openComponentEditor: (usageKey: string, onClose?: () => void) => void;
   closeComponentEditor: () => void;
   componentPicker?: typeof ComponentPicker;
+  blockTypesData?: Record<string, BlockTypeMetadata>;
 };
 
 /**
@@ -90,6 +91,12 @@ export const LibraryProvider = ({
   }, []);
 
   const { data: libraryData, isLoading: isLoadingLibraryData } = useContentLibrary(libraryId);
+  const { data: blockTypesDataList } = useBlockTypesMetadata(libraryId);
+
+  const blockTypesData = blockTypesDataList?.reduce((acc, block) => {
+    acc[block.blockType] = block;
+    return acc;
+  }, {});
 
   const {
     componentPickerMode,
@@ -124,6 +131,7 @@ export const LibraryProvider = ({
       openComponentEditor,
       closeComponentEditor,
       componentPicker,
+      blockTypesData,
     };
 
     return contextValue;
@@ -144,6 +152,7 @@ export const LibraryProvider = ({
     openComponentEditor,
     closeComponentEditor,
     componentPicker,
+    blockTypesData,
   ]);
 
   return (

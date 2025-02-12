@@ -7,7 +7,7 @@ import {
   waitFor,
   initializeMocks,
 } from '../../testUtils';
-import { mockContentLibrary } from '../data/api.mocks';
+import { mockContentLibrary, mockBlockTypesMetadata } from '../data/api.mocks';
 import {
   getContentLibraryApiUrl, getCreateLibraryBlockUrl, getLibraryCollectionComponentApiUrl, getLibraryPasteClipboardUrl,
 } from '../data/api';
@@ -61,8 +61,54 @@ describe('<AddContentContainer />', () => {
     expect(screen.queryByRole('button', { name: /open reponse/i })).not.toBeInTheDocument(); // Excluded from MVP
     expect(screen.queryByRole('button', { name: /drag drop/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /video/i })).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /advanced \/ other/i })).not.toBeInTheDocument(); // Excluded from MVP
+    expect(screen.queryByRole('button', { name: /advanced \/ other/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /copy from clipboard/i })).not.toBeInTheDocument();
+  });
+
+  it('should render advanced content buttons', async () => {
+    mockBlockTypesMetadata.applyMock();
+    mockClipboardEmpty.applyMock();
+    render();
+
+    const advancedButton = screen.getByRole('button', { name: /advanced \/ other/i });
+    fireEvent.click(advancedButton);
+
+    expect(await screen.findByRole('button', { name: /poll/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /survey/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /google document/i })).toBeInTheDocument();
+  });
+
+  it('should return to content view', async () => {
+    mockBlockTypesMetadata.applyMock();
+    mockClipboardEmpty.applyMock();
+    render();
+
+    const advancedButton = screen.getByRole('button', { name: /advanced \/ other/i });
+    fireEvent.click(advancedButton);
+
+    expect(await screen.findByRole('button', { name: /poll/i })).toBeInTheDocument();
+
+    const returnButton = screen.getByRole('button', { name: /back to list/i });
+    fireEvent.click(returnButton);
+
+    expect(screen.queryByRole('button', { name: /text/i })).toBeInTheDocument();
+  });
+
+  it('should create an advanced content', async () => {
+    mockBlockTypesMetadata.applyMock();
+    mockClipboardEmpty.applyMock();
+    const url = getCreateLibraryBlockUrl(libraryId);
+    axiosMock.onPost(url).reply(200);
+    render();
+
+    const advancedButton = screen.getByRole('button', { name: /advanced \/ other/i });
+    fireEvent.click(advancedButton);
+
+    const surveyButton = await screen.findByRole('button', { name: /survey/i });
+    fireEvent.click(surveyButton);
+
+    await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(url));
+    await waitFor(() => expect(axiosMock.history.patch.length).toEqual(0));
   });
 
   it('should create a content', async () => {

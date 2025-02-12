@@ -25,6 +25,11 @@ export const getLibraryTeamApiUrl = (libraryId: string) => `${getApiBaseUrl()}/a
 export const getLibraryTeamMemberApiUrl = (libraryId: string, username: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/team/user/${username}/`;
 
 /**
+ * Get the URL for block types metadata.
+ */
+export const getBlockTypesMetaDataUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/block_types/`;
+
+/**
  * Get the URL for library block metadata.
  */
 export const getLibraryBlockMetadataUrl = (usageKey: string) => `${getApiBaseUrl()}/api/libraries/v2/blocks/${usageKey}/`;
@@ -255,6 +260,11 @@ export interface CreateLibraryCollectionDataRequest {
   description: string | null;
 }
 
+export interface BlockTypeMetadata {
+  blockType: string;
+  displayName: string;
+}
+
 export type UpdateCollectionComponentsRequest = Partial<CreateLibraryCollectionDataRequest>;
 
 /**
@@ -373,6 +383,16 @@ export async function updateLibraryTeamMember(memberData: UpdateLibraryTeamMembe
   const client = getAuthenticatedHttpClient();
   const url = getLibraryTeamMemberApiUrl(memberData.libraryId, memberData.username);
   const { data } = await client.put(url, snakeCaseObject(memberData));
+  return camelCaseObject(data);
+}
+
+/**
+ * Get the block types metadata.
+ */
+export async function getBlockTypesMetaData(libraryId: string): Promise<BlockTypeMetadata[]> {
+  const client = getAuthenticatedHttpClient();
+  const url = getBlockTypesMetaDataUrl(libraryId);
+  const { data } = await client.get(url);
   return camelCaseObject(data);
 }
 

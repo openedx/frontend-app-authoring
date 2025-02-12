@@ -18,6 +18,7 @@ import {
   Question,
   VideoCamera,
   ContentPaste,
+  KeyboardBackspace,
 } from '@openedx/paragon/icons';
 import { v4 as uuid4 } from 'uuid';
 
@@ -43,6 +44,19 @@ type AddContentButtonProps = {
   onCreateContent: (blockType: string) => void,
 };
 
+type AddContentViewProps = {
+  onCreateContent: (blockType: string) => void,
+  isAddLibraryContentModalOpen: boolean,
+  closeAddLibraryContentModal: () => void,
+  isBlockTypeEnabled: (blockType: string) => boolean,
+};
+
+type AddAdvancedContentViewProps = {
+  closeAdvancedList: () => void,
+  onCreateContent: (blockType: string) => void,
+  isBlockTypeEnabled: (blockType: string) => boolean,
+};
+
 const AddContentButton = ({ contentType, onCreateContent } : AddContentButtonProps) => {
   const {
     name,
@@ -63,42 +77,24 @@ const AddContentButton = ({ contentType, onCreateContent } : AddContentButtonPro
   );
 };
 
-const AddContentContainer = () => {
+const AddContentView = ({
+  onCreateContent,
+  isAddLibraryContentModalOpen,
+  closeAddLibraryContentModal,
+  isBlockTypeEnabled,
+}: AddContentViewProps) => {
   const intl = useIntl();
   const {
-    libraryId,
     collectionId,
-    openCreateCollectionModal,
-    openComponentEditor,
     componentPicker,
   } = useLibraryContext();
-  const createBlockMutation = useCreateLibraryBlock();
-  const updateComponentsMutation = useAddComponentsToCollection(libraryId, collectionId);
-  const pasteClipboardMutation = useLibraryPasteClipboard();
-  const { showToast } = useContext(ToastContext);
   const canEdit = useSelector(getCanEdit);
-  const { showPasteXBlock, sharedClipboardData } = useCopyToClipboard(canEdit);
+  const { showPasteXBlock } = useCopyToClipboard(canEdit);
 
-  const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
-
-  const parseErrorMsg = (
-    error: any,
-    detailedMessage: MessageDescriptor,
-    defaultMessage: MessageDescriptor,
-  ) => {
-    try {
-      const { response: { data } } = error;
-      const detail = data && (Array.isArray(data) ? data.join() : String(data));
-      if (detail) {
-        return intl.formatMessage(detailedMessage, { detail });
-      }
-    } catch (_err) {
-      // ignore
-    }
-    return intl.formatMessage(defaultMessage);
+  const isAdvancedEnabled = () => {
+    const blocks = getConfig().LIBRARY_ADVANCED_BLOCKS;
+    return Array.isArray(blocks) && blocks.length > 0;
   };
-
-  const isBlockTypeEnabled = (blockType: string) => getConfig().LIBRARY_SUPPORTED_BLOCKS.includes(blockType);
 
   const collectionButtonData = {
     name: intl.formatMessage(messages.collectionButton),
@@ -147,9 +143,9 @@ const AddContentContainer = () => {
     },
     {
       name: intl.formatMessage(messages.otherTypeButton),
-      disabled: !isBlockTypeEnabled('other'),
+      disabled: !isAdvancedEnabled(),
       icon: AutoAwesome,
-      blockType: 'other', // This block doesn't exist yet.
+      blockType: 'advancedXBlock',
     },
   ];
 
@@ -164,6 +160,110 @@ const AddContentContainer = () => {
     };
     contentTypes.push(pasteButton);
   }
+
+  return (
+    <>
+      {collectionId ? (
+        componentPicker && (
+          <>
+            <AddContentButton contentType={libraryContentButtonData} onCreateContent={onCreateContent} />
+            <PickLibraryContentModal
+              isOpen={isAddLibraryContentModalOpen}
+              onClose={closeAddLibraryContentModal}
+            />
+          </>
+        )
+      ) : (
+        <AddContentButton contentType={collectionButtonData} onCreateContent={onCreateContent} />
+      )}
+      <hr className="w-100 bg-gray-500" />
+      {/* Note: for MVP we are hiding the unuspported types, not just disabling them. */}
+      {contentTypes.filter(ct => !ct.disabled).map((contentType) => (
+        <AddContentButton
+          key={`add-content-${contentType.blockType}`}
+          contentType={contentType}
+          onCreateContent={onCreateContent}
+        />
+      ))}
+    </>
+  );
+};
+
+const AddAdvancedContentView = ({
+  closeAdvancedList,
+  onCreateContent,
+  isBlockTypeEnabled,
+}: AddAdvancedContentViewProps) => {
+  const intl = useIntl();
+  const { blockTypesData } = useLibraryContext();
+  const advancedBlocks = getConfig().LIBRARY_ADVANCED_BLOCKS.filter((block) => {
+    if (!blockTypesData
+        || !Object.prototype.hasOwnProperty.call(blockTypesData, block)
+        || !isBlockTypeEnabled(block)) {
+      return false;
+    }
+    return true;
+  });
+
+  return (
+    <>
+      <div className="d-flex">
+        <Button variant="tertiary" iconBefore={KeyboardBackspace} onClick={closeAdvancedList}>
+          {intl.formatMessage(messages.backToAddContentListButton)}
+        </Button>
+      </div>
+      {advancedBlocks.map((blockType) => (
+        <AddContentButton
+          key={`add-content-${blockType}`}
+          contentType={{
+            name: blockTypesData ? blockTypesData[blockType].displayName : blockType,
+            blockType,
+            icon: AutoAwesome,
+            disabled: false,
+          }}
+          onCreateContent={onCreateContent}
+        />
+      ))}
+    </>
+  );
+};
+
+const AddContentContainer = () => {
+  const intl = useIntl();
+  const {
+    libraryId,
+    collectionId,
+    openCreateCollectionModal,
+    openComponentEditor,
+  } = useLibraryContext();
+  const createBlockMutation = useCreateLibraryBlock();
+  const updateComponentsMutation = useAddComponentsToCollection(libraryId, collectionId);
+  const pasteClipboardMutation = useLibraryPasteClipboard();
+  const { showToast } = useContext(ToastContext);
+  const canEdit = useSelector(getCanEdit);
+  const { sharedClipboardData } = useCopyToClipboard(canEdit);
+
+  const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
+  const [isAdvancedListOpen, showAdvancedList, closeAdvancedList] = useToggle();
+
+  const parseErrorMsg = (
+    error: any,
+    detailedMessage: MessageDescriptor,
+    defaultMessage: MessageDescriptor,
+  ) => {
+    try {
+      const { response: { data } } = error;
+      const detail = data && (Array.isArray(data) ? data.join() : String(data));
+      if (detail) {
+        return intl.formatMessage(detailedMessage, { detail });
+      }
+    } catch (_err) {
+      // ignore
+    }
+    return intl.formatMessage(defaultMessage);
+  };
+
+  const isBlockTypeEnabled = (blockType: string) => getConfig().LIBRARY_SUPPORTED_BLOCKS.includes(blockType);
 
   const linkComponent = (usageKey: string) => {
     updateComponentsMutation.mutateAsync([usageKey]).catch(() => {
@@ -222,6 +322,8 @@ const AddContentContainer = () => {
       openCreateCollectionModal();
     } else if (blockType === 'libraryContent') {
       showAddLibraryContentModal();
+    } else if (blockType === 'advancedXBlock') {
+      showAdvancedList();
     } else {
       onCreateBlock(blockType);
     }
@@ -234,28 +336,21 @@ const AddContentContainer = () => {
 
   return (
     <Stack direction="vertical">
-      {collectionId ? (
-        componentPicker && (
-          <>
-            <AddContentButton contentType={libraryContentButtonData} onCreateContent={onCreateContent} />
-            <PickLibraryContentModal
-              isOpen={isAddLibraryContentModalOpen}
-              onClose={closeAddLibraryContentModal}
-            />
-          </>
-        )
-      ) : (
-        <AddContentButton contentType={collectionButtonData} onCreateContent={onCreateContent} />
-      )}
-      <hr className="w-100 bg-gray-500" />
-      {/* Note: for MVP we are hiding the unuspported types, not just disabling them. */}
-      {contentTypes.filter(ct => !ct.disabled).map((contentType) => (
-        <AddContentButton
-          key={`add-content-${contentType.blockType}`}
-          contentType={contentType}
+      {isAdvancedListOpen && (
+        <AddAdvancedContentView
+          closeAdvancedList={closeAdvancedList}
           onCreateContent={onCreateContent}
+          isBlockTypeEnabled={isBlockTypeEnabled}
         />
-      ))}
+      )}
+      {!isAdvancedListOpen && (
+        <AddContentView
+          onCreateContent={onCreateContent}
+          isAddLibraryContentModalOpen={isAddLibraryContentModalOpen}
+          closeAddLibraryContentModal={closeAddLibraryContentModal}
+          isBlockTypeEnabled={isBlockTypeEnabled}
+        />
+      )}
     </Stack>
   );
 };

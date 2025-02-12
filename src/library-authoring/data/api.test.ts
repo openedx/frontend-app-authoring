@@ -66,6 +66,19 @@ describe('library data API', () => {
     });
   });
 
+  describe('getBlockTypesMetaData', () => {
+    it('should get block types metadata', async () => {
+      const { axiosMock } = initializeMocks();
+      const libraryId = 'lib:org:1';
+      const url = api.getBlockTypesMetaDataUrl(libraryId);
+      axiosMock.onGet(url).reply(200);
+
+      await api.getBlockTypesMetaData(libraryId);
+
+      expect(axiosMock.history.get[0].url).toEqual(url);
+    });
+  });
+
   it('should create collection', async () => {
     const { axiosMock } = initializeMocks();
     const libraryId = 'lib:org:1';

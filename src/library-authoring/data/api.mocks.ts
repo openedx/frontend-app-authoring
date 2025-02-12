@@ -526,3 +526,26 @@ mockGetLibraryTeam.notMember = {
 
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockGetLibraryTeam.applyMock = () => jest.spyOn(api, 'getLibraryTeam').mockImplementation(mockGetLibraryTeam);
+
+/**
+ * Mock for `getBlockTypesMetaData()`
+ *
+ * Use `mockBlockTypesMetadata.applyMock()` to apply it to the whole test suite.
+ */
+export async function mockBlockTypesMetadata(libraryId: string): Promise<api.BlockTypeMetadata[]> {
+  const thisMock = mockBlockTypesMetadata;
+  switch (libraryId) {
+    case mockContentLibrary.libraryId: return thisMock.blockTypesMetadata;
+    default: {
+      return [];
+    }
+  }
+}
+
+mockBlockTypesMetadata.blockTypesMetadata = [
+  { blockType: 'poll', displayName: 'Poll' },
+  { blockType: 'survey', displayName: 'Survey' },
+  { blockType: 'google-document', displayName: 'Google Document' },
+];
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockBlockTypesMetadata.applyMock = () => jest.spyOn(api, 'getBlockTypesMetaData').mockImplementation(mockBlockTypesMetadata);
