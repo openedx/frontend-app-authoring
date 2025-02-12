@@ -10,7 +10,6 @@ import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import ConfigureModal from '../../generic/configure-modal/ConfigureModal';
 import { IFRAME_FEATURE_POLICY } from '../../constants';
 import supportedEditors from '../../editors/supportedEditors';
-import { fetchCourseUnitQuery } from '../data/thunk';
 import { useIframe } from '../context/hooks';
 import {
   useMessageHandlers,
@@ -43,9 +42,10 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
 
   const iframeUrl = useMemo(() => getIframeUrl(blockId), [blockId]);
 
-  const { setIframeRef, sendMessageToIframe } = useIframe();
+  const { setIframeRef } = useIframe();
   const { iframeHeight } = useIFrameBehavior({ id: blockId, iframeUrl });
-  const { refreshIframeContent } = useIframeContent(iframeRef, setIframeRef, sendMessageToIframe);
+
+  useIframeContent(iframeRef, setIframeRef);
 
   useEffect(() => {
     setIframeRef(iframeRef);
@@ -57,9 +57,8 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
       if (supportedEditors[blockType]) {
         navigate(`/course/${courseId}/editor/${blockType}/${usageId}`);
       }
-      refreshIframeContent();
     },
-    [unitXBlockActions, courseId, navigate, refreshIframeContent],
+    [unitXBlockActions, courseId, navigate],
   );
 
   const handleDeleteXBlock = (usageId: string) => {
@@ -76,15 +75,10 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     }
   };
 
-  const handleRefetchXBlocks = useCallback(() => {
-    setTimeout(() => dispatch(fetchCourseUnitQuery(blockId)), 1000);
-  }, [dispatch, blockId]);
-
   const onDeleteSubmit = () => {
     if (deleteXBlockId) {
       unitXBlockActions.handleDelete(deleteXBlockId);
       closeDeleteModal();
-      refreshIframeContent();
     }
   };
 
@@ -92,8 +86,14 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     if (configureXBlockId) {
       handleConfigureSubmit(configureXBlockId, ...args, closeConfigureModal);
       setAccessManagedXBlockData({});
-      refreshIframeContent();
     }
+  };
+
+  const handleScrollToXBlock = (scrollOffset: number) => {
+    window.scrollBy({
+      top: scrollOffset,
+      behavior: 'smooth',
+    });
   };
 
   const messageHandlers = useMessageHandlers({
@@ -102,9 +102,9 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     dispatch,
     setIframeOffset,
     handleDeleteXBlock,
-    handleRefetchXBlocks,
     handleDuplicateXBlock,
     handleManageXBlockAccess,
+    handleScrollToXBlock,
   });
 
   useIframeMessages(messageHandlers);

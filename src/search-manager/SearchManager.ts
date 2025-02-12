@@ -9,7 +9,10 @@ import { MeiliSearch, type Filter } from 'meilisearch';
 import { union } from 'lodash';
 
 import {
-  CollectionHit, ContentHit, SearchSortOption, forceArray,
+  CollectionHit,
+  ContentHit,
+  SearchSortOption,
+  forceArray, PublishStatus,
 } from './data/api';
 import { TypesFilterData, useStateOrUrlSearchParam } from './hooks';
 import { useContentSearchConnection, useContentSearchResults } from './data/apiHooks';
@@ -20,12 +23,15 @@ export interface SearchContextData {
   indexName?: string;
   searchKeywords: string;
   setSearchKeywords: React.Dispatch<React.SetStateAction<string>>;
+  publishStatusFilter: PublishStatus[];
+  setPublishStatusFilter: React.Dispatch<React.SetStateAction<PublishStatus[]>>;
   typesFilter: TypesFilterData;
   setTypesFilter: React.Dispatch<React.SetStateAction<TypesFilterData>>;
   tagsFilter: string[];
   setTagsFilter: React.Dispatch<React.SetStateAction<string[]>>;
   blockTypes: Record<string, number>;
   problemTypes: Record<string, number>;
+  publishStatus: Record<string, number>;
   extraFilter?: Filter;
   canClearFilters: boolean;
   clearFilters: () => void;
@@ -98,6 +104,14 @@ export const SearchContextProvider: React.FC<{
     skipUrlUpdate,
   );
 
+  const [publishStatusFilter, setPublishStatusFilter] = useStateOrUrlSearchParam<PublishStatus>(
+    [],
+    'published',
+    (value: string) => Object.values(PublishStatus).find((enumValue) => value === enumValue),
+    (value: PublishStatus) => value.toString(),
+    skipUrlUpdate,
+  );
+
   // E.g ?usageKey=lb:OpenCraft:libA:problem:5714eb65-7c36-4eee-8ab9-a54ed5a95849
   const sanitizeUsageKey = (value: string): string | undefined => {
     try {
@@ -144,12 +158,14 @@ export const SearchContextProvider: React.FC<{
   const canClearFilters = (
     !typesFilter.isEmpty()
     || tagsFilter.length > 0
+    || publishStatusFilter.length > 0
     || !!usageKey
   );
   const isFiltered = canClearFilters || (searchKeywords !== '');
   const clearFilters = React.useCallback(() => {
     setTypesFilter((types) => types.clear());
     setTagsFilter([]);
+    setPublishStatusFilter([]);
     if (usageKey !== '') {
       setUsageKey('');
     }
@@ -164,6 +180,7 @@ export const SearchContextProvider: React.FC<{
     indexName,
     extraFilter,
     searchKeywords,
+    publishStatusFilter,
     blockTypesFilter: [...typesFilter.blocks],
     problemTypesFilter: [...typesFilter.problems],
     tagsFilter,
@@ -177,6 +194,8 @@ export const SearchContextProvider: React.FC<{
       indexName,
       searchKeywords,
       setSearchKeywords,
+      publishStatusFilter,
+      setPublishStatusFilter,
       typesFilter,
       setTypesFilter,
       tagsFilter,

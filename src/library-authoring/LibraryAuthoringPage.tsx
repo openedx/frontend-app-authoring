@@ -27,6 +27,7 @@ import {
   ClearFiltersButton,
   FilterByBlockType,
   FilterByTags,
+  FilterByPublished,
   SearchContextProvider,
   SearchKeywordsField,
   SearchSortWidget,
@@ -266,6 +267,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
               <SearchKeywordsField className="mr-3" />
               <FilterByTags />
               {!insideCollections && <FilterByBlockType />}
+              <FilterByPublished />
               <ClearFiltersButton />
               <ActionRow.Spacer />
               <SearchSortWidget />

@@ -1,21 +1,25 @@
 import React, { useMemo } from 'react';
 import {
+  Badge,
   Card,
   Container,
   Icon,
   Stack,
 } from '@openedx/paragon';
-
+import { useIntl } from '@edx/frontend-platform/i18n';
+import messages from './messages';
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
 import TagCount from '../../generic/tag-count';
 import { BlockTypeLabel, type ContentHitTags, Highlight } from '../../search-manager';
 
 type BaseComponentCardProps = {
-  componentType: string,
-  displayName: string, description: string,
-  numChildren?: number,
-  tags: ContentHitTags,
-  actions: React.ReactNode,
+  componentType: string;
+  displayName: string;
+  description: string;
+  numChildren?: number;
+  tags: ContentHitTags;
+  actions: React.ReactNode;
+  hasUnpublishedChanges?: boolean;
   onSelect: () => void
 };
 
@@ -27,6 +31,7 @@ const BaseComponentCard = ({
   tags,
   actions,
   onSelect,
+  ...props
 } : BaseComponentCardProps) => {
   const tagCount = useMemo(() => {
     if (!tags) {
@@ -37,6 +42,7 @@ const BaseComponentCard = ({
   }, [tags]);
 
   const componentIcon = getItemIcon(componentType);
+  const intl = useIntl();
 
   return (
     <Container className="library-component-card">
@@ -75,7 +81,8 @@ const BaseComponentCard = ({
             <div className="text-truncate h3 mt-2">
               <Highlight text={displayName} />
             </div>
-            <Highlight text={description} />
+            <Highlight text={description} /><br />
+            {props.hasUnpublishedChanges ? <Badge variant="warning">{intl.formatMessage(messages.unpublishedChanges)}</Badge> : null}
           </Card.Section>
         </Card.Body>
       </Card>
