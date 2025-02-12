@@ -1,0 +1,374 @@
+[
+  {
+    "filter": "usage_key IN [\"block-v1:NewOrg3+TSTCS+2025_T1+type@html+block@5be06d70f09c45a581d973d215e7ad62\",\"block-v1:NewOrg3+TSTCS+2025_T1+type@html+block@d1b006742e0745b0948c8ba8dcd9bc07\",\"block-v1:NewOrg3+TSTCS+2025_T1+type@html+block@276914b632eb49049b2c2568ef24fe4d\",\"block-v1:NewOrg3+TSTCS+2025_T1+type@problem+block@fcf430ac5b7a44b6ab316b53a7e67fef\"]",
+    "result": {
+      "hits": [
+        {
+          "display_name": "Dropdown",
+          "description": "asfd sdaf afd",
+          "breadcrumbs": [
+            {
+              "display_name": "Learn UNIXY"
+            },
+            {
+              "display_name": "Section",
+              "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@chapter+block@6104ecc39b0046c5888db9e64db30887"
+            },
+            {
+              "display_name": "Subsection",
+              "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@sequential+block@eb4f4db1032f46fdad5a7a9ebde12698"
+            },
+            {
+              "display_name": "Unit",
+              "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@vertical+block@eaea16cbcf2d45ba98ddfe72631b9734"
+            },
+            {
+              "display_name": "Problem Bank",
+              "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@itembank+block@abca641f6a19447c83e64730808d36d3"
+            }
+          ],
+          "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@problem+block@fcf430ac5b7a44b6ab316b53a7e67fef",
+          "block_type": "problem",
+          "_formatted": {
+            "display_name": "Dropdown",
+            "description": "asfd sdaf afd",
+            "breadcrumbs": [
+              {
+                "display_name": "Learn UNIXY"
+              },
+              {
+                "display_name": "Section",
+                "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@chapter+block@6104ecc39b0046c5888db9e64db30887"
+              },
+              {
+                "display_name": "Subsection",
+                "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@sequential+block@eb4f4db1032f46fdad5a7a9ebde12698"
+              },
+              {
+                "display_name": "Unit",
+                "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@vertical+block@eaea16cbcf2d45ba98ddfe72631b9734"
+              },
+              {
+                "display_name": "Problem Bank",
+                "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@itembank+block@abca641f6a19447c83e64730808d36d3"
+              }
+            ],
+            "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@problem+block@fcf430ac5b7a44b6ab316b53a7e67fef",
+            "block_type": "problem"
+          }
+        },
+        {
+          "display_name": "HTML 12",
+          "description": "A step beyond the simplicity of the WYSIWYG editor is the Raw HTML component which allows you to use HTML, CSS, and Javascript to create highly flexible content that looks good, excites your learners, and keeps them engaged and coming back to your courses. Unlike many learning platforms, the Open edX platform does not restrict authors in terms of what can be used in HTML components. If you can build it, the platform will not stop you. But use judgement and consider consulting with a web design expert. When used correctly, custom HTML, CSS and Javascript can be powerful tools for a course developer. But they can also lead to experiences that are inaccessible, unpleasant or even insecure to the learner and the provider. 1",
+          "breadcrumbs": [
+            {
+              "display_name": "Learn UNIXY"
+            },
+            {
+              "display_name": "Section",
+              "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@chapter+block@6104ecc39b0046c5888db9e64db30887"
+            },
+            {
+              "display_name": "Subsection",
+              "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@sequential+block@eb4f4db1032f46fdad5a7a9ebde12698"
+            },
+            {
+              "display_name": "Unit",
+              "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@vertical+block@eaea16cbcf2d45ba98ddfe72631b9734"
+            },
+            {
+              "display_name": "Problem Bank",
+              "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@itembank+block@abca641f6a19447c83e64730808d36d3"
+            }
+          ],
+          "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@html+block@5be06d70f09c45a581d973d215e7ad62",
+          "block_type": "html",
+          "_formatted": {
+            "display_name": "HTML 12",
+            "description": "A step beyond the simplicity of the WYSIWYG editor is the Raw HTML component which allows you to use HTML, CSS, and Javascript to create highly flexible content that looks…",
+            "breadcrumbs": [
+              {
+                "display_name": "Learn UNIXY"
+              },
+              {
+                "display_name": "Section",
+                "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@chapter+block@6104ecc39b0046c5888db9e64db30887"
+              },
+              {
+                "display_name": "Subsection",
+                "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@sequential+block@eb4f4db1032f46fdad5a7a9ebde12698"
+              },
+              {
+                "display_name": "Unit",
+                "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@vertical+block@eaea16cbcf2d45ba98ddfe72631b9734"
+              },
+              {
+                "display_name": "Problem Bank",
+                "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@itembank+block@abca641f6a19447c83e64730808d36d3"
+              }
+            ],
+            "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@html+block@5be06d70f09c45a581d973d215e7ad62",
+            "block_type": "html"
+          }
+        },
+        {
+          "display_name": "Text",
+          "breadcrumbs": [
+            {
+              "display_name": "Learn UNIXY"
+            },
+            {
+              "display_name": "Section",
+              "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@chapter+block@6104ecc39b0046c5888db9e64db30887"
+            },
+            {
+              "display_name": "Subsection",
+              "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@sequential+block@eb4f4db1032f46fdad5a7a9ebde12698"
+            },
+            {
+              "display_name": "Unit",
+              "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@vertical+block@eaea16cbcf2d45ba98ddfe72631b9734"
+            },
+            {
+              "display_name": "Problem Bank",
+              "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@itembank+block@abca641f6a19447c83e64730808d36d3"
+            }
+          ],
+          "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@html+block@d1b006742e0745b0948c8ba8dcd9bc07",
+          "block_type": "html",
+          "_formatted": {
+            "display_name": "Text",
+            "breadcrumbs": [
+              {
+                "display_name": "Learn UNIXY"
+              },
+              {
+                "display_name": "Section",
+                "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@chapter+block@6104ecc39b0046c5888db9e64db30887"
+              },
+              {
+                "display_name": "Subsection",
+                "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@sequential+block@eb4f4db1032f46fdad5a7a9ebde12698"
+              },
+              {
+                "display_name": "Unit",
+                "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@vertical+block@eaea16cbcf2d45ba98ddfe72631b9734"
+              },
+              {
+                "display_name": "Problem Bank",
+                "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@itembank+block@abca641f6a19447c83e64730808d36d3"
+              }
+            ],
+            "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@html+block@d1b006742e0745b0948c8ba8dcd9bc07",
+            "block_type": "html"
+          }
+        },
+        {
+          "display_name": "Text",
+          "breadcrumbs": [
+            {
+              "display_name": "Learn UNIXY"
+            },
+            {
+              "display_name": "Section",
+              "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@chapter+block@6104ecc39b0046c5888db9e64db30887"
+            },
+            {
+              "display_name": "Subsection",
+              "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@sequential+block@eb4f4db1032f46fdad5a7a9ebde12698"
+            },
+            {
+              "display_name": "Unit",
+              "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@vertical+block@eaea16cbcf2d45ba98ddfe72631b9734"
+            },
+            {
+              "display_name": "Problem Bank",
+              "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@itembank+block@abca641f6a19447c83e64730808d36d3"
+            }
+          ],
+          "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@html+block@276914b632eb49049b2c2568ef24fe4d",
+          "block_type": "html",
+          "_formatted": {
+            "display_name": "Text",
+            "breadcrumbs": [
+              {
+                "display_name": "Learn UNIXY"
+              },
+              {
+                "display_name": "Section",
+                "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@chapter+block@6104ecc39b0046c5888db9e64db30887"
+              },
+              {
+                "display_name": "Subsection",
+                "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@sequential+block@eb4f4db1032f46fdad5a7a9ebde12698"
+              },
+              {
+                "display_name": "Unit",
+                "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@vertical+block@eaea16cbcf2d45ba98ddfe72631b9734"
+              },
+              {
+                "display_name": "Problem Bank",
+                "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@itembank+block@abca641f6a19447c83e64730808d36d3"
+              }
+            ],
+            "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@html+block@276914b632eb49049b2c2568ef24fe4d",
+            "block_type": "html"
+          }
+        }
+      ],
+      "query": "",
+      "processingTimeMs": 0,
+      "limit": 4,
+      "offset": 0,
+      "estimatedTotalHits": 4
+    }
+  },
+  {
+    "filter": "usage_key IN [\"block-v1:NewOrg3+TSTCS+2025_T1+type@html+block@0dfbabb8c93140caa3a004ab621757f5\",\"block-v1:NewOrg3+TSTCS+2025_T1+type@html+block@37a916b53c2f430989d33ddeb47e224d\",\"block-v1:NewOrg3+TSTCS+2025_T1+type@video+block@33518787c3e14844ad823af8ff158a83\"]",
+    "result": {
+      "hits": [
+        {
+          "display_name": "Edited title",
+          "breadcrumbs": [
+            {
+              "display_name": "Learn UNIXY"
+            },
+            {
+              "display_name": "Section",
+              "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@chapter+block@6104ecc39b0046c5888db9e64db30887"
+            },
+            {
+              "display_name": "Subsection",
+              "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@sequential+block@d6e696f3d7d14cde82876a72a75cb208"
+            },
+            {
+              "display_name": "Unit",
+              "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@vertical+block@05da683dc74e405ca355c6b90d58ad6e"
+            }
+          ],
+          "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@video+block@33518787c3e14844ad823af8ff158a83",
+          "block_type": "video",
+          "_formatted": {
+            "display_name": "Edited title",
+            "breadcrumbs": [
+              {
+                "display_name": "Learn UNIXY"
+              },
+              {
+                "display_name": "Section",
+                "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@chapter+block@6104ecc39b0046c5888db9e64db30887"
+              },
+              {
+                "display_name": "Subsection",
+                "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@sequential+block@d6e696f3d7d14cde82876a72a75cb208"
+              },
+              {
+                "display_name": "Unit",
+                "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@vertical+block@05da683dc74e405ca355c6b90d58ad6e"
+              }
+            ],
+            "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@video+block@33518787c3e14844ad823af8ff158a83",
+            "block_type": "video"
+          }
+        },
+        {
+          "display_name": "Text 1",
+          "description": " 8¹⁺² 3²  Accept change now!d",
+          "breadcrumbs": [
+            {
+              "display_name": "Learn UNIXY"
+            },
+            {
+              "display_name": "Section",
+              "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@chapter+block@6104ecc39b0046c5888db9e64db30887"
+            },
+            {
+              "display_name": "Subsection",
+              "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@sequential+block@d6e696f3d7d14cde82876a72a75cb208"
+            },
+            {
+              "display_name": "Unit",
+              "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@vertical+block@bab96d80267041138975e91a96e20f35"
+            }
+          ],
+          "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@html+block@0dfbabb8c93140caa3a004ab621757f5",
+          "block_type": "html",
+          "_formatted": {
+            "display_name": "Text 1",
+            "description": " 8¹⁺² 3²  Accept change now!d",
+            "breadcrumbs": [
+              {
+                "display_name": "Learn UNIXY"
+              },
+              {
+                "display_name": "Section",
+                "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@chapter+block@6104ecc39b0046c5888db9e64db30887"
+              },
+              {
+                "display_name": "Subsection",
+                "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@sequential+block@d6e696f3d7d14cde82876a72a75cb208"
+              },
+              {
+                "display_name": "Unit",
+                "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@vertical+block@bab96d80267041138975e91a96e20f35"
+              }
+            ],
+            "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@html+block@0dfbabb8c93140caa3a004ab621757f5",
+            "block_type": "html"
+          }
+        },
+        {
+          "display_name": "Text 23",
+          "description": " AB = \\begin{pmatrix} 7 & 10 \\\\ 13 & 18 \\end{pmatrix} ",
+          "breadcrumbs": [
+            {
+              "display_name": "Learn UNIXY"
+            },
+            {
+              "display_name": "Section",
+              "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@chapter+block@6104ecc39b0046c5888db9e64db30887"
+            },
+            {
+              "display_name": "Subsection",
+              "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@sequential+block@d6e696f3d7d14cde82876a72a75cb208"
+            },
+            {
+              "display_name": "Unit",
+              "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@vertical+block@bab96d80267041138975e91a96e20f35"
+            }
+          ],
+          "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@html+block@37a916b53c2f430989d33ddeb47e224d",
+          "block_type": "html",
+          "_formatted": {
+            "display_name": "Text 23",
+            "description": " AB = \\begin{pmatrix} 7 & 10 \\\\ 13 & 18 \\end{pmatrix} ",
+            "breadcrumbs": [
+              {
+                "display_name": "Learn UNIXY"
+              },
+              {
+                "display_name": "Section",
+                "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@chapter+block@6104ecc39b0046c5888db9e64db30887"
+              },
+              {
+                "display_name": "Subsection",
+                "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@sequential+block@d6e696f3d7d14cde82876a72a75cb208"
+              },
+              {
+                "display_name": "Unit",
+                "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@vertical+block@bab96d80267041138975e91a96e20f35"
+              }
+            ],
+            "usage_key": "block-v1:NewOrg3+TSTCS+2025_T1+type@html+block@37a916b53c2f430989d33ddeb47e224d",
+            "block_type": "html"
+          }
+        }
+      ],
+      "query": "",
+      "processingTimeMs": 0,
+      "limit": 3,
+      "offset": 0,
+      "estimatedTotalHits": 3
+    }
+  }
+]

@@ -24,7 +24,7 @@ describe('header utils', () => {
         ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN: 'true',
       });
       const actualItems = renderHook(() => useContentMenuItems('course-123')).result.current;
-      expect(actualItems).toHaveLength(5);
+      expect(actualItems).toHaveLength(6);
     });
     it('when video upload page disabled should not include Video Uploads option', () => {
       setConfig({
@@ -32,7 +32,7 @@ describe('header utils', () => {
         ENABLE_VIDEO_UPLOAD_PAGE_LINK_IN_CONTENT_DROPDOWN: 'false',
       });
       const actualItems = renderHook(() => useContentMenuItems('course-123')).result.current;
-      expect(actualItems).toHaveLength(4);
+      expect(actualItems).toHaveLength(5);
     });
   });
 

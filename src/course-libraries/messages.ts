@@ -43,7 +43,7 @@ const messages = defineMessages({
   },
   totalComponentLabel: {
     id: 'course-authoring.course-libraries.libcard.total-component.label',
-    defaultMessage: '{totalComponents} components applied',
+    defaultMessage: '{totalComponents, plural, one {# component} other {# components}} applied',
     description: 'Prints total components applied from library',
   },
   allUptodateLabel: {
@@ -53,7 +53,7 @@ const messages = defineMessages({
   },
   outOfSyncCountLabel: {
     id: 'course-authoring.course-libraries.libcard.out-of-sync.label',
-    defaultMessage: '{outOfSyncCount} components out of sync',
+    defaultMessage: '{outOfSyncCount, plural, one {# component} other {# components}} out of sync',
     description: 'Prints number of components out of sync from library',
   },
   outOfSyncCountAlertTitle: {

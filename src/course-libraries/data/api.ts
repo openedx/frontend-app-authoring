@@ -3,7 +3,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
-const getEntityLinksByDownstreamContextUrl = (downstreamContextKey: string) => `${getApiBaseUrl()}/api/contentstore/v2/upstreams/${downstreamContextKey}`;
+export const getEntityLinksByDownstreamContextUrl = (downstreamContextKey: string) => `${getApiBaseUrl()}/api/contentstore/v2/upstreams/${downstreamContextKey}`;
 
 export interface PublishableEntityLink {
   upstreamUsageKey: string;
