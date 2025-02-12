@@ -37,7 +37,7 @@ Checker.propTypes = {
   hasSingleAnswer: PropTypes.bool.isRequired,
   answer: PropTypes.shape({
     correct: PropTypes.bool,
-    id: PropTypes.number,
+    id: PropTypes.string,
   }).isRequired,
   setAnswer: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
