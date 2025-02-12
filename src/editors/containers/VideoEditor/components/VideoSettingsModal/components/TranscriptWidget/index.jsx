@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
   FormattedMessage,
@@ -90,7 +90,6 @@ const TranscriptWidget = ({
   updateField,
   isUploadError,
   isDeleteError,
-  isLibrary,
   // injected
   intl,
 }) => {
@@ -98,6 +97,7 @@ const TranscriptWidget = ({
   const [showImportCard, setShowImportCard] = React.useState(true);
   const fullTextLanguages = module.hooks.transcriptLanguages(transcripts, intl);
   const hasTranscripts = module.hooks.hasTranscripts(transcripts);
+  const isLibrary = useSelector(selectors.app.isLibrary);
   const dispatch = useDispatch();
   if (isLibrary) {
     dispatch(thunkActions.video.updateTranscriptHandlerUrl());
@@ -202,7 +202,6 @@ TranscriptWidget.propTypes = {
   updateField: PropTypes.func.isRequired,
   isUploadError: PropTypes.bool.isRequired,
   isDeleteError: PropTypes.bool.isRequired,
-  isLibrary: PropTypes.bool.isRequired,
   intl: PropTypes.shape(intlShape).isRequired,
 };
 export const mapStateToProps = (state) => ({
@@ -213,7 +212,6 @@ export const mapStateToProps = (state) => ({
   allowTranscriptImport: selectors.video.allowTranscriptImport(state),
   isUploadError: selectors.requests.isFailed(state, { requestKey: RequestKeys.uploadTranscript }),
   isDeleteError: selectors.requests.isFailed(state, { requestKey: RequestKeys.deleteTranscript }),
-  isLibrary: selectors.app.isLibrary(state),
 });
 
 export const mapDispatchToProps = (dispatch) => ({

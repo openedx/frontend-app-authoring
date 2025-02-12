@@ -107,7 +107,6 @@ describe('TranscriptWidget', () => {
       updateField: jest.fn().mockName('args.updateField'),
       isUploadError: false,
       isDeleteError: false,
-      isLibrary: false,
     };
 
     describe('snapshots', () => {
@@ -154,11 +153,6 @@ describe('TranscriptWidget', () => {
       test('snapshot: renders ErrorAlert with delete error message', () => {
         expect(
           shallow(<TranscriptWidget {...props} isDeleteError transcripts={['en']} />).snapshot,
-        ).toMatchSnapshot();
-      });
-      test('snapshot: renders when isLibrary is true', () => {
-        expect(
-          shallow(<TranscriptWidget {...props} isDeleteError transcripts={['en']} isLibrary />).snapshot,
         ).toMatchSnapshot();
       });
     });
