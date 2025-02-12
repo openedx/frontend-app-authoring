@@ -9,7 +9,7 @@ export interface PublishableEntityLink {
   upstreamUsageKey: string;
   upstreamContextKey: string;
   upstreamContextTitle: string;
-  upstreamVersion: string;
+  upstreamVersion: number;
   downstreamUsageKey: string;
   downstreamContextTitle: string;
   downstreamContextKey: string;
