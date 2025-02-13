@@ -184,6 +184,10 @@ describe('useMessageHandlers', () => {
     const handleDeleteXBlock = jest.fn();
     const handleDuplicateXBlock = jest.fn();
     const handleManageXBlockAccess = jest.fn();
+    const handleShowLegacyEditXBlockModal = jest.fn();
+    const handleCloseLegacyEditorXBlockModal = jest.fn();
+    const handleSaveEditedXBlockData = jest.fn();
+    const handleFinishXBlockDragging = jest.fn();
 
     const { result } = renderHook(() => useMessageHandlers({
       courseId,
@@ -194,6 +198,10 @@ describe('useMessageHandlers', () => {
       handleDuplicateXBlock,
       handleScrollToXBlock: mockHandleScrollToXBlock,
       handleManageXBlockAccess,
+      handleShowLegacyEditXBlockModal,
+      handleCloseLegacyEditorXBlockModal,
+      handleSaveEditedXBlockData,
+      handleFinishXBlockDragging,
     }));
 
     act(() => {
