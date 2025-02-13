@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import {
   FormattedMessage,
@@ -17,7 +17,7 @@ import {
 } from '@openedx/paragon';
 import { Add, InfoOutline } from '@openedx/paragon/icons';
 
-import { actions, selectors } from '../../../../../../data/redux';
+import { thunkActions, actions, selectors } from '../../../../../../data/redux';
 import messages from './messages';
 
 import { RequestKeys } from '../../../../../../data/constants/requests';
@@ -97,6 +97,11 @@ const TranscriptWidget = ({
   const [showImportCard, setShowImportCard] = React.useState(true);
   const fullTextLanguages = module.hooks.transcriptLanguages(transcripts, intl);
   const hasTranscripts = module.hooks.hasTranscripts(transcripts);
+  const isLibrary = useSelector(selectors.app.isLibrary);
+  const dispatch = useDispatch();
+  if (isLibrary) {
+    dispatch(thunkActions.video.updateTranscriptHandlerUrl());
+  }
 
   return (
     <CollapsibleFormWidget

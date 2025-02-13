@@ -33,6 +33,7 @@ jest.mock('./requests', () => ({
   importTranscript: (args) => ({ importTranscript: args }),
   fetchVideoFeatures: (args) => ({ fetchVideoFeatures: args }),
   uploadVideo: (args) => ({ uploadVideo: args }),
+  getHandlerlUrl: (args) => ({ getHandlerlUrl: args }),
 }));
 
 jest.mock('../../../utils', () => ({
@@ -61,6 +62,12 @@ const mockVideoFeatures = {
 };
 const mockSelectedVideoId = 'ThisIsAVideoId';
 const mockSelectedVideoUrl = 'ThisIsAYoutubeUrl';
+const mockUpdateTranscriptHandlerUrl = 'ThisIsAHandler';
+const mockUpdateTranscriptHandlerUrlData = {
+  data: {
+    handler_url: mockUpdateTranscriptHandlerUrl,
+  },
+};
 
 const testMetadata = {
   download_track: 'dOWNlOAdTraCK',
@@ -667,6 +674,22 @@ describe('video thunkActions', () => {
       dispatch.mockClear();
       dispatchedAction.deleteTranscript.onSuccess();
       expect(dispatch).toHaveBeenCalledWith(actions.video.updateField({ transcripts: [] }));
+    });
+  });
+  describe('updateTranscriptHandlerUrl', () => {
+    beforeEach(() => {
+      thunkActions.updateTranscriptHandlerUrl()(dispatch);
+      [[dispatchedAction]] = dispatch.mock.calls;
+    });
+    it('dispatches updateTranscriptHandlerUrl action', () => {
+      expect(dispatchedAction.getHandlerlUrl).not.toEqual(undefined);
+    });
+    it('dispatches actions.video.updateField on success', () => {
+      dispatch.mockClear();
+      dispatchedAction.getHandlerlUrl.onSuccess(mockUpdateTranscriptHandlerUrlData);
+      expect(dispatch).toHaveBeenCalledWith(
+        actions.video.updateField({ transcriptHandlerUrl: mockUpdateTranscriptHandlerUrl }),
+      );
     });
   });
   describe('uploadTranscript', () => {

@@ -27,4 +27,5 @@ export const RequestKeys = StrictDict({
   uploadAsset: 'uploadAsset',
   fetchAdvancedSettings: 'fetchAdvancedSettings',
   fetchVideoFeatures: 'fetchVideoFeatures',
+  getHandlerUrl: 'getHandlerUrl',
 } as const);

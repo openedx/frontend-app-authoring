@@ -80,6 +80,14 @@ export const downloadVideoTranscriptURL = (({ studioEndpointUrl, blockId, langua
   `${videoTranscripts({ studioEndpointUrl, blockId })}?language_code=${language}`
 )) satisfies UrlFunction;
 
+export const transcriptXblockV2 = (({ transcriptHandlerUrl }) => (
+  `${transcriptHandlerUrl}translation`
+)) satisfies UrlFunction;
+
+export const downloadVideoTranscriptURLV2 = (({ transcriptHandlerUrl, language }) => (
+  `${transcriptXblockV2({ transcriptHandlerUrl })}?language_code=${language}`
+)) satisfies UrlFunction;
+
 export const mediaTranscriptURL = (({ studioEndpointUrl, transcriptUrl }) => (
   `${studioEndpointUrl}${transcriptUrl}`
 )) satisfies UrlFunction;
@@ -110,4 +118,8 @@ export const videoFeatures = (({ studioEndpointUrl }) => (
 
 export const courseVideos = (({ studioEndpointUrl, learningContextId }) => (
   `${studioEndpointUrl}/videos/${learningContextId}`
+)) satisfies UrlFunction;
+
+export const handlerUrl = (({ studioEndpointUrl, blockId, handlerName }) => (
+  `${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/handler_url/${handlerName}/`
 )) satisfies UrlFunction;

@@ -17,6 +17,9 @@ import {
   mediaTranscriptURL,
   videoFeatures,
   courseVideos,
+  handlerUrl,
+  transcriptXblockV2,
+  downloadVideoTranscriptURLV2,
 } from './urls';
 
 describe('cms url methods', () => {
@@ -32,6 +35,8 @@ describe('cms url methods', () => {
   const handout = '/aSSet@hANdoUt';
   const videoId = '123-SOmeVidEOid-213';
   const parameters = 'SomEParAMEterS';
+  const handlerName = 'transcript';
+  const transcriptHandlerUrl = handlerUrl({ studioEndpointUrl, blockId, handlerName });
 
   describe('return to learning context urls', () => {
     const unitUrl = {
@@ -187,6 +192,24 @@ describe('cms url methods', () => {
       const transcriptUrl = 'this-is-a-transcript';
       expect(mediaTranscriptURL({ studioEndpointUrl, transcriptUrl }))
         .toEqual(`${studioEndpointUrl}${transcriptUrl}`);
+    });
+  });
+  describe('handlerUrl', () => {
+    it('returns url with studioEndpointUrl, blockId and handlerName', () => {
+      expect(handlerUrl({ studioEndpointUrl, blockId, handlerName }))
+        .toEqual(`${studioEndpointUrl}/api/xblock/v2/xblocks/${blockId}/handler_url/transcript/`);
+    });
+  });
+  describe('transcriptXblockV2', () => {
+    it('returns url with transcriptHandlerUrl', () => {
+      expect(transcriptXblockV2({ transcriptHandlerUrl }))
+        .toEqual(`${transcriptHandlerUrl}translation`);
+    });
+  });
+  describe('downloadVideoTranscriptURLV2', () => {
+    it('returns url with transcriptHandlerUrl and language', () => {
+      expect(downloadVideoTranscriptURLV2({ transcriptHandlerUrl, language }))
+        .toEqual(`${transcriptHandlerUrl}translation?language_code=${language}`);
     });
   });
 });

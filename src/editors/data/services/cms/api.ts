@@ -215,7 +215,17 @@ export const apiMethods = {
       getJSON,
     );
   },
-
+  getTranscriptV2: ({
+    handlerUrl,
+    language,
+    videoId,
+  }) => {
+    const getJSON = { data: { lang: language, edx_video_id: videoId } };
+    return get(
+      `${urls.transcriptXblockV2({ transcriptHandlerUrl: handlerUrl })}?language_code=${language}`,
+      getJSON,
+    );
+  },
   deleteTranscript: ({
     studioEndpointUrl,
     language,
@@ -225,6 +235,17 @@ export const apiMethods = {
     const deleteJSON = { data: { lang: language, edx_video_id: videoId } };
     return deleteObject(
       urls.videoTranscripts({ studioEndpointUrl, blockId }),
+      deleteJSON,
+    );
+  },
+  deleteTranscriptV2: ({
+    handlerUrl,
+    language,
+    videoId,
+  }) => {
+    const deleteJSON = { data: { lang: language, edx_video_id: videoId } };
+    return deleteObject(
+      urls.transcriptXblockV2({ transcriptHandlerUrl: handlerUrl }),
       deleteJSON,
     );
   },
@@ -243,6 +264,23 @@ export const apiMethods = {
     data.append('new_language_code', newLanguage || language);
     return post(
       urls.videoTranscripts({ studioEndpointUrl, blockId }),
+      data,
+    );
+  },
+  uploadTranscriptV2: ({
+    handlerUrl,
+    transcript,
+    videoId,
+    language,
+    newLanguage = null,
+  }) => {
+    const data = new FormData();
+    data.append('file', transcript);
+    data.append('edx_video_id', videoId);
+    data.append('language_code', language);
+    data.append('new_language_code', newLanguage || language);
+    return post(
+      urls.transcriptXblockV2({ transcriptHandlerUrl: handlerUrl }),
       data,
     );
   },
@@ -344,6 +382,13 @@ export const apiMethods = {
   }) => post(
     urls.courseVideos({ studioEndpointUrl, learningContextId }),
     data,
+  ),
+  getHandlerUrl: ({
+    studioEndpointUrl,
+    blockId,
+    handlerName,
+  }) => get(
+    urls.handlerUrl({ studioEndpointUrl, blockId, handlerName }),
   ),
 };
 

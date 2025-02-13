@@ -10,7 +10,12 @@ import { initialState } from './reducer';
 // eslint-disable-next-line import/no-self-import
 import * as module from './selectors';
 import * as AppSelectors from '../app/selectors';
-import { downloadVideoTranscriptURL, downloadVideoHandoutUrl, mediaTranscriptURL } from '../../services/cms/urls';
+import {
+  downloadVideoTranscriptURL,
+  downloadVideoHandoutUrl,
+  mediaTranscriptURL,
+  downloadVideoTranscriptURLV2,
+} from '../../services/cms/urls';
 
 const stateKeys = keyStore(initialState);
 
@@ -27,6 +32,7 @@ export const simpleSelectors = [
   stateKeys.allowVideoSharing,
   stateKeys.thumbnail,
   stateKeys.transcripts,
+  stateKeys.transcriptHandlerUrl,
   stateKeys.selectedVideoTranscriptUrls,
   stateKeys.allowTranscriptDownloads,
   stateKeys.duration,
@@ -53,13 +59,27 @@ export const openLanguages = createSelector(
   },
 );
 
+/* istanbul ignore next */
 export const getTranscriptDownloadUrl = createSelector(
-  [AppSelectors.simpleSelectors.studioEndpointUrl, AppSelectors.simpleSelectors.blockId],
-  (studioEndpointUrl, blockId) => ({ language }) => downloadVideoTranscriptURL({
-    studioEndpointUrl,
-    blockId,
-    language,
-  }),
+  [
+    AppSelectors.simpleSelectors.studioEndpointUrl,
+    AppSelectors.simpleSelectors.blockId,
+    AppSelectors.isLibrary,
+    simpleSelectors.transcriptHandlerUrl,
+  ],
+  (studioEndpointUrl, blockId, isLibrary, transcriptHandlerUrl) => ({ language }) => {
+    if (isLibrary) {
+      return downloadVideoTranscriptURLV2({
+        transcriptHandlerUrl,
+        language,
+      });
+    }
+    return downloadVideoTranscriptURL({
+      studioEndpointUrl,
+      blockId,
+      language,
+    });
+  },
 );
 
 export const buildTranscriptUrl = createSelector(
