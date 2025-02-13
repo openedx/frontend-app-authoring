@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useMediaQuery } from 'react-responsive';
 import * as Yup from 'yup';
 import { snakeCase } from 'lodash/string';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { getConfig, getPath } from '@edx/frontend-platform';
 
 import { RequestStatus } from './data/constants';
@@ -151,9 +151,6 @@ export const getLabelById = (options, id) => {
  * Adds additional validation methods to Yup.
  */
 export function setupYupExtensions() {
-  // Add a uniqueProperty method to arrays that allows validating that the specified property path is unique
-  // across all objects in the array.
-  // Credit: https://github.com/jquense/yup/issues/345#issuecomment-717400071
   Yup.addMethod(Yup.array, 'uniqueProperty', function uniqueProperty(property, message) {
     return this.test('unique', '', function testUniqueness(list) {
       const errors = [];
@@ -199,10 +196,6 @@ export function setupYupExtensions() {
 
   Yup.addMethod(Yup.string, 'compare', function compare(message, type) {
     return this.test('isGreater', message, function isGreater() {
-      // This function compare 2 dates or 2 times. It return no error if dateInstance/timeInstance is empty
-      // of if startTime or endTime is not present for time comparison
-      // or startDate or endDate is not present for date comparison
-
       if (!this.parent
         || (!(this.parent.startTime && this.parent.endTime) && type === 'time')
         || (!(this.parent.startDate && this.parent.endDate) && type === 'date')
@@ -257,23 +250,19 @@ export function setupYupExtensions() {
 export const convertToDateFromString = (dateStr) => {
   /**
    * Convert UTC to local time for react-datepicker
-   * Note: react-datepicker has a bug where it only interacts with local time
    * @param {string} dateStr - YYYY-MM-DDTHH:MM:SSZ
-   * @return {Date} date in local time
+   * @return {Date} date in local time based on the user's browser time zone
    */
   if (!dateStr) {
     return '';
   }
 
-  const stripTimeZone = (stringValue) => stringValue.substring(0, 19);
-
-  return moment(stripTimeZone(String(dateStr))).toDate();
+  return moment(dateStr).local().toDate();
 };
 
 export const convertToStringFromDate = (date) => {
   /**
    * Convert local time to UTC from react-datepicker
-   * Note: react-datepicker has a bug where it only interacts with local time
    * @param {Date} date - date in local time
    * @return {string} YYYY-MM-DDTHH:MM:SSZ
    */
@@ -281,13 +270,38 @@ export const convertToStringFromDate = (date) => {
     return '';
   }
 
-  return moment(date).format(DATE_TIME_FORMAT);
+  return moment(date).utc().format('YYYY-MM-DDTHH:mm:ssZ'); // Convert to UTC before formatting
+};
+
+export const convertToLocalTime = (releaseDate) => {
+  if (!releaseDate) {
+    console.error('Invalid date: No release date provided');
+    return 'Invalid date';
+  }
+
+  const localDate = moment.utc(releaseDate, 'MMM DD, YYYY at HH:mm UTC', true);
+
+  if (!localDate.isValid()) {
+    console.error('Invalid date format:', releaseDate);
+    return 'Invalid date';
+  }
+
+  const timezoneName = moment.tz.guess();
+  const normalizedTimezone = timezoneName === 'Asia/Calcutta' ? 'Asia/Kolkata' : timezoneName;
+  const formattedDate = localDate.local().format('MMM DD, YYYY [at] hh:mm A');
+  const timezoneOffset = localDate.local().format('Z');
+
+  // Adjust the return format to match your desired output
+  return `${formattedDate} (${normalizedTimezone} GMT${timezoneOffset})`;
 };
 
 export const isValidDate = (date) => {
-  const formattedValue = convertToStringFromDate(date).split('T')[0];
-
-  return Boolean(formattedValue.length <= 10);
+  /**
+   * Validate if the date is a valid date format
+   * @param {Date | string} date - date to check
+   * @return {boolean} true if valid date, false otherwise
+   */
+  return moment(date, DATE_TIME_FORMAT, true).isValid();  // Using Moment's .isValid() for proper validation
 };
 
 export const getFileSizeToClosestByte = (fileSize) => {
