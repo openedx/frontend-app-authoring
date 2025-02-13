@@ -16,6 +16,7 @@ jest.mock('../../data/redux', () => ({
     app: {
       isInitialized: (state) => ({ isInitialized: state }),
       images: (state) => ({ images: state }),
+      shouldCreateBlock: (state) => ({ shouldCreateBlock: state }),
     },
     requests: {
       isFailed: (...args) => ({ requestFailed: args }),
@@ -26,6 +27,7 @@ jest.mock('../../hooks', () => ({
   ...jest.requireActual('../../hooks'),
   navigateCallback: jest.fn((args) => ({ navigateCallback: args })),
   saveBlock: jest.fn((args) => ({ saveBlock: args })),
+  createBlock: jest.fn((args) => ({ createBlock: args })),
 }));
 
 const dispatch = jest.fn();
@@ -53,6 +55,8 @@ describe('EditorContainer hooks', () => {
         const getContent = () => 'myTestContentValue';
         const setAssetToStaticUrl = () => 'myTestContentValue';
         const validateEntry = () => 'vaLIdAteENTry';
+        reactRedux.useSelector.mockReturnValue(false);
+
         const output = hooks.handleSaveClicked({
           getContent,
           images: {
@@ -71,6 +75,31 @@ describe('EditorContainer hooks', () => {
           analytics: reactRedux.useSelector(selectors.app.analytics),
           dispatch,
           validateEntry,
+        });
+      });
+      it('returns callback to createBlock with dispatch and content if shouldCreateBlock is true', () => {
+        const getContent = () => 'myTestContentValue';
+        const setAssetToStaticUrl = () => 'myTestContentValue';
+        const validateEntry = () => 'vaLIdAteENTry';
+        reactRedux.useSelector.mockReturnValue(true);
+
+        const output = hooks.handleSaveClicked({
+          getContent,
+          images: {
+            portableUrl: '/static/sOmEuiMAge.jpeg',
+            displayName: 'sOmEuiMAge',
+          },
+          destination: 'testDEsTURL',
+          analytics: 'soMEanALytics',
+          dispatch,
+          validateEntry,
+        });
+        output();
+        expect(appHooks.createBlock).toHaveBeenCalledWith({
+          content: setAssetToStaticUrl(reactRedux.useSelector(selectors.app.images), getContent),
+          destination: reactRedux.useSelector(selectors.app.returnUrl),
+          analytics: reactRedux.useSelector(selectors.app.analytics),
+          dispatch,
         });
       });
     });

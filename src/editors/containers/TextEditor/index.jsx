@@ -132,7 +132,8 @@ export const mapStateToProps = (state) => ({
   blockFailed: selectors.requests.isFailed(state, { requestKey: RequestKeys.fetchBlock }),
   blockId: selectors.app.blockId(state),
   showRawEditor: selectors.app.showRawEditor(state),
-  blockFinished: selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchBlock }),
+  blockFinished: selectors.app.shouldCreateBlock(state)
+  || selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchBlock }),
   learningContextId: selectors.app.learningContextId(state),
   images: selectors.app.images(state),
   isLibrary: selectors.app.isLibrary(state),

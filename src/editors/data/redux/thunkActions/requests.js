@@ -1,3 +1,4 @@
+import { v4 as uuid4 } from 'uuid';
 import { StrictDict, parseLibraryImageData, getLibraryImageAssets } from '../../../utils';
 
 import { RequestKeys } from '../../constants/requests';
@@ -11,7 +12,10 @@ import { selectors as appSelectors } from '../app';
 // eslint-disable-next-line import/no-self-import
 import * as module from './requests';
 import { isLibraryKey } from '../../../../generic/key-utils';
+import { createLibraryBlock } from '../../../../library-authoring/data/api';
 import { acceptedImgKeys } from '../../../sharedComponents/ImageUploadModal/SelectImageModal/utils';
+import { blockTypes } from '../../constants/app';
+import { problemTitles } from '../../constants/problem';
 
 // Similar to `import { actions, selectors } from '..';` but avoid circular imports:
 const actions = { requests: requestsActions };
@@ -122,9 +126,67 @@ export const saveBlock = ({ content, ...rest }) => (dispatch, getState) => {
     ...rest,
   }));
 };
+
+/**
+ * Tracked createBlock api method.  Tracked to the `createBlock` request key.
+ * @param {[func]} onSuccess - onSuccess method ((response) => { ... })
+ * @param {[func]} onFailure - onFailure method ((error) => { ... })
+ */
+export const createBlock = ({ ...rest }) => (dispatch, getState) => {
+  const blockTitle = selectors.app.blockTitle(getState());
+  const blockType = selectors.app.blockType(getState());
+  // Remove any special character, a slug should be created with unicode letters, numbers, underscores or hyphens.
+  const cleanTitle = blockTitle?.toLowerCase().replace(/[^a-zA-Z0-9_\s-]/g, '').trim();
+  let definitionId;
+  // Validates if the title has been assigned by the user, if not a UUID is returned as the key.
+  if (!cleanTitle || (blockType === blockTypes.problem && problemTitles.has(blockTitle))) {
+    definitionId = `${uuid4()}`;
+  } else {
+    // add a short random suffix to prevent conflicting IDs.
+    const suffix = uuid4().split('-')[4];
+    definitionId = `${cleanTitle.replaceAll(/\s+/g, '-')}-${suffix}`;
+  }
+  dispatch(module.networkRequest({
+    requestKey: RequestKeys.createBlock,
+    promise: createLibraryBlock({
+      libraryId: selectors.app.learningContextId(getState()),
+      blockType,
+      definitionId,
+    }),
+    ...rest,
+  }));
+};
+
+export const batchUploadAssets = ({ assets, content, ...rest }) => (dispatch) => {
+  let newContent = content;
+  const promises = assets.reduce((promiseChain, asset) => promiseChain
+    .then(() => new Promise((resolve) => {
+      dispatch(module.uploadAsset({
+        asset,
+        onSuccess: (response) => {
+          const imagePath = `/${response.data.asset.portableUrl}`;
+          const reader = new FileReader();
+          reader.addEventListener('load', () => {
+            const imageBS64 = reader.result.toString();
+            newContent = typeof content === 'string' ? newContent?.replace(imageBS64, imagePath) : { ...newContent, olx: newContent.olx.replace(imageBS64, imagePath) };
+            URL.revokeObjectURL(asset);
+            resolve(newContent);
+          });
+          reader.readAsDataURL(asset);
+        },
+      }));
+    })), Promise.resolve());
+
+  dispatch(module.networkRequest({
+    requestKey: RequestKeys.batchUploadAssets,
+    promise: promises,
+    ...rest,
+  }));
+};
+
 export const uploadAsset = ({ asset, ...rest }) => (dispatch, getState) => {
   const learningContextId = selectors.app.learningContextId(getState());
-  dispatch(module.networkRequest({
+  return dispatch(module.networkRequest({
     requestKey: RequestKeys.uploadAsset,
     promise: api.uploadAsset({
       learningContextId,
@@ -352,6 +414,7 @@ export default StrictDict({
   fetchBlock,
   fetchStudioView,
   fetchUnit,
+  createBlock,
   saveBlock,
   fetchImages,
   fetchVideos,

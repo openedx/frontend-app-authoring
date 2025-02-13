@@ -25,6 +25,7 @@ jest.mock('./data/redux', () => ({
     app: {
       initialize: (args) => ({ initializeApp: args }),
       saveBlock: (args) => ({ saveBlock: args }),
+      createBlock: (args) => ({ createBlock: args }),
     },
   },
 }));
@@ -165,12 +166,61 @@ describe('hooks', () => {
     });
   });
 
+  describe('createBlock', () => {
+    const navigateCallback = (args) => ({ navigateCallback: args });
+    const dispatch = jest.fn();
+    const destination = 'uRLwhENsAved';
+    const analytics = 'dATAonEveNT';
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+      jest.spyOn(hooks, hookKeys.navigateCallback).mockImplementationOnce(navigateCallback);
+    });
+    it('returns null when content is null', () => {
+      const content = null;
+      const expected = hooks.createBlock({
+        content,
+        destination,
+        analytics,
+        dispatch,
+      });
+      expect(expected).toEqual(undefined);
+    });
+    it('dispatches thunkActions.app.createBlock with navigateCallback, and passed content', () => {
+      const content = 'myContent';
+      hooks.createBlock({
+        content,
+        destination,
+        analytics,
+        dispatch,
+      });
+      expect(dispatch).toHaveBeenCalledWith(thunkActions.app.createBlock(
+        content,
+        navigateCallback({
+          destination,
+          analyticsEvent: analyticsEvt.editorSaveClick,
+          analytics,
+        }),
+      ));
+    });
+  });
+
   describe('clearSaveError', () => {
     it('dispatches actions.requests.clearRequest with saveBlock requestKey', () => {
       const dispatch = jest.fn();
       hooks.clearSaveError({ dispatch })();
       expect(dispatch).toHaveBeenCalledWith(actions.requests.clearRequest({
         requestKey: RequestKeys.saveBlock,
+      }));
+    });
+  });
+
+  describe('clearCreateError', () => {
+    it('dispatches actions.requests.clearRequest with createBlock requestKey', () => {
+      const dispatch = jest.fn();
+      hooks.clearCreateError({ dispatch })();
+      expect(dispatch).toHaveBeenCalledWith(actions.requests.clearRequest({
+        requestKey: RequestKeys.createBlock,
       }));
     });
   });

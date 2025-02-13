@@ -1,12 +1,11 @@
 import { StrictDict, camelizeKeys } from '../../../utils';
-import { isLibraryKey } from '../../../../generic/key-utils';
 import * as requests from './requests';
 // This 'module' self-import hack enables mocking during tests.
 // See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
 // should be re-thought and cleaned up to avoid this pattern.
 // eslint-disable-next-line import/no-self-import
 import * as module from './app';
-import { actions as appActions } from '../app';
+import { actions as appActions, selectors } from '../app';
 import { actions as requestsActions } from '../requests';
 import { RequestKeys } from '../../constants/requests';
 
@@ -88,7 +87,14 @@ export const fetchCourseDetails = () => (dispatch) => {
  */
 export const initialize = (data) => (dispatch) => {
   const editorType = data.blockType;
+  dispatch({ type: 'resetEditor' });
   dispatch(actions.app.initialize(data));
+
+  if (data.blockId === '' && editorType) {
+    dispatch(actions.app.initializeEditor());
+    return;
+  }
+
   dispatch(module.fetchBlock());
   if (data.blockId?.startsWith('block-v1:')) {
     dispatch(module.fetchUnit());
@@ -103,7 +109,6 @@ export const initialize = (data) => (dispatch) => {
       dispatch(module.fetchCourseDetails());
       break;
     case 'html':
-      if (isLibraryKey(data.learningContextId)) { dispatch(actions.app.resetImages()); }
       dispatch(module.fetchImages({ pageNumber: 0 }));
       break;
     default:
@@ -125,7 +130,54 @@ export const saveBlock = (content, returnToUnit) => (dispatch) => {
   }));
 };
 
-export const uploadAsset = ({ file, setSelection }) => (dispatch) => {
+/**
+ * @param {func} onSuccess
+ */
+export const createBlock = (content, returnToUnit) => (dispatch, getState) => {
+  dispatch(requests.createBlock({
+    onSuccess: (response) => {
+      dispatch(actions.app.setBlockId(response.id));
+      const newImages = Object.values(selectors.images(getState())).map((image) => image.file);
+
+      if (newImages.length === 0) {
+        dispatch(saveBlock(content, returnToUnit));
+        return;
+      }
+      dispatch(requests.batchUploadAssets({
+        assets: newImages,
+        content,
+        onSuccess: (updatedContent) => dispatch(saveBlock(updatedContent, returnToUnit)),
+        onFailure: (error) => dispatch(actions.requests.failRequest({
+          requestKey: RequestKeys.batchUploadAssets,
+          error,
+        })),
+      }));
+    },
+    onFailure: (error) => dispatch(actions.requests.failRequest({
+      requestKey: RequestKeys.createBlock,
+      error,
+    })),
+  }));
+};
+
+export const uploadAsset = ({ file, setSelection }) => (dispatch, getState) => {
+  if (selectors.shouldCreateBlock(getState())) {
+    const tempFileURL = URL.createObjectURL(file);
+    const tempImage = {
+      displayName: file.name,
+      url: tempFileURL,
+      externalUrl: tempFileURL,
+      portableUrl: tempFileURL,
+      thumbnail: tempFileURL,
+      id: file.name,
+      locked: false,
+      file,
+    };
+    setSelection(tempImage);
+    dispatch(appActions.setImages({ images: { [file.name]: tempImage }, imageCount: 1 }));
+    return;
+  }
+
   dispatch(requests.uploadAsset({
     asset: file,
     onSuccess: (response) => setSelection(camelizeKeys(response.data.asset)),
@@ -142,4 +194,5 @@ export default StrictDict({
   saveBlock,
   fetchImages,
   uploadAsset,
+  createBlock,
 });

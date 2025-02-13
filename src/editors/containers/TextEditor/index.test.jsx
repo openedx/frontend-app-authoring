@@ -55,6 +55,7 @@ jest.mock('../../data/redux', () => ({
   selectors: {
     app: {
       blockValue: jest.fn(state => ({ blockValue: state })),
+      shouldCreateBlock: jest.fn(state => ({ shouldCreateBlock: state })),
       lmsEndpointUrl: jest.fn(state => ({ lmsEndpointUrl: state })),
       studioEndpointUrl: jest.fn(state => ({ studioEndpointUrl: state })),
       showRawEditor: jest.fn(state => ({ showRawEditor: state })),
@@ -126,7 +127,8 @@ describe('TextEditor', () => {
     test('blockFinished from requests.isFinished', () => {
       expect(
         mapStateToProps(testState).blockFinished,
-      ).toEqual(selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchBlock }));
+      ).toEqual(selectors.app.shouldCreateBlock(testState)
+      || selectors.requests.isFinished(testState, { requestKey: RequestKeys.fetchBlock }));
     });
     test('learningContextId from app.learningContextId', () => {
       expect(
