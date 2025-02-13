@@ -24,6 +24,7 @@ const ModalComponentPreview = ({ isOpen, close, usageKey }: ModalComponentPrevie
       isOpen={isOpen}
       onClose={close}
       isOverflowVisible={false}
+      size="xl"
       className="component-preview-modal"
     >
       <LibraryBlock
