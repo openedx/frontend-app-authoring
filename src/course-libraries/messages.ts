@@ -37,9 +37,9 @@ const messages = defineMessages({
     description: 'Tab title for review tab when no updates are available',
   },
   breadcrumbAriaLabel: {
-    id: 'course-authoring.course-libraries.downstream-block.breadcrum.aria-label',
+    id: 'course-authoring.course-libraries.downstream-block.breadcrumb.aria-label',
     defaultMessage: 'Component breadcrumb',
-    description: 'Aria label for breadcrum in component cards in course libraries page.',
+    description: 'Aria label for breadcrumb in component cards in course libraries page.',
   },
   totalComponentLabel: {
     id: 'course-authoring.course-libraries.libcard.total-component.label',

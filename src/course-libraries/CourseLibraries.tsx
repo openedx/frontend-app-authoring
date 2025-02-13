@@ -18,12 +18,13 @@ import { useModel } from '../generic/model-store';
 import messages from './messages';
 import SubHeader from '../generic/sub-header/SubHeader';
 import { useEntityLinksByDownstreamContext } from './data/apiHooks';
-import { PublishableEntityLink } from './data/api';
+import type { PublishableEntityLink } from './data/api';
 import { useFetchIndexDocuments } from '../search-manager/data/apiHooks';
 import { getItemIcon } from '../generic/block-type-utils';
 import { BlockTypeLabel } from '../search-manager';
 import AlertMessage from '../generic/alert-message';
-import { ContentHit, SearchSortOption } from '../search-manager/data/api';
+import type { ContentHit } from '../search-manager/data/api';
+import { SearchSortOption } from '../search-manager/data/api';
 import Loading from '../generic/Loading';
 
 interface Props {
@@ -161,10 +162,10 @@ const LibraryCard: React.FC<LibraryCardProps> = ({ courseId, title, links }) => 
             src={MoreVert}
             iconAs={Icon}
             variant="primary"
+            disabled
           />
           <Dropdown.Menu>
             <Dropdown.Item>TODO 1</Dropdown.Item>
-            <Dropdown.Item>TODO 2</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </Collapsible.Trigger>
