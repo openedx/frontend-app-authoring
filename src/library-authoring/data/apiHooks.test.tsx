@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { waitFor } from '@testing-library/react';
@@ -12,6 +10,7 @@ import {
   getLibraryCollectionComponentApiUrl,
   getLibraryCollectionsApiUrl,
   getLibraryCollectionApiUrl,
+  getComponentDownstreamContextsApiUrl,
 } from './api';
 import {
   useCommitLibraryChanges,
@@ -20,6 +19,7 @@ import {
   useRevertLibraryChanges,
   useAddComponentsToCollection,
   useCollection,
+  useComponentDownstreamContexts,
 } from './apiHooks';
 
 let axiosMock;
@@ -122,5 +122,37 @@ describe('library api hooks', () => {
     });
     expect(result.current.data).toEqual({ testData: 'test-value' });
     expect(axiosMock.history.get[0].url).toEqual(url);
+  });
+
+  it('should get component usage', async () => {
+    const usageKey = 'usage-key';
+    const url = getComponentDownstreamContextsApiUrl(usageKey);
+    axiosMock.onGet(url).reply(200, [
+      {
+        id: 'course-v1:org1+123+123', display_name: 'Course ABC', url: '/course/course-v1:org1+123+123', count: 2,
+      },
+      {
+        id: 'course-v1:org1+456+456', display_name: 'Course DEF', url: '/course/course-v1:org1+456+456', count: 1,
+      },
+    ]);
+    const { result } = renderHook(() => useComponentDownstreamContexts(usageKey), { wrapper });
+    await waitFor(() => {
+      expect(result.current.isLoading).toBeFalsy();
+    });
+    expect(axiosMock.history.get[0].url).toEqual(url);
+    expect(result.current.data).toEqual([
+      {
+        id: 'course-v1:org1+123+123',
+        displayName: 'Course ABC',
+        url: '/course/course-v1:org1+123+123',
+        count: 2,
+      },
+      {
+        id: 'course-v1:org1+456+456',
+        displayName: 'Course DEF',
+        url: '/course/course-v1:org1+456+456',
+        count: 1,
+      },
+    ]);
   });
 });

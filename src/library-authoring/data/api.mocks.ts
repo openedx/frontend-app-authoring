@@ -526,3 +526,31 @@ mockGetLibraryTeam.notMember = {
 
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockGetLibraryTeam.applyMock = () => jest.spyOn(api, 'getLibraryTeam').mockImplementation(mockGetLibraryTeam);
+
+export async function mockComponentDownstreamContexts(usageKey: string): Promise<api.ComponentDownstreamContext[]> {
+  const thisMock = mockComponentDownstreamContexts;
+  switch (usageKey) {
+    case thisMock.usageKey: return thisMock.componentUsage;
+    default: return [];
+  }
+}
+mockComponentDownstreamContexts.usageKey = mockXBlockFields.usageKeyHtml;
+mockComponentDownstreamContexts.componentUsage = [
+  {
+    id: 'course-v1:org+course1+run',
+    displayName: 'Course 1',
+    url: '/course/course-v1:org+course+run',
+    count: 2,
+  },
+  {
+    id: 'course-v1:org+course2+run',
+    displayName: 'Course 2',
+    url: '/course/course-v1:org+course2+run',
+    count: 1,
+  },
+] satisfies api.ComponentDownstreamContext[];
+
+mockComponentDownstreamContexts.applyMock = () => jest.spyOn(
+  api,
+  'getComponentDownstreamContexts',
+).mockImplementation(mockComponentDownstreamContexts);
