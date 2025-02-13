@@ -36,7 +36,7 @@ export const useMessageHandlers = ({
   [messageTypes.toggleCourseXBlockDropdown]: ({
     courseXBlockDropdownHeight,
   }: { courseXBlockDropdownHeight: number }) => setIframeOffset(courseXBlockDropdownHeight),
-  [messageTypes.editXBlock]: (payload) => handleShowLegacyEditXBlockModal(payload.id),
+  [messageTypes.editXBlock]: ({ id }) => handleShowLegacyEditXBlockModal(id),
   [messageTypes.closeXBlockEditorModal]: () => handleCloseLegacyEditorXBlockModal(),
   [messageTypes.saveEditedXBlockData]: () => handleSaveEditedXBlockData(),
   [messageTypes.studioAjaxError]: ({ error }) => handleResponseErrors(error, dispatch, updateSavingStatus),

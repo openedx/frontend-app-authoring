@@ -8,7 +8,7 @@ interface ModalIframeProps extends IframeHTMLAttributes<HTMLIFrameElement> {
   className?: string;
 }
 
-const SANDBOX_OPTIONS = [
+export const SANDBOX_OPTIONS = [
   'allow-forms',
   'allow-modals',
   'allow-popups',
@@ -29,6 +29,7 @@ const ModalIframe = forwardRef<HTMLIFrameElement, ModalIframeProps>(
       frameBorder="0"
       scrolling="no"
       ref={ref}
+      role="dialog"
       sandbox={SANDBOX_OPTIONS}
       {...props}
     />
