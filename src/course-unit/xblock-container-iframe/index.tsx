@@ -8,17 +8,20 @@ import { useNavigate } from 'react-router-dom';
 
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import ConfigureModal from '../../generic/configure-modal/ConfigureModal';
+import ModalIframe from '../../generic/modal-iframe';
 import { IFRAME_FEATURE_POLICY } from '../../constants';
 import supportedEditors from '../../editors/supportedEditors';
 import { useIframe } from '../context/hooks';
+import { updateCourseUnitSidebar } from '../data/thunk';
 import {
   useMessageHandlers,
   useIframeContent,
   useIframeMessages,
   useIFrameBehavior,
 } from './hooks';
-import { formatAccessManagedXBlockData, getIframeUrl } from './utils';
+import { formatAccessManagedXBlockData, getIframeUrl, getLegacyEditModalUrl } from './utils';
 import messages from './messages';
+import { messageTypes } from '../constants';
 
 import {
   XBlockContainerIframeProps,
@@ -39,10 +42,12 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const [iframeOffset, setIframeOffset] = useState(0);
   const [deleteXBlockId, setDeleteXBlockId] = useState<string | null>(null);
   const [configureXBlockId, setConfigureXBlockId] = useState<string | null>(null);
+  const [showLegacyEditModal, setShowLegacyEditModal] = useState<boolean>(false);
 
   const iframeUrl = useMemo(() => getIframeUrl(blockId), [blockId]);
+  const legacyEditModalUrl = useMemo(() => getLegacyEditModalUrl(configureXBlockId), [configureXBlockId]);
 
-  const { setIframeRef } = useIframe();
+  const { setIframeRef, sendMessageToIframe } = useIframe();
   const { iframeHeight } = useIFrameBehavior({ id: blockId, iframeUrl });
 
   useIframeContent(iframeRef, setIframeRef);
@@ -96,6 +101,25 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     });
   };
 
+  const handleShowLegacyEditXBlockModal = (id: string) => {
+    setConfigureXBlockId(id);
+    setShowLegacyEditModal(true);
+  };
+
+  const handleCloseLegacyEditorXBlockModal = () => {
+    setConfigureXBlockId(null);
+    setShowLegacyEditModal(false);
+  };
+
+  const handleSaveEditedXBlockData = () => {
+    sendMessageToIframe(messageTypes.completeXBlockEditing, { locator: configureXBlockId });
+    dispatch(updateCourseUnitSidebar(blockId));
+  };
+
+  const handleFinishXBlockDragging = () => {
+    dispatch(updateCourseUnitSidebar(blockId));
+  };
+
   const messageHandlers = useMessageHandlers({
     courseId,
     navigate,
@@ -105,12 +129,22 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     handleDuplicateXBlock,
     handleManageXBlockAccess,
     handleScrollToXBlock,
+    handleShowLegacyEditXBlockModal,
+    handleCloseLegacyEditorXBlockModal,
+    handleSaveEditedXBlockData,
+    handleFinishXBlockDragging,
   });
 
   useIframeMessages(messageHandlers);
 
   return (
     <>
+      {showLegacyEditModal && (
+        <ModalIframe
+          title={intl.formatMessage(messages.legacyEditModalIframeTitle)}
+          src={legacyEditModalUrl}
+        />
+      )}
       <DeleteModal
         category="component"
         isOpen={isDeleteModalOpen}

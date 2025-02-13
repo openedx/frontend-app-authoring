@@ -39,6 +39,7 @@ const SavingErrorAlert = ({
     <AlertMessage
       show={showAlert}
       variant="danger"
+      data-testid="saving-error-alert"
       icon={WarningIcon}
       title={intl.formatMessage(messages.warningTitle)}
       description={
