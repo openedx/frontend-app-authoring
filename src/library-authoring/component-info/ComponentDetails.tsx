@@ -1,10 +1,11 @@
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Stack } from '@openedx/paragon';
+import { Link } from 'react-router-dom';
 
 import AlertError from '../../generic/alert-error';
 import Loading from '../../generic/Loading';
 import { useSidebarContext } from '../common/context/SidebarContext';
-import { useLibraryBlockMetadata } from '../data/apiHooks';
+import { useComponentDownstreamContexts, useLibraryBlockMetadata } from '../data/apiHooks';
 import HistoryWidget from '../generic/history-widget';
 import { ComponentAdvancedInfo } from './ComponentAdvancedInfo';
 import messages from './messages';
@@ -21,16 +22,23 @@ const ComponentDetails = () => {
 
   const {
     data: componentMetadata,
-    isError,
-    error,
-    isLoading,
+    isError: isErrorComponentMetadata,
+    error: errorComponentMetadata,
+    isLoading: isLoadingComponentMetadata,
   } = useLibraryBlockMetadata(usageKey);
 
-  if (isError) {
-    return <AlertError error={error} />;
+  const {
+    data: componentUsage,
+    isError: isErrorComponentUsage,
+    error: errorComponentUsage,
+    isLoading: isLoadingComponentUsage,
+  } = useComponentDownstreamContexts(usageKey);
+
+  if (isErrorComponentMetadata || isErrorComponentUsage) {
+    return <AlertError error={errorComponentMetadata || errorComponentUsage} />;
   }
 
-  if (isLoading) {
+  if (isLoadingComponentMetadata || isLoadingComponentUsage) {
     return <Loading />;
   }
 
@@ -40,7 +48,20 @@ const ComponentDetails = () => {
         <h3 className="h5">
           <FormattedMessage {...messages.detailsTabUsageTitle} />
         </h3>
-        <small><FormattedMessage {...messages.detailsTabUsagePlaceholder} /></small>
+        {
+          componentUsage?.length ? (
+            <Stack>
+              {
+                componentUsage.map(({ id, displayName, url }) => (
+                  <Link key={id} to={url}>{displayName}</Link>
+                ))
+              }
+            </Stack>
+          ) : (
+            <FormattedMessage {...messages.detailsTabUsageEmpty} />
+          )
+        }
+
       </div>
       <hr className="w-100" />
       <div>

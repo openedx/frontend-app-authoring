@@ -45,6 +45,7 @@ import {
   publishXBlock,
   deleteXBlockAsset,
   restoreLibraryBlock,
+  getComponentDownstreamContexts,
 } from './api';
 import { VersionSpec } from '../LibraryBlock';
 
@@ -99,6 +100,7 @@ export const xblockQueryKeys = {
   /** assets (static files) */
   xblockAssets: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'assets'],
   componentMetadata: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'componentMetadata'],
+  componentDownstreamContexts: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'downstreamContexts'],
 };
 
 /**
@@ -542,3 +544,11 @@ export const useUpdateComponentCollections = (libraryId: string, usageKey: strin
     },
   });
 };
+
+export const useComponentDownstreamContexts = (usageKey: string) => (
+  useQuery({
+    queryKey: xblockQueryKeys.componentDownstreamContexts(usageKey),
+    queryFn: () => getComponentDownstreamContexts(usageKey),
+    enabled: !!usageKey,
+  })
+);

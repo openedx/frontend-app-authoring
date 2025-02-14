@@ -8,6 +8,7 @@ import {
   mockLibraryBlockMetadata,
   mockXBlockAssets,
   mockXBlockOLX,
+  mockComponentDownstreamContexts,
 } from '../data/api.mocks';
 import { SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
 import ComponentDetails from './ComponentDetails';
@@ -16,6 +17,7 @@ mockContentLibrary.applyMock();
 mockLibraryBlockMetadata.applyMock();
 mockXBlockAssets.applyMock();
 mockXBlockOLX.applyMock();
+mockComponentDownstreamContexts.applyMock();
 
 const render = (usageKey: string) => baseRender(<ComponentDetails />, {
   extraWrapper: ({ children }) => (
@@ -46,10 +48,14 @@ describe('<ComponentDetails />', () => {
   });
 
   it('should render the component usage', async () => {
-    render(mockLibraryBlockMetadata.usageKeyNeverPublished);
+    render(mockComponentDownstreamContexts.usageKey);
     expect(await screen.findByText('Component Usage')).toBeInTheDocument();
-    // TODO: replace with actual data when implement course list
-    expect(screen.queryByText(/This will show the courses that use this component./)).toBeInTheDocument();
+    const links = screen.getAllByRole('link');
+    expect(links).toHaveLength(2);
+    expect(links[0]).toHaveTextContent('Course 1');
+    expect(links[0]).toHaveAttribute('href', '/course/course-v1:org+course+run');
+    expect(links[1]).toHaveTextContent('Course 2');
+    expect(links[1]).toHaveAttribute('href', '/course/course-v1:org+course2+run');
   });
 
   it('should render the component history', async () => {

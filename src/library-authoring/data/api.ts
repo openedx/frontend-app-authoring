@@ -94,6 +94,14 @@ export const getLibraryCollectionRestoreApiUrl = (libraryId: string, collectionI
  * Get the URL for the xblock api.
  */
 export const getXBlockBaseApiUrl = () => `${getApiBaseUrl()}/xblock/`;
+/**
+ * Get the URL for the content store api.
+ */
+export const getContentStoreApiUrl = () => `${getApiBaseUrl()}/api/contentstore/v2/`;
+/**
+ * Get the URL for the component downstream contexts API.
+ */
+export const getComponentDownstreamContextsApiUrl = (usageKey: string) => `${getContentStoreApiUrl()}upstream/${usageKey}/downstream-contexts`;
 
 export interface ContentLibrary {
   id: string;
@@ -532,4 +540,15 @@ export async function updateComponentCollections(usageKey: string, collectionKey
   await getAuthenticatedHttpClient().patch(getLibraryBlockCollectionsUrl(usageKey), {
     collection_keys: collectionKeys,
   });
+}
+
+export interface ComponentDownstreamContext {
+  id: string;
+  displayName: string;
+  url: string;
+}
+
+export async function getComponentDownstreamContexts(usageKey: string): Promise<ComponentDownstreamContext[]> {
+  const { data } = await getAuthenticatedHttpClient().get(getComponentDownstreamContextsApiUrl(usageKey));
+  return camelCaseObject(data);
 }
