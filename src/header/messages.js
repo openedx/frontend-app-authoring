@@ -21,6 +21,11 @@ const messages = defineMessages({
     defaultMessage: 'Outline',
     description: 'Link to Studio Outline page',
   },
+  'header.links.libraries': {
+    id: 'header.links.libraries',
+    defaultMessage: 'Libraries',
+    description: 'Link to Linked Libraries page in a course',
+  },
   'header.links.updates': {
     id: 'header.links.updates',
     defaultMessage: 'Updates',
