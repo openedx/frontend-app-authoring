@@ -545,7 +545,6 @@ export async function updateComponentCollections(usageKey: string, collectionKey
 export interface ComponentDownstreamContext {
   id: string;
   displayName: string;
-  count: number;
   url: string;
 }
 

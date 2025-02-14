@@ -540,13 +540,11 @@ mockComponentDownstreamContexts.componentUsage = [
     id: 'course-v1:org+course1+run',
     displayName: 'Course 1',
     url: '/course/course-v1:org+course+run',
-    count: 2,
   },
   {
     id: 'course-v1:org+course2+run',
     displayName: 'Course 2',
     url: '/course/course-v1:org+course2+run',
-    count: 1,
   },
 ] satisfies api.ComponentDownstreamContext[];
 

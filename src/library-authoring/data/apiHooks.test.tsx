@@ -128,12 +128,8 @@ describe('library api hooks', () => {
     const usageKey = 'usage-key';
     const url = getComponentDownstreamContextsApiUrl(usageKey);
     axiosMock.onGet(url).reply(200, [
-      {
-        id: 'course-v1:org1+123+123', display_name: 'Course ABC', url: '/course/course-v1:org1+123+123', count: 2,
-      },
-      {
-        id: 'course-v1:org1+456+456', display_name: 'Course DEF', url: '/course/course-v1:org1+456+456', count: 1,
-      },
+      { id: 'course-v1:org1+123+123', display_name: 'Course ABC', url: '/course/course-v1:org1+123+123' },
+      { id: 'course-v1:org1+456+456', display_name: 'Course DEF', url: '/course/course-v1:org1+456+456' },
     ]);
     const { result } = renderHook(() => useComponentDownstreamContexts(usageKey), { wrapper });
     await waitFor(() => {
@@ -141,18 +137,8 @@ describe('library api hooks', () => {
     });
     expect(axiosMock.history.get[0].url).toEqual(url);
     expect(result.current.data).toEqual([
-      {
-        id: 'course-v1:org1+123+123',
-        displayName: 'Course ABC',
-        url: '/course/course-v1:org1+123+123',
-        count: 2,
-      },
-      {
-        id: 'course-v1:org1+456+456',
-        displayName: 'Course DEF',
-        url: '/course/course-v1:org1+456+456',
-        count: 1,
-      },
+      { id: 'course-v1:org1+123+123', displayName: 'Course ABC', url: '/course/course-v1:org1+123+123' },
+      { id: 'course-v1:org1+456+456', displayName: 'Course DEF', url: '/course/course-v1:org1+456+456' },
     ]);
   });
 });
