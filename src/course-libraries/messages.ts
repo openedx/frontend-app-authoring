@@ -71,6 +71,11 @@ const messages = defineMessages({
     defaultMessage: 'Review',
     description: 'Alert review button text',
   },
+  librariesV2DisabledError: {
+    id: 'course-authoring.course-libraries.alert.error.libraries.v2.disabled',
+    defaultMessage: 'This page cannot be shown: Libraries v2 are disabled.',
+    description: 'Error message shown to users when trying to load a libraries V2 page while libraries v2 are disabled.',
+  },
 });
 
 export default messages;

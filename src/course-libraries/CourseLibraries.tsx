@@ -1,8 +1,11 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, {
+  useCallback, useMemo, useState,
+} from 'react';
 import { Helmet } from 'react-helmet';
 import { getConfig } from '@edx/frontend-platform';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
+  Alert,
   Breadcrumb, Button, Card, Collapsible, Container, Dropdown, Hyperlink, Icon, IconButton, Layout, Stack, Tab, Tabs,
 } from '@openedx/paragon';
 import {
@@ -26,6 +29,7 @@ import AlertMessage from '../generic/alert-message';
 import type { ContentHit } from '../search-manager/data/api';
 import { SearchSortOption } from '../search-manager/data/api';
 import Loading from '../generic/Loading';
+import { useStudioHome } from '../studio-home/hooks';
 
 interface Props {
   courseId: string;
@@ -232,6 +236,11 @@ const CourseLibraries: React.FC<Props> = ({ courseId }) => {
   const { data: links, isLoading } = useEntityLinksByDownstreamContext(courseId);
   const linksByLib = useMemo(() => groupBy(links, 'upstreamContextKey'), [links]);
   const outOfSyncCount = useMemo(() => countBy(links, 'readyToSync').true, [links]);
+  const {
+    isLoadingPage: isLoadingStudioHome,
+    isFailedLoadingPage: isFailedLoadingStudioHome,
+    librariesV2Enabled,
+  } = useStudioHome();
 
   const onAlertReview = () => {
     setTabKey(CourseLibraryTabs.review);
@@ -262,6 +271,14 @@ const CourseLibraries: React.FC<Props> = ({ courseId }) => {
       </>
     );
   }, [links, isLoading, linksByLib]);
+
+  if (!isLoadingStudioHome && (!librariesV2Enabled || isFailedLoadingStudioHome)) {
+    return (
+      <Alert variant="danger">
+        {intl.formatMessage(messages.librariesV2DisabledError)}
+      </Alert>
+    );
+  }
 
   return (
     <>
