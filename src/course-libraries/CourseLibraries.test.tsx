@@ -18,6 +18,14 @@ mockGetEntityLinksByDownstreamContext.applyMock();
 
 const searchEndpoint = 'http://mock.meilisearch.local/indexes/studio/search';
 
+jest.mock('../studio-home/hooks', () => ({
+  useStudioHome: () => ({
+    isLoadingPage: false,
+    isFailedLoadingPage: false,
+    librariesV2Enabled: true,
+  }),
+}));
+
 describe('<CourseLibraries />', () => {
   beforeEach(() => {
     initializeMocks();
