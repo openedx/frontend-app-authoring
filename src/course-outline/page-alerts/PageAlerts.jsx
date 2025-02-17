@@ -13,7 +13,7 @@ import {
 import {
   Alert, Button, Hyperlink, Truncate,
 } from '@openedx/paragon';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import ErrorAlert from '../../editors/sharedComponents/ErrorAlerts/ErrorAlert';
 import { RequestStatus } from '../../data/constants';
@@ -50,6 +50,7 @@ const PageAlerts = ({
   );
   const { newFiles, conflictingFiles, errorFiles } = useSelector(getPasteFileNotices);
   const [showOutOfSyncAlert, setShowOutOfSyncAlert] = useState(false);
+  const navigate = useNavigate();
 
   const getAssetsUrl = () => {
     if (getConfig().ENABLE_ASSETS_PAGE === 'true') {
@@ -425,7 +426,7 @@ const PageAlerts = ({
     return (
       <OutOfSyncAlert
         courseId={courseId}
-        onReview={() => {}}
+        onReview={() => navigate(`/course/${courseId}/libraries?tab=review`)}
         showAlert={showOutOfSyncAlert}
         setShowAlert={setShowOutOfSyncAlert}
       />
