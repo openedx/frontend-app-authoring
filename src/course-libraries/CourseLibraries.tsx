@@ -91,7 +91,6 @@ const BlockCard: React.FC<BlockCardProps> = ({ info, actions }) => {
         { 'bg-primary-100': info.readyToSync },
       )}
       orientation="horizontal"
-      key={info.usageKey}
     >
       <Card.Section
         className="py-3"
@@ -265,7 +264,7 @@ const ReviewTabContent = ({ courseId, outOfSyncComponents }: {
   return (
     <>
       {downstreamInfo?.map((info) => (
-        <BlockCard key={info.id} info={info} actions={
+        <BlockCard key={info.usageKey} info={info} actions={
           <div className="d-flex align-items-center mr-3">
             <ActionRow>
               <Button size="sm" className="mr-4" onClick={() => onReview(info)}>Review</Button>
@@ -372,7 +371,7 @@ const CourseLibraries: React.FC<Props> = ({ courseId }) => {
         <OutOfSyncAlert
           courseId={courseId}
           onReview={onAlertReview}
-          showAlert={showReviewAlert}
+          showAlert={showReviewAlert && tabKey === CourseLibraryTabs.all}
           setShowAlert={setShowReviewAlert}
         />
         <SubHeader
