@@ -45,16 +45,17 @@ type AddContentButtonProps = {
 };
 
 type AddContentViewProps = {
+  contentTypes: ContentType[],
   onCreateContent: (blockType: string) => void,
   isAddLibraryContentModalOpen: boolean,
   closeAddLibraryContentModal: () => void,
-  isBlockTypeEnabled: (blockType: string) => boolean,
 };
 
 type AddAdvancedContentViewProps = {
   closeAdvancedList: () => void,
   onCreateContent: (blockType: string) => void,
   isBlockTypeEnabled: (blockType: string) => boolean,
+  isBasicBlock: (blockType: string) => boolean,
 };
 
 const AddContentButton = ({ contentType, onCreateContent } : AddContentButtonProps) => {
@@ -78,23 +79,16 @@ const AddContentButton = ({ contentType, onCreateContent } : AddContentButtonPro
 };
 
 const AddContentView = ({
+  contentTypes,
   onCreateContent,
   isAddLibraryContentModalOpen,
   closeAddLibraryContentModal,
-  isBlockTypeEnabled,
 }: AddContentViewProps) => {
   const intl = useIntl();
   const {
     collectionId,
     componentPicker,
   } = useLibraryContext();
-  const canEdit = useSelector(getCanEdit);
-  const { showPasteXBlock } = useCopyToClipboard(canEdit);
-
-  const isAdvancedEnabled = () => {
-    const blocks = getConfig().LIBRARY_ADVANCED_BLOCKS;
-    return Array.isArray(blocks) && blocks.length > 0;
-  };
 
   const collectionButtonData = {
     name: intl.formatMessage(messages.collectionButton),
@@ -109,57 +103,6 @@ const AddContentView = ({
     icon: Folder,
     blockType: 'libraryContent',
   };
-
-  const contentTypes = [
-    {
-      name: intl.formatMessage(messages.textTypeButton),
-      disabled: !isBlockTypeEnabled('html'),
-      icon: Article,
-      blockType: 'html',
-    },
-    {
-      name: intl.formatMessage(messages.problemTypeButton),
-      disabled: !isBlockTypeEnabled('problem'),
-      icon: Question,
-      blockType: 'problem',
-    },
-    {
-      name: intl.formatMessage(messages.openResponseTypeButton),
-      disabled: !isBlockTypeEnabled('openassessment'),
-      icon: Create,
-      blockType: 'openassessment',
-    },
-    {
-      name: intl.formatMessage(messages.dragDropTypeButton),
-      disabled: !isBlockTypeEnabled('drag-and-drop-v2'),
-      icon: ThumbUpOutline,
-      blockType: 'drag-and-drop-v2',
-    },
-    {
-      name: intl.formatMessage(messages.videoTypeButton),
-      disabled: !isBlockTypeEnabled('video'),
-      icon: VideoCamera,
-      blockType: 'video',
-    },
-    {
-      name: intl.formatMessage(messages.otherTypeButton),
-      disabled: !isAdvancedEnabled(),
-      icon: AutoAwesome,
-      blockType: 'advancedXBlock',
-    },
-  ];
-
-  // Include the 'Paste from Clipboard' button if there is an Xblock in the clipboard
-  // that can be pasted
-  if (showPasteXBlock) {
-    const pasteButton = {
-      name: intl.formatMessage(messages.pasteButton),
-      disabled: false,
-      icon: ContentPaste,
-      blockType: 'paste',
-    };
-    contentTypes.push(pasteButton);
-  }
 
   return (
     <>
@@ -193,13 +136,15 @@ const AddAdvancedContentView = ({
   closeAdvancedList,
   onCreateContent,
   isBlockTypeEnabled,
+  isBasicBlock,
 }: AddAdvancedContentViewProps) => {
   const intl = useIntl();
   const { blockTypesData } = useLibraryContext();
   const advancedBlocks = getConfig().LIBRARY_ADVANCED_BLOCKS.filter((block) => {
     if (!blockTypesData
         || !Object.prototype.hasOwnProperty.call(blockTypesData, block)
-        || !isBlockTypeEnabled(block)) {
+        || !isBlockTypeEnabled(block)
+        || isBasicBlock(block)) {
       return false;
     }
     return true;
@@ -242,6 +187,7 @@ const AddContentContainer = () => {
   const { showToast } = useContext(ToastContext);
   const canEdit = useSelector(getCanEdit);
   const { sharedClipboardData } = useCopyToClipboard(canEdit);
+  const { showPasteXBlock } = useCopyToClipboard(canEdit);
 
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
   const [isAdvancedListOpen, showAdvancedList, closeAdvancedList] = useToggle();
@@ -264,6 +210,66 @@ const AddContentContainer = () => {
   };
 
   const isBlockTypeEnabled = (blockType: string) => getConfig().LIBRARY_SUPPORTED_BLOCKS.includes(blockType);
+
+  const isAdvancedEnabled = () => {
+    const blocks = getConfig().LIBRARY_ADVANCED_BLOCKS;
+    return Array.isArray(blocks) && blocks.length > 0;
+  };
+
+  const contentTypes = [
+    {
+      name: intl.formatMessage(messages.textTypeButton),
+      disabled: !isBlockTypeEnabled('html'),
+      icon: Article,
+      blockType: 'html',
+    },
+    {
+      name: intl.formatMessage(messages.problemTypeButton),
+      disabled: !isBlockTypeEnabled('problem'),
+      icon: Question,
+      blockType: 'problem',
+    },
+    {
+      name: intl.formatMessage(messages.openResponseTypeButton),
+      disabled: !isBlockTypeEnabled('openassessment'),
+      icon: Create,
+      blockType: 'openassessment',
+    },
+    {
+      name: intl.formatMessage(messages.dragDropTypeButton),
+      disabled: !isBlockTypeEnabled('drag-and-drop-v2'),
+      icon: ThumbUpOutline,
+      blockType: 'drag-and-drop-v2',
+    },
+    {
+      name: intl.formatMessage(messages.videoTypeButton),
+      disabled: !isBlockTypeEnabled('video'),
+      icon: VideoCamera,
+      blockType: 'video',
+    },
+    {
+      name: intl.formatMessage(messages.otherTypeButton),
+      disabled: !isAdvancedEnabled(),
+      icon: AutoAwesome,
+      blockType: 'advancedXBlock',
+    },
+  ];
+
+  const isBasicBlock = (blockType: string) => contentTypes.some(
+    content => content.blockType === blockType,
+  );
+
+  // Include the 'Paste from Clipboard' button if there is an Xblock in the clipboard
+  // that can be pasted
+  if (showPasteXBlock) {
+    const pasteButton = {
+      name: intl.formatMessage(messages.pasteButton),
+      disabled: false,
+      icon: ContentPaste,
+      blockType: 'paste',
+    };
+    contentTypes.push(pasteButton);
+  }
 
   const linkComponent = (usageKey: string) => {
     updateComponentsMutation.mutateAsync([usageKey]).catch(() => {
@@ -341,14 +347,15 @@ const AddContentContainer = () => {
           closeAdvancedList={closeAdvancedList}
           onCreateContent={onCreateContent}
           isBlockTypeEnabled={isBlockTypeEnabled}
+          isBasicBlock={isBasicBlock}
         />
       )}
       {!isAdvancedListOpen && (
         <AddContentView
+          contentTypes={contentTypes}
           onCreateContent={onCreateContent}
           isAddLibraryContentModalOpen={isAddLibraryContentModalOpen}
           closeAddLibraryContentModal={closeAddLibraryContentModal}
-          isBlockTypeEnabled={isBlockTypeEnabled}
         />
       )}
     </Stack>
