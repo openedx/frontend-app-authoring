@@ -37,7 +37,7 @@ const ModalIframe = forwardRef<HTMLIFrameElement, ModalIframeProps>(
 );
 
 ModalIframe.defaultProps = {
-  className: 'modal-iframe',
+  className: '',
 };
 
 export default ModalIframe;

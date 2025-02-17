@@ -20,7 +20,7 @@ describe('ModalIframe Component', () => {
     expect(iframe).toBeInTheDocument();
     expect(iframe).toHaveAttribute('src', src);
     expect(iframe).toHaveAttribute('allow', IFRAME_FEATURE_POLICY);
-    expect(iframe).toHaveAttribute('class', 'modal-iframe modal-iframe');
+    expect(iframe).toHaveAttribute('class', 'modal-iframe');
     expect(iframe).toHaveAttribute('referrerpolicy', 'origin');
     expect(iframe).toHaveAttribute('sandbox', SANDBOX_OPTIONS);
     expect(iframe).toHaveAttribute('scrolling', 'no');

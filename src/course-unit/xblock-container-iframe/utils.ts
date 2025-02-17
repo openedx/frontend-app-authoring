@@ -39,4 +39,6 @@ export const getIframeUrl = (blockId: string): string => `${getConfig().STUDIO_B
  *
  * @returns {string} - The generated URL for editing the XBlock in the legacy modal.
  */
-export const getLegacyEditModalUrl = (blockId: string | null): string => `${getConfig().STUDIO_BASE_URL}/xblock/${blockId}/action/edit`;
+export const getLegacyEditModalUrl = (
+  blockId: string | null,
+): string => (blockId ? `${getConfig().STUDIO_BASE_URL}/xblock/${blockId}/action/edit` : '');
