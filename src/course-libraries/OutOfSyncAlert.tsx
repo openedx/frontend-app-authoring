@@ -5,6 +5,7 @@ import { Loop } from "@openedx/paragon/icons";
 import AlertMessage from "../generic/alert-message";
 import { useEntityLinksByDownstreamContext } from "./data/apiHooks";
 import messages from "./messages";
+import _ from "lodash";
 
 interface OutOfSyncAlertProps {
   showAlert: boolean,
@@ -27,32 +28,26 @@ const OutOfSyncAlert: React.FC<OutOfSyncAlertProps> = ({
   const intl = useIntl();
   const { data, isLoading } = useEntityLinksByDownstreamContext(courseId, true);
   const outOfSyncCount = data?.length;
-  // Creates a unique key from link ids to persist alert actions in localStorage taken from users.
-  const idString = data?.reduce((acc: string, current) => acc + current.id + ",", "");
-  const prefix = "outOfSyncCountAlert-";
-  const alertKey = `${prefix}${idString}`;
+  const idList = data?.map((o) => `${o.id}:${o.upstreamVersion}`);
+  const alertKey = "outOfSyncCountAlert";
 
   useEffect(() => {
     if (isLoading) {
       return;
     }
     if (outOfSyncCount === 0) {
-      // remove all alert-dimiss-keys from localStorage to display alert again if new updates are present.
-      Object.keys(localStorage).forEach((key) => {
-        if (key.startsWith(prefix)) {
-          localStorage.removeItem(key);
-        }
-      });
+      localStorage.removeItem(alertKey);
       setShowAlert(false);
       return;
     }
-    setShowAlert(localStorage.getItem(alertKey) === null);
+    const dismissedIds: string[] = JSON.parse(localStorage.getItem(alertKey) || '[]');
+    setShowAlert(_.without(idList, ...dismissedIds).length > 0);
   }, [outOfSyncCount, isLoading])
 
 
   const dismissAlert = () => {
     setShowAlert(false);
-    localStorage.setItem(alertKey, 'true');
+    localStorage.setItem(alertKey, JSON.stringify(idList));
     onDismiss?.();
   }
 
