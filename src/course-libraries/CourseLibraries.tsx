@@ -37,7 +37,6 @@ import type { PublishableEntityLink } from './data/api';
 import { useFetchIndexDocuments } from '../search-manager/data/apiHooks';
 import { getItemIcon } from '../generic/block-type-utils';
 import { BlockTypeLabel } from '../search-manager';
-import AlertMessage from '../generic/alert-message';
 import type { ContentHit } from '../search-manager/data/api';
 import { SearchSortOption } from '../search-manager/data/api';
 import Loading from '../generic/Loading';
@@ -45,6 +44,7 @@ import { useStudioHome } from '../studio-home/hooks';
 import { useAcceptLibraryBlockChanges, useIgnoreLibraryBlockChanges } from '../course-unit/data/apiHooks';
 import { BasePreviewLibraryXBlockChanges, LibraryChangesMessageData } from '../course-unit/preview-changes';
 import { useQueryClient } from '@tanstack/react-query';
+import OutOfSyncAlert from './OutOfSyncAlert';
 
 interface Props {
   courseId: string;
@@ -200,36 +200,6 @@ const LibraryCard: React.FC<LibraryCardProps> = ({ courseId, title, links }) => 
   );
 };
 
-interface ReviewAlertProps {
-  show: boolean;
-  outOfSyncCount: number;
-  onDismiss: () => void;
-  onReview: () => void;
-}
-
-const ReviewAlert: React.FC<ReviewAlertProps> = ({
-  show, outOfSyncCount, onDismiss, onReview,
-}) => {
-  const intl = useIntl();
-  return (
-    <AlertMessage
-      title={intl.formatMessage(messages.outOfSyncCountAlertTitle, { outOfSyncCount })}
-      dismissible
-      show={show}
-      icon={Loop}
-      variant="info"
-      onClose={onDismiss}
-      actions={[
-        <Button
-          onClick={onReview}
-        >
-          {intl.formatMessage(messages.outOfSyncCountAlertReviewBtn)}
-        </Button>,
-      ]}
-    />
-  );
-};
-
 const TabContent = ({ children }: { children: React.ReactNode }) => (
   <Layout
     lg={[{ span: 9 }, { span: 3 }]}
@@ -321,7 +291,7 @@ const CourseLibraries: React.FC<Props> = ({ courseId }) => {
   const intl = useIntl();
   const courseDetails = useModel('courseDetails', courseId);
   const [tabKey, setTabKey] = useState<CourseLibraryTabs>(CourseLibraryTabs.home);
-  const [showReviewAlert, setShowReviewAlert] = useState(true);
+  const [showReviewAlert, setShowReviewAlert] = useState(false);
   const { data: links, isLoading } = useEntityLinksByDownstreamContext(courseId);
   const linksByLib = useMemo(() => _.groupBy(links, 'upstreamContextKey'), [links]);
   const outOfSyncCount = useMemo(() => _.countBy(links, 'readyToSync').true, [links]);
@@ -334,10 +304,6 @@ const CourseLibraries: React.FC<Props> = ({ courseId }) => {
 
   const onAlertReview = () => {
     setTabKey(CourseLibraryTabs.review);
-    setShowReviewAlert(false);
-  };
-  const onAlertDismiss = () => {
-    setShowReviewAlert(false);
   };
 
   const renderLibrariesTabContent = useCallback(() => {
@@ -395,16 +361,16 @@ const CourseLibraries: React.FC<Props> = ({ courseId }) => {
         </title>
       </Helmet>
       <Container size="xl" className="px-4 pt-4 mt-3">
-        <ReviewAlert
-          show={outOfSyncCount > 0 && tabKey === CourseLibraryTabs.home && showReviewAlert}
-          outOfSyncCount={outOfSyncCount}
-          onDismiss={onAlertDismiss}
+        <OutOfSyncAlert
+          courseId={courseId}
           onReview={onAlertReview}
+          showAlert={showReviewAlert}
+          setShowAlert={setShowReviewAlert}
         />
         <SubHeader
           title={intl.formatMessage(messages.headingTitle)}
           subtitle={intl.formatMessage(messages.headingSubtitle)}
-          headerActions={!showReviewAlert && tabKey === CourseLibraryTabs.home && (
+          headerActions={!showReviewAlert && outOfSyncCount > 0 && tabKey === CourseLibraryTabs.home && (
             <Button
               variant="primary"
               onClick={onAlertReview}
