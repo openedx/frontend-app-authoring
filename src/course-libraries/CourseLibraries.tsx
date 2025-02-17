@@ -45,6 +45,7 @@ import { useAcceptLibraryBlockChanges, useIgnoreLibraryBlockChanges } from '../c
 import { BasePreviewLibraryXBlockChanges, LibraryChangesMessageData } from '../course-unit/preview-changes';
 import { useQueryClient } from '@tanstack/react-query';
 import OutOfSyncAlert from './OutOfSyncAlert';
+import { useSearchParams } from 'react-router-dom';
 
 interface Props {
   courseId: string;
@@ -66,7 +67,7 @@ interface BlockCardProps {
 }
 
 export enum CourseLibraryTabs {
-  home = '',
+  all = 'all',
   review = 'review',
 }
 
@@ -290,7 +291,10 @@ const ReviewTabContent = ({ courseId, outOfSyncComponents }: {
 const CourseLibraries: React.FC<Props> = ({ courseId }) => {
   const intl = useIntl();
   const courseDetails = useModel('courseDetails', courseId);
-  const [tabKey, setTabKey] = useState<CourseLibraryTabs>(CourseLibraryTabs.home);
+  const [searchParams] = useSearchParams();
+  const [tabKey, setTabKey] = useState<CourseLibraryTabs>(
+    () => searchParams.get('tab') as CourseLibraryTabs || CourseLibraryTabs.all
+  );
   const [showReviewAlert, setShowReviewAlert] = useState(false);
   const { data: links, isLoading } = useEntityLinksByDownstreamContext(courseId);
   const linksByLib = useMemo(() => _.groupBy(links, 'upstreamContextKey'), [links]);
@@ -305,6 +309,10 @@ const CourseLibraries: React.FC<Props> = ({ courseId }) => {
   const onAlertReview = () => {
     setTabKey(CourseLibraryTabs.review);
   };
+
+  const tabChange = useCallback((selectedTab: CourseLibraryTabs) => {
+    setTabKey(selectedTab);
+  }, []);
 
   const renderLibrariesTabContent = useCallback(() => {
     if (isLoading) {
@@ -370,7 +378,7 @@ const CourseLibraries: React.FC<Props> = ({ courseId }) => {
         <SubHeader
           title={intl.formatMessage(messages.headingTitle)}
           subtitle={intl.formatMessage(messages.headingSubtitle)}
-          headerActions={!showReviewAlert && outOfSyncCount > 0 && tabKey === CourseLibraryTabs.home && (
+          headerActions={!showReviewAlert && outOfSyncCount > 0 && tabKey === CourseLibraryTabs.all && (
             <Button
               variant="primary"
               onClick={onAlertReview}
@@ -385,10 +393,10 @@ const CourseLibraries: React.FC<Props> = ({ courseId }) => {
           <Tabs
             id="course-library-tabs"
             activeKey={tabKey}
-            onSelect={(k: CourseLibraryTabs) => setTabKey(k)}
+            onSelect={tabChange}
           >
             <Tab
-              eventKey={CourseLibraryTabs.home}
+              eventKey={CourseLibraryTabs.all}
               title={intl.formatMessage(messages.homeTabTitle)}
               className="px-2 mt-3"
             >
