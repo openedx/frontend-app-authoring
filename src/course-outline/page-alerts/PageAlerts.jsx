@@ -24,6 +24,7 @@ import advancedSettingsMessages from '../../advanced-settings/messages';
 import { getPasteFileNotices } from '../data/selectors';
 import { dismissError, removePasteFileNotices } from '../data/slice';
 import { API_ERROR_TYPES } from '../constants';
+import OutOfSyncAlert from '../../course-libraries/OutOfSyncAlert';
 
 const PageAlerts = ({
   courseId,
@@ -48,6 +49,7 @@ const PageAlerts = ({
     localStorage.getItem(discussionAlertDismissKey) === null,
   );
   const { newFiles, conflictingFiles, errorFiles } = useSelector(getPasteFileNotices);
+  const [showOutOfSyncAlert, setShowOutOfSyncAlert] = useState(false);
 
   const getAssetsUrl = () => {
     if (getConfig().ENABLE_ASSETS_PAGE === 'true') {
@@ -419,6 +421,17 @@ const PageAlerts = ({
     );
   };
 
+  const renderOutOfSyncAlert = () => {
+    return (
+      <OutOfSyncAlert
+        courseId={courseId}
+        onReview={() => {}}
+        showAlert={showOutOfSyncAlert}
+        setShowAlert={setShowOutOfSyncAlert}
+      />
+    );
+  }
+
   return (
     <>
       {configurationErrors()}
@@ -432,6 +445,7 @@ const PageAlerts = ({
       {errorFilesPasteAlert()}
       {conflictingFilesPasteAlert()}
       {newFilesPasteAlert()}
+      {renderOutOfSyncAlert()}
     </>
   );
 };
