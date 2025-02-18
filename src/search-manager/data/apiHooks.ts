@@ -11,6 +11,7 @@ import {
   getContentSearchConfig,
   fetchBlockTypes,
   type PublishStatus,
+  fetchIndexDocuments,
 } from './api';
 
 /**
@@ -256,5 +257,35 @@ export const useGetBlockTypes = (extraFilters: Filter) => {
       'block_types',
     ],
     queryFn: () => fetchBlockTypes(client!, indexName!, extraFilters),
+  });
+};
+
+export const useFetchIndexDocuments = (
+  filter: Filter,
+  limit: number,
+  attributesToRetrieve?: string[],
+  attributesToCrop?: string[],
+  sort?: SearchSortOption[],
+) => {
+  const { client, indexName } = useContentSearchConnection();
+  return useQuery({
+    enabled: client !== undefined && indexName !== undefined,
+    queryKey: [
+      'content_search',
+      client?.config.apiKey,
+      client?.config.host,
+      indexName,
+      filter,
+      'generic-one-off',
+    ],
+    queryFn: () => fetchIndexDocuments(
+      client!,
+      indexName!,
+      filter,
+      limit,
+      attributesToRetrieve,
+      attributesToCrop,
+      sort,
+    ),
   });
 };

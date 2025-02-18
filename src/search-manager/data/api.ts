@@ -518,3 +518,29 @@ export async function fetchTagsThatMatchKeyword({
 
   return { matches: Array.from(matches).map((tagPath) => ({ tagPath })), mayBeMissingResults: hits.length === limit };
 }
+
+/**
+ * Generic one-off fetch from meilisearch index.
+ */
+export const fetchIndexDocuments = async (
+  client: MeiliSearch,
+  indexName: string,
+  filter?: Filter,
+  limit?: number,
+  attributesToRetrieve?: string[],
+  attributesToCrop?: string[],
+  sort?: SearchSortOption[],
+): Promise<ContentHit[]> => {
+  // Convert 'extraFilter' into an array
+  const filterFormatted = forceArray(filter);
+
+  const { hits } = await client.index(indexName).search('', {
+    filter: filterFormatted,
+    limit,
+    attributesToRetrieve,
+    attributesToCrop,
+    sort,
+  });
+
+  return hits.map(formatSearchHit) as ContentHit[];
+};
