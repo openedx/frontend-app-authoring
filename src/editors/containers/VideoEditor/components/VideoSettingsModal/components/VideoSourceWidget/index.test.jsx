@@ -2,6 +2,9 @@ import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { dispatch } from 'react-redux';
 import { shallow } from '@edx/react-unit-test-utils';
+import { render, screen } from '@testing-library/react';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
+import userEvent from '@testing-library/user-event';
 
 import { formatMessage } from '../../../../../../testUtils';
 import { VideoSourceWidgetInternal as VideoSourceWidget } from '.';
@@ -15,6 +18,8 @@ jest.mock('react-redux', () => {
     useDispatch: jest.fn(() => dispatchFn),
   };
 });
+
+const deleteFallbackVideoMock = jest.fn();
 
 jest.mock('../hooks', () => ({
   selectorKeys: ['soMEkEy'],
@@ -104,6 +109,22 @@ describe('VideoSourceWidget', () => {
       expect(control.props.floatingLabel).toEqual('Video URL');
       control.props.onBlur('onBlur event');
       expect(hook.updateVideoURL).toHaveBeenCalledWith('onBlur event', '');
+    });
+
+    test('deleteFallbackVideo is called on button click', async () => {
+      render(
+        <IntlProvider locale="en">
+          <VideoSourceWidget
+            {...props}
+            fallbackHooks={{ deleteFallbackVideo: deleteFallbackVideoMock }}
+          />
+        </IntlProvider>
+      );
+
+      const deleteButton = screen.getByTestId('delete-fallback-video');
+      await userEvent.click(deleteButton);
+
+      expect(deleteFallbackVideoMock).toHaveBeenCalledWith(0);
     });
   });
 });
