@@ -2,7 +2,7 @@ import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { dispatch } from 'react-redux';
 import { shallow } from '@edx/react-unit-test-utils';
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import userEvent from '@testing-library/user-event';
 
@@ -124,7 +124,9 @@ describe('VideoSourceWidget', () => {
       const deleteButton = getByTestId('delete-fallback-video');
       await userEvent.click(deleteButton);
 
-      expect(deleteFallbackVideoMock).toHaveBeenCalledWith(0);
+      await waitFor(() => {
+        expect(deleteFallbackVideoMock).toHaveBeenCalledWith(0);
+      })
     });
   });
 });
