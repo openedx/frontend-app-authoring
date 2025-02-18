@@ -11,6 +11,7 @@ const VisibilityTab = ({
   category,
   showWarning,
   isSubsection,
+  isSelfPaced,
 }) => {
   const intl = useIntl();
   const visibilityTitle = COURSE_BLOCK_NAMES[category]?.name;
@@ -53,6 +54,13 @@ const VisibilityTab = ({
     setFieldValue('showCorrectness', e.target.value);
   };
 
+  const hideDueMessage = {
+    hideContentLabel: isSelfPaced ? messages.hideContentAfterEnd : messages.hideContentAfterDue,
+    hideContentDescription: (
+      isSelfPaced ? messages.hideContentAfterEndDescription : messages.hideContentAfterDueDescription
+    ),
+  };
+
   return (
     <>
       <h5 className="mt-4 text-gray-700">
@@ -72,9 +80,10 @@ const VisibilityTab = ({
               </Form.Radio>
               <Form.Text><FormattedMessage {...messages.showEntireSubsectionDescription} /></Form.Text>
               <Form.Radio value="hideDue">
-                <FormattedMessage {...messages.hideContentAfterDue} />
+                <FormattedMessage {...hideDueMessage.hideContentLabel} />
               </Form.Radio>
-              <Form.Text><FormattedMessage {...messages.hideContentAfterDueDescription} /></Form.Text>
+              <Form.Text><FormattedMessage {...hideDueMessage.hideContentDescription} />
+              </Form.Text>
               <Form.Radio value="hide">
                 <FormattedMessage {...messages.hideEntireSubsection} />
               </Form.Radio>
@@ -130,6 +139,11 @@ VisibilityTab.propTypes = {
   category: PropTypes.string.isRequired,
   showWarning: PropTypes.bool.isRequired,
   isSubsection: PropTypes.bool.isRequired,
+  isSelfPaced: PropTypes.bool,
+};
+
+VisibilityTab.defaultProps = {
+  isSelfPaced: false,
 };
 
 export default injectIntl(VisibilityTab);
