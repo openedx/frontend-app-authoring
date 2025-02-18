@@ -118,7 +118,7 @@ describe('VideoSourceWidget', () => {
             {...props}
             fallbackHooks={{ deleteFallbackVideo: deleteFallbackVideoMock }}
           />
-        </IntlProvider>
+        </IntlProvider>,
       );
 
       const deleteButton = getByTestId('delete-fallback-video');
