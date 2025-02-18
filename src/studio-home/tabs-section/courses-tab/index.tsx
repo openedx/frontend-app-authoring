@@ -89,7 +89,7 @@ const CoursesTab: React.FC<Props> = ({
   };
 
   const handleCleanFilters = () => {
-    dispatch(resetStudioHomeCoursesCustomParams);
+    dispatch(resetStudioHomeCoursesCustomParams());
     dispatch(fetchStudioHomeData(locationValue, false, { page: 1, order: 'display_name' }));
   };
 
@@ -180,7 +180,7 @@ const CoursesTab: React.FC<Props> = ({
             <p data-testid="courses-not-found-alert">
               {intl.formatMessage(messages.coursesTabCourseNotFoundAlertMessage)}
             </p>
-            <Button variant="primary" onClick={handleCleanFilters}>
+            <Button data-testid="clean-filters" variant="primary" onClick={handleCleanFilters}>
               {intl.formatMessage(messages.coursesTabCourseNotFoundAlertCleanFiltersButton)}
             </Button>
           </Alert>
