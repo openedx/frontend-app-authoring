@@ -1,6 +1,6 @@
 import React from 'react';
 import { initializeMockApp } from '@edx/frontend-platform';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 
@@ -10,6 +10,7 @@ import { studioHomeMock } from '../../__mocks__';
 import { initialState } from '../../factories/mockApiResponses';
 
 import CoursesTab from '.';
+import { studioHomeCoursesRequestParamsDefault } from '../../data/slice';
 
 const onClickNewCourse = jest.fn();
 const isLoading = false;
@@ -31,22 +32,25 @@ const renderComponent = (overrideProps = {}, studioHomeState = {}) => {
   // Initialize the store with the custom initial state
   const store = initializeStore(customInitialState);
 
-  return render(
-    <AppProvider store={store}>
-      <IntlProvider locale="en" messages={{}}>
-        <CoursesTab
-          coursesDataItems={studioHomeMock.courses}
-          showNewCourseContainer={showNewCourseContainer}
-          onClickNewCourse={onClickNewCourse}
-          isLoading={isLoading}
-          isFailed={isFailed}
-          numPages={numPages}
-          coursesCount={coursesCount}
-          {...overrideProps}
-        />
-      </IntlProvider>
-    </AppProvider>,
-  );
+  return {
+    ...render(
+      <AppProvider store={store}>
+        <IntlProvider locale="en" messages={{}}>
+          <CoursesTab
+            coursesDataItems={studioHomeMock.courses}
+            showNewCourseContainer={showNewCourseContainer}
+            onClickNewCourse={onClickNewCourse}
+            isLoading={isLoading}
+            isFailed={isFailed}
+            numPages={numPages}
+            coursesCount={coursesCount}
+            {...overrideProps}
+          />
+        </IntlProvider>
+      </AppProvider>,
+    ),
+    store,
+  };
 };
 
 describe('<CoursesTab />', () => {
@@ -98,7 +102,7 @@ describe('<CoursesTab />', () => {
   });
 
   it('should render CollapsibleStateWithAction when courseCreatorStatus is true', () => {
-    const props = { isShowProcessing: true, isEnabledPagination: false };
+    const props = { isEnabledPagination: false };
     const customStoreData = {
       studioHomeData: {
         inProcessCourseActions: [],
@@ -108,5 +112,18 @@ describe('<CoursesTab />', () => {
     renderComponent(props, customStoreData);
     const collapsibleStateWithAction = screen.queryByTestId('collapsible-state-with-action');
     expect(collapsibleStateWithAction).toBeInTheDocument();
+  });
+
+  it('should reset filters when in pressed the button to clean them', () => {
+    const props = { isLoading: false, coursesDataItems: [] };
+    const customStoreData = { studioHomeCoursesRequestParams: { isFiltered: true } };
+    const { store } = renderComponent(props, customStoreData);
+    const cleanFiltersButton = screen.queryByTestId('clean-filters');
+    expect(cleanFiltersButton).toBeInTheDocument();
+
+    fireEvent.click(cleanFiltersButton!);
+
+    const state = store.getState();
+    expect(state.studioHome.studioHomeCoursesRequestParams).toStrictEqual(studioHomeCoursesRequestParamsDefault);
   });
 });

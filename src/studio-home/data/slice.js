@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import { RequestStatus } from '../../data/constants';
 
-const studioHomeCoursesRequestParamsDefault = {
+export const studioHomeCoursesRequestParamsDefault = {
   currentPage: 1,
   search: '',
   order: 'display_name',
