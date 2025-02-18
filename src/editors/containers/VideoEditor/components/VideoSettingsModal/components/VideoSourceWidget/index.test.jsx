@@ -2,7 +2,7 @@ import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { dispatch } from 'react-redux';
 import { shallow } from '@edx/react-unit-test-utils';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import userEvent from '@testing-library/user-event';
 
@@ -112,7 +112,7 @@ describe('VideoSourceWidget', () => {
     });
 
     test('deleteFallbackVideo is called on button click', async () => {
-      render(
+      const { getByTestId } = render(
         <IntlProvider locale="en">
           <VideoSourceWidget
             {...props}
@@ -121,7 +121,7 @@ describe('VideoSourceWidget', () => {
         </IntlProvider>
       );
 
-      const deleteButton = screen.getByTestId('delete-fallback-video');
+      const deleteButton = getByTestId('delete-fallback-video');
       await userEvent.click(deleteButton);
 
       expect(deleteFallbackVideoMock).toHaveBeenCalledWith(0);
