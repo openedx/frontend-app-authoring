@@ -533,16 +533,20 @@ export const fetchIndexDocuments = async (
   attributesToRetrieve?: string[],
   attributesToCrop?: string[],
   sort?: SearchSortOption[],
+  searchKeywords?: string,
 ): Promise<ContentHit[]> => {
   // Convert 'extraFilter' into an array
   const filterFormatted = forceArray(filter);
 
-  const { hits } = await client.index(indexName).search('', {
+  const { hits } = await client.index(indexName).search(searchKeywords, {
     filter: filterFormatted,
     limit,
     attributesToRetrieve,
     attributesToCrop,
     sort,
+    attributesToHighlight: ['display_name', 'description', 'published'],
+    highlightPreTag: HIGHLIGHT_PRE_TAG,
+    highlightPostTag: HIGHLIGHT_POST_TAG,
   });
 
   return hits.map(formatSearchHit) as ContentHit[];
