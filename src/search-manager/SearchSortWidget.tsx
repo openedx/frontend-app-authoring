@@ -8,6 +8,77 @@ import messages from './messages';
 import { SearchSortOption } from './data/api';
 import { useSearchContext } from './SearchManager';
 
+interface MenuItems {
+  id: string;
+  name: string;
+  value: SearchSortOption;
+  show: boolean;
+}
+
+interface BaseSearchSortWidgetProps {
+  iconOnly?: boolean;
+  menuItems: MenuItems[];
+  searchSortOrder: SearchSortOption;
+  setSearchSortOrder: React.Dispatch<React.SetStateAction<SearchSortOption>>;
+  defaultSearchSortOrder: SearchSortOption;
+}
+
+export const BaseSearchSortWidget = ({
+  menuItems,
+  searchSortOrder,
+  setSearchSortOrder,
+  defaultSearchSortOrder,
+  iconOnly = false,
+}: BaseSearchSortWidgetProps) => {
+  const intl = useIntl();
+
+  const defaultSortOption = menuItems.find(
+    ({ value }) => (value === defaultSearchSortOrder),
+  );
+  const shownMenuItems = menuItems.filter(({ show }) => show);
+
+  // Show the currently selected sort option as the toggle button label.
+  const selectedSortOption = shownMenuItems.find(
+    ({ value }) => (value === searchSortOrder),
+  ) ?? defaultSortOption;
+
+  const menuHeader = intl.formatMessage(messages.searchSortWidgetLabel);
+  const toggleLabel = selectedSortOption ? selectedSortOption.name : menuHeader;
+  return (
+    <Dropdown id="search-sort-dropdown">
+      <Dropdown.Toggle
+        id="search-sort-toggle"
+        title={intl.formatMessage(messages.searchSortWidgetAltTitle)}
+        alt={intl.formatMessage(messages.searchSortWidgetAltTitle)}
+        variant="outline-primary"
+        className={classNames('dropdown-toggle-menu-items d-flex', {
+          'border-0': iconOnly,
+        })}
+        size="sm"
+      >
+        <Icon src={SwapVert} className="d-inline" />
+        { !iconOnly && <div className="py-0 px-1">{toggleLabel}</div>}
+      </Dropdown.Toggle>
+      <Dropdown.Menu>
+        <Dropdown.Header>{menuHeader}</Dropdown.Header>
+        {shownMenuItems.map(({ id, name, value }) => (
+          <Dropdown.Item
+            key={id}
+            onClick={() => {
+              // If the selected sort option was re-clicked, de-select it (reset to default)
+              const searchOrder = value === searchSortOrder ? defaultSearchSortOrder : value;
+              setSearchSortOrder(searchOrder);
+            }}
+          >
+            {name}
+            {(value === searchSortOrder) && <Icon src={Check} className="ml-2" />}
+          </Dropdown.Item>
+        ))}
+      </Dropdown.Menu>
+    </Dropdown>
+  );
+}
+
 export const SearchSortWidget = ({ iconOnly = false }: { iconOnly?: boolean }) => {
   const intl = useIntl();
   const {
@@ -64,50 +135,14 @@ export const SearchSortWidget = ({ iconOnly = false }: { iconOnly?: boolean }) =
     [intl, defaultSearchSortOrder],
   );
 
-  const menuHeader = intl.formatMessage(messages.searchSortWidgetLabel);
-  const defaultSortOption = menuItems.find(
-    ({ value }) => (value === defaultSearchSortOrder),
-  );
-  const shownMenuItems = menuItems.filter(({ show }) => show);
-
-  // Show the currently selected sort option as the toggle button label.
-  const selectedSortOption = shownMenuItems.find(
-    ({ value }) => (value === searchSortOrder),
-  ) ?? defaultSortOption;
-  const toggleLabel = selectedSortOption ? selectedSortOption.name : menuHeader;
-
   return (
-    <Dropdown id="search-sort-dropdown">
-      <Dropdown.Toggle
-        id="search-sort-toggle"
-        title={intl.formatMessage(messages.searchSortWidgetAltTitle)}
-        alt={intl.formatMessage(messages.searchSortWidgetAltTitle)}
-        variant="outline-primary"
-        className={classNames('dropdown-toggle-menu-items d-flex', {
-          'border-0': iconOnly,
-        })}
-        size="sm"
-      >
-        <Icon src={SwapVert} className="d-inline" />
-        { !iconOnly && <div className="py-0 px-1">{toggleLabel}</div>}
-      </Dropdown.Toggle>
-      <Dropdown.Menu>
-        <Dropdown.Header>{menuHeader}</Dropdown.Header>
-        {shownMenuItems.map(({ id, name, value }) => (
-          <Dropdown.Item
-            key={id}
-            onClick={() => {
-              // If the selected sort option was re-clicked, de-select it (reset to default)
-              const searchOrder = value === searchSortOrder ? defaultSearchSortOrder : value;
-              setSearchSortOrder(searchOrder);
-            }}
-          >
-            {name}
-            {(value === searchSortOrder) && <Icon src={Check} className="ml-2" />}
-          </Dropdown.Item>
-        ))}
-      </Dropdown.Menu>
-    </Dropdown>
+    <BaseSearchSortWidget
+      menuItems={menuItems}
+      searchSortOrder={searchSortOrder}
+      setSearchSortOrder={setSearchSortOrder}
+      defaultSearchSortOrder={defaultSearchSortOrder}
+      iconOnly={iconOnly}
+    />
   );
 };
 

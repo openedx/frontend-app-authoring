@@ -266,6 +266,7 @@ interface UseFetchIndexDocumentsParams {
   attributesToRetrieve?: string[];
   attributesToCrop?: string[];
   sort?: SearchSortOption[];
+  searchKeywords?: string,
   enabled?: boolean;
 }
 
@@ -278,6 +279,7 @@ export const useFetchIndexDocuments = ({
   attributesToRetrieve,
   attributesToCrop,
   sort,
+  searchKeywords,
   enabled = true,
 } : UseFetchIndexDocumentsParams) => {
   const { client, indexName } = useContentSearchConnection();
@@ -289,6 +291,8 @@ export const useFetchIndexDocuments = ({
       client?.config.host,
       indexName,
       filter,
+      sort,
+      searchKeywords,
       'generic-one-off',
     ],
     queryFn: enabled ? () => fetchIndexDocuments(
@@ -299,6 +303,10 @@ export const useFetchIndexDocuments = ({
       attributesToRetrieve,
       attributesToCrop,
       sort,
+      searchKeywords,
     ) : undefined,
+    // Avoid flickering results when user is typing... keep old results until new is available.
+    keepPreviousData: true,
+    refetchOnWindowFocus: false, // This doesn't need to be refreshed when the user switches back to this tab.
   });
 };

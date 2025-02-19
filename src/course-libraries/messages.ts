@@ -76,6 +76,36 @@ const messages = defineMessages({
     defaultMessage: 'This page cannot be shown: Libraries v2 are disabled.',
     description: 'Error message shown to users when trying to load a libraries V2 page while libraries v2 are disabled.',
   },
+  cardReviewContentBtn: {
+    id: 'course-authoring.course-libraries.review-tab.libcard.review-btn-text',
+    defaultMessage: 'Review',
+    description: 'Card review button for component in review tab',
+  },
+  cardUpdateContentBtn: {
+    id: 'course-authoring.course-libraries.review-tab.libcard.update-btn-text',
+    defaultMessage: 'Update',
+    description: 'Card update button for component in review tab',
+  },
+  cardIgnoreContentBtn: {
+    id: 'course-authoring.course-libraries.review-tab.libcard.ignore-btn-text',
+    defaultMessage: 'Ignore',
+    description: 'Card ignore button for component in review tab',
+  },
+  updateSingleBlockSuccess: {
+    id: 'course-authoring.course-libraries.review-tab.libcard.update-success-toast',
+    defaultMessage: '{name} is updated!',
+    description: 'Success toast message when a component is updated.',
+  },
+  ignoreSingleBlockSuccess: {
+    id: 'course-authoring.course-libraries.review-tab.libcard.ignore-success-toast',
+    defaultMessage: 'Update for {name} has been ignored',
+    description: 'Success toast message when a component update is ignored.',
+  },
+  searchPlaceholder: {
+    id: 'course-authoring.course-libraries.review-tab.search.placeholder',
+    defaultMessage: 'Search',
+    description: 'Search text box in review tab placeholder text',
+  },
 });
 
 export default messages;
