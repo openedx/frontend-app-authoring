@@ -139,6 +139,10 @@ const AddAdvancedContentView = ({
   isBasicBlock,
 }: AddAdvancedContentViewProps) => {
   const intl = useIntl();
+  // We use block types data from backend to verify if the blocks
+  // in `LIBRARY_ADVANCED_BLOCKS` exists. This is to avoid show a non-existent
+  // block in the advanced blocks list.
+  // Also, we use that data to get the translated display name of the block.
   const { blockTypesData } = useLibraryContext();
   const advancedBlocks = getConfig().LIBRARY_ADVANCED_BLOCKS.filter((block) => {
     if (!blockTypesData
