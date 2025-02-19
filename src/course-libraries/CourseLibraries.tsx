@@ -1,5 +1,5 @@
 import React, {
-  useCallback, useMemo, useState,
+  useCallback, useContext, useMemo, useState,
 } from 'react';
 import { Helmet } from 'react-helmet';
 import { getConfig } from '@edx/frontend-platform';
@@ -21,6 +21,7 @@ import {
   Tab,
   Tabs,
   useToggle,
+  SearchField,
 } from '@openedx/paragon';
 import {
   Cached, CheckCircle, KeyboardArrowDown, KeyboardArrowRight, Loop, MoreVert,
@@ -31,12 +32,14 @@ import classNames from 'classnames';
 import getPageHeadTitle from '../generic/utils';
 import { useModel } from '../generic/model-store';
 import messages from './messages';
+import {default as previewChangesMessages} from '../course-unit/preview-changes/messages'
+import {default as searchMessages} from '../search-manager/messages'
 import SubHeader from '../generic/sub-header/SubHeader';
 import { courseLibrariesQueryKeys, useEntityLinksByDownstreamContext } from './data/apiHooks';
 import type { PublishableEntityLink } from './data/api';
 import { useFetchIndexDocuments } from '../search-manager/data/apiHooks';
 import { getItemIcon } from '../generic/block-type-utils';
-import { BlockTypeLabel } from '../search-manager';
+import { BlockTypeLabel, Highlight } from '../search-manager';
 import type { ContentHit } from '../search-manager/data/api';
 import { SearchSortOption } from '../search-manager/data/api';
 import Loading from '../generic/Loading';
@@ -46,6 +49,9 @@ import { BasePreviewLibraryXBlockChanges, LibraryChangesMessageData } from '../c
 import { useQueryClient } from '@tanstack/react-query';
 import OutOfSyncAlert from './OutOfSyncAlert';
 import { useSearchParams } from 'react-router-dom';
+import LoadingButton from '../generic/loading-button';
+import { ToastContext } from '../generic/toast-context';
+import { BaseSearchSortWidget } from '../search-manager/SearchSortWidget';
 
 interface Props {
   courseId: string;
@@ -64,6 +70,7 @@ interface ComponentInfo extends ContentHit {
 interface BlockCardProps {
   info: ComponentInfo;
   actions?: React.ReactNode;
+  reviewMode?: boolean;
 }
 
 export enum CourseLibraryTabs {
@@ -71,7 +78,7 @@ export enum CourseLibraryTabs {
   review = 'review',
 }
 
-const BlockCard: React.FC<BlockCardProps> = ({ info, actions }) => {
+const BlockCard: React.FC<BlockCardProps> = ({ info, actions, reviewMode }) => {
   const intl = useIntl();
   const componentIcon = getItemIcon(info.blockType);
   const breadcrumbs = _.tail(info.breadcrumbs) as Array<{ displayName: string, usageKey: string }>;
@@ -87,13 +94,18 @@ const BlockCard: React.FC<BlockCardProps> = ({ info, actions }) => {
   return (
     <Card
       className={classNames(
-        'my-3 shadow-none border-light-600 border',
-        { 'bg-primary-100': info.readyToSync },
+        'my-3 border-light-600 border',
+        {
+          'bg-primary-100': info.readyToSync && !reviewMode,
+          'shadow': reviewMode,
+          'shadow-none': !reviewMode,
+        },
       )}
       orientation="horizontal"
     >
       <Card.Section
         className="py-3"
+        actions={actions}
       >
         <Stack direction="horizontal" gap={2}>
           <Stack direction="vertical" gap={1}>
@@ -102,10 +114,12 @@ const BlockCard: React.FC<BlockCardProps> = ({ info, actions }) => {
               <BlockTypeLabel blockType={info.blockType} />
             </Stack>
             <Stack direction="horizontal" className="small" gap={1}>
-              {info.readyToSync && <Icon src={Loop} size="xs" />}
-              {info.formatted?.displayName}
+              {info.readyToSync && !reviewMode && <Icon src={Loop} size="xs" />}
+              <Highlight text={info.formatted?.displayName ?? ''} />
             </Stack>
-            <div className="micro">{info.formatted?.description}</div>
+            <div className="micro">
+              <Highlight text={info.formatted?.description ?? ''} />
+            </div>
             <Breadcrumb
               className="micro text-gray-500"
               ariaLabel={intl.formatMessage(messages.breadcrumbAriaLabel)}
@@ -114,7 +128,6 @@ const BlockCard: React.FC<BlockCardProps> = ({ info, actions }) => {
               linkAs="span"
             />
           </Stack>
-          {actions}
           <Hyperlink className="lead ml-auto mb-auto text-black" destination={getBlockLink()} target="_blank">
             {' '}
           </Hyperlink>
@@ -221,18 +234,27 @@ const ReviewTabContent = ({ courseId, outOfSyncComponents }: {
   courseId: string,
   outOfSyncComponents: PublishableEntityLink[];
 }) => {
+  const intl = useIntl();
+  const { showToast } = useContext(ToastContext);
   const [blockData, setBlockData] = useState<LibraryChangesMessageData | undefined>(undefined);
+  const [searchKeywords, setSearchKeywords] = useState<string>("");
+  const [searchSortOrder, setSearchSortOrder] = useState<SearchSortOption>(SearchSortOption.RECENTLY_MODIFIED);
   const downstreamKeys = outOfSyncComponents?.map(link => link.downstreamUsageKey);
-  const { data: downstreamInfo } = useFetchIndexDocuments(
+  const { data: downstreamInfo, isLoading } = useFetchIndexDocuments(
     [`context_key = "${courseId}"`, `usage_key IN ["${downstreamKeys?.join('","')}"]`],
     downstreamKeys?.length || 0,
     ['usage_key', 'display_name', 'breadcrumbs', 'description', 'block_type'],
     ['description:30'],
-    [SearchSortOption.TITLE_AZ],
-  ) as unknown as { data: ComponentInfo[] };
+    [searchSortOrder],
+    searchKeywords,
+  ) as unknown as { data: ComponentInfo[], isLoading: boolean };
   const outOfSyncComponentsByKey = useMemo(
     () => _.keyBy(outOfSyncComponents, 'downstreamUsageKey'),
     [outOfSyncComponents]
+  );
+  const downstreamInfoByKey = useMemo(
+    () => _.keyBy(downstreamInfo, 'usageKey'),
+    [downstreamInfo]
   );
   const queryClient = useQueryClient();
 
@@ -253,26 +275,123 @@ const ReviewTabContent = ({ courseId, outOfSyncComponents }: {
     openModal();
   }
 
+  const reloadLinks = (usageKey: string) => {
+    const courseKey = outOfSyncComponentsByKey[usageKey].downstreamContextKey;
+    queryClient.invalidateQueries(courseLibrariesQueryKeys.courseLibraries(courseKey));
+  }
+
   const postChange = () => {
     if (!blockData) {
       return
     }
-    const courseKey = outOfSyncComponentsByKey[blockData.downstreamBlockId].downstreamContextKey;
-    queryClient.invalidateQueries(courseLibrariesQueryKeys.courseLibraries(courseKey));
+    reloadLinks(blockData.downstreamBlockId);
   }
+
+  const updateBlock = async (info: ComponentInfo) => {
+    try {
+      await acceptChangesMutation.mutateAsync(info.usageKey);
+      reloadLinks(info.usageKey);
+      showToast(intl.formatMessage(
+        messages.updateSingleBlockSuccess,
+        { name: info.displayName }
+      ));
+    } catch (e) {
+      showToast(intl.formatMessage(previewChangesMessages.acceptChangesFailure));
+    }
+  }
+
+  const ignoreBlock = async (info: ComponentInfo) => {
+    try {
+      await acceptChangesMutation.mutateAsync(info.usageKey);
+      reloadLinks(info.usageKey);
+      showToast(intl.formatMessage(
+        messages.ignoreSingleBlockSuccess,
+        { name: info.displayName }
+      ));
+    } catch (e) {
+      showToast(intl.formatMessage(previewChangesMessages.ignoreChangesFailure));
+    }
+  }
+
+  const menuItems = useMemo(
+    () => [
+      {
+        id: 'search-sort-option-recently-modified',
+        name: intl.formatMessage(searchMessages.searchSortRecentlyModified),
+        value: SearchSortOption.RECENTLY_MODIFIED,
+        show: true,
+      },
+      {
+        id: 'search-sort-option-title-az',
+        name: intl.formatMessage(searchMessages.searchSortTitleAZ),
+        value: SearchSortOption.TITLE_AZ,
+        show: true,
+      },
+      {
+        id: 'search-sort-option-title-za',
+        name: intl.formatMessage(searchMessages.searchSortTitleZA),
+        value: SearchSortOption.TITLE_ZA,
+        show: true,
+      },
+    ],
+    [intl],
+  );
+
+  const orderInfo = useMemo(() => {
+    if (searchSortOrder !== SearchSortOption.RECENTLY_MODIFIED) {
+      return downstreamInfo;
+    }
+    if (isLoading) {
+      return [];
+    }
+    let merged = _.merge(downstreamInfoByKey, outOfSyncComponentsByKey);
+    merged = _.omitBy(merged, (o) => !o.displayName);
+    const ordered = _.orderBy(Object.values(merged), 'updated', 'desc');
+    return ordered;
+  }, [downstreamInfoByKey, outOfSyncComponentsByKey]);
 
   return (
     <>
-      {downstreamInfo?.map((info) => (
-        <BlockCard key={info.usageKey} info={info} actions={
-          <div className="d-flex align-items-center mr-3">
-            <ActionRow>
-              <Button size="sm" className="mr-4" onClick={() => onReview(info)}>Review</Button>
-              <div className="py-3 mx-2 border border-dark" />
-              <Button variant="tertiary" size="sm">Ignore</Button>
-              <Button variant="outline-primary" size="sm">Update</Button>
-            </ActionRow>
-          </div>
+      <ActionRow>
+        <SearchField
+          onChange={setSearchKeywords}
+          onSubmit={setSearchKeywords}
+          value={searchKeywords}
+          placeholder={intl.formatMessage(messages.searchPlaceholder)}
+        />
+        <BaseSearchSortWidget
+          menuItems={menuItems}
+          searchSortOrder={searchSortOrder}
+          setSearchSortOrder={setSearchSortOrder}
+          defaultSearchSortOrder={SearchSortOption.RECENTLY_MODIFIED}
+        />
+        <ActionRow.Spacer />
+      </ActionRow>
+      {orderInfo?.map((info) => (
+        <BlockCard key={info.usageKey} info={info} reviewMode actions={
+          <ActionRow>
+            <Button
+              size="sm"
+              variant="light"
+              onClick={() => onReview(info)}
+              className="font-weight-bold text-black"
+            >
+              {intl.formatMessage(messages.cardReviewContentBtn)}
+            </Button>
+            <ActionRow.Spacer/>
+            <LoadingButton
+              label={intl.formatMessage(messages.cardIgnoreContentBtn)}
+              variant="tertiary"
+              size="sm"
+              onClick={() => ignoreBlock(info)}
+            />
+            <LoadingButton
+              label={intl.formatMessage(messages.cardUpdateContentBtn)}
+              variant="outline-primary"
+              size="sm"
+              onClick={() => updateBlock(info)}
+            />
+          </ActionRow>
         } />
       ))}
       <BasePreviewLibraryXBlockChanges
