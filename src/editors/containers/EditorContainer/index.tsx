@@ -15,12 +15,12 @@ import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import { EditorComponent } from '../../EditorComponent';
 import { useEditorContext } from '../../EditorContext';
-import BaseModal from '../../sharedComponents/BaseModal';
 import TitleHeader from './components/TitleHeader';
 import * as hooks from './hooks';
 import messages from './messages';
 import './index.scss';
 import usePromptIfDirty from '../../../generic/promptIfDirty/usePromptIfDirty';
+import CancelConfirmModal from './components/CancelConfirmModal';
 
 interface WrapperProps {
   children: React.ReactNode;
@@ -118,29 +118,16 @@ const EditorContainer: React.FC<Props> = ({
           <FormattedMessage {...messages.contentSaveFailed} />
         </Toast>
       )}
-      <BaseModal
-        size="md"
-        confirmAction={(
-          <Button
-            variant="primary"
-            onClick={() => {
-              handleCancel();
-              if (returnFunction) {
-                closeCancelConfirmModal();
-              }
-            }}
-          >
-            <FormattedMessage {...messages.okButtonLabel} />
-          </Button>
-        )}
+      <CancelConfirmModal
         isOpen={isCancelConfirmOpen}
-        close={() => {
-          closeCancelConfirmModal();
+        closeCancelConfirmModal={closeCancelConfirmModal}
+        onCloseEditor={() => {
+          handleCancel();
+          if (returnFunction) {
+            closeCancelConfirmModal();
+          }
         }}
-        title={intl.formatMessage(messages.cancelConfirmTitle)}
-      >
-        <FormattedMessage {...messages.cancelConfirmDescription} />
-      </BaseModal>
+      />
       <ModalDialog.Header className="shadow-sm zindex-10">
         <div className="d-flex flex-row justify-content-between">
           <h2 className="h3 col pl-0">

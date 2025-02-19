@@ -1,20 +1,24 @@
 import React, { useEffect } from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { useToggle } from '@openedx/paragon';
 
 import { LibraryBlock } from '../library-authoring/LibraryBlock';
 import { EditorModalWrapper } from './containers/EditorContainer';
 import { ToastContext } from '../generic/toast-context';
+
 import messages from './messages';
+import CancelConfirmModal from './containers/EditorContainer/components/CancelConfirmModal';
 
 interface AdvancedEditorProps {
   usageKey: string,
-  onClose: Function | null,
+  onClose: (() => void) | null,
 }
 
 const AdvancedEditor = ({ usageKey, onClose }: AdvancedEditorProps) => {
   const intl = useIntl();
   const { showToast } = React.useContext(ToastContext);
+  const [isCancelConfirmOpen, openCancelConfirmModal, closeCancelConfirmModal] = useToggle(false);
 
   useEffect(() => {
     const handleIframeMessage = (event) => {
@@ -25,9 +29,9 @@ const AdvancedEditor = ({ usageKey, onClose }: AdvancedEditorProps) => {
       if (event.data.type === 'xblock-event') {
         const { eventName, data } = event.data;
 
-        if (onClose && (eventName === 'cancel'
-          || (eventName === 'save' && data.state === 'end'))
-        ) {
+        if (eventName === 'cancel') {
+          openCancelConfirmModal();
+        } else if (onClose && eventName === 'save' && data.state === 'end') {
           onClose();
         } else if (eventName === 'error') {
           showToast(intl.formatMessage(messages.advancedEditorGenericError));
@@ -43,12 +47,19 @@ const AdvancedEditor = ({ usageKey, onClose }: AdvancedEditorProps) => {
   }, []);
 
   return (
-    <EditorModalWrapper onClose={onClose as () => void}>
-      <LibraryBlock
-        usageKey={usageKey}
-        view="studio_view"
+    <>
+      <EditorModalWrapper onClose={openCancelConfirmModal}>
+        <LibraryBlock
+          usageKey={usageKey}
+          view="studio_view"
+        />
+      </EditorModalWrapper>
+      <CancelConfirmModal
+        isOpen={isCancelConfirmOpen}
+        closeCancelConfirmModal={closeCancelConfirmModal}
+        onCloseEditor={onClose}
       />
-    </EditorModalWrapper>
+    </>
   );
 };
 
