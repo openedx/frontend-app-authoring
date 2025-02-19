@@ -342,15 +342,14 @@ const AddContentContainer = () => {
 
   return (
     <Stack direction="vertical">
-      {isAdvancedListOpen && (
+      {isAdvancedListOpen ? (
         <AddAdvancedContentView
           closeAdvancedList={closeAdvancedList}
           onCreateContent={onCreateContent}
           isBlockTypeEnabled={isBlockTypeEnabled}
           isBasicBlock={isBasicBlock}
         />
-      )}
-      {!isAdvancedListOpen && (
+      ) : (
         <AddContentView
           contentTypes={contentTypes}
           onCreateContent={onCreateContent}
