@@ -16,12 +16,16 @@ import PropTypes from 'prop-types';
   * @param {string} props.label
   * @param {function=} props.onClick
   * @param {boolean=} props.disabled
+  * @param {string=} props.size
+  * @param {string=} props.variant
   * @returns {JSX.Element}
   */
 const LoadingButton = ({
   label,
   onClick,
   disabled,
+  size,
+  variant,
 }) => {
   const [state, setState] = useState('');
   // This is used to prevent setting the isLoading state after the component has been unmounted.
@@ -54,6 +58,8 @@ const LoadingButton = ({
       onClick={loadingOnClick}
       labels={{ default: label }}
       state={state}
+      size={size}
+      variant={variant}
     />
   );
 };
@@ -62,11 +68,15 @@ LoadingButton.propTypes = {
   label: PropTypes.string.isRequired,
   onClick: PropTypes.func,
   disabled: PropTypes.bool,
+  size: PropTypes.string,
+  variant: PropTypes.string,
 };
 
 LoadingButton.defaultProps = {
   onClick: undefined,
   disabled: undefined,
+  size: undefined,
+  variant: "",
 };
 
 export default LoadingButton;
