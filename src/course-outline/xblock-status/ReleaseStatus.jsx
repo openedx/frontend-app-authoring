@@ -18,8 +18,8 @@ const ReleaseStatus = ({
   const intl = useIntl();
 
   // Convert the release date if it's valid
-  const localReleaseDate = releaseDate ? convertToLocalTime(releaseDate) : 'No scheduled release date';
-  const displayReleaseDate = localReleaseDate === 'Invalid date' ? 'No scheduled release date' : localReleaseDate;
+  const localReleaseDate = releaseDate ? convertToLocalTime(releaseDate) : '';
+  const displayReleaseDate = localReleaseDate === 'Invalid date' ? null : localReleaseDate;
 
   let releaseLabel = messages.unscheduledLabel;
   if (releasedToStudents) {
