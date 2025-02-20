@@ -360,7 +360,7 @@ export class OLXParser {
     const stringEqualHint = _.get(stringresponse, 'stringequalhint', []);
     if (_.isArray(stringEqualHint)) {
       stringEqualHint.forEach((newAnswer, indx) => {
-        answerFeedback = this.richTextBuilder.build(stringEqualHintFeedback[indx].stringequalhint);
+        answerFeedback = this.getFeedback(stringEqualHintFeedback[indx]?.stringequalhint);
         answers.push({
           id: indexToLetterMap[answers.length],
           title: newAnswer['@_answer'],
@@ -369,7 +369,7 @@ export class OLXParser {
         });
       });
     } else {
-      answerFeedback = this.richTextBuilder.build(stringEqualHintFeedback[0].stringequalhint);
+      answerFeedback = this.getFeedback(stringEqualHintFeedback[0]?.stringequalhint);
       answers.push({
         id: indexToLetterMap[answers.length],
         title: stringEqualHint['@_answer'],
