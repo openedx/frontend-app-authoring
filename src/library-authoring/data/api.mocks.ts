@@ -526,3 +526,26 @@ mockGetLibraryTeam.notMember = {
 
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockGetLibraryTeam.applyMock = () => jest.spyOn(api, 'getLibraryTeam').mockImplementation(mockGetLibraryTeam);
+
+export async function mockComponentDownstreamLinks(
+  usageKey: string,
+): ReturnType<typeof api.getComponentDownstreamLinks> {
+  const thisMock = mockComponentDownstreamLinks;
+  switch (usageKey) {
+    case thisMock.usageKey: return thisMock.componentUsage;
+    default: return [];
+  }
+}
+mockComponentDownstreamLinks.usageKey = mockXBlockFields.usageKeyHtml;
+mockComponentDownstreamLinks.componentUsage = [
+  'block-v1:org+course1+run+type@html+block@blockid1',
+  'block-v1:org+course1+run+type@html+block@blockid2',
+  'block-v1:org+course2+run+type@html+block@blockid1',
+] satisfies Awaited<ReturnType<typeof api.getComponentDownstreamLinks>>;
+mockComponentDownstreamLinks.emptyUsageKey = 'lb:Axim:TEST1:html:571fe018-f3ce-45c9-8f53-5dafcb422fd1';
+mockComponentDownstreamLinks.emptyComponentUsage = [] as string[];
+
+mockComponentDownstreamLinks.applyMock = () => jest.spyOn(
+  api,
+  'getComponentDownstreamLinks',
+).mockImplementation(mockComponentDownstreamLinks);

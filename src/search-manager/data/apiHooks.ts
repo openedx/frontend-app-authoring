@@ -260,16 +260,29 @@ export const useGetBlockTypes = (extraFilters: Filter) => {
   });
 };
 
-export const useFetchIndexDocuments = (
-  filter: Filter,
-  limit: number,
-  attributesToRetrieve?: string[],
-  attributesToCrop?: string[],
-  sort?: SearchSortOption[],
-) => {
+interface UseFetchIndexDocumentsParams {
+  filter: Filter;
+  limit: number;
+  attributesToRetrieve?: string[];
+  attributesToCrop?: string[];
+  sort?: SearchSortOption[];
+  enabled?: boolean;
+}
+
+/**
+ * Fetch documents from the index.
+ */
+export const useFetchIndexDocuments = ({
+  filter,
+  limit,
+  attributesToRetrieve,
+  attributesToCrop,
+  sort,
+  enabled = true,
+} : UseFetchIndexDocumentsParams) => {
   const { client, indexName } = useContentSearchConnection();
   return useQuery({
-    enabled: client !== undefined && indexName !== undefined,
+    enabled: enabled && client !== undefined && indexName !== undefined,
     queryKey: [
       'content_search',
       client?.config.apiKey,
@@ -278,7 +291,7 @@ export const useFetchIndexDocuments = (
       filter,
       'generic-one-off',
     ],
-    queryFn: () => fetchIndexDocuments(
+    queryFn: enabled ? () => fetchIndexDocuments(
       client!,
       indexName!,
       filter,
@@ -286,6 +299,6 @@ export const useFetchIndexDocuments = (
       attributesToRetrieve,
       attributesToCrop,
       sort,
-    ),
+    ) : undefined,
   });
 };
