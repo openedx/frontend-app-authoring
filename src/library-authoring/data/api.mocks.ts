@@ -329,6 +329,7 @@ export async function mockLibraryBlockMetadata(usageKey: string): Promise<api.Li
     case thisMock.usageKeyPublishDisabled: return thisMock.dataPublishDisabled;
     case thisMock.usageKeyUnsupportedXBlock: return thisMock.dataUnsupportedXBlock;
     case thisMock.usageKeyForTags: return thisMock.dataPublished;
+    case thisMock.usageKeyPublishedWithChanges: return thisMock.dataPublishedWithChanges;
     default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
   }
 }
@@ -394,6 +395,22 @@ mockLibraryBlockMetadata.dataWithCollections = {
   modified: '2024-06-21T13:54:21Z',
   tagsCount: 0,
   collections: [{ title: 'My first collection', key: 'my-first-collection' }],
+} satisfies api.LibraryBlockMetadata;
+mockLibraryBlockMetadata.usageKeyPublishedWithChanges = 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fvv';
+mockLibraryBlockMetadata.dataPublishedWithChanges = {
+  id: 'lb:Axim:TEST2:html:571fe018-f3ce-45c9-8f53-5dafcb422fvv',
+  defKey: null,
+  blockType: 'html',
+  displayName: 'Introduction to Testing 2',
+  lastPublished: '2024-06-22T00:00:00',
+  publishedBy: 'Luke',
+  lastDraftCreated: null,
+  lastDraftCreatedBy: '2024-06-20T20:00:00Z',
+  hasUnpublishedChanges: true,
+  created: '2024-06-20T13:54:21Z',
+  modified: '2024-06-23T13:54:21Z',
+  tagsCount: 0,
+  collections: [],
 } satisfies api.LibraryBlockMetadata;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockLibraryBlockMetadata.applyMock = () => jest.spyOn(api, 'getLibraryBlockMetadata').mockImplementation(mockLibraryBlockMetadata);
