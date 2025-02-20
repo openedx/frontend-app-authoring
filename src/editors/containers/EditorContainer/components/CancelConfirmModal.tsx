@@ -21,11 +21,7 @@ const CancelConfirmModal = ({
       confirmAction={(
         <Button
           variant="primary"
-          onClick={() => {
-            if (onCloseEditor) {
-              onCloseEditor();
-            }
-          }}
+          onClick={() => onCloseEditor?.()}
         >
           <FormattedMessage {...messages.okButtonLabel} />
         </Button>
