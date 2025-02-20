@@ -20,6 +20,7 @@ import {
 
 export function startLinkCheck(courseId: string) {
   return async (dispatch) => {
+    dispatch(updateError({ msg: null, unitUrl: null }));    // Reset Error State when user click on Start scanning
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(updateLinkCheckInProgress(true));
     dispatch(updateCurrentStage(SCAN_STAGES[LINK_CHECK_STATUSES.PENDING]));
@@ -60,8 +61,12 @@ export function fetchLinkCheckStatus(courseId) {
       ) {
         dispatch(updateError({ msg: 'Link Check Failed' }));
         dispatch(updateIsErrorModalOpen(true));
-      } else if (linkCheckOutput) {
-        dispatch(updateLinkCheckResult(linkCheckOutput));
+      } else if (LINK_CHECK_STATUSES.SUCCEEDED == linkCheckStatus) {
+        if (linkCheckOutput){
+          dispatch(updateLinkCheckResult(linkCheckOutput));
+        }else{
+          dispatch(updateLinkCheckResult([]));
+        }
         dispatch(updateLastScannedAt(linkCheckCreatedAt));
       }
 

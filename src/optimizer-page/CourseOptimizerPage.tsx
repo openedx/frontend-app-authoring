@@ -59,7 +59,8 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
   const isSavingDenied = (RequestFailureStatuses as string[]).includes(savingStatus);
   const interval = useRef<number | undefined>(undefined);
   const courseDetails = useModel('courseDetails', courseId);
-  const linkCheckPresent = !!currentStage;
+  const linkCheckPresent = currentStage != null ? currentStage >= 0 : !!currentStage;
+  
   const intl = useIntl();
 
   const courseStepperSteps = [
@@ -157,13 +158,13 @@ const CourseOptimizerPage: FC<{ courseId: string }> = ({ courseId }) => {
                       // @ts-ignore
                       steps={courseStepperSteps}
                       activeKey={currentStage}
-                      hasError={currentStage < 0 || !!errorMessage}
+                      hasError={currentStage == 1 && !!errorMessage}
                       errorMessage={errorMessage}
                     />
                   </Card.Section>
                   )}
                 </Card>
-                {linkCheckPresent && <ScanResults data={linkCheckResult} />}
+                {(linkCheckPresent && linkCheckResult) && <ScanResults data={linkCheckResult} />}
               </article>
             </Layout.Element>
           </Layout>
