@@ -91,6 +91,36 @@ describe('<ComponentInfo> Sidebar', () => {
     await waitFor(() => expect(publishButton).not.toBeDisabled());
   });
 
+  it('should show publish confirmation on first publish', async () => {
+    render(
+      <ComponentInfo />,
+      withLibraryId(mockContentLibrary.libraryId, mockLibraryBlockMetadata.usageKeyNeverPublished),
+    );
+
+    const publishButton = await screen.findByRole('button', { name: /Publish component/i });
+    publishButton.click();
+
+    expect(await screen.findByText(/Publish all unpublished changes for this component?/i)).toBeInTheDocument();
+    expect(screen.getByText(mockLibraryBlockMetadata.dataNeverPublished.displayName)).toBeInTheDocument();
+    expect(screen.queryByText(/This content is currently being used in:/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Publishing this component will push the changes out to the courses./i)).not.toBeInTheDocument();
+  });
+
+  it('should show publish confirmation on already published', async () => {
+    render(
+      <ComponentInfo />,
+      withLibraryId(mockContentLibrary.libraryId, mockLibraryBlockMetadata.usageKeyPublishedWithChanges),
+    );
+
+    const publishButton = await screen.findByRole('button', { name: /Publish component/i });
+    publishButton.click();
+
+    expect(await screen.findByText(/Publish all unpublished changes for this component?/i)).toBeInTheDocument();
+    expect(screen.getByText(mockLibraryBlockMetadata.dataPublishedWithChanges.displayName)).toBeInTheDocument();
+    expect(screen.getByText(/This content is currently being used in:/i)).toBeInTheDocument();
+    expect(screen.getByText(/Publishing this component will push the changes out to the courses./i)).toBeInTheDocument();
+  });
+
   it('should show toast message when the component is published successfully', async () => {
     const { axiosMock, mockShowToast } = initializeMocks();
     const url = getXBlockPublishApiUrl(mockLibraryBlockMetadata.usageKeyNeverPublished);
@@ -102,6 +132,13 @@ describe('<ComponentInfo> Sidebar', () => {
 
     const publishButton = await screen.findByRole('button', { name: /Publish component/i });
     publishButton.click();
+
+    // Should show publish confirmation modal
+    expect(await screen.findByText(/Publish all unpublished changes for this component?/i)).toBeInTheDocument();
+
+    // Click on confirm
+    const confirmButton = await screen.findByRole('button', { name: /Publish/i });
+    confirmButton.click();
 
     await waitFor(() => {
       expect(mockShowToast).toHaveBeenCalledWith('Component published successfully.');
@@ -119,6 +156,13 @@ describe('<ComponentInfo> Sidebar', () => {
 
     const publishButton = await screen.findByRole('button', { name: /Publish component/i });
     publishButton.click();
+
+    // Should show publish confirmation modal
+    expect(await screen.findByText(/Publish all unpublished changes for this component?/i)).toBeInTheDocument();
+
+    // Click on confirm
+    const confirmButton = await screen.findByRole('button', { name: /Publish/i });
+    confirmButton.click();
 
     await waitFor(() => {
       expect(mockShowToast).toHaveBeenCalledWith('There was an error publishing the component.');
