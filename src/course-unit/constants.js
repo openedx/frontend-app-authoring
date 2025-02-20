@@ -69,4 +69,10 @@ export const messageTypes = {
   addXBlock: 'addXBlock',
   scrollToXBlock: 'scrollToXBlock',
   handleViewXBlockContent: 'handleViewXBlockContent',
+  editXBlock: 'editXBlock',
+  closeXBlockEditorModal: 'closeXBlockEditorModal',
+  saveEditedXBlockData: 'saveEditedXBlockData',
+  completeXBlockEditing: 'completeXBlockEditing',
+  studioAjaxError: 'studioAjaxError',
+  refreshPositions: 'refreshPositions',
 };
