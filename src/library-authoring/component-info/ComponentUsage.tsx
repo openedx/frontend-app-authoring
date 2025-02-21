@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 import AlertError from '../../generic/alert-error';
 import Loading from '../../generic/Loading';
-import { useFetchIndexDocuments, type ContentHit } from '../../search-manager';
+import { useFetchIndexDocuments } from '../../search-manager';
 import { useComponentDownstreamLinks } from '../data/apiHooks';
 import messages from './messages';
 
@@ -15,7 +15,11 @@ interface ComponentUsageProps {
 type ComponentUsageTree = Record<string, {
   key: string,
   contextName: string,
-  links: ContentHit['breadcrumbs'][1][],
+  links: {
+    usageKey: string,
+    displayName: string,
+    url: string,
+  }[]
 }>;
 
 export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
@@ -60,12 +64,18 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
     }
 
     if (hit.contextKey in acc) {
-      acc[hit.contextKey].links.push(link);
+      acc[hit.contextKey].links.push({
+        ...link,
+        url: `/course/${hit.contextKey}/container/${link.usageKey}`,
+      });
     } else {
       acc[hit.contextKey] = {
         key: hit.contextKey,
         contextName: hit.breadcrumbs[0].displayName,
-        links: [link],
+        links: [{
+          ...link,
+          url: `/course/${hit.contextKey}/container/${link.usageKey}`,
+        }],
       };
     }
     return acc;
@@ -78,11 +88,8 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
       {
         componentUsageList.map((context) => (
           <Collapsible key={context.key} title={context.contextName} styling="basic">
-            {context.links.map(({ usageKey: downstreamUsageKey, displayName }) => (
-              <Link
-                key={downstreamUsageKey}
-                to={`/course/${context.key}/container/${downstreamUsageKey}`}
-              >
+            {context.links.map(({ usageKey: downstreamUsageKey, displayName, url }) => (
+              <Link key={downstreamUsageKey} to={url}>
                 {displayName}
               </Link>
             ))}
