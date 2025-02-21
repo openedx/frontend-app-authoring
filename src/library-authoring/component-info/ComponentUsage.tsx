@@ -78,13 +78,13 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
       {
         componentUsageList.map((context) => (
           <Collapsible key={context.key} title={context.contextName} styling="basic">
-            {context.links.map(({ usageKey: downstreamUsageKey, url, displayName }) => (
-              url ? (
-                <Link key={downstreamUsageKey} to={url}>{displayName}</Link>
-              ) : (
-                // istanbul ignore next: this should never happen
-                <span key={downstreamUsageKey}>{displayName}</span>
-              )
+            {context.links.map(({ usageKey: downstreamUsageKey, displayName }) => (
+              <Link
+                key={downstreamUsageKey}
+                to={`/course/${context.key}/container/${downstreamUsageKey}`}
+              >
+                {displayName}
+              </Link>
             ))}
           </Collapsible>
         ))

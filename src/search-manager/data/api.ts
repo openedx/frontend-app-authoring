@@ -134,8 +134,8 @@ export interface ContentHit extends BaseContentHit {
    */
   type: 'course_block' | 'library_block';
   breadcrumbs: [
-    { displayName: string, url?: string },
-    ...Array<{ displayName: string, usageKey: string, url?: string }>,
+    { displayName: string },
+    ...Array<{ displayName: string, usageKey: string }>,
   ];
   description?: string;
   content?: ContentDetails;

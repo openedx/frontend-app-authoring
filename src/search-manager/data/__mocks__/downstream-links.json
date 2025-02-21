@@ -11,8 +11,7 @@
       "contextKey": "course-v1:org+course1+run",
       "breadcrumbs": [
         {
-          "display_name": "Course 1",
-          "url": "/course/course-v1:org+course1+run"
+          "display_name": "Course 1"
         },
         {
           "usage_key": "unit-v1:org+course1+run+section1",
@@ -24,8 +23,7 @@
         },
         {
           "usage_key": "block-v1:org+course1+run+type@vertical+block@verticalId3",
-          "display_name": "Unit 1",
-          "url": "/course/course-v1:org+course1+run/container/block-v1:org+course1+run+type@vertical+block@verticalId1"
+          "display_name": "Unit 1"
         }
       ]
     },
@@ -34,8 +32,7 @@
       "contextKey": "course-v1:org+course1+run",
       "breadcrumbs": [
         {
-          "display_name": "Course 1",
-          "url": "/course/course-v1:org+course1+run"
+          "display_name": "Course 1"
         },
         {
           "usage_key": "unit-v1:org+course1+run+section1",
@@ -47,8 +44,7 @@
         },
         {
           "usage_key": "block-v1:org+course1+run+type@vertical+block@verticalId2",
-          "display_name": "Unit 2",
-          "url": "/course/course-v1:org+course1+run/container/block-v1:org+course1+run+type@vertical+block@verticalId2"
+          "display_name": "Unit 2"
         }
       ]
     },
@@ -57,8 +53,7 @@
       "contextKey": "course-v1:org+course2+run",
       "breadcrumbs": [
         {
-          "display_name": "Course 2",
-          "url": "/course/course-v1:org+course2+run"
+          "display_name": "Course 2"
         },
         {
           "usage_key": "unit-v1:org+course2+run+section1",
@@ -70,13 +65,11 @@
         },
         {
           "usage_key": "block-v1:org+course1+run+type@vertical+block@verticalId3",
-          "display_name": "Unit 3",
-          "url": "/course/course-v1:org+course2+run/container/block-v1:org+course1+run+type@vertical+block@verticalId2"
+          "display_name": "Unit 3"
         },
         {
           "usage_key": "block-v1:org+course2+run+type@itembank+block@itembankId3",
-          "display_name": "Problem Bank 3",
-          "url": "/course/course-v1:org+course2+run/container/block-v1:org+course2+run+type@itembank+block@itembankId3"
+          "display_name": "Problem Bank 3"
         }
       ]
     }
