@@ -44,7 +44,7 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
     return <AlertError error={errorDownstreamLinks || errorIndexDocuments} />;
   }
 
-  if (isLoadingDownstreamLinks || isLoadingIndexDocuments) {
+  if (isLoadingDownstreamLinks || (isLoadingIndexDocuments && !!downstreamKeys.length)) {
     return <Loading />;
   }
 
