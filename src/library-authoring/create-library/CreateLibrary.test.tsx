@@ -12,7 +12,6 @@ import {
 } from '../../testUtils';
 import { studioHomeMock } from '../../studio-home/__mocks__';
 import { getStudioHomeApiUrl } from '../../studio-home/data/api';
-import { getApiWaffleFlagsUrl } from '../../data/api';
 import { CreateLibrary } from '.';
 import { getContentLibraryV2CreateApiUrl } from './data/api';
 
@@ -35,9 +34,6 @@ jest.mock('../../generic/data/apiHooks', () => ({
 describe('<CreateLibrary />', () => {
   beforeEach(() => {
     axiosMock = initializeMocks().axiosMock;
-    axiosMock
-      .onGet(getApiWaffleFlagsUrl(undefined))
-      .reply(200, {});
   });
 
   afterEach(() => {
