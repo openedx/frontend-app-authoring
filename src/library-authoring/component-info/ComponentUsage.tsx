@@ -1,6 +1,6 @@
+import { getConfig, getPath } from '@edx/frontend-platform';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import { Collapsible } from '@openedx/paragon';
-import { Link } from 'react-router-dom';
+import { Collapsible, Hyperlink } from '@openedx/paragon';
 
 import AlertError from '../../generic/alert-error';
 import Loading from '../../generic/Loading';
@@ -21,6 +21,10 @@ type ComponentUsageTree = Record<string, {
     url: string,
   }[]
 }>;
+
+const getContainerUrl = (contextKey: string, usageKey: string) => (
+  `${getPath(getConfig().PUBLIC_PATH)}course/${contextKey}/container/${usageKey}`
+);
 
 export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
   const {
@@ -52,7 +56,7 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
     return <Loading />;
   }
 
-  if (!downstreamKeys.length) {
+  if (!downstreamKeys.length || !downstreamHits) {
     return <FormattedMessage {...messages.detailsTabUsageEmpty} />;
   }
 
@@ -63,19 +67,18 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
       return acc;
     }
 
+    const linkData = {
+      ...link,
+      url: getContainerUrl(hit.contextKey, link.usageKey),
+    };
+
     if (hit.contextKey in acc) {
-      acc[hit.contextKey].links.push({
-        ...link,
-        url: `/course/${hit.contextKey}/container/${link.usageKey}`,
-      });
+      acc[hit.contextKey].links.push(linkData);
     } else {
       acc[hit.contextKey] = {
         key: hit.contextKey,
         contextName: hit.breadcrumbs[0].displayName,
-        links: [{
-          ...link,
-          url: `/course/${hit.contextKey}/container/${link.usageKey}`,
-        }],
+        links: [linkData],
       };
     }
     return acc;
@@ -89,9 +92,7 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
         componentUsageList.map((context) => (
           <Collapsible key={context.key} title={context.contextName} styling="basic">
             {context.links.map(({ usageKey: downstreamUsageKey, displayName, url }) => (
-              <Link key={downstreamUsageKey} to={url}>
-                {displayName}
-              </Link>
+              <Hyperlink key={downstreamUsageKey} destination={url} target="_blank">{displayName}</Hyperlink>
             ))}
           </Collapsible>
         ))
