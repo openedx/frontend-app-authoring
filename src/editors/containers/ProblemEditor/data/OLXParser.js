@@ -140,10 +140,12 @@ export class OLXParser {
       [correctAnswerFeedbackTag, incorrectAnswerFeedbackTag] = option;
     }
     const problemBodyArr = problemBody[problemType];
+    let hasCorrectAnswerFeedback = isChoiceProblem;
     problemBodyArr.forEach(subtag => {
       const tagNames = Object.keys(subtag);
       if (!isChoiceProblem && tagNames.includes(correctAnswerFeedbackTag)) {
         preservedAnswers.unshift(subtag[correctAnswerFeedbackTag]);
+        hasCorrectAnswerFeedback = true;
       }
       if (problemType === ProblemTypeKeys.TEXTINPUT && tagNames.includes(incorrectAnswerFeedbackTag)) {
         preservedAnswers.push(subtag);
@@ -157,6 +159,11 @@ export class OLXParser {
         });
       }
     });
+    // Since the first feedback is taken as correct answer feedback by non-choice problems,
+    // we insert an empty array to preserve feedback order.
+    if (!hasCorrectAnswerFeedback) {
+      preservedAnswers.unshift([]);
+    }
     return preservedAnswers;
   }
 
