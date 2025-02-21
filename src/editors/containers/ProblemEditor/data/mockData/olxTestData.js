@@ -562,6 +562,86 @@ export const textInputWithFeedbackAndHintsOLX = {
 `,
 };
 
+export const textInputWithFeedbackInIncorrectAnswerOnlyOLX = {
+  rawOLX: `<problem>
+<stringresponse answer="the correct answer" type="ci">
+  <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for text input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
+<label>Add the question text, or prompt, here. This text is required.</label>
+<description>You can add an optional tip or note related to the prompt like this. </description>
+  <additional_answer answer="optional acceptable variant of the correct answer"/>
+  <stringequalhint answer="optional incorrect answer such as a frequent misconception"><p>You can specify optional feedback for none, a subset, or all of the answers.</p></stringequalhint>
+  <stringequalhint answer="another optional incorrect answer such as a frequent misconception"><p>You can specify feedback again.</p></stringequalhint>
+  <textline size="20"/>
+</stringresponse>
+<demandhint>
+  <hint><p>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</p></hint>
+  <hint><p>If you add more than one hint, a different hint appears each time learners select the hint button.</p></hint>
+</demandhint>
+</problem>`,
+  hints: [{
+    id: 0,
+    value: '<p>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</p>',
+  },
+  {
+    id: 1,
+    value: '<p>If you add more than one hint, a different hint appears each time learners select the hint button.</p>',
+  },
+  ],
+  data: {
+    answers: [
+      {
+        id: 'A',
+        title: 'the correct answer',
+        correct: true,
+        selectedFeedback: '',
+      },
+      {
+        id: 'B',
+        title: 'optional acceptable variant of the correct answer',
+        correct: true,
+        selectedFeedback: '',
+      },
+      {
+        id: 'C',
+        title: 'optional incorrect answer such as a frequent misconception',
+        correct: false,
+        selectedFeedback: '<p>You can specify optional feedback for none, a subset, or all of the answers.</p>',
+      },
+      {
+        id: 'D',
+        title: 'another optional incorrect answer such as a frequent misconception',
+        correct: false,
+        selectedFeedback: '<p>You can specify feedback again.</p>',
+      },
+    ],
+    additionalStringAttributes: {
+      type: 'ci',
+      textline: {
+        size: '20',
+      },
+    },
+  },
+  question: `<p>You can use this template as a guide to the simple editor markdown and OLX markup to use for text input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
+<label>Add the question text, or prompt, here. This text is required.</label>
+<em class="olx_description">You can add an optional tip or note related to the prompt like this. </em>`,
+  buildOLX: `<problem>
+  <stringresponse answer="the correct answer" type="ci">
+    <p>You can use this template as a guide to the simple editor markdown and OLX markup to use for text input with hints and feedback problems. Edit this component to replace this template with your own assessment.</p>
+    <label>Add the question text, or prompt, here. This text is required.</label>
+    <em>You can add an optional tip or note related to the prompt like this.</em>
+    <correcthint><p>You can specify optional feedback like this, which appears after this answer is submitted.</p></correcthint>
+    <additional_answer answer="optional acceptable variant of the correct answer"></additional_answer>
+    <stringequalhint answer="optional incorrect answer such as a frequent misconception"><p>You can specify optional feedback for none, a subset, or all of the answers.</p></stringequalhint>
+    <textline size="20"></textline>
+  </stringresponse>
+  <demandhint>
+    <hint><p>You can add an optional hint like this. Problems that have a hint include a hint button, and this text appears the first time learners select the button.</p></hint>
+    <hint><p>If you add more than one hint, a different hint appears each time learners select the hint button.</p></hint>
+  </demandhint>
+</problem>
+`,
+};
+
 export const textInputWithFeedbackAndHintsOLXWithMultipleAnswers = {
   rawOLX: `<problem>
 <stringresponse answer="the correct answer" type="ci">
