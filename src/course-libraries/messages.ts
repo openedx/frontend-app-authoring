@@ -106,6 +106,11 @@ const messages = defineMessages({
     defaultMessage: 'Search',
     description: 'Search text box in review tab placeholder text',
   },
+  brokenLinkTooltip: {
+    id: 'course-authoring.course-libraries.home-tab.broken-link.tooltip',
+    defaultMessage: 'Sourced from a library - but the upstream link is broken/invalid.',
+    description: 'Tooltip text describing broken link in component listing.',
+  },
 });
 
 export default messages;

@@ -22,9 +22,11 @@ import {
   Tabs,
   useToggle,
   SearchField,
+  OverlayTrigger,
+  Tooltip,
 } from '@openedx/paragon';
 import {
-  Cached, CheckCircle, KeyboardArrowDown, KeyboardArrowRight, Loop, MoreVert,
+  Cached, CheckCircle, KeyboardArrowDown, KeyboardArrowRight, LinkOff, Loop, MoreVert,
 } from '@openedx/paragon/icons';
 
 import _ from 'lodash';
@@ -65,6 +67,7 @@ interface LibraryCardProps {
 
 interface ComponentInfo extends ContentHit {
   readyToSync: boolean;
+  upstreamVersion: number | null;
 }
 
 interface BlockCardProps {
@@ -115,6 +118,18 @@ const BlockCard: React.FC<BlockCardProps> = ({ info, actions, reviewMode }) => {
             </Stack>
             <Stack direction="horizontal" className="small" gap={1}>
               {info.readyToSync && !reviewMode && <Icon src={Loop} size="xs" />}
+              {info.upstreamVersion === null && (
+                <OverlayTrigger
+                  placement="auto"
+                  overlay={
+                    <Tooltip id={`${info.id}-broken-link-tooltip`}>
+                      <FormattedMessage {...messages.brokenLinkTooltip} />
+                    </Tooltip>
+                  }
+                >
+                  <Icon src={LinkOff} size="xs" />
+                </OverlayTrigger>
+              )}
               <Highlight text={info.formatted?.displayName ?? ''} />
             </Stack>
             <div className="micro">
@@ -154,6 +169,8 @@ const LibraryCard: React.FC<LibraryCardProps> = ({ courseId, title, links }) => 
   const renderBlockCards = (info: ComponentInfo) => {
     // eslint-disable-next-line no-param-reassign
     info.readyToSync = linksInfo[info.usageKey].readyToSync;
+    // eslint-disable-next-line no-param-reassign
+    info.upstreamVersion = linksInfo[info.usageKey].upstreamVersion;
     return <BlockCard info={info} key={info.usageKey} />;
   };
 
