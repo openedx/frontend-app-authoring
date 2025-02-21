@@ -28,10 +28,14 @@ jest.mock('../../../../../../data/redux', () => ({
   thunkActions: {
     video: {
       deleteTranscript: jest.fn().mockName('thunkActions.video.deleteTranscript'),
+      updateTranscriptHandlerUrl: jest.fn().mockName('thunkActions.video.updateTranscriptHandlerUrl'),
     },
   },
 
   selectors: {
+    app: {
+      isLibrary: jest.fn(state => ({ isLibrary: state })),
+    },
     video: {
       transcripts: jest.fn(state => ({ transcripts: state })),
       selectedVideoTranscriptUrls: jest.fn(state => ({ selectedVideoTranscriptUrls: state })),

@@ -383,6 +383,16 @@ export const updateTranscriptLanguage = ({ newLanguageCode, languageBeforeChange
   }));
 };
 
+export const updateTranscriptHandlerUrl = () => (dispatch) => {
+  dispatch(requests.getHandlerlUrl({
+    handlerName: 'studio_transcript',
+    onSuccess: (response) => {
+      const transcriptHandlerUrl = response.data.handler_url;
+      dispatch(actions.video.updateField({ transcriptHandlerUrl }));
+    },
+  }));
+};
+
 export const replaceTranscript = ({ newFile, newFilename, language }) => (dispatch, getState) => {
   const state = getState();
   const { videoId } = state.video;
@@ -456,4 +466,5 @@ export default {
   replaceTranscript,
   uploadHandout,
   uploadVideo,
+  updateTranscriptHandlerUrl,
 };
