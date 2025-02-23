@@ -28,7 +28,7 @@ import Breadcrumbs from './breadcrumbs/Breadcrumbs';
 import HeaderNavigations from './header-navigations/HeaderNavigations';
 import Sequence from './course-sequence';
 import Sidebar from './sidebar';
-import { useCourseUnit, useLayoutGrid } from './hooks';
+import { useCourseUnit, useLayoutGrid, useScrollToLastPosition } from './hooks';
 import messages from './messages';
 import PublishControls from './sidebar/PublishControls';
 import LocationInfo from './sidebar/LocationInfo';
@@ -78,6 +78,8 @@ const CourseUnit = ({ courseId }) => {
   useEffect(() => {
     document.title = getPageHeadTitle('', unitTitle);
   }, [unitTitle]);
+
+  useScrollToLastPosition();
 
   const {
     isShow: isShowProcessingNotification,

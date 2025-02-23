@@ -2,11 +2,11 @@ import { useContext } from 'react';
 
 import { IframeContext, IframeContextType } from './iFrameContext';
 
-// eslint-disable-next-line import/prefer-default-export
 export const useIframe = (): IframeContextType => {
   const context = useContext(IframeContext);
   if (!context) {
-    throw new Error('useIframe must be used within an IframeProvider');
+    // eslint-disable-next-line no-console
+    console.error('useIframe must be used within an IframeProvider');
   }
-  return context;
+  return context as IframeContextType;
 };

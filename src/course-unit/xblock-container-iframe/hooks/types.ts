@@ -11,6 +11,7 @@ export type UseMessageHandlersTypes = {
   handleCloseLegacyEditorXBlockModal: () => void;
   handleSaveEditedXBlockData: () => void;
   handleFinishXBlockDragging: () => void;
+  handleOpenManageTagsModal: (id: string) => void;
 };
 
 export type MessageHandlersTypes = Record<string, (payload: any) => void>;

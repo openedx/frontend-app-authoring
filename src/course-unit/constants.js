@@ -75,4 +75,5 @@ export const messageTypes = {
   completeXBlockEditing: 'completeXBlockEditing',
   studioAjaxError: 'studioAjaxError',
   refreshPositions: 'refreshPositions',
+  openManageTags: 'openManageTags',
 };

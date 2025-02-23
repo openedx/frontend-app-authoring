@@ -61,7 +61,7 @@ const AddComponent = ({ blockId, handleCreateNewCourseXBlock }) => {
       case COMPONENT_TYPES.problem:
       case COMPONENT_TYPES.video:
         handleCreateNewCourseXBlock({ type, parentLocator: blockId }, ({ courseKey, locator }) => {
-          localStorage.setItem('modalEditLastYPosition', window.scrollY);
+          localStorage.setItem('createXBlockLastYPosition', window.scrollY);
           navigate(`/course/${courseKey}/editor/${type}/${locator}`);
         });
         break;
@@ -92,6 +92,7 @@ const AddComponent = ({ blockId, handleCreateNewCourseXBlock }) => {
           boilerplate: moduleName,
           parentLocator: blockId,
         }, ({ courseKey, locator }) => {
+          localStorage.setItem('createXBlockLastYPosition', window.scrollY);
           navigate(`/course/${courseKey}/editor/html/${locator}`);
         });
         break;

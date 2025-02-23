@@ -14,6 +14,7 @@ import {
   updateContentTaxonomyTags,
   getContentTaxonomyTagsCount,
 } from './api';
+import { useIframe } from '../../course-unit/context/hooks';
 import { libraryQueryPredicate, xblockQueryKeys } from '../../library-authoring/data/apiHooks';
 import { getLibraryId } from '../../generic/key-utils';
 
@@ -126,6 +127,7 @@ export const useContentData = (contentId) => (
  */
 export const useContentTaxonomyTagsUpdater = (contentId) => {
   const queryClient = useQueryClient();
+  const iframeContext = useIframe();
 
   return useMutation({
     /**
@@ -173,8 +175,9 @@ export const useContentTaxonomyTagsUpdater = (contentId) => {
             contentId,
             ...data,
           };
+          iframeContext?.sendMessageToIframe('authoring.events.tags.updated', { ...contentData });
           window.top?.postMessage(
-            { type: 'authoring.events.tags.updated', data: contentData },
+            { type: 'authoring.events.tags.updated', payload: { ...contentData } },
             getConfig().STUDIO_BASE_URL,
           );
         });
@@ -185,8 +188,9 @@ export const useContentTaxonomyTagsUpdater = (contentId) => {
             contentId,
             count: data,
           };
+          iframeContext?.sendMessageToIframe('authoring.events.tags.count.updated', { ...contentData });
           window.top?.postMessage(
-            { type: 'authoring.events.tags.count.updated', data: contentData },
+            { type: 'authoring.events.tags.count.updated', payload: { ...contentData } },
             getConfig().STUDIO_BASE_URL,
           );
         });
