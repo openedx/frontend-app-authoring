@@ -2,7 +2,7 @@ export const LAST_EXPORT_COOKIE_NAME = 'lastexport';
 export const LINK_CHECK_STATUSES = {
   UNINITIATED: 'Uninitiated',
   PENDING: 'Pending',
-  IN_PROGRESS: 'In-Progress',
+  IN_PROGRESS: 'In Progress',
   SUCCEEDED: 'Succeeded',
   FAILED: 'Failed',
   CANCELED: 'Canceled',
@@ -11,7 +11,7 @@ export const LINK_CHECK_STATUSES = {
 export enum LinkCheckStatusTypes {
   UNINITIATED = 'Uninitiated',
   PENDING = 'Pending',
-  IN_PROGRESS = 'In-Progress',
+  IN_PROGRESS = 'In Progress',
   SUCCEEDED = 'Succeeded',
   FAILED = 'Failed',
   CANCELED = 'Canceled',

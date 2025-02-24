@@ -4,6 +4,9 @@ import {
   render,
   initializeMocks,
   waitFor,
+  screen,
+  act,
+  fireEvent,
 } from '../testUtils';
 import AdvancedEditor from './AdvancedEditor';
 
@@ -17,7 +20,7 @@ describe('AdvancedEditor', () => {
     initializeMocks();
   });
 
-  it('should call onClose when receiving "cancel-clicked" message', () => {
+  it('should call onClose when receiving "cancel-clicked" message', async () => {
     render(<AdvancedEditor usageKey="test" onClose={onCloseMock} />);
 
     const messageEvent = new MessageEvent('message', {
@@ -28,8 +31,17 @@ describe('AdvancedEditor', () => {
       origin: getConfig().STUDIO_BASE_URL,
     });
 
-    window.dispatchEvent(messageEvent);
+    act(() => {
+      // Send cancel event
+      window.dispatchEvent(messageEvent);
+    });
 
+    // Expect open cancel confimation modal
+    expect(await screen.findByText(/Are you sure you want to exit the editor/)).toBeInTheDocument();
+    // Click on "OK"
+    const confirmButton = await screen.findByRole('button', { name: 'OK' });
+    fireEvent.click(confirmButton);
+    // Should call `onClose`
     expect(onCloseMock).toHaveBeenCalled();
   });
 

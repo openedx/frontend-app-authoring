@@ -233,6 +233,126 @@ describe('<CourseUnit />', () => {
     });
   });
 
+  it('displays an error alert when a studioAjaxError message is received', async () => {
+    const { getByTitle, getByTestId } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      const xblocksIframe = getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+      expect(xblocksIframe).toBeInTheDocument();
+      simulatePostMessageEvent(messageTypes.studioAjaxError, {
+        error: 'Some error text...',
+      });
+    });
+    expect(getByTestId('saving-error-alert')).toBeInTheDocument();
+  });
+
+  it('renders XBlock iframe and opens legacy edit modal on editXBlock message', async () => {
+    const { getByTitle } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      const xblocksIframe = getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+      expect(xblocksIframe).toBeInTheDocument();
+      simulatePostMessageEvent(messageTypes.editXBlock, { id: blockId });
+
+      const legacyXBlockEditModalIframe = getByTitle(
+        xblockContainerIframeMessages.legacyEditModalIframeTitle.defaultMessage,
+      );
+      expect(legacyXBlockEditModalIframe).toBeInTheDocument();
+    });
+  });
+
+  it('closes the legacy edit modal when closeXBlockEditorModal message is received', async () => {
+    const { getByTitle, queryByTitle } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      const xblocksIframe = getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+      expect(xblocksIframe).toBeInTheDocument();
+      simulatePostMessageEvent(messageTypes.closeXBlockEditorModal, { id: blockId });
+
+      const legacyXBlockEditModalIframe = queryByTitle(
+        xblockContainerIframeMessages.legacyEditModalIframeTitle.defaultMessage,
+      );
+      expect(legacyXBlockEditModalIframe).not.toBeInTheDocument();
+    });
+  });
+
+  it('closes legacy edit modal and updates course unit sidebar after saveEditedXBlockData message', async () => {
+    const { getByTitle, queryByTitle, getByTestId } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      const xblocksIframe = getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+      expect(xblocksIframe).toBeInTheDocument();
+      simulatePostMessageEvent(messageTypes.saveEditedXBlockData);
+
+      const legacyXBlockEditModalIframe = queryByTitle(
+        xblockContainerIframeMessages.legacyEditModalIframeTitle.defaultMessage,
+      );
+      expect(legacyXBlockEditModalIframe).not.toBeInTheDocument();
+    });
+
+    axiosMock
+      .onGet(getCourseUnitApiUrl(blockId))
+      .reply(200, {
+        ...courseUnitIndexMock,
+        has_changes: true,
+        published_by: userName,
+      });
+
+    await waitFor(() => {
+      const courseUnitSidebar = getByTestId('course-unit-sidebar');
+      expect(
+        within(courseUnitSidebar).getByText(sidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage),
+      ).toBeInTheDocument();
+      expect(
+        within(courseUnitSidebar).getByText(sidebarMessages.releaseStatusTitle.defaultMessage),
+      ).toBeInTheDocument();
+      expect(
+        within(courseUnitSidebar).getByText(sidebarMessages.sidebarBodyNote.defaultMessage),
+      ).toBeInTheDocument();
+      expect(
+        within(courseUnitSidebar).queryByRole('button', {
+          name: sidebarMessages.actionButtonPublishTitle.defaultMessage,
+        }),
+      ).toBeInTheDocument();
+    });
+  });
+
+  it('updates course unit sidebar after receiving refreshPositions message', async () => {
+    const { getByTitle, getByTestId } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      const xblocksIframe = getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+      expect(xblocksIframe).toBeInTheDocument();
+      simulatePostMessageEvent(messageTypes.refreshPositions);
+    });
+
+    axiosMock
+      .onGet(getCourseUnitApiUrl(blockId))
+      .reply(200, {
+        ...courseUnitIndexMock,
+        has_changes: true,
+        published_by: userName,
+      });
+
+    await waitFor(() => {
+      const courseUnitSidebar = getByTestId('course-unit-sidebar');
+      expect(
+        within(courseUnitSidebar).getByText(sidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage),
+      ).toBeInTheDocument();
+      expect(
+        within(courseUnitSidebar).getByText(sidebarMessages.releaseStatusTitle.defaultMessage),
+      ).toBeInTheDocument();
+      expect(
+        within(courseUnitSidebar).getByText(sidebarMessages.sidebarBodyNote.defaultMessage),
+      ).toBeInTheDocument();
+      expect(
+        within(courseUnitSidebar).queryByRole('button', {
+          name: sidebarMessages.actionButtonPublishTitle.defaultMessage,
+        }),
+      ).toBeInTheDocument();
+    });
+  });
+
   it('checks whether xblock is removed when the corresponding delete button is clicked and the sidebar is the updated', async () => {
     const {
       getByTitle, getByText, queryByRole, getAllByRole, getByRole,
