@@ -175,6 +175,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
       <iframe
         ref={iframeRef}
         title={intl.formatMessage(messages.xblockIframeTitle)}
+        name="xblock-iframe"
         src={iframeUrl}
         frameBorder="0"
         allow={IFRAME_FEATURE_POLICY}
@@ -190,6 +191,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
           position="right"
           show={isManageTagsOpen}
           onClose={closeManageTagsModal}
+          blocking
         >
           <ContentTagsDrawer id={configureXBlockId} onClose={closeManageTagsModal} />
         </Sheet>

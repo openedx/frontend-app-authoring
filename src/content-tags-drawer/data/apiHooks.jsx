@@ -126,7 +126,7 @@ export const useContentData = (contentId) => (
  */
 export const useContentTaxonomyTagsUpdater = (contentId) => {
   const queryClient = useQueryClient();
-  const unitIframe = window.frames[0];
+  const unitIframe = window.frames['xblock-iframe'];
 
   return useMutation({
     /**
