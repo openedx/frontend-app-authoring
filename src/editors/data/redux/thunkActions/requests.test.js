@@ -19,14 +19,12 @@ jest.mock('../app/selectors', () => ({
   blockId: (state) => ({ blockId: state }),
   blockType: (state) => ({ blockType: state }),
   learningContextId: (state) => ({ learningContextId: state }),
-  blockTitle: (state) => ({ title: state }),
+  blockTitle: (state) => state.some,
   isLibrary: (state) => (state.isLibrary),
 }));
 
 jest.mock('../video/selectors', () => ({
   transcriptHandlerUrl: () => ('transcriptHandlerUrl'),
-  blockTitle: (state) => state.data,
-  blockTitle: (state) => state.some,
 }));
 
 jest.mock('../../services/cms/api', () => ({
@@ -476,26 +474,27 @@ describe('requests thunkActions module', () => {
         });
 
         it('should replace the base64 image with the image path in the content', (done) => {
-   /*       const onLoad = jest.fn();
+          /*       const onLoad = jest.fn();
           const readAsDataURLMock = jest.fn(() => {
             this.result = 'data:image/jpeg;base64,TESTBASE64';
             onLoad();
-          });*/
+          }); */
           class FileReaderMock {
             constructor() {
               this.result = '';
               this.onload = null;
             }
+
             addEventListener(event, callback) {
               if (event === 'load') {
-                this.onLoad =callback;
+                this.onLoad = callback;
               }
             }
 
             readAsDataURL() {
               this.result = 'data:image/jpeg;base64,TESTBASE64';
               this.onLoad();
-            };
+            }
           }
           global.FileReader = FileReaderMock;
           global.URL.revokeObjectURL = jest.fn();
