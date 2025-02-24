@@ -1,3 +1,4 @@
+import { getConfig } from '@edx/frontend-platform';
 import {
   initializeMocks,
   render as baseRender,
@@ -67,17 +68,17 @@ describe('<ComponentDetails />', () => {
     expect(links[0]).toHaveTextContent('Unit 1');
     expect(links[0]).toHaveAttribute(
       'href',
-      '/course/course-v1:org+course1+run/container/block-v1:org+course1+run+type@vertical+block@verticalId1',
+      `${getConfig().STUDIO_BASE_URL}/container/block-v1:org+course1+run+type@vertical+block@verticalId1`,
     );
     expect(links[1]).toHaveTextContent('Unit 2');
     expect(links[1]).toHaveAttribute(
       'href',
-      '/course/course-v1:org+course1+run/container/block-v1:org+course1+run+type@vertical+block@verticalId2',
+      `${getConfig().STUDIO_BASE_URL}/container/block-v1:org+course1+run+type@vertical+block@verticalId2`,
     );
     expect(links[2]).toHaveTextContent('Problem Bank 3');
     expect(links[2]).toHaveAttribute(
       'href',
-      '/course/course-v1:org+course2+run/container/block-v1:org+course2+run+type@itembank+block@itembankId3',
+      `${getConfig().STUDIO_BASE_URL}/container/block-v1:org+course2+run+type@itembank+block@itembankId3`,
     );
   });
 

@@ -1,6 +1,6 @@
-import { getConfig, getPath } from '@edx/frontend-platform';
+import { getConfig } from '@edx/frontend-platform';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
-import { Collapsible, Hyperlink } from '@openedx/paragon';
+import { Collapsible, Hyperlink, Stack } from '@openedx/paragon';
 
 import AlertError from '../../generic/alert-error';
 import Loading from '../../generic/Loading';
@@ -22,8 +22,8 @@ type ComponentUsageTree = Record<string, {
   }[]
 }>;
 
-const getContainerUrl = (contextKey: string, usageKey: string) => (
-  `${getPath(getConfig().PUBLIC_PATH)}course/${contextKey}/container/${usageKey}`
+const getContainerUrl = (usageKey: string) => (
+  `${getConfig().STUDIO_BASE_URL}/container/${usageKey}`
 );
 
 export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
@@ -69,7 +69,7 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
 
     const linkData = {
       ...link,
-      url: getContainerUrl(hit.contextKey, link.usageKey),
+      url: getContainerUrl(link.usageKey),
     };
 
     if (hit.contextKey in acc) {
@@ -91,9 +91,11 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
       {
         componentUsageList.map((context) => (
           <Collapsible key={context.key} title={context.contextName} styling="basic">
-            {context.links.map(({ usageKey: downstreamUsageKey, displayName, url }) => (
-              <Hyperlink key={downstreamUsageKey} destination={url} target="_blank">{displayName}</Hyperlink>
-            ))}
+            <Stack>
+              {context.links.map(({ usageKey: downstreamUsageKey, displayName, url }) => (
+                <Hyperlink key={downstreamUsageKey} destination={url} target="_blank">{displayName}</Hyperlink>
+              ))}
+            </Stack>
           </Collapsible>
         ))
       }
