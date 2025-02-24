@@ -90,7 +90,7 @@ const App = () => {
 
 subscribe(APP_READY, () => {
   ReactDOM.render(
-    (<App />),
+    (<div className={'mfe-course-authoring'}><App /></div>),
     document.getElementById('root'),
   );
 });
