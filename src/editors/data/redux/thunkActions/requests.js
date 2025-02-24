@@ -159,25 +159,27 @@ export const createBlock = ({ ...rest }) => (dispatch, getState) => {
   }));
 };
 
+// exportend only for test
+export const removeTemporalLink = (response, asset, content, resolve) => {
+  const imagePath = `/${response.data.asset.portableUrl}`;
+  const reader = new FileReader();
+  reader.addEventListener('load', () => {
+    const imageBS64 = reader.result.toString();
+    const parsedContent = typeof content === 'string' ? content.replace(imageBS64, imagePath) : { ...content, olx: content.olx.replace(imageBS64, imagePath) };
+    URL.revokeObjectURL(asset);
+    resolve(parsedContent);
+  });
+  reader.readAsDataURL(asset);
+};
+
 export const batchUploadAssets = ({ assets, content, ...rest }) => (dispatch) => {
-  let newContent = content;
   const promises = assets.reduce((promiseChain, asset) => promiseChain
-    .then(() => new Promise((resolve) => {
+    .then((parsedContent) => new Promise((resolve) => {
       dispatch(module.uploadAsset({
         asset,
-        onSuccess: (response) => {
-          const imagePath = `/${response.data.asset.portableUrl}`;
-          const reader = new FileReader();
-          reader.addEventListener('load', () => {
-            const imageBS64 = reader.result.toString();
-            newContent = typeof content === 'string' ? newContent?.replace(imageBS64, imagePath) : { ...newContent, olx: newContent.olx.replace(imageBS64, imagePath) };
-            URL.revokeObjectURL(asset);
-            resolve(newContent);
-          });
-          reader.readAsDataURL(asset);
-        },
+        onSuccess: (response) => removeTemporalLink(response, asset, parsedContent, resolve),
       }));
-    })), Promise.resolve());
+    })), Promise.resolve(content));
 
   dispatch(module.networkRequest({
     requestKey: RequestKeys.batchUploadAssets,
