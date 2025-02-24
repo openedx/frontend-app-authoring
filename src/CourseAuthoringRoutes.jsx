@@ -51,7 +51,7 @@ const CourseAuthoringRoutes = () => {
       <Routes>
         <Route
           path="/"
-          element={<PageWrap><IframeProvider><CourseOutline courseId={courseId} /></IframeProvider></PageWrap>}
+          element={<PageWrap><CourseOutline courseId={courseId} /></PageWrap>}
         />
         <Route
           path="course_info"

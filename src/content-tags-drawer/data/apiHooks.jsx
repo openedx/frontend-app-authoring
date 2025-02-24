@@ -14,7 +14,6 @@ import {
   updateContentTaxonomyTags,
   getContentTaxonomyTagsCount,
 } from './api';
-import { useIframe } from '../../course-unit/context/hooks';
 import { libraryQueryPredicate, xblockQueryKeys } from '../../library-authoring/data/apiHooks';
 import { getLibraryId } from '../../generic/key-utils';
 
@@ -127,7 +126,7 @@ export const useContentData = (contentId) => (
  */
 export const useContentTaxonomyTagsUpdater = (contentId) => {
   const queryClient = useQueryClient();
-  const iframeContext = useIframe();
+  const unitIframe = window.frames[0];
 
   return useMutation({
     /**
@@ -171,28 +170,32 @@ export const useContentTaxonomyTagsUpdater = (contentId) => {
 
         // Sends content tags.
         getContentTaxonomyTagsData(contentId).then((data) => {
-          const contentData = {
-            contentId,
-            ...data,
+          const contentData = { contentId, ...data };
+
+          const message = {
+            type: 'authoring.events.tags.updated',
+            data: contentData,
           };
-          iframeContext?.sendMessageToIframe('authoring.events.tags.updated', { ...contentData });
-          window.top?.postMessage(
-            { type: 'authoring.events.tags.updated', payload: { ...contentData } },
-            getConfig().STUDIO_BASE_URL,
-          );
+
+          const targetOrigin = getConfig().STUDIO_BASE_URL;
+
+          unitIframe?.postMessage(message, targetOrigin);
+          window.top?.postMessage(message, targetOrigin);
         });
 
         // Sends tags count.
-        getContentTaxonomyTagsCount(contentId).then((data) => {
-          const contentData = {
-            contentId,
-            count: data,
+        getContentTaxonomyTagsCount(contentId).then((count) => {
+          const contentData = { contentId, count };
+
+          const message = {
+            type: 'authoring.events.tags.count.updated',
+            data: contentData,
           };
-          iframeContext?.sendMessageToIframe('authoring.events.tags.count.updated', { ...contentData });
-          window.top?.postMessage(
-            { type: 'authoring.events.tags.count.updated', payload: { ...contentData } },
-            getConfig().STUDIO_BASE_URL,
-          );
+
+          const targetOrigin = getConfig().STUDIO_BASE_URL;
+
+          unitIframe?.postMessage(message, targetOrigin);
+          window.top?.postMessage(message, targetOrigin);
         });
       }
     },
