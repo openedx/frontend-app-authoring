@@ -5,6 +5,8 @@ const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
 export const getEntityLinksByDownstreamContextUrl = (downstreamContextKey: string) => `${getApiBaseUrl()}/api/contentstore/v2/upstreams/${downstreamContextKey}`;
 
+export const getEntityLinksSummaryByDownstreamContextUrl = (downstreamContextKey: string) => `${getEntityLinksByDownstreamContextUrl(downstreamContextKey)}/summary`
+
 export interface PublishableEntityLink {
   id: number;
   upstreamUsageKey: string;
@@ -21,6 +23,13 @@ export interface PublishableEntityLink {
   readyToSync: boolean;
 }
 
+export interface PublishableEntityLinkSummary {
+  upstreamContextKey: string;
+  upstreamContextTitle: string;
+  readyToSyncCount: number;
+  totalCount: number;
+}
+
 export const getEntityLinksByDownstreamContext = async (
   downstreamContextKey: string,
   readyToSync?: boolean,
@@ -29,5 +38,13 @@ export const getEntityLinksByDownstreamContext = async (
     .get(getEntityLinksByDownstreamContextUrl(downstreamContextKey), {
       params: { ready_to_sync: readyToSync },
     });
+  return camelCaseObject(data);
+};
+
+export const getEntityLinksSummaryByDownstreamContext = async (
+  downstreamContextKey: string,
+): Promise<PublishableEntityLinkSummary[]> => {
+  const { data } = await getAuthenticatedHttpClient()
+    .get(getEntityLinksSummaryByDownstreamContextUrl(downstreamContextKey));
   return camelCaseObject(data);
 };
