@@ -147,7 +147,6 @@ initialize({
         ENABLE_CHECKLIST_QUALITY: process.env.ENABLE_CHECKLIST_QUALITY || 'true',
         ENABLE_GRADING_METHOD_IN_PROBLEMS: process.env.ENABLE_GRADING_METHOD_IN_PROBLEMS === 'true',
         LIBRARY_SUPPORTED_BLOCKS: (process.env.LIBRARY_SUPPORTED_BLOCKS || 'problem,video,html').split(','),
-        LIBRARY_ADVANCED_BLOCKS: (process.env.LIBRARY_ADVANCED_BLOCKS || '').split(',').filter(Boolean),
       }, 'CourseAuthoringConfig');
     },
   },

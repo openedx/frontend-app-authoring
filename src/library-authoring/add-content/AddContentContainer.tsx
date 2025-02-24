@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import type { MessageDescriptor } from 'react-intl';
 import { useSelector } from 'react-redux';
 import {
@@ -25,12 +25,18 @@ import { v4 as uuid4 } from 'uuid';
 import { ToastContext } from '../../generic/toast-context';
 import { useCopyToClipboard } from '../../generic/clipboard';
 import { getCanEdit } from '../../course-unit/data/selectors';
-import { useCreateLibraryBlock, useLibraryPasteClipboard, useAddComponentsToCollection } from '../data/apiHooks';
+import {
+  useCreateLibraryBlock,
+  useLibraryPasteClipboard,
+  useAddComponentsToCollection,
+  useBlockTypesMetadata,
+} from '../data/apiHooks';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { canEditComponent } from '../components/ComponentEditorModal';
 import { PickLibraryContentModal } from './PickLibraryContentModal';
 
 import messages from './messages';
+import type { BlockTypeMetadata } from '../data/api';
 
 type ContentType = {
   name: string,
@@ -54,8 +60,7 @@ type AddContentViewProps = {
 type AddAdvancedContentViewProps = {
   closeAdvancedList: () => void,
   onCreateContent: (blockType: string) => void,
-  isBlockTypeEnabled: (blockType: string) => boolean,
-  isBasicBlock: (blockType: string) => boolean,
+  advancedBlocks: Record<string, BlockTypeMetadata>,
 };
 
 const AddContentButton = ({ contentType, onCreateContent } : AddContentButtonProps) => {
@@ -135,25 +140,9 @@ const AddContentView = ({
 const AddAdvancedContentView = ({
   closeAdvancedList,
   onCreateContent,
-  isBlockTypeEnabled,
-  isBasicBlock,
+  advancedBlocks,
 }: AddAdvancedContentViewProps) => {
   const intl = useIntl();
-  // We use block types data from backend to verify if the blocks
-  // in `LIBRARY_ADVANCED_BLOCKS` exists. This is to avoid show a non-existent
-  // block in the advanced blocks list.
-  // Also, we use that data to get the translated display name of the block.
-  const { blockTypesData } = useLibraryContext();
-  const advancedBlocks = getConfig().LIBRARY_ADVANCED_BLOCKS.filter((block) => {
-    if (!blockTypesData
-        || !Object.prototype.hasOwnProperty.call(blockTypesData, block)
-        || !isBlockTypeEnabled(block)
-        || isBasicBlock(block)) {
-      return false;
-    }
-    return true;
-  });
-
   return (
     <>
       <div className="d-flex">
@@ -161,11 +150,11 @@ const AddAdvancedContentView = ({
           {intl.formatMessage(messages.backToAddContentListButton)}
         </Button>
       </div>
-      {advancedBlocks.map((blockType) => (
+      {Object.keys(advancedBlocks).map((blockType) => (
         <AddContentButton
           key={`add-content-${blockType}`}
           contentType={{
-            name: blockTypesData ? blockTypesData[blockType].displayName : blockType,
+            name: advancedBlocks[blockType].displayName,
             blockType,
             icon: AutoAwesome,
             disabled: false,
@@ -196,6 +185,15 @@ const AddContentContainer = () => {
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
   const [isAdvancedListOpen, showAdvancedList, closeAdvancedList] = useToggle();
 
+  // We use block types data from backend to verify the enabled advanced blocks.
+  // Also, we use that data to get the translated display name of the block.
+  // TODO: It is possible to use this data to verify the basic blocks as well.
+  const { data: blockTypesDataList } = useBlockTypesMetadata(libraryId);
+  const blockTypesData = useMemo(() => blockTypesDataList?.reduce((acc, block) => {
+    acc[block.blockType] = block;
+    return acc;
+  }, {}), [blockTypesDataList]);
+
   const parseErrorMsg = (
     error: any,
     detailedMessage: MessageDescriptor,
@@ -214,11 +212,6 @@ const AddContentContainer = () => {
   };
 
   const isBlockTypeEnabled = (blockType: string) => getConfig().LIBRARY_SUPPORTED_BLOCKS.includes(blockType);
-
-  const isAdvancedEnabled = () => {
-    const blocks = getConfig().LIBRARY_ADVANCED_BLOCKS;
-    return Array.isArray(blocks) && blocks.length > 0;
-  };
 
   const contentTypes = [
     {
@@ -251,17 +244,26 @@ const AddContentContainer = () => {
       icon: VideoCamera,
       blockType: 'video',
     },
-    {
-      name: intl.formatMessage(messages.otherTypeButton),
-      disabled: !isAdvancedEnabled(),
-      icon: AutoAwesome,
-      blockType: 'advancedXBlock',
-    },
   ];
 
   const isBasicBlock = (blockType: string) => contentTypes.some(
     content => content.blockType === blockType,
   );
+
+  const advancedBlocks = useMemo(() => (blockTypesData ? Object.fromEntries(
+    Object.entries(blockTypesData).filter(([key]) => !isBasicBlock(key)),
+  ) : {}), [blockTypesData]) as Record<string, BlockTypeMetadata>;
+
+  // Include the 'Advanced / Other' button if there are enabled advanced Xblocks
+  if (Object.keys(advancedBlocks).length > 0) {
+    const pasteButton = {
+      name: intl.formatMessage(messages.otherTypeButton),
+      disabled: false,
+      icon: AutoAwesome,
+      blockType: 'advancedXBlock',
+    };
+    contentTypes.push(pasteButton);
+  }
 
   // Include the 'Paste from Clipboard' button if there is an Xblock in the clipboard
   // that can be pasted
@@ -350,8 +352,7 @@ const AddContentContainer = () => {
         <AddAdvancedContentView
           closeAdvancedList={closeAdvancedList}
           onCreateContent={onCreateContent}
-          isBlockTypeEnabled={isBlockTypeEnabled}
-          isBasicBlock={isBasicBlock}
+          advancedBlocks={advancedBlocks}
         />
       ) : (
         <AddContentView

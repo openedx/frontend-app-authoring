@@ -52,7 +52,8 @@ describe('<AddContentContainer />', () => {
   afterEach(() => {
     jest.restoreAllMocks();
   });
-  it('should render content buttons', () => {
+  it('should render content buttons', async () => {
+    mockBlockTypesMetadata.applyMock();
     mockClipboardEmpty.applyMock();
     render();
     expect(screen.queryByRole('button', { name: /collection/i })).toBeInTheDocument();
@@ -61,8 +62,8 @@ describe('<AddContentContainer />', () => {
     expect(screen.queryByRole('button', { name: /open reponse/i })).not.toBeInTheDocument(); // Excluded from MVP
     expect(screen.queryByRole('button', { name: /drag drop/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /video/i })).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /advanced \/ other/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /copy from clipboard/i })).not.toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /advanced \/ other/i })).toBeInTheDocument();
   });
 
   it('should render advanced content buttons', async () => {
@@ -70,7 +71,7 @@ describe('<AddContentContainer />', () => {
     mockClipboardEmpty.applyMock();
     render();
 
-    const advancedButton = screen.getByRole('button', { name: /advanced \/ other/i });
+    const advancedButton = await screen.findByRole('button', { name: /advanced \/ other/i });
     fireEvent.click(advancedButton);
 
     expect(await screen.findByRole('button', { name: /poll/i })).toBeInTheDocument();
@@ -78,12 +79,12 @@ describe('<AddContentContainer />', () => {
     expect(await screen.findByRole('button', { name: /google document/i })).toBeInTheDocument();
   });
 
-  it('should return to content view', async () => {
+  it('should return to content view fron advanced block creation view', async () => {
     mockBlockTypesMetadata.applyMock();
     mockClipboardEmpty.applyMock();
     render();
 
-    const advancedButton = screen.getByRole('button', { name: /advanced \/ other/i });
+    const advancedButton = await screen.findByRole('button', { name: /advanced \/ other/i });
     fireEvent.click(advancedButton);
 
     expect(await screen.findByRole('button', { name: /poll/i })).toBeInTheDocument();
@@ -101,7 +102,7 @@ describe('<AddContentContainer />', () => {
     axiosMock.onPost(url).reply(200);
     render();
 
-    const advancedButton = screen.getByRole('button', { name: /advanced \/ other/i });
+    const advancedButton = await screen.findByRole('button', { name: /advanced \/ other/i });
     fireEvent.click(advancedButton);
 
     const surveyButton = await screen.findByRole('button', { name: /survey/i });
