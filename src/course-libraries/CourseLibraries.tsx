@@ -10,13 +10,9 @@ import {
   Breadcrumb,
   Button,
   Card,
-  Collapsible,
   Container,
-  Dropdown,
   Hyperlink,
   Icon,
-  IconButton,
-  Layout,
   Stack,
   Tab,
   Tabs,
@@ -26,7 +22,7 @@ import {
   Tooltip,
 } from '@openedx/paragon';
 import {
-  Cached, CheckCircle, KeyboardArrowDown, KeyboardArrowRight, LinkOff, Loop, MoreVert,
+  Cached, CheckCircle, Launch, LinkOff, Loop,
 } from '@openedx/paragon/icons';
 
 import _ from 'lodash';
@@ -37,8 +33,8 @@ import messages from './messages';
 import {default as previewChangesMessages} from '../course-unit/preview-changes/messages'
 import {default as searchMessages} from '../search-manager/messages'
 import SubHeader from '../generic/sub-header/SubHeader';
-import { courseLibrariesQueryKeys, useEntityLinksByDownstreamContext } from './data/apiHooks';
-import type { PublishableEntityLink } from './data/api';
+import { courseLibrariesQueryKeys, useEntityLinksSummaryByDownstreamContext } from './data/apiHooks';
+import type { PublishableEntityLink, PublishableEntityLinkSummary } from './data/api';
 import { useFetchIndexDocuments } from '../search-manager/data/apiHooks';
 import { getItemIcon } from '../generic/block-type-utils';
 import { BlockTypeLabel, Highlight } from '../search-manager';
@@ -54,15 +50,14 @@ import { useSearchParams } from 'react-router-dom';
 import LoadingButton from '../generic/loading-button';
 import { ToastContext } from '../generic/toast-context';
 import { BaseSearchSortWidget } from '../search-manager/SearchSortWidget';
+import NewsstandIcon from '../generic/NewsstandIcon';
 
 interface Props {
   courseId: string;
 }
 
 interface LibraryCardProps {
-  courseId: string;
-  title: string;
-  links: PublishableEntityLink[];
+  linkSummary: PublishableEntityLinkSummary;
 }
 
 interface ComponentInfo extends ContentHit {
@@ -152,100 +147,56 @@ const BlockCard: React.FC<BlockCardProps> = ({ info, actions, reviewMode }) => {
   );
 };
 
-const LibraryCard: React.FC<LibraryCardProps> = ({ courseId, title, links }) => {
+const LibraryCard = ({ linkSummary }: LibraryCardProps) => {
   const intl = useIntl();
-  const linksInfo = useMemo(() => _.keyBy(links, 'downstreamUsageKey'), [links]);
-  const totalComponents = links.length;
-  const outOfSyncCount = useMemo(() => _.countBy(links, 'readyToSync').true, [links]);
-  const downstreamKeys = useMemo(() => _.uniq(Object.keys(linksInfo)), [links]);
-  const { data: downstreamInfo } = useFetchIndexDocuments(
-    filter: [`context_key = "${courseId}"`, `usage_key IN ["${downstreamKeys.join('","')}"]`],
-    limit: downstreamKeys.length,
-    attributesToRetrieve: ['usage_key', 'display_name', 'breadcrumbs', 'description', 'block_type'],
-    attributesToCrop: ['description:30'],
-    sort: [SearchSortOption.TITLE_AZ],
-  ) as unknown as { data: ComponentInfo[] };
-
-  const renderBlockCards = (info: ComponentInfo) => {
-    // eslint-disable-next-line no-param-reassign
-    info.readyToSync = linksInfo[info.usageKey].readyToSync;
-    // eslint-disable-next-line no-param-reassign
-    info.upstreamVersion = linksInfo[info.usageKey].upstreamVersion;
-    return <BlockCard info={info} key={info.usageKey} />;
-  };
 
   return (
-    <Collapsible.Advanced>
-      <Collapsible.Trigger className="bg-white shadow px-2 py-2 my-3 collapsible-trigger d-flex font-weight-normal text-dark">
-        <Collapsible.Visible whenClosed>
-          <Icon src={KeyboardArrowRight} />
-        </Collapsible.Visible>
-        <Collapsible.Visible whenOpen>
-          <Icon src={KeyboardArrowDown} />
-        </Collapsible.Visible>
-        <Stack direction="vertical" className="flex-grow-1 pl-2 x-small" gap={1}>
-          <h4>{title}</h4>
-          <Stack direction="horizontal" gap={2}>
-            <span>
-              {intl.formatMessage(messages.totalComponentLabel, { totalComponents })}
-            </span>
-            <span>/</span>
-            {outOfSyncCount ? (
-              <>
-                <Icon src={Loop} size="xs" />
-                <span>
-                  {intl.formatMessage(messages.outOfSyncCountLabel, { outOfSyncCount })}
-                </span>
-              </>
-            ) : (
-              <>
-                <Icon src={CheckCircle} size="xs" />
-                <span>
-                  {intl.formatMessage(messages.allUptodateLabel)}
-                </span>
-              </>
-            )}
-          </Stack>
+    <Card className="my-3 border-light-500 border shadow-none">
+      <Card.Header
+        title={(<Stack direction="horizontal" gap={2}>
+          <Icon src={NewsstandIcon} />
+          {linkSummary.upstreamContextTitle}
+        </Stack>)}
+        actions={
+          <ActionRow>
+            <Button
+              destination={`${getConfig().PUBLIC_PATH}library/${linkSummary.upstreamContextKey}`}
+              target='_blank'
+              className="border border-light-300"
+              variant="tertiary"
+              as={Hyperlink}
+              size="sm"
+              showLaunchIcon={false}
+              iconAfter={Launch}
+            >
+              View Library
+            </Button>
+          </ActionRow>
+        }
+        size="sm"
+      />
+      <Card.Section>
+        <Stack
+          direction="horizontal"
+          gap={4}
+          className="x-small"
+        >
+          <span>
+            {intl.formatMessage(messages.totalComponentLabel, { totalComponents: linkSummary.totalCount })}
+          </span>
+          {linkSummary.readyToSyncCount > 0 && (
+            <Stack direction="horizontal" gap={1}>
+              <Icon src={Loop} size="xs" />
+              <span>
+                {intl.formatMessage(messages.outOfSyncCountLabel, { outOfSyncCount: linkSummary.readyToSyncCount })}
+              </span>
+            </Stack>
+          )}
         </Stack>
-        <Dropdown onClick={(e: { stopPropagation: () => void; }) => e.stopPropagation()}>
-          <Dropdown.Toggle
-            id={`dropdown-toggle-${title}`}
-            alt="dropdown-toggle-menu-items"
-            as={IconButton}
-            src={MoreVert}
-            iconAs={Icon}
-            variant="primary"
-            disabled
-          />
-          <Dropdown.Menu>
-            <Dropdown.Item>TODO 1</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      </Collapsible.Trigger>
-
-      <Collapsible.Body className="collapsible-body border-left border-left-purple px-2">
-        {downstreamInfo?.map(info => renderBlockCards(info))}
-      </Collapsible.Body>
-    </Collapsible.Advanced>
+      </Card.Section>
+    </Card>
   );
 };
-
-const TabContent = ({ children }: { children: React.ReactNode }) => (
-  <Layout
-    lg={[{ span: 9 }, { span: 3 }]}
-    md={[{ span: 9 }, { span: 3 }]}
-    sm={[{ span: 12 }, { span: 12 }]}
-    xs={[{ span: 12 }, { span: 12 }]}
-    xl={[{ span: 9 }, { span: 3 }]}
-  >
-    <Layout.Element>
-      {children}
-    </Layout.Element>
-    <Layout.Element>
-      Help panel
-    </Layout.Element>
-  </Layout>
-);
 
 const ReviewTabContent = ({ courseId, outOfSyncComponents }: {
   courseId: string,
@@ -431,10 +382,8 @@ const CourseLibraries: React.FC<Props> = ({ courseId }) => {
     () => searchParams.get('tab') as CourseLibraryTabs || CourseLibraryTabs.all
   );
   const [showReviewAlert, setShowReviewAlert] = useState(false);
-  const { data: links, isLoading } = useEntityLinksByDownstreamContext(courseId);
-  const linksByLib = useMemo(() => _.groupBy(links, 'upstreamContextKey'), [links]);
-  const outOfSyncCount = useMemo(() => _.countBy(links, 'readyToSync').true, [links]);
-  const outOfSyncComponents = useMemo(() => _.filter(links, (link) => link.readyToSync), [links])
+  const { data: libraries, isLoading } = useEntityLinksSummaryByDownstreamContext(courseId);
+  const outOfSyncCount = useMemo(() => _.sumBy(libraries, (lib) => lib.readyToSyncCount), [libraries]);
   const {
     isLoadingPage: isLoadingStudioHome,
     isFailedLoadingPage: isFailedLoadingStudioHome,
@@ -453,29 +402,26 @@ const CourseLibraries: React.FC<Props> = ({ courseId }) => {
     if (isLoading) {
       return <Loading />;
     }
-    if (links?.length === 0) {
+    if (libraries?.length === 0) {
       return <small><FormattedMessage {...messages.homeTabDescriptionEmpty} /></small>;
     }
     return (
       <>
         <small><FormattedMessage {...messages.homeTabDescription} /></small>
-        {Object.entries(linksByLib).map(([libKey, libLinks]) => (
+        {libraries?.map((library) => (
           <LibraryCard
-            courseId={courseId}
-            title={libLinks[0].upstreamContextTitle}
-            links={libLinks}
-            key={libKey}
+            linkSummary={library}
           />
         ))}
       </>
     );
-  }, [links, isLoading, linksByLib]);
+  }, [libraries, isLoading]);
 
   const renderReviewTabContent = useCallback(() => {
     if (isLoading) {
       return <Loading />;
     }
-    if (!outOfSyncComponents || outOfSyncComponents?.length === 0) {
+    if (!outOfSyncCount || outOfSyncCount === 0) {
       return (
         <Stack direction="horizontal" gap={2}>
           <Icon src={CheckCircle} size="xs" />
@@ -485,8 +431,9 @@ const CourseLibraries: React.FC<Props> = ({ courseId }) => {
         </Stack>
       );
     }
-    return <ReviewTabContent courseId={courseId} outOfSyncComponents={outOfSyncComponents} />;
-  }, [outOfSyncComponents]);
+    return null;
+    //return <ReviewTabContent courseId={courseId} outOfSyncComponents={[]} />;
+  }, [outOfSyncCount]);
 
   if (!isLoadingStudioHome && (!librariesV2Enabled || isFailedLoadingStudioHome)) {
     return (
@@ -535,9 +482,7 @@ const CourseLibraries: React.FC<Props> = ({ courseId }) => {
               title={intl.formatMessage(messages.homeTabTitle)}
               className="px-2 mt-3"
             >
-              <TabContent>
-                {renderLibrariesTabContent()}
-              </TabContent>
+              {renderLibrariesTabContent()}
             </Tab>
             <Tab
               eventKey={CourseLibraryTabs.review}
@@ -550,9 +495,7 @@ const CourseLibraries: React.FC<Props> = ({ courseId }) => {
               notification={outOfSyncCount}
               className="px-2 mt-3"
             >
-              <TabContent>
-                {renderReviewTabContent()}
-              </TabContent>
+                TODO
             </Tab>
           </Tabs>
         </section>
