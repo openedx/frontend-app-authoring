@@ -1,3 +1,4 @@
+import React from 'react';
 import { renderHook, act } from '@testing-library/react-hooks';
 import { useScrollToLastPosition, useLayoutGrid } from './hooks';
 import { messageTypes } from './constants';
@@ -59,15 +60,24 @@ describe('useLayoutGrid', () => {
 describe('useScrollToLastPosition', () => {
   const storageKey = 'createXBlockLastYPosition';
   let scrollToSpy;
+  let clearTimeoutSpy;
+  let setTimeoutSpy;
+  let setStateSpy;
 
   beforeEach(() => {
     localStorage.clear();
     scrollToSpy = jest.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    clearTimeoutSpy = jest.spyOn(global, 'clearTimeout');
+    setTimeoutSpy = jest.spyOn(global, 'setTimeout');
+    setStateSpy = jest.spyOn(React, 'useState');
   });
 
   afterEach(() => {
     jest.clearAllTimers();
     scrollToSpy.mockRestore();
+    clearTimeoutSpy.mockRestore();
+    setTimeoutSpy.mockRestore();
+    setStateSpy.mockRestore();
   });
 
   it('should not add event listener if no lastYPosition is in localStorage', () => {
@@ -118,5 +128,54 @@ describe('useScrollToLastPosition', () => {
     unmount();
 
     expect(removeEventListenerSpy).toHaveBeenCalledWith('message', expect.any(Function));
+  });
+
+  it('should clear previous timeout before setting a new one on multiple message events', () => {
+    localStorage.setItem(storageKey, '500');
+
+    renderHook(() => useScrollToLastPosition(storageKey));
+
+    act(() => {
+      window.dispatchEvent(new MessageEvent('message', { data: { type: messageTypes.resize } }));
+      window.dispatchEvent(new MessageEvent('message', { data: { type: messageTypes.resize } }));
+    });
+
+    expect(clearTimeoutSpy).toHaveBeenCalled();
+    expect(setTimeoutSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('should not scroll if multiple message events prevent execution of setTimeout callback', () => {
+    localStorage.setItem(storageKey, '500');
+
+    renderHook(() => useScrollToLastPosition(storageKey));
+
+    act(() => {
+      window.dispatchEvent(new MessageEvent('message', { data: { type: messageTypes.resize } }));
+      jest.advanceTimersByTime(500);
+      window.dispatchEvent(new MessageEvent('message', { data: { type: messageTypes.resize } }));
+    });
+
+    expect(window.scrollTo).not.toHaveBeenCalled();
+  });
+
+  it('should scroll only after the final timeout', () => {
+    localStorage.setItem(storageKey, '500');
+
+    renderHook(() => useScrollToLastPosition(storageKey));
+
+    act(() => {
+      window.dispatchEvent(new MessageEvent('message', { data: { type: messageTypes.resize } }));
+      jest.advanceTimersByTime(1000);
+    });
+
+    expect(window.scrollTo).toHaveBeenCalledWith({ top: 500, behavior: 'smooth' });
+  });
+
+  it('should NOT set hasLastPosition to false if lastYPosition exists and is valid', () => {
+    localStorage.setItem(storageKey, '500');
+
+    renderHook(() => useScrollToLastPosition(storageKey));
+
+    expect(setStateSpy).not.toHaveBeenCalledWith(false);
   });
 });
