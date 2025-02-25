@@ -3,6 +3,7 @@ import { RequestKeys } from '../../constants/requests';
 import api from '../../services/cms/api';
 import * as requests from './requests';
 import { actions, selectors } from '../index';
+import { createLibraryBlock } from '../../../../library-authoring/data/api';
 
 const testState = {
   some: 'data',
@@ -18,7 +19,7 @@ jest.mock('../app/selectors', () => ({
   blockId: (state) => ({ blockId: state }),
   blockType: (state) => ({ blockType: state }),
   learningContextId: (state) => ({ learningContextId: state }),
-  blockTitle: (state) => ({ title: state }),
+  blockTitle: (state) => state.some,
   isLibrary: (state) => (state.isLibrary),
 }));
 
@@ -49,6 +50,10 @@ jest.mock('../../services/cms/api', () => ({
   importTranscript: (args) => args,
   fetchVideoFeatures: (args) => args,
   uploadVideo: (args) => args,
+}));
+
+jest.mock('../../../../library-authoring/data/api', () => ({
+  createLibraryBlock: ({ id, url }) => ({ id, url }),
 }));
 
 jest.mock('../../../utils', () => ({
@@ -360,6 +365,22 @@ describe('requests thunkActions module', () => {
         },
       });
     });
+    describe('createBlock', () => {
+      testNetworkRequestAction({
+        action: requests.createBlock,
+        args: { ...fetchParams },
+        expectedString: 'with create promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.createBlock,
+          promise: createLibraryBlock({
+            libraryId: selectors.app.learningContextId(testState),
+            blockType: selectors.app.blockType(testState),
+          }),
+        },
+      });
+    });
+
     describe('uploadAsset', () => {
       const asset = 'SoME iMage CoNtent As String';
       let uploadAsset;
@@ -414,6 +435,79 @@ describe('requests thunkActions module', () => {
         test('api.uploadAsset promise called with studioEndpointUrl and blockId', () => {
           expect(uploadAsset).toHaveBeenCalledWith(expectedArgs);
           expect(parseLibraryImageData).toHaveBeenCalled();
+        });
+      });
+    });
+
+    describe('batchUploadAssets', () => {
+      const assets = [new Blob(['file1']), new Blob(['file2'])];
+      testNetworkRequestAction({
+        action: requests.batchUploadAssets,
+        args: { ...fetchParams, assets },
+        expectedString: 'with upload batch assets promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.batchUploadAssets,
+          promise: assets.reduce((acc, asset) => acc.then(() => requests.uploadAsset({
+            asset,
+            learningContextId: selectors.app.learningContextId(testState),
+            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+          })), Promise.resolve()),
+        },
+      });
+      describe('removeTemporalLink', () => {
+        let response;
+        let asset;
+        let content;
+
+        beforeEach(() => {
+          response = {
+            data: {
+              asset: {
+                portableUrl: 'image/test.jpg',
+              },
+            },
+          };
+
+          asset = new Blob(['image data'], { type: 'image/jpeg' });
+          content = 'Content with an image: data:image/jpeg;base64,TESTBASE64';
+        });
+
+        it('should replace the base64 image with the image path in the content', (done) => {
+          /*       const onLoad = jest.fn();
+          const readAsDataURLMock = jest.fn(() => {
+            this.result = 'data:image/jpeg;base64,TESTBASE64';
+            onLoad();
+          }); */
+          class FileReaderMock {
+            constructor() {
+              this.result = '';
+              this.onload = null;
+            }
+
+            addEventListener(event, callback) {
+              if (event === 'load') {
+                this.onLoad = callback;
+              }
+            }
+
+            readAsDataURL() {
+              this.result = 'data:image/jpeg;base64,TESTBASE64';
+              this.onLoad();
+            }
+          }
+          global.FileReader = FileReaderMock;
+          global.URL.revokeObjectURL = jest.fn();
+          const resolveMock = jest.fn((parsedContent) => {
+            // Assert that the content has been replaced correctly
+            expect(parsedContent).toEqual('Content with an image: /image/test.jpg');
+            done();
+          });
+
+          requests.removeTemporalLink(response, asset, content, resolveMock);
+
+          // expect(global.FileReader.readAsDataURLMock).toHaveBeenCalledWith(asset);
+          expect(global.URL.revokeObjectURL).toHaveBeenCalledWith(asset);
         });
       });
     });

@@ -200,7 +200,7 @@ ImageUploadModal.propTypes = {
   images: PropTypes.shape({}).isRequired,
   lmsEndpointUrl: PropTypes.string.isRequired,
   editorType: PropTypes.string,
-  isLibrary: PropTypes.string,
+  isLibrary: PropTypes.bool,
 };
 
 export const ImageUploadModalInternal = ImageUploadModal; // For testing only

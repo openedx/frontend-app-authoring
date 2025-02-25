@@ -17,8 +17,8 @@ const selectors = { app: appSelectors, video: videoSelectors };
 
 export const loadVideoData = (selectedVideoId, selectedVideoUrl) => (dispatch, getState) => {
   const state = getState();
-  const blockValueData = state.app.blockValue.data;
-  let rawVideoData = blockValueData.metadata ? blockValueData.metadata : {};
+  const blockValueData = state.app?.blockValue?.data;
+  let rawVideoData = blockValueData?.metadata ? blockValueData.metadata : {};
   const rawVideos = Object.values(selectors.app.videos(state));
   if (selectedVideoId !== undefined && selectedVideoId !== null) {
     const selectedVideo = _.find(rawVideos, video => {
