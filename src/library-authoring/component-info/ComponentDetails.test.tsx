@@ -64,6 +64,7 @@ describe('<ComponentDetails />', () => {
     fireEvent.click(screen.getByText('Course 2'));
 
     const links = screen.getAllByRole('link');
+    // There are 2 instances in the Unit 1, but only one is shown
     expect(links).toHaveLength(3);
     expect(links[0]).toHaveTextContent('Unit 1');
     expect(links[0]).toHaveAttribute(

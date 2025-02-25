@@ -16,10 +16,11 @@ type ComponentUsageTree = Record<string, {
   key: string,
   contextName: string,
   links: {
-    usageKey: string,
-    displayName: string,
-    url: string,
-  }[]
+    [usageKey: string]: {
+      displayName: string,
+      url: string,
+    },
+  },
 }>;
 
 const getContainerUrl = (usageKey: string) => (
@@ -68,17 +69,22 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
     }
 
     const linkData = {
-      ...link,
+      displayName: link.displayName,
       url: getContainerUrl(link.usageKey),
     };
 
     if (hit.contextKey in acc) {
-      acc[hit.contextKey].links.push(linkData);
+      if (!(link.usageKey in acc[hit.contextKey].links)) {
+        acc[hit.contextKey].links[link.usageKey] = linkData;
+        return acc;
+      }
     } else {
       acc[hit.contextKey] = {
         key: hit.contextKey,
         contextName: hit.breadcrumbs[0].displayName,
-        links: [linkData],
+        links: {
+          [link.usageKey]: linkData,
+        },
       };
     }
     return acc;
@@ -92,8 +98,14 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
         componentUsageList.map((context) => (
           <Collapsible key={context.key} title={context.contextName} styling="basic">
             <Stack>
-              {context.links.map(({ usageKey: downstreamUsageKey, displayName, url }) => (
-                <Hyperlink key={downstreamUsageKey} destination={url} target="_blank">{displayName}</Hyperlink>
+              {Object.keys(context.links).map((downstreamUsageKey: string) => (
+                <Hyperlink
+                  key={downstreamUsageKey}
+                  destination={context.links[downstreamUsageKey].url}
+                  target="_blank"
+                >
+                  {context.links[downstreamUsageKey].displayName}
+                </Hyperlink>
               ))}
             </Stack>
           </Collapsible>
