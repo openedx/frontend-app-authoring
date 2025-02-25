@@ -1,0 +1,98 @@
+{
+  "comment": "This is a mock of the response from Meilisearch for downstream links",
+  "estimatedTotalHits": 3,
+  "query": "",
+  "limit": 3,
+  "offset": 0,
+  "processingTimeMs": 1,
+  "hits": [
+    {
+      "usageKey": "block-v1:org+course1+run+type@html+block@blockid1",
+      "contextKey": "course-v1:org+course1+run",
+      "breadcrumbs": [
+        {
+          "display_name": "Course 1"
+        },
+        {
+          "usage_key": "unit-v1:org+course1+run+section1",
+          "display_name": "Section 1"
+        },
+        {
+          "usage_key": "unit-v1:org+course1+run+subsection1",
+          "display_name": "Sub Section 1"
+        },
+        {
+          "usage_key": "block-v1:org+course1+run+type@vertical+block@verticalId1",
+          "display_name": "Unit 1"
+        }
+      ]
+    },
+    {
+      "usage_key": "block-v1:org+course1+run+type@html+block@blockid2",
+      "contextKey": "course-v1:org+course1+run",
+      "breadcrumbs": [
+        {
+          "display_name": "Course 1"
+        },
+        {
+          "usage_key": "unit-v1:org+course1+run+section1",
+          "display_name": "Section 1"
+        },
+        {
+          "usage_key": "unit-v1:org+course1+run+subsection1",
+          "display_name": "Sub Section 1"
+        },
+        {
+          "usage_key": "block-v1:org+course1+run+type@vertical+block@verticalId2",
+          "display_name": "Unit 2"
+        }
+      ]
+    },
+    {
+      "usage_key": "block-v1:org+course1+run+type@html+block@blockid3",
+      "contextKey": "course-v1:org+course1+run",
+      "breadcrumbs": [
+        {
+          "display_name": "Course 1"
+        },
+        {
+          "usage_key": "unit-v1:org+course1+run+section1",
+          "display_name": "Section 1"
+        },
+        {
+          "usage_key": "unit-v1:org+course1+run+subsection1",
+          "display_name": "Sub Section 1"
+        },
+        {
+          "usage_key": "block-v1:org+course1+run+type@vertical+block@verticalId2",
+          "display_name": "Unit 2"
+        }
+      ]
+    },
+    {
+      "usage_key": "block-v1:org+course2+run+type@html+block@blockid1",
+      "contextKey": "course-v1:org+course2+run",
+      "breadcrumbs": [
+        {
+          "display_name": "Course 2"
+        },
+        {
+          "usage_key": "unit-v1:org+course2+run+section1",
+          "display_name": "Section 1"
+        },
+        {
+          "usage_key": "unit-v1:org+course2+run+subsection1",
+          "display_name": "Sub Section 1"
+        },
+        {
+          "usage_key": "block-v1:org+course1+run+type@vertical+block@verticalId3",
+          "display_name": "Unit 3"
+        },
+        {
+          "usage_key": "block-v1:org+course2+run+type@itembank+block@itembankId3",
+          "display_name": "Problem Bank 3"
+        }
+      ]
+    }
+  ]
+}

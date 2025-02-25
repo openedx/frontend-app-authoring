@@ -111,13 +111,13 @@ const LibraryCard: React.FC<LibraryCardProps> = ({ courseId, title, links }) => 
   const totalComponents = links.length;
   const outOfSyncCount = useMemo(() => countBy(links, 'readyToSync').true, [links]);
   const downstreamKeys = useMemo(() => uniq(Object.keys(linksInfo)), [links]);
-  const { data: downstreamInfo } = useFetchIndexDocuments(
-    [`context_key = "${courseId}"`, `usage_key IN ["${downstreamKeys.join('","')}"]`],
-    downstreamKeys.length,
-    ['usage_key', 'display_name', 'breadcrumbs', 'description', 'block_type'],
-    ['description:30'],
-    [SearchSortOption.TITLE_AZ],
-  ) as unknown as { data: ComponentInfo[] };
+  const { data: downstreamInfo } = useFetchIndexDocuments({
+    filter: [`context_key = "${courseId}"`, `usage_key IN ["${downstreamKeys.join('","')}"]`],
+    limit: downstreamKeys.length,
+    attributesToRetrieve: ['usage_key', 'display_name', 'breadcrumbs', 'description', 'block_type'],
+    attributesToCrop: ['description:30'],
+    sort: [SearchSortOption.TITLE_AZ],
+  }) as unknown as { data: ComponentInfo[] };
 
   const renderBlockCards = (info: ComponentInfo) => {
     // eslint-disable-next-line no-param-reassign

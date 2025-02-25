@@ -133,7 +133,10 @@ export interface ContentHit extends BaseContentHit {
    * - After that is the name and usage key of any parent Section/Subsection/Unit/etc.
    */
   type: 'course_block' | 'library_block';
-  breadcrumbs: [{ displayName: string }, ...Array<{ displayName: string, usageKey: string }>];
+  breadcrumbs: [
+    { displayName: string },
+    ...Array<{ displayName: string, usageKey: string }>,
+  ];
   description?: string;
   content?: ContentDetails;
   lastPublished: number | null;

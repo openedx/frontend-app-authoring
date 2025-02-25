@@ -2,6 +2,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import fetchMock from 'fetch-mock-jest';
 import type { MultiSearchResponse } from 'meilisearch';
+import mockLinksResult from './__mocks__/downstream-links.json';
 import * as api from './api';
 
 /**
@@ -14,7 +15,8 @@ export async function mockContentSearchConfig(): ReturnType<typeof api.getConten
     apiKey: 'test-key',
   };
 }
-mockContentSearchConfig.searchEndpointUrl = 'http://mock.meilisearch.local/multi-search';
+mockContentSearchConfig.multisearchEndpointUrl = 'http://mock.meilisearch.local/multi-search';
+mockContentSearchConfig.searchEndpointUrl = 'http://mock.meilisearch.local/indexes/studio/search';
 mockContentSearchConfig.applyMock = () => (
   jest.spyOn(api, 'getContentSearchConfig').mockImplementation(mockContentSearchConfig)
 );
@@ -26,7 +28,7 @@ mockContentSearchConfig.applyMock = () => (
  * a different mock response, or you call `fetchMock.mockReset()`
  */
 export function mockSearchResult(mockResponse: MultiSearchResponse) {
-  fetchMock.post(mockContentSearchConfig.searchEndpointUrl, (_url, req) => {
+  fetchMock.post(mockContentSearchConfig.multisearchEndpointUrl, (_url, req) => {
     const requestData = JSON.parse(req.body?.toString() ?? '');
     const query = requestData?.queries[0]?.q ?? '';
     // We have to replace the query (search keywords) in the mock results with the actual query,
@@ -64,3 +66,15 @@ export async function mockGetBlockTypes(
   jest.spyOn(api, 'fetchBlockTypes').mockResolvedValue(mockResponseMap[mockResponse]);
 }
 mockGetBlockTypes.applyMock = () => jest.spyOn(api, 'fetchBlockTypes').mockResolvedValue({});
+
+export async function mockFetchIndexDocuments() {
+  return mockLinksResult;
+}
+
+mockFetchIndexDocuments.applyMock = () => {
+  fetchMock.post(
+    mockContentSearchConfig.searchEndpointUrl,
+    mockFetchIndexDocuments,
+    { overwriteRoutes: true },
+  );
+};
