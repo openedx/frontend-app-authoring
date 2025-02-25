@@ -161,7 +161,8 @@ export const useContentTaxonomyTagsUpdater = (contentId) => {
     onSuccess: /* istanbul ignore next */ () => {
       /* istanbul ignore next */
       if (window.top != null) {
-        // This send messages to the parent page if the drawer is called from a iframe.
+        // Sends messages to the parent page if the drawer was opened
+        // from an iframe or the unit iframe within the course.
         // Is used on Studio to update tags data and counts.
         // In the future, when the Course Outline Page and Unit Page are integrated into this MFE,
         // they should just use React Query to load the tag counts, and React Query will automatically

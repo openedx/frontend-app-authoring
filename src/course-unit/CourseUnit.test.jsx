@@ -93,6 +93,9 @@ jest.mock('react-router-dom', () => ({
 
 jest.mock('@tanstack/react-query', () => ({
   useQuery: jest.fn(({ queryKey }) => {
+    const taxonomyApiHooksModule = jest.requireActual('../taxonomy/data/apiHooks');
+    const actualQueryKeys = taxonomyApiHooksModule.taxonomyQueryKeys;
+
     if (queryKey[0] === 'contentTaxonomyTags') {
       return {
         data: {
@@ -106,7 +109,7 @@ jest.mock('@tanstack/react-query', () => ({
         isSuccess: true,
       };
     }
-    if (queryKey[0] === 'taxonomies') {
+    if (actualQueryKeys.all.includes(queryKey[0])) {
       return {
         data: {
           results: [],
