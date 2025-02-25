@@ -93,7 +93,7 @@ export const checkForNoAnswers = ({ openSaveWarningModal, problem }) => {
     const titles = [];
     answers.forEach(answer => {
       const title = simpleTextAreaProblems.includes(problemType) ? answer.title : answerTitles[answer.id];
-      if (title.length > 0) {
+      if (title?.length > 0) {
         titles.push(title);
       }
     });
@@ -108,7 +108,7 @@ export const checkForNoAnswers = ({ openSaveWarningModal, problem }) => {
     answers.forEach(answer => {
       if (answer.correct) {
         const title = simpleTextAreaProblems.includes(problemType) ? answer.title : answerTitles[answer.id];
-        if (title.length > 0) {
+        if (title?.length > 0) {
           correctAnswer = true;
         }
       }

@@ -4,6 +4,7 @@ import {
   dropdownOLXWithFeedbackAndHintsOLX,
   numericInputWithFeedbackAndHintsOLX,
   textInputWithFeedbackAndHintsOLX,
+  textInputWithFeedbackInIncorrectAnswerOnlyOLX,
   multipleChoiceWithoutAnswers,
   multipleChoiceSingleAnswer,
   multipleChoiceWithFeedbackAndHintsOLX,
@@ -39,6 +40,7 @@ const multipleChoiceOlxParser = new OLXParser(multipleChoiceWithFeedbackAndHints
 const multipleChoiceWithoutAnswersOlxParser = new OLXParser(multipleChoiceWithoutAnswers.rawOLX);
 const multipleChoiceSingleAnswerOlxParser = new OLXParser(multipleChoiceSingleAnswer.rawOLX);
 const textInputOlxParser = new OLXParser(textInputWithFeedbackAndHintsOLX.rawOLX);
+const textInputIncorrectFeedbackOlxParser = new OLXParser(textInputWithFeedbackInIncorrectAnswerOnlyOLX.rawOLX);
 const textInputMultipleAnswersOlxParser = new OLXParser(textInputWithFeedbackAndHintsOLXWithMultipleAnswers.rawOLX);
 const advancedOlxParser = new OLXParser(advancedProblemOlX.rawOLX);
 const multipleTextInputOlxParser = new OLXParser(multipleTextInputProblemOlX.rawOLX);
@@ -284,6 +286,13 @@ describe('OLXParser', () => {
       it('should equal an array of objects with length three', () => {
         expect(answers).toEqual(textInputWithFeedbackAndHintsOLX.data.answers);
         expect(answers).toHaveLength(3);
+      });
+    });
+    describe('given text input olx with feedback for incorrect answer only and hints', () => {
+      const { answers } = textInputIncorrectFeedbackOlxParser.parseStringResponse();
+      it('should equal an array of objects with length three', () => {
+        expect(answers).toEqual(textInputWithFeedbackInIncorrectAnswerOnlyOLX.data.answers);
+        expect(answers).toHaveLength(4);
       });
     });
     describe('given text input olx with feedback and hints with multiple answers', () => {
