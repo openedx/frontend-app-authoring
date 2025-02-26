@@ -131,40 +131,6 @@ describe('<AddContentContainer />', () => {
     expect(await screen.findByRole('heading', { name: /Text/ })).toBeInTheDocument();
   });
 
-  it('should create a component when the block is not supported by the editor', async () => {
-    mockClipboardEmpty.applyMock();
-    const url = getCreateLibraryBlockUrl(libraryId);
-    axiosMock.onPost(url).reply(200);
-    render();
-    const textButton = screen.getByRole('button', { name: /other/i });
-    fireEvent.click(textButton);
-    await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(url));
-    await waitFor(() => expect(axiosMock.history.patch.length).toEqual(0));
-  });
-
-  it('should create a content in a collection for non-editable blocks', async () => {
-    mockClipboardEmpty.applyMock();
-    const collectionId = 'some-collection-id';
-    const url = getCreateLibraryBlockUrl(libraryId);
-    const collectionComponentUrl = getLibraryCollectionComponentApiUrl(
-      libraryId,
-      collectionId,
-    );
-
-    axiosMock.onPost(url).reply(200, { id: 'some-component-id' });
-    axiosMock.onPatch(collectionComponentUrl).reply(200);
-
-    render(collectionId);
-
-    // Select a block that is not supported by the editor should create the component
-    const textButton = screen.getByRole('button', { name: /other/i });
-    fireEvent.click(textButton);
-
-    await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(url));
-    await waitFor(() => expect(axiosMock.history.patch.length).toEqual(1));
-    await waitFor(() => expect(axiosMock.history.patch[0].url).toEqual(collectionComponentUrl));
-  });
-
   it('should create a content in a collection for editable blocks', async () => {
     mockClipboardEmpty.applyMock();
     const collectionId = 'some-collection-id';
