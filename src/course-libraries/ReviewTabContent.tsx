@@ -2,7 +2,7 @@ import React, {
   useCallback, useContext, useEffect, useMemo, useState,
 } from 'react';
 import { getConfig } from '@edx/frontend-platform';
-import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
   Breadcrumb,
@@ -13,13 +13,9 @@ import {
   Stack,
   useToggle,
   SearchField,
-  OverlayTrigger,
-  Tooltip,
 } from '@openedx/paragon';
-import { LinkOff, Loop } from '@openedx/paragon/icons';
 
 import _ from 'lodash';
-import classNames from 'classnames';
 import messages from './messages';
 import {default as previewChangesMessages} from '../course-unit/preview-changes/messages'
 import {default as searchMessages} from '../search-manager/messages'
@@ -37,24 +33,19 @@ import LoadingButton from '../generic/loading-button';
 import { ToastContext } from '../generic/toast-context';
 import { BaseSearchSortWidget } from '../search-manager/SearchSortWidget';
 import { useLoadOnScroll } from '../hooks';
+import { Loop } from '@openedx/paragon/icons';
 
 
 interface Props {
   courseId: string;
 }
 
-interface ComponentInfo extends ContentHit {
-  readyToSync: boolean;
-  upstreamVersion: number | null;
-}
-
 interface BlockCardProps {
-  info: ComponentInfo;
+  info: ContentHit;
   actions?: React.ReactNode;
-  reviewMode?: boolean;
 }
 
-const BlockCard: React.FC<BlockCardProps> = ({ info, actions, reviewMode }) => {
+const BlockCard: React.FC<BlockCardProps> = ({ info, actions }) => {
   const intl = useIntl();
   const componentIcon = getItemIcon(info.blockType);
   const breadcrumbs = _.tail(info.breadcrumbs) as Array<{ displayName: string, usageKey: string }>;
@@ -69,19 +60,11 @@ const BlockCard: React.FC<BlockCardProps> = ({ info, actions, reviewMode }) => {
 
   return (
     <Card
-      className={classNames(
-        'my-3 border-light-600 border',
-        {
-          'bg-primary-100': info.readyToSync && !reviewMode,
-          'shadow': reviewMode,
-          'shadow-none': !reviewMode,
-        },
-      )}
+      className='my-3 border-light-500 border shadow-none'
       orientation="horizontal"
     >
       <Card.Section
         className="py-3"
-        actions={actions}
       >
         <Stack direction="horizontal" gap={2}>
           <Stack direction="vertical" gap={1}>
@@ -90,35 +73,24 @@ const BlockCard: React.FC<BlockCardProps> = ({ info, actions, reviewMode }) => {
               <BlockTypeLabel blockType={info.blockType} />
             </Stack>
             <Stack direction="horizontal" className="small" gap={1}>
-              {info.readyToSync && !reviewMode && <Icon src={Loop} size="xs" />}
-              {info.upstreamVersion === null && (
-                <OverlayTrigger
-                  placement="auto"
-                  overlay={
-                    <Tooltip id={`${info.id}-broken-link-tooltip`}>
-                      <FormattedMessage {...messages.brokenLinkTooltip} />
-                    </Tooltip>
-                  }
-                >
-                  <Icon src={LinkOff} size="xs" />
-                </OverlayTrigger>
-              )}
-              <Highlight text={info.formatted?.displayName ?? ''} />
+              <strong>
+                <Highlight text={info.formatted?.displayName ?? ''} />
+              </strong>
             </Stack>
-            <div className="micro">
-              <Highlight text={info.formatted?.description ?? ''} />
-            </div>
-            <Breadcrumb
-              className="micro text-gray-500"
-              ariaLabel={intl.formatMessage(messages.breadcrumbAriaLabel)}
-              links={breadcrumbs.map((breadcrumb) => ({ label: breadcrumb.displayName }))}
-              spacer={<span className="custom-spacer">/</span>}
-              linkAs="span"
-            />
+            <Stack direction="horizontal" className="micro" gap={3}>
+              {intl.formatMessage(messages.breadcrumbLabel)}
+              <Hyperlink showLaunchIcon={false} destination={getBlockLink()} target="_blank">
+                <Breadcrumb
+                  className="micro text-gray-700 border-bottom"
+                  ariaLabel={intl.formatMessage(messages.breadcrumbLabel)}
+                  links={breadcrumbs.map((breadcrumb) => ({ label: breadcrumb.displayName }))}
+                  spacer={<span className="custom-spacer">/</span>}
+                  linkAs="span"
+                />
+              </Hyperlink>
+            </Stack>
           </Stack>
-          <Hyperlink className="lead ml-auto mb-auto text-black" destination={getBlockLink()} target="_blank">
-            {' '}
-          </Hyperlink>
+        {actions}
         </Stack>
       </Card.Section>
     </Card>
@@ -149,12 +121,11 @@ const ReviewTabContent = ({ courseId }: Props) => {
   const { data: downstreamInfo, isLoading: isIndexDataLoading } = useFetchIndexDocuments({
     filter: [`context_key = "${courseId}"`, `usage_key IN ["${downstreamKeys?.join('","')}"]`],
     limit: downstreamKeys?.length || 0,
-    attributesToRetrieve: ['usage_key', 'display_name', 'breadcrumbs', 'description', 'block_type'],
-    attributesToCrop: ['description:30'],
+    attributesToRetrieve: ['usage_key', 'display_name', 'breadcrumbs', 'block_type'],
     sort: [searchSortOrder],
     searchKeywords,
     enabled: !!outOfSyncComponents,
-  }) as unknown as { data: ComponentInfo[], isLoading: boolean };
+  }) as unknown as { data: ContentHit[], isLoading: boolean };
   const outOfSyncComponentsByKey = useMemo(
     () => _.keyBy(outOfSyncComponents, 'downstreamUsageKey'),
     [outOfSyncComponents]
@@ -184,7 +155,7 @@ const ReviewTabContent = ({ courseId }: Props) => {
   const ignoreChangesMutation = useIgnoreLibraryBlockChanges();
 
   // Show preview changes on review
-  const onReview = (info: ComponentInfo) => {
+  const onReview = (info: ContentHit) => {
     setBlockData({
       displayName: info.displayName,
       downstreamBlockId: info.usageKey,
@@ -207,7 +178,7 @@ const ReviewTabContent = ({ courseId }: Props) => {
     reloadLinks(blockData.downstreamBlockId);
   }
 
-  const updateBlock = async (info: ComponentInfo) => {
+  const updateBlock = async (info: ContentHit) => {
     try {
       await acceptChangesMutation.mutateAsync(info.usageKey);
       reloadLinks(info.usageKey);
@@ -220,7 +191,7 @@ const ReviewTabContent = ({ courseId }: Props) => {
     }
   }
 
-  const ignoreBlock = async (info: ComponentInfo) => {
+  const ignoreBlock = async (info: ContentHit) => {
     try {
       await acceptChangesMutation.mutateAsync(info.usageKey);
       reloadLinks(info.usageKey);
@@ -292,17 +263,18 @@ const ReviewTabContent = ({ courseId }: Props) => {
         <ActionRow.Spacer />
       </ActionRow>
       {orderInfo?.map((info) => (
-        <BlockCard key={info.usageKey} info={info} reviewMode actions={
+        <BlockCard key={info.usageKey} info={info} actions={
           <ActionRow>
             <Button
               size="sm"
-              variant="light"
+              variant="outline-primary border-light-300"
               onClick={() => onReview(info)}
-              className="font-weight-bold text-black"
+              iconBefore={Loop}
+              className="mr-2"
             >
               {intl.formatMessage(messages.cardReviewContentBtn)}
             </Button>
-            <ActionRow.Spacer/>
+            <span className="border border-dark py-3 ml-4 mr-3" />
             <LoadingButton
               label={intl.formatMessage(messages.cardIgnoreContentBtn)}
               variant="tertiary"
@@ -311,9 +283,10 @@ const ReviewTabContent = ({ courseId }: Props) => {
             />
             <LoadingButton
               label={intl.formatMessage(messages.cardUpdateContentBtn)}
-              variant="outline-primary"
+              variant="primary"
               size="sm"
               onClick={() => updateBlock(info)}
+              className="rounded-0"
             />
           </ActionRow>
         } />
