@@ -1,8 +1,11 @@
-import { useIntl } from '@edx/frontend-platform/i18n';
-import { Alert, Button } from '@openedx/paragon';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import { Alert, Button, useToggle } from '@openedx/paragon';
 
 import BaseModal from '../../editors/sharedComponents/BaseModal';
 import messages from './messages';
+import infoMessages from '../component-info/messages';
+import { ComponentUsage } from '../component-info/ComponentUsage';
+import { useEffect } from 'react';
 
 interface PublishConfirmationModalProps {
   isOpen: boolean,
@@ -24,7 +27,7 @@ const PublishConfirmationBody = ({
   return (
     <div className="pt-4">
       {intl.formatMessage(messages.publishConfirmationBody)}
-      <div className="mt-4 p-2 border">
+      <div className="mt-2 p-2 border">
         {displayName}
       </div>
     </div>
@@ -41,7 +44,15 @@ const PublishConfirmationModal = ({
 }: PublishConfirmationModalProps) => {
   const intl = useIntl();
 
-  console.log(usageKey);
+  const [
+    isDownstreamsEmpty,
+    setDownstreamsEmpty,
+    setDownstreamsNotEmpty,
+  ] = useToggle(false);
+
+  useEffect(() => {
+    setDownstreamsNotEmpty();
+  }, [usageKey]);
 
   return (
     <BaseModal
@@ -53,21 +64,27 @@ const PublishConfirmationModal = ({
       )}
       confirmAction={(
         <Button onClick={onConfirm}>
-          {intl.formatMessage(messages.publishConfirmationButton)}
+          <FormattedMessage {...messages.publishConfirmationButton} />
         </Button>
       )}
     >
       {showDownstreams ? (
         <div>
           <PublishConfirmationBody displayName={displayName} />
-          <div className="m-2">
-            {intl.formatMessage(messages.publishConfimrationDownstreamsBody)}
-            <div>
-              TODO: Add list of course here
-            </div>
-            <Alert variant="warning">
-              {intl.formatMessage(messages.publishConfirmationDownstreamsAlert)}
-            </Alert>
+          <div className="mt-4">
+            {!isDownstreamsEmpty ? (
+              <>
+                <FormattedMessage {...messages.publishConfimrationDownstreamsBody} />
+                <div className="mt-3 mb-3 border">
+                  <ComponentUsage usageKey={usageKey} callbackEmpty={setDownstreamsEmpty}/>
+                </div>
+                <Alert variant="warning">
+                  <FormattedMessage {...messages.publishConfirmationDownstreamsAlert} />
+                </Alert>
+              </>
+            ) : (
+              <FormattedMessage {...infoMessages.detailsTabUsageEmpty} />
+            )}
           </div>
         </div>
       ) : (
