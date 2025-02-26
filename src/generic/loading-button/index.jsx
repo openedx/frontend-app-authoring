@@ -80,8 +80,8 @@ LoadingButton.defaultProps = {
   onClick: undefined,
   disabled: undefined,
   size: undefined,
-  variant: "",
-  className: "",
+  variant: '',
+  className: '',
 };
 
 export default LoadingButton;
