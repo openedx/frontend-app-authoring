@@ -1,11 +1,12 @@
 import { getConfig } from '@edx/frontend-platform';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Collapsible, Hyperlink, Stack } from '@openedx/paragon';
+import { useMemo } from 'react';
+import { useUnpaginatedEntityLinks } from '../../course-libraries/data/apiHooks';
 
 import AlertError from '../../generic/alert-error';
 import Loading from '../../generic/Loading';
 import { useFetchIndexDocuments } from '../../search-manager';
-import { useComponentDownstreamLinks } from '../data/apiHooks';
 import messages from './messages';
 
 interface ComponentUsageProps {
@@ -33,9 +34,12 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
     isError: isErrorDownstreamLinks,
     error: errorDownstreamLinks,
     isLoading: isLoadingDownstreamLinks,
-  } = useComponentDownstreamLinks(usageKey);
+  } = useUnpaginatedEntityLinks({ upstreamUsageKey: usageKey });
 
-  const downstreamKeys = dataDownstreamLinks || [];
+  const downstreamKeys = useMemo(
+    () => dataDownstreamLinks?.map(link => link.downstreamUsageKey) || [],
+    [dataDownstreamLinks]
+  );
 
   const {
     data: downstreamHits,

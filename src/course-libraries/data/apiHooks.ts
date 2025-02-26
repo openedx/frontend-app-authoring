@@ -2,45 +2,101 @@ import {
   useInfiniteQuery,
   useQuery,
 } from '@tanstack/react-query';
-import { getEntityLinksByDownstreamContext, getEntityLinksSummaryByDownstreamContext } from './api';
+import { getEntityLinks, getEntityLinksSummaryByDownstreamContext, getUnpaginatedEntityLinks } from './api';
 
 export const courseLibrariesQueryKeys = {
   all: ['courseLibraries'],
-  courseLibraries: (courseKey?: string) => {
-    return [...courseLibrariesQueryKeys.all, courseKey]
+  courseLibraries: (courseId?: string) => {
+    return [...courseLibrariesQueryKeys.all, courseId]
   },
-  courseReadyToSyncLibraries: (courseKey?: string, readyToSync?: boolean) => {
-    return [...courseLibrariesQueryKeys.courseLibraries(courseKey), readyToSync]
+  courseReadyToSyncLibraries: ({ courseId, readyToSync, upstreamUsageKey, pageSize }: {
+    courseId?: string,
+    readyToSync?: boolean,
+    upstreamUsageKey?: string,
+    pageSize?: number,
+  }) => {
+    const key: Array<string | boolean | number> = [...courseLibrariesQueryKeys.all]
+    if (courseId !== undefined) {
+      key.push(courseId);
+    }
+    if (readyToSync !== undefined) {
+      key.push(readyToSync);
+    }
+    if (upstreamUsageKey !== undefined) {
+      key.push(upstreamUsageKey);
+    }
+    if (pageSize !== undefined) {
+      key.push(pageSize);
+    }
+    return key;
   },
-  courseLibrariesSummary: (courseKey?: string) => {
-    return [...courseLibrariesQueryKeys.courseLibraries(courseKey), "summary"]
+  courseLibrariesSummary: (courseId?: string) => {
+    return [...courseLibrariesQueryKeys.courseLibraries(courseId), "summary"]
   },
 };
 
 /**
  * Hook to fetch publishable entity links by course key.
  */
-export const useEntityLinksByDownstreamContext = (courseKey?: string, readyToSync?: boolean, pageSize?: number) => (
+export const useEntityLinks = ({
+  courseId, readyToSync, upstreamUsageKey, pageSize
+}: {
+  courseId?: string,
+  readyToSync?: boolean,
+  upstreamUsageKey?: string,
+  pageSize?: number
+}) => (
   useInfiniteQuery({
-    queryKey: courseLibrariesQueryKeys.courseReadyToSyncLibraries(courseKey, readyToSync),
-    queryFn: ({ pageParam }) => getEntityLinksByDownstreamContext(
-      courseKey,
+    queryKey: courseLibrariesQueryKeys.courseReadyToSyncLibraries({
+      courseId,
       readyToSync,
+      upstreamUsageKey,
+      pageSize,
+    }),
+    queryFn: ({ pageParam }) => getEntityLinks(
+      courseId,
+      readyToSync,
+      upstreamUsageKey,
       pageParam,
       pageSize
     ),
     getNextPageParam: (lastPage) => lastPage.next,
-    enabled: courseKey !== undefined,
+    enabled: courseId !== undefined || upstreamUsageKey !== undefined || readyToSync !== undefined,
+  })
+);
+
+/**
+ * Hook to fetch unpaginated list of publishable entity links by course key.
+ */
+export const useUnpaginatedEntityLinks = ({
+  courseId, readyToSync, upstreamUsageKey
+}: {
+  courseId?: string,
+  readyToSync?: boolean,
+  upstreamUsageKey?: string,
+}) => (
+  useQuery({
+    queryKey: courseLibrariesQueryKeys.courseReadyToSyncLibraries({
+      courseId,
+      readyToSync,
+      upstreamUsageKey,
+    }),
+    queryFn: () => getUnpaginatedEntityLinks(
+      courseId,
+      readyToSync,
+      upstreamUsageKey,
+    ),
+    enabled: courseId !== undefined || upstreamUsageKey !== undefined || readyToSync !== undefined,
   })
 );
 
 /**
  * Hook to fetch publishable entity links summary by course key.
  */
-export const useEntityLinksSummaryByDownstreamContext = (courseKey?: string) => (
+export const useEntityLinksSummaryByDownstreamContext = (courseId?: string) => (
   useQuery({
-    queryKey: courseLibrariesQueryKeys.courseLibrariesSummary(courseKey),
-    queryFn: () => getEntityLinksSummaryByDownstreamContext(courseKey!),
-    enabled: courseKey !== undefined,
+    queryKey: courseLibrariesQueryKeys.courseLibrariesSummary(courseId),
+    queryFn: () => getEntityLinksSummaryByDownstreamContext(courseId!),
+    enabled: courseId !== undefined,
   })
 );

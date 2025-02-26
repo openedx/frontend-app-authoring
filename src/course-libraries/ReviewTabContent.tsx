@@ -23,7 +23,7 @@ import classNames from 'classnames';
 import messages from './messages';
 import {default as previewChangesMessages} from '../course-unit/preview-changes/messages'
 import {default as searchMessages} from '../search-manager/messages'
-import { courseLibrariesQueryKeys, useEntityLinksByDownstreamContext } from './data/apiHooks';
+import { courseLibrariesQueryKeys, useEntityLinks } from './data/apiHooks';
 import { useFetchIndexDocuments } from '../search-manager/data/apiHooks';
 import { getItemIcon } from '../generic/block-type-utils';
 import { BlockTypeLabel, Highlight } from '../search-manager';
@@ -137,7 +137,7 @@ const ReviewTabContent = ({ courseId }: Props) => {
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-  } = useEntityLinksByDownstreamContext(courseId, true);
+  } = useEntityLinks({ courseId, readyToSync: true });
   const outOfSyncComponents = useMemo(
     () => linkPages?.pages?.reduce((links, page) => [...links, ...page.results], []) ?? [],
     [linkPages],
@@ -146,14 +146,15 @@ const ReviewTabContent = ({ courseId }: Props) => {
     () => outOfSyncComponents?.map(link => link.downstreamUsageKey),
     [outOfSyncComponents]
   );
-  const { data: downstreamInfo, isLoading: isIndexDataLoading } = useFetchIndexDocuments(
-    [`context_key = "${courseId}"`, `usage_key IN ["${downstreamKeys?.join('","')}"]`],
-    downstreamKeys?.length || 0,
-    ['usage_key', 'display_name', 'breadcrumbs', 'description', 'block_type'],
-    ['description:30'],
-    [searchSortOrder],
+  const { data: downstreamInfo, isLoading: isIndexDataLoading } = useFetchIndexDocuments({
+    filter: [`context_key = "${courseId}"`, `usage_key IN ["${downstreamKeys?.join('","')}"]`],
+    limit: downstreamKeys?.length || 0,
+    attributesToRetrieve: ['usage_key', 'display_name', 'breadcrumbs', 'description', 'block_type'],
+    attributesToCrop: ['description:30'],
+    sort: [searchSortOrder],
     searchKeywords,
-  ) as unknown as { data: ComponentInfo[], isLoading: boolean };
+    enabled: !!outOfSyncComponents,
+  }) as unknown as { data: ComponentInfo[], isLoading: boolean };
   const outOfSyncComponentsByKey = useMemo(
     () => _.keyBy(outOfSyncComponents, 'downstreamUsageKey'),
     [outOfSyncComponents]
