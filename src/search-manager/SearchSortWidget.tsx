@@ -77,7 +77,7 @@ export const BaseSearchSortWidget = ({
       </Dropdown.Menu>
     </Dropdown>
   );
-}
+};
 
 export const SearchSortWidget = ({ iconOnly = false }: { iconOnly?: boolean }) => {
   const intl = useIntl();

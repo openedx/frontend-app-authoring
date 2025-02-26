@@ -6,16 +6,14 @@ import { getEntityLinks, getEntityLinksSummaryByDownstreamContext, getUnpaginate
 
 export const courseLibrariesQueryKeys = {
   all: ['courseLibraries'],
-  courseLibraries: (courseId?: string) => {
-    return [...courseLibrariesQueryKeys.all, courseId]
-  },
+  courseLibraries: (courseId?: string) => [...courseLibrariesQueryKeys.all, courseId],
   courseReadyToSyncLibraries: ({ courseId, readyToSync, upstreamUsageKey }: {
     courseId?: string,
     readyToSync?: boolean,
     upstreamUsageKey?: string,
     pageSize?: number,
   }) => {
-    const key: Array<string | boolean | number> = [...courseLibrariesQueryKeys.all]
+    const key: Array<string | boolean | number> = [...courseLibrariesQueryKeys.all];
     if (courseId !== undefined) {
       key.push(courseId);
     }
@@ -27,16 +25,14 @@ export const courseLibrariesQueryKeys = {
     }
     return key;
   },
-  courseLibrariesSummary: (courseId?: string) => {
-    return [...courseLibrariesQueryKeys.courseLibraries(courseId), "summary"]
-  },
+  courseLibrariesSummary: (courseId?: string) => [...courseLibrariesQueryKeys.courseLibraries(courseId), 'summary'],
 };
 
 /**
  * Hook to fetch publishable entity links by course key.
  */
 export const useEntityLinks = ({
-  courseId, readyToSync, upstreamUsageKey, pageSize
+  courseId, readyToSync, upstreamUsageKey, pageSize,
 }: {
   courseId?: string,
   readyToSync?: boolean,
@@ -54,7 +50,7 @@ export const useEntityLinks = ({
       readyToSync,
       upstreamUsageKey,
       pageParam,
-      pageSize
+      pageSize,
     ),
     getNextPageParam: (lastPage) => lastPage.next,
     enabled: courseId !== undefined || upstreamUsageKey !== undefined || readyToSync !== undefined,
@@ -65,7 +61,7 @@ export const useEntityLinks = ({
  * Hook to fetch unpaginated list of publishable entity links by course key.
  */
 export const useUnpaginatedEntityLinks = ({
-  courseId, readyToSync, upstreamUsageKey
+  courseId, readyToSync, upstreamUsageKey,
 }: {
   courseId?: string,
   readyToSync?: boolean,
