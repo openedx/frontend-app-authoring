@@ -9,7 +9,7 @@ export const courseLibrariesQueryKeys = {
   courseLibraries: (courseId?: string) => {
     return [...courseLibrariesQueryKeys.all, courseId]
   },
-  courseReadyToSyncLibraries: ({ courseId, readyToSync, upstreamUsageKey, pageSize }: {
+  courseReadyToSyncLibraries: ({ courseId, readyToSync, upstreamUsageKey }: {
     courseId?: string,
     readyToSync?: boolean,
     upstreamUsageKey?: string,
@@ -24,9 +24,6 @@ export const courseLibrariesQueryKeys = {
     }
     if (upstreamUsageKey !== undefined) {
       key.push(upstreamUsageKey);
-    }
-    if (pageSize !== undefined) {
-      key.push(pageSize);
     }
     return key;
   },
@@ -51,7 +48,6 @@ export const useEntityLinks = ({
       courseId,
       readyToSync,
       upstreamUsageKey,
-      pageSize,
     }),
     queryFn: ({ pageParam }) => getEntityLinks(
       courseId,
