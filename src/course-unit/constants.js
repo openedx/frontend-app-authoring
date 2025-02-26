@@ -75,4 +75,8 @@ export const messageTypes = {
   completeXBlockEditing: 'completeXBlockEditing',
   studioAjaxError: 'studioAjaxError',
   refreshPositions: 'refreshPositions',
+  showComponentTemplates: 'showComponentTemplates',
+  addNewComponent: 'addNewComponent',
+  pasteNewComponent: 'pasteComponent',
+  hideProcessingNotification: 'hideProcessingNotification',
 };
