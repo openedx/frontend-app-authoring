@@ -27,12 +27,12 @@ const useCreateOrRerunCourse = (initialValues) => {
   const allOrganizations = useSelector(getOrganizations);
   const postErrors = useSelector(getPostErrors);
   const {
-    allowToCreateNewOrg,
+    canCreateOrganizations,
     allowedOrganizations,
   } = useSelector(getStudioHomeData);
   const [isFormFilled, setFormFilled] = useState(false);
   const [showErrorBanner, setShowErrorBanner] = useState(false);
-  const organizations = allowToCreateNewOrg ? allOrganizations : allowedOrganizations;
+  const organizations = canCreateOrganizations ? allOrganizations : allowedOrganizations;
 
   const { specialCharsRule, noSpaceRule } = REGEX_RULES;
   const validationSchema = Yup.object().shape({
@@ -78,7 +78,7 @@ const useCreateOrRerunCourse = (initialValues) => {
   });
 
   useEffect(() => {
-    if (allowToCreateNewOrg) {
+    if (canCreateOrganizations) {
       dispatch(fetchOrganizationsQuery());
     }
   }, []);
