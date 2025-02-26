@@ -34,6 +34,7 @@ import { ToastContext } from '../generic/toast-context';
 import { BaseSearchSortWidget } from '../search-manager/SearchSortWidget';
 import { useLoadOnScroll } from '../hooks';
 import { Loop } from '@openedx/paragon/icons';
+import DeleteModal from '../generic/delete-modal/DeleteModal';
 
 
 interface Props {
@@ -101,6 +102,8 @@ const ReviewTabContent = ({ courseId }: Props) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const [blockData, setBlockData] = useState<LibraryChangesMessageData | undefined>(undefined);
+  // ignore changes confirmation modal toggle.
+  const [isConfirmModalOpen, openConfirmModal, closeConfirmModal] = useToggle(false);
   const [searchKeywords, setSearchKeywords] = useState<string>("");
   const [searchSortOrder, setSearchSortOrder] = useState<SearchSortOption>(SearchSortOption.RECENTLY_MODIFIED);
   const {
@@ -154,8 +157,7 @@ const ReviewTabContent = ({ courseId }: Props) => {
   const acceptChangesMutation = useAcceptLibraryBlockChanges();
   const ignoreChangesMutation = useIgnoreLibraryBlockChanges();
 
-  // Show preview changes on review
-  const onReview = (info: ContentHit) => {
+  const setSeletecdBlockData = (info: ContentHit) => {
     setBlockData({
       displayName: info.displayName,
       downstreamBlockId: info.usageKey,
@@ -163,7 +165,16 @@ const ReviewTabContent = ({ courseId }: Props) => {
       upstreamBlockVersionSynced: outOfSyncComponentsByKey[info.usageKey].upstreamVersion,
       isVertical: info.blockType === 'vertical',
     });
+  }
+  // Show preview changes on review
+  const onReview = (info: ContentHit) => {
+    setSeletecdBlockData(info);
     openModal();
+  }
+
+  const onIgnoreClick = (info: ContentHit) => {
+    setSeletecdBlockData(info);
+    openConfirmModal();
   }
 
   const reloadLinks = (usageKey: string) => {
@@ -191,16 +202,21 @@ const ReviewTabContent = ({ courseId }: Props) => {
     }
   }
 
-  const ignoreBlock = async (info: ContentHit) => {
+  const ignoreBlock = async () => {
+    if (!blockData) {
+      return
+    }
     try {
-      await acceptChangesMutation.mutateAsync(info.usageKey);
-      reloadLinks(info.usageKey);
+      await acceptChangesMutation.mutateAsync(blockData.downstreamBlockId);
+      reloadLinks(blockData.downstreamBlockId);
       showToast(intl.formatMessage(
         messages.ignoreSingleBlockSuccess,
-        { name: info.displayName }
+        { name: blockData.displayName }
       ));
     } catch (e) {
       showToast(intl.formatMessage(previewChangesMessages.ignoreChangesFailure));
+    } finally {
+      closeConfirmModal();
     }
   }
 
@@ -263,33 +279,34 @@ const ReviewTabContent = ({ courseId }: Props) => {
         <ActionRow.Spacer />
       </ActionRow>
       {orderInfo?.map((info) => (
-        <BlockCard key={info.usageKey} info={info} actions={
-          <ActionRow>
-            <Button
-              size="sm"
-              variant="outline-primary border-light-300"
-              onClick={() => onReview(info)}
-              iconBefore={Loop}
-              className="mr-2"
-            >
-              {intl.formatMessage(messages.cardReviewContentBtn)}
-            </Button>
-            <span className="border border-dark py-3 ml-4 mr-3" />
-            <LoadingButton
-              label={intl.formatMessage(messages.cardIgnoreContentBtn)}
-              variant="tertiary"
-              size="sm"
-              onClick={() => ignoreBlock(info)}
-            />
-            <LoadingButton
-              label={intl.formatMessage(messages.cardUpdateContentBtn)}
-              variant="primary"
-              size="sm"
-              onClick={() => updateBlock(info)}
-              className="rounded-0"
-            />
-          </ActionRow>
-        } />
+          <BlockCard key={info.usageKey} info={info} actions={
+            <ActionRow>
+              <Button
+                size="sm"
+                variant="outline-primary border-light-300"
+                onClick={() => onReview(info)}
+                iconBefore={Loop}
+                className="mr-2"
+              >
+                {intl.formatMessage(messages.cardReviewContentBtn)}
+              </Button>
+              <span className="border border-dark py-3 ml-4 mr-3" />
+              <Button
+                variant="tertiary"
+                size="sm"
+                onClick={() => onIgnoreClick(info)}
+              >
+                {intl.formatMessage(messages.cardIgnoreContentBtn)}
+              </Button>
+              <LoadingButton
+                label={intl.formatMessage(messages.cardUpdateContentBtn)}
+                variant="primary"
+                size="sm"
+                onClick={() => updateBlock(info)}
+                className="rounded-0"
+              />
+            </ActionRow>
+          } />
       ))}
       <BasePreviewLibraryXBlockChanges
         blockData={blockData}
@@ -298,6 +315,15 @@ const ReviewTabContent = ({ courseId }: Props) => {
         acceptChangesMutation={acceptChangesMutation}
         ignoreChangesMutation={ignoreChangesMutation}
         postChange={postChange}
+      />
+      <DeleteModal
+        isOpen={isConfirmModalOpen}
+        close={closeConfirmModal}
+        variant="warning"
+        title={intl.formatMessage(previewChangesMessages.confirmationTitle)}
+        description={intl.formatMessage(previewChangesMessages.confirmationDescription)}
+        onDeleteSubmit={ignoreBlock}
+        btnLabel={intl.formatMessage(previewChangesMessages.confirmationConfirmBtn)}
       />
     </>
   );
