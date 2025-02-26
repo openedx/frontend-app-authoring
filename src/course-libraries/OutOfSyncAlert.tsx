@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useIntl } from "@edx/frontend-platform/i18n";
 import { Button } from "@openedx/paragon";
 import { Loop } from "@openedx/paragon/icons";
 import AlertMessage from "../generic/alert-message";
-import { useEntityLinksByDownstreamContext } from "./data/apiHooks";
+import { useEntityLinksSummaryByDownstreamContext } from "./data/apiHooks";
 import messages from "./messages";
 import _ from "lodash";
 
@@ -26,10 +26,9 @@ const OutOfSyncAlert: React.FC<OutOfSyncAlertProps> = ({
   onReview,
 }) => {
   const intl = useIntl();
-  const { data, isLoading } = useEntityLinksByDownstreamContext(courseId, true);
-  const outOfSyncCount = data?.length;
-  const idList = data?.map((o) => `${o.id}:${o.upstreamVersion}`);
-  const alertKey = "outOfSyncCountAlert";
+  const { data, isLoading } = useEntityLinksSummaryByDownstreamContext(courseId);
+  const outOfSyncCount = useMemo(() => _.sumBy(data, (lib) => lib.readyToSyncCount), [data]);
+  const alertKey = `outOfSyncCountAlert-${courseId}`;
 
   useEffect(() => {
     if (isLoading) {
@@ -40,14 +39,14 @@ const OutOfSyncAlert: React.FC<OutOfSyncAlertProps> = ({
       setShowAlert(false);
       return;
     }
-    const dismissedIds: string[] = JSON.parse(localStorage.getItem(alertKey) || '[]');
-    setShowAlert(_.without(idList, ...dismissedIds).length > 0);
-  }, [outOfSyncCount, isLoading])
+    const dismissedAlert = localStorage.getItem(alertKey);
+    setShowAlert(parseInt(dismissedAlert || '') !== outOfSyncCount);
+  }, [outOfSyncCount, isLoading, data])
 
 
   const dismissAlert = () => {
     setShowAlert(false);
-    localStorage.setItem(alertKey, JSON.stringify(idList));
+    localStorage.setItem(alertKey, String(outOfSyncCount));
     onDismiss?.();
   }
 
