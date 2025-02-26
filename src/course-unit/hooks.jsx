@@ -80,11 +80,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
       window.open(draftPreviewLink, '_blank');
     },
     handleEdit: () => {
-      window.postMessage({
-        type: messageTypes.editXBlock,
-        message: 'Sends a message for display the legacy modal window',
-        payload: { id: courseUnit.id },
-      }, window.location.origin);
+      sendMessageToIframe(messageTypes.editXBlock, { id: courseUnit.id }, window);
     },
   };
 

@@ -22,7 +22,6 @@ const AddComponent = ({
   isUnitVerticalType,
   addComponentTemplateData,
   handleCreateNewCourseXBlock,
-  setAddComponentTemplateData,
 }) => {
   const navigate = useNavigate();
   const intl = useIntl();
@@ -30,7 +29,6 @@ const AddComponent = ({
   const [isOpenHtml, openHtml, closeHtml] = useToggle(false);
   const [isOpenOpenAssessment, openOpenAssessment, closeOpenAssessment] = useToggle(false);
   const { componentTemplates = {} } = useSelector(getCourseSectionVertical);
-  const isRequestedModalView = addComponentTemplateData?.model?.type;
   const blockId = addComponentTemplateData.parentLocator || parentLocator;
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
   const [isSelectLibraryContentModalOpen, showSelectLibraryContentModal, closeSelectLibraryContentModal] = useToggle();
@@ -99,22 +97,6 @@ const AddComponent = ({
       default:
     }
   };
-
-  if (isRequestedModalView && !isUnitVerticalType) {
-    return (
-      <ComponentModalView
-        isRequestedModalView
-        key={addComponentTemplateData.model.type}
-        component={addComponentTemplateData.model}
-        handleCreateNewXBlock={handleCreateNewXBlock}
-        modalParams={{
-          open: () => {},
-          close: () => setAddComponentTemplateData({}),
-          isOpen: addComponentTemplateData.model,
-        }}
-      />
-    );
-  }
 
   if (Object.keys(componentTemplates).length && isUnitVerticalType) {
     return (
@@ -190,7 +172,7 @@ const AddComponent = ({
           footerNode={
             isSelectLibraryContentModalOpen && (
               <ActionRow>
-                <Button variant="primary" onClick={onComponentSelectionSubmit}>
+                <Button onClick={onComponentSelectionSubmit}>
                   <FormattedMessage {...messages.multipleComponentPickerModalBtn} />
                 </Button>
               </ActionRow>
@@ -213,7 +195,6 @@ const AddComponent = ({
 
 AddComponent.defaultProps = {
   addComponentTemplateData: {},
-  setAddComponentTemplateData: () => {},
 };
 
 AddComponent.propTypes = {
@@ -241,7 +222,6 @@ AddComponent.propTypes = {
       }),
     }),
   },
-  setAddComponentTemplateData: PropTypes.func,
 };
 
 export default AddComponent;
