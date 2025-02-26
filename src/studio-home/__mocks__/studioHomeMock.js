@@ -26,7 +26,7 @@ module.exports = {
       cmsLink: '//localhost:18010/courses/course-v1:Design+123+e.g.2025',
     },
   ],
-  canCreateOrganizations: true,
+  canCreateOrganizations: false,
   courseCreatorStatus: 'granted',
   courses: [
     {
@@ -76,4 +76,5 @@ module.exports = {
   platformName: 'Your Platform Name Here',
   userIsActive: true,
   allowToCreateNewOrg: false,
+  allowedOrganizationsForLibraries: ['org1'],
 };
