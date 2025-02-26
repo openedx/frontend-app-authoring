@@ -10,6 +10,7 @@ import messages from './messages';
 
 interface ComponentUsageProps {
   usageKey: string;
+  callbackEmpty: (() => void) | null  
 }
 
 type ComponentUsageTree = Record<string, {
@@ -27,7 +28,10 @@ const getContainerUrl = (usageKey: string) => (
   `${getConfig().STUDIO_BASE_URL}/container/${usageKey}`
 );
 
-export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
+export const ComponentUsage = ({
+  usageKey,
+  callbackEmpty,
+}: ComponentUsageProps) => {
   const {
     data: dataDownstreamLinks,
     isError: isErrorDownstreamLinks,
@@ -58,6 +62,9 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
   }
 
   if (!downstreamKeys.length || !downstreamHits) {
+    if(callbackEmpty) {
+      callbackEmpty();
+    }
     return <FormattedMessage {...messages.detailsTabUsageEmpty} />;
   }
 
