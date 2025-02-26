@@ -55,6 +55,7 @@ export const messageTypes = {
   completeXBlockMoving: 'completeXBlockMoving',
   rollbackMovedXBlock: 'rollbackMovedXBlock',
   showMultipleComponentPicker: 'showMultipleComponentPicker',
+  showSingleComponentPicker: 'showSingleComponentPicker',
   addSelectedComponentsToBank: 'addSelectedComponentsToBank',
   showXBlockLibraryChangesPreview: 'showXBlockLibraryChangesPreview',
   copyXBlock: 'copyXBlock',
@@ -69,6 +70,7 @@ export const messageTypes = {
   addXBlock: 'addXBlock',
   scrollToXBlock: 'scrollToXBlock',
   handleViewXBlockContent: 'handleViewXBlockContent',
+  handleViewGroupConfigurations: 'handleViewGroupConfigurations',
   editXBlock: 'editXBlock',
   closeXBlockEditorModal: 'closeXBlockEditorModal',
   saveEditedXBlockData: 'saveEditedXBlockData',
@@ -79,5 +81,7 @@ export const messageTypes = {
   showComponentTemplates: 'showComponentTemplates',
   addNewComponent: 'addNewComponent',
   pasteNewComponent: 'pasteComponent',
+  copyXBlockLegacy: 'copyXBlockLegacy',
   hideProcessingNotification: 'hideProcessingNotification',
+  handleRedirectToXBlockEditPage: 'handleRedirectToXBlockEditPage',
 };

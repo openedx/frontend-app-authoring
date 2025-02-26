@@ -33,6 +33,7 @@ const HeaderNavigations = ({ headerNavigationsActions, category }) => {
           iconBefore={EditIcon}
           variant="outline-primary"
           onClick={handleEdit}
+          data-testid="header-edit-button"
         >
           {intl.formatMessage(messages.editButton)}
         </Button>

@@ -75,7 +75,6 @@ const CourseUnit = ({ courseId }) => {
     handleCloseXBlockMovedAlert,
     handleNavigateToTargetUnit,
     addComponentTemplateData,
-    setAddComponentTemplateData,
   } = useCourseUnit({ courseId, blockId });
   const layoutGrid = useLayoutGrid(unitCategory, isUnitLibraryType);
 
@@ -197,15 +196,13 @@ const CourseUnit = ({ courseId }) => {
                 courseVerticalChildren={courseVerticalChildren.children}
                 handleConfigureSubmit={handleConfigureSubmit}
               />
-              {isUnitVerticalType && (
-                <AddComponent
-                  parentLocator={blockId}
-                  isUnitVerticalType={isUnitVerticalType}
-                  handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
-                  addComponentTemplateData={addComponentTemplateData}
-                  setAddComponentTemplateData={setAddComponentTemplateData}
-                />
-              )}
+              <AddComponent
+                parentLocator={blockId}
+                isSplitTestType={isSplitTestType}
+                isUnitVerticalType={isUnitVerticalType}
+                handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
+                addComponentTemplateData={addComponentTemplateData}
+              />
               {showPasteXBlock && canPasteComponent && isUnitVerticalType && (
                 <PasteComponent
                   clipboardData={sharedClipboardData}

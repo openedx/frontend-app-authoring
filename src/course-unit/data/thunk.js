@@ -217,7 +217,10 @@ export function fetchCourseVerticalChildrenData(itemId, isSplitTestType, skipPag
         const childrenDataArray = await Promise.all(
           blockIds.map(blockId => getCourseVerticalChildren(blockId)),
         );
-        const allChildren = childrenDataArray.flatMap(data => data.children || []);
+        const allChildren = childrenDataArray.reduce(
+          (acc, data) => acc.concat(data.children || []),
+          [],
+        );
         courseVerticalChildrenData.children = [...courseVerticalChildrenData.children, ...allChildren];
       }
       dispatch(updateCourseVerticalChildren(courseVerticalChildrenData));

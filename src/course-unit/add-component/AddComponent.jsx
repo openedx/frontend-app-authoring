@@ -19,10 +19,10 @@ import { useEventListener } from '../../generic/hooks';
 
 const AddComponent = ({
   parentLocator,
+  isSplitTestType,
   isUnitVerticalType,
   addComponentTemplateData,
   handleCreateNewCourseXBlock,
-  setAddComponentTemplateData,
 }) => {
   const navigate = useNavigate();
   const intl = useIntl();
@@ -30,18 +30,22 @@ const AddComponent = ({
   const [isOpenHtml, openHtml, closeHtml] = useToggle(false);
   const [isOpenOpenAssessment, openOpenAssessment, closeOpenAssessment] = useToggle(false);
   const { componentTemplates = {} } = useSelector(getCourseSectionVertical);
-  const isRequestedModalView = addComponentTemplateData?.model?.type;
   const blockId = addComponentTemplateData.parentLocator || parentLocator;
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
   const [isSelectLibraryContentModalOpen, showSelectLibraryContentModal, closeSelectLibraryContentModal] = useToggle();
   const [selectedComponents, setSelectedComponents] = useState([]);
+  const [usageId, setUsageId] = useState(null);
   const { sendMessageToIframe } = useIframe();
 
-  const receiveMessage = useCallback(({ data: { type } }) => {
+  const receiveMessage = useCallback(({ data: { type, payload } }) => {
     if (type === messageTypes.showMultipleComponentPicker) {
       showSelectLibraryContentModal();
     }
-  }, [showSelectLibraryContentModal]);
+    if (type === messageTypes.showSingleComponentPicker) {
+      setUsageId(payload.usageId);
+      showAddLibraryContentModal();
+    }
+  }, [showSelectLibraryContentModal, showAddLibraryContentModal, setUsageId]);
 
   useEventListener('message', receiveMessage);
 
@@ -54,11 +58,11 @@ const AddComponent = ({
     handleCreateNewCourseXBlock({
       type: COMPONENT_TYPES.libraryV2,
       category: selection.blockType,
-      parentLocator: blockId,
+      parentLocator: usageId || blockId,
       libraryContentKey: selection.usageKey,
     });
     closeAddLibraryContentModal();
-  }, []);
+  }, [usageId]);
 
   const handleCreateNewXBlock = (type, moduleName) => {
     switch (type) {
@@ -104,80 +108,68 @@ const AddComponent = ({
     }
   };
 
-  if (isRequestedModalView && !isUnitVerticalType) {
-    return (
-      <ComponentModalView
-        isRequestedModalView
-        key={addComponentTemplateData.model.type}
-        component={addComponentTemplateData.model}
-        handleCreateNewXBlock={handleCreateNewXBlock}
-        modalParams={{
-          open: () => {},
-          close: () => setAddComponentTemplateData({}),
-          isOpen: addComponentTemplateData.model,
-        }}
-      />
-    );
-  }
-
-  if (Object.keys(componentTemplates).length && isUnitVerticalType) {
+  if (isUnitVerticalType || isSplitTestType) {
     return (
       <div className="py-4">
-        <h5 className="h3 mb-4 text-center">{intl.formatMessage(messages.title)}</h5>
-        <ul className="new-component-type list-unstyled m-0 d-flex flex-wrap justify-content-center">
-          {componentTemplates.map((component) => {
-            const { type, displayName, beta } = component;
-            let modalParams;
+        {Object.keys(componentTemplates).length && isUnitVerticalType ? (
+          <>
+            <h5 className="h3 mb-4 text-center">{intl.formatMessage(messages.title)}</h5>
+            <ul className="new-component-type list-unstyled m-0 d-flex flex-wrap justify-content-center">
+              {componentTemplates.map((component) => {
+                const { type, displayName, beta } = component;
+                let modalParams;
 
-            if (!component.templates.length) {
-              return null;
-            }
+                if (!component.templates.length) {
+                  return null;
+                }
 
-            switch (type) {
-              case COMPONENT_TYPES.advanced:
-                modalParams = {
-                  open: openAdvanced,
-                  close: closeAdvanced,
-                  isOpen: isOpenAdvanced,
-                };
-                break;
-              case COMPONENT_TYPES.html:
-                modalParams = {
-                  open: openHtml,
-                  close: closeHtml,
-                  isOpen: isOpenHtml,
-                };
-                break;
-              case COMPONENT_TYPES.openassessment:
-                modalParams = {
-                  open: openOpenAssessment,
-                  close: closeOpenAssessment,
-                  isOpen: isOpenOpenAssessment,
-                };
-                break;
-              default:
+                switch (type) {
+                  case COMPONENT_TYPES.advanced:
+                    modalParams = {
+                      open: openAdvanced,
+                      close: closeAdvanced,
+                      isOpen: isOpenAdvanced,
+                    };
+                    break;
+                  case COMPONENT_TYPES.html:
+                    modalParams = {
+                      open: openHtml,
+                      close: closeHtml,
+                      isOpen: isOpenHtml,
+                    };
+                    break;
+                  case COMPONENT_TYPES.openassessment:
+                    modalParams = {
+                      open: openOpenAssessment,
+                      close: closeOpenAssessment,
+                      isOpen: isOpenOpenAssessment,
+                    };
+                    break;
+                  default:
+                    return (
+                      <li key={type}>
+                        <AddComponentButton
+                          onClick={() => handleCreateNewXBlock(type)}
+                          displayName={displayName}
+                          type={type}
+                          beta={beta}
+                        />
+                      </li>
+                    );
+                }
+
                 return (
-                  <li key={type}>
-                    <AddComponentButton
-                      onClick={() => handleCreateNewXBlock(type)}
-                      displayName={displayName}
-                      type={type}
-                      beta={beta}
-                    />
-                  </li>
+                  <ComponentModalView
+                    key={type}
+                    component={component}
+                    handleCreateNewXBlock={handleCreateNewXBlock}
+                    modalParams={modalParams}
+                  />
                 );
-            }
-
-            return (
-              <ComponentModalView
-                key={type}
-                component={component}
-                handleCreateNewXBlock={handleCreateNewXBlock}
-                modalParams={modalParams}
-              />
-            );
-          })}
-        </ul>
+              })}
+            </ul>
+          </>
+        ) : null}
         <StandardModal
           title={
             isAddLibraryContentModalOpen
@@ -194,7 +186,7 @@ const AddComponent = ({
           footerNode={
             isSelectLibraryContentModalOpen && (
               <ActionRow>
-                <Button variant="primary" onClick={onComponentSelectionSubmit}>
+                <Button onClick={onComponentSelectionSubmit}>
                   <FormattedMessage {...messages.multipleComponentPickerModalBtn} />
                 </Button>
               </ActionRow>
@@ -217,10 +209,10 @@ const AddComponent = ({
 
 AddComponent.defaultProps = {
   addComponentTemplateData: {},
-  setAddComponentTemplateData: () => {},
 };
 
 AddComponent.propTypes = {
+  isSplitTestType: PropTypes.bool.isRequired,
   isUnitVerticalType: PropTypes.bool.isRequired,
   parentLocator: PropTypes.string.isRequired,
   handleCreateNewCourseXBlock: PropTypes.func.isRequired,
@@ -245,7 +237,6 @@ AddComponent.propTypes = {
       }),
     }),
   },
-  setAddComponentTemplateData: PropTypes.func,
 };
 
 export default AddComponent;

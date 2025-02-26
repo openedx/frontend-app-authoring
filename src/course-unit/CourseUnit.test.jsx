@@ -48,7 +48,6 @@ import { executeThunk } from '../utils';
 import { IFRAME_FEATURE_POLICY } from '../constants';
 import pasteComponentMessages from '../generic/clipboard/paste-component/messages';
 import pasteNotificationsMessages from './clipboard/paste-notification/messages';
-import headerNavigationsMessages from './header-navigations/messages';
 import headerTitleMessages from './header-title/messages';
 import courseSequenceMessages from './course-sequence/messages';
 import { extractCourseUnitId } from './sidebar/utils';
@@ -63,6 +62,7 @@ import { messageTypes, PUBLISH_TYPES, UNIT_VISIBILITY_STATES } from './constants
 import { IframeProvider } from './context/iFrameContext';
 import moveModalMessages from './move-modal/messages';
 import xblockContainerIframeMessages from './xblock-container-iframe/messages';
+import headerNavigationsMessages from './header-navigations/messages';
 import sidebarMessages from './sidebar/messages';
 import messages from './messages';
 
@@ -1963,6 +1963,46 @@ describe('<CourseUnit />', () => {
     });
   });
 
+  const checkLegacyEditModalOnEditMessage = async () => {
+    const { getByTitle, getByTestId } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      const editButton = getByTestId('header-edit-button');
+      expect(editButton).toBeInTheDocument();
+      const xblocksIframe = getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+      expect(xblocksIframe).toBeInTheDocument();
+      userEvent.click(editButton);
+    });
+  };
+
+  const checkRenderVisibilityModal = async (headingMessageId) => {
+    const { getByRole, getByTestId } = render(<RootWrapper />);
+    let configureModal;
+    let restrictAccessSelect;
+
+    await waitFor(() => {
+      const headerConfigureBtn = getByRole('button', { name: /settings/i });
+      expect(headerConfigureBtn).toBeInTheDocument();
+
+      userEvent.click(headerConfigureBtn);
+      configureModal = getByTestId('configure-modal');
+      restrictAccessSelect = within(configureModal)
+        .getByRole('combobox', { name: configureModalMessages.restrictAccessTo.defaultMessage });
+      expect(within(configureModal)
+        .getByRole('heading', { name: configureModalMessages[headingMessageId].defaultMessage })).toBeInTheDocument();
+      expect(within(configureModal)
+        .queryByText(configureModalMessages.unitVisibility.defaultMessage)).not.toBeInTheDocument();
+      expect(within(configureModal)
+        .getByText(configureModalMessages.restrictAccessTo.defaultMessage)).toBeInTheDocument();
+      expect(restrictAccessSelect).toBeInTheDocument();
+      expect(restrictAccessSelect).toHaveValue('-1');
+    });
+
+    const modalSaveBtn = within(configureModal)
+      .getByRole('button', { name: configureModalMessages.saveButton.defaultMessage });
+    userEvent.click(modalSaveBtn);
+  };
+
   describe('Library Content page', () => {
     const newUnitId = '12345';
     const sequenceId = courseSectionVerticalMock.subsection_location;
@@ -1982,6 +2022,20 @@ describe('<CourseUnit />', () => {
           },
         });
       await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+      axiosMock
+        .onGet(getCourseUnitApiUrl(courseId))
+        .reply(200, {
+          ...courseUnitIndexMock,
+          category: 'library_content',
+          ancestor_info: {
+            ...courseUnitIndexMock.ancestor_info,
+            child_info: {
+              ...courseUnitIndexMock.ancestor_info.child_info,
+              category: 'library_content',
+            },
+          },
+        });
+      await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
     });
 
     it('navigates to library content page on receive window event', async () => {
@@ -2020,6 +2074,12 @@ describe('<CourseUnit />', () => {
         expect(queryByRole('heading', { name: /unit location/i })).not.toBeInTheDocument();
       });
     });
+
+    it('should display visibility modal correctly', async () => (
+      checkRenderVisibilityModal('libraryContentAccess')
+    ));
+
+    it('opens legacy edit modal on edit button click', checkLegacyEditModalOnEditMessage);
   });
 
   describe('Split Test Content page', () => {
@@ -2041,6 +2101,20 @@ describe('<CourseUnit />', () => {
           },
         });
       await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+      axiosMock
+        .onGet(getCourseUnitApiUrl(courseId))
+        .reply(200, {
+          ...courseUnitIndexMock,
+          category: 'split_test',
+          ancestor_info: {
+            ...courseUnitIndexMock.ancestor_info,
+            child_info: {
+              ...courseUnitIndexMock.ancestor_info.child_info,
+              category: 'split_test',
+            },
+          },
+        });
+      await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
     });
 
     it('navigates to split test content page on receive window event', () => {
@@ -2048,6 +2122,32 @@ describe('<CourseUnit />', () => {
 
       simulatePostMessageEvent(messageTypes.handleViewXBlockContent, { usageId: newUnitId });
       expect(mockedUsedNavigate).toHaveBeenCalledWith(`/course/${courseId}/container/${newUnitId}/${sequenceId}`);
+    });
+
+    it('navigates to split test content page on receive window event', () => {
+      const groupId = 12345;
+      render(<RootWrapper />);
+
+      simulatePostMessageEvent(messageTypes.handleViewGroupConfigurations, { usageId: `${courseId}#${groupId}` });
+      expect(mockedUsedNavigate).toHaveBeenCalledWith(`/course/${courseId}/group_configurations#${groupId}`);
+    });
+
+    it('displays processing notification on receiving post message', async () => {
+      const { getByText, queryByText } = render(<RootWrapper />);
+
+      await waitFor(() => {
+        simulatePostMessageEvent(messageTypes.addNewComponent);
+        expect(getByText(('Adding'))).toBeInTheDocument();
+
+        simulatePostMessageEvent(messageTypes.hideProcessingNotification);
+        expect(queryByText(('Adding'))).not.toBeInTheDocument();
+
+        simulatePostMessageEvent(messageTypes.pasteNewComponent);
+        expect(getByText(('Pasting'))).toBeInTheDocument();
+
+        simulatePostMessageEvent(messageTypes.hideProcessingNotification);
+        expect(queryByText(('Pasting'))).not.toBeInTheDocument();
+      });
     });
 
     it('should render split test content page correctly', async () => {
@@ -2102,5 +2202,11 @@ describe('<CourseUnit />', () => {
         ).toHaveAttribute('href', helpLinkUrl);
       });
     });
+
+    it('should display visibility modal correctly', async () => (
+      checkRenderVisibilityModal('splitTestAccess')
+    ));
+
+    it('opens legacy edit modal on edit button click', checkLegacyEditModalOnEditMessage);
   });
 });
