@@ -18,6 +18,7 @@ import PropTypes from 'prop-types';
   * @param {boolean=} props.disabled
   * @param {string=} props.size
   * @param {string=} props.variant
+  * @param {string=} props.className
   * @returns {JSX.Element}
   */
 const LoadingButton = ({
@@ -26,6 +27,7 @@ const LoadingButton = ({
   disabled,
   size,
   variant,
+  className,
 }) => {
   const [state, setState] = useState('');
   // This is used to prevent setting the isLoading state after the component has been unmounted.
@@ -60,6 +62,7 @@ const LoadingButton = ({
       state={state}
       size={size}
       variant={variant}
+      className={className}
     />
   );
 };
@@ -70,6 +73,7 @@ LoadingButton.propTypes = {
   disabled: PropTypes.bool,
   size: PropTypes.string,
   variant: PropTypes.string,
+  className: PropTypes.string,
 };
 
 LoadingButton.defaultProps = {
@@ -77,6 +81,7 @@ LoadingButton.defaultProps = {
   disabled: undefined,
   size: undefined,
   variant: "",
+  className: "",
 };
 
 export default LoadingButton;
