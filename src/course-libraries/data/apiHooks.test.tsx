@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MockAdapter from 'axios-mock-adapter';
 import { waitFor } from '@testing-library/react';
 import { getEntityLinksByDownstreamContextUrl } from './api';
-import { useEntityLinksByDownstreamContext } from './apiHooks';
+import { useEntityLinks } from './apiHooks';
 
 let axiosMock: MockAdapter;
 
@@ -40,7 +40,7 @@ describe('course libraries api hooks', () => {
     const courseKey = 'course-v1:some+key';
     const url = getEntityLinksByDownstreamContextUrl(courseKey);
     axiosMock.onGet(url).reply(200, []);
-    const { result } = renderHook(() => useEntityLinksByDownstreamContext(courseKey), { wrapper });
+    const { result } = renderHook(() => useEntityLinks(courseKey), { wrapper });
     await waitFor(() => {
       expect(result.current.isLoading).toBeFalsy();
     });
