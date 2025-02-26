@@ -1,5 +1,5 @@
 import React, {
-  useCallback, useContext, useMemo, useState,
+  useCallback, useContext, useEffect, useMemo, useState,
 } from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
@@ -164,6 +164,12 @@ const ReviewTabContent = ({ courseId }: Props) => {
     [downstreamInfo]
   );
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (hasNextPage && !isFetchingNextPage && searchKeywords) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, searchKeywords]);
 
   useLoadOnScroll(
     hasNextPage,
