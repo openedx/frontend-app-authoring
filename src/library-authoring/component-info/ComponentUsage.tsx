@@ -38,7 +38,7 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
 
   const downstreamKeys = useMemo(
     () => dataDownstreamLinks?.map(link => link.downstreamUsageKey) || [],
-    [dataDownstreamLinks]
+    [dataDownstreamLinks],
   );
 
   const {

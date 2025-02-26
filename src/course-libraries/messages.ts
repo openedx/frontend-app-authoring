@@ -18,7 +18,7 @@ const messages = defineMessages({
   },
   homeTabDescription: {
     id: 'course-authoring.course-libraries.tab.home.description',
-    defaultMessage: 'This course contains content from these libraries.',
+    defaultMessage: 'Your course contains content from these libraries.',
     description: 'Description text for home tab',
   },
   homeTabDescriptionEmpty: {

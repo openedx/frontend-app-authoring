@@ -16,9 +16,11 @@ import {
 } from '@openedx/paragon';
 
 import _ from 'lodash';
+import { useQueryClient } from '@tanstack/react-query';
+import { Loop } from '@openedx/paragon/icons';
 import messages from './messages';
-import {default as previewChangesMessages} from '../course-unit/preview-changes/messages'
-import {default as searchMessages} from '../search-manager/messages'
+import previewChangesMessages from '../course-unit/preview-changes/messages';
+import searchMessages from '../search-manager/messages';
 import { courseLibrariesQueryKeys, useEntityLinks } from './data/apiHooks';
 import { useFetchIndexDocuments } from '../search-manager/data/apiHooks';
 import { getItemIcon } from '../generic/block-type-utils';
@@ -28,14 +30,11 @@ import { SearchSortOption } from '../search-manager/data/api';
 import Loading from '../generic/Loading';
 import { useAcceptLibraryBlockChanges, useIgnoreLibraryBlockChanges } from '../course-unit/data/apiHooks';
 import { BasePreviewLibraryXBlockChanges, LibraryChangesMessageData } from '../course-unit/preview-changes';
-import { useQueryClient } from '@tanstack/react-query';
 import LoadingButton from '../generic/loading-button';
 import { ToastContext } from '../generic/toast-context';
 import { BaseSearchSortWidget } from '../search-manager/SearchSortWidget';
 import { useLoadOnScroll } from '../hooks';
-import { Loop } from '@openedx/paragon/icons';
 import DeleteModal from '../generic/delete-modal/DeleteModal';
-
 
 interface Props {
   courseId: string;
@@ -61,7 +60,7 @@ const BlockCard: React.FC<BlockCardProps> = ({ info, actions }) => {
 
   return (
     <Card
-      className='my-3 border-light-500 border shadow-none'
+      className="my-3 border-light-500 border shadow-none"
       orientation="horizontal"
     >
       <Card.Section
@@ -91,7 +90,7 @@ const BlockCard: React.FC<BlockCardProps> = ({ info, actions }) => {
               </Hyperlink>
             </Stack>
           </Stack>
-        {actions}
+          {actions}
         </Stack>
       </Card.Section>
     </Card>
@@ -104,7 +103,7 @@ const ReviewTabContent = ({ courseId }: Props) => {
   const [blockData, setBlockData] = useState<LibraryChangesMessageData | undefined>(undefined);
   // ignore changes confirmation modal toggle.
   const [isConfirmModalOpen, openConfirmModal, closeConfirmModal] = useToggle(false);
-  const [searchKeywords, setSearchKeywords] = useState<string>("");
+  const [searchKeywords, setSearchKeywords] = useState<string>('');
   const [searchSortOrder, setSearchSortOrder] = useState<SearchSortOption>(SearchSortOption.RECENTLY_MODIFIED);
   const {
     data: linkPages,
@@ -119,7 +118,7 @@ const ReviewTabContent = ({ courseId }: Props) => {
   );
   const downstreamKeys = useMemo(
     () => outOfSyncComponents?.map(link => link.downstreamUsageKey),
-    [outOfSyncComponents]
+    [outOfSyncComponents],
   );
   const { data: downstreamInfo, isLoading: isIndexDataLoading } = useFetchIndexDocuments({
     filter: [`context_key = "${courseId}"`, `usage_key IN ["${downstreamKeys?.join('","')}"]`],
@@ -131,11 +130,11 @@ const ReviewTabContent = ({ courseId }: Props) => {
   }) as unknown as { data: ContentHit[], isLoading: boolean };
   const outOfSyncComponentsByKey = useMemo(
     () => _.keyBy(outOfSyncComponents, 'downstreamUsageKey'),
-    [outOfSyncComponents]
+    [outOfSyncComponents],
   );
   const downstreamInfoByKey = useMemo(
     () => _.keyBy(downstreamInfo, 'usageKey'),
-    [downstreamInfo]
+    [downstreamInfo],
   );
   const queryClient = useQueryClient();
 
@@ -165,29 +164,29 @@ const ReviewTabContent = ({ courseId }: Props) => {
       upstreamBlockVersionSynced: outOfSyncComponentsByKey[info.usageKey].upstreamVersion,
       isVertical: info.blockType === 'vertical',
     });
-  }
+  };
   // Show preview changes on review
   const onReview = (info: ContentHit) => {
     setSeletecdBlockData(info);
     openModal();
-  }
+  };
 
   const onIgnoreClick = (info: ContentHit) => {
     setSeletecdBlockData(info);
     openConfirmModal();
-  }
+  };
 
   const reloadLinks = (usageKey: string) => {
     const courseKey = outOfSyncComponentsByKey[usageKey].downstreamContextKey;
     queryClient.invalidateQueries(courseLibrariesQueryKeys.courseLibraries(courseKey));
-  }
+  };
 
   const postChange = () => {
     if (!blockData) {
-      return
+      return;
     }
     reloadLinks(blockData.downstreamBlockId);
-  }
+  };
 
   const updateBlock = async (info: ContentHit) => {
     try {
@@ -195,30 +194,30 @@ const ReviewTabContent = ({ courseId }: Props) => {
       reloadLinks(info.usageKey);
       showToast(intl.formatMessage(
         messages.updateSingleBlockSuccess,
-        { name: info.displayName }
+        { name: info.displayName },
       ));
     } catch (e) {
       showToast(intl.formatMessage(previewChangesMessages.acceptChangesFailure));
     }
-  }
+  };
 
   const ignoreBlock = async () => {
     if (!blockData) {
-      return
+      return;
     }
     try {
       await acceptChangesMutation.mutateAsync(blockData.downstreamBlockId);
       reloadLinks(blockData.downstreamBlockId);
       showToast(intl.formatMessage(
         messages.ignoreSingleBlockSuccess,
-        { name: blockData.displayName }
+        { name: blockData.displayName },
       ));
     } catch (e) {
       showToast(intl.formatMessage(previewChangesMessages.ignoreChangesFailure));
     } finally {
       closeConfirmModal();
     }
-  }
+  };
 
   const menuItems = useMemo(
     () => [
@@ -279,7 +278,10 @@ const ReviewTabContent = ({ courseId }: Props) => {
         <ActionRow.Spacer />
       </ActionRow>
       {orderInfo?.map((info) => (
-          <BlockCard key={info.usageKey} info={info} actions={
+        <BlockCard
+          key={info.usageKey}
+          info={info}
+          actions={(
             <ActionRow>
               <Button
                 size="sm"
@@ -306,7 +308,8 @@ const ReviewTabContent = ({ courseId }: Props) => {
                 className="rounded-0"
               />
             </ActionRow>
-          } />
+          )}
+        />
       ))}
       <BasePreviewLibraryXBlockChanges
         blockData={blockData}
@@ -327,6 +330,6 @@ const ReviewTabContent = ({ courseId }: Props) => {
       />
     </>
   );
-}
+};
 
 export default ReviewTabContent;
