@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 import { debounce } from 'lodash';
 
-import { handleResponseErrors } from '../../../generic/saving-error-alert/utils';
+import { handleResponseErrors } from '../../../generic/saving-error-alert';
 import { copyToClipboard } from '../../../generic/data/thunks';
+import { NOTIFICATION_MESSAGES } from '../../../constants';
 import { updateSavingStatus } from '../../data/slice';
 import { messageTypes } from '../../constants';
 import { MessageHandlersTypes, UseMessageHandlersTypes } from './types';
@@ -27,8 +28,9 @@ export const useMessageHandlers = ({
   handleSaveEditedXBlockData,
   handleFinishXBlockDragging,
   handleOpenManageTagsModal,
-  handleAddNewComponent,
+  handleShowProcessingNotification,
   handleHideProcessingNotification,
+  handleRedirectToXBlockEditPage,
 }: UseMessageHandlersTypes): MessageHandlersTypes => useMemo(() => ({
   [messageTypes.copyXBlock]: ({ usageId }) => dispatch(copyToClipboard(usageId)),
   [messageTypes.deleteXBlock]: ({ usageId }) => handleDeleteXBlock(usageId),
@@ -45,9 +47,11 @@ export const useMessageHandlers = ({
   [messageTypes.studioAjaxError]: ({ error }) => handleResponseErrors(error, dispatch, updateSavingStatus),
   [messageTypes.refreshPositions]: handleFinishXBlockDragging,
   [messageTypes.openManageTags]: (payload) => handleOpenManageTagsModal(payload.contentId),
-  [messageTypes.addNewComponent]: () => handleAddNewComponent(messageTypes.addNewComponent),
-  [messageTypes.pasteNewComponent]: () => handleAddNewComponent(messageTypes.pasteNewComponent),
+  [messageTypes.addNewComponent]: () => handleShowProcessingNotification(NOTIFICATION_MESSAGES.adding),
+  [messageTypes.pasteNewComponent]: () => handleShowProcessingNotification(NOTIFICATION_MESSAGES.pasting),
+  [messageTypes.copyXBlockLegacy]: () => handleShowProcessingNotification(NOTIFICATION_MESSAGES.copying),
   [messageTypes.hideProcessingNotification]: handleHideProcessingNotification,
+  [messageTypes.handleRedirectToXBlockEditPage]: (payload) => handleRedirectToXBlockEditPage(payload),
 }), [
   courseId,
   handleDeleteXBlock,

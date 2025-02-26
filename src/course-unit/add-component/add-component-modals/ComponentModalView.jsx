@@ -21,7 +21,7 @@ const ComponentModalView = ({
   const [moduleTitle, setModuleTitle] = useState('');
   const { open, close, isOpen } = modalParams;
   const {
-    type, displayName, templates = [], supportLegend,
+    type, displayName, templates, supportLegend,
   } = component;
   const supportLabels = getXBlockSupportMessages(intl);
 

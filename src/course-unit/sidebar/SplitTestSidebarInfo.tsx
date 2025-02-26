@@ -1,6 +1,5 @@
 import React from 'react';
-import { Card, Stack } from '@openedx/paragon';
-import { Link } from 'react-router-dom';
+import { Card, Hyperlink, Stack } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
@@ -43,19 +42,17 @@ const SplitTestSidebarInfo = () => {
           {intl.formatMessage(messages.sidebarSplitTestExperimentComponentInstruction)}
         </p>
         <hr className="course-split-test-sidebar-devider my-4" />
-        <Link
-          to="https://edx.readthedocs.io/projects/open-edx-building-and-running-a-course/en/latest/developing_course/course_components.html#components-that-contain-other-components"
+        <Hyperlink
+          showLaunchIcon={false}
+          destination="https://edx.readthedocs.io/projects/open-edx-building-and-running-a-course/en/latest/developing_course/course_components.html#components-that-contain-other-components"
           className="btn btn-outline-primary btn-sm"
           target="_blank"
-          rel="noopener noreferrer"
         >
           {intl.formatMessage(messages.sidebarSplitTestLearnMoreLinkLabel)}
-        </Link>
+        </Hyperlink>
       </Stack>
     </Card.Body>
   );
 };
-
-SplitTestSidebarInfo.propTypes = {};
 
 export default SplitTestSidebarInfo;

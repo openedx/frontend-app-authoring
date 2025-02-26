@@ -13,7 +13,7 @@ import {
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import ConfigureModal from '../../generic/configure-modal/ConfigureModal';
 import ModalIframe from '../../generic/modal-iframe';
-import { IFRAME_FEATURE_POLICY, NOTIFICATION_MESSAGES } from '../../constants';
+import { IFRAME_FEATURE_POLICY } from '../../constants';
 import ContentTagsDrawer from '../../content-tags-drawer/ContentTagsDrawer';
 import supportedEditors from '../../editors/supportedEditors';
 import { useIframe } from '../context/hooks';
@@ -137,17 +137,19 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     openManageTagsModal();
   };
 
-  const handleAddNewComponent = (variant: string) => {
-    if (variant === messageTypes.pasteNewComponent) {
-      dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.pasting));
-    } else {
-      dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.adding));
+  const handleShowProcessingNotification = (variant: string) => {
+    if (variant) {
+      dispatch(showProcessingNotification(variant));
     }
   };
 
   const handleHideProcessingNotification = () => {
     dispatch(fetchCourseVerticalChildrenData(blockId, true, true));
     dispatch(hideProcessingNotification());
+  };
+
+  const handleRedirectToXBlockEditPage = (payload: { type: string, locator: string }) => {
+    navigate(`/course/${courseId}/editor/${payload.type}/${payload.locator}`);
   };
 
   const messageHandlers = useMessageHandlers({
@@ -164,8 +166,9 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     handleSaveEditedXBlockData,
     handleFinishXBlockDragging,
     handleOpenManageTagsModal,
-    handleAddNewComponent,
+    handleShowProcessingNotification,
     handleHideProcessingNotification,
+    handleRedirectToXBlockEditPage,
   });
 
   useIframeMessages(messageHandlers);

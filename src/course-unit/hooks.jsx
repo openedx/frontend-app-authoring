@@ -80,11 +80,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
       window.open(draftPreviewLink, '_blank');
     },
     handleEdit: () => {
-      window.postMessage({
-        type: messageTypes.editXBlock,
-        message: 'Sends a message for display the legacy modal window',
-        payload: { id: courseUnit.id },
-      }, window.location.origin);
+      sendMessageToIframe(messageTypes.editXBlock, { id: courseUnit.id }, window);
     },
   };
 
@@ -178,6 +174,12 @@ export const useCourseUnit = ({ courseId, blockId }) => {
     if (type === messageTypes.handleViewXBlockContent) {
       const { usageId } = payload;
       navigate(`/course/${courseId}/container/${usageId}/${sequenceId}`);
+    }
+
+    if (type === messageTypes.handleViewGroupConfigurations) {
+      const { usageId } = payload;
+      const groupId = usageId.split('#').pop();
+      navigate(`/course/${courseId}/group_configurations#${groupId}`);
     }
 
     if (type === messageTypes.showComponentTemplates) {
