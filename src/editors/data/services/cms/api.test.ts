@@ -23,6 +23,8 @@ jest.mock('./urls', () => ({
     .mockImplementation(
       ({ studioEndpointUrl, learningContextId }) => `${studioEndpointUrl}/some_video_upload_url/${learningContextId}`,
     ),
+  handlerUrl: jest.fn().mockReturnValue('urls.handlerUrl'),
+  transcriptXblockV2: jest.fn().mockReturnValue('url.transcriptXblockV2'),
 }));
 
 jest.mock('./utils', () => ({
@@ -149,6 +151,14 @@ describe('cms api', () => {
       it('should call get with url.courseAdvanceSettings', () => {
         apiMethods.fetchAdvancedSettings({ learningContextId, studioEndpointUrl });
         expect(get).toHaveBeenCalledWith(urls.courseAdvanceSettings({ studioEndpointUrl, learningContextId }));
+      });
+    });
+
+    describe('getHandlerUrl', () => {
+      it('should call get with url.handlerUrl', () => {
+        const handlerName = 'transcript';
+        apiMethods.getHandlerUrl({ studioEndpointUrl, blockId, handlerName });
+        expect(get).toHaveBeenCalledWith(urls.handlerUrl({ studioEndpointUrl, blockId, handlerName }));
       });
     });
 
@@ -410,6 +420,27 @@ describe('cms api', () => {
         );
       });
     });
+    describe('uploadTranscriptV2', () => {
+      const transcript = new Blob(['dAta']);
+      it('should call post with urls.uploadTranscriptV2 and transcript data', () => {
+        const mockFormdata = new FormData();
+        const transcriptHandlerUrl = 'handlerUrl';
+        mockFormdata.append('file', transcript);
+        mockFormdata.append('edx_video_id', videoId);
+        mockFormdata.append('language_code', language);
+        mockFormdata.append('new_language_code', language);
+        apiMethods.uploadTranscriptV2({
+          handlerUrl: transcriptHandlerUrl,
+          transcript,
+          videoId,
+          language,
+        });
+        expect(post).toHaveBeenCalledWith(
+          urls.transcriptXblockV2({ transcriptHandlerUrl }),
+          mockFormdata,
+        );
+      });
+    });
     describe('transcript delete', () => {
       it('should call deleteObject with urls.videoTranscripts and transcript data', () => {
         const mockDeleteJSON = { data: { lang: language, edx_video_id: videoId } };
@@ -421,6 +452,19 @@ describe('cms api', () => {
         });
         expect(deleteObject).toHaveBeenCalledWith(
           urls.videoTranscripts({ studioEndpointUrl, blockId }),
+          mockDeleteJSON,
+        );
+      });
+      it('should call deleteObject with urls.transcriptXblockV2 and transcript data', () => {
+        const mockDeleteJSON = { data: { lang: language, edx_video_id: videoId } };
+        const transcriptHandlerUrl = 'handlerUrl';
+        apiMethods.deleteTranscriptV2({
+          handlerUrl: transcriptHandlerUrl,
+          videoId,
+          language,
+        });
+        expect(deleteObject).toHaveBeenCalledWith(
+          urls.transcriptXblockV2({ transcriptHandlerUrl }),
           mockDeleteJSON,
         );
       });
@@ -436,6 +480,19 @@ describe('cms api', () => {
         });
         expect(get).toHaveBeenCalledWith(
           `${urls.videoTranscripts({ studioEndpointUrl, blockId })}?language_code=${language}`,
+          mockJSON,
+        );
+      });
+      it('should call get with urls.transcriptXblockV2 and transcript data', () => {
+        const mockJSON = { data: { lang: language, edx_video_id: videoId } };
+        const transcriptHandlerUrl = 'handlerUrl';
+        apiMethods.getTranscriptV2({
+          handlerUrl: transcriptHandlerUrl,
+          videoId,
+          language,
+        });
+        expect(get).toHaveBeenCalledWith(
+          `${urls.transcriptXblockV2({ transcriptHandlerUrl })}?language_code=${language}`,
           mockJSON,
         );
       });

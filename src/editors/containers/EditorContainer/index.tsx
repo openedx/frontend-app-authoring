@@ -15,12 +15,15 @@ import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import { EditorComponent } from '../../EditorComponent';
 import { useEditorContext } from '../../EditorContext';
-import BaseModal from '../../sharedComponents/BaseModal';
 import TitleHeader from './components/TitleHeader';
 import * as hooks from './hooks';
 import messages from './messages';
+import { parseErrorMsg } from '../../../library-authoring/add-content/AddContentContainer';
+import libraryMessages from '../../../library-authoring/add-content/messages';
+
 import './index.scss';
 import usePromptIfDirty from '../../../generic/promptIfDirty/usePromptIfDirty';
+import CancelConfirmModal from './components/CancelConfirmModal';
 
 interface WrapperProps {
   children: React.ReactNode;
@@ -81,9 +84,12 @@ const EditorContainer: React.FC<Props> = ({
   const isInitialized = hooks.isInitialized();
   const { isCancelConfirmOpen, openCancelConfirmModal, closeCancelConfirmModal } = hooks.cancelConfirmModalToggle();
   const handleCancel = hooks.handleCancel({ onClose, returnFunction });
+  const { createFailed, createFailedError } = hooks.createFailed();
   const disableSave = !isInitialized;
   const saveFailed = hooks.saveFailed();
   const clearSaveFailed = hooks.clearSaveError({ dispatch });
+  const clearCreateFailed = hooks.clearCreateError({ dispatch });
+
   const handleSave = hooks.handleSaveClicked({
     dispatch,
     getContent,
@@ -113,34 +119,32 @@ const EditorContainer: React.FC<Props> = ({
   };
   return (
     <EditorModalWrapper onClose={confirmCancelIfDirty}>
+      {createFailed && (
+        <Toast show onClose={clearCreateFailed}>
+          {parseErrorMsg(
+            intl,
+            createFailedError,
+            libraryMessages.errorCreateMessageWithDetail,
+            libraryMessages.errorCreateMessage,
+          )}
+        </Toast>
+      )}
       {saveFailed && (
         <Toast show onClose={clearSaveFailed}>
           <FormattedMessage {...messages.contentSaveFailed} />
         </Toast>
       )}
-      <BaseModal
-        size="md"
-        confirmAction={(
-          <Button
-            variant="primary"
-            onClick={() => {
-              handleCancel();
-              if (returnFunction) {
-                closeCancelConfirmModal();
-              }
-            }}
-          >
-            <FormattedMessage {...messages.okButtonLabel} />
-          </Button>
-        )}
+      <CancelConfirmModal
         isOpen={isCancelConfirmOpen}
-        close={() => {
-          closeCancelConfirmModal();
+        closeCancelConfirmModal={closeCancelConfirmModal}
+        onCloseEditor={() => {
+          handleCancel();
+          if (returnFunction) {
+            closeCancelConfirmModal();
+          }
+          dispatch({ type: 'resetEditor' });
         }}
-        title={intl.formatMessage(messages.cancelConfirmTitle)}
-      >
-        <FormattedMessage {...messages.cancelConfirmDescription} />
-      </BaseModal>
+      />
       <ModalDialog.Header className="shadow-sm zindex-10">
         <div className="d-flex flex-row justify-content-between">
           <h2 className="h3 col pl-0">

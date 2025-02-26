@@ -12,13 +12,21 @@ import { AdvancedProblemType, ProblemType } from '../constants/problem';
 
 export { default as thunkActions } from './thunkActions';
 
-const rootReducer = combineReducers({
+const editorReducer = combineReducers({
   app: app.reducer,
   requests: requests.reducer,
   video: video.reducer,
   problem: problem.reducer,
   game: game.reducer,
 });
+
+const rootReducer = (state: any, action: any) => {
+  if (action.type === 'resetEditor') {
+    return editorReducer(undefined, action);
+  }
+
+  return editorReducer(state, action);
+};
 
 const actions = StrictDict({
   app: app.actions,

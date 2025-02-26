@@ -23,6 +23,7 @@ const VideoEditor: React.FC<EditorComponent> = ({
     (state) => selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchStudioView }),
   );
   const isLibrary = useSelector(selectors.app.isLibrary) as boolean;
+  const isCreateWorkflow = useSelector(selectors.app.shouldCreateBlock) as boolean;
   const {
     error,
     validateEntry,
@@ -36,7 +37,7 @@ const VideoEditor: React.FC<EditorComponent> = ({
         returnFunction={returnFunction}
         validateEntry={validateEntry}
       >
-        {studioViewFinished ? (
+        {(isCreateWorkflow || studioViewFinished) ? (
           <div className="video-editor">
             <VideoEditorModal {...{ isLibrary }} />
           </div>

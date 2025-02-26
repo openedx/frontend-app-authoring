@@ -20,7 +20,7 @@ describe('startLinkCheck thunk', () => {
 
   describe('successful request', () => {
     it('should set link check stage and request statuses to their in-progress states', async () => {
-      const inProgressStageId = 1;
+      const inPendingStageId = 0;
       await startLinkCheck(courseId)(dispatch, getState);
 
       expect(dispatch).toHaveBeenCalledWith({
@@ -39,7 +39,7 @@ describe('startLinkCheck thunk', () => {
       });
 
       expect(dispatch).toHaveBeenCalledWith({
-        payload: inProgressStageId,
+        payload: inPendingStageId,
         type: 'courseOptimizer/updateCurrentStage',
       });
     });
@@ -60,7 +60,7 @@ describe('startLinkCheck thunk', () => {
         type: 'courseOptimizer/updateLinkCheckInProgress',
       });
       expect(dispatch).toHaveBeenCalledWith({
-        payload: -1,
+        payload: 1,
         type: 'courseOptimizer/updateCurrentStage',
       });
     });
@@ -180,7 +180,7 @@ describe('fetchLinkCheckStatus thunk', () => {
       });
 
       expect(dispatch).toHaveBeenCalledWith({
-        payload: -1,
+        payload: 1,
         type: 'courseOptimizer/updateCurrentStage',
       });
 

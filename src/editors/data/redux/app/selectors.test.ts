@@ -88,6 +88,7 @@ describe('app selectors unit tests', () => {
         simpleSelectors.unitUrl,
         simpleSelectors.blockValue,
         selectors.isLibrary,
+        selectors.shouldCreateBlock,
       ]);
     });
     describe('for library blocks', () => {
@@ -98,8 +99,8 @@ describe('app selectors unit tests', () => {
         };
 
         [
-          [[null, truthy.blockValue, true] as [any, any, any], true] as const,
-          [[null, null, true] as [any, any, any], false] as const,
+          [[null, truthy.blockValue, true, false] as [any, any, any, any], true] as const,
+          [[null, null, true, false] as [any, any, any, any], false] as const,
         ].map(([args, expected]) => expect(cb(...args)).toEqual(expected));
       });
     });
@@ -112,9 +113,19 @@ describe('app selectors unit tests', () => {
         };
 
         [
-          [[null, truthy.blockValue, false] as [any, any, any], false] as const,
-          [[truthy.unitUrl, null, false] as [any, any, any], false] as const,
-          [[truthy.unitUrl, truthy.blockValue, false] as [any, any, any], true] as const,
+          [[null, truthy.blockValue, false, false] as [any, any, any, any], false] as const,
+          [[truthy.unitUrl, null, false, false] as [any, any, any, any], false] as const,
+          [[truthy.unitUrl, truthy.blockValue, false, false] as [any, any, any, any], true] as const,
+        ].map(([args, expected]) => expect(cb(...args)).toEqual(expected));
+      });
+    });
+    describe('component creation workflow', () => {
+      it('returns true if is shouldCreateBlock is truthy', () => {
+        const { resultFunc: cb } = selectors.isInitialized;
+
+        [
+          [[null, null, true, true] as [any, any, any, any], true] as const,
+          [[null, null, true, true] as [any, any, any, any], true] as const,
         ].map(([args, expected]) => expect(cb(...args)).toEqual(expected));
       });
     });
@@ -182,6 +193,11 @@ describe('app selectors unit tests', () => {
       it('should return true when learningContextId a v1 library', () => {
         expect(selectors.isLibrary.resultFunc(learningContextIdLibrary, 'library-v1')).toEqual(true);
       });
+    });
+  });
+  describe('shouldCreateBlock', () => {
+    it('should return false if the editor is initialized with a blockId', () => {
+      expect(selectors.shouldCreateBlock.resultFunc('block-v1:', 'text')).toEqual(false);
     });
   });
 });

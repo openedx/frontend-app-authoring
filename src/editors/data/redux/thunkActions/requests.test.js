@@ -3,9 +3,11 @@ import { RequestKeys } from '../../constants/requests';
 import api from '../../services/cms/api';
 import * as requests from './requests';
 import { actions, selectors } from '../index';
+import { createLibraryBlock } from '../../../../library-authoring/data/api';
 
 const testState = {
   some: 'data',
+  isLibrary: false,
 };
 
 jest.mock('../app/selectors', () => ({
@@ -17,7 +19,12 @@ jest.mock('../app/selectors', () => ({
   blockId: (state) => ({ blockId: state }),
   blockType: (state) => ({ blockType: state }),
   learningContextId: (state) => ({ learningContextId: state }),
-  blockTitle: (state) => ({ title: state }),
+  blockTitle: (state) => state.some,
+  isLibrary: (state) => (state.isLibrary),
+}));
+
+jest.mock('../video/selectors', () => ({
+  transcriptHandlerUrl: () => ('transcriptHandlerUrl'),
 }));
 
 jest.mock('../../services/cms/api', () => ({
@@ -34,11 +41,19 @@ jest.mock('../../services/cms/api', () => ({
   uploadThumbnail: (args) => args,
   uploadTranscript: (args) => args,
   deleteTranscript: (args) => args,
+  deleteTranscriptV2: (args) => args,
   getTranscript: (args) => args,
+  getTranscriptV2: (args) => args,
+  getHandlerUrl: (args) => args,
+  uploadTranscriptV2: (args) => args,
   checkTranscriptsForImport: (args) => args,
   importTranscript: (args) => args,
   fetchVideoFeatures: (args) => args,
   uploadVideo: (args) => args,
+}));
+
+jest.mock('../../../../library-authoring/data/api', () => ({
+  createLibraryBlock: ({ id, url }) => ({ id, url }),
 }));
 
 jest.mock('../../../utils', () => ({
@@ -158,10 +173,11 @@ describe('requests thunkActions module', () => {
     args,
     expectedData,
     expectedString,
+    state,
   }) => {
     let dispatchedAction;
     beforeEach(() => {
-      action({ ...args, onSuccess, onFailure })(dispatch, () => testState);
+      action({ ...args, onSuccess, onFailure })(dispatch, () => state || testState);
       [[dispatchedAction]] = dispatch.mock.calls;
     });
     it('dispatches networkRequest', () => {
@@ -349,6 +365,22 @@ describe('requests thunkActions module', () => {
         },
       });
     });
+    describe('createBlock', () => {
+      testNetworkRequestAction({
+        action: requests.createBlock,
+        args: { ...fetchParams },
+        expectedString: 'with create promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.createBlock,
+          promise: createLibraryBlock({
+            libraryId: selectors.app.learningContextId(testState),
+            blockType: selectors.app.blockType(testState),
+          }),
+        },
+      });
+    });
+
     describe('uploadAsset', () => {
       const asset = 'SoME iMage CoNtent As String';
       let uploadAsset;
@@ -407,6 +439,79 @@ describe('requests thunkActions module', () => {
       });
     });
 
+    describe('batchUploadAssets', () => {
+      const assets = [new Blob(['file1']), new Blob(['file2'])];
+      testNetworkRequestAction({
+        action: requests.batchUploadAssets,
+        args: { ...fetchParams, assets },
+        expectedString: 'with upload batch assets promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.batchUploadAssets,
+          promise: assets.reduce((acc, asset) => acc.then(() => requests.uploadAsset({
+            asset,
+            learningContextId: selectors.app.learningContextId(testState),
+            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+          })), Promise.resolve()),
+        },
+      });
+      describe('removeTemporalLink', () => {
+        let response;
+        let asset;
+        let content;
+
+        beforeEach(() => {
+          response = {
+            data: {
+              asset: {
+                portableUrl: 'image/test.jpg',
+              },
+            },
+          };
+
+          asset = new Blob(['image data'], { type: 'image/jpeg' });
+          content = 'Content with an image: data:image/jpeg;base64,TESTBASE64';
+        });
+
+        it('should replace the base64 image with the image path in the content', (done) => {
+          /*       const onLoad = jest.fn();
+          const readAsDataURLMock = jest.fn(() => {
+            this.result = 'data:image/jpeg;base64,TESTBASE64';
+            onLoad();
+          }); */
+          class FileReaderMock {
+            constructor() {
+              this.result = '';
+              this.onload = null;
+            }
+
+            addEventListener(event, callback) {
+              if (event === 'load') {
+                this.onLoad = callback;
+              }
+            }
+
+            readAsDataURL() {
+              this.result = 'data:image/jpeg;base64,TESTBASE64';
+              this.onLoad();
+            }
+          }
+          global.FileReader = FileReaderMock;
+          global.URL.revokeObjectURL = jest.fn();
+          const resolveMock = jest.fn((parsedContent) => {
+            // Assert that the content has been replaced correctly
+            expect(parsedContent).toEqual('Content with an image: /image/test.jpg');
+            done();
+          });
+
+          requests.removeTemporalLink(response, asset, content, resolveMock);
+
+          // expect(global.FileReader.readAsDataURLMock).toHaveBeenCalledWith(asset);
+          expect(global.URL.revokeObjectURL).toHaveBeenCalledWith(asset);
+        });
+      });
+    });
+
     describe('uploadThumbnail', () => {
       const thumbnail = 'SoME tHumbNAil CoNtent As String';
       const videoId = 'SoME VidEOid CoNtent As String';
@@ -442,6 +547,31 @@ describe('requests thunkActions module', () => {
             videoId,
             studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
           }),
+        },
+      });
+    });
+    describe('deleteTranscript V2', () => {
+      const language = 'SoME laNGUage CoNtent As String';
+      const videoId = 'SoME VidEOid CoNtent As String';
+      testNetworkRequestAction({
+        action: requests.deleteTranscript,
+        args: {
+          language,
+          videoId,
+          ...fetchParams,
+        },
+        expectedString: 'with deleteTranscript promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.deleteTranscript,
+          promise: api.deleteTranscriptV2({
+            handlerUrl: selectors.video.transcriptHandlerUrl(testState),
+            videoId,
+            language,
+          }),
+        },
+        state: {
+          isLibrary: true,
         },
       });
     });
@@ -500,6 +630,44 @@ describe('requests thunkActions module', () => {
         },
       });
     });
+    describe('getTranscriptFile V2', () => {
+      const language = 'SoME laNGUage CoNtent As String';
+      const videoId = 'SoME VidEOid CoNtent As String';
+      testNetworkRequestAction({
+        action: requests.getTranscriptFile,
+        args: { language, videoId, ...fetchParams },
+        expectedString: 'with getTranscriptFile promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.getTranscriptFile,
+          promise: api.getTranscriptV2({
+            handlerUrl: selectors.video.transcriptHandlerUrl(testState),
+            language,
+            videoId,
+          }),
+        },
+        state: {
+          isLibrary: true,
+        },
+      });
+    });
+    describe('getHandlerUrl', () => {
+      const handlerName = 'transcript';
+      testNetworkRequestAction({
+        action: requests.getHandlerlUrl,
+        args: { handlerName, ...fetchParams },
+        expectedString: 'with getHandlerUrl promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.getHandlerUrl,
+          promise: api.getHandlerUrl({
+            studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
+            blockId: selectors.app.blockId(testState),
+            handlerName,
+          }),
+        },
+      });
+    });
     describe('updateTranscriptLanguage', () => {
       const languageBeforeChange = 'SoME laNGUage CoNtent As String';
       const newLanguageCode = 'SoME NEW laNGUage CoNtent As String';
@@ -526,7 +694,34 @@ describe('requests thunkActions module', () => {
         },
       });
     });
-
+    describe('updateTranscriptLanguage V2', () => {
+      const languageBeforeChange = 'SoME laNGUage CoNtent As String';
+      const newLanguageCode = 'SoME NEW laNGUage CoNtent As String';
+      const videoId = 'SoME VidEOid CoNtent As String';
+      testNetworkRequestAction({
+        action: requests.updateTranscriptLanguage,
+        args: {
+          languageBeforeChange,
+          newLanguageCode,
+          videoId,
+          ...fetchParams,
+        },
+        expectedString: 'with uploadTranscript promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.updateTranscriptLanguage,
+          promise: api.uploadTranscriptV2({
+            videoId,
+            language: languageBeforeChange,
+            newLanguage: newLanguageCode,
+            handlerUrl: selectors.video.transcriptHandlerUrl(testState),
+          }),
+        },
+        state: {
+          isLibrary: true,
+        },
+      });
+    });
     describe('uploadTranscript', () => {
       const language = 'SoME laNGUage CoNtent As String';
       const videoId = 'SoME VidEOid CoNtent As String';
@@ -550,6 +745,34 @@ describe('requests thunkActions module', () => {
             language,
             studioEndpointUrl: selectors.app.studioEndpointUrl(testState),
           }),
+        },
+      });
+    });
+    describe('uploadTranscript V2', () => {
+      const language = 'SoME laNGUage CoNtent As String';
+      const videoId = 'SoME VidEOid CoNtent As String';
+      const transcript = 'SoME tRANscRIPt CoNtent As String';
+      testNetworkRequestAction({
+        action: requests.uploadTranscript,
+        args: {
+          transcript,
+          language,
+          videoId,
+          ...fetchParams,
+        },
+        expectedString: 'with uploadTranscript promise',
+        expectedData: {
+          ...fetchParams,
+          requestKey: RequestKeys.uploadTranscript,
+          promise: api.uploadTranscriptV2({
+            handlerUrl: selectors.video.transcriptHandlerUrl(testState),
+            transcript,
+            videoId,
+            language,
+          }),
+        },
+        state: {
+          isLibrary: true,
         },
       });
     });

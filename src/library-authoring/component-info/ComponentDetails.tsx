@@ -7,6 +7,7 @@ import { useSidebarContext } from '../common/context/SidebarContext';
 import { useLibraryBlockMetadata } from '../data/apiHooks';
 import HistoryWidget from '../generic/history-widget';
 import { ComponentAdvancedInfo } from './ComponentAdvancedInfo';
+import { ComponentUsage } from './ComponentUsage';
 import messages from './messages';
 
 const ComponentDetails = () => {
@@ -36,19 +37,19 @@ const ComponentDetails = () => {
 
   return (
     <Stack gap={3}>
-      <div>
+      <>
         <h3 className="h5">
           <FormattedMessage {...messages.detailsTabUsageTitle} />
         </h3>
-        <small><FormattedMessage {...messages.detailsTabUsagePlaceholder} /></small>
-      </div>
+        <ComponentUsage usageKey={usageKey} />
+      </>
       <hr className="w-100" />
-      <div>
+      <>
         <h3 className="h5">
           <FormattedMessage {...messages.detailsTabHistoryTitle} />
         </h3>
         <HistoryWidget {...componentMetadata} />
-      </div>
+      </>
       <ComponentAdvancedInfo />
     </Stack>
   );

@@ -15,7 +15,7 @@ const messages = defineMessages({
   },
   description1: {
     id: 'course-authoring.course-optimizer.description1',
-    defaultMessage: `This tool will scan your the published version of your course for broken links.
+    defaultMessage: `This tool will scan the published version of your course for broken links.
     Unpublished changes will not be included in the scan.
     Note that this process will take more time for larger courses.
     To update the scan after you have published new changes to your course,

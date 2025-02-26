@@ -17,8 +17,8 @@ const selectors = { app: appSelectors, video: videoSelectors };
 
 export const loadVideoData = (selectedVideoId, selectedVideoUrl) => (dispatch, getState) => {
   const state = getState();
-  const blockValueData = state.app.blockValue.data;
-  let rawVideoData = blockValueData.metadata ? blockValueData.metadata : {};
+  const blockValueData = state.app?.blockValue?.data;
+  let rawVideoData = blockValueData?.metadata ? blockValueData.metadata : {};
   const rawVideos = Object.values(selectors.app.videos(state));
   if (selectedVideoId !== undefined && selectedVideoId !== null) {
     const selectedVideo = _.find(rawVideos, video => {
@@ -383,6 +383,16 @@ export const updateTranscriptLanguage = ({ newLanguageCode, languageBeforeChange
   }));
 };
 
+export const updateTranscriptHandlerUrl = () => (dispatch) => {
+  dispatch(requests.getHandlerlUrl({
+    handlerName: 'studio_transcript',
+    onSuccess: (response) => {
+      const transcriptHandlerUrl = response.data.handler_url;
+      dispatch(actions.video.updateField({ transcriptHandlerUrl }));
+    },
+  }));
+};
+
 export const replaceTranscript = ({ newFile, newFilename, language }) => (dispatch, getState) => {
   const state = getState();
   const { videoId } = state.video;
@@ -456,4 +466,5 @@ export default {
   replaceTranscript,
   uploadHandout,
   uploadVideo,
+  updateTranscriptHandlerUrl,
 };

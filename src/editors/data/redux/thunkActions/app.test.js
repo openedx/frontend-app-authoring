@@ -1,14 +1,17 @@
 /* eslint-disable no-import-assign */
 import { actions } from '..';
 import { camelizeKeys } from '../../../utils';
+import { mockImageData } from '../../constants/mockData';
 import { RequestKeys } from '../../constants/requests';
 import * as thunkActions from './app';
 
 jest.mock('./requests', () => ({
   fetchBlock: (args) => ({ fetchBlock: args }),
   fetchUnit: (args) => ({ fetchUnit: args }),
+  createBlock: (args) => ({ createBlock: args }),
   saveBlock: (args) => ({ saveBlock: args }),
   uploadAsset: (args) => ({ uploadAsset: args }),
+  batchUploadAssets: (args) => ({ batchUploadAssets: args }),
   fetchStudioView: (args) => ({ fetchStudioView: args }),
   fetchImages: (args) => ({ fetchImages: args }),
   fetchVideos: (args) => ({ fetchVideos: args }),
@@ -30,8 +33,10 @@ const testValue = {
 describe('app thunkActions', () => {
   let dispatch;
   let dispatchedAction;
+  let getState;
   beforeEach(() => {
     dispatch = jest.fn((action) => ({ dispatch: action }));
+    getState = jest.fn().mockImplementation(() => ({ app: { blockId: 'blockId', images: {} } }));
   });
   describe('fetchBlock', () => {
     beforeEach(() => {
@@ -185,6 +190,7 @@ describe('app thunkActions', () => {
       thunkActions.fetchCourseDetails = () => 'fetchCourseDetails';
       thunkActions.initialize(testValue)(dispatch);
       expect(dispatch.mock.calls).toEqual([
+        [{ type: 'resetEditor' }],
         [actions.app.initialize(testValue)],
         [thunkActions.fetchBlock()],
       ]);
@@ -194,6 +200,22 @@ describe('app thunkActions', () => {
       thunkActions.fetchImages = fetchImages;
       thunkActions.fetchVideos = fetchVideos;
       thunkActions.fetchCourseDetails = fetchCourseDetails;
+    });
+  });
+  describe('initialize without block id but block type defined', () => {
+    it('dispatches actions.app.initialize, and then fetches both block and unit', () => {
+      const data = {
+        ...testValue,
+        blockType: 'html',
+        blockId: '',
+        learningContextId: 'course-v1:UniversityX+PHYS+1',
+      };
+      thunkActions.initialize(data)(dispatch);
+      expect(dispatch.mock.calls).toEqual([
+        [{ type: 'resetEditor' }],
+        [actions.app.initialize(data)],
+        [actions.app.initializeEditor()],
+      ]);
     });
   });
   describe('initialize with block type html', () => {
@@ -220,6 +242,7 @@ describe('app thunkActions', () => {
       };
       thunkActions.initialize(data)(dispatch);
       expect(dispatch.mock.calls).toEqual([
+        [{ type: 'resetEditor' }],
         [actions.app.initialize(data)],
         [thunkActions.fetchBlock()],
         [thunkActions.fetchUnit()],
@@ -257,6 +280,7 @@ describe('app thunkActions', () => {
       };
       thunkActions.initialize(data)(dispatch);
       expect(dispatch.mock.calls).toEqual([
+        [{ type: 'resetEditor' }],
         [actions.app.initialize(data)],
         [thunkActions.fetchBlock()],
         [thunkActions.fetchUnit()],
@@ -294,6 +318,7 @@ describe('app thunkActions', () => {
       };
       thunkActions.initialize(data)(dispatch);
       expect(dispatch.mock.calls).toEqual([
+        [{ type: 'resetEditor' }],
         [actions.app.initialize(data)],
         [thunkActions.fetchBlock()],
         [thunkActions.fetchUnit()],
@@ -333,21 +358,73 @@ describe('app thunkActions', () => {
       expect(returnToUnit).toHaveBeenCalled();
     });
   });
-  describe('uploadAsset', () => {
-    const setSelection = jest.fn();
+  describe('createBlock', () => {
+    let returnToUnit;
     beforeEach(() => {
-      thunkActions.uploadAsset({ file: testValue, setSelection })(dispatch);
+      returnToUnit = jest.fn();
+      thunkActions.createBlock(testValue, returnToUnit)(dispatch, getState);
       [[dispatchedAction]] = dispatch.mock.calls;
     });
+    it('dispatches createBlock', () => {
+      expect(dispatchedAction.createBlock).not.toBe(undefined);
+    });
+    test('onSuccess: calls setBlockId and dispatches saveBlock', () => {
+      const data = { id: 'block-id' };
+      dispatchedAction.createBlock.onSuccess(data);
+      expect(dispatch).toHaveBeenCalledWith(actions.app.setBlockId(data.id));
+      expect(dispatch.mock.calls.length).toBe(3);
+    });
+    test('onFailure: dispatches failRequest', () => {
+      const error = new Error('fail create a new component');
+      dispatchedAction.createBlock.onFailure(error);
+      expect(dispatch).toHaveBeenCalledWith(actions.requests.failRequest({
+        requestKey: RequestKeys.createBlock,
+        error,
+      }));
+    });
+    test('should call batchUploadAssets if the block has images', () => {
+      mockImageData.map(image => ({ ...image, file: 'file' }));
+      getState.mockReturnValueOnce({ app: { blockId: '', images: mockImageData } });
+      const data = { id: 'block-id' };
+      dispatchedAction.createBlock.onSuccess(data);
+      expect(dispatch).toHaveBeenCalledWith(actions.app.setBlockId(data.id));
+      expect(dispatch.mock.calls[2][0]).toEqual({
+        [RequestKeys.batchUploadAssets]: {
+          assets: mockImageData.map(image => image.file),
+          content: { data: expect.any(Object) },
+          onSuccess: expect.any(Function),
+          onFailure: expect.any(Function),
+        },
+      });
+    });
+  });
+  describe('uploadAsset', () => {
+    const setSelection = jest.fn();
+
     it('dispatches uploadAsset action', () => {
+      thunkActions.uploadAsset({ file: testValue, setSelection })(dispatch, getState);
+      [[dispatchedAction]] = dispatch.mock.calls;
       expect(dispatchedAction.uploadAsset).not.toBe(undefined);
     });
     test('passes file as image prop', () => {
+      thunkActions.uploadAsset({ file: testValue, setSelection })(dispatch, getState);
+      [[dispatchedAction]] = dispatch.mock.calls;
       expect(dispatchedAction.uploadAsset.asset).toEqual(testValue);
     });
     test('onSuccess: calls setSelection with camelized response.data.asset', () => {
+      thunkActions.uploadAsset({ file: testValue, setSelection })(dispatch, getState);
+      [[dispatchedAction]] = dispatch.mock.calls;
       dispatchedAction.uploadAsset.onSuccess({ data: { asset: testValue } });
       expect(setSelection).toHaveBeenCalledWith(camelizeKeys(testValue));
+    });
+    test('should save a new image temporary when is create workflow', () => {
+      getState.mockImplementation(() => ({ app: { blockId: '', blockType: 'html' } }));
+      global.URL.createObjectURL = jest.fn();
+      thunkActions.uploadAsset({ file: testValue, setSelection })(dispatch, getState);
+      [[dispatchedAction]] = dispatch.mock.calls;
+      expect(URL.createObjectURL).toHaveBeenCalledWith(testValue);
+      expect(setSelection).toHaveBeenCalled();
+      expect(dispatch).toHaveBeenCalledWith(actions.app.setImages({ images: expect.any(Object), imageCount: 1 }));
     });
   });
 });

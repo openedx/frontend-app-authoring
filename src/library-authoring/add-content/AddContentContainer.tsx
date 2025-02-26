@@ -32,8 +32,8 @@ import {
   useBlockTypesMetadata,
 } from '../data/apiHooks';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { canEditComponent } from '../components/ComponentEditorModal';
 import { PickLibraryContentModal } from './PickLibraryContentModal';
+import { blockTypes } from '../../editors/data/constants/app';
 
 import messages from './messages';
 import type { BlockTypeMetadata } from '../data/api';
@@ -166,6 +166,24 @@ const AddAdvancedContentView = ({
   );
 };
 
+export const parseErrorMsg = (
+  intl,
+  error: any,
+  detailedMessage: MessageDescriptor,
+  defaultMessage: MessageDescriptor,
+) => {
+  try {
+    const { response: { data } } = error;
+    const detail = data && (Array.isArray(data) ? data.join() : String(data));
+    if (detail) {
+      return intl.formatMessage(detailedMessage, { detail });
+    }
+  } catch (_err) {
+    // ignore
+  }
+  return intl.formatMessage(defaultMessage);
+};
+
 const AddContentContainer = () => {
   const intl = useIntl();
   const {
@@ -174,8 +192,8 @@ const AddContentContainer = () => {
     openCreateCollectionModal,
     openComponentEditor,
   } = useLibraryContext();
-  const createBlockMutation = useCreateLibraryBlock();
   const updateComponentsMutation = useAddComponentsToCollection(libraryId, collectionId);
+  const createBlockMutation = useCreateLibraryBlock();
   const pasteClipboardMutation = useLibraryPasteClipboard();
   const { showToast } = useContext(ToastContext);
   const canEdit = useSelector(getCanEdit);
@@ -193,23 +211,6 @@ const AddContentContainer = () => {
     acc[block.blockType] = block;
     return acc;
   }, {}), [blockTypesDataList]);
-
-  const parseErrorMsg = (
-    error: any,
-    detailedMessage: MessageDescriptor,
-    defaultMessage: MessageDescriptor,
-  ) => {
-    try {
-      const { response: { data } } = error;
-      const detail = data && (Array.isArray(data) ? data.join() : String(data));
-      if (detail) {
-        return intl.formatMessage(detailedMessage, { detail });
-      }
-    } catch (_err) {
-      // ignore
-    }
-    return intl.formatMessage(defaultMessage);
-  };
 
   const isBlockTypeEnabled = (blockType: string) => getConfig().LIBRARY_SUPPORTED_BLOCKS.includes(blockType);
 
@@ -296,35 +297,36 @@ const AddContentContainer = () => {
       showToast(intl.formatMessage(messages.successPasteClipboardMessage));
     }).catch((error) => {
       showToast(parseErrorMsg(
+        intl,
         error,
         messages.errorPasteClipboardMessageWithDetail,
         messages.errorPasteClipboardMessage,
       ));
     });
   };
-
   const onCreateBlock = (blockType: string) => {
-    createBlockMutation.mutateAsync({
-      libraryId,
-      blockType,
-      definitionId: `${uuid4()}`,
-    }).then((data) => {
-      const hasEditor = canEditComponent(data.id);
-      if (hasEditor) {
-        // linkComponent on editor close.
-        openComponentEditor(data.id, () => linkComponent(data.id));
-      } else {
+    const suportedEditorTypes = Object.values(blockTypes);
+    if (suportedEditorTypes.includes(blockType)) {
+      // linkComponent on editor close.
+      openComponentEditor('', (data) => data && linkComponent(data.id), blockType);
+    } else {
+      createBlockMutation.mutateAsync({
+        libraryId,
+        blockType,
+        definitionId: `${uuid4()}`,
+      }).then((data) => {
         // We can't start editing this right away so just show a toast message:
         showToast(intl.formatMessage(messages.successCreateMessage));
         linkComponent(data.id);
-      }
-    }).catch((error) => {
-      showToast(parseErrorMsg(
-        error,
-        messages.errorCreateMessageWithDetail,
-        messages.errorCreateMessage,
-      ));
-    });
+      }).catch((error) => {
+        showToast(parseErrorMsg(
+          intl,
+          error,
+          messages.errorCreateMessageWithDetail,
+          messages.errorCreateMessage,
+        ));
+      });
+    }
   };
 
   const onCreateContent = (blockType: string) => {

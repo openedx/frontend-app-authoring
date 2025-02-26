@@ -116,10 +116,10 @@ const messages = defineMessages({
     defaultMessage: 'Component Usage',
     description: 'Title for the Component Usage container in the details tab',
   },
-  detailsTabUsagePlaceholder: {
-    id: 'course-authoring.library-authoring.component.details-tab.usage-placeholder',
-    defaultMessage: 'This will show the courses that use this component. Feature coming soon.',
-    description: 'Explanation/placeholder for the future "Component Usage" feature',
+  detailsTabUsageEmpty: {
+    id: 'course-authoring.library-authoring.component.details-tab.usage-empty',
+    defaultMessage: 'This component is not used in any course.',
+    description: 'Message to display in usage section when component is not used in any course',
   },
   detailsTabHistoryTitle: {
     id: 'course-authoring.library-authoring.component.details-tab.history-title',

@@ -27,7 +27,7 @@ const wrapper = ({ children }) => (
 
 const fetchMockResponse = () => {
   fetchMock.post(
-    mockContentSearchConfig.searchEndpointUrl,
+    mockContentSearchConfig.multisearchEndpointUrl,
     () => mockResult,
     { overwriteRoutes: true },
   );

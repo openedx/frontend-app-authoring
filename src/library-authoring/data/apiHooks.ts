@@ -46,6 +46,7 @@ import {
   deleteXBlockAsset,
   restoreLibraryBlock,
   getBlockTypesMetaData,
+  getComponentDownstreamLinks,
 } from './api';
 import { VersionSpec } from '../LibraryBlock';
 
@@ -105,6 +106,7 @@ export const xblockQueryKeys = {
   /** assets (static files) */
   xblockAssets: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'assets'],
   componentMetadata: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'componentMetadata'],
+  componentDownstreamLinks: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'downstreamLinks'],
 };
 
 /**
@@ -559,3 +561,14 @@ export const useUpdateComponentCollections = (libraryId: string, usageKey: strin
     },
   });
 };
+
+/**
+ * Get the downstream links of a component in a library
+ */
+export const useComponentDownstreamLinks = (usageKey: string) => (
+  useQuery({
+    queryKey: xblockQueryKeys.componentDownstreamLinks(usageKey),
+    queryFn: () => getComponentDownstreamLinks(usageKey),
+    enabled: !!usageKey,
+  })
+);

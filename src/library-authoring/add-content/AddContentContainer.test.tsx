@@ -1,5 +1,4 @@
 import MockAdapter from 'axios-mock-adapter/types';
-import { snakeCaseObject } from '@edx/frontend-platform';
 import {
   fireEvent,
   render as baseRender,
@@ -7,9 +6,14 @@ import {
   waitFor,
   initializeMocks,
 } from '../../testUtils';
-import { mockContentLibrary, mockBlockTypesMetadata } from '../data/api.mocks';
+import {
+  mockContentLibrary,
+  mockBlockTypesMetadata,
+  mockXBlockFields,
+} from '../data/api.mocks';
 import {
   getContentLibraryApiUrl, getCreateLibraryBlockUrl, getLibraryCollectionComponentApiUrl, getLibraryPasteClipboardUrl,
+  getXBlockFieldsApiUrl,
 } from '../data/api';
 import { mockBroadcastChannel, mockClipboardEmpty, mockClipboardHtml } from '../../generic/data/api.mock';
 import { LibraryProvider } from '../common/context/LibraryContext';
@@ -17,8 +21,10 @@ import AddContentContainer from './AddContentContainer';
 import { ComponentEditorModal } from '../components/ComponentEditorModal';
 import editorCmsApi from '../../editors/data/services/cms/api';
 import { ToastActionData } from '../../generic/toast-context';
+import * as textEditorHooks from '../../editors/containers/TextEditor/hooks';
 
 mockBroadcastChannel();
+// mockCreateLibraryBlock.applyMock();
 
 // Mocks for ComponentEditorModal to work in tests.
 jest.mock('frontend-components-tinymce-advanced-plugins', () => ({ a11ycheckerCss: '' }));
@@ -48,6 +54,7 @@ describe('<AddContentContainer />', () => {
     axiosMock = mocks.axiosMock;
     mockShowToast = mocks.mockShowToast;
     axiosMock.onGet(getContentLibraryApiUrl(libraryId)).reply(200, {});
+    jest.spyOn(textEditorHooks, 'getContent').mockImplementation(() => () => '<p>Edited HTML content</p>');
   });
   afterEach(() => {
     jest.restoreAllMocks();
@@ -112,7 +119,7 @@ describe('<AddContentContainer />', () => {
     await waitFor(() => expect(axiosMock.history.patch.length).toEqual(0));
   });
 
-  it('should create a content', async () => {
+  it('should open the editor modal to create a content when the block is supported', async () => {
     mockClipboardEmpty.applyMock();
     const url = getCreateLibraryBlockUrl(libraryId);
     axiosMock.onPost(url).reply(200);
@@ -121,7 +128,16 @@ describe('<AddContentContainer />', () => {
 
     const textButton = screen.getByRole('button', { name: /text/i });
     fireEvent.click(textButton);
+    expect(await screen.findByRole('heading', { name: /Text/ })).toBeInTheDocument();
+  });
 
+  it('should create a component when the block is not supported by the editor', async () => {
+    mockClipboardEmpty.applyMock();
+    const url = getCreateLibraryBlockUrl(libraryId);
+    axiosMock.onPost(url).reply(200);
+    render();
+    const textButton = screen.getByRole('button', { name: /other/i });
+    fireEvent.click(textButton);
     await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(url));
     await waitFor(() => expect(axiosMock.history.patch.length).toEqual(0));
   });
@@ -134,13 +150,14 @@ describe('<AddContentContainer />', () => {
       libraryId,
       collectionId,
     );
-    // having id of block which is not video, html or problem will not trigger editor.
+
     axiosMock.onPost(url).reply(200, { id: 'some-component-id' });
     axiosMock.onPatch(collectionComponentUrl).reply(200);
 
     render(collectionId);
 
-    const textButton = screen.getByRole('button', { name: /text/i });
+    // Select a block that is not supported by the editor should create the component
+    const textButton = screen.getByRole('button', { name: /other/i });
     fireEvent.click(textButton);
 
     await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(url));
@@ -152,6 +169,8 @@ describe('<AddContentContainer />', () => {
     mockClipboardEmpty.applyMock();
     const collectionId = 'some-collection-id';
     const url = getCreateLibraryBlockUrl(libraryId);
+    const usageKey = mockXBlockFields.usageKeyNewHtml;
+    const updateBlockUrl = getXBlockFieldsApiUrl(usageKey);
     const collectionComponentUrl = getLibraryCollectionComponentApiUrl(
       libraryId,
       collectionId,
@@ -160,39 +179,20 @@ describe('<AddContentContainer />', () => {
     jest.spyOn(editorCmsApi, 'fetchCourseImages').mockImplementation(async () => ( // eslint-disable-next-line
       { data: { assets: [], start: 0, end: 0, page: 0, pageSize: 50, totalCount: 0 } }
     ));
-    jest.spyOn(editorCmsApi, 'fetchByUnitId').mockImplementation(async () => ({
-      status: 200,
-      data: {
-        ancestors: [{
-          id: 'block-v1:Org+TS100+24+type@vertical+block@parent',
-          display_name: 'You-Knit? The Test Unit',
-          category: 'vertical',
-          has_children: true,
-        }],
-      },
-    }));
-
     axiosMock.onPost(url).reply(200, {
-      id: 'lb:OpenedX:CSPROB2:html:1a5efd56-4ee5-4df0-b466-44f08fbbf567',
+      id: usageKey,
     });
-    const fieldsHtml = {
-      displayName: 'Introduction to Testing',
-      data: '<p>This is a text component which uses <strong>HTML</strong>.</p>',
-      metadata: { displayName: 'Introduction to Testing' },
-    };
-    jest.spyOn(editorCmsApi, 'fetchBlockById').mockImplementationOnce(async () => (
-      { status: 200, data: snakeCaseObject(fieldsHtml) }
-    ));
-    axiosMock.onPatch(collectionComponentUrl).reply(200);
 
+    axiosMock.onPost(updateBlockUrl).reply(200, mockXBlockFields.dataHtml);
+    axiosMock.onPatch(collectionComponentUrl).reply(200);
     render(collectionId);
 
     const textButton = screen.getByRole('button', { name: /text/i });
     fireEvent.click(textButton);
 
-    // Component should be linked to Collection on closing editor.
-    const closeButton = await screen.findByRole('button', { name: 'Exit the editor' });
-    fireEvent.click(closeButton);
+    // Component should be linked to Collection on saving the changes in the editor.
+    const saveButton = screen.getByLabelText('Save changes and return to learning context');
+    fireEvent.click(saveButton);
     await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(url));
     await waitFor(() => expect(axiosMock.history.patch.length).toEqual(1));
     await waitFor(() => expect(axiosMock.history.patch[0].url).toEqual(collectionComponentUrl));
@@ -305,20 +305,6 @@ describe('<AddContentContainer />', () => {
       mockResponse: ['library cannot have more than 100000 components'],
       expectedError: 'There was an error pasting the content: library cannot have more than 100000 components',
       buttonName: /paste from clipboard/i,
-    },
-    {
-      label: 'should handle failure to create content',
-      mockUrl: getCreateLibraryBlockUrl(libraryId),
-      mockResponse: undefined,
-      expectedError: 'There was an error creating the content.',
-      buttonName: /text/i,
-    },
-    {
-      label: 'should show detailed error in toast on create failure',
-      mockUrl: getCreateLibraryBlockUrl(libraryId),
-      mockResponse: 'library cannot have more than 100000 components',
-      expectedError: 'There was an error creating the content: library cannot have more than 100000 components',
-      buttonName: /text/i,
     },
   ])('$label', async ({
     mockUrl, mockResponse, buttonName, expectedError,

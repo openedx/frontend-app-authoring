@@ -9,6 +9,7 @@ import { RequestStatus } from '../../data/constants';
 import { NOTIFICATION_MESSAGES } from '../../constants';
 import { updateModel, updateModels } from '../../generic/model-store';
 import { updateClipboardData } from '../../generic/data/slice';
+import { messageTypes } from '../constants';
 import {
   getCourseUnitData,
   editUnitDisplayName,
@@ -126,6 +127,7 @@ export function editCourseUnitVisibilityAndData(
   isVisible,
   groupAccess,
   isDiscussionEnabled,
+  callback,
   blockId = itemId,
 ) {
   return async (dispatch) => {
@@ -143,6 +145,9 @@ export function editCourseUnitVisibilityAndData(
         isDiscussionEnabled,
       ).then(async (result) => {
         if (result) {
+          if (callback) {
+            callback();
+          }
           const courseUnit = await getCourseUnitData(blockId);
           dispatch(fetchCourseItemSuccess(courseUnit));
           const courseVerticalChildrenData = await getCourseVerticalChildren(blockId);
@@ -158,11 +163,8 @@ export function editCourseUnitVisibilityAndData(
   };
 }
 
-export function createNewCourseXBlock(body, callback, blockId) {
+export function createNewCourseXBlock(body, callback, blockId, sendMessageToIframe) {
   return async (dispatch) => {
-    dispatch(updateLoadingCourseXblockStatus({ status: RequestStatus.IN_PROGRESS }));
-    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
-
     if (body.stagedContent) {
       dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.pasting));
     } else {
@@ -188,10 +190,10 @@ export function createNewCourseXBlock(body, callback, blockId) {
           const courseVerticalChildrenData = await getCourseVerticalChildren(blockId);
           dispatch(updateCourseVerticalChildren(courseVerticalChildrenData));
           dispatch(hideProcessingNotification());
-          dispatch(updateLoadingCourseXblockStatus({ status: RequestStatus.SUCCESSFUL }));
-          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
           if (callback) {
             callback(result);
+          } else {
+            sendMessageToIframe(messageTypes.addXBlock, { data: result });
           }
           const currentBlockId = body.category === 'vertical' ? formattedResult.locator : blockId;
           const courseUnit = await getCourseUnitData(currentBlockId);
@@ -220,13 +222,14 @@ export function fetchCourseVerticalChildrenData(itemId) {
   };
 }
 
-export function deleteUnitItemQuery(itemId, xblockId) {
+export function deleteUnitItemQuery(itemId, xblockId, sendMessageToIframe) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.deleting));
 
     try {
       await deleteUnitItem(xblockId);
+      sendMessageToIframe(messageTypes.completeXBlockDeleting, { locator: xblockId });
       const { userClipboard } = await getCourseSectionVerticalData(itemId);
       dispatch(updateClipboardData(userClipboard));
       const courseUnit = await getCourseUnitData(itemId);
@@ -240,13 +243,14 @@ export function deleteUnitItemQuery(itemId, xblockId) {
   };
 }
 
-export function duplicateUnitItemQuery(itemId, xblockId) {
+export function duplicateUnitItemQuery(itemId, xblockId, callback) {
   return async (dispatch) => {
     dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.duplicating));
 
     try {
-      await duplicateUnitItem(itemId, xblockId);
+      const { courseKey, locator } = await duplicateUnitItem(itemId, xblockId);
+      callback(courseKey, locator);
       const courseUnit = await getCourseUnitData(itemId);
       dispatch(fetchCourseItemSuccess(courseUnit));
       dispatch(hideProcessingNotification());
@@ -300,13 +304,34 @@ export function patchUnitItemQuery({
       dispatch(updateMovedXBlockParams(xBlockParams));
       dispatch(updateCourseOutlineInfo({}));
       dispatch(updateCourseOutlineInfoLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
-      const courseUnit = await getCourseUnitData(currentParentLocator);
-      dispatch(fetchCourseItemSuccess(courseUnit));
-      callbackFn();
+      try {
+        const courseUnit = await getCourseUnitData(currentParentLocator);
+        dispatch(fetchCourseItemSuccess(courseUnit));
+      } catch (error) {
+        handleResponseErrors(error, dispatch, updateSavingStatus);
+      }
+      callbackFn(sourceLocator);
     } catch (error) {
       handleResponseErrors(error, dispatch, updateSavingStatus);
     } finally {
       dispatch(hideProcessingNotification());
+    }
+  };
+}
+
+export function updateCourseUnitSidebar(itemId) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+
+    try {
+      const courseUnit = await getCourseUnitData(itemId);
+      dispatch(fetchCourseItemSuccess(courseUnit));
+      dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+    } catch (error) {
+      dispatch(hideProcessingNotification());
+      handleResponseErrors(error, dispatch, updateSavingStatus);
     }
   };
 }

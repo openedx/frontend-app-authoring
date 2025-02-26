@@ -1,9 +1,12 @@
+import { v4 as uuid4 } from 'uuid';
+
 import { StrictDict, parseLibraryImageData, getLibraryImageAssets } from '../../../utils';
 
 import { RequestKeys } from '../../constants/requests';
 import api, { loadImages } from '../../services/cms/api';
 import { actions as requestsActions } from '../requests';
 import { selectors as appSelectors } from '../app';
+import { selectors as videoSelectors } from '../video';
 
 // This 'module' self-import hack enables mocking during tests.
 // See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
@@ -11,11 +14,14 @@ import { selectors as appSelectors } from '../app';
 // eslint-disable-next-line import/no-self-import
 import * as module from './requests';
 import { isLibraryKey } from '../../../../generic/key-utils';
+import { createLibraryBlock } from '../../../../library-authoring/data/api';
 import { acceptedImgKeys } from '../../../sharedComponents/ImageUploadModal/SelectImageModal/utils';
+import { blockTypes } from '../../constants/app';
+import { problemTitles } from '../../constants/problem';
 
 // Similar to `import { actions, selectors } from '..';` but avoid circular imports:
 const actions = { requests: requestsActions };
-const selectors = { app: appSelectors };
+const selectors = { app: appSelectors, video: videoSelectors };
 
 /**
  * Wrapper around a network request promise, that sends actions to the redux store to
@@ -122,9 +128,69 @@ export const saveBlock = ({ content, ...rest }) => (dispatch, getState) => {
     ...rest,
   }));
 };
+
+/**
+ * Tracked createBlock api method.  Tracked to the `createBlock` request key.
+ * @param {[func]} onSuccess - onSuccess method ((response) => { ... })
+ * @param {[func]} onFailure - onFailure method ((error) => { ... })
+ */
+export const createBlock = ({ ...rest }) => (dispatch, getState) => {
+  const blockTitle = selectors.app.blockTitle(getState());
+  const blockType = selectors.app.blockType(getState());
+  // Remove any special character, a slug should be created with unicode letters, numbers, underscores or hyphens.
+  const cleanTitle = blockTitle?.toLowerCase().replace(/[^a-zA-Z0-9_\s-]/g, '').trim();
+  let definitionId;
+  // Validates if the title has been assigned by the user, if not a UUID is returned as the key.
+  if (!cleanTitle || (blockType === blockTypes.problem && problemTitles.has(blockTitle))) {
+    definitionId = `${uuid4()}`;
+  } else {
+    // add a short random suffix to prevent conflicting IDs.
+    const suffix = uuid4().split('-')[4];
+    definitionId = `${cleanTitle.replaceAll(/\s+/g, '-')}-${suffix}`;
+  }
+  dispatch(module.networkRequest({
+    requestKey: RequestKeys.createBlock,
+    promise: createLibraryBlock({
+      libraryId: selectors.app.learningContextId(getState()),
+      blockType,
+      definitionId,
+    }),
+    ...rest,
+  }));
+};
+
+// exportend only for test
+export const removeTemporalLink = (response, asset, content, resolve) => {
+  const imagePath = `/${response.data.asset.portableUrl}`;
+  const reader = new FileReader();
+  reader.addEventListener('load', () => {
+    const imageBS64 = reader.result.toString();
+    const parsedContent = typeof content === 'string' ? content.replace(imageBS64, imagePath) : { ...content, olx: content.olx.replace(imageBS64, imagePath) };
+    URL.revokeObjectURL(asset);
+    resolve(parsedContent);
+  });
+  reader.readAsDataURL(asset);
+};
+
+export const batchUploadAssets = ({ assets, content, ...rest }) => (dispatch) => {
+  const promises = assets.reduce((promiseChain, asset) => promiseChain
+    .then((parsedContent) => new Promise((resolve) => {
+      dispatch(module.uploadAsset({
+        asset,
+        onSuccess: (response) => removeTemporalLink(response, asset, parsedContent, resolve),
+      }));
+    })), Promise.resolve(content));
+
+  dispatch(module.networkRequest({
+    requestKey: RequestKeys.batchUploadAssets,
+    promise: promises,
+    ...rest,
+  }));
+};
+
 export const uploadAsset = ({ asset, ...rest }) => (dispatch, getState) => {
   const learningContextId = selectors.app.learningContextId(getState());
-  dispatch(module.networkRequest({
+  return dispatch(module.networkRequest({
     requestKey: RequestKeys.uploadAsset,
     promise: api.uploadAsset({
       learningContextId,
@@ -239,16 +305,30 @@ export const importTranscript = ({ youTubeId, ...rest }) => (dispatch, getState)
 };
 
 export const deleteTranscript = ({ language, videoId, ...rest }) => (dispatch, getState) => {
-  dispatch(module.networkRequest({
-    requestKey: RequestKeys.deleteTranscript,
-    promise: api.deleteTranscript({
-      blockId: selectors.app.blockId(getState()),
-      language,
-      videoId,
-      studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
-    }),
-    ...rest,
-  }));
+  const state = getState();
+  const isLibrary = selectors.app.isLibrary(state);
+  if (isLibrary) {
+    dispatch(module.networkRequest({
+      requestKey: RequestKeys.deleteTranscript,
+      promise: api.deleteTranscriptV2({
+        language,
+        videoId,
+        handlerUrl: selectors.video.transcriptHandlerUrl(state),
+      }),
+      ...rest,
+    }));
+  } else {
+    dispatch(module.networkRequest({
+      requestKey: RequestKeys.deleteTranscript,
+      promise: api.deleteTranscript({
+        blockId: selectors.app.blockId(state),
+        language,
+        videoId,
+        studioEndpointUrl: selectors.app.studioEndpointUrl(state),
+      }),
+      ...rest,
+    }));
+  }
 };
 
 export const uploadTranscript = ({
@@ -257,17 +337,32 @@ export const uploadTranscript = ({
   language,
   ...rest
 }) => (dispatch, getState) => {
-  dispatch(module.networkRequest({
-    requestKey: RequestKeys.uploadTranscript,
-    promise: api.uploadTranscript({
-      blockId: selectors.app.blockId(getState()),
-      transcript,
-      videoId,
-      language,
-      studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
-    }),
-    ...rest,
-  }));
+  const state = getState();
+  const isLibrary = selectors.app.isLibrary(state);
+  if (isLibrary) {
+    dispatch(module.networkRequest({
+      requestKey: RequestKeys.uploadTranscript,
+      promise: api.uploadTranscriptV2({
+        handlerUrl: selectors.video.transcriptHandlerUrl(state),
+        transcript,
+        videoId,
+        language,
+      }),
+      ...rest,
+    }));
+  } else {
+    dispatch(module.networkRequest({
+      requestKey: RequestKeys.uploadTranscript,
+      promise: api.uploadTranscript({
+        blockId: selectors.app.blockId(state),
+        transcript,
+        videoId,
+        language,
+        studioEndpointUrl: selectors.app.studioEndpointUrl(state),
+      }),
+      ...rest,
+    }));
+  }
 };
 
 export const updateTranscriptLanguage = ({
@@ -277,28 +372,70 @@ export const updateTranscriptLanguage = ({
   videoId,
   ...rest
 }) => (dispatch, getState) => {
-  dispatch(module.networkRequest({
-    requestKey: RequestKeys.updateTranscriptLanguage,
-    promise: api.uploadTranscript({
-      blockId: selectors.app.blockId(getState()),
-      transcript: file,
-      videoId,
-      language: languageBeforeChange,
-      newLanguage: newLanguageCode,
-      studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
-    }),
-    ...rest,
-  }));
+  const state = getState();
+  const isLibrary = selectors.app.isLibrary(state);
+  if (isLibrary) {
+    dispatch(module.networkRequest({
+      requestKey: RequestKeys.updateTranscriptLanguage,
+      promise: api.uploadTranscriptV2({
+        handlerUrl: selectors.video.transcriptHandlerUrl(state),
+        transcript: file,
+        videoId,
+        language: languageBeforeChange,
+        newLanguage: newLanguageCode,
+      }),
+      ...rest,
+    }));
+  } else {
+    dispatch(module.networkRequest({
+      requestKey: RequestKeys.updateTranscriptLanguage,
+      promise: api.uploadTranscript({
+        blockId: selectors.app.blockId(state),
+        transcript: file,
+        videoId,
+        language: languageBeforeChange,
+        newLanguage: newLanguageCode,
+        studioEndpointUrl: selectors.app.studioEndpointUrl(state),
+      }),
+      ...rest,
+    }));
+  }
 };
 
 export const getTranscriptFile = ({ language, videoId, ...rest }) => (dispatch, getState) => {
+  const state = getState();
+  const isLibrary = selectors.app.isLibrary(state);
+  if (isLibrary) {
+    dispatch(module.networkRequest({
+      requestKey: RequestKeys.getTranscriptFile,
+      promise: api.getTranscriptV2({
+        handlerUrl: selectors.video.transcriptHandlerUrl(state),
+        videoId,
+        language,
+      }),
+      ...rest,
+    }));
+  } else {
+    dispatch(module.networkRequest({
+      requestKey: RequestKeys.getTranscriptFile,
+      promise: api.getTranscript({
+        studioEndpointUrl: selectors.app.studioEndpointUrl(state),
+        blockId: selectors.app.blockId(state),
+        videoId,
+        language,
+      }),
+      ...rest,
+    }));
+  }
+};
+
+export const getHandlerlUrl = ({ handlerName, ...rest }) => (dispatch, getState) => {
   dispatch(module.networkRequest({
-    requestKey: RequestKeys.getTranscriptFile,
-    promise: api.getTranscript({
+    requestKey: RequestKeys.getHandlerUrl,
+    promise: api.getHandlerUrl({
       studioEndpointUrl: selectors.app.studioEndpointUrl(getState()),
       blockId: selectors.app.blockId(getState()),
-      videoId,
-      language,
+      handlerName,
     }),
     ...rest,
   }));
@@ -352,6 +489,7 @@ export default StrictDict({
   fetchBlock,
   fetchStudioView,
   fetchUnit,
+  createBlock,
   saveBlock,
   fetchImages,
   fetchVideos,
@@ -368,4 +506,5 @@ export default StrictDict({
   fetchAdvancedSettings,
   fetchVideoFeatures,
   uploadVideo,
+  getHandlerlUrl,
 });

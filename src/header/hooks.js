@@ -11,6 +11,7 @@ export const useContentMenuItems = courseId => {
   const intl = useIntl();
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
   const waffleFlags = useSelector(getWaffleFlags);
+  const { librariesV2Enabled } = useSelector(getStudioHomeData);
 
   const items = [
     {
@@ -34,6 +35,13 @@ export const useContentMenuItems = courseId => {
     items.push({
       href: `/course/${courseId}/videos`,
       title: intl.formatMessage(messages['header.links.videoUploads']),
+    });
+  }
+
+  if (librariesV2Enabled) {
+    items.splice(1, 0, {
+      href: `/course/${courseId}/libraries`,
+      title: intl.formatMessage(messages['header.links.libraries']),
     });
   }
 

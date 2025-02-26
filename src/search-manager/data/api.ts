@@ -133,7 +133,10 @@ export interface ContentHit extends BaseContentHit {
    * - After that is the name and usage key of any parent Section/Subsection/Unit/etc.
    */
   type: 'course_block' | 'library_block';
-  breadcrumbs: [{ displayName: string }, ...Array<{ displayName: string, usageKey: string }>];
+  breadcrumbs: [
+    { displayName: string },
+    ...Array<{ displayName: string, usageKey: string }>,
+  ];
   description?: string;
   content?: ContentDetails;
   lastPublished: number | null;
@@ -518,3 +521,29 @@ export async function fetchTagsThatMatchKeyword({
 
   return { matches: Array.from(matches).map((tagPath) => ({ tagPath })), mayBeMissingResults: hits.length === limit };
 }
+
+/**
+ * Generic one-off fetch from meilisearch index.
+ */
+export const fetchIndexDocuments = async (
+  client: MeiliSearch,
+  indexName: string,
+  filter?: Filter,
+  limit?: number,
+  attributesToRetrieve?: string[],
+  attributesToCrop?: string[],
+  sort?: SearchSortOption[],
+): Promise<ContentHit[]> => {
+  // Convert 'extraFilter' into an array
+  const filterFormatted = forceArray(filter);
+
+  const { hits } = await client.index(indexName).search('', {
+    filter: filterFormatted,
+    limit,
+    attributesToRetrieve,
+    attributesToCrop,
+    sort,
+  });
+
+  return hits.map(formatSearchHit) as ContentHit[];
+};

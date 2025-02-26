@@ -4,7 +4,9 @@ import { useKeyedState } from '@edx/react-unit-test-utils';
 import { logError } from '@edx/frontend-platform/logging';
 
 import { stateKeys, messageTypes } from '../../../constants';
-import { useLoadBearingHook, useIFrameBehavior } from '..';
+import { useLoadBearingHook, useIFrameBehavior, useMessageHandlers } from '..';
+
+jest.useFakeTimers();
 
 jest.mock('@edx/react-unit-test-utils', () => ({
   useKeyedState: jest.fn(),
@@ -169,5 +171,56 @@ describe('useLoadBearingHook', () => {
 
     expect(setValue).toHaveBeenCalledWith(expect.any(Function));
     expect(setValue.mock.calls);
+  });
+});
+
+describe('useMessageHandlers', () => {
+  let handlers;
+  let result;
+
+  beforeEach(() => {
+    handlers = {
+      courseId: 'course-v1:Test+101+2025',
+      navigate: jest.fn(),
+      dispatch: jest.fn(),
+      setIframeOffset: jest.fn(),
+      handleDeleteXBlock: jest.fn(),
+      handleDuplicateXBlock: jest.fn(),
+      handleScrollToXBlock: jest.fn(),
+      handleManageXBlockAccess: jest.fn(),
+      handleShowLegacyEditXBlockModal: jest.fn(),
+      handleCloseLegacyEditorXBlockModal: jest.fn(),
+      handleSaveEditedXBlockData: jest.fn(),
+      handleFinishXBlockDragging: jest.fn(),
+    };
+
+    ({ result } = renderHook(() => useMessageHandlers(handlers)));
+  });
+
+  it('calls handleScrollToXBlock after debounce delay', () => {
+    act(() => {
+      result.current[messageTypes.scrollToXBlock]({ scrollOffset: 200 });
+    });
+
+    jest.advanceTimersByTime(3000);
+
+    expect(handlers.handleScrollToXBlock).toHaveBeenCalledTimes(1);
+    expect(handlers.handleScrollToXBlock).toHaveBeenCalledWith(200);
+  });
+
+  it.each([
+    [messageTypes.editXBlock, { id: 'test-xblock-id' }, 'handleShowLegacyEditXBlockModal', 'test-xblock-id'],
+    [messageTypes.closeXBlockEditorModal, {}, 'handleCloseLegacyEditorXBlockModal', undefined],
+    [messageTypes.saveEditedXBlockData, {}, 'handleSaveEditedXBlockData', undefined],
+    [messageTypes.refreshPositions, {}, 'handleFinishXBlockDragging', undefined],
+  ])('calls %s with correct arguments', (messageType, payload, handlerKey, expectedArg) => {
+    act(() => {
+      result.current[messageType](payload);
+    });
+
+    expect(handlers[handlerKey]).toHaveBeenCalledTimes(1);
+    if (expectedArg !== undefined) {
+      expect(handlers[handlerKey]).toHaveBeenCalledWith(expectedArg);
+    }
   });
 });
