@@ -93,12 +93,12 @@ const messages = defineMessages({
   },
   updateSingleBlockSuccess: {
     id: 'course-authoring.course-libraries.review-tab.libcard.update-success-toast',
-    defaultMessage: '{name} is updated!',
+    defaultMessage: 'Success! "{name}" is updated',
     description: 'Success toast message when a component is updated.',
   },
   ignoreSingleBlockSuccess: {
     id: 'course-authoring.course-libraries.review-tab.libcard.ignore-success-toast',
-    defaultMessage: 'Update for {name} has been ignored',
+    defaultMessage: '"{name}" will remain out of sync with library content. You will be notified when this component is updated again.',
     description: 'Success toast message when a component update is ignored.',
   },
   searchPlaceholder: {
