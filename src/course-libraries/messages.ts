@@ -36,10 +36,10 @@ const messages = defineMessages({
     defaultMessage: 'All components are up to date',
     description: 'Description text for home tab',
   },
-  breadcrumbAriaLabel: {
-    id: 'course-authoring.course-libraries.downstream-block.breadcrumb.aria-label',
-    defaultMessage: 'Component breadcrumb',
-    description: 'Aria label for breadcrumb in component cards in course libraries page.',
+  breadcrumbLabel: {
+    id: 'course-authoring.course-libraries.downstream-block.breadcrumb.label',
+    defaultMessage: 'Location:',
+    description: 'label for breadcrumb in component cards in course libraries page.',
   },
   totalComponentLabel: {
     id: 'course-authoring.course-libraries.libcard.total-component.label',
@@ -78,7 +78,7 @@ const messages = defineMessages({
   },
   cardReviewContentBtn: {
     id: 'course-authoring.course-libraries.review-tab.libcard.review-btn-text',
-    defaultMessage: 'Review',
+    defaultMessage: 'Review Updates',
     description: 'Card review button for component in review tab',
   },
   cardUpdateContentBtn: {
