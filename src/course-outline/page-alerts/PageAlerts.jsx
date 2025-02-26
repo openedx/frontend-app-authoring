@@ -422,16 +422,14 @@ const PageAlerts = ({
     );
   };
 
-  const renderOutOfSyncAlert = () => {
-    return (
-      <OutOfSyncAlert
-        courseId={courseId}
-        onReview={() => navigate(`/course/${courseId}/libraries?tab=review`)}
-        showAlert={showOutOfSyncAlert}
-        setShowAlert={setShowOutOfSyncAlert}
-      />
-    );
-  }
+  const renderOutOfSyncAlert = () => (
+    <OutOfSyncAlert
+      courseId={courseId}
+      onReview={() => navigate(`/course/${courseId}/libraries?tab=review`)}
+      showAlert={showOutOfSyncAlert}
+      setShowAlert={setShowOutOfSyncAlert}
+    />
+  );
 
   return (
     <>

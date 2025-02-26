@@ -1,11 +1,11 @@
-import React, { useEffect, useMemo } from "react";
-import { useIntl } from "@edx/frontend-platform/i18n";
-import { Button } from "@openedx/paragon";
-import { Loop } from "@openedx/paragon/icons";
-import AlertMessage from "../generic/alert-message";
-import { useEntityLinksSummaryByDownstreamContext } from "./data/apiHooks";
-import messages from "./messages";
-import _ from "lodash";
+import React, { useEffect, useMemo } from 'react';
+import { useIntl } from '@edx/frontend-platform/i18n';
+import { Button } from '@openedx/paragon';
+import { Loop } from '@openedx/paragon/icons';
+import _ from 'lodash';
+import AlertMessage from '../generic/alert-message';
+import { useEntityLinksSummaryByDownstreamContext } from './data/apiHooks';
+import messages from './messages';
 
 interface OutOfSyncAlertProps {
   showAlert: boolean,
@@ -40,20 +40,19 @@ const OutOfSyncAlert: React.FC<OutOfSyncAlertProps> = ({
       return;
     }
     const dismissedAlert = localStorage.getItem(alertKey);
-    setShowAlert(parseInt(dismissedAlert || '') !== outOfSyncCount);
-  }, [outOfSyncCount, isLoading, data])
-
+    setShowAlert(parseInt(dismissedAlert || '', 10) !== outOfSyncCount);
+  }, [outOfSyncCount, isLoading, data]);
 
   const dismissAlert = () => {
     setShowAlert(false);
     localStorage.setItem(alertKey, String(outOfSyncCount));
     onDismiss?.();
-  }
+  };
 
   const reviewAlert = () => {
     dismissAlert();
     onReview();
-  }
+  };
 
   return (
     <AlertMessage
@@ -73,6 +72,5 @@ const OutOfSyncAlert: React.FC<OutOfSyncAlertProps> = ({
     />
   );
 };
-
 
 export default OutOfSyncAlert;

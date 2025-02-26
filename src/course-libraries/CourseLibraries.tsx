@@ -21,6 +21,7 @@ import {
 } from '@openedx/paragon/icons';
 
 import _ from 'lodash';
+import { useSearchParams } from 'react-router-dom';
 import getPageHeadTitle from '../generic/utils';
 import { useModel } from '../generic/model-store';
 import messages from './messages';
@@ -30,7 +31,6 @@ import type { PublishableEntityLinkSummary } from './data/api';
 import Loading from '../generic/Loading';
 import { useStudioHome } from '../studio-home/hooks';
 import OutOfSyncAlert from './OutOfSyncAlert';
-import { useSearchParams } from 'react-router-dom';
 import NewsstandIcon from '../generic/NewsstandIcon';
 import ReviewTabContent from './ReviewTabContent';
 
@@ -42,12 +42,10 @@ interface LibraryCardProps {
   linkSummary: PublishableEntityLinkSummary;
 }
 
-
 export enum CourseLibraryTabs {
   all = 'all',
   review = 'review',
 }
-
 
 const LibraryCard = ({ linkSummary }: LibraryCardProps) => {
   const intl = useIntl();
@@ -55,15 +53,17 @@ const LibraryCard = ({ linkSummary }: LibraryCardProps) => {
   return (
     <Card className="my-3 border-light-500 border shadow-none">
       <Card.Header
-        title={(<Stack direction="horizontal" gap={2}>
-          <Icon src={NewsstandIcon} />
-          {linkSummary.upstreamContextTitle}
-        </Stack>)}
-        actions={
+        title={(
+          <Stack direction="horizontal" gap={2}>
+            <Icon src={NewsstandIcon} />
+            {linkSummary.upstreamContextTitle}
+          </Stack>
+)}
+        actions={(
           <ActionRow>
             <Button
               destination={`${getConfig().PUBLIC_PATH}library/${linkSummary.upstreamContextKey}`}
-              target='_blank'
+              target="_blank"
               className="border border-light-300"
               variant="tertiary"
               as={Hyperlink}
@@ -74,7 +74,7 @@ const LibraryCard = ({ linkSummary }: LibraryCardProps) => {
               View Library
             </Button>
           </ActionRow>
-        }
+        )}
         size="sm"
       />
       <Card.Section>
@@ -100,13 +100,12 @@ const LibraryCard = ({ linkSummary }: LibraryCardProps) => {
   );
 };
 
-
 const CourseLibraries: React.FC<Props> = ({ courseId }) => {
   const intl = useIntl();
   const courseDetails = useModel('courseDetails', courseId);
   const [searchParams] = useSearchParams();
   const [tabKey, setTabKey] = useState<CourseLibraryTabs>(
-    () => searchParams.get('tab') as CourseLibraryTabs || CourseLibraryTabs.all
+    () => searchParams.get('tab') as CourseLibraryTabs || CourseLibraryTabs.all,
   );
   const [showReviewAlert, setShowReviewAlert] = useState(false);
   const { data: libraries, isLoading } = useEntityLinksSummaryByDownstreamContext(courseId);

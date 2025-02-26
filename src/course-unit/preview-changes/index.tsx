@@ -4,6 +4,7 @@ import {
 } from '@openedx/paragon';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 
+import { UseMutationResult } from '@tanstack/react-query';
 import { useEventListener } from '../../generic/hooks';
 import { messageTypes } from '../constants';
 import CompareChangesWidget from '../../library-authoring/component-comparison/CompareChangesWidget';
@@ -15,7 +16,6 @@ import { ToastContext } from '../../generic/toast-context';
 import LoadingButton from '../../generic/loading-button';
 import Loading from '../../generic/Loading';
 import { useLibraryBlockMetadata } from '../../library-authoring/data/apiHooks';
-import { UseMutationResult } from '@tanstack/react-query';
 
 export interface LibraryChangesMessageData {
   displayName: string,
@@ -143,7 +143,7 @@ export const BasePreviewLibraryXBlockChanges = ({
       />
     </ModalDialog>
   );
-}
+};
 
 const PreviewLibraryXBlockChanges = () => {
   const [blockData, setBlockData] = useState<LibraryChangesMessageData | undefined>(undefined);
