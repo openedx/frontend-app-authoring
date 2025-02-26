@@ -2,7 +2,7 @@ import {
   useRef, FC, useEffect, useState, useMemo, useCallback,
 } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { useToggle } from '@openedx/paragon';
+import { useToggle, Sheet } from '@openedx/paragon';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,6 +10,7 @@ import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import ConfigureModal from '../../generic/configure-modal/ConfigureModal';
 import ModalIframe from '../../generic/modal-iframe';
 import { IFRAME_FEATURE_POLICY } from '../../constants';
+import ContentTagsDrawer from '../../content-tags-drawer/ContentTagsDrawer';
 import supportedEditors from '../../editors/supportedEditors';
 import { useIframe } from '../context/hooks';
 import { updateCourseUnitSidebar } from '../data/thunk';
@@ -43,6 +44,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const [deleteXBlockId, setDeleteXBlockId] = useState<string | null>(null);
   const [configureXBlockId, setConfigureXBlockId] = useState<string | null>(null);
   const [showLegacyEditModal, setShowLegacyEditModal] = useState<boolean>(false);
+  const [isManageTagsOpen, openManageTagsModal, closeManageTagsModal] = useToggle(false);
 
   const iframeUrl = useMemo(() => getIframeUrl(blockId), [blockId]);
   const legacyEditModalUrl = useMemo(() => getLegacyEditModalUrl(configureXBlockId), [configureXBlockId]);
@@ -120,6 +122,11 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     dispatch(updateCourseUnitSidebar(blockId));
   };
 
+  const handleOpenManageTagsModal = (id: string) => {
+    setConfigureXBlockId(id);
+    openManageTagsModal();
+  };
+
   const messageHandlers = useMessageHandlers({
     courseId,
     navigate,
@@ -133,6 +140,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
     handleCloseLegacyEditorXBlockModal,
     handleSaveEditedXBlockData,
     handleFinishXBlockDragging,
+    handleOpenManageTagsModal,
   });
 
   useIframeMessages(messageHandlers);
@@ -167,6 +175,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
       <iframe
         ref={iframeRef}
         title={intl.formatMessage(messages.xblockIframeTitle)}
+        name="xblock-iframe"
         src={iframeUrl}
         frameBorder="0"
         allow={IFRAME_FEATURE_POLICY}
@@ -177,6 +186,16 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
         referrerPolicy="origin"
         aria-label={intl.formatMessage(messages.xblockIframeLabel, { xblockCount: courseVerticalChildren.length })}
       />
+      {configureXBlockId && (
+        <Sheet
+          position="right"
+          show={isManageTagsOpen}
+          onClose={closeManageTagsModal}
+          blocking
+        >
+          <ContentTagsDrawer id={configureXBlockId} onClose={closeManageTagsModal} />
+        </Sheet>
+      )}
     </>
   );
 };

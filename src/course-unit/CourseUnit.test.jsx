@@ -54,6 +54,7 @@ import sidebarMessages from './sidebar/messages';
 import { extractCourseUnitId } from './sidebar/utils';
 import CourseUnit from './CourseUnit';
 
+import tagsDrawerMessages from '../content-tags-drawer/messages';
 import { getClipboardUrl } from '../generic/data/api';
 import configureModalMessages from '../generic/configure-modal/messages';
 import { getContentTaxonomyTagsApiUrl, getContentTaxonomyTagsCountApiUrl } from '../content-tags-drawer/data/api';
@@ -92,6 +93,9 @@ jest.mock('react-router-dom', () => ({
 
 jest.mock('@tanstack/react-query', () => ({
   useQuery: jest.fn(({ queryKey }) => {
+    const taxonomyApiHooksModule = jest.requireActual('../taxonomy/data/apiHooks');
+    const actualQueryKeys = taxonomyApiHooksModule.taxonomyQueryKeys;
+
     if (queryKey[0] === 'contentTaxonomyTags') {
       return {
         data: {
@@ -102,6 +106,14 @@ jest.mock('@tanstack/react-query', () => ({
     } if (queryKey[0] === 'contentTagsCount') {
       return {
         data: 17,
+        isSuccess: true,
+      };
+    }
+    if (actualQueryKeys.all.includes(queryKey[0])) {
+      return {
+        data: {
+          results: [],
+        },
         isSuccess: true,
       };
     }
@@ -259,6 +271,19 @@ describe('<CourseUnit />', () => {
       );
       expect(legacyXBlockEditModalIframe).toBeInTheDocument();
     });
+  });
+
+  it('renders the xBlocks iframe and opens the tags drawer on postMessage event', async () => {
+    const { getByTitle, getByText } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      const xblocksIframe = getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+      expect(xblocksIframe).toBeInTheDocument();
+    });
+
+    simulatePostMessageEvent(messageTypes.openManageTags, { contentId: blockId });
+
+    expect(getByText(tagsDrawerMessages.headerSubtitle.defaultMessage)).toBeInTheDocument();
   });
 
   it('closes the legacy edit modal when closeXBlockEditorModal message is received', async () => {
@@ -748,6 +773,44 @@ describe('<CourseUnit />', () => {
       sidebarMessages.releaseInfoWithSection.defaultMessage
         .replace('{sectionName}', courseUnitIndexMock.release_date_from),
     )).toBeInTheDocument();
+  });
+
+  it('handle creating Text xblock and saves scroll position in localStorage', async () => {
+    const { getByText, getByRole } = render(<RootWrapper />);
+    const xblockType = 'text';
+
+    axiosMock
+      .onPost(postXBlockBaseApiUrl({ type: xblockType, category: 'html', parentLocator: blockId }))
+      .reply(200, courseCreateXblockMock);
+
+    window.scrollTo(0, 250);
+    Object.defineProperty(window, 'scrollY', { value: 250, configurable: true });
+
+    await waitFor(() => {
+      const textButton = screen.getByRole('button', { name: /Text/i });
+
+      expect(getByText(addComponentMessages.title.defaultMessage)).toBeInTheDocument();
+
+      userEvent.click(textButton);
+
+      const addXBlockDialog = getByRole('dialog');
+      expect(addXBlockDialog).toBeInTheDocument();
+
+      expect(getByText(
+        addComponentMessages.modalContainerTitle.defaultMessage.replace('{componentTitle}', xblockType),
+      )).toBeInTheDocument();
+
+      const textRadio = screen.getByRole('radio', { name: /Text/i });
+      userEvent.click(textRadio);
+      expect(textRadio).toBeChecked();
+
+      const selectBtn = getByRole('button', { name: addComponentMessages.modalBtnText.defaultMessage });
+      expect(selectBtn).toBeInTheDocument();
+
+      userEvent.click(selectBtn);
+    });
+
+    expect(localStorage.getItem('createXBlockLastYPosition')).toBe('250');
   });
 
   it('correct addition of a new course unit after click on the "Add new unit" button', async () => {
