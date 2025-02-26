@@ -3,9 +3,18 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
-export const getEntityLinksByDownstreamContextUrl = (downstreamContextKey: string) => `${getApiBaseUrl()}/api/contentstore/v2/upstreams/${downstreamContextKey}`;
+export const getEntityLinksByDownstreamContextUrl = () => `${getApiBaseUrl()}/api/contentstore/v2/downstreams/`;
 
-export const getEntityLinksSummaryByDownstreamContextUrl = (downstreamContextKey: string) => `${getEntityLinksByDownstreamContextUrl(downstreamContextKey)}/summary`
+export const getEntityLinksSummaryByDownstreamContextUrl = (downstreamContextKey: string) => `${getApiBaseUrl()}/api/contentstore/v2/downstreams/${downstreamContextKey}/summary`
+
+export interface PaginatedData<T> {
+  next: number | null;
+  previous: number | null;
+  count: number;
+  num_pages: number;
+  current_page: number;
+  results: T,
+}
 
 export interface PublishableEntityLink {
   id: number;
@@ -31,12 +40,19 @@ export interface PublishableEntityLinkSummary {
 }
 
 export const getEntityLinksByDownstreamContext = async (
-  downstreamContextKey: string,
+  downstreamContextKey?: string,
   readyToSync?: boolean,
-): Promise<PublishableEntityLink[]> => {
+  pageParam?: number,
+  pageSize?: number,
+): Promise<PaginatedData<PublishableEntityLink[]>> => {
   const { data } = await getAuthenticatedHttpClient()
-    .get(getEntityLinksByDownstreamContextUrl(downstreamContextKey), {
-      params: { ready_to_sync: readyToSync },
+    .get(getEntityLinksByDownstreamContextUrl(), {
+      params: {
+        course_id: downstreamContextKey,
+        ready_to_sync: readyToSync,
+        page_size: pageSize,
+        page: pageParam,
+      },
     });
   return camelCaseObject(data);
 };

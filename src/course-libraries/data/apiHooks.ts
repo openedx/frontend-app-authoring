@@ -1,4 +1,5 @@
 import {
+  useInfiniteQuery,
   useQuery,
 } from '@tanstack/react-query';
 import { getEntityLinksByDownstreamContext, getEntityLinksSummaryByDownstreamContext } from './api';
@@ -19,10 +20,16 @@ export const courseLibrariesQueryKeys = {
 /**
  * Hook to fetch publishable entity links by course key.
  */
-export const useEntityLinksByDownstreamContext = (courseKey?: string, readyToSync?: boolean) => (
-  useQuery({
+export const useEntityLinksByDownstreamContext = (courseKey?: string, readyToSync?: boolean, pageSize?: number) => (
+  useInfiniteQuery({
     queryKey: courseLibrariesQueryKeys.courseReadyToSyncLibraries(courseKey, readyToSync),
-    queryFn: () => getEntityLinksByDownstreamContext(courseKey!, readyToSync),
+    queryFn: ({ pageParam }) => getEntityLinksByDownstreamContext(
+      courseKey,
+      readyToSync,
+      pageParam,
+      pageSize
+    ),
+    getNextPageParam: (lastPage) => lastPage.next,
     enabled: courseKey !== undefined,
   })
 );
