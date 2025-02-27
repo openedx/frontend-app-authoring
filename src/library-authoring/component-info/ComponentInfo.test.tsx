@@ -129,6 +129,22 @@ describe('<ComponentInfo> Sidebar', () => {
     expect(screen.getByText(/Publishing this component will push the changes out to the courses./i)).toBeInTheDocument();
   });
 
+  it('should show publish confirmation on already published empty downstreams', async () => {
+    render(
+      <ComponentInfo />,
+      withLibraryId(mockContentLibrary.libraryId, mockLibraryBlockMetadata.usageKeyPublishedWithChangesV2),
+    );
+
+    const publishButton = await screen.findByRole('button', { name: /Publish component/i });
+    await waitFor(() => expect(publishButton).not.toBeDisabled());
+    publishButton.click();
+
+    expect(await screen.findByText(/Publish all unpublished changes for this component?/i)).toBeInTheDocument();
+    expect(screen.getByText(mockLibraryBlockMetadata.dataPublishedWithChanges.displayName)).toBeInTheDocument();
+    expect(screen.getAllByText(/This component is not used in any course./i).length).toBe(2);
+    expect(screen.queryByText(/Publishing this component will push the changes out to the courses./i)).not.toBeInTheDocument();
+  });
+
   it('should show toast message when the component is published successfully', async () => {
     const { axiosMock, mockShowToast } = initializeMocks();
     const url = getXBlockPublishApiUrl(mockLibraryBlockMetadata.usageKeyNeverPublished);

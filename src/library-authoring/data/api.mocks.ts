@@ -330,6 +330,7 @@ export async function mockLibraryBlockMetadata(usageKey: string): Promise<api.Li
     case thisMock.usageKeyUnsupportedXBlock: return thisMock.dataUnsupportedXBlock;
     case thisMock.usageKeyForTags: return thisMock.dataPublished;
     case thisMock.usageKeyPublishedWithChanges: return thisMock.dataPublishedWithChanges;
+    case thisMock.usageKeyPublishedWithChangesV2: return thisMock.dataPublishedWithChanges;
     default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
   }
 }
@@ -397,6 +398,7 @@ mockLibraryBlockMetadata.dataWithCollections = {
   collections: [{ title: 'My first collection', key: 'my-first-collection' }],
 } satisfies api.LibraryBlockMetadata;
 mockLibraryBlockMetadata.usageKeyPublishedWithChanges = 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fvv';
+mockLibraryBlockMetadata.usageKeyPublishedWithChangesV2 = 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fv2';
 mockLibraryBlockMetadata.dataPublishedWithChanges = {
   id: 'lb:Axim:TEST2:html:571fe018-f3ce-45c9-8f53-5dafcb422fvv',
   defKey: null,
@@ -574,6 +576,7 @@ export async function mockComponentDownstreamLinks(
   switch (usageKey) {
     case thisMock.usageKey: return thisMock.componentUsage;
     case mockLibraryBlockMetadata.usageKeyPublishedWithChanges: return thisMock.componentUsage;
+    case mockLibraryBlockMetadata.usageKeyPublishedWithChangesV2: return thisMock.emptyComponentUsage;
     default: return [];
   }
 }
