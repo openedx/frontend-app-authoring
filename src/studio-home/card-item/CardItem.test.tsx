@@ -29,15 +29,17 @@ describe('<CardItem />', () => {
     render(<CardItem {...props} />);
     const courseTitleLink = screen.getByText(props.displayName);
     expect(courseTitleLink).toHaveAttribute('href', `${getConfig().STUDIO_BASE_URL}${props.url}`);
+    const dropDownMenu = screen.getByTestId('toggle-dropdown');
+    fireEvent.click(dropDownMenu);
     const btnReRunCourse = screen.getByText(messages.btnReRunText.defaultMessage);
-    expect(btnReRunCourse).toHaveAttribute('href', trimSlashes(props.rerunLink));
+    expect(btnReRunCourse).toHaveAttribute('href', props.rerunLink);
     const viewLiveLink = screen.getByText(messages.viewLiveBtnText.defaultMessage);
     expect(viewLiveLink).toHaveAttribute('href', props.lmsLink);
   });
 
   it('should render correct links for non-library course pagination', () => {
     const props = studioHomeMock.archivedCourses[0];
-    render(<CardItem {...props} isPaginated />);
+    render(<CardItem {...props} />);
     const courseTitleLink = screen.getByText(props.displayName);
     expect(courseTitleLink).toHaveAttribute('href', `${getConfig().STUDIO_BASE_URL}${props.url}`);
     const dropDownMenu = screen.getByTestId('toggle-dropdown');
