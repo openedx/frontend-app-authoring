@@ -550,6 +550,7 @@ export async function mockComponentDownstreamLinks(
   const thisMock = mockComponentDownstreamLinks;
   switch (usageKey) {
     case thisMock.usageKey: return thisMock.componentUsage;
+    case mockLibraryBlockMetadata.usageKeyPublishedWithChanges: return thisMock.componentUsage;
     default: return [];
   }
 }

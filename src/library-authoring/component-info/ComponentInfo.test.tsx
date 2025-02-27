@@ -4,7 +4,12 @@ import {
   screen,
   waitFor,
 } from '../../testUtils';
-import { mockContentLibrary, mockLibraryBlockMetadata } from '../data/api.mocks';
+import {
+  mockContentLibrary,
+  mockLibraryBlockMetadata,
+  mockComponentDownstreamLinks,
+} from '../data/api.mocks';
+import { mockFetchIndexDocuments } from '../../search-manager/data/api.mock';
 import { mockBroadcastChannel } from '../../generic/data/api.mock';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
@@ -14,6 +19,8 @@ import { getXBlockPublishApiUrl } from '../data/api';
 mockBroadcastChannel();
 mockContentLibrary.applyMock();
 mockLibraryBlockMetadata.applyMock();
+mockComponentDownstreamLinks.applyMock();
+mockFetchIndexDocuments.applyMock();
 jest.mock('./ComponentPreview', () => ({
   __esModule: true, // Required when mocking 'default' export
   default: () => <div>Mocked preview</div>,
@@ -113,6 +120,7 @@ describe('<ComponentInfo> Sidebar', () => {
     );
 
     const publishButton = await screen.findByRole('button', { name: /Publish component/i });
+    await waitFor(() => expect(publishButton).not.toBeDisabled());
     publishButton.click();
 
     expect(await screen.findByText(/Publish all unpublished changes for this component?/i)).toBeInTheDocument();
