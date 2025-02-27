@@ -10,7 +10,7 @@ import messages from './messages';
 
 interface ComponentUsageProps {
   usageKey: string;
-  callbackEmpty: (() => void) | null  
+  callbackEmpty: (() => void) | null;
 }
 
 type ComponentUsageTree = Record<string, {
@@ -62,7 +62,7 @@ export const ComponentUsage = ({
   }
 
   if (!downstreamKeys.length || !downstreamHits) {
-    if(callbackEmpty) {
+    if (callbackEmpty) {
       callbackEmpty();
     }
     return <FormattedMessage {...messages.detailsTabUsageEmpty} />;

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Alert, Button, useToggle } from '@openedx/paragon';
 
@@ -5,7 +6,6 @@ import BaseModal from '../../editors/sharedComponents/BaseModal';
 import messages from './messages';
 import infoMessages from '../component-info/messages';
 import { ComponentUsage } from '../component-info/ComponentUsage';
-import { useEffect } from 'react';
 
 interface PublishConfirmationModalProps {
   isOpen: boolean,
@@ -76,7 +76,7 @@ const PublishConfirmationModal = ({
               <>
                 <FormattedMessage {...messages.publishConfimrationDownstreamsBody} />
                 <div className="mt-3 mb-3 border">
-                  <ComponentUsage usageKey={usageKey} callbackEmpty={setDownstreamsEmpty}/>
+                  <ComponentUsage usageKey={usageKey} callbackEmpty={setDownstreamsEmpty} />
                 </div>
                 <Alert variant="warning">
                   <FormattedMessage {...messages.publishConfirmationDownstreamsAlert} />
