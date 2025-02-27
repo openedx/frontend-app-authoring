@@ -64,16 +64,9 @@ const pluginConfig = ({ isLibrary, placeholder, editorType }) => {
         [editImageSettings],
       ]),
       quickbarsInsertToolbar: toolbar ? false : mapToolbars([
-        [buttons.undo, buttons.redo],
-        [buttons.formatSelect],
-        [buttons.bold, buttons.italic, buttons.underline, buttons.foreColor],
-        [
-          buttons.align.justify,
-          buttons.bullist,
-          buttons.numlist,
-        ],
-        [imageUploadButton, buttons.blockQuote, buttons.codeBlock],
-        [buttons.table, buttons.emoticons, buttons.charmap, buttons.removeFormat, buttons.a11ycheck],
+        // To keep from blocking the whole text input field when it's empty, this "insert" toolbar
+        // used with ExpandableTextArea is kept as minimal as we can.
+        [imageUploadButton, buttons.table],
       ]),
       quickbarsSelectionToolbar: toolbar ? false : mapToolbars([
         [buttons.undo, buttons.redo],
