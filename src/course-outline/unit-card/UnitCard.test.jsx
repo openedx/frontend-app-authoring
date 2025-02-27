@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   act, render, fireEvent, within,
 } from '@testing-library/react';
@@ -48,6 +47,13 @@ const unit = {
 
 const queryClient = new QueryClient();
 
+const clipboardBroadcastChannelMock = {
+  postMessage: jest.fn(),
+  close: jest.fn(),
+};
+
+global.BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
+
 const renderComponent = (props) => render(
   <AppProvider store={store}>
     <QueryClientProvider client={queryClient}>
@@ -62,7 +68,6 @@ const renderComponent = (props) => render(
           onOpenPublishModal={jest.fn()}
           onOpenDeleteModal={jest.fn()}
           onOpenConfigureModal={jest.fn()}
-          onCopyToClipboardClick={jest.fn()}
           savingStatus=""
           onEditSubmit={jest.fn()}
           onDuplicateSubmit={jest.fn()}

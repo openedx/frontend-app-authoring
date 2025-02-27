@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { debounce } from 'lodash';
 
+import { useClipboard } from '../../../generic/clipboard';
 import { handleResponseErrors } from '../../../generic/saving-error-alert/utils';
-import { copyToClipboard } from '../../../generic/data/thunks';
 import { updateSavingStatus } from '../../data/slice';
 import { messageTypes } from '../../constants';
 import { MessageHandlersTypes, UseMessageHandlersTypes } from './types';
@@ -26,25 +26,30 @@ export const useMessageHandlers = ({
   handleCloseLegacyEditorXBlockModal,
   handleSaveEditedXBlockData,
   handleFinishXBlockDragging,
-}: UseMessageHandlersTypes): MessageHandlersTypes => useMemo(() => ({
-  [messageTypes.copyXBlock]: ({ usageId }) => dispatch(copyToClipboard(usageId)),
-  [messageTypes.deleteXBlock]: ({ usageId }) => handleDeleteXBlock(usageId),
-  [messageTypes.newXBlockEditor]: ({ blockType, usageId }) => navigate(`/course/${courseId}/editor/${blockType}/${usageId}`),
-  [messageTypes.duplicateXBlock]: ({ blockType, usageId }) => handleDuplicateXBlock(blockType, usageId),
-  [messageTypes.manageXBlockAccess]: ({ usageId }) => handleManageXBlockAccess(usageId),
-  [messageTypes.scrollToXBlock]: debounce(({ scrollOffset }) => handleScrollToXBlock(scrollOffset), 1000),
-  [messageTypes.toggleCourseXBlockDropdown]: ({
-    courseXBlockDropdownHeight,
-  }: { courseXBlockDropdownHeight: number }) => setIframeOffset(courseXBlockDropdownHeight),
-  [messageTypes.editXBlock]: ({ id }) => handleShowLegacyEditXBlockModal(id),
-  [messageTypes.closeXBlockEditorModal]: handleCloseLegacyEditorXBlockModal,
-  [messageTypes.saveEditedXBlockData]: handleSaveEditedXBlockData,
-  [messageTypes.studioAjaxError]: ({ error }) => handleResponseErrors(error, dispatch, updateSavingStatus),
-  [messageTypes.refreshPositions]: handleFinishXBlockDragging,
-}), [
-  courseId,
-  handleDeleteXBlock,
-  handleDuplicateXBlock,
-  handleManageXBlockAccess,
-  handleScrollToXBlock,
-]);
+}: UseMessageHandlersTypes): MessageHandlersTypes => {
+  const { copyToClipboard } = useClipboard();
+
+  return useMemo(() => ({
+    [messageTypes.copyXBlock]: ({ usageId }) => copyToClipboard(usageId),
+    [messageTypes.deleteXBlock]: ({ usageId }) => handleDeleteXBlock(usageId),
+    [messageTypes.newXBlockEditor]: ({ blockType, usageId }) => navigate(`/course/${courseId}/editor/${blockType}/${usageId}`),
+    [messageTypes.duplicateXBlock]: ({ blockType, usageId }) => handleDuplicateXBlock(blockType, usageId),
+    [messageTypes.manageXBlockAccess]: ({ usageId }) => handleManageXBlockAccess(usageId),
+    [messageTypes.scrollToXBlock]: debounce(({ scrollOffset }) => handleScrollToXBlock(scrollOffset), 1000),
+    [messageTypes.toggleCourseXBlockDropdown]: ({
+      courseXBlockDropdownHeight,
+    }: { courseXBlockDropdownHeight: number }) => setIframeOffset(courseXBlockDropdownHeight),
+    [messageTypes.editXBlock]: ({ id }) => handleShowLegacyEditXBlockModal(id),
+    [messageTypes.closeXBlockEditorModal]: handleCloseLegacyEditorXBlockModal,
+    [messageTypes.saveEditedXBlockData]: handleSaveEditedXBlockData,
+    [messageTypes.studioAjaxError]: ({ error }) => handleResponseErrors(error, dispatch, updateSavingStatus),
+    [messageTypes.refreshPositions]: handleFinishXBlockDragging,
+  }), [
+    courseId,
+    handleDeleteXBlock,
+    handleDuplicateXBlock,
+    handleManageXBlockAccess,
+    handleScrollToXBlock,
+    copyToClipboard,
+  ]);
+};

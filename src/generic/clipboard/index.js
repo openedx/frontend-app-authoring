@@ -1,2 +1,2 @@
-export { default as useCopyToClipboard } from './hooks/useCopyToClipboard';
+export { default as useClipboard } from './hooks/useClipboard';
 export { default as PasteComponent } from './paste-component';

@@ -1,5 +1,4 @@
 import { RequestStatus } from '../../data/constants';
-import { updateClipboardData } from '../../generic/data/slice';
 import { NOTIFICATION_MESSAGES } from '../../constants';
 import { COURSE_BLOCK_NAMES } from '../constants';
 import {
@@ -71,7 +70,6 @@ export function fetchCourseOutlineIndexQuery(courseId) {
         },
       } = outlineIndex;
       dispatch(fetchOutlineIndexSuccess(outlineIndex));
-      dispatch(updateClipboardData(outlineIndex.initialUserClipboard));
       dispatch(updateStatusBar({
         courseReleaseDate,
         highlightsEnabledForMessaging,
