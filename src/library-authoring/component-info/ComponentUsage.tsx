@@ -10,7 +10,7 @@ import messages from './messages';
 
 interface ComponentUsageProps {
   usageKey: string;
-  callbackEmpty: (() => void) | null;
+  callbackEmpty?: (() => void) | null;
 }
 
 type ComponentUsageTree = Record<string, {
