@@ -149,10 +149,13 @@ export const SearchContextProvider: React.FC<{
   // SearchSortOption.RELEVANCE is special, it means "no custom sorting", so we
   // send it to useContentSearchResults as an empty array.
   const searchSortOrderToUse = overrideSearchSortOrder ?? searchSortOrder;
-  const sort: SearchSortOption[] = (searchSortOrderToUse === SearchSortOption.RELEVANCE ? [] : [searchSortOrderToUse]);
-  // Selecting SearchSortOption.RECENTLY_PUBLISHED also excludes unpublished components.
+  let sort: SearchSortOption[] = (searchSortOrderToUse === SearchSortOption.RELEVANCE ? [] : [searchSortOrderToUse]);
+  // Adding `SearchSortOption.RECENTLY_MODIFIED` as second sort when
+  // selecting `SearchSortOption.RECENTLY_PUBLISHED`.
+  // This is to sort the never published components by recently modified that
+  // appears in the end after all published components.
   if (searchSortOrderToUse === SearchSortOption.RECENTLY_PUBLISHED) {
-    extraFilter = union(extraFilter, ['last_published IS NOT NULL']);
+    sort = union(sort, [SearchSortOption.RECENTLY_MODIFIED]);
   }
 
   const canClearFilters = (

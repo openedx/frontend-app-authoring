@@ -311,8 +311,13 @@ describe('<LibraryAuthoringPage />', () => {
       expect(options.length).toBeGreaterThan(0);
       fireEvent.click(options[options.length - 1]);
 
+      let bodyText;
       // Did the search happen with the expected sort option?
-      const bodyText = sortBy ? `"sort":["${sortBy}"]` : '"sort":[]';
+      if (Array.isArray(sortBy)) {
+        bodyText = `"sort":[${sortBy.map(item => `"${item}"`).join(',')}]`;
+      } else {
+        bodyText = sortBy ? `"sort":["${sortBy}"]` : '"sort":[]';
+      }
       await waitFor(() => {
         expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
           body: expect.stringContaining(bodyText),
@@ -337,14 +342,7 @@ describe('<LibraryAuthoringPage />', () => {
     await testSortOption('Oldest', 'created:asc', false);
 
     // Sorting by Recently Published also excludes unpublished components
-    await testSortOption('Recently Published', 'last_published:desc', false);
-    await waitFor(() => {
-      expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
-        body: expect.stringContaining('last_published IS NOT NULL'),
-        method: 'POST',
-        headers: expect.anything(),
-      });
-    });
+    await testSortOption('Recently Published', ['last_published:desc', 'modified:desc'], false);
 
     // Re-selecting the previous sort option resets sort to default "Recently Modified"
     await testSortOption('Recently Published', 'modified:desc', true);
