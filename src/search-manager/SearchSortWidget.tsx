@@ -8,30 +8,72 @@ import messages from './messages';
 import { SearchSortOption } from './data/api';
 import { useSearchContext } from './SearchManager';
 
-interface MenuItems {
-  id: string;
-  name: string;
-  value: SearchSortOption;
-  show: boolean;
-}
-
-interface BaseSearchSortWidgetProps {
-  iconOnly?: boolean;
-  menuItems: MenuItems[];
-  searchSortOrder: SearchSortOption;
-  setSearchSortOrder: React.Dispatch<React.SetStateAction<SearchSortOption>>;
-  defaultSearchSortOrder: SearchSortOption;
-}
-
-export const BaseSearchSortWidget = ({
-  menuItems,
-  searchSortOrder,
-  setSearchSortOrder,
-  defaultSearchSortOrder,
+export const SearchSortWidget = ({
   iconOnly = false,
-}: BaseSearchSortWidgetProps) => {
+  disableOptions,
+}: {
+  iconOnly?: boolean;
+  disableOptions?: SearchSortOption[];
+}) => {
   const intl = useIntl();
+  const {
+    searchSortOrder,
+    setSearchSortOrder,
+    defaultSearchSortOrder,
+  } = useSearchContext();
 
+  const menuItems = useMemo(
+    () => [
+      {
+        id: 'search-sort-option-most-relevant',
+        name: intl.formatMessage(messages.searchSortMostRelevant),
+        value: SearchSortOption.RELEVANCE,
+        show: (
+          !disableOptions?.includes(SearchSortOption.RELEVANCE)
+            && defaultSearchSortOrder === SearchSortOption.RELEVANCE
+        ),
+      },
+      {
+        id: 'search-sort-option-recently-modified',
+        name: intl.formatMessage(messages.searchSortRecentlyModified),
+        value: SearchSortOption.RECENTLY_MODIFIED,
+        show: !disableOptions?.includes(SearchSortOption.RECENTLY_MODIFIED),
+      },
+      {
+        id: 'search-sort-option-recently-published',
+        name: intl.formatMessage(messages.searchSortRecentlyPublished),
+        value: SearchSortOption.RECENTLY_PUBLISHED,
+        show: !disableOptions?.includes(SearchSortOption.RECENTLY_PUBLISHED),
+      },
+      {
+        id: 'search-sort-option-title-az',
+        name: intl.formatMessage(messages.searchSortTitleAZ),
+        value: SearchSortOption.TITLE_AZ,
+        show: !disableOptions?.includes(SearchSortOption.TITLE_AZ),
+      },
+      {
+        id: 'search-sort-option-title-za',
+        name: intl.formatMessage(messages.searchSortTitleZA),
+        value: SearchSortOption.TITLE_ZA,
+        show: !disableOptions?.includes(SearchSortOption.TITLE_ZA),
+      },
+      {
+        id: 'search-sort-option-newest',
+        name: intl.formatMessage(messages.searchSortNewest),
+        value: SearchSortOption.NEWEST,
+        show: !disableOptions?.includes(SearchSortOption.NEWEST),
+      },
+      {
+        id: 'search-sort-option-oldest',
+        name: intl.formatMessage(messages.searchSortOldest),
+        value: SearchSortOption.OLDEST,
+        show: !disableOptions?.includes(SearchSortOption.OLDEST),
+      },
+    ],
+    [intl, defaultSearchSortOrder],
+  );
+
+  const menuHeader = intl.formatMessage(messages.searchSortWidgetLabel);
   const defaultSortOption = menuItems.find(
     ({ value }) => (value === defaultSearchSortOrder),
   );
@@ -41,9 +83,8 @@ export const BaseSearchSortWidget = ({
   const selectedSortOption = shownMenuItems.find(
     ({ value }) => (value === searchSortOrder),
   ) ?? defaultSortOption;
-
-  const menuHeader = intl.formatMessage(messages.searchSortWidgetLabel);
   const toggleLabel = selectedSortOption ? selectedSortOption.name : menuHeader;
+
   return (
     <Dropdown id="search-sort-dropdown">
       <Dropdown.Toggle
@@ -76,73 +117,6 @@ export const BaseSearchSortWidget = ({
         ))}
       </Dropdown.Menu>
     </Dropdown>
-  );
-};
-
-export const SearchSortWidget = ({ iconOnly = false }: { iconOnly?: boolean }) => {
-  const intl = useIntl();
-  const {
-    searchSortOrder,
-    setSearchSortOrder,
-    defaultSearchSortOrder,
-  } = useSearchContext();
-
-  const menuItems = useMemo(
-    () => [
-      {
-        id: 'search-sort-option-most-relevant',
-        name: intl.formatMessage(messages.searchSortMostRelevant),
-        value: SearchSortOption.RELEVANCE,
-        show: (defaultSearchSortOrder === SearchSortOption.RELEVANCE),
-      },
-      {
-        id: 'search-sort-option-recently-modified',
-        name: intl.formatMessage(messages.searchSortRecentlyModified),
-        value: SearchSortOption.RECENTLY_MODIFIED,
-        show: true,
-      },
-      {
-        id: 'search-sort-option-recently-published',
-        name: intl.formatMessage(messages.searchSortRecentlyPublished),
-        value: SearchSortOption.RECENTLY_PUBLISHED,
-        show: true,
-      },
-      {
-        id: 'search-sort-option-title-az',
-        name: intl.formatMessage(messages.searchSortTitleAZ),
-        value: SearchSortOption.TITLE_AZ,
-        show: true,
-      },
-      {
-        id: 'search-sort-option-title-za',
-        name: intl.formatMessage(messages.searchSortTitleZA),
-        value: SearchSortOption.TITLE_ZA,
-        show: true,
-      },
-      {
-        id: 'search-sort-option-newest',
-        name: intl.formatMessage(messages.searchSortNewest),
-        value: SearchSortOption.NEWEST,
-        show: true,
-      },
-      {
-        id: 'search-sort-option-oldest',
-        name: intl.formatMessage(messages.searchSortOldest),
-        value: SearchSortOption.OLDEST,
-        show: true,
-      },
-    ],
-    [intl, defaultSearchSortOrder],
-  );
-
-  return (
-    <BaseSearchSortWidget
-      menuItems={menuItems}
-      searchSortOrder={searchSortOrder}
-      setSearchSortOrder={setSearchSortOrder}
-      defaultSearchSortOrder={defaultSearchSortOrder}
-      iconOnly={iconOnly}
-    />
   );
 };
 
