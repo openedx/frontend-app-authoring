@@ -12,7 +12,6 @@ import {
   Icon,
   Stack,
   useToggle,
-  SearchField,
 } from '@openedx/paragon';
 
 import _ from 'lodash';
@@ -20,9 +19,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Loop } from '@openedx/paragon/icons';
 import messages from './messages';
 import previewChangesMessages from '../course-unit/preview-changes/messages';
-import searchMessages from '../search-manager/messages';
 import { courseLibrariesQueryKeys, useEntityLinks } from './data/apiHooks';
-import { useContentSearchConnection, useContentSearchResults } from '../search-manager';
+import { SearchContextProvider, SearchKeywordsField, useSearchContext } from '../search-manager';
 import { getItemIcon } from '../generic/block-type-utils';
 import { BlockTypeLabel, Highlight } from '../search-manager';
 import type { ContentHit } from '../search-manager/data/api';
@@ -32,9 +30,10 @@ import { useAcceptLibraryBlockChanges, useIgnoreLibraryBlockChanges } from '../c
 import { BasePreviewLibraryXBlockChanges, LibraryChangesMessageData } from '../course-unit/preview-changes';
 import LoadingButton from '../generic/loading-button';
 import { ToastContext } from '../generic/toast-context';
-import { BaseSearchSortWidget } from '../search-manager/SearchSortWidget';
+import SearchSortWidget from '../search-manager/SearchSortWidget';
 import { useLoadOnScroll } from '../hooks';
 import DeleteModal from '../generic/delete-modal/DeleteModal';
+import { PublishableEntityLink } from './data/api';
 
 interface Props {
   courseId: string;
@@ -99,12 +98,6 @@ const BlockCard: React.FC<BlockCardProps> = ({ info, actions }) => {
 
 const ReviewTabContent = ({ courseId }: Props) => {
   const intl = useIntl();
-  const { showToast } = useContext(ToastContext);
-  const [blockData, setBlockData] = useState<LibraryChangesMessageData | undefined>(undefined);
-  // ignore changes confirmation modal toggle.
-  const [isConfirmModalOpen, openConfirmModal, closeConfirmModal] = useToggle(false);
-  const [searchKeywords, setSearchKeywords] = useState<string>('');
-  const [searchSortOrder, setSearchSortOrder] = useState<SearchSortOption>(SearchSortOption.RECENTLY_MODIFIED);
   const {
     data: linkPages,
     isLoading: isSyncComponentsLoading,
@@ -112,6 +105,7 @@ const ReviewTabContent = ({ courseId }: Props) => {
     isFetchingNextPage,
     fetchNextPage,
   } = useEntityLinks({ courseId, readyToSync: true });
+
   const outOfSyncComponents = useMemo(
     () => linkPages?.pages?.reduce((links, page) => [...links, ...page.results], []) ?? [],
     [linkPages],
@@ -120,17 +114,75 @@ const ReviewTabContent = ({ courseId }: Props) => {
     () => outOfSyncComponents?.map(link => link.downstreamUsageKey),
     [outOfSyncComponents],
   );
-  const { client, indexName } = useContentSearchConnection();
-  const { hits: downstreamInfo, isLoading: isIndexDataLoading } = useContentSearchResults({
-    client,
-    indexName,
-    extraFilter: [`context_key = "${courseId}"`, `usage_key IN ["${downstreamKeys?.join('","')}"]`],
+
+  useLoadOnScroll(
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    true,
+  );
+
+  const onSearchUpdate = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }
+
+  const disableSortOptions = [
+    SearchSortOption.RELEVANCE,
+    SearchSortOption.OLDEST,
+    SearchSortOption.NEWEST,
+    SearchSortOption.RECENTLY_PUBLISHED,
+  ];
+
+  if (isSyncComponentsLoading) {
+    return <Loading />
+  }
+
+  return (
+    <SearchContextProvider
+      extraFilter={[`context_key = "${courseId}"`, `usage_key IN ["${downstreamKeys?.join('","')}"]`]}
+      skipUrlUpdate
+      skipBlockTypeFetch
+    >
+      <ActionRow>
+        <SearchKeywordsField
+          placeholder={intl.formatMessage(messages.searchPlaceholder)}
+        />
+        <SearchSortWidget disableOptions={disableSortOptions} />
+        <ActionRow.Spacer />
+      </ActionRow>
+      <ComponentReviewList
+        outOfSyncComponents={outOfSyncComponents}
+        onSearchUpdate={onSearchUpdate}
+      />
+    </SearchContextProvider>
+  );
+};
+
+const ComponentReviewList = ({
+  outOfSyncComponents,
+  onSearchUpdate,
+}: {
+  outOfSyncComponents: PublishableEntityLink[];
+  onSearchUpdate: () => void;
+}) => {
+  const intl = useIntl();
+  const { showToast } = useContext(ToastContext);
+  const [blockData, setBlockData] = useState<LibraryChangesMessageData | undefined>(undefined);
+  // ignore changes confirmation modal toggle.
+  const [isConfirmModalOpen, openConfirmModal, closeConfirmModal] = useToggle(false);
+  const {
+    hits: downstreamInfo,
+    isLoading: isIndexDataLoading,
     searchKeywords,
-    limit: downstreamKeys?.length || 0,
-    sort: [searchSortOrder],
-    enabled: !!outOfSyncComponents,
-    skipBlockTypeFetch: true,
-  }) as unknown as { hits: ContentHit[], isLoading: boolean };
+    searchSortOrder,
+  } = useSearchContext() as {
+    hits: ContentHit[];
+    isLoading: boolean;
+    searchKeywords: string;
+    searchSortOrder: SearchSortOption;
+  };
   const outOfSyncComponentsByKey = useMemo(
     () => _.keyBy(outOfSyncComponents, 'downstreamUsageKey'),
     [outOfSyncComponents],
@@ -142,17 +194,10 @@ const ReviewTabContent = ({ courseId }: Props) => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (hasNextPage && !isFetchingNextPage && searchKeywords) {
-      fetchNextPage();
+    if (searchKeywords) {
+      onSearchUpdate();
     }
-  }, [hasNextPage, isFetchingNextPage, searchKeywords]);
-
-  useLoadOnScroll(
-    hasNextPage,
-    isFetchingNextPage,
-    fetchNextPage,
-    true,
-  );
+  }, [searchKeywords]);
 
   // Toggle preview changes modal
   const [isModalOpen, openModal, closeModal] = useToggle(false);
@@ -222,35 +267,11 @@ const ReviewTabContent = ({ courseId }: Props) => {
     }
   };
 
-  const menuItems = useMemo(
-    () => [
-      {
-        id: 'search-sort-option-recently-modified',
-        name: intl.formatMessage(searchMessages.searchSortRecentlyModified),
-        value: SearchSortOption.RECENTLY_MODIFIED,
-        show: true,
-      },
-      {
-        id: 'search-sort-option-title-az',
-        name: intl.formatMessage(searchMessages.searchSortTitleAZ),
-        value: SearchSortOption.TITLE_AZ,
-        show: true,
-      },
-      {
-        id: 'search-sort-option-title-za',
-        name: intl.formatMessage(searchMessages.searchSortTitleZA),
-        value: SearchSortOption.TITLE_ZA,
-        show: true,
-      },
-    ],
-    [intl],
-  );
-
   const orderInfo = useMemo(() => {
     if (searchSortOrder !== SearchSortOption.RECENTLY_MODIFIED) {
       return downstreamInfo;
     }
-    if (isSyncComponentsLoading || isIndexDataLoading) {
+    if (isIndexDataLoading) {
       return [];
     }
     let merged = _.merge(downstreamInfoByKey, outOfSyncComponentsByKey);
@@ -259,27 +280,12 @@ const ReviewTabContent = ({ courseId }: Props) => {
     return ordered;
   }, [downstreamInfoByKey, outOfSyncComponentsByKey]);
 
-  if (isSyncComponentsLoading || isIndexDataLoading) {
+  if (isIndexDataLoading) {
     return <Loading />;
   }
 
   return (
     <>
-      <ActionRow>
-        <SearchField
-          onChange={setSearchKeywords}
-          onSubmit={setSearchKeywords}
-          value={searchKeywords}
-          placeholder={intl.formatMessage(messages.searchPlaceholder)}
-        />
-        <BaseSearchSortWidget
-          menuItems={menuItems}
-          searchSortOrder={searchSortOrder}
-          setSearchSortOrder={setSearchSortOrder}
-          defaultSearchSortOrder={SearchSortOption.RECENTLY_MODIFIED}
-        />
-        <ActionRow.Spacer />
-      </ActionRow>
       {orderInfo?.map((info) => (
         <BlockCard
           key={info.usageKey}
