@@ -43,6 +43,7 @@ const FileSection = ({ intl, courseId }) => {
               }
               accept={{ 'application/gzip': ['.tar.gz'] }}
               data-testid="dropzone"
+              style={{ height: '200px' }}
             />
           )}
       </Card.Section>
