@@ -528,7 +528,7 @@ mockGetLibraryTeam.notMember = {
 mockGetLibraryTeam.applyMock = () => jest.spyOn(api, 'getLibraryTeam').mockImplementation(mockGetLibraryTeam);
 
 /**
- * Mock for `getBlockTypesMetaData()`
+ * Mock for `getBlockTypes()`
  *
  * Use `mockBlockTypesMetadata.applyMock()` to apply it to the whole test suite.
  */
@@ -548,7 +548,7 @@ mockBlockTypesMetadata.blockTypesMetadata = [
   { blockType: 'google-document', displayName: 'Google Document' },
 ];
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
-mockBlockTypesMetadata.applyMock = () => jest.spyOn(api, 'getBlockTypesMetaData').mockImplementation(mockBlockTypesMetadata);
+mockBlockTypesMetadata.applyMock = () => jest.spyOn(api, 'getBlockTypes').mockImplementation(mockBlockTypesMetadata);
 
 export async function mockComponentDownstreamLinks(
   usageKey: string,

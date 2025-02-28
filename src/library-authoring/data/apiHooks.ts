@@ -45,7 +45,7 @@ import {
   publishXBlock,
   deleteXBlockAsset,
   restoreLibraryBlock,
-  getBlockTypesMetaData,
+  getBlockTypes,
   getComponentDownstreamLinks,
 } from './api';
 import { VersionSpec } from '../LibraryBlock';
@@ -260,7 +260,7 @@ export const useLibraryTeam = (libraryId: string | undefined) => (
 export const useBlockTypesMetadata = (libraryId: string | undefined) => (
   useQuery({
     queryKey: libraryAuthoringQueryKeys.blockTypes(libraryId),
-    queryFn: () => getBlockTypesMetaData(libraryId!),
+    queryFn: () => getBlockTypes(libraryId!),
     enabled: libraryId !== undefined,
   })
 );

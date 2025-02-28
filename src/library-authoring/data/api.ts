@@ -395,9 +395,9 @@ export async function updateLibraryTeamMember(memberData: UpdateLibraryTeamMembe
 }
 
 /**
- * Get the block types metadata.
+ * Get the list of XBlock types that can be added to this library
  */
-export async function getBlockTypesMetaData(libraryId: string): Promise<BlockTypeMetadata[]> {
+export async function getBlockTypes(libraryId: string): Promise<BlockTypeMetadata[]> {
   const client = getAuthenticatedHttpClient();
   const url = getBlockTypesMetaDataUrl(libraryId);
   const { data } = await client.get(url);
