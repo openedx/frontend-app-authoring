@@ -45,6 +45,7 @@ import {
   publishXBlock,
   deleteXBlockAsset,
   restoreLibraryBlock,
+  getBlockTypes,
   getComponentDownstreamLinks,
 } from './api';
 import { VersionSpec } from '../LibraryBlock';
@@ -84,6 +85,11 @@ export const libraryAuthoringQueryKeys = {
     ...libraryAuthoringQueryKeys.all,
     libraryId,
     collectionId,
+  ],
+  blockTypes: (libraryId?: string) => [
+    ...libraryAuthoringQueryKeys.all,
+    'blockTypes',
+    libraryId,
   ],
 };
 
@@ -244,6 +250,17 @@ export const useLibraryTeam = (libraryId: string | undefined) => (
   useQuery({
     queryKey: libraryAuthoringQueryKeys.libraryTeam(libraryId),
     queryFn: () => getLibraryTeam(libraryId!),
+    enabled: libraryId !== undefined,
+  })
+);
+
+/**
+ * Hook to fetch the list of XBlock types that can be added to this library.
+ */
+export const useBlockTypesMetadata = (libraryId: string | undefined) => (
+  useQuery({
+    queryKey: libraryAuthoringQueryKeys.blockTypes(libraryId),
+    queryFn: () => getBlockTypes(libraryId!),
     enabled: libraryId !== undefined,
   })
 );

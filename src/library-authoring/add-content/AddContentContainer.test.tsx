@@ -6,7 +6,11 @@ import {
   waitFor,
   initializeMocks,
 } from '../../testUtils';
-import { mockContentLibrary, mockXBlockFields } from '../data/api.mocks';
+import {
+  mockContentLibrary,
+  mockBlockTypesMetadata,
+  mockXBlockFields,
+} from '../data/api.mocks';
 import {
   getContentLibraryApiUrl, getCreateLibraryBlockUrl, getLibraryCollectionComponentApiUrl, getLibraryPasteClipboardUrl,
   getXBlockFieldsApiUrl,
@@ -55,7 +59,8 @@ describe('<AddContentContainer />', () => {
   afterEach(() => {
     jest.restoreAllMocks();
   });
-  it('should render content buttons', () => {
+  it('should render content buttons', async () => {
+    mockBlockTypesMetadata.applyMock();
     mockClipboardEmpty.applyMock();
     render();
     expect(screen.queryByRole('button', { name: /collection/i })).toBeInTheDocument();
@@ -64,8 +69,54 @@ describe('<AddContentContainer />', () => {
     expect(screen.queryByRole('button', { name: /open reponse/i })).not.toBeInTheDocument(); // Excluded from MVP
     expect(screen.queryByRole('button', { name: /drag drop/i })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /video/i })).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /advanced \/ other/i })).toBeInTheDocument(); // To test not editor supported blocks
     expect(screen.queryByRole('button', { name: /copy from clipboard/i })).not.toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /advanced \/ other/i })).toBeInTheDocument();
+  });
+
+  it('should render advanced content buttons', async () => {
+    mockBlockTypesMetadata.applyMock();
+    mockClipboardEmpty.applyMock();
+    render();
+
+    const advancedButton = await screen.findByRole('button', { name: /advanced \/ other/i });
+    fireEvent.click(advancedButton);
+
+    expect(await screen.findByRole('button', { name: /poll/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /survey/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /google document/i })).toBeInTheDocument();
+  });
+
+  it('should return to content view fron advanced block creation view', async () => {
+    mockBlockTypesMetadata.applyMock();
+    mockClipboardEmpty.applyMock();
+    render();
+
+    const advancedButton = await screen.findByRole('button', { name: /advanced \/ other/i });
+    fireEvent.click(advancedButton);
+
+    expect(await screen.findByRole('button', { name: /poll/i })).toBeInTheDocument();
+
+    const returnButton = screen.getByRole('button', { name: /back to list/i });
+    fireEvent.click(returnButton);
+
+    expect(screen.queryByRole('button', { name: /text/i })).toBeInTheDocument();
+  });
+
+  it('should create an advanced content', async () => {
+    mockBlockTypesMetadata.applyMock();
+    mockClipboardEmpty.applyMock();
+    const url = getCreateLibraryBlockUrl(libraryId);
+    axiosMock.onPost(url).reply(200);
+    render();
+
+    const advancedButton = await screen.findByRole('button', { name: /advanced \/ other/i });
+    fireEvent.click(advancedButton);
+
+    const surveyButton = await screen.findByRole('button', { name: /survey/i });
+    fireEvent.click(surveyButton);
+
+    await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(url));
+    await waitFor(() => expect(axiosMock.history.patch.length).toEqual(0));
   });
 
   it('should open the editor modal to create a content when the block is supported', async () => {
@@ -78,40 +129,6 @@ describe('<AddContentContainer />', () => {
     const textButton = screen.getByRole('button', { name: /text/i });
     fireEvent.click(textButton);
     expect(await screen.findByRole('heading', { name: /Text/ })).toBeInTheDocument();
-  });
-
-  it('should create a component when the block is not supported by the editor', async () => {
-    mockClipboardEmpty.applyMock();
-    const url = getCreateLibraryBlockUrl(libraryId);
-    axiosMock.onPost(url).reply(200);
-    render();
-    const textButton = screen.getByRole('button', { name: /other/i });
-    fireEvent.click(textButton);
-    await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(url));
-    await waitFor(() => expect(axiosMock.history.patch.length).toEqual(0));
-  });
-
-  it('should create a content in a collection for non-editable blocks', async () => {
-    mockClipboardEmpty.applyMock();
-    const collectionId = 'some-collection-id';
-    const url = getCreateLibraryBlockUrl(libraryId);
-    const collectionComponentUrl = getLibraryCollectionComponentApiUrl(
-      libraryId,
-      collectionId,
-    );
-
-    axiosMock.onPost(url).reply(200, { id: 'some-component-id' });
-    axiosMock.onPatch(collectionComponentUrl).reply(200);
-
-    render(collectionId);
-
-    // Select a block that is not supported by the editor should create the component
-    const textButton = screen.getByRole('button', { name: /other/i });
-    fireEvent.click(textButton);
-
-    await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(url));
-    await waitFor(() => expect(axiosMock.history.patch.length).toEqual(1));
-    await waitFor(() => expect(axiosMock.history.patch[0].url).toEqual(collectionComponentUrl));
   });
 
   it('should create a content in a collection for editable blocks', async () => {
@@ -225,7 +242,7 @@ describe('<AddContentContainer />', () => {
 
   it('should stop user from pasting unsupported blocks and show toast', async () => {
     // Simulate having an HTML block in the clipboard:
-    mockClipboardHtml.applyMock('openassessment');
+    mockClipboardHtml.applyMock('conditional');
 
     const errMsg = 'Libraries do not support this type of content yet.';
 

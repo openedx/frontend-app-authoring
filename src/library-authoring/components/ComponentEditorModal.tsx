@@ -15,7 +15,7 @@ export function canEditComponent(usageKey: string): boolean {
     return false;
   }
 
-  return getConfig().LIBRARY_SUPPORTED_BLOCKS.includes(blockType);
+  return !getConfig().LIBRARY_UNSUPPORTED_BLOCKS.includes(blockType);
 }
 
 export const ComponentEditorModal: React.FC<Record<never, never>> = () => {
