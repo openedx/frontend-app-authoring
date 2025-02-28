@@ -341,7 +341,7 @@ describe('<LibraryAuthoringPage />', () => {
     await testSortOption('Newest', 'created:desc', false);
     await testSortOption('Oldest', 'created:asc', false);
 
-    // Sorting by Recently Published also excludes unpublished components
+    // Sorting by Recently Published also sorts unpublished components by recently modified
     await testSortOption('Recently Published', ['last_published:desc', 'modified:desc'], false);
 
     // Re-selecting the previous sort option resets sort to default "Recently Modified"
