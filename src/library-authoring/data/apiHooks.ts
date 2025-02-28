@@ -255,7 +255,7 @@ export const useLibraryTeam = (libraryId: string | undefined) => (
 );
 
 /**
- * Hook to fetch the block types metadata
+ * Hook to fetch the list of XBlock types that can be added to this library.
  */
 export const useBlockTypesMetadata = (libraryId: string | undefined) => (
   useQuery({
