@@ -197,6 +197,7 @@ interface FetchSearchParams {
   /** How many results to skip, e.g. if limit=20 then passing offset=20 gets the second page. */
   offset?: number,
   skipBlockTypeFetch?: boolean,
+  limit?: number,
 }
 
 export async function fetchSearchResults({
@@ -211,6 +212,7 @@ export async function fetchSearchResults({
   sort,
   offset = 0,
   skipBlockTypeFetch = false,
+  limit = 20,
 }: FetchSearchParams): Promise<{
     hits: (ContentHit | CollectionHit)[],
     nextOffset: number | undefined,
@@ -231,8 +233,6 @@ export async function fetchSearchResults({
   const publishStatusFilterFormatted = publishStatusFilter?.length ? [publishStatusFilter.map(ps => `publish_status = ${ps}`)] : [];
 
   const tagsFilterFormatted = formatTagsFilter(tagsFilter);
-
-  const limit = 20; // How many results to retrieve per page.
 
   // To filter normal block types and problem types as 'OR' query
   const typeFilters = [[
@@ -521,33 +521,3 @@ export async function fetchTagsThatMatchKeyword({
 
   return { matches: Array.from(matches).map((tagPath) => ({ tagPath })), mayBeMissingResults: hits.length === limit };
 }
-
-/**
- * Generic one-off fetch from meilisearch index.
- */
-export const fetchIndexDocuments = async (
-  client: MeiliSearch,
-  indexName: string,
-  filter?: Filter,
-  limit?: number,
-  attributesToRetrieve?: string[],
-  attributesToCrop?: string[],
-  sort?: SearchSortOption[],
-  searchKeywords?: string,
-): Promise<ContentHit[]> => {
-  // Convert 'extraFilter' into an array
-  const filterFormatted = forceArray(filter);
-
-  const { hits } = await client.index(indexName).search(searchKeywords, {
-    filter: filterFormatted,
-    limit,
-    attributesToRetrieve,
-    attributesToCrop,
-    sort,
-    attributesToHighlight: ['display_name', 'description', 'published'],
-    highlightPreTag: HIGHLIGHT_PRE_TAG,
-    highlightPostTag: HIGHLIGHT_POST_TAG,
-  });
-
-  return hits.map(formatSearchHit) as ContentHit[];
-};

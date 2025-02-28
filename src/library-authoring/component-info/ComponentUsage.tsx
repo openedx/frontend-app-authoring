@@ -6,7 +6,7 @@ import { useUnpaginatedEntityLinks } from '../../course-libraries/data/apiHooks'
 
 import AlertError from '../../generic/alert-error';
 import Loading from '../../generic/Loading';
-import { useFetchIndexDocuments } from '../../search-manager';
+import { useContentSearchConnection, useContentSearchResults } from '../../search-manager';
 import messages from './messages';
 
 interface ComponentUsageProps {
@@ -41,16 +41,20 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
     [dataDownstreamLinks],
   );
 
+  const { client, indexName } = useContentSearchConnection();
   const {
-    data: downstreamHits,
+    hits: downstreamHits,
     isError: isErrorIndexDocuments,
     error: errorIndexDocuments,
     isLoading: isLoadingIndexDocuments,
-  } = useFetchIndexDocuments({
-    filter: [`usage_key IN ["${downstreamKeys.join('","')}"]`],
+  } = useContentSearchResults({
+    client,
+    indexName,
+    searchKeywords: '',
+    extraFilter: [`usage_key IN ["${downstreamKeys.join('","')}"]`],
     limit: downstreamKeys.length,
-    attributesToRetrieve: ['usage_key', 'breadcrumbs', 'context_key'],
     enabled: !!downstreamKeys.length,
+    skipBlockTypeFetch: true,
   });
 
   if (isErrorDownstreamLinks || isErrorIndexDocuments) {
@@ -68,7 +72,7 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
   const componentUsage = downstreamHits.reduce<ComponentUsageTree>((acc, hit) => {
     const link = hit.breadcrumbs.at(-1);
     // istanbul ignore if: this should never happen. it is a type guard for the breadcrumb last item
-    if (!(link && ('usageKey' in link))) {
+    if (!link?.usageKey) {
       return acc;
     }
 

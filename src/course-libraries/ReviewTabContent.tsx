@@ -22,7 +22,7 @@ import messages from './messages';
 import previewChangesMessages from '../course-unit/preview-changes/messages';
 import searchMessages from '../search-manager/messages';
 import { courseLibrariesQueryKeys, useEntityLinks } from './data/apiHooks';
-import { useFetchIndexDocuments } from '../search-manager/data/apiHooks';
+import { useContentSearchConnection, useContentSearchResults } from '../search-manager';
 import { getItemIcon } from '../generic/block-type-utils';
 import { BlockTypeLabel, Highlight } from '../search-manager';
 import type { ContentHit } from '../search-manager/data/api';
@@ -120,14 +120,17 @@ const ReviewTabContent = ({ courseId }: Props) => {
     () => outOfSyncComponents?.map(link => link.downstreamUsageKey),
     [outOfSyncComponents],
   );
-  const { data: downstreamInfo, isLoading: isIndexDataLoading } = useFetchIndexDocuments({
-    filter: [`context_key = "${courseId}"`, `usage_key IN ["${downstreamKeys?.join('","')}"]`],
-    limit: downstreamKeys?.length || 0,
-    attributesToRetrieve: ['usage_key', 'display_name', 'breadcrumbs', 'block_type'],
-    sort: [searchSortOrder],
+  const { client, indexName } = useContentSearchConnection();
+  const { hits: downstreamInfo, isLoading: isIndexDataLoading } = useContentSearchResults({
+    client,
+    indexName,
+    extraFilter: [`context_key = "${courseId}"`, `usage_key IN ["${downstreamKeys?.join('","')}"]`],
     searchKeywords,
+    limit: downstreamKeys?.length || 0,
+    sort: [searchSortOrder],
     enabled: !!outOfSyncComponents,
-  }) as unknown as { data: ContentHit[], isLoading: boolean };
+    skipBlockTypeFetch: true,
+  }) as unknown as { hits: ContentHit[], isLoading: boolean };
   const outOfSyncComponentsByKey = useMemo(
     () => _.keyBy(outOfSyncComponents, 'downstreamUsageKey'),
     [outOfSyncComponents],
