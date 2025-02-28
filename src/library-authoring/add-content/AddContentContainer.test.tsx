@@ -242,7 +242,7 @@ describe('<AddContentContainer />', () => {
 
   it('should stop user from pasting unsupported blocks and show toast', async () => {
     // Simulate having an HTML block in the clipboard:
-    mockClipboardHtml.applyMock('openassessment');
+    mockClipboardHtml.applyMock('conditional');
 
     const errMsg = 'Libraries do not support this type of content yet.';
 

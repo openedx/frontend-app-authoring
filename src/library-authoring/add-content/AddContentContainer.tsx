@@ -61,6 +61,7 @@ type AddAdvancedContentViewProps = {
   closeAdvancedList: () => void,
   onCreateContent: (blockType: string) => void,
   advancedBlocks: Record<string, BlockTypeMetadata>,
+  isBlockTypeEnabled: (blockType) => boolean,
 };
 
 const AddContentButton = ({ contentType, onCreateContent } : AddContentButtonProps) => {
@@ -141,6 +142,7 @@ const AddAdvancedContentView = ({
   closeAdvancedList,
   onCreateContent,
   advancedBlocks,
+  isBlockTypeEnabled,
 }: AddAdvancedContentViewProps) => {
   const intl = useIntl();
   return (
@@ -151,16 +153,18 @@ const AddAdvancedContentView = ({
         </Button>
       </div>
       {Object.keys(advancedBlocks).map((blockType) => (
-        <AddContentButton
-          key={`add-content-${blockType}`}
-          contentType={{
-            name: advancedBlocks[blockType].displayName,
-            blockType,
-            icon: AutoAwesome,
-            disabled: false,
-          }}
-          onCreateContent={onCreateContent}
-        />
+        isBlockTypeEnabled(blockType) ? (
+          <AddContentButton
+            key={`add-content-${blockType}`}
+            contentType={{
+              name: advancedBlocks[blockType].displayName,
+              blockType,
+              icon: AutoAwesome,
+              disabled: false,
+            }}
+            onCreateContent={onCreateContent}
+          />
+        ) : null
       ))}
     </>
   );
@@ -203,16 +207,15 @@ const AddContentContainer = () => {
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
   const [isAdvancedListOpen, showAdvancedList, closeAdvancedList] = useToggle();
 
-  // We use block types data from backend to verify the enabled advanced blocks.
+  // We use block types data from backend to verify the enabled basic and advanced blocks.
   // Also, we use that data to get the translated display name of the block.
-  // TODO: It is possible to use this data to verify the basic blocks as well.
   const { data: blockTypesDataList } = useBlockTypesMetadata(libraryId);
   const blockTypesData = useMemo(() => blockTypesDataList?.reduce((acc, block) => {
     acc[block.blockType] = block;
     return acc;
   }, {}), [blockTypesDataList]);
 
-  const isBlockTypeEnabled = (blockType: string) => getConfig().LIBRARY_SUPPORTED_BLOCKS.includes(blockType);
+  const isBlockTypeEnabled = (blockType: string) => !getConfig().LIBRARY_UNSUPPORTED_BLOCKS.includes(blockType);
 
   const contentTypes = [
     {
@@ -355,6 +358,7 @@ const AddContentContainer = () => {
           closeAdvancedList={closeAdvancedList}
           onCreateContent={onCreateContent}
           advancedBlocks={advancedBlocks}
+          isBlockTypeEnabled={isBlockTypeEnabled}
         />
       ) : (
         <AddContentView
