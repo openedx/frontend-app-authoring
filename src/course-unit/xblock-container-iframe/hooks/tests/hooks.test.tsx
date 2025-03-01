@@ -1,9 +1,15 @@
 import React from 'react';
 import { renderHook, act } from '@testing-library/react-hooks';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { useKeyedState } from '@edx/react-unit-test-utils';
+import { initializeMockApp } from '@edx/frontend-platform';
 import { logError } from '@edx/frontend-platform/logging';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
+import { Provider } from 'react-redux';
 
 import { stateKeys, messageTypes } from '../../../constants';
+import { mockBroadcastChannel } from '../../../../generic/data/api.mock';
+import initializeStore from '../../../../store';
 import { useLoadBearingHook, useIFrameBehavior, useMessageHandlers } from '..';
 
 jest.useFakeTimers();
@@ -15,6 +21,8 @@ jest.mock('@edx/react-unit-test-utils', () => ({
 jest.mock('@edx/frontend-platform/logging', () => ({
   logError: jest.fn(),
 }));
+
+mockBroadcastChannel();
 
 describe('useIFrameBehavior', () => {
   const id = 'test-id';
@@ -157,10 +165,17 @@ describe('useIFrameBehavior', () => {
 });
 
 describe('useLoadBearingHook', () => {
-  it('updates state when id changes', () => {
-    const setValue = jest.fn();
-    jest.spyOn(React, 'useState').mockReturnValue([0, setValue]);
+  const setValue = jest.fn();
 
+  beforeEach(() => {
+    jest.spyOn(React, 'useState').mockReturnValue([0, setValue]);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('updates state when id changes', () => {
     const { rerender } = renderHook(({ id }) => useLoadBearingHook(id), {
       initialProps: { id: 'initial-id' },
     });
@@ -177,6 +192,24 @@ describe('useLoadBearingHook', () => {
 describe('useMessageHandlers', () => {
   let handlers;
   let result;
+  let store;
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  });
+
+  const wrapper = ({ children }) => (
+    <Provider store={store}>
+      <IntlProvider locale="en">
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      </IntlProvider>
+    </Provider>
+  );
 
   beforeEach(() => {
     handlers = {
@@ -194,7 +227,18 @@ describe('useMessageHandlers', () => {
       handleFinishXBlockDragging: jest.fn(),
     };
 
-    ({ result } = renderHook(() => useMessageHandlers(handlers)));
+    initializeMockApp({
+      authenticatedUser: {
+        userId: 3,
+        username: 'abc123',
+        administrator: false,
+        roles: [],
+      },
+    });
+
+    store = initializeStore();
+
+    ({ result } = renderHook(() => useMessageHandlers(handlers), { wrapper }));
   });
 
   it('calls handleScrollToXBlock after debounce delay', () => {

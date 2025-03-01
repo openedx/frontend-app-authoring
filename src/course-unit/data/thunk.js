@@ -8,7 +8,6 @@ import { handleResponseErrors } from '../../generic/saving-error-alert';
 import { RequestStatus } from '../../data/constants';
 import { NOTIFICATION_MESSAGES } from '../../constants';
 import { updateModel, updateModels } from '../../generic/model-store';
-import { updateClipboardData } from '../../generic/data/slice';
 import { messageTypes } from '../constants';
 import {
   getCourseUnitData,
@@ -77,7 +76,6 @@ export function fetchCourseSectionVerticalData(courseId, sequenceId) {
       }));
       dispatch(fetchStaticFileNoticesSuccess(JSON.parse(localStorage.getItem('staticFileNotices'))));
       localStorage.removeItem('staticFileNotices');
-      dispatch(updateClipboardData(courseSectionVerticalData.userClipboard));
       dispatch(fetchSequenceSuccess({ sequenceId }));
       return true;
     } catch (error) {
@@ -230,8 +228,6 @@ export function deleteUnitItemQuery(itemId, xblockId, sendMessageToIframe) {
     try {
       await deleteUnitItem(xblockId);
       sendMessageToIframe(messageTypes.completeXBlockDeleting, { locator: xblockId });
-      const { userClipboard } = await getCourseSectionVerticalData(itemId);
-      dispatch(updateClipboardData(userClipboard));
       const courseUnit = await getCourseUnitData(itemId);
       dispatch(fetchCourseItemSuccess(courseUnit));
       dispatch(hideProcessingNotification());

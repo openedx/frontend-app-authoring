@@ -1,4 +1,5 @@
 import MockAdapter from 'axios-mock-adapter';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   act, render, waitFor, within, screen,
 } from '@testing-library/react';
@@ -66,6 +67,7 @@ import messages from './messages';
 
 let axiosMock;
 let store;
+let queryClient;
 const courseId = '123';
 const blockId = '567890';
 const unitDisplayName = courseUnitIndexMock.metadata.display_name;
@@ -88,34 +90,6 @@ jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useParams: () => ({ blockId }),
   useNavigate: () => mockedUsedNavigate,
-}));
-
-jest.mock('@tanstack/react-query', () => ({
-  useQuery: jest.fn(({ queryKey }) => {
-    if (queryKey[0] === 'contentTaxonomyTags') {
-      return {
-        data: {
-          taxonomies: [],
-        },
-        isSuccess: true,
-      };
-    } if (queryKey[0] === 'contentTagsCount') {
-      return {
-        data: 17,
-        isSuccess: true,
-      };
-    }
-    return {
-      data: {},
-      isSuccess: true,
-    };
-  }),
-  useQueryClient: jest.fn(() => ({
-    setQueryData: jest.fn(),
-  })),
-  useMutation: jest.fn(() => ({
-    mutateAsync: jest.fn(),
-  })),
 }));
 
 const clipboardBroadcastChannelMock = {
@@ -145,7 +119,9 @@ const RootWrapper = () => (
   <AppProvider store={store}>
     <IntlProvider locale="en">
       <IframeProvider>
-        <CourseUnit courseId={courseId} />
+        <QueryClientProvider client={queryClient}>
+          <CourseUnit courseId={courseId} />
+        </QueryClientProvider>
       </IframeProvider>
     </IntlProvider>
   </AppProvider>
@@ -164,6 +140,13 @@ describe('<CourseUnit />', () => {
     window.scrollTo = jest.fn();
     global.localStorage.clear();
     store = initializeStore();
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    });
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock
       .onGet(getClipboardUrl())
@@ -182,7 +165,7 @@ describe('<CourseUnit />', () => {
     await executeThunk(fetchCourseVerticalChildrenData(blockId), store.dispatch);
     axiosMock
       .onGet(getContentTaxonomyTagsApiUrl(blockId))
-      .reply(200, {});
+      .reply(200, { taxonomies: [] });
     axiosMock
       .onGet(getContentTaxonomyTagsCountApiUrl(blockId))
       .reply(200, 17);
@@ -1249,13 +1232,6 @@ describe('<CourseUnit />', () => {
           enable_copy_paste_units: true,
         });
 
-      axiosMock
-        .onGet(getCourseSectionVerticalApiUrl(blockId))
-        .reply(200, {
-          ...courseSectionVerticalMock,
-          user_clipboard: clipboardUnit,
-        });
-
       await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
       await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
 
@@ -1305,11 +1281,9 @@ describe('<CourseUnit />', () => {
       });
 
       axiosMock
-        .onGet(getCourseSectionVerticalApiUrl(blockId))
-        .reply(200, {
-          ...courseSectionVerticalMock,
-          user_clipboard: clipboardXBlock,
-        });
+        .onGet(getClipboardUrl())
+        .reply(200, clipboardXBlock);
+
       axiosMock
         .onGet(getCourseUnitApiUrl(courseId))
         .reply(200, {
@@ -1380,13 +1354,6 @@ describe('<CourseUnit />', () => {
           enable_copy_paste_units: true,
         });
 
-      axiosMock
-        .onGet(getCourseSectionVerticalApiUrl(blockId))
-        .reply(200, {
-          ...courseSectionVerticalMock,
-          user_clipboard: clipboardUnit,
-        });
-
       await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
       await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
 
@@ -1437,13 +1404,6 @@ describe('<CourseUnit />', () => {
         .reply(200, {
           ...courseUnitIndexMock,
           enable_copy_paste_units: true,
-        });
-
-      axiosMock
-        .onGet(getCourseSectionVerticalApiUrl(blockId))
-        .reply(200, {
-          ...courseSectionVerticalMock,
-          user_clipboard: clipboardUnit,
         });
 
       await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
@@ -1498,13 +1458,6 @@ describe('<CourseUnit />', () => {
         .reply(200, {
           ...courseUnitIndexMock,
           enable_copy_paste_units: true,
-        });
-
-      axiosMock
-        .onGet(getCourseSectionVerticalApiUrl(blockId))
-        .reply(200, {
-          ...courseSectionVerticalMock,
-          user_clipboard: clipboardUnit,
         });
 
       await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);

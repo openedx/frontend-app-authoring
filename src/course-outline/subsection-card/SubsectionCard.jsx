@@ -16,7 +16,7 @@ import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
 import SortableItem from '../../generic/drag-helper/SortableItem';
 import { DragContext } from '../../generic/drag-helper/DragContextProvider';
-import { useCopyToClipboard, PasteComponent } from '../../generic/clipboard';
+import { useClipboard, PasteComponent } from '../../generic/clipboard';
 import TitleButton from '../card-header/TitleButton';
 import XBlockStatus from '../xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
@@ -49,7 +49,7 @@ const SubsectionCard = ({
   const isScrolledToElement = locatorId === subsection.id;
   const [isFormOpen, openForm, closeForm] = useToggle(false);
   const namePrefix = 'subsection';
-  const { sharedClipboardData, showPasteUnit } = useCopyToClipboard();
+  const { sharedClipboardData, showPasteUnit } = useClipboard();
 
   const {
     id,
@@ -233,11 +233,18 @@ const SubsectionCard = ({
                 >
                   {intl.formatMessage(messages.newUnitButton)}
                 </Button>
-                {enableCopyPasteUnits && showPasteUnit && (
+                {enableCopyPasteUnits && showPasteUnit && sharedClipboardData?.content && (
                   <PasteComponent
                     className="mt-4"
                     text={intl.formatMessage(messages.pasteButton)}
-                    clipboardData={sharedClipboardData}
+                    clipboardData={{
+                      sourceEditUrl: sharedClipboardData.sourceEditUrl,
+                      content: {
+                        displayName: sharedClipboardData.content.displayName,
+                        blockTypeDisplay: sharedClipboardData.content.blockTypeDisplay,
+                      },
+                      sourceContextTitle: sharedClipboardData.sourceContextTitle,
+                    }}
                     onClick={handlePasteButtonClick}
                   />
                 )}

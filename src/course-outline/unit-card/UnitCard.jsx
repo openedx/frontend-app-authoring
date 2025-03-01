@@ -13,6 +13,7 @@ import SortableItem from '../../generic/drag-helper/SortableItem';
 import TitleLink from '../card-header/TitleLink';
 import XBlockStatus from '../xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
+import { useClipboard } from '../../generic/clipboard';
 
 const UnitCard = ({
   unit,
@@ -30,7 +31,6 @@ const UnitCard = ({
   onDuplicateSubmit,
   getTitleLink,
   onOrderChange,
-  onCopyToClipboardClick,
   discussionsSettings,
 }) => {
   const currentRef = useRef(null);
@@ -40,6 +40,8 @@ const UnitCard = ({
   const isScrolledToElement = locatorId === unit.id;
   const [isFormOpen, openForm, closeForm] = useToggle(false);
   const namePrefix = 'unit';
+
+  const { copyToClipboard } = useClipboard();
 
   const {
     id,
@@ -98,7 +100,7 @@ const UnitCard = ({
   };
 
   const handleCopyClick = () => {
-    onCopyToClipboardClick(unit.id);
+    copyToClipboard(id);
   };
 
   const titleComponent = (
@@ -241,7 +243,6 @@ UnitCard.propTypes = {
   onOrderChange: PropTypes.func.isRequired,
   isSelfPaced: PropTypes.bool.isRequired,
   isCustomRelativeDatesActive: PropTypes.bool.isRequired,
-  onCopyToClipboardClick: PropTypes.func.isRequired,
   discussionsSettings: PropTypes.shape({
     providerType: PropTypes.string,
     enableGradedUnits: PropTypes.bool,
