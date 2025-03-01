@@ -4,6 +4,7 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { useKeyedState } from '@edx/react-unit-test-utils';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { logError } from '@edx/frontend-platform/logging';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { Provider } from 'react-redux';
 
 import { stateKeys, messageTypes } from '../../../constants';
@@ -202,9 +203,11 @@ describe('useMessageHandlers', () => {
 
   const wrapper = ({ children }) => (
     <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
+      <IntlProvider locale="en">
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      </IntlProvider>
     </Provider>
   );
 
