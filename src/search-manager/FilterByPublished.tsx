@@ -10,33 +10,22 @@ import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import SearchFilterWidget from './SearchFilterWidget';
 import { useSearchContext } from './SearchManager';
-import { PublishStatus, SearchSortOption } from './data/api';
+import { PublishStatus } from './data/api';
 
 /**
  * A button with a dropdown that allows filtering the current search by publish status
  */
 const FilterByPublished: React.FC<Record<never, never>> = () => {
-  const [onlyPublished, setOnlyPublished] = React.useState(false);
   const intl = useIntl();
   const {
     publishStatus,
     publishStatusFilter,
     setPublishStatusFilter,
-    searchSortOrder,
   } = useSearchContext();
 
   const clearFilters = React.useCallback(() => {
     setPublishStatusFilter([]);
   }, []);
-
-  React.useEffect(() => {
-    if (searchSortOrder === SearchSortOption.RECENTLY_PUBLISHED) {
-      setPublishStatusFilter([PublishStatus.Published, PublishStatus.Modified]);
-      setOnlyPublished(true);
-    } else {
-      setOnlyPublished(false);
-    }
-  }, [searchSortOrder]);
 
   const toggleFilterMode = React.useCallback((mode: PublishStatus) => {
     setPublishStatusFilter(oldList => {
@@ -90,7 +79,6 @@ const FilterByPublished: React.FC<Record<never, never>> = () => {
               as={Form.Checkbox}
               value={PublishStatus.NeverPublished}
               onChange={() => { toggleFilterMode(PublishStatus.NeverPublished); }}
-              disabled={onlyPublished}
             >
               <div>
                 {intl.formatMessage(messages.publishStatusNeverPublished)}
