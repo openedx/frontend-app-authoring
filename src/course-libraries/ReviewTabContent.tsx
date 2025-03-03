@@ -20,9 +20,10 @@ import { Loop } from '@openedx/paragon/icons';
 import messages from './messages';
 import previewChangesMessages from '../course-unit/preview-changes/messages';
 import { courseLibrariesQueryKeys, useEntityLinks } from './data/apiHooks';
-import { SearchContextProvider, SearchKeywordsField, useSearchContext } from '../search-manager';
+import {
+  SearchContextProvider, SearchKeywordsField, useSearchContext, BlockTypeLabel, Highlight, SearchSortWidget,
+} from '../search-manager';
 import { getItemIcon } from '../generic/block-type-utils';
-import { BlockTypeLabel, Highlight } from '../search-manager';
 import type { ContentHit } from '../search-manager/data/api';
 import { SearchSortOption } from '../search-manager/data/api';
 import Loading from '../generic/Loading';
@@ -30,7 +31,6 @@ import { useAcceptLibraryBlockChanges, useIgnoreLibraryBlockChanges } from '../c
 import { PreviewLibraryXBlockChanges, LibraryChangesMessageData } from '../course-unit/preview-changes';
 import LoadingButton from '../generic/loading-button';
 import { ToastContext } from '../generic/toast-context';
-import SearchSortWidget from '../search-manager/SearchSortWidget';
 import { useLoadOnScroll } from '../hooks';
 import DeleteModal from '../generic/delete-modal/DeleteModal';
 import { PublishableEntityLink } from './data/api';
@@ -314,7 +314,7 @@ const ReviewTabContent = ({ courseId }: Props) => {
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
-  }
+  };
 
   const disableSortOptions = [
     SearchSortOption.RELEVANCE,
@@ -324,7 +324,7 @@ const ReviewTabContent = ({ courseId }: Props) => {
   ];
 
   if (isSyncComponentsLoading) {
-    return <Loading />
+    return <Loading />;
   }
 
   if (isError) {
