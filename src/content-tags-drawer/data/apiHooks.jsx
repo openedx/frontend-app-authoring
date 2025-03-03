@@ -126,6 +126,7 @@ export const useContentData = (contentId) => (
  */
 export const useContentTaxonomyTagsUpdater = (contentId) => {
   const queryClient = useQueryClient();
+  const unitIframe = window.frames['xblock-iframe'];
 
   return useMutation({
     /**
@@ -160,7 +161,8 @@ export const useContentTaxonomyTagsUpdater = (contentId) => {
     onSuccess: /* istanbul ignore next */ () => {
       /* istanbul ignore next */
       if (window.top != null) {
-        // This send messages to the parent page if the drawer is called from a iframe.
+        // Sends messages to the parent page if the drawer was opened
+        // from an iframe or the unit iframe within the course.
         // Is used on Studio to update tags data and counts.
         // In the future, when the Course Outline Page and Unit Page are integrated into this MFE,
         // they should just use React Query to load the tag counts, and React Query will automatically
@@ -169,26 +171,32 @@ export const useContentTaxonomyTagsUpdater = (contentId) => {
 
         // Sends content tags.
         getContentTaxonomyTagsData(contentId).then((data) => {
-          const contentData = {
-            contentId,
-            ...data,
+          const contentData = { contentId, ...data };
+
+          const message = {
+            type: 'authoring.events.tags.updated',
+            data: contentData,
           };
-          window.top?.postMessage(
-            { type: 'authoring.events.tags.updated', data: contentData },
-            getConfig().STUDIO_BASE_URL,
-          );
+
+          const targetOrigin = getConfig().STUDIO_BASE_URL;
+
+          unitIframe?.postMessage(message, targetOrigin);
+          window.top?.postMessage(message, targetOrigin);
         });
 
         // Sends tags count.
-        getContentTaxonomyTagsCount(contentId).then((data) => {
-          const contentData = {
-            contentId,
-            count: data,
+        getContentTaxonomyTagsCount(contentId).then((count) => {
+          const contentData = { contentId, count };
+
+          const message = {
+            type: 'authoring.events.tags.count.updated',
+            data: contentData,
           };
-          window.top?.postMessage(
-            { type: 'authoring.events.tags.count.updated', data: contentData },
-            getConfig().STUDIO_BASE_URL,
-          );
+
+          const targetOrigin = getConfig().STUDIO_BASE_URL;
+
+          unitIframe?.postMessage(message, targetOrigin);
+          window.top?.postMessage(message, targetOrigin);
         });
       }
     },

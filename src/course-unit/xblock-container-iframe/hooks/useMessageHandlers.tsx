@@ -26,6 +26,7 @@ export const useMessageHandlers = ({
   handleCloseLegacyEditorXBlockModal,
   handleSaveEditedXBlockData,
   handleFinishXBlockDragging,
+  handleOpenManageTagsModal,
 }: UseMessageHandlersTypes): MessageHandlersTypes => useMemo(() => ({
   [messageTypes.copyXBlock]: ({ usageId }) => dispatch(copyToClipboard(usageId)),
   [messageTypes.deleteXBlock]: ({ usageId }) => handleDeleteXBlock(usageId),
@@ -41,6 +42,7 @@ export const useMessageHandlers = ({
   [messageTypes.saveEditedXBlockData]: handleSaveEditedXBlockData,
   [messageTypes.studioAjaxError]: ({ error }) => handleResponseErrors(error, dispatch, updateSavingStatus),
   [messageTypes.refreshPositions]: handleFinishXBlockDragging,
+  [messageTypes.openManageTags]: (payload) => handleOpenManageTagsModal(payload.contentId),
 }), [
   courseId,
   handleDeleteXBlock,

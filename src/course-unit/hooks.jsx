@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import {
+  useCallback, useEffect, useMemo, useRef, useState,
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useToggle } from '@openedx/paragon';
@@ -259,3 +261,58 @@ export const useLayoutGrid = (unitCategory, isUnitLibraryType) => (
     return isUnitLibraryType ? layouts.fullWidth : layouts.default;
   }, [unitCategory])
 );
+
+/**
+ * Custom hook that restores the scroll position from `localStorage` after a page reload.
+ * It listens for a `plugin.resize` message event and scrolls the window to the saved position
+ * after a 1-second delay, provided no new resize messages are received during that time.
+ *
+ * @param {string} [storageKey='createXBlockLastYPosition'] -
+ * The key used to store the last scroll position in `localStorage`.
+ */
+export const useScrollToLastPosition = (storageKey = 'createXBlockLastYPosition') => {
+  const timeoutRef = useRef(null);
+  const [hasLastPosition, setHasLastPosition] = useState(() => !!localStorage.getItem(storageKey));
+
+  const scrollToLastPosition = useCallback(() => {
+    const lastYPosition = localStorage.getItem(storageKey);
+    if (!lastYPosition) {
+      setHasLastPosition(false);
+      return;
+    }
+
+    const yPosition = parseInt(lastYPosition, 10);
+    if (!Number.isNaN(yPosition)) {
+      window.scrollTo({ top: yPosition, behavior: 'smooth' });
+      localStorage.removeItem(storageKey);
+      setHasLastPosition(false);
+    }
+  }, [storageKey]);
+
+  const handleMessage = useCallback((event) => {
+    if (event.data?.type === messageTypes.resize) {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(scrollToLastPosition, 1000);
+    }
+  }, [scrollToLastPosition]);
+
+  useEffect(() => {
+    if (!hasLastPosition) {
+      return undefined;
+    }
+
+    window.addEventListener('message', handleMessage);
+
+    return () => {
+      window.removeEventListener('message', handleMessage);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [hasLastPosition, handleMessage]);
+
+  return null;
+};
