@@ -8,7 +8,7 @@ import {
   waitFor,
 } from '../../testUtils';
 
-import PreviewLibraryXBlockChanges, { LibraryChangesMessageData } from '.';
+import IframePreviewLibraryXBlockChanges, { LibraryChangesMessageData } from '.';
 import { messageTypes } from '../constants';
 import { IframeProvider } from '../context/iFrameContext';
 import { libraryBlockChangesUrl } from '../data/api';
@@ -31,7 +31,7 @@ jest.mock('../context/hooks', () => ({
   }),
 }));
 const render = (eventData?: LibraryChangesMessageData) => {
-  baseRender(<PreviewLibraryXBlockChanges />, {
+  baseRender(<IframePreviewLibraryXBlockChanges />, {
     extraWrapper: ({ children }) => <IframeProvider>{ children }</IframeProvider>,
   });
   const message = {
@@ -49,7 +49,7 @@ const render = (eventData?: LibraryChangesMessageData) => {
 let axiosMock: MockAdapter;
 let mockShowToast: (message: string, action?: ToastActionData | undefined) => void;
 
-describe('<PreviewLibraryXBlockChanges />', () => {
+describe('<IframePreviewLibraryXBlockChanges />', () => {
   beforeEach(() => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
