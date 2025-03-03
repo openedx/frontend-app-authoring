@@ -4,7 +4,6 @@ import {
 } from '@openedx/paragon';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 
-import { UseMutationResult } from '@tanstack/react-query';
 import { useEventListener } from '../../generic/hooks';
 import { messageTypes } from '../constants';
 import CompareChangesWidget from '../../library-authoring/component-comparison/CompareChangesWidget';
