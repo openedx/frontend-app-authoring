@@ -70,7 +70,7 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
   }
 
   const componentUsage = downstreamHits.reduce<ComponentUsageTree>((acc, hit) => {
-    const link = hit.breadcrumbs.at(-1);
+    const link = hit.breadcrumbs.at(-1) as { displayName: string, usageKey: string };
     // istanbul ignore if: this should never happen. it is a type guard for the breadcrumb last item
     if (!link?.usageKey) {
       return acc;

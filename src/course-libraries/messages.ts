@@ -111,6 +111,11 @@ const messages = defineMessages({
     defaultMessage: 'Sourced from a library - but the upstream link is broken/invalid.',
     description: 'Tooltip text describing broken link in component listing.',
   },
+  genericErrorMessage: {
+    id: 'course-authoring.course-libraries.home-tab.error.message',
+    defaultMessage: 'Something went wrong! Could not fetch results.',
+    description: 'Generic error message displayed when fetching link data fails.',
+  },
 });
 
 export default messages;
