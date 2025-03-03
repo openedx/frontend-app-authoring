@@ -43,7 +43,7 @@ describe('<ComponentInfo> Sidebar', () => {
     initializeMocks();
     render(
       <ComponentInfo />,
-      withLibraryId(mockContentLibrary.libraryId, mockLibraryBlockMetadata.usageKeyThirdPartyXBlock),
+      withLibraryId(mockContentLibrary.libraryId, mockLibraryBlockMetadata.usageKeyUnsupportedXBlock),
     );
 
     const editButton = await screen.findByRole('button', { name: /Edit component/ });

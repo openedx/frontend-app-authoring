@@ -117,6 +117,11 @@ const messages = defineMessages({
     defaultMessage: 'Libraries do not support this type of content yet.',
     description: 'Message when unsupported block is pasted in library',
   },
+  backToAddContentListButton: {
+    id: 'course-authoring.library-authoring.add-content.buttons.back',
+    defaultMessage: 'Back to List',
+    description: 'Messag of button in advanced creation view to return to the main creation view.',
+  },
 });
 
 export default messages;

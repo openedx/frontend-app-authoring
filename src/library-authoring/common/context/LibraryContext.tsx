@@ -9,7 +9,7 @@ import {
 import { useParams } from 'react-router-dom';
 
 import type { ComponentPicker } from '../../component-picker';
-import type { ContentLibrary } from '../../data/api';
+import type { ContentLibrary, BlockTypeMetadata } from '../../data/api';
 import { useContentLibrary } from '../../data/apiHooks';
 import { useComponentPickerContext } from './ComponentPickerContext';
 
@@ -42,6 +42,7 @@ export type LibraryContextData = {
   openComponentEditor: (usageKey: string, onClose?: (data?:any) => void, blockType?:string) => void;
   closeComponentEditor: (data?:any) => void;
   componentPicker?: typeof ComponentPicker;
+  blockTypesData?: Record<string, BlockTypeMetadata>;
 };
 
 /**
