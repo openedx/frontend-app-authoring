@@ -27,13 +27,14 @@ import type { ContentHit } from '../search-manager/data/api';
 import { SearchSortOption } from '../search-manager/data/api';
 import Loading from '../generic/Loading';
 import { useAcceptLibraryBlockChanges, useIgnoreLibraryBlockChanges } from '../course-unit/data/apiHooks';
-import { BasePreviewLibraryXBlockChanges, LibraryChangesMessageData } from '../course-unit/preview-changes';
+import { PreviewLibraryXBlockChanges, LibraryChangesMessageData } from '../course-unit/preview-changes';
 import LoadingButton from '../generic/loading-button';
 import { ToastContext } from '../generic/toast-context';
 import SearchSortWidget from '../search-manager/SearchSortWidget';
 import { useLoadOnScroll } from '../hooks';
 import DeleteModal from '../generic/delete-modal/DeleteModal';
 import { PublishableEntityLink } from './data/api';
+import AlertError from '../generic/alert-error';
 
 interface Props {
   courseId: string;
@@ -96,70 +97,6 @@ const BlockCard: React.FC<BlockCardProps> = ({ info, actions }) => {
   );
 };
 
-const ReviewTabContent = ({ courseId }: Props) => {
-  const intl = useIntl();
-  const {
-    data: linkPages,
-    isLoading: isSyncComponentsLoading,
-    hasNextPage,
-    isFetchingNextPage,
-    fetchNextPage,
-  } = useEntityLinks({ courseId, readyToSync: true });
-
-  const outOfSyncComponents = useMemo(
-    () => linkPages?.pages?.reduce((links, page) => [...links, ...page.results], []) ?? [],
-    [linkPages],
-  );
-  const downstreamKeys = useMemo(
-    () => outOfSyncComponents?.map(link => link.downstreamUsageKey),
-    [outOfSyncComponents],
-  );
-
-  useLoadOnScroll(
-    hasNextPage,
-    isFetchingNextPage,
-    fetchNextPage,
-    true,
-  );
-
-  const onSearchUpdate = () => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  }
-
-  const disableSortOptions = [
-    SearchSortOption.RELEVANCE,
-    SearchSortOption.OLDEST,
-    SearchSortOption.NEWEST,
-    SearchSortOption.RECENTLY_PUBLISHED,
-  ];
-
-  if (isSyncComponentsLoading) {
-    return <Loading />
-  }
-
-  return (
-    <SearchContextProvider
-      extraFilter={[`context_key = "${courseId}"`, `usage_key IN ["${downstreamKeys?.join('","')}"]`]}
-      skipUrlUpdate
-      skipBlockTypeFetch
-    >
-      <ActionRow>
-        <SearchKeywordsField
-          placeholder={intl.formatMessage(messages.searchPlaceholder)}
-        />
-        <SearchSortWidget disableOptions={disableSortOptions} />
-        <ActionRow.Spacer />
-      </ActionRow>
-      <ComponentReviewList
-        outOfSyncComponents={outOfSyncComponents}
-        onSearchUpdate={onSearchUpdate}
-      />
-    </SearchContextProvider>
-  );
-};
-
 const ComponentReviewList = ({
   outOfSyncComponents,
   onSearchUpdate,
@@ -177,11 +114,13 @@ const ComponentReviewList = ({
     isLoading: isIndexDataLoading,
     searchKeywords,
     searchSortOrder,
+    hasError,
   } = useSearchContext() as {
     hits: ContentHit[];
     isLoading: boolean;
     searchKeywords: string;
     searchSortOrder: SearchSortOption;
+    hasError: boolean;
   };
   const outOfSyncComponentsByKey = useMemo(
     () => _.keyBy(outOfSyncComponents, 'downstreamUsageKey'),
@@ -254,7 +193,7 @@ const ComponentReviewList = ({
       return;
     }
     try {
-      await acceptChangesMutation.mutateAsync(blockData.downstreamBlockId);
+      await ignoreChangesMutation.mutateAsync(blockData.downstreamBlockId);
       reloadLinks(blockData.downstreamBlockId);
       showToast(intl.formatMessage(
         messages.ignoreSingleBlockSuccess,
@@ -282,6 +221,10 @@ const ComponentReviewList = ({
 
   if (isIndexDataLoading) {
     return <Loading />;
+  }
+
+  if (hasError) {
+    return <AlertError error={intl.formatMessage(messages.genericErrorMessage)} />;
   }
 
   return (
@@ -320,12 +263,10 @@ const ComponentReviewList = ({
           )}
         />
       ))}
-      <BasePreviewLibraryXBlockChanges
+      <PreviewLibraryXBlockChanges
         blockData={blockData}
         isModalOpen={isModalOpen}
         closeModal={closeModal}
-        acceptChangesMutation={acceptChangesMutation}
-        ignoreChangesMutation={ignoreChangesMutation}
         postChange={postChange}
       />
       <DeleteModal
@@ -338,6 +279,76 @@ const ComponentReviewList = ({
         btnLabel={intl.formatMessage(previewChangesMessages.confirmationConfirmBtn)}
       />
     </>
+  );
+};
+
+const ReviewTabContent = ({ courseId }: Props) => {
+  const intl = useIntl();
+  const {
+    data: linkPages,
+    isLoading: isSyncComponentsLoading,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    isError,
+    error,
+  } = useEntityLinks({ courseId, readyToSync: true });
+
+  const outOfSyncComponents = useMemo(
+    () => linkPages?.pages?.reduce((links, page) => [...links, ...page.results], []) ?? [],
+    [linkPages],
+  );
+  const downstreamKeys = useMemo(
+    () => outOfSyncComponents?.map(link => link.downstreamUsageKey),
+    [outOfSyncComponents],
+  );
+
+  useLoadOnScroll(
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    true,
+  );
+
+  const onSearchUpdate = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }
+
+  const disableSortOptions = [
+    SearchSortOption.RELEVANCE,
+    SearchSortOption.OLDEST,
+    SearchSortOption.NEWEST,
+    SearchSortOption.RECENTLY_PUBLISHED,
+  ];
+
+  if (isSyncComponentsLoading) {
+    return <Loading />
+  }
+
+  if (isError) {
+    return <AlertError error={error} />;
+  }
+
+  return (
+    <SearchContextProvider
+      extraFilter={[`context_key = "${courseId}"`, `usage_key IN ["${downstreamKeys?.join('","')}"]`]}
+      skipUrlUpdate
+      skipBlockTypeFetch
+    >
+      <ActionRow>
+        <SearchKeywordsField
+          placeholder={intl.formatMessage(messages.searchPlaceholder)}
+        />
+        <SearchSortWidget disableOptions={disableSortOptions} />
+        <ActionRow.Spacer />
+      </ActionRow>
+      <ComponentReviewList
+        outOfSyncComponents={outOfSyncComponents}
+        onSearchUpdate={onSearchUpdate}
+      />
+    </SearchContextProvider>
   );
 };
 
