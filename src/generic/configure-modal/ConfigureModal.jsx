@@ -140,15 +140,18 @@ const ConfigureModal = ({
     : intl.formatMessage(messages.title, { title: displayName });
 
   const handleSave = (data) => {
+    let { releaseDate } = data;
+    // to prevent passing an empty string to the backend
+    releaseDate = releaseDate || null;
     const groupAccess = {};
     switch (category) {
       case COURSE_BLOCK_NAMES.chapter.id:
-        onConfigureSubmit(data.isVisibleToStaffOnly, data.releaseDate);
+        onConfigureSubmit(data.isVisibleToStaffOnly, releaseDate);
         break;
       case COURSE_BLOCK_NAMES.sequential.id:
         onConfigureSubmit(
           data.isVisibleToStaffOnly,
-          data.releaseDate,
+          releaseDate,
           data.graderType,
           data.dueDate,
           data.isTimeLimited,
