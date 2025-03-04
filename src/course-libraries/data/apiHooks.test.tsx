@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MockAdapter from 'axios-mock-adapter';
 import { waitFor } from '@testing-library/react';
 import { getEntityLinksByDownstreamContextUrl } from './api';
-import { useEntityLinks } from './apiHooks';
+import { useEntityLinks, useUnpaginatedEntityLinks } from './apiHooks';
 
 let axiosMock: MockAdapter;
 
@@ -36,15 +36,37 @@ describe('course libraries api hooks', () => {
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
   });
 
-  it('should create library block', async () => {
-    const courseKey = 'course-v1:some+key';
-    const url = getEntityLinksByDownstreamContextUrl(courseKey);
-    axiosMock.onGet(url).reply(200, []);
-    const { result } = renderHook(() => useEntityLinks(courseKey), { wrapper });
+  afterEach(() => {
+    axiosMock.reset();
+  });
+
+  it('should return paginated links for course', async () => {
+    const courseId = 'course-v1:some+key';
+    const url = getEntityLinksByDownstreamContextUrl();
+    const expectedResult = {'next': null, 'results': [], 'previous': null, 'total': 0}
+    axiosMock.onGet(url).reply(200, expectedResult);
+    const { result } = renderHook(() => useEntityLinks({courseId}), { wrapper });
     await waitFor(() => {
       expect(result.current.isLoading).toBeFalsy();
     });
-    expect(result.current.data).toEqual([]);
+    expect(result.current.data?.pages).toEqual([expectedResult]);
     expect(axiosMock.history.get[0].url).toEqual(url);
+  });
+
+  it('should return links for course', async () => {
+    const courseId = 'course-v1:some+key';
+    const url = getEntityLinksByDownstreamContextUrl();
+    axiosMock.onGet(url).reply(200, []);
+    const { result } = renderHook(() => useUnpaginatedEntityLinks({courseId}), { wrapper });
+    await waitFor(() => {
+      expect(result.current.isLoading).toBeFalsy();
+    });
+    expect(axiosMock.history.get[0].url).toEqual(url);
+    expect(axiosMock.history.get[0].params).toEqual({
+      course_id: courseId,
+      ready_to_sync: undefined,
+      upstream_usage_key: undefined,
+      no_page: true
+    });
   });
 });
