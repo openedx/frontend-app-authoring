@@ -24,36 +24,32 @@ export interface LibraryChangesMessageData {
   isVertical: boolean,
 }
 
-const PreviewLibraryXBlockChanges = () => {
+export interface BasePreviewLibraryXBlockChangesProps {
+  blockData?: LibraryChangesMessageData,
+  isModalOpen: boolean,
+  closeModal: () => void,
+  postChange: () => void,
+}
+
+/**
+ * Component to preview two xblock versions in a modal that depends on params
+ * to display blocks, open-close modal, accept-ignore changes and post change triggers
+ */
+export const PreviewLibraryXBlockChanges = ({
+  blockData,
+  isModalOpen,
+  closeModal,
+  postChange,
+}: BasePreviewLibraryXBlockChangesProps) => {
   const { showToast } = useContext(ToastContext);
   const intl = useIntl();
 
-  const [blockData, setBlockData] = useState<LibraryChangesMessageData | undefined>(undefined);
-
-  // Main preview library modal toggle.
-  const [isModalOpen, openModal, closeModal] = useToggle(false);
   // ignore changes confirmation modal toggle.
   const [isConfirmModalOpen, openConfirmModal, closeConfirmModal] = useToggle(false);
+  const { data: componentMetadata } = useLibraryBlockMetadata(blockData?.upstreamBlockId);
 
   const acceptChangesMutation = useAcceptLibraryBlockChanges();
   const ignoreChangesMutation = useIgnoreLibraryBlockChanges();
-  const { data: componentMetadata } = useLibraryBlockMetadata(blockData?.upstreamBlockId);
-
-  const { sendMessageToIframe } = useIframe();
-
-  const receiveMessage = useCallback(({ data }: { data: {
-    payload: LibraryChangesMessageData;
-    type: string;
-  } }) => {
-    const { payload, type } = data;
-
-    if (type === messageTypes.showXBlockLibraryChangesPreview) {
-      setBlockData(payload);
-      openModal();
-    }
-  }, [openModal]);
-
-  useEventListener('message', receiveMessage);
 
   const getTitle = useCallback(() => {
     const oldName = blockData?.displayName;
@@ -95,7 +91,7 @@ const PreviewLibraryXBlockChanges = () => {
 
     try {
       await mutation.mutateAsync(blockData.downstreamBlockId);
-      sendMessageToIframe(messageTypes.refreshXBlock, null);
+      postChange();
     } catch (e) {
       showToast(intl.formatMessage(failureMsg));
     } finally {
@@ -151,4 +147,42 @@ const PreviewLibraryXBlockChanges = () => {
   );
 };
 
-export default PreviewLibraryXBlockChanges;
+/**
+ * Wrapper over PreviewLibraryXBlockChanges to preview two xblock versions in a modal
+ * that depends on iframe message events to setBlockData and display modal.
+ */
+const IframePreviewLibraryXBlockChanges = () => {
+  const [blockData, setBlockData] = useState<LibraryChangesMessageData | undefined>(undefined);
+
+  // Main preview library modal toggle.
+  const [isModalOpen, openModal, closeModal] = useToggle(false);
+
+  const { sendMessageToIframe } = useIframe();
+
+  const receiveMessage = useCallback(({ data }: {
+    data: {
+      payload: LibraryChangesMessageData;
+      type: string;
+    }
+  }) => {
+    const { payload, type } = data;
+
+    if (type === messageTypes.showXBlockLibraryChangesPreview) {
+      setBlockData(payload);
+      openModal();
+    }
+  }, [openModal]);
+
+  useEventListener('message', receiveMessage);
+
+  return (
+    <PreviewLibraryXBlockChanges
+      blockData={blockData}
+      isModalOpen={isModalOpen}
+      closeModal={closeModal}
+      postChange={() => sendMessageToIframe(messageTypes.refreshXBlock, null)}
+    />
+  );
+};
+
+export default IframePreviewLibraryXBlockChanges;
