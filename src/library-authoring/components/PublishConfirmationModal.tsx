@@ -51,6 +51,7 @@ const PublishConfirmationModal = ({
   ] = useToggle(false);
 
   useEffect(() => {
+    // Set to default 'false' when changing usage key
     setDownstreamsNotEmpty();
   }, [usageKey]);
 
