@@ -35,7 +35,7 @@ export const EditorModalWrapper: React.FC<WrapperProps & { onClose: () => void }
   if (fullScreen) {
     return (
       <div
-        className="editor-container d-flex flex-column position-relative zindex-0"
+        className="editor-container bg-light-300 d-flex flex-column position-relative zindex-0"
         style={{ minHeight: '100%' }}
       >
         {children}
@@ -50,7 +50,7 @@ export const EditorModalWrapper: React.FC<WrapperProps & { onClose: () => void }
 
 export const EditorModalBody: React.FC<WrapperProps> = ({ children }) => {
   const { fullScreen } = useEditorContext();
-  return <ModalDialog.Body className={fullScreen ? 'pb-6' : 'pb-0'}>{ children }</ModalDialog.Body>;
+  return <ModalDialog.Body className={`container-mw-xl mx-auto ${fullScreen ? 'pb-6' : 'pb-0'}`}>{ children }</ModalDialog.Body>;
 };
 
 export const FooterWrapper: React.FC<WrapperProps> = ({ children }) => {
@@ -178,7 +178,7 @@ const EditorContainer: React.FC<Props> = ({
             >
               {disableSave
                 ? <Spinner animation="border" className="mr-3" />
-                : <FormattedMessage {...messages.saveButtonLabel} />}
+                : <FormattedMessage {...messages.addCourseButtonLabel} />}
             </Button>
           </ActionRow>
         </ModalDialog.Footer>

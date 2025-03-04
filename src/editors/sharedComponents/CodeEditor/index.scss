@@ -1,2 +1,10 @@
 .cm-editor { height: 100% }
 .cm-scroller { overflow: auto }
+
+.advancedEditorCard{
+    min-height: 70vh;
+
+    .btn-tertiary {
+        width: max-content;
+    }
+}

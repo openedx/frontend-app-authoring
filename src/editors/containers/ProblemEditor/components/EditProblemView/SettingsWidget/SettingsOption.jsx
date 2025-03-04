@@ -17,13 +17,13 @@ const SettingsOption = ({
   const { isCardCollapsibleOpen, toggleCardCollapse } = showFullCard(hasExpandableTextArea);
 
   return (
-    <Card className={`${className} settingsOption border border-light-700 shadow-none`}>
-      <Card.Section className="settingsCardTitleSection" key={`settingsOption-${title}-header`}>
+    <Card className={`${className} settingsOption`}>
+      <Card.Section className="settingsCardTitleSection pb-3" key={`settingsOption-${title}-header`}>
         <Collapsible.Advanced
           open={isCardCollapsibleOpen}
           onToggle={toggleCardCollapse}
         >
-          <Collapsible.Trigger className="collapsible-trigger d-flex">
+          <Collapsible.Trigger className="collapsible-trigger d-flex align-items-center">
             <span className="flex-grow-1 text-primary-500 x-small">{title}</span>
             <Collapsible.Visible whenClosed>
               <Icon src={KeyboardArrowDown} />

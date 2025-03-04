@@ -7,7 +7,7 @@ import {
   IconButton,
   Form,
 } from '@openedx/paragon';
-import { FeedbackOutline, DeleteOutline } from '@openedx/paragon/icons';
+import { ChatBubbleOutline, DeleteOutline } from '@openedx/paragon/icons';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import { selectors } from '../../../../../data/redux';
@@ -105,7 +105,7 @@ const AnswerOption = ({
           disabled={problemType === ProblemTypeKeys.NUMERIC}
         />
       </div>
-      <div className="ml-1 flex-grow-1">
+      <div className="mx-2.5 flex-grow-1">
         {getInputArea()}
         <Collapsible.Body>
           <FeedbackBox
@@ -125,7 +125,7 @@ const AnswerOption = ({
       <div className="d-flex flex-row flex-nowrap">
         <Collapsible.Trigger aria-label="Toggle feedback" className="btn-icon btn-icon-primary btn-icon-md align-items-center">
           <Icon
-            src={FeedbackOutline}
+            src={ChatBubbleOutline}
             alt={intl.formatMessage(messages.feedbackToggleIconAltText)}
           />
         </Collapsible.Trigger>

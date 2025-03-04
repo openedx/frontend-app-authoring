@@ -17,6 +17,11 @@ const messages = defineMessages({
     defaultMessage: 'Enter your explanation',
     description: 'Placeholder text for tinyMCE editor',
   },
+  explanationDeleteIconAltText: {
+    id: 'authoring.problemEditor.explanationwidget.delete.icon.alt',
+    defaultMessage: 'Delete explanation',
+    description: 'Alt text for delete icon',
+  },
 });
 
 export default messages;

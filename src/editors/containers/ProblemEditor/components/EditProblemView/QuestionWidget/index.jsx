@@ -26,7 +26,7 @@ const QuestionWidget = ({
   const questionContent = newContent || initialContent;
   if (!refReady) { return null; }
   return (
-    <div className="tinyMceWidget">
+    <div className="tinyMceWidget p-4">
       <div className="h4 mb-3">
         <FormattedMessage {...messages.questionWidgetTitle} />
       </div>
