@@ -58,7 +58,7 @@ const LibraryCard = ({ linkSummary }: LibraryCardProps) => {
             <Icon src={NewsstandIcon} />
             {linkSummary.upstreamContextTitle}
           </Stack>
-)}
+        )}
         actions={(
           <ActionRow>
             <Button

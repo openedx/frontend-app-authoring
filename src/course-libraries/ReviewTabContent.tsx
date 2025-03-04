@@ -324,7 +324,7 @@ const ReviewTabContent = ({ courseId }: Props) => {
   ];
 
   if (isSyncComponentsLoading) {
-    return <Loading />;
+    return null;
   }
 
   if (isError) {
