@@ -168,7 +168,7 @@ const messages = defineMessages({
   },
   publishConfirmationDownstreamsAlert: {
     id: 'course-authoring.library-authoring.component.publish-confirmation.downsteams-alert',
-    defaultMessage: 'Publishing this component will push the changes out to the courses.',
+    defaultMessage: 'This component can be synced in courses after publish.',
     description: 'Alert text of the modal to confirm publish a component in a library.',
   },
 });

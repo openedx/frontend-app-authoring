@@ -16,24 +16,6 @@ interface PublishConfirmationModalProps {
   showDownstreams: boolean,
 }
 
-interface PublishConfirmationBodyProps {
-  displayName: string,
-}
-
-const PublishConfirmationBody = ({
-  displayName,
-}: PublishConfirmationBodyProps) => {
-  const intl = useIntl();
-  return (
-    <div className="pt-4">
-      {intl.formatMessage(messages.publishConfirmationBody)}
-      <div className="mt-2 p-2 border">
-        {displayName}
-      </div>
-    </div>
-  );
-};
-
 const PublishConfirmationModal = ({
   isOpen,
   onClose,
@@ -69,9 +51,14 @@ const PublishConfirmationModal = ({
         </Button>
       )}
     >
-      {showDownstreams ? (
-        <div>
-          <PublishConfirmationBody displayName={displayName} />
+      <div>
+        <div className="pt-4">
+          {intl.formatMessage(messages.publishConfirmationBody)}
+          <div className="mt-2 p-2 border">
+            {displayName}
+          </div>
+        </div>
+        {showDownstreams && (
           <div className="mt-4">
             {!isDownstreamsEmpty ? (
               <>
@@ -87,12 +74,8 @@ const PublishConfirmationModal = ({
               <FormattedMessage {...infoMessages.detailsTabUsageEmpty} />
             )}
           </div>
-        </div>
-      ) : (
-        <div>
-          <PublishConfirmationBody displayName={displayName} />
-        </div>
-      )}
+        )}
+      </div>
     </BaseModal>
   );
 };
