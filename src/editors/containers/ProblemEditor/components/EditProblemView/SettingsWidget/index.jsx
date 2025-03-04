@@ -3,13 +3,20 @@ import PropTypes from 'prop-types';
 import { injectIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { connect } from 'react-redux';
 import {
-  Button, Collapsible,
+  Button,
+  Collapsible,
+  IconButton,
+  Icon,
+  OverlayTrigger,
+  Tooltip,
 } from '@openedx/paragon';
+import { InfoOutline } from '@openedx/paragon/icons';
 import { selectors, actions } from '../../../../../data/redux';
 import ScoringCard from './settingsComponents/ScoringCard';
 import ShowAnswerCard from './settingsComponents/ShowAnswerCard';
 import HintsCard from './settingsComponents/HintsCard';
 import ResetCard from './settingsComponents/ResetCard';
+import ShuffleCard from './settingsComponents/ShuffleCard';
 import TimerCard from './settingsComponents/TimerCard';
 import TypeCard from './settingsComponents/TypeCard';
 import ToleranceCard from './settingsComponents/Tolerance';
@@ -21,6 +28,29 @@ import { showAdvancedSettingsCards } from './hooks';
 import './index.scss';
 import { ProblemTypeKeys } from '../../../../../data/constants/problem';
 import Randomization from './settingsComponents/Randomization';
+
+const GlobalSettingsHeader = () => (
+  <div className="global-settings d-flex align-items-center text-primary-500 font-weight-500 small mt-3">
+    Global Settings
+    <OverlayTrigger
+      placement="top"
+      overlay={(
+        <Tooltip id="info">
+          Applied to all questions
+        </Tooltip>
+      )}
+    >
+      <IconButton
+        src={InfoOutline}
+        iconAs={Icon}
+        alt="InfoIcon"
+        variant="primary"
+        size="small"
+        className="flex-shrink-0 ml-2"
+      />
+    </OverlayTrigger>
+  </div>
+);
 
 // This widget should be connected, grab all settings from store, update them as needed.
 const SettingsWidget = ({
@@ -59,6 +89,7 @@ const SettingsWidget = ({
 
   return (
     <div className="settingsWidget ml-4">
+      <div className="font-weight-bold text-primary-500 mb-3">Question 3 settings</div>
       <div className="mb-3">
         <TypeCard
           answers={answers}
@@ -80,15 +111,6 @@ const SettingsWidget = ({
             />
           </div>
           )}
-      {!isLibrary && (
-        <div className="my-3">
-          <ScoringCard
-            scoring={settings.scoring}
-            defaultValue={defaultSettings.maxAttempts}
-            updateSettings={updateSettings}
-          />
-        </div>
-      )}
       <div className="mt-3">
         <HintsCard
           problemType={problemType}
@@ -101,6 +123,24 @@ const SettingsWidget = ({
           }}
         />
       </div>
+      <div className="mt-3">
+        <ShuffleCard
+          showShuffleButton
+          defaultValue
+          updateSettings={updateSettings}
+        />
+      </div>
+      <GlobalSettingsHeader />
+      {!isLibrary && (
+        <div className="my-3">
+          <ScoringCard
+            scoring={settings.scoring}
+            defaultValue={defaultSettings.maxAttempts}
+            updateSettings={updateSettings}
+          />
+        </div>
+      )}
+
       {feedbackCard()}
       <div>
         <Collapsible.Advanced open={!isAdvancedCardsVisible}>

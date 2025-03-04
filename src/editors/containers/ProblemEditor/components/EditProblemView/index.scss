@@ -1,3 +1,5 @@
+@import "~@edx/brand/paragon/variables";
+
 .editProblemView {
   .editProblemView-settingsColumn {
     width: 320px;
@@ -5,8 +7,25 @@
     flex-shrink: 0;
   }
 
-  .advancedEditorTopMargin {
-    margin-top: 40px;
+  .QuestionCard{
+    border: 2px solid transparent;
+
+    &.is-selected{ 
+      border-color: $black;
+    }
+
+    .question-card-header__menu + .dropdown-menu{
+      padding: 0;
+      border: 0;
+      border-radius: 4px;
+      box-shadow: $level-1-box-shadow;
+    }
+
+    .question-title-card{ 
+      font-size: .75rem;
+      line-height: .875rem;
+      color: $black;
+    }
   }
 
   .answer-option {
@@ -21,6 +40,14 @@
   .settingsOption {
     .pgn__form-checkbox .pgn__form-label {
       min-width: .8rem;
+    }
+  }
+
+  .btn-inverse-primary.add-new-question-btn:not(:disabled, .disabled){
+    &:hover, &:focus, &:active{
+      color: $primary;
+      background: $white;
+      box-shadow: $level-1-box-shadow;
     }
   }
 }
@@ -48,7 +75,7 @@
       content: '';
       position: relative;
       left: 5px;
-      border: 1px solid #EAE6E5;
+      border: 1px solid $light-400;
       height: 24px;
     }
   }

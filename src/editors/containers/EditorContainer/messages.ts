@@ -47,10 +47,10 @@ const messages = defineMessages({
     defaultMessage: 'Save changes and return to learning context',
     description: 'Screen reader label for save button',
   },
-  saveButtonLabel: {
-    id: 'authoring.editorfooter.savebutton.label',
-    defaultMessage: 'Save',
-    description: 'Label for Save button',
+  addCourseButtonLabel: {
+    id: 'authoring.editorfooter.addbutton.label',
+    defaultMessage: 'Add to course',
+    description: 'Label for Add to Course button',
   },
 });
 
