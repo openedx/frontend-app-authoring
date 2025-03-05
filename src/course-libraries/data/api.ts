@@ -23,10 +23,9 @@ export interface PublishableEntityLink {
   upstreamContextTitle: string;
   upstreamVersion: number;
   downstreamUsageKey: string;
-  downstreamContextTitle: string;
   downstreamContextKey: string;
-  versionSynced: string;
-  versionDeclined: string;
+  versionSynced: number | null;
+  versionDeclined: number | null;
   created: string;
   updated: string;
   readyToSync: boolean;
