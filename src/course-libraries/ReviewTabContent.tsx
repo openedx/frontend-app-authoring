@@ -148,7 +148,7 @@ const ComponentReviewList = ({
       displayName: info.displayName,
       downstreamBlockId: info.usageKey,
       upstreamBlockId: outOfSyncComponentsByKey[info.usageKey].upstreamUsageKey,
-      upstreamBlockVersionSynced: outOfSyncComponentsByKey[info.usageKey].upstreamVersion,
+      upstreamBlockVersionSynced: outOfSyncComponentsByKey[info.usageKey].versionSynced,
       isVertical: info.blockType === 'vertical',
     });
   };
