@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import {
   Button,
+  Card,
 } from '@openedx/paragon';
 
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -27,17 +28,20 @@ const CodeEditor = ({
 
   return (
     <div>
-      <div id="CodeMirror" ref={DOMref} />
-      {showBtnEscapeHTML && (
-        <Button
-          variant="tertiary"
-          aria-label={intl.formatMessage(messages.escapeHTMLButtonLabel)}
-          ref={btnRef}
-          onClick={() => hooks.escapeHTMLSpecialChars({ ref: innerRef, hideBtn })}
-        >
-          <FormattedMessage {...messages.escapeHTMLButtonLabel} />
-        </Button>
-      )}
+      <div className="font-weight-bold text-primary-500 mb-3">Advanced Problem</div>
+      <Card className="advancedEditorCard p-4">
+        <div id="CodeMirror" ref={DOMref} />
+        {showBtnEscapeHTML && (
+          <Button
+            variant="tertiary"
+            aria-label={intl.formatMessage(messages.escapeHTMLButtonLabel)}
+            ref={btnRef}
+            onClick={() => hooks.escapeHTMLSpecialChars({ ref: innerRef, hideBtn })}
+          >
+            <FormattedMessage {...messages.escapeHTMLButtonLabel} />
+          </Button>
+        )}
+      </Card>
     </div>
   );
 };

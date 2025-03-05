@@ -26,7 +26,7 @@ const AnswersContainer = ({
   useAnswerContainer({ answers, problemType, updateField });
 
   return (
-    <div className="answers-container border border-light-700 rounded py-4 pl-4 pr-3">
+    <div className="answers-container rounded">
       {answers.map((answer) => (
         <AnswerOption
           key={answer.id}
@@ -35,44 +35,54 @@ const AnswersContainer = ({
         />
       ))}
 
-      {problemType !== ProblemTypeKeys.NUMERIC ? (
-        <Button
-          variant="add"
-          onClick={addAnswer}
-        >
-          <FormattedMessage {...messages.addAnswerButtonText} />
-        </Button>
-
-      ) : (
-        <Dropdown>
-          <Dropdown.Toggle
-            id="Add-Answer-Or-Answer-Range"
-            variant="tertiary"
-            className="pl-0"
+      <div className="d-flex align-items-center mt-2.5">
+        {problemType !== ProblemTypeKeys.NUMERIC ? (
+          <Button
+            variant="add"
+            onClick={addAnswer}
           >
-            <Icon
-              src={Add}
-            />
             <FormattedMessage {...messages.addAnswerButtonText} />
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <Dropdown.Item
-              key="add-answer"
-              onClick={addAnswer}
-              className={`AddAnswerRange ${answers.length === 1 && answers[0].isAnswerRange ? 'disabled' : ''}`}
+          </Button>
+
+        ) : (
+          <Dropdown>
+            <Dropdown.Toggle
+              id="Add-Answer-Or-Answer-Range"
+              variant="tertiary"
+              className="pl-0"
             >
+              <Icon
+                src={Add}
+              />
               <FormattedMessage {...messages.addAnswerButtonText} />
-            </Dropdown.Item>
-            <Dropdown.Item
-              key="add-answer-range"
-              onClick={addAnswerRange}
-              className={`AddAnswerRange ${answers.length > 1 || (answers.length === 1 && answers[0].isAnswerRange) ? 'disabled' : ''}`}
-            >
-              <FormattedMessage {...messages.addAnswerRangeButtonText} />
-            </Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      )}
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item
+                key="add-answer"
+                onClick={addAnswer}
+                className={`AddAnswerRange ${answers.length === 1 && answers[0].isAnswerRange ? 'disabled' : ''}`}
+              >
+                <FormattedMessage {...messages.addAnswerButtonText} />
+              </Dropdown.Item>
+              <Dropdown.Item
+                key="add-answer-range"
+                onClick={addAnswerRange}
+                className={`AddAnswerRange ${answers.length > 1 || (answers.length === 1 && answers[0].isAnswerRange) ? 'disabled' : ''}`}
+              >
+                <FormattedMessage {...messages.addAnswerRangeButtonText} />
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        )}
+
+        <Button
+          className="ml-3"
+          variant="add"
+          onClick={() => {}}
+        >
+          Add Explanation
+        </Button>
+      </div>
     </div>
   );
 };

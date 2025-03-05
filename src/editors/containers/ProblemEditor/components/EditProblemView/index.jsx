@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect, useDispatch } from 'react-redux';
 import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/i18n';
@@ -9,9 +9,9 @@ import {
   AlertModal,
   ActionRow,
 } from '@openedx/paragon';
-import AnswerWidget from './AnswerWidget';
+import { Add } from '@openedx/paragon/icons';
+import BasicProblemEditor from '../../../../sharedComponents/BasicProblemEditor';
 import SettingsWidget from './SettingsWidget';
-import QuestionWidget from './QuestionWidget';
 import EditorContainer from '../../../EditorContainer';
 import { selectors } from '../../../../data/redux';
 import RawEditor from '../../../../sharedComponents/RawEditor';
@@ -23,7 +23,6 @@ import {
 import './index.scss';
 import messages from './messages';
 
-import ExplanationWidget from './ExplanationWidget';
 import { saveBlock } from '../../../../hooks';
 
 const EditProblemView = ({
@@ -108,14 +107,21 @@ const EditProblemView = ({
       </AlertModal>
       <div className="editProblemView d-flex flex-row flex-nowrap justify-content-end">
         {isAdvancedProblemType ? (
-          <Container fluid className="advancedEditorTopMargin p-0">
+          <Container fluid className="advancedEditor p-0">
             <RawEditor editorRef={editorRef} lang="xml" content={problemState.rawOLX} />
           </Container>
         ) : (
-          <span className="flex-grow-1 mb-5">
-            <QuestionWidget />
-            <ExplanationWidget />
-            <AnswerWidget problemType={problemType} />
+          <span className="basicEditor flex-grow-1 mb-5">
+            <BasicProblemEditor problemType={problemType} />
+            <Button
+              data-testid="new-section-button"
+              className="mt-4"
+              variant="inverse-primary add-new-question-btn rounded border-0 px-4 py-3 box-shadow-down-1"
+              iconBefore={Add}
+              block
+            >
+              Add question
+            </Button>
           </span>
         )}
         <span className="editProblemView-settingsColumn">
