@@ -22,21 +22,21 @@
             },
             {
               "display_name": "Module 1: Dive into the Open edX® platform!",
-              "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
             },
             {
               "display_name": "Subsection",
-              "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
             },
             {
               "display_name": "Unit",
-              "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@vertical+block@43eb5cbc0ea2491aa93f968f5e705ebd"
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@vertical+block@43eb5cbc0ea2491aa93f968f5e705ebd"
             }
           ],
-          "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@problem+block@problem3",
+          "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@problem+block@problem3",
           "block_type": "problem",
-          "context_key": "course-v1:ITcracy+DemoX+CourseX",
-          "org": "ITcracy",
+          "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+          "org": "OpenEdx",
           "access_id": 4,
           "_formatted": {
             "display_name": "Dropdown",
@@ -57,21 +57,21 @@
               },
               {
                 "display_name": "Module 1: Dive into the Open edX® platform!",
-                "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
               },
               {
                 "display_name": "Subsection",
-                "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
               },
               {
                 "display_name": "Unit",
-                "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@vertical+block@43eb5cbc0ea2491aa93f968f5e705ebd"
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@vertical+block@43eb5cbc0ea2491aa93f968f5e705ebd"
               }
             ],
-            "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@problem+block@problem3",
+            "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@problem+block@problem3",
             "block_type": "problem",
-            "context_key": "course-v1:ITcracy+DemoX+CourseX",
-            "org": "ITcracy",
+            "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+            "org": "OpenEdx",
             "access_id": "4"
           }
         },
@@ -94,21 +94,21 @@
             },
             {
               "display_name": "Module 1: Dive into the Open edX® platform!",
-              "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
             },
             {
               "display_name": "Subsection",
-              "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
             },
             {
               "display_name": "Unit",
-              "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@vertical+block@43eb5cbc0ea2491aa93f968f5e705ebd"
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@vertical+block@43eb5cbc0ea2491aa93f968f5e705ebd"
             }
           ],
-          "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@problem+block@problem6",
+          "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@problem+block@problem6",
           "block_type": "problem",
-          "context_key": "course-v1:ITcracy+DemoX+CourseX",
-          "org": "ITcracy",
+          "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+          "org": "OpenEdx",
           "access_id": 4,
           "_formatted": {
             "display_name": "Dropdown",
@@ -129,21 +129,21 @@
               },
               {
                 "display_name": "Module 1: Dive into the Open edX® platform!",
-                "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
               },
               {
                 "display_name": "Subsection",
-                "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
               },
               {
                 "display_name": "Unit",
-                "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@vertical+block@43eb5cbc0ea2491aa93f968f5e705ebd"
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@vertical+block@43eb5cbc0ea2491aa93f968f5e705ebd"
               }
             ],
-            "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@problem+block@problem6",
+            "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@problem+block@problem6",
             "block_type": "problem",
-            "context_key": "course-v1:ITcracy+DemoX+CourseX",
-            "org": "ITcracy",
+            "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+            "org": "OpenEdx",
             "access_id": "4"
           }
         },
@@ -166,25 +166,25 @@
             },
             {
               "display_name": "Module 1: Dive into the Open edX® platform!",
-              "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
             },
             {
               "display_name": "Subsection",
-              "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
             },
             {
               "display_name": "Unit",
-              "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@vertical+block@59dc4eea07fa4c20aad677d433ada9f1"
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@vertical+block@59dc4eea07fa4c20aad677d433ada9f1"
             },
             {
               "display_name": "Problem Bank",
-              "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@itembank+block@3ba55d8eae5544aa9d3fb5e3f100ed62"
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@itembank+block@3ba55d8eae5544aa9d3fb5e3f100ed62"
             }
           ],
-          "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@problem+block@210e356cfa304b0aac591af53f6a6ae0",
+          "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@problem+block@210e356cfa304b0aac591af53f6a6ae0",
           "block_type": "problem",
-          "context_key": "course-v1:ITcracy+DemoX+CourseX",
-          "org": "ITcracy",
+          "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+          "org": "OpenEdx",
           "access_id": 4,
           "_formatted": {
             "display_name": "Dropdown",
@@ -205,25 +205,25 @@
               },
               {
                 "display_name": "Module 1: Dive into the Open edX® platform!",
-                "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
               },
               {
                 "display_name": "Subsection",
-                "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
               },
               {
                 "display_name": "Unit",
-                "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@vertical+block@59dc4eea07fa4c20aad677d433ada9f1"
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@vertical+block@59dc4eea07fa4c20aad677d433ada9f1"
               },
               {
                 "display_name": "Problem Bank",
-                "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@itembank+block@3ba55d8eae5544aa9d3fb5e3f100ed62"
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@itembank+block@3ba55d8eae5544aa9d3fb5e3f100ed62"
               }
             ],
-            "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@problem+block@210e356cfa304b0aac591af53f6a6ae0",
+            "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@problem+block@210e356cfa304b0aac591af53f6a6ae0",
             "block_type": "problem",
-            "context_key": "course-v1:ITcracy+DemoX+CourseX",
-            "org": "ITcracy",
+            "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+            "org": "OpenEdx",
             "access_id": "4"
           }
         },
@@ -243,21 +243,21 @@
             },
             {
               "display_name": "Module 1: Dive into the Open edX® platform!",
-              "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
             },
             {
               "display_name": "Subsection",
-              "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
             },
             {
               "display_name": "Unit",
-              "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@vertical+block@59dc4eea07fa4c20aad677d433ada9f1"
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@vertical+block@59dc4eea07fa4c20aad677d433ada9f1"
             }
           ],
-          "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@html+block@257e68e3386d4a8f8739d45b67e76a9b",
+          "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@html+block@257e68e3386d4a8f8739d45b67e76a9b",
           "block_type": "html",
-          "context_key": "course-v1:ITcracy+DemoX+CourseX",
-          "org": "ITcracy",
+          "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+          "org": "OpenEdx",
           "access_id": 4,
           "_formatted": {
             "display_name": "HTML 1",
@@ -275,21 +275,21 @@
               },
               {
                 "display_name": "Module 1: Dive into the Open edX® platform!",
-                "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
               },
               {
                 "display_name": "Subsection",
-                "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
               },
               {
                 "display_name": "Unit",
-                "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@vertical+block@59dc4eea07fa4c20aad677d433ada9f1"
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@vertical+block@59dc4eea07fa4c20aad677d433ada9f1"
               }
             ],
-            "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@html+block@257e68e3386d4a8f8739d45b67e76a9b",
+            "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@html+block@257e68e3386d4a8f8739d45b67e76a9b",
             "block_type": "html",
-            "context_key": "course-v1:ITcracy+DemoX+CourseX",
-            "org": "ITcracy",
+            "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+            "org": "OpenEdx",
             "access_id": "4"
           }
         },
@@ -312,21 +312,21 @@
             },
             {
               "display_name": "Module 1: Dive into the Open edX® platform!",
-              "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
             },
             {
               "display_name": "Subsection",
-              "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
             },
             {
               "display_name": "Unit",
-              "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@vertical+block@59dc4eea07fa4c20aad677d433ada9f1"
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@vertical+block@59dc4eea07fa4c20aad677d433ada9f1"
             }
           ],
-          "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@problem+block@a4455860b03647219ff8b01cde49cf37",
+          "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@problem+block@a4455860b03647219ff8b01cde49cf37",
           "block_type": "problem",
-          "context_key": "course-v1:ITcracy+DemoX+CourseX",
-          "org": "ITcracy",
+          "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+          "org": "OpenEdx",
           "access_id": 4,
           "_formatted": {
             "display_name": "Dropdown",
@@ -347,21 +347,21 @@
               },
               {
                 "display_name": "Module 1: Dive into the Open edX® platform!",
-                "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
               },
               {
                 "display_name": "Subsection",
-                "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
               },
               {
                 "display_name": "Unit",
-                "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@vertical+block@59dc4eea07fa4c20aad677d433ada9f1"
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@vertical+block@59dc4eea07fa4c20aad677d433ada9f1"
               }
             ],
-            "usage_key": "block-v1:ITcracy+DemoX+CourseX+type@problem+block@a4455860b03647219ff8b01cde49cf37",
+            "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@problem+block@a4455860b03647219ff8b01cde49cf37",
             "block_type": "problem",
-            "context_key": "course-v1:ITcracy+DemoX+CourseX",
-            "org": "ITcracy",
+            "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+            "org": "OpenEdx",
             "access_id": "4"
           }
         }

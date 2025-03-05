@@ -168,11 +168,23 @@ const ComponentReviewList = ({
     queryClient.invalidateQueries(courseLibrariesQueryKeys.courseLibraries(courseKey));
   };
 
-  const postChange = () => {
+  const postChange = (accept: boolean) => {
+    // istanbul ignore if: this should never happen
     if (!blockData) {
       return;
     }
     reloadLinks(blockData.downstreamBlockId);
+    if (accept) {
+      showToast(intl.formatMessage(
+        messages.updateSingleBlockSuccess,
+        { name: blockData.displayName },
+      ));
+    } else {
+      showToast(intl.formatMessage(
+        messages.ignoreSingleBlockSuccess,
+        { name: blockData.displayName },
+      ));
+    }
   };
 
   const updateBlock = async (info: ContentHit) => {
@@ -189,6 +201,7 @@ const ComponentReviewList = ({
   };
 
   const ignoreBlock = async () => {
+    // istanbul ignore if: this should never happen
     if (!blockData) {
       return;
     }
@@ -324,7 +337,7 @@ const ReviewTabContent = ({ courseId }: Props) => {
   ];
 
   if (isSyncComponentsLoading) {
-    return null;
+    return <Loading />;
   }
 
   if (isError) {

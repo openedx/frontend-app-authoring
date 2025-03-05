@@ -28,7 +28,7 @@ export interface BasePreviewLibraryXBlockChangesProps {
   blockData?: LibraryChangesMessageData,
   isModalOpen: boolean,
   closeModal: () => void,
-  postChange: () => void,
+  postChange: (accept: boolean) => void,
 }
 
 /**
@@ -91,7 +91,7 @@ export const PreviewLibraryXBlockChanges = ({
 
     try {
       await mutation.mutateAsync(blockData.downstreamBlockId);
-      postChange();
+      postChange(accept);
     } catch (e) {
       showToast(intl.formatMessage(failureMsg));
     } finally {
