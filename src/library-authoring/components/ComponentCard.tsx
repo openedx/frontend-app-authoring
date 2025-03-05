@@ -199,11 +199,12 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
     usageKey,
     publishStatus,
   } = contentHit;
+  const isNeverPublished = publishStatus === PublishStatus.NeverPublished;
   const componentDescription: string = (
-    showOnlyPublished ? formatted.published?.description : formatted.description
+    (showOnlyPublished && !isNeverPublished) ? formatted.published?.description : formatted.description
   ) ?? '';
   const displayName: string = (
-    showOnlyPublished ? formatted.published?.displayName : formatted.displayName
+    (showOnlyPublished && !isNeverPublished) ? formatted.published?.displayName : formatted.displayName
   ) ?? '';
 
   const { navigateTo } = useLibraryRoutes();
@@ -215,13 +216,15 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
     }
   }, [usageKey, navigateTo, openComponentInfoSidebar]);
 
+  const isDisabled = showOnlyPublished && isNeverPublished;
   return (
     <BaseComponentCard
       componentType={blockType}
       displayName={displayName}
       description={componentDescription}
       tags={tags}
-      actions={(
+      disabled={isDisabled}
+      actions={!isDisabled && (
         <ActionRow>
           {componentPickerMode ? (
             <AddComponentWidget usageKey={usageKey} blockType={blockType} />

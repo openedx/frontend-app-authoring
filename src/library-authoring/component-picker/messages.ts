@@ -44,7 +44,7 @@ const messages = defineMessages({
   },
   pickerInfoBanner: {
     id: 'course-authoring.library-authoring.pick-components.component-picker.information-alert',
-    defaultMessage: 'Only published content is visible and available for reuse.',
+    defaultMessage: 'Only published content is available for reuse.',
     description: 'The alert text on top of component-picker if only published content is visible.',
   },
 });
