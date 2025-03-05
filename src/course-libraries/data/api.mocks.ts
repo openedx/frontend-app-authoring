@@ -56,28 +56,6 @@ mockGetEntityLinks.applyMock = () => {
   jest.spyOn(api, 'getEntityLinks').mockImplementation(mockGetEntityLinks);
 };
 
-export async function mockGetUnpaginatedEntityLinks(
-  _downstreamContextKey?: string,
-  _readyToSync?: boolean,
-  upstreamUsageKey?: string,
-): ReturnType<typeof api.getUnpaginatedEntityLinks> {
-  const thisMock = mockGetUnpaginatedEntityLinks;
-  switch (upstreamUsageKey) {
-    case thisMock.upstreamUsageKey: return thisMock.response;
-    case thisMock.emptyUsageKey: return thisMock.emptyComponentUsage;
-    default: return [];
-  }
-}
-mockGetUnpaginatedEntityLinks.upstreamUsageKey = mockLinksResult.results.at(-1).upstreamUsageKey;
-mockGetUnpaginatedEntityLinks.response = [mockLinksResult.results.slice(-2)];
-mockGetUnpaginatedEntityLinks.emptyUsageKey = 'lb:Axim:TEST1:html:empty';
-mockGetUnpaginatedEntityLinks.emptyComponentUsage = [] as api.PublishableEntityLink[];
-
-mockGetUnpaginatedEntityLinks.applyMock = () => jest.spyOn(
-  api,
-  'getUnpaginatedEntityLinks',
-).mockImplementation(mockGetUnpaginatedEntityLinks);
-
 /**
  * Mock for `getEntityLinksSummaryByDownstreamContext()`
  *
