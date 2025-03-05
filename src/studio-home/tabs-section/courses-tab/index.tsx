@@ -19,6 +19,7 @@ import CardItem from '../../card-item';
 import CollapsibleStateWithAction from '../../collapsible-state-with-action';
 import ContactAdministrator from './contact-administrator';
 import CoursesFilters from './courses-filters';
+import ProcessingCourses from '../../processing-courses';
 import { LoadingSpinner } from '../../../generic/Loading';
 import AlertMessage from '../../../generic/alert-message';
 import messages from '../messages';
@@ -37,6 +38,7 @@ interface Props {
   }[];
   showNewCourseContainer: boolean;
   onClickNewCourse: () => void;
+  isShowProcessing: boolean;
   isLoading: boolean;
   isFailed: boolean;
   numPages: number;
@@ -47,6 +49,7 @@ const CoursesTab: React.FC<Props> = ({
   coursesDataItems,
   showNewCourseContainer,
   onClickNewCourse,
+  isShowProcessing,
   isLoading,
   isFailed,
   numPages = 0,
@@ -118,6 +121,7 @@ const CoursesTab: React.FC<Props> = ({
     ) : (
       <div className="courses-tab-container">
         <div className="d-flex flex-row align-items-center justify-content-between my-4">
+          {isShowProcessing && <ProcessingCourses />}
           <CoursesFilters dispatch={dispatch} locationValue={locationValue} isLoading={isLoading} />
           <p data-testid="pagination-info" className="my-0">
             {intl.formatMessage(messages.coursesPaginationInfo, {

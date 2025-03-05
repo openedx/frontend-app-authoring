@@ -35,6 +35,7 @@ const StudioHome = () => {
     isLoadingPage,
     isFailedLoadingPage,
     studioHomeData,
+    isShowProcessing,
     anyQueryIsFailed,
     isShowEmailStaff,
     anyQueryIsPending,
@@ -150,6 +151,7 @@ const StudioHome = () => {
             <TabsSection
               showNewCourseContainer={showNewCourseContainer}
               onClickNewCourse={() => setShowNewCourseContainer(true)}
+              isShowProcessing={isShowProcessing && !isFiltered}
               librariesV1Enabled={librariesV1Enabled}
               librariesV2Enabled={librariesV2Enabled}
             />
