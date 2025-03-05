@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+// eslint-disable-next-line import/no-extraneous-dependencies
 import fetchMock from 'fetch-mock-jest';
 import mockLinksResult from '../__mocks__/publishableEntityLinks.json';
 import mockSummaryResult from '../__mocks__/linkCourseSummary.json';
@@ -5,7 +7,7 @@ import mockLinkDetailsFromIndex from '../__mocks__/linkDetailsFromIndex.json';
 import mockLibBlockMetadata from '../__mocks__/libBlockMetadata.json';
 import { createAxiosError } from '../../testUtils';
 import * as api from './api';
-import * as libApi from '../../library-authoring/data/api'
+import * as libApi from '../../library-authoring/data/api';
 
 /**
  * Mock for `getEntityLinks()`
@@ -15,7 +17,6 @@ import * as libApi from '../../library-authoring/data/api'
 export async function mockGetEntityLinks(
   downstreamContextKey?: string,
   readyToSync?: boolean,
-  _upstreamUsageKey?: string,
 ): ReturnType<typeof api.getEntityLinks> {
   switch (downstreamContextKey) {
     case mockGetEntityLinks.invalidCourseKey:
@@ -35,13 +36,14 @@ export async function mockGetEntityLinks(
         current_page: 0,
         results: [],
       });
-    default:
-      const response: api.PaginatedData<api.PublishableEntityLink[]> = mockGetEntityLinks.response;
+    default: {
+      const { response } = mockGetEntityLinks;
       if (readyToSync !== undefined) {
-        response.results = response.results.filter((o) => o.readyToSync == readyToSync);
+        response.results = response.results.filter((o) => o.readyToSync === readyToSync);
         response.count = response.results.length;
       }
       return Promise.resolve(response);
+    }
   }
 }
 mockGetEntityLinks.courseKey = mockLinksResult.results[0].downstreamContextKey;
@@ -97,7 +99,7 @@ export async function mockGetEntityLinksSummaryByDownstreamContext(
       return Promise.resolve([]);
     case mockGetEntityLinksSummaryByDownstreamContext.courseKeyUpToDate:
       return Promise.resolve(mockGetEntityLinksSummaryByDownstreamContext.response.filter(
-        (o: { readyToSyncCount: number }) => o.readyToSyncCount === 0
+        (o: { readyToSyncCount: number }) => o.readyToSyncCount === 0,
       ));
     default:
       return Promise.resolve(mockGetEntityLinksSummaryByDownstreamContext.response);
@@ -113,7 +115,6 @@ mockGetEntityLinksSummaryByDownstreamContext.response = mockSummaryResult;
 mockGetEntityLinksSummaryByDownstreamContext.applyMock = () => {
   jest.spyOn(api, 'getEntityLinksSummaryByDownstreamContext').mockImplementation(mockGetEntityLinksSummaryByDownstreamContext);
 };
-
 
 /**
  * Mock for multi-search from meilisearch index for link details.

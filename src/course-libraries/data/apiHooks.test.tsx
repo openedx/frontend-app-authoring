@@ -43,9 +43,11 @@ describe('course libraries api hooks', () => {
   it('should return paginated links for course', async () => {
     const courseId = 'course-v1:some+key';
     const url = getEntityLinksByDownstreamContextUrl();
-    const expectedResult = {'next': null, 'results': [], 'previous': null, 'total': 0}
+    const expectedResult = {
+      next: null, results: [], previous: null, total: 0,
+    };
     axiosMock.onGet(url).reply(200, expectedResult);
-    const { result } = renderHook(() => useEntityLinks({courseId}), { wrapper });
+    const { result } = renderHook(() => useEntityLinks({ courseId }), { wrapper });
     await waitFor(() => {
       expect(result.current.isLoading).toBeFalsy();
     });
@@ -57,7 +59,7 @@ describe('course libraries api hooks', () => {
     const courseId = 'course-v1:some+key';
     const url = getEntityLinksByDownstreamContextUrl();
     axiosMock.onGet(url).reply(200, []);
-    const { result } = renderHook(() => useUnpaginatedEntityLinks({courseId}), { wrapper });
+    const { result } = renderHook(() => useUnpaginatedEntityLinks({ courseId }), { wrapper });
     await waitFor(() => {
       expect(result.current.isLoading).toBeFalsy();
     });
@@ -66,7 +68,7 @@ describe('course libraries api hooks', () => {
       course_id: courseId,
       ready_to_sync: undefined,
       upstream_usage_key: undefined,
-      no_page: true
+      no_page: true,
     });
   });
 });
