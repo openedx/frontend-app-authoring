@@ -13,6 +13,7 @@ import CoursesTab from '.';
 import { studioHomeCoursesRequestParamsDefault } from '../../data/slice';
 
 const onClickNewCourse = jest.fn();
+const isShowProcessing = false;
 const isLoading = false;
 const isFailed = false;
 const numPages = 1;
@@ -40,6 +41,7 @@ const renderComponent = (overrideProps = {}, studioHomeState = {}) => {
             coursesDataItems={studioHomeMock.courses}
             showNewCourseContainer={showNewCourseContainer}
             onClickNewCourse={onClickNewCourse}
+            isShowProcessing={isShowProcessing}
             isLoading={isLoading}
             isFailed={isFailed}
             numPages={numPages}
@@ -101,8 +103,24 @@ describe('<CoursesTab />', () => {
     expect(alertCoursesNotFound).toBeInTheDocument();
   });
 
+  it('should render processing courses component when isEnabledPagination is false and isShowProcessing is true', () => {
+    const props = { isShowProcessing: true, isEnabledPagination: false };
+    const customStoreData = {
+      studioHomeData: {
+        inProcessCourseActions: [],
+      },
+      studioHomeCoursesRequestParams: {
+        currentPage: 1,
+        isFiltered: true,
+      },
+    };
+    renderComponent(props, customStoreData);
+    const alertCoursesNotFound = screen.queryByTestId('processing-courses-title');
+    expect(alertCoursesNotFound).toBeInTheDocument();
+  });
+
   it('should render CollapsibleStateWithAction when courseCreatorStatus is true', () => {
-    const props = { isEnabledPagination: false };
+    const props = { isShowProcessing: true, isEnabledPagination: false };
     const customStoreData = {
       studioHomeData: {
         inProcessCourseActions: [],
