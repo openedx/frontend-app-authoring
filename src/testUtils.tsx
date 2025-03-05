@@ -191,6 +191,7 @@ export function initializeMocks({ user = defaultUser, initialState = undefined }
     axiosMock,
     mockShowToast: mockToastContext.showToast,
     mockToastAction: mockToastContext.toastAction,
+    queryClient,
   };
 }
 

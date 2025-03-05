@@ -19,6 +19,7 @@ import {
 import MockAdapter from 'axios-mock-adapter/types';
 import { libraryBlockChangesUrl } from '../course-unit/data/api';
 import { type ToastActionData } from '../generic/toast-context';
+import { QueryClient } from '@tanstack/react-query';
 
 mockContentSearchConfig.applyMock();
 mockGetEntityLinks.applyMock();
@@ -28,6 +29,7 @@ mockUseLibBlockMetadata.applyMock();
 const searchParamsGetMock = jest.fn();
 let axiosMock: MockAdapter;
 let mockShowToast: (message: string, action?: ToastActionData | undefined) => void;
+let queryClient: QueryClient;
 
 jest.mock('../studio-home/hooks', () => ({
   useStudioHome: () => ({
@@ -124,6 +126,7 @@ describe('<CourseLibraries ReviewTab />', () => {
     mockFetchIndexDocuments.applyMock();
     localStorage.clear();
     searchParamsGetMock.mockReturnValue('review');
+    queryClient = mocks.queryClient;
   });
 
   const renderCourseLibrariesReviewPage = async (courseKey?: string) => {
@@ -154,27 +157,47 @@ describe('<CourseLibraries ReviewTab />', () => {
   });
 
   it('update changes works', async () => {
+    const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
     const usageKey = mockGetEntityLinks.response.results[0].downstreamUsageKey;
     axiosMock.onPost(libraryBlockChangesUrl(usageKey)).reply(200, {});
     await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
     const updateBtns = await screen.findAllByRole('button', { name: 'Update' });
     expect(updateBtns.length).toEqual(5);
-
     userEvent.click(updateBtns[0]);
     await waitFor(() => {
       expect(axiosMock.history.post.length).toEqual(1);
       expect(axiosMock.history.post[0].url).toEqual(libraryBlockChangesUrl(usageKey));
     });
     expect(mockShowToast).toHaveBeenCalledWith('Success! "Dropdown" is updated');
+    expect(mockInvalidateQueries).toHaveBeenCalledWith(["courseLibraries", "course-v1:OpenEdx+DemoX+CourseX"]);
+  });
+
+  it('update changes works in preview modal', async () => {
+    const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
+    const usageKey = mockGetEntityLinks.response.results[0].downstreamUsageKey;
+    axiosMock.onPost(libraryBlockChangesUrl(usageKey)).reply(200, {});
+    await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
+    const previewBtns = await screen.findAllByRole('button', { name: 'Review Updates' });
+    expect(previewBtns.length).toEqual(5);
+    userEvent.click(previewBtns[0]);
+    const dialog = await screen.findByRole('dialog');
+    const confirmBtn = await within(dialog).findByRole('button', { name: 'Accept changes' });
+    userEvent.click(confirmBtn);
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toEqual(1);
+      expect(axiosMock.history.post[0].url).toEqual(libraryBlockChangesUrl(usageKey));
+    });
+    expect(mockShowToast).toHaveBeenCalledWith('Success! "Dropdown" is updated');
+    expect(mockInvalidateQueries).toHaveBeenCalledWith(["courseLibraries", "course-v1:OpenEdx+DemoX+CourseX"]);
   });
 
   it('ignore change works', async () => {
+    const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
     const usageKey = mockGetEntityLinks.response.results[0].downstreamUsageKey;
     axiosMock.onDelete(libraryBlockChangesUrl(usageKey)).reply(204, {});
     await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
     const ignoreBtns = await screen.findAllByRole('button', { name: 'Ignore' });
     expect(ignoreBtns.length).toEqual(5);
-
     // Show confirmation modal on clicking ignore.
     userEvent.click(ignoreBtns[0]);
     const dialog = await screen.findByRole('dialog', { name: 'Ignore these changes?'});
@@ -188,5 +211,32 @@ describe('<CourseLibraries ReviewTab />', () => {
     expect(mockShowToast).toHaveBeenCalledWith(
       '"Dropdown" will remain out of sync with library content. You will be notified when this component is updated again.'
     );
+    expect(mockInvalidateQueries).toHaveBeenCalledWith(["courseLibraries", "course-v1:OpenEdx+DemoX+CourseX"]);
+  });
+
+  it('ignore change works in preview', async () => {
+    const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
+    const usageKey = mockGetEntityLinks.response.results[0].downstreamUsageKey;
+    axiosMock.onDelete(libraryBlockChangesUrl(usageKey)).reply(204, {});
+    await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
+    const previewBtns = await screen.findAllByRole('button', { name: 'Review Updates' });
+    expect(previewBtns.length).toEqual(5);
+    userEvent.click(previewBtns[0]);
+    const previewDialog = await screen.findByRole('dialog');
+    const ignoreBtn = await within(previewDialog).findByRole('button', { name: 'Ignore changes' });
+    userEvent.click(ignoreBtn);
+    // Show confirmation modal on clicking ignore.
+    const dialog = await screen.findByRole('dialog', { name: 'Ignore these changes?'});
+    expect(dialog).toBeInTheDocument();
+    const confirmBtn = await within(dialog).findByRole('button', { name: 'Ignore' });
+    userEvent.click(confirmBtn);
+    await waitFor(() => {
+      expect(axiosMock.history.delete.length).toEqual(1);
+      expect(axiosMock.history.delete[0].url).toEqual(libraryBlockChangesUrl(usageKey));
+    });
+    expect(mockShowToast).toHaveBeenCalledWith(
+      '"Dropdown" will remain out of sync with library content. You will be notified when this component is updated again.'
+    );
+    expect(mockInvalidateQueries).toHaveBeenCalledWith(["courseLibraries", "course-v1:OpenEdx+DemoX+CourseX"]);
   });
 });
