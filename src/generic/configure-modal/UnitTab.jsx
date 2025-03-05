@@ -7,11 +7,12 @@ import {
 import { Field } from 'formik';
 import classNames from 'classnames';
 
+import { COURSE_BLOCK_NAMES } from '../../constants';
 import messages from './messages';
 
 const UnitTab = ({
   isXBlockComponent,
-  isLibraryContent,
+  category,
   values,
   setFieldValue,
   showWarning,
@@ -44,6 +45,17 @@ const UnitTab = ({
     return group.deleted && isGroupSelected;
   };
 
+  const getAccessBlockTitle = () => {
+    switch (category) {
+      case COURSE_BLOCK_NAMES.libraryContent.id:
+        return messages.libraryContentAccess;
+      case COURSE_BLOCK_NAMES.splitTest.id:
+        return messages.splitTestAccess;
+      default:
+        return messages.unitAccess;
+    }
+  };
+
   return (
     <>
       {!isXBlockComponent && (
@@ -63,7 +75,7 @@ const UnitTab = ({
       {userPartitionInfo.selectablePartitions.length > 0 && (
         <Form.Group controlId="groupSelect">
           <h4 className="mt-3">
-            <FormattedMessage {...messages[isLibraryContent ? 'libraryContentAccess' : 'unitAccess']} />
+            <FormattedMessage {...getAccessBlockTitle()} />
           </h4>
           <hr />
           <Form.Label as="legend" className="font-weight-bold">
@@ -149,12 +161,12 @@ const UnitTab = ({
 
 UnitTab.defaultProps = {
   isXBlockComponent: false,
-  isLibraryContent: false,
+  category: undefined,
 };
 
 UnitTab.propTypes = {
   isXBlockComponent: PropTypes.bool,
-  isLibraryContent: PropTypes.bool,
+  category: PropTypes.string,
   values: PropTypes.shape({
     isVisibleToStaffOnly: PropTypes.bool.isRequired,
     discussionEnabled: PropTypes.bool,
