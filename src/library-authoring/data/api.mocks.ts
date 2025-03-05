@@ -327,7 +327,7 @@ export async function mockLibraryBlockMetadata(usageKey: string): Promise<api.Li
     case thisMock.usageKeyPublished: return thisMock.dataPublished;
     case thisMock.usageKeyWithCollections: return thisMock.dataWithCollections;
     case thisMock.usageKeyPublishDisabled: return thisMock.dataPublishDisabled;
-    case thisMock.usageKeyThirdPartyXBlock: return thisMock.dataThirdPartyXBlock;
+    case thisMock.usageKeyUnsupportedXBlock: return thisMock.dataUnsupportedXBlock;
     case thisMock.usageKeyForTags: return thisMock.dataPublished;
     default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
   }
@@ -372,11 +372,11 @@ mockLibraryBlockMetadata.dataPublishDisabled = {
   id: mockLibraryBlockMetadata.usageKeyPublishDisabled,
   modified: '2024-06-11T13:54:21Z',
 } satisfies api.LibraryBlockMetadata;
-mockLibraryBlockMetadata.usageKeyThirdPartyXBlock = mockXBlockFields.usageKeyThirdParty;
-mockLibraryBlockMetadata.dataThirdPartyXBlock = {
+mockLibraryBlockMetadata.usageKeyUnsupportedXBlock = 'lb:Axim:TEST:conditional:12345';
+mockLibraryBlockMetadata.dataUnsupportedXBlock = {
   ...mockLibraryBlockMetadata.dataPublished,
-  id: mockLibraryBlockMetadata.usageKeyThirdPartyXBlock,
-  blockType: 'third_party',
+  id: mockLibraryBlockMetadata.usageKeyUnsupportedXBlock,
+  blockType: 'conditional',
 } satisfies api.LibraryBlockMetadata;
 mockLibraryBlockMetadata.usageKeyForTags = mockContentTaxonomyTagsData.largeTagsId;
 mockLibraryBlockMetadata.usageKeyWithCollections = 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd';
@@ -526,6 +526,29 @@ mockGetLibraryTeam.notMember = {
 
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockGetLibraryTeam.applyMock = () => jest.spyOn(api, 'getLibraryTeam').mockImplementation(mockGetLibraryTeam);
+
+/**
+ * Mock for `getBlockTypes()`
+ *
+ * Use `mockBlockTypesMetadata.applyMock()` to apply it to the whole test suite.
+ */
+export async function mockBlockTypesMetadata(libraryId: string): Promise<api.BlockTypeMetadata[]> {
+  const thisMock = mockBlockTypesMetadata;
+  switch (libraryId) {
+    case mockContentLibrary.libraryId: return thisMock.blockTypesMetadata;
+    default: {
+      return [];
+    }
+  }
+}
+
+mockBlockTypesMetadata.blockTypesMetadata = [
+  { blockType: 'poll', displayName: 'Poll' },
+  { blockType: 'survey', displayName: 'Survey' },
+  { blockType: 'google-document', displayName: 'Google Document' },
+];
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockBlockTypesMetadata.applyMock = () => jest.spyOn(api, 'getBlockTypes').mockImplementation(mockBlockTypesMetadata);
 
 export async function mockComponentDownstreamLinks(
   usageKey: string,
