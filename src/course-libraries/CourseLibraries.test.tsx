@@ -1,6 +1,8 @@
 import fetchMock from 'fetch-mock-jest';
 
 import userEvent from '@testing-library/user-event';
+import MockAdapter from 'axios-mock-adapter/types';
+import { QueryClient } from '@tanstack/react-query';
 import {
   initializeMocks,
   render,
@@ -16,10 +18,8 @@ import {
   mockFetchIndexDocuments,
   mockUseLibBlockMetadata,
 } from './data/api.mocks';
-import MockAdapter from 'axios-mock-adapter/types';
 import { libraryBlockChangesUrl } from '../course-unit/data/api';
 import { type ToastActionData } from '../generic/toast-context';
-import { QueryClient } from '@tanstack/react-query';
 
 mockContentSearchConfig.applyMock();
 mockGetEntityLinks.applyMock();
@@ -169,7 +169,7 @@ describe('<CourseLibraries ReviewTab />', () => {
       expect(axiosMock.history.post[0].url).toEqual(libraryBlockChangesUrl(usageKey));
     });
     expect(mockShowToast).toHaveBeenCalledWith('Success! "Dropdown" is updated');
-    expect(mockInvalidateQueries).toHaveBeenCalledWith(["courseLibraries", "course-v1:OpenEdx+DemoX+CourseX"]);
+    expect(mockInvalidateQueries).toHaveBeenCalledWith(['courseLibraries', 'course-v1:OpenEdx+DemoX+CourseX']);
   });
 
   it('update changes works in preview modal', async () => {
@@ -188,7 +188,7 @@ describe('<CourseLibraries ReviewTab />', () => {
       expect(axiosMock.history.post[0].url).toEqual(libraryBlockChangesUrl(usageKey));
     });
     expect(mockShowToast).toHaveBeenCalledWith('Success! "Dropdown" is updated');
-    expect(mockInvalidateQueries).toHaveBeenCalledWith(["courseLibraries", "course-v1:OpenEdx+DemoX+CourseX"]);
+    expect(mockInvalidateQueries).toHaveBeenCalledWith(['courseLibraries', 'course-v1:OpenEdx+DemoX+CourseX']);
   });
 
   it('ignore change works', async () => {
@@ -200,7 +200,7 @@ describe('<CourseLibraries ReviewTab />', () => {
     expect(ignoreBtns.length).toEqual(5);
     // Show confirmation modal on clicking ignore.
     userEvent.click(ignoreBtns[0]);
-    const dialog = await screen.findByRole('dialog', { name: 'Ignore these changes?'});
+    const dialog = await screen.findByRole('dialog', { name: 'Ignore these changes?' });
     expect(dialog).toBeInTheDocument();
     const confirmBtn = await within(dialog).findByRole('button', { name: 'Ignore' });
     userEvent.click(confirmBtn);
@@ -209,9 +209,9 @@ describe('<CourseLibraries ReviewTab />', () => {
       expect(axiosMock.history.delete[0].url).toEqual(libraryBlockChangesUrl(usageKey));
     });
     expect(mockShowToast).toHaveBeenCalledWith(
-      '"Dropdown" will remain out of sync with library content. You will be notified when this component is updated again.'
+      '"Dropdown" will remain out of sync with library content. You will be notified when this component is updated again.',
     );
-    expect(mockInvalidateQueries).toHaveBeenCalledWith(["courseLibraries", "course-v1:OpenEdx+DemoX+CourseX"]);
+    expect(mockInvalidateQueries).toHaveBeenCalledWith(['courseLibraries', 'course-v1:OpenEdx+DemoX+CourseX']);
   });
 
   it('ignore change works in preview', async () => {
@@ -226,7 +226,7 @@ describe('<CourseLibraries ReviewTab />', () => {
     const ignoreBtn = await within(previewDialog).findByRole('button', { name: 'Ignore changes' });
     userEvent.click(ignoreBtn);
     // Show confirmation modal on clicking ignore.
-    const dialog = await screen.findByRole('dialog', { name: 'Ignore these changes?'});
+    const dialog = await screen.findByRole('dialog', { name: 'Ignore these changes?' });
     expect(dialog).toBeInTheDocument();
     const confirmBtn = await within(dialog).findByRole('button', { name: 'Ignore' });
     userEvent.click(confirmBtn);
@@ -235,8 +235,8 @@ describe('<CourseLibraries ReviewTab />', () => {
       expect(axiosMock.history.delete[0].url).toEqual(libraryBlockChangesUrl(usageKey));
     });
     expect(mockShowToast).toHaveBeenCalledWith(
-      '"Dropdown" will remain out of sync with library content. You will be notified when this component is updated again.'
+      '"Dropdown" will remain out of sync with library content. You will be notified when this component is updated again.',
     );
-    expect(mockInvalidateQueries).toHaveBeenCalledWith(["courseLibraries", "course-v1:OpenEdx+DemoX+CourseX"]);
+    expect(mockInvalidateQueries).toHaveBeenCalledWith(['courseLibraries', 'course-v1:OpenEdx+DemoX+CourseX']);
   });
 });
