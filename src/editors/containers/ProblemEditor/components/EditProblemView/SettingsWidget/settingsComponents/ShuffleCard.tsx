@@ -1,16 +1,17 @@
 import React from 'react';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, ButtonGroup } from '@openedx/paragon';
-import PropTypes from 'prop-types';
 import SettingsOption from '../SettingsOption';
 
-const ShuffleCard = ({
-  showShuffleButton,
-  defaultValue,
-  updateSettings,
-  // inject
-  intl,
-}) => {
+interface ShuffleCardProps {
+  showShuffleButton: boolean | null;
+  defaultValue: boolean;
+  updateSettings: (value: boolean) => void;
+}
+
+const ShuffleCard: React.FC<ShuffleCardProps> = ({ showShuffleButton, defaultValue, updateSettings }) => {
+
+  const intl = useIntl();
   // const isLibrary = useSelector(selectors.app.isLibrary);
   // const { setResetTrue, setResetFalse } = resetCardHooks(updateSettings);
   // const advancedSettingsLink = `${useSelector(selectors.app.studioEndpointUrl)}/settings/advanced/${useSelector(selectors.app.learningContextId)}#show_reset_button`;
@@ -39,13 +40,4 @@ const ShuffleCard = ({
   );
 };
 
-ShuffleCard.propTypes = {
-  showShuffleButton: PropTypes.bool.isRequired,
-  defaultValue: PropTypes.bool.isRequired,
-  updateSettings: PropTypes.func.isRequired,
-  // injected
-  intl: intlShape.isRequired,
-};
-
-export const ShuffleCardInternal = ShuffleCard; // For testing only
-export default injectIntl(ShuffleCard);
+export default ShuffleCard;

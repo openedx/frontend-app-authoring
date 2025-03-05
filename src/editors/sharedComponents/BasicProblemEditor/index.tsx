@@ -93,9 +93,4 @@ const BasicProblemEditor = ({ problemType }) => {
   );
 };
 
-BasicProblemEditor.propTypes = {
-};
-BasicProblemEditor.defaultProps = {
-};
-
 export default BasicProblemEditor;

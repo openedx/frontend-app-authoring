@@ -115,9 +115,4 @@ const QuestionItem = ({
   );
 };
 
-QuestionItem.propTypes = {
-};
-QuestionItem.defaultProps = {
-};
-
 export { QuestionItem };
