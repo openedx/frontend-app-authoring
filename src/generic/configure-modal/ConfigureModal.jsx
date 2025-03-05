@@ -227,6 +227,7 @@ const ConfigureModal = ({
                 category={category}
                 isSubsection={isSubsection}
                 showWarning={visibilityState === VisibilityTypes.STAFF_ONLY}
+                isSelfPaced={isSelfPaced}
               />
             </Tab>
             <Tab eventKey="advanced" title={intl.formatMessage(messages.advancedTabTitle)}>

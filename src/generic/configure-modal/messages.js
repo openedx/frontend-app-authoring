@@ -143,6 +143,14 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.hide-content-after-due-description',
     defaultMessage: 'After the subsection\'s due date has passed, learners can no longer access its content. The subsection is not included in grade calculations.',
   },
+  hideContentAfterEnd: {
+    id: 'course-authoring.course-outline.configure-modal.visibility-tab.hide-content-after-end',
+    defaultMessage: 'Hide content after end date',
+  },
+  hideContentAfterEndDescription: {
+    id: 'course-authoring.course-outline.configure-modal.visibility-tab.hide-content-after-end-description',
+    defaultMessage: 'After the course\'s end date has passed, learners can no longer access its content. The subsection is not included in grade calculations.',
+  },
   hideEntireSubsection: {
     id: 'course-authoring.course-outline.configure-modal.visibility-tab.hide-entire-subsection',
     defaultMessage: 'Hide entire subsection',
