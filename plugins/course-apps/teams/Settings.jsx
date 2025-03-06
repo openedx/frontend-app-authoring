@@ -26,6 +26,7 @@ const TeamSettings = ({
     description: '',
     type: GroupTypes.OPEN,
     maxTeamSize: null,
+    userPartitionId: null,
     id: null,
     key: uuid(),
   };
@@ -38,6 +39,7 @@ const TeamSettings = ({
       type: group.type,
       description: group.description,
       max_team_size: group.maxTeamSize,
+      user_partition_id: group.userPartitionId,
     }));
     return saveSettings({
       team_sets: groups,
