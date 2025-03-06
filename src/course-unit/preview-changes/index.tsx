@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import {
   ActionRow, Button, ModalDialog, useToggle,
 } from '@openedx/paragon';
@@ -24,11 +24,12 @@ export interface LibraryChangesMessageData {
   isVertical: boolean,
 }
 
-export interface BasePreviewLibraryXBlockChangesProps {
+export interface PreviewLibraryXBlockChangesProps {
   blockData?: LibraryChangesMessageData,
   isModalOpen: boolean,
   closeModal: () => void,
   postChange: (accept: boolean) => void,
+  alertNode?: React.ReactNode,
 }
 
 /**
@@ -40,7 +41,8 @@ export const PreviewLibraryXBlockChanges = ({
   isModalOpen,
   closeModal,
   postChange,
-}: BasePreviewLibraryXBlockChangesProps) => {
+  alertNode,
+}: PreviewLibraryXBlockChangesProps) => {
   const { showToast } = useContext(ToastContext);
   const intl = useIntl();
 
@@ -115,6 +117,7 @@ export const PreviewLibraryXBlockChanges = ({
         </ModalDialog.Title>
       </ModalDialog.Header>
       <ModalDialog.Body>
+        {alertNode}
         {getBody()}
       </ModalDialog.Body>
       <ModalDialog.Footer>

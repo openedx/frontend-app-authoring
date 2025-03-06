@@ -16,7 +16,7 @@ import {
 
 import _ from 'lodash';
 import { useQueryClient } from '@tanstack/react-query';
-import { Loop } from '@openedx/paragon/icons';
+import { Loop, Warning } from '@openedx/paragon/icons';
 import messages from './messages';
 import previewChangesMessages from '../course-unit/preview-changes/messages';
 import { courseLibrariesQueryKeys, useEntityLinks } from './data/apiHooks';
@@ -35,6 +35,7 @@ import { useLoadOnScroll } from '../hooks';
 import DeleteModal from '../generic/delete-modal/DeleteModal';
 import { PublishableEntityLink } from './data/api';
 import AlertError from '../generic/alert-error';
+import AlertMessage from '../generic/alert-message';
 
 interface Props {
   courseId: string;
@@ -281,6 +282,14 @@ const ComponentReviewList = ({
         isModalOpen={isModalOpen}
         closeModal={closeModal}
         postChange={postChange}
+        alertNode={(
+          <AlertMessage
+            show
+            variant="warning"
+            icon={Warning}
+            title={intl.formatMessage(messages.olderVersionPreviewAlert)}
+          />
+        )}
       />
       <DeleteModal
         isOpen={isConfirmModalOpen}
