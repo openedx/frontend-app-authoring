@@ -8,10 +8,10 @@ import {
 import { mockFetchIndexDocuments, mockContentSearchConfig } from '../../search-manager/data/api.mock';
 import {
   mockContentLibrary,
+  mockGetUnpaginatedEntityLinks,
   mockLibraryBlockMetadata,
   mockXBlockAssets,
   mockXBlockOLX,
-  mockComponentDownstreamLinks,
 } from '../data/api.mocks';
 import { SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
 import ComponentDetails from './ComponentDetails';
@@ -21,7 +21,7 @@ mockContentLibrary.applyMock();
 mockLibraryBlockMetadata.applyMock();
 mockXBlockAssets.applyMock();
 mockXBlockOLX.applyMock();
-mockComponentDownstreamLinks.applyMock();
+mockGetUnpaginatedEntityLinks.applyMock();
 mockFetchIndexDocuments.applyMock();
 
 const render = (usageKey: string) => baseRender(<ComponentDetails />, {
@@ -53,7 +53,7 @@ describe('<ComponentDetails />', () => {
   });
 
   it('should render the component usage', async () => {
-    render(mockComponentDownstreamLinks.usageKey);
+    render(mockLibraryBlockMetadata.usageKeyPublished);
     expect(await screen.findByText('Component Usage')).toBeInTheDocument();
     const course1 = await screen.findByText('Course 1');
     expect(course1).toBeInTheDocument();
