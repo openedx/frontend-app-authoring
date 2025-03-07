@@ -1,14 +1,19 @@
 import { useRef } from 'react';
-import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon } from '@openedx/paragon';
 import { Question as QuestionIcon } from '@openedx/paragon/icons';
 
 import messages from '../messages';
 
+interface WhatsInClipboardProps {
+  handlePopoverToggle: (show: boolean) => void;
+  togglePopover: (show: boolean) => void;
+  popoverElementRef: React.RefObject<HTMLDivElement>;
+}
+
 const WhatsInClipboard = ({
   handlePopoverToggle, togglePopover, popoverElementRef,
-}) => {
+}: WhatsInClipboardProps) => {
   const intl = useIntl();
   const triggerElementRef = useRef(null);
 
@@ -44,15 +49,6 @@ const WhatsInClipboard = ({
       </p>
     </div>
   );
-};
-
-WhatsInClipboard.propTypes = {
-  handlePopoverToggle: PropTypes.func.isRequired,
-  togglePopover: PropTypes.func.isRequired,
-  popoverElementRef: PropTypes.oneOfType([
-    PropTypes.func,
-    PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
-  ]).isRequired,
 };
 
 export default WhatsInClipboard;

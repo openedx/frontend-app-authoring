@@ -105,7 +105,6 @@ const CourseOutline = ({ courseId }) => {
     handleNewUnitSubmit,
     getUnitUrl,
     handleVideoSharingOptionChange,
-    handleCopyToClipboardClick,
     handlePasteClipboardClick,
     notificationDismissUrl,
     discussionsSettings,
@@ -419,7 +418,6 @@ const CourseOutline = ({ courseId }) => {
                                                 onDuplicateSubmit={handleDuplicateUnitSubmit}
                                                 getTitleLink={getUnitUrl}
                                                 onOrderChange={updateUnitOrderByIndex}
-                                                onCopyToClipboardClick={handleCopyToClipboardClick}
                                                 discussionsSettings={discussionsSettings}
                                               />
                                             ))}

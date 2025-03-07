@@ -23,7 +23,7 @@ import {
 import { v4 as uuid4 } from 'uuid';
 
 import { ToastContext } from '../../generic/toast-context';
-import { useCopyToClipboard } from '../../generic/clipboard';
+import { useClipboard } from '../../generic/clipboard';
 import { getCanEdit } from '../../course-unit/data/selectors';
 import {
   useCreateLibraryBlock,
@@ -201,8 +201,7 @@ const AddContentContainer = () => {
   const pasteClipboardMutation = useLibraryPasteClipboard();
   const { showToast } = useContext(ToastContext);
   const canEdit = useSelector(getCanEdit);
-  const { sharedClipboardData } = useCopyToClipboard(canEdit);
-  const { showPasteXBlock } = useCopyToClipboard(canEdit);
+  const { showPasteXBlock, sharedClipboardData } = useClipboard(canEdit);
 
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
   const [isAdvancedListOpen, showAdvancedList, closeAdvancedList] = useToggle();
@@ -288,7 +287,14 @@ const AddContentContainer = () => {
   };
 
   const onPaste = () => {
-    if (!isBlockTypeEnabled(sharedClipboardData.content?.blockType)) {
+    const clipboardBlockType = sharedClipboardData?.content?.blockType;
+
+    // istanbul ignore if: this should never happen
+    if (!clipboardBlockType) {
+      return;
+    }
+
+    if (!isBlockTypeEnabled(clipboardBlockType)) {
       showToast(intl.formatMessage(messages.unsupportedBlockPasteClipboardMessage));
       return;
     }

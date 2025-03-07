@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useContext } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -15,8 +15,7 @@ import {
   MoreVert,
 } from '@openedx/paragon/icons';
 
-import { STUDIO_CLIPBOARD_CHANNEL } from '../../constants';
-import { updateClipboard } from '../../generic/data/api';
+import { useClipboard } from '../../generic/clipboard';
 import { ToastContext } from '../../generic/toast-context';
 import { type ContentHit } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
@@ -52,17 +51,12 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
 
   const canEdit = usageKey && canEditComponent(usageKey);
   const { showToast } = useContext(ToastContext);
-  const [clipboardBroadcastChannel] = useState(() => new BroadcastChannel(STUDIO_CLIPBOARD_CHANNEL));
   const removeComponentsMutation = useRemoveComponentsFromCollection(libraryId, collectionId);
   const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
+  const { copyToClipboard } = useClipboard();
 
   const updateClipboardClick = () => {
-    updateClipboard(usageKey)
-      .then((clipboardData) => {
-        clipboardBroadcastChannel.postMessage(clipboardData);
-        showToast(intl.formatMessage(messages.copyToClipboardSuccess));
-      })
-      .catch(() => showToast(intl.formatMessage(messages.copyToClipboardError)));
+    copyToClipboard(usageKey);
   };
 
   const removeFromCollection = () => {
