@@ -331,10 +331,9 @@ export const onSaveClick = ({
   })) {
     altText.error.dismiss();
     altText.validation.dismiss();
-    let altTextValue = altText.value;
-    if (altTextValue.includes('"')) {
-      altTextValue = altTextValue.replace(/"/g, '&quot;');
-    }
+    // Replaces double quotes with &quot; to prevent the alt text from being truncated  
+    // or breaking the image tag structure.
+    const altTextValue = altText.value.replace(/"/g, '&quot;');
     saveToEditor({
       altText: altTextValue,
       dimensions,
