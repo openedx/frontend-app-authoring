@@ -17,9 +17,9 @@ const PasteComponent = ({
   const [showPopover, togglePopover] = useState(false);
   const popoverElementRef = useRef(null);
 
-  const handlePopoverToggle = (isOpen) => togglePopover(isOpen);
+  const handlePopoverToggle = (isOpen: boolean) => togglePopover(isOpen);
 
-  const renderPopover = () => (
+  const renderPopover = (props) => (
     <div role="link" ref={popoverElementRef} tabIndex={0}>
       <Popover
         className="clipboard-popover"
@@ -28,6 +28,7 @@ const PasteComponent = ({
         onMouseLeave={() => handlePopoverToggle(false)}
         onFocus={() => handlePopoverToggle(true)}
         onBlur={() => handlePopoverToggle(false)}
+        {...props}
       >
         <PopoverContent clipboardData={clipboardData} />
       </Popover>

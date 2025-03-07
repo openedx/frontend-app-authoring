@@ -201,7 +201,9 @@ const CourseUnit = ({ courseId }) => {
               {showPasteXBlock && canPasteComponent && isUnitVerticalType && (
                 <PasteComponent
                   clipboardData={sharedClipboardData}
-                  onClick={handleCreateNewCourseXBlock}
+                  onClick={
+                    () => handleCreateNewCourseXBlock({ stagedContent: 'clipboard', parentLocator: blockId })
+                  }
                   text={intl.formatMessage(messages.pasteButtonText)}
                 />
               )}
