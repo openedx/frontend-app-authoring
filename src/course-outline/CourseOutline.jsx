@@ -302,6 +302,7 @@ const CourseOutline = ({ courseId }) => {
                 hasSections={Boolean(sectionsList.length)}
                 courseActions={courseActions}
                 errors={errors}
+                sections={sections}
               />
             )}
           />

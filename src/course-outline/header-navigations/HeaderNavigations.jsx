@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import { Button, OverlayTrigger, Tooltip } from '@openedx/paragon';
 import {
   Add as IconAdd,
@@ -8,6 +9,7 @@ import {
   ArrowDropUp as ArrowUpIcon,
 } from '@openedx/paragon/icons';
 
+import CourseOutlineAnalyticsSlot from '../../plugin-slots/CourseOutlineAnalyticsSlot';
 import messages from './messages';
 
 const HeaderNavigations = ({
@@ -16,6 +18,7 @@ const HeaderNavigations = ({
   isSectionsExpanded,
   isDisabledReindexButton,
   hasSections,
+  sections,
   courseActions,
   errors,
 }) => {
@@ -90,6 +93,7 @@ const HeaderNavigations = ({
           {intl.formatMessage(messages.viewLiveButton)}
         </Button>
       </OverlayTrigger>
+      <CourseOutlineAnalyticsSlot hasSections={hasSections} sections={sections} />
     </nav>
   );
 };
@@ -109,6 +113,10 @@ HeaderNavigations.propTypes = {
     lmsLink: PropTypes.string.isRequired,
   }).isRequired,
   hasSections: PropTypes.bool.isRequired,
+  sections: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    displayName: PropTypes.string.isRequired,
+  })).isRequired,
   courseActions: PropTypes.shape({
     deletable: PropTypes.bool.isRequired,
     draggable: PropTypes.bool.isRequired,
