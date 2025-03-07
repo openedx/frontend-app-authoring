@@ -332,7 +332,7 @@ export const onSaveClick = ({
     altText.error.dismiss();
     altText.validation.dismiss();
     let altTextValue = altText.value;
-    if (altTextValue.includes('"')){
+    if (altTextValue.includes('"')) {
       altTextValue = altTextValue.replace(/"/g, '&quot;');
     }
     saveToEditor({
