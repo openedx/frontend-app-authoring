@@ -51,16 +51,6 @@ const messages = defineMessages({
     defaultMessage: 'Failed to remove Component',
     description: 'Message for failure of removal of component from collection.',
   },
-  copyToClipboardSuccess: {
-    id: 'course-authoring.library-authoring.component.copyToClipboardSuccess',
-    defaultMessage: 'Component copied to clipboard',
-    description: 'Message for successful copy component to clipboard.',
-  },
-  copyToClipboardError: {
-    id: 'course-authoring.library-authoring.component.copyToClipboardError',
-    defaultMessage: 'Failed to copy component to clipboard',
-    description: 'Message for failed to copy component to clipboard.',
-  },
   deleteComponentWarningTitle: {
     id: 'course-authoring.library-authoring.component.delete-confirmation-title',
     defaultMessage: 'Delete Component',

@@ -18,7 +18,6 @@ const slice = createSlice({
       redirectUrlObj: {},
       postErrors: {},
     },
-    clipboardData: null,
   },
   reducers: {
     fetchOrganizations: (state, { payload }) => {
@@ -42,9 +41,6 @@ const slice = createSlice({
     updatePostErrors: (state, { payload }) => {
       state.createOrRerunCourse.postErrors = payload;
     },
-    updateClipboardData: (state, { payload }) => {
-      state.clipboardData = payload;
-    },
   },
 });
 
@@ -56,7 +52,6 @@ export const {
   updateSavingStatus,
   updateCourseData,
   updateRedirectUrlObj,
-  updateClipboardData,
 } = slice.actions;
 
 export const {

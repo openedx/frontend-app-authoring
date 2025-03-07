@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
   ActionRow, Card, Dropdown, Icon, IconButton, useToggle,
 } from '@openedx/paragon';
@@ -15,7 +15,7 @@ import ConfigureModal from '../../generic/configure-modal/ConfigureModal';
 import SortableItem from '../../generic/drag-helper/SortableItem';
 import { scrollToElement } from '../../course-outline/utils';
 import { COURSE_BLOCK_NAMES } from '../../constants';
-import { copyToClipboard } from '../../generic/data/thunks';
+import { useClipboard } from '../../generic/clipboard';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import XBlockMessages from './xblock-messages/XBlockMessages';
 import messages from './messages';
@@ -28,7 +28,6 @@ const CourseXBlock = ({
   const courseXBlockElementRef = useRef(null);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
-  const dispatch = useDispatch();
   const canEdit = useSelector(getCanEdit);
   const courseId = useSelector(getCourseId);
   const intl = useIntl();
@@ -47,6 +46,8 @@ const CourseXBlock = ({
     userPartitionInfo,
     showCorrectness: 'always',
   };
+
+  const { copyToClipboard } = useClipboard(canEdit);
 
   const onDeleteSubmit = () => {
     unitXBlockActions.handleDelete(id);
@@ -120,7 +121,7 @@ const CourseXBlock = ({
                     {intl.formatMessage(messages.blockLabelButtonMove)}
                   </Dropdown.Item>
                   {canEdit && (
-                    <Dropdown.Item onClick={() => dispatch(copyToClipboard(id))}>
+                    <Dropdown.Item onClick={() => copyToClipboard(id)}>
                       {intl.formatMessage(messages.blockLabelButtonCopyToClipboard)}
                     </Dropdown.Item>
                   )}
