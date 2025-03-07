@@ -28,7 +28,6 @@ export const getCourseReindexApiUrl = (reindexLink) => `${getApiBaseUrl()}${rein
 export const getXBlockBaseApiUrl = () => `${getApiBaseUrl()}/xblock/`;
 export const getCourseItemApiUrl = (itemId) => `${getXBlockBaseApiUrl()}${itemId}`;
 export const getXBlockApiUrl = (blockId) => `${getXBlockBaseApiUrl()}outline/${blockId}`;
-export const getClipboardUrl = () => `${getApiBaseUrl()}/api/content-staging/v1/clipboard/`;
 export const exportTags = (courseId) => `${getApiBaseUrl()}/api/content_tagging/v1/object_tags/${courseId}/export/`;
 
 /**

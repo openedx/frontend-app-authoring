@@ -1,13 +1,19 @@
 import { useRef, useState } from 'react';
-import PropTypes from 'prop-types';
 import { OverlayTrigger, Popover } from '@openedx/paragon';
 
 import { PopoverContent, PasteButton, WhatsInClipboard } from './components';
-import { clipboardPropsTypes } from './constants';
+import type { ClipboardStatus } from '../../data/api';
+
+interface PasteComponentProps {
+  onClick: () => void;
+  clipboardData: ClipboardStatus;
+  text: string;
+  className?: string;
+}
 
 const PasteComponent = ({
   onClick, clipboardData, text, className,
-}) => {
+}: PasteComponentProps) => {
   const [showPopover, togglePopover] = useState(false);
   const popoverElementRef = useRef(null);
 
@@ -24,9 +30,7 @@ const PasteComponent = ({
         onBlur={() => handlePopoverToggle(false)}
         {...props}
       >
-        {clipboardData && (
-          <PopoverContent clipboardData={clipboardData} />
-        )}
+        <PopoverContent clipboardData={clipboardData} />
       </Popover>
     </div>
   );
@@ -46,20 +50,6 @@ const PasteComponent = ({
       </OverlayTrigger>
     </>
   );
-};
-
-PasteComponent.propTypes = {
-  onClick: PropTypes.func.isRequired,
-  text: PropTypes.string.isRequired,
-  clipboardData: PropTypes.shape(clipboardPropsTypes),
-  blockType: PropTypes.string,
-  className: PropTypes.string,
-};
-
-PasteComponent.defaultProps = {
-  clipboardData: null,
-  blockType: null,
-  className: undefined,
 };
 
 export default PasteComponent;
