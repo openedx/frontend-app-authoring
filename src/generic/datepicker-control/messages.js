@@ -15,7 +15,11 @@ const messages = defineMessages({
   },
   datepickerUTC: {
     id: 'course-authoring.schedule.schedule-section.datepicker.utc',
-    defaultMessage: getUserTimezoneDetails(),   // Return the Local timezone
+    defaultMessage: 'UTC',
+  },
+  datepickerCustom: {
+    id: 'this.datepickerCustom',
+    defaultMessage: getUserTimezoneDetails(),
   },
 });
 
