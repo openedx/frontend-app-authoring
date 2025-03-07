@@ -360,6 +360,30 @@ describe('ImageSettingsModal hooks', () => {
         isDecorative: props.isDecorative,
       });
     });
+    it('replaces double quotes with &quot; before saving to editor', () => {
+      props.altText.value = 'The "Submit For Grading" button';
+      jest.spyOn(hooks, hookKeys.checkFormValidation).mockReturnValueOnce(true);
+
+      hooks.onSaveClick({ ...props })();
+
+      expect(props.saveToEditor).toHaveBeenCalledWith({
+        altText: 'The &quot;Submit For Grading&quot; button',
+        dimensions: props.dimensions,
+        isDecorative: props.isDecorative,
+      });
+    });
+    it('does not modify altText if there are no double quotes', () => {
+      props.altText.value = 'The Submit For Grading button';
+      jest.spyOn(hooks, hookKeys.checkFormValidation).mockReturnValueOnce(true);
+
+      hooks.onSaveClick({ ...props })();
+
+      expect(props.saveToEditor).toHaveBeenCalledWith({
+        altText: 'The Submit For Grading button',
+        dimensions: props.dimensions,
+        isDecorative: props.isDecorative,
+      });
+    });
     it('calls dismissError and sets showAltTextSubmissionError to false when checkFormValidation is true', () => {
       jest.spyOn(hooks, hookKeys.checkFormValidation).mockReturnValueOnce(true);
       hooks.onSaveClick({ ...props })();
