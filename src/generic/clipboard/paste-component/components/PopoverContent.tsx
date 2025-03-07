@@ -1,15 +1,23 @@
-import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon, Popover, Stack } from '@openedx/paragon';
 import { OpenInNew as OpenInNewIcon } from '@openedx/paragon/icons';
 
+import type { ClipboardStatus } from '../../../data/api';
 import messages from '../messages';
-import { clipboardPropsTypes } from '../constants';
 
-const PopoverContent = ({ clipboardData }) => {
+interface PopoverContentProps {
+  clipboardData: ClipboardStatus,
+}
+
+const PopoverContent = ({ clipboardData } : PopoverContentProps) => {
   const intl = useIntl();
   const { sourceEditUrl, content, sourceContextTitle } = clipboardData;
+
+  // istanbul ignore if: this should never happen
+  if (!content) {
+    return null;
+  }
 
   return (
     <Popover.Title
@@ -38,10 +46,6 @@ const PopoverContent = ({ clipboardData }) => {
       </Stack>
     </Popover.Title>
   );
-};
-
-PopoverContent.propTypes = {
-  clipboardData: PropTypes.shape(clipboardPropsTypes).isRequired,
 };
 
 export default PopoverContent;

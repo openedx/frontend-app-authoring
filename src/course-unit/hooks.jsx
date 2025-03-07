@@ -6,7 +6,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useToggle } from '@openedx/paragon';
 
 import { RequestStatus } from '../data/constants';
-import { useCopyToClipboard } from '../generic/clipboard';
+import { useClipboard } from '../generic/clipboard';
 import { useEventListener } from '../generic/hooks';
 import { COURSE_BLOCK_NAMES } from '../constants';
 import { messageTypes, PUBLISH_TYPES } from './constants';
@@ -62,7 +62,7 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const courseOutlineInfo = useSelector(getCourseOutlineInfo);
   const movedXBlockParams = useSelector(getMovedXBlockParams);
   const { currentlyVisibleToStudents } = courseUnit;
-  const { sharedClipboardData, showPasteXBlock, showPasteUnit } = useCopyToClipboard(canEdit);
+  const { sharedClipboardData, showPasteXBlock, showPasteUnit } = useClipboard(canEdit);
   const { canPasteComponent } = courseVerticalChildren;
   const { displayName: unitTitle, category: unitCategory } = xblockInfo;
   const sequenceId = courseUnit.ancestorInfo?.ancestors[0].id;

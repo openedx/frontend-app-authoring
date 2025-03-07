@@ -115,7 +115,7 @@ const RouterAndRoute: React.FC<RouteOptions> = ({
   );
 };
 
-function makeWrapper({ extraWrapper, ...routeArgs }: WrapperOptions & RouteOptions) {
+function makeWrapper({ extraWrapper, ...routeArgs }: WrapperOptions & RouteOptions = {}) {
   const AllTheProviders = ({ children }) => (
     <AppProvider store={reduxStore} wrapWithRouter={false}>
       <IntlProvider locale="en" messages={{}}>
@@ -195,7 +195,7 @@ export function initializeMocks({ user = defaultUser, initialState = undefined }
 }
 
 export * from '@testing-library/react';
-export { customRender as render };
+export { customRender as render, makeWrapper };
 
 /** Simulate a real Axios error (such as we'd see in response to a 404) */
 export function createAxiosError({ code, message, path }: { code: number, message: string, path: string }) {
