@@ -44,7 +44,7 @@ const BasicTab = ({
               <DatepickerControl
                 type={DATEPICKER_TYPES.time}
                 value={releaseDate}
-                label={intl.formatMessage(messages.releaseTimeUTC)}
+                label={intl.formatMessage(messages.releaseTimeCustom)}
                 controlName="start-time"
                 onChange={(val) => setFieldValue('releaseDate', val)}
               />
@@ -85,7 +85,7 @@ const BasicTab = ({
                   <DatepickerControl
                     type={DATEPICKER_TYPES.time}
                     value={dueDate}
-                    label={intl.formatMessage(messages.dueTimeUTC)}
+                    label={intl.formatMessage(messages.dueTimeCustom)}
                     controlName="start-time"
                     onChange={(val) => setFieldValue('dueDate', val)}
                   />

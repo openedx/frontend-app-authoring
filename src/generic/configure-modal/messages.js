@@ -36,6 +36,10 @@ const messages = defineMessages({
   },
   releaseTimeUTC: {
     id: 'course-authoring.course-outline.configure-modal.basic-tab.release-time-UTC',
+    defaultMessage: 'Release time in UTC:',
+  },
+  releaseTimeCustom: {
+    id: 'this.releaseTimeCustom',
     defaultMessage: `Release time in (${getUserTimezoneDetails()})`,
   },
   visibilityTabTitle: {
@@ -125,6 +129,10 @@ const messages = defineMessages({
   },
   dueTimeUTC: {
     id: 'course-authoring.course-outline.configure-modal.basic-tab.due-time-UTC',
+    defaultMessage: 'Due time in UTC:',
+  },
+  dueTimeCustom: {
+    id: 'this.dueTimeCustom',
     defaultMessage: `Due time in (${getUserTimezoneDetails()})`,
   },
   subsectionVisibility: {
