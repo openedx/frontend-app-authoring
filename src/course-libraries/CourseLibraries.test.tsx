@@ -11,7 +11,7 @@ import {
   within,
 } from '../testUtils';
 import { mockContentSearchConfig } from '../search-manager/data/api.mock';
-import CourseLibraries from './CourseLibraries';
+import { CourseLibraries } from './CourseLibraries';
 import {
   mockGetEntityLinks,
   mockGetEntityLinksSummaryByDownstreamContext,

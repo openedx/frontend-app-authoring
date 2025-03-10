@@ -30,9 +30,9 @@ import { useEntityLinksSummaryByDownstreamContext } from './data/apiHooks';
 import type { PublishableEntityLinkSummary } from './data/api';
 import Loading from '../generic/Loading';
 import { useStudioHome } from '../studio-home/hooks';
-import OutOfSyncAlert from './OutOfSyncAlert';
 import NewsstandIcon from '../generic/NewsstandIcon';
 import ReviewTabContent from './ReviewTabContent';
+import { OutOfSyncAlert } from './OutOfSyncAlert';
 
 interface Props {
   courseId: string;
@@ -100,7 +100,7 @@ const LibraryCard = ({ linkSummary }: LibraryCardProps) => {
   );
 };
 
-const CourseLibraries: React.FC<Props> = ({ courseId }) => {
+export const CourseLibraries: React.FC<Props> = ({ courseId }) => {
   const intl = useIntl();
   const courseDetails = useModel('courseDetails', courseId);
   const [searchParams] = useSearchParams();
@@ -229,5 +229,3 @@ const CourseLibraries: React.FC<Props> = ({ courseId }) => {
     </>
   );
 };
-
-export default CourseLibraries;

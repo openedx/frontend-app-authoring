@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button } from '@openedx/paragon';
 import { Loop } from '@openedx/paragon/icons';
@@ -18,7 +18,7 @@ interface OutOfSyncAlertProps {
 Shows an alert when library components used in the current course were updated and the blocks in course can be updated.
 Dismiss or review action is persisted using localStorage to avoid displaying the alert on every refresh.
 */
-const OutOfSyncAlert: React.FC<OutOfSyncAlertProps> = ({
+export const OutOfSyncAlert: React.FC<OutOfSyncAlertProps> = ({
   showAlert,
   setShowAlert,
   courseId,
@@ -27,7 +27,7 @@ const OutOfSyncAlert: React.FC<OutOfSyncAlertProps> = ({
 }) => {
   const intl = useIntl();
   const { data, isLoading } = useEntityLinksSummaryByDownstreamContext(courseId);
-  const outOfSyncCount = useMemo(() => _.sumBy(data, (lib) => lib.readyToSyncCount), [data]);
+  const outOfSyncCount = data?.reduce((count, lib) => count += lib.readyToSyncCount, 0);
   const alertKey = `outOfSyncCountAlert-${courseId}`;
 
   useEffect(() => {
@@ -72,5 +72,3 @@ const OutOfSyncAlert: React.FC<OutOfSyncAlertProps> = ({
     />
   );
 };
-
-export default OutOfSyncAlert;
