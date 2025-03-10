@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import classNames from 'classnames';
 import {
   Badge,
   Card,
@@ -20,6 +21,7 @@ type BaseComponentCardProps = {
   tags: ContentHitTags;
   actions: React.ReactNode;
   hasUnpublishedChanges?: boolean;
+  disabled?: boolean;
   onSelect: () => void
 };
 
@@ -31,6 +33,7 @@ const BaseComponentCard = ({
   tags,
   actions,
   onSelect,
+  disabled,
   ...props
 } : BaseComponentCardProps) => {
   const tagCount = useMemo(() => {
@@ -43,9 +46,15 @@ const BaseComponentCard = ({
 
   const componentIcon = getItemIcon(componentType);
   const intl = useIntl();
-
   return (
-    <Container className="library-component-card">
+    <Container
+      className={classNames(
+        'library-component-card',
+        {
+          'disabled-card': disabled,
+        },
+      )}
+    >
       <Card
         isClickable
         onClick={onSelect}

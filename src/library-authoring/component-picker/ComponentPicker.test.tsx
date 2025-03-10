@@ -274,6 +274,6 @@ describe('<ComponentPicker />', () => {
     fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
 
     // Wait for the content library to load
-    await screen.findByText(/Only published content is visible and available for reuse./i);
+    await screen.findByText(/Only published content is available for reuse./i);
   });
 });

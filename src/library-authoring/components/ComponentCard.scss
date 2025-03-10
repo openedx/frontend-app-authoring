@@ -1,6 +1,13 @@
 .library-component-card {
   .pgn__card {
-    height: 100%
+    height: 100%;
+  }
+
+  &.disabled-card {
+    .pgn__card {
+      opacity: .6;
+      pointer-events: none;
+    }
   }
 
   .library-component-header {
