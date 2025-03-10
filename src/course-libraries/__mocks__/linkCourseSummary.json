@@ -1,0 +1,20 @@
+[
+  {
+    "upstreamContextTitle": "CS problems 3",
+    "upstreamContextKey": "lib:OpenedX:CSPROB3",
+    "readyToSyncCount": 5,
+    "totalCount": 14
+  },
+  {
+    "upstreamContextTitle": "CS problems 2",
+    "upstreamContextKey": "lib:OpenedX:CSPROB2",
+    "readyToSyncCount": 0,
+    "totalCount": 21
+  },
+  {
+    "upstreamContextTitle": "CS problems",
+    "upstreamContextKey": "lib:OpenedX:CSPROB",
+    "readyToSyncCount": 0,
+    "totalCount": 3
+  }
+]

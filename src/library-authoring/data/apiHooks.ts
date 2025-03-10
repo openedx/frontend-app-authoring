@@ -46,7 +46,6 @@ import {
   deleteXBlockAsset,
   restoreLibraryBlock,
   getBlockTypes,
-  getComponentDownstreamLinks,
 } from './api';
 import { VersionSpec } from '../LibraryBlock';
 
@@ -561,14 +560,3 @@ export const useUpdateComponentCollections = (libraryId: string, usageKey: strin
     },
   });
 };
-
-/**
- * Get the downstream links of a component in a library
- */
-export const useComponentDownstreamLinks = (usageKey: string) => (
-  useQuery({
-    queryKey: xblockQueryKeys.componentDownstreamLinks(usageKey),
-    queryFn: () => getComponentDownstreamLinks(usageKey),
-    enabled: !!usageKey,
-  })
-);
