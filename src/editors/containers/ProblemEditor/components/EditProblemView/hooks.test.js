@@ -280,7 +280,7 @@ describe('EditProblemView hooks parseState', () => {
     const lmsEndpointUrl = 'someUrl';
     const editorRef = refMock;
     const expectedSettings = {
-      max_attempts: '',
+      max_attempts: null,
       weight: 1,
       rerandomize: null,
       showanswer: ShowAnswerTypesKeys.AFTER_SOME_NUMBER_OF_ATTEMPTS,
@@ -328,7 +328,7 @@ describe('EditProblemView hooks parseState', () => {
       });
       expect(settings).toEqual({
         max_attempts: '',
-        rerandomize: null,
+        rerandomize: 'never',
         show_reset_button: false,
         showanswer: 'after_attempts',
         attempts_before_showanswer_button: 0,

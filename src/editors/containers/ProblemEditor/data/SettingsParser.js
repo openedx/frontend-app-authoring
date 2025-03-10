@@ -5,11 +5,12 @@ import { ShowAnswerTypes, RandomizationTypesKeys } from '../../../data/constants
 export const popuplateItem = (parentObject, itemName, statekey, metadata, defaultValue = null, allowNull = false) => {
   let parent = parentObject;
   const item = _.get(metadata, itemName, null);
-  const equalsDefault = item === defaultValue;
-  if (allowNull) {
-    parent = { ...parentObject, [statekey]: item };
-  } else if (!_.isNil(item) && !equalsDefault) {
-    parent = { ...parentObject, [statekey]: item };
+
+  // if item is null, undefined, or empty string, use defaultValue
+  const finalValue = (!_.isNil(item) && item !== '') ? item : defaultValue;
+
+  if (allowNull || (!_.isNil(finalValue) && finalValue !== defaultValue)) {
+    parent = { ...parentObject, [statekey]: finalValue };
   }
   return parent;
 };
