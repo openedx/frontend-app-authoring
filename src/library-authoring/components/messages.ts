@@ -146,5 +146,30 @@ const messages = defineMessages({
     defaultMessage: 'Unpublished changes',
     description: 'Badge text shown when a component has unpublished changes',
   },
+  publishConfirmationTitle: {
+    id: 'course-authoring.library-authoring.component.publish-confirmation.title',
+    defaultMessage: 'Publish {displayName}',
+    description: 'Title of the modal to confirm publish a component in a library',
+  },
+  publishConfirmationButton: {
+    id: 'course-authoring.library-authoring.component.publish-confirmation.confirm',
+    defaultMessage: 'Publish',
+    description: 'Text in confirmation button of the modal to confirm publish a component in a library',
+  },
+  publishConfirmationBody: {
+    id: 'course-authoring.library-authoring.component.publish-confirmation.body',
+    defaultMessage: 'Publish all unpublished changes for this component?',
+    description: 'Body text of the modal to confirm publish a component in a library',
+  },
+  publishConfimrationDownstreamsBody: {
+    id: 'course-authoring.library-authoring.component.publish-confirmation.downsteams-body',
+    defaultMessage: 'This content is currently being used in:',
+    description: 'Body text to show downstreams of the modal to confirm publish a component in a library',
+  },
+  publishConfirmationDownstreamsAlert: {
+    id: 'course-authoring.library-authoring.component.publish-confirmation.downsteams-alert',
+    defaultMessage: 'This component can be synced in courses after publish.',
+    description: 'Alert text of the modal to confirm publish a component in a library.',
+  },
 });
 export default messages;
