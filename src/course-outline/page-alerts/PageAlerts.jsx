@@ -24,7 +24,7 @@ import advancedSettingsMessages from '../../advanced-settings/messages';
 import { getPasteFileNotices } from '../data/selectors';
 import { dismissError, removePasteFileNotices } from '../data/slice';
 import { API_ERROR_TYPES } from '../constants';
-import OutOfSyncAlert from '../../course-libraries/OutOfSyncAlert';
+import { OutOfSyncAlert } from '../../course-libraries/OutOfSyncAlert';
 
 const PageAlerts = ({
   courseId,
