@@ -110,6 +110,7 @@ export const PreviewLibraryXBlockChanges = ({
       className="lib-preview-xblock-changes-modal"
       hasCloseButton
       isFullscreenOnMobile
+      isOverflowVisible={false}
     >
       <ModalDialog.Header>
         <ModalDialog.Title>
