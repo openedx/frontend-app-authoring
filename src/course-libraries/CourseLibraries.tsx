@@ -148,6 +148,9 @@ export const CourseLibraries: React.FC<Props> = ({ courseId }) => {
     if (isLoading) {
       return <Loading />;
     }
+    if (tabKey !== CourseLibraryTabs.review) {
+      return null;
+    }
     if (!outOfSyncCount || outOfSyncCount === 0) {
       return (
         <Stack direction="horizontal" gap={2}>
@@ -159,7 +162,7 @@ export const CourseLibraries: React.FC<Props> = ({ courseId }) => {
       );
     }
     return <ReviewTabContent courseId={courseId} />;
-  }, [outOfSyncCount, isLoading]);
+  }, [outOfSyncCount, isLoading, tabKey]);
 
   if (!isLoadingStudioHome && (!librariesV2Enabled || isFailedLoadingStudioHome)) {
     return (
