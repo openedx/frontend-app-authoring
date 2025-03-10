@@ -1,15 +1,14 @@
 import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Button } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { Divider } from '../../../../generic/divider';
 import { getCanEdit, getCourseUnitData } from '../../../data/selectors';
-import { copyToClipboard } from '../../../../generic/data/thunks';
+import { useClipboard } from '../../../../generic/clipboard';
 import messages from '../../messages';
 
 const ActionButtons = ({ openDiscardModal, handlePublishing }) => {
-  const dispatch = useDispatch();
   const intl = useIntl();
   const {
     id,
@@ -18,6 +17,7 @@ const ActionButtons = ({ openDiscardModal, handlePublishing }) => {
     enableCopyPasteUnits,
   } = useSelector(getCourseUnitData);
   const canEdit = useSelector(getCanEdit);
+  const { copyToClipboard } = useClipboard();
 
   return (
     <>
@@ -40,7 +40,7 @@ const ActionButtons = ({ openDiscardModal, handlePublishing }) => {
         <>
           <Divider className="course-unit-sidebar-footer__divider" />
           <Button
-            onClick={() => dispatch(copyToClipboard(id))}
+            onClick={() => copyToClipboard(id)}
             variant="outline-primary"
             size="sm"
           >
