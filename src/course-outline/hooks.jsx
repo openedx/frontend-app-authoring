@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { useToggle } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
 
-import { copyToClipboard } from '../generic/data/thunks';
 import { getSavingStatus as getGenericSavingStatus } from '../generic/data/selectors';
 import { RequestStatus } from '../data/constants';
 import { COURSE_BLOCK_NAMES } from './constants';
@@ -94,10 +93,6 @@ const useCourseOutline = ({ courseId }) => {
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
 
   const isSavingStatusFailed = savingStatus === RequestStatus.FAILED || genericSavingStatus === RequestStatus.FAILED;
-
-  const handleCopyToClipboardClick = (usageKey) => {
-    dispatch(copyToClipboard(usageKey));
-  };
 
   const handlePasteClipboardClick = (parentLocator, sectionId) => {
     dispatch(pasteClipboardContent(parentLocator, sectionId));
@@ -339,7 +334,6 @@ const useCourseOutline = ({ courseId }) => {
     openUnitPage,
     handleNewUnitSubmit,
     handleVideoSharingOptionChange,
-    handleCopyToClipboardClick,
     handlePasteClipboardClick,
     notificationDismissUrl,
     discussionsSettings,
