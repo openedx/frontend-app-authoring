@@ -1,7 +1,7 @@
 import { useState, useMemo, FC } from 'react';
 import {
   Card,
-  CheckBox,
+  Form,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
@@ -44,15 +44,15 @@ const ScanResults: FC<Props> = ({ data }) => {
         <header className="sub-header-content">
           <h2 className="sub-header-content-title">{intl.formatMessage(messages.scanHeader)}</h2>
           <span className="locked-links-checkbox-wrapper">
-            <CheckBox
-              className="locked-links-checkbox"
-              type="checkbox"
-              checked={showLockedLinks}
-              onClick={() => {
-                setShowLockedLinks(!showLockedLinks);
-              }}
-              label={intl.formatMessage(messages.lockedCheckboxLabel)}
-            />
+              <Form.CheckBox
+                className="locked-links-checkbox"
+                checked={showLockedLinks}
+                onClick={() => {
+                  setShowLockedLinks(!showLockedLinks);
+                }}
+              > 
+                {intl.formatMessage(messages.lockedCheckboxLabel)}
+              </Form.CheckBox>
             <LockedInfoIcon />
           </span>
         </header>
