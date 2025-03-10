@@ -10,7 +10,7 @@
   }
 
   .whats-in-clipboard-text {
-    font-size: $font-size-sm;
+    font-size: var(--pgn-typography-font-size-sm);
   }
 }
 
@@ -35,9 +35,9 @@
 
   .clipboard-popover-detail-block-type {
     display: block;
-    font-size: $font-size-sm;
+    font-size: var(--pgn-typography-font-size-sm);
     line-height: 1.313rem;
-    color: $gray-700;
+    color: var(--pgn-color-gray-700);
   }
 
   .clipboard-popover-detail-course-name {

@@ -17,7 +17,7 @@
 
     &:hover, &:active, &:focus {
       background-color: lighten(#005C9E, 20%);
-      border: 1px solid $primary;
+      border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
     }
   }
@@ -42,7 +42,7 @@
 
     &:hover, &:active, &:focus {
       background-color: lighten(#9747FF, 20%);
-      border: 1px solid $primary;
+      border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
     }
   }
@@ -67,7 +67,7 @@
 
     &:hover, &:active, &:focus {
       background-color: lighten(#FFCD29, 20%);
-      border: 1px solid $primary;
+      border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
     }
   }
@@ -92,7 +92,7 @@
 
     &:hover, &:active, &:focus {
       background-color: lighten(#358F0A, 20%);
-      border: 1px solid $primary;
+      border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
     }
   }
@@ -117,7 +117,7 @@
 
     &:hover, &:active, &:focus {
       background-color: lighten(#0B8E77, 20%);
-      border: 1px solid $primary;
+      border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
     }
   }
@@ -142,7 +142,7 @@
 
     &:hover, &:active, &:focus {
       background-color: lighten(#646464, 20%);
-      border: 1px solid $primary;
+      border: 1px solid var(--pgn-color-primary-base);
       margin: -1px;
     }
   }
