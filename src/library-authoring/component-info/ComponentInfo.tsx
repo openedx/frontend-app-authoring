@@ -110,7 +110,7 @@ const ComponentInfo = () => {
     sidebarAction,
   } = useSidebarContext();
   const [
-    isOpenPublisConfirmation,
+    isPublishConfirmationOpen,
     openPublishConfirmation,
     closePublishConfirmation,
   ] = useToggle(false);
@@ -197,7 +197,7 @@ const ComponentInfo = () => {
         </Tabs>
       </Stack>
       <PublishConfirmationModal
-        isOpen={isOpenPublisConfirmation}
+        isOpen={isPublishConfirmationOpen}
         onClose={closePublishConfirmation}
         onConfirm={publish}
         displayName={componentMetadata?.displayName || ''}
