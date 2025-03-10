@@ -154,20 +154,20 @@ const ComponentReviewList = ({
     });
   };
   // Show preview changes on review
-  const onReview = (info: ContentHit) => {
+  const onReview = useCallback((info: ContentHit) => {
     setSeletecdBlockData(info);
     openModal();
-  };
+  }, [setSeletecdBlockData, openModal]);
 
-  const onIgnoreClick = (info: ContentHit) => {
+  const onIgnoreClick = useCallback((info: ContentHit) => {
     setSeletecdBlockData(info);
     openConfirmModal();
-  };
+  }, [setSeletecdBlockData, openConfirmModal]);
 
-  const reloadLinks = (usageKey: string) => {
+  const reloadLinks = useCallback((usageKey: string) => {
     const courseKey = outOfSyncComponentsByKey[usageKey].downstreamContextKey;
     queryClient.invalidateQueries(courseLibrariesQueryKeys.courseLibraries(courseKey));
-  };
+  }, [outOfSyncComponentsByKey]);
 
   const postChange = (accept: boolean) => {
     // istanbul ignore if: this should never happen
@@ -188,7 +188,7 @@ const ComponentReviewList = ({
     }
   };
 
-  const updateBlock = async (info: ContentHit) => {
+  const updateBlock = useCallback(async (info: ContentHit) => {
     try {
       await acceptChangesMutation.mutateAsync(info.usageKey);
       reloadLinks(info.usageKey);
@@ -199,9 +199,9 @@ const ComponentReviewList = ({
     } catch (e) {
       showToast(intl.formatMessage(previewChangesMessages.acceptChangesFailure));
     }
-  };
+  }, []);
 
-  const ignoreBlock = async () => {
+  const ignoreBlock = useCallback(async () => {
     // istanbul ignore if: this should never happen
     if (!blockData) {
       return;
@@ -218,7 +218,7 @@ const ComponentReviewList = ({
     } finally {
       closeConfirmModal();
     }
-  };
+  }, [blockData]);
 
   const orderInfo = useMemo(() => {
     if (searchSortOrder !== SearchSortOption.RECENTLY_MODIFIED) {
