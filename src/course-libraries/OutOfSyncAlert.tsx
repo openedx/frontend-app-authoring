@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button } from '@openedx/paragon';
 import { Loop } from '@openedx/paragon/icons';
-import _ from 'lodash';
 import AlertMessage from '../generic/alert-message';
 import { useEntityLinksSummaryByDownstreamContext } from './data/apiHooks';
 import messages from './messages';
@@ -27,7 +26,7 @@ export const OutOfSyncAlert: React.FC<OutOfSyncAlertProps> = ({
 }) => {
   const intl = useIntl();
   const { data, isLoading } = useEntityLinksSummaryByDownstreamContext(courseId);
-  const outOfSyncCount = data?.reduce((count, lib) => count += lib.readyToSyncCount, 0);
+  const outOfSyncCount = data?.reduce((count, lib) => count + lib.readyToSyncCount, 0);
   const alertKey = `outOfSyncCountAlert-${courseId}`;
 
   useEffect(() => {

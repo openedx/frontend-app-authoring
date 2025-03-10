@@ -116,13 +116,27 @@ const ComponentReviewList = ({
     searchKeywords,
     searchSortOrder,
     hasError,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
   } = useSearchContext() as {
     hits: ContentHit[];
     isLoading: boolean;
     searchKeywords: string;
     searchSortOrder: SearchSortOption;
     hasError: boolean;
+    hasNextPage: boolean | undefined,
+    isFetchingNextPage: boolean;
+    fetchNextPage: () => void;
   };
+
+  useLoadOnScroll(
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    true,
+  );
+
   const outOfSyncComponentsByKey = useMemo(
     () => _.keyBy(outOfSyncComponents, 'downstreamUsageKey'),
     [outOfSyncComponents],
