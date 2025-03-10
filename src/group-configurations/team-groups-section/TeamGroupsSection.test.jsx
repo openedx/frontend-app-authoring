@@ -10,7 +10,7 @@ const renderComponent = (props = {}) => render(
       availableGroup={teamGroupsMock}
       {...props}
     />
-  </IntlProvider>
+  </IntlProvider>,
 );
 
 describe('<TeamGroupsSection />', () => {
