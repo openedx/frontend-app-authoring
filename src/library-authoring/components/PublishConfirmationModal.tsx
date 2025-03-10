@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { Alert, Button, useToggle } from '@openedx/paragon';
+import { Alert, Button } from '@openedx/paragon';
 
 import BaseModal from '../../editors/sharedComponents/BaseModal';
 import messages from './messages';
 import infoMessages from '../component-info/messages';
 import { ComponentUsage } from '../component-info/ComponentUsage';
+import { useComponentDownstreamLinks } from '../data/apiHooks';
 
 interface PublishConfirmationModalProps {
   isOpen: boolean,
@@ -26,16 +26,12 @@ const PublishConfirmationModal = ({
 }: PublishConfirmationModalProps) => {
   const intl = useIntl();
 
-  const [
-    isDownstreamsEmpty,
-    setDownstreamsEmpty,
-    setDownstreamsNotEmpty,
-  ] = useToggle(false);
+  const {
+    data: dataDownstreamLinks,
+    isLoading: isLoadingDownstreamLinks,
+  } = useComponentDownstreamLinks(usageKey);
 
-  useEffect(() => {
-    // Set to default 'false' when changing usage key
-    setDownstreamsNotEmpty();
-  }, [usageKey]);
+  const hasDownstreamUsages = !isLoadingDownstreamLinks && dataDownstreamLinks?.length !== 0;
 
   return (
     <BaseModal
@@ -60,11 +56,11 @@ const PublishConfirmationModal = ({
         </div>
         {showDownstreams && (
           <div className="mt-4">
-            {!isDownstreamsEmpty ? (
+            {hasDownstreamUsages ? (
               <>
                 <FormattedMessage {...messages.publishConfimrationDownstreamsBody} />
                 <div className="mt-3 mb-3 border">
-                  <ComponentUsage usageKey={usageKey} callbackEmpty={setDownstreamsEmpty} />
+                  <ComponentUsage usageKey={usageKey} />
                 </div>
                 <Alert variant="warning">
                   <FormattedMessage {...messages.publishConfirmationDownstreamsAlert} />
