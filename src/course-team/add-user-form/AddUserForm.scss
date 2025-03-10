@@ -1,11 +1,11 @@
 .add-user-form {
   display: flex;
   flex-direction: column;
-  border: .0625rem solid $gray-200;
+  border: .0625rem solid var(--pgn-color-gray-200);
   border-radius: .375rem;
-  box-shadow: 0 1px 1px $gray-200;
+  box-shadow: 0 1px 1px var(--pgn-color-gray-200);
   margin-bottom: 1.25rem;
-  background-color: $white;
+  background-color: var(--pgn-color-white);
 
   .form-title {
     font-size: 1.5rem;
@@ -14,7 +14,7 @@
 
   .form-field {
     padding: 1.25rem 1.875rem;
-    margin-bottom: $spacer;
+    margin-bottom: var(--pgn-spacing-spacer-base);
 
     .pgn__form-group {
       margin-bottom: 0;
@@ -31,12 +31,12 @@
   }
 
   .form-helper-text {
-    font-size: $font-size-xs;
+    font-size: var(--pgn-typography-font-size-xs);
   }
 
   .pgn__action-row {
-    padding: $spacer 1.875rem;
-    border-top: .0625rem solid $gray-200;
+    padding: var(--pgn-spacing-spacer-base) 1.875rem;
+    border-top: .0625rem solid var(--pgn-color-gray-200);
     justify-content: flex-start;
   }
 }

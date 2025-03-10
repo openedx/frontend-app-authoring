@@ -13,12 +13,12 @@
 }
 
 .configuration-card {
-  @include pgn-box-shadow(1, "down");
+  box-shadow: var(--pgn-elevation-box-shadow-down-1);
 
-  background: $white;
+  background: var(--pgn-color-white);
   border-radius: .375rem;
-  padding: map-get($spacers, 4);
-  margin-bottom: map-get($spacers, 4);
+  padding: var(--pgn-spacing-spacer-4);
+  margin-bottom: var(--pgn-spacing-spacer-4);
 
   .configuration-card-header {
     display: flex;
@@ -30,7 +30,7 @@
       align-items: flex-start;
       padding: 0;
       height: auto;
-      color: $black;
+      color: var(--pgn-color-black);
 
       &:focus::before {
         display: none;
@@ -38,8 +38,8 @@
 
       .pgn__icon {
         display: inline-block;
-        margin-right: map-get($spacers, 1);
-        margin-bottom: map-get($spacers, 2\.5);
+        margin-right: var(--pgn-spacing-spacer-1);
+        margin-bottom: var(--pgn-spacing-spacer-2-5);
       }
 
       .pgn__hstack {
@@ -55,25 +55,25 @@
       text-align: left;
 
       h3 {
-        margin-bottom: map-get($spacers, 2);
+        margin-bottom: var(--pgn-spacing-spacer-2);
       }
     }
 
     .configuration-card-header__badge {
       display: flex;
-      padding: .125rem map-get($spacers, 2);
+      padding: .125rem var(--pgn-spacing-spacer-2);
       justify-content: center;
       align-items: center;
-      border-radius: $border-radius;
-      border: .063rem solid $light-300;
-      background: $white;
+      border-radius: var(--pgn-size-border-radius-base);
+      border: .063rem solid var(--pgn-color-light-300);
+      background: var(--pgn-color-white);
 
       &:first-child {
-        margin-left: map-get($spacers, 2\.5);
+        margin-left: var(--pgn-spacing-spacer-2-5);
       }
 
       & span:last-child {
-        color: $primary-700;
+        color: var(--pgn-color-primary-700);
       }
     }
 
@@ -83,18 +83,18 @@
   }
 
   .configuration-card-content {
-    margin: 0 map-get($spacers, 2) 0 map-get($spacers, 4);
+    margin: 0 var(--pgn-spacing-spacer-2) 0 var(--pgn-spacing-spacer-4);
 
     .configuration-card-content__experiment-stack {
       display: flex;
       justify-content: space-between;
-      padding: map-get($spacers, 2\.5) 0;
+      padding: var(--pgn-spacing-spacer-2-5) 0;
       margin: 0;
-      color: $primary-500;
-      gap: $spacer;
+      color: var(--pgn-color-primary-500);
+      gap: var(--pgn-spacing-spacer-base);
 
       &:not(:last-child) {
-        border-bottom: .063rem solid $light-400;
+        border-bottom: .063rem solid var(--pgn-color-light-400);
       }
     }
   }
@@ -105,20 +105,20 @@
 
   .configuration-form-group {
     .pgn__form-label {
-      font: normal $font-weight-bold .875rem/1.25rem $font-family-base;
-      color: $gray-700;
+      font: normal var(--pgn-typography-font-weight-bold) .875rem/1.25rem var(--pgn-typography-font-family-base);
+      color: var(--pgn-color-gray-700);
       margin-bottom: .875rem;
     }
 
     .pgn__form-control-description,
     .pgn__form-text {
-      font: normal $font-weight-normal .75rem/1.25rem $font-family-base;
-      color: $gray-500;
+      font: normal var(--pgn-typography-font-weight-normal) .75rem/1.25rem var(--pgn-typography-font-family-base);
+      color: var(--pgn-color-gray-500);
       margin-top: .625rem;
     }
 
     .pgn__form-text-invalid {
-      color: $form-feedback-invalid-color;
+      color: var(--pgn-color-form-feedback-invalid);
     }
   }
 

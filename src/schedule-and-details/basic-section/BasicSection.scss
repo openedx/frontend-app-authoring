@@ -8,9 +8,9 @@
   }
 
   .pgn__pageBanner-component {
-    @include pgn-box-shadow(1, "down");
+    box-shadow: var(--pgn-elevation-box-shadow-down-1);
 
-    background-color: $white;
+    background-color: var(--pgn-color-white);
     border-radius: .375rem;
   }
 
