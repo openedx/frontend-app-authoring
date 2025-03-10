@@ -30,6 +30,7 @@ export const courseLibrariesQueryKeys = {
 
 /**
  * Hook to fetch publishable entity links by course key.
+ * (That is, get a list of the library components used in the given course.)
  */
 export const useEntityLinks = ({
   courseId, readyToSync, upstreamUsageKey, pageSize,
