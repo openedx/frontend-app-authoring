@@ -1,5 +1,5 @@
 import React from 'react';
-import { StudioFooter } from '@edx/frontend-component-footer';
+import { StudioFooterSlot } from '@openedx/frontend-slot-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Container,
@@ -163,7 +163,7 @@ const CreateLibrary = () => {
         </Formik>
         {isError && (<AlertError error={error} />)}
       </Container>
-      <StudioFooter />
+      <StudioFooterSlot />
     </>
   );
 };
