@@ -100,7 +100,7 @@ module.exports = {
       read_only: true,
       scheme: 'team',
       version: 3,
-    }
+    },
   ],
   experimentGroupConfigurations: [
     {
