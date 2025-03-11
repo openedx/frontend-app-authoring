@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import { Button, OverlayTrigger, Tooltip } from '@openedx/paragon';
 import {
   Add as IconAdd,
@@ -9,7 +8,7 @@ import {
   ArrowDropUp as ArrowUpIcon,
 } from '@openedx/paragon/icons';
 
-import CourseOutlineAnalyticsSlot from '../../plugin-slots/CourseOutlineAnalyticsSlot';
+import CourseOutlineAnalyticsSlot from 'CourseAuthoring/plugin-slots/CourseOutlineAnalyticsSlot';
 import messages from './messages';
 
 const HeaderNavigations = ({

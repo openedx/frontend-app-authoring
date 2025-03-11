@@ -160,6 +160,8 @@ const CourseUnit = ({ courseId }) => {
               <HeaderNavigations
                 category={unitCategory}
                 headerNavigationsActions={headerNavigationsActions}
+                unitTitle={unitTitle}
+                courseVerticalChildren={courseVerticalChildren.children}
               />
             )}
           />

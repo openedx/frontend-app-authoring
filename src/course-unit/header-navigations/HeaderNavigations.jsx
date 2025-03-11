@@ -3,10 +3,13 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button } from '@openedx/paragon';
 import { Edit as EditIcon } from '@openedx/paragon/icons';
 
+import CourseUnitAnalyticsSlot from 'CourseAuthoring/plugin-slots/CourseUnitAnalyticsSlot';
 import { COURSE_BLOCK_NAMES } from '../../constants';
 import messages from './messages';
 
-const HeaderNavigations = ({ headerNavigationsActions, category }) => {
+const HeaderNavigations = ({
+  headerNavigationsActions, category, unitTitle, courseVerticalChildren,
+}) => {
   const intl = useIntl();
   const { handleViewLive, handlePreview, handleEdit } = headerNavigationsActions;
 
@@ -38,6 +41,11 @@ const HeaderNavigations = ({ headerNavigationsActions, category }) => {
           {intl.formatMessage(messages.editButton)}
         </Button>
       )}
+      <CourseUnitAnalyticsSlot
+        unitTitle={unitTitle}
+        isUnitVerticalType={category === COURSE_BLOCK_NAMES.vertical.id}
+        courseVerticalChildren={courseVerticalChildren}
+      />
     </nav>
   );
 };
@@ -48,6 +56,15 @@ HeaderNavigations.propTypes = {
     handlePreview: PropTypes.func.isRequired,
     handleEdit: PropTypes.func.isRequired,
   }).isRequired,
+  unitTitle: PropTypes.string.isRequired,
+  courseVerticalChildren: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      blockId: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      blockType: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
   category: PropTypes.string.isRequired,
 };
 
