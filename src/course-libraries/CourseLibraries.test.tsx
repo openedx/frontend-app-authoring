@@ -144,7 +144,6 @@ describe('<CourseLibraries ReviewTab />', () => {
   it('shows empty state when no readyToSync links are present', async () => {
     await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKeyUpToDate);
     const emptyMsg = await screen.findByText('All components are up to date');
-    screen.debug();
     expect(emptyMsg).toBeInTheDocument();
   });
 
@@ -166,8 +165,8 @@ describe('<CourseLibraries ReviewTab />', () => {
     userEvent.click(updateBtns[0]);
     await waitFor(() => {
       expect(axiosMock.history.post.length).toEqual(1);
-      expect(axiosMock.history.post[0].url).toEqual(libraryBlockChangesUrl(usageKey));
     });
+    expect(axiosMock.history.post[0].url).toEqual(libraryBlockChangesUrl(usageKey));
     expect(mockShowToast).toHaveBeenCalledWith('Success! "Dropdown" is updated');
     expect(mockInvalidateQueries).toHaveBeenCalledWith(['courseLibraries', 'course-v1:OpenEdx+DemoX+CourseX']);
   });
@@ -185,8 +184,8 @@ describe('<CourseLibraries ReviewTab />', () => {
     userEvent.click(confirmBtn);
     await waitFor(() => {
       expect(axiosMock.history.post.length).toEqual(1);
-      expect(axiosMock.history.post[0].url).toEqual(libraryBlockChangesUrl(usageKey));
     });
+    expect(axiosMock.history.post[0].url).toEqual(libraryBlockChangesUrl(usageKey));
     expect(mockShowToast).toHaveBeenCalledWith('Success! "Dropdown" is updated');
     expect(mockInvalidateQueries).toHaveBeenCalledWith(['courseLibraries', 'course-v1:OpenEdx+DemoX+CourseX']);
   });
@@ -206,8 +205,8 @@ describe('<CourseLibraries ReviewTab />', () => {
     userEvent.click(confirmBtn);
     await waitFor(() => {
       expect(axiosMock.history.delete.length).toEqual(1);
-      expect(axiosMock.history.delete[0].url).toEqual(libraryBlockChangesUrl(usageKey));
     });
+    expect(axiosMock.history.delete[0].url).toEqual(libraryBlockChangesUrl(usageKey));
     expect(mockShowToast).toHaveBeenCalledWith(
       '"Dropdown" will remain out of sync with library content. You will be notified when this component is updated again.',
     );
@@ -232,8 +231,8 @@ describe('<CourseLibraries ReviewTab />', () => {
     userEvent.click(confirmBtn);
     await waitFor(() => {
       expect(axiosMock.history.delete.length).toEqual(1);
-      expect(axiosMock.history.delete[0].url).toEqual(libraryBlockChangesUrl(usageKey));
     });
+    expect(axiosMock.history.delete[0].url).toEqual(libraryBlockChangesUrl(usageKey));
     expect(mockShowToast).toHaveBeenCalledWith(
       '"Dropdown" will remain out of sync with library content. You will be notified when this component is updated again.',
     );
