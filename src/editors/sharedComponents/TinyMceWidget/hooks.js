@@ -479,14 +479,21 @@ export const setAssetToStaticUrl = ({ editorValue, lmsEndpointUrl }) => {
     content = updatedContent;
   });
 
-  /* istanbul ignore next */
+  const updatedStaticUrls = [];
   assetSrcs.filter(src => src.startsWith('static/')).forEach(src => {
     // Before storing assets we make sure that library static assets points again to
     // `/static/dummy.jpg` instead of using the relative url `static/dummy.jpg`
     const nameFromEditorSrc = parseAssetName(src);
-    const portableUrl = `/${ nameFromEditorSrc}`;
+    const portableUrl = `/${nameFromEditorSrc}`;
+    if (updatedStaticUrls.includes(portableUrl)) {
+      // If same image is used multiple times in the same src,
+      // replace all occurence once and do not process them again.
+      return;
+    }
+    // track updated urls to process only once.
+    updatedStaticUrls.push(portableUrl);
     const currentSrc = src.substring(0, src.search(/("|&quot;)/));
-    const updatedContent = content.replace(currentSrc, portableUrl);
+    const updatedContent = content.replaceAll(currentSrc, portableUrl);
     content = updatedContent;
   });
   return content;

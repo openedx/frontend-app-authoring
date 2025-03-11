@@ -2,9 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
+import { getConfig } from '@edx/frontend-platform';
+
 import { selectors } from '../../../../../data/redux';
 import messages from './messages';
-
 import TinyMceWidget from '../../../../../sharedComponents/TinyMceWidget';
 import { prepareEditorRef, replaceStaticWithAsset } from '../../../../../sharedComponents/TinyMceWidget/hooks';
 
@@ -14,6 +15,7 @@ const ExplanationWidget = ({
   learningContextId,
   images,
   isLibrary,
+  blockId,
   // injected
   intl,
 }) => {
@@ -24,6 +26,10 @@ const ExplanationWidget = ({
     learningContextId,
   });
   const solutionContent = newContent || initialContent;
+  let staticRootUrl;
+  if (isLibrary) {
+    staticRootUrl = `${getConfig().STUDIO_BASE_URL }/library_assets/blocks/${ blockId }/`;
+  }
   if (!refReady) { return null; }
   return (
     <div className="tinyMceWidget mt-4 text-primary-500">
@@ -45,6 +51,7 @@ const ExplanationWidget = ({
           images,
           isLibrary,
           learningContextId,
+          staticRootUrl,
         }}
       />
     </div>
@@ -66,6 +73,7 @@ export const mapStateToProps = (state) => ({
   learningContextId: selectors.app.learningContextId(state),
   images: selectors.app.images(state),
   isLibrary: selectors.app.isLibrary(state),
+  blockId: selectors.app.blockId(state),
 });
 
 export const ExplanationWidgetInternal = ExplanationWidget; // For testing only

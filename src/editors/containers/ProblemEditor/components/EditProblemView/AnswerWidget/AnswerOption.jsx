@@ -9,8 +9,9 @@ import {
 } from '@openedx/paragon';
 import { FeedbackOutline, DeleteOutline } from '@openedx/paragon/icons';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { getConfig } from '@edx/frontend-platform';
 import messages from './messages';
-import { selectors } from '../../../../../data/redux';
+import { actions, selectors } from '../../../../../data/redux';
 import { answerOptionProps } from '../../../../../data/services/cms/types';
 import Checker from './components/Checker';
 import { FeedbackBox } from './components/Feedback';
@@ -27,6 +28,7 @@ const AnswerOption = ({
   problemType,
   images,
   isLibrary,
+  blockId,
   learningContextId,
 }) => {
   const dispatch = useDispatch();
@@ -41,6 +43,10 @@ const AnswerOption = ({
   const setSelectedFeedback = hooks.setSelectedFeedback({ answer, hasSingleAnswer, dispatch });
   const setUnselectedFeedback = hooks.setUnselectedFeedback({ answer, hasSingleAnswer, dispatch });
   const { isFeedbackVisible, toggleFeedback } = hooks.useFeedback(answer);
+  let staticRootUrl;
+  if (isLibrary) {
+    staticRootUrl = `${getConfig().STUDIO_BASE_URL }/library_assets/blocks/${ blockId }/`;
+  }
 
   const getInputArea = () => {
     if ([ProblemTypeKeys.SINGLESELECT, ProblemTypeKeys.MULTISELECT].includes(problemType)) {
@@ -54,6 +60,7 @@ const AnswerOption = ({
             images,
             isLibrary,
             learningContextId,
+            staticRootUrl,
           }}
         />
       );
@@ -158,6 +165,7 @@ export const mapStateToProps = (state) => ({
   images: selectors.app.images(state),
   isLibrary: selectors.app.isLibrary(state),
   learningContextId: selectors.app.learningContextId(state),
+  blockId: selectors.app.blockId(state),
 });
 
 export const mapDispatchToProps = {};

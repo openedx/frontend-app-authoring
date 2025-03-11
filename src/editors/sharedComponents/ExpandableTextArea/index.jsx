@@ -11,8 +11,9 @@ const ExpandableTextArea = ({
   errorMessage,
   ...props
 }) => {
-  const { editorRef, setEditorRef } = prepareEditorRef();
+  const { editorRef, refReady, setEditorRef } = prepareEditorRef();
 
+  if (!refReady) { return null; }
   return (
     <>
       <div className="expandable-mce error">
