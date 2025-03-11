@@ -27,7 +27,7 @@ const TitleButton = ({
     >
       <div className="configuration-card-header__title">
         <h3>
-          <Truncate lines={1}>{name}</Truncate>
+          <Truncate.Deprecated lines={1}>{name}</Truncate.Deprecated>
         </h3>
         <span className="x-small text-gray-500">
           {formatMessage(messages.titleId, { id })}
