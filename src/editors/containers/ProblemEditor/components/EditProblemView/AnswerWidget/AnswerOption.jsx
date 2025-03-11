@@ -11,7 +11,7 @@ import { FeedbackOutline, DeleteOutline } from '@openedx/paragon/icons';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 import messages from './messages';
-import { actions, selectors } from '../../../../../data/redux';
+import { selectors } from '../../../../../data/redux';
 import { answerOptionProps } from '../../../../../data/services/cms/types';
 import Checker from './components/Checker';
 import { FeedbackBox } from './components/Feedback';
