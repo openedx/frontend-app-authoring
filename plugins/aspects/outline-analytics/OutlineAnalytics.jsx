@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Button, Icon, IconButton, Sheet, Stack,
+  Button, Icon, Sheet, Stack,
 } from '@openedx/paragon';
 
 import { AutoGraph, Close, SchoolOutline } from '@openedx/paragon/icons';
