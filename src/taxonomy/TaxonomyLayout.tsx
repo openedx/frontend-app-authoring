@@ -1,37 +1,30 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { StudioFooter } from '@edx/frontend-component-footer';
-import { useIntl } from '@edx/frontend-platform/i18n';
 import { Outlet, ScrollRestoration } from 'react-router-dom';
 import { Toast } from '@openedx/paragon';
 
-import AlertMessage from '../generic/alert-message';
+import AlertError, { type AlertErrorProps } from '../generic/alert-error';
 import Header from '../header';
-import { type AlertProps, TaxonomyContext } from './common/context';
-import messages from './messages';
+import { TaxonomyContext } from './common/context';
 
 export const TaxonomyLayout = () => {
-  const intl = useIntl();
   // Use `setToastMessage` to show the toast.
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   // Use `setToastMessage` to show the alert.
-  const [alertProps, setAlertProps] = useState<AlertProps | null>(null);
+  const [alertError, setAlertError] = useState<AlertErrorProps | null>(null);
 
   const context = useMemo(() => ({
-    toastMessage, setToastMessage, alertProps, setAlertProps,
+    toastMessage, setToastMessage, alertError, setAlertError,
   }), []);
 
   return (
     <TaxonomyContext.Provider value={context}>
       <div className="bg-light-400">
         <Header isHiddenMainMenu />
-        { alertProps && (
-          <AlertMessage
-            data-testid="taxonomy-alert"
-            className="mb-0"
-            dismissible
-            closeLabel={intl.formatMessage(messages.taxonomyDismissLabel)}
-            onClose={() => setAlertProps(null)}
-            {...alertProps}
+        { alertError && (
+          <AlertError
+            {...alertError}
+            onDismiss={() => setAlertError(null)}
           />
         )}
         <Outlet />

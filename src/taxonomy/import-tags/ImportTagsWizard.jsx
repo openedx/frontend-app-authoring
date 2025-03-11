@@ -16,7 +16,6 @@ import {
 import {
   DeleteOutline,
   Download,
-  Error as ErrorIcon,
   InsertDriveFile,
   Warning,
 } from '@openedx/paragon/icons';
@@ -286,7 +285,7 @@ const ImportTagsWizard = ({
   reimport,
 }) => {
   const intl = useIntl();
-  const { setToastMessage, setAlertProps } = useContext(TaxonomyContext);
+  const { setToastMessage, setAlertError } = useContext(TaxonomyContext);
 
   const [currentStep, setCurrentStep] = useState(reimport ? 'export' : 'upload');
 
@@ -315,16 +314,12 @@ const ImportTagsWizard = ({
       if (setToastMessage) {
         setToastMessage(intl.formatMessage(messages.importNewTaxonomyToast, { name: taxonomyName }));
       }
-    } catch (/** @type {any} */ error) {
-      const alertProps = {
-        variant: 'danger',
-        icon: ErrorIcon,
-        title: intl.formatMessage(messages.importTaxonomyErrorAlert),
-        description: error.message,
-      };
-
-      if (setAlertProps) {
-        setAlertProps(alertProps);
+    } catch (/** @type {unknown} */ error) {
+      if (setAlertError) {
+        setAlertError({
+          title: intl.formatMessage(messages.importTaxonomyErrorAlert),
+          error,
+        });
       }
     } finally {
       enableDialog();
@@ -369,16 +364,12 @@ const ImportTagsWizard = ({
       if (setToastMessage) {
         setToastMessage(intl.formatMessage(messages.importTaxonomyToast, { name: taxonomy?.name }));
       }
-    } catch (/** @type {any} */ error) {
-      const alertProps = {
-        variant: 'danger',
-        icon: ErrorIcon,
-        title: intl.formatMessage(messages.importTaxonomyErrorAlert),
-        description: error.message,
-      };
-
-      if (setAlertProps) {
-        setAlertProps(alertProps);
+    } catch (/** @type {unknown} */ error) {
+      if (setAlertError) {
+        setAlertError({
+          title: intl.formatMessage(messages.importTaxonomyErrorAlert),
+          error,
+        });
       }
     } finally {
       enableDialog();

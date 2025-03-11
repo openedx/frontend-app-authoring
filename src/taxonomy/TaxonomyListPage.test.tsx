@@ -29,8 +29,8 @@ const organizations = ['Org 1', 'Org 2'];
 const context = {
   toastMessage: null,
   setToastMessage: jest.fn(),
-  alertProps: null,
-  setAlertProps: jest.fn(),
+  alertError: null,
+  setAlertError: jest.fn(),
 };
 
 const render = (ui: React.ReactElement) => baseRender(ui, {
