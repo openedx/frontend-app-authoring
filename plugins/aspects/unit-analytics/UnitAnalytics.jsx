@@ -51,7 +51,7 @@ const UnitAnalytics = ({ unitTitle, isUnitVerticalType, courseVerticalChildren }
           <h4>Component Analytics</h4>
           {isUnitVerticalType
             && courseVerticalChildren.length
-            && courseVerticalChildren.map((c) => <div key={c.id}>{c.name} - {c.type}</div>)}
+            && courseVerticalChildren.map((c) => <div key={c.id}>{c.name} - {c.blockType}</div>)}
         </Stack>
       </Sheet>
     </>
