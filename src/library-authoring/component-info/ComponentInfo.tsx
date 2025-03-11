@@ -5,6 +5,7 @@ import {
   Tab,
   Tabs,
   Stack,
+  useToggle,
 } from '@openedx/paragon';
 import {
   CheckBoxIcon,
@@ -29,6 +30,7 @@ import messages from './messages';
 import { getBlockType } from '../../generic/key-utils';
 import { useLibraryBlockMetadata, usePublishComponent } from '../data/apiHooks';
 import { ToastContext } from '../../generic/toast-context';
+import PublishConfirmationModal from '../components/PublishConfirmationModal';
 
 const AddComponentWidget = () => {
   const intl = useIntl();
@@ -107,6 +109,11 @@ const ComponentInfo = () => {
     sidebarComponentInfo,
     sidebarAction,
   } = useSidebarContext();
+  const [
+    isPublishConfirmationOpen,
+    openPublishConfirmation,
+    closePublishConfirmation,
+  ] = useToggle(false);
 
   const jumpToCollections = sidebarAction === SidebarActions.JumpToAddCollections;
 
@@ -138,6 +145,7 @@ const ComponentInfo = () => {
   const { showToast } = React.useContext(ToastContext);
 
   const publish = React.useCallback(() => {
+    closePublishConfirmation();
     publishComponent.mutateAsync()
       .then(() => {
         showToast(intl.formatMessage(messages.publishSuccessMsg));
@@ -147,41 +155,56 @@ const ComponentInfo = () => {
   }, [publishComponent, showToast, intl]);
 
   return (
-    <Stack>
-      {!readOnly && (
-        <div className="d-flex flex-wrap">
-          <Button
-            {...(canEdit ? { onClick: () => openComponentEditor(usageKey) } : { disabled: true })}
-            variant="outline-primary"
-            className="m-1 text-nowrap flex-grow-1"
-          >
-            {intl.formatMessage(messages.editComponentButtonTitle)}
-          </Button>
-          <Button disabled={publishComponent.isLoading || !canPublish} onClick={publish} variant="outline-primary" className="m-1 text-nowrap flex-grow-1">
-            {intl.formatMessage(messages.publishComponentButtonTitle)}
-          </Button>
-          <ComponentMenu usageKey={usageKey} />
-        </div>
-      )}
-      <AddComponentWidget />
-      <Tabs
-        variant="tabs"
-        className="my-3 d-flex justify-content-around"
-        defaultActiveKey={COMPONENT_INFO_TABS.Preview}
-        activeKey={tab}
-        onSelect={setSidebarTab}
-      >
-        <Tab eventKey={COMPONENT_INFO_TABS.Preview} title={intl.formatMessage(messages.previewTabTitle)}>
-          <ComponentPreview />
-        </Tab>
-        <Tab eventKey={COMPONENT_INFO_TABS.Manage} title={intl.formatMessage(messages.manageTabTitle)}>
-          <ComponentManagement />
-        </Tab>
-        <Tab eventKey={COMPONENT_INFO_TABS.Details} title={intl.formatMessage(messages.detailsTabTitle)}>
-          <ComponentDetails />
-        </Tab>
-      </Tabs>
-    </Stack>
+    <>
+      <Stack>
+        {!readOnly && (
+          <div className="d-flex flex-wrap">
+            <Button
+              {...(canEdit ? { onClick: () => openComponentEditor(usageKey) } : { disabled: true })}
+              variant="outline-primary"
+              className="m-1 text-nowrap flex-grow-1"
+            >
+              {intl.formatMessage(messages.editComponentButtonTitle)}
+            </Button>
+            <Button
+              disabled={publishComponent.isLoading || !canPublish}
+              onClick={openPublishConfirmation}
+              variant="outline-primary"
+              className="m-1 text-nowrap flex-grow-1"
+            >
+              {intl.formatMessage(messages.publishComponentButtonTitle)}
+            </Button>
+            <ComponentMenu usageKey={usageKey} />
+          </div>
+        )}
+        <AddComponentWidget />
+        <Tabs
+          variant="tabs"
+          className="my-3 d-flex justify-content-around"
+          defaultActiveKey={COMPONENT_INFO_TABS.Preview}
+          activeKey={tab}
+          onSelect={setSidebarTab}
+        >
+          <Tab eventKey={COMPONENT_INFO_TABS.Preview} title={intl.formatMessage(messages.previewTabTitle)}>
+            <ComponentPreview />
+          </Tab>
+          <Tab eventKey={COMPONENT_INFO_TABS.Manage} title={intl.formatMessage(messages.manageTabTitle)}>
+            <ComponentManagement />
+          </Tab>
+          <Tab eventKey={COMPONENT_INFO_TABS.Details} title={intl.formatMessage(messages.detailsTabTitle)}>
+            <ComponentDetails />
+          </Tab>
+        </Tabs>
+      </Stack>
+      <PublishConfirmationModal
+        isOpen={isPublishConfirmationOpen}
+        onClose={closePublishConfirmation}
+        onConfirm={publish}
+        displayName={componentMetadata?.displayName || ''}
+        usageKey={usageKey}
+        showDownstreams={!!componentMetadata?.lastPublished}
+      />
+    </>
   );
 };
 
