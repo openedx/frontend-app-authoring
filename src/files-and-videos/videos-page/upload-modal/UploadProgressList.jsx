@@ -25,9 +25,9 @@ const UploadProgressList = ({ videosList }) => (
         <Stack role="listitem" gap={2} direction="horizontal" className="mb-3 small" key={id}>
           <span>{bulletNumber}</span>
           <div className="col-5 pl-0">
-            <Truncate>
+            <Truncate.Deprecated>
               {video.name}
-            </Truncate>
+            </Truncate.Deprecated>
           </div>
           <div className="col-6 p-0">
             <span className="row m-0 justify-content-end font-weight-bold">
