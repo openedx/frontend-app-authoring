@@ -276,4 +276,18 @@ describe('<ComponentPicker />', () => {
     // Wait for the content library to load
     await screen.findByText(/Only published content is available for reuse./i);
   });
+
+  it('should render never published components as disabled', async () => {
+    render(<ComponentPicker />);
+
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
+
+    // Wait for the content library to load
+    await screen.findByText(/Change Library/i);
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+
+    // Verify that render the never published component as disabled
+    expect(await screen.findByTestId('card-disabled')).toBeInTheDocument();
+  });
 });

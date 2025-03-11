@@ -63,6 +63,7 @@ const BaseComponentCard = ({
             onSelect();
           }
         }}
+        data-testid={disabled ? 'card-disabled' : 'card-enabled'}
       >
         <Card.Header
           className={`library-component-header ${getComponentStyleColor(componentType)}`}

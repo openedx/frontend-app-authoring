@@ -22,6 +22,7 @@
           "created": 1721857069.042984,
           "modified": 1725878053.420395,
           "last_published": 1725035862.450613,
+          "publish_status": "published",
           "usage_key": "lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd",
           "block_type": "html",
           "context_key": "lib:Axim:TEST",
@@ -241,6 +242,7 @@
           "created": 1724879593.066427,
           "modified": 1725034981.663482,
           "last_published": 1725035862.450613,
+          "publish_status": "published",
           "usage_key": "lb:Axim:TEST:html:73a22298-bcd9-4f4c-ae34-0bc2b0612480",
           "block_type": "html",
           "context_key": "lib:Axim:TEST",
@@ -268,6 +270,7 @@
           "created": 1721857034.455737,
           "modified": 1722551300.377488,
           "last_published": 1724879092.002222,
+          "publish_status": "published",
           "usage_key": "lb:Axim:TEST:html:be5b5db9-26ba-4fac-86af-654538c70b5e",
           "block_type": "html",
           "context_key": "lib:Axim:TEST",
@@ -295,6 +298,7 @@
           "created": 1720774228.49832,
           "modified": 1720774228.49832,
           "last_published": 1724879092.002222,
+          "publish_status": "published",
           "usage_key": "lb:Axim:TEST:html:e59e8c73-4056-4894-bca4-062781fb3f68",
           "block_type": "html",
           "context_key": "lib:Axim:TEST",
@@ -322,6 +326,7 @@
           "created": 1724725821.973896,
           "modified": 1724725821.973896,
           "last_published": 1724879092.002222,
+          "publish_status": "published",
           "usage_key": "lb:Axim:TEST:problem:f16116c9-516e-4bb9-b99e-103599f62417",
           "block_type": "problem",
           "context_key": "lib:Axim:TEST",
@@ -352,6 +357,7 @@
           "created": 1720774232.76135,
           "modified": 1720774232.76135,
           "last_published": 1724879092.002222,
+          "publish_status": "published",
           "usage_key": "lb:Axim:TEST:problem:2ace6b9b-6620-413c-a66f-19c797527f34",
           "block_type": "problem",
           "context_key": "lib:Axim:TEST",
@@ -382,6 +388,7 @@
           "created": 1720774232.76135,
           "modified": 1720774232.76135,
           "last_published": 1724879092.002222,
+          "publish_status": "published",
           "usage_key": "lb:Axim:TEST:problem:7d7e98ba-3ac9-4aa8-8946-159129b39a28",
           "block_type": "problem",
           "context_key": "lib:Axim:TEST",
@@ -412,6 +419,7 @@
           "created": 1720774232.76135,
           "modified": 1720774232.76135,
           "last_published": 1724879092.002222,
+          "publish_status": "published",
           "usage_key": "lb:Axim:TEST:problem:4e1a72f9-ac93-42aa-a61c-ab5f9698c398",
           "block_type": "problem",
           "context_key": "lib:Axim:TEST",
@@ -442,6 +450,7 @@
           "created": 1720774232.76135,
           "modified": 1720774232.76135,
           "last_published": 1724879092.002222,
+          "publish_status": "published",
           "usage_key": "lb:Axim:TEST:problem:ad483625-ade2-4712-88d8-c9743abbd291",
           "block_type": "problem",
           "context_key": "lib:Axim:TEST",
@@ -472,6 +481,7 @@
           "created": 1720774232.76135,
           "modified": 1720774232.76135,
           "last_published": 1724879092.002222,
+          "publish_status": "published",
           "usage_key": "lb:Axim:TEST:problem:b4c859cb-de70-421a-917b-e6e01ce44bd8",
           "block_type": "problem",
           "context_key": "lib:Axim:TEST",
@@ -481,6 +491,30 @@
             "display_name": "String Response Problem",
             "description": "Problem"
           }
+        },
+        {
+          "id": "lbaximtesthtml571fe018-f3ce-45c9-8f53-5dafcb422fdv-273ebd51",
+          "display_name": "Never published component",
+          "block_id": "571fe018-f3ce-45c9-8f53-5dafcb422fdv",
+          "content": {
+            "html_content": "This is a text component which uses HTML."
+          },
+          "tags": {},
+          "type": "library_block",
+          "breadcrumbs": [
+            {
+              "display_name": "Test Library"
+            }
+          ],
+          "created": 1721857069.042984,
+          "modified": 1725878053.420395,
+          "last_published": null,
+          "publish_status": "never",
+          "usage_key": "lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdv",
+          "block_type": "html",
+          "context_key": "lib:Axim:TEST",
+          "org": "Axim",
+          "access_id": 15
         }
       ],
       "query": "",
