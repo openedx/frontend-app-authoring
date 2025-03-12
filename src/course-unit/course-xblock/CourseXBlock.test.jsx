@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   render, waitFor, within,
 } from '@testing-library/react';
@@ -24,6 +25,15 @@ import messages from './messages';
 
 let axiosMock;
 let store;
+let queryClient;
+
+const clipboardBroadcastChannelMock = {
+  postMessage: jest.fn(),
+  close: jest.fn(),
+};
+
+global.BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
+
 const courseId = '1234';
 const blockId = '567890';
 const handleDeleteMock = jest.fn();
@@ -49,17 +59,19 @@ jest.mock('react-redux', () => ({
 const renderComponent = (props) => render(
   <AppProvider store={store}>
     <IntlProvider locale="en">
-      <CourseXBlock
-        id={id}
-        title={name}
-        type={type}
-        blockId={blockId}
-        unitXBlockActions={unitXBlockActionsMock}
-        userPartitionInfo={userPartitionInfoFormatted}
-        shouldScroll={false}
-        handleConfigureSubmit={handleConfigureSubmitMock}
-        {...props}
-      />
+      <QueryClientProvider client={queryClient}>
+        <CourseXBlock
+          id={id}
+          title={name}
+          type={type}
+          blockId={blockId}
+          unitXBlockActions={unitXBlockActionsMock}
+          userPartitionInfo={userPartitionInfoFormatted}
+          shouldScroll={false}
+          handleConfigureSubmit={handleConfigureSubmitMock}
+          {...props}
+        />
+      </QueryClientProvider>
     </IntlProvider>
   </AppProvider>,
 );
@@ -98,6 +110,7 @@ describe('<CourseXBlock />', () => {
       .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, courseSectionVerticalMock);
     await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
+    queryClient = new QueryClient();
   });
 
   it('render CourseXBlock component correctly', async () => {

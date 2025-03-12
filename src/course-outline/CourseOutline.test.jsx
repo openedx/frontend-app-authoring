@@ -2182,9 +2182,6 @@ describe('<CourseOutline />', () => {
       .onPost(getClipboardUrl(), {
         usage_key: unit.id,
       }).reply(200, clipboardUnit);
-    // check that initialUserClipboard state is empty
-    const { initialUserClipboard } = store.getState().courseOutline;
-    expect(initialUserClipboard).toBeUndefined();
 
     // find menu button and click on it to open menu
     const menu = await within(unitElement).findByTestId('unit-card-header__menu-button');
@@ -2193,9 +2190,6 @@ describe('<CourseOutline />', () => {
     // move first unit back to second position to test move down option
     const copyButton = await within(unitElement).findByText(cardHeaderMessages.menuCopy.defaultMessage);
     await act(async () => fireEvent.click(copyButton));
-
-    // check that initialUserClipboard state is updated
-    expect(store.getState().generic.clipboardData).toEqual(clipboardUnit);
 
     [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
     // find clipboard content label

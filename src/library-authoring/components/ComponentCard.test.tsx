@@ -77,7 +77,8 @@ describe('<ComponentCard />', () => {
     );
 
     await waitFor(() => {
-      expect(mockShowToast).toHaveBeenCalledWith('Component copied to clipboard');
+      expect(mockShowToast).toHaveBeenCalledWith('Copying');
+      expect(mockShowToast).toHaveBeenCalledWith('Copied to clipboard');
     });
   });
 
@@ -100,7 +101,8 @@ describe('<ComponentCard />', () => {
     );
 
     await waitFor(() => {
-      expect(mockShowToast).toHaveBeenCalledWith('Failed to copy component to clipboard');
+      expect(mockShowToast).toHaveBeenCalledWith('Copying');
+      expect(mockShowToast).toHaveBeenCalledWith('Error copying to clipboard');
     });
   });
 });
