@@ -65,6 +65,7 @@ ExplanationWidget.propTypes = {
   learningContextId: PropTypes.string.isRequired,
   images: PropTypes.shape({}).isRequired,
   isLibrary: PropTypes.bool.isRequired,
+  blockId: PropTypes.string.isRequired,
   // injected
   intl: intlShape.isRequired,
 };

@@ -158,6 +158,7 @@ AnswerOption.propTypes = {
   images: PropTypes.shape({}).isRequired,
   learningContextId: PropTypes.string.isRequired,
   isLibrary: PropTypes.bool.isRequired,
+  blockId: PropTypes.string.isRequired,
 };
 
 export const mapStateToProps = (state) => ({
