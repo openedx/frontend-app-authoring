@@ -30,6 +30,7 @@ exports[`SourceCodeModal renders as expected with default behavior 1`] = `
   }
   footerAction={null}
   headerComponent={null}
+  hideCancelButton={false}
   isFullscreenScroll={true}
   isOpen={false}
   size="xl"

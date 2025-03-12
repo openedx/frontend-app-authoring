@@ -17,10 +17,15 @@ const messages = defineMessages({
     defaultMessage: 'Exit the editor',
     description: 'Alt text for the Exit button',
   },
-  okButtonLabel: {
-    id: 'authoring.editorContainer.okButton.label',
-    defaultMessage: 'OK',
-    description: 'Label for OK button',
+  keepEditingButtonLabel: {
+    id: 'authoring.editorContainer.keepEditing.label',
+    defaultMessage: 'Keep Editing',
+    description: 'Label for keep editing button on the editor cancel confirmation',
+  },
+  discardChangesButtonlabel: {
+    id: 'authoring.editorContainer.discardChanges.label',
+    defaultMessage: 'Discard Changes and Exit',
+    description: 'Label for discard changes button on the editor cancel confirmation',
   },
   modalTitle: {
     id: 'authoring.editorContainer.accessibleTitle',
