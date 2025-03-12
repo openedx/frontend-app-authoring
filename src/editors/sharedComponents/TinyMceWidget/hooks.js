@@ -250,7 +250,11 @@ export const setupCustomBehavior = ({
         lmsEndpointUrl,
         learningContextId,
       });
-      if (newContent) { updateContent(newContent); }
+      if (newContent) {
+        // update content but mark as not dirty as user did not change anything
+        updateContent(newContent, false);
+        editor.setDirty(false);
+      }
     });
   }
 

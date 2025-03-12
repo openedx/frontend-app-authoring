@@ -14,6 +14,7 @@ const pluginConfig = ({ placeholder, editorType, enableImageUpload }) => {
   const quickToolbar = editorType === 'expandable' ? plugins.quickbars : '';
   const statusbar = editorType !== 'expandable';
   const toolbar = editorType !== 'expandable';
+  const autoresize_bottom_margin = editorType === 'expandable' ? 10 : 50;
   const defaultFormat = (editorType === 'question' || editorType === 'expandable') ? 'div' : 'p';
   const hasStudioHeader = document.querySelector('.studio-header');
 
@@ -97,6 +98,7 @@ const pluginConfig = ({ placeholder, editorType, enableImageUpload }) => {
         powerpaste_word_import: 'prompt',
         powerpaste_html_import: 'prompt',
         powerpaste_googledoc_import: 'prompt',
+        autoresize_bottom_margin,
       },
     })
   );
