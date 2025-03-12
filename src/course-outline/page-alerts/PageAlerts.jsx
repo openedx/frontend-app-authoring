@@ -13,7 +13,7 @@ import {
 import {
   Alert, Button, Hyperlink, Truncate,
 } from '@openedx/paragon';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import ErrorAlert from '../../editors/sharedComponents/ErrorAlerts/ErrorAlert';
 import { RequestStatus } from '../../data/constants';
@@ -24,6 +24,7 @@ import advancedSettingsMessages from '../../advanced-settings/messages';
 import { getPasteFileNotices } from '../data/selectors';
 import { dismissError, removePasteFileNotices } from '../data/slice';
 import { API_ERROR_TYPES } from '../constants';
+import { OutOfSyncAlert } from '../../course-libraries/OutOfSyncAlert';
 
 const PageAlerts = ({
   courseId,
@@ -48,6 +49,8 @@ const PageAlerts = ({
     localStorage.getItem(discussionAlertDismissKey) === null,
   );
   const { newFiles, conflictingFiles, errorFiles } = useSelector(getPasteFileNotices);
+  const [showOutOfSyncAlert, setShowOutOfSyncAlert] = useState(false);
+  const navigate = useNavigate();
 
   const getAssetsUrl = () => {
     if (getConfig().ENABLE_ASSETS_PAGE === 'true') {
@@ -419,6 +422,15 @@ const PageAlerts = ({
     );
   };
 
+  const renderOutOfSyncAlert = () => (
+    <OutOfSyncAlert
+      courseId={courseId}
+      onReview={() => navigate(`/course/${courseId}/libraries?tab=review`)}
+      showAlert={showOutOfSyncAlert}
+      setShowAlert={setShowOutOfSyncAlert}
+    />
+  );
+
   return (
     <>
       {configurationErrors()}
@@ -432,6 +444,7 @@ const PageAlerts = ({
       {errorFilesPasteAlert()}
       {conflictingFilesPasteAlert()}
       {newFilesPasteAlert()}
+      {renderOutOfSyncAlert()}
     </>
   );
 };

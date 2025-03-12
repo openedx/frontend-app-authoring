@@ -28,6 +28,13 @@ jest.mock('react-redux', () => ({
   useSelector: jest.fn(),
 }));
 
+jest.mock('../../course-libraries/data/apiHooks', () => ({
+  useEntityLinksSummaryByDownstreamContext: () => ({
+    data: [],
+    isLoading: false,
+  }),
+}));
+
 let store;
 const handleDismissNotification = jest.fn();
 
@@ -70,9 +77,9 @@ describe('<PageAlerts />', () => {
     useSelector.mockReturnValue({});
   });
 
-  it('renders null when no alerts are present', () => {
+  it('renders null when no alerts are present', async () => {
     renderComponent();
-    expect(screen.queryByTestId('browser-router')).toBeEmptyDOMElement();
+    expect(await screen.findByTestId('browser-router')).toBeEmptyDOMElement();
   });
 
   it('renders configuration alerts', async () => {

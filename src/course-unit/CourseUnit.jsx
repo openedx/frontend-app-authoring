@@ -36,7 +36,7 @@ import TagsSidebarControls from '../content-tags-drawer/tags-sidebar-controls';
 import { PasteNotificationAlert } from './clipboard';
 import XBlockContainerIframe from './xblock-container-iframe';
 import MoveModal from './move-modal';
-import PreviewLibraryXBlockChanges from './preview-changes';
+import IframePreviewLibraryXBlockChanges from './preview-changes';
 
 const CourseUnit = ({ courseId }) => {
   const { blockId } = useParams();
@@ -213,7 +213,7 @@ const CourseUnit = ({ courseId }) => {
                 closeModal={closeMoveModal}
                 courseId={courseId}
               />
-              <PreviewLibraryXBlockChanges />
+              <IframePreviewLibraryXBlockChanges />
             </Layout.Element>
             <Layout.Element>
               <Stack gap={3}>

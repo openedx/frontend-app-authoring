@@ -352,10 +352,10 @@ describe('<CourseUnit />', () => {
 
   it('checks whether xblock is removed when the corresponding delete button is clicked and the sidebar is the updated', async () => {
     const {
-      getByTitle, getByText, queryByRole, getAllByRole, getByRole,
+      getByTitle, getByText, queryByRole, getByRole,
     } = render(<RootWrapper />);
 
-    await waitFor(() => {
+    await waitFor(async () => {
       const iframe = getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
       expect(iframe).toHaveAttribute(
         'aria-label',
@@ -370,13 +370,12 @@ describe('<CourseUnit />', () => {
       expect(getByText(/Delete this component?/i)).toBeInTheDocument();
       expect(getByText(/Deleting this component is permanent and cannot be undone./i)).toBeInTheDocument();
 
-      expect(getByRole('dialog')).toBeInTheDocument();
+      const dialog = getByRole('dialog');
+      expect(dialog).toBeInTheDocument();
 
       // Find the Cancel and Delete buttons within the iframe by their specific classes
-      const cancelButton = getAllByRole('button', { name: /Cancel/i })
-        .find(({ classList }) => classList.contains('btn-tertiary'));
-      const deleteButton = getAllByRole('button', { name: /Delete/i })
-        .find(({ classList }) => classList.contains('btn-primary'));
+      const cancelButton = await within(dialog).findByRole('button', { name: /Cancel/i });
+      const deleteButton = await within(dialog).findByRole('button', { name: /Delete/i });
 
       expect(cancelButton).toBeInTheDocument();
 

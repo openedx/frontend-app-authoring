@@ -1,0 +1,376 @@
+{
+  "results": [
+    {
+      "indexUid": "tutor_studio_content",
+      "hits": [
+        {
+          "display_name": "Dropdown",
+          "block_id": "problem3",
+          "content": {
+            "problem_types": [
+              "optionresponse"
+            ],
+            "capa_content": "asfd sdaf afd"
+          },
+          "description": "asfd sdaf afd",
+          "tags": {},
+          "id": "block-v1itcracydemoxcoursextypeproblemblockproblem3-31ecf30b",
+          "type": "course_block",
+          "breadcrumbs": [
+            {
+              "display_name": "OpenedX Demo Course"
+            },
+            {
+              "display_name": "Module 1: Dive into the Open edX® platform!",
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
+            },
+            {
+              "display_name": "Subsection",
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
+            },
+            {
+              "display_name": "Unit",
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@vertical+block@43eb5cbc0ea2491aa93f968f5e705ebd"
+            }
+          ],
+          "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@problem+block@problem3",
+          "block_type": "problem",
+          "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+          "org": "OpenEdx",
+          "access_id": 4,
+          "_formatted": {
+            "display_name": "Dropdown",
+            "block_id": "problem3",
+            "content": {
+              "problem_types": [
+                "optionresponse"
+              ],
+              "capa_content": "asfd sdaf afd"
+            },
+            "description": "asfd sdaf afd",
+            "tags": {},
+            "id": "block-v1itcracydemoxcoursextypeproblemblockproblem3-31ecf30b",
+            "type": "course_block",
+            "breadcrumbs": [
+              {
+                "display_name": "OpenedX Demo Course"
+              },
+              {
+                "display_name": "Module 1: Dive into the Open edX® platform!",
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
+              },
+              {
+                "display_name": "Subsection",
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
+              },
+              {
+                "display_name": "Unit",
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@vertical+block@43eb5cbc0ea2491aa93f968f5e705ebd"
+              }
+            ],
+            "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@problem+block@problem3",
+            "block_type": "problem",
+            "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+            "org": "OpenEdx",
+            "access_id": "4"
+          }
+        },
+        {
+          "display_name": "Dropdown",
+          "block_id": "problem6",
+          "content": {
+            "problem_types": [
+              "optionresponse"
+            ],
+            "capa_content": "asfd sdaf afd"
+          },
+          "description": "asfd sdaf afd",
+          "tags": {},
+          "id": "block-v1itcracydemoxcoursextypeproblemblockproblem6-5bb64bab",
+          "type": "course_block",
+          "breadcrumbs": [
+            {
+              "display_name": "OpenedX Demo Course"
+            },
+            {
+              "display_name": "Module 1: Dive into the Open edX® platform!",
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
+            },
+            {
+              "display_name": "Subsection",
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
+            },
+            {
+              "display_name": "Unit",
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@vertical+block@43eb5cbc0ea2491aa93f968f5e705ebd"
+            }
+          ],
+          "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@problem+block@problem6",
+          "block_type": "problem",
+          "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+          "org": "OpenEdx",
+          "access_id": 4,
+          "_formatted": {
+            "display_name": "Dropdown",
+            "block_id": "problem6",
+            "content": {
+              "problem_types": [
+                "optionresponse"
+              ],
+              "capa_content": "asfd sdaf afd"
+            },
+            "description": "asfd sdaf afd",
+            "tags": {},
+            "id": "block-v1itcracydemoxcoursextypeproblemblockproblem6-5bb64bab",
+            "type": "course_block",
+            "breadcrumbs": [
+              {
+                "display_name": "OpenedX Demo Course"
+              },
+              {
+                "display_name": "Module 1: Dive into the Open edX® platform!",
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
+              },
+              {
+                "display_name": "Subsection",
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
+              },
+              {
+                "display_name": "Unit",
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@vertical+block@43eb5cbc0ea2491aa93f968f5e705ebd"
+              }
+            ],
+            "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@problem+block@problem6",
+            "block_type": "problem",
+            "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+            "org": "OpenEdx",
+            "access_id": "4"
+          }
+        },
+        {
+          "display_name": "Dropdown",
+          "block_id": "210e356cfa304b0aac591af53f6a6ae0",
+          "content": {
+            "problem_types": [
+              "optionresponse"
+            ],
+            "capa_content": "asfd sdaf afd"
+          },
+          "description": "asfd sdaf afd",
+          "tags": {},
+          "id": "block-v1itcracydemoxcoursextypeproblemblock210e356cfa304b0aac591af53f6a6ae0-d02782e3",
+          "type": "course_block",
+          "breadcrumbs": [
+            {
+              "display_name": "OpenedX Demo Course"
+            },
+            {
+              "display_name": "Module 1: Dive into the Open edX® platform!",
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
+            },
+            {
+              "display_name": "Subsection",
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
+            },
+            {
+              "display_name": "Unit",
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@vertical+block@59dc4eea07fa4c20aad677d433ada9f1"
+            },
+            {
+              "display_name": "Problem Bank",
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@itembank+block@3ba55d8eae5544aa9d3fb5e3f100ed62"
+            }
+          ],
+          "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@problem+block@210e356cfa304b0aac591af53f6a6ae0",
+          "block_type": "problem",
+          "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+          "org": "OpenEdx",
+          "access_id": 4,
+          "_formatted": {
+            "display_name": "Dropdown",
+            "block_id": "210e356cfa304b0aac591af53f6a6ae0",
+            "content": {
+              "problem_types": [
+                "optionresponse"
+              ],
+              "capa_content": "asfd sdaf afd"
+            },
+            "description": "asfd sdaf afd",
+            "tags": {},
+            "id": "block-v1itcracydemoxcoursextypeproblemblock210e356cfa304b0aac591af53f6a6ae0-d02782e3",
+            "type": "course_block",
+            "breadcrumbs": [
+              {
+                "display_name": "OpenedX Demo Course"
+              },
+              {
+                "display_name": "Module 1: Dive into the Open edX® platform!",
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
+              },
+              {
+                "display_name": "Subsection",
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
+              },
+              {
+                "display_name": "Unit",
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@vertical+block@59dc4eea07fa4c20aad677d433ada9f1"
+              },
+              {
+                "display_name": "Problem Bank",
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@itembank+block@3ba55d8eae5544aa9d3fb5e3f100ed62"
+              }
+            ],
+            "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@problem+block@210e356cfa304b0aac591af53f6a6ae0",
+            "block_type": "problem",
+            "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+            "org": "OpenEdx",
+            "access_id": "4"
+          }
+        },
+        {
+          "display_name": "HTML 1",
+          "block_id": "257e68e3386d4a8f8739d45b67e76a9b",
+          "content": {
+            "html_content": "A step beyond the simplicity of the WYSIWYG editor is the Raw HTML component which allows you to use HTML, CSS, and Javascript to create highly flexible content that looks good, excites your learners, and keeps them engaged and coming back to your courses. Unlike many learning platforms, the Open edX platform does not restrict authors in terms of what can be used in HTML components. If you can build it, the platform will not stop you. But use judgement and consider consulting with a web design expert. When used correctly, custom HTML, CSS and Javascript can be powerful tools for a course developer. But they can also lead to experiences that are inaccessible, unpleasant or even insecure to the learner and the provider. 1"
+          },
+          "description": "A step beyond the simplicity of the WYSIWYG editor is the Raw HTML component which allows you to use HTML, CSS, and Javascript to create highly flexible content that looks good, excites your learners, and keeps them engaged and coming back to your courses. Unlike many learning platforms, the Open edX platform does not restrict authors in terms of what can be used in HTML components. If you can build it, the platform will not stop you. But use judgement and consider consulting with a web design expert. When used correctly, custom HTML, CSS and Javascript can be powerful tools for a course developer. But they can also lead to experiences that are inaccessible, unpleasant or even insecure to the learner and the provider. 1",
+          "tags": {},
+          "id": "block-v1itcracydemoxcoursextypehtmlblock257e68e3386d4a8f8739d45b67e76a9b-e5cd0344",
+          "type": "course_block",
+          "breadcrumbs": [
+            {
+              "display_name": "OpenedX Demo Course"
+            },
+            {
+              "display_name": "Module 1: Dive into the Open edX® platform!",
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
+            },
+            {
+              "display_name": "Subsection",
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
+            },
+            {
+              "display_name": "Unit",
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@vertical+block@59dc4eea07fa4c20aad677d433ada9f1"
+            }
+          ],
+          "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@html+block@257e68e3386d4a8f8739d45b67e76a9b",
+          "block_type": "html",
+          "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+          "org": "OpenEdx",
+          "access_id": 4,
+          "_formatted": {
+            "display_name": "HTML 1",
+            "block_id": "257e68e3386d4a8f8739d45b67e76a9b",
+            "content": {
+              "html_content": "A step beyond the simplicity of the WYSIWYG editor is the Raw HTML component which allows you to use HTML, CSS, and Javascript to create highly flexible content that looks good, excites your learners, and keeps them engaged and coming back to your courses. Unlike many learning platforms, the Open edX platform does not restrict authors in terms of what can be used in HTML components. If you can build it, the platform will not stop you. But use judgement and consider consulting with a web design expert. When used correctly, custom HTML, CSS and Javascript can be powerful tools for a course developer. But they can also lead to experiences that are inaccessible, unpleasant or even insecure to the learner and the provider. 1"
+            },
+            "description": "A step beyond the simplicity of the WYSIWYG editor is…",
+            "tags": {},
+            "id": "block-v1itcracydemoxcoursextypehtmlblock257e68e3386d4a8f8739d45b67e76a9b-e5cd0344",
+            "type": "course_block",
+            "breadcrumbs": [
+              {
+                "display_name": "OpenedX Demo Course"
+              },
+              {
+                "display_name": "Module 1: Dive into the Open edX® platform!",
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
+              },
+              {
+                "display_name": "Subsection",
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
+              },
+              {
+                "display_name": "Unit",
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@vertical+block@59dc4eea07fa4c20aad677d433ada9f1"
+              }
+            ],
+            "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@html+block@257e68e3386d4a8f8739d45b67e76a9b",
+            "block_type": "html",
+            "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+            "org": "OpenEdx",
+            "access_id": "4"
+          }
+        },
+        {
+          "display_name": "Dropdown",
+          "block_id": "a4455860b03647219ff8b01cde49cf37",
+          "content": {
+            "problem_types": [
+              "optionresponse"
+            ],
+            "capa_content": "asfd sdaf afd"
+          },
+          "description": "asfd sdaf afd",
+          "tags": {},
+          "id": "block-v1itcracydemoxcoursextypeproblemblocka4455860b03647219ff8b01cde49cf37-709012d2",
+          "type": "course_block",
+          "breadcrumbs": [
+            {
+              "display_name": "OpenedX Demo Course"
+            },
+            {
+              "display_name": "Module 1: Dive into the Open edX® platform!",
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
+            },
+            {
+              "display_name": "Subsection",
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
+            },
+            {
+              "display_name": "Unit",
+              "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@vertical+block@59dc4eea07fa4c20aad677d433ada9f1"
+            }
+          ],
+          "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@problem+block@a4455860b03647219ff8b01cde49cf37",
+          "block_type": "problem",
+          "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+          "org": "OpenEdx",
+          "access_id": 4,
+          "_formatted": {
+            "display_name": "Dropdown",
+            "block_id": "a4455860b03647219ff8b01cde49cf37",
+            "content": {
+              "problem_types": [
+                "optionresponse"
+              ],
+              "capa_content": "asfd sdaf afd"
+            },
+            "description": "asfd sdaf afd",
+            "tags": {},
+            "id": "block-v1itcracydemoxcoursextypeproblemblocka4455860b03647219ff8b01cde49cf37-709012d2",
+            "type": "course_block",
+            "breadcrumbs": [
+              {
+                "display_name": "OpenedX Demo Course"
+              },
+              {
+                "display_name": "Module 1: Dive into the Open edX® platform!",
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@chapter+block@30b3fbb840024953b2d4b2e700a53002"
+              },
+              {
+                "display_name": "Subsection",
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@sequential+block@46032ed27e6c47e887782fed91703240"
+              },
+              {
+                "display_name": "Unit",
+                "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@vertical+block@59dc4eea07fa4c20aad677d433ada9f1"
+              }
+            ],
+            "usage_key": "block-v1:OpenEdx+DemoX+CourseX+type@problem+block@a4455860b03647219ff8b01cde49cf37",
+            "block_type": "problem",
+            "context_key": "course-v1:OpenEdx+DemoX+CourseX",
+            "org": "OpenEdx",
+            "access_id": "4"
+          }
+        }
+      ],
+      "query": "",
+      "processingTimeMs": 8,
+      "limit": 20,
+      "offset": 0,
+      "estimatedTotalHits": 5
+    }
+  ]
+}

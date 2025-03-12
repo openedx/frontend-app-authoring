@@ -7,19 +7,20 @@ import {
 import {
   mockContentLibrary,
   mockLibraryBlockMetadata,
-  mockComponentDownstreamLinks,
+  mockGetUnpaginatedEntityLinks,
 } from '../data/api.mocks';
-import { mockFetchIndexDocuments } from '../../search-manager/data/api.mock';
+import { mockContentSearchConfig, mockFetchIndexDocuments } from '../../search-manager/data/api.mock';
 import { mockBroadcastChannel } from '../../generic/data/api.mock';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
 import ComponentInfo from './ComponentInfo';
 import { getXBlockPublishApiUrl } from '../data/api';
 
+mockContentSearchConfig.applyMock();
 mockBroadcastChannel();
 mockContentLibrary.applyMock();
 mockLibraryBlockMetadata.applyMock();
-mockComponentDownstreamLinks.applyMock();
+mockGetUnpaginatedEntityLinks.applyMock();
 mockFetchIndexDocuments.applyMock();
 jest.mock('./ComponentPreview', () => ({
   __esModule: true, // Required when mocking 'default' export
@@ -99,6 +100,7 @@ describe('<ComponentInfo> Sidebar', () => {
   });
 
   it('should show publish confirmation on first publish', async () => {
+    initializeMocks();
     render(
       <ComponentInfo />,
       withLibraryId(mockContentLibrary.libraryId, mockLibraryBlockMetadata.usageKeyNeverPublished),
@@ -114,6 +116,7 @@ describe('<ComponentInfo> Sidebar', () => {
   });
 
   it('should show publish confirmation on already published', async () => {
+    initializeMocks();
     render(
       <ComponentInfo />,
       withLibraryId(mockContentLibrary.libraryId, mockLibraryBlockMetadata.usageKeyPublishedWithChanges),
@@ -130,6 +133,7 @@ describe('<ComponentInfo> Sidebar', () => {
   });
 
   it('should show publish confirmation on already published empty downstreams', async () => {
+    initializeMocks();
     render(
       <ComponentInfo />,
       withLibraryId(mockContentLibrary.libraryId, mockLibraryBlockMetadata.usageKeyPublishedWithChangesV2),

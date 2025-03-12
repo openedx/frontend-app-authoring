@@ -4,7 +4,9 @@ import { mockContentTaxonomyTagsData } from '../../content-tags-drawer/data/api.
 import { getBlockType } from '../../generic/key-utils';
 import { createAxiosError } from '../../testUtils';
 import contentLibrariesListV2 from '../__mocks__/contentLibrariesListV2';
+import downstreamLinkInfo from '../../search-manager/data/__mocks__/downstream-links.json';
 import * as api from './api';
+import * as courseLibApi from '../../course-libraries/data/api';
 
 /**
  * Mock for `getContentLibraryV2List()`
@@ -569,28 +571,38 @@ mockBlockTypesMetadata.blockTypesMetadata = [
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockBlockTypesMetadata.applyMock = () => jest.spyOn(api, 'getBlockTypes').mockImplementation(mockBlockTypesMetadata);
 
-export async function mockComponentDownstreamLinks(
-  usageKey: string,
-): ReturnType<typeof api.getComponentDownstreamLinks> {
-  const thisMock = mockComponentDownstreamLinks;
-  switch (usageKey) {
-    case thisMock.usageKey: return thisMock.componentUsage;
-    case mockLibraryBlockMetadata.usageKeyPublishedWithChanges: return thisMock.componentUsage;
-    case mockLibraryBlockMetadata.usageKeyPublishedWithChangesV2: return thisMock.emptyComponentUsage;
+export async function mockGetUnpaginatedEntityLinks(
+  _downstreamContextKey?: string,
+  _readyToSync?: boolean,
+  upstreamUsageKey?: string,
+): ReturnType<typeof courseLibApi.getUnpaginatedEntityLinks> {
+  const thisMock = mockGetUnpaginatedEntityLinks;
+  switch (upstreamUsageKey) {
+    case thisMock.upstreamUsageKey: return thisMock.response;
+    case mockLibraryBlockMetadata.usageKeyPublishedWithChanges: return thisMock.response;
+    case thisMock.emptyUsageKey: return thisMock.emptyComponentUsage;
     default: return [];
   }
 }
-mockComponentDownstreamLinks.usageKey = mockXBlockFields.usageKeyHtml;
-mockComponentDownstreamLinks.componentUsage = [
-  'block-v1:org+course1+run+type@html+block@blockid1',
-  'block-v1:org+course1+run+type@html+block@blockid2',
-  'block-v1:org+course1+run+type@html+block@blockid3',
-  'block-v1:org+course2+run+type@html+block@blockid1',
-] satisfies Awaited<ReturnType<typeof api.getComponentDownstreamLinks>>;
-mockComponentDownstreamLinks.emptyUsageKey = 'lb:Axim:TEST1:html:571fe018-f3ce-45c9-8f53-5dafcb422fd1';
-mockComponentDownstreamLinks.emptyComponentUsage = [] as string[];
+mockGetUnpaginatedEntityLinks.upstreamUsageKey = mockLibraryBlockMetadata.usageKeyPublished;
+mockGetUnpaginatedEntityLinks.response = downstreamLinkInfo.results[0].hits.map((obj: { usageKey: any; }) => ({
+  id: 875,
+  upstreamContextTitle: 'CS problems 3',
+  upstreamVersion: 10,
+  readyToSync: true,
+  upstreamUsageKey: mockLibraryBlockMetadata.usageKeyPublished,
+  upstreamContextKey: 'lib:Axim:TEST2',
+  downstreamUsageKey: obj.usageKey,
+  downstreamContextKey: 'course-v1:OpenEdx+DemoX+CourseX',
+  versionSynced: 2,
+  versionDeclined: null,
+  created: '2025-02-08T14:07:05.588484Z',
+  updated: '2025-02-08T14:07:05.588484Z',
+}));
+mockGetUnpaginatedEntityLinks.emptyUsageKey = 'lb:Axim:TEST1:html:empty';
+mockGetUnpaginatedEntityLinks.emptyComponentUsage = [] as courseLibApi.PublishableEntityLink[];
 
-mockComponentDownstreamLinks.applyMock = () => jest.spyOn(
-  api,
-  'getComponentDownstreamLinks',
-).mockImplementation(mockComponentDownstreamLinks);
+mockGetUnpaginatedEntityLinks.applyMock = () => jest.spyOn(
+  courseLibApi,
+  'getUnpaginatedEntityLinks',
+).mockImplementation(mockGetUnpaginatedEntityLinks);

@@ -8,7 +8,13 @@ import messages from './messages';
 import { SearchSortOption } from './data/api';
 import { useSearchContext } from './SearchManager';
 
-export const SearchSortWidget = ({ iconOnly = false }: { iconOnly?: boolean }) => {
+export const SearchSortWidget = ({
+  iconOnly = false,
+  disableOptions,
+}: {
+  iconOnly?: boolean;
+  disableOptions?: SearchSortOption[];
+}) => {
   const intl = useIntl();
   const {
     searchSortOrder,
@@ -22,43 +28,46 @@ export const SearchSortWidget = ({ iconOnly = false }: { iconOnly?: boolean }) =
         id: 'search-sort-option-most-relevant',
         name: intl.formatMessage(messages.searchSortMostRelevant),
         value: SearchSortOption.RELEVANCE,
-        show: (defaultSearchSortOrder === SearchSortOption.RELEVANCE),
+        show: (
+          !disableOptions?.includes(SearchSortOption.RELEVANCE)
+            && defaultSearchSortOrder === SearchSortOption.RELEVANCE
+        ),
       },
       {
         id: 'search-sort-option-recently-modified',
         name: intl.formatMessage(messages.searchSortRecentlyModified),
         value: SearchSortOption.RECENTLY_MODIFIED,
-        show: true,
+        show: !disableOptions?.includes(SearchSortOption.RECENTLY_MODIFIED),
       },
       {
         id: 'search-sort-option-recently-published',
         name: intl.formatMessage(messages.searchSortRecentlyPublished),
         value: SearchSortOption.RECENTLY_PUBLISHED,
-        show: true,
+        show: !disableOptions?.includes(SearchSortOption.RECENTLY_PUBLISHED),
       },
       {
         id: 'search-sort-option-title-az',
         name: intl.formatMessage(messages.searchSortTitleAZ),
         value: SearchSortOption.TITLE_AZ,
-        show: true,
+        show: !disableOptions?.includes(SearchSortOption.TITLE_AZ),
       },
       {
         id: 'search-sort-option-title-za',
         name: intl.formatMessage(messages.searchSortTitleZA),
         value: SearchSortOption.TITLE_ZA,
-        show: true,
+        show: !disableOptions?.includes(SearchSortOption.TITLE_ZA),
       },
       {
         id: 'search-sort-option-newest',
         name: intl.formatMessage(messages.searchSortNewest),
         value: SearchSortOption.NEWEST,
-        show: true,
+        show: !disableOptions?.includes(SearchSortOption.NEWEST),
       },
       {
         id: 'search-sort-option-oldest',
         name: intl.formatMessage(messages.searchSortOldest),
         value: SearchSortOption.OLDEST,
-        show: true,
+        show: !disableOptions?.includes(SearchSortOption.OLDEST),
       },
     ],
     [intl, defaultSearchSortOrder],

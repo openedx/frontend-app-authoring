@@ -1,11 +1,12 @@
 import { getConfig } from '@edx/frontend-platform';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Collapsible, Hyperlink, Stack } from '@openedx/paragon';
+import { useMemo } from 'react';
+import { useUnpaginatedEntityLinks } from '../../course-libraries/data/apiHooks';
 
 import AlertError from '../../generic/alert-error';
 import Loading from '../../generic/Loading';
-import { useFetchIndexDocuments } from '../../search-manager';
-import { useComponentDownstreamLinks } from '../data/apiHooks';
+import { useContentSearchConnection, useContentSearchResults } from '../../search-manager';
 import messages from './messages';
 
 interface ComponentUsageProps {
@@ -33,20 +34,27 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
     isError: isErrorDownstreamLinks,
     error: errorDownstreamLinks,
     isLoading: isLoadingDownstreamLinks,
-  } = useComponentDownstreamLinks(usageKey);
+  } = useUnpaginatedEntityLinks({ upstreamUsageKey: usageKey });
 
-  const downstreamKeys = dataDownstreamLinks || [];
+  const downstreamKeys = useMemo(
+    () => dataDownstreamLinks?.map(link => link.downstreamUsageKey) || [],
+    [dataDownstreamLinks],
+  );
 
+  const { client, indexName } = useContentSearchConnection();
   const {
-    data: downstreamHits,
+    hits: downstreamHits,
     isError: isErrorIndexDocuments,
     error: errorIndexDocuments,
     isLoading: isLoadingIndexDocuments,
-  } = useFetchIndexDocuments({
-    filter: [`usage_key IN ["${downstreamKeys.join('","')}"]`],
+  } = useContentSearchResults({
+    client,
+    indexName,
+    searchKeywords: '',
+    extraFilter: [`usage_key IN ["${downstreamKeys.join('","')}"]`],
     limit: downstreamKeys.length,
-    attributesToRetrieve: ['usage_key', 'breadcrumbs', 'context_key'],
     enabled: !!downstreamKeys.length,
+    skipBlockTypeFetch: true,
   });
 
   if (isErrorDownstreamLinks || isErrorIndexDocuments) {
@@ -62,9 +70,9 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
   }
 
   const componentUsage = downstreamHits.reduce<ComponentUsageTree>((acc, hit) => {
-    const link = hit.breadcrumbs.at(-1);
+    const link = hit.breadcrumbs.at(-1) as { displayName: string, usageKey: string };
     // istanbul ignore if: this should never happen. it is a type guard for the breadcrumb last item
-    if (!(link && ('usageKey' in link))) {
+    if (!link?.usageKey) {
       return acc;
     }
 

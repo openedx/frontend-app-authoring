@@ -18,7 +18,7 @@ const messages = defineMessages({
   },
   homeTabDescription: {
     id: 'course-authoring.course-libraries.tab.home.description',
-    defaultMessage: 'This course contains content from these libraries.',
+    defaultMessage: 'Your course contains content from these libraries.',
     description: 'Description text for home tab',
   },
   homeTabDescriptionEmpty: {
@@ -28,18 +28,18 @@ const messages = defineMessages({
   },
   reviewTabTitle: {
     id: 'course-authoring.course-libraries.tab.review.title',
-    defaultMessage: 'Review Content Updates ({count})',
+    defaultMessage: 'Review Content Updates',
     description: 'Tab title for review tab',
   },
-  reviewTabTitleEmpty: {
-    id: 'course-authoring.course-libraries.tab.review.title-no-updates',
-    defaultMessage: 'Review Content Updates',
-    description: 'Tab title for review tab when no updates are available',
+  reviewTabDescriptionEmpty: {
+    id: 'course-authoring.course-libraries.tab.home.description-no-links',
+    defaultMessage: 'All components are up to date',
+    description: 'Description text for home tab',
   },
-  breadcrumbAriaLabel: {
-    id: 'course-authoring.course-libraries.downstream-block.breadcrumb.aria-label',
-    defaultMessage: 'Component breadcrumb',
-    description: 'Aria label for breadcrumb in component cards in course libraries page.',
+  breadcrumbLabel: {
+    id: 'course-authoring.course-libraries.downstream-block.breadcrumb.label',
+    defaultMessage: 'Location:',
+    description: 'label for breadcrumb in component cards in course libraries page.',
   },
   totalComponentLabel: {
     id: 'course-authoring.course-libraries.libcard.total-component.label',
@@ -58,7 +58,7 @@ const messages = defineMessages({
   },
   outOfSyncCountAlertTitle: {
     id: 'course-authoring.course-libraries.libcard.out-of-sync.alert.title',
-    defaultMessage: '{outOfSyncCount} library components are out of sync. Review updates to accept or ignore changes',
+    defaultMessage: '{outOfSyncCount, plural, one {# library component is} other {# library components are}} out of sync. Review updates to accept or ignore changes',
     description: 'Alert message shown when library components are out of sync',
   },
   reviewUpdatesBtn: {
@@ -75,6 +75,51 @@ const messages = defineMessages({
     id: 'course-authoring.course-libraries.alert.error.libraries.v2.disabled',
     defaultMessage: 'This page cannot be shown: Libraries v2 are disabled.',
     description: 'Error message shown to users when trying to load a libraries V2 page while libraries v2 are disabled.',
+  },
+  cardReviewContentBtn: {
+    id: 'course-authoring.course-libraries.review-tab.libcard.review-btn-text',
+    defaultMessage: 'Review Updates',
+    description: 'Card review button for component in review tab',
+  },
+  cardUpdateContentBtn: {
+    id: 'course-authoring.course-libraries.review-tab.libcard.update-btn-text',
+    defaultMessage: 'Update',
+    description: 'Card update button for component in review tab',
+  },
+  cardIgnoreContentBtn: {
+    id: 'course-authoring.course-libraries.review-tab.libcard.ignore-btn-text',
+    defaultMessage: 'Ignore',
+    description: 'Card ignore button for component in review tab',
+  },
+  updateSingleBlockSuccess: {
+    id: 'course-authoring.course-libraries.review-tab.libcard.update-success-toast',
+    defaultMessage: 'Success! "{name}" is updated',
+    description: 'Success toast message when a component is updated.',
+  },
+  ignoreSingleBlockSuccess: {
+    id: 'course-authoring.course-libraries.review-tab.libcard.ignore-success-toast',
+    defaultMessage: '"{name}" will remain out of sync with library content. You will be notified when this component is updated again.',
+    description: 'Success toast message when a component update is ignored.',
+  },
+  searchPlaceholder: {
+    id: 'course-authoring.course-libraries.review-tab.search.placeholder',
+    defaultMessage: 'Search',
+    description: 'Search text box in review tab placeholder text',
+  },
+  brokenLinkTooltip: {
+    id: 'course-authoring.course-libraries.home-tab.broken-link.tooltip',
+    defaultMessage: 'Sourced from a library - but the upstream link is broken/invalid.',
+    description: 'Tooltip text describing broken link in component listing.',
+  },
+  genericErrorMessage: {
+    id: 'course-authoring.course-libraries.home-tab.error.message',
+    defaultMessage: 'Something went wrong! Could not fetch results.',
+    description: 'Generic error message displayed when fetching link data fails.',
+  },
+  olderVersionPreviewAlert: {
+    id: 'course-authoring.course-libraries.reviw-tab.preview.old-version-alert',
+    defaultMessage: 'The old version preview is the previous library version',
+    description: 'Alert message stating that older version in preview is of library block',
   },
 });
 

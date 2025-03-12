@@ -11,7 +11,6 @@ import {
   getContentSearchConfig,
   fetchBlockTypes,
   type PublishStatus,
-  fetchIndexDocuments,
 } from './api';
 
 /**
@@ -59,6 +58,8 @@ export const useContentSearchResults = ({
   tagsFilter = [],
   sort = [],
   skipBlockTypeFetch = false,
+  limit,
+  enabled = true,
 }: {
   /** The Meilisearch API client */
   client?: MeiliSearch;
@@ -79,9 +80,13 @@ export const useContentSearchResults = ({
   sort?: SearchSortOption[];
   /** If true, don't fetch the block types from the server */
   skipBlockTypeFetch?: boolean;
+  /** Limit results */
+  limit?: number;
+  /** Enable or disable api */
+  enabled?: boolean;
 }) => {
   const query = useInfiniteQuery({
-    enabled: client !== undefined && indexName !== undefined,
+    enabled: enabled && client !== undefined && indexName !== undefined,
     queryKey: [
       'content_search',
       'results',
@@ -115,6 +120,7 @@ export const useContentSearchResults = ({
         // Note that if there are 20 results per page, the "second page" has offset=20, not 2.
         offset: pageParam,
         skipBlockTypeFetch,
+        limit,
       });
     },
     getNextPageParam: (lastPage) => lastPage.nextOffset,
@@ -138,6 +144,7 @@ export const useContentSearchResults = ({
     status: query.status,
     isLoading: query.isLoading,
     isError: query.isError,
+    error: query.error,
     isFetchingNextPage: query.isFetchingNextPage,
     // Call this to load more pages. We include some "safety" features recommended by the docs: this should never be
     // called while already fetching a page, and parameters (like 'event') should not be passed into fetchNextPage().
@@ -257,48 +264,5 @@ export const useGetBlockTypes = (extraFilters: Filter) => {
       'block_types',
     ],
     queryFn: () => fetchBlockTypes(client!, indexName!, extraFilters),
-  });
-};
-
-interface UseFetchIndexDocumentsParams {
-  filter: Filter;
-  limit: number;
-  attributesToRetrieve?: string[];
-  attributesToCrop?: string[];
-  sort?: SearchSortOption[];
-  enabled?: boolean;
-}
-
-/**
- * Fetch documents from the index.
- */
-export const useFetchIndexDocuments = ({
-  filter,
-  limit,
-  attributesToRetrieve,
-  attributesToCrop,
-  sort,
-  enabled = true,
-} : UseFetchIndexDocumentsParams) => {
-  const { client, indexName } = useContentSearchConnection();
-  return useQuery({
-    enabled: enabled && client !== undefined && indexName !== undefined,
-    queryKey: [
-      'content_search',
-      client?.config.apiKey,
-      client?.config.host,
-      indexName,
-      filter,
-      'generic-one-off',
-    ],
-    queryFn: enabled ? () => fetchIndexDocuments(
-      client!,
-      indexName!,
-      filter,
-      limit,
-      attributesToRetrieve,
-      attributesToCrop,
-      sort,
-    ) : undefined,
   });
 };

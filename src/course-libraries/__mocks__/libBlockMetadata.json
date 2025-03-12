@@ -1,0 +1,23 @@
+{
+    "id": "lb:OpenedX:CSPROB3:problem:d40264d5-80c4-4be8-bfb6-086391de1cd3",
+    "def_key": null,
+    "block_type": "problem",
+    "display_name": "Dropdown 123",
+    "last_published": "2025-02-19T13:58:49Z",
+    "published_by": "edx",
+    "last_draft_created": "2025-02-19T13:58:48Z",
+    "last_draft_created_by": null,
+    "has_unpublished_changes": false,
+    "created": "2024-10-30T10:48:35Z",
+    "modified": "2025-02-19T13:58:48Z",
+    "collections": [
+        {
+            "key": "second-collection",
+            "title": "Second collection"
+        },
+        {
+            "key": "test-collection-2",
+            "title": "Test collection 2"
+        }
+    ]
+}
