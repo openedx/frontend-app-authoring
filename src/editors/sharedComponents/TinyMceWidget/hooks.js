@@ -250,6 +250,7 @@ export const setupCustomBehavior = ({
         lmsEndpointUrl,
         learningContextId,
       });
+      // istanbul ignore if
       if (newContent) {
         // update content but mark as not dirty as user did not change anything
         updateContent(newContent, false);

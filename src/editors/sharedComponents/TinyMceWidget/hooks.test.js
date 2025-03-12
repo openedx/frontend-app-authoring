@@ -221,6 +221,12 @@ describe('TinyMceEditor hooks', () => {
         const content = module.setAssetToStaticUrl({ editorValue, lmsEndpointUrl });
         expect(content).toEqual('<img src="/static/soME_ImagE_URl1"/> <a href="/static/soMEImagEURl">testing link</a>');
       });
+      it('returns content with updated static img links', () => {
+        const editorValue = '<img src="static/goku.img"/> <a href="static/goku.img">testing link</a>';
+        const lmsEndpointUrl = getConfig().LMS_BASE_URL;
+        const content = module.setAssetToStaticUrl({ editorValue, lmsEndpointUrl });
+        expect(content).toEqual('<img src="/static/goku.img"/> <a href="/static/goku.img">testing link</a>');
+      });
     });
 
     describe('editorConfig', () => {
