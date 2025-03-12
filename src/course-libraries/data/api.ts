@@ -8,11 +8,13 @@ export const getEntityLinksByDownstreamContextUrl = () => `${getApiBaseUrl()}/ap
 export const getEntityLinksSummaryByDownstreamContextUrl = (downstreamContextKey: string) => `${getApiBaseUrl()}/api/contentstore/v2/downstreams/${downstreamContextKey}/summary`;
 
 export interface PaginatedData<T> {
-  next: number | null;
-  previous: number | null;
+  next: string | null;
+  previous: string | null;
+  nextPageNum: number | null;
+  previousPageNum: number | null;
   count: number;
-  num_pages: number;
-  current_page: number;
+  numPages: number;
+  currentPage: number;
   results: T,
 }
 

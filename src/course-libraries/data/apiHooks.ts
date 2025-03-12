@@ -53,7 +53,7 @@ export const useEntityLinks = ({
       pageParam,
       pageSize,
     ),
-    getNextPageParam: (lastPage) => lastPage.next,
+    getNextPageParam: (lastPage) => lastPage.nextPageNum,
     enabled: courseId !== undefined || upstreamUsageKey !== undefined || readyToSync !== undefined,
   })
 );
