@@ -579,6 +579,7 @@ export async function mockGetUnpaginatedEntityLinks(
   const thisMock = mockGetUnpaginatedEntityLinks;
   switch (upstreamUsageKey) {
     case thisMock.upstreamUsageKey: return thisMock.response;
+    case mockLibraryBlockMetadata.usageKeyPublishedWithChanges: return thisMock.response;
     case thisMock.emptyUsageKey: return thisMock.emptyComponentUsage;
     default: return [];
   }

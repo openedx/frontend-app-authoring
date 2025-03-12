@@ -31,9 +31,11 @@ export async function mockGetEntityLinks(
       return Promise.resolve({
         next: null,
         previous: null,
+        nextPageNum: null,
+        previousPageNum: null,
         count: 0,
-        num_pages: 0,
-        current_page: 0,
+        numPages: 0,
+        currentPage: 0,
         results: [],
       });
     default: {
