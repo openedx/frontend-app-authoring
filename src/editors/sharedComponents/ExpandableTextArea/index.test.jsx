@@ -15,6 +15,15 @@ jest.mock('@tinymce/tinymce-react', () => {
 
 jest.mock('../TinyMceWidget', () => 'TinyMceWidget');
 
+// Mock the TinyMceWidget
+jest.mock('../TinyMceWidget/hooks', () => ({
+  prepareEditorRef: jest.fn(() => ({
+    editorRef: { current: { value: 'something' } },
+    refReady: true,
+    setEditorRef: jest.fn().mockName('hooks.prepareEditorRef.setEditorRef'),
+  })),
+}));
+
 describe('ExpandableTextArea', () => {
   const props = {
     value: 'text',

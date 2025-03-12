@@ -16,6 +16,7 @@ jest.mock('../../../../../data/redux', () => ({
       images: jest.fn(state => ({ images: state })),
       isLibrary: jest.fn(state => ({ isLibrary: state })),
       learningContextId: jest.fn(state => ({ learningContextId: state })),
+      blockId: jest.fn(state => ({ blockId: state })),
     },
   },
   thunkActions: {
