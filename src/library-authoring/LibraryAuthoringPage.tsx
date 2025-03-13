@@ -140,7 +140,6 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     libraryId,
     libraryData,
     isLoadingLibraryData,
-    showOnlyPublished,
     componentId,
     collectionId,
   } = useLibraryContext();
@@ -210,9 +209,6 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
   ) : undefined;
 
   const extraFilter = [`context_key = "${libraryId}"`];
-  if (showOnlyPublished) {
-    extraFilter.push('last_published IS NOT NULL');
-  }
 
   const activeTypeFilters = {
     components: 'NOT type = "collection"',
