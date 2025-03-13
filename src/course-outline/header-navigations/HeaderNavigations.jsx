@@ -8,6 +8,7 @@ import {
   ArrowDropUp as ArrowUpIcon,
 } from '@openedx/paragon/icons';
 
+import CourseOutlineAnalyticsSlot from 'CourseAuthoring/plugin-slots/CourseOutlineAnalyticsSlot';
 import messages from './messages';
 
 const HeaderNavigations = ({
@@ -16,6 +17,7 @@ const HeaderNavigations = ({
   isSectionsExpanded,
   isDisabledReindexButton,
   hasSections,
+  sections,
   courseActions,
   errors,
 }) => {
@@ -90,6 +92,7 @@ const HeaderNavigations = ({
           {intl.formatMessage(messages.viewLiveButton)}
         </Button>
       </OverlayTrigger>
+      <CourseOutlineAnalyticsSlot hasSections={hasSections} sections={sections} />
     </nav>
   );
 };
@@ -109,6 +112,10 @@ HeaderNavigations.propTypes = {
     lmsLink: PropTypes.string.isRequired,
   }).isRequired,
   hasSections: PropTypes.bool.isRequired,
+  sections: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    displayName: PropTypes.string.isRequired,
+  })).isRequired,
   courseActions: PropTypes.shape({
     deletable: PropTypes.bool.isRequired,
     draggable: PropTypes.bool.isRequired,
