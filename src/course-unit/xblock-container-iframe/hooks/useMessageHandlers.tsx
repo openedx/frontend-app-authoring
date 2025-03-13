@@ -2,7 +2,8 @@ import { useMemo } from 'react';
 import { debounce } from 'lodash';
 
 import { useClipboard } from '../../../generic/clipboard';
-import { handleResponseErrors } from '../../../generic/saving-error-alert/utils';
+import { handleResponseErrors } from '../../../generic/saving-error-alert';
+import { NOTIFICATION_MESSAGES } from '../../../constants';
 import { updateSavingStatus } from '../../data/slice';
 import { messageTypes } from '../../constants';
 import { MessageHandlersTypes, UseMessageHandlersTypes } from './types';
@@ -27,6 +28,9 @@ export const useMessageHandlers = ({
   handleSaveEditedXBlockData,
   handleFinishXBlockDragging,
   handleOpenManageTagsModal,
+  handleShowProcessingNotification,
+  handleHideProcessingNotification,
+  handleRedirectToXBlockEditPage,
 }: UseMessageHandlersTypes): MessageHandlersTypes => {
   const { copyToClipboard } = useClipboard();
 
@@ -46,12 +50,17 @@ export const useMessageHandlers = ({
     [messageTypes.studioAjaxError]: ({ error }) => handleResponseErrors(error, dispatch, updateSavingStatus),
     [messageTypes.refreshPositions]: handleFinishXBlockDragging,
     [messageTypes.openManageTags]: (payload) => handleOpenManageTagsModal(payload.contentId),
-  }), [
-    courseId,
-    handleDeleteXBlock,
-    handleDuplicateXBlock,
-    handleManageXBlockAccess,
-    handleScrollToXBlock,
-    copyToClipboard,
+  [messageTypes.addNewComponent]: () => handleShowProcessingNotification(NOTIFICATION_MESSAGES.adding),
+  [messageTypes.pasteNewComponent]: () => handleShowProcessingNotification(NOTIFICATION_MESSAGES.pasting),
+  [messageTypes.copyXBlockLegacy]: () => handleShowProcessingNotification(NOTIFICATION_MESSAGES.copying),
+  [messageTypes.hideProcessingNotification]: handleHideProcessingNotification,
+  [messageTypes.handleRedirectToXBlockEditPage]: (payload) => handleRedirectToXBlockEditPage(payload),
+}), [
+  courseId,
+  handleDeleteXBlock,
+  handleDuplicateXBlock,
+  handleManageXBlockAccess,
+  handleScrollToXBlock,
+copyToClipboard,
   ]);
 };
