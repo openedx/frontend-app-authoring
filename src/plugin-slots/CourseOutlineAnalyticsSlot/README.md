@@ -15,7 +15,11 @@ This slot is empty by default. It adds an "Analytics" button, when Aspects is de
 
 ```js
 import { DIRECT_PLUGIN, PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-framework';
-import MyButton from 'myButtonLibrary';
+import { Button } from '@openedx/paragon';
+
+const MyButton = () => (
+  <Button>🐣</Button>
+);
 
 const config = {
   pluginSlots: {
