@@ -228,6 +228,10 @@ const problem = createSlice({
         problemType: null,
       };
     },
+    setDirty: (state, { payload }) => ({
+      ...state,
+      isDirty: payload,
+    }),
   },
 });
 
