@@ -45,10 +45,6 @@ const messages = defineMessages({
     id: 'course-authoring.taxonomy-list.toast.delete',
     defaultMessage: '"{name}" deleted',
   },
-  taxonomyDismissLabel: {
-    id: 'course-authoring.taxonomy-list.alert.dismiss',
-    defaultMessage: 'Dismiss',
-  },
   importInProgressAlertDescription: {
     id: 'course-authoring.import-tags.prompt.in-progress',
     defaultMessage: 'Please keep this window open. We\'ll let you know when it\'s done.',

@@ -39,8 +39,8 @@ const TaxonomyMenuComponent: React.FC<{
   const context = useMemo(() => ({
     toastMessage: null,
     setToastMessage: mockSetToastMessage,
-    alertProps: null,
-    setAlertProps: null,
+    alertError: null,
+    setAlertError: null,
   }), []);
 
   return (
