@@ -106,7 +106,7 @@ export const getContentStoreApiUrl = () => `${getApiBaseUrl()}/api/contentstore/
 /**
  * Get the URL for the library container api.
  */
-export const getLibraryContainerApiUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/containers/`;
+export const getLibraryContainersApiUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/containers/`;
 
 export interface ContentLibrary {
   id: string;
@@ -572,5 +572,5 @@ export interface CreateLibraryContainerDataRequest {
  */
 export async function createLibraryContainer(libraryId: string, containerData: CreateLibraryContainerDataRequest) {
   const client = getAuthenticatedHttpClient();
-  await client.post(getLibraryContainerApiUrl(libraryId), snakeCaseObject(containerData));
+  await client.post(getLibraryContainersApiUrl(libraryId), snakeCaseObject(containerData));
 }
