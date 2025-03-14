@@ -9,6 +9,7 @@ import {
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
+import ComponentCount from '../../generic/component-count';
 import TagCount from '../../generic/tag-count';
 import { BlockTypeLabel, type ContentHitTags, Highlight } from '../../search-manager';
 
@@ -69,19 +70,22 @@ const BaseComponentCard = ({
         />
         <Card.Body>
           <Card.Section>
-            <Stack direction="horizontal" className="d-flex justify-content-between">
-              <Stack direction="horizontal" gap={1}>
-                <Icon src={componentIcon} size="sm" />
-                <span className="small">
-                  <BlockTypeLabel blockType={componentType} count={numChildren} />
-                </span>
-              </Stack>
-              <TagCount count={tagCount} />
-            </Stack>
             <div className="text-truncate h3 mt-2">
               <Highlight text={displayName} />
             </div>
             <Highlight text={description} /><br />
+            <Stack direction="horizontal">
+              <Stack direction="horizontal" gap={1} className="mr-auto">
+                <Icon src={componentIcon} size="sm" />
+                <small>
+                  <BlockTypeLabel blockType={componentType} />
+                </small>
+              </Stack>
+              <Stack direction="horizontal" gap={2}>
+                <ComponentCount count={numChildren} />
+                <TagCount count={tagCount} />
+              </Stack>
+            </Stack>
             {props.hasUnpublishedChanges ? <Badge variant="warning">{intl.formatMessage(messages.unpublishedChanges)}</Badge> : null}
           </Card.Section>
         </Card.Body>
