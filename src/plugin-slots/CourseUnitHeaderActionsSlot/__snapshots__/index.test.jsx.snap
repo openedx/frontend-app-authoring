@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CourseUnitHeaderActionsSlot pluginProps are set correctly 1`] = `
+<PluginSlot
+  id="course_unit_header_actions_slot"
+  pluginProps={
+    {
+      "isUnitVerticalType": true,
+      "unitTitle": "Mock Unit",
+      "verticalBlocks": [],
+    }
+  }
+>
+  <HeaderNavigations
+    headerNavigationsActions={
+      {
+        "handleEdit": [MockFunction],
+        "handlePreview": [MockFunction],
+        "handleViewLive": [MockFunction],
+      }
+    }
+    unitCategory="vertical"
+  />
+</PluginSlot>
+`;
