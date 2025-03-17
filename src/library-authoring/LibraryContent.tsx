@@ -6,6 +6,7 @@ import { useLibraryContext } from './common/context/LibraryContext';
 import { useSidebarContext } from './common/context/SidebarContext';
 import CollectionCard from './components/CollectionCard';
 import ComponentCard from './components/ComponentCard';
+import ContainerCard from './components/ContainerCard';
 import { ContentType } from './routes';
 import { useLoadOnScroll } from '../hooks';
 import messages from './collections/messages';
@@ -20,6 +21,12 @@ import messages from './collections/messages';
 
 type LibraryContentProps = {
   contentType?: ContentType;
+};
+
+const LibraryItemCard = {
+  collection: CollectionCard,
+  library_block: ComponentCard,
+  library_container: ContainerCard,
 };
 
 const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps) => {
@@ -69,19 +76,11 @@ const LibraryContent = ({ contentType = ContentType.home }: LibraryContentProps)
 
   return (
     <div className="library-cards-grid">
-      {hits.map((contentHit) => (
-        contentHit.type === 'collection' ? (
-          <CollectionCard
-            key={contentHit.id}
-            collectionHit={contentHit}
-          />
-        ) : (
-          <ComponentCard
-            key={contentHit.id}
-            contentHit={contentHit}
-          />
-        )
-      ))}
+      {hits.map((contentHit) => {
+        const CardComponent = LibraryItemCard[contentHit.type] || ComponentCard;
+
+        return <CardComponent key={contentHit.id} hit={contentHit} />;
+      })}
     </div>
   );
 };

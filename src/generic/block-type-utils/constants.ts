@@ -56,6 +56,7 @@ export const COMPONENT_TYPE_ICON_MAP: Record<string, React.ComponentType> = {
 
 export const STRUCTURAL_TYPE_ICONS: Record<string, React.ComponentType> = {
   vertical: UNIT_TYPE_ICONS_MAP.vertical,
+  unit: UNIT_TYPE_ICONS_MAP.vertical,
   sequential: Folder,
   chapter: Folder,
   collection: Folder,
@@ -73,6 +74,7 @@ export const COMPONENT_TYPE_STYLE_COLOR_MAP = {
   [COMPONENT_TYPES.video]: 'component-style-video',
   [COMPONENT_TYPES.dragAndDrop]: 'component-style-default',
   vertical: 'component-style-vertical',
+  unit: 'component-style-vertical',
   sequential: 'component-style-default',
   chapter: 'component-style-default',
   collection: 'component-style-collection',
