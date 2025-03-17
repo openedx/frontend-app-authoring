@@ -1,15 +1,16 @@
-# CourseOutlineAnalyticsSlot
+# CourseOutlineHeaderActionsSlot
 
-### Slot ID: `course_outline_analytics_slot`
-### Props:
+### Slot ID: `course_outline_header_actions_slot`
+### Plugin Props:
+
 * `hasSections` - Boolean. Indicates if the course outline has sections.
 * `sections` - Array of objects. Sections of the course outline.
 
 ## Description
 
-The slot is positioned in the `header-navigation` section of the Course Outline page, suitable for adding an action button.
+The slot is positioned in the `SubHeader` section of the Course Outline page, suitable for adding action buttons.
 
-This slot is empty by default. It adds an "Analytics" button, when Aspects is deployed with an instance.
+The slot by default contains the action buttons such as <kbd>+ New Section</kbd>, <kbd>Reindex</kbd>, <kbd>View Live</kbd>.
 
 ## Example
 
@@ -23,7 +24,7 @@ const MyButton = () => (
 
 const config = {
   pluginSlots: {
-    course_outline_analytics_slot: {
+    course_outline_header_actions_slot: {
       keepDefault: true,
       plugins: [
         {
