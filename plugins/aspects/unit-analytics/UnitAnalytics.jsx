@@ -6,7 +6,7 @@ import {
 
 import { AutoGraph, Close, SchoolOutline } from '@openedx/paragon/icons';
 
-const UnitAnalytics = ({ unitTitle, isUnitVerticalType, courseVerticalChildren }) => {
+const UnitAnalytics = ({ unitTitle, isUnitVerticalType, verticalBlocks }) => {
   const [showSidebar, setShowSidebar] = useState(false);
 
   return (
@@ -50,8 +50,8 @@ const UnitAnalytics = ({ unitTitle, isUnitVerticalType, courseVerticalChildren }
           <hr />
           <h4>Component Analytics</h4>
           {isUnitVerticalType
-            && courseVerticalChildren.length
-            && courseVerticalChildren.map((c) => <div key={c.id}>{c.name} - {c.blockType}</div>)}
+            && verticalBlocks.length
+            && verticalBlocks.map((c) => <div key={c.id}>{c.name} - {c.blockType}</div>)}
         </Stack>
       </Sheet>
     </>
@@ -61,7 +61,7 @@ const UnitAnalytics = ({ unitTitle, isUnitVerticalType, courseVerticalChildren }
 UnitAnalytics.propTypes = {
   unitTitle: PropTypes.string.isRequired,
   isUnitVerticalType: PropTypes.bool.isRequired,
-  courseVerticalChildren: PropTypes.arrayOf(
+  verticalBlocks: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       blockId: PropTypes.string.isRequired,
