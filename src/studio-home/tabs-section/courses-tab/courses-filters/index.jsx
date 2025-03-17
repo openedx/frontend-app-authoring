@@ -72,7 +72,7 @@ const CoursesFilters = ({
   const handleSearchCourses = (searchValueDebounced) => {
     const valueFormatted = searchValueDebounced.trim();
     const filterParams = {
-      search: valueFormatted.length > 0 ? valueFormatted : undefined,
+      search: valueFormatted.length > 0 ? valueFormatted : '',
       activeOnly,
       archivedOnly,
       order,
