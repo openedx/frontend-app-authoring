@@ -110,7 +110,8 @@ describe('<LibraryCollectionPage />', () => {
   it('shows an error component if no collection returned', async () => {
     // This mock will simulate incorrect collection id
     await renderLibraryCollectionPage(mockCollection.collectionEmpty);
-    expect(await screen.findByText(/Mocked request failed with status code 404./)).toBeInTheDocument();
+    const errorMessage = 'Mocked request failed with status code 404{ "detail": "Not found." }';
+    expect(await screen.findByRole('alert')).toHaveTextContent(errorMessage);
   });
 
   it('shows collection data', async () => {

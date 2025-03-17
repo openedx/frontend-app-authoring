@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 
-import { initializeMocks, render } from '../testUtils';
+import { initializeMocks, render, screen } from '../testUtils';
 import { TaxonomyContext } from './common/context';
 import { TaxonomyLayout } from './TaxonomyLayout';
 
@@ -9,7 +9,7 @@ const alertErrorTitle = 'Error title';
 const alertErrorDescription = 'Error description';
 
 const MockChildComponent = () => {
-  const { setToastMessage, setAlertProps } = useContext(TaxonomyContext);
+  const { setToastMessage, setAlertError } = useContext(TaxonomyContext);
 
   return (
     <div data-testid="mock-content">
@@ -22,7 +22,7 @@ const MockChildComponent = () => {
       </button>
       <button
         type="button"
-        onClick={() => setAlertProps!({ title: alertErrorTitle, description: alertErrorDescription })}
+        onClick={() => setAlertError!({ title: alertErrorTitle, error: new Error(alertErrorDescription) })}
         data-testid="taxonomy-show-alert"
       >
         Show Alert
@@ -47,36 +47,31 @@ describe('<TaxonomyLayout />', () => {
   });
 
   it('should render page correctly', () => {
-    const { getByTestId } = render(<TaxonomyLayout />);
-    expect(getByTestId('mock-header')).toBeInTheDocument();
-    expect(getByTestId('mock-content')).toBeInTheDocument();
-    expect(getByTestId('mock-footer')).toBeInTheDocument();
+    render(<TaxonomyLayout />);
+    expect(screen.getByTestId('mock-header')).toBeInTheDocument();
+    expect(screen.getByTestId('mock-content')).toBeInTheDocument();
+    expect(screen.getByTestId('mock-footer')).toBeInTheDocument();
   });
 
   it('should show toast', () => {
-    const { getByTestId, getByText } = render(<TaxonomyLayout />);
-    const button = getByTestId('taxonomy-show-toast');
+    render(<TaxonomyLayout />);
+    const button = screen.getByTestId('taxonomy-show-toast');
     button.click();
-    expect(getByTestId('taxonomy-toast')).toBeInTheDocument();
-    expect(getByText(toastMessage)).toBeInTheDocument();
+    expect(screen.getByTestId('taxonomy-toast')).toBeInTheDocument();
+    expect(screen.getByText(toastMessage)).toBeInTheDocument();
   });
 
   it('should show alert', () => {
-    const {
-      getByTestId,
-      getByText,
-      getByRole,
-      queryByTestId,
-    } = render(<TaxonomyLayout />);
+    render(<TaxonomyLayout />);
 
-    const button = getByTestId('taxonomy-show-alert');
+    const button = screen.getByTestId('taxonomy-show-alert');
     button.click();
-    expect(getByTestId('taxonomy-alert')).toBeInTheDocument();
-    expect(getByText(alertErrorTitle)).toBeInTheDocument();
-    expect(getByText(alertErrorDescription)).toBeInTheDocument();
+    expect(screen.getByText(alertErrorTitle)).toBeInTheDocument();
+    expect(screen.getByText(alertErrorDescription)).toBeInTheDocument();
 
-    const closeAlertButton = getByRole('button', { name: 'Dismiss' });
+    const closeAlertButton = screen.getByRole('button', { name: 'Dismiss' });
     closeAlertButton.click();
-    expect(queryByTestId('taxonomy-alert')).not.toBeInTheDocument();
+    expect(screen.queryByText(alertErrorTitle)).not.toBeInTheDocument();
+    expect(screen.queryByText(alertErrorDescription)).not.toBeInTheDocument();
   });
 });

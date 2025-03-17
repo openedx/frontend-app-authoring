@@ -35,6 +35,6 @@ describe('<AlertMessage />', () => {
     const { getByText } = render(<RootWrapper error={error} />);
     screen.logTestingPlaygroundURL();
     expect(getByText(/this is an error message/i)).toBeInTheDocument();
-    expect(getByText(/\{"message":"this is a response body"\}/i)).toBeInTheDocument();
+    expect(getByText(/\{ "message": "this is a response body" \}/i)).toBeInTheDocument();
   });
 });
