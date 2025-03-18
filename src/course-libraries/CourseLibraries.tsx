@@ -1,5 +1,5 @@
 import React, {
-  useCallback, useMemo, useState,
+  useCallback, useEffect, useMemo, useState,
 } from 'react';
 import { Helmet } from 'react-helmet';
 import { getConfig } from '@edx/frontend-platform';
@@ -105,7 +105,7 @@ export const CourseLibraries: React.FC<Props> = ({ courseId }) => {
   const courseDetails = useModel('courseDetails', courseId);
   const [searchParams] = useSearchParams();
   const [tabKey, setTabKey] = useState<CourseLibraryTabs>(
-    () => searchParams.get('tab') as CourseLibraryTabs || CourseLibraryTabs.all,
+    () => searchParams.get('tab') as CourseLibraryTabs,
   );
   const [showReviewAlert, setShowReviewAlert] = useState(false);
   const { data: libraries, isLoading } = useEntityLinksSummaryByDownstreamContext(courseId);
@@ -123,6 +123,19 @@ export const CourseLibraries: React.FC<Props> = ({ courseId }) => {
   const tabChange = useCallback((selectedTab: CourseLibraryTabs) => {
     setTabKey(selectedTab);
   }, []);
+
+  useEffect(() => {
+    setTabKey((prev) => {
+      if (outOfSyncCount > 0) {
+        return CourseLibraryTabs.review;
+      }
+      if (prev) {
+        return prev;
+      }
+      /* istanbul ignore next */
+      return CourseLibraryTabs.all;
+    });
+  }, [outOfSyncCount]);
 
   const renderLibrariesTabContent = useCallback(() => {
     if (isLoading) {

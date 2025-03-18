@@ -76,11 +76,16 @@ describe('<CourseLibraries />', () => {
 
   it('shows alert when out of sync components are present', async () => {
     await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
+    const allTab = await screen.findByRole('tab', { name: 'Libraries' });
+    const reviewTab = await screen.findByRole('tab', { name: 'Review Content Updates 5' });
+    // review tab should be open by default as outOfSyncCount is greater than 0
+    expect(reviewTab).toHaveAttribute('aria-selected', 'true');
+
+    userEvent.click(allTab);
     const alert = await screen.findByRole('alert');
     expect(await within(alert).findByText(
       '5 library components are out of sync. Review updates to accept or ignore changes',
     )).toBeInTheDocument();
-    const allTab = await screen.findByRole('tab', { name: 'Libraries' });
     expect(allTab).toHaveAttribute('aria-selected', 'true');
 
     const reviewBtn = await screen.findByRole('button', { name: 'Review' });
@@ -104,16 +109,21 @@ describe('<CourseLibraries />', () => {
 
   it('hide alert on dismiss', async () => {
     await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
+    const reviewTab = await screen.findByRole('tab', { name: 'Review Content Updates 5' });
+    // review tab should be open by default as outOfSyncCount is greater than 0
+    expect(reviewTab).toHaveAttribute('aria-selected', 'true');
+    const allTab = await screen.findByRole('tab', { name: 'Libraries' });
+    userEvent.click(allTab);
+    expect(allTab).toHaveAttribute('aria-selected', 'true');
+
     const alert = await screen.findByRole('alert');
     expect(await within(alert).findByText(
       '5 library components are out of sync. Review updates to accept or ignore changes',
     )).toBeInTheDocument();
     const dismissBtn = await screen.findByRole('button', { name: 'Dismiss' });
     userEvent.click(dismissBtn);
-    const allTab = await screen.findByRole('tab', { name: 'Libraries' });
     expect(allTab).toHaveAttribute('aria-selected', 'true');
-
-    expect(alert).not.toBeInTheDocument();
+    waitFor(() => expect(alert).not.toBeInTheDocument());
   });
 });
 
