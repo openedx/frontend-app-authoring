@@ -48,6 +48,7 @@ const CreateUnitModal = () => {
       onClose={closeCreateUnitModal}
       hasCloseButton
       isFullscreenOnMobile
+      isOverflowVisible={false}
     >
       <ModalDialog.Header>
         <ModalDialog.Title>
