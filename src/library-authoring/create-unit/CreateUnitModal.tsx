@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   ActionRow,
-  Button,
   Form,
   ModalDialog,
 } from '@openedx/paragon';
@@ -13,6 +12,7 @@ import { useLibraryContext } from '../common/context/LibraryContext';
 import messages from './messages';
 import { useCreateLibraryContainer } from '../data/apiHooks';
 import { ToastContext } from '../../generic/toast-context';
+import LoadingButton from '../../generic/loading-button';
 
 const CreateUnitModal = () => {
   const intl = useIntl();
@@ -24,21 +24,20 @@ const CreateUnitModal = () => {
   const create = useCreateLibraryContainer(libraryId);
   const { showToast } = React.useContext(ToastContext);
 
-  const handleCreate = React.useCallback((values) => {
-    create
-      .mutateAsync({
+  const handleCreate = React.useCallback(async (values) => {
+    try {
+      await create.mutateAsync({
         containerType: 'unit',
         ...values,
-      })
-      .then(() => {
-        closeCreateUnitModal();
-        // TODO: Navigate to the new unit
-        // navigate(`/library/${libraryId}/units/${data.key}`);
-        showToast(intl.formatMessage(messages.createUnitSuccess));
-      })
-      .catch(() => {
-        showToast(intl.formatMessage(messages.createUnitError));
       });
+      // TODO: Navigate to the new unit
+      // navigate(`/library/${libraryId}/units/${data.key}`);
+      showToast(intl.formatMessage(messages.createUnitSuccess));
+    } catch (error) {
+      showToast(intl.formatMessage(messages.createUnitError));
+    } finally {
+      closeCreateUnitModal();
+    }
   }, []);
 
   return (
@@ -90,13 +89,12 @@ const CreateUnitModal = () => {
                 <ModalDialog.CloseButton variant="tertiary">
                   {intl.formatMessage(messages.createUnitModalCancel)}
                 </ModalDialog.CloseButton>
-                <Button
+                <LoadingButton
                   variant="primary"
                   onClick={formikProps.submitForm}
-                  disabled={formikProps.isSubmitting || !formikProps.isValid || !formikProps.dirty}
-                >
-                  {intl.formatMessage(messages.createUnitModalCreate)}
-                </Button>
+                  disabled={!formikProps.isValid || !formikProps.dirty}
+                  label={intl.formatMessage(messages.createUnitModalCreate)}
+                />
               </ActionRow>
             </ModalDialog.Footer>
           </>
