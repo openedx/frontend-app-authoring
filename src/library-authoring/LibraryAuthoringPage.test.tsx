@@ -457,15 +457,15 @@ describe('<LibraryAuthoringPage />', () => {
     expect(screen.getByRole('tab', { name: 'Manage' })).toHaveAttribute('aria-selected', 'true');
   });
 
-  it('can filter by capa problem type', async () => {
-    const problemTypes = {
-      'Multiple Choice': 'choiceresponse',
-      Checkboxes: 'multiplechoiceresponse',
-      'Numerical Input': 'numericalresponse',
-      Dropdown: 'optionresponse',
-      'Text Input': 'stringresponse',
-    };
+  const problemTypes = {
+    'Multiple Choice': 'choiceresponse',
+    Checkboxes: 'multiplechoiceresponse',
+    'Numerical Input': 'numericalresponse',
+    Dropdown: 'optionresponse',
+    'Text Input': 'stringresponse',
+  };
 
+  it.each(Object.keys(problemTypes))('can filter by capa problem type (%s)', async (submenuText) => {
     await renderLibraryPage();
 
     // Ensure the search endpoint is called
@@ -479,35 +479,26 @@ describe('<LibraryAuthoringPage />', () => {
     expect(showProbTypesSubmenuBtn).not.toBeNull();
     fireEvent.click(showProbTypesSubmenuBtn!);
 
-    const validateSubmenu = async (submenuText: string) => {
-      const submenu = screen.getByText(submenuText);
-      expect(submenu).toBeInTheDocument();
-      fireEvent.click(submenu);
+    const submenu = screen.getByText(submenuText);
+    expect(submenu).toBeInTheDocument();
+    fireEvent.click(submenu);
 
-      await waitFor(() => {
-        expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
-          body: expect.stringContaining(`content.problem_types = ${problemTypes[submenuText]}`),
-          method: 'POST',
-          headers: expect.anything(),
-        });
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+        body: expect.stringContaining(`content.problem_types = ${problemTypes[submenuText]}`),
+        method: 'POST',
+        headers: expect.anything(),
       });
+    });
 
-      fireEvent.click(submenu);
-      await waitFor(() => {
-        expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
-          body: expect.not.stringContaining(`content.problem_types = ${problemTypes[submenuText]}`),
-          method: 'POST',
-          headers: expect.anything(),
-        });
+    fireEvent.click(submenu);
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+        body: expect.not.stringContaining(`content.problem_types = ${problemTypes[submenuText]}`),
+        method: 'POST',
+        headers: expect.anything(),
       });
-    };
-
-    // Validate per submenu
-    // eslint-disable-next-line no-restricted-syntax
-    for (const key of Object.keys(problemTypes)) {
-      // eslint-disable-next-line no-await-in-loop
-      await validateSubmenu(key);
-    }
+    });
   });
 
   it('can filter by block type', async () => {
