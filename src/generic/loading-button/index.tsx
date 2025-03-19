@@ -36,7 +36,6 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
     componentMounted.current = false;
   }, []);
 
-  // @ts-ignore
   const loadingOnClick = useCallback(async (e: any) => {
     if (!onClick) {
       return;
