@@ -597,13 +597,11 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.click(createButton);
 
     // Check success toast
-    await waitFor(() => {
-      expect(axiosMock.history.post.length).toBe(1);
-      expect(axiosMock.history.post[0].url).toBe(url);
-      expect(axiosMock.history.post[0].data).toContain(`"title":"${title}"`);
-      expect(axiosMock.history.post[0].data).toContain(`"description":"${description}"`);
-      expect(mockShowToast).toHaveBeenCalledWith('Collection created successfully');
-    });
+    await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
+    expect(axiosMock.history.post[0].url).toBe(url);
+    expect(axiosMock.history.post[0].data).toContain(`"title":"${title}"`);
+    expect(axiosMock.history.post[0].data).toContain(`"description":"${description}"`);
+    expect(mockShowToast).toHaveBeenCalledWith('Collection created successfully');
   });
 
   it('should show validations in create collection', async () => {
@@ -677,10 +675,8 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.click(createButton);
 
     // Check error toast
-    await waitFor(() => {
-      expect(axiosMock.history.post.length).toBe(1);
-      expect(mockShowToast).toHaveBeenCalledWith('There is an error when creating the library collection');
-    });
+    await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
+    expect(mockShowToast).toHaveBeenCalledWith('There is an error when creating the library collection');
   });
 
   it('should create a unit', async () => {
@@ -721,14 +717,13 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.change(nameField, { target: { value: title } });
     fireEvent.click(createButton);
 
-    // Check success toast
-    await waitFor(() => {
-      expect(axiosMock.history.post.length).toBe(1);
-      expect(axiosMock.history.post[0].url).toBe(url);
-      expect(axiosMock.history.post[0].data).toContain(`"display_name":"${title}"`);
-      expect(axiosMock.history.post[0].data).toContain('"container_type":"unit"');
-      expect(mockShowToast).toHaveBeenCalledWith('Unit created successfully');
-    });
+    // Check success
+    await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
+
+    expect(axiosMock.history.post[0].url).toBe(url);
+    expect(axiosMock.history.post[0].data).toContain(`"display_name":"${title}"`);
+    expect(axiosMock.history.post[0].data).toContain('"container_type":"unit"');
+    expect(mockShowToast).toHaveBeenCalledWith('Unit created successfully');
   });
 
   it('should show validations in create unit', async () => {
@@ -797,10 +792,8 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.click(createButton);
 
     // Check error toast
-    await waitFor(() => {
-      expect(axiosMock.history.post.length).toBe(1);
-      expect(mockShowToast).toHaveBeenCalledWith('There is an error when creating the library unit');
-    });
+    await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
+    expect(mockShowToast).toHaveBeenCalledWith('There is an error when creating the library unit');
   });
 
   it('shows a single block when usageKey query param is set', async () => {
