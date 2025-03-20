@@ -1,4 +1,5 @@
 // @ts-check
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { getConfig } from '@edx/frontend-platform';
@@ -145,6 +146,12 @@ const CardHeader = ({
           { getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && !!contentTagCount && (
             <TagCount count={contentTagCount} onClick={openManageTagsDrawer} />
           )}
+          <PluginSlot
+            id="course_outline_header_slot"
+            pluginProps={{
+              cardId, title, isVertical, isSequential,
+            }}
+          />
           <Dropdown data-testid={`${namePrefix}-card-header__menu`} onClick={onClickMenuButton}>
             <Dropdown.Toggle
               className="item-card-header__menu"
