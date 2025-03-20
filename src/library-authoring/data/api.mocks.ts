@@ -19,7 +19,7 @@ export const mockGetContentLibraryV2List = {
     createAxiosError({ code: 500, message: 'Internal Error.', path: api.getContentLibraryV2ListApiUrl() }),
   ),
   applyMockLoading: () => jest.spyOn(api, 'getContentLibraryV2List').mockResolvedValue(
-    new Promise(() => {}),
+    new Promise(() => { }),
   ),
   applyMockEmpty: () => jest.spyOn(api, 'getContentLibraryV2List').mockResolvedValue({
     next: null,
@@ -43,7 +43,7 @@ export async function mockContentLibrary(libraryId: string): Promise<api.Content
   switch (libraryId) {
     case mockContentLibrary.libraryIdThatNeverLoads:
       // Return a promise that never resolves, to simulate never loading:
-      return new Promise<any>(() => {});
+      return new Promise<any>(() => { });
     case mockContentLibrary.library404:
       throw createAxiosError({ code: 400, message: 'Not found.', path: api.getContentLibraryApiUrl(libraryId) });
     case mockContentLibrary.library500:
@@ -179,7 +179,7 @@ export async function mockCreateLibraryBlock(
       case 'problem': return mockCreateLibraryBlock.newProblemData;
       case 'video': return mockCreateLibraryBlock.newVideoData;
       default:
-        // Continue to error handling below.
+      // Continue to error handling below.
     }
   }
   throw new Error(`mockCreateLibraryBlock doesn't know how to mock ${JSON.stringify(args)}`);
@@ -322,7 +322,7 @@ export async function mockLibraryBlockMetadata(usageKey: string): Promise<api.Li
   switch (usageKey) {
     case thisMock.usageKeyThatNeverLoads:
       // Return a promise that never resolves, to simulate never loading:
-      return new Promise<any>(() => {});
+      return new Promise<any>(() => { });
     case thisMock.usageKeyError404:
       throw createAxiosError({ code: 404, message: 'Not found.', path: api.getLibraryBlockMetadataUrl(usageKey) });
     case thisMock.usageKeyNeverPublished: return thisMock.dataNeverPublished;
@@ -433,7 +433,7 @@ export async function mockGetCollectionMetadata(libraryId: string, collectionId:
         path: api.getLibraryCollectionApiUrl(libraryId, collectionId),
       });
     case mockGetCollectionMetadata.collectionIdLoading:
-      return new Promise(() => {});
+      return new Promise(() => { });
     default:
       return Promise.resolve(mockGetCollectionMetadata.collectionData);
   }
@@ -455,6 +455,47 @@ mockGetCollectionMetadata.collectionData = {
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockGetCollectionMetadata.applyMock = () => {
   jest.spyOn(api, 'getCollectionMetadata').mockImplementation(mockGetCollectionMetadata);
+};
+
+/**
+ * Mock for `getContainerMetadata()`
+ *
+ * This mock returns a fixed response for the container ID *container_1*.
+ */
+export async function mockGetContainerMetadata(containerId: string): Promise<api.Container> {
+  switch (containerId) {
+    case mockGetCollectionMetadata.collectionIdError:
+      throw createAxiosError({
+        code: 404,
+        message: 'Not found.',
+        path: api.getLibraryContainerApiUrl(containerId),
+      });
+    case mockGetContainerMetadata.containerIdLoading:
+      return new Promise(() => { });
+    default:
+      return Promise.resolve(mockGetContainerMetadata.containerData);
+  }
+}
+mockGetContainerMetadata.containerId = 'container_1';
+mockGetContainerMetadata.containerIdError = 'container_error';
+mockGetContainerMetadata.containerIdLoading = 'container_loading';
+mockGetContainerMetadata.containerData = {
+  containerKey: 'lct:org:lib:unit:test-unit-9a2072',
+  containerType: 'unit',
+  displayName: 'Test Unit',
+  created: '2024-09-19T10:00:00Z',
+  createdBy: 'test_author',
+  lastPublished: '2024-09-20T10:00:00Z',
+  publishedBy: 'test_publisher',
+  lastDraftCreated: '2024-09-20T10:00:00Z',
+  lastDraftCreatedBy: 'test_author',
+  modified: '2024-09-20T11:00:00Z',
+  hasUnpublishedChanges: true,
+  collections: [],
+} satisfies api.Container;
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockGetContainerMetadata.applyMock = () => {
+  jest.spyOn(api, 'getContainerMetadata').mockImplementation(mockGetContainerMetadata);
 };
 
 /**
@@ -516,7 +557,7 @@ export async function mockGetLibraryTeam(libraryId: string): Promise<api.Library
   switch (libraryId) {
     case mockContentLibrary.libraryIdThatNeverLoads:
       // Return a promise that never resolves, to simulate never loading:
-      return new Promise<any>(() => {});
+      return new Promise<any>(() => { });
     default:
       return [
         mockGetLibraryTeam.adminMember,

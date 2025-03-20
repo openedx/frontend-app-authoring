@@ -24,11 +24,14 @@ export const ROUTES = {
   UNITS: '/units/:unitId?',
   // * All Content tab, with an optionally selected componentId in the sidebar.
   COMPONENT: '/component/:componentId',
-  // * All Content tab, with an optionally selected collectionId in the sidebar.
-  HOME: '/:collectionId?',
+  // * All Content tab, with an optionally selected collection or unit in the sidebar.
+  HOME: '/:selectedItemId?',
   // LibraryCollectionPage route:
   // * with a selected collectionId and/or an optionally selected componentId.
   COLLECTION: '/collection/:collectionId/:componentId?',
+  // LibraryUnitPage route:
+  // * with a selected unitId.
+  UNIT: '/unit/:unitId',
 };
 
 export enum ContentType {
@@ -41,6 +44,7 @@ export enum ContentType {
 export type NavigateToData = {
   componentId?: string,
   collectionId?: string,
+  unitId?: string,
   contentType?: ContentType,
 };
 
@@ -48,6 +52,7 @@ export type LibraryRoutesData = {
   insideCollection: PathMatch<string> | null;
   insideCollections: PathMatch<string> | null;
   insideComponents: PathMatch<string> | null;
+  insideUnit: PathMatch<string> | null;
   insideUnits: PathMatch<string> | null;
 
   // Navigate using the best route from the current location for the given parameters.
@@ -63,18 +68,21 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
   const insideCollection = matchPath(BASE_ROUTE + ROUTES.COLLECTION, pathname);
   const insideCollections = matchPath(BASE_ROUTE + ROUTES.COLLECTIONS, pathname);
   const insideComponents = matchPath(BASE_ROUTE + ROUTES.COMPONENTS, pathname);
+  const insideUnit = matchPath(BASE_ROUTE + ROUTES.UNIT, pathname);
   const insideUnits = matchPath(BASE_ROUTE + ROUTES.UNITS, pathname);
 
   const navigateTo = useCallback(({
     componentId,
     collectionId,
+    unitId,
     contentType,
   }: NavigateToData = {}) => {
     const routeParams = {
       ...params,
       // Overwrite the current componentId/collectionId params if provided
       ...((componentId !== undefined) && { componentId }),
-      ...((collectionId !== undefined) && { collectionId }),
+      ...((collectionId !== undefined) && { collectionId, selectedItemId: collectionId }),
+      ...((unitId !== undefined) && { unitId, selectedItemId: unitId }),
     };
     let route;
 
@@ -112,15 +120,15 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       // We're inside the All Content tab, so stay there,
       // and select a component.
       route = ROUTES.COMPONENT;
+    } else if (collectionId && collectionId === params.selectedItemId) {
+      // and now open the previously-selected collection.
+      route = ROUTES.COLLECTION;
+    } else if (unitId && unitId === params.selectedItemId) {
+      // or now open the previously-selected unit.
+      route = ROUTES.UNIT;
     } else {
-      // We're inside the All Content tab,
-      route = (
-        (collectionId && collectionId === params.collectionId)
-          // now open the previously-selected collection
-          ? ROUTES.COLLECTION
-          // or stay there to list all content, or optionally select a collection.
-          : ROUTES.HOME
-      );
+      // or stay there to list all content, or optionally select a collection or unit.
+      route = ROUTES.HOME;
     }
 
     const newPath = generatePath(BASE_ROUTE + route, routeParams);
@@ -135,6 +143,7 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     insideCollection,
     insideCollections,
     insideComponents,
+    insideUnit,
     insideUnits,
   };
 };

@@ -29,6 +29,8 @@ export type LibraryContextData = {
   setCollectionId: (collectionId?: string) => void;
   componentId: string | undefined;
   setComponentId: (componentId?: string) => void;
+  unitId: string | undefined;
+  setUnitId: (componentId?: string) => void;
   // Only show published components
   showOnlyPublished: boolean;
   // "Create New Collection" modal
@@ -106,11 +108,26 @@ export const LibraryProvider = ({
 
   // Parse the initial collectionId and/or componentId from the current URL params
   const params = useParams();
+  const { selectedItemId } = params;
+  let selectedUnitId: string | undefined;
+  let selectedCollectionId: string | undefined;
+
+  if (selectedItemId) {
+    if (selectedItemId.startsWith('lct')) {
+      selectedUnitId = selectedItemId;
+    } else {
+      selectedCollectionId = selectedItemId;
+    }
+  }
+
   const [componentId, setComponentId] = useState(
     skipUrlUpdate ? undefined : params.componentId,
   );
   const [collectionId, setCollectionId] = useState(
-    skipUrlUpdate ? undefined : params.collectionId,
+    skipUrlUpdate ? undefined : selectedCollectionId,
+  );
+  const [unitId, setUnitId] = useState(
+    skipUrlUpdate ? undefined : selectedUnitId,
   );
 
   const context = useMemo<LibraryContextData>(() => {
@@ -121,6 +138,8 @@ export const LibraryProvider = ({
       setCollectionId,
       componentId,
       setComponentId,
+      unitId,
+      setUnitId,
       readOnly,
       isLoadingLibraryData,
       showOnlyPublished,
