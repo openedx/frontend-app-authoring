@@ -1,4 +1,5 @@
 // @ts-check
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { getConfig } from '@edx/frontend-platform';
