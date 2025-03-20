@@ -12,6 +12,7 @@ import LibraryAuthoringPage from './LibraryAuthoringPage';
 import { LibraryProvider } from './common/context/LibraryContext';
 import { SidebarProvider } from './common/context/SidebarContext';
 import { CreateCollectionModal } from './create-collection';
+import { CreateUnitModal } from './create-unit';
 import LibraryCollectionPage from './collections/LibraryCollectionPage';
 import { ComponentPicker } from './component-picker';
 import { ComponentEditorModal } from './components/ComponentEditorModal';
@@ -44,6 +45,7 @@ const LibraryLayout = () => {
         <>
           {childPage}
           <CreateCollectionModal />
+          <CreateUnitModal />
           <ComponentEditorModal />
         </>
       </SidebarProvider>
