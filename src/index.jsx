@@ -2,6 +2,7 @@ import {
   APP_INIT_ERROR, APP_READY, subscribe, initialize, mergeConfig, getConfig, getPath,
 } from '@edx/frontend-platform';
 import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
+import { AuthoringAppSlot } from 'CourseAuthoring/plugin-slots/AuthoringAppSlot';
 import React, { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
@@ -97,12 +98,14 @@ const App = () => {
 
   return (
     <AppProvider store={initializeStore()} wrapWithRouter={false}>
-      <ToastProvider>
-        <QueryClientProvider client={queryClient}>
-          <Head />
-          <RouterProvider router={router} />
-        </QueryClientProvider>
-      </ToastProvider>
+      <AuthoringAppSlot>
+        <ToastProvider>
+          <QueryClientProvider client={queryClient}>
+            <Head />
+            <RouterProvider router={router} />
+          </QueryClientProvider>
+        </ToastProvider>
+      </AuthoringAppSlot>
     </AppProvider>
   );
 };
