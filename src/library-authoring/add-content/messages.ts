@@ -6,6 +6,11 @@ const messages = defineMessages({
     defaultMessage: 'Collection',
     description: 'Content of button to create a Collection.',
   },
+  unitButton: {
+    id: 'course-authoring.library-authoring.add-content.buttons.unit',
+    defaultMessage: 'Unit',
+    description: 'Content of button to create a Unit.',
+  },
   libraryContentButton: {
     id: 'course-authoring.library-authoring.add-content.buttons.library-content',
     defaultMessage: 'Existing Library Content',
