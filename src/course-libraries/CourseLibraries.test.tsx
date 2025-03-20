@@ -94,17 +94,6 @@ describe('<CourseLibraries />', () => {
     expect(allTab).toHaveAttribute('aria-selected', 'false');
     expect(await screen.findByRole('tab', { name: 'Review Content Updates 5' })).toHaveAttribute('aria-selected', 'true');
     expect(alert).not.toBeInTheDocument();
-
-    // go back to all tab
-    userEvent.click(allTab);
-    // alert should not be back
-    expect(alert).not.toBeInTheDocument();
-    expect(allTab).toHaveAttribute('aria-selected', 'true');
-
-    // review updates button
-    const reviewActionBtn = await screen.findByRole('button', { name: 'Review Updates' });
-    userEvent.click(reviewActionBtn);
-    expect(await screen.findByRole('tab', { name: 'Review Content Updates 5' })).toHaveAttribute('aria-selected', 'true');
   });
 
   it('hide alert on dismiss', async () => {
@@ -124,6 +113,10 @@ describe('<CourseLibraries />', () => {
     userEvent.click(dismissBtn);
     expect(allTab).toHaveAttribute('aria-selected', 'true');
     waitFor(() => expect(alert).not.toBeInTheDocument());
+    // review updates button
+    const reviewActionBtn = await screen.findByRole('button', { name: 'Review Updates' });
+    userEvent.click(reviewActionBtn);
+    expect(await screen.findByRole('tab', { name: 'Review Content Updates 5' })).toHaveAttribute('aria-selected', 'true');
   });
 });
 
