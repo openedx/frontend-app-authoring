@@ -1,3 +1,4 @@
+import { PluginSlot } from "@openedx/frontend-plugin-framework";
 import { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
@@ -6,7 +7,7 @@ import {
   Container, Layout, Stack, Button, TransitionReplace,
 } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
-import { useIntl, injectIntl } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Warning as WarningIcon,
   CheckCircle as CheckCircleIcon,
@@ -220,7 +221,7 @@ const CourseUnit = ({ courseId }) => {
             <Layout.Element>
               <Stack gap={3}>
                 {isUnitVerticalType && (
-                  <>
+                  <PluginSlot id="course_unit_sidebar" pluginProps={{ blockId, courseId, unitTitle }}>
                     <Sidebar data-testid="course-unit-sidebar">
                       <PublishControls blockId={blockId} />
                     </Sidebar>
@@ -232,7 +233,7 @@ const CourseUnit = ({ courseId }) => {
                     <Sidebar data-testid="course-unit-location-sidebar">
                       <LocationInfo />
                     </Sidebar>
-                  </>
+                  </PluginSlot>
                 )}
               </Stack>
             </Layout.Element>
@@ -257,4 +258,4 @@ CourseUnit.propTypes = {
   courseId: PropTypes.string.isRequired,
 };
 
-export default injectIntl(CourseUnit);
+export default CourseUnit;
