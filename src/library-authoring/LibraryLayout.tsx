@@ -59,6 +59,10 @@ const LibraryLayout = () => {
         element={context(<LibraryAuthoringPage />)}
       />
       <Route
+        path={ROUTES.UNITS}
+        element={context(<LibraryAuthoringPage />)}
+      />
+      <Route
         path={ROUTES.COLLECTIONS}
         element={context(<LibraryAuthoringPage />)}
       />
