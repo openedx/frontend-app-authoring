@@ -81,4 +81,19 @@
       text-decoration: line-through;
     }
   }
+
+  .course-split-test-sidebar {
+    padding: $spacer;
+
+    @extend %base-font-params;
+
+    .course-split-test-sidebar-title {
+      font-size: $font-size-base;
+      line-height: $line-height-base;
+    }
+
+    .course-split-test-sidebar-devider {
+      width: 100%;
+    }
+  }
 }

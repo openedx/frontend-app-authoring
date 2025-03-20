@@ -47,8 +47,12 @@ const messages = defineMessages({
     defaultMessage: 'Unit access',
   },
   libraryContentAccess: {
-    id: 'course-authoring.course-outline.configure-modal.visibility-tab.lib-content-access',
+    id: 'course-authoring.course-outline.configure-modal.visibility-tab.library-content-access',
     defaultMessage: 'Library content access',
+  },
+  splitTestAccess: {
+    id: 'course-authoring.course-outline.configure-modal.visibility-tab.split-test-access',
+    defaultMessage: 'Split Test access',
   },
   discussionEnabledSectionTitle: {
     id: 'course-authoring.course-outline.configure-modal.discussion-enabled.section-title',
