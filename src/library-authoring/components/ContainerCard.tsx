@@ -6,11 +6,14 @@ import {
   IconButton,
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
+import { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 
 import { type ContainerHit, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
+import { useSidebarContext } from '../common/context/SidebarContext';
+import { useLibraryRoutes } from '../routes';
 import BaseComponentCard from './BaseComponentCard';
 import messages from './messages';
 
@@ -18,7 +21,7 @@ type ContainerMenuProps = {
   containerHit: ContainerHit,
 };
 
-const ContainerMenu = ({ containerHit } : ContainerMenuProps) => {
+const ContainerMenu = ({ containerHit }: ContainerMenuProps) => {
   const intl = useIntl();
 
   return (
@@ -49,9 +52,10 @@ type ContainerCardProps = {
   hit: ContainerHit,
 };
 
-const ContainerCard = ({ hit } : ContainerCardProps) => {
+const ContainerCard = ({ hit }: ContainerCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
   const { showOnlyPublished } = useLibraryContext();
+  const { openUnitInfoSidebar } = useSidebarContext();
 
   const {
     blockType: componentType,
@@ -60,6 +64,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     numChildren,
     published,
     publishStatus,
+    usageKey,
   } = hit;
 
   const numChildrenCount = showOnlyPublished ? (
@@ -70,7 +75,14 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     showOnlyPublished ? formatted.published?.displayName : formatted.displayName
   ) ?? '';
 
-  const openContainer = () => {};
+  const { navigateTo } = useLibraryRoutes();
+  const openContainer = useCallback(() => {
+    if (componentType === 'unit') {
+      openUnitInfoSidebar(hit.usageKey);
+
+      navigateTo({ unitId: hit.usageKey });
+    }
+  }, [usageKey, componentType, openUnitInfoSidebar, navigateTo]);
 
   return (
     <BaseComponentCard
