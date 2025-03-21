@@ -1,5 +1,9 @@
-import { Card, Icon, OverlayTrigger, Table, Tooltip } from '@openedx/paragon';
-import { OpenInNew, Lock, LinkOff, InfoOutline } from '@openedx/paragon/icons';
+import {
+  Card, Icon, OverlayTrigger, Table, Tooltip,
+} from '@openedx/paragon';
+import {
+  OpenInNew, Lock, LinkOff, InfoOutline,
+} from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { FC } from 'react';
 import { Unit } from '../types';
@@ -24,23 +28,24 @@ const GoToBlock: FC<{ block: { url: string } }> = ({ block }) => (
 );
 
 const RecommendedManualCheckHeading = () => {
-  const  intl = useIntl();
+  const intl = useIntl();
   return (
-    <span className='d-flex align-items-center font-weight-bold py-2'>
+    <span className="d-flex align-items-center font-weight-bold py-2">
       {intl.formatMessage(messages.recommendedManualCheckText)}
       <OverlayTrigger
-            key="top"
-            placement="top"
-            overlay={(
-              <Tooltip id="tooltip-top">
-                {intl.formatMessage(messages.recommendedManualCheckTooltip)}
-              </Tooltip>
+        key="top"
+        placement="top"
+        overlay={(
+          <Tooltip id="tooltip-top">
+            {intl.formatMessage(messages.recommendedManualCheckTooltip)}
+          </Tooltip>
             )}
-          >
-          <Icon className='ml-1 pl-1' src={InfoOutline} />
+      >
+        <Icon className="ml-1 pl-1" src={InfoOutline} />
       </OverlayTrigger>
     </span>
-)};
+  );
+};
 
 interface BrokenLinkTableProps {
   unit: Unit;
@@ -59,7 +64,7 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
 }) => {
   const intl = useIntl();
   return (
-    <Card className='unit-card rounded-sm pt-2 pl-3 pr-4 mb-2.5'>
+    <Card className="unit-card rounded-sm pt-2 pl-3 pr-4 mb-2.5">
       <p className="unit-header">{unit.displayName}</p>
       <Table
         data={unit.blocks.reduce(
@@ -95,29 +100,28 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
                   </span>
                 ),
               }));
-            
+
               acc.push(...blockLockedLinks);
             }
 
             if (block.externalForbiddenLinks?.length > 0) {
               const recommendedManualCheckHeading = {
-                blockLink: <></>,
+                blockLink: <div />,
                 blockDisplayName: <RecommendedManualCheckHeading />,
-                brokenLink: <></>,
-                status: <></>
-              }
+                brokenLink: <div />,
+                status: <div />,
+              };
               const externalForbiddenLinks = block.externalForbiddenLinks.map((link) => ({
                 blockLink: <GoToBlock block={block} />,
                 blockDisplayName: block.displayName || '',
                 brokenLink: <BrokenLinkHref href={link} />,
-                status: <></>,
+                status: <div />,
               }));
 
-            
               acc.push(recommendedManualCheckHeading);
               acc.push(...externalForbiddenLinks);
             }
-            
+
             return acc;
           },
           [],

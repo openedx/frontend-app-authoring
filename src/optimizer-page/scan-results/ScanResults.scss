@@ -48,8 +48,8 @@
   }
 
   .unit-card{
-    border: 1px solid #bcbcbc;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    border: 1px solid #BCBCBC;
+    box-shadow: 0 1px 2px rgb(0 0 0 / .15);
   }
 
   /* Subsection Header */
@@ -58,7 +58,7 @@
     margin-top: 10px;
     font-size: 14px;
     font-weight: 700;
-    margin-bottom: 0.75rem;
+    margin-bottom: .75rem;
     color: $primary-500;
   }
 

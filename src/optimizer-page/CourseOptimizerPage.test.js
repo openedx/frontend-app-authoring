@@ -143,6 +143,7 @@ describe('CourseOptimizerPage', () => {
       await waitFor(() => {
         expect(getAllByText(scanResultsMessages.brokenLinkStatus.defaultMessage)[0]).toBeInTheDocument();
         expect(queryAllByText(scanResultsMessages.lockedLinkStatus.defaultMessage)[0]).toBeInTheDocument();
+        expect(queryAllByText(scanResultsMessages.recommendedManualCheckText.defaultMessage)[0]).toBeInTheDocument();
       });
     });
 
