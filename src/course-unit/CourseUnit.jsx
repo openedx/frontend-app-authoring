@@ -25,7 +25,6 @@ import Loading from '../generic/Loading';
 import AddComponent from './add-component/AddComponent';
 import HeaderTitle from './header-title/HeaderTitle';
 import Breadcrumbs from './breadcrumbs/Breadcrumbs';
-import HeaderNavigations from './header-navigations/HeaderNavigations';
 import Sequence from './course-sequence';
 import Sidebar from './sidebar';
 import { useCourseUnit, useLayoutGrid, useScrollToLastPosition } from './hooks';
@@ -37,6 +36,7 @@ import { PasteNotificationAlert } from './clipboard';
 import XBlockContainerIframe from './xblock-container-iframe';
 import MoveModal from './move-modal';
 import IframePreviewLibraryXBlockChanges from './preview-changes';
+import CourseUnitHeaderActionsSlot from '../plugin-slots/CourseUnitHeaderActionsSlot';
 
 const CourseUnit = ({ courseId }) => {
   const { blockId } = useParams();
@@ -154,9 +154,11 @@ const CourseUnit = ({ courseId }) => {
               />
             )}
             headerActions={(
-              <HeaderNavigations
+              <CourseUnitHeaderActionsSlot
                 unitCategory={unitCategory}
                 headerNavigationsActions={headerNavigationsActions}
+                unitTitle={unitTitle}
+                verticalBlocks={courseVerticalChildren.children}
               />
             )}
           />

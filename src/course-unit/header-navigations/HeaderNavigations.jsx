@@ -11,7 +11,7 @@ const HeaderNavigations = ({ headerNavigationsActions, unitCategory }) => {
   const { handleViewLive, handlePreview, handleEdit } = headerNavigationsActions;
 
   return (
-    <nav className="header-navigations ml-auto flex-shrink-0">
+    <>
       {unitCategory === COURSE_BLOCK_NAMES.vertical.id && (
         <>
           <Button
@@ -37,7 +37,7 @@ const HeaderNavigations = ({ headerNavigationsActions, unitCategory }) => {
           {intl.formatMessage(messages.editButton)}
         </Button>
       )}
-    </nav>
+    </>
   );
 };
 
