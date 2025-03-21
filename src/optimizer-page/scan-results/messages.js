@@ -41,6 +41,14 @@ const messages = defineMessages({
     id: 'course-authoring.course-optimizer.lockedLinkStatus',
     defaultMessage: 'Status: Locked',
   },
+  recommendedManualCheckText: {
+    id: 'course-authoring.course-optimizer.recommendedManualCheckText',
+    defaultMessage: 'Recommended Manual Check',
+  },
+  recommendedManualCheckTooltip: {
+    id: 'course-authoring.course-optimizer.recommendedManualCheckTooltip',
+    defaultMessage: 'For websites returning 403, websites often 403 because they don\'t want bots accessing their content',
+  },
 });
 
 export default messages;
