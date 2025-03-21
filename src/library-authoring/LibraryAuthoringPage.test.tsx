@@ -924,7 +924,7 @@ describe('<LibraryAuthoringPage />', () => {
 
     // Navigate to the units tab
     fireEvent.click(await screen.findByRole('tab', { name: 'Units' }));
-    expect((await screen.findAllByText('Collection 1'))[0]).toBeInTheDocument();
+    expect((await screen.findAllByText('Test Unit'))[0]).toBeInTheDocument();
     // No Types filter shown
     expect(screen.queryByRole('button', { name: /type/i })).not.toBeInTheDocument();
 
