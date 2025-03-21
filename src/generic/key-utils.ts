@@ -19,12 +19,10 @@ export function getBlockType(usageKey: string): string {
  * @returns The library key, e.g. `lib:org:lib`
  */
 export function getLibraryId(usageKey: string): string {
-  if (usageKey && (usageKey.startsWith('lb:') || usageKey.startsWith('lib-collection:'))) {
-    const org = usageKey.split(':')[1];
-    const lib = usageKey.split(':')[2];
-    if (org && lib) {
-      return `lib:${org}:${lib}`;
-    }
+  const [blockType, org, lib] = usageKey?.split(':') || [];
+
+  if (['lb', 'lib-collection', 'lct'].includes(blockType) && org && lib) {
+    return `lib:${org}:${lib}`;
   }
   throw new Error(`Invalid usageKey: ${usageKey}`);
 }

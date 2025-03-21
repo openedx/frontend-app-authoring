@@ -103,6 +103,10 @@ export const getXBlockBaseApiUrl = () => `${getApiBaseUrl()}/xblock/`;
  * Get the URL for the content store api.
  */
 export const getContentStoreApiUrl = () => `${getApiBaseUrl()}/api/contentstore/v2/`;
+/**
+ * Get the URL for the library container api.
+ */
+export const getLibraryContainersApiUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/containers/`;
 
 export interface ContentLibrary {
   id: string;
@@ -556,4 +560,17 @@ export async function updateComponentCollections(usageKey: string, collectionKey
   await getAuthenticatedHttpClient().patch(getLibraryBlockCollectionsUrl(usageKey), {
     collection_keys: collectionKeys,
   });
+}
+
+export interface CreateLibraryContainerDataRequest {
+  title: string;
+  containerType: string;
+}
+
+/**
+ * Create a library container
+ */
+export async function createLibraryContainer(libraryId: string, containerData: CreateLibraryContainerDataRequest) {
+  const client = getAuthenticatedHttpClient();
+  await client.post(getLibraryContainersApiUrl(libraryId), snakeCaseObject(containerData));
 }

@@ -46,6 +46,8 @@ import {
   deleteXBlockAsset,
   restoreLibraryBlock,
   getBlockTypes,
+  createLibraryContainer,
+  type CreateLibraryContainerDataRequest,
 } from './api';
 import { VersionSpec } from '../LibraryBlock';
 
@@ -556,6 +558,19 @@ export const useUpdateComponentCollections = (libraryId: string, usageKey: strin
     mutationFn: async (collectionKeys: string[]) => updateComponentCollections(usageKey, collectionKeys),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: xblockQueryKeys.componentMetadata(usageKey) });
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+    },
+  });
+};
+
+/**
+ * Use this mutation to create a library container
+ */
+export const useCreateLibraryContainer = (libraryId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: CreateLibraryContainerDataRequest) => createLibraryContainer(libraryId, data),
+    onSettled: () => {
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
     },
   });
