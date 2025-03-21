@@ -232,7 +232,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
   }
 
   // Disable filtering by block/problem type when viewing the Collections tab.
-  const overrideTypesFilter = insideCollections ? new TypesFilterData() : undefined;
+  const overrideTypesFilter = (insideCollections || insideUnits) ? new TypesFilterData() : undefined;
 
   return (
     <div className="d-flex">
