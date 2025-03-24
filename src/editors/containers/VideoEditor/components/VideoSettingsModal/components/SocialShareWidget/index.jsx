@@ -32,7 +32,7 @@ const SocialShareWidget = ({
 }) => {
   const isSetByCourse = allowVideoSharing.level === 'course';
   const videoSharingEnabled = isLibrary ? videoSharingEnabledForAll : videoSharingEnabledForCourse;
-  const learnMoreLink = videoSharingLearnMoreLink || 'http://edx.readthedocs.io/projects/open-edx-building-and-running-a-course/en/latest/developing_course/social_sharing.html';
+  const learnMoreLink = videoSharingLearnMoreLink || 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/social_sharing.html';
   const onSocialSharingCheckboxChange = hooks.useTrackSocialSharingChange({ updateField });
 
   const getSubtitle = () => {
