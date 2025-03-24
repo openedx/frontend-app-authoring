@@ -38,7 +38,7 @@ Cloning and Setup
 
     git clone https://github.com/openedx/frontend-app-authoring.git
 
-2. Use node v20.x.
+2. Use the version of Node specified in the ``.nvmrc`` file.
 
   The current version of the micro-frontend build scripts supports node 20.
   Using other major versions of node *may* work, but this is unsupported.  For
