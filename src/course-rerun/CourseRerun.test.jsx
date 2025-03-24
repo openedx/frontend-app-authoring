@@ -78,16 +78,15 @@ describe('<CourseRerun />', () => {
   it('shows the spinner before the query is complete', async () => {
     useSelector.mockReturnValue({ organizationLoadingStatus: RequestStatus.IN_PROGRESS });
 
-    await act(async () => {
-      const { getByRole } = render(<RootWrapper />);
-      const spinner = getByRole('status');
-      expect(spinner.textContent).toEqual('Loading...');
-    });
+    const { findByRole } = render(<RootWrapper />);
+    const spinner = await findByRole('status');
+    expect(spinner.textContent).toEqual('Loading...');
   });
 
-  it('should show footer', () => {
-    const { getByText } = render(<RootWrapper />);
-    expect(getByText('Looking for help with Studio?')).toBeInTheDocument();
-    expect(getByText('LMS')).toHaveAttribute('href', process.env.LMS_BASE_URL);
+  it('should show footer', async () => {
+    const { findByText } = render(<RootWrapper />);
+    await findByText('Looking for help with Studio?');
+    const lmsElement = await findByText('LMS');
+    expect(lmsElement).toHaveAttribute('href', process.env.LMS_BASE_URL);
   });
 });
