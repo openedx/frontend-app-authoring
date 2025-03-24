@@ -5,7 +5,7 @@
  * Helper functions for writing tests.
  */
 import React from 'react';
-import { AxiosError } from 'axios';
+import { AxiosError, AxiosHeaders } from 'axios';
 import { jest } from '@jest/globals';
 import type { Store } from 'redux';
 import { initializeMockApp } from '@edx/frontend-platform';
@@ -201,7 +201,7 @@ export { customRender as render, makeWrapper };
 /** Simulate a real Axios error (such as we'd see in response to a 404) */
 export function createAxiosError({ code, message, path }: { code: number, message: string, path: string }) {
   const request = { path };
-  const config = {};
+  const config = { headers: new AxiosHeaders()};
   const error = new AxiosError(
     `Mocked request failed with status code ${code}`,
     AxiosError.ERR_BAD_RESPONSE,
