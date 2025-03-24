@@ -7,6 +7,7 @@ export interface Unit {
     url: string;
     brokenLinks: string[];
     lockedLinks: string[];
+    externalForbiddenLinks: string[];
   }[];
 }
 
