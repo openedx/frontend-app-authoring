@@ -24,8 +24,8 @@ const customGrader = `<problem>
         click the "Show Answer" button.
     </p>
     <p>
-        For more information, see <a href="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/custom_python.html" target="_blank">
-        Write-Your-Own-Grader Problem</a> in <i>Building and Running an edX Course</i>.
+        For more information, see <a href="https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/create_custom_python_problem.html#create-a-custom-python-evaluated-input-problem" target="_blank">
+        Write-Your-Own-Grader Problem</a> in <i>Building and Running an Open edX Course</i>.
     </p>
     <p>
         When you add the problem, be sure to select <strong>Settings</strong>
