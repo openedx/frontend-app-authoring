@@ -156,9 +156,10 @@ describe('<TagListTable />', () => {
   it('should render pagination footer', async () => {
     axiosMock.onGet(rootTagsListUrl).reply(200, mockTagsPaginationResponse);
     render(<RootWrapper />);
-    const tableFooter = await screen.findByRole('navigation', {
+    const tableFooter = await screen.findAllByRole('navigation', {
       name: /table pagination/i,
     });
-    expect(tableFooter).toBeInTheDocument();
+    expect(tableFooter[0]).toBeInTheDocument();
+    expect(tableFooter[1]).toBeInTheDocument();
   });
 });
