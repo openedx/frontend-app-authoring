@@ -315,7 +315,7 @@ In additional to the standard settings, the following local configurations can b
 Developing
 **********
 
-`Devstack <https://edx.readthedocs.io/projects/edx-installing-configuring-and-running/en/latest/installation/index.html>`_.  If you start Devstack with ``make dev.up.studio`` that should give you everything you need as a companion to this frontend.
+`Tutor <https://docs.tutor.edly.io/>`_ is the community-supported Open edX development environment. See the `tutor-mfe plugin README <https://github.com/overhangio/tutor-mfe?tab=readme-ov-file#mfe-development>`_ for more information.
 
 
 If your devstack includes the default Demo course, you can visit the following URLs to see content:
