@@ -47,7 +47,7 @@ const messages = defineMessages({
   },
   recommendedManualCheckTooltip: {
     id: 'course-authoring.course-optimizer.recommendedManualCheckTooltip',
-    defaultMessage: 'For websites returning 403, websites often 403 because they don\'t want bots accessing their content',
+    defaultMessage: 'For websites returning 403, websites often show 403 because they don\'t want bots accessing their content',
   },
 });
 
