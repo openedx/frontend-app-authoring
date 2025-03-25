@@ -11,7 +11,7 @@ const VideoSelector = ({
   studioEndpointUrl,
 }) => {
   const dispatch = useDispatch();
-  hooks.initializeApp({
+  const loading = hooks.useInitializeApp({
     dispatch,
     data: {
       blockId,
@@ -21,6 +21,10 @@ const VideoSelector = ({
       studioEndpointUrl,
     },
   });
+  // istanbul ignore if
+  if (loading) {
+    return null;
+  }
   return (
     <VideoGallery />
   );
