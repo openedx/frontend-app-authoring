@@ -17,7 +17,13 @@ const CourseOutlineHeaderActionsSlot = ({
   <PluginSlot
     id="course_outline_header_actions_slot"
     pluginProps={{
+      isReIndexShow,
+      isSectionsExpanded,
+      isDisabledReindexButton,
+      headerNavigationsActions,
       hasSections,
+      courseActions,
+      errors,
       sections,
     }}
   >

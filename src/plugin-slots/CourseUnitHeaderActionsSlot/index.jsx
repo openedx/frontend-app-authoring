@@ -11,7 +11,12 @@ const CourseUnitHeaderActionsSlot = ({
 }) => {
   const isUnitVerticalType = unitCategory === COURSE_BLOCK_NAMES.vertical.id;
   return (
-    <PluginSlot id="course_unit_header_actions_slot" pluginProps={{ unitTitle, isUnitVerticalType, verticalBlocks }}>
+    <PluginSlot
+      id="course_unit_header_actions_slot"
+      pluginProps={{
+        headerNavigationsActions, unitCategory, unitTitle, isUnitVerticalType, verticalBlocks,
+      }}
+    >
       <HeaderNavigations headerNavigationsActions={headerNavigationsActions} unitCategory={unitCategory} />
     </PluginSlot>
   );
