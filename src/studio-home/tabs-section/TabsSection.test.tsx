@@ -22,7 +22,6 @@ import {
   render as baseRender,
   fireEvent,
   screen,
-  waitFor,
 } from '../../testUtils';
 
 const { studioShortName } = studioHomeMock;
@@ -49,10 +48,10 @@ const tabSectionComponent = (overrideProps) => (
 );
 
 export const LocationDisplay = () => {
-  const location = useLocation()
+  const location = useLocation();
 
-  return <div data-testid="location-display">{location.pathname}</div>
-}
+  return <div data-testid="location-display">{location.pathname}</div>;
+};
 
 const render = (overrideProps = {}) => baseRender(
   <>
