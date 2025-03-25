@@ -6,6 +6,7 @@ import { useToggle } from '@openedx/paragon';
 import { isEmpty } from 'lodash';
 import { useSearchParams } from 'react-router-dom';
 
+import CourseOutlineUnitCardExtraActionsSlot from '../../plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
@@ -111,6 +112,14 @@ const UnitCard = ({
     />
   );
 
+  const extraActionsComponent = (
+    <CourseOutlineUnitCardExtraActionsSlot
+      unit={unit}
+      subsection={subsection}
+      section={section}
+    />
+  );
+
   useEffect(() => {
     // if this items has been newly added, scroll to it.
     // we need to check section.shouldScroll as whole section is fetched when a
@@ -177,6 +186,7 @@ const UnitCard = ({
           discussionEnabled={discussionEnabled}
           discussionsSettings={discussionsSettings}
           parentInfo={parentInfo}
+          extraActionsComponent={extraActionsComponent}
         />
         <div className="unit-card__content item-children" data-testid="unit-card__content">
           <XBlockStatus

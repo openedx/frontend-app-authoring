@@ -11,6 +11,7 @@ import { Add as IconAdd } from '@openedx/paragon/icons';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 
+import CourseOutlineSubsectionCardExtraActionsSlot from '../../plugin-slots/CourseOutlineSubsectionCardExtraActionsSlot';
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
@@ -127,6 +128,13 @@ const SubsectionCard = ({
     />
   );
 
+  const extraActionsComponent = (
+    <CourseOutlineSubsectionCardExtraActionsSlot
+      subsection={subsection}
+      section={section}
+    />
+  );
+
   useEffect(() => {
     if (activeId === id && isExpanded) {
       setIsExpanded(false);
@@ -205,6 +213,7 @@ const SubsectionCard = ({
               actions={actions}
               proctoringExamConfigurationLink={proctoringExamConfigurationLink}
               isSequential
+              extraActionsComponent={extraActionsComponent}
             />
             <div className="subsection-card__content item-children" data-testid="subsection-card__content">
               <XBlockStatus
