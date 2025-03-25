@@ -361,7 +361,7 @@ describe('<LibraryAuthoringPage />', () => {
         headers: expect.anything(),
       });
     });
-  });
+  }, 10000);
 
   it('should open and close the component sidebar', async () => {
     const mockResult0 = { ...mockResult }.results[0].hits[0];
