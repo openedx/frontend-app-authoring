@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { getConfig, setConfig } from '@edx/frontend-platform';
 
 import { studioHomeMock } from '../__mocks__';
@@ -48,21 +48,30 @@ const tabSectionComponent = (overrideProps) => (
   />
 );
 
+export const LocationDisplay = () => {
+  const location = useLocation()
+
+  return <div data-testid="location-display">{location.pathname}</div>
+}
+
 const render = (overrideProps = {}) => baseRender(
-  <Routes>
-    <Route
-      path="/home"
-      element={tabSectionComponent(overrideProps)}
-    />
-    <Route
-      path="/libraries"
-      element={tabSectionComponent(overrideProps)}
-    />
-    <Route
-      path="/libraries-v1"
-      element={tabSectionComponent(overrideProps)}
-    />
-  </Routes>,
+  <>
+    <Routes>
+      <Route
+        path="/home"
+        element={tabSectionComponent(overrideProps)}
+      />
+      <Route
+        path="/libraries"
+        element={tabSectionComponent(overrideProps)}
+      />
+      <Route
+        path="/libraries-v1"
+        element={tabSectionComponent(overrideProps)}
+      />
+    </Routes>
+    <LocationDisplay />
+  </>,
   { routerProps: { initialEntries: ['/home'] } },
 );
 
@@ -213,9 +222,8 @@ describe('<TabsSection />', () => {
       await executeThunk(fetchStudioHomeData(), store.dispatch);
 
       // confirm the url path is initially /home
-      waitFor(() => {
-        expect(window.location.href).toContain('/home');
-      });
+      const firstLocationDisplay = await screen.findByTestId('location-display');
+      expect(firstLocationDisplay).toHaveTextContent('/home');
 
       // switch to libraries tab
       await axiosMock.onGet(libraryApiLink).reply(200, generateGetStudioHomeLibrariesApiResponse());
@@ -225,9 +233,8 @@ describe('<TabsSection />', () => {
 
       // confirm that the url path has changed
       expect(librariesTab).toHaveClass('active');
-      waitFor(() => {
-        expect(window.location.href).toContain('/libraries-v1');
-      });
+      const secondLocationDisplay = await screen.findByTestId('location-display');
+      expect(secondLocationDisplay).toHaveTextContent('/libraries-v1');
 
       // switch back to courses tab
       const coursesTab = screen.getByText(tabMessages.coursesTabTitle.defaultMessage);
@@ -235,9 +242,8 @@ describe('<TabsSection />', () => {
 
       // confirm that the url path is /home
       expect(coursesTab).toHaveClass('active');
-      waitFor(() => {
-        expect(window.location.href).toContain('/home');
-      });
+      const thirdLocationDisplay = await screen.findByTestId('location-display');
+      expect(thirdLocationDisplay).toHaveTextContent('/home');
     });
   });
 
@@ -269,9 +275,8 @@ describe('<TabsSection />', () => {
       const taxonomiesTab = await screen.findByText(tabMessages.taxonomiesTabTitle.defaultMessage);
       fireEvent.click(taxonomiesTab);
 
-      waitFor(() => {
-        expect(window.location.href).toContain('/taxonomies');
-      });
+      const locationDisplay = await screen.findByTestId('location-display');
+      expect(locationDisplay).toHaveTextContent('/taxonomies');
     });
   });
 
