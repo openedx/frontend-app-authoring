@@ -10,7 +10,7 @@
 
 The slot is positioned in the `SubHeader` section of the Course Outline page, suitable for adding action buttons.
 
-The slot by default contains the action buttons such as <kbd>+ New Section</kbd>, <kbd>Reindex</kbd>, <kbd>View Live</kbd>.
+The slot by default contains the action buttons such as `+ New Section`, `Reindex`, `View Live`.
 
 ## Example
 
