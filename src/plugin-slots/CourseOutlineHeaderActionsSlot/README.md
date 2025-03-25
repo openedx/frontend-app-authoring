@@ -3,7 +3,12 @@
 ### Slot ID: `course_outline_header_actions_slot`
 ### Plugin Props:
 
+* `isReIndexShow` - Boolean.
+* `isSectionsExpanded` - Boolean.
+* `headerNavigationsActions` - Object. See Proptypes definition in the component for details.
 * `hasSections` - Boolean. Indicates if the course outline has sections.
+* `courseActions` - Object. See Proptypes definition in the component for details.
+* `errors` - Object. See Proptypes definition in the component for details.
 * `sections` - Array of objects. Sections of the course outline.
 
 ## Description

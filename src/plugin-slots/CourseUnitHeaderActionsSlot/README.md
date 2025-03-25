@@ -3,6 +3,8 @@
 ### Slot ID: `course_unit_header_actions_slot`
 ### Plugin Props:
 
+* `headerNavigationsActions` - Object. See the prop-types definition in the component for details.
+* `unitCategory` - String.
 * `unitTitle` - String. Title of the Unit
 * `isUnitVerticalType` - Boolean. Flag indicating if the Unit is VerticalBlock type. It's false for others like Library Blocks.
 * `verticalBlocks` - Array. List of the vertical blocks.
