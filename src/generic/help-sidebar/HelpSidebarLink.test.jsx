@@ -29,7 +29,7 @@ describe('HelpSidebarLink Component', () => {
     const { getByText } = render(
       <IntlProvider locale="en">
         <HelpSidebarLink {...props} />
-      </IntlProvider>
+      </IntlProvider>,
     );
 
     const hyperlinkElement = getByText('Test Title');

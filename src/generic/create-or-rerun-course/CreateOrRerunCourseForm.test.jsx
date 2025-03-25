@@ -25,7 +25,6 @@ import { getCreateOrRerunCourseUrl } from '../data/api';
 import messages from './messages';
 import { CreateOrRerunCourseForm } from '.';
 import { initialState } from './factories/mockApiResponses';
-import { number } from 'prop-types';
 
 const mockedUsedNavigate = jest.fn();
 

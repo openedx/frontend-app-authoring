@@ -6,7 +6,7 @@ import { initializeMockApp } from '@edx/frontend-platform';
 import { IntlProvider, injectIntl } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
 import {
-  act, fireEvent, render, waitFor,
+  fireEvent, render, waitFor,
 } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 

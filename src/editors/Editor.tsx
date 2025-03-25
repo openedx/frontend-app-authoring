@@ -16,7 +16,7 @@ export interface Props extends EditorComponent {
   learningContextId: string | null;
   lmsEndpointUrl: string | null;
   studioEndpointUrl: string | null;
-  fullScreen?: boolean;
+  fullScreen?: boolean; // eslint-disable-line react/no-unused-prop-types
 }
 
 const Editor: React.FC<Props> = ({
