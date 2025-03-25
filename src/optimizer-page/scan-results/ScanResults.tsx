@@ -44,15 +44,15 @@ const ScanResults: FC<Props> = ({ data }) => {
         <header className="sub-header-content">
           <h2 className="sub-header-content-title">{intl.formatMessage(messages.scanHeader)}</h2>
           <span className="locked-links-checkbox-wrapper">
-              <Form.CheckBox
-                className="locked-links-checkbox"
-                checked={showLockedLinks}
-                onClick={() => {
-                  setShowLockedLinks(!showLockedLinks);
-                }}
-              > 
-                {intl.formatMessage(messages.lockedCheckboxLabel)}
-              </Form.CheckBox>
+            <Form.CheckBox
+              className="locked-links-checkbox"
+              checked={showLockedLinks}
+              onClick={() => {
+                setShowLockedLinks(!showLockedLinks);
+              }}
+            >
+              {intl.formatMessage(messages.lockedCheckboxLabel)}
+            </Form.CheckBox>
             <LockedInfoIcon />
           </span>
         </header>
