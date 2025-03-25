@@ -16,7 +16,6 @@ export interface Props extends EditorComponent {
   learningContextId: string | null;
   lmsEndpointUrl: string | null;
   studioEndpointUrl: string | null;
-  fullScreen?: boolean;
 }
 
 const Editor: React.FC<Props> = ({

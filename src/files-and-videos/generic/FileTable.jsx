@@ -289,7 +289,6 @@ const FileTable = ({
 };
 
 FileTable.propTypes = {
-  courseId: PropTypes.string.isRequired,
   files: PropTypes.arrayOf(PropTypes.shape({})),
   data: PropTypes.shape({
     fileIds: PropTypes.arrayOf(PropTypes.string).isRequired,
