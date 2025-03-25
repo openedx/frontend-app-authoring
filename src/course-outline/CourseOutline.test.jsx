@@ -2286,7 +2286,7 @@ describe('<CourseOutline />', () => {
     expect(await screen.findByText('An error has occurred creating the file')).toBeInTheDocument();
   });
 
-  it.only('sets status to DENIED when API responds with 403', async () => {
+  it('sets status to DENIED when API responds with 403', async () => {
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(403);
