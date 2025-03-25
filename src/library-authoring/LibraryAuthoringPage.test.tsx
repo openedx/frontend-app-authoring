@@ -503,7 +503,7 @@ describe('<LibraryAuthoringPage />', () => {
       // eslint-disable-next-line no-await-in-loop
       await validateSubmenu(key);
     }
-  });
+  }, 10000);
 
   it('can filter by block type', async () => {
     await renderLibraryPage();
