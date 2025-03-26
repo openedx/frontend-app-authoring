@@ -29,6 +29,9 @@ export const ROUTES = {
   // LibraryCollectionPage route:
   // * with a selected collectionId and/or an optionally selected componentId.
   COLLECTION: '/collection/:collectionId/:componentId?',
+  // LibraryUnitPage route:
+  // * with a selected unitId and/or an optionally selected componentId.
+  UNIT: '/unit/:unitId/:componentId?',
 };
 
 export enum ContentType {

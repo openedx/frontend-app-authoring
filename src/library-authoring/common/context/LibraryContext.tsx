@@ -28,6 +28,8 @@ export type LibraryContextData = {
   /** The ID of the current collection/component/unit, on the sidebar OR page */
   collectionId: string | undefined;
   setCollectionId: (collectionId?: string) => void;
+  unitId: string | undefined;
+  setUnitId: (unitId?: string) => void;
   componentId: string | undefined;
   setComponentId: (componentId?: string) => void;
   unitId: string | undefined;
@@ -125,6 +127,9 @@ export const LibraryProvider = ({
   const [unitId, setUnitId] = useState(
     skipUrlUpdate ? undefined : urlUnitId || (selectedItemIdIsUnit ? urlSelectedItemId : undefined),
   );
+  const [unitId, setUnitId] = useState(
+    skipUrlUpdate ? undefined : params.unitId,
+  );
 
   const context = useMemo<LibraryContextData>(() => {
     const contextValue = {
@@ -132,6 +137,8 @@ export const LibraryProvider = ({
       libraryData,
       collectionId,
       setCollectionId,
+      unitId,
+      setUnitId,
       componentId,
       setComponentId,
       unitId,
@@ -157,6 +164,8 @@ export const LibraryProvider = ({
     libraryData,
     collectionId,
     setCollectionId,
+    unitId,
+    setUnitId,
     componentId,
     setComponentId,
     unitId,
