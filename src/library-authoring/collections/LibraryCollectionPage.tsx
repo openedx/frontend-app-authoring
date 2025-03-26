@@ -139,7 +139,7 @@ const LibraryCollectionPage = () => {
     return <ErrorAlert error={error} />;
   }
 
-  const breadcumbs = !componentPickerMode ? (
+  const breadcrumbs = !componentPickerMode ? (
     <Breadcrumb
       ariaLabel={intl.formatMessage(messages.breadcrumbsAriaLabel)}
       links={[
@@ -204,7 +204,7 @@ const LibraryCollectionPage = () => {
           >
             <SubHeader
               title={<SubHeaderTitle title={collectionData.title} />}
-              breadcrumbs={breadcumbs}
+              breadcrumbs={breadcrumbs}
               headerActions={<HeaderActions />}
               hideBorder
             />

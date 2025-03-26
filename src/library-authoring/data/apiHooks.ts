@@ -93,6 +93,11 @@ export const libraryAuthoringQueryKeys = {
     libraryId,
     collectionId,
   ],
+  container: (libraryId?: string, containerId?: string) => [
+    ...libraryAuthoringQueryKeys.all,
+    libraryId,
+    containerId,
+  ],
   blockTypes: (libraryId?: string) => [
     ...libraryAuthoringQueryKeys.all,
     'blockTypes',
@@ -599,10 +604,11 @@ export const useCreateLibraryContainer = (libraryId: string) => {
 /**
  * Get the metadata for a container in a library
  */
-export const useContainer = (containerId: string) => (
+export const useContainer = (libraryId?: string, containerId?: string) => (
   useQuery({
-    queryKey: containerQueryKeys.container(containerId),
-    queryFn: containerId ? () => getContainerMetadata(containerId) : undefined,
+    enabled: !!libraryId && !!containerId,
+    queryKey: libraryAuthoringQueryKeys.container(libraryId, containerId),
+    queryFn: () => getContainerMetadata(containerId!),
   })
 );
 
@@ -618,7 +624,7 @@ export const useUpdateContainer = (containerId: string) => {
       // NOTE: We invalidate the library query here because we need to update the library's
       // container list.
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
-      queryClient.invalidateQueries({ queryKey: containerQueryKeys.container(containerId) });
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.container(libraryId, containerId) });
     },
   });
 };
