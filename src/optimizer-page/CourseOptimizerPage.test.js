@@ -144,6 +144,13 @@ describe('CourseOptimizerPage', () => {
         expect(getAllByText(scanResultsMessages.brokenLinkStatus.defaultMessage)[0]).toBeInTheDocument();
         expect(queryAllByText(scanResultsMessages.lockedLinkStatus.defaultMessage)[0]).toBeInTheDocument();
         expect(queryAllByText(scanResultsMessages.recommendedManualCheckText.defaultMessage)[0]).toBeInTheDocument();
+        const brokenLinks = getAllByText('https://example.com/broken-link-algo');
+        expect(brokenLinks.length).toBeGreaterThan(0);
+        fireEvent.click(brokenLinks[0]);
+        const lockedLinks = getAllByText('https://example.com/locked-link-algo');
+        expect(lockedLinks.length).toBeGreaterThan(0);
+        fireEvent.click(lockedLinks[0]);
+        fireEvent.click((getAllByText('Go to Block'))[0]);
       });
     });
 
