@@ -12,6 +12,7 @@ jest.mock('react', () => ({
   ...jest.requireActual('react'),
   useRef: jest.fn(val => ({ current: val })),
   useEffect: jest.fn(),
+  useState: jest.fn(() => [false, jest.fn()]),
   useCallback: (cb, prereqs) => ({ cb, prereqs }),
 }));
 
@@ -56,7 +57,7 @@ describe('hooks', () => {
         studioEndpointUrl: 'studioEndpointUrl',
         learningContextId: 'learningContextId',
       };
-      hooks.initializeApp({ dispatch, data: fakeData });
+      hooks.useInitializeApp({ dispatch, data: fakeData });
       expect(dispatch).not.toHaveBeenCalledWith(fakeData);
       const [cb, prereqs] = useEffect.mock.calls[0];
       expect(prereqs).toStrictEqual([
