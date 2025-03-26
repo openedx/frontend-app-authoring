@@ -10,22 +10,36 @@ import { Unit } from '../types';
 import messages from './messages';
 import LockedInfoIcon from './LockedInfoIcon';
 
-const BrokenLinkHref: FC<{ href: string }> = ({ href }) => (
-  <div className="broken-link-container">
-    <a href={href} target="_blank" className="broken-link" rel="noreferrer">
-      {href}
-    </a>
-  </div>
-);
+const BrokenLinkHref: FC<{ href: string }> = ({ href }) => {
+  const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    window.open(href, '_blank');
+  };
 
-const GoToBlock: FC<{ block: { url: string } }> = ({ block }) => (
-  <span style={{ display: 'flex', gap: '.5rem' }}>
-    <Icon src={OpenInNew} />
-    <a href={block.url} target="_blank" rel="noreferrer">
-      Go to Block
-    </a>
-  </span>
-);
+  return (
+    <div className="broken-link-container">
+      <a href={href} onClick={handleClick} className="broken-link" rel="noreferrer">
+        {href}
+      </a>
+    </div>
+  );
+};
+
+const GoToBlock: FC<{ block: { url: string } }> = ({ block }) => {
+  const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    window.open(block.url, '_blank');
+  };
+
+  return (
+    <span style={{ display: 'flex', gap: '.5rem' }}>
+      <Icon src={OpenInNew} />
+      <a href={block.url} onClick={handleClick} rel="noreferrer">
+        Go to Block
+      </a>
+    </span>
+  );
+};
 
 const RecommendedManualCheckHeading = () => {
   const intl = useIntl();
