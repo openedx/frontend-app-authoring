@@ -9,8 +9,7 @@ import { MeiliSearch, type Filter } from 'meilisearch';
 import { union } from 'lodash';
 
 import {
-  CollectionHit,
-  ContentHit,
+  type HitType,
   SearchSortOption,
   forceArray, PublishStatus,
 } from './data/api';
@@ -39,7 +38,7 @@ export interface SearchContextData {
   searchSortOrder: SearchSortOption;
   setSearchSortOrder: React.Dispatch<React.SetStateAction<SearchSortOption>>;
   defaultSearchSortOrder: SearchSortOption;
-  hits: (ContentHit | CollectionHit)[];
+  hits: HitType[];
   totalHits: number;
   isLoading: boolean;
   hasNextPage: boolean | undefined;

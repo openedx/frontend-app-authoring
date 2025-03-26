@@ -29,12 +29,18 @@ export type LibraryContextData = {
   setCollectionId: (collectionId?: string) => void;
   componentId: string | undefined;
   setComponentId: (componentId?: string) => void;
+  unitId: string | undefined;
+  setUnitId: (componentId?: string) => void;
   // Only show published components
   showOnlyPublished: boolean;
   // "Create New Collection" modal
   isCreateCollectionModalOpen: boolean;
   openCreateCollectionModal: () => void;
   closeCreateCollectionModal: () => void;
+  // "Create New Unit" modal
+  isCreateUnitModalOpen: boolean;
+  openCreateUnitModal: () => void;
+  closeCreateUnitModal: () => void;
   // Editor modal - for editing some component
   /** If the editor is open and the user is editing some component, this is the component being edited. */
   componentBeingEdited: ComponentEditorInfo | undefined;
@@ -80,6 +86,7 @@ export const LibraryProvider = ({
   componentPicker,
 }: LibraryProviderProps) => {
   const [isCreateCollectionModalOpen, openCreateCollectionModal, closeCreateCollectionModal] = useToggle(false);
+  const [isCreateUnitModalOpen, openCreateUnitModal, closeCreateUnitModal] = useToggle(false);
   const [componentBeingEdited, setComponentBeingEdited] = useState<ComponentEditorInfo | undefined>();
   const closeComponentEditor = useCallback((data) => {
     setComponentBeingEdited((prev) => {
@@ -101,11 +108,26 @@ export const LibraryProvider = ({
 
   // Parse the initial collectionId and/or componentId from the current URL params
   const params = useParams();
+  const { selectedItemId } = params;
+  let selectedUnitId: string | undefined;
+  let selectedCollectionId: string | undefined;
+
+  if (selectedItemId) {
+    if (selectedItemId.startsWith('lct')) {
+      selectedUnitId = selectedItemId;
+    } else {
+      selectedCollectionId = selectedItemId;
+    }
+  }
+
   const [componentId, setComponentId] = useState(
     skipUrlUpdate ? undefined : params.componentId,
   );
   const [collectionId, setCollectionId] = useState(
-    skipUrlUpdate ? undefined : params.collectionId,
+    skipUrlUpdate ? undefined : selectedCollectionId,
+  );
+  const [unitId, setUnitId] = useState(
+    skipUrlUpdate ? undefined : selectedUnitId,
   );
 
   const context = useMemo<LibraryContextData>(() => {
@@ -116,12 +138,17 @@ export const LibraryProvider = ({
       setCollectionId,
       componentId,
       setComponentId,
+      unitId,
+      setUnitId,
       readOnly,
       isLoadingLibraryData,
       showOnlyPublished,
       isCreateCollectionModalOpen,
       openCreateCollectionModal,
       closeCreateCollectionModal,
+      isCreateUnitModalOpen,
+      openCreateUnitModal,
+      closeCreateUnitModal,
       componentBeingEdited,
       openComponentEditor,
       closeComponentEditor,
@@ -142,6 +169,9 @@ export const LibraryProvider = ({
     isCreateCollectionModalOpen,
     openCreateCollectionModal,
     closeCreateCollectionModal,
+    isCreateUnitModalOpen,
+    openCreateUnitModal,
+    closeCreateUnitModal,
     componentBeingEdited,
     openComponentEditor,
     closeComponentEditor,

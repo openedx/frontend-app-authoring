@@ -9,13 +9,14 @@ import {
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
+import ComponentCount from '../../generic/component-count';
 import TagCount from '../../generic/tag-count';
 import { BlockTypeLabel, type ContentHitTags, Highlight } from '../../search-manager';
 
 type BaseComponentCardProps = {
   componentType: string;
   displayName: string;
-  description: string;
+  description?: string;
   numChildren?: number;
   tags: ContentHitTags;
   actions: React.ReactNode;
@@ -26,7 +27,7 @@ type BaseComponentCardProps = {
 const BaseComponentCard = ({
   componentType,
   displayName,
-  description,
+  description = '',
   numChildren,
   tags,
   actions,
@@ -67,24 +68,33 @@ const BaseComponentCard = ({
             <div onClick={(e) => e.stopPropagation()}>{actions}</div>
           }
         />
-        <Card.Body>
+        <Card.Body className="w-100">
           <Card.Section>
-            <Stack direction="horizontal" className="d-flex justify-content-between">
-              <Stack direction="horizontal" gap={1}>
-                <Icon src={componentIcon} size="sm" />
-                <span className="small">
-                  <BlockTypeLabel blockType={componentType} count={numChildren} />
-                </span>
-              </Stack>
-              <TagCount count={tagCount} />
-            </Stack>
             <div className="text-truncate h3 mt-2">
               <Highlight text={displayName} />
             </div>
-            <Highlight text={description} /><br />
-            {props.hasUnpublishedChanges ? <Badge variant="warning">{intl.formatMessage(messages.unpublishedChanges)}</Badge> : null}
+            <Highlight text={description} />
           </Card.Section>
         </Card.Body>
+        <Card.Footer className="mt-auto">
+          <Stack gap={2}>
+            <Stack direction="horizontal" gap={1}>
+              <Stack direction="horizontal" gap={1} className="mr-auto">
+                <Icon src={componentIcon} size="sm" />
+                <small>
+                  <BlockTypeLabel blockType={componentType} />
+                </small>
+              </Stack>
+              <ComponentCount count={numChildren} />
+              <TagCount size="sm" count={tagCount} />
+            </Stack>
+            <div className="badge-container d-flex align-items-center justify-content-center">
+              {props.hasUnpublishedChanges && (
+                <Badge variant="warning">{intl.formatMessage(messages.unpublishedChanges)}</Badge>
+              )}
+            </div>
+          </Stack>
+        </Card.Footer>
       </Card>
     </Container>
   );

@@ -103,6 +103,14 @@ export const getXBlockBaseApiUrl = () => `${getApiBaseUrl()}/xblock/`;
  * Get the URL for the content store api.
  */
 export const getContentStoreApiUrl = () => `${getApiBaseUrl()}/api/contentstore/v2/`;
+/**
+ * Get the URL for the library container api.
+ */
+export const getLibraryContainersApiUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/containers/`;
+/**
+ * Get the URL for the container detail api.
+ */
+export const getLibraryContainerApiUrl = (containerId: string) => `${getApiBaseUrl()}/api/libraries/v2/containers/${containerId}/`;
 
 export interface ContentLibrary {
   id: string;
@@ -556,4 +564,55 @@ export async function updateComponentCollections(usageKey: string, collectionKey
   await getAuthenticatedHttpClient().patch(getLibraryBlockCollectionsUrl(usageKey), {
     collection_keys: collectionKeys,
   });
+}
+
+export interface CreateLibraryContainerDataRequest {
+  title: string;
+  containerType: string;
+}
+
+/**
+ * Create a library container
+ */
+export async function createLibraryContainer(libraryId: string, containerData: CreateLibraryContainerDataRequest) {
+  const client = getAuthenticatedHttpClient();
+  await client.post(getLibraryContainersApiUrl(libraryId), snakeCaseObject(containerData));
+}
+
+export interface Container {
+  containerKey: string;
+  containerType: 'unit';
+  displayName: string;
+  lastPublished: string | null;
+  publishedBy: string | null;
+  createdBy: string | null;
+  lastDraftCreated: string | null;
+  lastDraftCreatedBy: string | null,
+  hasUnpublishedChanges: boolean;
+  created: string;
+  modified: string;
+  collections: CollectionMetadata[];
+}
+
+/**
+ * Get the container metadata.
+ */
+export async function getContainerMetadata(containerId: string): Promise<Container> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryContainerApiUrl(containerId));
+  return camelCaseObject(data);
+}
+
+export interface UpdateContainerDataRequest {
+  displayName: string;
+}
+
+/**
+ * Update container metadata.
+ */
+export async function updateContainerMetadata(
+  containerId: string,
+  containerData: UpdateContainerDataRequest,
+) {
+  const client = getAuthenticatedHttpClient();
+  await client.patch(getLibraryContainerApiUrl(containerId), snakeCaseObject(containerData));
 }

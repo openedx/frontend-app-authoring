@@ -105,7 +105,7 @@ export interface ContentHitTags {
  */
 interface BaseContentHit {
   id: string;
-  type: 'course_block' | 'library_block' | 'collection';
+  type: 'course_block' | 'library_block' | 'collection' | 'library_container';
   displayName: string;
   usageKey: string;
   blockId: string;
@@ -168,10 +168,25 @@ export interface CollectionHit extends BaseContentHit {
 }
 
 /**
+ * Information about a single container returned in the search results
+ * Defined in edx-platform/openedx/core/djangoapps/content/search/documents.py
+ */
+export interface ContainerHit extends BaseContentHit {
+  type: 'library_container';
+  blockType: 'unit'; // This should be expanded to include other container types
+  numChildren?: number;
+  published?: ContentPublishedData;
+  publishStatus: PublishStatus;
+  formatted: BaseContentHit['formatted'] & { published?: ContentPublishedData, };
+}
+
+export type HitType = ContentHit | CollectionHit | ContainerHit;
+
+/**
  * Convert search hits to camelCase
  * @param hit A search result directly from Meilisearch
  */
-export function formatSearchHit(hit: Record<string, any>): ContentHit | CollectionHit {
+export function formatSearchHit(hit: Record<string, any>): HitType {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const { _formatted, ...newHit } = hit;
   newHit.formatted = {
@@ -214,7 +229,7 @@ export async function fetchSearchResults({
   skipBlockTypeFetch = false,
   limit = 20,
 }: FetchSearchParams): Promise<{
-    hits: (ContentHit | CollectionHit)[],
+    hits: HitType[],
     nextOffset: number | undefined,
     totalHits: number,
     blockTypes: Record<string, number>,

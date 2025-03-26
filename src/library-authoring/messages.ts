@@ -46,6 +46,11 @@ const messages = defineMessages({
     defaultMessage: 'Collections',
     description: 'Tab label for the collections tab',
   },
+  unitsTab: {
+    id: 'course-authoring.library-authoring.units-tab',
+    defaultMessage: 'Units',
+    description: 'Tab label for the units tab',
+  },
   componentsTempPlaceholder: {
     id: 'course-authoring.library-authoring.components-temp-placeholder',
     defaultMessage: 'There are {componentCount} components in this library',
