@@ -27,6 +27,8 @@ export type LibraryContextData = {
   isLoadingLibraryData: boolean;
   collectionId: string | undefined;
   setCollectionId: (collectionId?: string) => void;
+  unitId: string | undefined;
+  setUnitId: (unitId?: string) => void;
   componentId: string | undefined;
   setComponentId: (componentId?: string) => void;
   // Only show published components
@@ -112,6 +114,9 @@ export const LibraryProvider = ({
   const [collectionId, setCollectionId] = useState(
     skipUrlUpdate ? undefined : params.collectionId,
   );
+  const [unitId, setUnitId] = useState(
+    skipUrlUpdate ? undefined : params.unitId,
+  );
 
   const context = useMemo<LibraryContextData>(() => {
     const contextValue = {
@@ -119,6 +124,8 @@ export const LibraryProvider = ({
       libraryData,
       collectionId,
       setCollectionId,
+      unitId,
+      setUnitId,
       componentId,
       setComponentId,
       readOnly,
@@ -142,6 +149,8 @@ export const LibraryProvider = ({
     libraryData,
     collectionId,
     setCollectionId,
+    unitId,
+    setUnitId,
     componentId,
     setComponentId,
     readOnly,
