@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import * as appHooks from '../../../hooks';
 import { thunkActions, selectors } from '../../../data/redux';
 import VideoSettingsModal from './VideoSettingsModal';
+import { RequestKeys } from '../../../data/constants/requests';
 
 interface Props {
   isLibrary: boolean;
@@ -27,11 +29,19 @@ const VideoEditorModal: React.FC<Props> = ({
   isLibrary,
 }) => {
   const dispatch = useDispatch();
-  const searchParams = new URLSearchParams(document.location.search);
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
   const selectedVideoId = searchParams.get('selectedVideoId');
   const selectedVideoUrl = searchParams.get('selectedVideoUrl');
   const onReturn = hooks.useReturnToGallery();
-  hooks.initialize(dispatch, selectedVideoId, selectedVideoUrl);
+  const isLoaded = useSelector(
+    (state) => selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchVideos }),
+  );
+
+  useEffect(() => {
+    hooks.initialize(dispatch, selectedVideoId, selectedVideoUrl);
+  }, [isLoaded, dispatch, selectedVideoId, selectedVideoUrl]);
+
   return (
     <VideoSettingsModal {...{
       onReturn,
