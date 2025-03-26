@@ -32,7 +32,7 @@
   bottom: 0;
   width: 100%;
   padding: 0 .625rem;
-  z-index: $zindex-modal;
+  z-index: var(--pgn-elevation-modal-zindex);
 }
 
 .alert-proctoring-error {
@@ -66,13 +66,13 @@
 .setting-sidebar-supplementary {
   .setting-sidebar-supplementary-about {
     .setting-sidebar-supplementary-about-title {
-      font: normal $font-weight-bold 1.125rem/1.5rem $font-family-base;
-      color: $headings-color;
+      font: normal var(--pgn-typography-font-weight-bold) 1.125rem/1.5rem var(--pgn-typography-font-family-base);
+      color: var(--pgn-color-headings-base);
       margin-bottom: 1.25rem;
     }
 
     .setting-sidebar-supplementary-about-descriptions {
-      font: normal $font-weight-normal .875rem/1.5rem $font-family-base;
+      font: normal var(--pgn-typography-font-weight-normal) .875rem/1.5rem var(--pgn-typography-font-family-base);
       color: $text-color-base;
     }
   }
@@ -81,16 +81,16 @@
     list-style: none;
 
     .setting-sidebar-supplementary-other-link {
-      font: normal $font-weight-normal .875rem/1.5rem $font-family-base;
+      font: normal var(--pgn-typography-font-weight-normal) .875rem/1.5rem var(--pgn-typography-font-family-base);
       line-height: 1.5rem;
-      color: $info-500;
+      color: var(--pgn-color-info-500);
       margin-bottom: .5rem;
     }
   }
 
   .setting-sidebar-supplementary-other-title {
-    font: normal $font-weight-bold 1.125rem/1.5rem $font-family-base;
-    color: $headings-color;
+    font: normal var(--pgn-typography-font-weight-bold) 1.125rem/1.5rem var(--pgn-typography-font-family-base);
+    color: var(--pgn-color-headings-base);
     margin-bottom: 1.25rem;
   }
 }
@@ -102,7 +102,7 @@
     display: inline-block;
     margin-right: 5px;
     margin-bottom: 5px;
-    color: $danger;
+    color: var(--pgn-color-danger-base);
   }
 
   .modal-error-item-title {
@@ -113,12 +113,12 @@
 
 .modal-popup-content {
   max-width: 200px;
-  color: $white;
-  background-color: $black;
+  color: var(--pgn-color-white);
+  background-color: var(--pgn-color-black);
   filter: drop-shadow(0 2px 4px rgba(0 0 0 / .15));
   font-weight: 400;
 }
 
 .pgn__modal-popup__arrow::after {
-  border-top-color: $black;
+  border-top-color: var(--pgn-color-black);
 }

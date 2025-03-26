@@ -98,14 +98,12 @@ Gallery.defaultProps = {
   highlighted: '',
   showIdsOnCards: false,
   height: '375px',
-  show: true,
   thumbnailFallback: undefined,
   allowLazyLoad: false,
   fetchNextPage: null,
   assetCount: 0,
 };
 Gallery.propTypes = {
-  show: PropTypes.bool,
   isLoaded: PropTypes.bool.isRequired,
   galleryIsEmpty: PropTypes.bool.isRequired,
   searchIsEmpty: PropTypes.bool.isRequired,

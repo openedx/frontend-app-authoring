@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require('node:path');
 const { createConfig } = require('@openedx/frontend-build');
 
 const config = createConfig('webpack-dev', {

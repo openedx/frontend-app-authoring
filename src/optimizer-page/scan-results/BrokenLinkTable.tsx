@@ -1,5 +1,5 @@
 import {
-  Card, Icon, OverlayTrigger, Table, Tooltip,
+  Card, Icon, OverlayTrigger, DataTable, Tooltip,
 } from '@openedx/paragon';
 import {
   OpenInNew, Lock, LinkOff, InfoOutline,
@@ -66,7 +66,7 @@ const BrokenLinkTable: FC<BrokenLinkTableProps> = ({
   return (
     <Card className="unit-card rounded-sm pt-2 pl-3 pr-4 mb-2.5">
       <p className="unit-header">{unit.displayName}</p>
-      <Table
+      <DataTable
         data={unit.blocks.reduce(
           (
             acc: TableData,
