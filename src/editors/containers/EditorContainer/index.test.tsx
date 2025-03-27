@@ -90,14 +90,14 @@ describe('EditorContainer', () => {
     expect(defaultPropsHtml.onClose).not.toHaveBeenCalled();
 
     // Should close modal if cancelled
-    const cancelBtn = await screen.findByRole('button', { name: 'Cancel' });
+    const cancelBtn = await screen.findByRole('button', { name: 'Keep Editing' });
     fireEvent.click(cancelBtn);
     expect(defaultPropsHtml.onClose).not.toHaveBeenCalled();
 
     // open modal again
     fireEvent.click(closeButton);
     // And can confirm the cancelation:
-    const confirmButton = await screen.findByRole('button', { name: 'OK' });
+    const confirmButton = await screen.findByRole('button', { name: 'Discard Changes and Exit' });
     fireEvent.click(confirmButton);
     expect(defaultPropsHtml.onClose).toHaveBeenCalled();
     window.dispatchEvent(mockEvent);
