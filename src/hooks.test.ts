@@ -1,5 +1,4 @@
-import { renderHook } from '@testing-library/react-hooks';
-import { fireEvent } from '@testing-library/react';
+import { fireEvent, renderHook } from '@testing-library/react';
 import { useLocation } from 'react-router-dom';
 import { history } from '@edx/frontend-platform';
 

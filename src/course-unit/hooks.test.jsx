@@ -1,5 +1,5 @@
 import React from 'react';
-import { renderHook, act } from '@testing-library/react-hooks';
+import { act, renderHook } from '@testing-library/react';
 import { useScrollToLastPosition, useLayoutGrid } from './hooks';
 import { messageTypes } from './constants';
 

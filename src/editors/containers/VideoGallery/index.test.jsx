@@ -1,7 +1,7 @@
 import { initializeMockApp } from '@edx/frontend-platform';
 import { AppProvider } from '@edx/frontend-platform/react';
 import { configureStore } from '@reduxjs/toolkit';
-import '@testing-library/jest-dom/extend-expect';
+import '@testing-library/jest-dom';
 import React from 'react';
 import {
   act, fireEvent, render, screen,

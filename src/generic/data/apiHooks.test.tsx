@@ -2,7 +2,7 @@ import React from 'react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 
 import { getTagsCountApiUrl } from './api';
