@@ -224,7 +224,7 @@ describe('<CreateOrRerunCourseForm />', () => {
     const runInput = await screen.findByPlaceholderText(messages.courseRunPlaceholder.defaultMessage);
 
     fireEvent.change(displayNameInput, { target: { value: 'foo course name' } });
-    userEvent.click(orgInput);
+    await userEvent.click(orgInput);
     fireEvent.change(numberInput, { target: { value: 'number with invalid (+) symbol' } });
     fireEvent.change(runInput, { target: { value: 'number with invalid (=) symbol' } });
 
