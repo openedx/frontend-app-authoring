@@ -44,6 +44,16 @@ class ReactStateOLXParser {
     this.problemState = problemState.problem;
   }
 
+  /**
+   * Checks if an answer string contains variables (letters except 'e' which is used for scientific notation)
+   * @param {string} answer - The answer string to check
+   * @return {boolean} - True if variables are present, false otherwise
+   */
+  containsVariables(answer) {
+    // Similar to checkIsNumeric in edit.js (legacy editor)
+    return /[a-df-z]/i.test(answer);
+  }
+
   /** addHints()
    * The editorObject saved to the class constuctor is parsed for the attribute hints. No hints returns an empty object.
    * The hints are parsed and appended to the hintsArray as object representations of the hint. The hints array is saved
@@ -365,6 +375,21 @@ class ReactStateOLXParser {
     const answerObject = this.buildNumericalResponse();
     const solution = this.addSolution();
 
+    // Verify if it is already stringresponse
+    if (this.convertedToStringResponse) {
+      answerObject[ProblemTypeKeys.TEXTINPUT].push(...solution);
+
+      const problemBody = this.richTextBuilder.build([answerObject]);
+      const questionString = this.richTextBuilder.build(question);
+      const hintString = this.richTextBuilder.build(demandhint);
+      const [problemTypeTag] = problemBody.match(/<stringresponse>|<stringresponse.[^>]+>/);
+      const updatedString = `${problemTypeTag}\n${questionString}`;
+      const problemBodyString = problemBody.replace(problemTypeTag, updatedString);
+      const fullProblemString = `<problem>${problemBodyString}${hintString}\n</problem>`;
+
+      return fullProblemString;
+    }
+
     answerObject[ProblemTypeKeys.NUMERIC].push(...solution);
 
     const problemBody = this.richTextBuilder.build([answerObject]);
@@ -394,6 +419,58 @@ class ReactStateOLXParser {
     const { answers, problemType } = this.problemState;
     const { tolerance } = this.problemState.settings;
     const { selectedFeedback } = this.editorObject;
+    // Verify if the answer has a correct answer
+    const correctAnswers = answers.filter(answer => answer.correct);
+    const mainAnswer = correctAnswers.length > 0 ? correctAnswers[0].title : '';
+
+    // If contain variables, generate as stringresponse instead of numericalresponse
+    if (mainAnswer && this.containsVariables(mainAnswer)) {
+      console.log('Response contains variables. Generating as stringresponse instead of numericalresponse.');
+      // Create a stringresponse type
+      let answerObject = {
+        ':@': {
+          '@_answer': mainAnswer,
+          '@_type': 'ci',
+        },
+        [ProblemTypeKeys.TEXTINPUT]: []
+      };
+      let firstCorrectAnswerParsed = true;
+
+      answers.forEach((answer) => {
+        const correcthint = this.getAnswerHints(selectedFeedback?.[answer.id]);
+
+        if (answer === correctAnswers[0]) {
+          if (correcthint.length > 0) {
+            answerObject[ProblemTypeKeys.TEXTINPUT].push(...correcthint);
+          }
+        }
+        else if (answer.correct && firstCorrectAnswerParsed) {
+          answerObject[ProblemTypeKeys.TEXTINPUT].push({
+            ':@': { '@_answer': answer.title },
+            additional_answer: [...correcthint],
+          });
+        }
+        // Wrong answers as stringequalhint (if exists)
+        else if (!answer.correct) {
+          const wronghint = correcthint[0]?.correcthint;
+          if (wronghint) {
+            answerObject[ProblemTypeKeys.TEXTINPUT].push({
+              ':@': { '@_answer': answer.title },
+              stringequalhint: wronghint ? [...wronghint] : [],
+            });
+          }
+        }
+      });
+      answerObject[ProblemTypeKeys.TEXTINPUT].push({
+        textline: { '#text': '' },
+        ':@': { '@_size': 20 },
+      });
+      // Save the answer type so buildNumericInput will know what to do
+      this.convertedToStringResponse = true;
+      return answerObject;
+    }
+    // If there is not variables, foollow the normal workflow
+    this.convertedToStringResponse = false;
     let answerObject = { [problemType]: [] };
     let firstCorrectAnswerParsed = false;
     answers.forEach((answer) => {
