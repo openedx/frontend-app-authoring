@@ -217,20 +217,18 @@ describe('<CreateOrRerunCourseForm />', () => {
   it('should be disabled create button if form has error', async () => {
     render(<RootWrapper {...props} />);
     await mockStore();
-    const createBtn = screen.getByRole('button', { name: messages.createButton.defaultMessage });
-    const displayNameInput = screen.getByPlaceholderText(messages.courseDisplayNamePlaceholder.defaultMessage);
-    const orgInput = screen.getByText(messages.courseOrgNoOptions.defaultMessage);
-    const numberInput = screen.getByPlaceholderText(messages.courseNumberPlaceholder.defaultMessage);
-    const runInput = screen.getByPlaceholderText(messages.courseRunPlaceholder.defaultMessage);
+    const createBtn = await screen.findByRole('button', { name: messages.createButton.defaultMessage });
+    const displayNameInput = await screen.findByPlaceholderText(messages.courseDisplayNamePlaceholder.defaultMessage);
+    const orgInput = await screen.findByText(messages.courseOrgNoOptions.defaultMessage);
+    const numberInput = await screen.findByPlaceholderText(messages.courseNumberPlaceholder.defaultMessage);
+    const runInput = await screen.findByPlaceholderText(messages.courseRunPlaceholder.defaultMessage);
 
     fireEvent.change(displayNameInput, { target: { value: 'foo course name' } });
-    fireEvent.click(orgInput);
+    await userEvent.click(orgInput);
     fireEvent.change(numberInput, { target: { value: 'number with invalid (+) symbol' } });
     fireEvent.change(runInput, { target: { value: 'number with invalid (=) symbol' } });
 
-    waitFor(() => {
-      expect(createBtn).toBeDisabled();
-    });
+    expect(createBtn).toBeDisabled();
   });
 
   it('shows typeahead dropdown with allowed to create org permissions', async () => {
@@ -245,7 +243,7 @@ describe('<CreateOrRerunCourseForm />', () => {
     render(<RootWrapper {...props} />);
     await mockStore();
 
-    expect(screen.getByPlaceholderText(messages.courseOrgPlaceholder.defaultMessage));
+    await screen.findByPlaceholderText(messages.courseOrgPlaceholder.defaultMessage);
   });
 
   it('shows button pending state', async () => {
@@ -258,22 +256,23 @@ describe('<CreateOrRerunCourseForm />', () => {
     });
     render(<RootWrapper {...props} />);
     await mockStore();
-    expect(screen.getByRole('button', { name: messages.creatingButton.defaultMessage })).toBeInTheDocument();
+    await screen.findByRole('button', { name: messages.creatingButton.defaultMessage });
   });
 
   it('shows alert error if postErrors presents', async () => {
     render(<RootWrapper {...props} />);
+    await screen.findByText(props.title);
     await mockStore();
     await axiosMock.onPost(getCreateOrRerunCourseUrl()).reply(200, { errMsg: 'aaa' });
     await executeThunk(updateCreateOrRerunCourseQuery({ org: 'testX', run: 'some' }), store.dispatch);
 
-    expect(screen.getByText('aaa')).toBeInTheDocument();
+    await screen.findByText('aaa');
   });
 
   it('shows error on field', async () => {
     render(<RootWrapper {...props} />);
     await mockStore();
-    const numberInput = screen.getByPlaceholderText(messages.courseNumberPlaceholder.defaultMessage);
+    const numberInput = await screen.findByPlaceholderText(messages.courseNumberPlaceholder.defaultMessage);
 
     fireEvent.change(numberInput, { target: { value: 'number with invalid (+) symbol' } });
 

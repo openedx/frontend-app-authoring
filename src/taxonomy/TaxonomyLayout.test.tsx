@@ -53,12 +53,12 @@ describe('<TaxonomyLayout />', () => {
     expect(screen.getByTestId('mock-footer')).toBeInTheDocument();
   });
 
-  it('should show toast', () => {
+  it('should show toast', async () => {
     render(<TaxonomyLayout />);
-    const button = screen.getByTestId('taxonomy-show-toast');
+    const button = await screen.findByTestId('taxonomy-show-toast');
     button.click();
-    expect(screen.getByTestId('taxonomy-toast')).toBeInTheDocument();
-    expect(screen.getByText(toastMessage)).toBeInTheDocument();
+    await screen.findByTestId('taxonomy-toast');
+    await screen.findByText(toastMessage);
   });
 
   it('should show alert', () => {

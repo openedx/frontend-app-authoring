@@ -289,7 +289,7 @@ const FileTable = ({
 };
 
 FileTable.propTypes = {
-  courseId: PropTypes.string.isRequired,
+  courseId: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
   files: PropTypes.arrayOf(PropTypes.shape({})),
   data: PropTypes.shape({
     fileIds: PropTypes.arrayOf(PropTypes.string).isRequired,

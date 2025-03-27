@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { IntlProvider } from '@edx/frontend-platform/i18n';
 
 import HelpSidebarLink from './HelpSidebarLink';
 
@@ -25,7 +26,11 @@ describe('HelpSidebarLink Component', () => {
 
   it('renders a Hyperlink when isNewPage is false', () => {
     const props = { ...defaultProps, isNewPage: false, pathToPage: 'https://example.com' };
-    const { getByText } = render(<HelpSidebarLink {...props} />);
+    const { getByText } = render(
+      <IntlProvider locale="en">
+        <HelpSidebarLink {...props} />
+      </IntlProvider>,
+    );
 
     const hyperlinkElement = getByText('Test Title');
     expect(hyperlinkElement.closest('a')).toHaveAttribute('href', 'https://example.com');

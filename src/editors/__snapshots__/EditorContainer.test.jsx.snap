@@ -12,16 +12,19 @@ exports[`Editor Container snapshots rendering correctly with expected Input 1`] 
             {
               "$$typeof": Symbol(react.forward_ref),
               "defaultProps": {
+                "as": "a",
                 "className": undefined,
-                "externalLinkAlternativeText": "in a new tab",
-                "externalLinkTitle": "Opens in a new tab",
+                "destination": undefined,
+                "externalLinkAlternativeText": undefined,
+                "externalLinkTitle": undefined,
                 "isInline": false,
-                "onClick": [Function],
+                "onClick": undefined,
                 "showLaunchIcon": true,
                 "target": "_self",
                 "variant": "default",
               },
               "propTypes": {
+                "as": [Function],
                 "children": [Function],
                 "className": [Function],
                 "destination": [Function],
