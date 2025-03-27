@@ -2,8 +2,8 @@ import {
   APP_INIT_ERROR, APP_READY, subscribe, initialize, mergeConfig, getConfig, getPath,
 } from '@edx/frontend-platform';
 import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
-import React, { useEffect } from 'react';
-import ReactDOM from 'react-dom';
+import React, { StrictMode, useEffect } from 'react';
+import { createRoot } from 'react-dom/client';
 import {
   Route, createRoutesFromElements, createBrowserRouter, RouterProvider,
 } from 'react-router-dom';
@@ -108,14 +108,23 @@ const App = () => {
 };
 
 subscribe(APP_READY, () => {
-  ReactDOM.render(
-    (<App />),
-    document.getElementById('root'),
+  const root = createRoot(document.getElementById('root'));
+
+  root.render(
+    <StrictMode>
+      <App />
+    </StrictMode>,
   );
 });
 
 subscribe(APP_INIT_ERROR, (error) => {
-  ReactDOM.render(<ErrorPage message={error.message} />, document.getElementById('root'));
+  const root = createRoot(document.getElementById('root'));
+
+  root.render(
+    <StrictMode>
+      <ErrorPage message={error.message} />
+    </StrictMode>,
+  );
 });
 
 initialize({

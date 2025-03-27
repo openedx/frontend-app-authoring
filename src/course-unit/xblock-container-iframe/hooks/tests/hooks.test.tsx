@@ -1,5 +1,5 @@
 import React from 'react';
-import { renderHook, act } from '@testing-library/react-hooks';
+import { act, renderHook } from '@testing-library/react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { useKeyedState } from '@edx/react-unit-test-utils';
 import { initializeMockApp } from '@edx/frontend-platform';

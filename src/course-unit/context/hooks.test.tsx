@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 
 import { useIframe } from './hooks';
 import { IframeProvider } from './iFrameContext';
