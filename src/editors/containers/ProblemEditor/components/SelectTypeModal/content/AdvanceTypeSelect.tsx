@@ -90,7 +90,7 @@ const AdvanceTypeSelect: React.FC<Props> = ({
         </Form.RadioSet>
       </Form.Group>
       <Hyperlink
-        destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/create_exercises_and_tools.html#advanced"
+        destination="https://docs.openedx.org/en/latest/educators/references/course_development/exercise_tools/guide_problem_types.html#advanced-problem-types"
         target="_blank"
       >
         <FormattedMessage {...messages.learnMoreAdvancedButtonLabel} />

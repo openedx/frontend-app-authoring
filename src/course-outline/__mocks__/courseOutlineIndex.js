@@ -60,7 +60,7 @@ module.exports = {
     highlightsEnabledForMessaging: false,
     highlightsEnabled: true,
     highlightsPreviewOnly: false,
-    highlightsDocUrl: 'http://edx.readthedocs.io/projects/open-edx-building-and-running-a-course/en/latest/developing_course/course_sections.html#set-section-highlights-for-weekly-course-highlight-messages',
+    highlightsDocUrl: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
     enableProctoredExams: true,
     createZendeskTickets: true,
     enableTimedExams: true,
@@ -128,7 +128,7 @@ module.exports = {
           ],
           highlightsEnabled: true,
           highlightsPreviewOnly: false,
-          highlightsDocUrl: 'http://edx.readthedocs.io/projects/open-edx-building-and-running-a-course/en/latest/developing_course/course_sections.html#set-section-highlights-for-weekly-course-highlight-messages',
+          highlightsDocUrl: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
           childInfo: {
             category: 'sequential',
             displayName: 'Subsection',
@@ -517,7 +517,7 @@ module.exports = {
           ],
           highlightsEnabled: true,
           highlightsPreviewOnly: false,
-          highlightsDocUrl: 'http://edx.readthedocs.io/projects/open-edx-building-and-running-a-course/en/latest/developing_course/course_sections.html#set-section-highlights-for-weekly-course-highlight-messages',
+          highlightsDocUrl: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
           childInfo: {
             category: 'sequential',
             displayName: 'Subsection',
@@ -1837,7 +1837,7 @@ module.exports = {
           highlights: [],
           highlightsEnabled: true,
           highlightsPreviewOnly: false,
-          highlightsDocUrl: 'http://edx.readthedocs.io/projects/open-edx-building-and-running-a-course/en/latest/developing_course/course_sections.html#set-section-highlights-for-weekly-course-highlight-messages',
+          highlightsDocUrl: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
           childInfo: {
             category: 'sequential',
             displayName: 'Subsection',
@@ -2787,7 +2787,7 @@ module.exports = {
           highlights: [],
           highlightsEnabled: true,
           highlightsPreviewOnly: false,
-          highlightsDocUrl: 'http://edx.readthedocs.io/projects/open-edx-building-and-running-a-course/en/latest/developing_course/course_sections.html#set-section-highlights-for-weekly-course-highlight-messages',
+          highlightsDocUrl: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
           childInfo: {
             category: 'sequential',
             displayName: 'Subsection',

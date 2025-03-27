@@ -38,7 +38,7 @@ Cloning and Setup
 
     git clone https://github.com/openedx/frontend-app-authoring.git
 
-2. Use node v20.x.
+2. Use the version of Node specified in the ``.nvmrc`` file.
 
   The current version of the micro-frontend build scripts supports node 20.
   Using other major versions of node *may* work, but this is unsupported.  For
@@ -315,7 +315,7 @@ In additional to the standard settings, the following local configurations can b
 Developing
 **********
 
-`Devstack <https://edx.readthedocs.io/projects/edx-installing-configuring-and-running/en/latest/installation/index.html>`_.  If you start Devstack with ``make dev.up.studio`` that should give you everything you need as a companion to this frontend.
+`Tutor <https://docs.tutor.edly.io/>`_ is the community-supported Open edX development environment. See the `tutor-mfe plugin README <https://github.com/overhangio/tutor-mfe?tab=readme-ov-file#mfe-development>`_ for more information.
 
 
 If your devstack includes the default Demo course, you can visit the following URLs to see content:
