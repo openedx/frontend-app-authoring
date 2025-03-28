@@ -269,8 +269,8 @@ describe('Videos page', () => {
             const addStatus = store.getState().videos.addingStatus;
             expect(addStatus).toEqual(RequestStatus.IN_PROGRESS);
             expect(uploadSpy).toHaveBeenCalled();
-            expect(screen.getByText(videoMessages.videoUploadTrackerModalTitle.defaultMessage)).toBeVisible();
           });
+          await screen.findByText(videoMessages.videoUploadTrackerModalTitle.defaultMessage);
           await act(async () => {
             window.dispatchEvent(new Event('beforeunload'));
           });
@@ -302,9 +302,8 @@ describe('Videos page', () => {
             expect(addStatus).toEqual(RequestStatus.IN_PROGRESS);
 
             expect(uploadSpy).toHaveBeenCalled();
-
-            expect(screen.getByText(videoMessages.videoUploadTrackerModalTitle.defaultMessage)).toBeVisible();
           });
+          await screen.findByText(videoMessages.videoUploadTrackerModalTitle.defaultMessage);
 
           await act(async () => {
             const cancelButton = screen.getByText(videoMessages.videoUploadTrackerAlertCancelLabel.defaultMessage);
@@ -315,9 +314,8 @@ describe('Videos page', () => {
             expect(setFailedSpy).toHaveBeenCalledWith(courseId, expect.any(String), expect.any(String), 'upload_failed');
 
             expect(addStatus).toEqual(RequestStatus.FAILED);
-
-            expect(screen.getByText('Upload error')).toBeVisible();
           });
+          await screen.findByText('Upload error');
           uploadSpy.mockRestore();
           setFailedSpy.mockRestore();
         });
