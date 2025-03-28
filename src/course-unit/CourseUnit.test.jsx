@@ -1862,49 +1862,47 @@ describe('<CourseUnit />', () => {
         .reply(200, { dummy: 'value' });
 
       const {
-        getByTitle, getByRole, getByTestId,
+        findByTitle, findByRole, findByTestId,
       } = render(<RootWrapper />);
 
       const accessGroupName1 = userPartitionInfoFormatted.selectablePartitions[0].groups[0].name;
       const accessGroupName2 = userPartitionInfoFormatted.selectablePartitions[0].groups[1].name;
 
+      await findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
       waitFor(() => {
-        const iframe = getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
-        expect(iframe).toBeInTheDocument();
         simulatePostMessageEvent(messageTypes.manageXBlockAccess, {
           usageId: courseVerticalChildrenMock.children[0].block_id,
         });
       });
 
+      const configureModal = await findByTestId('configure-modal');
+
+      expect(within(configureModal).queryByText(accessGroupName1)).not.toBeInTheDocument();
+      expect(within(configureModal).queryByText(accessGroupName2)).not.toBeInTheDocument();
+
+      const restrictAccessSelect = await findByRole('combobox', {
+        name: configureModalMessages.restrictAccessTo.defaultMessage,
+      });
+
+      await userEvent.selectOptions(restrictAccessSelect, '0');
+
+      // eslint-disable-next-line array-callback-return
+      userPartitionInfoFormatted.selectablePartitions[0].groups.map((group) => {
+        expect(within(configureModal).getByRole('checkbox', { name: group.name })).not.toBeChecked();
+        expect(within(configureModal).queryByText(group.name)).toBeInTheDocument();
+      });
+
+      const group1Checkbox = within(configureModal).getByRole('checkbox', { name: accessGroupName1 });
+      await userEvent.click(group1Checkbox);
+      expect(group1Checkbox).toBeChecked();
+
+      const saveModalBtnText = within(configureModal).getByRole('button', {
+        name: configureModalMessages.saveButton.defaultMessage,
+      });
+      expect(saveModalBtnText).toBeInTheDocument();
+
+      await userEvent.click(saveModalBtnText);
       waitFor(() => {
-        const configureModal = getByTestId('configure-modal');
-        expect(configureModal).toBeInTheDocument();
-
-        expect(within(configureModal).queryByText(accessGroupName1)).not.toBeInTheDocument();
-        expect(within(configureModal).queryByText(accessGroupName2)).not.toBeInTheDocument();
-
-        const restrictAccessSelect = getByRole('combobox', {
-          name: configureModalMessages.restrictAccessTo.defaultMessage,
-        });
-
-        userEvent.selectOptions(restrictAccessSelect, '0');
-
-        // eslint-disable-next-line array-callback-return
-        userPartitionInfoFormatted.selectablePartitions[0].groups.map((group) => {
-          expect(within(configureModal).getByRole('checkbox', { name: group.name })).not.toBeChecked();
-          expect(within(configureModal).queryByText(group.name)).toBeInTheDocument();
-        });
-
-        const group1Checkbox = within(configureModal).getByRole('checkbox', { name: accessGroupName1 });
-        userEvent.click(group1Checkbox);
-        expect(group1Checkbox).toBeChecked();
-
-        const saveModalBtnText = within(configureModal).getByRole('button', {
-          name: configureModalMessages.saveButton.defaultMessage,
-        });
-        expect(saveModalBtnText).toBeInTheDocument();
-
-        userEvent.click(saveModalBtnText);
         expect(handleConfigureSubmitMock).toHaveBeenCalledTimes(1);
       });
     });
