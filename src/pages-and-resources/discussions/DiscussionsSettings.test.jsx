@@ -414,13 +414,19 @@ describe.each([
     const showLTIConfig = isAdmin;
 
     renderComponent(`/course/${courseId}/pages-and-resources/discussion`);
-    // This is an important line that ensures the spinner has been removed - and thus our main
-    // content has been loaded - prior to proceeding with our expectations.
-    await waitForElementToBeRemoved(screen.queryByRole('status'));
 
-    userEvent.click(screen.getByLabelText('Select Piazza'));
-    userEvent.click(queryByText(container, messages.nextButton.defaultMessage));
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    let spinner = await screen.findByRole('status');
+    await waitFor(() => {
+      expect(spinner).not.toBeInTheDocument();
+    });
+
+    await userEvent.click(screen.getByLabelText('Select Piazza'));
+    await userEvent.click(queryByText(container, messages.nextButton.defaultMessage));
+
+    spinner = await screen.findByRole('status');
+    await waitFor(() => {
+      expect(spinner).not.toBeInTheDocument();
+    });
 
     await waitFor(() => {
       if (showLTIConfig) {
@@ -468,14 +474,20 @@ describe.each([
   test(`${piiSharingAllowed ? 'shows PII share username/email field when piiSharingAllowed is true'
     : 'hides PII share username/email field when piiSharingAllowed is false'}`, async () => {
     renderComponent(`/course/${courseId}/pages-and-resources/discussion`);
-    // This is an important line that ensures the spinner has been removed - and thus our main
-    // content has been loaded - prior to proceeding with our expectations.
-    await waitForElementToBeRemoved(screen.queryByRole('status'));
 
-    userEvent.click(screen.getByLabelText('Select Piazza'));
-    userEvent.click(screen.getByText(messages.nextButton.defaultMessage));
+    let spinner = await screen.findByRole('status');
+    await waitFor(() => {
+      expect(spinner).not.toBeInTheDocument();
+    });
 
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    await userEvent.click(screen.getByLabelText('Select Piazza'));
+    await userEvent.click(screen.getByText(messages.nextButton.defaultMessage));
+
+    spinner = await screen.findByRole('status');
+    await waitFor(() => {
+      expect(spinner).not.toBeInTheDocument();
+    });
+
     if (enablePIISharing) {
       expect(queryByTestId(container, 'piiSharingFields')).toBeInTheDocument();
     } else {
