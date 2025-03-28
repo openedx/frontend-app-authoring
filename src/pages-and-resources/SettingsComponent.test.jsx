@@ -1,5 +1,5 @@
-import React, { Suspense } from 'react';
-import { useParams } from 'react-router-dom';
+import React from 'react';
+import { useParams, useLocation } from 'react-router-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -8,6 +8,7 @@ import { initializeMockApp } from '@edx/frontend-platform/testing';
 import PagesAndResourcesProvider from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
 import initializeStore from 'CourseAuthoring/store';
 import { RequestStatus } from 'CourseAuthoring/data/constants';
+import userEvent from '@testing-library/user-event';
 import SettingsComponent from './SettingsComponent';
 
 jest.mock('react-router-dom', () => ({
@@ -51,17 +52,42 @@ describe('SettingsComponent', () => {
   test('renders LazyLoadedComponent when provided with props', async () => {
     useParams.mockImplementation(() => ({ appId: 'wiki' }));
 
-    const rendered = render(
-      <Suspense fallback="...">
-        <SettingsComponent url="/some-url" />
-      </Suspense>,
+    render(
+      <SettingsComponent url="/some-url" />,
       { wrapper: RequiredProviders },
     );
 
-    await waitFor(() => expect(rendered.getByText('Configure wiki')).toBeInTheDocument());
+    await screen.findByText('Configure wiki');
 
     const modalComponent = screen.getByRole('dialog');
     expect(modalComponent.querySelector('#enable-wiki-toggleHelpText')).toContainHTML('The course wiki can be set up');
+  });
+
+  test('navigates to provided url when closing', async () => {
+    useParams.mockImplementation(() => ({ appId: 'wiki' }));
+
+    const LocationDisplay = () => {
+      const location = useLocation();
+
+      return <div data-testid="location-display">{location.pathname}</div>;
+    };
+
+    render(
+      <>
+        <SettingsComponent url="/some-url" />
+        <LocationDisplay />
+      </>,
+      { wrapper: RequiredProviders },
+    );
+
+    await screen.findByText('Configure wiki');
+    const firstLocation = await screen.findByTestId('location-display');
+    expect(firstLocation).toHaveTextContent('/');
+
+    const cancelButton = await screen.findByText('Cancel');
+    await userEvent.click(cancelButton);
+    const secondLocation = await screen.findByTestId('location-display');
+    expect(secondLocation).toHaveTextContent('/some-url');
   });
 
   test('renders error message when plugin is unavilable when provided with props', async () => {
@@ -71,9 +97,7 @@ describe('SettingsComponent', () => {
     useParams.mockImplementation(() => ({ appId: 'invalid-plugin' }));
 
     const rendered = render(
-      <Suspense fallback="...">
-        <SettingsComponent url="/some-url" />
-      </Suspense>,
+      <SettingsComponent url="/some-url" />,
       { wrapper: RequiredProviders },
     );
 
