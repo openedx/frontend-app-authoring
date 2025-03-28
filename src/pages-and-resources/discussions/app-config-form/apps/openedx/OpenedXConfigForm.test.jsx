@@ -4,8 +4,9 @@ import {
   act,
   fireEvent,
   queryAllByText,
+  findByLabelText,
   queryByLabelText,
-  queryByRole,
+  findByRole,
   queryByTestId,
   queryByText,
   render,
@@ -320,18 +321,12 @@ describe('OpenedXConfigForm', () => {
     });
 
     test('check duplicate error is removed on deleting duplicate topic', async () => {
-      await act(async () => {
-        userEvent.click(
-          queryByLabelText(duplicateTopicCard, messages.deleteAltText.defaultMessage, { selector: 'button' }),
-        );
-      });
-
-      await act(async () => {
-        userEvent.click(
-          queryByRole(container, 'button', { name: messages.deleteButton.defaultMessage }),
-        );
-      });
-
+      await userEvent.click(
+        await findByLabelText(duplicateTopicCard, messages.deleteAltText.defaultMessage, { selector: 'button' }),
+      );
+      await userEvent.click(
+        await findByRole(container, 'button', { name: messages.deleteButton.defaultMessage }),
+      );
       await waitForElementToBeRemoved(queryByText(topicCard, messages.discussionTopicNameAlreadyExist.defaultMessage));
 
       expect(duplicateTopicCard).not.toBeInTheDocument();
