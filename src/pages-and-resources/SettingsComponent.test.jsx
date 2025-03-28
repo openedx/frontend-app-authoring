@@ -48,18 +48,6 @@ describe('SettingsComponent', () => {
     });
   });
 
-  // Something about how React 18 handles lazy loading
-  // is breaking SettingsComponent.
-  //
-  // This is not just a test problem, it is actually broken when
-  // navigating to "Pages & Resources"
-  //
-  // I have set this to .only so the existing tests don't run
-  // because they run for an absurd amount of time before failing.
-  it.only('fails because this isn\'t working', () => {
-    expect(2).toEqual(3);
-  });
-
   test('renders LazyLoadedComponent when provided with props', async () => {
     useParams.mockImplementation(() => ({ appId: 'wiki' }));
 
