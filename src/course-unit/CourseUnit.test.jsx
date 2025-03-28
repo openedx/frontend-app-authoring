@@ -2028,18 +2028,18 @@ describe('<CourseUnit />', () => {
 
     it('should render library content page correctly', async () => {
       const {
-        findByText,
+        getByText,
         getByRole,
         queryByRole,
-        findByTestId,
+        getByTestId,
       } = render(<RootWrapper />);
 
       const currentSectionName = courseUnitIndexMock.ancestor_info.ancestors[1].display_name;
       const currentSubSectionName = courseUnitIndexMock.ancestor_info.ancestors[1].display_name;
 
-      const unitHeaderTitle = await findByTestId('unit-header-title');
-      await findByText(unitDisplayName);
       await waitFor(() => {
+        const unitHeaderTitle = getByTestId('unit-header-title');
+        expect(getByText(unitDisplayName)).toBeInTheDocument();
         expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage })).toBeInTheDocument();
         expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonSettings.defaultMessage })).toBeInTheDocument();
         expect(getByRole('button', { name: currentSectionName })).toBeInTheDocument();
