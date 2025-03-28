@@ -75,7 +75,7 @@ describe('<GroupConfigurations />', () => {
     });
   });
 
-  it('does not render an empty section for enrollment track groups if it is empty', () => {
+  it('does not render an empty section for enrollment track groups if it is empty', async () => {
     const shouldNotShowEnrollmentTrackResponse = {
       ...groupConfigurationResponseMock,
       shouldShowEnrollmentTrack: false,
@@ -84,7 +84,9 @@ describe('<GroupConfigurations />', () => {
       .onGet(getContentStoreApiUrl(courseId))
       .reply(200, shouldNotShowEnrollmentTrackResponse);
 
-    const { queryByTestId } = renderComponent();
+    const { queryByTestId, findByTestId } = renderComponent();
+
+    await findByTestId('group-configurations-main-content-wrapper');
     expect(
       queryByTestId('group-configurations-empty-placeholder'),
     ).not.toBeInTheDocument();
