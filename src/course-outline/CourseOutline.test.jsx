@@ -2255,9 +2255,14 @@ describe('<CourseOutline />', () => {
 
   it('should show toats on export tags', async () => {
     const expectedResponse = 'this is a test';
-    axiosMock
+
+    // Delay to ensure we see "Please wait."
+    // Without the delay the success message renders too quickly
+    const delayedResponse = axiosMock
       .onGet(exportTags(courseId))
-      .reply(200, expectedResponse);
+      .withDelayInMs(500);
+    delayedResponse(200, expectedResponse);
+
     useLocation.mockReturnValue({
       pathname: '/foo-bar',
       hash: '#export-tags',
@@ -2265,26 +2270,30 @@ describe('<CourseOutline />', () => {
     window.URL.createObjectURL = jest.fn().mockReturnValue('http://example.com/archivo');
     window.URL.revokeObjectURL = jest.fn();
     render(<RootWrapper />);
-    expect(await screen.findByText('Please wait. Creating export file for course tags...')).toBeInTheDocument();
+    await screen.findByText('Please wait. Creating export file for course tags...');
 
     const expectedRequest = axiosMock.history.get.filter(request => request.url === exportTags(courseId));
     expect(expectedRequest.length).toBe(1);
 
-    expect(await screen.findByText('Course tags exported successfully')).toBeInTheDocument();
+    await screen.findByText('Course tags exported successfully');
   });
 
   it('should show toast on export tags error', async () => {
-    axiosMock
+    // Delay to ensure we see "Please wait."
+    // Without the delay the error renders too quickly
+    const delayedResponse = axiosMock
       .onGet(exportTags(courseId))
-      .reply(404);
+      .withDelayInMs(500);
+    delayedResponse(404);
+
     useLocation.mockReturnValue({
       pathname: '/foo-bar',
       hash: '#export-tags',
     });
 
     render(<RootWrapper />);
-    expect(await screen.findByText('Please wait. Creating export file for course tags...')).toBeInTheDocument();
-    expect(await screen.findByText('An error has occurred creating the file')).toBeInTheDocument();
+    await screen.findByText('Please wait. Creating export file for course tags...');
+    await screen.findByText('An error has occurred creating the file');
   });
 
   it('sets status to DENIED when API responds with 403', async () => {
