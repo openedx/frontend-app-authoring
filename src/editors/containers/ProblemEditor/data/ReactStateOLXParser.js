@@ -425,7 +425,6 @@ class ReactStateOLXParser {
 
     // If contain variables, generate as stringresponse instead of numericalresponse
     if (mainAnswer && this.containsVariables(mainAnswer)) {
-      console.log('Response contains variables. Generating as stringresponse instead of numericalresponse.');
       // Create a stringresponse type
       let answerObject = {
         ':@': {
