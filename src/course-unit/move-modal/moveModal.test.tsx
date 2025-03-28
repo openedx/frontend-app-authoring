@@ -11,7 +11,7 @@ import { getCourseOutlineInfoUrl } from '../data/api';
 import { courseOutlineInfoMock } from '../__mocks__';
 import { executeThunk } from '../../utils';
 import { getCourseOutlineInfoQuery } from '../data/thunk';
-import { IframeProvider } from '../context/iFrameContext';
+import { IframeProvider } from '../../generic/hooks/context/iFrameContext';
 import { IXBlock } from './interfaces';
 import MoveModal from './index';
 import messages from './messages';

@@ -11,7 +11,7 @@ import { RequestStatus } from '../../data/constants';
 import { useEventListener } from '../../generic/hooks';
 import { getCourseOutlineInfo, getCourseOutlineInfoLoadingStatus } from '../data/selectors';
 import { getCourseOutlineInfoQuery, patchUnitItemQuery } from '../data/thunk';
-import { useIframe } from '../context/hooks';
+import { useIframe } from '../../generic/hooks/context/hooks';
 import { messageTypes } from '../constants';
 import { CATEGORIES, MOVE_DIRECTIONS } from './constants';
 import {

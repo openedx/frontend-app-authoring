@@ -111,6 +111,10 @@ export const getLibraryContainersApiUrl = (libraryId: string) => `${getApiBaseUr
  * Get the URL for the library container detail api.
  */
 export const getLibraryContainerDetailApiUrl = (containerId: string) => `${getApiBaseUrl()}/api/libraries/v2/containers/${containerId}/`;
+/**
+ * Get the URL for the library container children api.
+ */
+export const getLibraryContainerChildrenApiUrl = (containerId: string) => `${getLibraryContainerDetailApiUrl(containerId)}children/`;
 
 export interface ContentLibrary {
   id: string;
@@ -598,5 +602,13 @@ export async function createLibraryContainer(libraryId: string, containerData: C
  */
 export async function getLibraryContainerMetadata(containerId: string): Promise<ContainerMetata> {
   const { data } = await getAuthenticatedHttpClient().get(getLibraryContainerDetailApiUrl(containerId));
+  return camelCaseObject(data);
+}
+
+/**
+ * Fetch container metadata.
+ */
+export async function getLibraryContainerChildren(containerId: string): Promise<LibraryBlockMetadata[]> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryContainerChildrenApiUrl(containerId));
   return camelCaseObject(data);
 }

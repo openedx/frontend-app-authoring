@@ -7,6 +7,7 @@ import { useSidebarContext } from '../common/context/SidebarContext';
 import { LibraryBlock } from '../LibraryBlock';
 import messages from './messages';
 import { useLibraryBlockMetadata } from '../data/apiHooks';
+import { IframeProvider } from '../../generic/hooks/context/iFrameContext';
 
 interface ModalComponentPreviewProps {
   isOpen: boolean;
@@ -51,7 +52,7 @@ const ComponentPreview = () => {
   const { data: componentMetadata } = useLibraryBlockMetadata(usageKey);
 
   return (
-    <>
+    <IframeProvider>
       <div className="position-relative m-2">
         <Button
           size="sm"
@@ -76,7 +77,7 @@ const ComponentPreview = () => {
         }
       </div>
       <ModalComponentPreview isOpen={isModalOpen} close={closeModal} usageKey={usageKey} />
-    </>
+    </IframeProvider>
   );
 };
 

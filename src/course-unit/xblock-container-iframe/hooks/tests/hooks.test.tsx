@@ -7,10 +7,11 @@ import { logError } from '@edx/frontend-platform/logging';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { Provider } from 'react-redux';
 
-import { stateKeys, messageTypes } from '../../../constants';
+import { messageTypes } from '../../../constants';
 import { mockBroadcastChannel } from '../../../../generic/data/api.mock';
 import initializeStore from '../../../../store';
 import { useLoadBearingHook, useIFrameBehavior, useMessageHandlers } from '..';
+import { iframeMessageTypes, iframeStateKeys } from '../../../../constants';
 
 jest.useFakeTimers();
 
@@ -35,13 +36,13 @@ describe('useIFrameBehavior', () => {
   beforeEach(() => {
     (useKeyedState as jest.Mock).mockImplementation((key, initialValue) => {
       switch (key) {
-        case stateKeys.iframeHeight:
+        case iframeStateKeys.iframeHeight:
           return [0, setIframeHeight];
-        case stateKeys.hasLoaded:
+        case iframeStateKeys.hasLoaded:
           return [false, setHasLoaded];
-        case stateKeys.showError:
+        case iframeStateKeys.showError:
           return [false, setShowError];
-        case stateKeys.windowTopOffset:
+        case iframeStateKeys.windowTopOffset:
           return [null, setWindowTopOffset];
         default:
           return [initialValue, jest.fn()];
@@ -66,7 +67,7 @@ describe('useIFrameBehavior', () => {
     const mockWindowTopOffset = 100;
 
     (useKeyedState as jest.Mock).mockImplementation((key) => {
-      if (key === stateKeys.windowTopOffset) {
+      if (key === iframeStateKeys.windowTopOffset) {
         return [mockWindowTopOffset, setWindowTopOffset];
       }
       return [null, jest.fn()];
@@ -76,7 +77,7 @@ describe('useIFrameBehavior', () => {
 
     const message = {
       data: {
-        type: messageTypes.videoFullScreen,
+        type: iframeMessageTypes.videoFullScreen,
         payload: { open: false },
       },
     };

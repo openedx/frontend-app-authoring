@@ -3,10 +3,10 @@ import { logError } from '@edx/frontend-platform/logging';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useKeyedState } from '@edx/react-unit-test-utils';
 
-import { useEventListener } from '../../../generic/hooks';
-import { stateKeys, messageTypes } from '../../constants';
 import { useLoadBearingHook } from './useLoadBearingHook';
-import { UseIFrameBehaviorTypes, UseIFrameBehaviorReturnTypes } from './types';
+import { iframeStateKeys, iframeMessageTypes } from '../../constants';
+import { UseIFrameBehaviorReturnTypes, UseIFrameBehaviorTypes } from '../types';
+import { useEventListener } from './useEventListener';
 
 /**
  * Custom hook to manage iframe behavior.
@@ -29,21 +29,25 @@ export const useIFrameBehavior = ({
   // Do not remove this hook.  See function description.
   useLoadBearingHook(id);
 
-  const [iframeHeight, setIframeHeight] = useKeyedState<number>(stateKeys.iframeHeight, 0);
-  const [hasLoaded, setHasLoaded] = useKeyedState<boolean>(stateKeys.hasLoaded, false);
-  const [showError, setShowError] = useKeyedState<boolean>(stateKeys.showError, false);
-  const [windowTopOffset, setWindowTopOffset] = useKeyedState<number | null>(stateKeys.windowTopOffset, null);
+  const [iframeHeight, setIframeHeight] = useKeyedState<number>(iframeStateKeys.iframeHeight, 0);
+  const [hasLoaded, setHasLoaded] = useKeyedState<boolean>(iframeStateKeys.hasLoaded, false);
+  const [showError, setShowError] = useKeyedState<boolean>(iframeStateKeys.showError, false);
+  const [windowTopOffset, setWindowTopOffset] = useKeyedState<number | null>(iframeStateKeys.windowTopOffset, null);
 
   const receiveMessage = useCallback(({ data }: MessageEvent) => {
     const { payload, type } = data;
+    // __AUTO_GENERATED_PRINT_VAR_START__
+    console.log("useIFrameBehavior#(anon) type: ", type); // __AUTO_GENERATED_PRINT_VAR_END__
+    // __AUTO_GENERATED_PRINT_VAR_START__
+    console.log("useIFrameBehavior#(anon) payload: ", payload); // __AUTO_GENERATED_PRINT_VAR_END__
 
-    if (type === messageTypes.resize) {
+    if (type === iframeMessageTypes.resize) {
       setIframeHeight(payload.height);
 
       if (!hasLoaded && iframeHeight === 0 && payload.height > 0) {
         setHasLoaded(true);
       }
-    } else if (type === messageTypes.videoFullScreen) {
+    } else if (type === iframeMessageTypes.videoFullScreen) {
       // We observe exit from the video xblock fullscreen mode
       // and scroll to the previously saved scroll position
       if (!payload.open && windowTopOffset !== null) {
