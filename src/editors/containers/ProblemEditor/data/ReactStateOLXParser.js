@@ -426,14 +426,14 @@ class ReactStateOLXParser {
     // If contain variables, generate as stringresponse instead of numericalresponse
     if (mainAnswer && this.containsVariables(mainAnswer)) {
       // Create a stringresponse type
-      let answerObject = {
+      const answerObject = {
         ':@': {
           '@_answer': mainAnswer,
           '@_type': 'ci',
         },
-        [ProblemTypeKeys.TEXTINPUT]: []
+        [ProblemTypeKeys.TEXTINPUT]: [],
       };
-      let firstCorrectAnswerParsed = true;
+      const firstCorrectAnswerParsed = true;
 
       answers.forEach((answer) => {
         const correcthint = this.getAnswerHints(selectedFeedback?.[answer.id]);
@@ -442,15 +442,13 @@ class ReactStateOLXParser {
           if (correcthint.length > 0) {
             answerObject[ProblemTypeKeys.TEXTINPUT].push(...correcthint);
           }
-        }
-        else if (answer.correct && firstCorrectAnswerParsed) {
+        } else if (answer.correct && firstCorrectAnswerParsed) {
           answerObject[ProblemTypeKeys.TEXTINPUT].push({
             ':@': { '@_answer': answer.title },
             additional_answer: [...correcthint],
           });
-        }
         // Wrong answers as stringequalhint (if exists)
-        else if (!answer.correct) {
+        } else if (!answer.correct) {
           const wronghint = correcthint[0]?.correcthint;
           if (wronghint) {
             answerObject[ProblemTypeKeys.TEXTINPUT].push({
