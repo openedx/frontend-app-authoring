@@ -16,7 +16,7 @@ import ModalIframe from '../../generic/modal-iframe';
 import { IFRAME_FEATURE_POLICY } from '../../constants';
 import ContentTagsDrawer from '../../content-tags-drawer/ContentTagsDrawer';
 import supportedEditors from '../../editors/supportedEditors';
-import { useIframe } from '../context/hooks';
+import { useIframe } from '../../generic/hooks/context/hooks';
 import {
   fetchCourseSectionVerticalData,
   fetchCourseVerticalChildrenData,
@@ -25,9 +25,6 @@ import {
 import { messageTypes } from '../constants';
 import {
   useMessageHandlers,
-  useIframeContent,
-  useIframeMessages,
-  useIFrameBehavior,
 } from './hooks';
 import {
   XBlockContainerIframeProps,
@@ -35,6 +32,9 @@ import {
 } from './types';
 import { formatAccessManagedXBlockData, getIframeUrl, getLegacyEditModalUrl } from './utils';
 import messages from './messages';
+import { useIFrameBehavior } from '../../generic/hooks/useIFrameBehavior';
+import { useIframeContent } from '../../generic/hooks/useIframeContent';
+import { useIframeMessages } from '../../generic/hooks/useIframeMessages';
 
 const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   courseId, blockId, unitXBlockActions, courseVerticalChildren, handleConfigureSubmit, isUnitVerticalType,

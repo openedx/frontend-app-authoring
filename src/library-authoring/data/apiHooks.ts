@@ -53,7 +53,7 @@ import {
   deleteContainer,
   type UpdateContainerDataRequest,
   restoreContainer,
-  getContainerChildren,
+  getLibraryContainerChildren,
 } from './api';
 import { VersionSpec } from '../LibraryBlock';
 
@@ -97,6 +97,12 @@ export const libraryAuthoringQueryKeys = {
     ...libraryAuthoringQueryKeys.all,
     libraryId,
     containerId,
+  ],
+  containerChildren: (libraryId?: string, containerId?: string) => [
+    ...libraryAuthoringQueryKeys.all,
+    libraryId,
+    containerId,
+    "children",
   ],
   blockTypes: (libraryId?: string) => [
     ...libraryAuthoringQueryKeys.all,
@@ -661,10 +667,10 @@ export const useRestoreContainer = (containerId: string) => {
 /**
  * Get the metadata and children for a container in a library
  */
-export const useContainerChildren = (containerId: string) => (
+export const useContainerChildren = (libraryId?: string, containerId?: string) => (
   useQuery({
-    enabled: !!containerId,
-    queryKey: containerQueryKeys.children(containerId),
-    queryFn: () => getContainerChildren(containerId!),
+    enabled: !!libraryId && !!containerId,
+    queryKey: libraryAuthoringQueryKeys.containerChildren(libraryId, containerId),
+    queryFn: () => getLibraryContainerChildren(containerId!),
   })
 );

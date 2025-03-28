@@ -500,7 +500,7 @@ mockGetContainerMetadata.applyMock = () => {
 };
 
 /**
- * Mock for `getContainerChildren()`
+ * Mock for `getLibraryContainerChildren()`
  *
  * This mock returns a fixed response for the given container ID.
  */
@@ -546,7 +546,7 @@ mockGetContainerChildren.childTemplate = {
 } satisfies api.LibraryBlockMetadata;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockGetContainerChildren.applyMock = () => {
-  jest.spyOn(api, 'getContainerChildren').mockImplementation(mockGetContainerChildren);
+  jest.spyOn(api, 'getLibraryContainerChildren').mockImplementation(mockGetContainerChildren);
 };
 
 /**

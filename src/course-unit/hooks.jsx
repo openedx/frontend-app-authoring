@@ -9,7 +9,7 @@ import { camelCaseObject } from '@edx/frontend-platform/utils';
 import { RequestStatus } from '../data/constants';
 import { useClipboard } from '../generic/clipboard';
 import { useEventListener } from '../generic/hooks';
-import { COURSE_BLOCK_NAMES } from '../constants';
+import { COURSE_BLOCK_NAMES, iframeMessageTypes } from '../constants';
 import { messageTypes, PUBLISH_TYPES } from './constants';
 import {
   createNewCourseXBlock,
@@ -41,7 +41,7 @@ import {
   updateMovedXBlockParams,
   updateQueryPendingStatus,
 } from './data/slice';
-import { useIframe } from './context/hooks';
+import { useIframe } from '../generic/hooks/context/hooks';
 
 export const useCourseUnit = ({ courseId, blockId }) => {
   const dispatch = useDispatch();
@@ -313,7 +313,7 @@ export const useScrollToLastPosition = (storageKey = 'createXBlockLastYPosition'
   }, [storageKey]);
 
   const handleMessage = useCallback((event) => {
-    if (event.data?.type === messageTypes.resize) {
+    if (event.data?.type === iframeMessageTypes.resize) {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }

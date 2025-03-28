@@ -18,7 +18,7 @@ import { courseSectionVerticalMock } from '../__mocks__';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import AddComponent from './AddComponent';
 import messages from './messages';
-import { IframeProvider } from '../context/iFrameContext';
+import { IframeProvider } from '../../generic/hooks/context/iFrameContext';
 import { messageTypes } from '../constants';
 
 let store;
