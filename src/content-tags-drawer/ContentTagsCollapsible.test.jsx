@@ -699,7 +699,7 @@ describe('<ContentTagsCollapsible />', () => {
     const xButtonAppliedTag = within(appliedTag).getByRole('button', {
       name: /delete/i,
     });
-    xButtonAppliedTag.click();
+    await userEvent.click(xButtonAppliedTag);
 
     // Check that the applied tag has been removed
     expect(appliedTag).not.toBeInTheDocument();
