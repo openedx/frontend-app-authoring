@@ -11,15 +11,16 @@ import { Link } from 'react-router-dom';
 import { type ContainerHit, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import BaseComponentCard from './BaseComponentCard';
+import BaseCard from './BaseCard';
 import messages from './messages';
 
 type ContainerMenuProps = {
-  containerHit: ContainerHit,
+  hit: ContainerHit,
 };
 
-const ContainerMenu = ({ containerHit } : ContainerMenuProps) => {
+const ContainerMenu = ({ hit } : ContainerMenuProps) => {
   const intl = useIntl();
+  const { contextKey, blockId } = hit;
 
   return (
     <Dropdown id="container-card-dropdown">
@@ -35,7 +36,7 @@ const ContainerMenu = ({ containerHit } : ContainerMenuProps) => {
       <Dropdown.Menu>
         <Dropdown.Item
           as={Link}
-          to={`/library/${containerHit.contextKey}/container/${containerHit.blockId}`}
+          to={`/library/${contextKey}/container/${blockId}`}
           disabled
         >
           <FormattedMessage {...messages.menuOpen} />
@@ -54,7 +55,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
   const { showOnlyPublished } = useLibraryContext();
 
   const {
-    blockType: componentType,
+    blockType: itemType,
     formatted,
     tags,
     numChildren,
@@ -73,14 +74,14 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
   const openContainer = () => {};
 
   return (
-    <BaseComponentCard
-      componentType={componentType}
+    <BaseCard
+      itemType={itemType}
       displayName={displayName}
       tags={tags}
       numChildren={numChildrenCount}
       actions={!componentPickerMode && (
         <ActionRow>
-          <ContainerMenu containerHit={hit} />
+          <ContainerMenu hit={hit} />
         </ActionRow>
       )}
       hasUnpublishedChanges={publishStatus !== PublishStatus.Published}

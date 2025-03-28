@@ -13,8 +13,8 @@ import ComponentCount from '../../generic/component-count';
 import TagCount from '../../generic/tag-count';
 import { BlockTypeLabel, type ContentHitTags, Highlight } from '../../search-manager';
 
-type BaseComponentCardProps = {
-  componentType: string;
+type BaseCardProps = {
+  itemType: string;
   displayName: string;
   description?: string;
   numChildren?: number;
@@ -24,8 +24,8 @@ type BaseComponentCardProps = {
   onSelect: () => void
 };
 
-const BaseComponentCard = ({
-  componentType,
+const BaseCard = ({
+  itemType,
   displayName,
   description = '',
   numChildren,
@@ -33,7 +33,7 @@ const BaseComponentCard = ({
   actions,
   onSelect,
   ...props
-} : BaseComponentCardProps) => {
+} : BaseCardProps) => {
   const tagCount = useMemo(() => {
     if (!tags) {
       return 0;
@@ -42,11 +42,11 @@ const BaseComponentCard = ({
             + (tags.level2?.length || 0) + (tags.level3?.length || 0);
   }, [tags]);
 
-  const componentIcon = getItemIcon(componentType);
+  const itemIcon = getItemIcon(itemType);
   const intl = useIntl();
 
   return (
-    <Container className="library-component-card">
+    <Container className="library-item-card">
       <Card
         isClickable
         onClick={onSelect}
@@ -57,9 +57,9 @@ const BaseComponentCard = ({
         }}
       >
         <Card.Header
-          className={`library-component-header ${getComponentStyleColor(componentType)}`}
+          className={`library-item-header ${getComponentStyleColor(itemType)}`}
           title={
-            <Icon src={componentIcon} className="library-component-header-icon" />
+            <Icon src={itemIcon} className="library-item-header-icon" />
           }
           actions={
             // Wrap the actions in a div to prevent the card from being clicked when the actions are clicked
@@ -80,9 +80,9 @@ const BaseComponentCard = ({
           <Stack gap={2}>
             <Stack direction="horizontal" gap={1}>
               <Stack direction="horizontal" gap={1} className="mr-auto">
-                <Icon src={componentIcon} size="sm" />
+                <Icon src={itemIcon} size="sm" />
                 <small>
-                  <BlockTypeLabel blockType={componentType} />
+                  <BlockTypeLabel blockType={itemType} />
                 </small>
               </Stack>
               <ComponentCount count={numChildren} />
@@ -100,4 +100,4 @@ const BaseComponentCard = ({
   );
 };
 
-export default BaseComponentCard;
+export default BaseCard;
