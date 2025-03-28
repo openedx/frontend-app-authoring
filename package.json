@@ -110,7 +110,7 @@
     "yup": "0.31.1"
   },
   "devDependencies": {
-    "@edx/react-unit-test-utils": "github:brian-smith-tcril/react-unit-test-utils#ccf1342",
+    "@edx/react-unit-test-utils": "^4.0.0",
     "@edx/stylelint-config-edx": "2.3.3",
     "@edx/typescript-config": "^1.0.1",
     "@testing-library/jest-dom": "^6.6.3",
