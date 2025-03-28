@@ -1,7 +1,7 @@
 import MockAdapter from 'axios-mock-adapter';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
-  act, render, waitFor, within, screen,
+  render, waitFor, within, screen,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
@@ -205,16 +205,15 @@ describe('<CourseUnit />', () => {
   });
 
   it('adjusts iframe height dynamically based on courseXBlockDropdownHeight postMessage event', async () => {
-    const { getByTitle } = render(<RootWrapper />);
+    render(<RootWrapper />);
 
-    await waitFor(() => {
-      const iframe = getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
-      expect(iframe).toHaveAttribute('style', 'width: 100%; height: 0px;');
-      simulatePostMessageEvent(messageTypes.toggleCourseXBlockDropdown, {
-        courseXBlockDropdownHeight: 200,
-      });
-      expect(iframe).toHaveAttribute('style', 'width: 100%; height: 200px;');
+    let iframe = await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+    expect(iframe).toHaveAttribute('style', 'width: 100%; height: 0px;');
+    simulatePostMessageEvent(messageTypes.toggleCourseXBlockDropdown, {
+      courseXBlockDropdownHeight: 200,
     });
+    iframe = await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+    expect(iframe).toHaveAttribute('style', 'width: 100%; height: 200px;');
   });
 
   it('displays an error alert when a studioAjaxError message is received', async () => {
@@ -246,16 +245,13 @@ describe('<CourseUnit />', () => {
   });
 
   it('renders the xBlocks iframe and opens the tags drawer on postMessage event', async () => {
-    const { getByTitle, getByText } = render(<RootWrapper />);
+    render(<RootWrapper />);
 
-    await waitFor(() => {
-      const xblocksIframe = getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
-      expect(xblocksIframe).toBeInTheDocument();
-    });
+    await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
 
     simulatePostMessageEvent(messageTypes.openManageTags, { contentId: blockId });
 
-    expect(getByText(tagsDrawerMessages.headerSubtitle.defaultMessage)).toBeInTheDocument();
+    await screen.findByText(tagsDrawerMessages.headerSubtitle.defaultMessage);
   });
 
   it('closes the legacy edit modal when closeXBlockEditorModal message is received', async () => {
@@ -1598,27 +1594,21 @@ describe('<CourseUnit />', () => {
 
     it('should display "Move Modal" on receive trigger message', async () => {
       const {
-        getByText,
         getByRole,
       } = render(<RootWrapper />);
 
-      await act(async () => {
-        await waitFor(() => {
-          expect(getByText(unitDisplayName))
-            .toBeInTheDocument();
-        });
+      await screen.findByText(unitDisplayName);
 
-        axiosMock
-          .onGet(getCourseOutlineInfoUrl(courseId))
-          .reply(200, courseOutlineInfoMock);
-        await executeThunk(getCourseOutlineInfoQuery(courseId), store.dispatch);
+      axiosMock
+        .onGet(getCourseOutlineInfoUrl(courseId))
+        .reply(200, courseOutlineInfoMock);
+      await executeThunk(getCourseOutlineInfoQuery(courseId), store.dispatch);
 
-        window.dispatchEvent(messageEvent);
-      });
+      window.dispatchEvent(messageEvent);
 
-      expect(getByText(
+      await screen.findByText(
         moveModalMessages.moveModalTitle.defaultMessage.replace('{displayName}', requestData.title),
-      )).toBeInTheDocument();
+      );
       expect(getByRole('button', { name: moveModalMessages.moveModalSubmitButton.defaultMessage })).toBeInTheDocument();
       expect(getByRole('button', { name: moveModalMessages.moveModalCancelButton.defaultMessage })).toBeInTheDocument();
     });
@@ -1629,23 +1619,18 @@ describe('<CourseUnit />', () => {
         getByRole,
       } = render(<RootWrapper />);
 
-      await act(async () => {
-        await waitFor(() => {
-          expect(getByText(unitDisplayName))
-            .toBeInTheDocument();
-        });
+      await screen.findByText(unitDisplayName);
 
-        axiosMock
-          .onGet(getCourseOutlineInfoUrl(courseId))
-          .reply(200, courseOutlineInfoMock);
-        await executeThunk(getCourseOutlineInfoQuery(courseId), store.dispatch);
+      axiosMock
+        .onGet(getCourseOutlineInfoUrl(courseId))
+        .reply(200, courseOutlineInfoMock);
+      await executeThunk(getCourseOutlineInfoQuery(courseId), store.dispatch);
 
-        window.dispatchEvent(messageEvent);
-      });
+      window.dispatchEvent(messageEvent);
 
-      expect(getByText(
+      await screen.findByText(
         moveModalMessages.moveModalTitle.defaultMessage.replace('{displayName}', requestData.title),
-      )).toBeInTheDocument();
+      );
 
       const currentSection = courseOutlineInfoMock.child_info.children[1];
       const currentSectionItemBtn = getByRole('button', {
@@ -1673,7 +1658,6 @@ describe('<CourseUnit />', () => {
 
     it('should allow move operation and handles it successfully', async () => {
       const {
-        getByText,
         getByRole,
       } = render(<RootWrapper />);
 
@@ -1685,23 +1669,18 @@ describe('<CourseUnit />', () => {
         .onGet(getCourseUnitApiUrl(blockId))
         .reply(200, courseUnitIndexMock);
 
-      await act(async () => {
-        await waitFor(() => {
-          expect(getByText(unitDisplayName))
-            .toBeInTheDocument();
-        });
+      await screen.findByText(unitDisplayName);
 
-        axiosMock
-          .onGet(getCourseOutlineInfoUrl(courseId))
-          .reply(200, courseOutlineInfoMock);
-        await executeThunk(getCourseOutlineInfoQuery(courseId), store.dispatch);
+      axiosMock
+        .onGet(getCourseOutlineInfoUrl(courseId))
+        .reply(200, courseOutlineInfoMock);
+      await executeThunk(getCourseOutlineInfoQuery(courseId), store.dispatch);
 
-        window.dispatchEvent(messageEvent);
-      });
+      window.dispatchEvent(messageEvent);
 
-      expect(getByText(
+      await screen.findByText(
         moveModalMessages.moveModalTitle.defaultMessage.replace('{displayName}', requestData.title),
-      )).toBeInTheDocument();
+      );
 
       const currentSection = courseOutlineInfoMock.child_info.children[1];
       const currentSectionItemBtn = getByRole('button', {
