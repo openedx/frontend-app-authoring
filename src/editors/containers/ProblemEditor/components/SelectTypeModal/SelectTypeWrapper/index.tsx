@@ -18,6 +18,7 @@ import ecMessages from '../../../../EditorContainer/messages';
 import messages from './messages';
 
 interface Props {
+  children: React.ReactNode;
   selected: string;
   onClose: (() => void) | null;
 }

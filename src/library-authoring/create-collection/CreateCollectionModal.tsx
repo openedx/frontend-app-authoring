@@ -44,6 +44,7 @@ const CreateCollectionModal = () => {
       size="xl"
       hasCloseButton
       isFullscreenOnMobile
+      isOverflowVisible
     >
       <ModalDialog.Header>
         <ModalDialog.Title>
