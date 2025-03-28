@@ -2,7 +2,7 @@ import MockAdapter from 'axios-mock-adapter';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 import { Provider, useDispatch } from 'react-redux';
 
 import { RequestStatus } from '../data/constants';

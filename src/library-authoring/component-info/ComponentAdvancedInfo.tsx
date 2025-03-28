@@ -62,16 +62,18 @@ const ComponentAdvancedInfoInner: React.FC<Record<never, never>> = () => {
         if (!olx) { return <FormattedMessage {...messages.advancedDetailsOLXError} />; }
         return (
           <div className="mb-4">
-            {olxUpdater.error && (
+            {olxUpdater.error ? (
               <Alert variant="danger">
-                <p><strong><FormattedMessage {...messages.advancedDetailsOLXEditFailed} /></strong></p>
-                {/*
-                  TODO: fix the API so it returns 400 errors in a JSON object, not HTML 500 errors. Then display
-                  a useful error message here like "parsing the XML failed on line 3".
-                  (olxUpdater.error as Record<string, any>)?.customAttributes?.httpErrorResponseData.errorMessage
-                */}
+                <>
+                  <p><strong><FormattedMessage {...messages.advancedDetailsOLXEditFailed} /></strong></p>
+                  {/*
+                    TODO: fix the API so it returns 400 errors in a JSON object, not HTML 500 errors. Then display
+                    a useful error message here like "parsing the XML failed on line 3".
+                    (olxUpdater.error as Record<string, any>)?.customAttributes?.httpErrorResponseData.errorMessage
+                  */}
+                </>
               </Alert>
-            )}
+            ) : null}
             <CodeEditor key={usageKey} readOnly={!isEditingOLX} editorRef={editorRef}>{olx}</CodeEditor>
             {
               isEditingOLX ? (

@@ -45,6 +45,7 @@ const DeleteDialog = ({
         onClose={onClose}
         size="md"
         hasCloseButton={false}
+        isOverflowVisible
         variant="warning"
         className="taxonomy-delete-dialog"
       >

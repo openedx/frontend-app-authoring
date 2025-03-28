@@ -41,6 +41,7 @@ let mockToastContext: ToastContextData = {
 };
 
 export interface RouteOptions {
+  children?: React.ReactNode;
   /** The URL path, like '/libraries/:libraryId' */
   path?: string;
   /** The URL parameters, like {libraryId: 'lib:org:123'} */

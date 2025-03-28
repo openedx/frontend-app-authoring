@@ -105,6 +105,7 @@ const MoveModal: FC<IUseMoveModalParams> = ({
       title={intl.formatMessage(messages.moveModalTitle, { displayName })}
       hasCloseButton
       isFullscreenOnMobile
+      isOverflowVisible
     >
       <ModalDialog.Header>
         <ModalDialog.Title>

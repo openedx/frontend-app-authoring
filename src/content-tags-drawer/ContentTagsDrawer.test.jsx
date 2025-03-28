@@ -1,5 +1,4 @@
 import {
-  act,
   fireEvent,
   initializeMocks,
   render,
@@ -94,15 +93,12 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('shows the taxonomies data including tag numbers after the query is complete', async () => {
-    await act(async () => {
-      const { container } = renderDrawer(largeTagsId);
-      await waitFor(() => { expect(screen.getByText('Taxonomy 1')).toBeInTheDocument(); });
-      expect(screen.getByText('Taxonomy 1')).toBeInTheDocument();
-      expect(screen.getByText('Taxonomy 2')).toBeInTheDocument();
-      const tagCountBadges = container.getElementsByClassName('taxonomy-tags-count-chip');
-      expect(tagCountBadges[0].textContent).toBe('3');
-      expect(tagCountBadges[1].textContent).toBe('2');
-    });
+    const { container } = renderDrawer(largeTagsId);
+    await screen.findByText('Taxonomy 1');
+    await screen.findByText('Taxonomy 2');
+    const tagCountBadges = container.getElementsByClassName('taxonomy-tags-count-chip');
+    expect(tagCountBadges[0].textContent).toBe('3');
+    expect(tagCountBadges[1].textContent).toBe('2');
   });
 
   it('should be read only on first render on drawer variant', async () => {

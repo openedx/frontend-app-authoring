@@ -25,7 +25,11 @@ const SettingsComponent = ({ url }) => {
     [appId],
   );
 
-  return <LazyLoadedComponent onClose={() => navigate(url)} />;
+  return (
+    <React.Suspense fallback="...">
+      <LazyLoadedComponent onClose={() => navigate(url)} />
+    </React.Suspense>
+  );
 };
 
 SettingsComponent.propTypes = {

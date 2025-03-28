@@ -544,12 +544,9 @@ describe('ProctoredExamSettings', () => {
 
   describe('Connection states', () => {
     it('Shows the spinner before the connection is complete', async () => {
-      await act(async () => {
-        render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />));
-        // This expectation is _inside_ the `act` intentionally, so that it executes immediately.
-        const spinner = await screen.findByRole('status');
-        expect(spinner.textContent).toEqual('Loading...');
-      });
+      render(intlWrapper(<IntlProctoredExamSettings {...defaultProps} />));
+      const spinner = await screen.findByRole('status');
+      expect(spinner.textContent).toEqual('Loading...');
     });
 
     it('Show connection error message when we suffer studio server side error', async () => {

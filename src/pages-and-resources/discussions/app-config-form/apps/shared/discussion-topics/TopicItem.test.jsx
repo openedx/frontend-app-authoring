@@ -4,7 +4,9 @@ import {
   queryAllByTestId,
   queryAllByText,
   queryByRole,
+  findByTestId,
   queryByTestId,
+  findByText,
   queryByText,
   queryByLabelText,
   render,
@@ -158,10 +160,10 @@ describe('TopicItem', () => {
     await mockStore(legacyApiResponse);
     createComponent(additionalTopic);
 
-    const topicCard = queryByTestId(container, '13f106c6-6735-4e84-b097-0456cff55960');
+    const topicCard = await findByTestId(container, '13f106c6-6735-4e84-b097-0456cff55960');
     userEvent.click(queryByLabelText(topicCard, 'Expand'));
     topicCard.querySelector('input').focus();
 
-    expect(queryByText(topicCard, messages.addTopicHelpText.defaultMessage)).toBeInTheDocument();
+    await findByText(topicCard, messages.addTopicHelpText.defaultMessage);
   });
 });

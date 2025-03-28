@@ -1,7 +1,7 @@
 import MockAdapter from 'axios-mock-adapter';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
-  act, render, waitFor, within, screen,
+  render, waitFor, within, screen,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
@@ -205,16 +205,15 @@ describe('<CourseUnit />', () => {
   });
 
   it('adjusts iframe height dynamically based on courseXBlockDropdownHeight postMessage event', async () => {
-    const { getByTitle } = render(<RootWrapper />);
+    render(<RootWrapper />);
 
-    await waitFor(() => {
-      const iframe = getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
-      expect(iframe).toHaveAttribute('style', 'width: 100%; height: 0px;');
-      simulatePostMessageEvent(messageTypes.toggleCourseXBlockDropdown, {
-        courseXBlockDropdownHeight: 200,
-      });
-      expect(iframe).toHaveAttribute('style', 'width: 100%; height: 200px;');
+    let iframe = await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+    expect(iframe).toHaveAttribute('style', 'width: 100%; height: 0px;');
+    simulatePostMessageEvent(messageTypes.toggleCourseXBlockDropdown, {
+      courseXBlockDropdownHeight: 200,
     });
+    iframe = await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+    expect(iframe).toHaveAttribute('style', 'width: 100%; height: 200px;');
   });
 
   it('displays an error alert when a studioAjaxError message is received', async () => {
@@ -246,16 +245,13 @@ describe('<CourseUnit />', () => {
   });
 
   it('renders the xBlocks iframe and opens the tags drawer on postMessage event', async () => {
-    const { getByTitle, getByText } = render(<RootWrapper />);
+    render(<RootWrapper />);
 
-    await waitFor(() => {
-      const xblocksIframe = getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
-      expect(xblocksIframe).toBeInTheDocument();
-    });
+    await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
 
     simulatePostMessageEvent(messageTypes.openManageTags, { contentId: blockId });
 
-    expect(getByText(tagsDrawerMessages.headerSubtitle.defaultMessage)).toBeInTheDocument();
+    await screen.findByText(tagsDrawerMessages.headerSubtitle.defaultMessage);
   });
 
   it('closes the legacy edit modal when closeXBlockEditorModal message is received', async () => {
@@ -1598,27 +1594,21 @@ describe('<CourseUnit />', () => {
 
     it('should display "Move Modal" on receive trigger message', async () => {
       const {
-        getByText,
         getByRole,
       } = render(<RootWrapper />);
 
-      await act(async () => {
-        await waitFor(() => {
-          expect(getByText(unitDisplayName))
-            .toBeInTheDocument();
-        });
+      await screen.findByText(unitDisplayName);
 
-        axiosMock
-          .onGet(getCourseOutlineInfoUrl(courseId))
-          .reply(200, courseOutlineInfoMock);
-        await executeThunk(getCourseOutlineInfoQuery(courseId), store.dispatch);
+      axiosMock
+        .onGet(getCourseOutlineInfoUrl(courseId))
+        .reply(200, courseOutlineInfoMock);
+      await executeThunk(getCourseOutlineInfoQuery(courseId), store.dispatch);
 
-        window.dispatchEvent(messageEvent);
-      });
+      window.dispatchEvent(messageEvent);
 
-      expect(getByText(
+      await screen.findByText(
         moveModalMessages.moveModalTitle.defaultMessage.replace('{displayName}', requestData.title),
-      )).toBeInTheDocument();
+      );
       expect(getByRole('button', { name: moveModalMessages.moveModalSubmitButton.defaultMessage })).toBeInTheDocument();
       expect(getByRole('button', { name: moveModalMessages.moveModalCancelButton.defaultMessage })).toBeInTheDocument();
     });
@@ -1629,23 +1619,18 @@ describe('<CourseUnit />', () => {
         getByRole,
       } = render(<RootWrapper />);
 
-      await act(async () => {
-        await waitFor(() => {
-          expect(getByText(unitDisplayName))
-            .toBeInTheDocument();
-        });
+      await screen.findByText(unitDisplayName);
 
-        axiosMock
-          .onGet(getCourseOutlineInfoUrl(courseId))
-          .reply(200, courseOutlineInfoMock);
-        await executeThunk(getCourseOutlineInfoQuery(courseId), store.dispatch);
+      axiosMock
+        .onGet(getCourseOutlineInfoUrl(courseId))
+        .reply(200, courseOutlineInfoMock);
+      await executeThunk(getCourseOutlineInfoQuery(courseId), store.dispatch);
 
-        window.dispatchEvent(messageEvent);
-      });
+      window.dispatchEvent(messageEvent);
 
-      expect(getByText(
+      await screen.findByText(
         moveModalMessages.moveModalTitle.defaultMessage.replace('{displayName}', requestData.title),
-      )).toBeInTheDocument();
+      );
 
       const currentSection = courseOutlineInfoMock.child_info.children[1];
       const currentSectionItemBtn = getByRole('button', {
@@ -1673,7 +1658,6 @@ describe('<CourseUnit />', () => {
 
     it('should allow move operation and handles it successfully', async () => {
       const {
-        getByText,
         getByRole,
       } = render(<RootWrapper />);
 
@@ -1685,23 +1669,18 @@ describe('<CourseUnit />', () => {
         .onGet(getCourseUnitApiUrl(blockId))
         .reply(200, courseUnitIndexMock);
 
-      await act(async () => {
-        await waitFor(() => {
-          expect(getByText(unitDisplayName))
-            .toBeInTheDocument();
-        });
+      await screen.findByText(unitDisplayName);
 
-        axiosMock
-          .onGet(getCourseOutlineInfoUrl(courseId))
-          .reply(200, courseOutlineInfoMock);
-        await executeThunk(getCourseOutlineInfoQuery(courseId), store.dispatch);
+      axiosMock
+        .onGet(getCourseOutlineInfoUrl(courseId))
+        .reply(200, courseOutlineInfoMock);
+      await executeThunk(getCourseOutlineInfoQuery(courseId), store.dispatch);
 
-        window.dispatchEvent(messageEvent);
-      });
+      window.dispatchEvent(messageEvent);
 
-      expect(getByText(
+      await screen.findByText(
         moveModalMessages.moveModalTitle.defaultMessage.replace('{displayName}', requestData.title),
-      )).toBeInTheDocument();
+      );
 
       const currentSection = courseOutlineInfoMock.child_info.children[1];
       const currentSectionItemBtn = getByRole('button', {
@@ -1883,49 +1862,47 @@ describe('<CourseUnit />', () => {
         .reply(200, { dummy: 'value' });
 
       const {
-        getByTitle, getByRole, getByTestId,
+        findByTitle, findByRole, findByTestId,
       } = render(<RootWrapper />);
 
       const accessGroupName1 = userPartitionInfoFormatted.selectablePartitions[0].groups[0].name;
       const accessGroupName2 = userPartitionInfoFormatted.selectablePartitions[0].groups[1].name;
 
+      await findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
       waitFor(() => {
-        const iframe = getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
-        expect(iframe).toBeInTheDocument();
         simulatePostMessageEvent(messageTypes.manageXBlockAccess, {
           usageId: courseVerticalChildrenMock.children[0].block_id,
         });
       });
 
+      const configureModal = await findByTestId('configure-modal');
+
+      expect(within(configureModal).queryByText(accessGroupName1)).not.toBeInTheDocument();
+      expect(within(configureModal).queryByText(accessGroupName2)).not.toBeInTheDocument();
+
+      const restrictAccessSelect = await findByRole('combobox', {
+        name: configureModalMessages.restrictAccessTo.defaultMessage,
+      });
+
+      await userEvent.selectOptions(restrictAccessSelect, '0');
+
+      // eslint-disable-next-line array-callback-return
+      userPartitionInfoFormatted.selectablePartitions[0].groups.map((group) => {
+        expect(within(configureModal).getByRole('checkbox', { name: group.name })).not.toBeChecked();
+        expect(within(configureModal).queryByText(group.name)).toBeInTheDocument();
+      });
+
+      const group1Checkbox = within(configureModal).getByRole('checkbox', { name: accessGroupName1 });
+      await userEvent.click(group1Checkbox);
+      expect(group1Checkbox).toBeChecked();
+
+      const saveModalBtnText = within(configureModal).getByRole('button', {
+        name: configureModalMessages.saveButton.defaultMessage,
+      });
+      expect(saveModalBtnText).toBeInTheDocument();
+
+      await userEvent.click(saveModalBtnText);
       waitFor(() => {
-        const configureModal = getByTestId('configure-modal');
-        expect(configureModal).toBeInTheDocument();
-
-        expect(within(configureModal).queryByText(accessGroupName1)).not.toBeInTheDocument();
-        expect(within(configureModal).queryByText(accessGroupName2)).not.toBeInTheDocument();
-
-        const restrictAccessSelect = getByRole('combobox', {
-          name: configureModalMessages.restrictAccessTo.defaultMessage,
-        });
-
-        userEvent.selectOptions(restrictAccessSelect, '0');
-
-        // eslint-disable-next-line array-callback-return
-        userPartitionInfoFormatted.selectablePartitions[0].groups.map((group) => {
-          expect(within(configureModal).getByRole('checkbox', { name: group.name })).not.toBeChecked();
-          expect(within(configureModal).queryByText(group.name)).toBeInTheDocument();
-        });
-
-        const group1Checkbox = within(configureModal).getByRole('checkbox', { name: accessGroupName1 });
-        userEvent.click(group1Checkbox);
-        expect(group1Checkbox).toBeChecked();
-
-        const saveModalBtnText = within(configureModal).getByRole('button', {
-          name: configureModalMessages.saveButton.defaultMessage,
-        });
-        expect(saveModalBtnText).toBeInTheDocument();
-
-        userEvent.click(saveModalBtnText);
         expect(handleConfigureSubmitMock).toHaveBeenCalledTimes(1);
       });
     });
@@ -1995,18 +1972,18 @@ describe('<CourseUnit />', () => {
 
     it('should render library content page correctly', async () => {
       const {
-        getByText,
+        findByText,
         getByRole,
         queryByRole,
-        getByTestId,
+        findByTestId,
       } = render(<RootWrapper />);
 
       const currentSectionName = courseUnitIndexMock.ancestor_info.ancestors[1].display_name;
       const currentSubSectionName = courseUnitIndexMock.ancestor_info.ancestors[1].display_name;
 
+      const unitHeaderTitle = await findByTestId('unit-header-title');
+      await findByText(unitDisplayName);
       await waitFor(() => {
-        const unitHeaderTitle = getByTestId('unit-header-title');
-        expect(getByText(unitDisplayName)).toBeInTheDocument();
         expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage })).toBeInTheDocument();
         expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonSettings.defaultMessage })).toBeInTheDocument();
         expect(getByRole('button', { name: currentSectionName })).toBeInTheDocument();

@@ -1,11 +1,12 @@
 import React from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { act } from 'react-dom/test-utils';
 import PromptIfDirty from './PromptIfDirty';
 
 describe('PromptIfDirty', () => {
   let container = null;
   let mockEvent = null;
+  let root = null;
 
   beforeEach(() => {
     container = document.createElement('div');
@@ -23,14 +24,15 @@ describe('PromptIfDirty', () => {
     window.removeEventListener.mockRestore();
     mockEvent.preventDefault.mockRestore();
     mockEvent = null;
-    unmountComponentAtNode(container);
+    root.unmount();
     container.remove();
     container = null;
   });
 
   it('should add event listener on mount', () => {
     act(() => {
-      render(<PromptIfDirty dirty />, container);
+      root = createRoot(container);
+      root.render(<PromptIfDirty dirty />);
     });
 
     expect(window.addEventListener).toHaveBeenCalledWith('beforeunload', expect.any(Function));
@@ -38,10 +40,11 @@ describe('PromptIfDirty', () => {
 
   it('should remove event listener on unmount', () => {
     act(() => {
-      render(<PromptIfDirty dirty />, container);
+      root = createRoot(container);
+      root.render(<PromptIfDirty dirty />);
     });
     act(() => {
-      unmountComponentAtNode(container);
+      root.unmount();
     });
 
     expect(window.removeEventListener).toHaveBeenCalledWith('beforeunload', expect.any(Function));
@@ -49,7 +52,8 @@ describe('PromptIfDirty', () => {
 
   it('should call preventDefault and set returnValue when dirty is true', () => {
     act(() => {
-      render(<PromptIfDirty dirty />, container);
+      root = createRoot(container);
+      root.render(<PromptIfDirty dirty />);
     });
     act(() => {
       window.dispatchEvent(mockEvent);
@@ -61,7 +65,8 @@ describe('PromptIfDirty', () => {
 
   it('should not call preventDefault when dirty is false', () => {
     act(() => {
-      render(<PromptIfDirty dirty={false} />, container);
+      root = createRoot(container);
+      root.render(<PromptIfDirty dirty={false} />);
     });
     act(() => {
       window.dispatchEvent(mockEvent);

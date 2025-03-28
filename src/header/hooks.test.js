@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import { getConfig, setConfig } from '@edx/frontend-platform';
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 import messages from './messages';
 import { useContentMenuItems, useToolsMenuItems, useSettingMenuItems } from './hooks';
 
