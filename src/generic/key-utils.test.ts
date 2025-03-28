@@ -32,6 +32,8 @@ describe('component utils', () => {
       ['lb:Axim:beta:problem:571fe018-f3ce-45c9-8f53-5dafcb422fdd', 'lib:Axim:beta'],
       ['lib-collection:org:lib:coll', 'lib:org:lib'],
       ['lib-collection:OpenCraftX:ALPHA:coll', 'lib:OpenCraftX:ALPHA'],
+      ['lct:org:lib:unit:my-unit-9284e2', 'lib:org:lib'],
+      ['lct:OpenCraftX:ALPHA:my-unit-a3223f', 'lib:OpenCraftX:ALPHA'],
     ]) {
       it(`returns '${expected}' for usage key '${input}'`, () => {
         expect(getLibraryId(input)).toStrictEqual(expected);

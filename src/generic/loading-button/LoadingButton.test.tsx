@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   act,
   fireEvent,
@@ -9,7 +8,7 @@ import LoadingButton from '.';
 
 const buttonTitle = 'Button Title';
 
-const RootWrapper = (onClick) => (
+const RootWrapper = (onClick?: () => (Promise<void> | void)) => (
   <LoadingButton label={buttonTitle} onClick={onClick} />
 );
 
@@ -31,8 +30,8 @@ describe('<LoadingButton />', () => {
   });
 
   it('renders the spinner correctly', async () => {
-    let resolver;
-    const longFunction = () => new Promise((resolve) => {
+    let resolver: () => void;
+    const longFunction = () => new Promise<void>((resolve) => {
       resolver = resolve;
     });
     const { container, getByRole, getByText } = render(RootWrapper(longFunction));
@@ -51,8 +50,8 @@ describe('<LoadingButton />', () => {
   });
 
   it('renders the spinner correctly even with error', async () => {
-    let rejecter;
-    const longFunction = () => new Promise((_resolve, reject) => {
+    let rejecter: (err: Error) => void;
+    const longFunction = () => new Promise<void>((_resolve, reject) => {
       rejecter = reject;
     });
     const { container, getByRole, getByText } = render(RootWrapper(longFunction));
