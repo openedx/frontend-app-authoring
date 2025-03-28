@@ -24,7 +24,7 @@ import { SidebarActions, useSidebarContext } from '../common/context/SidebarCont
 import { useRemoveComponentsFromCollection } from '../data/apiHooks';
 import { useLibraryRoutes } from '../routes';
 
-import BaseComponentCard from './BaseComponentCard';
+import BaseCard from './BaseCard';
 import { canEditComponent } from './ComponentEditorModal';
 import messages from './messages';
 import ComponentDeleter from './ComponentDeleter';
@@ -209,8 +209,8 @@ const ComponentCard = ({ hit }: ComponentCardProps) => {
   }, [usageKey, navigateTo, openComponentInfoSidebar]);
 
   return (
-    <BaseComponentCard
-      componentType={blockType}
+    <BaseCard
+      itemType={blockType}
       displayName={displayName}
       description={componentDescription}
       tags={tags}
