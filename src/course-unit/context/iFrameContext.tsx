@@ -10,7 +10,7 @@ export interface IframeContextType {
 
 export const IframeContext = createContext<IframeContextType | undefined>(undefined);
 
-export const IframeProvider: React.FC = ({ children }: { children: ReactNode }) => {
+export const IframeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const setIframeRef = useCallback((ref: MutableRefObject<HTMLIFrameElement | null>) => {
     iframeRef.current = ref.current;
