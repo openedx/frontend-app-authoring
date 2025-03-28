@@ -11,7 +11,7 @@ import { fetchCourseDetail, fetchWaffleFlags } from './data/thunks';
 import { useModel } from './generic/model-store';
 import NotFoundAlert from './generic/NotFoundAlert';
 import PermissionDeniedAlert from './generic/PermissionDeniedAlert';
-import { fetchStudioHomeData } from './studio-home/data/thunks';
+import { fetchOnlyStudioHomeData } from './studio-home/data/thunks';
 import { getCourseAppsApiStatus } from './pages-and-resources/data/selectors';
 import { RequestStatus } from './data/constants';
 import Loading from './generic/Loading';
@@ -25,7 +25,7 @@ const CourseAuthoringPage = ({ courseId, children }) => {
   }, [courseId]);
 
   useEffect(() => {
-    dispatch(fetchStudioHomeData());
+    dispatch(fetchOnlyStudioHomeData());
   }, []);
 
   const courseDetail = useModel('courseDetails', courseId);

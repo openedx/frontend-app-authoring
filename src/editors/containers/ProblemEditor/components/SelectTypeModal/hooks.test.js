@@ -55,7 +55,6 @@ describe('SelectTypeModal hooks', () => {
           attempts_before_showanswer_button: 0,
           show_reset_button: null,
           showanswer: null,
-          defaultToAdvanced: false,
         },
         defaultSettings: mockDefaultSettings,
       });

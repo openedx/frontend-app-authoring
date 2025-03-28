@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { sendTrackEvent } from '@edx/frontend-platform/analytics';
 import analyticsEvt from './data/constants/analyticsEvt';
@@ -6,11 +6,15 @@ import analyticsEvt from './data/constants/analyticsEvt';
 import { actions, thunkActions } from './data/redux';
 import { RequestKeys } from './data/constants/requests';
 
-// eslint-disable-next-line react-hooks/rules-of-hooks
-export const initializeApp = ({ dispatch, data }) => useEffect(
-  () => dispatch(thunkActions.app.initialize(data)),
-  [data?.blockId, data?.studioEndpointUrl, data?.learningContextId],
-);
+export const useInitializeApp = ({ dispatch, data }) => {
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    setLoading(true);
+    dispatch(thunkActions.app.initialize(data));
+    setLoading(false);
+  }, [data?.blockId, data?.studioEndpointUrl, data?.learningContextId]);
+  return loading;
+};
 
 export const navigateTo = (destination: string | URL) => {
   window.location.assign(destination);

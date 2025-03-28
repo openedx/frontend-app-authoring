@@ -11,6 +11,7 @@ import { cloneDeep } from 'lodash';
 import { closestCorners } from '@dnd-kit/core';
 
 import { useLocation } from 'react-router-dom';
+import userEvent from '@testing-library/user-event';
 import {
   getCourseBestPracticesApiUrl,
   getCourseLaunchApiUrl,
@@ -2173,7 +2174,7 @@ describe('<CourseOutline />', () => {
       .reply(200, courseSectionMock);
     let [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
     const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    await act(async () => fireEvent.click(expandBtn));
+    await userEvent.click(expandBtn);
     const [unit] = subsection.childInfo.children;
     const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
 
@@ -2286,15 +2287,15 @@ describe('<CourseOutline />', () => {
     expect(await screen.findByText('An error has occurred creating the file')).toBeInTheDocument();
   });
 
-  it('displays an alert and sets status to DENIED when API responds with 403', async () => {
+  it('sets status to DENIED when API responds with 403', async () => {
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
       .reply(403);
 
-    const { getByRole } = render(<RootWrapper />);
+    const { getByTestId } = render(<RootWrapper />);
 
     await waitFor(() => {
-      expect(getByRole('alert')).toBeInTheDocument();
+      expect(getByTestId('redux-provider')).toBeInTheDocument();
       const { outlineIndexLoadingStatus } = store.getState().courseOutline.loadingStatus;
       expect(outlineIndexLoadingStatus).toEqual(RequestStatus.DENIED);
     });

@@ -16,7 +16,7 @@ export interface Props extends EditorComponent {
   learningContextId: string | null;
   lmsEndpointUrl: string | null;
   studioEndpointUrl: string | null;
-  fullScreen?: boolean;
+  fullScreen?: boolean; // eslint-disable-line react/no-unused-prop-types
 }
 
 const Editor: React.FC<Props> = ({
@@ -29,7 +29,7 @@ const Editor: React.FC<Props> = ({
   returnFunction = null,
 }) => {
   const dispatch = useDispatch();
-  hooks.initializeApp({
+  const loading = hooks.useInitializeApp({
     dispatch,
     data: {
       blockId,
@@ -42,6 +42,11 @@ const Editor: React.FC<Props> = ({
   const { fullScreen } = useEditorContext();
 
   const EditorComponent = supportedEditors[blockType];
+
+  // Do not load editor until everything is initialized.
+  if (loading) {
+    return null;
+  }
 
   if (EditorComponent === undefined && blockId) {
     return (

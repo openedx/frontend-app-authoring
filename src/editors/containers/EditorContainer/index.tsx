@@ -131,7 +131,7 @@ const EditorContainer: React.FC<Props> = ({
       )}
       {saveFailed && (
         <Toast show onClose={clearSaveFailed}>
-          <FormattedMessage {...messages.contentSaveFailed} />
+          {intl.formatMessage(messages.contentSaveFailed)}
         </Toast>
       )}
       <CancelConfirmModal

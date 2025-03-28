@@ -1984,11 +1984,13 @@ describe('<CourseUnit />', () => {
       await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
     });
 
-    it('navigates to library content page on receive window event', () => {
+    it('navigates to library content page on receive window event', async () => {
       render(<RootWrapper />);
 
-      simulatePostMessageEvent(messageTypes.handleViewXBlockContent, { usageId: newUnitId });
-      expect(mockedUsedNavigate).toHaveBeenCalledWith(`/course/${courseId}/container/${newUnitId}/${sequenceId}`);
+      await waitFor(() => {
+        simulatePostMessageEvent(messageTypes.handleViewXBlockContent, { usageId: newUnitId });
+        expect(mockedUsedNavigate).toHaveBeenCalledWith(`/course/${courseId}/container/${newUnitId}/${sequenceId}`);
+      });
     });
 
     it('should render library content page correctly', async () => {
