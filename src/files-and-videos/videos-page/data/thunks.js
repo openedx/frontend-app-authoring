@@ -280,7 +280,7 @@ const uploadToBucket = async ({
   }
 };
 
-const newUploadData = ({
+export const newUploadData = ({
   status,
   edxVideoId,
   currentData,
