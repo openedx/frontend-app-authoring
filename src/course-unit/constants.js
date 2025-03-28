@@ -39,17 +39,7 @@ export const getXBlockSupportMessages = (intl) => ({
   },
 });
 
-export const stateKeys = {
-  iframeHeight: 'iframeHeight',
-  hasLoaded: 'hasLoaded',
-  showError: 'showError',
-  windowTopOffset: 'windowTopOffset',
-};
-
 export const messageTypes = {
-  modal: 'plugin.modal',
-  resize: 'plugin.resize',
-  videoFullScreen: 'plugin.videoFullScreen',
   refreshXBlock: 'refreshXBlock',
   showMoveXBlockModal: 'showMoveXBlockModal',
   completeXBlockMoving: 'completeXBlockMoving',

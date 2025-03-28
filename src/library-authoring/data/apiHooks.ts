@@ -51,6 +51,7 @@ import {
   getContainerMetadata,
   updateContainerMetadata,
   type UpdateContainerDataRequest,
+  getLibraryContainerChildren,
 } from './api';
 import { VersionSpec } from '../LibraryBlock';
 
@@ -94,6 +95,12 @@ export const libraryAuthoringQueryKeys = {
     ...libraryAuthoringQueryKeys.all,
     libraryId,
     containerId,
+  ],
+  containerChildren: (libraryId?: string, containerId?: string) => [
+    ...libraryAuthoringQueryKeys.all,
+    libraryId,
+    containerId,
+    "children",
   ],
   blockTypes: (libraryId?: string) => [
     ...libraryAuthoringQueryKeys.all,
@@ -611,3 +618,14 @@ export const useUpdateContainer = (containerId: string) => {
     },
   });
 };
+
+/**
+ * Get the metadata for a container in a library
+ */
+export const useContainerChildren = (libraryId?: string, containerId?: string) => (
+  useQuery({
+    enabled: !!libraryId && !!containerId,
+    queryKey: libraryAuthoringQueryKeys.containerChildren(libraryId, containerId),
+    queryFn: () => getLibraryContainerChildren(containerId!),
+  })
+);

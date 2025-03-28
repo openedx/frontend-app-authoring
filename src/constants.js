@@ -92,3 +92,16 @@ export const REGEX_RULES = {
 export const IFRAME_FEATURE_POLICY = (
   'microphone *; camera *; midi *; geolocation *; encrypted-media *; clipboard-write *'
 );
+
+export const iframeStateKeys = {
+  iframeHeight: 'iframeHeight',
+  hasLoaded: 'hasLoaded',
+  showError: 'showError',
+  windowTopOffset: 'windowTopOffset',
+};
+
+export const iframeMessageTypes = {
+  modal: 'plugin.modal',
+  resize: 'plugin.resize',
+  videoFullScreen: 'plugin.videoFullScreen',
+}

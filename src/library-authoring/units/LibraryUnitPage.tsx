@@ -1,19 +1,22 @@
 import { useIntl } from "@edx/frontend-platform/i18n";
-import { Breadcrumb, Button, Container } from "@openedx/paragon";
-import { Add, InfoOutline, Link } from "@openedx/paragon/icons";
+import { Breadcrumb, Button, Card, Container } from "@openedx/paragon";
+import { Add, InfoOutline } from "@openedx/paragon/icons";
 import { useEffect } from "react";
 import { Helmet } from 'react-helmet';
+import { Link } from "react-router-dom";
 
 import ErrorAlert from '../../generic/alert-error';
+import { IframeProvider } from "../../generic/hooks/context/iFrameContext";
 import Loading from "../../generic/Loading";
 import NotFoundAlert from "../../generic/NotFoundAlert";
 import SubHeader from "../../generic/sub-header/SubHeader";
 import Header from "../../header";
 import { useLibraryContext } from "../common/context/LibraryContext";
 import { useSidebarContext } from "../common/context/SidebarContext";
-import { useContainer, useContentLibrary } from "../data/apiHooks";
+import { useContainer, useContainerChildren, useContentLibrary } from "../data/apiHooks";
 import { LibrarySidebar } from "../library-sidebar";
 import { SubHeaderTitle } from "../LibraryAuthoringPage";
+import { LibraryBlock } from "../LibraryBlock";
 import messages from "./messages";
 
 const HeaderActions = () => {
@@ -38,6 +41,42 @@ const HeaderActions = () => {
     </div>
   );
 };
+
+const UnitBlocks = () => {
+  const {
+    libraryId,
+    unitId,
+    showOnlyPublished
+  } = useLibraryContext();
+
+  const {
+    data: blocks,
+    isLoading,
+    isError,
+    error,
+  } = useContainerChildren(libraryId, unitId);
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (isError) {
+    return <ErrorAlert error={error} />;
+  }
+
+  const renderedBlocks = blocks?.map((block) => (
+    <Card
+      className="my-3"
+      key={block.id}
+    >
+      <LibraryBlock
+        usageKey={block.id}
+        version={showOnlyPublished ? 'published' : undefined}
+      />
+    </Card>
+  ));
+  return (<>{renderedBlocks}</>);
+}
 
 export const LibraryUnitPage = () => {
   const intl = useIntl();
@@ -65,7 +104,6 @@ export const LibraryUnitPage = () => {
     isError,
     error,
   } = useContainer(libraryId, unitId);
-
 
   // Only show loading if unit or library data is not fetched from index yet
   if (isLibLoading || isLoading) {
@@ -99,36 +137,39 @@ export const LibraryUnitPage = () => {
   )
 
   return (
-    <div className="d-flex">
-      <div className="flex-grow-1">
-        <Helmet><title>{libraryData.title} | {process.env.SITE_NAME}</title></Helmet>
-        <Header
-          number={libraryData.slug}
-          title={libraryData.title}
-          org={libraryData.org}
-          contextId={libraryId}
-          isLibrary
-          containerProps={{
-            size: undefined,
-          }}
-        />
-        <Container className="px-4 mt-4 mb-5 library-authoring-page">
-          <SubHeader
-            title={<SubHeaderTitle title={unitData.displayName} />}
-            headerActions={<HeaderActions />}
-            breadcrumbs={breadcrumbs}
-            hideBorder
+    <IframeProvider>
+      <div className="d-flex">
+        <div className="flex-grow-1">
+          <Helmet><title>{libraryData.title} | {process.env.SITE_NAME}</title></Helmet>
+          <Header
+            number={libraryData.slug}
+            title={libraryData.title}
+            org={libraryData.org}
+            contextId={libraryId}
+            isLibrary
+            containerProps={{
+              size: undefined,
+            }}
           />
-        </Container>
-      </div>
-      {!!sidebarComponentInfo?.type && (
-        <div
-          className="library-authoring-sidebar box-shadow-left-1 bg-white"
-          data-testid="library-sidebar"
-        >
-          <LibrarySidebar />
+          <Container className="px-4 mt-4 mb-5 library-authoring-page">
+            <SubHeader
+              title={<SubHeaderTitle title={unitData.displayName} />}
+              headerActions={<HeaderActions />}
+              breadcrumbs={breadcrumbs}
+              hideBorder
+            />
+            <UnitBlocks/>
+          </Container>
         </div>
-      )}
-    </div>
+        {!!sidebarComponentInfo?.type && (
+          <div
+            className="library-authoring-sidebar box-shadow-left-1 bg-white"
+            data-testid="library-sidebar"
+          >
+            <LibrarySidebar />
+          </div>
+        )}
+      </div>
+    </IframeProvider>
   )
 }
