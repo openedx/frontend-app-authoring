@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 
+import userEvent from '@testing-library/user-event';
 import { initializeMocks, render, screen } from '../testUtils';
 import { TaxonomyContext } from './common/context';
 import { TaxonomyLayout } from './TaxonomyLayout';
@@ -61,16 +62,16 @@ describe('<TaxonomyLayout />', () => {
     await screen.findByText(toastMessage);
   });
 
-  it('should show alert', () => {
+  it('should show alert', async () => {
     render(<TaxonomyLayout />);
 
-    const button = screen.getByTestId('taxonomy-show-alert');
-    button.click();
+    const button = await screen.findByTestId('taxonomy-show-alert');
+    await userEvent.click(button);
     expect(screen.getByText(alertErrorTitle)).toBeInTheDocument();
     expect(screen.getByText(alertErrorDescription)).toBeInTheDocument();
 
-    const closeAlertButton = screen.getByRole('button', { name: 'Dismiss' });
-    closeAlertButton.click();
+    const closeAlertButton = await screen.findByRole('button', { name: 'Dismiss' });
+    await userEvent.click(closeAlertButton);
     expect(screen.queryByText(alertErrorTitle)).not.toBeInTheDocument();
     expect(screen.queryByText(alertErrorDescription)).not.toBeInTheDocument();
   });
