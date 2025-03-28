@@ -22,7 +22,10 @@ import { studioHomeMock } from '../studio-home/__mocks__';
 import { getStudioHomeApiUrl } from '../studio-home/data/api';
 import { mockBroadcastChannel } from '../generic/data/api.mock';
 import { LibraryLayout } from '.';
-import { getLibraryCollectionsApiUrl } from './data/api';
+import { getLibraryCollectionsApiUrl, getLibraryContainersApiUrl } from './data/api';
+
+let axiosMock;
+let mockShowToast;
 
 mockGetCollectionMetadata.applyMock();
 mockContentSearchConfig.applyMock();
@@ -53,7 +56,9 @@ const libraryTitle = mockContentLibrary.libraryData.title;
 
 describe('<LibraryAuthoringPage />', () => {
   beforeEach(async () => {
-    const { axiosMock } = initializeMocks();
+    const mocks = initializeMocks();
+    axiosMock = mocks.axiosMock;
+    mockShowToast = mocks.mockShowToast;
     axiosMock.onGet(getStudioHomeApiUrl()).reply(200, studioHomeMock);
 
     // The Meilisearch client-side API uses fetch, not Axios.
@@ -452,15 +457,15 @@ describe('<LibraryAuthoringPage />', () => {
     expect(screen.getByRole('tab', { name: 'Manage' })).toHaveAttribute('aria-selected', 'true');
   });
 
-  it('can filter by capa problem type', async () => {
-    const problemTypes = {
-      'Multiple Choice': 'choiceresponse',
-      Checkboxes: 'multiplechoiceresponse',
-      'Numerical Input': 'numericalresponse',
-      Dropdown: 'optionresponse',
-      'Text Input': 'stringresponse',
-    };
+  const problemTypes = {
+    'Multiple Choice': 'choiceresponse',
+    Checkboxes: 'multiplechoiceresponse',
+    'Numerical Input': 'numericalresponse',
+    Dropdown: 'optionresponse',
+    'Text Input': 'stringresponse',
+  };
 
+  it.each(Object.keys(problemTypes))('can filter by capa problem type (%s)', async (submenuText) => {
     await renderLibraryPage();
 
     // Ensure the search endpoint is called
@@ -474,36 +479,27 @@ describe('<LibraryAuthoringPage />', () => {
     expect(showProbTypesSubmenuBtn).not.toBeNull();
     fireEvent.click(showProbTypesSubmenuBtn!);
 
-    const validateSubmenu = async (submenuText: string) => {
-      const submenu = screen.getByText(submenuText);
-      expect(submenu).toBeInTheDocument();
-      fireEvent.click(submenu);
+    const submenu = screen.getByText(submenuText);
+    expect(submenu).toBeInTheDocument();
+    fireEvent.click(submenu);
 
-      await waitFor(() => {
-        expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
-          body: expect.stringContaining(`content.problem_types = ${problemTypes[submenuText]}`),
-          method: 'POST',
-          headers: expect.anything(),
-        });
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+        body: expect.stringContaining(`content.problem_types = ${problemTypes[submenuText]}`),
+        method: 'POST',
+        headers: expect.anything(),
       });
+    });
 
-      fireEvent.click(submenu);
-      await waitFor(() => {
-        expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
-          body: expect.not.stringContaining(`content.problem_types = ${problemTypes[submenuText]}`),
-          method: 'POST',
-          headers: expect.anything(),
-        });
+    fireEvent.click(submenu);
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenLastCalledWith(searchEndpoint, {
+        body: expect.not.stringContaining(`content.problem_types = ${problemTypes[submenuText]}`),
+        method: 'POST',
+        headers: expect.anything(),
       });
-    };
-
-    // Validate per submenu
-    // eslint-disable-next-line no-restricted-syntax
-    for (const key of Object.keys(problemTypes)) {
-      // eslint-disable-next-line no-await-in-loop
-      await validateSubmenu(key);
-    }
-  }, 10000);
+    });
+  });
 
   it('can filter by block type', async () => {
     await renderLibraryPage();
@@ -563,7 +559,6 @@ describe('<LibraryAuthoringPage />', () => {
     const title = 'This is a Test';
     const description = 'This is the description of the Test';
     const url = getLibraryCollectionsApiUrl(mockContentLibrary.libraryId);
-    const { axiosMock } = initializeMocks();
     axiosMock.onPost(url).reply(200, {
       id: '1',
       slug: 'this-is-a-test',
@@ -600,6 +595,13 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.change(nameField, { target: { value: title } });
     fireEvent.change(descriptionField, { target: { value: description } });
     fireEvent.click(createButton);
+
+    // Check success toast
+    await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
+    expect(axiosMock.history.post[0].url).toBe(url);
+    expect(axiosMock.history.post[0].data).toContain(`"title":"${title}"`);
+    expect(axiosMock.history.post[0].data).toContain(`"description":"${description}"`);
+    expect(mockShowToast).toHaveBeenCalledWith('Collection created successfully');
   });
 
   it('should show validations in create collection', async () => {
@@ -608,7 +610,6 @@ describe('<LibraryAuthoringPage />', () => {
     const title = 'This is a Test';
     const description = 'This is the description of the Test';
     const url = getLibraryCollectionsApiUrl(mockContentLibrary.libraryId);
-    const { axiosMock } = initializeMocks();
     axiosMock.onPost(url).reply(200, {
       id: '1',
       slug: 'this-is-a-test',
@@ -647,7 +648,6 @@ describe('<LibraryAuthoringPage />', () => {
     const title = 'This is a Test';
     const description = 'This is the description of the Test';
     const url = getLibraryCollectionsApiUrl(mockContentLibrary.libraryId);
-    const { axiosMock } = initializeMocks();
     axiosMock.onPost(url).reply(500);
 
     expect(await screen.findByRole('heading')).toBeInTheDocument();
@@ -673,6 +673,127 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.change(nameField, { target: { value: title } });
     fireEvent.change(descriptionField, { target: { value: description } });
     fireEvent.click(createButton);
+
+    // Check error toast
+    await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
+    expect(mockShowToast).toHaveBeenCalledWith('There is an error when creating the library collection');
+  });
+
+  it('should create a unit', async () => {
+    await renderLibraryPage();
+    const title = 'This is a Test';
+    const url = getLibraryContainersApiUrl(mockContentLibrary.libraryId);
+    axiosMock.onPost(url).reply(200, {
+      id: '1',
+      slug: 'this-is-a-test',
+      title,
+    });
+
+    expect(await screen.findByRole('heading')).toBeInTheDocument();
+    expect(screen.queryByText(/add content/i)).not.toBeInTheDocument();
+
+    // Open Add content sidebar
+    const newButton = screen.getByRole('button', { name: /new/i });
+    fireEvent.click(newButton);
+    expect(screen.getByText(/add content/i)).toBeInTheDocument();
+
+    // Open New unit Modal
+    const sidebar = screen.getByTestId('library-sidebar');
+    const newUnitButton = within(sidebar).getAllByRole('button', { name: /unit/i })[0];
+    fireEvent.click(newUnitButton);
+    const unitModalHeading = await screen.findByRole('heading', { name: /new unit/i });
+    expect(unitModalHeading).toBeInTheDocument();
+
+    // Click on Cancel button
+    const cancelButton = screen.getByRole('button', { name: /cancel/i });
+    fireEvent.click(cancelButton);
+    expect(unitModalHeading).not.toBeInTheDocument();
+
+    // Open new unit modal again and create a collection
+    fireEvent.click(newUnitButton);
+    const createButton = screen.getByRole('button', { name: /create/i });
+    const nameField = screen.getByRole('textbox', { name: /name your unit/i });
+
+    fireEvent.change(nameField, { target: { value: title } });
+    fireEvent.click(createButton);
+
+    // Check success
+    await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
+
+    expect(axiosMock.history.post[0].url).toBe(url);
+    expect(axiosMock.history.post[0].data).toContain(`"display_name":"${title}"`);
+    expect(axiosMock.history.post[0].data).toContain('"container_type":"unit"');
+    expect(mockShowToast).toHaveBeenCalledWith('Unit created successfully');
+  });
+
+  it('should show validations in create unit', async () => {
+    await renderLibraryPage();
+
+    const title = 'This is a Test';
+    const url = getLibraryContainersApiUrl(mockContentLibrary.libraryId);
+    axiosMock.onPost(url).reply(200, {
+      id: '1',
+      slug: 'this-is-a-test',
+      title,
+    });
+
+    expect(await screen.findByRole('heading')).toBeInTheDocument();
+    expect(screen.queryByText(/add content/i)).not.toBeInTheDocument();
+
+    // Open Add content sidebar
+    const newButton = screen.getByRole('button', { name: /new/i });
+    fireEvent.click(newButton);
+    expect(screen.getByText(/add content/i)).toBeInTheDocument();
+
+    // Open New unit Modal
+    const sidebar = screen.getByTestId('library-sidebar');
+    const newUnitButton = within(sidebar).getAllByRole('button', { name: /unit/i })[0];
+    fireEvent.click(newUnitButton);
+    const unitModalHeading = await screen.findByRole('heading', { name: /new unit/i });
+    expect(unitModalHeading).toBeInTheDocument();
+
+    const nameField = screen.getByRole('textbox', { name: /name your unit/i });
+    fireEvent.focus(nameField);
+    fireEvent.blur(nameField);
+
+    // Click on create with an empty name
+    const createButton = screen.getByRole('button', { name: /create/i });
+    fireEvent.click(createButton);
+
+    expect(await screen.findByText(/unit name is required/i)).toBeInTheDocument();
+  });
+
+  it('should show error on create unit', async () => {
+    await renderLibraryPage();
+    const displayName = 'This is a Test';
+    const url = getLibraryContainersApiUrl(mockContentLibrary.libraryId);
+    axiosMock.onPost(url).reply(500);
+
+    expect(await screen.findByRole('heading')).toBeInTheDocument();
+    expect(screen.queryByText(/add content/i)).not.toBeInTheDocument();
+
+    // Open Add content sidebar
+    const newButton = screen.getByRole('button', { name: /new/i });
+    fireEvent.click(newButton);
+    expect(screen.getByText(/add content/i)).toBeInTheDocument();
+
+    // Open New collection Modal
+    const sidebar = screen.getByTestId('library-sidebar');
+    const newUnitButton = within(sidebar).getAllByRole('button', { name: /unit/i })[0];
+    fireEvent.click(newUnitButton);
+    const unitModalHeading = await screen.findByRole('heading', { name: /new unit/i });
+    expect(unitModalHeading).toBeInTheDocument();
+
+    // Create a unit
+    const createButton = screen.getByRole('button', { name: /create/i });
+    const nameField = screen.getByRole('textbox', { name: /name your unit/i });
+
+    fireEvent.change(nameField, { target: { value: displayName } });
+    fireEvent.click(createButton);
+
+    // Check error toast
+    await waitFor(() => expect(axiosMock.history.post.length).toBe(1));
+    expect(mockShowToast).toHaveBeenCalledWith('There is an error when creating the library unit');
   });
 
   it('shows a single block when usageKey query param is set', async () => {
@@ -806,7 +927,6 @@ describe('<LibraryAuthoringPage />', () => {
   });
 
   it('Shows an error if libraries V2 is disabled', async () => {
-    const { axiosMock } = initializeMocks();
     axiosMock.onGet(getStudioHomeApiUrl()).reply(200, {
       ...studioHomeMock,
       libraries_v2_enabled: false,

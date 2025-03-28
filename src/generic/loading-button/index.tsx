@@ -1,4 +1,3 @@
-// @ts-check
 import React, {
   useCallback,
   useEffect,
@@ -8,20 +7,20 @@ import React, {
 import {
   StatefulButton,
 } from '@openedx/paragon';
-import PropTypes from 'prop-types';
+
+interface LoadingButtonProps {
+  label: string;
+  onClick?: (e: any) => (Promise<void> | void);
+  disabled?: boolean;
+  size?: string;
+  variant?: string;
+  className?: string;
+}
 
 /**
-  * A button that shows a loading spinner when clicked.
-  * @param {object} props
-  * @param {string} props.label
-  * @param {function=} props.onClick
-  * @param {boolean=} props.disabled
-  * @param {string=} props.size
-  * @param {string=} props.variant
-  * @param {string=} props.className
-  * @returns {JSX.Element}
+  * A button that shows a loading spinner when clicked, if the onClick function returns a Promise.
   */
-const LoadingButton = ({
+const LoadingButton: React.FC<LoadingButtonProps> = ({
   label,
   onClick,
   disabled,
@@ -37,7 +36,7 @@ const LoadingButton = ({
     componentMounted.current = false;
   }, []);
 
-  const loadingOnClick = useCallback(async (e) => {
+  const loadingOnClick = useCallback(async (e: any) => {
     if (!onClick) {
       return;
     }
@@ -65,23 +64,6 @@ const LoadingButton = ({
       className={className}
     />
   );
-};
-
-LoadingButton.propTypes = {
-  label: PropTypes.string.isRequired,
-  onClick: PropTypes.func,
-  disabled: PropTypes.bool,
-  size: PropTypes.string,
-  variant: PropTypes.string,
-  className: PropTypes.string,
-};
-
-LoadingButton.defaultProps = {
-  onClick: undefined,
-  disabled: undefined,
-  size: undefined,
-  variant: '',
-  className: '',
 };
 
 export default LoadingButton;
