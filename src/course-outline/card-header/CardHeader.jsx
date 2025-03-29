@@ -54,6 +54,7 @@ const CardHeader = ({
   discussionEnabled,
   discussionsSettings,
   parentInfo,
+  extraActionsComponent,
 }) => {
   const intl = useIntl();
   const [searchParams] = useSearchParams();
@@ -145,6 +146,7 @@ const CardHeader = ({
           { getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && !!contentTagCount && (
             <TagCount count={contentTagCount} onClick={openManageTagsDrawer} />
           )}
+          {extraActionsComponent}
           <Dropdown data-testid={`${namePrefix}-card-header__menu`} onClick={onClickMenuButton}>
             <Dropdown.Toggle
               className="item-card-header__menu"
@@ -252,6 +254,7 @@ CardHeader.defaultProps = {
   discussionsSettings: {},
   parentInfo: {},
   cardId: '',
+  extraActionsComponent: null,
 };
 
 CardHeader.propTypes = {
@@ -295,6 +298,9 @@ CardHeader.propTypes = {
     isTimeLimited: PropTypes.bool,
     graded: PropTypes.bool,
   }),
+  // An optional component that is rendered before the dropdown. This is used by the Subsection
+  // and Unit card components to render their plugin slots.
+  extraActionsComponent: PropTypes.node,
 };
 
 export default CardHeader;

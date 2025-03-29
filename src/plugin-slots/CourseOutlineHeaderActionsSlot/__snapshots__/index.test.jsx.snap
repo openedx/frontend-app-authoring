@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CourseOutlineHeaderActionsSlot pluginProps are set correctly 1`] = `
+<PluginSlot
+  id="course_outline_header_actions_slot"
+  pluginProps={
+    {
+      "courseActions": {
+        "childAddable": true,
+        "deletable": true,
+        "draggable": true,
+        "duplicable": true,
+      },
+      "errors": {},
+      "hasSections": false,
+      "headerNavigationsActions": {
+        "handleExpandAll": [MockFunction],
+        "handleNewSection": [MockFunction],
+        "handleReIndex": [MockFunction],
+        "lmsLink": "",
+      },
+      "isDisabledReindexButton": false,
+      "isReIndexShow": false,
+      "isSectionsExpanded": false,
+      "sections": [],
+    }
+  }
+>
+  <HeaderNavigations
+    courseActions={
+      {
+        "childAddable": true,
+        "deletable": true,
+        "draggable": true,
+        "duplicable": true,
+      }
+    }
+    errors={{}}
+    hasSections={false}
+    headerNavigationsActions={
+      {
+        "handleExpandAll": [MockFunction],
+        "handleNewSection": [MockFunction],
+        "handleReIndex": [MockFunction],
+        "lmsLink": "",
+      }
+    }
+    isDisabledReindexButton={false}
+    isReIndexShow={false}
+    isSectionsExpanded={false}
+  />
+</PluginSlot>
+`;
