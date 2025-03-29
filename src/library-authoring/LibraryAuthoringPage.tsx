@@ -215,7 +215,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
   }
 
   const activeTypeFilters = {
-    components: 'NOT type = "collection"',
+    components: 'type = "library_block"',
     collections: 'type = "collection"',
   };
   if (activeKey !== ContentType.home) {
