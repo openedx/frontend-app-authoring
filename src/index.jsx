@@ -2,6 +2,7 @@ import {
   APP_INIT_ERROR, APP_READY, subscribe, initialize, mergeConfig, getConfig, getPath,
 } from '@edx/frontend-platform';
 import { AppProvider, ErrorPage } from '@edx/frontend-platform/react';
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import {
@@ -97,12 +98,14 @@ const App = () => {
 
   return (
     <AppProvider store={initializeStore()} wrapWithRouter={false}>
-      <ToastProvider>
-        <QueryClientProvider client={queryClient}>
-          <Head />
-          <RouterProvider router={router} />
-        </QueryClientProvider>
-      </ToastProvider>
+      <PluginSlot id="authoring_app_wrapper">
+        <ToastProvider>
+          <QueryClientProvider client={queryClient}>
+            <Head />
+            <RouterProvider router={router} />
+          </QueryClientProvider>
+        </ToastProvider>
+      </PluginSlot>
     </AppProvider>
   );
 };

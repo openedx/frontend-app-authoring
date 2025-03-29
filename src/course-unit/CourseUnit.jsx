@@ -1,3 +1,4 @@
+import { PluginSlot } from "@openedx/frontend-plugin-framework";
 import { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
@@ -6,7 +7,7 @@ import {
   Container, Layout, Stack, Button, TransitionReplace,
 } from '@openedx/paragon';
 import { getConfig } from '@edx/frontend-platform';
-import { useIntl, injectIntl } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Warning as WarningIcon,
   CheckCircle as CheckCircleIcon,
@@ -25,7 +26,6 @@ import Loading from '../generic/Loading';
 import AddComponent from './add-component/AddComponent';
 import HeaderTitle from './header-title/HeaderTitle';
 import Breadcrumbs from './breadcrumbs/Breadcrumbs';
-import HeaderNavigations from './header-navigations/HeaderNavigations';
 import Sequence from './course-sequence';
 import Sidebar from './sidebar';
 import { useCourseUnit, useLayoutGrid, useScrollToLastPosition } from './hooks';
@@ -37,6 +37,7 @@ import { PasteNotificationAlert } from './clipboard';
 import XBlockContainerIframe from './xblock-container-iframe';
 import MoveModal from './move-modal';
 import IframePreviewLibraryXBlockChanges from './preview-changes';
+import CourseUnitHeaderActionsSlot from '../plugin-slots/CourseUnitHeaderActionsSlot';
 
 const CourseUnit = ({ courseId }) => {
   const { blockId } = useParams();
@@ -154,9 +155,11 @@ const CourseUnit = ({ courseId }) => {
               />
             )}
             headerActions={(
-              <HeaderNavigations
+              <CourseUnitHeaderActionsSlot
                 unitCategory={unitCategory}
                 headerNavigationsActions={headerNavigationsActions}
+                unitTitle={unitTitle}
+                verticalBlocks={courseVerticalChildren.children}
               />
             )}
           />
@@ -218,7 +221,7 @@ const CourseUnit = ({ courseId }) => {
             <Layout.Element>
               <Stack gap={3}>
                 {isUnitVerticalType && (
-                  <>
+                  <PluginSlot id="course_unit_sidebar" pluginProps={{ blockId, courseId, unitTitle }}>
                     <Sidebar data-testid="course-unit-sidebar">
                       <PublishControls blockId={blockId} />
                     </Sidebar>
@@ -230,7 +233,7 @@ const CourseUnit = ({ courseId }) => {
                     <Sidebar data-testid="course-unit-location-sidebar">
                       <LocationInfo />
                     </Sidebar>
-                  </>
+                  </PluginSlot>
                 )}
               </Stack>
             </Layout.Element>
@@ -255,4 +258,4 @@ CourseUnit.propTypes = {
   courseId: PropTypes.string.isRequired,
 };
 
-export default injectIntl(CourseUnit);
+export default CourseUnit;
