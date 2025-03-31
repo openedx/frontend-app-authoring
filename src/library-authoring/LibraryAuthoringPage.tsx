@@ -146,7 +146,12 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
   } = useLibraryContext();
   const { openInfoSidebar, sidebarComponentInfo } = useSidebarContext();
 
-  const { insideCollections, insideComponents, navigateTo } = useLibraryRoutes();
+  const {
+    insideCollections,
+    insideComponents,
+    insideUnits,
+    navigateTo,
+  } = useLibraryRoutes();
 
   // The activeKey determines the currently selected tab.
   const getActiveKey = () => {
@@ -158,6 +163,9 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     }
     if (insideComponents) {
       return ContentType.components;
+    }
+    if (insideUnits) {
+      return ContentType.units;
     }
     return ContentType.home;
   };
@@ -217,13 +225,14 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
   const activeTypeFilters = {
     components: 'type = "library_block"',
     collections: 'type = "collection"',
+    units: 'block_type = "unit"',
   };
   if (activeKey !== ContentType.home) {
     extraFilter.push(activeTypeFilters[activeKey]);
   }
 
   // Disable filtering by block/problem type when viewing the Collections tab.
-  const overrideTypesFilter = insideCollections ? new TypesFilterData() : undefined;
+  const overrideTypesFilter = (insideCollections || insideUnits) ? new TypesFilterData() : undefined;
 
   return (
     <div className="d-flex">
@@ -260,13 +269,14 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
               className="my-3"
             >
               <Tab eventKey={ContentType.home} title={intl.formatMessage(messages.homeTab)} />
-              <Tab eventKey={ContentType.components} title={intl.formatMessage(messages.componentsTab)} />
               <Tab eventKey={ContentType.collections} title={intl.formatMessage(messages.collectionsTab)} />
+              <Tab eventKey={ContentType.components} title={intl.formatMessage(messages.componentsTab)} />
+              <Tab eventKey={ContentType.units} title={intl.formatMessage(messages.unitsTab)} />
             </Tabs>
             <ActionRow className="my-3">
               <SearchKeywordsField className="mr-3" />
               <FilterByTags />
-              {!insideCollections && <FilterByBlockType />}
+              {!(insideCollections || insideUnits) && <FilterByBlockType />}
               <FilterByPublished />
               <ClearFiltersButton />
               <ActionRow.Spacer />
