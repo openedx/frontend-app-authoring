@@ -215,6 +215,10 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.click(screen.getByRole('tab', { name: 'Collections' }));
     expect(await screen.findByText('No matching collections found in this library.')).toBeInTheDocument();
 
+    // Navigate to the units tab
+    fireEvent.click(screen.getByRole('tab', { name: 'Units' }));
+    expect(await screen.findByText('No matching components found in this library.')).toBeInTheDocument();
+
     // Go back to Home tab
     // This step is necessary to avoid the url change leak to other tests
     fireEvent.click(screen.getByRole('tab', { name: 'All Content' }));
@@ -898,7 +902,7 @@ describe('<LibraryAuthoringPage />', () => {
     });
   });
 
-  it('Disables Type filter on Collections tab', async () => {
+  it('Disables Type filter on Collections and Units tab', async () => {
     await renderLibraryPage();
 
     expect(await screen.findByText('Content library')).toBeInTheDocument();
@@ -915,6 +919,12 @@ describe('<LibraryAuthoringPage />', () => {
     // Navigate to the collections tab
     fireEvent.click(await screen.findByRole('tab', { name: 'Collections' }));
     expect((await screen.findAllByText('Collection 1'))[0]).toBeInTheDocument();
+    // No Types filter shown
+    expect(screen.queryByRole('button', { name: /type/i })).not.toBeInTheDocument();
+
+    // Navigate to the units tab
+    fireEvent.click(await screen.findByRole('tab', { name: 'Units' }));
+    expect((await screen.findAllByText('Test Unit'))[0]).toBeInTheDocument();
     // No Types filter shown
     expect(screen.queryByRole('button', { name: /type/i })).not.toBeInTheDocument();
 
