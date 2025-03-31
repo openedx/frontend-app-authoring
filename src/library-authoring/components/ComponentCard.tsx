@@ -17,21 +17,20 @@ import {
 
 import { useClipboard } from '../../generic/clipboard';
 import { ToastContext } from '../../generic/toast-context';
-import { type ContentHit } from '../../search-manager';
+import { type ContentHit, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
 import { useRemoveComponentsFromCollection } from '../data/apiHooks';
 import { useLibraryRoutes } from '../routes';
 
-import BaseComponentCard from './BaseComponentCard';
+import BaseCard from './BaseCard';
 import { canEditComponent } from './ComponentEditorModal';
 import messages from './messages';
 import ComponentDeleter from './ComponentDeleter';
-import { PublishStatus } from '../../search-manager/data/api';
 
 type ComponentCardProps = {
-  contentHit: ContentHit,
+  hit: ContentHit,
 };
 
 export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
@@ -181,7 +180,7 @@ const AddComponentWidget = ({ usageKey, blockType }: AddComponentWidgetProps) =>
   return null;
 };
 
-const ComponentCard = ({ contentHit }: ComponentCardProps) => {
+const ComponentCard = ({ hit }: ComponentCardProps) => {
   const { showOnlyPublished } = useLibraryContext();
   const { openComponentInfoSidebar } = useSidebarContext();
   const { componentPickerMode } = useComponentPickerContext();
@@ -192,7 +191,7 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
     tags,
     usageKey,
     publishStatus,
-  } = contentHit;
+  } = hit;
   const componentDescription: string = (
     showOnlyPublished ? formatted.published?.description : formatted.description
   ) ?? '';
@@ -210,8 +209,8 @@ const ComponentCard = ({ contentHit }: ComponentCardProps) => {
   }, [usageKey, navigateTo, openComponentInfoSidebar]);
 
   return (
-    <BaseComponentCard
-      componentType={blockType}
+    <BaseCard
+      itemType={blockType}
       displayName={displayName}
       description={componentDescription}
       tags={tags}

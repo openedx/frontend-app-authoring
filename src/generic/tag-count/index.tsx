@@ -1,14 +1,20 @@
-import PropTypes from 'prop-types';
-import { Icon, Button } from '@openedx/paragon';
+import { Button, Icon, Stack } from '@openedx/paragon';
 import { Tag } from '@openedx/paragon/icons';
 import classNames from 'classnames';
 
-const TagCount = ({ count, onClick }) => {
+type TagCountProps = {
+  count: number;
+  onClick?: () => void;
+  size?: Parameters<typeof Icon>[0]['size'];
+};
+
+// eslint-disable-next-line react/prop-types
+const TagCount: React.FC<TagCountProps> = ({ count, onClick, size }) => {
   const renderContent = () => (
-    <>
-      <Icon className="mr-1 pt-1" src={Tag} />
+    <Stack direction="horizontal" gap={1}>
+      <Icon size={size} src={Tag} />
       {count}
-    </>
+    </Stack>
   );
 
   return (
@@ -24,15 +30,6 @@ const TagCount = ({ count, onClick }) => {
         : renderContent()}
     </div>
   );
-};
-
-TagCount.defaultProps = {
-  onClick: undefined,
-};
-
-TagCount.propTypes = {
-  count: PropTypes.number.isRequired,
-  onClick: PropTypes.func,
 };
 
 export default TagCount;

@@ -15,23 +15,29 @@ import { useComponentPickerContext } from '../common/context/ComponentPickerCont
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { useLibraryRoutes } from '../routes';
-import BaseComponentCard from './BaseComponentCard';
+import BaseCard from './BaseCard';
 import { ToastContext } from '../../generic/toast-context';
 import { useDeleteCollection, useRestoreCollection } from '../data/apiHooks';
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import messages from './messages';
 
 type CollectionMenuProps = {
-  collectionHit: CollectionHit,
+  hit: CollectionHit,
 };
 
-const CollectionMenu = ({ collectionHit } : CollectionMenuProps) => {
+const CollectionMenu = ({ hit } : CollectionMenuProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
   const { closeLibrarySidebar, sidebarComponentInfo } = useSidebarContext();
+  const {
+    contextKey,
+    blockId,
+    type,
+    displayName,
+  } = hit;
 
-  const restoreCollectionMutation = useRestoreCollection(collectionHit.contextKey, collectionHit.blockId);
+  const restoreCollectionMutation = useRestoreCollection(contextKey, blockId);
   const restoreCollection = useCallback(() => {
     restoreCollectionMutation.mutateAsync()
       .then(() => {
@@ -41,9 +47,9 @@ const CollectionMenu = ({ collectionHit } : CollectionMenuProps) => {
       });
   }, []);
 
-  const deleteCollectionMutation = useDeleteCollection(collectionHit.contextKey, collectionHit.blockId);
+  const deleteCollectionMutation = useDeleteCollection(contextKey, blockId);
   const deleteCollection = useCallback(async () => {
-    if (sidebarComponentInfo?.id === collectionHit.blockId) {
+    if (sidebarComponentInfo?.id === blockId) {
       // Close sidebar if current collection is open to avoid displaying
       // deleted collection in sidebar
       closeLibrarySidebar();
@@ -79,7 +85,7 @@ const CollectionMenu = ({ collectionHit } : CollectionMenuProps) => {
         <Dropdown.Menu>
           <Dropdown.Item
             as={Link}
-            to={`/library/${collectionHit.contextKey}/collection/${collectionHit.blockId}`}
+            to={`/library/${contextKey}/collection/${blockId}`}
           >
             <FormattedMessage {...messages.menuOpen} />
           </Dropdown.Item>
@@ -92,9 +98,9 @@ const CollectionMenu = ({ collectionHit } : CollectionMenuProps) => {
         isOpen={isDeleteModalOpen}
         close={closeDeleteModal}
         variant="warning"
-        category={collectionHit.type}
+        category={type}
         description={intl.formatMessage(messages.deleteCollectionConfirm, {
-          collectionTitle: collectionHit.displayName,
+          collectionTitle: displayName,
         })}
         onDeleteSubmit={deleteCollection}
       />
@@ -103,22 +109,22 @@ const CollectionMenu = ({ collectionHit } : CollectionMenuProps) => {
 };
 
 type CollectionCardProps = {
-  collectionHit: CollectionHit,
+  hit: CollectionHit,
 };
 
-const CollectionCard = ({ collectionHit } : CollectionCardProps) => {
+const CollectionCard = ({ hit } : CollectionCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
   const { showOnlyPublished } = useLibraryContext();
   const { openCollectionInfoSidebar } = useSidebarContext();
 
   const {
-    type: componentType,
+    type: itemType,
     blockId: collectionId,
     formatted,
     tags,
     numChildren,
     published,
-  } = collectionHit;
+  } = hit;
 
   const numChildrenCount = showOnlyPublished ? (
     published?.numChildren || 0
@@ -136,15 +142,15 @@ const CollectionCard = ({ collectionHit } : CollectionCardProps) => {
   }, [collectionId, navigateTo, openCollectionInfoSidebar]);
 
   return (
-    <BaseComponentCard
-      componentType={componentType}
+    <BaseCard
+      itemType={itemType}
       displayName={displayName}
       description={description}
       tags={tags}
       numChildren={numChildrenCount}
       actions={!componentPickerMode && (
         <ActionRow>
-          <CollectionMenu collectionHit={collectionHit} />
+          <CollectionMenu hit={hit} />
         </ActionRow>
       )}
       onSelect={openCollection}

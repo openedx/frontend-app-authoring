@@ -10,7 +10,7 @@ import CollectionCard from './CollectionCard';
 import messages from './messages';
 import { getLibraryCollectionApiUrl, getLibraryCollectionRestoreApiUrl } from '../data/api';
 
-const CollectionHitSample: CollectionHit = {
+const collectionHitSample: CollectionHit = {
   id: 'lib-collectionorg1democourse-collection-display-name',
   type: 'collection',
   contextKey: 'lb:org1:Demo_Course',
@@ -55,23 +55,23 @@ describe('<CollectionCard />', () => {
   });
 
   it('should render the card with title and description', () => {
-    render(<CollectionCard collectionHit={CollectionHitSample} />);
+    render(<CollectionCard hit={collectionHitSample} />);
 
     expect(screen.queryByText('Collection Display Formated Name')).toBeInTheDocument();
     expect(screen.queryByText('Collection description')).toBeInTheDocument();
-    expect(screen.queryByText('Collection (2)')).toBeInTheDocument();
+    expect(screen.queryByText('2')).toBeInTheDocument(); // Component count
   });
 
   it('should render published content', () => {
-    render(<CollectionCard collectionHit={CollectionHitSample} />, true);
+    render(<CollectionCard hit={collectionHitSample} />, true);
 
     expect(screen.queryByText('Collection Display Formated Name')).toBeInTheDocument();
     expect(screen.queryByText('Collection description')).toBeInTheDocument();
-    expect(screen.queryByText('Collection (1)')).toBeInTheDocument();
+    expect(screen.queryByText('1')).toBeInTheDocument(); // Published Component Count
   });
 
   it('should navigate to the collection if the open menu clicked', async () => {
-    render(<CollectionCard collectionHit={CollectionHitSample} />);
+    render(<CollectionCard hit={collectionHitSample} />);
 
     // Open menu
     expect(screen.getByTestId('collection-card-menu-toggle')).toBeInTheDocument();
@@ -85,9 +85,9 @@ describe('<CollectionCard />', () => {
   });
 
   it('should show confirmation box, delete collection and show toast to undo deletion', async () => {
-    const url = getLibraryCollectionApiUrl(CollectionHitSample.contextKey, CollectionHitSample.blockId);
+    const url = getLibraryCollectionApiUrl(collectionHitSample.contextKey, collectionHitSample.blockId);
     axiosMock.onDelete(url).reply(204);
-    render(<CollectionCard collectionHit={CollectionHitSample} />);
+    render(<CollectionCard hit={collectionHitSample} />);
 
     expect(screen.queryByText('Collection Display Formated Name')).toBeInTheDocument();
     // Open menu
@@ -123,7 +123,7 @@ describe('<CollectionCard />', () => {
     // Get restore / undo func from the toast
     const restoreFn = mockShowToast.mock.calls[0][1].onClick;
 
-    const restoreUrl = getLibraryCollectionRestoreApiUrl(CollectionHitSample.contextKey, CollectionHitSample.blockId);
+    const restoreUrl = getLibraryCollectionRestoreApiUrl(collectionHitSample.contextKey, collectionHitSample.blockId);
     axiosMock.onPost(restoreUrl).reply(200);
     // restore collection
     restoreFn();
@@ -134,9 +134,9 @@ describe('<CollectionCard />', () => {
   });
 
   it('should show failed toast on delete collection failure', async () => {
-    const url = getLibraryCollectionApiUrl(CollectionHitSample.contextKey, CollectionHitSample.blockId);
+    const url = getLibraryCollectionApiUrl(collectionHitSample.contextKey, collectionHitSample.blockId);
     axiosMock.onDelete(url).reply(404);
-    render(<CollectionCard collectionHit={CollectionHitSample} />);
+    render(<CollectionCard hit={collectionHitSample} />);
 
     expect(screen.queryByText('Collection Display Formated Name')).toBeInTheDocument();
     // Open menu

@@ -9,13 +9,14 @@ import {
 import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
+import ComponentCount from '../../generic/component-count';
 import TagCount from '../../generic/tag-count';
 import { BlockTypeLabel, type ContentHitTags, Highlight } from '../../search-manager';
 
-type BaseComponentCardProps = {
-  componentType: string;
+type BaseCardProps = {
+  itemType: string;
   displayName: string;
-  description: string;
+  description?: string;
   numChildren?: number;
   tags: ContentHitTags;
   actions: React.ReactNode;
@@ -23,16 +24,16 @@ type BaseComponentCardProps = {
   onSelect: () => void
 };
 
-const BaseComponentCard = ({
-  componentType,
+const BaseCard = ({
+  itemType,
   displayName,
-  description,
+  description = '',
   numChildren,
   tags,
   actions,
   onSelect,
   ...props
-} : BaseComponentCardProps) => {
+} : BaseCardProps) => {
   const tagCount = useMemo(() => {
     if (!tags) {
       return 0;
@@ -41,11 +42,11 @@ const BaseComponentCard = ({
             + (tags.level2?.length || 0) + (tags.level3?.length || 0);
   }, [tags]);
 
-  const componentIcon = getItemIcon(componentType);
+  const itemIcon = getItemIcon(itemType);
   const intl = useIntl();
 
   return (
-    <Container className="library-component-card">
+    <Container className="library-item-card">
       <Card
         isClickable
         onClick={onSelect}
@@ -56,9 +57,9 @@ const BaseComponentCard = ({
         }}
       >
         <Card.Header
-          className={`library-component-header ${getComponentStyleColor(componentType)}`}
+          className={`library-item-header ${getComponentStyleColor(itemType)}`}
           title={
-            <Icon src={componentIcon} className="library-component-header-icon" />
+            <Icon src={itemIcon} className="library-item-header-icon" />
           }
           actions={
             // Wrap the actions in a div to prevent the card from being clicked when the actions are clicked
@@ -67,27 +68,36 @@ const BaseComponentCard = ({
             <div onClick={(e) => e.stopPropagation()}>{actions}</div>
           }
         />
-        <Card.Body>
+        <Card.Body className="w-100">
           <Card.Section>
-            <Stack direction="horizontal" className="d-flex justify-content-between">
-              <Stack direction="horizontal" gap={1}>
-                <Icon src={componentIcon} size="sm" />
-                <span className="small">
-                  <BlockTypeLabel blockType={componentType} count={numChildren} />
-                </span>
-              </Stack>
-              <TagCount count={tagCount} />
-            </Stack>
             <div className="text-truncate h3 mt-2">
               <Highlight text={displayName} />
             </div>
-            <Highlight text={description} /><br />
-            {props.hasUnpublishedChanges ? <Badge variant="warning">{intl.formatMessage(messages.unpublishedChanges)}</Badge> : null}
+            <Highlight text={description} />
           </Card.Section>
         </Card.Body>
+        <Card.Footer className="mt-auto">
+          <Stack gap={2}>
+            <Stack direction="horizontal" gap={1}>
+              <Stack direction="horizontal" gap={1} className="mr-auto">
+                <Icon src={itemIcon} size="sm" />
+                <small>
+                  <BlockTypeLabel blockType={itemType} />
+                </small>
+              </Stack>
+              <ComponentCount count={numChildren} />
+              <TagCount size="sm" count={tagCount} />
+            </Stack>
+            <div className="badge-container d-flex align-items-center justify-content-center">
+              {props.hasUnpublishedChanges && (
+                <Badge variant="warning">{intl.formatMessage(messages.unpublishedChanges)}</Badge>
+              )}
+            </div>
+          </Stack>
+        </Card.Footer>
       </Card>
     </Container>
   );
 };
 
-export default BaseComponentCard;
+export default BaseCard;
