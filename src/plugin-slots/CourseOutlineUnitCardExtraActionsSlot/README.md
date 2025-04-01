@@ -18,6 +18,14 @@ The slot by default is empty.
 
 ## Example
 
+Default view of the unit cards in the course outline page.
+
+![Screenshot of the unit card](./images/default_view.png)
+
+The unit card with a custom icon-button inserted in the slot.
+
+![Screenshot of the unit card with extra icon button](./images/custom_buttons_added_to_slot.png)
+
 ```js
 import { DIRECT_PLUGIN, PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-framework';
 import { IconButton } from '@openedx/paragon';

@@ -17,6 +17,10 @@ By default, the slot contains the action buttons like **View Live Version** and 
 
 ## Example
 
+![Screenshot of an extra button in slot](./images/mybutton_added_to_slot.png)
+
+The following example configuration inserts an extra button to the header as shown above.
+
 ```js
 import { DIRECT_PLUGIN, PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-framework';
 import { Button } from '@openedx/paragon';

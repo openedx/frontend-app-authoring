@@ -19,6 +19,10 @@ The slot by default contains the action buttons such as `+ New Section`, `Reinde
 
 ## Example
 
+![Screenshot of a custom button in slot](./images/mybutton_added_to_the_slot.png)
+
+The following example configuration inserts an extra button to the header as shown above.
+
 ```js
 import { DIRECT_PLUGIN, PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-framework';
 import { Button } from '@openedx/paragon';

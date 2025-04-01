@@ -17,6 +17,14 @@ The slot by default is empty.
 
 ## Example
 
+Default view of the Subsection Cards
+
+![Screenshot of the subsection card](./images/default_view.png)
+
+The subsection with a custom icon-button inserted in the slot.
+
+![Screenshot subsection card with extra icon button](./images/custom_icon_button_inserted.png)
+
 ```js
 import { DIRECT_PLUGIN, PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-framework';
 import { IconButton } from '@openedx/paragon';
