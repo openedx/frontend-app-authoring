@@ -3,9 +3,10 @@ import {
   BackHand as BackHandIcon,
   BookOpen as BookOpenIcon,
   Casino as ProblemBankIcon,
+  ContentPaste as ContentPasteIcon,
   Edit as EditIcon,
   EditNote as EditNoteIcon,
-  FormatListBulleted as FormatListBulletedIcon,
+  CalendarViewDay,
   HelpOutline as HelpOutlineIcon,
   LibraryAdd as LibraryIcon,
   Lock as LockIcon,
@@ -35,7 +36,7 @@ export const COMPONENT_TYPES = {
 export const UNIT_TYPE_ICONS_MAP: Record<string, React.ComponentType> = {
   video: VideoCameraIcon,
   other: BookOpenIcon,
-  vertical: FormatListBulletedIcon,
+  vertical: CalendarViewDay,
   problem: EditIcon,
   lock: LockIcon,
 };
@@ -55,9 +56,12 @@ export const COMPONENT_TYPE_ICON_MAP: Record<string, React.ComponentType> = {
 
 export const STRUCTURAL_TYPE_ICONS: Record<string, React.ComponentType> = {
   vertical: UNIT_TYPE_ICONS_MAP.vertical,
+  unit: UNIT_TYPE_ICONS_MAP.vertical,
   sequential: Folder,
   chapter: Folder,
   collection: Folder,
+  libraryContent: Folder,
+  paste: ContentPasteIcon,
 };
 
 export const COMPONENT_TYPE_STYLE_COLOR_MAP = {
@@ -70,6 +74,7 @@ export const COMPONENT_TYPE_STYLE_COLOR_MAP = {
   [COMPONENT_TYPES.video]: 'component-style-video',
   [COMPONENT_TYPES.dragAndDrop]: 'component-style-default',
   vertical: 'component-style-vertical',
+  unit: 'component-style-vertical',
   sequential: 'component-style-default',
   chapter: 'component-style-default',
   collection: 'component-style-collection',

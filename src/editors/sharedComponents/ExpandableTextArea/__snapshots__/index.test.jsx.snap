@@ -9,12 +9,14 @@ exports[`ExpandableTextArea snapshots renders as expected with default behavior 
       editorContentHtml="text"
       editorRef={
         {
-          "current": null,
+          "current": {
+            "value": "something",
+          },
         }
       }
       editorType="expandable"
       placeholder={null}
-      setEditorRef={[Function]}
+      setEditorRef={[MockFunction hooks.prepareEditorRef.setEditorRef]}
       updateContent={[MockFunction]}
     />
   </div>
@@ -30,12 +32,14 @@ exports[`ExpandableTextArea snapshots renders error message 1`] = `
       editorContentHtml="text"
       editorRef={
         {
-          "current": null,
+          "current": {
+            "value": "something",
+          },
         }
       }
       editorType="expandable"
       placeholder={null}
-      setEditorRef={[Function]}
+      setEditorRef={[MockFunction hooks.prepareEditorRef.setEditorRef]}
       updateContent={[MockFunction]}
     />
   </div>

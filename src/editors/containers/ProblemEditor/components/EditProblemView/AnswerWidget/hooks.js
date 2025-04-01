@@ -34,12 +34,15 @@ export const setAnswerTitle = ({
   hasSingleAnswer,
   dispatch,
   problemType,
-}) => (updatedTitle) => {
+}) => (updatedTitle, isDirty) => {
   let title = updatedTitle;
   if ([ProblemTypeKeys.TEXTINPUT, ProblemTypeKeys.NUMERIC, ProblemTypeKeys.DROPDOWN].includes(problemType)) {
     title = updatedTitle.target.value;
   }
   dispatch(actions.problem.updateAnswer({ id: answer.id, hasSingleAnswer, title }));
+  if (isDirty !== undefined) {
+    dispatch(actions.problem.setDirty(isDirty));
+  }
 };
 
 export const setSelectedFeedback = ({ answer, hasSingleAnswer, dispatch }) => (value) => {

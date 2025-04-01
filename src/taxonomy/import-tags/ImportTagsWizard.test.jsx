@@ -1,5 +1,4 @@
 import MockAdapter from 'axios-mock-adapter';
-import React from 'react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
@@ -30,12 +29,12 @@ jest.mock('../data/api', () => ({
 }));
 
 const mockSetToastMessage = jest.fn();
-const mockSetAlertProps = jest.fn();
+const mockSetAlertError = jest.fn();
 const context = {
   toastMessage: null,
   setToastMessage: mockSetToastMessage,
   alertProps: null,
-  setAlertProps: mockSetAlertProps,
+  setAlertError: mockSetAlertError,
 };
 
 const planImportUrl = 'http://localhost:18010/api/content_tagging/v1/taxonomies/1/tags/import/plan/';
@@ -230,16 +229,15 @@ describe('<ImportTagsWizard />', () => {
     if (expectedResult === 'success') {
       // Toast message shown
       await waitFor(() => {
-        expect(mockSetToastMessage).toBeCalledWith(`"${sampleTaxonomy.name}" updated`);
+        expect(mockSetToastMessage).toHaveBeenCalledWith(`"${sampleTaxonomy.name}" updated`);
       });
     } else {
       // Alert message shown
       await waitFor(() => {
-        expect(mockSetAlertProps).toBeCalledWith(
+        expect(mockSetAlertError).toHaveBeenCalledWith(
           expect.objectContaining({
-            variant: 'danger',
             title: 'Import error',
-            description: 'Test error',
+            error: new Error('Test error'),
           }),
         );
       });
@@ -340,15 +338,15 @@ describe('<ImportTagsWizard />', () => {
     if (expectedResult === 'success') {
       // Toast message shown
       await waitFor(() => {
-        expect(mockSetToastMessage).toBeCalledWith(`"${newTaxonomyName}" imported`);
+        expect(mockSetToastMessage).toHaveBeenCalledWith(`"${newTaxonomyName}" imported`);
       });
     } else {
       // Alert message shown
       await waitFor(() => {
-        expect(mockSetAlertProps).toBeCalledWith(
+        expect(mockSetAlertError).toHaveBeenCalledWith(
           expect.objectContaining({
-            variant: 'danger',
             title: 'Import error',
+            error: new Error('Request failed with status code 400'),
           }),
         );
       });

@@ -6,7 +6,7 @@ import * as hooks from './hooks';
 import VideoSelector from './VideoSelector';
 
 jest.mock('./hooks', () => ({
-  initializeApp: jest.fn(),
+  useInitializeApp: jest.fn(),
 }));
 
 jest.mock('./containers/VideoGallery', () => 'VideoGallery');
@@ -32,7 +32,7 @@ describe('Video Selector', () => {
   describe('behavior', () => {
     it('calls initializeApp hook with dispatch, and passed data', () => {
       shallow(<VideoSelector {...props} />);
-      expect(hooks.initializeApp).toHaveBeenCalledWith({
+      expect(hooks.useInitializeApp).toHaveBeenCalledWith({
         dispatch: useDispatch(),
         data: initData,
       });

@@ -34,14 +34,9 @@ export const isBlankProblem = ({ rawOLX }) => {
 export const getDataFromOlx = ({ rawOLX, rawSettings, defaultSettings }) => {
   let olxParser;
   let parsedProblem;
-  const { default_to_advanced: defaultToAdvanced } = rawSettings;
   try {
     olxParser = new OLXParser(rawOLX);
-    if (defaultToAdvanced) {
-      parsedProblem = olxParser.getBetaParsedOLXData();
-    } else {
-      parsedProblem = olxParser.getParsedOLXData();
-    }
+    parsedProblem = olxParser.getParsedOLXData();
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('The Problem Could Not Be Parsed from OLX. redirecting to Advanced editor.', error);

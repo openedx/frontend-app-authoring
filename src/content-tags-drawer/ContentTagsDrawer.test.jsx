@@ -61,19 +61,15 @@ describe('<ContentTagsDrawer />', () => {
   });
 
   it('shows spinner before the content data query is complete', async () => {
-    await act(async () => {
-      renderDrawer(stagedTagsId);
-      const spinner = screen.getAllByRole('status')[0];
-      expect(spinner.textContent).toEqual('Loading'); // Uses <Spinner />
-    });
+    renderDrawer(stagedTagsId);
+    const spinner = (await screen.findAllByRole('status'))[0];
+    expect(spinner.textContent).toEqual('Loading'); // Uses <Spinner />
   });
 
   it('shows spinner before the taxonomy tags query is complete', async () => {
-    await act(async () => {
-      renderDrawer(stagedTagsId);
-      const spinner = screen.getAllByRole('status')[1];
-      expect(spinner.textContent).toEqual('Loading...'); // Uses <Loading />
-    });
+    renderDrawer(stagedTagsId);
+    const spinner = (await screen.findAllByRole('status'))[1];
+    expect(spinner.textContent).toEqual('Loading...'); // Uses <Loading />
   });
 
   it('shows the content display name after the query is complete in drawer variant', async () => {

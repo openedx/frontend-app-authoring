@@ -18,18 +18,20 @@ describe('<ProcessingNotification />', () => {
     initializeMocks();
   });
 
-  it('renders successfully', () => {
+  it('renders successfully', async () => {
     render(<ProcessingNotification {...props} close={() => {}} />);
-    expect(screen.getByText(props.title)).toBeInTheDocument();
-    expect(screen.getByText('Undo')).toBeInTheDocument();
-    expect(screen.getByRole('alert').querySelector('.processing-notification-hide-close-button')).not.toBeInTheDocument();
-    userEvent.click(screen.getByText('Undo'));
+    await screen.findByText(props.title);
+    const undo = await screen.findByText('Undo');
+    const alert = await screen.findByRole('alert', { hidden: true });
+    expect(alert.classList.contains('processing-notification-hide-close-button')).toBeFalsy();
+    await userEvent.click(undo);
     expect(mockUndo).toHaveBeenCalled();
   });
 
-  it('add hide-close-button class if no close action is passed', () => {
+  it('add hide-close-button class if no close action is passed', async () => {
     render(<ProcessingNotification {...props} />);
-    expect(screen.getByText(props.title)).toBeInTheDocument();
-    expect(screen.getByRole('alert').querySelector('.processing-notification-hide-close-button')).toBeInTheDocument();
+    await screen.findByText(props.title);
+    const alert = await screen.findByRole('alert', { hidden: true });
+    expect(alert.classList.contains('processing-notification-hide-close-button')).toBeTruthy();
   });
 });

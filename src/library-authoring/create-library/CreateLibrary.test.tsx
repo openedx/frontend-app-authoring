@@ -176,8 +176,8 @@ describe('<CreateLibrary />', () => {
         '{"description":"","title":"Test Library Name","org":"org1","slug":"test_library_slug"}',
       );
       expect(mockNavigate).not.toHaveBeenCalled();
-      expect(await screen.findByRole('alert')).toHaveTextContent('Request failed with status code 400');
-      expect(await screen.findByRole('alert')).toHaveTextContent('{"field":"Error message"}');
+      const errorMessage = 'Request failed with status code 400{ "field": "Error message" }';
+      expect(await screen.findByRole('alert')).toHaveTextContent(errorMessage);
     });
   });
 

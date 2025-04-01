@@ -9,20 +9,13 @@ import {
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 import {
-  Article,
   AutoAwesome,
-  BookOpen,
-  Create,
-  Folder,
-  ThumbUpOutline,
-  Question,
-  VideoCamera,
-  ContentPaste,
   KeyboardBackspace,
 } from '@openedx/paragon/icons';
 import { v4 as uuid4 } from 'uuid';
 
 import { ToastContext } from '../../generic/toast-context';
+import { getItemIcon } from '../../generic/block-type-utils';
 import { useClipboard } from '../../generic/clipboard';
 import { getCanEdit } from '../../course-unit/data/selectors';
 import {
@@ -41,7 +34,7 @@ import type { BlockTypeMetadata } from '../data/api';
 type ContentType = {
   name: string,
   disabled: boolean,
-  icon: React.ComponentType,
+  icon?: React.ComponentType,
   blockType: string,
 };
 
@@ -76,7 +69,7 @@ const AddContentButton = ({ contentType, onCreateContent } : AddContentButtonPro
       variant="outline-primary"
       disabled={disabled}
       className="m-2"
-      iconBefore={icon}
+      iconBefore={icon || getItemIcon(blockType)}
       onClick={() => onCreateContent(blockType)}
     >
       {name}
@@ -99,14 +92,18 @@ const AddContentView = ({
   const collectionButtonData = {
     name: intl.formatMessage(messages.collectionButton),
     disabled: false,
-    icon: BookOpen,
     blockType: 'collection',
+  };
+
+  const unitButtonData = {
+    name: intl.formatMessage(messages.unitButton),
+    disabled: false,
+    blockType: 'vertical',
   };
 
   const libraryContentButtonData = {
     name: intl.formatMessage(messages.libraryContentButton),
     disabled: false,
-    icon: Folder,
     blockType: 'libraryContent',
   };
 
@@ -125,6 +122,7 @@ const AddContentView = ({
       ) : (
         <AddContentButton contentType={collectionButtonData} onCreateContent={onCreateContent} />
       )}
+      <AddContentButton contentType={unitButtonData} onCreateContent={onCreateContent} />
       <hr className="w-100 bg-gray-500" />
       {/* Note: for MVP we are hiding the unuspported types, not just disabling them. */}
       {contentTypes.filter(ct => !ct.disabled).map((contentType) => (
@@ -194,6 +192,7 @@ const AddContentContainer = () => {
     libraryId,
     collectionId,
     openCreateCollectionModal,
+    openCreateUnitModal,
     openComponentEditor,
   } = useLibraryContext();
   const updateComponentsMutation = useAddComponentsToCollection(libraryId, collectionId);
@@ -220,31 +219,26 @@ const AddContentContainer = () => {
     {
       name: intl.formatMessage(messages.textTypeButton),
       disabled: !isBlockTypeEnabled('html'),
-      icon: Article,
       blockType: 'html',
     },
     {
       name: intl.formatMessage(messages.problemTypeButton),
       disabled: !isBlockTypeEnabled('problem'),
-      icon: Question,
       blockType: 'problem',
     },
     {
       name: intl.formatMessage(messages.openResponseTypeButton),
       disabled: !isBlockTypeEnabled('openassessment'),
-      icon: Create,
       blockType: 'openassessment',
     },
     {
       name: intl.formatMessage(messages.dragDropTypeButton),
       disabled: !isBlockTypeEnabled('drag-and-drop-v2'),
-      icon: ThumbUpOutline,
       blockType: 'drag-and-drop-v2',
     },
     {
       name: intl.formatMessage(messages.videoTypeButton),
       disabled: !isBlockTypeEnabled('video'),
-      icon: VideoCamera,
       blockType: 'video',
     },
   ];
@@ -259,13 +253,13 @@ const AddContentContainer = () => {
 
   // Include the 'Advanced / Other' button if there are enabled advanced Xblocks
   if (Object.keys(advancedBlocks).length > 0) {
-    const pasteButton = {
+    const advancedButton = {
       name: intl.formatMessage(messages.otherTypeButton),
       disabled: false,
       icon: AutoAwesome,
       blockType: 'advancedXBlock',
     };
-    contentTypes.push(pasteButton);
+    contentTypes.push(advancedButton);
   }
 
   // Include the 'Paste from Clipboard' button if there is an Xblock in the clipboard
@@ -274,7 +268,6 @@ const AddContentContainer = () => {
     const pasteButton = {
       name: intl.formatMessage(messages.pasteButton),
       disabled: false,
-      icon: ContentPaste,
       blockType: 'paste',
     };
     contentTypes.push(pasteButton);
@@ -313,6 +306,7 @@ const AddContentContainer = () => {
       ));
     });
   };
+
   const onCreateBlock = (blockType: string) => {
     const suportedEditorTypes = Object.values(blockTypes);
     if (suportedEditorTypes.includes(blockType)) {
@@ -347,6 +341,8 @@ const AddContentContainer = () => {
       showAddLibraryContentModal();
     } else if (blockType === 'advancedXBlock') {
       showAdvancedList();
+    } else if (blockType === 'vertical') {
+      openCreateUnitModal();
     } else {
       onCreateBlock(blockType);
     }

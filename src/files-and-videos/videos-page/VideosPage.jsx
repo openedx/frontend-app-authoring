@@ -29,6 +29,7 @@ import {
   resetErrors,
   updateVideoOrder,
   cancelAllUploads,
+  newUploadData,
 } from './data/thunks';
 import messages from './messages';
 import VideosPageProvider from './VideosPageProvider';
@@ -124,6 +125,19 @@ const VideosPage = ({
   const handleAddFile = (files) => {
     handleErrorReset({ errorType: 'add' });
     uploadingIdsRef.current.uploadCount = files.length;
+
+    files.forEach((file, idx) => {
+      const name = file?.name || `Video ${idx + 1}`;
+      const progress = 0;
+
+      newUploadData({
+        status: RequestStatus.PENDING,
+        currentData: uploadingIdsRef.current.uploadData,
+        originalValue: { name, progress },
+        key: `video_${idx}`,
+      });
+    });
+
     dispatch(addVideoFile(courseId, files, videoIds, uploadingIdsRef));
   };
   const handleDeleteFile = (id) => dispatch(deleteVideoFile(courseId, id));

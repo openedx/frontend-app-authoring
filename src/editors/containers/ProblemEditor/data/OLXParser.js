@@ -753,13 +753,4 @@ export class OLXParser {
       groupFeedbackList,
     };
   }
-
-  getBetaParsedOLXData() {
-    /* TODO: Replace olxParser.getParsedOLXData() with new parser function
-    * and remove console.log()
-    */
-    // eslint-disable-next-line no-console
-    console.log('Should default to the advanced editor');
-    return this.getParsedOLXData();
-  }
 }

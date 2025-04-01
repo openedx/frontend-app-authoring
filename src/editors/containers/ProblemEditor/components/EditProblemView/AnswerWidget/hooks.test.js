@@ -26,6 +26,7 @@ jest.mock('../../../../../data/redux', () => ({
     problem: {
       deleteAnswer: (args) => ({ deleteAnswer: args }),
       updateAnswer: (args) => ({ updateAnswer: args }),
+      setDirty: (args) => ({ setDirty: args }),
     },
   },
 }));
@@ -117,12 +118,13 @@ describe('Answer Options Hooks', () => {
         hasSingleAnswer,
         dispatch,
         problemType,
-      })(updatedTitle);
+      })(updatedTitle, false);
       expect(dispatch).toHaveBeenCalledWith(actions.problem.updateAnswer({
         id: answer.id,
         hasSingleAnswer,
         title: updatedTitle,
       }));
+      expect(dispatch).toHaveBeenCalledWith(actions.problem.setDirty(false));
     });
   });
   describe('setSelectedFeedback', () => {

@@ -18,6 +18,7 @@ jest.mock('../../../../../data/redux', () => ({
       learningContextId: jest.fn(state => ({ learningContextId: state })),
       images: jest.fn(state => ({ images: state })),
       isLibrary: jest.fn(state => ({ isLibrary: state })),
+      blockId: jest.fn(state => ({ blockId: state })),
     },
     problem: {
       question: jest.fn(state => ({ question: state })),

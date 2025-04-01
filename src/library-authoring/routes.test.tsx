@@ -258,6 +258,33 @@ describe('Library Authoring routes', () => {
         path: '/collections/clctnId2',
       },
     },
+    // "Units" tab
+    {
+      label: 'navigate from All Content tab to Units',
+      origin: {
+        path: '',
+        params: {},
+      },
+      destination: {
+        path: '/units',
+        params: {
+          contentType: ContentType.units,
+        },
+      },
+    },
+    {
+      label: 'navigate from Units tab to All Content tab',
+      origin: {
+        path: '/units',
+        params: {},
+      },
+      destination: {
+        path: '',
+        params: {
+          contentType: ContentType.home,
+        },
+      },
+    },
   ])(
     '$label',
     async ({ origin, destination }) => {
@@ -280,7 +307,7 @@ describe('Library Authoring routes', () => {
         },
       });
 
-      expect(mockNavigate).toBeCalledWith({
+      expect(mockNavigate).toHaveBeenCalledWith({
         pathname: `/library/${mockContentLibrary.libraryId}${destination.path}`,
         search: '',
       });

@@ -453,5 +453,19 @@ describe('problem reducer', () => {
         });
       });
     });
+    describe('setDirty', () => {
+      it('sets isDirty flag', () => {
+        expect(reducer(
+          {
+            ...testingState,
+            isDirty: false,
+          },
+          actions.setDirty(false),
+        )).toEqual({
+          ...testingState,
+          isDirty: false,
+        });
+      });
+    });
   });
 });

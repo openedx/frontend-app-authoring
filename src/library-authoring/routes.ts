@@ -20,6 +20,8 @@ export const ROUTES = {
   COMPONENTS: '/components/:componentId?',
   // * Collections tab, with an optionally selected collectionId in the sidebar.
   COLLECTIONS: '/collections/:collectionId?',
+  // * Units tab, with an optionally selected unitId in the sidebar.
+  UNITS: '/units/:unitId?',
   // * All Content tab, with an optionally selected componentId in the sidebar.
   COMPONENT: '/component/:componentId',
   // * All Content tab, with an optionally selected collectionId in the sidebar.
@@ -31,8 +33,9 @@ export const ROUTES = {
 
 export enum ContentType {
   home = '',
-  components = 'components',
   collections = 'collections',
+  components = 'components',
+  units = 'units',
 }
 
 export type NavigateToData = {
@@ -45,6 +48,7 @@ export type LibraryRoutesData = {
   insideCollection: PathMatch<string> | null;
   insideCollections: PathMatch<string> | null;
   insideComponents: PathMatch<string> | null;
+  insideUnits: PathMatch<string> | null;
 
   // Navigate using the best route from the current location for the given parameters.
   navigateTo: (dict?: NavigateToData) => void;
@@ -59,6 +63,7 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
   const insideCollection = matchPath(BASE_ROUTE + ROUTES.COLLECTION, pathname);
   const insideCollections = matchPath(BASE_ROUTE + ROUTES.COLLECTIONS, pathname);
   const insideComponents = matchPath(BASE_ROUTE + ROUTES.COMPONENTS, pathname);
+  const insideUnits = matchPath(BASE_ROUTE + ROUTES.UNITS, pathname);
 
   const navigateTo = useCallback(({
     componentId,
@@ -78,6 +83,8 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       route = ROUTES.COMPONENTS;
     } else if (contentType === ContentType.collections) {
       route = ROUTES.COLLECTIONS;
+    } else if (contentType === ContentType.units) {
+      route = ROUTES.UNITS;
     } else if (contentType === ContentType.home) {
       route = ROUTES.HOME;
     } else if (insideCollections) {
@@ -97,6 +104,11 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       // We're inside the Components tab, so stay there,
       // optionally selecting a component.
       route = ROUTES.COMPONENTS;
+    } else if (insideUnits) {
+      // We're inside the Units tab, so stay there,
+      // optionally selecting a unit.
+      // istanbul ignore next: this will be covered when we add unit selection
+      route = ROUTES.UNITS;
     } else if (componentId) {
       // We're inside the All Content tab, so stay there,
       // and select a component.
@@ -124,5 +136,6 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     insideCollection,
     insideCollections,
     insideComponents,
+    insideUnits,
   };
 };

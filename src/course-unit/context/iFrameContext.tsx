@@ -5,7 +5,7 @@ import { logError } from '@edx/frontend-platform/logging';
 
 export interface IframeContextType {
   setIframeRef: (ref: MutableRefObject<HTMLIFrameElement | null>) => void;
-  sendMessageToIframe: (messageType: string, payload: unknown) => void;
+  sendMessageToIframe: (messageType: string, payload: unknown, consumerWindow?: Window | null) => void;
 }
 
 export const IframeContext = createContext<IframeContextType | undefined>(undefined);
@@ -16,11 +16,12 @@ export const IframeProvider: React.FC = ({ children }: { children: ReactNode }) 
     iframeRef.current = ref.current;
   }, []);
 
-  const sendMessageToIframe = useCallback((messageType: string, payload: any) => {
+  const sendMessageToIframe = useCallback((messageType: string, payload: any, consumerWindow?: Window | null) => {
     const iframeWindow = iframeRef?.current?.contentWindow;
-    if (iframeWindow) {
+    const targetWindow = consumerWindow || iframeWindow;
+    if (targetWindow) {
       try {
-        iframeWindow.postMessage({ type: messageType, payload }, '*');
+        targetWindow.postMessage({ type: messageType, payload }, '*');
       } catch (error) {
         logError('Failed to send message to iframe:', error);
       }

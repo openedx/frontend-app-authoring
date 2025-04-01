@@ -105,7 +105,7 @@ Gallery.defaultProps = {
   assetCount: 0,
 };
 Gallery.propTypes = {
-  show: PropTypes.bool,
+  show: PropTypes.bool, // eslint-disable-line react/no-unused-prop-types
   isLoaded: PropTypes.bool.isRequired,
   galleryIsEmpty: PropTypes.bool.isRequired,
   searchIsEmpty: PropTypes.bool.isRequired,

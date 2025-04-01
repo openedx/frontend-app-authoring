@@ -12,8 +12,9 @@ const pluginConfig = ({ placeholder, editorType, enableImageUpload }) => {
   const codeButton = editorType === 'text' ? buttons.code : '';
   const labelButton = editorType === 'question' ? buttons.customLabelButton : '';
   const quickToolbar = editorType === 'expandable' ? plugins.quickbars : '';
-  const inline = editorType === 'expandable';
+  const statusbar = editorType !== 'expandable';
   const toolbar = editorType !== 'expandable';
+  const autoresizeBottomMargin = editorType === 'expandable' ? 10 : 50;
   const defaultFormat = (editorType === 'question' || editorType === 'expandable') ? 'div' : 'p';
   const hasStudioHeader = document.querySelector('.studio-header');
 
@@ -90,13 +91,14 @@ const pluginConfig = ({ placeholder, editorType, enableImageUpload }) => {
         relative_urls: true,
         convert_urls: false,
         placeholder,
-        inline,
+        statusbar,
         block_formats: 'Header 1=h1;Header 2=h2;Header 3=h3;Header 4=h4;Header 5=h5;Header 6=h6;Div=div;Paragraph=p;Preformatted=pre',
         forced_root_block: defaultFormat,
         powerpaste_allow_local_images: true,
         powerpaste_word_import: 'prompt',
         powerpaste_html_import: 'prompt',
         powerpaste_googledoc_import: 'prompt',
+        autoresize_bottom_margin: autoresizeBottomMargin,
       },
     })
   );
