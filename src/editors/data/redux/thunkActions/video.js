@@ -1,4 +1,4 @@
-import _, { isEmpty } from 'lodash';
+import { has, find, isEmpty } from 'lodash';
 import { removeItemOnce } from '../../../utils';
 import * as requests from './requests';
 // This 'module' self-import hack enables mocking during tests.
@@ -21,8 +21,8 @@ export const loadVideoData = (selectedVideoId, selectedVideoUrl) => (dispatch, g
   let rawVideoData = blockValueData?.metadata ? blockValueData.metadata : {};
   const rawVideos = Object.values(selectors.app.videos(state));
   if (selectedVideoId !== undefined && selectedVideoId !== null) {
-    const selectedVideo = _.find(rawVideos, video => {
-      if (_.has(video, 'edx_video_id')) {
+    const selectedVideo = find(rawVideos, video => {
+      if (has(video, 'edx_video_id')) {
         return video.edx_video_id === selectedVideoId;
       }
       return false;

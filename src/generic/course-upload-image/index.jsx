@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
+import last from 'lodash/last';
 import { useParams } from 'react-router-dom';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { FileUpload as FileUploadIcon } from '@openedx/paragon/icons';
@@ -35,9 +35,9 @@ const CourseUploadImage = ({
   const assetsUrl = () => new URL(`/assets/${courseId}`, getConfig().STUDIO_BASE_URL);
 
   const handleChangeImageAsset = (path) => {
-    const assetPath = _.last(path.split('/'));
+    const assetPath = last(path.split('/'));
     // If image path is entered directly, we need to strip the asset prefix
-    const imageName = _.last(assetPath.split('block@'));
+    const imageName = last(assetPath.split('block@'));
     onChange(path, assetImageField);
     if (imageNameField) {
       onChange(imageName, imageNameField);

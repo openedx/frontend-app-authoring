@@ -5,7 +5,7 @@ import {
 } from '@openedx/paragon';
 import { AppContext } from '@edx/frontend-platform/react';
 import { FieldArray, useFormikContext } from 'formik';
-import _ from 'lodash';
+import size from 'lodash/size';
 import { useParams } from 'react-router-dom';
 import FormSwitchGroup from '../../../../../generic/FormSwitchGroup';
 import messages from '../../messages';
@@ -34,7 +34,7 @@ const DivisionByGroupFields = ({ intl }) => {
 
   useEffect(() => {
     if (divideByCohorts) {
-      if (!divideCourseTopicsByCohorts && _.size(discussionTopics) !== _.size(divideDiscussionIds)) {
+      if (!divideCourseTopicsByCohorts && size(discussionTopics) !== size(divideDiscussionIds)) {
         setFieldValue('divideDiscussionIds', discussionTopics.map(topic => topic.id));
       }
     } else {

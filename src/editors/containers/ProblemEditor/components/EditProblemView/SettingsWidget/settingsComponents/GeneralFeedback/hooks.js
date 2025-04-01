@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import _ from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import messages from './messages';
 // This 'module' self-import hack enables mocking during tests.
 // See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
@@ -19,7 +19,7 @@ export const generalFeedbackHooks = (generalFeedback, updateSettings) => {
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
-    if (_.isEmpty(generalFeedback)) {
+    if (isEmpty(generalFeedback)) {
       setSummary({ message: messages.noGeneralFeedbackSummary, values: {}, intl: true });
     } else {
       setSummary({

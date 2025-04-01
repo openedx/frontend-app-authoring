@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { get, has } from 'lodash';
 import { XMLParser, XMLBuilder } from 'fast-xml-parser';
 import { ProblemTypeKeys } from '../../../data/constants/problem';
 import { ToleranceTypes } from '../components/EditProblemView/SettingsWidget/settingsComponents/Tolerance/constants';
@@ -169,7 +169,7 @@ class ReactStateOLXParser {
         choice.push(singleAnswer);
       }
     });
-    if (_.has(this.problemState, 'groupFeedbackList') && problemType === ProblemTypeKeys.MULTISELECT) {
+    if (has(this.problemState, 'groupFeedbackList') && problemType === ProblemTypeKeys.MULTISELECT) {
       compoundhint = this.addGroupFeedbackList();
       choice.push(...compoundhint);
     }
@@ -333,7 +333,7 @@ class ReactStateOLXParser {
           answerObject = {
             ':@': {
               '@_answer': answer.title,
-              '@_type': _.get(this.problemState, 'additionalAttributes.type', 'ci'),
+              '@_type': get(this.problemState, 'additionalAttributes.type', 'ci'),
             },
             [problemType]: [...correcthint],
           };
@@ -348,7 +348,7 @@ class ReactStateOLXParser {
     });
     answerObject[problemType].push({
       textline: { '#text': '' },
-      ':@': { '@_size': _.get(this.problemState, 'additionalAttributes.textline.size', 20) },
+      ':@': { '@_size': get(this.problemState, 'additionalAttributes.textline.size', 20) },
     });
     return answerObject;
   }
@@ -490,7 +490,7 @@ class ReactStateOLXParser {
    * @return {bool}
    */
   hasAttributeWithValue(obj, attr) {
-    return _.has(obj, attr) && _.get(obj, attr, '').toString().trim() !== '';
+    return has(obj, attr) && get(obj, attr, '').toString().trim() !== '';
   }
 
   buildOLX() {

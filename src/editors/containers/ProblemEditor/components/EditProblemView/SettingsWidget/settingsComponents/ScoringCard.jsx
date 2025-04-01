@@ -1,5 +1,5 @@
 import React from 'react';
-import _ from 'lodash';
+import isNil from 'lodash/isNil';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FormattedMessage, injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -76,7 +76,7 @@ const ScoringCard = ({
           className="mt-3 decoration-control-label"
           checked={scoring.attempts.unlimited}
           onChange={handleUnlimitedChange}
-          disabled={!_.isNil(defaultValue)}
+          disabled={!isNil(defaultValue)}
         >
           <div className="x-small">
             <FormattedMessage {...messages.unlimitedAttemptsCheckboxLabel} />

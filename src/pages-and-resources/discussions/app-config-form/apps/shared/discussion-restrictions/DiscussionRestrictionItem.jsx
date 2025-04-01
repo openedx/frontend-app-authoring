@@ -3,7 +3,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Form } from '@openedx/paragon';
 import { useFormikContext } from 'formik';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
+import { startCase, toLower } from 'lodash';
 
 import messages from '../../../messages';
 import RestrictDatesInput from './RestrictDatesInput';
@@ -53,7 +53,7 @@ const DiscussionRestrictionItem = ({
       collapseHeadingText={formatRestrictedDates(restrictedDate)}
       badgeVariant={badgeVariant[restrictedDate.status]}
       badgeStatus={intl.formatMessage(messages.restrictedDatesStatus, {
-        status: _.startCase(_.toLower(restrictedDate.status)),
+        status: startCase(toLower(restrictedDate.status)),
       })}
     />
   ), [restrictedDate]);
