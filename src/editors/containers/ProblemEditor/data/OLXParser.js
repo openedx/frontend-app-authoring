@@ -2,7 +2,9 @@
 /* eslint no-eval: 0 */
 
 import { XMLParser, XMLBuilder } from 'fast-xml-parser';
-import _ from 'lodash';
+import {
+  get, has, keys, isArray, isEmpty,
+} from 'lodash';
 import {
   ProblemTypeKeys,
   RichTextProblems,
@@ -92,7 +94,7 @@ export class OLXParser {
     const parser = new XMLParser(parserOptions);
     this.builder = new XMLBuilder(builderOptions);
     this.parsedOLX = parser.parse(olxString);
-    if (_.has(this.parsedOLX, 'problem')) {
+    if (has(this.parsedOLX, 'problem')) {
       this.problem = this.parsedOLX.problem;
     }
 
@@ -112,7 +114,7 @@ export class OLXParser {
     const richTextParser = new XMLParser(richTextOptions);
     this.richTextBuilder = new XMLBuilder(richTextBuilderOptions);
     this.richTextOLX = richTextParser.parse(olxString);
-    if (_.has(this.parsedOLX, 'problem')) {
+    if (has(this.parsedOLX, 'problem')) {
       this.richTextProblem = this.richTextOLX[0].problem;
     }
   }
@@ -188,17 +190,17 @@ export class OLXParser {
     );
     const answers = [];
     let data = {};
-    const widget = _.get(this.problem, `${problemType}.${widgetName}`);
+    const widget = get(this.problem, `${problemType}.${widgetName}`);
     const permissableTags = ['choice', '@_type', 'compoundhint', 'option', '#text'];
-    if (_.keys(widget).some((tag) => !permissableTags.includes(tag))) {
+    if (keys(widget).some((tag) => !permissableTags.includes(tag))) {
       throw new Error('Misc Tags, reverting to Advanced Editor');
     }
-    if (_.get(this.problem, `${problemType}.@_partial_credit`)) {
+    if (get(this.problem, `${problemType}.@_partial_credit`)) {
       throw new Error('Partial credit not supported by GUI, reverting to Advanced Editor');
     }
-    const choice = _.get(widget, option);
+    const choice = get(widget, option);
     const isComplexAnswer = RichTextProblems.includes(problemType);
-    if (_.isEmpty(choice)) {
+    if (isEmpty(choice)) {
       answers.push(
         {
           id: indexToLetterMap[answers.length],
@@ -206,7 +208,7 @@ export class OLXParser {
           correct: true,
         },
       );
-    } else if (_.isArray(choice)) {
+    } else if (isArray(choice)) {
       choice.forEach((element, index) => {
         const preservedAnswer = preservedAnswers[index].filter(answer => !Object.keys(answer).includes(`${option}hint`));
         const preservedFeedback = preservedAnswers[index].filter(answer => Object.keys(answer).includes(`${option}hint`));
@@ -265,11 +267,11 @@ export class OLXParser {
   getAnswerFeedback(preservedFeedback, hintKey) {
     const feedback = {};
     let feedbackKeys = 'selectedFeedback';
-    if (_.isEmpty(preservedFeedback)) { return feedback; }
+    if (isEmpty(preservedFeedback)) { return feedback; }
 
     preservedFeedback.forEach((feedbackArr) => {
-      if (_.has(feedbackArr, hintKey)) {
-        if (_.has(feedbackArr, ':@') && _.has(feedbackArr[':@'], '@_selected')) {
+      if (has(feedbackArr, hintKey)) {
+        if (has(feedbackArr, ':@') && has(feedbackArr[':@'], '@_selected')) {
           const isSelectedFeedback = feedbackArr[':@']['@_selected'] === 'true';
           feedbackKeys = isSelectedFeedback ? 'selectedFeedback' : 'unselectedFeedback';
         }
@@ -287,9 +289,9 @@ export class OLXParser {
    */
   getGroupedFeedback(choices) {
     const groupFeedback = [];
-    if (_.has(choices, 'compoundhint')) {
+    if (has(choices, 'compoundhint')) {
       const groupFeedbackArray = choices.compoundhint;
-      if (_.isArray(groupFeedbackArray)) {
+      if (isArray(groupFeedbackArray)) {
         groupFeedbackArray.forEach((element) => {
           const parsedFeedback = stripNonTextTags({ input: element, tag: '@_value' });
           groupFeedback.push({
@@ -338,12 +340,12 @@ export class OLXParser {
       selectedFeedback: firstFeedback,
     });
 
-    const additionalAnswerFeedback = preservedFeedback.filter(feedback => _.isArray(feedback));
-    const stringEqualHintFeedback = preservedFeedback.filter(feedback => !_.isArray(feedback));
+    const additionalAnswerFeedback = preservedFeedback.filter(feedback => isArray(feedback));
+    const stringEqualHintFeedback = preservedFeedback.filter(feedback => !isArray(feedback));
 
     // Parsing additional_answer for string response.
-    const additionalAnswer = _.get(stringresponse, 'additional_answer', []);
-    if (_.isArray(additionalAnswer)) {
+    const additionalAnswer = get(stringresponse, 'additional_answer', []);
+    if (isArray(additionalAnswer)) {
       additionalAnswer.forEach((newAnswer, indx) => {
         answerFeedback = this.getFeedback(additionalAnswerFeedback[indx]);
         answers.push({
@@ -364,8 +366,8 @@ export class OLXParser {
     }
 
     // Parsing stringequalhint for string response.
-    const stringEqualHint = _.get(stringresponse, 'stringequalhint', []);
-    if (_.isArray(stringEqualHint)) {
+    const stringEqualHint = get(stringresponse, 'stringequalhint', []);
+    if (isArray(stringEqualHint)) {
       stringEqualHint.forEach((newAnswer, indx) => {
         answerFeedback = this.getFeedback(stringEqualHintFeedback[indx]?.stringequalhint);
         answers.push({
@@ -387,9 +389,9 @@ export class OLXParser {
 
     // TODO: Support multiple types.
     additionalStringAttributes = {
-      type: _.get(stringresponse, '@_type'),
+      type: get(stringresponse, '@_type'),
       textline: {
-        size: _.get(stringresponse, 'textline.@_size'),
+        size: get(stringresponse, 'textline.@_size'),
       },
     };
 
@@ -416,16 +418,16 @@ export class OLXParser {
       'correcthint',
     );
     const { numericalresponse } = this.problem;
-    if (_.get(numericalresponse, '@_partial_credit')) {
+    if (get(numericalresponse, '@_partial_credit')) {
       throw new Error('Partial credit not supported by GUI, reverting to Advanced Editor');
     }
     let answerFeedback = '';
     const answers = [];
     let responseParam = {};
     const feedback = this.getFeedback(firstCorrectFeedback);
-    if (_.has(numericalresponse, 'responseparam')) {
-      const type = _.get(numericalresponse, 'responseparam.@_type');
-      const defaultValue = _.get(numericalresponse, 'responseparam.@_default');
+    if (has(numericalresponse, 'responseparam')) {
+      const type = get(numericalresponse, 'responseparam.@_type');
+      const defaultValue = get(numericalresponse, 'responseparam.@_default');
       responseParam = {
         [type]: defaultValue,
       };
@@ -441,8 +443,8 @@ export class OLXParser {
     });
 
     // Parsing additional_answer for numerical response.
-    const additionalAnswer = _.get(numericalresponse, 'additional_answer', []);
-    if (_.isArray(additionalAnswer)) {
+    const additionalAnswer = get(numericalresponse, 'additional_answer', []);
+    if (isArray(additionalAnswer)) {
       additionalAnswer.forEach((newAnswer, indx) => {
         answerFeedback = this.getFeedback(preservedFeedback[indx]);
         answers.push({
@@ -475,7 +477,7 @@ export class OLXParser {
    * @return {string} string of OLX
    */
   parseQuestions(problemType) {
-    const problemArray = _.get(this.richTextProblem[0], problemType) || this.richTextProblem;
+    const problemArray = get(this.richTextProblem[0], problemType) || this.richTextProblem;
 
     const questionArray = [];
     problemArray.forEach(tag => {
@@ -548,7 +550,7 @@ export class OLXParser {
    */
   getHints() {
     const hintsObject = [];
-    if (_.has(this.problem, 'demandhint.hint')) {
+    if (has(this.problem, 'demandhint.hint')) {
       const preservedProblem = this.richTextProblem;
       preservedProblem.forEach(obj => {
         const objKeys = Object.keys(obj);
@@ -578,21 +580,21 @@ export class OLXParser {
    * @return {string} string of OLX
    */
   getSolutionExplanation(problemType) {
-    if (!_.has(this.problem, `${problemType}.solution`) && !_.has(this.problem, 'solution')) { return null; }
+    if (!has(this.problem, `${problemType}.solution`) && !has(this.problem, 'solution')) { return null; }
     const [problemBody] = this.richTextProblem.filter(section => Object.keys(section).includes(problemType));
     const [solutionBody] = problemBody[problemType].filter(section => Object.keys(section).includes('solution'));
     const [divBody] = solutionBody.solution.filter(section => Object.keys(section).includes('div'));
     const solutionArray = [];
     if (divBody && divBody.div) {
       divBody.div.forEach(tag => {
-        const tagText = _.get(Object.values(tag)[0][0], '#text', '');
+        const tagText = get(Object.values(tag)[0][0], '#text', '');
         if (tagText.toString().trim() !== 'Explanation') {
           solutionArray.push(tag);
         }
       });
     } else {
       solutionBody.solution.forEach(tag => {
-        const tagText = _.get(Object.values(tag)[0][0], '#text', '');
+        const tagText = get(Object.values(tag)[0][0], '#text', '');
         if (tagText.toString().trim() !== 'Explanation') {
           solutionArray.push(tag);
         }
@@ -610,7 +612,7 @@ export class OLXParser {
    * @return {string} string of feedback
    */
   getFeedback(xmlElement) {
-    if (_.isEmpty(xmlElement)) { return ''; }
+    if (isEmpty(xmlElement)) { return ''; }
     const feedbackString = this.richTextBuilder.build(xmlElement);
     return feedbackString;
   }
@@ -636,7 +638,7 @@ export class OLXParser {
     }
     // make sure compound problems are treated as advanced
     if ((problemTypeKeys.length > 1)
-      || (_.isArray(this.problem[problemTypeKeys[0]])
+      || (isArray(this.problem[problemTypeKeys[0]])
         && this.problem[problemTypeKeys[0]].length > 1)) {
       return ProblemTypeKeys.ADVANCED;
     }
@@ -671,7 +673,7 @@ export class OLXParser {
   }
 
   getParsedOLXData() {
-    if (_.isEmpty(this.problem)) {
+    if (isEmpty(this.problem)) {
       return {};
     }
 
@@ -720,16 +722,16 @@ export class OLXParser {
         return {};
     }
     const generalFeedback = this.getGeneralFeedback({ answers: answersObject.answers, problemType });
-    if (_.has(answersObject, 'additionalStringAttributes')) {
+    if (has(answersObject, 'additionalStringAttributes')) {
       additionalAttributes = { ...answersObject.additionalStringAttributes };
     }
 
-    if (_.has(answersObject, 'groupFeedbackList')) {
+    if (has(answersObject, 'groupFeedbackList')) {
       groupFeedbackList = answersObject.groupFeedbackList;
     }
     const { answers } = answersObject;
     const settings = { hints };
-    if (ProblemTypeKeys.NUMERIC === problemType && _.has(answers[0], 'tolerance')) {
+    if (ProblemTypeKeys.NUMERIC === problemType && has(answers[0], 'tolerance')) {
       const toleranceValue = answers[0].tolerance;
       if (!toleranceValue || toleranceValue.length === 0) {
         settings.tolerance = { value: null, type: 'None' };

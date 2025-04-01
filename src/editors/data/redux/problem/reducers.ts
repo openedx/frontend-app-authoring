@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { has } from 'lodash';
 import { createSlice } from '@reduxjs/toolkit';
 import { indexToLetterMap } from '../../../containers/ProblemEditor/data/OLXParser';
 import { StrictDict } from '../../../utils';
@@ -61,17 +61,17 @@ const problem = createSlice({
       let { correctAnswerCount } = state;
       const answers = state.answers.map(obj => {
         if (obj.id === id) {
-          if (_.has(answer, 'correct') && payload.correct) {
+          if (has(answer, 'correct') && payload.correct) {
             correctAnswerCount += 1;
           }
-          if (_.has(answer, 'correct') && payload.correct === false && correctAnswerCount > 0) {
+          if (has(answer, 'correct') && payload.correct === false && correctAnswerCount > 0) {
             correctAnswerCount -= 1;
           }
           return { ...obj, ...answer };
         }
         // set other answers as incorrect if problem only has one answer correct
         // and changes object include correct key change
-        if (hasSingleAnswer && _.has(answer, 'correct') && obj.correct) {
+        if (hasSingleAnswer && has(answer, 'correct') && obj.correct) {
           return { ...obj, correct: false };
         }
         return obj;

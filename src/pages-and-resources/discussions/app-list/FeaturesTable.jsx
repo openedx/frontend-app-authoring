@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Remove, Check } from '@openedx/paragon/icons';
 import { DataTable } from '@openedx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import _ from 'lodash';
+import groupBy from 'lodash/groupBy';
 
 import messages from './messages';
 import appMessages from '../app-config-form/messages';
@@ -13,7 +13,7 @@ import './FeaturesTable.scss';
 const FeaturesTable = ({ apps, features, intl }) => {
   const {
     basic, partial, full, common,
-  } = _.groupBy(features, (feature) => feature.featureSupportType);
+  } = groupBy(features, (feature) => feature.featureSupportType);
 
   const createRow = (feature) => {
     const appCheckmarkCells = {};
