@@ -30,7 +30,6 @@ import {
   fetchSequenceSuccess,
   fetchCourseSectionVerticalDataSuccess,
   updateLoadingCourseSectionVerticalDataStatus,
-  updateLoadingCourseXblockStatus,
   updateCourseVerticalChildren,
   updateCourseVerticalChildrenLoadingStatus,
   updateQueryPendingStatus,
@@ -200,18 +199,30 @@ export function createNewCourseXBlock(body, callback, blockId, sendMessageToIfra
       });
     } catch (error) {
       dispatch(hideProcessingNotification());
-      dispatch(updateLoadingCourseXblockStatus({ status: RequestStatus.FAILED }));
       handleResponseErrors(error, dispatch, updateSavingStatus);
     }
   };
 }
 
-export function fetchCourseVerticalChildrenData(itemId) {
+export function fetchCourseVerticalChildrenData(itemId, isSplitTestType, skipPageLoading) {
   return async (dispatch) => {
-    dispatch(updateCourseVerticalChildrenLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
+    if (!skipPageLoading) {
+      dispatch(updateCourseVerticalChildrenLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
+    }
 
     try {
       const courseVerticalChildrenData = await getCourseVerticalChildren(itemId);
+      if (isSplitTestType) {
+        const blockIds = courseVerticalChildrenData.children.map(child => child.blockId);
+        const childrenDataArray = await Promise.all(
+          blockIds.map(blockId => getCourseVerticalChildren(blockId)),
+        );
+        const allChildren = childrenDataArray.reduce(
+          (acc, data) => acc.concat(data.children || []),
+          [],
+        );
+        courseVerticalChildrenData.children = [...courseVerticalChildrenData.children, ...allChildren];
+      }
       dispatch(updateCourseVerticalChildren(courseVerticalChildrenData));
       dispatch(updateCourseVerticalChildrenLoadingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
@@ -300,13 +311,13 @@ export function patchUnitItemQuery({
       dispatch(updateMovedXBlockParams(xBlockParams));
       dispatch(updateCourseOutlineInfo({}));
       dispatch(updateCourseOutlineInfoLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
+      callbackFn(sourceLocator);
       try {
         const courseUnit = await getCourseUnitData(currentParentLocator);
         dispatch(fetchCourseItemSuccess(courseUnit));
       } catch (error) {
         handleResponseErrors(error, dispatch, updateSavingStatus);
       }
-      callbackFn(sourceLocator);
     } catch (error) {
       handleResponseErrors(error, dispatch, updateSavingStatus);
     } finally {

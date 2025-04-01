@@ -15,12 +15,12 @@ const SubHeader = ({
   withSubHeaderContent,
 }) => (
   <div className={`${!hideBorder && 'border-bottom border-light-400'} mb-3`}>
+    {breadcrumbs && (
+      <div className="sub-header-breadcrumbs">{breadcrumbs}</div>
+    )}
     <header className="sub-header">
       <h2 className="sub-header-title">
         <small className="sub-header-title-subtitle">{subtitle}</small>
-        {breadcrumbs && (
-          <div className="sub-header-breadcrumbs">{breadcrumbs}</div>
-        )}
         {title}
         {titleActions && (
           <ActionRow className="ml-auto mt-2 justify-content-start">

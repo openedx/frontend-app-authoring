@@ -64,6 +64,9 @@ const renderComponent = (props) => render(
       <IframeProvider>
         <AddComponent
           blockId={blockId}
+          isUnitVerticalType
+          parentLocator={blockId}
+          addComponentTemplateData={{}}
           handleCreateNewCourseXBlock={handleCreateNewCourseXBlockMock}
           {...props}
         />

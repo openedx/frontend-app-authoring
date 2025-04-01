@@ -59,6 +59,7 @@ export const COURSE_BLOCK_NAMES = ({
   sequential: { id: 'sequential', name: 'Subsection' },
   vertical: { id: 'vertical', name: 'Unit' },
   libraryContent: { id: 'library_content', name: 'Library content' },
+  splitTest: { id: 'split_test', name: 'Split Test' },
   component: { id: 'component', name: 'Component' },
 });
 
