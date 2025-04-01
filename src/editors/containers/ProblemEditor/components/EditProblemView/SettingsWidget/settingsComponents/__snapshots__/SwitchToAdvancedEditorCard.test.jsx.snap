@@ -23,6 +23,7 @@ exports[`SwitchToAdvancedEditorCard snapshot snapshot: SwitchToAdvancedEditorCar
     }
     footerAction={null}
     headerComponent={null}
+    hideCancelButton={false}
     isFullscreenScroll={true}
     isOpen={false}
     size="md"
