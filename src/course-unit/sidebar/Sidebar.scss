@@ -88,8 +88,8 @@
     @extend %base-font-params;
 
     .course-split-test-sidebar-title {
-      font-size: $font-size-base;
-      line-height: $line-height-base;
+      font-size: var(--pgn-typography-font-size-base);
+      line-height: var(--pgn-typography-line-height-base);
     }
 
     .course-split-test-sidebar-devider {
