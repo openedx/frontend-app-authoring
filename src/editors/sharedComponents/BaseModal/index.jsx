@@ -48,8 +48,12 @@ const BaseModal = ({
     </Scrollable>
     <ModalDialog.Footer>
       <ActionRow>
-        {footerAction}
-        <ActionRow.Spacer />
+        {footerAction && (
+          <>
+            {footerAction}
+            <ActionRow.Spacer />
+          </>
+        )}
         {!hideCancelButton && (
           <ModalDialog.CloseButton variant="tertiary" onClick={close}>
             <FormattedMessage {...messages.cancelButtonLabel} />
