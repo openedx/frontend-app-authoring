@@ -3,7 +3,9 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { initializeMockApp } from '@edx/frontend-platform';
 import MockAdapter from 'axios-mock-adapter';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { render, waitFor } from '@testing-library/react';
+import {
+  render, waitFor, within,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import initializeStore from '../../store';
@@ -165,12 +167,16 @@ describe('<TextbookForm />', () => {
   });
 
   it('open modal dropzone when "Upload" button is clicked', async () => {
-    const { getByTestId } = renderComponent();
+    const { findByTestId, findByRole } = renderComponent();
 
+    const button = await findByTestId('chapter-upload-button');
+    await userEvent.click(button);
+    const modalBackdrop = await findByTestId('modal-backdrop');
+
+    const cancelButton = await within(await findByRole('dialog')).findByText('Cancel');
+    await userEvent.click(cancelButton);
     await waitFor(() => {
-      const button = getByTestId('chapter-upload-button');
-      userEvent.click(button);
-      expect(getByTestId('modal-backdrop')).toBeInTheDocument();
+      expect(modalBackdrop).not.toBeInTheDocument();
     });
   });
 });

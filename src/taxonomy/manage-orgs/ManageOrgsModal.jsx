@@ -155,6 +155,7 @@ const ManageOrgsModal = ({
         size="lg"
         hasCloseButton
         isFullscreenOnMobile
+        isOverflowVisible
       >
         {isDialogDisabled && (
           // This div is used to prevent the user from interacting with the dialog while it is disabled

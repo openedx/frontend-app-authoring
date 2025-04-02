@@ -15,9 +15,7 @@ exports[`CoursesFilterMenu snapshot 1`] = `
       data-testid="course-filter-menu-toggle"
       id="course-filter-menu-toggle"
       type="button"
-    >
-      
-    </button>
+    />
   </div>
 </div>
 `;

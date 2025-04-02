@@ -2,7 +2,7 @@ import React from 'react';
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook, waitFor } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 
 import { getTagsCountApiUrl } from './api';
@@ -43,11 +43,14 @@ describe('useContentTagsCount', () => {
   });
 
   it('should return success response', async () => {
-    const courseId = 'course-v1:edX+TestX+Test_Course';
+    const courseId = 'course-v1:edX+TestX+Test_Course_SUCCESS';
     axiosMock.onGet(getTagsCountApiUrl(courseId)).reply(200, { [courseId]: 10 });
 
     const hook = renderHook(() => useContentTagsCount(courseId), { wrapper });
-    await hook.waitForNextUpdate();
+    await waitFor(() => {
+      expect(hook.result.current.isLoading).toBeFalsy();
+    });
+
     const { data, isSuccess } = hook.result.current;
 
     expect(axiosMock.history.get[0].url).toEqual(getTagsCountApiUrl(courseId));
@@ -56,12 +59,13 @@ describe('useContentTagsCount', () => {
   });
 
   it('should return failure response', async () => {
-    const courseId = 'course-v1:edX+TestX+Test_Course';
+    const courseId = 'course-v1:edX+TestX+Test_Course_FAILURE';
     axiosMock.onGet(getTagsCountApiUrl(courseId)).reply(500, 'error');
 
     const hook = renderHook(() => useContentTagsCount(courseId), { wrapper });
-    await hook.waitForNextUpdate();
-
+    await waitFor(() => {
+      expect(hook.result.current.isLoading).toBeFalsy();
+    });
     const { isSuccess } = hook.result.current;
 
     expect(axiosMock.history.get[0].url).toEqual(getTagsCountApiUrl(courseId));
@@ -77,7 +81,9 @@ describe('useContentTagsCount', () => {
     });
 
     const hook = renderHook(() => useContentTagsCount(blockId), { wrapper });
-    await hook.waitForNextUpdate();
+    await waitFor(() => {
+      expect(hook.result.current.isLoading).toBeFalsy();
+    });
 
     const { data, isSuccess } = hook.result.current;
 

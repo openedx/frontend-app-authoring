@@ -7,7 +7,7 @@ import {
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { AppProvider, PageWrap } from '@edx/frontend-platform/react';
 import {
-  queryByTestId, render, waitFor, getByText, fireEvent,
+  findByTestId, queryByTestId, render, waitFor, getByText, fireEvent,
 } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 import PagesAndResourcesProvider from 'CourseAuthoring/pages-and-resources/PagesAndResourcesProvider';
@@ -106,8 +106,9 @@ describe('XpertUnitSummarySettings', () => {
     });
 
     test('Shows switch on if enabled from backend', async () => {
+      const enableBadge = await findByTestId(container, 'enable-badge');
       expect(container.querySelector('#enable-xpert-unit-summary-toggle').checked).toBeTruthy();
-      expect(queryByTestId(container, 'enable-badge')).toBeTruthy();
+      expect(enableBadge).toBeTruthy();
     });
 
     test('Shows switch on if disabled from backend', async () => {

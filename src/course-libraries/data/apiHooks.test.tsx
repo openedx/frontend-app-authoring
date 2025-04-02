@@ -1,9 +1,8 @@
 import { initializeMockApp } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { renderHook } from '@testing-library/react-hooks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MockAdapter from 'axios-mock-adapter';
-import { waitFor } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { getEntityLinksByDownstreamContextUrl } from './api';
 import { useEntityLinks, useUnpaginatedEntityLinks } from './apiHooks';
 

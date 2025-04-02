@@ -420,6 +420,7 @@ const ImportTagsWizard = ({
         isBlocking
         onClose={onClose}
         size="lg"
+        isOverflowVisible
       >
         {(isDialogDisabled) && (
           // This div is used to prevent the user from interacting with the dialog while the import is happening

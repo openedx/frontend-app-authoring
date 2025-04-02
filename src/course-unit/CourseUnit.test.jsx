@@ -205,16 +205,15 @@ describe('<CourseUnit />', () => {
   });
 
   it('adjusts iframe height dynamically based on courseXBlockDropdownHeight postMessage event', async () => {
-    const { getByTitle } = render(<RootWrapper />);
+    render(<RootWrapper />);
 
-    await waitFor(() => {
-      const iframe = getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
-      expect(iframe).toHaveAttribute('style', 'height: 0px;');
-      simulatePostMessageEvent(messageTypes.toggleCourseXBlockDropdown, {
-        courseXBlockDropdownHeight: 200,
-      });
-      expect(iframe).toHaveAttribute('style', 'height: 200px;');
+    let iframe = await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+    expect(iframe).toHaveAttribute('style', 'height: 0px;');
+    simulatePostMessageEvent(messageTypes.toggleCourseXBlockDropdown, {
+      courseXBlockDropdownHeight: 200,
     });
+    iframe = await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
+    expect(iframe).toHaveAttribute('style', 'height: 200px;');
   });
 
   it('displays an error alert when a studioAjaxError message is received', async () => {
@@ -246,16 +245,13 @@ describe('<CourseUnit />', () => {
   });
 
   it('renders the xBlocks iframe and opens the tags drawer on postMessage event', async () => {
-    const { getByTitle, getByText } = render(<RootWrapper />);
+    render(<RootWrapper />);
 
-    await waitFor(() => {
-      const xblocksIframe = getByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
-      expect(xblocksIframe).toBeInTheDocument();
-    });
+    await screen.findByTitle(xblockContainerIframeMessages.xblockIframeTitle.defaultMessage);
 
     simulatePostMessageEvent(messageTypes.openManageTags, { contentId: blockId });
 
-    expect(getByText(tagsDrawerMessages.headerSubtitle.defaultMessage)).toBeInTheDocument();
+    await screen.findByText(tagsDrawerMessages.headerSubtitle.defaultMessage);
   });
 
   it('closes the legacy edit modal when closeXBlockEditorModal message is received', async () => {
@@ -1598,27 +1594,21 @@ describe('<CourseUnit />', () => {
 
     it('should display "Move Modal" on receive trigger message', async () => {
       const {
-        getByText,
         getByRole,
       } = render(<RootWrapper />);
 
-      await act(async () => {
-        await waitFor(() => {
-          expect(getByText(unitDisplayName))
-            .toBeInTheDocument();
-        });
+      await screen.findByText(unitDisplayName);
 
-        axiosMock
-          .onGet(getCourseOutlineInfoUrl(courseId))
-          .reply(200, courseOutlineInfoMock);
-        await executeThunk(getCourseOutlineInfoQuery(courseId), store.dispatch);
+      axiosMock
+        .onGet(getCourseOutlineInfoUrl(courseId))
+        .reply(200, courseOutlineInfoMock);
+      await executeThunk(getCourseOutlineInfoQuery(courseId), store.dispatch);
 
-        window.dispatchEvent(messageEvent);
-      });
+      window.dispatchEvent(messageEvent);
 
-      expect(getByText(
+      await screen.findByText(
         moveModalMessages.moveModalTitle.defaultMessage.replace('{displayName}', requestData.title),
-      )).toBeInTheDocument();
+      );
       expect(getByRole('button', { name: moveModalMessages.moveModalSubmitButton.defaultMessage })).toBeInTheDocument();
       expect(getByRole('button', { name: moveModalMessages.moveModalCancelButton.defaultMessage })).toBeInTheDocument();
     });
@@ -1629,23 +1619,18 @@ describe('<CourseUnit />', () => {
         getByRole,
       } = render(<RootWrapper />);
 
-      await act(async () => {
-        await waitFor(() => {
-          expect(getByText(unitDisplayName))
-            .toBeInTheDocument();
-        });
+      await screen.findByText(unitDisplayName);
 
-        axiosMock
-          .onGet(getCourseOutlineInfoUrl(courseId))
-          .reply(200, courseOutlineInfoMock);
-        await executeThunk(getCourseOutlineInfoQuery(courseId), store.dispatch);
+      axiosMock
+        .onGet(getCourseOutlineInfoUrl(courseId))
+        .reply(200, courseOutlineInfoMock);
+      await executeThunk(getCourseOutlineInfoQuery(courseId), store.dispatch);
 
-        window.dispatchEvent(messageEvent);
-      });
+      window.dispatchEvent(messageEvent);
 
-      expect(getByText(
+      await screen.findByText(
         moveModalMessages.moveModalTitle.defaultMessage.replace('{displayName}', requestData.title),
-      )).toBeInTheDocument();
+      );
 
       const currentSection = courseOutlineInfoMock.child_info.children[1];
       const currentSectionItemBtn = getByRole('button', {
@@ -1673,7 +1658,6 @@ describe('<CourseUnit />', () => {
 
     it('should allow move operation and handles it successfully', async () => {
       const {
-        getByText,
         getByRole,
       } = render(<RootWrapper />);
 
@@ -1685,23 +1669,18 @@ describe('<CourseUnit />', () => {
         .onGet(getCourseUnitApiUrl(blockId))
         .reply(200, courseUnitIndexMock);
 
-      await act(async () => {
-        await waitFor(() => {
-          expect(getByText(unitDisplayName))
-            .toBeInTheDocument();
-        });
+      await screen.findByText(unitDisplayName);
 
-        axiosMock
-          .onGet(getCourseOutlineInfoUrl(courseId))
-          .reply(200, courseOutlineInfoMock);
-        await executeThunk(getCourseOutlineInfoQuery(courseId), store.dispatch);
+      axiosMock
+        .onGet(getCourseOutlineInfoUrl(courseId))
+        .reply(200, courseOutlineInfoMock);
+      await executeThunk(getCourseOutlineInfoQuery(courseId), store.dispatch);
 
-        window.dispatchEvent(messageEvent);
-      });
+      window.dispatchEvent(messageEvent);
 
-      expect(getByText(
+      await screen.findByText(
         moveModalMessages.moveModalTitle.defaultMessage.replace('{displayName}', requestData.title),
-      )).toBeInTheDocument();
+      );
 
       const currentSection = courseOutlineInfoMock.child_info.children[1];
       const currentSectionItemBtn = getByRole('button', {
@@ -1953,15 +1932,12 @@ describe('<CourseUnit />', () => {
   };
 
   const checkRenderVisibilityModal = async (headingMessageId) => {
-    const { getByRole, getByTestId } = render(<RootWrapper />);
+    const { findByRole, getByTestId } = render(<RootWrapper />);
     let configureModal;
     let restrictAccessSelect;
 
-    await waitFor(() => {
-      const headerConfigureBtn = getByRole('button', { name: /settings/i });
-      expect(headerConfigureBtn).toBeInTheDocument();
-      userEvent.click(headerConfigureBtn);
-    });
+    const headerConfigureBtn = await findByRole('button', { name: /settings/i });
+    await userEvent.click(headerConfigureBtn);
 
     await waitFor(() => {
       configureModal = getByTestId('configure-modal');
@@ -2028,18 +2004,18 @@ describe('<CourseUnit />', () => {
 
     it('should render library content page correctly', async () => {
       const {
-        getByText,
+        findByText,
         getByRole,
         queryByRole,
-        getByTestId,
+        findByTestId,
       } = render(<RootWrapper />);
 
       const currentSectionName = courseUnitIndexMock.ancestor_info.ancestors[1].display_name;
       const currentSubSectionName = courseUnitIndexMock.ancestor_info.ancestors[1].display_name;
 
+      const unitHeaderTitle = await findByTestId('unit-header-title');
+      await findByText(unitDisplayName);
       await waitFor(() => {
-        const unitHeaderTitle = getByTestId('unit-header-title');
-        expect(getByText(unitDisplayName)).toBeInTheDocument();
         expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage })).toBeInTheDocument();
         expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonSettings.defaultMessage })).toBeInTheDocument();
         expect(getByRole('button', { name: currentSectionName })).toBeInTheDocument();
@@ -2096,14 +2072,14 @@ describe('<CourseUnit />', () => {
       await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
     });
 
-    it('navigates to split test content page on receive window event', () => {
+    it('navigates to split test content page on receive window event', async () => {
       render(<RootWrapper />);
 
       simulatePostMessageEvent(messageTypes.handleViewXBlockContent, { usageId: newUnitId });
       expect(mockedUsedNavigate).toHaveBeenCalledWith(`/course/${courseId}/container/${newUnitId}/${sequenceId}`);
     });
 
-    it('navigates to group configuration page on receive window event', () => {
+    it('navigates to group configuration page on receive window event', async () => {
       const groupId = 12345;
       render(<RootWrapper />);
 
@@ -2117,13 +2093,19 @@ describe('<CourseUnit />', () => {
       await waitFor(() => {
         simulatePostMessageEvent(messageTypes.addNewComponent);
         expect(getByText(('Adding'))).toBeInTheDocument();
+      });
 
+      await waitFor(() => {
         simulatePostMessageEvent(messageTypes.hideProcessingNotification);
         expect(queryByText(('Adding'))).not.toBeInTheDocument();
+      });
 
+      await waitFor(() => {
         simulatePostMessageEvent(messageTypes.pasteNewComponent);
         expect(getByText(('Pasting'))).toBeInTheDocument();
+      });
 
+      await waitFor(() => {
         simulatePostMessageEvent(messageTypes.hideProcessingNotification);
         expect(queryByText(('Pasting'))).not.toBeInTheDocument();
       });
@@ -2142,7 +2124,7 @@ describe('<CourseUnit />', () => {
       const currentSubSectionName = courseUnitIndexMock.ancestor_info.ancestors[1].display_name;
       const helpLinkUrl = 'https://edx.readthedocs.io/projects/open-edx-building-and-running-a-course/en/latest/developing_course/course_components.html#components-that-contain-other-components';
 
-      await waitFor(() => {
+      waitFor(() => {
         const unitHeaderTitle = getByTestId('unit-header-title');
         expect(getByText(unitDisplayName)).toBeInTheDocument();
         expect(within(unitHeaderTitle).getByRole('button', { name: headerTitleMessages.altButtonEdit.defaultMessage })).toBeInTheDocument();
