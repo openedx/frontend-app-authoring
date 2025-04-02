@@ -1,11 +1,13 @@
 import userEvent from '@testing-library/user-event';
 
 import {
-  initializeMocks, render as baseRender, screen,
+  initializeMocks, render as baseRender, screen, waitFor,
+  fireEvent,
 } from '../../testUtils';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { type ContainerHit, PublishStatus } from '../../search-manager';
 import ContainerCard from './ContainerCard';
+import { getLibraryContainerApiUrl } from '../data/api';
 
 const containerHitSample: ContainerHit = {
   id: 'lctorg1democourse-unit-display-name-123',
@@ -79,5 +81,57 @@ describe('<ContainerCard />', () => {
     //   'href',
     //   '/library/lb:org1:Demo_Course/container/container-display-name-123',
     // );
+  });
+
+  it('should delete the container from the menu', async () => {
+    const { axiosMock, mockShowToast } = initializeMocks();
+    axiosMock.onDelete(getLibraryContainerApiUrl(containerHitSample.usageKey)).reply(200);
+
+    render(<ContainerCard hit={containerHitSample} />);
+
+    // Open menu
+    expect(screen.getByTestId('container-card-menu-toggle')).toBeInTheDocument();
+    userEvent.click(screen.getByTestId('container-card-menu-toggle'));
+
+    // Click on Delete Item
+    const deleteMenuItem = screen.getByRole('button', { name: 'Delete' });
+    expect(deleteMenuItem).toBeInTheDocument();
+    fireEvent.click(deleteMenuItem);
+
+    // Confirm delete Modal is open
+    expect(screen.getByText('Delete Unit'));
+    const deleteButton = screen.getByRole('button', { name: /delete/i });
+    fireEvent.click(deleteButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.delete.length).toBe(1);
+    });
+    expect(mockShowToast).toHaveBeenCalledWith('Unit deleted');
+  });
+
+  it('should show error on delete the container from the menu', async () => {
+    const { axiosMock, mockShowToast } = initializeMocks();
+    axiosMock.onDelete(getLibraryContainerApiUrl(containerHitSample.usageKey)).reply(400);
+
+    render(<ContainerCard hit={containerHitSample} />);
+
+    // Open menu
+    expect(screen.getByTestId('container-card-menu-toggle')).toBeInTheDocument();
+    userEvent.click(screen.getByTestId('container-card-menu-toggle'));
+
+    // Click on Delete Item
+    const deleteMenuItem = screen.getByRole('button', { name: 'Delete' });
+    expect(deleteMenuItem).toBeInTheDocument();
+    fireEvent.click(deleteMenuItem);
+
+    // Confirm delete Modal is open
+    expect(screen.getByText('Delete Unit'));
+    const deleteButton = screen.getByRole('button', { name: /delete/i });
+    fireEvent.click(deleteButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.delete.length).toBe(1);
+    });
+    expect(mockShowToast).toHaveBeenCalledWith('Failed to delete unit');
   });
 });

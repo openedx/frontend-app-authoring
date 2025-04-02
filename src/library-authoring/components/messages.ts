@@ -176,5 +176,30 @@ const messages = defineMessages({
     defaultMessage: 'This component can be synced in courses after publish.',
     description: 'Alert text of the modal to confirm publish a component in a library.',
   },
+  menuDeleteContainer: {
+    id: 'course-authoring.library-authoring.container.delete-menu-text',
+    defaultMessage: 'Delete',
+    description: 'Menu item to delete a container.',
+  },
+  deleteUnitWarningTitle: {
+    id: 'course-authoring.library-authoring.unit.delete-confirmation-title',
+    defaultMessage: 'Delete Unit',
+    description: 'Title text for the warning displayed before deleting a Unit',
+  },
+  deleteUnitConfirm: {
+    id: 'course-authoring.library-authoring.unit.delete-confirmation-text',
+    defaultMessage: 'Delete {componentName}? TBD',
+    description: 'Confirmation text to display before deleting a unit',
+  },
+  deleteUnitSuccess: {
+    id: 'course-authoring.library-authoring.unit.delete.success',
+    defaultMessage: 'Unit deleted',
+    description: 'Message to display on delete unit success',
+  },
+  deleteUnitFailed: {
+    id: 'course-authoring.library-authoring.unit.delete-failed-error',
+    defaultMessage: 'Failed to delete unit',
+    description: 'Message to display on failure to delete a unit',
+  },
 });
 export default messages;

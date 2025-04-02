@@ -23,6 +23,7 @@ import {
   useCollection,
   useBlockTypesMetadata,
   useContainer,
+  useDeleteContainer,
 } from './apiHooks';
 
 let axiosMock;
@@ -151,5 +152,17 @@ describe('library api hooks', () => {
     });
     expect(result.current.data).toEqual({ testData: 'test-value' });
     expect(axiosMock.history.get[0].url).toEqual(url);
+  });
+
+  it('should delete container', async () => {
+    const containerId = 'lct:org:lib1';
+    const url = getLibraryContainerApiUrl(containerId);
+
+    axiosMock.onDelete(url).reply(200);
+    const { result } = renderHook(() => useDeleteContainer(containerId), { wrapper });
+    await result.current.mutateAsync();
+    await waitFor(() => {
+      expect(axiosMock.history.delete[0].url).toEqual(url);
+    });
   });
 });
