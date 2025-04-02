@@ -56,14 +56,16 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
     deleteError = intl.formatMessage(messages.deleteUnitFailed);
   }
 
-  const onDelete = useCallback(() => {
-    deleteContainerMutation.mutateAsync().then(() => {
+  const onDelete = useCallback(async () => {
+    await deleteContainerMutation.mutateAsync().then(() => {
       if (sidebarComponentInfo?.id === usageKey) {
         closeLibrarySidebar();
       }
       showToast(deleteSuccess);
     }).catch(() => {
       showToast(deleteError);
+    }).finally(() => {
+      cancelDelete();
     });
   }, [sidebarComponentInfo, showToast, deleteContainerMutation]);
 
