@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -7,14 +6,17 @@ import {
   IconButton,
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
+import { ReactNode, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 
+import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
 import { type ContainerHit, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { useSidebarContext } from '../common/context/SidebarContext';
-import { useLibraryRoutes } from '../routes';
 import BaseCard from './BaseCard';
+import { useContainerChildren } from '../data/apiHooks';
+import { useLibraryRoutes } from '../routes';
 import messages from './messages';
 
 type ContainerMenuProps = {
@@ -46,6 +48,59 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
         </Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
+  );
+};
+
+type ContainerCardPreviewProps = {
+  containerId: string;
+  showMaxChildren?: number;
+};
+
+const ContainerCardPreview = ({ containerId, showMaxChildren = 5 }: ContainerCardPreviewProps) => {
+  const { data, isLoading, isError } = useContainerChildren(containerId);
+  if (isLoading || isError) {
+    return null;
+  }
+
+  const hiddenChildren = data.length - showMaxChildren;
+  return (
+    <div className="container-card-preview d-flex flex-wrap align-self-start">
+      {
+        data.slice(0, showMaxChildren).map(({ id, blockType, displayName }, idx) => {
+          let classNames = 'd-inline-flex rounded align-items-center m-1 p-1';
+          let blockPreview: ReactNode;
+
+          if (idx < showMaxChildren - 1 || hiddenChildren <= 0) {
+            // Show the first N-1 blocks as item icons
+            // (or all N blocks if no hidden children)
+            classNames = `${classNames} ${getComponentStyleColor(blockType)}`;
+            blockPreview = (
+              <Icon
+                src={getItemIcon(blockType)}
+                screenReaderText={blockType}
+                title={displayName}
+              />
+            );
+          } else {
+            // Container has more blocks than can fit in the preview, so show "+N"
+            blockPreview = (
+              <FormattedMessage
+                {...messages.containerPreviewMoreBlocks}
+                values={{ count: hiddenChildren + 1 }}
+              />
+            );
+          }
+          return (
+            <div
+              key={`container-card-preview-block-${id}`}
+              className={classNames}
+            >
+              {blockPreview}
+            </div>
+          );
+        })
+      }
+    </div>
   );
 };
 
@@ -90,6 +145,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     <BaseCard
       itemType={itemType}
       displayName={displayName}
+      preview={<ContainerCardPreview containerId={unitId} />}
       tags={tags}
       numChildren={numChildrenCount}
       actions={!componentPickerMode && (

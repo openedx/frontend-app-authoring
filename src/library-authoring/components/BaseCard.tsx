@@ -17,6 +17,7 @@ type BaseCardProps = {
   itemType: string;
   displayName: string;
   description?: string;
+  preview?: React.ReactNode;
   numChildren?: number;
   tags: ContentHitTags;
   actions: React.ReactNode;
@@ -70,10 +71,14 @@ const BaseCard = ({
         />
         <Card.Body className="w-100">
           <Card.Section>
-            <div className="text-truncate h3 mt-2">
+            <div className="text-truncate h3 mt-1">
               <Highlight text={displayName} />
             </div>
-            <Highlight text={description} />
+            {
+              props.preview
+                ? props.preview
+                : <Highlight text={description} />
+            }
           </Card.Section>
         </Card.Body>
         <Card.Footer className="mt-auto">
