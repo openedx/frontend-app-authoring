@@ -32,8 +32,10 @@ exports[`BaseModal ImageUploadModal template component snapshot 1`] = `
   </Scrollable>
   <ModalDialog.Footer>
     <ActionRow>
-      props.footerAction node
-      <ActionRow.Spacer />
+      <Fragment>
+        props.footerAction node
+        <ActionRow.Spacer />
+      </Fragment>
       <ModalDialog.CloseButton
         onClick={[MockFunction props.close]}
         variant="tertiary"
