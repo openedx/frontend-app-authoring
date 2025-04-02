@@ -616,3 +616,11 @@ export async function updateContainerMetadata(
   const client = getAuthenticatedHttpClient();
   await client.patch(getLibraryContainerApiUrl(containerId), snakeCaseObject(containerData));
 }
+
+/**
+ * Delete a container
+ */
+export async function deleteContainer(containerId: string) {
+  const client = getAuthenticatedHttpClient();
+  await client.delete(getLibraryContainerApiUrl(containerId));
+}

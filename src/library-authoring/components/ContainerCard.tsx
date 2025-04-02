@@ -1,12 +1,13 @@
+import { useCallback, useContext } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
   Dropdown,
   Icon,
   IconButton,
+  useToggle,
 } from '@openedx/paragon';
-import { MoreVert } from '@openedx/paragon/icons';
-import { useCallback } from 'react';
+import { MoreVert, Warning } from '@openedx/paragon/icons';
 import { Link } from 'react-router-dom';
 
 import { type ContainerHit, PublishStatus } from '../../search-manager';
@@ -16,6 +17,9 @@ import { useSidebarContext } from '../common/context/SidebarContext';
 import { useLibraryRoutes } from '../routes';
 import BaseComponentCard from './BaseComponentCard';
 import messages from './messages';
+import DeleteModal from '../../generic/delete-modal/DeleteModal';
+import { ToastContext } from '../../generic/toast-context';
+import { useDeleteContainer } from '../data/apiHooks';
 
 type ContainerMenuProps = {
   containerHit: ContainerHit,
@@ -23,6 +27,44 @@ type ContainerMenuProps = {
 
 const ContainerMenu = ({ containerHit }: ContainerMenuProps) => {
   const intl = useIntl();
+
+  const {
+    usageKey,
+    blockType: componentType,
+    displayName,
+  } = containerHit;
+  const {
+    sidebarComponentInfo,
+    closeLibrarySidebar,
+  } = useSidebarContext();
+
+  const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
+  const { showToast } = useContext(ToastContext);
+  const deleteContainerMutation = useDeleteContainer(usageKey);
+
+  let deleteWarningTitle;
+  let deleteText;
+  let deleteSuccess;
+  let deleteError;
+  if (componentType === 'unit') {
+    deleteWarningTitle = intl.formatMessage(messages.deleteUnitWarningTitle);
+    deleteText = intl.formatMessage(messages.deleteUnitConfirm, {
+      componentName: displayName,
+    });
+    deleteSuccess = intl.formatMessage(messages.deleteUnitSuccess);
+    deleteError = intl.formatMessage(messages.deleteUnitFailed);
+  }
+
+  const onDelete = useCallback(() => {
+    deleteContainerMutation.mutateAsync().then(() => {
+      if (sidebarComponentInfo?.id === usageKey) {
+        closeLibrarySidebar();
+      }
+      showToast(deleteSuccess);
+    }).catch(() => {
+      showToast(deleteError);
+    });
+  }, [sidebarComponentInfo, showToast, deleteContainerMutation]);
 
   return (
     <Dropdown id="container-card-dropdown">
@@ -43,7 +85,19 @@ const ContainerMenu = ({ containerHit }: ContainerMenuProps) => {
         >
           <FormattedMessage {...messages.menuOpen} />
         </Dropdown.Item>
+        <Dropdown.Item onClick={confirmDelete}>
+          <FormattedMessage {...messages.menuDeleteContainer} />
+        </Dropdown.Item>
       </Dropdown.Menu>
+      <DeleteModal
+        isOpen={isConfirmingDelete}
+        close={cancelDelete}
+        variant="warning"
+        title={deleteWarningTitle}
+        icon={Warning}
+        description={deleteText}
+        onDeleteSubmit={onDelete}
+      />
     </Dropdown>
   );
 };

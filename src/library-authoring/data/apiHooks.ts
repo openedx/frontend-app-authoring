@@ -50,6 +50,7 @@ import {
   type CreateLibraryContainerDataRequest,
   getContainerMetadata,
   updateContainerMetadata,
+  deleteContainer,
   type UpdateContainerDataRequest,
 } from './api';
 import { VersionSpec } from '../LibraryBlock';
@@ -610,6 +611,21 @@ export const useUpdateContainer = (containerId: string) => {
       // container list.
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
       queryClient.invalidateQueries({ queryKey: containerQueryKeys.container(containerId) });
+    },
+  });
+};
+
+/**
+ * Use this mutation to soft delete containers in a library
+ */
+export const useDeleteContainer = (containerId: string) => {
+  const libraryId = getLibraryId(containerId);
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => deleteContainer(containerId),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId) });
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
     },
   });
 };
