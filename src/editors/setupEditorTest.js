@@ -101,7 +101,9 @@ jest.mock('@openedx/paragon', () => jest.requireActual('./testUtils').mockNested
   Spinner: 'Spinner',
   Stack: 'Stack',
   Toast: 'Toast',
-  Truncate: 'Truncate',
+  Truncate: {
+    Deprecated: 'Truncate.Deprecated',
+  },
   useWindowSize: { height: '500px' },
 }));
 
