@@ -120,7 +120,7 @@ const LibraryCollectionPage = () => {
   } = useCollection(libraryId, collectionId);
 
   useEffect(() => {
-    openInfoSidebar(componentId, collectionId);
+    openInfoSidebar(componentId, collectionId, '');
   }, []);
 
   const { data: libraryData, isLoading: isLibLoading } = useContentLibrary(libraryId);

@@ -24,8 +24,8 @@ export const ROUTES = {
   UNITS: '/units/:unitId?',
   // * All Content tab, with an optionally selected componentId in the sidebar.
   COMPONENT: '/component/:componentId',
-  // * All Content tab, with an optionally selected collectionId in the sidebar.
-  HOME: '/:collectionId?',
+  // * All Content tab, with an optionally selected collection or unit in the sidebar.
+  HOME: '/:selectedItemId?',
   // LibraryCollectionPage route:
   // * with a selected collectionId and/or an optionally selected componentId.
   COLLECTION: '/collection/:collectionId/:componentId?',
@@ -41,6 +41,7 @@ export enum ContentType {
 export type NavigateToData = {
   componentId?: string,
   collectionId?: string,
+  unitId?: string,
   contentType?: ContentType,
 };
 
@@ -68,13 +69,15 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
   const navigateTo = useCallback(({
     componentId,
     collectionId,
+    unitId,
     contentType,
   }: NavigateToData = {}) => {
     const routeParams = {
       ...params,
       // Overwrite the current componentId/collectionId params if provided
       ...((componentId !== undefined) && { componentId }),
-      ...((collectionId !== undefined) && { collectionId }),
+      ...((collectionId !== undefined) && { collectionId, selectedItemId: collectionId }),
+      ...((unitId !== undefined) && { unitId, selectedItemId: unitId }),
     };
     let route;
 
@@ -107,14 +110,12 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     } else if (insideUnits) {
       // We're inside the Units tab, so stay there,
       // optionally selecting a unit.
-      // istanbul ignore next: this will be covered when we add unit selection
       route = ROUTES.UNITS;
     } else if (componentId) {
       // We're inside the All Content tab, so stay there,
       // and select a component.
       route = ROUTES.COMPONENT;
     } else {
-      // We're inside the All Content tab,
       route = (
         (collectionId && collectionId === params.collectionId)
           // now open the previously-selected collection

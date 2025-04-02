@@ -12,6 +12,7 @@ export enum SidebarBodyComponentId {
   Info = 'info',
   ComponentInfo = 'component-info',
   CollectionInfo = 'collection-info',
+  UnitInfo = 'unit-info',
 }
 
 export const COLLECTION_INFO_TABS = {
@@ -33,9 +34,20 @@ export const isComponentInfoTab = (tab: string): tab is ComponentInfoTab => (
   Object.values<string>(COMPONENT_INFO_TABS).includes(tab)
 );
 
-type SidebarInfoTab = ComponentInfoTab | CollectionInfoTab;
+export const UNIT_INFO_TABS = {
+  Preview: 'preview',
+  Organize: 'organize',
+  Usage: 'usage',
+  Settings: 'settings',
+} as const;
+export type UnitInfoTab = typeof UNIT_INFO_TABS[keyof typeof UNIT_INFO_TABS];
+export const isUnitInfoTab = (tab: string): tab is UnitInfoTab => (
+  Object.values<string>(UNIT_INFO_TABS).includes(tab)
+);
+
+type SidebarInfoTab = ComponentInfoTab | CollectionInfoTab | UnitInfoTab;
 const toSidebarInfoTab = (tab: string): SidebarInfoTab | undefined => (
-  isComponentInfoTab(tab) || isCollectionInfoTab(tab)
+  isComponentInfoTab(tab) || isCollectionInfoTab(tab) || isUnitInfoTab(tab)
     ? tab : undefined
 );
 
@@ -53,10 +65,11 @@ export enum SidebarActions {
 export type SidebarContextData = {
   closeLibrarySidebar: () => void;
   openAddContentSidebar: () => void;
-  openInfoSidebar: (componentId?: string, collectionId?: string) => void;
+  openInfoSidebar: (componentId?: string, collectionId?: string, unitId?: string) => void;
   openLibrarySidebar: () => void;
   openCollectionInfoSidebar: (collectionId: string) => void;
   openComponentInfoSidebar: (usageKey: string) => void;
+  openUnitInfoSidebar: (usageKey: string) => void;
   sidebarComponentInfo?: SidebarComponentInfo;
   sidebarAction: SidebarActions;
   setSidebarAction: (action: SidebarActions) => void;
@@ -131,11 +144,20 @@ export const SidebarProvider = ({
     });
   }, []);
 
-  const openInfoSidebar = useCallback((componentId?: string, collectionId?: string) => {
+  const openUnitInfoSidebar = useCallback((usageKey: string) => {
+    setSidebarComponentInfo({
+      id: usageKey,
+      type: SidebarBodyComponentId.UnitInfo,
+    });
+  }, []);
+
+  const openInfoSidebar = useCallback((componentId?: string, collectionId?: string, unitId?: string) => {
     if (componentId) {
       openComponentInfoSidebar(componentId);
     } else if (collectionId) {
       openCollectionInfoSidebar(collectionId);
+    } else if (unitId) {
+      openUnitInfoSidebar(unitId);
     } else {
       openLibrarySidebar();
     }
@@ -150,6 +172,7 @@ export const SidebarProvider = ({
       openComponentInfoSidebar,
       sidebarComponentInfo,
       openCollectionInfoSidebar,
+      openUnitInfoSidebar,
       sidebarAction,
       setSidebarAction,
       resetSidebarAction,
@@ -166,6 +189,7 @@ export const SidebarProvider = ({
     openComponentInfoSidebar,
     sidebarComponentInfo,
     openCollectionInfoSidebar,
+    openUnitInfoSidebar,
     sidebarAction,
     setSidebarAction,
     resetSidebarAction,
@@ -191,6 +215,7 @@ export function useSidebarContext(): SidebarContextData {
       openLibrarySidebar: () => {},
       openComponentInfoSidebar: () => {},
       openCollectionInfoSidebar: () => {},
+      openUnitInfoSidebar: () => {},
       sidebarAction: SidebarActions.None,
       setSidebarAction: () => {},
       resetSidebarAction: () => {},
