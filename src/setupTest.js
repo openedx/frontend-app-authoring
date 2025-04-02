@@ -48,6 +48,7 @@ mergeConfig({
   STUDIO_BASE_URL: process.env.STUDIO_BASE_URL || null,
   LMS_BASE_URL: process.env.LMS_BASE_URL || null,
   LIBRARY_UNSUPPORTED_BLOCKS: (process.env.LIBRARY_UNSUPPORTED_BLOCKS || 'conditional,step-builder,problem-builder').split(','),
+  PARAGON_THEME_URLS: process.env.PARAGON_THEME_URLS || null,
 }, 'CourseAuthoringConfig');
 
 class ResizeObserver {
