@@ -143,6 +143,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
     showOnlyPublished,
     componentId,
     collectionId,
+    unitId,
   } = useLibraryContext();
   const { openInfoSidebar, sidebarComponentInfo } = useSidebarContext();
 
@@ -173,7 +174,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
 
   useEffect(() => {
     if (!componentPickerMode) {
-      openInfoSidebar(componentId, collectionId, '');
+      openInfoSidebar(componentId, collectionId, unitId);
     }
   }, []);
 
