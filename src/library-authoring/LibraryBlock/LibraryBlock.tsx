@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 
@@ -43,10 +43,6 @@ export const LibraryBlock = ({
   const { iframeHeight } = useIFrameBehavior({ id: usageKey, iframeUrl });
 
   useIframeContent(iframeRef, setIframeRef);
-
-  useEffect(() => {
-    setIframeRef(iframeRef);
-  }, [setIframeRef]);
 
   /**
    * Handle any messages we receive from the XBlock Runtime code in the IFrame.
@@ -93,7 +89,8 @@ export const LibraryBlock = ({
       title={intl.formatMessage(messages.iframeTitle)}
       src={iframeUrl}
       data-testid="block-preview"
-      name="xblock-iframe"
+      name={`xblock-iframe-${usageKey}`}
+      id={`xblock-iframe-${usageKey}`}
       frameBorder="0"
       loading="lazy"
       referrerPolicy="origin"
