@@ -36,13 +36,19 @@ export const useIFrameBehavior = ({
 
   const receiveMessage = useCallback(({ data }: MessageEvent) => {
     const { payload, type } = data;
-    // __AUTO_GENERATED_PRINT_VAR_START__
-    console.log("useIFrameBehavior#(anon) type: ", type); // __AUTO_GENERATED_PRINT_VAR_END__
-    // __AUTO_GENERATED_PRINT_VAR_START__
-    console.log("useIFrameBehavior#(anon) payload: ", payload); // __AUTO_GENERATED_PRINT_VAR_END__
 
     if (type === iframeMessageTypes.resize) {
-      setIframeHeight(payload.height);
+      // if payload contains a usageId, check if it matches with current id
+      // and setIFrameHeight, this is required when a single page has multiple
+      // iframes like LibraryUnit Page and we need to set height of each component
+      // iframe individually.
+      if (payload.usageId) {
+        if (payload.usageId === id) {
+          setIframeHeight(payload.height);
+        }
+      } else {
+        setIframeHeight(payload.height);
+      }
 
       if (!hasLoaded && iframeHeight === 0 && payload.height > 0) {
         setHasLoaded(true);
