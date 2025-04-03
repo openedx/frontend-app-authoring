@@ -4,6 +4,7 @@ import React, {
 import { logError } from '@edx/frontend-platform/logging';
 
 export interface IframeContextType {
+  iframeRef: MutableRefObject<HTMLIFrameElement | null>;
   setIframeRef: (ref: MutableRefObject<HTMLIFrameElement | null>) => void;
   sendMessageToIframe: (messageType: string, payload: unknown, consumerWindow?: Window | null) => void;
 }
@@ -31,6 +32,7 @@ export const IframeProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   }, [iframeRef]);
 
   const value = useMemo(() => ({
+    iframeRef,
     setIframeRef,
     sendMessageToIframe,
   }), [setIframeRef, sendMessageToIframe]);
