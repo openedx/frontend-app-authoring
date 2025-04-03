@@ -186,17 +186,18 @@ const CustomPages = ({
                     marginBottom: '16px',
                     boxShadow: '0px 1px 5px #ADADAD',
                   }}
-                >
-                  <CustomPageCard
-                    {...{
-                      page,
-                      dispatch,
-                      deletePageStatus,
-                      courseId,
-                      setCurrentPage,
-                    }}
-                  />
-                </SortableItem>
+                  actions={
+                    <CustomPageCard
+                      {...{
+                        page,
+                        dispatch,
+                        deletePageStatus,
+                        courseId,
+                        setCurrentPage,
+                      }}
+                    />
+                  }
+                />
               ))}
             </DraggableList>
             <StatefulButton
