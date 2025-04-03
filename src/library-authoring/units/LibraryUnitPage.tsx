@@ -1,9 +1,11 @@
 import { useIntl } from "@edx/frontend-platform/i18n";
 import { Breadcrumb, Button, Card, Container } from "@openedx/paragon";
 import { Add, InfoOutline } from "@openedx/paragon/icons";
+import classNames from "classnames";
 import { useEffect } from "react";
 import { Helmet } from 'react-helmet';
 import { Link } from "react-router-dom";
+import { blockTypes } from "../../editors/data/constants/app";
 
 import ErrorAlert from '../../generic/alert-error';
 import { IframeProvider } from "../../generic/hooks/context/iFrameContext";
@@ -65,15 +67,18 @@ const UnitBlocks = () => {
   }
 
   const renderedBlocks = blocks?.map((block) => (
-    <Card
-      className="my-3"
-      key={block.id}
-    >
-      <LibraryBlock
-        usageKey={block.id}
-        version={showOnlyPublished ? 'published' : undefined}
-      />
-    </Card>
+    <IframeProvider key={block.id}>
+      <Card className="my-3 p-3">
+        <div className={classNames({
+          "container-mw-md": block.blockType === blockTypes.video,
+        })}>
+          <LibraryBlock
+            usageKey={block.id}
+            version={showOnlyPublished ? 'published' : undefined}
+          />
+        </div>
+      </Card>
+    </IframeProvider>
   ));
   return (<>{renderedBlocks}</>);
 }
@@ -137,39 +142,37 @@ export const LibraryUnitPage = () => {
   )
 
   return (
-    <IframeProvider>
-      <div className="d-flex">
-        <div className="flex-grow-1">
-          <Helmet><title>{libraryData.title} | {process.env.SITE_NAME}</title></Helmet>
-          <Header
-            number={libraryData.slug}
-            title={libraryData.title}
-            org={libraryData.org}
-            contextId={libraryId}
-            isLibrary
-            containerProps={{
-              size: undefined,
-            }}
+    <div className="d-flex">
+      <div className="flex-grow-1">
+        <Helmet><title>{libraryData.title} | {process.env.SITE_NAME}</title></Helmet>
+        <Header
+          number={libraryData.slug}
+          title={libraryData.title}
+          org={libraryData.org}
+          contextId={libraryId}
+          isLibrary
+          containerProps={{
+            size: undefined,
+          }}
+        />
+        <Container className="px-4 mt-4 mb-5 library-authoring-page">
+          <SubHeader
+            title={<SubHeaderTitle title={unitData.displayName} />}
+            headerActions={<HeaderActions />}
+            breadcrumbs={breadcrumbs}
+            hideBorder
           />
-          <Container className="px-4 mt-4 mb-5 library-authoring-page">
-            <SubHeader
-              title={<SubHeaderTitle title={unitData.displayName} />}
-              headerActions={<HeaderActions />}
-              breadcrumbs={breadcrumbs}
-              hideBorder
-            />
-            <UnitBlocks/>
-          </Container>
-        </div>
-        {!!sidebarComponentInfo?.type && (
-          <div
-            className="library-authoring-sidebar box-shadow-left-1 bg-white"
-            data-testid="library-sidebar"
-          >
-            <LibrarySidebar />
-          </div>
-        )}
+          <UnitBlocks/>
+        </Container>
       </div>
-    </IframeProvider>
+      {!!sidebarComponentInfo?.type && (
+        <div
+          className="library-authoring-sidebar box-shadow-left-1 bg-white"
+          data-testid="library-sidebar"
+        >
+          <LibrarySidebar />
+        </div>
+      )}
+    </div>
   )
 }
