@@ -40,7 +40,6 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   courseId, blockId, unitXBlockActions, courseVerticalChildren, handleConfigureSubmit, isUnitVerticalType,
 }) => {
   const intl = useIntl();
-  const iframeRef = useRef<HTMLIFrameElement>(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -56,8 +55,8 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const iframeUrl = useMemo(() => getIframeUrl(blockId), [blockId]);
   const legacyEditModalUrl = useMemo(() => getLegacyEditModalUrl(configureXBlockId), [configureXBlockId]);
 
-  const { setIframeRef, sendMessageToIframe } = useIframe();
-  const { iframeHeight } = useIFrameBehavior({ id: blockId, iframeUrl });
+  const { iframeRef, setIframeRef, sendMessageToIframe } = useIframe();
+  const { iframeHeight } = useIFrameBehavior({ id: blockId, iframeUrl, iframeRef });
 
   useIframeContent(iframeRef, setIframeRef);
 

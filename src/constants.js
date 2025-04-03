@@ -104,4 +104,5 @@ export const iframeMessageTypes = {
   modal: 'plugin.modal',
   resize: 'plugin.resize',
   videoFullScreen: 'plugin.videoFullScreen',
+  xblockEvent: 'xblock-event',
 }

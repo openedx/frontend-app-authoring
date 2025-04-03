@@ -1,4 +1,3 @@
-import { useEffect, useRef } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 
@@ -15,6 +14,7 @@ interface LibraryBlockProps {
   usageKey: string;
   version?: VersionSpec;
   view?: string;
+  scrolling?: string;
 }
 /**
  * React component that displays an XBlock in a sandboxed IFrame.
@@ -30,9 +30,9 @@ export const LibraryBlock = ({
   usageKey,
   version,
   view,
+  scrolling = "no",
 }: LibraryBlockProps) => {
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-  const { setIframeRef } = useIframe();
+  const { iframeRef, setIframeRef } = useIframe();
   const xblockView = view ?? 'student_view';
 
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
@@ -40,48 +40,14 @@ export const LibraryBlock = ({
   const intl = useIntl();
   const queryStr = version ? `?version=${version}` : '';
   const iframeUrl = `${studioBaseUrl}/xblocks/v2/${usageKey}/embed/${xblockView}/${queryStr}`;
-  const { iframeHeight } = useIFrameBehavior({ id: usageKey, iframeUrl });
+  const { iframeHeight } = useIFrameBehavior({
+    id: usageKey,
+    iframeUrl,
+    iframeRef,
+    onBlockNotification,
+  });
 
   useIframeContent(iframeRef, setIframeRef);
-
-  /**
-   * Handle any messages we receive from the XBlock Runtime code in the IFrame.
-   * See wrap.ts to see the code that sends these messages.
-   */
-  /* istanbul ignore next */
-  const receivedWindowMessage = async (event) => {
-    if (!iframeRef.current || event.source !== iframeRef.current.contentWindow) {
-      return; // This is some other random message.
-    }
-
-    const { method, replyKey, ...args } = event.data;
-    if (method?.indexOf('xblock:') === 0) {
-      // This is a notification from the XBlock's frontend via 'runtime.notify(event, args)'
-      if (onBlockNotification) {
-        onBlockNotification({
-          eventType: method.substr(7), // Remove the 'xblock:' prefix that we added in wrap.ts
-          ...args,
-        });
-      }
-    }
-  };
-
-  /**
-   * Prepare to receive messages from the IFrame.
-   */
-  useEffect(() => {
-    // Messages are the only way that the code in the IFrame can communicate
-    // with the surrounding UI.
-    window.addEventListener('message', receivedWindowMessage);
-    if (window.self !== window.top) {
-      // This component is loaded inside an iframe.
-      // setIFrameHeight(86);
-    }
-
-    return () => {
-      window.removeEventListener('message', receivedWindowMessage);
-    };
-  }, []);
 
   return (
     <iframe
@@ -97,7 +63,7 @@ export const LibraryBlock = ({
       style={{ width: '100%', height: iframeHeight }}
       allow={IFRAME_FEATURE_POLICY}
       allowFullScreen
-      scrolling="no"
+      scrolling={scrolling}
     />
   );
 };
