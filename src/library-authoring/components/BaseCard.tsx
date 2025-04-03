@@ -74,11 +74,7 @@ const BaseCard = ({
             <div className="text-truncate h3 mt-1">
               <Highlight text={displayName} />
             </div>
-            {
-              props.preview
-                ? props.preview
-                : <Highlight text={description} />
-            }
+            {props.preview || <Highlight text={description} />}
           </Card.Section>
         </Card.Body>
         <Card.Footer className="mt-auto">

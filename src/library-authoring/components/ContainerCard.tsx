@@ -4,6 +4,7 @@ import {
   Dropdown,
   Icon,
   IconButton,
+  Stack,
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
 import { ReactNode, useCallback } from 'react';
@@ -64,16 +65,16 @@ const ContainerCardPreview = ({ containerId, showMaxChildren = 5 }: ContainerCar
 
   const hiddenChildren = data.length - showMaxChildren;
   return (
-    <div className="container-card-preview d-flex flex-wrap align-self-start">
+    <Stack direction="horizontal" gap={2}>
       {
         data.slice(0, showMaxChildren).map(({ id, blockType, displayName }, idx) => {
-          let classNames = 'd-inline-flex rounded align-items-center m-1 p-1';
           let blockPreview: ReactNode;
+          let classNames;
 
           if (idx < showMaxChildren - 1 || hiddenChildren <= 0) {
             // Show the first N-1 blocks as item icons
             // (or all N blocks if no hidden children)
-            classNames = `${classNames} ${getComponentStyleColor(blockType)}`;
+            classNames = `rounded p-1 ${getComponentStyleColor(blockType)}`;
             blockPreview = (
               <Icon
                 src={getItemIcon(blockType)}
@@ -100,7 +101,7 @@ const ContainerCardPreview = ({ containerId, showMaxChildren = 5 }: ContainerCar
           );
         })
       }
-    </div>
+    </Stack>
   );
 };
 
