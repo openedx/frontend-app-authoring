@@ -107,6 +107,14 @@ export const getContentStoreApiUrl = () => `${getApiBaseUrl()}/api/contentstore/
  * Get the URL for the library container api.
  */
 export const getLibraryContainersApiUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/containers/`;
+/**
+ * Get the URL for the library container detail api.
+ */
+export const getLibraryContainerDetailApiUrl = (containerId: string) => `${getApiBaseUrl()}/api/libraries/v2/containers/${containerId}/`;
+/**
+ * Get the URL for the library container children api.
+ */
+export const getLibraryContainerChildrenApiUrl = (containerId: string) => `${getLibraryContainerDetailApiUrl(containerId)}children/`;
 
 export interface ContentLibrary {
   id: string;
@@ -165,6 +173,20 @@ export interface Collection {
   created: string;
   modified: string;
   learningPackage: number;
+}
+
+export interface ContainerMetata {
+  containerKey: string;
+  containerType: string;
+  displayName: string;
+  lastPublished: string | null;
+  publishedBy: string | null;
+  lastDraftCreated: string | null;
+  lastDraftCreatedBy: string | null;
+  hasUnpublishedDeletes: boolean;
+  created: string;
+  modified: string;
+  collections: CollectionMetadata[];
 }
 
 export interface LibraryBlockType {
@@ -573,4 +595,20 @@ export interface CreateLibraryContainerDataRequest {
 export async function createLibraryContainer(libraryId: string, containerData: CreateLibraryContainerDataRequest) {
   const client = getAuthenticatedHttpClient();
   await client.post(getLibraryContainersApiUrl(libraryId), snakeCaseObject(containerData));
+}
+
+/**
+ * Fetch container metadata.
+ */
+export async function getLibraryContainerMetadata(containerId: string): Promise<ContainerMetata> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryContainerDetailApiUrl(containerId));
+  return camelCaseObject(data);
+}
+
+/**
+ * Fetch container metadata.
+ */
+export async function getLibraryContainerChildren(containerId: string): Promise<LibraryBlockMetadata[]> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryContainerChildrenApiUrl(containerId));
+  return camelCaseObject(data);
 }

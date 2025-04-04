@@ -16,6 +16,7 @@ import { CreateUnitModal } from './create-unit';
 import LibraryCollectionPage from './collections/LibraryCollectionPage';
 import { ComponentPicker } from './component-picker';
 import { ComponentEditorModal } from './components/ComponentEditorModal';
+import { LibraryUnitPage } from './units';
 
 const LibraryLayout = () => {
   const { libraryId } = useParams();
@@ -73,6 +74,10 @@ const LibraryLayout = () => {
       <Route
         path={ROUTES.COLLECTION}
         element={context(<LibraryCollectionPage />)}
+      />
+      <Route
+        path={ROUTES.UNIT}
+        element={context(<LibraryUnitPage />)}
       />
       <Route
         path={ROUTES.HOME}

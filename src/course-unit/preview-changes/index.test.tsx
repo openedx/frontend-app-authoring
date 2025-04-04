@@ -10,7 +10,7 @@ import {
 
 import IframePreviewLibraryXBlockChanges, { LibraryChangesMessageData } from '.';
 import { messageTypes } from '../constants';
-import { IframeProvider } from '../context/iFrameContext';
+import { IframeProvider } from '../../generic/hooks/context/iFrameContext';
 import { libraryBlockChangesUrl } from '../data/api';
 import { ToastActionData } from '../../generic/toast-context';
 import { getLibraryBlockMetadataUrl } from '../../library-authoring/data/api';
