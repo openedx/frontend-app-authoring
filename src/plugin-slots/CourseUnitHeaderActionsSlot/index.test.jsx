@@ -17,7 +17,7 @@ const headerNavProps = {
     handlePreview: jest.fn(),
     handleEdit: jest.fn(),
   },
-  unitCategory: 'vertical',
+  category: 'vertical',
   unitTitle: 'Mock Unit',
   verticalBlocks: [],
 };
@@ -35,7 +35,7 @@ describe('CourseUnitHeaderActionsSlot', () => {
       <CourseUnitHeaderActionsSlot
         unitTitle="Mock Title"
         verticalBlocks={[]}
-        unitCategory="library"
+        category="library"
         headerNavigationsActions={headerNavProps.headerNavigationsActions}
       />,
     );
@@ -45,7 +45,7 @@ describe('CourseUnitHeaderActionsSlot', () => {
       <CourseUnitHeaderActionsSlot
         unitTitle="Mock Title"
         verticalBlocks={[]}
-        unitCategory={COURSE_BLOCK_NAMES.vertical.id}
+        category={COURSE_BLOCK_NAMES.vertical.id}
         headerNavigationsActions={headerNavProps.headerNavigationsActions}
       />,
     );

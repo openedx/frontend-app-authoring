@@ -7,17 +7,17 @@ import HeaderNavigations from 'CourseAuthoring/course-unit/header-navigations/He
 import { COURSE_BLOCK_NAMES } from 'CourseAuthoring/constants';
 
 const CourseUnitHeaderActionsSlot = ({
-  headerNavigationsActions, unitCategory, unitTitle, verticalBlocks,
+  headerNavigationsActions, category, unitTitle, verticalBlocks,
 }) => {
-  const isUnitVerticalType = unitCategory === COURSE_BLOCK_NAMES.vertical.id;
+  const isUnitVerticalType = category === COURSE_BLOCK_NAMES.vertical.id;
   return (
     <PluginSlot
       id="course_unit_header_actions_slot"
       pluginProps={{
-        headerNavigationsActions, unitCategory, unitTitle, isUnitVerticalType, verticalBlocks,
+        headerNavigationsActions, category, unitTitle, isUnitVerticalType, verticalBlocks,
       }}
     >
-      <HeaderNavigations headerNavigationsActions={headerNavigationsActions} unitCategory={unitCategory} />
+      <HeaderNavigations headerNavigationsActions={headerNavigationsActions} category={category} />
     </PluginSlot>
   );
 };
@@ -28,7 +28,7 @@ CourseUnitHeaderActionsSlot.propTypes = {
     handlePreview: PropTypes.func.isRequired,
     handleEdit: PropTypes.func.isRequired,
   }).isRequired,
-  unitCategory: PropTypes.string.isRequired,
+  category: PropTypes.string.isRequired,
   unitTitle: PropTypes.string.isRequired,
   verticalBlocks: PropTypes.arrayOf(
     PropTypes.shape({

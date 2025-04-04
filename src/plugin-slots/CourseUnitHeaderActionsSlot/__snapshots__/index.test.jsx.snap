@@ -5,19 +5,20 @@ exports[`CourseUnitHeaderActionsSlot pluginProps are set correctly 1`] = `
   id="course_unit_header_actions_slot"
   pluginProps={
     {
+      "category": "vertical",
       "headerNavigationsActions": {
         "handleEdit": [MockFunction],
         "handlePreview": [MockFunction],
         "handleViewLive": [MockFunction],
       },
       "isUnitVerticalType": true,
-      "unitCategory": "vertical",
       "unitTitle": "Mock Unit",
       "verticalBlocks": [],
     }
   }
 >
   <HeaderNavigations
+    category="vertical"
     headerNavigationsActions={
       {
         "handleEdit": [MockFunction],
@@ -25,7 +26,6 @@ exports[`CourseUnitHeaderActionsSlot pluginProps are set correctly 1`] = `
         "handleViewLive": [MockFunction],
       }
     }
-    unitCategory="vertical"
   />
 </PluginSlot>
 `;
