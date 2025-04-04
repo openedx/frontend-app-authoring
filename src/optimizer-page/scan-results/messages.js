@@ -29,6 +29,10 @@ const messages = defineMessages({
     id: 'course-authoring.course-optimizer.lockedLinksNumber',
     defaultMessage: '{count} locked links',
   },
+  externalForbiddenLinksNumber: {
+    id: 'course-authoring.course-optimizer.externalForbiddenLinksNumber',
+    defaultMessage: '{count} manual check',
+  },
   lockedInfoTooltip: {
     id: 'course-authoring.course-optimizer.lockedInfoTooltip',
     defaultMessage: 'These course files are "locked", so we cannot verify if the link can access the file.',
