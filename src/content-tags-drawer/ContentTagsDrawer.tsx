@@ -227,7 +227,6 @@ interface ContentTagsDrawerProps {
  * It is used both in interfaces of this MFE and in edx-platform interfaces such as iframe.
  * - If you want to use it as an iframe, the component obtains the `contentId` from the url parameters.
  *   Functions to close the drawer are handled internally.
- *   TODO: We can delete this method when is no longer used on edx-platform.
  * - If you want to use it as react component, you need to pass the content id and the close functions
  *   through the component parameters.
  */
@@ -246,7 +245,7 @@ const ContentTagsDrawer = ({
     throw new Error('Error: contentId cannot be null.');
   }
 
-  const context = useCreateContentTagsDrawerContext(contentId, !readOnly);
+  const context = useCreateContentTagsDrawerContext(contentId, !readOnly, variant === 'drawer');
   const { blockingSheet } = useContext(ContentTagsDrawerSheetContext);
 
   const {

@@ -16,6 +16,11 @@ const messages = defineMessages({
     defaultMessage: 'Organize',
     description: 'Title for organize tab',
   },
+  organizeTabTagsTitle: {
+    id: 'course-authoring.library-authoring.container-sidebar.organize-tab.tags.title',
+    defaultMessage: 'Tags ({count})',
+    description: 'Title for tags section in organize tab',
+  },
   settingsTabTitle: {
     id: 'course-authoring.library-authoring.container-sidebar.settings-tab.title',
     defaultMessage: 'Settings',

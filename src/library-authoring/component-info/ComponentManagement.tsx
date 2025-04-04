@@ -11,8 +11,7 @@ import { SidebarActions, useSidebarContext } from '../common/context/SidebarCont
 import { useLibraryBlockMetadata } from '../data/apiHooks';
 import StatusWidget from '../generic/status-widget';
 import messages from './messages';
-import { ContentTagsDrawer } from '../../content-tags-drawer';
-import { useContentTaxonomyTagsData } from '../../content-tags-drawer/data/apiHooks';
+import { ContentTagsDrawer, useContentTaxonomyTagsData } from '../../content-tags-drawer';
 import ManageCollections from './ManageCollections';
 
 const ComponentManagement = () => {
