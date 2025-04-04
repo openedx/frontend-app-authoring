@@ -1,5 +1,5 @@
 import { useIntl } from "@edx/frontend-platform/i18n";
-import { ActionRow, Breadcrumb, Button, Card, Container, Icon, Stack } from "@openedx/paragon";
+import { ActionRow, Breadcrumb, Button, Container, Icon, Stack } from "@openedx/paragon";
 import { Add, InfoOutline } from "@openedx/paragon/icons";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
@@ -72,7 +72,7 @@ const UnitBlocks = () => {
   if (isError) {
     return <ErrorAlert error={error} />;
   }
-  const handleReorder = () => (newOrder) => {
+  const handleReorder = () => (newOrder: LibraryBlockMetadata[]) => {
     // TODO: update order of components in unit
   };
 
@@ -100,7 +100,7 @@ const UnitBlocks = () => {
         actionStyle={{
           borderRadius: '8px 8px 0px 0px',
           padding: '0.5rem 1rem',
-          backgroundColor: '#FBFAF9',
+          background: '#FBFAF9',
           borderBottom: 'solid 1px #E1DDDB'
         }}
       >
@@ -194,14 +194,18 @@ export const LibraryUnitPage = () => {
             size: undefined,
           }}
         />
-        <Container className="px-4 mt-4 mb-5 library-authoring-page">
-          <SubHeader
-            title={<SubHeaderTitle title={unitData.displayName} />}
-            headerActions={<HeaderActions />}
-            breadcrumbs={breadcrumbs}
-            hideBorder
-          />
-          <UnitBlocks/>
+        <Container className="px-0 mt-4 mb-5 library-authoring-page bg-white">
+          <div className="px-4 bg-light-200 border-bottom mb-2">
+            <SubHeader
+              title={<SubHeaderTitle title={unitData.displayName} />}
+              headerActions={<HeaderActions />}
+              breadcrumbs={breadcrumbs}
+              hideBorder
+            />
+          </div>
+          <Container className="px-4 py-4">
+            <UnitBlocks/>
+          </Container>
         </Container>
       </div>
       {!!sidebarComponentInfo?.type && (
