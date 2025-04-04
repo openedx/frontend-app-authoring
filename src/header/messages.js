@@ -103,7 +103,7 @@ const messages = defineMessages({
   },
   'header.links.optimizer': {
     id: 'header.links.optimizer',
-    defaultMessage: 'Optimize Course',
+    defaultMessage: 'Course Optimizer',
     description: 'Fix broken links and other issues in your course',
   },
   'header.links.exportTags': {
