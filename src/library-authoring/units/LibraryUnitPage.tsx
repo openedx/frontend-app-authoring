@@ -1,10 +1,12 @@
-import { useIntl } from "@edx/frontend-platform/i18n";
-import { ActionRow, Breadcrumb, Button, Container, Icon, Stack } from "@openedx/paragon";
-import { Add, InfoOutline } from "@openedx/paragon/icons";
+import { FormattedMessage, useIntl } from "@edx/frontend-platform/i18n";
+import { ActionRow, Badge, Breadcrumb, Button, Container, Icon, Stack, useToggle } from "@openedx/paragon";
+import { Add, Description, InfoOutline } from "@openedx/paragon/icons";
+import { useQueryClient } from "@tanstack/react-query";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
 import { Helmet } from 'react-helmet';
 import { Link } from "react-router-dom";
+import { ContentTagsDrawerSheet } from "../../content-tags-drawer";
 import { blockTypes } from "../../editors/data/constants/app";
 import DraggableList, { SortableItem } from "../../editors/sharedComponents/DraggableList";
 
@@ -14,12 +16,13 @@ import { IframeProvider } from "../../generic/hooks/context/iFrameContext";
 import Loading from "../../generic/Loading";
 import NotFoundAlert from "../../generic/NotFoundAlert";
 import SubHeader from "../../generic/sub-header/SubHeader";
+import TagCount from "../../generic/tag-count";
 import Header from "../../header";
 import { useLibraryContext } from "../common/context/LibraryContext";
 import { useSidebarContext } from "../common/context/SidebarContext";
 import ComponentMenu from "../components";
 import { LibraryBlockMetadata } from "../data/api";
-import { useContainer, useContainerChildren, useContentLibrary } from "../data/apiHooks";
+import { libraryAuthoringQueryKeys, useContainer, useContainerChildren, useContentLibrary } from "../data/apiHooks";
 import { LibrarySidebar } from "../library-sidebar";
 import { SubHeaderTitle } from "../LibraryAuthoringPage";
 import { LibraryBlock } from "../LibraryBlock";
@@ -49,13 +52,16 @@ const HeaderActions = () => {
 };
 
 const UnitBlocks = () => {
+  const [selectedBlock, setSelectedBlock] = useState<LibraryBlockMetadata | null>(null);
   const [orderedBlocks, setOrderedBlocks] = useState<LibraryBlockMetadata[]>([]);
+  const [isManageTagsDrawerOpen, openManageTagsDrawer, closeManageTagsDrawer] = useToggle(false);
   const {
     libraryId,
     unitId,
     showOnlyPublished
   } = useLibraryContext();
 
+  const queryClient = useQueryClient();
   const {
     data: blocks,
     isLoading,
@@ -76,16 +82,21 @@ const UnitBlocks = () => {
     // TODO: update order of components in unit
   };
 
+  const onTagSidebarClose = () => {
+    queryClient.invalidateQueries(libraryAuthoringQueryKeys.containerChildren(libraryId, unitId));
+    closeManageTagsDrawer();
+  }
+
   const renderedBlocks = orderedBlocks?.map((block) => (
     <IframeProvider key={block.id}>
       <SortableItem
         id={block.id}
         componentStyle={{
-          background: 'white',
           borderRadius: '8px',
           padding: '0px',
           marginBottom: '1rem',
-          border: 'solid 1px #E1DDDB'
+          border: 'solid 1px #E1DDDB',
+          boxShadow: 'none',
         }}
         actions={
           <>
@@ -94,7 +105,21 @@ const UnitBlocks = () => {
               {block.displayName}
             </Stack>
             <ActionRow.Spacer />
-            <ComponentMenu usageKey={block.id} />
+            <Stack direction="horizontal" gap={3}>
+              {block.hasUnpublishedChanges && (
+                <Badge
+                  className="px-2 pt-1"
+                  variant="warning"
+                >
+                  <Stack direction="horizontal" gap={1}>
+                    <Icon className="mb-1" size="xs" src={Description} />
+                    <FormattedMessage {...messages.draftChipText} />
+                  </Stack>
+                </Badge>
+              )}
+              <TagCount size="sm" count={block.tagsCount} onClick={openManageTagsDrawer} />
+              <ComponentMenu usageKey={block.id} />
+            </Stack>
           </>
         }
         actionStyle={{
@@ -103,6 +128,8 @@ const UnitBlocks = () => {
           background: '#FBFAF9',
           borderBottom: 'solid 1px #E1DDDB'
         }}
+        isClickable
+        onClick={() => setSelectedBlock(block)}
       >
         <div className={classNames('p-3', {
           "container-mw-md": block.blockType === blockTypes.video,
@@ -116,9 +143,16 @@ const UnitBlocks = () => {
     </IframeProvider>
   ));
   return (
-    <DraggableList itemList={orderedBlocks} setState={setOrderedBlocks} updateOrder={handleReorder}>
-      {renderedBlocks}
-    </DraggableList>
+    <>
+      <DraggableList itemList={orderedBlocks} setState={setOrderedBlocks} updateOrder={handleReorder}>
+        {renderedBlocks}
+      </DraggableList>
+      <ContentTagsDrawerSheet
+        id={selectedBlock?.id}
+        onClose={onTagSidebarClose}
+        showSheet={isManageTagsDrawerOpen}
+      />
+    </>
   );
 }
 

@@ -16,6 +16,11 @@ const messages = defineMessages({
     defaultMessage: 'Navigation breadcrumbs',
     description: 'Aria label for navigation breadcrumbs',
   },
+  draftChipText: {
+    id: 'course-authoring.library-authoring.unit-component.draft-chip.text',
+    defaultMessage: 'Draft',
+    description: 'Chip in components in unit page that is shown when component has unpublished changes',
+  },
 });
 
 export default messages;
