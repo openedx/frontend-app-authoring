@@ -1,4 +1,4 @@
-# Footer Slot
+# Studio Footer Slot
 
 ### Slot ID: `studio_footer_slot`
 
@@ -23,7 +23,7 @@ import { DIRECT_PLUGIN, PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-frame
 
 const config = {
   pluginSlots: {
-    footer_slot: {
+    studio_footer_slot: {
       plugins: [
         {
           // Hide the default footer
