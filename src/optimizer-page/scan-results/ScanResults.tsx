@@ -30,7 +30,11 @@ const ScanResults: FC<Props> = ({ data }) => {
   const intl = useIntl();
   const [showLockedLinks, setShowLockedLinks] = useState(true);
 
-  const { brokenLinksCounts, lockedLinksCounts } = useMemo(() => countBrokenLinks(data), [data?.sections]);
+  const {
+    brokenLinksCounts,
+    lockedLinksCounts,
+    externalForbiddenLinksCounts,
+  } = useMemo(() => countBrokenLinks(data), [data?.sections]);
 
   if (!data?.sections) {
     return <InfoCard text={intl.formatMessage(messages.noBrokenLinksCard)} />;
@@ -64,6 +68,9 @@ const ScanResults: FC<Props> = ({ data }) => {
           title={section.displayName}
           redItalics={intl.formatMessage(messages.brokenLinksNumber, { count: brokenLinksCounts[index] })}
           yellowItalics={!showLockedLinks ? '' : intl.formatMessage(messages.lockedLinksNumber, { count: lockedLinksCounts[index] })}
+          greenItalics={
+            intl.formatMessage(messages.externalForbiddenLinksNumber, { count: externalForbiddenLinksCounts[index] })
+          }
         >
           {section.subsections.map((subsection) => (
             <>
