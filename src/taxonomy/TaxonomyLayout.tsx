@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { StudioFooterSlot } from '@openedx/frontend-slot-footer';
 import { Outlet, ScrollRestoration } from 'react-router-dom';
 import { Toast } from '@openedx/paragon';

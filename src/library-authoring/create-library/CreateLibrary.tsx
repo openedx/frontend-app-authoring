@@ -1,4 +1,3 @@
-import React from 'react';
 import { StudioFooterSlot } from '@openedx/frontend-slot-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
