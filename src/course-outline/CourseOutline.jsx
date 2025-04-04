@@ -35,7 +35,6 @@ import AlertMessage from '../generic/alert-message';
 import getPageHeadTitle from '../generic/utils';
 import { getCurrentItem, getProctoredExamsFlag } from './data/selectors';
 import { COURSE_BLOCK_NAMES } from './constants';
-import HeaderNavigations from './header-navigations/HeaderNavigations';
 import OutlineSideBar from './outline-sidebar/OutlineSidebar';
 import StatusBar from './status-bar/StatusBar';
 import EnableHighlightsModal from './enable-highlights-modal/EnableHighlightsModal';
@@ -55,6 +54,7 @@ import {
 import { useCourseOutline } from './hooks';
 import messages from './messages';
 import { getTagsExportFile } from './data/api';
+import CourseOutlineHeaderActionsSlot from '../plugin-slots/CourseOutlineHeaderActionsSlot';
 
 const CourseOutline = ({ courseId }) => {
   const intl = useIntl();
@@ -294,7 +294,7 @@ const CourseOutline = ({ courseId }) => {
             title={intl.formatMessage(messages.headingTitle)}
             subtitle={intl.formatMessage(messages.headingSubtitle)}
             headerActions={(
-              <HeaderNavigations
+              <CourseOutlineHeaderActionsSlot
                 isReIndexShow={isReIndexShow}
                 isSectionsExpanded={isSectionsExpanded}
                 headerNavigationsActions={headerNavigationsActions}
@@ -302,6 +302,7 @@ const CourseOutline = ({ courseId }) => {
                 hasSections={Boolean(sectionsList.length)}
                 courseActions={courseActions}
                 errors={errors}
+                sections={sections}
               />
             )}
           />
