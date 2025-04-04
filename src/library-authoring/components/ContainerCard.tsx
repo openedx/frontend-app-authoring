@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -11,6 +12,8 @@ import { Link } from 'react-router-dom';
 import { type ContainerHit, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
+import { useSidebarContext } from '../common/context/SidebarContext';
+import { useLibraryRoutes } from '../routes';
 import BaseCard from './BaseCard';
 import messages from './messages';
 
@@ -53,6 +56,7 @@ type ContainerCardProps = {
 const ContainerCard = ({ hit } : ContainerCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
   const { showOnlyPublished } = useLibraryContext();
+  const { openUnitInfoSidebar } = useSidebarContext();
 
   const {
     blockType: itemType,
@@ -61,6 +65,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     numChildren,
     published,
     publishStatus,
+    usageKey: unitId,
   } = hit;
 
   const numChildrenCount = showOnlyPublished ? (
@@ -71,7 +76,15 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     showOnlyPublished ? formatted.published?.displayName : formatted.displayName
   ) ?? '';
 
-  const openContainer = () => {};
+  const { navigateTo } = useLibraryRoutes();
+
+  const openContainer = useCallback(() => {
+    if (itemType === 'unit') {
+      openUnitInfoSidebar(unitId);
+
+      navigateTo({ unitId });
+    }
+  }, [unitId, itemType, openUnitInfoSidebar, navigateTo]);
 
   return (
     <BaseCard
