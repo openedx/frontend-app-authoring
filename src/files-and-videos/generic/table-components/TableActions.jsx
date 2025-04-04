@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import _ from 'lodash';
+import { isEmpty } from 'lodash';
 import { PropTypes } from 'prop-types';
 import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
@@ -57,7 +57,7 @@ const TableActions = ({
           ) : null}
           <Dropdown.Item
             onClick={() => handleBulkDownload(selectedFlatRows)}
-            disabled={_.isEmpty(selectedFlatRows)}
+            disabled={isEmpty(selectedFlatRows)}
           >
             <FormattedMessage {...messages.downloadTitle} />
           </Dropdown.Item>
@@ -65,7 +65,7 @@ const TableActions = ({
           <Dropdown.Item
             data-testid="open-delete-confirmation-button"
             onClick={() => handleOpenDeleteConfirmation(selectedFlatRows)}
-            disabled={_.isEmpty(selectedFlatRows)}
+            disabled={isEmpty(selectedFlatRows)}
           >
             <FormattedMessage {...messages.deleteTitle} />
           </Dropdown.Item>

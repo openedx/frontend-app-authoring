@@ -14,7 +14,9 @@ import {
   useToggle,
 } from '@openedx/paragon';
 
-import _ from 'lodash';
+import {
+  tail, keyBy, orderBy, merge, omitBy,
+} from 'lodash';
 import { useQueryClient } from '@tanstack/react-query';
 import { Loop, Warning } from '@openedx/paragon/icons';
 import messages from './messages';
@@ -49,7 +51,7 @@ interface BlockCardProps {
 const BlockCard: React.FC<BlockCardProps> = ({ info, actions }) => {
   const intl = useIntl();
   const componentIcon = getItemIcon(info.blockType);
-  const breadcrumbs = _.tail(info.breadcrumbs) as Array<{ displayName: string, usageKey: string }>;
+  const breadcrumbs = tail(info.breadcrumbs) as Array<{ displayName: string, usageKey: string }>;
 
   const getBlockLink = useCallback(() => {
     let key = info.usageKey;
@@ -138,11 +140,11 @@ const ComponentReviewList = ({
   );
 
   const outOfSyncComponentsByKey = useMemo(
-    () => _.keyBy(outOfSyncComponents, 'downstreamUsageKey'),
+    () => keyBy(outOfSyncComponents, 'downstreamUsageKey'),
     [outOfSyncComponents],
   );
   const downstreamInfoByKey = useMemo(
-    () => _.keyBy(downstreamInfo, 'usageKey'),
+    () => keyBy(downstreamInfo, 'usageKey'),
     [downstreamInfo],
   );
   const queryClient = useQueryClient();
@@ -241,9 +243,9 @@ const ComponentReviewList = ({
     if (isIndexDataLoading) {
       return [];
     }
-    let merged = _.merge(downstreamInfoByKey, outOfSyncComponentsByKey);
-    merged = _.omitBy(merged, (o) => !o.displayName);
-    const ordered = _.orderBy(Object.values(merged), 'updated', 'desc');
+    let merged = merge(downstreamInfoByKey, outOfSyncComponentsByKey);
+    merged = omitBy(merged, (o) => !o.displayName);
+    const ordered = orderBy(Object.values(merged), 'updated', 'desc');
     return ordered;
   }, [downstreamInfoByKey, outOfSyncComponentsByKey]);
 

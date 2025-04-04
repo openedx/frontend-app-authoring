@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
+import { isEmpty } from 'lodash';
 import { Form } from '@openedx/paragon';
 
 const FormGroup = (props) => {
@@ -35,13 +35,13 @@ const FormGroup = (props) => {
 
       {props.children}
 
-      {props.helpText && _.isEmpty(props.errorMessage) && (
+      {props.helpText && isEmpty(props.errorMessage) && (
         <Form.Control.Feedback type="default" key="help-text">
           {props.helpText}
         </Form.Control.Feedback>
       )}
 
-      {!_.isEmpty(props.errorMessage) && (
+      {!isEmpty(props.errorMessage) && (
         <Form.Control.Feedback
           type="invalid"
           key="error"

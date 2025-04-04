@@ -1,15 +1,17 @@
-import _ from 'lodash';
+import {
+  get, isEmpty, isFinite, isNil,
+} from 'lodash';
 
 import { ShowAnswerTypes, RandomizationTypesKeys } from '../../../data/constants/problem';
 
 export const popuplateItem = (parentObject, itemName, statekey, metadata, defaultValue = null, allowNull = false) => {
   let parent = parentObject;
-  const item = _.get(metadata, itemName, null);
+  const item = get(metadata, itemName, null);
 
   // if item is null, undefined, or empty string, use defaultValue
-  const finalValue = (_.isNil(item) || item === '') ? defaultValue : item;
+  const finalValue = (isNil(item) || item === '') ? defaultValue : item;
 
-  if (!_.isNil(finalValue) || allowNull) {
+  if (!isNil(finalValue) || allowNull) {
     parent = { ...parentObject, [statekey]: finalValue };
   }
   return parent;
@@ -19,18 +21,18 @@ export const parseScoringSettings = (metadata, defaultSettings) => {
   let scoring = {};
 
   const attempts = popuplateItem({}, 'max_attempts', 'number', metadata);
-  const initialAttempts = _.get(attempts, 'number', null);
-  const defaultAttempts = _.get(defaultSettings, 'max_attempts', null);
+  const initialAttempts = get(attempts, 'number', null);
+  const defaultAttempts = get(defaultSettings, 'max_attempts', null);
   attempts.unlimited = false;
 
   // isFinite checks if value is a finite primitive number.
-  if (!_.isFinite(initialAttempts) || initialAttempts === defaultAttempts) {
+  if (!isFinite(initialAttempts) || initialAttempts === defaultAttempts) {
     // set number to null in any case as lms will pick default value if it exists.
     attempts.number = null;
   }
 
   // if both block number and default number are null set unlimited to true.
-  if (_.isNil(initialAttempts) && _.isNil(defaultAttempts)) {
+  if (isNil(initialAttempts) && isNil(defaultAttempts)) {
     attempts.unlimited = true;
   }
 
@@ -48,8 +50,8 @@ export const parseScoringSettings = (metadata, defaultSettings) => {
 export const parseShowAnswer = (metadata) => {
   let showAnswer = {};
 
-  const showAnswerType = _.get(metadata, 'showanswer', {});
-  if (!_.isNil(showAnswerType) && showAnswerType in ShowAnswerTypes) {
+  const showAnswerType = get(metadata, 'showanswer', {});
+  if (!isNil(showAnswerType) && showAnswerType in ShowAnswerTypes) {
     showAnswer = { ...showAnswer, on: showAnswerType };
   }
 
@@ -61,22 +63,22 @@ export const parseShowAnswer = (metadata) => {
 export const parseSettings = (metadata, defaultSettings) => {
   let settings = {};
 
-  if (_.isNil(metadata) || _.isEmpty(metadata)) {
+  if (isNil(metadata) || isEmpty(metadata)) {
     return settings;
   }
 
   const scoring = parseScoringSettings(metadata, defaultSettings);
-  if (!_.isEmpty(scoring)) {
+  if (!isEmpty(scoring)) {
     settings = { ...settings, scoring };
   }
 
   const showAnswer = parseShowAnswer(metadata);
-  if (!_.isEmpty(showAnswer)) {
+  if (!isEmpty(showAnswer)) {
     settings = { ...settings, showAnswer };
   }
 
-  const randomizationType = _.get(metadata, 'rerandomize', {});
-  if (!_.isEmpty(randomizationType) && Object.values(RandomizationTypesKeys).includes(randomizationType)) {
+  const randomizationType = get(metadata, 'rerandomize', {});
+  if (!isEmpty(randomizationType) && Object.values(RandomizationTypesKeys).includes(randomizationType)) {
     settings = popuplateItem(settings, 'rerandomize', 'randomization', metadata);
   }
 
