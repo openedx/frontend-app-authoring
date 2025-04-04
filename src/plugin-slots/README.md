@@ -9,3 +9,6 @@
 ## Course Unit page
 
 * [`course_unit_header_actions_slot`](./CourseUnitHeaderActionsSlot/)
+
+## Footer Slot
+* [`studio_footer_slot`](./StudioFooterSlot/)
