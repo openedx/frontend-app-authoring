@@ -107,6 +107,14 @@ export const getContentStoreApiUrl = () => `${getApiBaseUrl()}/api/contentstore/
  * Get the URL for the library container api.
  */
 export const getLibraryContainersApiUrl = (libraryId: string) => `${getApiBaseUrl()}/api/libraries/v2/${libraryId}/containers/`;
+/**
+ * Get the URL for the container detail api.
+ */
+export const getLibraryContainerApiUrl = (containerId: string) => `${getApiBaseUrl()}/api/libraries/v2/containers/${containerId}/`;
+/**
+ * Get the URL for a single container children api.
+ */
+export const getLibraryContainerChildrenApiUrl = (containerId: string) => `${getApiBaseUrl()}/api/libraries/v2/containers/${containerId}/children/`;
 
 export interface ContentLibrary {
   id: string;
@@ -573,4 +581,51 @@ export interface CreateLibraryContainerDataRequest {
 export async function createLibraryContainer(libraryId: string, containerData: CreateLibraryContainerDataRequest) {
   const client = getAuthenticatedHttpClient();
   await client.post(getLibraryContainersApiUrl(libraryId), snakeCaseObject(containerData));
+}
+
+export interface Container {
+  containerKey: string;
+  containerType: 'unit';
+  displayName: string;
+  lastPublished: string | null;
+  publishedBy: string | null;
+  createdBy: string | null;
+  lastDraftCreated: string | null;
+  lastDraftCreatedBy: string | null,
+  hasUnpublishedChanges: boolean;
+  created: string;
+  modified: string;
+  collections: CollectionMetadata[];
+}
+
+/**
+ * Get the container metadata.
+ */
+export async function getContainerMetadata(containerId: string): Promise<Container> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryContainerApiUrl(containerId));
+  return camelCaseObject(data);
+}
+
+export interface UpdateContainerDataRequest {
+  displayName: string;
+}
+
+/**
+ * Update container metadata.
+ */
+export async function updateContainerMetadata(
+  containerId: string,
+  containerData: UpdateContainerDataRequest,
+) {
+  const client = getAuthenticatedHttpClient();
+  await client.patch(getLibraryContainerApiUrl(containerId), snakeCaseObject(containerData));
+}
+
+/**
+ * Fetch a library container's children's metadata.
+ */
+export async function getContainerChildren(containerId: string): Promise<LibraryBlockMetadata[]> {
+  const client = getAuthenticatedHttpClient();
+  const { data } = await client.get(getLibraryContainerChildrenApiUrl(containerId));
+  return camelCaseObject(data);
 }

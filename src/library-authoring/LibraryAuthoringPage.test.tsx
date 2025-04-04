@@ -14,6 +14,7 @@ import mockEmptyResult from '../search-modal/__mocks__/empty-search-result.json'
 import {
   mockContentLibrary,
   mockGetCollectionMetadata,
+  mockGetContainerMetadata,
   mockGetLibraryTeam,
   mockXBlockFields,
 } from './data/api.mocks';
@@ -28,6 +29,7 @@ let axiosMock;
 let mockShowToast;
 
 mockGetCollectionMetadata.applyMock();
+mockGetContainerMetadata.applyMock();
 mockContentSearchConfig.applyMock();
 mockContentLibrary.applyMock();
 mockGetLibraryTeam.applyMock();
@@ -429,6 +431,25 @@ describe('<LibraryAuthoringPage />', () => {
 
     // The mock data for the sidebar has a title of "Test Collection"
     await waitFor(() => expect(getByText('Test Collection')).toBeInTheDocument());
+
+    const closeButton = getByRole('button', { name: /close/i });
+    fireEvent.click(closeButton);
+
+    await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
+  });
+
+  it('should open and close the unit sidebar', async () => {
+    await renderLibraryPage();
+
+    // Click on the first unit
+    fireEvent.click((await screen.findByText('Test Unit')));
+
+    const sidebar = screen.getByTestId('library-sidebar');
+
+    const { getByRole, getByText } = within(sidebar);
+
+    // The mock data for the sidebar has a title of "Test Unit"
+    await waitFor(() => expect(getByText('Test Unit')).toBeInTheDocument());
 
     const closeButton = getByRole('button', { name: /close/i });
     fireEvent.click(closeButton);
