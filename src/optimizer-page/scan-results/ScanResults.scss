@@ -12,7 +12,15 @@
   }
 
   .yellow-italics {
-    color: $warning-800;;
+    color: $warning-800;
+    margin-left: 2rem;
+    font-weight: 400;
+    font-size: 80%;
+    font-style: italic;
+  }
+
+  .green-italics {
+    color: $green;
     margin-left: 2rem;
     font-weight: 400;
     font-size: 80%;
