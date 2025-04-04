@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { intlShape, injectIntl } from '@edx/frontend-platform/i18n';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { ActionRow, Icon, IconButtonWithTooltip, Stack } from '@openedx/paragon';
+import { ActionRow, Card, Icon, IconButtonWithTooltip } from '@openedx/paragon';
 import { DragIndicator } from '@openedx/paragon/icons';
 import messages from './messages';
 
@@ -13,6 +13,8 @@ const SortableItem = ({
   actions,
   actionStyle,
   children,
+  isClickable,
+  onClick,
   // injected
   intl,
 }) => {
@@ -31,10 +33,12 @@ const SortableItem = ({
   };
 
   return (
-    <Stack
+    <Card
       ref={setNodeRef}
       style={style}
       className="mx-0"
+      isClickable={isClickable}
+      onClick={onClick}
     >
       <ActionRow style={actionStyle}>
         {actions}
@@ -51,13 +55,15 @@ const SortableItem = ({
         />
       </ActionRow>
       {children}
-    </Stack>
+    </Card>
   );
 };
 SortableItem.defaultProps = {
   componentStyle: null,
   actions: null,
   actionStyle: null,
+  isClickable: false,
+  onClick: null,
 };
 SortableItem.propTypes = {
   id: PropTypes.string.isRequired,
@@ -65,6 +71,8 @@ SortableItem.propTypes = {
   actions: PropTypes.node,
   actionStyle: PropTypes.shape({}),
   componentStyle: PropTypes.shape({}),
+  isClickable: PropTypes.boolean,
+  onClick: PropTypes.func,
   // injected
   intl: intlShape.isRequired,
 };
