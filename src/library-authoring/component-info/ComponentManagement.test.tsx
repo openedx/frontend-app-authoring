@@ -13,6 +13,7 @@ import { mockContentLibrary, mockLibraryBlockMetadata } from '../data/api.mocks'
 import ComponentManagement from './ComponentManagement';
 
 jest.mock('../../content-tags-drawer', () => ({
+  ...jest.requireActual('../../content-tags-drawer'),
   ContentTagsDrawer: ({ readOnly }: { readOnly: boolean }) => (
     <div>Mocked {readOnly ? 'read-only' : 'editable'} ContentTagsDrawer</div>
   ),

@@ -9,6 +9,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { AddContentContainer, AddContentHeader } from '../add-content';
 import { CollectionInfo, CollectionInfoHeader } from '../collections';
+import { ContainerInfoHeader, UnitInfo } from '../containers';
 import { SidebarBodyComponentId, useSidebarContext } from '../common/context/SidebarContext';
 import { ComponentInfo, ComponentInfoHeader } from '../component-info';
 import { LibraryInfo, LibraryInfoHeader } from '../library-info';
@@ -32,6 +33,7 @@ const LibrarySidebar = () => {
     [SidebarBodyComponentId.Info]: <LibraryInfo />,
     [SidebarBodyComponentId.ComponentInfo]: <ComponentInfo />,
     [SidebarBodyComponentId.CollectionInfo]: <CollectionInfo />,
+    [SidebarBodyComponentId.UnitInfo]: <UnitInfo />,
     unknown: null,
   };
 
@@ -40,6 +42,7 @@ const LibrarySidebar = () => {
     [SidebarBodyComponentId.Info]: <LibraryInfoHeader />,
     [SidebarBodyComponentId.ComponentInfo]: <ComponentInfoHeader />,
     [SidebarBodyComponentId.CollectionInfo]: <CollectionInfoHeader />,
+    [SidebarBodyComponentId.UnitInfo]: <ContainerInfoHeader />,
     unknown: null,
   };
 
