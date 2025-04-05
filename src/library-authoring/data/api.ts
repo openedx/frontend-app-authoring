@@ -629,3 +629,11 @@ export async function getContainerChildren(containerId: string): Promise<Library
   const { data } = await client.get(getLibraryContainerChildrenApiUrl(containerId));
   return camelCaseObject(data);
 }
+
+/**
+ * Add components to library container
+ */
+export async function addComponentsToContainer(containerId: string, componentIds: string[]) {
+  const client = getAuthenticatedHttpClient();
+  await client.post(getLibraryContainerChildrenApiUrl(containerId), snakeCaseObject({usageKeys: componentIds}));
+}

@@ -47,6 +47,7 @@ import {
   restoreLibraryBlock,
   getBlockTypes,
   createLibraryContainer,
+  addComponentsToContainer,
   type CreateLibraryContainerDataRequest,
   getContainerMetadata,
   updateContainerMetadata,
@@ -643,3 +644,15 @@ export const useContainerChildren = (containerId: string) => (
     queryFn: () => getContainerChildren(containerId!),
   })
 );
+
+/**
+ * Use this mutatio to add components to a container
+ */
+export const useAddComponentsToContainer = (containerId: string) => {
+  return useMutation({
+    mutationFn: (componentIds: string[]) => addComponentsToContainer(containerId, componentIds),
+    onSettled: () => {
+      // TODO invalidate children of container
+    },
+  });
+};
