@@ -68,21 +68,19 @@ const CreateUnitModal = () => {
         onSubmit={handleCreate}
       >
         {(formikProps) => (
-          <>
+          <Form onSubmit={formikProps.handleSubmit}>
             <ModalDialog.Body className="mw-sm">
-              <Form onSubmit={formikProps.handleSubmit}>
-                <FormikControl
-                  name="displayName"
-                  label={(
-                    <Form.Label className="font-weight-bold h3">
-                      {intl.formatMessage(messages.createUnitModalNameLabel)}
-                    </Form.Label>
-                  )}
-                  value={formikProps.values.displayName}
-                  placeholder={intl.formatMessage(messages.createUnitModalNamePlaceholder)}
-                  controlClasses="pb-2"
-                />
-              </Form>
+              <FormikControl
+                name="displayName"
+                label={(
+                  <Form.Label className="font-weight-bold h3">
+                    {intl.formatMessage(messages.createUnitModalNameLabel)}
+                  </Form.Label>
+                )}
+                value={formikProps.values.displayName}
+                placeholder={intl.formatMessage(messages.createUnitModalNamePlaceholder)}
+                controlClasses="pb-2"
+              />
             </ModalDialog.Body>
             <ModalDialog.Footer>
               <ActionRow>
@@ -93,11 +91,13 @@ const CreateUnitModal = () => {
                   variant="primary"
                   onClick={formikProps.submitForm}
                   disabled={!formikProps.isValid || !formikProps.dirty}
+                  isLoading={formikProps.isSubmitting}
                   label={intl.formatMessage(messages.createUnitModalCreate)}
+                  type="submit"
                 />
               </ActionRow>
             </ModalDialog.Footer>
-          </>
+          </Form>
         )}
       </Formik>
     </ModalDialog>

@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   ActionRow,
-  Button,
   Form,
   ModalDialog,
 } from '@openedx/paragon';
@@ -10,6 +9,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import FormikControl from '../../generic/FormikControl';
+import LoadingButton from '../../generic/loading-button';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import messages from './messages';
 import { useCreateLibraryCollection } from '../data/apiHooks';
@@ -67,55 +67,54 @@ const CreateCollectionModal = () => {
         onSubmit={handleCreate}
       >
         {(formikProps) => (
-          <>
+          <Form onSubmit={formikProps.handleSubmit}>
             <ModalDialog.Body className="mw-sm">
-              <Form onSubmit={formikProps.handleSubmit}>
-                <FormikControl
-                  name="title"
-                  label={(
-                    <Form.Label className="font-weight-bold h3">
-                      {intl.formatMessage(messages.createCollectionModalNameLabel)}
-                    </Form.Label>
-                  )}
-                  value={formikProps.values.title}
-                  placeholder={intl.formatMessage(messages.createCollectionModalNamePlaceholder)}
-                  controlClasses="pb-2"
-                />
-                <FormikControl
-                  name="description"
-                  as="textarea"
-                  label={(
-                    <Form.Label className="font-weight-bold h3">
-                      {intl.formatMessage(messages.createCollectionModalDescriptionLabel)}
-                    </Form.Label>
-                  )}
-                  value={formikProps.values.description}
-                  placeholder={intl.formatMessage(messages.createCollectionModalDescriptionPlaceholder)}
-                  help={(
-                    <Form.Text>
-                      {intl.formatMessage(messages.createCollectionModalDescriptionDetails)}
-                    </Form.Text>
-                  )}
-                  controlClasses="pb-2"
-                  rows="5"
-                />
-              </Form>
+              <FormikControl
+                name="title"
+                label={(
+                  <Form.Label className="font-weight-bold h3">
+                    {intl.formatMessage(messages.createCollectionModalNameLabel)}
+                  </Form.Label>
+                )}
+                value={formikProps.values.title}
+                placeholder={intl.formatMessage(messages.createCollectionModalNamePlaceholder)}
+                controlClasses="pb-2"
+              />
+              <FormikControl
+                name="description"
+                as="textarea"
+                label={(
+                  <Form.Label className="font-weight-bold h3">
+                    {intl.formatMessage(messages.createCollectionModalDescriptionLabel)}
+                  </Form.Label>
+                )}
+                value={formikProps.values.description}
+                placeholder={intl.formatMessage(messages.createCollectionModalDescriptionPlaceholder)}
+                help={(
+                  <Form.Text>
+                    {intl.formatMessage(messages.createCollectionModalDescriptionDetails)}
+                  </Form.Text>
+                )}
+                controlClasses="pb-2"
+                rows="5"
+              />
             </ModalDialog.Body>
             <ModalDialog.Footer>
               <ActionRow>
                 <ModalDialog.CloseButton variant="tertiary">
                   {intl.formatMessage(messages.createCollectionModalCancel)}
                 </ModalDialog.CloseButton>
-                <Button
+                <LoadingButton
                   variant="primary"
                   onClick={formikProps.submitForm}
-                  disabled={formikProps.isSubmitting || !formikProps.isValid || !formikProps.dirty}
-                >
-                  {intl.formatMessage(messages.createCollectionModalCreate)}
-                </Button>
+                  disabled={!formikProps.isValid || !formikProps.dirty}
+                  isLoading={formikProps.isSubmitting}
+                  label={intl.formatMessage(messages.createCollectionModalCreate)}
+                  type="submit"
+                />
               </ActionRow>
             </ModalDialog.Footer>
-          </>
+          </Form>
         )}
       </Formik>
     </ModalDialog>

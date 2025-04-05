@@ -72,4 +72,24 @@ describe('<LoadingButton />', () => {
     expect(buttonElement).not.toHaveAttribute('aria-disabled', 'true');
     expect(container.getElementsByClassName('icon-spin').length).toBe(0);
   });
+
+  it('doesnt run the onClick function if the button is loading (disabled)', async () => {
+    let resolver: () => void;
+    const promise = new Promise<void>((resolve) => {
+      resolver = resolve;
+    });
+    const longFunction = jest.fn().mockReturnValue(promise);
+    const { getByRole } = render(RootWrapper(longFunction));
+    const buttonElement = getByRole('button');
+    fireEvent.click(buttonElement);
+    // First click should call the function
+    expect(longFunction).toHaveBeenCalledTimes(1);
+    fireEvent.click(buttonElement);
+    // Second click should not call the function, because the button is disabled
+    expect(longFunction).toHaveBeenCalledTimes(1);
+    await act(async () => { resolver(); });
+    // After the promise is resolved, the button should be enabled
+    fireEvent.click(buttonElement);
+    expect(longFunction).toHaveBeenCalledTimes(2);
+  });
 });

@@ -8,13 +8,12 @@ import {
   StatefulButton,
 } from '@openedx/paragon';
 
-interface LoadingButtonProps {
+interface LoadingButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   label: string;
   onClick?: (e: any) => (Promise<void> | void);
-  disabled?: boolean;
   size?: string;
   variant?: string;
-  className?: string;
+  isLoading?: boolean;
 }
 
 /**
@@ -26,17 +25,33 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
   disabled,
   size,
   variant,
-  className,
+  isLoading,
+  ...props
 }) => {
-  const [state, setState] = useState('');
-  // This is used to prevent setting the isLoading state after the component has been unmounted.
+  // Button state depends on isLoading and disabled flags
+  const getState = () => {
+    if (isLoading) { return 'pending'; }
+    if (disabled) { return 'disabled'; }
+    return '';
+  };
+  const [state, setState] = useState(getState);
+
+  useEffect(() => {
+    setState(getState);
+  }, [isLoading, disabled]);
+
   const componentMounted = useRef(true);
 
+  // This is used to prevent setting the isLoading state after the component has been unmounted.
   useEffect(() => () => {
     componentMounted.current = false;
   }, []);
 
   const loadingOnClick = useCallback(async (e: any) => {
+    if (disabled) {
+      return;
+    }
+
     if (!onClick) {
       return;
     }
@@ -55,13 +70,13 @@ const LoadingButton: React.FC<LoadingButtonProps> = ({
 
   return (
     <StatefulButton
-      disabledStates={disabled ? [state] : ['pending'] /* StatefulButton doesn't support disabled prop */}
+      disabledStates={['disabled', 'pending'] /* StatefulButton doesn't support disabled prop */}
       onClick={loadingOnClick}
       labels={{ default: label }}
       state={state}
       size={size}
       variant={variant}
-      className={className}
+      {...props}
     />
   );
 };
