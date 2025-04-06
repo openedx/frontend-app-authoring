@@ -17,7 +17,7 @@ import {
 } from '../data/api';
 import { mockBroadcastChannel, mockClipboardEmpty, mockClipboardHtml } from '../../generic/data/api.mock';
 import { LibraryProvider } from '../common/context/LibraryContext';
-import AddContentContainer from './AddContentContainer';
+import AddContent from './AddContent';
 import { ComponentEditorModal } from '../components/ComponentEditorModal';
 import editorCmsApi from '../../editors/data/services/cms/api';
 import { ToastActionData } from '../../generic/toast-context';
@@ -32,7 +32,7 @@ jest.mock('frontend-components-tinymce-advanced-plugins', () => ({ a11ycheckerCs
 const { libraryId } = mockContentLibrary;
 const render = (collectionId?: string) => {
   const params: { libraryId: string, collectionId?: string } = { libraryId, collectionId };
-  return baseRender(<AddContentContainer />, {
+  return baseRender(<AddContent />, {
     path: '/library/:libraryId/:collectionId?',
     params,
     extraWrapper: ({ children }) => (
@@ -47,7 +47,7 @@ const render = (collectionId?: string) => {
 };
 const renderWithUnit = (unitId: string) => {
   const params: { libraryId: string, unitId?: string } = { libraryId, unitId };
-  return baseRender(<AddContentContainer />, {
+  return baseRender(<AddContent />, {
     path: '/library/:libraryId/:unitId?',
     params,
     extraWrapper: ({ children }) => (
@@ -63,7 +63,7 @@ const renderWithUnit = (unitId: string) => {
 let axiosMock: MockAdapter;
 let mockShowToast: (message: string, action?: ToastActionData | undefined) => void;
 
-describe('<AddContentContainer />', () => {
+describe('<AddContent />', () => {
   beforeEach(() => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;

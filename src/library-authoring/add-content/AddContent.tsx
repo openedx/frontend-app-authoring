@@ -197,7 +197,7 @@ export const parseErrorMsg = (
   return intl.formatMessage(defaultMessage);
 };
 
-const AddContentContainer = () => {
+const AddContent = () => {
   const intl = useIntl();
   const {
     libraryId,
@@ -393,4 +393,4 @@ const AddContentContainer = () => {
   );
 };
 
-export default AddContentContainer;
+export default AddContent;

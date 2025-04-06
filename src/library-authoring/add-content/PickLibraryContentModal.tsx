@@ -42,7 +42,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
     collectionId,
     /** We need to get it as a reference instead of directly importing it to avoid the import cycle:
      * ComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
-     * Sidebar > AddContentContainer > ComponentPicker */
+     * Sidebar > AddContent > ComponentPicker */
     componentPicker: ComponentPicker,
   } = useLibraryContext();
 
