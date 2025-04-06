@@ -13,7 +13,7 @@ import {
 } from '../data/api.mocks';
 import {
   getContentLibraryApiUrl, getCreateLibraryBlockUrl, getLibraryCollectionComponentApiUrl, getLibraryPasteClipboardUrl,
-  getXBlockFieldsApiUrl,
+  getXBlockFieldsApiUrl, getLibraryContainerChildrenApiUrl,
 } from '../data/api';
 import { mockBroadcastChannel, mockClipboardEmpty, mockClipboardHtml } from '../../generic/data/api.mock';
 import { LibraryProvider } from '../common/context/LibraryContext';
@@ -34,6 +34,21 @@ const render = (collectionId?: string) => {
   const params: { libraryId: string, collectionId?: string } = { libraryId, collectionId };
   return baseRender(<AddContentContainer />, {
     path: '/library/:libraryId/:collectionId?',
+    params,
+    extraWrapper: ({ children }) => (
+      <LibraryProvider
+        libraryId={libraryId}
+      >
+        { children }
+        <ComponentEditorModal />
+      </LibraryProvider>
+    ),
+  });
+};
+const renderWithUnit = (unitId: string) => {
+  const params: { libraryId: string, unitId?: string } = { libraryId, unitId };
+  return baseRender(<AddContentContainer />, {
+    path: '/library/:libraryId/:unitId?',
     params,
     extraWrapper: ({ children }) => (
       <LibraryProvider
@@ -289,5 +304,72 @@ describe('<AddContentContainer />', () => {
       expect(axiosMock.history.post[0].url).toEqual(mockUrl);
       expect(mockShowToast).toHaveBeenCalledWith(expectedError);
     });
+  });
+
+  it('should not show collection/unit buttons when create component in container', async () => {
+    const unitId = 'lct:orf1:lib1:unit:test-1';
+    renderWithUnit(unitId);
+
+    expect(await screen.findByRole('button', { name: 'Text' })).toBeInTheDocument();
+
+    expect(screen.queryByRole('button', { name: 'Collection' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Unit' })).not.toBeInTheDocument();
+  });
+
+  it('should create a component in unit', async () => {
+    const unitId = 'lct:orf1:lib1:unit:test-1';
+    const usageKey = mockXBlockFields.usageKeyNewHtml;
+    const createUrl = getCreateLibraryBlockUrl(libraryId);
+    const updateBlockUrl = getXBlockFieldsApiUrl(usageKey);
+    const linkUrl = getLibraryContainerChildrenApiUrl(unitId);
+
+    axiosMock.onPost(createUrl).reply(200, {
+      id: usageKey,
+    });
+    axiosMock.onPost(updateBlockUrl).reply(200, mockXBlockFields.dataHtml);
+    axiosMock.onPost(linkUrl).reply(200);
+
+    renderWithUnit(unitId);
+
+    const textButton = screen.getByRole('button', { name: /text/i });
+    fireEvent.click(textButton);
+
+    // Component should be linked to Unit on saving the changes in the editor.
+    const saveButton = screen.getByLabelText('Save changes and return to learning context');
+    fireEvent.click(saveButton);
+
+    await waitFor(() => expect(axiosMock.history.post.length).toEqual(3));
+    expect(axiosMock.history.post[0].url).toEqual(createUrl);
+    expect(axiosMock.history.post[1].url).toEqual(updateBlockUrl);
+    expect(axiosMock.history.post[2].url).toEqual(linkUrl);
+  });
+
+  it('should show error on create a component in unit', async () => {
+    const unitId = 'lct:orf1:lib1:unit:test-1';
+    const usageKey = mockXBlockFields.usageKeyNewHtml;
+    const createUrl = getCreateLibraryBlockUrl(libraryId);
+    const updateBlockUrl = getXBlockFieldsApiUrl(usageKey);
+    const linkUrl = getLibraryContainerChildrenApiUrl(unitId);
+
+    axiosMock.onPost(createUrl).reply(200, {
+      id: usageKey,
+    });
+    axiosMock.onPost(updateBlockUrl).reply(200, mockXBlockFields.dataHtml);
+    axiosMock.onPost(linkUrl).reply(400);
+
+    renderWithUnit(unitId);
+
+    const textButton = screen.getByRole('button', { name: /text/i });
+    fireEvent.click(textButton);
+
+    const saveButton = screen.getByLabelText('Save changes and return to learning context');
+    fireEvent.click(saveButton);
+
+    await waitFor(() => expect(axiosMock.history.post.length).toEqual(3));
+    expect(axiosMock.history.post[0].url).toEqual(createUrl);
+    expect(axiosMock.history.post[1].url).toEqual(updateBlockUrl);
+    expect(axiosMock.history.post[2].url).toEqual(linkUrl);
+
+    expect(mockShowToast).toHaveBeenCalledWith('There was an error linking the content to this container.');
   });
 });
