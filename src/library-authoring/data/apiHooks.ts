@@ -674,11 +674,17 @@ export const useContainerChildren = (libraryId?: string, containerId?: string) =
 /**
  * Use this mutatio to add components to a container
  */
-export const useAddComponentsToContainer = (containerId: string) => {
+export const useAddComponentsToContainer = (containerId?: string) => {
+  const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (componentIds: string[]) => addComponentsToContainer(containerId, componentIds),
+    mutationFn: async (componentIds: string[]) => {
+      if (containerId !== undefined) {
+        return addComponentsToContainer(containerId, componentIds);
+      }
+      return undefined;
+    },
     onSettled: () => {
-      // TODO invalidate children of container
+      queryClient.invalidateQueries({ queryKey: containerQueryKeys.children(containerId) });
     },
   });
 };
