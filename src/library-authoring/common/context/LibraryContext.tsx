@@ -72,7 +72,7 @@ type LibraryProviderProps = {
   /** The component picker modal to use. We need to pass it as a reference instead of
    * directly importing it to avoid the import cycle:
    * ComponentPicker > LibraryAuthoringPage/LibraryCollectionPage >
-   * Sidebar > AddContentContainer > ComponentPicker */
+   * Sidebar > AddContent > ComponentPicker */
   componentPicker?: typeof ComponentPicker;
 };
 
