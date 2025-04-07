@@ -48,6 +48,9 @@ import {
   getBlockTypes,
   createLibraryContainer,
   type CreateLibraryContainerDataRequest,
+  getContainerMetadata,
+  updateContainerMetadata,
+  type UpdateContainerDataRequest,
 } from './api';
 import { VersionSpec } from '../LibraryBlock';
 
@@ -108,6 +111,14 @@ export const xblockQueryKeys = {
   xblockAssets: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'assets'],
   componentMetadata: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'componentMetadata'],
   componentDownstreamLinks: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'downstreamLinks'],
+};
+
+export const containerQueryKeys = {
+  all: ['container'],
+  /**
+   * Base key for data specific to a container
+   */
+  container: (usageKey?: string) => [...containerQueryKeys.all, usageKey],
 };
 
 /**
@@ -572,6 +583,33 @@ export const useCreateLibraryContainer = (libraryId: string) => {
     mutationFn: (data: CreateLibraryContainerDataRequest) => createLibraryContainer(libraryId, data),
     onSettled: () => {
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+    },
+  });
+};
+
+/**
+ * Get the metadata for a container in a library
+ */
+export const useContainer = (containerId: string) => (
+  useQuery({
+    queryKey: containerQueryKeys.container(containerId),
+    queryFn: containerId ? () => getContainerMetadata(containerId) : undefined,
+  })
+);
+
+/**
+ * Use this mutation to update the fields of a container in a library
+ */
+export const useUpdateContainer = (containerId: string) => {
+  const libraryId = getLibraryId(containerId);
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: UpdateContainerDataRequest) => updateContainerMetadata(containerId, data),
+    onSettled: () => {
+      // NOTE: We invalidate the library query here because we need to update the library's
+      // container list.
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+      queryClient.invalidateQueries({ queryKey: containerQueryKeys.container(containerId) });
     },
   });
 };

@@ -54,29 +54,22 @@ const LibraryLayout = () => {
 
   return (
     <Routes>
-      <Route
-        path={ROUTES.COMPONENTS}
-        element={context(<LibraryAuthoringPage />)}
-      />
-      <Route
-        path={ROUTES.UNITS}
-        element={context(<LibraryAuthoringPage />)}
-      />
-      <Route
-        path={ROUTES.COLLECTIONS}
-        element={context(<LibraryAuthoringPage />)}
-      />
-      <Route
-        path={ROUTES.COMPONENT}
-        element={context(<LibraryAuthoringPage />)}
-      />
+      {[
+        ROUTES.HOME,
+        ROUTES.COMPONENT,
+        ROUTES.COMPONENTS,
+        ROUTES.COLLECTIONS,
+        ROUTES.UNITS,
+      ].map((route) => (
+        <Route
+          key={route}
+          path={route}
+          element={context(<LibraryAuthoringPage />)}
+        />
+      ))}
       <Route
         path={ROUTES.COLLECTION}
         element={context(<LibraryCollectionPage />)}
-      />
-      <Route
-        path={ROUTES.HOME}
-        element={context(<LibraryAuthoringPage />)}
       />
     </Routes>
   );

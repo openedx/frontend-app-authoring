@@ -458,6 +458,47 @@ mockGetCollectionMetadata.applyMock = () => {
 };
 
 /**
+ * Mock for `getContainerMetadata()`
+ *
+ * This mock returns a fixed response for the container ID *container_1*.
+ */
+export async function mockGetContainerMetadata(containerId: string): Promise<api.Container> {
+  switch (containerId) {
+    case mockGetCollectionMetadata.collectionIdError:
+      throw createAxiosError({
+        code: 404,
+        message: 'Not found.',
+        path: api.getLibraryContainerApiUrl(containerId),
+      });
+    case mockGetContainerMetadata.containerIdLoading:
+      return new Promise(() => { });
+    default:
+      return Promise.resolve(mockGetContainerMetadata.containerData);
+  }
+}
+mockGetContainerMetadata.containerId = 'lct:org:lib:unit:test-unit-9a207';
+mockGetContainerMetadata.containerIdError = 'lct:org:lib:unit:container_error';
+mockGetContainerMetadata.containerIdLoading = 'lct:org:lib:unit:container_loading';
+mockGetContainerMetadata.containerData = {
+  containerKey: 'lct:org:lib:unit:test-unit-9a2072',
+  containerType: 'unit',
+  displayName: 'Test Unit',
+  created: '2024-09-19T10:00:00Z',
+  createdBy: 'test_author',
+  lastPublished: '2024-09-20T10:00:00Z',
+  publishedBy: 'test_publisher',
+  lastDraftCreated: '2024-09-20T10:00:00Z',
+  lastDraftCreatedBy: 'test_author',
+  modified: '2024-09-20T11:00:00Z',
+  hasUnpublishedChanges: true,
+  collections: [],
+} satisfies api.Container;
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockGetContainerMetadata.applyMock = () => {
+  jest.spyOn(api, 'getContainerMetadata').mockImplementation(mockGetContainerMetadata);
+};
+
+/**
  * Mock for `getXBlockOLX()`
  *
  * This mock returns different data/responses depending on the ID of the block

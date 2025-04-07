@@ -109,6 +109,19 @@ describe('Library Authoring routes', () => {
       },
     },
     {
+      label: 'from All Content tab, select a Unit',
+      origin: {
+        path: '',
+        params: {},
+      },
+      destination: {
+        params: {
+          unitId: 'lct:org:lib:unit:unitId',
+        },
+        path: '/lct:org:lib:unit:unitId',
+      },
+    },
+    {
       label: 'navigate from All Content > selected Collection to the Collection page',
       origin: {
         params: {
@@ -228,7 +241,7 @@ describe('Library Authoring routes', () => {
       label: 'from Collections tab > selected Collection, navigate to the Collection page',
       origin: {
         params: {
-          collectionId: 'clctnId',
+          selectedItemId: 'clctnId',
         },
         path: '/collections/clctnId',
       },
@@ -273,6 +286,19 @@ describe('Library Authoring routes', () => {
       },
     },
     {
+      label: 'from Unit tab, select a Unit',
+      origin: {
+        path: '/units',
+        params: {},
+      },
+      destination: {
+        params: {
+          unitId: 'unitId',
+        },
+        path: '/units/unitId',
+      },
+    },
+    {
       label: 'navigate from Units tab to All Content tab',
       origin: {
         path: '/units',
@@ -303,6 +329,7 @@ describe('Library Authoring routes', () => {
         params: {
           libraryId: mockContentLibrary.libraryId,
           collectionId: '',
+          selectedItemId: '',
           ...origin.params,
         },
       });

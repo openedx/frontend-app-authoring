@@ -24,8 +24,8 @@ export const ROUTES = {
   UNITS: '/units/:unitId?',
   // * All Content tab, with an optionally selected componentId in the sidebar.
   COMPONENT: '/component/:componentId',
-  // * All Content tab, with an optionally selected collectionId in the sidebar.
-  HOME: '/:collectionId?',
+  // * All Content tab, with an optionally selected collection or unit in the sidebar.
+  HOME: '/:selectedItemId?',
   // LibraryCollectionPage route:
   // * with a selected collectionId and/or an optionally selected componentId.
   COLLECTION: '/collection/:collectionId/:componentId?',
@@ -41,6 +41,7 @@ export enum ContentType {
 export type NavigateToData = {
   componentId?: string,
   collectionId?: string,
+  unitId?: string,
   contentType?: ContentType,
 };
 
@@ -68,13 +69,26 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
   const navigateTo = useCallback(({
     componentId,
     collectionId,
+    unitId,
     contentType,
   }: NavigateToData = {}) => {
+    const {
+      collectionId: urlCollectionId,
+      componentId: urlComponentId,
+      unitId: urlUnitId,
+      selectedItemId: urlSelectedItemId,
+    } = params;
+
     const routeParams = {
       ...params,
       // Overwrite the current componentId/collectionId params if provided
       ...((componentId !== undefined) && { componentId }),
-      ...((collectionId !== undefined) && { collectionId }),
+      ...((collectionId !== undefined) && { collectionId, selectedItemId: collectionId }),
+      ...((unitId !== undefined) && { unitId, selectedItemId: unitId }),
+      ...(contentType === ContentType.home && { selectedItemId: urlCollectionId || urlUnitId }),
+      ...(contentType === ContentType.components && { componentId: urlComponentId || urlSelectedItemId }),
+      ...(contentType === ContentType.collections && { collectionId: urlCollectionId || urlSelectedItemId }),
+      ...(contentType === ContentType.units && { unitId: urlUnitId || urlSelectedItemId }),
     };
     let route;
 
@@ -90,7 +104,7 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     } else if (insideCollections) {
       // We're inside the Collections tab,
       route = (
-        (collectionId && collectionId === params.collectionId)
+        (collectionId && collectionId === (urlCollectionId || urlSelectedItemId))
           // now open the previously-selected collection,
           ? ROUTES.COLLECTION
           // or stay there to list all collections, or a selected collection.
@@ -107,16 +121,14 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     } else if (insideUnits) {
       // We're inside the Units tab, so stay there,
       // optionally selecting a unit.
-      // istanbul ignore next: this will be covered when we add unit selection
       route = ROUTES.UNITS;
     } else if (componentId) {
       // We're inside the All Content tab, so stay there,
       // and select a component.
       route = ROUTES.COMPONENT;
     } else {
-      // We're inside the All Content tab,
       route = (
-        (collectionId && collectionId === params.collectionId)
+        (collectionId && collectionId === (urlCollectionId || urlSelectedItemId))
           // now open the previously-selected collection
           ? ROUTES.COLLECTION
           // or stay there to list all content, or optionally select a collection.
