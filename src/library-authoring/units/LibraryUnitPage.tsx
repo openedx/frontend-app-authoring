@@ -52,9 +52,10 @@ const HeaderActions = () => {
 };
 
 const UnitBlocks = () => {
-  const [selectedBlock, setSelectedBlock] = useState<LibraryBlockMetadata | null>(null);
   const [orderedBlocks, setOrderedBlocks] = useState<LibraryBlockMetadata[]>([]);
   const [isManageTagsDrawerOpen, openManageTagsDrawer, closeManageTagsDrawer] = useToggle(false);
+  const { componentId, setComponentId } = useLibraryContext();
+
   const {
     libraryId,
     unitId,
@@ -129,7 +130,7 @@ const UnitBlocks = () => {
           borderBottom: 'solid 1px #E1DDDB'
         }}
         isClickable
-        onClick={() => setSelectedBlock(block)}
+        onClick={() => setComponentId(block.id)}
       >
         <div className={classNames('p-3', {
           "container-mw-md": block.blockType === blockTypes.video,
@@ -148,7 +149,7 @@ const UnitBlocks = () => {
         {renderedBlocks}
       </DraggableList>
       <ContentTagsDrawerSheet
-        id={selectedBlock?.id}
+        id={componentId}
         onClose={onTagSidebarClose}
         showSheet={isManageTagsDrawerOpen}
       />
@@ -167,8 +168,8 @@ export const LibraryUnitPage = () => {
   const { sidebarComponentInfo, openInfoSidebar } = useSidebarContext();
 
   useEffect(() => {
-    openInfoSidebar(componentId, unitId);
-  }, []);
+    openInfoSidebar(componentId);
+  }, [componentId]);
 
   if (!unitId || !libraryId) {
     // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
