@@ -24,38 +24,48 @@ const SortableItem = ({
     setNodeRef,
     transform,
     transition,
-  } = useSortable({ id });
+    setActivatorNodeRef,
+    isDragging,
+  } = useSortable({
+    id,
+    animateLayoutChanges: () => false,
+  });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Translate.toString(transform),
+    zIndex: isDragging ? 200 : undefined,
     transition,
     ...componentStyle,
   };
 
   return (
-    <Card
+    <div
       ref={setNodeRef}
-      style={style}
-      className="mx-0"
-      isClickable={isClickable}
-      onClick={onClick}
     >
-      <ActionRow style={actionStyle}>
-        {actions}
-        <IconButtonWithTooltip
-          key="drag-to-reorder-icon"
-          tooltipPlacement="top"
-          tooltipContent={intl.formatMessage(messages.tooltipContent)}
-          src={DragIndicator}
-          iconAs={Icon}
-          variant="light"
-          alt={intl.formatMessage(messages.tooltipContent)}
-          {...attributes}
-          {...listeners}
-        />
-      </ActionRow>
-      {children}
-    </Card>
+      <Card
+        style={style}
+        className="mx-0"
+        isClickable={isClickable}
+        onClick={onClick}
+      >
+        <ActionRow style={actionStyle}>
+          {actions}
+          <IconButtonWithTooltip
+            key="drag-to-reorder-icon"
+            ref={setActivatorNodeRef}
+            tooltipPlacement="top"
+            tooltipContent={intl.formatMessage(messages.tooltipContent)}
+            src={DragIndicator}
+            iconAs={Icon}
+            variant="light"
+            alt={intl.formatMessage(messages.tooltipContent)}
+            {...attributes}
+            {...listeners}
+          />
+        </ActionRow>
+        {children}
+      </Card>
+    </div>
   );
 };
 SortableItem.defaultProps = {
