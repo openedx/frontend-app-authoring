@@ -15,6 +15,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
 const DraggableList = ({
   itemList,
@@ -48,6 +49,7 @@ const DraggableList = ({
   return (
     <DndContext
       sensors={sensors}
+      modifiers={[restrictToVerticalAxis]}
       collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
     >
