@@ -60,7 +60,7 @@ export const LibraryBlock = ({
       frameBorder="0"
       loading="lazy"
       referrerPolicy="origin"
-      style={{ width: '100%', height: iframeHeight }}
+      style={{ width: '100%', height: iframeHeight, pointerEvents: 'auto' }}
       allow={IFRAME_FEATURE_POLICY}
       allowFullScreen
       scrolling={scrolling}
