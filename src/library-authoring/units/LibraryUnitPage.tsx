@@ -100,13 +100,7 @@ const UnitBlocks = () => {
     <IframeProvider key={block.id}>
       <SortableItem
         id={block.id}
-        componentStyle={{
-          borderRadius: '8px',
-          padding: '0px',
-          marginBottom: '1rem',
-          border: 'solid 1px #E1DDDB',
-          boxShadow: 'none',
-        }}
+        componentStyle={null}
         actions={
           <>
             <Stack direction="horizontal" gap={2} className="font-weight-bold">
@@ -151,6 +145,7 @@ const UnitBlocks = () => {
       </SortableItem>
     </IframeProvider>
   ));
+
   return (
     <>
       <DraggableList itemList={orderedBlocks} setState={setOrderedBlocks} updateOrder={handleReorder}>
@@ -260,7 +255,7 @@ export const LibraryUnitPage = () => {
               hideBorder
             />
           </div>
-          <Container className="px-4 py-4">
+          <Container className="px-4 py-4 library-unit-page">
             <UnitBlocks/>
           </Container>
         </Container>
