@@ -46,6 +46,7 @@ export type NavigateToData = {
   collectionId?: string,
   unitId?: string,
   contentType?: ContentType,
+  unitId?: string,
 };
 
 export type LibraryRoutesData = {
@@ -68,6 +69,7 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
   const insideCollections = matchPath(BASE_ROUTE + ROUTES.COLLECTIONS, pathname);
   const insideComponents = matchPath(BASE_ROUTE + ROUTES.COMPONENTS, pathname);
   const insideUnits = matchPath(BASE_ROUTE + ROUTES.UNITS, pathname);
+  const insideUnit = matchPath(BASE_ROUTE + ROUTES.UNIT, pathname);
 
   const navigateTo = useCallback(({
     componentId,
@@ -125,6 +127,10 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       // We're inside the Units tab, so stay there,
       // optionally selecting a unit.
       route = ROUTES.UNITS;
+    } else if (insideUnit) {
+      // We're viewing a Unit, so stay there,
+      // and optionally select a component in that Unit.
+      route = ROUTES.UNIT;
     } else if (componentId) {
       // We're inside the All Content tab, so stay there,
       // and select a component.

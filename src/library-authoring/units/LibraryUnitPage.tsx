@@ -19,13 +19,14 @@ import SubHeader from "../../generic/sub-header/SubHeader";
 import TagCount from "../../generic/tag-count";
 import Header from "../../header";
 import { useLibraryContext } from "../common/context/LibraryContext";
-import { useSidebarContext } from "../common/context/SidebarContext";
+import { COMPONENT_INFO_TABS, useSidebarContext } from "../common/context/SidebarContext";
 import ComponentMenu from "../components";
 import { LibraryBlockMetadata } from "../data/api";
 import { libraryAuthoringQueryKeys, useContainer, useContainerChildren, useContentLibrary } from "../data/apiHooks";
 import { LibrarySidebar } from "../library-sidebar";
 import { SubHeaderTitle } from "../LibraryAuthoringPage";
 import { LibraryBlock } from "../LibraryBlock";
+import { useLibraryRoutes } from "../routes";
 import messages from "./messages";
 
 const HeaderActions = () => {
@@ -54,12 +55,14 @@ const HeaderActions = () => {
 const UnitBlocks = () => {
   const [orderedBlocks, setOrderedBlocks] = useState<LibraryBlockMetadata[]>([]);
   const [isManageTagsDrawerOpen, openManageTagsDrawer, closeManageTagsDrawer] = useToggle(false);
-  const { componentId, setComponentId } = useLibraryContext();
+  const { navigateTo } = useLibraryRoutes();
 
   const {
     libraryId,
     unitId,
-    showOnlyPublished
+    showOnlyPublished,
+    componentId,
+    setComponentId,
   } = useLibraryContext();
 
   const queryClient = useQueryClient();
@@ -86,6 +89,11 @@ const UnitBlocks = () => {
   const onTagSidebarClose = () => {
     queryClient.invalidateQueries(libraryAuthoringQueryKeys.containerChildren(libraryId, unitId));
     closeManageTagsDrawer();
+  }
+
+  const handleComponentSelection = (block: LibraryBlockMetadata) => {
+    setComponentId(block.id);
+    navigateTo({ componentId: block.id });
   }
 
   const renderedBlocks = orderedBlocks?.map((block) => (
@@ -130,7 +138,7 @@ const UnitBlocks = () => {
           borderBottom: 'solid 1px #E1DDDB'
         }}
         isClickable
-        onClick={() => setComponentId(block.id)}
+        onClick={() => handleComponentSelection(block)}
       >
         <div className={classNames('p-3', {
           "container-mw-md": block.blockType === blockTypes.video,
@@ -165,7 +173,8 @@ export const LibraryUnitPage = () => {
     unitId,
     componentId,
   } = useLibraryContext();
-  const { sidebarComponentInfo, openInfoSidebar } = useSidebarContext();
+  const { sidebarComponentInfo, openInfoSidebar, setDefaultTab } = useSidebarContext();
+  setDefaultTab(COMPONENT_INFO_TABS.Manage);
 
   useEffect(() => {
     openInfoSidebar(componentId);
