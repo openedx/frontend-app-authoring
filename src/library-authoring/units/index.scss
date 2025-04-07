@@ -8,9 +8,24 @@
 
   .pgn__card.clickable {
     box-shadow: none;
+    // this is required for clicks to be captured by card and iframe when it is not in focus
+    pointer-events: auto;
+    &:focus {
+      // this is required for clicks to be passed to underlying iframe component
+      pointer-events: none;
+    }
+  }
+
+  .pgn__action-row {
+    // this is required for clicks to be captured by card header
+    pointer-events: auto;
   }
 
   .pgn__card.clickable:hover {
     box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.15), 0 0.125rem 0.5rem rgba(0, 0, 0, 0.15);
+  }
+
+  .sortable-item-children {
+    pointer-events: auto;
   }
 }
