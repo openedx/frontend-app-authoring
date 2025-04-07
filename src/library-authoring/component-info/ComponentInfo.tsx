@@ -108,6 +108,7 @@ const ComponentInfo = () => {
     setSidebarTab,
     sidebarComponentInfo,
     sidebarAction,
+    defaultTab,
   } = useSidebarContext();
   const [
     isPublishConfirmationOpen,
@@ -120,7 +121,7 @@ const ComponentInfo = () => {
   const tab: ComponentInfoTab = (
     isComponentInfoTab(sidebarTab)
       ? sidebarTab
-      : COMPONENT_INFO_TABS.Preview
+      : defaultTab
   );
 
   useEffect(() => {
@@ -181,7 +182,7 @@ const ComponentInfo = () => {
         <Tabs
           variant="tabs"
           className="my-3 d-flex justify-content-around"
-          defaultActiveKey={COMPONENT_INFO_TABS.Preview}
+          defaultActiveKey={defaultTab}
           activeKey={tab}
           onSelect={setSidebarTab}
         >

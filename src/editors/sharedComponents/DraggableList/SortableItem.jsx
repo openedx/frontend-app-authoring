@@ -48,7 +48,7 @@ const SortableItem = ({
           tooltipContent={intl.formatMessage(messages.tooltipContent)}
           src={DragIndicator}
           iconAs={Icon}
-          variant="secondary"
+          variant="light"
           alt={intl.formatMessage(messages.tooltipContent)}
           {...attributes}
           {...listeners}
