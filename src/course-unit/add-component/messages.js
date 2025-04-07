@@ -58,27 +58,27 @@ const messages = defineMessages({
   },
   modalComponentSupportTooltipFullySupported: {
     id: 'course-authoring.course-unit.modal.component.support.tooltip.fully-supported',
-    defaultMessage: 'Fully supported tools and features are available for Open edX installations, '
-      + 'are fully tested, have user interfaces where applicable, and are documented in the '
-      + 'official Open edX guides that are available on docs.openedx.org.',
+    defaultMessage: 'Fully supported tools and features are available on edX, are '
+      + 'fully tested, have user interfaces where applicable, and are documented in the '
+      + 'official edX guides that are available on docs.edx.org.',
     description: 'Message for support status tooltip for modules with full platform support',
   },
   modalComponentSupportTooltipNotSupported: {
     id: 'course-authoring.course-unit.modal.component.support.tooltip.not-supported',
-    defaultMessage: 'Tools with no support are not maintained by the Open edX community, '
-      + 'and might be deprecated in the future. They are not recommended for use in '
-      + 'courses due to non-compliance with one or more of the base requirements, such as '
-      + 'testing, accessibility, internationalization, and documentation.',
+    defaultMessage: 'Tools with no support are not maintained by edX, and might be '
+      + 'deprecated in the future. They are not recommended for use in courses due to '
+      + 'non-compliance with one or more of the base requirements, such as testing, '
+      + 'accessibility, internationalization, and documentation.',
     description: 'Message for support status tooltip for modules which is not supported',
   },
   modalComponentSupportTooltipProvisionallySupported: {
     id: 'course-authoring.course-unit.modal.component.support.tooltip.provisionally-support',
     defaultMessage: 'Provisionally supported tools might lack the robustness of functionality '
-      + 'that your courses require. Open edX does not have control over the quality of the software, '
+      + 'that your courses require. edX does not have control over the quality of the software, '
       + 'or of the content that can be provided using these tools. Test these tools thoroughly '
       + 'before using them in your course, especially in graded sections. Complete documentation '
       + 'might not be available for provisionally supported tools, or documentation might be '
-      + 'available from sources other than the Open edX community.',
+      + 'available from sources other than edX.',
     description: 'Message for support status tooltip for modules with provisional platform support',
   },
 });

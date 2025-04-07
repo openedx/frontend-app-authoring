@@ -20,9 +20,11 @@ import { ContentTagsDrawerSheetContext } from './common/context';
  * To *use* the context, just use `useContext(ContentTagsDrawerContext)`
  * @param {string} contentId
  * @param {boolean} canTagObject
+ * @param {boolean} fetchMetadata=false If true, fetches metadata for the contentId. This is used on `edx-platform` to
+ * show the content name as the drawer title.
  * @returns {ContentTagsDrawerContextData}
  */
-export const useCreateContentTagsDrawerContext = (contentId, canTagObject) => {
+export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetchMetadata = false) => {
   const intl = useIntl();
   const org = extractOrgFromContentId(contentId);
 
@@ -48,7 +50,7 @@ export const useCreateContentTagsDrawerContext = (contentId, canTagObject) => {
   const updateTags = useContentTaxonomyTagsUpdater(contentId);
 
   // Fetch from database
-  const { data: contentData, isSuccess: isContentDataLoaded } = useContentData(contentId);
+  const { data: contentData, isSuccess: isContentDataLoaded } = useContentData(contentId, fetchMetadata);
   const {
     data: contentTaxonomyTagsData,
     isSuccess: isContentTaxonomyTagsLoaded,
