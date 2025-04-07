@@ -173,8 +173,21 @@ export const LibraryUnitPage = () => {
     unitId,
     componentId,
   } = useLibraryContext();
-  const { sidebarComponentInfo, openInfoSidebar, setDefaultTab } = useSidebarContext();
-  setDefaultTab(COMPONENT_INFO_TABS.Manage);
+  const {
+    sidebarComponentInfo,
+    openInfoSidebar,
+    setDefaultTab,
+    setDisabledTabs,
+  } = useSidebarContext();
+
+  useEffect(() => {
+    setDefaultTab(COMPONENT_INFO_TABS.Manage);
+    setDisabledTabs([COMPONENT_INFO_TABS.Preview]);
+    return () => {
+      setDefaultTab(COMPONENT_INFO_TABS.Preview);
+      setDisabledTabs([])
+    };
+  }, [setDefaultTab, setDisabledTabs]);
 
   useEffect(() => {
     openInfoSidebar(componentId);

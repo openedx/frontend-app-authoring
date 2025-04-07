@@ -78,6 +78,8 @@ export type SidebarContextData = {
   setSidebarTab: (tab: SidebarInfoTab) => void;
   defaultTab: ComponentInfoTab;
   setDefaultTab: (tab: ComponentInfoTab) => void;
+  disabledTabs: ComponentInfoTab[];
+  setDisabledTabs: (tabs: ComponentInfoTab[]) => void;
 };
 
 /**
@@ -106,6 +108,7 @@ export const SidebarProvider = ({
   );
 
   const [defaultTab, setDefaultTab] = useState<ComponentInfoTab>(COMPONENT_INFO_TABS.Preview);
+  const [disabledTabs, setDisabledTabs] = useState<ComponentInfoTab[]>([]);
 
   const [sidebarTab, setSidebarTab] = useStateWithUrlSearchParam<SidebarInfoTab>(
     defaultTab,
@@ -184,6 +187,8 @@ export const SidebarProvider = ({
       setSidebarTab,
       defaultTab,
       setDefaultTab,
+      disabledTabs,
+      setDisabledTabs,
     };
 
     return contextValue;
@@ -203,6 +208,8 @@ export const SidebarProvider = ({
     setSidebarTab,
     defaultTab,
     setDefaultTab,
+    disabledTabs,
+    setDisabledTabs,
   ]);
 
   return (
@@ -232,6 +239,8 @@ export function useSidebarContext(): SidebarContextData {
       sidebarComponentInfo: undefined,
       defaultTab: COMPONENT_INFO_TABS.Preview,
       setDefaultTab: () => {},
+      disabledTabs: [],
+      setDisabledTabs: () => {},
     };
   }
   return ctx;
