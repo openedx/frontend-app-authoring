@@ -1,7 +1,12 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
-import { Collapsible, Icon, Stack } from '@openedx/paragon';
+import {
+  Collapsible,
+  Icon,
+  Stack,
+  useToggle,
+} from '@openedx/paragon';
 import {
   ExpandLess, ExpandMore, Tag,
 } from '@openedx/paragon/icons';
@@ -13,7 +18,7 @@ import messages from './messages';
 
 const ContainerOrganize = () => {
   const intl = useIntl();
-  const [tagsCollapseIsOpen, setTagsCollapseOpen] = useState(true);
+  const [tagsCollapseIsOpen, , , toggleTags] = useToggle(true);
 
   const { readOnly } = useLibraryContext();
   const { sidebarComponentInfo } = useSidebarContext();
@@ -54,7 +59,7 @@ const ContainerOrganize = () => {
             className="collapsible-card border-0"
           >
             <Collapsible.Trigger
-              onClick={() => setTagsCollapseOpen((prev) => !prev)}
+              onClick={toggleTags}
               className="collapsible-trigger d-flex justify-content-between p-2"
             >
               <Stack gap={1} direction="horizontal">
