@@ -22,6 +22,7 @@ import {
 } from '../common/context/SidebarContext';
 import ContainerOrganize from './ContainerOrganize';
 import { useLibraryRoutes } from '../routes';
+import { LibraryUnitBlocks } from '../units/LibraryUnitBlocks';
 import messages from './messages';
 import componentMessages from '../components/messages';
 import ContainerDeleter from '../components/ContainerDeleter';
@@ -108,7 +109,7 @@ const UnitInfo = () => {
         {component}
       </Tab>
     );
-  }, [disabledTabs, defaultTab.unit]);
+  }, [disabledTabs, defaultTab.unit, unitId]);
 
   return (
     <Stack>
@@ -134,7 +135,7 @@ const UnitInfo = () => {
         activeKey={tab}
         onSelect={setSidebarTab}
       >
-        {renderTab(UNIT_INFO_TABS.Preview, "Unit Preview", intl.formatMessage(messages.previewTabTitle))}
+        {renderTab(UNIT_INFO_TABS.Preview, <LibraryUnitBlocks />, intl.formatMessage(messages.previewTabTitle))}
         {renderTab(UNIT_INFO_TABS.Organize, <ContainerOrganize />, intl.formatMessage(messages.organizeTabTitle))}
         {renderTab(UNIT_INFO_TABS.Settings, "Unit Settings", intl.formatMessage(messages.settingsTabTitle))}
       </Tabs>
