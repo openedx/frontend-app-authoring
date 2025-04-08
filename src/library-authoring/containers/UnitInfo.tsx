@@ -70,13 +70,13 @@ const UnitInfo = () => {
 
   const { setUnitId } = useLibraryContext();
   const { componentPickerMode } = useComponentPickerContext();
-  const { sidebarComponentInfo, sidebarTab, setSidebarTab } = useSidebarContext();
+  const { defaultTab, disabledTabs, sidebarComponentInfo, sidebarTab, setSidebarTab } = useSidebarContext();
   const { insideUnit, navigateTo } = useLibraryRoutes();
   const { data: container } = useContainer(unitId);
 
   const tab: UnitInfoTab = (
     sidebarTab && isUnitInfoTab(sidebarTab)
-  ) ? sidebarTab : UNIT_INFO_TABS.Preview;
+  ) ? sidebarTab : defaultTab.unit;
 
   const unitId = sidebarComponentInfo?.id;
   // istanbul ignore if: this should never happen
@@ -98,6 +98,18 @@ const UnitInfo = () => {
     return null;
   }
 
+  const renderTab = useCallback((tab: UnitInfoTab, component: React.ReactNode, title: string) => {
+    if (disabledTabs.includes(tab)) {
+      // For some reason, returning anything other than empty list breaks the tab style
+      return [];
+    }
+    return (
+      <Tab eventKey={tab} title={title}>
+        {component}
+      </Tab>
+    );
+  }, [disabledTabs, defaultTab.unit]);
+
   return (
     <Stack>
       {showOpenUnitButton && (
@@ -118,19 +130,13 @@ const UnitInfo = () => {
       <Tabs
         variant="tabs"
         className="my-3 d-flex justify-content-around"
-        defaultActiveKey={UNIT_INFO_TABS.Preview}
+        defaultActiveKey={defaultTab.unit}
         activeKey={tab}
         onSelect={setSidebarTab}
       >
-        <Tab eventKey={UNIT_INFO_TABS.Preview} title={intl.formatMessage(messages.previewTabTitle)}>
-          Unit Preview
-        </Tab>
-        <Tab eventKey={UNIT_INFO_TABS.Organize} title={intl.formatMessage(messages.organizeTabTitle)}>
-          <ContainerOrganize />
-        </Tab>
-        <Tab eventKey={UNIT_INFO_TABS.Settings} title={intl.formatMessage(messages.settingsTabTitle)}>
-          Unit Settings
-        </Tab>
+        {renderTab(UNIT_INFO_TABS.Preview, "Unit Preview", intl.formatMessage(messages.previewTabTitle))}
+        {renderTab(UNIT_INFO_TABS.Organize, <ContainerOrganize />, intl.formatMessage(messages.organizeTabTitle))}
+        {renderTab(UNIT_INFO_TABS.Settings, "Unit Settings", intl.formatMessage(messages.settingsTabTitle))}
       </Tabs>
     </Stack>
   );
