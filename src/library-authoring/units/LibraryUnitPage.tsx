@@ -166,6 +166,7 @@ export const LibraryUnitPage = () => {
   const {
     libraryId,
     unitId,
+    collectionId,
     componentId,
   } = useLibraryContext();
   const {
@@ -185,7 +186,7 @@ export const LibraryUnitPage = () => {
   }, [setDefaultTab, setDisabledTabs]);
 
   useEffect(() => {
-    openInfoSidebar(componentId);
+    openInfoSidebar(componentId, collectionId, unitId);
   }, [componentId]);
 
   if (!unitId || !libraryId) {

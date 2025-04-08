@@ -10,8 +10,10 @@ import {
   useToggle,
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
+import { useCallback } from 'react';
 
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
+import { useLibraryContext } from '../common/context/LibraryContext';
 import {
   type UnitInfoTab,
   UNIT_INFO_TABS,
@@ -19,6 +21,7 @@ import {
   useSidebarContext,
 } from '../common/context/SidebarContext';
 import ContainerOrganize from './ContainerOrganize';
+import { useLibraryRoutes } from '../routes';
 import messages from './messages';
 import componentMessages from '../components/messages';
 import ContainerDeleter from '../components/ContainerDeleter';
@@ -65,8 +68,11 @@ const UnitMenu = ({ containerId, displayName }: ContainerMenuProps) => {
 const UnitInfo = () => {
   const intl = useIntl();
 
+  const { setUnitId } = useLibraryContext();
   const { componentPickerMode } = useComponentPickerContext();
   const { sidebarComponentInfo, sidebarTab, setSidebarTab } = useSidebarContext();
+  const { insideUnit, navigateTo } = useLibraryRoutes();
+  const { data: container } = useContainer(unitId);
 
   const tab: UnitInfoTab = (
     sidebarTab && isUnitInfoTab(sidebarTab)
@@ -78,9 +84,15 @@ const UnitInfo = () => {
     throw new Error('unitId is required');
   }
 
-  const showOpenUnitButton = !componentPickerMode;
+  const handleOpenUnit = useCallback(() => {
+    if (componentPickerMode) {
+      setUnitId(unitId);
+    } else {
+      navigateTo({ unitId });
+    }
+  }, [componentPickerMode, navigateTo, unitId]);
 
-  const { data: container } = useContainer(unitId);
+  const showOpenUnitButton = !insideUnit || !componentPickerMode;
 
   if (!container) {
     return null;
@@ -93,7 +105,7 @@ const UnitInfo = () => {
           <Button
             variant="outline-primary"
             className="m-1 text-nowrap flex-grow-1"
-            disabled
+            onClick={handleOpenUnit}
           >
             {intl.formatMessage(messages.openUnitButton)}
           </Button>
