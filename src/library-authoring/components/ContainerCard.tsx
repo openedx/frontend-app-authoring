@@ -27,9 +27,9 @@ type ContainerMenuProps = {
 
 const ContainerMenu = ({ hit } : ContainerMenuProps) => {
   const intl = useIntl();
-  const { contextKey, blockId } = hit;
-
-  const {
+  const { 
+    contextKey,
+    blockId,
     usageKey: containerKey,
     blockType: componentType,
     displayName,
