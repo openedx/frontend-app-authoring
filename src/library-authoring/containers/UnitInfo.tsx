@@ -16,6 +16,7 @@ import {
   useSidebarContext,
 } from '../common/context/SidebarContext';
 import { useLibraryRoutes } from '../routes';
+import { LibraryUnitBlocks } from '../units/LibraryUnitBlocks';
 import messages from './messages';
 
 const UnitInfo = () => {
@@ -56,7 +57,7 @@ const UnitInfo = () => {
         {component}
       </Tab>
     );
-  }, [disabledTabs, defaultTab.unit]);
+  }, [disabledTabs, defaultTab.unit, unitId]);
 
   return (
     <Stack>
@@ -78,7 +79,7 @@ const UnitInfo = () => {
         activeKey={tab}
         onSelect={setSidebarTab}
       >
-        {renderTab(UNIT_INFO_TABS.Preview, "Unit Preview", intl.formatMessage(messages.previewTabTitle))}
+        {renderTab(UNIT_INFO_TABS.Preview, <LibraryUnitBlocks />, intl.formatMessage(messages.previewTabTitle))}
         {renderTab(UNIT_INFO_TABS.Organize, "Organize Unit", intl.formatMessage(messages.organizeTabTitle))}
         {renderTab(UNIT_INFO_TABS.Settings, "Unit Settings", intl.formatMessage(messages.settingsTabTitle))}
       </Tabs>
