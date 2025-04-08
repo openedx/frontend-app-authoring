@@ -51,7 +51,7 @@ import {
   getContainerMetadata,
   updateContainerMetadata,
   type UpdateContainerDataRequest,
-  getLibraryContainerChildren,
+  getContainerChildren,
 } from './api';
 import { VersionSpec } from '../LibraryBlock';
 
@@ -107,6 +107,11 @@ export const libraryAuthoringQueryKeys = {
     'blockTypes',
     libraryId,
   ],
+  container: (libraryId?: string, containerId?: string) => [
+    ...libraryAuthoringQueryKeys.all,
+    libraryId,
+    containerId,
+  ],
 };
 
 export const xblockQueryKeys = {
@@ -123,6 +128,15 @@ export const xblockQueryKeys = {
   xblockAssets: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'assets'],
   componentMetadata: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'componentMetadata'],
   componentDownstreamLinks: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'downstreamLinks'],
+};
+
+export const containerQueryKeys = {
+  all: ['container', 'children'],
+  /**
+   * Base key for data specific to a container
+   */
+  container: (usageKey?: string) => [...containerQueryKeys.all, usageKey],
+  children: (usageKey?: string) => [...containerQueryKeys.all, usageKey, 'children'],
 };
 
 /**
@@ -620,12 +634,12 @@ export const useUpdateContainer = (containerId: string) => {
 };
 
 /**
- * Get the metadata for a container in a library
+ * Get the metadata and children for a container in a library
  */
-export const useContainerChildren = (libraryId?: string, containerId?: string) => (
+export const useContainerChildren = (containerId: string) => (
   useQuery({
-    enabled: !!libraryId && !!containerId,
-    queryKey: libraryAuthoringQueryKeys.containerChildren(libraryId, containerId),
-    queryFn: () => getLibraryContainerChildren(containerId!),
+    enabled: !!containerId,
+    queryKey: containerQueryKeys.children(containerId),
+    queryFn: () => getContainerChildren(containerId!),
   })
 );

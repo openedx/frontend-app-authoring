@@ -499,6 +499,56 @@ mockGetContainerMetadata.applyMock = () => {
 };
 
 /**
+ * Mock for `getContainerChildren()`
+ *
+ * This mock returns a fixed response for the given container ID.
+ */
+export async function mockGetContainerChildren(containerId: string): Promise<api.LibraryBlockMetadata[]> {
+  let numChildren: number;
+  switch (containerId) {
+    case mockGetContainerChildren.fiveChildren:
+      numChildren = 5;
+      break;
+    case mockGetContainerChildren.sixChildren:
+      numChildren = 6;
+      break;
+    default:
+      numChildren = 0;
+      break;
+  }
+  return Promise.resolve(
+    Array(numChildren).fill(mockGetContainerChildren.childTemplate).map((child, idx) => (
+      {
+        ...child,
+        // Generate a unique ID for each child block to avoid "duplicate key" errors in tests
+        id: `lb:org1:Demo_course:html:text-${idx}`,
+      }
+    )),
+  );
+}
+mockGetContainerChildren.fiveChildren = 'lct:org1:Demo_Course:unit:unit-5';
+mockGetContainerChildren.sixChildren = 'lct:org1:Demo_Course:unit:unit-6';
+mockGetContainerChildren.childTemplate = {
+  id: 'lb:org1:Demo_course:html:text',
+  blockType: 'html',
+  defKey: 'def_key',
+  displayName: 'text block',
+  lastPublished: null,
+  publishedBy: null,
+  lastDraftCreated: null,
+  lastDraftCreatedBy: null,
+  hasUnpublishedChanges: false,
+  created: null,
+  modified: null,
+  tagsCount: 0,
+  collections: [] as api.CollectionMetadata[],
+} satisfies api.LibraryBlockMetadata;
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockGetContainerChildren.applyMock = () => {
+  jest.spyOn(api, 'getContainerChildren').mockImplementation(mockGetContainerChildren);
+};
+
+/**
  * Mock for `getXBlockOLX()`
  *
  * This mock returns different data/responses depending on the ID of the block

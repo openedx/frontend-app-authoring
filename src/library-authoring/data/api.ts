@@ -622,9 +622,10 @@ export async function updateContainerMetadata(
 }
 
 /**
- * Fetch container metadata.
+ * Fetch a library container's children's metadata.
  */
-export async function getLibraryContainerChildren(containerId: string): Promise<LibraryBlockMetadata[]> {
-  const { data } = await getAuthenticatedHttpClient().get(getLibraryContainerChildrenApiUrl(containerId));
+export async function getContainerChildren(containerId: string): Promise<LibraryBlockMetadata[]> {
+  const client = getAuthenticatedHttpClient();
+  const { data } = await client.get(getLibraryContainerChildrenApiUrl(containerId));
   return camelCaseObject(data);
 }
