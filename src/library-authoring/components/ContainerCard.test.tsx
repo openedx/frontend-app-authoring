@@ -51,9 +51,7 @@ const render = (ui: React.ReactElement, showOnlyPublished: boolean = false) => b
 
 describe('<ContainerCard />', () => {
   beforeEach(() => {
-    const mocks = initializeMocks();
-    axiosMock = mocks.axiosMock;
-    mockShowToast = mocks.mockShowToast;
+    ({ axiosMock, mockShowToast } = initializeMocks());
   });
 
   it('should render the card with title', () => {

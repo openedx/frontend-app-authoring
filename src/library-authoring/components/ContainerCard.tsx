@@ -31,7 +31,6 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
     contextKey,
     blockId,
     usageKey: containerKey,
-    blockType: componentType,
     displayName,
   } = hit;
   const {
@@ -43,18 +42,13 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
   const { showToast } = useContext(ToastContext);
   const deleteContainerMutation = useDeleteContainer(containerKey);
 
-  let deleteWarningTitle;
-  let deleteText;
-  let deleteSuccess;
-  let deleteError;
-  if (componentType === 'unit') {
-    deleteWarningTitle = intl.formatMessage(messages.deleteUnitWarningTitle);
-    deleteText = intl.formatMessage(messages.deleteUnitConfirm, {
-      componentName: displayName,
-    });
-    deleteSuccess = intl.formatMessage(messages.deleteUnitSuccess);
-    deleteError = intl.formatMessage(messages.deleteUnitFailed);
-  }
+  const deleteWarningTitle = intl.formatMessage(messages.deleteUnitWarningTitle);
+  const deleteText = intl.formatMessage(messages.deleteUnitConfirm, {
+    componentName: displayName,
+  });
+  const deleteSuccess = intl.formatMessage(messages.deleteUnitSuccess);
+  const deleteError = intl.formatMessage(messages.deleteUnitFailed);
+  const undoDeleteError = messages.undoDeleteUnitToastFailed;
 
   const restoreContainerMutation = useRestoreContainer(containerKey);
   const restoreComponent = useCallback(async () => {
@@ -62,7 +56,7 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
       await restoreContainerMutation.mutateAsync();
       showToast(intl.formatMessage(messages.undoDeleteContainerToastMessage));
     } catch (e) {
-      showToast(intl.formatMessage(messages.undoDeleteUnitToastFailed));
+      showToast(intl.formatMessage(undoDeleteError));
     }
   }, []);
 
