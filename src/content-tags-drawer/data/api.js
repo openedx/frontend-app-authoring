@@ -72,12 +72,12 @@ export async function getContentTaxonomyTagsCount(contentId) {
 /**
  * Fetch meta data (eg: display_name) about the content object (unit/component)
  * @param {string} contentId The id of the content object (unit/component)
- * @returns {Promise<import("./types.js").ContentData | undefined>}
+ * @returns {Promise<import("./types.js").ContentData>}
  */
 export async function getContentData(contentId) {
   let url;
 
-  if (contentId.startsWith('lb:') || contentId.startsWith('library:')) {
+  if (contentId.startsWith('lb:')) {
     url = getLibraryContentDataApiUrl(contentId);
   } else if (contentId.startsWith('course-v1:')) {
     url = getCourseContentDataApiURL(contentId);

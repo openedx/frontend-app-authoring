@@ -20,8 +20,8 @@ import { ContentTagsDrawerSheetContext } from './common/context';
  * To *use* the context, just use `useContext(ContentTagsDrawerContext)`
  * @param {string} contentId
  * @param {boolean} canTagObject
- * @param {boolean} fetchMetadata=false If true, fetches metadata for the contentId. This is used on `edx-platform` to
- * show the content name as the drawer title.
+ * @param {boolean} fetchMetadata=false If true, fetches metadata for the contentId. This is used on `edx-platform`
+ * and the Course/Unit Outline to show the content name as the drawer title.
  * @returns {ContentTagsDrawerContextData}
  */
 export const useCreateContentTagsDrawerContext = (contentId, canTagObject, fetchMetadata = false) => {
