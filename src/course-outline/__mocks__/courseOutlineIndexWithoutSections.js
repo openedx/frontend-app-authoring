@@ -6,7 +6,6 @@ module.exports = {
     blocks: [],
     advanceSettingsUrl: '/settings/advanced/course-v1:edx+101+y76',
   },
-  discussionsIncontextFeedbackUrl: '',
   discussionsIncontextLearnmoreUrl: '',
   initialState: {
     expandedLocators: [
