@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import { intlShape, injectIntl } from '@edx/frontend-platform/i18n';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { ActionRow, Card, Icon, IconButtonWithTooltip } from '@openedx/paragon';
+import {
+  ActionRow, Card, Icon, IconButtonWithTooltip,
+} from '@openedx/paragon';
 import { DragIndicator } from '@openedx/paragon/icons';
 import messages from './messages';
 
@@ -81,7 +83,7 @@ SortableItem.propTypes = {
   actions: PropTypes.node,
   actionStyle: PropTypes.shape({}),
   componentStyle: PropTypes.shape({}),
-  isClickable: PropTypes.boolean,
+  isClickable: PropTypes.bool,
   onClick: PropTypes.func,
   // injected
   intl: intlShape.isRequired,

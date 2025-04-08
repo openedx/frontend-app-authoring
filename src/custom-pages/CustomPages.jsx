@@ -186,7 +186,7 @@ const CustomPages = ({
                     marginBottom: '16px',
                     boxShadow: '0px 1px 5px #ADADAD',
                   }}
-                  actions={
+                  actions={(
                     <CustomPageCard
                       {...{
                         page,
@@ -196,7 +196,7 @@ const CustomPages = ({
                         setCurrentPage,
                       }}
                     />
-                  }
+                  )}
                 />
               ))}
             </DraggableList>

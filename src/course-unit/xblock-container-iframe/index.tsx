@@ -1,5 +1,5 @@
 import {
-  useRef, FC, useEffect, useState, useMemo, useCallback,
+  FC, useEffect, useState, useMemo, useCallback,
 } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useToggle, Sheet } from '@openedx/paragon';

@@ -1,23 +1,25 @@
-import { useIntl } from "@edx/frontend-platform/i18n";
-import { Breadcrumb, Button, Container, Icon, Stack, useToggle } from "@openedx/paragon";
-import { Add, InfoOutline } from "@openedx/paragon/icons";
-import { useCallback, useEffect } from "react";
+import { useIntl } from '@edx/frontend-platform/i18n';
+import { Breadcrumb, Button, Container } from '@openedx/paragon';
+import { Add, InfoOutline } from '@openedx/paragon/icons';
+import { useCallback, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 import ErrorAlert from '../../generic/alert-error';
-import Loading from "../../generic/Loading";
-import NotFoundAlert from "../../generic/NotFoundAlert";
-import SubHeader from "../../generic/sub-header/SubHeader";
-import Header from "../../header";
-import { useLibraryContext } from "../common/context/LibraryContext";
-import { COLLECTION_INFO_TABS, COMPONENT_INFO_TABS, DefaultTabs, SidebarBodyComponentId, UNIT_INFO_TABS, useSidebarContext } from "../common/context/SidebarContext";
-import { useContainer, useContentLibrary } from "../data/apiHooks";
-import { LibrarySidebar } from "../library-sidebar";
-import { SubHeaderTitle } from "../LibraryAuthoringPage";
-import { useLibraryRoutes } from "../routes";
-import { LibraryUnitBlocks } from "./LibraryUnitBlocks";
-import messages from "./messages";
+import Loading from '../../generic/Loading';
+import NotFoundAlert from '../../generic/NotFoundAlert';
+import SubHeader from '../../generic/sub-header/SubHeader';
+import Header from '../../header';
+import { useLibraryContext } from '../common/context/LibraryContext';
+import {
+  COLLECTION_INFO_TABS, COMPONENT_INFO_TABS, SidebarBodyComponentId, UNIT_INFO_TABS, useSidebarContext,
+} from '../common/context/SidebarContext';
+import { useContainer, useContentLibrary } from '../data/apiHooks';
+import { LibrarySidebar } from '../library-sidebar';
+import { SubHeaderTitle } from '../LibraryAuthoringPage';
+import { useLibraryRoutes } from '../routes';
+import { LibraryUnitBlocks } from './LibraryUnitBlocks';
+import messages from './messages';
 
 const HeaderActions = () => {
   const intl = useIntl();
@@ -47,11 +49,10 @@ const HeaderActions = () => {
     navigateTo({ unitId });
   }, [unitId, infoSidebarIsOpen]);
 
-
   return (
     <div className="header-actions">
       <Button
-        className='normal-border'
+        className="normal-border"
         iconBefore={InfoOutline}
         variant="outline-primary rounded-0"
         onClick={handleOnClickInfoSidebar}
@@ -99,7 +100,7 @@ export const LibraryUnitPage = () => {
         unit: UNIT_INFO_TABS.Preview,
         collection: COLLECTION_INFO_TABS.Manage,
       });
-      setDisabledTabs([])
+      setDisabledTabs([]);
     };
   }, [setDefaultTab, setDisabledTabs]);
 
@@ -149,7 +150,7 @@ export const LibraryUnitPage = () => {
       ]}
       linkAs={Link}
     />
-  )
+  );
 
   return (
     <div className="d-flex">
@@ -188,5 +189,5 @@ export const LibraryUnitPage = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};

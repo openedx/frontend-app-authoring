@@ -1,7 +1,7 @@
 .library-unit-page {
   .pgn__card {
     border-radius: 8px;
-    padding: 0px;
+    padding: 0;
     margin-bottom: 1rem;
     border: solid 1px $light-500;
   }
@@ -10,6 +10,7 @@
     box-shadow: none;
     // this is required for clicks to be captured by card and iframe when it is not in focus
     pointer-events: auto;
+
     &:focus {
       // this is required for clicks to be passed to underlying iframe component
       pointer-events: none;
@@ -22,7 +23,7 @@
   }
 
   .pgn__card.clickable:hover {
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.15), 0 0.125rem 0.5rem rgba(0, 0, 0, 0.15);
+    box-shadow: 0 .125rem .25rem rgb(0 0 0 / .15), 0 .125rem .5rem rgb(0 0 0 / .15);
   }
 
   .sortable-item-children {

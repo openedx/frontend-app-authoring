@@ -1,25 +1,27 @@
-import { FormattedMessage } from "@edx/frontend-platform/i18n";
-import { ActionRow, Badge, Icon, Stack, useToggle } from "@openedx/paragon";
-import { Description } from "@openedx/paragon/icons";
-import { useQueryClient } from "@tanstack/react-query";
-import classNames from "classnames";
-import { useEffect, useState } from "react";
-import { ContentTagsDrawerSheet } from "../../content-tags-drawer";
-import { blockTypes } from "../../editors/data/constants/app";
-import DraggableList, { SortableItem } from "../../editors/sharedComponents/DraggableList";
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import {
+  ActionRow, Badge, Icon, Stack, useToggle,
+} from '@openedx/paragon';
+import { Description } from '@openedx/paragon/icons';
+import { useQueryClient } from '@tanstack/react-query';
+import classNames from 'classnames';
+import { useEffect, useState } from 'react';
+import { ContentTagsDrawerSheet } from '../../content-tags-drawer';
+import { blockTypes } from '../../editors/data/constants/app';
+import DraggableList, { SortableItem } from '../../editors/sharedComponents/DraggableList';
 
 import ErrorAlert from '../../generic/alert-error';
-import { getItemIcon } from "../../generic/block-type-utils";
-import { IframeProvider } from "../../generic/hooks/context/iFrameContext";
-import Loading from "../../generic/Loading";
-import TagCount from "../../generic/tag-count";
-import { useLibraryContext } from "../common/context/LibraryContext";
-import ComponentMenu from "../components";
-import { LibraryBlockMetadata } from "../data/api";
-import { libraryAuthoringQueryKeys, useContainerChildren } from "../data/apiHooks";
-import { LibraryBlock } from "../LibraryBlock";
-import { useLibraryRoutes } from "../routes";
-import messages from "./messages";
+import { getItemIcon } from '../../generic/block-type-utils';
+import { IframeProvider } from '../../generic/hooks/context/iFrameContext';
+import Loading from '../../generic/Loading';
+import TagCount from '../../generic/tag-count';
+import { useLibraryContext } from '../common/context/LibraryContext';
+import ComponentMenu from '../components';
+import { LibraryBlockMetadata } from '../data/api';
+import { libraryAuthoringQueryKeys, useContainerChildren } from '../data/apiHooks';
+import { LibraryBlock } from '../LibraryBlock';
+import { useLibraryRoutes } from '../routes';
+import messages from './messages';
 
 export const LibraryUnitBlocks = () => {
   const [orderedBlocks, setOrderedBlocks] = useState<LibraryBlockMetadata[]>([]);
@@ -42,7 +44,7 @@ export const LibraryUnitBlocks = () => {
     error,
   } = useContainerChildren(libraryId, unitId);
 
-  useEffect(() => setOrderedBlocks(blocks || []), [blocks])
+  useEffect(() => setOrderedBlocks(blocks || []), [blocks]);
 
   if (isLoading) {
     return <Loading />;
@@ -51,26 +53,30 @@ export const LibraryUnitBlocks = () => {
   if (isError) {
     return <ErrorAlert error={error} />;
   }
+
+  /* istanbul ignore next */
   const handleReorder = () => (newOrder: LibraryBlockMetadata[]) => {
+    // eslint-disable-next-line no-console
+    console.log('LibraryUnitBlocks newOrder: ', newOrder);
     // TODO: update order of components in unit
   };
 
   const onTagSidebarClose = () => {
     queryClient.invalidateQueries(libraryAuthoringQueryKeys.containerChildren(libraryId, unitId));
     closeManageTagsDrawer();
-  }
+  };
 
   const handleComponentSelection = (block: LibraryBlockMetadata) => {
     setComponentId(block.id);
     navigateTo({ componentId: block.id });
-  }
+  };
 
   const renderedBlocks = orderedBlocks?.map((block) => (
     <IframeProvider key={block.id}>
       <SortableItem
         id={block.id}
         componentStyle={null}
-        actions={
+        actions={(
           <>
             <Stack direction="horizontal" gap={2} className="font-weight-bold">
               <Icon src={getItemIcon(block.blockType)} />
@@ -93,19 +99,20 @@ export const LibraryUnitBlocks = () => {
               <ComponentMenu usageKey={block.id} />
             </Stack>
           </>
-        }
+        )}
         actionStyle={{
           borderRadius: '8px 8px 0px 0px',
           padding: '0.5rem 1rem',
           background: '#FBFAF9',
-          borderBottom: 'solid 1px #E1DDDB'
+          borderBottom: 'solid 1px #E1DDDB',
         }}
         isClickable
         onClick={() => handleComponentSelection(block)}
       >
         <div className={classNames('p-3', {
-          "container-mw-md": block.blockType === blockTypes.video,
-        })}>
+          'container-mw-md': block.blockType === blockTypes.video,
+        })}
+        >
           <LibraryBlock
             usageKey={block.id}
             version={showOnlyPublished ? 'published' : undefined}
@@ -127,4 +134,4 @@ export const LibraryUnitBlocks = () => {
       />
     </div>
   );
-}
+};

@@ -31,7 +31,6 @@ import { getBlockType } from '../../generic/key-utils';
 import { useLibraryBlockMetadata, usePublishComponent } from '../data/apiHooks';
 import { ToastContext } from '../../generic/toast-context';
 import PublishConfirmationModal from '../components/PublishConfirmationModal';
-import { title } from '../../schedule-and-details/__mocks__/courseDetails';
 
 const AddComponentWidget = () => {
   const intl = useIntl();
@@ -157,13 +156,13 @@ const ComponentInfo = () => {
       });
   }, [publishComponent, showToast, intl]);
 
-  const renderTab = React.useCallback((tab: ComponentInfoTab, component: React.ReactNode, title: string) => {
-    if (disabledTabs.includes(tab)) {
+  const renderTab = React.useCallback((infoTab: ComponentInfoTab, component: React.ReactNode, title: string) => {
+    if (disabledTabs.includes(infoTab)) {
       // For some reason, returning anything other than empty list breaks the tab style
       return [];
     }
     return (
-      <Tab eventKey={tab} title={title}>
+      <Tab eventKey={infoTab} title={title}>
         {component}
       </Tab>
     );

@@ -102,7 +102,7 @@ export const libraryAuthoringQueryKeys = {
     ...libraryAuthoringQueryKeys.all,
     libraryId,
     containerId,
-    "children",
+    'children',
   ],
   blockTypes: (libraryId?: string) => [
     ...libraryAuthoringQueryKeys.all,

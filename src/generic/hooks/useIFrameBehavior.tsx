@@ -42,6 +42,7 @@ export const useIFrameBehavior = ({
     }
     const { data } = event;
     const { payload, type } = data;
+    const { method, replyKey, ...args } = data;
 
     switch (type) {
       case iframeMessageTypes.resize:
@@ -62,7 +63,6 @@ export const useIFrameBehavior = ({
         setWindowTopOffset(payload.open ? window.scrollY : null);
         break;
       case iframeMessageTypes.xblockEvent:
-        const { method, replyKey, ...args } = data;
         if (method?.indexOf('xblock:') === 0) {
           // This is a notification from the XBlock's frontend via 'runtime.notify(event, args)'
           onBlockNotification?.({
