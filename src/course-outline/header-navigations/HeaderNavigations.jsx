@@ -25,7 +25,7 @@ const HeaderNavigations = ({
   } = headerNavigationsActions;
 
   return (
-    <nav className="header-navigations ml-auto">
+    <>
       {courseActions.childAddable && (
         <OverlayTrigger
           placement="bottom"
@@ -90,7 +90,7 @@ const HeaderNavigations = ({
           {intl.formatMessage(messages.viewLiveButton)}
         </Button>
       </OverlayTrigger>
-    </nav>
+    </>
   );
 };
 

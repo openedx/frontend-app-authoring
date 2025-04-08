@@ -114,7 +114,7 @@ export const getLibraryContainerApiUrl = (containerId: string) => `${getApiBaseU
 /**
  * Get the URL for a single container children api.
  */
-export const getLibraryContainerChildrenApiUrl = (containerId: string) => `${getApiBaseUrl()}/api/libraries/v2/containers/${containerId}/children/`;
+export const getLibraryContainerChildrenApiUrl = (containerId: string) => `${getLibraryContainerApiUrl(containerId)}children/`;
 
 export interface ContentLibrary {
   id: string;

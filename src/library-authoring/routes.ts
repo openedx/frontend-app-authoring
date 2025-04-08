@@ -72,12 +72,23 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     unitId,
     contentType,
   }: NavigateToData = {}) => {
+    const {
+      collectionId: urlCollectionId,
+      componentId: urlComponentId,
+      unitId: urlUnitId,
+      selectedItemId: urlSelectedItemId,
+    } = params;
+
     const routeParams = {
       ...params,
       // Overwrite the current componentId/collectionId params if provided
       ...((componentId !== undefined) && { componentId }),
       ...((collectionId !== undefined) && { collectionId, selectedItemId: collectionId }),
       ...((unitId !== undefined) && { unitId, selectedItemId: unitId }),
+      ...(contentType === ContentType.home && { selectedItemId: urlCollectionId || urlUnitId }),
+      ...(contentType === ContentType.components && { componentId: urlComponentId || urlSelectedItemId }),
+      ...(contentType === ContentType.collections && { collectionId: urlCollectionId || urlSelectedItemId }),
+      ...(contentType === ContentType.units && { unitId: urlUnitId || urlSelectedItemId }),
     };
     let route;
 
@@ -93,7 +104,7 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     } else if (insideCollections) {
       // We're inside the Collections tab,
       route = (
-        (collectionId && collectionId === params.collectionId)
+        (collectionId && collectionId === (urlCollectionId || urlSelectedItemId))
           // now open the previously-selected collection,
           ? ROUTES.COLLECTION
           // or stay there to list all collections, or a selected collection.
@@ -117,7 +128,7 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       route = ROUTES.COMPONENT;
     } else {
       route = (
-        (collectionId && collectionId === params.collectionId)
+        (collectionId && collectionId === (urlCollectionId || urlSelectedItemId))
           // now open the previously-selected collection
           ? ROUTES.COLLECTION
           // or stay there to list all content, or optionally select a collection.
