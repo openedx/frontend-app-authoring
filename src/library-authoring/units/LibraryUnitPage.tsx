@@ -1,7 +1,7 @@
 import { useIntl } from "@edx/frontend-platform/i18n";
 import { Breadcrumb, Button, Container, Icon, Stack, useToggle } from "@openedx/paragon";
 import { Add, InfoOutline } from "@openedx/paragon/icons";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { Helmet } from 'react-helmet';
 import { Link } from "react-router-dom";
 
@@ -11,15 +11,42 @@ import NotFoundAlert from "../../generic/NotFoundAlert";
 import SubHeader from "../../generic/sub-header/SubHeader";
 import Header from "../../header";
 import { useLibraryContext } from "../common/context/LibraryContext";
-import { COLLECTION_INFO_TABS, COMPONENT_INFO_TABS, DefaultTabs, UNIT_INFO_TABS, useSidebarContext } from "../common/context/SidebarContext";
+import { COLLECTION_INFO_TABS, COMPONENT_INFO_TABS, DefaultTabs, SidebarBodyComponentId, UNIT_INFO_TABS, useSidebarContext } from "../common/context/SidebarContext";
 import { useContainer, useContentLibrary } from "../data/apiHooks";
 import { LibrarySidebar } from "../library-sidebar";
 import { SubHeaderTitle } from "../LibraryAuthoringPage";
+import { useLibraryRoutes } from "../routes";
 import { LibraryUnitBlocks } from "./LibraryUnitBlocks";
 import messages from "./messages";
 
 const HeaderActions = () => {
   const intl = useIntl();
+
+  const { unitId, readOnly } = useLibraryContext();
+  const {
+    closeLibrarySidebar,
+    openUnitInfoSidebar,
+    sidebarComponentInfo,
+  } = useSidebarContext();
+  const { navigateTo } = useLibraryRoutes();
+
+  // istanbul ignore if: this should never happen
+  if (!unitId) {
+    throw new Error('it should not be possible to render HeaderActions without a unitId');
+  }
+
+  const infoSidebarIsOpen = sidebarComponentInfo?.type === SidebarBodyComponentId.UnitInfo
+    && sidebarComponentInfo?.id === unitId;
+
+  const handleOnClickInfoSidebar = useCallback(() => {
+    if (infoSidebarIsOpen) {
+      closeLibrarySidebar();
+    } else {
+      openUnitInfoSidebar(unitId);
+    }
+    navigateTo({ unitId });
+  }, [unitId, infoSidebarIsOpen]);
+
 
   return (
     <div className="header-actions">
@@ -27,6 +54,7 @@ const HeaderActions = () => {
         className='normal-border'
         iconBefore={InfoOutline}
         variant="outline-primary rounded-0"
+        onClick={handleOnClickInfoSidebar}
       >
         {intl.formatMessage(messages.infoButtonText)}
       </Button>
@@ -34,6 +62,7 @@ const HeaderActions = () => {
         className="ml-2"
         iconBefore={Add}
         variant="primary rounded-0"
+        disabled={readOnly}
       >
         {intl.formatMessage(messages.newContentButton)}
       </Button>
@@ -76,7 +105,7 @@ export const LibraryUnitPage = () => {
 
   useEffect(() => {
     openInfoSidebar(componentId, collectionId, unitId);
-  }, [componentId]);
+  }, [componentId, unitId, collectionId]);
 
   if (!unitId || !libraryId) {
     // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
