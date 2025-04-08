@@ -64,9 +64,16 @@ describe('CodeEditor', () => {
     describe('cleanHTML', () => {
       const dirtyText = `&${Object.keys(alphanumericMap).join('; , &')};`;
       const cleanText = `${Object.values(alphanumericMap).join(' , ')}`;
+      const dirtyTextWithAlt = '<img src="image.png" alt="Description &le; and &ge; &quot;do not convert these to double quotes&quot; 1" /> and &le; and &ge;';
+      const cleanTextWithAlt = '<img src="image.png" alt="Description ≤ and ≥ &quot;do not convert these to double quotes&quot; 1" /> and ≤ and ≥';
 
       it('escapes alphanumerics and sets them to be literals', () => {
         expect(hooks.cleanHTML({ initialText: dirtyText })).toEqual(cleanText);
+      });
+
+      it('replaces alt attributes with placeholders and restores them', () => {
+        const result = hooks.cleanHTML({ initialText: dirtyTextWithAlt });
+        expect(result).toEqual(cleanTextWithAlt);
       });
     });
 
