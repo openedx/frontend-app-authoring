@@ -52,7 +52,7 @@ jest.mock('../../library-authoring/component-picker', () => ({
 }));
 
 const mockSendMessageToIframe = jest.fn();
-jest.mock('../context/hooks', () => ({
+jest.mock('../../generic/hooks/context/hooks', () => ({
   useIframe: () => ({
     sendMessageToIframe: mockSendMessageToIframe,
   }),
