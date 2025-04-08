@@ -123,7 +123,7 @@ const ComponentInfo = () => {
   const tab: ComponentInfoTab = (
     isComponentInfoTab(sidebarTab)
       ? sidebarTab
-      : defaultTab
+      : defaultTab.component
   );
 
   useEffect(() => {
@@ -167,7 +167,7 @@ const ComponentInfo = () => {
         {component}
       </Tab>
     );
-  }, [disabledTabs, defaultTab]);
+  }, [disabledTabs, defaultTab.component]);
 
   return (
     <>
@@ -196,7 +196,7 @@ const ComponentInfo = () => {
         <Tabs
           variant="tabs"
           className="my-3 d-flex justify-content-around"
-          defaultActiveKey={defaultTab}
+          defaultActiveKey={defaultTab.component}
           activeKey={tab}
           onSelect={setSidebarTab}
         >

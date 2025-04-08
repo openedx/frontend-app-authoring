@@ -19,7 +19,7 @@ import SubHeader from "../../generic/sub-header/SubHeader";
 import TagCount from "../../generic/tag-count";
 import Header from "../../header";
 import { useLibraryContext } from "../common/context/LibraryContext";
-import { COMPONENT_INFO_TABS, useSidebarContext } from "../common/context/SidebarContext";
+import { COLLECTION_INFO_TABS, COMPONENT_INFO_TABS, DefaultTabs, UNIT_INFO_TABS, useSidebarContext } from "../common/context/SidebarContext";
 import ComponentMenu from "../components";
 import { LibraryBlockMetadata } from "../data/api";
 import { libraryAuthoringQueryKeys, useContainer, useContainerChildren, useContentLibrary } from "../data/apiHooks";
@@ -177,10 +177,18 @@ export const LibraryUnitPage = () => {
   } = useSidebarContext();
 
   useEffect(() => {
-    setDefaultTab(COMPONENT_INFO_TABS.Manage);
-    setDisabledTabs([COMPONENT_INFO_TABS.Preview]);
+    setDefaultTab({
+      collection: COLLECTION_INFO_TABS.Details,
+      component: COMPONENT_INFO_TABS.Manage,
+      unit: UNIT_INFO_TABS.Organize,
+    });
+    setDisabledTabs([COMPONENT_INFO_TABS.Preview, UNIT_INFO_TABS.Preview]);
     return () => {
-      setDefaultTab(COMPONENT_INFO_TABS.Preview);
+      setDefaultTab({
+        component: COMPONENT_INFO_TABS.Preview,
+        unit: UNIT_INFO_TABS.Preview,
+        collection: COLLECTION_INFO_TABS.Manage,
+      });
       setDisabledTabs([])
     };
   }, [setDefaultTab, setDisabledTabs]);

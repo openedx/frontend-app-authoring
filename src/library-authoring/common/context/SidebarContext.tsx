@@ -51,6 +51,12 @@ const toSidebarInfoTab = (tab: string): SidebarInfoTab | undefined => (
     ? tab : undefined
 );
 
+export interface DefaultTabs {
+  component: ComponentInfoTab;
+  unit: UnitInfoTab;
+  collection: CollectionInfoTab;
+}
+
 export interface SidebarComponentInfo {
   type: SidebarBodyComponentId;
   id: string;
@@ -76,9 +82,9 @@ export type SidebarContextData = {
   resetSidebarAction: () => void;
   sidebarTab: SidebarInfoTab;
   setSidebarTab: (tab: SidebarInfoTab) => void;
-  defaultTab: ComponentInfoTab;
-  setDefaultTab: (tab: ComponentInfoTab) => void;
-  disabledTabs: ComponentInfoTab[];
+  defaultTab: DefaultTabs;
+  setDefaultTab: (tabs: DefaultTabs) => void;
+  disabledTabs: Array<SidebarInfoTab>;
   setDisabledTabs: (tabs: ComponentInfoTab[]) => void;
 };
 
@@ -107,11 +113,15 @@ export const SidebarProvider = ({
     initialSidebarComponentInfo,
   );
 
-  const [defaultTab, setDefaultTab] = useState<ComponentInfoTab>(COMPONENT_INFO_TABS.Preview);
-  const [disabledTabs, setDisabledTabs] = useState<ComponentInfoTab[]>([]);
+  const [defaultTab, setDefaultTab] = useState<DefaultTabs>({
+    component: COMPONENT_INFO_TABS.Preview,
+    unit: UNIT_INFO_TABS.Preview,
+    collection: COLLECTION_INFO_TABS.Manage,
+  });
+  const [disabledTabs, setDisabledTabs] = useState<Array<SidebarInfoTab>>([]);
 
   const [sidebarTab, setSidebarTab] = useStateWithUrlSearchParam<SidebarInfoTab>(
-    defaultTab,
+    defaultTab.component,
     'st',
     (value: string) => toSidebarInfoTab(value),
     (value: SidebarInfoTab) => value.toString(),
@@ -237,7 +247,11 @@ export function useSidebarContext(): SidebarContextData {
       sidebarTab: COMPONENT_INFO_TABS.Preview,
       setSidebarTab: () => {},
       sidebarComponentInfo: undefined,
-      defaultTab: COMPONENT_INFO_TABS.Preview,
+      defaultTab: {
+        component: COMPONENT_INFO_TABS.Preview,
+        unit: UNIT_INFO_TABS.Preview,
+        collection: COLLECTION_INFO_TABS.Manage,
+      },
       setDefaultTab: () => {},
       disabledTabs: [],
       setDisabledTabs: () => {},
