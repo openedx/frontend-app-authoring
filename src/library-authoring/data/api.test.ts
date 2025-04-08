@@ -104,4 +104,15 @@ describe('library data API', () => {
     await api.deleteContainer(containerId);
     expect(axiosMock.history.delete[0].url).toEqual(url);
   });
+
+  it('should restore a container', async () => {
+    const { axiosMock } = initializeMocks();
+    const containerId = 'lct:org:lib1';
+    const url = api.getLibraryContainerRestoreApiUrl(containerId);
+
+    axiosMock.onPost(url).reply(200);
+
+    await api.restoreContainer(containerId);
+    expect(axiosMock.history.post[0].url).toEqual(url);
+  });
 });

@@ -111,6 +111,10 @@ export const getLibraryContainersApiUrl = (libraryId: string) => `${getApiBaseUr
  * Get the URL for the container detail api.
  */
 export const getLibraryContainerApiUrl = (containerId: string) => `${getApiBaseUrl()}/api/libraries/v2/containers/${containerId}/`;
+/**
+ * Get the URL for restore a container
+ */
+export const getLibraryContainerRestoreApiUrl = (containerId: string) => `${getLibraryContainerApiUrl(containerId)}restore/`;
 
 export interface ContentLibrary {
   id: string;
@@ -623,4 +627,12 @@ export async function updateContainerMetadata(
 export async function deleteContainer(containerId: string) {
   const client = getAuthenticatedHttpClient();
   await client.delete(getLibraryContainerApiUrl(containerId));
+}
+
+/**
+ * Restore a container
+ */
+export async function restoreContainer(containerId: string) {
+  const client = getAuthenticatedHttpClient();
+  await client.post(getLibraryContainerRestoreApiUrl(containerId));
 }

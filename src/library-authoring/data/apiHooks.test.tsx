@@ -13,6 +13,7 @@ import {
   getLibraryCollectionApiUrl,
   getBlockTypesMetaDataUrl,
   getLibraryContainerApiUrl,
+  getLibraryContainerRestoreApiUrl,
 } from './api';
 import {
   useCommitLibraryChanges,
@@ -24,6 +25,7 @@ import {
   useBlockTypesMetadata,
   useContainer,
   useDeleteContainer,
+  useRestoreContainer,
 } from './apiHooks';
 
 let axiosMock;
@@ -154,7 +156,7 @@ describe('library api hooks', () => {
     expect(axiosMock.history.get[0].url).toEqual(url);
   });
 
-  it('should delete container', async () => {
+  it('should delete a container', async () => {
     const containerId = 'lct:org:lib1';
     const url = getLibraryContainerApiUrl(containerId);
 
@@ -163,6 +165,18 @@ describe('library api hooks', () => {
     await result.current.mutateAsync();
     await waitFor(() => {
       expect(axiosMock.history.delete[0].url).toEqual(url);
+    });
+  });
+
+  it('should restore a container', async () => {
+    const containerId = 'lct:org:lib1';
+    const url = getLibraryContainerRestoreApiUrl(containerId);
+
+    axiosMock.onPost(url).reply(200);
+    const { result } = renderHook(() => useRestoreContainer(containerId), { wrapper });
+    await result.current.mutateAsync();
+    await waitFor(() => {
+      expect(axiosMock.history.post[0].url).toEqual(url);
     });
   });
 });

@@ -188,7 +188,7 @@ const messages = defineMessages({
   },
   deleteUnitConfirm: {
     id: 'course-authoring.library-authoring.unit.delete-confirmation-text',
-    defaultMessage: 'Delete {componentName}? TBD',
+    defaultMessage: 'Delete {componentName}? The components inside this unit will remain in the library',
     description: 'Confirmation text to display before deleting a unit',
   },
   deleteUnitSuccess: {
@@ -200,6 +200,21 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.unit.delete-failed-error',
     defaultMessage: 'Failed to delete unit',
     description: 'Message to display on failure to delete a unit',
+  },
+  undoDeleteContainerToastAction: {
+    id: 'course-authoring.library-authoring.container.undo-delete-container-toast-button',
+    defaultMessage: 'Undo',
+    description: 'Toast message to undo deletion of container',
+  },
+  undoDeleteContainerToastMessage: {
+    id: 'course-authoring.library-authoring.container.undo-delete-container-toast-text',
+    defaultMessage: 'Undo successful',
+    description: 'Message to display on undo delete container success',
+  },
+  undoDeleteUnitToastFailed: {
+    id: 'course-authoring.library-authoring.unit.undo-delete-unit-failed',
+    defaultMessage: 'Failed to undo delete Unit operation',
+    description: 'Message to display on failure to undo delete unit',
   },
 });
 export default messages;

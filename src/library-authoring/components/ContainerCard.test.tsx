@@ -1,4 +1,5 @@
 import userEvent from '@testing-library/user-event';
+import type MockAdapter from 'axios-mock-adapter';
 
 import {
   initializeMocks, render as baseRender, screen, waitFor,
@@ -7,7 +8,7 @@ import {
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { type ContainerHit, PublishStatus } from '../../search-manager';
 import ContainerCard from './ContainerCard';
-import { getLibraryContainerApiUrl } from '../data/api';
+import { getLibraryContainerApiUrl, getLibraryContainerRestoreApiUrl } from '../data/api';
 
 const containerHitSample: ContainerHit = {
   id: 'lctorg1democourse-unit-display-name-123',
@@ -34,6 +35,8 @@ const containerHitSample: ContainerHit = {
   tags: {},
   publishStatus: PublishStatus.Published,
 };
+let axiosMock: MockAdapter;
+let mockShowToast;
 
 const render = (ui: React.ReactElement, showOnlyPublished: boolean = false) => baseRender(ui, {
   extraWrapper: ({ children }) => (
@@ -48,7 +51,9 @@ const render = (ui: React.ReactElement, showOnlyPublished: boolean = false) => b
 
 describe('<ContainerCard />', () => {
   beforeEach(() => {
-    initializeMocks();
+    const mocks = initializeMocks();
+    axiosMock = mocks.axiosMock;
+    mockShowToast = mocks.mockShowToast;
   });
 
   it('should render the card with title', () => {
@@ -83,8 +88,7 @@ describe('<ContainerCard />', () => {
     // );
   });
 
-  it('should delete the container from the menu', async () => {
-    const { axiosMock, mockShowToast } = initializeMocks();
+  it('should delete the container from the menu & restore the container', async () => {
     axiosMock.onDelete(getLibraryContainerApiUrl(containerHitSample.usageKey)).reply(200);
 
     render(<ContainerCard hit={containerHitSample} />);
@@ -106,11 +110,22 @@ describe('<ContainerCard />', () => {
     await waitFor(() => {
       expect(axiosMock.history.delete.length).toBe(1);
     });
-    expect(mockShowToast).toHaveBeenCalledWith('Unit deleted');
+    expect(mockShowToast).toHaveBeenCalled();
+
+    // Get restore / undo func from the toast
+    const restoreFn = mockShowToast.mock.calls[0][1].onClick;
+
+    const restoreUrl = getLibraryContainerRestoreApiUrl(containerHitSample.usageKey);
+    axiosMock.onPost(restoreUrl).reply(200);
+    // restore collection
+    restoreFn();
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toEqual(1);
+    });
+    expect(mockShowToast).toHaveBeenCalledWith('Undo successful');
   });
 
   it('should show error on delete the container from the menu', async () => {
-    const { axiosMock, mockShowToast } = initializeMocks();
     axiosMock.onDelete(getLibraryContainerApiUrl(containerHitSample.usageKey)).reply(400);
 
     render(<ContainerCard hit={containerHitSample} />);

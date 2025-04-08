@@ -19,7 +19,7 @@ import BaseCard from './BaseCard';
 import messages from './messages';
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import { ToastContext } from '../../generic/toast-context';
-import { useDeleteContainer } from '../data/apiHooks';
+import { useDeleteContainer, useRestoreContainer } from '../data/apiHooks';
 
 type ContainerMenuProps = {
   hit: ContainerHit,
@@ -30,7 +30,7 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
   const { contextKey, blockId } = hit;
 
   const {
-    usageKey,
+    usageKey: containerKey,
     blockType: componentType,
     displayName,
   } = hit;
@@ -41,7 +41,7 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
 
   const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
   const { showToast } = useContext(ToastContext);
-  const deleteContainerMutation = useDeleteContainer(usageKey);
+  const deleteContainerMutation = useDeleteContainer(containerKey);
 
   let deleteWarningTitle;
   let deleteText;
@@ -56,12 +56,28 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
     deleteError = intl.formatMessage(messages.deleteUnitFailed);
   }
 
+  const restoreContainerMutation = useRestoreContainer(containerKey);
+  const restoreComponent = useCallback(async () => {
+    try {
+      await restoreContainerMutation.mutateAsync();
+      showToast(intl.formatMessage(messages.undoDeleteContainerToastMessage));
+    } catch (e) {
+      showToast(intl.formatMessage(messages.undoDeleteUnitToastFailed));
+    }
+  }, []);
+
   const onDelete = useCallback(async () => {
     await deleteContainerMutation.mutateAsync().then(() => {
-      if (sidebarComponentInfo?.id === usageKey) {
+      if (sidebarComponentInfo?.id === containerKey) {
         closeLibrarySidebar();
       }
-      showToast(deleteSuccess);
+      showToast(
+        deleteSuccess,
+        {
+          label: intl.formatMessage(messages.undoDeleteContainerToastAction),
+          onClick: restoreComponent,
+        },
+      );
     }).catch(() => {
       showToast(deleteError);
     }).finally(() => {
