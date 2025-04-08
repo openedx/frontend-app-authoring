@@ -44,7 +44,6 @@ export enum ContentType {
 export type NavigateToData = {
   componentId?: string,
   collectionId?: string,
-  unitId?: string,
   contentType?: ContentType,
   unitId?: string,
 };
@@ -54,6 +53,7 @@ export type LibraryRoutesData = {
   insideCollections: PathMatch<string> | null;
   insideComponents: PathMatch<string> | null;
   insideUnits: PathMatch<string> | null;
+  insideUnit: PathMatch<string> | null;
 
   // Navigate using the best route from the current location for the given parameters.
   navigateTo: (dict?: NavigateToData) => void;
@@ -95,7 +95,7 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       ...(contentType === ContentType.collections && { collectionId: urlCollectionId || urlSelectedItemId }),
       ...(contentType === ContentType.units && { unitId: urlUnitId || urlSelectedItemId }),
     };
-    let route;
+    let route: string;
 
     // Providing contentType overrides the current route so we can change tabs.
     if (contentType === ContentType.components) {
@@ -135,14 +135,15 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       // We're inside the All Content tab, so stay there,
       // and select a component.
       route = ROUTES.COMPONENT;
+    } else if (collectionId && collectionId === (urlCollectionId || urlSelectedItemId)) {
+      // now open the previously-selected collection
+      route = ROUTES.COLLECTION;
+    } else if (unitId && unitId === (urlUnitId || urlSelectedItemId)) {
+      // now open the previously-selected unit
+      route = ROUTES.UNIT;
     } else {
-      route = (
-        (collectionId && collectionId === (urlCollectionId || urlSelectedItemId))
-          // now open the previously-selected collection
-          ? ROUTES.COLLECTION
-          // or stay there to list all content, or optionally select a collection.
-          : ROUTES.HOME
-      );
+      // or stay there to list all content, or optionally select a collection.
+      route = ROUTES.HOME;
     }
 
     const newPath = generatePath(BASE_ROUTE + route, routeParams);
@@ -158,5 +159,6 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     insideCollections,
     insideComponents,
     insideUnits,
+    insideUnit,
   };
 };
