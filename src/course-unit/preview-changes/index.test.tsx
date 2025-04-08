@@ -10,7 +10,6 @@ import {
 
 import IframePreviewLibraryXBlockChanges, { LibraryChangesMessageData } from '.';
 import { messageTypes } from '../constants';
-import { IframeProvider } from '../../generic/hooks/context/iFrameContext';
 import { libraryBlockChangesUrl } from '../data/api';
 import { ToastActionData } from '../../generic/toast-context';
 import { getLibraryBlockMetadataUrl } from '../../library-authoring/data/api';
@@ -25,15 +24,15 @@ const defaultEventData: LibraryChangesMessageData = {
 };
 
 const mockSendMessageToIframe = jest.fn();
-jest.mock('../context/hooks', () => ({
+jest.mock('../../generic/hooks/context/hooks', () => ({
   useIframe: () => ({
+    iframeRef: { current: { contentWindow: {} as HTMLIFrameElement } },
+    setIframeRef: () => {},
     sendMessageToIframe: mockSendMessageToIframe,
   }),
 }));
 const render = (eventData?: LibraryChangesMessageData) => {
-  baseRender(<IframePreviewLibraryXBlockChanges />, {
-    extraWrapper: ({ children }) => <IframeProvider>{ children }</IframeProvider>,
-  });
+  baseRender(<IframePreviewLibraryXBlockChanges />);
   const message = {
     data: {
       type: messageTypes.showXBlockLibraryChangesPreview,

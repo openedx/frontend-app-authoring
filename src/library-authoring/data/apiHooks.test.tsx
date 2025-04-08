@@ -146,11 +146,12 @@ describe('library api hooks', () => {
   });
 
   it('should get container metadata', async () => {
+    const libraryId = 'lib:org:1';
     const containerId = 'lct:lib:org:unit:unit1';
     const url = getLibraryContainerApiUrl(containerId);
 
     axiosMock.onGet(url).reply(200, { 'test-data': 'test-value' });
-    const { result } = renderHook(() => useContainer(containerId), { wrapper });
+    const { result } = renderHook(() => useContainer(libraryId, containerId), { wrapper });
     await waitFor(() => {
       expect(result.current.isLoading).toBeFalsy();
     });
