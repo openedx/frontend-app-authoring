@@ -35,7 +35,6 @@ export const exportTags = (courseId) => `${getApiBaseUrl()}/api/content_tagging/
  * @property {string} courseReleaseDate
  * @property {Object} courseStructure
  * @property {Object} deprecatedBlocksInfo
- * @property {string} discussionsIncontextFeedbackUrl
  * @property {string} discussionsIncontextLearnmoreUrl
  * @property {Object} initialState
  * @property {Object} initialUserClipboard
