@@ -30,7 +30,7 @@ export const LibraryBlock = ({
   usageKey,
   version,
   view,
-  scrolling = "no",
+  scrolling = 'no',
 }: LibraryBlockProps) => {
   const { iframeRef, setIframeRef } = useIframe();
   const xblockView = view ?? 'student_view';

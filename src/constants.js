@@ -105,4 +105,4 @@ export const iframeMessageTypes = {
   resize: 'plugin.resize',
   videoFullScreen: 'plugin.videoFullScreen',
   xblockEvent: 'xblock-event',
-}
+};

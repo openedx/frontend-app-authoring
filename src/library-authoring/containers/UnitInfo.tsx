@@ -24,7 +24,9 @@ const UnitInfo = () => {
 
   const { setUnitId } = useLibraryContext();
   const { componentPickerMode } = useComponentPickerContext();
-  const { defaultTab, disabledTabs, sidebarComponentInfo, sidebarTab, setSidebarTab } = useSidebarContext();
+  const {
+    defaultTab, disabledTabs, sidebarComponentInfo, sidebarTab, setSidebarTab,
+  } = useSidebarContext();
   const { insideUnit, navigateTo } = useLibraryRoutes();
 
   const tab: UnitInfoTab = (
@@ -47,13 +49,13 @@ const UnitInfo = () => {
 
   const showOpenUnitButton = !insideUnit || !componentPickerMode;
 
-  const renderTab = useCallback((tab: UnitInfoTab, component: React.ReactNode, title: string) => {
-    if (disabledTabs.includes(tab)) {
+  const renderTab = useCallback((infoTab: UnitInfoTab, component: React.ReactNode, title: string) => {
+    if (disabledTabs.includes(infoTab)) {
       // For some reason, returning anything other than empty list breaks the tab style
       return [];
     }
     return (
-      <Tab eventKey={tab} title={title}>
+      <Tab eventKey={infoTab} title={title}>
         {component}
       </Tab>
     );
@@ -80,8 +82,8 @@ const UnitInfo = () => {
         onSelect={setSidebarTab}
       >
         {renderTab(UNIT_INFO_TABS.Preview, <LibraryUnitBlocks />, intl.formatMessage(messages.previewTabTitle))}
-        {renderTab(UNIT_INFO_TABS.Organize, "Organize Unit", intl.formatMessage(messages.organizeTabTitle))}
-        {renderTab(UNIT_INFO_TABS.Settings, "Unit Settings", intl.formatMessage(messages.settingsTabTitle))}
+        {renderTab(UNIT_INFO_TABS.Organize, 'Organize Unit', intl.formatMessage(messages.organizeTabTitle))}
+        {renderTab(UNIT_INFO_TABS.Settings, 'Unit Settings', intl.formatMessage(messages.settingsTabTitle))}
       </Tabs>
     </Stack>
   );
