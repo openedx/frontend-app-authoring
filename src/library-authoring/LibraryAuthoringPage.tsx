@@ -96,16 +96,6 @@ const HeaderActions = () => {
           {intl.formatMessage(messages.newContentButton)}
         </Button>
       )}
-      {/* This button is temporal in this commit */}
-      <Button
-        className="ml-1"
-        iconBefore={Add}
-        variant="primary rounded-0"
-        onClick={openAddContentSidebar}
-        disabled={readOnly}
-      >
-        Add Content
-      </Button>
     </div>
   );
 };
