@@ -108,7 +108,6 @@ const CourseOutline = ({ courseId }) => {
     handlePasteClipboardClick,
     notificationDismissUrl,
     discussionsSettings,
-    discussionsIncontextFeedbackUrl,
     discussionsIncontextLearnmoreUrl,
     deprecatedBlocksInfo,
     proctoringErrors,
@@ -241,7 +240,6 @@ const CourseOutline = ({ courseId }) => {
           notificationDismissUrl={notificationDismissUrl}
           handleDismissNotification={handleDismissNotification}
           discussionsSettings={discussionsSettings}
-          discussionsIncontextFeedbackUrl={discussionsIncontextFeedbackUrl}
           discussionsIncontextLearnmoreUrl={discussionsIncontextLearnmoreUrl}
           deprecatedBlocksInfo={deprecatedBlocksInfo}
           proctoringErrors={proctoringErrors}
@@ -266,7 +264,6 @@ const CourseOutline = ({ courseId }) => {
             notificationDismissUrl={notificationDismissUrl}
             handleDismissNotification={handleDismissNotification}
             discussionsSettings={discussionsSettings}
-            discussionsIncontextFeedbackUrl={discussionsIncontextFeedbackUrl}
             discussionsIncontextLearnmoreUrl={discussionsIncontextLearnmoreUrl}
             deprecatedBlocksInfo={deprecatedBlocksInfo}
             proctoringErrors={proctoringErrors}

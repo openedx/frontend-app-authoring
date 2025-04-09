@@ -5,7 +5,6 @@ import {
   render,
   fireEvent,
   screen,
-  waitFor,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -43,7 +42,6 @@ const pageAlertsData = {
   notificationDismissUrl: '',
   handleDismissNotification: null,
   discussionsSettings: {},
-  discussionsIncontextFeedbackUrl: '',
   discussionsIncontextLearnmoreUrl: '',
   deprecatedBlocksInfo: {},
   proctoringErrors: [],
@@ -102,7 +100,6 @@ describe('<PageAlerts />', () => {
       discussionsSettings: {
         providerType: 'openedx',
       },
-      discussionsIncontextFeedbackUrl: 'some-feedback-url',
       discussionsIncontextLearnmoreUrl: 'some-learn-more-url',
     });
 
@@ -115,12 +112,6 @@ describe('<PageAlerts />', () => {
     fireEvent.click(dismissBtn);
     const discussionAlertDismissKey = `discussionAlertDismissed-${pageAlertsData.courseId}`;
     expect(localStorage.getItem(discussionAlertDismissKey)).toBe('true');
-
-    await waitFor(() => {
-      const feedbackLink = screen.queryByText(messages.discussionNotificationFeedback.defaultMessage);
-      expect(feedbackLink).toBeInTheDocument();
-      expect(feedbackLink).toHaveAttribute('href', 'some-feedback-url');
-    });
   });
 
   it('renders deprecation warning alerts', async () => {

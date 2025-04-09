@@ -1,9 +1,10 @@
 import userEvent from '@testing-library/user-event';
 
 import {
-  initializeMocks, render as baseRender, screen,
+  initializeMocks, render as baseRender, screen, waitFor,
 } from '../../testUtils';
 import { LibraryProvider } from '../common/context/LibraryContext';
+import { mockContentLibrary, mockGetContainerChildren } from '../data/api.mocks';
 import { type ContainerHit, PublishStatus } from '../../search-manager';
 import ContainerCard from './ContainerCard';
 
@@ -32,6 +33,9 @@ const containerHitSample: ContainerHit = {
   tags: {},
   publishStatus: PublishStatus.Published,
 };
+
+mockContentLibrary.applyMock();
+mockGetContainerChildren.applyMock();
 
 const render = (ui: React.ReactElement, showOnlyPublished: boolean = false) => baseRender(ui, {
   extraWrapper: ({ children }) => (
@@ -79,5 +83,38 @@ describe('<ContainerCard />', () => {
     //   'href',
     //   '/library/lb:org1:Demo_Course/container/container-display-name-123',
     // );
+  });
+
+  it('should render no child blocks in card preview', async () => {
+    render(<ContainerCard hit={containerHitSample} />);
+
+    expect(screen.queryByTitle('text block')).not.toBeInTheDocument();
+    expect(screen.queryByText('+0')).not.toBeInTheDocument();
+  });
+
+  it('should render <=5 child blocks in card preview', async () => {
+    const containerWith5Children = {
+      ...containerHitSample,
+      usageKey: mockGetContainerChildren.fiveChildren,
+    };
+    render(<ContainerCard hit={containerWith5Children} />);
+
+    await waitFor(() => {
+      expect(screen.getAllByTitle('text block').length).toBe(5);
+    });
+    expect(screen.queryByText('+0')).not.toBeInTheDocument();
+  });
+
+  it('should render >5 child blocks with +N in card preview', async () => {
+    const containerWith6Children = {
+      ...containerHitSample,
+      usageKey: mockGetContainerChildren.sixChildren,
+    };
+    render(<ContainerCard hit={containerWith6Children} />);
+
+    await waitFor(() => {
+      expect(screen.getAllByTitle('text block').length).toBe(4);
+    });
+    expect(screen.queryByText('+2')).toBeInTheDocument();
   });
 });

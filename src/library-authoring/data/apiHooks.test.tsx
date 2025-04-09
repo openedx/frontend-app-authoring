@@ -13,6 +13,7 @@ import {
   getLibraryCollectionApiUrl,
   getBlockTypesMetaDataUrl,
   getLibraryContainerApiUrl,
+  getLibraryContainerChildrenApiUrl,
 } from './api';
 import {
   useCommitLibraryChanges,
@@ -23,6 +24,7 @@ import {
   useCollection,
   useBlockTypesMetadata,
   useContainer,
+  useContainerChildren,
 } from './apiHooks';
 
 let axiosMock;
@@ -150,6 +152,81 @@ describe('library api hooks', () => {
       expect(result.current.isLoading).toBeFalsy();
     });
     expect(result.current.data).toEqual({ testData: 'test-value' });
+    expect(axiosMock.history.get[0].url).toEqual(url);
+  });
+
+  it('should get container children', async () => {
+    const containerId = 'lct:lib:org:unit:unit1';
+    const url = getLibraryContainerChildrenApiUrl(containerId);
+
+    axiosMock.onGet(url).reply(200, [
+      {
+        id: 'lb:org1:Demo_course:html:text',
+        block_type: 'html',
+        def_key: 'def_key',
+        display_name: 'text block',
+        last_published: null,
+        published_by: null,
+        last_draft_created: null,
+        last_draft_created_by: null,
+        has_unpublished_changes: false,
+        created: null,
+        modified: null,
+        tags_count: 0,
+        collections: ['col1', 'col2'],
+      },
+      {
+        id: 'lb:org1:Demo_course:video:video1',
+        block_type: 'video',
+        def_key: 'def_key',
+        display_name: 'video block',
+        last_published: null,
+        published_by: null,
+        last_draft_created: null,
+        last_draft_created_by: null,
+        has_unpublished_changes: false,
+        created: null,
+        modified: null,
+        tags_count: 0,
+        collections: ['col2'],
+      },
+    ]);
+    const { result } = renderHook(() => useContainerChildren(containerId), { wrapper });
+    await waitFor(() => {
+      expect(result.current.isLoading).toBeFalsy();
+    });
+    expect(result.current.data).toEqual([
+      {
+        id: 'lb:org1:Demo_course:html:text',
+        blockType: 'html',
+        defKey: 'def_key',
+        displayName: 'text block',
+        lastPublished: null,
+        publishedBy: null,
+        lastDraftCreated: null,
+        lastDraftCreatedBy: null,
+        hasUnpublishedChanges: false,
+        created: null,
+        modified: null,
+        tagsCount: 0,
+        collections: ['col1', 'col2'],
+      },
+      {
+        id: 'lb:org1:Demo_course:video:video1',
+        blockType: 'video',
+        defKey: 'def_key',
+        displayName: 'video block',
+        lastPublished: null,
+        publishedBy: null,
+        lastDraftCreated: null,
+        lastDraftCreatedBy: null,
+        hasUnpublishedChanges: false,
+        created: null,
+        modified: null,
+        tagsCount: 0,
+        collections: ['col2'],
+      },
+    ]);
     expect(axiosMock.history.get[0].url).toEqual(url);
   });
 });

@@ -176,5 +176,10 @@ const messages = defineMessages({
     defaultMessage: 'This component can be synced in courses after publish.',
     description: 'Alert text of the modal to confirm publish a component in a library.',
   },
+  containerPreviewMoreBlocks: {
+    id: 'course-authoring.library-authoring.component.container-card-preview.more-blocks',
+    defaultMessage: '+{count}',
+    description: 'Count shown when a container has more blocks than will fit on the card preview.',
+  },
 });
 export default messages;
