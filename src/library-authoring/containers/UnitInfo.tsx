@@ -95,7 +95,7 @@ const UnitInfo = () => {
     }
   }, [componentPickerMode, navigateTo, unitId]);
 
-  const showOpenUnitButton = !insideUnit || !componentPickerMode;
+  const showOpenUnitButton = !insideUnit || componentPickerMode;
 
   if (!container) {
     return null;
