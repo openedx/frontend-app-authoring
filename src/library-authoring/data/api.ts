@@ -115,6 +115,10 @@ export const getLibraryContainerApiUrl = (containerId: string) => `${getApiBaseU
  * Get the URL for restore a container
  */
 export const getLibraryContainerRestoreApiUrl = (containerId: string) => `${getLibraryContainerApiUrl(containerId)}restore/`;
+/**
+ * Get the URL for a single container children api.
+ */
+export const getLibraryContainerChildrenApiUrl = (containerId: string) => `${getLibraryContainerApiUrl(containerId)}children/`;
 
 export interface ContentLibrary {
   id: string;
@@ -635,4 +639,13 @@ export async function deleteContainer(containerId: string) {
 export async function restoreContainer(containerId: string) {
   const client = getAuthenticatedHttpClient();
   await client.post(getLibraryContainerRestoreApiUrl(containerId));
+}
+
+/**
+ * Fetch a library container's children's metadata.
+ */
+export async function getContainerChildren(containerId: string): Promise<LibraryBlockMetadata[]> {
+  const client = getAuthenticatedHttpClient();
+  const { data } = await client.get(getLibraryContainerChildrenApiUrl(containerId));
+  return camelCaseObject(data);
 }

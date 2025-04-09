@@ -1,4 +1,4 @@
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, ReactNode } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -6,20 +6,22 @@ import {
   Icon,
   IconButton,
   useToggle,
+  Stack,
 } from '@openedx/paragon';
 import { MoreVert, Warning } from '@openedx/paragon/icons';
 import { Link } from 'react-router-dom';
 
+import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
 import { type ContainerHit, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { useSidebarContext } from '../common/context/SidebarContext';
-import { useLibraryRoutes } from '../routes';
 import BaseCard from './BaseCard';
+import { useLibraryRoutes } from '../routes';
 import messages from './messages';
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import { ToastContext } from '../../generic/toast-context';
-import { useDeleteContainer, useRestoreContainer } from '../data/apiHooks';
+import { useDeleteContainer, useRestoreContainer, useContainerChildren } from '../data/apiHooks';
 
 type ContainerMenuProps = {
   hit: ContainerHit,
@@ -115,6 +117,59 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
   );
 };
 
+type ContainerCardPreviewProps = {
+  containerId: string;
+  showMaxChildren?: number;
+};
+
+const ContainerCardPreview = ({ containerId, showMaxChildren = 5 }: ContainerCardPreviewProps) => {
+  const { data, isLoading, isError } = useContainerChildren(containerId);
+  if (isLoading || isError) {
+    return null;
+  }
+
+  const hiddenChildren = data.length - showMaxChildren;
+  return (
+    <Stack direction="horizontal" gap={2}>
+      {
+        data.slice(0, showMaxChildren).map(({ id, blockType, displayName }, idx) => {
+          let blockPreview: ReactNode;
+          let classNames;
+
+          if (idx < showMaxChildren - 1 || hiddenChildren <= 0) {
+            // Show the first N-1 blocks as item icons
+            // (or all N blocks if no hidden children)
+            classNames = `rounded p-1 ${getComponentStyleColor(blockType)}`;
+            blockPreview = (
+              <Icon
+                src={getItemIcon(blockType)}
+                screenReaderText={blockType}
+                title={displayName}
+              />
+            );
+          } else {
+            // Container has more blocks than can fit in the preview, so show "+N"
+            blockPreview = (
+              <FormattedMessage
+                {...messages.containerPreviewMoreBlocks}
+                values={{ count: hiddenChildren + 1 }}
+              />
+            );
+          }
+          return (
+            <div
+              key={`container-card-preview-block-${id}`}
+              className={classNames}
+            >
+              {blockPreview}
+            </div>
+          );
+        })
+      }
+    </Stack>
+  );
+};
+
 type ContainerCardProps = {
   hit: ContainerHit,
 };
@@ -156,6 +211,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     <BaseCard
       itemType={itemType}
       displayName={displayName}
+      preview={<ContainerCardPreview containerId={unitId} />}
       tags={tags}
       numChildren={numChildrenCount}
       actions={!componentPickerMode && (

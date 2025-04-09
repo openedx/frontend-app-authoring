@@ -216,5 +216,10 @@ const messages = defineMessages({
     defaultMessage: 'Failed to undo delete Unit operation',
     description: 'Message to display on failure to undo delete unit',
   },
+  containerPreviewMoreBlocks: {
+    id: 'course-authoring.library-authoring.component.container-card-preview.more-blocks',
+    defaultMessage: '+{count}',
+    description: 'Count shown when a container has more blocks than will fit on the card preview.',
+  },
 });
 export default messages;
