@@ -1,6 +1,7 @@
 import { camelCaseObject, getConfig, snakeCaseObject } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { VersionSpec } from '../LibraryBlock';
+import { type ContainerType } from '../utils';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
@@ -572,7 +573,7 @@ export async function updateComponentCollections(usageKey: string, collectionKey
 
 export interface CreateLibraryContainerDataRequest {
   title: string;
-  containerType: string;
+  containerType: ContainerType;
 }
 
 /**
@@ -628,4 +629,15 @@ export async function getContainerChildren(containerId: string): Promise<Library
   const client = getAuthenticatedHttpClient();
   const { data } = await client.get(getLibraryContainerChildrenApiUrl(containerId));
   return camelCaseObject(data);
+}
+
+/**
+ * Add components to library container
+ */
+export async function addComponentsToContainer(containerId: string, componentIds: string[]) {
+  const client = getAuthenticatedHttpClient();
+  await client.post(
+    getLibraryContainerChildrenApiUrl(containerId),
+    snakeCaseObject({ usageKeys: componentIds }),
+  );
 }
