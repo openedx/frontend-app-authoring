@@ -184,6 +184,7 @@ describe('library api hooks', () => {
   });
 
   it('should get container children', async () => {
+    const libraryId = 'lib:org:1';
     const containerId = 'lct:lib:org:unit:unit1';
     const url = getLibraryContainerChildrenApiUrl(containerId);
 
@@ -219,7 +220,7 @@ describe('library api hooks', () => {
         collections: ['col2'],
       },
     ]);
-    const { result } = renderHook(() => useContainerChildren(containerId), { wrapper });
+    const { result } = renderHook(() => useContainerChildren(libraryId, containerId), { wrapper });
     await waitFor(() => {
       expect(result.current.isLoading).toBeFalsy();
     });
