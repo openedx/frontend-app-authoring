@@ -42,7 +42,7 @@ export const LibraryUnitBlocks = () => {
     isLoading,
     isError,
     error,
-  } = useContainerChildren(libraryId, unitId);
+  } = useContainerChildren(unitId);
 
   useEffect(() => setOrderedBlocks(blocks || []), [blocks]);
 

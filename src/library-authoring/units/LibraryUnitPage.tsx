@@ -26,6 +26,7 @@ const HeaderActions = () => {
 
   const { unitId, readOnly } = useLibraryContext();
   const {
+    openAddContentSidebar,
     closeLibrarySidebar,
     openUnitInfoSidebar,
     sidebarComponentInfo,
@@ -64,6 +65,7 @@ const HeaderActions = () => {
         iconBefore={Add}
         variant="primary rounded-0"
         disabled={readOnly}
+        onClick={openAddContentSidebar}
       >
         {intl.formatMessage(messages.newContentButton)}
       </Button>

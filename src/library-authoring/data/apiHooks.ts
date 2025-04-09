@@ -637,7 +637,7 @@ export const useUpdateContainer = (containerId: string) => {
 /**
  * Get the metadata and children for a container in a library
  */
-export const useContainerChildren = (containerId: string) => (
+export const useContainerChildren = (containerId?: string) => (
   useQuery({
     enabled: !!containerId,
     queryKey: containerQueryKeys.children(containerId),
