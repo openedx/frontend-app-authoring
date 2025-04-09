@@ -1,7 +1,7 @@
 import React from 'react';
 import { act, renderHook } from '@testing-library/react';
 import { useScrollToLastPosition, useLayoutGrid } from './hooks';
-import { messageTypes } from './constants';
+import { iframeMessageTypes } from '../constants';
 
 jest.useFakeTimers();
 
@@ -108,7 +108,7 @@ describe('useScrollToLastPosition', () => {
     const { unmount } = renderHook(() => useScrollToLastPosition(storageKey));
 
     act(() => {
-      window.dispatchEvent(new MessageEvent('message', { data: { type: messageTypes.resize } }));
+      window.dispatchEvent(new MessageEvent('message', { data: { type: iframeMessageTypes.resize } }));
       jest.advanceTimersByTime(1000);
     });
 
@@ -136,8 +136,8 @@ describe('useScrollToLastPosition', () => {
     renderHook(() => useScrollToLastPosition(storageKey));
 
     act(() => {
-      window.dispatchEvent(new MessageEvent('message', { data: { type: messageTypes.resize } }));
-      window.dispatchEvent(new MessageEvent('message', { data: { type: messageTypes.resize } }));
+      window.dispatchEvent(new MessageEvent('message', { data: { type: iframeMessageTypes.resize } }));
+      window.dispatchEvent(new MessageEvent('message', { data: { type: iframeMessageTypes.resize } }));
     });
 
     expect(clearTimeoutSpy).toHaveBeenCalled();
@@ -150,9 +150,9 @@ describe('useScrollToLastPosition', () => {
     renderHook(() => useScrollToLastPosition(storageKey));
 
     act(() => {
-      window.dispatchEvent(new MessageEvent('message', { data: { type: messageTypes.resize } }));
+      window.dispatchEvent(new MessageEvent('message', { data: { type: iframeMessageTypes.resize } }));
       jest.advanceTimersByTime(500);
-      window.dispatchEvent(new MessageEvent('message', { data: { type: messageTypes.resize } }));
+      window.dispatchEvent(new MessageEvent('message', { data: { type: iframeMessageTypes.resize } }));
     });
 
     expect(window.scrollTo).not.toHaveBeenCalled();
@@ -164,7 +164,7 @@ describe('useScrollToLastPosition', () => {
     renderHook(() => useScrollToLastPosition(storageKey));
 
     act(() => {
-      window.dispatchEvent(new MessageEvent('message', { data: { type: messageTypes.resize } }));
+      window.dispatchEvent(new MessageEvent('message', { data: { type: iframeMessageTypes.resize } }));
       jest.advanceTimersByTime(1000);
     });
 
