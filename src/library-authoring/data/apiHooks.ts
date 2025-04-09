@@ -109,11 +109,6 @@ export const libraryAuthoringQueryKeys = {
     'blockTypes',
     libraryId,
   ],
-  container: (libraryId?: string, containerId?: string) => [
-    ...libraryAuthoringQueryKeys.all,
-    libraryId,
-    containerId,
-  ],
 };
 
 export const xblockQueryKeys = {

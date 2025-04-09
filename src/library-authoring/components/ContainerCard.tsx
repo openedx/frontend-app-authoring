@@ -78,7 +78,8 @@ type ContainerCardPreviewProps = {
 };
 
 const ContainerCardPreview = ({ containerId, showMaxChildren = 5 }: ContainerCardPreviewProps) => {
-  const { data, isLoading, isError } = useContainerChildren(containerId);
+  const { libraryId } = useLibraryContext();
+  const { data, isLoading, isError } = useContainerChildren(libraryId, containerId);
   if (isLoading || isError) {
     return null;
   }
