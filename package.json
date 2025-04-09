@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "build": "fedx-scripts webpack",
-    "i18n_extract": "formatjs extract --format node_modules/@openedx/frontend-build/lib/formatter.js --ignore {src,plugins}/**/*.json --out-file ./temp/babel-plugin-formatjs/Default.messages.json -- {src,plugins}/**/*.js* {src,plugins}/**/messages.ts src/editors/data/constants/problem.ts",
+    "i18n_extract": "fedx-scripts formatjs extract",
     "stylelint": "stylelint \"plugins/**/*.scss\" \"src/**/*.scss\" \"scss/**/*.scss\" --config .stylelintrc.json",
     "lint": "npm run stylelint && fedx-scripts eslint --ext .js --ext .jsx --ext .ts --ext .tsx .",
     "lint:fix": "npm run stylelint -- --fix && fedx-scripts eslint --fix --ext .js --ext .jsx --ext .ts --ext .tsx .",

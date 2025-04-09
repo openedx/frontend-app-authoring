@@ -7,97 +7,31 @@ import numericalInput from '../images/numericalInput.png';
 import textInput from '../images/textInput.png';
 import advancedOlxTemplates from './advancedOlxTemplates';
 import basicOlxTemplates from './basicOlxTemplates';
+import {
+  ProblemTypeKeys,
+  AdvanceProblemKeys,
+  AdvancedProblemType,
+  ProblemType,
+  ShowAnswerTypesKeys,
+  RandomizationTypesKeys,
+} from './problemTypes';
+import {
+  ProblemTypesTitleMessages,
+  ProblemTypesDescription,
+  ProblemTypesPreviewDescription,
+  AdvanceProblemsStatus,
+  AdvanceProblemsTitleMessages,
+} from './messages';
 
-export const ProblemTypeKeys = StrictDict({
-  SINGLESELECT: 'multiplechoiceresponse',
-  MULTISELECT: 'choiceresponse',
-  DROPDOWN: 'optionresponse',
-  NUMERIC: 'numericalresponse',
-  TEXTINPUT: 'stringresponse',
-  ADVANCED: 'advanced',
-} as const);
-export type ProblemType = typeof ProblemTypeKeys[keyof typeof ProblemTypeKeys];
+export {
+  ProblemTypeKeys, AdvanceProblemKeys, ShowAnswerTypesKeys, RandomizationTypesKeys,
+} from './problemTypes';
+export { AdvanceProblemsStatus } from './messages';
+export type { AdvancedProblemType, ProblemType } from './problemTypes';
 
-export const ProblemTypesTitleMessages = defineMessages({
-  [ProblemTypeKeys.SINGLESELECT]: {
-    id: 'authoring.problemeditor.problemtype.title.singleselect',
-    defaultMessage: 'Single select',
-  },
-  [ProblemTypeKeys.MULTISELECT]: {
-    id: 'authoring.problemeditor.problemtype.title.multiSelect',
-    defaultMessage: 'Multi-select',
-  },
-  [ProblemTypeKeys.DROPDOWN]: {
-    id: 'authoring.problemeditor.problemtype.title.dropdown',
-    defaultMessage: 'Dropdown',
-  },
-  [ProblemTypeKeys.NUMERIC]: {
-    id: 'authoring.problemeditor.problemtype.title.numeric',
-    defaultMessage: 'Numerical input',
-  },
-  [ProblemTypeKeys.TEXTINPUT]: {
-    id: 'authoring.problemeditor.problemtype.title.textInput',
-    defaultMessage: 'Text input',
-  },
-  [ProblemTypeKeys.ADVANCED]: {
-    id: 'authoring.problemeditor.problemtype.title.advanced',
-    defaultMessage: 'Advanced Problem',
-  },
-});
-
-export const ProblemTypesPreviewDescription = defineMessages({
-  [ProblemTypeKeys.SINGLESELECT]: {
-    id: 'authoring.problemeditor.problemtype.previewDescription.singleselect',
-    defaultMessage: 'Learners must select the correct answer from a list of possible options.',
-  },
-  [ProblemTypeKeys.MULTISELECT]: {
-    id: 'authoring.problemeditor.problemtype.previewDescription.multiselect',
-    defaultMessage: 'Learners must select all correct answers from a list of possible options.',
-  },
-  [ProblemTypeKeys.DROPDOWN]: {
-    id: 'authoring.problemeditor.problemtype.previewDescription.dropdown',
-    defaultMessage: 'Learners must select the correct answer from a list of possible options',
-  },
-  [ProblemTypeKeys.NUMERIC]: {
-    id: 'authoring.problemeditor.problemtype.previewDescription.numeric',
-    defaultMessage: 'Specify one or more correct numeric answers, submitted in a response field.',
-  },
-  [ProblemTypeKeys.TEXTINPUT]: {
-    id: 'authoring.problemeditor.problemtype.previewDescription.textinput',
-    defaultMessage: 'Specify one or more correct text answers, including numbers and special characters, submitted in a response field.',
-  },
-  [ProblemTypeKeys.ADVANCED]: {
-    id: 'authoring.problemeditor.problemtype.previewDescription.advanced',
-    defaultMessage: 'Specify an advanced problem.',
-  },
-});
-
-export const ProblemTypesDescription = defineMessages({
-  [ProblemTypeKeys.SINGLESELECT]: {
-    id: 'authoring.problemeditor.problemtype.description.singleselect',
-    defaultMessage: 'Enter your single select answers below and select which choices are correct. Learners must choose one correct answer.',
-  },
-  [ProblemTypeKeys.MULTISELECT]: {
-    id: 'authoring.problemeditor.problemtype.description.multiselect',
-    defaultMessage: 'Enter your multi select answers below and select which choices are correct. Learners must choose all correct answers.',
-  },
-  [ProblemTypeKeys.DROPDOWN]: {
-    id: 'authoring.problemeditor.problemtype.description.dropdown',
-    defaultMessage: 'Enter your dropdown answers below and select which choice is correct. Learners must select one correct answer.',
-  },
-  [ProblemTypeKeys.NUMERIC]: {
-    id: 'authoring.problemeditor.problemtype.description.numeric',
-    defaultMessage: 'Enter correct numerical input answers below. Learners must enter one correct answer.',
-  },
-  [ProblemTypeKeys.TEXTINPUT]: {
-    id: 'authoring.problemeditor.problemtype.description.textinput',
-    defaultMessage: 'Enter your text input answers below and select which choices are correct. Learners must enter one correct answer.',
-  },
-  [ProblemTypeKeys.ADVANCED]: {
-    id: 'authoring.problemeditor.problemtype.description.advanced',
-    defaultMessage: 'An Advanced Problem Type.',
-  },
-});
+export function isAdvancedProblemType(pt: ProblemType | AdvancedProblemType): pt is AdvancedProblemType {
+  return Object.values(AdvanceProblemKeys).includes(pt as any);
+}
 
 export const ProblemTypes = StrictDict({
   [ProblemTypeKeys.SINGLESELECT]: {
@@ -165,67 +99,6 @@ export const ProblemTypes = StrictDict({
   },
 });
 
-export const AdvanceProblemKeys = StrictDict({
-  BLANK: 'blankadvanced',
-  CIRCUITSCHEMATIC: 'circuitschematic',
-  JSINPUT: 'jsinputresponse',
-  CUSTOMGRADER: 'customgrader',
-  IMAGE: 'imageresponse',
-  FORMULA: 'formularesponse',
-  PROBLEMWITHHINT: 'problemwithhint',
-} as const);
-export type AdvancedProblemType = typeof AdvanceProblemKeys[keyof typeof AdvanceProblemKeys];
-
-export function isAdvancedProblemType(pt: ProblemType | AdvancedProblemType): pt is AdvancedProblemType {
-  return Object.values(AdvanceProblemKeys).includes(pt as any);
-}
-
-export const AdvanceProblemsTitleMessages = defineMessages({
-  [AdvanceProblemKeys.BLANK]: {
-    id: 'authoring.problemeditor.settings.advanceProblems.blank',
-    defaultMessage: 'Blank problem',
-  },
-  [AdvanceProblemKeys.CIRCUITSCHEMATIC]: {
-    id: 'authoring.problemeditor.settings.advanceProblems.circuitSchematic',
-    defaultMessage: 'Circuit schematic builder',
-  },
-  [AdvanceProblemKeys.JSINPUT]: {
-    id: 'authoring.problemeditor.settings.advanceProblems.jsInput',
-    defaultMessage: 'Custom JavaScript display and grading',
-  },
-  [AdvanceProblemKeys.CUSTOMGRADER]: {
-    id: 'authoring.problemeditor.settings.advanceProblems.customGrader',
-    defaultMessage: 'Custom Python-evaluated input',
-  },
-  [AdvanceProblemKeys.IMAGE]: {
-    id: 'authoring.problemeditor.settings.advanceProblems.image',
-    defaultMessage: 'Image mapped input',
-  },
-  [AdvanceProblemKeys.FORMULA]: {
-    id: 'authoring.problemeditor.settings.advanceProblems.formula',
-    defaultMessage: 'Math expression input',
-  },
-  [AdvanceProblemKeys.PROBLEMWITHHINT]: {
-    id: 'authoring.problemeditor.settings.advanceProblems.problemWithHint',
-    defaultMessage: 'Problem with adaptive hint',
-  },
-} as const);
-
-export const AdvanceProblemsStatus = defineMessages({
-  empty: {
-    id: 'authoring.problemeditor.settings.advanceProblems.status.empty',
-    defaultMessage: '',
-  },
-  notSupported: {
-    id: 'authoring.problemeditor.settings.advanceProblems.status.notSupported',
-    defaultMessage: 'Not supported',
-  },
-  provisional: {
-    id: 'authoring.problemeditor.settings.advanceProblems.status.provisional',
-    defaultMessage: 'Provisional',
-  },
-} as const);
-
 export const AdvanceProblems = StrictDict({
   [AdvanceProblemKeys.BLANK]: {
     title: AdvanceProblemsTitleMessages[AdvanceProblemKeys.BLANK].defaultMessage,
@@ -269,21 +142,6 @@ export const AdvanceProblems = StrictDict({
     status: AdvanceProblemsStatus.notSupported,
     template: advancedOlxTemplates.problemWithHint,
   },
-} as const);
-
-export const ShowAnswerTypesKeys = StrictDict({
-  ALWAYS: 'always',
-  ANSWERED: 'answered',
-  ATTEMPTED: 'attempted',
-  CLOSED: 'closed',
-  FINISHED: 'finished',
-  CORRECT_OR_PAST_DUE: 'correct_or_past_due',
-  PAST_DUE: 'past_due',
-  NEVER: 'never',
-  AFTER_SOME_NUMBER_OF_ATTEMPTS: 'after_attempts',
-  AFTER_ALL_ATTEMPTS: 'after_all_attempts',
-  AFTER_ALL_ATTEMPTS_OR_CORRECT: 'after_all_attempts_or_correct',
-  ATTEMPTED_NO_PAST_DUE: 'attempted_no_past_due',
 } as const);
 
 export const ShowAnswerTypes = defineMessages({
@@ -335,13 +193,6 @@ export const ShowAnswerTypes = defineMessages({
     id: 'authoring.problemeditor.settings.showanswertype.attempted_no_past_due',
     defaultMessage: 'Attempted',
   },
-} as const);
-
-export const RandomizationTypesKeys = StrictDict({
-  NEVER: 'never',
-  ALWAYS: 'always',
-  ONRESET: 'onreset',
-  PERSTUDENT: 'per_student',
 } as const);
 
 export const RandomizationTypes = StrictDict({
