@@ -70,17 +70,12 @@ export async function getContentTaxonomyTagsCount(contentId) {
 }
 
 /**
- * Fetch meta data (eg: display_name) about the content object (unit/compoenent)
+ * Fetch meta data (eg: display_name) about the content object (unit/component)
  * @param {string} contentId The id of the content object (unit/component)
- * @returns {Promise<import("./types.js").ContentData | null>}
+ * @returns {Promise<import("./types.js").ContentData>}
  */
 export async function getContentData(contentId) {
   let url;
-  if (contentId.startsWith('lib-collection:')) {
-    // This type of usage_key is not used to obtain collections
-    // is only used in tagging.
-    return null;
-  }
 
   if (contentId.startsWith('lb:')) {
     url = getLibraryContentDataApiUrl(contentId);

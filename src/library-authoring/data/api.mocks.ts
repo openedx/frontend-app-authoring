@@ -479,6 +479,7 @@ export async function mockGetContainerMetadata(containerId: string): Promise<api
 mockGetContainerMetadata.containerId = 'lct:org:lib:unit:test-unit-9a207';
 mockGetContainerMetadata.containerIdError = 'lct:org:lib:unit:container_error';
 mockGetContainerMetadata.containerIdLoading = 'lct:org:lib:unit:container_loading';
+mockGetContainerMetadata.containerIdForTags = mockContentTaxonomyTagsData.largeTagsId;
 mockGetContainerMetadata.containerData = {
   containerKey: 'lct:org:lib:unit:test-unit-9a2072',
   containerType: 'unit',

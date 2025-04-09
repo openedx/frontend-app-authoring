@@ -5,7 +5,6 @@ import {
   Tab,
   Tabs,
 } from '@openedx/paragon';
-
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import {
   type UnitInfoTab,
@@ -13,6 +12,7 @@ import {
   isUnitInfoTab,
   useSidebarContext,
 } from '../common/context/SidebarContext';
+import ContainerOrganize from './ContainerOrganize';
 import messages from './messages';
 
 const UnitInfo = () => {
@@ -57,7 +57,7 @@ const UnitInfo = () => {
           Unit Preview
         </Tab>
         <Tab eventKey={UNIT_INFO_TABS.Organize} title={intl.formatMessage(messages.organizeTabTitle)}>
-          Organize Unit
+          <ContainerOrganize />
         </Tab>
         <Tab eventKey={UNIT_INFO_TABS.Settings} title={intl.formatMessage(messages.settingsTabTitle)}>
           Unit Settings
