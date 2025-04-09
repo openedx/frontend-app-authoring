@@ -21,7 +21,9 @@ const AnswerWidget = ({
           <FormattedMessage {...messages.answerWidgetTitle} />
         </div>
         <div className="small">
-          {intl.formatMessage(messages.answerHelperText, { helperText: problemStaticData.description })}
+          {intl.formatMessage(messages.answerHelperText, {
+            helperText: intl.formatMessage(problemStaticData.description),
+          })}
         </div>
       </div>
       <AnswersContainer problemType={problemType} />
