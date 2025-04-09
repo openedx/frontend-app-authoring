@@ -271,6 +271,7 @@ export async function mockXBlockFields(usageKey: string): Promise<api.XBlockFiel
     case thisMock.usageKeyNewProblem: return thisMock.dataNewProblem;
     case thisMock.usageKeyNewVideo: return thisMock.dataNewVideo;
     case thisMock.usageKeyThirdParty: return thisMock.dataThirdParty;
+    case thisMock.usageKey0: return thisMock.dataHtml0;
     default: throw new Error(`No mock has been set up for usageKey "${usageKey}"`);
   }
 }
@@ -280,6 +281,13 @@ mockXBlockFields.dataHtml = {
   displayName: 'Introduction to Testing',
   data: '<p>This is a text component which uses <strong>HTML</strong>.</p>',
   metadata: { displayName: 'Introduction to Testing' },
+} satisfies api.XBlockFields;
+// Mock of another "regular" HTML (Text) block:
+mockXBlockFields.usageKey0 = 'lb:org1:Demo_course:html:text-0';
+mockXBlockFields.dataHtml0 = {
+  displayName: 'text block 0',
+  data: '<p>This is a text component which uses <strong>HTML</strong>.</p>',
+  metadata: { displayName: 'text block 0' },
 } satisfies api.XBlockFields;
 // Mock of a blank/new HTML (Text) block:
 mockXBlockFields.usageKeyNewHtml = 'lb:Axim:TEST:html:123';
@@ -464,7 +472,7 @@ mockGetCollectionMetadata.applyMock = () => {
  */
 export async function mockGetContainerMetadata(containerId: string): Promise<api.Container> {
   switch (containerId) {
-    case mockGetCollectionMetadata.collectionIdError:
+    case mockGetContainerMetadata.containerIdError:
       throw createAxiosError({
         code: 404,
         message: 'Not found.',
@@ -507,6 +515,9 @@ mockGetContainerMetadata.applyMock = () => {
 export async function mockGetContainerChildren(containerId: string): Promise<api.LibraryBlockMetadata[]> {
   let numChildren: number;
   switch (containerId) {
+    case mockGetContainerMetadata.containerId:
+      numChildren = 3;
+      break;
     case mockGetContainerChildren.fiveChildren:
       numChildren = 5;
       break;
@@ -523,6 +534,7 @@ export async function mockGetContainerChildren(containerId: string): Promise<api
         ...child,
         // Generate a unique ID for each child block to avoid "duplicate key" errors in tests
         id: `lb:org1:Demo_course:html:text-${idx}`,
+        displayName: `text block ${idx}`,
       }
     )),
   );

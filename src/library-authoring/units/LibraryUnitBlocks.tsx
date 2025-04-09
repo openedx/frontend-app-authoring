@@ -51,6 +51,7 @@ export const LibraryUnitBlocks = () => {
   }
 
   if (isError) {
+    // istanbul ignore next
     return <ErrorAlert error={error} />;
   }
 

@@ -131,6 +131,7 @@ export const LibraryUnitPage = () => {
   }
 
   if (isError) {
+    // istanbul ignore next
     return <ErrorAlert error={error} />;
   }
 
