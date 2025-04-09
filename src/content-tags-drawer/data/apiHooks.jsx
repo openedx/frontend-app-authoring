@@ -118,6 +118,7 @@ export const useContentData = (contentId, enabled) => (
   useQuery({
     queryKey: ['contentData', contentId],
     queryFn: enabled ? () => getContentData(contentId) : undefined,
+    enabled,
   })
 );
 
