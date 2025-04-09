@@ -21,7 +21,6 @@ import {
 import { mockContentSearchConfig } from '../search-manager/data/api.mock';
 import { studioHomeMock } from '../studio-home/__mocks__';
 import { getStudioHomeApiUrl } from '../studio-home/data/api';
-import { mockBroadcastChannel } from '../generic/data/api.mock';
 import { LibraryLayout } from '.';
 import { getLibraryCollectionsApiUrl, getLibraryContainersApiUrl } from './data/api';
 
@@ -34,7 +33,6 @@ mockContentSearchConfig.applyMock();
 mockContentLibrary.applyMock();
 mockGetLibraryTeam.applyMock();
 mockXBlockFields.applyMock();
-mockBroadcastChannel();
 
 const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
 

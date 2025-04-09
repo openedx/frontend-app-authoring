@@ -39,13 +39,6 @@ const contentHit: ContentHit = {
   publishStatus: PublishStatus.Published,
 };
 
-const clipboardBroadcastChannelMock = {
-  postMessage: jest.fn(),
-  close: jest.fn(),
-};
-
-(global as any).BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
-
 const libraryId = 'lib:org1:Demo_Course';
 const render = () => baseRender(<ComponentCard hit={contentHit} />, {
   extraWrapper: ({ children }) => (

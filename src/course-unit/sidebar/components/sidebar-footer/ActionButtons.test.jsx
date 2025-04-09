@@ -22,13 +22,6 @@ let axiosMock;
 let queryClient;
 const courseId = '123';
 
-const clipboardBroadcastChannelMock = {
-  postMessage: jest.fn(),
-  close: jest.fn(),
-};
-
-global.BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
-
 const renderComponent = (props = {}) => render(
   <AppProvider store={store}>
     <IntlProvider locale="en">

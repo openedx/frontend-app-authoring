@@ -8,7 +8,6 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { Provider } from 'react-redux';
 
 import { stateKeys, messageTypes } from '../../../constants';
-import { mockBroadcastChannel } from '../../../../generic/data/api.mock';
 import initializeStore from '../../../../store';
 import { useLoadBearingHook, useIFrameBehavior, useMessageHandlers } from '..';
 
@@ -21,8 +20,6 @@ jest.mock('@edx/react-unit-test-utils', () => ({
 jest.mock('@edx/frontend-platform/logging', () => ({
   logError: jest.fn(),
 }));
-
-mockBroadcastChannel();
 
 describe('useIFrameBehavior', () => {
   const id = 'test-id';

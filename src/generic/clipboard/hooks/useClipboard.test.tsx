@@ -7,7 +7,7 @@ import {
 } from '../../../__mocks__';
 import { initializeMocks, makeWrapper } from '../../../testUtils';
 import { getClipboardUrl } from '../../data/api';
-import useClipboard from './useClipboard';
+import useClipboard, { _testingOverrideBroadcastChannel } from './useClipboard';
 
 initializeMocks();
 
@@ -16,13 +16,14 @@ let mockShowToast: jest.Mock;
 
 const unitId = 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@vertical_0270f6de40fc';
 const xblockId = 'block-v1:edX+DemoX+Demo_Course+type@html+block@030e35c4756a4ddc8d40b95fbbfff4d4';
-const clipboardBroadcastChannelMock = {
-  postMessage: jest.fn(),
-  close: jest.fn(),
-  onmessage: jest.fn(),
-};
 
-(global as any).BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
+let broadcastMockListener: (x: unknown) => void | undefined;
+const clipboardBroadcastChannelMock = {
+  postMessage: (message: unknown) => { broadcastMockListener(message); },
+  addEventListener: (_eventName: string, handler: typeof broadcastMockListener) => { broadcastMockListener = handler; },
+  removeEventListener: jest.fn(),
+};
+_testingOverrideBroadcastChannel(clipboardBroadcastChannelMock as any);
 
 describe('useClipboard', () => {
   beforeEach(async () => {
@@ -88,14 +89,14 @@ describe('useClipboard', () => {
   describe('broadcast channel message handling', () => {
     it('updates states correctly on receiving a broadcast message', async () => {
       const { result, rerender } = renderHook(() => useClipboard(true), { wrapper: makeWrapper() });
-      clipboardBroadcastChannelMock.onmessage({ data: clipboardUnit });
+      clipboardBroadcastChannelMock.postMessage({ data: clipboardUnit });
 
       rerender();
 
       expect(result.current.showPasteUnit).toBe(true);
       expect(result.current.showPasteXBlock).toBe(false);
 
-      clipboardBroadcastChannelMock.onmessage({ data: clipboardXBlock });
+      clipboardBroadcastChannelMock.postMessage({ data: clipboardXBlock });
       rerender();
 
       expect(result.current.showPasteUnit).toBe(false);
