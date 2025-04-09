@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { actions as problemActions } from '../problem';
 import { actions as requestActions } from '../requests';
 import { selectors as appSelectors } from '../app';
@@ -47,7 +47,7 @@ export const getDataFromOlx = ({ rawOLX, rawSettings, defaultSettings }) => {
   }
   const { settings, ...data } = parsedProblem;
   const parsedSettings = { ...settings, ...parseSettings(rawSettings, defaultSettings) };
-  if (!_.isEmpty(rawOLX) && !_.isEmpty(data)) {
+  if (!isEmpty(rawOLX) && !isEmpty(data)) {
     return { ...data, rawOLX, settings: parsedSettings };
   }
   return { settings: parsedSettings };
@@ -79,8 +79,8 @@ export const fetchAdvancedSettings = ({ rawOLX, rawSettings }) => (dispatch) => 
 };
 
 export const initializeProblem = (blockValue) => (dispatch, getState) => {
-  const rawOLX = _.get(blockValue, 'data.data', '');
-  const rawSettings = _.get(blockValue, 'data.metadata', {});
+  const rawOLX = get(blockValue, 'data.data', '');
+  const rawSettings = get(blockValue, 'data.metadata', {});
   const learningContextId = selectors.app.learningContextId(getState());
   if (isLibraryKey(learningContextId)) {
     // Content libraries don't yet support defaults for fields like max_attempts, showanswer, etc.

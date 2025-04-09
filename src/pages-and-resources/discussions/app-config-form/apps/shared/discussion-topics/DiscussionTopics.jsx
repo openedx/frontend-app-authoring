@@ -4,7 +4,7 @@ import { Button } from '@openedx/paragon';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { FieldArray, useFormikContext } from 'formik';
 import { v4 as uuid } from 'uuid';
-import _ from 'lodash';
+import { remove as removeElements, uniq, uniqBy } from 'lodash';
 import messages from '../../../messages';
 import TopicItem from './TopicItem';
 import { OpenedXConfigFormContext } from '../../openedx/OpenedXConfigFormProvider';
@@ -36,10 +36,10 @@ const DiscussionTopics = ({ intl }) => {
     } else {
       setValidDiscussionTopics(currentValidTopics => {
         const allDiscussionTopics = [...currentValidTopics, ...discussionTopics.filter(topic => topic.id === id)];
-        const allValidTopics = _.remove(allDiscussionTopics, topic => topic.name !== '');
-        return _.uniqBy(allValidTopics, 'id');
+        const allValidTopics = removeElements(allDiscussionTopics, topic => topic.name !== '');
+        return uniqBy(allValidTopics, 'id');
       });
-      setFieldValue('divideDiscussionIds', _.uniq([...divideDiscussionIds, id]));
+      setFieldValue('divideDiscussionIds', uniq([...divideDiscussionIds, id]));
     }
   }, [divideDiscussionIds, discussionTopics]);
 

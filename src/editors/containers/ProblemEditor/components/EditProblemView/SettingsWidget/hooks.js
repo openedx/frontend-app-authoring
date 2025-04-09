@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 
-import _ from 'lodash';
+import {
+  includes, isEmpty, isFinite, isNaN, isNil,
+} from 'lodash';
 // This 'module' self-import hack enables mocking during tests.
 // See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
 // should be re-thought and cleaned up to avoid this pattern.
@@ -65,7 +67,7 @@ export const hintsCardHooks = (hints, updateSettings) => {
 
   const handleAdd = () => {
     let newId = 0;
-    if (!_.isEmpty(hints)) {
+    if (!isEmpty(hints)) {
       newId = Math.max(...hints.map(hint => hint.id)) + 1;
     }
     const hint = { id: newId, value: '' };
@@ -114,9 +116,9 @@ export const resetCardHooks = (updateSettings) => {
 
 export const scoringCardHooks = (scoring, updateSettings, defaultValue) => {
   let loadedAttemptsNumber = scoring.attempts.number;
-  if ((loadedAttemptsNumber === defaultValue || !_.isFinite(loadedAttemptsNumber)) && _.isFinite(defaultValue)) {
+  if ((loadedAttemptsNumber === defaultValue || !isFinite(loadedAttemptsNumber)) && isFinite(defaultValue)) {
     loadedAttemptsNumber = `${defaultValue} (Default)`;
-  } else if (loadedAttemptsNumber === defaultValue && _.isNil(defaultValue)) {
+  } else if (loadedAttemptsNumber === defaultValue && isNil(defaultValue)) {
     loadedAttemptsNumber = '';
   }
   const [attemptDisplayValue, setAttemptDisplayValue] = module.state.attemptDisplayValue(loadedAttemptsNumber);
@@ -135,9 +137,9 @@ export const scoringCardHooks = (scoring, updateSettings, defaultValue) => {
     let unlimitedAttempts = false;
     let attemptNumber = parseInt(event.target.value, 10);
 
-    if (!_.isFinite(attemptNumber) || attemptNumber === defaultValue) {
+    if (!isFinite(attemptNumber) || attemptNumber === defaultValue) {
       attemptNumber = null;
-      if (_.isFinite(defaultValue)) {
+      if (isFinite(defaultValue)) {
         setAttemptDisplayValue(`${defaultValue} (Default)`);
       } else {
         setAttemptDisplayValue('');
@@ -154,7 +156,7 @@ export const scoringCardHooks = (scoring, updateSettings, defaultValue) => {
     let newMaxAttempt = parseInt(event.target.value, 10);
     if (newMaxAttempt === defaultValue) {
       newMaxAttempt = `${defaultValue} (Default)`;
-    } else if (_.isNaN(newMaxAttempt)) {
+    } else if (isNaN(newMaxAttempt)) {
       newMaxAttempt = '';
     } else if (newMaxAttempt < 0) {
       newMaxAttempt = 0;
@@ -164,7 +166,7 @@ export const scoringCardHooks = (scoring, updateSettings, defaultValue) => {
 
   const handleWeightChange = (event) => {
     let weight = parseFloat(event.target.value);
-    if (_.isNaN(weight) || weight < 0) {
+    if (isNaN(weight) || weight < 0) {
       weight = 0;
     }
     updateSettings({ scoring: { ...scoring, weight } });
@@ -187,18 +189,18 @@ export const useAnswerSettings = (showAnswer, updateSettings) => {
   ];
 
   useEffect(() => {
-    setShowAttempts(_.includes(numberOfAttemptsChoice, showAnswer.on));
+    setShowAttempts(includes(numberOfAttemptsChoice, showAnswer.on));
   }, [showAttempts]);
 
   const handleShowAnswerChange = (event) => {
     const { value } = event.target;
-    setShowAttempts(_.includes(numberOfAttemptsChoice, value));
+    setShowAttempts(includes(numberOfAttemptsChoice, value));
     updateSettings({ showAnswer: { ...showAnswer, on: value } });
   };
 
   const handleAttemptsChange = (event) => {
     let attempts = parseInt(event.target.value, 10);
-    if (_.isNaN(attempts) || attempts < 0) {
+    if (isNaN(attempts) || attempts < 0) {
       attempts = 0;
     }
     updateSettings({ showAnswer: { ...showAnswer, afterAttempts: attempts } });
@@ -214,7 +216,7 @@ export const useAnswerSettings = (showAnswer, updateSettings) => {
 export const timerCardHooks = (updateSettings) => ({
   handleChange: (event) => {
     let time = parseInt(event.target.value, 10);
-    if (_.isNaN(time) || time < 0) {
+    if (isNaN(time) || time < 0) {
       time = 0;
     }
     updateSettings({ timeBetween: time });

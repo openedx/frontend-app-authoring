@@ -20,7 +20,7 @@ import {
   Cached, CheckCircle, Launch, Loop,
 } from '@openedx/paragon/icons';
 
-import _ from 'lodash';
+import sumBy from 'lodash/sumBy';
 import { useSearchParams } from 'react-router-dom';
 import getPageHeadTitle from '../generic/utils';
 import { useModel } from '../generic/model-store';
@@ -109,7 +109,7 @@ export const CourseLibraries: React.FC<Props> = ({ courseId }) => {
   );
   const [showReviewAlert, setShowReviewAlert] = useState(false);
   const { data: libraries, isLoading } = useEntityLinksSummaryByDownstreamContext(courseId);
-  const outOfSyncCount = useMemo(() => _.sumBy(libraries, (lib) => lib.readyToSyncCount), [libraries]);
+  const outOfSyncCount = useMemo(() => sumBy(libraries, (lib) => lib.readyToSyncCount), [libraries]);
   const {
     isLoadingPage: isLoadingStudioHome,
     isFailedLoadingPage: isFailedLoadingStudioHome,

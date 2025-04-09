@@ -1,5 +1,5 @@
 import moment from 'moment';
-import _ from 'lodash';
+import orderBy from 'lodash/orderBy';
 import { getIn } from 'formik';
 import { restrictedDatesStatus as constants } from '../data/constants';
 
@@ -48,7 +48,7 @@ export const decodeDateTime = (date, time) => {
 };
 
 export const sortRestrictedDatesByStatus = (data, status, order) => (
-  _.orderBy(
+  orderBy(
     data.filter(date => date.status === status),
     [(obj) => decodeDateTime(obj.startDate, startOfDayTime(obj.startTime))],
     [order],
