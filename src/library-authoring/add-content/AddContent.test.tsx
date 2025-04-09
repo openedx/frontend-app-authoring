@@ -15,7 +15,7 @@ import {
   getContentLibraryApiUrl, getCreateLibraryBlockUrl, getLibraryCollectionComponentApiUrl, getLibraryPasteClipboardUrl,
   getXBlockFieldsApiUrl, getLibraryContainerChildrenApiUrl,
 } from '../data/api';
-import { mockBroadcastChannel, mockClipboardEmpty, mockClipboardHtml } from '../../generic/data/api.mock';
+import { mockClipboardEmpty, mockClipboardHtml } from '../../generic/data/api.mock';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import AddContent from './AddContent';
 import { ComponentEditorModal } from '../components/ComponentEditorModal';
@@ -23,7 +23,6 @@ import editorCmsApi from '../../editors/data/services/cms/api';
 import { ToastActionData } from '../../generic/toast-context';
 import * as textEditorHooks from '../../editors/containers/TextEditor/hooks';
 
-mockBroadcastChannel();
 // mockCreateLibraryBlock.applyMock();
 
 // Mocks for ComponentEditorModal to work in tests.
