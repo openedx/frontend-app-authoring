@@ -68,13 +68,6 @@ const courseId = '123';
 
 window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
-const clipboardBroadcastChannelMock = {
-  postMessage: jest.fn(),
-  close: jest.fn(),
-};
-
-global.BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
-
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useLocation: jest.fn(),

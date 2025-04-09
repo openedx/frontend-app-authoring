@@ -3,7 +3,6 @@ import { getConfig } from '@edx/frontend-platform';
 import { act, renderHook } from '@testing-library/react';
 import { useKeyedState } from '@edx/react-unit-test-utils';
 import { logError } from '@edx/frontend-platform/logging';
-import { mockBroadcastChannel } from '../../data/api.mock';
 import { iframeMessageTypes, iframeStateKeys } from '../../../constants';
 import { useIframeBehavior } from '../useIframeBehavior';
 import { useLoadBearingHook } from '../useLoadBearingHook';
@@ -17,8 +16,6 @@ jest.mock('@edx/react-unit-test-utils', () => ({
 jest.mock('@edx/frontend-platform/logging', () => ({
   logError: jest.fn(),
 }));
-
-mockBroadcastChannel();
 
 describe('useIframeBehavior', () => {
   const id = 'test-id';

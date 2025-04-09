@@ -47,13 +47,6 @@ const unit = {
 
 const queryClient = new QueryClient();
 
-const clipboardBroadcastChannelMock = {
-  postMessage: jest.fn(),
-  close: jest.fn(),
-};
-
-global.BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
-
 const renderComponent = (props) => render(
   <AppProvider store={store}>
     <QueryClientProvider client={queryClient}>

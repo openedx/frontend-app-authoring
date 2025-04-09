@@ -10,14 +10,12 @@ import {
   mockGetUnpaginatedEntityLinks,
 } from '../data/api.mocks';
 import { mockContentSearchConfig, mockFetchIndexDocuments } from '../../search-manager/data/api.mock';
-import { mockBroadcastChannel } from '../../generic/data/api.mock';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
 import ComponentInfo from './ComponentInfo';
 import { getXBlockPublishApiUrl } from '../data/api';
 
 mockContentSearchConfig.applyMock();
-mockBroadcastChannel();
 mockContentLibrary.applyMock();
 mockLibraryBlockMetadata.applyMock();
 mockGetUnpaginatedEntityLinks.applyMock();

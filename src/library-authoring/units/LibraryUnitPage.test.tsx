@@ -14,7 +14,7 @@ import {
   mockLibraryBlockMetadata,
 } from '../data/api.mocks';
 import { mockContentSearchConfig, mockGetBlockTypes } from '../../search-manager/data/api.mock';
-import { mockBroadcastChannel, mockClipboardEmpty } from '../../generic/data/api.mock';
+import { mockClipboardEmpty } from '../../generic/data/api.mock';
 import LibraryLayout from '../LibraryLayout';
 
 const path = '/library/:libraryId/*';
@@ -28,7 +28,6 @@ mockGetBlockTypes.applyMock();
 mockContentLibrary.applyMock();
 mockXBlockFields.applyMock();
 mockLibraryBlockMetadata.applyMock();
-mockBroadcastChannel();
 
 describe('<LibraryUnitPage />', () => {
   beforeEach(() => {
