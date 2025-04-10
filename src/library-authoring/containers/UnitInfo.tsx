@@ -1,10 +1,15 @@
-import { useIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
   Stack,
   Tab,
   Tabs,
+  Dropdown,
+  Icon,
+  IconButton,
+  useToggle,
 } from '@openedx/paragon';
+import { MoreVert } from '@openedx/paragon/icons';
 
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import {
@@ -14,6 +19,47 @@ import {
   useSidebarContext,
 } from '../common/context/SidebarContext';
 import messages from './messages';
+import componentMessages from '../components/messages';
+import ContainerDeleter from '../components/ContainerDeleter';
+import { useContainer } from '../data/apiHooks';
+
+type ContainerMenuProps = {
+  containerId: string,
+  displayName: string,
+};
+
+const UnitMenu = ({ containerId, displayName }: ContainerMenuProps) => {
+  const intl = useIntl();
+
+  const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
+
+  return (
+    <>
+      <Dropdown id="unit-info-dropdown">
+        <Dropdown.Toggle
+          id="unit-info-menu-toggle"
+          as={IconButton}
+          src={MoreVert}
+          iconAs={Icon}
+          variant="primary"
+          alt={intl.formatMessage(componentMessages.collectionCardMenuAlt)}
+          data-testid="unit-info-menu-toggle"
+        />
+        <Dropdown.Menu>
+          <Dropdown.Item onClick={confirmDelete}>
+            <FormattedMessage {...componentMessages.menuDeleteContainer} />
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+      <ContainerDeleter
+        isOpen={isConfirmingDelete}
+        close={cancelDelete}
+        containerId={containerId}
+        displayName={displayName}
+      />
+    </>
+  );
+};
 
 const UnitInfo = () => {
   const intl = useIntl();
@@ -31,11 +77,17 @@ const UnitInfo = () => {
     throw new Error('unitId is required');
   }
 
-  const showOpenCollectionButton = !componentPickerMode;
+  const showOpenUnitButton = !componentPickerMode;
+
+  const { data: container } = useContainer(unitId);
+
+  if (!container) {
+    return null;
+  }
 
   return (
     <Stack>
-      {showOpenCollectionButton && (
+      {showOpenUnitButton && (
         <div className="d-flex flex-wrap">
           <Button
             variant="outline-primary"
@@ -44,6 +96,10 @@ const UnitInfo = () => {
           >
             {intl.formatMessage(messages.openUnitButton)}
           </Button>
+          <UnitMenu
+            containerId={unitId}
+            displayName={container.displayName}
+          />
         </div>
       )}
       <Tabs
