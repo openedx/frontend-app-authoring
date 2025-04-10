@@ -28,7 +28,7 @@ const CodeEditor = ({
   return (
     <div>
       <div id="CodeMirror" ref={DOMref} />
-      {showBtnEscapeHTML && (
+      {showBtnEscapeHTML && lang !== 'markdown' && (
         <Button
           variant="tertiary"
           aria-label={intl.formatMessage(messages.escapeHTMLButtonLabel)}

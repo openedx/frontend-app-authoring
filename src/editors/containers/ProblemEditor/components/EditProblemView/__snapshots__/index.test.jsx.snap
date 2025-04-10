@@ -1,6 +1,85 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`EditorProblemView component renders raw editor 1`] = `
+exports[`EditorProblemView component renders markdown editor when isMarkdownEditorEnabled is true 1`] = `
+<EditorContainer
+  getContent={[Function]}
+  isDirty={[Function]}
+  returnFunction={null}
+>
+  <AlertModal
+    footerNode={
+      <ActionRow>
+        <Button
+          onClick={[Function]}
+          variant="tertiary"
+        >
+          <FormattedMessage
+            defaultMessage="Cancel"
+            description="Label for cancel button in the save warning modal"
+            id="authoring.problemEditor.editProblemView.saveWarningModal.cancelButton.label"
+          />
+        </Button>
+        <Button
+          onClick={[Function]}
+        >
+          <FormattedMessage
+            defaultMessage="Ok"
+            description="Label for save button in the save warning modal"
+            id="authoring.problemEditor.editProblemView.saveWarningModal.saveButton.label"
+          />
+        </Button>
+      </ActionRow>
+    }
+    isOpen={false}
+    onClose={[Function]}
+    title="No answer specified"
+  >
+    <Fragment>
+      <div>
+        <FormattedMessage
+          defaultMessage="Are you sure you want to exit the editor?"
+          description="Question in body of save warning modal"
+          id="authoring.problemEditor.editProblemView.saveWarningModal.body.question"
+        />
+      </div>
+      <div>
+        <FormattedMessage
+          defaultMessage="No correct answer has been specified."
+          description="Explanation in body of no answer modal"
+          id="authoring.problemEditor.editProblemView.saveWarningModal.noAnswer.body.explanation"
+        />
+      </div>
+    </Fragment>
+  </AlertModal>
+  <div
+    className="editProblemView d-flex flex-row flex-nowrap justify-content-end"
+  >
+    <Container
+      className="advancedEditorTopMargin p-0"
+      fluid={true}
+    >
+      <RawEditor
+        content="# Markdown content"
+        editorRef={
+          {
+            "current": null,
+          }
+        }
+        lang="markdown"
+      />
+    </Container>
+    <span
+      className="editProblemView-settingsColumn"
+    >
+      <injectIntl(ShimmedIntlComponent)
+        problemType="multiplechoiceresponse"
+      />
+    </span>
+  </div>
+</EditorContainer>
+`;
+
+exports[`EditorProblemView component renders raw editor for advanced problem type 1`] = `
 <EditorContainer
   getContent={[Function]}
   isDirty={[Function]}
@@ -50,7 +129,7 @@ exports[`EditorProblemView component renders raw editor 1`] = `
       fluid={true}
     >
       <RawEditor
-        content={null}
+        content="<problem>...</problem>"
         editorRef={
           {
             "current": null,

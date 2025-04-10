@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SwitchEditorCard snapshot snapshot: SwitchEditorCard 1`] = `undefined`;
+
+exports[`SwitchEditorCard snapshot snapshot: SwitchEditorCard returns null 1`] = `null`;
+
+exports[`SwitchEditorCard snapshot snapshot: SwitchEditorCard returns null 2`] = `null`;
+
+exports[`SwitchEditorCard snapshot snapshot: SwitchEditorCard returns null for advanced problems 1`] = `null`;
+
+exports[`SwitchEditorCard snapshot snapshot: SwitchEditorCard returns null when editor is Markdown 1`] = `undefined`;

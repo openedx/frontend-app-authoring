@@ -1,9 +1,11 @@
 /* eslint-disable */
-const numeric = `<problem>
+const olx = `<problem>
   <numericalresponse>
     <responseparam type="tolerance" default="5"/>
     <formulaequationinput/>
   </numericalresponse>
 </problem>`
 
-export default numeric;
+const markdown = `= 100 +-5`
+
+export default { olx, markdown };

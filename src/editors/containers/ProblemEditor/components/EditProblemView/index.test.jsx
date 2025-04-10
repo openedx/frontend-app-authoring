@@ -22,15 +22,41 @@ describe('EditorProblemView component', () => {
     expect(wrapper.instance.findByType(RawEditor).length).toBe(0);
   });
 
-  test('renders raw editor', () => {
+  test('renders raw editor for advanced problem type', () => {
     const wrapper = shallow(<EditProblemView
       problemType={ProblemTypeKeys.ADVANCED}
-      problemState={{}}
+      isMarkdownEditorEnabled={false}
+      problemState={{ rawOLX: '<problem>...</problem>' }}
       assets={{}}
       intl={{ formatMessage }}
     />);
+
     expect(wrapper.snapshot).toMatchSnapshot();
-    expect(wrapper.instance.findByType(AnswerWidget).length).toBe(0);
-    expect(wrapper.instance.findByType(RawEditor).length).toBe(1);
+
+    const rawEditor = wrapper.instance.findByType(RawEditor);
+    expect(rawEditor.length).toBe(1);
+    expect(rawEditor[0].props.lang).toBe('xml');
+
+    const answerWidget = wrapper.instance.findByType(AnswerWidget);
+    expect(answerWidget.length).toBe(0); // since advanced problem type skips AnswerWidget
+  });
+
+  test('renders markdown editor when isMarkdownEditorEnabled is true', () => {
+    const wrapper = shallow(<EditProblemView
+      problemType={ProblemTypeKeys.SINGLESELECT}
+      isMarkdownEditorEnabled
+      problemState={{ rawMarkdown: '# Markdown content' }}
+      assets={{}}
+      intl={{ formatMessage }}
+    />);
+
+    expect(wrapper.snapshot).toMatchSnapshot();
+
+    const rawEditor = wrapper.instance.findByType(RawEditor);
+    expect(rawEditor.length).toBe(1);
+    expect(rawEditor[0].props.lang).toBe('markdown');
+
+    const answerWidget = wrapper.instance.findByType(AnswerWidget);
+    expect(answerWidget.length).toBe(0); // since markdown view skips AnswerWidget
   });
 });

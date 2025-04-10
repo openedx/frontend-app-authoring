@@ -382,15 +382,15 @@ describe('Problem settings hooks', () => {
       expect(typeRowProps.updateField).toHaveBeenCalledWith({ problemType: ProblemTypeKeys.TEXTINPUT });
     });
   });
-  test('test confirmSwitchToAdvancedEditor hook', () => {
-    const switchToAdvancedEditor = jest.fn();
+  test('test handleConfirmEditorSwitch hook', () => {
+    const switchEditor = jest.fn();
     const setConfirmOpen = jest.fn();
     window.scrollTo = jest.fn();
-    hooks.confirmSwitchToAdvancedEditor({
-      switchToAdvancedEditor,
+    hooks.handleConfirmEditorSwitch({
+      switchEditor,
       setConfirmOpen,
     });
-    expect(switchToAdvancedEditor).toHaveBeenCalled();
+    expect(switchEditor).toHaveBeenCalled();
     expect(setConfirmOpen).toHaveBeenCalledWith(false);
     expect(window.scrollTo).toHaveBeenCalled();
   });

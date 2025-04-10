@@ -17,6 +17,13 @@ jest.mock('react-router-dom', () => ({
   }],
 }));
 
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useSelector: jest.fn(() => ({
+    useMarkdownEditor: true,
+  })),
+}));
+
 jest.mock('@edx/frontend-platform/i18n', () => ({
   ...jest.requireActual('@edx/frontend-platform/i18n'),
   useIntl: () => ({

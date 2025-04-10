@@ -52,7 +52,8 @@ exports[`SettingsWidget isLibrary snapshot: renders Settings widget for Advanced
       <div
         className="my-3"
       >
-        <SwitchToAdvancedEditorCard
+        <SwitchEditorCard
+          editorType="advanced"
           problemType="stringresponse"
         />
       </div>
@@ -113,7 +114,8 @@ exports[`SettingsWidget isLibrary snapshot: renders Settings widget page 1`] = `
       <div
         className="my-3"
       >
-        <SwitchToAdvancedEditorCard
+        <SwitchEditorCard
+          editorType="advanced"
           problemType="stringresponse"
         />
       </div>
@@ -174,7 +176,8 @@ exports[`SettingsWidget isLibrary snapshot: renders Settings widget page advance
       <div
         className="my-3"
       >
-        <SwitchToAdvancedEditorCard
+        <SwitchEditorCard
+          editorType="advanced"
           problemType="stringresponse"
         />
       </div>
@@ -261,7 +264,8 @@ exports[`SettingsWidget snapshot snapshot: renders Settings widget for Advanced 
       <div
         className="my-3"
       >
-        <SwitchToAdvancedEditorCard
+        <SwitchEditorCard
+          editorType="advanced"
           problemType="stringresponse"
         />
       </div>
@@ -348,7 +352,8 @@ exports[`SettingsWidget snapshot snapshot: renders Settings widget page 1`] = `
       <div
         className="my-3"
       >
-        <SwitchToAdvancedEditorCard
+        <SwitchEditorCard
+          editorType="advanced"
           problemType="stringresponse"
         />
       </div>
@@ -435,7 +440,8 @@ exports[`SettingsWidget snapshot snapshot: renders Settings widget page advanced
       <div
         className="my-3"
       >
-        <SwitchToAdvancedEditorCard
+        <SwitchEditorCard
+          editorType="advanced"
           problemType="stringresponse"
         />
       </div>

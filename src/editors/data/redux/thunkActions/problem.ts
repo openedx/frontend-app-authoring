@@ -24,6 +24,18 @@ export const switchToAdvancedEditor = () => (dispatch, getState) => {
   dispatch(actions.problem.updateField({ problemType: ProblemTypeKeys.ADVANCED, rawOLX }));
 };
 
+export const switchToMarkdownEditor = () => (dispatch, getState) => {
+  const state = getState();
+  dispatch(actions.problem.updateField({ isMarkdownEditorEnabled: true }));
+  const { blockValue } = state.app;
+  const olx = _.get(blockValue, 'data.data', '');
+  const content = { settings: { markdown_edited: true }, olx };
+  // Sending a request to save the problem block with the updated markdown_edited value
+  dispatch(requests.saveBlock({ content }));
+};
+
+export const switchEditor = (editorType) => (dispatch, getState) => (editorType === 'advanced' ? switchToAdvancedEditor : switchToMarkdownEditor)()(dispatch, getState);
+
 export const isBlankProblem = ({ rawOLX }) => {
   if (['<problem></problem>', '<problem/>'].includes(rawOLX.replace(/\s/g, ''))) {
     return true;
@@ -53,15 +65,21 @@ export const getDataFromOlx = ({ rawOLX, rawSettings, defaultSettings }) => {
   return { settings: parsedSettings };
 };
 
-export const loadProblem = ({ rawOLX, rawSettings, defaultSettings }) => (dispatch) => {
+export const loadProblem = ({
+  rawOLX, rawSettings, defaultSettings, isMarkdownEditorEnabled,
+}) => (dispatch) => {
   if (isBlankProblem({ rawOLX })) {
     dispatch(actions.problem.setEnableTypeSelection(camelizeKeys(defaultSettings)));
   } else {
-    dispatch(actions.problem.load(getDataFromOlx({ rawOLX, rawSettings, defaultSettings })));
+    dispatch(actions.problem.load({
+      ...getDataFromOlx({ rawOLX, rawSettings, defaultSettings }),
+      rawMarkdown: rawSettings.markdown,
+      isMarkdownEditorEnabled,
+    }));
   }
 };
 
-export const fetchAdvancedSettings = ({ rawOLX, rawSettings }) => (dispatch) => {
+export const fetchAdvancedSettings = ({ rawOLX, rawSettings, isMarkdownEditorEnabled }) => (dispatch) => {
   const advancedProblemSettingKeys = ['max_attempts', 'showanswer', 'show_reset_button', 'rerandomize'];
   dispatch(requests.fetchAdvancedSettings({
     onSuccess: (response) => {
@@ -72,26 +90,37 @@ export const fetchAdvancedSettings = ({ rawOLX, rawSettings }) => (dispatch) => 
         }
       });
       dispatch(actions.problem.updateField({ defaultSettings: camelizeKeys(defaultSettings) }));
-      loadProblem({ rawOLX, rawSettings, defaultSettings })(dispatch);
+      loadProblem({
+        rawOLX, rawSettings, defaultSettings, isMarkdownEditorEnabled,
+      })(dispatch);
     },
-    onFailure: () => { loadProblem({ rawOLX, rawSettings, defaultSettings: {} })(dispatch); },
+    onFailure: () => {
+      loadProblem({
+        rawOLX, rawSettings, defaultSettings: {}, isMarkdownEditorEnabled,
+      })(dispatch);
+    },
   }));
 };
 
 export const initializeProblem = (blockValue) => (dispatch, getState) => {
   const rawOLX = get(blockValue, 'data.data', '');
   const rawSettings = get(blockValue, 'data.metadata', {});
+  const isMarkdownEditorEnabled = get(blockValue, 'data.metadata.markdown_edited', false);
   const learningContextId = selectors.app.learningContextId(getState());
   if (isLibraryKey(learningContextId)) {
     // Content libraries don't yet support defaults for fields like max_attempts, showanswer, etc.
     // So proceed with loading the problem.
     // Though first we need to fake the request or else the problem type selection UI won't display:
     dispatch(actions.requests.completeRequest({ requestKey: RequestKeys.fetchAdvancedSettings, response: {} }));
-    dispatch(loadProblem({ rawOLX, rawSettings, defaultSettings: {} }));
+    dispatch(loadProblem({
+      rawOLX, rawSettings, defaultSettings: {}, isMarkdownEditorEnabled,
+    }));
   } else {
     // Load the defaults (for max_attempts, etc.) from the course's advanced settings, then proceed:
-    dispatch(fetchAdvancedSettings({ rawOLX, rawSettings }));
+    dispatch(fetchAdvancedSettings({ rawOLX, rawSettings, isMarkdownEditorEnabled }));
   }
 };
 
-export default { initializeProblem, switchToAdvancedEditor, fetchAdvancedSettings };
+export default {
+  initializeProblem, switchEditor, switchToAdvancedEditor, fetchAdvancedSettings,
+};

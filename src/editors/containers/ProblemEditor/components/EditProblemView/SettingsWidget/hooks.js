@@ -322,11 +322,11 @@ export const typeRowHooks = ({
   };
 };
 
-export const confirmSwitchToAdvancedEditor = ({
-  switchToAdvancedEditor,
+export const handleConfirmEditorSwitch = ({
+  switchEditor,
   setConfirmOpen,
 }) => {
-  switchToAdvancedEditor();
+  switchEditor();
   setConfirmOpen(false);
   window.scrollTo({
     top: 0,

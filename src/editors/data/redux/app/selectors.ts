@@ -26,6 +26,7 @@ export const simpleSelectors = {
   images: mkSimpleSelector(app => app.images),
   videos: mkSimpleSelector(app => app.videos),
   showRawEditor: mkSimpleSelector(app => app.showRawEditor),
+  isMarkdownEditorEnabledForCourse: mkSimpleSelector(app => app.isMarkdownEditorEnabledForCourse),
 };
 
 export const returnUrl = createSelector(

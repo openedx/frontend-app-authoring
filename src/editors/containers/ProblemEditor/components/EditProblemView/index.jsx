@@ -30,6 +30,7 @@ const EditProblemView = ({
   returnFunction,
   // redux
   problemType,
+  isMarkdownEditorEnabled,
   problemState,
   lmsEndpointUrl,
   returnUrl,
@@ -57,6 +58,7 @@ const EditProblemView = ({
         problemState,
         openSaveWarningModal,
         isAdvancedProblemType,
+        isMarkdownEditorEnabled,
         editorRef,
         lmsEndpointUrl,
       })}
@@ -79,6 +81,7 @@ const EditProblemView = ({
                 content: parseState({
                   problem: problemState,
                   isAdvanced: isAdvancedProblemType,
+                  isMarkdown: isMarkdownEditorEnabled,
                   ref: editorRef,
                   lmsEndpointUrl,
                 })(),
@@ -107,9 +110,9 @@ const EditProblemView = ({
         )}
       </AlertModal>
       <div className="editProblemView d-flex flex-row flex-nowrap justify-content-end">
-        {isAdvancedProblemType ? (
+        {isAdvancedProblemType || isMarkdownEditorEnabled ? (
           <Container fluid className="advancedEditorTopMargin p-0">
-            <RawEditor editorRef={editorRef} lang="xml" content={problemState.rawOLX} />
+            <RawEditor editorRef={editorRef} lang={isMarkdownEditorEnabled ? 'markdown' : 'xml'} content={isMarkdownEditorEnabled ? problemState.rawMarkdown : problemState.rawOLX} />
           </Container>
         ) : (
           <span className="flex-grow-1 mb-5">
@@ -141,6 +144,7 @@ EditProblemView.propTypes = {
   lmsEndpointUrl: PropTypes.string,
   returnUrl: PropTypes.string.isRequired,
   isDirty: PropTypes.bool,
+  isMarkdownEditorEnabled: PropTypes.bool,
   // injected
   intl: intlShape.isRequired,
 };
@@ -150,6 +154,8 @@ export const mapStateToProps = (state) => ({
   lmsEndpointUrl: selectors.app.lmsEndpointUrl(state),
   returnUrl: selectors.app.returnUrl(state),
   problemType: selectors.problem.problemType(state),
+  isMarkdownEditorEnabled: selectors.problem.isMarkdownEditorEnabled(state)
+   && selectors.app.isMarkdownEditorEnabledForCourse(state),
   problemState: selectors.problem.completeState(state),
   isDirty: selectors.problem.isDirty(state),
 });
