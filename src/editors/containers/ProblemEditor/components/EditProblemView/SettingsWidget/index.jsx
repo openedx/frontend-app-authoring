@@ -42,7 +42,6 @@ const SettingsWidget = ({
   showMarkdownEditorButton,
 }) => {
   const { isAdvancedCardsVisible, showAdvancedCards } = showAdvancedSettingsCards();
-
   const feedbackCard = () => {
     if ([ProblemTypeKeys.MULTISELECT].includes(problemType)) {
       return (
@@ -216,7 +215,8 @@ const mapStateToProps = (state) => ({
   images: selectors.app.images(state),
   isLibrary: selectors.app.isLibrary(state),
   learningContextId: selectors.app.learningContextId(state),
-  showMarkdownEditorButton: selectors.app.isMarkdownEditorEnabledForCourse(state),
+  showMarkdownEditorButton: selectors.app.isMarkdownEditorEnabledForCourse(state)
+  && selectors.problem.rawMarkdown(state),
 });
 
 export const mapDispatchToProps = {
