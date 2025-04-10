@@ -109,7 +109,7 @@ const ComponentInfo = () => {
     sidebarComponentInfo,
     sidebarAction,
     defaultTab,
-    disabledTabs,
+    hiddenTabs,
   } = useSidebarContext();
   const [
     isPublishConfirmationOpen,
@@ -156,8 +156,9 @@ const ComponentInfo = () => {
       });
   }, [publishComponent, showToast, intl]);
 
+  // TODO: refactor sidebar Tabs to handle rendering and disabledTabs in one place.
   const renderTab = React.useCallback((infoTab: ComponentInfoTab, component: React.ReactNode, title: string) => {
-    if (disabledTabs.includes(infoTab)) {
+    if (hiddenTabs.includes(infoTab)) {
       // For some reason, returning anything other than empty list breaks the tab style
       return [];
     }
@@ -166,7 +167,7 @@ const ComponentInfo = () => {
         {component}
       </Tab>
     );
-  }, [disabledTabs, defaultTab.component]);
+  }, [hiddenTabs, defaultTab.component]);
 
   return (
     <>

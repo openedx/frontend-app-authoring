@@ -72,7 +72,7 @@ const UnitInfo = () => {
   const { setUnitId } = useLibraryContext();
   const { componentPickerMode } = useComponentPickerContext();
   const {
-    defaultTab, disabledTabs, sidebarComponentInfo, sidebarTab, setSidebarTab,
+    defaultTab, hiddenTabs, sidebarComponentInfo, sidebarTab, setSidebarTab,
   } = useSidebarContext();
   const { insideUnit, navigateTo } = useLibraryRoutes();
   const { data: container } = useContainer(unitId);
@@ -111,7 +111,7 @@ const UnitInfo = () => {
         {component}
       </Tab>
     );
-  }, [disabledTabs, defaultTab.unit, unitId]);
+  }, [hiddenTabs, defaultTab.unit, unitId]);
 
   return (
     <Stack>

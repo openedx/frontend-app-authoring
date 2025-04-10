@@ -84,8 +84,8 @@ export type SidebarContextData = {
   setSidebarTab: (tab: SidebarInfoTab) => void;
   defaultTab: DefaultTabs;
   setDefaultTab: (tabs: DefaultTabs) => void;
-  disabledTabs: Array<SidebarInfoTab>;
-  setDisabledTabs: (tabs: ComponentInfoTab[]) => void;
+  hiddenTabs: Array<SidebarInfoTab>;
+  setHiddenTabs: (tabs: ComponentInfoTab[]) => void;
 };
 
 /**
@@ -118,7 +118,7 @@ export const SidebarProvider = ({
     unit: UNIT_INFO_TABS.Preview,
     collection: COLLECTION_INFO_TABS.Manage,
   });
-  const [disabledTabs, setDisabledTabs] = useState<Array<SidebarInfoTab>>([]);
+  const [hiddenTabs, setHiddenTabs] = useState<Array<SidebarInfoTab>>([]);
 
   const [sidebarTab, setSidebarTab] = useStateWithUrlSearchParam<SidebarInfoTab>(
     defaultTab.component,
@@ -197,8 +197,8 @@ export const SidebarProvider = ({
       setSidebarTab,
       defaultTab,
       setDefaultTab,
-      disabledTabs,
-      setDisabledTabs,
+      hiddenTabs,
+      setHiddenTabs,
     };
 
     return contextValue;
@@ -218,8 +218,8 @@ export const SidebarProvider = ({
     setSidebarTab,
     defaultTab,
     setDefaultTab,
-    disabledTabs,
-    setDisabledTabs,
+    hiddenTabs,
+    setHiddenTabs,
   ]);
 
   return (
@@ -253,8 +253,8 @@ export function useSidebarContext(): SidebarContextData {
         collection: COLLECTION_INFO_TABS.Manage,
       },
       setDefaultTab: () => {},
-      disabledTabs: [],
-      setDisabledTabs: () => {},
+      hiddenTabs: [],
+      setHiddenTabs: () => {},
     };
   }
   return ctx;

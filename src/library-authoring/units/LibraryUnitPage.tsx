@@ -84,7 +84,7 @@ export const LibraryUnitPage = () => {
     sidebarComponentInfo,
     openInfoSidebar,
     setDefaultTab,
-    setDisabledTabs,
+    setHiddenTabs,
   } = useSidebarContext();
 
   useEffect(() => {
@@ -93,16 +93,16 @@ export const LibraryUnitPage = () => {
       component: COMPONENT_INFO_TABS.Manage,
       unit: UNIT_INFO_TABS.Organize,
     });
-    setDisabledTabs([COMPONENT_INFO_TABS.Preview, UNIT_INFO_TABS.Preview]);
+    setHiddenTabs([COMPONENT_INFO_TABS.Preview, UNIT_INFO_TABS.Preview]);
     return () => {
       setDefaultTab({
         component: COMPONENT_INFO_TABS.Preview,
         unit: UNIT_INFO_TABS.Preview,
         collection: COLLECTION_INFO_TABS.Manage,
       });
-      setDisabledTabs([]);
+      setHiddenTabs([]);
     };
-  }, [setDefaultTab, setDisabledTabs]);
+  }, [setDefaultTab, setHiddenTabs]);
 
   useEffect(() => {
     openInfoSidebar(componentId, collectionId, unitId);
