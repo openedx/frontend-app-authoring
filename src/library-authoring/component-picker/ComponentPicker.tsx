@@ -38,7 +38,7 @@ const defaultSelectionChangedCallback: ComponentSelectionChangedEvent = (selecti
   window.parent.postMessage({ type: 'pickerSelectionChanged', selections }, '*');
 };
 
-type ComponentPickerProps = { libraryId?: string, showOnlyPublished?: boolean } & (
+type ComponentPickerProps = { libraryId?: string, showOnlyPublished?: boolean, extraFilter?: string[] } & (
   {
     componentPickerMode?: 'single',
     onComponentSelected?: ComponentSelectedEvent,
@@ -54,6 +54,7 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
   /** Restrict the component picker to a specific library */
   libraryId,
   showOnlyPublished,
+  extraFilter,
   componentPickerMode = 'single',
   /** This default callback is used to send the selected component back to the parent window,
    * when the component picker is used in an iframe.
@@ -105,6 +106,7 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
           <LibraryProvider
             libraryId={selectedLibrary}
             showOnlyPublished={calcShowOnlyPublished}
+            extraFilter={extraFilter}
             skipUrlUpdate
           >
             <SidebarProvider>

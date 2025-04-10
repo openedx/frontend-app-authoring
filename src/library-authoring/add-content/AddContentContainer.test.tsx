@@ -12,7 +12,7 @@ import {
   mockXBlockFields,
 } from '../data/api.mocks';
 import {
-  getContentLibraryApiUrl, getCreateLibraryBlockUrl, getLibraryCollectionComponentApiUrl, getLibraryPasteClipboardUrl,
+  getContentLibraryApiUrl, getCreateLibraryBlockUrl, getLibraryCollectionItemsApiUrl, getLibraryPasteClipboardUrl,
   getXBlockFieldsApiUrl,
 } from '../data/api';
 import { mockBroadcastChannel, mockClipboardEmpty, mockClipboardHtml } from '../../generic/data/api.mock';
@@ -137,7 +137,7 @@ describe('<AddContentContainer />', () => {
     const url = getCreateLibraryBlockUrl(libraryId);
     const usageKey = mockXBlockFields.usageKeyNewHtml;
     const updateBlockUrl = getXBlockFieldsApiUrl(usageKey);
-    const collectionComponentUrl = getLibraryCollectionComponentApiUrl(
+    const collectionComponentUrl = getLibraryCollectionItemsApiUrl(
       libraryId,
       collectionId,
     );
@@ -195,7 +195,7 @@ describe('<AddContentContainer />', () => {
 
     const pasteUrl = getLibraryPasteClipboardUrl(libraryId);
     const collectionId = 'some-collection-id';
-    const collectionComponentUrl = getLibraryCollectionComponentApiUrl(
+    const collectionComponentUrl = getLibraryCollectionItemsApiUrl(
       libraryId,
       collectionId,
     );
@@ -220,7 +220,7 @@ describe('<AddContentContainer />', () => {
 
     const pasteUrl = getLibraryPasteClipboardUrl(libraryId);
     const collectionId = 'some-collection-id';
-    const collectionComponentUrl = getLibraryCollectionComponentApiUrl(
+    const collectionComponentUrl = getLibraryCollectionItemsApiUrl(
       libraryId,
       collectionId,
     );

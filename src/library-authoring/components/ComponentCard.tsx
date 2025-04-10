@@ -2,18 +2,12 @@ import { useCallback, useContext } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
-  Button,
   Dropdown,
   Icon,
   IconButton,
   useToggle,
 } from '@openedx/paragon';
-import {
-  AddCircleOutline,
-  CheckBoxIcon,
-  CheckBoxOutlineBlank,
-  MoreVert,
-} from '@openedx/paragon/icons';
+import { MoreVert } from '@openedx/paragon/icons';
 
 import { useClipboard } from '../../generic/clipboard';
 import { ToastContext } from '../../generic/toast-context';
@@ -21,13 +15,14 @@ import { type ContentHit, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
-import { useRemoveComponentsFromCollection } from '../data/apiHooks';
+import { useRemoveItemsFromCollection } from '../data/apiHooks';
 import { useLibraryRoutes } from '../routes';
 
+import AddComponentWidget from './AddComponentWidget';
 import BaseCard from './BaseCard';
 import { canEditComponent } from './ComponentEditorModal';
-import messages from './messages';
 import ComponentDeleter from './ComponentDeleter';
+import messages from './messages';
 
 type ComponentCardProps = {
   hit: ContentHit,
@@ -50,7 +45,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
 
   const canEdit = usageKey && canEditComponent(usageKey);
   const { showToast } = useContext(ToastContext);
-  const removeComponentsMutation = useRemoveComponentsFromCollection(libraryId, collectionId);
+  const removeComponentsMutation = useRemoveItemsFromCollection(libraryId, collectionId);
   const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
   const { copyToClipboard } = useClipboard();
 
@@ -108,76 +103,6 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
       <ComponentDeleter usageKey={usageKey} isConfirmingDelete={isConfirmingDelete} cancelDelete={cancelDelete} />
     </Dropdown>
   );
-};
-
-interface AddComponentWidgetProps {
-  usageKey: string;
-  blockType: string;
-}
-
-const AddComponentWidget = ({ usageKey, blockType }: AddComponentWidgetProps) => {
-  const intl = useIntl();
-
-  const {
-    componentPickerMode,
-    onComponentSelected,
-    addComponentToSelectedComponents,
-    removeComponentFromSelectedComponents,
-    selectedComponents,
-  } = useComponentPickerContext();
-
-  // istanbul ignore if: this should never happen
-  if (!usageKey) {
-    throw new Error('usageKey is required');
-  }
-
-  // istanbul ignore if: this should never happen
-  if (!componentPickerMode) {
-    return null;
-  }
-
-  if (componentPickerMode === 'single') {
-    return (
-      <Button
-        variant="outline-primary"
-        iconBefore={AddCircleOutline}
-        onClick={() => {
-          onComponentSelected({ usageKey, blockType });
-        }}
-      >
-        <FormattedMessage {...messages.componentPickerSingleSelectTitle} />
-      </Button>
-    );
-  }
-
-  if (componentPickerMode === 'multiple') {
-    const isChecked = selectedComponents.some((component) => component.usageKey === usageKey);
-
-    const handleChange = () => {
-      const selectedComponent = {
-        usageKey,
-        blockType,
-      };
-      if (!isChecked) {
-        addComponentToSelectedComponents(selectedComponent);
-      } else {
-        removeComponentFromSelectedComponents(selectedComponent);
-      }
-    };
-
-    return (
-      <Button
-        variant="outline-primary"
-        iconBefore={isChecked ? CheckBoxIcon : CheckBoxOutlineBlank}
-        onClick={handleChange}
-      >
-        {intl.formatMessage(messages.componentPickerMultipleSelectTitle)}
-      </Button>
-    );
-  }
-
-  // istanbul ignore next: this should never happen
-  return null;
 };
 
 const ComponentCard = ({ hit }: ComponentCardProps) => {

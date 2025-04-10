@@ -10,28 +10,33 @@ import * as Yup from 'yup';
 import FormikControl from '../../generic/FormikControl';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import messages from './messages';
-import { useCreateLibraryContainer } from '../data/apiHooks';
+import { useAddItemsToCollection, useCreateLibraryContainer } from '../data/apiHooks';
 import { ToastContext } from '../../generic/toast-context';
 import LoadingButton from '../../generic/loading-button';
 
 const CreateUnitModal = () => {
   const intl = useIntl();
   const {
+    collectionId,
     libraryId,
     isCreateUnitModalOpen,
     closeCreateUnitModal,
   } = useLibraryContext();
   const create = useCreateLibraryContainer(libraryId);
+  const updateItemsMutation = useAddItemsToCollection(libraryId, collectionId);
   const { showToast } = React.useContext(ToastContext);
 
   const handleCreate = React.useCallback(async (values) => {
     try {
-      await create.mutateAsync({
+      const container = await create.mutateAsync({
         containerType: 'unit',
         ...values,
       });
+      if (collectionId) {
+        await updateItemsMutation.mutateAsync([container.containerKey]);
+      }
       // TODO: Navigate to the new unit
-      // navigate(`/library/${libraryId}/units/${data.key}`);
+      // navigate(`/library/${libraryId}/units/${container.containerKey}`);
       showToast(intl.formatMessage(messages.createUnitSuccess));
     } catch (error) {
       showToast(intl.formatMessage(messages.createUnitError));

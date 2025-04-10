@@ -5,7 +5,7 @@ import { ActionRow, Button, StandardModal } from '@openedx/paragon';
 import { ToastContext } from '../../generic/toast-context';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import type { SelectedComponent } from '../common/context/ComponentPickerContext';
-import { useAddComponentsToCollection } from '../data/apiHooks';
+import { useAddItemsToCollection } from '../data/apiHooks';
 import messages from './messages';
 
 interface PickLibraryContentModalFooterProps {
@@ -51,7 +51,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
     throw new Error('libraryId and componentPicker are required');
   }
 
-  const updateComponentsMutation = useAddComponentsToCollection(libraryId, collectionId);
+  const updateComponentsMutation = useAddItemsToCollection(libraryId, collectionId);
 
   const { showToast } = useContext(ToastContext);
 

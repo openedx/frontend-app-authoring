@@ -1,5 +1,6 @@
 import { useContext, useState } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
+import type { UseMutationResult } from '@tanstack/react-query';
 import {
   Button, Icon, Scrollable, SelectableBox, Stack, StatefulButton, useCheckboxSetValues,
 } from '@openedx/paragon';
@@ -10,24 +11,29 @@ import {
   SearchKeywordsField,
   SearchSortWidget,
   useSearchContext,
-} from '../../search-manager';
+} from '../../../search-manager';
+import { ToastContext } from '../../../generic/toast-context';
+import { CollectionMetadata } from '../../data/api';
+import { useLibraryContext } from '../../common/context/LibraryContext';
+import { SidebarActions, useSidebarContext } from '../../common/context/SidebarContext';
 import messages from './messages';
-import { useUpdateComponentCollections } from '../data/apiHooks';
-import { ToastContext } from '../../generic/toast-context';
-import { CollectionMetadata } from '../data/api';
-import { useLibraryContext } from '../common/context/LibraryContext';
-import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
 
 interface ManageCollectionsProps {
-  usageKey: string;
+  opaqueKey: string;
   collections: CollectionMetadata[],
+  useUpdateCollectionsHook: (opaqueKey: string) => UseMutationResult<void, unknown, string[], unknown>;
 }
 
 interface CollectionsDrawerProps extends ManageCollectionsProps {
   onClose: () => void;
 }
 
-const CollectionsSelectableBox = ({ usageKey, collections, onClose }: CollectionsDrawerProps) => {
+const CollectionsSelectableBox = ({
+  opaqueKey,
+  collections,
+  useUpdateCollectionsHook,
+  onClose,
+}: CollectionsDrawerProps) => {
   const type = 'checkbox';
   const intl = useIntl();
   const { hits } = useSearchContext();
@@ -39,9 +45,7 @@ const CollectionsSelectableBox = ({ usageKey, collections, onClose }: Collection
   }] = useCheckboxSetValues(collectionKeys);
   const [btnState, setBtnState] = useState('default');
 
-  const { libraryId } = useLibraryContext();
-
-  const updateCollectionsMutation = useUpdateComponentCollections(libraryId, usageKey);
+  const updateCollectionsMutation = useUpdateCollectionsHook(opaqueKey);
 
   const handleConfirmation = () => {
     setBtnState('pending');
@@ -107,7 +111,12 @@ const CollectionsSelectableBox = ({ usageKey, collections, onClose }: Collection
   );
 };
 
-const AddToCollectionsDrawer = ({ usageKey, collections, onClose }: CollectionsDrawerProps) => {
+const AddToCollectionsDrawer = ({
+  opaqueKey,
+  collections,
+  useUpdateCollectionsHook,
+  onClose,
+}: CollectionsDrawerProps) => {
   const intl = useIntl();
   const { libraryId } = useLibraryContext();
 
@@ -128,19 +137,20 @@ const AddToCollectionsDrawer = ({ usageKey, collections, onClose }: CollectionsD
           />
           <SearchSortWidget iconOnly />
         </Stack>
-        {/* Set key to update selection when component usageKey changes */}
+        {/* Set key to update selection when entity opaqueKey changes */}
         <CollectionsSelectableBox
-          usageKey={usageKey}
+          opaqueKey={opaqueKey}
           collections={collections}
+          useUpdateCollectionsHook={useUpdateCollectionsHook}
           onClose={onClose}
-          key={usageKey}
+          key={opaqueKey}
         />
       </Stack>
     </SearchContextProvider>
   );
 };
 
-const ComponentCollections = ({ collections, onManageClick }: {
+const EntityCollections = ({ collections, onManageClick }: {
   collections?: string[];
   onManageClick: () => void;
 }) => {
@@ -190,7 +200,7 @@ const ComponentCollections = ({ collections, onManageClick }: {
   );
 };
 
-const ManageCollections = ({ usageKey, collections }: ManageCollectionsProps) => {
+const ManageCollections = ({ opaqueKey, collections, useUpdateCollectionsHook }: ManageCollectionsProps) => {
   const { sidebarAction, resetSidebarAction, setSidebarAction } = useSidebarContext();
   const collectionNames = collections.map((collection) => collection.title);
 
@@ -198,12 +208,13 @@ const ManageCollections = ({ usageKey, collections }: ManageCollectionsProps) =>
     sidebarAction === SidebarActions.JumpToAddCollections
       ? (
         <AddToCollectionsDrawer
-          usageKey={usageKey}
+          opaqueKey={opaqueKey}
           collections={collections}
+          useUpdateCollectionsHook={useUpdateCollectionsHook}
           onClose={() => resetSidebarAction()}
         />
       ) : (
-        <ComponentCollections
+        <EntityCollections
           collections={collectionNames}
           onManageClick={() => setSidebarAction(SidebarActions.JumpToAddCollections)}
         />

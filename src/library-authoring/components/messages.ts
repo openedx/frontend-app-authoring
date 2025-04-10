@@ -44,17 +44,17 @@ const messages = defineMessages({
   menuRemoveFromCollection: {
     id: 'course-authoring.library-authoring.component.menu.remove',
     defaultMessage: 'Remove from collection',
-    description: 'Menu item for remove a component from collection.',
+    description: 'Menu item for remove an item from collection.',
   },
   removeComponentSucess: {
     id: 'course-authoring.library-authoring.component.remove-from-collection-success',
-    defaultMessage: 'Component successfully removed',
-    description: 'Message for successful removal of component from collection.',
+    defaultMessage: 'Item successfully removed',
+    description: 'Message for successful removal of an item from collection.',
   },
   removeComponentFailure: {
     id: 'course-authoring.library-authoring.component.remove-from-collection-failure',
-    defaultMessage: 'Failed to remove Component',
-    description: 'Message for failure of removal of component from collection.',
+    defaultMessage: 'Failed to remove item',
+    description: 'Message for failure of removal of an item from collection.',
   },
   deleteComponentWarningTitle: {
     id: 'course-authoring.library-authoring.component.delete-confirmation-title',
@@ -137,7 +137,7 @@ const messages = defineMessages({
     description: 'Message to display on failure to undo delete collection',
   },
   componentPickerSingleSelectTitle: {
-    id: 'course-authoring.library-authoring.component-picker.single..title',
+    id: 'course-authoring.library-authoring.component-picker.single.title',
     defaultMessage: 'Add',
     description: 'Button title for picking a component',
   },

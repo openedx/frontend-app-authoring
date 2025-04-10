@@ -23,14 +23,18 @@ mockGetContainerMetadata.applyMock();
 mockContentLibrary.applyMock();
 mockContentTaxonomyTagsData.applyMock();
 
-const { containerIdForTags } = mockGetContainerMetadata;
-
-const render = (libraryId?: string) => baseRender(<ContainerOrganize />, {
+const render = ({
+  libraryId = mockContentLibrary.libraryId,
+  containerId = mockGetContainerMetadata.containerId,
+}: {
+  libraryId?: string;
+  containerId?: string;
+}) => baseRender(<ContainerOrganize />, {
   extraWrapper: ({ children }) => (
-    <LibraryProvider libraryId={libraryId || mockContentLibrary.libraryId}>
+    <LibraryProvider libraryId={libraryId}>
       <SidebarProvider
         initialSidebarComponentInfo={{
-          id: containerIdForTags,
+          id: containerId,
           type: SidebarBodyComponentId.ComponentInfo,
         }}
       >
@@ -61,7 +65,7 @@ describe('<ContainerOrganize />', () => {
         ...getConfig(),
         ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
       });
-      render(libraryId);
+      render({ libraryId });
       await waitFor(() => {
         expect(screen.getByText(`Mocked ${expected} ContentTagsDrawer`)).toBeInTheDocument();
       });
@@ -73,7 +77,12 @@ describe('<ContainerOrganize />', () => {
       ...getConfig(),
       ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
     });
-    render();
+    render({ containerId: mockGetContainerMetadata.containerIdForTags });
     expect(await screen.findByText('Tags (6)')).toBeInTheDocument();
+  });
+
+  it('should render collection count in collection info section', async () => {
+    render({ containerId: mockGetContainerMetadata.containerIdWithCollections });
+    expect(await screen.findByText('Collections (1)')).toBeInTheDocument();
   });
 });

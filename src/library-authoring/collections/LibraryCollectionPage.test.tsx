@@ -20,7 +20,7 @@ import { mockContentSearchConfig, mockGetBlockTypes } from '../../search-manager
 import { mockBroadcastChannel, mockClipboardEmpty } from '../../generic/data/api.mock';
 import { LibraryLayout } from '..';
 import { ContentTagsDrawer } from '../../content-tags-drawer';
-import { getLibraryCollectionComponentApiUrl } from '../data/api';
+import { getLibraryCollectionItemsApiUrl } from '../data/api';
 
 let axiosMock: MockAdapter;
 let mockShowToast;
@@ -351,7 +351,7 @@ describe('<LibraryCollectionPage />', () => {
   });
 
   it('should remove component from collection and hides sidebar', async () => {
-    const url = getLibraryCollectionComponentApiUrl(
+    const url = getLibraryCollectionItemsApiUrl(
       mockContentLibrary.libraryId,
       mockCollection.collectionId,
     );
@@ -370,8 +370,8 @@ describe('<LibraryCollectionPage />', () => {
     fireEvent.click(await screen.findByText('Remove from collection'));
     await waitFor(() => {
       expect(axiosMock.history.delete.length).toEqual(1);
-      expect(mockShowToast).toHaveBeenCalledWith('Component successfully removed');
     });
+    expect(mockShowToast).toHaveBeenCalledWith('Item successfully removed');
     // Should close sidebar as component was removed
     await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
   });
