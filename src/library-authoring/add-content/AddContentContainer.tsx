@@ -21,7 +21,7 @@ import { getCanEdit } from '../../course-unit/data/selectors';
 import {
   useCreateLibraryBlock,
   useLibraryPasteClipboard,
-  useAddComponentsToCollection,
+  useAddItemsToCollection,
   useBlockTypesMetadata,
 } from '../data/apiHooks';
 import { useLibraryContext } from '../common/context/LibraryContext';
@@ -195,7 +195,7 @@ const AddContentContainer = () => {
     openCreateUnitModal,
     openComponentEditor,
   } = useLibraryContext();
-  const updateComponentsMutation = useAddComponentsToCollection(libraryId, collectionId);
+  const updateItemsMutation = useAddItemsToCollection(libraryId, collectionId);
   const createBlockMutation = useCreateLibraryBlock();
   const pasteClipboardMutation = useLibraryPasteClipboard();
   const { showToast } = useContext(ToastContext);
@@ -273,8 +273,8 @@ const AddContentContainer = () => {
     contentTypes.push(pasteButton);
   }
 
-  const linkComponent = (usageKey: string) => {
-    updateComponentsMutation.mutateAsync([usageKey]).catch(() => {
+  const linkComponent = (opaque_key: string) => {
+    updateItemsMutation.mutateAsync([opaque_key]).catch(() => {
       showToast(intl.formatMessage(messages.errorAssociateComponentMessage));
     });
   };

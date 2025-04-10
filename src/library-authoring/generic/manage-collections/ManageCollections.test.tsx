@@ -2,25 +2,27 @@ import fetchMock from 'fetch-mock-jest';
 
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter/types';
+import { mockContentSearchConfig } from '../../../search-manager/data/api.mock';
 import {
   initializeMocks,
   render as baseRender,
   screen,
   waitFor,
-} from '../../testUtils';
-import mockCollectionsResults from '../__mocks__/collection-search.json';
-import { mockContentSearchConfig } from '../../search-manager/data/api.mock';
-import { mockContentLibrary, mockLibraryBlockMetadata } from '../data/api.mocks';
+} from '../../../testUtils';
+import mockCollectionsResults from '../../__mocks__/collection-search.json';
+import { LibraryProvider } from '../../common/context/LibraryContext';
+import { SidebarProvider } from '../../common/context/SidebarContext';
+import { getLibraryBlockCollectionsUrl, getLibraryContainerCollectionsUrl } from '../../data/api';
+import { useUpdateComponentCollections, useUpdateContainerCollections } from '../../data/apiHooks';
+import { mockContentLibrary, mockLibraryBlockMetadata, mockGetContainerMetadata } from '../../data/api.mocks';
 import ManageCollections from './ManageCollections';
-import { LibraryProvider } from '../common/context/LibraryContext';
-import { SidebarProvider } from '../common/context/SidebarContext';
-import { getLibraryBlockCollectionsUrl } from '../data/api';
 
 let axiosMock: MockAdapter;
 let mockShowToast;
 
 mockContentLibrary.applyMock();
 mockLibraryBlockMetadata.applyMock();
+mockGetContainerMetadata.applyMock();
 mockContentSearchConfig.applyMock();
 
 const render = (ui: React.ReactElement) => baseRender(ui, {
@@ -56,12 +58,13 @@ describe('<ManageCollections />', () => {
     });
   });
 
-  it('should show all collections in library and allow users to select for the current component ', async () => {
+  it('should show all collections in library and allow users to select for the current component', async () => {
     const url = getLibraryBlockCollectionsUrl(mockLibraryBlockMetadata.usageKeyWithCollections);
     axiosMock.onPatch(url).reply(200);
     render(<ManageCollections
-      usageKey={mockLibraryBlockMetadata.usageKeyWithCollections}
+      opaqueKey={mockLibraryBlockMetadata.usageKeyWithCollections}
       collections={[{ title: 'My first collection', key: 'my-first-collection' }]}
+      useUpdateCollectionsHook={useUpdateComponentCollections}
     />);
     const manageBtn = await screen.findByRole('button', { name: 'Manage Collections' });
     userEvent.click(manageBtn);
@@ -73,10 +76,36 @@ describe('<ManageCollections />', () => {
     userEvent.click(confirmBtn);
     await waitFor(() => {
       expect(axiosMock.history.patch.length).toEqual(1);
-      expect(mockShowToast).toHaveBeenCalledWith('Component collections updated');
-      expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({
-        collection_keys: ['my-first-collection', 'my-second-collection'],
-      });
+    });
+    expect(mockShowToast).toHaveBeenCalledWith('Item collections updated');
+    expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({
+      collection_keys: ['my-first-collection', 'my-second-collection'],
+    });
+    expect(screen.queryByRole('search')).not.toBeInTheDocument();
+  });
+
+  it('should show all collections in library and allow users to select for the current container', async () => {
+    const url = getLibraryContainerCollectionsUrl(mockGetContainerMetadata.containerIdWithCollections);
+    axiosMock.onPatch(url).reply(200);
+    render(<ManageCollections
+      opaqueKey={mockGetContainerMetadata.containerIdWithCollections}
+      collections={[{ title: 'My first collection', key: 'my-first-collection' }]}
+      useUpdateCollectionsHook={useUpdateContainerCollections}
+    />);
+    const manageBtn = await screen.findByRole('button', { name: 'Manage Collections' });
+    userEvent.click(manageBtn);
+    await waitFor(() => { expect(fetchMock).toHaveFetchedTimes(1, searchEndpoint, 'post'); });
+    expect(screen.queryByRole('search')).toBeInTheDocument();
+    const secondCollection = await screen.findByRole('button', { name: 'My second collection' });
+    userEvent.click(secondCollection);
+    const confirmBtn = await screen.findByRole('button', { name: 'Confirm' });
+    userEvent.click(confirmBtn);
+    await waitFor(() => {
+      expect(axiosMock.history.patch.length).toEqual(1);
+    });
+    expect(mockShowToast).toHaveBeenCalledWith('Item collections updated');
+    expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({
+      collection_keys: ['my-first-collection', 'my-second-collection'],
     });
     expect(screen.queryByRole('search')).not.toBeInTheDocument();
   });
@@ -85,8 +114,9 @@ describe('<ManageCollections />', () => {
     const url = getLibraryBlockCollectionsUrl(mockLibraryBlockMetadata.usageKeyWithCollections);
     axiosMock.onPatch(url).reply(400);
     render(<ManageCollections
-      usageKey={mockLibraryBlockMetadata.usageKeyWithCollections}
+      opaqueKey={mockLibraryBlockMetadata.usageKeyWithCollections}
       collections={[]}
+      useUpdateCollectionsHook={useUpdateComponentCollections}
     />);
     screen.logTestingPlaygroundURL();
     const manageBtn = await screen.findByRole('button', { name: 'Add to Collection' });
@@ -99,11 +129,11 @@ describe('<ManageCollections />', () => {
     userEvent.click(confirmBtn);
     await waitFor(() => {
       expect(axiosMock.history.patch.length).toEqual(1);
-      expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({
-        collection_keys: ['my-second-collection'],
-      });
-      expect(mockShowToast).toHaveBeenCalledWith('Failed to update Component collections');
     });
+    expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({
+      collection_keys: ['my-second-collection'],
+    });
+    expect(mockShowToast).toHaveBeenCalledWith('Failed to update item collections');
     expect(screen.queryByRole('search')).not.toBeInTheDocument();
   });
 
@@ -111,8 +141,9 @@ describe('<ManageCollections />', () => {
     const url = getLibraryBlockCollectionsUrl(mockLibraryBlockMetadata.usageKeyWithCollections);
     axiosMock.onPatch(url).reply(400);
     render(<ManageCollections
-      usageKey={mockLibraryBlockMetadata.usageKeyWithCollections}
+      opaqueKey={mockLibraryBlockMetadata.usageKeyWithCollections}
       collections={[]}
+      useUpdateCollectionsHook={useUpdateComponentCollections}
     />);
     const manageBtn = await screen.findByRole('button', { name: 'Add to Collection' });
     userEvent.click(manageBtn);
@@ -124,8 +155,8 @@ describe('<ManageCollections />', () => {
     userEvent.click(cancelBtn);
     await waitFor(() => {
       expect(axiosMock.history.patch.length).toEqual(0);
-      expect(mockShowToast).not.toHaveBeenCalled();
     });
+    expect(mockShowToast).not.toHaveBeenCalled();
     expect(screen.queryByRole('search')).not.toBeInTheDocument();
   });
 });

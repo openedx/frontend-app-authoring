@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
@@ -8,6 +9,7 @@ import {
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import {
   type UnitInfoTab,
+  SidebarActions,
   UNIT_INFO_TABS,
   isUnitInfoTab,
   useSidebarContext,
@@ -19,7 +21,13 @@ const UnitInfo = () => {
   const intl = useIntl();
 
   const { componentPickerMode } = useComponentPickerContext();
-  const { sidebarComponentInfo, sidebarTab, setSidebarTab } = useSidebarContext();
+  const {
+    sidebarTab,
+    setSidebarTab,
+    sidebarComponentInfo,
+    sidebarAction,
+  } = useSidebarContext();
+  const jumpToCollections = sidebarAction === SidebarActions.JumpToAddCollections;
 
   const tab: UnitInfoTab = (
     sidebarTab && isUnitInfoTab(sidebarTab)
@@ -30,6 +38,13 @@ const UnitInfo = () => {
   if (!unitId) {
     throw new Error('unitId is required');
   }
+
+  useEffect(() => {
+    // Show Organize tab if JumpToAddCollections action is set in sidebarComponentInfo
+    if (jumpToCollections) {
+      setSidebarTab(UNIT_INFO_TABS.Organize);
+    }
+  }, [jumpToCollections, setSidebarTab]);
 
   const showOpenCollectionButton = !componentPickerMode;
 

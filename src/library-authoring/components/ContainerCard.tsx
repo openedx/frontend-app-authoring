@@ -1,4 +1,4 @@
-import { ReactNode, useCallback } from 'react';
+import { ReactNode, useCallback, useContext } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -11,13 +11,15 @@ import { MoreVert } from '@openedx/paragon/icons';
 import { Link } from 'react-router-dom';
 
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
+import { ToastContext } from '../../generic/toast-context';
 import { type ContainerHit, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { useSidebarContext } from '../common/context/SidebarContext';
-import BaseCard from './BaseCard';
-import { useContainerChildren } from '../data/apiHooks';
+import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
+import { useContainerChildren, useRemoveItemsFromCollection } from '../data/apiHooks';
 import { useLibraryRoutes } from '../routes';
+import AddComponentWidget from './AddComponentWidget';
+import BaseCard from './BaseCard';
 import messages from './messages';
 
 type ContainerMenuProps = {
@@ -26,7 +28,34 @@ type ContainerMenuProps = {
 
 const ContainerMenu = ({ hit } : ContainerMenuProps) => {
   const intl = useIntl();
-  const { contextKey, blockId } = hit;
+  const { contextKey, usageKey: containerId } = hit;
+  const { libraryId, collectionId } = useLibraryContext();
+  const {
+    sidebarComponentInfo,
+    openUnitInfoSidebar,
+    closeLibrarySidebar,
+    setSidebarAction,
+  } = useSidebarContext();
+  const { showToast } = useContext(ToastContext);
+
+  const removeComponentsMutation = useRemoveItemsFromCollection(libraryId, collectionId);
+
+  const removeFromCollection = () => {
+    removeComponentsMutation.mutateAsync([containerId]).then(() => {
+      if (sidebarComponentInfo?.id === containerId) {
+        // Close sidebar if current component is open
+        closeLibrarySidebar();
+      }
+      showToast(intl.formatMessage(messages.removeComponentSucess));
+    }).catch(() => {
+      showToast(intl.formatMessage(messages.removeComponentFailure));
+    });
+  };
+
+  const showManageCollections = useCallback(() => {
+    setSidebarAction(SidebarActions.JumpToAddCollections);
+    openUnitInfoSidebar(containerId);
+  }, [setSidebarAction, openUnitInfoSidebar, containerId]);
 
   return (
     <Dropdown id="container-card-dropdown">
@@ -42,10 +71,18 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
       <Dropdown.Menu>
         <Dropdown.Item
           as={Link}
-          to={`/library/${contextKey}/container/${blockId}`}
+          to={`/library/${contextKey}/container/${containerId}`}
           disabled
         >
           <FormattedMessage {...messages.menuOpen} />
+        </Dropdown.Item>
+        {collectionId && (
+          <Dropdown.Item onClick={removeFromCollection}>
+            <FormattedMessage {...messages.menuRemoveFromCollection} />
+          </Dropdown.Item>
+        )}
+        <Dropdown.Item onClick={showManageCollections}>
+          <FormattedMessage {...messages.menuAddToCollection} />
         </Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
@@ -149,9 +186,13 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
       preview={<ContainerCardPreview containerId={unitId} />}
       tags={tags}
       numChildren={numChildrenCount}
-      actions={!componentPickerMode && (
+      actions={(
         <ActionRow>
-          <ContainerMenu hit={hit} />
+          {componentPickerMode ? (
+            <AddComponentWidget usageKey={unitId} blockType={itemType} />
+          ) : (
+            <ContainerMenu hit={hit} />
+          )}
         </ActionRow>
       )}
       hasUnpublishedChanges={publishStatus !== PublishStatus.Published}

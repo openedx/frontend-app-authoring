@@ -34,6 +34,8 @@ export type LibraryContextData = {
   setUnitId: (unitId?: string) => void;
   // Only show published components
   showOnlyPublished: boolean;
+  // Additional filtering
+  extraFilter?: string[];
   // "Create New Collection" modal
   isCreateCollectionModalOpen: boolean;
   openCreateCollectionModal: () => void;
@@ -66,6 +68,7 @@ type LibraryProviderProps = {
   children?: React.ReactNode;
   libraryId: string;
   showOnlyPublished?: boolean;
+  extraFilter?: string[]
   // If set, will initialize the current collection and/or component from the current URL
   skipUrlUpdate?: boolean;
 
@@ -83,6 +86,7 @@ export const LibraryProvider = ({
   children,
   libraryId,
   showOnlyPublished = false,
+  extraFilter = [],
   skipUrlUpdate = false,
   componentPicker,
 }: LibraryProviderProps) => {
@@ -139,6 +143,7 @@ export const LibraryProvider = ({
       readOnly,
       isLoadingLibraryData,
       showOnlyPublished,
+      extraFilter,
       isCreateCollectionModalOpen,
       openCreateCollectionModal,
       closeCreateCollectionModal,
@@ -164,6 +169,7 @@ export const LibraryProvider = ({
     readOnly,
     isLoadingLibraryData,
     showOnlyPublished,
+    extraFilter,
     isCreateCollectionModalOpen,
     openCreateCollectionModal,
     closeCreateCollectionModal,

@@ -49,8 +49,8 @@ describe('<PickLibraryContentModal />', () => {
   });
 
   it('can pick components from the modal', async () => {
-    const mockAddComponentsToCollection = jest.fn();
-    jest.spyOn(api, 'addComponentsToCollection').mockImplementation(mockAddComponentsToCollection);
+    const mockAddItemsToCollection = jest.fn();
+    jest.spyOn(api, 'addItemsToCollection').mockImplementation(mockAddItemsToCollection);
 
     render();
 
@@ -67,7 +67,7 @@ describe('<PickLibraryContentModal />', () => {
     fireEvent.click(screen.queryAllByRole('button', { name: 'Add to Collection' })[0]);
 
     await waitFor(() => {
-      expect(mockAddComponentsToCollection).toHaveBeenCalledWith(
+      expect(mockAddItemsToCollection).toHaveBeenCalledWith(
         libraryId,
         'collectionId',
         ['lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd'],
@@ -78,8 +78,8 @@ describe('<PickLibraryContentModal />', () => {
   });
 
   it('show error when api call fails', async () => {
-    const mockAddComponentsToCollection = jest.fn().mockRejectedValue(new Error('Failed to add components'));
-    jest.spyOn(api, 'addComponentsToCollection').mockImplementation(mockAddComponentsToCollection);
+    const mockAddItemsToCollection = jest.fn().mockRejectedValue(new Error('Failed to add components'));
+    jest.spyOn(api, 'addItemsToCollection').mockImplementation(mockAddItemsToCollection);
     render();
 
     // Wait for the content library to load
@@ -95,7 +95,7 @@ describe('<PickLibraryContentModal />', () => {
     fireEvent.click(screen.queryAllByRole('button', { name: 'Add to Collection' })[0]);
 
     await waitFor(() => {
-      expect(mockAddComponentsToCollection).toHaveBeenCalledWith(
+      expect(mockAddItemsToCollection).toHaveBeenCalledWith(
         libraryId,
         'collectionId',
         ['lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd'],

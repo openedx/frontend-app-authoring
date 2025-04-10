@@ -8,7 +8,7 @@ import MockAdapter from 'axios-mock-adapter';
 import {
   getCommitLibraryChangesUrl,
   getCreateLibraryBlockUrl,
-  getLibraryCollectionComponentApiUrl,
+  getLibraryCollectionItemsApiUrl,
   getLibraryCollectionsApiUrl,
   getLibraryCollectionApiUrl,
   getBlockTypesMetaDataUrl,
@@ -20,7 +20,7 @@ import {
   useCreateLibraryBlock,
   useCreateLibraryCollection,
   useRevertLibraryChanges,
-  useAddComponentsToCollection,
+  useAddItemsToCollection,
   useCollection,
   useBlockTypesMetadata,
   useContainer,
@@ -107,9 +107,9 @@ describe('library api hooks', () => {
   it('should add components to collection', async () => {
     const libraryId = 'lib:org:1';
     const collectionId = 'my-first-collection';
-    const url = getLibraryCollectionComponentApiUrl(libraryId, collectionId);
+    const url = getLibraryCollectionItemsApiUrl(libraryId, collectionId);
     axiosMock.onPatch(url).reply(200);
-    const { result } = renderHook(() => useAddComponentsToCollection(libraryId, collectionId), { wrapper });
+    const { result } = renderHook(() => useAddItemsToCollection(libraryId, collectionId), { wrapper });
     await result.current.mutateAsync(['some-usage-key']);
 
     expect(axiosMock.history.patch[0].url).toEqual(url);
