@@ -1,4 +1,4 @@
-import convertMarkdownToXml from './convertMarkdownToXML';
+import { convertMarkdownToXml } from './convertMarkdownToXML';
 
 describe('convertMarkdownToXml', () => {
   // Helper function to normalize whitespace for easier comparison

@@ -1,4 +1,4 @@
-const convertMarkdownToXml = (markdown) => {
+export const convertMarkdownToXml = (markdown) => {
   const demandHintTags = [];
 
   // Comprehensive XML conversion function
@@ -21,13 +21,13 @@ const convertMarkdownToXml = (markdown) => {
     // <label>question</label> <description>description</description>
     xml = xml.replace(/>>([^]+?)<</gm, (match, questionText) => {
       const result = questionText.split('||');
-      const label = `<label>${ result[0] }</label>\n`; // xss-lint: disable=javascript-concat-html
+      const label = `<label>${ result[0] }</label>\n`;
 
       // don't add empty <description> tag
       if (result.length === 1 || !result[1]) {
         return label;
       }
-      // xss-lint: disable=javascript-concat-html
+
       return `${label }<description>${ result[1] }</description>\n`;
     });
 
@@ -39,7 +39,6 @@ const convertMarkdownToXml = (markdown) => {
       for (i = 0; i < options.length; i += 1) {
         inner = /\s*\|\|(.*?)\|\|/.exec(options[i]);
         if (inner) {
-          // xss-lint: disable=javascript-concat-html
           demandhints += `  <hint>${ inner[1].trim() }</hint>\n`;
         }
       }
@@ -117,7 +116,6 @@ const convertMarkdownToXml = (markdown) => {
           optiontag += correct[1];
         }
         optiontag += '">';
-        // xss-lint: disable=javascript-concat-html
         return `\n<optionresponse>\n${ optiontag }</optioninput>\n</optionresponse>\n\n`;
       }
 
@@ -138,14 +136,11 @@ const convertMarkdownToXml = (markdown) => {
             if (label) {
               label = ` label="${ label }"`;
             }
-            // xss-lint: disable=javascript-concat-html
             hintstr = ` <optionhint${ label }>${ textHint.hint }</optionhint>`;
           }
-          // xss-lint: disable=javascript-concat-html
           optionlines += `    <option${ correctstr }>${ textHint.nothint }${hintstr }</option>\n`;
         }
       }
-      // xss-lint: disable=javascript-concat-html
       return `\n<optionresponse>\n  <optioninput>\n${ optionlines }  </optioninput>\n</optionresponse>\n\n`;
     });
     xml = xml.replace(/(^\s*\(.{0,3}\).*?$\n*)+/gm, (match) => {
@@ -175,10 +170,8 @@ const convertMarkdownToXml = (markdown) => {
           hint = extractHint(value);
           if (hint.hint) {
             value = hint.nothint;
-            // xss-lint: disable=javascript-concat-html
             value = `${value } <choicehint${ hint.labelassign }>${ hint.hint }</choicehint>`;
           }
-          // xss-lint: disable=javascript-concat-html
           choices += `    <choice correct="${ correct }"${ fixed }>${ value }</choice>\n`;
         }
       }
@@ -216,10 +209,9 @@ const convertMarkdownToXml = (markdown) => {
             // lone case of hint text processing outside of extractHint, since syntax here is unique
             let [, , hintbody] = abhint;
             hintbody = hintbody.replace('&lf;', '\n').trim();
-            // xss-lint: disable=javascript-concat-html
             endHints += `    <compoundhint value="${ abhint[1].trim() }">${ hintbody }</compoundhint>\n`;
             // eslint-disable-next-line no-continue
-            continue; // bail
+            continue;
           }
 
           let [, value] = options[i].split(/^\s*\[.?\]\s*/);
@@ -239,12 +231,10 @@ const convertMarkdownToXml = (markdown) => {
             // checkbox choicehints get their own line, since there can be two of them
             // <choicehint selected="true">You’re right that apple is a fruit.</choicehint>
             if (select) {
-              // xss-lint: disable=javascript-concat-html
               hints += `\n      <choicehint selected="true">${ select[2].trim() }</choicehint>`;
             }
             select = /{\s*(u|unselected):((.|\n)*?)}/i.exec(inner);
             if (select) {
-              // xss-lint: disable=javascript-concat-html
               hints += `\n      <choicehint selected="false">${ select[2].trim() }</choicehint>`;
             }
 
@@ -254,7 +244,6 @@ const convertMarkdownToXml = (markdown) => {
               value = hint.nothint;
             }
           }
-          // xss-lint: disable=javascript-concat-html
           groupString += `    <choice correct="${ correct }">${ value }${hints }</choice>\n`;
         }
       }
@@ -323,7 +312,6 @@ const convertMarkdownToXml = (markdown) => {
         hintLine = '';
         if (textHint.hint) {
           firstAnswer = textHint.nothint;
-          // xss-lint: disable=javascript-concat-html
           hintLine = `  <correcthint${ textHint.labelassign }>${ textHint.hint }</correcthint>\n`;
         }
 
@@ -331,14 +319,11 @@ const convertMarkdownToXml = (markdown) => {
         if (isRangeToleranceCase(firstAnswer)) {
           // [5, 7) or (5, 7), or (1.2345 * (2+3), 7*4 ]  - range tolerance case
           // = (5*2)*3 should not be used as range tolerance
-          // xss-lint: disable=javascript-concat-html
           numericalResponseString = `<numericalresponse answer="${ firstAnswer }">\n`;
         } else {
           answerData = getAnswerData(firstAnswer);
-          // xss-lint: disable=javascript-concat-html
           numericalResponseString = `<numericalresponse answer="${ answerData.answer }">\n`;
           if (answerData.default) {
-            // xss-lint: disable=javascript-concat-html
             numericalResponseString += `  <responseparam type="tolerance" default="${ answerData.default }" />\n`;
           }
         }
@@ -363,11 +348,9 @@ const convertMarkdownToXml = (markdown) => {
             }
 
             if (additionalTextHint.hint) {
-              // xss-lint: disable=javascript-concat-html
               additionalHintLine = `<correcthint${ additionalTextHint.labelassign }>${ additionalTextHint.hint }</correcthint>`;
             }
 
-            // xss-lint: disable=javascript-concat-html
             additionalAnswerString += `  <additional_answer answer="${ orMatch[1] }">`;
             additionalAnswerString += additionalHintLine;
             additionalAnswerString += '</additional_answer>\n';
@@ -399,12 +382,10 @@ const convertMarkdownToXml = (markdown) => {
           typ = ' type="ci regexp"';
           firstAnswer = firstAnswer.slice(1).trim();
         }
-        // xss-lint: disable=javascript-concat-html
         string = `<stringresponse answer="${ firstAnswer }"${ typ } >\n`;
         if (textHint.hint) {
-          // xss-lint: disable=javascript-concat-html
           string += `  <correcthint${ textHint.labelassign }>${
-            textHint.hint }</correcthint>\n`; // xss-lint: disable=javascript-concat-html
+            textHint.hint }</correcthint>\n`;
         }
 
         // Subsequent cases are not= or or=
@@ -412,7 +393,6 @@ const convertMarkdownToXml = (markdown) => {
           textHint = extractHint(values[i]);
           notMatch = /^not=\s*(.*)/.exec(textHint.nothint);
           if (notMatch) {
-            // xss-lint: disable=javascript-concat-html
             string += `  <stringequalhint answer="${ notMatch[1] }"${ textHint.labelassign }>${ textHint.hint }</stringequalhint>\n`;
 
             // eslint-disable-next-line no-continue
@@ -421,10 +401,8 @@ const convertMarkdownToXml = (markdown) => {
           orMatch = /^or=\s*(.*)/.exec(textHint.nothint);
           if (orMatch) {
             // additional_answer with answer= attribute
-            // xss-lint: disable=javascript-concat-html
             string += `  <additional_answer answer="${ orMatch[1] }">`;
             if (textHint.hint) {
-              // xss-lint: disable=javascript-concat-html
               string += `<correcthint${ textHint.labelassign }>${ textHint.hint }</correcthint>`;
             }
             string += '</additional_answer>\n';
@@ -478,7 +456,6 @@ const convertMarkdownToXml = (markdown) => {
     const responseTypesSelector = responseTypes.join(', ');
 
     // make temporary xml
-    // xss-lint: disable=javascript-concat-html
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(`<prob>${ xml }</prob>`, 'application/xml');
     const responseType = xmlDoc.querySelector(responseTypesSelector);
@@ -497,7 +474,6 @@ const convertMarkdownToXml = (markdown) => {
         }
 
         if (beforeInputtype) {
-          // xss-lint: disable=javascript-jquery-insert-into-target
           responseType.insertBefore(child, inputtype);
         } else {
           responseType.appendChild(child);
@@ -538,4 +514,3 @@ const convertMarkdownToXml = (markdown) => {
   return finalXml;
 };
 
-export default convertMarkdownToXml;
