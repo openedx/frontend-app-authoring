@@ -31,7 +31,6 @@ const PageAlerts = ({
   notificationDismissUrl,
   handleDismissNotification,
   discussionsSettings,
-  discussionsIncontextFeedbackUrl,
   discussionsIncontextLearnmoreUrl,
   deprecatedBlocksInfo,
   proctoringErrors,
@@ -114,13 +113,6 @@ const PageAlerts = ({
             platformName: process.env.SITE_NAME,
           })}
         </div>
-        <Hyperlink
-          showLaunchIcon={false}
-          destination={discussionsIncontextFeedbackUrl}
-          target="_blank"
-        >
-          {intl.formatMessage(messages.discussionNotificationFeedback)}
-        </Hyperlink>
       </Alert>
     );
   };
@@ -453,7 +445,6 @@ PageAlerts.defaultProps = {
   notificationDismissUrl: '',
   handleDismissNotification: null,
   discussionsSettings: {},
-  discussionsIncontextFeedbackUrl: '',
   discussionsIncontextLearnmoreUrl: '',
   deprecatedBlocksInfo: {},
   proctoringErrors: [],
@@ -470,7 +461,6 @@ PageAlerts.propTypes = {
   discussionsSettings: PropTypes.shape({
     providerType: PropTypes.string,
   }),
-  discussionsIncontextFeedbackUrl: PropTypes.string,
   discussionsIncontextLearnmoreUrl: PropTypes.string,
   deprecatedBlocksInfo: PropTypes.shape({
     blocks: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),

@@ -24,9 +24,41 @@ export const prepareShowBtnEscapeHTML = () => {
 };
 
 export const cleanHTML = ({ initialText }) => {
+  const altRegex = /(alt="(.*?)")/g;
+  const altTextMap = {};
+  let altTextIndex = 0;
+
+  // Replace alt attributes with ALT_TEXT_0/1/2...
+  const initialTextWithoutAltAttr = initialText.replace(altRegex, (match) => {
+    const altText = `ALT_TEXT_${altTextIndex++}`;
+    altTextMap[altText] = match;
+    return altText;
+  });
+
+  // Replace HTML entities in the rest of the text, excluding altTexts
   const translateRegex = new RegExp(`&(${Object.keys(alphanumericMap).join('|')});`, 'g');
   const translator = ($0, $1) => alphanumericMap[$1];
-  return initialText.replace(translateRegex, translator);
+  const cleanedTextWithoutAltAttr = initialTextWithoutAltAttr.replace(translateRegex, translator);
+
+  // Clean altText matches in altTextMap, ignore &quot;
+  const alphanumericMapForAltText = { ...alphanumericMap };
+  delete alphanumericMapForAltText.quot;
+  Object.keys(altTextMap).forEach((key) => {
+    const altTextValue = altTextMap[key];
+    const cleanedAltTextValue = altTextValue.replace(
+      /&(\w+);/g,
+      ($0, $1) => alphanumericMapForAltText[$1] || $0,
+    );
+    altTextMap[key] = cleanedAltTextValue;
+  });
+
+  // Restore the original alt attributes from altTextMap
+  const finalCleanedText = Object.keys(altTextMap).reduce(
+    (text, altText) => text.replace(altText, altTextMap[altText]),
+    cleanedTextWithoutAltAttr,
+  );
+
+  return finalCleanedText;
 };
 
 export const syntaxChecker = ({ textArr, lang }) => {

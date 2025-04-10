@@ -112,11 +112,13 @@ export const useContentTaxonomyTagsData = (contentId) => (
 /**
  * Builds the query to get meta data about the content object
  * @param {string} contentId The id of the content object (unit/component)
+ * @param {boolean} enabled Flag to enable/disable the query
  */
-export const useContentData = (contentId) => (
+export const useContentData = (contentId, enabled) => (
   useQuery({
     queryKey: ['contentData', contentId],
-    queryFn: () => getContentData(contentId),
+    queryFn: enabled ? () => getContentData(contentId) : undefined,
+    enabled,
   })
 );
 
@@ -149,7 +151,7 @@ export const useContentTaxonomyTagsUpdater = (contentId) => {
         contentPattern = contentId.replace(/\+type@.*$/, '*');
       }
       queryClient.invalidateQueries({ queryKey: ['contentTagsCount', contentPattern] });
-      if (contentId.startsWith('lb:') || contentId.startsWith('lib-collection:')) {
+      if (contentId.startsWith('lb:') || contentId.startsWith('lib-collection:') || contentId.startsWith('lct:')) {
         // Obtain library id from contentId
         const libraryId = getLibraryId(contentId);
         // Invalidate component metadata to update tags count
