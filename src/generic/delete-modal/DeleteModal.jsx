@@ -51,6 +51,7 @@ const DeleteModal = ({
               e.stopPropagation();
               await onDeleteSubmit();
             }}
+            variant="brand"
             label={defaultBtnLabel}
           />
         </ActionRow>

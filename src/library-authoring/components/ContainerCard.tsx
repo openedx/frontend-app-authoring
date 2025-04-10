@@ -1,10 +1,11 @@
-import { ReactNode, useCallback } from 'react';
+import { useCallback, ReactNode } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
   Dropdown,
   Icon,
   IconButton,
+  useToggle,
   Stack,
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
@@ -16,9 +17,10 @@ import { useComponentPickerContext } from '../common/context/ComponentPickerCont
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { useSidebarContext } from '../common/context/SidebarContext';
 import BaseCard from './BaseCard';
-import { useContainerChildren } from '../data/apiHooks';
 import { useLibraryRoutes } from '../routes';
 import messages from './messages';
+import { useContainerChildren } from '../data/apiHooks';
+import ContainerDeleter from './ContainerDeleter';
 
 type ContainerMenuProps = {
   hit: ContainerHit,
@@ -26,29 +28,47 @@ type ContainerMenuProps = {
 
 const ContainerMenu = ({ hit } : ContainerMenuProps) => {
   const intl = useIntl();
-  const { contextKey, blockId } = hit;
+  const {
+    contextKey,
+    blockId,
+    usageKey: containerId,
+    displayName,
+  } = hit;
+
+  const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
 
   return (
-    <Dropdown id="container-card-dropdown">
-      <Dropdown.Toggle
-        id="container-card-menu-toggle"
-        as={IconButton}
-        src={MoreVert}
-        iconAs={Icon}
-        variant="primary"
-        alt={intl.formatMessage(messages.collectionCardMenuAlt)}
-        data-testid="container-card-menu-toggle"
+    <>
+      <Dropdown id="container-card-dropdown">
+        <Dropdown.Toggle
+          id="container-card-menu-toggle"
+          as={IconButton}
+          src={MoreVert}
+          iconAs={Icon}
+          variant="primary"
+          alt={intl.formatMessage(messages.collectionCardMenuAlt)}
+          data-testid="container-card-menu-toggle"
+        />
+        <Dropdown.Menu>
+          <Dropdown.Item
+            as={Link}
+            to={`/library/${contextKey}/container/${blockId}`}
+            disabled
+          >
+            <FormattedMessage {...messages.menuOpen} />
+          </Dropdown.Item>
+          <Dropdown.Item onClick={confirmDelete}>
+            <FormattedMessage {...messages.menuDeleteContainer} />
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+      <ContainerDeleter
+        isOpen={isConfirmingDelete}
+        close={cancelDelete}
+        containerId={containerId}
+        displayName={displayName}
       />
-      <Dropdown.Menu>
-        <Dropdown.Item
-          as={Link}
-          to={`/library/${contextKey}/container/${blockId}`}
-          disabled
-        >
-          <FormattedMessage {...messages.menuOpen} />
-        </Dropdown.Item>
-      </Dropdown.Menu>
-    </Dropdown>
+    </>
   );
 };
 
