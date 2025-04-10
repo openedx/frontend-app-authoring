@@ -43,7 +43,7 @@ const UnitMenu = ({ containerId, displayName }: ContainerMenuProps) => {
           src={MoreVert}
           iconAs={Icon}
           variant="primary"
-          alt={intl.formatMessage(componentMessages.collectionCardMenuAlt)}
+          alt={intl.formatMessage(componentMessages.containerCardMenuAlt)}
           data-testid="unit-info-menu-toggle"
         />
         <Dropdown.Menu>
