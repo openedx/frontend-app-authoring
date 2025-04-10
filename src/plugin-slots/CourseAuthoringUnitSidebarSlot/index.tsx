@@ -5,7 +5,13 @@ import Sidebar from '../../course-unit/sidebar';
 import LocationInfo from '../../course-unit/sidebar/LocationInfo';
 import PublishControls from '../../course-unit/sidebar/PublishControls';
 
-export const CourseAuthoringUnitSidebarSlot = ({ blockId, courseId, unitTitle }: CourseAuthoringUnitSidebarSlotProps) => (
+export const CourseAuthoringUnitSidebarSlot = (
+  {
+    blockId,
+    courseId,
+    unitTitle,
+  }: CourseAuthoringUnitSidebarSlotProps,
+) => (
   <PluginSlot
     id="course_authoring_unit_sidebar_slot"
     pluginProps={{ blockId, courseId, unitTitle }}
