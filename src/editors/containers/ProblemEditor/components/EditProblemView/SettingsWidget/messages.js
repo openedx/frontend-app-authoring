@@ -159,22 +159,27 @@ const messages = defineMessages({
   },
   SwitchButtonLabel: {
     id: 'authoring.problemeditor.settings.switchtoadvancededitor.label',
-    defaultMessage: 'Switch to advanced editor',
+    defaultMessage: 'Switch to {editorType} editor',
     description: 'button to switch to the advanced mode of the editor.',
   },
-  ConfirmSwitchMessage: {
-    id: 'authoring.problemeditor.settings.switchtoadvancededitor.ConfirmSwitchMessage',
+  ConfirmSwitcToAdvancedMessage: {
+    id: 'authoring.problemeditor.settings.switchtoadvancededitor.ConfirmSwitcToAdvancedMessage',
     defaultMessage: 'If you use the advanced editor, this problem will be converted to OLX and you will not be able to return to the simple editor.',
+    description: 'message to confirm that a user wants to use the advanced editor',
+  },
+  ConfirmSwitchToMardownMessage: {
+    id: 'authoring.problemeditor.settings.switchtoadvancededitor.ConfirmSwitchToMardownMessage',
+    defaultMessage: 'If you use the markdown editor, this problem will be converted to markdown and you will not be able to return to the simple editor.',
     description: 'message to confirm that a user wants to use the advanced editor',
   },
   ConfirmSwitchMessageTitle: {
     id: 'authoring.problemeditor.settings.switchtoadvancededitor.ConfirmSwitchMessageTitle',
-    defaultMessage: 'Convert to OLX?',
+    defaultMessage: 'Convert to {convertType}?',
     description: 'message to confirm that a user wants to use the advanced editor',
   },
   ConfirmSwitchButtonLabel: {
     id: 'authoring.problemeditor.settings.switchtoadvancededitor.ConfirmSwitchButtonLabel',
-    defaultMessage: 'Switch to advanced editor',
+    defaultMessage: 'Switch to {editorType} editor',
     description: 'message to confirm that a user wants to use the advanced editor',
   },
   explanationInputLabel: {

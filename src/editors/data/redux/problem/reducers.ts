@@ -10,6 +10,8 @@ const nextAlphaId = (lastId: string) => String.fromCharCode(lastId.charCodeAt(0)
 
 const initialState: EditorState['problem'] = {
   rawOLX: '',
+  rawMarkdown: '',
+  isMarkdownEditorEnabled: false,
   problemType: null,
   question: '',
   answers: [],

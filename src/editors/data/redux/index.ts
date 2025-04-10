@@ -107,6 +107,7 @@ export interface EditorState {
     videos: Record<string, any>;
     courseDetails: Record<string, any>;
     showRawEditor: boolean;
+    isMarkdownEditorEnabledForCourse: boolean;
   },
   requests: Record<keyof typeof RequestKeys, {
     status: keyof typeof RequestStates;
@@ -154,7 +155,9 @@ export interface EditorState {
     /** Has the user made changes to this problem since opening the editor? */
     isDirty: boolean;
     rawOLX: string;
+    rawMarkdown: string;
     problemType: null | ProblemType | AdvancedProblemType;
+    isMarkdownEditorEnabled: boolean;
     question: string;
     answers: any[];
     correctAnswerCount: number;

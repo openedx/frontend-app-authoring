@@ -5,7 +5,7 @@ import dropdown from '../images/dropdown.png';
 import numericalInput from '../images/numericalInput.png';
 import textInput from '../images/textInput.png';
 import advancedOlxTemplates from './advancedOlxTemplates';
-import basicOlxTemplates from './basicOlxTemplates';
+import basicProblemTemplates from './basicProblemTemplates';
 
 export const ProblemTypeKeys = StrictDict({
   SINGLESELECT: 'multiplechoiceresponse',
@@ -26,8 +26,8 @@ export const ProblemTypes = StrictDict({
     helpLink: 'https://docs.openedx.org/en/latest/educators/concepts/exercise_tools/about_multi_select.html',
     prev: ProblemTypeKeys.TEXTINPUT,
     next: ProblemTypeKeys.MULTISELECT,
-    template: basicOlxTemplates.singleSelect,
-
+    template: basicProblemTemplates.singleSelect.olx,
+    markdownTemplate: basicProblemTemplates.singleSelect.markdown,
   },
   [ProblemTypeKeys.MULTISELECT]: {
     title: 'Multi-select',
@@ -37,7 +37,8 @@ export const ProblemTypes = StrictDict({
     helpLink: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_multi_select.html',
     next: ProblemTypeKeys.DROPDOWN,
     prev: ProblemTypeKeys.SINGLESELECT,
-    template: basicOlxTemplates.multiSelect,
+    template: basicProblemTemplates.multiSelect.olx,
+    markdownTemplate: basicProblemTemplates.multiSelect.markdown,
   },
   [ProblemTypeKeys.DROPDOWN]: {
     title: 'Dropdown',
@@ -47,7 +48,8 @@ export const ProblemTypes = StrictDict({
     helpLink: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_dropdown.html',
     next: ProblemTypeKeys.NUMERIC,
     prev: ProblemTypeKeys.MULTISELECT,
-    template: basicOlxTemplates.dropdown,
+    template: basicProblemTemplates.dropdown.olx,
+    markdownTemplate: basicProblemTemplates.dropdown.markdown,
   },
   [ProblemTypeKeys.NUMERIC]: {
     title: 'Numerical input',
@@ -57,7 +59,8 @@ export const ProblemTypes = StrictDict({
     helpLink: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/manage_numerical_input_problem.html',
     next: ProblemTypeKeys.TEXTINPUT,
     prev: ProblemTypeKeys.DROPDOWN,
-    template: basicOlxTemplates.numeric,
+    template: basicProblemTemplates.numeric.olx,
+    markdownTemplate: basicProblemTemplates.numeric.markdown,
   },
   [ProblemTypeKeys.TEXTINPUT]: {
     title: 'Text input',
@@ -67,7 +70,8 @@ export const ProblemTypes = StrictDict({
     helpLink: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_text_input.html',
     prev: ProblemTypeKeys.NUMERIC,
     next: ProblemTypeKeys.SINGLESELECT,
-    template: basicOlxTemplates.textInput,
+    template: basicProblemTemplates.textInput.olx,
+    markdownTemplate: basicProblemTemplates.textInput.markdown,
   },
   [ProblemTypeKeys.ADVANCED]: {
     title: 'Advanced Problem',

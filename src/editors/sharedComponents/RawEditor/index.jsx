@@ -18,10 +18,9 @@ const RawEditor = ({
 }) => {
   const value = getValue(content) || '';
   const staticUpdate = setAssetToStaticUrl({ editorValue: value });
-
   return (
     <div>
-      {lang === 'xml' ? null : (
+      {['xml', 'markdown'].includes(lang) ? null : (
         <Alert variant="danger">
           You are using the raw {lang} editor.
         </Alert>

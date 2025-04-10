@@ -36,6 +36,10 @@ jest.mock('@codemirror/lang-xml', () => ({
   xml: jest.fn(),
 }));
 
+jest.mock('@codemirror/lang-markdown', () => ({
+  markdown: jest.fn(),
+}));
+
 jest.mock('codemirror', () => ({
   basicSetup: 'bAsiCSetUp',
 }));

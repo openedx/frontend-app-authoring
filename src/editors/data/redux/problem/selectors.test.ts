@@ -32,6 +32,7 @@ describe('problem selectors unit tests', () => {
         simpleKeys.settings,
         simpleKeys.question,
         simpleKeys.defaultSettings,
+        simpleKeys.isMarkdownEditorEnabled,
       ].map(testSimpleSelector);
     });
     test('simple selector completeState equals the entire state', () => {

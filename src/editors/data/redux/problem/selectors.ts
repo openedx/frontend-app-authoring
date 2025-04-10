@@ -7,6 +7,7 @@ const mkSimpleSelector = <T>(cb: (problemState: EditorState['problem']) => T) =>
 
 export const simpleSelectors = {
   problemType: mkSimpleSelector(problemData => problemData.problemType),
+  isMarkdownEditorEnabled: mkSimpleSelector(problemData => problemData.isMarkdownEditorEnabled),
   generalFeedback: mkSimpleSelector(problemData => problemData.generalFeedback),
   groupFeedbackList: mkSimpleSelector(problemData => problemData.groupFeedbackList),
   answers: mkSimpleSelector(problemData => problemData.answers),
