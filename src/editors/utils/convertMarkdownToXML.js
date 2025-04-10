@@ -513,4 +513,3 @@ export const convertMarkdownToXml = (markdown) => {
 
   return finalXml;
 };
-
