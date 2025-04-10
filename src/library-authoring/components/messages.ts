@@ -188,8 +188,18 @@ const messages = defineMessages({
   },
   deleteUnitConfirm: {
     id: 'course-authoring.library-authoring.unit.delete-confirmation-text',
-    defaultMessage: 'Delete {componentName}? The components inside this unit will remain in the library',
+    defaultMessage: 'Delete {unitName}? {message}',
     description: 'Confirmation text to display before deleting a unit',
+  },
+  deleteUnitConfirmMsg1: {
+    id: 'course-authoring.library-authoring.unit.delete-confirmation-msg-1',
+    defaultMessage: 'Any course instances will stop receiving updates.',
+    description: 'First part of confirmation message to display before deleting a unit',
+  },
+  deleteUnitConfirmMsg2: {
+    id: 'course-authoring.library-authoring.unit.delete-confirmation-msg-2',
+    defaultMessage: 'Any components will remain in the library.',
+    description: 'Second part of confirmation message to display before deleting a unit',
   },
   deleteUnitSuccess: {
     id: 'course-authoring.library-authoring.unit.delete.success',

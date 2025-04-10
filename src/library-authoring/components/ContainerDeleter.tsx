@@ -1,6 +1,7 @@
-import { useCallback, useContext } from 'react';
+import { ReactNode, useCallback, useContext } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Warning } from '@openedx/paragon/icons';
+import { Icon } from '@openedx/paragon';
+import { Warning, School, Widgets } from '@openedx/paragon/icons';
 
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import { useSidebarContext } from '../common/context/SidebarContext';
@@ -33,8 +34,20 @@ const ContainerDeleter = ({
   // TODO: support other container types besides 'unit'
   const deleteWarningTitle = intl.formatMessage(messages.deleteUnitWarningTitle);
   const deleteText = intl.formatMessage(messages.deleteUnitConfirm, {
-    componentName: displayName,
-  });
+    unitName: <b>{displayName}</b>,
+    message: (
+      <>
+        <div className="d-flex mt-2">
+          <Icon className="mr-2" src={School} />
+          {intl.formatMessage(messages.deleteUnitConfirmMsg1)}
+        </div>
+        <div className="d-flex mt-2">
+          <Icon className="mr-2" src={Widgets} />
+          {intl.formatMessage(messages.deleteUnitConfirmMsg2)}
+        </div>
+      </>
+    ),
+  }) as ReactNode as string;
   const deleteSuccess = intl.formatMessage(messages.deleteUnitSuccess);
   const deleteError = intl.formatMessage(messages.deleteUnitFailed);
   const undoDeleteError = messages.undoDeleteUnitToastFailed;
