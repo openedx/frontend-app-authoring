@@ -17,7 +17,7 @@ be used to add additional sidebar components or modify the existing sidebar.
 
 ![Screenshot of the unit sidebar surrounded by border](./images/unit_sidebar_with_border.png)
 
-The following example configuration inserts an extra button to the header as shown above.
+The following example configuration surrounds the sidebar in a border as shown above.
 
 ```js
 import { PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-framework';
