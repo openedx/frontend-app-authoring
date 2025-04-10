@@ -139,7 +139,7 @@ const UnitInfo = () => {
       >
         {renderTab(UNIT_INFO_TABS.Preview, <LibraryUnitBlocks />, intl.formatMessage(messages.previewTabTitle))}
         {renderTab(UNIT_INFO_TABS.Organize, <ContainerOrganize />, intl.formatMessage(messages.organizeTabTitle))}
-        {renderTab(UNIT_INFO_TABS.Settings, "Unit Settings", intl.formatMessage(messages.settingsTabTitle))}
+        {renderTab(UNIT_INFO_TABS.Settings, 'Unit Settings', intl.formatMessage(messages.settingsTabTitle))}
       </Tabs>
     </Stack>
   );

@@ -124,9 +124,14 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       // optionally selecting a component.
       route = ROUTES.COMPONENTS;
     } else if (insideUnits) {
-      // We're inside the Units tab, so stay there,
-      // optionally selecting a unit.
-      route = ROUTES.UNITS;
+      // We're inside the units tab,
+      route = (
+        (unitId && unitId === (urlUnitId || urlSelectedItemId))
+          // now open the previously-selected unit,
+          ? ROUTES.UNIT
+          // or stay there to list all units, or a selected unit.
+          : ROUTES.UNITS
+      );
     } else if (insideUnit) {
       // We're viewing a Unit, so stay there,
       // and optionally select a component in that Unit.
