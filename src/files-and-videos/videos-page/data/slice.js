@@ -23,10 +23,18 @@ const slice = createSlice({
       transcript: [],
       loading: '',
     },
+    filesCurrentView: 'list',
+    videosCurrentView: 'list',
   },
   reducers: {
     setVideoIds: (state, { payload }) => {
       state.videoIds = payload.videoIds;
+    },
+    setVideosCurrentViewState: (state, { payload }) => {
+      state.videosCurrentView = payload.videosCurrentView;
+    },
+    setFilesCurrentViewState: (state, { payload }) => {
+      state.filesCurrentView = payload.filesCurrentView;
     },
     setPageSettings: (state, { payload }) => {
       state.pageSettings = payload;
@@ -98,6 +106,8 @@ const slice = createSlice({
 
 export const {
   setVideoIds,
+  setVideosCurrentViewState,
+  setFilesCurrentViewState,
   setPageSettings,
   updateLoadingStatus,
   deleteVideoSuccess,
