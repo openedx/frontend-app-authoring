@@ -94,7 +94,7 @@ const FilesPage = ({
 
   const activeColumn = {
     id: 'activeStatus',
-    Header: 'Active',
+    Header: intl.formatMessage(messages.fileActiveColumn),
     accessor: 'activeStatus',
     Cell: ({ row }) => ActiveColumn({ row, pageLoadStatus: loadingStatus }),
     Filter: CheckboxFilter,
@@ -106,7 +106,7 @@ const FilesPage = ({
   };
   const accessColumn = {
     id: 'lockStatus',
-    Header: 'Access',
+    Header: intl.formatMessage(messages.fileAccessColumn),
     accessor: 'lockStatus',
     Cell: ({ row }) => AccessColumn({ row }),
     Filter: CheckboxFilter,
@@ -122,7 +122,7 @@ const FilesPage = ({
   };
   const fileSizeColumn = {
     id: 'fileSize',
-    Header: 'File size',
+    Header: intl.formatMessage(messages.fileSizeColumn),
     accessor: 'fileSize',
     Cell: ({ row }) => {
       const { fileSize } = row.original;
@@ -133,12 +133,12 @@ const FilesPage = ({
   const tableColumns = [
     { ...thumbnailColumn },
     {
-      Header: 'File name',
+      Header: intl.formatMessage(messages.fileNameColumn),
       accessor: 'displayName',
     },
     { ...fileSizeColumn },
     {
-      Header: 'Type',
+      Header: intl.formatMessage(messages.fileTypeColumn),
       accessor: 'wrapperType',
       Filter: CheckboxFilter,
       filter: 'includesValue',
