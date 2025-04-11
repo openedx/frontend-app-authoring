@@ -37,6 +37,7 @@ exports[`ImageSettingsModal render snapshot 1`] = `
   }
   footerAction={null}
   headerComponent={null}
+  hideCancelButton={false}
   isFullscreenScroll={true}
   isOpen={false}
   size="lg"
