@@ -36,10 +36,13 @@ const LARGE_COMPONENTS = [
 ];
 
 interface LibraryUnitBlocksProps {
+  /** set to true if it is rendered as preview
+  * This disables drag and drop
+  */
   preview?: boolean;
 }
 
-export const LibraryUnitBlocks = ({ preview = false }: LibraryUnitBlocksProps) => {
+export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
   const intl = useIntl();
   const [orderedBlocks, setOrderedBlocks] = useState<LibraryBlockMetadata[]>([]);
   const [isManageTagsDrawerOpen, openManageTagsDrawer, closeManageTagsDrawer] = useToggle(false);
@@ -120,6 +123,7 @@ export const LibraryUnitBlocks = ({ preview = false }: LibraryUnitBlocksProps) =
     );
   }
 
+  /** Component header, split out to reuse in drag overlay */
   const BlockHeader = ({block}: {block: LibraryBlockMetadata}) => (
     <>
       <Stack direction="horizontal" gap={2} className="font-weight-bold">
@@ -159,6 +163,7 @@ export const LibraryUnitBlocks = ({ preview = false }: LibraryUnitBlocksProps) =
         }}
         isClickable
         onClick={() => handleComponentSelection(block)}
+        disabled={preview}
       >
         {hidePreviewFor !== block.id && <div className={classNames('p-3', {
           'container-mw-md': block.blockType === blockTypes.video,
