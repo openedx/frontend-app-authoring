@@ -22,6 +22,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { useLocation } from 'react-router-dom';
+import { CourseAuthoringOutlineSidebarSlot } from '../plugin-slots/CourseAuthoringOutlineSidebarSlot';
 
 import { LoadingSpinner } from '../generic/Loading';
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
@@ -35,7 +36,6 @@ import AlertMessage from '../generic/alert-message';
 import getPageHeadTitle from '../generic/utils';
 import { getCurrentItem, getProctoredExamsFlag } from './data/selectors';
 import { COURSE_BLOCK_NAMES } from './constants';
-import OutlineSideBar from './outline-sidebar/OutlineSidebar';
 import StatusBar from './status-bar/StatusBar';
 import EnableHighlightsModal from './enable-highlights-modal/EnableHighlightsModal';
 import SectionCard from './section-card/SectionCard';
@@ -453,7 +453,7 @@ const CourseOutline = ({ courseId }) => {
               </article>
             </Layout.Element>
             <Layout.Element>
-              <OutlineSideBar courseId={courseId} />
+              <CourseAuthoringOutlineSidebarSlot courseId={courseId} />
             </Layout.Element>
           </Layout>
           <EnableHighlightsModal

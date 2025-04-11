@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import classNames from 'classnames';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 
 import { getWaffleFlags } from '../../data/selectors';
@@ -11,13 +11,13 @@ import messages from './messages';
 import HelpSidebarLink from './HelpSidebarLink';
 
 const HelpSidebar = ({
-  intl,
   courseId,
   showOtherSettings,
   proctoredExamSettingsUrl,
   children,
   className,
 }) => {
+  const intl = useIntl();
   const { pathname } = useLocation();
   const {
     grading,
@@ -124,7 +124,6 @@ HelpSidebar.defaultProps = {
 };
 
 HelpSidebar.propTypes = {
-  intl: intlShape.isRequired,
   courseId: PropTypes.string,
   showOtherSettings: PropTypes.bool,
   proctoredExamSettingsUrl: PropTypes.string,
@@ -132,4 +131,4 @@ HelpSidebar.propTypes = {
   className: PropTypes.string,
 };
 
-export default injectIntl(HelpSidebar);
+export default HelpSidebar;

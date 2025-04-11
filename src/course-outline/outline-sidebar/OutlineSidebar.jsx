@@ -26,7 +26,6 @@ const OutlineSideBar = ({ courseId }) => {
 
   return (
     <HelpSidebar
-      intl={intl}
       courseId={courseId}
       showOtherSettings={false}
       className="outline-sidebar mt-4"
