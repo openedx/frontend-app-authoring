@@ -1,4 +1,4 @@
-import React, { act, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {createPortal} from 'react-dom';
 
