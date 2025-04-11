@@ -126,9 +126,6 @@ export const convertMarkdownToXml = (markdown) => {
         line = lines[i].trim();
         if (line.length > 0) {
           textHint = extractHint(line, true);
-          if (!textHint.nothint) {
-            throw new Error('An answer option has been left blank. Please review and edit the component.');
-          }
           correctstr = ` correct="${ textHint.parens ? 'True' : 'False' }"`;
           hintstr = '';
           if (textHint.hint) {
@@ -154,9 +151,6 @@ export const convertMarkdownToXml = (markdown) => {
         options[i] = options[i].trim(); // trim off leading/trailing whitespace
         if (options[i].length > 0) {
           let [, value] = options[i].split(/^\s*\(.{0,3}\)\s*/);
-          if (!value) {
-            throw new Error('An answer option has been left blank. Please review and edit the component.');
-          }
           const [,inparens] = /^\s*\((.{0,3})\)\s*/.exec(options[i]);
           correct = /x/i.test(inparens);
           fixed = '';
@@ -215,9 +209,6 @@ export const convertMarkdownToXml = (markdown) => {
           }
 
           let [, value] = options[i].split(/^\s*\[.?\]\s*/);
-          if (!value) {
-            throw new Error('An answer option has been left blank. Please review and edit the component.');
-          }
           correct = /^\s*\[x\]/i.test(options[i]);
           hints = '';
           //  {{ selected: You’re right that apple is a fruit. },
