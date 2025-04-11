@@ -5,7 +5,7 @@ import { useKeyedState } from '@edx/react-unit-test-utils';
 import { logError } from '@edx/frontend-platform/logging';
 import { mockBroadcastChannel } from '../../data/api.mock';
 import { iframeMessageTypes, iframeStateKeys } from '../../../constants';
-import { useIFrameBehavior } from '../useIFrameBehavior';
+import { useIframeBehavior } from '../useIframeBehavior';
 import { useLoadBearingHook } from '../useLoadBearingHook';
 
 jest.useFakeTimers();
@@ -20,7 +20,7 @@ jest.mock('@edx/frontend-platform/logging', () => ({
 
 mockBroadcastChannel();
 
-describe('useIFrameBehavior', () => {
+describe('useIframeBehavior', () => {
   const id = 'test-id';
   const iframeUrl = 'http://example.com';
   const setIframeHeight = jest.fn();
@@ -52,7 +52,7 @@ describe('useIFrameBehavior', () => {
   });
 
   it('initializes state correctly', () => {
-    const { result } = renderHook(() => useIFrameBehavior({ id, iframeUrl, iframeRef }));
+    const { result } = renderHook(() => useIframeBehavior({ id, iframeUrl, iframeRef }));
 
     expect(result.current.iframeHeight).toBe(0);
     expect(result.current.showError).toBe(false);
@@ -69,7 +69,7 @@ describe('useIFrameBehavior', () => {
       return [null, jest.fn()];
     });
 
-    renderHook(() => useIFrameBehavior({ id, iframeUrl, iframeRef }));
+    renderHook(() => useIframeBehavior({ id, iframeUrl, iframeRef }));
 
     const message = {
       data: {
@@ -86,7 +86,7 @@ describe('useIFrameBehavior', () => {
   });
 
   it('handles resize message correctly', () => {
-    renderHook(() => useIFrameBehavior({ id, iframeUrl, iframeRef }));
+    renderHook(() => useIframeBehavior({ id, iframeUrl, iframeRef }));
 
     const message = {
       data: {
@@ -105,7 +105,7 @@ describe('useIFrameBehavior', () => {
 
   it('handles xblock-event message correctly', () => {
     const onBlockNotification = jest.fn();
-    renderHook(() => useIFrameBehavior({
+    renderHook(() => useIframeBehavior({
       id, iframeUrl, iframeRef, onBlockNotification,
     }));
 
@@ -130,7 +130,7 @@ describe('useIFrameBehavior', () => {
   });
 
   it('handles videoFullScreen message correctly', () => {
-    renderHook(() => useIFrameBehavior({ id, iframeUrl, iframeRef }));
+    renderHook(() => useIframeBehavior({ id, iframeUrl, iframeRef }));
 
     const message = {
       data: {
@@ -148,7 +148,7 @@ describe('useIFrameBehavior', () => {
 
   it('handles offset message correctly', () => {
     document.body.innerHTML = '<div id="unit-iframe" style="position: absolute; top: 50px;"></div>';
-    renderHook(() => useIFrameBehavior({ id, iframeUrl, iframeRef }));
+    renderHook(() => useIframeBehavior({ id, iframeUrl, iframeRef }));
 
     const message = {
       data: { offset: 100 },
@@ -162,7 +162,7 @@ describe('useIFrameBehavior', () => {
   });
 
   it('handles iframe load error correctly', () => {
-    const { result } = renderHook(() => useIFrameBehavior({ id, iframeUrl, iframeRef }));
+    const { result } = renderHook(() => useIframeBehavior({ id, iframeUrl, iframeRef }));
 
     act(() => {
       result.current.handleIFrameLoad();
@@ -176,7 +176,7 @@ describe('useIFrameBehavior', () => {
 
   it('resets state when iframeUrl changes', () => {
     // eslint-disable-next-line @typescript-eslint/no-shadow
-    const { rerender } = renderHook(({ id, iframeUrl }) => useIFrameBehavior({ id, iframeUrl, iframeRef }), {
+    const { rerender } = renderHook(({ id, iframeUrl }) => useIframeBehavior({ id, iframeUrl, iframeRef }), {
       initialProps: { id, iframeUrl },
     });
 

@@ -3,7 +3,7 @@ import { getConfig } from '@edx/frontend-platform';
 
 import messages from './messages';
 import { IFRAME_FEATURE_POLICY } from '../../constants';
-import { useIFrameBehavior } from '../../generic/hooks/useIFrameBehavior';
+import { useIframeBehavior } from '../../generic/hooks/useIframeBehavior';
 import { useIframe } from '../../generic/hooks/context/hooks';
 import { useIframeContent } from '../../generic/hooks/useIframeContent';
 
@@ -40,7 +40,7 @@ export const LibraryBlock = ({
   const intl = useIntl();
   const queryStr = version ? `?version=${version}` : '';
   const iframeUrl = `${studioBaseUrl}/xblocks/v2/${usageKey}/embed/${xblockView}/${queryStr}`;
-  const { iframeHeight } = useIFrameBehavior({
+  const { iframeHeight } = useIframeBehavior({
     id: usageKey,
     iframeUrl,
     iframeRef,
@@ -60,7 +60,9 @@ export const LibraryBlock = ({
       frameBorder="0"
       loading="lazy"
       referrerPolicy="origin"
-      style={{ width: '100%', height: iframeHeight, pointerEvents: 'auto' }}
+      style={{
+        width: '100%', height: iframeHeight, pointerEvents: 'auto', minHeight: '30vh',
+      }}
       allow={IFRAME_FEATURE_POLICY}
       allowFullScreen
       scrolling={scrolling}

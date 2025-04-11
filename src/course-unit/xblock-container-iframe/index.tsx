@@ -32,7 +32,7 @@ import {
 } from './types';
 import { formatAccessManagedXBlockData, getIframeUrl, getLegacyEditModalUrl } from './utils';
 import messages from './messages';
-import { useIFrameBehavior } from '../../generic/hooks/useIFrameBehavior';
+import { useIframeBehavior } from '../../generic/hooks/useIframeBehavior';
 import { useIframeContent } from '../../generic/hooks/useIframeContent';
 import { useIframeMessages } from '../../generic/hooks/useIframeMessages';
 
@@ -56,7 +56,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const legacyEditModalUrl = useMemo(() => getLegacyEditModalUrl(configureXBlockId), [configureXBlockId]);
 
   const { iframeRef, setIframeRef, sendMessageToIframe } = useIframe();
-  const { iframeHeight } = useIFrameBehavior({ id: blockId, iframeUrl, iframeRef });
+  const { iframeHeight } = useIframeBehavior({ id: blockId, iframeUrl, iframeRef });
 
   useIframeContent(iframeRef, setIframeRef);
 

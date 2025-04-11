@@ -21,7 +21,7 @@ import { useEventListener } from './useEventListener';
  * @returns {boolean} return.showError - Flag to indicate if there was an error loading the iframe.
  * @returns {boolean} return.hasLoaded - Flag to indicate if the iframe has loaded.
  */
-export const useIFrameBehavior = ({
+export const useIframeBehavior = ({
   id,
   iframeUrl,
   onLoaded = true,
