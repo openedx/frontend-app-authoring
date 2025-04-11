@@ -47,13 +47,6 @@ jest.mock('../search-manager', () => ({
   useSearchContext: () => mockUseSearchContext(),
 }));
 
-const clipboardBroadcastChannelMock = {
-  postMessage: jest.fn(),
-  close: jest.fn(),
-};
-
-(global as any).BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
-
 const withLibraryId = (libraryId: string) => ({
   extraWrapper: ({ children }: { children: React.ReactNode }) => (
     <LibraryProvider libraryId={libraryId}>

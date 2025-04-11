@@ -21,13 +21,6 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-const clipboardBroadcastChannelMock = {
-  postMessage: jest.fn(),
-  close: jest.fn(),
-};
-
-global.BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
-
 const unit = {
   id: 'unit-1',
 };
