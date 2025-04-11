@@ -51,6 +51,12 @@ const toSidebarInfoTab = (tab: string): SidebarInfoTab | undefined => (
     ? tab : undefined
 );
 
+export interface DefaultTabs {
+  component: ComponentInfoTab;
+  unit: UnitInfoTab;
+  collection: CollectionInfoTab;
+}
+
 export interface SidebarComponentInfo {
   type: SidebarBodyComponentId;
   id: string;
@@ -76,6 +82,10 @@ export type SidebarContextData = {
   resetSidebarAction: () => void;
   sidebarTab: SidebarInfoTab;
   setSidebarTab: (tab: SidebarInfoTab) => void;
+  defaultTab: DefaultTabs;
+  setDefaultTab: (tabs: DefaultTabs) => void;
+  hiddenTabs: Array<SidebarInfoTab>;
+  setHiddenTabs: (tabs: ComponentInfoTab[]) => void;
 };
 
 /**
@@ -103,8 +113,15 @@ export const SidebarProvider = ({
     initialSidebarComponentInfo,
   );
 
+  const [defaultTab, setDefaultTab] = useState<DefaultTabs>({
+    component: COMPONENT_INFO_TABS.Preview,
+    unit: UNIT_INFO_TABS.Preview,
+    collection: COLLECTION_INFO_TABS.Manage,
+  });
+  const [hiddenTabs, setHiddenTabs] = useState<Array<SidebarInfoTab>>([]);
+
   const [sidebarTab, setSidebarTab] = useStateWithUrlSearchParam<SidebarInfoTab>(
-    COMPONENT_INFO_TABS.Preview,
+    defaultTab.component,
     'st',
     (value: string) => toSidebarInfoTab(value),
     (value: SidebarInfoTab) => value.toString(),
@@ -178,6 +195,10 @@ export const SidebarProvider = ({
       resetSidebarAction,
       sidebarTab,
       setSidebarTab,
+      defaultTab,
+      setDefaultTab,
+      hiddenTabs,
+      setHiddenTabs,
     };
 
     return contextValue;
@@ -195,6 +216,10 @@ export const SidebarProvider = ({
     resetSidebarAction,
     sidebarTab,
     setSidebarTab,
+    defaultTab,
+    setDefaultTab,
+    hiddenTabs,
+    setHiddenTabs,
   ]);
 
   return (
@@ -222,6 +247,14 @@ export function useSidebarContext(): SidebarContextData {
       sidebarTab: COMPONENT_INFO_TABS.Preview,
       setSidebarTab: () => {},
       sidebarComponentInfo: undefined,
+      defaultTab: {
+        component: COMPONENT_INFO_TABS.Preview,
+        unit: UNIT_INFO_TABS.Preview,
+        collection: COLLECTION_INFO_TABS.Manage,
+      },
+      setDefaultTab: () => {},
+      hiddenTabs: [],
+      setHiddenTabs: () => {},
     };
   }
   return ctx;

@@ -10,8 +10,10 @@ import {
   useToggle,
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
+import { useCallback } from 'react';
 
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
+import { useLibraryContext } from '../common/context/LibraryContext';
 import {
   type UnitInfoTab,
   UNIT_INFO_TABS,
@@ -19,6 +21,8 @@ import {
   useSidebarContext,
 } from '../common/context/SidebarContext';
 import ContainerOrganize from './ContainerOrganize';
+import { useLibraryRoutes } from '../routes';
+import { LibraryUnitBlocks } from '../units/LibraryUnitBlocks';
 import messages from './messages';
 import componentMessages from '../components/messages';
 import ContainerDeleter from '../components/ContainerDeleter';
@@ -65,22 +69,46 @@ const UnitMenu = ({ containerId, displayName }: ContainerMenuProps) => {
 const UnitInfo = () => {
   const intl = useIntl();
 
+  const { libraryId, setUnitId } = useLibraryContext();
   const { componentPickerMode } = useComponentPickerContext();
-  const { sidebarComponentInfo, sidebarTab, setSidebarTab } = useSidebarContext();
+  const {
+    defaultTab, hiddenTabs, sidebarComponentInfo, sidebarTab, setSidebarTab,
+  } = useSidebarContext();
+  const { insideUnit, navigateTo } = useLibraryRoutes();
 
   const tab: UnitInfoTab = (
     sidebarTab && isUnitInfoTab(sidebarTab)
-  ) ? sidebarTab : UNIT_INFO_TABS.Preview;
+  ) ? sidebarTab : defaultTab.unit;
 
   const unitId = sidebarComponentInfo?.id;
+  const { data: container } = useContainer(libraryId, unitId);
+
+  const handleOpenUnit = useCallback(() => {
+    if (componentPickerMode) {
+      setUnitId(unitId);
+    } else {
+      navigateTo({ unitId });
+    }
+  }, [componentPickerMode, navigateTo, unitId]);
+
+  const showOpenUnitButton = !insideUnit || componentPickerMode;
+
+  const renderTab = useCallback((infoTab: UnitInfoTab, component: React.ReactNode, title: string) => {
+    if (hiddenTabs.includes(infoTab)) {
+      // For some reason, returning anything other than empty list breaks the tab style
+      return [];
+    }
+    return (
+      <Tab eventKey={infoTab} title={title}>
+        {component}
+      </Tab>
+    );
+  }, [hiddenTabs, defaultTab.unit, unitId]);
+
   // istanbul ignore if: this should never happen
   if (!unitId) {
     throw new Error('unitId is required');
   }
-
-  const showOpenUnitButton = !componentPickerMode;
-
-  const { data: container } = useContainer(unitId);
 
   if (!container) {
     return null;
@@ -93,7 +121,7 @@ const UnitInfo = () => {
           <Button
             variant="outline-primary"
             className="m-1 text-nowrap flex-grow-1"
-            disabled
+            onClick={handleOpenUnit}
           >
             {intl.formatMessage(messages.openUnitButton)}
           </Button>
@@ -106,19 +134,13 @@ const UnitInfo = () => {
       <Tabs
         variant="tabs"
         className="my-3 d-flex justify-content-around"
-        defaultActiveKey={UNIT_INFO_TABS.Preview}
+        defaultActiveKey={defaultTab.unit}
         activeKey={tab}
         onSelect={setSidebarTab}
       >
-        <Tab eventKey={UNIT_INFO_TABS.Preview} title={intl.formatMessage(messages.previewTabTitle)}>
-          Unit Preview
-        </Tab>
-        <Tab eventKey={UNIT_INFO_TABS.Organize} title={intl.formatMessage(messages.organizeTabTitle)}>
-          <ContainerOrganize />
-        </Tab>
-        <Tab eventKey={UNIT_INFO_TABS.Settings} title={intl.formatMessage(messages.settingsTabTitle)}>
-          Unit Settings
-        </Tab>
+        {renderTab(UNIT_INFO_TABS.Preview, <LibraryUnitBlocks />, intl.formatMessage(messages.previewTabTitle))}
+        {renderTab(UNIT_INFO_TABS.Organize, <ContainerOrganize />, intl.formatMessage(messages.organizeTabTitle))}
+        {renderTab(UNIT_INFO_TABS.Settings, 'Unit Settings', intl.formatMessage(messages.settingsTabTitle))}
       </Tabs>
     </Stack>
   );

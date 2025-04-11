@@ -18,7 +18,7 @@ import { courseSectionVerticalMock } from '../__mocks__';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import AddComponent from './AddComponent';
 import messages from './messages';
-import { IframeProvider } from '../context/iFrameContext';
+import { IframeProvider } from '../../generic/hooks/context/iFrameContext';
 import { messageTypes } from '../constants';
 
 let store;
@@ -52,7 +52,7 @@ jest.mock('../../library-authoring/component-picker', () => ({
 }));
 
 const mockSendMessageToIframe = jest.fn();
-jest.mock('../context/hooks', () => ({
+jest.mock('../../generic/hooks/context/hooks', () => ({
   useIframe: () => ({
     sendMessageToIframe: mockSendMessageToIframe,
   }),

@@ -17,7 +17,7 @@ import ScheduleAndDetails from './schedule-and-details';
 import { GradingSettings } from './grading-settings';
 import CourseTeam from './course-team/CourseTeam';
 import { CourseUpdates } from './course-updates';
-import { CourseUnit, IframeProvider } from './course-unit';
+import { CourseUnit } from './course-unit';
 import { Certificates } from './certificates';
 import CourseExportPage from './export-page/CourseExportPage';
 import CourseOptimizerPage from './optimizer-page/CourseOptimizerPage';
@@ -26,6 +26,7 @@ import { DECODED_ROUTES } from './constants';
 import CourseChecklist from './course-checklist';
 import GroupConfigurations from './group-configurations';
 import { CourseLibraries } from './course-libraries';
+import { IframeProvider } from './generic/hooks/context/iFrameContext';
 
 /**
  * As of this writing, these routes are mounted at a path prefixed with the following:

@@ -78,7 +78,8 @@ type ContainerCardPreviewProps = {
 };
 
 const ContainerCardPreview = ({ containerId, showMaxChildren = 5 }: ContainerCardPreviewProps) => {
-  const { data, isLoading, isError } = useContainerChildren(containerId);
+  const { libraryId } = useLibraryContext();
+  const { data, isLoading, isError } = useContainerChildren(libraryId, containerId);
   if (isLoading || isError) {
     return null;
   }
@@ -131,7 +132,7 @@ type ContainerCardProps = {
 
 const ContainerCard = ({ hit } : ContainerCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
-  const { showOnlyPublished } = useLibraryContext();
+  const { setUnitId, showOnlyPublished } = useLibraryContext();
   const { openUnitInfoSidebar } = useSidebarContext();
 
   const {
@@ -157,7 +158,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
   const openContainer = useCallback(() => {
     if (itemType === 'unit') {
       openUnitInfoSidebar(unitId);
-
+      setUnitId(unitId);
       navigateTo({ unitId });
     }
   }, [unitId, itemType, openUnitInfoSidebar, navigateTo]);

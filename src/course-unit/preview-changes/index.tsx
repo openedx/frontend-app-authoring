@@ -8,7 +8,7 @@ import { useEventListener } from '../../generic/hooks';
 import { messageTypes } from '../constants';
 import CompareChangesWidget from '../../library-authoring/component-comparison/CompareChangesWidget';
 import { useAcceptLibraryBlockChanges, useIgnoreLibraryBlockChanges } from '../data/apiHooks';
-import { useIframe } from '../context/hooks';
+import { useIframe } from '../../generic/hooks/context/hooks';
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import messages from './messages';
 import { ToastContext } from '../../generic/toast-context';
