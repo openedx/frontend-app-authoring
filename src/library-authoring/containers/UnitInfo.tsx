@@ -69,23 +69,19 @@ const UnitMenu = ({ containerId, displayName }: ContainerMenuProps) => {
 const UnitInfo = () => {
   const intl = useIntl();
 
-  const { setUnitId } = useLibraryContext();
+  const { libraryId, setUnitId } = useLibraryContext();
   const { componentPickerMode } = useComponentPickerContext();
   const {
     defaultTab, hiddenTabs, sidebarComponentInfo, sidebarTab, setSidebarTab,
   } = useSidebarContext();
   const { insideUnit, navigateTo } = useLibraryRoutes();
-  const { data: container } = useContainer(unitId);
 
   const tab: UnitInfoTab = (
     sidebarTab && isUnitInfoTab(sidebarTab)
   ) ? sidebarTab : defaultTab.unit;
 
   const unitId = sidebarComponentInfo?.id;
-  // istanbul ignore if: this should never happen
-  if (!unitId) {
-    throw new Error('unitId is required');
-  }
+  const { data: container } = useContainer(libraryId, unitId);
 
   const handleOpenUnit = useCallback(() => {
     if (componentPickerMode) {
@@ -97,12 +93,8 @@ const UnitInfo = () => {
 
   const showOpenUnitButton = !insideUnit || componentPickerMode;
 
-  if (!container) {
-    return null;
-  }
-
-  const renderTab = useCallback((tab: UnitInfoTab, component: React.ReactNode, title: string) => {
-    if (disabledTabs.includes(tab)) {
+  const renderTab = useCallback((infoTab: UnitInfoTab, component: React.ReactNode, title: string) => {
+    if (hiddenTabs.includes(infoTab)) {
       // For some reason, returning anything other than empty list breaks the tab style
       return [];
     }
@@ -112,6 +104,15 @@ const UnitInfo = () => {
       </Tab>
     );
   }, [hiddenTabs, defaultTab.unit, unitId]);
+
+  // istanbul ignore if: this should never happen
+  if (!unitId) {
+    throw new Error('unitId is required');
+  }
+
+  if (!container) {
+    return null;
+  }
 
   return (
     <Stack>
