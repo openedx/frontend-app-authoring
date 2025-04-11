@@ -1,4 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { Helmet } from 'react-helmet';
 import classNames from 'classnames';
 import { StudioFooterSlot } from '@openedx/frontend-slot-footer';
@@ -100,7 +105,7 @@ const HeaderActions = () => {
   );
 };
 
-export const SubHeaderTitle = ({ title }: { title: string }) => {
+export const SubHeaderTitle = ({ title }: { title: ReactNode }) => {
   const intl = useIntl();
 
   const { readOnly } = useLibraryContext();

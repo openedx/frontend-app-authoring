@@ -36,11 +36,6 @@ const messages = defineMessages({
     defaultMessage: 'Failed to update container.',
     description: 'Message displayed when container update fails',
   },
-  editTitleButtonAlt: {
-    id: 'course-authoring.library-authoring.container.sidebar.edit-name.alt',
-    defaultMessage: 'Edit container title',
-    description: 'Alt text for edit container title icon button',
-  },
 });
 
 export default messages;
