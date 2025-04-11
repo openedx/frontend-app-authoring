@@ -61,7 +61,7 @@ export const LibraryBlock = ({
       loading="lazy"
       referrerPolicy="origin"
       style={{
-        width: '100%', height: iframeHeight, pointerEvents: 'auto', minHeight: '30vh',
+        width: '100%', height: iframeHeight, pointerEvents: 'auto', minHeight: '200px',
       }}
       allow={IFRAME_FEATURE_POLICY}
       allowFullScreen
