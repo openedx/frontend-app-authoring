@@ -193,7 +193,6 @@ describe('library api hooks', () => {
       {
         id: 'lb:org1:Demo_course:html:text',
         block_type: 'html',
-        def_key: 'def_key',
         display_name: 'text block',
         last_published: null,
         published_by: null,
@@ -208,7 +207,6 @@ describe('library api hooks', () => {
       {
         id: 'lb:org1:Demo_course:video:video1',
         block_type: 'video',
-        def_key: 'def_key',
         display_name: 'video block',
         last_published: null,
         published_by: null,
@@ -229,7 +227,6 @@ describe('library api hooks', () => {
       {
         id: 'lb:org1:Demo_course:html:text',
         blockType: 'html',
-        defKey: 'def_key',
         displayName: 'text block',
         lastPublished: null,
         publishedBy: null,
@@ -244,7 +241,6 @@ describe('library api hooks', () => {
       {
         id: 'lb:org1:Demo_course:video:video1',
         blockType: 'video',
-        defKey: 'def_key',
         displayName: 'video block',
         lastPublished: null,
         publishedBy: null,

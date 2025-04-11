@@ -186,7 +186,6 @@ export async function mockCreateLibraryBlock(
 }
 mockCreateLibraryBlock.newHtmlData = {
   id: 'lb:Axim:TEST:html:123',
-  defKey: '123',
   blockType: 'html',
   displayName: 'New Text Component',
   hasUnpublishedChanges: true,
@@ -201,7 +200,6 @@ mockCreateLibraryBlock.newHtmlData = {
 } satisfies api.LibraryBlockMetadata;
 mockCreateLibraryBlock.newProblemData = {
   id: 'lb:Axim:TEST:problem:prob1',
-  defKey: 'prob1',
   blockType: 'problem',
   displayName: 'New Problem',
   hasUnpublishedChanges: true,
@@ -216,7 +214,6 @@ mockCreateLibraryBlock.newProblemData = {
 } satisfies api.LibraryBlockMetadata;
 mockCreateLibraryBlock.newVideoData = {
   id: 'lb:Axim:TEST:video:vid1',
-  defKey: 'vid1',
   blockType: 'video',
   displayName: 'New Video',
   hasUnpublishedChanges: true,
@@ -349,7 +346,6 @@ mockLibraryBlockMetadata.usageKeyError404 = 'lb:Axim:error404:html:123';
 mockLibraryBlockMetadata.usageKeyNeverPublished = 'lb:Axim:TEST1:html:571fe018-f3ce-45c9-8f53-5dafcb422fd1';
 mockLibraryBlockMetadata.dataNeverPublished = {
   id: 'lb:Axim:TEST1:html:571fe018-f3ce-45c9-8f53-5dafcb422fd1',
-  defKey: null,
   blockType: 'html',
   displayName: 'Introduction to Testing 1',
   lastPublished: null,
@@ -365,7 +361,6 @@ mockLibraryBlockMetadata.dataNeverPublished = {
 mockLibraryBlockMetadata.usageKeyPublished = 'lb:Axim:TEST2:html:571fe018-f3ce-45c9-8f53-5dafcb422fd2';
 mockLibraryBlockMetadata.dataPublished = {
   id: 'lb:Axim:TEST2:html:571fe018-f3ce-45c9-8f53-5dafcb422fd2',
-  defKey: null,
   blockType: 'html',
   displayName: 'Introduction to Testing 2',
   lastPublished: '2024-06-22T00:00:00',
@@ -394,7 +389,6 @@ mockLibraryBlockMetadata.usageKeyForTags = mockContentTaxonomyTagsData.largeTags
 mockLibraryBlockMetadata.usageKeyWithCollections = 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd';
 mockLibraryBlockMetadata.dataWithCollections = {
   id: 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd',
-  defKey: null,
   blockType: 'html',
   displayName: 'Introduction to Testing 2',
   lastPublished: '2024-06-21T00:00:00',
@@ -411,7 +405,6 @@ mockLibraryBlockMetadata.usageKeyPublishedWithChanges = 'lb:Axim:TEST:html:571fe
 mockLibraryBlockMetadata.usageKeyPublishedWithChangesV2 = 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fv2';
 mockLibraryBlockMetadata.dataPublishedWithChanges = {
   id: 'lb:Axim:TEST2:html:571fe018-f3ce-45c9-8f53-5dafcb422fvv',
-  defKey: null,
   blockType: 'html',
   displayName: 'Introduction to Testing 2',
   lastPublished: '2024-06-22T00:00:00',
@@ -489,7 +482,7 @@ mockGetContainerMetadata.containerIdError = 'lct:org:lib:unit:container_error';
 mockGetContainerMetadata.containerIdLoading = 'lct:org:lib:unit:container_loading';
 mockGetContainerMetadata.containerIdForTags = mockContentTaxonomyTagsData.largeTagsId;
 mockGetContainerMetadata.containerData = {
-  containerKey: 'lct:org:lib:unit:test-unit-9a2072',
+  id: 'lct:org:lib:unit:test-unit-9a2072',
   containerType: 'unit',
   displayName: 'Test Unit',
   created: '2024-09-19T10:00:00Z',
@@ -544,7 +537,6 @@ mockGetContainerChildren.sixChildren = 'lct:org1:Demo_Course:unit:unit-6';
 mockGetContainerChildren.childTemplate = {
   id: 'lb:org1:Demo_course:html:text',
   blockType: 'html',
-  defKey: 'def_key',
   displayName: 'text block',
   lastPublished: null,
   publishedBy: null,

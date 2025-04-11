@@ -241,7 +241,6 @@ export interface CollectionMetadata {
 export interface LibraryBlockMetadata {
   id: string;
   blockType: string;
-  defKey: string | null;
   displayName: string;
   lastPublished: string | null;
   publishedBy: string | null;
@@ -266,7 +265,6 @@ export interface UpdateLibraryDataRequest {
 
 export interface LibraryPasteClipboardRequest {
   libraryId: string;
-  blockId: string;
 }
 
 export interface UpdateXBlockFieldsRequest {
@@ -422,15 +420,9 @@ export async function getBlockTypes(libraryId: string): Promise<BlockTypeMetadat
  */
 export async function libraryPasteClipboard({
   libraryId,
-  blockId,
 }: LibraryPasteClipboardRequest): Promise<LibraryBlockMetadata> {
   const client = getAuthenticatedHttpClient();
-  const { data } = await client.post(
-    getLibraryPasteClipboardUrl(libraryId),
-    {
-      block_id: blockId,
-    },
-  );
+  const { data } = await client.post(getLibraryPasteClipboardUrl(libraryId), {});
   return data;
 }
 
@@ -589,7 +581,7 @@ export async function createLibraryContainer(libraryId: string, containerData: C
 }
 
 export interface Container {
-  containerKey: string;
+  id: string;
   containerType: 'unit';
   displayName: string;
   lastPublished: string | null;
