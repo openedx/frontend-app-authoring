@@ -45,6 +45,7 @@ export const LibraryUnitBlocks = ({ preview = false }: LibraryUnitBlocksProps) =
   const [isManageTagsDrawerOpen, openManageTagsDrawer, closeManageTagsDrawer] = useToggle(false);
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
 
+  const [hidePreviewFor, setHidePreviewFor] = useState<string | null>(null);
   const { navigateTo } = useLibraryRoutes();
 
   const {
@@ -103,35 +104,53 @@ export const LibraryUnitBlocks = ({ preview = false }: LibraryUnitBlocksProps) =
     return '200px';
   };
 
+  const renderOverlay = (activeId: string | null) => {
+    setHidePreviewFor(activeId);
+    if (!activeId) {
+      return null;
+    }
+    const block = orderedBlocks?.find((val) => val.id === activeId);
+    if (!block) {
+      return null;
+    }
+    return (
+      <ActionRow className='bg-light-200 border border-light-500 p-2 rounded'>
+        <BlockHeader block={block} />
+      </ActionRow>
+    );
+  }
+
+  const BlockHeader = ({block}: {block: LibraryBlockMetadata}) => (
+    <>
+      <Stack direction="horizontal" gap={2} className="font-weight-bold">
+        <Icon src={getItemIcon(block.blockType)} />
+        {block.displayName}
+      </Stack>
+      <ActionRow.Spacer />
+      <Stack direction="horizontal" gap={3}>
+        {block.hasUnpublishedChanges && (
+          <Badge
+            className="px-2 pt-1"
+            variant="warning"
+          >
+            <Stack direction="horizontal" gap={1}>
+              <Icon className="mb-1" size="xs" src={Description} />
+              <FormattedMessage {...messages.draftChipText} />
+            </Stack>
+          </Badge>
+        )}
+        <TagCount size="sm" count={block.tagsCount} onClick={openManageTagsDrawer} />
+        <ComponentMenu usageKey={block.id} />
+      </Stack>
+    </>
+  );
+
   const renderedBlocks = orderedBlocks?.map((block) => (
     <IframeProvider key={block.id}>
       <SortableItem
         id={block.id}
         componentStyle={null}
-        actions={(
-          <>
-            <Stack direction="horizontal" gap={2} className="font-weight-bold">
-              <Icon src={getItemIcon(block.blockType)} />
-              {block.displayName}
-            </Stack>
-            <ActionRow.Spacer />
-            <Stack direction="horizontal" gap={3}>
-              {block.hasUnpublishedChanges && (
-                <Badge
-                  className="px-2 pt-1"
-                  variant="warning"
-                >
-                  <Stack direction="horizontal" gap={1}>
-                    <Icon className="mb-1" size="xs" src={Description} />
-                    <FormattedMessage {...messages.draftChipText} />
-                  </Stack>
-                </Badge>
-              )}
-              <TagCount size="sm" count={block.tagsCount} onClick={openManageTagsDrawer} />
-              <ComponentMenu usageKey={block.id} />
-            </Stack>
-          </>
-        )}
+        actions={<BlockHeader block={block} />}
         actionStyle={{
           borderRadius: '8px 8px 0px 0px',
           padding: '0.5rem 1rem',
@@ -141,7 +160,7 @@ export const LibraryUnitBlocks = ({ preview = false }: LibraryUnitBlocksProps) =
         isClickable
         onClick={() => handleComponentSelection(block)}
       >
-        <div className={classNames('p-3', {
+        {hidePreviewFor !== block.id && <div className={classNames('p-3', {
           'container-mw-md': block.blockType === blockTypes.video,
         })}
         >
@@ -150,14 +169,19 @@ export const LibraryUnitBlocks = ({ preview = false }: LibraryUnitBlocksProps) =
             version={showOnlyPublished ? 'published' : undefined}
             minHeight={calculateMinHeight(block)}
           />
-        </div>
+        </div>}
       </SortableItem>
     </IframeProvider>
   ));
 
   return (
     <div className="library-unit-page">
-      <DraggableList itemList={orderedBlocks} setState={setOrderedBlocks} updateOrder={handleReorder}>
+      <DraggableList
+        itemList={orderedBlocks}
+        setState={setOrderedBlocks}
+        updateOrder={handleReorder}
+        renderOverlay={renderOverlay}
+      >
         {renderedBlocks}
       </DraggableList>
       { !preview && (
