@@ -37,7 +37,7 @@ const SwitchEditorCard = ({
         )}
         size="md"
       >
-        {editorType === 'advanced' ? <FormattedMessage {...messages.ConfirmSwitcToAdvancedMessage} /> : <FormattedMessage {...messages.ConfirmSwitchToMardownMessage} />}
+        {editorType === 'advanced' ? <FormattedMessage {...messages.ConfirmSwitchToAdvancedMessage} /> : <FormattedMessage {...messages.ConfirmSwitchToMardownMessage} />}
       </BaseModal>
       <Button
         className="my-3 ml-2 py-0"

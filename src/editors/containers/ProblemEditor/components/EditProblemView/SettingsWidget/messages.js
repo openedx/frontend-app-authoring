@@ -162,8 +162,8 @@ const messages = defineMessages({
     defaultMessage: 'Switch to {editorType} editor',
     description: 'button to switch to the advanced mode of the editor.',
   },
-  ConfirmSwitcToAdvancedMessage: {
-    id: 'authoring.problemeditor.settings.switchtoadvancededitor.ConfirmSwitcToAdvancedMessage',
+  ConfirmSwitchToAdvancedMessage: {
+    id: 'authoring.problemeditor.settings.switchtoadvancededitor.ConfirmSwitchToAdvancedMessage',
     defaultMessage: 'If you use the advanced editor, this problem will be converted to OLX and you will not be able to return to the simple editor.',
     description: 'message to confirm that a user wants to use the advanced editor',
   },
