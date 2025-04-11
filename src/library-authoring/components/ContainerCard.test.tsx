@@ -166,9 +166,7 @@ describe('<ContainerCard />', () => {
     };
     render(<ContainerCard hit={containerWith5Children} />);
 
-    await waitFor(() => {
-      expect(screen.getAllByTitle('text block').length).toBe(5);
-    });
+    expect((await screen.findAllByTitle(/text block */)).length).toBe(5);
     expect(screen.queryByText('+0')).not.toBeInTheDocument();
   });
 
@@ -179,9 +177,7 @@ describe('<ContainerCard />', () => {
     };
     render(<ContainerCard hit={containerWith6Children} />);
 
-    await waitFor(() => {
-      expect(screen.getAllByTitle('text block').length).toBe(4);
-    });
+    expect((await screen.findAllByTitle(/text block */)).length).toBe(4);
     expect(screen.queryByText('+2')).toBeInTheDocument();
   });
 });

@@ -9,6 +9,7 @@ import { ToastContext } from '../generic/toast-context';
 
 import messages from './messages';
 import CancelConfirmModal from './containers/EditorContainer/components/CancelConfirmModal';
+import { IframeProvider } from '../generic/hooks/context/iFrameContext';
 
 interface AdvancedEditorProps {
   usageKey: string,
@@ -49,10 +50,13 @@ const AdvancedEditor = ({ usageKey, onClose }: AdvancedEditorProps) => {
   return (
     <>
       <EditorModalWrapper onClose={openCancelConfirmModal}>
-        <LibraryBlock
-          usageKey={usageKey}
-          view="studio_view"
-        />
+        <IframeProvider>
+          <LibraryBlock
+            usageKey={usageKey}
+            view="studio_view"
+            scrolling="yes"
+          />
+        </IframeProvider>
       </EditorModalWrapper>
       <CancelConfirmModal
         isOpen={isCancelConfirmOpen}

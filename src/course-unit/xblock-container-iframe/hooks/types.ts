@@ -18,16 +18,3 @@ export type UseMessageHandlersTypes = {
 };
 
 export type MessageHandlersTypes = Record<string, (payload: any) => void>;
-
-export interface UseIFrameBehaviorTypes {
-  id: string;
-  iframeUrl: string;
-  onLoaded?: boolean;
-}
-
-export interface UseIFrameBehaviorReturnTypes {
-  iframeHeight: number;
-  handleIFrameLoad: () => void;
-  showError: boolean;
-  hasLoaded: boolean;
-}

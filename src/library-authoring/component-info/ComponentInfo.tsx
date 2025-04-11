@@ -108,6 +108,8 @@ const ComponentInfo = () => {
     setSidebarTab,
     sidebarComponentInfo,
     sidebarAction,
+    defaultTab,
+    hiddenTabs,
   } = useSidebarContext();
   const [
     isPublishConfirmationOpen,
@@ -120,7 +122,7 @@ const ComponentInfo = () => {
   const tab: ComponentInfoTab = (
     isComponentInfoTab(sidebarTab)
       ? sidebarTab
-      : COMPONENT_INFO_TABS.Preview
+      : defaultTab.component
   );
 
   useEffect(() => {
@@ -154,6 +156,19 @@ const ComponentInfo = () => {
       });
   }, [publishComponent, showToast, intl]);
 
+  // TODO: refactor sidebar Tabs to handle rendering and disabledTabs in one place.
+  const renderTab = React.useCallback((infoTab: ComponentInfoTab, component: React.ReactNode, title: string) => {
+    if (hiddenTabs.includes(infoTab)) {
+      // For some reason, returning anything other than empty list breaks the tab style
+      return [];
+    }
+    return (
+      <Tab eventKey={infoTab} title={title}>
+        {component}
+      </Tab>
+    );
+  }, [hiddenTabs, defaultTab.component]);
+
   return (
     <>
       <Stack>
@@ -181,19 +196,13 @@ const ComponentInfo = () => {
         <Tabs
           variant="tabs"
           className="my-3 d-flex justify-content-around"
-          defaultActiveKey={COMPONENT_INFO_TABS.Preview}
+          defaultActiveKey={defaultTab.component}
           activeKey={tab}
           onSelect={setSidebarTab}
         >
-          <Tab eventKey={COMPONENT_INFO_TABS.Preview} title={intl.formatMessage(messages.previewTabTitle)}>
-            <ComponentPreview />
-          </Tab>
-          <Tab eventKey={COMPONENT_INFO_TABS.Manage} title={intl.formatMessage(messages.manageTabTitle)}>
-            <ComponentManagement />
-          </Tab>
-          <Tab eventKey={COMPONENT_INFO_TABS.Details} title={intl.formatMessage(messages.detailsTabTitle)}>
-            <ComponentDetails />
-          </Tab>
+          {renderTab(COMPONENT_INFO_TABS.Preview, <ComponentPreview />, intl.formatMessage(messages.previewTabTitle))}
+          {renderTab(COMPONENT_INFO_TABS.Manage, <ComponentManagement />, intl.formatMessage(messages.manageTabTitle))}
+          {renderTab(COMPONENT_INFO_TABS.Details, <ComponentDetails />, intl.formatMessage(messages.detailsTabTitle))}
         </Tabs>
       </Stack>
       <PublishConfirmationModal

@@ -18,7 +18,7 @@ const ContainerInfoHeader = () => {
   const intl = useIntl();
   const [inputIsActive, setIsActive] = useState(false);
 
-  const { readOnly } = useLibraryContext();
+  const { libraryId, readOnly } = useLibraryContext();
   const { sidebarComponentInfo } = useSidebarContext();
 
   const containerId = sidebarComponentInfo?.id;
@@ -27,7 +27,7 @@ const ContainerInfoHeader = () => {
     throw new Error('containerId is required');
   }
 
-  const { data: container } = useContainer(containerId);
+  const { data: container } = useContainer(libraryId, containerId);
 
   const updateMutation = useUpdateContainer(containerId);
   const { showToast } = useContext(ToastContext);
