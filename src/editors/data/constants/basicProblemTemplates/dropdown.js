@@ -1,5 +1,5 @@
 /* eslint-disable */
-const dropdown = `<problem>
+const olx = `<problem>
   <optionresponse>
     <optioninput>
       <option correct="True"></option>
@@ -9,4 +9,10 @@ const dropdown = `<problem>
   </optionresponse>
 </problem>`
 
-export default dropdown;
+const markdown = `[[
+an incorrect answer
+(the correct answer)
+an incorrect answer
+]]`
+
+export default { olx, markdown };

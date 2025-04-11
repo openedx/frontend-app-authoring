@@ -110,7 +110,7 @@ export const fetchUnit = ({ ...rest }) => (dispatch, getState) => {
 
 /**
  * Tracked saveBlock api method.  Tracked to the `saveBlock` request key.
- * @param {string} content
+ * @param {Object} content
  * @param {[func]} onSuccess - onSuccess method ((response) => { ... })
  * @param {[func]} onFailure - onFailure method ((error) => { ... })
  */

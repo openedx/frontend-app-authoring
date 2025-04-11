@@ -2,6 +2,8 @@ import { ProblemTypeKeys, ShowAnswerTypesKeys } from '../../../../data/constants
 import * as hooks from './hooks';
 import { MockUseState } from '../../../../testUtils';
 
+const mockRawMarkdown = 'Raw Markdown';
+const mockMarkdownToXML = '<problem>Raw Markdown</problem>';
 const mockRawOLX = '<problem>rawOLX</problem>';
 const mockBuiltOLX = 'builtOLX';
 const mockGetSettings = {
@@ -49,12 +51,18 @@ const problemState = {
 
 const toStringMock = () => mockRawOLX;
 const refMock = { current: { state: { doc: { toString: toStringMock } } } };
+const markdownRefMock = { current: { state: { doc: { toString: () => mockRawMarkdown } } } };
 
 jest.mock('../../data/ReactStateOLXParser', () => (
   jest.fn().mockImplementation(() => ({
     buildOLX: () => mockBuiltOLX,
   }))
 ));
+
+jest.mock('../../../../utils', () => ({
+  ...jest.requireActual('../../../../utils'),
+  convertMarkdownToXml: jest.fn().mockImplementation(() => mockMarkdownToXML),
+}));
 
 const hookState = new MockUseState(hooks);
 
@@ -157,6 +165,17 @@ describe('EditProblemView hooks parseState', () => {
         assets: {},
       })();
       expect(res.olx).toBe(mockRawOLX);
+    });
+    it('markdown problem', () => {
+      const res = hooks.parseState({
+        problem: problemState,
+        isAdvanced: false,
+        isMarkdownEditorEnabled: true,
+        ref: markdownRefMock,
+        assets: {},
+      })();
+      expect(res.settings.markdown).toBe(mockRawMarkdown);
+      expect(res.olx).toBe(mockMarkdownToXML);
     });
   });
   describe('checkNoAnswers', () => {

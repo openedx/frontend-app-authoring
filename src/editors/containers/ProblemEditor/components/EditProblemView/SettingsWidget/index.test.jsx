@@ -17,7 +17,7 @@ jest.mock('./settingsComponents/HintsCard', () => 'HintsCard');
 jest.mock('./settingsComponents/ResetCard', () => 'ResetCard');
 jest.mock('./settingsComponents/ScoringCard', () => 'ScoringCard');
 jest.mock('./settingsComponents/ShowAnswerCard', () => 'ShowAnswerCard');
-jest.mock('./settingsComponents/SwitchToAdvancedEditorCard', () => 'SwitchToAdvancedEditorCard');
+jest.mock('./settingsComponents/SwitchEditorCard', () => 'SwitchEditorCard');
 jest.mock('./settingsComponents/TimerCard', () => 'TimerCard');
 jest.mock('./settingsComponents/TypeCard', () => 'TypeCard');
 
