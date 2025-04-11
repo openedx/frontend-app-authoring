@@ -40,7 +40,7 @@ const EditorContainer: React.FC<Props> = ({
   const [searchParams] = useSearchParams();
   const upstreamLibRef = searchParams.get('upstreamLibRef');
   const waffleFlags = useSelector(getWaffleFlags);
-  const isMarkdownEditorEnabledForCourse = waffleFlags?.reactMarkdownEditor;
+  const isMarkdownEditorEnabledForCourse = waffleFlags?.useReactMarkdownEditor;
 
   if (blockType === undefined || blockId === undefined) {
     // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
