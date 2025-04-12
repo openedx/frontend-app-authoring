@@ -94,17 +94,6 @@ export const libraryAuthoringQueryKeys = {
     libraryId,
     collectionId,
   ],
-  container: (libraryId?: string, containerId?: string) => [
-    ...libraryAuthoringQueryKeys.all,
-    libraryId,
-    containerId,
-  ],
-  containerChildren: (libraryId?: string, containerId?: string) => [
-    ...libraryAuthoringQueryKeys.all,
-    libraryId,
-    containerId,
-    'children',
-  ],
   blockTypes: (libraryId?: string) => [
     ...libraryAuthoringQueryKeys.all,
     'blockTypes',
@@ -133,8 +122,8 @@ export const containerQueryKeys = {
   /**
    * Base key for data specific to a container
    */
-  container: (usageKey?: string) => [...containerQueryKeys.all, usageKey],
-  children: (usageKey?: string) => [...containerQueryKeys.all, usageKey, 'children'],
+  container: (containerId?: string) => [...containerQueryKeys.all, containerId],
+  children: (containerId?: string) => [...containerQueryKeys.all, containerId, 'children'],
 };
 
 /**
@@ -607,10 +596,10 @@ export const useCreateLibraryContainer = (libraryId: string) => {
 /**
  * Get the metadata for a container in a library
  */
-export const useContainer = (libraryId?: string, containerId?: string) => (
+export const useContainer = (containerId?: string) => (
   useQuery({
-    enabled: !!libraryId && !!containerId,
-    queryKey: libraryAuthoringQueryKeys.container(libraryId, containerId),
+    enabled: !!containerId,
+    queryKey: containerQueryKeys.container(containerId),
     queryFn: () => getContainerMetadata(containerId!),
   })
 );
@@ -627,7 +616,7 @@ export const useUpdateContainer = (containerId: string) => {
       // NOTE: We invalidate the library query here because we need to update the library's
       // container list.
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
-      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.container(libraryId, containerId) });
+      queryClient.invalidateQueries({ queryKey: containerQueryKeys.container(containerId) });
     },
   });
 };
@@ -664,10 +653,10 @@ export const useRestoreContainer = (containerId: string) => {
 /**
  * Get the metadata and children for a container in a library
  */
-export const useContainerChildren = (libraryId?: string, containerId?: string) => (
+export const useContainerChildren = (containerId?: string) => (
   useQuery({
-    enabled: !!libraryId && !!containerId,
-    queryKey: libraryAuthoringQueryKeys.containerChildren(libraryId, containerId),
+    enabled: !!containerId,
+    queryKey: containerQueryKeys.children(containerId),
     queryFn: () => getLibraryContainerChildren(containerId!),
   })
 );

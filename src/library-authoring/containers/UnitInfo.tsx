@@ -70,7 +70,7 @@ const UnitMenu = ({ containerId, displayName }: ContainerMenuProps) => {
 const UnitInfo = () => {
   const intl = useIntl();
 
-  const { libraryId, setUnitId } = useLibraryContext();
+  const { setUnitId } = useLibraryContext();
   const { componentPickerMode } = useComponentPickerContext();
   const {
     defaultTab,
@@ -88,7 +88,7 @@ const UnitInfo = () => {
   ) ? sidebarTab : defaultTab.unit;
 
   const unitId = sidebarComponentInfo?.id;
-  const { data: container } = useContainer(libraryId, unitId);
+  const { data: container } = useContainer(unitId);
 
   const handleOpenUnit = useCallback(() => {
     if (componentPickerMode) {
