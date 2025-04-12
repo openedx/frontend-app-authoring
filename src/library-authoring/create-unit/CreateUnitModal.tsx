@@ -6,6 +6,7 @@ import {
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Formik } from 'formik';
+import { useNavigate } from 'react-router';
 import * as Yup from 'yup';
 import FormikControl from '../../generic/FormikControl';
 import { useLibraryContext } from '../common/context/LibraryContext';
@@ -16,6 +17,7 @@ import LoadingButton from '../../generic/loading-button';
 
 const CreateUnitModal = () => {
   const intl = useIntl();
+  const navigate = useNavigate();
   const {
     collectionId,
     libraryId,
@@ -35,8 +37,8 @@ const CreateUnitModal = () => {
       if (collectionId) {
         await updateItemsMutation.mutateAsync([container.containerKey]);
       }
-      // TODO: Navigate to the new unit
-      // navigate(`/library/${libraryId}/units/${container.containerKey}`);
+      // Navigate to the new unit
+      navigate(`/library/${libraryId}/unit/${container.containerKey}`);
       showToast(intl.formatMessage(messages.createUnitSuccess));
     } catch (error) {
       showToast(intl.formatMessage(messages.createUnitError));
