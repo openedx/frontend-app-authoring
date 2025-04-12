@@ -8,7 +8,7 @@ import {
 
 export interface SelectedComponent {
   usageKey: string;
-  blockType?: string;
+  blockType: string;
 }
 
 export type ComponentSelectedEvent = (selectedComponent: SelectedComponent) => void;
