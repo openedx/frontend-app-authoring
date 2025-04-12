@@ -32,7 +32,6 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
   const intl = useIntl();
   const {
     contextKey,
-    blockId,
     usageKey: containerId,
     displayName,
   } = hit;
@@ -74,14 +73,13 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
           src={MoreVert}
           iconAs={Icon}
           variant="primary"
-          alt={intl.formatMessage(messages.collectionCardMenuAlt)}
+          alt={intl.formatMessage(messages.containerCardMenuAlt)}
           data-testid="container-card-menu-toggle"
         />
         <Dropdown.Menu>
           <Dropdown.Item
             as={Link}
-            to={`/library/${contextKey}/container/${blockId}`}
-            disabled
+            to={`/library/${contextKey}/unit/${containerId}`}
           >
             <FormattedMessage {...messages.menuOpen} />
           </Dropdown.Item>

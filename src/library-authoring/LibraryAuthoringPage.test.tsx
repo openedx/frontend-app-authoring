@@ -394,7 +394,7 @@ describe('<LibraryAuthoringPage />', () => {
     await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
   });
 
-  it('should open component sidebar, showing manage tab on clicking add to collection menu item', async () => {
+  it('should open component sidebar, showing manage tab on clicking add to collection menu item (component)', async () => {
     const mockResult0 = { ...mockResult }.results[0].hits[0];
     const displayName = 'Introduction to Testing';
     expect(mockResult0.display_name).toStrictEqual(displayName);
@@ -413,6 +413,29 @@ describe('<LibraryAuthoringPage />', () => {
 
     await waitFor(() => expect(queryByText(displayName)).toBeInTheDocument());
     expect(getByRole('tab', { selected: true })).toHaveTextContent('Manage');
+    const closeButton = getByRole('button', { name: /close/i });
+    fireEvent.click(closeButton);
+
+    await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
+  });
+
+  it('should open component sidebar, showing manage tab on clicking add to collection menu item (unit)', async () => {
+    const displayName = 'Test Unit';
+    await renderLibraryPage();
+
+    waitFor(() => expect(screen.getAllByTestId('container-card-menu-toggle').length).toBeGreaterThan(0));
+
+    // Open menu
+    fireEvent.click((await screen.findAllByTestId('container-card-menu-toggle'))[0]);
+    // Click add to collection
+    fireEvent.click(screen.getByRole('button', { name: 'Add to collection' }));
+
+    const sidebar = screen.getByTestId('library-sidebar');
+
+    const { getByRole, queryByText } = within(sidebar);
+
+    await waitFor(() => expect(queryByText(displayName)).toBeInTheDocument());
+    expect(getByRole('tab', { selected: true })).toHaveTextContent('Organize');
     const closeButton = getByRole('button', { name: /close/i });
     fireEvent.click(closeButton);
 
@@ -734,7 +757,7 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.click(cancelButton);
     expect(unitModalHeading).not.toBeInTheDocument();
 
-    // Open new unit modal again and create a collection
+    // Open new unit modal again and create a unit
     fireEvent.click(newUnitButton);
     const createButton = screen.getByRole('button', { name: /create/i });
     const nameField = screen.getByRole('textbox', { name: /name your unit/i });
@@ -802,7 +825,7 @@ describe('<LibraryAuthoringPage />', () => {
     fireEvent.click(newButton);
     expect(screen.getByText(/add content/i)).toBeInTheDocument();
 
-    // Open New collection Modal
+    // Open New Unit Modal
     const sidebar = screen.getByTestId('library-sidebar');
     const newUnitButton = within(sidebar).getAllByRole('button', { name: /unit/i })[0];
     fireEvent.click(newUnitButton);
