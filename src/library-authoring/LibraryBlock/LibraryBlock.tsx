@@ -1,8 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 
 import messages from './messages';
+import { IFRAME_FEATURE_POLICY } from '../../constants';
+import { useIframeBehavior } from '../../generic/hooks/useIframeBehavior';
+import { useIframe } from '../../generic/hooks/context/hooks';
+import { useIframeContent } from '../../generic/hooks/useIframeContent';
 
 export type VersionSpec = 'published' | 'draft' | number;
 
@@ -11,6 +14,7 @@ interface LibraryBlockProps {
   usageKey: string;
   version?: VersionSpec;
   view?: string;
+  scrolling?: string;
 }
 /**
  * React component that displays an XBlock in a sandboxed IFrame.
@@ -26,84 +30,42 @@ export const LibraryBlock = ({
   usageKey,
   version,
   view,
+  scrolling = 'no',
 }: LibraryBlockProps) => {
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const { iframeRef, setIframeRef } = useIframe();
   const xblockView = view ?? 'student_view';
-  const defaultiFrameHeight = xblockView === 'studio_view' ? 80 : 50;
 
-  const [iFrameHeight, setIFrameHeight] = useState(defaultiFrameHeight);
   const studioBaseUrl = getConfig().STUDIO_BASE_URL;
 
   const intl = useIntl();
-
-  /**
-   * Handle any messages we receive from the XBlock Runtime code in the IFrame.
-   * See wrap.ts to see the code that sends these messages.
-   */
-  /* istanbul ignore next */
-  const receivedWindowMessage = async (event) => {
-    if (!iframeRef.current || event.source !== iframeRef.current.contentWindow) {
-      return; // This is some other random message.
-    }
-
-    const { method, replyKey, ...args } = event.data;
-
-    if (method === 'update_frame_height') {
-      setIFrameHeight(args.height);
-    } else if (method?.indexOf('xblock:') === 0) {
-      // This is a notification from the XBlock's frontend via 'runtime.notify(event, args)'
-      if (onBlockNotification) {
-        onBlockNotification({
-          eventType: method.substr(7), // Remove the 'xblock:' prefix that we added in wrap.ts
-          ...args,
-        });
-      }
-    }
-  };
-
-  /**
-   * Prepare to receive messages from the IFrame.
-   */
-  useEffect(() => {
-    // Messages are the only way that the code in the IFrame can communicate
-    // with the surrounding UI.
-    window.addEventListener('message', receivedWindowMessage);
-    if (window.self !== window.top) {
-      // This component is loaded inside an iframe.
-      setIFrameHeight(86);
-    }
-
-    return () => {
-      window.removeEventListener('message', receivedWindowMessage);
-    };
-  }, []);
-
   const queryStr = version ? `?version=${version}` : '';
+  const iframeUrl = `${studioBaseUrl}/xblocks/v2/${usageKey}/embed/${xblockView}/${queryStr}`;
+  const { iframeHeight } = useIframeBehavior({
+    id: usageKey,
+    iframeUrl,
+    iframeRef,
+    onBlockNotification,
+  });
+
+  useIframeContent(iframeRef, setIframeRef);
 
   return (
-    <div style={{
-      height: `${iFrameHeight}vh`,
-      boxSizing: 'content-box',
-      position: 'relative',
-      overflow: 'hidden',
-      minHeight: '200px',
-    }}
-    >
-      <iframe
-        ref={iframeRef}
-        title={intl.formatMessage(messages.iframeTitle)}
-        src={`${studioBaseUrl}/xblocks/v2/${usageKey}/embed/${xblockView}/${queryStr}`}
-        data-testid="block-preview"
-        style={{
-          width: '100%',
-          height: '100%',
-          minHeight: '200px',
-          border: '0 none',
-        }}
-        // allowing 'autoplay' is required to allow the video XBlock to control the YouTube iframe it has.
-        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-
-      />
-    </div>
+    <iframe
+      ref={iframeRef}
+      title={intl.formatMessage(messages.iframeTitle)}
+      src={iframeUrl}
+      data-testid="block-preview"
+      name={`xblock-iframe-${usageKey}`}
+      id={`xblock-iframe-${usageKey}`}
+      frameBorder="0"
+      loading="lazy"
+      referrerPolicy="origin"
+      style={{
+        width: '100%', height: iframeHeight, pointerEvents: 'auto', minHeight: '700px',
+      }}
+      allow={IFRAME_FEATURE_POLICY}
+      allowFullScreen
+      scrolling={scrolling}
+    />
   );
 };

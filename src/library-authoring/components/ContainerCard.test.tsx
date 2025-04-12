@@ -1,12 +1,15 @@
 import userEvent from '@testing-library/user-event';
+import type MockAdapter from 'axios-mock-adapter';
 
 import {
   initializeMocks, render as baseRender, screen, waitFor,
+  fireEvent,
 } from '../../testUtils';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import { mockContentLibrary, mockGetContainerChildren } from '../data/api.mocks';
 import { type ContainerHit, PublishStatus } from '../../search-manager';
 import ContainerCard from './ContainerCard';
+import { getLibraryContainerApiUrl, getLibraryContainerRestoreApiUrl } from '../data/api';
 
 const containerHitSample: ContainerHit = {
   id: 'lctorg1democourse-unit-display-name-123',
@@ -33,6 +36,8 @@ const containerHitSample: ContainerHit = {
   tags: {},
   publishStatus: PublishStatus.Published,
 };
+let axiosMock: MockAdapter;
+let mockShowToast;
 
 mockContentLibrary.applyMock();
 mockGetContainerChildren.applyMock();
@@ -50,7 +55,7 @@ const render = (ui: React.ReactElement, showOnlyPublished: boolean = false) => b
 
 describe('<ContainerCard />', () => {
   beforeEach(() => {
-    initializeMocks();
+    ({ axiosMock, mockShowToast } = initializeMocks());
   });
 
   it('should render the card with title', () => {
@@ -85,6 +90,68 @@ describe('<ContainerCard />', () => {
     // );
   });
 
+  it('should delete the container from the menu & restore the container', async () => {
+    axiosMock.onDelete(getLibraryContainerApiUrl(containerHitSample.usageKey)).reply(200);
+
+    render(<ContainerCard hit={containerHitSample} />);
+
+    // Open menu
+    expect(screen.getByTestId('container-card-menu-toggle')).toBeInTheDocument();
+    userEvent.click(screen.getByTestId('container-card-menu-toggle'));
+
+    // Click on Delete Item
+    const deleteMenuItem = screen.getByRole('button', { name: 'Delete' });
+    expect(deleteMenuItem).toBeInTheDocument();
+    fireEvent.click(deleteMenuItem);
+
+    // Confirm delete Modal is open
+    expect(screen.getByText('Delete Unit'));
+    const deleteButton = screen.getByRole('button', { name: /delete/i });
+    fireEvent.click(deleteButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.delete.length).toBe(1);
+    });
+    expect(mockShowToast).toHaveBeenCalled();
+
+    // Get restore / undo func from the toast
+    const restoreFn = mockShowToast.mock.calls[0][1].onClick;
+
+    const restoreUrl = getLibraryContainerRestoreApiUrl(containerHitSample.usageKey);
+    axiosMock.onPost(restoreUrl).reply(200);
+    // restore collection
+    restoreFn();
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toEqual(1);
+    });
+    expect(mockShowToast).toHaveBeenCalledWith('Undo successful');
+  });
+
+  it('should show error on delete the container from the menu', async () => {
+    axiosMock.onDelete(getLibraryContainerApiUrl(containerHitSample.usageKey)).reply(400);
+
+    render(<ContainerCard hit={containerHitSample} />);
+
+    // Open menu
+    expect(screen.getByTestId('container-card-menu-toggle')).toBeInTheDocument();
+    userEvent.click(screen.getByTestId('container-card-menu-toggle'));
+
+    // Click on Delete Item
+    const deleteMenuItem = screen.getByRole('button', { name: 'Delete' });
+    expect(deleteMenuItem).toBeInTheDocument();
+    fireEvent.click(deleteMenuItem);
+
+    // Confirm delete Modal is open
+    expect(screen.getByText('Delete Unit'));
+    const deleteButton = screen.getByRole('button', { name: /delete/i });
+    fireEvent.click(deleteButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.delete.length).toBe(1);
+    });
+    expect(mockShowToast).toHaveBeenCalledWith('Failed to delete unit');
+  });
+
   it('should render no child blocks in card preview', async () => {
     render(<ContainerCard hit={containerHitSample} />);
 
@@ -99,9 +166,7 @@ describe('<ContainerCard />', () => {
     };
     render(<ContainerCard hit={containerWith5Children} />);
 
-    await waitFor(() => {
-      expect(screen.getAllByTitle('text block').length).toBe(5);
-    });
+    expect((await screen.findAllByTitle(/text block */)).length).toBe(5);
     expect(screen.queryByText('+0')).not.toBeInTheDocument();
   });
 
@@ -112,9 +177,7 @@ describe('<ContainerCard />', () => {
     };
     render(<ContainerCard hit={containerWith6Children} />);
 
-    await waitFor(() => {
-      expect(screen.getAllByTitle('text block').length).toBe(4);
-    });
+    expect((await screen.findAllByTitle(/text block */)).length).toBe(4);
     expect(screen.queryByText('+2')).toBeInTheDocument();
   });
 });

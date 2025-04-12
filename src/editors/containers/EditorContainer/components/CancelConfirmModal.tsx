@@ -17,18 +17,27 @@ const CancelConfirmModal = ({
   const intl = useIntl();
   return (
     <BaseModal
-      size="md"
+      size="lg"
+      footerAction={(
+        <Button
+          variant="outline-brand"
+          onClick={() => onCloseEditor?.()}
+        >
+          <FormattedMessage {...messages.discardChangesButtonlabel} />
+        </Button>
+      )}
       confirmAction={(
         <Button
           variant="primary"
-          onClick={() => onCloseEditor?.()}
+          onClick={closeCancelConfirmModal}
         >
-          <FormattedMessage {...messages.okButtonLabel} />
+          <FormattedMessage {...messages.keepEditingButtonLabel} />
         </Button>
       )}
       isOpen={isOpen}
       close={closeCancelConfirmModal}
       title={intl.formatMessage(messages.cancelConfirmTitle)}
+      hideCancelButton
     >
       <FormattedMessage {...messages.cancelConfirmDescription} />
     </BaseModal>

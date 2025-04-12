@@ -50,8 +50,10 @@ import {
   type CreateLibraryContainerDataRequest,
   getContainerMetadata,
   updateContainerMetadata,
+  deleteContainer,
   type UpdateContainerDataRequest,
-  getContainerChildren,
+  restoreContainer,
+  getLibraryContainerChildren,
   updateContainerCollections,
 } from './api';
 import { VersionSpec } from '../LibraryBlock';
@@ -92,15 +94,21 @@ export const libraryAuthoringQueryKeys = {
     libraryId,
     collectionId,
   ],
-  blockTypes: (libraryId?: string) => [
-    ...libraryAuthoringQueryKeys.all,
-    'blockTypes',
-    libraryId,
-  ],
   container: (libraryId?: string, containerId?: string) => [
     ...libraryAuthoringQueryKeys.all,
     libraryId,
     containerId,
+  ],
+  containerChildren: (libraryId?: string, containerId?: string) => [
+    ...libraryAuthoringQueryKeys.all,
+    libraryId,
+    containerId,
+    'children',
+  ],
+  blockTypes: (libraryId?: string) => [
+    ...libraryAuthoringQueryKeys.all,
+    'blockTypes',
+    libraryId,
   ],
 };
 
@@ -599,10 +607,11 @@ export const useCreateLibraryContainer = (libraryId: string) => {
 /**
  * Get the metadata for a container in a library
  */
-export const useContainer = (containerId: string) => (
+export const useContainer = (libraryId?: string, containerId?: string) => (
   useQuery({
-    queryKey: containerQueryKeys.container(containerId),
-    queryFn: containerId ? () => getContainerMetadata(containerId) : undefined,
+    enabled: !!libraryId && !!containerId,
+    queryKey: libraryAuthoringQueryKeys.container(libraryId, containerId),
+    queryFn: () => getContainerMetadata(containerId!),
   })
 );
 
@@ -618,7 +627,36 @@ export const useUpdateContainer = (containerId: string) => {
       // NOTE: We invalidate the library query here because we need to update the library's
       // container list.
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
-      queryClient.invalidateQueries({ queryKey: containerQueryKeys.container(containerId) });
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.container(libraryId, containerId) });
+    },
+  });
+};
+
+/**
+ * Use this mutation to soft delete containers in a library
+ */
+export const useDeleteContainer = (containerId: string) => {
+  const libraryId = getLibraryId(containerId);
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => deleteContainer(containerId),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId) });
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+    },
+  });
+};
+
+/**
+ * Use this mutation to restore a container
+ */
+export const useRestoreContainer = (containerId: string) => {
+  const libraryId = getLibraryId(containerId);
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => restoreContainer(containerId),
+    onSettled: () => {
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
     },
   });
 };
@@ -626,11 +664,11 @@ export const useUpdateContainer = (containerId: string) => {
 /**
  * Get the metadata and children for a container in a library
  */
-export const useContainerChildren = (containerId: string) => (
+export const useContainerChildren = (libraryId?: string, containerId?: string) => (
   useQuery({
-    enabled: !!containerId,
-    queryKey: containerQueryKeys.children(containerId),
-    queryFn: () => getContainerChildren(containerId!),
+    enabled: !!libraryId && !!containerId,
+    queryKey: libraryAuthoringQueryKeys.containerChildren(libraryId, containerId),
+    queryFn: () => getLibraryContainerChildren(containerId!),
   })
 );
 

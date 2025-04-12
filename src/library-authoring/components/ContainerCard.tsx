@@ -5,6 +5,7 @@ import {
   Dropdown,
   Icon,
   IconButton,
+  useToggle,
   Stack,
 } from '@openedx/paragon';
 import { MoreVert } from '@openedx/paragon/icons';
@@ -21,6 +22,7 @@ import { useLibraryRoutes } from '../routes';
 import AddComponentWidget from './AddComponentWidget';
 import BaseCard from './BaseCard';
 import messages from './messages';
+import ContainerDeleter from './ContainerDeleter';
 
 type ContainerMenuProps = {
   hit: ContainerHit,
@@ -28,7 +30,12 @@ type ContainerMenuProps = {
 
 const ContainerMenu = ({ hit } : ContainerMenuProps) => {
   const intl = useIntl();
-  const { contextKey, usageKey: containerId } = hit;
+  const {
+    contextKey,
+    blockId,
+    usageKey: containerId,
+    displayName,
+  } = hit;
   const { libraryId, collectionId } = useLibraryContext();
   const {
     sidebarComponentInfo,
@@ -37,6 +44,7 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
     setSidebarAction,
   } = useSidebarContext();
   const { showToast } = useContext(ToastContext);
+  const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
 
   const removeComponentsMutation = useRemoveItemsFromCollection(libraryId, collectionId);
 
@@ -58,34 +66,45 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
   }, [setSidebarAction, openUnitInfoSidebar, containerId]);
 
   return (
-    <Dropdown id="container-card-dropdown">
-      <Dropdown.Toggle
-        id="container-card-menu-toggle"
-        as={IconButton}
-        src={MoreVert}
-        iconAs={Icon}
-        variant="primary"
-        alt={intl.formatMessage(messages.collectionCardMenuAlt)}
-        data-testid="container-card-menu-toggle"
-      />
-      <Dropdown.Menu>
-        <Dropdown.Item
-          as={Link}
-          to={`/library/${contextKey}/container/${containerId}`}
-          disabled
-        >
-          <FormattedMessage {...messages.menuOpen} />
-        </Dropdown.Item>
-        {collectionId && (
-          <Dropdown.Item onClick={removeFromCollection}>
-            <FormattedMessage {...messages.menuRemoveFromCollection} />
+    <>
+      <Dropdown id="container-card-dropdown">
+        <Dropdown.Toggle
+          id="container-card-menu-toggle"
+          as={IconButton}
+          src={MoreVert}
+          iconAs={Icon}
+          variant="primary"
+          alt={intl.formatMessage(messages.collectionCardMenuAlt)}
+          data-testid="container-card-menu-toggle"
+        />
+        <Dropdown.Menu>
+          <Dropdown.Item
+            as={Link}
+            to={`/library/${contextKey}/container/${blockId}`}
+            disabled
+          >
+            <FormattedMessage {...messages.menuOpen} />
           </Dropdown.Item>
-        )}
-        <Dropdown.Item onClick={showManageCollections}>
-          <FormattedMessage {...messages.menuAddToCollection} />
-        </Dropdown.Item>
-      </Dropdown.Menu>
-    </Dropdown>
+          <Dropdown.Item onClick={confirmDelete}>
+            <FormattedMessage {...messages.menuDeleteContainer} />
+          </Dropdown.Item>
+          {collectionId && (
+            <Dropdown.Item onClick={removeFromCollection}>
+              <FormattedMessage {...messages.menuRemoveFromCollection} />
+            </Dropdown.Item>
+          )}
+          <Dropdown.Item onClick={showManageCollections}>
+            <FormattedMessage {...messages.menuAddToCollection} />
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+      <ContainerDeleter
+        isOpen={isConfirmingDelete}
+        close={cancelDelete}
+        containerId={containerId}
+        displayName={displayName}
+      />
+    </>
   );
 };
 
@@ -95,7 +114,8 @@ type ContainerCardPreviewProps = {
 };
 
 const ContainerCardPreview = ({ containerId, showMaxChildren = 5 }: ContainerCardPreviewProps) => {
-  const { data, isLoading, isError } = useContainerChildren(containerId);
+  const { libraryId } = useLibraryContext();
+  const { data, isLoading, isError } = useContainerChildren(libraryId, containerId);
   if (isLoading || isError) {
     return null;
   }
@@ -148,7 +168,7 @@ type ContainerCardProps = {
 
 const ContainerCard = ({ hit } : ContainerCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
-  const { showOnlyPublished } = useLibraryContext();
+  const { setUnitId, showOnlyPublished } = useLibraryContext();
   const { openUnitInfoSidebar } = useSidebarContext();
 
   const {
@@ -174,7 +194,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
   const openContainer = useCallback(() => {
     if (itemType === 'unit') {
       openUnitInfoSidebar(unitId);
-
+      setUnitId(unitId);
       navigateTo({ unitId });
     }
   }, [unitId, itemType, openUnitInfoSidebar, navigateTo]);

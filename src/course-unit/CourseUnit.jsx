@@ -5,12 +5,12 @@ import { useParams } from 'react-router-dom';
 import {
   Container, Layout, Stack, Button, TransitionReplace,
 } from '@openedx/paragon';
-import { getConfig } from '@edx/frontend-platform';
-import { useIntl, injectIntl } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Warning as WarningIcon,
   CheckCircle as CheckCircleIcon,
 } from '@openedx/paragon/icons';
+import { CourseAuthoringUnitSidebarSlot } from '../plugin-slots/CourseAuthoringUnitSidebarSlot';
 
 import { getProcessingNotification } from '../generic/processing-notification/data/selectors';
 import SubHeader from '../generic/sub-header/SubHeader';
@@ -30,9 +30,6 @@ import Sidebar from './sidebar';
 import SplitTestSidebarInfo from './sidebar/SplitTestSidebarInfo';
 import { useCourseUnit, useLayoutGrid, useScrollToLastPosition } from './hooks';
 import messages from './messages';
-import PublishControls from './sidebar/PublishControls';
-import LocationInfo from './sidebar/LocationInfo';
-import TagsSidebarControls from '../content-tags-drawer/tags-sidebar-controls';
 import { PasteNotificationAlert } from './clipboard';
 import XBlockContainerIframe from './xblock-container-iframe';
 import MoveModal from './move-modal';
@@ -225,19 +222,11 @@ const CourseUnit = ({ courseId }) => {
             <Layout.Element>
               <Stack gap={3}>
                 {isUnitVerticalType && (
-                  <>
-                    <Sidebar data-testid="course-unit-sidebar">
-                      <PublishControls blockId={blockId} />
-                    </Sidebar>
-                    {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
-                      <Sidebar className="tags-sidebar">
-                        <TagsSidebarControls />
-                      </Sidebar>
-                    )}
-                    <Sidebar data-testid="course-unit-location-sidebar">
-                      <LocationInfo />
-                    </Sidebar>
-                  </>
+                <CourseAuthoringUnitSidebarSlot
+                  courseId={courseId}
+                  blockId={blockId}
+                  unitTitle={unitTitle}
+                />
                 )}
                 {isSplitTestType && (
                   <Sidebar data-testid="course-split-test-sidebar">
@@ -267,4 +256,4 @@ CourseUnit.propTypes = {
   courseId: PropTypes.string.isRequired,
 };
 
-export default injectIntl(CourseUnit);
+export default CourseUnit;

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   useLocation,
 } from 'react-router-dom';
-import { StudioFooter } from '@edx/frontend-component-footer';
+import { StudioFooterSlot } from '@openedx/frontend-slot-footer';
 import Header from './header';
 import { fetchCourseDetail, fetchWaffleFlags } from './data/thunks';
 import { useModel } from './generic/model-store';
@@ -66,7 +66,7 @@ const CourseAuthoringPage = ({ courseId, children }) => {
         )
         )}
       {children}
-      {!inProgress && !isEditor && <StudioFooter />}
+      {!inProgress && !isEditor && <StudioFooterSlot />}
     </div>
   );
 };

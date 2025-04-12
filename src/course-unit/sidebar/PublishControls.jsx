@@ -4,7 +4,7 @@ import { useToggle } from '@openedx/paragon';
 import { InfoOutline as InfoOutlineIcon } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import useCourseUnitData from './hooks';
-import { useIframe } from '../context/hooks';
+import { useIframe } from '../../generic/hooks/context/hooks';
 import { editCourseUnitVisibilityAndData } from '../data/thunk';
 import { SidebarBody, SidebarFooter, SidebarHeader } from './components';
 import { PUBLISH_TYPES, messageTypes } from '../constants';

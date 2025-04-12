@@ -22,6 +22,7 @@ const BaseModal = ({
   isFullscreenScroll,
   bodyStyle,
   className,
+  hideCancelButton,
 }) => (
   <ModalDialog
     isOpen={isOpen}
@@ -47,11 +48,17 @@ const BaseModal = ({
     </Scrollable>
     <ModalDialog.Footer>
       <ActionRow>
-        {footerAction}
-        <ActionRow.Spacer />
-        <ModalDialog.CloseButton variant="tertiary" onClick={close}>
-          <FormattedMessage {...messages.cancelButtonLabel} />
-        </ModalDialog.CloseButton>
+        {footerAction && (
+          <>
+            {footerAction}
+            <ActionRow.Spacer />
+          </>
+        )}
+        {!hideCancelButton && (
+          <ModalDialog.CloseButton variant="tertiary" onClick={close}>
+            <FormattedMessage {...messages.cancelButtonLabel} />
+          </ModalDialog.CloseButton>
+        )}
         {confirmAction}
       </ActionRow>
     </ModalDialog.Footer>
@@ -65,6 +72,7 @@ BaseModal.defaultProps = {
   isFullscreenScroll: true,
   bodyStyle: null,
   className: undefined,
+  hideCancelButton: false,
 };
 
 BaseModal.propTypes = {
@@ -79,6 +87,7 @@ BaseModal.propTypes = {
   isFullscreenScroll: PropTypes.bool,
   bodyStyle: PropTypes.shape({}),
   className: PropTypes.string,
+  hideCancelButton: PropTypes.bool,
 };
 
 export default BaseModal;

@@ -112,6 +112,10 @@ export const getLibraryContainersApiUrl = (libraryId: string) => `${getApiBaseUr
  */
 export const getLibraryContainerApiUrl = (containerId: string) => `${getApiBaseUrl()}/api/libraries/v2/containers/${containerId}/`;
 /**
+ * Get the URL for restore a container
+ */
+export const getLibraryContainerRestoreApiUrl = (containerId: string) => `${getLibraryContainerApiUrl(containerId)}restore/`;
+/**
  * Get the URL for a single container children api.
  */
 export const getLibraryContainerChildrenApiUrl = (containerId: string) => `${getLibraryContainerApiUrl(containerId)}children/`;
@@ -630,11 +634,26 @@ export async function updateContainerMetadata(
 }
 
 /**
+ * Delete a container
+ */
+export async function deleteContainer(containerId: string) {
+  const client = getAuthenticatedHttpClient();
+  await client.delete(getLibraryContainerApiUrl(containerId));
+}
+
+/**
+ * Restore a container
+ */
+export async function restoreContainer(containerId: string) {
+  const client = getAuthenticatedHttpClient();
+  await client.post(getLibraryContainerRestoreApiUrl(containerId));
+}
+
+/**
  * Fetch a library container's children's metadata.
  */
-export async function getContainerChildren(containerId: string): Promise<LibraryBlockMetadata[]> {
-  const client = getAuthenticatedHttpClient();
-  const { data } = await client.get(getLibraryContainerChildrenApiUrl(containerId));
+export async function getLibraryContainerChildren(containerId: string): Promise<LibraryBlockMetadata[]> {
+  const { data } = await getAuthenticatedHttpClient().get(getLibraryContainerChildrenApiUrl(containerId));
   return camelCaseObject(data);
 }
 

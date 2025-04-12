@@ -38,8 +38,8 @@ describe('AdvancedEditor', () => {
 
     // Expect open cancel confimation modal
     expect(await screen.findByText(/Are you sure you want to exit the editor/)).toBeInTheDocument();
-    // Click on "OK"
-    const confirmButton = await screen.findByRole('button', { name: 'OK' });
+    // Click on "Discard button"
+    const confirmButton = await screen.findByRole('button', { name: 'Discard Changes and Exit' });
     fireEvent.click(confirmButton);
     // Should call `onClose`
     expect(onCloseMock).toHaveBeenCalled();

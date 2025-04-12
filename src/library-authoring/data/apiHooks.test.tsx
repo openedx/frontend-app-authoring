@@ -13,6 +13,7 @@ import {
   getLibraryCollectionApiUrl,
   getBlockTypesMetaDataUrl,
   getLibraryContainerApiUrl,
+  getLibraryContainerRestoreApiUrl,
   getLibraryContainerChildrenApiUrl,
 } from './api';
 import {
@@ -24,6 +25,8 @@ import {
   useCollection,
   useBlockTypesMetadata,
   useContainer,
+  useDeleteContainer,
+  useRestoreContainer,
   useContainerChildren,
 } from './apiHooks';
 
@@ -143,11 +146,12 @@ describe('library api hooks', () => {
   });
 
   it('should get container metadata', async () => {
+    const libraryId = 'lib:org:1';
     const containerId = 'lct:lib:org:unit:unit1';
     const url = getLibraryContainerApiUrl(containerId);
 
     axiosMock.onGet(url).reply(200, { 'test-data': 'test-value' });
-    const { result } = renderHook(() => useContainer(containerId), { wrapper });
+    const { result } = renderHook(() => useContainer(libraryId, containerId), { wrapper });
     await waitFor(() => {
       expect(result.current.isLoading).toBeFalsy();
     });
@@ -155,7 +159,32 @@ describe('library api hooks', () => {
     expect(axiosMock.history.get[0].url).toEqual(url);
   });
 
+  it('should delete a container', async () => {
+    const containerId = 'lct:org:lib1';
+    const url = getLibraryContainerApiUrl(containerId);
+
+    axiosMock.onDelete(url).reply(200);
+    const { result } = renderHook(() => useDeleteContainer(containerId), { wrapper });
+    await result.current.mutateAsync();
+    await waitFor(() => {
+      expect(axiosMock.history.delete[0].url).toEqual(url);
+    });
+  });
+
+  it('should restore a container', async () => {
+    const containerId = 'lct:org:lib1';
+    const url = getLibraryContainerRestoreApiUrl(containerId);
+
+    axiosMock.onPost(url).reply(200);
+    const { result } = renderHook(() => useRestoreContainer(containerId), { wrapper });
+    await result.current.mutateAsync();
+    await waitFor(() => {
+      expect(axiosMock.history.post[0].url).toEqual(url);
+    });
+  });
+
   it('should get container children', async () => {
+    const libraryId = 'lib:org:1';
     const containerId = 'lct:lib:org:unit:unit1';
     const url = getLibraryContainerChildrenApiUrl(containerId);
 
@@ -191,7 +220,7 @@ describe('library api hooks', () => {
         collections: ['col2'],
       },
     ]);
-    const { result } = renderHook(() => useContainerChildren(containerId), { wrapper });
+    const { result } = renderHook(() => useContainerChildren(libraryId, containerId), { wrapper });
     await waitFor(() => {
       expect(result.current.isLoading).toBeFalsy();
     });

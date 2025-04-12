@@ -14,7 +14,7 @@ import AddComponentButton from './add-component-btn';
 import messages from './messages';
 import { ComponentPicker } from '../../library-authoring/component-picker';
 import { messageTypes } from '../constants';
-import { useIframe } from '../context/hooks';
+import { useIframe } from '../../generic/hooks/context/hooks';
 import { useEventListener } from '../../generic/hooks';
 
 const AddComponent = ({
