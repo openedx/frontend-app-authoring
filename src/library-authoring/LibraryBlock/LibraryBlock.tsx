@@ -15,6 +15,7 @@ interface LibraryBlockProps {
   version?: VersionSpec;
   view?: string;
   scrolling?: string;
+  minHeight?: string;
 }
 /**
  * React component that displays an XBlock in a sandboxed IFrame.
@@ -31,6 +32,7 @@ export const LibraryBlock = ({
   version,
   view,
   scrolling = 'no',
+  minHeight = '200px',
 }: LibraryBlockProps) => {
   const { iframeRef, setIframeRef } = useIframe();
   const xblockView = view ?? 'student_view';
@@ -61,7 +63,7 @@ export const LibraryBlock = ({
       loading="lazy"
       referrerPolicy="origin"
       style={{
-        width: '100%', height: iframeHeight, pointerEvents: 'auto', minHeight: '700px',
+        width: '100%', height: iframeHeight, pointerEvents: 'auto', minHeight,
       }}
       allow={IFRAME_FEATURE_POLICY}
       allowFullScreen
