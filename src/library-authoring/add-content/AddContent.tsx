@@ -191,7 +191,8 @@ export const parseErrorMsg = (
     if (Array.isArray(data)) {
       detail = data.join(', ');
     } else if (typeof data === 'string') {
-      detail = data;
+      /* istanbul ignore next */
+      detail = data.substring(0, 400); // In case this is a giant HTML response, only show the first little bit.
     } else if (data) {
       detail = JSON.stringify(data);
     }
