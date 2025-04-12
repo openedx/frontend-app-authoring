@@ -672,9 +672,9 @@ export const useContainerChildren = (libraryId?: string, containerId?: string) =
 );
 
 /**
- * Use this mutatio to add components to a container
+ * Use this mutation to add components to a container
  */
-export const useAddComponentsToContainer = (containerId?: string) => {
+export const useAddComponentsToContainer = (libraryId?: string, containerId?: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (componentIds: string[]) => {
@@ -684,7 +684,7 @@ export const useAddComponentsToContainer = (containerId?: string) => {
       return undefined;
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: containerQueryKeys.children(containerId) });
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerChildren(libraryId, containerId) });
     },
   });
 };

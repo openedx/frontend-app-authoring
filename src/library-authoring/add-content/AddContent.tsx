@@ -31,7 +31,7 @@ import { blockTypes } from '../../editors/data/constants/app';
 
 import messages from './messages';
 import type { BlockTypeMetadata } from '../data/api';
-import { getContainerTypeFromId, ContainerType } from '../utils';
+import { getContainerTypeFromId, ContainerType } from '../../generic/key-utils';
 
 type ContentType = {
   name: string,
@@ -208,7 +208,7 @@ const AddContent = () => {
     unitId,
   } = useLibraryContext();
   const addComponentsToCollectionMutation = useAddComponentsToCollection(libraryId, collectionId);
-  const addComponentsToContainerMutation = useAddComponentsToContainer(unitId);
+  const addComponentsToContainerMutation = useAddComponentsToContainer(libraryId, unitId);
   const createBlockMutation = useCreateLibraryBlock();
   const pasteClipboardMutation = useLibraryPasteClipboard();
   const { showToast } = useContext(ToastContext);

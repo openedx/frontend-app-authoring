@@ -4,6 +4,8 @@ import {
   getLibraryId,
   isLibraryKey,
   isLibraryV1Key,
+  getContainerTypeFromId,
+  ContainerType,
 } from './key-utils';
 
 describe('component utils', () => {
@@ -94,6 +96,18 @@ describe('component utils', () => {
     ] as const) {
       it(`returns '${expected}' for learning context key '${libraryKey}' and collection Id '${collectionId}'`, () => {
         expect(buildCollectionUsageKey(libraryKey, collectionId)).toStrictEqual(expected);
+      });
+    }
+  });
+
+  describe('getContainerTypeFromId', () => {
+    for (const [input, expected] of [
+      ['lct:org:lib:unit:my-unit-9284e2', ContainerType.Unit],
+      ['lct:OpenCraftX:ALPHA:my-unit-a3223f', undefined],
+      ['', undefined],
+    ]) {
+      it(`returns '${expected}' for container key '${input}'`, () => {
+        expect(getContainerTypeFromId(input!)).toStrictEqual(expected);
       });
     }
   });

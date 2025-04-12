@@ -49,3 +49,26 @@ export const buildCollectionUsageKey = (learningContextKey: string, collectionId
   const orgLib = learningContextKey.replace('lib:', '');
   return `lib-collection:${orgLib}:${collectionId}`;
 };
+
+export enum ContainerType {
+  Unit = 'unit',
+}
+
+/**
+ * Given a container key like `ltc:org:lib:unit:id`
+ * get the container type
+ */
+export function getContainerTypeFromId(containerId: string): ContainerType | undefined {
+  const parts = containerId.split(':');
+  if (parts.length < 2) {
+    return undefined;
+  }
+
+  const maybeType = parts[parts.length - 2];
+
+  if (Object.values(ContainerType).includes(maybeType as ContainerType)) {
+    return maybeType as ContainerType;
+  }
+
+  return undefined;
+}

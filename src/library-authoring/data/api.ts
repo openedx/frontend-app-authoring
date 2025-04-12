@@ -1,7 +1,7 @@
 import { camelCaseObject, getConfig, snakeCaseObject } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { VersionSpec } from '../LibraryBlock';
-import { type ContainerType } from '../utils';
+import { type ContainerType } from '../../generic/key-utils';
 
 const getApiBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
