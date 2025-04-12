@@ -67,7 +67,7 @@ const HeaderActions = () => {
         disabled={readOnly}
         onClick={openAddContentSidebar}
       >
-        {intl.formatMessage(messages.newContentButton)}
+        {intl.formatMessage(messages.addContentButton)}
       </Button>
     </div>
   );

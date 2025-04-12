@@ -65,7 +65,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
         showToast(intl.formatMessage(messages.successAssociateComponentMessage));
       })
       .catch(() => {
-        showToast(intl.formatMessage(messages.errorAssociateComponentMessage));
+        showToast(intl.formatMessage(messages.errorAssociateComponentToCollectionMessage));
       });
   }, [selectedComponents]);
 

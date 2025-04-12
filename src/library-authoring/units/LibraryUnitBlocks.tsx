@@ -1,8 +1,8 @@
-import { FormattedMessage } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  ActionRow, Badge, Icon, Stack, useToggle,
+  ActionRow, Badge, Button, Icon, Stack, useToggle,
 } from '@openedx/paragon';
-import { Description } from '@openedx/paragon/icons';
+import { Add, Description } from '@openedx/paragon/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
@@ -22,8 +22,10 @@ import { libraryAuthoringQueryKeys, useContainerChildren } from '../data/apiHook
 import { LibraryBlock } from '../LibraryBlock';
 import { useLibraryRoutes } from '../routes';
 import messages from './messages';
+import { useSidebarContext } from '../common/context/SidebarContext';
 
 export const LibraryUnitBlocks = () => {
+  const intl = useIntl();
   const [orderedBlocks, setOrderedBlocks] = useState<LibraryBlockMetadata[]>([]);
   const [isManageTagsDrawerOpen, openManageTagsDrawer, closeManageTagsDrawer] = useToggle(false);
   const { navigateTo } = useLibraryRoutes();
@@ -33,8 +35,13 @@ export const LibraryUnitBlocks = () => {
     unitId,
     showOnlyPublished,
     componentId,
+    readOnly,
     setComponentId,
   } = useLibraryContext();
+
+  const {
+    openAddContentSidebar,
+  } = useSidebarContext();
 
   const queryClient = useQueryClient();
   const {
@@ -128,6 +135,31 @@ export const LibraryUnitBlocks = () => {
       <DraggableList itemList={orderedBlocks} setState={setOrderedBlocks} updateOrder={handleReorder}>
         {renderedBlocks}
       </DraggableList>
+      <div className="d-flex">
+        <div className="w-100 mr-2">
+          <Button
+            className="ml-2"
+            iconBefore={Add}
+            variant="outline-primary rounded-0"
+            disabled={readOnly}
+            onClick={openAddContentSidebar}
+            block
+          >
+            {intl.formatMessage(messages.newContentButton)}
+          </Button>
+        </div>
+        <div className="w-100 ml-2">
+          <Button
+            className="ml-2"
+            iconBefore={Add}
+            variant="outline-primary rounded-0"
+            disabled
+            block
+          >
+            {intl.formatMessage(messages.addExistingContentButton)}
+          </Button>
+        </div>
+      </div>
       <ContentTagsDrawerSheet
         id={componentId}
         onClose={onTagSidebarClose}
