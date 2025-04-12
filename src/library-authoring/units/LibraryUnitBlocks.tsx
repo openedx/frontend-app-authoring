@@ -8,7 +8,7 @@ import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import { ContentTagsDrawerSheet } from '../../content-tags-drawer';
 import { blockTypes } from '../../editors/data/constants/app';
-import DraggableList, { SortableItem } from '../../editors/sharedComponents/DraggableList';
+import DraggableList, { SortableItem } from '../../generic/DraggableList';
 
 import ErrorAlert from '../../generic/alert-error';
 import { getItemIcon } from '../../generic/block-type-utils';
