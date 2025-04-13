@@ -453,7 +453,11 @@ const CourseOutline = ({ courseId }) => {
               </article>
             </Layout.Element>
             <Layout.Element>
-              <CourseAuthoringOutlineSidebarSlot courseId={courseId} />
+              <CourseAuthoringOutlineSidebarSlot
+                courseId={courseId}
+                courseName={courseName}
+                sections={sections}
+              />
             </Layout.Element>
           </Layout>
           <EnableHighlightsModal
