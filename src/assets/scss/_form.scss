@@ -1,14 +1,14 @@
 .form-group-custom {
   .pgn__form-label {
-    font: normal $font-weight-bold .75rem/1.25rem $font-family-base;
-    color: $gray-500;
+    font: normal var(--pgn-typography-font-weight-bold) .75rem/1.25rem var(--pgn-typography-font-family-base);
+    color: var(--pgn-color-gray-500);
     margin-bottom: .5rem;
   }
 
   .pgn__form-control-description,
   .pgn__form-text {
-    font: normal $font-weight-normal .75rem/1.25rem $font-family-base;
-    color: $gray-500;
+    font: normal var(--pgn-typography-font-weight-normal) .75rem/1.25rem var(--pgn-typography-font-family-base);
+    color: var(--pgn-color-gray-500);
     margin-top: .5rem;
   }
 
@@ -19,12 +19,12 @@
 
   .form-group-custom_isInvalid {
     input {
-      border-color: $form-feedback-invalid-color;
+      border-color: var(--pgn-color-form-feedback-invalid);
     }
   }
 
   .feedback-error {
-    color: $form-feedback-invalid-color;
+    color: var(--pgn-color-form-feedback-invalid);
   }
 }
 
@@ -34,40 +34,40 @@
   .datepicker-custom-control {
     display: block;
     width: 100%;
-    font-size: $input-font-size;
-    font-weight: $input-font-weight;
-    line-height: $input-line-height;
-    background: $input-bg;
-    border-color: $input-border-color;
-    border-width: $input-border-width;
-    box-shadow: $input-box-shadow;
-    border-radius: $input-border-radius;
-    color: $input-color;
-    padding: $input-padding-y $input-padding-x;
-    height: $input-height;
+    font-size: var(--pgn-typography-form-input-font-size-base);
+    font-weight: var(--pgn-typography-form-input-font-weight);
+    line-height: var(--pgn-typography-form-input-line-height-base);
+    background: var(--pgn-color-form-input-bg-base);
+    border-color: var(--pgn-color-form-input-border);
+    border-width: var(--pgn-size-form-input-width-border);
+    box-shadow: var(--pgn-elevation-form-input-base);
+    border-radius: var(--pgn-size-form-input-radius-border-base);
+    color: var(--pgn-color-form-input-base);
+    padding: var(--pgn-spacing-form-input-padding-y-base) var(--pgn-spacing-form-input-padding-x-base);
+    height: var(--pgn-size-form-input-height-base);
     resize: none;
 
     &:focus,
     :focus-visible {
-      color: $input-focus-color;
-      background-color: $input-bg;
-      border-color: $input-focus-border-color;
-      box-shadow: $input-focus-box-shadow;
+      color: var(--pgn-color-form-input-focus-base);
+      background-color: var(--pgn-color-form-input-bg-base);
+      border-color: var(--pgn-color-form-input-focus-border);
+      box-shadow: var(--pgn-elevation-form-input-focus);
       outline: 0;
     }
 
     &::placeholder {
-      color: $input-placeholder-color;
+      color: var(--pgn-color-form-input-placeholder);
     }
   }
 
   .datepicker-custom-control_readonly {
     border-color: transparent;
-    background: $input-disabled-bg;
+    background: var(--pgn-color-form-input-bg-disabled);
   }
 
   .datepicker-custom-control_isInvalid {
-    border-color: $form-feedback-invalid-color;
+    border-color: var(--pgn-color-form-feedback-invalid);
   }
 
   .datepicker-custom-control-icon {
@@ -76,7 +76,7 @@
     right: 1.188rem;
     top: 50%;
     transform: translateY(-50%);
-    color: $black;
+    color: var(--pgn-color-black);
   }
 }
 
