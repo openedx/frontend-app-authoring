@@ -7,7 +7,7 @@ import {
 import { Close } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
-import { AddContentContainer, AddContentHeader } from '../add-content';
+import { AddContent, AddContentHeader } from '../add-content';
 import { CollectionInfo, CollectionInfoHeader } from '../collections';
 import { ContainerInfoHeader, UnitInfo } from '../containers';
 import { SidebarBodyComponentId, useSidebarContext } from '../common/context/SidebarContext';
@@ -29,7 +29,7 @@ const LibrarySidebar = () => {
   const { sidebarComponentInfo, closeLibrarySidebar } = useSidebarContext();
 
   const bodyComponentMap = {
-    [SidebarBodyComponentId.AddContent]: <AddContentContainer />,
+    [SidebarBodyComponentId.AddContent]: <AddContent />,
     [SidebarBodyComponentId.Info]: <LibraryInfo />,
     [SidebarBodyComponentId.ComponentInfo]: <ComponentInfo />,
     [SidebarBodyComponentId.CollectionInfo]: <CollectionInfo />,

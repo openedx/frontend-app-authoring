@@ -23,6 +23,7 @@ import {
   useLibraryPasteClipboard,
   useAddComponentsToCollection,
   useBlockTypesMetadata,
+  useAddComponentsToContainer,
 } from '../data/apiHooks';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { PickLibraryContentModal } from './PickLibraryContentModal';
@@ -30,6 +31,7 @@ import { blockTypes } from '../../editors/data/constants/app';
 
 import messages from './messages';
 import type { BlockTypeMetadata } from '../data/api';
+import { getContainerTypeFromId, ContainerType } from '../../generic/key-utils';
 
 type ContentType = {
   name: string,
@@ -87,7 +89,12 @@ const AddContentView = ({
   const {
     collectionId,
     componentPicker,
+    unitId,
   } = useLibraryContext();
+  let upstreamContainerType: ContainerType | undefined;
+  if (unitId) {
+    upstreamContainerType = getContainerTypeFromId(unitId);
+  }
 
   const collectionButtonData = {
     name: intl.formatMessage(messages.collectionButton),
@@ -109,21 +116,25 @@ const AddContentView = ({
 
   return (
     <>
-      {collectionId ? (
-        componentPicker && (
-          <>
-            <AddContentButton contentType={libraryContentButtonData} onCreateContent={onCreateContent} />
-            <PickLibraryContentModal
-              isOpen={isAddLibraryContentModalOpen}
-              onClose={closeAddLibraryContentModal}
-            />
-          </>
-        )
-      ) : (
-        <AddContentButton contentType={collectionButtonData} onCreateContent={onCreateContent} />
+      {upstreamContainerType !== ContainerType.Unit && (
+        <>
+          {collectionId ? (
+            componentPicker && (
+              <>
+                <AddContentButton contentType={libraryContentButtonData} onCreateContent={onCreateContent} />
+                <PickLibraryContentModal
+                  isOpen={isAddLibraryContentModalOpen}
+                  onClose={closeAddLibraryContentModal}
+                />
+              </>
+            )
+          ) : (
+            <AddContentButton contentType={collectionButtonData} onCreateContent={onCreateContent} />
+          )}
+          <AddContentButton contentType={unitButtonData} onCreateContent={onCreateContent} />
+          <hr className="w-100 bg-gray-500" />
+        </>
       )}
-      <AddContentButton contentType={unitButtonData} onCreateContent={onCreateContent} />
-      <hr className="w-100 bg-gray-500" />
       {/* Note: for MVP we are hiding the unuspported types, not just disabling them. */}
       {contentTypes.filter(ct => !ct.disabled).map((contentType) => (
         <AddContentButton
@@ -186,7 +197,7 @@ export const parseErrorMsg = (
   return intl.formatMessage(defaultMessage);
 };
 
-const AddContentContainer = () => {
+const AddContent = () => {
   const intl = useIntl();
   const {
     libraryId,
@@ -194,8 +205,10 @@ const AddContentContainer = () => {
     openCreateCollectionModal,
     openCreateUnitModal,
     openComponentEditor,
+    unitId,
   } = useLibraryContext();
-  const updateComponentsMutation = useAddComponentsToCollection(libraryId, collectionId);
+  const addComponentsToCollectionMutation = useAddComponentsToCollection(libraryId, collectionId);
+  const addComponentsToContainerMutation = useAddComponentsToContainer(libraryId, unitId);
   const createBlockMutation = useCreateLibraryBlock();
   const pasteClipboardMutation = useLibraryPasteClipboard();
   const { showToast } = useContext(ToastContext);
@@ -274,9 +287,16 @@ const AddContentContainer = () => {
   }
 
   const linkComponent = (usageKey: string) => {
-    updateComponentsMutation.mutateAsync([usageKey]).catch(() => {
-      showToast(intl.formatMessage(messages.errorAssociateComponentMessage));
-    });
+    if (collectionId) {
+      addComponentsToCollectionMutation.mutateAsync([usageKey]).catch(() => {
+        showToast(intl.formatMessage(messages.errorAssociateComponentToCollectionMessage));
+      });
+    }
+    if (unitId) {
+      addComponentsToContainerMutation.mutateAsync([usageKey]).catch(() => {
+        showToast(intl.formatMessage(messages.errorAssociateComponentToContainerMessage));
+      });
+    }
   };
 
   const onPaste = () => {
@@ -374,4 +394,4 @@ const AddContentContainer = () => {
   );
 };
 
-export default AddContentContainer;
+export default AddContent;

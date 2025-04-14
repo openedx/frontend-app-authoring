@@ -113,6 +113,17 @@ describe('library data API', () => {
     axiosMock.onPost(url).reply(200);
 
     await api.restoreContainer(containerId);
+  });
+
+  it('should add components to unit', async () => {
+    const { axiosMock } = initializeMocks();
+    const componentId = 'lb:org:lib:html:1';
+    const containerId = 'ltc:org:lib:unit:1';
+    const url = api.getLibraryContainerChildrenApiUrl(containerId);
+
+    axiosMock.onPost(url).reply(200);
+
+    await api.addComponentsToContainer(containerId, [componentId]);
     expect(axiosMock.history.post[0].url).toEqual(url);
   });
 });

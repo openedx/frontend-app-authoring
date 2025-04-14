@@ -28,6 +28,7 @@ import {
   useDeleteContainer,
   useRestoreContainer,
   useContainerChildren,
+  useAddComponentsToContainer,
 } from './apiHooks';
 
 let axiosMock;
@@ -257,5 +258,19 @@ describe('library api hooks', () => {
       },
     ]);
     expect(axiosMock.history.get[0].url).toEqual(url);
+  });
+
+  it('should add components to container', async () => {
+    const libraryId = 'lib:org:1';
+    const componentId = 'lb:org:lib:html:1';
+    const containerId = 'ltc:org:lib:unit:1';
+
+    const url = getLibraryContainerChildrenApiUrl(containerId);
+
+    axiosMock.onPost(url).reply(200);
+    const { result } = renderHook(() => useAddComponentsToContainer(libraryId, containerId), { wrapper });
+    await result.current.mutateAsync([componentId]);
+
+    expect(axiosMock.history.post[0].url).toEqual(url);
   });
 });

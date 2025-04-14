@@ -47,6 +47,7 @@ import {
   restoreLibraryBlock,
   getBlockTypes,
   createLibraryContainer,
+  addComponentsToContainer,
   type CreateLibraryContainerDataRequest,
   getContainerMetadata,
   updateContainerMetadata,
@@ -669,3 +670,21 @@ export const useContainerChildren = (libraryId?: string, containerId?: string) =
     queryFn: () => getLibraryContainerChildren(containerId!),
   })
 );
+
+/**
+ * Use this mutation to add components to a container
+ */
+export const useAddComponentsToContainer = (libraryId?: string, containerId?: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (componentIds: string[]) => {
+      if (containerId !== undefined) {
+        return addComponentsToContainer(containerId, componentIds);
+      }
+      return undefined;
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerChildren(libraryId, containerId) });
+    },
+  });
+};
