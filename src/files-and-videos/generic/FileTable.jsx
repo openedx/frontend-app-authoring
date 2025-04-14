@@ -1,4 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -26,6 +27,10 @@ import {
 } from './table-components';
 import ApiStatusToast from './ApiStatusToast';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
+import {
+  setFilesCurrentViewState,
+  setVideosCurrentViewState,
+} from '../videos-page/data/slice';
 
 const FileTable = ({
   files,
@@ -44,7 +49,7 @@ const FileTable = ({
   // injected
   intl,
 }) => {
-  const defaultVal = 'card';
+  const dispatch = useDispatch();
   const pageCount = Math.ceil(files.length / 50);
   const columnSizes = {
     xs: 12,
@@ -53,7 +58,10 @@ const FileTable = ({
     lg: 3,
     xl: 2,
   };
-  const [currentView, setCurrentView] = useState(defaultVal);
+  const {
+    filesCurrentView,
+    videosCurrentView,
+  } = useSelector((state) => state.videos);
   const [isDeleteOpen, setDeleteOpen, setDeleteClose] = useToggle(false);
   const [isDownloadOpen, setDownloadOpen, setDownloadClose] = useToggle(false);
   const [isAssetInfoOpen, openAssetInfo, closeAssetinfo] = useToggle(false);
@@ -198,8 +206,15 @@ const FileTable = ({
         defaultColumnValues={{ Filter: TextFilter }}
         dataViewToggleOptions={{
           isDataViewToggleEnabled: true,
-          onDataViewToggle: val => setCurrentView(val),
-          defaultActiveStateValue: defaultVal,
+          onDataViewToggle: (val) => {
+            if (fileType === 'video') {
+              dispatch(setVideosCurrentViewState({ videosCurrentView: val }));
+            } else {
+              // There's only 2 fileTypes currently being used i.e. video or file
+              dispatch(setFilesCurrentViewState({ filesCurrentView: val }));
+            }
+          },
+          defaultActiveStateValue: (fileType === 'video' && videosCurrentView) || (fileType === 'file' && filesCurrentView),
           togglePlacement: 'left',
         }}
         initialState={initialState}
@@ -227,8 +242,8 @@ const FileTable = ({
           <div data-testid="files-data-table" className="bg-light-200">
             <DataTable.TableControlBar />
             <hr className="mb-5 border-light-700" />
-            { currentView === 'card' && <CardView CardComponent={fileCard} columnSizes={columnSizes} selectionPlacement="left" skeletonCardCount={6} /> }
-            { currentView === 'list' && <DataTable.Table /> }
+            { ((fileType === 'video' && videosCurrentView === 'card') || (fileType === 'file' && filesCurrentView === 'card')) && <CardView CardComponent={fileCard} columnSizes={columnSizes} selectionPlacement="left" skeletonCardCount={6} /> }
+            { ((fileType === 'video' && videosCurrentView === 'list') || (fileType === 'file' && filesCurrentView === 'list')) && <DataTable.Table /> }
             <DataTable.EmptyTable content={intl.formatMessage(messages.noResultsFoundMessage)} />
             <Footer />
           </div>
@@ -243,7 +258,7 @@ const FileTable = ({
           fileType={fileType}
         />
 
-        {fileType === 'files' && (
+        {fileType === 'file' && (
           <ApiStatusToast
             actionType={intl.formatMessage(messages.apiStatusAddingAction)}
             selectedRowCount={selectedRows.length}
