@@ -655,6 +655,7 @@ export async function getLibraryContainerChildren(containerId: string): Promise<
  */
 export async function addComponentsToContainer(containerId: string, componentIds: string[]) {
   const client = getAuthenticatedHttpClient();
+  // POSTing to this URL will append children; PATCHing to it will replace the children.
   await client.post(
     getLibraryContainerChildrenApiUrl(containerId),
     snakeCaseObject({ usageKeys: componentIds }),

@@ -291,7 +291,8 @@ const AddContent = () => {
       addComponentsToCollectionMutation.mutateAsync([usageKey]).catch(() => {
         showToast(intl.formatMessage(messages.errorAssociateComponentToCollectionMessage));
       });
-    } else if (unitId) {
+    }
+    if (unitId) {
       addComponentsToContainerMutation.mutateAsync([usageKey]).catch(() => {
         showToast(intl.formatMessage(messages.errorAssociateComponentToContainerMessage));
       });
