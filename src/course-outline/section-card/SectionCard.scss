@@ -2,15 +2,15 @@
   flex-grow: 1;
 
   .section-card__subsections {
-    margin-top: $spacer;
+    margin-top: var(--pgn-spacing-spacer-base);
   }
 
   .section-card-title {
-    font-size: $h3-font-size;
-    font-family: $headings-font-family;
-    font-weight: $headings-font-weight;
-    line-height: $headings-line-height;
-    color: $headings-color;
+    font-size: var(--pgn-typography-font-size-h3-base);
+    font-family: var(--pgn-typography-headings-font-family);
+    font-weight: var(--pgn-typography-headings-font-weight);
+    line-height: var(--pgn-typography-headings-line-height);
+    color: var(--pgn-color-headings-base);
   }
 
   .section-card__content {

@@ -1,16 +1,16 @@
 .update-form {
-  @include pgn-box-shadow(1, "centered");
+  box-shadow: var(--pgn-elevation-box-shadow-centered-1);
 
-  border: .0625rem solid $gray-200;
+  border: .0625rem solid var(--pgn-color-gray-200);
   border-radius: .375rem;
-  background: $white;
-  margin-bottom: map-get($spacers, 4);
-  padding: $spacer 1.875rem;
+  background: var(--pgn-color-white);
+  margin-bottom: var(--pgn-spacing-spacer-4);
+  padding: var(--pgn-spacing-spacer-base) 1.875rem;
 
   .update-form-title {
     font-size: 1.5rem;
     font-weight: 600;
-    margin-bottom: $spacer;
+    margin-bottom: var(--pgn-spacing-spacer-base);
   }
 
   .datepicker-field {
@@ -25,7 +25,7 @@
       top: -.625rem;
       left: .3125rem;
       z-index: 9;
-      background-color: $white;
+      background-color: var(--pgn-color-white);
     }
 
     .datepicker-field-error {
@@ -35,7 +35,7 @@
     }
 
     .react-datepicker-popper {
-      z-index: $zindex-dropdown;
+      z-index: var(--pgn-elevation-dropdown-zindex);
     }
   }
 }
@@ -43,8 +43,8 @@
 .update-form__inner {
   margin-bottom: 0;
   margin-top: 1.875rem;
-  padding: map-get($spacers, 4) 0 0;
-  border-top: .0625rem solid $light-400;
+  padding: var(--pgn-spacing-spacer-4) 0 0;
+  border-top: .0625rem solid var(--pgn-color-light-400);
   border-bottom: none;
   border-left: none;
   border-right: none;

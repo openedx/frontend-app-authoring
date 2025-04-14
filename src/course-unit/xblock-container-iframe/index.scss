@@ -1,4 +1,4 @@
 .xblock-container-iframe {
-    width: calc(100% + ($spacer * .3125));
-    margin: 0 (($spacer * .3125) * -1);
+    width: calc(100% + (var(--pgn-spacing-spacer-base) * .3125));
+    margin: 0 calc(calc(var(--pgn-spacing-spacer-base) * .3125) * -1);
 }
