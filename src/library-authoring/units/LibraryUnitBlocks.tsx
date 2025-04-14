@@ -1,8 +1,8 @@
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  ActionRow, Badge, Button, Icon, Stack, useToggle,
+  ActionRow, Badge, Button, Icon, IconButton, Stack, useToggle,
 } from '@openedx/paragon';
-import { Add, Description } from '@openedx/paragon/icons';
+import { Add, Description, DragIndicator } from '@openedx/paragon/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { useEffect, useState } from 'react';
@@ -119,6 +119,12 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
     return (
       <ActionRow className='bg-light-200 border border-light-500 p-2 rounded'>
         <BlockHeader block={block} />
+        <IconButton
+          src={DragIndicator}
+          variant="light"
+          iconAs={Icon}
+          alt={''}
+        />
       </ActionRow>
     );
   }
@@ -160,6 +166,7 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
           padding: '0.5rem 1rem',
           background: '#FBFAF9',
           borderBottom: 'solid 1px #E1DDDB',
+          outline: hidePreviewFor === block.id && '2px dashed gray'
         }}
         isClickable
         onClick={() => handleComponentSelection(block)}
