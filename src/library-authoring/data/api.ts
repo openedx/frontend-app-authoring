@@ -670,3 +670,17 @@ export async function updateContainerCollections(containerId: string, collection
     collection_keys: collectionKeys,
   });
 }
+
+/**
+ * Update library container's children.
+ */
+export async function updateLibraryContainerChildren(
+  containerId: string,
+  children: string[],
+): Promise<LibraryBlockMetadata[]> {
+  const { data } = await getAuthenticatedHttpClient().patch(
+    getLibraryContainerChildrenApiUrl(containerId),
+    {'usage_keys': children},
+  );
+  return camelCaseObject(data);
+}

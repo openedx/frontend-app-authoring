@@ -5,7 +5,7 @@ import {
 import { Add, Description, DragIndicator } from '@openedx/paragon/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import classNames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { ContentTagsDrawerSheet } from '../../content-tags-drawer';
 import { blockTypes } from '../../editors/data/constants/app';
 import DraggableList, { SortableItem } from '../../generic/DraggableList';
@@ -20,11 +20,12 @@ import { useLibraryContext } from '../common/context/LibraryContext';
 import { PickLibraryContentModal } from '../add-content';
 import ComponentMenu from '../components';
 import { LibraryBlockMetadata } from '../data/api';
-import { libraryAuthoringQueryKeys, useContainerChildren } from '../data/apiHooks';
+import { libraryAuthoringQueryKeys, useContainerChildren, useUpdateContainerChildren } from '../data/apiHooks';
 import { LibraryBlock } from '../LibraryBlock';
 import { useLibraryRoutes } from '../routes';
 import messages from './messages';
 import { useSidebarContext } from '../common/context/SidebarContext';
+import { ToastContext } from '../../generic/toast-context';
 
 /** Components that need large min height in preview */
 const LARGE_COMPONENTS = [
@@ -50,6 +51,7 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
 
   const [hidePreviewFor, setHidePreviewFor] = useState<string | null>(null);
   const { navigateTo } = useLibraryRoutes();
+  const { showToast } = useContext(ToastContext);
 
   const {
     unitId,
@@ -64,6 +66,7 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
   } = useSidebarContext();
 
   const queryClient = useQueryClient();
+  const orderMutator = useUpdateContainerChildren(unitId);
   const {
     data: blocks,
     isLoading,
@@ -82,11 +85,14 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
     return <ErrorAlert error={error} />;
   }
 
-  /* istanbul ignore next */
-  const handleReorder = () => (newOrder: LibraryBlockMetadata[]) => {
-    // eslint-disable-next-line no-console
-    console.log('LibraryUnitBlocks newOrder: ', newOrder);
-    // TODO: update order of components in unit
+  const handleReorder = () => async (newOrder: LibraryBlockMetadata[]) => {
+    const usageKeys = newOrder.map((o) => o.id);
+    try {
+      await orderMutator.mutateAsync(usageKeys);
+      showToast(intl.formatMessage(messages.orderUpdatedMsg));
+    } catch (e) {
+      showToast(intl.formatMessage(messages.failedOrderUpdatedMsg));
+    }
   };
 
   const onTagSidebarClose = () => {
