@@ -31,7 +31,7 @@ const ModalComponentPreview = ({ isOpen, close, usageKey }: ModalComponentPrevie
       <LibraryBlock
         usageKey={usageKey}
         version={showOnlyPublished ? 'published' : undefined}
-        minHeight="70vh"
+        minHeight="60vh"
       />
     </StandardModal>
   );
@@ -72,7 +72,7 @@ const ComponentPreview = () => {
                 usageKey={usageKey}
                 key={componentMetadata.modified}
                 version={showOnlyPublished ? 'published' : undefined}
-                minHeight="70vh"
+                minHeight="60vh"
               />
             )
             : null

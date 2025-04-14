@@ -29,14 +29,22 @@ const CompareChangesWidget = ({ usageKey, oldVersion = 'published', newVersion =
         <Tab eventKey="old" title={intl.formatMessage(messages.oldVersionTitle)}>
           <div className="p-2 bg-white">
             <IframeProvider>
-              <LibraryBlock usageKey={usageKey} version={oldVersion} />
+              <LibraryBlock
+                usageKey={usageKey}
+                version={oldVersion}
+                minHeight="50vh"
+              />
             </IframeProvider>
           </div>
         </Tab>
         <Tab eventKey="new" title={intl.formatMessage(messages.newVersionTitle)}>
           <div className="p-2 bg-white">
             <IframeProvider>
-              <LibraryBlock usageKey={usageKey} version={newVersion} />
+              <LibraryBlock
+                usageKey={usageKey}
+                version={newVersion}
+                minHeight="50vh"
+              />
             </IframeProvider>
           </div>
         </Tab>

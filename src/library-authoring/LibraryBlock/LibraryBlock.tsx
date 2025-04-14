@@ -31,8 +31,8 @@ export const LibraryBlock = ({
   usageKey,
   version,
   view,
+  minHeight,
   scrolling = 'no',
-  minHeight = '200px',
 }: LibraryBlockProps) => {
   const { iframeRef, setIframeRef } = useIframe();
   const xblockView = view ?? 'student_view';
