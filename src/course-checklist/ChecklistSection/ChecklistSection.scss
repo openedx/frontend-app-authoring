@@ -13,10 +13,10 @@
 
 .assignment-list {
   display: inline;
-  padding-inline-start: map-get($spacers, 1);
+  padding-inline-start: var(--pgn-spacing-spacer-1);
 }
 
 //complete checklist item style
 .checklist-item-complete {
-  box-shadow: -5px 0 0 0 $success-500;
+  box-shadow: -5px 0 0 0 var(--pgn-color-success-500);
 }

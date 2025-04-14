@@ -4,7 +4,7 @@
   }
 
   .red-italics {
-    color: $brand-500;
+    color: var(--pgn-color-brand-500);
     margin-left: 2rem;
     font-weight: 400;
     font-size: 80%;
@@ -12,7 +12,7 @@
   }
 
   .yellow-italics {
-    color: $warning-800;
+    color: var(--pgn-color-warning-800);
     margin-left: 2rem;
     font-weight: 400;
     font-size: 80%;
@@ -20,7 +20,7 @@
   }
 
   .green-italics {
-    color: $green;
+    color: var(--pgn-color-green);
     margin-left: 2rem;
     font-weight: 400;
     font-size: 80%;
@@ -46,7 +46,7 @@
   .subsection-header {
     font-size: 16px; /* Slightly smaller */
     font-weight: 600; /* Reduced boldness */
-    background-color: $dark-100;
+    background-color: var(--pgn-color-dark-100);
     padding: 10px;
     margin-bottom: 10px;
 
@@ -66,8 +66,8 @@
     margin-top: 10px;
     font-size: 14px;
     font-weight: 700;
-    margin-bottom: .75rem;
-    color: $primary-500;
+    margin-bottom:  .75rem;
+    color: var(--pgn-color-primary-500);
   }
 
   /* Block Links */
@@ -91,7 +91,7 @@
   }
 
   .broken-link {
-    color: $brand-500;
+    color: var(--pgn-color-brand-500);
     text-decoration: none;
   }
 
@@ -118,10 +118,10 @@
   }
 
   .broken-link-icon {
-    color: $brand-500;
+    color: var(--pgn-color-brand-500);
   }
 
   .lock-icon {
-    color: $warning-300;
+    color: var(--pgn-color-warning-300);
   }
 }

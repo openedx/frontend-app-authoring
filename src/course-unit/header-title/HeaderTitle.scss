@@ -1,4 +1,4 @@
 .header-title__visibility-message {
-  font-size: $font-size-sm;
-  font-weight: $font-weight-normal;
+  font-size: var(--pgn-typography-font-size-sm);
+  font-weight: var(--pgn-typography-font-weight-normal);
 }
