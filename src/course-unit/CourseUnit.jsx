@@ -220,12 +220,13 @@ const CourseUnit = ({ courseId }) => {
               <IframePreviewLibraryXBlockChanges />
             </Layout.Element>
             <Layout.Element>
-              <Stack gap={3}>
+              <Stack gap={3} className="h-100">
                 {isUnitVerticalType && (
                 <CourseAuthoringUnitSidebarSlot
                   courseId={courseId}
                   blockId={blockId}
                   unitTitle={unitTitle}
+                  verticalBlocks={courseVerticalChildren.children}
                 />
                 )}
                 {isSplitTestType && (
