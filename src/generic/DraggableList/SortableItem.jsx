@@ -33,8 +33,8 @@ const SortableItem = ({
     id,
     animateLayoutChanges: () => false,
     disabled: {
-      draggable: disabled
-    }
+      draggable: disabled,
+    },
   });
 
   const style = {
@@ -56,7 +56,8 @@ const SortableItem = ({
       >
         <ActionRow style={actionStyle}>
           {actions}
-          {!disabled && <IconButtonWithTooltip
+          {!disabled && (
+          <IconButtonWithTooltip
             key="drag-to-reorder-icon"
             ref={setActivatorNodeRef}
             tooltipPlacement="top"
@@ -67,7 +68,8 @@ const SortableItem = ({
             alt={intl.formatMessage(messages.tooltipContent)}
             {...attributes}
             {...listeners}
-          />}
+          />
+          )}
         </ActionRow>
         {children}
       </Card>

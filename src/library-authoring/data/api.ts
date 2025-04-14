@@ -680,7 +680,7 @@ export async function updateLibraryContainerChildren(
 ): Promise<LibraryBlockMetadata[]> {
   const { data } = await getAuthenticatedHttpClient().patch(
     getLibraryContainerChildrenApiUrl(containerId),
-    {'usage_keys': children},
+    { usage_keys: children },
   );
   return camelCaseObject(data);
 }

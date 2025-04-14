@@ -36,6 +36,37 @@ const LARGE_COMPONENTS = [
   'lti_consumer',
 ];
 
+interface BlockHeaderProps {
+  block: LibraryBlockMetadata;
+  onTagClick: () => void;
+}
+
+/** Component header, split out to reuse in drag overlay */
+const BlockHeader = ({ block, onTagClick }: BlockHeaderProps) => (
+  <>
+    <Stack direction="horizontal" gap={2} className="font-weight-bold">
+      <Icon src={getItemIcon(block.blockType)} />
+      {block.displayName}
+    </Stack>
+    <ActionRow.Spacer />
+    <Stack direction="horizontal" gap={3}>
+      {block.hasUnpublishedChanges && (
+        <Badge
+          className="px-2 pt-1"
+          variant="warning"
+        >
+          <Stack direction="horizontal" gap={1}>
+            <Icon className="mb-1" size="xs" src={Description} />
+            <FormattedMessage {...messages.draftChipText} />
+          </Stack>
+        </Badge>
+      )}
+      <TagCount size="sm" count={block.tagsCount} onClick={onTagClick} />
+      <ComponentMenu usageKey={block.id} />
+    </Stack>
+  </>
+);
+
 interface LibraryUnitBlocksProps {
   /** set to true if it is rendered as preview
   * This disables drag and drop
@@ -123,62 +154,37 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
       return null;
     }
     return (
-      <ActionRow className='bg-light-200 border border-light-500 p-2 rounded'>
-        <BlockHeader block={block} />
+      <ActionRow className="bg-light-200 border border-light-500 p-2 rounded">
+        <BlockHeader block={block} onTagClick={openManageTagsDrawer} />
         <IconButton
           src={DragIndicator}
           variant="light"
           iconAs={Icon}
-          alt={''}
+          alt=""
         />
       </ActionRow>
     );
-  }
-
-  /** Component header, split out to reuse in drag overlay */
-  const BlockHeader = ({block}: {block: LibraryBlockMetadata}) => (
-    <>
-      <Stack direction="horizontal" gap={2} className="font-weight-bold">
-        <Icon src={getItemIcon(block.blockType)} />
-        {block.displayName}
-      </Stack>
-      <ActionRow.Spacer />
-      <Stack direction="horizontal" gap={3}>
-        {block.hasUnpublishedChanges && (
-          <Badge
-            className="px-2 pt-1"
-            variant="warning"
-          >
-            <Stack direction="horizontal" gap={1}>
-              <Icon className="mb-1" size="xs" src={Description} />
-              <FormattedMessage {...messages.draftChipText} />
-            </Stack>
-          </Badge>
-        )}
-        <TagCount size="sm" count={block.tagsCount} onClick={openManageTagsDrawer} />
-        <ComponentMenu usageKey={block.id} />
-      </Stack>
-    </>
-  );
+  };
 
   const renderedBlocks = orderedBlocks?.map((block) => (
     <IframeProvider key={block.id}>
       <SortableItem
         id={block.id}
         componentStyle={null}
-        actions={<BlockHeader block={block} />}
+        actions={<BlockHeader block={block} onTagClick={openManageTagsDrawer} />}
         actionStyle={{
           borderRadius: '8px 8px 0px 0px',
           padding: '0.5rem 1rem',
           background: '#FBFAF9',
           borderBottom: 'solid 1px #E1DDDB',
-          outline: hidePreviewFor === block.id && '2px dashed gray'
+          outline: hidePreviewFor === block.id && '2px dashed gray',
         }}
         isClickable
         onClick={() => handleComponentSelection(block)}
         disabled={preview}
       >
-        {hidePreviewFor !== block.id && <div className={classNames('p-3', {
+        {hidePreviewFor !== block.id && (
+        <div className={classNames('p-3', {
           'container-mw-md': block.blockType === blockTypes.video,
         })}
         >
@@ -187,7 +193,8 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
             version={showOnlyPublished ? 'published' : undefined}
             minHeight={calculateMinHeight(block)}
           />
-        </div>}
+        </div>
+        )}
       </SortableItem>
     </IframeProvider>
   ));

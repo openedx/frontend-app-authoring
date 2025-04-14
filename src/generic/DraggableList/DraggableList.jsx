@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import {createPortal} from 'react-dom';
+import { createPortal } from 'react-dom';
 
 import {
   DndContext,
@@ -51,9 +51,9 @@ const DraggableList = ({
     }
   };
 
-  function handleDragStart(event) {
+  const handleDragStart = (event) => {
     setActiveId(event.active.id);
-  }
+  };
 
   return (
     <DndContext
@@ -73,15 +73,15 @@ const DraggableList = ({
         <DragOverlay>
           {renderOverlay(activeId)}
         </DragOverlay>,
-        document.body
+        document.body,
       )}
     </DndContext>
   );
 };
 
 DraggableList.defaultProps = {
-  overlayComponent: undefined,
-}
+  renderOverlay: undefined,
+};
 
 DraggableList.propTypes = {
   itemList: PropTypes.arrayOf(PropTypes.shape({

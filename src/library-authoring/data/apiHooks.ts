@@ -708,7 +708,7 @@ export const useUpdateContainerChildren = (containerId?: string) => {
       if (!containerId) {
         return undefined;
       }
-      return updateLibraryContainerChildren(containerId, usageKeys)
+      return updateLibraryContainerChildren(containerId, usageKeys);
     },
     onSettled: () => {
       // NOTE: We invalidate the library query here because we need to update the library's
