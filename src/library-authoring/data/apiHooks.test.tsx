@@ -29,6 +29,7 @@ import {
   useRestoreContainer,
   useContainerChildren,
   useAddComponentsToContainer,
+  useUpdateContainerChildren,
 } from './apiHooks';
 
 let axiosMock;
@@ -265,5 +266,17 @@ describe('library api hooks', () => {
     await result.current.mutateAsync([componentId]);
 
     expect(axiosMock.history.post[0].url).toEqual(url);
+  });
+
+  it('should update container children', async () => {
+    const containerId = 'lct:org:lib1';
+    const url = getLibraryContainerChildrenApiUrl(containerId);
+
+    axiosMock.onPatch(url).reply(200);
+    const { result } = renderHook(() => useUpdateContainerChildren(containerId), { wrapper });
+    await result.current.mutateAsync([]);
+    await waitFor(() => {
+      expect(axiosMock.history.patch[0].url).toEqual(url);
+    });
   });
 });

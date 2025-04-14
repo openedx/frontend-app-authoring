@@ -145,7 +145,6 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
   };
 
   const renderOverlay = (activeId: string | null) => {
-    setHidePreviewFor(activeId);
     if (!activeId) {
       return null;
     }
@@ -206,6 +205,8 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
         setState={setOrderedBlocks}
         updateOrder={handleReorder}
         renderOverlay={renderOverlay}
+        activeId={hidePreviewFor}
+        setActiveId={setHidePreviewFor}
       >
         {renderedBlocks}
       </DraggableList>

@@ -2,6 +2,7 @@ import userEvent from '@testing-library/user-event';
 import type MockAdapter from 'axios-mock-adapter';
 
 import {
+  fireEvent,
   initializeMocks,
   fireEvent,
   render,
@@ -20,9 +21,16 @@ import {
 import { mockContentSearchConfig, mockGetBlockTypes } from '../../search-manager/data/api.mock';
 import { mockClipboardEmpty } from '../../generic/data/api.mock';
 import LibraryLayout from '../LibraryLayout';
+import { getLibraryContainerChildrenApiUrl } from '../data/api';
+import { RequestStatus } from '../../data/constants';
+import { closestCorners } from '@dnd-kit/core';
+import { ToastActionData } from '../../generic/toast-context';
+import { act } from 'react';
 
 const path = '/library/:libraryId/*';
 const libraryTitle = mockContentLibrary.libraryData.title;
+let axiosMock: import("axios-mock-adapter/types");
+let mockShowToast: (message: string, action?: ToastActionData | undefined) => void;
 
 let axiosMock: MockAdapter;
 let mockShowToast: (message: string) => void;
@@ -35,6 +43,17 @@ mockGetBlockTypes.applyMock();
 mockContentLibrary.applyMock();
 mockXBlockFields.applyMock();
 mockLibraryBlockMetadata.applyMock();
+
+jest.mock('@dnd-kit/core', () => ({
+  ...jest.requireActual('@dnd-kit/core'),
+  // Since jsdom (used by jest) does not support getBoundingClientRect function
+  // which is required for drag-n-drop calculations, we mock closestCorners fn
+  // from dnd-kit to return collided elements as per the test. This allows us to
+  // test all drag-n-drop handlers.
+  closestCorners: jest.fn(),
+}));
+// eslint-disable-next-line no-promise-executor-return
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 describe('<LibraryUnitPage />', () => {
   beforeEach(() => {
@@ -186,5 +205,20 @@ describe('<LibraryUnitPage />', () => {
     const closeButton = await findByRole('button', { name: /close/i });
     userEvent.click(closeButton);
     await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
+  });
+
+  it('should call update order api on dragging component', async () => {
+    renderLibraryUnitPage();
+    const firstDragHandle = (await screen.findAllByRole('button', { name: 'Drag to reorder' }))[0];
+    axiosMock
+      .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId))
+      .reply(200);
+    closestCorners.mockReturnValue([{ id: "lb:org1:Demo_course:html:text-1" }]);
+    await act(async () => {
+      fireEvent.keyDown(firstDragHandle, { code: 'Space' });
+      await sleep(1);
+      fireEvent.keyUp(firstDragHandle, { code: 'Space' });
+    })
+    await waitFor(() => expect(mockShowToast).toHaveBeenLastCalledWith('test'));
   });
 });
