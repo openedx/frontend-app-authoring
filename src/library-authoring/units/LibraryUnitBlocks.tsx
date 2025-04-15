@@ -12,6 +12,7 @@ import DraggableList, { SortableItem } from '../../editors/sharedComponents/Drag
 
 import ErrorAlert from '../../generic/alert-error';
 import { getItemIcon } from '../../generic/block-type-utils';
+import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import { IframeProvider } from '../../generic/hooks/context/iFrameContext';
 import Loading from '../../generic/Loading';
 import TagCount from '../../generic/tag-count';
@@ -23,6 +24,15 @@ import { LibraryBlock } from '../LibraryBlock';
 import { useLibraryRoutes } from '../routes';
 import messages from './messages';
 import { useSidebarContext } from '../common/context/SidebarContext';
+
+/** Components that need large min height in preview */
+const LARGE_COMPONENTS = [
+  COMPONENT_TYPES.advanced,
+  COMPONENT_TYPES.dragAndDrop,
+  COMPONENT_TYPES.discussion,
+  'lti',
+  'lti_consumer',
+];
 
 export const LibraryUnitBlocks = () => {
   const intl = useIntl();
@@ -79,6 +89,14 @@ export const LibraryUnitBlocks = () => {
     navigateTo({ componentId: block.id });
   };
 
+  /* istanbul ignore next */
+  const calculateMinHeight = (block: LibraryBlockMetadata) => {
+    if (LARGE_COMPONENTS.includes(block.blockType)) {
+      return '700px';
+    }
+    return '200px';
+  };
+
   const renderedBlocks = orderedBlocks?.map((block) => (
     <IframeProvider key={block.id}>
       <SortableItem
@@ -124,6 +142,7 @@ export const LibraryUnitBlocks = () => {
           <LibraryBlock
             usageKey={block.id}
             version={showOnlyPublished ? 'published' : undefined}
+            minHeight={calculateMinHeight(block)}
           />
         </div>
       </SortableItem>

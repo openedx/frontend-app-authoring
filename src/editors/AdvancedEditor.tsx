@@ -55,6 +55,7 @@ const AdvancedEditor = ({ usageKey, onClose }: AdvancedEditorProps) => {
             usageKey={usageKey}
             view="studio_view"
             scrolling="yes"
+            minHeight="70vh"
           />
         </IframeProvider>
       </EditorModalWrapper>
