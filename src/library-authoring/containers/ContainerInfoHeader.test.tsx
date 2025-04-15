@@ -58,14 +58,14 @@ describe('<ContainerInfoHeader />', () => {
     render();
     expect(await screen.findByText('Test Unit')).toBeInTheDocument();
 
-    expect(screen.getByRole('button', { name: /edit container title/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /edit/i })).toBeInTheDocument();
   });
 
   it('should not render edit title button without permission', async () => {
     render(libraryIdReadOnly);
     expect(await screen.findByText('Test Unit')).toBeInTheDocument();
 
-    expect(screen.queryByRole('button', { name: /edit container title/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /edit/i })).not.toBeInTheDocument();
   });
 
   it('should update container title', async () => {
@@ -76,9 +76,9 @@ describe('<ContainerInfoHeader />', () => {
     const url = api.getLibraryContainerApiUrl(containerId);
     axiosMock.onPatch(url).reply(200);
 
-    fireEvent.click(screen.getByRole('button', { name: /edit container title/i }));
+    fireEvent.click(screen.getByRole('button', { name: /edit/i }));
 
-    const textBox = screen.getByRole('textbox', { name: /title input/i });
+    const textBox = screen.getByRole('textbox', { name: /text input/i });
 
     userEvent.clear(textBox);
     userEvent.type(textBox, 'New Unit Title{enter}');
@@ -99,9 +99,9 @@ describe('<ContainerInfoHeader />', () => {
     const url = api.getLibraryContainerApiUrl(containerId);
     axiosMock.onPatch(url).reply(200);
 
-    fireEvent.click(screen.getByRole('button', { name: /edit container title/i }));
+    fireEvent.click(screen.getByRole('button', { name: /edit/i }));
 
-    const textBox = screen.getByRole('textbox', { name: /title input/i });
+    const textBox = screen.getByRole('textbox', { name: /text input/i });
 
     userEvent.clear(textBox);
     userEvent.type(textBox, `${mockGetContainerMetadata.containerData.displayName}{enter}`);
@@ -118,9 +118,9 @@ describe('<ContainerInfoHeader />', () => {
     const url = api.getLibraryContainerApiUrl(containerId);
     axiosMock.onPatch(url).reply(200);
 
-    fireEvent.click(screen.getByRole('button', { name: /edit container title/i }));
+    fireEvent.click(screen.getByRole('button', { name: /edit/i }));
 
-    const textBox = screen.getByRole('textbox', { name: /title input/i });
+    const textBox = screen.getByRole('textbox', { name: /text input/i });
 
     userEvent.clear(textBox);
     userEvent.type(textBox, '{enter}');
@@ -137,9 +137,9 @@ describe('<ContainerInfoHeader />', () => {
     const url = api.getLibraryContainerApiUrl(containerId);
     axiosMock.onPatch(url).reply(200);
 
-    fireEvent.click(screen.getByRole('button', { name: /edit container title/i }));
+    fireEvent.click(screen.getByRole('button', { name: /edit/i }));
 
-    const textBox = screen.getByRole('textbox', { name: /title input/i });
+    const textBox = screen.getByRole('textbox', { name: /text input/i });
 
     userEvent.clear(textBox);
     userEvent.type(textBox, 'New Unit Title{esc}');
@@ -156,9 +156,9 @@ describe('<ContainerInfoHeader />', () => {
     const url = api.getLibraryContainerApiUrl(containerId);
     axiosMock.onPatch(url).reply(500);
 
-    fireEvent.click(screen.getByRole('button', { name: /edit container title/i }));
+    fireEvent.click(screen.getByRole('button', { name: /edit/i }));
 
-    const textBox = screen.getByRole('textbox', { name: /title input/i });
+    const textBox = screen.getByRole('textbox', { name: /text input/i });
 
     userEvent.clear(textBox);
     userEvent.type(textBox, 'New Unit Title{enter}');

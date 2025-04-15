@@ -31,6 +31,16 @@ const messages = defineMessages({
     defaultMessage: 'Draft',
     description: 'Chip in components in unit page that is shown when component has unpublished changes',
   },
+  updateContainerSuccessMsg: {
+    id: 'course-authoring.library-authoring.update-container-success-msg',
+    defaultMessage: 'Container updated successfully.',
+    description: 'Message displayed when container is updated successfully',
+  },
+  updateContainerErrorMsg: {
+    id: 'course-authoring.library-authoring.update-container-error-msg',
+    defaultMessage: 'Failed to update container.',
+    description: 'Message displayed when container update fails',
+  },
 });
 
 export default messages;

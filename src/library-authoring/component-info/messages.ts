@@ -61,11 +61,6 @@ const messages = defineMessages({
     defaultMessage: 'ID (Usage key)',
     description: 'Heading for the component\'s ID',
   },
-  editNameButtonAlt: {
-    id: 'course-authoring.library-authoring.component.edit-name.alt',
-    defaultMessage: 'Edit component name',
-    description: 'Alt text for edit component name icon button',
-  },
   updateComponentSuccessMsg: {
     id: 'course-authoring.library-authoring.component.update.success',
     defaultMessage: 'Component updated successfully.',

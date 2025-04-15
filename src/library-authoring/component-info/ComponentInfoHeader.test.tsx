@@ -61,7 +61,7 @@ describe('<ComponentInfoHeader />', () => {
 
     expect(await screen.findByText('Test HTML Block')).toBeInTheDocument();
 
-    expect(screen.getByRole('button', { name: /edit component name/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /edit/i })).toBeInTheDocument();
   });
 
   it('should not render edit title button without permission', async () => {
@@ -69,7 +69,7 @@ describe('<ComponentInfoHeader />', () => {
 
     expect(await screen.findByText('Test HTML Block')).toBeInTheDocument();
 
-    expect(screen.queryByRole('button', { name: /edit component name/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /edit/i })).not.toBeInTheDocument();
   });
 
   it('should edit component title', async () => {
@@ -79,9 +79,9 @@ describe('<ComponentInfoHeader />', () => {
 
     expect(await screen.findByText('Test HTML Block')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: /edit component name/i }));
+    fireEvent.click(screen.getByRole('button', { name: /edit/i }));
 
-    const textBox = screen.getByRole('textbox', { name: /display name input/i });
+    const textBox = screen.getByRole('textbox', { name: /text input/i });
 
     fireEvent.change(textBox, { target: { value: 'New component name' } });
     fireEvent.keyDown(textBox, { key: 'Enter', code: 'Enter', charCode: 13 });
@@ -105,9 +105,9 @@ describe('<ComponentInfoHeader />', () => {
 
     expect(await screen.findByText('Test HTML Block')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: /edit component name/i }));
+    fireEvent.click(screen.getByRole('button', { name: /edit/i }));
 
-    const textBox = screen.getByRole('textbox', { name: /display name input/i });
+    const textBox = screen.getByRole('textbox', { name: /text input/i });
 
     fireEvent.change(textBox, { target: { value: 'New component name' } });
     fireEvent.keyDown(textBox, { key: 'Escape', code: 'Escape', charCode: 27 });
@@ -124,9 +124,9 @@ describe('<ComponentInfoHeader />', () => {
 
     expect(await screen.findByText('Test HTML Block')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: /edit component name/i }));
+    fireEvent.click(screen.getByRole('button', { name: /edit/i }));
 
-    const textBox = screen.getByRole('textbox', { name: /display name input/i });
+    const textBox = screen.getByRole('textbox', { name: /text input/i });
 
     fireEvent.change(textBox, { target: { value: 'New component name' } });
     fireEvent.keyDown(textBox, { key: 'Enter', code: 'Enter', charCode: 13 });

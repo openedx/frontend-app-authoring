@@ -111,11 +111,6 @@ const messages = defineMessages({
     defaultMessage: 'Failed to update collection.',
     description: 'Message displayed when collection update fails',
   },
-  editTitleButtonAlt: {
-    id: 'course-authoring.library-authoring.collection.sidebar.edit-name.alt',
-    defaultMessage: 'Edit collection title',
-    description: 'Alt text for edit collection title icon button',
-  },
   returnToLibrary: {
     id: 'course-authoring.library-authoring.collection.component-picker.return-to-library',
     defaultMessage: 'Back to Library',
