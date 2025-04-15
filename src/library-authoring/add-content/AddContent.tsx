@@ -154,6 +154,10 @@ const AddAdvancedContentView = ({
   isBlockTypeEnabled,
 }: AddAdvancedContentViewProps) => {
   const intl = useIntl();
+  // Sort block types alphabetically by default display name
+  const sortedBlockTypes = Object.keys(advancedBlocks).sort((typeA, typeB) => (
+    advancedBlocks[typeA].displayName.localeCompare(advancedBlocks[typeB].displayName)
+  ));
   return (
     <>
       <div className="d-flex">
@@ -161,7 +165,7 @@ const AddAdvancedContentView = ({
           {intl.formatMessage(messages.backToAddContentListButton)}
         </Button>
       </div>
-      {Object.keys(advancedBlocks).map((blockType) => (
+      {sortedBlockTypes.map((blockType) => (
         isBlockTypeEnabled(blockType) ? (
           <AddContentButton
             key={`add-content-${blockType}`}
