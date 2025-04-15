@@ -191,7 +191,15 @@ export const parseErrorMsg = (
 ) => {
   try {
     const { response: { data } } = error;
-    const detail = data && (Array.isArray(data) ? data.join() : String(data));
+    let detail = '';
+    if (Array.isArray(data)) {
+      detail = data.join(', ');
+    } else if (typeof data === 'string') {
+      /* istanbul ignore next */
+      detail = data.substring(0, 400); // In case this is a giant HTML response, only show the first little bit.
+    } else if (data) {
+      detail = JSON.stringify(data);
+    }
     if (detail) {
       return intl.formatMessage(detailedMessage, { detail });
     }
@@ -217,7 +225,7 @@ const AddContent = () => {
   const pasteClipboardMutation = useLibraryPasteClipboard();
   const { showToast } = useContext(ToastContext);
   const canEdit = useSelector(getCanEdit);
-  const { showPasteXBlock, sharedClipboardData } = useClipboard(canEdit);
+  const { showPasteUnit, showPasteXBlock, sharedClipboardData } = useClipboard(canEdit);
 
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
   const [isAdvancedListOpen, showAdvancedList, closeAdvancedList] = useToggle();
@@ -281,7 +289,7 @@ const AddContent = () => {
 
   // Include the 'Paste from Clipboard' button if there is an Xblock in the clipboard
   // that can be pasted
-  if (showPasteXBlock) {
+  if (showPasteXBlock || showPasteUnit) {
     const pasteButton = {
       name: intl.formatMessage(messages.pasteButton),
       disabled: false,
@@ -317,7 +325,6 @@ const AddContent = () => {
     }
     pasteClipboardMutation.mutateAsync({
       libraryId,
-      blockId: `${uuid4()}`,
     }).then((data) => {
       linkComponent(data.id);
       showToast(intl.formatMessage(messages.successPasteClipboardMessage));

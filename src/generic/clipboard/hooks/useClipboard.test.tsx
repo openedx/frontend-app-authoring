@@ -2,6 +2,7 @@ import { renderHook } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
 
 import {
+  clipboardSubsection,
   clipboardUnit,
   clipboardXBlock,
 } from '../../../__mocks__';
@@ -42,7 +43,7 @@ describe('useClipboard', () => {
 
       axiosMock
         .onPost(getClipboardUrl())
-        .reply(200, clipboardUnit);
+        .reply(200, clipboardSubsection);
 
       await result.current.copyToClipboard(unitId);
 
@@ -89,6 +90,7 @@ describe('useClipboard', () => {
   describe('broadcast channel message handling', () => {
     it('updates states correctly on receiving a broadcast message', async () => {
       const { result, rerender } = renderHook(() => useClipboard(true), { wrapper: makeWrapper() });
+      // Subsections cannot be pasted:
       clipboardBroadcastChannelMock.postMessage({ data: clipboardUnit });
 
       rerender();

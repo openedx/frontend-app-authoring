@@ -207,6 +207,23 @@ describe('<AddContent />', () => {
     await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(pasteUrl));
   });
 
+  it('should show error toast on paste failure', async () => {
+    // Simulate having an HTML block in the clipboard:
+    mockClipboardHtml.applyMock();
+
+    const pasteUrl = getLibraryPasteClipboardUrl(libraryId);
+    axiosMock.onPost(pasteUrl).reply(500, { block_type: 'Unsupported block type.' });
+
+    render();
+    const pasteButton = await screen.findByRole('button', { name: /paste from clipboard/i });
+    fireEvent.click(pasteButton);
+
+    await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(pasteUrl));
+    expect(mockShowToast).toHaveBeenCalledWith(
+      'There was an error pasting the content: {"block_type":"Unsupported block type."}',
+    );
+  });
+
   it('should paste content inside a collection', async () => {
     // Simulate having an HTML block in the clipboard:
     const getClipboardSpy = mockClipboardHtml.applyMock();
