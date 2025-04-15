@@ -116,25 +116,25 @@ const AddContentView = ({
 
   return (
     <>
-      {upstreamContainerType !== ContainerType.Unit && (
+      {(collectionId || unitId) && componentPicker && (
+        /// Show the "Add Library Content" button for units and collections
         <>
-          {collectionId ? (
-            componentPicker && (
-              <>
-                <AddContentButton contentType={libraryContentButtonData} onCreateContent={onCreateContent} />
-                <PickLibraryContentModal
-                  isOpen={isAddLibraryContentModalOpen}
-                  onClose={closeAddLibraryContentModal}
-                />
-              </>
-            )
-          ) : (
-            <AddContentButton contentType={collectionButtonData} onCreateContent={onCreateContent} />
-          )}
-          <AddContentButton contentType={unitButtonData} onCreateContent={onCreateContent} />
-          <hr className="w-100 bg-gray-500" />
+          <AddContentButton contentType={libraryContentButtonData} onCreateContent={onCreateContent} />
+          <PickLibraryContentModal
+            isOpen={isAddLibraryContentModalOpen}
+            onClose={closeAddLibraryContentModal}
+          />
         </>
       )}
+      {!collectionId && !unitId && (
+        // Doesn't show the "Collection" button if we are in a unit or collection
+        <AddContentButton contentType={collectionButtonData} onCreateContent={onCreateContent} />
+      )}
+      {upstreamContainerType !== ContainerType.Unit && (
+        // Doesn't show the "Unit" button if we are in a unit
+        <AddContentButton contentType={unitButtonData} onCreateContent={onCreateContent} />
+      )}
+      <hr className="w-100 bg-gray-500" />
       {/* Note: for MVP we are hiding the unuspported types, not just disabling them. */}
       {contentTypes.filter(ct => !ct.disabled).map((contentType) => (
         <AddContentButton

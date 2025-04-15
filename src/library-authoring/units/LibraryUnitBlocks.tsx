@@ -17,6 +17,7 @@ import { IframeProvider } from '../../generic/hooks/context/iFrameContext';
 import Loading from '../../generic/Loading';
 import TagCount from '../../generic/tag-count';
 import { useLibraryContext } from '../common/context/LibraryContext';
+import { PickLibraryContentModal } from '../add-content';
 import ComponentMenu from '../components';
 import { LibraryBlockMetadata } from '../data/api';
 import { libraryAuthoringQueryKeys, useContainerChildren } from '../data/apiHooks';
@@ -38,6 +39,8 @@ export const LibraryUnitBlocks = () => {
   const intl = useIntl();
   const [orderedBlocks, setOrderedBlocks] = useState<LibraryBlockMetadata[]>([]);
   const [isManageTagsDrawerOpen, openManageTagsDrawer, closeManageTagsDrawer] = useToggle(false);
+  const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
+
   const { navigateTo } = useLibraryRoutes();
 
   const {
@@ -148,6 +151,7 @@ export const LibraryUnitBlocks = () => {
     </IframeProvider>
   ));
 
+
   return (
     <div className="library-unit-page">
       <DraggableList itemList={orderedBlocks} setState={setOrderedBlocks} updateOrder={handleReorder}>
@@ -171,11 +175,17 @@ export const LibraryUnitBlocks = () => {
             className="ml-2"
             iconBefore={Add}
             variant="outline-primary rounded-0"
-            disabled
+            disabled={readOnly}
+            onClick={showAddLibraryContentModal}
             block
           >
             {intl.formatMessage(messages.addExistingContentButton)}
           </Button>
+          <PickLibraryContentModal
+            isOpen={isAddLibraryContentModalOpen}
+            onClose={closeAddLibraryContentModal}
+            extraFilter={['NOT block_type = "unit"']}
+          />
         </div>
       </div>
       <ContentTagsDrawerSheet

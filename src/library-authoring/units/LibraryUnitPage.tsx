@@ -1,5 +1,9 @@
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Breadcrumb, Button, Container } from '@openedx/paragon';
+import {
+  Breadcrumb,
+  Button,
+  Container,
+} from '@openedx/paragon';
 import { Add, InfoOutline } from '@openedx/paragon/icons';
 import { useCallback, useEffect } from 'react';
 import { Helmet } from 'react-helmet';

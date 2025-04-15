@@ -21,6 +21,11 @@ const messages = defineMessages({
     defaultMessage: 'Add to Collection',
     description: 'Button to add library content to a collection.',
   },
+  addToUnitButton: {
+    id: 'course-authoring.library-authoring.add-content.buttons.library-content.add-to-unit',
+    defaultMessage: 'Add to Unit',
+    description: 'Button to add library content to a unit.',
+  },
   selectedComponents: {
     id: 'course-authoring.library-authoring.add-content.selected-components',
     defaultMessage: '{count, plural, one {# Selected Component} other {# Selected Components}}',
