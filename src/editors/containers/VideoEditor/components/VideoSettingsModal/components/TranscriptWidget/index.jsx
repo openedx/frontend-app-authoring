@@ -98,9 +98,29 @@ const TranscriptWidget = ({
   const fullTextLanguages = module.hooks.transcriptLanguages(transcripts, intl);
   const hasTranscripts = module.hooks.hasTranscripts(transcripts);
   const isLibrary = useSelector(selectors.app.isLibrary);
+  const isCreateWorkflow = useSelector(selectors.app.shouldCreateBlock);
   const dispatch = useDispatch();
   if (isLibrary) {
     dispatch(thunkActions.video.updateTranscriptHandlerUrl());
+  }
+
+  if (isCreateWorkflow) {
+    return (
+      <CollapsibleFormWidget
+        fontSize="x-small"
+        isError={Object.keys(error).length !== 0}
+        title={(
+          <div className="text-gray-500">
+            {intl.formatMessage(messages.title)}
+          </div>
+        )}
+        bgColor="bg-light-200"
+      >
+        <div className="d-flex justify-content-around text-gray-700">
+          {intl.formatMessage(messages.videoCreationWarning)}
+        </div>
+      </CollapsibleFormWidget>
+    );
   }
 
   return (
