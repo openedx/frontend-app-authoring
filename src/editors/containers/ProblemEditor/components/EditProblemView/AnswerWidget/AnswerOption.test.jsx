@@ -42,7 +42,7 @@ describe('AnswerOption', () => {
   };
   const answerRange = {
     id: 'A',
-    title: 'Answer 1',
+    title: '[2,5]',
     correct: true,
     selectedFeedback: 'selected feedback',
     unselectedFeedback: 'unselected feedback',
@@ -72,6 +72,9 @@ describe('AnswerOption', () => {
     });
     test('snapshot: renders correct option with numeric input problem and answer range', () => {
       expect(shallow(<AnswerOption {...props} problemType="numericalresponse" answer={answerRange} />).snapshot).toMatchSnapshot();
+    });
+    test('snapshot: renders incorrect option with numeric input problem and answer range', () => {
+      expect(shallow(<AnswerOption {...props} problemType="numericalresponse" answer={{ ...answerRange, title: '[2.5]' }} />).snapshot).toMatchSnapshot();
     });
   });
 
