@@ -711,9 +711,12 @@ export const useUpdateContainerChildren = (containerId?: string) => {
       return updateLibraryContainerChildren(containerId, usageKeys);
     },
     onSettled: () => {
+      if (!containerId) {
+        return;
+      }
       // NOTE: We invalidate the library query here because we need to update the library's
       // container list.
-      const libraryId = getLibraryId(containerId!);
+      const libraryId = getLibraryId(containerId);
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.container(libraryId, containerId) });
     },

@@ -279,4 +279,12 @@ describe('library api hooks', () => {
       expect(axiosMock.history.patch[0].url).toEqual(url);
     });
   });
+
+  it('should not attempt request if containerId is not defined', async () => {
+    const { result } = renderHook(() => useUpdateContainerChildren(), { wrapper });
+    await result.current.mutateAsync([]);
+    await waitFor(() => {
+      expect(axiosMock.history.patch.length).toEqual(0);
+    });
+  });
 });
