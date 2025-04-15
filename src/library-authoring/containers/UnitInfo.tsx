@@ -112,11 +112,6 @@ const UnitInfo = () => {
     );
   }, [hiddenTabs, defaultTab.unit, unitId]);
 
-  // istanbul ignore if: this should never happen
-  if (!unitId) {
-    throw new Error('unitId is required');
-  }
-
   useEffect(() => {
     // Show Organize tab if JumpToAddCollections action is set in sidebarComponentInfo
     if (jumpToCollections) {
@@ -124,7 +119,7 @@ const UnitInfo = () => {
     }
   }, [jumpToCollections, setSidebarTab]);
 
-  if (!container) {
+  if (!container || !unitId) {
     return null;
   }
 

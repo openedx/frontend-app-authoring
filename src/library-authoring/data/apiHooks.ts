@@ -100,16 +100,14 @@ export const libraryAuthoringQueryKeys = {
     'blockTypes',
     libraryId,
   ],
-  container: (libraryId?: string, containerId?: string) => [
+  container: (containerId?: string) => [
     ...libraryAuthoringQueryKeys.all,
     'container',
-    libraryId,
     containerId,
   ],
-  containerChildren: (libraryId?: string, containerId?: string) => [
+  containerChildren: (containerId?: string) => [
     ...libraryAuthoringQueryKeys.all,
     'container',
-    libraryId,
     containerId,
     'children',
   ],
@@ -129,14 +127,6 @@ export const xblockQueryKeys = {
   xblockAssets: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'assets'],
   componentMetadata: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'componentMetadata'],
   componentDownstreamLinks: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'downstreamLinks'],
-};
-
-export const containerQueryKeys = {
-  all: ['container', 'children'],
-  /**
-   * Base key for data specific to a container
-   */
-  container: (containerId?: string) => [...containerQueryKeys.all, containerId],
 };
 
 /**
@@ -276,7 +266,7 @@ export const useRevertLibraryChanges = () => {
 /**
  * Hook to fetch a content library's team members
  */
-export const useLibraryTeam = (libraryId: string | undefined) => (
+export const useLibraryTeam = (libraryId?: string) => (
   useQuery({
     queryKey: libraryAuthoringQueryKeys.libraryTeam(libraryId),
     queryFn: () => getLibraryTeam(libraryId!),
@@ -287,7 +277,7 @@ export const useLibraryTeam = (libraryId: string | undefined) => (
 /**
  * Hook to fetch the list of XBlock types that can be added to this library.
  */
-export const useBlockTypesMetadata = (libraryId: string | undefined) => (
+export const useBlockTypesMetadata = (libraryId?: string) => (
   useQuery({
     queryKey: libraryAuthoringQueryKeys.blockTypes(libraryId),
     queryFn: () => getBlockTypes(libraryId!),
@@ -612,7 +602,7 @@ export const useCreateLibraryContainer = (libraryId: string) => {
 export const useContainer = (containerId?: string) => (
   useQuery({
     enabled: !!containerId,
-    queryKey: containerQueryKeys.container(containerId),
+    queryKey: libraryAuthoringQueryKeys.container(containerId!),
     queryFn: () => getContainerMetadata(containerId!),
   })
 );
@@ -629,7 +619,7 @@ export const useUpdateContainer = (containerId: string) => {
       // NOTE: We invalidate the library query here because we need to update the library's
       // container list.
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
-      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerChildren(libraryId, containerId) });
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.container(containerId) });
     },
   });
 };
@@ -666,19 +656,18 @@ export const useRestoreContainer = (containerId: string) => {
 /**
  * Get the metadata and children for a container in a library
  */
-export const useContainerChildren = (containerId: string) => {
-  const libraryId = getLibraryId(containerId);
-  return useQuery({
+export const useContainerChildren = (containerId?: string) => (
+  useQuery({
     enabled: !!containerId,
-    queryKey: libraryAuthoringQueryKeys.containerChildren(libraryId, containerId),
+    queryKey: libraryAuthoringQueryKeys.containerChildren(containerId),
     queryFn: () => getLibraryContainerChildren(containerId!),
-  });
+  })
 );
 
 /**
  * Use this mutation to add components to a container
  */
-export const useAddComponentsToContainer = (libraryId?: string, containerId?: string) => {
+export const useAddComponentsToContainer = (containerId?: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (componentIds: string[]) => {
@@ -688,7 +677,7 @@ export const useAddComponentsToContainer = (libraryId?: string, containerId?: st
       return undefined;
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerChildren(libraryId, containerId) });
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerChildren(containerId!) });
     },
   });
 };

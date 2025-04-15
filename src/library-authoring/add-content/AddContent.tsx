@@ -208,7 +208,7 @@ const AddContent = () => {
     unitId,
   } = useLibraryContext();
   const addComponentsToCollectionMutation = useAddItemsToCollection(libraryId, collectionId);
-  const addComponentsToContainerMutation = useAddComponentsToContainer(libraryId, unitId);
+  const addComponentsToContainerMutation = useAddComponentsToContainer(unitId);
   const createBlockMutation = useCreateLibraryBlock();
   const pasteClipboardMutation = useLibraryPasteClipboard();
   const { showToast } = useContext(ToastContext);

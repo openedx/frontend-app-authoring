@@ -18,7 +18,7 @@ import TagCount from '../../generic/tag-count';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import ComponentMenu from '../components';
 import { LibraryBlockMetadata } from '../data/api';
-import { containerQueryKeys, useContainerChildren } from '../data/apiHooks';
+import { libraryAuthoringQueryKeys, useContainerChildren } from '../data/apiHooks';
 import { LibraryBlock } from '../LibraryBlock';
 import { useLibraryRoutes } from '../routes';
 import messages from './messages';
@@ -42,11 +42,6 @@ export const LibraryUnitBlocks = () => {
     openAddContentSidebar,
   } = useSidebarContext();
 
-  // istanbul ignore if: this should never happen
-  if (!unitId) {
-    throw new Error('unitId is required');
-  }
-
   const queryClient = useQueryClient();
   const {
     data: blocks,
@@ -54,7 +49,6 @@ export const LibraryUnitBlocks = () => {
     isError,
     error,
   } = useContainerChildren(unitId);
-
 
   useEffect(() => setOrderedBlocks(blocks || []), [blocks]);
 
@@ -75,7 +69,7 @@ export const LibraryUnitBlocks = () => {
   };
 
   const onTagSidebarClose = () => {
-    queryClient.invalidateQueries(containerQueryKeys.children(unitId));
+    queryClient.invalidateQueries(libraryAuthoringQueryKeys.containerChildren(unitId));
     closeManageTagsDrawer();
   };
 
