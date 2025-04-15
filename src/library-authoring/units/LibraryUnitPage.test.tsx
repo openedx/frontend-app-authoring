@@ -1,6 +1,7 @@
 import userEvent from '@testing-library/user-event';
 import type MockAdapter from 'axios-mock-adapter';
 
+import { act } from 'react';
 import {
   fireEvent,
   initializeMocks,
@@ -22,14 +23,11 @@ import { mockContentSearchConfig, mockGetBlockTypes } from '../../search-manager
 import { mockClipboardEmpty } from '../../generic/data/api.mock';
 import LibraryLayout from '../LibraryLayout';
 import { getLibraryContainerChildrenApiUrl } from '../data/api';
-import { RequestStatus } from '../../data/constants';
-import { closestCorners } from '@dnd-kit/core';
 import { ToastActionData } from '../../generic/toast-context';
-import { act } from 'react';
 
 const path = '/library/:libraryId/*';
 const libraryTitle = mockContentLibrary.libraryData.title;
-let axiosMock: import("axios-mock-adapter/types");
+let axiosMock: import('axios-mock-adapter/types');
 let mockShowToast: (message: string, action?: ToastActionData | undefined) => void;
 
 let axiosMock: MockAdapter;
@@ -44,16 +42,15 @@ mockContentLibrary.applyMock();
 mockXBlockFields.applyMock();
 mockLibraryBlockMetadata.applyMock();
 
+const closestCenter = jest.fn();
 jest.mock('@dnd-kit/core', () => ({
   ...jest.requireActual('@dnd-kit/core'),
   // Since jsdom (used by jest) does not support getBoundingClientRect function
   // which is required for drag-n-drop calculations, we mock closestCorners fn
   // from dnd-kit to return collided elements as per the test. This allows us to
   // test all drag-n-drop handlers.
-  closestCorners: jest.fn(),
+  closestCenter: () => closestCenter(),
 }));
-// eslint-disable-next-line no-promise-executor-return
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 describe('<LibraryUnitPage />', () => {
   beforeEach(() => {
@@ -213,12 +210,29 @@ describe('<LibraryUnitPage />', () => {
     axiosMock
       .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId))
       .reply(200);
-    closestCorners.mockReturnValue([{ id: "lb:org1:Demo_course:html:text-1" }]);
+    closestCenter.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1' }]);
     await act(async () => {
       fireEvent.keyDown(firstDragHandle, { code: 'Space' });
-      await sleep(1);
-      fireEvent.keyUp(firstDragHandle, { code: 'Space' });
-    })
-    await waitFor(() => expect(mockShowToast).toHaveBeenLastCalledWith('test'));
+    });
+    await act(async () => {
+      fireEvent.keyDown(firstDragHandle, { code: 'Space' });
+    });
+    await waitFor(() => expect(mockShowToast).toHaveBeenLastCalledWith('Order updated'));
+  });
+
+  it('should show toast error message on update order failure', async () => {
+    renderLibraryUnitPage();
+    const firstDragHandle = (await screen.findAllByRole('button', { name: 'Drag to reorder' }))[0];
+    axiosMock
+      .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId))
+      .reply(500);
+    closestCenter.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1' }]);
+    await act(async () => {
+      fireEvent.keyDown(firstDragHandle, { code: 'Space' });
+    });
+    await act(async () => {
+      fireEvent.keyDown(firstDragHandle, { code: 'Space' });
+    });
+    await waitFor(() => expect(mockShowToast).toHaveBeenLastCalledWith('Failed to update components order'));
   });
 });

@@ -176,8 +176,8 @@ export const LibraryUnitPage = () => {
     return <NotFoundAlert />;
   }
 
+  // istanbul ignore if
   if (isError) {
-    // istanbul ignore next
     return <ErrorAlert error={error} />;
   }
 

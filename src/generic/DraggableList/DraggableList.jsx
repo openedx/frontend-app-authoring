@@ -95,7 +95,7 @@ DraggableList.propTypes = {
   children: PropTypes.node.isRequired,
   renderOverlay: PropTypes.func,
   activeId: PropTypes.string,
-  onDragEnd: PropTypes.func,
+  setActiveId: PropTypes.func,
 };
 
 export default DraggableList;
