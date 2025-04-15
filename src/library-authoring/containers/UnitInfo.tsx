@@ -10,6 +10,7 @@ import {
   useToggle,
 } from '@openedx/paragon';
 import { useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { MoreVert } from '@openedx/paragon/icons';
 
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
@@ -70,7 +71,7 @@ const UnitMenu = ({ containerId, displayName }: ContainerMenuProps) => {
 const UnitInfo = () => {
   const intl = useIntl();
 
-  const { setUnitId } = useLibraryContext();
+  const { libraryId } = useLibraryContext();
   const { componentPickerMode } = useComponentPickerContext();
   const {
     defaultTab,
@@ -81,7 +82,7 @@ const UnitInfo = () => {
     sidebarAction,
   } = useSidebarContext();
   const jumpToCollections = sidebarAction === SidebarActions.JumpToAddCollections;
-  const { insideUnit, navigateTo } = useLibraryRoutes();
+  const { insideUnit } = useLibraryRoutes();
 
   const tab: UnitInfoTab = (
     sidebarTab && isUnitInfoTab(sidebarTab)
@@ -90,15 +91,7 @@ const UnitInfo = () => {
   const unitId = sidebarComponentInfo?.id;
   const { data: container } = useContainer(unitId);
 
-  const handleOpenUnit = useCallback(() => {
-    if (componentPickerMode) {
-      setUnitId(unitId);
-    } else {
-      navigateTo({ unitId });
-    }
-  }, [componentPickerMode, navigateTo, unitId]);
-
-  const showOpenUnitButton = !insideUnit || componentPickerMode;
+  const showOpenUnitButton = !insideUnit && !componentPickerMode;
 
   const renderTab = useCallback((infoTab: UnitInfoTab, component: React.ReactNode, title: string) => {
     if (hiddenTabs.includes(infoTab)) {
@@ -130,7 +123,8 @@ const UnitInfo = () => {
           <Button
             variant="outline-primary"
             className="m-1 text-nowrap flex-grow-1"
-            onClick={handleOpenUnit}
+            as={Link}
+            to={`/library/${libraryId}/unit/${unitId}`}
           >
             {intl.formatMessage(messages.openUnitButton)}
           </Button>
@@ -147,7 +141,7 @@ const UnitInfo = () => {
         activeKey={tab}
         onSelect={setSidebarTab}
       >
-        {renderTab(UNIT_INFO_TABS.Preview, <LibraryUnitBlocks />, intl.formatMessage(messages.previewTabTitle))}
+        {renderTab(UNIT_INFO_TABS.Preview, <LibraryUnitBlocks preview />, intl.formatMessage(messages.previewTabTitle))}
         {renderTab(UNIT_INFO_TABS.Organize, <ContainerOrganize />, intl.formatMessage(messages.organizeTabTitle))}
         {renderTab(UNIT_INFO_TABS.Settings, 'Unit Settings', intl.formatMessage(messages.settingsTabTitle))}
       </Tabs>
