@@ -35,7 +35,11 @@ const LARGE_COMPONENTS = [
   'lti_consumer',
 ];
 
-export const LibraryUnitBlocks = () => {
+interface LibraryUnitBlocksProps {
+  preview?: boolean;
+}
+
+export const LibraryUnitBlocks = ({ preview = false }: LibraryUnitBlocksProps) => {
   const intl = useIntl();
   const [orderedBlocks, setOrderedBlocks] = useState<LibraryBlockMetadata[]>([]);
   const [isManageTagsDrawerOpen, openManageTagsDrawer, closeManageTagsDrawer] = useToggle(false);
@@ -151,43 +155,44 @@ export const LibraryUnitBlocks = () => {
     </IframeProvider>
   ));
 
-
   return (
     <div className="library-unit-page">
       <DraggableList itemList={orderedBlocks} setState={setOrderedBlocks} updateOrder={handleReorder}>
         {renderedBlocks}
       </DraggableList>
-      <div className="d-flex">
-        <div className="w-100 mr-2">
-          <Button
-            className="ml-2"
-            iconBefore={Add}
-            variant="outline-primary rounded-0"
-            disabled={readOnly}
-            onClick={openAddContentSidebar}
-            block
-          >
-            {intl.formatMessage(messages.newContentButton)}
-          </Button>
+      { !preview && (
+        <div className="d-flex">
+          <div className="w-100 mr-2">
+            <Button
+              className="ml-2"
+              iconBefore={Add}
+              variant="outline-primary rounded-0"
+              disabled={readOnly}
+              onClick={openAddContentSidebar}
+              block
+            >
+              {intl.formatMessage(messages.newContentButton)}
+            </Button>
+          </div>
+          <div className="w-100 ml-2">
+            <Button
+              className="ml-2"
+              iconBefore={Add}
+              variant="outline-primary rounded-0"
+              disabled={readOnly}
+              onClick={showAddLibraryContentModal}
+              block
+            >
+              {intl.formatMessage(messages.addExistingContentButton)}
+            </Button>
+            <PickLibraryContentModal
+              isOpen={isAddLibraryContentModalOpen}
+              onClose={closeAddLibraryContentModal}
+              extraFilter={['NOT block_type = "unit"']}
+            />
+          </div>
         </div>
-        <div className="w-100 ml-2">
-          <Button
-            className="ml-2"
-            iconBefore={Add}
-            variant="outline-primary rounded-0"
-            disabled={readOnly}
-            onClick={showAddLibraryContentModal}
-            block
-          >
-            {intl.formatMessage(messages.addExistingContentButton)}
-          </Button>
-          <PickLibraryContentModal
-            isOpen={isAddLibraryContentModalOpen}
-            onClose={closeAddLibraryContentModal}
-            extraFilter={['NOT block_type = "unit"']}
-          />
-        </div>
-      </div>
+      )}
       <ContentTagsDrawerSheet
         id={componentId}
         onClose={onTagSidebarClose}

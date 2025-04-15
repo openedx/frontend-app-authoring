@@ -147,7 +147,7 @@ const UnitInfo = () => {
         activeKey={tab}
         onSelect={setSidebarTab}
       >
-        {renderTab(UNIT_INFO_TABS.Preview, <LibraryUnitBlocks />, intl.formatMessage(messages.previewTabTitle))}
+        {renderTab(UNIT_INFO_TABS.Preview, <LibraryUnitBlocks preview />, intl.formatMessage(messages.previewTabTitle))}
         {renderTab(UNIT_INFO_TABS.Organize, <ContainerOrganize />, intl.formatMessage(messages.organizeTabTitle))}
         {renderTab(UNIT_INFO_TABS.Settings, 'Unit Settings', intl.formatMessage(messages.settingsTabTitle))}
       </Tabs>
