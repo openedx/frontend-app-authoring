@@ -480,6 +480,8 @@ export async function mockGetContainerMetadata(containerId: string): Promise<api
       });
     case mockGetContainerMetadata.containerIdLoading:
       return new Promise(() => { });
+    case mockGetContainerMetadata.containerIdWithCollections:
+      return Promise.resolve(mockGetContainerMetadata.containerDataWithCollections);
     default:
       return Promise.resolve(mockGetContainerMetadata.containerData);
   }
@@ -488,6 +490,7 @@ mockGetContainerMetadata.containerId = 'lct:org:lib:unit:test-unit-9a207';
 mockGetContainerMetadata.containerIdError = 'lct:org:lib:unit:container_error';
 mockGetContainerMetadata.containerIdLoading = 'lct:org:lib:unit:container_loading';
 mockGetContainerMetadata.containerIdForTags = mockContentTaxonomyTagsData.largeTagsId;
+mockGetContainerMetadata.containerIdWithCollections = 'lct:org:lib:unit:container_collections';
 mockGetContainerMetadata.containerData = {
   containerKey: 'lct:org:lib:unit:test-unit-9a2072',
   containerType: 'unit',
@@ -501,6 +504,11 @@ mockGetContainerMetadata.containerData = {
   modified: '2024-09-20T11:00:00Z',
   hasUnpublishedChanges: true,
   collections: [],
+} satisfies api.Container;
+mockGetContainerMetadata.containerDataWithCollections = {
+  ...mockGetContainerMetadata.containerData,
+  containerKey: mockGetContainerMetadata.containerIdWithCollections,
+  collections: [{ title: 'My first collection', key: 'my-first-collection' }],
 } satisfies api.Container;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockGetContainerMetadata.applyMock = () => {

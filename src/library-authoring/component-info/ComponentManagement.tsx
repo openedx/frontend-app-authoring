@@ -8,11 +8,11 @@ import {
 
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
-import { useLibraryBlockMetadata } from '../data/apiHooks';
-import StatusWidget from '../generic/status-widget';
-import messages from './messages';
 import { ContentTagsDrawer, useContentTaxonomyTagsData } from '../../content-tags-drawer';
-import ManageCollections from './ManageCollections';
+import { useLibraryBlockMetadata, useUpdateComponentCollections } from '../data/apiHooks';
+import StatusWidget from '../generic/status-widget';
+import { ManageCollections } from '../generic/manage-collections';
+import messages from './messages';
 
 const ComponentManagement = () => {
   const intl = useIntl();
@@ -130,7 +130,11 @@ const ComponentManagement = () => {
           </Collapsible.Visible>
         </Collapsible.Trigger>
         <Collapsible.Body className="collapsible-body">
-          <ManageCollections usageKey={usageKey} collections={componentMetadata.collections} />
+          <ManageCollections
+            opaqueKey={usageKey}
+            collections={componentMetadata.collections}
+            useUpdateCollectionsHook={useUpdateComponentCollections}
+          />
         </Collapsible.Body>
       </Collapsible.Advanced>
     </Stack>

@@ -6,33 +6,40 @@ import {
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Formik } from 'formik';
+import { useNavigate } from 'react-router';
 import * as Yup from 'yup';
 import FormikControl from '../../generic/FormikControl';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import messages from './messages';
-import { useCreateLibraryContainer } from '../data/apiHooks';
+import { useAddItemsToCollection, useCreateLibraryContainer } from '../data/apiHooks';
 import { ToastContext } from '../../generic/toast-context';
 import LoadingButton from '../../generic/loading-button';
 import { ContainerType } from '../../generic/key-utils';
 
 const CreateUnitModal = () => {
   const intl = useIntl();
+  const navigate = useNavigate();
   const {
+    collectionId,
     libraryId,
     isCreateUnitModalOpen,
     closeCreateUnitModal,
   } = useLibraryContext();
   const create = useCreateLibraryContainer(libraryId);
+  const updateItemsMutation = useAddItemsToCollection(libraryId, collectionId);
   const { showToast } = React.useContext(ToastContext);
 
   const handleCreate = React.useCallback(async (values) => {
     try {
-      await create.mutateAsync({
+      const container = await create.mutateAsync({
         containerType: ContainerType.Unit,
         ...values,
       });
-      // TODO: Navigate to the new unit
-      // navigate(`/library/${libraryId}/units/${data.key}`);
+      if (collectionId) {
+        await updateItemsMutation.mutateAsync([container.containerKey]);
+      }
+      // Navigate to the new unit
+      navigate(`/library/${libraryId}/unit/${container.containerKey}`);
       showToast(intl.formatMessage(messages.createUnitSuccess));
     } catch (error) {
       showToast(intl.formatMessage(messages.createUnitError));

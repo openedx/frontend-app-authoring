@@ -41,7 +41,7 @@ export const getLibraryBlockMetadataUrl = (usageKey: string) => `${getApiBaseUrl
 export const getLibraryBlockRestoreUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}restore/`;
 
 /**
- * Get the URL for library block metadata.
+ * Get the URL for library block collections.
  */
 export const getLibraryBlockCollectionsUrl = (usageKey: string) => `${getLibraryBlockMetadataUrl(usageKey)}collections/`;
 
@@ -89,9 +89,9 @@ export const getLibraryCollectionsApiUrl = (libraryId: string) => `${getApiBaseU
  */
 export const getLibraryCollectionApiUrl = (libraryId: string, collectionId: string) => `${getLibraryCollectionsApiUrl(libraryId)}${collectionId}/`;
 /**
- * Get the URL for the collection components API.
+ * Get the URL for the collection items API.
  */
-export const getLibraryCollectionComponentApiUrl = (libraryId: string, collectionId: string) => `${getLibraryCollectionApiUrl(libraryId, collectionId)}components/`;
+export const getLibraryCollectionItemsApiUrl = (libraryId: string, collectionId: string) => `${getLibraryCollectionApiUrl(libraryId, collectionId)}items/`;
 /**
  * Get the API URL for restoring deleted collection.
  */
@@ -120,6 +120,10 @@ export const getLibraryContainerRestoreApiUrl = (containerId: string) => `${getL
  * Get the URL for a single container children api.
  */
 export const getLibraryContainerChildrenApiUrl = (containerId: string) => `${getLibraryContainerApiUrl(containerId)}children/`;
+/**
+ * Get the URL for library container collections.
+ */
+export const getLibraryContainerCollectionsUrl = (containerId: string) => `${getLibraryContainerApiUrl(containerId)}collections/`;
 
 export interface ContentLibrary {
   id: string;
@@ -533,19 +537,19 @@ export async function updateCollectionMetadata(
 }
 
 /**
- * Add components to collection.
+ * Add items to collection.
  */
-export async function addComponentsToCollection(libraryId: string, collectionId: string, usageKeys: string[]) {
-  await getAuthenticatedHttpClient().patch(getLibraryCollectionComponentApiUrl(libraryId, collectionId), {
+export async function addItemsToCollection(libraryId: string, collectionId: string, usageKeys: string[]) {
+  await getAuthenticatedHttpClient().patch(getLibraryCollectionItemsApiUrl(libraryId, collectionId), {
     usage_keys: usageKeys,
   });
 }
 
 /**
- * Remove components from collection.
+ * Remove items from collection.
  */
-export async function removeComponentsFromCollection(libraryId: string, collectionId: string, usageKeys: string[]) {
-  await getAuthenticatedHttpClient().delete(getLibraryCollectionComponentApiUrl(libraryId, collectionId), {
+export async function removeItemsFromCollection(libraryId: string, collectionId: string, usageKeys: string[]) {
+  await getAuthenticatedHttpClient().delete(getLibraryCollectionItemsApiUrl(libraryId, collectionId), {
     data: { usage_keys: usageKeys },
   });
 }
@@ -583,9 +587,13 @@ export interface CreateLibraryContainerDataRequest {
 /**
  * Create a library container
  */
-export async function createLibraryContainer(libraryId: string, containerData: CreateLibraryContainerDataRequest) {
+export async function createLibraryContainer(
+  libraryId: string,
+  containerData: CreateLibraryContainerDataRequest,
+): Promise<Container> {
   const client = getAuthenticatedHttpClient();
-  await client.post(getLibraryContainersApiUrl(libraryId), snakeCaseObject(containerData));
+  const { data } = await client.post(getLibraryContainersApiUrl(libraryId), snakeCaseObject(containerData));
+  return camelCaseObject(data);
 }
 
 export interface Container {
@@ -660,4 +668,13 @@ export async function addComponentsToContainer(containerId: string, componentIds
     getLibraryContainerChildrenApiUrl(containerId),
     snakeCaseObject({ usageKeys: componentIds }),
   );
+}
+
+/**
+ * Update container collections.
+ */
+export async function updateContainerCollections(containerId: string, collectionKeys: string[]) {
+  await getAuthenticatedHttpClient().patch(getLibraryContainerCollectionsUrl(containerId), {
+    collection_keys: collectionKeys,
+  });
 }

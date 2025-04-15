@@ -121,7 +121,7 @@ export const LibraryUnitPage = () => {
     isLoading,
     isError,
     error,
-  } = useContainer(libraryId, unitId);
+  } = useContainer(unitId);
 
   // Only show loading if unit or library data is not fetched from index yet
   if (isLibLoading || isLoading) {

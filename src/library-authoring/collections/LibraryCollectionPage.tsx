@@ -109,7 +109,9 @@ const LibraryCollectionPage = () => {
   }
 
   const { componentPickerMode } = useComponentPickerContext();
-  const { showOnlyPublished, setCollectionId, componentId } = useLibraryContext();
+  const {
+    showOnlyPublished, extraFilter: contextExtraFilter, setCollectionId, componentId,
+  } = useLibraryContext();
   const { sidebarComponentInfo, openInfoSidebar } = useSidebarContext();
 
   const {
@@ -180,6 +182,10 @@ const LibraryCollectionPage = () => {
   const extraFilter = [`context_key = "${libraryId}"`, `collections.key = "${collectionId}"`];
   if (showOnlyPublished) {
     extraFilter.push('last_published IS NOT NULL');
+  }
+
+  if (contextExtraFilter) {
+    extraFilter.push(...contextExtraFilter);
   }
 
   return (

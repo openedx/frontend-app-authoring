@@ -41,7 +41,6 @@ export const LibraryUnitBlocks = () => {
   const { navigateTo } = useLibraryRoutes();
 
   const {
-    libraryId,
     unitId,
     showOnlyPublished,
     componentId,
@@ -59,7 +58,7 @@ export const LibraryUnitBlocks = () => {
     isLoading,
     isError,
     error,
-  } = useContainerChildren(libraryId, unitId);
+  } = useContainerChildren(unitId);
 
   useEffect(() => setOrderedBlocks(blocks || []), [blocks]);
 
@@ -80,7 +79,7 @@ export const LibraryUnitBlocks = () => {
   };
 
   const onTagSidebarClose = () => {
-    queryClient.invalidateQueries(libraryAuthoringQueryKeys.containerChildren(libraryId, unitId));
+    queryClient.invalidateQueries(libraryAuthoringQueryKeys.containerChildren(unitId));
     closeManageTagsDrawer();
   };
 

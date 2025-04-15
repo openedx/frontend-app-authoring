@@ -8,7 +8,7 @@ import MockAdapter from 'axios-mock-adapter';
 import {
   getCommitLibraryChangesUrl,
   getCreateLibraryBlockUrl,
-  getLibraryCollectionComponentApiUrl,
+  getLibraryCollectionItemsApiUrl,
   getLibraryCollectionsApiUrl,
   getLibraryCollectionApiUrl,
   getBlockTypesMetaDataUrl,
@@ -21,7 +21,7 @@ import {
   useCreateLibraryBlock,
   useCreateLibraryCollection,
   useRevertLibraryChanges,
-  useAddComponentsToCollection,
+  useAddItemsToCollection,
   useCollection,
   useBlockTypesMetadata,
   useContainer,
@@ -111,9 +111,9 @@ describe('library api hooks', () => {
   it('should add components to collection', async () => {
     const libraryId = 'lib:org:1';
     const collectionId = 'my-first-collection';
-    const url = getLibraryCollectionComponentApiUrl(libraryId, collectionId);
+    const url = getLibraryCollectionItemsApiUrl(libraryId, collectionId);
     axiosMock.onPatch(url).reply(200);
-    const { result } = renderHook(() => useAddComponentsToCollection(libraryId, collectionId), { wrapper });
+    const { result } = renderHook(() => useAddItemsToCollection(libraryId, collectionId), { wrapper });
     await result.current.mutateAsync(['some-usage-key']);
 
     expect(axiosMock.history.patch[0].url).toEqual(url);
@@ -147,12 +147,11 @@ describe('library api hooks', () => {
   });
 
   it('should get container metadata', async () => {
-    const libraryId = 'lib:org:1';
     const containerId = 'lct:lib:org:unit:unit1';
     const url = getLibraryContainerApiUrl(containerId);
 
     axiosMock.onGet(url).reply(200, { 'test-data': 'test-value' });
-    const { result } = renderHook(() => useContainer(libraryId, containerId), { wrapper });
+    const { result } = renderHook(() => useContainer(containerId), { wrapper });
     await waitFor(() => {
       expect(result.current.isLoading).toBeFalsy();
     });
@@ -185,7 +184,6 @@ describe('library api hooks', () => {
   });
 
   it('should get container children', async () => {
-    const libraryId = 'lib:org:1';
     const containerId = 'lct:lib:org:unit:unit1';
     const url = getLibraryContainerChildrenApiUrl(containerId);
 
@@ -221,7 +219,7 @@ describe('library api hooks', () => {
         collections: ['col2'],
       },
     ]);
-    const { result } = renderHook(() => useContainerChildren(libraryId, containerId), { wrapper });
+    const { result } = renderHook(() => useContainerChildren(containerId), { wrapper });
     await waitFor(() => {
       expect(result.current.isLoading).toBeFalsy();
     });
@@ -261,14 +259,13 @@ describe('library api hooks', () => {
   });
 
   it('should add components to container', async () => {
-    const libraryId = 'lib:org:1';
     const componentId = 'lb:org:lib:html:1';
     const containerId = 'ltc:org:lib:unit:1';
 
     const url = getLibraryContainerChildrenApiUrl(containerId);
 
     axiosMock.onPost(url).reply(200);
-    const { result } = renderHook(() => useAddComponentsToContainer(libraryId, containerId), { wrapper });
+    const { result } = renderHook(() => useAddComponentsToContainer(containerId), { wrapper });
     await result.current.mutateAsync([componentId]);
 
     expect(axiosMock.history.post[0].url).toEqual(url);

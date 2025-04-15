@@ -9,13 +9,14 @@ import {
   IconButton,
   useToggle,
 } from '@openedx/paragon';
+import { useEffect, useCallback } from 'react';
 import { MoreVert } from '@openedx/paragon/icons';
-import { useCallback } from 'react';
 
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import {
   type UnitInfoTab,
+  SidebarActions,
   UNIT_INFO_TABS,
   isUnitInfoTab,
   useSidebarContext,
@@ -69,11 +70,17 @@ const UnitMenu = ({ containerId, displayName }: ContainerMenuProps) => {
 const UnitInfo = () => {
   const intl = useIntl();
 
-  const { libraryId, setUnitId } = useLibraryContext();
+  const { setUnitId } = useLibraryContext();
   const { componentPickerMode } = useComponentPickerContext();
   const {
-    defaultTab, hiddenTabs, sidebarComponentInfo, sidebarTab, setSidebarTab,
+    defaultTab,
+    hiddenTabs,
+    sidebarTab,
+    setSidebarTab,
+    sidebarComponentInfo,
+    sidebarAction,
   } = useSidebarContext();
+  const jumpToCollections = sidebarAction === SidebarActions.JumpToAddCollections;
   const { insideUnit, navigateTo } = useLibraryRoutes();
 
   const tab: UnitInfoTab = (
@@ -81,7 +88,7 @@ const UnitInfo = () => {
   ) ? sidebarTab : defaultTab.unit;
 
   const unitId = sidebarComponentInfo?.id;
-  const { data: container } = useContainer(libraryId, unitId);
+  const { data: container } = useContainer(unitId);
 
   const handleOpenUnit = useCallback(() => {
     if (componentPickerMode) {
@@ -105,12 +112,14 @@ const UnitInfo = () => {
     );
   }, [hiddenTabs, defaultTab.unit, unitId]);
 
-  // istanbul ignore if: this should never happen
-  if (!unitId) {
-    throw new Error('unitId is required');
-  }
+  useEffect(() => {
+    // Show Organize tab if JumpToAddCollections action is set in sidebarComponentInfo
+    if (jumpToCollections) {
+      setSidebarTab(UNIT_INFO_TABS.Organize);
+    }
+  }, [jumpToCollections, setSidebarTab]);
 
-  if (!container) {
+  if (!container || !unitId) {
     return null;
   }
 

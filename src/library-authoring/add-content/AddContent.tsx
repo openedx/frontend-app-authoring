@@ -21,8 +21,8 @@ import { getCanEdit } from '../../course-unit/data/selectors';
 import {
   useCreateLibraryBlock,
   useLibraryPasteClipboard,
-  useAddComponentsToCollection,
   useBlockTypesMetadata,
+  useAddItemsToCollection,
   useAddComponentsToContainer,
 } from '../data/apiHooks';
 import { useLibraryContext } from '../common/context/LibraryContext';
@@ -207,8 +207,8 @@ const AddContent = () => {
     openComponentEditor,
     unitId,
   } = useLibraryContext();
-  const addComponentsToCollectionMutation = useAddComponentsToCollection(libraryId, collectionId);
-  const addComponentsToContainerMutation = useAddComponentsToContainer(libraryId, unitId);
+  const addComponentsToCollectionMutation = useAddItemsToCollection(libraryId, collectionId);
+  const addComponentsToContainerMutation = useAddComponentsToContainer(unitId);
   const createBlockMutation = useCreateLibraryBlock();
   const pasteClipboardMutation = useLibraryPasteClipboard();
   const { showToast } = useContext(ToastContext);
@@ -286,14 +286,14 @@ const AddContent = () => {
     contentTypes.push(pasteButton);
   }
 
-  const linkComponent = (usageKey: string) => {
+  const linkComponent = (opaqueKey: string) => {
     if (collectionId) {
-      addComponentsToCollectionMutation.mutateAsync([usageKey]).catch(() => {
+      addComponentsToCollectionMutation.mutateAsync([opaqueKey]).catch(() => {
         showToast(intl.formatMessage(messages.errorAssociateComponentToCollectionMessage));
       });
     }
     if (unitId) {
-      addComponentsToContainerMutation.mutateAsync([usageKey]).catch(() => {
+      addComponentsToContainerMutation.mutateAsync([opaqueKey]).catch(() => {
         showToast(intl.formatMessage(messages.errorAssociateComponentToContainerMessage));
       });
     }

@@ -15,12 +15,13 @@ import {
   mockContentLibrary,
   mockXBlockFields,
   mockGetCollectionMetadata,
+  mockGetContainerMetadata,
 } from '../data/api.mocks';
 import { mockContentSearchConfig, mockGetBlockTypes } from '../../search-manager/data/api.mock';
 import { mockClipboardEmpty } from '../../generic/data/api.mock';
 import { LibraryLayout } from '..';
 import { ContentTagsDrawer } from '../../content-tags-drawer';
-import { getLibraryCollectionComponentApiUrl } from '../data/api';
+import { getLibraryCollectionItemsApiUrl } from '../data/api';
 
 let axiosMock: MockAdapter;
 let mockShowToast;
@@ -31,6 +32,7 @@ mockContentSearchConfig.applyMock();
 mockGetBlockTypes.applyMock();
 mockContentLibrary.applyMock();
 mockXBlockFields.applyMock();
+mockGetContainerMetadata.applyMock();
 
 const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
 const path = '/library/:libraryId/*';
@@ -350,7 +352,7 @@ describe('<LibraryCollectionPage />', () => {
   });
 
   it('should remove component from collection and hides sidebar', async () => {
-    const url = getLibraryCollectionComponentApiUrl(
+    const url = getLibraryCollectionItemsApiUrl(
       mockContentLibrary.libraryId,
       mockCollection.collectionId,
     );
@@ -369,8 +371,38 @@ describe('<LibraryCollectionPage />', () => {
     fireEvent.click(await screen.findByText('Remove from collection'));
     await waitFor(() => {
       expect(axiosMock.history.delete.length).toEqual(1);
-      expect(mockShowToast).toHaveBeenCalledWith('Component successfully removed');
     });
+    expect(mockShowToast).toHaveBeenCalledWith('Item successfully removed');
+    // Should close sidebar as component was removed
+    await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
+  });
+
+  it('should remove unit from collection and hides sidebar', async () => {
+    const url = getLibraryCollectionItemsApiUrl(
+      mockContentLibrary.libraryId,
+      mockCollection.collectionId,
+    );
+    axiosMock.onDelete(url).reply(204);
+    const displayName = 'Test Unit';
+    await renderLibraryCollectionPage();
+
+    // Wait for the unit cards to load
+    waitFor(() => expect(screen.getAllByTestId('container-card-menu-toggle').length).toBeGreaterThan(0));
+
+    // open sidebar
+    fireEvent.click(await screen.findByText(displayName));
+    await waitFor(() => expect(screen.queryByTestId('library-sidebar')).toBeInTheDocument());
+
+    // Open menu
+    fireEvent.click((await screen.findAllByTestId('container-card-menu-toggle'))[0]);
+
+    // Click remove to collection
+    fireEvent.click(screen.getByRole('button', { name: 'Remove from collection' }));
+
+    await waitFor(() => {
+      expect(axiosMock.history.delete.length).toEqual(1);
+    });
+    expect(mockShowToast).toHaveBeenCalledWith('Item successfully removed');
     // Should close sidebar as component was removed
     await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
   });
