@@ -1,3 +1,4 @@
+import { getConfig } from '@edx/frontend-platform';
 import React, { useContext, useEffect } from 'react';
 import {
   Container,
@@ -60,7 +61,13 @@ const TaxonomyList = ({ contentId }: TaxonomyListProps) => {
               size="inline"
               variant="link"
               className="text-info-500 p-0 enable-taxonomies-button"
-              onClick={() => navigate('/taxonomies')}
+              onClick={() => {
+                if (window.top && window.top !== window) {
+                  window.top.location.href = `${getConfig().COURSE_AUTHORING_MICROFRONTEND_URL}/taxonomies`;
+                } else {
+                  navigate('/taxonomies');
+                }
+              }}
             >
               { intl.formatMessage(messages.emptyDrawerContentLink) }
             </Button>
