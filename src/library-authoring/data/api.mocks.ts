@@ -500,7 +500,7 @@ mockGetContainerMetadata.containerData = {
 } satisfies api.Container;
 mockGetContainerMetadata.containerDataWithCollections = {
   ...mockGetContainerMetadata.containerData,
-  containerKey: mockGetContainerMetadata.containerIdWithCollections,
+  id: mockGetContainerMetadata.containerIdWithCollections,
   collections: [{ title: 'My first collection', key: 'my-first-collection' }],
 } satisfies api.Container;
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */

@@ -34,9 +34,9 @@ interface EditableTitleProps {
 const EditableTitle = ({ unitId }: EditableTitleProps) => {
   const intl = useIntl();
 
-  const { libraryId, readOnly } = useLibraryContext();
+  const { readOnly } = useLibraryContext();
 
-  const { data: container } = useContainer(libraryId, unitId);
+  const { data: container } = useContainer(unitId);
 
   const updateMutation = useUpdateContainer(unitId);
   const { showToast } = useContext(ToastContext);

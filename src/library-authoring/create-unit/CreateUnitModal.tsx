@@ -36,10 +36,10 @@ const CreateUnitModal = () => {
         ...values,
       });
       if (collectionId) {
-        await updateItemsMutation.mutateAsync([container.containerKey]);
+        await updateItemsMutation.mutateAsync([container.id]);
       }
       // Navigate to the new unit
-      navigate(`/library/${libraryId}/unit/${container.containerKey}`);
+      navigate(`/library/${libraryId}/unit/${container.id}`);
       showToast(intl.formatMessage(messages.createUnitSuccess));
     } catch (error) {
       showToast(intl.formatMessage(messages.createUnitError));
