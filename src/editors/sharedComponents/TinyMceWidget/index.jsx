@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Editor } from '@tinymce/tinymce-react';
 import { getConfig } from '@edx/frontend-platform';
+import { useDispatch } from 'react-redux';
 
 import 'tinymce';
 import 'tinymce/themes/silver';
@@ -54,6 +55,8 @@ const TinyMceWidget = ({
   const { imagesRef } = hooks.useImages({ images, editorContentHtml });
   const imageSelection = hooks.selectedImage(null);
 
+  const dispatch = useDispatch();
+
   return (
     <>
       {enableImageUpload && (
@@ -90,6 +93,7 @@ const TinyMceWidget = ({
             images: imagesRef,
             editorContentHtml,
             staticRootUrl,
+            dispatch,
             ...imageSelection,
             ...editorConfig,
           })
