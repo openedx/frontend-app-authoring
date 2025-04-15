@@ -423,7 +423,7 @@ export async function libraryPasteClipboard({
 }: LibraryPasteClipboardRequest): Promise<LibraryBlockMetadata> {
   const client = getAuthenticatedHttpClient();
   const { data } = await client.post(getLibraryPasteClipboardUrl(libraryId), {});
-  return data;
+  return camelCaseObject(data);
 }
 
 /**
