@@ -14,6 +14,7 @@ import messages from './messages';
 import { useAddItemsToCollection, useCreateLibraryContainer } from '../data/apiHooks';
 import { ToastContext } from '../../generic/toast-context';
 import LoadingButton from '../../generic/loading-button';
+import { ContainerType } from '../../generic/key-utils';
 
 const CreateUnitModal = () => {
   const intl = useIntl();
@@ -31,7 +32,7 @@ const CreateUnitModal = () => {
   const handleCreate = React.useCallback(async (values) => {
     try {
       const container = await create.mutateAsync({
-        containerType: 'unit',
+        containerType: ContainerType.Unit,
         ...values,
       });
       if (collectionId) {

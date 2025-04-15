@@ -47,6 +47,7 @@ import {
   restoreLibraryBlock,
   getBlockTypes,
   createLibraryContainer,
+  addComponentsToContainer,
   type CreateLibraryContainerDataRequest,
   getContainerMetadata,
   updateContainerMetadata,
@@ -99,6 +100,19 @@ export const libraryAuthoringQueryKeys = {
     'blockTypes',
     libraryId,
   ],
+  container: (libraryId?: string, containerId?: string) => [
+    ...libraryAuthoringQueryKeys.all,
+    'container',
+    libraryId,
+    containerId,
+  ],
+  containerChildren: (libraryId?: string, containerId?: string) => [
+    ...libraryAuthoringQueryKeys.all,
+    'container',
+    libraryId,
+    containerId,
+    'children',
+  ],
 };
 
 export const xblockQueryKeys = {
@@ -123,7 +137,6 @@ export const containerQueryKeys = {
    * Base key for data specific to a container
    */
   container: (containerId?: string) => [...containerQueryKeys.all, containerId],
-  children: (containerId?: string) => [...containerQueryKeys.all, containerId, 'children'],
 };
 
 /**
@@ -616,7 +629,7 @@ export const useUpdateContainer = (containerId: string) => {
       // NOTE: We invalidate the library query here because we need to update the library's
       // container list.
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
-      queryClient.invalidateQueries({ queryKey: containerQueryKeys.container(containerId) });
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerChildren(libraryId, containerId) });
     },
   });
 };
@@ -653,13 +666,32 @@ export const useRestoreContainer = (containerId: string) => {
 /**
  * Get the metadata and children for a container in a library
  */
-export const useContainerChildren = (containerId?: string) => (
-  useQuery({
+export const useContainerChildren = (containerId: string) => {
+  const libraryId = getLibraryId(containerId);
+  return useQuery({
     enabled: !!containerId,
-    queryKey: containerQueryKeys.children(containerId),
+    queryKey: libraryAuthoringQueryKeys.containerChildren(libraryId, containerId),
     queryFn: () => getLibraryContainerChildren(containerId!),
-  })
+  });
 );
+
+/**
+ * Use this mutation to add components to a container
+ */
+export const useAddComponentsToContainer = (libraryId?: string, containerId?: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (componentIds: string[]) => {
+      if (containerId !== undefined) {
+        return addComponentsToContainer(containerId, componentIds);
+      }
+      return undefined;
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerChildren(libraryId, containerId) });
+    },
+  });
+};
 
 /**
  * Use this mutation to update collections related a container in a library
@@ -670,7 +702,7 @@ export const useUpdateContainerCollections = (containerId: string) => {
   return useMutation({
     mutationFn: async (collectionKeys: string[]) => updateContainerCollections(containerId, collectionKeys),
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: containerQueryKeys.container(containerId) });
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.container(containerId) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
     },
   });

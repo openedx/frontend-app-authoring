@@ -17,7 +17,7 @@ import {
   mockCreateLibraryBlock,
   mockXBlockFields,
 } from '../data/api.mocks';
-import { mockBroadcastChannel, mockClipboardEmpty } from '../../generic/data/api.mock';
+import { mockClipboardEmpty } from '../../generic/data/api.mock';
 import { mockContentSearchConfig, mockSearchResult } from '../../search-manager/data/api.mock';
 import { studioHomeMock } from '../../studio-home/__mocks__';
 import { getStudioHomeApiUrl } from '../../studio-home/data/api';
@@ -25,7 +25,6 @@ import LibraryLayout from '../LibraryLayout';
 
 mockContentSearchConfig.applyMock();
 mockClipboardEmpty.applyMock();
-mockBroadcastChannel();
 mockContentLibrary.applyMock();
 mockCreateLibraryBlock.applyMock();
 mockSearchResult(mockResult);

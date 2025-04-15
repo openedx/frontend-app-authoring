@@ -93,13 +93,6 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => mockedUsedNavigate,
 }));
 
-const clipboardBroadcastChannelMock = {
-  postMessage: jest.fn(),
-  close: jest.fn(),
-};
-
-global.BroadcastChannel = jest.fn(() => clipboardBroadcastChannelMock);
-
 /**
  * Simulates receiving a post message event for testing purposes.
  * This can be used to mimic events like deletion or other actions

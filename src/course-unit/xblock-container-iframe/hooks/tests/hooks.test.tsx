@@ -6,7 +6,6 @@ import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { Provider } from 'react-redux';
 
 import { messageTypes } from '../../../constants';
-import { mockBroadcastChannel } from '../../../../generic/data/api.mock';
 import initializeStore from '../../../../store';
 import { useMessageHandlers } from '..';
 
@@ -19,8 +18,6 @@ jest.mock('@edx/react-unit-test-utils', () => ({
 jest.mock('@edx/frontend-platform/logging', () => ({
   logError: jest.fn(),
 }));
-
-mockBroadcastChannel();
 
 describe('useMessageHandlers', () => {
   let handlers;

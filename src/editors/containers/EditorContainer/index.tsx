@@ -18,7 +18,7 @@ import { useEditorContext } from '../../EditorContext';
 import TitleHeader from './components/TitleHeader';
 import * as hooks from './hooks';
 import messages from './messages';
-import { parseErrorMsg } from '../../../library-authoring/add-content/AddContentContainer';
+import { parseErrorMsg } from '../../../library-authoring/add-content/AddContent';
 import libraryMessages from '../../../library-authoring/add-content/messages';
 
 import './index.scss';

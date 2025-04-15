@@ -18,7 +18,7 @@ import {
   mockGetContainerMetadata,
 } from '../data/api.mocks';
 import { mockContentSearchConfig, mockGetBlockTypes } from '../../search-manager/data/api.mock';
-import { mockBroadcastChannel, mockClipboardEmpty } from '../../generic/data/api.mock';
+import { mockClipboardEmpty } from '../../generic/data/api.mock';
 import { LibraryLayout } from '..';
 import { ContentTagsDrawer } from '../../content-tags-drawer';
 import { getLibraryCollectionItemsApiUrl } from '../data/api';
@@ -33,7 +33,6 @@ mockGetBlockTypes.applyMock();
 mockContentLibrary.applyMock();
 mockXBlockFields.applyMock();
 mockGetContainerMetadata.applyMock();
-mockBroadcastChannel();
 
 const searchEndpoint = 'http://mock.meilisearch.local/multi-search';
 const path = '/library/:libraryId/*';
