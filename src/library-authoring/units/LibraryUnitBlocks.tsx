@@ -166,7 +166,7 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
   };
 
   const renderedBlocks = orderedBlocks?.map((block) => (
-    <IframeProvider key={block.id}>
+    <IframeProvider key={block.id + block.modified}>
       <SortableItem
         id={block.id}
         componentStyle={null}
