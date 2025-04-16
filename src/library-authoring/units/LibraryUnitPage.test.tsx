@@ -50,9 +50,7 @@ jest.mock('@dnd-kit/core', () => ({
 
 describe('<LibraryUnitPage />', () => {
   beforeEach(() => {
-    const mocks = initializeMocks();
-    axiosMock = mocks.axiosMock;
-    mockShowToast = mocks.mockShowToast;
+    ({ axiosMock, mockShowToast } = initializeMocks());
   });
 
   afterEach(() => {
@@ -232,7 +230,7 @@ describe('<LibraryUnitPage />', () => {
     await waitFor(() => expect(mockShowToast).toHaveBeenLastCalledWith('Failed to update components order'));
   });
 
-  it('should remove a component from component card', async () => {
+  it('should remove a component & restore from component card', async () => {
     const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
     axiosMock.onDelete(url).reply(200);
     renderLibraryUnitPage();
@@ -248,6 +246,19 @@ describe('<LibraryUnitPage />', () => {
       expect(axiosMock.history.delete[0].url).toEqual(url);
     });
     await waitFor(() => expect(mockShowToast).toHaveBeenCalled());
+
+    // Get restore / undo func from the toast
+    // @ts-ignore
+    const restoreFn = mockShowToast.mock.calls[0][1].onClick;
+
+    const restoreUrl = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
+    axiosMock.onPost(restoreUrl).reply(200);
+    // restore collection
+    restoreFn();
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toEqual(1);
+    });
+    expect(mockShowToast).toHaveBeenCalledWith('Undo successful');
   });
 
   it('should remove a component from component sidebar', async () => {

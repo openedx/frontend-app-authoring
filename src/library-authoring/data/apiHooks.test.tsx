@@ -300,4 +300,12 @@ describe('library api hooks', () => {
       expect(axiosMock.history.delete[0].url).toEqual(url);
     });
   });
+
+  it('should not attempt request if containerId is not defined in remove children from container', async () => {
+    const { result } = renderHook(() => useRemoveContainerChildren(), { wrapper });
+    await result.current.mutateAsync([]);
+    await waitFor(() => {
+      expect(axiosMock.history.patch.length).toEqual(0);
+    });
+  });
 });
