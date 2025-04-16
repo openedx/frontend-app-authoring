@@ -161,7 +161,7 @@ describe('library api hooks', () => {
   });
 
   it('should delete a container', async () => {
-    const containerId = 'lct:org:lib1';
+    const containerId = 'lct:lib:org:unit:unit1';
     const url = getLibraryContainerApiUrl(containerId);
 
     axiosMock.onDelete(url).reply(200);
@@ -173,7 +173,7 @@ describe('library api hooks', () => {
   });
 
   it('should restore a container', async () => {
-    const containerId = 'lct:org:lib1';
+    const containerId = 'lct:lib:org:unit:unit1';
     const url = getLibraryContainerRestoreApiUrl(containerId);
 
     axiosMock.onPost(url).reply(200);
@@ -269,7 +269,7 @@ describe('library api hooks', () => {
   });
 
   it('should update container children', async () => {
-    const containerId = 'lct:org:lib1';
+    const containerId = 'lct:org:lib:unit:unit-1';
     const url = getLibraryContainerChildrenApiUrl(containerId);
 
     axiosMock.onPatch(url).reply(200);

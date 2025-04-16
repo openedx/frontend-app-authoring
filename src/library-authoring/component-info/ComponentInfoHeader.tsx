@@ -48,7 +48,7 @@ const ComponentInfoHeader = () => {
       text={xblockFields?.displayName}
       readOnly={readOnly}
       textClassName="font-weight-bold m-1.5"
-      showEditButton
+      alwaysShowEditButton
     />
   );
 };

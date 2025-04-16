@@ -10,7 +10,11 @@ import {
   waitFor,
   within,
 } from '../../testUtils';
-import { getLibraryContainerApiUrl, getLibraryContainerChildrenApiUrl } from '../data/api';
+import {
+  getLibraryContainerApiUrl,
+  getLibraryContainerChildrenApiUrl,
+  getXBlockFieldsApiUrl,
+} from '../data/api';
 import {
   mockContentLibrary,
   mockXBlockFields,
@@ -198,6 +202,74 @@ describe('<LibraryUnitPage />', () => {
     const closeButton = await findByRole('button', { name: /close/i });
     userEvent.click(closeButton);
     await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
+  });
+
+  it('should rename component while clicking on name', async () => {
+    const url = getXBlockFieldsApiUrl('lb:org1:Demo_course:html:text-0');
+    axiosMock.onPost(url).reply(200);
+    renderLibraryUnitPage();
+
+    // Wait loading of the component
+    await screen.findByText('text block 0');
+
+    const componentTitle = screen.getAllByRole(
+      'button',
+      { name: 'text block 0' },
+    )[0];
+    fireEvent.click(componentTitle);
+
+    await waitFor(() => {
+      expect(screen.getByRole('textbox', { name: /text input/i })).toBeInTheDocument();
+    });
+
+    const textBox = screen.getByRole('textbox', { name: /text input/i });
+    expect(textBox).toBeInTheDocument();
+    fireEvent.change(textBox, { target: { value: 'New Component Title' } });
+    fireEvent.keyDown(textBox, { key: 'Enter', code: 'Enter', charCode: 13 });
+
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toEqual(1);
+    });
+    expect(axiosMock.history.post[0].url).toEqual(url);
+    expect(axiosMock.history.post[0].data).toStrictEqual(JSON.stringify({
+      metadata: { display_name: 'New Component Title' },
+    }));
+    expect(textBox).not.toBeInTheDocument();
+    expect(mockShowToast).toHaveBeenCalledWith('Component updated successfully.');
+  });
+
+  it('should show error while updating component name', async () => {
+    const url = getXBlockFieldsApiUrl('lb:org1:Demo_course:html:text-0');
+    axiosMock.onPost(url).reply(400);
+    renderLibraryUnitPage();
+
+    // Wait loading of the component
+    await screen.findByText('text block 0');
+
+    const componentTitle = screen.getAllByRole(
+      'button',
+      { name: 'text block 0' },
+    )[0];
+    fireEvent.click(componentTitle);
+
+    await waitFor(() => {
+      expect(screen.getByRole('textbox', { name: /text input/i })).toBeInTheDocument();
+    });
+
+    const textBox = screen.getByRole('textbox', { name: /text input/i });
+    expect(textBox).toBeInTheDocument();
+    fireEvent.change(textBox, { target: { value: 'New Component Title' } });
+    fireEvent.keyDown(textBox, { key: 'Enter', code: 'Enter', charCode: 13 });
+
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toEqual(1);
+    });
+    expect(axiosMock.history.post[0].url).toEqual(url);
+    expect(axiosMock.history.post[0].data).toStrictEqual(JSON.stringify({
+      metadata: { display_name: 'New Component Title' },
+    }));
+    expect(textBox).not.toBeInTheDocument();
+    expect(mockShowToast).toHaveBeenCalledWith('There was an error updating the component.');
   });
 
   it('should call update order api on dragging component', async () => {
