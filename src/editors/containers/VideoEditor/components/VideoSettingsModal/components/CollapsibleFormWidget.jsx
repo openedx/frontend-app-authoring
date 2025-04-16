@@ -20,12 +20,11 @@ const CollapsibleFormWidget = ({
   subtitle,
   title,
   fontSize,
-  bgColor,
   // injected
   intl,
 }) => (
   <Collapsible.Advanced
-    className={`collapsible-card rounded mx-4 my-3 px-4 text-primary-500 ${bgColor}`}
+    className="collapsible-card rounded mx-4 my-3 px-4 text-primary-500"
     defaultOpen
     open={isError || undefined}
   >
@@ -59,7 +58,6 @@ const CollapsibleFormWidget = ({
 CollapsibleFormWidget.defaultProps = {
   subtitle: null,
   fontSize: '',
-  bgColor: '',
 };
 
 CollapsibleFormWidget.propTypes = {
@@ -68,7 +66,6 @@ CollapsibleFormWidget.propTypes = {
   subtitle: PropTypes.node,
   title: PropTypes.node.isRequired,
   fontSize: PropTypes.string,
-  bgColor: PropTypes.string,
   // injected
   intl: intlShape.isRequired,
 };

@@ -14,6 +14,7 @@ import {
   OverlayTrigger,
   Tooltip,
   ActionRow,
+  Card,
 } from '@openedx/paragon';
 import { Add, InfoOutline } from '@openedx/paragon/icons';
 
@@ -106,20 +107,21 @@ const TranscriptWidget = ({
 
   if (isCreateWorkflow) {
     return (
-      <CollapsibleFormWidget
-        fontSize="x-small"
-        isError={Object.keys(error).length !== 0}
-        title={(
-          <div className="text-gray-500">
-            {intl.formatMessage(messages.title)}
-          </div>
-        )}
-        bgColor="bg-light-200"
-      >
-        <div className="d-flex justify-content-around text-gray-700">
-          {intl.formatMessage(messages.videoCreationWarning)}
-        </div>
-      </CollapsibleFormWidget>
+      <div className="mr-4 ml-4">
+        <Card className="bg-light-200">
+          <Card.Section
+            title={(
+              <div className="text-gray-500">
+                {intl.formatMessage(messages.title)}
+              </div>
+            )}
+          >
+            <div className="d-flex justify-content-around text-gray-700 pb-4 x-small">
+              {intl.formatMessage(messages.videoCreationWarning)}
+            </div>
+          </Card.Section>
+        </Card>
+      </div>
     );
   }
 
