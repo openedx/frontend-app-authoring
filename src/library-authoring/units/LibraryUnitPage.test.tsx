@@ -3,7 +3,6 @@ import type MockAdapter from 'axios-mock-adapter';
 
 import { act } from 'react';
 import {
-  fireEvent,
   initializeMocks,
   fireEvent,
   render,
@@ -11,7 +10,7 @@ import {
   waitFor,
   within,
 } from '../../testUtils';
-import { getLibraryContainerApiUrl } from '../data/api';
+import { getLibraryContainerApiUrl, getLibraryContainerChildrenApiUrl } from '../data/api';
 import {
   mockContentLibrary,
   mockXBlockFields,
@@ -22,16 +21,13 @@ import {
 import { mockContentSearchConfig, mockGetBlockTypes } from '../../search-manager/data/api.mock';
 import { mockClipboardEmpty } from '../../generic/data/api.mock';
 import LibraryLayout from '../LibraryLayout';
-import { getLibraryContainerChildrenApiUrl } from '../data/api';
 import { ToastActionData } from '../../generic/toast-context';
 
 const path = '/library/:libraryId/*';
 const libraryTitle = mockContentLibrary.libraryData.title;
-let axiosMock: import('axios-mock-adapter/types');
-let mockShowToast: (message: string, action?: ToastActionData | undefined) => void;
 
 let axiosMock: MockAdapter;
-let mockShowToast: (message: string) => void;
+let mockShowToast: (message: string, action?: ToastActionData | undefined) => void;
 
 mockClipboardEmpty.applyMock();
 mockGetContainerMetadata.applyMock();

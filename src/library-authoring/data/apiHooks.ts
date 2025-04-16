@@ -718,7 +718,7 @@ export const useUpdateContainerChildren = (containerId?: string) => {
       // container list.
       const libraryId = getLibraryId(containerId);
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
-      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.container(libraryId, containerId) });
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.container(containerId) });
     },
   });
 };
