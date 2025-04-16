@@ -15,8 +15,8 @@ import CourseOutlineSubsectionCardExtraActionsSlot from '../../plugin-slots/Cour
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
 import CardHeader from '../card-header/CardHeader';
-import SortableItem from '../../generic/drag-helper/SortableItem';
-import { DragContext } from '../../generic/drag-helper/DragContextProvider';
+import SortableItem from '../drag-helper/SortableItem';
+import { DragContext } from '../drag-helper/DragContextProvider';
 import { useClipboard, PasteComponent } from '../../generic/clipboard';
 import TitleButton from '../card-header/TitleButton';
 import XBlockStatus from '../xblock-status/XBlockStatus';

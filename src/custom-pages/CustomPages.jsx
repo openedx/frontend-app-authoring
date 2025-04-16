@@ -21,7 +21,7 @@ import {
 } from '@openedx/paragon';
 import { Add, SpinnerSimple } from '@openedx/paragon/icons';
 import Placeholder from '../editors/Placeholder';
-import DraggableList, { SortableItem } from '../editors/sharedComponents/DraggableList';
+import DraggableList, { SortableItem } from '../generic/DraggableList';
 import ErrorAlert from '../editors/sharedComponents/ErrorAlerts/ErrorAlert';
 
 import { RequestStatus } from '../data/constants';

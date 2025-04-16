@@ -17,6 +17,7 @@ const SortableItem = ({
   children,
   isClickable,
   onClick,
+  disabled,
   // injected
   intl,
 }) => {
@@ -31,6 +32,9 @@ const SortableItem = ({
   } = useSortable({
     id,
     animateLayoutChanges: () => false,
+    disabled: {
+      draggable: disabled,
+    },
   });
 
   const style = {
@@ -52,6 +56,7 @@ const SortableItem = ({
       >
         <ActionRow style={actionStyle}>
           {actions}
+          {!disabled && (
           <IconButtonWithTooltip
             key="drag-to-reorder-icon"
             ref={setActivatorNodeRef}
@@ -64,6 +69,7 @@ const SortableItem = ({
             {...attributes}
             {...listeners}
           />
+          )}
         </ActionRow>
         {children}
       </Card>
@@ -76,6 +82,7 @@ SortableItem.defaultProps = {
   actionStyle: null,
   isClickable: false,
   onClick: null,
+  disabled: false,
 };
 SortableItem.propTypes = {
   id: PropTypes.string.isRequired,
@@ -85,6 +92,7 @@ SortableItem.propTypes = {
   componentStyle: PropTypes.shape({}),
   isClickable: PropTypes.bool,
   onClick: PropTypes.func,
+  disabled: PropTypes.bool,
   // injected
   intl: intlShape.isRequired,
 };

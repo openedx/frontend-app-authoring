@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
+import { createPortal } from 'react-dom';
 
 import {
   DndContext,
@@ -8,6 +9,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  DragOverlay,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -22,6 +24,9 @@ const DraggableList = ({
   setState,
   updateOrder,
   children,
+  renderOverlay,
+  activeId,
+  setActiveId,
 }) => {
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -30,7 +35,7 @@ const DraggableList = ({
     }),
   );
 
-  const handleDragEnd = (event) => {
+  const handleDragEnd = useCallback((event) => {
     const { active, over } = event;
     if (active.id !== over.id) {
       let updatedArray;
@@ -44,13 +49,19 @@ const DraggableList = ({
       });
       updateOrder()(updatedArray);
     }
-  };
+    setActiveId?.(null);
+  }, [updateOrder, setActiveId]);
+
+  const handleDragStart = useCallback((event) => {
+    setActiveId?.(event.active.id);
+  }, [setActiveId]);
 
   return (
     <DndContext
       sensors={sensors}
       modifiers={[restrictToVerticalAxis]}
       collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
       <SortableContext
@@ -59,8 +70,20 @@ const DraggableList = ({
       >
         {children}
       </SortableContext>
+      {renderOverlay && createPortal(
+        <DragOverlay>
+          {renderOverlay(activeId)}
+        </DragOverlay>,
+        document.body,
+      )}
     </DndContext>
   );
+};
+
+DraggableList.defaultProps = {
+  renderOverlay: undefined,
+  activeId: null,
+  setActiveId: () => {},
 };
 
 DraggableList.propTypes = {
@@ -70,6 +93,9 @@ DraggableList.propTypes = {
   setState: PropTypes.func.isRequired,
   updateOrder: PropTypes.func.isRequired,
   children: PropTypes.node.isRequired,
+  renderOverlay: PropTypes.func,
+  activeId: PropTypes.string,
+  setActiveId: PropTypes.func,
 };
 
 export default DraggableList;

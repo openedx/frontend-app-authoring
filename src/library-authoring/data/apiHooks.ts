@@ -56,6 +56,7 @@ import {
   restoreContainer,
   getLibraryContainerChildren,
   updateContainerCollections,
+  updateLibraryContainerChildren,
 } from './api';
 import { VersionSpec } from '../LibraryBlock';
 
@@ -693,6 +694,31 @@ export const useUpdateContainerCollections = (containerId: string) => {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.container(containerId) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+    },
+  });
+};
+
+/**
+ * Update container children
+ */
+export const useUpdateContainerChildren = (containerId?: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (usageKeys: string[]) => {
+      if (!containerId) {
+        return undefined;
+      }
+      return updateLibraryContainerChildren(containerId, usageKeys);
+    },
+    onSettled: () => {
+      if (!containerId) {
+        return;
+      }
+      // NOTE: We invalidate the library query here because we need to update the library's
+      // container list.
+      const libraryId = getLibraryId(containerId);
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.container(containerId) });
     },
   });
 };
