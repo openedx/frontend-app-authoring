@@ -26,6 +26,7 @@ import { useLibraryRoutes } from '../routes';
 import messages from './messages';
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { ToastContext } from '../../generic/toast-context';
+import { canEditComponent } from '../components/ComponentEditorModal';
 
 /** Components that need large min height in preview */
 const LARGE_COMPONENTS = [
@@ -90,6 +91,7 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
     componentId,
     readOnly,
     setComponentId,
+    openComponentEditor,
   } = useLibraryContext();
 
   const {
@@ -131,9 +133,14 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
     closeManageTagsDrawer();
   };
 
-  const handleComponentSelection = (block: LibraryBlockMetadata) => {
+  const handleComponentSelection = (block: LibraryBlockMetadata, numberOfClicks: number) => {
     setComponentId(block.id);
     navigateTo({ componentId: block.id });
+    const canEdit = canEditComponent(block.id);
+    if (numberOfClicks > 1 && canEdit) {
+      // Open editor on double click.
+      openComponentEditor(block.id);
+    }
   };
 
   /* istanbul ignore next */
@@ -179,7 +186,7 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
           outline: hidePreviewFor === block.id && '2px dashed gray',
         }}
         isClickable
-        onClick={() => handleComponentSelection(block)}
+        onClick={(e: { detail: number; }) => handleComponentSelection(block, e.detail)}
         disabled={preview}
       >
         {hidePreviewFor !== block.id && (
@@ -250,4 +257,4 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
       />
     </div>
   );
-};
+}
