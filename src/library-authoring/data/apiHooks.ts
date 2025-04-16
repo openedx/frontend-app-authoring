@@ -57,6 +57,7 @@ import {
   getLibraryContainerChildren,
   updateContainerCollections,
   updateLibraryContainerChildren,
+  removeLibraryContainerChildren,
 } from './api';
 import { VersionSpec } from '../LibraryBlock';
 
@@ -709,6 +710,31 @@ export const useUpdateContainerChildren = (containerId?: string) => {
         return undefined;
       }
       return updateLibraryContainerChildren(containerId, usageKeys);
+    },
+    onSettled: () => {
+      if (!containerId) {
+        return;
+      }
+      // NOTE: We invalidate the library query here because we need to update the library's
+      // container list.
+      const libraryId = getLibraryId(containerId);
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.container(containerId) });
+    },
+  });
+};
+
+/**
+ * Remove components from container
+ */
+export const useRemoveContainerChildren = (containerId?: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (usageKeys: string[]) => {
+      if (!containerId) {
+        return undefined;
+      }
+      return removeLibraryContainerChildren(containerId, usageKeys);
     },
     onSettled: () => {
       if (!containerId) {

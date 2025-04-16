@@ -30,6 +30,7 @@ import {
   useContainerChildren,
   useAddComponentsToContainer,
   useUpdateContainerChildren,
+  useRemoveContainerChildren,
 } from './apiHooks';
 
 let axiosMock;
@@ -285,6 +286,18 @@ describe('library api hooks', () => {
     await result.current.mutateAsync([]);
     await waitFor(() => {
       expect(axiosMock.history.patch.length).toEqual(0);
+    });
+  });
+
+  it('should remove container children', async () => {
+    const containerId = 'lct:org:lib1';
+    const url = getLibraryContainerChildrenApiUrl(containerId);
+
+    axiosMock.onDelete(url).reply(200);
+    const { result } = renderHook(() => useRemoveContainerChildren(containerId), { wrapper });
+    await result.current.mutateAsync([]);
+    await waitFor(() => {
+      expect(axiosMock.history.delete[0].url).toEqual(url);
     });
   });
 });
