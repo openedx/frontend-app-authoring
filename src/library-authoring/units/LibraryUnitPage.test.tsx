@@ -183,7 +183,7 @@ describe('<LibraryUnitPage />', () => {
     expect(await screen.findByTestId('library-sidebar')).toBeInTheDocument();
   });
 
-  it('should open and component sidebar on component selection', async () => {
+  it('should open and close component sidebar on component selection', async () => {
     renderLibraryUnitPage();
 
     const component = await screen.findByText('text block 0');
@@ -230,5 +230,46 @@ describe('<LibraryUnitPage />', () => {
       fireEvent.keyDown(firstDragHandle, { code: 'Space' });
     });
     await waitFor(() => expect(mockShowToast).toHaveBeenLastCalledWith('Failed to update components order'));
+  });
+
+  it('should remove a component from component card', async () => {
+    const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
+    axiosMock.onDelete(url).reply(200);
+    renderLibraryUnitPage();
+
+    expect(await screen.findByText('text block 0')).toBeInTheDocument();
+    const menu = screen.getAllByRole('button', { name: /component actions menu/i })[0];
+    fireEvent.click(menu);
+
+    const removeButton = await screen.getByText('Remove from unit');
+    fireEvent.click(removeButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.delete[0].url).toEqual(url);
+    });
+    await waitFor(() => expect(mockShowToast).toHaveBeenCalled());
+  });
+
+  it('should remove a component from component sidebar', async () => {
+    const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
+    axiosMock.onDelete(url).reply(200);
+    renderLibraryUnitPage();
+
+    const component = await screen.findByText('text block 0');
+    userEvent.click(component);
+    const sidebar = await screen.findByTestId('library-sidebar');
+
+    const { findByRole, findByText } = within(sidebar);
+
+    const menu = await findByRole('button', { name: /component actions menu/i });
+    fireEvent.click(menu);
+
+    const removeButton = await findByText('Remove from unit');
+    fireEvent.click(removeButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.delete[0].url).toEqual(url);
+    });
+    await waitFor(() => expect(mockShowToast).toHaveBeenCalled());
   });
 });
