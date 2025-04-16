@@ -1,3 +1,4 @@
+import { defineMessages } from '@edx/frontend-platform/i18n';
 import { StrictDict } from '../../utils';
 import singleSelect from '../images/singleSelect.png';
 import multiSelect from '../images/multiSelect.png';
@@ -6,146 +7,144 @@ import numericalInput from '../images/numericalInput.png';
 import textInput from '../images/textInput.png';
 import advancedOlxTemplates from './advancedOlxTemplates';
 import basicOlxTemplates from './basicOlxTemplates';
+import {
+  ProblemTypeKeys,
+  AdvanceProblemKeys,
+  AdvancedProblemType,
+  ProblemType,
+  ShowAnswerTypesKeys,
+  RandomizationTypesKeys,
+} from './problemTypes';
+import {
+  ProblemTypesTitleMessages,
+  ProblemTypesDescription,
+  ProblemTypesPreviewDescription,
+  AdvanceProblemsStatus,
+  AdvanceProblemsTitleMessages,
+} from './messages';
 
-export const ProblemTypeKeys = StrictDict({
-  SINGLESELECT: 'multiplechoiceresponse',
-  MULTISELECT: 'choiceresponse',
-  DROPDOWN: 'optionresponse',
-  NUMERIC: 'numericalresponse',
-  TEXTINPUT: 'stringresponse',
-  ADVANCED: 'advanced',
-} as const);
-export type ProblemType = typeof ProblemTypeKeys[keyof typeof ProblemTypeKeys];
+export {
+  ProblemTypeKeys, AdvanceProblemKeys, ShowAnswerTypesKeys, RandomizationTypesKeys,
+} from './problemTypes';
+export { AdvanceProblemsStatus } from './messages';
+export type { AdvancedProblemType, ProblemType } from './problemTypes';
+
+export function isAdvancedProblemType(pt: ProblemType | AdvancedProblemType): pt is AdvancedProblemType {
+  return Object.values(AdvanceProblemKeys).includes(pt as any);
+}
 
 export const ProblemTypes = StrictDict({
   [ProblemTypeKeys.SINGLESELECT]: {
-    title: 'Single select',
+    title: ProblemTypesTitleMessages[ProblemTypeKeys.SINGLESELECT].defaultMessage,
+    titleMessage: ProblemTypesTitleMessages[ProblemTypeKeys.SINGLESELECT],
     preview: singleSelect,
-    previewDescription: 'Learners must select the correct answer from a list of possible options.',
-    description: 'Enter your single select answers below and select which choices are correct. Learners must choose one correct answer.',
+    previewDescription: ProblemTypesPreviewDescription[ProblemTypeKeys.SINGLESELECT],
+    description: ProblemTypesDescription[ProblemTypeKeys.SINGLESELECT],
     helpLink: 'https://docs.openedx.org/en/latest/educators/concepts/exercise_tools/about_multi_select.html',
     prev: ProblemTypeKeys.TEXTINPUT,
     next: ProblemTypeKeys.MULTISELECT,
     template: basicOlxTemplates.singleSelect,
-
   },
   [ProblemTypeKeys.MULTISELECT]: {
-    title: 'Multi-select',
+    title: ProblemTypesTitleMessages[ProblemTypeKeys.MULTISELECT].defaultMessage,
+    titleMessage: ProblemTypesTitleMessages[ProblemTypeKeys.MULTISELECT],
     preview: multiSelect,
-    previewDescription: 'Learners must select all correct answers from a list of possible options.',
-    description: 'Enter your multi select answers below and select which choices are correct. Learners must choose all correct answers.',
+    previewDescription: ProblemTypesPreviewDescription[ProblemTypeKeys.MULTISELECT],
+    description: ProblemTypesDescription[ProblemTypeKeys.MULTISELECT],
     helpLink: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_multi_select.html',
     next: ProblemTypeKeys.DROPDOWN,
     prev: ProblemTypeKeys.SINGLESELECT,
     template: basicOlxTemplates.multiSelect,
   },
   [ProblemTypeKeys.DROPDOWN]: {
-    title: 'Dropdown',
+    title: ProblemTypesTitleMessages[ProblemTypeKeys.DROPDOWN].defaultMessage,
+    titleMessage: ProblemTypesTitleMessages[ProblemTypeKeys.DROPDOWN],
     preview: dropdown,
-    previewDescription: 'Learners must select the correct answer from a list of possible options',
-    description: 'Enter your dropdown answers below and select which choice is correct. Learners must select one correct answer.',
+    previewDescription: ProblemTypesPreviewDescription[ProblemTypeKeys.DROPDOWN],
+    description: ProblemTypesDescription[ProblemTypeKeys.DROPDOWN],
     helpLink: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_dropdown.html',
     next: ProblemTypeKeys.NUMERIC,
     prev: ProblemTypeKeys.MULTISELECT,
     template: basicOlxTemplates.dropdown,
   },
   [ProblemTypeKeys.NUMERIC]: {
-    title: 'Numerical input',
+    title: ProblemTypesTitleMessages[ProblemTypeKeys.NUMERIC].defaultMessage,
+    titleMessage: ProblemTypesTitleMessages[ProblemTypeKeys.NUMERIC],
     preview: numericalInput,
-    previewDescription: 'Specify one or more correct numeric answers, submitted in a response field.',
-    description: 'Enter correct numerical input answers below. Learners must enter one correct answer.',
+    previewDescription: ProblemTypesPreviewDescription[ProblemTypeKeys.NUMERIC],
+    description: ProblemTypesDescription[ProblemTypeKeys.NUMERIC],
     helpLink: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/manage_numerical_input_problem.html',
     next: ProblemTypeKeys.TEXTINPUT,
     prev: ProblemTypeKeys.DROPDOWN,
     template: basicOlxTemplates.numeric,
   },
   [ProblemTypeKeys.TEXTINPUT]: {
-    title: 'Text input',
+    title: ProblemTypesTitleMessages[ProblemTypeKeys.TEXTINPUT].defaultMessage,
+    titleMessage: ProblemTypesTitleMessages[ProblemTypeKeys.TEXTINPUT],
     preview: textInput,
-    previewDescription: 'Specify one or more correct text answers, including numbers and special characters, submitted in a response field.',
-    description: 'Enter your text input answers below and select which choices are correct. Learners must enter one correct answer.',
+    previewDescription: ProblemTypesPreviewDescription[ProblemTypeKeys.TEXTINPUT],
+    description: ProblemTypesDescription[ProblemTypeKeys.TEXTINPUT],
     helpLink: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_text_input.html',
     prev: ProblemTypeKeys.NUMERIC,
     next: ProblemTypeKeys.SINGLESELECT,
     template: basicOlxTemplates.textInput,
   },
   [ProblemTypeKeys.ADVANCED]: {
-    title: 'Advanced Problem',
+    title: ProblemTypesTitleMessages[ProblemTypeKeys.ADVANCED].defaultMessage,
+    titleMessage: ProblemTypesTitleMessages[ProblemTypeKeys.ADVANCED],
+    previewDescription: ProblemTypesPreviewDescription[ProblemTypeKeys.ADVANCED],
     preview: ('<div />'),
-    description: 'An Advanced Problem Type',
+    description: ProblemTypesDescription[ProblemTypeKeys.ADVANCED],
     helpLink: 'something.com',
   },
 });
 
-export const AdvanceProblemKeys = StrictDict({
-  BLANK: 'blankadvanced',
-  CIRCUITSCHEMATIC: 'circuitschematic',
-  JSINPUT: 'jsinputresponse',
-  CUSTOMGRADER: 'customgrader',
-  IMAGE: 'imageresponse',
-  FORMULA: 'formularesponse',
-  PROBLEMWITHHINT: 'problemwithhint',
-} as const);
-export type AdvancedProblemType = typeof AdvanceProblemKeys[keyof typeof AdvanceProblemKeys];
-
-export function isAdvancedProblemType(pt: ProblemType | AdvancedProblemType): pt is AdvancedProblemType {
-  return Object.values(AdvanceProblemKeys).includes(pt as any);
-}
-
 export const AdvanceProblems = StrictDict({
   [AdvanceProblemKeys.BLANK]: {
-    title: 'Blank problem',
-    status: '',
+    title: AdvanceProblemsTitleMessages[AdvanceProblemKeys.BLANK].defaultMessage,
+    titleMessage: AdvanceProblemsTitleMessages[AdvanceProblemKeys.BLANK],
+    status: AdvanceProblemsStatus.empty,
     template: '<problem></problem>',
   },
   [AdvanceProblemKeys.CIRCUITSCHEMATIC]: {
-    title: 'Circuit schematic builder',
-    status: 'Not supported',
+    title: AdvanceProblemsTitleMessages[AdvanceProblemKeys.CIRCUITSCHEMATIC].defaultMessage,
+    titleMessage: AdvanceProblemsTitleMessages[AdvanceProblemKeys.CIRCUITSCHEMATIC],
+    status: AdvanceProblemsStatus.notSupported,
     template: advancedOlxTemplates.circuitSchematic,
   },
   [AdvanceProblemKeys.JSINPUT]: {
-    title: 'Custom JavaScript display and grading',
-    status: '',
+    title: AdvanceProblemsTitleMessages[AdvanceProblemKeys.JSINPUT].defaultMessage,
+    titleMessage: AdvanceProblemsTitleMessages[AdvanceProblemKeys.JSINPUT],
+    status: AdvanceProblemsStatus.empty,
     template: advancedOlxTemplates.jsInputResponse,
   },
   [AdvanceProblemKeys.CUSTOMGRADER]: {
-    title: 'Custom Python-evaluated input',
-    status: 'Provisional',
+    title: AdvanceProblemsTitleMessages[AdvanceProblemKeys.CUSTOMGRADER].defaultMessage,
+    titleMessage: AdvanceProblemsTitleMessages[AdvanceProblemKeys.CUSTOMGRADER],
+    status: AdvanceProblemsStatus.provisional,
     template: advancedOlxTemplates.customGrader,
   },
   [AdvanceProblemKeys.IMAGE]: {
-    title: 'Image mapped input',
-    status: 'Not supported',
+    title: AdvanceProblemsTitleMessages[AdvanceProblemKeys.IMAGE].defaultMessage,
+    titleMessage: AdvanceProblemsTitleMessages[AdvanceProblemKeys.IMAGE],
+    status: AdvanceProblemsStatus.notSupported,
     template: advancedOlxTemplates.imageResponse,
   },
   [AdvanceProblemKeys.FORMULA]: {
-    title: 'Math expression input',
-    status: '',
+    title: AdvanceProblemsTitleMessages[AdvanceProblemKeys.FORMULA].defaultMessage,
+    titleMessage: AdvanceProblemsTitleMessages[AdvanceProblemKeys.FORMULA],
+    status: AdvanceProblemsStatus.empty,
     template: advancedOlxTemplates.formulaResponse,
   },
   [AdvanceProblemKeys.PROBLEMWITHHINT]: {
-    title: 'Problem with adaptive hint',
-    status: 'Not supported',
+    title: AdvanceProblemsTitleMessages[AdvanceProblemKeys.PROBLEMWITHHINT].defaultMessage,
+    titleMessage: AdvanceProblemsTitleMessages[AdvanceProblemKeys.PROBLEMWITHHINT],
+    status: AdvanceProblemsStatus.notSupported,
     template: advancedOlxTemplates.problemWithHint,
   },
 } as const);
 
-export const ShowAnswerTypesKeys = StrictDict({
-  ALWAYS: 'always',
-  ANSWERED: 'answered',
-  ATTEMPTED: 'attempted',
-  CLOSED: 'closed',
-  FINISHED: 'finished',
-  CORRECT_OR_PAST_DUE: 'correct_or_past_due',
-  PAST_DUE: 'past_due',
-  NEVER: 'never',
-  AFTER_SOME_NUMBER_OF_ATTEMPTS: 'after_attempts',
-  AFTER_ALL_ATTEMPTS: 'after_all_attempts',
-  AFTER_ALL_ATTEMPTS_OR_CORRECT: 'after_all_attempts_or_correct',
-  ATTEMPTED_NO_PAST_DUE: 'attempted_no_past_due',
-} as const);
-
-export const ShowAnswerTypes = StrictDict({
+export const ShowAnswerTypes = defineMessages({
   [ShowAnswerTypesKeys.ALWAYS]: {
     id: 'authoring.problemeditor.settings.showanswertype.always',
     defaultMessage: 'Always',
@@ -194,13 +193,6 @@ export const ShowAnswerTypes = StrictDict({
     id: 'authoring.problemeditor.settings.showanswertype.attempted_no_past_due',
     defaultMessage: 'Attempted',
   },
-} as const);
-
-export const RandomizationTypesKeys = StrictDict({
-  NEVER: 'never',
-  ALWAYS: 'always',
-  ONRESET: 'onreset',
-  PERSTUDENT: 'per_student',
 } as const);
 
 export const RandomizationTypes = StrictDict({
