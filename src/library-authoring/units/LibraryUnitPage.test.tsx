@@ -261,6 +261,55 @@ describe('<LibraryUnitPage />', () => {
     expect(mockShowToast).toHaveBeenCalledWith('Undo successful');
   });
 
+  it('should show error on remove a component', async () => {
+    const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
+    axiosMock.onDelete(url).reply(404);
+    renderLibraryUnitPage();
+
+    expect(await screen.findByText('text block 0')).toBeInTheDocument();
+    const menu = screen.getAllByRole('button', { name: /component actions menu/i })[0];
+    fireEvent.click(menu);
+
+    const removeButton = await screen.getByText('Remove from unit');
+    fireEvent.click(removeButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.delete[0].url).toEqual(url);
+    });
+    expect(mockShowToast).toHaveBeenCalledWith('Failed to remove component');
+  });
+
+  it('should show error on restore removed component', async () => {
+    const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
+    axiosMock.onDelete(url).reply(200);
+    renderLibraryUnitPage();
+
+    expect(await screen.findByText('text block 0')).toBeInTheDocument();
+    const menu = screen.getAllByRole('button', { name: /component actions menu/i })[0];
+    fireEvent.click(menu);
+
+    const removeButton = await screen.getByText('Remove from unit');
+    fireEvent.click(removeButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.delete[0].url).toEqual(url);
+    });
+    await waitFor(() => expect(mockShowToast).toHaveBeenCalled());
+
+    // Get restore / undo func from the toast
+    // @ts-ignore
+    const restoreFn = mockShowToast.mock.calls[0][1].onClick;
+
+    const restoreUrl = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
+    axiosMock.onPost(restoreUrl).reply(404);
+    // restore collection
+    restoreFn();
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toEqual(1);
+    });
+    expect(mockShowToast).toHaveBeenCalledWith('Failed to undo remove component operation');
+  });
+
   it('should remove a component from component sidebar', async () => {
     const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
     axiosMock.onDelete(url).reply(200);
