@@ -129,7 +129,7 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
   };
 
   const onTagSidebarClose = () => {
-    queryClient.invalidateQueries(libraryAuthoringQueryKeys.containerChildren(unitId));
+    queryClient.invalidateQueries(libraryAuthoringQueryKeys.containerChildren(unitId!));
     closeManageTagsDrawer();
   };
 
