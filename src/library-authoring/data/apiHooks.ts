@@ -740,8 +740,8 @@ export const useRemoveContainerChildren = (containerId?: string) => {
       if (!containerId) {
         return;
       }
-      // NOTE: We invalidate the library query here because we need to update the library's
-      // container list.
+      // NOTE: We invalidate the library query here because we need to update the container
+      // count in the library
       const libraryId = getLibraryId(containerId);
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.container(containerId) });
