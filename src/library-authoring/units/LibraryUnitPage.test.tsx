@@ -332,4 +332,12 @@ describe('<LibraryUnitPage />', () => {
     });
     await waitFor(() => expect(mockShowToast).toHaveBeenCalled());
   });
+
+  it('should show editor on double click', async () => {
+    renderLibraryUnitPage();
+    const component = await screen.findByText('text block 0');
+    // trigger double click
+    userEvent.click(component, undefined, { clickCount: 2 });
+    expect(await screen.findByRole('dialog', { name: 'Editor Dialog' })).toBeInTheDocument();
+  });
 });

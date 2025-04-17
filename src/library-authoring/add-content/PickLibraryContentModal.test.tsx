@@ -32,6 +32,7 @@ const mockAddItemsToCollection = jest.fn();
 const mockAddComponentsToContainer = jest.fn();
 jest.spyOn(api, 'addItemsToCollection').mockImplementation(mockAddItemsToCollection);
 jest.spyOn(api, 'addComponentsToContainer').mockImplementation(mockAddComponentsToContainer);
+const unitId = 'lct:Axim:TEST:unit:test-unit-1';
 
 const render = (context: 'collection' | 'unit') => baseRender(<PickLibraryContentModal isOpen onClose={onClose} />, {
   path: context === 'collection'
@@ -40,7 +41,7 @@ const render = (context: 'collection' | 'unit') => baseRender(<PickLibraryConten
   params: {
     libraryId,
     ...(context === 'collection' && { collectionId: 'collectionId' }),
-    ...(context === 'unit' && { unitId: 'unitId' }),
+    ...(context === 'unit' && { unitId }),
   },
   extraWrapper: ({ children }) => (
     <LibraryProvider
@@ -85,7 +86,7 @@ describe('<PickLibraryContentModal />', () => {
           );
         } else {
           expect(mockAddComponentsToContainer).toHaveBeenCalledWith(
-            'unitId',
+            unitId,
             ['lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd'],
           );
         }
@@ -123,7 +124,7 @@ describe('<PickLibraryContentModal />', () => {
           );
         } else {
           expect(mockAddComponentsToContainer).toHaveBeenCalledWith(
-            'unitId',
+            unitId,
             ['lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422fdd'],
           );
         }

@@ -258,7 +258,7 @@ describe('library api hooks', () => {
 
   it('should add components to container', async () => {
     const componentId = 'lb:org:lib:html:1';
-    const containerId = 'ltc:org:lib:unit:1';
+    const containerId = 'lct:org:lib:unit:1';
 
     const url = getLibraryContainerChildrenApiUrl(containerId);
 

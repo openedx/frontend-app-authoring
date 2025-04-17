@@ -102,17 +102,27 @@ export const libraryAuthoringQueryKeys = {
     'blockTypes',
     libraryId,
   ],
-  container: (containerId?: string) => [
-    ...libraryAuthoringQueryKeys.all,
-    'container',
-    containerId,
-  ],
-  containerChildren: (containerId?: string) => [
-    ...libraryAuthoringQueryKeys.all,
-    'container',
-    containerId,
-    'children',
-  ],
+  container: (containerId?: string) => {
+    const baseKey = containerId
+      ? libraryAuthoringQueryKeys.contentLibrary(getLibraryId(containerId))
+      : libraryAuthoringQueryKeys.all;
+    return [
+      ...baseKey,
+      'container',
+      containerId,
+    ];
+  },
+  containerChildren: (containerId?: string) => {
+    const baseKey = containerId
+      ? libraryAuthoringQueryKeys.contentLibrary(getLibraryId(containerId))
+      : libraryAuthoringQueryKeys.all;
+    return [
+      ...baseKey,
+      'container',
+      containerId,
+      'children',
+    ];
+  },
 };
 
 export const xblockQueryKeys = {
