@@ -46,12 +46,12 @@ const messages = defineMessages({
     defaultMessage: 'Remove from collection',
     description: 'Menu item for remove an item from collection.',
   },
-  removeComponentSucess: {
+  removeComponentFromCollectionSuccess: {
     id: 'course-authoring.library-authoring.component.remove-from-collection-success',
     defaultMessage: 'Item successfully removed',
     description: 'Message for successful removal of an item from collection.',
   },
-  removeComponentFailure: {
+  removeComponentFromCollectionFailure: {
     id: 'course-authoring.library-authoring.component.remove-from-collection-failure',
     defaultMessage: 'Failed to remove item',
     description: 'Message for failure of removal of an item from collection.',
@@ -230,6 +230,36 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.component.container-card-preview.more-blocks',
     defaultMessage: '+{count}',
     description: 'Count shown when a container has more blocks than will fit on the card preview.',
+  },
+  removeComponentFromUnitMenu: {
+    id: 'course-authoring.library-authoring.unit.component.remove.button',
+    defaultMessage: 'Remove from unit',
+    description: 'Text of the menu item to remove a component from a unit',
+  },
+  removeComponentFromContainerSuccess: {
+    id: 'course-authoring.library-authoring.component.remove-from-container-success',
+    defaultMessage: 'Component successfully removed',
+    description: 'Message for successful removal of a component from container.',
+  },
+  removeComponentFromContainerFailure: {
+    id: 'course-authoring.library-authoring.component.remove-from-container-failure',
+    defaultMessage: 'Failed to remove component',
+    description: 'Message for failure of removal of a component from container.',
+  },
+  undoRemoveComponentFromContainerToastAction: {
+    id: 'course-authoring.library-authoring.component.undo-remove-from-container-toast-button',
+    defaultMessage: 'Undo',
+    description: 'Toast message to undo remove a component from container.',
+  },
+  undoRemoveComponentFromContainerToastSuccess: {
+    id: 'course-authoring.library-authoring.component.undo-remove-component-from-container-toast-text',
+    defaultMessage: 'Undo successful',
+    description: 'Message to display on undo delete component success',
+  },
+  undoRemoveComponentFromContainerToastFailed: {
+    id: 'course-authoring.library-authoring.component.undo-remove-component-from-container-failed',
+    defaultMessage: 'Failed to undo remove component operation',
+    description: 'Message to display on failure to undo delete component',
   },
 });
 export default messages;

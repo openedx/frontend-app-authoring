@@ -53,9 +53,9 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
         // Close sidebar if current component is open
         closeLibrarySidebar();
       }
-      showToast(intl.formatMessage(messages.removeComponentSucess));
+      showToast(intl.formatMessage(messages.removeComponentFromCollectionSuccess));
     }).catch(() => {
-      showToast(intl.formatMessage(messages.removeComponentFailure));
+      showToast(intl.formatMessage(messages.removeComponentFromCollectionFailure));
     });
   };
 

@@ -684,3 +684,19 @@ export async function updateLibraryContainerChildren(
   );
   return camelCaseObject(data);
 }
+
+/**
+ * Remove components in `children` from library container.
+ */
+export async function removeLibraryContainerChildren(
+  containerId: string,
+  children: string[],
+): Promise<LibraryBlockMetadata[]> {
+  const { data } = await getAuthenticatedHttpClient().delete(
+    getLibraryContainerChildrenApiUrl(containerId),
+    {
+      data: { usage_keys: children },
+    },
+  );
+  return camelCaseObject(data);
+}

@@ -380,6 +380,25 @@ describe('<LibraryCollectionPage />', () => {
     await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
   });
 
+  it('should show error when remove component from collection', async () => {
+    const url = getLibraryCollectionItemsApiUrl(
+      mockContentLibrary.libraryId,
+      mockCollection.collectionId,
+    );
+    axiosMock.onDelete(url).reply(404);
+    await renderLibraryCollectionPage();
+
+    const menuBtns = await screen.findAllByRole('button', { name: 'Component actions menu' });
+    // open menu
+    fireEvent.click(menuBtns[0]);
+
+    fireEvent.click(await screen.findByText('Remove from collection'));
+    await waitFor(() => {
+      expect(axiosMock.history.delete.length).toEqual(1);
+    });
+    expect(mockShowToast).toHaveBeenCalledWith('Failed to remove item');
+  });
+
   it('should remove unit from collection and hides sidebar', async () => {
     const url = getLibraryCollectionItemsApiUrl(
       mockContentLibrary.libraryId,

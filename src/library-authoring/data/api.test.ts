@@ -1,10 +1,15 @@
 import { initializeMocks } from '../../testUtils';
 import * as api from './api';
 
+let axiosMock;
+
 describe('library data API', () => {
+  beforeEach(() => {
+    ({ axiosMock } = initializeMocks());
+  });
+
   describe('createLibraryBlock', () => {
     it('should create library block', async () => {
-      const { axiosMock } = initializeMocks();
       const libraryId = 'lib:org:1';
       const url = api.getCreateLibraryBlockUrl(libraryId);
       axiosMock.onPost(url).reply(200);
@@ -20,7 +25,6 @@ describe('library data API', () => {
 
   describe('deleteLibraryBlock', () => {
     it('should delete a library block', async () => {
-      const { axiosMock } = initializeMocks();
       const usageKey = 'lib:org:1';
       const url = api.getLibraryBlockMetadataUrl(usageKey);
       axiosMock.onDelete(url).reply(200);
@@ -31,7 +35,6 @@ describe('library data API', () => {
 
   describe('restoreLibraryBlock', () => {
     it('should restore a soft-deleted library block', async () => {
-      const { axiosMock } = initializeMocks();
       const usageKey = 'lib:org:1';
       const url = api.getLibraryBlockRestoreUrl(usageKey);
       axiosMock.onPost(url).reply(200);
@@ -42,7 +45,6 @@ describe('library data API', () => {
 
   describe('commitLibraryChanges', () => {
     it('should commit library changes', async () => {
-      const { axiosMock } = initializeMocks();
       const libraryId = 'lib:org:1';
       const url = api.getCommitLibraryChangesUrl(libraryId);
       axiosMock.onPost(url).reply(200);
@@ -55,7 +57,6 @@ describe('library data API', () => {
 
   describe('revertLibraryChanges', () => {
     it('should revert library changes', async () => {
-      const { axiosMock } = initializeMocks();
       const libraryId = 'lib:org:1';
       const url = api.getCommitLibraryChangesUrl(libraryId);
       axiosMock.onDelete(url).reply(200);
@@ -68,7 +69,6 @@ describe('library data API', () => {
 
   describe('getBlockTypes', () => {
     it('should get block types metadata', async () => {
-      const { axiosMock } = initializeMocks();
       const libraryId = 'lib:org:1';
       const url = api.getBlockTypesMetaDataUrl(libraryId);
       axiosMock.onGet(url).reply(200);
@@ -80,7 +80,6 @@ describe('library data API', () => {
   });
 
   it('should create collection', async () => {
-    const { axiosMock } = initializeMocks();
     const libraryId = 'lib:org:1';
     const url = api.getLibraryCollectionsApiUrl(libraryId);
 
@@ -95,7 +94,6 @@ describe('library data API', () => {
   });
 
   it('should delete a container', async () => {
-    const { axiosMock } = initializeMocks();
     const containerId = 'lct:org:lib1';
     const url = api.getLibraryContainerApiUrl(containerId);
 
@@ -106,7 +104,6 @@ describe('library data API', () => {
   });
 
   it('should restore a container', async () => {
-    const { axiosMock } = initializeMocks();
     const containerId = 'lct:org:lib1';
     const url = api.getLibraryContainerRestoreApiUrl(containerId);
 
@@ -116,7 +113,6 @@ describe('library data API', () => {
   });
 
   it('should add components to unit', async () => {
-    const { axiosMock } = initializeMocks();
     const componentId = 'lb:org:lib:html:1';
     const containerId = 'lct:org:lib:unit:1';
     const url = api.getLibraryContainerChildrenApiUrl(containerId);
@@ -128,7 +124,6 @@ describe('library data API', () => {
   });
 
   it('should update container children', async () => {
-    const { axiosMock } = initializeMocks();
     const containerId = 'lct:org:lib1';
     const url = api.getLibraryContainerChildrenApiUrl(containerId);
 
@@ -136,5 +131,15 @@ describe('library data API', () => {
 
     await api.updateLibraryContainerChildren(containerId, ['test']);
     expect(axiosMock.history.patch[0].url).toEqual(url);
+  });
+
+  it('should remove container children', async () => {
+    const containerId = 'lct:org:lib1';
+    const url = api.getLibraryContainerChildrenApiUrl(containerId);
+
+    axiosMock.onDelete(url).reply(200);
+
+    await api.removeLibraryContainerChildren(containerId, ['test']);
+    expect(axiosMock.history.delete[0].url).toEqual(url);
   });
 });

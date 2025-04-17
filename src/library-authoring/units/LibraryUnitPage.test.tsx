@@ -50,9 +50,7 @@ jest.mock('@dnd-kit/core', () => ({
 
 describe('<LibraryUnitPage />', () => {
   beforeEach(() => {
-    const mocks = initializeMocks();
-    axiosMock = mocks.axiosMock;
-    mockShowToast = mocks.mockShowToast;
+    ({ axiosMock, mockShowToast } = initializeMocks());
   });
 
   afterEach(() => {
@@ -183,7 +181,7 @@ describe('<LibraryUnitPage />', () => {
     expect(await screen.findByTestId('library-sidebar')).toBeInTheDocument();
   });
 
-  it('should open and component sidebar on component selection', async () => {
+  it('should open and close component sidebar on component selection', async () => {
     renderLibraryUnitPage();
 
     const component = await screen.findByText('text block 0');
@@ -230,6 +228,109 @@ describe('<LibraryUnitPage />', () => {
       fireEvent.keyDown(firstDragHandle, { code: 'Space' });
     });
     await waitFor(() => expect(mockShowToast).toHaveBeenLastCalledWith('Failed to update components order'));
+  });
+
+  it('should remove a component & restore from component card', async () => {
+    const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
+    axiosMock.onDelete(url).reply(200);
+    renderLibraryUnitPage();
+
+    expect(await screen.findByText('text block 0')).toBeInTheDocument();
+    const menu = screen.getAllByRole('button', { name: /component actions menu/i })[0];
+    fireEvent.click(menu);
+
+    const removeButton = await screen.getByText('Remove from unit');
+    fireEvent.click(removeButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.delete[0].url).toEqual(url);
+    });
+    await waitFor(() => expect(mockShowToast).toHaveBeenCalled());
+
+    // Get restore / undo func from the toast
+    // @ts-ignore
+    const restoreFn = mockShowToast.mock.calls[0][1].onClick;
+
+    const restoreUrl = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
+    axiosMock.onPost(restoreUrl).reply(200);
+    // restore collection
+    restoreFn();
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toEqual(1);
+    });
+    expect(mockShowToast).toHaveBeenCalledWith('Undo successful');
+  });
+
+  it('should show error on remove a component', async () => {
+    const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
+    axiosMock.onDelete(url).reply(404);
+    renderLibraryUnitPage();
+
+    expect(await screen.findByText('text block 0')).toBeInTheDocument();
+    const menu = screen.getAllByRole('button', { name: /component actions menu/i })[0];
+    fireEvent.click(menu);
+
+    const removeButton = await screen.getByText('Remove from unit');
+    fireEvent.click(removeButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.delete[0].url).toEqual(url);
+    });
+    expect(mockShowToast).toHaveBeenCalledWith('Failed to remove component');
+  });
+
+  it('should show error on restore removed component', async () => {
+    const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
+    axiosMock.onDelete(url).reply(200);
+    renderLibraryUnitPage();
+
+    expect(await screen.findByText('text block 0')).toBeInTheDocument();
+    const menu = screen.getAllByRole('button', { name: /component actions menu/i })[0];
+    fireEvent.click(menu);
+
+    const removeButton = await screen.getByText('Remove from unit');
+    fireEvent.click(removeButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.delete[0].url).toEqual(url);
+    });
+    await waitFor(() => expect(mockShowToast).toHaveBeenCalled());
+
+    // Get restore / undo func from the toast
+    // @ts-ignore
+    const restoreFn = mockShowToast.mock.calls[0][1].onClick;
+
+    const restoreUrl = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
+    axiosMock.onPost(restoreUrl).reply(404);
+    // restore collection
+    restoreFn();
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toEqual(1);
+    });
+    expect(mockShowToast).toHaveBeenCalledWith('Failed to undo remove component operation');
+  });
+
+  it('should remove a component from component sidebar', async () => {
+    const url = getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId);
+    axiosMock.onDelete(url).reply(200);
+    renderLibraryUnitPage();
+
+    const component = await screen.findByText('text block 0');
+    userEvent.click(component);
+    const sidebar = await screen.findByTestId('library-sidebar');
+
+    const { findByRole, findByText } = within(sidebar);
+
+    const menu = await findByRole('button', { name: /component actions menu/i });
+    fireEvent.click(menu);
+
+    const removeButton = await findByText('Remove from unit');
+    fireEvent.click(removeButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.delete[0].url).toEqual(url);
+    });
+    await waitFor(() => expect(mockShowToast).toHaveBeenCalled());
   });
 
   it('should show editor on double click', async () => {
