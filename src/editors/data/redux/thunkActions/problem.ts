@@ -28,7 +28,7 @@ export const switchToMarkdownEditor = () => (dispatch, getState) => {
   const state = getState();
   dispatch(actions.problem.updateField({ isMarkdownEditorEnabled: true }));
   const { blockValue } = state.app;
-  const olx = _.get(blockValue, 'data.data', '');
+  const olx = get(blockValue, 'data.data', '');
   const content = { settings: { markdown_edited: true }, olx };
   // Sending a request to save the problem block with the updated markdown_edited value
   dispatch(requests.saveBlock({ content }));
