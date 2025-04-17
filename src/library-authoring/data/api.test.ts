@@ -118,7 +118,7 @@ describe('library data API', () => {
   it('should add components to unit', async () => {
     const { axiosMock } = initializeMocks();
     const componentId = 'lb:org:lib:html:1';
-    const containerId = 'ltc:org:lib:unit:1';
+    const containerId = 'lct:org:lib:unit:1';
     const url = api.getLibraryContainerChildrenApiUrl(containerId);
 
     axiosMock.onPost(url).reply(200);
