@@ -13,6 +13,7 @@ export async function mockContentTaxonomyTagsData(contentId: string): Promise<an
     case thisMock.languageWithTagsId: return thisMock.languageWithTags;
     case thisMock.languageWithoutTagsId: return thisMock.languageWithoutTags;
     case thisMock.largeTagsId: return thisMock.largeTags;
+    case thisMock.containerTagsId: return thisMock.largeTags;
     case thisMock.emptyTagsId: return thisMock.emptyTags;
     default: throw new Error(`No mock has been set up for contentId "${contentId}"`);
   }
@@ -204,6 +205,7 @@ mockContentTaxonomyTagsData.emptyTagsId = 'block-v1:EmptyTagsOrg+STC1+2023_1+typ
 mockContentTaxonomyTagsData.emptyTags = {
   taxonomies: [],
 };
+mockContentTaxonomyTagsData.containerTagsId = 'lct:org:lib:unit:container_tags';
 mockContentTaxonomyTagsData.applyMock = () => jest.spyOn(api, 'getContentTaxonomyTagsData').mockImplementation(mockContentTaxonomyTagsData);
 
 /**
