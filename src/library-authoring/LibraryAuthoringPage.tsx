@@ -129,9 +129,10 @@ export const SubHeaderTitle = ({ title }: { title: ReactNode }) => {
 
 interface LibraryAuthoringPageProps {
   returnToLibrarySelection?: () => void,
+  showOnlyHomeTab?: boolean,
 }
 
-const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPageProps) => {
+const LibraryAuthoringPage = ({ returnToLibrarySelection, showOnlyHomeTab = false }: LibraryAuthoringPageProps) => {
   const intl = useIntl();
 
   const {
@@ -245,6 +246,17 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
   // Disable filtering by block/problem type when viewing the Collections tab.
   const overrideTypesFilter = (insideCollections || insideUnits) ? new TypesFilterData() : undefined;
 
+  const visibleTabs = [
+    <Tab eventKey={ContentType.home} title={intl.formatMessage(messages.homeTab)} />,
+  ];
+  if (!showOnlyHomeTab) {
+    visibleTabs.push(
+      <Tab eventKey={ContentType.collections} title={intl.formatMessage(messages.collectionsTab)} />,
+      <Tab eventKey={ContentType.components} title={intl.formatMessage(messages.componentsTab)} />,
+      <Tab eventKey={ContentType.units} title={intl.formatMessage(messages.unitsTab)} />,
+    );
+  }
+
   return (
     <div className="d-flex">
       <div className="flex-grow-1">
@@ -279,10 +291,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection }: LibraryAuthoringPage
               onSelect={handleTabChange}
               className="my-3"
             >
-              <Tab eventKey={ContentType.home} title={intl.formatMessage(messages.homeTab)} />
-              <Tab eventKey={ContentType.collections} title={intl.formatMessage(messages.collectionsTab)} />
-              <Tab eventKey={ContentType.components} title={intl.formatMessage(messages.componentsTab)} />
-              <Tab eventKey={ContentType.units} title={intl.formatMessage(messages.unitsTab)} />
+              {visibleTabs}
             </Tabs>
             <ActionRow className="my-3">
               <SearchKeywordsField className="mr-3" />
