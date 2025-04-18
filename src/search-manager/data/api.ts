@@ -171,6 +171,9 @@ export interface CollectionHit extends BaseContentHit {
  * Information about a single container returned in the search results
  * Defined in edx-platform/openedx/core/djangoapps/content/search/documents.py
  */
+interface ContainerHitContent {
+  childUsageKeys: string[],
+}
 export interface ContainerHit extends BaseContentHit {
   type: 'library_container';
   blockType: 'unit'; // This should be expanded to include other container types
@@ -178,6 +181,7 @@ export interface ContainerHit extends BaseContentHit {
   published?: ContentPublishedData;
   publishStatus: PublishStatus;
   formatted: BaseContentHit['formatted'] & { published?: ContentPublishedData, };
+  content?: ContainerHitContent;
 }
 
 export type HitType = ContentHit | CollectionHit | ContainerHit;
