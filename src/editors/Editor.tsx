@@ -7,7 +7,6 @@ import * as hooks from './hooks';
 
 import supportedEditors from './supportedEditors';
 import type { EditorComponent } from './EditorComponent';
-import { useEditorContext } from './EditorContext';
 import AdvancedEditor from './AdvancedEditor';
 
 export interface Props extends EditorComponent {
@@ -16,7 +15,6 @@ export interface Props extends EditorComponent {
   learningContextId: string | null;
   lmsEndpointUrl: string | null;
   studioEndpointUrl: string | null;
-  fullScreen?: boolean; // eslint-disable-line react/no-unused-prop-types
 }
 
 const Editor: React.FC<Props> = ({
@@ -39,7 +37,6 @@ const Editor: React.FC<Props> = ({
       studioEndpointUrl,
     },
   });
-  const { fullScreen } = useEditorContext();
 
   const EditorComponent = supportedEditors[blockType];
 
@@ -57,24 +54,7 @@ const Editor: React.FC<Props> = ({
     );
   }
 
-  const innerEditor = <EditorComponent {...{ onClose, returnFunction }} />;
-
-  if (fullScreen) {
-    return (
-      <div
-        className="d-flex flex-column"
-      >
-        <div
-          className="pgn__modal-fullscreen h-100"
-          role="dialog"
-          aria-label={blockType}
-        >
-          {innerEditor}
-        </div>
-      </div>
-    );
-  }
-  return innerEditor;
+  return <EditorComponent {...{ onClose, returnFunction }} />;
 };
 
 export default Editor;
