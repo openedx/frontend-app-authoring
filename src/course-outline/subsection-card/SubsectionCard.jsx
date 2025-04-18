@@ -183,6 +183,7 @@ const SubsectionCard = ({
 
   const handleSelectLibraryUnit = useCallback((selectedUnit) => {
     // TODO add unit to course
+    // eslint-disable-next-line no-console
     console.log(selectedUnit);
     closeAddLibraryUnitModal();
   }, []);

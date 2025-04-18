@@ -28,6 +28,24 @@ jest.mock('react-redux', () => ({
   }),
 }));
 
+// Mock ComponentPicker to call onComponentSelected on click
+jest.mock('../../library-authoring/component-picker', () => ({
+  ComponentPicker: (props) => {
+    const onClick = () => {
+      // eslint-disable-next-line react/prop-types
+      props.onComponentSelected({
+        usageKey: 'lct:org:lib:unit:1',
+        blockType: 'unti',
+      });
+    };
+    return (
+      <button type="submit" onClick={onClick}>
+        Dummy button
+      </button>
+    );
+  },
+}));
+
 const unit = {
   id: 'unit-1',
 };
@@ -269,6 +287,10 @@ describe('<SubsectionCard />', () => {
 
     expect(await screen.findByText('Select unit'));
 
-    // TODO selet and add unit
+    // click dummy button to execute onComponentSelected prop.
+    const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
+    fireEvent.click(dummyBtn);
+
+    // TODO call add unit from library api call
   });
 });
