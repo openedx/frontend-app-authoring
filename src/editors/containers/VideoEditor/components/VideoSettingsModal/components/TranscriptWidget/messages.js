@@ -117,6 +117,11 @@ const messages = defineMessages({
     defaultMessage: 'We found transcript for this video on YouTube. Would you like to import it now?',
     description: 'Message for import transcript card asking user if they want to import transcript',
   },
+  videoCreationWarning: {
+    id: 'authoring.videoEditor.transcrtipts.videoCreation.message',
+    defaultMessage: 'To add transcripts, save and reopen this video',
+    description: 'Warning message when the user is creating a video',
+  },
 });
 
 export default messages;
