@@ -1,6 +1,6 @@
 import { MemoryRouter } from 'react-router-dom';
 import {
-  act, render, fireEvent, within,
+  act, render, fireEvent, within, screen,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -18,6 +18,13 @@ jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useLocation: () => ({
     pathname: mockPathname,
+  }),
+}));
+
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useSelector: () => ({
+    librariesV2Enabled: true,
   }),
 }));
 
@@ -246,5 +253,22 @@ describe('<SubsectionCard />', () => {
     const newUnitButton = await queryByTestId('new-unit-button');
     expect(cardUnits).toBeNull();
     expect(newUnitButton).toBeNull();
+  });
+
+  it('should add unit from library', async () => {
+    renderComponent();
+
+    const expandButton = await screen.findByTestId('subsection-card-header__expanded-btn');
+    fireEvent.click(expandButton);
+
+    const useUnitFromLibraryButton = screen.getByRole('button', {
+      name: /use unit from library/i
+    });
+    expect(useUnitFromLibraryButton).toBeInTheDocument();
+    fireEvent.click(useUnitFromLibraryButton);
+
+    expect(await screen.findByText('Select unit'));
+
+    // TODO selet and add unit
   });
 });
