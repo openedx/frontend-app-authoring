@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { Card, Stack } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
@@ -6,14 +5,25 @@ import messages from '../../messages';
 import UnitVisibilityInfo from './UnitVisibilityInfo';
 import ActionButtons from './ActionButtons';
 
+interface SidebarFooterProps {
+  locationId?: string,
+  displayUnitLocation?: boolean,
+  openDiscardModal: () => void,
+  openVisibleModal: () => void,
+  handlePublishing: () => void,
+  visibleToStaffOnly: boolean,
+  hasUpstream?: boolean,
+}
+
 const SidebarFooter = ({
   locationId,
   openVisibleModal,
   handlePublishing,
   openDiscardModal,
   visibleToStaffOnly,
-  displayUnitLocation,
-}) => {
+  displayUnitLocation = false,
+  hasUpstream = false,
+}: SidebarFooterProps) => {
   const intl = useIntl();
 
   return (
@@ -32,26 +42,13 @@ const SidebarFooter = ({
             <ActionButtons
               openDiscardModal={openDiscardModal}
               handlePublishing={handlePublishing}
+              readOnly={hasUpstream}
             />
           </>
         )}
       </Stack>
     </Card.Footer>
   );
-};
-
-SidebarFooter.propTypes = {
-  locationId: PropTypes.string,
-  displayUnitLocation: PropTypes.bool,
-  openDiscardModal: PropTypes.func,
-  openVisibleModal: PropTypes.func,
-  handlePublishing: PropTypes.func,
-  visibleToStaffOnly: PropTypes.bool.isRequired,
-};
-
-SidebarFooter.defaultProps = {
-  displayUnitLocation: false,
-  locationId: null,
 };
 
 export default SidebarFooter;

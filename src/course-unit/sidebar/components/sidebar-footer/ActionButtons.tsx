@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { Button } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -8,7 +7,17 @@ import { getCanEdit, getCourseUnitData } from '../../../data/selectors';
 import { useClipboard } from '../../../../generic/clipboard';
 import messages from '../../messages';
 
-const ActionButtons = ({ openDiscardModal, handlePublishing }) => {
+interface ActionButtonsProps {
+  openDiscardModal: () => void,
+  handlePublishing: () => void,
+  readOnly: boolean,
+}
+
+const ActionButtons = ({
+  openDiscardModal,
+  handlePublishing,
+  readOnly = false,
+}: ActionButtonsProps) => {
   const intl = useIntl();
   const {
     id,
@@ -22,7 +31,13 @@ const ActionButtons = ({ openDiscardModal, handlePublishing }) => {
   return (
     <>
       {(!published || hasChanges) && (
-        <Button size="sm" className="mt-3.5" variant="outline-primary" onClick={handlePublishing}>
+        <Button
+          size="sm"
+          className="mt-3.5"
+          variant="outline-primary"
+          onClick={handlePublishing}
+          disabled={readOnly}
+        >
           {intl.formatMessage(messages.actionButtonPublishTitle)}
         </Button>
       )}
@@ -32,6 +47,7 @@ const ActionButtons = ({ openDiscardModal, handlePublishing }) => {
           variant="link"
           onClick={openDiscardModal}
           className="course-unit-sidebar-footer__discard-changes__btn mt-2"
+          disabled={readOnly}
         >
           {intl.formatMessage(messages.actionButtonDiscardChangesTitle)}
         </Button>
@@ -50,11 +66,6 @@ const ActionButtons = ({ openDiscardModal, handlePublishing }) => {
       )}
     </>
   );
-};
-
-ActionButtons.propTypes = {
-  openDiscardModal: PropTypes.func.isRequired,
-  handlePublishing: PropTypes.func.isRequired,
 };
 
 export default ActionButtons;

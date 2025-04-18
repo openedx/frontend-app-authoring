@@ -2195,4 +2195,49 @@ describe('<CourseUnit />', () => {
         .toHaveBeenCalledWith(`/course/${courseId}/editor/html/${targetBlockId}`, { replace: true });
     });
   });
+
+  it('renders units from libraries with some components read-only', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+    });
+    render(<RootWrapper />);
+
+    axiosMock
+      .onGet(getCourseUnitApiUrl(courseId))
+      .reply(200, {
+        ...courseUnitIndexMock,
+        upstream: 'lct:org:lib:unit:unit-1',
+      });
+    await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
+
+    // Disable the "Edit" button
+    const unitHeaderTitle = screen.getByTestId('unit-header-title');
+    const editButton = within(unitHeaderTitle).getByRole(
+      'button',
+      { name: 'Edit' },
+    );
+    expect(editButton).toBeInTheDocument();
+    expect(editButton).toBeDisabled();
+
+    // Disable the "Publish" button
+    const courseUnitSidebar = screen.getByTestId('course-unit-sidebar');
+    const publishButton = within(courseUnitSidebar).getByRole(
+      'button',
+      { name: sidebarMessages.actionButtonPublishTitle.defaultMessage },
+    );
+    expect(publishButton).toBeInTheDocument();
+    expect(publishButton).toBeDisabled();
+
+    // Disable the "Manage Tags" button
+    const manageTagsButton = screen.getByRole(
+      'button',
+      { name: tagsDrawerMessages.manageTagsButton.defaultMessage },
+    );
+    expect(manageTagsButton).toBeInTheDocument();
+    expect(manageTagsButton).toBeDisabled();
+
+    // Does not render the "Add Components" section
+    expect(screen.queryByText(addComponentMessages.title.defaultMessage)).not.toBeInTheDocument();
+  });
 });

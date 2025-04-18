@@ -1,10 +1,14 @@
 import TagsSidebarHeader from './TagsSidebarHeader';
 import TagsSidebarBody from './TagsSidebarBody';
 
-const TagsSidebarControls = () => (
+interface TagsSidebarControlsProps {
+  readOnly: boolean,
+}
+
+const TagsSidebarControls = ({ readOnly }: TagsSidebarControlsProps) => (
   <>
     <TagsSidebarHeader />
-    <TagsSidebarBody />
+    <TagsSidebarBody readOnly={readOnly} />
   </>
 );
 

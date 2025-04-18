@@ -1,5 +1,4 @@
-// @ts-check
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Card, Stack, Button, Collapsible, Icon,
 } from '@openedx/paragon';
@@ -10,10 +9,19 @@ import { ContentTagsDrawerSheet } from '..';
 
 import messages from '../messages';
 import { useContentTaxonomyTagsData } from '../data/apiHooks';
+import type { ContentTaxonomyTagData, Tag } from '../data/types';
 import { LoadingSpinner } from '../../generic/Loading';
 import TagsTree from '../TagsTree';
 
-const TagsSidebarBody = () => {
+interface TagsSidebarBodyProps {
+  readOnly: boolean
+}
+
+type TagTree = {
+  [key: string]: { children: TagTree, canChangeObjecttag: boolean, canDeleteObjecttag: boolean }
+};
+
+const TagsSidebarBody = ({ readOnly }: TagsSidebarBodyProps) => {
   const intl = useIntl();
   const [showManageTags, setShowManageTags] = useState(false);
   const contentId = useParams().blockId;
@@ -24,8 +32,8 @@ const TagsSidebarBody = () => {
     isSuccess: isContentTaxonomyTagsLoaded,
   } = useContentTaxonomyTagsData(contentId || '');
 
-  const buildTagsTree = (contentTags) => {
-    const resultTree = {};
+  const buildTagsTree = (contentTags: Tag[]) => {
+    const resultTree: TagTree = {};
     contentTags.forEach(item => {
       let currentLevel = resultTree;
 
@@ -46,7 +54,7 @@ const TagsSidebarBody = () => {
   };
 
   const tree = useMemo(() => {
-    const result = [];
+    const result: (Omit<ContentTaxonomyTagData, 'tags'> & { tags: TagTree })[] = [];
     if (isContentTaxonomyTagsLoaded && contentTaxonomyTagsData) {
       contentTaxonomyTagsData.taxonomies.forEach((taxonomy) => {
         result.push({
@@ -88,7 +96,13 @@ const TagsSidebarBody = () => {
               </div>
             )}
 
-          <Button className="mt-3 ml-2" variant="outline-primary" size="sm" onClick={() => setShowManageTags(true)}>
+          <Button
+            className="mt-3 ml-2"
+            variant="outline-primary"
+            size="sm"
+            onClick={() => setShowManageTags(true)}
+            disabled={readOnly}
+          >
             {intl.formatMessage(messages.manageTagsButton)}
           </Button>
         </Stack>
@@ -101,7 +115,5 @@ const TagsSidebarBody = () => {
     </>
   );
 };
-
-TagsSidebarBody.propTypes = {};
 
 export default TagsSidebarBody;

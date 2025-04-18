@@ -40,6 +40,7 @@ const CourseUnit = ({ courseId }) => {
   const { blockId } = useParams();
   const intl = useIntl();
   const {
+    courseUnit,
     isLoading,
     sequenceId,
     unitTitle,
@@ -74,6 +75,8 @@ const CourseUnit = ({ courseId }) => {
     addComponentTemplateData,
   } = useCourseUnit({ courseId, blockId });
   const layoutGrid = useLayoutGrid(unitCategory, isUnitLibraryType);
+
+  const readOnly = !!courseUnit.upstream;
 
   useEffect(() => {
     document.title = getPageHeadTitle('', unitTitle);
@@ -195,14 +198,16 @@ const CourseUnit = ({ courseId }) => {
                 courseVerticalChildren={courseVerticalChildren.children}
                 handleConfigureSubmit={handleConfigureSubmit}
               />
-              <AddComponent
-                parentLocator={blockId}
-                isSplitTestType={isSplitTestType}
-                isUnitVerticalType={isUnitVerticalType}
-                handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
-                addComponentTemplateData={addComponentTemplateData}
-              />
-              {showPasteXBlock && canPasteComponent && isUnitVerticalType && (
+              {!readOnly && (
+                <AddComponent
+                  parentLocator={blockId}
+                  isSplitTestType={isSplitTestType}
+                  isUnitVerticalType={isUnitVerticalType}
+                  handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
+                  addComponentTemplateData={addComponentTemplateData}
+                />
+              )}
+              {!readOnly && showPasteXBlock && canPasteComponent && isUnitVerticalType && (
                 <PasteComponent
                   clipboardData={sharedClipboardData}
                   onClick={
@@ -227,6 +232,7 @@ const CourseUnit = ({ courseId }) => {
                   blockId={blockId}
                   unitTitle={unitTitle}
                   xBlocks={courseVerticalChildren.children}
+                  readOnly={readOnly}
                 />
                 )}
                 {isSplitTestType && (
