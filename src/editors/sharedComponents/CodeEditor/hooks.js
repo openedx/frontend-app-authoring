@@ -6,11 +6,16 @@ import { EditorState } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import { html } from '@codemirror/lang-html';
 import { xml } from '@codemirror/lang-xml';
+import { markdown } from '@codemirror/lang-markdown';
 import { linter } from '@codemirror/lint';
 import alphanumericMap from './constants';
 import './index.scss';
 
-const CODEMIRROR_LANGUAGES = { HTML: 'html', XML: 'xml' };
+const CODEMIRROR_LANGUAGES = {
+  html,
+  markdown,
+  xml,
+};
 
 export const state = {
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -95,7 +100,7 @@ export const createCodeMirrorDomNode = ({
 }) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
-    const languageExtension = lang === CODEMIRROR_LANGUAGES.HTML ? html() : xml();
+    const languageExtension = CODEMIRROR_LANGUAGES[lang]();
     const cleanText = cleanHTML({ initialText });
     const newState = EditorState.create({
       doc: cleanText,

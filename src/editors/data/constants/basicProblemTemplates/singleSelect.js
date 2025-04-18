@@ -1,5 +1,5 @@
 /* eslint-disable */
-const singleSelect = `<problem>
+const olx = `<problem>
   <multiplechoiceresponse>
     <choicegroup>
       <choice correct="true"></choice>
@@ -9,4 +9,9 @@ const singleSelect = `<problem>
   </multiplechoiceresponse>
 </problem>`
 
-export default singleSelect;
+const markdown = `( ) an incorrect answer
+(x) the correct answer
+( ) an incorrect answer
+`
+
+export default { olx, markdown };

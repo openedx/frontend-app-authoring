@@ -12,7 +12,7 @@ export const useInitializeApp = ({ dispatch, data }) => {
     setLoading(true);
     dispatch(thunkActions.app.initialize(data));
     setLoading(false);
-  }, [data?.blockId, data?.studioEndpointUrl, data?.learningContextId]);
+  }, [data?.blockId, data?.studioEndpointUrl, data?.learningContextId, data?.isMarkdownEditorEnabledForCourse]);
   return loading;
 };
 
