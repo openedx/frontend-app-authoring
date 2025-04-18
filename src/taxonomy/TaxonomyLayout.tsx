@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { StudioFooterSlot } from '@openedx/frontend-slot-footer';
+import { StudioFooterSlot } from '@edx/frontend-component-footer';
 import { Outlet, ScrollRestoration } from 'react-router-dom';
 import { Toast } from '@openedx/paragon';
 
