@@ -45,18 +45,6 @@ export const convertMarkdownToXml = (markdown) => {
       return '';
     });
 
-    // Pull out demand hints
-    xml = xml.replace(/(^\s*\|\|.*?\|\|\s*$\n?)+/gm, (match) => {
-      const options = match.split('\n');
-      options.forEach((option) => {
-        const inner = /\s*\|\|(.*?)\|\|/.exec(option);
-        if (inner) {
-          demandhints += `  <hint>${inner[1].trim()}</hint>\n`;
-        }
-      });
-      return '';
-    });
-
     // replace \n+whitespace within extended hint {{ .. }}, by a space, so the whole
     // hint sits on one line.
     // This is the one instance of {{ ... }} matching that permits \n
@@ -204,7 +192,6 @@ export const convertMarkdownToXml = (markdown) => {
             let [, , hintbody] = abhint;
             hintbody = hintbody.replace('&lf;', '\n').trim();
             endHints += `    <compoundhint value="${ abhint[1].trim() }">${ hintbody }</compoundhint>\n`;
-            // eslint-disable-next-line no-continue
             continue;
           }
 
@@ -334,10 +321,8 @@ export const convertMarkdownToXml = (markdown) => {
             if (Number.isNaN(Number(orMatch[1]))
                                 || isRangeToleranceCase(orMatch[1])
                                 || hasTolerance) {
-              // eslint-disable-next-line no-continue
               continue;
             }
-
             if (additionalTextHint.hint) {
               additionalHintLine = `<correcthint${ additionalTextHint.labelassign }>${ additionalTextHint.hint }</correcthint>`;
             }
@@ -386,7 +371,6 @@ export const convertMarkdownToXml = (markdown) => {
           if (notMatch) {
             string += `  <stringequalhint answer="${ notMatch[1] }"${ textHint.labelassign }>${ textHint.hint }</stringequalhint>\n`;
 
-            // eslint-disable-next-line no-continue
             continue;
           }
           orMatch = /^or=\s*(.*)/.exec(textHint.nothint);

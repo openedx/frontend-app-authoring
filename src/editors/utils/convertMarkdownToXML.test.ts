@@ -82,9 +82,9 @@ describe('convertMarkdownToXml', () => {
     });
 
     it('should handle option hints', () => {
-      const markdown = '[[Apple {{This is a hint}}\nBanana\n(Orange)]]';
+      const markdown = '[[Apple {{label::This is a hint}}\nBanana\n(Orange)]]';
       const result = convertMarkdownToXml(markdown);
-      expect(result).toContain('<optionhint>This is a hint</optionhint>');
+      expect(result).toContain('<optionhint label="\label\">This is a hint</optionhint>');
     });
   });
 
@@ -111,9 +111,9 @@ describe('convertMarkdownToXml', () => {
     });
 
     it('should handle choice hints', () => {
-      const markdown = '(x) Correct Answer {{Hint text}}\n() Wrong Answer';
+      const markdown = '(x) Correct Answer {{label::Hint text}}\n() Wrong Answer';
       const result = convertMarkdownToXml(markdown);
-      expect(result).toContain('<choicehint>Hint text</choicehint>');
+      expect(result).toContain('<choicehint label="\label\">Hint text</choicehint>');
     });
   });
 
@@ -129,9 +129,12 @@ describe('convertMarkdownToXml', () => {
     });
 
     it('should handle choice hints in checkboxes', () => {
-      const markdown = '[x] Option {{selected: Good choice}}';
-      const result = convertMarkdownToXml(markdown);
+      let markdown = '[x] Option {{selected: Good choice}}';
+      let result = convertMarkdownToXml(markdown);
       expect(result).toContain('<choicehint selected="true">Good choice</choicehint>');
+      markdown = '[x] Option {{unselected: Bad choice}}';
+      result = convertMarkdownToXml(markdown);
+      expect(result).toContain('<choicehint selected="false">Bad choice</choicehint>');
     });
 
     it('should handle compound hints', () => {
@@ -164,9 +167,10 @@ describe('convertMarkdownToXml', () => {
     });
 
     it('should handle additional answers', () => {
-      const markdown = '= 100\nor= 200';
+      const markdown = '= 100\nor= 200 {{This is an additional answer}}';
       const result = convertMarkdownToXml(markdown);
-      expect(result).toContain('<additional_answer answer="200"/>');
+      expect(result).toContain('<additional_answer answer="200">');
+      expect(result).toContain('<correcthint>This is an additional answer</correcthint>');
     });
 
     it('should handle correct hints', () => {
@@ -179,10 +183,11 @@ describe('convertMarkdownToXml', () => {
   // Test string responses
   describe('string responses', () => {
     it('should convert basic string response', () => {
-      const markdown = 's= answer';
+      const markdown = 's= answer {{Hint}}';
       const result = convertMarkdownToXml(markdown);
       expect(result).toContain('<stringresponse answer="answer" type="ci">');
       expect(result).toContain('<textline size="20"/>');
+      expect(result).toContain('<correcthint>Hint</correcthint>');
     });
 
     it('should handle regexp in string response', () => {
@@ -192,9 +197,10 @@ describe('convertMarkdownToXml', () => {
     });
 
     it('should handle additional answers', () => {
-      const markdown = 's= answer1\nor= answer2';
+      const markdown = 's= answer1\nor= answer2 {{This is an additional answer}}';
       const result = convertMarkdownToXml(markdown);
-      expect(result).toContain('<additional_answer answer="answer2"/>');
+      expect(result).toContain('<additional_answer answer="answer2">');
+      expect(result).toContain('<correcthint>This is an additional answer</correcthint>');
     });
 
     it('should handle string equal hints', () => {

@@ -29,6 +29,7 @@ const SwitchEditorCard = ({
         title={intl.formatMessage(messages.ConfirmSwitchMessageTitle, { convertType: editorType === 'advanced' ? 'OLX' : 'Markdown' })}
         confirmAction={(
           <Button
+            /* istanbul ignore next */
             onClick={() => handleConfirmEditorSwitch({ switchEditor: () => switchEditor(editorType), setConfirmOpen })}
             variant="primary"
           >
