@@ -21,7 +21,7 @@ const AddComponent = ({
   parentLocator,
   isSplitTestType,
   isUnitVerticalType,
-  addComponentTemplateData,
+  addComponentTemplateData = {},
   handleCreateNewCourseXBlock,
 }) => {
   const navigate = useNavigate();
@@ -206,10 +206,6 @@ const AddComponent = ({
   }
 
   return null;
-};
-
-AddComponent.defaultProps = {
-  addComponentTemplateData: {},
 };
 
 AddComponent.propTypes = {

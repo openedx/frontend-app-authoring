@@ -10,6 +10,7 @@ export const CourseAuthoringUnitSidebarSlot = (
     blockId,
     courseId,
     unitTitle,
+    readOnly = false,
   }: CourseAuthoringUnitSidebarSlotProps,
 ) => (
   <PluginSlot
@@ -17,11 +18,11 @@ export const CourseAuthoringUnitSidebarSlot = (
     pluginProps={{ blockId, courseId, unitTitle }}
   >
     <Sidebar data-testid="course-unit-sidebar">
-      <PublishControls blockId={blockId} />
+      <PublishControls blockId={blockId} readOnly={readOnly} />
     </Sidebar>
     {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
     <Sidebar className="tags-sidebar">
-      <TagsSidebarControls />
+      <TagsSidebarControls readOnly={readOnly} />
     </Sidebar>
     )}
     <Sidebar data-testid="course-unit-location-sidebar">
@@ -34,4 +35,5 @@ interface CourseAuthoringUnitSidebarSlotProps {
   blockId: string;
   courseId: string;
   unitTitle: string;
+  readOnly: boolean;
 }

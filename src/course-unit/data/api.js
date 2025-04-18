@@ -23,6 +23,7 @@ export const libraryBlockChangesUrl = (blockId) => `${getStudioBaseUrl()}/api/co
 export async function getCourseUnitData(unitId) {
   const { data } = await getAuthenticatedHttpClient()
     .get(getCourseUnitApiUrl(unitId));
+  // FIXME: Check if we can add the readOnly attribute here
 
   return camelCaseObject(data);
 }
