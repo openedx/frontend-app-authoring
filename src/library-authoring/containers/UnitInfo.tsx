@@ -9,7 +9,7 @@ import {
   IconButton,
   useToggle,
 } from '@openedx/paragon';
-import { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { MoreVert } from '@openedx/paragon/icons';
 
@@ -28,7 +28,8 @@ import { LibraryUnitBlocks } from '../units/LibraryUnitBlocks';
 import messages from './messages';
 import componentMessages from '../components/messages';
 import ContainerDeleter from '../components/ContainerDeleter';
-import { useContainer } from '../data/apiHooks';
+import { useContainer, usePublishContainer } from '../data/apiHooks';
+import { ToastContext } from '../../generic/toast-context';
 
 type ContainerMenuProps = {
   containerId: string,
@@ -71,8 +72,9 @@ const UnitMenu = ({ containerId, displayName }: ContainerMenuProps) => {
 const UnitInfo = () => {
   const intl = useIntl();
 
-  const { libraryId } = useLibraryContext();
+  const { libraryId, readOnly } = useLibraryContext();
   const { componentPickerMode } = useComponentPickerContext();
+  const { showToast } = React.useContext(ToastContext);
   const {
     defaultTab,
     hiddenTabs,
@@ -90,6 +92,7 @@ const UnitInfo = () => {
 
   const unitId = sidebarComponentInfo?.id;
   const { data: container } = useContainer(unitId);
+  const publishContainer = usePublishContainer(unitId!);
 
   const showOpenUnitButton = !insideUnit && !componentPickerMode;
 
@@ -105,6 +108,15 @@ const UnitInfo = () => {
     );
   }, [hiddenTabs, defaultTab.unit, unitId]);
 
+  const handlePublish = React.useCallback(async () => {
+    try {
+      await publishContainer.mutateAsync();
+      showToast(intl.formatMessage(messages.publishContainerSuccess));
+    } catch (error) {
+      showToast(intl.formatMessage(messages.publishContainerFailed));
+    }
+  }, [publishContainer]);
+
   useEffect(() => {
     // Show Organize tab if JumpToAddCollections action is set in sidebarComponentInfo
     if (jumpToCollections) {
@@ -118,8 +130,8 @@ const UnitInfo = () => {
 
   return (
     <Stack>
-      {showOpenUnitButton && (
-        <div className="d-flex flex-wrap">
+      <div className="d-flex flex-wrap">
+        {showOpenUnitButton && (
           <Button
             variant="outline-primary"
             className="m-1 text-nowrap flex-grow-1"
@@ -128,12 +140,24 @@ const UnitInfo = () => {
           >
             {intl.formatMessage(messages.openUnitButton)}
           </Button>
+        )}
+        {!componentPickerMode && !readOnly && (
+          <Button
+            variant="outline-primary"
+            className="m-1 text-nowrap flex-grow-1"
+            disabled={!container.hasUnpublishedChanges || publishContainer.isLoading}
+            onClick={handlePublish}
+          >
+            {intl.formatMessage(messages.publishContainerButton)}
+          </Button>
+        )}
+        {showOpenUnitButton && ( // Check: should we still show this on the unit page?
           <UnitMenu
             containerId={unitId}
             displayName={container.displayName}
           />
-        </div>
-      )}
+        )}
+      </div>
       <Tabs
         variant="tabs"
         className="my-3 d-flex justify-content-around"

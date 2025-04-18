@@ -15,6 +15,7 @@ import {
   getLibraryContainerApiUrl,
   getLibraryContainerRestoreApiUrl,
   getLibraryContainerChildrenApiUrl,
+  getLibraryContainerPublishApiUrl,
 } from './api';
 import {
   useCommitLibraryChanges,
@@ -31,6 +32,7 @@ import {
   useAddComponentsToContainer,
   useUpdateContainerChildren,
   useRemoveContainerChildren,
+  usePublishContainer,
 } from './apiHooks';
 
 let axiosMock;
@@ -306,6 +308,18 @@ describe('library api hooks', () => {
     await result.current.mutateAsync([]);
     await waitFor(() => {
       expect(axiosMock.history.patch.length).toEqual(0);
+    });
+  });
+
+  describe('publishContainer', () => {
+    it('should publish a container', async () => {
+      const containerId = 'lct:org:lib:unit:1';
+      const url = getLibraryContainerPublishApiUrl(containerId);
+      axiosMock.onPost(url).reply(200);
+      const { result } = renderHook(() => usePublishContainer(containerId), { wrapper });
+      await result.current.mutateAsync();
+
+      expect(axiosMock.history.post[0].url).toEqual(url);
     });
   });
 });
