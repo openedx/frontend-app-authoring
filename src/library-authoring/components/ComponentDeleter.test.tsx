@@ -57,7 +57,14 @@ describe('<ComponentDeleter />', () => {
 
   it('deletes the block when confirmed, shows a toast with undo option and restores block on undo', async () => {
     const mockCancel = jest.fn();
-    render(<ComponentDeleter usageKey={usageKey} isConfirmingDelete cancelDelete={mockCancel} />, renderArgs);
+    render(
+      <ComponentDeleter
+        usageKey={mockDeleteLibraryBlock.inContainersKey}
+        isConfirmingDelete
+        cancelDelete={mockCancel}
+      />,
+      renderArgs,
+    );
 
     const modal = screen.getByRole('dialog', { name: 'Delete Component' });
     expect(modal).toBeVisible();
@@ -73,8 +80,8 @@ describe('<ComponentDeleter />', () => {
     const restoreFn = mockShowToast.mock.calls[0][1].onClick;
     restoreFn();
     await waitFor(() => {
-      expect(mockRestore).toHaveBeenCalled();
       expect(mockShowToast).toHaveBeenCalledWith('Undo successful');
     });
+    expect(mockRestore).toHaveBeenCalled();
   });
 });

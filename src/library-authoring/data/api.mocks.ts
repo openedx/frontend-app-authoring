@@ -232,17 +232,6 @@ mockCreateLibraryBlock.applyMock = () => (
 );
 
 /**
- * Mock for `deleteLibraryBlock()`
- */
-export async function mockDeleteLibraryBlock(): ReturnType<typeof api.deleteLibraryBlock> {
-  // no-op
-}
-/** Apply this mock. Returns a spy object that can tell you if it's been called. */
-mockDeleteLibraryBlock.applyMock = () => (
-  jest.spyOn(api, 'deleteLibraryBlock').mockImplementation(mockDeleteLibraryBlock)
-);
-
-/**
  * Mock for `restoreLibraryBlock()`
  */
 export async function mockRestoreLibraryBlock(): ReturnType<typeof api.restoreLibraryBlock> {
@@ -710,3 +699,26 @@ mockGetUnpaginatedEntityLinks.applyMock = () => jest.spyOn(
   courseLibApi,
   'getUnpaginatedEntityLinks',
 ).mockImplementation(mockGetUnpaginatedEntityLinks);
+
+/**
+ * Mock for `deleteLibraryBlock()`
+ */
+export async function mockDeleteLibraryBlock({ usageKey }): ReturnType<typeof api.deleteLibraryBlock> {
+  const thisMock = mockDeleteLibraryBlock;
+  switch (usageKey) {
+    case mockLibraryBlockMetadata.usageKeyPublished: return thisMock.emptyData;
+    case thisMock.inContainersKey: return thisMock.inContainersData;
+    default: return thisMock.emptyData;
+  }
+}
+mockDeleteLibraryBlock.emptyData = {
+  affectedContainers: [],
+};
+mockDeleteLibraryBlock.inContainersKey = 'lb:Axim:TEST:html:571fe018-f3ce-45c9-8f53-5dafcb422flo';
+mockDeleteLibraryBlock.inContainersData = {
+  affectedContainers: [mockGetContainerMetadata.containerData],
+};
+/** Apply this mock. Returns a spy object that can tell you if it's been called. */
+mockDeleteLibraryBlock.applyMock = () => (
+  jest.spyOn(api, 'deleteLibraryBlock').mockImplementation(mockDeleteLibraryBlock)
+);
