@@ -120,6 +120,31 @@ const messages = defineMessages({
       in your course and signed in to access the file.`,
     description: 'Tooltip message for the lock icon in the table view of files',
   },
+  fileNameColumn: {
+    id: 'course-authoring.files-and-uploads.file-info.fileName.column',
+    defaultMessage: 'File name',
+    description: 'Title of the File Name column in the file list view',
+  },
+  fileSizeColumn: {
+    id: 'course-authoring.files-and-uploads.file-info.fileSize.column',
+    defaultMessage: 'File size',
+    description: 'Title of the File size column in the file list view',
+  },
+  fileTypeColumn: {
+    id: 'course-authoring.files-and-uploads.file-info.fileType.column',
+    defaultMessage: 'Type',
+    description: 'Title of the Type column in the file list view',
+  },
+  fileActiveColumn: {
+    id: 'course-authoring.files-and-uploads.file-info.fileActive.column',
+    defaultMessage: 'Active',
+    description: 'Title of the Active column in the file list view',
+  },
+  fileAccessColumn: {
+    id: 'course-authoring.files-and-uploads.file-info.fileAccess.column',
+    defaultMessage: 'Access',
+    description: 'Title of the Access column in the file list view',
+  },
 });
 
 export default messages;
