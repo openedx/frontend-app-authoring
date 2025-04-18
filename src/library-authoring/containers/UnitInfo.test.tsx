@@ -8,12 +8,16 @@ import {
 import { mockContentLibrary, mockGetContainerMetadata } from '../data/api.mocks';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import UnitInfo from './UnitInfo';
-import { getLibraryContainerApiUrl } from '../data/api';
+import { getLibraryContainerApiUrl, getLibraryContainerPublishApiUrl } from '../data/api';
 import { SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
 
 mockGetContainerMetadata.applyMock();
+mockContentLibrary.applyMock();
+mockGetContainerMetadata.applyMock();
+
 const { libraryId } = mockContentLibrary;
 const { containerId } = mockGetContainerMetadata;
+
 const render = () => baseRender(<UnitInfo />, {
   extraWrapper: ({ children }) => (
     <LibraryProvider
@@ -38,7 +42,7 @@ describe('<UnitInfo />', () => {
     ({ axiosMock, mockShowToast } = initializeMocks());
   });
 
-  it('should detele the unit using the menu', async () => {
+  it('should delete the unit using the menu', async () => {
     axiosMock.onDelete(getLibraryContainerApiUrl(containerId)).reply(200);
     render();
 
@@ -60,5 +64,35 @@ describe('<UnitInfo />', () => {
       expect(axiosMock.history.delete.length).toBe(1);
     });
     expect(mockShowToast).toHaveBeenCalled();
+  });
+
+  it('can publish the container', async () => {
+    axiosMock.onPost(getLibraryContainerPublishApiUrl(containerId)).reply(200);
+    render();
+
+    // Click on Publish button
+    const publishButton = await screen.findByRole('button', { name: 'Publish' });
+    expect(publishButton).toBeInTheDocument();
+    userEvent.click(publishButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toBe(1);
+    });
+    expect(mockShowToast).toHaveBeenCalledWith('All changes published');
+  });
+
+  it('shows an error if publishing the container fails', async () => {
+    axiosMock.onPost(getLibraryContainerPublishApiUrl(containerId)).reply(500);
+    render();
+
+    // Click on Publish button
+    const publishButton = await screen.findByRole('button', { name: 'Publish' });
+    expect(publishButton).toBeInTheDocument();
+    userEvent.click(publishButton);
+
+    await waitFor(() => {
+      expect(axiosMock.history.post.length).toBe(1);
+    });
+    expect(mockShowToast).toHaveBeenCalledWith('Failed to publish changes');
   });
 });

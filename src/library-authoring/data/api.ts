@@ -124,6 +124,10 @@ export const getLibraryContainerChildrenApiUrl = (containerId: string) => `${get
  * Get the URL for library container collections.
  */
 export const getLibraryContainerCollectionsUrl = (containerId: string) => `${getLibraryContainerApiUrl(containerId)}collections/`;
+/**
+ * Get the URL for the API endpoint to publish a single container (+ children).
+ */
+export const getLibraryContainerPublishApiUrl = (containerId: string) => `${getLibraryContainerApiUrl(containerId)}publish/`;
 
 export interface ContentLibrary {
   id: string;
@@ -699,4 +703,14 @@ export async function removeLibraryContainerChildren(
     },
   );
   return camelCaseObject(data);
+}
+
+/**
+ * Publish a container, and any unpublished children within it.
+ *
+ * This doesn't return any data at the moment, but we could have it return a
+ * list of the auto-published children in the future, if that would be helpful.
+ */
+export async function publishContainer(containerId: string) {
+  await getAuthenticatedHttpClient().post(getLibraryContainerPublishApiUrl(containerId));
 }
