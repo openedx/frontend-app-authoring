@@ -1,5 +1,6 @@
 import { screen, render } from '@testing-library/react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import PageSettingButton from './PageSettingButton';
 
@@ -43,51 +44,62 @@ const renderComponent = (props = {}) => render(
 );
 
 describe('PageSettingButton', () => {
+  const navigate = jest.fn();
+
   beforeEach(() => {
     useSelector.mockClear();
+    useNavigate.mockReturnValue(navigate);
   });
 
-  it('renders the settings button with the new textbooks page link when useNewTextbooksPage is true', () => {
+  it('navigates to the new textbooks page link when useNewTextbooksPage is true', () => {
     useSelector.mockReturnValue(mockWaffleFlags);
 
     renderComponent({ legacyLink: 'http://legacylink.com/textbooks' });
 
-    const linkElement = screen.getByRole('link');
-    expect(linkElement).toHaveAttribute('href', `/course/${defaultProps.courseId}/page-id`);
+    const buttonElement = screen.getByRole('button', { name: /settings/i });
+    buttonElement.click();
+
+    expect(navigate).toHaveBeenCalledWith(`/course/${defaultProps.courseId}/page-id`);
   });
 
-  it('does not render link when legacyLink prop value incorrect', () => {
+  it('does not render button when legacyLink prop value incorrect', () => {
     useSelector.mockReturnValue(mockWaffleFlags);
 
     renderComponent({ legacyLink: 'http://legacylink.com/some-value' });
 
-    expect(screen.queryByRole('link')).toBeNull();
+    expect(screen.queryByRole('IconButton', { name: /settings/i })).toBeNull();
   });
 
-  it('renders the settings button with the legacy link when useNewTextbooksPage is false', () => {
+  it('navigates to the legacy link when useNewTextbooksPage is false', () => {
     useSelector.mockReturnValue({ ...mockWaffleFlags, useNewTextbooksPage: false });
 
     renderComponent({ legacyLink: 'http://legacylink.com/textbooks' });
 
-    const linkElement = screen.getByRole('link');
-    expect(linkElement).toHaveAttribute('href', 'http://legacylink.com/textbooks');
+    const buttonElement = screen.getByRole('button', { name: /settings/i });
+    buttonElement.click();
+
+    expect(navigate).toHaveBeenCalledWith('http://legacylink.com/textbooks');
   });
 
-  it('renders the settings button with the new custom pages link when useNewCustomPages is true', () => {
+  it('navigates to the new custom pages link when useNewCustomPages is true', () => {
     useSelector.mockReturnValue(mockWaffleFlags);
 
     renderComponent();
 
-    const linkElement = screen.getByRole('link');
-    expect(linkElement).toHaveAttribute('href', `/course/${defaultProps.courseId}/page-id`);
+    const buttonElement = screen.getByRole('button', { name: /settings/i });
+    buttonElement.click();
+
+    expect(navigate).toHaveBeenCalledWith(`/course/${defaultProps.courseId}/page-id`);
   });
 
-  it('renders the settings button with the legacy link when useNewCustomPages is false', () => {
+  it('navigates to the legacy link when useNewCustomPages is false', () => {
     useSelector.mockReturnValue({ ...mockWaffleFlags, useNewCustomPages: false });
 
     renderComponent();
 
-    const linkElement = screen.getByRole('link');
-    expect(linkElement).toHaveAttribute('href', defaultProps.legacyLink);
+    const buttonElement = screen.getByRole('button', { name: /settings/i });
+    buttonElement.click();
+
+    expect(navigate).toHaveBeenCalledWith(defaultProps.legacyLink);
   });
 });
