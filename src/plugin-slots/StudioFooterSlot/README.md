@@ -1,12 +1,15 @@
 # Studio Footer Slot
 
-### Slot ID: `studio_footer_slot`
+### Slot ID: `org.openedx.frontend.layout.studio_footer.v1`
+
+### Slot ID Aliases
+* `studio_footer_slot`
 
 ## Description
 
 This slot is used to replace/modify/hide the footer.
 
-The implementation of the `StudioFooterSlot` component lives in [the `frontend-slot-footer` repository](https://github.com/openedx/frontend-slot-footer/).
+The implementation of the `StudioFooterSlot` component lives in [the `frontend-component-footer` repository](https://github.com/openedx/frontend-component-footer/).
 
 ## Example
 
@@ -23,7 +26,7 @@ import { DIRECT_PLUGIN, PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-frame
 
 const config = {
   pluginSlots: {
-    studio_footer_slot: {
+    'org.openedx.frontend.layout.studio_footer.v1': {
       plugins: [
         {
           // Hide the default footer

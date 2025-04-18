@@ -2,7 +2,7 @@ import React from 'react';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Helmet } from 'react-helmet';
 import { Container } from '@openedx/paragon';
-import { StudioFooterSlot } from '@openedx/frontend-slot-footer';
+import { StudioFooterSlot } from '@edx/frontend-component-footer';
 
 import Header from '../header';
 import messages from './messages';
