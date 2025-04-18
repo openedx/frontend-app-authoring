@@ -192,6 +192,7 @@ export const convertMarkdownToXml = (markdown) => {
             let [, , hintbody] = abhint;
             hintbody = hintbody.replace('&lf;', '\n').trim();
             endHints += `    <compoundhint value="${ abhint[1].trim() }">${ hintbody }</compoundhint>\n`;
+            // eslint-disable-next-line no-continue
             continue;
           }
 
@@ -321,8 +322,10 @@ export const convertMarkdownToXml = (markdown) => {
             if (Number.isNaN(Number(orMatch[1]))
                                 || isRangeToleranceCase(orMatch[1])
                                 || hasTolerance) {
+            // eslint-disable-next-line no-continue
               continue;
             }
+
             if (additionalTextHint.hint) {
               additionalHintLine = `<correcthint${ additionalTextHint.labelassign }>${ additionalTextHint.hint }</correcthint>`;
             }
@@ -370,7 +373,7 @@ export const convertMarkdownToXml = (markdown) => {
           notMatch = /^not=\s*(.*)/.exec(textHint.nothint);
           if (notMatch) {
             string += `  <stringequalhint answer="${ notMatch[1] }"${ textHint.labelassign }>${ textHint.hint }</stringequalhint>\n`;
-
+            // eslint-disable-next-line no-continue
             continue;
           }
           orMatch = /^or=\s*(.*)/.exec(textHint.nothint);

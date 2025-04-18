@@ -84,7 +84,7 @@ describe('convertMarkdownToXml', () => {
     it('should handle option hints', () => {
       const markdown = '[[Apple {{label::This is a hint}}\nBanana\n(Orange)]]';
       const result = convertMarkdownToXml(markdown);
-      expect(result).toContain('<optionhint label="\label\">This is a hint</optionhint>');
+      expect(result).toContain('<optionhint label="label">This is a hint</optionhint>');
     });
   });
 
@@ -113,7 +113,7 @@ describe('convertMarkdownToXml', () => {
     it('should handle choice hints', () => {
       const markdown = '(x) Correct Answer {{label::Hint text}}\n() Wrong Answer';
       const result = convertMarkdownToXml(markdown);
-      expect(result).toContain('<choicehint label="\label\">Hint text</choicehint>');
+      expect(result).toContain('<choicehint label="label">Hint text</choicehint>');
     });
   });
 
