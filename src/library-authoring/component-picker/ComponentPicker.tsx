@@ -17,15 +17,24 @@ import messages from './messages';
 
 interface LibraryComponentPickerProps {
   returnToLibrarySelection: () => void;
+  showOnlyHomeTab?: boolean;
 }
 
-const InnerComponentPicker: React.FC<LibraryComponentPickerProps> = ({ returnToLibrarySelection }) => {
+const InnerComponentPicker: React.FC<LibraryComponentPickerProps> = ({
+  returnToLibrarySelection,
+  showOnlyHomeTab = false,
+}) => {
   const { collectionId } = useLibraryContext();
 
   if (collectionId) {
     return <LibraryCollectionPage />;
   }
-  return <LibraryAuthoringPage returnToLibrarySelection={returnToLibrarySelection} />;
+  return (
+    <LibraryAuthoringPage
+      returnToLibrarySelection={returnToLibrarySelection}
+      showOnlyHomeTab={showOnlyHomeTab}
+    />
+  );
 };
 
 /** Default handler in single-select mode. Used by the legacy UI for adding a single selected component to a course. */
@@ -38,7 +47,12 @@ const defaultSelectionChangedCallback: ComponentSelectionChangedEvent = (selecti
   window.parent.postMessage({ type: 'pickerSelectionChanged', selections }, '*');
 };
 
-type ComponentPickerProps = { libraryId?: string, showOnlyPublished?: boolean, extraFilter?: string[] } & (
+type ComponentPickerProps = {
+  libraryId?: string,
+  showOnlyPublished?: boolean,
+  extraFilter?: string[],
+  showOnlyHomeTab?: boolean,
+} & (
   {
     componentPickerMode?: 'single',
     onComponentSelected?: ComponentSelectedEvent,
@@ -56,6 +70,7 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
   showOnlyPublished,
   extraFilter,
   componentPickerMode = 'single',
+  showOnlyHomeTab = false,
   /** This default callback is used to send the selected component back to the parent window,
    * when the component picker is used in an iframe.
    */
@@ -116,7 +131,10 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
                   <FormattedMessage {...messages.pickerInfoBanner} />
                 </Alert>
                 )}
-              <InnerComponentPicker returnToLibrarySelection={returnToLibrarySelection} />
+              <InnerComponentPicker
+                returnToLibrarySelection={returnToLibrarySelection}
+                showOnlyHomeTab={showOnlyHomeTab}
+              />
             </SidebarProvider>
           </LibraryProvider>
         </ComponentPickerProvider>

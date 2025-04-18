@@ -1,6 +1,6 @@
 import { MemoryRouter } from 'react-router-dom';
 import {
-  act, render, fireEvent, within,
+  act, render, fireEvent, within, screen,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -19,6 +19,31 @@ jest.mock('react-router-dom', () => ({
   useLocation: () => ({
     pathname: mockPathname,
   }),
+}));
+
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useSelector: () => ({
+    librariesV2Enabled: true,
+  }),
+}));
+
+// Mock ComponentPicker to call onComponentSelected on click
+jest.mock('../../library-authoring/component-picker', () => ({
+  ComponentPicker: (props) => {
+    const onClick = () => {
+      // eslint-disable-next-line react/prop-types
+      props.onComponentSelected({
+        usageKey: 'lct:org:lib:unit:1',
+        blockType: 'unti',
+      });
+    };
+    return (
+      <button type="submit" onClick={onClick}>
+        Dummy button
+      </button>
+    );
+  },
 }));
 
 const unit = {
@@ -246,5 +271,26 @@ describe('<SubsectionCard />', () => {
     const newUnitButton = await queryByTestId('new-unit-button');
     expect(cardUnits).toBeNull();
     expect(newUnitButton).toBeNull();
+  });
+
+  it('should add unit from library', async () => {
+    renderComponent();
+
+    const expandButton = await screen.findByTestId('subsection-card-header__expanded-btn');
+    fireEvent.click(expandButton);
+
+    const useUnitFromLibraryButton = screen.getByRole('button', {
+      name: /use unit from library/i,
+    });
+    expect(useUnitFromLibraryButton).toBeInTheDocument();
+    fireEvent.click(useUnitFromLibraryButton);
+
+    expect(await screen.findByText('Select unit'));
+
+    // click dummy button to execute onComponentSelected prop.
+    const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
+    fireEvent.click(dummyBtn);
+
+    // TODO call add unit from library api call
   });
 });
