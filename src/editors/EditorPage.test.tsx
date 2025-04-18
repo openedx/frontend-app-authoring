@@ -37,7 +37,6 @@ const defaultPropsHtml = {
   lmsEndpointUrl: 'http://lms.test.none/',
   studioEndpointUrl: 'http://cms.test.none/',
   onClose: jest.fn(),
-  fullScreen: false,
 };
 const fieldsHtml = {
   displayName: 'Introduction to Testing',
@@ -64,22 +63,6 @@ describe('EditorPage', () => {
     expect(modalElement.classList).toContain('pgn__modal');
     expect(modalElement.classList).toContain('pgn__modal-xl');
     expect(modalElement.classList).not.toContain('pgn__modal-fullscreen');
-  });
-
-  test('it can display the Text (html) editor as a full page (when coming from the legacy UI)', async () => {
-    jest.spyOn(editorCmsApi, 'fetchBlockById').mockImplementationOnce(async () => (
-      { status: 200, data: snakeCaseObject(fieldsHtml) }
-    ));
-
-    render(<EditorPage {...defaultPropsHtml} fullScreen />);
-
-    // Then the editor should open
-    expect(await screen.findByRole('heading', { name: /Introduction to Testing/ })).toBeInTheDocument();
-
-    const modalElement = screen.getByRole('dialog');
-    expect(modalElement.classList).toContain('pgn__modal-fullscreen');
-    expect(modalElement.classList).not.toContain('pgn__modal');
-    expect(modalElement.classList).not.toContain('pgn__modal-xl');
   });
 
   test('it shows the Advanced Editor if there is no corresponding editor', async () => {

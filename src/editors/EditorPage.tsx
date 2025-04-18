@@ -14,7 +14,6 @@ interface Props extends EditorComponent {
   isMarkdownEditorEnabledForCourse?: boolean;
   lmsEndpointUrl?: string;
   studioEndpointUrl?: string;
-  fullScreen?: boolean;
   children?: never;
 }
 
@@ -31,7 +30,6 @@ const EditorPage: React.FC<Props> = ({
   studioEndpointUrl = null,
   onClose = null,
   returnFunction = null,
-  fullScreen = true,
 }) => (
   <Provider store={store}>
     <ErrorBoundary
@@ -40,7 +38,7 @@ const EditorPage: React.FC<Props> = ({
         studioEndpointUrl,
       }}
     >
-      <EditorContextProvider fullScreen={fullScreen} learningContextId={courseId}>
+      <EditorContextProvider learningContextId={courseId}>
         <Editor
           {...{
             onClose,
