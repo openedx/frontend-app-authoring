@@ -1,12 +1,12 @@
 // @ts-check
 import React, {
-  useContext, useEffect, useState, useRef,
+  useContext, useEffect, useState, useRef, useCallback,
 } from 'react';
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Button, useToggle } from '@openedx/paragon';
+import { Button, StandardModal, useToggle } from '@openedx/paragon';
 import { Add as IconAdd } from '@openedx/paragon/icons';
 import classNames from 'classnames';
 import { isEmpty } from 'lodash';
@@ -22,6 +22,8 @@ import TitleButton from '../card-header/TitleButton';
 import XBlockStatus from '../xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
 import messages from './messages';
+import { getStudioHomeData } from '../../studio-home/data/selectors';
+import { ComponentPicker } from '../../library-authoring';
 
 const SubsectionCard = ({
   section,
@@ -51,6 +53,13 @@ const SubsectionCard = ({
   const [isFormOpen, openForm, closeForm] = useToggle(false);
   const namePrefix = 'subsection';
   const { sharedClipboardData, showPasteUnit } = useClipboard();
+  const studioHomeData = useSelector(getStudioHomeData);
+  const { librariesV2Enabled } = studioHomeData;
+  const [
+    isAddLibraryUnitModalOpen,
+    openAddLibraryUnitModal,
+    closeAddLibraryUnitModal,
+  ] = useToggle(false);
 
   const {
     id,
@@ -172,90 +181,125 @@ const SubsectionCard = ({
       && !(isHeaderVisible === false)
   );
 
+  const handleSelectLibraryUnit = useCallback((selectedUnit) => {
+    // TODO add unit to course
+    console.log(selectedUnit);
+    closeAddLibraryUnitModal();
+  }, []);
+
+  // TODO add `showOnlyPublished` to units picker
   return (
-    <SortableItem
-      id={id}
-      category={category}
-      key={id}
-      isDraggable={isDraggable}
-      isDroppable={actions.childAddable}
-      componentStyle={{
-        background: '#f8f7f6',
-        ...borderStyle,
-      }}
-    >
-      <div
-        className={`subsection-card ${isScrolledToElement ? 'highlight' : ''}`}
-        data-testid="subsection-card"
-        ref={currentRef}
+    <>
+      <SortableItem
+        id={id}
+        category={category}
+        key={id}
+        isDraggable={isDraggable}
+        isDroppable={actions.childAddable}
+        componentStyle={{
+          background: '#f8f7f6',
+          ...borderStyle,
+        }}
       >
-        {isHeaderVisible && (
-          <>
-            <CardHeader
-              title={displayName}
-              status={subsectionStatus}
-              cardId={id}
-              hasChanges={hasChanges}
-              onClickMenuButton={handleClickMenuButton}
-              onClickPublish={onOpenPublishModal}
-              onClickEdit={openForm}
-              onClickDelete={onOpenDeleteModal}
-              onClickMoveUp={handleSubsectionMoveUp}
-              onClickMoveDown={handleSubsectionMoveDown}
-              onClickConfigure={onOpenConfigureModal}
-              isFormOpen={isFormOpen}
-              closeForm={closeForm}
-              onEditSubmit={handleEditSubmit}
-              isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
-              onClickDuplicate={onDuplicateSubmit}
-              titleComponent={titleComponent}
-              namePrefix={namePrefix}
-              actions={actions}
-              proctoringExamConfigurationLink={proctoringExamConfigurationLink}
-              isSequential
-              extraActionsComponent={extraActionsComponent}
-            />
-            <div className="subsection-card__content item-children" data-testid="subsection-card__content">
-              <XBlockStatus
-                isSelfPaced={isSelfPaced}
-                isCustomRelativeDatesActive={isCustomRelativeDatesActive}
-                blockData={subsection}
+        <div
+          className={`subsection-card ${isScrolledToElement ? 'highlight' : ''}`}
+          data-testid="subsection-card"
+          ref={currentRef}
+        >
+          {isHeaderVisible && (
+            <>
+              <CardHeader
+                title={displayName}
+                status={subsectionStatus}
+                cardId={id}
+                hasChanges={hasChanges}
+                onClickMenuButton={handleClickMenuButton}
+                onClickPublish={onOpenPublishModal}
+                onClickEdit={openForm}
+                onClickDelete={onOpenDeleteModal}
+                onClickMoveUp={handleSubsectionMoveUp}
+                onClickMoveDown={handleSubsectionMoveDown}
+                onClickConfigure={onOpenConfigureModal}
+                isFormOpen={isFormOpen}
+                closeForm={closeForm}
+                onEditSubmit={handleEditSubmit}
+                isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
+                onClickDuplicate={onDuplicateSubmit}
+                titleComponent={titleComponent}
+                namePrefix={namePrefix}
+                actions={actions}
+                proctoringExamConfigurationLink={proctoringExamConfigurationLink}
+                isSequential
+                extraActionsComponent={extraActionsComponent}
               />
-            </div>
-          </>
-        )}
-        {isExpanded && (
-          <div
-            data-testid="subsection-card__units"
-            className={classNames('subsection-card__units', { 'item-children': isDraggable })}
-          >
-            {children}
-            {actions.childAddable && (
-              <>
-                <Button
-                  data-testid="new-unit-button"
-                  className="mt-4"
-                  variant="outline-primary"
-                  iconBefore={IconAdd}
-                  block
-                  onClick={handleNewButtonClick}
-                >
-                  {intl.formatMessage(messages.newUnitButton)}
-                </Button>
-                {enableCopyPasteUnits && showPasteUnit && sharedClipboardData && (
-                  <PasteComponent
+              <div className="subsection-card__content item-children" data-testid="subsection-card__content">
+                <XBlockStatus
+                  isSelfPaced={isSelfPaced}
+                  isCustomRelativeDatesActive={isCustomRelativeDatesActive}
+                  blockData={subsection}
+                />
+              </div>
+            </>
+          )}
+          {isExpanded && (
+            <div
+              data-testid="subsection-card__units"
+              className={classNames('subsection-card__units', { 'item-children': isDraggable })}
+            >
+              {children}
+              {actions.childAddable && (
+                <>
+                  <Button
+                    data-testid="new-unit-button"
                     className="mt-4"
-                    text={intl.formatMessage(messages.pasteButton)}
-                    clipboardData={sharedClipboardData}
-                    onClick={handlePasteButtonClick}
-                  />
-                )}
-              </>
-            )}
-          </div>
-        )}
-      </div>
-    </SortableItem>
+                    variant="outline-primary"
+                    iconBefore={IconAdd}
+                    block
+                    onClick={handleNewButtonClick}
+                  >
+                    {intl.formatMessage(messages.newUnitButton)}
+                  </Button>
+                  {enableCopyPasteUnits && showPasteUnit && sharedClipboardData && (
+                    <PasteComponent
+                      className="mt-4"
+                      text={intl.formatMessage(messages.pasteButton)}
+                      clipboardData={sharedClipboardData}
+                      onClick={handlePasteButtonClick}
+                    />
+                  )}
+                  {librariesV2Enabled && (
+                    <Button
+                      data-testid="use-unit-from-library"
+                      className="mt-4"
+                      variant="outline-primary"
+                      iconBefore={IconAdd}
+                      block
+                      onClick={openAddLibraryUnitModal}
+                    >
+                      {intl.formatMessage(messages.useUnitFromLibraryButton)}
+                    </Button>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      </SortableItem>
+      <StandardModal
+        title={intl.formatMessage(messages.unitPickerModalTitle)}
+        isOpen={isAddLibraryUnitModalOpen}
+        onClose={closeAddLibraryUnitModal}
+        isOverflowVisible={false}
+        size="xl"
+      >
+        <ComponentPicker
+          extraFilter={['block_type = "unit"']}
+          componentPickerMode="single"
+          onComponentSelected={handleSelectLibraryUnit}
+          showOnlyHomeTab
+        />
+      </StandardModal>
+    </>
   );
 };
 
