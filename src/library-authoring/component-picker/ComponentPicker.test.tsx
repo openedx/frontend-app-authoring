@@ -276,4 +276,29 @@ describe('<ComponentPicker />', () => {
     // Wait for the content library to load
     await screen.findByText(/Only published content is visible and available for reuse./i);
   });
+
+  it('should display all tabs', async () => {
+    // Default `showOnlyHomeTab=false`
+    render(<ComponentPicker />);
+
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
+
+    expect(await screen.findByRole('tab', { name: /all content/i })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: /collections/i })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: /components/i })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: /units/i })).toBeInTheDocument();
+  });
+
+  it('should display only home tab when `showOnlyHomeTab` is true', async () => {
+    render(<ComponentPicker showOnlyHomeTab />);
+
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
+
+    expect(await screen.findByRole('tab', { name: /all content/i })).toBeInTheDocument();
+    expect(screen.queryByRole('tab', { name: /collections/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('tab', { name: /components/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('tab', { name: /units/i })).not.toBeInTheDocument();
+  });
 });
