@@ -187,7 +187,6 @@ const SubsectionCard = ({
     closeAddLibraryUnitModal();
   }, []);
 
-  // TODO add `showOnlyPublished` to units picker
   return (
     <>
       <SortableItem
@@ -293,6 +292,7 @@ const SubsectionCard = ({
         size="xl"
       >
         <ComponentPicker
+          showOnlyPublished
           extraFilter={['block_type = "unit"']}
           componentPickerMode="single"
           onComponentSelected={handleSelectLibraryUnit}

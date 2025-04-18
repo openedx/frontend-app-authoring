@@ -262,7 +262,7 @@ describe('<SubsectionCard />', () => {
     fireEvent.click(expandButton);
 
     const useUnitFromLibraryButton = screen.getByRole('button', {
-      name: /use unit from library/i
+      name: /use unit from library/i,
     });
     expect(useUnitFromLibraryButton).toBeInTheDocument();
     fireEvent.click(useUnitFromLibraryButton);
