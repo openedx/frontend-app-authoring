@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -27,10 +27,6 @@ import {
 } from './table-components';
 import ApiStatusToast from './ApiStatusToast';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
-import {
-  setFilesCurrentViewState,
-  setVideosCurrentViewState,
-} from '../videos-page/data/slice';
 
 const FileTable = ({
   files,
@@ -49,7 +45,6 @@ const FileTable = ({
   // injected
   intl,
 }) => {
-  const dispatch = useDispatch();
   const pageCount = Math.ceil(files.length / 50);
   const columnSizes = {
     xs: 12,
@@ -59,9 +54,11 @@ const FileTable = ({
     xl: 2,
   };
   const {
-    filesCurrentView,
-    videosCurrentView,
+    filesDefaultView,
+    videosDefaultView,
   } = useSelector((state) => state.videos);
+  const [videosCurrentView, setVideosCurrentView] = useState(localStorage.getItem('videosCurrentView') || filesDefaultView);
+  const [filesCurrentView, setFilesCurrentView] = useState(localStorage.getItem('filesCurrentView') || videosDefaultView);
   const [isDeleteOpen, setDeleteOpen, setDeleteClose] = useToggle(false);
   const [isDownloadOpen, setDownloadOpen, setDownloadClose] = useToggle(false);
   const [isAssetInfoOpen, openAssetInfo, closeAssetinfo] = useToggle(false);
@@ -208,10 +205,12 @@ const FileTable = ({
           isDataViewToggleEnabled: true,
           onDataViewToggle: (val) => {
             if (fileType === 'video') {
-              dispatch(setVideosCurrentViewState({ videosCurrentView: val }));
+              localStorage.setItem('videosCurrentView', val);
+              setVideosCurrentView(val);
             } else {
               // There's only 2 fileTypes currently being used i.e. video or file
-              dispatch(setFilesCurrentViewState({ filesCurrentView: val }));
+              localStorage.setItem('filesCurrentView', val);
+              setFilesCurrentView(val);
             }
           },
           defaultActiveStateValue: (fileType === 'video' && videosCurrentView) || (fileType === 'file' && filesCurrentView),
