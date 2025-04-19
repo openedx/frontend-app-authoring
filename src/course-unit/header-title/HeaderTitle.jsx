@@ -20,6 +20,7 @@ const HeaderTitle = ({
   handleTitleEdit,
   handleTitleEditSubmit,
   handleConfigureSubmit,
+  readOnly = false,
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -80,12 +81,14 @@ const HeaderTitle = ({
           className="ml-1 flex-shrink-0"
           iconAs={EditIcon}
           onClick={handleTitleEdit}
+          disabled={readOnly}
         />
         <IconButton
           alt={intl.formatMessage(messages.altButtonSettings)}
           className="flex-shrink-0"
           iconAs={SettingsIcon}
           onClick={openConfigureModal}
+          disabled={readOnly}
         />
         <ConfigureModal
           isOpen={isConfigureModalOpen}
@@ -102,12 +105,13 @@ const HeaderTitle = ({
   );
 };
 
+export default HeaderTitle;
+
 HeaderTitle.propTypes = {
   unitTitle: PropTypes.string.isRequired,
   isTitleEditFormOpen: PropTypes.bool.isRequired,
   handleTitleEdit: PropTypes.func.isRequired,
   handleTitleEditSubmit: PropTypes.func.isRequired,
   handleConfigureSubmit: PropTypes.func.isRequired,
+  readOnly: PropTypes.bool,
 };
-
-export default HeaderTitle;

@@ -75,6 +75,10 @@ const CourseUnit = ({ courseId }) => {
   } = useCourseUnit({ courseId, blockId });
   const layoutGrid = useLayoutGrid(unitCategory, isUnitLibraryType);
 
+  // FIXME: Get the readOnly status
+  // const readOnly = true;
+  const readOnly = false;
+
   useEffect(() => {
     document.title = getPageHeadTitle('', unitTitle);
   }, [unitTitle]);
@@ -145,6 +149,7 @@ const CourseUnit = ({ courseId }) => {
                 handleTitleEdit={handleTitleEdit}
                 handleTitleEditSubmit={handleTitleEditSubmit}
                 handleConfigureSubmit={handleConfigureSubmit}
+                readOnly={readOnly}
               />
             )}
             breadcrumbs={(
@@ -195,14 +200,16 @@ const CourseUnit = ({ courseId }) => {
                 courseVerticalChildren={courseVerticalChildren.children}
                 handleConfigureSubmit={handleConfigureSubmit}
               />
-              <AddComponent
-                parentLocator={blockId}
-                isSplitTestType={isSplitTestType}
-                isUnitVerticalType={isUnitVerticalType}
-                handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
-                addComponentTemplateData={addComponentTemplateData}
-              />
-              {showPasteXBlock && canPasteComponent && isUnitVerticalType && (
+              {!readOnly && (
+                <AddComponent
+                  parentLocator={blockId}
+                  isSplitTestType={isSplitTestType}
+                  isUnitVerticalType={isUnitVerticalType}
+                  handleCreateNewCourseXBlock={handleCreateNewCourseXBlock}
+                  addComponentTemplateData={addComponentTemplateData}
+                />
+              )}
+              {!readOnly && showPasteXBlock && canPasteComponent && isUnitVerticalType && (
                 <PasteComponent
                   clipboardData={sharedClipboardData}
                   onClick={
@@ -226,6 +233,7 @@ const CourseUnit = ({ courseId }) => {
                   courseId={courseId}
                   blockId={blockId}
                   unitTitle={unitTitle}
+                  readOnly={readOnly}
                 />
                 )}
                 {isSplitTestType && (
