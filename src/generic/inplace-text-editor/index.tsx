@@ -1,8 +1,15 @@
-import React, { useCallback, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  useRef,
+  forwardRef,
+} from 'react';
 import {
   Form,
   Icon,
   IconButton,
+  OverlayTrigger,
   Stack,
 } from '@openedx/paragon';
 import { Edit } from '@openedx/paragon/icons';
@@ -10,12 +17,33 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
 
+interface IconWrapperProps {
+  popper: any;
+  children: React.ReactNode;
+  [key: string]: any;
+}
+
+const IconWrapper = forwardRef<HTMLDivElement, IconWrapperProps>(({ popper, children, ...props }, ref) => {
+  useEffect(() => {
+    // This is a workaround to force the popper to update its position when
+    // the editor is opened.
+    // Ref: https://react-bootstrap.netlify.app/docs/components/overlays/#updating-position-dynamically
+    popper.scheduleUpdate();
+  }, [popper, children]);
+
+  return (
+    <div ref={ref} {...props}>
+      {children}
+    </div>
+  );
+});
+
 interface InplaceTextEditorProps {
   text: string;
   onSave: (newText: string) => void;
   readOnly?: boolean;
   textClassName?: string;
-  showEditButton?: boolean;
+  alwaysShowEditButton?: boolean;
 }
 
 export const InplaceTextEditor: React.FC<InplaceTextEditorProps> = ({
@@ -23,10 +51,11 @@ export const InplaceTextEditor: React.FC<InplaceTextEditorProps> = ({
   onSave,
   readOnly = false,
   textClassName,
-  showEditButton = false,
+  alwaysShowEditButton = false,
 }) => {
   const intl = useIntl();
   const [inputIsActive, setIsActive] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const handleOnChangeText = useCallback(
     (event) => {
@@ -39,7 +68,7 @@ export const InplaceTextEditor: React.FC<InplaceTextEditorProps> = ({
     [text],
   );
 
-  const handleClick = () => {
+  const handleEdit = () => {
     setIsActive(true);
   };
 
@@ -51,41 +80,91 @@ export const InplaceTextEditor: React.FC<InplaceTextEditorProps> = ({
     }
   };
 
+  if (readOnly) {
+    return (
+      <span className={textClassName}>
+        {text}
+      </span>
+    );
+  }
+
+  if (alwaysShowEditButton) {
+    return (
+      <Stack
+        direction="horizontal"
+        gap={1}
+      >
+        {inputIsActive
+          ? (
+            <Form.Control
+              autoFocus
+              type="text"
+              aria-label="Text input"
+              defaultValue={text}
+              onBlur={handleOnChangeText}
+              onKeyDown={handleOnKeyDown}
+            />
+          )
+          : (
+            <span className={textClassName}>
+              {text}
+            </span>
+          )}
+        <IconButton
+          src={Edit}
+          iconAs={Icon}
+          alt={intl.formatMessage(messages.editTextButtonAlt)}
+          onClick={handleEdit}
+          size="inline"
+        />
+      </Stack>
+    );
+  }
+
   return (
-    <Stack direction="horizontal">
-      {inputIsActive
-        ? (
-          <Form.Control
-            autoFocus
-            type="text"
-            aria-label="Text input"
-            defaultValue={text}
-            onBlur={handleOnChangeText}
-            onKeyDown={handleOnKeyDown}
+    <OverlayTrigger
+      trigger={['hover', 'focus']}
+      container={containerRef.current}
+      placement="right"
+      overlay={(
+        <IconWrapper>
+          <Icon
+            id="edit-text-icon"
+            src={Edit}
+            className="ml-1.5"
+            onClick={handleEdit}
           />
-        )
-        : (
-          <>
+        </IconWrapper>
+      )}
+    >
+      <Stack
+        direction="horizontal"
+        gap={1}
+      >
+        {inputIsActive
+          ? (
+            <Form.Control
+              autoFocus
+              type="text"
+              aria-label="Text input"
+              defaultValue={text}
+              onBlur={handleOnChangeText}
+              onKeyDown={handleOnKeyDown}
+            />
+          )
+          : (
             <span
+              onClick={handleEdit}
+              onKeyDown={handleEdit}
               className={textClassName}
               role="button"
-              onClick={!readOnly ? handleClick : undefined}
-              onKeyDown={!readOnly ? handleClick : undefined}
               tabIndex={0}
             >
               {text}
             </span>
-            {!readOnly && showEditButton && (
-              <IconButton
-                src={Edit}
-                iconAs={Icon}
-                alt={intl.formatMessage(messages.editTextButtonAlt)}
-                onClick={handleClick}
-                size="inline"
-              />
-            )}
-          </>
-        )}
-    </Stack>
+          )}
+        <div ref={containerRef} />
+      </Stack>
+    </OverlayTrigger>
   );
 };

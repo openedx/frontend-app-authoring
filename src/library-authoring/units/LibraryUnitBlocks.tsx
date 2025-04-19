@@ -14,13 +14,19 @@ import ErrorAlert from '../../generic/alert-error';
 import { getItemIcon } from '../../generic/block-type-utils';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import { IframeProvider } from '../../generic/hooks/context/iFrameContext';
+import { InplaceTextEditor } from '../../generic/inplace-text-editor';
 import Loading from '../../generic/Loading';
 import TagCount from '../../generic/tag-count';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { PickLibraryContentModal } from '../add-content';
 import ComponentMenu from '../components';
 import { LibraryBlockMetadata } from '../data/api';
-import { libraryAuthoringQueryKeys, useContainerChildren, useUpdateContainerChildren } from '../data/apiHooks';
+import {
+  libraryAuthoringQueryKeys,
+  useContainerChildren,
+  useUpdateContainerChildren,
+  useUpdateXBlockFields,
+} from '../data/apiHooks';
 import { LibraryBlock } from '../LibraryBlock';
 import { useLibraryRoutes } from '../routes';
 import messages from './messages';
@@ -43,30 +49,52 @@ interface BlockHeaderProps {
 }
 
 /** Component header, split out to reuse in drag overlay */
-const BlockHeader = ({ block, onTagClick }: BlockHeaderProps) => (
-  <>
-    <Stack direction="horizontal" gap={2} className="font-weight-bold">
-      <Icon src={getItemIcon(block.blockType)} />
-      {block.displayName}
-    </Stack>
-    <ActionRow.Spacer />
-    <Stack direction="horizontal" gap={3}>
-      {block.hasUnpublishedChanges && (
-        <Badge
-          className="px-2 pt-1"
-          variant="warning"
-        >
-          <Stack direction="horizontal" gap={1}>
-            <Icon className="mb-1" size="xs" src={Description} />
-            <FormattedMessage {...messages.draftChipText} />
-          </Stack>
-        </Badge>
-      )}
-      <TagCount size="sm" count={block.tagsCount} onClick={onTagClick} />
-      <ComponentMenu usageKey={block.id} />
-    </Stack>
-  </>
-);
+const BlockHeader = ({ block, onTagClick }: BlockHeaderProps) => {
+  const intl = useIntl();
+  const { showToast } = useContext(ToastContext);
+
+  const updateMutation = useUpdateXBlockFields(block.id);
+
+  const handleSaveDisplayName = (newDisplayName: string) => {
+    updateMutation.mutateAsync({
+      metadata: {
+        display_name: newDisplayName,
+      },
+    }).then(() => {
+      showToast(intl.formatMessage(messages.updateComponentSuccessMsg));
+    }).catch(() => {
+      showToast(intl.formatMessage(messages.updateComponentErrorMsg));
+    });
+  };
+
+  return (
+    <>
+      <Stack direction="horizontal" gap={2} className="font-weight-bold">
+        <Icon src={getItemIcon(block.blockType)} />
+        <InplaceTextEditor
+          onSave={handleSaveDisplayName}
+          text={block.displayName}
+        />
+      </Stack>
+      <ActionRow.Spacer />
+      <Stack direction="horizontal" gap={3}>
+        {block.hasUnpublishedChanges && (
+          <Badge
+            className="px-2 pt-1"
+            variant="warning"
+          >
+            <Stack direction="horizontal" gap={1}>
+              <Icon className="mb-1" size="xs" src={Description} />
+              <FormattedMessage {...messages.draftChipText} />
+            </Stack>
+          </Badge>
+        )}
+        <TagCount size="sm" count={block.tagsCount} onClick={onTagClick} />
+        <ComponentMenu usageKey={block.id} />
+      </Stack>
+    </>
+  );
+};
 
 interface LibraryUnitBlocksProps {
   /** set to true if it is rendered as preview

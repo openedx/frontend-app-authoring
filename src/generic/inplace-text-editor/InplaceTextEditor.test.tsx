@@ -24,8 +24,8 @@ describe('<InplaceTextEditor />', () => {
     expect(screen.queryByRole('button', { name: /edit/ })).not.toBeInTheDocument();
   });
 
-  it('should render the edit button if showEditButton is true', () => {
-    render(<InplaceTextEditor text="Test text" onSave={mockOnSave} showEditButton />);
+  it('should render the edit button if alwaysShowEditButton is true', () => {
+    render(<InplaceTextEditor text="Test text" onSave={mockOnSave} alwaysShowEditButton />);
 
     expect(screen.getByText('Test text')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /edit/i })).toBeInTheDocument();

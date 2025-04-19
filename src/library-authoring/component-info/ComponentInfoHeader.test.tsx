@@ -98,7 +98,7 @@ describe('<ComponentInfoHeader />', () => {
     });
   });
 
-  it('should close edit library title on press Escape', async () => {
+  it('should close edit component title on press Escape', async () => {
     const url = getXBlockFieldsVersionApiUrl(usageKey, 'draft');
     axiosMock.onPost(url).reply(200);
     render();
@@ -117,7 +117,7 @@ describe('<ComponentInfoHeader />', () => {
     await waitFor(() => expect(axiosMock.history.post.length).toEqual(0));
   });
 
-  it('should show error on edit library tittle', async () => {
+  it('should show error on edit component tittle', async () => {
     const url = getXBlockFieldsApiUrl(usageKey);
     axiosMock.onPatch(url).reply(500);
     render();

@@ -45,7 +45,7 @@ const ContainerInfoHeader = () => {
       text={container.displayName}
       readOnly={readOnly}
       textClassName="font-weight-bold m-1.5"
-      showEditButton
+      alwaysShowEditButton
     />
   );
 };
