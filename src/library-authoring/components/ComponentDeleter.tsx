@@ -36,9 +36,9 @@ const ComponentDeleter = ({ usageKey, ...props }: Props) => {
   const sidebarComponentUsageKey = sidebarComponentInfo?.id;
 
   const restoreComponentMutation = useRestoreLibraryBlock();
-  const restoreComponent = useCallback(async () => {
+  const restoreComponent = useCallback(async (affectedContainersKeys: string[]) => {
     try {
-      await restoreComponentMutation.mutateAsync({ usageKey });
+      await restoreComponentMutation.mutateAsync({ usageKey, affectedContainersKeys });
       showToast(intl.formatMessage(messages.undoDeleteComponentToastSuccess));
     } catch (e) {
       showToast(intl.formatMessage(messages.undoDeleteComponentToastFailed));
@@ -47,12 +47,13 @@ const ComponentDeleter = ({ usageKey, ...props }: Props) => {
 
   const deleteComponentMutation = useDeleteLibraryBlock();
   const doDelete = React.useCallback(async () => {
-    await deleteComponentMutation.mutateAsync({ usageKey });
+    const { affectedContainers } = await deleteComponentMutation.mutateAsync({ usageKey });
+    const affectedContainersKeys = affectedContainers.map((container) => container.id);
     showToast(
       intl.formatMessage(messages.deleteComponentSuccess),
       {
         label: intl.formatMessage(messages.undoDeleteCollectionToastAction),
-        onClick: restoreComponent,
+        onClick: () => restoreComponent(affectedContainersKeys),
       },
     );
     props.cancelDelete();

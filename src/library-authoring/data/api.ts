@@ -241,6 +241,11 @@ export interface DeleteBlockDataRequest {
   usageKey: string;
 }
 
+export interface RestoreBlockDataRequest {
+  usageKey: string;
+  affectedContainersKeys?: string[];
+}
+
 export interface CollectionMetadata {
   key: string;
   title: string;
@@ -292,6 +297,25 @@ export interface BlockTypeMetadata {
   displayName: string;
 }
 
+export interface Container {
+  id: string;
+  containerType: 'unit';
+  displayName: string;
+  lastPublished: string | null;
+  publishedBy: string | null;
+  createdBy: string | null;
+  lastDraftCreated: string | null;
+  lastDraftCreatedBy: string | null,
+  hasUnpublishedChanges: boolean;
+  created: string;
+  modified: string;
+  collections: CollectionMetadata[];
+}
+
+export interface DeleteLibraryBlockResponse {
+  affectedContainers: Container[],
+}
+
 export type UpdateCollectionComponentsRequest = Partial<CreateLibraryCollectionDataRequest>;
 
 /**
@@ -318,14 +342,20 @@ export async function createLibraryBlock({
   return camelCaseObject(data);
 }
 
-export async function deleteLibraryBlock({ usageKey }: DeleteBlockDataRequest): Promise<void> {
+export async function deleteLibraryBlock({ usageKey }: DeleteBlockDataRequest): Promise<DeleteLibraryBlockResponse> {
   const client = getAuthenticatedHttpClient();
-  await client.delete(getLibraryBlockMetadataUrl(usageKey));
+  const { data } = await client.delete(getLibraryBlockMetadataUrl(usageKey));
+  return camelCaseObject(data);
 }
 
-export async function restoreLibraryBlock({ usageKey }: DeleteBlockDataRequest): Promise<void> {
+export async function restoreLibraryBlock({
+  usageKey,
+  affectedContainersKeys = [],
+}: RestoreBlockDataRequest): Promise<void> {
   const client = getAuthenticatedHttpClient();
-  await client.post(getLibraryBlockRestoreUrl(usageKey));
+  await client.post(getLibraryBlockRestoreUrl(usageKey), {
+    affected_containers: affectedContainersKeys,
+  });
 }
 
 /**
@@ -590,21 +620,6 @@ export async function createLibraryContainer(
   const client = getAuthenticatedHttpClient();
   const { data } = await client.post(getLibraryContainersApiUrl(libraryId), snakeCaseObject(containerData));
   return camelCaseObject(data);
-}
-
-export interface Container {
-  id: string;
-  containerType: 'unit';
-  displayName: string;
-  lastPublished: string | null;
-  publishedBy: string | null;
-  createdBy: string | null;
-  lastDraftCreated: string | null;
-  lastDraftCreatedBy: string | null,
-  hasUnpublishedChanges: boolean;
-  created: string;
-  modified: string;
-  collections: CollectionMetadata[];
 }
 
 /**
