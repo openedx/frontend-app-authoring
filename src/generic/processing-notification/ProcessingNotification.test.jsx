@@ -22,8 +22,8 @@ describe('<ProcessingNotification />', () => {
     render(<ProcessingNotification {...props} close={() => {}} />);
     await screen.findByText(props.title);
     const undo = await screen.findByText('Undo');
-    const alert = await screen.findByRole('alert', { hidden: true });
-    expect(alert.classList.contains('processing-notification-hide-close-button')).toBeFalsy();
+    const alert = await screen.findAllByRole('alert', { hidden: true });
+    expect(alert[1].classList.contains('processing-notification-hide-close-button')).toBeFalsy();
     await userEvent.click(undo);
     expect(mockUndo).toHaveBeenCalled();
   });
@@ -31,7 +31,7 @@ describe('<ProcessingNotification />', () => {
   it('add hide-close-button class if no close action is passed', async () => {
     render(<ProcessingNotification {...props} />);
     await screen.findByText(props.title);
-    const alert = await screen.findByRole('alert', { hidden: true });
-    expect(alert.classList.contains('processing-notification-hide-close-button')).toBeTruthy();
+    const alert = await screen.findAllByRole('alert', { hidden: true });
+    expect(alert[1].classList.contains('processing-notification-hide-close-button')).toBeTruthy();
   });
 });

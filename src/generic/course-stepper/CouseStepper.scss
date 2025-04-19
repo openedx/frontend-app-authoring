@@ -1,12 +1,12 @@
 .course-stepper {
   .course-stepper__step {
     display: flex;
-    gap: $spacer;
+    gap: var(--pgn-spacing-spacer-base);
     padding: 1.25rem 0;
     opacity: .5;
 
     &:not(:last-child) {
-      border-bottom: 1px solid $gray-200;
+      border-bottom: 1px solid var(--pgn-color-gray-200);
     }
 
     .course-stepper__step-icon {
@@ -35,7 +35,7 @@
     .course-stepper__step-description {
       margin: 0;
       font-size: 1rem;
-      color: $gray-400;
+      color: var(--pgn-color-gray-400);
     }
   }
 
@@ -52,7 +52,7 @@
 
     & svg,
     .course-stepper__step-title {
-      color: $success-500;
+      color: var(--pgn-color-success-500);
     }
   }
 
@@ -62,7 +62,7 @@
     .course-stepper__step-title,
     .course-stepper__step-description,
     & svg {
-      color: $danger-300;
+      color: var(--pgn-color-danger-300);
     }
   }
 }

@@ -1,9 +1,9 @@
 .textbook-card {
-  padding: $spacer $spacer $spacer map-get($spacers, 4);
+  padding: var(--pgn-spacing-spacer-base) var(--pgn-spacing-spacer-base) var(--pgn-spacing-spacer-base) var(--pgn-spacing-spacer-4);
 
   & .pgn__card-header {
     padding: 0;
-    margin-bottom: $spacer;
+    margin-bottom: var(--pgn-spacing-spacer-base);
   }
 
   & .pgn__card-header-content {
@@ -15,18 +15,18 @@
   }
 
   &:not(:last-of-type) {
-    margin-bottom: map-get($spacers, 4);
+    margin-bottom: var(--pgn-spacing-spacer-4);
   }
 }
 
 .textbook-card__chapters {
-  margin-left: -(map-get($spacers, 2));
+  margin-left: -(var(--pgn-spacing-spacer-2));
 }
 
 .textbook-card__chapter-item {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: $spacer;
+  gap: var(--pgn-spacing-spacer-base);
 
   & span:first-of-type {
     word-break: break-word;
@@ -37,6 +37,6 @@
   }
 
   &:not(:last-of-type) {
-    margin-bottom: map-get($spacers, 2);
+    margin-bottom: var(--pgn-spacing-spacer-2);
   }
 }
