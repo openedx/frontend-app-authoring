@@ -41,7 +41,6 @@ export const ComponentEditorModal: React.FC<Record<never, never>> = () => {
       lmsEndpointUrl={getConfig().LMS_BASE_URL}
       onClose={onClose}
       returnFunction={() => onClose}
-      fullScreen={false}
     />
   );
 };

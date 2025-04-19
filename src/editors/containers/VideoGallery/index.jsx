@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { Image } from '@openedx/paragon';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../data/redux';
@@ -9,7 +10,7 @@ import messages from './messages';
 import { RequestKeys } from '../../data/constants/requests';
 import videoThumbnail from '../../data/images/videoThumbnail.svg';
 
-const VideoGallery = () => {
+const VideoGallery = ({ onCancel }) => {
   const rawVideos = useSelector(selectors.app.videos);
   const isLoaded = useSelector(
     (state) => selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchVideos }),
@@ -21,7 +22,7 @@ const VideoGallery = () => {
     (state) => selectors.requests.isFailed(state, { requestKey: RequestKeys.uploadVideo }),
   );
   const videos = hooks.buildVideos({ rawVideos });
-  const handleVideoUpload = hooks.useVideoUploadHandler({ replace: true });
+  const handleVideoUpload = hooks.useVideoUploadHandler({ replace: !onCancel, newTab: !!onCancel });
 
   useEffect(() => {
     // If no videos exists redirects to the video upload screen
@@ -60,7 +61,7 @@ const VideoGallery = () => {
       <SelectionModal
         {...{
           isOpen: true,
-          close: handleCancel,
+          close: onCancel || handleCancel,
           size: 'fullscreen',
           isFullscreenScroll: false,
           galleryError,
@@ -83,6 +84,8 @@ const VideoGallery = () => {
   );
 };
 
-VideoGallery.propTypes = {};
+VideoGallery.propTypes = {
+  onCancel: PropTypes.func,
+};
 
 export default VideoGallery;

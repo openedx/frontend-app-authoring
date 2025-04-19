@@ -9,6 +9,7 @@ const VideoSelector = ({
   learningContextId,
   lmsEndpointUrl,
   studioEndpointUrl,
+  onCancel,
 }) => {
   const dispatch = useDispatch();
   const loading = hooks.useInitializeApp({
@@ -26,7 +27,7 @@ const VideoSelector = ({
     return null;
   }
   return (
-    <VideoGallery />
+    <VideoGallery onCancel={onCancel} />
   );
 };
 
@@ -35,6 +36,7 @@ VideoSelector.propTypes = {
   learningContextId: PropTypes.string.isRequired,
   lmsEndpointUrl: PropTypes.string.isRequired,
   studioEndpointUrl: PropTypes.string.isRequired,
+  onCancel: PropTypes.func,
 };
 
 export default VideoSelector;

@@ -46,6 +46,7 @@ export const saveBlock = ({
   returnFunction,
   validateEntry,
 }) => {
+  console.log('return function', returnFunction);
   if (!content) {
     return;
   }

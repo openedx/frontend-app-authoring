@@ -138,10 +138,13 @@ export const useVideoListProps = ({
   };
 };
 
-export const useVideoUploadHandler = ({ replace }) => {
+export const useVideoUploadHandler = ({ replace, newTab }) => {
   const learningContextId = useSelector(selectors.app.learningContextId);
   const blockId = useSelector(selectors.app.blockId);
   const path = `/course/${learningContextId}/editor/video_upload/${blockId}`;
+  if (newTab) {
+    return () => window.open(path, '_blank');
+  }
   if (replace) {
     return () => window.location.replace(path);
   }

@@ -20,7 +20,7 @@ describe('SelectTypeModal', () => {
     jest.spyOn(hooks, 'onSelect').mockImplementation(mockSelect);
     // This is a new-style test, unlike most of the old snapshot-based editor tests.
     render(
-      <EditorContextProvider fullScreen={false} learningContextId="course-v1:Org+COURSE+RUN">
+      <EditorContextProvider learningContextId="course-v1:Org+COURSE+RUN">
         <Provider store={editorStore}>
           <SelectTypeModal onClose={mockClose} />
         </Provider>
