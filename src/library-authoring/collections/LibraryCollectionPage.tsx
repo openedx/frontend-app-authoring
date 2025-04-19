@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { StudioFooterSlot } from '@openedx/frontend-slot-footer';
+import { StudioFooterSlot } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,

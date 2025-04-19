@@ -11,4 +11,4 @@
 * [`course_unit_header_actions_slot`](./CourseUnitHeaderActionsSlot/)
 
 ## Footer Slot
-* [`studio_footer_slot`](./StudioFooterSlot/)
+* [`org.openedx.frontend.layout.studio_footer.v1`](./StudioFooterSlot/)

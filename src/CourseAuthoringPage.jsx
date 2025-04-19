@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   useLocation,
 } from 'react-router-dom';
-import { StudioFooterSlot } from '@openedx/frontend-slot-footer';
+import { StudioFooterSlot } from '@edx/frontend-component-footer';
 import Header from './header';
 import { fetchCourseDetail, fetchWaffleFlags } from './data/thunks';
 import { useModel } from './generic/model-store';
