@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { Icon, IconButton } from '@openedx/paragon';
+import { Hyperlink, Icon, IconButton } from '@openedx/paragon';
 import { ArrowForward, Settings } from '@openedx/paragon/icons';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { getWaffleFlags } from '../../data/selectors';
 import messages from '../messages';
@@ -44,14 +44,14 @@ const PageSettingButton = ({
 
   if (determineLinkDestination) {
     return (
-      <Link to={determineLinkDestination}>
+      <Hyperlink destination={determineLinkDestination}>
         <IconButton
           src={ArrowForward}
           iconAs={Icon}
           size="inline"
           alt={formatMessage(messages.settings)}
         />
-      </Link>
+      </Hyperlink>
     );
   }
 
