@@ -161,7 +161,7 @@ describe('library api hooks', () => {
   });
 
   it('should delete a container', async () => {
-    const containerId = 'lct:lib:org:unit:unit1';
+    const containerId = 'lct:org:lib:unit:unit1';
     const url = getLibraryContainerApiUrl(containerId);
 
     axiosMock.onDelete(url).reply(200);
