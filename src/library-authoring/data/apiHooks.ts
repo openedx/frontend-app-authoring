@@ -375,8 +375,12 @@ export const useUpdateXBlockFields = (usageKey: string) => {
     mutationFn: (data: UpdateXBlockFieldsRequest) => updateXBlockFields(usageKey, data),
     onMutate: async (data) => {
       const queryKey = xblockQueryKeys.xblockFields(usageKey);
-      const previousBlockData = queryClient.getQueriesData(queryKey)[0][1] as XBlockFields;
+      const previousBlockData = queryClient.getQueriesData(queryKey)?.[0]?.[1] as XBlockFields | undefined;
       const formatedData = camelCaseObject(data);
+
+      if (!previousBlockData) {
+        return { previousBlockData };
+      }
 
       const newBlockData = {
         ...previousBlockData,
@@ -389,7 +393,7 @@ export const useUpdateXBlockFields = (usageKey: string) => {
 
       queryClient.setQueryData(queryKey, newBlockData);
 
-      return { previousBlockData, newBlockData };
+      return { previousBlockData };
     },
     onError: (_err, _data, context) => {
       queryClient.setQueryData(
