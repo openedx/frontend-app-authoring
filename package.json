@@ -44,7 +44,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@edx/brand": "npm:@openedx/brand-openedx@^1.2.3",
     "@edx/browserslist-config": "1.2.0",
-    "@edx/frontend-component-footer": "^14.3.0",
+    "@edx/frontend-component-footer": "^14.6.0",
     "@edx/frontend-component-header": "^6.2.0",
     "@edx/frontend-enterprise-hotjar": "^7.2.0",
     "@edx/frontend-platform": "^8.3.1",
