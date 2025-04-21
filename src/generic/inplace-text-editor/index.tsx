@@ -2,7 +2,6 @@ import React, {
   useCallback,
   useEffect,
   useState,
-  useRef,
   forwardRef,
 } from 'react';
 import {
@@ -55,7 +54,6 @@ export const InplaceTextEditor: React.FC<InplaceTextEditorProps> = ({
 }) => {
   const intl = useIntl();
   const [inputIsActive, setIsActive] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   const handleOnChangeText = useCallback(
     (event) => {
@@ -124,7 +122,6 @@ export const InplaceTextEditor: React.FC<InplaceTextEditorProps> = ({
   return (
     <OverlayTrigger
       trigger={['hover', 'focus']}
-      container={containerRef.current}
       placement="right"
       overlay={(
         <IconWrapper>
@@ -137,10 +134,7 @@ export const InplaceTextEditor: React.FC<InplaceTextEditorProps> = ({
         </IconWrapper>
       )}
     >
-      <Stack
-        direction="horizontal"
-        gap={1}
-      >
+      <div>
         {inputIsActive
           ? (
             <Form.Control
@@ -163,8 +157,7 @@ export const InplaceTextEditor: React.FC<InplaceTextEditorProps> = ({
               {text}
             </span>
           )}
-        <div ref={containerRef} />
-      </Stack>
+      </div>
     </OverlayTrigger>
   );
 };
