@@ -554,7 +554,7 @@ export function addUnitFromLibrary(body, callback) {
           callback(result.locator);
         }
       });
-    } catch /* istanbul ignore next */  (error)  {
+    } catch /* istanbul ignore next */ (error) {
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
     }
