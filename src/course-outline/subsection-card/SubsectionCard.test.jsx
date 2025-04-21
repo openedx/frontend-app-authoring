@@ -10,9 +10,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import initializeStore from '../../store';
 import SubsectionCard from './SubsectionCard';
 import cardHeaderMessages from '../card-header/messages';
+import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 
 let store;
 const mockPathname = '/foo-bar';
+const containerKey = 'lct:org:lib:unit:1';
+const handleOnAddUnitFromLibrary = jest.fn();
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -21,9 +24,8 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useSelector: () => ({
+jest.mock('../../studio-home/hooks', () => ({
+  useStudioHome: () => ({
     librariesV2Enabled: true,
   }),
 }));
@@ -34,7 +36,7 @@ jest.mock('../../library-authoring/component-picker', () => ({
     const onClick = () => {
       // eslint-disable-next-line react/prop-types
       props.onComponentSelected({
-        usageKey: 'lct:org:lib:unit:1',
+        usageKey: containerKey,
         blockType: 'unti',
       });
     };
@@ -105,6 +107,7 @@ const renderComponent = (props, entry = '/') => render(
             onOpenHighlightsModal={jest.fn()}
             onOpenDeleteModal={jest.fn()}
             onNewUnitSubmit={jest.fn()}
+            onAddUnitFromLibrary={handleOnAddUnitFromLibrary}
             isCustomRelativeDatesActive={false}
             onEditClick={jest.fn()}
             savingStatus=""
@@ -291,6 +294,12 @@ describe('<SubsectionCard />', () => {
     const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
     fireEvent.click(dummyBtn);
 
-    // TODO call add unit from library api call
+    expect(handleOnAddUnitFromLibrary).toHaveBeenCalled();
+    expect(handleOnAddUnitFromLibrary).toHaveBeenCalledWith({
+      type: COMPONENT_TYPES.libraryV2,
+      parentLocator: '123',
+      category: 'unit',
+      libraryContentKey: containerKey,
+    });
   });
 });

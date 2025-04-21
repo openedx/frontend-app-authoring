@@ -3,7 +3,7 @@ import React, {
   useContext, useEffect, useState, useRef, useCallback,
 } from 'react';
 import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, StandardModal, useToggle } from '@openedx/paragon';
@@ -22,10 +22,10 @@ import TitleButton from '../card-header/TitleButton';
 import XBlockStatus from '../xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
 import messages from './messages';
-import { getStudioHomeData } from '../../studio-home/data/selectors';
 import { ComponentPicker } from '../../library-authoring';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import { ContainerType } from '../../generic/key-utils';
+import { useStudioHome } from '../../studio-home/hooks';
 
 const SubsectionCard = ({
   section,
@@ -56,8 +56,7 @@ const SubsectionCard = ({
   const [isFormOpen, openForm, closeForm] = useToggle(false);
   const namePrefix = 'subsection';
   const { sharedClipboardData, showPasteUnit } = useClipboard();
-  const studioHomeData = useSelector(getStudioHomeData);
-  const { librariesV2Enabled } = studioHomeData;
+  const { librariesV2Enabled } = useStudioHome();
   const [
     isAddLibraryUnitModalOpen,
     openAddLibraryUnitModal,

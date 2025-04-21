@@ -60,11 +60,14 @@ import {
   moveSubsection,
   moveUnit,
 } from './drag-helper/utils';
+import { postXBlockBaseApiUrl } from '../course-unit/data/api';
+import { COMPONENT_TYPES } from '../generic/block-type-utils/constants';
 
 let axiosMock;
 let store;
 const mockPathname = '/foo-bar';
 const courseId = '123';
+const containerKey = 'lct:org:lib:unit:1';
 
 window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
@@ -92,6 +95,30 @@ jest.mock('@edx/frontend-platform/i18n', () => ({
 jest.mock('./data/api', () => ({
   ...jest.requireActual('./data/api'),
   getTagsCount: () => jest.fn().mockResolvedValue({}),
+}));
+
+jest.mock('../studio-home/hooks', () => ({
+  useStudioHome: () => ({
+    librariesV2Enabled: true,
+  }),
+}));
+
+// Mock ComponentPicker to call onComponentSelected on click
+jest.mock('../library-authoring/component-picker', () => ({
+  ComponentPicker: (props) => {
+    const onClick = () => {
+      // eslint-disable-next-line react/prop-types
+      props.onComponentSelected({
+        usageKey: containerKey,
+        blockType: 'unti',
+      });
+    };
+    return (
+      <button type="submit" onClick={onClick}>
+        Dummy button
+      </button>
+    );
+  },
 }));
 
 const queryClient = new QueryClient();
@@ -387,6 +414,42 @@ describe('<CourseOutline />', () => {
       parent_locator: subsection.id,
       category: COURSE_BLOCK_NAMES.vertical.id,
       display_name: COURSE_BLOCK_NAMES.vertical.name,
+    }));
+  });
+
+  it('adds a unit from library correctly', async () => {
+    render(<RootWrapper />);
+    const [sectionElement] = await screen.findAllByTestId('section-card');
+    const [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
+    const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
+    fireEvent.click(expandBtn);
+    const units = await within(subsectionElement).findAllByTestId('unit-card');
+    expect(units.length).toBe(1);
+
+    axiosMock
+      .onPost(postXBlockBaseApiUrl())
+      .reply(200, {
+        locator: 'some',
+      });
+
+    const addUnitFromLibraryButton = within(subsectionElement).getByRole('button', {
+      name: /use unit from library/i,
+    });
+    fireEvent.click(addUnitFromLibraryButton);
+
+    // click dummy button to execute onComponentSelected prop.
+    const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
+    fireEvent.click(dummyBtn);
+
+    waitFor(() => expect(axiosMock.history.post.length).toBe(1));
+
+    const [section] = courseOutlineIndexMock.courseStructure.childInfo.children;
+    const [subsection] = section.childInfo.children;
+    expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
+      type: COMPONENT_TYPES.libraryV2,
+      category: 'unit',
+      parent_locator: subsection.id,
+      library_content_key: containerKey,
     }));
   });
 
