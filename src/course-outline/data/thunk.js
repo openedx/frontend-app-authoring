@@ -53,6 +53,7 @@ import {
   setPasteFileNotices,
   updateCourseLaunchQueryStatus,
 } from './slice';
+import { createCourseXblock } from '../../course-unit/data/api';
 
 export function fetchCourseOutlineIndexQuery(courseId) {
   return async (dispatch) => {
@@ -537,6 +538,26 @@ export function addNewUnitQuery(parentLocator, callback) {
       COURSE_BLOCK_NAMES.vertical.name,
       async (result) => callback(result.locator),
     ));
+  };
+}
+
+export function addUnitFromLibrary(body, callback) {
+  return async (dispatch) => {
+    dispatch(updateSavingStatus({ status: RequestStatus.PENDING }));
+    dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
+
+    try {
+      await createCourseXblock(body).then(async (result) => {
+        if (result) {
+          dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
+          dispatch(hideProcessingNotification());
+          callback(result.locator);
+        }
+      });
+    } catch (error) {
+      dispatch(hideProcessingNotification());
+      dispatch(updateSavingStatus({ status: RequestStatus.FAILED }));
+    }
   };
 }
 

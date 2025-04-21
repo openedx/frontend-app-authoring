@@ -103,6 +103,7 @@ const CourseOutline = ({ courseId }) => {
     handleNewSectionSubmit,
     handleNewSubsectionSubmit,
     handleNewUnitSubmit,
+    handleAddUnitFromLibrary,
     getUnitUrl,
     handleVideoSharingOptionChange,
     handlePasteClipboardClick,
@@ -383,6 +384,7 @@ const CourseOutline = ({ courseId }) => {
                                           onDuplicateSubmit={handleDuplicateSubsectionSubmit}
                                           onOpenConfigureModal={openConfigureModal}
                                           onNewUnitSubmit={handleNewUnitSubmit}
+                                          onAddUnitFromLibrary={handleAddUnitFromLibrary}
                                           onOrderChange={updateSubsectionOrderByIndex}
                                           onPasteClick={handlePasteClipboardClick}
                                         >

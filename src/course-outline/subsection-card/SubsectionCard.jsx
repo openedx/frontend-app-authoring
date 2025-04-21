@@ -24,6 +24,8 @@ import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
 import messages from './messages';
 import { getStudioHomeData } from '../../studio-home/data/selectors';
 import { ComponentPicker } from '../../library-authoring';
+import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
+import { ContainerType } from '../../generic/key-utils';
 
 const SubsectionCard = ({
   section,
@@ -39,6 +41,7 @@ const SubsectionCard = ({
   onOpenDeleteModal,
   onDuplicateSubmit,
   onNewUnitSubmit,
+  onAddUnitFromLibrary,
   onOrderChange,
   onOpenConfigureModal,
   onPasteClick,
@@ -182,9 +185,12 @@ const SubsectionCard = ({
   );
 
   const handleSelectLibraryUnit = useCallback((selectedUnit) => {
-    // TODO add unit to course
-    // eslint-disable-next-line no-console
-    console.log(selectedUnit);
+    onAddUnitFromLibrary({
+      type: COMPONENT_TYPES.libraryV2,
+      category: ContainerType.Unit,
+      parentLocator: id,
+      libraryContentKey: selectedUnit.usageKey,
+    });
     closeAddLibraryUnitModal();
   }, []);
 
@@ -351,6 +357,7 @@ SubsectionCard.propTypes = {
   onOpenDeleteModal: PropTypes.func.isRequired,
   onDuplicateSubmit: PropTypes.func.isRequired,
   onNewUnitSubmit: PropTypes.func.isRequired,
+  onAddUnitFromLibrary: PropTypes.func.isRequired,
   index: PropTypes.number.isRequired,
   getPossibleMoves: PropTypes.func.isRequired,
   onOrderChange: PropTypes.func.isRequired,
