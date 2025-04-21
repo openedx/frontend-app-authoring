@@ -17,12 +17,12 @@ import messages from './messages';
 
 interface LibraryComponentPickerProps {
   returnToLibrarySelection: () => void;
-  showOnlyHomeTab?: boolean;
+  showOnlyHomeTab: boolean;
 }
 
 const InnerComponentPicker: React.FC<LibraryComponentPickerProps> = ({
   returnToLibrarySelection,
-  showOnlyHomeTab = false,
+  showOnlyHomeTab,
 }) => {
   const { collectionId } = useLibraryContext();
 
