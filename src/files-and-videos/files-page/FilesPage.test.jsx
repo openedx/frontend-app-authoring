@@ -163,6 +163,7 @@ describe('FilesAndUploads', () => {
       store = initializeStore(initialState);
       axiosMock = new MockAdapter(getAuthenticatedHttpClient());
       file = new File(['(⌐□_□)'], 'download.png', { type: 'image/png' });
+      global.localStorage.clear();
     });
 
     afterEach(() => {

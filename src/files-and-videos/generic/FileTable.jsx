@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import isEmpty from 'lodash/isEmpty';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
@@ -27,10 +27,6 @@ import {
 } from './table-components';
 import ApiStatusToast from './ApiStatusToast';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
-import {
-  setFilesCurrentViewState,
-  setVideosCurrentViewState,
-} from '../videos-page/data/slice';
 
 const FileTable = ({
   files,
@@ -49,7 +45,6 @@ const FileTable = ({
   // injected
   intl,
 }) => {
-  const dispatch = useDispatch();
   const pageCount = Math.ceil(files.length / 50);
   const columnSizes = {
     xs: 12,
@@ -58,10 +53,7 @@ const FileTable = ({
     lg: 3,
     xl: 2,
   };
-  const {
-    filesCurrentView,
-    videosCurrentView,
-  } = useSelector((state) => state.videos);
+  const { defaultView } = useSelector((state) => state.videos);
   const [isDeleteOpen, setDeleteOpen, setDeleteClose] = useToggle(false);
   const [isDownloadOpen, setDownloadOpen, setDownloadClose] = useToggle(false);
   const [isAssetInfoOpen, openAssetInfo, closeAssetinfo] = useToggle(false);
@@ -85,6 +77,8 @@ const FileTable = ({
     supportedFileFormats,
     fileType,
   } = data;
+  const defaultCurrentView = (fileType === 'video' && localStorage.getItem('videosCurrentView')) || (fileType === 'file' && localStorage.getItem('filesCurrentView')) || defaultView;
+  const [currentView, setCurrentView] = useState(defaultCurrentView);
 
   useEffect(() => {
     if (!isEmpty(selectedRows) && Object.keys(selectedRows[0]).length > 0) {
@@ -208,13 +202,15 @@ const FileTable = ({
           isDataViewToggleEnabled: true,
           onDataViewToggle: (val) => {
             if (fileType === 'video') {
-              dispatch(setVideosCurrentViewState({ videosCurrentView: val }));
+              localStorage.setItem('videosCurrentView', val);
+              setCurrentView(val);
             } else {
               // There's only 2 fileTypes currently being used i.e. video or file
-              dispatch(setFilesCurrentViewState({ filesCurrentView: val }));
+              localStorage.setItem('filesCurrentView', val);
+              setCurrentView(val);
             }
           },
-          defaultActiveStateValue: (fileType === 'video' && videosCurrentView) || (fileType === 'file' && filesCurrentView),
+          defaultActiveStateValue: defaultCurrentView,
           togglePlacement: 'left',
         }}
         initialState={initialState}
@@ -242,8 +238,8 @@ const FileTable = ({
           <div data-testid="files-data-table" className="bg-light-200">
             <DataTable.TableControlBar />
             <hr className="mb-5 border-light-700" />
-            { ((fileType === 'video' && videosCurrentView === 'card') || (fileType === 'file' && filesCurrentView === 'card')) && <CardView CardComponent={fileCard} columnSizes={columnSizes} selectionPlacement="left" skeletonCardCount={6} /> }
-            { ((fileType === 'video' && videosCurrentView === 'list') || (fileType === 'file' && filesCurrentView === 'list')) && <DataTable.Table /> }
+            { currentView === 'card' && <CardView CardComponent={fileCard} columnSizes={columnSizes} selectionPlacement="left" skeletonCardCount={6} /> }
+            { currentView === 'list' && <DataTable.Table /> }
             <DataTable.EmptyTable content={intl.formatMessage(messages.noResultsFoundMessage)} />
             <Footer />
           </div>

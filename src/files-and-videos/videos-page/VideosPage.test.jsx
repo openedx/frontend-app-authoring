@@ -110,6 +110,7 @@ describe('Videos page', () => {
       axiosMock = new MockAdapter(getAuthenticatedHttpClient());
       axiosUnauthenticateMock = new MockAdapter(getHttpClient());
       file = new File(['(⌐□_□)'], 'download.mp4', { type: 'video/mp4' });
+      global.localStorage.clear();
     });
 
     it('should return placeholder component', async () => {
@@ -166,6 +167,7 @@ describe('Videos page', () => {
       axiosMock = new MockAdapter(getAuthenticatedHttpClient());
       axiosUnauthenticateMock = new MockAdapter(getHttpClient());
       file = new File(['(⌐□_□)'], 'download.png', { type: 'image/png' });
+      global.localStorage.clear();
     });
 
     describe('table view', () => {

@@ -58,8 +58,7 @@ export const initialState = {
       transcript: [],
       loading: '',
     },
-    filesCurrentView: 'card',
-    videosCurrentView: 'list',
+    defaultView: 'card',
   },
 };
 
