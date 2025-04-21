@@ -173,7 +173,7 @@ describe('library api hooks', () => {
   });
 
   it('should restore a container', async () => {
-    const containerId = 'lct:lib:org:unit:unit1';
+    const containerId = 'lct:org:lib:unit:unit1';
     const url = getLibraryContainerRestoreApiUrl(containerId);
 
     axiosMock.onPost(url).reply(200);
