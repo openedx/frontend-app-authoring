@@ -21,13 +21,13 @@ const jsInputResponse = `<problem>
     </p>
     <p>
         For more information, see
-        <a href="https://docs.openedx.org/en/latest/educators/references/course_development/exercise_tools/custom_javascript.html" target="_blank">
-        Custom JavaScript Problem</a> in <i>Building and Running an Open edX Course</i>.
+        <a href="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/custom_javascript.html" target="_blank">
+        Custom JavaScript Problem</a> in <i>Building and Running an edX Course</i>.
     </p>
     <p>
         JavaScript developers can also see
-        <a href="https://docs.openedx.org/en/latest/developers/references/developer_guide/extending_platform/extending.html" target="_blank">
-        Custom JavaScript Applications</a> in the <i>Open edX Developer's Guide</i>.
+        <a href="https://edx.readthedocs.io/projects/edx-developer-guide/en/latest/extending_platform/javascript.html" target="_blank">
+        Custom JavaScript Applications</a> in the <i>EdX Developer's Guide</i>.
     </p>
     <p>
         When you add the problem, be sure to select <strong>Settings</strong>

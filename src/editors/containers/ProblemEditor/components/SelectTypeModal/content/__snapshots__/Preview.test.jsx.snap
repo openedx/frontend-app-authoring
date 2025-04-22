@@ -36,7 +36,7 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is ch
     Learners must select all correct answers from a list of possible options.
   </div>
   <Hyperlink
-    destination="https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_multi_select.html"
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/checkbox.html"
     target="_blank"
   >
     <FormattedMessage
@@ -82,7 +82,7 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is mu
     Learners must select the correct answer from a list of possible options.
   </div>
   <Hyperlink
-    destination="https://docs.openedx.org/en/latest/educators/concepts/exercise_tools/about_multi_select.html"
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/multiple_choice.html"
     target="_blank"
   >
     <FormattedMessage
@@ -128,7 +128,7 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is nu
     Specify one or more correct numeric answers, submitted in a response field.
   </div>
   <Hyperlink
-    destination="https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/manage_numerical_input_problem.html"
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/numerical_input.html"
     target="_blank"
   >
     <FormattedMessage
@@ -174,7 +174,7 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is op
     Learners must select the correct answer from a list of possible options
   </div>
   <Hyperlink
-    destination="https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_dropdown.html"
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/dropdown.html"
     target="_blank"
   >
     <FormattedMessage
@@ -220,7 +220,7 @@ exports[`Preview snapshots snapshots: renders as expected with problemType is st
     Specify one or more correct text answers, including numbers and special characters, submitted in a response field.
   </div>
   <Hyperlink
-    destination="https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_text_input.html"
+    destination="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/text_input.html"
     target="_blank"
   >
     <FormattedMessage

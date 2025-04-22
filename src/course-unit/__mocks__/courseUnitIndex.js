@@ -968,7 +968,7 @@ module.exports = {
         highlights: [],
         highlights_enabled: true,
         highlights_preview_only: false,
-        highlights_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
+        highlights_doc_url: 'http://edx.readthedocs.io/projects/open-edx-building-and-running-a-course/en/latest/developing_course/course_sections.html#set-section-highlights-for-weekly-course-highlight-messages',
         ancestor_has_staff_lock: false,
         user_partition_info: {
           selectable_partitions: [
@@ -1054,7 +1054,7 @@ module.exports = {
         highlights_enabled_for_messaging: false,
         highlights_enabled: true,
         highlights_preview_only: false,
-        highlights_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
+        highlights_doc_url: 'http://edx.readthedocs.io/projects/open-edx-building-and-running-a-course/en/latest/developing_course/course_sections.html#set-section-highlights-for-weekly-course-highlight-messages',
         enable_proctored_exams: false,
         create_zendesk_tickets: true,
         enable_timed_exams: true,

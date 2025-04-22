@@ -8,9 +8,9 @@ const imageResponse = `<problem>
         <p>
             In an image mapped input problem, also known as a "pointing on a picture" problem, students click inside a defined region in an image. You define this region by including coordinates in the body of the problem. You can define one rectangular region,
             multiple rectangular regions, or one non-rectangular region. For more information, see
-            <a href="https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/create_image_mapped_input.html" target="_blank">Image Mapped Input Problem</a>
+            <a href="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/image_mapped_input.html" target="_blank">Image Mapped Input Problem</a>
             in
-            <i>Building and Running an Open edX Course</i>.
+            <i>Building and Running an edx Course</i>.
         </p>
         <p>When you add the problem, be sure to select
             <strong>Settings</strong>

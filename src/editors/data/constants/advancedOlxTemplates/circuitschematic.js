@@ -13,8 +13,8 @@ const circuitSchematic = `<problem>
     </p>
     <p>
         For more information, see
-        <a href="https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/add_circuit_schematic_builder.html" target="_blank">
-        Circuit Schematic Builder Problem</a> in <i>Building and Running an Open edX Course</i>.
+        <a href="https://edx.readthedocs.io/projects/edx-partner-course-staff/en/latest/exercises_tools/circuit_schematic_builder.html" target="_blank">
+        Circuit Schematic Builder Problem</a> in <i>Building and Running an edX Course</i>.
     </p>
     <p>
         When you add the problem, be sure to select <strong>Settings</strong>

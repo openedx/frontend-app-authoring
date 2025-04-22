@@ -55,7 +55,7 @@ module.exports = {
   highlights: [],
   highlights_enabled: true,
   highlights_preview_only: false,
-  highlights_doc_url: 'https://docs.openedx.org/en/latest/educators/how-tos/course_development/manage_course_highlight_emails.html',
+  highlights_doc_url: 'http://edx.readthedocs.io/projects/open-edx-building-and-running-a-course/en/latest/developing_course/course_sections.html#set-section-highlights-for-weekly-course-highlight-messages',
   child_info: {
     category: 'sequential',
     display_name: 'Subsection',
