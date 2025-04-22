@@ -439,7 +439,7 @@ export const convertMarkdownToXml = (markdown) => {
     let responseType = xmlDoc.querySelectorAll(responseTypesSelector);
     // convert if there is only one responsetype
     if (responseType.length === 1) {
-      responseType = responseType[0];
+      [responseType] = responseType;
       const inputtype = responseType.firstElementChild;
       // used to decide whether an element should be placed before or after an inputtype
       let beforeInputtype = true;
