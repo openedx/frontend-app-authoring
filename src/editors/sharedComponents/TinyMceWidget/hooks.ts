@@ -111,6 +111,7 @@ export const replaceStaticWithAsset = ({
   learningContextId,
   editorType,
   lmsEndpointUrl,
+  validateAssetUrl = true,
 }) => {
   let content = initialContent;
   let hasChanges = false;
@@ -152,8 +153,10 @@ export const replaceStaticWithAsset = ({
 
         // check if the asset exists on the server before replacing
         try {
-          await getAuthenticatedHttpClient()
-            .get(staticFullUrl);
+          if (validateAssetUrl) {
+            await getAuthenticatedHttpClient()
+              .get(staticFullUrl);
+          }
           content = currentContent.replace(currentSrc, staticFullUrl);
           hasChanges = true;
         } catch (e) {
