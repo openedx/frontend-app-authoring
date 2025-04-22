@@ -11,7 +11,7 @@ import {
   OverlayTrigger,
   Stack,
 } from '@openedx/paragon';
-import { Edit, EditCircle } from '@openedx/paragon/icons';
+import { Edit } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
@@ -127,7 +127,7 @@ export const InplaceTextEditor: React.FC<InplaceTextEditorProps> = ({
         <IconWrapper>
           <Icon
             id="edit-text-icon"
-            src={EditCircle}
+            src={Edit}
             className="ml-1.5"
             onClick={handleEdit}
           />
