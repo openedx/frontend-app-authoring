@@ -72,6 +72,10 @@ export const parseState = ({
   ref,
   lmsEndpointUrl,
 }) => () => {
+  // Constructs the save payload by parsing the current state of the problem editor.
+  // If the Markdown editor is enabled, content is converted to OLX using convertMarkdownToXml.
+  // For advanced problems, raw editor content is used as OLX; for simple problems, OLX is generated using ReactStateOLXParser.
+  // Settings are then parsed from the OLX and returned alongside the OLX content, including markdown incase of markdown editor.
   const contentString = ref?.current?.state.doc.toString();
   const rawOLX = isMarkdownEditorEnabled ? convertMarkdownToXml(contentString) : contentString;
   let reactBuiltOlx;

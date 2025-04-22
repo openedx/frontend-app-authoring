@@ -24,6 +24,13 @@ jest.mock('@edx/frontend-platform/i18n', () => ({
   }),
 }));
 
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useSelector: () => ({
+    useReactMarkdownEditor: true, // or false depending on the test
+  }),
+}));
+
 const props = { learningContextId: 'cOuRsEId' };
 
 describe('Editor Container', () => {

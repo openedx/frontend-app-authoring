@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
+import { injectIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Card } from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import messages from '../messages';
@@ -11,7 +11,6 @@ import { handleConfirmEditorSwitch } from '../hooks';
 import { ProblemTypeKeys } from '../../../../../../data/constants/problem';
 
 const SwitchEditorCard = ({
-  intl,
   editorType,
   problemType,
   switchEditor,
@@ -26,14 +25,14 @@ const SwitchEditorCard = ({
       <BaseModal
         isOpen={isConfirmOpen}
         close={() => { setConfirmOpen(false); }}
-        title={intl.formatMessage(messages.ConfirmSwitchMessageTitle, { convertType: editorType === 'advanced' ? 'OLX' : 'Markdown' })}
+        title={<FormattedMessage {...messages[`ConfirmSwitchMessageTitle-${editorType}`]} />}
         confirmAction={(
           <Button
             /* istanbul ignore next */
             onClick={() => handleConfirmEditorSwitch({ switchEditor: () => switchEditor(editorType), setConfirmOpen })}
             variant="primary"
           >
-            {intl.formatMessage(messages.ConfirmSwitchButtonLabel, { editorType })}
+            <FormattedMessage {...messages[`ConfirmSwitchButtonLabel-${editorType}`]} />
           </Button>
         )}
         size="md"
@@ -46,14 +45,13 @@ const SwitchEditorCard = ({
         size="sm"
         onClick={() => { setConfirmOpen(true); }}
       >
-        {intl.formatMessage(messages.SwitchButtonLabel, { editorType }) }
+        <FormattedMessage {...messages[`SwitchButtonLabel-${editorType}`]} />
       </Button>
     </Card>
   );
 };
 
 SwitchEditorCard.propTypes = {
-  intl: intlShape.isRequired,
   switchEditor: PropTypes.func.isRequired,
   isMarkdownEditorEnabled: PropTypes.bool.isRequired,
   problemType: PropTypes.string.isRequired,
@@ -69,4 +67,4 @@ export const mapDispatchToProps = {
 };
 
 export const SwitchEditorCardInternal = SwitchEditorCard; // For testing only
-export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(SwitchEditorCard));
+export default connect(mapStateToProps, mapDispatchToProps)(SwitchEditorCard);
