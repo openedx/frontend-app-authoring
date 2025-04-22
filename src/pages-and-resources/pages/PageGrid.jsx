@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { injectIntl } from '@edx/frontend-platform/i18n';
 import { CardGrid } from '@openedx/paragon';
 import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import PageCard, { CoursePageShape } from './PageCard';
@@ -31,4 +30,4 @@ PageGrid.propTypes = {
   courseId: PropTypes.string,
 };
 
-export default injectIntl(PageGrid);
+export default PageGrid;

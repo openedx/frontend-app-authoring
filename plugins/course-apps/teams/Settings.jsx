@@ -1,4 +1,4 @@
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, Form } from '@openedx/paragon';
 import { Add } from '@openedx/paragon/icons';
 
@@ -17,9 +17,9 @@ import messages from './messages';
 setupYupExtensions();
 
 const TeamSettings = ({
-  intl,
   onClose,
 }) => {
+  const intl = useIntl();
   const [teamsConfiguration, saveSettings] = useAppSetting('teamsConfiguration');
   const blankNewGroup = {
     name: '',
@@ -166,8 +166,7 @@ const TeamSettings = ({
 };
 
 TeamSettings.propTypes = {
-  intl: intlShape.isRequired,
   onClose: PropTypes.func.isRequired,
 };
 
-export default injectIntl(TeamSettings);
+export default TeamSettings;

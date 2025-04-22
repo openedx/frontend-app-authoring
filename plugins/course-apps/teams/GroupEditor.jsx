@@ -1,4 +1,4 @@
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, Form, TransitionReplace } from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
@@ -30,8 +30,9 @@ const TeamTypeNameMessage = {
 };
 
 const GroupEditor = ({
-  intl, group, onDelete, onChange, onBlur, fieldNameCommonBase, errors,
+  group, onDelete, onChange, onBlur, fieldNameCommonBase, errors,
 }) => {
+  const intl = useIntl();
   const [isDeleting, setDeleting] = useState(false);
   const [isOpen, setOpen] = useState(group.id === null);
   const initiateDeletion = () => setDeleting(true);
@@ -149,7 +150,6 @@ export const groupShape = PropTypes.shape({
 });
 
 GroupEditor.propTypes = {
-  intl: intlShape.isRequired,
   fieldNameCommonBase: PropTypes.string.isRequired,
   errors: PropTypes.shape({
     name: PropTypes.string,
@@ -170,4 +170,4 @@ GroupEditor.defaultProps = {
   },
 };
 
-export default injectIntl(GroupEditor);
+export default GroupEditor;

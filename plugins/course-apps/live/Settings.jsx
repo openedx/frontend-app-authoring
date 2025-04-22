@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { camelCase } from 'lodash';
 import { Icon } from '@openedx/paragon';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
@@ -20,9 +20,9 @@ import ZoomSettings from './ZoomSettings';
 import BBBSettings from './BBBSettings';
 
 const LiveSettings = ({
-  intl,
   onClose,
 }) => {
+  const intl = useIntl();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const courseId = useSelector(state => state.courseDetail.courseId);
@@ -130,8 +130,7 @@ const LiveSettings = ({
 };
 
 LiveSettings.propTypes = {
-  intl: intlShape.isRequired,
   onClose: PropTypes.func.isRequired,
 };
 
-export default injectIntl(LiveSettings);
+export default LiveSettings;

@@ -4,7 +4,7 @@ import React, {
 import PropTypes from 'prop-types';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Alert, Button, FullscreenModal, Stepper,
 } from '@openedx/paragon';
@@ -25,7 +25,8 @@ import Loading from '../../generic/Loading';
 const SELECTION_STEP = 'selection';
 const SETTINGS_STEP = 'settings';
 
-const DiscussionsSettings = ({ courseId, intl }) => {
+const DiscussionsSettings = ({ courseId }) => {
+  const intl = useIntl();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { path: pagesAndResourcesPath } = useContext(PagesAndResourcesContext);
@@ -148,7 +149,6 @@ const DiscussionsSettings = ({ courseId, intl }) => {
 
 DiscussionsSettings.propTypes = {
   courseId: PropTypes.string.isRequired,
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(DiscussionsSettings);
+export default DiscussionsSettings;

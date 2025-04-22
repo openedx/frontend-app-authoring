@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { getConfig } from '@edx/frontend-platform';
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import { PageWrap, AppContext } from '@edx/frontend-platform/react';
 
 import { Routes, Route } from 'react-router-dom';
@@ -21,7 +21,8 @@ import SettingsComponent from './SettingsComponent';
 import PermissionDeniedAlert from '../generic/PermissionDeniedAlert';
 import getPageHeadTitle from '../generic/utils';
 
-const PagesAndResources = ({ courseId, intl }) => {
+const PagesAndResources = ({ courseId }) => {
+  const intl = useIntl();
   const courseDetails = useModel('courseDetails', courseId);
   document.title = getPageHeadTitle(courseDetails?.name, intl.formatMessage(messages.heading));
 
@@ -108,7 +109,6 @@ const PagesAndResources = ({ courseId, intl }) => {
 
 PagesAndResources.propTypes = {
   courseId: PropTypes.string.isRequired,
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(PagesAndResources);
+export default PagesAndResources;

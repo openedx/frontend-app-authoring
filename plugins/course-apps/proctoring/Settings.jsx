@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 
 import { getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
-import { injectIntl, intlShape, FormattedMessage } from '@edx/frontend-platform/i18n';
+import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   ActionRow, Alert, Badge, Form, Hyperlink, ModalDialog, StatefulButton,
 } from '@openedx/paragon';
@@ -25,7 +25,8 @@ import { PagesAndResourcesContext } from 'CourseAuthoring/pages-and-resources/Pa
 
 import messages from './messages';
 
-const ProctoringSettings = ({ intl, onClose }) => {
+const ProctoringSettings = ({ onClose }) => {
+  const intl = useIntl();
   const initialFormValues = {
     enableProctoredExams: false,
     proctoringProvider: false,
@@ -652,10 +653,9 @@ const ProctoringSettings = ({ intl, onClose }) => {
 };
 
 ProctoringSettings.propTypes = {
-  intl: intlShape.isRequired,
   onClose: PropTypes.func.isRequired,
 };
 
 ProctoringSettings.defaultProps = {};
 
-export default injectIntl(ProctoringSettings);
+export default ProctoringSettings;
