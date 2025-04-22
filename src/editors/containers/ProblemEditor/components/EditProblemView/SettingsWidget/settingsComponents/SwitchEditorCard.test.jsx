@@ -18,7 +18,7 @@ describe('SwitchEditorCard snapshot', () => {
   });
   test('snapshot: SwitchEditorCard returns null when editor is Markdown', () => {
     expect(
-      shallow(<SwitchEditorCard switchEditor={mockSwitchEditor} problemType="stringresponse" editorType="markdown" />).snapshot,
+      shallow(<SwitchEditorCard switchEditor={mockSwitchEditor} problemType="stringresponse" editorType="markdown" isMarkdownEditorEnabled={true} />).snapshot,
     ).toMatchSnapshot();
   });
 
