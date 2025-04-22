@@ -5,7 +5,7 @@ import {
 } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppContext, PageWrap } from '@edx/frontend-platform/react';
-import { injectIntl, FormattedMessage, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
   Breadcrumb,
@@ -45,9 +45,8 @@ import { getPagePath } from '../utils';
 
 const CustomPages = ({
   courseId,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [orderedPages, setOrderedPages] = useState([]);
@@ -278,8 +277,6 @@ const CustomPages = ({
 
 CustomPages.propTypes = {
   courseId: PropTypes.string.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(CustomPages);
+export default CustomPages;
