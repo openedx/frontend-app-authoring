@@ -157,42 +157,42 @@ const messages = defineMessages({
     defaultMessage: 'Type',
     description: 'Type settings card title',
   },
-  ['SwitchButtonLabel-advanced']: {
+  'SwitchButtonLabel-advanced': {
     id: 'authoring.problemeditor.settings.switchtoeditor.label.advanced',
     defaultMessage: 'Switch to advanced editor',
     description: 'button to switch to the advanced mode of the editor',
   },
-  ['SwitchButtonLabel-markdown']: {
+  'SwitchButtonLabel-markdown': {
     id: 'authoring.problemeditor.settings.switchtoeditor.label.markdown',
     defaultMessage: 'Switch to markdown editor',
     description: 'button to switch to the markdown editor',
   },
-  ['ConfirmSwitchMessage-advanced']: {
+  'ConfirmSwitchMessage-advanced': {
     id: 'authoring.problemeditor.settings.switchtoeditor.ConfirmSwitchMessage.advanced',
     defaultMessage: 'If you use the advanced editor, this problem will be converted to OLX and you will not be able to return to the simple editor.',
     description: 'message to confirm that a user wants to use the advanced editor',
   },
-  ['ConfirmSwitchMessage-markdown']: {
+  'ConfirmSwitchMessage-markdown': {
     id: 'authoring.problemeditor.settings.switchtoeditor.ConfirmSwitchMessage.markdown',
     defaultMessage: 'If you use the markdown editor, this problem will be converted to markdown and you will not be able to return to the simple editor.',
     description: 'message to confirm that a user wants to use the advanced editor',
   },
-  ['ConfirmSwitchMessageTitle-advanced']: {
+  'ConfirmSwitchMessageTitle-advanced': {
     id: 'authoring.problemeditor.settings.switchtoeditor.ConfirmSwitchMessageTitle.advanced',
     defaultMessage: 'Convert to OLX?',
     description: 'message to confirm that a user wants to use the advanced editor',
   },
-  ['ConfirmSwitchMessageTitle-markdown']: {
+  'ConfirmSwitchMessageTitle-markdown': {
     id: 'authoring.problemeditor.settings.switchtoeditor.ConfirmSwitchMessageTitle.markdown',
     defaultMessage: 'Convert to Markdown?',
     description: 'message to confirm that a user wants to use the markdown editor',
   },
-  ['ConfirmSwitchButtonLabel-advanced']: {
+  'ConfirmSwitchButtonLabel-advanced': {
     id: 'authoring.problemeditor.settings.switchtoeditor.ConfirmSwitchButtonLabel.advanced',
     defaultMessage: 'Switch to advanced editor',
     description: 'message to confirm that a user wants to use the advanced editor',
   },
-  ['ConfirmSwitchButtonLabel-markdown']: {
+  'ConfirmSwitchButtonLabel-markdown': {
     id: 'authoring.problemeditor.settings.switchtoeditor.ConfirmSwitchButtonLabel.markdown',
     defaultMessage: 'Switch to markdown editor',
     description: 'message to confirm that a user wants to use the markdown editor',
