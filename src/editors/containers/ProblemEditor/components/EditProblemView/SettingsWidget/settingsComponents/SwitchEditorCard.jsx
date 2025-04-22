@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { injectIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
+import { FormattedMessage } from '@edx/frontend-platform/i18n';
 import { Card } from '@openedx/paragon';
 import PropTypes from 'prop-types';
 import messages from '../messages';
@@ -37,7 +37,7 @@ const SwitchEditorCard = ({
         )}
         size="md"
       >
-        {editorType === 'advanced' ? <FormattedMessage {...messages.ConfirmSwitchToAdvancedMessage} /> : <FormattedMessage {...messages.ConfirmSwitchToMardownMessage} />}
+        <FormattedMessage {...messages[`ConfirmSwitchMessage-${editorType}`]} />
       </BaseModal>
       <Button
         className="my-3 ml-2 py-0"
