@@ -342,7 +342,7 @@ describe('<TabsSection />', () => {
       expect(librariesTab).toHaveClass('active');
 
       await screen.findByText('Showing 2 of 2');
-      expect(screen.getByText('Page 1, Current Page, of 2')).toBeVisible();
+      expect(screen.getAllByText('Page 1, Current Page, of 2')[0]).toBeVisible();
 
       expect(screen.getByText(contentLibrariesListV2.results[0].title)).toBeVisible();
       expect(screen.getByText(
