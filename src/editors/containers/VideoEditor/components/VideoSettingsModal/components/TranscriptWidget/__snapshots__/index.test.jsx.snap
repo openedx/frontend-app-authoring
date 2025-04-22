@@ -4,12 +4,10 @@ exports[`TranscriptWidget component snapshots snapshot: render when \`isCreateWo
 <div
   className="mr-4 ml-4"
 >
-  <withDeprecatedProps(Card)
+  <Card
     className="bg-light-200"
   >
-    <ForwardRef
-      muted={false}
-      skeletonHeight={100}
+    <Card.Section
       title={
         <div
           className="text-gray-500"
@@ -23,8 +21,8 @@ exports[`TranscriptWidget component snapshots snapshot: render when \`isCreateWo
       >
         To add transcripts, save and reopen this video
       </div>
-    </ForwardRef>
-  </withDeprecatedProps(Card)>
+    </Card.Section>
+  </Card>
 </div>
 `;
 
@@ -40,7 +38,7 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
     hideHeading={true}
     isError={false}
   >
-    <Memo(MemoizedFormattedMessage)
+    <FormattedMessage
       defaultMessage="Failed to upload transcript. Please try again."
       description="Message presented to user when transcript fails to upload"
       id="authoring.videoeditor.transcript.error.uploadTranscriptError"
@@ -51,18 +49,16 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
     hideHeading={true}
     isError={true}
   >
-    <Memo(MemoizedFormattedMessage)
+    <FormattedMessage
       defaultMessage="Failed to delete transcript. Please try again."
       description="Message presented to user when transcript fails to delete"
       id="authoring.videoeditor.transcript.error.deleteTranscriptError"
     />
   </ErrorAlert>
-  <ForwardRef
-    direction="vertical"
+  <Stack
     gap={3}
-    reversed={false}
   >
-    <FormGroup
+    <Form.Group
       className="border-primary-100 border-bottom"
     >
       <Transcript
@@ -70,70 +66,39 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
         language="en"
       />
       <ActionRow
-        as="div"
         className="mt-3.5"
-        isStacked={false}
       >
-        <ForwardRef
+        <Form.Checkbox
           checked={false}
           className="decorative-control-label"
-          controlAs={
-            {
-              "$$typeof": Symbol(react.forward_ref),
-              "defaultProps": {
-                "className": undefined,
-                "isIndeterminate": false,
-              },
-              "propTypes": {
-                "className": [Function],
-                "isIndeterminate": [Function],
-              },
-              "render": [Function],
-            }
-          }
-          disabled={false}
-          floatLabelLeft={false}
-          isInvalid={false}
-          isValid={false}
           onChange={[Function]}
         >
           <div
             className="small text-gray-700"
           >
-            <Memo(MemoizedFormattedMessage)
+            <FormattedMessage
               defaultMessage="Allow transcript downloads"
               description="Label for allow transcript downloads checkbox"
               id="authoring.videoeditor.transcripts.allowDownloadCheckboxLabel"
             />
           </div>
-        </ForwardRef>
+        </Form.Checkbox>
         <OverlayTrigger
-          defaultShow={false}
           key="top"
           overlay={
-            <ForwardRef
-              bsPrefix="tooltip"
+            <Tooltip
               id="tooltip-top"
-              placement="right"
             >
-              <Memo(MemoizedFormattedMessage)
+              <FormattedMessage
                 defaultMessage="Learners will see a link to download the transcript below the video."
                 description="Message for show by default checkbox"
                 id="authoring.videoeditor.transcripts.upload.allowDownloadTooltipMessage"
               />
-            </ForwardRef>
+            </Tooltip>
           }
           placement="top"
-          popperConfig={{}}
-          trigger={
-            [
-              "hover",
-              "focus",
-            ]
-          }
         >
-          <withDeprecatedProps(Icon)
-            src={[Function]}
+          <Icon
             style={
               {
                 "height": "16px",
@@ -142,61 +107,41 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
             }
           />
         </OverlayTrigger>
-        <ActionRowSpacer />
+        <ActionRow.Spacer />
       </ActionRow>
-      <ForwardRef
+      <Form.Checkbox
         checked={false}
         className="mt-3 decorative-control-label"
-        controlAs={
-          {
-            "$$typeof": Symbol(react.forward_ref),
-            "defaultProps": {
-              "className": undefined,
-              "isIndeterminate": false,
-            },
-            "propTypes": {
-              "className": [Function],
-              "isIndeterminate": [Function],
-            },
-            "render": [Function],
-          }
-        }
-        disabled={false}
-        floatLabelLeft={false}
-        isInvalid={false}
-        isValid={false}
         onChange={[Function]}
       >
         <div
           className="small text-gray-700"
         >
-          <Memo(MemoizedFormattedMessage)
+          <FormattedMessage
             defaultMessage="Show transcript in the video player by default"
             description="Label for show by default checkbox"
             id="authoring.videoeditor.transcripts.upload.showByDefaultCheckboxLabel"
           />
         </div>
-      </ForwardRef>
-    </FormGroup>
+      </Form.Checkbox>
+    </Form.Group>
     <div
       className="mt-2"
     >
-      <ForwardRef
+      <Button
         className="text-primary-500 font-weight-bold justify-content-start pl-0"
-        disabled={false}
-        iconBefore={[Function]}
         onClick={[Function]}
         size="sm"
         variant="link"
       >
-        <Memo(MemoizedFormattedMessage)
+        <FormattedMessage
           defaultMessage="Add a transcript"
           description="Label for upload button"
           id="authoring.videoeditor.transcripts.upload.label"
         />
-      </ForwardRef>
+      </Button>
     </div>
-  </ForwardRef>
+  </Stack>
 </CollapsibleFormWidget>
 `;
 
@@ -212,7 +157,7 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
     hideHeading={true}
     isError={true}
   >
-    <Memo(MemoizedFormattedMessage)
+    <FormattedMessage
       defaultMessage="Failed to upload transcript. Please try again."
       description="Message presented to user when transcript fails to upload"
       id="authoring.videoeditor.transcript.error.uploadTranscriptError"
@@ -223,18 +168,16 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
     hideHeading={true}
     isError={false}
   >
-    <Memo(MemoizedFormattedMessage)
+    <FormattedMessage
       defaultMessage="Failed to delete transcript. Please try again."
       description="Message presented to user when transcript fails to delete"
       id="authoring.videoeditor.transcript.error.deleteTranscriptError"
     />
   </ErrorAlert>
-  <ForwardRef
-    direction="vertical"
+  <Stack
     gap={3}
-    reversed={false}
   >
-    <FormGroup
+    <Form.Group
       className="border-primary-100 border-bottom"
     >
       <Transcript
@@ -246,70 +189,39 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
         language="fr"
       />
       <ActionRow
-        as="div"
         className="mt-3.5"
-        isStacked={false}
       >
-        <ForwardRef
+        <Form.Checkbox
           checked={false}
           className="decorative-control-label"
-          controlAs={
-            {
-              "$$typeof": Symbol(react.forward_ref),
-              "defaultProps": {
-                "className": undefined,
-                "isIndeterminate": false,
-              },
-              "propTypes": {
-                "className": [Function],
-                "isIndeterminate": [Function],
-              },
-              "render": [Function],
-            }
-          }
-          disabled={false}
-          floatLabelLeft={false}
-          isInvalid={false}
-          isValid={false}
           onChange={[Function]}
         >
           <div
             className="small text-gray-700"
           >
-            <Memo(MemoizedFormattedMessage)
+            <FormattedMessage
               defaultMessage="Allow transcript downloads"
               description="Label for allow transcript downloads checkbox"
               id="authoring.videoeditor.transcripts.allowDownloadCheckboxLabel"
             />
           </div>
-        </ForwardRef>
+        </Form.Checkbox>
         <OverlayTrigger
-          defaultShow={false}
           key="top"
           overlay={
-            <ForwardRef
-              bsPrefix="tooltip"
+            <Tooltip
               id="tooltip-top"
-              placement="right"
             >
-              <Memo(MemoizedFormattedMessage)
+              <FormattedMessage
                 defaultMessage="Learners will see a link to download the transcript below the video."
                 description="Message for show by default checkbox"
                 id="authoring.videoeditor.transcripts.upload.allowDownloadTooltipMessage"
               />
-            </ForwardRef>
+            </Tooltip>
           }
           placement="top"
-          popperConfig={{}}
-          trigger={
-            [
-              "hover",
-              "focus",
-            ]
-          }
         >
-          <withDeprecatedProps(Icon)
-            src={[Function]}
+          <Icon
             style={
               {
                 "height": "16px",
@@ -318,61 +230,41 @@ exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with 
             }
           />
         </OverlayTrigger>
-        <ActionRowSpacer />
+        <ActionRow.Spacer />
       </ActionRow>
-      <ForwardRef
+      <Form.Checkbox
         checked={false}
         className="mt-3 decorative-control-label"
-        controlAs={
-          {
-            "$$typeof": Symbol(react.forward_ref),
-            "defaultProps": {
-              "className": undefined,
-              "isIndeterminate": false,
-            },
-            "propTypes": {
-              "className": [Function],
-              "isIndeterminate": [Function],
-            },
-            "render": [Function],
-          }
-        }
-        disabled={false}
-        floatLabelLeft={false}
-        isInvalid={false}
-        isValid={false}
         onChange={[Function]}
       >
         <div
           className="small text-gray-700"
         >
-          <Memo(MemoizedFormattedMessage)
+          <FormattedMessage
             defaultMessage="Show transcript in the video player by default"
             description="Label for show by default checkbox"
             id="authoring.videoeditor.transcripts.upload.showByDefaultCheckboxLabel"
           />
         </div>
-      </ForwardRef>
-    </FormGroup>
+      </Form.Checkbox>
+    </Form.Group>
     <div
       className="mt-2"
     >
-      <ForwardRef
+      <Button
         className="text-primary-500 font-weight-bold justify-content-start pl-0"
-        disabled={false}
-        iconBefore={[Function]}
         onClick={[Function]}
         size="sm"
         variant="link"
       >
-        <Memo(MemoizedFormattedMessage)
+        <FormattedMessage
           defaultMessage="Add a transcript"
           description="Label for upload button"
           id="authoring.videoeditor.transcripts.upload.label"
         />
-      </ForwardRef>
+      </Button>
     </div>
-  </ForwardRef>
+  </Stack>
 </CollapsibleFormWidget>
 `;
 
@@ -388,7 +280,7 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
     hideHeading={true}
     isError={false}
   >
-    <Memo(MemoizedFormattedMessage)
+    <FormattedMessage
       defaultMessage="Failed to upload transcript. Please try again."
       description="Message presented to user when transcript fails to upload"
       id="authoring.videoeditor.transcript.error.uploadTranscriptError"
@@ -399,18 +291,16 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
     hideHeading={true}
     isError={false}
   >
-    <Memo(MemoizedFormattedMessage)
+    <FormattedMessage
       defaultMessage="Failed to delete transcript. Please try again."
       description="Message presented to user when transcript fails to delete"
       id="authoring.videoeditor.transcript.error.deleteTranscriptError"
     />
   </ErrorAlert>
-  <ForwardRef
-    direction="vertical"
+  <Stack
     gap={3}
-    reversed={false}
   >
-    <FormGroup
+    <Form.Group
       className="border-primary-100 border-bottom"
     >
       <Transcript
@@ -418,70 +308,39 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
         language="en"
       />
       <ActionRow
-        as="div"
         className="mt-3.5"
-        isStacked={false}
       >
-        <ForwardRef
+        <Form.Checkbox
           checked={true}
           className="decorative-control-label"
-          controlAs={
-            {
-              "$$typeof": Symbol(react.forward_ref),
-              "defaultProps": {
-                "className": undefined,
-                "isIndeterminate": false,
-              },
-              "propTypes": {
-                "className": [Function],
-                "isIndeterminate": [Function],
-              },
-              "render": [Function],
-            }
-          }
-          disabled={false}
-          floatLabelLeft={false}
-          isInvalid={false}
-          isValid={false}
           onChange={[Function]}
         >
           <div
             className="small text-gray-700"
           >
-            <Memo(MemoizedFormattedMessage)
+            <FormattedMessage
               defaultMessage="Allow transcript downloads"
               description="Label for allow transcript downloads checkbox"
               id="authoring.videoeditor.transcripts.allowDownloadCheckboxLabel"
             />
           </div>
-        </ForwardRef>
+        </Form.Checkbox>
         <OverlayTrigger
-          defaultShow={false}
           key="top"
           overlay={
-            <ForwardRef
-              bsPrefix="tooltip"
+            <Tooltip
               id="tooltip-top"
-              placement="right"
             >
-              <Memo(MemoizedFormattedMessage)
+              <FormattedMessage
                 defaultMessage="Learners will see a link to download the transcript below the video."
                 description="Message for show by default checkbox"
                 id="authoring.videoeditor.transcripts.upload.allowDownloadTooltipMessage"
               />
-            </ForwardRef>
+            </Tooltip>
           }
           placement="top"
-          popperConfig={{}}
-          trigger={
-            [
-              "hover",
-              "focus",
-            ]
-          }
         >
-          <withDeprecatedProps(Icon)
-            src={[Function]}
+          <Icon
             style={
               {
                 "height": "16px",
@@ -490,61 +349,41 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
             }
           />
         </OverlayTrigger>
-        <ActionRowSpacer />
+        <ActionRow.Spacer />
       </ActionRow>
-      <ForwardRef
+      <Form.Checkbox
         checked={false}
         className="mt-3 decorative-control-label"
-        controlAs={
-          {
-            "$$typeof": Symbol(react.forward_ref),
-            "defaultProps": {
-              "className": undefined,
-              "isIndeterminate": false,
-            },
-            "propTypes": {
-              "className": [Function],
-              "isIndeterminate": [Function],
-            },
-            "render": [Function],
-          }
-        }
-        disabled={false}
-        floatLabelLeft={false}
-        isInvalid={false}
-        isValid={false}
         onChange={[Function]}
       >
         <div
           className="small text-gray-700"
         >
-          <Memo(MemoizedFormattedMessage)
+          <FormattedMessage
             defaultMessage="Show transcript in the video player by default"
             description="Label for show by default checkbox"
             id="authoring.videoeditor.transcripts.upload.showByDefaultCheckboxLabel"
           />
         </div>
-      </ForwardRef>
-    </FormGroup>
+      </Form.Checkbox>
+    </Form.Group>
     <div
       className="mt-2"
     >
-      <ForwardRef
+      <Button
         className="text-primary-500 font-weight-bold justify-content-start pl-0"
-        disabled={false}
-        iconBefore={[Function]}
         onClick={[Function]}
         size="sm"
         variant="link"
       >
-        <Memo(MemoizedFormattedMessage)
+        <FormattedMessage
           defaultMessage="Add a transcript"
           description="Label for upload button"
           id="authoring.videoeditor.transcripts.upload.label"
         />
-      </ForwardRef>
+      </Button>
     </div>
-  </ForwardRef>
+  </Stack>
 </CollapsibleFormWidget>
 `;
 
@@ -560,7 +399,7 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
     hideHeading={true}
     isError={false}
   >
-    <Memo(MemoizedFormattedMessage)
+    <FormattedMessage
       defaultMessage="Failed to upload transcript. Please try again."
       description="Message presented to user when transcript fails to upload"
       id="authoring.videoeditor.transcript.error.uploadTranscriptError"
@@ -571,19 +410,17 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
     hideHeading={true}
     isError={false}
   >
-    <Memo(MemoizedFormattedMessage)
+    <FormattedMessage
       defaultMessage="Failed to delete transcript. Please try again."
       description="Message presented to user when transcript fails to delete"
       id="authoring.videoeditor.transcript.error.deleteTranscriptError"
     />
   </ErrorAlert>
-  <ForwardRef
-    direction="vertical"
+  <Stack
     gap={3}
-    reversed={false}
   >
     <Fragment>
-      <Memo(MemoizedFormattedMessage)
+      <FormattedMessage
         defaultMessage="Add video transcripts (.srt files only) for improved accessibility."
         description="Message for adding first transcript"
         id="authoring.videoeditor.transcripts.upload.firstTranscriptMessage"
@@ -595,22 +432,20 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
     <div
       className="mt-2"
     >
-      <ForwardRef
+      <Button
         className="text-primary-500 font-weight-bold justify-content-start pl-0"
-        disabled={false}
-        iconBefore={[Function]}
         onClick={[Function]}
         size="sm"
         variant="link"
       >
-        <Memo(MemoizedFormattedMessage)
+        <FormattedMessage
           defaultMessage="Add a transcript"
           description="Label for upload button"
           id="authoring.videoeditor.transcripts.upload.label"
         />
-      </ForwardRef>
+      </Button>
     </div>
-  </ForwardRef>
+  </Stack>
 </CollapsibleFormWidget>
 `;
 
@@ -626,7 +461,7 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
     hideHeading={true}
     isError={false}
   >
-    <Memo(MemoizedFormattedMessage)
+    <FormattedMessage
       defaultMessage="Failed to upload transcript. Please try again."
       description="Message presented to user when transcript fails to upload"
       id="authoring.videoeditor.transcript.error.uploadTranscriptError"
@@ -637,19 +472,17 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
     hideHeading={true}
     isError={false}
   >
-    <Memo(MemoizedFormattedMessage)
+    <FormattedMessage
       defaultMessage="Failed to delete transcript. Please try again."
       description="Message presented to user when transcript fails to delete"
       id="authoring.videoeditor.transcript.error.deleteTranscriptError"
     />
   </ErrorAlert>
-  <ForwardRef
-    direction="vertical"
+  <Stack
     gap={3}
-    reversed={false}
   >
     <Fragment>
-      <Memo(MemoizedFormattedMessage)
+      <FormattedMessage
         defaultMessage="Add video transcripts (.srt files only) for improved accessibility."
         description="Message for adding first transcript"
         id="authoring.videoeditor.transcripts.upload.firstTranscriptMessage"
@@ -658,22 +491,20 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
     <div
       className="mt-2"
     >
-      <ForwardRef
+      <Button
         className="text-primary-500 font-weight-bold justify-content-start pl-0"
-        disabled={false}
-        iconBefore={[Function]}
         onClick={[Function]}
         size="sm"
         variant="link"
       >
-        <Memo(MemoizedFormattedMessage)
+        <FormattedMessage
           defaultMessage="Add a transcript"
           description="Label for upload button"
           id="authoring.videoeditor.transcripts.upload.label"
         />
-      </ForwardRef>
+      </Button>
     </div>
-  </ForwardRef>
+  </Stack>
 </CollapsibleFormWidget>
 `;
 
@@ -689,7 +520,7 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
     hideHeading={true}
     isError={false}
   >
-    <Memo(MemoizedFormattedMessage)
+    <FormattedMessage
       defaultMessage="Failed to upload transcript. Please try again."
       description="Message presented to user when transcript fails to upload"
       id="authoring.videoeditor.transcript.error.uploadTranscriptError"
@@ -700,18 +531,16 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
     hideHeading={true}
     isError={false}
   >
-    <Memo(MemoizedFormattedMessage)
+    <FormattedMessage
       defaultMessage="Failed to delete transcript. Please try again."
       description="Message presented to user when transcript fails to delete"
       id="authoring.videoeditor.transcript.error.deleteTranscriptError"
     />
   </ErrorAlert>
-  <ForwardRef
-    direction="vertical"
+  <Stack
     gap={3}
-    reversed={false}
   >
-    <FormGroup
+    <Form.Group
       className="border-primary-100 border-bottom"
     >
       <Transcript
@@ -719,70 +548,39 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
         language="en"
       />
       <ActionRow
-        as="div"
         className="mt-3.5"
-        isStacked={false}
       >
-        <ForwardRef
+        <Form.Checkbox
           checked={false}
           className="decorative-control-label"
-          controlAs={
-            {
-              "$$typeof": Symbol(react.forward_ref),
-              "defaultProps": {
-                "className": undefined,
-                "isIndeterminate": false,
-              },
-              "propTypes": {
-                "className": [Function],
-                "isIndeterminate": [Function],
-              },
-              "render": [Function],
-            }
-          }
-          disabled={false}
-          floatLabelLeft={false}
-          isInvalid={false}
-          isValid={false}
           onChange={[Function]}
         >
           <div
             className="small text-gray-700"
           >
-            <Memo(MemoizedFormattedMessage)
+            <FormattedMessage
               defaultMessage="Allow transcript downloads"
               description="Label for allow transcript downloads checkbox"
               id="authoring.videoeditor.transcripts.allowDownloadCheckboxLabel"
             />
           </div>
-        </ForwardRef>
+        </Form.Checkbox>
         <OverlayTrigger
-          defaultShow={false}
           key="top"
           overlay={
-            <ForwardRef
-              bsPrefix="tooltip"
+            <Tooltip
               id="tooltip-top"
-              placement="right"
             >
-              <Memo(MemoizedFormattedMessage)
+              <FormattedMessage
                 defaultMessage="Learners will see a link to download the transcript below the video."
                 description="Message for show by default checkbox"
                 id="authoring.videoeditor.transcripts.upload.allowDownloadTooltipMessage"
               />
-            </ForwardRef>
+            </Tooltip>
           }
           placement="top"
-          popperConfig={{}}
-          trigger={
-            [
-              "hover",
-              "focus",
-            ]
-          }
         >
-          <withDeprecatedProps(Icon)
-            src={[Function]}
+          <Icon
             style={
               {
                 "height": "16px",
@@ -791,61 +589,41 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
             }
           />
         </OverlayTrigger>
-        <ActionRowSpacer />
+        <ActionRow.Spacer />
       </ActionRow>
-      <ForwardRef
+      <Form.Checkbox
         checked={true}
         className="mt-3 decorative-control-label"
-        controlAs={
-          {
-            "$$typeof": Symbol(react.forward_ref),
-            "defaultProps": {
-              "className": undefined,
-              "isIndeterminate": false,
-            },
-            "propTypes": {
-              "className": [Function],
-              "isIndeterminate": [Function],
-            },
-            "render": [Function],
-          }
-        }
-        disabled={false}
-        floatLabelLeft={false}
-        isInvalid={false}
-        isValid={false}
         onChange={[Function]}
       >
         <div
           className="small text-gray-700"
         >
-          <Memo(MemoizedFormattedMessage)
+          <FormattedMessage
             defaultMessage="Show transcript in the video player by default"
             description="Label for show by default checkbox"
             id="authoring.videoeditor.transcripts.upload.showByDefaultCheckboxLabel"
           />
         </div>
-      </ForwardRef>
-    </FormGroup>
+      </Form.Checkbox>
+    </Form.Group>
     <div
       className="mt-2"
     >
-      <ForwardRef
+      <Button
         className="text-primary-500 font-weight-bold justify-content-start pl-0"
-        disabled={false}
-        iconBefore={[Function]}
         onClick={[Function]}
         size="sm"
         variant="link"
       >
-        <Memo(MemoizedFormattedMessage)
+        <FormattedMessage
           defaultMessage="Add a transcript"
           description="Label for upload button"
           id="authoring.videoeditor.transcripts.upload.label"
         />
-      </ForwardRef>
+      </Button>
     </div>
-  </ForwardRef>
+  </Stack>
 </CollapsibleFormWidget>
 `;
 
@@ -861,7 +639,7 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
     hideHeading={true}
     isError={false}
   >
-    <Memo(MemoizedFormattedMessage)
+    <FormattedMessage
       defaultMessage="Failed to upload transcript. Please try again."
       description="Message presented to user when transcript fails to upload"
       id="authoring.videoeditor.transcript.error.uploadTranscriptError"
@@ -872,19 +650,17 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
     hideHeading={true}
     isError={false}
   >
-    <Memo(MemoizedFormattedMessage)
+    <FormattedMessage
       defaultMessage="Failed to delete transcript. Please try again."
       description="Message presented to user when transcript fails to delete"
       id="authoring.videoeditor.transcript.error.deleteTranscriptError"
     />
   </ErrorAlert>
-  <ForwardRef
-    direction="vertical"
+  <Stack
     gap={3}
-    reversed={false}
   >
     <Fragment>
-      <Memo(MemoizedFormattedMessage)
+      <FormattedMessage
         defaultMessage="Add video transcripts (.srt files only) for improved accessibility."
         description="Message for adding first transcript"
         id="authoring.videoeditor.transcripts.upload.firstTranscriptMessage"
@@ -893,22 +669,20 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
     <div
       className="mt-2"
     >
-      <ForwardRef
+      <Button
         className="text-primary-500 font-weight-bold justify-content-start pl-0"
-        disabled={false}
-        iconBefore={[Function]}
         onClick={[Function]}
         size="sm"
         variant="link"
       >
-        <Memo(MemoizedFormattedMessage)
+        <FormattedMessage
           defaultMessage="Add a transcript"
           description="Label for upload button"
           id="authoring.videoeditor.transcripts.upload.label"
         />
-      </ForwardRef>
+      </Button>
     </div>
-  </ForwardRef>
+  </Stack>
 </CollapsibleFormWidget>
 `;
 
@@ -924,7 +698,7 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
     hideHeading={true}
     isError={false}
   >
-    <Memo(MemoizedFormattedMessage)
+    <FormattedMessage
       defaultMessage="Failed to upload transcript. Please try again."
       description="Message presented to user when transcript fails to upload"
       id="authoring.videoeditor.transcript.error.uploadTranscriptError"
@@ -935,18 +709,16 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
     hideHeading={true}
     isError={false}
   >
-    <Memo(MemoizedFormattedMessage)
+    <FormattedMessage
       defaultMessage="Failed to delete transcript. Please try again."
       description="Message presented to user when transcript fails to delete"
       id="authoring.videoeditor.transcript.error.deleteTranscriptError"
     />
   </ErrorAlert>
-  <ForwardRef
-    direction="vertical"
+  <Stack
     gap={3}
-    reversed={false}
   >
-    <FormGroup
+    <Form.Group
       className="border-primary-100 border-bottom"
     >
       <Transcript
@@ -954,70 +726,39 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
         language="en"
       />
       <ActionRow
-        as="div"
         className="mt-3.5"
-        isStacked={false}
       >
-        <ForwardRef
+        <Form.Checkbox
           checked={false}
           className="decorative-control-label"
-          controlAs={
-            {
-              "$$typeof": Symbol(react.forward_ref),
-              "defaultProps": {
-                "className": undefined,
-                "isIndeterminate": false,
-              },
-              "propTypes": {
-                "className": [Function],
-                "isIndeterminate": [Function],
-              },
-              "render": [Function],
-            }
-          }
-          disabled={false}
-          floatLabelLeft={false}
-          isInvalid={false}
-          isValid={false}
           onChange={[Function]}
         >
           <div
             className="small text-gray-700"
           >
-            <Memo(MemoizedFormattedMessage)
+            <FormattedMessage
               defaultMessage="Allow transcript downloads"
               description="Label for allow transcript downloads checkbox"
               id="authoring.videoeditor.transcripts.allowDownloadCheckboxLabel"
             />
           </div>
-        </ForwardRef>
+        </Form.Checkbox>
         <OverlayTrigger
-          defaultShow={false}
           key="top"
           overlay={
-            <ForwardRef
-              bsPrefix="tooltip"
+            <Tooltip
               id="tooltip-top"
-              placement="right"
             >
-              <Memo(MemoizedFormattedMessage)
+              <FormattedMessage
                 defaultMessage="Learners will see a link to download the transcript below the video."
                 description="Message for show by default checkbox"
                 id="authoring.videoeditor.transcripts.upload.allowDownloadTooltipMessage"
               />
-            </ForwardRef>
+            </Tooltip>
           }
           placement="top"
-          popperConfig={{}}
-          trigger={
-            [
-              "hover",
-              "focus",
-            ]
-          }
         >
-          <withDeprecatedProps(Icon)
-            src={[Function]}
+          <Icon
             style={
               {
                 "height": "16px",
@@ -1026,61 +767,41 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
             }
           />
         </OverlayTrigger>
-        <ActionRowSpacer />
+        <ActionRow.Spacer />
       </ActionRow>
-      <ForwardRef
+      <Form.Checkbox
         checked={false}
         className="mt-3 decorative-control-label"
-        controlAs={
-          {
-            "$$typeof": Symbol(react.forward_ref),
-            "defaultProps": {
-              "className": undefined,
-              "isIndeterminate": false,
-            },
-            "propTypes": {
-              "className": [Function],
-              "isIndeterminate": [Function],
-            },
-            "render": [Function],
-          }
-        }
-        disabled={false}
-        floatLabelLeft={false}
-        isInvalid={false}
-        isValid={false}
         onChange={[Function]}
       >
         <div
           className="small text-gray-700"
         >
-          <Memo(MemoizedFormattedMessage)
+          <FormattedMessage
             defaultMessage="Show transcript in the video player by default"
             description="Label for show by default checkbox"
             id="authoring.videoeditor.transcripts.upload.showByDefaultCheckboxLabel"
           />
         </div>
-      </ForwardRef>
-    </FormGroup>
+      </Form.Checkbox>
+    </Form.Group>
     <div
       className="mt-2"
     >
-      <ForwardRef
+      <Button
         className="text-primary-500 font-weight-bold justify-content-start pl-0"
-        disabled={false}
-        iconBefore={[Function]}
         onClick={[Function]}
         size="sm"
         variant="link"
       >
-        <Memo(MemoizedFormattedMessage)
+        <FormattedMessage
           defaultMessage="Add a transcript"
           description="Label for upload button"
           id="authoring.videoeditor.transcripts.upload.label"
         />
-      </ForwardRef>
+      </Button>
     </div>
-  </ForwardRef>
+  </Stack>
 </CollapsibleFormWidget>
 `;
 
@@ -1096,7 +817,7 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
     hideHeading={true}
     isError={false}
   >
-    <Memo(MemoizedFormattedMessage)
+    <FormattedMessage
       defaultMessage="Failed to upload transcript. Please try again."
       description="Message presented to user when transcript fails to upload"
       id="authoring.videoeditor.transcript.error.uploadTranscriptError"
@@ -1107,18 +828,16 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
     hideHeading={true}
     isError={false}
   >
-    <Memo(MemoizedFormattedMessage)
+    <FormattedMessage
       defaultMessage="Failed to delete transcript. Please try again."
       description="Message presented to user when transcript fails to delete"
       id="authoring.videoeditor.transcript.error.deleteTranscriptError"
     />
   </ErrorAlert>
-  <ForwardRef
-    direction="vertical"
+  <Stack
     gap={3}
-    reversed={false}
   >
-    <FormGroup
+    <Form.Group
       className="border-primary-100 border-bottom"
     >
       <Transcript
@@ -1126,70 +845,39 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
         language="es"
       />
       <ActionRow
-        as="div"
         className="mt-3.5"
-        isStacked={false}
       >
-        <ForwardRef
+        <Form.Checkbox
           checked={false}
           className="decorative-control-label"
-          controlAs={
-            {
-              "$$typeof": Symbol(react.forward_ref),
-              "defaultProps": {
-                "className": undefined,
-                "isIndeterminate": false,
-              },
-              "propTypes": {
-                "className": [Function],
-                "isIndeterminate": [Function],
-              },
-              "render": [Function],
-            }
-          }
-          disabled={false}
-          floatLabelLeft={false}
-          isInvalid={false}
-          isValid={false}
           onChange={[Function]}
         >
           <div
             className="small text-gray-700"
           >
-            <Memo(MemoizedFormattedMessage)
+            <FormattedMessage
               defaultMessage="Allow transcript downloads"
               description="Label for allow transcript downloads checkbox"
               id="authoring.videoeditor.transcripts.allowDownloadCheckboxLabel"
             />
           </div>
-        </ForwardRef>
+        </Form.Checkbox>
         <OverlayTrigger
-          defaultShow={false}
           key="top"
           overlay={
-            <ForwardRef
-              bsPrefix="tooltip"
+            <Tooltip
               id="tooltip-top"
-              placement="right"
             >
-              <Memo(MemoizedFormattedMessage)
+              <FormattedMessage
                 defaultMessage="Learners will see a link to download the transcript below the video."
                 description="Message for show by default checkbox"
                 id="authoring.videoeditor.transcripts.upload.allowDownloadTooltipMessage"
               />
-            </ForwardRef>
+            </Tooltip>
           }
           placement="top"
-          popperConfig={{}}
-          trigger={
-            [
-              "hover",
-              "focus",
-            ]
-          }
         >
-          <withDeprecatedProps(Icon)
-            src={[Function]}
+          <Icon
             style={
               {
                 "height": "16px",
@@ -1198,60 +886,40 @@ exports[`TranscriptWidget component snapshots snapshots: renders as expected wit
             }
           />
         </OverlayTrigger>
-        <ActionRowSpacer />
+        <ActionRow.Spacer />
       </ActionRow>
-      <ForwardRef
+      <Form.Checkbox
         checked={false}
         className="mt-3 decorative-control-label"
-        controlAs={
-          {
-            "$$typeof": Symbol(react.forward_ref),
-            "defaultProps": {
-              "className": undefined,
-              "isIndeterminate": false,
-            },
-            "propTypes": {
-              "className": [Function],
-              "isIndeterminate": [Function],
-            },
-            "render": [Function],
-          }
-        }
-        disabled={false}
-        floatLabelLeft={false}
-        isInvalid={false}
-        isValid={false}
         onChange={[Function]}
       >
         <div
           className="small text-gray-700"
         >
-          <Memo(MemoizedFormattedMessage)
+          <FormattedMessage
             defaultMessage="Show transcript in the video player by default"
             description="Label for show by default checkbox"
             id="authoring.videoeditor.transcripts.upload.showByDefaultCheckboxLabel"
           />
         </div>
-      </ForwardRef>
-    </FormGroup>
+      </Form.Checkbox>
+    </Form.Group>
     <div
       className="mt-2"
     >
-      <ForwardRef
+      <Button
         className="text-primary-500 font-weight-bold justify-content-start pl-0"
-        disabled={false}
-        iconBefore={[Function]}
         onClick={[Function]}
         size="sm"
         variant="link"
       >
-        <Memo(MemoizedFormattedMessage)
+        <FormattedMessage
           defaultMessage="Add a transcript"
           description="Label for upload button"
           id="authoring.videoeditor.transcripts.upload.label"
         />
-      </ForwardRef>
+      </Button>
     </div>
-  </ForwardRef>
+  </Stack>
 </CollapsibleFormWidget>
 `;
