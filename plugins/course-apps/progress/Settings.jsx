@@ -1,4 +1,4 @@
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import React from 'react';
 import * as Yup from 'yup';
@@ -8,7 +8,8 @@ import { useAppSetting } from 'CourseAuthoring/utils';
 import AppSettingsModal from 'CourseAuthoring/pages-and-resources/app-settings-modal/AppSettingsModal';
 import messages from './messages';
 
-const ProgressSettings = ({ intl, onClose }) => {
+const ProgressSettings = ({ onClose }) => {
+  const intl = useIntl();
   const [disableProgressGraph, saveSetting] = useAppSetting('disableProgressGraph');
   const showProgressGraphSetting = getConfig().ENABLE_PROGRESS_GRAPH_SETTINGS.toString().toLowerCase() === 'true';
 
@@ -48,8 +49,7 @@ const ProgressSettings = ({ intl, onClose }) => {
 };
 
 ProgressSettings.propTypes = {
-  intl: intlShape.isRequired,
   onClose: PropTypes.func.isRequired,
 };
 
-export default injectIntl(ProgressSettings);
+export default ProgressSettings;

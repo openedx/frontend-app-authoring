@@ -1,4 +1,4 @@
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
   Alert,
@@ -70,38 +70,40 @@ AppSettingsForm.defaultProps = {
 };
 
 const SettingsModalBase = ({
-  intl, title, onClose, variant, isMobile, children, footer,
-}) => (
-  <ModalDialog
-    title={title}
-    isOpen
-    onClose={onClose}
-    size="lg"
-    variant={variant}
-    hasCloseButton={isMobile}
-    isFullscreenOnMobile
-  >
-    <ModalDialog.Header>
-      <ModalDialog.Title data-testid="modal-title">
-        {title}
-      </ModalDialog.Title>
-    </ModalDialog.Header>
-    <ModalDialog.Body>
-      {children}
-    </ModalDialog.Body>
-    <ModalDialog.Footer className="p-4">
-      <ActionRow>
-        <ModalDialog.CloseButton variant="tertiary">
-          {intl.formatMessage(messages.cancel)}
-        </ModalDialog.CloseButton>
-        {footer}
-      </ActionRow>
-    </ModalDialog.Footer>
-  </ModalDialog>
-);
+  title, onClose, variant, isMobile, children, footer,
+}) => {
+  const intl = useIntl();
+  return (
+    <ModalDialog
+      title={title}
+      isOpen
+      onClose={onClose}
+      size="lg"
+      variant={variant}
+      hasCloseButton={isMobile}
+      isFullscreenOnMobile
+    >
+      <ModalDialog.Header>
+        <ModalDialog.Title data-testid="modal-title">
+          {title}
+        </ModalDialog.Title>
+      </ModalDialog.Header>
+      <ModalDialog.Body>
+        {children}
+      </ModalDialog.Body>
+      <ModalDialog.Footer className="p-4">
+        <ActionRow>
+          <ModalDialog.CloseButton variant="tertiary">
+            {intl.formatMessage(messages.cancel)}
+          </ModalDialog.CloseButton>
+          {footer}
+        </ActionRow>
+      </ModalDialog.Footer>
+    </ModalDialog>
+  );
+};
 
 SettingsModalBase.propTypes = {
-  intl: intlShape.isRequired,
   title: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
   variant: PropTypes.oneOf(['default', 'dark']).isRequired,
@@ -115,11 +117,11 @@ SettingsModalBase.defaultProps = {
 };
 
 const ResetUnitsButton = ({
-  intl,
   courseId,
   checked,
   visible,
 }) => {
+  const intl = useIntl();
   const resetStatusRequestStatus = useSelector(getResetStatus);
   const dispatch = useDispatch();
 
@@ -185,7 +187,6 @@ const ResetUnitsButton = ({
 };
 
 ResetUnitsButton.propTypes = {
-  intl: intlShape.isRequired,
   courseId: PropTypes.string.isRequired,
   checked: PropTypes.oneOf(['true', 'false']).isRequired,
   visible: PropTypes.bool,
@@ -196,7 +197,6 @@ ResetUnitsButton.defaultProps = {
 };
 
 const SettingsModal = ({
-  intl,
   appId,
   title,
   children,
@@ -213,6 +213,7 @@ const SettingsModal = ({
   allUnitsEnabledText,
   noUnitsEnabledText,
 }) => {
+  const intl = useIntl();
   const { courseId } = useContext(PagesAndResourcesContext);
   const loadingStatus = useSelector(getLoadingStatus);
   const updateSettingsRequestStatus = useSelector(getSavingStatus);
@@ -372,7 +373,6 @@ const SettingsModal = ({
                   >
                     {allUnitsEnabledText}
                     <ResetUnitsButton
-                      intl={intl}
                       courseId={courseId}
                       checked={formikProps.values.checked}
                       visible={formikProps.values.checked === 'true'}
@@ -385,7 +385,6 @@ const SettingsModal = ({
                   >
                     {noUnitsEnabledText}
                     <ResetUnitsButton
-                      intl={intl}
                       courseId={courseId}
                       checked={formikProps.values.checked}
                       visible={formikProps.values.checked === 'false'}
@@ -423,7 +422,6 @@ const SettingsModal = ({
 };
 
 SettingsModal.propTypes = {
-  intl: intlShape.isRequired,
   title: PropTypes.string.isRequired,
   appId: PropTypes.string.isRequired,
   children: PropTypes.func,
@@ -450,4 +448,4 @@ SettingsModal.defaultProps = {
   enableReinitialize: false,
 };
 
-export default injectIntl(SettingsModal);
+export default SettingsModal;

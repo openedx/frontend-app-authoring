@@ -1,4 +1,4 @@
-import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import PropTypes from 'prop-types';
 import React from 'react';
 import * as Yup from 'yup';
@@ -8,7 +8,8 @@ import { useAppSetting } from 'CourseAuthoring/utils';
 import AppSettingsModal from 'CourseAuthoring/pages-and-resources/app-settings-modal/AppSettingsModal';
 import messages from './messages';
 
-const WikiSettings = ({ intl, onClose }) => {
+const WikiSettings = ({ onClose }) => {
+  const intl = useIntl();
   const [enablePublicWiki, saveSetting] = useAppSetting('allowPublicWikiAccess');
   const handleSettingsSave = (values) => saveSetting(values.enablePublicWiki);
 
@@ -32,7 +33,7 @@ const WikiSettings = ({ intl, onClose }) => {
             label={intl.formatMessage(messages.enablePublicWikiLabel)}
             helpText={intl.formatMessage(messages.enablePublicWikiHelp)}
             onChange={handleChange}
-            onBlue={handleBlur}
+            onBlur={handleBlur}
             checked={values.enablePublicWiki}
           />
         )
@@ -42,8 +43,7 @@ const WikiSettings = ({ intl, onClose }) => {
 };
 
 WikiSettings.propTypes = {
-  intl: intlShape.isRequired,
   onClose: PropTypes.func.isRequired,
 };
 
-export default injectIntl(WikiSettings);
+export default WikiSettings;
