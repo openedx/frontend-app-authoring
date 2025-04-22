@@ -15,6 +15,7 @@ import {
   getLibraryContainerApiUrl,
   getLibraryContainerRestoreApiUrl,
   getLibraryContainerChildrenApiUrl,
+  getLibraryContainerPublishApiUrl,
 } from './api';
 import {
   useCommitLibraryChanges,
@@ -30,6 +31,8 @@ import {
   useContainerChildren,
   useAddComponentsToContainer,
   useUpdateContainerChildren,
+  useRemoveContainerChildren,
+  usePublishContainer,
 } from './apiHooks';
 
 let axiosMock;
@@ -285,6 +288,38 @@ describe('library api hooks', () => {
     await result.current.mutateAsync([]);
     await waitFor(() => {
       expect(axiosMock.history.patch.length).toEqual(0);
+    });
+  });
+
+  it('should remove container children', async () => {
+    const containerId = 'lct:org:lib1';
+    const url = getLibraryContainerChildrenApiUrl(containerId);
+
+    axiosMock.onDelete(url).reply(200);
+    const { result } = renderHook(() => useRemoveContainerChildren(containerId), { wrapper });
+    await result.current.mutateAsync([]);
+    await waitFor(() => {
+      expect(axiosMock.history.delete[0].url).toEqual(url);
+    });
+  });
+
+  it('should not attempt request if containerId is not defined in remove children from container', async () => {
+    const { result } = renderHook(() => useRemoveContainerChildren(), { wrapper });
+    await result.current.mutateAsync([]);
+    await waitFor(() => {
+      expect(axiosMock.history.patch.length).toEqual(0);
+    });
+  });
+
+  describe('publishContainer', () => {
+    it('should publish a container', async () => {
+      const containerId = 'lct:org:lib:unit:1';
+      const url = getLibraryContainerPublishApiUrl(containerId);
+      axiosMock.onPost(url).reply(200);
+      const { result } = renderHook(() => usePublishContainer(containerId), { wrapper });
+      await result.current.mutateAsync();
+
+      expect(axiosMock.history.post[0].url).toEqual(url);
     });
   });
 });

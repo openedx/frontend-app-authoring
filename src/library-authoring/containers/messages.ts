@@ -26,6 +26,21 @@ const messages = defineMessages({
     defaultMessage: 'Collections ({count})',
     description: 'Title for collections section in organize tab',
   },
+  publishContainerButton: {
+    id: 'course-authoring.library-authoring.container-sidebar.publish-button',
+    defaultMessage: 'Publish',
+    description: 'Button text to publish the unit/subsection/section',
+  },
+  publishContainerSuccess: {
+    id: 'course-authoring.library-authoring.container-sidebar.publish-success',
+    defaultMessage: 'All changes published',
+    description: 'Popup text after publishing a unit/subsection/section',
+  },
+  publishContainerFailed: {
+    id: 'course-authoring.library-authoring.container-sidebar.publish-failure',
+    defaultMessage: 'Failed to publish changes',
+    description: 'Popup text seen if publishing a unit/subsection/section fails',
+  },
   settingsTabTitle: {
     id: 'course-authoring.library-authoring.container-sidebar.settings-tab.title',
     defaultMessage: 'Settings',
