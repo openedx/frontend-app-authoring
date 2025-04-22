@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { intlShape, injectIntl } from '@edx/frontend-platform/i18n';
+import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
   IconButtonWithTooltip,
@@ -27,9 +27,8 @@ const CustomPageCard = ({
   dispatch,
   deletePageStatus,
   setCurrentPage,
-  // injected
-  intl,
 }) => {
+  const intl = useIntl();
   const [isDeleteConfirmationOpen, openDeleteConfirmation, closeDeleteConfirmation] = useToggle(false);
   const { path: customPagesPath } = useContext(CustomPagesContext);
   const navigate = useNavigate();
@@ -129,8 +128,6 @@ CustomPageCard.propTypes = {
   dispatch: PropTypes.func.isRequired,
   deletePageStatus: PropTypes.string.isRequired,
   setCurrentPage: PropTypes.func.isRequired,
-  // injected
-  intl: intlShape.isRequired,
 };
 
-export default injectIntl(CustomPageCard);
+export default CustomPageCard;
