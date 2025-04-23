@@ -10,11 +10,14 @@ export const CourseAuthoringUnitSidebarSlot = (
     blockId,
     courseId,
     unitTitle,
+    xBlocks,
   }: CourseAuthoringUnitSidebarSlotProps,
 ) => (
   <PluginSlot
     id="course_authoring_unit_sidebar_slot"
-    pluginProps={{ blockId, courseId, unitTitle }}
+    pluginProps={{
+      blockId, courseId, unitTitle, xBlocks,
+    }}
   >
     <Sidebar data-testid="course-unit-sidebar">
       <PublishControls blockId={blockId} />
@@ -30,8 +33,15 @@ export const CourseAuthoringUnitSidebarSlot = (
   </PluginSlot>
 );
 
+type XBlock = {
+  id: string,
+  name: string,
+  blockType: string,
+};
+
 interface CourseAuthoringUnitSidebarSlotProps {
   blockId: string;
   courseId: string;
   unitTitle: string;
+  xBlocks: XBlock[];
 }
