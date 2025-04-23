@@ -1,0 +1,44 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SwitchEditorCard snapshot snapshot: SwitchEditorCard 1`] = `
+<Card
+  className="border border-light-700 shadow-none"
+>
+  <BaseModal
+    bodyStyle={null}
+    close={[Function]}
+    confirmAction={
+      <Button
+        className={null}
+        onClick={[Function]}
+        text={null}
+        variant="primary"
+      >
+        <FormattedMessage />
+      </Button>
+    }
+    footerAction={null}
+    headerComponent={null}
+    hideCancelButton={false}
+    isFullscreenScroll={true}
+    isOpen={false}
+    size="md"
+    title={<FormattedMessage />}
+  >
+    <FormattedMessage />
+  </BaseModal>
+  <Button
+    className="my-3 ml-2 py-0"
+    onClick={[Function]}
+    size="sm"
+    text={null}
+    variant="link"
+  >
+    <FormattedMessage />
+  </Button>
+</Card>
+`;
+
+exports[`SwitchEditorCard snapshot snapshot: SwitchEditorCard returns null for advanced problems 1`] = `null`;
+
+exports[`SwitchEditorCard snapshot snapshot: SwitchEditorCard returns null when editor is Markdown 1`] = `null`;

@@ -14,7 +14,7 @@ import TimerCard from './settingsComponents/TimerCard';
 import TypeCard from './settingsComponents/TypeCard';
 import ToleranceCard from './settingsComponents/Tolerance';
 import GroupFeedbackCard from './settingsComponents/GroupFeedback/index';
-import SwitchToAdvancedEditorCard from './settingsComponents/SwitchToAdvancedEditorCard';
+import SwitchEditorCard from './settingsComponents/SwitchEditorCard';
 import messages from './messages';
 import { showAdvancedSettingsCards } from './hooks';
 
@@ -39,9 +39,9 @@ const SettingsWidget = ({
   images,
   isLibrary,
   learningContextId,
+  showMarkdownEditorButton,
 }) => {
   const { isAdvancedCardsVisible, showAdvancedCards } = showAdvancedSettingsCards();
-
   const feedbackCard = () => {
     if ([ProblemTypeKeys.MULTISELECT].includes(problemType)) {
       return (
@@ -153,8 +153,14 @@ const SettingsWidget = ({
             </div>
           )}
           <div className="my-3">
-            <SwitchToAdvancedEditorCard problemType={problemType} />
+            <SwitchEditorCard problemType={problemType} editorType="advanced" />
           </div>
+          { showMarkdownEditorButton
+          && (
+          <div className="my-3">
+            <SwitchEditorCard problemType={problemType} editorType="markdown" />
+          </div>
+          )}
         </Collapsible.Body>
       </Collapsible.Advanced>
     </div>
@@ -196,6 +202,7 @@ SettingsWidget.propTypes = {
   isLibrary: PropTypes.bool.isRequired,
   // eslint-disable-next-line
   settings: PropTypes.any.isRequired,
+  showMarkdownEditorButton: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -208,6 +215,8 @@ const mapStateToProps = (state) => ({
   images: selectors.app.images(state),
   isLibrary: selectors.app.isLibrary(state),
   learningContextId: selectors.app.learningContextId(state),
+  showMarkdownEditorButton: selectors.app.isMarkdownEditorEnabledForCourse(state)
+  && selectors.problem.rawMarkdown(state),
 });
 
 export const mapDispatchToProps = {

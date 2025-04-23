@@ -13,6 +13,7 @@ import AdvancedEditor from './AdvancedEditor';
 export interface Props extends EditorComponent {
   blockType: string;
   blockId: string | null;
+  isMarkdownEditorEnabledForCourse: boolean;
   learningContextId: string | null;
   lmsEndpointUrl: string | null;
   studioEndpointUrl: string | null;
@@ -23,6 +24,7 @@ const Editor: React.FC<Props> = ({
   learningContextId,
   blockType,
   blockId,
+  isMarkdownEditorEnabledForCourse,
   lmsEndpointUrl,
   studioEndpointUrl,
   onClose = null,
@@ -34,6 +36,7 @@ const Editor: React.FC<Props> = ({
     data: {
       blockId,
       blockType,
+      isMarkdownEditorEnabledForCourse,
       learningContextId,
       lmsEndpointUrl,
       studioEndpointUrl,

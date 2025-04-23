@@ -16,6 +16,7 @@ export const onSelect = ({
     setBlockTitle(AdvanceProblems[selected].title);
   } else {
     const newOLX = ProblemTypes[selected].template;
+    const newMarkdown = ProblemTypes[selected].markdownTemplate;
     const newState = getDataFromOlx({
       rawOLX: newOLX,
       rawSettings: {
@@ -26,7 +27,7 @@ export const onSelect = ({
       },
       defaultSettings: snakeCaseKeys(defaultSettings),
     });
-    updateField(newState);
+    updateField({ ...newState, rawMarkdown: newMarkdown });
     setBlockTitle(ProblemTypes[selected].title);
   }
 };

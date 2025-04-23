@@ -40,14 +40,14 @@ describe('SelectTypeModal hooks', () => {
       });
       expect(mocksetBlockTitle).toHaveBeenCalledWith(AdvanceProblems[mockAdvancedSelected].title);
     });
-    test('updateField is called with selected on visual propblems', () => {
+    test('updateField is called with selected on visual problems', () => {
       hooks.onSelect({
         selected: mockSelected,
         updateField: mockUpdateField,
         setBlockTitle: mocksetBlockTitle,
         defaultSettings: mockDefaultSettings,
       })();
-      // const testOlXParser = new OLXParser(ProblemTypes[mockSelected].template);
+
       const testState = getDataFromOlx({
         rawOLX: ProblemTypes[mockSelected].template,
         rawSettings: {
@@ -58,7 +58,11 @@ describe('SelectTypeModal hooks', () => {
         },
         defaultSettings: mockDefaultSettings,
       });
-      expect(mockUpdateField).toHaveBeenCalledWith(testState);
+
+      expect(mockUpdateField).toHaveBeenCalledWith({
+        ...testState,
+        rawMarkdown: ProblemTypes[mockSelected].markdownTemplate,
+      });
       expect(mocksetBlockTitle).toHaveBeenCalledWith(ProblemTypes[mockSelected].title);
     });
   });

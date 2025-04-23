@@ -48,6 +48,7 @@ describe('app selectors unit tests', () => {
         simpleKeys.images,
         simpleKeys.videos,
         simpleKeys.showRawEditor,
+        simpleKeys.isMarkdownEditorEnabledForCourse,
       ].map(testSimpleSelector);
     });
   });

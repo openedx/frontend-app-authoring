@@ -1,5 +1,5 @@
 /* eslint-disable */
- const multiSelect= `<problem>
+ const olx= `<problem>
   <choiceresponse>
     <checkboxgroup>
       <choice correct="true"></choice>
@@ -9,4 +9,10 @@
   </choiceresponse>
 </problem>`
 
-export default multiSelect;
+const markdown = `[x] a correct answer
+[ ] an incorrect answer
+[ ] an incorrect answer
+[x] a correct answer
+`
+
+export default { olx, markdown };

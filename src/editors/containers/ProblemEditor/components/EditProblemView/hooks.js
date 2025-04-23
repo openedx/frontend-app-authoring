@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import 'tinymce';
-import { StrictDict } from '../../../../utils';
+import { StrictDict, convertMarkdownToXml } from '../../../../utils';
 import ReactStateSettingsParser from '../../data/ReactStateSettingsParser';
 import ReactStateOLXParser from '../../data/ReactStateOLXParser';
 import { setAssetToStaticUrl } from '../../../../sharedComponents/TinyMceWidget/hooks';
@@ -68,17 +68,32 @@ export const fetchEditorContent = ({ format }) => {
 export const parseState = ({
   problem,
   isAdvanced,
+  isMarkdownEditorEnabled,
   ref,
   lmsEndpointUrl,
 }) => () => {
-  const rawOLX = ref?.current?.state.doc.toString();
-  const editorObject = fetchEditorContent({ format: '' });
-  const reactOLXParser = new ReactStateOLXParser({ problem, editorObject });
+  // Constructs the save payload by parsing the current state of the problem editor.
+  // If the Markdown editor is enabled, the editor content is converted to OLX using convertMarkdownToXml.
+  // For advanced problems, raw editor content is used as OLX; for visual ones, it's built via ReactStateOLXParser.
+  // Settings are then parsed from the OLX and returned alongside the OLX content,
+  // including markdown incase of markdown editor.
+  const contentString = ref?.current?.state.doc.toString();
+  const rawOLX = isMarkdownEditorEnabled ? convertMarkdownToXml(contentString) : contentString;
+  let reactBuiltOlx;
+  if (!isMarkdownEditorEnabled) {
+    const editorObject = fetchEditorContent({ format: '' });
+    const reactOLXParser = new ReactStateOLXParser({ problem, editorObject });
+    reactBuiltOlx = setAssetToStaticUrl({ editorValue: reactOLXParser.buildOLX(), lmsEndpointUrl });
+  }
   const reactSettingsParser = new ReactStateSettingsParser({ problem, rawOLX });
-  const reactBuiltOlx = setAssetToStaticUrl({ editorValue: reactOLXParser.buildOLX(), lmsEndpointUrl });
+  const settings = isAdvanced ? reactSettingsParser.parseRawOlxSettings() : reactSettingsParser.getSettings();
   return {
-    settings: isAdvanced ? reactSettingsParser.parseRawOlxSettings() : reactSettingsParser.getSettings(),
-    olx: isAdvanced ? rawOLX : reactBuiltOlx,
+    settings: {
+      ...settings,
+      ...(isMarkdownEditorEnabled && { markdown: contentString }),
+      markdown_edited: isMarkdownEditorEnabled,
+    },
+    olx: isAdvanced || isMarkdownEditorEnabled ? rawOLX : reactBuiltOlx,
   };
 };
 
@@ -130,8 +145,11 @@ export const checkForNoAnswers = ({ openSaveWarningModal, problem }) => {
   return false;
 };
 
-export const checkForSettingDiscrepancy = ({ problem, ref, openSaveWarningModal }) => {
-  const rawOLX = ref?.current?.state.doc.toString();
+export const checkForSettingDiscrepancy = ({
+  problem, ref, openSaveWarningModal, isMarkdownEditorEnabled,
+}) => {
+  const contentString = ref?.current?.state.doc.toString();
+  const rawOLX = isMarkdownEditorEnabled ? convertMarkdownToXml(contentString) : contentString;
   const reactSettingsParser = new ReactStateSettingsParser({ problem, rawOLX });
   const problemSettings = reactSettingsParser.getSettings();
   const rawOlxSettings = reactSettingsParser.parseRawOlxSettings();
@@ -154,23 +172,26 @@ export const getContent = ({
   problemState,
   openSaveWarningModal,
   isAdvancedProblemType,
+  isMarkdownEditorEnabled,
   editorRef,
   lmsEndpointUrl,
 }) => {
   const problem = problemState;
-  const hasNoAnswers = isAdvancedProblemType ? false : checkForNoAnswers({
+  const hasNoAnswers = isAdvancedProblemType || isMarkdownEditorEnabled ? false : checkForNoAnswers({
     problem,
     openSaveWarningModal,
   });
-  const hasMismatchedSettings = isAdvancedProblemType ? checkForSettingDiscrepancy({
+  const hasMismatchedSettings = isAdvancedProblemType || isMarkdownEditorEnabled ? checkForSettingDiscrepancy({
     ref: editorRef,
     problem,
     openSaveWarningModal,
+    isMarkdownEditorEnabled,
   }) : false;
   if (!hasNoAnswers && !hasMismatchedSettings) {
     const data = parseState({
       isAdvanced: isAdvancedProblemType,
       ref: editorRef,
+      isMarkdownEditorEnabled,
       problem,
       lmsEndpointUrl,
     })();

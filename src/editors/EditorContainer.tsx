@@ -5,11 +5,13 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, Hyperlink } from '@openedx/paragon';
 import { Warning as WarningIcon } from '@openedx/paragon/icons';
 
+import { useSelector } from 'react-redux';
 import EditorPage from './EditorPage';
 import AlertMessage from '../generic/alert-message';
 import messages from './messages';
 import { getLibraryId } from '../generic/key-utils';
 import { createCorrectInternalRoute } from '../utils';
+import { getWaffleFlags } from '../data/selectors';
 
 interface Props {
   /** Course ID or Library ID */
@@ -37,6 +39,8 @@ const EditorContainer: React.FC<Props> = ({
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const upstreamLibRef = searchParams.get('upstreamLibRef');
+  const waffleFlags = useSelector(getWaffleFlags);
+  const isMarkdownEditorEnabledForCourse = waffleFlags?.useReactMarkdownEditor;
 
   if (blockType === undefined || blockId === undefined) {
     // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
@@ -76,6 +80,7 @@ const EditorContainer: React.FC<Props> = ({
         courseId={learningContextId}
         blockType={blockType}
         blockId={blockId}
+        isMarkdownEditorEnabledForCourse={isMarkdownEditorEnabledForCourse}
         studioEndpointUrl={getConfig().STUDIO_BASE_URL}
         lmsEndpointUrl={getConfig().LMS_BASE_URL}
         onClose={onClose ? () => onClose(location.state?.from) : null}
