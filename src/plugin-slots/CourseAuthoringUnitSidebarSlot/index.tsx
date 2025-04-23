@@ -35,7 +35,8 @@ export const CourseAuthoringUnitSidebarSlot = (
 
 type VerticalBlock = {
   id: string,
-  displayName: string,
+  name: string,
+  blockType: string,
 };
 
 interface CourseAuthoringUnitSidebarSlotProps {
