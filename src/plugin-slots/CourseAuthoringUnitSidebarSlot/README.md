@@ -7,7 +7,7 @@
 * `courseId` - String.
 * `blockId` - String. The usage id of the current unit being viewed / edited.
 * `unitTitle` - String. The name of the current unit being viewed / edited.
-* `verticalBlocks` - Objects. Interface defined in `index.tsx`.
+* `verticalBlocks` - Array of Objects. Object structure defined in `index.tsx`.
 
 ## Description
 

@@ -4,7 +4,9 @@
 
 ### Plugin Props:
 
-* `courseId` - String. 
+* `courseId` - String.
+* `courseName` - String.
+* `sections` - Array of Objects. Object structure defined in `index.tsx`.
 
 ## Description
 
