@@ -10,13 +10,13 @@ export const CourseAuthoringUnitSidebarSlot = (
     blockId,
     courseId,
     unitTitle,
-    verticalBlocks,
+    xBlocks,
   }: CourseAuthoringUnitSidebarSlotProps,
 ) => (
   <PluginSlot
     id="course_authoring_unit_sidebar_slot"
     pluginProps={{
-      blockId, courseId, unitTitle, verticalBlocks,
+      blockId, courseId, unitTitle, xBlocks,
     }}
   >
     <Sidebar data-testid="course-unit-sidebar">
@@ -33,7 +33,7 @@ export const CourseAuthoringUnitSidebarSlot = (
   </PluginSlot>
 );
 
-type VerticalBlock = {
+type XBlock = {
   id: string,
   name: string,
   blockType: string,
@@ -43,5 +43,5 @@ interface CourseAuthoringUnitSidebarSlotProps {
   blockId: string;
   courseId: string;
   unitTitle: string;
-  verticalBlocks: VerticalBlock[];
+  xBlocks: XBlock[];
 }

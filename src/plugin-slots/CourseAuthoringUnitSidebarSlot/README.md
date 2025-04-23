@@ -7,7 +7,7 @@
 * `courseId` - String.
 * `blockId` - String. The usage id of the current unit being viewed / edited.
 * `unitTitle` - String. The name of the current unit being viewed / edited.
-* `verticalBlocks` - Array of Objects. Object structure defined in `index.tsx`.
+* `xBlocks` - Array of Objects. List of XBlocks in the Unit. Object structure defined in `index.tsx`.
 
 ## Description
 
@@ -49,11 +49,11 @@ export default config;
 ```js
 import { PLUGIN_OPERATIONS, DIRECT_PLUGIN  } from '@openedx/frontend-plugin-framework';
 
-const ProblemBlocks = ({unitTitle, verticalBlocks}) => (
+const ProblemBlocks = ({unitTitle, xBlocks}) => (
   <>
     <h4 className="h4">{unitTitle}: Problem Blocks</h4>
     <ul>
-      {verticalBlocks
+      {xBlocks
         .filter(block => block.blockType === "problem")
         .map(block => <li key={block.id}>{block.displayName}</li>)
       }
