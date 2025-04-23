@@ -226,7 +226,7 @@ const CourseUnit = ({ courseId }) => {
                   courseId={courseId}
                   blockId={blockId}
                   unitTitle={unitTitle}
-                  verticalBlocks={courseVerticalChildren.children}
+                  xBlocks={courseVerticalChildren.children}
                 />
                 )}
                 {isSplitTestType && (
