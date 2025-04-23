@@ -242,6 +242,7 @@ export const ignoredOlxAttributes = [
   // '@_markdown',  // Not sure if this is safe to ignore; some tests seem to indicate it's not.
   '@_url_name',
   '@_x-is-pointer-node',
+  '@_markdown_edited',
 ] as const;
 
 // Useful for the block creation workflow.
