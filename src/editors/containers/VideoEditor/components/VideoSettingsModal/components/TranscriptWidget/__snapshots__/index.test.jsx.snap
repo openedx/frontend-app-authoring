@@ -1,5 +1,31 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`TranscriptWidget component snapshots snapshot: render when \`isCreateWorkflow\` is \`True\` 1`] = `
+<div
+  className="mr-4 ml-4"
+>
+  <Card
+    className="bg-light-200"
+  >
+    <Card.Section
+      title={
+        <div
+          className="text-gray-500"
+        >
+          Transcripts
+        </div>
+      }
+    >
+      <div
+        className="d-flex justify-content-around text-gray-700 pb-4 x-small"
+      >
+        To add transcripts, save and reopen this video
+      </div>
+    </Card.Section>
+  </Card>
+</div>
+`;
+
 exports[`TranscriptWidget component snapshots snapshot: renders ErrorAlert with delete error message 1`] = `
 <CollapsibleFormWidget
   fontSize="x-small"

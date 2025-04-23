@@ -14,6 +14,7 @@ import {
   OverlayTrigger,
   Tooltip,
   ActionRow,
+  Card,
 } from '@openedx/paragon';
 import { Add, InfoOutline } from '@openedx/paragon/icons';
 
@@ -98,9 +99,30 @@ const TranscriptWidget = ({
   const fullTextLanguages = module.hooks.transcriptLanguages(transcripts, intl);
   const hasTranscripts = module.hooks.hasTranscripts(transcripts);
   const isLibrary = useSelector(selectors.app.isLibrary);
+  const isCreateWorkflow = useSelector(selectors.app.shouldCreateBlock);
   const dispatch = useDispatch();
   if (isLibrary) {
     dispatch(thunkActions.video.updateTranscriptHandlerUrl());
+  }
+
+  if (isCreateWorkflow) {
+    return (
+      <div className="mr-4 ml-4">
+        <Card className="bg-light-200">
+          <Card.Section
+            title={(
+              <div className="text-gray-500">
+                {intl.formatMessage(messages.title)}
+              </div>
+            )}
+          >
+            <div className="d-flex justify-content-around text-gray-700 pb-4 x-small">
+              {intl.formatMessage(messages.videoCreationWarning)}
+            </div>
+          </Card.Section>
+        </Card>
+      </div>
+    );
   }
 
   return (

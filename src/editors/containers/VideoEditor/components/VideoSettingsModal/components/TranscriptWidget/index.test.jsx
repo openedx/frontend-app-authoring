@@ -1,6 +1,7 @@
 import 'CourseAuthoring/editors/setupEditorTest';
 import React from 'react';
 import { shallow } from '@edx/react-unit-test-utils';
+import { useSelector } from 'react-redux';
 
 import { RequestKeys } from '../../../../../../data/constants/requests';
 
@@ -35,6 +36,7 @@ jest.mock('../../../../../../data/redux', () => ({
   selectors: {
     app: {
       isLibrary: jest.fn(state => ({ isLibrary: state })),
+      shouldCreateBlock: jest.fn(() => false),
     },
     video: {
       transcripts: jest.fn(state => ({ transcripts: state })),
@@ -51,7 +53,19 @@ jest.mock('../../../../../../data/redux', () => ({
 jest.mock('../CollapsibleFormWidget', () => 'CollapsibleFormWidget');
 jest.mock('./Transcript', () => 'Transcript');
 
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useDispatch: jest.fn(() => jest.fn()),
+  useSelector: jest.fn(),
+}));
+
+useSelector.mockImplementation((selectorFn) => selectorFn({}));
+
 describe('TranscriptWidget', () => {
+  beforeEach(() => {
+    selectors.app.shouldCreateBlock.mockReset();
+  });
+
   describe('hooks', () => {
     describe('transcriptLanguages', () => {
       test('empty list of transcripts returns ', () => {
@@ -153,6 +167,12 @@ describe('TranscriptWidget', () => {
       test('snapshot: renders ErrorAlert with delete error message', () => {
         expect(
           shallow(<TranscriptWidget {...props} isDeleteError transcripts={['en']} />).snapshot,
+        ).toMatchSnapshot();
+      });
+      test('snapshot: render when `isCreateWorkflow` is `True`', () => {
+        selectors.app.shouldCreateBlock.mockReturnValue(true);
+        expect(
+          shallow(<TranscriptWidget {...props} />).snapshot,
         ).toMatchSnapshot();
       });
     });
