@@ -220,7 +220,7 @@ const CourseUnit = ({ courseId }) => {
               <IframePreviewLibraryXBlockChanges />
             </Layout.Element>
             <Layout.Element>
-              <Stack gap={3} className="h-100">
+              <Stack gap={3}>
                 {isUnitVerticalType && (
                 <CourseAuthoringUnitSidebarSlot
                   courseId={courseId}
