@@ -4,7 +4,11 @@ import PropTypes from 'prop-types';
 import { PluginSlot } from '@openedx/frontend-plugin-framework';
 
 const CourseOutlineUnitCardExtraActionsSlot = ({ unit, subsection, section }) => (
-  <PluginSlot id="course_outline_unit_card_extra_actions_slot" pluginProps={{ unit, subsection, section }} />
+  <PluginSlot
+    id="org.openedx.frontend.authoring.course_outline_unit_card_extra_actions.v1"
+    idAliases={['course_outline_unit_card_extra_actions_slot']}
+    pluginProps={{ unit, subsection, section }}
+  />
 );
 
 CourseOutlineUnitCardExtraActionsSlot.propTypes = {

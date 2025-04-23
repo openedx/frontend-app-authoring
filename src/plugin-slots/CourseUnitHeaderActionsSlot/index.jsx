@@ -12,7 +12,8 @@ const CourseUnitHeaderActionsSlot = ({
   const isUnitVerticalType = category === COURSE_BLOCK_NAMES.vertical.id;
   return (
     <PluginSlot
-      id="course_unit_header_actions_slot"
+      id="org.openedx.frontend.authoring.course_unit_header_actions.v1"
+      idAliases={['course_unit_header_actions_slot']}
       pluginProps={{
         headerNavigationsActions, category, unitTitle, isUnitVerticalType, verticalBlocks,
       }}

@@ -15,7 +15,8 @@ const CourseOutlineHeaderActionsSlot = ({
   sections,
 }) => (
   <PluginSlot
-    id="course_outline_header_actions_slot"
+    id="org.openedx.frontend.authoring.course_outline_header_actions.v1"
+    idAliases={['course_outline_header_actions_slot']}
     pluginProps={{
       isReIndexShow,
       isSectionsExpanded,

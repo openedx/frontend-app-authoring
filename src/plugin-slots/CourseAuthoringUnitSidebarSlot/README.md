@@ -1,6 +1,9 @@
 # CourseAuthoringUnitSidebarSlot
 
-### Slot ID: `course_authoring_unit_sidebar_slot`
+### Slot ID: `org.openedx.frontend.authoring.course_unit_sidebar.v1`
+
+### Slot ID Aliases
+* `course_authoring_unit_sidebar_slot`
 
 ### Plugin Props:
 
@@ -25,7 +28,7 @@ import { PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-framework';
 
 const config = {
   pluginSlots: {
-    course_authoring_unit_sidebar_slot: {
+    'org.openedx.frontend.authoring.course_unit_sidebar.v1': {
       keepDefault: true,
       plugins: [
         {
@@ -63,7 +66,7 @@ const ProblemBlocks = ({unitTitle, xBlocks}) => (
 
 const config = {
   pluginSlots: {
-    course_authoring_unit_sidebar_slot: {
+    'org.openedx.frontend.authoring.course_unit_sidebar.v1': {
       keepDefault: true,
       plugins: [
         {
