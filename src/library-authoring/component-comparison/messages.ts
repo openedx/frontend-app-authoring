@@ -17,6 +17,11 @@ const messages = defineMessages({
     defaultMessage: 'Compare Changes',
     description: 'Title used for the compare changes dialog',
   },
+  previewNotAvailable: {
+    id: 'course-authoring.library-authoring.component-comparison.preview-not-available',
+    defaultMessage: 'Preview not available',
+    description: 'Message shown when preview is not available.',
+  },
 });
 
 export default messages;

@@ -1,5 +1,10 @@
 // @ts-check
-import React, { useEffect, useRef } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import { useToggle } from '@openedx/paragon';
@@ -8,6 +13,7 @@ import { useSearchParams } from 'react-router-dom';
 
 import CourseOutlineUnitCardExtraActionsSlot from '../../plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
+import { fetchCourseSectionQuery } from '../data/thunk';
 import { RequestStatus } from '../../data/constants';
 import { isUnitReadOnly } from '../../course-unit/data/utils';
 import CardHeader from '../card-header/CardHeader';
@@ -16,6 +22,7 @@ import TitleLink from '../card-header/TitleLink';
 import XBlockStatus from '../xblock-status/XBlockStatus';
 import { getItemStatus, getItemStatusBorder, scrollToElement } from '../utils';
 import { useClipboard } from '../../generic/clipboard';
+import { PreviewLibraryXBlockChanges } from '../../course-unit/preview-changes';
 
 const UnitCard = ({
   unit,
@@ -41,6 +48,7 @@ const UnitCard = ({
   const locatorId = searchParams.get('show');
   const isScrolledToElement = locatorId === unit.id;
   const [isFormOpen, openForm, closeForm] = useToggle(false);
+  const [isSyncModalOpen, openSyncModal, closeSyncModal] = useToggle(false);
   const namePrefix = 'unit';
 
   const { copyToClipboard } = useClipboard();
@@ -56,7 +64,21 @@ const UnitCard = ({
     isHeaderVisible = true,
     enableCopyPasteUnits = false,
     discussionEnabled,
+    upstreamInfo,
   } = unit;
+
+  const blockSyncData = useMemo(() => {
+    if (!upstreamInfo.readyToSync) {
+      return undefined;
+    }
+    return {
+      displayName,
+      downstreamBlockId: id,
+      upstreamBlockId: upstreamInfo.upstreamRef,
+      upstreamBlockVersionSynced: upstreamInfo.versionSynced,
+      isVertical: true,
+    };
+  }, [upstreamInfo]);
 
   const readOnly = isUnitReadOnly(unit);
 
@@ -107,6 +129,10 @@ const UnitCard = ({
     copyToClipboard(id);
   };
 
+  const handleOnPostChangeSync = useCallback(async () => {
+    await dispatch(fetchCourseSectionQuery([section.id]));
+  }, [dispatch, section]);
+
   const titleComponent = (
     <TitleLink
       title={displayName}
@@ -147,59 +173,69 @@ const UnitCard = ({
   const isDraggable = actions.draggable && (actions.allowMoveUp || actions.allowMoveDown);
 
   return (
-    <SortableItem
-      id={id}
-      category={category}
-      key={id}
-      isDraggable={isDraggable}
-      isDroppable={actions.childAddable}
-      componentStyle={{
-        background: '#fdfdfd',
-        ...borderStyle,
-      }}
-    >
-      <div
-        className={`unit-card ${isScrolledToElement ? 'highlight' : ''}`}
-        data-testid="unit-card"
-        ref={currentRef}
+    <>
+      <SortableItem
+        id={id}
+        category={category}
+        key={id}
+        isDraggable={isDraggable}
+        isDroppable={actions.childAddable}
+        componentStyle={{
+          background: '#fdfdfd',
+          ...borderStyle,
+        }}
       >
-        <CardHeader
-          title={displayName}
-          status={unitStatus}
-          hasChanges={hasChanges}
-          cardId={id}
-          onClickMenuButton={handleClickMenuButton}
-          onClickPublish={onOpenPublishModal}
-          onClickConfigure={onOpenConfigureModal}
-          onClickEdit={openForm}
-          onClickDelete={onOpenDeleteModal}
-          onClickMoveUp={handleUnitMoveUp}
-          onClickMoveDown={handleUnitMoveDown}
-          isFormOpen={isFormOpen}
-          closeForm={closeForm}
-          onEditSubmit={handleEditSubmit}
-          isDisabledEditField={readOnly || savingStatus === RequestStatus.IN_PROGRESS}
-          onClickDuplicate={onDuplicateSubmit}
-          titleComponent={titleComponent}
-          namePrefix={namePrefix}
-          actions={actions}
-          isVertical
-          enableCopyPasteUnits={enableCopyPasteUnits}
-          onClickCopy={handleCopyClick}
-          discussionEnabled={discussionEnabled}
-          discussionsSettings={discussionsSettings}
-          parentInfo={parentInfo}
-          extraActionsComponent={extraActionsComponent}
-        />
-        <div className="unit-card__content item-children" data-testid="unit-card__content">
-          <XBlockStatus
-            isSelfPaced={isSelfPaced}
-            isCustomRelativeDatesActive={isCustomRelativeDatesActive}
-            blockData={unit}
+        <div
+          className={`unit-card ${isScrolledToElement ? 'highlight' : ''}`}
+          data-testid="unit-card"
+          ref={currentRef}
+        >
+          <CardHeader
+            title={displayName}
+            status={unitStatus}
+            hasChanges={hasChanges}
+            cardId={id}
+            onClickMenuButton={handleClickMenuButton}
+            onClickPublish={onOpenPublishModal}
+            onClickConfigure={onOpenConfigureModal}
+            onClickEdit={openForm}
+            onClickDelete={onOpenDeleteModal}
+            onClickMoveUp={handleUnitMoveUp}
+            onClickMoveDown={handleUnitMoveDown}
+            onClickSync={openSyncModal}
+            isFormOpen={isFormOpen}
+            closeForm={closeForm}
+            onEditSubmit={handleEditSubmit}
+            isDisabledEditField={readOnly || savingStatus === RequestStatus.IN_PROGRESS}
+            onClickDuplicate={onDuplicateSubmit}
+            titleComponent={titleComponent}
+            namePrefix={namePrefix}
+            actions={actions}
+            isVertical
+            enableCopyPasteUnits={enableCopyPasteUnits}
+            onClickCopy={handleCopyClick}
+            discussionEnabled={discussionEnabled}
+            discussionsSettings={discussionsSettings}
+            parentInfo={parentInfo}
+            extraActionsComponent={extraActionsComponent}
+            readyToSync={upstreamInfo.readyToSync}
           />
+          <div className="unit-card__content item-children" data-testid="unit-card__content">
+            <XBlockStatus
+              isSelfPaced={isSelfPaced}
+              isCustomRelativeDatesActive={isCustomRelativeDatesActive}
+              blockData={unit}
+            />
+          </div>
         </div>
-      </div>
-    </SortableItem>
+      </SortableItem>
+      <PreviewLibraryXBlockChanges
+        blockData={blockSyncData}
+        isModalOpen={isSyncModalOpen}
+        closeModal={closeSyncModal}
+        postChange={handleOnPostChangeSync}
+      />
+    </>
   );
 };
 
@@ -225,6 +261,11 @@ UnitCard.propTypes = {
     isHeaderVisible: PropTypes.bool,
     enableCopyPasteUnits: PropTypes.bool,
     discussionEnabled: PropTypes.bool,
+    upstreamInfo: PropTypes.shape({
+      readyToSync: PropTypes.bool.isRequired,
+      upstreamRef: PropTypes.string.isRequired,
+      versionSynced: PropTypes.number.isRequired,
+    }).isRequired,
   }).isRequired,
   subsection: PropTypes.shape({
     id: PropTypes.string.isRequired,

@@ -12,13 +12,13 @@ import IframePreviewLibraryXBlockChanges, { LibraryChangesMessageData } from '.'
 import { messageTypes } from '../constants';
 import { libraryBlockChangesUrl } from '../data/api';
 import { ToastActionData } from '../../generic/toast-context';
-import { getLibraryBlockMetadataUrl } from '../../library-authoring/data/api';
+import { getLibraryBlockMetadataUrl, getLibraryContainerApiUrl } from '../../library-authoring/data/api';
 
 const usageKey = 'some-id';
 const defaultEventData: LibraryChangesMessageData = {
   displayName: 'Test block',
   downstreamBlockId: usageKey,
-  upstreamBlockId: 'some-lib-id',
+  upstreamBlockId: 'lct:org:lib1:unit:1',
   upstreamBlockVersionSynced: 1,
   isVertical: false,
 };
@@ -85,6 +85,15 @@ describe('<IframePreviewLibraryXBlockChanges />', () => {
     render();
 
     expect(await screen.findByText('Preview changes: Test block -> New test block')).toBeInTheDocument();
+  });
+
+  it('renders both new and old title if they are different on units', async () => {
+    axiosMock.onGet(getLibraryContainerApiUrl(defaultEventData.upstreamBlockId)).reply(200, {
+      displayName: 'New test Unit',
+    });
+    render({ ...defaultEventData, isVertical: true, displayName: 'Test Unit' });
+
+    expect(await screen.findByText('Preview changes: Test Unit -> New test Unit')).toBeInTheDocument();
   });
 
   it('accept changes works', async () => {

@@ -368,4 +368,19 @@ describe('<CardHeader />', () => {
     renderComponent();
     expect(screen.queryByText('0')).not.toBeInTheDocument();
   });
+
+  it('should render sync button when is ready to sync', () => {
+    const mockClickSync = jest.fn();
+
+    renderComponent({
+      readyToSync: true,
+      onClickSync: mockClickSync,
+    });
+
+    const syncButton = screen.getByRole('button', { name: /update available - click to sync/i });
+    expect(syncButton).toBeInTheDocument();
+    fireEvent.click(syncButton);
+
+    expect(mockClickSync).toHaveBeenCalled();
+  });
 });

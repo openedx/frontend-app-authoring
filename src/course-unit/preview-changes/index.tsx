@@ -14,7 +14,7 @@ import messages from './messages';
 import { ToastContext } from '../../generic/toast-context';
 import LoadingButton from '../../generic/loading-button';
 import Loading from '../../generic/Loading';
-import { useLibraryBlockMetadata } from '../../library-authoring/data/apiHooks';
+import { useContainer, useLibraryBlockMetadata } from '../../library-authoring/data/apiHooks';
 
 export interface LibraryChangesMessageData {
   displayName: string,
@@ -48,14 +48,20 @@ export const PreviewLibraryXBlockChanges = ({
 
   // ignore changes confirmation modal toggle.
   const [isConfirmModalOpen, openConfirmModal, closeConfirmModal] = useToggle(false);
+
+  // TODO: Split into two different components to avoid making these two calls in which
+  // one will definitely fail
   const { data: componentMetadata } = useLibraryBlockMetadata(blockData?.upstreamBlockId);
+  const { data: unitMetadata } = useContainer(blockData?.upstreamBlockId);
+
+  const metadata = blockData?.isVertical ? unitMetadata : componentMetadata;
 
   const acceptChangesMutation = useAcceptLibraryBlockChanges();
   const ignoreChangesMutation = useIgnoreLibraryBlockChanges();
 
   const getTitle = useCallback(() => {
     const oldName = blockData?.displayName;
-    const newName = componentMetadata?.displayName;
+    const newName = metadata?.displayName;
 
     if (!oldName) {
       if (blockData?.isVertical) {
@@ -67,7 +73,7 @@ export const PreviewLibraryXBlockChanges = ({
       return intl.formatMessage(messages.title, { blockTitle: oldName });
     }
     return intl.formatMessage(messages.diffTitle, { oldName, newName });
-  }, [blockData, componentMetadata]);
+  }, [blockData, metadata]);
 
   const getBody = useCallback(() => {
     if (!blockData) {
@@ -78,6 +84,7 @@ export const PreviewLibraryXBlockChanges = ({
         usageKey={blockData.upstreamBlockId}
         oldVersion={blockData.upstreamBlockVersionSynced || 'published'}
         newVersion="published"
+        isContainer={blockData.isVertical}
       />
     );
   }, [blockData]);
