@@ -26,7 +26,6 @@ const PublishControls = ({ blockId }: PublishControlsProps) => {
   } = useCourseUnitData(unitData);
   const intl = useIntl();
   const { sendMessageToIframe } = useIframe();
-  const hasUpstream = !!unitData?.upstream;
 
   const [isDiscardModalOpen, openDiscardModal, closeDiscardModal] = useToggle(false);
   const [isVisibleModalOpen, openVisibleModal, closeVisibleModal] = useToggle(false);
@@ -70,7 +69,6 @@ const PublishControls = ({ blockId }: PublishControlsProps) => {
         openVisibleModal={openVisibleModal}
         handlePublishing={handleCourseUnitPublish}
         visibleToStaffOnly={visibleToStaffOnly}
-        hasUpstream={hasUpstream}
       />
       <ModalNotification
         title={intl.formatMessage(messages.modalDiscardUnitChangesTitle)}

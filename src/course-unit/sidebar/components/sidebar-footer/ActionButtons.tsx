@@ -10,13 +10,11 @@ import messages from '../../messages';
 interface ActionButtonsProps {
   openDiscardModal: () => void,
   handlePublishing: () => void,
-  readOnly: boolean,
 }
 
 const ActionButtons = ({
   openDiscardModal,
   handlePublishing,
-  readOnly = false,
 }: ActionButtonsProps) => {
   const intl = useIntl();
   const {
@@ -36,7 +34,6 @@ const ActionButtons = ({
           className="mt-3.5"
           variant="outline-primary"
           onClick={handlePublishing}
-          disabled={readOnly}
         >
           {intl.formatMessage(messages.actionButtonPublishTitle)}
         </Button>
@@ -47,7 +44,6 @@ const ActionButtons = ({
           variant="link"
           onClick={openDiscardModal}
           className="course-unit-sidebar-footer__discard-changes__btn mt-2"
-          disabled={readOnly}
         >
           {intl.formatMessage(messages.actionButtonDiscardChangesTitle)}
         </Button>

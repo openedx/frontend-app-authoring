@@ -12,7 +12,6 @@ interface SidebarFooterProps {
   openVisibleModal: () => void,
   handlePublishing: () => void,
   visibleToStaffOnly: boolean,
-  hasUpstream?: boolean,
 }
 
 const SidebarFooter = ({
@@ -22,7 +21,6 @@ const SidebarFooter = ({
   openDiscardModal,
   visibleToStaffOnly,
   displayUnitLocation = false,
-  hasUpstream = false,
 }: SidebarFooterProps) => {
   const intl = useIntl();
 
@@ -42,7 +40,6 @@ const SidebarFooter = ({
             <ActionButtons
               openDiscardModal={openDiscardModal}
               handlePublishing={handlePublishing}
-              readOnly={hasUpstream}
             />
           </>
         )}
