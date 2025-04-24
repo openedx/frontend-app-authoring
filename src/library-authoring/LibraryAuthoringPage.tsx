@@ -6,7 +6,7 @@ import {
 } from 'react';
 import { Helmet } from 'react-helmet';
 import classNames from 'classnames';
-import { StudioFooterSlot } from '@openedx/frontend-slot-footer';
+import { StudioFooterSlot } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,

@@ -16,4 +16,4 @@
 * [`org.openedx.frontend.authoring.video_transcript_additional_translations_component.v1`](./AdditionalTranslationsComponentSlot/)
 
 ## Footer Slot
-* [`studio_footer_slot`](./StudioFooterSlot/)
+* [`org.openedx.frontend.layout.studio_footer.v1`](./StudioFooterSlot/)

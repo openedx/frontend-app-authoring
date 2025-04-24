@@ -34,7 +34,7 @@ const MockChildComponent = () => {
 
 jest.mock('../header', () => jest.fn(() => <div data-testid="mock-header" />));
 jest.mock('@edx/frontend-component-footer', () => ({
-  StudioFooter: jest.fn(() => <div data-testid="mock-footer" />),
+  StudioFooterSlot: jest.fn(() => <div data-testid="mock-footer" />),
 }));
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
