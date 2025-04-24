@@ -136,6 +136,7 @@ const CardHeader = ({
               alt={intl.formatMessage(messages.altButtonEdit)}
               iconAs={EditIcon}
               onClick={onClickEdit}
+              // @ts-ignore
               disabled={isDisabledEditField}
             />
           </>
