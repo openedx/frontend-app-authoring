@@ -38,7 +38,7 @@ import {
   updateCourseOutlineInfoLoadingStatus,
   updateMovedXBlockParams,
 } from './slice';
-import { getNotificationMessage } from './utils';
+import { getNotificationMessage, isUnitReadOnly } from './utils';
 
 export function fetchCourseUnitQuery(courseId) {
   return async (dispatch) => {
@@ -46,6 +46,8 @@ export function fetchCourseUnitQuery(courseId) {
 
     try {
       const courseUnit = await getCourseUnitData(courseId);
+      courseUnit.readOnly = isUnitReadOnly(courseUnit);
+
       dispatch(fetchCourseItemSuccess(courseUnit));
       dispatch(updateLoadingCourseUnitStatus({ status: RequestStatus.SUCCESSFUL }));
       return true;

@@ -76,7 +76,7 @@ const CourseUnit = ({ courseId }) => {
   } = useCourseUnit({ courseId, blockId });
   const layoutGrid = useLayoutGrid(unitCategory, isUnitLibraryType);
 
-  const readOnly = !!courseUnit.upstream;
+  const readOnly = !!courseUnit.readOnly;
 
   useEffect(() => {
     document.title = getPageHeadTitle('', unitTitle);
