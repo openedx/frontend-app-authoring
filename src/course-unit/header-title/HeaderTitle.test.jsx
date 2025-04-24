@@ -72,8 +72,25 @@ describe('<HeaderTitle />', () => {
 
     expect(getByRole('textbox', { name: messages.ariaLabelButtonEdit.defaultMessage })).toBeInTheDocument();
     expect(getByRole('textbox', { name: messages.ariaLabelButtonEdit.defaultMessage })).toHaveValue(unitTitle);
-    expect(getByRole('button', { name: messages.altButtonEdit.defaultMessage })).toBeInTheDocument();
-    expect(getByRole('button', { name: messages.altButtonSettings.defaultMessage })).toBeInTheDocument();
+    expect(getByRole('button', { name: messages.altButtonEdit.defaultMessage })).toBeEnabled();
+    expect(getByRole('button', { name: messages.altButtonSettings.defaultMessage })).toBeEnabled();
+  });
+
+  it('Units sourced from upstream show a disabled edit form and config menu', async () => {
+    // Override mock unit with one sourced from an upstream library
+    axiosMock = new MockAdapter(getAuthenticatedHttpClient());
+    axiosMock
+      .onGet(getCourseUnitApiUrl(blockId))
+      .reply(200, {
+        ...courseUnitIndexMock,
+        upstream: 'lct:org:lib:unit:unit-1',
+      });
+    await executeThunk(fetchCourseUnitQuery(blockId), store.dispatch);
+
+    const { getByRole } = renderComponent();
+
+    expect(getByRole('button', { name: messages.altButtonEdit.defaultMessage })).toBeDisabled();
+    expect(getByRole('button', { name: messages.altButtonSettings.defaultMessage })).toBeDisabled();
   });
 
   it('calls toggle edit title form by clicking on Edit button', () => {
