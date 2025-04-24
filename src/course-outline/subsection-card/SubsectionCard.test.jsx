@@ -298,7 +298,7 @@ describe('<SubsectionCard />', () => {
     expect(handleOnAddUnitFromLibrary).toHaveBeenCalledWith({
       type: COMPONENT_TYPES.libraryV2,
       parentLocator: '123',
-      category: 'unit',
+      category: 'vertical',
       libraryContentKey: containerKey,
     });
   });

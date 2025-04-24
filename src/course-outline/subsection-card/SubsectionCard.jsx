@@ -186,7 +186,7 @@ const SubsectionCard = ({
   const handleSelectLibraryUnit = useCallback((selectedUnit) => {
     onAddUnitFromLibrary({
       type: COMPONENT_TYPES.libraryV2,
-      category: ContainerType.Unit,
+      category: ContainerType.Vertical,
       parentLocator: id,
       libraryContentKey: selectedUnit.usageKey,
     });

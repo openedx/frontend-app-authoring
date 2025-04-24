@@ -447,7 +447,7 @@ describe('<CourseOutline />', () => {
     const [subsection] = section.childInfo.children;
     expect(axiosMock.history.post[0].data).toBe(JSON.stringify({
       type: COMPONENT_TYPES.libraryV2,
-      category: 'unit',
+      category: 'vertical',
       parent_locator: subsection.id,
       library_content_key: containerKey,
     }));

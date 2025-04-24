@@ -52,6 +52,7 @@ export const buildCollectionUsageKey = (learningContextKey: string, collectionId
 
 export enum ContainerType {
   Unit = 'unit',
+  Vertical = 'vertical',
 }
 
 /**
