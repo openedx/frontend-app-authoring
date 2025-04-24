@@ -225,7 +225,6 @@ UnitCard.propTypes = {
     isHeaderVisible: PropTypes.bool,
     enableCopyPasteUnits: PropTypes.bool,
     discussionEnabled: PropTypes.bool,
-    upstream: PropTypes.string,
   }).isRequired,
   subsection: PropTypes.shape({
     id: PropTypes.string.isRequired,

@@ -2207,7 +2207,9 @@ describe('<CourseUnit />', () => {
       .onGet(getCourseUnitApiUrl(courseId))
       .reply(200, {
         ...courseUnitIndexMock,
-        upstream: 'lct:org:lib:unit:unit-1',
+        upstreamInfo: {
+          upstreamRef: 'lct:org:lib:unit:unit-1',
+        },
       });
     await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
 
