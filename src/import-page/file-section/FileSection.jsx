@@ -41,7 +41,7 @@ const FileSection = ({ intl, courseId }) => {
                   handleError,
                 ))
               }
-              accept={{ 'application/gzip': ['.tar.gz'] }}
+              accept={{ 'application/x-tar.gz': ['.tar.gz'] }}
               data-testid="dropzone"
               style={{ height: '200px' }}
             />
