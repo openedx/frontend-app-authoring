@@ -2220,14 +2220,14 @@ describe('<CourseUnit />', () => {
     expect(editButton).toBeInTheDocument();
     expect(editButton).toBeDisabled();
 
-    // Disable the "Publish" button
+    // The "Publish" button should still be enabled
     const courseUnitSidebar = screen.getByTestId('course-unit-sidebar');
     const publishButton = within(courseUnitSidebar).getByRole(
       'button',
       { name: sidebarMessages.actionButtonPublishTitle.defaultMessage },
     );
     expect(publishButton).toBeInTheDocument();
-    expect(publishButton).toBeDisabled();
+    expect(publishButton).toBeEnabled();
 
     // Disable the "Manage Tags" button
     const manageTagsButton = screen.getByRole(
