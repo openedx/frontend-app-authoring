@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { Form } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -10,7 +9,15 @@ import { PUBLISH_TYPES } from '../../../constants';
 import { getVisibilityTitle } from '../../utils';
 import messages from '../../messages';
 
-const UnitVisibilityInfo = ({ openVisibleModal, visibleToStaffOnly }) => {
+interface UnitVisibilityInfoProps {
+  openVisibleModal: () => void,
+  visibleToStaffOnly: boolean,
+}
+
+const UnitVisibilityInfo = ({
+  openVisibleModal,
+  visibleToStaffOnly,
+}: UnitVisibilityInfoProps) => {
   const intl = useIntl();
   const { blockId } = useParams();
   const dispatch = useDispatch();
@@ -57,11 +64,6 @@ const UnitVisibilityInfo = ({ openVisibleModal, visibleToStaffOnly }) => {
       </Form.Checkbox>
     </>
   );
-};
-
-UnitVisibilityInfo.propTypes = {
-  openVisibleModal: PropTypes.func.isRequired,
-  visibleToStaffOnly: PropTypes.bool.isRequired,
 };
 
 export default UnitVisibilityInfo;

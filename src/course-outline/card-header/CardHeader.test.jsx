@@ -240,6 +240,35 @@ describe('<CardHeader />', () => {
     expect(await findByTestId('subsection-edit-field')).toBeDisabled();
   });
 
+  it('check editing is enabled when isDisabledEditField is false', async () => {
+    const { getByTestId } = renderComponent({
+      ...cardHeaderProps,
+    });
+
+    expect(getByTestId('subsection-edit-button')).toBeEnabled();
+
+    // Ensure menu items related to editing are enabled
+    const menuButton = getByTestId('subsection-card-header__menu-button');
+    await act(async () => fireEvent.click(menuButton));
+    expect(await getByTestId('subsection-card-header__menu-configure-button')).not.toHaveAttribute('aria-disabled');
+    expect(await getByTestId('subsection-card-header__menu-manage-tags-button')).not.toHaveAttribute('aria-disabled');
+  });
+
+  it('check editing is disabled when isDisabledEditField is true', async () => {
+    const { getByTestId } = renderComponent({
+      ...cardHeaderProps,
+      isDisabledEditField: true,
+    });
+
+    expect(await getByTestId('subsection-edit-button')).toBeDisabled();
+
+    // Ensure menu items related to editing are disabled
+    const menuButton = getByTestId('subsection-card-header__menu-button');
+    await act(async () => fireEvent.click(menuButton));
+    expect(await getByTestId('subsection-card-header__menu-configure-button')).toHaveAttribute('aria-disabled', 'true');
+    expect(await getByTestId('subsection-card-header__menu-manage-tags-button')).toHaveAttribute('aria-disabled', 'true');
+  });
+
   it('calls onClickDelete when item is clicked', async () => {
     const { findByText, findByTestId } = renderComponent();
 

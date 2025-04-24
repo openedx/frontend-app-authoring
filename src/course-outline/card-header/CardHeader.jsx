@@ -136,6 +136,8 @@ const CardHeader = ({
               alt={intl.formatMessage(messages.altButtonEdit)}
               iconAs={EditIcon}
               onClick={onClickEdit}
+              // @ts-ignore
+              disabled={isDisabledEditField}
             />
           </>
         )}
@@ -178,6 +180,7 @@ const CardHeader = ({
               </Dropdown.Item>
               <Dropdown.Item
                 data-testid={`${namePrefix}-card-header__menu-configure-button`}
+                disabled={isDisabledEditField}
                 onClick={onClickConfigure}
               >
                 {intl.formatMessage(messages.menuConfigure)}
@@ -185,6 +188,7 @@ const CardHeader = ({
               {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && (
                 <Dropdown.Item
                   data-testid={`${namePrefix}-card-header__menu-manage-tags-button`}
+                  disabled={isDisabledEditField}
                   onClick={openManageTagsDrawer}
                 >
                   {intl.formatMessage(messages.menuManageTags)}

@@ -26,8 +26,8 @@ const ConfigureModal = ({
   onClose,
   onConfigureSubmit,
   currentItemData,
-  enableProctoredExams,
-  isXBlockComponent,
+  enableProctoredExams = false,
+  isXBlockComponent = false,
   isSelfPaced,
 }) => {
   const intl = useIntl();
@@ -318,11 +318,6 @@ const ConfigureModal = ({
       </div>
     </ModalDialog>
   );
-};
-
-ConfigureModal.defaultProps = {
-  isXBlockComponent: false,
-  enableProctoredExams: false,
 };
 
 ConfigureModal.propTypes = {

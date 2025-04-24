@@ -34,6 +34,8 @@ const HeaderTitle = ({
     COURSE_BLOCK_NAMES.component.id,
   ].includes(currentItemData.category);
 
+  const readOnly = !!currentItemData.readOnly;
+
   const onConfigureSubmit = (...arg) => {
     handleConfigureSubmit(currentItemData.id, ...arg, closeConfigureModal);
   };
@@ -80,12 +82,14 @@ const HeaderTitle = ({
           className="ml-1 flex-shrink-0"
           iconAs={EditIcon}
           onClick={handleTitleEdit}
+          disabled={readOnly}
         />
         <IconButton
           alt={intl.formatMessage(messages.altButtonSettings)}
           className="flex-shrink-0"
           iconAs={SettingsIcon}
           onClick={openConfigureModal}
+          disabled={readOnly}
         />
         <ConfigureModal
           isOpen={isConfigureModalOpen}
@@ -102,6 +106,8 @@ const HeaderTitle = ({
   );
 };
 
+export default HeaderTitle;
+
 HeaderTitle.propTypes = {
   unitTitle: PropTypes.string.isRequired,
   isTitleEditFormOpen: PropTypes.bool.isRequired,
@@ -109,5 +115,3 @@ HeaderTitle.propTypes = {
   handleTitleEditSubmit: PropTypes.func.isRequired,
   handleConfigureSubmit: PropTypes.func.isRequired,
 };
-
-export default HeaderTitle;

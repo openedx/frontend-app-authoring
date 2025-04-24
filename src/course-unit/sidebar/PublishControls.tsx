@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { useToggle } from '@openedx/paragon';
 import { InfoOutline as InfoOutlineIcon } from '@openedx/paragon/icons';
@@ -12,14 +11,19 @@ import { getCourseUnitData } from '../data/selectors';
 import messages from './messages';
 import ModalNotification from '../../generic/modal-notification';
 
-const PublishControls = ({ blockId }) => {
+interface PublishControlsProps {
+  blockId?: string,
+}
+
+const PublishControls = ({ blockId }: PublishControlsProps) => {
+  const unitData = useSelector(getCourseUnitData);
   const {
     title,
     locationId,
     releaseLabel,
     visibilityState,
     visibleToStaffOnly,
-  } = useCourseUnitData(useSelector(getCourseUnitData));
+  } = useCourseUnitData(unitData);
   const intl = useIntl();
   const { sendMessageToIframe } = useIframe();
 
@@ -88,14 +92,6 @@ const PublishControls = ({ blockId }) => {
       />
     </>
   );
-};
-
-PublishControls.propTypes = {
-  blockId: PropTypes.string,
-};
-
-PublishControls.defaultProps = {
-  blockId: null,
 };
 
 export default PublishControls;
