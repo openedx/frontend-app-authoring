@@ -9,6 +9,7 @@ import { useSearchParams } from 'react-router-dom';
 import CourseOutlineUnitCardExtraActionsSlot from '../../plugin-slots/CourseOutlineUnitCardExtraActionsSlot';
 import { setCurrentItem, setCurrentSection, setCurrentSubsection } from '../data/slice';
 import { RequestStatus } from '../../data/constants';
+import { isUnitReadOnly } from '../../course-unit/data/utils';
 import CardHeader from '../card-header/CardHeader';
 import SortableItem from '../drag-helper/SortableItem';
 import TitleLink from '../card-header/TitleLink';
@@ -56,6 +57,8 @@ const UnitCard = ({
     enableCopyPasteUnits = false,
     discussionEnabled,
   } = unit;
+
+  const readOnly = isUnitReadOnly(unit);
 
   // re-create actions object for customizations
   const actions = { ...unitActions };
@@ -175,7 +178,7 @@ const UnitCard = ({
           isFormOpen={isFormOpen}
           closeForm={closeForm}
           onEditSubmit={handleEditSubmit}
-          isDisabledEditField={savingStatus === RequestStatus.IN_PROGRESS}
+          isDisabledEditField={readOnly || savingStatus === RequestStatus.IN_PROGRESS}
           onClickDuplicate={onDuplicateSubmit}
           titleComponent={titleComponent}
           namePrefix={namePrefix}
@@ -222,6 +225,7 @@ UnitCard.propTypes = {
     isHeaderVisible: PropTypes.bool,
     enableCopyPasteUnits: PropTypes.bool,
     discussionEnabled: PropTypes.bool,
+    upstream: PropTypes.string,
   }).isRequired,
   subsection: PropTypes.shape({
     id: PropTypes.string.isRequired,
