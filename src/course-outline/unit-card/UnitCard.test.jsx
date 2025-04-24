@@ -1,5 +1,6 @@
 import {
-  act, render, fireEvent, within,
+  act, render, fireEvent, within, screen,
+  waitFor,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -11,6 +12,17 @@ import UnitCard from './UnitCard';
 import cardMessages from '../card-header/messages';
 
 let store;
+const mockUseAcceptLibraryBlockChanges = jest.fn();
+const mockUseIgnoreLibraryBlockChanges = jest.fn();
+
+jest.mock('../../course-unit/data/apiHooks', () => ({
+  useAcceptLibraryBlockChanges: () => ({
+    mutateAsync: mockUseAcceptLibraryBlockChanges,
+  }),
+  useIgnoreLibraryBlockChanges: () => ({
+    mutateAsync: mockUseIgnoreLibraryBlockChanges,
+  }),
+}));
 
 const section = {
   id: '1',
@@ -43,6 +55,11 @@ const unit = {
     duplicable: true,
   },
   isHeaderVisible: true,
+  upstreamInfo: {
+    readyToSync: true,
+    upstreamRef: 'lct:org1:lib1:unit:1',
+    versionSynced: 1,
+  },
 };
 
 const queryClient = new QueryClient();
@@ -146,5 +163,52 @@ describe('<UnitCard />', () => {
       },
     });
     expect(queryByRole('status')).not.toBeInTheDocument();
+  });
+
+  it('should sync unit changes from upstream', async () => {
+    renderComponent();
+
+    expect(await screen.findByTestId('unit-card-header')).toBeInTheDocument();
+
+    // Click on sync button
+    const syncButton = screen.getByRole('button', { name: /update available - click to sync/i });
+    fireEvent.click(syncButton);
+
+    // Should open compare preview modal
+    expect(screen.getByRole('heading', { name: /preview changes: unit name/i })).toBeInTheDocument();
+    expect(screen.getByText('Preview not available')).toBeInTheDocument();
+
+    // Click on accept changes
+    const acceptChangesButton = screen.getByText(/accept changes/i);
+    fireEvent.click(acceptChangesButton);
+
+    await waitFor(() => expect(mockUseAcceptLibraryBlockChanges).toHaveBeenCalled());
+  });
+
+  it('should decline sync unit changes from upstream', async () => {
+    renderComponent();
+
+    expect(await screen.findByTestId('unit-card-header')).toBeInTheDocument();
+
+    // Click on sync button
+    const syncButton = screen.getByRole('button', { name: /update available - click to sync/i });
+    fireEvent.click(syncButton);
+
+    // Should open compare preview modal
+    expect(screen.getByRole('heading', { name: /preview changes: unit name/i })).toBeInTheDocument();
+    expect(screen.getByText('Preview not available')).toBeInTheDocument();
+
+    // Click on ignore changes
+    const ignoreChangesButton = screen.getByRole('button', { name: /ignore changes/i });
+    fireEvent.click(ignoreChangesButton);
+
+    // Should open the confirmation modal
+    expect(screen.getByRole('heading', { name: /ignore these changes\?/i })).toBeInTheDocument();
+
+    // Click on ignore button
+    const ignoreButton = screen.getByRole('button', { name: /ignore/i });
+    fireEvent.click(ignoreButton);
+
+    await waitFor(() => expect(mockUseIgnoreLibraryBlockChanges).toHaveBeenCalled());
   });
 });

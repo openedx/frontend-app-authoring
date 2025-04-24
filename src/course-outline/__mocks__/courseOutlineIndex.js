@@ -292,6 +292,11 @@ module.exports = {
                         selectedPartitionIndex: -1,
                         selectedGroupsLabel: '',
                       },
+                      upstreamInfo: {
+                        readyToSync: false,
+                        upstreamRef: undefined,
+                        versionSynced: undefined,
+                      },
                     },
                   ],
                 },
@@ -675,6 +680,11 @@ module.exports = {
                         selectedPartitionIndex: -1,
                         selectedGroupsLabel: '',
                       },
+                      upstreamInfo: {
+                        readyToSync: false,
+                        upstreamRef: undefined,
+                        versionSynced: undefined,
+                      },
                     },
                     {
                       id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@vertical_2dbb0072785e',
@@ -758,6 +768,11 @@ module.exports = {
                         ],
                         selectedPartitionIndex: -1,
                         selectedGroupsLabel: '',
+                      },
+                      upstreamInfo: {
+                        readyToSync: false,
+                        upstreamRef: undefined,
+                        versionSynced: undefined,
                       },
                     },
                     {
@@ -843,6 +858,11 @@ module.exports = {
                         selectedPartitionIndex: -1,
                         selectedGroupsLabel: '',
                       },
+                      upstreamInfo: {
+                        readyToSync: false,
+                        upstreamRef: undefined,
+                        versionSynced: undefined,
+                      },
                     },
                     {
                       id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@vertical_d32bf9b2242c',
@@ -927,6 +947,11 @@ module.exports = {
                         selectedPartitionIndex: -1,
                         selectedGroupsLabel: '',
                       },
+                      upstreamInfo: {
+                        readyToSync: false,
+                        upstreamRef: undefined,
+                        versionSynced: undefined,
+                      },
                     },
                     {
                       id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@4e592689563243c484af947465eaef0d',
@@ -1010,6 +1035,11 @@ module.exports = {
                         ],
                         selectedPartitionIndex: -1,
                         selectedGroupsLabel: '',
+                      },
+                      upstreamInfo: {
+                        readyToSync: false,
+                        upstreamRef: undefined,
+                        versionSynced: undefined,
                       },
                     },
                   ],
@@ -1196,6 +1226,11 @@ module.exports = {
                         selectedPartitionIndex: -1,
                         selectedGroupsLabel: '',
                       },
+                      upstreamInfo: {
+                        readyToSync: false,
+                        upstreamRef: undefined,
+                        versionSynced: undefined,
+                      },
                     },
                     {
                       id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@vertical_aae927868e55',
@@ -1279,6 +1314,11 @@ module.exports = {
                         ],
                         selectedPartitionIndex: -1,
                         selectedGroupsLabel: '',
+                      },
+                      upstreamInfo: {
+                        readyToSync: false,
+                        upstreamRef: undefined,
+                        versionSynced: undefined,
                       },
                     },
                     {
@@ -1364,6 +1404,11 @@ module.exports = {
                         selectedPartitionIndex: -1,
                         selectedGroupsLabel: '',
                       },
+                      upstreamInfo: {
+                        readyToSync: false,
+                        upstreamRef: undefined,
+                        versionSynced: undefined,
+                      },
                     },
                     {
                       id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@vertical_bc69a47c6fae',
@@ -1448,6 +1493,11 @@ module.exports = {
                         selectedPartitionIndex: -1,
                         selectedGroupsLabel: '',
                       },
+                      upstreamInfo: {
+                        readyToSync: false,
+                        upstreamRef: undefined,
+                        versionSynced: undefined,
+                      },
                     },
                     {
                       id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@8f89194410954e768bde1764985454a7',
@@ -1531,6 +1581,11 @@ module.exports = {
                         ],
                         selectedPartitionIndex: -1,
                         selectedGroupsLabel: '',
+                      },
+                      upstreamInfo: {
+                        readyToSync: false,
+                        upstreamRef: undefined,
+                        versionSynced: undefined,
                       },
                     },
                   ],
@@ -1716,6 +1771,11 @@ module.exports = {
                         ],
                         selectedPartitionIndex: -1,
                         selectedGroupsLabel: '',
+                      },
+                      upstreamInfo: {
+                        readyToSync: false,
+                        upstreamRef: undefined,
+                        versionSynced: undefined,
                       },
                     },
                   ],
@@ -1995,6 +2055,11 @@ module.exports = {
                         selectedPartitionIndex: -1,
                         selectedGroupsLabel: '',
                       },
+                      upstreamInfo: {
+                        readyToSync: false,
+                        upstreamRef: undefined,
+                        versionSynced: undefined,
+                      },
                     },
                     {
                       id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@vertical_f04afeac0131',
@@ -2078,6 +2143,11 @@ module.exports = {
                         ],
                         selectedPartitionIndex: -1,
                         selectedGroupsLabel: '',
+                      },
+                      upstreamInfo: {
+                        readyToSync: false,
+                        upstreamRef: undefined,
+                        versionSynced: undefined,
                       },
                     },
                     {
@@ -2163,6 +2233,11 @@ module.exports = {
                         selectedPartitionIndex: -1,
                         selectedGroupsLabel: '',
                       },
+                      upstreamInfo: {
+                        readyToSync: false,
+                        upstreamRef: undefined,
+                        versionSynced: undefined,
+                      },
                     },
                     {
                       id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@f91d8d31f7cf48ce990f8d8745ae4cfa',
@@ -2246,6 +2321,11 @@ module.exports = {
                         ],
                         selectedPartitionIndex: -1,
                         selectedGroupsLabel: '',
+                      },
+                      upstreamInfo: {
+                        readyToSync: false,
+                        upstreamRef: undefined,
+                        versionSynced: undefined,
                       },
                     },
                     {
@@ -2331,6 +2411,11 @@ module.exports = {
                         selectedPartitionIndex: -1,
                         selectedGroupsLabel: '',
                       },
+                      upstreamInfo: {
+                        readyToSync: false,
+                        upstreamRef: undefined,
+                        versionSynced: undefined,
+                      },
                     },
                     {
                       id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@vertical_36e0beb03f0a',
@@ -2414,6 +2499,11 @@ module.exports = {
                         ],
                         selectedPartitionIndex: -1,
                         selectedGroupsLabel: '',
+                      },
+                      upstreamInfo: {
+                        readyToSync: false,
+                        upstreamRef: undefined,
+                        versionSynced: undefined,
                       },
                     },
                     {
@@ -2499,6 +2589,11 @@ module.exports = {
                         selectedPartitionIndex: -1,
                         selectedGroupsLabel: '',
                       },
+                      upstreamInfo: {
+                        readyToSync: false,
+                        upstreamRef: undefined,
+                        versionSynced: undefined,
+                      },
                     },
                     {
                       id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@c7e98fd39a6944edb6b286c32e1150ff',
@@ -2583,6 +2678,11 @@ module.exports = {
                         selectedPartitionIndex: -1,
                         selectedGroupsLabel: '',
                       },
+                      upstreamInfo: {
+                        readyToSync: false,
+                        upstreamRef: undefined,
+                        versionSynced: undefined,
+                      },
                     },
                     {
                       id: 'block-v1:edX+DemoX+Demo_Course+type@vertical+block@d6eaa391d2be41dea20b8b1bfbcb1c45',
@@ -2666,6 +2766,11 @@ module.exports = {
                         ],
                         selectedPartitionIndex: -1,
                         selectedGroupsLabel: '',
+                      },
+                      upstreamInfo: {
+                        readyToSync: false,
+                        upstreamRef: undefined,
+                        versionSynced: undefined,
                       },
                     },
                   ],
@@ -2944,6 +3049,11 @@ module.exports = {
                         ],
                         selectedPartitionIndex: -1,
                         selectedGroupsLabel: '',
+                      },
+                      upstreamInfo: {
+                        readyToSync: false,
+                        upstreamRef: undefined,
+                        versionSynced: undefined,
                       },
                     },
                   ],

@@ -15,6 +15,7 @@ import {
 import {
   MoreVert as MoveVertIcon,
   EditOutline as EditIcon,
+  Sync as SyncIcon,
 } from '@openedx/paragon/icons';
 
 import { useContentTagsCount } from '../../generic/data/apiHooks';
@@ -55,6 +56,8 @@ const CardHeader = ({
   discussionsSettings,
   parentInfo,
   extraActionsComponent,
+  onClickSync,
+  readyToSync,
 }) => {
   const intl = useIntl();
   const [searchParams] = useSearchParams();
@@ -130,8 +133,17 @@ const CardHeader = ({
         ) : (
           <>
             {titleComponent}
+            {readyToSync && (
+              <IconButton
+                className="item-card-button-icon"
+                data-testid={`${namePrefix}-sync-button`}
+                alt={intl.formatMessage(messages.readyToSyncButtonAlt)}
+                iconAs={SyncIcon}
+                onClick={onClickSync}
+              />
+            )}
             <IconButton
-              className="item-card-edit-icon"
+              className="item-card-button-icon"
               data-testid={`${namePrefix}-edit-button`}
               alt={intl.formatMessage(messages.altButtonEdit)}
               iconAs={EditIcon}
@@ -259,6 +271,8 @@ CardHeader.defaultProps = {
   parentInfo: {},
   cardId: '',
   extraActionsComponent: null,
+  readyToSync: false,
+  onClickSync: null,
 };
 
 CardHeader.propTypes = {
@@ -305,6 +319,8 @@ CardHeader.propTypes = {
   // An optional component that is rendered before the dropdown. This is used by the Subsection
   // and Unit card components to render their plugin slots.
   extraActionsComponent: PropTypes.node,
+  onClickSync: PropTypes.func,
+  readyToSync: PropTypes.bool,
 };
 
 export default CardHeader;

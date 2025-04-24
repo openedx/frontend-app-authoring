@@ -12,7 +12,7 @@
     color: $black;
   }
 
-  .item-card-edit-icon {
+  .item-card-button-icon {
     opacity: 0;
     transition: opacity .3s linear;
     margin-right: .5rem;
@@ -23,7 +23,7 @@
   }
 
   &:hover {
-    .item-card-edit-icon {
+    .item-card-button-icon {
       opacity: 1;
     }
   }

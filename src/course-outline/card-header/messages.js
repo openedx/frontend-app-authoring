@@ -77,6 +77,11 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.card.menu.manageTags',
     defaultMessage: 'Manage tags',
   },
+  readyToSyncButtonAlt: {
+    id: 'course-authoring.course-outline.card.button.sync.alt',
+    defaultMessage: 'Update available - click to sync',
+    description: 'Alt text for the sync icon button.',
+  },
 });
 
 export default messages;
