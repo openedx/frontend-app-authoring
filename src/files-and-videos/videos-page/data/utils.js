@@ -61,7 +61,7 @@ export const getFormattedDuration = (value) => {
   }
   const seconds = Math.floor(value % 60);
   const minutes = Math.floor((value / 60) % 60);
-  const hours = Math.floor((value / 360) % 60);
+  const hours = Math.floor(value / 3600);
   const zeroPad = (num) => String(num).padStart(2, '0');
   return [hours, minutes, seconds].map(zeroPad).join(':');
 };
