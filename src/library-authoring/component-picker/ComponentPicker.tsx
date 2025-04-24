@@ -14,18 +14,28 @@ import LibraryAuthoringPage from '../LibraryAuthoringPage';
 import LibraryCollectionPage from '../collections/LibraryCollectionPage';
 import SelectLibrary from './SelectLibrary';
 import messages from './messages';
+import { ContentType, allLibraryPageTabs } from '../routes';
 
 interface LibraryComponentPickerProps {
   returnToLibrarySelection: () => void;
+  visibleTabs: ContentType[],
 }
 
-const InnerComponentPicker: React.FC<LibraryComponentPickerProps> = ({ returnToLibrarySelection }) => {
+const InnerComponentPicker: React.FC<LibraryComponentPickerProps> = ({
+  returnToLibrarySelection,
+  visibleTabs,
+}) => {
   const { collectionId } = useLibraryContext();
 
   if (collectionId) {
     return <LibraryCollectionPage />;
   }
-  return <LibraryAuthoringPage returnToLibrarySelection={returnToLibrarySelection} />;
+  return (
+    <LibraryAuthoringPage
+      returnToLibrarySelection={returnToLibrarySelection}
+      visibleTabs={visibleTabs}
+    />
+  );
 };
 
 /** Default handler in single-select mode. Used by the legacy UI for adding a single selected component to a course. */
@@ -38,7 +48,12 @@ const defaultSelectionChangedCallback: ComponentSelectionChangedEvent = (selecti
   window.parent.postMessage({ type: 'pickerSelectionChanged', selections }, '*');
 };
 
-type ComponentPickerProps = { libraryId?: string, showOnlyPublished?: boolean, extraFilter?: string[] } & (
+type ComponentPickerProps = {
+  libraryId?: string,
+  showOnlyPublished?: boolean,
+  extraFilter?: string[],
+  visibleTabs?: ContentType[],
+} & (
   {
     componentPickerMode?: 'single',
     onComponentSelected?: ComponentSelectedEvent,
@@ -56,6 +71,7 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
   showOnlyPublished,
   extraFilter,
   componentPickerMode = 'single',
+  visibleTabs = allLibraryPageTabs,
   /** This default callback is used to send the selected component back to the parent window,
    * when the component picker is used in an iframe.
    */
@@ -116,7 +132,10 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
                   <FormattedMessage {...messages.pickerInfoBanner} />
                 </Alert>
                 )}
-              <InnerComponentPicker returnToLibrarySelection={returnToLibrarySelection} />
+              <InnerComponentPicker
+                returnToLibrarySelection={returnToLibrarySelection}
+                visibleTabs={visibleTabs}
+              />
             </SidebarProvider>
           </LibraryProvider>
         </ComponentPickerProvider>

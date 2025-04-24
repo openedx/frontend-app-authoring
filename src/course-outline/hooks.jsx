@@ -53,6 +53,7 @@ import {
   setUnitOrderListQuery,
   pasteClipboardContent,
   dismissNotificationQuery,
+  addUnitFromLibrary,
 } from './data/thunk';
 
 const useCourseOutline = ({ courseId }) => {
@@ -126,6 +127,10 @@ const useCourseOutline = ({ courseId }) => {
 
   const handleNewUnitSubmit = (subsectionId) => {
     dispatch(addNewUnitQuery(subsectionId, openUnitPage));
+  };
+
+  const handleAddUnitFromLibrary = (body) => {
+    dispatch(addUnitFromLibrary(body, openUnitPage));
   };
 
   const headerNavigationsActions = {
@@ -336,6 +341,7 @@ const useCourseOutline = ({ courseId }) => {
     getUnitUrl,
     openUnitPage,
     handleNewUnitSubmit,
+    handleAddUnitFromLibrary,
     handleVideoSharingOptionChange,
     handlePasteClipboardClick,
     notificationDismissUrl,

@@ -1,6 +1,6 @@
 import { MemoryRouter } from 'react-router-dom';
 import {
-  act, render, fireEvent, within,
+  act, render, fireEvent, within, screen,
 } from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { AppProvider } from '@edx/frontend-platform/react';
@@ -10,15 +10,42 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import initializeStore from '../../store';
 import SubsectionCard from './SubsectionCard';
 import cardHeaderMessages from '../card-header/messages';
+import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 
 let store;
 const mockPathname = '/foo-bar';
+const containerKey = 'lct:org:lib:unit:1';
+const handleOnAddUnitFromLibrary = jest.fn();
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useLocation: () => ({
     pathname: mockPathname,
   }),
+}));
+
+jest.mock('../../studio-home/hooks', () => ({
+  useStudioHome: () => ({
+    librariesV2Enabled: true,
+  }),
+}));
+
+// Mock ComponentPicker to call onComponentSelected on click
+jest.mock('../../library-authoring/component-picker', () => ({
+  ComponentPicker: (props) => {
+    const onClick = () => {
+      // eslint-disable-next-line react/prop-types
+      props.onComponentSelected({
+        usageKey: containerKey,
+        blockType: 'unti',
+      });
+    };
+    return (
+      <button type="submit" onClick={onClick}>
+        Dummy button
+      </button>
+    );
+  },
 }));
 
 const unit = {
@@ -80,6 +107,7 @@ const renderComponent = (props, entry = '/') => render(
             onOpenHighlightsModal={jest.fn()}
             onOpenDeleteModal={jest.fn()}
             onNewUnitSubmit={jest.fn()}
+            onAddUnitFromLibrary={handleOnAddUnitFromLibrary}
             isCustomRelativeDatesActive={false}
             onEditClick={jest.fn()}
             savingStatus=""
@@ -246,5 +274,32 @@ describe('<SubsectionCard />', () => {
     const newUnitButton = await queryByTestId('new-unit-button');
     expect(cardUnits).toBeNull();
     expect(newUnitButton).toBeNull();
+  });
+
+  it('should add unit from library', async () => {
+    renderComponent();
+
+    const expandButton = await screen.findByTestId('subsection-card-header__expanded-btn');
+    fireEvent.click(expandButton);
+
+    const useUnitFromLibraryButton = screen.getByRole('button', {
+      name: /use unit from library/i,
+    });
+    expect(useUnitFromLibraryButton).toBeInTheDocument();
+    fireEvent.click(useUnitFromLibraryButton);
+
+    expect(await screen.findByText('Select unit'));
+
+    // click dummy button to execute onComponentSelected prop.
+    const dummyBtn = await screen.findByRole('button', { name: 'Dummy button' });
+    fireEvent.click(dummyBtn);
+
+    expect(handleOnAddUnitFromLibrary).toHaveBeenCalled();
+    expect(handleOnAddUnitFromLibrary).toHaveBeenCalledWith({
+      type: COMPONENT_TYPES.libraryV2,
+      parentLocator: '123',
+      category: 'vertical',
+      libraryContentKey: containerKey,
+    });
   });
 });
