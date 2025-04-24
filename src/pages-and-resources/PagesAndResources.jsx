@@ -20,6 +20,8 @@ import { RequestStatus } from '../data/constants';
 import SettingsComponent from './SettingsComponent';
 import PermissionDeniedAlert from '../generic/PermissionDeniedAlert';
 import getPageHeadTitle from '../generic/utils';
+import { AdditionalCoursePluginSlot } from '../plugin-slots/AdditionalCoursePluginSlot';
+import { AdditionalCourseContentPluginSlot } from '../plugin-slots/AdditionalCourseContentPluginSlot';
 
 const PagesAndResources = ({ courseId }) => {
   const intl = useIntl();
@@ -90,7 +92,7 @@ const PagesAndResources = ({ courseId }) => {
           <Route path=":appId/settings" element={<PageWrap><SettingsComponent url={redirectUrl} /></PageWrap>} />
         </Routes>
 
-        <PageGrid pages={pages} pluginSlotId="additional_course_plugin" courseId={courseId} />
+        <PageGrid pages={pages} pluginSlotComponent={AdditionalCoursePluginSlot} courseId={courseId} />
         {
           (contentPermissionsPages.length > 0 || hasAdditionalCoursePlugin)
             && (
@@ -98,7 +100,7 @@ const PagesAndResources = ({ courseId }) => {
                 <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
                   <h3 className="m-0">{intl.formatMessage(messages.contentPermissions)}</h3>
                 </div>
-                <PageGrid pages={contentPermissionsPages} pluginSlotId="additional_course_content_plugin" />
+                <PageGrid pages={contentPermissionsPages} pluginSlotComponent={AdditionalCourseContentPluginSlot} />
               </>
             )
         }

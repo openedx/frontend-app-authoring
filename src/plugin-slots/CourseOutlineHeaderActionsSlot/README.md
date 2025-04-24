@@ -1,6 +1,10 @@
 # CourseOutlineHeaderActionsSlot
 
-### Slot ID: `course_outline_header_actions_slot`
+### Slot ID: `org.openedx.frontend.authoring.course_outline_header_actions.v1`
+
+### Slot ID Aliases
+* `course_outline_header_actions_slot`
+
 ### Plugin Props:
 
 * `isReIndexShow` - Boolean.
@@ -33,7 +37,7 @@ const MyButton = () => (
 
 const config = {
   pluginSlots: {
-    course_outline_header_actions_slot: {
+    'org.openedx.frontend.authoring.course_outline_header_actions.v1': {
       keepDefault: true,
       plugins: [
         {

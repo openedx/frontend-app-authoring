@@ -1,6 +1,10 @@
 # CourseOutlineUnitCardExtraActionsSlot
 
-### Slot ID: `course_outline_unit_card_extra_actions_slot`
+### Slot ID: `org.openedx.frontend.authoring.course_outline_unit_card_extra_actions.v1`
+
+### Slot ID Aliases
+* `course_outline_unit_card_extra_actions_slot`
+
 ### Plugin Props:
 
 * `unit` - object
@@ -37,7 +41,7 @@ const MyIconButton = () => (
 
 const config = {
   pluginSlots: {
-    course_outline_unit_card_extra_actions_slot: {
+    'org.openedx.frontend.authoring.course_outline_unit_card_extra_actions.v1': {
       keepDefault: true,
       plugins: [
         {

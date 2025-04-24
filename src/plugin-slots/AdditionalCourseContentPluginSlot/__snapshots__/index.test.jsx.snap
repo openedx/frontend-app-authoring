@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AdditionalCourseContentPluginSlot renders 1`] = `
+<PluginSlot
+  id="org.openedx.frontend.authoring.additional_course_content_plugin.v1"
+  idAliases={
+    [
+      "additional_course_content_plugin",
+    ]
+  }
+/>
+`;

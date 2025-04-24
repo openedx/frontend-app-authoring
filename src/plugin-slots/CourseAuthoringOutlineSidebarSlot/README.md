@@ -1,6 +1,9 @@
 # CourseAuthoringOutlineSidebarSlot
 
-### Slot ID: `course_authoring_outline_sidebar_slot`
+### Slot ID: `org.openedx.frontend.authoring.course_outline_sidebar.v1`
+
+### Slot ID Aliases
+* `course_authoring_outline_sidebar_slot`
 
 ### Plugin Props:
 
@@ -24,7 +27,7 @@ import { PLUGIN_OPERATIONS } from '@openedx/frontend-plugin-framework';
 
 const config = {
   pluginSlots: {
-    course_authoring_outline_sidebar_slot: {
+    'org.openedx.frontend.authoring.course_outline_sidebar.v1': {
       keepDefault: true,
       plugins: [
         {

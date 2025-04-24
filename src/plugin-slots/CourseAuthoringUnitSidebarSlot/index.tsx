@@ -14,7 +14,8 @@ export const CourseAuthoringUnitSidebarSlot = (
   }: CourseAuthoringUnitSidebarSlotProps,
 ) => (
   <PluginSlot
-    id="course_authoring_unit_sidebar_slot"
+    id="org.openedx.frontend.authoring.course_unit_sidebar.v1"
+    idAliases={['course_authoring_unit_sidebar_slot']}
     pluginProps={{
       blockId, courseId, unitTitle, xBlocks,
     }}

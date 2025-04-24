@@ -1,6 +1,10 @@
 # CourseUnitHeaderActionsSlot
 
-### Slot ID: `course_unit_header_actions_slot`
+### Slot ID: `org.openedx.frontend.authoring.course_unit_header_actions.v1`
+
+### Slot ID Aliases
+* `course_unit_header_actions_slot`
+
 ### Plugin Props:
 
 * `headerNavigationsActions` - Object. See the prop-types definition in the component for details.
@@ -31,7 +35,7 @@ const MyButton = () => (
 
 const config = {
   pluginSlots: {
-    course_unit_header_actions_slot: {
+    'org.openedx.frontend.authoring.course_unit_header_actions.v1': {
       keepDefault: true,
       plugins: [
         {
