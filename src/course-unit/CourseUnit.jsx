@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import {
   Container, Layout, Stack, Button, TransitionReplace,
+  Alert,
 } from '@openedx/paragon';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
@@ -139,6 +140,24 @@ const CourseUnit = ({ courseId }) => {
               />
             ) : null}
           </TransitionReplace>
+          {courseUnit.upstreamInfo.upstreamLink && (
+            <AlertMessage
+              title={intl.formatMessage(
+                messages.alertLibraryUnitReadOnlyText,
+                {
+                  link: (
+                    <Alert.Link
+                      className="ml-1"
+                      href={courseUnit.upstreamInfo.upstreamLink}
+                    >
+                      {intl.formatMessage(messages.alertLibraryUnitReadOnlyLinkText)}
+                    </Alert.Link>
+                  ),
+                },
+              )}
+              variant="info"
+            />
+          )}
           <SubHeader
             hideBorder
             title={(

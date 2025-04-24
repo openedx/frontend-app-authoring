@@ -2209,9 +2209,12 @@ describe('<CourseUnit />', () => {
         ...courseUnitIndexMock,
         upstreamInfo: {
           upstreamRef: 'lct:org:lib:unit:unit-1',
+          upstreamLink: 'some-link',
         },
       });
     await executeThunk(fetchCourseUnitQuery(courseId), store.dispatch);
+
+    expect(screen.getByText(/this unit can only be edited from the \./i)).toBeInTheDocument();
 
     // Disable the "Edit" button
     const unitHeaderTitle = screen.getByTestId('unit-header-title');

@@ -43,6 +43,16 @@ const messages = defineMessages({
     defaultMessage: 'Take me to the new location',
     description: 'Text for the button allowing users to navigate to the new location after an XBlock has been moved',
   },
+  alertLibraryUnitReadOnlyText: {
+    id: 'course-authoring.course-unit.alert.read-only.text',
+    defaultMessage: 'This unit can only be edited from the {link}.',
+    description: 'Text of the alert when the unit is read only because is a library unit',
+  },
+  alertLibraryUnitReadOnlyLinkText: {
+    id: 'course-authoring.course-unit.alert.read-only.link.text',
+    defaultMessage: 'library',
+    description: 'Text of the link in the alert when the unit is read only because is a library unit',
+  },
 });
 
 export default messages;

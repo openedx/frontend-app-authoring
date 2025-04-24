@@ -1120,4 +1120,7 @@ module.exports = {
   has_partition_group_components: false,
   release_date_from: 'Section "Example Week 1: Getting Started"',
   staff_lock_from: null,
+  upstreamInfo: {
+    upstreamLink: undefined,
+  },
 };
