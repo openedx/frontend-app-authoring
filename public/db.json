@@ -1,0 +1,80 @@
+{
+  "dashboard": {
+    "metrics": {
+      "courses": 5,
+      "students": 5,
+      "enrollments": 10,
+      "submissions": 8
+    },
+    "quickActions": [
+      "You have no course expiring.",
+      "You are not registered to attend any online class.",
+      "You have no course expiring.",
+      "You are not registered to attend any online class.",
+      "You have no course expiring.",
+      "You are not registered to attend any online class.",
+      "You have no course expiring.",
+      "You are not registered to attend any online class.",
+      "You have no course expiring.",
+      "You are not registered to attend any online class.",
+      "You have no course expiring.",
+      "You are not registered to attend any online class.",
+      "You have no course expiring.",
+      "You are not registered to attend any online class.",
+      "You have no course expiring.",
+      "You are not registered to attend any online class."
+    ],
+    "recentCourses": [
+      "Create Course",
+      "Start Communication"
+    ],
+    "notifications": [],
+    "upcomingEvents": [],
+    "calendar": {
+      "date": "Mon April 22",
+      "events": [
+        {
+          "title": "TitanEd - Upcoming Event 1",
+          "time": "10:30 – 11:30pm"
+        },
+        {
+          "title": "TitanEd - Upcoming Event 2",
+          "time": "10:30 – 11:30pm"
+        }
+      ]
+    },
+    "titanAISuggestions": [],
+    "todoList": [
+      "You have no course expiring.",
+      "You are not registered to attend any online class.",
+      "You have no course expiring.",
+      "You are not registered to attend any online class.",
+      "You have no course expiring.",
+      "You are not registered to attend any online class.",
+      "You have no course expiring.",
+      "You are not registered to attend any online class.",
+      "You have no course expiring.",
+      "You are not registered to attend any online class.",
+      "You have no course expiring.",
+      "You are not registered to attend any online class.",
+      "You have no course expiring.",
+      "You are not registered to attend any online class.",
+      "You have no course expiring.",
+      "You are not registered to attend any online class.",
+      "You have no course expiring.",
+      "You are not registered to attend any online class.",
+      "You have no course expiring.",
+      "You are not registered to attend any online class.",
+      "You have no course expiring.",
+      "You are not registered to attend any online class.",
+      "You have no course expiring.",
+      "You are not registered to attend any online class.",
+      "You have no course expiring.",
+      "You are not registered to attend any online class.",
+      "You have no course expiring.",
+      "You are not registered to attend any online class.",
+      "You have no course expiring.",
+      "You are not registered to attend any online class."
+    ]
+  }
+} 

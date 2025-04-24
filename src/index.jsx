@@ -14,6 +14,7 @@ import {
 
 import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
+import Dashboard from './dashboard/Dashboard';
 import messages from './i18n';
 
 import {
@@ -55,14 +56,21 @@ const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route>
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/home" element={<StudioHome />} />
         <Route path="/libraries" element={<StudioHome />} />
         <Route path="/libraries-v1" element={<StudioHome />} />
         <Route path="/library/create" element={<CreateLibrary />} />
         <Route path="/library/:libraryId/*" element={<LibraryLayout />} />
         <Route path="/component-picker" element={<ComponentPicker />} />
-        <Route path="/component-picker/multiple" element={<ComponentPicker componentPickerMode="multiple" />} />
-        <Route path="/legacy/preview-changes/:usageKey" element={<PreviewChangesEmbed />} />
+        <Route
+          path="/component-picker/multiple"
+          element={<ComponentPicker componentPickerMode="multiple" />}
+        />
+        <Route
+          path="/legacy/preview-changes/:usageKey"
+          element={<PreviewChangesEmbed />}
+        />
         <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
         <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
         {getConfig().ENABLE_ACCESSIBILITY_PAGE === 'true' && (
@@ -74,7 +82,10 @@ const App = () => {
               <Route index element={<TaxonomyListPage />} />
             </Route>
             <Route path="/taxonomy" element={<TaxonomyLayout />}>
-              <Route path="/taxonomy/:taxonomyId" element={<TaxonomyDetailPage />} />
+              <Route
+                path="/taxonomy/:taxonomyId"
+                element={<TaxonomyDetailPage />}
+              />
             </Route>
             <Route
               path="/tagging/components/widget/:contentId"

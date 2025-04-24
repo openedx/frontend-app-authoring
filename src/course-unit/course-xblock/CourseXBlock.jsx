@@ -119,11 +119,11 @@ const CourseXBlock = ({
                   <Dropdown.Item>
                     {intl.formatMessage(messages.blockLabelButtonMove)}
                   </Dropdown.Item>
-                  {canEdit && (
+                  {/* {canEdit && (
                     <Dropdown.Item onClick={() => dispatch(copyToClipboard(id))}>
                       {intl.formatMessage(messages.blockLabelButtonCopyToClipboard)}
                     </Dropdown.Item>
-                  )}
+                  )} */}
                   <Dropdown.Item onClick={openConfigureModal}>
                     {intl.formatMessage(messages.blockLabelButtonManageAccess)}
                   </Dropdown.Item>

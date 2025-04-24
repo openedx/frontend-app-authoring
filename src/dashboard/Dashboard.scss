@@ -1,0 +1,180 @@
+.custom-card {
+  height: 22rem;
+}
+
+.custom-card-header {
+  padding: 0.5rem 2rem 0.5rem 1rem;
+}
+
+.content-wrapper {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-grow: 1;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  padding-top: 0;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+.card-stack>*:not(:last-child) {
+  margin-bottom: 20px;
+}
+
+.dashboard-wrapper {
+  display: flex;
+  padding: 1rem;
+  gap: 2rem;
+
+  .main-content {
+    flex: 1;
+    padding: 1rem;
+  }
+
+  .metrics-container {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .metric-card {
+    flex: 1;
+    padding: 1rem;
+
+    .metric-card-content {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+
+      .metric-text {
+        text-align: left;
+
+        .metric-value {
+          font-size: 1.125rem;
+          font-weight: 600;
+        }
+
+        .metric-label {
+          font-size: 0.875rem;
+        }
+      }
+    }
+  }
+
+  .overview-section {
+    h1 {
+      margin-bottom: 1.5rem;
+    }
+
+    .overview-grid {
+      display: grid;
+      gap: 2rem;
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .overview-card {
+      height: 20rem;
+      overflow: auto;
+    }
+
+    .calendar-card {
+      grid-column: span 2;
+      height: 20rem;
+      overflow: auto;
+    }
+
+    .card-header {
+      border-bottom: 1px solid #eaeaea;
+      padding-bottom: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-list {
+      padding-left: 1rem;
+      list-style-type: disc;
+      font-size: 0.875rem;
+    }
+
+    .text-muted {
+      font-size: 1.125rem;
+    }
+
+    .calendar-events {
+      display: grid;
+      gap: 1rem;
+      margin-top: 0.75rem;
+
+      .calendar-event {
+        background-color: var(--primary);
+        color: white;
+        padding: 0.5rem;
+        border-radius: 0.25rem;
+
+        .event-time {
+          font-size: 0.75rem;
+        }
+      }
+    }
+  }
+
+  .sidebar {
+    width: 300px;
+    border-left: 1px solid #eaeaea;
+    padding-left: 2rem;
+
+    .sidebar-card {
+      margin-bottom: 1rem;
+      height: 20rem;
+      overflow: auto;
+
+      .card-header {
+        border-bottom: 1px solid #eaeaea;
+        padding-bottom: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+    }
+
+    .card-list {
+      padding-left: 1rem;
+      list-style-type: disc;
+      font-size: 0.875rem;
+    }
+
+    .text-muted {
+      font-size: 1.125rem;
+    }
+  }
+}
+
+// Responsive styles
+@media (max-width: 1024px) {
+  .dashboard-wrapper {
+    flex-direction: column;
+
+    .sidebar {
+      width: 100%;
+      border-left: none;
+      border-top: 1px solid #eaeaea;
+      padding-left: 0;
+      padding-top: 2rem;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .metrics-container {
+    flex-direction: column;
+  }
+
+  .overview-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .calendar-card {
+    grid-column: auto !important;
+  }
+}
