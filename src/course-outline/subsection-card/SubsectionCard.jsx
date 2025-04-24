@@ -26,6 +26,7 @@ import { ComponentPicker } from '../../library-authoring';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import { ContainerType } from '../../generic/key-utils';
 import { useStudioHome } from '../../studio-home/hooks';
+import { ContentType } from '../../library-authoring/routes';
 
 const SubsectionCard = ({
   section,
@@ -302,7 +303,7 @@ const SubsectionCard = ({
           extraFilter={['block_type = "unit"']}
           componentPickerMode="single"
           onComponentSelected={handleSelectLibraryUnit}
-          showOnlyHomeTab
+          visibleTabs={[ContentType.units]}
         />
       </StandardModal>
     </>

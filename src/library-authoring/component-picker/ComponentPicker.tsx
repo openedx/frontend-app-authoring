@@ -14,15 +14,16 @@ import LibraryAuthoringPage from '../LibraryAuthoringPage';
 import LibraryCollectionPage from '../collections/LibraryCollectionPage';
 import SelectLibrary from './SelectLibrary';
 import messages from './messages';
+import { ContentType, allLibraryPageTabs } from '../routes';
 
 interface LibraryComponentPickerProps {
   returnToLibrarySelection: () => void;
-  showOnlyHomeTab: boolean;
+  visibleTabs: ContentType[],
 }
 
 const InnerComponentPicker: React.FC<LibraryComponentPickerProps> = ({
   returnToLibrarySelection,
-  showOnlyHomeTab,
+  visibleTabs,
 }) => {
   const { collectionId } = useLibraryContext();
 
@@ -32,7 +33,7 @@ const InnerComponentPicker: React.FC<LibraryComponentPickerProps> = ({
   return (
     <LibraryAuthoringPage
       returnToLibrarySelection={returnToLibrarySelection}
-      showOnlyHomeTab={showOnlyHomeTab}
+      visibleTabs={visibleTabs}
     />
   );
 };
@@ -51,7 +52,7 @@ type ComponentPickerProps = {
   libraryId?: string,
   showOnlyPublished?: boolean,
   extraFilter?: string[],
-  showOnlyHomeTab?: boolean,
+  visibleTabs?: ContentType[],
 } & (
   {
     componentPickerMode?: 'single',
@@ -70,7 +71,7 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
   showOnlyPublished,
   extraFilter,
   componentPickerMode = 'single',
-  showOnlyHomeTab = false,
+  visibleTabs = allLibraryPageTabs,
   /** This default callback is used to send the selected component back to the parent window,
    * when the component picker is used in an iframe.
    */
@@ -133,7 +134,7 @@ export const ComponentPicker: React.FC<ComponentPickerProps> = ({
                 )}
               <InnerComponentPicker
                 returnToLibrarySelection={returnToLibrarySelection}
-                showOnlyHomeTab={showOnlyHomeTab}
+                visibleTabs={visibleTabs}
               />
             </SidebarProvider>
           </LibraryProvider>

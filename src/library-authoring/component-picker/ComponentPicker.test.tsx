@@ -17,6 +17,7 @@ import {
 } from '../data/api.mocks';
 
 import { ComponentPicker } from './ComponentPicker';
+import { ContentType } from '../routes';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -278,7 +279,7 @@ describe('<ComponentPicker />', () => {
   });
 
   it('should display all tabs', async () => {
-    // Default `showOnlyHomeTab=false`
+    // Default `visibleTabs = allLibraryPageTabs`
     render(<ComponentPicker />);
 
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
@@ -290,15 +291,15 @@ describe('<ComponentPicker />', () => {
     expect(screen.getByRole('tab', { name: /units/i })).toBeInTheDocument();
   });
 
-  it('should display only home tab when `showOnlyHomeTab` is true', async () => {
-    render(<ComponentPicker showOnlyHomeTab />);
+  it('should display only unit tab', async () => {
+    render(<ComponentPicker visibleTabs={[ContentType.units]} />);
 
     expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
     fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
 
-    expect(await screen.findByRole('tab', { name: /all content/i })).toBeInTheDocument();
+    expect(await screen.findByRole('tab', { name: /units/i })).toBeInTheDocument();
+    expect(screen.queryByRole('tab', { name: /all content/i })).not.toBeInTheDocument();
     expect(screen.queryByRole('tab', { name: /collections/i })).not.toBeInTheDocument();
     expect(screen.queryByRole('tab', { name: /components/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole('tab', { name: /units/i })).not.toBeInTheDocument();
   });
 });

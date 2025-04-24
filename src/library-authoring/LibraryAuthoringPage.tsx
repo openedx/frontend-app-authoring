@@ -43,7 +43,7 @@ import { LibrarySidebar } from './library-sidebar';
 import { useComponentPickerContext } from './common/context/ComponentPickerContext';
 import { useLibraryContext } from './common/context/LibraryContext';
 import { SidebarBodyComponentId, useSidebarContext } from './common/context/SidebarContext';
-import { ContentType, useLibraryRoutes } from './routes';
+import { allLibraryPageTabs, ContentType, useLibraryRoutes } from './routes';
 
 import messages from './messages';
 
@@ -129,10 +129,13 @@ export const SubHeaderTitle = ({ title }: { title: ReactNode }) => {
 
 interface LibraryAuthoringPageProps {
   returnToLibrarySelection?: () => void,
-  showOnlyHomeTab?: boolean,
+  visibleTabs?: ContentType[],
 }
 
-const LibraryAuthoringPage = ({ returnToLibrarySelection, showOnlyHomeTab = false }: LibraryAuthoringPageProps) => {
+const LibraryAuthoringPage = ({
+  returnToLibrarySelection,
+  visibleTabs = allLibraryPageTabs,
+}: LibraryAuthoringPageProps) => {
   const intl = useIntl();
 
   const {
@@ -164,7 +167,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection, showOnlyHomeTab = fals
   // The activeKey determines the currently selected tab.
   const getActiveKey = () => {
     if (componentPickerMode) {
-      return ContentType.home;
+      return visibleTabs[0];
     }
     if (insideCollections) {
       return ContentType.collections;
@@ -246,16 +249,15 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection, showOnlyHomeTab = fals
   // Disable filtering by block/problem type when viewing the Collections tab.
   const overrideTypesFilter = (insideCollections || insideUnits) ? new TypesFilterData() : undefined;
 
-  const visibleTabs = [
-    <Tab eventKey={ContentType.home} title={intl.formatMessage(messages.homeTab)} />,
-  ];
-  if (!showOnlyHomeTab) {
-    visibleTabs.push(
-      <Tab eventKey={ContentType.collections} title={intl.formatMessage(messages.collectionsTab)} />,
-      <Tab eventKey={ContentType.components} title={intl.formatMessage(messages.componentsTab)} />,
-      <Tab eventKey={ContentType.units} title={intl.formatMessage(messages.unitsTab)} />,
-    );
-  }
+  const tabTitles = {
+    [ContentType.home]: intl.formatMessage(messages.homeTab),
+    [ContentType.collections]: intl.formatMessage(messages.collectionsTab),
+    [ContentType.components]: intl.formatMessage(messages.componentsTab),
+    [ContentType.units]: intl.formatMessage(messages.unitsTab),
+  };
+  const visibleTabsToRender = visibleTabs.map((contentType) => (
+    <Tab eventKey={contentType} title={tabTitles[contentType]} />
+  ));
 
   return (
     <div className="d-flex">
@@ -291,7 +293,7 @@ const LibraryAuthoringPage = ({ returnToLibrarySelection, showOnlyHomeTab = fals
               onSelect={handleTabChange}
               className="my-3"
             >
-              {visibleTabs}
+              {visibleTabsToRender}
             </Tabs>
             <ActionRow className="my-3">
               <SearchKeywordsField className="mr-3" />

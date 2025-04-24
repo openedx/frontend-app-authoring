@@ -41,6 +41,8 @@ export enum ContentType {
   units = 'units',
 }
 
+export const allLibraryPageTabs: ContentType[] = Object.values(ContentType);
+
 export type NavigateToData = {
   componentId?: string,
   collectionId?: string,
