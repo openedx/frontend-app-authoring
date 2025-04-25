@@ -262,6 +262,8 @@ export function duplicateUnitItemQuery(itemId, xblockId, callback) {
       callback(courseKey, locator);
       const courseUnit = await getCourseUnitData(itemId);
       dispatch(fetchCourseItemSuccess(courseUnit));
+      const courseVerticalChildrenData = await getCourseVerticalChildren(itemId);
+      dispatch(updateCourseVerticalChildren(courseVerticalChildrenData));
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
