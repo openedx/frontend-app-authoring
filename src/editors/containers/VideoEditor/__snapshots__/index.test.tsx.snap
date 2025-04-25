@@ -18,6 +18,7 @@ exports[`VideoEditor snapshots renders as expected with default behavior 1`] = `
             "useSelector": [MockFunction],
           }
         }
+        onClose={[MockFunction props.onClose]}
       />
     </div>
   </EditorContainer>

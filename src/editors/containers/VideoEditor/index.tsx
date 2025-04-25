@@ -39,7 +39,7 @@ const VideoEditor: React.FC<EditorComponent> = ({
       >
         {(isCreateWorkflow || studioViewFinished) ? (
           <div className="video-editor">
-            <VideoEditorModal {...{ isLibrary }} />
+            <VideoEditorModal {...{ isLibrary, onClose, returnFunction }} />
           </div>
         ) : (
           <div style={{

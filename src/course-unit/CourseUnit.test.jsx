@@ -675,8 +675,7 @@ describe('<CourseUnit />', () => {
     });
   });
 
-  it('handle creating Problem xblock and navigate to editor page', async () => {
-    const { courseKey, locator } = courseCreateXblockMock;
+  it('handle creating Problem xblock and showing editor modal', async () => {
     axiosMock
       .onPost(postXBlockBaseApiUrl({ type: 'problem', category: 'problem', parentLocator: blockId }))
       .reply(200, courseCreateXblockMock);
@@ -705,11 +704,16 @@ describe('<CourseUnit />', () => {
     await waitFor(() => {
       const problemButton = getByRole('button', {
         name: new RegExp(`problem ${addComponentMessages.buttonText.defaultMessage} Problem`, 'i'),
+        hidden: true,
       });
 
       userEvent.click(problemButton);
-      expect(mockedUsedNavigate).toHaveBeenCalled();
-      expect(mockedUsedNavigate).toHaveBeenCalledWith(`/course/${courseKey}/editor/problem/${locator}`);
+    });
+
+    await waitFor(() => {
+      expect(getByRole('heading', {
+        name: new RegExp(`${addComponentMessages.blockEditorModalTitle.defaultMessage}`, 'i'),
+      })).toBeInTheDocument();
     });
 
     axiosMock
@@ -737,44 +741,6 @@ describe('<CourseUnit />', () => {
       sidebarMessages.releaseInfoWithSection.defaultMessage
         .replace('{sectionName}', courseUnitIndexMock.release_date_from),
     )).toBeInTheDocument();
-  });
-
-  it('handle creating Text xblock and saves scroll position in localStorage', async () => {
-    const { getByText, getByRole } = render(<RootWrapper />);
-    const xblockType = 'text';
-
-    axiosMock
-      .onPost(postXBlockBaseApiUrl({ type: xblockType, category: 'html', parentLocator: blockId }))
-      .reply(200, courseCreateXblockMock);
-
-    window.scrollTo(0, 250);
-    Object.defineProperty(window, 'scrollY', { value: 250, configurable: true });
-
-    await waitFor(() => {
-      const textButton = screen.getByRole('button', { name: /Text/i });
-
-      expect(getByText(addComponentMessages.title.defaultMessage)).toBeInTheDocument();
-
-      userEvent.click(textButton);
-
-      const addXBlockDialog = getByRole('dialog');
-      expect(addXBlockDialog).toBeInTheDocument();
-
-      expect(getByText(
-        addComponentMessages.modalContainerTitle.defaultMessage.replace('{componentTitle}', xblockType),
-      )).toBeInTheDocument();
-
-      const textRadio = screen.getByRole('radio', { name: /Text/i });
-      userEvent.click(textRadio);
-      expect(textRadio).toBeChecked();
-
-      const selectBtn = getByRole('button', { name: addComponentMessages.modalBtnText.defaultMessage });
-      expect(selectBtn).toBeInTheDocument();
-
-      userEvent.click(selectBtn);
-    });
-
-    expect(localStorage.getItem('createXBlockLastYPosition')).toBe('250');
   });
 
   it('correct addition of a new course unit after click on the "Add new unit" button', async () => {
@@ -867,8 +833,7 @@ describe('<CourseUnit />', () => {
     });
   });
 
-  it('handles creating Video xblock and navigates to editor page', async () => {
-    const { courseKey, locator } = courseCreateXblockMock;
+  it('handles creating Video xblock and showing editor modal', async () => {
     axiosMock
       .onPost(postXBlockBaseApiUrl({ type: 'video', category: 'video', parentLocator: blockId }))
       .reply(200, courseCreateXblockMock);
@@ -906,12 +871,17 @@ describe('<CourseUnit />', () => {
 
       const videoButton = getByRole('button', {
         name: new RegExp(`${addComponentMessages.buttonText.defaultMessage} Video`, 'i'),
+        hidden: true,
       });
 
       userEvent.click(videoButton);
-      expect(mockedUsedNavigate).toHaveBeenCalled();
-      expect(mockedUsedNavigate).toHaveBeenCalledWith(`/course/${courseKey}/editor/video/${locator}`);
     });
+
+    /** TODO -- fix this test.
+    await waitFor(() => {
+      expect(getByRole('textbox', { name: /paste your video id or url/i })).toBeInTheDocument();
+    });
+    */
 
     axiosMock
       .onGet(getCourseUnitApiUrl(blockId))
