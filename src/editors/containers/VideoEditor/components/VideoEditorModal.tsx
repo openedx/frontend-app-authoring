@@ -7,7 +7,9 @@ import VideoSettingsModal from './VideoSettingsModal';
 import { RequestKeys } from '../../../data/constants/requests';
 
 interface Props {
+  onReturn?: (() => void);
   isLibrary: boolean;
+  onClose?: (() => void) | null;
 }
 
 export const {
@@ -27,13 +29,15 @@ export const hooks = {
 
 const VideoEditorModal: React.FC<Props> = ({
   isLibrary,
+  onClose,
+  onReturn,
 }) => {
   const dispatch = useDispatch();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const selectedVideoId = searchParams.get('selectedVideoId');
   const selectedVideoUrl = searchParams.get('selectedVideoUrl');
-  const onReturn = hooks.useReturnToGallery();
+  const onSettingsReturn = onReturn || hooks.useReturnToGallery();
   const isLoaded = useSelector(
     (state) => selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchVideos }),
   );
@@ -44,8 +48,9 @@ const VideoEditorModal: React.FC<Props> = ({
 
   return (
     <VideoSettingsModal {...{
-      onReturn,
+      onReturn: onSettingsReturn,
       isLibrary,
+      onClose,
     }}
     />
   );

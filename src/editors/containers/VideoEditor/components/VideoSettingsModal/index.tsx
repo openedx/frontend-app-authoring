@@ -20,11 +20,13 @@ import messages from '../../messages';
 interface Props {
   onReturn: () => void;
   isLibrary: boolean;
+  onClose?: (() => void) | null;
 }
 
 const VideoSettingsModal: React.FC<Props> = ({
   onReturn,
   isLibrary,
+  onClose,
 }) => (
   <>
     {!isLibrary && (
@@ -32,7 +34,7 @@ const VideoSettingsModal: React.FC<Props> = ({
         variant="link"
         className="text-primary-500"
         size="sm"
-        onClick={onReturn}
+        onClick={onClose || onReturn}
         style={{
           textDecoration: 'none',
           marginLeft: '3px',
