@@ -1,0 +1,393 @@
+{
+    "templateData": {
+        "templateId": "template_011",
+        "templateName": "titanedredtemp",
+        "pageSettings": {
+            "logoUrl": "https://www.google.com/imgres?q=titaned%20logo&imgurl=https%3A%2F%2Ftitaned.com%2Fwp-content%2Fuploads%2F2023%2F07%2FTitanEdLogoHigherEdOrange.png&imgrefurl=https%3A%2F%2Ftitaned.com%2F&docid=peo4rhpAfbf7sM&tbnid=my7nRoEjHSrhYM&vet=12ahUKEwjSibSyqYmLAxWVTGwGHSh1Eo8QM3oECB4QAA..i&w=948&h=424&hcb=2&ved=2ahUKEwjSibSyqYmLAxWVTGwGHSh1Eo8QM3oECB4QAA",
+            "faviconUrl": "https://example.com/favicon.ico",
+            "fontFamily": "Arial, sans-serif"
+        },
+        "themeSettings": {
+            "colors": {
+                "C1": "#553cdf",
+                "C2": "#221859",
+                "C3": "#eeebff",
+                "C4": "#f9f8ff",
+                "C5": "#110c2d",
+                "C6": "#1f1f25",
+                "C7": "#737477",
+                "C8": "#ffffff",
+                "C9": "#000000"
+            },
+            "background": {
+                "type": "color",
+                "value": "#ffffff"
+            }
+        },
+        "content": {
+            "logoUrl": "https://viceclass.com/media/branding_assets/logos/vic-logo.png",
+            "header": {
+                "topHeader": {
+                    "contactDetails": {
+                        "mailId": "info@viceclass.com",
+                        "phoneNo": "+61012012445"
+                    },
+                    "languageList": {
+                        "default": "English",
+                        "otherOptions": [
+                            "French",
+                            "Hindi",
+                            "Arabic"
+                        ]
+                    }
+                },
+                "mainHeader": {
+                    "logoUrl": "https://demo.titaned.com/media/branding_assets/logos/logo_orJUH9R_7xqkeK1.png",
+                    "menu": {
+                        "align": "left",
+                        "menuList": [
+                            {
+                                "label": "Home",
+                                "link": "test link"
+                            },
+                            {
+                                "label": "Pages",
+                                "link": "test link",
+                                "subMenu": [
+                                    {
+                                        "id": "01",
+                                        "label": "About Us",
+                                        "value": "aboutus",
+                                        "link": "test link"
+                                    },
+                                    {
+                                        "id": "02",
+                                        "label": "About Two",
+                                        "value": "abouttwo",
+                                        "link": "test link"
+                                    },
+                                    {
+                                        "id": "03",
+                                        "label": "About Three",
+                                        "value": "aboutthree",
+                                        "link": "test link"
+                                    },
+                                    {
+                                        "id": "04",
+                                        "label": "Contact",
+                                        "value": "contact",
+                                        "link": "test link"
+                                    }
+                                ]
+                            },
+                            {
+                                "label": "Courses",
+                                "link": "test link"
+                            },
+                            {
+                                "label": "Blog",
+                                "link": "test link"
+                            }
+                        ],
+                        "loginSignupButtons": true
+                    }
+                }
+            },
+            "body": {
+                "carouselContents": {
+                    "contents": [
+                        {
+                            "align": "left",
+                            "tagline": "Victoria Education Group",
+                            "heading": "Excellence in Education: North America's Most Effective Education Platform ",
+                            "paragraph": "Weve empowered 100,000+ learners to turn their ambitions into reality—leading the continent in employment rates—but also a trusted partner in guiding students toward successful Ivy League university admissions.",
+                            "button": {
+                                "label": "Apply for a Trail Class",
+                                "link": "test link"
+                            },
+                            "carouselBGImageURL": "https://landing.spaces.nexudus.com/en/Blog/GetImage?id=1415023636&w=600h=314&mode=Pad"
+                        },
+                        {
+                            "align": "center",
+                            "tagline": "Example content line 1",
+                            "heading": "Excellence in Education: North America's Most Effective Education Platform ",
+                            "paragraph": "Weve empowered 100,000+ learners to turn their ambitions into reality—leading the continent in employment rates—but also a trusted partner in guiding students toward successful Ivy League university admissions.",
+                            "button": {
+                                "label": "Explore",
+                                "link": "test link"
+                            },
+                            "carouselBGImageURL": "https://img.freepik.com/premium-photo/business-people-meeting-glass-office_693425-13469.jpg"
+                        },
+                        {
+                            "align": "right",
+                            "tagline": "Example content line 1",
+                            "heading": "Excellence in Education: North America's Most Effective Education Platform ",
+                            "paragraph": "Weve empowered 100,000+ learners to turn their ambitions into reality—leading the continent in employment rates—but also a trusted partner in guiding students toward successful Ivy League university admissions.",
+                            "button": {
+                                "label": "Score the Big",
+                                "link": "test link"
+                            },
+                            "carouselBGImageURL": "https://img.pikbest.com/wp/202347/dreamy-whimsical-carousel-world-in-pastel-a-3d-rendering_9742393.jpg!bw700"
+                        }
+                    ]
+                },
+                "feauturedCourses": {
+                    "sectionTitle": "Explore Feautured Courses",
+                    "sectionText": "You'll find something to spark your curiosity and enhance",
+                    "coursesSelection": [
+                        {
+                            "header": "The Web Developer in 2023: Zero to Mastery",
+                            "category": "Web Development",
+                            "wishlist": true,
+                            "paidFree": "Free",
+                            "headerHelperText": [
+                                {
+                                    "label": "25 Lessons",
+                                    "icon": "CalendarToday"
+                                },
+                                {
+                                    "label": "54 Students",
+                                    "icon": "People"
+                                }
+                            ],
+                            "imageField": "https://studyhub-nextjs.vercel.app/_next/image?url=%2Fimages%2Fcourse%2F01.jpg&w=384&q=75",
+                            "footerHelperText": "01/2/2025"
+                        },
+                        {
+                            "header": "The Complete Developer in 2023: Zero to Mastery",
+                            "category": "Web Development",
+                            "wishlist": true,
+                            "paidFree": "Free",
+                            "headerHelperText": [
+                                {
+                                    "label": "25 Lessons",
+                                    "icon": "CalendarToday"
+                                },
+                                {
+                                    "label": "54 Students",
+                                    "icon": "People"
+                                }
+                            ],
+                            "imageField": "https://studyhub-nextjs.vercel.app/_next/image?url=%2Fimages%2Fcourse%2F02.jpg&w=384&q=75",
+                            "footerHelperText": "01/2/2025"
+                        }
+                    ],
+                    "blogsSelection": [
+                        {
+                            "header": "Azure Fundamentals: How to Pass AI-900 Exam",
+                            "categoryOverImage": "Web Development",
+                            "headerHelperText": [
+                                {
+                                    "label": "14 June 2023",
+                                    "icon": "DateIcon"
+                                },
+                                {
+                                    "label": "Jonathon Lopez",
+                                    "icon": "AuthorIcon"
+                                }
+                            ],
+                            "imageField": "https://studyhub-nextjs.vercel.app/_next/image?url=%2Fimages%2Fblog%2F01.jpg&w=1920&q=75",
+                            "buttonEnabled": true
+                        },
+                        {
+                            "header": "Azure Fundamentals: How to Pass AI-900 Exam",
+                            "categoryOverImage": "Web Development",
+                            "headerHelperText": [
+                                {
+                                    "label": "14 June 2023",
+                                    "icon": "DateIcon"
+                                },
+                                {
+                                    "label": "Jonathon Lopez",
+                                    "icon": "AuthorIcon"
+                                }
+                            ],
+                            "imageField": "https://studyhub-nextjs.vercel.app/_next/image?url=%2Fimages%2Fblog%2F02.jpg&w=1920&q=75",
+                            "buttonEnabled": true
+                        }
+                    ],
+                    "instructorSelection": [
+                        {
+                            "header": "Emma Elizabeth",
+                            "headerHelperText": [
+                                {
+                                    "label": "Assistantant"
+                                }
+                            ],
+                            "imageField": "https://studyhub-nextjs.vercel.app/_next/image?url=%2Fimages%2Fblog%2F01.jpg&w=1920&q=75",
+                            "share": true
+                        }
+                    ]
+                },
+                "tableData": {
+                    "columns": [
+                        {
+                            "key": "name",
+                            "label": "Name"
+                        },
+                        {
+                            "key": "age",
+                            "label": "Age"
+                        },
+                        {
+                            "key": "address",
+                            "label": "Address"
+                        }
+                    ],
+                    "table1": [
+                        {
+                            "key": "1",
+                            "name": "John Doe",
+                            "age": 28,
+                            "address": "New York"
+                        },
+                        {
+                            "key": "2",
+                            "name": "Jane Smith",
+                            "age": 32,
+                            "address": "London"
+                        },
+                        {
+                            "key": "3",
+                            "name": "Michael Johnson",
+                            "age": 40,
+                            "address": "Los Angeles"
+                        }
+                    ],
+                    "table2": [
+                        {
+                            "key": "1",
+                            "name": "John Doe",
+                            "age": 28,
+                            "address": "New York",
+                            "email": "john.doe@example.com",
+                            "phone": "+1 123-456-7890"
+                        },
+                        {
+                            "key": "2",
+                            "name": "Jane Smith",
+                            "age": 32,
+                            "address": "London",
+                            "email": "jane.smith@example.com",
+                            "phone": "+44 789-654-3210"
+                        },
+                        {
+                            "key": "3",
+                            "name": "Alice Johnson",
+                            "age": 25,
+                            "address": "Paris",
+                            "email": "alice.johnson@example.com",
+                            "phone": "+33 456-789-1234"
+                        }
+                    ]
+                },
+                "menuListData": [
+                    {
+                        "label": "Configuration",
+                        "children": [
+                            {
+                                "label": "Theme"
+                            }
+                        ]
+                    },
+                    {
+                        "label": "Pages",
+                        "children": [
+                            {
+                                "label": "Top Header"
+                            },
+                            {
+                                "label": "Header"
+                            },
+                            {
+                                "label": "Banner / Slider"
+                            },
+                            {
+                                "label": "Section Builder",
+                                "children": [
+                                    {
+                                        "label": "Courses"
+                                    },
+                                    {
+                                        "label": "Status Content"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            "footer": {
+                "contactInfo": {
+                    "align": "left",
+                    "content": {
+                        "shortdesc": "We are passionate education dedicated to providing high-quality resources learners all backgrounds.",
+                        "address1": "Yarra Park, Melbourne, Australia",
+                        "address2": "",
+                        "pincode": "",
+                        "location": {
+                            "label": "San fransicoq",
+                            "value": "Sanss"
+                        },
+                        "phonenumber": "9515088071",
+                        "facebook": "",
+                        "instagram": "",
+                        "twitter": "",
+                        "linkedIn": ""
+                    }
+                },
+                "quickLinks": {
+                    "align": "center",
+                    "content": [
+                        {
+                            "label": "Latest Courses",
+                            "link": ""
+                        },
+                        {
+                            "label": "Mission & Vision",
+                            "link": ""
+                        },
+                        {
+                            "label": "Join a Career",
+                            "link": ""
+                        },
+                        {
+                            "label": "Zoom Meeting",
+                            "link": ""
+                        },
+                        {
+                            "label": "Pricing Plan",
+                            "link": ""
+                        }
+                    ]
+                },
+                "exploreLinks": {
+                    "align": "right",
+                    "content": [
+                        {
+                            "label": "Course One",
+                            "link": ""
+                        },
+                        {
+                            "label": "Course Two",
+                            "link": ""
+                        },
+                        {
+                            "label": "Create Course",
+                            "link": ""
+                        },
+                        {
+                            "label": "Lesson Details",
+                            "link": ""
+                        },
+                        {
+                            "label": "Instructor",
+                            "link": ""
+                        }
+                    ]
+                },
+                "copyrights": "Copyright © 2025 All Rights Reserved by TitanEd"
+            }
+        }
+    }
+}
