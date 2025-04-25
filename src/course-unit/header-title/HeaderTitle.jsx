@@ -89,7 +89,6 @@ const HeaderTitle = ({
           className="flex-shrink-0"
           iconAs={SettingsIcon}
           onClick={openConfigureModal}
-          disabled={readOnly}
         />
         <ConfigureModal
           isOpen={isConfigureModalOpen}
