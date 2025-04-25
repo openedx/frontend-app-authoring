@@ -34,7 +34,7 @@ export const OutOfSyncAlert: React.FC<OutOfSyncAlertProps> = ({
 }) => {
   const intl = useIntl();
   const { data, isLoading } = useEntityLinksSummaryByDownstreamContext(courseId);
-  const outOfSyncCount = data?.reduce((count, lib) => count + lib.readyToSyncCount, 0);
+  const outOfSyncCount = data?.reduce((count, lib) => count + (lib.readyToSyncCount || 0), 0);
   const alertKey = `outOfSyncCountAlert-${courseId}`;
 
   useEffect(() => {
