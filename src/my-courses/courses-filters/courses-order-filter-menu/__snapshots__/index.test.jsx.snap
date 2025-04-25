@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CoursesTypesFilterMenu snapshot 1`] = `
+<div>
+  <div
+    class="pgn__dropdown pgn__dropdown-light dropdown"
+    data-testid="dropdown"
+    id="dropdown-toggle-dropdown-toggle-courses-order-menu"
+  >
+    <button
+      alt="dropdown-toggle-menu-items"
+      aria-expanded="false"
+      aria-haspopup="true"
+      class="dropdown-toggle-menu-items dropdown-toggle btn btn-none"
+      data-testid="dropdown-toggle-courses-order-menu"
+      id="dropdown-toggle-courses-order-menu"
+      type="button"
+    >
+      Name A-Z
+    </button>
+  </div>
+</div>
+`;

@@ -9,6 +9,7 @@ const slice = createSlice({
     courseId: null,
     status: null,
     canChangeProvider: null,
+    courseDetail: [],
   },
   reducers: {
     updateStatus: (state, { payload }) => {
@@ -18,12 +19,23 @@ const slice = createSlice({
     updateCanChangeProviders: (state, { payload }) => {
       state.canChangeProviders = payload.canChangeProviders;
     },
+    updateCourseDetail: (state, { payload }) => {
+      const existingIndex = state.courseDetail.findIndex(
+        detail => detail.courseId === payload.courseDetail.courseId,
+      );
+      if (existingIndex === -1) {
+        state.courseDetail = [...state.courseDetail, payload.courseDetail];
+      } else {
+        state.courseDetail[existingIndex] = payload.courseDetail;
+      }
+    },
   },
 });
 
 export const {
   updateStatus,
   updateCanChangeProviders,
+  updateCourseDetail,
 } = slice.actions;
 
 export const {

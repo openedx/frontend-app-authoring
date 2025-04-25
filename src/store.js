@@ -3,7 +3,7 @@ import { configureStore } from '@reduxjs/toolkit';
 // FIXME: because the 'live' plugin is using Redux, we have to hard-code a reference to it here.
 // If this app + the plugin were using React-query, there'd be no issues.
 import { reducer as liveReducer } from '@openedx-plugins/course-app-live/data/slice';
-
+import { reducer as myCoursesReducer } from './my-courses/data/slice';
 import { reducer as modelsReducer } from './generic/model-store';
 import { reducer as courseDetailReducer } from './data/slice';
 import { reducer as discussionsReducer } from './pages-and-resources/discussions/data/slice';
@@ -59,6 +59,7 @@ export default function initializeStore(preloadedState = undefined) {
       certificates: certificatesReducer,
       groupConfigurations: groupConfigurationsReducer,
       textbooks: textbooksReducer,
+      myCourses: myCoursesReducer,
     },
     preloadedState,
   });

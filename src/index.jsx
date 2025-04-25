@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+/* eslint-disable linebreak-style */
 import {
   APP_INIT_ERROR, APP_READY, subscribe, initialize, mergeConfig, getConfig, getPath,
 } from '@edx/frontend-platform';
@@ -14,6 +16,8 @@ import {
 
 import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
+import { loadThemeStyles } from 'utils/themeService';
+import MyCourses from 'my-courses/MyCourses';
 import Dashboard from './dashboard/Dashboard';
 import messages from './i18n';
 
@@ -35,10 +39,12 @@ import { ToastProvider } from './generic/toast-context';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
+// eslint-disable-next-line import/no-unresolved
+import Layout from './Layout';
 
 const queryClient = new QueryClient();
 
-const App = () => {
+const App = ({ themeData }) => {
   useEffect(() => {
     if (process.env.HOTJAR_APP_ID) {
       try {
@@ -55,9 +61,10 @@ const App = () => {
 
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/home" element={<StudioHome />} />
+      <Route element={<Layout />}>
+        <Route path="/home" element={<Dashboard />} />
+        {/* <Route path="/home" element={<StudioHome />} /> */}
+        <Route path="/my-courses" element={<MyCourses />} />
         <Route path="/libraries" element={<StudioHome />} />
         <Route path="/libraries-v1" element={<StudioHome />} />
         <Route path="/library/create" element={<CreateLibrary />} />
@@ -104,7 +111,7 @@ const App = () => {
     <AppProvider store={initializeStore()} wrapWithRouter={false}>
       <ToastProvider>
         <QueryClientProvider client={queryClient}>
-          <Head />
+          <Head themeData={themeData} />
           <RouterProvider router={router} />
         </QueryClientProvider>
       </ToastProvider>
@@ -112,9 +119,10 @@ const App = () => {
   );
 };
 
-subscribe(APP_READY, () => {
+subscribe(APP_READY, async () => {
+  const themeData = await loadThemeStyles();
   ReactDOM.render(
-    (<App />),
+    (<App themeData={themeData} />),
     document.getElementById('root'),
   );
 });

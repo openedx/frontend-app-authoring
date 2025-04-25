@@ -1,0 +1,83 @@
+.mainHeaderContainer {
+    display: flex;
+}
+
+.navbarContainer {
+    background-color: var(--c8);
+
+    .navbar-collapse {
+        background-color: var(--c8); // Same bg as parent
+        border-radius: 0 0 0.5rem 0.5rem; // Optional - nice rounded look
+        padding: 1rem; // Optional - spacing in collapsed state
+    }
+}
+
+.buttonListContainer {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    flex: 1;
+}
+
+.navbarList {
+    display: flex;
+    gap: 2rem;
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+}
+
+.navbarList li {
+    cursor: pointer;
+    color: var(--c6);
+}
+
+.navbarList li:hover {
+    color: var(--c2);
+}
+
+.navbarButtons {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto;
+}
+
+.navbarListLeft {
+    justify-self: start;
+    margin-left: 4rem;
+}
+
+.navbarListCenter {
+    justify-self: center;
+}
+
+.navbarListRight {
+    justify-self: end;
+    margin-right: 4rem;
+} 
+
+.menuButton {
+    padding: 0.75rem 1.25rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--c6); /* or your preferred text color */
+    background-color: #fff;
+    outline: none !important;
+    border-color: #fff !important;
+    width: 8rem;
+}
+
+.mainHeaderContainer {
+    display: flex;
+    position: relative;
+    z-index: 100;
+}
+
+// .btn-outline-primary {
+//     border: none;
+//   }
+
+  
+.nav-gap {
+    gap: 3rem;
+}

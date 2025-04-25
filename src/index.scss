@@ -65,3 +65,34 @@ body {
 mark {
   padding: 0;
 }
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content-wrapper {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-grow: 1;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  padding-top: 0;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+.pgn-btn-active {
+  color: #454545;
+  background-color: #E1DDDB;
+  border-color: transparent;
+}
+
+.btn-tertiary:focus::before {
+  border: solid 2px transparent;
+}

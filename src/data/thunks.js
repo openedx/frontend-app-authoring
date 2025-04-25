@@ -4,6 +4,7 @@ import { getCourseDetail } from './api';
 import {
   updateStatus,
   updateCanChangeProviders,
+  updateCourseDetail,
 } from './slice';
 import { RequestStatus } from './constants';
 
@@ -15,6 +16,9 @@ export function fetchCourseDetail(courseId) {
     try {
       const courseDetail = await getCourseDetail(courseId, getAuthenticatedUser().username);
       dispatch(updateStatus({ courseId, status: RequestStatus.SUCCESSFUL }));
+      if (courseDetail) {
+        dispatch(updateCourseDetail({ courseDetail }));
+      }
 
       dispatch(addModel({ modelType: 'courseDetails', model: courseDetail }));
       dispatch(updateCanChangeProviders({

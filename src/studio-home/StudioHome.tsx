@@ -1,3 +1,6 @@
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/quotes */
+/* eslint-disable linebreak-style */
 import React, { useCallback } from 'react';
 import {
   Button,
@@ -13,6 +16,7 @@ import { StudioFooter } from '@edx/frontend-component-footer';
 import { getConfig } from '@edx/frontend-platform';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import Loading from '../generic/Loading';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import Header from '../header';
@@ -25,6 +29,7 @@ import CreateNewCourseForm from './create-new-course-form';
 import messages from './messages';
 import { useStudioHome } from './hooks';
 import AlertMessage from '../generic/alert-message';
+import 'titaned-lib/dist/index.css';
 
 const StudioHome = () => {
   const intl = useIntl();
@@ -135,6 +140,8 @@ const StudioHome = () => {
     if (!userIsActive) {
       return <VerifyEmailLayout />;
     }
+
+    console.log("isPaginationCoursesEnabled", isPaginationCoursesEnabled);
     return (
       <Layout
         lg={[{ span: 9 }, { span: 3 }]}
@@ -188,7 +195,10 @@ const StudioHome = () => {
           isQueryPending={anyQueryIsPending}
         />
       </div>
-      <StudioFooter />
+
+      <PluginSlot id="footer_plugin_slot">
+        <StudioFooter />
+      </PluginSlot>
     </>
   );
 };

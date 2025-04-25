@@ -1,0 +1,18 @@
+.course-card-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4rem; /* Space between cards */
+    margin-bottom: 20px; /* Space below the last card */
+}
+
+.course-grid {
+    display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  justify-content: start;
+}
+
+.pagination-container {
+    margin-top: 1rem;
+}

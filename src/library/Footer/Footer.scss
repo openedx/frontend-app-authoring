@@ -1,0 +1,73 @@
+.footer {
+  background-color: var(--c9);
+  padding: 1rem 2rem;
+  color: var(--c8);
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  height: 15rem;
+}
+
+/* All sections default styles */
+.section {
+  flex: 1;
+  margin: 1rem;
+  min-width: 12.5rem;
+  display: flex;
+  flex-direction: column;
+  text-align: left; /* Always keep text aligned left */
+}
+
+/* Alignment classes using flex order */
+.left {
+  order: 1;
+  align-items: flex-start;
+}
+
+.center {
+  order: 2;
+  align-items: center;
+}
+
+.right {
+  order: 3;
+  align-items: flex-end;
+}
+
+.section h3 {
+  color: var(--c8);
+  margin-bottom: 1rem;
+  /* margin-left: -1.5rem; */
+}
+
+.section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.section ul li {
+  margin-bottom: 0.625rem;
+}
+
+.section ul li a {
+  color: var(--c8);
+  text-decoration: none;
+}
+
+.section ul li a:hover {
+  text-decoration: underline;
+}
+
+.copyright {
+  text-align: center;
+  margin-top: 1.25rem;
+  font-size: 0.875rem;
+  color: var(--c7);
+}
+
+.h3Adjust {
+  margin-left: -1.5rem;
+}
