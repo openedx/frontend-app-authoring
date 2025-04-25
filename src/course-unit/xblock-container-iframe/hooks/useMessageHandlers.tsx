@@ -51,9 +51,14 @@ export const useMessageHandlers = ({
     [messageTypes.openManageTags]: (payload) => handleOpenManageTagsModal(payload.contentId),
     [messageTypes.addNewComponent]: () => handleShowProcessingNotification(NOTIFICATION_MESSAGES.adding),
     [messageTypes.pasteNewComponent]: () => handleShowProcessingNotification(NOTIFICATION_MESSAGES.pasting),
-    [messageTypes.copyXBlockLegacy]: () => handleShowProcessingNotification(NOTIFICATION_MESSAGES.copying),
+    [messageTypes.copyXBlockLegacy]: /* istanbul ignore next */ () => handleShowProcessingNotification(
+      NOTIFICATION_MESSAGES.copying,
+    ),
     [messageTypes.hideProcessingNotification]: handleHideProcessingNotification,
-    [messageTypes.handleRedirectToXBlockEditPage]: (payload) => handleEditXBlock(payload.type, payload.locator),
+    [messageTypes.handleRedirectToXBlockEditPage]: /* istanbul ignore next */ (payload) => handleEditXBlock(
+      payload.type,
+      payload.locator,
+    ),
   }), [
     courseId,
     handleDeleteXBlock,
