@@ -16,6 +16,7 @@ import { ToastContext } from '../../../generic/toast-context';
 import { CollectionMetadata } from '../../data/api';
 import { useLibraryContext } from '../../common/context/LibraryContext';
 import { SidebarActions, useSidebarContext } from '../../common/context/SidebarContext';
+import genericMessages from '../messages';
 import messages from './messages';
 
 interface ManageCollectionsProps {
@@ -50,9 +51,9 @@ const CollectionsSelectableBox = ({
   const handleConfirmation = () => {
     setBtnState('pending');
     updateCollectionsMutation.mutateAsync(selectedCollections).then(() => {
-      showToast(intl.formatMessage(messages.manageCollectionsToComponentSuccess));
+      showToast(intl.formatMessage(genericMessages.manageCollectionsSuccess));
     }).catch(() => {
-      showToast(intl.formatMessage(messages.manageCollectionsToComponentFailed));
+      showToast(intl.formatMessage(genericMessages.manageCollectionsFailed));
     }).finally(() => {
       setBtnState('default');
       onClose();

@@ -29,6 +29,7 @@ import { useLibraryContext } from '../common/context/LibraryContext';
 import { PickLibraryContentModal } from './PickLibraryContentModal';
 import { blockTypes } from '../../editors/data/constants/app';
 
+import genericMessages from '../generic/messages';
 import messages from './messages';
 import type { BlockTypeMetadata } from '../data/api';
 import { getContainerTypeFromId, ContainerType } from '../../generic/key-utils';
@@ -301,7 +302,7 @@ const AddContent = () => {
   const linkComponent = (opaqueKey: string) => {
     if (collectionId) {
       addComponentsToCollectionMutation.mutateAsync([opaqueKey]).catch(() => {
-        showToast(intl.formatMessage(messages.errorAssociateComponentToCollectionMessage));
+        showToast(intl.formatMessage(genericMessages.manageCollectionsFailed));
       });
     }
     if (unitId) {

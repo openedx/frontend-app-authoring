@@ -6,6 +6,7 @@ import { ToastContext } from '../../generic/toast-context';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import type { SelectedComponent } from '../common/context/ComponentPickerContext';
 import { useAddItemsToCollection, useAddComponentsToContainer } from '../data/apiHooks';
+import genericMessages from '../generic/messages';
 import messages from './messages';
 
 interface PickLibraryContentModalFooterProps {
@@ -69,16 +70,16 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
     if (collectionId) {
       updateCollectionItemsMutation.mutateAsync(usageKeys)
         .then(() => {
-          showToast(intl.formatMessage(messages.successAssociateComponentMessage));
+          showToast(intl.formatMessage(genericMessages.manageCollectionsSuccess));
         })
         .catch(() => {
-          showToast(intl.formatMessage(messages.errorAssociateComponentToCollectionMessage));
+          showToast(intl.formatMessage(genericMessages.manageCollectionsFailed));
         });
     }
     if (unitId) {
       updateUnitComponentsMutation.mutateAsync(usageKeys)
         .then(() => {
-          showToast(intl.formatMessage(messages.successAssociateComponentMessage));
+          showToast(intl.formatMessage(messages.successAssociateComponentToContainerMessage));
         })
         .catch(() => {
           showToast(intl.formatMessage(messages.errorAssociateComponentToContainerMessage));

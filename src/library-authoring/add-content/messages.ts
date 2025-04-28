@@ -84,15 +84,10 @@ const messages = defineMessages({
       + ' The {detail} text provides more information about the error.'
     ),
   },
-  successAssociateComponentMessage: {
-    id: 'course-authoring.library-authoring.associate-collection-content.success.text',
+  successAssociateComponentToContainerMessage: {
+    id: 'course-authoring.library-authoring.associate-container-content.success.text',
     defaultMessage: 'Content linked successfully.',
-    description: 'Message when linking of content to a collection in library is success',
-  },
-  errorAssociateComponentToCollectionMessage: {
-    id: 'course-authoring.library-authoring.associate-collection-content.error.text',
-    defaultMessage: 'There was an error linking the content to this collection.',
-    description: 'Message when linking of content to a collection in library fails',
+    description: 'Message when linking of content to a container in library is success',
   },
   errorAssociateComponentToContainerMessage: {
     id: 'course-authoring.library-authoring.associate-container-content.error.text',

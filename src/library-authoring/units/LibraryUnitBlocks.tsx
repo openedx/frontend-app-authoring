@@ -220,16 +220,16 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
         disabled={preview}
       >
         {hidePreviewFor !== block.id && (
-        <div className={classNames('p-3', {
-          'container-mw-md': block.blockType === blockTypes.video,
-        })}
-        >
-          <LibraryBlock
-            usageKey={block.id}
-            version={showOnlyPublished ? 'published' : undefined}
-            minHeight={calculateMinHeight(block)}
-          />
-        </div>
+          <div className={classNames('p-3', {
+            'container-mw-md': block.blockType === blockTypes.video,
+          })}
+          >
+            <LibraryBlock
+              usageKey={block.id}
+              version={showOnlyPublished ? 'published' : undefined}
+              minHeight={calculateMinHeight(block)}
+            />
+          </div>
         )}
       </SortableItem>
     </IframeProvider>
@@ -247,7 +247,7 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
       >
         {renderedBlocks}
       </DraggableList>
-      { !preview && (
+      {!preview && (
         <div className="d-flex">
           <div className="w-100 mr-2">
             <Button
