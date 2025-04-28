@@ -69,7 +69,14 @@ const BlockHeader = ({ block, onTagClick }: BlockHeaderProps) => {
 
   return (
     <>
-      <Stack direction="horizontal" gap={2} className="font-weight-bold">
+      <Stack
+        direction="horizontal"
+        gap={2}
+        className="font-weight-bold"
+        // Prevent parent card from being clicked.
+        /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
+        onClick={(e) => e.stopPropagation()}
+      >
         <Icon src={getItemIcon(block.blockType)} />
         <InplaceTextEditor
           onSave={handleSaveDisplayName}
@@ -77,7 +84,13 @@ const BlockHeader = ({ block, onTagClick }: BlockHeaderProps) => {
         />
       </Stack>
       <ActionRow.Spacer />
-      <Stack direction="horizontal" gap={3}>
+      <Stack
+        direction="horizontal"
+        gap={3}
+        // Prevent parent card from being clicked.
+        /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
+        onClick={(e) => e.stopPropagation()}
+      >
         {block.hasUnpublishedChanges && (
           <Badge
             className="px-2 pt-1"
@@ -206,7 +219,9 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
     <IframeProvider key={`${block.id}-${idx}-${block.modified}`}>
       <SortableItem
         id={block.id}
-        componentStyle={null}
+        componentStyle={{
+          outline: componentId === block.id && '2px solid black',
+        }}
         actions={<BlockHeader block={block} onTagClick={openManageTagsDrawer} />}
         actionStyle={{
           borderRadius: '8px 8px 0px 0px',
@@ -220,9 +235,13 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
         disabled={preview}
       >
         {hidePreviewFor !== block.id && (
-          <div className={classNames('p-3', {
-            'container-mw-md': block.blockType === blockTypes.video,
-          })}
+          // Prevent parent card from being clicked.
+          /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
+          <div
+            className={classNames('p-3', {
+              'container-mw-md': block.blockType === blockTypes.video,
+            })}
+            onClick={(e) => e.stopPropagation()}
           >
             <LibraryBlock
               usageKey={block.id}
