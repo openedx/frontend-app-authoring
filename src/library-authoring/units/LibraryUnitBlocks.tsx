@@ -28,7 +28,7 @@ import {
   useUpdateXBlockFields,
 } from '../data/apiHooks';
 import { LibraryBlock } from '../LibraryBlock';
-import { useLibraryRoutes } from '../routes';
+import { useLibraryRoutes, ContentType } from '../routes';
 import messages from './messages';
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { ToastContext } from '../../generic/toast-context';
@@ -275,7 +275,8 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
             <PickLibraryContentModal
               isOpen={isAddLibraryContentModalOpen}
               onClose={closeAddLibraryContentModal}
-              extraFilter={['NOT block_type = "unit"']}
+              extraFilter={['NOT block_type = "unit"', 'NOT type = "collection"']}
+              visibleTabs={[ContentType.components]}
             />
           </div>
         </div>

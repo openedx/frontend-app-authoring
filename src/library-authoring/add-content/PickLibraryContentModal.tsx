@@ -7,6 +7,7 @@ import { useLibraryContext } from '../common/context/LibraryContext';
 import type { SelectedComponent } from '../common/context/ComponentPickerContext';
 import { useAddItemsToCollection, useAddComponentsToContainer } from '../data/apiHooks';
 import genericMessages from '../generic/messages';
+import type { ContentType } from '../routes';
 import messages from './messages';
 
 interface PickLibraryContentModalFooterProps {
@@ -33,12 +34,14 @@ interface PickLibraryContentModalProps {
   isOpen: boolean;
   onClose: () => void;
   extraFilter?: string[];
+  visibleTabs?: ContentType[],
 }
 
 export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = ({
   isOpen,
   onClose,
   extraFilter,
+  visibleTabs,
 }) => {
   const intl = useIntl();
 
@@ -110,6 +113,7 @@ export const PickLibraryContentModal: React.FC<PickLibraryContentModalProps> = (
         componentPickerMode="multiple"
         onChangeComponentSelection={setSelectedComponents}
         extraFilter={extraFilter}
+        visibleTabs={visibleTabs}
       />
     </StandardModal>
   );
