@@ -128,6 +128,7 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
 
   const {
     unitId,
+    collectionId,
     showOnlyPublished,
     componentId,
     readOnly,
@@ -137,6 +138,7 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
 
   const {
     openAddContentSidebar,
+    openInfoSidebar,
   } = useSidebarContext();
 
   const queryClient = useQueryClient();
@@ -181,6 +183,9 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
     if (numberOfClicks > 1 && canEdit) {
       // Open editor on double click.
       openComponentEditor(block.id);
+    } else {
+      // open current component sidebar
+      openInfoSidebar(block.id, collectionId, unitId)
     }
   };
 
