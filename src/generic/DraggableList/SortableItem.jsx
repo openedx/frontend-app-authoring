@@ -47,12 +47,12 @@ const SortableItem = ({
   return (
     <div
       ref={setNodeRef}
+      onClick={onClick}
     >
       <Card
         style={style}
         className="mx-0"
         isClickable={isClickable}
-        onClick={onClick}
       >
         <ActionRow style={actionStyle}>
           {actions}
