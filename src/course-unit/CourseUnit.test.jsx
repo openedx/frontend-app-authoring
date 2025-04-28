@@ -72,6 +72,7 @@ let store;
 let queryClient;
 const courseId = '123';
 const blockId = '567890';
+const sequenceId = 'block-v1:edX+DemoX+Demo_Course+type@sequential+block@19a30717eff543078a5d94ae9d6c18a5';
 const unitDisplayName = courseUnitIndexMock.metadata.display_name;
 const mockedUsedNavigate = jest.fn();
 const userName = 'openedx';
@@ -90,7 +91,7 @@ const postXBlockBody = {
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
-  useParams: () => ({ blockId }),
+  useParams: () => ({ blockId, sequenceId }),
   useNavigate: () => mockedUsedNavigate,
 }));
 
@@ -1976,7 +1977,6 @@ describe('<CourseUnit />', () => {
 
   describe('Library Content page', () => {
     const newUnitId = '12345';
-    const sequenceId = courseSectionVerticalMock.subsection_location;
 
     beforeEach(async () => {
       axiosMock
@@ -2055,7 +2055,6 @@ describe('<CourseUnit />', () => {
 
   describe('Split Test Content page', () => {
     const newUnitId = '12345';
-    const sequenceId = courseSectionVerticalMock.subsection_location;
 
     beforeEach(async () => {
       axiosMock
