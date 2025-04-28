@@ -200,8 +200,10 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
     );
   };
 
-  const renderedBlocks = orderedBlocks?.map((block) => (
-    <IframeProvider key={block.id + block.modified}>
+  const renderedBlocks = orderedBlocks?.map((block, idx) => (
+    // A container can have multiple instances of the same block
+    // eslint-disable-next-line react/no-array-index-key
+    <IframeProvider key={`${block.id}-${idx}-${block.modified}`}>
       <SortableItem
         id={block.id}
         componentStyle={null}

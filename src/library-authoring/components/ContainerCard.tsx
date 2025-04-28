@@ -147,7 +147,9 @@ const ContainerCardPreview = ({ containerId, showMaxChildren = 5 }: ContainerCar
           }
           return (
             <div
-              key={`container-card-preview-block-${id}`}
+              // A container can have multiple instances of the same block
+              // eslint-disable-next-line react/no-array-index-key
+              key={`${id}-${idx}`}
               className={classNames}
             >
               {blockPreview}
