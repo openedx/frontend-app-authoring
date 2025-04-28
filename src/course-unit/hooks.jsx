@@ -43,7 +43,7 @@ import {
 } from './data/slice';
 import { useIframe } from '../generic/hooks/context/hooks';
 
-export const useCourseUnit = ({ courseId, blockId }) => {
+export const useCourseUnit = ({ courseId, blockId, sequenceId }) => {
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
   const { sendMessageToIframe } = useIframe();
@@ -67,7 +67,6 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   const { sharedClipboardData, showPasteXBlock, showPasteUnit } = useClipboard(canEdit);
   const { canPasteComponent } = courseVerticalChildren;
   const { displayName: unitTitle, category: unitCategory } = xblockInfo;
-  const sequenceId = courseUnit.ancestorInfo?.ancestors[0].id;
   const isUnitVerticalType = unitCategory === COURSE_BLOCK_NAMES.vertical.id;
   const isUnitLibraryType = unitCategory === COURSE_BLOCK_NAMES.libraryContent.id;
   const isSplitTestType = unitCategory === COURSE_BLOCK_NAMES.splitTest.id;
@@ -216,7 +215,6 @@ export const useCourseUnit = ({ courseId, blockId }) => {
   }, [isMoveModalOpen]);
 
   return {
-    sequenceId,
     courseUnit,
     unitTitle,
     unitCategory,
