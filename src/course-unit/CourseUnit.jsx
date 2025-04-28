@@ -38,12 +38,11 @@ import IframePreviewLibraryXBlockChanges from './preview-changes';
 import CourseUnitHeaderActionsSlot from '../plugin-slots/CourseUnitHeaderActionsSlot';
 
 const CourseUnit = ({ courseId }) => {
-  const { blockId } = useParams();
+  const { blockId, sequenceId } = useParams();
   const intl = useIntl();
   const {
     courseUnit,
     isLoading,
-    sequenceId,
     unitTitle,
     unitCategory,
     errorMessage,
@@ -74,7 +73,7 @@ const CourseUnit = ({ courseId }) => {
     handleCloseXBlockMovedAlert,
     handleNavigateToTargetUnit,
     addComponentTemplateData,
-  } = useCourseUnit({ courseId, blockId });
+  } = useCourseUnit({ courseId, blockId, sequenceId });
   const layoutGrid = useLayoutGrid(unitCategory, isUnitLibraryType);
 
   const readOnly = !!courseUnit.readOnly;
@@ -140,7 +139,7 @@ const CourseUnit = ({ courseId }) => {
               />
             ) : null}
           </TransitionReplace>
-          {courseUnit.upstreamInfo.upstreamLink && (
+          {courseUnit.upstreamInfo?.upstreamLink && (
             <AlertMessage
               title={intl.formatMessage(
                 messages.alertLibraryUnitReadOnlyText,
