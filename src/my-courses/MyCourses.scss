@@ -8,11 +8,42 @@
 
 .course-grid {
     display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1.5rem;
-  justify-content: start;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 1rem 1.25rem;
+    max-width: 1800px;
+    margin: 0 auto;
+
+    @media (min-width: 768px) {
+        grid-template-columns: repeat(2, minmax(280px, 1fr));
+    }
+
+    @media (min-width: 992px) {
+        grid-template-columns: repeat(3, minmax(280px, 1fr));
+    }
+
+    @media (min-width: 1200px) {
+        grid-template-columns: repeat(4, minmax(280px, 1fr));
+    }
+
+    @media (min-width: 1600px) {
+        grid-template-columns: repeat(5, minmax(260px, 1fr));
+        gap: 1.5rem;
+    }
 }
 
 .pagination-container {
-    margin-top: 1rem;
+    margin-top: 2rem;
+    padding: 0 1.25rem;
+}
+
+// Override container padding
+.container {
+    padding-left: 0;
+    padding-right: 0;
+    max-width: 1800px;
+}
+
+.filters-container {
+    padding: 0 2rem;
 }

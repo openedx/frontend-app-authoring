@@ -4,11 +4,12 @@
 
 .navbarContainer {
     background-color: var(--c8);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 
     .navbar-collapse {
-        background-color: var(--c8); // Same bg as parent
-        border-radius: 0 0 0.5rem 0.5rem; // Optional - nice rounded look
-        padding: 1rem; // Optional - spacing in collapsed state
+        background-color: var(--c8);
+        border-radius: 0 0 0.5rem 0.5rem;
+        padding: 1rem;
     }
 }
 
@@ -60,24 +61,17 @@
     padding: 0.75rem 1.25rem;
     font-weight: 600;
     text-transform: uppercase;
-    color: var(--c6); /* or your preferred text color */
+    color: var(--c6);
     background-color: #fff;
     outline: none !important;
     border-color: #fff !important;
     width: 8rem;
 }
 
-.mainHeaderContainer {
-    display: flex;
-    position: relative;
-    z-index: 100;
-}
-
-// .btn-outline-primary {
-//     border: none;
-//   }
-
-  
 .nav-gap {
     gap: 3rem;
+}
+
+.dropdown-menu {
+    min-width: 15rem;
 }

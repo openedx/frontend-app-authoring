@@ -1,35 +1,33 @@
 .course-card {
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    width: 100%; /* Ensures the card takes full width of the grid column */
-    max-width: 18rem; /* Limits the maximum width */
+    width: 100%;
+    height: 100%;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin: 0 auto;
 
-    // &:hover {
-    //     transform: translateY(-5px); /* Lift the card slightly on hover */
-    //     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2); /* Stronger shadow */
-    //     cursor: pointer;
-    // }
 }
 
 .course-card-image {
     width: 100%;
-    height: 180px; // you can adjust the height as per your design
-    object-fit: cover; // crop and fit image inside fixed box
+    height: 160px;
+    object-fit: cover;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
 }
 
 .title-container {
-    height: 2.5rem;
+    height: 3rem;
+    margin-bottom: 0.5rem;
 }
   
 .card-title {
-    font-size: large;
-    // min-height: 2.5rem;
+    font-size: 1rem;
+    line-height: 1.4;
     word-break: break-word;
     display: -webkit-box;
-    -webkit-line-clamp: 2;  // 👈 limits to 2 lines
-    line-clamp: 2;          // Standard property for compatibility
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -37,13 +35,19 @@
 
 .course-card-buttons {
     display: flex;
-    flex-wrap: nowrap;
-    justify-content: center;
-    // gap: 0.5rem;
+    gap: 0.5rem;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  
+    @media (max-width: 340px) {
+        flex-direction: column;
+    }
   
     button {
-      white-space: nowrap;
-      padding: 0.4rem 0.5rem;
-      font-size: 0.875rem;
+        flex: 1;
+        white-space: nowrap;
+        padding: 0.4rem 0.5rem;
+        font-size: 0.75rem;
+        min-width: max-content;
     }
 }

@@ -179,7 +179,7 @@ const MyCourses = () => {
       ) : (
         <div>
           {/* {isShowProcessing && !isEnabledPagination && <ProcessingCourses />} */}
-          <div className="d-flex justify-content-end align-items-center mb-3 gap-3">
+          <div className="d-flex justify-content-end align-items-center mb-3 gap-3 filters-container">
             <CoursesFilters
               dispatch={dispatch}
               locationValue={locationValue}

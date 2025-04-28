@@ -1,4 +1,3 @@
-/* eslint-disable linebreak-style */
 import React from 'react';
 import {
   Navbar,
@@ -6,10 +5,12 @@ import {
   NavDropdown,
   Button,
 } from '@openedx/paragon';
-import useIsMobileSize from 'library/hooks/useIsMobileSize';
+// import useIsMobileSize from '../../../hooks/useIsMobileSize';
+// import { MainHeaderProps } from '../../../interfaces/components';
 import { MainHeaderProps } from 'titaned-lib';
 import UserMenu from '../UserMenu/UserMenu';
 import './MainHeader.scss';
+import useIsMobileSize from '../hooks/useIsMobileSize';
 
 const MainHeader: React.FC<MainHeaderProps> = ({
   logoUrl,
@@ -20,8 +21,6 @@ const MainHeader: React.FC<MainHeaderProps> = ({
   userMenuItems,
   menuAlignment,
 }) => {
-
-  console.log('Checking Autenticated User:', authenticatedUser);
   const isMobile = useIsMobileSize();
 
   const alignmentMap: { [key: string]: string } = {

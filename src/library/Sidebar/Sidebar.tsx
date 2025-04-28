@@ -1,7 +1,8 @@
-/* eslint-disable linebreak-style */
-import React from 'react';
+/* eslint-disable implicit-arrow-linebreak */
+import React, { useState } from 'react';
 import { Button } from '@openedx/paragon';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { ChevronLeft, ChevronRight } from '@openedx/paragon/icons';
+// import { useLocation, useNavigate } from 'react-router-dom';
 import './Sidebar.scss';
 
 interface SidebarProps {
@@ -10,25 +11,35 @@ interface SidebarProps {
     path: string;
     icon: React.ReactElement;
   }[];
+  onNavigate: (path: string) => void;
+  // isActive: (path: string) => boolean;
+  presentPath: string;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ buttons }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const isActive = (path: string) => location.pathname === path;
+const Sidebar: React.FC<SidebarProps> = ({ buttons, onNavigate, presentPath }) => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
-    <div className="sidebar">
+    <div className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
+      <Button
+        variant="tertiary"
+        className="collapse-btn"
+        onClick={() => setIsCollapsed(!isCollapsed)}
+      >
+        {isCollapsed ? <ChevronRight /> : <ChevronLeft />}
+      </Button>
       <div className="sidebar-buttons">
         {buttons.map((btn) => (
           <Button
             key={btn.path}
             variant="tertiary"
-            className={`sidebar-btn ${isActive(btn.path) ? 'pgn-btn-active' : ''}`}
-            onClick={() => navigate(btn.path)}
+            className={`sidebar-btn ${btn.path === presentPath ? 'pgn-btn-active' : ''}`}
+            onClick={() => onNavigate(btn.path)}
           >
-            <span className="icon-left">{btn.icon}</span> {btn.label}
+            <div className="btn-content">
+              <span className="icon-container">{btn.icon}</span>
+              <span className="btn-label">{btn.label}</span>
+            </div>
           </Button>
         ))}
       </div>
