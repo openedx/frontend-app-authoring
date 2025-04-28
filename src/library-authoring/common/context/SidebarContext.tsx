@@ -36,7 +36,7 @@ export const isComponentInfoTab = (tab: string): tab is ComponentInfoTab => (
 
 export const UNIT_INFO_TABS = {
   Preview: 'preview',
-  Organize: 'organize',
+  Manage: 'manage',
   Usage: 'usage',
   Settings: 'settings',
 } as const;
