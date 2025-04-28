@@ -165,21 +165,7 @@ Feature: New React XBlock Editors
 
 .. image:: ./docs/readme-images/feature-problem-editor.png
 
-This allows an operator to enable the use of new React editors for the HTML, Video, and Problem XBlocks, all of which are provided here.
-
-Requirements
-------------
-
-* ``edx-platform`` Waffle flags:
-
-  * ``new_core_editors.use_new_text_editor``: must be enabled for the new HTML Xblock editor to be used in Studio
-  * ``new_core_editors.use_new_video_editor``: must be enabled for the new Video Xblock editor to be used in Studio
-  * ``new_core_editors.use_new_problem_editor``: must be enabled for the new Problem Xblock editor to be used in Studio
-
-Feature Description
--------------------
-
-When a corresponding waffle flag is set, upon editing a block in Studio, the view is rendered by this MFE instead of by the XBlock's authoring view.  The user remains in Studio.
+New React editors for the HTML, Video, and Problem XBlocks are provided here and are rendered by this MFE instead of by the XBlock's authoring view.
 
 Feature: New Proctoring Exams View
 ==================================
@@ -192,10 +178,6 @@ Requirements
 * ``edx-platform`` Django settings:
 
   * ``ZENDESK_*``: necessary if automatic ZenDesk ticket creation is desired
-
-* ``edx-platform`` Feature flags:
-
-  * ``ENABLE_EXAM_SETTINGS_HTML_VIEW``: this feature flag must be enabled for the link to the settings view to be shown
 
 * `edx-exams <https://github.com/edx/edx-exams>`_: for this feature to work, the ``edx-exams`` IDA must be deployed and its API accessible by the browser
 
@@ -221,32 +203,12 @@ Feature: Advanced Settings
 
 .. image:: ./docs/readme-images/feature-advanced-settings.png
 
-Requirements
-------------
-
-* ``edx-platform`` Waffle flags:
-
-  * ``contentstore.new_studio_mfe.use_new_advanced_settings_page``: this feature flag must be enabled for the link to the settings view to be shown. It can be enabled on a per-course basis.
-
-Feature Description
--------------------
-
 In Studio, the "Advanced Settings" page for each enabled course will now be served by this frontend, instead of the UI built into edx-platform. The advanced settings page holds many different settings for the course, such as what features or XBlocks are enabled.
 
 Feature: Files & Uploads
 ==========================
 
 .. image:: ./docs/readme-images/feature-files-uploads.png
-
-Requirements
-------------
-
-* ``edx-platform`` Waffle flags:
-
-  * ``contentstore.new_studio_mfe.use_new_files_uploads_page``: this feature flag must be enabled for the link to the Files & Uploads page to go to the MFE. It can be enabled on a per-course basis.
-
-Feature Description
--------------------
 
 In Studio, the "Files & Uploads" page for each enabled course will now be served by this frontend, instead of the UI built into edx-platform. This page allows managing static asset files like PDFs, images, etc. used for the course.
 
@@ -255,25 +217,10 @@ Feature: Course Updates
 
 .. image:: ./docs/readme-images/feature-course-updates.png
 
-Requirements
-------------
-
-* ``edx-platform`` Waffle flags:
-
-  * ``contentstore.new_studio_mfe.use_new_updates_page``: this feature flag must be enabled.
-
 Feature: Import/Export Pages
 ============================
 
 .. image:: ./docs/readme-images/feature-export.png
-
-Requirements
-------------
-
-* ``edx-platform`` Waffle flags:
-
-  * ``contentstore.new_studio_mfe.use_new_export_page``: this feature flag will change the CMS to link to the new export page.
-  * ``contentstore.new_studio_mfe.use_new_import_page``: this feature flag will change the CMS to link to the new import page.
 
 Feature: Tagging/Taxonomy Pages
 ================================
@@ -379,6 +326,20 @@ For more information about these options, see the `Getting Help`_ page.
 .. _#wg-frontend channel: https://openedx.slack.com/archives/C04BM6YC7A6
 .. _Getting Help: https://openedx.org/community/connect
 
+
+Legacy Studio
+*************
+
+If you would like to use legacy studio for certain features, you can set the following waffle flags in ``edx-platform``:
+  * ``legacy_studio.text_editor``: loads the legacy HTML Xblock editor when editing a text block
+  * ``legacy_studio.video_editor``: loads the legacy Video editor when editing a video block
+  * ``legacy_studio.problem_editor``: loads the legacy Problem editor when editing a problem block
+  * ``legacy_studio.advanced_settings``: Advanced Settings page
+  * ``legacy_studio.updates``: Updates page
+  * ``legacy_studio.export``: Export page
+  * ``legacy_studio.import``: Import page
+  * ``legacy_studio.files_uploads``: Files page
+  * ``legacy_studio.exam_settings``: loads the legacy Exam Settings
 
 License
 *******
