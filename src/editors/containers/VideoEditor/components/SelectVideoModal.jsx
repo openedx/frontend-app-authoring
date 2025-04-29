@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { Button } from '@openedx/paragon';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { thunkActions } from '../../../data/redux';
 import BaseModal from '../../../sharedComponents/BaseModal';
@@ -11,6 +12,7 @@ import BaseModal from '../../../sharedComponents/BaseModal';
 // should be re-thought and cleaned up to avoid this pattern.
 // eslint-disable-next-line import/no-self-import
 import * as module from './SelectVideoModal';
+import messages from './messages';
 
 export const hooks = {
   videoList: ({ fetchVideos }) => {
@@ -31,6 +33,7 @@ export const SelectVideoModal = ({
   close,
   setSelection,
 }) => {
+  const intl = useIntl();
   const videos = module.hooks.videoList({ fetchVideos });
   const onSelectClick = module.hooks.onSelectClick({
     setSelection,
@@ -41,7 +44,7 @@ export const SelectVideoModal = ({
     <BaseModal
       isOpen={isOpen}
       close={close}
-      title="Add a video"
+      title={intl.formatMessage(messages.selectVideoModalTitle)}
       confirmAction={<Button variant="primary" onClick={onSelectClick}>Next</Button>}
     >
       {/* Content selection */}
