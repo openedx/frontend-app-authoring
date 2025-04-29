@@ -5,6 +5,7 @@ import {
   MenuBook, Groups, LibraryBooks, Assessment,
 } from '@openedx/paragon/icons';
 import './Dashboard.scss';
+import WidgetCard from './components/WidgetCard';
 
 const MetricCard = ({ icon, value, label }) => (
   <Card className="metric-card">
@@ -71,71 +72,89 @@ const Dashboard = () => {
         <div className="overview-section">
           <h1>Overview</h1>
           <div className="overview-grid">
-            <Card className="overview-card">
-              <h4 className="card-header">Quick Actions</h4>
-              <Card.Section className="card-section">
-                <ul className="card-list">
-                  {dashboardData.quickActions.map((action) => (
-                    <li key={`quick-action-${action}`}>{action}</li>
-                  ))}
-                </ul>
-              </Card.Section>
-            </Card>
-
-            <Card className="overview-card">
-              <h4 className="card-header">Recent course</h4>
-              <Card.Section className="card-section">
-                <ul className="card-list">
-                  {dashboardData.recentCourses.map((course) => (
-                    <li key={`recent-course-${course}`}>{course}</li>
-                  ))}
-                </ul>
-              </Card.Section>
-            </Card>
-
-            <Card className="overview-card">
-              <h4 className="card-header">Notifications</h4>
-              <Card.Section className="card-section">
-                {dashboardData.notifications.length > 0 ? (
+            {/* <div>
+              <Card className="overview-card">
+                <h4 className="card-header">Quick Actions</h4>
+                <Card.Section className="card-section">
                   <ul className="card-list">
-                    {dashboardData.notifications.map((notification) => (
-                      <li key={`notification-${notification}`}>{notification}</li>
+                    {dashboardData.quickActions.map((action) => (
+                      <li key={`quick-action-${action}`}>{action}</li>
                     ))}
                   </ul>
-                ) : (
-                  <p className="text-muted">No notifications yet.</p>
-                )}
-              </Card.Section>
-            </Card>
+                </Card.Section>
+              </Card>
 
-            <Card className="overview-card">
-              <h4 className="card-header">Upcoming Events</h4>
-              <Card.Section className="card-section">
-                {dashboardData.upcomingEvents.length > 0 ? (
+              <Card className="overview-card">
+                <h4 className="card-header">Recent course</h4>
+                <Card.Section className="card-section">
                   <ul className="card-list">
-                    {dashboardData.upcomingEvents.map((event) => (
-                      <li key={`upcoming-event-${event}`}>{event}</li>
+                    {dashboardData.recentCourses.map((course) => (
+                      <li key={`recent-course-${course}`}>{course}</li>
                     ))}
                   </ul>
-                ) : (
-                  <p className="text-muted">No upcoming events.</p>
-                )}
-              </Card.Section>
-            </Card>
+                </Card.Section>
+              </Card>
 
-            <Card className="calendar-card">
-              <h4 className="card-header">Calendar - {dashboardData.calendar.date}</h4>
-              <Card.Section className="card-section">
-                <div className="calendar-events">
-                  {dashboardData.calendar.events.map((event) => (
-                    <div key={`calendar-event-${event.title}`} className="calendar-event">
-                      {event.title}<br />
-                      <span className="event-time">{event.time}</span>
-                    </div>
-                  ))}
-                </div>
-              </Card.Section>
-            </Card>
+              <Card className="overview-card">
+                <h4 className="card-header">Notifications</h4>
+                <Card.Section className="card-section">
+                  {dashboardData.notifications.length > 0 ? (
+                    <ul className="card-list">
+                      {dashboardData.notifications.map((notification) => (
+                        <li key={`notification-${notification}`}>
+                          {notification}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-muted">No notifications yet.</p>
+                  )}
+                </Card.Section>
+              </Card>
+
+              <Card className="overview-card">
+                <h4 className="card-header">Upcoming Events</h4>
+                <Card.Section className="card-section">
+                  {dashboardData.upcomingEvents.length > 0 ? (
+                    <ul className="card-list">
+                      {dashboardData.upcomingEvents.map((event) => (
+                        <li key={`upcoming-event-${event}`}>{event}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-muted">No upcoming events.</p>
+                  )}
+                </Card.Section>
+              </Card>
+
+              <Card className="calendar-card">
+                <h4 className="card-header">
+                  Calendar - {dashboardData.calendar.date}
+                </h4>
+                <Card.Section className="card-section">
+                  <div className="calendar-events">
+                    {dashboardData.calendar.events.map((event) => (
+                      <div
+                        key={`calendar-event-${event.title}`}
+                        className="calendar-event"
+                      >
+                        {event.title}
+                        <br />
+                        <span className="event-time">{event.time}</span>
+                      </div>
+                    ))}
+                  </div>
+                </Card.Section>
+              </Card>
+            </div> */}
+            {dashboardData.widgets.map((widget) => (
+              <WidgetCard
+                key={widget.id}
+                title={widget.title}
+                content={widget.content}
+                className={widget.className}
+              />
+            ))}
           </div>
         </div>
       </div>
