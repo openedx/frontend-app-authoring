@@ -183,4 +183,25 @@ describe('<ContainerCard />', () => {
     expect((await screen.findAllByTitle(/lb:org1:Demo_course:html:text-*/)).length).toBe(4);
     expect(screen.queryByText('+2')).toBeInTheDocument();
   });
+
+  it('should render published child blocks when rendering a published card preview', async () => {
+    const containerWithPublishedChildren = {
+      ...containerHitSample,
+      content: {
+        childUsageKeys: Array(6).fill('').map((_child, idx) => `lb:org1:Demo_course:html:text-${idx}`),
+      },
+      published: {
+        content: {
+          childUsageKeys: Array(2).fill('').map((_child, idx) => `lb:org1:Demo_course:html:text-${idx}`),
+        },
+      },
+    } satisfies ContainerHit;
+    render(
+      <ContainerCard hit={containerWithPublishedChildren} />,
+      true,
+    );
+
+    expect((await screen.findAllByTitle(/lb:org1:Demo_course:html:text-*/)).length).toBe(2);
+    expect(screen.queryByText('+2')).not.toBeInTheDocument();
+  });
 });

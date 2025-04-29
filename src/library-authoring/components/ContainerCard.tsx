@@ -108,13 +108,11 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
 };
 
 type ContainerCardPreviewProps = {
-  hit: ContainerHit,
+  childUsageKeys: Array<string>;
   showMaxChildren?: number;
 };
 
-const ContainerCardPreview = ({ hit, showMaxChildren = 5 }: ContainerCardPreviewProps) => {
-  const { content } = hit;
-  const { childUsageKeys } = content ?? { childUsageKeys: [] };
+const ContainerCardPreview = ({ childUsageKeys, showMaxChildren = 5 }: ContainerCardPreviewProps) => {
   const hiddenChildren = childUsageKeys.length - showMaxChildren;
   return (
     <Stack direction="horizontal" gap={2}>
@@ -172,9 +170,10 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     formatted,
     tags,
     numChildren,
-    published,
+    published = {},
     publishStatus,
     usageKey: unitId,
+    content = {},
   } = hit;
 
   const numChildrenCount = showOnlyPublished ? (
@@ -184,6 +183,11 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
   const displayName: string = (
     showOnlyPublished ? formatted.published?.displayName : formatted.displayName
   ) ?? '';
+
+  published.content = published?.content ?? {};
+  const childUsageKeys: Array<string> = (
+    showOnlyPublished ? published.content?.childUsageKeys : content?.childUsageKeys
+  ) ?? [];
 
   const { navigateTo } = useLibraryRoutes();
 
@@ -199,7 +203,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     <BaseCard
       itemType={itemType}
       displayName={displayName}
-      preview={<ContainerCardPreview hit={hit} />}
+      preview={<ContainerCardPreview childUsageKeys={childUsageKeys} />}
       tags={tags}
       numChildren={numChildrenCount}
       actions={(

@@ -50,6 +50,7 @@ export const getContentSearchConfig = async (): Promise<{ url: string, indexName
 export interface ContentDetails {
   htmlContent?: string;
   capaContent?: string;
+  childUsageKeys?: Array<string>;
   [k: string]: any;
 }
 
@@ -151,9 +152,10 @@ export interface ContentHit extends BaseContentHit {
  * Defined in edx-platform/openedx/core/djangoapps/content/search/documents.py
  */
 export interface ContentPublishedData {
-  description?: string,
-  displayName?: string,
-  numChildren?: number,
+  description?: string;
+  displayName?: string;
+  numChildren?: number;
+  content?: ContentDetails;
 }
 
 /**
@@ -172,7 +174,7 @@ export interface CollectionHit extends BaseContentHit {
  * Defined in edx-platform/openedx/core/djangoapps/content/search/documents.py
  */
 interface ContainerHitContent {
-  childUsageKeys: string[],
+  childUsageKeys?: string[],
 }
 export interface ContainerHit extends BaseContentHit {
   type: 'library_container';
