@@ -77,6 +77,11 @@ const messages = defineMessages({
     defaultMessage: 'When a video has a different license than the course as a whole, learners see the license at the bottom right of the video player.',
     description: 'Message explaining where video specific licenses are seen by users',
   },
+  attributionCheckboxAriaLabel: {
+    id: 'authoring.videoeditor.license.attributionCheckboxAriaLabel',
+    defaultMessage: 'Checkbox',
+    description: 'Aria label for attribution checkbox',
+  },
   attributionCheckboxLabel: {
     id: 'authoring.videoeditor.license.attributionCheckboxLabel',
     defaultMessage: 'Attribution',
@@ -86,6 +91,11 @@ const messages = defineMessages({
     id: 'authoring.videoeditor.license.attributionSectionDescription',
     defaultMessage: 'Allow others to copy, distribute, display and perform your copyrighted work but only if they give credit the way you request. Currently, this option is required.',
     description: 'Attribution card section defining attribution license',
+  },
+  noncommercialCheckboxAriaLabel: {
+    id: 'authoring.videoeditor.license.noncommercialCheckboxAriaLabel',
+    defaultMessage: 'Checkbox',
+    description: 'Aria label for noncommercial checkbox',
   },
   noncommercialCheckboxLabel: {
     id: 'authoring.videoeditor.license.noncommercialCheckboxLabel',
@@ -97,6 +107,11 @@ const messages = defineMessages({
     defaultMessage: 'Allow others to copy, distribute, display and perform your work - and derivative works based upon it - but for noncommercial purposes only.',
     description: 'Noncommercial card section defining noncommercial license',
   },
+  noDerivativesCheckboxAriaLabel: {
+    id: 'authoring.videoeditor.license.noDerivativesCheckboxAriaLabel',
+    defaultMessage: 'Checkbox',
+    description: 'Aria label for No Derivatives checkbox',
+  },
   noDerivativesCheckboxLabel: {
     id: 'authoring.videoeditor.license.noDerivativesCheckboxLabel',
     defaultMessage: 'No Derivatives',
@@ -106,6 +121,11 @@ const messages = defineMessages({
     id: 'authoring.videoeditor.license.noDerivativesSectionDescription',
     defaultMessage: 'Allow others to copy, distribute, display and perform only verbatim copies of your work, not derivative works based upon it. This option is incompatible with "Share Alike".',
     description: 'No Derivatives card section defining no derivatives license',
+  },
+  shareAlikeCheckboxAriaLabel: {
+    id: 'authoring.videoeditor.license.shareAlikeCheckboxAriaLabel',
+    defaultMessage: 'Checkbox',
+    description: 'Aria label for Share Alike checkbox',
   },
   shareAlikeCheckboxLabel: {
     id: 'authoring.videoeditor.license.shareAlikeCheckboxLabel',

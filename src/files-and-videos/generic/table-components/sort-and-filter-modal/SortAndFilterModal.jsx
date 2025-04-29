@@ -91,7 +91,7 @@ const SortAndFilterModal = ({
             className="text-center"
             value="displayName,asc"
             type="radio"
-            aria-label="name descending radio"
+            aria-label={intl.formatMessage(messages.sortByNameAscendingAriaLabel)}
           >
             <FormattedMessage {...messages.sortByNameAscending} />
           </SelectableBox>
@@ -99,7 +99,7 @@ const SortAndFilterModal = ({
             className="text-center"
             value="dateAdded,desc"
             type="radio"
-            aria-label="date added descending radio"
+            aria-label={intl.formatMessage(messages.sortByNewestAriaLabel)}
           >
             <FormattedMessage {...messages.sortByNewest} />
           </SelectableBox>
@@ -107,7 +107,7 @@ const SortAndFilterModal = ({
             className="text-center"
             value="fileSize,desc"
             type="radio"
-            aria-label="file size descending radio"
+            aria-label={intl.formatMessage(messages.sortBySizeDescendingAriaLabel)}
           >
             <FormattedMessage {...messages.sortBySizeDescending} />
           </SelectableBox>
@@ -115,7 +115,7 @@ const SortAndFilterModal = ({
             className="text-center"
             value="displayName,desc"
             type="radio"
-            aria-label="name ascending radio"
+            aria-label={intl.formatMessage(messages.sortByNameDescendingAriaLabel)}
           >
             <FormattedMessage {...messages.sortByNameDescending} />
           </SelectableBox>
@@ -123,7 +123,7 @@ const SortAndFilterModal = ({
             className="text-center"
             value="dateAdded,asc"
             type="radio"
-            aria-label="date added ascending radio"
+            aria-label={intl.formatMessage(messages.sortByOldestAriaLabel)}
           >
             <FormattedMessage {...messages.sortByOldest} />
           </SelectableBox>
@@ -131,7 +131,7 @@ const SortAndFilterModal = ({
             className="text-center"
             value="fileSize,asc"
             type="radio"
-            aria-label="file size ascending radio"
+            aria-label={intl.formatMessage(messages.sortBySizeAscendingAriaLabel)}
           >
             <FormattedMessage {...messages.sortBySizeAscending} />
           </SelectableBox>
