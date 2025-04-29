@@ -28,6 +28,10 @@
     min-width: 0;
   }
 
+  .sequence-navigation-tabs {
+    max-width: 100%;
+  }
+
   .sequence-navigation-tabs-container {
     flex: 1 1 100%;
     // min-width 0 prevents the flex item from overflowing the parent container
