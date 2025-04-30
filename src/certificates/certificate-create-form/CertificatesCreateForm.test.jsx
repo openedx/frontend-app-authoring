@@ -1,4 +1,3 @@
-/* eslint-disable i18n/no-hardcoded-strings */
 import { render, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';

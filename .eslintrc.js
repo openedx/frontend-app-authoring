@@ -14,7 +14,6 @@ module.exports = createConfig(
       'no-restricted-exports': 'off',
       // There is no reason to disallow this syntax anymore; we don't use regenerator-runtime in new browsers
       'no-restricted-syntax': 'off',
-      'i18n/no-hardcoded-strings': 'warn'
     },
     settings: {
       // Import URLs should be resolved using aliases
