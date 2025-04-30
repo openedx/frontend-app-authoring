@@ -2,15 +2,39 @@ import { screen, waitFor } from '@testing-library/react';
 
 import { PagesAndResources } from '.';
 import { render } from './utils.test';
+import { getConfig, setConfig } from '@edx/frontend-platform';
+import { PLUGIN_OPERATIONS, DIRECT_PLUGIN } from '@openedx/frontend-plugin-framework';
+
+const mockPlugin = (identifier) => ({
+    plugins: [
+      {
+        op: PLUGIN_OPERATIONS.Insert,
+        widget: {
+          id: "mock-plugin-1",
+          type: DIRECT_PLUGIN,
+          priority: 1,
+          RenderWidget: () => <div data-testid={identifier}>HELLO</div>,
+        },
+      },
+    ],
+  })
 
 const courseId = 'course-v1:edX+TestX+Test_Course';
 
 describe('PagesAndResources', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    setConfig({
+      ...getConfig(),
+      pluginSlots: {
+        'org.openedx.frontend.authoring.additional_course_plugin.v1': mockPlugin('additional_course_plugin'),
+        'org.openedx.frontend.authoring.additional_course_content_plugin.v1': mockPlugin('additional_course_content_plugin'),
+      },
+    });
   });
+    
 
-  it('doesn\'t show content permissions section if relevant apps are not enabled', () => {
+  it('doesn\'t show content permissions section if relevant apps are not enabled', async () => {
     const initialState = {
       models: {
         courseApps: {},
@@ -25,8 +49,11 @@ describe('PagesAndResources', () => {
       { preloadedState: initialState },
     );
 
-    expect(screen.queryByRole('heading', { name: 'Content permissions' })).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByRole('heading', { name: 'Content permissions' })).not.toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByTestId('additional_course_plugin')).not.toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByTestId('additional_course_content_plugin')).not.toBeInTheDocument());
   });
+
   it('show content permissions section if Learning Assistant app is enabled', async () => {
     const initialState = {
       models: {
@@ -56,6 +83,9 @@ describe('PagesAndResources', () => {
 
     await waitFor(() => expect(screen.getByRole('heading', { name: 'Content permissions' })).toBeInTheDocument());
     await waitFor(() => expect(screen.getByText('Learning Assistant')).toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByTestId('additional_course_plugin')).not.toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByTestId('additional_course_content_plugin')).not.toBeInTheDocument());
+
   });
 
   it('show content permissions section if Xpert learning summaries app is enabled', async () => {
@@ -89,5 +119,7 @@ describe('PagesAndResources', () => {
 
     await waitFor(() => expect(screen.getByRole('heading', { name: 'Content permissions' })).toBeInTheDocument());
     await waitFor(() => expect(screen.getByText('Xpert unit summaries')).toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByTestId('additional_course_plugin')).not.toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByTestId('additional_course_content_plugin')).not.toBeInTheDocument());
   });
 });
