@@ -74,6 +74,7 @@
     "axios": "^1.8.4",
     "classnames": "2.5.1",
     "codemirror": "^6.0.0",
+    "dompurify": "^3.2.5",
     "email-validator": "2.0.4",
     "fast-xml-parser": "^4.0.10",
     "file-saver": "^2.0.5",

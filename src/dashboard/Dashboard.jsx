@@ -152,7 +152,7 @@ const Dashboard = () => {
                 key={widget.id}
                 title={widget.title}
                 content={widget.content}
-                className={widget.className}
+                styles={widget.styles}
               />
             ))}
           </div>
