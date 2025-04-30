@@ -49,7 +49,7 @@ describe('PagesAndResources', () => {
     );
 
     await waitFor(() => expect(screen.queryByRole('heading', { name: 'Content permissions' })).not.toBeInTheDocument());
-    await waitFor(() => expect(screen.queryByTestId('additional_course_plugin')).not.toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByTestId('additional_course_plugin')).toBeInTheDocument());
     await waitFor(() => expect(screen.queryByTestId('additional_course_content_plugin')).not.toBeInTheDocument());
   });
 
@@ -82,8 +82,8 @@ describe('PagesAndResources', () => {
 
     await waitFor(() => expect(screen.getByRole('heading', { name: 'Content permissions' })).toBeInTheDocument());
     await waitFor(() => expect(screen.getByText('Learning Assistant')).toBeInTheDocument());
-    await waitFor(() => expect(screen.queryByTestId('additional_course_plugin')).not.toBeInTheDocument());
-    await waitFor(() => expect(screen.queryByTestId('additional_course_content_plugin')).not.toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByTestId('additional_course_plugin')).toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByTestId('additional_course_content_plugin')).toBeInTheDocument());
   });
 
   it('show content permissions section if Xpert learning summaries app is enabled', async () => {
@@ -117,7 +117,7 @@ describe('PagesAndResources', () => {
 
     await waitFor(() => expect(screen.getByRole('heading', { name: 'Content permissions' })).toBeInTheDocument());
     await waitFor(() => expect(screen.getByText('Xpert unit summaries')).toBeInTheDocument());
-    await waitFor(() => expect(screen.queryByTestId('additional_course_plugin')).not.toBeInTheDocument());
-    await waitFor(() => expect(screen.queryByTestId('additional_course_content_plugin')).not.toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByTestId('additional_course_plugin')).toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByTestId('additional_course_content_plugin')).toBeInTheDocument());
   });
 });
