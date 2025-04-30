@@ -252,6 +252,7 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
               usageKey={block.id}
               version={showOnlyPublished ? 'published' : undefined}
               minHeight={calculateMinHeight(block)}
+              scrollIntoView={block.isNew}
             />
           </div>
         )}
