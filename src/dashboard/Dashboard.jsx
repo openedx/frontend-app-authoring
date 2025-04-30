@@ -150,6 +150,7 @@ const Dashboard = () => {
             {dashboardData.widgets.map((widget) => (
               <WidgetCard
                 key={widget.id}
+                type={widget.type}
                 title={widget.title}
                 content={widget.content}
                 styles={widget.styles}

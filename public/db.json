@@ -77,6 +77,7 @@
     "widgets": [
       {
         "id": "overview-widget-1",
+        "type": "text",
         "title": "Overview 1",
         "content": "<div class='widget-metrics-list'><div class='widget-metric-item'><span class='widget-metric-icon'>📚</span><span class='widget-metric-label'>Assigned courses</span><span class='widget-metric-value'>1</span></div><div class='widget-metric-item'><span class='widget-metric-icon'>👥</span><span class='widget-metric-label'>Active users</span><span class='widget-metric-value'>2</span></div><div class='widget-metric-item'><span class='widget-metric-icon'>👥</span><span class='widget-metric-label'>Groups</span><span class='widget-metric-value'>1</span></div><div class='widget-metric-item'><span class='widget-metric-icon'>⏱️</span><span class='widget-metric-label'>Training time</span><span class='widget-metric-value'>0h 0m</span></div><div class='widget-metric-item'><span class='widget-metric-icon'>📊</span><span class='widget-metric-label'>Completion rate</span><span class='widget-metric-value'>0.0%</span></div></div>",
         "styles": ".widget-metrics-list { display: flex; flex-direction: column; gap: 1rem; } .widget-metric-item { display: flex; align-items: center; gap: 1rem; padding: 0.5rem 0; border-bottom: 1px solid #f5f5f5; } .widget-metric-item:last-child { border-bottom: none; } .widget-metric-icon { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; } .widget-metric-label { flex: 1; color: #454545; } .widget-metric-value { font-weight: 600; color: #000; }"
@@ -84,20 +85,113 @@
       {
         "id": "overview-widget-2",
         "title": "Overview 2",
+        "type": "text",
         "content": "<div class='widget-metrics-list'><div class='widget-metric-item'><span class='widget-metric-icon'>📚</span><span class='widget-metric-label'>Assigned courses</span><span class='widget-metric-value'>1</span></div><div class='widget-metric-item'><span class='widget-metric-icon'>👥</span><span class='widget-metric-label'>Active users</span><span class='widget-metric-value'>2</span></div><div class='widget-metric-item'><span class='widget-metric-icon'>👥</span><span class='widget-metric-label'>Groups</span><span class='widget-metric-value'>1</span></div><div class='widget-metric-item'><span class='widget-metric-icon'>⏱️</span><span class='widget-metric-label'>Training time</span><span class='widget-metric-value'>0h 0m</span></div><div class='widget-metric-item'><span class='widget-metric-icon'>📊</span><span class='widget-metric-label'>Completion rate</span><span class='widget-metric-value'>0.0%</span></div></div>",
         "styles": ".widget-metrics-list { display: flex; flex-direction: column; gap: 1rem; } .widget-metric-item { display: flex; align-items: center; gap: 1rem; padding: 0.5rem 0; border-bottom: 1px solid #f5f5f5; } .widget-metric-item:last-child { border-bottom: none; } .widget-metric-icon { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; } .widget-metric-label { flex: 1; color: #454545; } .widget-metric-value { font-weight: 600; color: #000; }"
       },
       {
         "id": "overview-widget-3",
         "title": "Overview 3",
+        "type": "text",
         "content": "<div class='widget-metrics-list'><div class='widget-metric-item'><span class='widget-metric-icon'>📚</span><span class='widget-metric-label'>Assigned courses</span><span class='widget-metric-value'>1</span></div><div class='widget-metric-item'><span class='widget-metric-icon'>👥</span><span class='widget-metric-label'>Active users</span><span class='widget-metric-value'>2</span></div><div class='widget-metric-item'><span class='widget-metric-icon'>👥</span><span class='widget-metric-label'>Groups</span><span class='widget-metric-value'>1</span></div><div class='widget-metric-item'><span class='widget-metric-icon'>⏱️</span><span class='widget-metric-label'>Training time</span><span class='widget-metric-value'>0h 0m</span></div><div class='widget-metric-item'><span class='widget-metric-icon'>📊</span><span class='widget-metric-label'>Completion rate</span><span class='widget-metric-value'>0.0%</span></div></div>",
         "styles": ".widget-metrics-list { display: flex; flex-direction: column; gap: 1rem; } .widget-metric-item { display: flex; align-items: center; gap: 1rem; padding: 0.5rem 0; border-bottom: 1px solid #f5f5f5; } .widget-metric-item:last-child { border-bottom: none; } .widget-metric-icon { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; } .widget-metric-label { flex: 1; color: #454545; } .widget-metric-value { font-weight: 600; color: #000; }"
       },
       {
         "id": "overview-widget-4",
+        "type": "text",
         "title": "Overview 4",
         "content": "<div class='widget-metrics-list'><div class='widget-metric-item'><span class='widget-metric-icon'>📚</span><span class='widget-metric-label'>Assigned courses</span><span class='widget-metric-value'>1</span></div><div class='widget-metric-item'><span class='widget-metric-icon'>👥</span><span class='widget-metric-label'>Active users</span><span class='widget-metric-value'>2</span></div><div class='widget-metric-item'><span class='widget-metric-icon'>👥</span><span class='widget-metric-label'>Groups</span><span class='widget-metric-value'>1</span></div><div class='widget-metric-item'><span class='widget-metric-icon'>⏱️</span><span class='widget-metric-label'>Training time</span><span class='widget-metric-value'>0h 0m</span></div><div class='widget-metric-item'><span class='widget-metric-icon'>📊</span><span class='widget-metric-label'>Completion rate</span><span class='widget-metric-value'>0.0%</span></div></div>",
         "styles": ".widget-metrics-list { display: flex; flex-direction: column; gap: 1rem; } .widget-metric-item { display: flex; align-items: center; gap: 1rem; padding: 0.5rem 0; border-bottom: 1px solid #f5f5f5; } .widget-metric-item:last-child { border-bottom: none; } .widget-metric-icon { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; } .widget-metric-label { flex: 1; color: #454545; } .widget-metric-value { font-weight: 600; color: #000; }"
+      },
+      {
+        "id": "overview-widget-5",
+        "type": "chart",
+        "title": "Overview 5",
+        "content": {
+          "chartType": "pie",
+          "data": [
+            {
+              "label": "Course 1",
+              "value": 1
+            },
+            {
+              "label": "Course 2",
+              "value": 2
+            },
+            {
+              "label": "Course 3",
+              "value": 3
+            }
+          ]
+        }
+      },
+      {
+        "id": "overview-widget-6",
+        "type": "chart",
+        "title": "Overview 6",
+        "content": {
+          "chartType": "donut",
+          "data": [
+            {
+              "label": "Course 1",
+              "value": 1
+            },
+            {
+              "label": "Course 2",
+              "value": 2
+            },
+            {
+              "label": "Course 3",
+              "value": 3
+            }
+          ]
+        }
+      },
+      {
+        "id": "overview-widget-7",
+        "type": "chart",
+        "title": "Overview 7",
+        "content": {
+          "chartType": "bar",
+          "referenceLabels": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+          "data": [
+            {
+              "label": "Course 1",
+              "value": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+            },
+            {
+              "label": "Course 2",
+              "value": [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24]
+            },
+            {
+              "label": "Course 3",
+              "value": [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36]
+            }
+          ]
+        }
+      },
+      {
+        "id": "overview-widget-8",
+        "type": "chart",
+        "title": "Overview 8",
+        "content": {
+          "chartType": "line",
+          "referenceLabels": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+          "data": [
+            {
+              "label": "Course 1",
+              "value": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+            },
+            {
+              "label": "Course 2",
+              "value": [2, 4, 6, 8, 10, 3, 14, 16, 18, 20, 22, 24]
+            },
+            {
+              "label": "Course 3",
+              "value": [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36]
+            }
+          ]
+        }
       }
     ]
   }
