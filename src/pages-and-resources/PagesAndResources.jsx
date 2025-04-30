@@ -92,7 +92,7 @@ const PagesAndResources = ({ courseId }) => {
           <Route path=":appId/settings" element={<PageWrap><SettingsComponent url={redirectUrl} /></PageWrap>} />
         </Routes>
 
-        <PageGrid pages={pages} pluginSlotComponent={AdditionalCoursePluginSlot} courseId={courseId} />
+        <PageGrid pages={pages} pluginSlotComponent={<AdditionalCoursePluginSlot />} courseId={courseId} />
         {
           (contentPermissionsPages.length > 0 || hasAdditionalCoursePlugin)
             && (
@@ -100,7 +100,7 @@ const PagesAndResources = ({ courseId }) => {
                 <div className="d-flex justify-content-between my-4 my-md-5 align-items-center">
                   <h3 className="m-0">{intl.formatMessage(messages.contentPermissions)}</h3>
                 </div>
-                <PageGrid pages={contentPermissionsPages} pluginSlotComponent={AdditionalCourseContentPluginSlot} />
+                <PageGrid pages={contentPermissionsPages} pluginSlotComponent={<AdditionalCourseContentPluginSlot />} />
               </>
             )
         }
