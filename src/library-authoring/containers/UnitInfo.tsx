@@ -82,6 +82,7 @@ const UnitInfo = () => {
     setSidebarTab,
     sidebarComponentInfo,
     sidebarAction,
+    resetSidebarAction,
   } = useSidebarContext();
   const jumpToCollections = sidebarAction === SidebarActions.JumpToAddCollections;
   const { insideUnit } = useLibraryRoutes();
@@ -95,6 +96,11 @@ const UnitInfo = () => {
   const publishContainer = usePublishContainer(unitId!);
 
   const showOpenUnitButton = !insideUnit && !componentPickerMode;
+
+  const handleTabChange = (tab: UnitInfoTab) => {
+    resetSidebarAction();
+    setSidebarTab(tab);
+  }
 
   const renderTab = useCallback((infoTab: UnitInfoTab, component: React.ReactNode, title: string) => {
     if (hiddenTabs.includes(infoTab)) {
@@ -163,7 +169,7 @@ const UnitInfo = () => {
         className="my-3 d-flex justify-content-around"
         defaultActiveKey={defaultTab.unit}
         activeKey={tab}
-        onSelect={setSidebarTab}
+        onSelect={handleTabChange}
       >
         {renderTab(UNIT_INFO_TABS.Preview, <LibraryUnitBlocks preview />, intl.formatMessage(messages.previewTabTitle))}
         {renderTab(UNIT_INFO_TABS.Manage, <ContainerOrganize />, intl.formatMessage(messages.manageTabTitle))}

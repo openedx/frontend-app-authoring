@@ -20,6 +20,7 @@ import {
 import { canEditComponent } from './ComponentEditorModal';
 import ComponentDeleter from './ComponentDeleter';
 import messages from './messages';
+import { useLibraryRoutes } from '../routes';
 
 export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   const intl = useIntl();
@@ -27,6 +28,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
     libraryId,
     collectionId,
     unitId,
+    setComponentId,
     openComponentEditor,
   } = useLibraryContext();
 
@@ -36,6 +38,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
     closeLibrarySidebar,
     setSidebarAction,
   } = useSidebarContext();
+  const { navigateTo } = useLibraryRoutes();
 
   const canEdit = usageKey && canEditComponent(usageKey);
   const { showToast } = useContext(ToastContext);
@@ -88,9 +91,17 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   };
 
   const showManageCollections = useCallback(() => {
+    setComponentId(usageKey);
     setSidebarAction(SidebarActions.JumpToAddCollections);
     openComponentInfoSidebar(usageKey);
-  }, [setSidebarAction, openComponentInfoSidebar, usageKey]);
+    navigateTo({ componentId: usageKey });
+  }, [
+    setSidebarAction,
+    openComponentInfoSidebar,
+    usageKey,
+    navigateTo,
+    setComponentId,
+  ]);
 
   return (
     <Dropdown id="component-card-dropdown">
@@ -123,11 +134,9 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
             <FormattedMessage {...messages.menuRemoveFromCollection} />
           </Dropdown.Item>
         )}
-        {!unitId && (
-          <Dropdown.Item onClick={showManageCollections}>
-            <FormattedMessage {...messages.menuAddToCollection} />
-          </Dropdown.Item>
-        )}
+        <Dropdown.Item onClick={showManageCollections}>
+          <FormattedMessage {...messages.menuAddToCollection} />
+        </Dropdown.Item>
       </Dropdown.Menu>
       <ComponentDeleter usageKey={usageKey} isConfirmingDelete={isConfirmingDelete} cancelDelete={cancelDelete} />
     </Dropdown>

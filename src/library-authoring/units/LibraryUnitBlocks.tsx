@@ -200,7 +200,7 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
     return '200px';
   };
 
-  const getComponentStyle = useCallback((block: LibraryBlockMetadata) => {
+  const getComponentStyle = (block: LibraryBlockMetadata) => {
     if (hidePreviewFor === block.id) {
       return {
         outline: '2px dashed gray',
@@ -212,7 +212,7 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
         outline: '2px solid black',
       }
     }
-  }, [hidePreviewFor, componentId]);
+  };
 
   const renderedBlocks = orderedBlocks?.map((block, idx) => (
     // A container can have multiple instances of the same block

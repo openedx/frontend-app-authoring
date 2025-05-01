@@ -110,6 +110,7 @@ const ComponentInfo = () => {
     sidebarAction,
     defaultTab,
     hiddenTabs,
+    resetSidebarAction,
   } = useSidebarContext();
   const [
     isPublishConfirmationOpen,
@@ -131,6 +132,11 @@ const ComponentInfo = () => {
       setSidebarTab(COMPONENT_INFO_TABS.Manage);
     }
   }, [jumpToCollections, setSidebarTab]);
+
+  const handleTabChange = (tab: ComponentInfoTab) => {
+    resetSidebarAction();
+    setSidebarTab(tab);
+  }
 
   const usageKey = sidebarComponentInfo?.id;
   // istanbul ignore if: this should never happen
@@ -198,7 +204,7 @@ const ComponentInfo = () => {
           className="my-3 d-flex justify-content-around"
           defaultActiveKey={defaultTab.component}
           activeKey={tab}
-          onSelect={setSidebarTab}
+          onSelect={handleTabChange}
         >
           {renderTab(COMPONENT_INFO_TABS.Preview, <ComponentPreview />, intl.formatMessage(messages.previewTabTitle))}
           {renderTab(COMPONENT_INFO_TABS.Manage, <ComponentManagement />, intl.formatMessage(messages.manageTabTitle))}
