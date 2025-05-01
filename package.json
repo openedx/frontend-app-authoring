@@ -49,7 +49,7 @@
     "@edx/frontend-component-header": "^6.2.0",
     "@edx/frontend-enterprise-hotjar": "^7.2.0",
     "@edx/frontend-platform": "^8.3.1",
-    "@edx/openedx-atlas": "^0.6.0",
+    "@edx/openedx-atlas": "^0.7.0",
     "@openedx-plugins/course-app-calculator": "file:plugins/course-apps/calculator",
     "@openedx-plugins/course-app-edxnotes": "file:plugins/course-apps/edxnotes",
     "@openedx-plugins/course-app-learning_assistant": "file:plugins/course-apps/learning_assistant",
