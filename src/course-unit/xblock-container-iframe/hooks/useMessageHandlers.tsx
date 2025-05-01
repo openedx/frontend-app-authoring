@@ -37,7 +37,7 @@ export const useMessageHandlers = ({
     [messageTypes.copyXBlock]: ({ usageId }) => copyToClipboard(usageId),
     [messageTypes.deleteXBlock]: ({ usageId }) => handleDeleteXBlock(usageId),
     [messageTypes.newXBlockEditor]: ({ blockType, usageId }) => handleEditXBlock(blockType, usageId),
-    [messageTypes.duplicateXBlock]: ({ blockType, usageId }) => handleDuplicateXBlock(blockType, usageId),
+    [messageTypes.duplicateXBlock]: ({ usageId }) => handleDuplicateXBlock(usageId),
     [messageTypes.manageXBlockAccess]: ({ usageId }) => handleManageXBlockAccess(usageId),
     [messageTypes.scrollToXBlock]: debounce(({ scrollOffset }) => handleScrollToXBlock(scrollOffset), 1000),
     [messageTypes.toggleCourseXBlockDropdown]: ({

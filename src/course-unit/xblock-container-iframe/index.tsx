@@ -78,7 +78,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   }, [showXBlockEditorModal]);
 
   const handleDuplicateXBlock = useCallback(
-    (type: string, usageId: string) => {
+    (usageId: string) => {
       unitXBlockActions.handleDuplicate(usageId);
     },
     [unitXBlockActions, courseId],
