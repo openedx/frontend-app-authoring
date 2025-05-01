@@ -11,20 +11,20 @@ const messages = defineMessages({
     defaultMessage: 'Preview',
     description: 'Title for preview tab',
   },
-  organizeTabTitle: {
-    id: 'course-authoring.library-authoring.container-sidebar.organize-tab.title',
-    defaultMessage: 'Organize',
-    description: 'Title for organize tab',
+  manageTabTitle: {
+    id: 'course-authoring.library-authoring.container-sidebar.manage-tab.title',
+    defaultMessage: 'Manage',
+    description: 'Title for manage tab',
   },
-  organizeTabTagsTitle: {
-    id: 'course-authoring.library-authoring.container-sidebar.organize-tab.tags.title',
+  manageTabTagsTitle: {
+    id: 'course-authoring.library-authoring.container-sidebar.manage-tab.tags.title',
     defaultMessage: 'Tags ({count})',
-    description: 'Title for tags section in organize tab',
+    description: 'Title for tags section in manage tab',
   },
-  organizeTabCollectionsTitle: {
-    id: 'course-authoring.library-authoring.container-sidebar.organize-tab.collections.title',
+  manageTabCollectionsTitle: {
+    id: 'course-authoring.library-authoring.container-sidebar.manage-tab.collections.title',
     defaultMessage: 'Collections ({count})',
-    description: 'Title for collections section in organize tab',
+    description: 'Title for collections section in manage tab',
   },
   publishContainerButton: {
     id: 'course-authoring.library-authoring.container-sidebar.publish-button',

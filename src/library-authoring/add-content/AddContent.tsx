@@ -29,6 +29,8 @@ import { useLibraryContext } from '../common/context/LibraryContext';
 import { PickLibraryContentModal } from './PickLibraryContentModal';
 import { blockTypes } from '../../editors/data/constants/app';
 
+import { ContentType as LibraryContentTypes } from '../routes';
+import genericMessages from '../generic/messages';
 import messages from './messages';
 import type { BlockTypeMetadata } from '../data/api';
 import { getContainerTypeFromId, ContainerType } from '../../generic/key-utils';
@@ -114,6 +116,9 @@ const AddContentView = ({
     blockType: 'libraryContent',
   };
 
+  const extraFilter = unitId ? ['NOT block_type = "unit"', 'NOT type = "collections"'] : undefined;
+  const visibleTabs = unitId ? [LibraryContentTypes.components] : undefined;
+
   return (
     <>
       {(collectionId || unitId) && componentPicker && (
@@ -123,6 +128,8 @@ const AddContentView = ({
           <PickLibraryContentModal
             isOpen={isAddLibraryContentModalOpen}
             onClose={closeAddLibraryContentModal}
+            extraFilter={extraFilter}
+            visibleTabs={visibleTabs}
           />
         </>
       )}
@@ -301,7 +308,7 @@ const AddContent = () => {
   const linkComponent = (opaqueKey: string) => {
     if (collectionId) {
       addComponentsToCollectionMutation.mutateAsync([opaqueKey]).catch(() => {
-        showToast(intl.formatMessage(messages.errorAssociateComponentToCollectionMessage));
+        showToast(intl.formatMessage(genericMessages.manageCollectionsFailed));
       });
     }
     if (unitId) {

@@ -21,16 +21,6 @@ const messages = defineMessages({
     defaultMessage: 'Collection selection',
     description: 'Aria label text for collection selection box',
   },
-  manageCollectionsToComponentSuccess: {
-    id: 'course-authoring.library-authoring.manage-collections.add-success',
-    defaultMessage: 'Item collections updated',
-    description: 'Message to display on updating item collections',
-  },
-  manageCollectionsToComponentFailed: {
-    id: 'course-authoring.library-authoring.manage-collections.add-failed',
-    defaultMessage: 'Failed to update item collections',
-    description: 'Message to display on failure of updating item collections',
-  },
   manageCollectionsToComponentConfirmBtn: {
     id: 'course-authoring.library-authoring.manage-collections.add-confirm-btn',
     defaultMessage: 'Confirm',
