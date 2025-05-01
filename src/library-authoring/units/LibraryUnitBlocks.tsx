@@ -1,11 +1,11 @@
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
-  ActionRow, Badge, Button, Icon, IconButton, Stack, useToggle,
+  ActionRow, Badge, Button, Icon, Stack, useToggle,
 } from '@openedx/paragon';
-import { Add, Description, DragIndicator } from '@openedx/paragon/icons';
+import { Add, Description } from '@openedx/paragon/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import classNames from 'classnames';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { ContentTagsDrawerSheet } from '../../content-tags-drawer';
 import { blockTypes } from '../../editors/data/constants/app';
 import DraggableList, { SortableItem } from '../../generic/DraggableList';
@@ -161,7 +161,10 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
     return <ErrorAlert error={error} />;
   }
 
-  const handleReorder = () => async (newOrder: LibraryBlockMetadata[]) => {
+  const handleReorder = () => async (newOrder?: LibraryBlockMetadata[]) => {
+    if (!newOrder) {
+      return;
+    }
     const usageKeys = newOrder.map((o) => o.id);
     try {
       await orderMutator.mutateAsync(usageKeys);
@@ -197,26 +200,19 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
     return '200px';
   };
 
-  const renderOverlay = (activeId: string | null) => {
-    if (!activeId) {
-      return null;
+  const getComponentStyle = useCallback((block: LibraryBlockMetadata) => {
+    if (hidePreviewFor === block.id) {
+      return {
+        outline: '2px dashed gray',
+        maxHeight: '200px',
+        overflowY: 'hidden',
+      }
+    } else if (componentId === block.id) {
+      return {
+        outline: '2px solid black',
+      }
     }
-    const block = orderedBlocks?.find((val) => val.id === activeId);
-    if (!block) {
-      return null;
-    }
-    return (
-      <ActionRow className="bg-light-200 border border-light-500 p-2 rounded">
-        <BlockHeader block={block} onTagClick={openManageTagsDrawer} />
-        <IconButton
-          src={DragIndicator}
-          variant="light"
-          iconAs={Icon}
-          alt=""
-        />
-      </ActionRow>
-    );
-  };
+  }, [hidePreviewFor, componentId]);
 
   const renderedBlocks = orderedBlocks?.map((block, idx) => (
     // A container can have multiple instances of the same block
@@ -224,11 +220,7 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
     <IframeProvider key={`${block.id}-${idx}-${block.modified}`}>
       <SortableItem
         id={block.id}
-        componentStyle={{
-          outline: hidePreviewFor === block.id && '2px dashed gray' || componentId === block.id && '2px solid black',
-          maxHeight: hidePreviewFor === block.id && '200px',
-          overflowY: hidePreviewFor === block.id && 'hidden',
-        }}
+        componentStyle={getComponentStyle(block)}
         actions={<BlockHeader block={block} onTagClick={openManageTagsDrawer} />}
         actionStyle={{
           borderRadius: '8px 8px 0px 0px',

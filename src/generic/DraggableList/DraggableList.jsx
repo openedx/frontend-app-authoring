@@ -67,6 +67,7 @@ const DraggableList = ({
       modifiers={[restrictToVerticalAxis]}
       collisionDetection={verticalSortableListCollisionDetection}
       onDragStart={handleDragStart}
+      // autoScroll does not play well with verticalSortableListCollisionDetection strategy
       autoScroll={false}
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
