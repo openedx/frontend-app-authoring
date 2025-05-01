@@ -43,7 +43,6 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
@@ -83,12 +82,8 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const handleDuplicateXBlock = useCallback(
     (type: string, usageId: string) => {
       unitXBlockActions.handleDuplicate(usageId);
-      if (supportedEditors[type]) {
-        // istanbul ignore next
-        handleEditXBlock(type, usageId);
-      }
     },
-    [unitXBlockActions, courseId, navigate],
+    [unitXBlockActions, courseId],
   );
 
   const handleDeleteXBlock = (usageId: string) => {
