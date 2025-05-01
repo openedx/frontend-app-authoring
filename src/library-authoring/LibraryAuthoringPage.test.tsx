@@ -433,7 +433,7 @@ describe('<LibraryAuthoringPage />', () => {
     const { getByRole, queryByText } = within(sidebar);
 
     await waitFor(() => expect(queryByText(displayName)).toBeInTheDocument());
-    expect(getByRole('tab', { selected: true })).toHaveTextContent('Organize');
+    expect(getByRole('tab', { selected: true })).toHaveTextContent('Manage');
     const closeButton = getByRole('button', { name: /close/i });
     fireEvent.click(closeButton);
 

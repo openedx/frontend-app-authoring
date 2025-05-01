@@ -272,7 +272,7 @@ describe('<AddContent />', () => {
     await waitFor(() => expect(axiosMock.history.post[0].url).toEqual(pasteUrl));
     await waitFor(() => expect(axiosMock.history.patch.length).toEqual(1));
     await waitFor(() => expect(axiosMock.history.patch[0].url).toEqual(collectionComponentUrl));
-    expect(mockShowToast).toHaveBeenCalledWith('There was an error linking the content to this collection.');
+    expect(mockShowToast).toHaveBeenCalledWith('Failed to add content to collection.');
   });
 
   it('should stop user from pasting unsupported blocks and show toast', async () => {

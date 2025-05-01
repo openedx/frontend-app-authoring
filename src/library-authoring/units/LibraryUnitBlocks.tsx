@@ -28,7 +28,7 @@ import {
   useUpdateXBlockFields,
 } from '../data/apiHooks';
 import { LibraryBlock } from '../LibraryBlock';
-import { useLibraryRoutes } from '../routes';
+import { useLibraryRoutes, ContentType } from '../routes';
 import messages from './messages';
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { ToastContext } from '../../generic/toast-context';
@@ -200,8 +200,10 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
     );
   };
 
-  const renderedBlocks = orderedBlocks?.map((block) => (
-    <IframeProvider key={block.id + block.modified}>
+  const renderedBlocks = orderedBlocks?.map((block, idx) => (
+    // A container can have multiple instances of the same block
+    // eslint-disable-next-line react/no-array-index-key
+    <IframeProvider key={`${block.id}-${idx}-${block.modified}`}>
       <SortableItem
         id={block.id}
         componentStyle={null}
@@ -218,16 +220,16 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
         disabled={preview}
       >
         {hidePreviewFor !== block.id && (
-        <div className={classNames('p-3', {
-          'container-mw-md': block.blockType === blockTypes.video,
-        })}
-        >
-          <LibraryBlock
-            usageKey={block.id}
-            version={showOnlyPublished ? 'published' : undefined}
-            minHeight={calculateMinHeight(block)}
-          />
-        </div>
+          <div className={classNames('p-3', {
+            'container-mw-md': block.blockType === blockTypes.video,
+          })}
+          >
+            <LibraryBlock
+              usageKey={block.id}
+              version={showOnlyPublished ? 'published' : undefined}
+              minHeight={calculateMinHeight(block)}
+            />
+          </div>
         )}
       </SortableItem>
     </IframeProvider>
@@ -245,7 +247,7 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
       >
         {renderedBlocks}
       </DraggableList>
-      { !preview && (
+      {!preview && (
         <div className="d-flex">
           <div className="w-100 mr-2">
             <Button
@@ -273,7 +275,8 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
             <PickLibraryContentModal
               isOpen={isAddLibraryContentModalOpen}
               onClose={closeAddLibraryContentModal}
-              extraFilter={['NOT block_type = "unit"']}
+              extraFilter={['NOT block_type = "unit"', 'NOT type = "collection"']}
+              visibleTabs={[ContentType.components]}
             />
           </div>
         </div>
