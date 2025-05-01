@@ -225,7 +225,9 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
       <SortableItem
         id={block.id}
         componentStyle={{
-          outline: componentId === block.id && '2px solid black',
+          outline: hidePreviewFor === block.id && '2px dashed gray' || componentId === block.id && '2px solid black',
+          maxHeight: hidePreviewFor === block.id && '200px',
+          overflowY: hidePreviewFor === block.id && 'hidden',
         }}
         actions={<BlockHeader block={block} onTagClick={openManageTagsDrawer} />}
         actionStyle={{
@@ -233,28 +235,27 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
           padding: '0.5rem 1rem',
           background: '#FBFAF9',
           borderBottom: 'solid 1px #E1DDDB',
-          outline: hidePreviewFor === block.id && '2px dashed gray',
         }}
         isClickable
         onClick={(e: { detail: number; }) => handleComponentSelection(block, e.detail)}
         disabled={preview}
       >
-        {hidePreviewFor !== block.id && (
+        {true && (
+        /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
+        <div
+          className={classNames('p-3', {
+            'container-mw-md': block.blockType === blockTypes.video,
+          })}
           // Prevent parent card from being clicked.
-          /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
-          <div
-            className={classNames('p-3', {
-              'container-mw-md': block.blockType === blockTypes.video,
-            })}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <LibraryBlock
-              usageKey={block.id}
-              version={showOnlyPublished ? 'published' : undefined}
-              minHeight={calculateMinHeight(block)}
-              scrollIntoView={block.isNew}
-            />
-          </div>
+          onClick={(e) => e.stopPropagation()}
+        >
+          <LibraryBlock
+            usageKey={block.id}
+            version={showOnlyPublished ? 'published' : undefined}
+            minHeight={calculateMinHeight(block)}
+            scrollIntoView={block.isNew}
+          />
+        </div>
         )}
       </SortableItem>
     </IframeProvider>
@@ -266,7 +267,6 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
         itemList={orderedBlocks}
         setState={setOrderedBlocks}
         updateOrder={handleReorder}
-        renderOverlay={renderOverlay}
         activeId={hidePreviewFor}
         setActiveId={setHidePreviewFor}
       >

@@ -18,6 +18,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import { verticalSortableListCollisionDetection } from './verticalSortableList';
 
 const DraggableList = ({
   itemList,
@@ -60,7 +61,7 @@ const DraggableList = ({
     <DndContext
       sensors={sensors}
       modifiers={[restrictToVerticalAxis]}
-      collisionDetection={closestCenter}
+      collisionDetection={verticalSortableListCollisionDetection}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
