@@ -14,9 +14,7 @@ import {
   useToggle,
 } from '@openedx/paragon';
 
-import {
-  tail, keyBy, orderBy, merge, omitBy,
-} from 'lodash';
+import { tail, keyBy } from 'lodash';
 import { useQueryClient } from '@tanstack/react-query';
 import { Loop, Warning } from '@openedx/paragon/icons';
 import messages from './messages';
@@ -116,7 +114,6 @@ const ComponentReviewList = ({
     hits: downstreamInfo,
     isLoading: isIndexDataLoading,
     searchKeywords,
-    searchSortOrder,
     hasError,
     hasNextPage,
     isFetchingNextPage,
@@ -142,10 +139,6 @@ const ComponentReviewList = ({
   const outOfSyncComponentsByKey = useMemo(
     () => keyBy(outOfSyncComponents, 'downstreamUsageKey'),
     [outOfSyncComponents],
-  );
-  const downstreamInfoByKey = useMemo(
-    () => keyBy(downstreamInfo, 'usageKey'),
-    [downstreamInfo],
   );
   const queryClient = useQueryClient();
 
@@ -236,19 +229,6 @@ const ComponentReviewList = ({
     }
   }, [blockData]);
 
-  const orderInfo = useMemo(() => {
-    if (searchSortOrder !== SearchSortOption.RECENTLY_MODIFIED) {
-      return downstreamInfo;
-    }
-    if (isIndexDataLoading) {
-      return [];
-    }
-    let merged = merge(downstreamInfoByKey, outOfSyncComponentsByKey);
-    merged = omitBy(merged, (o) => !o.displayName);
-    const ordered = orderBy(Object.values(merged), 'updated', 'desc');
-    return ordered;
-  }, [downstreamInfoByKey, outOfSyncComponentsByKey]);
-
   if (isIndexDataLoading) {
     return <Loading />;
   }
@@ -259,7 +239,7 @@ const ComponentReviewList = ({
 
   return (
     <>
-      {orderInfo?.map((info) => (
+      {downstreamInfo?.map((info) => (
         <BlockCard
           key={info.usageKey}
           info={info}
