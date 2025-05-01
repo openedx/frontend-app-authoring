@@ -91,7 +91,7 @@
     "react-responsive": "9.0.2",
     "react-router": "6.27.0",
     "react-router-dom": "6.27.0",
-    "react-select": "5.8.0",
+    "react-select": "5.10.1",
     "react-textarea-autosize": "^8.5.3",
     "react-transition-group": "4.4.5",
     "redux": "4.0.5",
