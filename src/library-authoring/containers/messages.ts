@@ -56,6 +56,36 @@ const messages = defineMessages({
     defaultMessage: 'Failed to update container.',
     description: 'Message displayed when container update fails',
   },
+  unitVisibilityTitle: {
+    id: 'course-authoring.library-authoring.unit.settings.visibility.title',
+    defaultMessage: 'Unit Visibility',
+    description: 'Title of the Unit Visibility section on Unit Settings',
+  },
+  unitDiscussionTitle: {
+    id: 'course-authoring.library-authoring.unit.settings.discussion.title',
+    defaultMessage: 'Discussion',
+    description: 'Title of the Discussion section on Unit Settings',
+  },
+  unitVisibilityStudentLabel: {
+    id: 'course-authoring.library-authoring.unit.settings.visibility.student',
+    defaultMessage: 'Student Visible',
+    description: 'Label of the button for set the unit as student visible on unit settins.',
+  },
+  unitVisibilityStaffLabel: {
+    id: 'course-authoring.library-authoring.unit.settings.visibility.staff',
+    defaultMessage: 'Staff Only',
+    description: 'Label of the button for set the unit as staff only visible on unit settins.',
+  },
+  unitEnableDiscussionLabel: {
+    id: 'course-authoring.library-authoring.unit.settings.discussion.enable.label',
+    defaultMessage: 'Enable discussion',
+    description: 'Label of the check to enable discussion on units settings.',
+  },
+  unitEnableDiscussionDescription: {
+    id: 'course-authoring.library-authoring.unit.settings.discussion.enable.description',
+    defaultMessage: 'Topics for unpublished units will not be created',
+    description: 'Description of the check to enable discussion on units settings.',
+  },
 });
 
 export default messages;

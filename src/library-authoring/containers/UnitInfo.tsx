@@ -30,6 +30,7 @@ import componentMessages from '../components/messages';
 import ContainerDeleter from '../components/ContainerDeleter';
 import { useContainer, usePublishContainer } from '../data/apiHooks';
 import { ToastContext } from '../../generic/toast-context';
+import UnitSettings from './UnitSettings';
 
 type ContainerMenuProps = {
   containerId: string,
@@ -167,7 +168,7 @@ const UnitInfo = () => {
       >
         {renderTab(UNIT_INFO_TABS.Preview, <LibraryUnitBlocks preview />, intl.formatMessage(messages.previewTabTitle))}
         {renderTab(UNIT_INFO_TABS.Organize, <ContainerOrganize />, intl.formatMessage(messages.organizeTabTitle))}
-        {renderTab(UNIT_INFO_TABS.Settings, 'Unit Settings', intl.formatMessage(messages.settingsTabTitle))}
+        {renderTab(UNIT_INFO_TABS.Settings, <UnitSettings />, intl.formatMessage(messages.settingsTabTitle))}
       </Tabs>
     </Stack>
   );
