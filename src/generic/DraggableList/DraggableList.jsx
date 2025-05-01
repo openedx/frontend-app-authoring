@@ -57,13 +57,19 @@ const DraggableList = ({
     setActiveId?.(event.active.id);
   }, [setActiveId]);
 
+  const handleDragCancel = useCallback((event) => {
+    setActiveId?.(null);
+  }, [setActiveId]);
+
   return (
     <DndContext
       sensors={sensors}
       modifiers={[restrictToVerticalAxis]}
       collisionDetection={verticalSortableListCollisionDetection}
       onDragStart={handleDragStart}
+      autoScroll={false}
       onDragEnd={handleDragEnd}
+      onDragCancel={handleDragCancel}
     >
       <SortableContext
         items={itemList}
