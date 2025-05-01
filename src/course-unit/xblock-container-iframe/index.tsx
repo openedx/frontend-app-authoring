@@ -5,7 +5,6 @@ import {
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useToggle, Sheet, StandardModal } from '@openedx/paragon';
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 
 import {
   hideProcessingNotification,
@@ -16,7 +15,6 @@ import ConfigureModal from '../../generic/configure-modal/ConfigureModal';
 import ModalIframe from '../../generic/modal-iframe';
 import { IFRAME_FEATURE_POLICY } from '../../constants';
 import ContentTagsDrawer from '../../content-tags-drawer/ContentTagsDrawer';
-import supportedEditors from '../../editors/supportedEditors';
 import { useIframe } from '../../generic/hooks/context/hooks';
 import {
   fetchCourseSectionVerticalData,
