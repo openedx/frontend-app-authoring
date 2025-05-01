@@ -144,7 +144,9 @@ const ContainerCardPreview = ({ childUsageKeys, showMaxChildren = 5 }: Container
           }
           return (
             <div
-              key={`container-card-preview-block-${usageKey}`}
+              // A container can have multiple instances of the same block
+              // eslint-disable-next-line react/no-array-index-key
+              key={`${usageKey}-${idx}`}
               className={classNames}
             >
               {blockPreview}
@@ -170,10 +172,10 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     formatted,
     tags,
     numChildren,
-    published = {},
+    published,
     publishStatus,
     usageKey: unitId,
-    content = {},
+    content,
   } = hit;
 
   const numChildrenCount = showOnlyPublished ? (
@@ -184,9 +186,8 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     showOnlyPublished ? formatted.published?.displayName : formatted.displayName
   ) ?? '';
 
-  published.content = published?.content ?? {};
   const childUsageKeys: Array<string> = (
-    showOnlyPublished ? published.content?.childUsageKeys : content?.childUsageKeys
+    showOnlyPublished ? published?.content?.childUsageKeys : content?.childUsageKeys
   ) ?? [];
 
   const { navigateTo } = useLibraryRoutes();
