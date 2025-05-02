@@ -233,7 +233,7 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
             <BlockHeader
               block={block}
               onTagClick={openManageTagsDrawer}
-              unitsData={hit.units}
+              unitsData={hit?.units}
             />
           )}
           actionStyle={{

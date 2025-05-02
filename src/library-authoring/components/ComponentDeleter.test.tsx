@@ -77,4 +77,52 @@ describe('<ComponentDeleter />', () => {
       expect(mockShowToast).toHaveBeenCalledWith('Undo successful');
     });
   });
+
+  it('should show units message if `unitsData` is set with one unit', async () => {
+    const mockCancel = jest.fn();
+    render(
+      <ComponentDeleter
+        usageKey={usageKey}
+        isConfirmingDelete
+        cancelDelete={mockCancel}
+        unitsData={{
+          displayName: ['Unit 1'],
+          key: ['unit1'],
+        }}
+      />,
+      renderArgs,
+    );
+
+    const modal = screen.getByRole('dialog', { name: 'Delete Component' });
+    expect(modal).toBeVisible();
+
+    expect(screen.getByText(
+      /by deleting this component, you will also be deleting it from in this library\./i,
+    )).toBeInTheDocument();
+    expect(screen.getByText(/unit 1/i)).toBeInTheDocument();
+  });
+
+  it('should show units message if `unitsData` is set with multiple units', async () => {
+    const mockCancel = jest.fn();
+    render(
+      <ComponentDeleter
+        usageKey={usageKey}
+        isConfirmingDelete
+        cancelDelete={mockCancel}
+        unitsData={{
+          displayName: ['Unit 1', 'Unit 2'],
+          key: ['unit1', 'unit2'],
+        }}
+      />,
+      renderArgs,
+    );
+
+    const modal = screen.getByRole('dialog', { name: 'Delete Component' });
+    expect(modal).toBeVisible();
+
+    expect(screen.getByText(
+      /by deleting this component, you will also be deleting it from in this library\./i,
+    )).toBeInTheDocument();
+    expect(screen.getByText(/2 units/i)).toBeInTheDocument();
+  });
 });
