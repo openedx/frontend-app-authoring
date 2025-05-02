@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Card, Icon } from '@openedx/paragon';
+import {
+  Card,
+  Icon,
+  Button,
+  Dropdown,
+  Modal,
+} from '@openedx/paragon';
 import {
   MenuBook, Groups, LibraryBooks, Assessment,
 } from '@openedx/paragon/icons';
@@ -32,6 +38,10 @@ MetricCard.propTypes = {
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedWidgets, setSelectedWidgets] = useState([]);
+  const [availableWidgets, setAvailableWidgets] = useState([]);
+  const [tempSelectedWidgets, setTempSelectedWidgets] = useState([]);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -39,6 +49,8 @@ const Dashboard = () => {
         const response = await fetch('/db.json');
         const data = await response.json();
         setDashboardData(data.dashboard);
+        setSelectedWidgets(data.dashboard.widgets.map(widget => widget.id));
+        setAvailableWidgets(data.dashboard.widgets);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {
@@ -48,6 +60,35 @@ const Dashboard = () => {
 
     fetchDashboardData();
   }, []);
+
+  const handleModalOpen = () => {
+    setTempSelectedWidgets(selectedWidgets);
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setTempSelectedWidgets(selectedWidgets);
+  };
+
+  const handleWidgetSelection = (widgetId) => {
+    setTempSelectedWidgets(prev => {
+      if (prev.includes(widgetId)) {
+        return prev.filter(id => id !== widgetId);
+      }
+      return [...prev, widgetId];
+    });
+  };
+
+  const handleUpdateWidgets = () => {
+    setSelectedWidgets(tempSelectedWidgets);
+    const updatedWidgets = availableWidgets.filter(widget => tempSelectedWidgets.includes(widget.id));
+    setDashboardData(prev => ({
+      ...prev,
+      widgets: updatedWidgets,
+    }));
+    setIsModalOpen(false);
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -70,7 +111,18 @@ const Dashboard = () => {
 
         {/* Overview Cards */}
         <div className="overview-section">
-          <h1>Overview</h1>
+          <div className="overview-header">
+            <h1>Overview</h1>
+            <Dropdown>
+              <Dropdown.Toggle variant="primary">
+                Customize
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                <Dropdown.Item>Edit mode</Dropdown.Item>
+                <Dropdown.Item onClick={handleModalOpen}>Add widget</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
           <div className="overview-grid">
             {/* <div>
               <Card className="overview-card">
@@ -159,6 +211,46 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Widget Selection Modal */}
+      <Modal
+        open={isModalOpen}
+        onClose={handleModalClose}
+        title="Add/Remove Widgets"
+        size="lg"
+        body={(
+          <div className="widget-selection-grid">
+            {availableWidgets.map((widget) => (
+              <Card
+                key={widget.id}
+                className={`widget-selection-card ${tempSelectedWidgets.includes(widget.id) ? 'selected' : ''}`}
+                onClick={() => handleWidgetSelection(widget.id)}
+              >
+                <Card.Section className="widget-selection-content">
+                  <h4>{widget.title}</h4>
+                  <p>{widget.type === 'chart' ? `Chart type: ${widget.content.chartType}` : 'Text widget'}</p>
+                </Card.Section>
+              </Card>
+            ))}
+          </div>
+        )}
+        buttons={[
+          <Button
+            key="cancel"
+            variant="outline-primary"
+            onClick={handleModalClose}
+          >
+            Cancel
+          </Button>,
+          <Button
+            key="update"
+            variant="primary"
+            onClick={handleUpdateWidgets}
+          >
+            Update
+          </Button>,
+        ]}
+      />
 
       {/* Sidebar */}
       <div className="sidebar">
