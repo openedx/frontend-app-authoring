@@ -5,7 +5,7 @@ import {
   Icon,
   Button,
   Dropdown,
-  Modal,
+  ModalDialog,
 } from '@openedx/paragon';
 import {
   MenuBook, Groups, LibraryBooks, Assessment,
@@ -213,12 +213,18 @@ const Dashboard = () => {
       </div>
 
       {/* Widget Selection Modal */}
-      <Modal
-        open={isModalOpen}
+      <ModalDialog
+        isOpen={isModalOpen}
         onClose={handleModalClose}
-        title="Add/Remove Widgets"
         size="lg"
-        body={(
+        hasCloseButton
+      >
+        <ModalDialog.Header>
+          <ModalDialog.Title>
+            Add/Remove Widgets
+          </ModalDialog.Title>
+        </ModalDialog.Header>
+        <ModalDialog.Body>
           <div className="widget-selection-grid">
             {availableWidgets.map((widget) => (
               <Card
@@ -233,24 +239,23 @@ const Dashboard = () => {
               </Card>
             ))}
           </div>
-        )}
-        buttons={[
+        </ModalDialog.Body>
+        <ModalDialog.Footer>
           <Button
-            key="cancel"
+            style={{ marginRight: '10px' }}
             variant="outline-primary"
             onClick={handleModalClose}
           >
             Cancel
-          </Button>,
+          </Button>
           <Button
-            key="update"
             variant="primary"
             onClick={handleUpdateWidgets}
           >
             Update
-          </Button>,
-        ]}
-      />
+          </Button>
+        </ModalDialog.Footer>
+      </ModalDialog>
 
       {/* Sidebar */}
       <div className="sidebar">
