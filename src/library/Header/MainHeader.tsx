@@ -4,13 +4,19 @@ import {
   Nav,
   NavDropdown,
   Button,
+  SearchField,
+  Icon,
+  IconButtonWithTooltip,
 } from '@openedx/paragon';
 // import useIsMobileSize from '../../../hooks/useIsMobileSize';
 // import { MainHeaderProps } from '../../../interfaces/components';
 import { MainHeaderProps } from 'titaned-lib';
+import useIsMobileSize from '../hooks/useIsMobileSize';
 import UserMenu from '../UserMenu/UserMenu';
 import './MainHeader.scss';
-import useIsMobileSize from '../hooks/useIsMobileSize';
+import {
+  ExitToApp, HelpCenter, Notifications, Sync,
+} from '@openedx/paragon/icons';
 
 const MainHeader: React.FC<MainHeaderProps> = ({
   logoUrl,
@@ -33,15 +39,33 @@ const MainHeader: React.FC<MainHeaderProps> = ({
     ? alignmentMap[menuAlignment.toLowerCase()] || 'justify-content-start'
     : 'justify-content-start';
 
+  const handleSearch = (value: string) => {
+    // Implement search functionality here
+    console.log('Search query:', value);
+  };
+
   return (
     <Navbar expand="lg" className="navbarContainer px-5 py-1" style={{ zIndex: 100 }}>
-      <Navbar.Brand href="/">
+      <Navbar.Brand href="/" className="navbar-brand">
         <img
           src={logoUrl}
           alt="Logo"
-          style={{ width: '5.5rem', height: '5rem' }}
+          // style={{ width: '5.5rem', height: '5rem' }}
         />
       </Navbar.Brand>
+
+      {authenticatedUser !== null && (
+        <div className="d-flex align-items-center justify-content-center flex-grow-1">
+          <div style={{ width: '20rem' }}>
+            <SearchField
+              onSubmit={handleSearch}
+              placeholder="Search..."
+              size="sm"
+              className="w-100"
+            />
+          </div>
+        </div>
+      )}
 
       <div className="d-flex align-items-center gap-2 ms-auto order-lg-3">
         {authenticatedUser === null && loginSignupButtons && (
@@ -52,13 +76,20 @@ const MainHeader: React.FC<MainHeaderProps> = ({
         )}
 
         {authenticatedUser !== null && (
-        <UserMenu
-          username={authenticatedUser?.username}
-          authenticatedUserAvatar={authenticatedUser?.avatar}
-          isMobile={isMobile}
-          isAdmin={authenticatedUser?.administrator}
-          menuItems={userMenuItems}
-        />
+          <>
+            <IconButtonWithTooltip src={Sync} iconAs={Icon} alt="Sync" tooltipPlacement="bottom" tooltipContent="Re-Sync" />
+            <IconButtonWithTooltip src={ExitToApp} iconAs={Icon} alt="Sync" tooltipPlacement="bottom" tooltipContent="Switch to User Mode" />
+            <IconButtonWithTooltip src={HelpCenter} iconAs={Icon} alt="Help" tooltipPlacement="bottom" tooltipContent="Help" />
+            <IconButtonWithTooltip src={Notifications} iconAs={Icon} alt="Notifications" tooltipPlacement="bottom" tooltipContent="Notifications" />
+
+            <UserMenu
+              username={authenticatedUser?.username}
+              authenticatedUserAvatar={authenticatedUser?.avatar}
+              isMobile={isMobile}
+              isAdmin={authenticatedUser?.administrator}
+              menuItems={userMenuItems}
+            />
+          </>
         )}
       </div>
 

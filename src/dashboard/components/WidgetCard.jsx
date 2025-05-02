@@ -6,7 +6,7 @@ import DOMPurify from 'dompurify';
 import {
   Chart as ChartJS, ArcElement, Tooltip, Legend,
   CategoryScale, LinearScale, BarElement,
-  LineElement, PointElement,
+  LineElement, PointElement, Filler,
 } from 'chart.js';
 import {
   Pie, Doughnut, Bar, Line,
@@ -24,6 +24,7 @@ if (typeof window !== 'undefined') {
     BarElement,
     LineElement,
     PointElement,
+    Filler,
   );
 }
 
@@ -48,19 +49,19 @@ const WidgetCard = ({
       const dataLength = content.data.length;
       const colors = generateColors(dataLength);
 
-      if (content.chartType === 'bar' || content.chartType === 'line') {
+      if (content.chartType === 'bar' || content.chartType === 'line' || content.chartType === 'area') {
         return {
           labels: content.referenceLabels,
           datasets: content.data.map((item, index) => ({
             label: item.label,
             data: item.value,
-            backgroundColor: colors.backgroundColor[index],
+            backgroundColor: content.chartType === 'area' ? colors.backgroundColor[index] : colors.backgroundColor[index],
             borderColor: colors.borderColor[index],
             borderWidth: 2,
             tension: 0.4,
-            fill: content.chartType === 'line' ? false : true,
-            pointRadius: content.chartType === 'line' ? 4 : 0,
-            pointHoverRadius: content.chartType === 'line' ? 6 : 0,
+            fill: content.chartType === 'area' ? true : false,
+            pointRadius: (content.chartType === 'line' || content.chartType === 'area') ? 4 : 0,
+            pointHoverRadius: (content.chartType === 'line' || content.chartType === 'area') ? 6 : 0,
           })),
         };
       }
@@ -145,7 +146,7 @@ const WidgetCard = ({
                 }}
               />
             )}
-            {content.chartType === 'line' && (
+            {(content.chartType === 'line' || content.chartType === 'area') && (
               <Line
                 data={getChartData()}
                 options={{
@@ -194,11 +195,11 @@ WidgetCard.propTypes = {
   content: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.shape({
-      chartType: PropTypes.string,
+      chartType: PropTypes.oneOf(['pie', 'donut', 'bar', 'line', 'area']),
       referenceLabels: PropTypes.arrayOf(PropTypes.string),
       data: PropTypes.arrayOf(PropTypes.shape({
         label: PropTypes.string,
-        value: PropTypes.number,
+        value: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.number)]),
       })),
     }),
   ]).isRequired,

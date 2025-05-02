@@ -5,11 +5,38 @@
 .navbarContainer {
     background-color: var(--c8);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    height: 6rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .navbar-brand {
+        padding: 0;
+        display: flex;
+        align-items: center;
+        // min-width: 180px;
+        
+        img {
+            max-width: 100%;
+            height: auto;
+            object-fit: contain;
+            max-height: 5rem;
+        }
+    }
 
     .navbar-collapse {
         background-color: var(--c8);
         border-radius: 0 0 0.5rem 0.5rem;
         padding: 1rem;
+    }
+
+    // Center search container
+    .d-flex.align-items-center.justify-content-center {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: auto;
+        z-index: 1;
     }
 }
 
@@ -61,17 +88,28 @@
     padding: 0.75rem 1.25rem;
     font-weight: 600;
     text-transform: uppercase;
-    color: var(--c6);
+    color: var(--c6); /* or your preferred text color */
     background-color: #fff;
     outline: none !important;
     border-color: #fff !important;
     width: 8rem;
 }
 
+.mainHeaderContainer {
+    display: flex;
+    position: relative;
+    z-index: 100;
+}
+
+// .btn-outline-primary {
+//     border: none;
+//   }
+
+  
 .nav-gap {
     gap: 3rem;
 }
 
 .dropdown-menu {
-    min-width: 15rem;
+    min-width: 15rem !important;
 }
