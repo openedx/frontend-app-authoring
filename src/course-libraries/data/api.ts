@@ -38,6 +38,7 @@ export interface PublishableEntityLinkSummary {
   upstreamContextTitle: string;
   readyToSyncCount: number;
   totalCount: number;
+  lastPublishedAt: string;
 }
 
 export const getEntityLinks = async (
