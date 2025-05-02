@@ -92,7 +92,10 @@ describe('<PickLibraryContentModal />', () => {
         }
       });
       expect(onClose).toHaveBeenCalled();
-      expect(mockShowToast).toHaveBeenCalledWith('Content linked successfully.');
+      const text = context === 'collection'
+        ? 'Content added to collection.'
+        : 'Content linked successfully.';
+      expect(mockShowToast).toHaveBeenCalledWith(text);
     });
 
     it(`show error when api call fails (${context})`, async () => {
@@ -130,8 +133,10 @@ describe('<PickLibraryContentModal />', () => {
         }
       });
       expect(onClose).toHaveBeenCalled();
-      const name = context === 'collection' ? 'collection' : 'container';
-      expect(mockShowToast).toHaveBeenCalledWith(`There was an error linking the content to this ${name}.`);
+      const text = context === 'collection'
+        ? 'Failed to add content to collection.'
+        : 'There was an error linking the content to this container.';
+      expect(mockShowToast).toHaveBeenCalledWith(text);
     });
   });
 });

@@ -120,7 +120,7 @@ const UnitInfo = () => {
   useEffect(() => {
     // Show Organize tab if JumpToAddCollections action is set in sidebarComponentInfo
     if (jumpToCollections) {
-      setSidebarTab(UNIT_INFO_TABS.Organize);
+      setSidebarTab(UNIT_INFO_TABS.Manage);
     }
   }, [jumpToCollections, setSidebarTab]);
 
@@ -166,7 +166,7 @@ const UnitInfo = () => {
         onSelect={setSidebarTab}
       >
         {renderTab(UNIT_INFO_TABS.Preview, <LibraryUnitBlocks preview />, intl.formatMessage(messages.previewTabTitle))}
-        {renderTab(UNIT_INFO_TABS.Organize, <ContainerOrganize />, intl.formatMessage(messages.organizeTabTitle))}
+        {renderTab(UNIT_INFO_TABS.Manage, <ContainerOrganize />, intl.formatMessage(messages.manageTabTitle))}
         {renderTab(UNIT_INFO_TABS.Settings, 'Unit Settings', intl.formatMessage(messages.settingsTabTitle))}
       </Tabs>
     </Stack>

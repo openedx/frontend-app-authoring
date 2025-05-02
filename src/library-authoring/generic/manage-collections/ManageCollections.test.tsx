@@ -77,7 +77,7 @@ describe('<ManageCollections />', () => {
     await waitFor(() => {
       expect(axiosMock.history.patch.length).toEqual(1);
     });
-    expect(mockShowToast).toHaveBeenCalledWith('Item collections updated');
+    expect(mockShowToast).toHaveBeenCalledWith('Content added to collection.');
     expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({
       collection_keys: ['my-first-collection', 'my-second-collection'],
     });
@@ -103,7 +103,7 @@ describe('<ManageCollections />', () => {
     await waitFor(() => {
       expect(axiosMock.history.patch.length).toEqual(1);
     });
-    expect(mockShowToast).toHaveBeenCalledWith('Item collections updated');
+    expect(mockShowToast).toHaveBeenCalledWith('Content added to collection.');
     expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({
       collection_keys: ['my-first-collection', 'my-second-collection'],
     });
@@ -133,7 +133,7 @@ describe('<ManageCollections />', () => {
     expect(JSON.parse(axiosMock.history.patch[0].data)).toEqual({
       collection_keys: ['my-second-collection'],
     });
-    expect(mockShowToast).toHaveBeenCalledWith('Failed to update item collections');
+    expect(mockShowToast).toHaveBeenCalledWith('Failed to add content to collection.');
     expect(screen.queryByRole('search')).not.toBeInTheDocument();
   });
 

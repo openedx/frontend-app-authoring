@@ -85,7 +85,7 @@ const ContainerOrganize = () => {
             >
               <Stack gap={1} direction="horizontal">
                 <Icon src={Tag} />
-                {intl.formatMessage(messages.organizeTabTagsTitle, { count: tagsCount })}
+                {intl.formatMessage(messages.manageTabTagsTitle, { count: tagsCount })}
               </Stack>
               <Collapsible.Visible whenClosed>
                 <Icon src={ExpandMore} />
@@ -113,7 +113,7 @@ const ContainerOrganize = () => {
         >
           <Stack gap={1} direction="horizontal">
             <Icon src={BookOpen} />
-            {intl.formatMessage(messages.organizeTabCollectionsTitle, { count: collectionsCount })}
+            {intl.formatMessage(messages.manageTabCollectionsTitle, { count: collectionsCount })}
           </Stack>
           <Collapsible.Visible whenClosed>
             <Icon src={ExpandMore} />

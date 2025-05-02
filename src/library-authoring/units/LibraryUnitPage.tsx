@@ -137,7 +137,7 @@ export const LibraryUnitPage = () => {
     setDefaultTab({
       collection: COLLECTION_INFO_TABS.Details,
       component: COMPONENT_INFO_TABS.Manage,
-      unit: UNIT_INFO_TABS.Organize,
+      unit: UNIT_INFO_TABS.Manage,
     });
     setHiddenTabs([COMPONENT_INFO_TABS.Preview, UNIT_INFO_TABS.Preview]);
     return () => {
