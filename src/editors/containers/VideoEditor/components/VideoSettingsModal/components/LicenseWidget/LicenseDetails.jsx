@@ -39,11 +39,11 @@ const LicenseDetails = ({
           <div className="mb-3">
             <FormattedMessage {...messages.detailsSubsectionTitle} />
           </div>
-          {license === LicenseTypes.allRightsReserved ? (
+          {license === LicenseTypes.allRightsReserved && (
             <div className="mt-2">
               <FormattedMessage {...messages.allRightsReservedSectionMessage} />
             </div>
-          ) : null}
+          )}
           {license === LicenseTypes.creativeCommons
             ? (
               <Stack gap={4}>
