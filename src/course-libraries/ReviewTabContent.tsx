@@ -110,23 +110,16 @@ const ComponentReviewList = ({
   // ignore changes confirmation modal toggle.
   const [isConfirmModalOpen, openConfirmModal, closeConfirmModal] = useToggle(false);
   const {
-    hits: downstreamInfo,
+    hits,
     isLoading: isIndexDataLoading,
     searchKeywords,
     hasError,
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-  } = useSearchContext() as {
-    hits: ContentHit[];
-    isLoading: boolean;
-    searchKeywords: string;
-    searchSortOrder: SearchSortOption;
-    hasError: boolean;
-    hasNextPage: boolean | undefined,
-    isFetchingNextPage: boolean;
-    fetchNextPage: () => void;
-  };
+  } = useSearchContext();
+
+  const downstreamInfo = hits as ContentHit[];
 
   useLoadOnScroll(
     hasNextPage,
@@ -142,6 +135,7 @@ const ComponentReviewList = ({
   const queryClient = useQueryClient();
 
   useEffect(() => {
+    // FIXME: Do we need this?
     if (searchKeywords) {
       onSearchUpdate();
     }
@@ -152,7 +146,7 @@ const ComponentReviewList = ({
   const acceptChangesMutation = useAcceptLibraryBlockChanges();
   const ignoreChangesMutation = useIgnoreLibraryBlockChanges();
 
-  const setSeletecdBlockData = (info: ContentHit) => {
+  const setSelectedBlockData = useCallback((info: ContentHit) => {
     setBlockData({
       displayName: info.displayName,
       downstreamBlockId: info.usageKey,
@@ -160,17 +154,18 @@ const ComponentReviewList = ({
       upstreamBlockVersionSynced: outOfSyncComponentsByKey[info.usageKey].versionSynced,
       isVertical: info.blockType === 'vertical',
     });
-  };
+  }, [outOfSyncComponentsByKey]);
+
   // Show preview changes on review
   const onReview = useCallback((info: ContentHit) => {
-    setSeletecdBlockData(info);
+    setSelectedBlockData(info);
     openModal();
-  }, [setSeletecdBlockData, openModal]);
+  }, [setSelectedBlockData, openModal]);
 
   const onIgnoreClick = useCallback((info: ContentHit) => {
-    setSeletecdBlockData(info);
+    setSelectedBlockData(info);
     openConfirmModal();
-  }, [setSeletecdBlockData, openConfirmModal]);
+  }, [setSelectedBlockData, openConfirmModal]);
 
   const reloadLinks = useCallback((usageKey: string) => {
     const courseKey = outOfSyncComponentsByKey[usageKey].downstreamContextKey;

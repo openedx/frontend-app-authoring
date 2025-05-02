@@ -87,7 +87,7 @@ export const PreviewLibraryXBlockChanges = ({
   const defaultTitle = intl.formatMessage(
     blockData.isVertical
       ? messages.defaultUnitTitle
-      : messages.defaultComponentTitle
+      : messages.defaultComponentTitle,
   );
   const title = blockData.displayName
     ? intl.formatMessage(messages.title, { blockTitle: blockData?.displayName })

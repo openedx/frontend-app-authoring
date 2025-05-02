@@ -12,7 +12,6 @@ import IframePreviewLibraryXBlockChanges, { LibraryChangesMessageData } from '.'
 import { messageTypes } from '../constants';
 import { libraryBlockChangesUrl } from '../data/api';
 import { ToastActionData } from '../../generic/toast-context';
-import { getLibraryBlockMetadataUrl, getLibraryContainerApiUrl } from '../../library-authoring/data/api';
 
 const usageKey = 'some-id';
 const defaultEventData: LibraryChangesMessageData = {
