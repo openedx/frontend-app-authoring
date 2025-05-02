@@ -6,7 +6,7 @@ import {
   fireEvent,
 } from '../../testUtils';
 import { LibraryProvider } from '../common/context/LibraryContext';
-import { mockContentLibrary, mockGetContainerChildren } from '../data/api.mocks';
+import { mockContentLibrary } from '../data/api.mocks';
 import { type ContainerHit, PublishStatus } from '../../search-manager';
 import ContainerCard from './ContainerCard';
 import { getLibraryContainerApiUrl, getLibraryContainerRestoreApiUrl } from '../data/api';
@@ -40,7 +40,6 @@ let axiosMock: MockAdapter;
 let mockShowToast;
 
 mockContentLibrary.applyMock();
-mockGetContainerChildren.applyMock();
 
 const render = (ui: React.ReactElement, showOnlyPublished: boolean = false) => baseRender(ui, {
   extraWrapper: ({ children }) => (
@@ -155,29 +154,54 @@ describe('<ContainerCard />', () => {
   it('should render no child blocks in card preview', async () => {
     render(<ContainerCard hit={containerHitSample} />);
 
-    expect(screen.queryByTitle('text block')).not.toBeInTheDocument();
+    expect(screen.queryByTitle('lb:org1:Demo_course:html:text-0')).not.toBeInTheDocument();
     expect(screen.queryByText('+0')).not.toBeInTheDocument();
   });
 
   it('should render <=5 child blocks in card preview', async () => {
     const containerWith5Children = {
       ...containerHitSample,
-      usageKey: mockGetContainerChildren.fiveChildren,
-    };
+      content: {
+        childUsageKeys: Array(5).fill('').map((_child, idx) => `lb:org1:Demo_course:html:text-${idx}`),
+      },
+    } satisfies ContainerHit;
     render(<ContainerCard hit={containerWith5Children} />);
 
-    expect((await screen.findAllByTitle(/text block */)).length).toBe(5);
+    expect((await screen.findAllByTitle(/lb:org1:Demo_course:html:text-*/)).length).toBe(5);
     expect(screen.queryByText('+0')).not.toBeInTheDocument();
   });
 
   it('should render >5 child blocks with +N in card preview', async () => {
     const containerWith6Children = {
       ...containerHitSample,
-      usageKey: mockGetContainerChildren.sixChildren,
-    };
+      content: {
+        childUsageKeys: Array(6).fill('').map((_child, idx) => `lb:org1:Demo_course:html:text-${idx}`),
+      },
+    } satisfies ContainerHit;
     render(<ContainerCard hit={containerWith6Children} />);
 
-    expect((await screen.findAllByTitle(/text block */)).length).toBe(4);
+    expect((await screen.findAllByTitle(/lb:org1:Demo_course:html:text-*/)).length).toBe(4);
     expect(screen.queryByText('+2')).toBeInTheDocument();
+  });
+
+  it('should render published child blocks when rendering a published card preview', async () => {
+    const containerWithPublishedChildren = {
+      ...containerHitSample,
+      content: {
+        childUsageKeys: Array(6).fill('').map((_child, idx) => `lb:org1:Demo_course:html:text-${idx}`),
+      },
+      published: {
+        content: {
+          childUsageKeys: Array(2).fill('').map((_child, idx) => `lb:org1:Demo_course:html:text-${idx}`),
+        },
+      },
+    } satisfies ContainerHit;
+    render(
+      <ContainerCard hit={containerWithPublishedChildren} />,
+      true,
+    );
+
+    expect((await screen.findAllByTitle(/lb:org1:Demo_course:html:text-*/)).length).toBe(2);
+    expect(screen.queryByText('+2')).not.toBeInTheDocument();
   });
 });
