@@ -12,12 +12,13 @@ import { MoreVert } from '@openedx/paragon/icons';
 import { Link } from 'react-router-dom';
 
 import { getItemIcon, getComponentStyleColor } from '../../generic/block-type-utils';
+import { getBlockType } from '../../generic/key-utils';
 import { ToastContext } from '../../generic/toast-context';
 import { type ContainerHit, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
 import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
-import { useContainerChildren, useRemoveItemsFromCollection } from '../data/apiHooks';
+import { useRemoveItemsFromCollection } from '../data/apiHooks';
 import { useLibraryRoutes } from '../routes';
 import AddComponentWidget from './AddComponentWidget';
 import BaseCard from './BaseCard';
@@ -107,21 +108,17 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
 };
 
 type ContainerCardPreviewProps = {
-  containerId: string;
+  childUsageKeys: Array<string>;
   showMaxChildren?: number;
 };
 
-const ContainerCardPreview = ({ containerId, showMaxChildren = 5 }: ContainerCardPreviewProps) => {
-  const { data, isLoading, isError } = useContainerChildren(containerId);
-  if (isLoading || isError) {
-    return null;
-  }
-
-  const hiddenChildren = data.length - showMaxChildren;
+const ContainerCardPreview = ({ childUsageKeys, showMaxChildren = 5 }: ContainerCardPreviewProps) => {
+  const hiddenChildren = childUsageKeys.length - showMaxChildren;
   return (
     <Stack direction="horizontal" gap={2}>
       {
-        data.slice(0, showMaxChildren).map(({ id, blockType, displayName }, idx) => {
+        childUsageKeys.slice(0, showMaxChildren).map((usageKey, idx) => {
+          const blockType = getBlockType(usageKey);
           let blockPreview: ReactNode;
           let classNames;
 
@@ -133,7 +130,7 @@ const ContainerCardPreview = ({ containerId, showMaxChildren = 5 }: ContainerCar
               <Icon
                 src={getItemIcon(blockType)}
                 screenReaderText={blockType}
-                title={displayName}
+                title={usageKey}
               />
             );
           } else {
@@ -149,7 +146,7 @@ const ContainerCardPreview = ({ containerId, showMaxChildren = 5 }: ContainerCar
             <div
               // A container can have multiple instances of the same block
               // eslint-disable-next-line react/no-array-index-key
-              key={`${id}-${idx}`}
+              key={`${usageKey}-${idx}`}
               className={classNames}
             >
               {blockPreview}
@@ -178,6 +175,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     published,
     publishStatus,
     usageKey: unitId,
+    content,
   } = hit;
 
   const numChildrenCount = showOnlyPublished ? (
@@ -187,6 +185,10 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
   const displayName: string = (
     showOnlyPublished ? formatted.published?.displayName : formatted.displayName
   ) ?? '';
+
+  const childUsageKeys: Array<string> = (
+    showOnlyPublished ? published?.content?.childUsageKeys : content?.childUsageKeys
+  ) ?? [];
 
   const { navigateTo } = useLibraryRoutes();
 
@@ -202,7 +204,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     <BaseCard
       itemType={itemType}
       displayName={displayName}
-      preview={<ContainerCardPreview containerId={unitId} />}
+      preview={<ContainerCardPreview childUsageKeys={childUsageKeys} />}
       tags={tags}
       numChildren={numChildrenCount}
       actions={(
