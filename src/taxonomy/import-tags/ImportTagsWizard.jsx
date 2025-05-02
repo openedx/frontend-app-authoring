@@ -249,7 +249,7 @@ const ConfirmStep = ({ importPlan }) => {
   const intl = useIntl();
 
   return (
-    <Stepper.Step eventKey="confirm" ttitle={intl.formatMessage(messages.importWizardStepperConfirmStepTitle)}>
+    <Stepper.Step eventKey="confirm" title={intl.formatMessage(messages.importWizardStepperConfirmStepTitle)}>
       <Stack data-testid="confirm-step">
         {intl.formatMessage(
           messages.importWizardStepConfirmBody,
