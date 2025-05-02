@@ -25,7 +25,9 @@ const AccessibilityPage = ({
     </Helmet>
     <Header isHiddenMainMenu />
     <Container size="xl" classNamae="px-4">
-      <AccessibilityBody {...{ ACCESSIBILITY_EMAIL, COMMUNITY_ACCESSIBILITY_LINK }} />
+      <AccessibilityBody
+        {...{ email: ACCESSIBILITY_EMAIL, communityAccessibilityLink: COMMUNITY_ACCESSIBILITY_LINK }}
+      />
       <AccessibilityForm accessibilityEmail={ACCESSIBILITY_EMAIL} />
     </Container>
     <StudioFooterSlot />
