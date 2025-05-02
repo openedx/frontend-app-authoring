@@ -1,15 +1,21 @@
 .overview-card {
   height: 100%;
   margin-bottom: 1rem;
+  position: relative;
 
   .card-header {
     padding: 1rem;
     margin: 0;
     border-bottom: 1px solid #e0e0e0;
+    background-color: white;
+    position: sticky;
+    top: 0;
+    z-index: 1;
   }
 
   .card-section {
     padding: 1rem;
+    overflow: auto;
   }
 
   // .metrics-list {
