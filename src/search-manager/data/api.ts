@@ -141,6 +141,7 @@ export interface ContentHit extends BaseContentHit {
   content?: ContentDetails;
   lastPublished: number | null;
   collections: { displayName?: string[], key?: string[] };
+  units: { displayName?: string[], key?: string[] };
   published?: ContentPublishedData;
   publishStatus: PublishStatus;
   formatted: BaseContentHit['formatted'] & { published?: ContentPublishedData, };

@@ -1,3 +1,9 @@
+import {
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow, Badge, Button, Icon, IconButton, Stack, useToggle,
@@ -5,7 +11,6 @@ import {
 import { Add, Description, DragIndicator } from '@openedx/paragon/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import classNames from 'classnames';
-import { useContext, useEffect, useState } from 'react';
 import { ContentTagsDrawerSheet } from '../../content-tags-drawer';
 import { blockTypes } from '../../editors/data/constants/app';
 import DraggableList, { SortableItem } from '../../generic/DraggableList';
@@ -33,6 +38,7 @@ import messages from './messages';
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { ToastContext } from '../../generic/toast-context';
 import { canEditComponent } from '../components/ComponentEditorModal';
+import { ContentHit, useContentSearchConnection, useContentSearchResults } from '../../search-manager';
 
 /** Components that need large min height in preview */
 const LARGE_COMPONENTS = [
@@ -46,10 +52,11 @@ const LARGE_COMPONENTS = [
 interface BlockHeaderProps {
   block: LibraryBlockMetadata;
   onTagClick: () => void;
+  unitsData?: { displayName?: string[], key?: string[] };
 }
 
 /** Component header, split out to reuse in drag overlay */
-const BlockHeader = ({ block, onTagClick }: BlockHeaderProps) => {
+const BlockHeader = ({ block, onTagClick, unitsData }: BlockHeaderProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
 
@@ -90,7 +97,7 @@ const BlockHeader = ({ block, onTagClick }: BlockHeaderProps) => {
           </Badge>
         )}
         <TagCount size="sm" count={block.tagsCount} onClick={onTagClick} />
-        <ComponentMenu usageKey={block.id} />
+        <ComponentMenu usageKey={block.id} unitsData={unitsData} />
       </Stack>
     </>
   );
@@ -136,6 +143,21 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
   } = useContainerChildren(unitId);
 
   useEffect(() => setOrderedBlocks(blocks || []), [blocks]);
+
+  const blockIds = useMemo(() => orderedBlocks.map((block) => block.id), [orderedBlocks]);
+
+  const { client, indexName } = useContentSearchConnection();
+  const {
+    hits: blockHits,
+  } = useContentSearchResults({
+    client,
+    indexName,
+    searchKeywords: '',
+    extraFilter: [`usage_key IN ["${blockIds.join('","')}"]`],
+    limit: blockIds.length,
+    enabled: !!blockIds.length,
+    skipBlockTypeFetch: true,
+  });
 
   if (isLoading) {
     return <Loading />;
@@ -200,38 +222,47 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
     );
   };
 
-  const renderedBlocks = orderedBlocks?.map((block) => (
-    <IframeProvider key={block.id + block.modified}>
-      <SortableItem
-        id={block.id}
-        componentStyle={null}
-        actions={<BlockHeader block={block} onTagClick={openManageTagsDrawer} />}
-        actionStyle={{
-          borderRadius: '8px 8px 0px 0px',
-          padding: '0.5rem 1rem',
-          background: '#FBFAF9',
-          borderBottom: 'solid 1px #E1DDDB',
-          outline: hidePreviewFor === block.id && '2px dashed gray',
-        }}
-        isClickable
-        onClick={(e: { detail: number; }) => handleComponentSelection(block, e.detail)}
-        disabled={preview}
-      >
-        {hidePreviewFor !== block.id && (
-        <div className={classNames('p-3', {
-          'container-mw-md': block.blockType === blockTypes.video,
-        })}
+  const renderedBlocks = orderedBlocks?.map((block) => {
+    const hit = blockHits?.find((val) => val.usageKey === block.id) as ContentHit;
+    return (
+      <IframeProvider key={block.id + block.modified}>
+        <SortableItem
+          id={block.id}
+          componentStyle={null}
+          actions={(
+            <BlockHeader
+              block={block}
+              onTagClick={openManageTagsDrawer}
+              unitsData={hit.units}
+            />
+          )}
+          actionStyle={{
+            borderRadius: '8px 8px 0px 0px',
+            padding: '0.5rem 1rem',
+            background: '#FBFAF9',
+            borderBottom: 'solid 1px #E1DDDB',
+            outline: hidePreviewFor === block.id && '2px dashed gray',
+          }}
+          isClickable
+          onClick={(e: { detail: number; }) => handleComponentSelection(block, e.detail)}
+          disabled={preview}
         >
-          <LibraryBlock
-            usageKey={block.id}
-            version={showOnlyPublished ? 'published' : undefined}
-            minHeight={calculateMinHeight(block)}
-          />
-        </div>
-        )}
-      </SortableItem>
-    </IframeProvider>
-  ));
+          {hidePreviewFor !== block.id && (
+          <div className={classNames('p-3', {
+            'container-mw-md': block.blockType === blockTypes.video,
+          })}
+          >
+            <LibraryBlock
+              usageKey={block.id}
+              version={showOnlyPublished ? 'published' : undefined}
+              minHeight={calculateMinHeight(block)}
+            />
+          </div>
+          )}
+        </SortableItem>
+      </IframeProvider>
+    );
+  });
 
   return (
     <div className="library-unit-page">

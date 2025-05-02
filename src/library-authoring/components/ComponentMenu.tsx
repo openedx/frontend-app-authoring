@@ -21,7 +21,12 @@ import { canEditComponent } from './ComponentEditorModal';
 import ComponentDeleter from './ComponentDeleter';
 import messages from './messages';
 
-export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
+type ComponentMenuProps = {
+  usageKey: string,
+  unitsData?: { displayName?: string[], key?: string[] },
+};
+
+export const ComponentMenu = ({ usageKey, unitsData }: ComponentMenuProps) => {
   const intl = useIntl();
   const {
     libraryId,
@@ -129,7 +134,12 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
           </Dropdown.Item>
         )}
       </Dropdown.Menu>
-      <ComponentDeleter usageKey={usageKey} isConfirmingDelete={isConfirmingDelete} cancelDelete={cancelDelete} />
+      <ComponentDeleter
+        usageKey={usageKey}
+        isConfirmingDelete={isConfirmingDelete}
+        cancelDelete={cancelDelete}
+        unitsData={unitsData}
+      />
     </Dropdown>
   );
 };

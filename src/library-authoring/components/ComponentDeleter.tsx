@@ -1,6 +1,7 @@
 import React, { useCallback, useContext } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { Warning } from '@openedx/paragon/icons';
+import { Icon } from '@openedx/paragon';
+import { Info, Warning } from '@openedx/paragon/icons';
 
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { useDeleteLibraryBlock, useLibraryBlockMetadata, useRestoreLibraryBlock } from '../data/apiHooks';
@@ -27,6 +28,7 @@ interface Props {
   /** If true, show a confirmation modal that asks the user if they want to delete this component. */
   isConfirmingDelete: boolean;
   cancelDelete: () => void;
+  unitsData?: { displayName?: string[], key?: string[] };
 }
 
 const ComponentDeleter = ({ usageKey, ...props }: Props) => {
@@ -66,6 +68,16 @@ const ComponentDeleter = ({ usageKey, ...props }: Props) => {
     return null;
   }
 
+  let unitsMessage;
+  const unitsLength = props.unitsData?.displayName?.length ?? 0;
+  if (props.unitsData?.displayName && unitsLength > 0) {
+    if (props.unitsData.displayName.length === 1) {
+      [unitsMessage] = props.unitsData.displayName;
+    } else {
+      unitsMessage = `${unitsLength} units`;
+    }
+  }
+
   return (
     <DeleteModal
       isOpen
@@ -74,15 +86,33 @@ const ComponentDeleter = ({ usageKey, ...props }: Props) => {
       title={intl.formatMessage(messages.deleteComponentWarningTitle)}
       icon={Warning}
       description={(
-        <FormattedMessage
-          {...messages.deleteComponentConfirm}
-          values={{
-            componentName: (
-              <strong><BlockName usageKey={usageKey} /></strong>
-            ),
-          }}
-        />
-)}
+        <>
+          <FormattedMessage
+            {...messages.deleteComponentConfirm}
+            values={{
+              componentName: (
+                <strong><BlockName usageKey={usageKey} /></strong>
+              ),
+              message: unitsLength
+                ? intl.formatMessage(messages.deleteComponentConfirmCourseSmall)
+                : intl.formatMessage(messages.deleteComponentConfirmCourse),
+            }}
+          />
+          {unitsMessage && (
+            <div className="d-flex mt-3 small text-danger-900">
+              <Icon className="mr-2 mt-2" src={Info} />
+              <div>
+                <FormattedMessage
+                  {...messages.deleteComponentConfirmUnits}
+                  values={{
+                    unit: <strong>{unitsMessage}</strong>,
+                  }}
+                />
+              </div>
+            </div>
+          )}
+        </>
+      )}
       onDeleteSubmit={doDelete}
     />
   );

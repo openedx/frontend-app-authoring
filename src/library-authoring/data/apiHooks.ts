@@ -648,6 +648,13 @@ export const useAddComponentsToContainer = (containerId?: string) => {
       return undefined;
     },
     onSettled: () => {
+      if (!containerId) {
+        return;
+      }
+      // NOTE: We invalidate the library query here because we need to update the units list
+      // of the added components
+      const libraryId = getLibraryId(containerId);
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerChildren(containerId!) });
     },
   });

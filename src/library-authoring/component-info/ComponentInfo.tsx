@@ -31,6 +31,7 @@ import { getBlockType } from '../../generic/key-utils';
 import { useLibraryBlockMetadata, usePublishComponent } from '../data/apiHooks';
 import { ToastContext } from '../../generic/toast-context';
 import PublishConfirmationModal from '../components/PublishConfirmationModal';
+import { ContentHit, useContentSearchConnection, useContentSearchResults } from '../../search-manager';
 
 const AddComponentWidget = () => {
   const intl = useIntl();
@@ -146,6 +147,19 @@ const ComponentInfo = () => {
   const canPublish = (new Date(componentMetadata?.modified ?? 0)) > (new Date(componentMetadata?.lastPublished ?? 0));
   const { showToast } = React.useContext(ToastContext);
 
+  const { client, indexName } = useContentSearchConnection();
+  const {
+    hits: componentHit,
+  } = useContentSearchResults({
+    client,
+    indexName,
+    searchKeywords: '',
+    extraFilter: [`usage_key IN ["${usageKey}"]`],
+    limit: 1,
+    enabled: true,
+    skipBlockTypeFetch: true,
+  });
+
   const publish = React.useCallback(() => {
     closePublishConfirmation();
     publishComponent.mutateAsync()
@@ -189,7 +203,10 @@ const ComponentInfo = () => {
             >
               {intl.formatMessage(messages.publishComponentButtonTitle)}
             </Button>
-            <ComponentMenu usageKey={usageKey} />
+            <ComponentMenu
+              usageKey={usageKey}
+              unitsData={(componentHit as ContentHit[])?.[0]?.units}
+            />
           </div>
         )}
         <AddComponentWidget />
