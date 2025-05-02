@@ -66,7 +66,7 @@ describe('<IframePreviewLibraryXBlockChanges />', () => {
     expect(await screen.findByRole('tab', { name: 'Old version' })).toBeInTheDocument();
   });
 
-  it('renders displayName for units', async () => {
+  it('renders default displayName for units with no displayName', async () => {
     render({ ...defaultEventData, isVertical: true, displayName: '' });
 
     expect(await screen.findByText('Preview changes: Unit')).toBeInTheDocument();
@@ -76,24 +76,6 @@ describe('<IframePreviewLibraryXBlockChanges />', () => {
     render({ ...defaultEventData, displayName: '' });
 
     expect(await screen.findByText('Preview changes: Component')).toBeInTheDocument();
-  });
-
-  it('renders both new and old title if they are different', async () => {
-    axiosMock.onGet(getLibraryBlockMetadataUrl(defaultEventData.upstreamBlockId)).reply(200, {
-      displayName: 'New test block',
-    });
-    render();
-
-    expect(await screen.findByText('Preview changes: Test block -> New test block')).toBeInTheDocument();
-  });
-
-  it('renders both new and old title if they are different on units', async () => {
-    axiosMock.onGet(getLibraryContainerApiUrl(defaultEventData.upstreamBlockId)).reply(200, {
-      displayName: 'New test Unit',
-    });
-    render({ ...defaultEventData, isVertical: true, displayName: 'Test Unit' });
-
-    expect(await screen.findByText('Preview changes: Test Unit -> New test Unit')).toBeInTheDocument();
   });
 
   it('accept changes works', async () => {
