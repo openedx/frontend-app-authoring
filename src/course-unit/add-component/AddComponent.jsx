@@ -16,6 +16,7 @@ import { ComponentPicker } from '../../library-authoring/component-picker';
 import { messageTypes } from '../constants';
 import { useIframe } from '../../generic/hooks/context/hooks';
 import { useEventListener } from '../../generic/hooks';
+import VideoSelectorPage from '../../editors/VideoSelectorPage';
 import EditorPage from '../../editors/EditorPage';
 
 const AddComponent = ({
@@ -32,6 +33,7 @@ const AddComponent = ({
   const { componentTemplates = {} } = useSelector(getCourseSectionVertical);
   const blockId = addComponentTemplateData.parentLocator || parentLocator;
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
+  const [isVideoSelectorModalOpen, showVideoSelectorModal, closeVideoSelectorModal] = useToggle();
   const [isXBlockEditorModalOpen, showXBlockEditorModal, closeXBlockEditorModal] = useToggle();
 
   const [blockType, setBlockType] = useState(null);
@@ -61,8 +63,9 @@ const AddComponent = ({
 
   const onXBlockSave = useCallback(/* istanbul ignore next */ () => {
     closeXBlockEditorModal();
+    closeVideoSelectorModal();
     sendMessageToIframe(messageTypes.refreshXBlock, null);
-  }, [closeXBlockEditorModal, sendMessageToIframe]);
+  }, [closeXBlockEditorModal, closeVideoSelectorModal, sendMessageToIframe]);
 
   const handleLibraryV2Selection = useCallback((selection) => {
     handleCreateNewCourseXBlock({
@@ -80,13 +83,20 @@ const AddComponent = ({
       case COMPONENT_TYPES.dragAndDrop:
         handleCreateNewCourseXBlock({ type, parentLocator: blockId });
         break;
-      case COMPONENT_TYPES.video:
       case COMPONENT_TYPES.problem:
         handleCreateNewCourseXBlock({ type, parentLocator: blockId }, ({ courseKey, locator }) => {
           setCourseId(courseKey);
           setBlockType(type);
           setNewBlockId(locator);
           showXBlockEditorModal();
+        });
+        break;
+      case COMPONENT_TYPES.video:
+        handleCreateNewCourseXBlock({ type, parentLocator: blockId }, ({ courseKey, locator }) => {
+          setCourseId(courseKey);
+          setBlockType(type);
+          setNewBlockId(locator);
+          showVideoSelectorModal();
         });
         break;
         // TODO: The library functional will be a bit different of current legacy (CMS)
@@ -214,6 +224,24 @@ const AddComponent = ({
             onComponentSelected={handleLibraryV2Selection}
             onChangeComponentSelection={setSelectedComponents}
           />
+        </StandardModal>
+        <StandardModal
+          title={intl.formatMessage(messages.videoPickerModalTitle)}
+          isOpen={isVideoSelectorModalOpen}
+          onClose={closeVideoSelectorModal}
+          isOverflowVisible={false}
+          size="xl"
+        >
+          <div className="selector-page">
+            <VideoSelectorPage
+              blockId={newBlockId}
+              courseId={courseId}
+              studioEndpointUrl={getConfig().STUDIO_BASE_URL}
+              lmsEndpointUrl={getConfig().LMS_BASE_URL}
+              onCancel={closeVideoSelectorModal}
+              returnFunction={() => onXBlockSave}
+            />
+          </div>
         </StandardModal>
         <StandardModal
           title={intl.formatMessage(messages.blockEditorModalTitle)}

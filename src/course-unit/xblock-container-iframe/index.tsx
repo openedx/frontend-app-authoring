@@ -34,6 +34,7 @@ import messages from './messages';
 import { useIframeBehavior } from '../../generic/hooks/useIframeBehavior';
 import { useIframeContent } from '../../generic/hooks/useIframeContent';
 import { useIframeMessages } from '../../generic/hooks/useIframeMessages';
+import VideoSelectorPage from '../../editors/VideoSelectorPage';
 import EditorPage from '../../editors/EditorPage';
 
 const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
@@ -44,6 +45,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
 
   const [isDeleteModalOpen, openDeleteModal, closeDeleteModal] = useToggle(false);
   const [isConfigureModalOpen, openConfigureModal, closeConfigureModal] = useToggle(false);
+  const [isVideoSelectorModalOpen, showVideoSelectorModal, closeVideoSelectorModal] = useToggle();
   const [isXBlockEditorModalOpen, showXBlockEditorModal, closeXBlockEditorModal] = useToggle();
   const [blockType, setBlockType] = useState<string>('');
   const [newBlockId, setNewBlockId] = useState<string>('');
@@ -68,14 +70,19 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
 
   const onXBlockSave = useCallback(/* istanbul ignore next */ () => {
     closeXBlockEditorModal();
+    closeVideoSelectorModal();
     sendMessageToIframe(messageTypes.refreshXBlock, null);
-  }, [closeXBlockEditorModal, sendMessageToIframe]);
+  }, [closeXBlockEditorModal, closeVideoSelectorModal, sendMessageToIframe]);
 
   const handleEditXBlock = useCallback((type: string, id: string) => {
     setBlockType(type);
     setNewBlockId(id);
-    showXBlockEditorModal();
-  }, [showXBlockEditorModal]);
+    if (type === 'video') {
+      showVideoSelectorModal();
+    } else {
+      showXBlockEditorModal();
+    }
+  }, [showVideoSelectorModal, showXBlockEditorModal]);
 
   const handleDuplicateXBlock = useCallback(
     (usageId: string) => {
@@ -191,6 +198,24 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
         close={closeDeleteModal}
         onDeleteSubmit={onDeleteSubmit}
       />
+      <StandardModal
+        title={intl.formatMessage(messages.videoPickerModalTitle)}
+        isOpen={isVideoSelectorModalOpen}
+        onClose={closeVideoSelectorModal}
+        isOverflowVisible={false}
+        size="xl"
+      >
+        <div className="selector-page">
+          <VideoSelectorPage
+            blockId={newBlockId}
+            courseId={courseId}
+            studioEndpointUrl={getConfig().STUDIO_BASE_URL}
+            lmsEndpointUrl={getConfig().LMS_BASE_URL}
+            onCancel={closeVideoSelectorModal}
+            returnFunction={() => onXBlockSave}
+          />
+        </div>
+      </StandardModal>
       <StandardModal
         title={intl.formatMessage(messages.blockEditorModalTitle)}
         isOpen={isXBlockEditorModalOpen}
