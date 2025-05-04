@@ -232,8 +232,7 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
         onClick={(e: { detail: number; }) => handleComponentSelection(block, e.detail)}
         disabled={preview}
       >
-        {true && (
-        /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
+        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
         <div
           className={classNames('p-3', {
             'container-mw-md': block.blockType === blockTypes.video,
@@ -248,7 +247,6 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
             scrollIntoView={block.isNew}
           />
         </div>
-        )}
       </SortableItem>
     </IframeProvider>
   ));
