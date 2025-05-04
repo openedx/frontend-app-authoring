@@ -90,9 +90,8 @@ const HeaderActions = () => {
       closeLibrarySidebar();
     } else {
       openUnitInfoSidebar(unitId);
-      setComponentId(undefined);
     }
-    navigateTo({ unitId });
+    navigateTo({ unitId, componentId: '' });
   }, [unitId, infoSidebarIsOpen]);
 
   return (

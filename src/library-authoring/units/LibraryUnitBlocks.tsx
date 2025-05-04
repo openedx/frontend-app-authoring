@@ -132,7 +132,6 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
     showOnlyPublished,
     componentId,
     readOnly,
-    setComponentId,
     openComponentEditor,
   } = useLibraryContext();
 
@@ -180,7 +179,6 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
   };
 
   const handleComponentSelection = (block: LibraryBlockMetadata, numberOfClicks: number) => {
-    setComponentId(block.id);
     navigateTo({ componentId: block.id });
     const canEdit = canEditComponent(block.id);
     if (numberOfClicks > 1 && canEdit) {

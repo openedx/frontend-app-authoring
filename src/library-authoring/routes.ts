@@ -11,6 +11,7 @@ import {
   useSearchParams,
   type PathMatch,
 } from 'react-router-dom';
+import { useLibraryContext } from './common/context/LibraryContext';
 
 export const BASE_ROUTE = '/library/:libraryId';
 
@@ -66,6 +67,7 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
   const params = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { setComponentId, setUnitId, setCollectionId } = useLibraryContext();
 
   const insideCollection = matchPath(BASE_ROUTE + ROUTES.COLLECTION, pathname);
   const insideCollections = matchPath(BASE_ROUTE + ROUTES.COLLECTIONS, pathname);
@@ -98,6 +100,17 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       ...(contentType === ContentType.units && { unitId: urlUnitId || urlSelectedItemId }),
     };
     let route: string;
+
+    // Update componentId, unitId, collectionId in library context if passed.
+    if (componentId) {
+        setComponentId(componentId);
+    }
+    if (unitId) {
+        setUnitId(unitId);
+    }
+    if (collectionId) {
+        setCollectionId(collectionId);
+    }
 
     // Providing contentType overrides the current route so we can change tabs.
     if (contentType === ContentType.components) {
@@ -158,7 +171,15 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       pathname: newPath,
       search: searchParams.toString(),
     });
-  }, [navigate, params, searchParams, pathname]);
+  }, [
+    navigate,
+    params,
+    searchParams,
+    pathname,
+    setComponentId,
+    setUnitId,
+    setCollectionId,
+  ]);
 
   return {
     navigateTo,
