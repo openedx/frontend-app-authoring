@@ -1,5 +1,4 @@
 import { PluginSlot } from '@openedx/frontend-plugin-framework/dist';
-import React from 'react';
 
 export const AdditionalCoursePluginSlot = () => (
   <PluginSlot
