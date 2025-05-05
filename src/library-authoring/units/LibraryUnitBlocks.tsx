@@ -3,10 +3,8 @@ import {
   ActionRow, Badge, Button, Icon, Stack, useToggle,
 } from '@openedx/paragon';
 import { Add, Description } from '@openedx/paragon/icons';
-import { useQueryClient } from '@tanstack/react-query';
 import classNames from 'classnames';
-import { useCallback, useContext, useEffect, useState } from 'react';
-import { ContentTagsDrawerSheet } from '../../content-tags-drawer';
+import { useContext, useEffect, useState } from 'react';
 import { blockTypes } from '../../editors/data/constants/app';
 import DraggableList, { SortableItem } from '../../generic/DraggableList';
 
@@ -22,7 +20,6 @@ import { PickLibraryContentModal } from '../add-content';
 import ComponentMenu from '../components';
 import { LibraryBlockMetadata } from '../data/api';
 import {
-  libraryAuthoringQueryKeys,
   useContainerChildren,
   useUpdateContainerChildren,
   useUpdateXBlockFields,
@@ -30,9 +27,10 @@ import {
 import { LibraryBlock } from '../LibraryBlock';
 import { useLibraryRoutes, ContentType } from '../routes';
 import messages from './messages';
-import { useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
 import { ToastContext } from '../../generic/toast-context';
 import { canEditComponent } from '../components/ComponentEditorModal';
+import { useRunOnNextRender } from '../../utils';
 
 /** Components that need large min height in preview */
 const LARGE_COMPONENTS = [
@@ -45,13 +43,14 @@ const LARGE_COMPONENTS = [
 
 interface BlockHeaderProps {
   block: LibraryBlockMetadata;
-  onTagClick: () => void;
 }
 
 /** Component header, split out to reuse in drag overlay */
-const BlockHeader = ({ block, onTagClick }: BlockHeaderProps) => {
+const BlockHeader = ({ block }: BlockHeaderProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
+  const { navigateTo } = useLibraryRoutes();
+  const { openComponentInfoSidebar, setSidebarAction } = useSidebarContext();
 
   const updateMutation = useUpdateXBlockFields(block.id);
 
@@ -66,6 +65,18 @@ const BlockHeader = ({ block, onTagClick }: BlockHeaderProps) => {
       showToast(intl.formatMessage(messages.updateComponentErrorMsg));
     });
   };
+
+  const scheduleJumpToTags = useRunOnNextRender(() => {
+    // TODO: Ugly hack to make sure sidebar shows manage tags section
+    // This needs to run after all changes to url takes place to avoid conflicts.
+    setTimeout(() => setSidebarAction(SidebarActions.JumpToManageTags));
+  });
+
+  const jumpToManageTags = () => {
+    navigateTo({ componentId: block.id });
+    openComponentInfoSidebar(block.id);
+    scheduleJumpToTags();
+  }
 
   return (
     <>
@@ -102,7 +113,7 @@ const BlockHeader = ({ block, onTagClick }: BlockHeaderProps) => {
             </Stack>
           </Badge>
         )}
-        <TagCount size="sm" count={block.tagsCount} onClick={onTagClick} />
+        <TagCount size="sm" count={block.tagsCount} onClick={jumpToManageTags} />
         <ComponentMenu usageKey={block.id} />
       </Stack>
     </>
@@ -119,7 +130,6 @@ interface LibraryUnitBlocksProps {
 export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
   const intl = useIntl();
   const [orderedBlocks, setOrderedBlocks] = useState<LibraryBlockMetadata[]>([]);
-  const [isManageTagsDrawerOpen, openManageTagsDrawer, closeManageTagsDrawer] = useToggle(false);
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
 
   const [hidePreviewFor, setHidePreviewFor] = useState<string | null>(null);
@@ -140,7 +150,6 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
     openInfoSidebar,
   } = useSidebarContext();
 
-  const queryClient = useQueryClient();
   const orderMutator = useUpdateContainerChildren(unitId);
   const {
     data: blocks,
@@ -171,11 +180,6 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
     } catch (e) {
       showToast(intl.formatMessage(messages.failedOrderUpdatedMsg));
     }
-  };
-
-  const onTagSidebarClose = () => {
-    queryClient.invalidateQueries(libraryAuthoringQueryKeys.containerChildren(unitId!));
-    closeManageTagsDrawer();
   };
 
   const handleComponentSelection = (block: LibraryBlockMetadata, numberOfClicks: number) => {
@@ -219,7 +223,7 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
       <SortableItem
         id={block.id}
         componentStyle={getComponentStyle(block)}
-        actions={<BlockHeader block={block} onTagClick={openManageTagsDrawer} />}
+        actions={<BlockHeader block={block} />}
         actionStyle={{
           borderRadius: '8px 8px 0px 0px',
           padding: '0.5rem 1rem',
@@ -294,11 +298,6 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
           </div>
         </div>
       )}
-      <ContentTagsDrawerSheet
-        id={componentId}
-        onClose={onTagSidebarClose}
-        showSheet={isManageTagsDrawerOpen}
-      />
     </div>
   );
 };

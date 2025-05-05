@@ -84,7 +84,7 @@ const UnitInfo = () => {
     sidebarAction,
     resetSidebarAction,
   } = useSidebarContext();
-  const jumpToCollections = sidebarAction === SidebarActions.JumpToAddCollections;
+  const jumpToCollections = sidebarAction === SidebarActions.JumpToManageCollections;
   const { insideUnit } = useLibraryRoutes();
 
   const tab: UnitInfoTab = (

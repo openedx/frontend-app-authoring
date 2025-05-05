@@ -118,7 +118,8 @@ const ComponentInfo = () => {
     closePublishConfirmation,
   ] = useToggle(false);
 
-  const jumpToCollections = sidebarAction === SidebarActions.JumpToAddCollections;
+  const jumpToCollections = sidebarAction === SidebarActions.JumpToManageCollections;
+  const jumpToTags = sidebarAction === SidebarActions.JumpToManageTags;
 
   const tab: ComponentInfoTab = (
     isComponentInfoTab(sidebarTab)
@@ -127,8 +128,8 @@ const ComponentInfo = () => {
   );
 
   useEffect(() => {
-    // Show Manage tab if JumpToAddCollections action is set in sidebarComponentInfo
-    if (jumpToCollections) {
+    // Show Manage tab if JumpToManageCollections or JumpToManageTags action is set
+    if (jumpToCollections || jumpToTags) {
       setSidebarTab(COMPONENT_INFO_TABS.Manage);
     }
   }, [jumpToCollections, setSidebarTab]);

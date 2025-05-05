@@ -14,6 +14,7 @@ import ContentTagsCollapsible from './ContentTagsCollapsible';
 import Loading from '../generic/Loading';
 import { useCreateContentTagsDrawerContext } from './ContentTagsDrawerHelper';
 import { ContentTagsDrawerContext, ContentTagsDrawerSheetContext } from './common/context';
+import { SidebarActions, useSidebarContext } from '../library-authoring/common/context/SidebarContext';
 
 interface TaxonomyListProps {
   contentId: string;
@@ -244,6 +245,7 @@ const ContentTagsDrawer = ({
   if (contentId === undefined) {
     throw new Error('Error: contentId cannot be null.');
   }
+  const { sidebarAction } = useSidebarContext();
 
   const context = useCreateContentTagsDrawerContext(contentId, !readOnly, variant === 'drawer');
   const { blockingSheet } = useContext(ContentTagsDrawerSheetContext);
@@ -260,6 +262,7 @@ const ContentTagsDrawer = ({
     closeToast,
     setCollapsibleToInitalState,
     otherTaxonomies,
+    toEditMode,
   } = context;
 
   let onCloseDrawer: () => void;
@@ -273,6 +276,13 @@ const ContentTagsDrawer = ({
       onCloseDrawer = onClose;
     }
   }
+
+  // Open tag edit mode when sidebarAction is JumpToManageTags
+  useEffect(() => {
+    if (sidebarAction === SidebarActions.JumpToManageTags) {
+      toEditMode();
+    }
+  }, [sidebarAction, toEditMode]);
 
   useEffect(() => {
     if (variant === 'drawer') {

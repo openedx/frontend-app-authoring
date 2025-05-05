@@ -93,7 +93,7 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   const scheduleJumpToCollection = useRunOnNextRender(() => {
     // TODO: Ugly hack to make sure sidebar shows add to collection section
     // This needs to run after all changes to url takes place to avoid conflicts.
-    setTimeout(() => setSidebarAction(SidebarActions.JumpToAddCollections));
+    setTimeout(() => setSidebarAction(SidebarActions.JumpToManageCollections));
   });
 
   const showManageCollections = useCallback(() => {

@@ -28,7 +28,7 @@ const ContainerOrganize = () => {
 
   const { readOnly } = useLibraryContext();
   const { sidebarComponentInfo, sidebarAction } = useSidebarContext();
-  const jumpToCollections = sidebarAction === SidebarActions.JumpToAddCollections;
+  const jumpToCollections = sidebarAction === SidebarActions.JumpToManageCollections;
 
   const containerId = sidebarComponentInfo?.id;
   // istanbul ignore if: this should never happen
