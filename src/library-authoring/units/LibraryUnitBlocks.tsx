@@ -4,7 +4,7 @@ import {
 } from '@openedx/paragon';
 import { Add, Description } from '@openedx/paragon/icons';
 import classNames from 'classnames';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { blockTypes } from '../../editors/data/constants/app';
 import DraggableList, { SortableItem } from '../../generic/DraggableList';
 
@@ -41,12 +41,14 @@ const LARGE_COMPONENTS = [
   'lti_consumer',
 ];
 
-interface BlockHeaderProps {
+interface ComponentBlockProps {
   block: LibraryBlockMetadata;
+  preview?: boolean;
+  isDragging?: boolean;
 }
 
-/** Component header, split out to reuse in drag overlay */
-const BlockHeader = ({ block }: BlockHeaderProps) => {
+/** Component header */
+const BlockHeader = ({ block }: ComponentBlockProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const { navigateTo } = useLibraryRoutes();
@@ -120,69 +122,16 @@ const BlockHeader = ({ block }: BlockHeaderProps) => {
   );
 };
 
-interface LibraryUnitBlocksProps {
-  /** set to true if it is rendered as preview
-  * This disables drag and drop
-  */
-  preview?: boolean;
-}
-
-export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
-  const intl = useIntl();
-  const [orderedBlocks, setOrderedBlocks] = useState<LibraryBlockMetadata[]>([]);
-  const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
-
-  const [hidePreviewFor, setHidePreviewFor] = useState<string | null>(null);
+/** ComponentBlock to render preview of given component under Unit */
+const ComponentBlock = ({ block, preview, isDragging }: ComponentBlockProps) => {
+  const { showOnlyPublished } = useLibraryContext();
   const { navigateTo } = useLibraryRoutes();
-  const { showToast } = useContext(ToastContext);
 
-  const {
-    unitId,
-    collectionId,
-    showOnlyPublished,
-    componentId,
-    readOnly,
-    openComponentEditor,
-  } = useLibraryContext();
+  const { unitId, collectionId, componentId, openComponentEditor } = useLibraryContext();
 
-  const {
-    openAddContentSidebar,
-    openInfoSidebar,
-  } = useSidebarContext();
+  const { openInfoSidebar } = useSidebarContext();
 
-  const orderMutator = useUpdateContainerChildren(unitId);
-  const {
-    data: blocks,
-    isLoading,
-    isError,
-    error,
-  } = useContainerChildren(unitId);
-
-  useEffect(() => setOrderedBlocks(blocks || []), [blocks]);
-
-  if (isLoading) {
-    return <Loading />;
-  }
-
-  if (isError) {
-    // istanbul ignore next
-    return <ErrorAlert error={error} />;
-  }
-
-  const handleReorder = () => async (newOrder?: LibraryBlockMetadata[]) => {
-    if (!newOrder) {
-      return;
-    }
-    const usageKeys = newOrder.map((o) => o.id);
-    try {
-      await orderMutator.mutateAsync(usageKeys);
-      showToast(intl.formatMessage(messages.orderUpdatedMsg));
-    } catch (e) {
-      showToast(intl.formatMessage(messages.failedOrderUpdatedMsg));
-    }
-  };
-
-  const handleComponentSelection = (block: LibraryBlockMetadata, numberOfClicks: number) => {
+  const handleComponentSelection = useCallback((numberOfClicks: number) => {
     navigateTo({ componentId: block.id });
     const canEdit = canEditComponent(block.id);
     if (numberOfClicks > 1 && canEdit) {
@@ -192,18 +141,24 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
       // open current component sidebar
       openInfoSidebar(block.id, collectionId, unitId)
     }
-  };
+  }, [block, collectionId, unitId, navigateTo, canEditComponent, openComponentEditor, openInfoSidebar]);
+
+  useEffect(() => {
+    if (block.isNew) {
+      handleComponentSelection(1);
+    }
+  }, [block]);
 
   /* istanbul ignore next */
-  const calculateMinHeight = (block: LibraryBlockMetadata) => {
+  const calculateMinHeight = () => {
     if (LARGE_COMPONENTS.includes(block.blockType)) {
       return '700px';
     }
     return '200px';
   };
 
-  const getComponentStyle = (block: LibraryBlockMetadata) => {
-    if (hidePreviewFor === block.id) {
+  const getComponentStyle = useCallback(() => {
+    if (isDragging) {
       return {
         outline: '2px dashed gray',
         maxHeight: '200px',
@@ -214,15 +169,13 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
         outline: '2px solid black',
       }
     }
-  };
+  }, [isDragging, componentId, block]);
 
-  const renderedBlocks = orderedBlocks?.map((block, idx) => (
-    // A container can have multiple instances of the same block
-    // eslint-disable-next-line react/no-array-index-key
-    <IframeProvider key={`${block.id}-${idx}-${block.modified}`}>
+  return (
+    <IframeProvider>
       <SortableItem
         id={block.id}
-        componentStyle={getComponentStyle(block)}
+        componentStyle={getComponentStyle()}
         actions={<BlockHeader block={block} />}
         actionStyle={{
           borderRadius: '8px 8px 0px 0px',
@@ -231,7 +184,7 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
           borderBottom: 'solid 1px #E1DDDB',
         }}
         isClickable
-        onClick={(e: { detail: number; }) => handleComponentSelection(block, e.detail)}
+        onClick={(e: { detail: number; }) => handleComponentSelection(e.detail)}
         disabled={preview}
       >
         {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
@@ -245,13 +198,65 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
           <LibraryBlock
             usageKey={block.id}
             version={showOnlyPublished ? 'published' : undefined}
-            minHeight={calculateMinHeight(block)}
+            minHeight={calculateMinHeight()}
             scrollIntoView={block.isNew}
           />
         </div>
       </SortableItem>
     </IframeProvider>
-  ));
+  );
+}
+
+interface LibraryUnitBlocksProps {
+  /** set to true if it is rendered as preview
+  * This disables drag and drop
+  */
+  preview?: boolean;
+}
+
+export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
+  const intl = useIntl();
+  const [orderedBlocks, setOrderedBlocks] = useState<LibraryBlockMetadata[]>([]);
+  const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
+
+  const [hidePreviewFor, setHidePreviewFor] = useState<string | null>(null);
+  const { showToast } = useContext(ToastContext);
+
+  const { unitId, readOnly } = useLibraryContext();
+
+  const { openAddContentSidebar } = useSidebarContext();
+
+  const orderMutator = useUpdateContainerChildren(unitId);
+  const {
+    data: blocks,
+    isLoading,
+    isError,
+    error,
+  } = useContainerChildren(unitId);
+
+  const handleReorder = useCallback(() => async (newOrder?: LibraryBlockMetadata[]) => {
+    if (!newOrder) {
+      return;
+    }
+    const usageKeys = newOrder.map((o) => o.id);
+    try {
+      await orderMutator.mutateAsync(usageKeys);
+      showToast(intl.formatMessage(messages.orderUpdatedMsg));
+    } catch (e) {
+      showToast(intl.formatMessage(messages.failedOrderUpdatedMsg));
+    }
+  }, [orderMutator]);
+
+  useEffect(() => setOrderedBlocks(blocks || []), [blocks]);
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (isError) {
+    // istanbul ignore next
+    return <ErrorAlert error={error} />;
+  }
 
   return (
     <div className="library-unit-page">
@@ -262,7 +267,15 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
         activeId={hidePreviewFor}
         setActiveId={setHidePreviewFor}
       >
-        {renderedBlocks}
+        {orderedBlocks?.map((block, idx) => (
+          // A container can have multiple instances of the same block
+          // eslint-disable-next-line react/no-array-index-key
+          <ComponentBlock
+            key={`${block.id}-${idx}-${block.modified}`}
+            block={block}
+            isDragging={hidePreviewFor === block.id}
+          />
+        ))}
       </DraggableList>
       {!preview && (
         <div className="d-flex">

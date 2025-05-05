@@ -68,7 +68,7 @@ const EditableTitle = ({ unitId }: EditableTitleProps) => {
 const HeaderActions = () => {
   const intl = useIntl();
 
-  const { unitId, readOnly, setComponentId } = useLibraryContext();
+  const { unitId, readOnly } = useLibraryContext();
   const {
     openAddContentSidebar,
     closeLibrarySidebar,
@@ -125,7 +125,6 @@ export const LibraryUnitPage = () => {
     unitId,
     componentId,
     collectionId,
-    setComponentId,
   } = useLibraryContext();
   const {
     openInfoSidebar,
@@ -133,6 +132,7 @@ export const LibraryUnitPage = () => {
     setDefaultTab,
     setHiddenTabs,
   } = useSidebarContext();
+  const { navigateTo } = useLibraryRoutes();
 
   // Open unit or component sidebar on mount
   useEffect(() => {
@@ -237,7 +237,7 @@ export const LibraryUnitPage = () => {
           className="library-authoring-sidebar box-shadow-left-1 bg-white"
           data-testid="library-sidebar"
         >
-          <LibrarySidebar onSidebarClose={() => setComponentId(undefined)} />
+          <LibrarySidebar onSidebarClose={() => navigateTo({ componentId: '' })} />
         </div>
       )}
     </div>

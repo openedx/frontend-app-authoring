@@ -101,14 +101,15 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     };
     let route: string;
 
-    // Update componentId, unitId, collectionId in library context if passed.
-    if (componentId) {
+    // Update componentId, unitId, collectionId in library context if is not undefined.
+    // Ids can be cleared from route by passing in empty string so we need to set it.
+    if (componentId !== undefined) {
         setComponentId(componentId);
     }
-    if (unitId) {
+    if (unitId !== undefined) {
         setUnitId(unitId);
     }
-    if (collectionId) {
+    if (collectionId !== undefined) {
         setCollectionId(collectionId);
     }
 
