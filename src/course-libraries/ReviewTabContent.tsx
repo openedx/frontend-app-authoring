@@ -1,5 +1,5 @@
 import React, {
-  useCallback, useContext, useEffect, useMemo, useState,
+  useCallback, useContext, useMemo, useState,
 } from 'react';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
@@ -99,10 +99,8 @@ const BlockCard: React.FC<BlockCardProps> = ({ info, actions }) => {
 
 const ComponentReviewList = ({
   outOfSyncComponents,
-  onSearchUpdate,
 }: {
   outOfSyncComponents: PublishableEntityLink[];
-  onSearchUpdate: () => void;
 }) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
@@ -112,12 +110,18 @@ const ComponentReviewList = ({
   const {
     hits,
     isLoading: isIndexDataLoading,
-    searchKeywords,
     hasError,
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
   } = useSearchContext();
+
+  useLoadOnScroll(
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    true,
+  );
 
   const downstreamInfo = hits as ContentHit[];
 
@@ -133,13 +137,6 @@ const ComponentReviewList = ({
     [outOfSyncComponents],
   );
   const queryClient = useQueryClient();
-
-  useEffect(() => {
-    // FIXME: Do we need this?
-    if (searchKeywords) {
-      onSearchUpdate();
-    }
-  }, [searchKeywords]);
 
   // Toggle preview changes modal
   const [isModalOpen, openModal, closeModal] = useToggle(false);
@@ -291,36 +288,16 @@ const ComponentReviewList = ({
 const ReviewTabContent = ({ courseId }: Props) => {
   const intl = useIntl();
   const {
-    data: linkPages,
+    data: outOfSyncComponents,
     isLoading: isSyncComponentsLoading,
-    hasNextPage,
-    isFetchingNextPage,
-    fetchNextPage,
     isError,
     error,
   } = useEntityLinks({ courseId, readyToSync: true });
 
-  const outOfSyncComponents = useMemo(
-    () => linkPages?.pages?.reduce((links, page) => [...links, ...page.results], []) ?? [],
-    [linkPages],
-  );
   const downstreamKeys = useMemo(
     () => outOfSyncComponents?.map(link => link.downstreamUsageKey),
     [outOfSyncComponents],
   );
-
-  useLoadOnScroll(
-    hasNextPage,
-    isFetchingNextPage,
-    fetchNextPage,
-    true,
-  );
-
-  const onSearchUpdate = () => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  };
 
   const disableSortOptions = [
     SearchSortOption.RELEVANCE,
@@ -352,7 +329,6 @@ const ReviewTabContent = ({ courseId }: Props) => {
       </ActionRow>
       <ComponentReviewList
         outOfSyncComponents={outOfSyncComponents}
-        onSearchUpdate={onSearchUpdate}
       />
     </SearchContextProvider>
   );

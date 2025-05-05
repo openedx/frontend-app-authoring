@@ -160,7 +160,7 @@ describe('<CourseLibraries ReviewTab />', () => {
 
   it('update changes works', async () => {
     const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
-    const usageKey = mockGetEntityLinks.response.results[0].downstreamUsageKey;
+    const usageKey = mockGetEntityLinks.response[0].downstreamUsageKey;
     axiosMock.onPost(libraryBlockChangesUrl(usageKey)).reply(200, {});
     await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
     const updateBtns = await screen.findAllByRole('button', { name: 'Update' });
@@ -176,7 +176,7 @@ describe('<CourseLibraries ReviewTab />', () => {
 
   it('update changes works in preview modal', async () => {
     const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
-    const usageKey = mockGetEntityLinks.response.results[0].downstreamUsageKey;
+    const usageKey = mockGetEntityLinks.response[0].downstreamUsageKey;
     axiosMock.onPost(libraryBlockChangesUrl(usageKey)).reply(200, {});
     await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
     const previewBtns = await screen.findAllByRole('button', { name: 'Review Updates' });
@@ -195,7 +195,7 @@ describe('<CourseLibraries ReviewTab />', () => {
 
   it('ignore change works', async () => {
     const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
-    const usageKey = mockGetEntityLinks.response.results[0].downstreamUsageKey;
+    const usageKey = mockGetEntityLinks.response[0].downstreamUsageKey;
     axiosMock.onDelete(libraryBlockChangesUrl(usageKey)).reply(204, {});
     await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
     const ignoreBtns = await screen.findAllByRole('button', { name: 'Ignore' });
@@ -218,7 +218,7 @@ describe('<CourseLibraries ReviewTab />', () => {
 
   it('ignore change works in preview', async () => {
     const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
-    const usageKey = mockGetEntityLinks.response.results[0].downstreamUsageKey;
+    const usageKey = mockGetEntityLinks.response[0].downstreamUsageKey;
     axiosMock.onDelete(libraryBlockChangesUrl(usageKey)).reply(204, {});
     await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
     const previewBtns = await screen.findAllByRole('button', { name: 'Review Updates' });

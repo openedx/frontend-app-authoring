@@ -45,26 +45,6 @@ export const getEntityLinks = async (
   downstreamContextKey?: string,
   readyToSync?: boolean,
   upstreamUsageKey?: string,
-  pageParam?: number,
-  pageSize?: number,
-): Promise<PaginatedData<PublishableEntityLink[]>> => {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(getEntityLinksByDownstreamContextUrl(), {
-      params: {
-        course_id: downstreamContextKey,
-        ready_to_sync: readyToSync,
-        upstream_usage_key: upstreamUsageKey,
-        page_size: pageSize,
-        page: pageParam,
-      },
-    });
-  return camelCaseObject(data);
-};
-
-export const getUnpaginatedEntityLinks = async (
-  downstreamContextKey?: string,
-  readyToSync?: boolean,
-  upstreamUsageKey?: string,
 ): Promise<PublishableEntityLink[]> => {
   const { data } = await getAuthenticatedHttpClient()
     .get(getEntityLinksByDownstreamContextUrl(), {
