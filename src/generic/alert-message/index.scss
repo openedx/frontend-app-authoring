@@ -1,0 +1,6 @@
+// TODO: remove this after upstream fix merging: https://github.com/openedx/paragon/pull/3562
+.alert {
+  .alert-message-content {
+    align-self: baseline;
+  }
+}
