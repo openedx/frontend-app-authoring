@@ -106,11 +106,11 @@ const BlockHeader = ({ block }: ComponentBlockProps) => {
       >
         {block.hasUnpublishedChanges && (
           <Badge
-            className="px-2 pt-1"
+            className="px-2 py-1"
             variant="warning"
           >
             <Stack direction="horizontal" gap={1}>
-              <Icon className="mb-1" size="xs" src={Description} />
+              <Icon size="xs" src={Description} />
               <FormattedMessage {...messages.draftChipText} />
             </Stack>
           </Badge>
