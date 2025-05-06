@@ -7,24 +7,15 @@ const messages = defineMessages({
   },
   headingTitle: {
     id: 'course-authoring.course-optimizer.heading.title',
-    defaultMessage: 'Course Optimizer',
+    defaultMessage: 'Course optimizer',
   },
   headingSubtitle: {
     id: 'course-authoring.course-optimizer.heading.subtitle',
     defaultMessage: 'Tools',
   },
-  description1: {
-    id: 'course-authoring.course-optimizer.description1',
-    defaultMessage: `This tool will scan the published version of your course for broken links.
-    Unpublished changes will not be included in the scan.
-    Note that this process will take more time for larger courses.
-    To update the scan after you have published new changes to your course,
-    click the "Start Scanning" button again.
-    `,
-  },
-  description2: {
-    id: 'course-authoring.course-optimizer.description2',
-    defaultMessage: 'Broken links are links pointing to external websites, images, or videos that do not exist or are no longer available. These links can cause issues for learners when they try to access the content.',
+  description: {
+    id: 'course-authoring.course-optimizer.description',
+    defaultMessage: 'This tool will scan your course for broken links, and any links that point to pages in your previous course run. Unpublished changes will not be included in the scan. Note that this process will take more time for larger courses.',
   },
   card1Title: {
     id: 'course-authoring.course-optimizer.card1.title',
@@ -36,7 +27,7 @@ const messages = defineMessages({
   },
   buttonTitle: {
     id: 'course-authoring.course-optimizer.button.title',
-    defaultMessage: 'Start Scanning',
+    defaultMessage: 'Start scanning',
   },
   preparingStepTitle: {
     id: 'course-authoring.course-optimizer.peparing-step.title',
