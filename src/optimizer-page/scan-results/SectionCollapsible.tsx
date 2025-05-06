@@ -6,38 +6,57 @@ import {
 import {
   ArrowRight,
   ArrowDropDown,
+  LinkOff,
 } from '@openedx/paragon/icons';
+import CustomIcon from './CustomIcon';
+import messages from './messages';
+import lockedIcon from './lockedIcon';
+import ManualIcon from './manualIcon';
 
 interface Props {
   title: string;
   children: React.ReactNode;
-  redItalics?: string;
-  yellowItalics?: string;
-  greenItalics?: string;
+  brokenNumber: number;
+  manualNumber: number;
+  lockedNumber: number;
   className?: string;
 }
 
 const SectionCollapsible: FC<Props> = ({
-  title, children, redItalics = '', yellowItalics = '', greenItalics = '', className = '',
+  title, children, brokenNumber = 0, manualNumber = 0, lockedNumber = 0, className = '',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const styling = 'card-lg';
+  const styling = 'card-lg rounded-sm shadow-outline';
   const collapsibleTitle = (
     <div className={className}>
-      <Icon src={isOpen ? ArrowDropDown : ArrowRight} className="open-arrow" />
-      <strong>{title}</strong>
-      <span className="red-italics">{redItalics}</span>
-      <span className="yellow-italics">{yellowItalics}</span>
-      <span className="green-italics">{greenItalics}</span>
+      <div className="section-collapsible-header-item">
+        <Icon src={isOpen ? ArrowDropDown : ArrowRight} />
+        <strong>{title}</strong>
+      </div>
+      <div className="section-collapsible-header-actions">
+        <span>
+          <CustomIcon icon={LinkOff} message1={messages.brokenLabel} message2={messages.brokenInfoTooltip} />
+          {brokenNumber}
+        </span>
+        <span>
+          <CustomIcon icon={ManualIcon} message1={messages.manualLabel} message2={messages.manualInfoTooltip} />
+          {manualNumber}
+        </span>
+        <span>
+          <CustomIcon icon={lockedIcon} message1={messages.lockedLabel} message2={messages.lockedInfoTooltip} />
+          {lockedNumber}
+        </span>
+      </div>
     </div>
   );
 
   return (
     <div className={`section ${isOpen ? 'is-open' : ''}`}>
       <Collapsible
+        className="section-collapsible-item-container"
         styling={styling}
         title={(
-          <p>
+          <p className="flex-grow-1 section-collapsible-item">
             <strong>{collapsibleTitle}</strong>
           </p>
         )}
