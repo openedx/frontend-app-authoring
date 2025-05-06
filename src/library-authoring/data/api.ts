@@ -602,6 +602,8 @@ export interface Container {
   lastDraftCreated: string | null;
   lastDraftCreatedBy: string | null,
   hasUnpublishedChanges: boolean;
+  hideFromLearners: boolean;
+  enableDiscussion: boolean;
   created: string;
   modified: string;
   collections: CollectionMetadata[];
@@ -615,8 +617,15 @@ export async function getContainerMetadata(containerId: string): Promise<Contain
   return camelCaseObject(data);
 }
 
+export interface UpdateUnitMetadata {
+  hideFromLearners?: boolean;
+  enableDiscussion?: boolean;
+}
+
 export interface UpdateContainerDataRequest {
-  displayName: string;
+  displayName?: string;
+  // Add other container metadata types when they are implemented
+  metadata?: UpdateUnitMetadata | null;
 }
 
 /**
@@ -627,7 +636,10 @@ export async function updateContainerMetadata(
   containerData: UpdateContainerDataRequest,
 ) {
   const client = getAuthenticatedHttpClient();
-  await client.patch(getLibraryContainerApiUrl(containerId), snakeCaseObject(containerData));
+  await client.patch(getLibraryContainerApiUrl(containerId), snakeCaseObject({
+    displayName: containerData.displayName,
+    ...containerData.metadata ?? {},
+  }));
 }
 
 /**
