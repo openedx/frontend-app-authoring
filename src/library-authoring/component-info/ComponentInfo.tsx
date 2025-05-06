@@ -28,10 +28,10 @@ import ComponentManagement from './ComponentManagement';
 import ComponentPreview from './ComponentPreview';
 import messages from './messages';
 import { getBlockType } from '../../generic/key-utils';
-import { useLibraryBlockMetadata, usePublishComponent } from '../data/apiHooks';
+import { useComponentsFromSearchIndex, useLibraryBlockMetadata, usePublishComponent } from '../data/apiHooks';
 import { ToastContext } from '../../generic/toast-context';
 import PublishConfirmationModal from '../components/PublishConfirmationModal';
-import { ContentHit, useContentSearchConnection, useContentSearchResults } from '../../search-manager';
+import { type ContentHit } from '../../search-manager';
 
 const AddComponentWidget = () => {
   const intl = useIntl();
@@ -147,18 +147,7 @@ const ComponentInfo = () => {
   const canPublish = (new Date(componentMetadata?.modified ?? 0)) > (new Date(componentMetadata?.lastPublished ?? 0));
   const { showToast } = React.useContext(ToastContext);
 
-  const { client, indexName } = useContentSearchConnection();
-  const {
-    hits: componentHit,
-  } = useContentSearchResults({
-    client,
-    indexName,
-    searchKeywords: '',
-    extraFilter: [`usage_key IN ["${usageKey}"]`],
-    limit: 1,
-    enabled: true,
-    skipBlockTypeFetch: true,
-  });
+  const { hits: componentHit } = useComponentsFromSearchIndex([usageKey]);
 
   const publish = React.useCallback(() => {
     closePublishConfirmation();

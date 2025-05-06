@@ -11,6 +11,7 @@ import { useCallback } from 'react';
 import { getLibraryId } from '../../generic/key-utils';
 import * as api from './api';
 import { VersionSpec } from '../LibraryBlock';
+import { useContentSearchConnection, useContentSearchResults } from '../../search-manager';
 
 export const libraryQueryPredicate = (query: Query, libraryId: string): boolean => {
   // Invalidate all content queries related to this library.
@@ -742,5 +743,21 @@ export const usePublishContainer = (containerId: string) => {
       // For XBlocks, the only thing we need to invalidate is the metadata which includes "has unpublished changes"
       queryClient.invalidateQueries({ predicate: xblockQueryKeys.allComponentMetadata });
     },
+  });
+};
+
+/**
+ * Use this mutations to get a list of components from the search index
+ */
+export const useComponentsFromSearchIndex = (componentIds: string[]) => {
+  const { client, indexName } = useContentSearchConnection();
+  return useContentSearchResults({
+    client,
+    indexName,
+    searchKeywords: '',
+    extraFilter: [`usage_key IN ["${componentIds.join('","')}"]`],
+    limit: componentIds.length,
+    enabled: !!componentIds.length,
+    skipBlockTypeFetch: true,
   });
 };

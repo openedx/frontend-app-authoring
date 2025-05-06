@@ -28,6 +28,7 @@ import ComponentMenu from '../components';
 import { LibraryBlockMetadata } from '../data/api';
 import {
   libraryAuthoringQueryKeys,
+  useComponentsFromSearchIndex,
   useContainerChildren,
   useUpdateContainerChildren,
   useUpdateXBlockFields,
@@ -38,7 +39,7 @@ import messages from './messages';
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { ToastContext } from '../../generic/toast-context';
 import { canEditComponent } from '../components/ComponentEditorModal';
-import { ContentHit, useContentSearchConnection, useContentSearchResults } from '../../search-manager';
+import { type ContentHit } from '../../search-manager';
 
 /** Components that need large min height in preview */
 const LARGE_COMPONENTS = [
@@ -146,18 +147,7 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
 
   const blockIds = useMemo(() => orderedBlocks.map((block) => block.id), [orderedBlocks]);
 
-  const { client, indexName } = useContentSearchConnection();
-  const {
-    hits: blockHits,
-  } = useContentSearchResults({
-    client,
-    indexName,
-    searchKeywords: '',
-    extraFilter: [`usage_key IN ["${blockIds.join('","')}"]`],
-    limit: blockIds.length,
-    enabled: !!blockIds.length,
-    skipBlockTypeFetch: true,
-  });
+  const { hits: blockHits } = useComponentsFromSearchIndex(blockIds);
 
   if (isLoading) {
     return <Loading />;
