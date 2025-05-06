@@ -7,6 +7,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useParams } from 'react-router';
 import {
   getTaxonomyTagsData,
   getContentTaxonomyTagsData,
@@ -16,7 +17,6 @@ import {
 } from './api';
 import { libraryAuthoringQueryKeys, libraryQueryPredicate, xblockQueryKeys } from '../../library-authoring/data/apiHooks';
 import { getLibraryId } from '../../generic/key-utils';
-import { useParams } from 'react-router';
 
 /** @typedef {import("../../taxonomy/data/types.js").TagListData} TagListData */
 /** @typedef {import("../../taxonomy/data/types.js").TagData} TagData */
@@ -161,7 +161,9 @@ export const useContentTaxonomyTagsUpdater = (contentId) => {
         // Invalidate content search to update tags count
         queryClient.invalidateQueries(['content_search'], { predicate: (query) => libraryQueryPredicate(query, libraryId) });
         // If the tags for a compoent were edited from Unit page, invalidate children query to fetch count again.
-        unitId && queryClient.invalidateQueries(libraryAuthoringQueryKeys.containerChildren(unitId));
+        if (unitId) {
+          queryClient.invalidateQueries(libraryAuthoringQueryKeys.containerChildren(unitId));
+        }
       }
     },
     onSuccess: /* istanbul ignore next */ () => {

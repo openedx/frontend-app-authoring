@@ -125,7 +125,7 @@ const ComponentInfo = () => {
   const handleTabChange = (newTab: ComponentInfoTab) => {
     resetSidebarAction();
     setSidebarTab(newTab);
-  }
+  };
 
   const usageKey = sidebarComponentInfo?.id;
   // istanbul ignore if: this should never happen

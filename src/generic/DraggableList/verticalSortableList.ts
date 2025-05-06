@@ -5,15 +5,10 @@ to resolve issues with variable sized draggables.
 import { CollisionDetection, DroppableContainer } from '@dnd-kit/core';
 import { sortBy } from 'lodash';
 
-export const verticalSortableListCollisionDetection: CollisionDetection = (
-  args
-) => {
-  if (args.collisionRect.top < (args.active.rect.current?.initial?.top ?? 0)) {
-    return highestDroppableContainerMajorityCovered(args);
-  } else {
-    return lowestDroppableContainerMajorityCovered(args);
-  }
-};
+const collision = (dropppableContainer?: DroppableContainer) => ({
+  id: dropppableContainer?.id ?? '',
+  value: dropppableContainer,
+});
 
 // Look for the first (/ furthest up / highest) droppable container that is at least
 // 50% covered by the top edge of the dragging container.
@@ -23,7 +18,7 @@ const highestDroppableContainerMajorityCovered: CollisionDetection = ({
 }) => {
   const ascendingDroppabaleContainers = sortBy(
     droppableContainers,
-    (c) => c?.rect.current?.top
+    (c) => c?.rect.current?.top,
   );
 
   for (const droppableContainer of ascendingDroppabaleContainers) {
@@ -32,9 +27,8 @@ const highestDroppableContainerMajorityCovered: CollisionDetection = ({
     } = droppableContainer;
 
     if (droppableRect) {
-      const coveredPercentage =
-        (droppableRect.top + droppableRect.height - collisionRect.top) /
-        droppableRect.height;
+      const coveredPercentage = (droppableRect.top + droppableRect.height - collisionRect.top)
+        / droppableRect.height;
 
       if (coveredPercentage > 0.5) {
         return [collision(droppableContainer)];
@@ -54,7 +48,7 @@ const lowestDroppableContainerMajorityCovered: CollisionDetection = ({
 }) => {
   const descendingDroppabaleContainers = sortBy(
     droppableContainers,
-    (c) => c?.rect.current?.top
+    (c) => c?.rect.current?.top,
   ).reverse();
 
   for (const droppableContainer of descendingDroppabaleContainers) {
@@ -63,8 +57,7 @@ const lowestDroppableContainerMajorityCovered: CollisionDetection = ({
     } = droppableContainer;
 
     if (droppableRect) {
-      const coveredPercentage =
-        (collisionRect.bottom - droppableRect.top) / droppableRect.height;
+      const coveredPercentage = (collisionRect.bottom - droppableRect.top) / droppableRect.height;
 
       if (coveredPercentage > 0.5) {
         return [collision(droppableContainer)];
@@ -76,9 +69,11 @@ const lowestDroppableContainerMajorityCovered: CollisionDetection = ({
   return [collision(descendingDroppabaleContainers[0])];
 };
 
-const collision = (dropppableContainer?: DroppableContainer) => {
-  return {
-    id: dropppableContainer?.id ?? '',
-    value: dropppableContainer,
-  };
+export const verticalSortableListCollisionDetection: CollisionDetection = (
+  args,
+) => {
+  if (args.collisionRect.top < (args.active.rect.current?.initial?.top ?? 0)) {
+    return highestDroppableContainerMajorityCovered(args);
+  }
+  return lowestDroppableContainerMajorityCovered(args);
 };

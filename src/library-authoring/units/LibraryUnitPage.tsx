@@ -137,7 +137,7 @@ export const LibraryUnitPage = () => {
   // Open unit or component sidebar on mount
   useEffect(() => {
     // includes componentId to open correct sidebar on page mount from url
-    openInfoSidebar(componentId, collectionId, unitId)
+    openInfoSidebar(componentId, collectionId, unitId);
     // avoid including componentId in dependencies to prevent flicker on closing sidebar.
     // See below useEffect that clears componentId on closing sidebar.
   }, [unitId, collectionId]);

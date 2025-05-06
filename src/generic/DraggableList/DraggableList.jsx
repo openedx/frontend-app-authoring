@@ -1,10 +1,9 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { createPortal } from 'react-dom';
 
 import {
   DndContext,
-  closestCenter,
   KeyboardSensor,
   PointerSensor,
   useSensor,
@@ -57,7 +56,7 @@ const DraggableList = ({
     setActiveId?.(event.active.id);
   }, [setActiveId]);
 
-  const handleDragCancel = useCallback((event) => {
+  const handleDragCancel = useCallback(() => {
     setActiveId?.(null);
   }, [setActiveId]);
 

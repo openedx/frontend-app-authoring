@@ -637,15 +637,17 @@ export const useContainerChildren = (containerId?: string) => (
       // This just sets `isNew` flag to new children components
       if (oldData) {
         const oldDataIds = oldData.map((obj) => obj.id);
+        // eslint-disable-next-line no-param-reassign
         newData = newData.map((newObj) => {
           if (!oldDataIds.includes(newObj.id)) {
             // Set isNew = true if we have new child on refetch
+            // eslint-disable-next-line no-param-reassign
             newObj.isNew = true;
           }
           return newObj;
         });
       }
-      return replaceEqualDeep(oldData, newData)
+      return replaceEqualDeep(oldData, newData);
     },
   })
 );

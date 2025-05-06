@@ -145,9 +145,9 @@ describe('<ComponentManagement />', () => {
     expect(await screen.findByText('Collections (1)')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Manage tags' })).not.toBeInTheDocument();
     const tagsSection = await screen.findByRole('button', { name: 'Tags (0)' });
-    expect(tagsSection).toHaveAttribute('aria-expanded', "false");
+    expect(tagsSection).toHaveAttribute('aria-expanded', 'false');
     const collectionsSection = await screen.findByRole('button', { name: 'Collections (1)' });
-    expect(collectionsSection).toHaveAttribute('aria-expanded', "true");
+    expect(collectionsSection).toHaveAttribute('aria-expanded', 'true');
   });
 
   it('should open tags section when sidebarAction = JumpToManageTags', async () => {
@@ -160,8 +160,8 @@ describe('<ComponentManagement />', () => {
     expect(await screen.findByText('Collections (0)')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Manage tags' })).not.toBeInTheDocument();
     const tagsSection = await screen.findByRole('button', { name: 'Tags (6)' });
-    expect(tagsSection).toHaveAttribute('aria-expanded', "true");
+    expect(tagsSection).toHaveAttribute('aria-expanded', 'true');
     const collectionsSection = await screen.findByRole('button', { name: 'Collections (0)' });
-    expect(collectionsSection).toHaveAttribute('aria-expanded', "false");
+    expect(collectionsSection).toHaveAttribute('aria-expanded', 'false');
   });
 });

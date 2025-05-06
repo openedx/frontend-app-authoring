@@ -4,7 +4,9 @@ import {
 } from '@openedx/paragon';
 import { Add, Description } from '@openedx/paragon/icons';
 import classNames from 'classnames';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import {
+  useCallback, useContext, useEffect, useState,
+} from 'react';
 import { blockTypes } from '../../editors/data/constants/app';
 import DraggableList, { SortableItem } from '../../generic/DraggableList';
 
@@ -78,7 +80,7 @@ const BlockHeader = ({ block }: ComponentBlockProps) => {
     navigateTo({ componentId: block.id });
     openComponentInfoSidebar(block.id);
     scheduleJumpToTags();
-  }
+  };
 
   return (
     <>
@@ -127,7 +129,9 @@ const ComponentBlock = ({ block, preview, isDragging }: ComponentBlockProps) => 
   const { showOnlyPublished } = useLibraryContext();
   const { navigateTo } = useLibraryRoutes();
 
-  const { unitId, collectionId, componentId, openComponentEditor } = useLibraryContext();
+  const {
+    unitId, collectionId, componentId, openComponentEditor,
+  } = useLibraryContext();
 
   const { openInfoSidebar } = useSidebarContext();
 
@@ -139,7 +143,7 @@ const ComponentBlock = ({ block, preview, isDragging }: ComponentBlockProps) => 
       openComponentEditor(block.id);
     } else {
       // open current component sidebar
-      openInfoSidebar(block.id, collectionId, unitId)
+      openInfoSidebar(block.id, collectionId, unitId);
     }
   }, [block, collectionId, unitId, navigateTo, canEditComponent, openComponentEditor, openInfoSidebar]);
 
@@ -163,12 +167,13 @@ const ComponentBlock = ({ block, preview, isDragging }: ComponentBlockProps) => 
         outline: '2px dashed gray',
         maxHeight: '200px',
         overflowY: 'hidden',
-      }
-    } else if (componentId === block.id) {
+      };
+    } if (componentId === block.id) {
       return {
         outline: '2px solid black',
-      }
+      };
     }
+    return {};
   }, [isDragging, componentId, block]);
 
   return (
@@ -205,7 +210,7 @@ const ComponentBlock = ({ block, preview, isDragging }: ComponentBlockProps) => 
       </SortableItem>
     </IframeProvider>
   );
-}
+};
 
 interface LibraryUnitBlocksProps {
   /** set to true if it is rendered as preview
@@ -271,6 +276,7 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
           // A container can have multiple instances of the same block
           // eslint-disable-next-line react/no-array-index-key
           <ComponentBlock
+            // eslint-disable-next-line react/no-array-index-key
             key={`${block.id}-${idx}-${block.modified}`}
             block={block}
             isDragging={hidePreviewFor === block.id}

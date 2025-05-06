@@ -104,13 +104,13 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     // Update componentId, unitId, collectionId in library context if is not undefined.
     // Ids can be cleared from route by passing in empty string so we need to set it.
     if (componentId !== undefined) {
-        setComponentId(componentId);
+      setComponentId(componentId);
     }
     if (unitId !== undefined) {
-        setUnitId(unitId);
+      setUnitId(unitId);
     }
     if (collectionId !== undefined) {
-        setCollectionId(collectionId);
+      setCollectionId(collectionId);
     }
 
     // Providing contentType overrides the current route so we can change tabs.

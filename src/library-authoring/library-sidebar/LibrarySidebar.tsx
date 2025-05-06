@@ -10,7 +10,9 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { AddContent, AddContentHeader } from '../add-content';
 import { CollectionInfo, CollectionInfoHeader } from '../collections';
 import { ContainerInfoHeader, UnitInfo } from '../containers';
-import { COMPONENT_INFO_TABS, SidebarActions, SidebarBodyComponentId, useSidebarContext } from '../common/context/SidebarContext';
+import {
+  COMPONENT_INFO_TABS, SidebarActions, SidebarBodyComponentId, useSidebarContext,
+} from '../common/context/SidebarContext';
 import { ComponentInfo, ComponentInfoHeader } from '../component-info';
 import { LibraryInfo, LibraryInfoHeader } from '../library-info';
 import messages from '../messages';
@@ -48,7 +50,6 @@ const LibrarySidebar = ({ onSidebarClose }: LibrarySidebarProps) => {
     }
   }, [jumpToCollections, setSidebarTab]);
 
-
   const bodyComponentMap = {
     [SidebarBodyComponentId.AddContent]: <AddContent />,
     [SidebarBodyComponentId.Info]: <LibraryInfo />,
@@ -72,8 +73,8 @@ const LibrarySidebar = ({ onSidebarClose }: LibrarySidebarProps) => {
 
   const handleSidebarClose = () => {
     closeLibrarySidebar();
-    onSidebarClose?.()
-  }
+    onSidebarClose?.();
+  };
 
   return (
     <Stack gap={4} className="p-3 text-primary-700">

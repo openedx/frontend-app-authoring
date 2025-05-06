@@ -94,10 +94,10 @@ const UnitInfo = () => {
 
   const showOpenUnitButton = !insideUnit && !componentPickerMode;
 
-  const handleTabChange = (tab: UnitInfoTab) => {
+  const handleTabChange = (newTab: UnitInfoTab) => {
     resetSidebarAction();
-    setSidebarTab(tab);
-  }
+    setSidebarTab(newTab);
+  };
 
   const renderTab = useCallback((infoTab: UnitInfoTab, component: React.ReactNode, title: string) => {
     if (hiddenTabs.includes(infoTab)) {
