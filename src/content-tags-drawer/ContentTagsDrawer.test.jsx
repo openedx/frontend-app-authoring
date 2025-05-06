@@ -21,6 +21,7 @@ const path = '/content/:contentId?/*';
 const mockOnClose = jest.fn();
 const mockSetBlockingSheet = jest.fn();
 const mockNavigate = jest.fn();
+const mockSidebarAction = jest.fn();
 mockContentTaxonomyTagsData.applyMock();
 mockTaxonomyListData.applyMock();
 mockTaxonomyTagsData.applyMock();
@@ -38,6 +39,11 @@ const {
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
+}));
+
+jest.mock('../library-authoring/common/context/SidebarContext', () => ({
+  ...jest.requireActual('../library-authoring/common/context/SidebarContext'),
+  useSidebarContext: () => ({ sidebarAction: mockSidebarAction() }),
 }));
 
 const renderDrawer = (contentId, drawerParams = {}) => (
@@ -168,6 +174,26 @@ describe('<ContentTagsDrawer />', () => {
       name: /manage tags/i,
     });
     fireEvent.click(manageTagsButton);
+
+    // Show delete tag buttons
+    expect(screen.getAllByRole('button', {
+      name: /delete/i,
+    }).length).toBe(2);
+
+    // Show add a tag select
+    expect(screen.getByText(/add a tag/i)).toBeInTheDocument();
+
+    // Show cancel button
+    expect(screen.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
+
+    // Show save button
+    expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument();
+  });
+
+  it('should change to edit mode sidebar action is set to JumpToManageTags', async () => {
+    mockSidebarAction.mockReturnValueOnce('jump-to-manage-tags');
+    renderDrawer(stagedTagsId, { variant: 'component' });
+    expect(await screen.findByText('Taxonomy 1')).toBeInTheDocument();
 
     // Show delete tag buttons
     expect(screen.getAllByRole('button', {

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
@@ -17,7 +17,6 @@ import { useLibraryContext } from '../common/context/LibraryContext';
 import {
   type ComponentInfoTab,
   COMPONENT_INFO_TABS,
-  SidebarActions,
   isComponentInfoTab,
   useSidebarContext,
 } from '../common/context/SidebarContext';
@@ -107,7 +106,6 @@ const ComponentInfo = () => {
     sidebarTab,
     setSidebarTab,
     sidebarComponentInfo,
-    sidebarAction,
     defaultTab,
     hiddenTabs,
     resetSidebarAction,
@@ -118,25 +116,15 @@ const ComponentInfo = () => {
     closePublishConfirmation,
   ] = useToggle(false);
 
-  const jumpToCollections = sidebarAction === SidebarActions.JumpToManageCollections;
-  const jumpToTags = sidebarAction === SidebarActions.JumpToManageTags;
-
   const tab: ComponentInfoTab = (
     isComponentInfoTab(sidebarTab)
       ? sidebarTab
       : defaultTab.component
   );
 
-  useEffect(() => {
-    // Show Manage tab if JumpToManageCollections or JumpToManageTags action is set
-    if (jumpToCollections || jumpToTags) {
-      setSidebarTab(COMPONENT_INFO_TABS.Manage);
-    }
-  }, [jumpToCollections, setSidebarTab]);
-
-  const handleTabChange = (tab: ComponentInfoTab) => {
+  const handleTabChange = (newTab: ComponentInfoTab) => {
     resetSidebarAction();
-    setSidebarTab(tab);
+    setSidebarTab(newTab);
   }
 
   const usageKey = sidebarComponentInfo?.id;

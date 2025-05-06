@@ -9,7 +9,7 @@ import {
   IconButton,
   useToggle,
 } from '@openedx/paragon';
-import React, { useEffect, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { MoreVert } from '@openedx/paragon/icons';
 
@@ -17,7 +17,6 @@ import { useComponentPickerContext } from '../common/context/ComponentPickerCont
 import { useLibraryContext } from '../common/context/LibraryContext';
 import {
   type UnitInfoTab,
-  SidebarActions,
   UNIT_INFO_TABS,
   isUnitInfoTab,
   useSidebarContext,
@@ -81,10 +80,8 @@ const UnitInfo = () => {
     sidebarTab,
     setSidebarTab,
     sidebarComponentInfo,
-    sidebarAction,
     resetSidebarAction,
   } = useSidebarContext();
-  const jumpToCollections = sidebarAction === SidebarActions.JumpToManageCollections;
   const { insideUnit } = useLibraryRoutes();
 
   const tab: UnitInfoTab = (
@@ -122,13 +119,6 @@ const UnitInfo = () => {
       showToast(intl.formatMessage(messages.publishContainerFailed));
     }
   }, [publishContainer]);
-
-  useEffect(() => {
-    // Show Organize tab if JumpToAddCollections action is set in sidebarComponentInfo
-    if (jumpToCollections) {
-      setSidebarTab(UNIT_INFO_TABS.Manage);
-    }
-  }, [jumpToCollections, setSidebarTab]);
 
   if (!container || !unitId) {
     return null;

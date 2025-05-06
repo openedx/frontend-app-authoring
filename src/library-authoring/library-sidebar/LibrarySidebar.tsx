@@ -10,7 +10,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { AddContent, AddContentHeader } from '../add-content';
 import { CollectionInfo, CollectionInfoHeader } from '../collections';
 import { ContainerInfoHeader, UnitInfo } from '../containers';
-import { SidebarBodyComponentId, useSidebarContext } from '../common/context/SidebarContext';
+import { COMPONENT_INFO_TABS, SidebarActions, SidebarBodyComponentId, useSidebarContext } from '../common/context/SidebarContext';
 import { ComponentInfo, ComponentInfoHeader } from '../component-info';
 import { LibraryInfo, LibraryInfoHeader } from '../library-info';
 import messages from '../messages';
@@ -30,7 +30,24 @@ interface LibrarySidebarProps {
  */
 const LibrarySidebar = ({ onSidebarClose }: LibrarySidebarProps) => {
   const intl = useIntl();
-  const { sidebarComponentInfo, closeLibrarySidebar } = useSidebarContext();
+  const {
+    sidebarAction,
+    setSidebarTab,
+    sidebarComponentInfo,
+    closeLibrarySidebar,
+  } = useSidebarContext();
+  const jumpToCollections = sidebarAction === SidebarActions.JumpToManageCollections;
+  const jumpToTags = sidebarAction === SidebarActions.JumpToManageTags;
+
+  React.useEffect(() => {
+    // Show Manage tab if JumpToManageCollections or JumpToManageTags action is set
+    if (jumpToCollections || jumpToTags) {
+      // COMPONENT_INFO_TABS.Manage works for containers as well as its value
+      // is same as UNIT_INFO_TABS.Manage.
+      setSidebarTab(COMPONENT_INFO_TABS.Manage);
+    }
+  }, [jumpToCollections, setSidebarTab]);
+
 
   const bodyComponentMap = {
     [SidebarBodyComponentId.AddContent]: <AddContent />,
