@@ -18,6 +18,7 @@ import { initializeHotjar } from '@edx/frontend-enterprise-hotjar';
 import { logError } from '@edx/frontend-platform/logging';
 import { loadThemeStyles } from 'utils/themeService';
 import MyCourses from 'my-courses/MyCourses';
+import CreateWidgets from 'widgets-create/CreateWidgets';
 import Dashboard from './dashboard/Dashboard';
 import messages from './i18n';
 
@@ -64,6 +65,7 @@ const App = ({ themeData }) => {
       <Route element={<Layout />}>
         <Route path="/home" element={<Dashboard />} />
         {/* <Route path="/home" element={<StudioHome />} /> */}
+        <Route path="/widgets-create" element={<CreateWidgets />} />
         <Route path="/my-courses" element={<MyCourses />} />
         <Route path="/libraries" element={<StudioHome />} />
         <Route path="/libraries-v1" element={<StudioHome />} />
