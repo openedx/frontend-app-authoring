@@ -21,7 +21,8 @@
     "dev": "PUBLIC_PATH=/authoring/ MFE_CONFIG_API_URL='http://localhost:8000/api/mfe_config/v1' fedx-scripts webpack-dev-server --progress --host apps.local.openedx.io",
     "test": "TZ=UTC fedx-scripts jest --coverage --passWithNoTests",
     "test:ci": "TZ=UTC fedx-scripts jest --silent --coverage --passWithNoTests",
-    "types": "tsc --noEmit"
+    "types": "tsc --noEmit",
+    "js": "json-server --watch db.json --port=3001"
   },
   "husky": {
     "hooks": {

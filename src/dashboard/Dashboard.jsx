@@ -21,7 +21,6 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import {
-  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
@@ -141,12 +140,14 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const response = await fetch('/db.json');
+        const response = await fetch('http://localhost:3001/dashboard');
         const data = await response.json();
-        setDashboardData(data.dashboard);
-        setSelectedWidgets(data.dashboard.widgets.map(widget => widget.id));
-        setTempOrderedWidgets(data.dashboard.widgets);
-        setAllWidgets(data.dashboard.widgets);
+        // Sort widgets by order before setting state
+        const sortedWidgets = [...data.widgets].sort((a, b) => a.order - b.order);
+        setDashboardData({ ...data, widgets: sortedWidgets });
+        setSelectedWidgets(data.widgets.map(widget => widget.id));
+        setTempOrderedWidgets(sortedWidgets);
+        setAllWidgets(sortedWidgets);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {
@@ -186,20 +187,67 @@ const Dashboard = () => {
       setTempOrderedWidgets((items) => {
         const oldIndex = items.findIndex((item) => item.id === active.id);
         const newIndex = items.findIndex((item) => item.id === over.id);
-        return arrayMove(items, oldIndex, newIndex);
+
+        // Create a new array with updated order values
+        return items.map((item, index) => {
+          if (item.id === active.id) {
+            // Set the dragged item's order to the new position
+            return { ...item, order: newIndex };
+          }
+
+          // Adjust orders of items between old and new positions
+          if (oldIndex < newIndex && index > oldIndex && index <= newIndex) {
+            // Moving down: decrease order of items between old and new positions
+            return { ...item, order: item.order - 1 };
+          }
+
+          if (oldIndex > newIndex && index >= newIndex && index < oldIndex) {
+            // Moving up: increase order of items between new and old positions
+            return { ...item, order: item.order + 1 };
+          }
+
+          return item;
+        }).sort((a, b) => a.order - b.order);
       });
     }
   };
 
-  const handleUpdateWidgets = () => {
-    setSelectedWidgets(tempSelectedWidgets);
-    // Only show selected widgets on dashboard, in the order set in modal
-    const updatedWidgets = tempOrderedWidgets.filter(widget => tempSelectedWidgets.includes(widget.id));
-    setDashboardData(prev => ({
-      ...prev,
-      widgets: updatedWidgets,
-    }));
-    setIsModalOpen(false);
+  const handleUpdateWidgets = async () => {
+    try {
+      // Update local state
+      setSelectedWidgets(tempSelectedWidgets);
+
+      // Update widgets to include enabled/disabled status while preserving all widgets
+      const updatedWidgets = tempOrderedWidgets.map((widget, index) => ({
+        ...widget,
+        order: index + 1,
+        enabled: tempSelectedWidgets.includes(widget.id),
+      }));
+
+      // Update the dashboard data in db.json
+      const response = await fetch('http://localhost:3001/dashboard', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...dashboardData,
+          widgets: updatedWidgets,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update dashboard data');
+      }
+
+      // Update local state with the response data
+      const updatedData = await response.json();
+      setDashboardData(updatedData);
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error('Error updating dashboard data:', error);
+      // You might want to show an error message to the user here
+    }
   };
 
   if (loading) {
@@ -310,15 +358,17 @@ const Dashboard = () => {
                 </Card.Section>
               </Card>
             </div> */}
-            {dashboardData.widgets.map((widget) => (
-              <WidgetCard
-                key={widget.id}
-                type={widget.type}
-                title={widget.title}
-                content={widget.content}
-                styles={widget.styles}
-              />
-            ))}
+            {dashboardData.widgets
+              .filter(widget => widget.enabled)
+              .map((widget) => (
+                <WidgetCard
+                  key={widget.id}
+                  type={widget.type}
+                  title={widget.title}
+                  content={widget.content}
+                  styles={widget.styles}
+                />
+              ))}
           </div>
         </div>
       </div>
