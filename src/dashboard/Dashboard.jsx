@@ -9,8 +9,25 @@ import {
 } from '@openedx/paragon';
 import {
   MenuBook, Groups, LibraryBooks, Assessment,
+  DragIndicator,
 } from '@openedx/paragon/icons';
 import './Dashboard.scss';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import WidgetCard from './components/WidgetCard';
 
 const MetricCard = ({ icon, value, label }) => (
@@ -35,13 +52,91 @@ MetricCard.propTypes = {
   label: PropTypes.string.isRequired,
 };
 
+// Sortable widget card for modal
+const SortableWidgetCard = ({ widget, isSelected, onClick }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: widget.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    cursor: isDragging ? 'grabbing' : 'grab',
+    opacity: isDragging ? 0.7 : 1,
+    background: isDragging ? '#f5f5f5' : undefined,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      <Card
+        className={`widget-selection-card ${isSelected ? 'selected' : ''}`}
+        // Only allow selection on card click, not on drag handle
+        onClick={onClick}
+      >
+        <Card.Section className="widget-selection-content" style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+            <h4 style={{ flex: 1, margin: 0 }}>{widget.title}</h4>
+            <span
+              {...attributes}
+              {...listeners}
+              style={{ display: 'inline-flex', alignItems: 'center', marginLeft: 8 }}
+              onClick={e => e.stopPropagation()}
+              role="button"
+              tabIndex={0}
+              aria-label="Drag to reorder"
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  // Let dnd-kit handle keyboard drag
+                }
+              }}
+            >
+              <DragIndicator style={{ cursor: 'grab', color: '#888' }} />
+            </span>
+          </div>
+          <div style={{ width: '100%' }}>
+            <p style={{ margin: 0 }}>{widget.type === 'chart' ? `Chart type: ${widget.content.chartType}` : 'Text widget'}</p>
+          </div>
+        </Card.Section>
+      </Card>
+    </div>
+  );
+};
+
+SortableWidgetCard.propTypes = {
+  widget: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+    content: PropTypes.shape({
+      chartType: PropTypes.string,
+    }).isRequired,
+  }).isRequired,
+  isSelected: PropTypes.bool.isRequired,
+  onClick: PropTypes.func.isRequired,
+};
+
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedWidgets, setSelectedWidgets] = useState([]);
-  const [availableWidgets, setAvailableWidgets] = useState([]);
   const [tempSelectedWidgets, setTempSelectedWidgets] = useState([]);
+  const [tempOrderedWidgets, setTempOrderedWidgets] = useState([]);
+  const [allWidgets, setAllWidgets] = useState([]);
+
+  // dnd-kit sensors (must be before any early return)
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -50,7 +145,8 @@ const Dashboard = () => {
         const data = await response.json();
         setDashboardData(data.dashboard);
         setSelectedWidgets(data.dashboard.widgets.map(widget => widget.id));
-        setAvailableWidgets(data.dashboard.widgets);
+        setTempOrderedWidgets(data.dashboard.widgets);
+        setAllWidgets(data.dashboard.widgets);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {
@@ -63,6 +159,10 @@ const Dashboard = () => {
 
   const handleModalOpen = () => {
     setTempSelectedWidgets(selectedWidgets);
+    // Ensure tempOrderedWidgets contains all widgets from allWidgets, preserving order for existing ones
+    const orderedIds = tempOrderedWidgets.map(w => w.id);
+    const missingWidgets = allWidgets.filter(w => !orderedIds.includes(w.id));
+    setTempOrderedWidgets([...tempOrderedWidgets, ...missingWidgets]);
     setIsModalOpen(true);
   };
 
@@ -80,9 +180,21 @@ const Dashboard = () => {
     });
   };
 
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+    if (active.id !== over.id) {
+      setTempOrderedWidgets((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
+
   const handleUpdateWidgets = () => {
     setSelectedWidgets(tempSelectedWidgets);
-    const updatedWidgets = availableWidgets.filter(widget => tempSelectedWidgets.includes(widget.id));
+    // Only show selected widgets on dashboard, in the order set in modal
+    const updatedWidgets = tempOrderedWidgets.filter(widget => tempSelectedWidgets.includes(widget.id));
     setDashboardData(prev => ({
       ...prev,
       widgets: updatedWidgets,
@@ -118,7 +230,6 @@ const Dashboard = () => {
                 Customize
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                <Dropdown.Item>Edit mode</Dropdown.Item>
                 <Dropdown.Item onClick={handleModalOpen}>Add widget</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
@@ -225,20 +336,27 @@ const Dashboard = () => {
           </ModalDialog.Title>
         </ModalDialog.Header>
         <ModalDialog.Body>
-          <div className="widget-selection-grid">
-            {availableWidgets.map((widget) => (
-              <Card
-                key={widget.id}
-                className={`widget-selection-card ${tempSelectedWidgets.includes(widget.id) ? 'selected' : ''}`}
-                onClick={() => handleWidgetSelection(widget.id)}
-              >
-                <Card.Section className="widget-selection-content">
-                  <h4>{widget.title}</h4>
-                  <p>{widget.type === 'chart' ? `Chart type: ${widget.content.chartType}` : 'Text widget'}</p>
-                </Card.Section>
-              </Card>
-            ))}
-          </div>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={tempOrderedWidgets.map(widget => widget.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {tempOrderedWidgets.map((widget) => (
+                  <SortableWidgetCard
+                    key={widget.id}
+                    widget={widget}
+                    isSelected={tempSelectedWidgets.includes(widget.id)}
+                    onClick={() => handleWidgetSelection(widget.id)}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
         </ModalDialog.Body>
         <ModalDialog.Footer>
           <Button

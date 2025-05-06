@@ -224,6 +224,7 @@
     &.selected {
       border-color: var(--primary);
       background-color: rgba(var(--primary-rgb), 0.05);
+      box-shadow: 0 0 0 2px #1976d233;
     }
 
     .widget-selection-content {
@@ -245,4 +246,10 @@
 // Modal styles
 .pgn__modal-layer {
   z-index: 1000;
+}
+
+.widget-selection-card.selected {
+  border: 2px solid #1976d2 !important;
+  background: #e3f2fd !important;
+  box-shadow: 0 0 0 2px #1976d233;
 }
