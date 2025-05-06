@@ -145,7 +145,8 @@ const Dashboard = () => {
         // Sort widgets by order before setting state
         const sortedWidgets = [...data.widgets].sort((a, b) => a.order - b.order);
         setDashboardData({ ...data, widgets: sortedWidgets });
-        setSelectedWidgets(data.widgets.map(widget => widget.id));
+        // Set selected widgets based on enabled property
+        setSelectedWidgets(sortedWidgets.filter(widget => widget.enabled).map(widget => widget.id));
         setTempOrderedWidgets(sortedWidgets);
         setAllWidgets(sortedWidgets);
       } catch (error) {
