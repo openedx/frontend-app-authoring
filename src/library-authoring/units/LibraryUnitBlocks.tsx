@@ -43,8 +43,12 @@ const LARGE_COMPONENTS = [
   'lti_consumer',
 ];
 
+interface LibraryBlockMetadataWithUniqueId extends LibraryBlockMetadata {
+  originalId: string;
+}
+
 interface ComponentBlockProps {
-  block: LibraryBlockMetadata;
+  block: LibraryBlockMetadataWithUniqueId;
   preview?: boolean;
   isDragging?: boolean;
 }
@@ -56,7 +60,7 @@ const BlockHeader = ({ block }: ComponentBlockProps) => {
   const { navigateTo } = useLibraryRoutes();
   const { openComponentInfoSidebar, setSidebarAction } = useSidebarContext();
 
-  const updateMutation = useUpdateXBlockFields(block.id);
+  const updateMutation = useUpdateXBlockFields(block.originalId);
 
   const handleSaveDisplayName = (newDisplayName: string) => {
     updateMutation.mutateAsync({
@@ -79,8 +83,8 @@ const BlockHeader = ({ block }: ComponentBlockProps) => {
 
   /* istanbul ignore next */
   const jumpToManageTags = () => {
-    navigateTo({ componentId: block.id });
-    openComponentInfoSidebar(block.id);
+    navigateTo({ componentId: block.originalId });
+    openComponentInfoSidebar(block.originalId);
     scheduleJumpToTags();
   };
 
@@ -120,7 +124,7 @@ const BlockHeader = ({ block }: ComponentBlockProps) => {
           </Badge>
         )}
         <TagCount size="sm" count={block.tagsCount} onClick={jumpToManageTags} />
-        <ComponentMenu usageKey={block.id} />
+        <ComponentMenu usageKey={block.originalId} />
       </Stack>
     </>
   );
@@ -138,14 +142,14 @@ const ComponentBlock = ({ block, preview, isDragging }: ComponentBlockProps) => 
   const { openInfoSidebar } = useSidebarContext();
 
   const handleComponentSelection = useCallback((numberOfClicks: number) => {
-    navigateTo({ componentId: block.id });
-    const canEdit = canEditComponent(block.id);
+    navigateTo({ componentId: block.originalId });
+    const canEdit = canEditComponent(block.originalId);
     if (numberOfClicks > 1 && canEdit) {
       // Open editor on double click.
-      openComponentEditor(block.id);
+      openComponentEditor(block.originalId);
     } else {
       // open current component sidebar
-      openInfoSidebar(block.id, collectionId, unitId);
+      openInfoSidebar(block.originalId, collectionId, unitId);
     }
   }, [block, collectionId, unitId, navigateTo, canEditComponent, openComponentEditor, openInfoSidebar]);
 
@@ -170,7 +174,7 @@ const ComponentBlock = ({ block, preview, isDragging }: ComponentBlockProps) => 
         maxHeight: '200px',
         overflowY: 'hidden',
       };
-    } if (componentId === block.id) {
+    } if (componentId === block.originalId) {
       return {
         outline: '2px solid black',
       };
@@ -203,7 +207,7 @@ const ComponentBlock = ({ block, preview, isDragging }: ComponentBlockProps) => 
           onClick={(e) => e.stopPropagation()}
         >
           <LibraryBlock
-            usageKey={block.id}
+            usageKey={block.originalId}
             version={showOnlyPublished ? 'published' : undefined}
             minHeight={calculateMinHeight()}
             scrollIntoView={block.isNew}
@@ -223,7 +227,7 @@ interface LibraryUnitBlocksProps {
 
 export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
   const intl = useIntl();
-  const [orderedBlocks, setOrderedBlocks] = useState<LibraryBlockMetadata[]>([]);
+  const [orderedBlocks, setOrderedBlocks] = useState<LibraryBlockMetadataWithUniqueId[]>([]);
   const [isAddLibraryContentModalOpen, showAddLibraryContentModal, closeAddLibraryContentModal] = useToggle();
 
   const [hidePreviewFor, setHidePreviewFor] = useState<string | null>(null);
@@ -241,11 +245,11 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
     error,
   } = useContainerChildren(unitId);
 
-  const handleReorder = useCallback(() => async (newOrder?: LibraryBlockMetadata[]) => {
+  const handleReorder = useCallback(() => async (newOrder?: LibraryBlockMetadataWithUniqueId[]) => {
     if (!newOrder) {
       return;
     }
-    const usageKeys = newOrder.map((o) => o.id);
+    const usageKeys = newOrder.map((o) => o.originalId);
     try {
       await orderMutator.mutateAsync(usageKeys);
       showToast(intl.formatMessage(messages.orderUpdatedMsg));
@@ -254,7 +258,19 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
     }
   }, [orderMutator]);
 
-  useEffect(() => setOrderedBlocks(blocks || []), [blocks]);
+  useEffect(() => {
+    // Create new ids which are unique using index.
+    // This is required to support multiple components with same id under a unit.
+    const newBlocks = blocks?.map((block, idx) => {
+      const newBlock: LibraryBlockMetadataWithUniqueId = {
+        ...block,
+        id: `${block.id}----${idx}`,
+        originalId: block.id,
+      };
+      return newBlock;
+    });
+    return setOrderedBlocks(newBlocks || []);
+  }, [blocks, setOrderedBlocks]);
 
   if (isLoading) {
     return <Loading />;
@@ -279,7 +295,7 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
           // eslint-disable-next-line react/no-array-index-key
           <ComponentBlock
             // eslint-disable-next-line react/no-array-index-key
-            key={`${block.id}-${idx}-${block.modified}`}
+            key={`${block.originalId}-${idx}-${block.modified}`}
             block={block}
             isDragging={hidePreviewFor === block.id}
           />
