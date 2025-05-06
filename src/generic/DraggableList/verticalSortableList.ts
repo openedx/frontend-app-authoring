@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 /**
 This sorting strategy was copied over from https://github.com/clauderic/dnd-kit/pull/805
 to resolve issues with variable sized draggables.
