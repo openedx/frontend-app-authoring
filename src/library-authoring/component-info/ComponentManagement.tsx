@@ -31,7 +31,7 @@ const ComponentManagement = () => {
       setTagsCollapseOpen(true);
       setCollectionsCollapseOpen(false);
     }
-  }, [jumpToCollections, jumpToTags, tagsCollapseIsOpen, collectionsCollapseIsOpen]);
+  }, [jumpToCollections, jumpToTags]);
 
   useEffect(() => {
     // This is required to redo actions.

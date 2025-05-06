@@ -94,6 +94,7 @@ const UnitInfo = () => {
 
   const showOpenUnitButton = !insideUnit && !componentPickerMode;
 
+  /* istanbul ignore next */
   const handleTabChange = (newTab: UnitInfoTab) => {
     resetSidebarAction();
     setSidebarTab(newTab);

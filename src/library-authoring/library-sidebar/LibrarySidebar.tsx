@@ -48,7 +48,7 @@ const LibrarySidebar = ({ onSidebarClose }: LibrarySidebarProps) => {
       // is same as UNIT_INFO_TABS.Manage.
       setSidebarTab(COMPONENT_INFO_TABS.Manage);
     }
-  }, [jumpToCollections, setSidebarTab]);
+  }, [jumpToCollections, setSidebarTab, jumpToTags]);
 
   const bodyComponentMap = {
     [SidebarBodyComponentId.AddContent]: <AddContent />,

@@ -277,13 +277,6 @@ const ContentTagsDrawer = ({
     }
   }
 
-  // Open tag edit mode when sidebarAction is JumpToManageTags
-  useEffect(() => {
-    if (sidebarAction === SidebarActions.JumpToManageTags) {
-      toEditMode();
-    }
-  }, [sidebarAction, toEditMode]);
-
   useEffect(() => {
     if (variant === 'drawer') {
       const handleEsc = (event) => {
@@ -312,8 +305,13 @@ const ContentTagsDrawer = ({
 
   // First call of the initial collapsible states
   React.useEffect(() => {
-    setCollapsibleToInitalState();
-  }, [isTaxonomyListLoaded, isContentTaxonomyTagsLoaded]);
+    // Open tag edit mode when sidebarAction is JumpToManageTags
+    if (sidebarAction === SidebarActions.JumpToManageTags) {
+      toEditMode();
+    } else {
+      setCollapsibleToInitalState();
+    }
+  }, [isTaxonomyListLoaded, isContentTaxonomyTagsLoaded, sidebarAction, toEditMode]);
 
   const renderFooter = () => {
     if (isTaxonomyListLoaded && isContentTaxonomyTagsLoaded) {

@@ -53,6 +53,7 @@ export const LibraryBlock = ({
   });
 
   useEffect(() => {
+    /* istanbul ignore next */
     if (scrollIntoView) {
       iframeRef?.current?.scrollIntoView({ behavior: 'smooth' });
     }

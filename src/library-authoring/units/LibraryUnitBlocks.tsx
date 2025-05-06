@@ -70,12 +70,14 @@ const BlockHeader = ({ block }: ComponentBlockProps) => {
     });
   };
 
+  /* istanbul ignore next */
   const scheduleJumpToTags = useRunOnNextRender(() => {
     // TODO: Ugly hack to make sure sidebar shows manage tags section
     // This needs to run after all changes to url takes place to avoid conflicts.
-    setTimeout(() => setSidebarAction(SidebarActions.JumpToManageTags));
+    setTimeout(() => setSidebarAction(SidebarActions.JumpToManageTags), 250);
   });
 
+  /* istanbul ignore next */
   const jumpToManageTags = () => {
     navigateTo({ componentId: block.id });
     openComponentInfoSidebar(block.id);

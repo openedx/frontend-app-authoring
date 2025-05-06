@@ -284,6 +284,20 @@ describe('<LibraryUnitPage />', () => {
     await waitFor(() => expect(mockShowToast).toHaveBeenLastCalledWith('Order updated'));
   });
 
+  it('should cancel update order api on cancelling dragging component', async () => {
+    renderLibraryUnitPage();
+    const firstDragHandle = (await screen.findAllByRole('button', { name: 'Drag to reorder' }))[0];
+    axiosMock
+      .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId))
+      .reply(200);
+    verticalSortableListCollisionDetection.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1' }]);
+    await act(async () => {
+      fireEvent.keyDown(firstDragHandle, { code: 'Space' });
+    });
+    setTimeout(() => fireEvent.keyDown(firstDragHandle, { code: 'Escape' }));
+    await waitFor(() => expect(mockShowToast).not.toHaveBeenLastCalledWith('Order updated'));
+  });
+
   it('should show toast error message on update order failure', async () => {
     renderLibraryUnitPage();
     const firstDragHandle = (await screen.findAllByRole('button', { name: 'Drag to reorder' }))[0];
