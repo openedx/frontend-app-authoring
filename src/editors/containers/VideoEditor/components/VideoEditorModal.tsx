@@ -23,7 +23,7 @@ export const hooks = {
   useReturnToGallery: () => {
     const learningContextId = useSelector(selectors.app.learningContextId);
     const blockId = useSelector(selectors.app.blockId);
-    return () => (navigateTo(`/course/${learningContextId}/editor/course-videos/${blockId}`));
+    return () => (navigateTo(`/authoring/course/${learningContextId}/editor/course-videos/${blockId}`));
   },
 };
 
