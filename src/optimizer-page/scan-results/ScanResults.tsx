@@ -4,6 +4,7 @@ import {
   Chip,
   Button,
   useCheckboxSetValues,
+  useToggle,
 } from '@openedx/paragon';
 import {
   ArrowDropDown,
@@ -34,7 +35,7 @@ interface Props {
 
 const ScanResults: FC<Props> = ({ data }) => {
   const intl = useIntl();
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isOpen, open, close] = useToggle(false);
   const initialFilters = {
     brokenLinks: false,
     lockedLinks: false,
@@ -76,7 +77,7 @@ const ScanResults: FC<Props> = ({ data }) => {
           <Button
             ref={setButtonRef}
             variant="outline-primary"
-            onClick={() => setModalOpen(true)}
+            onClick={open}
             disabled={false}
             iconAfter={ArrowDropDown}
             className="rounded-sm justify-content-between cadence-button"
@@ -86,8 +87,10 @@ const ScanResults: FC<Props> = ({ data }) => {
         </header>
       </div>
       <FilterModal
-        isOpen={isModalOpen}
-        onClose={() => setModalOpen(false)}
+        isOpen={isOpen}
+        // ignoring below line because filter modal doesn't have close button
+        // istanbul ignore next
+        onClose={close}
         onApply={setFilters}
         positionRef={buttonRef}
         filterOptions={filterOptions}
@@ -105,6 +108,7 @@ const ScanResults: FC<Props> = ({ data }) => {
             {activeFilters.map(filter => (
               <Chip
                 key={filter}
+                data-testid={`chip-${filter}`}
                 iconAfter={CloseSmall}
                 iconAfterAlt="icon-after"
                 className="scan-results-active-filters-chip"
