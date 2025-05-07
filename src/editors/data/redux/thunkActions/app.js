@@ -8,6 +8,7 @@ import * as module from './app';
 import { actions as appActions, selectors } from '../app';
 import { actions as requestsActions } from '../requests';
 import { RequestKeys } from '../../constants/requests';
+import { getWaffleFlags } from '../../../../data/api';
 
 // Similar to `import { actions } from '..';` but avoid circular imports:
 const actions = {
@@ -79,6 +80,13 @@ export const fetchCourseDetails = () => (dispatch) => {
   }));
 };
 
+export function fetchWaffleFlags(courseId) {
+  return async (dispatch) => {
+    const waffleFlags = await getWaffleFlags(courseId);
+    dispatch(appActions.setWaffleFlags(waffleFlags));
+  };
+}
+
 /**
  * @param {string} studioEndpointUrl
  * @param {string} blockId
@@ -95,6 +103,7 @@ export const initialize = (data) => (dispatch) => {
     return;
   }
 
+  dispatch(module.fetchWaffleFlags(data.courseId));
   dispatch(module.fetchBlock());
   if (data.blockId?.startsWith('block-v1:')) {
     dispatch(module.fetchUnit());
