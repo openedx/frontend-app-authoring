@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useContext } from 'react';
+import { useCallback, useContext } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Icon } from '@openedx/paragon';
 import { Warning, School, Widgets } from '@openedx/paragon/icons';
@@ -47,7 +47,7 @@ const ContainerDeleter = ({
         </div>
       </>
     ),
-  }) as ReactNode as string;
+  });
   const deleteSuccess = intl.formatMessage(messages.deleteUnitSuccess);
   const deleteError = intl.formatMessage(messages.deleteUnitFailed);
   const undoDeleteError = messages.undoDeleteUnitToastFailed;

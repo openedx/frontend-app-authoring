@@ -256,7 +256,7 @@ const LibraryAuthoringPage = ({
     [ContentType.units]: intl.formatMessage(messages.unitsTab),
   };
   const visibleTabsToRender = visibleTabs.map((contentType) => (
-    <Tab eventKey={contentType} title={tabTitles[contentType]} />
+    <Tab key={contentType} eventKey={contentType} title={tabTitles[contentType]} />
   ));
 
   return (
