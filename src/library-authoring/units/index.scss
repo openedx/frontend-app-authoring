@@ -4,6 +4,23 @@
     padding: 0;
     margin-bottom: 1rem;
     border: solid 1px $light-500;
+
+    &::before {
+      border: none !important; // Remove default focus
+    }
+
+    &.selected:not(:focus) {
+      border: 2px $gray-700 solid;
+    }
+
+    &.selected:focus {
+      border: 3px $gray-700 solid;
+    }
+
+    &:not(.selected):focus {
+      outline: 1px $gray-200 solid;
+      outline-offset: 2px;
+    }
   }
 
   .pgn__card.clickable {

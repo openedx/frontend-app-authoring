@@ -6,7 +6,7 @@ import {
 import { type ContentHit, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarBodyComponentId, useSidebarContext } from '../common/context/SidebarContext';
 import { useLibraryRoutes } from '../routes';
 import AddComponentWidget from './AddComponentWidget';
 import BaseCard from './BaseCard';
@@ -18,7 +18,7 @@ type ComponentCardProps = {
 
 const ComponentCard = ({ hit }: ComponentCardProps) => {
   const { showOnlyPublished } = useLibraryContext();
-  const { openComponentInfoSidebar } = useSidebarContext();
+  const { openComponentInfoSidebar, sidebarComponentInfo } = useSidebarContext();
   const { componentPickerMode } = useComponentPickerContext();
 
   const {
@@ -44,6 +44,9 @@ const ComponentCard = ({ hit }: ComponentCardProps) => {
     }
   }, [usageKey, navigateTo, openComponentInfoSidebar]);
 
+  const selected = sidebarComponentInfo?.type === SidebarBodyComponentId.ComponentInfo
+    && sidebarComponentInfo.id === usageKey;
+
   return (
     <BaseCard
       itemType={blockType}
@@ -61,6 +64,7 @@ const ComponentCard = ({ hit }: ComponentCardProps) => {
       )}
       hasUnpublishedChanges={publishStatus !== PublishStatus.Published}
       onSelect={openComponent}
+      selected={selected}
     />
   );
 };
