@@ -13,56 +13,40 @@ const mockApiResponse = {
             units: [
               {
                 id: 'unit-1-1-1',
-                displayName: 'Welcome Video',
+                displayName: 'Test Broken Links',
+                blocks: [
+                  {
+                    id: 'block-1-1-1-5',
+                    url: 'https://example.com/welcome-video',
+                    brokenLinks: ['https://example.com/broken-link-algo1'],
+                    lockedLinks: [],
+                    externalForbiddenLinks: [],
+                  },
+                ],
+              },
+              {
+                id: 'unit-1-1-3',
+                displayName: 'Test Manual Links',
                 blocks: [
                   {
                     id: 'block-1-1-1-1',
                     url: 'https://example.com/welcome-video',
-                    brokenLinks: ['https://example.com/broken-link-algo'],
-                    lockedLinks: ['https://example.com/locked-link-algo'],
-                  },
-                  {
-                    id: 'block-1-1-1-2',
-                    url: 'https://example.com/intro-guide',
-                    brokenLinks: ['https://example.com/broken-link-algo'],
-                    lockedLinks: ['https://example.com/locked-link-algo'],
+                    brokenLinks: [],
+                    lockedLinks: [],
                     externalForbiddenLinks: ['https://outsider.com/forbidden-link-algo'],
                   },
                 ],
               },
               {
                 id: 'unit-1-1-2',
-                displayName: 'Course Overview',
+                displayName: 'Test Locked Links',
                 blocks: [
                   {
                     id: 'block-1-1-2-1',
                     url: 'https://example.com/course-overview',
-                    brokenLinks: ['https://example.com/broken-link-algo'],
+                    brokenLinks: [],
                     lockedLinks: ['https://example.com/locked-link-algo'],
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            id: 'subsection-1-2',
-            displayName: 'Basic Concepts',
-            units: [
-              {
-                id: 'unit-1-2-1',
-                displayName: 'Variables and Data Types',
-                blocks: [
-                  {
-                    id: 'block-1-2-1-1',
-                    url: 'https://example.com/variables',
-                    brokenLinks: ['https://example.com/broken-link-algo'],
-                    lockedLinks: ['https://example.com/locked-link-algo'],
-                  },
-                  {
-                    id: 'block-1-2-1-2',
-                    url: 'https://example.com/broken-link',
-                    brokenLinks: ['https://example.com/broken-link'],
-                    lockedLinks: ['https://example.com/locked-link-algo'],
+                    externalForbiddenLinks: [],
                   },
                 ],
               },
@@ -72,26 +56,60 @@ const mockApiResponse = {
       },
       {
         id: 'section-2',
-        displayName: 'Advanced Topics',
+        displayName: 'Introduction to Programming 2',
         subsections: [
           {
-            id: 'subsection-2-1',
-            displayName: 'Algorithms and Data Structures',
+            id: 'subsection-1-2',
+            displayName: 'Getting Started 2',
             units: [
               {
-                id: 'unit-2-1-1',
-                displayName: 'Sorting Algorithms',
+                id: 'unit-2-2-2',
+                displayName: 'unit',
                 blocks: [
                   {
-                    id: 'block-2-1-1-1',
-                    url: 'https://example.com/sorting-algorithms',
-                    brokenLinks: ['https://example.com/broken-link-algo'],
-                    lockedLinks: ['https://example.com/locked-link-algo'],
+                    id: 'block-1-1-1-6',
+                    url: 'https://example.com/welcome-video',
+                    brokenLinks: ['https://example.com/broken-link-algo1'],
+                    lockedLinks: [],
+                    externalForbiddenLinks: [],
                   },
                   {
-                    id: 'block-2-1-1-2',
-                    url: 'https://example.com/broken-link-algo',
-                    brokenLinks: ['https://example.com/broken-link-algo'],
+                    id: 'block-1-1-1-6',
+                    url: 'https://example.com/welcome-video',
+                    brokenLinks: ['https://example.com/broken-link-algo1'],
+                    lockedLinks: ['https://example.com/locked-link-algo'],
+                    externalForbiddenLinks: [],
+                  },
+                  {
+                    id: 'block-1-1-1-6',
+                    url: 'https://example.com/welcome-video',
+                    brokenLinks: ['https://example.com/broken-link-algo1'],
+                    lockedLinks: [],
+                    externalForbiddenLinks: ['https://outsider.com/forbidden-link-algo'],
+                  },
+                ],
+              },
+              {
+                id: 'unit-2-2-3',
+                displayName: 'unit',
+                blocks: [
+                  {
+                    id: 'block-1-1-1-7',
+                    url: 'https://example.com/welcome-video',
+                    brokenLinks: ['https://example.com/broken-link-algo1'],
+                    lockedLinks: [],
+                    externalForbiddenLinks: ['https://outsider.com/forbidden-link-algo'],
+                  },
+                ],
+              },
+              {
+                id: 'unit-2-2-4',
+                displayName: 'Test Locked Links',
+                blocks: [
+                  {
+                    id: 'block-1-1-7-1',
+                    url: 'https://example.com/course-overview',
+                    brokenLinks: ['https://example.com/broken-link-algo1'],
                     lockedLinks: ['https://example.com/locked-link-algo'],
                     externalForbiddenLinks: ['https://outsider.com/forbidden-link-algo'],
                   },
