@@ -37,6 +37,24 @@ const OptimizerPage = () => (
   </AppProvider>
 );
 
+const setupOptimizerPage = async () => {
+  axiosMock.onGet(getLinkCheckStatusApiUrl(courseId)).reply(200, mockApiResponse);
+  const optimizerPage = render(<OptimizerPage />);
+
+  // Click the scan button
+  fireEvent.click(optimizerPage.getByText(messages.buttonTitle.defaultMessage));
+
+  // Wait for the scan results to load
+  await waitFor(() => {
+    expect(optimizerPage.getByText('Introduction to Programming')).toBeInTheDocument();
+  });
+
+  // Click on filters button
+  fireEvent.click(optimizerPage.getByText(scanResultsMessages.filterButtonLabel.defaultMessage));
+
+  return optimizerPage;
+};
+
 describe('CourseOptimizerPage', () => {
   describe('pollLinkCheckDuringScan', () => {
     let mockFetchLinkCheckStatus;
@@ -71,6 +89,7 @@ describe('CourseOptimizerPage', () => {
       pollLinkCheckDuringScan(linkCheckInProgress, interval, dispatch, courseId);
       expect(interval.current).toBeTruthy();
     });
+
     it('should not start polling if link check is not in progress', () => {
       const linkCheckInProgress = false;
       const interval = { current: null };
@@ -79,6 +98,7 @@ describe('CourseOptimizerPage', () => {
       pollLinkCheckDuringScan(linkCheckInProgress, interval, dispatch, courseId);
       expect(interval.current).toBeFalsy();
     });
+
     it('should clear the interval if link check is finished', () => {
       const linkCheckInProgress = false;
       const interval = { current: 1 };
@@ -127,53 +147,6 @@ describe('CourseOptimizerPage', () => {
       });
     });
 
-    it('should list broken links results', async () => {
-      const {
-        getByText, queryAllByText, getAllByText, container,
-      } = render(<OptimizerPage />);
-      expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
-      fireEvent.click(getByText(messages.buttonTitle.defaultMessage));
-      await waitFor(() => {
-        expect(getByText('5 broken links')).toBeInTheDocument();
-        expect(getByText('5 locked links')).toBeInTheDocument();
-      });
-      const collapsibleTrigger = container.querySelector('.collapsible-trigger');
-      expect(collapsibleTrigger).toBeInTheDocument();
-      fireEvent.click(collapsibleTrigger);
-      await waitFor(() => {
-        expect(getAllByText(scanResultsMessages.brokenLinkStatus.defaultMessage)[0]).toBeInTheDocument();
-        expect(queryAllByText(scanResultsMessages.lockedLinkStatus.defaultMessage)[0]).toBeInTheDocument();
-        expect(queryAllByText(scanResultsMessages.recommendedManualCheckText.defaultMessage)[0]).toBeInTheDocument();
-        const brokenLinks = getAllByText('https://example.com/broken-link-algo');
-        expect(brokenLinks.length).toBeGreaterThan(0);
-        fireEvent.click(brokenLinks[0]);
-        const lockedLinks = getAllByText('https://example.com/locked-link-algo');
-        expect(lockedLinks.length).toBeGreaterThan(0);
-        fireEvent.click(lockedLinks[0]);
-        fireEvent.click((getAllByText('Go to Block'))[0]);
-      });
-    });
-
-    it('should not list locked links results when show locked links is unchecked', async () => {
-      const {
-        getByText, getAllByText, getByLabelText, queryAllByText, queryByText, container,
-      } = render(<OptimizerPage />);
-      expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
-      fireEvent.click(getByText(messages.buttonTitle.defaultMessage));
-      await waitFor(() => {
-        expect(getByText('5 broken links')).toBeInTheDocument();
-      });
-      fireEvent.click(getByLabelText(scanResultsMessages.lockedCheckboxLabel.defaultMessage));
-      const collapsibleTrigger = container.querySelector('.collapsible-trigger');
-      expect(collapsibleTrigger).toBeInTheDocument();
-      fireEvent.click(collapsibleTrigger);
-      await waitFor(() => {
-        expect(queryByText('5 locked links')).not.toBeInTheDocument();
-        expect(getAllByText(scanResultsMessages.brokenLinkStatus.defaultMessage)[0]).toBeInTheDocument();
-        expect(queryAllByText(scanResultsMessages.lockedLinkStatus.defaultMessage)?.[0]).toBeUndefined();
-      });
-    });
-
     it('should show no broken links found message', async () => {
       axiosMock
         .onGet(getLinkCheckStatusApiUrl(courseId))
@@ -195,6 +168,103 @@ describe('CourseOptimizerPage', () => {
       fireEvent.click(screen.getByText(messages.buttonTitle.defaultMessage));
       await waitFor(() => {
         expect(screen.getByText(generalMessages.supportText.defaultMessage)).toBeInTheDocument();
+      });
+    });
+
+    it('should show only broken links when brokenLinks filter is selected', async () => {
+      const {
+        getByText,
+        getByLabelText,
+        queryByText,
+        container,
+      } = await setupOptimizerPage();
+      // Check if the modal is opened
+      expect(getByText('Broken')).toBeInTheDocument();
+      // Select the broken links checkbox
+      fireEvent.click(getByLabelText(scanResultsMessages.brokenLabel.defaultMessage));
+
+      const collapsibleTrigger = container.querySelector('.collapsible-trigger');
+      expect(collapsibleTrigger).toBeInTheDocument();
+      fireEvent.click(collapsibleTrigger);
+
+      await waitFor(() => {
+        expect(getByText('Test Broken Links')).toBeInTheDocument();
+        expect(queryByText('Test Locked Links')).not.toBeInTheDocument();
+        expect(queryByText('Test Manual Links')).not.toBeInTheDocument();
+      });
+    });
+
+    it('should show only manual links when manualLinks filter is selected', async () => {
+      const {
+        getByText,
+        getByLabelText,
+        queryByText,
+        container,
+      } = await setupOptimizerPage();
+      // Check if the modal is opened
+      expect(getByText('Manual')).toBeInTheDocument();
+      // Select the manual links checkbox
+      fireEvent.click(getByLabelText(scanResultsMessages.manualLabel.defaultMessage));
+
+      const collapsibleTrigger = container.querySelector('.collapsible-trigger');
+      expect(collapsibleTrigger).toBeInTheDocument();
+      fireEvent.click(collapsibleTrigger);
+
+      await waitFor(() => {
+        expect(getByText('Test Manual Links')).toBeInTheDocument();
+        expect(queryByText('Test Broken Links')).not.toBeInTheDocument();
+        expect(queryByText('Test Locked Links')).not.toBeInTheDocument();
+      });
+    });
+
+    it('should show only manual & locked links when manual & locked Links filters are selected, ignore broken links', async () => {
+      const {
+        getByText,
+        getByLabelText,
+        queryByText,
+        container,
+      } = await setupOptimizerPage();
+      // Check if the modal is opened
+      expect(getByText('Manual')).toBeInTheDocument();
+      expect(getByText('Locked')).toBeInTheDocument();
+      // Select the manual & locked links checkbox
+      fireEvent.click(getByLabelText(scanResultsMessages.manualLabel.defaultMessage));
+      fireEvent.click(getByLabelText(scanResultsMessages.lockedLabel.defaultMessage));
+
+      const collapsibleTrigger = container.querySelector('.collapsible-trigger');
+      expect(collapsibleTrigger).toBeInTheDocument();
+      fireEvent.click(collapsibleTrigger);
+
+      await waitFor(() => {
+        expect(getByText('Test Manual Links')).toBeInTheDocument();
+        expect(getByText('Test Locked Links')).toBeInTheDocument();
+        expect(queryByText('Test Broken Links')).not.toBeInTheDocument();
+      });
+    });
+
+    it('should show all links when all filters are selected', async () => {
+      const {
+        getByText,
+        getByLabelText,
+        container,
+      } = await setupOptimizerPage();
+      // Check if the modal is opened
+      expect(getByText('Broken')).toBeInTheDocument();
+      expect(getByText('Manual')).toBeInTheDocument();
+      expect(getByText('Locked')).toBeInTheDocument();
+      // Select the all checkboxes
+      fireEvent.click(getByLabelText(scanResultsMessages.brokenLabel.defaultMessage));
+      fireEvent.click(getByLabelText(scanResultsMessages.lockedLabel.defaultMessage));
+      fireEvent.click(getByLabelText(scanResultsMessages.manualLabel.defaultMessage));
+
+      const collapsibleTrigger = container.querySelector('.collapsible-trigger');
+      expect(collapsibleTrigger).toBeInTheDocument();
+      fireEvent.click(collapsibleTrigger);
+
+      await waitFor(() => {
+        expect(getByText('Test Broken Links')).toBeInTheDocument();
+        expect(getByText('Test Manual Links')).toBeInTheDocument();
+        expect(getByText('Test Locked Links')).toBeInTheDocument();
       });
     });
   });
