@@ -10,7 +10,6 @@ import { NOTIFICATION_MESSAGES } from '../../constants';
 import { updateModel, updateModels } from '../../generic/model-store';
 import { messageTypes } from '../constants';
 import {
-  getCourseUnitData,
   editUnitDisplayName,
   getCourseSectionVerticalData,
   createCourseXblock,
@@ -22,8 +21,6 @@ import {
   patchUnitItem,
 } from './api';
 import {
-  updateLoadingCourseUnitStatus,
-  fetchCourseItemSuccess,
   updateSavingStatus,
   fetchSequenceRequest,
   fetchSequenceFailure,
@@ -40,24 +37,6 @@ import {
 } from './slice';
 import { getNotificationMessage, isUnitReadOnly } from './utils';
 
-export function fetchCourseUnitQuery(courseId) {
-  return async (dispatch) => {
-    dispatch(updateLoadingCourseUnitStatus({ status: RequestStatus.IN_PROGRESS }));
-
-    try {
-      const courseUnit = await getCourseUnitData(courseId);
-      courseUnit.readOnly = isUnitReadOnly(courseUnit);
-
-      dispatch(fetchCourseItemSuccess(courseUnit));
-      dispatch(updateLoadingCourseUnitStatus({ status: RequestStatus.SUCCESSFUL }));
-      return true;
-    } catch (error) {
-      dispatch(updateLoadingCourseUnitStatus({ status: RequestStatus.FAILED }));
-      return false;
-    }
-  };
-}
-
 export function fetchCourseSectionVerticalData(courseId, sequenceId) {
   return async (dispatch) => {
     dispatch(updateLoadingCourseSectionVerticalDataStatus({ status: RequestStatus.IN_PROGRESS }));
@@ -65,6 +44,7 @@ export function fetchCourseSectionVerticalData(courseId, sequenceId) {
 
     try {
       const courseSectionVerticalData = await getCourseSectionVerticalData(courseId);
+      courseSectionVerticalData.xblockInfo.readOnly = isUnitReadOnly(courseSectionVerticalData.xblockInfo);
       dispatch(fetchCourseSectionVerticalDataSuccess(courseSectionVerticalData));
       dispatch(updateLoadingCourseSectionVerticalDataStatus({ status: RequestStatus.SUCCESSFUL }));
       dispatch(updateModel({
@@ -95,7 +75,6 @@ export function editCourseItemQuery(itemId, displayName, sequenceId) {
     try {
       await editUnitDisplayName(itemId, displayName).then(async (result) => {
         if (result) {
-          const courseUnit = await getCourseUnitData(itemId);
           const courseSectionVerticalData = await getCourseSectionVerticalData(itemId);
           dispatch(fetchCourseSectionVerticalDataSuccess(courseSectionVerticalData));
           dispatch(updateLoadingCourseSectionVerticalDataStatus({ status: RequestStatus.SUCCESSFUL }));
@@ -108,7 +87,6 @@ export function editCourseItemQuery(itemId, displayName, sequenceId) {
             models: courseSectionVerticalData.units || [],
           }));
           dispatch(fetchSequenceSuccess({ sequenceId }));
-          dispatch(fetchCourseItemSuccess(courseUnit));
           dispatch(hideProcessingNotification());
           dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
         }
@@ -147,8 +125,8 @@ export function editCourseUnitVisibilityAndData(
           if (callback) {
             callback();
           }
-          const courseUnit = await getCourseUnitData(blockId);
-          dispatch(fetchCourseItemSuccess(courseUnit));
+          const courseSectionVerticalData = await getCourseSectionVerticalData(blockId);
+          dispatch(fetchCourseSectionVerticalDataSuccess(courseSectionVerticalData));
           const courseVerticalChildrenData = await getCourseVerticalChildren(blockId);
           dispatch(updateCourseVerticalChildren(courseVerticalChildrenData));
           dispatch(hideProcessingNotification());
@@ -195,8 +173,8 @@ export function createNewCourseXBlock(body, callback, blockId, sendMessageToIfra
             sendMessageToIframe(messageTypes.addXBlock, { data: result });
           }
           const currentBlockId = body.category === 'vertical' ? formattedResult.locator : blockId;
-          const courseUnit = await getCourseUnitData(currentBlockId);
-          dispatch(fetchCourseItemSuccess(courseUnit));
+          const courseSectionVerticalData = await getCourseSectionVerticalData(currentBlockId);
+          dispatch(fetchCourseSectionVerticalDataSuccess(courseSectionVerticalData));
         }
       });
     } catch (error) {
@@ -241,8 +219,8 @@ export function deleteUnitItemQuery(itemId, xblockId, sendMessageToIframe) {
     try {
       await deleteUnitItem(xblockId);
       sendMessageToIframe(messageTypes.completeXBlockDeleting, { locator: xblockId });
-      const courseUnit = await getCourseUnitData(itemId);
-      dispatch(fetchCourseItemSuccess(courseUnit));
+      const courseSectionVerticalData = await getCourseSectionVerticalData(itemId);
+      dispatch(fetchCourseSectionVerticalDataSuccess(courseSectionVerticalData));
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
@@ -260,8 +238,8 @@ export function duplicateUnitItemQuery(itemId, xblockId, callback) {
     try {
       const { courseKey, locator } = await duplicateUnitItem(itemId, xblockId);
       callback(courseKey, locator);
-      const courseUnit = await getCourseUnitData(itemId);
-      dispatch(fetchCourseItemSuccess(courseUnit));
+      const courseSectionVerticalData = await getCourseSectionVerticalData(itemId);
+      dispatch(fetchCourseSectionVerticalDataSuccess(courseSectionVerticalData));
       const courseVerticalChildrenData = await getCourseVerticalChildren(itemId);
       dispatch(updateCourseVerticalChildren(courseVerticalChildrenData));
       dispatch(hideProcessingNotification());
@@ -317,8 +295,8 @@ export function patchUnitItemQuery({
       dispatch(updateCourseOutlineInfoLoadingStatus({ status: RequestStatus.IN_PROGRESS }));
       callbackFn(sourceLocator);
       try {
-        const courseUnit = await getCourseUnitData(currentParentLocator);
-        dispatch(fetchCourseItemSuccess(courseUnit));
+        const courseSectionVerticalData = await getCourseSectionVerticalData(currentParentLocator);
+        dispatch(fetchCourseSectionVerticalDataSuccess(courseSectionVerticalData));
       } catch (error) {
         handleResponseErrors(error, dispatch, updateSavingStatus);
       }
@@ -336,8 +314,8 @@ export function updateCourseUnitSidebar(itemId) {
     dispatch(showProcessingNotification(NOTIFICATION_MESSAGES.saving));
 
     try {
-      const courseUnit = await getCourseUnitData(itemId);
-      dispatch(fetchCourseItemSuccess(courseUnit));
+      const courseSectionVerticalData = await getCourseSectionVerticalData(itemId);
+      dispatch(fetchCourseSectionVerticalDataSuccess(courseSectionVerticalData));
       dispatch(hideProcessingNotification());
       dispatch(updateSavingStatus({ status: RequestStatus.SUCCESSFUL }));
     } catch (error) {
