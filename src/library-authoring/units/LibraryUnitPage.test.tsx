@@ -276,7 +276,7 @@ describe('<LibraryUnitPage />', () => {
     axiosMock
       .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId))
       .reply(200);
-    verticalSortableListCollisionDetection.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1' }]);
+    verticalSortableListCollisionDetection.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1----1' }]);
     await act(async () => {
       fireEvent.keyDown(firstDragHandle, { code: 'Space' });
     });
@@ -290,7 +290,7 @@ describe('<LibraryUnitPage />', () => {
     axiosMock
       .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId))
       .reply(200);
-    verticalSortableListCollisionDetection.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1' }]);
+    verticalSortableListCollisionDetection.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1----1' }]);
     await act(async () => {
       fireEvent.keyDown(firstDragHandle, { code: 'Space' });
     });
@@ -304,7 +304,7 @@ describe('<LibraryUnitPage />', () => {
     axiosMock
       .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId))
       .reply(500);
-    verticalSortableListCollisionDetection.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1' }]);
+    verticalSortableListCollisionDetection.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1----1' }]);
     await act(async () => {
       fireEvent.keyDown(firstDragHandle, { code: 'Space' });
     });
