@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Icon } from '@openedx/paragon';
 import { ArrowBackIos } from '@openedx/paragon/icons';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
 // import VideoPreview from './components/VideoPreview';
+import { useSelector } from 'react-redux';
 import { ErrorSummary } from './ErrorSummary';
 import DurationWidget from './components/DurationWidget';
 import HandoutWidget from './components/HandoutWidget';
@@ -16,6 +17,7 @@ import ConnectedVideoPreviewWidget from './components/VideoPreviewWidget';
 import './index.scss';
 import SocialShareWidget from './components/SocialShareWidget';
 import messages from '../../messages';
+import { getWaffleFlags } from '../../../../data/redux/app/selectors';
 
 interface Props {
   onReturn: () => void;
@@ -27,35 +29,39 @@ const VideoSettingsModal: React.FC<Props> = ({
   onReturn,
   isLibrary,
   onClose,
-}) => (
-  <>
-    {!isLibrary && (
-      <Button
-        variant="link"
-        className="text-primary-500"
-        size="sm"
-        onClick={onClose || onReturn}
-        style={{
-          textDecoration: 'none',
-          marginLeft: '3px',
-        }}
-      >
-        <Icon src={ArrowBackIos} style={{ height: '13px' }} />
-        <FormattedMessage {...messages.replaceVideoButtonLabel} />
-      </Button>
-    )}
-    <ErrorSummary />
-    <ConnectedVideoPreviewWidget />
-    <VideoSourceWidget />
-    {!isLibrary && (
-      <SocialShareWidget />
-    )}
-    <ThumbnailWidget />
-    <TranscriptWidget />
-    <DurationWidget />
-    <HandoutWidget />
-    <LicenseWidget />
-  </>
-);
+}) => {
+  const { useNewVideoUploadsPage } = useSelector(getWaffleFlags);
+
+  return (
+    <>
+      {!isLibrary && useNewVideoUploadsPage && (
+        <Button
+          variant="link"
+          className="text-primary-500"
+          size="sm"
+          onClick={onClose || onReturn}
+          style={{
+            textDecoration: 'none',
+            marginLeft: '3px',
+          }}
+        >
+          <Icon src={ArrowBackIos} style={{ height: '13px' }} />
+          <FormattedMessage {...messages.replaceVideoButtonLabel} />
+        </Button>
+      )}
+      <ErrorSummary />
+      <ConnectedVideoPreviewWidget />
+      <VideoSourceWidget />
+      {!isLibrary && (
+        <SocialShareWidget />
+      )}
+      <ThumbnailWidget />
+      <TranscriptWidget />
+      <DurationWidget />
+      <HandoutWidget />
+      <LicenseWidget />
+    </>
+  );
+};
 
 export default VideoSettingsModal;
