@@ -1,6 +1,7 @@
 import React, { useCallback, useContext } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
-import { Warning } from '@openedx/paragon/icons';
+import { Icon } from '@openedx/paragon';
+import { CalendarViewDay, School, Warning } from '@openedx/paragon/icons';
 
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { useDeleteLibraryBlock, useLibraryBlockMetadata, useRestoreLibraryBlock } from '../data/apiHooks';
@@ -66,6 +67,22 @@ const ComponentDeleter = ({ usageKey, ...props }: Props) => {
     return null;
   }
 
+  const deleteText = intl.formatMessage(messages.deleteComponentConfirm, {
+    componentName: <b><BlockName usageKey={usageKey} /></b>,
+    message: (
+      <>
+        <div className="d-flex mt-2">
+          <Icon className="mr-2" src={School} />
+          {intl.formatMessage(messages.deleteComponentConfirmMsg1)}
+        </div>
+        <div className="d-flex mt-2">
+          <Icon className="mr-2" src={CalendarViewDay} />
+          {intl.formatMessage(messages.deleteComponentConfirmMsg2)}
+        </div>
+      </>
+    ),
+  });
+
   return (
     <DeleteModal
       isOpen
@@ -73,16 +90,7 @@ const ComponentDeleter = ({ usageKey, ...props }: Props) => {
       variant="warning"
       title={intl.formatMessage(messages.deleteComponentWarningTitle)}
       icon={Warning}
-      description={(
-        <FormattedMessage
-          {...messages.deleteComponentConfirm}
-          values={{
-            componentName: (
-              <strong><BlockName usageKey={usageKey} /></strong>
-            ),
-          }}
-        />
-)}
+      description={deleteText}
       onDeleteSubmit={doDelete}
     />
   );
