@@ -33,25 +33,25 @@ const VideoSettingsModal: React.FC<Props> = ({
 }) => (
   <>
     {!isLibrary && useNewVideoUploadsPage && (
-    <Button
-      variant="link"
-      className="text-primary-500"
-      size="sm"
-      onClick={onReturn || onClose}
-      style={{
-        textDecoration: 'none',
-        marginLeft: '3px',
-      }}
-    >
-      <Icon src={ArrowBackIos} style={{ height: '13px' }} />
-      <FormattedMessage {...messages.replaceVideoButtonLabel} />
-    </Button>
+      <Button
+        variant="link"
+        className="text-primary-500"
+        size="sm"
+        onClick={onReturn || onClose}
+        style={{
+          textDecoration: 'none',
+          marginLeft: '3px',
+        }}
+      >
+        <Icon src={ArrowBackIos} style={{ height: '13px' }} />
+        <FormattedMessage {...messages.replaceVideoButtonLabel} />
+      </Button>
     )}
     <ErrorSummary />
     <ConnectedVideoPreviewWidget />
     <VideoSourceWidget />
     {!isLibrary && (
-    <SocialShareWidget />
+      <SocialShareWidget />
     )}
     <ThumbnailWidget />
     <TranscriptWidget />
