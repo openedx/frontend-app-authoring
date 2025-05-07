@@ -8,9 +8,9 @@ import { initializeMockApp } from '@edx/frontend-platform';
 
 import initializeStore from '../../store';
 import { executeThunk } from '../../utils';
-import { getCourseUnitApiUrl } from '../data/api';
-import { fetchCourseUnitQuery } from '../data/thunk';
-import { courseUnitIndexMock } from '../__mocks__';
+import { getCourseSectionVerticalApiUrl } from '../data/api';
+import { fetchCourseSectionVerticalData } from '../data/thunk';
+import { courseSectionVerticalMock } from '../__mocks__';
 import HeaderTitle from './HeaderTitle';
 import messages from './messages';
 
@@ -52,9 +52,9 @@ describe('<HeaderTitle />', () => {
     store = initializeStore();
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock
-      .onGet(getCourseUnitApiUrl(blockId))
-      .reply(200, courseUnitIndexMock);
-    await executeThunk(fetchCourseUnitQuery(blockId), store.dispatch);
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
+      .reply(200, courseSectionVerticalMock);
+    await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
   });
 
   it('render HeaderTitle component correctly', () => {
@@ -80,14 +80,18 @@ describe('<HeaderTitle />', () => {
     // Override mock unit with one sourced from an upstream library
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock
-      .onGet(getCourseUnitApiUrl(blockId))
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, {
-        ...courseUnitIndexMock,
-        upstreamInfo: {
-          upstreamRef: 'lct:org:lib:unit:unit-1',
+        ...courseSectionVerticalMock,
+        xblock_info: {
+          ...courseSectionVerticalMock.xblock_info,
+          upstreamInfo: {
+            ...courseSectionVerticalMock.xblock_info.upstreamInfo,
+            upstreamRef: 'lct:org:lib:unit:unit-1',
+          },
         },
       });
-    await executeThunk(fetchCourseUnitQuery(blockId), store.dispatch);
+    await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
 
     const { getByRole } = renderComponent();
 
@@ -122,16 +126,19 @@ describe('<HeaderTitle />', () => {
 
   it('displays a visibility message with the selected groups for the unit', async () => {
     axiosMock
-      .onGet(getCourseUnitApiUrl(blockId))
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, {
-        ...courseUnitIndexMock,
-        user_partition_info: {
-          ...courseUnitIndexMock.user_partition_info,
-          selected_partition_index: 1,
-          selected_groups_label: 'Visibility group 1',
+        ...courseSectionVerticalMock,
+        xblock_info: {
+          ...courseSectionVerticalMock.xblock_info,
+          user_partition_info: {
+            ...courseSectionVerticalMock.xblock_info.user_partition_info,
+            selected_partition_index: 1,
+            selected_groups_label: 'Visibility group 1',
+          },
         },
       });
-    await executeThunk(fetchCourseUnitQuery(blockId), store.dispatch);
+    await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
     const { getByText } = renderComponent();
     const visibilityMessage = messages.definedVisibilityMessage.defaultMessage
       .replace('{selectedGroupsLabel}', 'Visibility group 1');
@@ -143,12 +150,15 @@ describe('<HeaderTitle />', () => {
 
   it('displays a visibility message with the selected groups for some of xblock', async () => {
     axiosMock
-      .onGet(getCourseUnitApiUrl(blockId))
+      .onGet(getCourseSectionVerticalApiUrl(blockId))
       .reply(200, {
-        ...courseUnitIndexMock,
-        has_partition_group_components: true,
+        ...courseSectionVerticalMock,
+        xblock_info: {
+          ...courseSectionVerticalMock.xblock_info,
+          has_partition_group_components: true,
+        },
       });
-    await executeThunk(fetchCourseUnitQuery(blockId), store.dispatch);
+    await executeThunk(fetchCourseSectionVerticalData(blockId), store.dispatch);
     const { getByText } = renderComponent();
 
     await waitFor(() => {
