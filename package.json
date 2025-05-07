@@ -106,7 +106,7 @@
     "reselect": "^4.1.5",
     "start": "^5.1.0",
     "tinymce": "^5.10.4",
-    "titaned-lib": "^0.0.52",
+    "titaned-lib": "^0.0.62",
     "universal-cookie": "^4.0.4",
     "uuid": "^3.4.0",
     "xmlchecker": "^0.1.0",
