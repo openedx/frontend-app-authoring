@@ -12,7 +12,7 @@ export function useSequenceNavigationMetadata(courseId, currentSequenceId, curre
   const isLastUnit = !nextUrl;
   const sequenceIds = useSelector(getSequenceIds);
   const sequenceIndex = sequenceIds.indexOf(currentSequenceId);
-  const unitIndex = sequence.unitIds?.indexOf(currentUnitId);
+  const unitIndex = sequence.unitIds.indexOf(currentUnitId);
 
   const nextSequenceId = sequenceIndex < sequenceIds.length - 1 ? sequenceIds[sequenceIndex + 1] : null;
   const previousSequenceId = sequenceIndex > 0 ? sequenceIds[sequenceIndex - 1] : null;
@@ -20,7 +20,7 @@ export function useSequenceNavigationMetadata(courseId, currentSequenceId, curre
   let nextLink;
   const nextIndex = unitIndex + 1;
 
-  if (nextIndex < sequence.unitIds?.length) {
+  if (nextIndex < sequence.unitIds.length) {
     const nextUnitId = sequence.unitIds[nextIndex];
     nextLink = `/course/${courseId}/container/${nextUnitId}/${currentSequenceId}`;
   } else if (nextSequenceId) {
