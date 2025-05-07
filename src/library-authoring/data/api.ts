@@ -259,6 +259,9 @@ export interface LibraryBlockMetadata {
   modified: string | null;
   tagsCount: number;
   collections: CollectionMetadata[];
+  // Local only variable set to true when a new block is added
+  // NOTE: Currently only updated when a new component is added inside a unit
+  isNew?: boolean;
 }
 
 export interface UpdateLibraryDataRequest {

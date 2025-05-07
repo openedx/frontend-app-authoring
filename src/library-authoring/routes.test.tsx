@@ -15,6 +15,14 @@ jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
 }));
+jest.mock('./common/context/LibraryContext', () => ({
+  ...jest.requireActual('./common/context/LibraryContext'),
+  useLibraryContext: () => ({
+    setComponentId: jest.fn(),
+    setUnitId: jest.fn(),
+    setCollectionId: jest.fn(),
+  }),
+}));
 
 mockContentLibrary.applyMock();
 

@@ -42,14 +42,14 @@ mockContentLibrary.applyMock();
 mockXBlockFields.applyMock();
 mockLibraryBlockMetadata.applyMock();
 
-const closestCenter = jest.fn();
-jest.mock('@dnd-kit/core', () => ({
-  ...jest.requireActual('@dnd-kit/core'),
+const verticalSortableListCollisionDetection = jest.fn();
+jest.mock('../../generic/DraggableList/verticalSortableList', () => ({
+  ...jest.requireActual('../../generic/DraggableList/verticalSortableList'),
   // Since jsdom (used by jest) does not support getBoundingClientRect function
   // which is required for drag-n-drop calculations, we mock closestCorners fn
   // from dnd-kit to return collided elements as per the test. This allows us to
   // test all drag-n-drop handlers.
-  closestCenter: () => closestCenter(),
+  verticalSortableListCollisionDetection: () => verticalSortableListCollisionDetection(),
 }));
 
 describe('<LibraryUnitPage />', () => {
@@ -187,9 +187,9 @@ describe('<LibraryUnitPage />', () => {
 
   it('should open and close component sidebar on component selection', async () => {
     renderLibraryUnitPage();
-
     const component = await screen.findByText('text block 0');
-    userEvent.click(component);
+    // Card is 3 levels up the component name div
+    userEvent.click(component.parentElement!.parentElement!.parentElement!);
     const sidebar = await screen.findByTestId('library-sidebar');
 
     const { findByRole, findByText } = within(sidebar);
@@ -276,14 +276,26 @@ describe('<LibraryUnitPage />', () => {
     axiosMock
       .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId))
       .reply(200);
-    closestCenter.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1' }]);
+    verticalSortableListCollisionDetection.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1----1' }]);
     await act(async () => {
       fireEvent.keyDown(firstDragHandle, { code: 'Space' });
     });
-    await act(async () => {
-      fireEvent.keyDown(firstDragHandle, { code: 'Space' });
-    });
+    setTimeout(() => fireEvent.keyDown(firstDragHandle, { code: 'Space' }));
     await waitFor(() => expect(mockShowToast).toHaveBeenLastCalledWith('Order updated'));
+  });
+
+  it('should cancel update order api on cancelling dragging component', async () => {
+    renderLibraryUnitPage();
+    const firstDragHandle = (await screen.findAllByRole('button', { name: 'Drag to reorder' }))[0];
+    axiosMock
+      .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId))
+      .reply(200);
+    verticalSortableListCollisionDetection.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1----1' }]);
+    await act(async () => {
+      fireEvent.keyDown(firstDragHandle, { code: 'Space' });
+    });
+    setTimeout(() => fireEvent.keyDown(firstDragHandle, { code: 'Escape' }));
+    await waitFor(() => expect(mockShowToast).not.toHaveBeenLastCalledWith('Order updated'));
   });
 
   it('should show toast error message on update order failure', async () => {
@@ -292,13 +304,11 @@ describe('<LibraryUnitPage />', () => {
     axiosMock
       .onPatch(getLibraryContainerChildrenApiUrl(mockGetContainerMetadata.containerId))
       .reply(500);
-    closestCenter.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1' }]);
+    verticalSortableListCollisionDetection.mockReturnValue([{ id: 'lb:org1:Demo_course:html:text-1----1' }]);
     await act(async () => {
       fireEvent.keyDown(firstDragHandle, { code: 'Space' });
     });
-    await act(async () => {
-      fireEvent.keyDown(firstDragHandle, { code: 'Space' });
-    });
+    setTimeout(() => fireEvent.keyDown(firstDragHandle, { code: 'Space' }));
     await waitFor(() => expect(mockShowToast).toHaveBeenLastCalledWith('Failed to update components order'));
   });
 
@@ -311,7 +321,7 @@ describe('<LibraryUnitPage />', () => {
     const menu = screen.getAllByRole('button', { name: /component actions menu/i })[0];
     fireEvent.click(menu);
 
-    const removeButton = await screen.getByText('Remove from unit');
+    const removeButton = await screen.findByText('Remove from unit');
     fireEvent.click(removeButton);
 
     await waitFor(() => {
@@ -342,7 +352,7 @@ describe('<LibraryUnitPage />', () => {
     const menu = screen.getAllByRole('button', { name: /component actions menu/i })[0];
     fireEvent.click(menu);
 
-    const removeButton = await screen.getByText('Remove from unit');
+    const removeButton = await screen.findByText('Remove from unit');
     fireEvent.click(removeButton);
 
     await waitFor(() => {
@@ -360,7 +370,7 @@ describe('<LibraryUnitPage />', () => {
     const menu = screen.getAllByRole('button', { name: /component actions menu/i })[0];
     fireEvent.click(menu);
 
-    const removeButton = await screen.getByText('Remove from unit');
+    const removeButton = await screen.findByText('Remove from unit');
     fireEvent.click(removeButton);
 
     await waitFor(() => {
@@ -388,7 +398,7 @@ describe('<LibraryUnitPage />', () => {
     renderLibraryUnitPage();
 
     const component = await screen.findByText('text block 0');
-    userEvent.click(component);
+    userEvent.click(component.parentElement!.parentElement!.parentElement!);
     const sidebar = await screen.findByTestId('library-sidebar');
 
     const { findByRole, findByText } = within(sidebar);
@@ -409,7 +419,7 @@ describe('<LibraryUnitPage />', () => {
     renderLibraryUnitPage();
     const component = await screen.findByText('text block 0');
     // trigger double click
-    userEvent.click(component, undefined, { clickCount: 2 });
+    userEvent.click(component.parentElement!.parentElement!.parentElement!, undefined, { clickCount: 2 });
     expect(await screen.findByRole('dialog', { name: 'Editor Dialog' })).toBeInTheDocument();
   });
 });

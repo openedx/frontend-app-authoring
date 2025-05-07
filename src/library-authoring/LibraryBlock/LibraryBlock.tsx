@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 
@@ -16,6 +17,7 @@ interface LibraryBlockProps {
   view?: string;
   scrolling?: string;
   minHeight?: string;
+  scrollIntoView?: boolean;
 }
 /**
  * React component that displays an XBlock in a sandboxed IFrame.
@@ -33,6 +35,7 @@ export const LibraryBlock = ({
   view,
   minHeight,
   scrolling = 'no',
+  scrollIntoView = false,
 }: LibraryBlockProps) => {
   const { iframeRef, setIframeRef } = useIframe();
   const xblockView = view ?? 'student_view';
@@ -48,6 +51,13 @@ export const LibraryBlock = ({
     iframeRef,
     onBlockNotification,
   });
+
+  useEffect(() => {
+    /* istanbul ignore next */
+    if (scrollIntoView) {
+      iframeRef?.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [scrollIntoView]);
 
   useIframeContent(iframeRef, setIframeRef);
 
