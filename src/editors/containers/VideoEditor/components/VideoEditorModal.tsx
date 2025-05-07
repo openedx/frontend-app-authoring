@@ -37,7 +37,7 @@ const VideoEditorModal: React.FC<Props> = ({
   const searchParams = new URLSearchParams(location.search);
   const selectedVideoId = searchParams.get('selectedVideoId');
   const selectedVideoUrl = searchParams.get('selectedVideoUrl');
-  const onSettingsReturn = onReturn || hooks.useReturnToGallery();
+  const onSettingsReturn = hooks.useReturnToGallery() || onReturn;
   const isLoaded = useSelector(
     (state) => selectors.requests.isFinished(state, { requestKey: RequestKeys.fetchVideos }),
   );
