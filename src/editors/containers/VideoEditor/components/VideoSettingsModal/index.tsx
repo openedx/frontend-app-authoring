@@ -17,51 +17,48 @@ import ConnectedVideoPreviewWidget from './components/VideoPreviewWidget';
 import './index.scss';
 import SocialShareWidget from './components/SocialShareWidget';
 import messages from '../../messages';
-import { getWaffleFlags } from '../../../../data/redux/app/selectors';
 
 interface Props {
   onReturn: () => void;
   isLibrary: boolean;
   onClose?: (() => void) | null;
+  useNewVideoUploadsPage?: boolean;
 }
 
 const VideoSettingsModal: React.FC<Props> = ({
   onReturn,
   isLibrary,
   onClose,
-}) => {
-  const { useNewVideoUploadsPage } = useSelector(getWaffleFlags);
-
-  return (
-    <>
-      {!isLibrary && useNewVideoUploadsPage && (
-        <Button
-          variant="link"
-          className="text-primary-500"
-          size="sm"
-          onClick={onReturn || onClose}
-          style={{
-            textDecoration: 'none',
-            marginLeft: '3px',
-          }}
-        >
-          <Icon src={ArrowBackIos} style={{ height: '13px' }} />
-          <FormattedMessage {...messages.replaceVideoButtonLabel} />
-        </Button>
-      )}
-      <ErrorSummary />
-      <ConnectedVideoPreviewWidget />
-      <VideoSourceWidget />
-      {!isLibrary && (
-        <SocialShareWidget />
-      )}
-      <ThumbnailWidget />
-      <TranscriptWidget />
-      <DurationWidget />
-      <HandoutWidget />
-      <LicenseWidget />
-    </>
-  );
-};
+  useNewVideoUploadsPage,
+}) => (
+  <>
+    {!isLibrary && useNewVideoUploadsPage && (
+    <Button
+      variant="link"
+      className="text-primary-500"
+      size="sm"
+      onClick={onReturn || onClose}
+      style={{
+        textDecoration: 'none',
+        marginLeft: '3px',
+      }}
+    >
+      <Icon src={ArrowBackIos} style={{ height: '13px' }} />
+      <FormattedMessage {...messages.replaceVideoButtonLabel} />
+    </Button>
+    )}
+    <ErrorSummary />
+    <ConnectedVideoPreviewWidget />
+    <VideoSourceWidget />
+    {!isLibrary && (
+    <SocialShareWidget />
+    )}
+    <ThumbnailWidget />
+    <TranscriptWidget />
+    <DurationWidget />
+    <HandoutWidget />
+    <LicenseWidget />
+  </>
+);
 
 export default VideoSettingsModal;
