@@ -55,6 +55,10 @@ const path = '/library/:libraryId/*';
 const libraryTitle = mockContentLibrary.libraryData.title;
 
 describe('<LibraryAuthoringPage />', () => {
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+
   beforeEach(async () => {
     const mocks = initializeMocks();
     axiosMock = mocks.axiosMock;
@@ -76,6 +80,10 @@ describe('<LibraryAuthoringPage />', () => {
       newMockResult.results[0]?.hits.forEach((hit) => { hit._formatted = { ...hit }; });
       return newMockResult;
     });
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
   });
 
   const renderLibraryPage = async () => {
@@ -392,7 +400,7 @@ describe('<LibraryAuthoringPage />', () => {
     await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
   });
 
-  it('should open component sidebar, showing manage tab on clicking add to collection menu item (component)', async () => {
+  it('should open component sidebar, showing manage tab on clicking add to collection menu item - component', async () => {
     const mockResult0 = { ...mockResult }.results[0].hits[0];
     const displayName = 'Introduction to Testing';
     expect(mockResult0.display_name).toStrictEqual(displayName);
@@ -407,9 +415,10 @@ describe('<LibraryAuthoringPage />', () => {
 
     const sidebar = screen.getByTestId('library-sidebar');
 
-    const { getByRole, queryByText } = within(sidebar);
+    const { getByRole, findByText } = within(sidebar);
 
-    await waitFor(() => expect(queryByText(displayName)).toBeInTheDocument());
+    expect(await findByText(displayName)).toBeInTheDocument();
+    jest.advanceTimersByTime(300);
     expect(getByRole('tab', { selected: true })).toHaveTextContent('Manage');
     const closeButton = getByRole('button', { name: /close/i });
     fireEvent.click(closeButton);
@@ -417,7 +426,7 @@ describe('<LibraryAuthoringPage />', () => {
     await waitFor(() => expect(screen.queryByTestId('library-sidebar')).not.toBeInTheDocument());
   });
 
-  it('should open component sidebar, showing manage tab on clicking add to collection menu item (unit)', async () => {
+  it('should open component sidebar, showing manage tab on clicking add to collection menu item - unit', async () => {
     const displayName = 'Test Unit';
     await renderLibraryPage();
 
@@ -430,9 +439,10 @@ describe('<LibraryAuthoringPage />', () => {
 
     const sidebar = screen.getByTestId('library-sidebar');
 
-    const { getByRole, queryByText } = within(sidebar);
+    const { getByRole, findByText } = within(sidebar);
 
-    await waitFor(() => expect(queryByText(displayName)).toBeInTheDocument());
+    expect(await findByText(displayName)).toBeInTheDocument();
+    jest.advanceTimersByTime(300);
     expect(getByRole('tab', { selected: true })).toHaveTextContent('Manage');
     const closeButton = getByRole('button', { name: /close/i });
     fireEvent.click(closeButton);

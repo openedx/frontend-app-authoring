@@ -46,7 +46,8 @@ export const useIframeBehavior = ({
 
     switch (type) {
       case iframeMessageTypes.resize:
-        setIframeHeight(payload.height);
+        // Adding 10px as padding
+        setIframeHeight(payload.height + 10);
         if (!hasLoaded && iframeHeight === 0 && payload.height > 0) {
           setHasLoaded(true);
         }

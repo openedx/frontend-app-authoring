@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useMediaQuery } from 'react-responsive';
 import * as Yup from 'yup';
@@ -300,4 +300,23 @@ export const getFileSizeToClosestByte = (fileSize) => {
   const units = ['B', 'KB', 'MB', 'GB', 'TB'];
   const fileSizeFixedDecimal = Number.parseFloat(size).toFixed(2);
   return `${fileSizeFixedDecimal} ${units[divides]}`;
+};
+
+/**
+* A generic hook to run callback on next render cycle.
+* @param {} callback - Callback function that needs to be run later
+*/
+export const useRunOnNextRender = (callback) => {
+  const [scheduled, setScheduled] = useState(false);
+
+  useEffect(() => {
+    if (!scheduled) {
+      return;
+    }
+
+    setScheduled(false);
+    callback();
+  }, [scheduled]);
+
+  return () => setScheduled(true);
 };

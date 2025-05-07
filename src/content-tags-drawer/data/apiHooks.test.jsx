@@ -157,7 +157,7 @@ describe('useContentTaxonomyTagsUpdater', () => {
 
     const contentId = 'testerContent';
     const taxonomyId = 123;
-    const mutation = useContentTaxonomyTagsUpdater(contentId);
+    const mutation = renderHook(() => useContentTaxonomyTagsUpdater(contentId)).result.current;
     const tagsData = [{
       taxonomy: taxonomyId,
       tags: ['tag1', 'tag2'],

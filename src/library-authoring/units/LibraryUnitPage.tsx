@@ -91,7 +91,7 @@ const HeaderActions = () => {
     } else {
       openUnitInfoSidebar(unitId);
     }
-    navigateTo({ unitId });
+    navigateTo({ unitId, componentId: '' });
   }, [unitId, infoSidebarIsOpen]);
 
   return (
@@ -123,15 +123,24 @@ export const LibraryUnitPage = () => {
   const {
     libraryId,
     unitId,
-    collectionId,
     componentId,
+    collectionId,
   } = useLibraryContext();
   const {
-    sidebarComponentInfo,
     openInfoSidebar,
+    sidebarComponentInfo,
     setDefaultTab,
     setHiddenTabs,
   } = useSidebarContext();
+  const { navigateTo } = useLibraryRoutes();
+
+  // Open unit or component sidebar on mount
+  useEffect(() => {
+    // includes componentId to open correct sidebar on page mount from url
+    openInfoSidebar(componentId, collectionId, unitId);
+    // avoid including componentId in dependencies to prevent flicker on closing sidebar.
+    // See below useEffect that clears componentId on closing sidebar.
+  }, [unitId, collectionId]);
 
   useEffect(() => {
     setDefaultTab({
@@ -149,10 +158,6 @@ export const LibraryUnitPage = () => {
       setHiddenTabs([]);
     };
   }, [setDefaultTab, setHiddenTabs]);
-
-  useEffect(() => {
-    openInfoSidebar(componentId, collectionId, unitId);
-  }, [componentId, unitId, collectionId]);
 
   if (!unitId || !libraryId) {
     // istanbul ignore next - This shouldn't be possible; it's just here to satisfy the type checker.
@@ -232,7 +237,7 @@ export const LibraryUnitPage = () => {
           className="library-authoring-sidebar box-shadow-left-1 bg-white"
           data-testid="library-sidebar"
         >
-          <LibrarySidebar />
+          <LibrarySidebar onSidebarClose={() => navigateTo({ componentId: '' })} />
         </div>
       )}
     </div>

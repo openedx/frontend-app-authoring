@@ -1,10 +1,9 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { createPortal } from 'react-dom';
 
 import {
   DndContext,
-  closestCenter,
   KeyboardSensor,
   PointerSensor,
   useSensor,
@@ -18,6 +17,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import { verticalSortableListCollisionDetection } from './verticalSortableList';
 
 const DraggableList = ({
   itemList,
@@ -56,13 +56,20 @@ const DraggableList = ({
     setActiveId?.(event.active.id);
   }, [setActiveId]);
 
+  const handleDragCancel = useCallback(() => {
+    setActiveId?.(null);
+  }, [setActiveId]);
+
   return (
     <DndContext
       sensors={sensors}
       modifiers={[restrictToVerticalAxis]}
-      collisionDetection={closestCenter}
+      collisionDetection={verticalSortableListCollisionDetection}
       onDragStart={handleDragStart}
+      // autoScroll does not play well with verticalSortableListCollisionDetection strategy
+      autoScroll={false}
       onDragEnd={handleDragEnd}
+      onDragCancel={handleDragCancel}
     >
       <SortableContext
         items={itemList}

@@ -8,7 +8,7 @@ import {
   waitFor,
 } from '../../testUtils';
 import { LibraryProvider } from '../common/context/LibraryContext';
-import { SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
+import { SidebarActions, SidebarBodyComponentId, SidebarProvider } from '../common/context/SidebarContext';
 import { mockContentLibrary, mockLibraryBlockMetadata } from '../data/api.mocks';
 import ComponentManagement from './ComponentManagement';
 
@@ -17,6 +17,16 @@ jest.mock('../../content-tags-drawer', () => ({
   ContentTagsDrawer: ({ readOnly }: { readOnly: boolean }) => (
     <div>Mocked {readOnly ? 'read-only' : 'editable'} ContentTagsDrawer</div>
   ),
+}));
+
+const mockSearchParam = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'), // use actual for all non-hook parts
+  useSearchParams: () => [
+    { getAll: (paramName: string) => mockSearchParam(paramName) },
+    () => {},
+  ],
 }));
 
 mockContentLibrary.applyMock();
@@ -55,6 +65,11 @@ const render = (usageKey: string, libraryId?: string) => baseRender(<ComponentMa
 describe('<ComponentManagement />', () => {
   beforeEach(() => {
     initializeMocks();
+    mockSearchParam.mockResolvedValue([undefined, () => {}]);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should render draft status', async () => {
@@ -118,5 +133,35 @@ describe('<ComponentManagement />', () => {
   it('should render collection count in collection info section', async () => {
     render(mockLibraryBlockMetadata.usageKeyWithCollections);
     expect(await screen.findByText('Collections (1)')).toBeInTheDocument();
+  });
+
+  it('should open collection section when sidebarAction = JumpToManageCollections', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+    });
+    mockSearchParam.mockReturnValue([SidebarActions.JumpToManageCollections]);
+    render(mockLibraryBlockMetadata.usageKeyWithCollections);
+    expect(await screen.findByText('Collections (1)')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Manage tags' })).not.toBeInTheDocument();
+    const tagsSection = await screen.findByRole('button', { name: 'Tags (0)' });
+    expect(tagsSection).toHaveAttribute('aria-expanded', 'false');
+    const collectionsSection = await screen.findByRole('button', { name: 'Collections (1)' });
+    expect(collectionsSection).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  it('should open tags section when sidebarAction = JumpToManageTags', async () => {
+    setConfig({
+      ...getConfig(),
+      ENABLE_TAGGING_TAXONOMY_PAGES: 'true',
+    });
+    mockSearchParam.mockReturnValue([SidebarActions.JumpToManageTags]);
+    render(mockLibraryBlockMetadata.usageKeyForTags);
+    expect(await screen.findByText('Collections (0)')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Manage tags' })).not.toBeInTheDocument();
+    const tagsSection = await screen.findByRole('button', { name: 'Tags (6)' });
+    expect(tagsSection).toHaveAttribute('aria-expanded', 'true');
+    const collectionsSection = await screen.findByRole('button', { name: 'Collections (0)' });
+    expect(collectionsSection).toHaveAttribute('aria-expanded', 'false');
   });
 });
