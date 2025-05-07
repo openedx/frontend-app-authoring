@@ -37,11 +37,12 @@ import { TaxonomyLayout, TaxonomyDetailPage, TaxonomyListPage } from './taxonomy
 import { ContentTagsDrawer } from './content-tags-drawer';
 import AccessibilityPage from './accessibility-page';
 import { ToastProvider } from './generic/toast-context';
-
+import PSCourseForm from './studio-home/ps-course-form/PSCourseForm';
 import 'react-datepicker/dist/react-datepicker.css';
 import './index.scss';
 // eslint-disable-next-line import/no-unresolved
 import Layout from './Layout';
+import './styles/global-overrides.scss';
 
 const queryClient = new QueryClient();
 
@@ -82,6 +83,7 @@ const App = ({ themeData }) => {
         />
         <Route path="/course/:courseId/*" element={<CourseAuthoringRoutes />} />
         <Route path="/course_rerun/:courseId" element={<CourseRerun />} />
+        <Route path="/new-course" element={<PSCourseForm />} />
         {getConfig().ENABLE_ACCESSIBILITY_PAGE === 'true' && (
           <Route path="/accessibility" element={<AccessibilityPage />} />
         )}

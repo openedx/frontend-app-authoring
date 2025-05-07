@@ -81,14 +81,20 @@ const StudioHome = () => {
     if (hasAbilityToCreateNewCourse) {
       headerButtons.push(
         <Button
-          variant="outline-primary"
-          iconBefore={AddIcon}
-          size="sm"
-          disabled={showNewCourseContainer}
+          variant="primary"
+          className="mr-2"
           onClick={() => setShowNewCourseContainer(true)}
+          disabled={showNewCourseContainer}
         >
           {intl.formatMessage(messages.addNewCourseBtnText)}
         </Button>,
+        <Button
+          variant="primary"
+          onClick={() => navigate('/ps-course-form')}
+          disabled={showNewCourseContainer}
+        >
+          {intl.formatMessage(messages.addNewPSCourseBtnText)}
+        </Button>
       );
     }
 
@@ -175,7 +181,9 @@ const StudioHome = () => {
 
   return (
     <>
+      {/* <PluginSlot id="header_plugin_slot"> */}
       <Header isHiddenMainMenu />
+      {/* </PluginSlot> */}
       <Container size="xl" className="p-4 mt-3">
         <section className="mb-4">
           <article className="studio-home-sub-header">
@@ -195,10 +203,9 @@ const StudioHome = () => {
           isQueryPending={anyQueryIsPending}
         />
       </div>
-
-      <PluginSlot id="footer_plugin_slot">
+      {/* <PluginSlot id="footer_plugin_slot">
         <StudioFooter />
-      </PluginSlot>
+      </PluginSlot> */}
     </>
   );
 };

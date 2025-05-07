@@ -9,6 +9,7 @@ import {
 import { DragIndicator } from '@openedx/paragon/icons';
 
 import messages from './messages';
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 
 const SortableItem = ({
   id,
@@ -73,7 +74,11 @@ const SortableItem = ({
           {...listeners}
         >
           <span className="btn-icon__icon-container">
-            <Icon src={DragIndicator} />
+            <PluginSlot
+              id="drag_indicator_icon_plugin_slot"
+            >
+              <Icon src={DragIndicator} />
+            </PluginSlot>
           </span>
         </button>
       )}

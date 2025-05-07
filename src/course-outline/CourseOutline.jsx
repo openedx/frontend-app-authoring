@@ -36,7 +36,6 @@ import getPageHeadTitle from '../generic/utils';
 import { getCurrentItem, getProctoredExamsFlag } from './data/selectors';
 import { COURSE_BLOCK_NAMES } from './constants';
 import HeaderNavigations from './header-navigations/HeaderNavigations';
-import OutlineSideBar from './outline-sidebar/OutlineSidebar';
 import StatusBar from './status-bar/StatusBar';
 import EnableHighlightsModal from './enable-highlights-modal/EnableHighlightsModal';
 import SectionCard from './section-card/SectionCard';
@@ -121,7 +120,7 @@ const CourseOutline = ({ courseId }) => {
   } = useCourseOutline({ courseId });
 
   // Use `setToastMessage` to show the toast.
-  const [toastMessage, setToastMessage] = useState(/** @type{null|string} */ (null));
+  const [toastMessage, setToastMessage] = useState(/** @type{null|string} */(null));
 
   useEffect(() => {
     // Wait for the course data to load before exporting tags.
@@ -237,6 +236,7 @@ const CourseOutline = ({ courseId }) => {
       <Helmet>
         <title>{getPageHeadTitle(courseName, intl.formatMessage(messages.headingTitle))}</title>
       </Helmet>
+
       <Container size="xl" className="px-4">
         <section className="course-outline-container mb-4 mt-5">
           <PageAlerts
@@ -397,6 +397,7 @@ const CourseOutline = ({ courseId }) => {
                                                 getTitleLink={getUnitUrl}
                                                 onOrderChange={updateUnitOrderByIndex}
                                                 discussionsSettings={discussionsSettings}
+                                                onCopyToClipboardClick={handlePasteClipboardClick}
                                               />
                                             ))}
                                           </SortableContext>
@@ -431,9 +432,6 @@ const CourseOutline = ({ courseId }) => {
                   </section>
                 </div>
               </article>
-            </Layout.Element>
-            <Layout.Element>
-              <OutlineSideBar courseId={courseId} />
             </Layout.Element>
           </Layout>
           <EnableHighlightsModal
@@ -471,6 +469,7 @@ const CourseOutline = ({ courseId }) => {
         <ProcessingNotification
           isShow={isShowProcessingNotification}
           title={processingNotificationTitle}
+          action={null}
         />
         <InternetConnectionAlert
           isFailed={isInternetConnectionAlertFailed}

@@ -15,6 +15,7 @@ import { fetchStudioHomeData } from './studio-home/data/thunks';
 import { getCourseAppsApiStatus } from './pages-and-resources/data/selectors';
 import { RequestStatus } from './data/constants';
 import Loading from './generic/Loading';
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 
 const CourseAuthoringPage = ({ courseId, children }) => {
   const dispatch = useDispatch();
@@ -54,18 +55,22 @@ const CourseAuthoringPage = ({ courseId, children }) => {
       using url pattern containing /editor/,
       we shouldn't have the header and footer on these pages.
       This functionality will be removed in TNL-9591 */}
-      {inProgress ? !isEditor && <Loading />
-        : (!isEditor && (
-          <Header
-            number={courseNumber}
-            org={courseOrg}
-            title={courseTitle}
-            contextId={courseId}
-          />
-        )
-        )}
+      <PluginSlot id="header_plugin_slot">
+        {inProgress ? !isEditor && <Loading />
+          : (!isEditor && (
+            <Header
+              number={courseNumber}
+              org={courseOrg}
+              title={courseTitle}
+              contextId={courseId}
+            />
+          )
+          )}
+      </PluginSlot>
       {children}
-      {!inProgress && !isEditor && <StudioFooter />}
+      <PluginSlot id="footer_plugin_slot">
+        {!inProgress && !isEditor && <StudioFooter />}
+      </PluginSlot>
     </div>
   );
 };

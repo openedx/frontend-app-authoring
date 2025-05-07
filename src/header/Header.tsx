@@ -5,10 +5,10 @@ import { StudioHeader } from '@edx/frontend-component-header';
 import { type Container, useToggle } from '@openedx/paragon';
 import { generatePath, useHref } from 'react-router-dom';
 
-import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import { SearchModal } from '../search-modal';
 import { useContentMenuItems, useSettingMenuItems, useToolsMenuItems } from './hooks';
 import messages from './messages';
+
 
 type ContainerPropsType = React.ComponentProps<typeof Container>;
 
@@ -65,8 +65,8 @@ const Header = ({
     : generatePath(libraryHref, { libraryId: contextId });
 
   return (
-    // <>
-    <PluginSlot>
+    <>
+      {/* <PluginSlot id="header_plugin_slot"> */}
       <StudioHeader
         org={org}
         number={number}
@@ -84,9 +84,8 @@ const Header = ({
           onClose={closeSearchModal}
         />
       )}
-    </PluginSlot>
-
-  // </>
+      {/* </PluginSlot> */}
+    </>
   );
 };
 

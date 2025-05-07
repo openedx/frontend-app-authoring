@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { getConfig } from '@edx/frontend-platform';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useSearchParams } from 'react-router-dom';
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 import {
   Dropdown,
   Form,
@@ -71,6 +72,8 @@ const CardHeader = ({
 
   const { data: contentTagCount } = useContentTagsCount(cardId);
 
+
+
   useEffect(() => {
     const locatorId = searchParams.get('show');
     if (!locatorId) {
@@ -84,13 +87,13 @@ const CardHeader = ({
 
   const showDiscussionsEnabledBadge = (
     isVertical
-      && !parentInfo?.isTimeLimited
-      && discussionEnabled
-      && discussionsSettings?.providerType === 'openedx'
-      && (
-        discussionsSettings?.enableGradedUnits
-          || (!discussionsSettings?.enableGradedUnits && !parentInfo.graded)
-      )
+    && !parentInfo?.isTimeLimited
+    && discussionEnabled
+    && discussionsSettings?.providerType === 'openedx'
+    && (
+      discussionsSettings?.enableGradedUnits
+      || (!discussionsSettings?.enableGradedUnits && !parentInfo.graded)
+    )
   );
 
   useEscapeClick({
@@ -100,6 +103,8 @@ const CardHeader = ({
     },
     dependency: title,
   });
+
+
 
   return (
     <>
@@ -142,19 +147,24 @@ const CardHeader = ({
           {(isVertical || isSequential) && (
             <CardStatus status={status} showDiscussionsEnabledBadge={showDiscussionsEnabledBadge} />
           )}
-          { getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && !!contentTagCount && (
+          {getConfig().ENABLE_TAGGING_TAXONOMY_PAGES === 'true' && !!contentTagCount && (
             <TagCount count={contentTagCount} onClick={openManageTagsDrawer} />
           )}
           <Dropdown data-testid={`${namePrefix}-card-header__menu`} onClick={onClickMenuButton}>
-            <Dropdown.Toggle
-              className="item-card-header__menu"
-              id={`${namePrefix}-card-header__menu`}
-              data-testid={`${namePrefix}-card-header__menu-button`}
-              as={IconButton}
-              src={MoveVertIcon}
-              alt={`${namePrefix}-card-header__menu`}
-              iconAs={Icon}
-            />
+            <PluginSlot
+              id="card_header_menu_icon_plugin_slot"
+              namePrefix={namePrefix}
+            >
+              <Dropdown.Toggle
+                className="item-card-header__menu"
+                id={`${namePrefix}-card-header__menu`}
+                data-testid={`${namePrefix}-card-header__menu-button`}
+                as={IconButton}
+                src={MoveVertIcon}
+                alt={`${namePrefix}-card-header__menu`}
+                iconAs={Icon}
+              />
+            </PluginSlot>
             <Dropdown.Menu>
               {isSequential && proctoringExamConfigurationLink && (
                 <Dropdown.Item
@@ -232,7 +242,7 @@ const CardHeader = ({
             </Dropdown.Menu>
           </Dropdown>
         </div>
-      </div>
+      </div >
       <ContentTagsDrawerSheet
         id={cardId}
         onClose={/* istanbul ignore next */ () => closeManageTagsDrawer()}

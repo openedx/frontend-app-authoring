@@ -4,18 +4,18 @@ import { StudioFooter } from '@edx/frontend-component-footer';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Outlet, ScrollRestoration } from 'react-router-dom';
 import { Toast } from '@openedx/paragon';
-
 import AlertMessage from '../generic/alert-message';
 import Header from '../header';
 import { TaxonomyContext } from './common/context';
 import messages from './messages';
+import { PluginSlot } from '@openedx/frontend-plugin-framework';
 
 const TaxonomyLayout = () => {
   const intl = useIntl();
   // Use `setToastMessage` to show the toast.
-  const [toastMessage, setToastMessage] = useState(/** @type{null|string} */ (null));
+  const [toastMessage, setToastMessage] = useState(/** @type{null|string} */(null));
   // Use `setToastMessage` to show the alert.
-  const [alertProps, setAlertProps] = useState(/** @type {null|import('./common/context').AlertProps} */ (null));
+  const [alertProps, setAlertProps] = useState(/** @type {null|import('./common/context').AlertProps} */(null));
 
   const context = useMemo(() => ({
     toastMessage, setToastMessage, alertProps, setAlertProps,
@@ -25,7 +25,7 @@ const TaxonomyLayout = () => {
     <TaxonomyContext.Provider value={context}>
       <div className="bg-light-400">
         <Header isHiddenMainMenu />
-        { alertProps && (
+        {alertProps && (
           <AlertMessage
             data-testid="taxonomy-alert"
             className="mb-0"
@@ -36,7 +36,9 @@ const TaxonomyLayout = () => {
           />
         )}
         <Outlet />
-        <StudioFooter />
+        <PluginSlot id="footer_plugin_slot">
+          <StudioFooter />
+        </PluginSlot>
         {toastMessage && (
           <Toast
             show
