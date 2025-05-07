@@ -3,31 +3,16 @@ import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import { PUBLISH_TYPES } from '../constants';
-import { isUnitReadOnly, normalizeCourseSectionVerticalData, updateXBlockBlockIdToId } from './utils';
+import { normalizeCourseSectionVerticalData, updateXBlockBlockIdToId } from './utils';
 
 const getStudioBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
-export const getCourseUnitApiUrl = (itemId) => `${getStudioBaseUrl()}/xblock/container/${itemId}`;
 export const getXBlockBaseApiUrl = (itemId) => `${getStudioBaseUrl()}/xblock/${itemId}`;
 export const getCourseSectionVerticalApiUrl = (itemId) => `${getStudioBaseUrl()}/api/contentstore/v1/container_handler/${itemId}`;
 export const getCourseVerticalChildrenApiUrl = (itemId) => `${getStudioBaseUrl()}/api/contentstore/v1/container/vertical/${itemId}/children`;
 export const getCourseOutlineInfoUrl = (courseId) => `${getStudioBaseUrl()}/course/${courseId}?format=concise`;
 export const postXBlockBaseApiUrl = () => `${getStudioBaseUrl()}/xblock/`;
 export const libraryBlockChangesUrl = (blockId) => `${getStudioBaseUrl()}/api/contentstore/v2/downstreams/${blockId}/sync`;
-
-/**
- * Get course unit.
- * @param {string} unitId
- * @returns {Promise<Object>}
- */
-export async function getCourseUnitData(unitId) {
-  const { data } = await getAuthenticatedHttpClient()
-    .get(getCourseUnitApiUrl(unitId));
-
-  const result = camelCaseObject(data);
-  result.readOnly = isUnitReadOnly(result);
-  return result;
-}
 
 /**
  * Edit course unit display name.
