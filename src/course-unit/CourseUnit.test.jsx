@@ -469,6 +469,10 @@ describe('<CourseUnit />', () => {
     });
 
     axiosMock
+      .onGet(getCourseUnitApiUrl(blockId))
+      .reply(200, courseUnitIndexMock);
+
+    axiosMock
       .onPost(postXBlockBaseApiUrl({
         parent_locator: blockId,
         duplicate_source_locator: courseVerticalChildrenMock.children[0].block_id,
@@ -2173,6 +2177,17 @@ describe('<CourseUnit />', () => {
       .map((child) => (child.block_id === targetBlockId
         ? { ...child, block_type: 'html' }
         : child));
+
+    axiosMock
+      .onGet(getCourseUnitApiUrl(blockId))
+      .reply(200, courseUnitIndexMock);
+
+    axiosMock
+      .onPost(postXBlockBaseApiUrl({
+        parent_locator: blockId,
+        duplicate_source_locator: courseVerticalChildrenMock.children[0].block_id,
+      }))
+      .replyOnce(200, { locator: '1234567890' });
 
     axiosMock
       .onGet(getCourseVerticalChildrenApiUrl(blockId))
