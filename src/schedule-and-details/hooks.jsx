@@ -54,11 +54,14 @@ const useSaveValuesPrompt = (
     if (!isQueryPending && !isEditableState) {
       setEditedValues(initialEditedData);
     }
+    console.log("Initial editeddd", initialEditedData)
   }, [initialEditedData]);
 
   useEffect(() => {
     const errors = validateScheduleAndDetails(editedValues, canShowCertificateAvailableDateField, intl);
     setErrorFields(errors);
+    console.log("HookEdited", editedValues)
+    console.log("Initial editeddd", initialEditedData)
   }, [editedValues]);
 
   const handleValuesChange = (value, fieldName) => {
@@ -70,7 +73,8 @@ const useSaveValuesPrompt = (
       setEditedValues((prevEditedValues) => ({
         ...prevEditedValues,
         [fieldName]: value || '',
-      }));
+      })
+      );
 
       if (!showModifiedAlert) {
         setShowModifiedAlert(true);
@@ -99,6 +103,7 @@ const useSaveValuesPrompt = (
   };
 
   const handleQueryProcessing = () => {
+    console.log("query")
     setShowSuccessfulAlert(false);
     setShowFailedAlert(false);
     dispatch(updateDataQuery(courseId, updateWithDefaultValues(editedValues)));
@@ -106,6 +111,7 @@ const useSaveValuesPrompt = (
 
   useEffect(() => {
     if (savingStatus === RequestStatus.SUCCESSFUL) {
+      console.log("success", savingStatus)
       setIsQueryPending(false);
       setShowSuccessfulAlert(true);
       setShowFailedAlert(false);
@@ -116,6 +122,7 @@ const useSaveValuesPrompt = (
         setShowModifiedAlert(false);
       }
     } else if (savingStatus === RequestStatus.FAILED) {
+      console.log("fail", savingStatus)
       setIsQueryPending(false);
       setShowSuccessfulAlert(false);
       setShowFailedAlert(true);
