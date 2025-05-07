@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Button, Icon } from '@openedx/paragon';
 import { ArrowBackIos } from '@openedx/paragon/icons';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
@@ -39,7 +39,7 @@ const VideoSettingsModal: React.FC<Props> = ({
           variant="link"
           className="text-primary-500"
           size="sm"
-          onClick={onClose || onReturn}
+          onClick={onReturn || onClose}
           style={{
             textDecoration: 'none',
             marginLeft: '3px',
