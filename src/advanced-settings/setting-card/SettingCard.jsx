@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  ActionRow,
   Card,
   Form,
   Icon,
@@ -58,51 +57,43 @@ const SettingCard = ({
   return (
     <li className="field-group course-advanced-policy-list-item">
       <Card className="flex-column setting-card">
-        <Card.Body className="d-flex row m-0 align-items-center">
-          <Card.Header
-            className="col-6"
-            title={(
-              <ActionRow>
-                {capitalize(displayName)}
-                <IconButton
-                  ref={setTarget}
-                  onClick={open}
-                  src={InfoOutline}
-                  iconAs={Icon}
-                  alt={intl.formatMessage(messages.helpButtonText)}
-                  variant="primary"
-                  className="flex-shrink-0 ml-1 mr-2"
-                />
-                <ModalPopup
-                  hasArrow
-                  placement="right"
-                  positionRef={target}
-                  isOpen={isOpen}
-                  onClose={close}
-                  className="pgn__modal-popup__arrow"
-                >
-                  <div
-                    className="p-2 x-small rounded modal-popup-content"
-                    // eslint-disable-next-line react/no-danger
-                    dangerouslySetInnerHTML={{ __html: help }}
-                  />
-                </ModalPopup>
-                <ActionRow.Spacer />
-              </ActionRow>
-            )}
-          />
-          <Card.Section className="col-6 flex-grow-1">
-            <Form.Group className="m-0">
-              <Form.Control
-                as={TextareaAutosize}
-                value={isEditableState ? newValue : initialValue}
-                name={name}
-                onChange={handleSettingChange}
-                aria-label={displayName}
-                onBlur={handleCardBlur}
+        <Card.Body className="d-flex flex-column p-3">
+          <div className="d-flex align-items-center mb-2">
+            <span className="font-weight-bold">{capitalize(displayName)}</span>
+            <IconButton
+              ref={setTarget}
+              onClick={open}
+              src={InfoOutline}
+              iconAs={Icon}
+              alt={intl.formatMessage(messages.helpButtonText)}
+              variant="primary"
+              className="flex-shrink-0 ml-2"
+            />
+            <ModalPopup
+              hasArrow
+              placement="right"
+              positionRef={target}
+              isOpen={isOpen}
+              onClose={close}
+              className="pgn__modal-popup__arrow"
+            >
+              <div
+                className="p-2 x-small rounded modal-popup-content"
+                // eslint-disable-next-line react/no-danger
+                dangerouslySetInnerHTML={{ __html: help }}
               />
-            </Form.Group>
-          </Card.Section>
+            </ModalPopup>
+          </div>
+          <Form.Group className="m-0">
+            <Form.Control
+              as={TextareaAutosize}
+              value={isEditableState ? newValue : initialValue}
+              name={name}
+              onChange={handleSettingChange}
+              aria-label={displayName}
+              onBlur={handleCardBlur}
+            />
+          </Form.Group>
         </Card.Body>
         {deprecated && (
           <Card.Status icon={Warning} variant="danger">
