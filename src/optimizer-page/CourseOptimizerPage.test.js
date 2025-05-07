@@ -194,7 +194,7 @@ describe('CourseOptimizerPage', () => {
       });
     });
 
-    it('should show only manual links when manualLinks filter is selected', async () => {
+    it('should show only manual links when manualLinks filter is selected and show all links when clicked again', async () => {
       const {
         getByText,
         getByLabelText,
@@ -214,6 +214,16 @@ describe('CourseOptimizerPage', () => {
         expect(getByText('Test Manual Links')).toBeInTheDocument();
         expect(queryByText('Test Broken Links')).not.toBeInTheDocument();
         expect(queryByText('Test Locked Links')).not.toBeInTheDocument();
+      });
+
+      // Click the manual links checkbox again to clear the filter
+      fireEvent.click(getByLabelText(scanResultsMessages.manualLabel.defaultMessage));
+
+      // Assert that all links are displayed after clearing the filter
+      await waitFor(() => {
+        expect(getByText('Test Broken Links')).toBeInTheDocument();
+        expect(getByText('Test Manual Links')).toBeInTheDocument();
+        expect(getByText('Test Locked Links')).toBeInTheDocument();
       });
     });
 
@@ -261,6 +271,52 @@ describe('CourseOptimizerPage', () => {
       expect(collapsibleTrigger).toBeInTheDocument();
       fireEvent.click(collapsibleTrigger);
 
+      await waitFor(() => {
+        expect(getByText('Test Broken Links')).toBeInTheDocument();
+        expect(getByText('Test Manual Links')).toBeInTheDocument();
+        expect(getByText('Test Locked Links')).toBeInTheDocument();
+      });
+    });
+
+    it('should show only manual links when the broken chip is clicked and show all links when clear filters button is clicked', async () => {
+      const {
+        getByText,
+        getByLabelText,
+        getByTestId,
+        queryByText,
+        container,
+      } = await setupOptimizerPage();
+      // Select broken & manual link checkboxes
+      fireEvent.click(getByLabelText(scanResultsMessages.brokenLabel.defaultMessage));
+      fireEvent.click(getByLabelText(scanResultsMessages.manualLabel.defaultMessage));
+
+      const collapsibleTrigger = container.querySelector('.collapsible-trigger');
+      expect(collapsibleTrigger).toBeInTheDocument();
+      fireEvent.click(collapsibleTrigger);
+
+      // Assert that all links are displayed
+      await waitFor(() => {
+        expect(getByText('Test Broken Links')).toBeInTheDocument();
+        expect(getByText('Test Manual Links')).toBeInTheDocument();
+        expect(queryByText('Test Locked Links')).not.toBeInTheDocument();
+      });
+
+      // Click on the "Broken" chip to filter the results
+      const brokenChip = getByTestId('chip-brokenLinks');
+      fireEvent.click(brokenChip);
+
+      // Assert that only manual links are displayed
+      await waitFor(() => {
+        expect(queryByText('Test Broken Links')).not.toBeInTheDocument();
+        expect(getByText('Test Manual Links')).toBeInTheDocument();
+        expect(queryByText('Test Locked Links')).not.toBeInTheDocument();
+      });
+
+      // Click the "Clear filters" button
+      const clearFiltersButton = getByText(scanResultsMessages.clearFilters.defaultMessage);
+      fireEvent.click(clearFiltersButton);
+
+      // Assert that all links are displayed after clearing filters
       await waitFor(() => {
         expect(getByText('Test Broken Links')).toBeInTheDocument();
         expect(getByText('Test Manual Links')).toBeInTheDocument();
