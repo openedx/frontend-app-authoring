@@ -642,13 +642,22 @@ export const useAddComponentsToContainer = (containerId?: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (componentIds: string[]) => {
-      if (containerId !== undefined) {
-        return api.addComponentsToContainer(containerId, componentIds);
+      // istanbul ignore if: this should never happen
+      if (!containerId) {
+        return undefined;
       }
-      return undefined;
+      return api.addComponentsToContainer(containerId, componentIds);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerChildren(containerId!) });
+      // istanbul ignore if: this should never happen
+      if (!containerId) {
+        return;
+      }
+      // NOTE: We invalidate the library query here because we need to update the library's
+      // container list.
+      const libraryId = getLibraryId(containerId);
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerChildren(containerId) });
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
     },
   });
 };
