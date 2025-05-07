@@ -4,7 +4,6 @@ import { ArrowBackIos } from '@openedx/paragon/icons';
 import { FormattedMessage } from '@edx/frontend-platform/i18n';
 
 // import VideoPreview from './components/VideoPreview';
-import { useSelector } from 'react-redux';
 import { ErrorSummary } from './ErrorSummary';
 import DurationWidget from './components/DurationWidget';
 import HandoutWidget from './components/HandoutWidget';
