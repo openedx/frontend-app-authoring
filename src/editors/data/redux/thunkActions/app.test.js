@@ -173,7 +173,7 @@ describe('app thunkActions', () => {
     });
   });
   describe('initialize without block type defined', () => {
-    it('dispatches actions.app.initialize, and then fetches both block and unit', () => {
+    it('dispatches actions.app.initialize, fetchWaffleFlags and fetchBlock', () => {
       const {
         fetchBlock,
         fetchUnit,
@@ -181,25 +181,41 @@ describe('app thunkActions', () => {
         fetchImages,
         fetchVideos,
         fetchCourseDetails,
+        fetchWaffleFlags,
       } = thunkActions;
+
+      // Mock all the fetch functions
       thunkActions.fetchBlock = () => 'fetchBlock';
       thunkActions.fetchUnit = () => 'fetchUnit';
       thunkActions.fetchStudioView = () => 'fetchStudioView';
       thunkActions.fetchImages = () => 'fetchImages';
       thunkActions.fetchVideos = () => 'fetchVideos';
       thunkActions.fetchCourseDetails = () => 'fetchCourseDetails';
-      thunkActions.initialize(testValue)(dispatch);
+      thunkActions.fetchWaffleFlags = () => 'fetchWaffleFlags';
+
+      // Add courseId to testValue
+      const dataWithCourseId = {
+        ...testValue,
+        courseId: 'test-course-id',
+      };
+
+      thunkActions.initialize(dataWithCourseId)(dispatch);
+
       expect(dispatch.mock.calls).toEqual([
         [{ type: 'resetEditor' }],
-        [actions.app.initialize(testValue)],
+        [actions.app.initialize(dataWithCourseId)],
+        [thunkActions.fetchWaffleFlags()],
         [thunkActions.fetchBlock()],
       ]);
+
+      // Restore original functions
       thunkActions.fetchBlock = fetchBlock;
       thunkActions.fetchUnit = fetchUnit;
       thunkActions.fetchStudioView = fetchStudioView;
       thunkActions.fetchImages = fetchImages;
       thunkActions.fetchVideos = fetchVideos;
       thunkActions.fetchCourseDetails = fetchCourseDetails;
+      thunkActions.fetchWaffleFlags = fetchWaffleFlags;
     });
   });
   describe('initialize without block id but block type defined', () => {
@@ -227,6 +243,7 @@ describe('app thunkActions', () => {
         fetchImages,
         fetchVideos,
         fetchCourseDetails,
+        fetchWaffleFlags,
       } = thunkActions;
       thunkActions.fetchBlock = () => 'fetchBlock';
       thunkActions.fetchUnit = () => 'fetchUnit';
@@ -234,16 +251,19 @@ describe('app thunkActions', () => {
       thunkActions.fetchImages = () => 'fetchImages';
       thunkActions.fetchVideos = () => 'fetchVideos';
       thunkActions.fetchCourseDetails = () => 'fetchCourseDetails';
+      thunkActions.fetchWaffleFlags = () => 'fetchWaffleFlags';
       const data = {
         ...testValue,
         blockType: 'html',
         blockId: 'block-v1:UniversityX+PHYS+1+type@problem+block@123',
         learningContextId: 'course-v1:UniversityX+PHYS+1',
+        courseId: 'test-course-id',
       };
       thunkActions.initialize(data)(dispatch);
       expect(dispatch.mock.calls).toEqual([
         [{ type: 'resetEditor' }],
         [actions.app.initialize(data)],
+        [thunkActions.fetchWaffleFlags()],
         [thunkActions.fetchBlock()],
         [thunkActions.fetchUnit()],
         [thunkActions.fetchImages()],
@@ -254,6 +274,7 @@ describe('app thunkActions', () => {
       thunkActions.fetchImages = fetchImages;
       thunkActions.fetchVideos = fetchVideos;
       thunkActions.fetchCourseDetails = fetchCourseDetails;
+      thunkActions.fetchWaffleFlags = fetchWaffleFlags;
     });
   });
   describe('initialize with block type problem', () => {
@@ -265,6 +286,7 @@ describe('app thunkActions', () => {
         fetchImages,
         fetchVideos,
         fetchCourseDetails,
+        fetchWaffleFlags,
       } = thunkActions;
       thunkActions.fetchBlock = () => 'fetchBlock';
       thunkActions.fetchUnit = () => 'fetchUnit';
@@ -272,16 +294,19 @@ describe('app thunkActions', () => {
       thunkActions.fetchImages = () => 'fetchImages';
       thunkActions.fetchVideos = () => 'fetchVideos';
       thunkActions.fetchCourseDetails = () => 'fetchCourseDetails';
+      thunkActions.fetchWaffleFlags = () => 'fetchWaffleFlags';
       const data = {
         ...testValue,
         blockType: 'problem',
         blockId: 'block-v1:UniversityX+PHYS+1+type@problem+block@123',
         learningContextId: 'course-v1:UniversityX+PHYS+1',
+        courseId: 'test-course-id',
       };
       thunkActions.initialize(data)(dispatch);
       expect(dispatch.mock.calls).toEqual([
         [{ type: 'resetEditor' }],
         [actions.app.initialize(data)],
+        [thunkActions.fetchWaffleFlags()],
         [thunkActions.fetchBlock()],
         [thunkActions.fetchUnit()],
         [thunkActions.fetchImages()],
@@ -292,6 +317,7 @@ describe('app thunkActions', () => {
       thunkActions.fetchImages = fetchImages;
       thunkActions.fetchVideos = fetchVideos;
       thunkActions.fetchCourseDetails = fetchCourseDetails;
+      thunkActions.fetchWaffleFlags = fetchWaffleFlags;
     });
   });
   describe('initialize with block type video', () => {
@@ -303,6 +329,7 @@ describe('app thunkActions', () => {
         fetchImages,
         fetchVideos,
         fetchCourseDetails,
+        fetchWaffleFlags,
       } = thunkActions;
       thunkActions.fetchBlock = () => 'fetchBlock';
       thunkActions.fetchUnit = () => 'fetchUnit';
@@ -310,16 +337,19 @@ describe('app thunkActions', () => {
       thunkActions.fetchImages = () => 'fetchImages';
       thunkActions.fetchVideos = () => 'fetchVideos';
       thunkActions.fetchCourseDetails = () => 'fetchCourseDetails';
+      thunkActions.fetchWaffleFlags = () => 'fetchWaffleFlags';
       const data = {
         ...testValue,
         blockType: 'video',
         blockId: 'block-v1:UniversityX+PHYS+1+type@problem+block@123',
         learningContextId: 'course-v1:UniversityX+PHYS+1',
+        courseId: 'test-course-id',
       };
       thunkActions.initialize(data)(dispatch);
       expect(dispatch.mock.calls).toEqual([
         [{ type: 'resetEditor' }],
         [actions.app.initialize(data)],
+        [thunkActions.fetchWaffleFlags()],
         [thunkActions.fetchBlock()],
         [thunkActions.fetchUnit()],
         [thunkActions.fetchVideos()],
@@ -332,6 +362,7 @@ describe('app thunkActions', () => {
       thunkActions.fetchImages = fetchImages;
       thunkActions.fetchVideos = fetchVideos;
       thunkActions.fetchCourseDetails = fetchCourseDetails;
+      thunkActions.fetchWaffleFlags = fetchWaffleFlags;
     });
   });
   describe('saveBlock', () => {
