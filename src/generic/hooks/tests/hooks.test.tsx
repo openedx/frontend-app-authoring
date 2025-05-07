@@ -96,7 +96,8 @@ describe('useIframeBehavior', () => {
       window.dispatchEvent(new MessageEvent('message', message));
     });
 
-    expect(setIframeHeight).toHaveBeenCalledWith(500);
+    // +10 padding
+    expect(setIframeHeight).toHaveBeenCalledWith(510);
     expect(setHasLoaded).toHaveBeenCalledWith(true);
   });
 

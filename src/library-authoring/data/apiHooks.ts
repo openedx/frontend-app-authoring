@@ -5,6 +5,7 @@ import {
   useQueryClient,
   type Query,
   type QueryClient,
+  replaceEqualDeep,
 } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
@@ -633,6 +634,22 @@ export const useContainerChildren = (containerId?: string) => (
     enabled: !!containerId,
     queryKey: libraryAuthoringQueryKeys.containerChildren(containerId!),
     queryFn: () => api.getLibraryContainerChildren(containerId!),
+    structuralSharing: (oldData: api.LibraryBlockMetadata[], newData: api.LibraryBlockMetadata[]) => {
+      // This just sets `isNew` flag to new children components
+      if (oldData) {
+        const oldDataIds = oldData.map((obj) => obj.id);
+        // eslint-disable-next-line no-param-reassign
+        newData = newData.map((newObj) => {
+          if (!oldDataIds.includes(newObj.id)) {
+            // Set isNew = true if we have new child on refetch
+            // eslint-disable-next-line no-param-reassign
+            newObj.isNew = true;
+          }
+          return newObj;
+        });
+      }
+      return replaceEqualDeep(oldData, newData);
+    },
   })
 );
 
@@ -643,12 +660,14 @@ export const useAddComponentsToContainer = (containerId?: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (componentIds: string[]) => {
-      if (containerId !== undefined) {
-        return api.addComponentsToContainer(containerId, componentIds);
+      // istanbul ignore if: this should never happen
+      if (!containerId) {
+        return undefined;
       }
-      return undefined;
+      return api.addComponentsToContainer(containerId, componentIds);
     },
     onSettled: () => {
+<<<<<<< HEAD
       if (!containerId) {
         return;
       }
@@ -657,6 +676,17 @@ export const useAddComponentsToContainer = (containerId?: string) => {
       const libraryId = getLibraryId(containerId);
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerChildren(containerId!) });
+=======
+      // istanbul ignore if: this should never happen
+      if (!containerId) {
+        return;
+      }
+      // NOTE: We invalidate the library query here because we need to update the library's
+      // container list.
+      const libraryId = getLibraryId(containerId);
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerChildren(containerId) });
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+>>>>>>> master
     },
   });
 };

@@ -20,6 +20,8 @@ import {
 import { canEditComponent } from './ComponentEditorModal';
 import ComponentDeleter from './ComponentDeleter';
 import messages from './messages';
+import { useLibraryRoutes } from '../routes';
+import { useRunOnNextRender } from '../../utils';
 
 type ComponentMenuProps = {
   usageKey: string,
@@ -41,6 +43,7 @@ export const ComponentMenu = ({ usageKey, unitsData }: ComponentMenuProps) => {
     closeLibrarySidebar,
     setSidebarAction,
   } = useSidebarContext();
+  const { navigateTo } = useLibraryRoutes();
 
   const canEdit = usageKey && canEditComponent(usageKey);
   const { showToast } = useContext(ToastContext);
@@ -92,10 +95,22 @@ export const ComponentMenu = ({ usageKey, unitsData }: ComponentMenuProps) => {
     });
   };
 
+  const scheduleJumpToCollection = useRunOnNextRender(() => {
+    // TODO: Ugly hack to make sure sidebar shows add to collection section
+    // This needs to run after all changes to url takes place to avoid conflicts.
+    setTimeout(() => setSidebarAction(SidebarActions.JumpToManageCollections), 250);
+  });
+
   const showManageCollections = useCallback(() => {
-    setSidebarAction(SidebarActions.JumpToAddCollections);
+    navigateTo({ componentId: usageKey });
     openComponentInfoSidebar(usageKey);
-  }, [setSidebarAction, openComponentInfoSidebar, usageKey]);
+    scheduleJumpToCollection();
+  }, [
+    scheduleJumpToCollection,
+    openComponentInfoSidebar,
+    usageKey,
+    navigateTo,
+  ]);
 
   return (
     <Dropdown id="component-card-dropdown">
@@ -128,11 +143,9 @@ export const ComponentMenu = ({ usageKey, unitsData }: ComponentMenuProps) => {
             <FormattedMessage {...messages.menuRemoveFromCollection} />
           </Dropdown.Item>
         )}
-        {!unitId && (
-          <Dropdown.Item onClick={showManageCollections}>
-            <FormattedMessage {...messages.menuAddToCollection} />
-          </Dropdown.Item>
-        )}
+        <Dropdown.Item onClick={showManageCollections}>
+          <FormattedMessage {...messages.menuAddToCollection} />
+        </Dropdown.Item>
       </Dropdown.Menu>
       <ComponentDeleter
         usageKey={usageKey}

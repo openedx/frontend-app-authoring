@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import {
   Button,
@@ -17,7 +17,6 @@ import { useLibraryContext } from '../common/context/LibraryContext';
 import {
   type ComponentInfoTab,
   COMPONENT_INFO_TABS,
-  SidebarActions,
   isComponentInfoTab,
   useSidebarContext,
 } from '../common/context/SidebarContext';
@@ -108,9 +107,9 @@ const ComponentInfo = () => {
     sidebarTab,
     setSidebarTab,
     sidebarComponentInfo,
-    sidebarAction,
     defaultTab,
     hiddenTabs,
+    resetSidebarAction,
   } = useSidebarContext();
   const [
     isPublishConfirmationOpen,
@@ -118,20 +117,16 @@ const ComponentInfo = () => {
     closePublishConfirmation,
   ] = useToggle(false);
 
-  const jumpToCollections = sidebarAction === SidebarActions.JumpToAddCollections;
-
   const tab: ComponentInfoTab = (
     isComponentInfoTab(sidebarTab)
       ? sidebarTab
       : defaultTab.component
   );
 
-  useEffect(() => {
-    // Show Manage tab if JumpToAddCollections action is set in sidebarComponentInfo
-    if (jumpToCollections) {
-      setSidebarTab(COMPONENT_INFO_TABS.Manage);
-    }
-  }, [jumpToCollections, setSidebarTab]);
+  const handleTabChange = (newTab: ComponentInfoTab) => {
+    resetSidebarAction();
+    setSidebarTab(newTab);
+  };
 
   const usageKey = sidebarComponentInfo?.id;
   // istanbul ignore if: this should never happen
@@ -204,7 +199,7 @@ const ComponentInfo = () => {
           className="my-3 d-flex justify-content-around"
           defaultActiveKey={defaultTab.component}
           activeKey={tab}
-          onSelect={setSidebarTab}
+          onSelect={handleTabChange}
         >
           {renderTab(COMPONENT_INFO_TABS.Preview, <ComponentPreview />, intl.formatMessage(messages.previewTabTitle))}
           {renderTab(COMPONENT_INFO_TABS.Manage, <ComponentManagement />, intl.formatMessage(messages.manageTabTitle))}

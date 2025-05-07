@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import {
   ActionRow,
   Button,
@@ -9,17 +8,29 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 import LoadingButton from '../loading-button';
 
+interface DeleteModalProps {
+  isOpen: boolean;
+  close: () => void;
+  category?: string;
+  onDeleteSubmit: () => void | Promise<void>;
+  title?: string;
+  description?: React.ReactNode | React.ReactNode[];
+  variant?: string;
+  btnLabel?: string;
+  icon?: React.ElementType;
+}
+
 const DeleteModal = ({
-  category,
+  category = '',
   isOpen,
   close,
   onDeleteSubmit,
   title,
   description,
-  variant,
+  variant = 'default',
   btnLabel,
   icon,
-}) => {
+}: DeleteModalProps) => {
   const intl = useIntl();
 
   const modalTitle = title || intl.formatMessage(messages.title, { category });
@@ -60,30 +71,6 @@ const DeleteModal = ({
       <p>{modalDescription}</p>
     </AlertModal>
   );
-};
-
-DeleteModal.defaultProps = {
-  category: '',
-  title: '',
-  description: '',
-  variant: 'default',
-  btnLabel: '',
-  icon: null,
-};
-
-DeleteModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  close: PropTypes.func.isRequired,
-  category: PropTypes.string,
-  onDeleteSubmit: PropTypes.func.isRequired,
-  title: PropTypes.string,
-  description: PropTypes.oneOfType([
-    PropTypes.element,
-    PropTypes.string,
-  ]),
-  variant: PropTypes.string,
-  btnLabel: PropTypes.string,
-  icon: PropTypes.elementType,
 };
 
 export default DeleteModal;

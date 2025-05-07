@@ -1,7 +1,7 @@
 import React, { useCallback, useContext } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import { Icon } from '@openedx/paragon';
-import { Info, Warning } from '@openedx/paragon/icons';
+import { CalendarViewDay, School, Warning, Info } from '@openedx/paragon/icons';
 
 import { useSidebarContext } from '../common/context/SidebarContext';
 import { useDeleteLibraryBlock, useLibraryBlockMetadata, useRestoreLibraryBlock } from '../data/apiHooks';
@@ -78,27 +78,9 @@ const ComponentDeleter = ({ usageKey, ...props }: Props) => {
     }
   }
 
-  return (
-    <DeleteModal
-      isOpen
-      close={props.cancelDelete}
-      variant="warning"
-      title={intl.formatMessage(messages.deleteComponentWarningTitle)}
-      icon={Warning}
-      description={(
-        <>
-          <FormattedMessage
-            {...messages.deleteComponentConfirm}
-            values={{
-              componentName: (
-                <strong><BlockName usageKey={usageKey} /></strong>
-              ),
-              message: unitsLength
-                ? intl.formatMessage(messages.deleteComponentConfirmCourseSmall)
-                : intl.formatMessage(messages.deleteComponentConfirmCourse),
-            }}
-          />
-          {unitsMessage && (
+  /**
+   
+  {unitsMessage && (
             <div className="d-flex mt-3 small text-danger-900">
               <Icon className="mr-2 mt-2" src={Info} />
               <div>
@@ -111,8 +93,32 @@ const ComponentDeleter = ({ usageKey, ...props }: Props) => {
               </div>
             </div>
           )}
-        </>
-      )}
+   */
+
+  const deleteText = intl.formatMessage(messages.deleteComponentConfirm, {
+    componentName: <b><BlockName usageKey={usageKey} /></b>,
+    message: (
+      <>
+        <div className="d-flex mt-2">
+          <Icon className="mr-2" src={School} />
+          {intl.formatMessage(messages.deleteComponentConfirmMsg1)}
+        </div>
+        <div className="d-flex mt-2">
+          <Icon className="mr-2" src={CalendarViewDay} />
+          {intl.formatMessage(messages.deleteComponentConfirmMsg2)}
+        </div>
+      </>
+    ),
+  });
+
+  return (
+    <DeleteModal
+      isOpen
+      close={props.cancelDelete}
+      variant="warning"
+      title={intl.formatMessage(messages.deleteComponentWarningTitle)}
+      icon={Warning}
+      description={deleteText}
       onDeleteSubmit={doDelete}
     />
   );

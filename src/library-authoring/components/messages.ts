@@ -71,11 +71,6 @@ const messages = defineMessages({
     defaultMessage: 'Delete {componentName}? {message}',
     description: 'Confirmation text to display before deleting a component',
   },
-  deleteComponentConfirmCourse: {
-    id: 'course-authoring.library-authoring.component.delete-confirmation-text.course',
-    defaultMessage: 'If this component has been used in a course, those copies won\'t be deleted, but they will no longer receive updates from the library.',
-    description: 'Message text about courses when deleting a component',
-  },
   deleteComponentConfirmCourseSmall: {
     id: 'course-authoring.library-authoring.component.delete-confirmation-text.course-small',
     defaultMessage: 'Any course instances will stop receiving library updates.',
@@ -85,6 +80,11 @@ const messages = defineMessages({
     id: 'course-authoring.library-authoring.component.delete-confirmation-text.units',
     defaultMessage: 'By deleting this component, you will also be deleting it from {unit} in this library.',
     description: 'Message text about units when deleting a component',
+  },
+  deleteComponentConfirmMsg1: {
+    id: 'course-authoring.library-authoring.component.delete-confirmation-msg-1',
+    defaultMessage: 'If this component has been used in a course, those copies won\'t be deleted, but they will no longer receive updates from the library.',
+    description: 'First part of confirmation message to display before deleting a component',
   },
   deleteComponentCancelButton: {
     id: 'course-authoring.library-authoring.component.cancel-delete-button',
