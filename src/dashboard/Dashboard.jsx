@@ -443,7 +443,7 @@ const Dashboard = () => {
 
         <Card className="sidebar-card">
           <h4 className="card-header">Todo List</h4>
-          <Card.Section className="card-section">
+          <Card.Section className="card-section temp-flow">
             {dashboardData.todoList.length > 0 ? (
               <ul className="card-list">
                 {dashboardData.todoList.map((todo) => (
