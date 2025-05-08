@@ -8,6 +8,7 @@ import {
 } from '@openedx/paragon';
 
 import { getCourseSectionVertical } from '../data/selectors';
+import { getWaffleFlags } from '../../data/selectors';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import ComponentModalView from './add-component-modals/ComponentModalView';
 import AddComponentButton from './add-component-btn';
@@ -43,6 +44,7 @@ const AddComponent = ({
   const [selectedComponents, setSelectedComponents] = useState([]);
   const [usageId, setUsageId] = useState(null);
   const { sendMessageToIframe } = useIframe();
+  const { useVideoGalleryFlow } = useSelector(getWaffleFlags);
 
   const receiveMessage = useCallback(({ data: { type, payload } }) => {
     if (type === messageTypes.showMultipleComponentPicker) {
@@ -96,7 +98,11 @@ const AddComponent = ({
           setCourseId(courseKey);
           setBlockType(type);
           setNewBlockId(locator);
-          showVideoSelectorModal();
+          if (useVideoGalleryFlow) {
+            showVideoSelectorModal();
+          } else {
+            showXBlockEditorModal();
+          }
         });
         break;
         // TODO: The library functional will be a bit different of current legacy (CMS)
