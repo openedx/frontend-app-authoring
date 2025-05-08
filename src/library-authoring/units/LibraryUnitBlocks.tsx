@@ -1,15 +1,12 @@
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
 import {
   ActionRow, Badge, Button, Icon, Stack, useToggle,
 } from '@openedx/paragon';
 import { Add, Description } from '@openedx/paragon/icons';
 import classNames from 'classnames';
+import {
+  useCallback, useContext, useEffect, useState,
+} from 'react';
 import { blockTypes } from '../../editors/data/constants/app';
 import DraggableList, { SortableItem } from '../../generic/DraggableList';
 

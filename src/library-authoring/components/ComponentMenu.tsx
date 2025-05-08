@@ -23,11 +23,7 @@ import messages from './messages';
 import { useLibraryRoutes } from '../routes';
 import { useRunOnNextRender } from '../../utils';
 
-type ComponentMenuProps = {
-  usageKey: string,
-};
-
-export const ComponentMenu = ({ usageKey }: ComponentMenuProps) => {
+export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
   const intl = useIntl();
   const {
     libraryId,

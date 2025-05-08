@@ -184,9 +184,7 @@ const ComponentInfo = () => {
             >
               {intl.formatMessage(messages.publishComponentButtonTitle)}
             </Button>
-            <ComponentMenu
-              usageKey={usageKey}
-            />
+            <ComponentMenu usageKey={usageKey} />
           </div>
         )}
         <AddComponentWidget />

@@ -78,12 +78,10 @@ const ComponentDeleter = ({ usageKey, ...props }: Props) => {
 
   let unitsMessage;
   const unitsLength = componentHit?.units?.displayName?.length ?? 0;
-  if (componentHit?.units?.displayName && unitsLength > 0) {
-    if (componentHit.units.displayName.length === 1) {
-      [unitsMessage] = componentHit.units.displayName;
-    } else {
-      unitsMessage = `${unitsLength} units`;
-    }
+  if (unitsLength === 1) {
+    unitsMessage = componentHit?.units?.displayName?.[0];
+  } else if (unitsLength > 1) {
+    unitsMessage = `${unitsLength} units`;
   }
 
   const deleteText = intl.formatMessage(messages.deleteComponentConfirm, {
