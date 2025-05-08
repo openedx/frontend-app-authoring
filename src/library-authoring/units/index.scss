@@ -14,7 +14,7 @@
     &:focus {
       // this is required for clicks to be passed to underlying iframe component
       pointer-events: none;
-      outline: solid 1px $dark-500;
+      outline: solid 1px var(--pgn-color-dark-500);
     }
 
     &::before {
