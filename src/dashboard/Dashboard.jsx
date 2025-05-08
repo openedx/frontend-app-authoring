@@ -4,12 +4,12 @@ import {
   Card,
   Icon,
   Button,
-  Dropdown,
   ModalDialog,
 } from '@openedx/paragon';
 import {
   MenuBook, Groups, LibraryBooks, Assessment,
   DragIndicator,
+  FilterList,
 } from '@openedx/paragon/icons';
 import './Dashboard.scss';
 import {
@@ -274,14 +274,12 @@ const Dashboard = () => {
         <div className="overview-section">
           <div className="overview-header">
             <h1>Overview</h1>
-            <Dropdown>
-              <Dropdown.Toggle variant="primary">
-                Customize
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item onClick={handleModalOpen}>Add widget</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
+            <Icon
+              src={FilterList}
+              className="text-primary"
+              style={{ cursor: 'pointer' }}
+              onClick={handleModalOpen}
+            />
           </div>
           <div className="overview-grid">
             {/* <div>
@@ -360,7 +358,7 @@ const Dashboard = () => {
               </Card>
             </div> */}
             {dashboardData.widgets
-              .filter(widget => widget.enabled)
+              .filter((widget) => widget.enabled)
               .map((widget) => (
                 <WidgetCard
                   key={widget.id}
@@ -393,7 +391,7 @@ const Dashboard = () => {
             onDragEnd={handleDragEnd}
           >
             <SortableContext
-              items={tempOrderedWidgets.map(widget => widget.id)}
+              items={tempOrderedWidgets.map((widget) => widget.id)}
               strategy={verticalListSortingStrategy}
             >
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
