@@ -18,7 +18,8 @@ const ComponentManagement = () => {
   const intl = useIntl();
   const { readOnly, isLoadingLibraryData } = useLibraryContext();
   const { sidebarComponentInfo, sidebarAction, resetSidebarAction } = useSidebarContext();
-  const jumpToCollections = sidebarAction === SidebarActions.JumpToAddCollections;
+  const jumpToCollections = sidebarAction === SidebarActions.JumpToManageCollections;
+  const jumpToTags = sidebarAction === SidebarActions.JumpToManageTags;
   const [tagsCollapseIsOpen, setTagsCollapseOpen] = React.useState(!jumpToCollections);
   const [collectionsCollapseIsOpen, setCollectionsCollapseOpen] = React.useState(true);
 
@@ -26,8 +27,11 @@ const ComponentManagement = () => {
     if (jumpToCollections) {
       setTagsCollapseOpen(false);
       setCollectionsCollapseOpen(true);
+    } else if (jumpToTags) {
+      setTagsCollapseOpen(true);
+      setCollectionsCollapseOpen(false);
     }
-  }, [jumpToCollections, tagsCollapseIsOpen, collectionsCollapseIsOpen]);
+  }, [jumpToCollections, jumpToTags]);
 
   useEffect(() => {
     // This is required to redo actions.

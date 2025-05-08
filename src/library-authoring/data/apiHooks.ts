@@ -5,6 +5,7 @@ import {
   useQueryClient,
   type Query,
   type QueryClient,
+  replaceEqualDeep,
 } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
@@ -632,6 +633,22 @@ export const useContainerChildren = (containerId?: string) => (
     enabled: !!containerId,
     queryKey: libraryAuthoringQueryKeys.containerChildren(containerId!),
     queryFn: () => api.getLibraryContainerChildren(containerId!),
+    structuralSharing: (oldData: api.LibraryBlockMetadata[], newData: api.LibraryBlockMetadata[]) => {
+      // This just sets `isNew` flag to new children components
+      if (oldData) {
+        const oldDataIds = oldData.map((obj) => obj.id);
+        // eslint-disable-next-line no-param-reassign
+        newData = newData.map((newObj) => {
+          if (!oldDataIds.includes(newObj.id)) {
+            // Set isNew = true if we have new child on refetch
+            // eslint-disable-next-line no-param-reassign
+            newObj.isNew = true;
+          }
+          return newObj;
+        });
+      }
+      return replaceEqualDeep(oldData, newData);
+    },
   })
 );
 

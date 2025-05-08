@@ -24,6 +24,7 @@ import AddComponentWidget from './AddComponentWidget';
 import BaseCard from './BaseCard';
 import messages from './messages';
 import ContainerDeleter from './ContainerDeleter';
+import { useRunOnNextRender } from '../../utils';
 
 type ContainerMenuProps = {
   hit: ContainerHit,
@@ -45,6 +46,7 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
   } = useSidebarContext();
   const { showToast } = useContext(ToastContext);
   const [isConfirmingDelete, confirmDelete, cancelDelete] = useToggle(false);
+  const { navigateTo } = useLibraryRoutes();
 
   const removeComponentsMutation = useRemoveItemsFromCollection(libraryId, collectionId);
 
@@ -60,10 +62,17 @@ const ContainerMenu = ({ hit } : ContainerMenuProps) => {
     });
   };
 
+  const scheduleJumpToCollection = useRunOnNextRender(() => {
+    // TODO: Ugly hack to make sure sidebar shows add to collection section
+    // This needs to run after all changes to url takes place to avoid conflicts.
+    setTimeout(() => setSidebarAction(SidebarActions.JumpToManageCollections));
+  });
+
   const showManageCollections = useCallback(() => {
-    setSidebarAction(SidebarActions.JumpToAddCollections);
+    navigateTo({ unitId: containerId });
     openUnitInfoSidebar(containerId);
-  }, [setSidebarAction, openUnitInfoSidebar, containerId]);
+    scheduleJumpToCollection();
+  }, [scheduleJumpToCollection, navigateTo, openUnitInfoSidebar, containerId]);
 
   return (
     <>

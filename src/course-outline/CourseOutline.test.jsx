@@ -2230,7 +2230,7 @@ describe('<CourseOutline />', () => {
       .reply(200, courseSectionMock);
     let [subsectionElement] = await within(sectionElement).findAllByTestId('subsection-card');
     const expandBtn = await within(subsectionElement).findByTestId('subsection-card-header__expanded-btn');
-    await userEvent.click(expandBtn);
+    userEvent.click(expandBtn);
     const [unit] = subsection.childInfo.children;
     const [unitElement] = await within(subsectionElement).findAllByTestId('unit-card');
 

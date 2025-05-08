@@ -63,7 +63,8 @@ export interface SidebarComponentInfo {
 }
 
 export enum SidebarActions {
-  JumpToAddCollections = 'jump-to-add-collections',
+  JumpToManageCollections = 'jump-to-manage-collections',
+  JumpToManageTags = 'jump-to-manage-tags',
   ManageTeam = 'manage-team',
   None = '',
 }

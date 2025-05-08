@@ -206,7 +206,7 @@ const ManageCollections = ({ opaqueKey, collections, useUpdateCollectionsHook }:
   const collectionNames = collections.map((collection) => collection.title);
 
   return (
-    sidebarAction === SidebarActions.JumpToAddCollections
+    sidebarAction === SidebarActions.JumpToManageCollections
       ? (
         <AddToCollectionsDrawer
           opaqueKey={opaqueKey}
@@ -217,7 +217,7 @@ const ManageCollections = ({ opaqueKey, collections, useUpdateCollectionsHook }:
       ) : (
         <EntityCollections
           collections={collectionNames}
-          onManageClick={() => setSidebarAction(SidebarActions.JumpToAddCollections)}
+          onManageClick={() => setSidebarAction(SidebarActions.JumpToManageCollections)}
         />
       )
   );

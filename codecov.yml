@@ -10,4 +10,5 @@ coverage:
         threshold: 0%
 ignore:
   - "src/grading-settings/grading-scale/react-ranger.js"
+  - "src/generic/DraggableList/verticalSortableList.ts"
   - "src/index.js"

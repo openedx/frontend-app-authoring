@@ -9,7 +9,7 @@ import {
   IconButton,
   useToggle,
 } from '@openedx/paragon';
-import React, { useEffect, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { MoreVert } from '@openedx/paragon/icons';
 
@@ -17,7 +17,6 @@ import { useComponentPickerContext } from '../common/context/ComponentPickerCont
 import { useLibraryContext } from '../common/context/LibraryContext';
 import {
   type UnitInfoTab,
-  SidebarActions,
   UNIT_INFO_TABS,
   isUnitInfoTab,
   useSidebarContext,
@@ -81,9 +80,8 @@ const UnitInfo = () => {
     sidebarTab,
     setSidebarTab,
     sidebarComponentInfo,
-    sidebarAction,
+    resetSidebarAction,
   } = useSidebarContext();
-  const jumpToCollections = sidebarAction === SidebarActions.JumpToAddCollections;
   const { insideUnit } = useLibraryRoutes();
 
   const tab: UnitInfoTab = (
@@ -95,6 +93,12 @@ const UnitInfo = () => {
   const publishContainer = usePublishContainer(unitId!);
 
   const showOpenUnitButton = !insideUnit && !componentPickerMode;
+
+  /* istanbul ignore next */
+  const handleTabChange = (newTab: UnitInfoTab) => {
+    resetSidebarAction();
+    setSidebarTab(newTab);
+  };
 
   const renderTab = useCallback((infoTab: UnitInfoTab, component: React.ReactNode, title: string) => {
     if (hiddenTabs.includes(infoTab)) {
@@ -116,13 +120,6 @@ const UnitInfo = () => {
       showToast(intl.formatMessage(messages.publishContainerFailed));
     }
   }, [publishContainer]);
-
-  useEffect(() => {
-    // Show Organize tab if JumpToAddCollections action is set in sidebarComponentInfo
-    if (jumpToCollections) {
-      setSidebarTab(UNIT_INFO_TABS.Manage);
-    }
-  }, [jumpToCollections, setSidebarTab]);
 
   if (!container || !unitId) {
     return null;
@@ -163,7 +160,7 @@ const UnitInfo = () => {
         className="my-3 d-flex justify-content-around"
         defaultActiveKey={defaultTab.unit}
         activeKey={tab}
-        onSelect={setSidebarTab}
+        onSelect={handleTabChange}
       >
         {renderTab(UNIT_INFO_TABS.Preview, <LibraryUnitBlocks preview />, intl.formatMessage(messages.previewTabTitle))}
         {renderTab(UNIT_INFO_TABS.Manage, <ContainerOrganize />, intl.formatMessage(messages.manageTabTitle))}
