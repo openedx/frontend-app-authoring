@@ -1,6 +1,32 @@
 import { renderHook, act } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import thunk from 'redux-thunk';
 import * as hooks from './hooks';
+import * as appHooks from '../../hooks';
 import { filterKeys } from './utils';
+
+jest.mock('react-redux', () => {
+  const actual = jest.requireActual('react-redux');
+  return {
+    ...actual,
+    useSelector: jest.fn((selectorFn) => selectorFn({
+      app: {
+        learningContextId: 'course-v1:id',
+        blockId: 'block-v1:id',
+      },
+    })),
+  };
+});
+
+jest.mock('../../hooks', () => ({
+  navigateTo: jest.fn(),
+}));
+
+const createStore = (customState = {}) => configureStore({
+  reducer: () => customState,
+  middleware: [thunk],
+});
 
 describe('hooks module', () => {
   describe('useSearchAndSortProps', () => {
@@ -78,6 +104,66 @@ describe('hooks module', () => {
       expect(result[0].id).toBe('vid1');
       expect(result[0].statusBadgeVariant).toBe('light');
       expect(result[0].statusMessage).toBe('Uploading');
+    });
+  });
+
+  describe('useVideoListProps - selectBtnProps', () => {
+    const videos = [{ displayName: 'Test Video', status: 'ready' }];
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    const wrapper = ({ children }) => (
+      <Provider store={createStore()}>{children}</Provider>
+    );
+
+    it('navigates to video editor when a video is selected', async () => {
+      const { result } = renderHook(
+        () => hooks.useVideoListProps({
+          searchSortProps: {
+            searchString: '',
+            sortBy: 'dateNewest',
+            filterBy: filterKeys.anyStatus,
+            hideSelectedVideos: false,
+          },
+          videos,
+        }),
+        { wrapper },
+      );
+
+      act(() => {
+        result.current.galleryProps.onHighlightChange({ target: { value: 'video123' } });
+      });
+
+      await act(async () => {
+        await result.current.selectBtnProps.onClick();
+      });
+
+      expect(appHooks.navigateTo).toHaveBeenCalledWith(
+        '/authoring/course/course-v1:id/editor/video/block-v1:id?selectedVideoId=video123',
+      );
+    });
+
+    it('sets showSelectVideoError to true if no video is selected', () => {
+      const { result } = renderHook(
+        () => hooks.useVideoListProps({
+          searchSortProps: {
+            searchString: '',
+            sortBy: 'dateNewest',
+            filterBy: filterKeys.anyStatus,
+            hideSelectedVideos: false,
+          },
+          videos,
+        }),
+        { wrapper },
+      );
+
+      act(() => {
+        result.current.selectBtnProps.onClick();
+      });
+
+      expect(result.current.galleryError.show).toBe(true);
     });
   });
 });
