@@ -242,6 +242,7 @@ const messages = defineMessages({
   timeLimitPlaceholder: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.time-limit-placeholder',
     defaultMessage: 'HH:MM',
+    description: 'The placeholder for the time limit input field, two digits for hours and two digits for minutes colons in between',
   },
   timeLimitDescription: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.time-limit-description',

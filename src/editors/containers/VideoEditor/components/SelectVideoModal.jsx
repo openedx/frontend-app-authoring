@@ -11,21 +11,19 @@ import BaseModal from '../../../sharedComponents/BaseModal';
 // See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
 // should be re-thought and cleaned up to avoid this pattern.
 // eslint-disable-next-line import/no-self-import
-import * as module from './SelectVideoModal';
 import messages from './messages';
 
-export const hooks = {
-  videoList: ({ fetchVideos }) => {
+export const useVideoList = ({ fetchVideos }) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [videos, setVideos] = React.useState(null);
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    React.useEffect(() => {
-      fetchVideos({ onSuccess: setVideos });
-    }, []);
-    return videos;
-  },
-  onSelectClick: ({ setSelection, videos }) => () => setSelection(videos[0]),
+  const [videos, setVideos] = React.useState(null);
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  React.useEffect(() => {
+    fetchVideos({ onSuccess: setVideos });
+  }, []);
+  return videos;
 };
+
+export const useOnSelectClick = ({ setSelection, videos }) => () => setSelection(videos[0]);
 
 export const SelectVideoModal = ({
   fetchVideos,
@@ -34,8 +32,8 @@ export const SelectVideoModal = ({
   setSelection,
 }) => {
   const intl = useIntl();
-  const videos = module.hooks.videoList({ fetchVideos });
-  const onSelectClick = module.hooks.onSelectClick({
+  const videos = useVideoList({ fetchVideos });
+  const onSelectClick = useOnSelectClick({
     setSelection,
     videos,
   });
@@ -50,7 +48,7 @@ export const SelectVideoModal = ({
       {/* Content selection */}
       {videos && (videos.map(
         img => (
-          <div key={img.externalUrl} />
+          <div key={img.externalUrl}>{img.externalUrl}</div>
         ),
       ))}
     </BaseModal>
@@ -65,7 +63,7 @@ SelectVideoModal.propTypes = {
   fetchVideos: PropTypes.func.isRequired,
 };
 
-export const mapStateToProps = () => ({});
+export const mapStateToProps = null;
 export const mapDispatchToProps = {
   fetchVideos: thunkActions.app.fetchVideos,
 };
