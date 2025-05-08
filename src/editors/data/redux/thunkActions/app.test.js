@@ -173,7 +173,7 @@ describe('app thunkActions', () => {
     });
   });
   describe('initialize without block type defined', () => {
-    it('dispatches actions.app.initialize, fetchWaffleFlags and fetchBlock', () => {
+    it('dispatches actions.app.initialize, and then fetches both block and unit', () => {
       const {
         fetchBlock,
         fetchUnit,
@@ -182,30 +182,18 @@ describe('app thunkActions', () => {
         fetchVideos,
         fetchCourseDetails,
       } = thunkActions;
-
-      // Mock all the fetch functions
       thunkActions.fetchBlock = () => 'fetchBlock';
       thunkActions.fetchUnit = () => 'fetchUnit';
       thunkActions.fetchStudioView = () => 'fetchStudioView';
       thunkActions.fetchImages = () => 'fetchImages';
       thunkActions.fetchVideos = () => 'fetchVideos';
       thunkActions.fetchCourseDetails = () => 'fetchCourseDetails';
-
-      // Add courseId to testValue
-      const dataWithCourseId = {
-        ...testValue,
-        courseId: 'test-course-id',
-      };
-
-      thunkActions.initialize(dataWithCourseId)(dispatch);
-
+      thunkActions.initialize(testValue)(dispatch);
       expect(dispatch.mock.calls).toEqual([
         [{ type: 'resetEditor' }],
-        [actions.app.initialize(dataWithCourseId)],
+        [actions.app.initialize(testValue)],
         [thunkActions.fetchBlock()],
       ]);
-
-      // Restore original functions
       thunkActions.fetchBlock = fetchBlock;
       thunkActions.fetchUnit = fetchUnit;
       thunkActions.fetchStudioView = fetchStudioView;
@@ -289,7 +277,6 @@ describe('app thunkActions', () => {
         blockType: 'problem',
         blockId: 'block-v1:UniversityX+PHYS+1+type@problem+block@123',
         learningContextId: 'course-v1:UniversityX+PHYS+1',
-        courseId: 'test-course-id',
       };
       thunkActions.initialize(data)(dispatch);
       expect(dispatch.mock.calls).toEqual([
