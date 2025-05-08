@@ -64,7 +64,7 @@ import sidebarMessages from './sidebar/messages';
 import messages from './messages';
 import { mockWaffleFlags } from '../data/apiHooks.mock';
 
-import { getApiWaffleFlagsUrl } from '../data/api'
+import { getApiWaffleFlagsUrl } from '../data/api';
 
 let axiosMock;
 let store;
@@ -161,11 +161,11 @@ describe('<CourseUnit />', () => {
       .onGet(getContentTaxonomyTagsCountApiUrl(blockId))
       .reply(200, 17);
     axiosMock.onGet(getApiWaffleFlagsUrl()).reply(200, {
-        waffle_flags: {
-          'studio.enable_new_video_uploads_page': true,
-          'studio.enable_new_text_editor': false,
-        },
-      });
+      waffle_flags: {
+        'studio.enable_new_video_uploads_page': true,
+        'studio.enable_new_text_editor': false,
+      },
+    });
   });
 
   it('render CourseUnit component correctly', async () => {
