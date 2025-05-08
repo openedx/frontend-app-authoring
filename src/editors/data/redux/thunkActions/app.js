@@ -103,7 +103,6 @@ export const initialize = (data) => (dispatch) => {
     return;
   }
 
-  dispatch(module.fetchWaffleFlags(data.courseId));
   dispatch(module.fetchBlock());
   if (data.blockId?.startsWith('block-v1:')) {
     dispatch(module.fetchUnit());
@@ -113,6 +112,7 @@ export const initialize = (data) => (dispatch) => {
       dispatch(module.fetchImages({ pageNumber: 0 }));
       break;
     case 'video':
+      dispatch(module.fetchWaffleFlags(data.courseId));
       dispatch(module.fetchVideos());
       dispatch(module.fetchStudioView());
       dispatch(module.fetchCourseDetails());
