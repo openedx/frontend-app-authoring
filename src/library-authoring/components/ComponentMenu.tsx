@@ -25,10 +25,9 @@ import { useRunOnNextRender } from '../../utils';
 
 type ComponentMenuProps = {
   usageKey: string,
-  unitsData?: { displayName?: string[], key?: string[] },
 };
 
-export const ComponentMenu = ({ usageKey, unitsData }: ComponentMenuProps) => {
+export const ComponentMenu = ({ usageKey }: ComponentMenuProps) => {
   const intl = useIntl();
   const {
     libraryId,
@@ -147,12 +146,13 @@ export const ComponentMenu = ({ usageKey, unitsData }: ComponentMenuProps) => {
           <FormattedMessage {...messages.menuAddToCollection} />
         </Dropdown.Item>
       </Dropdown.Menu>
-      <ComponentDeleter
-        usageKey={usageKey}
-        isConfirmingDelete={isConfirmingDelete}
-        cancelDelete={cancelDelete}
-        unitsData={unitsData}
-      />
+      {isConfirmingDelete && (
+        <ComponentDeleter
+          usageKey={usageKey}
+          isConfirmingDelete={isConfirmingDelete}
+          cancelDelete={cancelDelete}
+        />
+      )}
     </Dropdown>
   );
 };

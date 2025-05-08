@@ -2,7 +2,6 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useMemo,
   useState,
 } from 'react';
 import { FormattedMessage, useIntl } from '@edx/frontend-platform/i18n';
@@ -11,7 +10,6 @@ import {
 } from '@openedx/paragon';
 import { Add, Description } from '@openedx/paragon/icons';
 import classNames from 'classnames';
-import { ContentTagsDrawerSheet } from '../../content-tags-drawer';
 import { blockTypes } from '../../editors/data/constants/app';
 import DraggableList, { SortableItem } from '../../generic/DraggableList';
 
@@ -37,7 +35,6 @@ import messages from './messages';
 import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
 import { ToastContext } from '../../generic/toast-context';
 import { canEditComponent } from '../components/ComponentEditorModal';
-import { type ContentHit } from '../../search-manager';
 import { useRunOnNextRender } from '../../utils';
 
 /** Components that need large min height in preview */
@@ -57,11 +54,10 @@ interface ComponentBlockProps {
   block: LibraryBlockMetadataWithUniqueId;
   preview?: boolean;
   isDragging?: boolean;
-  unitsData?: { displayName?: string[], key?: string[] };
 }
 
 /** Component header */
-const BlockHeader = ({ block, unitsData }: ComponentBlockProps) => {
+const BlockHeader = ({ block }: ComponentBlockProps) => {
   const intl = useIntl();
   const { showToast } = useContext(ToastContext);
   const { navigateTo } = useLibraryRoutes();
@@ -131,14 +127,14 @@ const BlockHeader = ({ block, unitsData }: ComponentBlockProps) => {
           </Badge>
         )}
         <TagCount size="sm" count={block.tagsCount} onClick={jumpToManageTags} />
-        <ComponentMenu usageKey={block.id} unitsData={unitsData} />
+        <ComponentMenu usageKey={block.originalId} />
       </Stack>
     </>
   );
 };
 
 /** ComponentBlock to render preview of given component under Unit */
-const ComponentBlock = ({ block, preview, isDragging, unitsData }: ComponentBlockProps) => {
+const ComponentBlock = ({ block, preview, isDragging }: ComponentBlockProps) => {
   const { showOnlyPublished } = useLibraryContext();
   const { navigateTo } = useLibraryRoutes();
 
@@ -194,7 +190,7 @@ const ComponentBlock = ({ block, preview, isDragging, unitsData }: ComponentBloc
       <SortableItem
         id={block.id}
         componentStyle={getComponentStyle()}
-        actions={<BlockHeader block={block} unitsData={unitsData} />}
+        actions={<BlockHeader block={block} />}
         actionStyle={{
           borderRadius: '8px 8px 0px 0px',
           padding: '0.5rem 1rem',
@@ -278,9 +274,6 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
     });
     return setOrderedBlocks(newBlocks || []);
   }, [blocks, setOrderedBlocks]);
-
-  const blockIds = useMemo(() => orderedBlocks.map((block) => block.id), [orderedBlocks]);
-
 
   if (isLoading) {
     return <Loading />;
