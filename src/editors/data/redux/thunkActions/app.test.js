@@ -306,7 +306,6 @@ describe('app thunkActions', () => {
         fetchWaffleFlags,
       } = thunkActions;
 
-      // Mock all the fetch functions
       const waffleFlagsThunk = jest.fn(() => 'fetchWaffleFlags');
       thunkActions.fetchBlock = () => 'fetchBlock';
       thunkActions.fetchUnit = () => 'fetchUnit';
@@ -337,10 +336,8 @@ describe('app thunkActions', () => {
         [thunkActions.fetchCourseDetails()],
       ]);
 
-      // Now this will work because fetchWaffleFlags is a Jest mock function
       expect(thunkActions.fetchWaffleFlags).toHaveBeenCalledWith(data.courseId);
 
-      // Restore original functions
       thunkActions.fetchBlock = fetchBlock;
       thunkActions.fetchUnit = fetchUnit;
       thunkActions.fetchStudioView = fetchStudioView;
