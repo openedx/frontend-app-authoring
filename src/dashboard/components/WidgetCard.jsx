@@ -185,6 +185,27 @@ const WidgetCard = ({
             )}
           </div>
         )}
+        {type === 'calendar' && content && (
+          <div className="calendar-widget">
+            <div className="calendar-title">{content.date}</div>
+            <div className="calendar-events">
+              {content.events && content.events.length > 0 ? (
+                content.events.map(event => (
+                  <div
+                    key={`calendar-event-${event.title}-${event.time}`}
+                    className="calendar-event"
+                  >
+                    {event.title}
+                    <br />
+                    <span className="event-time">{event.time}</span>
+                  </div>
+                ))
+              ) : (
+                <div className="text-muted">No events today.</div>
+              )}
+            </div>
+          </div>
+        )}
       </Card.Section>
     </Card>
   );

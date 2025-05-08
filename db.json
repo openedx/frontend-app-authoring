@@ -186,9 +186,29 @@
         }
       },
       {
+        "id": "calendar-widget",
+        "type": "calendar 5",
+        "order": 4,
+        "enabled": true,
+        "title": "Calendar",
+        "content": {
+          "date": "Mon April 22",
+          "events": [
+            {
+              "title": "TitanEd - Upcoming Event 1",
+              "time": "10:30 – 11:30pm"
+            },
+            {
+              "title": "TitanEd - Upcoming Event 2",
+              "time": "10:30 – 11:30pm"
+            }
+          ]
+        }
+      },
+      {
         "id": "overview-widget-4",
         "type": "chart",
-        "order": 4,
+        "order": 5,
         "enabled": true,
         "title": "Overview 4",
         "content": {
