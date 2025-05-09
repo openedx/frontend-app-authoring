@@ -116,13 +116,6 @@ const ComponentReviewList = ({
     fetchNextPage,
   } = useSearchContext();
 
-  useLoadOnScroll(
-    hasNextPage,
-    isFetchingNextPage,
-    fetchNextPage,
-    true,
-  );
-
   const downstreamInfo = hits as ContentHit[];
 
   useLoadOnScroll(
