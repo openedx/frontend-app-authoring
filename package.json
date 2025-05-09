@@ -99,7 +99,7 @@
     "redux-thunk": "^2.4.1",
     "reselect": "^4.1.5",
     "start": "^5.1.0",
-    "tinymce": "^5.10.4",
+    "tinymce": "^7.0.0",
     "universal-cookie": "^4.0.4",
     "uuid": "^3.4.0",
     "xmlchecker": "^0.1.0",
