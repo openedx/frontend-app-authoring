@@ -5,11 +5,11 @@ import {
 } from '../../testUtils';
 
 import { executeThunk } from '../../utils';
-import { getCourseSectionVerticalApiUrl, getCourseUnitApiUrl } from '../data/api';
+import { getCourseSectionVerticalApiUrl } from '../data/api';
 import { getApiWaffleFlagsUrl } from '../../data/api';
 import { fetchWaffleFlags } from '../../data/thunks';
-import { fetchCourseSectionVerticalData, fetchCourseUnitQuery } from '../data/thunk';
-import { courseSectionVerticalMock, courseUnitIndexMock } from '../__mocks__';
+import { fetchCourseSectionVerticalData } from '../data/thunk';
+import { courseSectionVerticalMock } from '../__mocks__';
 import Breadcrumbs from './Breadcrumbs';
 
 let axiosMock;
@@ -43,9 +43,9 @@ describe('<Breadcrumbs />', () => {
     reduxStore = mocks.reduxStore;
 
     axiosMock
-      .onGet(getCourseUnitApiUrl(courseId))
-      .reply(200, courseUnitIndexMock);
-    await executeThunk(fetchCourseUnitQuery(courseId), reduxStore.dispatch);
+      .onGet(getCourseSectionVerticalApiUrl(courseId))
+      .reply(200, courseSectionVerticalMock);
+    await executeThunk(fetchCourseSectionVerticalData(courseId), reduxStore.dispatch);
     axiosMock
       .onGet(getCourseSectionVerticalApiUrl(courseId))
       .reply(200, courseSectionVerticalMock);
