@@ -5,7 +5,7 @@ import {
   initializeMocks, render as baseRender, screen, waitFor,
   fireEvent,
 } from '../../testUtils';
-import { mockContentLibrary, mockGetContainerMetadata } from '../data/api.mocks';
+import { mockContentLibrary, mockGetContainerChildren, mockGetContainerMetadata } from '../data/api.mocks';
 import { LibraryProvider } from '../common/context/LibraryContext';
 import UnitInfo from './UnitInfo';
 import { getLibraryContainerApiUrl, getLibraryContainerPublishApiUrl } from '../data/api';
@@ -14,14 +14,16 @@ import { SidebarBodyComponentId, SidebarProvider } from '../common/context/Sideb
 mockGetContainerMetadata.applyMock();
 mockContentLibrary.applyMock();
 mockGetContainerMetadata.applyMock();
+mockGetContainerChildren.applyMock();
 
 const { libraryId } = mockContentLibrary;
 const { containerId } = mockGetContainerMetadata;
 
-const render = () => baseRender(<UnitInfo />, {
+const render = (showOnlyPublished: boolean = false) => baseRender(<UnitInfo />, {
   extraWrapper: ({ children }) => (
     <LibraryProvider
       libraryId={libraryId}
+      showOnlyPublished={showOnlyPublished}
     >
       <SidebarProvider
         initialSidebarComponentInfo={{
@@ -94,5 +96,11 @@ describe('<UnitInfo />', () => {
       expect(axiosMock.history.post.length).toBe(1);
     });
     expect(mockShowToast).toHaveBeenCalledWith('Failed to publish changes');
+  });
+
+  it('show only published content', async () => {
+    render(true);
+    expect(await screen.findByTestId('unit-info-menu-toggle')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /text block published 1/i })).toBeInTheDocument();
   });
 });

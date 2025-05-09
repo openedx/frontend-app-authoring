@@ -208,7 +208,9 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
     if (itemType === 'unit') {
       openUnitInfoSidebar(unitId);
       setUnitId(unitId);
-      navigateTo({ unitId });
+      if (!componentPickerMode) {
+        navigateTo({ unitId });
+      }
     }
   }, [unitId, itemType, openUnitInfoSidebar, navigateTo]);
 

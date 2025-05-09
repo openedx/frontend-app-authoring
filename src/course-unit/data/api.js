@@ -3,7 +3,7 @@ import { camelCaseObject, getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 
 import { PUBLISH_TYPES } from '../constants';
-import { normalizeCourseSectionVerticalData, updateXBlockBlockIdToId } from './utils';
+import { isUnitReadOnly, normalizeCourseSectionVerticalData, updateXBlockBlockIdToId } from './utils';
 
 const getStudioBaseUrl = () => getConfig().STUDIO_BASE_URL;
 
@@ -24,7 +24,9 @@ export async function getCourseUnitData(unitId) {
   const { data } = await getAuthenticatedHttpClient()
     .get(getCourseUnitApiUrl(unitId));
 
-  return camelCaseObject(data);
+  const result = camelCaseObject(data);
+  result.readOnly = isUnitReadOnly(result);
+  return result;
 }
 
 /**

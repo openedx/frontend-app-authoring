@@ -56,6 +56,7 @@ interface ComponentBlockProps {
 /** Component header */
 const BlockHeader = ({ block }: ComponentBlockProps) => {
   const intl = useIntl();
+  const { showOnlyPublished } = useLibraryContext();
   const { showToast } = useContext(ToastContext);
   const { navigateTo } = useLibraryRoutes();
   const { openComponentInfoSidebar, setSidebarAction } = useSidebarContext();
@@ -101,7 +102,7 @@ const BlockHeader = ({ block }: ComponentBlockProps) => {
         <Icon src={getItemIcon(block.blockType)} />
         <InplaceTextEditor
           onSave={handleSaveDisplayName}
-          text={block.displayName}
+          text={showOnlyPublished ? (block.publishedDisplayName ?? block.displayName) : block.displayName}
         />
       </Stack>
       <ActionRow.Spacer />
@@ -112,7 +113,7 @@ const BlockHeader = ({ block }: ComponentBlockProps) => {
         /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
         onClick={(e) => e.stopPropagation()}
       >
-        {block.hasUnpublishedChanges && (
+        {!showOnlyPublished && block.hasUnpublishedChanges && (
           <Badge
             className="px-2 py-1"
             variant="warning"
@@ -237,7 +238,9 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
   const [hidePreviewFor, setHidePreviewFor] = useState<string | null>(null);
   const { showToast } = useContext(ToastContext);
 
-  const { unitId, readOnly } = useLibraryContext();
+  const { readOnly, showOnlyPublished } = useLibraryContext();
+  const { sidebarComponentInfo } = useSidebarContext();
+  const unitId = sidebarComponentInfo?.id;
 
   const { openAddContentSidebar } = useSidebarContext();
 
@@ -247,7 +250,7 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
     isLoading,
     isError,
     error,
-  } = useContainerChildren(unitId);
+  } = useContainerChildren(unitId, showOnlyPublished);
 
   const handleReorder = useCallback(() => async (newOrder?: LibraryBlockMetadataWithUniqueId[]) => {
     if (!newOrder) {

@@ -119,7 +119,7 @@ export const getLibraryContainerRestoreApiUrl = (containerId: string) => `${getL
 /**
  * Get the URL for a single container children api.
  */
-export const getLibraryContainerChildrenApiUrl = (containerId: string) => `${getLibraryContainerApiUrl(containerId)}children/`;
+export const getLibraryContainerChildrenApiUrl = (containerId: string, published: boolean = false) => `${getLibraryContainerApiUrl(containerId)}children/?published=${published}`;
 /**
  * Get the URL for library container collections.
  */
@@ -250,6 +250,7 @@ export interface LibraryBlockMetadata {
   id: string;
   blockType: string;
   displayName: string;
+  publishedDisplayName: string | null;
   lastPublished: string | null;
   publishedBy: string | null;
   lastDraftCreated: string | null;
@@ -652,8 +653,13 @@ export async function restoreContainer(containerId: string) {
 /**
  * Fetch a library container's children's metadata.
  */
-export async function getLibraryContainerChildren(containerId: string): Promise<LibraryBlockMetadata[]> {
-  const { data } = await getAuthenticatedHttpClient().get(getLibraryContainerChildrenApiUrl(containerId));
+export async function getLibraryContainerChildren(
+  containerId: string,
+  published: boolean = false,
+): Promise<LibraryBlockMetadata[]> {
+  const { data } = await getAuthenticatedHttpClient().get(
+    getLibraryContainerChildrenApiUrl(containerId, published),
+  );
   return camelCaseObject(data);
 }
 
