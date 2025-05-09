@@ -282,7 +282,7 @@ exports[`TextEditor snapshots renders static images with relative paths 1`] = `
     </Toast>
     <TinyMceWidget
       disabled={false}
-      editorContentHtml="eDiTablE Text with <img src="/asset+org+run+type@asset+block@img.jpg" />"
+      editorContentHtml="eDiTablE Text with <img src="/static/img.jpg" />"
       editorRef={
         {
           "current": {
