@@ -22,7 +22,8 @@ type BaseCardProps = {
   tags: ContentHitTags;
   actions: React.ReactNode;
   hasUnpublishedChanges?: boolean;
-  onSelect: () => void
+  onSelect: () => void;
+  selected?: boolean;
 };
 
 const BaseCard = ({
@@ -33,6 +34,7 @@ const BaseCard = ({
   tags,
   actions,
   onSelect,
+  selected = false,
   ...props
 } : BaseCardProps) => {
   const tagCount = useMemo(() => {
@@ -47,7 +49,7 @@ const BaseCard = ({
   const intl = useIntl();
 
   return (
-    <Container className="library-item-card">
+    <Container className="library-item-card selected">
       <Card
         isClickable
         onClick={onSelect}
@@ -56,6 +58,7 @@ const BaseCard = ({
             onSelect();
           }
         }}
+        className={selected ? 'selected' : undefined}
       >
         <Card.Header
           className={`library-item-header ${getComponentStyleColor(itemType)}`}
