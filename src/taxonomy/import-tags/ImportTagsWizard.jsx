@@ -40,7 +40,7 @@ const ExportStep = ({ taxonomy }) => {
   const intl = useIntl();
 
   return (
-    <Stepper.Step eventKey="export" title="export">
+    <Stepper.Step eventKey="export" title={intl.formatMessage(messages.importWizardStepperExportStepTitle)}>
       <Stack gap={3} data-testid="export-step">
         <p>{intl.formatMessage(messages.importWizardStepExportBody, { br: linebreak })}</p>
         <Stack gap={3} direction="horizontal">
@@ -97,7 +97,7 @@ const UploadStep = ({
   };
 
   return (
-    <Stepper.Step eventKey="upload" title="upload" hasError={!!importPlanError}>
+    <Stepper.Step eventKey="upload" title={intl.formatMessage(messages.importWizardStepperUploadStepTitle)} hasError={!!importPlanError}>
       <Stack gap={3} data-testid="upload-step">
         <p>{
           reimport
@@ -190,7 +190,7 @@ const PopulateStep = ({
   };
 
   return (
-    <Stepper.Step eventKey="populate" title="populate">
+    <Stepper.Step eventKey="populate" title={intl.formatMessage(messages.importWizardStepperPopulateStepTitle)}>
       <Stack gap={3} data-testid="populate-step">
         <Form.Group>
           <Form.Label>{ intl.formatMessage(messages.importWizardStepPopulateTaxonomyName) }</Form.Label>
@@ -222,7 +222,7 @@ const PlanStep = ({ importPlan }) => {
   const intl = useIntl();
 
   return (
-    <Stepper.Step eventKey="plan" title="plan">
+    <Stepper.Step eventKey="plan" title={intl.formatMessage(messages.importWizardStepperPlanStepTitle)}>
       <Stack gap={3} data-testid="plan-step">
         {intl.formatMessage(messages.importWizardStepPlanBody, { br: linebreak, changeCount: importPlan?.length })}
         <ul className="h-200px" style={{ overflow: 'scroll' }}>
@@ -249,7 +249,7 @@ const ConfirmStep = ({ importPlan }) => {
   const intl = useIntl();
 
   return (
-    <Stepper.Step eventKey="confirm" title="confirm">
+    <Stepper.Step eventKey="confirm" title={intl.formatMessage(messages.importWizardStepperConfirmStepTitle)}>
       <Stack data-testid="confirm-step">
         {intl.formatMessage(
           messages.importWizardStepConfirmBody,

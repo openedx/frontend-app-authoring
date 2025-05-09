@@ -154,6 +154,26 @@ const messages = defineMessages({
     id: 'course-authoring.import-tags.error-alert.title',
     defaultMessage: 'Import error',
   },
+  importWizardStepperExportStepTitle: {
+    id: 'course-authoring.import-tags.wizard.stepper.export-step.title',
+    defaultMessage: 'Export',
+  },
+  importWizardStepperUploadStepTitle: {
+    id: 'course-authoring.import-tags.wizard.stepper.upload-step.title',
+    defaultMessage: 'Upload',
+  },
+  importWizardStepperPopulateStepTitle: {
+    id: 'course-authoring.import-tags.wizard.stepper.populate-step.title',
+    defaultMessage: 'Populate',
+  },
+  importWizardStepperPlanStepTitle: {
+    id: 'course-authoring.import-tags.wizard.stepper.plan-step.title',
+    defaultMessage: 'Plan',
+  },
+  importWizardStepperConfirmStepTitle: {
+    id: 'course-authoring.import-tags.wizard.stepper.confirm-step.title',
+    defaultMessage: 'Confirm',
+  },
 });
 
 export default messages;

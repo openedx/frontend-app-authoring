@@ -239,6 +239,11 @@ const messages = defineMessages({
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.time-allotted',
     defaultMessage: 'Time allotted (HH:MM):',
   },
+  timeLimitPlaceholder: {
+    id: 'course-authoring.course-outline.configure-modal.advanced-tab.time-limit-placeholder',
+    defaultMessage: 'HH:MM',
+    description: 'The placeholder for the time limit input field, two digits for hours and two digits for minutes colons in between',
+  },
   timeLimitDescription: {
     id: 'course-authoring.course-outline.configure-modal.advanced-tab.time-limit-description',
     defaultMessage: 'Select a time allotment for the exam. If it is over 24 hours, type in the amount of time. You can grant individual learners extra time to complete the exam through the Instructor Dashboard.',

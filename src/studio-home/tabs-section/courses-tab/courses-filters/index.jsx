@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { SearchField } from '@openedx/paragon';
 import { debounce } from 'lodash';
+import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { getStudioHomeCoursesParams } from '../../../data/selectors';
 import { updateStudioHomeCoursesCustomParams } from '../../../data/slice';
@@ -11,6 +12,7 @@ import { LoadingSpinner } from '../../../../generic/Loading';
 import CoursesTypesFilterMenu from './courses-types-filter-menu';
 import CoursesOrderFilterMenu from './courses-order-filter-menu';
 import './index.scss';
+import messages from './messages';
 
 /* regex to check if a string has only whitespace
   example "    "
@@ -32,6 +34,8 @@ const CoursesFilters = ({
     cleanFilters,
   } = studioHomeCoursesParams;
   const [inputSearchValue, setInputSearchValue] = useState('');
+
+  const intl = useIntl();
 
   const getFilterTypeData = (baseFilters) => ({
     archivedCourses: { ...baseFilters, archivedOnly: true, activeOnly: undefined },
@@ -107,7 +111,7 @@ const CoursesFilters = ({
           value={cleanFilters ? '' : inputSearchValue}
           className="mr-4"
           data-testid="input-filter-courses-search"
-          placeholder="Search"
+          placeholder={intl.formatMessage(messages.coursesSearchPlaceholder)}
         />
         {isLoading && (
           <span className="search-field-loading" data-testid="loading-search-spinner">

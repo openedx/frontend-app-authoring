@@ -5,7 +5,7 @@ import { Alert, Form, Hyperlink } from '@openedx/paragon';
 import {
   Warning as WarningIcon,
 } from '@openedx/paragon/icons';
-import { FormattedMessage, injectIntl } from '@edx/frontend-platform/i18n';
+import { FormattedMessage, injectIntl, useIntl } from '@edx/frontend-platform/i18n';
 import messages from './messages';
 
 import PrereqSettings from './PrereqSettings';
@@ -31,6 +31,8 @@ const AdvancedTab = ({
     examReviewRules,
   } = values;
   let examTypeValue = 'none';
+
+  const intl = useIntl();
 
   if (isTimeLimited && isProctoredExam) {
     if (isOnboardingExam) {
@@ -183,7 +185,7 @@ const AdvancedTab = ({
             <Form.Control
               onChange={setCurrentTimeLimit}
               value={timeLimit}
-              placeholder="HH:MM"
+              placeholder={intl.formatMessage(messages.timeLimitPlaceholder)}
               pattern="^[0-9][0-9]:[0-5][0-9]$"
             />
           </Form.Group>
