@@ -2,24 +2,56 @@
   .pgn__card {
     height: 100%;
     min-width: 15rem;
-  }
 
-  .library-item-header {
-    border-top-left-radius: .375rem;
-    border-top-right-radius: .375rem;
-    padding: 0 .5rem 0 1.25rem;
-
-    .library-item-header-icon {
-      width: 2.3rem;
-      height: 2.3rem;
+    &::before {
+      border: none !important; // Remove default focus
     }
 
-    .pgn__card-header-content {
-      margin-top: .55rem;
+    &.selected:not(:focus) {
+      border: 2px $gray-700 solid;
+
+      .library-item-header {
+        border-top-left-radius: calc(.375rem - 2px);
+        border-top-right-radius: calc(.375rem - 2px);
+      }
     }
 
-    .pgn__card-header-actions {
-      margin: .25rem 0 .25rem 1rem;
+    &.selected:focus {
+      border: 3px $gray-700 solid;
+
+      .library-item-header {
+        border-top-left-radius: calc(.375rem - 3px);
+        border-top-right-radius: calc(.375rem - 3px);
+      }
+    }
+
+    &:not(.selected):focus {
+      outline: 1px $gray-200 solid;
+      outline-offset: 2px;
+    }
+
+    &:not(.selected) {
+      .library-item-header {
+        border-top-left-radius: .375rem;
+        border-top-right-radius: .375rem;
+      }
+    }
+
+    .library-item-header {
+      padding: 0 .5rem 0 1.25rem;
+
+      .library-item-header-icon {
+        width: 2.3rem;
+        height: 2.3rem;
+      }
+
+      .pgn__card-header-content {
+        margin-top: .55rem;
+      }
+
+      .pgn__card-header-actions {
+        margin: .25rem 0 .25rem 1rem;
+      }
     }
   }
 

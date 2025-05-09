@@ -18,6 +18,7 @@ const SortableItem = ({
   isClickable,
   onClick,
   disabled,
+  cardClassName = '',
   // injected
   intl,
 }) => {
@@ -45,14 +46,15 @@ const SortableItem = ({
   };
 
   return (
+    /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */
     <div
       ref={setNodeRef}
+      onClick={onClick}
     >
       <Card
         style={style}
-        className="mx-0"
+        className={`mx-0 ${cardClassName}`}
         isClickable={isClickable}
-        onClick={onClick}
       >
         <ActionRow style={actionStyle}>
           {actions}
@@ -93,6 +95,7 @@ SortableItem.propTypes = {
   isClickable: PropTypes.bool,
   onClick: PropTypes.func,
   disabled: PropTypes.bool,
+  cardClassName: PropTypes.string,
   // injected
   intl: intlShape.isRequired,
 };

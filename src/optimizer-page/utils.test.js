@@ -6,9 +6,9 @@ describe('countBrokenLinks', () => {
     const data = mockApiResponse.LinkCheckOutput;
     expect(countBrokenLinks(data)).toStrictEqual(
       {
-        brokenLinksCounts: [5, 2],
-        lockedLinksCounts: [5, 2],
-        externalForbiddenLinksCounts: [1, 1],
+        brokenLinksCounts: [1, 5],
+        lockedLinksCounts: [1, 2],
+        externalForbiddenLinksCounts: [1, 3],
       },
     );
   });

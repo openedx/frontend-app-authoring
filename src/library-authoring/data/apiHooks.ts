@@ -5,6 +5,7 @@ import {
   useQueryClient,
   type Query,
   type QueryClient,
+  replaceEqualDeep,
 } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
@@ -90,7 +91,11 @@ export const xblockQueryKeys = {
   componentMetadata: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'componentMetadata'],
   componentDownstreamLinks: (usageKey: string) => [...xblockQueryKeys.xblock(usageKey), 'downstreamLinks'],
 
-  /** Predicate used to invalidate all metadata only */
+  /**
+   * Predicate used to invalidate all metadata only (not OLX, fields, assets, etc.).
+   * Affects all libraries; we could do a more complex version that affects only one library, but it would require
+   * introspecting the usage keys.
+   */
   allComponentMetadata: (query: Query) => query.queryKey[0] === 'xblock' && query.queryKey[2] === 'componentMetadata',
 };
 
@@ -207,23 +212,32 @@ export const useContentLibraryV2List = (customParams: api.GetLibrariesV2CustomPa
   })
 );
 
+/** Publish all changes in the library. */
 export const useCommitLibraryChanges = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: api.commitLibraryChanges,
     onSettled: (_data, _error, libraryId) => {
+      // Invalidate all content-related metadata and search results for the whole library.
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId) });
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+      // For XBlocks, the only thing we need to invalidate is the metadata which includes "has unpublished changes"
+      queryClient.invalidateQueries({ predicate: xblockQueryKeys.allComponentMetadata });
     },
   });
 };
 
+/** Discard all un-published changes in the library */
 export const useRevertLibraryChanges = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: api.revertLibraryChanges,
     onSettled: (_data, _error, libraryId) => {
+      // Invalidate all content-related metadata and search results for the whole library.
       queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.contentLibrary(libraryId) });
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
+      // For XBlocks, the only thing we need to invalidate is the metadata which includes "has unpublished changes"
+      queryClient.invalidateQueries({ predicate: xblockQueryKeys.allComponentMetadata });
     },
   });
 };
@@ -632,6 +646,22 @@ export const useContainerChildren = (containerId?: string) => (
     enabled: !!containerId,
     queryKey: libraryAuthoringQueryKeys.containerChildren(containerId!),
     queryFn: () => api.getLibraryContainerChildren(containerId!),
+    structuralSharing: (oldData: api.LibraryBlockMetadata[], newData: api.LibraryBlockMetadata[]) => {
+      // This just sets `isNew` flag to new children components
+      if (oldData) {
+        const oldDataIds = oldData.map((obj) => obj.id);
+        // eslint-disable-next-line no-param-reassign
+        newData = newData.map((newObj) => {
+          if (!oldDataIds.includes(newObj.id)) {
+            // Set isNew = true if we have new child on refetch
+            // eslint-disable-next-line no-param-reassign
+            newObj.isNew = true;
+          }
+          return newObj;
+        });
+      }
+      return replaceEqualDeep(oldData, newData);
+    },
   })
 );
 
@@ -642,13 +672,22 @@ export const useAddComponentsToContainer = (containerId?: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (componentIds: string[]) => {
-      if (containerId !== undefined) {
-        return api.addComponentsToContainer(containerId, componentIds);
+      // istanbul ignore if: this should never happen
+      if (!containerId) {
+        return undefined;
       }
-      return undefined;
+      return api.addComponentsToContainer(containerId, componentIds);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerChildren(containerId!) });
+      // istanbul ignore if: this should never happen
+      if (!containerId) {
+        return;
+      }
+      // NOTE: We invalidate the library query here because we need to update the library's
+      // container list.
+      const libraryId = getLibraryId(containerId);
+      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.containerChildren(containerId) });
+      queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
     },
   });
 };
