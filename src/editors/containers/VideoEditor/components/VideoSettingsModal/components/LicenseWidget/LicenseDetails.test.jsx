@@ -52,8 +52,11 @@ describe('LicenseDetails', () => {
       ).toMatchSnapshot();
     });
     test('snapshots: renders as expected with level set to block and license set to Creative Commons', () => {
+      const mockIntl = {
+        formatMessage: jest.fn(({ defaultMessage }) => defaultMessage),
+      };
       expect(
-        shallow(<LicenseDetails {...props} level="block" license="creative-commons" />).snapshot,
+        shallow(<LicenseDetails {...props} level="block" license="creative-commons" intl={mockIntl} />).snapshot,
       ).toMatchSnapshot();
     });
   });

@@ -119,14 +119,14 @@ const OrderTranscriptForm = ({
       >
         <SelectableBox
           value="order"
-          aria-label="none radio"
+          aria-label={intl.formatMessage(messages.noneAriaLabel)}
           className="text-center"
         >
           <FormattedMessage {...messages.noneLabel} />
         </SelectableBox>
         <SelectableBox
           value="Cielo24"
-          aria-label="Cielo24 radio"
+          aria-label={intl.formatMessage(messages.cieloAriaLabel)}
           className="text-center"
           disabled={!validCieloTranscriptionPlan && cieloHasCredentials}
         >
@@ -134,7 +134,7 @@ const OrderTranscriptForm = ({
         </SelectableBox>
         <SelectableBox
           value="3PlayMedia"
-          aria-label="3PlayMedia radio"
+          aria-label={intl.formatMessage(messages.threePlayMediaAriaLabel)}
           className="text-center"
           disabled={!validThreePlayTranscriptionPlan && threePlayHasCredentials}
         >

@@ -120,7 +120,7 @@ const CardHeader = ({
               value={titleValue}
               name="displayName"
               onChange={(e) => setTitleValue(e.target.value)}
-              aria-label="edit field"
+              aria-label={intl.formatMessage(messages.editFieldAriaLabel)}
               onBlur={() => onEditSubmit(titleValue)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {

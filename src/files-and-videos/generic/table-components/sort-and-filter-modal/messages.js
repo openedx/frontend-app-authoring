@@ -25,25 +25,49 @@ const messages = defineMessages({
     id: 'course-authoring..files-and-videos.sort-and-filter.modal.sortByNameAscendingButton.label',
     defaultMessage: 'Name (A-Z)',
   },
+  sortByNameAscendingAriaLabel: {
+    id: 'course-authoring..files-and-videos.sort-and-filter.modal.sortByNameAscendingButton.aria-label',
+    defaultMessage: 'name descending radio',
+  },
   sortByNewest: {
     id: 'course-authoring..files-and-videos.sort-and-filter.modal.sortByNewestButton.label',
     defaultMessage: 'Newest',
+  },
+  sortByNewestAriaLabel: {
+    id: 'course-authoring..files-and-videos.sort-and-filter.modal.sortByNewestButton.label-label',
+    defaultMessage: 'date added descending radio',
   },
   sortBySizeDescending: {
     id: 'course-authoring..files-and-videos.sort-and-filter.modal.sortBySizeDescendingButton.label',
     defaultMessage: 'File size (High to low)',
   },
+  sortBySizeDescendingAriaLabel: {
+    id: 'course-authoring..files-and-videos.sort-and-filter.modal.sortBySizeDescendingButton.aria-label',
+    defaultMessage: 'file size descending radio',
+  },
   sortByNameDescending: {
     id: 'course-authoring..files-and-videos.sort-and-filter.modal.sortByNameDescendingButton.label',
     defaultMessage: 'Name (Z-A)',
+  },
+  sortByNameDescendingAriaLabel: {
+    id: 'course-authoring..files-and-videos.sort-and-filter.modal.sortByNameDescendingButton.aria-label',
+    defaultMessage: 'name ascending radio',
   },
   sortByOldest: {
     id: 'course-authoring..files-and-videos.sort-and-filter.modal.sortByOldestButton.label',
     defaultMessage: 'Oldest',
   },
+  sortByOldestAriaLabel: {
+    id: 'course-authoring..files-and-videos.sort-and-filter.modal.sortByOldestButton.aria-label',
+    defaultMessage: 'date added ascending radio',
+  },
   sortBySizeAscending: {
     id: 'course-authoring..files-and-videos.sort-and-filter.modal.sortBySizeAscendingButton.label',
     defaultMessage: 'File size (Low to high)',
+  },
+  sortBySizeAscendingAriaLabel: {
+    id: 'course-authoring..files-and-videos.sort-and-filter.modal.sortBySizeAscendingButton.aria-label',
+    defaultMessage: 'file size ascending radio',
   },
   applySortButton: {
     id: 'course-authoring..files-and-videos.sort-and-filter.modal.applyySortButton.label',
