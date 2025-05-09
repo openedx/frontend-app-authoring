@@ -14,22 +14,22 @@
     }
 
     .pgn__modal-header {
-        @include pgn-box-shadow(2, "centered");
+        box-shadow: var(--pgn-elevation-box-shadow-centered-2);
     }
 
     .pgn__modal-footer {
-        @include pgn-box-shadow(2, "down");
+        box-shadow: var(--pgn-elevation-box-shadow-down-2);
     }
 
     .pgn__modal-body {
-        background: $white;
+        background: var(--pgn-color-white);
         padding-left: 0;
         padding-right: 0;
     }
 
     .pgn__breadcrumb {
-        border-bottom: 1px solid $light-300;
-        padding: map-get($spacers, 1) map-get($spacers, 4) $spacer;
+        border-bottom: 1px solid var(--pgn-color-light-300);
+        padding: var(--pgn-spacing-spacer-1) var(--pgn-spacing-spacer-4) var(--pgn-spacing-spacer-base);
 
         .list-inline {
             flex-wrap: wrap;
@@ -38,7 +38,7 @@
         .list-inline-item {
             &.active,
             a.link-muted {
-                color: $dark-500;
+                color: var(--pgn-color-dark-500);
             }
 
             a.link-muted {
@@ -48,7 +48,7 @@
     }
 
     .xblock-items-category {
-        padding: $spacer map-get($spacers, 4) map-get($spacers, 2\.5);
+        padding: var(--pgn-spacing-spacer-base) var(--pgn-spacing-spacer-4) var(--pgn-spacing-spacer-2-5);
     }
 
     .xblock-items-container {
@@ -61,13 +61,13 @@
             display: flex;
             border-radius: 0;
             width: 100%;
-            gap: map-get($spacers, 2);
-            padding: .5625rem $spacer .5625rem map-get($spacers, 4);
+            gap: var(--pgn-spacing-spacer-2);
+            padding: .5625rem var(--pgn-spacing-spacer-base) .5625rem var(--pgn-spacing-spacer-4);
         }
 
         .btn {
             &:hover {
-                background: $light-300;
+                background: var(--pgn-color-light-300);
                 text-decoration: none;
             }
         }

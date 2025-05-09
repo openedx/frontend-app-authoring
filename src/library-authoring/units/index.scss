@@ -3,7 +3,7 @@
     border-radius: 8px;
     padding: 0;
     margin-bottom: 1rem;
-    border: solid 1px $light-500;
+    border: solid 1px var(--pgn-color-light-500);
   }
 
   .pgn__card.clickable {
@@ -14,7 +14,7 @@
     &:focus {
       // this is required for clicks to be passed to underlying iframe component
       pointer-events: none;
-      outline: solid 1px $dark-500;
+      outline: solid 1px var(--pgn-color-dark-500);
     }
 
     &::before {
