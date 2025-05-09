@@ -142,7 +142,13 @@ export const ComponentMenu = ({ usageKey }: { usageKey: string }) => {
           <FormattedMessage {...messages.menuAddToCollection} />
         </Dropdown.Item>
       </Dropdown.Menu>
-      <ComponentDeleter usageKey={usageKey} isConfirmingDelete={isConfirmingDelete} cancelDelete={cancelDelete} />
+      {isConfirmingDelete && (
+        <ComponentDeleter
+          usageKey={usageKey}
+          isConfirmingDelete={isConfirmingDelete}
+          cancelDelete={cancelDelete}
+        />
+      )}
     </Dropdown>
   );
 };

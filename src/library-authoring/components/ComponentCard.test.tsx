@@ -36,6 +36,7 @@ const contentHit: ContentHit = {
   modified: 1722434322294,
   lastPublished: null,
   collections: {},
+  units: {},
   publishStatus: PublishStatus.Published,
 };
 

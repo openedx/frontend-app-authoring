@@ -6,8 +6,8 @@ import { useUnpaginatedEntityLinks } from '../../course-libraries/data/apiHooks'
 
 import AlertError from '../../generic/alert-error';
 import Loading from '../../generic/Loading';
-import { useContentSearchConnection, useContentSearchResults } from '../../search-manager';
 import messages from './messages';
+import { useComponentsFromSearchIndex } from '../data/apiHooks';
 
 interface ComponentUsageProps {
   usageKey: string;
@@ -41,21 +41,12 @@ export const ComponentUsage = ({ usageKey }: ComponentUsageProps) => {
     [dataDownstreamLinks],
   );
 
-  const { client, indexName } = useContentSearchConnection();
   const {
     hits: downstreamHits,
     isError: isErrorIndexDocuments,
     error: errorIndexDocuments,
     isLoading: isLoadingIndexDocuments,
-  } = useContentSearchResults({
-    client,
-    indexName,
-    searchKeywords: '',
-    extraFilter: [`usage_key IN ["${downstreamKeys.join('","')}"]`],
-    limit: downstreamKeys.length,
-    enabled: !!downstreamKeys.length,
-    skipBlockTypeFetch: true,
-  });
+  } = useComponentsFromSearchIndex(downstreamKeys);
 
   if (isErrorDownstreamLinks || isErrorIndexDocuments) {
     return <AlertError error={errorDownstreamLinks || errorIndexDocuments} />;
