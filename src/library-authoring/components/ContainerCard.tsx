@@ -17,7 +17,7 @@ import { ToastContext } from '../../generic/toast-context';
 import { type ContainerHit, PublishStatus } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarActions, SidebarBodyComponentId, useSidebarContext } from '../common/context/SidebarContext';
 import { useRemoveItemsFromCollection } from '../data/apiHooks';
 import { useLibraryRoutes } from '../routes';
 import AddComponentWidget from './AddComponentWidget';
@@ -174,7 +174,7 @@ type ContainerCardProps = {
 const ContainerCard = ({ hit } : ContainerCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
   const { setUnitId, showOnlyPublished } = useLibraryContext();
-  const { openUnitInfoSidebar } = useSidebarContext();
+  const { openUnitInfoSidebar, sidebarComponentInfo } = useSidebarContext();
 
   const {
     blockType: itemType,
@@ -198,6 +198,9 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
   const childUsageKeys: Array<string> = (
     showOnlyPublished ? published?.content?.childUsageKeys : content?.childUsageKeys
   ) ?? [];
+
+  const selected = sidebarComponentInfo?.type === SidebarBodyComponentId.UnitInfo
+    && sidebarComponentInfo.id === unitId;
 
   const { navigateTo } = useLibraryRoutes();
 
@@ -227,6 +230,7 @@ const ContainerCard = ({ hit } : ContainerCardProps) => {
       )}
       hasUnpublishedChanges={publishStatus !== PublishStatus.Published}
       onSelect={openContainer}
+      selected={selected}
     />
   );
 };

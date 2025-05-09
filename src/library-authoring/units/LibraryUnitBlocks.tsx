@@ -29,7 +29,7 @@ import {
 import { LibraryBlock } from '../LibraryBlock';
 import { useLibraryRoutes, ContentType } from '../routes';
 import messages from './messages';
-import { SidebarActions, useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarActions, SidebarBodyComponentId, useSidebarContext } from '../common/context/SidebarContext';
 import { ToastContext } from '../../generic/toast-context';
 import { canEditComponent } from '../components/ComponentEditorModal';
 import { useRunOnNextRender } from '../../utils';
@@ -139,7 +139,7 @@ const ComponentBlock = ({ block, preview, isDragging }: ComponentBlockProps) => 
     unitId, collectionId, componentId, openComponentEditor,
   } = useLibraryContext();
 
-  const { openInfoSidebar } = useSidebarContext();
+  const { openInfoSidebar, sidebarComponentInfo } = useSidebarContext();
 
   const handleComponentSelection = useCallback((numberOfClicks: number) => {
     navigateTo({ componentId: block.originalId });
@@ -182,6 +182,9 @@ const ComponentBlock = ({ block, preview, isDragging }: ComponentBlockProps) => 
     return {};
   }, [isDragging, componentId, block]);
 
+  const selected = sidebarComponentInfo?.type === SidebarBodyComponentId.ComponentInfo
+    && sidebarComponentInfo?.id === block.id;
+
   return (
     <IframeProvider>
       <SortableItem
@@ -197,6 +200,7 @@ const ComponentBlock = ({ block, preview, isDragging }: ComponentBlockProps) => 
         isClickable
         onClick={(e: { detail: number; }) => handleComponentSelection(e.detail)}
         disabled={preview}
+        cardClassName={selected ? 'selected' : undefined}
       >
         {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
         <div

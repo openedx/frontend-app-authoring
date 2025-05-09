@@ -13,7 +13,7 @@ import { Link } from 'react-router-dom';
 import { type CollectionHit } from '../../search-manager';
 import { useComponentPickerContext } from '../common/context/ComponentPickerContext';
 import { useLibraryContext } from '../common/context/LibraryContext';
-import { useSidebarContext } from '../common/context/SidebarContext';
+import { SidebarBodyComponentId, useSidebarContext } from '../common/context/SidebarContext';
 import { useLibraryRoutes } from '../routes';
 import BaseCard from './BaseCard';
 import { ToastContext } from '../../generic/toast-context';
@@ -115,7 +115,7 @@ type CollectionCardProps = {
 const CollectionCard = ({ hit } : CollectionCardProps) => {
   const { componentPickerMode } = useComponentPickerContext();
   const { showOnlyPublished } = useLibraryContext();
-  const { openCollectionInfoSidebar } = useSidebarContext();
+  const { openCollectionInfoSidebar, sidebarComponentInfo } = useSidebarContext();
 
   const {
     type: itemType,
@@ -131,6 +131,9 @@ const CollectionCard = ({ hit } : CollectionCardProps) => {
   ) : numChildren;
 
   const { displayName = '', description = '' } = formatted;
+
+  const selected = sidebarComponentInfo?.type === SidebarBodyComponentId.CollectionInfo
+    && sidebarComponentInfo.id === collectionId;
 
   const { navigateTo } = useLibraryRoutes();
   const openCollection = useCallback(() => {
@@ -154,6 +157,7 @@ const CollectionCard = ({ hit } : CollectionCardProps) => {
         </ActionRow>
       )}
       onSelect={openCollection}
+      selected={selected}
     />
   );
 };

@@ -18,6 +18,7 @@ const SortableItem = ({
   isClickable,
   onClick,
   disabled,
+  cardClassName = '',
   // injected
   intl,
 }) => {
@@ -52,7 +53,7 @@ const SortableItem = ({
     >
       <Card
         style={style}
-        className="mx-0"
+        className={`mx-0 ${cardClassName}`}
         isClickable={isClickable}
       >
         <ActionRow style={actionStyle}>
@@ -94,6 +95,7 @@ SortableItem.propTypes = {
   isClickable: PropTypes.bool,
   onClick: PropTypes.func,
   disabled: PropTypes.bool,
+  cardClassName: PropTypes.string,
   // injected
   intl: intlShape.isRequired,
 };
