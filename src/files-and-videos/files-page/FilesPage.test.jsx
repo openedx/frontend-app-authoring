@@ -358,7 +358,9 @@ describe('FilesAndUploads', () => {
 
         global.fetch = jest.fn().mockImplementation(() => mockFetchResponse);
         fireEvent.click(downloadButton);
-        expect(fetch).toHaveBeenCalledTimes(2);
+        await waitFor(() => {
+          expect(global.fetch).toHaveBeenCalledTimes(2);
+        });
       });
 
       it('sort button should be enabled and sort files by name', async () => {
