@@ -303,18 +303,22 @@ describe('app thunkActions', () => {
         fetchImages,
         fetchVideos,
         fetchCourseDetails,
+        fetchWaffleFlags,
       } = thunkActions;
+      const waffleFlagsThunk = jest.fn(() => 'fetchWaffleFlags');
       thunkActions.fetchBlock = () => 'fetchBlock';
       thunkActions.fetchUnit = () => 'fetchUnit';
       thunkActions.fetchStudioView = () => 'fetchStudioView';
       thunkActions.fetchImages = () => 'fetchImages';
       thunkActions.fetchVideos = () => 'fetchVideos';
       thunkActions.fetchCourseDetails = () => 'fetchCourseDetails';
+      thunkActions.fetchWaffleFlags = jest.fn().mockImplementation(() => waffleFlagsThunk);
       const data = {
         ...testValue,
         blockType: 'video',
         blockId: 'block-v1:UniversityX+PHYS+1+type@problem+block@123',
         learningContextId: 'course-v1:UniversityX+PHYS+1',
+        courseId: 'test-course-id',
       };
       thunkActions.initialize(data)(dispatch);
       expect(dispatch.mock.calls).toEqual([
@@ -322,16 +326,19 @@ describe('app thunkActions', () => {
         [actions.app.initialize(data)],
         [thunkActions.fetchBlock()],
         [thunkActions.fetchUnit()],
+        [waffleFlagsThunk],
         [thunkActions.fetchVideos()],
         [thunkActions.fetchStudioView()],
         [thunkActions.fetchCourseDetails()],
       ]);
+      expect(thunkActions.fetchWaffleFlags).toHaveBeenCalledWith(data.courseId);
       thunkActions.fetchBlock = fetchBlock;
       thunkActions.fetchUnit = fetchUnit;
       thunkActions.fetchStudioView = fetchStudioView;
       thunkActions.fetchImages = fetchImages;
       thunkActions.fetchVideos = fetchVideos;
       thunkActions.fetchCourseDetails = fetchCourseDetails;
+      thunkActions.fetchWaffleFlags = fetchWaffleFlags;
     });
   });
   describe('saveBlock', () => {
