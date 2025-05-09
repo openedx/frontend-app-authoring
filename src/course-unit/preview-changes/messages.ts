@@ -6,11 +6,6 @@ const messages = defineMessages({
     defaultMessage: 'Preview changes: {blockTitle}',
     description: 'Preview changes modal title text',
   },
-  diffTitle: {
-    id: 'authoring.course-unit.preview-changes.modal-diff-title',
-    defaultMessage: 'Preview changes: {oldName} -> {newName}',
-    description: 'Preview changes modal title text',
-  },
   defaultUnitTitle: {
     id: 'authoring.course-unit.preview-changes.modal-default-unit-title',
     defaultMessage: 'Preview changes: Unit',
@@ -60,6 +55,11 @@ const messages = defineMessages({
     id: 'authoring.course-unit.preview-changes.confirmation-dialog-confirm-btn',
     defaultMessage: 'Ignore',
     description: 'Preview changes confirmation dialog confirm button text when user clicks on ignore changes.',
+  },
+  olderVersionPreviewAlert: {
+    id: 'course-authoring.review-tab.preview.old-version-alert',
+    defaultMessage: 'The old version preview is the previous library version',
+    description: 'Alert message stating that older version in preview is of library block',
   },
 });
 

@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import MockAdapter from 'axios-mock-adapter';
 import { renderHook, waitFor } from '@testing-library/react';
 import { getEntityLinksByDownstreamContextUrl } from './api';
-import { useEntityLinks, useUnpaginatedEntityLinks } from './apiHooks';
+import { useEntityLinks } from './apiHooks';
 
 let axiosMock: MockAdapter;
 
@@ -39,26 +39,11 @@ describe('course libraries api hooks', () => {
     axiosMock.reset();
   });
 
-  it('should return paginated links for course', async () => {
-    const courseId = 'course-v1:some+key';
-    const url = getEntityLinksByDownstreamContextUrl();
-    const expectedResult = {
-      next: null, results: [], previous: null, total: 0,
-    };
-    axiosMock.onGet(url).reply(200, expectedResult);
-    const { result } = renderHook(() => useEntityLinks({ courseId }), { wrapper });
-    await waitFor(() => {
-      expect(result.current.isLoading).toBeFalsy();
-    });
-    expect(result.current.data?.pages).toEqual([expectedResult]);
-    expect(axiosMock.history.get[0].url).toEqual(url);
-  });
-
   it('should return links for course', async () => {
     const courseId = 'course-v1:some+key';
     const url = getEntityLinksByDownstreamContextUrl();
     axiosMock.onGet(url).reply(200, []);
-    const { result } = renderHook(() => useUnpaginatedEntityLinks({ courseId }), { wrapper });
+    const { result } = renderHook(() => useEntityLinks({ courseId }), { wrapper });
     await waitFor(() => {
       expect(result.current.isLoading).toBeFalsy();
     });

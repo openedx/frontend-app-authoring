@@ -18,12 +18,11 @@ interface OutOfSyncAlertProps {
 * in course can be updated. Following are the conditions for displaying the alert.
 *
 * * The alert is displayed if components are out of sync.
-* * If the user clicks on dismiss button, the state is stored in localstorage of user
-*   in this format: outOfSyncCountAlert-${courseId} = <number of out of sync components>.
-* * If the number of sync components don't change for the course and the user opens outline
+* * If the user clicks on dismiss button, the state of dismiss is stored in localstorage of user
+*   in this format: outOfSyncCountAlert-${courseId} = <datetime value in milliseconds>.
+* * If there are not new published components for the course and the user opens outline
 *   in the same browser, they don't see the alert again.
-* * If the number changes, i.e., if a new component is out of sync or the user updates or ignores
-*   a component, the alert is displayed again.
+* * If there is a new published component upstream, the alert is displayed again.
 */
 export const OutOfSyncAlert: React.FC<OutOfSyncAlertProps> = ({
   showAlert,
@@ -35,6 +34,8 @@ export const OutOfSyncAlert: React.FC<OutOfSyncAlertProps> = ({
   const intl = useIntl();
   const { data, isLoading } = useEntityLinksSummaryByDownstreamContext(courseId);
   const outOfSyncCount = data?.reduce((count, lib) => count + (lib.readyToSyncCount || 0), 0);
+  const lastPublishedDate = data?.map(lib => new Date(lib.lastPublishedAt || 0).getTime())
+    .reduce((acc, lastPublished) => Math.max(lastPublished, acc), 0);
   const alertKey = `outOfSyncCountAlert-${courseId}`;
 
   useEffect(() => {
@@ -46,13 +47,14 @@ export const OutOfSyncAlert: React.FC<OutOfSyncAlertProps> = ({
       setShowAlert(false);
       return;
     }
-    const dismissedAlert = localStorage.getItem(alertKey);
-    setShowAlert(parseInt(dismissedAlert || '', 10) !== outOfSyncCount);
-  }, [outOfSyncCount, isLoading, data]);
+    const dismissedAlertDate = parseInt(localStorage.getItem(alertKey) ?? '0', 10);
+
+    setShowAlert((lastPublishedDate ?? 0) > dismissedAlertDate);
+  }, [outOfSyncCount, lastPublishedDate, isLoading, data]);
 
   const dismissAlert = () => {
     setShowAlert(false);
-    localStorage.setItem(alertKey, String(outOfSyncCount));
+    localStorage.setItem(alertKey, Date.now().toString());
     onDismiss?.();
   };
 

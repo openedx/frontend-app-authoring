@@ -3,17 +3,20 @@
     "upstreamContextTitle": "CS problems 3",
     "upstreamContextKey": "lib:OpenedX:CSPROB3",
     "readyToSyncCount": 5,
-    "totalCount": 14
+    "totalCount": 14,
+    "lastPublishedAt": "2025-05-01T20:20:44.989042Z"
   },
   {
     "upstreamContextTitle": "CS problems 2",
     "upstreamContextKey": "lib:OpenedX:CSPROB2",
     "readyToSyncCount": 0,
-    "totalCount": 21
+    "totalCount": 21,
+    "lastPublishedAt": "2025-05-01T21:20:44.989042Z"
   },
   {
     "upstreamContextTitle": "CS problems",
     "upstreamContextKey": "lib:OpenedX:CSPROB",
-    "totalCount": 3
+    "totalCount": 3,
+    "lastPublishedAt": "2025-05-01T22:20:44.989042Z"
   }
 ]

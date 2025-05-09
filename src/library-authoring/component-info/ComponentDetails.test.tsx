@@ -8,7 +8,7 @@ import {
 import { mockFetchIndexDocuments, mockContentSearchConfig } from '../../search-manager/data/api.mock';
 import {
   mockContentLibrary,
-  mockGetUnpaginatedEntityLinks,
+  mockGetEntityLinks,
   mockLibraryBlockMetadata,
   mockXBlockAssets,
   mockXBlockOLX,
@@ -21,7 +21,7 @@ mockContentLibrary.applyMock();
 mockLibraryBlockMetadata.applyMock();
 mockXBlockAssets.applyMock();
 mockXBlockOLX.applyMock();
-mockGetUnpaginatedEntityLinks.applyMock();
+mockGetEntityLinks.applyMock();
 mockFetchIndexDocuments.applyMock();
 
 const render = (usageKey: string) => baseRender(<ComponentDetails />, {

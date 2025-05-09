@@ -5,7 +5,7 @@ import BaseModal from '../../editors/sharedComponents/BaseModal';
 import messages from './messages';
 import infoMessages from '../component-info/messages';
 import { ComponentUsage } from '../component-info/ComponentUsage';
-import { useUnpaginatedEntityLinks } from '../../course-libraries/data/apiHooks';
+import { useEntityLinks } from '../../course-libraries/data/apiHooks';
 
 interface PublishConfirmationModalProps {
   isOpen: boolean,
@@ -29,7 +29,7 @@ const PublishConfirmationModal = ({
   const {
     data: dataDownstreamLinks,
     isLoading: isLoadingDownstreamLinks,
-  } = useUnpaginatedEntityLinks({ upstreamUsageKey: usageKey });
+  } = useEntityLinks({ upstreamUsageKey: usageKey });
 
   const hasDownstreamUsages = !isLoadingDownstreamLinks && dataDownstreamLinks?.length !== 0;
 

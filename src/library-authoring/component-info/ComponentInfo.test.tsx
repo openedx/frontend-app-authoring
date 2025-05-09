@@ -7,7 +7,7 @@ import {
 import {
   mockContentLibrary,
   mockLibraryBlockMetadata,
-  mockGetUnpaginatedEntityLinks,
+  mockGetEntityLinks,
 } from '../data/api.mocks';
 import { mockContentSearchConfig, mockFetchIndexDocuments } from '../../search-manager/data/api.mock';
 import { LibraryProvider } from '../common/context/LibraryContext';
@@ -18,7 +18,7 @@ import { getXBlockPublishApiUrl } from '../data/api';
 mockContentSearchConfig.applyMock();
 mockContentLibrary.applyMock();
 mockLibraryBlockMetadata.applyMock();
-mockGetUnpaginatedEntityLinks.applyMock();
+mockGetEntityLinks.applyMock();
 mockFetchIndexDocuments.applyMock();
 jest.mock('./ComponentPreview', () => ({
   __esModule: true, // Required when mocking 'default' export
