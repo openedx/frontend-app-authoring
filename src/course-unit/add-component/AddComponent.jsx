@@ -94,16 +94,19 @@ const AddComponent = ({
         });
         break;
       case COMPONENT_TYPES.video:
-        handleCreateNewCourseXBlock({ type, parentLocator: blockId }, /* istanbul ignore next */ ({ courseKey, locator }) => {
-          setCourseId(courseKey);
-          setBlockType(type);
-          setNewBlockId(locator);
-          if (useVideoGalleryFlow) {
-            showVideoSelectorModal();
-          } else {
-            showXBlockEditorModal();
-          }
-        });
+        handleCreateNewCourseXBlock(
+          { type, parentLocator: blockId },
+          /* istanbul ignore next */ ({ courseKey, locator }) => {
+            setCourseId(courseKey);
+            setBlockType(type);
+            setNewBlockId(locator);
+            if (useVideoGalleryFlow) {
+              showVideoSelectorModal();
+            } else {
+              showXBlockEditorModal();
+            }
+          },
+        );
         break;
         // TODO: The library functional will be a bit different of current legacy (CMS)
         //  behaviour and this ticket is on hold (blocked by other development team).
