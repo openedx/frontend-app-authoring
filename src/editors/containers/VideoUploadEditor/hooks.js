@@ -11,15 +11,20 @@ export const {
   navigateTo,
 } = appHooks;
 
-export const postUploadRedirect = (storeState, uploadType = 'selectedVideoUrl') => {
+export const postUploadRedirect = (storeState, uploadType = 'selectedVideoUrl', onUpload = null) => {
   const learningContextId = selectors.app.learningContextId(storeState);
   const blockId = selectors.app.blockId(storeState);
+  if (onUpload) {
+    return (videoUrl) => {
+      onUpload(videoUrl, learningContextId, blockId);
+    };
+  }
   return (videoUrl) => navigateTo(`/course/${learningContextId}/editor/video/${blockId}?${uploadType}=${videoUrl}`);
 };
 
-export const onVideoUpload = (uploadType) => {
+export const onVideoUpload = (uploadType, onUpload) => {
   const storeState = store.getState();
-  return module.postUploadRedirect(storeState, uploadType);
+  return module.postUploadRedirect(storeState, uploadType, onUpload);
 };
 
 export const useUploadVideo = async ({

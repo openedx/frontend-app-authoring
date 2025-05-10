@@ -26,6 +26,7 @@ const slice = createSlice({
       useNewCertificatesPage: true,
       useNewTextbooksPage: true,
       useNewGroupConfigurationsPage: true,
+      useVideoGalleryFlow: false,
     },
   },
   reducers: {
