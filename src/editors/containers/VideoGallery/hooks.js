@@ -86,6 +86,7 @@ export const filterList = ({
 export const useVideoListProps = ({
   searchSortProps,
   videos,
+  returnFunction,
 }) => {
   const [highlighted, setHighlighted] = React.useState(null);
   const [
@@ -128,7 +129,9 @@ export const useVideoListProps = ({
     },
     selectBtnProps: {
       onClick: () => {
-        if (highlighted) {
+        if (returnFunction) {
+          returnFunction()();
+        } else if (highlighted) {
           navigateTo(`/course/${learningContextId}/editor/video/${blockId}?selectedVideoId=${highlighted}`);
         } else {
           setShowSelectVideoError(true);
@@ -196,11 +199,12 @@ export const getstatusBadgeVariant = ({ status }) => {
 
 export const getStatusMessage = ({ status }) => Object.values(filterMessages).find((m) => m.defaultMessage === status);
 
-export const useVideoProps = ({ videos, uploadHandler }) => {
+export const useVideoProps = ({ videos, uploadHandler, returnFunction }) => {
   const searchSortProps = useSearchAndSortProps();
   const videoList = useVideoListProps({
     searchSortProps,
     videos,
+    returnFunction,
   });
   const {
     galleryError,

@@ -34,7 +34,7 @@ const VideoGallery = ({ returnFunction, onCancel }) => {
   const setSearchParams = useSearchParams()[1];
 
   useEffect(() => {
-    // If no videos exists redirects to the video upload screen
+    // If no videos exists opens to the video upload modal
     if (isLoaded && videos.length === 0) {
       showVideoUploadModal();
     }
@@ -57,7 +57,7 @@ const VideoGallery = ({ returnFunction, onCancel }) => {
     galleryProps,
     searchSortProps,
     selectBtnProps,
-  } = hooks.useVideoProps({ videos, uploadHandler });
+  } = hooks.useVideoProps({ videos, uploadHandler, returnFunction });
   const handleCancel = hooks.useCancelHandler();
 
   const modalMessages = {
