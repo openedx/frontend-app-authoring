@@ -876,13 +876,6 @@ describe('<CourseUnit />', () => {
       userEvent.click(videoButton);
     });
 
-    screen.debug();
-    /** TODO -- fix this test.
-    await waitFor(() => {
-      expect(getByRole('textbox', { name: /paste your video id or url/i })).toBeInTheDocument();
-    });
-    */
-
     axiosMock
       .onGet(getCourseUnitApiUrl(blockId))
       .reply(200, courseUnitIndexMock);
@@ -908,6 +901,7 @@ describe('<CourseUnit />', () => {
       sidebarMessages.releaseInfoWithSection.defaultMessage
         .replace('{sectionName}', courseUnitIndexMock.release_date_from),
     )).toBeInTheDocument();
+    expect(getByRole('heading', { name: /add video to your course/i, hidden: true })).toBeInTheDocument();
 
     waffleSpy.mockRestore();
   });
@@ -956,7 +950,6 @@ describe('<CourseUnit />', () => {
       userEvent.click(videoButton);
     });
 
-    screen.debug();
     /** TODO -- fix this test.
     await waitFor(() => {
       expect(getByRole('textbox', { name: /paste your video id or url/i })).toBeInTheDocument();
