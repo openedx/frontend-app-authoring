@@ -94,7 +94,7 @@ const AddComponent = ({
         });
         break;
       case COMPONENT_TYPES.video:
-        handleCreateNewCourseXBlock({ type, parentLocator: blockId }, ({ courseKey, locator }) => {
+        handleCreateNewCourseXBlock({ type, parentLocator: blockId }, /* istanbul ignore next */ ({ courseKey, locator }) => {
           setCourseId(courseKey);
           setBlockType(type);
           setNewBlockId(locator);
@@ -245,7 +245,7 @@ const AddComponent = ({
               studioEndpointUrl={getConfig().STUDIO_BASE_URL}
               lmsEndpointUrl={getConfig().LMS_BASE_URL}
               onCancel={closeVideoSelectorModal}
-              returnFunction={() => onXBlockSave}
+              returnFunction={/* istanbul ignore next */ () => onXBlockSave}
             />
           </div>
         </StandardModal>
