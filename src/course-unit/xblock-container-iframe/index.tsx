@@ -79,7 +79,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
   const handleEditXBlock = useCallback((type: string, id: string) => {
     setBlockType(type);
     setNewBlockId(id);
-    if (type === 'video' && useVideoGalleryFlow ) {
+    if (type === 'video' && useVideoGalleryFlow) {
       showVideoSelectorModal();
     } else {
       showXBlockEditorModal();
