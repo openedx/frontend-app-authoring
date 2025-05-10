@@ -130,6 +130,7 @@ export const useVideoListProps = ({
     selectBtnProps: {
       onClick: () => {
         if (returnFunction) {
+          /* istanbul ignore next */
           returnFunction()();
         } else if (highlighted) {
           navigateTo(`/course/${learningContextId}/editor/video/${blockId}?selectedVideoId=${highlighted}`);

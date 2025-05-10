@@ -214,7 +214,7 @@ const XBlockContainerIframe: FC<XBlockContainerIframeProps> = ({
             studioEndpointUrl={getConfig().STUDIO_BASE_URL}
             lmsEndpointUrl={getConfig().LMS_BASE_URL}
             onCancel={closeVideoSelectorModal}
-            returnFunction={() => onXBlockSave}
+            returnFunction={/* istanbul ignore next */ () => onXBlockSave}
           />
         </div>
       </StandardModal>

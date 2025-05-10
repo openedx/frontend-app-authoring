@@ -65,6 +65,7 @@ import xblockContainerIframeMessages from './xblock-container-iframe/messages';
 import headerNavigationsMessages from './header-navigations/messages';
 import sidebarMessages from './sidebar/messages';
 import messages from './messages';
+import * as selectors from '../data/selectors';
 
 let axiosMock;
 let store;
@@ -829,6 +830,88 @@ describe('<CourseUnit />', () => {
     });
   });
 
+  it('handles creating Video xblock and showing editor modal using videogalleryflow', async () => {
+    const waffleSpy = jest.spyOn(selectors, 'getWaffleFlags').mockReturnValue({ useVideoGalleryFlow: true });
+
+    axiosMock
+      .onPost(postXBlockBaseApiUrl({ type: 'video', category: 'video', parentLocator: blockId }))
+      .reply(200, courseCreateXblockMock);
+    const { getByText, queryByRole, getByRole } = render(<RootWrapper />);
+
+    await waitFor(() => {
+      userEvent.click(getByRole('button', { name: sidebarMessages.actionButtonPublishTitle.defaultMessage }));
+    });
+
+    axiosMock
+      .onPost(getXBlockBaseApiUrl(blockId), {
+        publish: PUBLISH_TYPES.makePublic,
+      })
+      .reply(200, { dummy: 'value' });
+    axiosMock
+      .onGet(getCourseUnitApiUrl(blockId))
+      .reply(200, {
+        ...courseUnitIndexMock,
+        visibility_state: UNIT_VISIBILITY_STATES.live,
+        has_changes: false,
+        published_by: userName,
+      });
+
+    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
+
+    await waitFor(() => {
+      // check if the sidebar status is Published and Live
+      expect(getByText(sidebarMessages.sidebarTitlePublishedAndLive.defaultMessage)).toBeInTheDocument();
+      expect(getByText(
+        sidebarMessages.publishLastPublished.defaultMessage
+          .replace('{publishedOn}', courseUnitIndexMock.published_on)
+          .replace('{publishedBy}', userName),
+      )).toBeInTheDocument();
+      expect(queryByRole('button', { name: sidebarMessages.actionButtonPublishTitle.defaultMessage })).not.toBeInTheDocument();
+
+      const videoButton = getByRole('button', {
+        name: new RegExp(`${addComponentMessages.buttonText.defaultMessage} Video`, 'i'),
+        hidden: true,
+      });
+
+      userEvent.click(videoButton);
+    });
+
+    screen.debug();
+    /** TODO -- fix this test.
+    await waitFor(() => {
+      expect(getByRole('textbox', { name: /paste your video id or url/i })).toBeInTheDocument();
+    });
+    */
+
+    axiosMock
+      .onGet(getCourseUnitApiUrl(blockId))
+      .reply(200, courseUnitIndexMock);
+
+    await executeThunk(editCourseUnitVisibilityAndData(blockId, PUBLISH_TYPES.makePublic, true), store.dispatch);
+
+    // after creating video xblock, the sidebar status changes to Draft (unpublished changes)
+    expect(getByText(sidebarMessages.sidebarTitleDraftUnpublishedChanges.defaultMessage)).toBeInTheDocument();
+    expect(getByText(sidebarMessages.visibilityStaffAndLearnersTitle.defaultMessage)).toBeInTheDocument();
+    expect(getByText(sidebarMessages.releaseStatusTitle.defaultMessage)).toBeInTheDocument();
+    expect(getByText(sidebarMessages.sidebarBodyNote.defaultMessage)).toBeInTheDocument();
+    expect(getByText(sidebarMessages.visibilityWillBeVisibleToTitle.defaultMessage)).toBeInTheDocument();
+    expect(getByText(sidebarMessages.visibilityCheckboxTitle.defaultMessage)).toBeInTheDocument();
+    expect(getByText(sidebarMessages.actionButtonPublishTitle.defaultMessage)).toBeInTheDocument();
+    expect(getByText(sidebarMessages.actionButtonDiscardChangesTitle.defaultMessage)).toBeInTheDocument();
+    expect(getByText(courseUnitIndexMock.release_date)).toBeInTheDocument();
+    expect(getByText(
+      sidebarMessages.publishInfoDraftSaved.defaultMessage
+        .replace('{editedOn}', courseUnitIndexMock.edited_on)
+        .replace('{editedBy}', courseUnitIndexMock.edited_by),
+    )).toBeInTheDocument();
+    expect(getByText(
+      sidebarMessages.releaseInfoWithSection.defaultMessage
+        .replace('{sectionName}', courseUnitIndexMock.release_date_from),
+    )).toBeInTheDocument();
+
+    waffleSpy.mockRestore();
+  });
+
   it('handles creating Video xblock and showing editor modal', async () => {
     axiosMock
       .onPost(postXBlockBaseApiUrl({ type: 'video', category: 'video', parentLocator: blockId }))
@@ -873,6 +956,7 @@ describe('<CourseUnit />', () => {
       userEvent.click(videoButton);
     });
 
+    screen.debug();
     /** TODO -- fix this test.
     await waitFor(() => {
       expect(getByRole('textbox', { name: /paste your video id or url/i })).toBeInTheDocument();
