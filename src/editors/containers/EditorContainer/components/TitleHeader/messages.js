@@ -17,6 +17,11 @@ const messages = defineMessages({
     defaultMessage: 'Edit Title',
     description: 'Screen reader label title for icon button to edit the xblock title',
   },
+  editTitlePlaceholder: {
+    id: 'authoring.texteditor.header.editTitleLabelPlaceholder',
+    defaultMessage: 'Title',
+    description: 'Screen reader label title for icon button to edit the xblock title',
+  },
   cancelTitleEdit: {
     id: 'authoring.texteditor.header.cancelTitleEdit',
     defaultMessage: 'Cancel',
