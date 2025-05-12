@@ -7,10 +7,6 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import { thunkActions } from '../../../data/redux';
 import BaseModal from '../../../sharedComponents/BaseModal';
-// This 'module' self-import hack enables mocking during tests.
-// See src/editors/decisions/0005-internal-editor-testability-decisions.md. The whole approach to how hooks are tested
-// should be re-thought and cleaned up to avoid this pattern.
-// eslint-disable-next-line import/no-self-import
 import messages from './messages';
 
 export const useVideoList = ({ fetchVideos }) => {
