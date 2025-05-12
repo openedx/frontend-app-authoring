@@ -3,7 +3,7 @@ import React, {
   useContext, useEffect, useState, useRef, useCallback,
 } from 'react';
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { Button, StandardModal, useToggle } from '@openedx/paragon';
@@ -25,8 +25,8 @@ import messages from './messages';
 import { ComponentPicker } from '../../library-authoring';
 import { COMPONENT_TYPES } from '../../generic/block-type-utils/constants';
 import { ContainerType } from '../../generic/key-utils';
-import { useStudioHome } from '../../studio-home/hooks';
 import { ContentType } from '../../library-authoring/routes';
+import { getStudioHomeData } from '../../studio-home/data/selectors';
 
 const SubsectionCard = ({
   section,
@@ -57,7 +57,7 @@ const SubsectionCard = ({
   const [isFormOpen, openForm, closeForm] = useToggle(false);
   const namePrefix = 'subsection';
   const { sharedClipboardData, showPasteUnit } = useClipboard();
-  const { librariesV2Enabled } = useStudioHome();
+  const { librariesV2Enabled } = useSelector(getStudioHomeData);
   const [
     isAddLibraryUnitModalOpen,
     openAddLibraryUnitModal,
