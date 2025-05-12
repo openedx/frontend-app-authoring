@@ -1,6 +1,6 @@
 .sub-header {
   display: flex;
-  gap: map-get($spacers, 4\.5);
+  gap: var(--pgn-spacing-spacer-4-5);
 
   .sub-header-actions {
     margin-bottom: 1.75rem;
@@ -9,25 +9,25 @@
 }
 
 .sub-header-title {
-  font: normal $font-weight-bold 2rem/2.25rem $font-family-base;
-  color: $black;
+  font: normal var(--pgn-typography-font-weight-bold) 2rem/2.25rem var(--pgn-typography-font-family-base);
+  color: var(--pgn-color-black);
 
   .sub-header-title-subtitle,
   .sub-header-breadcrumbs {
-    font: normal $font-weight-normal .875rem/1.5rem $font-family-base;
+    font: normal var(--pgn-typography-font-weight-normal) .875rem/1.5rem var(--pgn-typography-font-family-base);
     display: block;
     color: $text-color-base;
   }
 }
 
 .sub-header-content-title {
-  font: normal $font-weight-normal 1.375rem/1.5 $font-family-base;
+  font: normal var(--pgn-typography-font-weight-normal) 1.375rem/1.5 var(--pgn-typography-font-family-base);
   margin-bottom: 0;
-  color: $black;
+  color: var(--pgn-color-black);
 }
 
 .sub-header-instructions {
-  font: normal $font-weight-normal .875rem/1.5rem $font-family-base;
+  font: normal var(--pgn-typography-font-weight-normal) .875rem/1.5rem var(--pgn-typography-font-family-base);
   color: $text-color-base;
 }
 

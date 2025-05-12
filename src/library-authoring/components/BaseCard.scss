@@ -8,7 +8,7 @@
     }
 
     &.selected:not(:focus) {
-      border: 2px $gray-700 solid;
+      border: 2px var(--pgn-color-gray-700) solid;
 
       .library-item-header {
         border-top-left-radius: calc(.375rem - 2px);
@@ -17,7 +17,7 @@
     }
 
     &.selected:focus {
-      border: 3px $gray-700 solid;
+      border: 3px var(--pgn-color-gray-700) solid;
 
       .library-item-header {
         border-top-left-radius: calc(.375rem - 3px);
@@ -26,7 +26,7 @@
     }
 
     &:not(.selected):focus {
-      outline: 1px $gray-200 solid;
+      outline: 1px var(--pgn-color-gray-200) solid;
       outline-offset: 2px;
     }
 

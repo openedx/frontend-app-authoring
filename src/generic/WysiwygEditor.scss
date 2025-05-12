@@ -1,5 +1,5 @@
 .tox-dialog-wrap__backdrop {
-  background-color: $black !important;
+  background-color: var(--pgn-color-black) !important;
   opacity: .5;
-  z-index: $zindex-modal-backdrop;
+  z-index: var(--pgn-elevation-modal-backdrop-zindex);
 }
