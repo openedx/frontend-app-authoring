@@ -97,12 +97,6 @@ jest.mock('./data/api', () => ({
   getTagsCount: () => jest.fn().mockResolvedValue({}),
 }));
 
-jest.mock('../studio-home/hooks', () => ({
-  useStudioHome: () => ({
-    librariesV2Enabled: true,
-  }),
-}));
-
 // Mock ComponentPicker to call onComponentSelected on click
 jest.mock('../library-authoring/component-picker', () => ({
   ComponentPicker: (props) => {
@@ -160,7 +154,9 @@ describe('<CourseOutline />', () => {
       pathname: mockPathname,
     });
 
-    store = initializeStore();
+    store = initializeStore({
+      studioHome: { studioHomeData: { librariesV2Enabled: true } },
+    });
     axiosMock = new MockAdapter(getAuthenticatedHttpClient());
     axiosMock
       .onGet(getCourseOutlineIndexApiUrl(courseId))
@@ -177,6 +173,10 @@ describe('<CourseOutline />', () => {
       }))
       .reply(200, courseLaunchMock);
     await executeThunk(fetchCourseOutlineIndexQuery(courseId), store.dispatch);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it('render CourseOutline component correctly', async () => {

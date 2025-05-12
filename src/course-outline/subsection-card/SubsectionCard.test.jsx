@@ -24,8 +24,9 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-jest.mock('../../studio-home/hooks', () => ({
-  useStudioHome: () => ({
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useSelector: () => ({
     librariesV2Enabled: true,
   }),
 }));
