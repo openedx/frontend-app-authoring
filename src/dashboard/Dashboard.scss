@@ -89,7 +89,7 @@
     }
 
     .overview-card {
-      height: 20rem;
+      height: 25rem;
       overflow: auto;
       position: relative;
 
@@ -148,7 +148,7 @@
     .sidebar-card {
       margin-bottom: 1rem;
       height: 20rem;
-      overflow: auto;
+      // overflow: auto;
       position: relative;
 
       .card-header {
@@ -252,4 +252,8 @@
   border: 2px solid #1976d2 !important;
   background: #e3f2fd !important;
   box-shadow: 0 0 0 2px #1976d233;
+}
+
+.temp-flow {
+  overflow: auto;
 }

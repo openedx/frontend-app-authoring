@@ -15,7 +15,7 @@
 
   .card-section {
     padding: 1rem;
-    overflow: auto;
+    overflow: overlay;
   }
 
   // .metrics-list {
@@ -53,4 +53,29 @@
   //     }
   //   }
   // }
+}
+
+.calendar-widget {
+  // Container for the calendar widget
+}
+
+.calendar-title {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.calendar-events {
+  // Container for events
+}
+
+.calendar-event {
+  background: #03a9f4;
+  color: white;
+  border-radius: 6px;
+  padding: 0.5rem;
+  margin-bottom: 8px;
+}
+
+.event-time {
+  font-size: 0.85em;
 } 

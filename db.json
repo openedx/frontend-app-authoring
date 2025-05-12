@@ -278,6 +278,26 @@
             }
           ]
         }
+      },
+      {
+        "id": "calendar-widget",
+        "type": "calendar",
+        "order": 5,
+        "enabled": true,
+        "title": "Calendar 5",
+        "content": {
+          "date": "Mon April 22",
+          "events": [
+            {
+              "title": "TitanEd - Upcoming Event 1",
+              "time": "10:30 – 11:30pm"
+            },
+            {
+              "title": "TitanEd - Upcoming Event 2",
+              "time": "10:30 – 11:30pm"
+            }
+          ]
+        }
       }
     ]
   }

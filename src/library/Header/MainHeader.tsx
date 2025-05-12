@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Navbar,
   Nav,
@@ -7,6 +7,7 @@ import {
   SearchField,
   Icon,
   IconButtonWithTooltip,
+  Dropdown,
 } from '@openedx/paragon';
 // import useIsMobileSize from '../../../hooks/useIsMobileSize';
 // import { MainHeaderProps } from '../../../interfaces/components';
@@ -28,6 +29,18 @@ const MainHeader: React.FC<MainHeaderProps> = ({
   menuAlignment,
 }) => {
   const isMobile = useIsMobileSize();
+  const [selectedLanguage, setSelectedLanguage] = useState(() => {
+    return localStorage.getItem('selectedLanguage') || 'EN';
+  });
+
+  useEffect(() => {
+    document.body.dir = selectedLanguage === 'AR' ? 'rtl' : 'ltr';
+  }, [selectedLanguage]);
+
+  const handleLanguageChange = (lang: string) => {
+    setSelectedLanguage(lang);
+    localStorage.setItem('selectedLanguage', lang);
+  };
 
   const alignmentMap: { [key: string]: string } = {
     left: 'justify-content-start',
@@ -81,6 +94,16 @@ const MainHeader: React.FC<MainHeaderProps> = ({
             <IconButtonWithTooltip src={ExitToApp} iconAs={Icon} alt="Sync" tooltipPlacement="bottom" tooltipContent="Switch to User Mode" />
             <IconButtonWithTooltip src={HelpCenter} iconAs={Icon} alt="Help" tooltipPlacement="bottom" tooltipContent="Help" />
             <IconButtonWithTooltip src={Notifications} iconAs={Icon} alt="Notifications" tooltipPlacement="bottom" tooltipContent="Notifications" />
+
+            <Dropdown>
+              <Dropdown.Toggle variant="tertiary" id="language-dropdown">
+                {selectedLanguage}
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                <Dropdown.Item onClick={() => handleLanguageChange('EN')}>EN</Dropdown.Item>
+                <Dropdown.Item onClick={() => handleLanguageChange('AR')}>AR</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
 
             <UserMenu
               username={authenticatedUser?.username}

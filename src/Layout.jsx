@@ -12,8 +12,9 @@ import {
   Home, LibraryAdd, LibraryBooks, Lightbulb, LmsBook,
 } from '@openedx/paragon/icons';
 // import Sidebar from 'library/Sidebar/Sidebar';
-import { Footer, MainHeader, Sidebar } from 'titaned-lib';
+import { Footer, Sidebar } from 'titaned-lib';
 import getUserMenuItems from 'library/utils/getUserMenuItems';
+import MainHeader from 'library/Header/MainHeader';
 // import { FooterProps } './studio-home/interfaces/components';
 
 const Layout = () => {
