@@ -675,12 +675,12 @@ mockBlockTypesMetadata.blockTypesMetadata = [
 /** Apply this mock. Returns a spy object that can tell you if it's been called. */
 mockBlockTypesMetadata.applyMock = () => jest.spyOn(api, 'getBlockTypes').mockImplementation(mockBlockTypesMetadata);
 
-export async function mockGetUnpaginatedEntityLinks(
+export async function mockGetEntityLinks(
   _downstreamContextKey?: string,
   _readyToSync?: boolean,
   upstreamUsageKey?: string,
-): ReturnType<typeof courseLibApi.getUnpaginatedEntityLinks> {
-  const thisMock = mockGetUnpaginatedEntityLinks;
+): ReturnType<typeof courseLibApi.getEntityLinks> {
+  const thisMock = mockGetEntityLinks;
   switch (upstreamUsageKey) {
     case thisMock.upstreamUsageKey: return thisMock.response;
     case mockLibraryBlockMetadata.usageKeyPublishedWithChanges: return thisMock.response;
@@ -688,8 +688,8 @@ export async function mockGetUnpaginatedEntityLinks(
     default: return [];
   }
 }
-mockGetUnpaginatedEntityLinks.upstreamUsageKey = mockLibraryBlockMetadata.usageKeyPublished;
-mockGetUnpaginatedEntityLinks.response = downstreamLinkInfo.results[0].hits.map((obj: { usageKey: any; }) => ({
+mockGetEntityLinks.upstreamUsageKey = mockLibraryBlockMetadata.usageKeyPublished;
+mockGetEntityLinks.response = downstreamLinkInfo.results[0].hits.map((obj: { usageKey: any; }) => ({
   id: 875,
   upstreamContextTitle: 'CS problems 3',
   upstreamVersion: 10,
@@ -703,10 +703,10 @@ mockGetUnpaginatedEntityLinks.response = downstreamLinkInfo.results[0].hits.map(
   created: '2025-02-08T14:07:05.588484Z',
   updated: '2025-02-08T14:07:05.588484Z',
 }));
-mockGetUnpaginatedEntityLinks.emptyUsageKey = 'lb:Axim:TEST1:html:empty';
-mockGetUnpaginatedEntityLinks.emptyComponentUsage = [] as courseLibApi.PublishableEntityLink[];
+mockGetEntityLinks.emptyUsageKey = 'lb:Axim:TEST1:html:empty';
+mockGetEntityLinks.emptyComponentUsage = [] as courseLibApi.PublishableEntityLink[];
 
-mockGetUnpaginatedEntityLinks.applyMock = () => jest.spyOn(
+mockGetEntityLinks.applyMock = () => jest.spyOn(
   courseLibApi,
-  'getUnpaginatedEntityLinks',
-).mockImplementation(mockGetUnpaginatedEntityLinks);
+  'getEntityLinks',
+).mockImplementation(mockGetEntityLinks);

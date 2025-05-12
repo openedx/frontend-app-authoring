@@ -229,12 +229,14 @@ const UnitCard = ({
           </div>
         </div>
       </SortableItem>
-      <PreviewLibraryXBlockChanges
-        blockData={blockSyncData}
-        isModalOpen={isSyncModalOpen}
-        closeModal={closeSyncModal}
-        postChange={handleOnPostChangeSync}
-      />
+      {blockSyncData && (
+        <PreviewLibraryXBlockChanges
+          blockData={blockSyncData}
+          isModalOpen={isSyncModalOpen}
+          closeModal={closeSyncModal}
+          postChange={handleOnPostChangeSync}
+        />
+      )}
     </>
   );
 };
