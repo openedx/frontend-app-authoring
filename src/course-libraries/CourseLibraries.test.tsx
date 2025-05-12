@@ -118,6 +118,46 @@ describe('<CourseLibraries />', () => {
     userEvent.click(reviewActionBtn);
     expect(await screen.findByRole('tab', { name: 'Review Content Updates 5' })).toHaveAttribute('aria-selected', 'true');
   });
+
+  it('show alert if max lastPublishedDate is greated than the local storage value', async () => {
+    const lastPublishedDate = new Date('2025-05-01T22:20:44.989042Z');
+    localStorage.setItem(
+      `outOfSyncCountAlert-${mockGetEntityLinks.courseKey}`,
+      String(lastPublishedDate.getTime() - 1000),
+    );
+
+    await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
+    const allTab = await screen.findByRole('tab', { name: 'Libraries' });
+    const reviewTab = await screen.findByRole('tab', { name: 'Review Content Updates 5' });
+    // review tab should be open by default as outOfSyncCount is greater than 0
+    expect(reviewTab).toHaveAttribute('aria-selected', 'true');
+
+    userEvent.click(allTab);
+    const alert = await screen.findByRole('alert');
+    expect(await within(alert).findByText(
+      '5 library components are out of sync. Review updates to accept or ignore changes',
+    )).toBeInTheDocument();
+  });
+
+  it('doesnt show alert if max lastPublishedDate is less than the local storage value', async () => {
+    const lastPublishedDate = new Date('2025-05-01T22:20:44.989042Z');
+    localStorage.setItem(
+      `outOfSyncCountAlert-${mockGetEntityLinks.courseKey}`,
+      String(lastPublishedDate.getTime() + 1000),
+    );
+
+    await renderCourseLibrariesPage(mockGetEntityLinks.courseKey);
+    const allTab = await screen.findByRole('tab', { name: 'Libraries' });
+    const reviewTab = await screen.findByRole('tab', { name: 'Review Content Updates 5' });
+    // review tab should be open by default as outOfSyncCount is greater than 0
+    expect(reviewTab).toHaveAttribute('aria-selected', 'true');
+    userEvent.click(allTab);
+    expect(allTab).toHaveAttribute('aria-selected', 'true');
+
+    screen.logTestingPlaygroundURL();
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
 });
 
 describe('<CourseLibraries ReviewTab />', () => {
@@ -160,7 +200,7 @@ describe('<CourseLibraries ReviewTab />', () => {
 
   it('update changes works', async () => {
     const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
-    const usageKey = mockGetEntityLinks.response.results[0].downstreamUsageKey;
+    const usageKey = mockGetEntityLinks.response[0].downstreamUsageKey;
     axiosMock.onPost(libraryBlockChangesUrl(usageKey)).reply(200, {});
     await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
     const updateBtns = await screen.findAllByRole('button', { name: 'Update' });
@@ -176,7 +216,7 @@ describe('<CourseLibraries ReviewTab />', () => {
 
   it('update changes works in preview modal', async () => {
     const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
-    const usageKey = mockGetEntityLinks.response.results[0].downstreamUsageKey;
+    const usageKey = mockGetEntityLinks.response[0].downstreamUsageKey;
     axiosMock.onPost(libraryBlockChangesUrl(usageKey)).reply(200, {});
     await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
     const previewBtns = await screen.findAllByRole('button', { name: 'Review Updates' });
@@ -195,7 +235,7 @@ describe('<CourseLibraries ReviewTab />', () => {
 
   it('ignore change works', async () => {
     const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
-    const usageKey = mockGetEntityLinks.response.results[0].downstreamUsageKey;
+    const usageKey = mockGetEntityLinks.response[0].downstreamUsageKey;
     axiosMock.onDelete(libraryBlockChangesUrl(usageKey)).reply(204, {});
     await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
     const ignoreBtns = await screen.findAllByRole('button', { name: 'Ignore' });
@@ -218,7 +258,7 @@ describe('<CourseLibraries ReviewTab />', () => {
 
   it('ignore change works in preview', async () => {
     const mockInvalidateQueries = jest.spyOn(queryClient, 'invalidateQueries');
-    const usageKey = mockGetEntityLinks.response.results[0].downstreamUsageKey;
+    const usageKey = mockGetEntityLinks.response[0].downstreamUsageKey;
     axiosMock.onDelete(libraryBlockChangesUrl(usageKey)).reply(204, {});
     await renderCourseLibrariesReviewPage(mockGetEntityLinksSummaryByDownstreamContext.courseKey);
     const previewBtns = await screen.findAllByRole('button', { name: 'Review Updates' });

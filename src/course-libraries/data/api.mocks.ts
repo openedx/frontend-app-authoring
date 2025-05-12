@@ -28,27 +28,17 @@ export async function mockGetEntityLinks(
     case mockGetEntityLinks.courseKeyLoading:
       return new Promise(() => {});
     case mockGetEntityLinks.courseKeyEmpty:
-      return Promise.resolve({
-        next: null,
-        previous: null,
-        nextPageNum: null,
-        previousPageNum: null,
-        count: 0,
-        numPages: 0,
-        currentPage: 0,
-        results: [],
-      });
+      return Promise.resolve([]);
     default: {
-      const { response } = mockGetEntityLinks;
+      let { response } = mockGetEntityLinks;
       if (readyToSync !== undefined) {
-        response.results = response.results.filter((o) => o.readyToSync === readyToSync);
-        response.count = response.results.length;
+        response = response.filter((o) => o.readyToSync === readyToSync);
       }
       return Promise.resolve(response);
     }
   }
 }
-mockGetEntityLinks.courseKey = mockLinksResult.results[0].downstreamContextKey;
+mockGetEntityLinks.courseKey = mockLinksResult[0].downstreamContextKey;
 mockGetEntityLinks.invalidCourseKey = 'course_key_error';
 mockGetEntityLinks.courseKeyLoading = 'courseKeyLoading';
 mockGetEntityLinks.courseKeyEmpty = 'courseKeyEmpty';
@@ -85,7 +75,7 @@ export async function mockGetEntityLinksSummaryByDownstreamContext(
       return Promise.resolve(mockGetEntityLinksSummaryByDownstreamContext.response);
   }
 }
-mockGetEntityLinksSummaryByDownstreamContext.courseKey = mockLinksResult.results[0].downstreamContextKey;
+mockGetEntityLinksSummaryByDownstreamContext.courseKey = mockLinksResult[0].downstreamContextKey;
 mockGetEntityLinksSummaryByDownstreamContext.invalidCourseKey = 'course_key_error';
 mockGetEntityLinksSummaryByDownstreamContext.courseKeyLoading = 'courseKeySummaryLoading';
 mockGetEntityLinksSummaryByDownstreamContext.courseKeyEmpty = 'courseKeyEmpty';

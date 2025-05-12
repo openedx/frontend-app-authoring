@@ -164,7 +164,7 @@ export const CourseLibraries: React.FC<Props> = ({ courseId }) => {
     if (tabKey !== CourseLibraryTabs.review) {
       return null;
     }
-    if (!outOfSyncCount || outOfSyncCount === 0) {
+    if (!outOfSyncCount) {
       return (
         <Stack direction="horizontal" gap={2}>
           <Icon src={CheckCircle} size="xs" />

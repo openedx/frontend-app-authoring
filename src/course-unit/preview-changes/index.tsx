@@ -1,20 +1,21 @@
-import React, { useCallback, useContext, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import {
   ActionRow, Button, ModalDialog, useToggle,
 } from '@openedx/paragon';
+import { Warning } from '@openedx/paragon/icons';
 import { useIntl, FormattedMessage } from '@edx/frontend-platform/i18n';
 
 import { useEventListener } from '../../generic/hooks';
 import { messageTypes } from '../constants';
 import CompareChangesWidget from '../../library-authoring/component-comparison/CompareChangesWidget';
 import { useAcceptLibraryBlockChanges, useIgnoreLibraryBlockChanges } from '../data/apiHooks';
+import AlertMessage from '../../generic/alert-message';
 import { useIframe } from '../../generic/hooks/context/hooks';
 import DeleteModal from '../../generic/delete-modal/DeleteModal';
 import messages from './messages';
 import { ToastContext } from '../../generic/toast-context';
 import LoadingButton from '../../generic/loading-button';
 import Loading from '../../generic/Loading';
-import { useContainer, useLibraryBlockMetadata } from '../../library-authoring/data/apiHooks';
 
 export interface LibraryChangesMessageData {
   displayName: string,
@@ -25,11 +26,10 @@ export interface LibraryChangesMessageData {
 }
 
 export interface PreviewLibraryXBlockChangesProps {
-  blockData?: LibraryChangesMessageData,
+  blockData: LibraryChangesMessageData,
   isModalOpen: boolean,
   closeModal: () => void,
   postChange: (accept: boolean) => void,
-  alertNode?: React.ReactNode,
 }
 
 /**
@@ -41,7 +41,6 @@ export const PreviewLibraryXBlockChanges = ({
   isModalOpen,
   closeModal,
   postChange,
-  alertNode,
 }: PreviewLibraryXBlockChangesProps) => {
   const { showToast } = useContext(ToastContext);
   const intl = useIntl();
@@ -49,31 +48,8 @@ export const PreviewLibraryXBlockChanges = ({
   // ignore changes confirmation modal toggle.
   const [isConfirmModalOpen, openConfirmModal, closeConfirmModal] = useToggle(false);
 
-  // TODO: Split into two different components to avoid making these two calls in which
-  // one will definitely fail
-  const { data: componentMetadata } = useLibraryBlockMetadata(blockData?.upstreamBlockId);
-  const { data: unitMetadata } = useContainer(blockData?.upstreamBlockId);
-
-  const metadata = blockData?.isVertical ? unitMetadata : componentMetadata;
-
   const acceptChangesMutation = useAcceptLibraryBlockChanges();
   const ignoreChangesMutation = useIgnoreLibraryBlockChanges();
-
-  const getTitle = useCallback(() => {
-    const oldName = blockData?.displayName;
-    const newName = metadata?.displayName;
-
-    if (!oldName) {
-      if (blockData?.isVertical) {
-        return intl.formatMessage(messages.defaultUnitTitle);
-      }
-      return intl.formatMessage(messages.defaultComponentTitle);
-    }
-    if (oldName === newName || !newName) {
-      return intl.formatMessage(messages.title, { blockTitle: oldName });
-    }
-    return intl.formatMessage(messages.diffTitle, { oldName, newName });
-  }, [blockData, metadata]);
 
   const getBody = useCallback(() => {
     if (!blockData) {
@@ -108,12 +84,21 @@ export const PreviewLibraryXBlockChanges = ({
     }
   }, [blockData]);
 
+  const defaultTitle = intl.formatMessage(
+    blockData.isVertical
+      ? messages.defaultUnitTitle
+      : messages.defaultComponentTitle,
+  );
+  const title = blockData.displayName
+    ? intl.formatMessage(messages.title, { blockTitle: blockData?.displayName })
+    : defaultTitle;
+
   return (
     <ModalDialog
       isOpen={isModalOpen}
       onClose={closeModal}
       size="xl"
-      title={getTitle()}
+      title={title}
       className="lib-preview-xblock-changes-modal"
       hasCloseButton
       isFullscreenOnMobile
@@ -121,11 +106,16 @@ export const PreviewLibraryXBlockChanges = ({
     >
       <ModalDialog.Header>
         <ModalDialog.Title>
-          {getTitle()}
+          {title}
         </ModalDialog.Title>
       </ModalDialog.Header>
       <ModalDialog.Body>
-        {alertNode}
+        <AlertMessage
+          show
+          variant="warning"
+          icon={Warning}
+          title={intl.formatMessage(messages.olderVersionPreviewAlert)}
+        />
         {getBody()}
       </ModalDialog.Body>
       <ModalDialog.Footer>
@@ -185,6 +175,10 @@ const IframePreviewLibraryXBlockChanges = () => {
   }, [openModal]);
 
   useEventListener('message', receiveMessage);
+
+  if (!blockData) {
+    return null;
+  }
 
   return (
     <PreviewLibraryXBlockChanges
