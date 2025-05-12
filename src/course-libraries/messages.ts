@@ -116,11 +116,6 @@ const messages = defineMessages({
     defaultMessage: 'Something went wrong! Could not fetch results.',
     description: 'Generic error message displayed when fetching link data fails.',
   },
-  olderVersionPreviewAlert: {
-    id: 'course-authoring.course-libraries.reviw-tab.preview.old-version-alert',
-    defaultMessage: 'The old version preview is the previous library version',
-    description: 'Alert message stating that older version in preview is of library block',
-  },
 });
 
 export default messages;
