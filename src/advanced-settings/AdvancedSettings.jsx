@@ -13,7 +13,7 @@ import { useModel } from '../generic/model-store';
 import InternetConnectionAlert from '../generic/internet-connection-alert';
 import { parseArrayOrObjectValues } from '../utils';
 import { RequestStatus } from '../data/constants';
-import SubHeader from '../generic/sub-header/SubHeader';
+// import SubHeader from '../generic/sub-header/SubHeader';
 import AlertMessage from '../generic/alert-message';
 import { fetchCourseAppSettings, updateCourseAppSetting, fetchProctoringExamErrors } from './data/thunks';
 import {
