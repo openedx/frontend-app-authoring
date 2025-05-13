@@ -132,6 +132,10 @@ jest.mock('@dnd-kit/core', () => ({
   closestCorners: jest.fn(),
 }));
 
+jest.mock('./data/api', () => ({
+  ...jest.requireActual('./data/api'),
+  createDiscussionsTopics: jest.fn().mockResolvedValue(undefined),
+}));
 // eslint-disable-next-line no-promise-executor-return
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
