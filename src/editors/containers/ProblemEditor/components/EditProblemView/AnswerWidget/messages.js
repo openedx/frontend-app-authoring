@@ -29,7 +29,7 @@ const messages = defineMessages({
   feedbackToggleIconAriaLabel: {
     id: 'authoring.answerwidget.feedback.icon.aria-label',
     defaultMessage: 'Toggle feedback',
-    description: 'Aria label feedback toggle icon',
+    description: 'Accessible (screen reader) label for "Toggle Feedback" icon',
   },
   feedbackToggleIconAltText: {
     id: 'authoring.answerwidget.feedback.icon.alt',

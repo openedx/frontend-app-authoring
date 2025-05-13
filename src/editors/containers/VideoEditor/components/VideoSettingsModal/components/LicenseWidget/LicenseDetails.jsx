@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import {
   FormattedMessage,
   injectIntl,
-  intlShape,
 } from '@edx/frontend-platform/i18n';
 import {
   ActionRow,
@@ -30,9 +29,8 @@ const LicenseDetails = ({
   level,
   // redux
   updateField,
-  intl,
 }) => (
-  level !== LicenseLevel.course && details && license !== 'select' ? (
+  level !== LicenseLevel.course && details && license !== 'select' && (
     <div className="x-small border-primary-100 border-bottom m-0 pr-1">
       <Form.Group className="pb-2">
         <div className="mb-3">
@@ -57,7 +55,6 @@ const LicenseDetails = ({
                     <CheckboxControl
                       disabled
                       checked
-                      aria-label={intl.formatMessage(messages.attributionCheckboxAriaLabel)}
                     />
                   </ActionRow>
                 </Form.Group>
@@ -82,7 +79,6 @@ const LicenseDetails = ({
                           noncommercial: e.target.checked,
                         },
                       })}
-                      aria-label={intl.formatMessage(messages.noncommercialCheckboxAriaLabel)}
                     />
                   </ActionRow>
                 </Form.Group>
@@ -108,7 +104,6 @@ const LicenseDetails = ({
                           shareAlike: e.target.checked ? false : details.shareAlike,
                         },
                       })}
-                      aria-label={intl.formatMessage(messages.noDerivativesCheckboxAriaLabel)}
                     />
                   </ActionRow>
                 </Form.Group>
@@ -134,7 +129,6 @@ const LicenseDetails = ({
                           noDerivatives: e.target.checked ? false : details.noDerivatives,
                         },
                       })}
-                      aria-label={intl.formatMessage(messages.shareAlikeCheckboxAriaLabel)}
                     />
                   </ActionRow>
                 </Form.Group>
@@ -146,7 +140,7 @@ const LicenseDetails = ({
           ) : null}
       </Form.Group>
     </div>
-  ) : null
+  )
 );
 
 LicenseDetails.propTypes = {
@@ -160,7 +154,6 @@ LicenseDetails.propTypes = {
   level: PropTypes.string.isRequired,
   // redux
   updateField: PropTypes.func.isRequired,
-  intl: intlShape.isRequired,
 };
 
 export const mapStateToProps = () => ({});

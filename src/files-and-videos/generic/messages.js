@@ -211,8 +211,8 @@ const messages = defineMessages({
   },
   fileInputAriaLabel: {
     id: 'course-authoring.files-and-uploads.fileInput.ariaLabel',
-    defaultMessage: 'file-input',
-    description: 'Aria label for file input',
+    defaultMessage: 'Upload a file',
+    description: 'Accessible (screen reader) label for file input',
   },
 });
 
