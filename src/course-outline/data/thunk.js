@@ -30,7 +30,7 @@ import {
   setVideoSharingOption,
   setCourseItemOrderList,
   pasteBlock,
-  dismissNotification,
+  dismissNotification, createDiscussionsTopics,
 } from './api';
 import {
   addSection,
@@ -91,6 +91,17 @@ export function fetchCourseOutlineIndexQuery(courseId) {
           errors: getErrorDetails(error, false),
         }));
       }
+    }
+  };
+}
+
+export function syncDiscussionsTopics(courseId) {
+  return async () => {
+    try {
+      await createDiscussionsTopics(courseId);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log('There was an issue in discussion topic sync', error);
     }
   };
 }

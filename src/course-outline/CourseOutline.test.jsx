@@ -27,7 +27,7 @@ import { RequestStatus } from '../data/constants';
 import {
   fetchCourseBestPracticesQuery,
   fetchCourseLaunchQuery,
-  fetchCourseOutlineIndexQuery,
+  fetchCourseOutlineIndexQuery, syncDiscussionsTopics,
   updateCourseSectionHighlightsQuery,
 } from './data/thunk';
 import initializeStore from '../store';
@@ -132,6 +132,10 @@ jest.mock('@dnd-kit/core', () => ({
   closestCorners: jest.fn(),
 }));
 
+jest.mock('./data/api', () => ({
+  ...jest.requireActual('./data/api'),
+  createDiscussionsTopics: jest.fn().mockResolvedValue(undefined),
+}));
 // eslint-disable-next-line no-promise-executor-return
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -177,6 +181,7 @@ describe('<CourseOutline />', () => {
       }))
       .reply(200, courseLaunchMock);
     await executeThunk(fetchCourseOutlineIndexQuery(courseId), store.dispatch);
+    await executeThunk(syncDiscussionsTopics(courseId), store.dispatch);
   });
 
   it('render CourseOutline component correctly', async () => {
