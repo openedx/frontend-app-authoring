@@ -30,7 +30,7 @@ import {
   setVideoSharingOption,
   setCourseItemOrderList,
   pasteBlock,
-  dismissNotification,
+  dismissNotification, createDiscussionsTopics,
 } from './api';
 import {
   addSection,
@@ -91,6 +91,13 @@ export function fetchCourseOutlineIndexQuery(courseId) {
           errors: getErrorDetails(error, false),
         }));
       }
+    }
+    // Sync discussions topics and log errors if any because we don't want to interrupt the process.
+    try {
+      await createDiscussionsTopics(courseId);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error);
     }
   };
 }
