@@ -244,7 +244,7 @@ describe('Videos page', () => {
           axiosUnauthenticateMock.onPut('http://testing.org').reply(200);
           axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
 
-          const addFilesButton = screen.getAllByLabelText('file-input')[3];
+          const addFilesButton = screen.getAllByLabelText(messages.fileInputAriaLabel.defaultMessage)[3];
           await act(async () => {
             userEvent.upload(addFilesButton, file);
           });
@@ -263,7 +263,7 @@ describe('Videos page', () => {
           const setFailedSpy = jest.spyOn(api, 'sendVideoUploadStatus').mockImplementation(() => {});
           uploadSpy.mockResolvedValue(new Promise(() => {}));
 
-          const addFilesButton = screen.getAllByLabelText('file-input')[3];
+          const addFilesButton = screen.getAllByLabelText(messages.fileInputAriaLabel.defaultMessage)[3];
           await act(async () => {
             userEvent.upload(addFilesButton, file);
           });
@@ -294,7 +294,7 @@ describe('Videos page', () => {
           const setFailedSpy = jest.spyOn(api, 'sendVideoUploadStatus').mockImplementation(() => {});
           uploadSpy.mockResolvedValue(new Promise(() => {}));
 
-          const addFilesButton = screen.getAllByLabelText('file-input')[3];
+          const addFilesButton = screen.getAllByLabelText(messages.fileInputAriaLabel.defaultMessage)[3];
           await act(async () => {
             userEvent.upload(addFilesButton, file);
           });
@@ -610,7 +610,7 @@ describe('Videos page', () => {
         axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(413, { error: errorMessage });
         axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
 
-        const addFilesButton = screen.getAllByLabelText('file-input')[3];
+        const addFilesButton = screen.getAllByLabelText(messages.fileInputAriaLabel.defaultMessage)[3];
         await act(async () => {
           userEvent.upload(addFilesButton, file);
         });
@@ -627,7 +627,7 @@ describe('Videos page', () => {
         axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(404);
         axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
 
-        const addFilesButton = screen.getAllByLabelText('file-input')[3];
+        const addFilesButton = screen.getAllByLabelText(messages.fileInputAriaLabel.defaultMessage)[3];
         await act(async () => {
           userEvent.upload(addFilesButton, file);
         });
@@ -658,7 +658,7 @@ describe('Videos page', () => {
         axiosMock.onPost(getCourseVideosApiUrl(courseId)).reply(204, generateNewVideoApiResponse());
         axiosUnauthenticateMock.onPut('http://testing.org').reply(404);
         axiosMock.onGet(getCourseVideosApiUrl(courseId)).reply(200, generateAddVideoApiResponse());
-        const addFilesButton = screen.getAllByLabelText('file-input')[3];
+        const addFilesButton = screen.getAllByLabelText(messages.fileInputAriaLabel.defaultMessage)[3];
         await act(async () => {
           userEvent.upload(addFilesButton, file);
         });
