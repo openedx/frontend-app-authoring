@@ -86,6 +86,7 @@ export const filterList = ({
 export const useVideoListProps = ({
   searchSortProps,
   videos,
+  returnFunction,
 }) => {
   const [highlighted, setHighlighted] = React.useState(null);
   const [
@@ -128,7 +129,10 @@ export const useVideoListProps = ({
     },
     selectBtnProps: {
       onClick: () => {
-        if (highlighted) {
+        /* istanbul ignore next */
+        if (returnFunction) {
+          returnFunction()();
+        } else if (highlighted) {
           navigateTo(`/course/${learningContextId}/editor/video/${blockId}?selectedVideoId=${highlighted}`);
         } else {
           setShowSelectVideoError(true);
@@ -138,10 +142,15 @@ export const useVideoListProps = ({
   };
 };
 
-export const useVideoUploadHandler = ({ replace }) => {
+export const useVideoUploadHandler = ({ replace, uploadHandler }) => {
   const learningContextId = useSelector(selectors.app.learningContextId);
   const blockId = useSelector(selectors.app.blockId);
   const path = `/course/${learningContextId}/editor/video_upload/${blockId}`;
+  if (uploadHandler) {
+    return () => {
+      uploadHandler();
+    };
+  }
   if (replace) {
     return () => window.location.replace(path);
   }
@@ -191,11 +200,12 @@ export const getstatusBadgeVariant = ({ status }) => {
 
 export const getStatusMessage = ({ status }) => Object.values(filterMessages).find((m) => m.defaultMessage === status);
 
-export const useVideoProps = ({ videos }) => {
+export const useVideoProps = ({ videos, uploadHandler, returnFunction }) => {
   const searchSortProps = useSearchAndSortProps();
   const videoList = useVideoListProps({
     searchSortProps,
     videos,
+    returnFunction,
   });
   const {
     galleryError,
@@ -203,7 +213,7 @@ export const useVideoProps = ({ videos }) => {
     inputError,
     selectBtnProps,
   } = videoList;
-  const fileInput = { click: useVideoUploadHandler({ replace: false }) };
+  const fileInput = { click: useVideoUploadHandler({ replace: false, uploadHandler }) };
 
   return {
     galleryError,
