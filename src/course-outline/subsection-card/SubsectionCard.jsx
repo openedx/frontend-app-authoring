@@ -57,6 +57,11 @@ const SubsectionCard = ({
   const [isFormOpen, openForm, closeForm] = useToggle(false);
   const namePrefix = 'subsection';
   const { sharedClipboardData, showPasteUnit } = useClipboard();
+  // WARNING: Do not use "useStudioHome" to get "librariesV2Enabled" flag below,
+  // as it has a useEffect that fetches course waffle flags whenever
+  // location.search is updated. Course search updates location.search when
+  // user types, which will then trigger the useEffect and reload the page.
+  // See https://github.com/openedx/frontend-app-authoring/pull/1938.
   const { librariesV2Enabled } = useSelector(getStudioHomeData);
   const [
     isAddLibraryUnitModalOpen,
