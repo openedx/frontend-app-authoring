@@ -28,15 +28,30 @@ const messages = defineMessages({
     defaultMessage: 'None',
     description: 'Label for order transcript None option',
   },
+  noneAriaLabel: {
+    id: 'course-authoring.video-uploads.transcriptSettings.orderTranscripts.none.aria-label',
+    defaultMessage: 'none radio',
+    description: 'Accessible (screen reader) label for order transcript None option',
+  },
   cieloLabel: {
     id: 'course-authoring.video-uploads.transcriptSettings.orderTranscripts.cielo24.label',
     defaultMessage: 'Cielo24',
     description: 'Label for order transcript Cieol24 option',
   },
+  cieloAriaLabel: {
+    id: 'course-authoring.video-uploads.transcriptSettings.orderTranscripts.cielo24.aria-label',
+    defaultMessage: 'Cielo24 radio',
+    description: 'Accessible (screen reader) label for order transcript Cieol24 option',
+  },
   threePlayMediaLabel: {
     id: 'course-authoring.video-uploads.transcriptSettings.orderTranscripts.3PlayMedia.label',
     defaultMessage: '3Play Media',
     description: 'Label for order transcript 3Play Media option',
+  },
+  threePlayMediaAriaLabel: {
+    id: 'course-authoring.video-uploads.transcriptSettings.orderTranscripts.3PlayMedia.aria-label',
+    defaultMessage: '3PlayMedia radio',
+    description: 'Accessible (screen reader) label for order transcript 3Play Media option',
   },
   updateSettingsLabel: {
     id: 'course-authoring.video-uploads.transcriptSettings.orderTranscripts.updateSettings.label',
