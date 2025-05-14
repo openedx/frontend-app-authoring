@@ -32,7 +32,6 @@ import {
   ClearFiltersButton,
   FilterByBlockType,
   FilterByTags,
-  FilterByPublished,
   SearchContextProvider,
   SearchKeywordsField,
   SearchSortWidget,
@@ -46,6 +45,7 @@ import { SidebarBodyComponentId, useSidebarContext } from './common/context/Side
 import { allLibraryPageTabs, ContentType, useLibraryRoutes } from './routes';
 
 import messages from './messages';
+import LibraryFilterByPublished from './generic/filter-by-published';
 
 const HeaderActions = () => {
   const intl = useIntl();
@@ -299,7 +299,7 @@ const LibraryAuthoringPage = ({
               <SearchKeywordsField className="mr-3" />
               <FilterByTags />
               {!(insideCollections || insideUnits) && <FilterByBlockType />}
-              <FilterByPublished />
+              <LibraryFilterByPublished />
               <ClearFiltersButton />
               <ActionRow.Spacer />
               <SearchSortWidget />
