@@ -20,6 +20,7 @@ jest.mock('react-redux', () => {
 });
 
 const deleteFallbackVideoMock = jest.fn();
+const updateVideoURLMock = jest.fn();
 
 jest.mock('../hooks', () => ({
   selectorKeys: ['soMEkEy'],
@@ -40,18 +41,18 @@ jest.mock('../hooks', () => ({
 jest.mock('./hooks', () => ({
   videoIdChangeAlert: jest.fn().mockReturnValue({
     videoIdChangeAlert: {
-      set: (args) => ({ set: args }),
+      set: jest.fn(),
       show: false,
-      dismiss: (args) => ({ dismiss: args }),
+      dismiss: jest.fn(),
     },
   }),
   sourceHooks: jest.fn().mockReturnValue({
-    updateVideoId: (args) => ({ updateVideoId: args }),
-    updateVideoURL: jest.fn().mockName('updateVideoURL'),
+    updateVideoId: jest.fn(),
+    updateVideoURL: updateVideoURLMock,
   }),
   fallbackHooks: jest.fn().mockReturnValue({
-    addFallbackVideo: jest.fn().mockName('addFallbackVideo'),
-    deleteFallbackVideo: jest.fn().mockName('deleteFallbackVideo'),
+    addFallbackVideo: jest.fn(),
+    deleteFallbackVideo: deleteFallbackVideoMock,
   }),
 }));
 
