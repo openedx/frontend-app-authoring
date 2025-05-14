@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getConfig } from '@edx/frontend-platform';
 
 import { RequestStatus } from '../data/constants';
 import { COURSE_CREATOR_STATES } from '../constants';
@@ -19,7 +18,6 @@ import { updateSavingStatuses } from './data/slice';
 const useStudioHome = () => {
   const location = useLocation();
   const dispatch = useDispatch();
-  const isPaginated = getConfig().ENABLE_HOME_PAGE_COURSE_API_V2;
   const studioHomeData = useSelector(getStudioHomeData);
   const studioHomeCoursesParams = useSelector(getStudioHomeCoursesParams);
   const { isFiltered } = studioHomeCoursesParams;
@@ -35,18 +33,14 @@ const useStudioHome = () => {
   const isFailedLoadingPage = studioHomeLoadingStatus === RequestStatus.FAILED;
 
   useEffect(() => {
-    if (!isPaginated) {
-      dispatch(fetchStudioHomeData(location.search ?? ''));
-      setShowNewCourseContainer(false);
-    }
+    dispatch(fetchStudioHomeData(location.search ?? ''));
+    setShowNewCourseContainer(false);
     dispatch(fetchWaffleFlags());
   }, [location.search]);
 
   useEffect(() => {
-    if (isPaginated) {
-      const firstPage = 1;
-      dispatch(fetchStudioHomeData(location.search ?? '', false, { page: firstPage, order: 'display_name' }, true));
-    }
+    const firstPage = 1;
+    dispatch(fetchStudioHomeData(location.search ?? '', false, { page: firstPage, order: 'display_name' }));
   }, []);
 
   useEffect(() => {
