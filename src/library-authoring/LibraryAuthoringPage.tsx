@@ -37,6 +37,7 @@ import {
   SearchKeywordsField,
   SearchSortWidget,
   TypesFilterData,
+  PublishStatus,
 } from '../search-manager';
 import LibraryContent from './LibraryContent';
 import { LibrarySidebar } from './library-sidebar';
@@ -259,6 +260,11 @@ const LibraryAuthoringPage = ({
     <Tab key={contentType} eventKey={contentType} title={tabTitles[contentType]} />
   ));
 
+  const publishedFilters = [PublishStatus.Published, PublishStatus.Modified];
+  if (!showOnlyPublished) {
+    publishedFilters.push(PublishStatus.NeverPublished);
+  }
+
   return (
     <div className="d-flex">
       <div className="flex-grow-1">
@@ -299,7 +305,7 @@ const LibraryAuthoringPage = ({
               <SearchKeywordsField className="mr-3" />
               <FilterByTags />
               {!(insideCollections || insideUnits) && <FilterByBlockType />}
-              <FilterByPublished />
+              <FilterByPublished visibleFilters={publishedFilters} />
               <ClearFiltersButton />
               <ActionRow.Spacer />
               <SearchSortWidget />

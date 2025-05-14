@@ -302,4 +302,20 @@ describe('<ComponentPicker />', () => {
     expect(screen.queryByRole('tab', { name: /collections/i })).not.toBeInTheDocument();
     expect(screen.queryByRole('tab', { name: /components/i })).not.toBeInTheDocument();
   });
+
+  it('should not display never published filter', async () => {
+    render(<ComponentPicker />);
+
+    expect(await screen.findByText('Test Library 1')).toBeInTheDocument();
+    fireEvent.click(screen.getByDisplayValue(/lib:sampletaxonomyorg1:tl1/i));
+
+    // Wait for the content library to load
+    const filterButton = await screen.findByRole('button', { name: /publish status/i });
+    fireEvent.click(filterButton);
+
+    // Verify the filters. Note: It's hard to verify the `published` filter,
+    // because there are many components with that text on the screen, but that's not the important thing.
+    expect(screen.getByText(/modified since publish/i)).toBeInTheDocument();
+    expect(screen.queryByText(/never published/i)).not.toBeInTheDocument();
+  });
 });
