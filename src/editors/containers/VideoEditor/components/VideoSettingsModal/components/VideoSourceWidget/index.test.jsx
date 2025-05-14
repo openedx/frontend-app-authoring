@@ -126,7 +126,7 @@ describe('VideoSourceWidget', () => {
 
       await waitFor(() => {
         expect(deleteFallbackVideoMock).toHaveBeenCalledWith(0);
-      })
+      });
     });
   });
 });
