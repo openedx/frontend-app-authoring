@@ -32,12 +32,10 @@ import {
   ClearFiltersButton,
   FilterByBlockType,
   FilterByTags,
-  FilterByPublished,
   SearchContextProvider,
   SearchKeywordsField,
   SearchSortWidget,
   TypesFilterData,
-  PublishStatus,
 } from '../search-manager';
 import LibraryContent from './LibraryContent';
 import { LibrarySidebar } from './library-sidebar';
@@ -47,6 +45,7 @@ import { SidebarBodyComponentId, useSidebarContext } from './common/context/Side
 import { allLibraryPageTabs, ContentType, useLibraryRoutes } from './routes';
 
 import messages from './messages';
+import LibraryFilterByPublished from './generic/filter-by-published';
 
 const HeaderActions = () => {
   const intl = useIntl();
@@ -260,11 +259,6 @@ const LibraryAuthoringPage = ({
     <Tab key={contentType} eventKey={contentType} title={tabTitles[contentType]} />
   ));
 
-  const publishedFilters = [PublishStatus.Published, PublishStatus.Modified];
-  if (!showOnlyPublished) {
-    publishedFilters.push(PublishStatus.NeverPublished);
-  }
-
   return (
     <div className="d-flex">
       <div className="flex-grow-1">
@@ -305,7 +299,7 @@ const LibraryAuthoringPage = ({
               <SearchKeywordsField className="mr-3" />
               <FilterByTags />
               {!(insideCollections || insideUnits) && <FilterByBlockType />}
-              <FilterByPublished visibleFilters={publishedFilters} />
+              <LibraryFilterByPublished />
               <ClearFiltersButton />
               <ActionRow.Spacer />
               <SearchSortWidget />
