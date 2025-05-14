@@ -4,14 +4,17 @@ import { FilterByPublished, PublishStatus } from '../../../search-manager';
 
 const LibraryFilterByPublished : React.FC<Record<never, never>> = () => {
   const { showOnlyPublished } = useLibraryContext();
-  const publishedFilters = [PublishStatus.Published, PublishStatus.Modified];
-  if (!showOnlyPublished) {
-    publishedFilters.push(PublishStatus.NeverPublished);
+
+  if (showOnlyPublished) {
+    return (
+      <FilterByPublished visibleFilters={
+        [PublishStatus.Published, PublishStatus.Modified]
+      }
+      />
+    );
   }
 
-  return (
-    <FilterByPublished visibleFilters={publishedFilters} />
-  );
+  return <FilterByPublished />;
 };
 
 export default LibraryFilterByPublished;
