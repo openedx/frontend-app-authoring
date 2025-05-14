@@ -1,11 +1,12 @@
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
+import {
+  getConfig, camelCaseObject, modifyObjectKeys, snakeCaseObject,
+} from '@edx/frontend-platform';
 import {
   getCourseAdvancedSettings,
   updateCourseAdvancedSettings,
   getProctoringExamErrors,
 } from './api';
-
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
-import { getConfig, camelCaseObject, modifyObjectKeys, snakeCaseObject } from '@edx/frontend-platform';
 import { convertObjectToSnakeCase } from '../../utils';
 
 jest.mock('@edx/frontend-platform', () => ({
@@ -51,7 +52,7 @@ describe('courseSettings API', () => {
 
       const result = await getCourseAdvancedSettings('course-v1:Test+T101+2024');
       expect(mockHttpClient.get).toHaveBeenCalledWith(
-        'http://studio.test/api/contentstore/v0/advanced_settings/course-v1:Test+T101+2024?fetch_all=0'
+        'http://studio.test/api/contentstore/v0/advanced_settings/course-v1:Test+T101+2024?fetch_all=0',
       );
       expect(result).toEqual(modified);
     });
@@ -77,7 +78,7 @@ describe('courseSettings API', () => {
       const result = await updateCourseAdvancedSettings('course-v1:Test+T101+2024', input);
       expect(mockHttpClient.patch).toHaveBeenCalledWith(
         'http://studio.test/api/contentstore/v0/advanced_settings/course-v1:Test+T101+2024',
-        snakeInput
+        snakeInput,
       );
       expect(result).toEqual(modified);
     });
@@ -93,10 +94,9 @@ describe('courseSettings API', () => {
 
       const result = await getProctoringExamErrors('course-v1:Test+T101+2024');
       expect(mockHttpClient.get).toHaveBeenCalledWith(
-        'http://studio.test/api/contentstore/v1/proctoring_errors/course-v1:Test+T101+2024'
+        'http://studio.test/api/contentstore/v1/proctoring_errors/course-v1:Test+T101+2024',
       );
       expect(result).toEqual(camelCased);
     });
   });
 });
-  
