@@ -117,8 +117,10 @@ describe('header utils', () => {
 
     it('when course optimizer enabled should include optimizer option', () => {
       useSelector.mockReturnValue({ enableCourseOptimizer: true });
-      const actualItemsTitle = renderHook(() => useToolsMenuItems('course-123')).result.current.map((item) => item.title);
-      expect(actualItemsTitle).toContain(messages['header.links.optimizer'].defaultMessage);
+      const optimizerItem = renderHook(() => useToolsMenuItems('course-123')).result.current.find(
+        item => item.href === '/course/course-123/optimizer',
+      );
+      expect(optimizerItem).toBeDefined();
     });
 
     it('when course optimizer disabled should not include optimizer option', () => {
