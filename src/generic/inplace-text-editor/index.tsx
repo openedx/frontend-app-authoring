@@ -1,14 +1,11 @@
 import React, {
   useCallback,
-  useEffect,
   useState,
-  forwardRef,
 } from 'react';
 import {
   Form,
   Icon,
   IconButton,
-  OverlayTrigger,
   Stack,
 } from '@openedx/paragon';
 import { Edit } from '@openedx/paragon/icons';
@@ -16,33 +13,11 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 
 import messages from './messages';
 
-interface IconWrapperProps {
-  popper: any;
-  children: React.ReactNode;
-  [key: string]: any;
-}
-
-const IconWrapper = forwardRef<HTMLDivElement, IconWrapperProps>(({ popper, children, ...props }, ref) => {
-  useEffect(() => {
-    // This is a workaround to force the popper to update its position when
-    // the editor is opened.
-    // Ref: https://react-bootstrap.netlify.app/docs/components/overlays/#updating-position-dynamically
-    popper.scheduleUpdate();
-  }, [popper, children]);
-
-  return (
-    <div ref={ref} {...props}>
-      {children}
-    </div>
-  );
-});
-
 interface InplaceTextEditorProps {
   text: string;
-  onSave: (newText: string) => void;
+  onSave: (newText: string) => Promise<void>;
   readOnly?: boolean;
   textClassName?: string;
-  alwaysShowEditButton?: boolean;
 }
 
 export const InplaceTextEditor: React.FC<InplaceTextEditorProps> = ({
@@ -50,18 +25,29 @@ export const InplaceTextEditor: React.FC<InplaceTextEditorProps> = ({
   onSave,
   readOnly = false,
   textClassName,
-  alwaysShowEditButton = false,
 }) => {
   const intl = useIntl();
   const [inputIsActive, setIsActive] = useState(false);
+  const [pendingSaveText, setPendingSaveText] = useState<string>(); // state with the new text while updating
 
   const handleOnChangeText = useCallback(
-    (event) => {
-      const newText = event.target.value;
-      if (newText && newText !== text) {
-        onSave(newText);
-      }
+    async (event: React.ChangeEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
+      const inputText = event.currentTarget.value;
       setIsActive(false);
+      if (inputText && inputText !== text) {
+        // NOTE: While using react query for optimistic updates would be the best approach,
+        // it could not be possible in some cases. For that reason, we use the `pendingSaveText` state
+        // to show the new text while saving.
+        setPendingSaveText(inputText);
+        try {
+          await onSave(inputText);
+        } catch {
+          // don't propagate the exception
+        } finally {
+          // reset the pending save text
+          setPendingSaveText(undefined);
+        }
+      }
     },
     [text],
   );
@@ -78,86 +64,44 @@ export const InplaceTextEditor: React.FC<InplaceTextEditorProps> = ({
     }
   };
 
-  if (readOnly) {
+  // If we have the `pendingSaveText` state it means that we are in the process of saving the new text.
+  // In that case, we show the new text instead of the original in read-only mode as an optimistic update.
+  if (readOnly || pendingSaveText) {
     return (
       <span className={textClassName}>
-        {text}
+        {pendingSaveText || text}
       </span>
     );
   }
 
-  if (alwaysShowEditButton) {
-    return (
-      <Stack
-        direction="horizontal"
-        gap={1}
-      >
-        {inputIsActive
-          ? (
-            <Form.Control
-              autoFocus
-              type="text"
-              aria-label="Text input"
-              defaultValue={text}
-              onBlur={handleOnChangeText}
-              onKeyDown={handleOnKeyDown}
-            />
-          )
-          : (
-            <span className={textClassName}>
-              {text}
-            </span>
-          )}
-        <IconButton
-          src={Edit}
-          iconAs={Icon}
-          alt={intl.formatMessage(messages.editTextButtonAlt)}
-          onClick={handleEdit}
-          size="inline"
-        />
-      </Stack>
-    );
-  }
-
   return (
-    <OverlayTrigger
-      trigger={['hover', 'focus']}
-      placement="right"
-      overlay={(
-        <IconWrapper>
-          <Icon
-            id="edit-text-icon"
-            src={Edit}
-            className="ml-1.5"
-            onClick={handleEdit}
-          />
-        </IconWrapper>
-      )}
+    <Stack
+      direction="horizontal"
+      gap={1}
     >
-      <div>
-        {inputIsActive
-          ? (
-            <Form.Control
-              autoFocus
-              type="text"
-              aria-label="Text input"
-              defaultValue={text}
-              onBlur={handleOnChangeText}
-              onKeyDown={handleOnKeyDown}
-            />
-          )
-          : (
-            <span
-              onClick={handleEdit}
-              onKeyDown={handleEdit}
-              className={textClassName}
-              role="button"
-              tabIndex={0}
-            >
-              {text}
-            </span>
-          )}
-      </div>
-    </OverlayTrigger>
+      {inputIsActive
+        ? (
+          <Form.Control
+            autoFocus
+            type="text"
+            aria-label="Text input"
+            defaultValue={text}
+            onBlur={handleOnChangeText}
+            onKeyDown={handleOnKeyDown}
+          />
+        )
+        : (
+          <span className={textClassName}>
+            {text}
+          </span>
+        )}
+      <IconButton
+        src={Edit}
+        iconAs={Icon}
+        alt={intl.formatMessage(messages.editTextButtonAlt)}
+        onClick={handleEdit}
+        size="inline"
+      />
+    </Stack>
   );
 };
