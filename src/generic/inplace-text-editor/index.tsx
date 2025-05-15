@@ -28,20 +28,24 @@ export const InplaceTextEditor: React.FC<InplaceTextEditorProps> = ({
 }) => {
   const intl = useIntl();
   const [inputIsActive, setIsActive] = useState(false);
-  const [newText, setNewText] = useState<string>(); // state with the new text while updating
+  const [pendingSaveText, setPendingSaveText] = useState<string>(); // state with the new text while updating
 
   const handleOnChangeText = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) => {
       const inputText = event.currentTarget.value;
       setIsActive(false);
       if (inputText && inputText !== text) {
-        setNewText(inputText);
+        // NOTE: While using react query for optimistic updates would be the best approach,
+        // it could not be possible in some cases. For that reason, we use the `pendingSaveText` state
+        // to show the new text while saving.
+        setPendingSaveText(inputText);
         try {
           await onSave(inputText);
         } catch {
           // don't propagate the exception
         } finally {
-          setNewText(undefined);
+          // reset the pending save text
+          setPendingSaveText(undefined);
         }
       }
     },
@@ -60,10 +64,12 @@ export const InplaceTextEditor: React.FC<InplaceTextEditorProps> = ({
     }
   };
 
-  if (readOnly || newText) {
+  // If we have the `pendingSaveText` state it means that we are in the process of saving the new text.
+  // In that case, we show the new text instead of the original in read-only mode as an optimistic update.
+  if (readOnly || pendingSaveText) {
     return (
       <span className={textClassName}>
-        {newText || text}
+        {pendingSaveText || text}
       </span>
     );
   }
