@@ -26,7 +26,7 @@ const SectionCollapsible: FC<Props> = ({
   title, children, brokenNumber = 0, manualNumber = 0, lockedNumber = 0, className = '',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const styling = 'card-lg rounded-sm shadow-outline';
+  const styling = 'card-lg rounded-sm';
   const collapsibleTitle = (
     <div className={className}>
       <div className="section-collapsible-header-item">
@@ -65,7 +65,7 @@ const SectionCollapsible: FC<Props> = ({
         open={isOpen}
         onToggle={() => setIsOpen(!isOpen)}
       >
-        <Collapsible.Body>{children}</Collapsible.Body>
+        <Collapsible.Body className="section-collapsible-item-body">{children}</Collapsible.Body>
       </Collapsible>
     </div>
   );

@@ -34,6 +34,7 @@ interface Props {
 }
 
 const ScanResults: FC<Props> = ({ data }) => {
+  let hasSectionsRendered = false;
   const intl = useIntl();
   const [isOpen, open, close] = useToggle(false);
   const initialFilters = {
@@ -60,6 +61,7 @@ const ScanResults: FC<Props> = ({ data }) => {
   }
 
   const { sections } = data;
+
   const filterOptions = [
     { name: intl.formatMessage(messages.brokenLabel), value: 'brokenLinks' },
     { name: intl.formatMessage(messages.manualLabel), value: 'externalForbiddenLinks' },
@@ -135,37 +137,54 @@ const ScanResults: FC<Props> = ({ data }) => {
         </div>
       )}
 
-      {sections?.map((section, index) => (
-        <SectionCollapsible
-          key={section.id}
-          title={section.displayName}
-          brokenNumber={brokenLinksCounts[index]}
-          manualNumber={externalForbiddenLinksCounts[index]}
-          lockedNumber={lockedLinksCounts[index]}
-          className="section-collapsible-header"
-        >
-          {section.subsections.map((subsection) => (
-            <>
-              {subsection.units.map((unit) => {
-                if (
-                  (!filters.brokenLinks && !filters.externalForbiddenLinks && !filters.lockedLinks)
-                  || (filters.brokenLinks && unit.blocks.some(block => block.brokenLinks.length > 0))
-                  || (filters.externalForbiddenLinks
-                      && unit.blocks.some(block => block.externalForbiddenLinks.length > 0))
-                  || (filters.lockedLinks && unit.blocks.some(block => block.lockedLinks.length > 0))
-                ) {
-                  return (
-                    <div className="unit">
-                      <BrokenLinkTable unit={unit} filters={filters} />
-                    </div>
-                  );
-                }
-                return null;
-              })}
-            </>
-          ))}
-        </SectionCollapsible>
-      ))}
+      {sections?.map((section, index) => {
+        const shouldRenderSection = (
+          (!filters.brokenLinks && !filters.externalForbiddenLinks && !filters.lockedLinks)
+          || (filters.brokenLinks && brokenLinksCounts[index] > 0)
+          || (filters.externalForbiddenLinks && externalForbiddenLinksCounts[index] > 0)
+          || (filters.lockedLinks && lockedLinksCounts[index] > 0)
+        );
+
+        if (shouldRenderSection) {
+          hasSectionsRendered = true;
+          return (
+            <SectionCollapsible
+              key={section.id}
+              title={section.displayName}
+              brokenNumber={brokenLinksCounts[index]}
+              manualNumber={externalForbiddenLinksCounts[index]}
+              lockedNumber={lockedLinksCounts[index]}
+              className="section-collapsible-header"
+            >
+              {section.subsections.map((subsection) => (
+                <>
+                  {subsection.units.map((unit) => {
+                    if (
+                      (!filters.brokenLinks && !filters.externalForbiddenLinks && !filters.lockedLinks)
+                      || (filters.brokenLinks && unit.blocks.some(block => block.brokenLinks.length > 0))
+                      || (filters.externalForbiddenLinks
+                          && unit.blocks.some(block => block.externalForbiddenLinks.length > 0))
+                      || (filters.lockedLinks && unit.blocks.some(block => block.lockedLinks.length > 0))
+                    ) {
+                      return (
+                        <div className="unit">
+                          <BrokenLinkTable unit={unit} filters={filters} />
+                        </div>
+                      );
+                    }
+                    return null;
+                  })}
+                </>
+              ))}
+            </SectionCollapsible>
+          );
+        }
+        return hasSectionsRendered === false ? (
+          <div className="no-results-found-container">
+            <h3 className="no-results-found">{intl.formatMessage(messages.noResultsFound)}</h3>
+          </div>
+        ) : null;
+      })}
     </div>
   );
 };

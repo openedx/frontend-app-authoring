@@ -2,7 +2,7 @@ import { startLinkCheck, fetchLinkCheckStatus } from './thunks';
 import * as api from './api';
 import { LINK_CHECK_STATUSES } from './constants';
 import { RequestStatus } from '../../data/constants';
-import mockApiResponse from '../mocks/mockApiResponse';
+import { mockApiResponse } from '../mocks/mockApiResponse';
 
 describe('startLinkCheck thunk', () => {
   const dispatch = jest.fn();
