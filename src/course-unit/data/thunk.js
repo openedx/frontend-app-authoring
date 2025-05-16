@@ -35,7 +35,7 @@ import {
   updateCourseOutlineInfoLoadingStatus,
   updateMovedXBlockParams,
 } from './slice';
-import { getNotificationMessage } from './utils';
+import { getNotificationMessage, isUnitReadOnly } from './utils';
 
 export function fetchCourseSectionVerticalData(courseId, sequenceId) {
   return async (dispatch) => {
