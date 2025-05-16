@@ -238,9 +238,7 @@ export const LibraryUnitBlocks = ({ preview }: LibraryUnitBlocksProps) => {
   const [hidePreviewFor, setHidePreviewFor] = useState<string | null>(null);
   const { showToast } = useContext(ToastContext);
 
-  const { readOnly, showOnlyPublished } = useLibraryContext();
-  const { sidebarComponentInfo } = useSidebarContext();
-  const unitId = sidebarComponentInfo?.id;
+  const { unitId, readOnly, showOnlyPublished } = useLibraryContext();
 
   const { openAddContentSidebar } = useSidebarContext();
 

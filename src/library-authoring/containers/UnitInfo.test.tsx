@@ -19,23 +19,28 @@ mockGetContainerChildren.applyMock();
 const { libraryId } = mockContentLibrary;
 const { containerId } = mockGetContainerMetadata;
 
-const render = (showOnlyPublished: boolean = false) => baseRender(<UnitInfo />, {
-  extraWrapper: ({ children }) => (
-    <LibraryProvider
-      libraryId={libraryId}
-      showOnlyPublished={showOnlyPublished}
-    >
-      <SidebarProvider
-        initialSidebarComponentInfo={{
-          id: containerId,
-          type: SidebarBodyComponentId.UnitInfo,
-        }}
+const render = (showOnlyPublished: boolean = false) => {
+  const params: { libraryId: string, unitId?: string } = { libraryId, unitId: containerId };
+  return baseRender(<UnitInfo />, {
+    path: '/library/:libraryId/:unitId?',
+    params,
+    extraWrapper: ({ children }) => (
+      <LibraryProvider
+        libraryId={libraryId}
+        showOnlyPublished={showOnlyPublished}
       >
-        {children}
-      </SidebarProvider>
-    </LibraryProvider>
-  ),
-});
+        <SidebarProvider
+          initialSidebarComponentInfo={{
+            id: containerId,
+            type: SidebarBodyComponentId.UnitInfo,
+          }}
+        >
+          {children}
+        </SidebarProvider>
+      </LibraryProvider>
+    ),
+  });
+};
 let axiosMock: MockAdapter;
 let mockShowToast;
 
@@ -101,6 +106,6 @@ describe('<UnitInfo />', () => {
   it('show only published content', async () => {
     render(true);
     expect(await screen.findByTestId('unit-info-menu-toggle')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /text block published 1/i })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /text block published 1/i })).toBeInTheDocument();
   });
 });
