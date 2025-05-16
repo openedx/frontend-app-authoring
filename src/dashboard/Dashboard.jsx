@@ -30,16 +30,14 @@ import { CSS } from '@dnd-kit/utilities';
 import WidgetCard from './components/WidgetCard';
 
 const MetricCard = ({ icon, value, label }) => (
-  <Card className="metric-card">
-    <div className="metric-card-content">
-      <Icon
-        src={icon}
-        className="text-primary"
-        style={{ height: '50px', width: '50px' }}
-      />
-      <div className="metric-text">
-        <div className="metric-value">{value}</div>
-        <div className="metric-label">{label}</div>
+  <Card className="metric-card metric-card-modern">
+    <div className="metric-card-content-modern">
+      <div className="metric-text-modern">
+        <div className="metric-value-modern">{value}</div>
+        <div className="metric-label-modern">{label}</div>
+      </div>
+      <div className="metric-icon-modern">
+        <Icon src={icon} />
       </div>
     </div>
   </Card>
@@ -261,13 +259,13 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-wrapper">
-      <div className="main-content">
+      <div className="dashboard-main-content">
         {/* Top Metric Cards */}
         <div className="metrics-container">
           <MetricCard icon={MenuBook} value={dashboardData.metrics.courses} label="Courses" />
           <MetricCard icon={Groups} value={dashboardData.metrics.students} label="Students" />
-          <MetricCard icon={LibraryBooks} value={dashboardData.metrics.enrollments} label="Enrollments" />
-          <MetricCard icon={Assessment} value={dashboardData.metrics.submissions} label="Submissions" />
+          <MetricCard icon={Assessment} value={dashboardData.metrics.enrollments} label="Enrollments" />
+          <MetricCard icon={LibraryBooks} value={dashboardData.metrics.submissions} label="Submissions" />
         </div>
 
         {/* Overview Cards */}
@@ -425,7 +423,7 @@ const Dashboard = () => {
       </ModalDialog>
 
       {/* Sidebar */}
-      <div className="sidebar">
+      <div className="dashboard-sidebar">
         <Card className="sidebar-card">
           <h4 className="card-header">Titan AI suggestion</h4>
           <Card.Section className="card-section">

@@ -85,50 +85,26 @@
         "styles": ".widget-metrics-list { display: flex; flex-direction: column; gap: 1rem; } .widget-metric-item { display: flex; align-items: center; gap: 1rem; padding: 0.5rem 0; border-bottom: 1px solid #f5f5f5; } .widget-metric-item:last-child { border-bottom: none; } .widget-metric-icon { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; } .widget-metric-label { flex: 1; color: #454545; } .widget-metric-value { font-weight: 600; color: #000; }"
       },
       {
-        "id": "overview-widget-2",
-        "type": "chart",
-        "order": 2,
-        "enabled": true,
-        "title": "Overview 2",
-        "content": {
-          "chartType": "pie",
-          "data": [
-            {
-              "label": "Course 1",
-              "value": 1
-            },
-            {
-              "label": "Course 2",
-              "value": 2
-            },
-            {
-              "label": "Course 3",
-              "value": 3
-            }
-          ]
-        }
-      },
-      {
         "id": "overview-widget-3",
         "type": "chart",
-        "order": 3,
+        "order": 2,
         "enabled": true,
         "title": "Overview 3",
         "content": {
           "chartType": "bar",
           "referenceLabels": [
-            "January",
-            "February",
-            "March",
-            "April",
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
             "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December"
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec"
           ],
           "data": [
             {
@@ -182,43 +158,48 @@
                 36
               ]
             }
+          ],
+          "colors": [
+            "#A5D8FF",
+            "#2196f3",
+            "#673ab7"
           ]
         }
       },
       {
         "id": "overview-widget-4",
         "type": "chart",
-        "order": 4,
+        "order": 3,
         "enabled": true,
         "title": "Overview 4",
         "content": {
           "chartType": "area",
           "referenceLabels": [
-            "January",
-            "February",
-            "March",
-            "April",
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
             "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December"
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec"
           ],
           "data": [
             {
               "label": "Course 1",
               "value": [
-                1,
-                2,
-                3,
-                4,
+                20,
+                12,
+                31,
+                8,
                 5,
                 6,
                 7,
-                8,
+                2,
                 9,
                 10,
                 11,
@@ -276,13 +257,18 @@
                 31
               ]
             }
+          ],
+          "colors": [
+            "#A5D8FF",
+            "#74C0FC",
+            "#B197FC"
           ]
         }
       },
       {
         "id": "calendar-widget",
         "type": "calendar",
-        "order": 5,
+        "order": 4,
         "enabled": true,
         "title": "Calendar 5",
         "content": {
@@ -296,6 +282,64 @@
               "title": "TitanEd - Upcoming Event 2",
               "time": "10:30 – 11:30pm"
             }
+          ]
+        }
+      },
+      {
+        "id": "overview-widget-2",
+        "type": "chart",
+        "order": 5,
+        "enabled": true,
+        "title": "Users",
+        "content": {
+          "chartType": "pie",
+          "data": [
+            {
+              "label": "Admins",
+              "value": 30
+            },
+            {
+              "label": "Instructors",
+              "value": 40
+            },
+            {
+              "label": "Learners",
+              "value": 60
+            }
+          ],
+          "colors": [
+            "#A5D8FF",
+            "#74C0FC",
+            "#B197FC"
+          ]
+        }
+      },
+      {
+        "id": "overview-widget-7",
+        "type": "chart",
+        "order": 6,
+        "enabled": true,
+        "title": "Users",
+        "content": {
+          "chartType": "donut",
+          "data": [
+            {
+              "label": "Admins",
+              "value": 30
+            },
+            {
+              "label": "Instructors",
+              "value": 40
+            },
+            {
+              "label": "Learners",
+              "value": 60
+            }
+          ],
+          "colors": [
+            "#A5D8FF",
+            "#74C0FC",
+            "#B197FC"
           ]
         }
       }

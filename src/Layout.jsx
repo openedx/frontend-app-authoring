@@ -12,9 +12,11 @@ import {
   Home, LibraryAdd, LibraryBooks, Lightbulb, LmsBook,
 } from '@openedx/paragon/icons';
 // import Sidebar from 'library/Sidebar/Sidebar';
-import { Footer, Sidebar } from 'titaned-lib';
+import {
+  Footer, Sidebar, MainHeader, SidebarProvider,
+} from 'titaned-lib';
 import getUserMenuItems from 'library/utils/getUserMenuItems';
-import MainHeader from 'library/Header/MainHeader';
+// import MainHeader from 'library/Header/MainHeader';
 // import { FooterProps } './studio-home/interfaces/components';
 
 const Layout = () => {
@@ -71,8 +73,9 @@ const Layout = () => {
   return (
     <div className="app-container">
       {/* <p>This is header</p> */}
-      <div className="header-container">
-        {headerData?.logoUrl
+      <SidebarProvider>
+        <div className="header-container">
+          {headerData?.logoUrl
           && headerData.menu?.align
           && headerData.menu.menuList
           && headerData.menu.loginSignupButtons && (
@@ -84,34 +87,35 @@ const Layout = () => {
             authenticatedUser={authenticatedUser}
             userMenuItems={userMenuItems}
           />
-        )}
-      </div>
-      {/* Sidebar and Main Content */}
-      <div className="content-wrapper">
-        <Sidebar
-          buttons={sidebarItems}
-          onNavigate={handleNavigate}
-          presentPath={presentPath}
-        />
-        <div className="main-content">
-          <div className="page-content">
-            <Outlet />
-          </div>
-        </div>
-      </div>
-      <div>
-        <div className="footer-container">
-          {footerData?.contactInfo && footerData?.quickLinks && footerData?.exploreLinks && (
-          <Footer
-            contactInfo={footerData.contactInfo}
-            quickLinks={footerData.quickLinks}
-            exploreLinks={footerData.exploreLinks}
-            logoUrl="https://titaned.com/wp-content/uploads/2023/07/TitanEdLogoHigherEdOrange.png"
-            copyrights={footerData.copyrights}
-          />
           )}
         </div>
-      </div>
+        {/* Sidebar and Main Content */}
+        <div className="content-wrapper">
+          <Sidebar
+            buttons={sidebarItems}
+            onNavigate={handleNavigate}
+            presentPath={presentPath}
+          />
+          <div className="main-content">
+            <div className="page-content">
+              <Outlet />
+            </div>
+          </div>
+        </div>
+        <div>
+          <div className="footer-container">
+            {footerData?.contactInfo && footerData?.quickLinks && footerData?.exploreLinks && (
+            <Footer
+              contactInfo={footerData.contactInfo}
+              quickLinks={footerData.quickLinks}
+              exploreLinks={footerData.exploreLinks}
+              logoUrl="https://titaned.com/wp-content/uploads/2023/07/TitanEdLogoHigherEdOrange.png"
+              copyrights={footerData.copyrights}
+            />
+            )}
+          </div>
+        </div>
+      </SidebarProvider>
     </div>
   );
 };

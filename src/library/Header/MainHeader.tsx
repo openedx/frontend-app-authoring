@@ -68,13 +68,13 @@ const MainHeader: React.FC<MainHeaderProps> = ({
       </Navbar.Brand>
 
       {authenticatedUser !== null && (
-        <div className="d-flex align-items-center justify-content-center flex-grow-1">
+        <div className="d-flex align-items-center justify-content-center flex-grow-1 ml-2">
           <div style={{ width: '20rem' }}>
             <SearchField
               onSubmit={handleSearch}
-              placeholder="Search..."
+              placeholder="Search"
               size="sm"
-              className="w-100"
+              className="w-100 search-field-custom"
             />
           </div>
         </div>
@@ -90,12 +90,20 @@ const MainHeader: React.FC<MainHeaderProps> = ({
 
         {authenticatedUser !== null && (
           <>
-            <IconButtonWithTooltip src={Sync} iconAs={Icon} alt="Sync" tooltipPlacement="bottom" tooltipContent="Re-Sync" />
-            <IconButtonWithTooltip src={ExitToApp} iconAs={Icon} alt="Sync" tooltipPlacement="bottom" tooltipContent="Switch to User Mode" />
-            <IconButtonWithTooltip src={HelpCenter} iconAs={Icon} alt="Help" tooltipPlacement="bottom" tooltipContent="Help" />
-            <IconButtonWithTooltip src={Notifications} iconAs={Icon} alt="Notifications" tooltipPlacement="bottom" tooltipContent="Notifications" />
+            <div className="icon-curved-square">
+              <IconButtonWithTooltip src={Sync} iconAs={Icon} alt="Sync" tooltipPlacement="bottom" tooltipContent="Re-Sync" />
+            </div>
+            <div className="icon-curved-square">
+              <IconButtonWithTooltip src={ExitToApp} iconAs={Icon} alt="Sync" tooltipPlacement="bottom" tooltipContent="Switch to User Mode" />
+            </div>
+            <div className="icon-curved-square">
+              <IconButtonWithTooltip src={HelpCenter} iconAs={Icon} alt="Help" tooltipPlacement="bottom" tooltipContent="Help" />
+            </div>
+            <div className="icon-curved-square">
+              <IconButtonWithTooltip src={Notifications} iconAs={Icon} alt="Notifications" tooltipPlacement="bottom" tooltipContent="Notifications" />
+            </div>
 
-            <Dropdown>
+            <Dropdown className="language-dropdown">
               <Dropdown.Toggle variant="tertiary" id="language-dropdown">
                 {selectedLanguage}
               </Dropdown.Toggle>
@@ -105,13 +113,15 @@ const MainHeader: React.FC<MainHeaderProps> = ({
               </Dropdown.Menu>
             </Dropdown>
 
-            <UserMenu
-              username={authenticatedUser?.username}
-              authenticatedUserAvatar={authenticatedUser?.avatar}
-              isMobile={isMobile}
-              isAdmin={authenticatedUser?.administrator}
-              menuItems={userMenuItems}
-            />
+            <div className="usermenu-dropdown">
+              <UserMenu
+                username={authenticatedUser?.username}
+                authenticatedUserAvatar={authenticatedUser?.avatar}
+                isMobile={isMobile}
+                isAdmin={authenticatedUser?.administrator}
+                menuItems={userMenuItems}
+              />
+            </div>
           </>
         )}
       </div>

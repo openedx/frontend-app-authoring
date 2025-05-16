@@ -3,12 +3,13 @@
 }
 
 .navbarContainer {
-    background-color: var(--c8);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    background-color: var(--bg-surface);
+    // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     height: 6rem;
     position: relative;
     display: flex;
     align-items: center;
+    // transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1);
 
     .navbar-brand {
         padding: 0;
@@ -21,6 +22,8 @@
             height: auto;
             object-fit: contain;
             max-height: 5rem;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
         }
     }
 
@@ -113,3 +116,141 @@
 .dropdown-menu {
     min-width: 15rem !important;
 }
+
+.search-field-custom {
+  background: var(--bg-surface);
+  border: 2px solid var(--primary-light);
+  border-radius: 10px !important;
+  padding: 0.2rem !important;
+  display: flex;
+  align-items: center;
+  box-shadow: none !important;
+  min-height: 48px;
+
+  input {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: var(--text-light) !important;
+    font-size: 1.1rem;
+    font-weight: 500;
+    &::placeholder {
+      color: var(--text-secondary, #697586) !important;
+      opacity: 1;
+    }
+  }
+
+  .pgn__searchfield-form {
+    outline: none !important;
+    border: none !important;
+  }
+  
+}
+
+.search-field-custom input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.pgn__searchfield.has-focus:not(.pgn__searchfield--external)::after {
+    border: none !important;
+}
+
+.pgn__searchfield:hover, .pgn__searchfield:active {
+    border: 2px solid var(--primary) !important;
+}
+
+.icon-curved-square {
+    margin: 0 6px;
+}
+
+.icon-curved-square .btn-icon.btn-icon-primary {
+    background-color: var(--primary-light);
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+
+    &:hover {
+        background-color: var(--primary);
+        color: var(--primary-light) !important;
+    }
+}
+
+.language-dropdown {
+
+    margin: 0 6px;
+
+    .btn-tertiary {
+        background-color: var(--primary-light);
+        border-radius: 12px;
+    }
+    
+    .btn-tertiary:hover {
+        background-color: var(--primary) !important;
+        color: var(--primary-light) !important;
+    }
+
+    .btn-tertiary.dropdown-toggle {
+        background-color: var(--primary-light) !important;
+        color: var(--primary) !important;
+
+        &:hover {
+            background-color: var(--primary) !important;
+            color: var(--primary-light) !important;
+        }
+    }
+}
+
+.usermenu-dropdown {
+    margin: 0 6px;
+
+    .btn-tertiary {
+        background-color: var(--primary-light);
+        border-radius: 10px;
+    }
+
+    .btn-tertiary:hover {
+        background-color: var(--primary) !important;
+        color: var(--primary-light) !important;
+    }
+
+    .btn-tertiary.dropdown-toggle {
+        background-color: var(--primary-light) !important;
+        color: var(--primary) !important;
+
+        &:hover {
+            background-color: var(--primary) !important;
+            color: var(--primary-light) !important;
+        }
+    }
+}
+// .btn-icon.btn-icon-primary {
+//     background-color: var(--primary-light);
+//     width: 48px;
+//     height: 48px;
+//     border-radius: 16px;
+
+//     &:hover {
+//         background-color: var(--primary);
+//         color: var(--text-white);
+//     }
+// }
+
+// .icon-curved-square {
+//   width: 48px;
+//   height: 48px;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   background: #ede7f6; /* light purple, adjust as needed */
+//   border-radius: 16px; /* curved square */
+//   margin: 0 6px;
+//   transition: box-shadow 0.2s, background 0.2s;
+//   cursor: pointer;
+// }
+
+// .icon-curved-square:hover {
+//   background: #d1c4e9; /* slightly darker on hover */
+//   box-shadow: 0 2px 8px rgba(80, 60, 180, 0.10);
+// }
+
