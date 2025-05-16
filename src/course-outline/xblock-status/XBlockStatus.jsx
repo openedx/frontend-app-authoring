@@ -7,6 +7,8 @@ import GradingPolicyAlert from './GradingPolicyAlert';
 import GradingTypeAndDueDate from './GradingTypeAndDueDate';
 import StatusMessages from './StatusMessages';
 import HideAfterDueMessage from './HideAfterDueMessage';
+import NeverShowAssessmentResultMessage from './NeverShowAssessmentResultMessage';
+import { ShowAnswerTypesKeys } from '../../editors/data/constants/problem';
 
 const XBlockStatus = ({
   isSelfPaced,
@@ -33,6 +35,7 @@ const XBlockStatus = ({
     graded,
     courseGraders,
     hideAfterDue,
+    showCorrectness,
   } = blockData;
 
   const isInstructorPaced = !isSelfPaced;
@@ -40,6 +43,9 @@ const XBlockStatus = ({
 
   return (
     <div className="text-secondary-400 x-small mb-1">
+      {category === COURSE_BLOCK_NAMES.sequential.id && showCorrectness === ShowAnswerTypesKeys.NEVER && (
+        <NeverShowAssessmentResultMessage />
+      )}
       {!isVertical && (
         <ReleaseStatus
           isInstructorPaced={isInstructorPaced}
@@ -116,6 +122,7 @@ XBlockStatus.propTypes = {
     graded: PropTypes.bool,
     courseGraders: PropTypes.arrayOf(PropTypes.string.isRequired),
     hideAfterDue: PropTypes.bool,
+    showCorrectness: PropTypes.string,
   }).isRequired,
 };
 
