@@ -35,7 +35,7 @@ import {
   updateCourseOutlineInfoLoadingStatus,
   updateMovedXBlockParams,
 } from './slice';
-import { getNotificationMessage, isUnitReadOnly } from './utils';
+import { getNotificationMessage } from './utils';
 
 export function fetchCourseSectionVerticalData(courseId, sequenceId) {
   return async (dispatch) => {
@@ -44,7 +44,6 @@ export function fetchCourseSectionVerticalData(courseId, sequenceId) {
 
     try {
       const courseSectionVerticalData = await getCourseSectionVerticalData(courseId);
-      courseSectionVerticalData.xblockInfo.readOnly = isUnitReadOnly(courseSectionVerticalData.xblockInfo);
       dispatch(fetchCourseSectionVerticalDataSuccess(courseSectionVerticalData));
       dispatch(updateLoadingCourseSectionVerticalDataStatus({ status: RequestStatus.SUCCESSFUL }));
       dispatch(updateModel({

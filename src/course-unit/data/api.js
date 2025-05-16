@@ -40,7 +40,10 @@ export async function getCourseSectionVerticalData(unitId) {
   const { data } = await getAuthenticatedHttpClient()
     .get(getCourseSectionVerticalApiUrl(unitId));
 
-  return normalizeCourseSectionVerticalData(data);
+  const courseSectionVerticalData = normalizeCourseSectionVerticalData(data);
+  courseSectionVerticalData.xblockInfo.readOnly = isUnitReadOnly(courseSectionVerticalData.xblockInfo);
+
+  return courseSectionVerticalData;
 }
 
 /**
@@ -116,8 +119,6 @@ export async function getCourseVerticalChildren(itemId) {
   const { data } = await getAuthenticatedHttpClient()
     .get(getCourseVerticalChildrenApiUrl(itemId));
   const camelCaseData = camelCaseObject(data);
-
-  camelCaseData.xblockInfo.readOnly = isUnitReadOnly(camelCaseData.xblockInfo);
 
   return updateXBlockBlockIdToId(camelCaseData);
 }
