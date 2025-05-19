@@ -7,6 +7,7 @@ import { initializeMockApp } from '@edx/frontend-platform';
 import initializeStore from '../../store';
 import XBlockStatus from './XBlockStatus';
 import messages from './messages';
+import genericMessages from '../../generic/configure-modal/messages';
 
 let store;
 
@@ -225,6 +226,7 @@ const subsection = {
   graded: true,
   courseGraders: ['Homework'],
   hideAfterDue: true,
+  showCorrectness: 'never',
 };
 
 describe('<XBlockStatus /> for Instructor paced Subsection', () => {
@@ -274,6 +276,13 @@ describe('<XBlockStatus /> for Instructor paced Subsection', () => {
     const hideAfterDueMessage = queryByTestId('hide-after-due-message');
     expect(hideAfterDueMessage).toBeInTheDocument();
     expect(hideAfterDueMessage).toHaveTextContent(messages.hiddenAfterDueDate.defaultMessage);
+
+    // check never show assessment result message
+    const neverShowAssessmentResultMessage = queryByTestId('never-show-assessment-result-message');
+    expect(neverShowAssessmentResultMessage).toBeInTheDocument();
+    expect(neverShowAssessmentResultMessage).toHaveTextContent(
+      genericMessages.neverShowAssessmentResults.defaultMessage,
+    );
 
     // check status messages
     const statusDiv = queryByTestId('status-messages-div');
@@ -402,6 +411,13 @@ describe('<XBlockStatus /> for self paced Subsection', () => {
     expect(hideAfterDueMessage).toBeInTheDocument();
     expect(hideAfterDueMessage).toHaveTextContent(messages.hiddenAfterEndDate.defaultMessage);
 
+    // check never show assessment result message
+    const neverShowAssessmentResultMessage = queryByTestId('never-show-assessment-result-message');
+    expect(neverShowAssessmentResultMessage).toBeInTheDocument();
+    expect(neverShowAssessmentResultMessage).toHaveTextContent(
+      genericMessages.neverShowAssessmentResults.defaultMessage,
+    );
+
     // check status messages
     const statusDiv = queryByTestId('status-messages-div');
     expect(statusDiv).toBeInTheDocument();
@@ -467,6 +483,10 @@ describe('<XBlockStatus /> for unit', () => {
     // check hide after due date message
     // hide after due date message should not be visible as the flag is set to false
     expect(queryByTestId('hide-after-due-message')).not.toBeInTheDocument();
+
+    // check never show assessment result message
+    // never show assessment result message should not be visible as the flag is set to false
+    expect(queryByTestId('never-show-assessment-result-message')).not.toBeInTheDocument();
 
     // check status messages for partition info
     const statusDiv = queryByTestId('status-messages-div');

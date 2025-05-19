@@ -1,6 +1,10 @@
 import { defineMessages } from '@edx/frontend-platform/i18n';
 
 const messages = defineMessages({
+  editFieldAriaLabel: {
+    id: 'course-authoring.course-outline.card.edit-field.aria-label',
+    defaultMessage: 'Edit field',
+  },
   expandTooltip: {
     id: 'course-authoring.course-outline.card.expandTooltip',
     defaultMessage: 'Collapse/Expand this card',
