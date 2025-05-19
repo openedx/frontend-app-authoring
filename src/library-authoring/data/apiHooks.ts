@@ -472,15 +472,28 @@ export const useCollection = (libraryId: string, collectionId: string) => (
  */
 export const useUpdateCollection = (libraryId: string, collectionId: string) => {
   const queryClient = useQueryClient();
+  const collectionQueryKey = libraryAuthoringQueryKeys.collection(libraryId, collectionId);
   return useMutation({
     mutationFn: (data: api.UpdateCollectionComponentsRequest) => (
       api.updateCollectionMetadata(libraryId, collectionId, data)
     ),
+    onMutate: (data) => {
+      const previousData = queryClient.getQueryData(collectionQueryKey) as api.CollectionMetadata;
+      queryClient.setQueryData(collectionQueryKey, {
+        ...previousData,
+        ...data,
+      });
+
+      return { previousData };
+    },
+    onError: (_err, _data, context) => {
+      queryClient.setQueryData(collectionQueryKey, context?.previousData);
+    },
     onSettled: () => {
       // NOTE: We invalidate the library query here because we need to update the library's
       // collection list.
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
-      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.collection(libraryId, collectionId) });
+      queryClient.invalidateQueries({ queryKey: collectionQueryKey });
     },
   });
 };
@@ -598,13 +611,26 @@ export const useContainer = (containerId?: string) => (
 export const useUpdateContainer = (containerId: string) => {
   const libraryId = getLibraryId(containerId);
   const queryClient = useQueryClient();
+  const containerQueryKey = libraryAuthoringQueryKeys.container(containerId);
   return useMutation({
     mutationFn: (data: api.UpdateContainerDataRequest) => api.updateContainerMetadata(containerId, data),
+    onMutate: (data) => {
+      const previousData = queryClient.getQueryData(containerQueryKey) as api.CollectionMetadata;
+      queryClient.setQueryData(containerQueryKey, {
+        ...previousData,
+        ...data,
+      });
+
+      return { previousData };
+    },
+    onError: (_err, _data, context) => {
+      queryClient.setQueryData(containerQueryKey, context?.previousData);
+    },
     onSettled: () => {
       // NOTE: We invalidate the library query here because we need to update the library's
       // container list.
       queryClient.invalidateQueries({ predicate: (query) => libraryQueryPredicate(query, libraryId) });
-      queryClient.invalidateQueries({ queryKey: libraryAuthoringQueryKeys.container(containerId) });
+      queryClient.invalidateQueries({ queryKey: containerQueryKey });
     },
   });
 };
