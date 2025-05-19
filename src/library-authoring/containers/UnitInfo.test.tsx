@@ -19,23 +19,28 @@ mockGetContainerChildren.applyMock();
 const { libraryId } = mockContentLibrary;
 const { containerId } = mockGetContainerMetadata;
 
-const render = (showOnlyPublished: boolean = false) => baseRender(<UnitInfo />, {
-  extraWrapper: ({ children }) => (
-    <LibraryProvider
-      libraryId={libraryId}
-      showOnlyPublished={showOnlyPublished}
-    >
-      <SidebarProvider
-        initialSidebarComponentInfo={{
-          id: containerId,
-          type: SidebarBodyComponentId.UnitInfo,
-        }}
+const render = (showOnlyPublished: boolean = false) => {
+  const params: { libraryId: string, unitId?: string } = { libraryId, unitId: containerId };
+  return baseRender(<UnitInfo />, {
+    path: '/library/:libraryId/:unitId?',
+    params,
+    extraWrapper: ({ children }) => (
+      <LibraryProvider
+        libraryId={libraryId}
+        showOnlyPublished={showOnlyPublished}
       >
-        {children}
-      </SidebarProvider>
-    </LibraryProvider>
-  ),
-});
+        <SidebarProvider
+          initialSidebarComponentInfo={{
+            id: containerId,
+            type: SidebarBodyComponentId.UnitInfo,
+          }}
+        >
+          {children}
+        </SidebarProvider>
+      </LibraryProvider>
+    ),
+  });
+};
 let axiosMock: MockAdapter;
 let mockShowToast;
 
