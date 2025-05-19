@@ -12,6 +12,8 @@
 * `unitTitle` - String. The name of the current unit being viewed / edited.
 * `xBlocks` - Array of Objects. List of XBlocks in the Unit. Object structure defined in `index.tsx`.
 * `readOnly` - Boolean. True if the user should not be able to edit the contents of the unit.
+* `isUnitVerticalType` - Boolean. If the unit category is `vertical`.
+* `isSplitTestType` - Boolean. If the unit category is `split_test`.
 
 ## Description
 
