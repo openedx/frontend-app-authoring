@@ -47,7 +47,7 @@ import CourseOutline from './CourseOutline';
 import configureModalMessages from '../generic/configure-modal/messages';
 import pasteButtonMessages from '../generic/clipboard/paste-component/messages';
 import messages from './messages';
-import {getApiBaseUrl, getClipboardUrl} from '../generic/data/api';
+import { getApiBaseUrl, getClipboardUrl } from '../generic/data/api';
 import headerMessages from './header-navigations/messages';
 import cardHeaderMessages from './card-header/messages';
 import enableHighlightsModalMessages from './enable-highlights-modal/messages';
