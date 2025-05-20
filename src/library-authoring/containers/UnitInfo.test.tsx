@@ -108,4 +108,20 @@ describe('<UnitInfo />', () => {
     expect(await screen.findByTestId('unit-info-menu-toggle')).toBeInTheDocument();
     expect(screen.getByText(/text block published 1/i)).toBeInTheDocument();
   });
+
+  it('shows the preview tab by default and the component are readonly', async () => {
+    render();
+    const previewTab = await screen.findByText('Preview');
+    expect(previewTab).toBeInTheDocument();
+    expect(previewTab).toHaveAttribute('aria-selected', 'true');
+
+    // Check that there are no edit buttons for components titles
+    expect(screen.queryAllByRole('button', { name: /edit/i }).length).toBe(0);
+
+    // Check that there are no drag handle for components
+    expect(screen.queryAllByRole('button', { name: 'Drag to reorder' }).length).toBe(0);
+
+    // Check that there are no menu buttons for components
+    expect(screen.queryAllByRole('button', { name: /component actions menu/i }).length).toBe(0);
+  });
 });
