@@ -9,7 +9,7 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cloneDeep } from 'lodash';
 import { closestCorners } from '@dnd-kit/core';
-
+import { logError } from '@edx/frontend-platform/logging';
 import { useLocation } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import {
@@ -22,6 +22,7 @@ import {
   getCourseItemApiUrl,
   getXBlockBaseApiUrl,
   exportTags,
+  createDiscussionsTopics,
 } from './data/api';
 import { RequestStatus } from '../data/constants';
 import {
@@ -115,6 +116,10 @@ jest.mock('../library-authoring/component-picker', () => ({
   },
 }));
 
+jest.mock('@edx/frontend-platform/logging', () => ({
+  logError: jest.fn(),
+}));
+
 const queryClient = new QueryClient();
 
 jest.mock('@dnd-kit/core', () => ({
@@ -190,6 +195,16 @@ describe('<CourseOutline />', () => {
       expect(getByText(messages.headingTitle.defaultMessage)).toBeInTheDocument();
       expect(getByText(messages.headingSubtitle.defaultMessage)).toBeInTheDocument();
     });
+  });
+
+  it('logs an error when syncDiscussionsTopics encounters an API failure', async () => {
+    axiosMock
+      .onGet(createDiscussionsTopics(courseId))
+      .reply(500, 'some internal error');
+
+    await executeThunk(syncDiscussionsTopics(), store.dispatch);
+
+    expect(logError).toHaveBeenCalledTimes(1);
   });
 
   it('handles course outline fetch api errors', async () => {
