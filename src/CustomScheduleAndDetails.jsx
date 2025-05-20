@@ -136,6 +136,7 @@ const CustomScheduleAndDetails = (props) => {
         handleResetValues,
         handleValuesChange,
         handleInternetConnectionFailed,
+        handleUpdateValues,
     } = useSaveValuesPrompt(
         courseId,
         updateCourseDetailsQuery,
@@ -154,6 +155,7 @@ const CustomScheduleAndDetails = (props) => {
     const [imageErrors, setImageErrors] = useState({});
     const [uploadProgress, setUploadProgress] = useState(0);
     const [errors, setErrors] = useState({});
+    const [hasAttemptedSave, setHasAttemptedSave] = useState(false);
 
     // Refs for tracking previous values
     const prevCardImageUrl = useRef(editedValues?.courseImageAssetPath);
@@ -349,20 +351,6 @@ const CustomScheduleAndDetails = (props) => {
         dispatch(updateCourseDetailsQuery(courseId, payload));
     }, [courseId, dispatch, editedValues]);
 
-    // Memoized save changes handler
-    const handleSaveChanges = useCallback(() => {
-        handleQueryProcessing();
-        setShowSaveChangesPrompt(false);
-        setHasUnsavedChanges(false);
-    }, [handleQueryProcessing]);
-
-    // Memoized cancel changes handler
-    const handleCancelChanges = useCallback(() => {
-        handleResetValues();
-        setShowSaveChangesPrompt(false);
-        setHasUnsavedChanges(false);
-    }, [handleResetValues]);
-
     // Check if all required fields are present and no image errors exist
     const requiredFieldsPresent = Boolean(
         editedValues?.shortDescription &&
@@ -383,12 +371,24 @@ const CustomScheduleAndDetails = (props) => {
         disabledStates: [STATEFUL_BUTTON_STATES.pending],
     };
 
+    const handleCancelChanges = useCallback(() => {
+        handleResetValues();
+        setShowSaveChangesPrompt(false);
+        setTouched({});
+    }, [handleResetValues]);
+
+    // Modify handleUpdateValues to track save attempt
+    const handleSaveChanges = useCallback(() => {
+        setHasAttemptedSave(true);
+        handleUpdateValues();
+    }, [handleUpdateValues]);
+
     return (
         <div className="custom-schedule-details">
             <Container size="xl" className="schedule-and-details px-2">
                 <div className="alert-container mb-4">
                     <AlertMessage
-                        show={showSuccessfulAlert}
+                        show={showSuccessfulAlert && !isQueryPending && hasAttemptedSave}
                         variant="success"
                         icon={CheckCircleIcon}
                         title={intl.formatMessage(messages.alertSuccess)}
@@ -410,8 +410,6 @@ const CustomScheduleAndDetails = (props) => {
                                 onBannerImageUpload={handleImageUpload}
                                 onRemoveImage={handleRemoveImage}
                                 showSaveChangesPrompt={showSaveChangesPrompt}
-                                onSaveChanges={handleSaveChanges}
-                                onCancelChanges={handleCancelChanges}
                                 onFieldChange={handleFieldChange}
                                 cardImagePreview={cardImagePreview}
                                 bannerImagePreview={bannerImagePreview}

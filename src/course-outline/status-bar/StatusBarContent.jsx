@@ -7,19 +7,21 @@ import { Add, ArrowRight as ArrowDownIcon, ArrowDropUp as ArrowUpIcon, VerticalA
 const StatusBarContent = ({ onAddSection, onCollapseAll, isSectionsExpanded, handleExpandAll }) => {
     return (
         <div className="d-flex justify-content-between align-items-center mt-4">
-            <span className="fw-bold">Content</span>
+            <h4>Content</h4>
             <div className="d-flex align-items-center">
                 <Icon
                     src={Add}
                     onClick={onAddSection}
-                    className="mx-2 cursor-pointer"
+                    className="mx-2"
                     aria-label="Add Section"
+                    data-tooltip="New Section"
                 />
                 <Icon
                     src={isSectionsExpanded ? VerticalAlignCenter : VerticalAlignCenter}
                     onClick={handleExpandAll}
-                    className="mx-2 cursor-pointer"
+                    className="mx-2 "
                     aria-label={isSectionsExpanded ? 'Collapse All' : 'Expand All'}
+                    data-tooltip={isSectionsExpanded ? 'Collapse All' : 'Expand All'}
                 />
             </div>
         </div>

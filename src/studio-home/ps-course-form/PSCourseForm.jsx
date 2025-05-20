@@ -356,12 +356,12 @@ const PSCourseForm = ({
 
     return (
         <div className="ps-course-form">
-            <Container size="xl" className="px-3">
+            <Container size="xl" className="pl-3">
                 <Row>
-                    <Col xs={12}>
+                    <Col xs={12} className="pr-0 pb-3">
                         <Form className="course-form" onSubmit={handleSubmit}>
                             <Row>
-                                <Col xs={8}>
+                                <Col xs={12} md={8}>
                                     <div>
                                         {children}
                                     </div>
@@ -424,7 +424,7 @@ const PSCourseForm = ({
 
                                     <div className="options-container">
                                         <Row>
-                                            <Col xs={3} className="sidebar">
+                                            <Col xs={12} md={3} className="sidebar">
                                                 <Nav className="nav-tabs flex-column border-0">
                                                     {tabList.map((tab) => (
                                                         <Nav.Item key={tab.key}>
@@ -440,12 +440,12 @@ const PSCourseForm = ({
                                                 </Nav>
                                             </Col>
 
-                                            <Col xs={9} className="content-area">
+                                            <Col xs={12} md={9} className="content-area">
                                                 {activeTab === 'general' && (
                                                     <div className="form-section">
                                                         <Stack gap={4}>
                                                             <Row>
-                                                                <Col xs={6}>
+                                                                <Col xs={12} md={6}>
                                                                     <Form.Group>
                                                                         <Form.Label><>Organization <span className="required-asterisk">*</span></></Form.Label>
                                                                         {createOrRerunOrganizations ? (
@@ -487,7 +487,7 @@ const PSCourseForm = ({
                                                                         )}
                                                                     </Form.Group>
                                                                 </Col>
-                                                                <Col xs={6}>
+                                                                <Col xs={12} md={6}>
                                                                     <Form.Group>
                                                                         <Form.Label><>Course Number <span className="required-asterisk">*</span></></Form.Label>
                                                                         <Form.Control
@@ -512,7 +512,7 @@ const PSCourseForm = ({
                                                                 </Col>
                                                             </Row>
                                                             <Row>
-                                                                <Col xs={6}>
+                                                                <Col xs={12} md={6}>
                                                                     <Form.Group>
                                                                         <Form.Label><>Course Run <span className="required-asterisk">*</span></></Form.Label>
                                                                         <Form.Control
@@ -535,7 +535,7 @@ const PSCourseForm = ({
                                                                         )}
                                                                     </Form.Group>
                                                                 </Col>
-                                                                <Col xs={6}>
+                                                                <Col xs={12} md={6}>
                                                                     <Form.Group>
                                                                         <Form.Label>Course Pacing</Form.Label>
                                                                         <div className="pacing-style">
@@ -738,7 +738,7 @@ const PSCourseForm = ({
                                                     <div className="form-section">
                                                         <Stack gap={2}>
                                                             <Row>
-                                                                <Col xs={6}>
+                                                                <Col xs={12} md={6}>
                                                                     <Form.Group>
                                                                         <Form.Label>Hours of effort per week</Form.Label>
                                                                         <Form.Control
@@ -752,7 +752,7 @@ const PSCourseForm = ({
                                                                         <Form.Text>Time spent on all course work</Form.Text>
                                                                     </Form.Group>
                                                                 </Col>
-                                                                <Col xs={6}>
+                                                                <Col xs={12} md={6}>
                                                                     <Form.Group>
                                                                         <Form.Label>Prerequisite course</Form.Label>
                                                                         <Dropdown>
@@ -942,7 +942,7 @@ const PSCourseForm = ({
                                     </div>
                                 </Col>
 
-                                <Col xs={4}>
+                                <Col xs={12} md={4}>
                                     <div className="media-section">
                                         <Stack gap={1}>
                                             {renderImageUploadSection(

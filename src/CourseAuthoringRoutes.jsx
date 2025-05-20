@@ -50,7 +50,7 @@ const CoursePageLayout = ({ children, courseId }) => {
       <div style={{ minWidth: 220, maxWidth: 260, background: '#fff', borderRight: '1px solid #eee' }}>
         <PluginSlot id="course_sidebar_plugin_slot" pluginProps={{ courseId }} />
       </div>
-      <main style={{ flex: 1, padding: '16px 16px 24px 16px' }}>
+      <main style={{ flex: 1, paddingTop: '1.5rem' }}>
         <Suspense>
           {children}
         </Suspense>
