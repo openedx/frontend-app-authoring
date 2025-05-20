@@ -243,7 +243,7 @@ describe('<CourseOutline />', () => {
       async () => fireEvent.change(optionDropdown, { target: { value: VIDEO_SHARING_OPTIONS.allOff } }),
     );
 
-    expect(axiosMock.history.post.length).çÏ(2);
+    expect(axiosMock.history.post.length).toBe(2);
     expect(axiosMock.history.post[1].data).toBe(JSON.stringify({
       metadata: {
         video_sharing_options: VIDEO_SHARING_OPTIONS.allOff,
