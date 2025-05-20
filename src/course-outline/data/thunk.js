@@ -1,3 +1,4 @@
+import { logError } from '@edx/frontend-platform/logging';
 import { RequestStatus } from '../../data/constants';
 import { NOTIFICATION_MESSAGES } from '../../constants';
 import { COURSE_BLOCK_NAMES } from '../constants';
@@ -100,8 +101,7 @@ export function syncDiscussionsTopics(courseId) {
     try {
       await createDiscussionsTopics(courseId);
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log('There was an issue in discussion topic sync', error);
+      logError(error);
     }
   };
 }
