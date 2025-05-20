@@ -49,6 +49,7 @@ export type NavigateToData = {
   collectionId?: string,
   contentType?: ContentType,
   unitId?: string,
+  doubleClicked?: boolean,
 };
 
 export type LibraryRoutesData = {
@@ -80,6 +81,7 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     collectionId,
     unitId,
     contentType,
+    doubleClicked,
   }: NavigateToData = {}) => {
     const {
       collectionId: urlCollectionId,
@@ -125,7 +127,7 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     } else if (insideCollections) {
       // We're inside the Collections tab,
       route = (
-        (collectionId && collectionId === (urlCollectionId || urlSelectedItemId))
+        (collectionId && doubleClicked)
           // now open the previously-selected collection,
           ? ROUTES.COLLECTION
           // or stay there to list all collections, or a selected collection.
@@ -142,7 +144,7 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
     } else if (insideUnits) {
       // We're inside the units tab,
       route = (
-        (unitId && unitId === (urlUnitId || urlSelectedItemId))
+        (unitId && doubleClicked)
           // now open the previously-selected unit,
           ? ROUTES.UNIT
           // or stay there to list all units, or a selected unit.
@@ -156,10 +158,10 @@ export const useLibraryRoutes = (): LibraryRoutesData => {
       // We're inside the All Content tab, so stay there,
       // and select a component.
       route = ROUTES.COMPONENT;
-    } else if (collectionId && collectionId === (urlCollectionId || urlSelectedItemId)) {
+    } else if (collectionId && doubleClicked) {
       // now open the previously-selected collection
       route = ROUTES.COLLECTION;
-    } else if (unitId && unitId === (urlUnitId || urlSelectedItemId)) {
+    } else if (unitId && doubleClicked) {
       // now open the previously-selected unit
       route = ROUTES.UNIT;
     } else {
