@@ -261,7 +261,7 @@ const PSCourseForm = ({
                     <Icon
                         src={InfoOutline}
                         className="ms-2 cursor-pointer"
-                        data-tooltip={`Displayed as ${label.toLowerCase()}. Please add an image (Note: only JPEG or PNG format supported)`}
+                        data-tooltip={`Displayed as ${label.toLowerCase()}. Please upload a JPEG or PNG image between 300x300 and 1024x1024 pixels, under 5MB.`}
                     />
                 </div>
                 <div
